@@ -1,21 +1,21 @@
-@extends('layouts.app')
+{% extends "layouts.master" %}
 
-@section('content')
+{% block content %}
 <div class="container">
     <div class="row justify-content-center">
         <div class="col-md-8">
             <div class="card">
-                <div class="card-header">{{ __('Theme Options') }}</div>
+                <div class="card-header">Theme Options</div>
 
                 <div class="card-body">
-                    @if (session('status'))
+                    {% if session.status is defined %}
                         <div class="alert alert-success" role="alert">
-                            {{ session('status') }}
+                            {{ session.status }}
                         </div>
-                    @endif
+                    {% endif %}
                     
                     <form action="/theme/submit-theme" method="post">
-                        @csrf
+                        <input type="hidden" name="_token" value="{{ csrf_token() }}" />
                         <div class="form-group">
                             <label for="">Theme Title</label>
                             <input type="text" name="title" class="form-control">
@@ -54,4 +54,4 @@
         </div>
     </div>
 </div>
-@endsection
+{% endblock %}

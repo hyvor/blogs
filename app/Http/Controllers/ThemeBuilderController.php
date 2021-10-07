@@ -4,14 +4,11 @@ namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
 use App\Models\Themes;
-// use Theme;
 
 class ThemeBuilderController extends Controller
 {
-    public function createTheme()
+    public function createThemeForm()
     {
-        // Theme::uses('demoone');
-        // return Theme::view('theme_builder.create');
         return view('theme_builder.create');
     }
 
@@ -23,7 +20,8 @@ class ThemeBuilderController extends Controller
             'footer' => 'required',
             'pageBody' => 'required',
             'postBody' => 'required',            
-            ]);
+        ]);
+
         $thm = new Themes();
         $thm->title = $request->title;
         $thm->header = $request->header;
@@ -36,19 +34,20 @@ class ThemeBuilderController extends Controller
         return redirect('/dashboard')->with('success','Theme created successfully!');
     }
 
-    public function loadTheme($id)
+    public function themesListAll()
     {
-        // $thm = new Themes();
-        $srvLiquid = "";
-        $thmObj = Themes::where('id', '=', 2)->get();
-        foreach($thmObj as $atheme){
-            $srvLiquid .= $atheme->header;
-            // $srvLiquid .= $atheme->pageBody;
-            $srvLiquid .= $atheme->postBody;
-            $srvLiquid .= $atheme->footer;
-        }
-        return $srvLiquid;
+        $themes = Themes::all();
+        $data['themes'] = $themes;
+        return view('theme_builder.index', $data);
     }
+
+    public function destroy(Themes $theme)
+    {
+        $theme->delete();
+        return redirect('/theme/list')->with('success','Theme deleted successfully!');
+    }
+
+
 
 
 }
