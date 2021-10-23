@@ -2,23 +2,30 @@
 
 namespace App\Classes;
 
-use App\Models\Themes;
+use App\Models\BlogsToThemes;
 
 class Theme
 {
 
     public $renderedHTML;
     public function __construct($data) {
-        $id = 0;
-        $thmObj = Themes::where('id', '=', $id)->get();
+        $blog = $data['page'];
+        // dd($blog);
+        $thmObj = BlogsToThemes::where('blog_id', '=', $blog['blog_id'])->get();
 
         $data['theme'] = array(
             'title' => 'Default Theme',
+            'styles1' => '',
         );
 
         $content = "";
         $html = "";
         foreach($thmObj as $atheme){
+
+            $data['theme']['title'] = $atheme->parent_theme_id;
+            $data['theme']['styles1'] = $atheme->styles_1;
+
+
             $html .= "<html>";
             $html .= "<head>";
             $html .= $atheme->header;
@@ -37,11 +44,13 @@ class Theme
             $content = "{% extends 'baseTemplate.php' %}";
             $content .= "{% block content %}";
             if( $data['type'] == 'post' ) {                
-                $content .= $atheme->postBody;
+                $content .= $atheme->post_body;
             } elseif( $data['type'] == 'post-edit' ) { 
-                // dd($data['post']);           
+                // dd($data['post']); 
+            } elseif( $data['type'] == 'blog' ) {  
+                $content .= $atheme->page_body;         
             } else {
-                $content .= $atheme->pageBody;    
+                $content .= $atheme->page_body;    
             }
             $content .= "{% endblock content %}";
 

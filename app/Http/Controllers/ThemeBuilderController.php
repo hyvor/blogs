@@ -28,6 +28,7 @@ class ThemeBuilderController extends Controller
         $thm->footer = $request->footer;
         $thm->pageBody = $request->pageBody;
         $thm->postBody = $request->postBody;
+        $thm->styles_1 = $request->styles1;
         $thm->author = '1';
 
         $thm->save();

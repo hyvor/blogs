@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "274eb3e91bdc32b1c9fad8d5d0480e86",
+    "content-hash": "541c4e2fde2325ed96a96eb12c4c52a2",
     "packages": [
         {
             "name": "asm89/stack-cors",
@@ -61,6 +61,221 @@
                 "source": "https://github.com/asm89/stack-cors/tree/v2.0.3"
             },
             "time": "2021-03-11T06:42:03+00:00"
+        },
+        {
+            "name": "auth0/auth0-php",
+            "version": "7.9.0",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/auth0/auth0-PHP.git",
+                "reference": "0611fbabcb802ac63533f1c0ff5bd765e22f4aa3"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/auth0/auth0-PHP/zipball/0611fbabcb802ac63533f1c0ff5bd765e22f4aa3",
+                "reference": "0611fbabcb802ac63533f1c0ff5bd765e22f4aa3",
+                "shasum": ""
+            },
+            "require": {
+                "auth0/php-jwt": "3.3.4",
+                "ext-json": "*",
+                "ext-openssl": "*",
+                "guzzlehttp/guzzle": "^6.0|^7.0",
+                "php": "^7.3 | ^8.0",
+                "psr/simple-cache": "^1.0"
+            },
+            "require-dev": {
+                "cache/adapter-common": "^1.2",
+                "cache/array-adapter": "^1.1",
+                "cache/hierarchical-cache": "^1.1",
+                "dealerdirect/phpcodesniffer-composer-installer": "^0.7",
+                "josegonzalez/dotenv": "^3.2",
+                "phpcompatibility/php-compatibility": "^8.1",
+                "phpstan/phpstan": "^0.12.64",
+                "phpunit/phpunit": "^9.3",
+                "squizlabs/php_codesniffer": "^3.2"
+            },
+            "type": "library",
+            "autoload": {
+                "psr-4": {
+                    "Auth0\\SDK\\": "src/"
+                }
+            },
+            "notification-url": "https://packagist.org/downloads/",
+            "license": [
+                "MIT"
+            ],
+            "authors": [
+                {
+                    "name": "Auth0",
+                    "email": "support@auth0.com",
+                    "homepage": "http://www.auth0.com/"
+                }
+            ],
+            "description": "Auth0 PHP SDK.",
+            "homepage": "https://github.com/auth0/auth0-PHP",
+            "support": {
+                "issues": "https://github.com/auth0/auth0-PHP/issues",
+                "source": "https://github.com/auth0/auth0-PHP/tree/7.9.0"
+            },
+            "time": "2021-05-04T00:30:48+00:00"
+        },
+        {
+            "name": "auth0/login",
+            "version": "6.5.0",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/auth0/laravel-auth0.git",
+                "reference": "a324411c5e85e05dfec21a683b84c1f8aca2a7bf"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/auth0/laravel-auth0/zipball/a324411c5e85e05dfec21a683b84c1f8aca2a7bf",
+                "reference": "a324411c5e85e05dfec21a683b84c1f8aca2a7bf",
+                "shasum": ""
+            },
+            "require": {
+                "auth0/auth0-php": "^7.9",
+                "ext-filter": "*",
+                "ext-json": "*",
+                "ext-mbstring": "*",
+                "ext-openssl": "*",
+                "illuminate/contracts": "^6.0 || ^7.0 || ^8.0",
+                "illuminate/support": " ^6.0 || ^7.0 || ^8.0",
+                "php": "^7.3 || ^8.0"
+            },
+            "conflict": {
+                "lcobucci/jwt": "*"
+            },
+            "require-dev": {
+                "nunomaduro/larastan": "^0.7",
+                "nunomaduro/phpinsights": "^1.13 || ^2.0",
+                "orchestra/testbench": "^4.0 || ^5.0",
+                "phpunit/phpunit": "^9.5"
+            },
+            "type": "library",
+            "extra": {
+                "laravel": {
+                    "providers": [
+                        "Auth0\\Login\\LoginServiceProvider"
+                    ],
+                    "aliases": {
+                        "Auth0": "Auth0\\Login\\Facade\\Auth0"
+                    }
+                }
+            },
+            "autoload": {
+                "classmap": [
+                    "src/controllers",
+                    "src/facade"
+                ],
+                "psr-0": {
+                    "Auth0\\Login\\": "src/"
+                }
+            },
+            "notification-url": "https://packagist.org/downloads/",
+            "license": [
+                "MIT"
+            ],
+            "authors": [
+                {
+                    "name": "Auth0",
+                    "email": "support@auth0.com",
+                    "homepage": "https://auth0.com/"
+                }
+            ],
+            "description": "Laravel plugin that helps authenticate with the Auth0 service",
+            "homepage": "https://github.com/auth0/laravel-auth0",
+            "keywords": [
+                "Authentication",
+                "JSON Web Token",
+                "JWK",
+                "OpenId",
+                "api",
+                "auth",
+                "auth0",
+                "authorization",
+                "json web key",
+                "jwt",
+                "laravel",
+                "login",
+                "oauth",
+                "protect",
+                "secure"
+            ],
+            "support": {
+                "issues": "https://github.com/auth0/laravel-auth0/issues",
+                "source": "https://github.com/auth0/laravel-auth0/tree/6.5.0"
+            },
+            "time": "2021-10-15T12:55:15+00:00"
+        },
+        {
+            "name": "auth0/php-jwt",
+            "version": "3.3.4",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/auth0/php-jwt.git",
+                "reference": "a0daa1a728cf85230843ebb8c1183047fe493284"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/auth0/php-jwt/zipball/a0daa1a728cf85230843ebb8c1183047fe493284",
+                "reference": "a0daa1a728cf85230843ebb8c1183047fe493284",
+                "shasum": ""
+            },
+            "require": {
+                "ext-mbstring": "*",
+                "ext-openssl": "*",
+                "php": "^5.6 || ^7.0 || ^8.0"
+            },
+            "require-dev": {
+                "mikey179/vfsstream": "~1.5",
+                "phpmd/phpmd": "~2.2",
+                "phpunit/php-invoker": "~1.1",
+                "phpunit/phpunit": "^5.7 || ^7.3",
+                "squizlabs/php_codesniffer": "~2.3"
+            },
+            "type": "library",
+            "extra": {
+                "branch-alias": {
+                    "dev-master": "3.1-dev"
+                }
+            },
+            "autoload": {
+                "psr-4": {
+                    "Lcobucci\\JWT\\": "src"
+                }
+            },
+            "notification-url": "https://packagist.org/downloads/",
+            "license": [
+                "BSD-3-Clause"
+            ],
+            "authors": [
+                {
+                    "name": "Luís Otávio Cobucci Oblonczyk",
+                    "email": "lcobucci@gmail.com",
+                    "role": "Developer"
+                }
+            ],
+            "description": "A simple library to work with JSON Web Token and JSON Web Signature",
+            "keywords": [
+                "JWS",
+                "jwt"
+            ],
+            "support": {
+                "source": "https://github.com/auth0/php-jwt/tree/3.3.4"
+            },
+            "funding": [
+                {
+                    "url": "https://github.com/lcobucci",
+                    "type": "github"
+                },
+                {
+                    "url": "https://www.patreon.com/lcobucci",
+                    "type": "patreon"
+                }
+            ],
+            "time": "2021-01-04T20:39:06+00:00"
         },
         {
             "name": "brick/math",

@@ -22,6 +22,9 @@ Route::delete('/post/{post}', [App\Http\Controllers\PostController::class, 'dest
 
 // Route::get('/dashboard', 'DashboardController@index')->middleware('theme:dashboard-theme');
 Route::get('/dashboard', [App\Http\Controllers\DashboardController::class, 'index']);
+Route::get('/log-in', [App\Http\Controllers\DashboardController::class, 'logIn']);
+Route::get('/log-out', [App\Http\Controllers\DashboardController::class, 'logout']);
+Route::get('/create-user', [App\Http\Controllers\DashboardController::class, 'createUser']);
 
 Route::get('/theme/create', [App\Http\Controllers\ThemeBuilderController::class, 'createThemeForm']);
 Route::get('/theme/list', [App\Http\Controllers\ThemeBuilderController::class, 'themesListAll']);
@@ -29,8 +32,10 @@ Route::post('/theme/submit-theme', [App\Http\Controllers\ThemeBuilderController:
 Route::get('/theme/{id}', [App\Http\Controllers\ThemeBuilderController::class, 'loadThemeMarkup']);
 Route::delete('/theme/{theme}', [App\Http\Controllers\ThemeBuilderController::class, 'destroy']);
 
-Route::get('/blog/create', [App\Http\Controllers\ThemeBuilderController::class, 'createThemeForm']);
-Route::get('/blog/list', [App\Http\Controllers\ThemeBuilderController::class, 'themesListAll']);
-Route::post('/blog/save', [App\Http\Controllers\ThemeBuilderController::class, 'saveTheme']);
-Route::get('/blog/{id}', [App\Http\Controllers\ThemeBuilderController::class, 'loadThemeMarkup']);
-Route::delete('/blog/{blog}', [App\Http\Controllers\ThemeBuilderController::class, 'destroy']);
+Route::get('/blogs/create', [App\Http\Controllers\BlogController::class, 'create']);
+Route::get('/blogs', [App\Http\Controllers\BlogController::class, 'index']);
+Route::post('/blogs', [App\Http\Controllers\BlogController::class, 'store']);
+Route::get('/blogs/{blog}', [App\Http\Controllers\BlogController::class, 'show']);
+Route::get('/blogs/{blog}/edit', [App\Http\Controllers\BlogController::class, 'edit']);
+Route::put('/blogs/{blog}', [App\Http\Controllers\BlogController::class, 'update']);
+Route::delete('/blogs/{blog}', [App\Http\Controllers\BlogController::class, 'destroy']);

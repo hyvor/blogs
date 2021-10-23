@@ -17,9 +17,12 @@ class PostController extends Controller
         return view('posts.index', $data);
     }
 
-    public function create()
+    public function create(Request $request)
     {
-        return view('posts.create');
+        $data['blog'] = array(
+            'id' => $request->blogid,
+        );
+        return view('posts.create',$data);
     }
 
     public function store(Request $request)
@@ -30,11 +33,12 @@ class PostController extends Controller
             ]);
         $post = new Post();
         $post->title = $request->title;
+        $post->blog_id = $request->blog_id;
         $post->body = $request->body;
         $post->published_at = $request->published_at;
 
         $post->save();
-        return redirect('/home')->with('success','Post created successfully!');
+        return redirect('/blogs/'.$request->blog_id)->with('success','Post created successfully!');
     }
 
     public function show(Post $post)
@@ -46,6 +50,7 @@ class PostController extends Controller
         $page = array(
             'title' => "Example Page T",
             'content' => "Example page content...",
+            'blog_id' => $post->blog_id,
         );
 
 
@@ -75,9 +80,9 @@ class PostController extends Controller
             'type' => 'post-edit',
             'post' => $post,
         );        
-        $themeObj = new Theme($data);
-        return $themeObj->printVar($post);        
-        // return view('posts.edit', compact('post'));
+        // $themeObj = new Theme($data);
+        // return $themeObj->printVar($post);        
+        return view('posts.edit', compact('post'));
     }
 
     public function update(Post $post, Request $request)
@@ -99,4 +104,28 @@ class PostController extends Controller
         $post->delete();
         return redirect('/home')->with('success','Post deleted successfully!');
     }
+
+    public function fetchPartialHtml($path,$data)
+    {
+        //'./partials/email-template.twig'
+        $posts = Post::all();       
+        $data['posts'] = $posts;
+        $template = $this->view->fetch($path);
+        $html = $template->render($data);
+        return $html;
+    }
+
+    public function postsHtml($blog_id)
+    {                                                                   
+        $posts = Post::where('blog_id', '=', $blog_id)->get(); 
+        $html = '<ul>';
+        foreach($posts as $post){
+            $html .= "<li><a href='/post/". $post->id ."' class='btn btn-primary'>". $post->title ."</a></li>";
+        }  
+        $html .= "</ul>";
+        return $html;
+    }
+
+
+
 }

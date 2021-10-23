@@ -14,7 +14,7 @@
                         </div>
                     {% endif %}
                     
-                    <form action="/posts/{{post.id}}" method="post">
+                    <form action="/post/{{post.id}}" method="post">
                         <!-- @csrf -->
                         <input type="hidden" name="_token" value="{{ csrf_token() }}">
                         <input type='hidden' name='_method' value='PUT'>

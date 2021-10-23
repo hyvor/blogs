@@ -5,7 +5,7 @@
     <div class="row justify-content-center">
         <div class="col-md-8">
             <div class="card">
-                <div class="card-header">Create Post</div>
+                <div class="card-header">Create Blog</div>
 
                 <div class="card-body">
                     {% if session.status is defined %}
@@ -13,26 +13,34 @@
                             {{ session.status }}
                         </div>
                     {% endif %}
+
                     
-                    <form action="/post" method="post">
+                    <form action="/blogs" method="post">
                         <input type="hidden" name="_token" value="{{ csrf_token() }}">
                         <input type='hidden' name='_method' value='POST'>
-                        <input type='hidden' name='blog_id' value='{{blog.id}}'>
                         <div class="form-group">
-                            <label for="">Post Title</label>
+                            <label for="">Website url</label>
+                            <input type="text" name="websiteUrl" class="form-control">
+                        </div>
+
+                        <div class="form-group">
+                            <label for="">Title</label>
                             <input type="text" name="title" class="form-control">
                         </div>
 
                         <div class="form-group">
-                            <label for="">Post Body</label>
-                            <textarea name="body" id="" cols="30" rows="10" class="form-control"></textarea>
+                            <label for="">Short Description</label>
+                            <textarea name="description" id="" cols="30" rows="10" class="form-control"></textarea>
                         </div>
 
                         <div class="form-group">
-                            <label for="">Publish At</label>
-                            <input type="date" name="published_at" class="form-control">
+                            <label for="">Select a theme</label>
+                            <select class="form-control" name="theme">
+                                  {% for theme in themes %}
+                                  <option value="{{theme.id}}" >{{theme.name}}</option>
+                                  {% endfor %}
+                            </select>
                         </div>
-                        
                         <button type="submit" class="btn btn-primary">Submit</button>
                     </form>
                     
