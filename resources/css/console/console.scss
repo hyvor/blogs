@@ -1,0 +1,58 @@
+@import '../font';
+
+
+body {
+    background-color: #fafafa;
+}
+
+#left {
+    position:absolute;
+    left:15px;
+    top:15px;
+    width:250px;
+    padding-bottom:15px;
+    background-color: #fff;
+    box-shadow: 0 0 20px rgb(0 0 0 / 5%);
+    border-radius: 5px;
+}
+#left-header {
+    display: flex;
+    padding: 15px;
+    justify-content: space-between;
+}
+#left-nav {
+    a {
+        display: block;
+        padding: 14px 18px;
+        transition:.3s background-color;
+        cursor: pointer;
+        &:hover {
+            background-color: #fafafa;
+        }
+        &.active {
+            background: #9323a733;
+            border-right: 4px solid #9323a7;
+        }
+    }
+    .left-divider {
+        height:25px;
+    }
+}
+
+#middle {
+    position:absolute;
+    top:15px;
+    background-color: #fff;
+    box-shadow: 0 0 20px rgb(0 0 0 / 5%);
+    left:280px;
+    right:15px;
+    height:2000px;
+    border-radius: 5px;
+}
+
+.round-image-40 {
+    border-radius: 50%;
+    width:40px;
+    height:40px;
+    background:#eee;
+}
