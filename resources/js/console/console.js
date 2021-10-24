@@ -1,6 +1,8 @@
 import React from 'react';
 import ReactDOM from 'react-dom';
 
+import TheEditor from './editor';
+
 function App() {
 
     return <div>
@@ -26,7 +28,7 @@ function App() {
             </div>
         </div>
         <div id="middle">
-
+            <TheEditor />
         </div>
     </div>
 }
