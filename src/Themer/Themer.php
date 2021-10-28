@@ -1,10 +1,9 @@
 <?php
-
-namespace App\Classes;
+namespace Project\Themer;
 
 use App\Models\BlogsToThemes;
 
-class Theme
+class Themer
 {
 
     public $renderedHTML;
