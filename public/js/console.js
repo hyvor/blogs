@@ -9314,6 +9314,7 @@ var Tiptap = function Tiptap() {
     extensions: [_tiptap_starter_kit__WEBPACK_IMPORTED_MODULE_2__["default"]],
     content: '<p>Hello World!</p>'
   });
+  window.editor = editor;
   return /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_3__.jsx)(_tiptap_react__WEBPACK_IMPORTED_MODULE_1__.EditorContent, {
     editor: editor
   });

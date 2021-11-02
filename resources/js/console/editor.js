@@ -9,9 +9,13 @@ const Tiptap = () => {
         ],
         content: '<p>Hello World!</p>',
     })
+
+    window.editor = editor;
   
     return (
-        <EditorContent editor={editor} />
+        <EditorContent 
+            editor={editor}
+        />
     )
   }
   
