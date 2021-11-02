@@ -9,7 +9,7 @@ use Illuminate\Support\Facades\Route;
 
 // Auth::routes();
 
-Route::view('/console', 'console');
+Route::view('/console/{any?}', 'console')->where('any', '.*');;
 
 Route::get('/', [App\Http\Controllers\PostController::class, 'index'])->name('index');
 Route::get('/home', [App\Http\Controllers\PostController::class, 'index'])->name('home');
