@@ -40,7 +40,7 @@ function App() {
                     </div>
                 </div>
                 <div id="middle" className="box">
-
+                 <TheEditor />
                 </div>
             </Route>
 
