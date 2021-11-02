@@ -24,7 +24,7 @@ function App() {
                         <div id="left-header-image-2" className="round-image-40"></div>
                     </div>
                     <div id="left-nav">
-                        <a className="active">Overview</a>
+                        <a className="active">Your Blog</a>
 
                         <div className="left-divider"></div>
 
