@@ -14,23 +14,17 @@ use Illuminate\Support\Facades\Route;
 |
 */
 
-Route::prefix('/v1/')->group(function() {
-    Route::get('themes', [App\Http\Controllers\API\ThemeBuilderController::class, 'index']);
-    Route::get('themes/{theme}', [App\Http\Controllers\API\ThemeBuilderController::class, 'show']);
-    Route::post('themes', [App\Http\Controllers\API\ThemeBuilderController::class, 'store']);
-    Route::put('themes/{theme}', [App\Http\Controllers\API\ThemeBuilderController::class, 'update']);
-    Route::delete('themes/{theme}', [App\Http\Controllers\API\ThemeBuilderController::class, 'destroy']);
-
+Route::domain('blogs.hyvor.test')->group(function () {
     Route::get('blogs', [App\Http\Controllers\API\BlogController::class, 'index']);
-    Route::get('blogs/{blog}', [App\Http\Controllers\API\BlogController::class, 'show']);    
-    Route::post('blogs', [App\Http\Controllers\API\BlogController::class, 'store']);
-    Route::put('blogs/{blog}', [App\Http\Controllers\API\BlogController::class, 'update']);
-    Route::delete('blogs/{blog}', [App\Http\Controllers\API\BlogController::class, 'destroy']);
+});
 
-    Route::get('post', [App\Http\Controllers\API\PostController::class, 'index']);
-    Route::get('post/{post}', [App\Http\Controllers\API\PostController::class, 'show']);   
-    Route::post('post', [App\Http\Controllers\API\PostController::class, 'store']);
-    Route::put('post/{post}', [App\Http\Controllers\API\PostController::class, 'update']);
-    Route::delete('post/{post}', [App\Http\Controllers\API\PostController::class, 'destroy']);
 
+// Delivery API 
+Route::domain('{account}.hyvorblogs.test')->group(function () {
+    Route::get(
+        '/',function ($account) {
+            
+            $themeCtr = new ThemeBuilderController(); 
+            return $themeCtr->index();
+    });
 });
