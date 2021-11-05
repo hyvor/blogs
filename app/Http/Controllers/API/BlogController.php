@@ -11,8 +11,8 @@ use App\Models\Blog;
 use App\Models\User;
 use Illuminate\Support\Facades\Hash;
 
-use App\Http\Controllers\PostController;
-use App\Http\Controllers\BlogThemeCustomizerController;
+use App\Http\Controllers\API\PostController;
+// use App\Http\Controllers\BlogThemeCustomizerController;
 
 use App\Http\Controllers\DashboardController;
 
@@ -61,6 +61,7 @@ class BlogController extends Controller
         );        
 
         $blog = new Blog();
+        $blog->name = $request->subdomain;
         $blog->website_url = $request->websiteUrl;
         $blog->title = $request->title;
         $blog->short_description = $request->description;
@@ -94,6 +95,7 @@ class BlogController extends Controller
             'websiteUrl' => 'required',
             'title' => 'required',
         ]);
+        $blog->name = $request->subdomain ?? $blog->name;
         $blog->website_url = $request->websiteUrl ?? $blog->website_url;
         $blog->title = $request->title ?? $blog->title;
         $blog->short_description = $request->description ?? $blog->short_description;
@@ -118,7 +120,7 @@ class BlogController extends Controller
     }
 
 
-    public function rederedThemedBlog(Blog $blog)
+    public function renderedThemedBlog(Blog $blog)
     {
 
         $themeInfo = array(
@@ -148,6 +150,40 @@ class BlogController extends Controller
 
         $themeObj = new Themer($data);
         return $themeObj->view();
+    }
+
+    public function checkSubdomainExist(Request $request,$name = null)
+    {
+        $tempName = null;
+        if($name != null){
+            $tempName = $name;
+        } else {
+            $tempName = $request->name;
+        }
+        if (Blog::where('name', $tempName)->exists()){
+            return response([
+                'success' => true,
+                'message' => true,
+            ], 201);
+        } else {
+            return response([
+                'success' => true,
+                'message' => false,
+            ], 201);
+        }
+    }
+
+    public function loadBlog($name)
+    {
+        $blog = Blog::where('name','=', $name)->first();
+        $renderedBlog = $this->renderedThemedBlog($blog);
+
+        return array(
+                'success' => true,
+                'data' => $blog,
+                'payload' => $renderedBlog,
+                'user' => Auth::user(),
+        );
     }
 
 }

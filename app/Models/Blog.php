@@ -18,4 +18,5 @@ class Blog extends Model
         return $blogs;
     }
 
+
 }
