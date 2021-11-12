@@ -35,7 +35,9 @@ Route::domain('blogs.hyvor.test')->group(function () {
     Route::get('post/{post}', [App\Http\Controllers\API\PostController::class, 'show']);   
     Route::post('post', [App\Http\Controllers\API\PostController::class, 'store']);
     Route::put('post/{post}', [App\Http\Controllers\API\PostController::class, 'update']);
-    Route::delete('post/{post}', [App\Http\Controllers\API\PostController::class, 'destroy']);
+    Route::delete('post/{post}', [App\Http\Controllers\API\PostController::class, 'destroy']);    
+    Route::get('post/check-slug/{slug?}', [App\Http\Controllers\API\PostController::class, 'getSlugAvailability']);
+
 });
 
 
@@ -45,23 +47,21 @@ Route::domain('{account}.hyvorblogs.test')->group(function () {
         '/',function ($account) {
             $blogCtr = new BlogController(); 
             $entity = $blogCtr->loadBlog($account); 
-            return $entity['payload']; 
 
-            // return response($entity, 200)
-            // ->header('Content-Type', 'text/html')
-            // ->header('Authorization','Bearer '.'<token>')
-            // ->header('Accept','application/json');
+            return response($entity, 200)
+            ->header('Content-Type', 'text/html')
+            ->header('Authorization','Bearer '.'<token>')
+            ->header('Accept','application/json');
     });
     Route::get(
         '/{slug}',function ($account,$slug) {
             $postCtr = new PostController();
             $entity = $postCtr->loadPost($account,$slug);
-            return $entity['payload']; 
 
-            // return response($entity, 200)
-            // ->header('Content-Type', 'text/html')
-            // ->header('Authorization','Bearer '.'<token>')
-            // ->header('Accept','application/json');
+            return response($entity, 200)
+            ->header('Content-Type', 'text/html')
+            ->header('Authorization','Bearer '.'<token>')
+            ->header('Accept','application/json');
 
     });
 

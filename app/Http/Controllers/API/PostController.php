@@ -3,8 +3,10 @@
 namespace App\Http\Controllers\API;
 
 use Illuminate\Http\Request;
+use Illuminate\Support\Str;
 use App\Models\Post;
 use Project\Themer\Themer;
+use Project\Util\Ajax;
 
 use App\Http\Controllers\ThemeBuilderController;
 
@@ -29,15 +31,31 @@ class PostController extends Controller
             'title' => 'required',
             'body' => 'required',
             ]);
-        $post = new Post();
-        $post->slug = str_slug($request->title, "-"); // check DB before saving for existing 
-        $post->title = $request->title;
-        $post->blog_id = $request->blog_id;
-        $post->body = $request->body;
-        $post->published_at = $request->published_at;
 
-        $post->save();
-        return response()->json($post, 201);
+        $blog_id = $request->blog_id;
+        $suggestSlug = Str::slug($request->title);
+        $checkSlug = false;
+
+        $checkSlug = $this->checkSlugExists($blog_id, $suggestSlug);
+
+        if( $checkSlug->getData()->status === true ) {
+            return Ajax::error('slug pattern exists.');
+        } else {
+            $post = new Post();
+            $post->slug = $suggestSlug;
+            $post->title = $request->title;
+            $post->blog_id = $request->blog_id;
+            $post->body = $request->body;
+            $post->published_at = $request->published_at;
+
+            $post->save();
+
+            return Ajax::success(array(
+                "post" => $post,
+                "message" => "Post created successfully",
+            ));
+        }
+        
     }
 
     public function update(Request $request, Post $post)
@@ -68,6 +86,31 @@ class PostController extends Controller
         $html = $template->render($data);
         return $html;
     }
+
+    public function getSlugAvailability (Request $request, $slug = null) {
+        if( $slug != null ){
+            $blog_id = $request->query('blogId') ?? 0;
+            $slug = $slug;
+            $checked = $this->checkSlugExists($blog_id,$slug);            
+            return $checked->getData()->status;
+        } else {
+            return false;
+        }
+    }
+
+
+    public function checkSlugExists($blog_id = null, $slug = null)
+    {
+        if( Post::where( 'slug','=', $slug )
+            ->where( 'blog_id','=', $blog_id )
+            ->exists() ) {
+            return Ajax::success();
+        } else {
+            return Ajax::error('slug pattern exists.');
+        }
+    }
+
+
 
     public function postsHtml($blog_id)
     {                                                                   
