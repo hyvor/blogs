@@ -13,7 +13,10 @@ class AppServiceProvider extends ServiceProvider
      */
     public function register()
     {
-        //
+        $this->app->bind(
+          \Auth0\Login\Contract\Auth0UserRepository::class,
+          \Auth0\Login\Repository\Auth0UserRepository::class
+        );
     }
 
     /**
@@ -23,6 +26,8 @@ class AppServiceProvider extends ServiceProvider
      */
     public function boot()
     {
-        //
+        $loader = new \Twig\Loader\FilesystemLoader();
+        $loader->addPath(base_path() . '/resources/views/components', 'components');
+        \Twig::getLoader()->addLoader($loader);
     }
 }

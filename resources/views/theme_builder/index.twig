@@ -1,0 +1,42 @@
+{% extends "layouts.master" %}
+
+{% block content %}
+<div class="container">
+    <div class="row justify-content-center">
+    <div class="col-12">
+                <h4>Available Themes</h4> 
+                <br>
+                <table class="table table-bordered">
+                    <thead>
+                        <tr>
+                            <th>Id</th>
+                            <th>Title</th>
+                            <th>Published At</th>
+                            <th>Author</th>
+                            <th colspan="2">Action</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for theme in themes %}
+                        <tr>
+                            <td>{{ theme.id }}</td>
+                            <td>{{ theme.title }}</td>
+                            <td>{{ theme.published_at|date("m/d/Y") }}</td>
+                            <td><p>user id - <strong>{{ theme.author }}</strong></p></td>
+                            <td>
+                            <a href="/theme/{{theme.id}}" class="btn btn-primary">Show</a>
+                            <a href="/theme/{{theme.id}}/edit" class="btn btn-primary">Edit</a>
+                            <form action="/theme/{{theme.id}}" method="post" class="d-inline">
+                                {{ csrf_field() }}
+                                <input type='hidden' name='_method' value='DELETE'>
+                                <button class="btn btn-danger" type="submit">Delete</button>
+                            </form>
+                            </td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div> 
+    </div>
+</div>
+{% endblock %}

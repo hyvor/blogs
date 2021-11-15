@@ -2,6 +2,9 @@
 
 use Illuminate\Support\Facades\Route;
 
+use App\Http\Controllers\API\BlogController;
+use App\Http\Controllers\API\PostController;
+
 // Route::get('/', function () {
 //     // return view('posts.index');
 //     return View::make('layouts/app');
@@ -21,9 +24,18 @@ Route::put('/post/{post}', [App\Http\Controllers\PostController::class, 'update'
 Route::delete('/post/{post}', [App\Http\Controllers\PostController::class, 'destroy']);
 
 
-// Route::get('/dashboard', 'DashboardController@index')->middleware('theme:dashboard-theme');
-Route::get('/dashboard', [App\Http\Controllers\DashboardController::class, 'index']);
+Route::domain('{account}.hyvorblogs.test')->group(function () {
+    Route::get(
+        '/',function ($account) {
+            $blogCtr = new BlogController(); 
+            $entity = $blogCtr->loadBlog($account); 
+            return $entity['payload'];
+    });
+    Route::get(
+        '/{slug}',function ($account,$slug) {
+            $postCtr = new PostController();
+            $entity = $postCtr->loadPost($account,$slug);
+            return $entity['payload'];
+    });
 
-Route::get('/theme/create', [App\Http\Controllers\ThemeBuilderController::class, 'createTheme']);
-Route::post('/theme/submit-theme', [App\Http\Controllers\ThemeBuilderController::class, 'saveTheme']);
-Route::get('/theme/{id}', [App\Http\Controllers\ThemeBuilderController::class, 'loadTheme']);
+});
