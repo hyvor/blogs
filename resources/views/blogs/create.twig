@@ -1,0 +1,52 @@
+{% extends "layouts.master" %}
+
+{% block content %}
+<div class="container">
+    <div class="row justify-content-center">
+        <div class="col-md-8">
+            <div class="card">
+                <div class="card-header">Create Blog</div>
+
+                <div class="card-body">
+                    {% if session.status is defined %}
+                        <div class="alert alert-success" role="alert">
+                            {{ session.status }}
+                        </div>
+                    {% endif %}
+
+                    
+                    <form action="/blogs" method="post">
+                        <input type="hidden" name="_token" value="{{ csrf_token() }}">
+                        <input type='hidden' name='_method' value='POST'>
+                        <div class="form-group">
+                            <label for="">Website url</label>
+                            <input type="text" name="websiteUrl" class="form-control">
+                        </div>
+
+                        <div class="form-group">
+                            <label for="">Title</label>
+                            <input type="text" name="title" class="form-control">
+                        </div>
+
+                        <div class="form-group">
+                            <label for="">Short Description</label>
+                            <textarea name="description" id="" cols="30" rows="10" class="form-control"></textarea>
+                        </div>
+
+                        <div class="form-group">
+                            <label for="">Select a theme</label>
+                            <select class="form-control" name="theme">
+                                  {% for theme in themes %}
+                                  <option value="{{theme.id}}" >{{theme.name}}</option>
+                                  {% endfor %}
+                            </select>
+                        </div>
+                        <button type="submit" class="btn btn-primary">Submit</button>
+                    </form>
+                    
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
