@@ -1,3 +1,4 @@
+@import '../colors.scss';
 
 input:focus {
     outline: 0;
@@ -32,8 +33,12 @@ input:focus {
     font-weight: 600;
     font-family: inherit;
     cursor: pointer;
-    width: 140px;
-    height: 36px;
+    font-size:1rem;
+
+    &.small {
+        font-size: 12px;
+        padding: 4px 10px;
+    }
 
     /* border: none;
     padding: 13px 30px;
@@ -48,6 +53,14 @@ input:focus {
     &:hover {
         box-shadow: 0px 0px 10px 5px #ebd4ee;
     } */
+}
+
+.post-tag {
+    font-size: 11px;
+    background: #eee;
+    padding: 2px 7px;
+    border-radius: 20px;
+    font-weight: 600;
 }
 
 .input-view {
@@ -81,5 +94,34 @@ input:focus {
     }
     .input-bottom {
         margin-top:5px;
+    }
+}
+
+// select
+.react-select {
+    &.react-select-small {
+        .react-select__control {
+            display:flex;
+            min-height: initial;
+            border-radius: 20px;
+            background: $color-grey;
+            font-size: 12px;
+            border:none;
+        }
+        .react-select__indicator-separator {
+            display:none;
+        }
+        .react-select__indicator {
+            padding: 0;
+            padding-right: 4px;
+            svg {height:12px;width:12px;}
+        }
+        .react-select__input-container {
+            margin:0;
+        }
+        .react-select__value-container {
+            padding: 0;
+            padding-left: 6px;
+        }
     }
 }
