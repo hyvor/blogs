@@ -69,8 +69,6 @@ function Middle() {
 
 function Posts() {
 
-    const [isFiltersOpen, setIsFiltersOpen] = useState(false);
-
     const statusOptions = [
         { value: 'all', label: 'All' },
         { value: 'published', label: 'Published (43)' },
@@ -90,40 +88,48 @@ function Posts() {
         { value: 'today', label: 'Today'}
     ];
 
-    function handleFilterOpenChange() {
-        setIsFiltersOpen(!isFiltersOpen);
-    }
+    var postStatuses = ['published', 'draft', 'scheduled', 'deleted'];
 
     return <div className="posts-view">
         <div className="box box-left">
             <div className="middle-heading">
                 <div>
-                    Posts <span className="link-button" onClick={handleFilterOpenChange}>
-                        <Filter size={16} />
-                    </span>
+                    Posts
                 </div>
                 <button className="button small">+ New</button>
             </div>
             <div className="posts-filtering">
-                <PostsFilter name="Status" defaultValue={statusOptions[0]} options={statusOptions} />
-                <PostsFilter name="Author" defaultValue={ownershipOptions[0]} options={ownershipOptions} />
-                <PostsFilter name="Tags" defaultValue={tagsOptions[0]} options={tagsOptions} />
-                <PostsFilter name="Date" defaultValue={dateOptions[0]} options={dateOptions} />
+                <div className="post-filters">
+                    <PostsFilter name="Status" defaultValue={statusOptions[0]} options={statusOptions} />
+                    <PostsFilter name="Author" defaultValue={ownershipOptions[0]} options={ownershipOptions} />
+                    <PostsFilter name="Tags" defaultValue={tagsOptions[0]} options={tagsOptions} />
+                    <PostsFilter name="Date" defaultValue={dateOptions[0]} options={dateOptions} />
+                </div>
+                <div className="post-search">
+                    <input className="input" placeholder="Search..."></input>
+                </div>
             </div>
             <div className="posts-list">
                 {
                     [...Array(15).keys()].map(i => {
-                        return <div key={i} className={"posts-list-item" + (i === 1 ? " active" : "") }>
+                        var status = postStatuses[Math.floor(Math.random() * postStatuses.length)];
+
+                        return <div key={i} className={"posts-list-item" + (i === 1 ? " active" : "") + ` ${status}` }>
                             <div className="post-title">Hello World, Welcome to Hyvor Blogs!</div>
                             
                             <div className="post-data">
-                                <div className="post-date">Published 2021-02-03 12:46pm</div>
+                                <div className="post-date">
+                                    2021-02-03 12:46pm { 
+                                        status !== 'published' ? 
+                                        <span className={`post-status ${status}`}>&#8729; {status}</span> 
+                                        : null}
+                                </div>
                                 <div className="post-author">by Ishini Avindya</div>
                             </div>
 
 
                             <div className="post-tags">
-                                <span className="post-tag">Creative</span>
+                                <span className="post-tag">#creative</span>
                             </div>
                         </div>
                     })
@@ -140,7 +146,7 @@ function PostsFilter(props) {
         <Select 
             defaultValue={props.defaultValue} 
             type="small" 
-            options={props.options} 
+            options={props.options}
         />
     </div>   
 }
