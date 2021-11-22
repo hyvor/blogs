@@ -16,6 +16,18 @@ class CreateBlogsTable extends Migration
         Schema::create('blogs', function (Blueprint $table) {
             $table->id();
             $table->timestamps();
+
+            // connections
+            $table->bigInteger('user_id'); // hyvor user id
+
+            // data
+            $table->string('subdomain')->unique();
+            $table->string('name');
+            $table->string('description');
+            $table->bigInteger('icon_media_id');
+            $table->bigInteger('logo_media_id');
+            
+
             $table->string('name')->unique();
             $table->string('website_url');
             $table->string('title');

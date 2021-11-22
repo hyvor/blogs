@@ -121,7 +121,8 @@ function Posts() {
                                 <div className="post-date">
                                     2021-02-03 12:46pm { 
                                         status !== 'published' ? 
-                                        <span className={`post-status ${status}`}>&#8729; {status}</span> 
+                                        <span>&#8729; <span className={`post-status ${status}`}>{status}</span>
+                                        </span>
                                         : null}
                                 </div>
                                 <div className="post-author">by Ishini Avindya</div>
