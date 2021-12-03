@@ -6,7 +6,7 @@ input.input {
     padding: 9px 15px;
     border-radius: 20px;
     border:none;
-    background:#eee;
+    background:$color-input;
     font-family: inherit;
     transition:.3s box-shadow;
 }
@@ -23,7 +23,7 @@ input.input:focus {
 }
 
 .box {
-    background-color: #fff;
+    background-color: $color-box;
     box-shadow: 0 0 30px rgb(0 0 0 / 5%);
     border-radius: 20px;
 }
@@ -36,7 +36,7 @@ input.input:focus {
 }
 
 .button {
-    background: #9323a7;
+    background: $color-accent;
     color: #fff;
     border-radius: 20px;
     border: none;
@@ -107,7 +107,7 @@ input.input:focus {
             display:flex;
             min-height: initial;
             border-radius: 20px;
-            background: $color-grey;
+            background: $color-input;
             font-size: 12px;
             border:none;
             transition:.3s box-shadow;
@@ -126,6 +126,7 @@ input.input:focus {
         }
         .react-select__single-value  {
             text-overflow: initial;
+            color:inherit;
         }
         .react-select__indicator-separator {
             display:none;

@@ -18,6 +18,7 @@ class CreateTeamMembersTable extends Migration
             $table->timestamps();
 
             // connection
+            $table->bigInteger('blog_id');
             $table->bigInteger('user_id'); // hyvor user id
 
             // data

@@ -20,8 +20,10 @@ class CreatePostsTable extends Migration
             $table->timestamps();
             $table->timestamp('published_at')->nullable();
 
-            // main
+            // connections
             $table->bigInteger('blog_id');
+
+            // main
             $table->string('slug');
             $table->string('title');
             $table->string('description', 350);

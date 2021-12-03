@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import ReactDOM from 'react-dom';
 import OnBoarding from './OnBoarding'
-import TheEditor from './editor';
+import TheEditor from './PostEditor';
 import Select from './ReusableComponents/Select';
 
 
@@ -18,7 +18,7 @@ function App() {
 
     const isLoggedIn = true;
 
-    return <Router>
+    return <Router basename="/console">
         <Switch>
             <Route path="/onboarding" exact>
                 <OnBoarding />
@@ -43,6 +43,7 @@ function App() {
 
 import { CheckCircleFill, HourglassSplit } from 'react-bootstrap-icons';
 import ReactSwitch from "./ReusableComponents/Switch";
+import PostEditor from './PostEditor';
 function NotLoggedHomepage() {
 
     const [isYearlyBilling, setIsYearlyBilling] = useState(true);
@@ -211,15 +212,14 @@ function Posts() {
                         var status = postStatuses[Math.floor(Math.random() * postStatuses.length)];
 
                         return <div key={i} className={"posts-list-item" + (i === 1 ? " active" : "") + ` ${status}` }>
-                            <div className="post-title">Hello World, Welcome to Hyvor Blogs!</div>
+                            <div className="post-title">{ 
+                                        status !== 'published' ? 
+                                        <span className={`post-status ${status}`}>{status}</span>
+                                        : null}Hello World, Welcome to Hyvor Blogs!</div>
                             
                             <div className="post-data">
                                 <div className="post-date">
-                                    2021-02-03 12:46pm { 
-                                        status !== 'published' ? 
-                                        <span>&#8729; <span className={`post-status ${status}`}>{status}</span>
-                                        </span>
-                                        : null}
+                                    2021-02-03 12:46pm 
                                 </div>
                                 <div className="post-author">by Ishini Avindya</div>
                             </div>
@@ -233,7 +233,9 @@ function Posts() {
                 }
             </div>
         </div>
-        <div className="box box-right"></div>
+        <div className="box box-right">
+            <PostEditor />
+        </div>
     </div>
 }
 

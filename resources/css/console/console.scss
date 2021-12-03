@@ -5,7 +5,8 @@
 
 
 body {
-    background-color: #fafafa;
+    background-color: #fffaf8;
+    color: #4a5568;
 }
 
 #not-logged-homepage {
@@ -125,17 +126,18 @@ body {
     justify-content: space-between;
 }
 #left-nav {
+    font-weight: 600;
     a {
         display: block;
         padding: 14px 18px;
         transition:.3s background-color;
         cursor: pointer;
         &:hover {
-            background-color: #fafafa;
+            background-color: $color-hover;
         }
         &.active {
-            background: #ebd4ee;
-            border-right: 4px solid #9323a7;
+            background: $color-accent-light;
+            border-right: 4px solid $color-accent;
         }
     }
     .left-divider {
@@ -174,8 +176,8 @@ body {
 
         .posts-filtering {
             padding: 15px 25px;
-            border-bottom:1px solid $color-grey;
-            border-top:1px solid $color-grey;
+            border-bottom:1px solid $color-accent-light;
+            border-top:1px solid $color-accent-light;
             font-size:12px;
             .post-filters {
                 display: flex;
@@ -202,8 +204,11 @@ body {
         .posts-list-item {
             padding: 15px 25px;
             cursor: pointer;
-            transition:0.3s background-color;
+            transition:0.1s background-color;
 
+            &:not(:last-child) {
+                border-bottom:1px solid $color-accent-light;
+            }
             .post-title {
                 font-weight:600;
             }
@@ -227,14 +232,20 @@ body {
             .post-status {
                 font-weight: 600;
                 text-transform: capitalize;
+                font-size:11px;
+                padding:2px 7px;
+                border-radius:20px;
+                margin-left:5px;
+                color:#fff;
+                float:right;
                 &.scheduled {
-                    color: $color-post-scheduled;
+                    background: #4b6ec1;
                 }
                 &.draft {
-                    color: $color-post-draft;
+                    background: #9b7e14;
                 }
                 &.deleted {
-                    color: $color-post-deleted;
+                    background: #db7474;
                 }
             }
 
