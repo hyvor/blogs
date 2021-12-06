@@ -4,12 +4,17 @@ use Illuminate\Support\Facades\Route;
 
 use App\Http\Controllers\API\BlogController;
 use App\Http\Controllers\API\PostController;
+use App\Http\Controllers\API\ImportExportController;
+
 
 // Route::get('/', function () {
-//     // return view('posts.index');
-//     return View::make('layouts/app');
+//     return view('posts.index');
+//     // return View::make('layouts/app');
 // });
 
+Route::get('/', function () {
+    return view('test.test');
+});
 
 Route::domain('{account}.hyvorblogs.test')->group(function () {
     Route::get(
@@ -26,3 +31,6 @@ Route::domain('{account}.hyvorblogs.test')->group(function () {
     });
 
 });
+
+//Import and export from other CDNs
+Route::get('/', [ImportExportController::class, 'index']);
