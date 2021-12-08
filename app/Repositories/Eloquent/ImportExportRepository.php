@@ -10,8 +10,8 @@ Class ImportExportRepository implements ImportExportRepositoryInterface
 
     public function index($final){
 
-        $testFinal = json_encode($final);
-        dd($testFinal);
+        // $testFinal = json_encode($final);
+        dd($final);
 
     }
 

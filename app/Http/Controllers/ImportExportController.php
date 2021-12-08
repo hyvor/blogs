@@ -23,7 +23,7 @@ class ImportExportController extends Controller
 
         // return view('history.history');
 
-        $platform = "wordpress";
+        $platform = "ghost";
         
         // Wordpress Import Section
         if($platform == "wordpress"){
@@ -59,13 +59,24 @@ class ImportExportController extends Controller
             $ghostJsonFile = file_get_contents($ghostPath);  
             $ghostArray = json_decode($ghostJsonFile, true);
 
-            // dd($ghostArray);
-            if ($ghostArray["db"][0]["data"]["posts"] != null){
+            $postArray = $ghostArray["db"][0]["data"]["posts"];
+            $userArray = $ghostArray["db"][0]["data"]["users"];
+
+            // print_r($ghostArray);      
+            // $test = $ghostArray["db"][0]["data"]["posts"][0]->id;
+            // dd($test);
+
+            if ($postArray != null){
+
+                foreach($postArray as $single){
+                    dd($single);
+
+                }
 
                 // User
-                $arrayUser = $ghostArray["db"][0]["data"]["users"];
+                $arrayUser = $userArray;
                 // posts
-                $arraycheck = $ghostArray["db"][0]["data"]["posts"];
+                $arraycheck = $postArray;
             }
 
             $check = json_encode($arraycheck, JSON_FORCE_OBJECT);
