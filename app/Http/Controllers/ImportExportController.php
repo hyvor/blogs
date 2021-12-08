@@ -1,10 +1,12 @@
 <?php
 
-namespace App\Http\Controllers\API;
+namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
 // use Path\To\DOMDocument;
 use App\Repositories\ImportExportRepositoryInterface;
+use Session;
+
 
 
 class ImportExportController extends Controller
@@ -21,7 +23,7 @@ class ImportExportController extends Controller
 
         // return view('history.history');
 
-        $platform = "ghost";
+        $platform = "wordpress";
         
         // Wordpress Import Section
         if($platform == "wordpress"){
@@ -30,15 +32,18 @@ class ImportExportController extends Controller
             $rss = new \DOMDocument();
             $rss->load($wordpressPath);
             $feed = array();
+
             foreach ($rss->getElementsByTagName('item') as $node) {
                $item = array (
                     'title' => $node->getElementsByTagName('title')->item(0)->nodeValue,
                     'link' => $node->getElementsByTagName('link')->item(0)->nodeValue,
                     'pubDate' => $node->getElementsByTagName('pubDate')->item(0)->nodeValue,
                     'description' => $node->getElementsByTagName('description')->item(0)->nodeValue,
+                    'creator' => $node->getElementsByTagName('creator')->item(0)->nodeValue,
+                    'post_modified' => $node->getElementsByTagName('post_modified')->item(0)->nodeValue,
+                    // 'category' => $node->getElementsByTagName('category').getAttribute('post_tag')->item(0)->nodeValue,
                     'content' => trim(strip_tags($node->getElementsByTagName('encoded')->item(0)->nodeValue))
                     );
-
                 if ($item['content'] != null){
                     array_push($feed, $item);
                 }
@@ -54,23 +59,18 @@ class ImportExportController extends Controller
             $ghostJsonFile = file_get_contents($ghostPath);  
             $ghostArray = json_decode($ghostJsonFile, true);
 
+            // dd($ghostArray);
             if ($ghostArray["db"][0]["data"]["posts"] != null){
 
+                // User
+                $arrayUser = $ghostArray["db"][0]["data"]["users"];
+                // posts
                 $arraycheck = $ghostArray["db"][0]["data"]["posts"];
-
-                // $arr[$newkey] = $arr[$oldkey];
-                // $ghostItem = array ($arraycheck['title'], $arraycheck['plaintext'], $arraycheck['published_at'], $arraycheck['custom_excerpt']);
-
-                // $ids = array_column($ghostItem);
-
-                // $userNames = array_reduce($ghostItem, function ($carry, $user) {
-                //     array_push($carry, $user['title']);
-                //     // return $carry;
-                // }, []);
             }
 
             $check = json_encode($arraycheck, JSON_FORCE_OBJECT);
         }
+
         else{
             echo 'hello world none';
         }
@@ -78,6 +78,20 @@ class ImportExportController extends Controller
         $final = json_decode($check, true);
 
         $this->importExportRepo->index($final);
+
+        // Creating a common format with html
+        // $hyvorBlogHtml = "Hyvor blog html file";
+        // $hyvorBlogHtml .= "<ul>";
+
+        // foreach($final as $html)
+        // {
+        //     $hyvorBlogHtml .= "<li>$html</li>";
+        // }
+
+        // $hyvorBlogHtml .= "</ul>";
+
+        // echo $hyvorBlogHtml;
+
 
         // Blogger Import Section
         // $bloggerPath = "tools/Import/test.xml";

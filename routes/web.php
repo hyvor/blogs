@@ -4,7 +4,7 @@ use Illuminate\Support\Facades\Route;
 
 use App\Http\Controllers\API\BlogController;
 use App\Http\Controllers\API\PostController;
-use App\Http\Controllers\API\ImportExportController;
+use App\Http\Controllers\ImportExportController;
 
 
 // Route::get('/', function () {
