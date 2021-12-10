@@ -15,7 +15,9 @@ class RepositoriesServiceProvider extends ServiceProvider
      */
     public function register()
     {
-        //
+        $this->app->bind(
+            'App\Repositories\ImportExportRepositoryInterface',
+            'App\Repositories\Eloquent\ImportExportRepository');
     }
 
     /**

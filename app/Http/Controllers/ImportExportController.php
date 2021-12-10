@@ -16,7 +16,7 @@ class ImportExportController extends Controller
 
     public function __construct(ImportExportRepositoryInterface $importExportRepository)
     {
-        $this->importExportRepo = $importExportRepository;
+        $this->importExportRepo = $importExportRepository; 
     }
 
     public function index(){
@@ -88,6 +88,8 @@ class ImportExportController extends Controller
 
         $final = json_decode($check, true);
 
+
+        // dd($final);
         $this->importExportRepo->index($final);
 
         // Creating a common format with html
