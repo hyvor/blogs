@@ -10,8 +10,8 @@ use App\Http\Controllers\API\PostController;
 //     return View::make('layouts/app');
 // });
 
-
-Route::domain('{account}.hyvorblogs.test')->group(function () {
+ 
+Route::domain('{account}.hyvorblogs.test:8000')->group(function () {
     Route::get(
         '/',function ($account) {
             $blogCtr = new BlogController(); 
