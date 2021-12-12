@@ -1,0 +1,148 @@
+@import '../colors.scss';
+
+
+input.input {
+    width: 100%;
+    padding: 9px 15px;
+    border-radius: 20px;
+    border:none;
+    background:$color-input;
+    font-family: inherit;
+    transition:.3s box-shadow;
+}
+input.input:focus {
+    outline: 0;
+    box-shadow: 0 0 2px 0px $color-accent;
+}
+
+.text-normal {
+    color: #000;
+}
+.text-light {
+    color:#666;
+}
+
+.box {
+    background-color: $color-box;
+    box-shadow: 0 0 30px rgb(0 0 0 / 5%);
+    border-radius: 20px;
+}
+
+.round-image-40 {
+    border-radius: 50%;
+    width:40px;
+    height:40px;
+    background:#eee;
+}
+
+.button {
+    background: $color-accent;
+    color: #fff;
+    border-radius: 20px;
+    border: none;
+    font-weight: 600;
+    font-family: inherit;
+    cursor: pointer;
+    font-size: 14px;
+    padding: 8px 20px;
+
+    &.small {
+        font-size: 12px;
+        padding: 4px 10px;
+    }
+
+    /* border: none;
+    padding: 13px 30px;
+    box-shadow: -1px -2px 0px 3px #ebd4ee;
+    background: #9323a7;
+    font-weight: 600;
+    color: #fff;
+    border-radius: 30% 70% 41% 59% / 57% 41% 59% 43%;
+    transition:.3s;
+    cursor: pointer;
+
+    &:hover {
+        box-shadow: 0px 0px 10px 5px #ebd4ee;
+    } */
+}
+
+.post-tag {
+    font-size: 11px;
+    background: #eee;
+    padding: 2px 7px;
+    border-radius: 20px;
+    font-weight: 600;
+}
+
+.input-view {
+    margin-bottom:15px;
+    .input-top {
+        display:flex;
+        align-items:center;
+    }
+    .input-title {
+        margin-bottom: 5px;
+        flex:1;
+    }
+    .input-error {
+        font-size: 12px;
+        color: #d64541;
+    }
+    .input-success {
+        font-size:12px;
+        color: #3d9a51;
+    }
+    &.error input {
+        background: #ffe1e0;
+    }
+    .input-bottom {
+        margin-top:5px;
+    }
+}
+
+// select
+.react-select {
+    &.react-select-small {
+        .react-select__control {
+            display:flex;
+            min-height: initial;
+            border-radius: 20px;
+            background: $color-input;
+            font-size: 12px;
+            border:none;
+            transition:.3s box-shadow;
+            &--is-focused {
+                box-shadow: 0 0 2px 0px $color-accent;
+            }
+        }
+        .react-select__menu {
+            width:150px;
+        }
+        .react-select__option--is-focused {
+            background: $color-accent-light;
+        }
+        .react-select__option--is-selected {
+            background: $color-accent;
+        }
+        .react-select__single-value  {
+            text-overflow: initial;
+            color:inherit;
+        }
+        .react-select__indicator-separator {
+            display:none;
+        }
+        .react-select__indicator {
+            padding: 0;
+            padding-right: 4px;
+            svg {height:12px;width:12px;}
+        }
+        .react-select__input-container {
+            margin:0;
+            padding:0;
+        }
+        .react-select__value-container {
+            padding: 6px;
+            padding-right: 0;
+        }
+    }
+}

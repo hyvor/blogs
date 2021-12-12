@@ -54,6 +54,10 @@ return [
 
     'url' => env('APP_URL', 'http://localhost'),
 
+    // domains
+    'domain_app' => env('DOMAIN_APP'),
+    'domain_delivery' => env('DOMAIN_DELIVERY'),
+
     'asset_url' => env('ASSET_URL', null),
 
     /*
@@ -178,6 +182,7 @@ return [
         
         Auth0\Login\LoginServiceProvider::class,
 
+
     ],
 
     /*
@@ -231,7 +236,6 @@ return [
         'URL' => Illuminate\Support\Facades\URL::class,
         'Validator' => Illuminate\Support\Facades\Validator::class,
         'View' => Illuminate\Support\Facades\View::class,
-        'Auth0' => Auth0\Login\Facade\Auth0::class,
 
     ],
 
