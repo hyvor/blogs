@@ -14,7 +14,11 @@ use App\Http\Controllers\API\PostController;
 
 Route::domain(config('app.domain_app'))->group(function() {
     
-    Route::view('/{any?}', 'console')->where('any', '.*');
+    // landing pages
+    Route::view('/', 'landing.index');
+    Route::view('/pricing', 'landing.pricing');
+
+    Route::view('/console/{any?}', 'console')->where('any', '.*');
 
 });
 

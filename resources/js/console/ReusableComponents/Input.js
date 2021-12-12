@@ -15,7 +15,7 @@ export default function Input(props) {
                 autoFocus={props.autoFocus || false} 
                 name={props.name}
                 value={props.value} 
-                onChange={props.onChange}
+                onChange={(e) => props.onChange(e.target.value)}
                 onKeyDown={props.onKeyDown}
                 onBlur={props.onBlur}
                 onFocus={props.onFocus}

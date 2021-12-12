@@ -46,7 +46,7 @@ export default function OnBoarding() {
                     name="blog-name"
                     autocomplete={false}
                     value={name}
-                    onChange={(e) => onNameChange(e.target.value)}
+                    onChange={onNameChange}
                     maxLength={50}
                 />
                 <Input 
@@ -58,7 +58,7 @@ export default function OnBoarding() {
                     name="blog-subdomain"
                     autocomplete={false}
                     value={subdomain}
-                    onChange={(e) => onSubdomainChange(e.target.value)}
+                    onChange={onSubdomainChange}
                     error={subdomainError}
                     bottom={
                         <div className="your-blog"><b>{subdomain}.hyvorblogs.io</b></div>
