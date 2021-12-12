@@ -11,12 +11,13 @@ use App\Http\Controllers\API\PostController;
 // });
 
  
-Route::domain('{account}.hyvorblogs.test:8000')->group(function () {
+Route::domain('{account}.hyvorblogs.test')->group(function () {
     Route::get(
         '/',function ($account) {
-            $blogCtr = new BlogController(); 
-            $entity = $blogCtr->loadBlog($account); 
-            return $entity['payload'];
+            // $blogCtr = new BlogController(); 
+            // $entity = $blogCtr->loadBlog($account); 
+            // return $entity['payload'];
+            return "hello world";
     });
     Route::get(
         '/{slug}',function ($account,$slug) {
