@@ -16,8 +16,6 @@ import {
 
 function App() {
 
-    const isLoggedIn = true;
-
     return <Router basename="/console">
         <Switch>
             <Route path="/onboarding" exact>
@@ -25,110 +23,23 @@ function App() {
             </Route>
 
             <Route>
-                {
-                    isLoggedIn ?
-                    <div>
-                        <Left />
-                        <div id="middle">
-                            <Middle />
-                        </div>
-                    </div> : 
-                    <NotLoggedHomepage />
-                }
+                <div>
+                    <Left />
+                    <div id="middle">
+                        <Middle />
+                    </div>
+                </div>
             </Route>
 
         </Switch>
     </Router>
 }
 
-import { CheckCircleFill, HourglassSplit } from 'react-bootstrap-icons';
-import ReactSwitch from "./ReusableComponents/Switch";
 import PostEditor from './PostEditor';
-function NotLoggedHomepage() {
-
-    const [isYearlyBilling, setIsYearlyBilling] = useState(true);
-
-    return <div id="not-logged-homepage" className="box">
-
-        <div className="first-row">
-            <h1>Hyvor Blogs</h1>
-            <p>A simple blogging platform for individuals and teams</p>
-
-            <div>
-                <button className="button">Sign up</button>
-                <span className="or">or</span>
-                <button className="button">Log in</button>
-            </div>
-        </div>
-        
-
-        <div className="second-row">
-
-            <div className="plans-title">Pricing Plans</div>
-            <div className="plans-wrap">
-                <div className="plan">
-                    <div className="plan-title">Personal</div>
-                    <div className="plan-desc">For starters & hobby bloggers</div>
-                    <div className="plan-features">
-                        <div><CheckCircleFill /> 1 user</div>
-                        <div><CheckCircleFill /> 1GB media storage</div>
-                        <div><CheckCircleFill /> hyvorblogs.io subdomain</div>
-                        <div><CheckCircleFill /> In-built SEO</div>
-                        <div><CheckCircleFill /> Own your data, export anytime in WordPress format</div>
-                        <div><HourglassSplit /> Import from WordPress, Blogger, Medium, Ghost, etc.</div>
-                    </div>
-                    <div className="plan-price">Free</div>
-                </div>
-                <div className="plan">
-                    <div className="plan-title">Personal Pro</div>
-                    <div className="plan-desc">For serious bloggers</div>
-                    <div className="plan-features">        
-                        <div><CheckCircleFill /> All Personal features</div>
-                        <div><CheckCircleFill /> 1 user</div>
-                        <div><CheckCircleFill /> 5GB media storage</div>
-                        <div><CheckCircleFill /> Code injecting</div>
-                        <div><CheckCircleFill /> Custom domain</div>
-                        <div><HourglassSplit /> Custom themes</div>
-                        <div><HourglassSplit /> Data API</div>
-                    </div>
-                    <div className="plan-price">$20/year</div>
-                </div>
-                <div className="plan">
-                    <div className="plan-title">Team</div>
-                    <div className="plan-desc">For you and your partner</div>
-                    <div className="plan-features">
-                        <div><CheckCircleFill /> All Personal Pro Features</div>
-                        <div><HourglassSplit /> Delivery API (Self-hosting on a subdirectory)</div>
-
-                        <div className="plan-package">
-                            <div className="plan-package-include">One Package Includes: </div>
-                            <div><CheckCircleFill /> 2 Team Members</div>
-                            <div><CheckCircleFill /> 20 Contributors</div>
-                            <div><CheckCircleFill /> 1000 Posts</div>
-                            <div><CheckCircleFill /> 5GB Media Storage</div>
-                        </div>
-                    </div>
-                    <div className="plan-switch">
-                        <span>Billed Annually</span>
-                        <ReactSwitch
-                            checked={isYearlyBilling} 
-                            onChange={(c) => setIsYearlyBilling(c)} />
-                    </div>
-                    <div className="plan-price">
-                        <div>${isYearlyBilling ? "10" : "15"}/month/package</div>
-                    </div> 
-                </div>
-            </div>
-        </div>
-
-    </div>;
-
-}
-
 function Left() {
     return <div id="left" className="box">
         <div id="left-header">
-            <img src="/logo.jpeg" id="left-header-image-1" className="round-image-40"></img>
+            <img src="/img/logo.png" id="left-header-image-1" className="round-image-40"></img>
             <div id="left-header-image-2" className="round-image-40"></div>
         </div>
         <div id="left-nav">

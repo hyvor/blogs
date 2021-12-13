@@ -1,0 +1,69 @@
+@import '../colors.scss';
+
+body.index {
+    #hero-home {
+        padding-top: 75px;
+        padding-bottom: 30px;
+
+        background: $color-accent-light;
+
+        min-height:550px;
+
+        > .container {
+            padding-top: 25px;
+        }
+
+        .title-and-svg {
+            display:flex;
+            margin-top: 48px;
+            padding-top:25px;
+
+            .hero-title {
+                flex:1;
+                h1 {
+                    font-size: 30px;
+                    font-weight: 800;
+                    margin-bottom: 15px;
+                }
+                h2 {
+                    font-size: 16px;
+                    letter-spacing: 0.3px;
+                    font-weight: normal;
+                }
+                .button {
+                    margin-top:25px;
+                }
+            }
+            .hero-svg {
+                flex: 2;
+            }
+        }
+    }
+
+    .feature {
+        display:flex;
+        padding: 30px 0;
+        margin-bottom:100px;
+
+        .feature-image {
+            flex: 1;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            img {
+                max-height: 250px;
+            }
+        }
+        .feature-description {
+            flex:1;
+            h3 {
+                font-size:28px;
+            }
+            p {
+                letter-spacing: 0.2px;
+                line-height:23px;
+            }
+        }
+
+    }
+}

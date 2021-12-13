@@ -1,0 +1,38 @@
+nav {
+    position: absolute;
+    top: 0;
+    left: 0;
+    height: 65px;
+    z-index: 1000;
+    width: 100%;
+    display: flex;
+    align-items: center;
+
+    > .container {
+        display:flex;
+    }
+
+    .brand-name {
+        vertical-align: middle;
+        font-weight: 600;
+    }
+    img {
+        vertical-align: middle;
+    }
+
+    .navbar-content {
+        display: flex;
+        align-items: center;
+        justify-content: flex-end;
+        flex: 1;
+        a {
+            margin-left: 8px;
+            font-weight: 600;
+            text-transform: uppercase;
+            font-size: 14px;
+            color: #333232 !important;
+            position: relative;
+            padding:8px;
+        }
+    }
+}
