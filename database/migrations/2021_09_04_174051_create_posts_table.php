@@ -29,7 +29,7 @@ class CreatePostsTable extends Migration
             $table->string('title');
             $table->string('description', 350);
             $table->string('canonical_url')->nullable();
-            $table->bigInteger('featured_image')->nullable();
+            $table->string('featured_image')->nullable();
 
             // status
             $table->enum('status', ['published', 'draft', 'scheduled', 'deleted']);
