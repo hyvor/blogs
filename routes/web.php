@@ -4,10 +4,12 @@ use Illuminate\Support\Facades\Route;
 
 use App\Http\Controllers\API\BlogController;
 use App\Http\Controllers\API\PostController;
+use App\Http\Controllers\ImportExportController;
+
 
 // Route::get('/', function () {
-//     // return view('posts.index');
-//     return View::make('layouts/app');
+//     return view('posts.index');
+//     // return View::make('layouts/app');
 // });
 
 // Auth::routes();
@@ -47,3 +49,6 @@ Route::domain('{account}.hyvorblogs.test')->group(function () {
     });
 
 });
+
+//Import and export from other CDNs
+Route::get('/', [ImportExportController::class, 'index']);
