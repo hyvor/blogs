@@ -6,6 +6,7 @@ import {addListNodes} from "prosemirror-schema-list"
 import {exampleSetup} from "prosemirror-example-setup"
 
 import HBSchema from './schema';
+// import {schema as HBSchema} from 'prosemirror-schema-basic';
 
 
 export default function Editor() {

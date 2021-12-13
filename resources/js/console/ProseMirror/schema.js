@@ -21,6 +21,7 @@ export const nodes = {
     paragraph: {
         content: "inline*",
         group: "block",
+        selectable: false,
         parseDOM: [{tag: "p"}],
         toDOM() { return pDOM }
     },
@@ -30,6 +31,7 @@ export const nodes = {
         content: "block+",
         group: "block",
         defining: true,
+        selectable: false,
         parseDOM: [{tag: "blockquote"}],
         toDOM() { return blockquoteDOM }
     },
@@ -49,6 +51,7 @@ export const nodes = {
         content: "inline*",
         group: "block",
         defining: true,
+        selectable: false,
         parseDOM: [
                 {tag: "h2", attrs: {level: 2}},
                 {tag: "h3", attrs: {level: 3}},
@@ -99,6 +102,51 @@ export const nodes = {
         toDOM(node) { let {src, alt, title} = node.attrs; return ["img", {src, alt, title}] }
     }, */
 
+    figure: {
+        content: "image+ figcaption?",
+        group: "block",
+        parseDOM: [
+            {
+                tag: "figure",
+                getAttrs(dom) {
+                    return dom.querySelector("img[src]") ? {} : false; // check for an image element
+                },
+            }
+        ],
+        toDOM() { 
+            return ["figure", 0] 
+        }
+    },
+    image: {
+        attrs: {
+            src: {default: null}, 
+            alt: {default: null}, 
+            title: {default: null}
+        },
+        inline: false,
+        draggable: true,
+        group: "figure",
+        parseDOM: [{
+          tag: "img[src]", 
+          getAttrs(img) {
+            return {
+                src: img.src, 
+                alt: img.alt, 
+                title: img.title
+            }; 
+          }
+        }],
+        toDOM(node) {
+          return ["img", {...node.attrs}]; 
+        }
+    },
+    figcaption: {
+        content: "inline*",
+        group: "figure",
+        parseDOM: [{tag: "figcaption"}],
+        toDOM() { return ["figcaption", 0]; },
+    },
+
     // :: NodeSpec A hard line break, represented in the DOM as `<br>`.
     hard_break: {
         inline: true,
@@ -109,7 +157,12 @@ export const nodes = {
     }
 }
 
-const emDOM = ["em", 0], strongDOM = ["strong", 0], codeDOM = ["code", 0]
+const emDOM = ["em", 0], 
+    strongDOM = ["strong", 0], 
+    codeDOM = ["code", 0],
+    strikeDOM = ["s", 0],
+    supDOM = ["sup", 0],
+    subDOM = ["sub", 0];
 
 // :: Object [Specs](#model.MarkSpec) for the marks in the schema.
 export const marks = {
@@ -151,7 +204,25 @@ export const marks = {
     code: {
         parseDOM: [{tag: "code"}],
         toDOM() { return codeDOM }
-    }
+    },
+
+    // `<s>` for strike
+    s: {
+        parseDOM: [{tag: "s"}, {tag: "strike"}, {tag: "del"}],
+        toDOM() { return strikeDOM }
+    },
+
+    sup: {
+        parseDOM: [{tag: "sup"}],
+        toDOM() { return supDOM }
+    },
+
+    subS: {
+        parseDOM: [{tag: "sub"}],
+        toDOM() { return subDOM }
+    },
+
+
 }
 
 // :: Schema
