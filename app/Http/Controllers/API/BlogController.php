@@ -11,7 +11,7 @@ use App\Models\Blog;
 use App\Models\User;
 use Illuminate\Support\Facades\Hash;
 
-use App\Http\Controllers\API\PostController;
+use App\Http\Controllers\PostController;
 // use App\Http\Controllers\BlogThemeCustomizerController;
 
 use App\Http\Controllers\DashboardController;

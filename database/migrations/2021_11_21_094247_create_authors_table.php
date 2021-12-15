@@ -4,7 +4,7 @@ use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\Schema;
 
-class CreateTeamMembersTable extends Migration
+class CreateAuthorsTable extends Migration
 {
     /**
      * Run the migrations.
@@ -13,7 +13,7 @@ class CreateTeamMembersTable extends Migration
      */
     public function up()
     {
-        Schema::create('team_members', function (Blueprint $table) {
+        Schema::create('authors', function (Blueprint $table) {
             $table->id();
             $table->timestamps();
 
@@ -23,7 +23,7 @@ class CreateTeamMembersTable extends Migration
 
             // data
             $table->enum('status', ['invited', 'active', 'blocked']);
-            $table->enum('type', ['owner', 'admin', 'editor', 'author', 'contributor']);
+            $table->enum('role', ['owner', 'admin', 'editor', 'writer', 'contributor']);
         });
     }
 

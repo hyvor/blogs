@@ -1,0 +1,99 @@
+<?php
+
+namespace App\Repositories\Eloquent;
+use App\Repositories\ThemesRepositoryInterface;
+use App\Models\Theme;
+use App\Models\ThemeFile;
+use App\Models\BlogThemeFile;
+use App\Models\Blog;
+
+
+Class ThemesRepository implements ThemesRepositoryInterface
+{
+
+    public function getTheme($theme_id){
+
+        $themeID = Theme::select('id')
+        ->where('id','=', $theme_id)
+        ->get();
+
+        if($themeID){
+
+            $blogId = Blog::select('id')
+            ->value('id');
+
+            // $blogId = BlogThemeFile::join('blogs', 'blogs.id', '=', 'blog_theme_files.blogs_id')
+            // ->where('id','=', $theme_id)
+            // ->first();
+
+            $themeFileName= ThemeFile::select('name','content','type')
+            ->where('theme_id','=', $theme_id)
+            ->get();
+
+            foreach($themeFileName as $key => $themeFile){
+                BlogThemeFile::create([
+                    'blog_id'=> $blogId,
+                    'name'=>$themeFile->name,
+                    'content'=>$themeFile->content,
+                    'type'=>$themeFile->type,
+                ]);
+            }
+
+            // foreach($themeFileName as $key => $themeFile){
+            //     BlogThemeFile::create([
+            //         'blog_id'=> $blogId,
+            //         'name'=>$themeFile['name'],
+            //         'content'=>$themeFile['content'],
+            //         'type'=>$themeFile['type'],
+            //     ]);
+            // }
+
+        }
+        
+        return $themeID;
+    }
+
+    // Theme Delevery area
+    
+    // Home page of the blog
+    public function index(){
+
+        $blogId = Blog::select('id')
+            ->value('id');
+
+        $themeFileName= BlogThemeFile::select('content')
+            ->where('blog_id','=', $blogId)
+            ->where('name','=', 'index.twig')
+            ->value('content');
+
+        return $themeFileName;
+    }
+
+    // Author page of the blog
+    public function authorPage(){
+        return "This is the author page";
+    }
+
+    // Tag page of the blog
+    public function tagPage(){
+        return "This is the page for tags";
+    }
+
+    // Posts/Pages of the blog
+    public function postsAndPages(){
+
+        $blogId = Blog::select('id')
+            ->value('id');
+
+        $themeSingleTwig= BlogThemeFile::select('content')
+            ->where('blog_id','=', $blogId)
+            ->where('name','=', 'single.twig')
+            ->value('content');
+
+        return $themeSingleTwig;
+
+        // return "This is all the other pages";
+    }
+
+
+}

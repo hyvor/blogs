@@ -12,11 +12,12 @@ use App\Http\Controllers\API\PostController;
 
 // Auth::routes();
 
-Route::domain(config('app.domain_app'))->group(function() {
+// Route::domain(config('app.domain_app'))->group(function() {
     
-    Route::view('/{any?}', 'console')->where('any', '.*');
+//     Route::view('/{any?}', 'console')->where('any', '.*');
 
-});
+// });
+
 
 /* Route::get('/', [App\Http\Controllers\PostController::class, 'index'])->name('index');
 Route::get('/home', [App\Http\Controllers\PostController::class, 'index'])->name('home');
@@ -28,19 +29,19 @@ Route::put('/post/{post}', [App\Http\Controllers\PostController::class, 'update'
 Route::delete('/post/{post}', [App\Http\Controllers\PostController::class, 'destroy']);
  */
 
+
+// Delevery Routes
 Route::domain('{account}.hyvorblogs.test')->group(function () {
-    Route::get(
-        '/',function ($account) {
-            // $blogCtr = new BlogController(); 
-            // $entity = $blogCtr->loadBlog($account); 
-            // return $entity['payload'];
-            return "hello world";
-    });
-    Route::get(
-        '/{slug}',function ($account,$slug) {
-            $postCtr = new PostController();
-            $entity = $postCtr->loadPost($account,$slug);
-            return $entity['payload'];
-    });
+
+    // Pages in the blog
+    Route::get('/', [App\Http\Controllers\Delevery\ThemeDeleveryController::class, 'index'])->name('/');
+    Route::get('/author/{slug}', [App\Http\Controllers\Delevery\ThemeDeleveryController::class, 'author']);
+    Route::get('/tag/{tag:name}', [App\Http\Controllers\Delevery\ThemeDeleveryController::class, 'tag']);
+    Route::get('/{name}', [App\Http\Controllers\Delevery\ThemeDeleveryController::class, 'pages']);
+
+    // Route::get('/asset/{assets}', [App\Http\Controllers\Delevery\ThemeDeleveryController::class, 'pages']);
+
+    // Select a specific theme for the blog
+    Route::get('/theme', [App\Http\Controllers\ThemesController::class, 'selectTheme'])->name('/theme');
 
 });

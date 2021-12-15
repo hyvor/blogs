@@ -4,7 +4,7 @@ use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\Schema;
 
-class CreateThemesTable extends Migration
+class CreateThemeFilesTable extends Migration
 {
     /**
      * Run the migrations.
@@ -13,16 +13,17 @@ class CreateThemesTable extends Migration
      */
     public function up()
     {
-        Schema::create('themes', function (Blueprint $table) {
+        Schema::create('theme_files', function (Blueprint $table) {
             $table->id();
+
+            // Connections
+            $table->bigInteger('theme_id')->nullable();
+
+            $table->string('name');
+            $table->binary('content');
+            $table->enum('type', ['template', 'asset']);
+
             $table->timestamps();
-            $table->string('title');
-            $table->text('header');
-            $table->text('footer');
-            $table->text('page_body');
-            $table->text('post_body');
-            $table->text('styles_1');
-            $table->integer('author');
         });
     }
 
@@ -33,6 +34,6 @@ class CreateThemesTable extends Migration
      */
     public function down()
     {
-        Schema::dropIfExists('themes');
+        Schema::dropIfExists('theme_files');
     }
 }
