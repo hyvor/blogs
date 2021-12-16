@@ -53,47 +53,20 @@ Class ThemesRepository implements ThemesRepositoryInterface
         return $themeID;
     }
 
-    // Theme Delevery area
     
     // Home page of the blog
-    public function index(){
+    public function deliverThemeData(){
 
         $blogId = Blog::select('id')
             ->value('id');
 
-        $themeFileName= BlogThemeFile::select('content')
+        $themeFileName= BlogThemeFile::select('name','content')
             ->where('blog_id','=', $blogId)
-            ->where('name','=', 'index.twig')
-            ->value('content');
+            // ->where('name','=', 'index.twig')
+            ->get();
+            // ->value('content');
 
         return $themeFileName;
     }
-
-    // Author page of the blog
-    public function authorPage(){
-        return "This is the author page";
-    }
-
-    // Tag page of the blog
-    public function tagPage(){
-        return "This is the page for tags";
-    }
-
-    // Posts/Pages of the blog
-    public function postsAndPages(){
-
-        $blogId = Blog::select('id')
-            ->value('id');
-
-        $themeSingleTwig= BlogThemeFile::select('content')
-            ->where('blog_id','=', $blogId)
-            ->where('name','=', 'single.twig')
-            ->value('content');
-
-        return $themeSingleTwig;
-
-        // return "This is all the other pages";
-    }
-
 
 }

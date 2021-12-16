@@ -23,21 +23,24 @@ class BlogFilesSeeder extends Seeder
                 'name' => "single.twig",
                 'content' => '<!DOCTYPE html>
                 <html lang="en">
-                
-                <head>
-                    <meta charset="UTF-8">
-                    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-                    <title>Document</title>
-                </head>
-                
-                <body>
-                
-                    <p>
-                        {{ name }} is a {{ occupation }}
-                    </p>
-                
-                </body>
-                
+                                
+                    <head>
+                        <meta charset="UTF-8">
+                        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+                        <style>{{style}}</style>
+                        <title>{{Title}}</title>
+                    </head>
+                                
+                    <body>       
+                            <ul>
+                                <li>{{ name }}</li>
+                                <li>{{ number }}</li>
+                                <li>{{ test }}</li>
+                            </ul>
+                            
+                        <script>{{script | raw}}</script>
+                    </body>
+                                
                 </html>',
                 'type' => "template",
             ],
@@ -47,31 +50,48 @@ class BlogFilesSeeder extends Seeder
                 'name' => "index.twig",
                 'content' => '<!DOCTYPE html>
                 <html lang="en">
-                
-                <head>
-                    <meta charset="UTF-8">
-                    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-                    <title>Document</title>
-                </head>
-                
-                <body>
-                
-                    <p>
-                        {{ name }} this is the index twig page
-                    </p>
-                
-                </body>
-                
+                                
+                    <head>
+                        <meta charset="UTF-8">
+                        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+                        <style>{{style}}</style>
+                        <title>Document</title>
+                    </head>
+                                
+                    <body>       
+                        <p>
+                            {{ name }} is a {{ occupation }}
+                        </p>     
+                        <script>{{script | raw}}</script>
+                    </body>
+                                
                 </html>',
                 'type' => "template",
             ],
 
             [
                 'theme_id' => "1",
-                'name' => "styles.css",
-                'content' => "p { font-size: 120%; color: dimgray; }
-                a { text-decoration: none; }
-                a:hover { text-decoration: underline; }
+                'name' => "style.css",
+                'content' => "body {
+                    background-color:black;
+                }
+                p { 
+                    font-size: 120%; 
+                    color: rgb(3, 148, 51); 
+                }
+                                
+                ul { 
+                    background-color: burlywood;
+                }
+                ",
+                'type' => "asset",
+            ],
+
+            [
+                'theme_id' => "1",
+                'name' => "script.js",
+                'content' => "// console.log('Submiting form');
+                alert('Testing the javaScript');
                 ",
                 'type' => "asset",
             ],

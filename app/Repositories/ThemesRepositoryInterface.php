@@ -15,10 +15,7 @@ interface ThemesRepositoryInterface
     public function getTheme($theme_id); 
 
     // Selected theme pages
-    public function index();
-    public function authorPage();
-    public function tagPage();
-    public function postsAndPages();
+    public function deliverThemeData();
 }
 
 

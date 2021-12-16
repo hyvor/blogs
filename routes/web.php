@@ -31,13 +31,13 @@ Route::delete('/post/{post}', [App\Http\Controllers\PostController::class, 'dest
 
 
 // Delevery Routes
-Route::domain('{account}.hyvorblogs.test')->group(function () {
+Route::domain('{subdomain}.hyvorblogs.test')->middleware('blogDeliver')->group(function () {
 
     // Pages in the blog
-    Route::get('/', [App\Http\Controllers\Delevery\ThemeDeleveryController::class, 'index'])->name('/');
-    Route::get('/author/{slug}', [App\Http\Controllers\Delevery\ThemeDeleveryController::class, 'author']);
-    Route::get('/tag/{tag:name}', [App\Http\Controllers\Delevery\ThemeDeleveryController::class, 'tag']);
-    Route::get('/{name}', [App\Http\Controllers\Delevery\ThemeDeleveryController::class, 'pages']);
+    Route::get('/', [App\Http\Controllers\Delivery\ThemeDeleveryController::class, 'index'])->name('/');
+    Route::get('/author/{slug}', [App\Http\Controllers\Delivery\ThemeDeleveryController::class, 'author']);
+    Route::get('/tag/{tag:name}', [App\Http\Controllers\Delivery\ThemeDeleveryController::class, 'tag']);
+    Route::get('/{name}', [App\Http\Controllers\Delivery\ThemeDeleveryController::class, 'pages']);
 
     // Route::get('/asset/{assets}', [App\Http\Controllers\Delevery\ThemeDeleveryController::class, 'pages']);
 
