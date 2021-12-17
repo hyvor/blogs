@@ -23,22 +23,22 @@ class CreatePostsTable extends Migration
             // connections
             $table->bigInteger('blog_id');
 
-            // data
+            // status
+            $table->enum('status', ['published', 'draft', 'scheduled', 'deleted']);
+            $table->boolean('is_featured')->default(false);
+            $table->boolean('is_page')->default(false);
+
+            // basic
             $table->text('content');
             $table->string('slug');
             $table->string('title');
             $table->string('description', 350);
-            $table->string('canonical_url')->nullable();
             $table->string('featured_image')->nullable();
 
-            // status
-            $table->enum('status', ['published', 'draft', 'scheduled', 'deleted']);
-            $table->boolean('is_featured')->default(false);
-
-            // code
-            $table->text('code_head')->nullable();
-            $table->text('code_after_content')->nullable();
-            $table->text('code_footer')->nullable();
+            // advanced
+            $table->string('canonical_url')->nullable();
+            $table->text('code_head')->nullable();`
+            $table->text('code_foot')->nullable();
 
             // other
             $table->tinyInteger('reading_time');

@@ -24,7 +24,9 @@ class CreateTagsTable extends Migration
             $table->string('name');
             $table->string('slug');
             $table->string('description');
-            $table->bigInteger('feature_image_media_id');
+            $table->string('featured_image');
+
+
         });
     }
 

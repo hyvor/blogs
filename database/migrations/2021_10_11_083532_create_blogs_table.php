@@ -24,16 +24,14 @@ class CreateBlogsTable extends Migration
             $table->string('subdomain')->unique();
             $table->string('name');
             $table->string('description');
-            $table->bigInteger('icon_media_id');
-            $table->bigInteger('logo_media_id');
-            
+            $table->string('icon');
 
-            $table->string('name')->unique();
-            $table->string('website_url');
-            $table->string('title');
-            $table->string('short_description');
-            $table->integer('author_id');
-            $table->integer('theme_id');
+            $table->string('social_facebook');
+            $table->string('social_twitter');
+            $table->string('social_linkedin');
+            $table->string('social_youtube');
+            $table->string('social_instagram');
+
         });
     }
 

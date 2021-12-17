@@ -53,7 +53,7 @@ function Left() {
             <div className="left-divider"></div>
 
             <a>Theme</a>
-            <a>Team</a>
+            <a>Users</a>
             <a>Billing</a>
             <a>Settings</a>
         </div>

@@ -146,15 +146,23 @@ $pricingRow = '<tr>
             </tr>
 
             <tr>
-                <td>Output API</td>
+                <td>Delivery API</td>
                 <td><?= $svgCancel ?></td>
                 <td><?= $svgCancel ?></td>
                 <td><?= $svgCheck ?></td>
                 <td><?= $svgCheck ?></td>
             </tr>
 
-             <tr>
+            <tr>
                 <td>SAML Login</td>
+                <td><?= $svgCancel ?></td>
+                <td><?= $svgCancel ?></td>
+                <td><?= $svgCancel ?></td>
+                <td><?= $svgCheck ?></td>
+            </tr>
+
+            <tr>
+                <td>Custom Console</td>
                 <td><?= $svgCancel ?></td>
                 <td><?= $svgCancel ?></td>
                 <td><?= $svgCancel ?></td>
