@@ -40,30 +40,80 @@ body.index {
         }
     }
 
-    .feature {
-        display:flex;
-        padding: 30px 0;
-        margin-bottom:100px;
-
-        .feature-image {
-            flex: 1;
+    .details-list {
+        margin-bottom:120px;
+        h3 {
+            font-size: 26px;
+            text-align: center;
+            margin: 30px;
+        }
+        .details-table-wrap {
+            background: #fffaf8;
+            box-shadow: 0 0 30px rgb(0 0 0 / 10%);
+            overflow: hidden;
+            border-radius: 20px;
+        }
+        .details-table {
+            
             display: flex;
-            align-items: center;
-            justify-content: center;
-            img {
-                max-height: 250px;
+            margin:auto;    
+            .title {
+                flex: 1;
+                padding: 30px;
+                background: #fff;
+                h4 {
+                    margin:0;
+                }
+                .title-description {
+                    font-size:14px;
+                    color:#777;
+                }
             }
-        }
-        .feature-description {
-            flex:1;
-            h3 {
-                font-size:28px;
-            }
-            p {
+            .description {
+                flex: 3;
+                margin: 0;
+                padding: 30px;
                 letter-spacing: 0.2px;
-                line-height:23px;
+                line-height: 23px;
+                p {
+                    margin-top:0;
+                    &.note {
+                        font-size: 12px;
+                        color: #777;
+                    }
+                }
+                .image-wrap {
+                    margin:30px;
+                    img {
+                        border-radius: 20px;
+                        box-shadow: 0 0 40px 20px rgb(0 0 0 / 5%);
+                    }
+                }
+            }
+
+            &:not(:first-child) {
+                border-top:1px dashed #896c6b;
             }
         }
+    }
 
+    #spam {
+        > div {
+            margin: 60px auto;
+            padding: 30px;
+            background: #ffdede;
+            border-radius: 20px;
+            box-shadow: 0 0 30px rgb(0 0 0 / 10%);
+            width:500px;
+            max-width:100%;
+        }
+        h3 {
+            text-align: center;
+            margin-top: 0;
+            margin-bottom:20px;
+        }
+        p {
+            margin:20px;
+        }
     }
 }
