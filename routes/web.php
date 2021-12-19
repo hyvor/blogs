@@ -2,70 +2,14 @@
 
 use Illuminate\Support\Facades\Route;
 
-use App\Http\Controllers\API\BlogController;
-use App\Http\Controllers\API\PostController;
-use App\Http\Controllers\ImportExportController;
-
-
-// Route::get('/', function () {
-//     return view('posts.index');
-//     // return View::make('layouts/app');
-// });
-
-// Auth::routes();
+include('app/subdomain.php');
 
 Route::domain(config('app.domain_app'))->group(function() {
     
-    // landing pages
-    Route::view('/', 'landing.index');
-    Route::view('/pricing', 'landing.pricing');
+    include('app/pages.php');
 
-    Route::view('/console/{any?}', 'console')->where('any', '.*');
-
-});
-
-/* Route::get('/', [App\Http\Controllers\PostController::class, 'index'])->name('index');
-Route::get('/home', [App\Http\Controllers\PostController::class, 'index'])->name('home');
-Route::get('/post/create', [App\Http\Controllers\PostController::class, 'create']);
-Route::post('/post', [App\Http\Controllers\PostController::class, 'store']);
-Route::get('/post/{post}/edit', [App\Http\Controllers\PostController::class, 'edit']);
-Route::get('/post/{post}', [App\Http\Controllers\PostController::class, 'show']);
-Route::put('/post/{post}', [App\Http\Controllers\PostController::class, 'update']);
-Route::delete('/post/{post}', [App\Http\Controllers\PostController::class, 'destroy']);
- */
-
-Route::get('/theme/{page?}', function($page = null) {
-    $loader = new \Twig\Loader\FilesystemLoader(storage_path('themes/default'));
-    $twig = new \Twig\Environment($loader);
-
-    $content = '<p>Life is busy. It can feel impossible to move toward your dreams. If you have a full-time job and kids, it’s even harder.</p><p>How do you move forward?</p><p>If you don’t purposefully carve time out every day to progress and improve — without question, your time will get lost in the vacuum of our increasingly crowded lives. Before you know it, you’ll be old and withered — wondering where all that time went.</p><p>As Professor Harold Hill has said<em> — “You pile up enough tomorrows, and you’ll find you are left with nothing but a lot of empty yesterdays.”</em></p><h2><strong>Rethinking Your Life and Getting Out of Survival Mode</strong></h2><p>This article is intended to challenge you to rethink your entire approach to life. The purpose is to help you simplify and get back to the fundamentals.</p><p>Sadly, most people’s lives are filled to the brim with the nonessential and trivial. They don’t have time to build toward anything meaningful.</p><p>They are in survival mode. <em>Are you in survival mode?</em></p><p>Like Bilbo, most of us are like butter scraped over too much bread. Unfortunately, the bread is not even our own, but someone else’s. Very few have taken the time to take their lives into their own hands.</p><p>It was social and cultural to live our lives on other people’s terms just one generation ago. And many millennials are perpetuating this process simply because it’s the only worldview we’ve been taught.</p><p>However, there is a growing collective-consciousness that with a lot of work and intention — you can live every moment of your life on your own terms.</p><p>You are the designer of your destiny.</p><p>You are responsible.</p><p>You get to decide. You <em>must </em>decide — because if you don’t, someone else will. Indecision is a bad decision.</p><p>With this short morning routine, your life will quickly change.</p><p>It may seem like a long list. But in short, it’s really quite simple:</p><ul><li>Wake up</li><li>Get in the zone</li><li>Get moving</li><li>Put the right food in your body</li><li>Get ready</li><li>Get inspired</li><li>Get perspective</li><li>Do something to move you forward</li></ul><p>Let’s begin:</p><h2><strong>1. Get A Healthy 7+ Hours of Sleep</strong></h2><p>Let’s face it — Sleep is just as important as eating and drinking water. Despite this, millions of people do not sleep enough and experience insane problems as a result.</p><p>The National Sleep Foundation (NSF) conducted surveys revealing that at least 40 million Americans suffer from over 70 different sleep disorders. Not only that, 60 percent of adults, and 69 percent of children, experience one or more sleep problems a few nights or more during a week.</p><p>In addition, more than 40 percent of adults experience daytime sleepiness severe enough to interfere with their daily activities at least a few days each month — with 20 percent reporting problem sleepiness a few days a week or more.</p><p>On the flip side, getting a healthy amount of sleep is linked to:</p><ul><li>Increased memory</li><li>Longer life</li><li>Decreased inflammation</li><li>Increased creativity</li><li>Increased attention and focus</li><li>Decreased fat and increased muscle mass with exercise</li><li>Lower stress</li><li>Decreased dependence on stimulants like caffeine</li><li>Decreased risk of getting into accidents</li><li>Decreased risk of depression</li><li>And tons more… google it.</li></ul><p>The rest of this blog post is worthless if you don’t make sleep a priority. Who cares if you wake up at 5 o’clock A.M. if you went to bed three hours earlier?</p><p>You won’t last long.</p><p>You may use stimulants to compensate, but that isn’t sustainable. In the long-run, your health will fall apart. The goal needs to be long-term sustainability.</p><h2><strong>2. Prayer and Meditation to Facilitate Clarity and Abundance</strong></h2><p>After waking from a healthy and restful sleep session, prayer and meditation are crucial for orienting yourself toward the positive. What you focus on expands.</p><p>Prayer and meditation facilitate intense gratitude for all that you have. Gratitude is having an abundance mindset. When you think abundantly, the world is your oyster. There is limitless opportunity and possibility for you.</p><p>People are magnets. When you’re grateful for what you have, you will attract more of the positive and good. Gratitude is contagious.</p><p>Gratitude may be the most important key to success. It has been called the mother of all virtues.</p><p>If you start every morning putting yourself in a space of gratitude and clarity, you will attract the best the world has to offer, and not get distracted.</p><h2><strong>3. Hard Physical Activity</strong></h2><p>Despite endless evidence of the need for exercise, only one-third of American men and women between the ages of 25 to 64 years engage in regular physical activity according to the Center for Disease Control’s National Health Interview Survey.</p><p>If you want to be among the healthy, happy, and productive people in the world, get in the habit of regular exercise. Many people go immediately to the gym to get their body moving. I have lately found that doing yard work in the wee hours of the morning generates an intense inflow of inspiration and clarity.</p><p>Whatever your preference, get your body moving.</p><p>Exercise has been found to decrease your chance of depression, anxiety, and stress. It is also related to higher success in your career.</p><p>If you don’t care about your body, every other aspect of your life will suffer. Humans are holistic beings.</p><h2><strong>4. Consume 30 Grams of Protein</strong></h2><p>Donald Layman, professor emeritus of nutrition at the University of Illinois, recommends consuming at least 30 grams of protein for breakfast. Similarly, Tim Ferriss, in his book, <em>The 4-Hour Body, </em>also recommends 30 grams of protein 30 minutes after waking up.</p><p>According to Tim, his father did this and lost 19 pounds in one month.</p><p>Protein-rich foods keep you full longer than other foods because they take longer to leave the stomach. Also, protein keeps blood-sugar levels steady, which prevents spikes in hunger.</p><p>Eating protein first decreases your white carbohydrate cravings. These are the types of carbs that get you fat. Think bagels, toast, and donuts.</p><p>Tim makes four recommendations for getting adequate protein in the morning:</p><ul><li>Eat at least 40% of your breakfast calories as protein</li><li>Do it with two or three whole eggs (each egg has about 6g protein)</li><li>If you don’t like eggs, use something like turkey bacon, organic pork bacon or sausage, or cottage cheese</li><li>Or, you could always do a protein shake with water</li></ul><p>For people who avoid dairy, meat, and eggs, there are several plant-based proteins. Legumes, greens, nuts, and seeds all are rich in protein.</p><h2><strong>5. Take A Cold Shower</strong></h2><p>Tony Robbins starts every morning by jumping into a 57-degree Fahrenheit swimming pool.</p><p>Why would he do such a thing?</p><p>Cold water immersion radically facilitates physical and mental wellness.When practiced regularly, it provides long-lasting changes to your body’s immune, lymphatic, circulatory and digestive systems that improve the quality of your life. It can also increase weight-loss because it boosts your metabolism.</p><p>A <a href="http://www.ncbi.nlm.nih.gov/pubmed/17993252">2007 research study</a> found that taking cold showers routinely can help treat depression symptoms often more effectively than prescription medications. That’s because cold water triggers a wave of mood-boosting neurochemicals which make you feel happy.</p><p>There is of course, an initial fear of stepping into a cold shower. Without a doubt, if you’ve tried this before, you have found yourself standing outside the shower dreading the thought of going in.</p><p>You may have even talked yourself out of it and said, “Maybe tomorrow.” And turned the hot water handle before getting in.</p><p>Or, maybe you jumped in but quickly turned the hot water on?</p><p>What has helped me is thinking about it like a swimming pool. It’s a slow painful death to get into a cold pool slowly. You just need to jump in. After 20 seconds, you’re fine.</p><p>It’s the same way with taking a cold shower. You get in, you heart starts beating like crazy. Then, after like 20 seconds, you feel fine.</p><p>To me, it increases my willpower and boosts my creativity and inspiration. While standing with the cold water hitting my back, I practice slowing my breathing and calming down. After I’ve chilled out, I feel super happy and inspired. Lots of ideas start flowing and I become way motivated to achieve my goals.</p><p>Plus, it’s healthy to do something in the morning that kind of freaks you out! Get’s you feeling alive and sets the tone for living outside your comfort zone!</p><h2><strong>6. Listen to/Read Uplifting Content</strong></h2><p>Ordinary people seek entertainment. Extraordinary people seek education and learning. It is common for the world’s most successful people to read at least one book per week. They are constantly learning.</p><p>I can easily get through one audiobook per week by just listening during my commute to school and while walking on campus.</p><p>Taking even 15–30 minutes every morning to read uplifting and instructive information changes you. It puts you in the zone to perform at your highest.</p><p>Over a long enough period of time, you will have read hundreds of books. You’ll be knowledgeable on several topics. You’ll think and see the world differently. You’ll be able to make more connections between different topics.</p><h2><strong>7. Review Your Life Vision</strong></h2><p>Your goals should be written down — short term and long term. Taking just a few minutes to read your life vision puts your day into perspective.</p><p>If you read your long term goals every day you will think about them every day. If you think about them every day, and spend your days working toward them, they’ll manifest.</p><p>Achieving goals is a science. There’s no confusion or ambiguity to it. If you follow a simple pattern, you can accomplish all of your goals, no matter how big they are.</p><p>A fundamental aspect of that is writing them down and reviewing them every single day.</p><h2><strong>8. Do At Least One Thing Towards Long-Term Goals</strong></h2><p>Willpower is like a muscle that depletes when it is exercised. Similarly, our ability to make high quality decisions becomes fatigued over time. The more decisions you make, the lower quality they become — the weaker your willpower.</p><p>Consequently, you need to do the hard stuff first thing in the morning. The important stuff.</p><p>If you don’t, it simply will not get done. By the end of your day, you’ll be exhausted. You’ll be fried. There will be a million reasons to just start tomorrow. And you will start tomorrow — which is never.</p><p>So your mantra becomes: <em>The worst comes first. </em>Do that thing you’ve been needing to do. Then do it again tomorrow.</p><p>If you take just one step toward you big goals every day, you’ll realize those goals weren’t really far away.</p><h2><strong>Conclusion</strong></h2><p>After you’ve done this, no matter what you have for the rest of your day, you’ll have done the important stuff first. You’ll have put yourself in a place to succeed. You’ll have inched toward your dreams.</p><p>Because you’ll have done all these things, you’ll show up better in life. You’ll be better at your job. You’ll be better in your relationships. You’ll be happier. You’ll be more confident. You’ll be more bold and daring. You’ll have more clarity and vision.</p><p>Your life will shortly change.</p><p>You can’t have mornings like this consistently without waking up to all that is incongruent in your life. Those things you despise will meet their demise. They’ll disappear and never return.</p><p>You’ll quickly find you’re doing the work you’re passionate about.</p><p>Your relationships will be passionate, meaningful, deep, and fun!</p><p>You will have freedom and abundance.</p><p>The world, and the universe, will respond to you in beautiful ways.</p>';
-
-    return $twig->render($page ? 'page.twig' : 'index.twig', [
-        'content' => $content,
-        '_head' => '<script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/instantclick/3.1.0/instantclick.min.js"></script>
-        <script>
-            window.addEventListener("load", function() {
-                InstantClick.init();
-            })
-        </script>'
-    ]);
-});
-
-Route::domain('{account}.hyvorblogs.test')->group(function () {
-    Route::get(
-        '/',function ($account) {
-            $blogCtr = new BlogController(); 
-            $entity = $blogCtr->loadBlog($account); 
-            return $entity['payload'];
-    });
-    Route::get(
-        '/{slug}',function ($account,$slug) {
-            $postCtr = new PostController();
-            $entity = $postCtr->loadPost($account,$slug);
-            return $entity['payload'];
-    });
+    include('app/api-data.php');
+    include('app/api-delivery.php');
+    include('app/api-console.php');
 
 });
-
-//Import and export from other CDNs
-Route::get('/', [ImportExportController::class, 'index']);

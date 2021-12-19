@@ -4,7 +4,7 @@ use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\Schema;
 
-class CreateTagsTable extends Migration
+class CreatePostTagTable extends Migration
 {
     /**
      * Run the migrations.
@@ -13,20 +13,17 @@ class CreateTagsTable extends Migration
      */
     public function up()
     {
-        Schema::create('tags', function (Blueprint $table) {
+
+        // table name convention from this laravel docs
+        // https://laravel.com/docs/8.x/eloquent-relationships#many-to-many-table-structure
+        
+        Schema::create('post_tag', function (Blueprint $table) {
             $table->id();
             $table->timestamps();
 
             // connections
-            $table->bigInteger('blog_id');
-
-            // data
-            $table->string('name');
-            $table->string('slug');
-            $table->string('description');
-            $table->string('featured_image');
-
-
+            $table->bigInteger('post_id');
+            $table->bigInteger('tag_id');
         });
     }
 
@@ -37,6 +34,6 @@ class CreateTagsTable extends Migration
      */
     public function down()
     {
-        Schema::dropIfExists('tags');
+        Schema::dropIfExists('posts_tags');
     }
 }

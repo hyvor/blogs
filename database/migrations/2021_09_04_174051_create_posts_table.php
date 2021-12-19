@@ -21,10 +21,10 @@ class CreatePostsTable extends Migration
             $table->timestamp('published_at')->nullable();
 
             // connections
-            $table->bigInteger('blog_id');
+            $table->bigInteger('blog_id')->index();
 
             // status
-            $table->enum('status', ['published', 'draft', 'scheduled', 'deleted']);
+            $table->enum('status', ['published', 'draft', 'scheduled', 'deleted'])->default('draft');
             $table->boolean('is_featured')->default(false);
             $table->boolean('is_page')->default(false);
 
@@ -37,11 +37,13 @@ class CreatePostsTable extends Migration
 
             // advanced
             $table->string('canonical_url')->nullable();
-            $table->text('code_head')->nullable();`
+            $table->text('code_head')->nullable();
             $table->text('code_foot')->nullable();
 
             // other
             $table->tinyInteger('reading_time');
+
+            $table->unique(['blog_id', 'slug']);
         });
     }
 

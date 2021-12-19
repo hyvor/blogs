@@ -23,14 +23,14 @@ class CreateBlogsTable extends Migration
             // data
             $table->string('subdomain')->unique();
             $table->string('name');
-            $table->string('description');
-            $table->string('icon');
+            $table->string('description')->nullable();
+            $table->string('icon')->nullable();
 
-            $table->string('social_facebook');
-            $table->string('social_twitter');
-            $table->string('social_linkedin');
-            $table->string('social_youtube');
-            $table->string('social_instagram');
+            $table->string('social_facebook')->nullable();
+            $table->string('social_twitter')->nullable();
+            $table->string('social_linkedin')->nullable();
+            $table->string('social_youtube')->nullable();
+            $table->string('social_instagram')->nullable();
 
         });
     }

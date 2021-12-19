@@ -2,6 +2,11 @@
 
 namespace Database\Seeders;
 
+use App\Models\Blog;
+use App\Models\Post;
+use App\Models\PostTag;
+use App\Models\Tag;
+use Illuminate\Support\Str;
 use Illuminate\Database\Seeder;
 
 class DatabaseSeeder extends Seeder
@@ -13,6 +18,52 @@ class DatabaseSeeder extends Seeder
      */
     public function run()
     {
-        // \App\Models\User::factory(10)->create();
+
+        $faker = \Faker\Factory::create();
+
+        $blog = Blog::create([
+            'user_id' => 1,
+            'subdomain' => 'supun',
+            'name' => "Supun's Blog",
+        ]);
+
+        $tags = [];
+        foreach (range(0, 9) as $i) {
+            $name = $faker->name();
+            $tags[] = Tag::create([
+                'blog_id' => $blog->id,
+                'name' => $name,
+                'slug' => Str::slug($name),
+            ]);
+        }
+
+        $posts = [];
+        foreach (range(0, 100) as $i) {
+
+            $title = $faker->sentence;
+
+            $paragraphs = $faker->paragraphs(rand(2, 6));
+            $content = "";
+            foreach ($paragraphs as $para) {
+                $content .= "<p>{$para}</p>";
+            }
+
+
+            $post = Post::create([
+                'blog_id' => $blog->id,
+                'content' => $content,
+                'title' => $title,
+                'slug' => Str::slug($title),
+                'description' => $faker->sentence,
+
+                'reading_time' => 2,
+            ]);
+
+            PostTag::create([
+                'post_id' => $post->id,
+                'tag_id' => $tags[ array_rand($tags) ]->id
+            ]);
+        }
+
     }
 }
