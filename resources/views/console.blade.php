@@ -9,5 +9,7 @@
 <body>
     <div id="app"></div>
     <script src="/js/console.js"></script>
+
+    @paddleJS
 </body>
 </html>

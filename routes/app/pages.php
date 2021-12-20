@@ -5,9 +5,6 @@ use Illuminate\Support\Facades\Route;
 Route::view('/', 'landing.index');
 Route::view('/pricing', 'landing.pricing');
 
-Route::view('/console/{any?}', 'console')->where('any', '.*');
-
-
 
 Route::get('/theme/{page?}', function($page = null) {
     $loader = new \Twig\Loader\FilesystemLoader(storage_path('themes/default'));
