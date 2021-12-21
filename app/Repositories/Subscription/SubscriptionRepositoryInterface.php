@@ -11,4 +11,6 @@ interface SubscriptionRepositoryInterface {
 
     public function update();
 
+    public function getPlanNameByPlanId(int $planId);
+
 }

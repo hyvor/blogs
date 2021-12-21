@@ -20,17 +20,18 @@ class CreateUsersTable extends Migration
             // connection
             $table->bigInteger('blog_id');
             $table->bigInteger('user_id'); // hyvor | SSO user id
-            $table->enum('user_type', ['hyvor', 'sso']);
+            $table->enum('user_type', ['hyvor', 'sso'])->default('hyvor');
 
 
-            $table->enum('status', ['invited', 'active', 'blocked'])->nullable();
-            $table->enum('type', ['owner', 'admin', 'editor', 'author', 'contributor']);
+            $table->enum('status', ['invited', 'active', 'blocked'])->default('invited');
+            $table->enum('role', ['owner', 'admin', 'editor', 'author', 'contributor']);
+
 
             // user data
             $table->string('slug');
             $table->string('name', 50);
             $table->string('email');
-            $table->string('profile_image');
+            $table->string('profile_image')->nullable();
             $table->string('cover_image')->nullable();
             $table->string('bio')->nullable();
             $table->string('website_url')->nullable();
@@ -42,6 +43,9 @@ class CreateUsersTable extends Migration
             $table->string('social_linkedin')->nullable();
             $table->string('social_youtube')->nullable();
             $table->string('social_instagram')->nullable();
+
+            // misc
+            $table->integer('order')->default(0); // for ordering in the console
 
             $table->unique(['blog_id', 'slug']);
         });

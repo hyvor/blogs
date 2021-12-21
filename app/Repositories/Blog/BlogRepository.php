@@ -2,6 +2,7 @@
 namespace App\Repositories\Blog;
 
 use App\Models\Blog;
+use App\Models\User;
 
 class BlogRepository implements BlogRepositoryInterface {
 
@@ -24,5 +25,6 @@ class BlogRepository implements BlogRepositoryInterface {
 
         return '';
     }
+
 
 }

@@ -80,8 +80,8 @@ $pricingRow = '<tr>
             <tr>
                 <td>Users</td>
                 <td>1</td>
-                <td>1</td>
-                <td>2 to 99</td>
+                <td>2</td>
+                <td>3 to 99</td>
                 <td>Unlimited</td>
             </tr>
 

@@ -6,6 +6,7 @@ use App\Models\Blog;
 use App\Models\Post;
 use App\Models\PostTag;
 use App\Models\Tag;
+use App\Models\User;
 use Illuminate\Support\Str;
 use Illuminate\Database\Seeder;
 
@@ -25,6 +26,16 @@ class DatabaseSeeder extends Seeder
             'user_id' => 1,
             'subdomain' => 'supun',
             'name' => "Supun's Blog",
+        ]);
+
+        User::create([
+            'blog_id' => $blog->id,
+            'user_id' => $blog->user_id,
+            'role' => 'owner',
+            'status' => 'active',
+            'slug' => "supun",
+            'name' => 'Supun Kavinda',
+            'email' => 'supun@hyvor.com'
         ]);
 
         $tags = [];

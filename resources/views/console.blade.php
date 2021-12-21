@@ -8,8 +8,16 @@
 </head>
 <body>
     <div id="app"></div>
-    <script src="/js/console.js"></script>
+
+
 
     @paddleJS
+
+    <script>
+        var config = <?php echo json_encode($config); ?>;
+    </script>
+
+    <script src="/js/console.js"></script>
+
 </body>
 </html>

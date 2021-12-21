@@ -12,4 +12,6 @@ interface UserRepositoryInterface {
 
     public function update();
 
+    public function getBlogs(int $userId, string $userType);
+
 }
