@@ -32,6 +32,7 @@
         "react-router-dom": "^5.3.0",
         "react-select": "^5.2.1",
         "react-switch": "^6.0.0",
+        "recoil": "^0.5.2",
         "striptags": "^3.2.0"
     }
 }

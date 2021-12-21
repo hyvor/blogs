@@ -24,6 +24,7 @@ body {
     display: flex;
     padding: 15px;
     justify-content: space-between;
+    margin-bottom:15px;
 }
 #left-nav {
     font-weight: 600;
@@ -42,6 +43,15 @@ body {
     }
     .left-divider {
         height:25px;
+    }
+    .blog-selector {
+        display:flex;
+        cursor: pointer;
+        padding: 20px 18px;
+        border-bottom:1px solid $color-accent-light;
+        .name {
+            flex:1;
+        }
     }
 }
 

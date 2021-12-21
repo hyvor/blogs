@@ -180,6 +180,9 @@ return [
         App\Providers\RouteServiceProvider::class,
         App\Providers\RepositoriesServiceProvider::class,
 
+
+        \Hyvor\Auth\HyvorAuthServiceProvider::class,
+
     ],
 
     /*

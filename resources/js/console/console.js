@@ -1,11 +1,10 @@
 import React, { useState } from 'react';
 import ReactDOM from 'react-dom';
 import OnBoarding from './OnBoarding'
-import TheEditor from './PostEditor';
 import Select from './ReusableComponents/Select';
 
 
-import {Filter} from 'react-bootstrap-icons';
+import {ChevronExpand, Filter} from 'react-bootstrap-icons';
 
 import {
     BrowserRouter as Router,
@@ -37,12 +36,17 @@ function App() {
 
 import PostEditor from './PostEditor';
 function Left() {
-    return <div id="left" className="box">
-        <div id="left-header">
+    return <div id="left">
+        <div id="left-header" className="box">
             <img src="/img/logo.png" id="left-header-image-1" className="round-image-40"></img>
             <div id="left-header-image-2" className="round-image-40"></div>
         </div>
-        <div id="left-nav">
+        <div id="left-nav" className="box">
+            <div className="blog-selector">
+                <div className="name">Supun's Blog</div>
+                <div><ChevronExpand /></div>
+            </div>
+
             <NavLink to="/" exact>Your Blog</NavLink>
 
             <div className="left-divider"></div>
@@ -66,9 +70,6 @@ function Middle() {
         <Switch>
             <Route path="/posts">
                 <Posts />
-            </Route>
-            <Route>
-                <TheEditor />
             </Route>
         </Switch>
     )

@@ -17,8 +17,12 @@ class ConsoleViewController extends Controller {
             $customConsole = []; // data
         }
 
+        $userBlogs = null;
+
         $config = [
-            'customConsole' => $customConsole
+            'customConsole' => $customConsole,
+
+            'blogs' => $userBlogs
         ];
 
         return view('console');
