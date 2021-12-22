@@ -1,0 +1,15 @@
+$margin: 20px;
+$fontSize: 30px;
+$color: rgb(0, 255, 42); 
+
+.hyvor{
+    color: $color;
+    margin:$margin;
+    font-size: $fontSize;
+    background-color: rgb(123, 195, 207);
+    text-align: center;
+}
+
+h3{
+    padding: 5px;
+}

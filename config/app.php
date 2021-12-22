@@ -180,7 +180,7 @@ return [
         App\Providers\RouteServiceProvider::class,
         App\Providers\RepositoriesServiceProvider::class,
         
-        Auth0\Login\LoginServiceProvider::class,
+        // Auth0\Login\LoginServiceProvider::class,
 
 
     ],

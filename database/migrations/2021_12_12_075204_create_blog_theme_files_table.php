@@ -21,7 +21,7 @@ class CreateBlogThemeFilesTable extends Migration
             
             $table->string('name')->nullable();
             $table->binary('content')->nullable();
-            $table->enum('type', ['template', 'asset'])->nullable();
+            $table->enum('type', ['templates', 'assets','styles'])->nullable();
 
             $table->timestamps();
         });

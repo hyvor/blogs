@@ -21,7 +21,7 @@ class CreateThemeFilesTable extends Migration
 
             $table->string('name');
             $table->binary('content');
-            $table->enum('type', ['template', 'asset']);
+            $table->enum('type', ['templates', 'assets','styles'])->nullable();
 
             $table->timestamps();
         });

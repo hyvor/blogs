@@ -10,7 +10,11 @@ use App\Models\Blog;
 
 Class ThemesRepository implements ThemesRepositoryInterface
 {
-
+    /* 
+    *
+    * Selecting the theme from ThemeFiles table & pasting it in the BlogThemeFiles table
+    *
+    */
     public function getTheme($theme_id){
 
         $themeID = Theme::select('id')
@@ -54,7 +58,11 @@ Class ThemesRepository implements ThemesRepositoryInterface
     }
 
     
-    // Home page of the blog
+    /* 
+    *
+    * Rendering the home page from the database
+    *
+    */
     public function deliverThemeData(){
 
         $blogId = Blog::select('id')
@@ -67,6 +75,24 @@ Class ThemesRepository implements ThemesRepositoryInterface
             // ->value('content');
 
         return $themeFileName;
+    }
+
+    /* 
+    *
+    * Rendering the assets from the database
+    *
+    */
+    public function deliverAssets($assetFile){
+
+        // $assetFile = "script.js";
+        $blogId = Blog::select('id')
+            ->value('id');
+
+        $assetsFileName= BlogThemeFile::where('type' , 'assets') 
+        ->where('name' , $assetFile)
+        ->get();
+
+        return $assetsFileName;
     }
 
 }

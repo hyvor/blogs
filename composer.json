@@ -10,7 +10,12 @@
         "guzzlehttp/guzzle": "^7.0.1",
         "laravel/framework": "^8.54",
         "laravel/tinker": "^2.5",
-        "twig/twig": "^3.3"
+        "leafo/scssphp": "^0.8.2",
+        "rcrowe/twigbridge": "^0.12.3",
+        "scssphp/scssphp": "^1.9",
+        "symfony/asset": "^6.0",
+        "twig/twig": "^3.3",
+        "vlucas/phpdotenv": "^5.4"
     },
     "require-dev": {
         "facade/ignition": "^2.5",
@@ -26,7 +31,10 @@
             "App\\": "app/",
             "Database\\Factories\\": "database/factories/",
             "Database\\Seeders\\": "database/seeders/"
-        }
+        },
+        "files": [
+            "app/Helpers/ImportScssHelper.php"
+        ]
     },
     "autoload-dev": {
         "psr-4": {

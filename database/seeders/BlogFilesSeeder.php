@@ -42,7 +42,7 @@ class BlogFilesSeeder extends Seeder
                     </body>
                                 
                 </html>',
-                'type' => "template",
+                'type' => "templates",
             ],
 
             [
@@ -54,37 +54,82 @@ class BlogFilesSeeder extends Seeder
                     <head>
                         <meta charset="UTF-8">
                         <meta name="viewport" content="width=device-width, initial-scale=1.0">
-                        <style>{{style}}</style>
+                        {# <link rel="stylesheet" type="text/css" href="../styles/index.css"> #}
+                        <style> {{ style }} </style>
                         <title>Document</title>
                     </head>
                                 
-                    <body>       
+                    <body> 
+                        
+                        <div class="hyvor">
+                            <h3> Hyvor testing the scss </h3>
+                        </div>
+                
                         <p>
                             {{ name }} is a {{ occupation }}
-                        </p>     
-                        <script>{{script | raw}}</script>
+                        </p>  
+                           
+                        <script src="../assets/script.js"></script>
                     </body>
                                 
                 </html>',
-                'type' => "template",
+                'type' => "templates",
             ],
 
             [
                 'theme_id' => "1",
-                'name' => "style.css",
-                'content' => "body {
-                    background-color:black;
-                }
-                p { 
+                'name' => "index.scss",
+                'content' => 
+                '@import "header";
+                 @import "body"; 
+                ',
+                'type' => "styles",
+            ],
+
+            [
+                'theme_id' => "1",
+                'name' => "body.scss",
+                'content' => 
+                '$bodyColor : #dde668; 
+                 $anotherColor : #33fd0f; 
+                
+                 body {
+                    background-color:$bodyColor ;
+                 }
+                 p { 
                     font-size: 120%; 
                     color: rgb(3, 148, 51); 
-                }
+                    text-align: center;
+                 }
                                 
-                ul { 
-                    background-color: burlywood;
-                }
-                ",
-                'type' => "asset",
+                 ul { 
+                    background-color: $anotherColor;
+                 } 
+                ',
+                'type' => "styles",
+            ],
+
+            [
+                'theme_id' => "1",
+                'name' => "head.scss",
+                'content' => 
+                '$margin: 20px;
+                 $fontSize: 30px;
+                 $color: rgb(0, 255, 42); 
+                
+                 .hyvor{
+                    color: $color;
+                    margin:$margin;
+                    font-size: $fontSize;
+                    background-color: rgb(123, 195, 207);
+                    text-align: center;
+                 }
+                
+                 h3{
+                    padding: 5px;
+                 }
+                ',
+                'type' => "styles",
             ],
 
             [
@@ -93,7 +138,7 @@ class BlogFilesSeeder extends Seeder
                 'content' => "// console.log('Submiting form');
                 alert('Testing the javaScript');
                 ",
-                'type' => "asset",
+                'type' => "assets",
             ],
 
         ]);
