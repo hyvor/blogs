@@ -1,7 +1,7 @@
 @import '../colors.scss';
 
 
-input.input {
+.input {
     width: 100%;
     padding: 9px 15px;
     border-radius: 20px;
@@ -10,7 +10,7 @@ input.input {
     font-family: inherit;
     transition:.3s box-shadow;
 }
-input.input:focus {
+.input:focus {
     outline: 0;
     box-shadow: 0 0 2px 0px $color-accent;
 }
@@ -32,39 +32,8 @@ input.input:focus {
     border-radius: 50%;
     width:40px;
     height:40px;
-    background:#eee;
 }
 
-.button {
-    background: $color-accent;
-    color: #fff;
-    border-radius: 20px;
-    border: none;
-    font-weight: 600;
-    font-family: inherit;
-    cursor: pointer;
-    font-size: 14px;
-    padding: 8px 20px;
-
-    &.small {
-        font-size: 12px;
-        padding: 4px 10px;
-    }
-
-    /* border: none;
-    padding: 13px 30px;
-    box-shadow: -1px -2px 0px 3px #ebd4ee;
-    background: #9323a7;
-    font-weight: 600;
-    color: #fff;
-    border-radius: 30% 70% 41% 59% / 57% 41% 59% 43%;
-    transition:.3s;
-    cursor: pointer;
-
-    &:hover {
-        box-shadow: 0px 0px 10px 5px #ebd4ee;
-    } */
-}
 
 .post-tag {
     font-size: 11px;
@@ -98,6 +67,10 @@ input.input:focus {
     .input-bottom {
         margin-top:5px;
     }
+}
+
+svg, img, span {
+    vertical-align: middle;
 }
 
 // select

@@ -21,40 +21,29 @@ class CreatePostsTable extends Migration
             $table->timestamp('published_at')->nullable();
 
             // connections
-            $table->bigInteger('blog_id');
+            $table->bigInteger('blog_id')->index();
 
-            // main
+            // status
+            $table->enum('status', ['published', 'draft', 'scheduled', 'deleted'])->default('draft');
+            $table->boolean('is_featured')->default(false);
+            $table->boolean('is_page')->default(false);
+
+            // basic
+            $table->text('content');
             $table->string('slug');
             $table->string('title');
             $table->string('description', 350);
-            $table->text('content');
+            $table->string('featured_image')->nullable();
 
-            // status
-            $table->enum('status', ['published', 'draft', 'scheduled', 'deleted']);
-            $table->boolean('is_featured')->default(false);
-
-            // seo
-            $table->string('meta_title')->nullable();
-            $table->string('meta_description')->nullable();
+            // advanced
             $table->string('canonical_url')->nullable();
-
-            // feature and social media
-            $table->bigInteger('feature_image_media_id')->nullable();
-            $table->bigInteger('og_image_media_id')->nullable();
-            $table->string('og_title')->nullable();
-            $table->string('og_description')->nullable();
-            $table->bigInteger('twitter_image_media_id')->nullable();
-            $table->string('twitter_title')->nullable();
-            $table->string('twitter_description')->nullable();
-
-            // code
             $table->text('code_head')->nullable();
-            $table->text('code_after_content')->nullable();
-            $table->text('code_footer')->nullable();
+            $table->text('code_foot')->nullable();
 
             // other
             $table->tinyInteger('reading_time');
 
+            $table->unique(['blog_id', 'slug']);
         });
     }
 

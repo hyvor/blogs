@@ -2,6 +2,7 @@
 
 use Illuminate\Support\Facades\Route;
 
+
 use App\Http\Controllers\API\BlogController;
 use App\Http\Controllers\API\PostController;
 
@@ -14,8 +15,12 @@ use Symfony\Component\Routing\Loader\Configurator\RoutingConfigurator;
 
 // Auth::routes();
 
+include('app/subdomain.php');
+
+
 // Route::domain(config('app.domain_app'))->group(function() {
     
+
 //     Route::view('/{any?}', 'console')->where('any', '.*');
 
 // });
@@ -59,5 +64,12 @@ Route::domain('{subdomain}.hyvorblogs.test')->middleware('blogDeliver')->group(f
 
     // Select a specific theme for the blog
     Route::get('/theme', [App\Http\Controllers\ThemesController::class, 'selectTheme'])->name('/theme');
+
+    include('app/pages.php');
+
+    include('app/api-data.php');
+    include('app/api-delivery.php');
+    include('app/api-console.php');
+
 
 });

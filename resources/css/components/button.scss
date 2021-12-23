@@ -1,0 +1,29 @@
+
+
+// for both console and landing pages
+.button {
+    background: $color-accent;
+    color: #fff;
+    border-radius: 20px;
+    border: none;
+    font-weight: 600;
+    font-family: inherit;
+    cursor: pointer;
+    font-size: 14px;
+    padding: 8px 20px;
+    display:inline-block;
+
+    &.big {
+        padding: 10px 30px;
+    }
+
+    &.small {
+        font-size: 12px;
+        padding: 4px 10px;
+    }
+
+    &.inactive {
+        background: $color-accent-light;
+        color: $color-text;
+    }
+}

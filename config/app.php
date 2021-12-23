@@ -178,9 +178,14 @@ return [
         // App\Providers\BroadcastServiceProvider::class,
         App\Providers\EventServiceProvider::class,
         App\Providers\RouteServiceProvider::class,
+
         App\Providers\RepositoriesServiceProvider::class,
-        
         // Auth0\Login\LoginServiceProvider::class,
+
+        App\Providers\TelescopeServiceProvider::class,
+        // App\Providers\RepositoriesServiceProvider::class,
+
+        \Hyvor\Auth\HyvorAuthServiceProvider::class,
 
 
     ],

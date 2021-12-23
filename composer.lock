@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "469cac5f94946cae046e0f8a060aaea2",
+    "content-hash": "0ce9b10ebac42ddc1071a0bd231d4f0c",
     "packages": [
         {
             "name": "asm89/stack-cors",
@@ -960,17 +960,98 @@
             "time": "2021-10-06T17:43:30+00:00"
         },
         {
-            "name": "laravel/framework",
-            "version": "v8.76.2",
+            "name": "laravel/cashier-paddle",
+            "version": "v1.4.8",
             "source": {
                 "type": "git",
-                "url": "https://github.com/laravel/framework.git",
-                "reference": "c67acfdc968f487b6235435080eef62a7e2ed055"
+                "url": "https://github.com/laravel/cashier-paddle.git",
+                "reference": "3d6e6e8baf3bff348cd5f2ad65d8f3f23ec8223b"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/laravel/framework/zipball/c67acfdc968f487b6235435080eef62a7e2ed055",
-                "reference": "c67acfdc968f487b6235435080eef62a7e2ed055",
+                "url": "https://api.github.com/repos/laravel/cashier-paddle/zipball/3d6e6e8baf3bff348cd5f2ad65d8f3f23ec8223b",
+                "reference": "3d6e6e8baf3bff348cd5f2ad65d8f3f23ec8223b",
+                "shasum": ""
+            },
+            "require": {
+                "ext-json": "*",
+                "ext-openssl": "*",
+                "guzzlehttp/guzzle": "^6.5|^7.0",
+                "illuminate/contracts": "^7.9|^8.0",
+                "illuminate/database": "^7.9|^8.0",
+                "illuminate/http": "^7.9|^8.0",
+                "illuminate/routing": "^7.9|^8.0",
+                "illuminate/support": "^7.9|^8.0",
+                "illuminate/view": "^7.9|^8.0",
+                "moneyphp/money": "^3.2|^4.0",
+                "nesbot/carbon": "^2.0",
+                "php": "^7.2|^8.0",
+                "spatie/url": "^1.3.5",
+                "symfony/http-kernel": "^5.0",
+                "symfony/intl": "^5.0"
+            },
+            "require-dev": {
+                "mockery/mockery": "^1.0",
+                "orchestra/testbench": "^5.0|^6.0",
+                "phpunit/phpunit": "^8.0|^9.0"
+            },
+            "suggest": {
+                "ext-intl": "Allows for more locales besides the default \"en\" when formatting money values."
+            },
+            "type": "library",
+            "extra": {
+                "branch-alias": {
+                    "dev-master": "1.x-dev"
+                },
+                "laravel": {
+                    "providers": [
+                        "Laravel\\Paddle\\CashierServiceProvider"
+                    ]
+                }
+            },
+            "autoload": {
+                "psr-4": {
+                    "Laravel\\Paddle\\": "src/"
+                }
+            },
+            "notification-url": "https://packagist.org/downloads/",
+            "license": [
+                "MIT"
+            ],
+            "authors": [
+                {
+                    "name": "Taylor Otwell",
+                    "email": "taylor@laravel.com"
+                },
+                {
+                    "name": "Dries Vints",
+                    "email": "dries@laravel.com"
+                }
+            ],
+            "description": "Cashier Paddle provides an expressive, fluent interface to Paddle's subscription billing services.",
+            "keywords": [
+                "billing",
+                "laravel",
+                "paddle"
+            ],
+            "support": {
+                "issues": "https://github.com/laravel/cashier-paddle/issues",
+                "source": "https://github.com/laravel/cashier-paddle"
+            },
+            "time": "2021-11-30T15:44:14+00:00"
+        },
+        {
+            "name": "laravel/framework",
+            "version": "v8.77.1",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/laravel/framework.git",
+                "reference": "994dbac5c6da856c77c81a411cff5b7d31519ca8"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/laravel/framework/zipball/994dbac5c6da856c77c81a411cff5b7d31519ca8",
+                "reference": "994dbac5c6da856c77c81a411cff5b7d31519ca8",
                 "shasum": ""
             },
             "require": {
@@ -988,7 +1069,7 @@
                 "opis/closure": "^3.6",
                 "php": "^7.3|^8.0",
                 "psr/container": "^1.0",
-                "psr/log": "^1.0 || ^2.0",
+                "psr/log": "^1.0|^2.0",
                 "psr/simple-cache": "^1.0",
                 "ramsey/uuid": "^4.2.2",
                 "swiftmailer/swiftmailer": "^6.3",
@@ -1129,7 +1210,7 @@
                 "issues": "https://github.com/laravel/framework/issues",
                 "source": "https://github.com/laravel/framework"
             },
-            "time": "2021-12-15T14:02:14+00:00"
+            "time": "2021-12-21T20:22:29+00:00"
         },
         {
             "name": "laravel/serializable-closure",
@@ -1189,6 +1270,73 @@
                 "source": "https://github.com/laravel/serializable-closure"
             },
             "time": "2021-11-30T15:53:04+00:00"
+        },
+        {
+            "name": "laravel/telescope",
+            "version": "v4.6.9",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/laravel/telescope.git",
+                "reference": "848d32cbeb4eca82cacea821dd59cc4df10f4182"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/laravel/telescope/zipball/848d32cbeb4eca82cacea821dd59cc4df10f4182",
+                "reference": "848d32cbeb4eca82cacea821dd59cc4df10f4182",
+                "shasum": ""
+            },
+            "require": {
+                "ext-json": "*",
+                "laravel/framework": "^8.29",
+                "php": "^7.3|^8.0",
+                "symfony/var-dumper": "^5.0"
+            },
+            "require-dev": {
+                "ext-gd": "*",
+                "orchestra/testbench": "^6.0"
+            },
+            "type": "library",
+            "extra": {
+                "branch-alias": {
+                    "dev-master": "4.x-dev"
+                },
+                "laravel": {
+                    "providers": [
+                        "Laravel\\Telescope\\TelescopeServiceProvider"
+                    ]
+                }
+            },
+            "autoload": {
+                "psr-4": {
+                    "Laravel\\Telescope\\": "src/",
+                    "Laravel\\Telescope\\Database\\Factories\\": "database/factories/"
+                }
+            },
+            "notification-url": "https://packagist.org/downloads/",
+            "license": [
+                "MIT"
+            ],
+            "authors": [
+                {
+                    "name": "Taylor Otwell",
+                    "email": "taylor@laravel.com"
+                },
+                {
+                    "name": "Mohamed Said",
+                    "email": "mohamed@laravel.com"
+                }
+            ],
+            "description": "An elegant debug assistant for the Laravel framework.",
+            "keywords": [
+                "debugging",
+                "laravel",
+                "monitoring"
+            ],
+            "support": {
+                "issues": "https://github.com/laravel/telescope/issues",
+                "source": "https://github.com/laravel/telescope/tree/v4.6.9"
+            },
+            "time": "2021-12-07T16:37:53+00:00"
         },
         {
             "name": "laravel/tinker",
@@ -1651,6 +1799,95 @@
                 }
             ],
             "time": "2021-11-21T11:48:40+00:00"
+        },
+        {
+            "name": "moneyphp/money",
+            "version": "v4.0.3",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/moneyphp/money.git",
+                "reference": "d945f775bd6ab0920d9d205813d8831a899a8844"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/moneyphp/money/zipball/d945f775bd6ab0920d9d205813d8831a899a8844",
+                "reference": "d945f775bd6ab0920d9d205813d8831a899a8844",
+                "shasum": ""
+            },
+            "require": {
+                "ext-bcmath": "*",
+                "ext-filter": "*",
+                "ext-json": "*",
+                "php": "^8.0"
+            },
+            "require-dev": {
+                "cache/taggable-cache": "^1.1.0",
+                "doctrine/coding-standard": "^9.0",
+                "doctrine/instantiator": "^1.4.0",
+                "ext-gmp": "*",
+                "ext-intl": "*",
+                "florianv/exchanger": "^2.6.3",
+                "florianv/swap": "^4.3.0",
+                "moneyphp/iso-currencies": "^3.2.1",
+                "php-http/message": "^1.11.0",
+                "php-http/mock-client": "^1.4.1",
+                "phpbench/phpbench": "1.0.0-beta1@BETA",
+                "phpspec/phpspec": "^7.0.1",
+                "phpunit/phpunit": "^9.5.4",
+                "psalm/plugin-phpunit": "^0.15.1",
+                "psr/cache": "^1.0.1",
+                "roave/infection-static-analysis-plugin": "^1.7",
+                "vimeo/psalm": "~4.7.0 || ^4.8.2"
+            },
+            "suggest": {
+                "ext-gmp": "Calculate without integer limits",
+                "ext-intl": "Format Money objects with intl",
+                "florianv/exchanger": "Exchange rates library for PHP",
+                "florianv/swap": "Exchange rates library for PHP",
+                "psr/cache-implementation": "Used for Currency caching"
+            },
+            "type": "library",
+            "extra": {
+                "branch-alias": {
+                    "dev-master": "3.x-dev"
+                }
+            },
+            "autoload": {
+                "psr-4": {
+                    "Money\\": "src/"
+                }
+            },
+            "notification-url": "https://packagist.org/downloads/",
+            "license": [
+                "MIT"
+            ],
+            "authors": [
+                {
+                    "name": "Mathias Verraes",
+                    "email": "mathias@verraes.net",
+                    "homepage": "http://verraes.net"
+                },
+                {
+                    "name": "Márk Sági-Kazár",
+                    "email": "mark.sagikazar@gmail.com"
+                },
+                {
+                    "name": "Frederik Bosch",
+                    "email": "f.bosch@genkgo.nl"
+                }
+            ],
+            "description": "PHP implementation of Fowler's Money pattern",
+            "homepage": "http://moneyphp.org",
+            "keywords": [
+                "Value Object",
+                "money",
+                "vo"
+            ],
+            "support": {
+                "issues": "https://github.com/moneyphp/money/issues",
+                "source": "https://github.com/moneyphp/money/tree/v4.0.3"
+            },
+            "time": "2021-12-01T10:39:00+00:00"
         },
         {
             "name": "monolog/monolog",
@@ -2847,27 +3084,26 @@
             "source": {
                 "type": "git",
                 "url": "https://github.com/rcrowe/TwigBridge.git",
-                "reference": "1320fbdb29775f4e4da2054c0b0a45c3bcb15dae"
+                "reference": "8415e7679165b7dcdacc9d2a4fcb2e041762719e"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/rcrowe/TwigBridge/zipball/1320fbdb29775f4e4da2054c0b0a45c3bcb15dae",
-                "reference": "1320fbdb29775f4e4da2054c0b0a45c3bcb15dae",
+                "url": "https://api.github.com/repos/rcrowe/TwigBridge/zipball/8415e7679165b7dcdacc9d2a4fcb2e041762719e",
+                "reference": "8415e7679165b7dcdacc9d2a4fcb2e041762719e",
                 "shasum": ""
             },
             "require": {
-                "illuminate/support": "^5.5|^6|^7|^8",
-                "illuminate/view": "^5.5|^6|^7|^8",
-                "php": ">=7.2.5",
+                "illuminate/support": "^5.5 || ^6.0 || ^7.0 || ^8.0",
+                "illuminate/view": "^5.5 || ^6.0 || ^7.0 || ^8.0",
+                "php": "^7.2.5 || ^8.0",
                 "twig/twig": "~3.0"
             },
             "require-dev": {
                 "ext-json": "*",
-                "laravel/framework": "5.5.*",
-                "mockery/mockery": "0.9.*",
-                "phpunit/phpunit": "~6.0",
-                "satooshi/php-coveralls": "~0.6",
-                "squizlabs/php_codesniffer": "~1.5"
+                "laravel/framework": "^5.5 || ^6.0 || ^7.0 || ^8.0",
+                "mockery/mockery": "^1.3.1",
+                "phpunit/phpunit": "^6.5.14 || ^7.5.20 || ^8.5.8 || ^9.3.7",
+                "squizlabs/php_codesniffer": "^3.6"
             },
             "suggest": {
                 "laravelcollective/html": "For bringing back html/form in Laravel 5.x",
@@ -2917,7 +3153,7 @@
                 "issues": "https://github.com/rcrowe/TwigBridge/issues",
                 "source": "https://github.com/rcrowe/TwigBridge/tree/master"
             },
-            "time": "2021-08-16T09:18:59+00:00"
+            "time": "2021-12-22T07:20:48+00:00"
         },
         {
             "name": "scssphp/scssphp",
@@ -2992,6 +3228,108 @@
                 "source": "https://github.com/scssphp/scssphp/tree/v1.9.0"
             },
             "time": "2021-12-13T11:55:16+00:00"
+        },
+        {
+            "name": "spatie/macroable",
+            "version": "1.0.1",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/spatie/macroable.git",
+                "reference": "7a99549fc001c925714b329220dea680c04bfa48"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/spatie/macroable/zipball/7a99549fc001c925714b329220dea680c04bfa48",
+                "reference": "7a99549fc001c925714b329220dea680c04bfa48",
+                "shasum": ""
+            },
+            "require": {
+                "php": "^7.2|^8.0"
+            },
+            "require-dev": {
+                "phpunit/phpunit": "^8.0|^9.3"
+            },
+            "type": "library",
+            "autoload": {
+                "psr-4": {
+                    "Spatie\\Macroable\\": "src"
+                }
+            },
+            "notification-url": "https://packagist.org/downloads/",
+            "license": [
+                "MIT"
+            ],
+            "authors": [
+                {
+                    "name": "Freek Van der Herten",
+                    "email": "freek@spatie.be",
+                    "homepage": "https://spatie.be",
+                    "role": "Developer"
+                }
+            ],
+            "description": "A trait to dynamically add methods to a class",
+            "homepage": "https://github.com/spatie/macroable",
+            "keywords": [
+                "macroable",
+                "spatie"
+            ],
+            "support": {
+                "issues": "https://github.com/spatie/macroable/issues",
+                "source": "https://github.com/spatie/macroable/tree/1.0.1"
+            },
+            "time": "2020-11-03T10:15:05+00:00"
+        },
+        {
+            "name": "spatie/url",
+            "version": "1.3.5",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/spatie/url.git",
+                "reference": "3633de58e0709ea98cecceff61ee51caf1fde7e3"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/spatie/url/zipball/3633de58e0709ea98cecceff61ee51caf1fde7e3",
+                "reference": "3633de58e0709ea98cecceff61ee51caf1fde7e3",
+                "shasum": ""
+            },
+            "require": {
+                "php": "^7.2|^8.0",
+                "psr/http-message": "^1.0",
+                "spatie/macroable": "^1.0.1"
+            },
+            "require-dev": {
+                "phpunit/phpunit": "^8.0|^9.3"
+            },
+            "type": "library",
+            "autoload": {
+                "psr-4": {
+                    "Spatie\\Url\\": "src"
+                }
+            },
+            "notification-url": "https://packagist.org/downloads/",
+            "license": [
+                "MIT"
+            ],
+            "authors": [
+                {
+                    "name": "Sebastian De Deyne",
+                    "email": "sebastian@spatie.be",
+                    "homepage": "https://spatie.be",
+                    "role": "Developer"
+                }
+            ],
+            "description": "Parse, build and manipulate URL's",
+            "homepage": "https://github.com/spatie/url",
+            "keywords": [
+                "spatie",
+                "url"
+            ],
+            "support": {
+                "issues": "https://github.com/spatie/url/issues",
+                "source": "https://github.com/spatie/url/tree/1.3.5"
+            },
+            "time": "2020-11-03T10:36:20+00:00"
         },
         {
             "name": "swiftmailer/swiftmailer",
@@ -3852,6 +4190,94 @@
                 }
             ],
             "time": "2021-12-09T13:36:09+00:00"
+        },
+        {
+            "name": "symfony/intl",
+            "version": "v5.4.0",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/symfony/intl.git",
+                "reference": "01b11a038293916ad52aab9ac7bd6b4e711d1f3e"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/symfony/intl/zipball/01b11a038293916ad52aab9ac7bd6b4e711d1f3e",
+                "reference": "01b11a038293916ad52aab9ac7bd6b4e711d1f3e",
+                "shasum": ""
+            },
+            "require": {
+                "php": ">=7.2.5",
+                "symfony/deprecation-contracts": "^2.1|^3",
+                "symfony/polyfill-php80": "^1.16"
+            },
+            "require-dev": {
+                "symfony/filesystem": "^4.4|^5.0|^6.0"
+            },
+            "type": "library",
+            "autoload": {
+                "psr-4": {
+                    "Symfony\\Component\\Intl\\": ""
+                },
+                "classmap": [
+                    "Resources/stubs"
+                ],
+                "files": [
+                    "Resources/functions.php"
+                ],
+                "exclude-from-classmap": [
+                    "/Tests/"
+                ]
+            },
+            "notification-url": "https://packagist.org/downloads/",
+            "license": [
+                "MIT"
+            ],
+            "authors": [
+                {
+                    "name": "Bernhard Schussek",
+                    "email": "bschussek@gmail.com"
+                },
+                {
+                    "name": "Eriksen Costa",
+                    "email": "eriksen.costa@infranology.com.br"
+                },
+                {
+                    "name": "Igor Wiedler",
+                    "email": "igor@wiedler.ch"
+                },
+                {
+                    "name": "Symfony Community",
+                    "homepage": "https://symfony.com/contributors"
+                }
+            ],
+            "description": "Provides a PHP replacement layer for the C intl extension that includes additional data from the ICU library",
+            "homepage": "https://symfony.com",
+            "keywords": [
+                "i18n",
+                "icu",
+                "internationalization",
+                "intl",
+                "l10n",
+                "localization"
+            ],
+            "support": {
+                "source": "https://github.com/symfony/intl/tree/v5.4.0"
+            },
+            "funding": [
+                {
+                    "url": "https://symfony.com/sponsor",
+                    "type": "custom"
+                },
+                {
+                    "url": "https://github.com/fabpot",
+                    "type": "github"
+                },
+                {
+                    "url": "https://tidelift.com/funding/github/packagist/symfony/symfony",
+                    "type": "tidelift"
+                }
+            ],
+            "time": "2021-11-28T15:25:38+00:00"
         },
         {
             "name": "symfony/mime",

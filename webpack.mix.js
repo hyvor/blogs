@@ -16,3 +16,7 @@ const mix = require('laravel-mix');
 mix.js('resources/js/console/console.js', 'public/js')
     .react();
 mix.sass('resources/css/console/console.scss', 'public/css');
+
+
+// landing
+mix.sass('resources/css/landing/landing.scss', 'public/css');
