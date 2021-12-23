@@ -24,7 +24,7 @@ class CreateUsersTable extends Migration
 
 
             $table->enum('status', ['invited', 'active', 'blocked'])->default('invited');
-            $table->enum('role', ['owner', 'admin', 'editor', 'author', 'contributor']);
+            $table->enum('role', ['owner', 'admin', 'finance', 'editor', 'author', 'contributor']);
 
 
             // user data

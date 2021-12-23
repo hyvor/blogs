@@ -3,9 +3,6 @@ import ReactDOM from 'react-dom';
 import OnBoarding from './OnBoarding'
 import Select from './ReusableComponents/Select';
 
-
-import {ChevronExpand, Filter} from 'react-bootstrap-icons';
-
 import {
     BrowserRouter as Router,
     Switch,
@@ -13,56 +10,37 @@ import {
     NavLink
 } from "react-router-dom";
 
-function App() {
 
-    return <Router basename="/console">
-        <Switch>
-            <Route path="/onboarding" exact>
-                <OnBoarding />
-            </Route>
+import { RecoilRoot } from 'recoil';
 
-            <Route>
-                <div>
-                    <Left />
-                    <div id="middle">
-                        <Middle />
-                    </div>
-                </div>
-            </Route>
-
-        </Switch>
-    </Router>
-}
 
 import PostEditor from './PostEditor';
-function Left() {
-    return <div id="left">
-        <div id="left-header" className="box">
-            <img src="/img/logo.png" id="left-header-image-1" className="round-image-40"></img>
-            <div id="left-header-image-2" className="round-image-40"></div>
-        </div>
-        <div id="left-nav" className="box">
-            <div className="blog-selector">
-                <div className="name">Supun's Blog</div>
-                <div><ChevronExpand /></div>
-            </div>
+import Nav from './Nav/Nav';
 
-            <NavLink to="/" exact>Your Blog</NavLink>
+function App() {
 
-            <div className="left-divider"></div>
+    return <RecoilRoot>
+        <Router basename="/console">
+            <Switch>
+                <Route path="/onboarding" exact>
+                    <OnBoarding />
+                </Route>
 
-            <NavLink to="/posts">Posts</NavLink>
-            <NavLink to="/pages">Pages</NavLink>
+                <Route>
+                    <div>
+                        <Nav />
+                        <div id="middle">
+                            <Middle />
+                        </div>
+                    </div>
+                </Route>
 
-            <div className="left-divider"></div>
+            </Switch>
+        </Router>
+    </RecoilRoot>
 
-            <a>Theme</a>
-            <a>Users</a>
-            <a>Billing</a>
-            <a>Settings</a>
-        </div>
-    </div>
 }
+
 
 function Middle() {
 
