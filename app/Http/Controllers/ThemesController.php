@@ -3,17 +3,17 @@
 namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
-use App\Repositories\ThemesRepositoryInterface;
+// use App\Repositories\ThemesRepositoryInterface;
 use App\Models\ThemeFile;
 
 class ThemesController extends Controller
 {
-    private $themeRepo;
+    // private $themeRepo;
 
-    public function __construct(ThemesRepositoryInterface $themeRepository)
-    {
-        $this->themeRepo = $themeRepository;
-    }
+    // public function __construct(ThemesRepositoryInterface $themeRepository)
+    // {
+    //     $this->themeRepo = $themeRepository;
+    // }
 
 
     // Bloger Theme Select

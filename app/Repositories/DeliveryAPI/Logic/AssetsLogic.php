@@ -1,22 +1,34 @@
 <?php
 
-namespace App\Repositories\DeliveryAPI;
+namespace App\Repositories\DeliveryAPI\Logic;
 
-class AssetsAPI {
+// use App\Repositories\DeliveryAPI\AssetsLogicInterface;
+use App\Repositories\DeliveryAPI\Eloquent\ThemeQuery;
+
+use ScssPhp\ScssPhp\Compiler;
+
+
+// class AssetsLogic implements AssetsLogicInterface{
+class AssetsLogic {
+
+    private $themeRepo;
+
+    public function __construct(ThemeQuery $themeRepository)
+    {
+        $this->themeRepo = $themeRepository;
+    }
 
     /* 
     *
     * Fetching the assets data from the database and passing it to an URL
     *
     */
-    public function assets(Request $request){
+    public function assets($geturl){
 
-        $assetFile = $request->assetFile;
-        $this->themeRepo->deliverAssets($assetFile);
+        // dd($geturl);
+        $this->themeRepo->deliverAssets($geturl);
 
-        // $fileExtention = ;
-
-        if($assetFile == 'style.css'){
+        if($geturl == 'style.css'){
 
             $path = file_get_contents(base_path('public/themes/styles/index.scss'), true);
             // Scss compiler
@@ -27,7 +39,9 @@ class AssetsAPI {
         }
         else{
             
-            $file = $this->themeRepo->deliverAssets($assetFile);
+            $file = $this->themeRepo->deliverAssets($geturl);
+            dd($file);
+
             foreach($file as $singleAsset){
                 $assetName = $singleAsset['name'];
             }
@@ -38,6 +52,7 @@ class AssetsAPI {
 
                 // $extention = '.png';
                 if($extention = '.js'){
+                    // dd("I am java script");
                     $script = file_get_contents(base_path('public/themes/assets/script.js'), true);
                     return $script;
                 }

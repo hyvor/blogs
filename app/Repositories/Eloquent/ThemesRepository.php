@@ -82,14 +82,14 @@ Class ThemesRepository implements ThemesRepositoryInterface
     * Rendering the assets from the database
     *
     */
-    public function deliverAssets($assetFile){
+    public function deliverAssets($fileName){
 
-        // $assetFile = "script.js";
+        // $fileName = "script.js";
         $blogId = Blog::select('id')
             ->value('id');
 
         $assetsFileName= BlogThemeFile::where('type' , 'assets') 
-        ->where('name' , $assetFile)
+        ->where('name' , $fileName)
         ->get();
 
         return $assetsFileName;

@@ -183,9 +183,8 @@ return [
         // Auth0\Login\LoginServiceProvider::class,
 
         App\Providers\TelescopeServiceProvider::class,
-        // App\Providers\RepositoriesServiceProvider::class,
 
-        \Hyvor\Auth\HyvorAuthServiceProvider::class,
+        // \Hyvor\Auth\HyvorAuthServiceProvider::class,
 
 
     ],

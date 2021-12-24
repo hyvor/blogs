@@ -2,16 +2,15 @@
 
 namespace App\Repositories\DeliveryAPI\Eloquent;
 
-use App\Repositories\ThemesRepositoryInterface;
 use App\Models\Theme;
 use App\Models\ThemeFile;
 use App\Models\BlogThemeFile;
 use App\Models\Blog;
 
 
-Class ThemesRepository implements ThemesRepositoryInterface
+Class ThemeQuery 
 {
-    /* 
+    /* ThemeQuery
     *
     * Selecting the theme from ThemeFiles table & pasting it in the BlogThemeFiles table
     *
@@ -83,15 +82,16 @@ Class ThemesRepository implements ThemesRepositoryInterface
     * Rendering the assets from the database
     *
     */
-    public function deliverAssets($assetFile){
+    public function deliverAssets($geturl){
 
-        // $assetFile = "script.js";
+        // $fileName = "script.js";
         $blogId = Blog::select('id')
             ->value('id');
 
         $assetsFileName= BlogThemeFile::where('type' , 'assets') 
-        ->where('name' , $assetFile)
+        ->where('name' , $geturl)
         ->get();
+        dd($assetsFileName);
 
         return $assetsFileName;
     }
