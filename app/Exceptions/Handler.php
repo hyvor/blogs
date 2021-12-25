@@ -3,6 +3,7 @@
 namespace App\Exceptions;
 
 use Illuminate\Foundation\Exceptions\Handler as ExceptionHandler;
+use Illuminate\Validation\ValidationException;
 use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 use Throwable;
 
@@ -45,14 +46,20 @@ class Handler extends ExceptionHandler
         if (!config('app.debug')) { // not in debug mode
 
             if ($request->is('api/*')) {
-                $code = $exception->getCode();
+                $code = isset($exception->status) ? $exception->status : $exception->getCode();
                 $httpCode = in_array($code, [400, 401, 402, 403, 404, 422, 500]) ? $code : 500;
 
-                $error = $exception instanceof TrustedException ? $exception->getMessage() : 'Something went wrong on our side.';
+                $error = $exception instanceof TrustedException ? 
+                    $exception->getMessage() : 
+                    'Something went wrong on our side.';
 
                 if ($exception instanceof NotFoundHttpException) {
                     $httpCode = 404;
                     $error = 'API Endpoint not found';
+                }
+
+                if ($exception instanceof ValidationException) {
+                    $error = $exception->validator->errors()->first();
                 }
 
                 return response()->json([

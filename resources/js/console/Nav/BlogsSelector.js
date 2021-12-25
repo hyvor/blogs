@@ -1,18 +1,31 @@
 import React from 'react'
-import { useRecoilValue } from 'recoil'
-import activeBlogIdState from '../state/activeBlogIdState'
-import blogsState from '../state/blogsState'
+import { useEffect } from 'react';
 
 
 import {ChevronExpand} from 'react-bootstrap-icons';
+import { useParams } from 'react-router-dom';
+import useActiveSubdomain from '../state/useActiveSubdomain';
+import useBlogsState from '../state/useBlogsState';
+
+let lastActiveSubdomain = null;
 
 export default function BlogsSelector() {
 
-    const blogs = useRecoilValue(blogsState)
-    const activeBlogId = useRecoilValue(activeBlogIdState)
+    const blogsState = useBlogsState();
+    const subdomain = useActiveSubdomain().get();
+
+    let activeBlog = blogsState.getBlogBySubdomain(subdomain || lastActiveSubdomain);
+
+    if (!activeBlog) {
+        activeBlog = blogsState.get()[0];
+    }
+
+    useEffect(() => {
+        lastActiveSubdomain = subdomain;
+    }, [subdomain]);
 
     return <div className="blog-selector">
-        <div className="name">Supun's Blog</div>
+        <div className="name">{ activeBlog.name }</div>
         <div><ChevronExpand /></div>
     </div>
 
