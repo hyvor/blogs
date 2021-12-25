@@ -11,6 +11,8 @@ use Symfony\Component\Routing\Matcher\UrlMatcher;
 use Symfony\Component\Routing\RequestContext;
 use Symfony\Component\Routing;
 
+use \Mockery ;
+
 
 
 Class DeliveryAPIRepository implements DeliveryAPIRepositoryInterface
@@ -29,59 +31,52 @@ Class DeliveryAPIRepository implements DeliveryAPIRepositoryInterface
     /* 
     *
     * This is the author page of the bolg
-    *
+    * mockery/mockery
     */
-    public function getUrl($geturl , $request){
+    public function getUrl($geturl, $request){
 
         // dd($geturl);
-       
+        // $request = Mockery::mock('App\Http\Requests\UpdateMerchant');
+
         $route = new RouteCollection();
         
         $route->add('assets', new Route('/assets/{name}'));
         $route->add('pages', new Route('{name}'));
-        // dd($route);
-        // $route->add('home', new Route(''));
-        // $route->add('pages', new Route('tag/{name}'));
-        // $route->add('pages', new Route('author/{name}'));
-
+        // $route->add('home', new Route('/'));
+        $route->add('tag', new Route('tag/{name}'));
+        $route->add('author', new Route('author/{name}'));
 
         /* 
         *
-        * Call the assets
+        * Connecting with the main route
         *
         */
-        $assetContext = new RequestContext($geturl);
-        $assetContext->fromRequest($request);
-        $assetMatcher = new UrlMatcher($route, $assetContext);
-        $assetAttribute = $assetMatcher->match($request->getPathInfo());        
-        
-        dd($assetAttribute);
-        // $generator = new Routing\Generator\UrlGenerator($routes, $context);
-        // echo $generator->generate('script.js');
-
-        /* 
-        *
-        * Call the pages
-        *
-        */
-        $pageContext = new RequestContext($geturl);
-        $pageContext->fromRequest($request);
-        $pageMatcher = new UrlMatcher($route, $pageContext);
-        $pageAttribute = $pageMatcher->match($request->getPathInfo()); 
-
-        // dd($pageAttribute);
+        $Context = new RequestContext($geturl);
+        $Context->fromRequest($request);
+        $Matcher = new UrlMatcher($route, $Context);
+        $Attribute = $Matcher->match($request->getPathInfo());        
+        // dd($Attribute);
 
 
-        if($assetAttribute['name'])
+
+        if($Attribute['_route'] == 'assets' )
         {
            return $this->assetsLog->assets($geturl);
         }
-        else if($pageAttribute['name'])
+        else if($Attribute['_route'] == 'page')
         {
             dd('this is for the page route');
         }
+        else if($Attribute['_route'] == 'tag')
+        {
+            dd('this links the tags page');
+        }
+        else if($Attribute['_route'] == 'author')
+        {
+            dd('this links for the author page');
+        }
         else{
-            dd('none');
+            dd('this is for the home page');
         }
     }
 
