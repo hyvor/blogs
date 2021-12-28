@@ -9,18 +9,15 @@ import _globalState from "./_globalState";
  * This state is synced with 
  * 
  * The default subdomain is the subdomain of the first blog
- * 
- * 
- * 
  */
 export default function useActiveSubdomain() {
 
     const blogs = useBlogsState().get();
 
-    const { subdomain } = useParams();
+    const routeSubdomain = useParams().subdomain;
     const loation = useLocation();
     const navigate = useNavigate();
-    const state = _globalState('activeSubdomain', subdomain || findDefaultActiveSubdomain(), {
+    const state = _globalState('activeSubdomain', routeSubdomain || findDefaultActiveSubdomain(), {
         // when deleting the current one
         resetToFirst: (state, setState) => {
             setState(findDefaultActiveSubdomain());
@@ -33,20 +30,12 @@ export default function useActiveSubdomain() {
                 old = subdomain
 
                 navigate("/" + subdomain + path);
+
+                return old;
             });
 
         }
     });
-
-    useEffect(() => {
-        if (subdomain) {
-            state.set(subdomain);
-        }
-    }, [subdomain]);
-
-    useEffect(() => {
-        
-    }, [state.get()])
 
     function findDefaultActiveSubdomain() {
         return blogs.length ? blogs[0].subdomain : null;

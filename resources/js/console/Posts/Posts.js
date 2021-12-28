@@ -13,9 +13,24 @@ import {
 } from "react-router-dom";
 
 import PostEditor from './PostEditor';
+import axios from 'axios';
+import { getConsoleAPIEndpoint } from '../helper';
+import useActiveSubdomain from '../state/useActiveSubdomain';
 
 
 export default function Posts() {
+
+    const activeSubdomain = useActiveSubdomain().get();
+
+    useEffect(() => {
+
+        axios.get(getConsoleAPIEndpoint(activeSubdomain, '/post-stats'))
+            .then(function(response) {
+                var counts = response.data;
+                
+            })
+
+    }, [activeSubdomain])
 
     const statusOptions = [
         { value: 'all', label: 'All' },

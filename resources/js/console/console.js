@@ -20,27 +20,33 @@ import { BoxArrowUpRight, Laptop, Phone } from 'react-bootstrap-icons';
 import Loader from './ReusableComponents/Loader';
 import Posts from './Posts/Posts';
 
+import { resetContext, Provider } from 'kea'
+
+resetContext();
+
 function App() {
 
-    return <BrowserRouter basename="console">
-        <Routes>
-            <Route path="onboarding" exact element={<OnBoarding />} />
+    return <Provider>
+        <BrowserRouter basename="console">
+            <Routes>
+                <Route path="onboarding" exact element={<OnBoarding />} />
 
-            <Route path="" element={<BlogConsole />} >
+                <Route path="" element={<ViewWithNav />} >
 
-                <Route path=":subdomain">
-                    <Route index element={<BlogPreview />} />
-                    <Route path="posts" element={<Posts />} />
-                    <Route path="pages" element={<Posts />} />
-                    <Route path="theme" element={<Theme />} />
-                    <Route path="settings" element={<Theme />} />
+                    <Route path=":subdomain">
+                        <Route index element={<BlogPreview />} />
+                        <Route path="posts" element={<Posts />} />
+                        <Route path="pages" element={<Posts />} />
+                        <Route path="theme" element={<Theme />} />
+                        <Route path="settings" element={<Theme />} />
+                    </Route>
+
                 </Route>
+                
 
-            </Route>
-            
-
-        </Routes>
-    </BrowserRouter>
+            </Routes>
+        </BrowserRouter>
+    </Provider>
 
 }
 
@@ -48,15 +54,13 @@ function Theme() {
     return <div style={{height: "100%"}} className="box"></div>
 }
 
-function BlogConsole() {
-
+function ViewWithNav() {
     return <div>
         <Nav />
         <div id="middle">
             <Outlet />
         </div>
     </div>
-
 }
 
 function BlogPreview() {
