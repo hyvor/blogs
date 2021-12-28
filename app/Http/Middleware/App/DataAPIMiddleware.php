@@ -29,6 +29,10 @@ class DataAPIMiddleware {
             throw new DataAPIException("Subdomain not found ($subdomain)", 400);
         }
 
+        /**
+         * 
+         * Todo: Change this to use Dependency Injection like SubdomainMiddleware.php
+         */
         $request->attributes->set('blog', $blog);
 
         return $next($request);

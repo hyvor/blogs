@@ -1,5 +1,5 @@
 import { useEffect } from "react";
-import { useLocation, useParams } from "react-router-dom";
+import { useLocation, useNavigate, useParams } from "react-router-dom";
 import useBlogsState from "./useBlogsState";
 import _globalState from "./_globalState";
 
@@ -19,10 +19,22 @@ export default function useActiveSubdomain() {
 
     const { subdomain } = useParams();
     const loation = useLocation();
+    const navigate = useNavigate();
     const state = _globalState('activeSubdomain', subdomain || findDefaultActiveSubdomain(), {
         // when deleting the current one
         resetToFirst: (state, setState) => {
             setState(findDefaultActiveSubdomain());
+        },
+
+        change: (subdomain) => {
+            var path;
+            state.update((old) => {
+                path = location.pathname.replace('/console/' + old, '');
+                old = subdomain
+
+                navigate("/" + subdomain + path);
+            });
+
         }
     });
 
@@ -30,7 +42,6 @@ export default function useActiveSubdomain() {
         if (subdomain) {
             state.set(subdomain);
         }
-        console.log(location);
     }, [subdomain]);
 
     useEffect(() => {

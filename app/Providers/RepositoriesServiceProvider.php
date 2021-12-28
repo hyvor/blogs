@@ -9,6 +9,8 @@ use App\Repositories\DataAPI\DataAPIRepositoryInterface;
 use Illuminate\Support\ServiceProvider;
 use App\Repositories\ImportExportRepositoryInterface;
 use App\Repositories\Eloquent\ImportExportRepository;
+use App\Repositories\Post\PostRepository;
+use App\Repositories\Post\PostRepositoryInterface;
 use App\Repositories\Subscription\SubscriptionRepository;
 use App\Repositories\Subscription\SubscriptionRepositoryInterface;
 use App\Repositories\User\UserRepository;
@@ -34,6 +36,7 @@ class RepositoriesServiceProvider extends ServiceProvider
     public function boot()
     {
         $this->app->bind(BlogRepositoryInterface::class, BlogRepository::class);
+        $this->app->bind(PostRepositoryInterface::class, PostRepository::class);
         $this->app->bind(UserRepositoryInterface::class, UserRepository::class);
         $this->app->bind(SubscriptionRepositoryInterface::class, SubscriptionRepository::class);
 

@@ -9,7 +9,7 @@
 
 
 body {
-    background-color: #fffaf8;
+    background-color: $color-accent-very-light;
     color: $color-text;
 }
 
@@ -28,29 +28,102 @@ body {
 }
 #left-nav {
     font-weight: 600;
+    padding:15px;
     a {
         display: block;
-        padding: 14px 18px;
-        transition:.3s background-color;
+        padding: 12px 18px;
+        transition:.1s background-color;
         cursor: pointer;
+        border-radius:20px;
         &:hover {
             background-color: $color-hover;
         }
         &.active {
             background: $color-accent-light;
-            border-right: 4px solid $color-accent;
         }
     }
     .left-divider {
         height:25px;
     }
     .blog-selector {
-        display:flex;
-        cursor: pointer;
-        padding: 20px 18px;
-        border-bottom:1px solid $color-accent-light;
+        position:relative;
+        margin-bottom:24px;
+        &:after {
+            position: absolute;
+            content: "";
+            width:85%;
+            left:50%;
+            bottom:-12px;
+            transform: translateX(-50%);
+            height:1px;
+            background: $color-accent-light;
+        }
+        .value {
+            display:flex;
+            cursor: pointer;
+            padding: 12px 18px;
+        }
         .name {
             flex:1;
+        }
+        .popup-list {
+            position:absolute;
+            width:280px;
+            transition:.125s transform, .125s opacity;
+            left:100%;
+            top:0;
+            z-index: 1;
+            padding:15px;
+            
+            &.active {
+                pointer-events: auto;
+                opacity: 1;
+                transform:translateX(0px);
+            }
+            &.inactive {
+                pointer-events: none;
+                opacity: 0;
+                transform:translateX(-20px);
+            }
+            .create-button-view {
+                margin-top:15px;
+                margin-bottom:5px;
+                text-align: center;
+            }
+
+            .blog-list {max-height: 350px;overflow:auto}
+
+            .blog {
+                padding: 6px 15px;
+                border-radius: 20px;
+                cursor: pointer;
+                transition:.1s background-color;
+                &:hover {
+                    background-color: $color-hover;
+                }
+                &.active {
+                    background-color: $color-accent-light;
+
+                    .global-tag-role {background-color:#fff}
+                }
+                .blog-name {
+                    flex:1;
+                }
+                .blog-row {
+                    display:flex;
+                    align-items: center;
+                    &:nth-child(2) {
+                        color: $color-text-light;
+                        font-size: 11px;
+                    }
+                }
+                .row-left {
+                    flex:1;
+                }
+                .row-right {
+                    text-align: right;
+                }
+            }
         }
     }
 }
@@ -292,11 +365,17 @@ body {
             align-items: center;
             justify-content: center;
             overflow: hidden;
+            position:relative;
             iframe {
                 max-width: 100%;
                 max-height: 100%;
                 border: none;
                 transition: .3s width, .3s height;
+                animation: preview-iframe .5s;
+                @keyframes preview-iframe {
+                    0% {opacity: 0;transform:translateY(30px)}
+                    100% {opacity: 1;transform:translateY(0)}
+                }
             }
         }
 

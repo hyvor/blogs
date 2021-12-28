@@ -22,8 +22,24 @@
         padding: 4px 10px;
     }
 
+    &.medium {
+        font-size:12px;
+        padding:6px 14px;
+    }
+
     &.inactive {
         background: $color-accent-light;
         color: $color-text;
+    }
+
+    &.secondary {
+        background: none;
+        color: $color-text-light;
+        border: 1px solid $color-grey;
+        box-shadow: 0 1px 2px 0 rgba(0,0,0,0.05);
+        transition:.1s color;
+        &:hover {
+            color: $color-text;
+        }
     }
 }

@@ -26,5 +26,4 @@ class BlogRepository implements BlogRepositoryInterface {
         return '';
     }
 
-
 }

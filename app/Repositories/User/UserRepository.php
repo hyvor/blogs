@@ -26,7 +26,7 @@ class UserRepository implements UserRepositoryInterface {
             ->orderBy('sort', 'ASC')
             ->orderBy('created_at', 'ASC')
             ->select('role', 'blog_id')
-            ->with('blog:id,name,subdomain', 'blog.subscriptions')
+            ->with('blog:id,name,subdomain,posts_count', 'blog.subscriptions')
             ->get();
 
         $blogs = [];
@@ -67,7 +67,8 @@ class UserRepository implements UserRepositoryInterface {
             'role' => $user->role,
             'name' => $user->blog->name,
             'subdomain' => $user->blog->subdomain,
-            'plan' => $plan
+            'plan' => $plan,
+            'posts_count' => $user->blog->posts_count
         ];
     }
 

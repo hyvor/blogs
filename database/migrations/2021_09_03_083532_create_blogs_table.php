@@ -32,6 +32,7 @@ class CreateBlogsTable extends Migration
             $table->string('social_youtube')->nullable();
             $table->string('social_instagram')->nullable();
 
+            $table->integer('posts_count')->default(0);
         });
     }
 
