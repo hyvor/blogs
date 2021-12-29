@@ -40,6 +40,7 @@ class CreateBlogsTable extends Migration
             $table->string('short_description');
             $table->integer('author_id');
 
+            $table->string('edited_at')->nullable();
             // Soft Delete
             $table->string('deleted_at')->nullable();
 

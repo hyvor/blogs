@@ -16,11 +16,4 @@ class Tag extends Model
         'description',
         'feature_image_media_id',
     ];
-
-
-    // public function getRouteKeyName(){
-    //     return 'name';
-    // }
-
-
 }

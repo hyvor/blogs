@@ -6,6 +6,9 @@ use Illuminate\Http\Request;
 use App\Http\Controllers\Controller;
 use App\Repositories\DeliveryAPI\DeliveryAPIRepositoryInterface;
 
+use App\Twig\TwigFilters;
+
+
 class ThemeDeleveryController extends Controller
 {
     private $themeRepo;
@@ -22,10 +25,15 @@ class ThemeDeleveryController extends Controller
     *
     */
     public function getUrl(Request $request){
-        $geturl = $request->url;
-        $this->themeRepo->getUrl($geturl, $request);
+        
+        $geturl = $request->path();
+        // dd($geturl);
+        $this->themeRepo->getUrl($geturl);
 
-        // return $this->themeRepo->index();
+        // $twigFilter = new TwigFilters;
+        // $twigFilter->postNotification($geturl);
+
+        return $this->themeRepo->getUrl($geturl);
     }
 
 
@@ -120,6 +128,8 @@ class ThemeDeleveryController extends Controller
             'index.html' => $index,
         ));
         $twig = new \Twig\Environment($loader);
+        $twig->addExtension(new TwigFilters());
+
 
         echo $twig->render('index.html', 
             array(

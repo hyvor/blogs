@@ -19,16 +19,3 @@ Route::domain(config('app.domain_app'))->group(function() {
     include('app/api-console.php');
 
 });
-
-
-// Delevery Routes
-// Route::domain('{subdomain}.hyvorblogs.test')->middleware('blogDeliver')->group(function () {
-
-//     // Delevery Routes
-//     include('Delivery/api-assets.php');
-//     include('Delivery/api-theme.php');
-
-//     // Select a specific theme for the blog
-//     Route::get('/theme', [App\Http\Controllers\ThemesController::class, 'selectTheme'])->name('/theme');
-
-// });

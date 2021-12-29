@@ -4,7 +4,7 @@
     <head>
         <meta charset="UTF-8">
         <meta name="viewport" content="width=device-width, initial-scale=1.0">
-        <link href="{{ ('assets/style.css') |e('html_attr') }}" rel="stylesheet" />
+        <link href="{{ ('style.css') |assets }}" rel="stylesheet" />
 
         {# <link href="{{ HTML::style('assets/style.css') }}" rel="stylesheet" /> #}
 
@@ -16,8 +16,17 @@
     <body> 
         
         <div class="hyvor">
-            <h3> Hyvor testing the scss </h3>
-        </div>
+            <h3> assets testing section </h3>
+            {{ ('style.css')  |assets }} <br>
+            {{ ('script.js')  |assets }} <br>
+            {{ ('hello')  |assets }}
+        </div> 
+
+<br><br>
+        <div class="hyvor">
+            <h3> language testing section </h3>
+            {{ 'Hello world'  |lang }} <br>
+        </div> 
 
         <div class="alert alert-primary" role="alert">
             A simple primary alert—check it out!
@@ -32,7 +41,7 @@
         {% endblock %}
 
 
-        <img src="{{ ('assets/2.png') | e('url') }}" alt="Girl in a jacket" width="500" height="600">
+        <img src="{{ ('2.png') |assets }}" alt="Girl in a jacket" width="500" height="600">
 
         {# {% block stylesheets %}
             <link rel="stylesheet" type="text/css" href="{{ ('styles/index') | e('url') }} ">
@@ -40,7 +49,8 @@
         {% endblock %} #}
 
         {% block javascript %}
-            <script src=" {{ ('assets/script.js') | e('url') }} "></script>
+            {# // <script src=" {{ ('assets/script.js') | e('url') }} "></script> #}
+            <script src=" {{ ('script.js') |assets }} "></script>
         {% endblock %}
     </body>
                 

@@ -63,7 +63,7 @@ Class ThemeQuery
     * Rendering the home page from the database
     *
     */
-    public function deliverThemeData(){
+    public static function deliverThemeData(){
 
         $blogId = Blog::select('id')
             ->value('id');
@@ -82,16 +82,19 @@ Class ThemeQuery
     * Rendering the assets from the database
     *
     */
-    public function deliverAssets($geturl){
+    public static function deliverAssets($urlName){
 
+        // dd($geturl);
         // $fileName = "script.js";
         $blogId = Blog::select('id')
             ->value('id');
 
+            // $test = 'script.js';
         $assetsFileName= BlogThemeFile::where('type' , 'assets') 
-        ->where('name' , $geturl)
+        ->where('name' , $urlName)
         ->get();
-        dd($assetsFileName);
+        // ->first();
+        // dd($assetsFileName);
 
         return $assetsFileName;
     }

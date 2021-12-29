@@ -22,18 +22,16 @@ Route::domain('{subdomain}.' . config('app.domain_delivery'))
 
 Route::domain('{subdomain}.hyvorblogs.test')->middleware('blogDeliver')->group(function () {
 
+    // Testing Theme Route
+    Route::get('/test', [App\Http\Controllers\Delivery\ThemeDeleveryController::class, 'test']);
 
-    Route::get('{url}', [App\Http\Controllers\Delivery\ThemeDeleveryController::class, 'getUrl'])->where('url', '.+');
+    Route::get('{url}', [App\Http\Controllers\Delivery\ThemeDeleveryController::class, 'getUrl'])->where('url', '.*');
 
 
-    // // Call to css,js,png & other files.
+    // Call to css,js,png & other files.
     // Route::get('assets/{fileName}', [App\Http\Controllers\Delivery\AssetController::class, 'assets']);
     // // Language change
     // Route::get('language', [App\Http\Controllers\Delivery\ThemeDeleveryController::class, 'languageChange']);
-
-
-    // // Testing Theme Route
-    // Route::get('/test', [App\Http\Controllers\Delivery\ThemeDeleveryController::class, 'test']);
 
     // // Main Theme Routes
     // Route::get('/', [App\Http\Controllers\Delivery\ThemeDeleveryController::class, 'index'])->name('/');
@@ -43,7 +41,7 @@ Route::domain('{subdomain}.hyvorblogs.test')->middleware('blogDeliver')->group(f
 
 
 
-    // // Select a specific theme for the blog
+    // Select a specific theme for the blog
     // Route::get('/theme', [App\Http\Controllers\ThemesController::class, 'selectTheme'])->name('/theme');
 
 });

@@ -19,16 +19,15 @@ class BlogSeeder extends Seeder
         DB::table('blogs')->insert([
             'user_id' => "1",
             'theme_id' => "1",
-            'subdomain' => "test",
-            'name' => "hellotest",
-            'description' => "testing the test",
-            'icon_media_id' => "1",
-            'logo_media_id' => "1",
+            'subdomain' => "rasif",
+            'name' => "deletation",
+            'description' => "testing the deletation",
             'website_url' => "http://test.hyvorblogs.test/",
             'title' => "test theme",
-            'short_description' => "hello world",
+            'short_description' => "sorry its not vailable",
             'author_id' => "1",
-            'deleted_at' => "1",
+            'edited_at'=> "1",
+            'deleted_at'=>"1",
 
         ]);
     }

@@ -15,8 +15,9 @@
         "leafo/scssphp": "^0.8.2",
         "rcrowe/twigbridge": "^0.12.3",
         "scssphp/scssphp": "^1.9",
+        "stichoza/google-translate-php": "^4.1",
         "symfony/asset": "^6.0",
-        "twig/twig": "^3.3",
+        "symfony/http-foundation": "^5.4",
         "vlucas/phpdotenv": "^5.4"
     },
     "require-dev": {
@@ -37,6 +38,9 @@
         },
         "files": [
             "app/Helpers/ImportScssHelper.php"
+        ],
+        "classmap": [
+            "app/twig"
         ],
 
         "Database\\Seeders\\": "database/seeders/",

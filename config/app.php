@@ -186,6 +186,12 @@ return [
 
         // \Hyvor\Auth\HyvorAuthServiceProvider::class,
 
+        /* 
+        * 3rd Party Providers 
+        */
+        // Dedicated\GoogleTranslate\GoogleTranslateProvider::class,
+
+
 
     ],
 

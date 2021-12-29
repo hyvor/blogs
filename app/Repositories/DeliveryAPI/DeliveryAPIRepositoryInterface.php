@@ -10,7 +10,7 @@ namespace App\Repositories\DeliveryAPI;
 
 interface DeliveryAPIRepositoryInterface
 {
-    public function getUrl($geturl, $request);
+    public function getUrl($geturl);
 
     // public function index();
     // public function author($getAuthor);

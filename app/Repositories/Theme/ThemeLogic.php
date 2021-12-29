@@ -1,41 +1,47 @@
 <?php
 
-namespace App\Repositories\DeliveryAPI\Logic;
+namespace App\Repositories\Theme;
 
 use App\Repositories\DeliveryAPI\Eloquent\ThemeQuery;
-// use App\Repositories\DeliveryAPI\ThemesRepositoryInterface;
 
 use ScssPhp\ScssPhp\Compiler;
 use Twig\Environment;
 use Dotenv\Dotenv;
 
 
-
-// class ThemeLogic implements ThemesRepositoryInterface{
 class ThemeLogic {
-
-    private $themeRepo;
-
-    public function __construct(ThemeQuery $themeRepository)
-    {
-        $this->themeRepo = $themeRepository;
-    }
-
 
     /* 
     *
     * This is the index page of the bolg
     *
     */
-    public function index(){
+    public static function index(){ 
 
-        $fileName = $this->themeRepo->deliverThemeData();
-        $style = $this->style();
-        $script = $this->script();
+        // $fileName = $this->themeRepo->deliverThemeData();
+        $fileName = ThemeQuery::deliverThemeData();
+       
+        foreach($fileName as $homePage){
+            if($homePage['name'] == 'index.scss'){
+                $style = $homePage['content'];
+            }
+        }
 
-        $compiler = new Compiler();
-        $stylecss = $compiler->compileString($style)->getCss();
+        foreach($fileName as $homePage){
+            if($homePage['name'] == 'script.js'){
+                $script = $homePage['content'];
+            }
+        }
 
+        // These function methods are not needed need to delete this after a bit of thinking.
+        // $style = $this->style();
+        // $script = $this->script();
+
+        // Need to add this in the future
+        // $compiler = new Compiler();
+        // $stylecss = $compiler->compileString($style)->getCss();
+
+        // I cant remember what is this
         // $test = mb_convert_encoding($script, "UTF-8", "HTML-ENTITIES");
         // $test =  htmlspecialchars_decode($script, ENT_QUOTES);
         // dd($test);
@@ -53,7 +59,7 @@ class ThemeLogic {
        
                 echo $twig->render('index.html', 
                     array(
-                        'style' => $stylecss , 
+                        // 'style' => $stylecss , 
                         'name' => 'Finnaly done', 
                         'occupation' => 'must get the approvel', 
                         'script' => $script
@@ -68,7 +74,8 @@ class ThemeLogic {
     * This is the author page of the bolg
     *
     */
-    public function author($getAuthor){
+    public static function author(){
+        dd('hello its done for the author');
         return "This is the author page";
     }
 
@@ -78,7 +85,8 @@ class ThemeLogic {
     * This is the tags page of the bolg
     *
     */
-    public function tag($getTag){
+    public static function tag(){
+        // dd('hi I am the tag');
         return "This is the page for tags";
     }
 
@@ -88,7 +96,7 @@ class ThemeLogic {
     * This is the posts & pages of the bolg
     *
     */
-    public function pages($getPage){
+    public static function pages(){
 
         $fileName = $this->themeRepo->deliverThemeData();
         $style = $this->style();
