@@ -20,7 +20,7 @@ class ConsolePostController {
     }
 
     public function getPosts(Blog $blog) {
-        
+        return response()->json(Post::get());
     }
 
 }

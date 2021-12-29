@@ -2,35 +2,17 @@ import React, { useEffect, useState } from 'react';
 import Select from '../ReusableComponents/Select';
 import { components } from 'react-select';
 
-import {
-    BrowserRouter,
-    Routes,
-    Route,
-    Outlet,
-    useNavigate,
-    Redirect,
-    Navigate,
-} from "react-router-dom";
-
 import PostEditor from './PostEditor';
-import axios from 'axios';
-import { getConsoleAPIEndpoint } from '../helper';
-import useActiveSubdomain from '../state/useActiveSubdomain';
+import { useValues } from 'kea';
+import subdomainLogic from '../logic/subdomainLogic';
+import postsLogic from '../logic/postsLogic';
+import Loader from '../ReusableComponents/Loader';
 
 
 export default function Posts() {
 
-    const activeSubdomain = useActiveSubdomain().get();
-
-    useEffect(() => {
-
-        axios.get(getConsoleAPIEndpoint(activeSubdomain, '/post-stats'))
-            .then(function(response) {
-                var counts = response.data;
-                
-            })
-
-    }, [activeSubdomain])
+    const { subdomain } = useValues(subdomainLogic)
+    const { posts, postsLoading } = useValues(postsLogic({subdomain}));
 
     const statusOptions = [
         { value: 'all', label: 'All' },
@@ -50,8 +32,6 @@ export default function Posts() {
         { value: 'all', label: 'All' },
         { value: 'today', label: 'Today'}
     ];
-
-    var postStatuses = ['published', 'draft', 'scheduled', 'deleted'];
 
     return <div className="posts-view">
         <div className="box box-left">
@@ -74,18 +54,18 @@ export default function Posts() {
             </div>
             <div className="posts-list">
                 {
-                    [...Array(15).keys()].map(i => {
-                        var status = postStatuses[Math.floor(Math.random() * postStatuses.length)];
-
-                        return <div key={i} className={"posts-list-item" + (i === 1 ? " active" : "") + ` ${status}` }>
+                    postsLoading ?
+                    <div className="posts-loading"><Loader /></div> :
+                    posts.map(post => {
+                        return <div key={post.id} className={"posts-list-item" + (false ? " active" : "") + ` ${post.status}` }>
                             <div className="post-title">{ 
-                                        status !== 'published' ? 
-                                        <span className={`post-status ${status}`}>{status}</span>
-                                        : null}Hello World, Welcome to Hyvor Blogs!</div>
+                                        post.status !== 'published' ? 
+                                        <span className={`post-status ${post.status}`}>{post.status}</span>
+                                        : null}{ post.title }</div>
                             
                             <div className="post-data">
                                 <div className="post-date">
-                                    2021-02-03 12:46pm 
+                                    { new Date(post.created_at).toDateString() }
                                 </div>
                                 <div className="post-author">by Ishini Avindya</div>
                             </div>

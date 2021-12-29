@@ -1,14 +1,13 @@
 import React from 'react';
 import BlogsSelector from './BlogsSelector';
 
-import {
-    NavLink, useParams
-} from "react-router-dom";
-import useActiveSubdomain from '../state/useActiveSubdomain';
+import { useValues } from 'kea';
+import subdomainLogic from '../logic/subdomainLogic';
+import NavLink from '../ReusableComponents/NavLink';
 
 export default function Nav() {
 
-    const subdomain = useActiveSubdomain().get();
+    const { subdomain } = useValues(subdomainLogic);
 
     return <div id="left">
         <div id="left-header" className="box">
@@ -18,17 +17,17 @@ export default function Nav() {
         <div id="left-nav" className="box">
             <BlogsSelector />
 
-            <NavLink to={subdomain} end>Blog</NavLink>
+            <NavLink href={`/console/${subdomain}`}>Blog</NavLink>
 
             <div className="left-divider"></div>
 
-            <NavLink to={`/${subdomain}/posts`}>Posts</NavLink>
-            <NavLink to={`/${subdomain}/pages`}>Pages</NavLink>
+            <NavLink href={`/console/${subdomain}/posts`}>Posts</NavLink>
+            <NavLink href={`/console/${subdomain}/pages`}>Pages</NavLink>
 
             <div className="left-divider"></div>
 
-            <NavLink to={`/${subdomain}/theme`}>Theme</NavLink>
-            <NavLink to={`/${subdomain}/settings`}>Settings</NavLink>
+            <NavLink href={`/${subdomain}/theme`}>Theme</NavLink>
+            <NavLink href={`/${subdomain}/settings`}>Settings</NavLink>
 
         </div>
     </div>

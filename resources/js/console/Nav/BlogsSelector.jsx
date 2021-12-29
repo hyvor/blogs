@@ -1,29 +1,30 @@
+import { useActions, useValues } from 'kea';
 import React, { useState } from 'react'
 import { useRef } from 'react';
 import { useEffect } from 'react';
 
 
 import {ChevronExpand} from 'react-bootstrap-icons';
-import { useParams } from 'react-router-dom';
 import onOutsideClick from '../../helpers/onOutsideClick';
-import useActiveSubdomain from '../state/useActiveSubdomain';
-import useBlogsState from '../state/useBlogsState';
+import blogsLogic from '../logic/blogsLogic';
+import subdomainLogic from '../logic/subdomainLogic';
 
 let lastActiveSubdomain = null;
 
 export default function BlogsSelector() {
 
-    const blogsState = useBlogsState();
-    const activeSubdomainState = useActiveSubdomain();
-    const activeSubdomain = activeSubdomainState.get();
+    const { blogs, findBlogBySubdomain } = useValues(blogsLogic)
+    const { subdomain: activeSubdomain } = useValues(subdomainLogic)
+    const { setSubdomain } = useActions(subdomainLogic)
+
 
     const [ isListOpen, setIsListOpen ] = useState(false);
     const listRef = useRef(null);
 
-    let activeBlog = blogsState.getBlogBySubdomain(activeSubdomain || lastActiveSubdomain);
+    let activeBlog = findBlogBySubdomain(activeSubdomain || lastActiveSubdomain);
 
     if (!activeBlog) {
-        activeBlog = blogsState.get()[0];
+        activeBlog = blogs[0];
     }
 
     useEffect(() => {
@@ -41,7 +42,7 @@ export default function BlogsSelector() {
     }
 
     function handleBlogChange(subdomain) {
-        activeSubdomainState.change(subdomain)
+        setSubdomain(subdomain)
         closerRef.current();
     }
 
@@ -56,7 +57,7 @@ export default function BlogsSelector() {
         >
             <div className="blog-list">
                 {
-                    blogsState.get().map(blog => {
+                    blogs.map(blog => {
                         return <div 
                             key={blog.id} 
                             className={"blog" + (blog.subdomain === activeSubdomain ? " active" : "")}

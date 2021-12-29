@@ -183,6 +183,14 @@ body {
 
         .posts-list {
             overflow: auto;
+            flex:1;
+        }
+        .posts-loading {
+            width: 100%;
+            height: 100%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
         }
         .posts-list-item {
             padding: 15px 25px;
@@ -214,18 +222,19 @@ body {
 
             .post-status {
                 font-weight: 600;
-                text-transform: capitalize;
-                font-size:11px;
-                padding:2px 7px;
-                border-radius:20px;
-                margin-left:5px;
-                color:#fff;
-                float:right;
+                margin-left: 5px;
+                color: #fff;
+                font-size: 8px;
+                text-transform: uppercase;
+                padding: 1px 7px;
+                border-radius: 20px;
+                margin-top: 3px;
+                float: right;
                 &.scheduled {
                     background: #4b6ec1;
                 }
                 &.draft {
-                    background: #9b7e14;
+                    background: #6e6c65;
                 }
                 &.deleted {
                     background: #db7474;
