@@ -17,7 +17,7 @@ export default function Nav() {
         <div id="left-nav" className="box">
             <BlogsSelector />
 
-            <NavLink href={`/console/${subdomain}`}>Blog</NavLink>
+            <NavLink href={`/console/${subdomain}`} exact={1}>Blog</NavLink>
 
             <div className="left-divider"></div>
 

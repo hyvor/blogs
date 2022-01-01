@@ -36,6 +36,7 @@
         "react-router-dom": "^6.2.1",
         "react-select": "^5.2.1",
         "react-switch": "^6.0.0",
+        "react-textarea-autosize": "^8.3.3",
         "redux": "^4.1.2",
         "reselect": "^4.1.5",
         "state-pool": "^0.6.0",

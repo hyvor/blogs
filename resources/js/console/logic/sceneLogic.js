@@ -2,8 +2,8 @@ import { kea } from "kea"
 
 const routes = {
     '/': 'dashboard',
-    '/:subdomain/posts': 'posts',
-    '/:subdomain/pages': 'posts',
+    '/:subdomain/posts(/:postId)': 'posts',
+    '/:subdomain/pages(/:page)': 'posts',
     '/:subdomain': 'blogPreview',
 }
 

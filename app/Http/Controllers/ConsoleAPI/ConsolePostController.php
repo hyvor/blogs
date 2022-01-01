@@ -19,8 +19,11 @@ class ConsolePostController {
         return response()->json($this->postRepo->getPostStats($blog->id));
     }
 
-    public function getPosts(Blog $blog) {
-        return response()->json(Post::get());
+    public function getPosts(Request $request, Blog $blog) {
+        return response()->json([
+            'posts' => Post::limit(50)->get(),
+            'hasMore' => $request->input('page') == 2 ? false : true
+        ]);
     }
 
 }

@@ -16,7 +16,7 @@ const subdomainLogic = kea({
             var path = location.pathname.replace('/console/' + old, '');
             router.actions.push("/console/" + subdomain + path);
 
-            postsLogic({subdomain}).actions.loadPosts();
+            postsLogic({subdomain}).actions.getPostsLoad();
         }
     }),
 

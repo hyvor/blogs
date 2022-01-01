@@ -3,11 +3,12 @@ import {EditorState} from "prosemirror-state"
 import {EditorView} from "prosemirror-view"
 import {Schema, DOMParser} from "prosemirror-model"
 import {addListNodes} from "prosemirror-schema-list"
-import {exampleSetup} from "prosemirror-example-setup"
 
 import HBSchema from './schema';
+import plugins from './plugins';
 // import {schema as HBSchema} from 'prosemirror-schema-basic';
 
+let view;
 
 export default function Editor() {
 
@@ -15,21 +16,22 @@ export default function Editor() {
 
     useEffect(() => {
 
-        const mySchema = new Schema({
+        const schema = new Schema({
             nodes: addListNodes(HBSchema.spec.nodes, "paragraph block*", "block"),
             marks: HBSchema.spec.marks
         })
 
-        window.view = new EditorView(editorRef.current, {
+        view = new EditorView(editorRef.current, {
             state: EditorState.create({
-              doc: DOMParser.fromSchema(mySchema).parse("<p>Hello World</p>"),
-              plugins: exampleSetup({schema: mySchema, menuBar: false})
+              doc: DOMParser.fromSchema(schema).parse(''),
+              plugins: plugins(schema)
             })
         })
+        window.view = view;
 
-    });
+    }, []);
 
-    return <div className="post-editor-wrap">
+    return <div className="post-editor-wrap" onClick={() => false && view && view.focus()}>
         <div ref={editorRef} />
     </div>
 

@@ -192,9 +192,16 @@ body {
             align-items: center;
             justify-content: center;
         }
+        .posts-loaded-wrap {
+            animation: posts-loaded-wrap .3s;
+            @keyframes posts-loaded-wrap {
+                0% {opacity: 0;transform:translateY(10px)}
+                100% {opacity: 1;transform:translateY(0)}
+            }
+        }
         .posts-list-item {
+            display: block;
             padding: 15px 25px;
-            cursor: pointer;
             transition:0.1s background-color;
 
             &:not(:last-child) {
@@ -248,31 +255,112 @@ body {
 
         .post-editor {
             .post-editor-top {
+                position:relative;
                 border-bottom:1px solid $color-accent-light;
+                width:700px;
+                margin:auto;
             }
-            .post-editor-heading {
-                padding:30px;
-                padding-bottom:10px;
+            .post-editor-title-row {
+                display:flex;
+                position:relative;
+            }
+            .title-textarea-wrap {
+                flex:1;
+            }
+            /* .cover-image {
+                background-repeat: no-repeat;
+                background-size: cover;
+                position: absolute;
+                top: 0px;
+                left: 0px;
+                width: 100%;
+                height: 100%;
+                opacity: 0.2;
+                border-radius: 20px 20px 0 0;
+            } */
+            .post-editor-title {
+                padding: 30px;
+                padding-right:0;
+                padding-bottom: 10px;
                 font-size: 30px;
                 font-weight: 600;
-                outline:none;
-                &[contenteditable=true]:empty:before {
-                    content: attr(placeholder);
-                    pointer-events: none;
-                    display: block; /* For Firefox */
-                    opacity:0.5;
+                outline: none;
+                word-break: break-all;
+                resize: none;
+                border: 0;
+                display: block;
+                width: 100%;
+                background:none;
+            }
+            .publish-buttons {
+                button {
+                    display:inline-flex;
+                    align-items: center;
+                    span{margin-right:6px} svg {width:9px}
                 }
             }
             .post-editor-settings {
+                position:relative;
                 padding: 0 30px;
                 margin-bottom: 25px;
             }
+            .post-editor-settings-buttons {
+                display:flex;
+                .left {
+                    flex:1;
+                }
+                button {
+                    span {
+                        margin-right:5px;
+                    }
+                    &.view {
+                        margin-left:8px;
+                    }
+                }
+            }
+            .settings-view-wrap {
+                position:absolute;
+                width:100%;
+                left:0;
+                z-index: 1;
+                transition:.125s transform, .125s opacity;
+                &.active {
+                    pointer-events: auto;
+                    opacity: 1;
+                    transform:translateY(0px);
+                }
+                &.inactive {
+                    pointer-events: none;
+                    opacity: 0;
+                    transform:translateY(-10px);
+                }
+                .setting-select {
+                    text-align: center;
+                    padding: 20px;
+                    border-bottom: 1px solid $color-accent-mid;
+                    span {
+                        cursor: pointer;
+                        display: inline-block;
+                        padding: 4px 10px;
+                        font-size: 12px;
+                        border-radius: 20px;
+                        transition: .1s background, .1s color;
+                        &.active {
+                            font-weight: 600;
+                            background: $color-accent;
+                            color: #fff;
+                        }
+                    }
+                }
+                .setting-show {
+                    padding:20px;
+                }
+            }
             .post-editor-settings-view {
                 background: $color-accent-light;
-                margin-left: 60px;
+                margin-left: 90px;
                 margin-right: 60px;
                 margin-top: 10px;
-                padding: 20px;
                 min-height: 200px;
                 border-radius: 20px;
                 position: relative;

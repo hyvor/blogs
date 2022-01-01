@@ -19,7 +19,7 @@
 
     &.small {
         font-size: 12px;
-        padding: 4px 10px;
+        padding: 5px 10px;
     }
 
     &.medium {
@@ -41,5 +41,9 @@
         &:hover {
             color: $color-text;
         }
+    }
+
+    &.danger {
+        background: $color-red;
     }
 }

@@ -1,11 +1,11 @@
 
 
-export default function onOutsideClick(element, func, onBlur = false)	{
+export default function onOutsideClick(element, func, onBlur = false, autoRemove = true)	{
 
     /**
      * Calling two times is a trick to avoid the outsideClick function being called the first time.
      */
-    //window.addEventListener("click", addClickEventListerner, true)
+    //window.addEventListener("mouseup", addClickEventListerner, true)
 
     setTimeout(addClickEventListerner, 0);
 
@@ -18,26 +18,27 @@ export default function onOutsideClick(element, func, onBlur = false)	{
 
     function checkOutsideClick(event) {
         if (event.target !== element && !element.contains(event.target)) {
-            removeListenerAndCall();
+            removeListenerAndCall(event);
             event.stopPropagation();
+            event.preventDefault();
         }
     }
 
-    function removeListenerAndCall() {
-        window.removeEventListener("click", checkOutsideClick, true);
-        func()
+    function removeListenerAndCall(e, forced) {
+        autoRemove || forced ? window.removeEventListener("click", checkOutsideClick, true) : null;
+        func(e)
     }
 
     /**
      * Close popups on blur.
      * Only use for popups that doesn't contain user input and importatnt state
      */
-    function handleBlur() {
+    function handleBlur(e) {
         window.removeEventListener("blur", handleBlur, true);
-        removeListenerAndCall();
+        removeListenerAndCall(e);
     }
 
-    return removeListenerAndCall;
+    return () => removeListenerAndCall(true);
 
 
 }

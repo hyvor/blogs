@@ -8,7 +8,7 @@ import Posts from './Posts/Posts'
 export const scenes = {
     error404: () => <div>404</div>,
     blogPreview: () => <BlogPreview />,
-    posts: () => <Posts />,
+    posts: ({ postId }) => <Posts postId={postId} />,
 }
 
 

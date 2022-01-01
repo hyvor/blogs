@@ -4,9 +4,13 @@ import { useValues } from 'kea';
 
 export default function NavLink(props = {}) {
 
-    const { location: { pathname } } = useValues(router);
-    
-    const isActive = props.href === pathname.toLowerCase();
+    let { location: { pathname } } = useValues(router);
+
+    pathname = pathname.toLocaleLowerCase();
+    const isActive = props.href === pathname ||
+        (!props.exact &&
+            pathname.startsWith(props.href) &&
+            pathname.charAt(props.href.length) === "/");
 
     let clsName = (props.className || '');
     if (isActive) {

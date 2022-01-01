@@ -1,18 +1,95 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useState, useRef } from 'react';
 import Select from '../ReusableComponents/Select';
 import { components } from 'react-select';
-
-import PostEditor from './PostEditor';
-import { useValues } from 'kea';
+import Post from './Post';
+import { useActions, useValues } from 'kea';
 import subdomainLogic from '../logic/subdomainLogic';
 import postsLogic from '../logic/postsLogic';
 import Loader from '../ReusableComponents/Loader';
+import NavLink from '../ReusableComponents/NavLink';
 
-
-export default function Posts() {
+export default function Posts( { postId } ) {
 
     const { subdomain } = useValues(subdomainLogic)
-    const { posts, postsLoading } = useValues(postsLogic({subdomain}));
+    const postLogicSubdomain = postsLogic({subdomain})
+    const { postsList, posts, postsListLoadStatus, postsListHasMore, postsListLoadMoreStatus, filters } = useValues(postLogicSubdomain);
+    const { getPostsListLoadMore } = useActions(postLogicSubdomain)
+
+    const { changeFilter } = useActions(postLogicSubdomain)
+
+    function handleScroll(e) {
+        var el = e.target;
+        if (
+            postsListLoadMoreStatus !== 'loading' &&  
+            postsListHasMore &&
+            el.scrollTop + el.clientHeight >= el.scrollHeight
+        ) {
+            getPostsListLoadMore({ page: 2 })
+        }
+    }
+
+    return <div className="posts-view">
+        <div className="box box-left">
+            <div className="middle-heading">
+                <div>
+                    Posts
+                </div>
+                <button className="button small">+ New</button>
+            </div>
+            <PostFilterView filters={filters} changeFilter={changeFilter} />
+            <div className="posts-list" onScroll={handleScroll}>
+                {
+                    postsListLoadStatus === 'loading' ?
+                    <div className="posts-loading"><Loader /></div> :
+
+                    <div className="posts-loaded-wrap">
+                        {
+                            postsList.map(pId => {
+                                const post = posts[pId];
+                                const postsLink = `/console/${subdomain}/posts`
+                                const toLink = `${postsLink}/${post.id}`
+
+                                return <NavLink
+                                    key={post.id} 
+                                    href={location.pathname === toLink ? postsLink : toLink }
+                                    className={"posts-list-item" + (false ? " active" : "") + ` ${post.status}` }>
+                                    <div className="post-title">{
+                                                post.status !== 'published' ? 
+                                                <span className={`post-status ${post.status}`}>{post.status}</span>
+                                                : null}{ post.title }</div>
+                                    
+                                    <div className="post-data">
+                                        <div className="post-date">
+                                            { new Date(post.created_at).toDateString() }
+                                        </div>
+                                        <div className="post-author">by Ishini Avindya</div>
+                                    </div>
+
+
+                                    <div className="post-tags">
+                                        <span className="post-tag">#creative</span>
+                                    </div>
+                                </NavLink>
+                            })
+                        }
+                        {
+                            postsListHasMore ?
+                            <div>Has more</div> : null
+                        }
+                    </div>
+                }
+            </div>
+        </div>
+        <div className="box box-right">
+            {
+                postId ?
+                <Post subdomain={subdomain} id={postId} /> : <div>No post ID</div>
+            }
+        </div>
+    </div>
+}
+
+function PostFilterView({ filters, changeFilter }) {
 
     const statusOptions = [
         { value: 'all', label: 'All' },
@@ -33,72 +110,58 @@ export default function Posts() {
         { value: 'today', label: 'Today'}
     ];
 
-    return <div className="posts-view">
-        <div className="box box-left">
-            <div className="middle-heading">
-                <div>
-                    Posts
-                </div>
-                <button className="button small">+ New</button>
-            </div>
-            <div className="posts-filtering">
-                <div className="post-filters">
-                    <PostsFilter name="Status" defaultValue={statusOptions[0]} options={statusOptions} />
-                    <PostsFilter name="Author" defaultValue={ownershipOptions[0]} options={ownershipOptions} />
-                    <PostsFilter name="Tags" defaultValue={tagsOptions[0]} options={tagsOptions} />
-                    <PostsFilter name="Date" defaultValue={dateOptions[0]} options={dateOptions} />
-                </div>
-                <div className="post-search">
-                    <input className="input" placeholder="Search..."></input>
-                </div>
-            </div>
-            <div className="posts-list">
-                {
-                    postsLoading ?
-                    <div className="posts-loading"><Loader /></div> :
-                    posts.map(post => {
-                        return <div key={post.id} className={"posts-list-item" + (false ? " active" : "") + ` ${post.status}` }>
-                            <div className="post-title">{ 
-                                        post.status !== 'published' ? 
-                                        <span className={`post-status ${post.status}`}>{post.status}</span>
-                                        : null}{ post.title }</div>
-                            
-                            <div className="post-data">
-                                <div className="post-date">
-                                    { new Date(post.created_at).toDateString() }
-                                </div>
-                                <div className="post-author">by Ishini Avindya</div>
-                            </div>
+    function handleChange(name, v) {
+        changeFilter(name, v.value);
+    }
+    function updateSearch(e) {
+        if (filters.search !== e.target.value)
+            changeFilter('search', e.target.value)
+    }
+
+    // search is only updated when blur or enterClick
+    const [search, setSearch] = useState(filters.search);
 
 
-                            <div className="post-tags">
-                                <span className="post-tag">#creative</span>
-                            </div>
-                        </div>
-                    })
-                }
-            </div>
+    return <div className="posts-filtering">
+        <div className="post-filters">
+            <PostsFilter name="status" value={filters.status} options={statusOptions} onChange={handleChange} />
+            <PostsFilter name="author" value={filters.author} options={ownershipOptions} onChange={handleChange} />
+            <PostsFilter name="tag" value={filters.tag} options={tagsOptions} onChange={handleChange} />
+            <PostsFilter name="date" value={filters.date} options={dateOptions} onChange={handleChange} />
         </div>
-        <div className="box box-right">
-            <PostEditor />
+        <div className="post-search">
+            <input 
+                className="input" 
+                value={search} 
+                onChange={(e) => setSearch(e.target.value)}
+                onKeyDown={(e) => e.key === 'Enter' && updateSearch(e)}
+                onBlur={updateSearch}
+                placeholder="Search..."
+            ></input>
         </div>
     </div>
+
 }
 
-function PostsFilter(props) {
+function PostsFilter( { name, value, options, onChange } ) {
 
-    const SingleValue = props => (
-        <components.SingleValue {...props}>
-          {props.data.label.replace(/ \(.+\)/, '')}
+    const SingleValue = p => (
+        <components.SingleValue {...p}>
+          {p.data.label.replace(/ \(.+\)/, '')}
         </components.SingleValue>
     );
 
+    value = options.find(i => i.value === value) || options[0];
+
     return <div className="posts-filter">
-        <div className="posts-filter-name">{props.name}</div>
+        <div className="posts-filter-name">{name}</div>
         <Select 
-            defaultValue={props.defaultValue} 
+            value={value} 
             type="small" 
-            options={props.options}
+            options={options}
+            onChange={(v) => onChange(name, v)}
+
+            
 
             // https://stackoverflow.com/a/52484756/9059939
             // to remove number

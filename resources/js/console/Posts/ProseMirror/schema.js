@@ -44,7 +44,7 @@ export const nodes = {
     },
 
     // :: NodeSpec A heading textblock, with a `level` attribute that
-    // should hold the number 1 to 6. Parsed and serialized as `<h1>` to
+    // should hold the number 2 to 6. Parsed and serialized as `<h1>` to
     // `<h6>` elements.
     heading: {
         attrs: {level: {default: 2}},
@@ -71,6 +71,7 @@ export const nodes = {
         group: "block",
         code: true,
         defining: true,
+        selectable: false,
         parseDOM: [{tag: "pre", preserveWhitespace: "full"}],
         toDOM() { return preDOM }
     },
@@ -217,7 +218,7 @@ export const marks = {
         toDOM() { return supDOM }
     },
 
-    subS: {
+    sub: {
         parseDOM: [{tag: "sub"}],
         toDOM() { return subDOM }
     },
