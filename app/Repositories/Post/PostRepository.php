@@ -1,49 +1,52 @@
 <?php
 namespace App\Repositories\Post;
 
+use App\Models\Blog;
 use App\Models\Post;
 use App\Models\Tag;
 use App\Models\User;
+use App\Types\Post\PostInputListFiltersType;
 use Illuminate\Support\Facades\DB;
 
-class PostRepository implements PostRepositoryInterface {
+class PostRepository {
 
-    public function getPostStats(int $blogId) : array
-    {
+    static function byId(int $postId) {
 
-        $status = Post::select('status as _id', DB::raw('COUNT(id) as count'))
-            ->groupBy('status')
-            ->where('blog_id', $blogId)
-            ->get();
+    }
 
-         $author = User::select('users.id as _id', DB::raw('COUNT(post_author.id) as count'))
-            ->leftJoin('post_author', 'post_author.user_id', '=', 'users.id')
-            ->leftJoin('posts', 'posts.id', '=', 'post_author.post_id')
-            ->where('posts.blog_id', $blogId)
-            ->groupBy('users.id')
-            ->get();
-
-        $tag = Tag::select('tags.id as _id', DB::raw('COUNT(post_tag.id) as count'))
-            ->leftJoin('post_tag', 'post_tag.tag_id', '=', 'tags.id')
-            ->leftJoin('posts', 'posts.id', '=', 'post_tag.post_id')
-            ->where('posts.blog_id', '=', $blogId)
-            ->groupBy('tags.id')
-            ->get();
+    static function byBlogIdAndIdentifier(int $blogId, int $postid = null, string $slug = null) {
         
+    }
 
-        $convertToKeyValue = function($val) {
-            $ret = [];
-            foreach ($val as $x) {
-                $ret[$x['_id']] = $x['count'];
-            }
-            return $ret;
-        };
+    static function getPosts(Blog $blog, PostInputListFiltersType $filters, int $limit = 0, int $offset = 0) {
+        $status = $filters->status;
+        $authorId = $filters->authorId;
+        $tagId = $filters->tagId;
+        $startTimestamp = $filters->startTimestamp;
+        $endTimestamp = $filters->endTimestamp;
+        $search = $filters->search;
 
-        return [
-            'status' => $convertToKeyValue($status),
-            'author' => $convertToKeyValue($author),
-            'tag' => $convertToKeyValue($tag),
-        ];
+        Post::when($authorId, function($query) use ($authorId) {
+            $query->join('post_author', function($join) use ($authorId) {
+                $join->on('post_author.post_id', '=', 'posts.id');
+                $join->on('post_author.author_id', '=', $authorId);
+            }); 
+        })->when($tagId, function($query) use ($tagId) {
+            $query->join('post_tag', function($join) use ($tagId) {
+                $join->on('post_tag.post_id', '=', 'posts.id');
+                $join->on('post_tag.tag_id', '=', $tagId);
+            });
+        })->when($startTimestamp, function($query) use ($startTimestamp) {
+            $query->whereDate('created_at', '>', $startTimestamp);
+        })->when($endTimestamp, function($query) use ($endTimestamp) {
+            $query->whereDate('created_at', '<', $endTimestamp);
+        })
+        // status
+        ->when($status === 'all', function($query) {
+            $query->where('posts.status', '!=', 'deleted');
+        }, function ($query) use ($status) {
+            $query->where('posts.status', $status);
+        });
     }
 
 }

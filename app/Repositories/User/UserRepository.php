@@ -91,6 +91,12 @@ class UserRepository implements UserRepositoryInterface {
 
     }
 
+    public function getUsers(blog $blog) {
+        $users = User::where('blog_id', $blog->id)
+            ->get();
+
+    }
+
     public function addUserToBlog(
         int $userId, string $userType, int $blogId, string $role, string $status = 'invited'
     ) : User {

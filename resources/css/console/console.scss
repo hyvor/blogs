@@ -280,7 +280,6 @@ body {
             } */
             .post-editor-title {
                 padding: 30px;
-                padding-right:0;
                 padding-bottom: 10px;
                 font-size: 30px;
                 font-weight: 600;
@@ -358,26 +357,21 @@ body {
             }
             .post-editor-settings-view {
                 background: $color-accent-light;
-                margin-left: 90px;
+                margin-left: 30px;
                 margin-right: 60px;
-                margin-top: 10px;
+                margin-top: 14px;
                 min-height: 200px;
                 border-radius: 20px;
                 position: relative;
                 &:before {
                     position: absolute;
                     content: "";
-                    width: 20px;
-                    height: 25px;
-                    border: 3px solid;
-                    right: 100%;
+                    left: 30px;
                     bottom: 100%;
-                    margin-bottom: -18px;
-                    margin-right: -1px;
-                    border-right: 0;
-                    border-top: 0;
-                    border-bottom-left-radius: 10px;
-                    border-color: $color-accent-light;
+                    border: 10px solid #f0e7e8;
+                    border-top-color: transparent;
+                    border-left-color: transparent;
+                    border-right-color: transparent;
                 }
             }
 

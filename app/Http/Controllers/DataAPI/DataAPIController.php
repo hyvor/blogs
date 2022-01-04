@@ -5,17 +5,15 @@ namespace App\Http\Controllers\DataAPI;
 use Illuminate\Http\Request;
 use App\Http\Controllers\Controller;
 use App\Repositories\DataAPI\DataAPISingleRequest;
-use App\Repositories\DataAPI\DataAPIResponseSuccess;
-use App\Repositories\DataAPI\DataAPIRepositoryInterface;
-
+use App\Repositories\Post\PostRepositoryInterface;
 
 class DataAPIController extends Controller
 {
 
-    private $dataAPIRepo;
+    private $postRepo;
 
-    public function __construct(DataAPIRepositoryInterface $dataAPIRepo) {
-        $this->dataAPIRepo = $dataAPIRepo;
+    public function __construct(PostRepositoryInterface $postRepo) {
+        $this->postRepo = $postRepo;
     }
 
     public function post(Request $request) {

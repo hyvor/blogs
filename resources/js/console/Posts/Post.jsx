@@ -1,6 +1,6 @@
 import { useValues } from 'kea';
 import React, { useEffect, useRef, useState } from 'react';
-import { BoxArrowUpRight, CaretDownFill, GearFill, Trash } from 'react-bootstrap-icons';
+import { BoxArrowUpRight, CaretDownFill, GearFill, PencilFill, Trash } from 'react-bootstrap-icons';
 import postsLogic from '../logic/postsLogic';
 import Editor from './ProseMirror/Editor';
 import TextareaAutosize from 'react-textarea-autosize';
@@ -48,6 +48,59 @@ export default function Post( {subdomain, id} ) {
 
     const [ settingsType, setSettingsType ] = useState('basic'); // basic | advanced
 
+    // have to first click Edit Post to edit published/scheduled posts
+    const [publishedPostEditing, setPublishedPostEditing] = useState(false);
+
+    // something changed?
+    // null if not
+    // object ({old, new}) if changed
+    function getDiff() {
+        var diff = {};
+        for (var key in posts[id]) {
+            if (post[key] !== posts[id][key]) {
+                diff[key] = {
+                    old: posts[id][key],
+                    new: post[key]
+                }
+            }
+        }
+        return diff;
+    }
+
+    function MainButton() {
+        let name, onClick, icon, disabled = false;
+
+        if (post.status === 'published' || post.status === 'scheduled') {
+            if (!publishedPostEditing) {
+                name = "Edit Post";
+                icon = <PencilFill />
+                onClick = () => setPublishedPostEditing(true);
+            } else {
+                const diff = getDiff();
+                if (diff) {
+                    const count = Object.keys(diff).length;
+                    name = "Save Changes" + (count > 0 ? " (" + count + ")" : "");
+                    onClick = () => showUpdateDetails();
+                    disabled = count === 0;
+                }
+            }
+        } else if (post.status === 'draft') {
+            name = "Publish Post";
+            onClick = () => showPublishDetails()
+        } else { // deleted
+            name = "Recover Post";
+            onClick = () => showDeleteDetails()
+        }
+
+        return <button className="button small" onClick={() => onClick()}>
+            <span>{name}</span>{icon || <CaretDownFill />}
+        </button>
+    }
+
+    function showUpdateDetails() {
+        alert("Updated");
+    }
+
     return <div className="post-editor" ref={viewRef}>
 
         <div className="post-editor-top">
@@ -88,7 +141,7 @@ export default function Post( {subdomain, id} ) {
                     </div>
 
                     <div className="publish-buttons">
-                        <button className="button small"><span>Publish</span><CaretDownFill /></button>
+                        <MainButton />
                     </div>
                 </div>
                 
@@ -210,7 +263,6 @@ export default function Post( {subdomain, id} ) {
                         }
                     </div>  
                 </div>
-
 
             </div>
         </div>
