@@ -45,7 +45,7 @@ function findDefaultActiveSubdomain() {
         return subdomainOnLoad
     }
     
-    return blogs.length ? blogs[0].subdomain : null;
+    return blogs.length ? blogs[0].blog.subdomain : null;
 }
 
 export default subdomainLogic;

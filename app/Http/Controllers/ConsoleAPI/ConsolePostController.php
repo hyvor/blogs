@@ -3,26 +3,36 @@ namespace App\Http\Controllers\ConsoleAPI;
 
 use App\Models\Blog;
 use App\Models\Post;
-use App\Repositories\Post\PostRepository;
-use App\Types\Post\PostsFiltersType;
+use App\Domains\Post\PostRepository;
+use App\Types\Post\PostInputListFiltersType;
+use App\Types\Post\PostOutputType;
 use Illuminate\Http\Request;
 
 class ConsolePostController {
 
+    public function getPostsCounts(Request $request, Blog $blog) {
+        return response()->json(
+          //  PostRepository::getPostsCounts($blog->id, 0)
+        );
+    }
+
     public function getPosts(Request $request, Blog $blog) {
 
+        $filters = json_decode($request->input('filters'));
         $posts = PostRepository::getPosts(
-            $blog,
-            (new PostsFiltersType())
-                ->setStatus($request->input('status'))
-                ->setAuthorId($request->input('author_id'))
-                ->setTagId($request->input('tag_id'))
-                ->setStartTimestamp($request->input('start_timestamp'))
-                ->setEndTimestamp($request->input('end_timestamp'))
-                ->setSearch($request->input('search')),
-            $request->input('limit') ?? 0,
+            $blog->id,
+            (new PostInputListFiltersType())
+                ->setStatus($filters->status)
+                ->setAuthorId($filters->author === 'all' ? null : $filters->author)
+                ->setTagId($filters->tag === 'all' ? null : $filters->tag)
+                ->setStartTimestamp($filters->dateStart)
+                ->setEndTimestamp($filters->dateEnd)
+                ->setSearch($filters->search),
+            $request->input('limit'),
             $request->input('offset') ?? 0
-        );
+        )->map(function($post) use ($blog) {
+            return new PostOutputType($post, $blog, true);
+        });
 
         return response()->json($posts);
     }

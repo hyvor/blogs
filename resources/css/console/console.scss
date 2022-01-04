@@ -68,7 +68,7 @@ body {
         }
         .popup-list {
             position:absolute;
-            width:280px;
+            width:340px;
             transition:.125s transform, .125s opacity;
             left:100%;
             top:-15px;
@@ -122,6 +122,10 @@ body {
                 }
                 .row-right {
                     text-align: right;
+                }
+                .plan-name {
+                    font-size:11px;
+                    margin-right:6px;
                 }
             }
         }
@@ -254,6 +258,7 @@ body {
         }
 
         .post-editor {
+            position: relative;
             .post-editor-top {
                 position:relative;
                 border-bottom:1px solid $color-accent-light;

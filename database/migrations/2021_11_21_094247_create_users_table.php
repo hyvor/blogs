@@ -19,13 +19,11 @@ class CreateUsersTable extends Migration
 
             // connection
             $table->bigInteger('blog_id');
-            $table->bigInteger('user_id'); // hyvor | SSO user id
-            $table->enum('user_type', ['hyvor', 'sso'])->default('hyvor');
-
+            $table->bigInteger('user_id'); // hyvor user ID
+            $table->boolean('is_synced', true); // synced with hyvor data
 
             $table->enum('status', ['invited', 'active', 'blocked'])->default('invited');
             $table->enum('role', ['owner', 'admin', 'finance', 'editor', 'writer', 'contributor']);
-
 
             // user data
             $table->string('slug');
@@ -46,8 +44,9 @@ class CreateUsersTable extends Migration
 
             // misc
             $table->integer('sort')->default(0); // for ordering in the console
-
+            
             $table->unique(['blog_id', 'slug']);
+            $table->unique(['blog_id', 'user_id']);
         });
     }
 

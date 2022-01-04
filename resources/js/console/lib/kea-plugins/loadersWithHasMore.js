@@ -10,7 +10,7 @@
 /**
  * Docs
  * 
- * loaders: {
+ * loadersWithHasMore: {
  *      posts: {
  *           getPosts: () => {}
  *      },
@@ -36,19 +36,19 @@
  *  - postsHasMore = false
  */
 
-export const loadersProPlugin = (options) => {
+export const loadersWithHasMorePlugin = (options) => {
 
     return {
-        name: 'loaders',
+        name: 'loadersWithHasMore',
 
         buildSteps: {
-            loaders(logic, input) {
-                if (!input.loaders)
+            loadersWithHasMore(logic, input) {
+                if (!input.loadersWithHasMore)
                     return;
 
                 // run the loaders function with the already created logic as an input,
                 // so it can do ({ actions, ... }) => ({ ... })
-                const loaders = typeof input.loaders === 'function' ? input.loaders(logic) : input.loaders
+                const loaders = typeof input.loadersWithHasMore === 'function' ? input.loadersWithHasMore(logic) : input.loaders
 
                 for (const [reducerKey, actionsObject] of Object.entries(loaders)) {
                     let defaultValue = logic.defaults[reducerKey] || null

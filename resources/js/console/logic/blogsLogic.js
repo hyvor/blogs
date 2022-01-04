@@ -13,7 +13,7 @@ const blogsLogic = kea({
         findBlogBySubdomain: [
             (s) => [s.blogs],
             (blogs) => {
-                return sub => blogs.find(b => b.subdomain === sub)
+                return sub => blogs.find(b => b.blog.subdomain === sub)
             }
         ]
     }

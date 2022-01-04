@@ -2,8 +2,9 @@ import React from 'react';
 import ReactDOM from 'react-dom';
 import { resetContext, Provider } from 'kea'
 import { routerPlugin } from 'kea-router'
+import { loadersPlugin } from 'kea-loaders'
 import Scene from './Scene';
-import { loadersProPlugin } from './lib/kea-plugins/loaders-pro';
+import { loadersWithHasMorePlugin } from './lib/kea-plugins/loadersWithHasMore';
 
 resetContext({
     plugins: [
@@ -11,7 +12,8 @@ resetContext({
             pathFromRoutesToWindow: (path) => "/console" + path,
             pathFromWindowToRoutes: (path) => path.replace(/^\/console/, ''),
         }),
-        loadersProPlugin()
+        loadersPlugin(),
+        loadersWithHasMorePlugin()
     ]
 });
 

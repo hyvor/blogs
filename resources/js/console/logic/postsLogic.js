@@ -11,7 +11,7 @@ const postsLogic = kea({
         setPosts: (posts) => ({posts})
     },
 
-    loaders: ({ values, props, actions }) => ({
+    loadersWithHasMore: ({ values, props, actions }) => ({
 
         /**
          * posts in the post-list preview
@@ -19,14 +19,14 @@ const postsLogic = kea({
          * Data is saved in postsStorage
          */
         postsList: [[], {
-            getPosts: async ({ page }) => {
+            getPosts: async ({ offset }) => {
                 const response = await api.get(props.subdomain, '/posts', {
                     filters: values.filters,
-                    page
+                    offset
                 });
-                actions.getPostsSetHasMore(response.hasMore)
-                actions.setPosts(response.posts)
-                return response.posts.map(val => val.id); // just the IDs
+                actions.getPostsSetHasMore(response.length === 50);
+                actions.setPosts(response)
+                return response.map(val => val.id); // just the IDs
             }
         }],
 
@@ -34,6 +34,29 @@ const postsLogic = kea({
             getPost: async (id) => await api.get(props.post, '/post')
         },
         
+    }),
+
+    loaders: ({ values, props, actions }) => ({
+
+        postsCounts: [{
+            all: null,
+            published: null,
+            draft: null,
+            scheduled: null,
+            deleted: null,
+            your: null
+        }, {
+            loadPostsCounts: async () => {
+                return await api.get(props.subdomain, '/posts-counts');
+            }
+        }],
+
+        tags: [[], {
+            loadTags: () => {
+
+            }
+        }]
+
     }),
 
     listeners: ({actions}) => ({
@@ -52,9 +75,9 @@ const postsLogic = kea({
 
         filters: [
             {
-                status: null,
-                author: null,
-                tag: null,
+                status: 'all',
+                author: 'all',
+                tag: 'all',
                 dateStart: null,
                 dateEnd: null,
                 search: ''
@@ -64,6 +87,12 @@ const postsLogic = kea({
             }
         ]
     },
+
+    events: ({actions}) => ({
+        afterMount: [
+            actions.loadPostsCounts
+        ]
+    })
 
 })
 

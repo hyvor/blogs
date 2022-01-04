@@ -3,7 +3,7 @@
 namespace App\Http\Controllers\ConsoleAPI;
 
 use App\Http\Controllers\Controller;
-use App\Repositories\User\UserRepositoryInterface;
+use App\Domains\User\UserRepositoryInterface;
 use Illuminate\Http\Request;
 
 class ConsoleUserController extends Controller {

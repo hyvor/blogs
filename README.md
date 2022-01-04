@@ -10,8 +10,8 @@ Folder | Contents
 `app/Http/Middleware` | Laravel HTTP Middlewares for controllers.
 `app/Http/Middleware/App` | Our middlewares reside here (just to seperate it from Laravel middleware)
 `app/Models` | Application database models
-`app/Providers` | Laravel and our service providers resides here. Usually, you want to edit `RepositoriesServiceProvider.php` when adding new repos.
-`app/Repositories` | All our repos reside here, namespaced by the domains (Blog, User, etc.).
+`app/Providers` | Laravel and our service providers resides here. Usually, you want to edit `DomainsServiceProvider.php` when adding new repos.
+`app/Domains` | All our repos reside here, namespaced by the domains (Blog, User, etc.).
 `app/Repositores/{Domain}/Types` | All input and output types of that repository reside here. Our APIs return responses as objects or arrays of objects. The schema of these objects resides in this folder. Think of these objects as interfaces in TypeScript. We do not return Models directly in API responses. All Models go through Types to be converted to an "API-friendly" output. We define each key value pair in a public attribute with a default value (`json_encode` only convert `public` attributes).
 `database/migrations` | Database migrations. We only store **table create** statements here - not updates
 `database/seeders` | Add seeders here
@@ -29,7 +29,7 @@ Hyvor Blogs is headless, which means back-end and front-end are completely seper
 
 Let's see how our APIs are structured. 
 
-All app's main functionalities (business logic) is written inside **repositories** seperated by domains like Post, Blog, etc. Usually, repos get a typed input and returns a typed output. Middlewares and Controllers are the middlemans between the external world and the repos. Middlewares are used for authentications, input sanitizing, etc. Controllers receive user input, call one or more repositories (with typed input), and return the results to the front-end in JSON.
+All app's main functionalities (business logic) is written inside **Domains** seperated by domains like Post, Blog, etc. Usually, repos get a typed input and returns a typed output. Middlewares and Controllers are the middlemans between the external world and the repos. Middlewares are used for authentications, input sanitizing, etc. Controllers receive user input, call one or more Domains (with typed input), and return the results to the front-end in JSON.
 
 ## APIs
 

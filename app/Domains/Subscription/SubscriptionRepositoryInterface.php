@@ -1,5 +1,5 @@
 <?php
-namespace App\Repositories\Subscription;
+namespace App\Domains\Subscription;
 
 
 interface SubscriptionRepositoryInterface {

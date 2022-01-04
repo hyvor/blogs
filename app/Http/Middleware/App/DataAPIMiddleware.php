@@ -3,7 +3,7 @@ namespace App\Http\Middleware\App;
 
 use App\Exceptions\DataAPIException;
 use App\Models\Blog;
-use App\Repositories\Blog\BlogRepositoryInterface;
+use App\Domains\Blog\BlogRepositoryInterface;
 use Closure;
 use Exception;
 

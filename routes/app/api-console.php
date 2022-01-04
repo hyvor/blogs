@@ -26,7 +26,7 @@ Route::prefix('/api/console/v0/blog/{subdomain}')
     ->middleware(SubdomainMiddleware::class)
     ->group(function() {
 
-    Route::get('/post-stats', [ConsolePostController::class, 'getStats']);
+    Route::get('/posts-counts', [ConsolePostController::class, 'getCounts']);
 
     // posts (and pages)
     Route::get('/posts', [ConsolePostController::class, 'getPosts']);

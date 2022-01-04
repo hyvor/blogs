@@ -1,40 +1,28 @@
 <?php
-namespace App\Repositories\User;
+namespace App\Domains\User;
 
 use App\Models\Blog;
 use App\Models\User;
-use App\Repositories\Subscription\SubscriptionRepositoryInterface;
+use App\Domains\User\Types\UserBlogOutputConsoleType;
+use Illuminate\Support\Collection;
 use Illuminate\Support\Str;
 
-class UserRepository implements UserRepositoryInterface {
-
-    private $subscriptionRepo;
-
-    public function __construct(SubscriptionRepositoryInterface $subscriptionRepo) {
-        $this->subscriptionRepo = $subscriptionRepo;
-    }
+class UserRepository {
 
     /**
      * Get blogs of a user
      * returns an array of blogs with basic data
      */
-    public function getBlogs(int $userId, string $userType) : array {
-
-        $userBlogs = User::where('user_id', $userId)
-            ->where('user_type', $userType)
+    static function getBlogsOfUser(int $hyvorUserId,) : Collection {
+        return User::where('user_id', $hyvorUserId)
             ->where('status', 'active')
             ->orderBy('sort', 'ASC')
             ->orderBy('created_at', 'ASC')
-            ->select('role', 'blog_id')
-            ->with('blog:id,name,subdomain,posts_count', 'blog.subscriptions')
-            ->get();
-
-        $blogs = [];
-        foreach ($userBlogs as $userBlog) {
-            $blogs[] = $this->convertUserToBlogForConsole($userBlog);
-        }
-
-        return $blogs;
+            ->with('blog', 'blog.subscriptions')
+            ->get()
+            ->map(function($user) {
+                return new UserBlogOutputConsoleType($user);
+            });
     } 
 
     public function createBlog(int $userId, string $subdomain, string $name) : array {

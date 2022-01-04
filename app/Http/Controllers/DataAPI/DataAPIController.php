@@ -4,8 +4,8 @@ namespace App\Http\Controllers\DataAPI;
 
 use Illuminate\Http\Request;
 use App\Http\Controllers\Controller;
-use App\Repositories\DataAPI\DataAPISingleRequest;
-use App\Repositories\Post\PostRepositoryInterface;
+use App\Domains\DataAPI\DataAPISingleRequest;
+use App\Domains\Post\PostRepositoryInterface;
 
 class DataAPIController extends Controller
 {

@@ -1,8 +1,9 @@
 <?php
-namespace App\Domains\DataAPI;
+namespace App\Types\Post;
 
 use App\Models\Blog;
 use App\Models\Post;
+use App\Types\Tag\TagType;
 
 class DataAPIPost {
 
@@ -28,7 +29,7 @@ class DataAPIPost {
     public function __construct(Post $post, Blog $blog) {
 
         $tags = $post->tags->map(function($tag) use ($blog) {
-            return new DataAPITag($tag, $blog);
+            return new TagType($tag, $blog);
         })->toArray();
 
         $authors = null;

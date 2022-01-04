@@ -1,5 +1,5 @@
 <?php
-namespace App\Repositories\Blog;
+namespace App\Domains\Blog;
 
 use App\Models\Blog;
 use App\Models\User;

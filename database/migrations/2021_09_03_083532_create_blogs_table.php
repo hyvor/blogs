@@ -33,6 +33,8 @@ class CreateBlogsTable extends Migration
             $table->string('social_instagram')->nullable();
 
             $table->integer('posts_count')->default(0);
+            $table->integer('users_count')->default(0);
+            
         });
     }
 

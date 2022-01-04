@@ -1,5 +1,5 @@
 <?php
-namespace App\Repositories\Post;
+namespace App\Domains\Post;
 
 use App\Models\Blog;
 use App\Models\Post;
@@ -18,7 +18,11 @@ class PostRepository {
         
     }
 
-    static function getPosts(Blog $blog, PostInputListFiltersType $filters, int $limit = 0, int $offset = 0) {
+    /**
+     * Get posts of a blog
+     * with filters, limit, and offset
+     */
+    static function getPosts(int $blogId, PostInputListFiltersType $filters, ?int $limit, int $offset = 0) {
         $status = $filters->status;
         $authorId = $filters->authorId;
         $tagId = $filters->tagId;
@@ -26,7 +30,10 @@ class PostRepository {
         $endTimestamp = $filters->endTimestamp;
         $search = $filters->search;
 
-        Post::when($authorId, function($query) use ($authorId) {
+        $limit = $limit ?? 50;
+
+        return Post::where('blog_id', $blogId)
+        ->when($authorId, function($query) use ($authorId) {
             $query->join('post_author', function($join) use ($authorId) {
                 $join->on('post_author.post_id', '=', 'posts.id');
                 $join->on('post_author.author_id', '=', $authorId);
@@ -36,17 +43,24 @@ class PostRepository {
                 $join->on('post_tag.post_id', '=', 'posts.id');
                 $join->on('post_tag.tag_id', '=', $tagId);
             });
-        })->when($startTimestamp, function($query) use ($startTimestamp) {
-            $query->whereDate('created_at', '>', $startTimestamp);
-        })->when($endTimestamp, function($query) use ($endTimestamp) {
-            $query->whereDate('created_at', '<', $endTimestamp);
+        })->when($startTimestamp && $endTimestamp, function($query) use ($startTimestamp, $endTimestamp) {
+            $query->whereDate('created_at', '>', $startTimestamp)
+                ->whereDate('created_at', '<', $endTimestamp);
         })
         // status
         ->when($status === 'all', function($query) {
             $query->where('posts.status', '!=', 'deleted');
         }, function ($query) use ($status) {
             $query->where('posts.status', $status);
-        });
+        })
+        ->when($search, function($query) use ($search) {
+            $query->where('posts.title', 'LIKE', "$search%");
+        })
+        ->orderByRaw("FIELD(posts.status, 'draft') DESC") // drafts first
+        ->orderBy('created_at', 'desc')
+        ->limit($limit)
+        ->offset($offset)
+        ->get();
     }
 
 }

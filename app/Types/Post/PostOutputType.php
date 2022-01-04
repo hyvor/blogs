@@ -5,7 +5,7 @@ use App\Models\Blog;
 use App\Models\Post;
 use App\Types\Tag\TagType;
 
-class DataAPIPost {
+class PostOutputType {
 
     public $id;
     public $created_at;
@@ -26,10 +26,13 @@ class DataAPIPost {
     public $code_foot;
 
 
-    public function __construct(Post $post, Blog $blog) {
+    /**
+     * @var $isConsole - If this type is for Console API.
+     */
+    public function __construct(Post $post, Blog $blog, bool $isConsole = false) {
 
-        $tags = $post->tags->map(function($tag) use ($blog) {
-            return new TagType($tag, $blog);
+        $tags = $post->tags->map(function($tag) use ($blog, $isConsole) {
+            return $isConsole ? $tag->id : new TagType($tag, $blog);
         })->toArray();
 
         $authors = null;

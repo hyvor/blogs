@@ -13,7 +13,7 @@ export default function Posts( { postId } ) {
     const { subdomain } = useValues(subdomainLogic)
     const postLogicSubdomain = postsLogic({subdomain})
     const { postsList, posts, postsListLoadStatus, postsListHasMore, postsListLoadMoreStatus, filters } = useValues(postLogicSubdomain);
-    const { getPostsListLoadMore } = useActions(postLogicSubdomain)
+    const { getPostsLoadMore } = useActions(postLogicSubdomain)
 
     const { changeFilter } = useActions(postLogicSubdomain)
 
@@ -24,7 +24,7 @@ export default function Posts( { postId } ) {
             postsListHasMore &&
             el.scrollTop + el.clientHeight >= el.scrollHeight
         ) {
-            getPostsListLoadMore({ page: 2 })
+            getPostsLoadMore({ offset: postsList.length })
         }
     }
 
@@ -72,10 +72,6 @@ export default function Posts( { postId } ) {
                                 </NavLink>
                             })
                         }
-                        {
-                            postsListHasMore ?
-                            <div>Has more</div> : null
-                        }
                     </div>
                 }
             </div>
@@ -97,9 +93,10 @@ function PostFilterView({ filters, changeFilter }) {
         { value: 'draft', label: 'Draft (50)' },
         { value: 'deleted', label: 'Deleted (2)' }
     ]
-    const ownershipOptions = [
-        { value: 'all', label: 'All' },
+    const authorsOptions = [
+        { value: 'all', label: 'All (500)' },
         { value: 'you', label: 'You (45)' },
+        { value: 'others', label: 'Others (241)' }
     ];
     const tagsOptions = [
         { value: 'all', label: 'All' },
@@ -125,7 +122,7 @@ function PostFilterView({ filters, changeFilter }) {
     return <div className="posts-filtering">
         <div className="post-filters">
             <PostsFilter name="status" value={filters.status} options={statusOptions} onChange={handleChange} />
-            <PostsFilter name="author" value={filters.author} options={ownershipOptions} onChange={handleChange} />
+            <PostsFilter name="author" value={filters.author} options={authorsOptions} onChange={handleChange} />
             <PostsFilter name="tag" value={filters.tag} options={tagsOptions} onChange={handleChange} />
             <PostsFilter name="date" value={filters.date} options={dateOptions} onChange={handleChange} />
         </div>

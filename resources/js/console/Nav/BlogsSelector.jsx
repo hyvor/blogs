@@ -5,6 +5,7 @@ import { useEffect } from 'react';
 
 
 import {ChevronExpand} from 'react-bootstrap-icons';
+import numberFormatter from '../../helpers/numberFormatter';
 import onOutsideClick from '../../helpers/onOutsideClick';
 import blogsLogic from '../logic/blogsLogic';
 import subdomainLogic from '../logic/subdomainLogic';
@@ -48,7 +49,7 @@ export default function BlogsSelector() {
 
     return <div className="blog-selector">
         <div className="value" onClick={isListOpen ? null : openList}>
-            <div className="name">{ activeBlog.name }</div>
+            <div className="name">{ activeBlog.blog.name }</div>
             <div><ChevronExpand /></div>
         </div>
         <div 
@@ -57,7 +58,7 @@ export default function BlogsSelector() {
         >
             <div className="blog-list">
                 {
-                    blogs.map(blog => {
+                    blogs.map(({blog, user}) => {
                         return <div 
                             key={blog.id} 
                             className={"blog" + (blog.subdomain === activeSubdomain ? " active" : "")}
@@ -66,12 +67,15 @@ export default function BlogsSelector() {
                             <div className="blog-row">
                                 <div className="row-left">{blog.name}</div>
                                 <div className="row-right">
-                                    <span className="global-tag-role">{blog.role}</span>
+                                    <span className="plan-name">{blog.plan || "Personal"}</span>
+                                    <span className="global-tag-role">{user.role}</span>
                                 </div>
                             </div>
                             <div className="blog-row">
                                 <div className="row-left">{blog.subdomain}.hyvorblogs.io</div>
-                                <div className="row-right">{blog.posts_count} Posts</div>
+                                <div className="row-right">
+                                    { numberFormatter(blog.posts_count)} Posts &middot;&nbsp;
+                                    { numberFormatter(blog.users_count) } Users</div>
                             </div>
                         </div>
                     })
