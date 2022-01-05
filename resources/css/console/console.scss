@@ -520,6 +520,36 @@ body {
     }
 }
 
+.settings-view {
+
+    .middle-heading {
+        justify-content: center;
+        border-bottom:1px solid $color-accent-light;
+        margin-bottom: 25px!important;
+        padding-bottom: 25px!important;
+    }
+
+    .settings-nav {
+        padding:0 25px;
+        div {height:25px;}
+        a {
+            display: block;
+            padding: 12px 18px;
+            transition: 0.1s background-color;
+            cursor: pointer;
+            border-radius: 20px;
+            font-weight: 600;
+            &:hover {
+                background-color: $color-hover;
+            }
+            &.active {
+                background: $color-accent-light;
+            }
+        }
+    }
+
+}
+
 .onboarding-body {
     .your-blog {
         font-size: 14px;

@@ -26,8 +26,9 @@ export default function Nav() {
 
             <div className="left-divider"></div>
 
-            <NavLink href={`/${subdomain}/theme`}>Theme</NavLink>
-            <NavLink href={`/${subdomain}/settings`}>Settings</NavLink>
+            <NavLink href={`/console/${subdomain}/theme`}>Theme</NavLink>
+            <NavLink href={`/console/${subdomain}/billing`}>Billing</NavLink>
+            <NavLink href={`/console/${subdomain}/settings`}>Settings</NavLink>
 
         </div>
     </div>
