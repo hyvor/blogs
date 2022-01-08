@@ -5,6 +5,7 @@ import { routerPlugin } from 'kea-router'
 import { loadersPlugin } from 'kea-loaders'
 import Scene from './Scene';
 import { loadersWithHasMorePlugin } from './lib/kea-plugins/loadersWithHasMore';
+import { ajaxPlugin } from './lib/kea-plugins/ajax';
 
 resetContext({
     plugins: [
@@ -13,7 +14,8 @@ resetContext({
             pathFromWindowToRoutes: (path) => path.replace(/^\/console/, ''),
         }),
         loadersPlugin(),
-        loadersWithHasMorePlugin()
+        loadersWithHasMorePlugin(),
+        ajaxPlugin()
     ]
 });
 

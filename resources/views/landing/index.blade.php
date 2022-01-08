@@ -162,12 +162,13 @@
                     <ul>
                         <li><b>Owner</b> - who created the blog, can access everything</li>
                         <li><b>Admin</b> - can access everything</li>
-                        <li><b>Finance</b> - can only access billing settings (your finance people)</li>
                         <li><b>Editor</b> - can publish and manage everyone's posts.</li>
                         <li><b>Writer</b> - can publish and manage their posts but not others'.</li>
+                        <li><b>Contributors</b> - can write but not publish. An editor has to publish their posts.</li>
+                        <li><b>Finance</b> - can only access billing settings.</li>
                     </ul>
                 </p>
-                <p>You can also add <b>contributors</b>, who will not be considered as "users" for billing. They can write posts but someone else from your team have to publish the posts.</p>
+                
             </div>
         </div>
 

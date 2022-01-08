@@ -12,7 +12,7 @@ Folder | Contents
 `app/Models` | Application database models
 `app/Providers` | Laravel and our service providers resides here. Usually, you want to edit `DomainsServiceProvider.php` when adding new repos.
 `app/Domains` | All our repos reside here, namespaced by the domains (Blog, User, etc.).
-`app/Repositores/{Domain}/Types` | All input and output types of that repository reside here. Our APIs return responses as objects or arrays of objects. The schema of these objects resides in this folder. Think of these objects as interfaces in TypeScript. We do not return Models directly in API responses. All Models go through Types to be converted to an "API-friendly" output. We define each key value pair in a public attribute with a default value (`json_encode` only convert `public` attributes).
+`app/Domains/{Domain}/Types` | All input and output types of that repository reside here. Our APIs return responses as objects or arrays of objects. The schema of these objects resides in this folder. Think of these objects as interfaces in TypeScript. We do not return Models directly in API responses. All Models go through Types to be converted to an "API-friendly" output. We define each key value pair in a public attribute with a default value (`json_encode` only convert `public` attributes).
 `database/migrations` | Database migrations. We only store **table create** statements here - not updates
 `database/seeders` | Add seeders here
 `resources` | Front-end files

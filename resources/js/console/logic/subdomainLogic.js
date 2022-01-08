@@ -7,6 +7,8 @@ import sceneLogic from './sceneLogic';
 
 const subdomainLogic = kea({
 
+    path: ['subdomain'],
+
     actions: ({ values }) => ({
         setSubdomain: (subdomain, oldDomain) => ({ old: oldDomain || values.subdomain, subdomain })
     }),

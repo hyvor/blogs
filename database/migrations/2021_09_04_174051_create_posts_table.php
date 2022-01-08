@@ -19,6 +19,7 @@ class CreatePostsTable extends Migration
             // time
             $table->timestamps();
             $table->timestamp('published_at')->nullable();
+            $table->softDeletes();
 
             // connections
             $table->bigInteger('blog_id')->index();
@@ -29,10 +30,10 @@ class CreatePostsTable extends Migration
             $table->boolean('is_page')->default(false);
 
             // basic
-            $table->text('content');
-            $table->string('slug');
-            $table->string('title');
-            $table->string('description', 350);
+            $table->text('content')->nullable();
+            $table->string('slug')->nullable();
+            $table->string('title')->nullable();
+            $table->string('description', 350)->default('');
             $table->string('featured_image')->nullable();
 
             // advanced
@@ -41,7 +42,7 @@ class CreatePostsTable extends Migration
             $table->text('code_foot')->nullable();
 
             // other
-            $table->tinyInteger('reading_time');
+            $table->tinyInteger('reading_time')->nullable();
 
             $table->unique(['blog_id', 'slug']);
         });

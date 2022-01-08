@@ -1,4 +1,6 @@
 import {Schema} from "prosemirror-model"
+import { schema } from "prosemirror-schema-basic"
+import { addListNodes } from "prosemirror-schema-list"
 
 /**
  * Copied and changed from
@@ -234,4 +236,11 @@ export const marks = {
 //
 // To reuse elements from this schema, extend or read from its
 // `spec.nodes` and `spec.marks` [properties](#model.Schema.spec).
-export default new Schema({nodes, marks})
+
+
+const schemaWithoutList = new Schema({nodes, marks})
+
+export default new Schema({
+    nodes: addListNodes(schemaWithoutList.spec.nodes, "paragraph block*", "block"),
+    marks: schemaWithoutList.spec.marks
+})

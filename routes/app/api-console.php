@@ -28,53 +28,50 @@ Route::prefix('/api/console/v0/blog/{subdomain}')
 
     Route::get('/posts-counts', [ConsolePostController::class, 'getCounts']);
 
-    // posts (and pages)
+    // posts (and pages) CRUD
     Route::get('/posts', [ConsolePostController::class, 'getPosts']);
     Route::post('/post', [ConsolePostController::class, 'createPost']);
+    Route::get('/post/{id}', [ConsolePostController::class, 'getPost']);
     Route::patch('/post/{id}', [ConsolePostController::class, 'updatePost']);
-    Route::delete('/post/{id}', [ConsolePostController::class, 'getPosts']);
+    Route::delete('/post/{id}', [ConsolePostController::class, 'deletePost']);
 
-    // users
-    Route::get('/users', []);
-    Route::post('/user', []);
-    Route::patch('/user/{id}', []);
-    Route::delete('/user/{id}', []);
+    // users CRUD
+    Route::get('/users', [ConsoleUserController::class, 'getUsers']);
+    Route::post('/user', [ConsoleUserController::class, 'createUser']);
+    Route::patch('/user/{id}', [ConsoleUserController::class, 'updateUser']);
+    Route::delete('/user/{id}', [ConsoleUserController::class, 'deleteUser']);
 
-    // tags
+    // tags CRUD
     Route::get('/tags', []);
     Route::post('/tag', []);
     Route::patch('/tag/{id}', []);
     Route::delete('/tag/{id}', []);
 
-    // post actions
-    Route::post('/post/{id}/tags', []);
-    Route::post('/post/{id}/authors', []);
-
-    // theme
+    // theme CRUD
     Route::get('/theme/files', []);
     Route::post('/theme/file/{name}', []);
     Route::post('/theme/{themeId}', []);
     Route::post('/theme/upload', []);
 
-    // webhooks
+    // webhooks CRUD
     Route::get('/webhooks', []);
     Route::post('/webhook', []);
     Route::patch('/webhook/{id}', []);
     Route::delete('/webhook/{id}', []);
 
-    // navigation
+    // navigation CRUD
     Route::get('/navigations', []);
     Route::post('/navigation', []);
     Route::patch('/navigation/{id}', []);
     Route::delete('/navigation/{id}', []);
 
-    // billing
+    // billing CRUD
     Route::get('/subscription', []);
     Route::post('/subscription', []);
     Route::patch('/subscription', []);
     Route::delete('/subscription', []);
 
-    // settings
+    // settings RU
     Route::get('/settings', []);
     Route::post('/settings', []);
 

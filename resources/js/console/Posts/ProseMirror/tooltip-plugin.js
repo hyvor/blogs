@@ -58,6 +58,7 @@ class MarksTooltip {
         this.tooltip.appendChild(dom);
 
         var selfx = this;
+        const view = this.view;
 
         dom.addEventListener("click", function() {
             if (isLink) {

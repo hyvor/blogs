@@ -2,11 +2,18 @@ import { useValues } from 'kea';
 import React from 'react';
 import subdomainLogic from '../logic/subdomainLogic';
 import NavLink from '../ReusableComponents/NavLink';
+import SettingUsers from './SettingUsers';
 
 export default function Settings({type}) {
 
     const { subdomain } = useValues(subdomainLogic); 
     const settingsPrefix = `/console/${subdomain}/settings`;
+
+    var Type = () => null;
+    switch (type) {
+        case 'users':
+            Type = () => <SettingUsers />;
+    }
 
     return <div className="posts-view settings-view">
         <div className="box box-left">
@@ -32,8 +39,8 @@ export default function Settings({type}) {
                 <NavLink href={settingsPrefix + "/delete"}>Delete Blog</NavLink>
             </div>
         </div>
-        <div className="box box-right">
-            
+        <div className="box box-right settings-right">
+            <Type />
         </div>
     </div>
 

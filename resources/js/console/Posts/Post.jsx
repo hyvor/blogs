@@ -1,24 +1,25 @@
-import { useValues } from 'kea';
+import { useActions, useValues } from 'kea';
 import React, { useEffect, useRef, useState } from 'react';
 import { BoxArrowUpRight, CaretDownFill, GearFill, PencilFill, Trash } from 'react-bootstrap-icons';
 import postsLogic from '../logic/postsLogic';
 import Editor from './ProseMirror/Editor';
 import TextareaAutosize from 'react-textarea-autosize';
 import onOutsideClick from '../../helpers/onOutsideClick';
+import postLogic from '../logic/postLogic';
 
 export default function Post( {subdomain, id} ) {
 
+    id = parseInt(id)
 
-    const { posts } = useValues(postsLogic({subdomain}))
-    const [ post, setPost ] = useState({});
+    const postSubdomainLogic = postsLogic({subdomain});
 
-    useEffect(() => {
-        setPost(posts[id]);
-    }, [id]);
+    const { posts } = useValues(postSubdomainLogic)
+    const { deletePost } = useActions(postSubdomainLogic)
 
-    function handleDataChange(key, val) {
-        setPost({...post, ...{[key]: val}});
-    }
+    const postLogicInst = postLogic({id});
+    const { post } = useValues(postLogicInst)
+    const { updatePostValue } = useActions(postLogicInst)
+
 
     /**
      * Disallow outside clicking when the content has changed
@@ -101,13 +102,13 @@ export default function Post( {subdomain, id} ) {
         alert("Updated");
     }
 
+    function handleDelete() {
+        deletePost({id})
+    }
+
     return <div className="post-editor" ref={viewRef}>
 
         <div className="post-editor-top">
-
-            {/* <div className="cover-image" style={{
-                backgroundImage: 'url("https://picsum.photos/400/300")',
-            }}></div> */}
 
             <div className="post-editor-title-row">
 
@@ -116,7 +117,7 @@ export default function Post( {subdomain, id} ) {
                         className="post-editor-title" 
                         placeholder="Title..."
                         value={post.title}
-                        onChange={(e) => handleDataChange('title', e.target.value)}
+                        onChange={(e) => updatePostValue('title', e.target.value)}
                     />
                 </div>
 
@@ -163,7 +164,7 @@ export default function Post( {subdomain, id} ) {
                                     <input 
                                         className="input" 
                                         value={post.slug}
-                                        onChange={(e) => handleDataChange("slug", e.target.value)}
+                                        onChange={(e) => updatePostValue("slug", e.target.value)}
                                     ></input>
                                 </Setting>
 
@@ -171,7 +172,7 @@ export default function Post( {subdomain, id} ) {
                                     title="Publish Time"
                                     className="post-setting-featured-image"
                                 >
-                                    <input className="input" value="2021-01-01"></input>
+                                    <input className="input" value="2021-01-01" onChange={() => {}}></input>
                                 </Setting>
 
                             </div>
@@ -182,14 +183,14 @@ export default function Post( {subdomain, id} ) {
                                     title="Authors"
                                     description="The unique part of the URL to identify this post"
                                 >
-                                    <input className="input" value="Ishini Avindya"></input>
+                                    <input className="input" value="Ishini Avindya" onChange={() => {}}></input>
                                 </Setting>
 
                                 <Setting 
                                     title="Tags"
                                     className="post-setting-featured-image"
                                 >
-                                    <input className="input" value="#creative"></input>
+                                    <input className="input" value="#creative" onChange={() => {}}></input>
                                 </Setting>
 
                             </div>
@@ -201,7 +202,12 @@ export default function Post( {subdomain, id} ) {
                                     description="Summarization of the post for listing pages and search engines."
                                     className="post-setting-description"
                                 >
-                                    <textarea className="input" placeholder="Write a description..."></textarea>
+                                    <textarea 
+                                        className="input"
+                                        placeholder="Write a description..."
+                                        value={post.description}
+                                        onChange={e => updatePostValue('description', e.target.value)}
+                                    ></textarea>
                                 </Setting>
 
                                 <Setting 
@@ -225,7 +231,10 @@ export default function Post( {subdomain, id} ) {
                                 <Setting 
                                     title="Delete Post"
                                 >
-                                    <button className="button small danger">Delete <Trash /></button>
+                                    <button 
+                                        className="button small danger"
+                                        onClick={handleDelete}
+                                    >Delete <Trash /></button>
                                 </Setting>
 
                             </div>
@@ -237,7 +246,11 @@ export default function Post( {subdomain, id} ) {
                                 title="Canonical URL"
                                 description=""
                             >
-                                <input className="input"></input>
+                                <input 
+                                    className="input"
+                                    value={post.canonical_url}
+                                    onChange={e => updatePostValue('canonical_url', e.target.value)}
+                                ></input>
                             </Setting>
 
                             <div className="post-setting-dual">
@@ -247,7 +260,12 @@ export default function Post( {subdomain, id} ) {
                                     description="Summarization of the post for listing pages and search engines."
                                     className="post-setting-description"
                                 >
-                                    <textarea className="input" placeholder="Paste HTML code..."></textarea>
+                                    <textarea 
+                                        className="input"
+                                        placeholder="Paste HTML code..."
+                                        value={post.code_head}
+                                        onChange={e => updatePostValue('code_head', e.target.value)}
+                                    ></textarea>
                                 </Setting>
 
                                 <Setting 
@@ -255,7 +273,12 @@ export default function Post( {subdomain, id} ) {
                                     description="Summarization of the post for listing pages and search engines."
                                     className="post-setting-description"
                                 >
-                                    <textarea className="input" placeholder="Paste HTML code..."></textarea>
+                                    <textarea 
+                                        className="input" 
+                                        placeholder="Paste HTML code..."
+                                        value={post.code_foot}
+                                        onChange={e => updatePostValue('code_foot', e.target.value)}
+                                    ></textarea>
                                 </Setting>
 
                             </div> 
@@ -267,7 +290,10 @@ export default function Post( {subdomain, id} ) {
             </div>
         </div>
 
-        <Editor />
+        <Editor 
+            initialValue={post.content}
+            onChange={v => updatePostValue('content', v)}
+        />
 
     </div>
 

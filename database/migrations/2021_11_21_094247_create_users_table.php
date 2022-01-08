@@ -20,17 +20,16 @@ class CreateUsersTable extends Migration
             // connection
             $table->bigInteger('blog_id');
             $table->bigInteger('user_id'); // hyvor user ID
-            $table->boolean('is_synced', true); // synced with hyvor data
+            $table->boolean('is_synced', true)->default(false); // synced with hyvor data
 
             $table->enum('status', ['invited', 'active', 'blocked'])->default('invited');
-            $table->enum('role', ['owner', 'admin', 'finance', 'editor', 'writer', 'contributor']);
+            $table->enum('role', ['owner', 'admin', 'editor', 'writer', 'contributor', 'finance']);
 
             // user data
             $table->string('slug');
             $table->string('name', 50);
             $table->string('email');
             $table->string('profile_image')->nullable();
-            $table->string('cover_image')->nullable();
             $table->string('bio')->nullable();
             $table->string('website_url')->nullable();
             $table->string('location', 30)->nullable();

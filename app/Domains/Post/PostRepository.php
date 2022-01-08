@@ -10,8 +10,8 @@ use Illuminate\Support\Facades\DB;
 
 class PostRepository {
 
-    static function byId(int $postId) {
-
+    static function postById(int $postId) {
+        return Post::find($postId);
     }
 
     static function byBlogIdAndIdentifier(int $blogId, int $postid = null, string $slug = null) {
@@ -61,6 +61,29 @@ class PostRepository {
         ->limit($limit)
         ->offset($offset)
         ->get();
+    }
+
+    static function createPost(int $blogId, bool $isPage) {
+
+        /**
+         * Because Laravel doesn't fetch database default values for other colums
+         * you have to manually fetch the record again by ID to prevent 
+         * status being null
+         * 
+         * #ref https://github.com/laravel/framework/issues/21449
+         */
+
+        $post = Post::create([
+            'blog_id' => $blogId,
+            'is_page' => $isPage
+        ]);
+
+        return Post::find($post->id);
+
+    }
+
+    static function deletePost($postId) {
+        Post::find($postId)->delete();
     }
 
 }

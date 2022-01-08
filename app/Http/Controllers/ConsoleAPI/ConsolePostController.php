@@ -4,6 +4,7 @@ namespace App\Http\Controllers\ConsoleAPI;
 use App\Models\Blog;
 use App\Models\Post;
 use App\Domains\Post\PostRepository;
+use App\Exceptions\TrustedException;
 use App\Types\Post\PostInputListFiltersType;
 use App\Types\Post\PostOutputType;
 use Illuminate\Http\Request;
@@ -17,7 +18,6 @@ class ConsolePostController {
     }
 
     public function getPosts(Request $request, Blog $blog) {
-
         $filters = json_decode($request->input('filters'));
         $posts = PostRepository::getPosts(
             $blog->id,
@@ -35,6 +35,30 @@ class ConsolePostController {
         });
 
         return response()->json($posts);
+    }
+
+    public function getPost(Request $request, Blog $blog) {
+        $postId = (int) $request->route('id');
+        $post = PostRepository::postById($postId);
+        if ($post->blog_id !== $blog->id) {
+            throw new TrustedException('Post does not belong to this blog', 401);
+        }
+        return response()->json(new PostOutputType($post, $blog, true));
+    }
+
+    public function createPost(Request $request, Blog $blog) {
+        $isPage = (bool) $request->input('is_page');
+        $post = PostRepository::createPost($blog->id, $isPage);
+        return response()->json(new PostOutputType($post, $blog, true));
+    }
+
+    public function deletePost(Request $request, Blog $blog) {
+        $postId = $request->route('id');
+        $post = PostRepository::postById($postId);
+        if ($post->blog_id !== $blog->id) {
+            throw new TrustedException('Post does not belong to this blog', 401);
+        }
+        PostRepository::deletePost($postId, $blog->id);
     }
 
 }

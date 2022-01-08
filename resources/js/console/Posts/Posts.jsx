@@ -12,8 +12,12 @@ export default function Posts( { postId } ) {
 
     const { subdomain } = useValues(subdomainLogic)
     const postLogicSubdomain = postsLogic({subdomain})
-    const { postsList, posts, postsListLoadStatus, postsListHasMore, postsListLoadMoreStatus, filters } = useValues(postLogicSubdomain);
-    const { getPostsLoadMore } = useActions(postLogicSubdomain)
+    const { 
+        posts,
+        postsList, postsListLoadStatus, postsListHasMore, postsListLoadMoreStatus, 
+        filters 
+    } = useValues(postLogicSubdomain);
+    const { getPostsLoadMore, createPost } = useActions(postLogicSubdomain)
 
     const { changeFilter } = useActions(postLogicSubdomain)
 
@@ -28,13 +32,20 @@ export default function Posts( { postId } ) {
         }
     }
 
+    function handleNew() {
+        createPost();
+    }
+
     return <div className="posts-view">
         <div className="box box-left">
             <div className="middle-heading">
                 <div>
                     Posts
                 </div>
-                <button className="button small">+ New</button>
+                <button 
+                    className="button small"
+                    onClick={handleNew}
+                >+ New</button>
             </div>
             <PostFilterView filters={filters} changeFilter={changeFilter} />
             <div className="posts-list" onScroll={handleScroll}>
@@ -56,7 +67,7 @@ export default function Posts( { postId } ) {
                                     <div className="post-title">{
                                                 post.status !== 'published' ? 
                                                 <span className={`post-status ${post.status}`}>{post.status}</span>
-                                                : null}{ post.title }</div>
+                                                : null}{ post.title || '(Untitled)' }</div>
                                     
                                     <div className="post-data">
                                         <div className="post-date">
