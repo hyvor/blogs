@@ -212,7 +212,8 @@ body {
                 border-bottom:1px solid $color-accent-light;
             }
             .post-title {
-                font-weight:600;
+                font-weight:600;    
+                word-break: break-all;
             }
 
             .post-data {
@@ -297,7 +298,12 @@ body {
                 background:none;
             }
             .publish-buttons {
-                button {
+                .saving {
+                    margin-right: 9px;
+                    color: #777;
+                    font-size: 12px;
+                }
+                button.main-button {
                     display:inline-flex;
                     align-items: center;
                     span{margin-right:6px} svg {width:9px}

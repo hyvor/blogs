@@ -15,7 +15,6 @@ import { Node } from 'prosemirror-model';
 import {ProseMirror} from 'use-prosemirror';
 import useUpdateEffect from '../../../helpers/hooks/useUpdateEffect';
 
-let view;
 
 function getState(val) {
     val = val ? JSON.parse(val) : null

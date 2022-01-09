@@ -37,18 +37,18 @@ class ConsolePostController {
         return response()->json($posts);
     }
 
+    public function createPost(Request $request, Blog $blog) {
+        $isPage = (bool) $request->input('is_page');
+        $post = PostRepository::createPost($blog->id, $isPage);
+        return response()->json(new PostOutputType($post, $blog, true));
+    }
+
     public function getPost(Request $request, Blog $blog) {
         $postId = (int) $request->route('id');
         $post = PostRepository::postById($postId);
         if ($post->blog_id !== $blog->id) {
             throw new TrustedException('Post does not belong to this blog', 401);
         }
-        return response()->json(new PostOutputType($post, $blog, true));
-    }
-
-    public function createPost(Request $request, Blog $blog) {
-        $isPage = (bool) $request->input('is_page');
-        $post = PostRepository::createPost($blog->id, $isPage);
         return response()->json(new PostOutputType($post, $blog, true));
     }
 
@@ -59,6 +59,22 @@ class ConsolePostController {
             throw new TrustedException('Post does not belong to this blog', 401);
         }
         PostRepository::deletePost($postId, $blog->id);
+    }
+
+    public function updatePost(Request $request, Blog $blog) {
+        $postId = $request->route('id');
+        $post = PostRepository::postById($postId);
+        
+        if ($post->blog_id !== $blog->id) {
+            throw new TrustedException('Post does not belong to this blog', 401);
+        }
+        $updates = [];
+
+        if ($request->has('content')) $updates['content'] = $request->input('content');
+        if ($request->has('title')) $updates['title'] = $request->input('title');
+
+        $post = PostRepository::updatePost($postId, $updates);
+        return response()->json(new PostOutputType($post, $blog, true));
     }
 
 }

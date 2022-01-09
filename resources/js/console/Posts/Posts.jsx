@@ -14,21 +14,22 @@ export default function Posts( { postId } ) {
     const { subdomain } = useValues(subdomainLogic)
     const postLogicSubdomain = postsLogic({subdomain})
     const { 
-        postsList, postsListLoadStatus, postsListHasMore, postsListLoadMoreStatus, 
-        filters 
+        postsList, loadPostsListAjax, postsListHasMore, loadPostsListMoreAjax,
+        filters
     } = useValues(postLogicSubdomain);
-    const { getPostsLoadMore, createPost } = useActions(postLogicSubdomain)
-
-    const { changeFilter } = useActions(postLogicSubdomain)
+    const { 
+        loadPostsListMore, createPost,
+        changeFilter
+    } = useActions(postLogicSubdomain)
 
     function handleScroll(e) {
         var el = e.target;
         if (
-            postsListLoadMoreStatus !== 'loading' &&  
+            loadPostsListMoreAjax.status !== 'loading' &&  
             postsListHasMore &&
             el.scrollTop + el.clientHeight >= el.scrollHeight
         ) {
-            getPostsLoadMore({ offset: postsList.length })
+            loadPostsListMore({ offset: postsList.length })
         }
     }
 
@@ -50,12 +51,12 @@ export default function Posts( { postId } ) {
             <PostFilterView filters={filters} changeFilter={changeFilter} />
             <div className="posts-list" onScroll={handleScroll}>
                 {
-                    postsListLoadStatus === 'loading' ?
+                    loadPostsListAjax.status === 'loading' ?
                     <div className="posts-loading"><Loader /></div> :
 
                     <div className="posts-loaded-wrap">
                         {
-                            postsList.map(id => <PostRow id={id} subdomain={subdomain} />)
+                            postsList.map(id => <PostRow key={id} id={id} subdomain={subdomain} />)
                         }
                     </div>
                 }
@@ -64,7 +65,8 @@ export default function Posts( { postId } ) {
         <div className="box box-right">
             {
                 postId ?
-                <Post subdomain={subdomain} id={postId} /> : <div>No post ID</div>
+                <Post subdomain={subdomain} id={postId} /> : 
+                <NoPost />
             }
         </div>
     </div>
@@ -97,6 +99,14 @@ function PostRow({id, subdomain}) {
             <span className="post-tag">#creative</span>
         </div>
     </NavLink>
+
+}
+
+function NoPost() {
+
+    return <div>
+        Posts are the heart of your blog.
+    </div>
 
 }
 

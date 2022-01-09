@@ -31,6 +31,7 @@ class CreatePostsTable extends Migration
 
             // basic
             $table->text('content')->nullable();
+            $table->text('content_unsaved')->nullable();
             $table->string('slug')->nullable();
             $table->string('title')->nullable();
             $table->string('description', 350)->default('');

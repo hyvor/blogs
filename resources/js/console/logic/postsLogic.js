@@ -10,7 +10,9 @@ const postsLogic = kea({
 
     actions: {
         changeFilter: (name, value) => ({name, value}),
-        updatePost: (id, key, value) => ({id, key, value}),
+
+        setPostsList: (list) => ({list}),
+        setPostsListHasMore: (has) => ({has}),
 
         navigateToPost: (id) => ({id}),
         navigateToPosts: () => false
@@ -23,18 +25,40 @@ const postsLogic = kea({
 
     ajax: ({ values, props, actions }) => ({
 
+        /**
+         * First and more loading uses seperate actiosn because
+         * we want seperate loading states
+         */
+        loadPostsList: async () => {
+            const response = await api.get(props.subdomain, '/posts', {
+                filters: values.filters
+            });
+            response.forEach(post => {
+                const builtCounterLogic = postLogic.build({id: post.id, data: post}, false);
+                builtCounterLogic.mount();
+            })
+            actions.setPostsListHasMore(response.length === 50);
+            actions.setPostsList(response.map(val => val.id))
+        },
+        loadPostsListMore: async ({offset}) => {
+            const response = await api.get(props.subdomain, '/posts', {
+                filters: values.filters,
+                offset
+            });
+            response.forEach(post => {
+                const builtCounterLogic = postLogic.build({id: post.id, data: post}, false);
+                builtCounterLogic.mount();
+            })
+            actions.setPostsListHasMore(response.length === 50);
+            actions.setPostsList([...values.postsList, ...response.map(val => val.id)])
+        },
+
         createPost: async () => {
             const response = await api.post(props.subdomain, '/post');
 
             actions.getPostsLoadSuccess([response.id, ...values.postsList])
             actions.navigateToPost(response.id);
-        },
-
-        deletePost: async ({id}) => {
-            await api.delete(props.subdomain, `/post/${id}`);
-            actions.getPostsLoadSuccess(values.postsList.filter(pId => pId !== id));
-            actions.navigateToPosts();
-        },
+        },        
 
         savePost: async ({ id, data }) => {
             const response = await api.patch(props.subdomain, `/post/${id}`, data);
@@ -43,13 +67,8 @@ const postsLogic = kea({
 
     }),
 
-    loadersWithHasMore: ({ values, props, actions }) => ({
+    /* loadersWithHasMore: ({ values, props, actions }) => ({
 
-        /**
-         * posts in the post-list preview
-         * Just the IDs
-         * Data is saved in postsStorage
-         */
         postsList: [[], {
             getPosts: async ({ offset }) => {
                 const response = await api.get(props.subdomain, '/posts', {
@@ -68,9 +87,9 @@ const postsLogic = kea({
             },
         }],
         
-    }),
+    }), */
 
-    loaders: ({ values, props, actions }) => ({
+    /* loaders: ({ values, props, actions }) => ({
 
         postsCounts: [{
             all: null,
@@ -92,13 +111,20 @@ const postsLogic = kea({
             }
         }]
 
-    }),
+    }), */
 
     listeners: ({actions}) => ({
         changeFilter: () => actions.getPostsLoad()
     }),
 
     reducers: {
+
+        postsList: [[], {
+            setPostsList: (_, {list}) => list
+        }],
+        postsListHasMore: [false, {
+            setPostsListHasMore: (_, {has}) => has 
+        }],
 
         filters: [
             {
@@ -116,9 +142,7 @@ const postsLogic = kea({
     },
 
     events: ({actions}) => ({
-        afterMount: [
-            actions.loadPostsCounts
-        ]
+        afterMount: []
     })
 
 })

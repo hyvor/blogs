@@ -82,8 +82,22 @@ class PostRepository {
 
     }
 
-    static function deletePost($postId) {
+    static function updatePost(int $postId, array $updates) {
+        $post = Post::find($postId);
+        if (isset($updates['content'])) {
+            $post->content = $updates['content'];
+        }
+        if (isset($updates['title'])) {
+            $post->title = $updates['title'];
+        }
+        $post->save();
+        return $post;
+    } 
+
+
+    static function deletePost(int $postId) {
         Post::find($postId)->delete();
     }
+
 
 }

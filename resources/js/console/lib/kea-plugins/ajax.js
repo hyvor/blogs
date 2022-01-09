@@ -21,7 +21,7 @@
  *
  * 
  * Creates a reducer
- *  createPost: {
+ *  createPostAjax: {
  *      status: (string) loading|success|error
  *      error: null|string
  *  }
@@ -68,7 +68,7 @@
                         reducers: () => {
                             const newReducers =  {};
 
-                            newReducers[key] = [{
+                            newReducers[key + "Ajax"] = [{
                                 status: null,
                                 error: null
                             }, {

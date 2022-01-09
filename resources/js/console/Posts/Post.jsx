@@ -11,12 +11,9 @@ export default function Post( {subdomain, id} ) {
 
     id = parseInt(id)
 
-    const postSubdomainLogic = postsLogic({subdomain});
-
-    const { deletePost, updatePost } = useActions(postSubdomainLogic)
     const postLogicInst = postLogic({id});
-    const { post, loadPost } = useValues(postLogicInst)
-    const { updatePostValue } = useActions(postLogicInst)
+    const { post, loadPostAjax, savePostAjax } = useValues(postLogicInst)
+    const { updatePostValue, savePost, deletePost } = useActions(postLogicInst)
 
 
     /**
@@ -29,6 +26,28 @@ export default function Post( {subdomain, id} ) {
         }, false, false);
         return remove; */
     }, [])
+
+    // set auto saving each 30 seconds
+    useEffect(() => {
+        const autoSaveInterval = setInterval(() => {
+            if (savePostAjax.status !== 'loading')
+                savePost();
+        }, 10000);
+
+        function checkSave(e) {
+            if (e.keyCode === 83 && (e.ctrlKey || e.metaKey)) { // ctrl + s
+                savePost();
+                e.preventDefault();
+            }
+        }
+
+        window.addEventListener('keydown', checkSave);
+
+        return () => {
+            clearInterval(autoSaveInterval)
+            window.removeEventListener('keydown', checkSave);
+        }
+    }, [id])
 
     /**
      * Settings view
@@ -92,7 +111,7 @@ export default function Post( {subdomain, id} ) {
             onClick = () => showDeleteDetails()
         }
 
-        return <button className="button small" onClick={() => onClick()}>
+        return <button className="button small main-button" onClick={() => onClick()}>
             <span>{name}</span>{icon || <CaretDownFill />}
         </button>
     }
@@ -141,6 +160,10 @@ export default function Post( {subdomain, id} ) {
                     </div>
 
                     <div className="publish-buttons">
+                        {
+                            savePostAjax.status === 'loading' ?
+                            <span className="saving">Saving...</span> : null
+                        }
                         <MainButton />
                     </div>
                 </div>
@@ -291,7 +314,7 @@ export default function Post( {subdomain, id} ) {
 
         <div className="post-editor-wrap" onClick={() => false && view && view.focus()}>   
             {
-                false && loadPost.status === 'loading' ? null :
+                loadPostAjax.status === 'loading' ? null :
                 <Editor 
                     id={id}
                     value={post.content}
