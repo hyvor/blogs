@@ -13,11 +13,9 @@ export default function Post( {subdomain, id} ) {
 
     const postSubdomainLogic = postsLogic({subdomain});
 
-    const { posts } = useValues(postSubdomainLogic)
-    const { deletePost } = useActions(postSubdomainLogic)
-
+    const { deletePost, updatePost } = useActions(postSubdomainLogic)
     const postLogicInst = postLogic({id});
-    const { post } = useValues(postLogicInst)
+    const { post, loadPost } = useValues(postLogicInst)
     const { updatePostValue } = useActions(postLogicInst)
 
 
@@ -51,6 +49,7 @@ export default function Post( {subdomain, id} ) {
 
     // have to first click Edit Post to edit published/scheduled posts
     const [publishedPostEditing, setPublishedPostEditing] = useState(false);
+
 
     // something changed?
     // null if not
@@ -116,7 +115,7 @@ export default function Post( {subdomain, id} ) {
                     <TextareaAutosize 
                         className="post-editor-title" 
                         placeholder="Title..."
-                        value={post.title}
+                        value={post.title || ""}
                         onChange={(e) => updatePostValue('title', e.target.value)}
                     />
                 </div>
@@ -290,13 +289,18 @@ export default function Post( {subdomain, id} ) {
             </div>
         </div>
 
-        {
-            post.content ?
-            <Editor 
-                id={id}
-                value={post.content}
-                onChange={v => updatePostValue('content', v)}
-            /> : null }
+        <div className="post-editor-wrap" onClick={() => false && view && view.focus()}>   
+            {
+                false && loadPost.status === 'loading' ? null :
+                <Editor 
+                    id={id}
+                    value={post.content}
+                    onChange={v => updatePostValue('content', v)}
+                />
+            }
+        </div>
+                        
+        
 
     </div>
 

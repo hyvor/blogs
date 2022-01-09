@@ -50,7 +50,7 @@ const postLogic = kea({
 
     events: ({actions, values, props}) => ({
         afterMount: () =>  {
-
+            return;
             if (Object.keys(values.post).length) // post already loaded
                 return;
 
@@ -62,6 +62,7 @@ const postLogic = kea({
             const post = postsLogic({subdomain}).values.posts[props.id]
             if (post) {
                 actions.set(post);
+                actions.loadPostSuccess()
             } else {
                 actions.loadPost();
             }

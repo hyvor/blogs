@@ -28,9 +28,9 @@
  *  
  * Creates these actions
  * createPost
- * createPostAjaxStart
- * createPostAjaxSuccess
- * createPostAjaxError
+ * createPostStart
+ * createPostSuccess
+ * createPostError
  * 
  * How to call
  * 
@@ -58,9 +58,9 @@
                         actions: () => {
                             const newActions = {};
                             newActions[key] = (params) => params || {};
-                            newActions[key + "AjaxStart"] = false;
-                            newActions[key + "AjaxSuccess"] = false;
-                            newActions[key + "AjaxError"] = (error) => ({error});
+                            newActions[key + "Start"] = false;
+                            newActions[key + "Success"] = false;
+                            newActions[key + "Error"] = (error) => ({error});
 
                             return newActions;
                         },
@@ -69,18 +69,18 @@
                             const newReducers =  {};
 
                             newReducers[key] = [{
-                                status: 'loading',
+                                status: null,
                                 error: null
                             }, {
-                                [key + "AjaxStart"]: () => ({
+                                [key + "Start"]: () => ({
                                     status: "loading",
                                     error: null
                                 }),
-                                [key + "AjaxSuccess"]: () => ({
+                                [key + "Success"]: () => ({
                                     status: "success",
                                     error: null
                                 }),
-                                [key + "AjaxError"]: (_, {error}) => ({
+                                [key + "Error"]: (_, {error}) => ({
                                     status: "error",
                                     error
                                 })
@@ -94,18 +94,18 @@
                             const newListeners = {};
 
                             newListeners[key] = (payload = {}, breakpoint, action) => {
-                                actions[key + "AjaxStart"]();
+                                actions[key + "Start"]();
                                 try {
                                     const response = handler(payload, breakpoint, action);
                                     if (response && response.then && typeof response.then === "function") {
                                         return response
-                                            .then(() => actions[key + "AjaxSuccess"]())
-                                            .catch(error => actions[key + "AjaxError"](error.message))
+                                            .then(() => actions[key + "Success"]())
+                                            .catch(error => actions[key + "Error"](error.message))
                                     } else {
-                                        actions[key + "AjaxSuccess"]();
+                                        actions[key + "Success"]();
                                     }
                                 } catch (error) {
-                                    actions[key + "AjaxError"](error.message)
+                                    actions[key + "Error"](error.message)
                                 }
                             }
 

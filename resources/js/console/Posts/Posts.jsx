@@ -7,13 +7,13 @@ import subdomainLogic from '../logic/subdomainLogic';
 import postsLogic from '../logic/postsLogic';
 import Loader from '../ReusableComponents/Loader';
 import NavLink from '../ReusableComponents/NavLink';
+import postLogic from '../logic/postLogic';
 
 export default function Posts( { postId } ) {
 
     const { subdomain } = useValues(subdomainLogic)
     const postLogicSubdomain = postsLogic({subdomain})
     const { 
-        posts,
         postsList, postsListLoadStatus, postsListHasMore, postsListLoadMoreStatus, 
         filters 
     } = useValues(postLogicSubdomain);
@@ -55,33 +55,7 @@ export default function Posts( { postId } ) {
 
                     <div className="posts-loaded-wrap">
                         {
-                            postsList.map(pId => {
-                                const post = posts[pId];
-                                const postsLink = `/console/${subdomain}/posts`
-                                const toLink = `${postsLink}/${post.id}`
-
-                                return <NavLink
-                                    key={post.id} 
-                                    href={location.pathname === toLink ? postsLink : toLink }
-                                    className={"posts-list-item" + (false ? " active" : "") + ` ${post.status}` }>
-                                    <div className="post-title">{
-                                                post.status !== 'published' ? 
-                                                <span className={`post-status ${post.status}`}>{post.status}</span>
-                                                : null}{ post.title || '(Untitled)' }</div>
-                                    
-                                    <div className="post-data">
-                                        <div className="post-date">
-                                            { new Date(post.created_at).toDateString() }
-                                        </div>
-                                        <div className="post-author">by Ishini Avindya</div>
-                                    </div>
-
-
-                                    <div className="post-tags">
-                                        <span className="post-tag">#creative</span>
-                                    </div>
-                                </NavLink>
-                            })
+                            postsList.map(id => <PostRow id={id} subdomain={subdomain} />)
                         }
                     </div>
                 }
@@ -94,6 +68,36 @@ export default function Posts( { postId } ) {
             }
         </div>
     </div>
+}
+
+function PostRow({id, subdomain}) {
+
+    const { post } = useValues(postLogic({id}))
+    const postsLink = `/console/${subdomain}/posts`
+    const toLink = `${postsLink}/${post.id}`
+
+    return <NavLink
+        key={post.id} 
+        href={location.pathname === toLink ? postsLink : toLink }
+        className={"posts-list-item" + (false ? " active" : "") + ` ${post.status}` }>
+        <div className="post-title">{
+                    post.status !== 'published' ? 
+                    <span className={`post-status ${post.status}`}>{post.status}</span>
+                    : null}{ post.title || '(Untitled)' }</div>
+        
+        <div className="post-data">
+            <div className="post-date">
+                { new Date(post.created_at).toDateString() }
+            </div>
+            <div className="post-author">by Ishini Avindya</div>
+        </div>
+
+
+        <div className="post-tags">
+            <span className="post-tag">#creative</span>
+        </div>
+    </NavLink>
+
 }
 
 function PostFilterView({ filters, changeFilter }) {

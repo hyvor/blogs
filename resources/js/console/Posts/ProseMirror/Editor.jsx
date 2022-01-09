@@ -42,8 +42,6 @@ export default function Editor(props) {
         setState(state);
     }
 
-    return <div className="post-editor-wrap" onClick={() => false && view && view.focus()}>
-        <ProseMirror state={state} onChange={handleChange} />
-    </div>
+    return <ProseMirror state={state} onChange={handleChange} />
 
 }

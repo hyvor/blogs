@@ -1,5 +1,6 @@
 import { kea } from "kea";
 import api from "../lib/api";
+import postLogic from "./postLogic";
 
 const postsLogic = kea({
 
@@ -9,7 +10,7 @@ const postsLogic = kea({
 
     actions: {
         changeFilter: (name, value) => ({name, value}),
-        setPosts: (posts) => ({posts}),
+        updatePost: (id, key, value) => ({id, key, value}),
 
         navigateToPost: (id) => ({id}),
         navigateToPosts: () => false
@@ -20,26 +21,22 @@ const postsLogic = kea({
         navigateToPosts: () => `/${props.subdomain}/posts`
     }),
 
-
-
     ajax: ({ values, props, actions }) => ({
 
         createPost: async () => {
             const response = await api.post(props.subdomain, '/post');
 
-            actions.setPosts(response);
             actions.getPostsLoadSuccess([response.id, ...values.postsList])
             actions.navigateToPost(response.id);
         },
 
         deletePost: async ({id}) => {
             await api.delete(props.subdomain, `/post/${id}`);
-
             actions.getPostsLoadSuccess(values.postsList.filter(pId => pId !== id));
             actions.navigateToPosts();
         },
 
-        updatePost: async ({ id, data }) => {
+        savePost: async ({ id, data }) => {
             const response = await api.patch(props.subdomain, `/post/${id}`, data);
             actions.setPosts(response); // update the post object
         }
@@ -60,7 +57,13 @@ const postsLogic = kea({
                     offset
                 });
                 actions.getPostsSetHasMore(response.length === 50);
-                actions.setPosts(response)
+
+                response.forEach(post => {
+                    const builtCounterLogic = postLogic.build({id: post.id}, false);
+                    builtCounterLogic.mount();
+                    builtCounterLogic.actions.set(post);
+                })
+
                 return response.map(val => val.id); // just the IDs
             },
         }],
@@ -95,25 +98,7 @@ const postsLogic = kea({
         changeFilter: () => actions.getPostsLoad()
     }),
 
-    selectors: {
-        findById: [
-            (s) => [s.posts],
-            (posts) => {
-                return id => posts[id]
-            }
-        ]
-    },
-
     reducers: {
-
-        posts: [{}, { // id => PostObject storage
-            setPosts: (state, { posts }) => {
-                const obj = {}
-                if (!Array.isArray(posts)) posts = [posts]
-                posts.forEach(val => obj[val.id] = val)
-                return {...state, ...obj};
-            }
-        }], 
 
         filters: [
             {
