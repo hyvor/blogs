@@ -290,10 +290,13 @@ export default function Post( {subdomain, id} ) {
             </div>
         </div>
 
-        <Editor 
-            initialValue={post.content}
-            onChange={v => updatePostValue('content', v)}
-        />
+        {
+            post.content ?
+            <Editor 
+                id={id}
+                value={post.content}
+                onChange={v => updatePostValue('content', v)}
+            /> : null }
 
     </div>
 

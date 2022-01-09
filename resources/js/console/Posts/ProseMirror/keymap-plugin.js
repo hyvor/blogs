@@ -16,7 +16,7 @@ export default function keymapPlugins(schema) {
 
     bind("Mod-z", undo)
     bind("Shift-Mod-z", redo)
-    if (!mac) bind("Mod-y", redo)
+    bind("Mod-y", redo)
 
     // undo input rule, if it is the last thing user did
     bind("Backspace", undoInputRule)

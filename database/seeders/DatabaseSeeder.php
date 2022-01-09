@@ -58,15 +58,23 @@ class DatabaseSeeder extends Seeder
                 $title = $faker->sentence;
 
                 $paragraphs = $faker->paragraphs(rand(2, 6));
-                $content = "";
+                $prosemirrorJson = [
+                    'type' => 'doc',
+                    'content' => []
+                ];
                 foreach ($paragraphs as $para) {
-                    $content .= "<p>{$para}</p>";
+                    $prosemirrorJson['content'][] = [
+                        'type' => 'paragraph',
+                        'content' => [[
+                            'type' => 'text',
+                            'text' => $para
+                        ]]
+                    ];
                 }
-
 
                 $post = Post::create([
                     'blog_id' => $blog->id,
-                    'content' => $content,
+                    'content' => json_encode($prosemirrorJson),
                     'title' => $title,
                     'slug' => Str::slug($title),
                     'description' => $faker->sentence,

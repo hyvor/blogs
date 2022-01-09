@@ -9,43 +9,41 @@ import plugins from './plugins';
 import { Node } from 'prosemirror-model';
 // import {schema as HBSchema} from 'prosemirror-schema-basic';
 
-import {useProseMirror, ProseMirror} from 'use-prosemirror';
+/**
+ * 
+ */
+import {ProseMirror} from 'use-prosemirror';
+import useUpdateEffect from '../../../helpers/hooks/useUpdateEffect';
 
 let view;
 
+function getState(val) {
+    val = val ? JSON.parse(val) : null
+    const newState = {
+        schema: HBSchema,
+        plugins: plugins(HBSchema)
+    }
+    if (val) {
+        newState.doc = HBSchema.nodeFromJSON( val );
+    }
+    return () => EditorState.create(newState);
+}
+
 export default function Editor(props) {
 
-    const editorRef = useRef(null);
+    const [state, setState] = useState(getState(props.value));
 
-    const [state, setState] = useProseMirror({
-        schema: HBSchema,
-        doc: props.content ? Node.fromJSON(HBSchema, props.content) : null,
-        plugins: plugins(HBSchema)
-    })
+    useUpdateEffect(() => {
+        setState(getState(props.value))
+    }, [props.id]);
 
-    useEffect(() => {
-        props.onChange(state.doc.toJSON());
-    }, [state]);
-
-   /*  useEffect(() => {
-
-        const schema = new Schema({
-            nodes: addListNodes(HBSchema.spec.nodes, "paragraph block*", "block"),
-            marks: HBSchema.spec.marks
-        })
-
-        view = new EditorView(editorRef.current, {
-            state: EditorState.create({
-                doc: Node.fromJSON(schema, )
-                plugins: plugins(schema)
-            })
-        })
-        window.view = view;
-
-    }, []); */
+    function handleChange(state) {
+        props.onChange(JSON.stringify(state.doc.toJSON()));
+        setState(state);
+    }
 
     return <div className="post-editor-wrap" onClick={() => false && view && view.focus()}>
-        <ProseMirror state={state} onChange={setState} />
+        <ProseMirror state={state} onChange={handleChange} />
     </div>
 
 }
