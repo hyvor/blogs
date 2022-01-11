@@ -9,12 +9,10 @@
 <body>
     <div id="app"></div>
 
-
-
     @paddleJS
 
     <script>
-        var config = <?php echo json_encode($config); ?>;
+        var appConfig = <?php echo json_encode($config); ?>;
     </script>
 
     <script src="/js/console.js"></script>

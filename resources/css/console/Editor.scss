@@ -1,10 +1,74 @@
+@import '../colors.scss';
+
 .post-editor {
     display: flex;
     flex-direction: column;
     height:100%;
     .post-editor-wrap {
         font-size:18px;
+        flex:1;
         overflow:auto;
+    }
+
+
+    .pm-tooltip {
+        position:absolute;
+        background: #fff;
+        box-shadow: 0 0 20px 8px rgba(136, 108, 107, 0.11);
+        border-radius: 20px;
+        padding: 5px 10px;
+        margin-bottom: 10px;
+        span {
+            display: inline-flex;
+            cursor: pointer;
+            transition: 0.1s background-color;
+            width: 25px;
+            height: 25px;
+            align-items: center;
+            justify-content: center;
+            border-radius:50%;
+            margin-right:2px;
+            &:hover {
+                background-color: $color-hover;
+            }
+            &.active {
+                background-color: $color-accent-light;
+            }
+            &:after {
+                content: "";
+                top: 100%;
+                left: 50%;
+                transform: translateX(-50%);
+                width: 0;
+                height: 0;
+                border: 5px solid #fff;
+                border-bottom-color: transparent;
+                position: absolute;
+                border-left-color: transparent;
+                border-right-color: transparent;
+            }
+        }
+        // link input is shown
+        &.linking {
+            display: flex;
+            align-items: center;
+            span {
+                display:none;
+            }
+            input {
+                border:none;
+                font-size: 14px;
+                width: 200px;
+                outline:0;
+                padding: 5px;
+            }
+            .input-close {
+                font-size:12px;
+                cursor: pointer;
+                display:inline-block;
+                padding:4px;
+            }
+        }
     }
 }
 
@@ -13,6 +77,23 @@
         padding:25px 30px;
         position: relative;
         min-height:200px;
+        margin:auto;
+        width:700px;
+
+        pre {
+            background-color: #eee;
+            padding: 20px;
+            border-radius: 2px;
+            code {
+                font-size:14px;
+                font-family: inherit;
+            }
+        }
+
+        a {
+            text-decoration: underline;
+            color: #3f51b5;
+        }
     }
     
     .ProseMirror {
@@ -344,3 +425,15 @@
     }
     
     .ProseMirror p { margin-bottom: 1em }
+
+
+// placeholder
+.ProseMirror[data-placeholder]::before {
+    color: $color-text-light;
+    position: absolute;
+    content: attr(data-placeholder);
+    pointer-events: none;
+}
+.ProseMirror p:first-child { // to make sure it aligns well with the placeholder
+    margin-top:0;
+}

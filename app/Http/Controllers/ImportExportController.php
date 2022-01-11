@@ -4,7 +4,7 @@ namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
 // use Path\To\DOMDocument;
-use App\Repositories\ImportExportRepositoryInterface;
+use App\Domains\ImportExportRepositoryInterface;
 use Session;
 
 

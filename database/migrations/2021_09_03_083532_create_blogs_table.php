@@ -45,6 +45,9 @@ class CreateBlogsTable extends Migration
             $table->string('deleted_at')->nullable();
 
 
+            $table->integer('posts_count')->default(0);
+            $table->integer('users_count')->default(0);
+            
         });
     }
 

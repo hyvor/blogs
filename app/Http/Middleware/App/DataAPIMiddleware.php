@@ -3,7 +3,7 @@ namespace App\Http\Middleware\App;
 
 use App\Exceptions\DataAPIException;
 use App\Models\Blog;
-use App\Repositories\Blog\BlogRepositoryInterface;
+use App\Domains\Blog\BlogRepositoryInterface;
 use Closure;
 use Exception;
 
@@ -29,6 +29,10 @@ class DataAPIMiddleware {
             throw new DataAPIException("Subdomain not found ($subdomain)", 400);
         }
 
+        /**
+         * 
+         * Todo: Change this to use Dependency Injection like SubdomainMiddleware.php
+         */
         $request->attributes->set('blog', $blog);
 
         return $next($request);

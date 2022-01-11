@@ -1,5 +1,5 @@
 <?php
-namespace App\Repositories\DataAPI;
+namespace App\Domains\DataAPI;
 
 use App\Models\Blog;
 use App\Models\Tag;

@@ -162,12 +162,13 @@
                     <ul>
                         <li><b>Owner</b> - who created the blog, can access everything</li>
                         <li><b>Admin</b> - can access everything</li>
-                        <li><b>Billing</b> - can only access billing settings (your finance people)</li>
                         <li><b>Editor</b> - can publish and manage everyone's posts.</li>
                         <li><b>Writer</b> - can publish and manage their posts but not others'.</li>
+                        <li><b>Contributors</b> - can write but not publish. An editor has to publish their posts.</li>
+                        <li><b>Finance</b> - can only access billing settings.</li>
                     </ul>
                 </p>
-                <p>You can also add <b>contributors</b>, who will not be considered as "users" for billing. They can write posts but someone else from your team have to publish the posts.</p>
+                
             </div>
         </div>
 
@@ -360,6 +361,14 @@
             </div>
             <p>
                 One our main goals is to make the blog "static". Login is a dynamic feature. We will not support any additional dynamic feature except search. So, the answer is no. However you can use platforms like Memberstack or Memberspace to set up login and protected content pages for your blog. We may create direct integrations with one of these platforms in the future.
+            </p>
+        </div>
+
+        <div class="faq">
+            <h5>Can I see usage/analytics of my blog (ex: Total Visitors)?</h5>
+            </div>
+            <p>
+                No, because of how Hyvor Blogs works, most requests never even reach our servers - only our global CDN. Therefore we do not have a way to track pageviews internally.
             </p>
         </div>
 

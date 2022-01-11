@@ -1,5 +1,5 @@
 <?php
-namespace App\Repositories\DataAPI;
+namespace App\Domains\DataAPI;
 
 use App\Models\Post;
 use App\Exceptions\DataAPIException;

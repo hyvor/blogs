@@ -6,7 +6,7 @@
  * Time: 11:20 AM
  */
 
-namespace App\Repositories;
+namespace App\Domains;
 
 
 interface ImportExportRepositoryInterface

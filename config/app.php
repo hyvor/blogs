@@ -182,14 +182,13 @@ return [
         App\Providers\RepositoriesServiceProvider::class,
         // Auth0\Login\LoginServiceProvider::class,
 
-        App\Providers\TelescopeServiceProvider::class,
-
         // \Hyvor\Auth\HyvorAuthServiceProvider::class,
 
         /* 
         * 3rd Party Providers 
         */
         // Dedicated\GoogleTranslate\GoogleTranslateProvider::class,
+        App\Providers\TelescopeServiceProvider::class,
 
 
 

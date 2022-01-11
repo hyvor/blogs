@@ -12,6 +12,8 @@
     "devDependencies": {
         "@babel/preset-react": "^7.16.5",
         "axios": "^0.21",
+        "@babel/preset-react": "^7.14.5",
+        "axios": "^0.21.4",
         "laravel-mix": "^6.0.6",
         "lodash": "^4.17.19",
         "postcss": "^8.1.14",
@@ -20,6 +22,9 @@
         "sass-loader": "^12.4.0"
     },
     "dependencies": {
+        "kea": "^2.5.6",
+        "kea-loaders": "^0.5.1",
+        "kea-router": "^1.0.6",
         "prosemirror-example-setup": "^1.1.2",
         "prosemirror-model": "^1.15.0",
         "prosemirror-schema-basic": "^1.1.2",
@@ -29,10 +34,15 @@
         "react": "^17.0.2",
         "react-bootstrap-icons": "^1.6.1",
         "react-dom": "^17.0.2",
-        "react-router-dom": "^5.3.0",
+        "react-redux": "^7.2.6",
+        "react-router-dom": "^6.2.1",
         "react-select": "^5.2.1",
         "react-switch": "^6.0.0",
-        "recoil": "^0.5.2",
-        "striptags": "^3.2.0"
+        "react-textarea-autosize": "^8.3.3",
+        "redux": "^4.1.2",
+        "reselect": "^4.1.5",
+        "state-pool": "^0.6.0",
+        "striptags": "^3.2.0",
+        "use-prosemirror": "^1.2.2"
     }
 }

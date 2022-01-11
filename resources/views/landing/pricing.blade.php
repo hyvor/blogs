@@ -85,16 +85,6 @@ $pricingRow = '<tr>
                 <td>Unlimited</td>
             </tr>
 
-            <tr>
-                <td>Contributors</td>
-                <td>0</td>
-                <td>0</td>
-                <td>10 per user</td>
-                <td>Unlimited</td>
-            </tr>
-
-
-
              <tr>
                 <td>Posts</td>
                 <td>100</td>

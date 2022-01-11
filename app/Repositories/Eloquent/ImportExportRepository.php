@@ -1,7 +1,7 @@
 <?php
 
-namespace App\Repositories\Eloquent;
-use App\Repositories\ImportExportRepositoryInterface;
+namespace App\Domains\Eloquent;
+use App\Domains\ImportExportRepositoryInterface;
 
 
 
