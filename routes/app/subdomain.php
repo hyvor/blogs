@@ -22,10 +22,12 @@ Route::domain('{subdomain}.' . config('app.domain_delivery'))
 
 Route::domain('{subdomain}.hyvorblogs.test')->middleware('blogDeliver')->group(function () {
 
-    // Testing Theme Route
-    Route::get('/test', [App\Http\Controllers\Delivery\ThemeDeleveryController::class, 'test']);
+    Route::get('/assets', [App\Http\Controllers\DeliveryAPI\ThemeDeleveryController::class, 'assets']);
 
-    Route::get('{url}', [App\Http\Controllers\Delivery\ThemeDeleveryController::class, 'getUrl'])->where('url', '.*');
+    // Testing Theme Route
+    Route::get('/test', [App\Http\Controllers\DeliveryAPI\ThemeDeleveryController::class, 'test']);
+
+    Route::get('{url}', [App\Http\Controllers\DeliveryAPI\ThemeDeleveryController::class, 'getUrl'])->where('url', '.*');
 
 
     // Call to css,js,png & other files.

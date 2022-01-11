@@ -1,21 +1,18 @@
 <?php
 
-namespace App\Http\Controllers\Delivery;
+namespace App\Http\Controllers\DeliveryAPI;
 
 use Illuminate\Http\Request;
 use App\Http\Controllers\Controller;
 use App\Repositories\DeliveryAPI\DeliveryAPIRepositoryInterface;
+use App\Repositories\Theme\AssetsLogic;
 
-use App\Twig\Filters\AssetsFilters;
-use App\Twig\Filters\LanguageFilter;
+use App\Domains\Themes\Twig\Filters\AssetsFilters;
+use App\Domains\Themes\Twig\Filters\LanguageFilter;
 
+use App\Domains\Themes\Twig\Tags\MyTagExtension;
 
-use App\Twig\Tags\MyTagExtension;
-// use App\Twig\Tags\Node\TwigNode;
-// use App\Twig\Tags\TokenParser\TwigTokenParser;
-
-
-use App\Twig\Functions\TwigFunctions;
+use App\Domains\Themes\Twig\Functions\TwigFunctions;
 
 
 
@@ -37,28 +34,21 @@ class ThemeDeleveryController extends Controller
     public function getUrl(Request $request){
         
         $geturl = $request->path();
-        // dd($geturl);
         $this->themeRepo->getUrl($geturl);
-
-        // $twigFilter = new TwigFilters;
-        // $twigFilter->postNotification($geturl);
-
         return $this->themeRepo->getUrl($geturl);
     }
 
+    /* 
+    *
+    * This is the index page of the bolg
+    *
+    */
+    public function assets(){
+       $asset = AssetsLogic::assets($urlName);
+       return $asset;
+    }
 
 
-
-
-
-
-
-
-
-
-
-
-    
 
     /* 
     *
@@ -66,7 +56,7 @@ class ThemeDeleveryController extends Controller
     *
     */
     public function index(){
-        return $this->themeRepo->index();
+        // 
     }
 
     /* 
@@ -75,10 +65,7 @@ class ThemeDeleveryController extends Controller
     *
     */
     public function author(Request $request){
-
-        $getAuthor = $request->slug;
-        $this->themeRepo->author($getAuthor);
-        return $this->themeRepo->author($getAuthor);
+    //
     }
 
 
@@ -88,9 +75,7 @@ class ThemeDeleveryController extends Controller
     *
     */
     public function tag(Request $request){
-        $getTag = $request->tagName;
-        $this->themeRepo->tag($getTag);
-        return $this->themeRepo->tag($getTag);
+        //
     }
 
 
@@ -100,24 +85,9 @@ class ThemeDeleveryController extends Controller
     *
     */
     public function pages(Request $request){
-
-        $getPage = $request->name;
-        $this->themeRepo->pages($getPage);
-        return $this->themeRepo->pages($getPage);
+        //
     }
 
-    /* 
-    *
-    * This is the language change function. (.env)
-    *
-    */
-    public function languageChange(){
-        $dotenv = Dotenv::createImmutable(public_path('themes/'));
-        $dotenv->load();
-
-        $language = getenv('LANG');
-        dd($language);
-    }
 
     /*
     *

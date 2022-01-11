@@ -84,7 +84,7 @@ Class DeliveryAPIRepository implements DeliveryAPIRepositoryInterface
     }
 
 
-    /* ThemeQuery
+    /* ThemeQueryType
     *
     * Selecting the theme from ThemeFiles table & pasting it in the BlogThemeFiles table
     *

@@ -1,7 +1,7 @@
 <?php
 
 namespace App\Repositories\Theme;
-use App\Repositories\DeliveryAPI\Eloquent\ThemeQuery;
+use App\Domains\Themes\Types\ThemeQueryType;
 
 use ScssPhp\ScssPhp\Compiler;
 
@@ -15,7 +15,7 @@ class AssetsLogic {
     public static function assets($urlName){
 
         // dd($urlName);
-        ThemeQuery::deliverAssets($urlName);
+        ThemeQueryType::deliverAssets($urlName);
 
         if($urlName == 'style.css'){
 
@@ -26,20 +26,25 @@ class AssetsLogic {
             $compiler = new Compiler();
             $style = $compiler->compileString($path)->getCss();
 
-            return response($style)->header('Content-Type' , 'text/css');
-            // return $style;
-
+            $collection = array(
+                'type' => 'text',
+                'mime_type' => 'text/css',
+                'content' => $style
+            );
+            dd($collection);
+            return $collection;
+            // return response($style)->header('Content-Type' , 'text/css');
         }
         else{
             
-            // $file = ThemeQuery::deliverAssets($urlName);
+            // $file = ThemeQueryType::deliverAssets($urlName);
             // // dd($file);
 
             // foreach($file as $singleAsset){
             //     $assetName = $singleAsset['name'];
             // }
 
-            $assetName = '1.png';
+            $assetName = '1.js';
             // dd($assetName);
             if($assetName){
                 // This function is used to get the file extention

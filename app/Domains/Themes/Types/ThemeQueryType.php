@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Repositories\DeliveryAPI\Eloquent;
+namespace App\Domains\Themes\Types;
 
 use App\Models\Theme;
 use App\Models\ThemeFile;
@@ -8,7 +8,7 @@ use App\Models\BlogThemeFile;
 use App\Models\Blog;
 
 
-Class ThemeQuery 
+Class ThemeQueryType 
 {
     /* ThemeQuery
     *

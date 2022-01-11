@@ -11,13 +11,6 @@ namespace App\Repositories\DeliveryAPI;
 interface DeliveryAPIRepositoryInterface
 {
     public function getUrl($geturl);
-
     public function copyTheme($theme_id);
-
-
-    // public function index();
-    // public function author($getAuthor);
-    // public function tag($getTag);
-    // public function pages($getPage);
 }
 

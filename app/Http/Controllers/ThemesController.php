@@ -19,10 +19,8 @@ class ThemesController extends Controller
     // Bloger Theme Select
     public function selectTheme(){
 
-        // dd('hello world');
         $theme_id = 1;
         $this->themeRepo->copyTheme($theme_id);
-
         $selectedTheme = $this->themeRepo->copyTheme($theme_id);
         return view('themes.select_theme');
     }
