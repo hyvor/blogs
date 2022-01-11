@@ -14,6 +14,8 @@ const postsLogic = kea({
         setPostsList: (list) => ({list}),
         setPostsListHasMore: (has) => ({has}),
 
+        setCounts: (counts) => ({counts}),
+
         navigateToPost: (id) => ({id}),
         navigateToPosts: () => false
     },
@@ -25,20 +27,25 @@ const postsLogic = kea({
 
     ajax: ({ values, props, actions }) => ({
 
+        getCounts: async () => {
+            const counts = await api.get(props.subdomain, '/counts');
+            actions.setCounts(counts);
+        },
+
         /**
          * First and more loading uses seperate actiosn because
          * we want seperate loading states
          */
         loadPostsList: async () => {
-            const response = await api.get(props.subdomain, '/posts', {
+            const posts = await api.get(props.subdomain, '/posts', {
                 filters: values.filters
             });
-            response.forEach(post => {
+            posts.forEach(post => {
                 const builtCounterLogic = postLogic.build({id: post.id, data: post}, false);
                 builtCounterLogic.mount();
             })
-            actions.setPostsListHasMore(response.length === 50);
-            actions.setPostsList(response.map(val => val.id))
+            actions.setPostsListHasMore(posts.length === 50);
+            actions.setPostsList(posts.map(val => val.id))
         },
         loadPostsListMore: async ({offset}) => {
             const response = await api.get(props.subdomain, '/posts', {
@@ -114,10 +121,16 @@ const postsLogic = kea({
     }), */
 
     listeners: ({actions}) => ({
-        changeFilter: () => actions.getPostsLoad()
+        changeFilter: () => actions.loadPostsList()
     }),
 
     reducers: {
+
+        // object returned by /counts
+        // { all: count, status: {[statuses+featured]: count}, authors/tags: [{id,name,count}],  }
+        counts: [null, {
+            setCounts: (_, {counts}) => counts
+        }],
 
         postsList: [[], {
             setPostsList: (_, {list}) => list
@@ -142,7 +155,9 @@ const postsLogic = kea({
     },
 
     events: ({actions}) => ({
-        afterMount: []
+        afterMount: [
+            actions.getCounts
+        ]
     })
 
 })

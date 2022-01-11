@@ -59,11 +59,13 @@ class _UserType {
 
     public int $id;
     public string $role;
+    public int $posts_count;
 
     public function __construct(User $user) {
 
         $this->id = $user->id;
         $this->role = $user->role;
+        $this->posts_count = $user->posts_count;
 
     }
 

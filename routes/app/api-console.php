@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Controllers\ConsoleAPI\ConsoleBlogController;
 use App\Http\Controllers\ConsoleAPI\ConsolePostController;
 use App\Http\Controllers\ConsoleAPI\ConsoleUserController;
 use App\Http\Controllers\ConsoleAPI\ConsoleViewController;
@@ -25,8 +26,6 @@ Route::prefix('/api/console')
 Route::prefix('/api/console/v0/blog/{subdomain}')
     ->middleware(SubdomainMiddleware::class)
     ->group(function() {
-
-    Route::get('/posts-counts', [ConsolePostController::class, 'getCounts']);
 
     // posts (and pages) CRUD
     Route::get('/posts', [ConsolePostController::class, 'getPosts']);
@@ -74,6 +73,9 @@ Route::prefix('/api/console/v0/blog/{subdomain}')
     // settings RU
     Route::get('/settings', []);
     Route::post('/settings', []);
+
+    // misc
+    Route::get('/counts', [ConsoleBlogController::class, 'getPostsCounts']);
 
     // platform-specific
     Route::get('/themes', []);

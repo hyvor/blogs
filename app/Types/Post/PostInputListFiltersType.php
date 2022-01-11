@@ -17,10 +17,7 @@ class PostInputListFiltersType {
     public $search;
 
     public function setStatus(?string $status) {
-        if (is_null($status)) {
-            $status = 'all';
-        }
-        if (!in_array($status, ['all', 'published', 'deleted', 'draft', 'scheduled'])) {
+        if (!in_array($status, [null, 'published', 'deleted', 'draft', 'scheduled', 'featured'])) {
             throw new TrustedException('Invalid status for filteing: ' . $status);
         }
         $this->status = $status;

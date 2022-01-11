@@ -49,10 +49,14 @@ class PostRepository {
                 ->whereDate('created_at', '<', $endTimestamp);
         })
         // status
-        ->when($status === 'all', function($query) {
+        ->when($status === null, function($query) {
             $query->where('posts.status', '!=', 'deleted');
         }, function ($query) use ($status) {
-            $query->where('posts.status', $status);
+            if ($status === 'featured') {
+                $query->where('is_featured', true);
+            } else {
+                $query->where('posts.status', $status);
+            }
         })
         ->when($search, function($query) use ($search) {
             $query->where('posts.title', 'LIKE', "$search%");

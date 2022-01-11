@@ -42,6 +42,7 @@ class CreateUsersTable extends Migration
             $table->string('social_instagram')->nullable();
 
             // misc
+            $table->integer('posts_count')->default(0);
             $table->integer('sort')->default(0); // for ordering in the console
             
             $table->unique(['blog_id', 'slug']);

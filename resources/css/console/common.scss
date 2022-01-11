@@ -89,16 +89,17 @@ svg, img, span {
             }
         }
         .react-select__menu {
-            width:150px;
+            width:180px;
             box-shadow: 0 0 9px 4px rgb(0 0 0 / 5%);
             border-radius: 20px;
+            overflow:hidden;
         }
         .react-select__menu-list {
             padding: 10px;
         }
         .react-select__option {
-            border-radius: 20px;
-            transition:.1s background;
+            border-radius:20px;
+            transition:.05s background;
             cursor: pointer;
         }
         .react-select__option--is-focused {
@@ -110,6 +111,7 @@ svg, img, span {
         .react-select__single-value  {
             text-overflow: initial;
             color:inherit;
+            text-transform: capitalize;
         }
         .react-select__indicator-separator {
             display:none;

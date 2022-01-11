@@ -168,6 +168,24 @@ body {
             font-size:12px;
             .post-filters {
                 display: flex;
+                .filter-label {
+                    .name {
+                        text-transform: capitalize;
+                    }
+                    .count {
+                        font-size: 8px;
+                        margin-left: 4px;
+                        display: inline-flex;
+                        width: 18px;
+                        height: 18px;
+                        background: $color-grey;
+                        color: #000;
+                        align-items: center;
+                        justify-content: center;
+                        border-radius: 50%;
+                        font-weight: 600;
+                    }
+                }
             }
             .posts-filter {
                 flex:1;

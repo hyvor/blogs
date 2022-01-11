@@ -22,7 +22,6 @@ class BlogRepository implements BlogRepositoryInterface {
     }
 
     public function getURL(?string $slug) : string {
-
         return '';
     }
 
