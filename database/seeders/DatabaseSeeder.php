@@ -72,12 +72,14 @@ class DatabaseSeeder extends Seeder
                     ];
                 }
 
+                $status = ['draft', 'published', 'deleted', 'scheduled'];
                 $post = Post::create([
                     'blog_id' => $blog->id,
                     'content' => json_encode($prosemirrorJson),
                     'title' => $title,
                     'slug' => Str::slug($title),
                     'description' => $faker->sentence,
+                    'status' => $status[ array_rand($status) ],
 
                     'reading_time' => 2,
                 ]);

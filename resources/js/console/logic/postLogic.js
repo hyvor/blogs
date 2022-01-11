@@ -3,6 +3,7 @@
  */
 
 import { kea } from "kea";
+import slugify from "../../helpers/slugify";
 import api from "../lib/api";
 import postsLogic from "./postsLogic";
 import subdomainLogic from "./subdomainLogic";
@@ -17,11 +18,11 @@ const postLogic = kea({
 
         set: (obj) => ({obj}),
         setOriginal: (obj) => ({obj}),
-        updatePostValue: (key, val) => ({obj: {[key]:val}})
+        updatePostValue: (key, value) => ({key, value})
 
     },
 
-    ajax: ({actions, values,  props}) => ({
+    ajax: ({actions, values, selectors, props}) => ({
  
         loadPost: async () => {
             const response = await api.get(subdomainLogic.values.subdomain, `/post/${props.id}`);
@@ -35,7 +36,7 @@ const postLogic = kea({
         },
 
         savePost: async () => {
-            const diff = getPostDiff(values.post, values.postOriginal);
+            const diff = selectors.getDiff();
             
             if (Object.keys(diff).length === 0) {
                 return false;
@@ -47,12 +48,38 @@ const postLogic = kea({
 
     }),
 
+    listeners: ({actions, values}) => ({
+
+        updatePostValue: ({key, value}) => {
+
+            // auto update slug when updating title 
+            // if the original value is null
+            if (key === 'title' && values.postOriginal.slug === null) {
+                actions.updatePostValue("slug", slugify(value))
+            }
+
+        }
+
+    }),
+
+    selectors: {
+
+        // diff of orignal and state
+        getDiff: [
+            (selectors) => [selectors.post, selectors.postOriginal],
+            (post, postOriginal) => {
+                return getPostDiff(post, postOriginal)
+            }
+        ]
+
+    },  
+
     reducers: ({actions, props, selectors}) => ({
 
         // post's current state in the front-end
         post: [{}, { 
             set: (_, {obj}) => obj,
-            updatePostValue: (state, {obj}) => ({...state, ...obj})
+            updatePostValue: (state, {key, value}) => ({...state, ...{[key]: value}})
         }],
 
         // the really saved post in the back-end

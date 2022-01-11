@@ -12,7 +12,7 @@ export default function Post( {subdomain, id} ) {
     id = parseInt(id)
 
     const postLogicInst = postLogic({id});
-    const { post, loadPostAjax, savePostAjax } = useValues(postLogicInst)
+    const { post, loadPostAjax, savePostAjax, getDiff } = useValues(postLogicInst)
     const { updatePostValue, savePost, deletePost } = useActions(postLogicInst)
 
 
@@ -20,19 +20,12 @@ export default function Post( {subdomain, id} ) {
      * Disallow outside clicking when the content has changed
      */
     const viewRef = useRef(null);
-    useEffect(() => {
-        /* const remove = onOutsideClick(viewRef.current, (e) => {
-            // e.preventDefault();
-        }, false, false);
-        return remove; */
-    }, [])
 
-    // set auto saving each 30 seconds
+    // saving
     useEffect(() => {
-        const autoSaveInterval = setInterval(() => {
-            if (savePostAjax.status !== 'loading')
-                savePost();
-        }, 10000);
+
+        // auto save
+        const autoSaveInterval = setInterval(savePost, 10000);
 
         function checkSave(e) {
             if (e.keyCode === 83 && (e.ctrlKey || e.metaKey)) { // ctrl + s
@@ -41,11 +34,30 @@ export default function Post( {subdomain, id} ) {
             }
         }
 
+        function checkSaveUnload() {
+            if (
+                (post.status === 'published' || post.status === 'scheduled') && 
+                Object.keys(getDiff).length > 0
+            ) {
+                return true;
+            } else {
+                savePost();
+            }
+        }
+
+        // save on CTRL + S
         window.addEventListener('keydown', checkSave);
+        // save on unload
+        window.addEventListener('beforeunload', checkSaveUnload);
+
+        // save on outsideClick
+        const removeOutsideEvent = onOutsideClick(viewRef.current, savePost, false, false, false);
 
         return () => {
             clearInterval(autoSaveInterval)
             window.removeEventListener('keydown', checkSave);
+            window.removeEventListener('beforeunload', checkSaveUnload);
+            removeOutsideEvent(false);
         }
     }, [id])
 
@@ -73,7 +85,7 @@ export default function Post( {subdomain, id} ) {
     // something changed?
     // null if not
     // object ({old, new}) if changed
-    function getDiff() {
+    function getDiffWithOld() {
         var diff = {};
         for (var key in posts[id]) {
             if (post[key] !== posts[id][key]) {
@@ -95,7 +107,7 @@ export default function Post( {subdomain, id} ) {
                 icon = <PencilFill />
                 onClick = () => setPublishedPostEditing(true);
             } else {
-                const diff = getDiff();
+                const diff = getDiffWithOld();
                 if (diff) {
                     const count = Object.keys(diff).length;
                     name = "Save Changes" + (count > 0 ? " (" + count + ")" : "");

@@ -1,6 +1,6 @@
 
 
-export default function onOutsideClick(element, func, onBlur = false, autoRemove = true)	{
+export default function onOutsideClick(element, func, onBlur = false, autoRemove = true, preventDefault = true) {
 
     /**
      * Calling two times is a trick to avoid the outsideClick function being called the first time.
@@ -19,14 +19,17 @@ export default function onOutsideClick(element, func, onBlur = false, autoRemove
     function checkOutsideClick(event) {
         if (event.target !== element && !element.contains(event.target)) {
             removeListenerAndCall(event);
-            event.stopPropagation();
-            event.preventDefault();
+
+            if (preventDefault) {
+                event.stopPropagation();
+                event.preventDefault();
+            }
         }
     }
 
-    function removeListenerAndCall(e, forced) {
+    function removeListenerAndCall(e, forced, call = true) {
         autoRemove || forced ? window.removeEventListener("click", checkOutsideClick, true) : null;
-        func(e)
+        call && func(e)
     }
 
     /**
@@ -38,7 +41,7 @@ export default function onOutsideClick(element, func, onBlur = false, autoRemove
         removeListenerAndCall(e);
     }
 
-    return () => removeListenerAndCall(true);
+    return (call) => removeListenerAndCall(null, true, call ? true : false);
 
 
 }

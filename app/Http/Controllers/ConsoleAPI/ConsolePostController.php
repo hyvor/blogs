@@ -70,8 +70,42 @@ class ConsolePostController {
         }
         $updates = [];
 
-        if ($request->has('content')) $updates['content'] = $request->input('content');
-        if ($request->has('title')) $updates['title'] = $request->input('title');
+        /**
+         * Some strings become null when empty
+         * So, always use ->has() to check if the variable is set
+         */
+        if ($request->has('published_at')) 
+            $updates['published_at'] = $request->input('published_at');
+
+        if ($request->has('status')) 
+            $updates['status'] = $request->input('status');
+
+        if ($request->has('is_featured')) 
+            $updates['is_featured'] = (bool) $request->input('is_featured');
+
+        if ($request->has('slug')) 
+            $updates['slug'] = $request->input('slug');
+
+        if ($request->has('content')) 
+            $updates['content'] = $request->input('content');
+
+        if ($request->has('title')) 
+            $updates['title'] = $request->input('title');
+
+        if ($request->has('description')) 
+            $updates['description'] = $request->input('description');
+
+        if ($request->has('featured_image')) 
+            $updates['featured_image'] = $request->input('featured_image');
+
+        if ($request->has('canonical_url')) 
+            $updates['canonical_url'] = $request->input('canonical_url');
+
+        if ($request->has('code_head')) 
+            $updates['code_head'] = $request->input('code_head');
+
+        if ($request->has('code_foot')) 
+            $updates['code_foot'] = $request->input('code_foot');
 
         $post = PostRepository::updatePost($postId, $updates);
         return response()->json(new PostOutputType($post, $blog, true));

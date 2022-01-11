@@ -100,12 +100,16 @@
                                     if (response && response.then && typeof response.then === "function") {
                                         return response
                                             .then(() => actions[key + "Success"]())
-                                            .catch(error => actions[key + "Error"](error.message))
+                                            .catch(error => {
+                                                actions[key + "Error"](error.message)
+                                                throw error;
+                                            })
                                     } else {
                                         actions[key + "Success"]();
                                     }
                                 } catch (error) {
                                     actions[key + "Error"](error.message)
+                                    throw error;
                                 }
                             }
 

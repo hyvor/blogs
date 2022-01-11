@@ -6,6 +6,7 @@ use App\Models\Post;
 use App\Models\Tag;
 use App\Models\User;
 use App\Types\Post\PostInputListFiltersType;
+use Carbon\Carbon;
 use Illuminate\Support\Facades\DB;
 
 class PostRepository {
@@ -84,12 +85,53 @@ class PostRepository {
 
     static function updatePost(int $postId, array $updates) {
         $post = Post::find($postId);
-        if (isset($updates['content'])) {
+
+        if (
+            array_key_exists('published_at', $updates) &&
+            in_array($post->status, ['published', 'scheduled'])
+        ) {
+            $post->published_at = Carbon::createFromTimestamp($updates['published_at']);
+        }
+        if (array_key_exists('status', $updates)) {
+            $post->status = $updates['status'];
+        }
+        if (array_key_exists('is_featured', $updates)) {
+            $post->is_featured = $updates['is_featured'];
+        }
+        if (array_key_exists('slug', $updates)) {
+            $slug = $updates['slug'];
+            if (
+                $slug === null &&
+                $post->status === 'published' || $post->status === 'scheduled'
+            ) {
+                // slug cannot be null for published|scheduled posts
+                // so don't update
+            } else {
+                $post->slug = $updates['slug'];
+            }
+        }
+        if (array_key_exists('content', $updates)) {
             $post->content = $updates['content'];
         }
-        if (isset($updates['title'])) {
+        if (array_key_exists('title', $updates)) {
             $post->title = $updates['title'];
         }
+        if (array_key_exists('description', $updates)) {
+            $post->description = $updates['description'];
+        }
+        if (array_key_exists('featured_image', $updates)) {
+            $post->featured_image = $updates['featured_image'];
+        }
+        if (array_key_exists('canonical_url', $updates)) {
+            $post->canonical_url = $updates['canonical_url'];
+        }
+        if (array_key_exists('code_head', $updates)) {
+            $post->code_head = $updates['code_head'];
+        }
+        if (array_key_exists('code_foot', $updates)) {
+            $post->code_foot = $updates['code_foot'];
+        }
+
         $post->save();
         return $post;
     } 
