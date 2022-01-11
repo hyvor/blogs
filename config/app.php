@@ -178,10 +178,19 @@ return [
         // App\Providers\BroadcastServiceProvider::class,
         App\Providers\EventServiceProvider::class,
         App\Providers\RouteServiceProvider::class,
+
+        App\Providers\RepositoriesServiceProvider::class,
+        // Auth0\Login\LoginServiceProvider::class,
+
+        // \Hyvor\Auth\HyvorAuthServiceProvider::class,
+
+        /* 
+        * 3rd Party Providers 
+        */
+        // Dedicated\GoogleTranslate\GoogleTranslateProvider::class,
         App\Providers\TelescopeServiceProvider::class,
 
 
-        \Hyvor\Auth\HyvorAuthServiceProvider::class,
 
     ],
 

@@ -4,9 +4,7 @@ use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\Schema;
 
-
-class CreatePostTagTable extends Migration
-
+class CreateThemeFilesTable extends Migration
 {
     /**
      * Run the migrations.
@@ -14,15 +12,18 @@ class CreatePostTagTable extends Migration
      * @return void
      */
     public function up()
-    {   
-        Schema::create('post_tag', function (Blueprint $table) {
-
+    {
+        Schema::create('theme_files', function (Blueprint $table) {
             $table->id();
+
+            // Connections
+            $table->bigInteger('theme_id')->nullable();
+
             $table->string('name');
+            $table->binary('content');
+            $table->enum('type', ['templates', 'assets','styles'])->nullable();
+
             $table->timestamps();
-            // connections
-            $table->bigInteger('post_id');
-            $table->bigInteger('tag_id');
         });
     }
 
@@ -31,10 +32,8 @@ class CreatePostTagTable extends Migration
      *
      * @return void
      */
-
     public function down()
     {
-        Schema::dropIfExists('themes');
-        Schema::dropIfExists('posts_tags');
+        Schema::dropIfExists('theme_files');
     }
 }

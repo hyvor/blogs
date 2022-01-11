@@ -5,19 +5,14 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 
-
-class Theme extends Model
+class ThemeFile extends Model
 {
     use HasFactory;
-
-    protected $table = "themes";
+    protected $table = "theme_files";
 
     protected $fillable = [
+       'theme_id',
        'name',
+       'content',
     ];
-}
-class PostTag extends Model
-{
-    protected $table = 'post_tag';
-
 }

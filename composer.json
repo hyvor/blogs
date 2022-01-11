@@ -12,7 +12,14 @@
         "laravel/framework": "^8.54",
         "laravel/telescope": "^4.6",
         "laravel/tinker": "^2.5",
-        "twig/twig": "^3.3"
+        "leafo/scssphp": "^0.8.2",
+        "rcrowe/twigbridge": "^0.12.3",
+        "scssphp/scssphp": "^1.9",
+        "stichoza/google-translate-php": "^4.1",
+        "symfony/asset": "^6.0",
+        "symfony/dotenv": "^6.0",
+        "symfony/http-foundation": "^5.4",
+        "vlucas/phpdotenv": "^5.4"
     },
     "require-dev": {
         "facade/ignition": "^2.5",
@@ -27,10 +34,19 @@
             "Project\\": "src/",
             "App\\": "app/",
             "Database\\Factories\\": "database/factories/",
-            "Database\\Seeders\\": "database/seeders/",
 
-            "Hyvor\\Auth\\": "packages/hyvor/auth/src/"
-        }
+            "Database\\Seeders\\": "database/seeders/"
+        },
+        "files": [
+            "app/Helpers/ImportScssHelper.php"
+        ],
+        "classmap": [
+            "app/twig"
+        ],
+
+        "Database\\Seeders\\": "database/seeders/",
+        "Hyvor\\Auth\\": "packages/hyvor/auth/src/"
+        
     },
     "autoload-dev": {
         "psr-4": {

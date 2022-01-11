@@ -19,6 +19,8 @@ class CreateBlogsTable extends Migration
 
             // connections
             $table->bigInteger('user_id'); // hyvor user id
+            $table->bigInteger('theme_id')->nullable();
+
 
             // data
             $table->string('subdomain')->unique();
@@ -31,6 +33,17 @@ class CreateBlogsTable extends Migration
             $table->string('social_linkedin')->nullable();
             $table->string('social_youtube')->nullable();
             $table->string('social_instagram')->nullable();
+
+            // $table->string('name')->unique();
+            $table->string('website_url');
+            $table->string('title');
+            $table->string('short_description');
+            $table->integer('author_id');
+
+            $table->string('edited_at')->nullable();
+            // Soft Delete
+            $table->string('deleted_at')->nullable();
+
 
             $table->integer('posts_count')->default(0);
             $table->integer('users_count')->default(0);
