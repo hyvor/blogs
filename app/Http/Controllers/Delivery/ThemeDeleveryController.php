@@ -6,7 +6,17 @@ use Illuminate\Http\Request;
 use App\Http\Controllers\Controller;
 use App\Repositories\DeliveryAPI\DeliveryAPIRepositoryInterface;
 
-use App\Twig\TwigFilters;
+use App\Twig\Filters\AssetsFilters;
+use App\Twig\Filters\LanguageFilter;
+
+
+use App\Twig\Tags\MyTagExtension;
+// use App\Twig\Tags\Node\TwigNode;
+// use App\Twig\Tags\TokenParser\TwigTokenParser;
+
+
+use App\Twig\Functions\TwigFunctions;
+
 
 
 class ThemeDeleveryController extends Controller
@@ -128,7 +138,10 @@ class ThemeDeleveryController extends Controller
             'index.html' => $index,
         ));
         $twig = new \Twig\Environment($loader);
-        $twig->addExtension(new TwigFilters());
+        $twig->addExtension(new AssetsFilters());
+        $twig->addExtension(new LanguageFilter());
+        $twig->addExtension(new MyTagExtension());
+        $twig->addExtension(new TwigFunctions());
 
 
         echo $twig->render('index.html', 
@@ -138,7 +151,7 @@ class ThemeDeleveryController extends Controller
                 'occupation' => 'must get the approvel', 
                 // 'script' => $script
             ));
-
+            
     }
 
 }

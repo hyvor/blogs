@@ -19,14 +19,40 @@
             <h3> assets testing section </h3>
             {{ ('style.css')  |assets }} <br>
             {{ ('script.js')  |assets }} <br>
-            {{ ('hello')  |assets }}
+            {{ ('hello')  |assets }}<br>
+            {{ ('1.png')  |assets }}
+
         </div> 
 
-<br><br>
-        <div class="hyvor">
-            <h3> language testing section </h3>
-            {{ 'Hello world'  |lang }} <br>
+        <div class="language">
+            <h5> language testing section </h5>
+            {{ 'PUBLISHED'|lang }} <br>
+            {{ 'HEADDING'|lang }} <br>
+                        {{ 'HEADDING'|lang }} <br>
+
+                        {{ 'SUBHEADDING'|lang }} <br>
+            {# {{ 'DB_DATABASE'|lang }} <br> #}
+
         </div> 
+
+
+        <div class = "tags">
+            <h5> tags testing section </h5>
+           {% hyvorTag name = 'ok ok' %}
+           {{ name }}
+           {# {% endhyvorTag %} #}
+        </div>
+
+        <div class= "functions">
+            <h5> functions testing section </h5>
+            {% set _post = filterObject(endpoint = 'post' , filter = 1) %}
+            {% set _author = filterObject(endpoint = 'author') %}
+
+            {{_post}} 
+            <br>
+            {{_author}}
+        </div>
+
 
         <div class="alert alert-primary" role="alert">
             A simple primary alert—check it out!
@@ -41,7 +67,10 @@
         {% endblock %}
 
 
+        {# <img src="{{ ('1.png') |assets }}" alt="Girl in a jacket" width="500" height="600"> #}
+
         <img src="{{ ('2.png') |assets }}" alt="Girl in a jacket" width="500" height="600">
+
 
         {# {% block stylesheets %}
             <link rel="stylesheet" type="text/css" href="{{ ('styles/index') | e('url') }} ">

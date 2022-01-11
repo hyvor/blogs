@@ -17,6 +17,7 @@
         "scssphp/scssphp": "^1.9",
         "stichoza/google-translate-php": "^4.1",
         "symfony/asset": "^6.0",
+        "symfony/dotenv": "^6.0",
         "symfony/http-foundation": "^5.4",
         "vlucas/phpdotenv": "^5.4"
     },

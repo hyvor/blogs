@@ -20,7 +20,8 @@ class DataAPIController extends Controller
 
     public function post(Request $request) {
         $post = $this->dataAPIRepo->post($this->getSingleRequestForRepo($request));
-        return response()->json($post);
+        // return response()->json($post);
+        return 'hello world';
     }
 
     public function tag(Request $request) {

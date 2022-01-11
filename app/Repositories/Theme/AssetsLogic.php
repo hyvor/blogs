@@ -32,12 +32,15 @@ class AssetsLogic {
         }
         else{
             
-            $file = ThemeQuery::deliverAssets($urlName);
-            // dd($file);
+            // $file = ThemeQuery::deliverAssets($urlName);
+            // // dd($file);
 
-            foreach($file as $singleAsset){
-                $assetName = $singleAsset['name'];
-            }
+            // foreach($file as $singleAsset){
+            //     $assetName = $singleAsset['name'];
+            // }
+
+            $assetName = '1.png';
+            // dd($assetName);
             if($assetName){
                 // This function is used to get the file extention
                 $extentionFilter = pathinfo($assetName, PATHINFO_EXTENSION);
@@ -45,19 +48,23 @@ class AssetsLogic {
                 // dd($extention);
                 // $extention = '.png';
                 
-                if($extention = '.js'){
+                if($extention == ".js"){
                     $script = file_get_contents(base_path('public/themes/assets/script.js'), true);
                     return response($script)->header('Content-Type', 'application/js');
+                    // return $script;
                 }
-                else if($extention = '.svg'){
+                else if($extention == '.svg'){
                     // return response($svg)->header('Content-Type', 'image/svg+xml');
                 }
-                else if ($extention = '.jpeg'){
-                    // return response($jpeg)->header('Content-Type', 'image/jpeg');
+                else if ($extention == '.jpg'){
+                    $jpeg = file_get_contents(base_path('public/themes/assets/test.jpg'), true);
+                    return response($jpeg)->header('Content-Type', 'image/jpeg');
+                    // return $jpeg;
                 }
-                else if ($extention = '.png'){
-                    $png = file_get_contents(base_path('public/themes/assets/1.png'), true);
-                    return response($png)->header('Content-Type', 'image/png');;
+                else if ($extention == '.png'){
+                    $png = file_get_contents(base_path('public/themes/assets/2.png'), true);
+                    return response($png)->header('Content-Type', 'image/png');
+                    // return $png;
                 }
                 else if ($extention = '.icon'){
                     // return response($icon)->header('Content-Type', 'image/x-icon');

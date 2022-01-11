@@ -18,6 +18,8 @@ class ThemesSeeder extends Seeder
     {
         DB::table('themes')->insert([
             'name' => Str:: random(10),
+            'post_id' => 1,
+            'tag_id' => 1,
         ]);
     }
 }
