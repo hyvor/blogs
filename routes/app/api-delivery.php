@@ -1,10 +1,7 @@
 <?php
 
+use App\Http\Controllers\DeliveryAPI\DeliveryAPIController;
 use Illuminate\Support\Facades\Route;
 
 
-Route::prefix('/api/delivery/v0')->group(function() {
-
-
-
-});
+Route::get('/api/delivery/v0/blog/{subdomain}', [DeliveryAPIController::class, 'get']);
