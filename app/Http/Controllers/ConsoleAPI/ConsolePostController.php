@@ -5,11 +5,12 @@ use App\Models\Blog;
 use App\Models\Post;
 use App\Domains\Post\PostRepository;
 use App\Exceptions\TrustedException;
+use App\Http\Controllers\Controller;
 use App\Types\Post\PostInputListFiltersType;
 use App\Types\Post\PostOutputType;
 use Illuminate\Http\Request;
 
-class ConsolePostController {
+class ConsolePostController extends Controller {
 
     public function getPosts(Request $request, Blog $blog) {
         $filters = json_decode($request->input('filters'));

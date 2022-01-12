@@ -1,6 +1,7 @@
 <?php
 
 use App\Http\Controllers\ConsoleAPI\ConsoleBlogController;
+use App\Http\Controllers\ConsoleAPI\ConsoleMediaController;
 use App\Http\Controllers\ConsoleAPI\ConsolePostController;
 use App\Http\Controllers\ConsoleAPI\ConsoleUserController;
 use App\Http\Controllers\ConsoleAPI\ConsoleViewController;
@@ -45,6 +46,9 @@ Route::prefix('/api/console/v0/blog/{subdomain}')
     Route::post('/tag', []);
     Route::patch('/tag/{id}', []);
     Route::delete('/tag/{id}', []);
+
+    // media CRD
+    Route::get('/media/upload', [ConsoleMediaController::class, 'upload']);
 
     // theme CRUD
     Route::get('/theme/files', []);

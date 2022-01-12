@@ -24,6 +24,7 @@ export default function Settings({type}) {
                 <NavLink href={settingsPrefix + "/users"}>Users</NavLink>
                 <NavLink href={settingsPrefix + "/tags"}>Tags</NavLink>
                 <NavLink href={settingsPrefix + "/navigation"}>Navigation</NavLink>
+                <NavLink href={settingsPrefix + "/media"}>Media</NavLink>
 
                 <div></div>
                 <NavLink href={settingsPrefix + "/seo"}>SEO</NavLink>
