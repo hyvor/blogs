@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Domains\Themes\Twig\Tags\Node; 
+namespace App\Domains\Theme\Twig\Tags\Node; 
 use Twig\Node\Node;
 use Twig\Compiler;
 

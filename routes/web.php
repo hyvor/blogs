@@ -9,7 +9,10 @@ use App\Http\Controllers\API\PostController;
 use Symfony\Component\Routing\Loader\Configurator\RoutingConfigurator;
 
 
-include('app/subdomain.php');
+// include('app/subdomain.php');
+
+include('app/api-delivery.php');
+
 
 Route::domain(config('app.domain_app'))->group(function() {
     

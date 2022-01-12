@@ -1,9 +1,10 @@
 <?php
 
 namespace App\Repositories\Theme;
-use App\Domains\Themes\Types\ThemeQueryType;
+use App\Domains\Theme\ThemeRepository;
 
 use ScssPhp\ScssPhp\Compiler;
+use Response;
 
 class AssetsLogic {
 
@@ -15,7 +16,7 @@ class AssetsLogic {
     public static function assets($urlName){
 
         // dd($urlName);
-        ThemeQueryType::deliverAssets($urlName);
+        ThemeRepository::deliverAssets($urlName);
 
         if($urlName == 'style.css'){
 
@@ -31,13 +32,14 @@ class AssetsLogic {
                 'mime_type' => 'text/css',
                 'content' => $style
             );
-            dd($collection);
-            return $collection;
+            // dd($collection);
+            // return $collection;
+            return Response::json($style);
             // return response($style)->header('Content-Type' , 'text/css');
         }
         else{
             
-            // $file = ThemeQueryType::deliverAssets($urlName);
+            // $file = ThemeRepository::deliverAssets($urlName);
             // // dd($file);
 
             // foreach($file as $singleAsset){

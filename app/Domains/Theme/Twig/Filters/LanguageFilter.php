@@ -1,13 +1,13 @@
 <?php
 
-namespace App\Domains\Themes\Twig\Filters; 
+namespace App\Domains\Theme\Twig\Filters; 
 
 use Twig\TwigFilter; 
 use Twig\Extension\AbstractExtension;
 use Stichoza\GoogleTranslate\GoogleTranslate;
 use Dotenv\Dotenv;
 
-use App\Http\Controllers\Delivery\ThemeDeleveryController;
+use App\Http\Controllers\DeliveryAPI\DeliveryAPIController;
 use App\Repositories\DeliveryAPI\Logic\AssetsLogic;
 
  

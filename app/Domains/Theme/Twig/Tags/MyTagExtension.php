@@ -1,11 +1,11 @@
 <?php
-namespace App\Domains\Themes\Twig\Tags; 
+namespace App\Domains\Theme\Twig\Tags; 
 
 // use Twig\Extension\Twig_Extension;
 // namespace Drupal\twig_extension\TwigExtension;
 
 use Twig\Extension\AbstractExtension;
-use App\Domains\Themes\Twig\Tags\TokenParser\TwigTokenParser;
+use App\Domains\Theme\Twig\Tags\TokenParser\TwigTokenParser;
 
 
 

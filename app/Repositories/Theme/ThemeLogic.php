@@ -2,7 +2,7 @@
 
 namespace App\Repositories\Theme;
 
-use App\Domains\Themes\Types\ThemeQueryType;
+use App\Domains\Themes\ThemeRepository;
 
 use ScssPhp\ScssPhp\Compiler;
 use Twig\Environment;
@@ -19,7 +19,7 @@ class ThemeLogic {
     public static function index(){ 
 
         // $fileName = $this->themeRepo->deliverThemeData();
-        $fileName = ThemeQueryType::deliverThemeData();
+        $fileName = ThemeRepository::deliverThemeData();
        
         foreach($fileName as $homePage){
             if($homePage['name'] == 'index.scss'){

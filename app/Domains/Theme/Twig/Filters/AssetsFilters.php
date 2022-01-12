@@ -1,11 +1,11 @@
 <?php
 
-namespace App\Domains\Themes\Twig\Filters; 
+namespace App\Domains\Theme\Twig\Filters; 
 
 use Twig\TwigFilter; 
 use Twig\Extension\AbstractExtension;
 
-use App\Http\Controllers\DeliveryAPI\ThemeDeleveryController;
+use App\Http\Controllers\DeliveryAPI\DeliveryAPIController;
 use App\Repositories\DeliveryAPI\Logic\AssetsLogic;
 
  

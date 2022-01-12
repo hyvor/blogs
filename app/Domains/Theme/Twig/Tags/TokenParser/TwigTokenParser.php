@@ -1,12 +1,12 @@
 <?php
 
-namespace App\Domains\Themes\Twig\Tags\TokenParser; 
+namespace App\Domains\Theme\Twig\Tags\TokenParser; 
 
 use Twig\TokenParser\AbstractTokenParser;
 use Twig\Token;
 use Twig\Node\Node;
 
-use App\Domains\Themes\Twig\Tags\Node\TwigNode;
+use App\Domains\Theme\Twig\Tags\Node\TwigNode;
 
 class TwigTokenParser extends AbstractTokenParser
 {
