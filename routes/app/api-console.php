@@ -80,6 +80,8 @@ Route::prefix('/api/console/v0/blog/{subdomain}')
 
     // misc
     Route::get('/counts', [ConsoleBlogController::class, 'getPostsCounts']);
+    // editor-related
+    Route::get('/embed', []);
 
     // platform-specific
     Route::get('/themes', []);
