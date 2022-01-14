@@ -15,7 +15,11 @@ Class ThemeRepository
     * Selecting the theme from ThemeFiles table & pasting it in the BlogThemeFiles table
     *
     */
-    public function copyTheme($theme_id){
+    // public static function copyTheme($theme_id){
+        public static function copyTheme(){
+
+
+        $theme_id = 1;
 
         $themeID = Theme::select('id')
         ->where('id','=', $theme_id)
@@ -60,7 +64,7 @@ Class ThemeRepository
     
     /* 
     *
-    * Rendering the home page from the database
+    * Rendering the HOME page from the database
     *
     */
     public static function deliverThemeData(){
@@ -70,11 +74,49 @@ Class ThemeRepository
 
         $themeFileName= BlogThemeFile::select('name','content')
             ->where('blog_id','=', $blogId)
-            // ->where('name','=', 'index.twig')
+            ->where('name','=', 'index.twig')
             ->get();
             // ->value('content');
 
         return $themeFileName;
+    }
+
+    /* 
+    *
+    * Rendering the TAG page data from the database
+    *
+    */
+    public static function deliverTagData(){
+
+        $blogId = Blog::select('id')
+            ->value('id');
+
+        $tagData= BlogThemeFile::select('name','content')
+            ->where('blog_id','=', $blogId)
+            ->where('name','=', 'tag.twig')
+            ->get();
+            // ->value('content');
+
+        return $tagData;
+    }
+
+    /* 
+    *
+    * Rendering the AUTHOR page data from the database
+    *
+    */
+    public static function deliverAuthorData(){
+
+        $blogId = Blog::select('id')
+            ->value('id');
+
+        $authorData= BlogThemeFile::select('name','content')
+            ->where('blog_id','=', $blogId)
+            ->where('name','=', 'author.twig')
+            ->get();
+            // ->value('content');
+
+        return $authorData;
     }
 
     /* 
@@ -93,10 +135,31 @@ Class ThemeRepository
         $assetsFileName= BlogThemeFile::where('type' , 'assets') 
         ->where('name' , $urlName)
         ->get();
-        // ->first();
+        // ->first(); 
         // dd($assetsFileName);
 
         return $assetsFileName;
+    }
+
+    /*
+    * 
+    * css files
+    *
+    */
+    public static function deliverCSS(){
+
+        // dd($geturl);
+        // $fileName = "script.js";
+        $blogId = Blog::select('id')
+            ->value('id');
+
+        $cssContent= BlogThemeFile::where('type' , 'styles') 
+        ->where('name' , 'index.scss')
+        ->get();
+        // ->first();
+        // dd($assetsFileName);
+
+        return $cssContent;
     }
 
 }

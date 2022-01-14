@@ -30,7 +30,7 @@ class BlogFilesSeeder extends Seeder
                         <style>{{style}}</style>
                         <title>{{Title}}</title>
                     </head>
-                                
+                                 
                     <body>       
                             <ul>
                                 <li>{{ name }}</li>
@@ -54,22 +54,55 @@ class BlogFilesSeeder extends Seeder
                     <head>
                         <meta charset="UTF-8">
                         <meta name="viewport" content="width=device-width, initial-scale=1.0">
-                        {# <link rel="stylesheet" type="text/css" href="../styles/index.css"> #}
-                        <style> {{ style }} </style>
+                        <link href="{{ (style.css) |assets }}" rel="stylesheet" />                
+                        
+                        <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-1BmE4kWBq78iYhFldvKuhfTAU6auU8tT94WrHftjDbrCEXSU1oBoqyl2QvZ6jIW3" crossorigin="anonymous">
                         <title>Document</title>
                     </head>
                                 
                     <body> 
-                        
                         <div class="hyvor">
-                            <h3> Hyvor testing the scss </h3>
+                            <h3> assets testing section </h3>
+                            {{ (style.css)  |assets }} <br>
+                            {{ (script.js)  |assets }} <br>
+                            {{ (hello)  |assets }}<br>
+                            {{ (1.png)  |assets }}
+                        </div> 
+                        <div class="language">
+                            <h5> language testing section </h5>
+                            {{ PUBLISHED|lang }} <br>
+                            {{ HEADDING|lang }} <br>
+                            {{ HEADDING|lang }} <br>
+                            {{ SUBHEADDING|lang }} <br>
+                        </div> 
+                        <div class = "tags">
+                            <h5> tags testing section </h5>
+                           {% hyvorTag name = "ok ok" %}
+                           {{ name }}
+                           {# {% endhyvorTag %} #}
                         </div>
+                        <div class= "functions">
+                            <h5> functions testing section </h5>
+                            {% set _post = filterObject(endpoint = "post" , filter = 1) %}
+                            {% set _author = filterObject(endpoint = "author") %}
                 
+                            {{_post}} 
+                            <br>
+                            {{_author}}
+                        </div>
+                        <div class="alert alert-primary" role="alert">
+                            A simple primary alert—check it out!
+                        </div>
+                        {% block content %}
                         <p>
                             {{ name }} is a {{ occupation }}
                         </p>  
-                           
-                        <script src="../assets/script.js"></script>
+                        {% endblock %}
+                        {# <img src="{{ (1.png) |assets }}" alt="Girl in a jacket" width="500" height="600"> #}
+                        <img src="{{ (2.png) |assets }}" alt="Girl in a jacket" width="500" height="600">
+                        {% block javascript %}
+                            <script src=" {{ (script.js) |assets }} "></script>
+                        {% endblock %}
                     </body>
                                 
                 </html>',
@@ -80,8 +113,9 @@ class BlogFilesSeeder extends Seeder
                 'theme_id' => "1",
                 'name' => "index.scss",
                 'content' => 
-                '@import "header";
-                 @import "body"; 
+                '
+                @import "header";
+                @import "body"; 
                 ',
                 'type' => "styles",
             ],
@@ -90,21 +124,21 @@ class BlogFilesSeeder extends Seeder
                 'theme_id' => "1",
                 'name' => "body.scss",
                 'content' => 
-                '$bodyColor : #dde668; 
-                 $anotherColor : #33fd0f; 
+                '$$bodyColor : #dde668; 
+                $anotherColor : #33fd0f; 
                 
-                 body {
+                body {
                     background-color:$bodyColor ;
-                 }
-                 p { 
+                }
+                p { 
                     font-size: 120%; 
                     color: rgb(3, 148, 51); 
                     text-align: center;
-                 }
+                }
                                 
-                 ul { 
+                ul { 
                     background-color: $anotherColor;
-                 } 
+                }
                 ',
                 'type' => "styles",
             ],
@@ -114,20 +148,43 @@ class BlogFilesSeeder extends Seeder
                 'name' => "head.scss",
                 'content' => 
                 '$margin: 20px;
-                 $fontSize: 30px;
-                 $color: rgb(0, 255, 42); 
+                $fontSize: 30px;
+                $color: rgb(0, 255, 42); 
+                $fontType:url(assets/regular.woff2);
                 
-                 .hyvor{
+                .hyvor{
                     color: $color;
                     margin:$margin;
                     font-size: $fontSize;
-                    background-color: rgb(123, 195, 207);
+                    background-color: rgb(28, 97, 109);
                     text-align: center;
-                 }
-                
-                 h3{
+                }
+                h3{
                     padding: 5px;
-                 }
+                }
+                .language{
+                    color: $color;
+                    background-color: rgb(26, 15, 15);
+                    margin: 20px;
+                    text-align: center;
+                    padding: 10px;
+                }
+                
+                .tags{
+                    color: $color;
+                    background-color: rgb(141, 75, 75);
+                    margin: 20px;
+                    text-align: center;
+                    padding: 10px; 
+                }
+                
+                .functions{
+                    color: $color;
+                    background-color: rgb(75, 82, 141);
+                    margin: 20px;
+                    text-align: center;
+                    padding: 10px; 
+                }
                 ',
                 'type' => "styles",
             ],
@@ -135,8 +192,8 @@ class BlogFilesSeeder extends Seeder
             [
                 'theme_id' => "1",
                 'name' => "script.js",
-                'content' => "// console.log('Submiting form');
-                alert('Testing the javaScript');
+                'content' => "console.log('Submiting form');
+                // alert('Testing the javaScript');
                 ",
                 'type' => "assets",
             ],

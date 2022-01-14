@@ -1,6 +1,7 @@
 <?php
 
-namespace App\Repositories\DeliveryAPI;
+namespace App\Domains\Subdomain\Type;
+
 use App\Repositories\DeliveryAPI\DeliveryAPIRepositoryInterface;
 use App\Repositories\Theme\AssetsLogic;
 use App\Repositories\Theme\ThemeLogic;
@@ -27,7 +28,8 @@ Class DeliveryAPIRepository implements DeliveryAPIRepositoryInterface
     * Resource :- https://symfony.com/doc/current/create_framework/routing.html
     *
     */
-    public function getUrl($geturl){
+    public function getUrl($geturl)
+    {
 
         // dd($geturl);
         $request = Request::createFromGlobals();
@@ -83,56 +85,5 @@ Class DeliveryAPIRepository implements DeliveryAPIRepositoryInterface
             dd('this is for the home page');
         }
     }
-
-
-    // /* ThemeRepository
-    // *
-    // * Selecting the theme from ThemeFiles table & pasting it in the BlogThemeFiles table
-    // *
-    // */
-    // public function copyTheme($theme_id){
-
-    //     $themeID = Theme::select('id')
-    //     ->where('id','=', $theme_id)
-    //     ->get();
-
-    //     if($themeID){
-
-    //         $blogId = Blog::select('id')
-    //         ->value('id');
-
-    //         // $blogId = BlogThemeFile::join('blogs', 'blogs.id', '=', 'blog_theme_files.blogs_id')
-    //         // ->where('id','=', $theme_id)
-    //         // ->first();
-
-    //         $themeFileName= ThemeFile::select('name','content','type')
-    //         ->where('theme_id','=', $theme_id)
-    //         ->get();
-
-    //         foreach($themeFileName as $key => $themeFile){
-    //             BlogThemeFile::create([
-    //                 'blog_id'=> $blogId,
-    //                 'name'=>$themeFile->name,
-    //                 'content'=>$themeFile->content,
-    //                 'type'=>$themeFile->type,
-    //             ]);
-    //         }
-
-    //         // foreach($themeFileName as $key => $themeFile){
-    //         //     BlogThemeFile::create([
-    //         //         'blog_id'=> $blogId,
-    //         //         'name'=>$themeFile['name'],
-    //         //         'content'=>$themeFile['content'],
-    //         //         'type'=>$themeFile['type'],
-    //         //     ]);
-    //         // }
-
-    //     }
-        
-    //     return $themeID;
-    // }
-
-
-
 
 }
