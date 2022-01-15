@@ -41,8 +41,8 @@ const postsLogic = kea({
                 filters: values.filters
             });
             posts.forEach(post => {
-                const builtCounterLogic = postLogic.build({id: post.id, data: post}, false);
-                builtCounterLogic.mount();
+                const builtPostLogic = postLogic.build({id: post.id, data: post}, false);
+                builtPostLogic.mount();
             })
             actions.setPostsListHasMore(posts.length === 50);
             actions.setPostsList(posts.map(val => val.id))
@@ -53,8 +53,8 @@ const postsLogic = kea({
                 offset
             });
             response.forEach(post => {
-                const builtCounterLogic = postLogic.build({id: post.id, data: post}, false);
-                builtCounterLogic.mount();
+                const builtPostLogic = postLogic.build({id: post.id, data: post}, false);
+                builtPostLogic.mount();
             })
             actions.setPostsListHasMore(response.length === 50);
             actions.setPostsList([...values.postsList, ...response.map(val => val.id)])

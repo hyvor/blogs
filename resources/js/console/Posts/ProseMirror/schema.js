@@ -1,6 +1,5 @@
 import {Schema} from "prosemirror-model"
-import { schema } from "prosemirror-schema-basic"
-import { addListNodes } from "prosemirror-schema-list"
+import { addListNodes } from "./list"
 
 /**
  * Copied and changed from
@@ -106,8 +105,10 @@ export const nodes = {
     }, */
 
     figure: {
-        content: "image+ figcaption?",
+        content: "(rich|image)+ figcaption",
         group: "block",
+        selectable: true,
+        draggable: true,
         parseDOM: [
             {
                 tag: "figure",
@@ -143,9 +144,34 @@ export const nodes = {
           return ["img", {...node.attrs}]; 
         }
     },
+    rich: {
+        attrs: {
+            url: {default: null}
+        },
+        content: "text*",
+        group: "figure",
+        atom: true,
+        selectable: false,
+        parseDOM: [{
+            tag: "div.rich[data-url]",
+            getAttrs(div) {
+                return {
+                    url: div.dataset.url
+                }
+            }
+        }],
+        toDOM(node) {
+            return ["div", {
+                "data-url": node.attrs.url,
+                class: "rich"
+            }]
+        }
+    },
+
     figcaption: {
         content: "inline*",
         group: "figure",
+        selectable: false,
         parseDOM: [{tag: "figcaption"}],
         toDOM() { return ["figcaption", 0]; },
     },

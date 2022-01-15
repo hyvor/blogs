@@ -48,6 +48,7 @@ Route::prefix('/api/console/v0/blog/{subdomain}')
     Route::delete('/tag/{id}', []);
 
     // media CRD
+    Route::get('/media/embed', [ConsoleMediaController::class, 'getEmbedData']);
     Route::get('/media/upload', [ConsoleMediaController::class, 'upload']);
 
     // theme CRUD

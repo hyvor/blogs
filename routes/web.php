@@ -17,6 +17,5 @@ Route::domain(config('app.domain_app'))->group(function() {
     include('app/api-data.php');
     include('app/api-delivery.php');
     include('app/api-console.php');
-    include('app/media.php');
 
 });

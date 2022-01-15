@@ -4,6 +4,11 @@ namespace App\Domains\Media\Embed;
 use App\Exceptions\TrustedException;
 use App\Models\Embed;
 
+function _safe_length($str, $len = 255) {
+    if (!$str) return $str; // null
+    return mb_substr($str, 0, $len);
+}
+
 class EmbedRepository {
 
     static function fetch($url) : Embed {
@@ -15,15 +20,21 @@ class EmbedRepository {
         }
 
         try {
-            $embed = Iframely::fetch($url);
+            $json = Iframely::fetch($url);
 
             return Embed::create([
-                'url' => $embed->url,
-                'type' => $embed->type,
-                'html' => $embed->html,
-                'title' => $embed->title,
-                'description' => $embed->description,
-                'thumbnail' => $embed->thumbnail
+                /**
+                 * Iframely returns 4 types: link, photo, video, rich 
+                 * (https://iframely.com/docs/oembed-api#api-response)
+                 * 
+                 * We only want either the link or rich
+                 */
+                'url' => $url,
+                'type' => $json['type'] === 'link' ? 'link' : 'rich',
+                'html' => $json['html'] ?? null,
+                'title' => _safe_length($json['title'] ?? null),
+                'description' => _safe_length($json['description'] ?? null),
+                'thumbnail' => _safe_length($json['thumbnail_url'] ?? null, 1024)
             ]);
 
         } catch (IframelyException) {
