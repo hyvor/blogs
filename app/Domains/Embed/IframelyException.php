@@ -1,5 +1,5 @@
 <?php
-namespace App\Domains\Media\Embed;
+namespace App\Domains\Embed;
 
 use App\Exceptions\TrustedException;
 

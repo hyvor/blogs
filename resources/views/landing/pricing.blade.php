@@ -73,6 +73,7 @@ $pricingRow = '<tr>
 <div class="pricing-table">
 
     <div class="container">
+
         <table>
 
             {!! $pricingRow !!}        
@@ -99,6 +100,14 @@ $pricingRow = '<tr>
                 <td>10GB</td>
                 <td>20GB per user</td>
                 <td>2TB</td>
+            </tr>
+
+            <tr>
+                <td>Supported Media</td>
+                <td>Images</td>
+                <td>Images</td>
+                <td>Images</td>
+                <td>Any file type</td>
             </tr>
 
 
@@ -143,7 +152,7 @@ $pricingRow = '<tr>
                 <td><?= $svgCheck ?></td>
             </tr>
 
-            <tr>
+            <!-- <tr>
                 <td>SAML Login</td>
                 <td><?= $svgCancel ?></td>
                 <td><?= $svgCancel ?></td>
@@ -157,12 +166,16 @@ $pricingRow = '<tr>
                 <td><?= $svgCancel ?></td>
                 <td><?= $svgCancel ?></td>
                 <td><?= $svgCheck ?></td>
-            </tr>
+            </tr> -->
 
 
             {!! $pricingRow !!}  
 
         </table>
+
+        <p>
+            Each blog requires a seperate subscription.<br> The prices are shown <b>excluding</b> applicable VAT charges.
+        </p>
 
     </div>
 </div>

@@ -1,5 +1,5 @@
 <?php
-namespace App\Domains\Media\Embed\Types;
+namespace App\Domains\Embed\Types;
 
 use App\Models\Embed;
 

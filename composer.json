@@ -13,6 +13,7 @@
         "laravel/telescope": "^4.6",
         "laravel/tinker": "^2.5",
         "leafo/scssphp": "^0.8.2",
+        "league/flysystem-aws-s3-v3": "^1.0",
         "rcrowe/twigbridge": "^0.12.3",
         "scssphp/scssphp": "^1.9",
         "stichoza/google-translate-php": "^4.1",
@@ -39,9 +40,6 @@
         },
         "files": [
             "app/Helpers/ImportScssHelper.php"
-        ],
-        "classmap": [
-            "app/twig"
         ],
 
         "Database\\Seeders\\": "database/seeders/",

@@ -1,10 +1,12 @@
 <?php
 
 use App\Http\Controllers\ConsoleAPI\ConsoleBlogController;
+use App\Http\Controllers\ConsoleAPI\ConsoleEmbedController;
 use App\Http\Controllers\ConsoleAPI\ConsoleMediaController;
 use App\Http\Controllers\ConsoleAPI\ConsolePostController;
 use App\Http\Controllers\ConsoleAPI\ConsoleUserController;
 use App\Http\Controllers\ConsoleAPI\ConsoleViewController;
+use App\Http\Middleware\App\ConsoleAPI\BlogAccessMiddleware;
 use App\Http\Middleware\App\SubdomainMiddleware;
 use Illuminate\Support\Facades\Route;
 
@@ -24,8 +26,17 @@ Route::prefix('/api/console')
 
 // this is the Console API
 // can be used by both us and others
+// Important! see readme.md to see how to write these routes securely
+
 Route::prefix('/api/console/v0/blog/{subdomain}')
-    ->middleware(SubdomainMiddleware::class)
+    ->middleware([
+        // converts {subdomain} tp Blog model
+        SubdomainMiddleware::class,
+
+        // checks blog access
+        // and relationship to the blog, for resources that have {id} in route
+        BlogAccessMiddleware::class,
+    ])
     ->group(function() {
 
     // posts (and pages) CRUD
@@ -48,13 +59,18 @@ Route::prefix('/api/console/v0/blog/{subdomain}')
     Route::delete('/tag/{id}', []);
 
     // media CRD
-    Route::get('/media/embed', [ConsoleMediaController::class, 'getEmbedData']);
-    Route::get('/media/upload', [ConsoleMediaController::class, 'upload']);
+    Route::get('/media', [ConsoleMediaController::class, 'getFiles']);
+    Route::post('/media', [ConsoleMediaController::class, 'uploadFile']);
+    Route::delete('/media/{id}', [ConsoleMediaController::class, 'deleteFile']);
+
+    // embed R
+    Route::get('/embed', [ConsoleEmbedController::class, 'getData']);
+
 
     // theme CRUD
     Route::get('/theme/files', []);
     Route::post('/theme/file/{name}', []);
-    Route::post('/theme/{themeId}', []);
+    Route::post('/theme/{id}', []);
     Route::post('/theme/upload', []);
 
     // webhooks CRUD
@@ -81,8 +97,6 @@ Route::prefix('/api/console/v0/blog/{subdomain}')
 
     // misc
     Route::get('/counts', [ConsoleBlogController::class, 'getPostsCounts']);
-    // editor-related
-    Route::get('/embed', []);
 
     // platform-specific
     Route::get('/themes', []);

@@ -41,28 +41,16 @@ class ConsolePostController extends Controller {
     public function getPost(Request $request, Blog $blog) {
         $postId = (int) $request->route('id');
         $post = PostRepository::postById($postId);
-        if ($post->blog_id !== $blog->id) {
-            throw new TrustedException('Post does not belong to this blog', 401);
-        }
         return response()->json(new PostOutputType($post, $blog, true));
     }
 
     public function deletePost(Request $request, Blog $blog) {
         $postId = $request->route('id');
-        $post = PostRepository::postById($postId);
-        if ($post->blog_id !== $blog->id) {
-            throw new TrustedException('Post does not belong to this blog', 401);
-        }
         PostRepository::deletePost($postId, $blog->id);
     }
 
     public function updatePost(Request $request, Blog $blog) {
         $postId = $request->route('id');
-        $post = PostRepository::postById($postId);
-        
-        if ($post->blog_id !== $blog->id) {
-            throw new TrustedException('Post does not belong to this blog', 401);
-        }
         $updates = [];
 
         /**

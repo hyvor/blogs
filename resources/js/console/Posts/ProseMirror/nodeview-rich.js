@@ -17,7 +17,7 @@ export default class RichView {
 
         this.dom.innerHTML = "Embedding...";
 
-        api.get(subdomainLogic.values.subdomain, '/media/embed', {url})
+        api.get(subdomainLogic.values.subdomain, '/embed', {url})
             .then(response => {
                 if (response.type === 'rich') {
                     setInnerHTMLWithScripts(this.dom, response.html);
