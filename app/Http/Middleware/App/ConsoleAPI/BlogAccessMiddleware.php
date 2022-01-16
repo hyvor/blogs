@@ -64,6 +64,8 @@ class BlogAccessMiddleware {
             // ex: Post model
             $model = $this->models[$modelType]::find($id);
 
+            // now check if the model's blog_id
+            // is currently accessed blog's ID
             if ($model->blog_id !== $this->blog->id) {
                 throw new TrustedException("This $modelType belongs to another blog. Ensure the subdomain is correct");
             }

@@ -22,7 +22,7 @@
     color:#666;
 }
 
-.box {
+.box, .box-style {
     background-color: $color-box;
     box-shadow: 0 0 30px rgb(0 0 0 / 5%);
     border-radius: 20px;
@@ -168,4 +168,44 @@ svg, img, span {
     display: inline-block;
     background: #f0e7e8;
     border-radius: 20px;
+}
+
+.global-no-results {
+    text-align: center;
+    padding: 100px;
+    color: $color-text-light;
+    img {
+        width: 350px;
+        display: block;
+        margin: auto;
+        margin-bottom: 25px;
+    }
+    
+}
+
+
+// toast
+:root {
+    --toastify-color-success: #{$color-green};
+    --toastify-color-warning: #{$color-orange};
+    --toastify-color-error: #{$color-red};
+
+    --toastify-font-family: inherit!important;
+    --toastify-text-color-light: #{$color-text}!important;
+    // Used when no type is provided
+    // toast("**hello**")
+    --toastify-color-progress-light: #{$color-accent}!important;
+    --toastify-toast-min-height: 40px!important;
+}
+.Toastify__toast {
+    border-radius: 20px!important;
+    padding: 5px 15px!important;
+    box-shadow: 0 0 11px 2px rgba(0,0,0,0.1)!important;
+    margin-bottom: 10px!important;
+}
+.Toastify__close-button {
+    align-self: center!important;
+}
+.Toastify__progress-bar {
+    height: 4px!important;
 }

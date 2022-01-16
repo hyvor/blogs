@@ -18,14 +18,14 @@ class CreateMediaTable extends Migration
             $table->timestamps();
 
             // connections
-            $table->bigInteger('blog_id');
+            $table->bigInteger('blog_id')->index();
 
             // data
-            $table->string('url');
+            $table->string('path')->nullable();  // for back-end (delete)
+            $table->string('url'); // for front-end
             $table->integer('size')->default(0); // in bytes
-            $table->string('name')->nullable(); // filename
-            $table->string('extension')->nullable(); // file extension
-            $table->string('description')->nullable();
+            $table->string('name'); // filename
+            $table->string('extension')->index(); // file extension
         });
     }
 

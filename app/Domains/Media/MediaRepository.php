@@ -16,7 +16,9 @@ class MediaRepository {
                 $query->where('extension', $extension);
             })
             ->limit($limit)
-            ->offset($offset);
+            ->offset($offset)
+            ->orderBy('id', 'DESC')
+            ->get();
 
     }
 
@@ -25,7 +27,7 @@ class MediaRepository {
     }
 
     static function upload(int $blogId, UploadedFile $file) : Media {
-        
+
         try {
             $path = Storage::putFile("blog/$blogId", $file);
             $url = Storage::url($path);
@@ -35,6 +37,7 @@ class MediaRepository {
 
         $media = Media::create([
             'blog_id' => $blogId,
+            'path' => $path,
             'url' => $url,
             'size' => $file->getSize(),
             'name' => $file->getClientOriginalName(),
@@ -45,7 +48,14 @@ class MediaRepository {
     }
 
     static function delete(int $id) {
-        self::getOne($id)->delete();
+        $media = self::getOne($id);
+        $path = $media->path;
+
+        if ($path) {
+            Storage::delete($path);
+        }
+
+        $media->delete();
     }
 
 }

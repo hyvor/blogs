@@ -43,6 +43,11 @@
         }
     }
 
+    &.text-only {
+        background-color:transparent;
+        color: $color-text;
+    }
+
     &.danger {
         background: $color-red;
     }

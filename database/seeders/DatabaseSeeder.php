@@ -3,6 +3,7 @@
 namespace Database\Seeders;
 
 use App\Models\Blog;
+use App\Models\Media;
 use App\Models\Post;
 use App\Models\PostTag;
 use App\Models\Tag;
@@ -87,6 +88,16 @@ class DatabaseSeeder extends Seeder
                 PostTag::create([
                     'post_id' => $post->id,
                     'tag_id' => $tags[ array_rand($tags) ]->id
+                ]);
+            }
+
+            foreach (range(0, 15) as $i) {
+                Media::create([
+                    'blog_id' => $blog->id,
+                    'url' => 'https://picsum.photos/' . rand(200, 500) . '/' . rand(200, 500),
+                    'size' => rand(1000000, 9000000),
+                    'name' => $faker->name,
+                    'extension' => 'jpg'
                 ]);
             }
 

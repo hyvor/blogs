@@ -18,8 +18,12 @@ const api = {
     },
 
     post: async (subdomain, endpoint, data = {}) => {
-        const res = await axios.post(getEndpoint(subdomain, endpoint), data);
-        return res.data;
+        try {
+            const res = await axios.post(getEndpoint(subdomain, endpoint), data);
+            return res.data;
+        } catch (e) {
+            throw new Error(e.response.data.error)
+        }
     },
 
     delete: async (subdomain, endpoint, data = {}) => {
