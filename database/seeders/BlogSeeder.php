@@ -22,12 +22,12 @@ class BlogSeeder extends Seeder
             'subdomain' => "rasif",
             'name' => "deletation",
             'description' => "testing the deletation",
-            'website_url' => "http://test.hyvorblogs.test/",
-            'title' => "test theme",
-            'short_description' => "sorry its not vailable",
-            'author_id' => "1",
-            'edited_at'=> "1",
-            'deleted_at'=>"1",
+            // 'website_url' => "http://test.hyvorblogs.test/",
+            // 'title' => "test theme",
+            // 'short_description' => "sorry its not vailable",
+            // 'author_id' => "1",
+            // 'edited_at'=> "1",
+            // 'deleted_at'=>"0",
 
         ]);
     }
