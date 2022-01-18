@@ -1,10 +1,11 @@
 <?php
-namespace App\Domains\DataAPI;
+namespace App\Types\DataAPI\Output;
 
+use App\Domains\Blog\BlogRepository;
 use App\Models\Blog;
 use App\Models\Tag;
 
-class DataAPITag {
+class TagType {
 
     public $id;
     public $name;
@@ -18,11 +19,10 @@ class DataAPITag {
         $this->id = $tag->id;
         $this->name = $tag->name;
         $this->slug = $tag->slug;
-        $this->url = 
+        $this->url = BlogRepository::getFullUrlFromSlug($blog, 'tags/' . $tag->slug);
         $this->featured_image = $tag->featured_image;
         $this->posts_count = $tag->posts_count;
 
     }
 
 }
-

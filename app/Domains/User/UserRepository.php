@@ -23,7 +23,17 @@ class UserRepository {
             ->map(function($user) {
                 return new UserBlogOutputConsoleType($user);
             });
-    } 
+    }
+
+    static function getTagByBlogIdAndIdentifier(int $blogId, ?int $id, ?string $slug) {
+        $post = User::where('blog_id', $blogId);
+        if ($id) {
+            $post->where('id', $id);
+        } else {
+            $post->where('slug', $slug);
+        }
+        return $post->first();
+    }
 
     public function createBlog(int $userId, string $subdomain, string $name) : array {
 

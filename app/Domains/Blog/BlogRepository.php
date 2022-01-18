@@ -4,25 +4,29 @@ namespace App\Domains\Blog;
 use App\Models\Blog;
 use App\Models\User;
 
-class BlogRepository implements BlogRepositoryInterface {
+class BlogRepository {
 
-    public function bySubdomain(string $subdomain, array $selectColumns = null) : Blog {
-        $blog = Blog::where('subdomain', $subdomain);
-        if ($selectColumns) {
-            $blog->select($selectColumns);
+    static function getDomain(Blog $blog) {
+        if ($blog->hosted_at === 'subdomain') {
+            $deliveryDomain = config('blogs.domain_delivery');
+            $domain = "$blog->subdomain.$deliveryDomain";
+        } else if ($blog->hosted_at === 'blog->customdomain') {
+            $domain = $blog->custom_domain;
+        } else {
+            $domain = $blog->subdirectory;
         }
-        return $blog->first();
-    }
-    public function byId(int $blogId, array $selectColumns = null) : Blog {
-        $blog = Blog::where('id', $blogId);
-        if ($selectColumns) {
-            $blog->select($selectColumns);
-        }
-        return $blog->first();
+        return $domain;
     }
 
-    public function getURL(?string $slug) : string {
-        return '';
+    static function getFullUrlFromSlug(Blog $blog, ?string $slug) {
+        if (is_null($slug))
+            $slug = '';
+
+        $slug = trim($slug, '/');
+
+        $domain = self::getDomain($blog);
+
+        return 'https://' . $domain . ($slug ? '/' . $slug : '');
     }
 
 }

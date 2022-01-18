@@ -12,10 +12,14 @@ class SubdomainMiddleware {
        
         $subdomain = $request->route('subdomain');
 
+        if (!$subdomain) {
+            throw new TrustedException('Subdomain is required', TrustedException::ERROR_BAD_REQUEST);
+        }
+
         $blog = Blog::where('subdomain', $subdomain)->first();
 
         if (!$blog) {
-            throw new TrustedException('Blog not found - invalid subdmoain', 400);
+            throw new TrustedException('Blog not found - invalid subdmoain', TrustedException::ERROR_BAD_REQUEST);
         }
 
         app()->instance(Blog::class, $blog);

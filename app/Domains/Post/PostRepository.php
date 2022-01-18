@@ -11,12 +11,18 @@ use Illuminate\Support\Facades\DB;
 
 class PostRepository {
 
-    static function postById(int $postId) {
+    static function getPostById(int $postId) {
         return Post::find($postId);
     }
 
-    static function byBlogIdAndIdentifier(int $blogId, int $postid = null, string $slug = null) {
-        
+    static function getPostByBlogIdAndIdentifier(int $blogId, ?int $id, ?string $slug) {
+        $post = Post::where('blog_id', $blogId);
+        if ($id) {
+            $post->where('id', $id);
+        } else {
+            $post->where('slug', $slug);
+        }
+        return $post->first();
     }
 
     /**

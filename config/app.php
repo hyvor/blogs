@@ -54,10 +54,6 @@ return [
 
     'url' => env('APP_URL', 'http://localhost'),
 
-    // domains
-    'domain_app' => env('DOMAIN_APP'),
-    'domain_delivery' => env('DOMAIN_DELIVERY'),
-
     'asset_url' => env('ASSET_URL', null),
 
     /*
@@ -160,7 +156,7 @@ return [
         Illuminate\Pipeline\PipelineServiceProvider::class,
         Illuminate\Queue\QueueServiceProvider::class,
         Illuminate\Redis\RedisServiceProvider::class,
-        Illuminate\Auth\Passwords\PasswordResetServiceProvider::class,
+        // Illuminate\Auth\Passwords\PasswordResetServiceProvider::class,
         Illuminate\Session\SessionServiceProvider::class,
         Illuminate\Translation\TranslationServiceProvider::class,
         Illuminate\Validation\ValidationServiceProvider::class,
@@ -179,15 +175,11 @@ return [
         App\Providers\EventServiceProvider::class,
         App\Providers\RouteServiceProvider::class,
 
-        App\Providers\RepositoriesServiceProvider::class,
-        // Auth0\Login\LoginServiceProvider::class,
-
         // \Hyvor\Auth\HyvorAuthServiceProvider::class,
 
         /* 
         * 3rd Party Providers 
         */
-        // Dedicated\GoogleTranslate\GoogleTranslateProvider::class,
         App\Providers\TelescopeServiceProvider::class,
 
 

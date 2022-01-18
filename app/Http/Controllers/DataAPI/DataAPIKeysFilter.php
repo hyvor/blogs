@@ -1,5 +1,5 @@
 <?php
-namespace App\Domains\DataAPI;
+namespace App\Http\Controllers\DataAPI;
 
 use Illuminate\Support\Collection;
 

@@ -15,4 +15,11 @@ namespace App\Exceptions;
  * They can contain sensitive information.
  */
 
-class TrustedException extends \Exception {}
+class TrustedException extends \Exception {
+
+    const ERROR_BAD_REQUEST = 400; // This means that client-side input fails validation.
+    const ERROR_UNAUTHORIZED = 401; // This means the user isn’t authenticated.
+    const ERROR_FORBIDDEN = 403; // This means the user is authenticated, but it’s not allowed to access a resource.
+    const ERROR_NOT_FOUND = 404; // not found
+
+}

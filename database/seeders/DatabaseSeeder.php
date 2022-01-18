@@ -5,6 +5,7 @@ namespace Database\Seeders;
 use App\Models\Blog;
 use App\Models\Media;
 use App\Models\Post;
+use App\Models\PostAuthor;
 use App\Models\PostTag;
 use App\Models\Tag;
 use App\Models\User;
@@ -74,13 +75,15 @@ class DatabaseSeeder extends Seeder
                 }
 
                 $status = ['draft', 'published', 'deleted', 'scheduled'];
+                $status = $i === 0 ? 'published' : $status[ array_rand($status) ];
                 $post = Post::create([
                     'blog_id' => $blog->id,
                     'content' => json_encode($prosemirrorJson),
                     'title' => $title,
                     'slug' => Str::slug($title),
+                    'published_at' => $status === 'published' ? now() : null,
                     'description' => $faker->sentence,
-                    'status' => $status[ array_rand($status) ],
+                    'status' => $status,
 
                     'reading_time' => 2,
                 ]);
@@ -88,6 +91,11 @@ class DatabaseSeeder extends Seeder
                 PostTag::create([
                     'post_id' => $post->id,
                     'tag_id' => $tags[ array_rand($tags) ]->id
+                ]);
+
+                PostAuthor::create([
+                    'post_id' => $post->id,
+                    'user_id' => 1
                 ]);
             }
 

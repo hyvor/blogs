@@ -72,3 +72,15 @@ Serves blogs of the subdomain. These controllers calls the Delivery API and retu
 * Routes: `routes/app/pages.php`
 
 These are landing/marketing pages of the application. Usually, most websites seperate these types of pages from the application, but we keep them for simplicity and we don't usually have a lot of pages - just a few that explains what exactly our service does.
+
+
+### Naming Convensions
+
+Here are some examples for repository methods:
+
+* `getPost`
+* `getPostBySlug`
+* `getPosts`
+* `createPost`
+* `deletePost`
+* `updatePost`

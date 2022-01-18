@@ -40,7 +40,7 @@ class ConsolePostController extends Controller {
 
     public function getPost(Request $request, Blog $blog) {
         $postId = (int) $request->route('id');
-        $post = PostRepository::postById($postId);
+        $post = PostRepository::getPostById($postId);
         return response()->json(new PostOutputType($post, $blog, true));
     }
 
