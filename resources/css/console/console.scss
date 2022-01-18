@@ -169,17 +169,17 @@ body {
             .post-filters {
                 display: flex;
                 .filter-label {
+                    display:flex;
                     .name {
                         text-transform: capitalize;
+                        flex:1;
                     }
                     .count {
-                        font-size: 8px;
+                        font-size: 10px;
                         margin-left: 4px;
                         display: inline-flex;
                         width: 18px;
                         height: 18px;
-                        background: $color-grey;
-                        color: #000;
                         align-items: center;
                         justify-content: center;
                         border-radius: 50%;

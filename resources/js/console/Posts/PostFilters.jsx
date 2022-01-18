@@ -54,7 +54,7 @@ export default function PostFilters({ filters, changeFilter }) {
         counts.tags.forEach(({id, slug, posts_count}) => {
             tagsCopy.push({
                 value: id,
-                label:  <FilterLabel name={slug} count={posts_count} />,
+                label:  <FilterLabel name={"#" + slug} count={posts_count} />,
             })
         })
         setTagsOptions(tagsCopy);
