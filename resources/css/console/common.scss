@@ -1,5 +1,11 @@
 @import '../colors.scss';
 
+a.link {
+    font-weight: 600;
+    color: $color-accent;
+    cursor: pointer;
+    text-decoration: underline;
+}
 
 .input {
     width: 100%;
@@ -181,6 +187,28 @@ svg, img, span {
         margin-bottom: 25px;
     }
     
+}
+
+.global-dual-setting {
+    display: flex;
+    padding: 18px 0;
+    border-bottom: 1px solid $color-accent-light;
+    .dual-left {
+        flex: 1;
+        margin-right: 20px;
+    } 
+    .dual-title {
+        font-size:18px;
+        font-weight: 600;
+        margin-bottom: 6px
+    }
+    .dual-description {
+        color: $color-text-light;
+    }
+    .dual-right {
+        flex:1;
+    }
+
 }
 
 

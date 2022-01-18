@@ -2,8 +2,12 @@ import { useValues } from 'kea';
 import React from 'react';
 import subdomainLogic from '../logic/subdomainLogic';
 import NavLink from '../ReusableComponents/NavLink';
-import SettingMedia from './SettingsMedia';
+import SettingsDelete from './SettingsDelete';
+import SettingsCode from './SettingsCode';
+import SettingsMedia from './SettingsMedia';
+import SettingsMigrate from './SettingsMigrate';
 import SettingUsers from './SettingUsers';
+import SettingsComments from './SettingsComments';
 
 export default function Settings({type}) {
 
@@ -16,7 +20,19 @@ export default function Settings({type}) {
             Type = () => <SettingUsers />;
             break;
         case 'media':
-            Type = () => <SettingMedia />;
+            Type = () => <SettingsMedia />;
+            break;
+        case 'code':
+            Type = () => <SettingsCode />
+            break;
+        case 'comments':
+            Type = () => <SettingsComments />
+            break;
+        case 'migrate':
+            Type = () => <SettingsMigrate />;
+            break;
+        case 'delete':
+            Type = () => <SettingsDelete />;
             break;
     }
 
@@ -28,20 +44,20 @@ export default function Settings({type}) {
                 <NavLink href={settingsPrefix} exact={1}>General</NavLink>
                 <NavLink href={settingsPrefix + "/users"}>Users</NavLink>
                 <NavLink href={settingsPrefix + "/tags"}>Tags</NavLink>
-                <NavLink href={settingsPrefix + "/navigation"}>Navigation</NavLink>
-                <NavLink href={settingsPrefix + "/media"}>Media</NavLink>
 
                 <div></div>
                 <NavLink href={settingsPrefix + "/seo"}>SEO</NavLink>
+                <NavLink href={settingsPrefix + "/navigation"}>Navigation</NavLink>
                 <NavLink href={settingsPrefix + "/redirects"}>Redirects</NavLink>
                 <NavLink href={settingsPrefix + "/webhooks"}>Webhooks</NavLink>
-                <NavLink href={settingsPrefix + "/code" }>Custom Code</NavLink>
+                <NavLink href={settingsPrefix + "/media"}>Media</NavLink>
 
                 <div></div>
-                <NavLink href={settingsPrefix + "/import"}>Import</NavLink>
-                <NavLink href={settingsPrefix + "/export"}>Export</NavLink>
+                <NavLink href={settingsPrefix + "/comments"}>Comments & Newsletter</NavLink>
+                <NavLink href={settingsPrefix + "/code"}>Custom Code</NavLink>
 
                 <div></div>
+                <NavLink href={settingsPrefix + "/migrate"}>Import & Export</NavLink>
                 <NavLink href={settingsPrefix + "/delete"}>Delete Blog</NavLink>
             </div>
         </div>

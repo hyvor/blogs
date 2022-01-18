@@ -12,7 +12,7 @@ import NoResults from '../ReusableComponents/NoResults';
 
 let uploadInput = null;
 
-export default function SettingMedia() {
+export default function SettingsMedia() {
 
     const subdomain = subdomainLogic.values.subdomain;
     const mediaLogicBuilt = mediaLogic({subdomain})
