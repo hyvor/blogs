@@ -613,7 +613,53 @@ body {
                 }
             }
         }
-    }
+
+        .redirect-view {
+            .title {
+                font-size: 20px;
+                font-weight: 600;
+                text-align: center;
+            }
+            .ridirects {
+                margin: 20px 0;
+                .riderect-create{
+                    display: inline-block;
+                    width: 50%;
+                }
+                .user-row {
+                    display: flex;
+                    align-items: center;
+                    padding: 15px;
+                    cursor: pointer;
+                    border-radius: 20px;
+                    transition:.1s background-color;
+                    &:hover {
+                        background-color: $color-hover;
+                    }
+                }
+                .user-left {
+                    flex: 1;
+                    img {
+                        width: 40px;
+                        border-radius: 50%;
+                        height: 40px;
+                        margin-right: 7px;
+                    }
+                    .user-name {
+                        display: inline-flex;
+                        align-items: center;
+                    }
+                    .user-name-email {
+                        display:inline-flex;
+                        flex-direction: column;
+                    }
+                }
+            }
+        }
+
+
+
+    } 
 
 }
 

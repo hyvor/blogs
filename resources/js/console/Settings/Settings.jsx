@@ -3,6 +3,8 @@ import React from 'react';
 import subdomainLogic from '../logic/subdomainLogic';
 import NavLink from '../ReusableComponents/NavLink';
 import SettingUsers from './SettingUsers';
+import SettingRedirects from './SettingRedirects';
+
 
 export default function Settings({type}) {
 
@@ -13,6 +15,9 @@ export default function Settings({type}) {
     switch (type) {
         case 'users':
             Type = () => <SettingUsers />;
+            break;
+        case 'redirects':
+            Type = () => <SettingRedirects />;
     }
 
     return <div className="posts-view settings-view">
