@@ -1,12 +1,12 @@
 <?php
 
-namespace App\Domains\Theme\Twig\Filters; 
+namespace App\Domains\Theme\Twig; 
 
 use Twig\TwigFilter; 
 use Twig\Extension\AbstractExtension;
 
 use App\Http\Controllers\DeliveryAPI\DeliveryAPIController;
-use App\Repositories\DeliveryAPI\Logic\AssetsLogic;
+use App\Domains\Theme\AssetsRepository;
 
  
 class AssetsFilters extends AbstractExtension { 

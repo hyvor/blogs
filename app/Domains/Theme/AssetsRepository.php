@@ -1,12 +1,12 @@
 <?php
 
-namespace App\Domains\Theme\Delivery;
+namespace App\Domains\Theme;
 
 use App\Domains\Theme\ThemeRepository;
 use ScssPhp\ScssPhp\Compiler;
 use Response;
 
-class AssetsLogic {
+class AssetsRepository {
 
     /* 
     *
@@ -22,17 +22,26 @@ class AssetsLogic {
 
             // dd('style');
             $path = ThemeRepository::deliverCSS();
-            dd($path);
-
+            // dd($path['content']);
+            $testArray = json_encode($path['content'], true);
+            // dd($testArray);
+            $cars = array('@import "header";');
+            
             // Scss compiler
             $compiler = new Compiler();
-            $style = $compiler->compileString($path)->getCss();
+            $style = $compiler->registerFiles($cars)->getCss();
+
+            dd($style); 
+
+
+
 
             $collection = array(
                 'type' => 'text',
                 'mime_type' => 'text/css',
                 'content' => $style
             );
+            // dd($collection);
             return Response::json($collection);
             // return response($style)->header('Content-Type' , 'text/css');
         }

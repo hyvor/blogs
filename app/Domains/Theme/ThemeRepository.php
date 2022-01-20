@@ -6,6 +6,8 @@ use App\Models\Theme;
 use App\Models\ThemeFile;
 use App\Models\BlogThemeFile;
 use App\Models\Blog;
+use App\Models\Post;
+
 
 
 Class ThemeRepository 
@@ -15,9 +17,7 @@ Class ThemeRepository
     * Selecting the theme from ThemeFiles table & pasting it in the BlogThemeFiles table
     *
     */
-    // public static function copyTheme($theme_id){
         public static function copyTheme(){
-
 
         $theme_id = 1;
 
@@ -26,7 +26,6 @@ Class ThemeRepository
         ->get();
 
         if($themeID){
-
             $blogId = Blog::select('id')
             ->value('id');
 
@@ -57,7 +56,6 @@ Class ThemeRepository
             // }
 
         }
-        
         return $themeID;
     }
 
@@ -143,23 +141,33 @@ Class ThemeRepository
 
     /*
     * 
-    * css files
+    * Get the css files
     *
     */
     public static function deliverCSS(){
 
-        // dd($geturl);
-        // $fileName = "script.js";
         $blogId = Blog::select('id')
             ->value('id');
 
         $cssContent= BlogThemeFile::where('type' , 'styles') 
-        ->where('name' , 'index.scss')
-        ->get();
-        // ->first();
-        // dd($assetsFileName);
+            ->where('name' , 'index.scss')
+            // ->get();
+            ->first();
 
         return $cssContent;
+    }
+
+    /*
+    * 
+    * Filternig whether it is a post, page or redirect
+    *
+    */
+    public static function isPage(){
+
+        $getType= Post::where('is_page') 
+            // ->get();
+            ->first();
+        return $getType;
     }
 
 }

@@ -4,14 +4,12 @@ namespace App\Http\Controllers\DeliveryAPI;
 use Illuminate\Http\Request;
 use App\Http\Controllers\Controller;
 use App\Repositories\DeliveryAPI\DeliveryAPIRepositoryInterface;
-use App\Repositories\Theme\AssetsLogic;
+use App\Domains\Theme\AssetsRepository;
 
-use App\Domains\Theme\Twig\Filters\AssetsFilters;
-use App\Domains\Theme\Twig\Filters\LanguageFilter;
+use App\Domains\Theme\Twig\AssetsFilters;
+use App\Domains\Theme\Twig\LanguageFilter;
 
-use App\Domains\Theme\Twig\Tags\MyTagExtension;
-
-use App\Domains\Theme\Twig\Functions\TwigFunctions;
+use App\Domains\Theme\Twig\TwigFunctions;
 
 
 /**
@@ -49,7 +47,7 @@ class SubdomainController {
     *
     */
     public function assets(){
-       $asset = AssetsLogic::assets($urlName);
+       $asset = AssetsRepository::assets($urlName);
        return $asset;
     }
 

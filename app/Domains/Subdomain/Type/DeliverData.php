@@ -2,9 +2,8 @@
 
 namespace App\Domains\Subdomain\Type;
 
-use App\Repositories\DeliveryAPI\DeliveryAPIRepositoryInterface;
-use App\Repositories\Theme\AssetsLogic;
-use App\Repositories\Theme\ThemeLogic;
+use App\Domains\ThemeAssetsRepository;
+use App\Domains\ThemeTemplateRepository;
 
 use Symfony\Component\Routing\RouteCollection;
 use Symfony\Component\Routing\Route;
@@ -58,27 +57,27 @@ Class DeliveryAPIRepository implements DeliveryAPIRepositoryInterface
         {
             // Returns the assets of the theme
             $urlName = $Attribute['name'];
-            return AssetsLogic::assets($urlName);            
+            return AssetsRepository::assets($urlName);            
         }
         else if($Attribute['_route'] == 'page')
         {
             // Returns the sub pages of th theme
-            return ThemeLogic::pages();
+            return TemplateRepository::pages();
         }
         else if($Attribute['_route'] == 'tag')
         {
             // This is the tag page
-            return ThemeLogic::tag();
+            return TemplateRepository::tag();
         }
         else if($Attribute['_route'] == 'author')
         {
             // This is the author page
-            return ThemeLogic::author();
+            return TemplateRepository::author();
         }
         else if($Attribute['_route'] == 'home')
         {
             // Returns the home page of th theme
-            return ThemeLogic::index();
+            return TemplateRepository::index();
         }
         else
         {

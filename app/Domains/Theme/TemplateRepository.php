@@ -1,13 +1,13 @@
 <?php
 
-namespace App\Domains\Theme\Delivery;
+namespace App\Domains\Theme;
 
 use App\Domains\Theme\ThemeRepository;
 
 use ScssPhp\ScssPhp\Compiler;
 use Twig\Environment;
 
-class ThemeLogic {
+class TemplateRepository {
 
     /* 
     *
@@ -88,7 +88,6 @@ class ThemeLogic {
         }
     }
 
-
     /* 
     *
     *
@@ -144,32 +143,42 @@ class ThemeLogic {
     */
     public static function pages()
     {
+        // $type = 1; //check page, post or redirect
+        $type = ThemeRepository::isPage();
+        // dd($type);
 
-        $fileName = $this->themeRepo->deliverThemeData();
-        $style = $this->style();
-        $script = $this->script();
+        if($type == 1){
+            dd('this is a page');
 
-        foreach($fileName as $singlePage){
-            if($singlePage['name'] == 'single.twig'){
+        }else if($type == 0){
 
-                $singleContent = $singlePage['content'];
-                $loader = new \Twig\Loader\ArrayLoader(array(
-                    'single.html' => $singleContent,
-                ));
-                $twig = new \Twig\Environment($loader);
+            dd('this is a post');
+
+            $fileName = $this->themeRepo->deliverThemeData();
+
+            foreach($fileName as $singlePage){
+                if($singlePage['name'] == 'single.twig'){
+
+                    $singleContent = $singlePage['content'];
+                    $loader = new \Twig\Loader\ArrayLoader(array(
+                        'single.html' => $singleContent,
+                    ));
+                    $twig = new \Twig\Environment($loader);
        
-                echo $twig->render('single.html', 
-                array(
-                    'style' => $style , 
-                    'Title'=> "hyvor blog",
-                    'name' => 'hyvor' , 
-                    'number'=> "123456789",
-                    'test' => 'loader', 
-                    'script'=> $script,
-                ));
+                    echo $twig->render('single.html', 
+                    array(
+                        'Title'=> "hyvor blog",
+                        'name' => 'hyvor' , 
+                        'number'=> "123456789",
+                        'test' => 'loader', 
+                    ));
+                }
             }
+
+        }else{
+            dd('this is an redirect');
         }
-        // return "This is all the other pages";
+
     }
 
 }
