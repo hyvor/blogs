@@ -2,9 +2,6 @@
 
 namespace App\Domains\Subdomain\Type;
 
-use App\Domains\ThemeAssetsRepository;
-use App\Domains\ThemeTemplateRepository;
-
 use Symfony\Component\Routing\RouteCollection;
 use Symfony\Component\Routing\Route;
 use Symfony\Component\Routing\Matcher\UrlMatcher;
@@ -13,13 +10,10 @@ use Symfony\Component\Routing;
 
 use Symfony\Component\HttpFoundation\Request;
 
-use App\Models\Theme;
-use App\Models\ThemeFile;
-use App\Models\BlogThemeFile;
-use App\Models\Blog;
 
 
-Class DeliveryAPIRepository implements DeliveryAPIRepositoryInterface
+
+Class DeliverData
 {
     /* 
     *
@@ -55,6 +49,7 @@ Class DeliveryAPIRepository implements DeliveryAPIRepositoryInterface
 
         if($Attribute['_route'] == 'assets' )
         {
+            dd('hello world');
             // Returns the assets of the theme
             $urlName = $Attribute['name'];
             return AssetsRepository::assets($urlName);            

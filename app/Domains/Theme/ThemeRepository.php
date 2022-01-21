@@ -81,7 +81,28 @@ Class ThemeRepository
 
     /* 
     *
-    * Rendering the TAG page data from the database
+    * Rendering the single.twig page data from the database
+    *
+    */
+    public static function deliverSinglePage(){
+
+        $blogId = Blog::select('id')
+            ->value('id');
+
+        $authorData= BlogThemeFile::select('name','content')
+            ->where('blog_id','=', $blogId)
+            ->where('name','=', 'single.twig')
+            ->get();
+            // ->value('content');
+
+        return $authorData;
+    }
+
+
+    /* 
+    *
+    * 1. Rendering the TAG page data from the database
+    * 2. Checking wheather the tag page exist in the theme.
     *
     */
     public static function deliverTagData(){
@@ -98,9 +119,20 @@ Class ThemeRepository
         return $tagData;
     }
 
+    // Check wheather tag file exist or not
+    public static function checkTag(){
+
+        $tagExist= BlogThemeFile::select('name')
+            ->where('name','=', 'tags.twig')
+            ->first();
+
+        return $tagExist;
+    }
+
     /* 
     *
-    * Rendering the AUTHOR page data from the database
+    * 1. Rendering the AUTHOR page data from the database.
+    * 2. Checking wheather the author page exist in this theme.
     *
     */
     public static function deliverAuthorData(){
@@ -116,6 +148,17 @@ Class ThemeRepository
 
         return $authorData;
     }
+
+    // Check wheather author file exist or not
+    public static function checkAuthor(){
+
+        $authorExist= BlogThemeFile::select('name')
+            ->where('name','=', 'author.twig')
+            ->first();
+
+        return $authorExist;
+    }
+    
 
     /* 
     *

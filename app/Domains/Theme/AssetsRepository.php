@@ -3,6 +3,8 @@
 namespace App\Domains\Theme;
 
 use App\Domains\Theme\ThemeRepository;
+use App\Domains\Theme\Types\OutPutDeliveryAPI;
+
 use ScssPhp\ScssPhp\Compiler;
 use Response;
 
@@ -15,26 +17,21 @@ class AssetsRepository {
     */
     public static function assets($urlName){
 
-        // dd($urlName);
         ThemeRepository::deliverAssets($urlName);
 
         if($urlName == 'style.css'){ 
 
-            // dd('style');
             $path = ThemeRepository::deliverCSS();
-            // dd($path['content']);
-            $testArray = json_encode($path['content'], true);
+            // dd($path['name']);
+            $testArray = array($path['name'] , $path['content']);
             // dd($testArray);
-            $cars = array('@import "header";');
+            // $cars = array('@import "header";');
             
             // Scss compiler
             $compiler = new Compiler();
-            $style = $compiler->registerFiles($cars)->getCss();
+            $style = $compiler->registerFiles([ '@import "header";']);
 
-            dd($style); 
-
-
-
+            // dd($style); 
 
             $collection = array(
                 'type' => 'text',
@@ -42,7 +39,9 @@ class AssetsRepository {
                 'content' => $style
             );
             // dd($collection);
-            return Response::json($collection);
+            return OutPutDeliveryAPI::renderContent($collection);
+
+            // return Response::json($collection);
             // return response($style)->header('Content-Type' , 'text/css');
         }
         else{
@@ -52,8 +51,7 @@ class AssetsRepository {
             foreach($file as $singleAsset){
                 $assetName = $singleAsset['name'];
             }
-            // $assetName = '1.js';
-            // dd($assetName);
+
             if($assetName){
                 // This function is used to get the file extention
                 $extentionFilter = pathinfo($assetName, PATHINFO_EXTENSION);
@@ -69,8 +67,7 @@ class AssetsRepository {
                         'mime_type' => 'application/js',
                         'content' => $script
                     );
-                    return Response::json($collection);
-                    // return response($script)->header('Content-Type', 'application/js');
+                    return OutPutDeliveryAPI::renderContent($collection);
                 }
                 else if($extention == '.svg'){
                     $svg = file_get_contents(base_path('public/themes/assets/girl.svg'), true);
@@ -79,8 +76,7 @@ class AssetsRepository {
                         'mime_type' => 'image/svg+xml',
                         'content' => $svg
                     );
-                    return Response::json($collection);
-                    // return response($svg)->header('Content-Type', 'image/svg+xml');
+                    return OutPutDeliveryAPI::renderContent($collection);
                 }
                 else if ($extention == '.jpg'){
                     $jpeg = file_get_contents(base_path('public/themes/assets/test.jpg'), true);
@@ -90,7 +86,9 @@ class AssetsRepository {
                         'mime_type' => 'image/jpeg',
                         'content' => $convert
                     );
-                    return Response::json($collection);
+                    return OutPutDeliveryAPI::renderContent($collection);
+
+                    // return Response::json($collection);
                     // $backwords = base64_decode($convert);
                     // return response($backwords)->header('Content-Type', 'image/jpeg');                
                 }
@@ -102,8 +100,7 @@ class AssetsRepository {
                         'mime_type' => 'image/png',
                         'content' => $convert
                     );
-                    return Response::json($collection);
-                    // return response($png)->header('Content-Type', 'image/png');
+                    return OutPutDeliveryAPI::renderContent($collection);
                 }
                 else if ($extention = '.icon'){
                     // return response($icon)->header('Content-Type', 'image/x-icon');
@@ -116,8 +113,7 @@ class AssetsRepository {
                         'mime_type' => 'image/gif',
                         'content' => $convert
                     );
-                    return Response::json($collection);
-                    // return response($gif)->header('Content-Type', 'image/gif');
+                    return OutPutDeliveryAPI::renderContent($collection);
                 }
                 else if ($extention = '.woff2'){
                     $woff2 = file_get_contents(base_path('public/themes/assets/regular.woff2'), true);
@@ -127,8 +123,7 @@ class AssetsRepository {
                         'mime_type' => 'font/woff2',
                         'content' => $convert
                     );
-                    return Response::json($collection);
-                    // return response($font)->header('Content-Type', 'font/woff2');
+                    return OutPutDeliveryAPI::renderContent($collection);
                 }
                 else{
                     return 'sorry we dont support this format';

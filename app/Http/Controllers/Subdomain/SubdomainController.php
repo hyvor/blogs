@@ -1,101 +1,92 @@
 <?php
-namespace App\Http\Controllers\DeliveryAPI;
+namespace App\Http\Controllers\Subdomain;
 
 use Illuminate\Http\Request;
+use Illuminate\Routing\Route;
 use App\Http\Controllers\Controller;
-use App\Repositories\DeliveryAPI\DeliveryAPIRepositoryInterface;
-use App\Domains\Theme\AssetsRepository;
 
-use App\Domains\Theme\Twig\AssetsFilters;
-use App\Domains\Theme\Twig\LanguageFilter;
+use App\Domains\Theme\Types\OutPutDeliveryAPI;
 
-use App\Domains\Theme\Twig\TwigFunctions;
+use Symfony\Component\Routing\RouteCollection;
+// use Symfony\Component\Routing\Route;
+use Symfony\Component\Routing\Matcher\UrlMatcher;
+use Symfony\Component\Routing\RequestContext;
+use Symfony\Component\Routing;
 
-
-/**
- * 
- * 
- */
 
 class SubdomainController {
 
-
-
-    private $themeRepo;
-
-    public function __construct(DeliveryAPIRepositoryInterface $themeRepository)
-    {
-        $this->themeRepo = $themeRepository;
-    }
-
-
     /* 
     *
-    * This is the index page of the bolg
+    * Resource :- https://symfony.com/doc/current/create_framework/routing.html
     *
     */
-    public function getUrl(Request $request){
+    public function getSubdomainData(Request $request){
         
-        $geturl = $request->path();
-        $this->themeRepo->getUrl($geturl);
-        return $this->themeRepo->getUrl($geturl);
-    }
+        $getScript = Request::create('http://blogs.hyvor.test/api/delivery/v0/blog/test?path=/assets/script.js', 'GET');
 
-    /* 
-    *
-    * This is the index page of the bolg
-    *
-    */
-    public function assets(){
-       $asset = AssetsRepository::assets($urlName);
-       return $asset;
-    }
+        $instance = json_decode(app()->handle($getScript)->getContent());
 
+        dd($instance);
+        response($content)->header('content-type', $instance['mime-type']);
+        // $check = response()->json($instance); 
+        // dd($check);
 
+        $path = $request->path();
 
-    /* 
-    *
-    * This is the index page of the bolg
-    *
-    */
-    public function index(){
-        // 
-    }
-
-    /* 
-    *
-    * This is the author page of the bolg
-    *
-    */
-    public function author(Request $request){
-    //
-    }
+        $route = new RouteCollection();
+        
+        $route->add('assets', new Route('/assets/{name}'));
+        $route->add('pages', new Route('{name}'));
+        $route->add('tag', new Route('tag/{name}'));
+        $route->add('author', new Route('author/{name}'));
+        $route->add('home', new Route('/'));
 
 
-    /* 
-    *
-    * This is the tags page of the bolg
-    *
-    */
-    public function tag(Request $request){
-        //
-    }
+        $context = new RequestContext();
+        $context->fromRequest($request);
+        $matcher = new UrlMatcher($route, $context);
 
+        $Attribute = $matcher->match($request->getPathInfo());
 
-    /* 
-    *
-    * This is the posts & pages of the bolg
-    *
-    */
-    public function pages(Request $request){
-        //
+        // dd($Attribute);
+
+        $getContent = OutPutDeliveryAPI::renderContent($Attribute['name']);
+
+        dd($getContent);
+
+        if($Attribute['_route'] == 'assets' )
+        {
+           return 'css,js and other assets';          
+        }
+        else if($Attribute['_route'] == 'page')
+        {
+            return 'dynamic pages';
+        }
+        else if($Attribute['_route'] == 'tag')
+        {
+            return 'tag pages.';
+        }
+        else if($Attribute['_route'] == 'author')
+        {
+            return 'author pages.';
+        }
+        else if($Attribute['_route'] == 'home')
+        {
+            return 'home page.';
+        }
+        else
+        {
+            dd('this is for the home page');
+        }
+
     }
 
 
     /*
     *
     *
-    * Testing the theme files
+    * This to test how dose the theme files work.
     *
     */
     public function test(){

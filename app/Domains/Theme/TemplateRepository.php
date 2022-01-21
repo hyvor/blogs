@@ -3,6 +3,8 @@
 namespace App\Domains\Theme;
 
 use App\Domains\Theme\ThemeRepository;
+use App\Domains\Theme\Types\OutPutDeliveryAPI;
+
 
 use ScssPhp\ScssPhp\Compiler;
 use Twig\Environment;
@@ -20,11 +22,6 @@ class TemplateRepository {
     {  
         $fileName = ThemeRepository::deliverThemeData();
 
-        // I cant remember what is this
-        // $test = mb_convert_encoding($script, "UTF-8", "HTML-ENTITIES");
-        // $test =  htmlspecialchars_decode($script, ENT_QUOTES);
-        // dd($test);
-
         foreach($fileName as $homePage){
 
             if($homePage['name'] == 'index.twig'){
@@ -36,13 +33,18 @@ class TemplateRepository {
                 ));
                 $twig = new \Twig\Environment($loader);
        
-                echo $twig->render('index.html', 
+                $fileContent =  $twig->render('index.html', 
                     array(
-                        // 'style' => $stylecss , 
                         'name' => 'Finnaly done', 
                         'occupation' => 'must get the approvel', 
-                        'script' => $script
                     ));
+                
+                $getContent = array(
+                        'type' => 'text',
+                        'mime_type' => 'text/html',
+                        'content' => $fileContent
+                    );
+                return OutPutDeliveryAPI::renderContent($getContent);
             }
         }
     }
@@ -55,36 +57,68 @@ class TemplateRepository {
     *
     */
     public static function author(){
-        $homePage = ThemeRepository::deliverThemeData();
-        $authorPage = ThemeRepository::deliverAuthorData();
-        // dd($tagPage);
 
-        if($authorPage != null)
+        $authorExist = ThemeRepository::checkAuthor();
+
+        if($authorExist == null)
         {
+            $homePage = ThemeRepository::deliverThemeData();
+
             foreach($homePage as $getHomePage){
 
                 if($getHomePage['name'] == 'index.twig'){
-       
                     $homeContent = $getHomePage['content'];
-    
+
                     $loader = new \Twig\Loader\ArrayLoader(array(
                         'index.html' => $homeContent,
                     ));
                     $twig = new \Twig\Environment($loader);
            
-                    echo $twig->render('index.html', 
+                    $fileContent =  $twig->render('index.html', 
                         array(
                             // 'style' => $stylecss , 
                             'name' => 'Finnaly done', 
                             'occupation' => 'must get the approvel', 
                             // 'script' => $script
                         ));
+                    $getContent = array(
+                            'type' => 'text',
+                            'mime_type' => 'text/html',
+                            'content' => $fileContent
+                        );
+                    return OutPutDeliveryAPI::renderContent($getContent);
                 }
             }
         }
         else
         {
-            return 'author page content';
+            $authorPage = ThemeRepository::deliverAuthorData();
+
+            foreach($authorPage as $getauthorPage){
+
+                if($getauthorPage['name'] == 'author.twig'){
+                    $authorContent = $getauthorPage['content'];
+
+                    $loader = new \Twig\Loader\ArrayLoader(array(
+                        'author.html' => $authorContent,
+                    ));
+                    $twig = new \Twig\Environment($loader);
+           
+                    $fileContent =  $twig->render('author.html', 
+                        array(
+                            // 'style' => $stylecss , 
+                            'name' => 'Finnaly done', 
+                            'occupation' => 'must get the approvel', 
+                            // 'script' => $script
+                        ));
+                    $getContent = array(
+                            'type' => 'text',
+                            'mime_type' => 'text/html',
+                            'content' => $fileContent
+                        );
+                    return OutPutDeliveryAPI::renderContent($getContent);
+                }
+            }
         }
     }
 
@@ -97,13 +131,11 @@ class TemplateRepository {
     */
     public static function tag()
     {
+        $tagExist = ThemeRepository::checkTag();
 
-        $homePage = ThemeRepository::deliverThemeData();
-        $tagPage = ThemeRepository::deliverTagData();
-        // dd($tagPage);
-
-        if($tagPage != null)
+        if($tagExist == null)
         {
+            $homePage = ThemeRepository::deliverThemeData();
             foreach($homePage as $getHomePage){
 
                 if($getHomePage['name'] == 'index.twig'){
@@ -115,30 +147,58 @@ class TemplateRepository {
                     ));
                     $twig = new \Twig\Environment($loader);
            
-                    echo $twig->render('index.html', 
-                        array(
-                            // 'style' => $stylecss , 
-                            'name' => 'Finnaly done', 
-                            'occupation' => 'must get the approvel', 
-                            // 'script' => $script
-                        ));
+                    $fileContent =  $twig->render('index.html', 
+                                array(
+                                    // 'style' => $stylecss , 
+                                    'name' => 'Finnaly done', 
+                                    'occupation' => 'must get the approvel', 
+                                    // 'script' => $script
+                                ));
+                    $getContent = array(
+                            'type' => 'text',
+                            'mime_type' => 'text/html',
+                            'content' => $fileContent
+                        );
+                    return OutPutDeliveryAPI::renderContent($getContent);
                 }
             }
         }
         else
-        {
-            return 'tag content';
+        { 
+            $tagPage = ThemeRepository::deliverTagData();
+            foreach($tagPage as $getTagPage){
+
+                if($getTagPage['name'] == 'index.twig'){
+       
+                    $tagContent = $getTagPage['content'];
+    
+                    $loader = new \Twig\Loader\ArrayLoader(array(
+                        'index.html' => $tagContent,
+                    ));
+                    $twig = new \Twig\Environment($loader);
+           
+                    $fileContent =  $twig->render('index.html', 
+                                array(
+                                    // 'style' => $stylecss , 
+                                    'name' => 'Finnaly done', 
+                                    'occupation' => 'must get the approvel', 
+                                    // 'script' => $script
+                                ));
+                    $getContent = array(
+                            'type' => 'text',
+                            'mime_type' => 'text/html',
+                            'content' => $fileContent
+                        );
+                    return OutPutDeliveryAPI::renderContent($getContent);
+                }
+            }
         }
-        // dd('hi I am the tag');
-        // return "This is the page for tags";
     }
 
 
     /* 
     *
-    *
     * This is the posts & pages of the bolg
-    *
     *
     */
     public static function pages()
@@ -152,9 +212,7 @@ class TemplateRepository {
 
         }else if($type == 0){
 
-            dd('this is a post');
-
-            $fileName = $this->themeRepo->deliverThemeData();
+            $fileName = ThemeRepository::deliverSinglePage();
 
             foreach($fileName as $singlePage){
                 if($singlePage['name'] == 'single.twig'){
@@ -165,14 +223,23 @@ class TemplateRepository {
                     ));
                     $twig = new \Twig\Environment($loader);
        
-                    echo $twig->render('single.html', 
-                    array(
-                        'Title'=> "hyvor blog",
-                        'name' => 'hyvor' , 
-                        'number'=> "123456789",
-                        'test' => 'loader', 
-                    ));
+                    $fileContent = $twig->render('single.html', 
+                            array(
+                                'Title'=> "hyvor blog",
+                                'name' => 'hyvor' , 
+                                'number'=> "123456789",
+                                'test' => 'loader', 
+                            ));
+
+                    $getContent = array(
+                        'type' => 'text',
+                        'mime_type' => 'text/html',
+                        'content' => $fileContent
+                    );
+                    return OutPutDeliveryAPI::renderContent($getContent);
+
                 }
+                
             }
 
         }else{
