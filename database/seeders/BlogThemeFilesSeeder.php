@@ -21,70 +21,14 @@ class BlogFilesSeeder extends Seeder
             [
                 'theme_id' => "1",
                 'name' => "single.twig",
-                'content' => '<!DOCTYPE html>
-                <html lang="en">
-                                
-                    <head>
-                        <meta charset="UTF-8">
-                        <meta name="viewport" content="width=device-width, initial-scale=1.0">
-                    </head>
-                                 
-                    <body>       
-                            <ul>
-                                <li>name</li>
-                                <li>number</li>
-                                <li>test</li>
-                            </ul>
-                            
-                        <script></script>
-                    </body>
-                                
-                </html>',
+                'content' => '',
                 'type' => "templates",
             ],
 
             [
                 'theme_id' => "1",
                 'name' => "index.twig",
-                'content' => '<!DOCTYPE html>
-                <html lang="en">
-                                
-                    <head>
-                        <meta charset="UTF-8">
-                        <meta name="viewport" content="width=device-width, initial-scale=1.0">
-                        
-                        <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-1BmE4kWBq78iYhFldvKuhfTAU6auU8tT94WrHftjDbrCEXSU1oBoqyl2QvZ6jIW3" crossorigin="anonymous">
-                        <title>Document</title>
-                    </head>
-                                
-                    <body> 
-                        <div class="hyvor">
-                            <h3> assets testing section </h3>
-                            style.css <br>
-                            script.js <br>
-                            hello <br>
-                            1.png
-                        </div> 
-                        <div class="language">
-                            <h5> language testing section </h5>
-                                PUBLISHED<br>
-                                HEADDING<br>
-                                HEADDING<br> 
-                                SUBHEADDING<br>
-                        </div> 
-                        <div class = "tags">
-                            <h5> tags testing section </h5>
-                        </div>
-                        <div class= "functions">
-                            <h5> functions testing section </h5>
-                                       
-                        </div>
-                        <div class="alert alert-primary" role="alert">
-                            A simple primary alert—check it out!
-                        </div>
-                    </body>
-                                
-                </html>',
+                'content' => '',
                 'type' => "templates",
             ],
 

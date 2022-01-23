@@ -20,6 +20,8 @@ class DatabaseSeeder extends Seeder
     public function run()
     {
 
+        Blog::factory()
+
         $faker = \Faker\Factory::create();
 
         $blogs = [['supun', "Supun's Blog"], ['ishini', "Ishini's Blog"]];

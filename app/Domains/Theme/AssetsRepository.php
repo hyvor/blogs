@@ -10,7 +10,25 @@ use Response;
 
 class AssetsRepository {
 
-    /* 
+    public static function getAsset(int $blogId, string $file) : array
+    {
+
+        
+
+        return [
+            $content,
+            $contentType
+        ];
+
+    }
+
+    public static function getStylesCss(int $blogId) {
+
+
+
+    }
+
+    /*
     *
     * Fetching the assets data from the database and passing it to an URL
     *
@@ -19,19 +37,19 @@ class AssetsRepository {
 
         ThemeRepository::deliverAssets($urlName);
 
-        if($urlName == 'style.css'){ 
+        if($urlName == 'style.css'){
 
             $path = ThemeRepository::deliverCSS();
             // dd($path['name']);
             $testArray = array($path['name'] , $path['content']);
             // dd($testArray);
             // $cars = array('@import "header";');
-            
+
             // Scss compiler
             $compiler = new Compiler();
             $style = $compiler->registerFiles([ '@import "header";']);
 
-            // dd($style); 
+            // dd($style);
 
             $collection = array(
                 'type' => 'text',
@@ -45,7 +63,7 @@ class AssetsRepository {
             // return response($style)->header('Content-Type' , 'text/css');
         }
         else{
-            
+
             $file = ThemeRepository::deliverAssets($urlName);
             // dd($file);
             foreach($file as $singleAsset){
@@ -58,7 +76,7 @@ class AssetsRepository {
                 $extention = '.'.$extentionFilter;
                 // dd($extention);
                 // $extention = '.png';
-                
+
                 if($extention == ".js"){
                     // dd('hell');
                     $script = file_get_contents(base_path('public/themes/assets/script.js'), true);
@@ -90,7 +108,7 @@ class AssetsRepository {
 
                     // return Response::json($collection);
                     // $backwords = base64_decode($convert);
-                    // return response($backwords)->header('Content-Type', 'image/jpeg');                
+                    // return response($backwords)->header('Content-Type', 'image/jpeg');
                 }
                 else if ($extention == '.png'){
                     $png = file_get_contents(base_path('public/themes/assets/2.png'), true);
@@ -132,5 +150,5 @@ class AssetsRepository {
         }
     }
 
-    
+
 }

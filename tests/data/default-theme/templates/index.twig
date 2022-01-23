@@ -11,7 +11,7 @@
 <body class="index-pages">
 
 <div class="header-wrapper">
-    {% include('header.twig') %}
+    {% include('_header.twig') %}
 </div>
 
 <div class="index-heading">
@@ -28,12 +28,12 @@
 <div class="posts">
 
     {% for i in range(0, 3) %}
-        {% include('post-card.twig') %}
+        {% include('_post-card.twig') %}
     {% endfor %}
 
 </div>
 
-{% include('footer.twig') %}
+{% include('_footer.twig') %}
 
 {{ _foot | raw }}
 

@@ -10,8 +10,16 @@ use App\Models\Post;
 
 
 
-Class ThemeRepository 
+Class ThemeRepository
 {
+
+    public function getSingleFile(int $blogId, string $fileName, string $type) {
+
+        
+
+    }
+
+
     /*
     *
     * Selecting the theme from ThemeFiles table & pasting it in the BlogThemeFiles table
