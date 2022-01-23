@@ -38,12 +38,10 @@
 
             "Database\\Seeders\\": "database/seeders/"
         },
-        "files": [
-            "app/Helpers/ImportScssHelper.php"
-        ],
 
         "Database\\Seeders\\": "database/seeders/",
-        "Hyvor\\Auth\\": "packages/hyvor/auth/src/"
+        "Hyvor\\Auth\\": "packages/hyvor/auth/src/",
+        "Hyvor\\FilterQ\\": "packages/hyvor/filter-q"
         
     },
     "autoload-dev": {

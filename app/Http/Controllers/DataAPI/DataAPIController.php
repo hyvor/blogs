@@ -34,9 +34,8 @@ class DataAPIController extends Controller
         if (!$post) {
             throw new TrustedException('Post not found', TrustedException::ERROR_NOT_FOUND);
         }
-        /**
-         * Data API only return published posts
-         */
+        
+        // Data API only return published posts
         if ($post->status !== 'published') {
             throw new TrustedException('This post is not yet published', TrustedException::ERROR_BAD_REQUEST);
         }
@@ -81,6 +80,18 @@ class DataAPIController extends Controller
         }
 
         return response()->json(DataAPIKeysFilter::filter(new AuthorType($user, $blog), $keys));
+    }
+
+    public function posts(Request $request, Blog $blog) {
+
+        $limit = $request->input('limit');
+        $page = $request->input('page');
+        $filter = $request->input('filter');
+        $sort = $request->input('sort');
+        $key = $request->input('keys');
+
+        
+
     }
 
 }
