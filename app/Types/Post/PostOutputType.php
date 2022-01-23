@@ -1,12 +1,13 @@
 <?php
+
 namespace App\Types\Post;
 
 use App\Models\Blog;
 use App\Models\Post;
 use App\Types\Tag\TagType;
 
-class PostOutputType {
-
+class PostOutputType
+{
     public $id;
     public $created_at;
     public $updated_at;
@@ -29,9 +30,10 @@ class PostOutputType {
     /**
      * @var $isConsole - If this type is for Console API.
      */
-    public function __construct(Post $post, Blog $blog, bool $isConsole = false) {
+    public function __construct(Post $post, Blog $blog, bool $isConsole = false)
+    {
 
-        $tags = $post->tags->map(function($tag) use ($blog, $isConsole) {
+        $tags = $post->tags->map(function ($tag) use ($blog, $isConsole) {
             return $isConsole ? $tag->id : new TagType($tag, $blog);
         })->toArray();
 
@@ -54,11 +56,8 @@ class PostOutputType {
         $this->reading_time = $post->reading_time;
         $this->code_head = $post->code_head;
         $this->code_foot = $post->code_foot;
-        
+
         $this->tags = $tags;
         $this->authors = $authors;
-        
     }
-
 }
-

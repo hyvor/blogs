@@ -1,12 +1,13 @@
 <?php
+
 namespace App\Types\Post;
 
 use App\Models\Blog;
 use App\Models\Post;
 use App\Types\Tag\TagType;
 
-class DataAPIPost {
-
+class DataAPIPost
+{
     public $id;
     public $created_at;
     public $updated_at;
@@ -26,9 +27,10 @@ class DataAPIPost {
     public $code_foot;
 
 
-    public function __construct(Post $post, Blog $blog) {
+    public function __construct(Post $post, Blog $blog)
+    {
 
-        $tags = $post->tags->map(function($tag) use ($blog) {
+        $tags = $post->tags->map(function ($tag) use ($blog) {
             return new TagType($tag, $blog);
         })->toArray();
 
@@ -51,11 +53,8 @@ class DataAPIPost {
         $this->reading_time = $post->reading_time;
         $this->code_head = $post->code_head;
         $this->code_foot = $post->code_foot;
-        
+
         $this->tags = $tags;
         $this->authors = $authors;
-        
     }
-
 }
-

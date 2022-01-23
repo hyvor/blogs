@@ -30,7 +30,6 @@ class CreateTagsTable extends Migration
 
 
             $table->unique(['blog_id', 'slug']);
-
         });
     }
 

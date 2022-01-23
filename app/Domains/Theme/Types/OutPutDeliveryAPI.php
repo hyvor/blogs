@@ -2,9 +2,10 @@
 
 namespace App\Domains\Theme\Types;
 
-class OutPutDeliveryAPI {
-    
-    public static function renderContent($data){
+class OutPutDeliveryAPI
+{
+    public static function renderContent($data)
+    {
         return $data;
     }
 }

@@ -4,14 +4,12 @@ namespace App\Domains\Theme\Twig;
 
 use Twig\Extension\AbstractExtension;
 use Twig\TwigFunction;
-
 use App\Http\Controllers\DataAPI\DataAPIController;
 use Illuminate\Http\Request;
 // use Symfony\Component\Routing\Route;
 // use Symfony\Component\Routing\Annotation\Route;
 // use Illuminate\Routing\Route;
 use Illuminate\Support\Facades\Route;
-
 
 class TwigFunctions extends AbstractExtension
 {
@@ -22,13 +20,13 @@ class TwigFunctions extends AbstractExtension
         ];
     }
 
-    public function calculateArea($endpoint , $filter = null)
+    public function calculateArea($endpoint, $filter = null)
     {
         // $version = 'v0';
         $subdomain = 'test';
 
         // $url = 'api/data/v0'.'/'.$subdomain.'/'.$endpoint;
-        $url = 'api/data/v0'.'/'.$endpoint;
+        $url = 'api/data/v0' . '/' . $endpoint;
 
 
         $request = Request::create($url, 'GET');
@@ -100,4 +98,4 @@ class TwigFunctions extends AbstractExtension
         // api/data/v0/{subdomain}/endpoint?filter
         // return $url;
     }
-} 
+}

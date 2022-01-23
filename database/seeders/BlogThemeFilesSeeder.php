@@ -91,7 +91,7 @@ class BlogFilesSeeder extends Seeder
             [
                 'theme_id' => "1",
                 'name' => "index.scss",
-                'content' => 
+                'content' =>
                 '
                 @import "header";
                 @import "body"; 
@@ -102,7 +102,7 @@ class BlogFilesSeeder extends Seeder
             [
                 'theme_id' => "1",
                 'name' => "body.scss",
-                'content' => 
+                'content' =>
                 '$$bodyColor : #dde668; 
                 $anotherColor : #33fd0f; 
                 
@@ -125,7 +125,7 @@ class BlogFilesSeeder extends Seeder
             [
                 'theme_id' => "1",
                 'name' => "head.scss",
-                'content' => 
+                'content' =>
                 '$margin: 20px;
                 $fontSize: 30px;
                 $color: rgb(0, 255, 42); 

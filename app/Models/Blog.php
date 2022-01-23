@@ -17,8 +17,8 @@ class Blog extends Model
     /**
      * Get Posts of the blog
      */
-    public function posts() {
+    public function posts()
+    {
         return $this->hasMany(Post::class);
     }
-
 }

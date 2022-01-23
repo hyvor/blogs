@@ -7,10 +7,8 @@ use Illuminate\Http\Request;
 use Project\Themer\Themer;
 use App\Models\Themes;
 use App\Models\Blog;
-
 use App\Models\User;
 use Illuminate\Support\Facades\Hash;
-
 use App\Http\Controllers\PostController;
 // use App\Http\Controllers\BlogThemeCustomizerController;
 
@@ -18,8 +16,6 @@ use App\Http\Controllers\DashboardController;
 
 class BlogController extends Controller
 {
-
-
     public function index()
     {
         $blogs = Blog::all();
@@ -44,13 +40,13 @@ class BlogController extends Controller
             $user = Auth::user();
         } else {
             // return view('user.register');
-            // redirect to yvor Auth login 
+            // redirect to yvor Auth login
             $dash = new DashboardController();
-            $user = $dash->logIn();      
+            $user = $dash->logIn();
         }
 
         $user = User::firstOrCreate(
-            [ 
+            [
                 'email' => $user->email ],
             [
                 'name'     => $user->name,
@@ -58,7 +54,7 @@ class BlogController extends Controller
                 // 'password' => Hash::make('awesome'),
                 'password' => Hash::make('123456'),
             ]
-        );        
+        );
 
         $blog = new Blog();
         $blog->name = $request->subdomain;
@@ -80,10 +76,10 @@ class BlogController extends Controller
             'revision' => 1,
             'unsaved' => false,
         );
-        foreach($themes as $theme){
+        foreach ($themes as $theme) {
             $data['theme'] = $theme;
             $themeInstance = new BlogThemeCustomizerController();
-            $custoizerTheme = $themeInstance->store($request,$data);
+            $custoizerTheme = $themeInstance->store($request, $data);
         }
 
         return response()->json($blog, 201);
@@ -102,7 +98,7 @@ class BlogController extends Controller
         $blog->author_id = $blog->author_id;
         $blog->theme_id = $request->theme ?? $blog->theme_id;
 
-        $blog->save();        
+        $blog->save();
         return response()->json($blog, 200);
     }
 
@@ -116,7 +112,7 @@ class BlogController extends Controller
     public function blogsToTheme()
     {
         $blogs = Blog::blogsWithThemeName();
-        return $blogs;        
+        return $blogs;
     }
 
 
@@ -127,19 +123,19 @@ class BlogController extends Controller
             'title' => 'undefined',
         );
 
-        $content = "<div><p><stong>by ". $blog->author_id ."</strong></p>"; 
-        $content .= "<p>".$blog->short_description."</p><br/>";
-        $content .= "<a href='/post/create?blogid=".$blog->id."'>Create a post</a>";
+        $content = "<div><p><stong>by " . $blog->author_id . "</strong></p>";
+        $content .= "<p>" . $blog->short_description . "</p><br/>";
+        $content .= "<a href='/post/create?blogid=" . $blog->id . "'>Create a post</a>";
         $content .= "<h3>List of posts</h3>";
         $postCont = new PostController();
-        $ht = $postCont->postsHtml($blog->id); 
-        $content .= $ht;       
+        $ht = $postCont->postsHtml($blog->id);
+        $content .= $ht;
 
         $blog = array(
             'title' => $blog->title,
             'content' => $content,
             'blog_id' => $blog->id,
-        );        
+        );
 
         $data = array(
             'type' => 'blog',
@@ -152,15 +148,15 @@ class BlogController extends Controller
         return $themeObj->view();
     }
 
-    public function checkSubdomainExist(Request $request,$name = null)
+    public function checkSubdomainExist(Request $request, $name = null)
     {
         $tempName = null;
-        if($name != null){
+        if ($name != null) {
             $tempName = $name;
         } else {
             $tempName = $request->name;
         }
-        if (Blog::where('name', $tempName)->exists()){
+        if (Blog::where('name', $tempName)->exists()) {
             return response([
                 'success' => true,
                 'message' => true,
@@ -175,7 +171,7 @@ class BlogController extends Controller
 
     public function loadBlog($name)
     {
-        $blog = Blog::where('name','=', $name)->first();
+        $blog = Blog::where('name', '=', $name)->first();
         $renderedBlog = $this->renderedThemedBlog($blog);
 
         return array(
@@ -185,5 +181,4 @@ class BlogController extends Controller
                 'user' => Auth::user(),
         );
     }
-
 }

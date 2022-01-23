@@ -27,7 +27,6 @@ class DatabaseSeeder extends Seeder
         $blogs = [['supun', "Supun's Blog"], ['ishini', "Ishini's Blog"]];
 
         foreach ($blogs as $blogData) {
-
             $blog = Blog::create([
                 'user_id' => 1,
                 'subdomain' => $blogData[0],
@@ -56,7 +55,6 @@ class DatabaseSeeder extends Seeder
 
             $posts = [];
             foreach (range(0, 100) as $i) {
-
                 $title = $faker->sentence;
 
                 $paragraphs = $faker->paragraphs(rand(2, 6));
@@ -91,8 +89,6 @@ class DatabaseSeeder extends Seeder
                     'tag_id' => $tags[ array_rand($tags) ]->id
                 ]);
             }
-
         }
-
     }
 }

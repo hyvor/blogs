@@ -1,11 +1,12 @@
 <?php
+
 namespace App\Domains\DataAPI;
 
 use App\Models\Blog;
 use App\Models\Tag;
 
-class DataAPITag {
-
+class DataAPITag
+{
     public $id;
     public $name;
     public $slug;
@@ -13,16 +14,14 @@ class DataAPITag {
     public $featured_image;
     public $posts_count;
 
-    public function __construct(Tag $tag, Blog $blog) {
+    public function __construct(Tag $tag, Blog $blog)
+    {
 
         $this->id = $tag->id;
         $this->name = $tag->name;
         $this->slug = $tag->slug;
-        $this->url = 
+        $this->url =
         $this->featured_image = $tag->featured_image;
         $this->posts_count = $tag->posts_count;
-
     }
-
 }
-

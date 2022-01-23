@@ -1,28 +1,28 @@
 <?php
 
 namespace App\Repositories\Eloquent;
+
 use App\Repositories\ThemesRepositoryInterface;
 use App\Models\Theme;
 use App\Models\ThemeFile;
 use App\Models\BlogThemeFile;
 use App\Models\Blog;
 
-
-Class ThemesRepository implements ThemesRepositoryInterface
+class ThemesRepository implements ThemesRepositoryInterface
 {
-    /* 
+    /*
     *
     * Selecting the theme from ThemeFiles table & pasting it in the BlogThemeFiles table
     *
     */
-    public function getTheme($theme_id){
+    public function getTheme($theme_id)
+    {
 
         $themeID = Theme::select('id')
-        ->where('id','=', $theme_id)
+        ->where('id', '=', $theme_id)
         ->get();
 
-        if($themeID){
-
+        if ($themeID) {
             $blogId = Blog::select('id')
             ->value('id');
 
@@ -30,16 +30,16 @@ Class ThemesRepository implements ThemesRepositoryInterface
             // ->where('id','=', $theme_id)
             // ->first();
 
-            $themeFileName= ThemeFile::select('name','content','type')
-            ->where('theme_id','=', $theme_id)
+            $themeFileName = ThemeFile::select('name', 'content', 'type')
+            ->where('theme_id', '=', $theme_id)
             ->get();
 
-            foreach($themeFileName as $key => $themeFile){
+            foreach ($themeFileName as $key => $themeFile) {
                 BlogThemeFile::create([
-                    'blog_id'=> $blogId,
-                    'name'=>$themeFile->name,
-                    'content'=>$themeFile->content,
-                    'type'=>$themeFile->type,
+                    'blog_id' => $blogId,
+                    'name' => $themeFile->name,
+                    'content' => $themeFile->content,
+                    'type' => $themeFile->type,
                 ]);
             }
 
@@ -51,25 +51,25 @@ Class ThemesRepository implements ThemesRepositoryInterface
             //         'type'=>$themeFile['type'],
             //     ]);
             // }
-
         }
-        
+
         return $themeID;
     }
 
-    
-    /* 
+
+    /*
     *
     * Rendering the home page from the database
     *
     */
-    public function deliverThemeData(){
+    public function deliverThemeData()
+    {
 
         $blogId = Blog::select('id')
             ->value('id');
 
-        $themeFileName= BlogThemeFile::select('name','content')
-            ->where('blog_id','=', $blogId)
+        $themeFileName = BlogThemeFile::select('name', 'content')
+            ->where('blog_id', '=', $blogId)
             // ->where('name','=', 'index.twig')
             ->get();
             // ->value('content');
@@ -77,22 +77,22 @@ Class ThemesRepository implements ThemesRepositoryInterface
         return $themeFileName;
     }
 
-    /* 
+    /*
     *
     * Rendering the assets from the database
     *
     */
-    public function deliverAssets($fileName){
+    public function deliverAssets($fileName)
+    {
 
         // $fileName = "script.js";
         $blogId = Blog::select('id')
             ->value('id');
 
-        $assetsFileName= BlogThemeFile::where('type' , 'assets') 
-        ->where('name' , $fileName)
+        $assetsFileName = BlogThemeFile::where('type', 'assets')
+        ->where('name', $fileName)
         ->get();
 
         return $assetsFileName;
     }
-
 }

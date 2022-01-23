@@ -19,12 +19,11 @@ class CreateBlogThemeFilesTable extends Migration
 
             // Connections
             $table->bigInteger('blog_id')->nullable();
-            
+
             // data
             $table->string('name')->nullable();
             $table->binary('content')->nullable();
             $table->enum('folder', ['templates', 'assets', 'styles', 'lang'])->nullable();
-
         });
     }
 

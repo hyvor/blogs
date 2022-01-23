@@ -1,16 +1,19 @@
 <?php
+
 namespace App\Domains\Subscription;
 
-
-interface SubscriptionRepositoryInterface {
-
+interface SubscriptionRepositoryInterface
+{
     public function create(
-        int $blogId, int $userId, string $userType,
-        string $name, ?string $profileImage, string $type
+        int $blogId,
+        int $userId,
+        string $userType,
+        string $name,
+        ?string $profileImage,
+        string $type
     );
 
     public function update();
 
     public function getPlanNameByPlanId(int $planId);
-
 }

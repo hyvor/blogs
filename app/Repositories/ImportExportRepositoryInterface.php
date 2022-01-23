@@ -1,4 +1,5 @@
 <?php
+
 /**
  * Created by PhpStorm.
  * User: LENOVO
@@ -8,11 +9,7 @@
 
 namespace App\Domains;
 
-
 interface ImportExportRepositoryInterface
 {
     public function index($final);
-
 }
-
-

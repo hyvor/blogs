@@ -1,4 +1,5 @@
 <?php
+
 namespace App\Types\Post;
 
 use App\Exceptions\TrustedException;
@@ -7,8 +8,8 @@ use App\Exceptions\TrustedException;
  * Filter object for /posts endpoint in the console
  * Used in PostRepository
  */
-class PostInputListFiltersType {
-
+class PostInputListFiltersType
+{
     public $status;
     public $authorId;
     public $tagId;
@@ -16,7 +17,8 @@ class PostInputListFiltersType {
     public $endTimestamp;
     public $search;
 
-    public function setStatus(?string $status) {
+    public function setStatus(?string $status)
+    {
         if (!in_array($status, [null, 'published', 'deleted', 'draft', 'scheduled', 'featured'])) {
             throw new TrustedException('Invalid status for filteing: ' . $status);
         }
@@ -24,29 +26,33 @@ class PostInputListFiltersType {
         return $this;
     }
 
-    public function setAuthorId(?int $authorId) {
+    public function setAuthorId(?int $authorId)
+    {
         $this->authorId = $authorId;
         return $this;
     }
 
-    public function setTagId(?int $tagId) {
+    public function setTagId(?int $tagId)
+    {
         $this->tagId = $tagId;
         return $this;
     }
 
-    public function setStartTimestamp(?int $startTimestamp) {
+    public function setStartTimestamp(?int $startTimestamp)
+    {
         $this->startTimestamp = $startTimestamp;
         return $this;
     }
 
-    public function setEndTimestamp(?int $endTimestamp) {
+    public function setEndTimestamp(?int $endTimestamp)
+    {
         $this->endTimestamp = $endTimestamp;
         return $this;
     }
 
-    public function setSearch(?string $search) {
+    public function setSearch(?string $search)
+    {
         $this->search = $search;
         return $this;
     }
-
 }

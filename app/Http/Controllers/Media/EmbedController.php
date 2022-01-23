@@ -1,16 +1,18 @@
 <?php
+
 namespace App\Http\Controllers\Media;
 
 use App\Domains\Media\Embed\EmbedRepository;
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 
-class EmbedController extends Controller {
-
+class EmbedController extends Controller
+{
     /**
      * Rich content loads inside our iframe.
      */
-    public function embedRichIframe(Request $request) {
+    public function embedRichIframe(Request $request)
+    {
         $url = $request->get('url');
 
         $embed = EmbedRepository::fetch($url);
@@ -32,5 +34,4 @@ class EmbedController extends Controller {
         </html>
         HTML;
     }
-
 }

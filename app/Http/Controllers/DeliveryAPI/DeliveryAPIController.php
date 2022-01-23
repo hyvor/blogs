@@ -1,8 +1,8 @@
 <?php
+
 namespace App\Http\Controllers\DeliveryAPI;
 
 use Illuminate\Http\Request;
-
 use App\Domains\Theme\AssetsRepository;
 use App\Domains\Theme\TemplateRepository;
 use App\Domains\Theme\ThemeRepository;
@@ -13,10 +13,10 @@ use Symfony\Component\Routing\Route;
 use Symfony\Component\Routing\Matcher\UrlMatcher;
 use Symfony\Component\Routing\RequestContext;
 
-
-class DeliveryAPIController {
-
-    static function handle(Request $request, Blog $blog) {
+class DeliveryAPIController
+{
+    static function handle(Request $request, Blog $blog)
+    {
 
         $request->validate([
             'path' => 'required|string'
@@ -52,35 +52,30 @@ class DeliveryAPIController {
 
         $type = $attributes['_route'];
 
-        if($type == 'asset' ) {
+        if ($type == 'asset') {
             $fileName = $attributes['fileName'];
             [ $content, $contentType ] = AssetsRepository::getAsset($blog->id, $fileName);
-        } else if($type == 'pages') {
+        } elseif ($type == 'pages') {
             // dd('This is for posts, pages and redirects');
             // Returns the sub pages of th theme
             return TemplateRepository::pages();
-
-        } else if($type == 'tag') {
+        } elseif ($type == 'tag') {
             // This is the tag page
             return TemplateRepository::tag();
-
-        } else if($type == 'author') {
+        } elseif ($type == 'author') {
             // This is the author page
             return TemplateRepository::author();
-        } else if($type == 'home')
-        {
+        } elseif ($type == 'home') {
             // Returns the home page of th theme
             return TemplateRepository::index();
-        }
-        else
-        {
+        } else {
             dd('Error this page is not working');
         }
-
     }
 
     // Bloger Theme Select
-    public function selectTheme(){
+    public function selectTheme()
+    {
 
         $selectedTheme = ThemeRepository::copyTheme();
         return 'hello world';

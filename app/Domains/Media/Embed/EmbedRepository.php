@@ -1,12 +1,14 @@
 <?php
+
 namespace App\Domains\Media\Embed;
 
 use App\Exceptions\TrustedException;
 use App\Models\Embed;
 
-class EmbedRepository {
-
-    static function fetch($url) : Embed {
+class EmbedRepository
+{
+    static function fetch($url): Embed
+    {
 
         $embed = Embed::where('url', $url)->first();
 
@@ -25,9 +27,7 @@ class EmbedRepository {
                 'description' => $embed->description,
                 'thumbnail' => $embed->thumbnail
             ]);
-
         } catch (IframelyException) {
-
             // insert to database before sending response so that we don't make multiple requests to
             // iframely endpoint for error URLs
 
@@ -37,8 +37,6 @@ class EmbedRepository {
             ]);
 
             throw new TrustedException('Unable to fetch');
-        }     
-
+        }
     }
-
 }

@@ -1,10 +1,11 @@
 <?php
+
 namespace App\Domains\Subscription;
 
 use App\Models\Blog;
 
-class SubscriptionRepository implements SubscriptionRepositoryInterface {
-
+class SubscriptionRepository implements SubscriptionRepositoryInterface
+{
     const PADDLE_PLANS = [
         'personal_pro' => [21525, null],
         'team' => [21526, 21527],
@@ -12,23 +13,25 @@ class SubscriptionRepository implements SubscriptionRepositoryInterface {
     ];
 
     public function create(
-        int $blogId, int $userId, string $userType,
-        string $name, ?string $profileImage, string $type
+        int $blogId,
+        int $userId,
+        string $userType,
+        string $name,
+        ?string $profileImage,
+        string $type
     ) {
-
-
-
     }
 
-    public function update() {
-        
+    public function update()
+    {
     }
 
-    public function getPlanNameByPlanId(int $planId) {
+    public function getPlanNameByPlanId(int $planId)
+    {
         foreach (self::PADDLE_PLANS as $planName => $plan) {
-            if ($plan[0] === $planId || $plan[1] === $planId)
+            if ($plan[0] === $planId || $plan[1] === $planId) {
                 return $planName;
+            }
         }
     }
-
 }

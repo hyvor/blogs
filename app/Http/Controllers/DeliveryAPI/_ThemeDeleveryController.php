@@ -6,13 +6,9 @@ use Illuminate\Http\Request;
 use App\Http\Controllers\Controller;
 use App\Repositories\DeliveryAPI\DeliveryAPIRepositoryInterface;
 use App\Domains\Theme\AssetsRepository;
-
 use App\Domains\Themes\Twig\AssetsFilters;
 use App\Domains\Themes\Twig\LanguageFilter;
-
 use App\Domains\Themes\Twig\TwigFunctions;
-
-
 
 class ThemeDeleveryController extends Controller
 {
@@ -24,65 +20,71 @@ class ThemeDeleveryController extends Controller
     }
 
 
-    /* 
+    /*
     *
     * This is the index page of the bolg
     *
     */
-    public function getUrl(Request $request){
-        
+    public function getUrl(Request $request)
+    {
+
         $geturl = $request->path();
         $this->themeRepo->getUrl($geturl);
         return $this->themeRepo->getUrl($geturl);
     }
 
-    /* 
+    /*
     *
     * This is the index page of the bolg
     *
     */
-    public function assets(){
-       $asset = AssetsRepository::assets($urlName);
-       return $asset;
+    public function assets()
+    {
+        $asset = AssetsRepository::assets($urlName);
+        return $asset;
     }
 
 
 
-    /* 
+    /*
     *
     * This is the index page of the bolg
     *
     */
-    public function index(){
-        // 
+    public function index()
+    {
+        //
     }
 
-    /* 
+    /*
     *
     * This is the author page of the bolg
     *
     */
-    public function author(Request $request){
+    public function author(Request $request)
+    {
     //
     }
 
 
-    /* 
+    /*
     *
     * This is the tags page of the bolg
     *
     */
-    public function tag(Request $request){
+    public function tag(Request $request)
+    {
         //
     }
 
 
-    /* 
+    /*
     *
     * This is the posts & pages of the bolg
     *
     */
-    public function pages(Request $request){
+    public function pages(Request $request)
+    {
         //
     }
 
@@ -93,7 +95,8 @@ class ThemeDeleveryController extends Controller
     * Testing the theme files
     *
     */
-    public function test(){
+    public function test()
+    {
 
         // $path = file_get_contents(base_path('public/themes/styles/index.scss'), true);
         $index = file_get_contents(base_path('public/themes/templates/index.twig'), true);
@@ -112,14 +115,14 @@ class ThemeDeleveryController extends Controller
         $twig->addExtension(new TwigFunctions());
 
 
-        echo $twig->render('index.html', 
+        echo $twig->render(
+            'index.html',
             array(
-                // 'style' => $style , 
-                'name' => 'Finnaly done', 
-                'occupation' => 'must get the approvel', 
+                // 'style' => $style ,
+                'name' => 'Finnaly done',
+                'occupation' => 'must get the approvel',
                 // 'script' => $script
-            ));
-            
+            )
+        );
     }
-
 }

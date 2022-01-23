@@ -4,14 +4,12 @@ namespace App\Domains\Theme;
 
 use App\Domains\Theme\ThemeRepository;
 use App\Domains\Theme\Types\OutPutDeliveryAPI;
-
-
 use ScssPhp\ScssPhp\Compiler;
 use Twig\Environment;
 
-class TemplateRepository {
-
-    /* 
+class TemplateRepository
+{
+    /*
     *
     *
     * This is the index page of the bolg
@@ -19,26 +17,26 @@ class TemplateRepository {
     *
     */
     public static function index()
-    {  
+    {
         $fileName = ThemeRepository::deliverThemeData();
 
-        foreach($fileName as $homePage){
-
-            if($homePage['name'] == 'index.twig'){
-   
+        foreach ($fileName as $homePage) {
+            if ($homePage['name'] == 'index.twig') {
                 $homeContent = $homePage['content'];
 
                 $loader = new \Twig\Loader\ArrayLoader(array(
                     'index.html' => $homeContent,
                 ));
                 $twig = new \Twig\Environment($loader);
-       
-                $fileContent =  $twig->render('index.html', 
+
+                $fileContent =  $twig->render(
+                    'index.html',
                     array(
-                        'name' => 'Finnaly done', 
-                        'occupation' => 'must get the approvel', 
-                    ));
-                
+                        'name' => 'Finnaly done',
+                        'occupation' => 'must get the approvel',
+                    )
+                );
+
                 $getContent = array(
                         'type' => 'text',
                         'mime_type' => 'text/html',
@@ -49,38 +47,39 @@ class TemplateRepository {
         }
     }
 
-    /* 
+    /*
     *
     *
     * This is the AUTHOR page of the bolg
     *
     *
     */
-    public static function author(){
+    public static function author()
+    {
 
         $authorExist = ThemeRepository::checkAuthor();
 
-        if($authorExist == null)
-        {
+        if ($authorExist == null) {
             $homePage = ThemeRepository::deliverThemeData();
 
-            foreach($homePage as $getHomePage){
-
-                if($getHomePage['name'] == 'index.twig'){
+            foreach ($homePage as $getHomePage) {
+                if ($getHomePage['name'] == 'index.twig') {
                     $homeContent = $getHomePage['content'];
 
                     $loader = new \Twig\Loader\ArrayLoader(array(
                         'index.html' => $homeContent,
                     ));
                     $twig = new \Twig\Environment($loader);
-           
-                    $fileContent =  $twig->render('index.html', 
+
+                    $fileContent =  $twig->render(
+                        'index.html',
                         array(
-                            // 'style' => $stylecss , 
-                            'name' => 'Finnaly done', 
-                            'occupation' => 'must get the approvel', 
+                            // 'style' => $stylecss ,
+                            'name' => 'Finnaly done',
+                            'occupation' => 'must get the approvel',
                             // 'script' => $script
-                        ));
+                        )
+                    );
                     $getContent = array(
                             'type' => 'text',
                             'mime_type' => 'text/html',
@@ -89,28 +88,27 @@ class TemplateRepository {
                     return OutPutDeliveryAPI::renderContent($getContent);
                 }
             }
-        }
-        else
-        {
+        } else {
             $authorPage = ThemeRepository::deliverAuthorData();
 
-            foreach($authorPage as $getauthorPage){
-
-                if($getauthorPage['name'] == 'author.twig'){
+            foreach ($authorPage as $getauthorPage) {
+                if ($getauthorPage['name'] == 'author.twig') {
                     $authorContent = $getauthorPage['content'];
 
                     $loader = new \Twig\Loader\ArrayLoader(array(
                         'author.html' => $authorContent,
                     ));
                     $twig = new \Twig\Environment($loader);
-           
-                    $fileContent =  $twig->render('author.html', 
+
+                    $fileContent =  $twig->render(
+                        'author.html',
                         array(
-                            // 'style' => $stylecss , 
-                            'name' => 'Finnaly done', 
-                            'occupation' => 'must get the approvel', 
+                            // 'style' => $stylecss ,
+                            'name' => 'Finnaly done',
+                            'occupation' => 'must get the approvel',
                             // 'script' => $script
-                        ));
+                        )
+                    );
                     $getContent = array(
                             'type' => 'text',
                             'mime_type' => 'text/html',
@@ -122,7 +120,7 @@ class TemplateRepository {
         }
     }
 
-    /* 
+    /*
     *
     *
     * This is the tags page of the bolg
@@ -133,27 +131,26 @@ class TemplateRepository {
     {
         $tagExist = ThemeRepository::checkTag();
 
-        if($tagExist == null)
-        {
+        if ($tagExist == null) {
             $homePage = ThemeRepository::deliverThemeData();
-            foreach($homePage as $getHomePage){
-
-                if($getHomePage['name'] == 'index.twig'){
-       
+            foreach ($homePage as $getHomePage) {
+                if ($getHomePage['name'] == 'index.twig') {
                     $homeContent = $getHomePage['content'];
-    
+
                     $loader = new \Twig\Loader\ArrayLoader(array(
                         'index.html' => $homeContent,
                     ));
                     $twig = new \Twig\Environment($loader);
-           
-                    $fileContent =  $twig->render('index.html', 
-                                array(
-                                    // 'style' => $stylecss , 
-                                    'name' => 'Finnaly done', 
-                                    'occupation' => 'must get the approvel', 
+
+                    $fileContent =  $twig->render(
+                        'index.html',
+                        array(
+                                    // 'style' => $stylecss ,
+                                    'name' => 'Finnaly done',
+                                    'occupation' => 'must get the approvel',
                                     // 'script' => $script
-                                ));
+                        )
+                    );
                     $getContent = array(
                             'type' => 'text',
                             'mime_type' => 'text/html',
@@ -162,28 +159,26 @@ class TemplateRepository {
                     return OutPutDeliveryAPI::renderContent($getContent);
                 }
             }
-        }
-        else
-        { 
+        } else {
             $tagPage = ThemeRepository::deliverTagData();
-            foreach($tagPage as $getTagPage){
-
-                if($getTagPage['name'] == 'index.twig'){
-       
+            foreach ($tagPage as $getTagPage) {
+                if ($getTagPage['name'] == 'index.twig') {
                     $tagContent = $getTagPage['content'];
-    
+
                     $loader = new \Twig\Loader\ArrayLoader(array(
                         'index.html' => $tagContent,
                     ));
                     $twig = new \Twig\Environment($loader);
-           
-                    $fileContent =  $twig->render('index.html', 
-                                array(
-                                    // 'style' => $stylecss , 
-                                    'name' => 'Finnaly done', 
-                                    'occupation' => 'must get the approvel', 
+
+                    $fileContent =  $twig->render(
+                        'index.html',
+                        array(
+                                    // 'style' => $stylecss ,
+                                    'name' => 'Finnaly done',
+                                    'occupation' => 'must get the approvel',
                                     // 'script' => $script
-                                ));
+                        )
+                    );
                     $getContent = array(
                             'type' => 'text',
                             'mime_type' => 'text/html',
@@ -196,7 +191,7 @@ class TemplateRepository {
     }
 
 
-    /* 
+    /*
     *
     * This is the posts & pages of the bolg
     *
@@ -207,29 +202,28 @@ class TemplateRepository {
         $type = ThemeRepository::isPage();
         // dd($type);
 
-        if($type == 1){
+        if ($type == 1) {
             dd('this is a page');
-
-        }else if($type == 0){
-
+        } elseif ($type == 0) {
             $fileName = ThemeRepository::deliverSinglePage();
 
-            foreach($fileName as $singlePage){
-                if($singlePage['name'] == 'single.twig'){
-
+            foreach ($fileName as $singlePage) {
+                if ($singlePage['name'] == 'single.twig') {
                     $singleContent = $singlePage['content'];
                     $loader = new \Twig\Loader\ArrayLoader(array(
                         'single.html' => $singleContent,
                     ));
                     $twig = new \Twig\Environment($loader);
-       
-                    $fileContent = $twig->render('single.html', 
-                            array(
-                                'Title'=> "hyvor blog",
-                                'name' => 'hyvor' , 
-                                'number'=> "123456789",
-                                'test' => 'loader', 
-                            ));
+
+                    $fileContent = $twig->render(
+                        'single.html',
+                        array(
+                                'Title' => "hyvor blog",
+                                'name' => 'hyvor' ,
+                                'number' => "123456789",
+                                'test' => 'loader',
+                        )
+                    );
 
                     $getContent = array(
                         'type' => 'text',
@@ -237,15 +231,10 @@ class TemplateRepository {
                         'content' => $fileContent
                     );
                     return OutPutDeliveryAPI::renderContent($getContent);
-
                 }
-                
             }
-
-        }else{
+        } else {
             dd('this is an redirect');
         }
-
     }
-
 }
