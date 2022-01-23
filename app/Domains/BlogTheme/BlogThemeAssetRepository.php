@@ -2,22 +2,25 @@
 
 namespace App\Domains\Theme;
 
+use App\Domains\BlogTheme\BlogThemeRepository;
 use App\Domains\Theme\ThemeRepository;
 use App\Domains\Theme\Types\OutPutDeliveryAPI;
 use ScssPhp\ScssPhp\Compiler;
 use Response;
 
-class AssetsRepository
+class ThemeAssetsRepository
 {
-    public static function getAsset(int $blogId, string $file): array
+
+    /**
+     * 
+     */
+
+    public static function getContentOfFile(int $blogId, string $fileName): ?array
     {
+    
+        $file = BlogThemeRepository::getFile($blogId, $fileName);
 
-
-
-        return [
-            $content,
-            $contentType
-        ];
+        return $file ? $file->content : null;
     }
 
     public static function getStylesCss(int $blogId)
