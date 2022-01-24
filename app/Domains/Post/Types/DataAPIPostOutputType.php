@@ -25,9 +25,10 @@ class DataAPIPostOutputType {
     public $code_foot;
 
 
-    public function __construct(Post $post, Blog $blog) {
+    public function __construct(Post $post, Blog $blog)
+    {
 
-        $tags = $post->tags->map(function($tag) use ($blog) {
+        $tags = $post->tags->map(function ($tag) use ($blog) {
             return new DataAPITag($tag, $blog);
         })->toArray();
 
@@ -50,11 +51,8 @@ class DataAPIPostOutputType {
         $this->reading_time = $post->reading_time;
         $this->code_head = $post->code_head;
         $this->code_foot = $post->code_foot;
-        
+
         $this->tags = $tags;
         $this->authors = $authors;
-        
     }
-
 }
-

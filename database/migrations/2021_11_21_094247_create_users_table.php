@@ -44,7 +44,7 @@ class CreateUsersTable extends Migration
             // misc
             $table->integer('posts_count')->default(0);
             $table->integer('sort')->default(0); // for ordering in the console
-            
+
             $table->unique(['blog_id', 'slug']);
             $table->unique(['blog_id', 'user_id']);
         });

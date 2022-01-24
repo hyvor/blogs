@@ -1,4 +1,7 @@
 <?php
+
 namespace App\Exceptions;
 
-class DataAPIException extends TrustedException {}
+class DataAPIException extends TrustedException
+{
+}

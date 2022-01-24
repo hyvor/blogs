@@ -1,101 +1,112 @@
 <?php
+
 namespace App\Domains\DataAPI;
 
-class DataAPIMultiRequest {
-
+class DataAPIMultiRequest
+{
     private $limit;
     private $page;
     private $filter;
     private $sort;
     private $keys;
 
-	/**
-	 *
-	 * @return mixed
-	 */
-	function getLimit() {
-		return $this->limit;
-	}
+    /**
+     *
+     * @return mixed
+     */
+    function getLimit()
+    {
+        return $this->limit;
+    }
 
-	/**
-	 *
-	 * @param mixed $limit
-	 * @return DataAPIMultiPropType
-	 */
-	function setLimit($limit): self {
-		$this->limit = $limit;
-		return $this;
-	}
+    /**
+     *
+     * @param mixed $limit
+     * @return DataAPIMultiPropType
+     */
+    function setLimit($limit): self
+    {
+        $this->limit = $limit;
+        return $this;
+    }
 
-	/**
-	 *
-	 * @return mixed
-	 */
-	function getPage() {
-		return $this->page;
-	}
+    /**
+     *
+     * @return mixed
+     */
+    function getPage()
+    {
+        return $this->page;
+    }
 
-	/**
-	 *
-	 * @param mixed $page
-	 * @return DataAPIMultiPropType
-	 */
-	function setPage($page): self {
-		$this->page = $page;
-		return $this;
-	}
+    /**
+     *
+     * @param mixed $page
+     * @return DataAPIMultiPropType
+     */
+    function setPage($page): self
+    {
+        $this->page = $page;
+        return $this;
+    }
 
-	/**
-	 *
-	 * @return mixed
-	 */
-	function getFilter() {
-		return $this->filter;
-	}
+    /**
+     *
+     * @return mixed
+     */
+    function getFilter()
+    {
+        return $this->filter;
+    }
 
-	/**
-	 *
-	 * @param mixed $filter
-	 * @return DataAPIMultiPropType
-	 */
-	function setFilter($filter): self {
-		$this->filter = $filter;
-		return $this;
-	}
+    /**
+     *
+     * @param mixed $filter
+     * @return DataAPIMultiPropType
+     */
+    function setFilter($filter): self
+    {
+        $this->filter = $filter;
+        return $this;
+    }
 
-	/**
-	 *
-	 * @return mixed
-	 */
-	function getSort() {
-		return $this->sort;
-	}
+    /**
+     *
+     * @return mixed
+     */
+    function getSort()
+    {
+        return $this->sort;
+    }
 
-	/**
-	 *
-	 * @param mixed $sort
-	 * @return DataAPIMultiPropType
-	 */
-	function setSort($sort): self {
-		$this->sort = $sort;
-		return $this;
-	}
+    /**
+     *
+     * @param mixed $sort
+     * @return DataAPIMultiPropType
+     */
+    function setSort($sort): self
+    {
+        $this->sort = $sort;
+        return $this;
+    }
 
-	/**
-	 *
-	 * @return mixed
-	 */
-	function getKeys() {
-		return $this->keys;
-	}
+    /**
+     *
+     * @return mixed
+     */
+    function getKeys()
+    {
+        return $this->keys;
+    }
 
-	/**
-	 *
-	 * @param mixed $keys
-	 * @return DataAPIMultiPropType
-	 */
-	function setKeys($keys): self {
-		$this->keys = $keys;
-		return $this;
-	}
+    /**
+     *
+     * @param mixed $keys
+     * @return DataAPIMultiPropType
+     */
+    function setKeys($keys): self
+    {
+        $this->keys = $keys;
+        return $this;
+    }
 }

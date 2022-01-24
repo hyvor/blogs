@@ -1,19 +1,15 @@
 <?php
 
 namespace App\Domains\Eloquent;
+
 use App\Domains\ImportExportRepositoryInterface;
 
-
-
-Class ImportExportRepository implements ImportExportRepositoryInterface
+class ImportExportRepository implements ImportExportRepositoryInterface
 {
-
-    public function index($final){
+    public function index($final)
+    {
 
         // $testFinal = json_encode($final);
         dd($final);
-
     }
-
-
 }

@@ -1,4 +1,5 @@
 <?php
+
 namespace App\Domains\Blog;
 
 use App\Models\Blog;
@@ -28,5 +29,4 @@ class BlogRepository {
 
         return 'https://' . $domain . ($slug ? '/' . $slug : '');
     }
-
 }

@@ -8,6 +8,7 @@ use Illuminate\Database\Eloquent\Model;
 class ThemeFile extends Model
 {
     use HasFactory;
+
     protected $table = "theme_files";
 
     protected $fillable = [

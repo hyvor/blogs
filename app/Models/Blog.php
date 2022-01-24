@@ -14,4 +14,11 @@ class Blog extends Model
     use SoftDeletes;
     use Billable;
 
+    /**
+     * Get Posts of the blog
+     */
+    public function posts()
+    {
+        return $this->hasMany(Post::class);
+    }
 }

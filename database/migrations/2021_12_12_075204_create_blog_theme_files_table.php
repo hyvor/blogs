@@ -15,15 +15,17 @@ class CreateBlogThemeFilesTable extends Migration
     {
         Schema::create('blog_theme_files', function (Blueprint $table) {
             $table->id();
+            $table->timestamps();
 
             // Connections
             $table->bigInteger('blog_id')->nullable();
-            
+
+            // data
             $table->string('name')->nullable();
             $table->binary('content')->nullable();
-            $table->enum('type', ['templates', 'assets','styles'])->nullable();
+            $table->enum('folder', ['templates', 'assets', 'styles', 'lang'])->nullable();
 
-            $table->timestamps();
+            $table->unique(['blog_id', 'name', 'folder']);
         });
     }
 

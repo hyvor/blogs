@@ -1,13 +1,15 @@
 <?php
+
 namespace App\Domains\DataAPI;
 
 use App\Models\Post;
 use App\Exceptions\DataAPIException;
 use App\Models\Tag;
 
-class DataAPIRepository implements DataAPIRepositoryInterface {
-
-    public function post(DataAPISingleRequest $request) : array {
+class DataAPIRepository implements DataAPIRepositoryInterface
+{
+    public function post(DataAPISingleRequest $request): array
+    {
         $blog = $request->getBlog();
         $id = $request->getId();
         $slug = $request->getSlug();
@@ -32,7 +34,8 @@ class DataAPIRepository implements DataAPIRepositoryInterface {
         return DataAPIKeysFilter::filter(new DataAPIPost($post, $blog), $keys);
     }
 
-    public function tag(DataAPISingleRequest $request) : array {
+    public function tag(DataAPISingleRequest $request): array
+    {
         $blog = $request->getBlog();
         $id = $request->getId();
         $slug = $request->getSlug();
@@ -57,18 +60,21 @@ class DataAPIRepository implements DataAPIRepositoryInterface {
         return DataAPIKeysFilter::filter(new DataAPITag($tag, $blog), $keys);
     }
 
-    public function author(DataAPISingleRequest $request) : array {
+    public function author(DataAPISingleRequest $request): array
+    {
         return [];
     }
 
-    public function posts(DataAPIMultiRequest $request) : array {
+    public function posts(DataAPIMultiRequest $request): array
+    {
         return [];
     }
-    public function tags(DataAPIMultiRequest $request) : array {
+    public function tags(DataAPIMultiRequest $request): array
+    {
         return [];
     }
-    public function authors(DataAPIMultiRequest $request) : array {
+    public function authors(DataAPIMultiRequest $request): array
+    {
         return [];
     }
-
 }

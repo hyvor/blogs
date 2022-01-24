@@ -6,10 +6,11 @@ use App\Exceptions\TrustedException;
 use App\Models\Blog;
 use Closure;
 
-class SubdomainMiddleware {
+class SubdomainMiddleware
+{
+    public function handle($request, Closure $next)
+    {
 
-    public function handle($request, Closure $next) {
-       
         $subdomain = $request->route('subdomain');
 
         if (!$subdomain) {
@@ -25,7 +26,5 @@ class SubdomainMiddleware {
         app()->instance(Blog::class, $blog);
 
         return $next($request);
-
     }
-
 }

@@ -4,6 +4,7 @@ namespace Database\Seeders;
 
 use App\Models\Blog;
 use App\Models\Media;
+use App\Models\BlogThemeFile;
 use App\Models\Post;
 use App\Models\PostAuthor;
 use App\Models\PostTag;
@@ -27,7 +28,6 @@ class DatabaseSeeder extends Seeder
         $blogs = [['supun', "Supun's Blog"], ['ishini', "Ishini's Blog"]];
 
         foreach ($blogs as $blogData) {
-
             $blog = Blog::create([
                 'user_id' => 1,
                 'subdomain' => $blogData[0],
@@ -56,7 +56,6 @@ class DatabaseSeeder extends Seeder
 
             $posts = [];
             foreach (range(0, 100) as $i) {
-
                 $title = $faker->sentence;
 
                 $paragraphs = $faker->paragraphs(rand(2, 6));
@@ -109,7 +108,19 @@ class DatabaseSeeder extends Seeder
                 ]);
             }
 
-        }
+            BlogThemeFile::create([
+                'name' => 'logo.png',
+                'content' => file_get_contents(public_path('img/logo.png')),
+                'blog_id' => $blog->id,
+                'folder' => 'assets'
+            ]);
+            BlogThemeFile::create([
+                'name' => 'index.scss',
+                'content' => file_get_contents(base_path('tests/data/default-theme/styles/index.scss')),
+                'blog_id' => $blog->id,
+                'folder' => 'styles'
+            ]);
 
+        }
     }
 }

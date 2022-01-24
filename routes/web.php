@@ -2,12 +2,10 @@
 
 use Illuminate\Support\Facades\Route;
 
-
 use App\Http\Controllers\API\BlogController;
 use App\Http\Controllers\API\PostController;
 
 use Symfony\Component\Routing\Loader\Configurator\RoutingConfigurator;
-
 
 include('app/subdomain.php');
 

@@ -14,7 +14,8 @@ class TagType {
     public $featured_image;
     public $posts_count;
 
-    public function __construct(Tag $tag, Blog $blog) {
+    public function __construct(Tag $tag, Blog $blog)
+    {
 
         $this->id = $tag->id;
         $this->name = $tag->name;
@@ -22,7 +23,6 @@ class TagType {
         $this->url = BlogRepository::getFullUrlFromSlug($blog, 'tag/' . $tag->slug);
         $this->featured_image = $tag->featured_image;
         $this->posts_count = $tag->posts_count;
-
     }
 
 }
