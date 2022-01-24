@@ -2,19 +2,17 @@
 
 namespace App\Http\Controllers\DataAPI;
 
+use App\Data\Objects\DataAPI\AuthorObject;
+use App\Data\Objects\DataAPI\PostObject;
+use App\Data\Objects\DataAPI\TagObject;
 use Illuminate\Http\Request;
 use App\Http\Controllers\Controller;
 use App\Exceptions\TrustedException;
-
 use App\Models\Blog;
-
 use App\Domains\Post\PostRepository;
 use App\Domains\Tag\TagRepository;
 use App\Domains\User\UserRepository;
 use App\Models\Post;
-use App\Types\DataAPI\Output\AuthorType;
-use App\Types\DataAPI\Output\PostType;
-use App\Types\DataAPI\Output\TagType;
 
 class DataAPIController extends Controller
 {
@@ -41,7 +39,7 @@ class DataAPIController extends Controller
             throw new TrustedException('This post is not yet published', TrustedException::ERROR_BAD_REQUEST);
         }
 
-        return response()->json(DataAPIKeysFilter::filter(new PostType($post, $blog), $keys));
+        return response()->json(DataAPIKeysFilter::filter(new PostObject($post, $blog), $keys));
     }
 
     public function tag(Request $request, Blog $blog) {
@@ -59,7 +57,7 @@ class DataAPIController extends Controller
             throw new TrustedException('Tag not found', TrustedException::ERROR_NOT_FOUND);
         }
 
-        return response()->json(DataAPIKeysFilter::filter(new TagType($tag, $blog), $keys));
+        return response()->json(DataAPIKeysFilter::filter(new TagObject($tag, $blog), $keys));
     }
 
     public function author(Request $request, Blog $blog) {
@@ -80,7 +78,7 @@ class DataAPIController extends Controller
             throw new TrustedException('This user is not an author', TrustedException::ERROR_BAD_REQUEST);
         }
 
-        return response()->json(DataAPIKeysFilter::filter(new AuthorType($user, $blog), $keys));
+        return response()->json(DataAPIKeysFilter::filter(new AuthorObject($user, $blog), $keys));
     }
 
     public function posts(Request $request, Blog $blog) {
@@ -93,7 +91,7 @@ class DataAPIController extends Controller
 
         $posts = Post::get()
             ->map(function($post) use ($blog) {
-                return new PostType($post, $blog);
+                return new PostObject($post, $blog);
             });
 
         return response()->json(DataAPIKeysFilter::filter($posts, $keys));

@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Types\Post;
+namespace App\Data\Params\ConsoleAPI;
 
 use App\Exceptions\TrustedException;
 
@@ -8,7 +8,7 @@ use App\Exceptions\TrustedException;
  * Filter object for /posts endpoint in the console
  * Used in PostRepository
  */
-class PostInputListFiltersType
+class PostsFilterParam
 {
     public $status;
     public $authorId;

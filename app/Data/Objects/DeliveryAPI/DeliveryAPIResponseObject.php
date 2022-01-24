@@ -4,7 +4,7 @@ namespace App\Data\Objects\DeliveryAPI;
 use App\Data\Enums\DeliveryAPITypeEnum;
 use App\Data\Enums\RedirectTypeEnum;
 
-class DeliveryAPIObject {
+class DeliveryAPIResponseObject {
 
     public DeliveryAPITypeEnum $type;
 

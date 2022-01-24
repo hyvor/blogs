@@ -2,7 +2,7 @@
 
 namespace App\Http\Controllers\DeliveryAPI;
 
-use App\Data\Objects\DeliveryAPI\DeliveryAPIObject;
+use App\Data\Objects\DeliveryAPI\DeliveryAPIResponseObject;
 use App\Domains\BlogTheme\BlogThemeRepository;
 use Illuminate\Http\Request;
 use App\Helpers\MimeTypes;
@@ -94,7 +94,7 @@ class DeliveryAPIController
             $extension = pathinfo($fileName, PATHINFO_EXTENSION);
             $mimeType = MimeTypes::getMime($extension);
 
-            $returnObj = DeliveryAPIObject::forFile($file->content, $mimeType);
+            $returnObj = DeliveryAPIResponseObject::forFile($file->content, $mimeType);
 
         } else if ($type === 'styles') {
 
@@ -114,7 +114,7 @@ class DeliveryAPIController
 
             $css = $scssCompiler->compileFile('index.scss')->getCss();
 
-            $returnObj = DeliveryAPIObject::forFile($css, 'text/css');
+            $returnObj = DeliveryAPIResponseObject::forFile($css, 'text/css');
 
         } else if (
             $type === 'tag' || 
@@ -132,7 +132,7 @@ class DeliveryAPIController
                 $request->input('page'),
             );
 
-            $returnObj = DeliveryAPIObject::forFile($html, 'text/html');
+            $returnObj = DeliveryAPIResponseObject::forFile($html, 'text/html');
 
         } else {
 
@@ -145,7 +145,7 @@ class DeliveryAPIController
 
     static function notFound() {
 
-        return response()->json(DeliveryAPIObject::forFile('404', 'text/html', 404));
+        return response()->json(DeliveryAPIResponseObject::forFile('404', 'text/html', 404));
 
     }
 

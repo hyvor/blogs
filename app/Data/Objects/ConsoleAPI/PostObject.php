@@ -1,12 +1,12 @@
 <?php
 
-namespace App\Types\Post;
+namespace App\Data\Objects\ConsoleAPI;
 
+use App\Data\Objects\DataAPI\TagObject;
 use App\Models\Blog;
 use App\Models\Post;
-use App\Types\Tag\TagType;
 
-class DataAPIPost
+class PostObject
 {
     public $id;
     public $created_at;
@@ -31,7 +31,7 @@ class DataAPIPost
     {
 
         $tags = $post->tags->map(function ($tag) use ($blog) {
-            return new TagType($tag, $blog);
+            return new TagObject($tag, $blog);
         })->toArray();
 
         $authors = null;
