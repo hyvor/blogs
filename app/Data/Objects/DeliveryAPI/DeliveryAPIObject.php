@@ -13,8 +13,10 @@ class DeliveryAPIObject {
     public string $mime_type;
 
     // for redirect
-    public int $code;
     public string $to;
+
+    // for both
+    public int $status;
 
     public function __construct(DeliveryAPITypeEnum $type) {
         $this->type = $type;
@@ -23,10 +25,11 @@ class DeliveryAPIObject {
     /**
      * Files content is base64 encoded
      */
-    static function forFile(string $content, string $mimeType) {
+    static function forFile(string $content, string $mimeType, int $status = 200) {
         $obj = new self(DeliveryAPITypeEnum::FILE);
         $obj->content = base64_encode($content);
         $obj->mime_type = $mimeType;
+        $obj->status = $status;
 
         return $obj;
     }
@@ -34,14 +37,10 @@ class DeliveryAPIObject {
     
     static function forRedirect(RedirectTypeEnum $type, string $to) {
         $obj = new self(DeliveryAPITypeEnum::REDIRECT);
-        $obj->code = $type->value;
+        $obj->both = $type->value;
         $obj->to = $to;
 
         return $obj;
-    }
-
-    static function forNotFound() {
-        return new self(DeliveryAPITypeEnum::NOTFOUND);
     }
 
 }

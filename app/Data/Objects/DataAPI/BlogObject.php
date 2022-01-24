@@ -7,13 +7,13 @@ class BlogObject {
 
     public string $subdomain;
     public string $name;
-    public string $description;
-    public string $icon;
-    public string $featured_image;
+    public ?string $description;
+    public ?string $icon;
+    public ?string $featured_image;
     public string $lang;
     public string $url;
     
-    public BlogSocialObject $social;
+    public SocialMediaObject $social;
 
     public array $nav_header;
     public array $nav_footer;
@@ -31,31 +31,16 @@ class BlogObject {
         $this->icon = $blog->icon;
         $this->featured_image = $blog->featured_image;
         
-        $this->social = new BlogSocialObject($blog);
+        $this->social = new SocialMediaObject(
+            $blog->social_facebook,
+            $blog->social_twitter,
+            $blog->social_linkedin,
+            $blog->social_youtube,
+            $blog->social_instagram,
+            $blog->social_github
+        );
 
         // TODO: 
-
-    }
-
-}
-
-class BlogSocialObject {
-
-    public ?string $facebook;
-    public ?string $twitter;
-    public ?string $linkedin;
-    public ?string $youtube;
-    public ?string $instagram;
-    public ?string $github;
-
-    public function __construct(Blog $blog) {
-
-        $this->facebook = $blog->social_facebook;
-        $this->twitter = $blog->social_twitter;
-        $this->linkedin = $blog->social_linkedin;
-        $this->youtube = $blog->social_youtube;
-        $this->instagram = $blog->social_instagram;
-        $this->github = $blog->social_github;
 
     }
 

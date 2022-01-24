@@ -25,7 +25,7 @@ class DatabaseSeeder extends Seeder
 
         $faker = \Faker\Factory::create();
 
-        $blogs = [['supun', "Supun's Blog"], ['ishini', "Ishini's Blog"]];
+        $blogs = [['test', "Test Blog"], ['test2', "Test2 Blog"]];
 
         foreach ($blogs as $blogData) {
             $blog = Blog::create([
@@ -39,9 +39,9 @@ class DatabaseSeeder extends Seeder
                 'user_id' => $blog->user_id,
                 'role' => 'owner',
                 'status' => 'active',
-                'slug' => "supun",
-                'name' => 'Supun Kavinda',
-                'email' => 'supun@hyvor.com'
+                'slug' => "test",
+                'name' => 'Test User',
+                'email' => 'test@hyvor.com'
             ]);
 
             $tags = [];
@@ -107,20 +107,12 @@ class DatabaseSeeder extends Seeder
                     'extension' => 'jpg'
                 ]);
             }
-
-            BlogThemeFile::create([
-                'name' => 'logo.png',
-                'content' => file_get_contents(public_path('img/logo.png')),
-                'blog_id' => $blog->id,
-                'folder' => 'assets'
-            ]);
-            BlogThemeFile::create([
-                'name' => 'index.scss',
-                'content' => file_get_contents(base_path('tests/data/default-theme/styles/index.scss')),
-                'blog_id' => $blog->id,
-                'folder' => 'styles'
-            ]);
-
         }
+
+
+        $this->call([
+            BlogThemeFilesSeeder::class
+        ]);
+
     }
 }

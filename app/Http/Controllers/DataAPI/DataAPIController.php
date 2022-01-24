@@ -11,6 +11,7 @@ use App\Models\Blog;
 use App\Domains\Post\PostRepository;
 use App\Domains\Tag\TagRepository;
 use App\Domains\User\UserRepository;
+use App\Models\Post;
 use App\Types\DataAPI\Output\AuthorType;
 use App\Types\DataAPI\Output\PostType;
 use App\Types\DataAPI\Output\TagType;
@@ -88,8 +89,14 @@ class DataAPIController extends Controller
         $page = $request->input('page');
         $filter = $request->input('filter');
         $sort = $request->input('sort');
-        $key = $request->input('keys');
+        $keys = $request->input('keys');
 
+        $posts = Post::get()
+            ->map(function($post) use ($blog) {
+                return new PostType($post, $blog);
+            });
+
+        return response()->json(DataAPIKeysFilter::filter($posts, $keys));
         
 
     }

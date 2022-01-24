@@ -17,16 +17,15 @@ use Symfony\Component\Routing\Route;
 use Symfony\Component\Routing\Matcher\UrlMatcher;
 use Symfony\Component\Routing\RequestContext;
 use App\Data\Enums\ThemeFileFolderEnum;
+use App\Data\Enums\DeliveryAPIScopeEnum;
+use App\Domains\BlogTheme\BlogThemeTemplateRepository;
 use ScssPhp\ScssPhp\Compiler;
+use Symfony\Component\Routing\Exception\ResourceNotFoundException;
 
 class DeliveryAPIController
 {
     static function handle(Request $request, Blog $blog)
     {
-
-        $request->validate([
-            'path' => 'required|string'
-        ]);
 
         /**
          * Delivery API says "how to serve a path"
@@ -37,7 +36,7 @@ class DeliveryAPIController
          *
          * Returns an output as specified [here]()
          */
-        $path = $request->input('path') ?? '';
+        $path = $request->route('path') ?? '';
 
         if (!preg_match('/^\//', $path)) {
             $path = '/' . $path; // add leading slash (otherwise matcher doesn't work)
@@ -65,11 +64,18 @@ class DeliveryAPIController
 
         $context = new RequestContext();
         $matcher = new UrlMatcher($route, $context);
-        $props = $matcher->match($path);
+
 
         $returnObj = null;
 
-        $type = $props['_route'];
+        try {
+            $props = $matcher->match($path);
+            $type = $props['_route'];
+        } catch (ResourceNotFoundException) {
+            $type = null;
+        }
+
+
 
         if ($type === 'assets') {
 
@@ -120,7 +126,9 @@ class DeliveryAPIController
 
         } else if ($type === 'home') {
 
-            
+            $html = BlogThemeTemplateRepository::renderFile($blog, DeliveryAPIScopeEnum::INDEX, [
+                'page' => $request->input('page')
+            ]);
     
             $returnObj = DeliveryAPIObject::forFile($html, 'text/html');
 
@@ -137,7 +145,7 @@ class DeliveryAPIController
 
     static function notFound() {
 
-        return response()->json(DeliveryAPIObject::forNotFound());
+        return response()->json(DeliveryAPIObject::forFile('404', 'text/html', 404));
 
     }
 

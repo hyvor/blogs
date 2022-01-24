@@ -9,8 +9,8 @@ use Symfony\Component\Routing\Loader\Configurator\RoutingConfigurator;
 
 include('app/subdomain.php');
 
-Route::domain(config('app.domain_app'))->group(function() {
-    
+Route::domain(config('blogs.domain_app'))->group(function() {
+
     include('app/pages.php');
     include('app/api-data.php');
     include('app/api-delivery.php');
