@@ -10,13 +10,15 @@ use App\Types\Post\PostInputListFiltersType;
 use Carbon\Carbon;
 use Illuminate\Support\Facades\DB;
 
-class PostRepository {
-
-    static function getPostById(int $postId) {
+class PostRepository
+{
+    static function getPostById(int $postId)
+    {
         return Post::find($postId);
     }
 
-    static function getPostByBlogIdAndIdentifier(int $blogId, ?int $id, ?string $slug) {
+    static function getPostByBlogIdAndIdentifier(int $blogId, ?int $id, ?string $slug)
+    {
         $post = Post::where('blog_id', $blogId);
         if ($id) {
             $post->where('id', $id);

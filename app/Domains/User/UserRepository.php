@@ -27,7 +27,8 @@ class UserRepository
             });
     }
 
-    static function getTagByBlogIdAndIdentifier(int $blogId, ?int $id, ?string $slug) {
+    static function getTagByBlogIdAndIdentifier(int $blogId, ?int $id, ?string $slug)
+    {
         $post = User::where('blog_id', $blogId);
         if ($id) {
             $post->where('id', $id);

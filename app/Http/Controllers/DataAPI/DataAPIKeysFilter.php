@@ -1,4 +1,5 @@
 <?php
+
 namespace App\Http\Controllers\DataAPI;
 
 use Illuminate\Support\Collection;

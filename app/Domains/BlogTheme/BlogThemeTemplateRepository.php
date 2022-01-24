@@ -14,14 +14,12 @@ use Twig\Environment as TwigEnvironment;
 
 class BlogThemeTemplateRepository
 {
-
     public static function renderFile(
-        Blog $blog, 
+        Blog $blog,
         DeliveryAPIScopeEnum $scope,
         ?string $slug,
-        ?int $page 
-    ) : string 
-    {
+        ?int $page
+    ): string {
 
         $templateFiles = BlogThemeRepository::getFilesInFolder($blog->id, ThemeFileFolderEnum::TEMPLATES);
 
@@ -42,13 +40,12 @@ class BlogThemeTemplateRepository
         $fileName = self::getFileNameToRenderFromScope($scope, array_keys($loaderArray));
 
         return $twig->render($fileName, $vars);
-
     }
 
-    private static function getVarsFromScope(Blog $blog, DeliveryAPIScopeEnum $scope, ?int $page) : array {
+    private static function getVarsFromScope(Blog $blog, DeliveryAPIScopeEnum $scope, ?int $page): array
+    {
 
         if ($scope === DeliveryAPIScopeEnum::INDEX) {
-
             $page = $page ?? 1;
 
             $posts = InternalAPICaller::data($blog->subdomain, 'posts', [
@@ -65,18 +62,14 @@ class BlogThemeTemplateRepository
                 '@posts' => $posts,
                 '@featured_posts' => $featuredPosts
             ];
-
         }
-
     }
 
-    private static function getFileNameToRenderFromScope( DeliveryAPIScopeEnum $scope, array $availableFiles) {
+    private static function getFileNameToRenderFromScope(DeliveryAPIScopeEnum $scope, array $availableFiles)
+    {
 
         if ($scope == DeliveryAPIScopeEnum::INDEX) {
             return 'index.twig';
         }
-
     }
-
-
 }

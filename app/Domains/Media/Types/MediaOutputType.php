@@ -1,10 +1,11 @@
 <?php
+
 namespace App\Domains\Media\Types;
 
 use App\Models\Media;
 
-class MediaOutputType {
-
+class MediaOutputType
+{
     public int $id;
     public int $uploaded_at;
     public int $blog_id;
@@ -12,7 +13,8 @@ class MediaOutputType {
     public string $name;
     public string $extension;
 
-    public function __construct(Media $media) {
+    public function __construct(Media $media)
+    {
 
         $this->id = $media->id;
         $this->uploaded_at = $media->created_at->timestamp;
@@ -20,7 +22,5 @@ class MediaOutputType {
         $this->url = $media->url;
         $this->name = $media->name;
         $this->extension = $media->extension;
-
     }
-
 }

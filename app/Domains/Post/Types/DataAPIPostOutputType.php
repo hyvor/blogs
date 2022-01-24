@@ -1,11 +1,12 @@
 <?php
+
 namespace App\Domains\Post\Types;
 
 use App\Models\Blog;
 use App\Models\Post;
 
-class DataAPIPostOutputType {
-
+class DataAPIPostOutputType
+{
     public $id;
     public $created_at;
     public $updated_at;

@@ -1,11 +1,12 @@
 <?php
+
 namespace App\Domains\Embed\Types;
 
 use App\Models\Embed;
 
 // either a link or rich media
-class EmbedType {
-
+class EmbedType
+{
     public $type;
     public $html;
     public $url;
@@ -13,7 +14,8 @@ class EmbedType {
     public $description;
     public $thumbnail;
 
-    public function __construct(Embed $embed) {
+    public function __construct(Embed $embed)
+    {
         $this->type = $embed->type;
         $this->html = $embed->html;
         $this->url = $embed->url;
@@ -21,6 +23,4 @@ class EmbedType {
         $this->description = $embed->description;
         $this->thumbnail = $embed->thumbnail;
     }
-
 }
-

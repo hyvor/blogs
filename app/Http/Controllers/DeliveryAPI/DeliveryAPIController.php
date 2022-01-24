@@ -44,7 +44,7 @@ class DeliveryAPIController
 
         /**
          * Adds the routes to match
-         * 
+         *
          * Important!
          *  dynamic matches these:
          *      - redirects
@@ -95,13 +95,12 @@ class DeliveryAPIController
             $mimeType = MimeTypes::getMime($extension);
 
             $returnObj = DeliveryAPIResponseObject::forFile($file->content, $mimeType);
-
-        } else if ($type === 'styles') {
+        } elseif ($type === 'styles') {
 
             /**
              * Process all SCSS files
              */
-            
+
             $files = BlogThemeRepository::getFilesInFolder($blog->id, ThemeFileFolderEnum::STYLES);
 
             $filesArray = [];
@@ -115,38 +114,32 @@ class DeliveryAPIController
             $css = $scssCompiler->compileFile('index.scss')->getCss();
 
             $returnObj = DeliveryAPIResponseObject::forFile($css, 'text/css');
-
-        } else if (
-            $type === 'tag' || 
-            $type === 'author' || 
+        } elseif (
+            $type === 'tag' ||
+            $type === 'author' ||
             $type === 'index' ||
             $type === 'search'
         ) {
-
             $scope = DeliveryAPIScopeEnum::from($type);
 
             $html = BlogThemeTemplateRepository::renderFile(
-                $blog, 
+                $blog,
                 $scope,
                 $request->input('slug'),
                 $request->input('page'),
             );
 
             $returnObj = DeliveryAPIResponseObject::forFile($html, 'text/html');
-
         } else {
-
             $slug = trim($path, '/');
-
         }
 
         return $returnObj ? response()->json($returnObj) : self::notFound();
     }
 
-    static function notFound() {
+    static function notFound()
+    {
 
         return response()->json(DeliveryAPIResponseObject::forFile('404', 'text/html', 404));
-
     }
-
 }

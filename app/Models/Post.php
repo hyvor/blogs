@@ -13,11 +13,13 @@ class Post extends Model
         'published_at' => 'datetime',
     ];
 
-    public function tags() {
+    public function tags()
+    {
         return $this->belongsToMany(Tag::class);
     }
 
-    public function authors() {
+    public function authors()
+    {
         return $this->belongsToMany(User::class, 'post_author');
     }
 }

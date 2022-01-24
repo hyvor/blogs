@@ -1,11 +1,12 @@
 <?php
+
 namespace App\Data\Objects\DeliveryAPI;
 
 use App\Data\Enums\DeliveryAPITypeEnum;
 use App\Data\Enums\RedirectTypeEnum;
 
-class DeliveryAPIResponseObject {
-
+class DeliveryAPIResponseObject
+{
     public DeliveryAPITypeEnum $type;
 
     // for file
@@ -18,14 +19,16 @@ class DeliveryAPIResponseObject {
     // for both
     public int $status;
 
-    public function __construct(DeliveryAPITypeEnum $type) {
+    public function __construct(DeliveryAPITypeEnum $type)
+    {
         $this->type = $type;
     }
 
     /**
      * Files content is base64 encoded
      */
-    static function forFile(string $content, string $mimeType, int $status = 200) {
+    static function forFile(string $content, string $mimeType, int $status = 200)
+    {
         $obj = new self(DeliveryAPITypeEnum::FILE);
         $obj->content = base64_encode($content);
         $obj->mime_type = $mimeType;
@@ -34,13 +37,13 @@ class DeliveryAPIResponseObject {
         return $obj;
     }
 
-    
-    static function forRedirect(RedirectTypeEnum $type, string $to) {
+
+    static function forRedirect(RedirectTypeEnum $type, string $to)
+    {
         $obj = new self(DeliveryAPITypeEnum::REDIRECT);
         $obj->both = $type->value;
         $obj->to = $to;
 
         return $obj;
     }
-
 }

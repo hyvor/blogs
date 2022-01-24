@@ -1,17 +1,22 @@
 <?php
+
 namespace App\Domains\Embed;
 
 use App\Exceptions\TrustedException;
 use App\Models\Embed;
 
-function _safe_length($str, $len = 255) {
-    if (!$str) return $str; // null
+function _safe_length($str, $len = 255)
+{
+    if (!$str) {
+        return $str; // null
+    }
     return mb_substr($str, 0, $len);
 }
 
-class EmbedRepository {
-
-    static function fetch($url) : Embed {
+class EmbedRepository
+{
+    static function fetch($url): Embed
+    {
 
         $embed = Embed::where('url', $url)->first();
 
@@ -24,9 +29,9 @@ class EmbedRepository {
 
             return Embed::create([
                 /**
-                 * Iframely returns 4 types: link, photo, video, rich 
+                 * Iframely returns 4 types: link, photo, video, rich
                  * (https://iframely.com/docs/oembed-api#api-response)
-                 * 
+                 *
                  * We only want either the link or rich
                  */
                 'url' => $url,
@@ -36,9 +41,7 @@ class EmbedRepository {
                 'description' => _safe_length($json['description'] ?? null),
                 'thumbnail' => _safe_length($json['thumbnail_url'] ?? null, 1024)
             ]);
-
         } catch (IframelyException) {
-
             // insert to database before sending response so that we don't make multiple requests to
             // iframely endpoint for error URLs
 
@@ -48,8 +51,6 @@ class EmbedRepository {
             ]);
 
             throw new TrustedException('Unable to fetch');
-        }     
-
+        }
     }
-
 }

@@ -12,7 +12,7 @@ use Illuminate\Database\Eloquent\Collection;
 
 class BlogThemeRepository
 {
-    public static function getFile(int $blogId, string $fileName, ?string $folder = null) : ?BlogTHemeFile
+    public static function getFile(int $blogId, string $fileName, ?string $folder = null): ?BlogTHemeFile
     {
 
         $file = BlogThemeFile::where('blog_id', $blogId)
@@ -21,15 +21,13 @@ class BlogThemeRepository
             ->first();
 
         return $file;
-
     }
 
-    public static function getFilesInFolder(int $blogId, ?ThemeFileFolderEnum $folder) : Collection {
+    public static function getFilesInFolder(int $blogId, ?ThemeFileFolderEnum $folder): Collection
+    {
 
         return BlogThemeFile::where('blog_id', $blogId)
             ->where('folder', $folder)
             ->get();
-
     }
-
 }

@@ -1,10 +1,11 @@
 <?php
+
 namespace App\Data\Objects\DataAPI;
 
 use App\Models\Blog;
 
-class BlogObject {
-
+class BlogObject
+{
     public string $subdomain;
     public string $name;
     public ?string $description;
@@ -12,7 +13,7 @@ class BlogObject {
     public ?string $featured_image;
     public string $lang;
     public string $url;
-    
+
     public SocialMediaObject $social;
 
     public array $nav_header;
@@ -23,14 +24,15 @@ class BlogObject {
 
     public int $posts_count;
 
-    public function __construct(Blog $blog) {
+    public function __construct(Blog $blog)
+    {
 
         $this->subdomain = $blog->subdomain;
         $this->name = $blog->name;
         $this->description = $blog->description;
         $this->icon = $blog->icon;
         $this->featured_image = $blog->featured_image;
-        
+
         $this->social = new SocialMediaObject(
             $blog->social_facebook,
             $blog->social_twitter,
@@ -40,8 +42,6 @@ class BlogObject {
             $blog->social_github
         );
 
-        // TODO: 
-
+        // TODO:
     }
-
 }

@@ -1,8 +1,9 @@
 <?php
+
 namespace App\Data\Objects\DataAPI;
 
-class SocialMediaObject {
-
+class SocialMediaObject
+{
     public ?string $facebook;
     public ?string $twitter;
     public ?string $linkedin;
@@ -10,7 +11,8 @@ class SocialMediaObject {
     public ?string $instagram;
     public ?string $github;
 
-    public function __construct($facebook ,$twitter ,$linkedin ,$youtube, $instagram, $github) {
+    public function __construct($facebook, $twitter, $linkedin, $youtube, $instagram, $github)
+    {
         $this->facebook = $facebook;
         $this->twitter = $twitter;
         $this->linkedin = $linkedin;
@@ -18,5 +20,4 @@ class SocialMediaObject {
         $this->instagram = $instagram;
         $this->github = $github;
     }
-
 }

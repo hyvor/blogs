@@ -1,4 +1,5 @@
 <?php
+
 namespace App\Domains\Media;
 
 use App\Domains\Media\Exceptions\UploadException;
@@ -7,26 +8,28 @@ use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Http\UploadedFile;
 use Illuminate\Support\Facades\Storage;
 
-class MediaRepository {
-
-    static function get(int $blogId, int $limit = 0, int $offset = 0, $extension = null) : Collection {
+class MediaRepository
+{
+    static function get(int $blogId, int $limit = 0, int $offset = 0, $extension = null): Collection
+    {
 
         return Media::where('blog_id', $blogId)
-            ->when($extension, function($query) use ($extension) {
+            ->when($extension, function ($query) use ($extension) {
                 $query->where('extension', $extension);
             })
             ->limit($limit)
             ->offset($offset)
             ->orderBy('id', 'DESC')
             ->get();
-
     }
 
-    static function getOne(int $id) {
+    static function getOne(int $id)
+    {
         return Media::find($id);
     }
 
-    static function upload(int $blogId, UploadedFile $file) : Media {
+    static function upload(int $blogId, UploadedFile $file): Media
+    {
 
         try {
             $path = Storage::putFile("blog/$blogId", $file);
@@ -47,7 +50,8 @@ class MediaRepository {
         return $media;
     }
 
-    static function delete(int $id) {
+    static function delete(int $id)
+    {
         $media = self::getOne($id);
         $path = $media->path;
 
@@ -57,5 +61,4 @@ class MediaRepository {
 
         $media->delete();
     }
-
 }

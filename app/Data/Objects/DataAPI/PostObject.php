@@ -1,12 +1,13 @@
 <?php
+
 namespace App\Data\Objects\DataAPI;
 
 use App\Domains\Blog\BlogRepository;
 use App\Models\Blog;
 use App\Models\Post;
 
-class PostObject {
-
+class PostObject
+{
     public int $id;
     public int $created_at;
     public int $updated_at;
@@ -25,13 +26,14 @@ class PostObject {
     public ?string $code_foot;
 
 
-    public function __construct(Post $post, Blog $blog) {
+    public function __construct(Post $post, Blog $blog)
+    {
 
-        $tags = $post->tags->map(function($tag) use ($blog) {
+        $tags = $post->tags->map(function ($tag) use ($blog) {
             return new TagObject($tag, $blog);
         })->toArray();
 
-        $authors = $post->authors->map(function($author) use ($blog) {
+        $authors = $post->authors->map(function ($author) use ($blog) {
             return new AuthorObject($author, $blog);
         })->toArray();
 
@@ -39,7 +41,7 @@ class PostObject {
         $this->created_at = $post->created_at->timestamp;
         $this->updated_at = $post->updated_at->timestamp;
         $this->published_at = $post->published_at?->timestamp;
-        
+
         $this->is_featured = $post->is_featured;
         $this->is_page = $post->is_page;
         $this->slug = $post->slug;
@@ -52,11 +54,8 @@ class PostObject {
         $this->reading_time = $post->reading_time;
         $this->code_head = $post->code_head;
         $this->code_foot = $post->code_foot;
-        
+
         $this->tags = $tags;
         $this->authors = $authors;
-        
     }
-
 }
-

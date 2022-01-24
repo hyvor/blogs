@@ -1,12 +1,13 @@
 <?php
+
 namespace App\Data\Objects\DataAPI;
 
 use App\Domains\Blog\BlogRepository;
 use App\Models\Blog;
 use App\Models\Tag;
 
-class TagObject {
-
+class TagObject
+{
     public $id;
     public $name;
     public $slug;
@@ -24,5 +25,4 @@ class TagObject {
         $this->featured_image = $tag->featured_image;
         $this->posts_count = $tag->posts_count;
     }
-
 }

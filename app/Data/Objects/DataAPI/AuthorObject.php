@@ -1,12 +1,13 @@
 <?php
+
 namespace App\Data\Objects\DataAPI;
 
 use App\Domains\Blog\BlogRepository;
 use App\Models\Blog;
 use App\Models\User;
 
-class AuthorObject {
-
+class AuthorObject
+{
     public int $id;
     public string $slug;
     public string $url;
@@ -18,7 +19,8 @@ class AuthorObject {
     public SocialMediaObject $social;
     public int $posts_count;
 
-    public function __construct(User $user, Blog $blog) {
+    public function __construct(User $user, Blog $blog)
+    {
 
         $this->id = $user->id;
         $this->slug = $user->slug;
@@ -39,7 +41,5 @@ class AuthorObject {
         );
 
         $this->posts_count = $user->posts_count;
-        
     }
-
 }
