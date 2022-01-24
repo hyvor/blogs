@@ -3,8 +3,7 @@ namespace App\Data\Enums;
 
 enum DeliveryAPITypeEnum: string {
 
-    case TEXT = 'text';
-    case BINARY = 'binary';
+    case FILE = 'file';
     case REDIRECT = 'redirect';
     case NOTFOUND = 'notfound';
 

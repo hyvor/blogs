@@ -1,9 +1,11 @@
 <?php
+namespace App\Data\Enums;
 
 enum ThemeFileFolderEnum: string {
 
-    case Templates = 'templates';
-    case Assets = 'assets';
-    case Styles = 'styles';
+    case TEMPLATES = 'templates';
+    case ASSETS = 'assets';
+    case STYLES = 'styles';
+    case LANG = 'lang';
 
 }

@@ -1,5 +1,5 @@
 <?php
-namespace App\Types\DeliveryAPI;
+namespace App\Data\Objects\DeliveryAPI;
 
 use App\Data\Enums\DeliveryAPITypeEnum;
 use App\Data\Enums\RedirectTypeEnum;
@@ -8,7 +8,7 @@ class DeliveryAPIObject {
 
     public DeliveryAPITypeEnum $type;
 
-    // for text and binary
+    // for file
     public string $content;
     public string $mime_type;
 
@@ -20,18 +20,15 @@ class DeliveryAPIObject {
         $this->type = $type;
     }
 
-    static function forTextOrBinary(string $content, string $mimeType, bool $isBinary) {
-        $obj = new self($isBinary ? DeliveryAPITypeEnum::BINARY : DeliveryAPITypeEnum::TEXT);
-        $obj->content = $content;
+    /**
+     * Files content is base64 encoded
+     */
+    static function forFile(string $content, string $mimeType) {
+        $obj = new self(DeliveryAPITypeEnum::FILE);
+        $obj->content = base64_encode($content);
         $obj->mime_type = $mimeType;
 
         return $obj;
-    }
-    static function forText(string $content, string $mimeType) {
-        return self::forTextOrBinary($content, $mimeType, false);
-    }
-    static function forBinary(string $content, string $mimeType) {
-        return self::forTextOrBinary($content, $mimeType, true);
     }
 
     

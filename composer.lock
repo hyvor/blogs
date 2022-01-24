@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "e80dc9c44944fbd1c7c3d8b38754655f",
+    "content-hash": "8cf7a0d786b9fbd18b0ebe775780529c",
     "packages": [
         {
             "name": "asm89/stack-cors",
@@ -961,16 +961,16 @@
         },
         {
             "name": "hyvor/scssphp",
-            "version": "dev-master",
+            "version": "2.0.1",
             "source": {
                 "type": "git",
                 "url": "https://github.com/hyvor/scssphp.git",
-                "reference": "9daa85aecb575ce86523ce49f79ed612eb94eb24"
+                "reference": "845470b7ac2c2bdf6e9146feab257d7eb1e1e28d"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/hyvor/scssphp/zipball/9daa85aecb575ce86523ce49f79ed612eb94eb24",
-                "reference": "9daa85aecb575ce86523ce49f79ed612eb94eb24",
+                "url": "https://api.github.com/repos/hyvor/scssphp/zipball/845470b7ac2c2bdf6e9146feab257d7eb1e1e28d",
+                "reference": "845470b7ac2c2bdf6e9146feab257d7eb1e1e28d",
                 "shasum": ""
             },
             "require": {
@@ -986,25 +986,20 @@
                 "symfony/phpunit-bridge": "^5.1",
                 "thoughtbot/bourbon": "^7.0",
                 "twbs/bootstrap": "~5.0",
-                "twbs/bootstrap4": "4.6.0",
+                "twbs/bootstrap4": "4.6.1",
                 "zurb/foundation": "~6.5"
             },
             "suggest": {
                 "ext-iconv": "Can be used as fallback when ext-mbstring is not available",
                 "ext-mbstring": "For best performance, mbstring should be installed as it is faster than ext-iconv"
             },
-            "default-branch": true,
             "type": "library",
             "autoload": {
                 "psr-4": {
                     "ScssPhp\\ScssPhp\\": "src/"
                 }
             },
-            "autoload-dev": {
-                "psr-4": {
-                    "ScssPhp\\ScssPhp\\Tests\\": "tests/"
-                }
-            },
+            "notification-url": "https://packagist.org/downloads/",
             "license": [
                 "MIT"
             ],
@@ -1030,9 +1025,9 @@
                 "stylesheet"
             ],
             "support": {
-                "source": "https://github.com/hyvor/scssphp/tree/master"
+                "source": "https://github.com/hyvor/scssphp/tree/2.0.1"
             },
-            "time": "2021-12-20T14:20:05+00:00"
+            "time": "2022-01-24T01:00:53+00:00"
         },
         {
             "name": "laravel/cashier-paddle",
@@ -8680,14 +8675,12 @@
     ],
     "aliases": [],
     "minimum-stability": "dev",
-    "stability-flags": {
-        "hyvor/scssphp": 20
-    },
+    "stability-flags": [],
     "prefer-stable": true,
     "prefer-lowest": false,
     "platform": {
         "php": "^7.3|^8.0"
     },
     "platform-dev": [],
-    "plugin-api-version": "2.1.0"
+    "plugin-api-version": "2.0.0"
 }

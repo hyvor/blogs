@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers\DeliveryAPI;
 
+use App\Data\Objects\DeliveryAPI\DeliveryAPIObject;
 use App\Domains\BlogTheme\BlogThemeRepository;
 use Illuminate\Http\Request;
 use App\Domains\Theme\AssetsRepository;
@@ -11,11 +12,12 @@ use App\Domains\Theme\ThemeRepository;
 use App\Exceptions\TrustedException;
 use App\Helpers\MimeTypes;
 use App\Models\Blog;
-use App\Types\DeliveryAPI\DeliveryAPIObject;
 use Symfony\Component\Routing\RouteCollection;
 use Symfony\Component\Routing\Route;
 use Symfony\Component\Routing\Matcher\UrlMatcher;
 use Symfony\Component\Routing\RequestContext;
+use App\Data\Enums\ThemeFileFolderEnum;
+use ScssPhp\ScssPhp\Compiler;
 
 class DeliveryAPIController
 {
@@ -37,6 +39,10 @@ class DeliveryAPIController
          */
         $path = $request->input('path');
 
+        if (!preg_match('/^\//', $path)) {
+            $path = '/' . $path; // add leading slash (otherwise matcher doesn't work)
+        }
+
         /**
          * from https://symfony.com/doc/current/create_framework/routing.html
          */
@@ -51,8 +57,8 @@ class DeliveryAPIController
          *      - posts or pages (from slugs)
          *      - custom pages (from theme files)
          */
-        $route->add('styles', new Route('/styles.css'));
         $route->add('asset', new Route('/assets/{fileName}'));
+        $route->add('styles', new Route('/styles.css'));
         $route->add('tag', new Route('/tag/{slug}'));
         $route->add('author', new Route('/author/{slug}'));
         $route->add('dynamic', new Route('/{slug}'));
@@ -64,33 +70,52 @@ class DeliveryAPIController
 
         $returnObj = null;
 
-        switch ($props['_route']) {
+        $type = $props['_route'];
 
-            case 'asset':
-                $fileName = $props['file'];
-                $file = BlogThemeRepository::getFile($blog->id, $fileName, 'assets');
+        if ($type === 'asset') {
 
-                dd($file);
+            /**
+             * asset is simple.
+             * Just get the file and return it
+             */
 
-                if (!$file) {
-                    throw new TrustedException('Asset not found', TrustedException::ERROR_NOT_FOUND);
-                }
+            $fileName = $props['fileName'];
+            $file = BlogThemeRepository::getFile($blog->id, $fileName, 'assets');
 
-                $extension = pathinfo($fileName, PATHINFO_EXTENSION);
-                $mimeType = MimeTypes::getMime($extension);
+            if (!$file) {
+                return self::notFound();
+            }
 
-                $isBinary = 
+            $extension = pathinfo($fileName, PATHINFO_EXTENSION);
+            $mimeType = MimeTypes::getMime($extension);
 
-                $returnObj = DeliveryAPIObject::forTextOrBinary($file->content, $mimeType, $isBinary);
+            $returnObj = DeliveryAPIObject::forFile($file->content, $mimeType);
 
-                break;
-            case 'dynamic':
+        } else if ($type === 'styles') {
 
-                break;
+            /**
+             * Process all SCSS files
+             */
+            
+            $files = BlogThemeRepository::getFilesInFolder($blog->id, ThemeFileFolderEnum::STYLES);
+
+            $filesArray = [];
+            foreach ($files as $file) {
+                $filesArray[$file->name] = $file->content;
+            }
+
+            $scssCompiler = new Compiler();
+            $scssCompiler->registerFiles($filesArray);
+
+            $css = $scssCompiler->compileFile('index.scss')->getCss();
+
+            $returnObj = DeliveryAPIObject::forFile($css, 'text/css');
 
         }
 
-        if ($type == 'asset') {
+        return response()->json($returnObj);
+
+        /* if ($type == 'asset') {
             $fileName = $attributes['fileName'];
             [ $content, $contentType ] = AssetsRepository::getAsset($blog->id, $fileName);
         } elseif ($type == 'pages') {
@@ -108,16 +133,13 @@ class DeliveryAPIController
             return TemplateRepository::index();
         } else {
 
-
-
-        }
+        } */
     }
 
-    // Bloger Theme Select
-    public function selectTheme()
-    {
+    static function notFound() {
 
-        $selectedTheme = ThemeRepository::copyTheme();
-        return 'hello world';
+        return response()->json(DeliveryAPIObject::forNotFound());
+
     }
+
 }

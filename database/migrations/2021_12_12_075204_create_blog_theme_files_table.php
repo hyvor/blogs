@@ -24,6 +24,8 @@ class CreateBlogThemeFilesTable extends Migration
             $table->string('name')->nullable();
             $table->binary('content')->nullable();
             $table->enum('folder', ['templates', 'assets', 'styles', 'lang'])->nullable();
+
+            $table->unique(['blog_id', 'name', 'folder']);
         });
     }
 

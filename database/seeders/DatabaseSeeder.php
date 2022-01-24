@@ -3,6 +3,7 @@
 namespace Database\Seeders;
 
 use App\Models\Blog;
+use App\Models\BlogThemeFile;
 use App\Models\Post;
 use App\Models\PostTag;
 use App\Models\Tag;
@@ -19,8 +20,6 @@ class DatabaseSeeder extends Seeder
      */
     public function run()
     {
-
-        Blog::factory()
 
         $faker = \Faker\Factory::create();
 
@@ -89,6 +88,20 @@ class DatabaseSeeder extends Seeder
                     'tag_id' => $tags[ array_rand($tags) ]->id
                 ]);
             }
+
+            BlogThemeFile::create([
+                'name' => 'logo.png',
+                'content' => file_get_contents(public_path('img/logo.png')),
+                'blog_id' => $blog->id,
+                'folder' => 'assets'
+            ]);
+            BlogThemeFile::create([
+                'name' => 'index.scss',
+                'content' => file_get_contents(base_path('tests/data/default-theme/styles/index.scss')),
+                'blog_id' => $blog->id,
+                'folder' => 'styles'
+            ]);
+
         }
     }
 }
