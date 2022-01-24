@@ -28,12 +28,14 @@ class CreateBlogsTable extends Migration
             $table->string('name');
             $table->string('description')->nullable();
             $table->string('icon')->nullable();
+            $table->string('featured_image')->nullable();
 
             $table->string('social_facebook')->nullable();
             $table->string('social_twitter')->nullable();
             $table->string('social_linkedin')->nullable();
             $table->string('social_youtube')->nullable();
             $table->string('social_instagram')->nullable();
+            $table->string('social_github')->nullable();
 
             $table->string('edited_at')->nullable();
 

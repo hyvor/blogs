@@ -37,7 +37,7 @@ class DeliveryAPIController
          *
          * Returns an output as specified [here]()
          */
-        $path = $request->input('path');
+        $path = $request->input('path') ?? '';
 
         if (!preg_match('/^\//', $path)) {
             $path = '/' . $path; // add leading slash (otherwise matcher doesn't work)
@@ -57,11 +57,10 @@ class DeliveryAPIController
          *      - posts or pages (from slugs)
          *      - custom pages (from theme files)
          */
-        $route->add('asset', new Route('/assets/{fileName}'));
+        $route->add('assets', new Route('/assets/{fileName}'));
         $route->add('styles', new Route('/styles.css'));
         $route->add('tag', new Route('/tag/{slug}'));
         $route->add('author', new Route('/author/{slug}'));
-        $route->add('dynamic', new Route('/{slug}'));
         $route->add('home', new Route('/'));
 
         $context = new RequestContext();
@@ -72,7 +71,7 @@ class DeliveryAPIController
 
         $type = $props['_route'];
 
-        if ($type === 'asset') {
+        if ($type === 'assets') {
 
             /**
              * asset is simple.
@@ -111,29 +110,29 @@ class DeliveryAPIController
 
             $returnObj = DeliveryAPIObject::forFile($css, 'text/css');
 
-        }
+        } else if ($type === 'tag') {
 
-        return response()->json($returnObj);
 
-        /* if ($type == 'asset') {
-            $fileName = $attributes['fileName'];
-            [ $content, $contentType ] = AssetsRepository::getAsset($blog->id, $fileName);
-        } elseif ($type == 'pages') {
-            // dd('This is for posts, pages and redirects');
-            // Returns the sub pages of th theme
-            return TemplateRepository::pages();
-        } elseif ($type == 'tag') {
-            // This is the tag page
-            return TemplateRepository::tag();
-        } elseif ($type == 'author') {
-            // This is the author page
-            return TemplateRepository::author();
-        } elseif ($type == 'home') {
-            // Returns the home page of th theme
-            return TemplateRepository::index();
+
+        } else if ($type === 'author') {
+
+
+
+        } else if ($type === 'home') {
+
+            
+    
+            $returnObj = DeliveryAPIObject::forFile($html, 'text/html');
+
         } else {
 
-        } */
+            $slug = trim($path, '/');
+
+
+
+        }
+
+        return $returnObj ? response()->json($returnObj) : self::notFound();
     }
 
     static function notFound() {

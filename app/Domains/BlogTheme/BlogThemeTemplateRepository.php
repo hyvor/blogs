@@ -1,14 +1,48 @@
 <?php
 
-namespace App\Domains\Theme;
+namespace App\Domains\BlogTheme;
 
 use App\Domains\Theme\ThemeRepository;
 use App\Domains\Theme\Types\OutPutDeliveryAPI;
 use ScssPhp\ScssPhp\Compiler;
 use Twig\Environment;
+use App\Data\Enums\ThemeFileFolderEnum;
+use App\Data\Objects\DataAPI\BlogObject;
+use App\Models\Blog;
+use Twig\Loader\ArrayLoader as TwigArrayLoader;
+use Twig\Environment as TwigEnvironment;
 
-class TemplateRepository
+class BlogThemeTemplateRepository
 {
+
+    public static function renderIndex(Blog $blog)
+    {
+        return self::renderFile($blog, 'index');
+    }
+
+    public static function renderFile(Blog $blog, string $type, array $data = []) {
+
+        $templateFiles = BlogThemeRepository::getFilesInFolder($blog->id, ThemeFileFolderEnum::TEMPLATES);
+
+        $loaderArray = [];
+        foreach ($templateFiles as $file) {
+            $loaderArray[$file->name] = $file->content;
+        }
+
+        $loader = new TwigArrayLoader($loaderArray);
+        $twig = new TwigEnvironment($loader);
+
+        $vars = [
+            '@blog' => new BlogObject($blog),
+            '@env' => [],
+        ];
+
+        return $twig->render($fileName, [
+
+        ]);
+
+    }
+
     /*
     *
     *
