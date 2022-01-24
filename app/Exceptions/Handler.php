@@ -45,28 +45,44 @@ class Handler extends ExceptionHandler
     {
 
         if (!config('app.debug')) { // not in debug mode
-            if ($request->is('api/*')) {
-                $code = isset($exception->status) ? $exception->status : $exception->getCode();
-                $httpCode = in_array($code, [400, 401, 402, 403, 404, 422, 500]) ? $code : 500;
 
-                $error = $exception instanceof TrustedException ?
-                    $exception->getMessage() :
-                    'Something went wrong on our side.';
+            if ($request->getHost() === config('blogs.domain_app')) {
+                // app domain
 
-                if ($exception instanceof NotFoundHttpException) {
-                    $httpCode = 404;
-                    $error = 'API Endpoint not found';
+                if (
+                    $request->is('api/*')
+                ) {
+                    $code = isset($exception->status) ? $exception->status : $exception->getCode();
+                    $httpCode = in_array($code, [400, 401, 402, 403, 404, 422, 500]) ? $code : 500;
+    
+                    $error = $exception instanceof TrustedException ?
+                        $exception->getMessage() :
+                        'Something went wrong on our side.';
+    
+                    if ($exception instanceof NotFoundHttpException) {
+                        $httpCode = 404;
+                        $error = 'API Endpoint not found';
+                    }
+    
+                    if ($exception instanceof ValidationException) {
+                        $error = $exception->validator->errors()->first();
+                    }
+    
+                    return response()->json([
+                        'error' => $error,
+                        'errorCode' => $code
+                    ], $httpCode);
                 }
 
-                if ($exception instanceof ValidationException) {
-                    $error = $exception->validator->errors()->first();
+            } else {
+                // subdomains
+
+                if ($exception instanceof SubdomainNotFoundException) {
+                    return redirect('https://' . config('blogs.domain_app'));
                 }
 
-                return response()->json([
-                    'error' => $error,
-                    'errorCode' => $code
-                ], $httpCode);
             }
+
         }
 
         return parent::render($request, $exception);

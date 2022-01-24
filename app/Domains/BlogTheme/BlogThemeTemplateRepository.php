@@ -15,7 +15,13 @@ use Twig\Environment as TwigEnvironment;
 class BlogThemeTemplateRepository
 {
 
-    public static function renderFile(Blog $blog, DeliveryAPIScopeEnum $scope, array $data = []) : string {
+    public static function renderFile(
+        Blog $blog, 
+        DeliveryAPIScopeEnum $scope,
+        ?string $slug,
+        ?int $page 
+    ) : string 
+    {
 
         $templateFiles = BlogThemeRepository::getFilesInFolder($blog->id, ThemeFileFolderEnum::TEMPLATES);
 
@@ -30,7 +36,7 @@ class BlogThemeTemplateRepository
         $vars = [
             '@blog' => new BlogObject($blog),
             '@env' => [],
-            ...self::getVarsFromScope($blog, $scope, $data)
+            ...self::getVarsFromScope($blog, $scope, $page)
         ];
 
         $fileName = self::getFileNameToRenderFromScope($scope, array_keys($loaderArray));
@@ -39,11 +45,11 @@ class BlogThemeTemplateRepository
 
     }
 
-    private static function getVarsFromScope(Blog $blog, DeliveryAPIScopeEnum $scope, array $data) : array {
+    private static function getVarsFromScope(Blog $blog, DeliveryAPIScopeEnum $scope, ?int $page) : array {
 
         if ($scope === DeliveryAPIScopeEnum::INDEX) {
 
-            $page = $data['page'] ?? 1;
+            $page = $page ?? 1;
 
             $posts = InternalAPICaller::data($blog->subdomain, 'posts', [
                 'limit' => 10,

@@ -5,11 +5,6 @@ namespace App\Http\Controllers\DeliveryAPI;
 use App\Data\Objects\DeliveryAPI\DeliveryAPIObject;
 use App\Domains\BlogTheme\BlogThemeRepository;
 use Illuminate\Http\Request;
-use App\Domains\Theme\AssetsRepository;
-use App\Domains\Theme\TemplateRepository;
-use App\Domains\Theme\ThemeAssetsRepository;
-use App\Domains\Theme\ThemeRepository;
-use App\Exceptions\TrustedException;
 use App\Helpers\MimeTypes;
 use App\Models\Blog;
 use Symfony\Component\Routing\RouteCollection;
@@ -56,11 +51,16 @@ class DeliveryAPIController
          *      - posts or pages (from slugs)
          *      - custom pages (from theme files)
          */
+
+        // assets
         $route->add('assets', new Route('/assets/{fileName}'));
         $route->add('styles', new Route('/styles.css'));
+
+        // scopes
         $route->add('tag', new Route('/tag/{slug}'));
         $route->add('author', new Route('/author/{slug}'));
-        $route->add('home', new Route('/'));
+        $route->add('search', new Route('/search/{slug}'));
+        $route->add('index', new Route('/'));
 
         $context = new RequestContext();
         $matcher = new UrlMatcher($route, $context);
@@ -116,27 +116,27 @@ class DeliveryAPIController
 
             $returnObj = DeliveryAPIObject::forFile($css, 'text/css');
 
-        } else if ($type === 'tag') {
+        } else if (
+            $type === 'tag' || 
+            $type === 'author' || 
+            $type === 'index' ||
+            $type === 'search'
+        ) {
 
+            $scope = DeliveryAPIScopeEnum::from($type);
 
+            $html = BlogThemeTemplateRepository::renderFile(
+                $blog, 
+                $scope,
+                $request->input('slug'),
+                $request->input('page'),
+            );
 
-        } else if ($type === 'author') {
-
-
-
-        } else if ($type === 'home') {
-
-            $html = BlogThemeTemplateRepository::renderFile($blog, DeliveryAPIScopeEnum::INDEX, [
-                'page' => $request->input('page')
-            ]);
-    
             $returnObj = DeliveryAPIObject::forFile($html, 'text/html');
 
         } else {
 
             $slug = trim($path, '/');
-
-
 
         }
 
