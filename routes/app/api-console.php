@@ -5,6 +5,8 @@ use App\Http\Controllers\ConsoleAPI\ConsoleMediaController;
 use App\Http\Controllers\ConsoleAPI\ConsolePostController;
 use App\Http\Controllers\ConsoleAPI\ConsoleUserController;
 use App\Http\Controllers\ConsoleAPI\ConsoleViewController;
+use App\Http\Controllers\ConsoleAPI\ConsoleRedirectController;
+
 use App\Http\Middleware\App\SubdomainMiddleware;
 use Illuminate\Support\Facades\Route;
 
@@ -73,6 +75,14 @@ Route::prefix('/api/console/v0/blog/{subdomain}')
     Route::post('/subscription', []);
     Route::patch('/subscription', []);
     Route::delete('/subscription', []);
+
+    // redirects CRUD
+    Route::get('/redirect', [ConsoleRedirectController::class, 'getRedirect']);
+    Route::post('/redirect', [ConsoleRedirectController::class, 'createRedirect']);
+    Route::get('/deleteRedirect/{id}', [ConsoleRedirectController::class, 'deleteRedirect']);
+    Route::get('/updateRedirect/{id}', [ConsoleRedirectController::class, 'showData']);
+    Route::post('/updateRedirect', [ConsoleRedirectController::class, 'updateRedirect']);
+
 
     // settings RU
     Route::get('/settings', []);

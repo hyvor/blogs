@@ -8,11 +8,11 @@ export default function SettingRedirects(props) {
             <div className="title">
                 Redirects
             </div>
-            <div className="ridirects">
+            <div className="redirects">
 
                 <div>
-                    <div className='riderect-create'>Create Redirect URL</div>
-                    <form className='riderect-create'>
+                    <div className='redirect-create'>Create Redirect URL</div>
+                    <form className='redirect-create'>
                         <input type="text" />
                     </form>
                 </div>
@@ -21,8 +21,8 @@ export default function SettingRedirects(props) {
                         <div>Redirect URL</div>
                     </div>
                     <div className="user-right">
-                        <div className="riderect-delete">Delete</div>
-                        <div className="riderect-edit">Edit</div>
+                        <div className="redirect-delete">Delete</div>
+                        <div className="redirect-edit">Edit</div>
                     </div>
                 </div>
                  
