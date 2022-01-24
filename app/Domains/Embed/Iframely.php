@@ -7,7 +7,7 @@ use Illuminate\Support\Facades\Http;
 
 class Iframely
 {
-    const ENDPOINT = 'https://iframe.ly/api/oembed';
+    private const ENDPOINT = 'https://iframe.ly/api/oembed';
 
     /**
      * @var string $url - URL to fetch data from
@@ -15,7 +15,7 @@ class Iframely
      * Fetches data from iframely's oembed endpoint
      * https://iframely.com/docs/oembed-api
      */
-    static function fetch(string $url)
+    public static function fetch(string $url)
     {
         $params = http_build_query([
             'url' => $url,

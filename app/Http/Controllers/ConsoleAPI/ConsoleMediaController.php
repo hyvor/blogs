@@ -14,7 +14,7 @@ use Illuminate\Http\Request;
 
 class ConsoleMediaController extends Controller
 {
-    static function getFiles(Request $request, Blog $blog)
+    public static function getFiles(Request $request, Blog $blog)
     {
         $limit = $request->input('limit') ?? 50;
         $offset = $request->input('offset');
@@ -34,7 +34,7 @@ class ConsoleMediaController extends Controller
         return response()->json($media);
     }
 
-    static function uploadFile(Request $request, Blog $blog)
+    public static function uploadFile(Request $request, Blog $blog)
     {
         $file = $request->file('file');
 
@@ -52,7 +52,7 @@ class ConsoleMediaController extends Controller
         return response()->json(new MediaOutputType($media));
     }
 
-    static function deleteFile(Request $request)
+    public static function deleteFile(Request $request)
     {
         $id = $request->route('id');
         MediaRepository::delete($id);

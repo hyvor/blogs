@@ -116,7 +116,7 @@ class DataAPIKeysFilter
         return $this->data;
     }
 
-    static function filter($input, $keys)
+    public static function filter($input, $keys)
     {
         return (new self($input, $keys))->getData();
     }

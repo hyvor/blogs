@@ -10,7 +10,7 @@ use Illuminate\Support\Facades\Storage;
 
 class MediaRepository
 {
-    static function get(int $blogId, int $limit = 0, int $offset = 0, $extension = null): Collection
+    public static function get(int $blogId, int $limit = 0, int $offset = 0, $extension = null): Collection
     {
 
         return Media::where('blog_id', $blogId)
@@ -23,12 +23,12 @@ class MediaRepository
             ->get();
     }
 
-    static function getOne(int $id)
+    public static function getOne(int $id)
     {
         return Media::find($id);
     }
 
-    static function upload(int $blogId, UploadedFile $file): Media
+    public static function upload(int $blogId, UploadedFile $file): Media
     {
 
         try {
@@ -50,7 +50,7 @@ class MediaRepository
         return $media;
     }
 
-    static function delete(int $id)
+    public static function delete(int $id)
     {
         $media = self::getOne($id);
         $path = $media->path;

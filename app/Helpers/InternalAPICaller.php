@@ -7,7 +7,7 @@ use Illuminate\Support\Facades\Route;
 
 class InternalAPICaller
 {
-    static function data(string $subdomain, string $endpoint, $query = [])
+    public static function data(string $subdomain, string $endpoint, $query = [])
     {
 
         $domain = config('blogs.domain_app');
@@ -28,7 +28,7 @@ class InternalAPICaller
         }
     }
 
-    static function delivery(string $subdomain, string $path, array $query)
+    public static function delivery(string $subdomain, string $path, array $query)
     {
 
         $domain = config('blogs.domain_app');

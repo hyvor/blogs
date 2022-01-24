@@ -6,7 +6,7 @@ use App\Models\Blog;
 
 class SubscriptionRepository implements SubscriptionRepositoryInterface
 {
-    const PADDLE_PLANS = [
+    private const PADDLE_PLANS = [
         'personal_pro' => [21525, null],
         'team' => [21526, 21527],
         'enterprise' => [21528, 21529]

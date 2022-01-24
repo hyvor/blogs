@@ -1,5 +1,6 @@
 <?php
 
+/*
 namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
@@ -38,7 +39,9 @@ class ImportExportController extends Controller
                     'description' => $node->getElementsByTagName('description')->item(0)->nodeValue,
                     'creator' => $node->getElementsByTagName('creator')->item(0)->nodeValue,
                     'post_modified' => $node->getElementsByTagName('post_modified')->item(0)->nodeValue,
-                    // 'category' => $node->getElementsByTagName('category').getAttribute('post_tag')->item(0)->nodeValue,
+                    'category' =>
+                        $node->getElementsByTagName('category').getAttribute('post_tag')
+                            ->item(0)->nodeValue,
                     'content' => trim(strip_tags($node->getElementsByTagName('encoded')->item(0)->nodeValue))
                     );
                 if ($item['content'] != null) {
@@ -116,3 +119,4 @@ class ImportExportController extends Controller
         return view('test.test');
     }
 }
+ */

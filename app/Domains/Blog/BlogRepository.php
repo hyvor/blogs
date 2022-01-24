@@ -7,7 +7,7 @@ use App\Models\User;
 
 class BlogRepository
 {
-    static function getDomain(Blog $blog)
+    public static function getDomain(Blog $blog)
     {
         if ($blog->hosted_at === 'subdomain') {
             $deliveryDomain = config('blogs.domain_delivery');
@@ -20,7 +20,7 @@ class BlogRepository
         return $domain;
     }
 
-    static function getFullUrlFromSlug(Blog $blog, ?string $slug)
+    public static function getFullUrlFromSlug(Blog $blog, ?string $slug)
     {
         if (is_null($slug)) {
             $slug = '';

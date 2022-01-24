@@ -27,7 +27,7 @@ class DeliveryAPIResponseObject
     /**
      * Files content is base64 encoded
      */
-    static function forFile(string $content, string $mimeType, int $status = 200)
+    public static function forFile(string $content, string $mimeType, int $status = 200)
     {
         $obj = new self(DeliveryAPITypeEnum::FILE);
         $obj->content = base64_encode($content);
@@ -38,7 +38,7 @@ class DeliveryAPIResponseObject
     }
 
 
-    static function forRedirect(RedirectTypeEnum $type, string $to)
+    public static function forRedirect(RedirectTypeEnum $type, string $to)
     {
         $obj = new self(DeliveryAPITypeEnum::REDIRECT);
         $obj->both = $type->value;

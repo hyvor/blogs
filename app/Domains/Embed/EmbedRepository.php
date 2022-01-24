@@ -15,7 +15,7 @@ function _safe_length($str, $len = 255)
 
 class EmbedRepository
 {
-    static function fetch($url): Embed
+    public static function fetch($url): Embed
     {
 
         $embed = Embed::where('url', $url)->first();

@@ -12,12 +12,12 @@ use Illuminate\Support\Facades\DB;
 
 class PostRepository
 {
-    static function getPostById(int $postId)
+    public static function getPostById(int $postId)
     {
         return Post::find($postId);
     }
 
-    static function getPostByBlogIdAndIdentifier(int $blogId, ?int $id, ?string $slug)
+    public static function getPostByBlogIdAndIdentifier(int $blogId, ?int $id, ?string $slug)
     {
         $post = Post::where('blog_id', $blogId);
         if ($id) {
@@ -32,7 +32,7 @@ class PostRepository
      * Get posts of a blog
      * with filters, limit, and offset
      */
-    static function getPosts(int $blogId, PostInputListFiltersType $filters, ?int $limit, int $offset = 0)
+    public static function getPosts(int $blogId, PostInputListFiltersType $filters, ?int $limit, int $offset = 0)
     {
         $status = $filters->status;
         $authorId = $filters->authorId;
@@ -78,7 +78,7 @@ class PostRepository
         ->get();
     }
 
-    static function createPost(int $blogId, bool $isPage)
+    public static function createPost(int $blogId, bool $isPage)
     {
 
         /**
@@ -97,7 +97,7 @@ class PostRepository
         return Post::find($post->id);
     }
 
-    static function updatePost(int $postId, array $updates)
+    public static function updatePost(int $postId, array $updates)
     {
         $post = Post::find($postId);
 
@@ -152,7 +152,7 @@ class PostRepository
     }
 
 
-    static function deletePost(int $postId)
+    public static function deletePost(int $postId)
     {
         Post::find($postId)->delete();
     }

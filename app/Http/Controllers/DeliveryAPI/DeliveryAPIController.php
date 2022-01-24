@@ -19,7 +19,7 @@ use Symfony\Component\Routing\Exception\ResourceNotFoundException;
 
 class DeliveryAPIController
 {
-    static function handle(Request $request, Blog $blog)
+    public function handle(Request $request, Blog $blog)
     {
 
         /**
@@ -137,7 +137,7 @@ class DeliveryAPIController
         return $returnObj ? response()->json($returnObj) : self::notFound();
     }
 
-    static function notFound()
+    private static function notFound()
     {
 
         return response()->json(DeliveryAPIResponseObject::forFile('404', 'text/html', 404));

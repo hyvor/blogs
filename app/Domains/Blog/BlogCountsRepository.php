@@ -17,7 +17,7 @@ class BlogCountsRepository
      * By author (15 max)
      * By tag (15 max)
      */
-    static function getPostsCounts(int $blogId)
+    public static function getPostsCounts(int $blogId)
     {
 
         $status = [];

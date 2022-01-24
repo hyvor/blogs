@@ -9,7 +9,7 @@ use Illuminate\Http\Request;
 
 class ConsoleEmbedController extends Controller
 {
-    static function getData(Request $request)
+    public static function getData(Request $request)
     {
         $url = $request->input('url');
         $request->validate([

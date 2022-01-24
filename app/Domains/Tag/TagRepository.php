@@ -6,7 +6,7 @@ use App\Models\Tag;
 
 class TagRepository
 {
-    static function getTagByBlogIdAndIdentifier(int $blogId, ?int $id, ?string $slug)
+    public static function getTagByBlogIdAndIdentifier(int $blogId, ?int $id, ?string $slug)
     {
         $post = Tag::where('blog_id', $blogId);
         if ($id) {
