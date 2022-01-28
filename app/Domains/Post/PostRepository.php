@@ -2,22 +2,26 @@
 
 namespace App\Domains\Post;
 
+use App\Data\Params\ConsoleAPI\PostsFilterParam;
+use App\Exceptions\TrustedException;
 use App\Models\Blog;
 use App\Models\Post;
 use App\Models\Tag;
 use App\Models\User;
 use App\Types\Post\PostInputListFiltersType;
 use Carbon\Carbon;
+use Hyvor\FilterQ\Facades\FilterQ;
+use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Support\Facades\DB;
 
 class PostRepository
 {
-    public static function getPostById(int $postId)
+    public static function getPostById(int $postId) : ?Post
     {
         return Post::find($postId);
     }
 
-    public static function getPostByBlogIdAndIdentifier(int $blogId, ?int $id, ?string $slug)
+    public static function getPostByBlogIdAndIdentifier(int $blogId, ?int $id, ?string $slug) : ?Post
     {
         $post = Post::where('blog_id', $blogId);
         if ($id) {
@@ -31,8 +35,11 @@ class PostRepository
     /**
      * Get posts of a blog
      * with filters, limit, and offset
+     * This is for the ConsoleAPI
      */
-    public static function getPosts(int $blogId, PostInputListFiltersType $filters, ?int $limit, int $offset = 0)
+    public static function getPosts(
+        int $blogId, PostsFilterParam $filters, ?int $limit, int $offset = 0
+    ) : Collection
     {
         $status = $filters->status;
         $authorId = $filters->authorId;
@@ -78,11 +85,109 @@ class PostRepository
         ->get();
     }
 
+
+    /**
+     * Getting posts with FilterQ
+     * This is for the Data API
+     */
+    public static function getPostsWithFilterQ(
+        int $blogId, ?string $filterQExpression, 
+        int $limit, int $offset,
+        string $orderBy, string $orderMethod
+    ) : Collection {
+
+        $builder = FilterQ::expression($filterQExpression)
+            ->builder(Post::class)
+            ->keys(function($keys) {
+
+                $keys->add('id')
+                    ->column('posts.id')
+                    ->operators('~', true);
+
+                $keys->add('published_at')
+                    ->column('posts.published_at')
+                    ->operators('~', true);
+
+                $keys->add('updated_at')
+                    ->column('posts.updated_at')
+                    ->operators('~', true);
+
+                $keys->add('is_featured')
+                    ->column('posts.is_featured')
+                    ->operators('=,!=');
+
+                $keys->add('slug')
+                    ->column('posts.slug')
+                    ->operators('=,!=,~');
+
+                $keys->add('title')
+                    ->column('posts.title')
+                    ->operators('~');
+
+                $keys->add('description')
+                    ->column('posts.description')
+                    ->operators('~,=,!=');
+
+                $keys->add('featured_image')
+                    ->column('posts.featured_image')
+                    ->operators('=,!=');
+
+                $keys->add('canonical_url')
+                    ->column('posts.canonical_url')
+                    ->operators('=,!=');
+
+                $keys->add('reading_time')
+                    ->column('posts.reading_time')
+                    ->operators('~', true);
+
+                $keys->add('tag.id')
+                    ->column('post_tag.tag_id')
+                    ->operators('=,!=')
+                    ->join('post_tag', 'post_tag.post_id', '=', 'posts.id', 'left');
+
+                $keys->add('tag.slug')
+                    ->column('tags.slug')
+                    ->operators('=,!=')
+                    ->join(function($query) {
+                        $query->leftJoin('post_tag', 'post_tag.post_id', '=', 'posts.id')
+                            ->join('tags', 'tags.id', '=', 'post_tag.tag_id');
+                    });
+
+                $keys->add('author.id')
+                    ->column('post_author.user_id')
+                    ->operators('=,!=')
+                    ->join('post_author', 'post_author.post_id', '=', 'posts.id', 'left');
+
+                $keys->add('author.slug')
+                    ->column('users.slug')
+                    ->operators('=,!=')
+                    ->join(function($query) {
+                        $query->leftJoin('post_author', 'post_author.post_id', '=', 'posts.id')
+                            ->leftJoin('users', 'users.id', '=', 'post_author.user_id');
+                    });
+
+            })
+            ->operators(function($operators) {
+                $operators->add('~', 'LIKE');
+            })
+            ->addWhere();
+
+        return $builder
+            ->where('posts.blog_id', $blogId)
+            ->where('posts.status', 'published')
+            ->limit($limit)
+            ->offset($offset)
+            ->orderBy($orderBy, $orderMethod)
+            ->select('posts.*')
+            ->get();
+
+    }
+
     public static function createPost(int $blogId, bool $isPage)
     {
 
         /**
-         * Because Laravel doesn't fetch database default values for other colums
+         * Because Laravel doesn't fetch database default values for other columns
          * you have to manually fetch the record again by ID to prevent
          * status being null
          *

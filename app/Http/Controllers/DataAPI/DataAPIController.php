@@ -88,28 +88,49 @@ class DataAPIController extends Controller
     public function posts(Request $request, Blog $blog)
     {
 
-        $limit = $request->input('limit');
-        $page = $request->input('page');
+        $limit = $request->input('limit') ?? 25;
+        $page = $request->input('page') ?? 1;
         $filter = $request->input('filter');
         $sort = $request->input('sort');
         $keys = $request->input('keys');
 
-        $posts = FilterQ::expression($filter)
-            ->builder(Post::class)
-            ->keys(function($keys) {
-                $keys->add('id');
-                $keys->add('created_at');
-            })
-            ->operators(function($operators) {
-                $operators->add('~', 'LIKE');
-            })
-            ->addWhere()
-            ->where('status', 'published')
-            ->get()
-            ->map(function ($post) use ($blog) {
-                return new PostObject($post, $blog);
-            });
+        // check if the sort is valid
+        $sort ??= 'published_at DESC';
+        @[ $orderBy, $orderMethod ] = explode(' ', $sort);
+        $orderMethod ??= 'DESC';
 
-        return response()->json(DataAPIKeysFilter::filter($posts, $keys));
+        if (!in_array($orderBy, 
+            [
+                'published_at', 'created_at', 'updated_at', 
+                'is_featured', 'title', 'reading_time'
+            ]
+            )
+        ) {
+            throw new TrustedException("Sort method $orderBy not supported", TrustedException::ERROR_BAD_REQUEST);
+        }
+
+        $orderMethod = strtoupper($orderMethod);
+        if (!in_array($orderMethod, ['ASC', 'DESC'])) {
+            $orderMethod = 'DESC';
+        }
+
+        $posts = PostRepository::getPostsWithFilterQ(
+            $blog->id,
+            $filter,
+            $limit,
+            $page - 1 * $limit,
+            $orderBy,
+            $orderMethod
+        )->map(function ($post) use ($blog) {
+            return new PostObject($post, $blog);
+        });
+
+        $filteredPosts = DataAPIKeysFilter::filter($posts, $keys);
+
+        return response()->json([
+            'data' => $filteredPosts,
+            'count' => null
+        ]);
     }
+
 }

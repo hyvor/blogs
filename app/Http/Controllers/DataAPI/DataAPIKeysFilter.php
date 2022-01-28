@@ -29,7 +29,7 @@ class DataAPIKeysFilter
 
         $ret = [];
 
-        if (is_array($object)) {
+        if (is_iterable($object)) {
             foreach ($object as $i => $element) {
                 $ret[$i] = $this->filterObject($element, $start);
             }
@@ -73,9 +73,17 @@ class DataAPIKeysFilter
             /**
              * If the current key's children are defined, the current key is considered included
              * For example, when keys=tags.id,
-             * tags key is included
+             * tags key should be included
              */
             if (preg_match("/$key\..+/", $checkKey)) {
+                return true;
+            }
+
+            /**
+             * The opposite of the above
+             * If when keys=tags, tags.* should also be included
+             */
+            if (preg_match("/$checkKey\..+/", $key)) {
                 return true;
             }
         }

@@ -80,7 +80,7 @@ class DatabaseSeeder extends Seeder
                     'content' => json_encode($prosemirrorJson),
                     'title' => $title,
                     'slug' => Str::slug($title),
-                    'published_at' => $status === 'published' ? now() : null,
+                    'published_at' => $status === 'published' ? $faker->dateTime() : null,
                     'description' => $faker->sentence,
                     'status' => $status,
 
