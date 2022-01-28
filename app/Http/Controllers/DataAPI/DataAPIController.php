@@ -14,6 +14,8 @@ use App\Domains\Tag\TagRepository;
 use App\Domains\User\UserRepository;
 use App\Models\Post;
 
+use Hyvor\FilterQ\Facades\FilterQ;
+
 class DataAPIController extends Controller
 {
     public function post(Request $request, Blog $blog)
@@ -92,7 +94,18 @@ class DataAPIController extends Controller
         $sort = $request->input('sort');
         $keys = $request->input('keys');
 
-        $posts = Post::get()
+        $posts = FilterQ::expression($filter)
+            ->builder(Post::class)
+            ->keys(function($keys) {
+                $keys->add('id');
+                $keys->add('created_at');
+            })
+            ->operators(function($operators) {
+                $operators->add('~', 'LIKE');
+            })
+            ->addWhere()
+            ->where('status', 'published')
+            ->get()
             ->map(function ($post) use ($blog) {
                 return new PostObject($post, $blog);
             });
