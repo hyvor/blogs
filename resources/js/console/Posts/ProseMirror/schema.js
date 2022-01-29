@@ -128,7 +128,8 @@ export const nodes = {
             title: {default: null}
         },
         inline: false,
-        draggable: true,
+        draggable: false,
+        selectable: false,
         group: "figure",
         parseDOM: [{
           tag: "img[src]", 

@@ -4,15 +4,6 @@ $prosemirror-hover-outline: 2px solid #8cf;
 $prosemirror-selected-outline: 3px solid #299af3;
 
 .post-editor {
-    display: flex;
-    flex-direction: column;
-    height:100%;
-    .post-editor-wrap {
-        font-size:18px;
-        flex:1;
-        overflow:auto;
-    }
-
 
     .pm-tooltip {
         position:absolute;
@@ -128,6 +119,8 @@ $prosemirror-selected-outline: 3px solid #299af3;
 
 .ProseMirror {
 
+    font-size:18px;
+
     &:focus-visible {
         outline: none;
     }
@@ -147,9 +140,19 @@ $prosemirror-selected-outline: 3px solid #299af3;
     }
 
     p {
+        line-height: 28px;
         margin-top: 30px;
         &:first-child {
             margin-top:0;
+        }
+
+        code {
+            background: rgba(135,131,120,0.15);
+            color: #EB5757;
+            border-radius: 3px;
+            font-size: 85%;
+            padding: 0.2em 0.4em;
+            font-family: monospace;
         }
     }
 

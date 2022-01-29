@@ -1,6 +1,6 @@
 import { useActions, useValues } from 'kea';
 import React, { useEffect, useRef, useState } from 'react';
-import { BoxArrowUpRight, CaretDownFill, GearFill, PencilFill, Trash } from 'react-bootstrap-icons';
+import { BoxArrowUpRight, CaretDownFill, Fullscreen, GearFill, PencilFill, Trash } from 'react-bootstrap-icons';
 import postsLogic from '../logic/postsLogic';
 import Editor from './ProseMirror/Editor';
 import TextareaAutosize from 'react-textarea-autosize';
@@ -14,6 +14,9 @@ export default function Post( {subdomain, id} ) {
     const postLogicInst = postLogic({id});
     const { post, loadPostAjax, savePostAjax, getDiff } = useValues(postLogicInst)
     const { updatePostValue, savePost, deletePost } = useActions(postLogicInst)
+
+
+    const [isFullScreen, setIsFullScreen] = useState(false);
 
 
     /**
@@ -136,205 +139,235 @@ export default function Post( {subdomain, id} ) {
         deletePost({id})
     }
 
-    return <div className="post-editor" ref={viewRef}>
+    function toggleFullscreen() {
 
-        <div className="post-editor-top">
+        if (!isFullScreen) {
+            setIsFullScreen(true);
+            window.addEventListener("keyup", checkFullscreenClose)
+        } else {
+            closeFullscreen();
+        }
 
-            <div className="post-editor-title-row">
+    }
+    function closeFullscreen() {
+        window.removeEventListener("keyup", checkFullscreenClose);
+        setIsFullScreen(false);
+    }
+    function checkFullscreenClose(e) {
+        if (e.key === "Escape")
+            closeFullscreen();
+    }
 
-                <div className="title-textarea-wrap">
-                    <TextareaAutosize 
-                        className="post-editor-title" 
-                        placeholder="Title..."
-                        value={post.title || ""}
-                        onChange={(e) => updatePostValue('title', e.target.value)}
-                    />
+    return <div className={"post-editor" + (isFullScreen ? " fullscreen" : "") } ref={viewRef}>
+
+        <div className="pos-rel"> {/* this element is required to make the tooltip work correctly */}
+            <div className="post-editor-top">
+
+                <div className="post-editor-title-row">
+
+                    <div className="title-textarea-wrap">
+                        <TextareaAutosize 
+                            className="post-editor-title" 
+                            placeholder="Title..."
+                            value={post.title || ""}
+                            onChange={(e) => updatePostValue('title', e.target.value)}
+                        />
+                    </div>
+
                 </div>
 
-            </div>
+                <div className="post-editor-settings">
 
-            <div className="post-editor-settings">
-
-                <div className="post-editor-settings-buttons">
-                    <div className="left">
-                        <button 
-                            className={"button small" + (!isSettingsOpen ? " inactive" : "")}
-                            onClick={isSettingsOpen ? null : openSettingsView}    
-                        >
-                            <span>Settings</span><GearFill />
-                        </button>
-
-                        <a href="/se" target="_blank">
-                            <button className="button small inactive view" >
-                                <span>View</span><BoxArrowUpRight />
+                    <div className="post-editor-settings-buttons">
+                        <div className="left">
+                            <button 
+                                className={"button small" + (!isSettingsOpen ? " inactive" : "")}
+                                onClick={isSettingsOpen ? null : openSettingsView}    
+                            >
+                                <span>Settings</span><GearFill />
                             </button>
-                        </a>
-                    </div>
 
-                    <div className="publish-buttons">
-                        {
-                            savePostAjax.status === 'loading' ?
-                            <span className="saving">Saving...</span> : null
-                        }
-                        <MainButton />
-                    </div>
-                </div>
-                
-                <div className={"settings-view-wrap " + (isSettingsOpen ? "active" : "inactive") }>
-                    <div ref={settingsViewRef} className="post-editor-settings-view">
-
-                        <div className="setting-select">
-                            <span onClick={() => setSettingsType('basic')} className={settingsType === 'basic' ? 'active' : ''}>Basic</span>
-                            <span onClick={() => setSettingsType('advanced')} className={settingsType === 'advanced' ? 'active' : ''}>Advanced</span>
+                            <a href="/se" target="_blank">
+                                <button className="button small inactive view" >
+                                    <span>View</span><BoxArrowUpRight />
+                                </button>
+                            </a>
+                            <button 
+                                className={"button small" + (!isFullScreen ? " inactive" : "")}
+                                onClick={toggleFullscreen}
+                            >
+                                <Fullscreen />
+                            </button>
                         </div>
 
-                        {settingsType === 'basic' ?
-                        <div className="setting-show">
-                            <div className="post-setting-dual">
+                        <div className="publish-buttons">
+                            {
+                                savePostAjax.status === 'loading' ?
+                                <span className="saving">Saving...</span> : null
+                            }
+                            <MainButton />
+                        </div>
+                    </div>
+                    
+                    <div className={"settings-view-wrap " + (isSettingsOpen ? "active" : "inactive") }>
+                        <div ref={settingsViewRef} className="post-editor-settings-view">
+
+                            <div className="setting-select">
+                                <span onClick={() => setSettingsType('basic')} className={settingsType === 'basic' ? 'active' : ''}>Basic</span>
+                                <span onClick={() => setSettingsType('advanced')} className={settingsType === 'advanced' ? 'active' : ''}>Advanced</span>
+                            </div>
+
+                            {settingsType === 'basic' ?
+                            <div className="setting-show">
+                                <div className="post-setting-dual">
+                                    <Setting 
+                                        title="Slug"
+                                        description="The unique part of the URL to identify this post"
+                                    >
+                                        <input 
+                                            className="input" 
+                                            value={post.slug}
+                                            onChange={(e) => updatePostValue("slug", e.target.value)}
+                                        ></input>
+                                    </Setting>
+
+                                    <Setting 
+                                        title="Publish Time"
+                                        className="post-setting-featured-image"
+                                    >
+                                        <input className="input" value="2021-01-01" onChange={() => {}}></input>
+                                    </Setting>
+
+                                </div>
+
+                                <div className="post-setting-dual">
+
+                                    <Setting 
+                                        title="Authors"
+                                        description="The unique part of the URL to identify this post"
+                                    >
+                                        <input className="input" value="Ishini Avindya" onChange={() => {}}></input>
+                                    </Setting>
+
+                                    <Setting 
+                                        title="Tags"
+                                        className="post-setting-featured-image"
+                                    >
+                                        <input className="input" value="#creative" onChange={() => {}}></input>
+                                    </Setting>
+
+                                </div>
+
+                                <div className="post-setting-dual">
+
+                                    <Setting 
+                                        title="Description"
+                                        description="Summarization of the post for listing pages and search engines."
+                                        className="post-setting-description"
+                                    >
+                                        <textarea 
+                                            className="input"
+                                            placeholder="Write a description..."
+                                            value={post.description}
+                                            onChange={e => updatePostValue('description', e.target.value)}
+                                        ></textarea>
+                                    </Setting>
+
+                                    <Setting 
+                                        title="Featured Image"
+                                        className="post-setting-featured-image"
+                                    >
+                                        <div className="image-uploader">Upload a file</div>
+                                    </Setting>
+
+                                </div>
+
+                                <div className="post-setting-dual">
+
+                                    <Setting 
+                                        title="Featured?"
+                                        description="The unique part of the URL to identify this post"
+                                    >
+                                        <input type="checkbox"></input>
+                                    </Setting>
+
+                                    <Setting 
+                                        title="Delete Post"
+                                    >
+                                        <button 
+                                            className="button small danger"
+                                            onClick={handleDelete}
+                                        >Delete <Trash /></button>
+                                    </Setting>
+
+                                </div>
+                            </div>
+                            : 
+                            <div className="setting-show">
+
                                 <Setting 
-                                    title="Slug"
-                                    description="The unique part of the URL to identify this post"
+                                    title="Canonical URL"
+                                    description=""
                                 >
                                     <input 
-                                        className="input" 
-                                        value={post.slug}
-                                        onChange={(e) => updatePostValue("slug", e.target.value)}
+                                        className="input"
+                                        value={post.canonical_url}
+                                        onChange={e => updatePostValue('canonical_url', e.target.value)}
                                     ></input>
                                 </Setting>
 
-                                <Setting 
-                                    title="Publish Time"
-                                    className="post-setting-featured-image"
-                                >
-                                    <input className="input" value="2021-01-01" onChange={() => {}}></input>
-                                </Setting>
+                                <div className="post-setting-dual">
 
+                                    <Setting 
+                                        title="Header HTML Code"
+                                        description="Summarization of the post for listing pages and search engines."
+                                        className="post-setting-description"
+                                    >
+                                        <textarea 
+                                            className="input"
+                                            placeholder="Paste HTML code..."
+                                            value={post.code_head}
+                                            onChange={e => updatePostValue('code_head', e.target.value)}
+                                        ></textarea>
+                                    </Setting>
+
+                                    <Setting 
+                                        title="Footer HTML Code"
+                                        description="Summarization of the post for listing pages and search engines."
+                                        className="post-setting-description"
+                                    >
+                                        <textarea 
+                                            className="input" 
+                                            placeholder="Paste HTML code..."
+                                            value={post.code_foot}
+                                            onChange={e => updatePostValue('code_foot', e.target.value)}
+                                        ></textarea>
+                                    </Setting>
+
+                                </div> 
                             </div>
+                            }
+                        </div>  
+                    </div>
 
-                            <div className="post-setting-dual">
-
-                                <Setting 
-                                    title="Authors"
-                                    description="The unique part of the URL to identify this post"
-                                >
-                                    <input className="input" value="Ishini Avindya" onChange={() => {}}></input>
-                                </Setting>
-
-                                <Setting 
-                                    title="Tags"
-                                    className="post-setting-featured-image"
-                                >
-                                    <input className="input" value="#creative" onChange={() => {}}></input>
-                                </Setting>
-
-                            </div>
-
-                            <div className="post-setting-dual">
-
-                                <Setting 
-                                    title="Description"
-                                    description="Summarization of the post for listing pages and search engines."
-                                    className="post-setting-description"
-                                >
-                                    <textarea 
-                                        className="input"
-                                        placeholder="Write a description..."
-                                        value={post.description}
-                                        onChange={e => updatePostValue('description', e.target.value)}
-                                    ></textarea>
-                                </Setting>
-
-                                <Setting 
-                                    title="Featured Image"
-                                    className="post-setting-featured-image"
-                                >
-                                    <div className="image-uploader">Upload a file</div>
-                                </Setting>
-
-                            </div>
-
-                            <div className="post-setting-dual">
-
-                                <Setting 
-                                    title="Featured?"
-                                    description="The unique part of the URL to identify this post"
-                                >
-                                    <input type="checkbox"></input>
-                                </Setting>
-
-                                <Setting 
-                                    title="Delete Post"
-                                >
-                                    <button 
-                                        className="button small danger"
-                                        onClick={handleDelete}
-                                    >Delete <Trash /></button>
-                                </Setting>
-
-                            </div>
-                        </div>
-                        : 
-                        <div className="setting-show">
-
-                            <Setting 
-                                title="Canonical URL"
-                                description=""
-                            >
-                                <input 
-                                    className="input"
-                                    value={post.canonical_url}
-                                    onChange={e => updatePostValue('canonical_url', e.target.value)}
-                                ></input>
-                            </Setting>
-
-                            <div className="post-setting-dual">
-
-                                <Setting 
-                                    title="Header HTML Code"
-                                    description="Summarization of the post for listing pages and search engines."
-                                    className="post-setting-description"
-                                >
-                                    <textarea 
-                                        className="input"
-                                        placeholder="Paste HTML code..."
-                                        value={post.code_head}
-                                        onChange={e => updatePostValue('code_head', e.target.value)}
-                                    ></textarea>
-                                </Setting>
-
-                                <Setting 
-                                    title="Footer HTML Code"
-                                    description="Summarization of the post for listing pages and search engines."
-                                    className="post-setting-description"
-                                >
-                                    <textarea 
-                                        className="input" 
-                                        placeholder="Paste HTML code..."
-                                        value={post.code_foot}
-                                        onChange={e => updatePostValue('code_foot', e.target.value)}
-                                    ></textarea>
-                                </Setting>
-
-                            </div> 
-                        </div>
-                        }
-                    </div>  
                 </div>
-
             </div>
-        </div>
 
-        <div className="post-editor-wrap" onClick={() => false && view && view.focus()}>   
-            {
-                loadPostAjax.status === 'loading' ? null :
-                <Editor 
-                    id={id}
-                    value={post.content}
-                    onChange={v => updatePostValue('content', v)}
-                />
-            }
-        </div>
-                        
+            <div 
+                className="post-editor-wrap"
+                onClick={() => false && view && view.focus()}
+            >
+                {
+                    loadPostAjax.status === 'loading' ? null :
+                    <Editor 
+                        id={id}
+                        value={post.content}
+                        onChange={v => updatePostValue('content', v)}
+                    />
+                }
+            </div>
+
+        </div>     
         
 
     </div>
