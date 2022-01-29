@@ -44,7 +44,7 @@ class InternalAPICaller
             $data = $response->getContent();
             return json_decode($data);
         } catch (\Exception $e) {
-            return null;
+            dd($e);
         }
     }
 }

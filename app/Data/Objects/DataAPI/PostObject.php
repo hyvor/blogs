@@ -3,6 +3,7 @@
 namespace App\Data\Objects\DataAPI;
 
 use App\Domains\Blog\BlogRepository;
+use App\Domains\Post\PostContentRepository;
 use App\Models\Blog;
 use App\Models\Post;
 
@@ -45,7 +46,7 @@ class PostObject
         $this->is_featured = $post->is_featured;
         $this->is_page = $post->is_page;
         $this->slug = $post->slug;
-        $this->content = $post->content;
+        $this->content = PostContentRepository::prosemirrorToHtml($post->content);
         $this->title = $post->title;
         $this->description = $post->description;
         $this->url = BlogRepository::getFullUrlFromSlug($blog, $post->slug);

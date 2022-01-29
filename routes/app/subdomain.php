@@ -8,6 +8,4 @@ use App\Http\Middleware\App\Subdomain\RedirectIfSubdomainNotFoundMiddleware;
 
 Route::domain('{subdomain}.' . config('blogs.domain_delivery'))
     ->middleware(SubdomainMiddleware::class)
-    ->group(function () {
-        Route::get('{path}', [SubdomainController::class, 'handle'])->where('path', '.*');
-    });
+    ->get('{path}', [SubdomainController::class, 'handle'])->where('path', '.*');

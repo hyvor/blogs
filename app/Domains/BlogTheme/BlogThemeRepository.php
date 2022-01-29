@@ -3,12 +3,10 @@
 namespace App\Domains\BlogTheme;
 
 use App\Data\Enums\ThemeFileFolderEnum;
-use App\Models\Theme;
-use App\Models\ThemeFile;
 use App\Models\BlogThemeFile;
-use App\Models\Blog;
-use App\Models\Post;
+use Database\Seeders\BlogThemeFilesSeeder;
 use Illuminate\Database\Eloquent\Collection;
+use Illuminate\Support\Facades\App;
 
 class BlogThemeRepository
 {
@@ -25,6 +23,16 @@ class BlogThemeRepository
 
     public static function getFilesInFolder(int $blogId, ?ThemeFileFolderEnum $folder): Collection
     {
+        
+        /**
+         * This is a simple way to refresh the database
+         * and run the seeder that so local file changes are updated
+         * This is ONLY FOR LOCAL TESTING
+         */
+        if (App::environment('local')) {
+            BlogThemeFile::where('blog_id', $blogId)->delete();
+            (new BlogThemeFilesSeeder())->run();
+        }
 
         return BlogThemeFile::where('blog_id', $blogId)
             ->where('folder', $folder)

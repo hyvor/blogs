@@ -2,7 +2,8 @@
 
 namespace App\Http\Controllers\ConsoleAPI;
 
-use App\Domains\Media\Embed\EmbedRepository;
+use App\Data\Objects\ConsoleAPI\EmbedObject;
+use App\Domains\Embed\EmbedRepository;
 use App\Domains\Media\Embed\Types\EmbedType;
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
@@ -15,7 +16,7 @@ class ConsoleEmbedController extends Controller
         $request->validate([
             'url' => 'required|url'
         ]);
-        $embed = new EmbedType(EmbedRepository::fetch($url));
+        $embed = new EmbedObject(EmbedRepository::fetch($url));
 
         return response()->json($embed);
     }

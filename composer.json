@@ -13,12 +13,8 @@
         "laravel/cashier-paddle": "^1.4",
         "laravel/framework": "^8.54",
         "laravel/telescope": "^4.6",
-        "laravel/tinker": "^2.5",
-        "rcrowe/twigbridge": "^0.12.3",
-        "stichoza/google-translate-php": "^4.1",
-        "symfony/asset": "^6.0",
-        "symfony/dotenv": "^6.0",
         "symfony/http-foundation": "^5.4",
+        "ueberdosis/prosemirror-to-html": "^2.7",
         "vlucas/phpdotenv": "^5.4"
     },
     "require-dev": {

@@ -5,7 +5,7 @@
 <title>The Blog of Hyvor Blogs</title>
 <link rel="stylesheet" href="/themes/default/styles.css"></link>
 
-{{ _head | raw }}
+{{ __head | raw }}
 
 </head>
 <body class="index-pages">
@@ -27,15 +27,15 @@
 
 <div class="posts">
 
-    {% for i in range(0, 3) %}
-        {% include('_post-card.twig') %}
+    {% for post in _posts %}
+        {% include '_post-card.twig'  %}
     {% endfor %}
 
 </div>
 
 {% include('_footer.twig') %}
 
-{{ _foot | raw }}
+{{ __foot | raw }}
 
 </body>
 

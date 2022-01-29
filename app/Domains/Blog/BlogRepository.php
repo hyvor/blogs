@@ -4,6 +4,7 @@ namespace App\Domains\Blog;
 
 use App\Models\Blog;
 use App\Models\User;
+use Illuminate\Support\Facades\App;
 
 class BlogRepository
 {
@@ -29,7 +30,9 @@ class BlogRepository
         $slug = trim($slug, '/');
 
         $domain = self::getDomain($blog);
+        
+        $protocol = App::environment('local') ? 'http://' : 'https://';
 
-        return 'https://' . $domain . ($slug ? '/' . $slug : '');
+        return $protocol . $domain . ($slug ? '/' . $slug : '');
     }
 }

@@ -14,6 +14,8 @@ use Symfony\Component\Routing\RequestContext;
 use App\Data\Enums\ThemeFileFolderEnum;
 use App\Data\Enums\DeliveryAPIScopeEnum;
 use App\Domains\BlogTheme\BlogThemeTemplateRepository;
+use App\Domains\Delivery\DeliveryRepository;
+use App\Domains\Post\PostRepository;
 use ScssPhp\ScssPhp\Compiler;
 use Symfony\Component\Routing\Exception\ResourceNotFoundException;
 
@@ -21,7 +23,6 @@ class DeliveryAPIController
 {
     public function handle(Request $request, Blog $blog)
     {
-
         /**
          * Delivery API says "how to serve a path"
          *
@@ -31,115 +32,20 @@ class DeliveryAPIController
          *
          * Returns an output as specified [here]()
          */
-        $path = $request->route('path') ?? '';
 
-        if (!preg_match('/^\//', $path)) {
-            $path = '/' . $path; // add leading slash (otherwise matcher doesn't work)
-        }
+        $response = DeliveryRepository::getHtml(
+            $blog,
+            $request->route('path') ?? '',
+            [
+                'page' => $request->input('page')
+            ]
+        );
 
-        /**
-         * from https://symfony.com/doc/current/create_framework/routing.html
-         */
-        $route = new RouteCollection();
-
-        /**
-         * Adds the routes to match
-         *
-         * Important!
-         *  dynamic matches these:
-         *      - redirects
-         *      - posts or pages (from slugs)
-         *      - custom pages (from theme files)
-         */
-
-        // assets
-        $route->add('assets', new Route('/assets/{fileName}'));
-        $route->add('styles', new Route('/styles.css'));
-
-        // scopes
-        $route->add('tag', new Route('/tag/{slug}'));
-        $route->add('author', new Route('/author/{slug}'));
-        $route->add('search', new Route('/search/{slug}'));
-        $route->add('index', new Route('/'));
-
-        $context = new RequestContext();
-        $matcher = new UrlMatcher($route, $context);
-
-
-        $returnObj = null;
-
-        try {
-            $props = $matcher->match($path);
-            $type = $props['_route'];
-        } catch (ResourceNotFoundException) {
-            $type = null;
-        }
-
-
-
-        if ($type === 'assets') {
-
-            /**
-             * asset is simple.
-             * Just get the file and return it
-             */
-
-            $fileName = $props['fileName'];
-            $file = BlogThemeRepository::getFile($blog->id, $fileName, 'assets');
-
-            if (!$file) {
-                return self::notFound();
-            }
-
-            $extension = pathinfo($fileName, PATHINFO_EXTENSION);
-            $mimeType = MimeTypes::getMime($extension);
-
-            $returnObj = DeliveryAPIResponseObject::forFile($file->content, $mimeType);
-        } elseif ($type === 'styles') {
-
-            /**
-             * Process all SCSS files
-             */
-
-            $files = BlogThemeRepository::getFilesInFolder($blog->id, ThemeFileFolderEnum::STYLES);
-
-            $filesArray = [];
-            foreach ($files as $file) {
-                $filesArray[$file->name] = $file->content;
-            }
-
-            $scssCompiler = new Compiler();
-            $scssCompiler->registerFiles($filesArray);
-
-            $css = $scssCompiler->compileFile('index.scss')->getCss();
-
-            $returnObj = DeliveryAPIResponseObject::forFile($css, 'text/css');
-        } elseif (
-            $type === 'tag' ||
-            $type === 'author' ||
-            $type === 'index' ||
-            $type === 'search'
-        ) {
-            $scope = DeliveryAPIScopeEnum::from($type);
-
-            $html = BlogThemeTemplateRepository::renderFile(
-                $blog,
-                $scope,
-                $request->input('slug'),
-                $request->input('page'),
-            );
-
-            $returnObj = DeliveryAPIResponseObject::forFile($html, 'text/html');
-        } else {
-            $slug = trim($path, '/');
-        }
-
-        return $returnObj ? response()->json($returnObj) : self::notFound();
+        return $response ? response()->json($response) : self::notFound();
     }
 
     private static function notFound()
     {
-
         return response()->json(DeliveryAPIResponseObject::forFile('404', 'text/html', 404));
     }
 }

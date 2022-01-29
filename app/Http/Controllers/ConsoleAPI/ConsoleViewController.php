@@ -15,7 +15,11 @@ class ConsoleViewController extends Controller
 
         $config = [
             'hyvorAccount' => $hyvor,
-            'blogs' => $blogs
+            'blogs' => $blogs,
+            'domains' => [
+                'app' => config('blogs.domain_app'),
+                'delivery' => config('blogs.domain_delivery')
+            ]
         ];
 
         return view('console', ['config' => $config]);

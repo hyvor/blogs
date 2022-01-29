@@ -2,6 +2,7 @@
 
 namespace App\Domains\User;
 
+use App\Data\Objects\ConsoleAPI\UserBlog\UserBlogObject;
 use App\Models\Blog;
 use App\Models\User;
 use App\Domains\User\Types\UserBlogOutputConsoleType;
@@ -23,7 +24,7 @@ class UserRepository
             ->with('blog', 'blog.subscriptions')
             ->get()
             ->map(function ($user) {
-                return new UserBlogOutputConsoleType($user);
+                return new UserBlogObject($user);
             });
     }
 
