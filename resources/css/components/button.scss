@@ -46,4 +46,8 @@
     &.danger {
         background: $color-red;
     }
+    &.light {
+        border: 1px solid transparent;
+        color: $color-accent;
+    }
 }

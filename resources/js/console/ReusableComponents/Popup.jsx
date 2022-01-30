@@ -37,3 +37,31 @@ PopupFooterSingleButton.propTypes = {
     name: PropTypes.string.isRequired,
     onClick: PropTypes.func.isRequired
 }
+
+// assuming cancel and main buttons
+export function PopupFooterDoubleButton( {onCancel, cancelName, onClick, name, buttonClass = ''} ) {
+    return <div className="popup-footer-single">
+        <button className="button text-only" onClick={onCancel}>{cancelName || "Cancel"}</button>
+        <button className={"button " + buttonClass} onClick={onClick}>{name}</button>
+    </div>
+}
+
+
+export function PopupConfirm( { title, text, name, buttonClass, onClick, onCancel } ) {
+
+    return <Popup 
+        header={<PopupHeaderDefault title={title} />}
+        body={
+            <PopupBodyDefault>{text}</PopupBodyDefault>
+        }
+        footer={
+            <PopupFooterDoubleButton
+                name={name}
+                onClick={onClick}
+                onCancel={onCancel}
+                buttonClass={buttonClass}
+            />
+        }
+    />
+
+}

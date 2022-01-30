@@ -77,12 +77,10 @@ Route::prefix('/api/console/v0/blog/{subdomain}')
     Route::delete('/subscription', []);
 
     // redirects CRUD
-    Route::get('/redirect', [ConsoleRedirectController::class, 'getRedirect']);
+    Route::get('/redirect', [ConsoleRedirectController::class, 'getRedirects']);
     Route::post('/redirect', [ConsoleRedirectController::class, 'createRedirect']);
-    Route::get('/deleteRedirect/{id}', [ConsoleRedirectController::class, 'deleteRedirect']);
-    Route::get('/updateRedirect/{id}', [ConsoleRedirectController::class, 'showData']);
-    Route::post('/updateRedirect', [ConsoleRedirectController::class, 'updateRedirect']);
-
+    Route::put('/redirect/{id}', [ConsoleRedirectController::class, 'updateRedirect']);
+    Route::delete('/redirect/{id}', [ConsoleRedirectController::class, 'deleteRedirect']);
 
     // settings RU
     Route::get('/settings', []);

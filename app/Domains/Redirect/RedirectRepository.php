@@ -12,45 +12,71 @@ use Illuminate\Http\Request;
 
 use App\Models\Redirect;
 
-
-
 Class RedirectRepository
 {
-    public static function getRedirects(){
-        return Redirect::get();
-        // return 'get the redirect data ';
+    /*
+    *
+    * This function will get all the redirect data from the database.
+    *
+    */
+    public static function getRedirects( int $blogID)
+    {
+        return Redirect::where('blog_id','=', $blogID)
+            ->offset(0)
+            ->limit(100)
+            ->latest()
+            ->get();
+        // return Redirect::paginate(7);
     }
 
-    public static function createRedirects(Request $req ){
-        $redirect = new Redirect;
-        $redirect->blog_id=$req->blog_id;
-        $redirect->old_url=$req->old_url;
-        $redirect->new_url=$req->new_url;
-        $redirect->type=$req->type;
+    /*
+    *
+    * This function will create new redirect data and save it in the database.
+    *
+    */
+    public static function createRedirect(int $blogID, string $oldURL, string $newURL, $type )
+    {
+        return Redirect::create([
+            'blog_id' => $blogID,
+            'old_url' => $oldURL,
+            'new_url' => $newURL,
+            'type' => $type, 
+        ]);
+    }
+
+    /*
+    *
+    * This function will update an existing redirect and save it in the database.
+    *
+    */
+    public static function updateRedirect(int $blogID ,int $id, string $oldURL, string $newURL, $type){
+
+        // return Redirect::find($id)
+        // ->create([
+        //     'blog_id' => $blogID,
+        //     'old_url' => $oldURL,
+        //     'new_url' => $newURL,
+        //     'type' => $type, 
+        // ]);
+
+        $redirect = Redirect::find($id);
+        $redirect->old_url=$oldURL;
+        $redirect->new_url=$newURL;
+        $redirect->type=$type;
 
         $redirect->save();
-        // return Redirect::create(
-        //     ['blog_id' =>'1'],
-        //     ['old_url' =>'this is an old website'],
-        //     ['new_url' =>'this is an new webdite'],
-        //     ['type' =>'301'],
-        // );
     }
 
-    public static function deleteRedirects($id){
+    /*
+    *
+    * This function will delete an redirect from the database.
+    *
+    */
+    public static function deleteRedirect(int $id){
         $data = Redirect::find($id);
         $data->delete();
     }
 
-    public static function updateRedirects(Request $req){
-        $redirect = Redirect::find($req->id);
-        $redirect->blog_id=$req->blog_id;
-        $redirect->old_url=$req->old_url;
-        $redirect->new_url=$req->new_url;
-        $redirect->type=$req->type;
-
-        $redirect->save();
-    }
 }
 
 

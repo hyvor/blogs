@@ -2,7 +2,7 @@
 
 <form action="" method="POST">
     @csrf 
-    <input type="text" name = "blog_id" placeholder="enter the blog_id"> <br><br>
+    <!-- <input type="text" name = "blog_id" placeholder="enter the blog_id"> <br><br> -->
     <input type="text" name = "old_url" placeholder="enter the old_url"> <br><br>
     <input type="text" name = "new_url" placeholder="enter the new_url"> <br><br>
     <input type="text" name = "type" placeholder="enter the type"> <br><br>
@@ -25,7 +25,15 @@
         <td>{{$i['old_url']}}</td>
         <td>{{$i['new_url']}}</td>
         <td>{{$i['type']}}</td>
-        <td><a href ="{{'/api/console/v0/blog/supun/deleteRedirect/'.$i['id']}}">delete</a></td>
+        <!-- <td>
+            <form method="DELETE">
+                @method('DELETE')
+                @csrf
+                <a href ="{{'/api/console/v0/blog/supun/deleteRedirect/'.$i['id']}}">delete</a>
+            </form>
+        </td> -->
+
+        <td><a href ="{{'/api/console/v0/blog/supun/redirect/'.$i['id']}}">delete</a></td>
         <td><a href = "{{'/api/console/v0/blog/supun/updateRedirect/'.$i['id']}}">update</a></td>
 
         <!-- <td><a href="redirect/"$i['id']>delete</a></td> -->
