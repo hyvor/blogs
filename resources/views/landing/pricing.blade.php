@@ -14,7 +14,7 @@ $pricingRow = '<tr>
                     <div class="plan-price"><span class="price">Free</span></div>
                 </th>
                 <th>
-                    <div class="plan-name">Personal Pro</div>
+                    <div class="plan-name">Pro</div>
                     <div class="plan-price">
                         <div class="price">$20</div>
                         <div class="price-details">

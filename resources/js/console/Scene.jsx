@@ -1,4 +1,5 @@
 import { useMountedLogic, useValues } from 'kea'
+import Billing from './Billing/Billing'
 import BlogPreview from './BlogPreview/BlogPreview'
 import blogsLogic from './logic/blogsLogic'
 import sceneLogic from './logic/sceneLogic'
@@ -11,6 +12,7 @@ export const scenes = {
     blogPreview: () => <BlogPreview />,
     posts: ({ postId }) => <Posts postId={postId} />,
     settings: ({type}) => <Settings type={type} />,
+    billing: () => <Billing />
 }
 
 

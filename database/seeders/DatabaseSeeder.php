@@ -34,6 +34,10 @@ class DatabaseSeeder extends Seeder
                 'name' => $blogData[1],
             ]);
 
+            $blog->createAsCustomer([
+                'trial_ends_at' => now()->addDays(30)
+            ]);
+
             User::create([
                 'blog_id' => $blog->id,
                 'user_id' => $blog->user_id,

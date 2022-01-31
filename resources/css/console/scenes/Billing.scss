@@ -1,0 +1,140 @@
+@import '../../colors.scss';
+
+.billing-view {
+    height:100%;
+    display: flex;
+
+    .billing-column {
+        display:flex;
+        flex:1;
+        flex-direction: column;
+    }
+
+    .billing-section {
+        margin:5px;
+        padding:20px 25px;
+        .section-title {
+            font-size: 20px;
+            font-weight: 600;
+            margin-bottom: 15px;
+
+            &.plans-title {
+                display:flex;
+                align-items: center;
+                .title {
+                    flex:1;
+                }
+                .frequency-selector {
+                    font-size: 12px;
+                    font-weight: initial;
+                    background: $color-accent-light;
+                    border-radius: 20px;
+                    padding:2px 0;
+                    span {
+                        border-radius: 20px;
+                        padding: 2px 6px;
+                        cursor: pointer;
+                        font-weight: 600;
+                        &.active {
+                            background: $color-accent;
+                            color: $color-text-white;
+                        }
+                    }
+                }
+            }
+        }
+        .section-content {
+            .plans {
+                .plan {
+                    padding: 15px;
+                    border-radius: 20px;
+                    background: $color-card;
+                    margin-bottom: 10px;
+                    display:flex;
+                    .plan-left {
+                        flex:1;
+                        align-items: center;
+                        display: flex;
+                    }
+                    .plan-name {
+                        font-size: 16px;
+                        font-weight: 600;
+                    }
+                    .plan-price {
+                        font-size:14px;
+                        font-weight: 600;
+                        margin-right: 10px;
+                    }
+                    .plan-button {
+                        
+                    }
+
+                    .team-users-selector {
+                        margin-left: 10px;
+                        border-radius: 20px;
+                        overflow: hidden;
+                        display: inline-flex;
+                        align-items: center;
+                        user-select: none;
+                        .minus, .plus {
+                            margin-right: 4px;
+                            width:20px;
+                            height:20px;
+                            display: inline-flex;
+                            align-items: center;
+                            justify-content:center;
+                            border-radius: 50%;
+                            background: $color-accent-light;
+                            font-weight: 600;
+                            cursor: pointer;
+                        }
+                        .count {
+                            margin-right:4px;
+                        }
+                    }
+                }
+            }
+        }
+    }
+
+    .subscription-details {
+
+        .details-row {
+            display: flex;   
+            margin-bottom:15px;
+            .details-card {
+                flex: 1;
+                text-align: center;
+                background: $color-card;
+                margin-right: 8px;
+                border-radius: 20px;
+                padding:15px;
+            }
+            .card-content {
+                font-size: 20px;
+                text-transform: capitalize;
+                font-weight: 600;
+                margin-top: 5px;
+                .helper-text {
+                    font-size:14px;
+                    text-transform: initial;
+                    font-weight: normal;
+                }
+            }
+            .plan-status {
+                font-size: 12px;
+                padding: 5px 15px;
+                text-transform: uppercase;
+                border-radius: 20px;
+                &.active {
+                    background: $color-green;
+                    color: $color-text-white;
+                }
+            }
+        }
+
+
+
+    }
+
+}

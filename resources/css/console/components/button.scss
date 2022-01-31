@@ -51,4 +51,8 @@
     &.danger {
         background: $color-red;
     }
+
+    &.disabled {
+        cursor: not-allowed;
+    }
 }

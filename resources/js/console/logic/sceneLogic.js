@@ -5,6 +5,7 @@ const routes = {
     '/:subdomain/posts(/:postId)': 'posts',
     '/:subdomain/pages(/:page)': 'posts',
     '/:subdomain': 'blogPreview',
+    '/:subdomain/billing': 'billing',
     '/:subdomain/settings(/:type)': 'settings'
 }
 

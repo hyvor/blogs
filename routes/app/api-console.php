@@ -4,12 +4,13 @@ use App\Http\Controllers\ConsoleAPI\ConsoleBlogController;
 use App\Http\Controllers\ConsoleAPI\ConsoleEmbedController;
 use App\Http\Controllers\ConsoleAPI\ConsoleMediaController;
 use App\Http\Controllers\ConsoleAPI\ConsolePostController;
+use App\Http\Controllers\ConsoleAPI\ConsoleSubscriptionController;
 use App\Http\Controllers\ConsoleAPI\ConsoleUserController;
 use App\Http\Controllers\ConsoleAPI\ConsoleViewController;
 use App\Http\Middleware\App\ConsoleAPI\BlogAccessMiddleware;
 use App\Http\Middleware\App\SubdomainMiddleware;
 use Illuminate\Support\Facades\Route;
-
+use SebastianBergmann\Environment\Console;
 
 Route::get('/console/{any?}', ConsoleViewController::class)->where('any', '.*');
 
@@ -86,10 +87,10 @@ Route::prefix('/api/console/v0/blog/{subdomain}')
     Route::delete('/navigation/{id}', []);
 
     // billing CRUD
-    Route::get('/subscription', []);
-    Route::post('/subscription', []);
-    Route::patch('/subscription', []);
-    Route::delete('/subscription', []);
+    Route::get('/subscription', [ConsoleSubscriptionController::class, 'getData']);
+    Route::post('/subscription', [ConsoleSubscriptionController::class, 'createPayLink']);
+    Route::patch('/subscription', [ConsoleSubscriptionController::class, 'updateSubscription']);
+    Route::delete('/subscription', [ConsoleSubscriptionController::class, 'cancelSubscription']);
 
     // settings RU
     Route::get('/settings', []);
