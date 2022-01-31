@@ -19,7 +19,7 @@ class CreateUsersTable extends Migration
 
             // connection
             $table->bigInteger('blog_id');
-            $table->bigInteger('user_id'); // hyvor user ID
+            $table->bigInteger('user_id')->nullable(); // hyvor user ID
             $table->boolean('is_synced', true)->default(false); // synced with hyvor data
 
             $table->enum('status', ['invited', 'active', 'blocked'])->default('invited');

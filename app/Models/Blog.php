@@ -21,4 +21,18 @@ class Blog extends Model
     {
         return $this->hasMany(Post::class);
     }
+
+    public function counts() 
+    {
+        return $this->morphMany(Count::class, 'countable');
+    }
+
+    /**
+     * Get a count
+     */
+    public function count(string $name)
+    {
+        return $this->counts()->where('name', $name)->value('value');
+    }
+
 }

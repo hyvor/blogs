@@ -235,7 +235,7 @@ function Usage({subdomain}) {
                 percentage={90}
             />
             <UsageBar 
-                name="Pages"
+                name="Posts"
                 now={10}
                 full={100} 
                 percentage={10}
@@ -247,7 +247,7 @@ function Usage({subdomain}) {
                 percentage={10}
             />
             <div className="section-desc">
-                Usage data is updated every 12 hours.
+                Usage data is updated every 24 hours.
             </div>
         </div>
 
