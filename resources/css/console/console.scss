@@ -134,11 +134,13 @@ body {
 }
 
 #middle {
-    position:absolute;
-    top:15px;
-    left:280px;
-    right:15px;
-    bottom:15px;
+    position: absolute;
+    top: 0;
+    left: 265px;
+    right: 0;
+    bottom: 0;
+    overflow: auto;
+    padding: 15px;
 
     .posts-view {
         display:flex;

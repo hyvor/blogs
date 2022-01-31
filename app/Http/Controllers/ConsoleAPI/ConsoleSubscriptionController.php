@@ -5,6 +5,7 @@ use App\Data\Objects\ConsoleAPI\BlogSubscription\ReceiptObject;
 use App\Data\Objects\ConsoleAPI\BlogSubscription\SubscriptionInfoObject;
 use App\Data\Objects\ConsoleAPI\BlogSubscription\SubscriptionObject;
 use App\Domains\Subscription\SubscriptionRepository;
+use App\Domains\Subscription\UsageRepository;
 use App\Http\Controllers\Controller;
 use App\Models\Blog;
 use Illuminate\Http\Request;
@@ -19,13 +20,13 @@ class ConsoleSubscriptionController extends Controller {
             return new ReceiptObject($receipt);
         });
 
-        $info = new SubscriptionInfoObject($blog);
+        $info = $blog->subscription() ? new SubscriptionInfoObject($blog) : null;
 
         $subscriptions = SubscriptionRepository::getAllSubscriptions($blog)->map(function (Subscription $subscription) {
             return new SubscriptionObject($subscription);
         });
 
-        $usage = SubscriptionRepository::getUsage();
+        $usage = UsageRepository::getUsage($blog);
 
         return response()->json([
             'receipts' => $receipts,

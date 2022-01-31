@@ -18,4 +18,17 @@ class CountRepository {
 
     }
 
+    public static function getCounts(Model $model, array $names) {
+
+        $counts = $model->counts()->whereIn('name', $names)->get()->keyBy('name');
+
+        $ret = [];
+        foreach ($names as $name) {
+            $ret[$name] = $counts->get($name)?->value ?? 0;
+        }
+
+        return $ret;
+
+    }
+
 }

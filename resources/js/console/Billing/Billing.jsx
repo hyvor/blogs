@@ -1,12 +1,12 @@
-import dayjs from 'dayjs';
 import { useValues } from 'kea';
 import React, { useEffect, useState } from 'react'
 import { BoxArrowUpRight } from 'react-bootstrap-icons';
 import api from '../lib/api';
-import blogsLogic from '../logic/blogsLogic';
 import subdomainLogic from '../logic/subdomainLogic';
-import subscriptionLogic from '../logic/subscriptionLogic';
-import Loader from '../ReusableComponents/Loader';
+import BillingHistory from './BillingHistory';
+import SubscriptionDetails from './SubscriptionDetails';
+import SubscriptionHistory from './SubscriptionHistory';
+import { Usage } from './Usage';
 
 export default function Billing() {
 
@@ -128,7 +128,7 @@ export default function Billing() {
                     Billing History
                 </div>
                 <div className="section-content">
-                    <BillingHistory />
+                    <BillingHistory subdomain={subdomain} />
                 </div>
             </div>
             <div className="box billing-section">
@@ -136,155 +136,10 @@ export default function Billing() {
                     Subscription History
                 </div>
                 <div className="section-content">
-
+                    <SubscriptionHistory subdomain={subdomain} />
                 </div>
             </div>
         </div>
     </div>
 
-}
-
-function SubscriptionDetails({subdomain}) {
-
-    const { findBlogBySubdomain } = useValues(blogsLogic);
-
-    const { blog: { subscription: currentSubscription} } = findBlogBySubdomain(subdomain);
-
-    const { data, loadAjax } = useValues(subscriptionLogic({subdomain}));
-
-    return <div className="subscription-details">
-        { 
-            loadAjax.status === 'loading' ?
-            <BillingLoader /> :
-            <div>
-                <div className="details-row">
-                    <div className="details-card">
-                        <div className="card-title">
-                            Current Plan
-                        </div>
-                        <div className="card-content">
-                            { currentSubscription.plan }
-                        </div>
-                    </div>
-                    <div className="details-card">
-                        <div className="card-title">
-                            Plan Status
-                        </div>
-                        <div className="card-content">
-                            <span className={"plan-status " + currentSubscription.status}>
-                                { currentSubscription.status }
-                            </span>
-                        </div>
-                    </div>
-                </div>
-                <div className="details-row">
-                    <div className="details-card">
-                        <div className="card-title">
-                            Last Payment
-                        </div>
-                        <div className="card-content">
-                            <div>
-                                { data.info.last_payment } USD
-                            </div>
-                            <div className="helper-text">
-                                on { dayjs.unix(data.info.last_payment_at).format('MMM D, YYYY') }
-                            </div>
-                        </div>
-                    </div>
-                    <div className="details-card">
-                        <div className="card-title">
-                            Next Payment
-                        </div>
-                        <div className="card-content">
-                            {
-                                data.info.next_payment ?
-                                <div>
-                                    <div>
-                                        { data.info.next_payment } USD
-                                    </div>
-                                    <div className="helper-text">
-                                        on { dayjs.unix(data.info.next_payment_at).format('MMM D, YYYY') }
-                                    </div>
-                                    <div className="helper-text">
-                                        (in { dayjs.unix(data.info.next_payment_at).diff(dayjs(), 'd') } days)
-                                    </div>
-                                </div>
-                                : <div>-</div>
-                            }
-                        </div>
-                    </div>
-                </div>
-            </div>
-        }
-    </div>;
-
-}
-
-function Usage({subdomain}) {
-
-
-    const { data, loadAjax } = useValues(subscriptionLogic({subdomain}));
-
-    return loadAjax.status === 'loading' ?
-        <BillingLoader /> :
-        <div className="usage">
-            <UsageBar 
-                name="Users"
-                now={10}
-                full={11} 
-                percentage={90}
-            />
-            <UsageBar 
-                name="Posts"
-                now={10}
-                full={100} 
-                percentage={10}
-            />
-            <UsageBar 
-                name="Media Storage"
-                now="10GB"
-                full="100GB"
-                percentage={10}
-            />
-            <div className="section-desc">
-                Usage data is updated every 24 hours.
-            </div>
-        </div>
-
-}
-
-function UsageBar({name, now, full, percentage}) {
-
-    const [width, setWidth] = useState("0%");
-
-    const calcWidth = percentage + "%";
-    // animation
-    useEffect(() => {
-        setTimeout(() => {
-            setWidth(calcWidth);
-        }, 200);
-    }, []);
-
-    return <div className="usage-bar">
-        <div className="usage-bar-top">
-            <div className="usage-name">
-                { name }
-            </div>
-            <div className="usage-number">
-                <span className="usage-now">{now}</span>
-                <span className="usage-full">/ {full}</span>
-            </div>
-        </div>
-        <div className="usage-bar-bar">
-            <div className="usage-bar-fill" style={{width}}></div>
-        </div>
-    </div>
-}
-
-function BillingLoader() {
-    return <Loader style={{padding:40, textAlign: 'center'}} />
-}
-
-function BillingHistory() {
-    return null;
 }

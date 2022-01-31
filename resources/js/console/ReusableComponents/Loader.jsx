@@ -1,6 +1,6 @@
 
 
-export default function Loader({width, height, style}) {
+export default function Loader({width, height, padding = 0}) {
 
     const logo = <svg xmlns="http://www.w3.org/2000/svg" 
         width={width || 50} 
@@ -10,7 +10,7 @@ export default function Loader({width, height, style}) {
 
     return <div 
         className="global-loader"
-        style={style}>
+        style={{ padding }}>
         { logo }
     </div>;
 

@@ -55,7 +55,7 @@ export default function SettingsMedia() {
             {
 
                 loadAjax.status === 'loading' ?
-                <Loader style={{padding:200, textAlign: 'center'}} /> :
+                <Loader padding={200} /> :
 
                 (
                     media.length ? 
@@ -113,7 +113,7 @@ function Media({ isDummy, id, uploaded_at, url, name, extension, remove }) {
     if (isDummy) {
         imageUrl = null;
         content = <div className="loader-wrap">
-            <Loader />
+            <Loader padding={40} />
         </div>
     }
 

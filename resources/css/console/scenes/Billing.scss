@@ -11,8 +11,9 @@
     }
 
     .billing-section {
-        margin:5px;
-        padding:20px 25px;
+        margin:0 5px;
+        margin-bottom:10px;
+        padding:30px;
         .section-title {
             font-size: 20px;
             font-weight: 600;
@@ -174,6 +175,7 @@
             background: $color-accent-light;
             border-radius: 20px;
             position: relative;
+            overflow: hidden;
         }
         .usage-bar-fill {
             position: absolute;
@@ -183,6 +185,28 @@
             background: $color-accent;
             border-radius: 20px;
             transition: .3s width ease-out;
+        }
+
+    }
+
+    .billing-history {
+
+        .receipts-row {
+            display: flex;
+            padding: 10px 20px;
+            text-align: center;
+            &.header {
+                background: $color-card;
+                border-radius: 20px;
+                font-weight: 600;
+            }
+            & > div {
+                flex: 1;
+            }
+        }
+        .receipts-results-wrap {
+            max-height: 300px;
+            overflow: auto;
         }
 
     }

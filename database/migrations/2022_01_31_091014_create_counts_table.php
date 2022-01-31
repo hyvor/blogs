@@ -21,7 +21,7 @@ class CreateCountsTable extends Migration
             $table->string('countable_type');
 
             $table->string('name');
-            $table->string('value');
+            $table->bigInteger('value');
 
             $table->unique(['countable_id', 'countable_type', 'name']);
         });

@@ -30,7 +30,6 @@ class BlogCountJob implements ShouldQueue, ShouldBeUnique {
                             users.user_id IS NOT NULL AND 
                             users.status = "active"
                     ) as users,
-
                     (
                         SELECT COUNT(posts.id) 
                         FROM posts 

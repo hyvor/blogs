@@ -5,6 +5,11 @@ a.link {
     color: $color-accent;
     cursor: pointer;
     text-decoration: underline;
+    & > .icon {
+        text-decoration: none;
+        vertical-align: middle;
+        margin-left: 5px;
+    }
 }
 
 .input {
@@ -140,6 +145,7 @@ svg, img, span {
 
 
 .global-loader {
+    text-align: center;
     svg {
         animation: lds-heart 1.2s infinite cubic-bezier(0.215, 0.61, 0.355, 1);
     }

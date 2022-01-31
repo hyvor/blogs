@@ -145,9 +145,4 @@ class SubscriptionRepository
         return $blog->subscriptions()->get();
     }
 
-
-    public static function getUsage() {
-        return null;
-    }
-
 }

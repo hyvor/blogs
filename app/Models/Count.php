@@ -16,6 +16,10 @@ class Count extends Model
 {
     use HasFactory;
 
+    protected $casts = [
+        'value' => 'integer',
+    ];
+
     public function countable() 
     {
         $this->morphTo();
