@@ -1,6 +1,7 @@
 import dayjs from 'dayjs';
 import { useValues } from 'kea';
-import React, { useState } from 'react'
+import React, { useEffect, useState } from 'react'
+import { BoxArrowUpRight } from 'react-bootstrap-icons';
 import api from '../lib/api';
 import blogsLogic from '../logic/blogsLogic';
 import subdomainLogic from '../logic/subdomainLogic';
@@ -87,10 +88,20 @@ export default function Billing() {
                     </div>
                 </div>
                 <div className="section-content">
+
                     <div className="plans">
                         <Plan type="personal_pro" name="Personal Pro" />
                         <Plan type="team" name="Team" />
                         <Plan type="enterprise" name="Enterprise" />
+                    </div>
+                    <div className="section-desc">
+                        Prices are shown in USD, excluding VAT. <br/>
+                        <div>
+                            <a href="/pricing" className="link" target="_blank">
+                                Pricing & Features
+                            </a>
+                            &nbsp;<BoxArrowUpRight />
+                        </div>
                     </div>
                 </div>
             </div>
@@ -109,7 +120,7 @@ export default function Billing() {
                     Usage
                 </div>
                 <div className="section-content">
-
+                    <Usage subdomain={subdomain} />
                 </div>
             </div>
             <div className="box billing-section">
@@ -117,7 +128,7 @@ export default function Billing() {
                     Billing History
                 </div>
                 <div className="section-content">
-
+                    <BillingHistory />
                 </div>
             </div>
             <div className="box billing-section">
@@ -144,7 +155,7 @@ function SubscriptionDetails({subdomain}) {
     return <div className="subscription-details">
         { 
             loadAjax.status === 'loading' ?
-            <Loader style={{padding:40, textAlign: 'center'}} /> :
+            <BillingLoader /> :
             <div>
                 <div className="details-row">
                     <div className="details-card">
@@ -207,4 +218,73 @@ function SubscriptionDetails({subdomain}) {
         }
     </div>;
 
+}
+
+function Usage({subdomain}) {
+
+
+    const { data, loadAjax } = useValues(subscriptionLogic({subdomain}));
+
+    return loadAjax.status === 'loading' ?
+        <BillingLoader /> :
+        <div className="usage">
+            <UsageBar 
+                name="Users"
+                now={10}
+                full={11} 
+                percentage={90}
+            />
+            <UsageBar 
+                name="Pages"
+                now={10}
+                full={100} 
+                percentage={10}
+            />
+            <UsageBar 
+                name="Media Storage"
+                now="10GB"
+                full="100GB"
+                percentage={10}
+            />
+            <div className="section-desc">
+                Usage data is updated every 12 hours.
+            </div>
+        </div>
+
+}
+
+function UsageBar({name, now, full, percentage}) {
+
+    const [width, setWidth] = useState("0%");
+
+    const calcWidth = percentage + "%";
+    // animation
+    useEffect(() => {
+        setTimeout(() => {
+            setWidth(calcWidth);
+        }, 200);
+    }, []);
+
+    return <div className="usage-bar">
+        <div className="usage-bar-top">
+            <div className="usage-name">
+                { name }
+            </div>
+            <div className="usage-number">
+                <span className="usage-now">{now}</span>
+                <span className="usage-full">/ {full}</span>
+            </div>
+        </div>
+        <div className="usage-bar-bar">
+            <div className="usage-bar-fill" style={{width}}></div>
+        </div>
+    </div>
+}
+
+function BillingLoader() {
+    return <Loader style={{padding:40, textAlign: 'center'}} />
+}
+
+function BillingHistory() {
+    return null;
 }
