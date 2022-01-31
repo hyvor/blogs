@@ -17,7 +17,11 @@ export default function Billing() {
 
     function handleSubscriptionCreate() {
 
-        api.post(subdomain, '/subscription')
+        api.post(subdomain, '/subscription', {
+            plan: "team",
+            quantity: 3,
+            frequency: "monthly"
+        })
             .then(function (json) {
                 Paddle.Checkout.open({
                     override: json.payLink

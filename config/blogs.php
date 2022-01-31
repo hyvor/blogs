@@ -24,25 +24,25 @@ return [
             'price' => 20
         ],
         [
-            'id' => env('APP_ENV') !== 'production' ? 21527 : 0,
+            'id' => env('APP_ENV') !== 'production' ? 21526 : 0,
             'name' => 'team',
             'frequency' => 'monthly',
             'price' => 8
         ],
         [
-            'id' => env('APP_ENV') !== 'production' ? 21526 : 0,
+            'id' => env('APP_ENV') !== 'production' ? 21527 : 0,
             'name' => 'team',
             'frequency' => 'yearly',
             'price' => 60
         ],
         [
-            'id' => env('APP_ENV') !== 'production' ? 21529 : 0,
+            'id' => env('APP_ENV') !== 'production' ? 21528 : 0,
             'name' => 'enterprise',
             'frequency' => 'monthly',
             'price' => 800
         ],
         [
-            'id' => env('APP_ENV') !== 'production' ? 21528 : 0,
+            'id' => env('APP_ENV') !== 'production' ? 21529 : 0,
             'name' => 'enterprise',
             'frequency' => 'monthly',
             'price' => 6000

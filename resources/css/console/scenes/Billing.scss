@@ -202,11 +202,37 @@
             }
             & > div {
                 flex: 1;
+                text-transform: capitalize;
             }
         }
         .receipts-results-wrap {
             max-height: 300px;
             overflow: auto;
+        }
+
+        &.subscription-history {
+            .status-tag {
+                display: inline-block;
+                padding: 2px 10px;
+                border-radius: 20px;
+                font-size: 10px;
+                font-weight: 600;
+                text-transform: uppercase;
+                color: $color-text-white;
+                &.active {
+                    background-color: $color-green;
+                }
+                &.past-due {
+                    background-color: $color-orange;
+                    color: $color-text;
+                }
+                &.paused {
+                    background-color: $color-blue;
+                }
+                &.deleted {
+                    background-color: $color-red;
+                }
+            }
         }
 
     }
