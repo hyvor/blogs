@@ -27,9 +27,7 @@ export default function SubscriptionHistory({subdomain}) {
                     <div className="receipts-results-wrap">
                     {
                         data.subscriptions.map(subscription => {
-
-                            subscription.status = 'deleted';
-
+                            
                             let statusClass = subscription.status
                             let statusName = subscription.status;
                             if (subscription.status === 'past_due') {
@@ -51,7 +49,7 @@ export default function SubscriptionHistory({subdomain}) {
                     } 
                     </div>
                 </div>:
-                <NoResults text="No previous payments" />
+                <NoResults text="No subscriptions" />
             }
         </div>
     }

@@ -217,6 +217,36 @@ svg, img, span {
 
 }
 
+.global-callout {
+
+    padding: 15px;
+    border-radius: 20px;    
+    margin: 15px 0;
+
+    .text {
+        margin-top:4px;
+    }
+    .title {
+        font-size: 16px;
+        font-weight: 600;
+        .icon {
+            margin-right:6px;
+            display: inline-flex;
+            align-items: center;
+        }
+    }
+
+    &.blue {
+        background: $color-blue-light;
+        color: $color-blue-dark;
+    }
+    &.orange {
+        background: $color-orange-light;
+        color: $color-orange-dark;
+    }
+
+}
+
 
 // toast
 :root {

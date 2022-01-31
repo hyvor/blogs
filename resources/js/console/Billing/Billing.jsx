@@ -4,7 +4,7 @@ import { BoxArrowUpRight } from 'react-bootstrap-icons';
 import api from '../lib/api';
 import subdomainLogic from '../logic/subdomainLogic';
 import BillingHistory from './BillingHistory';
-import SubscriptionDetails from './SubscriptionDetails';
+import CurrentSubscription from './CurrentSubscription';
 import SubscriptionHistory from './SubscriptionHistory';
 import { Usage } from './Usage';
 
@@ -18,8 +18,8 @@ export default function Billing() {
     function handleSubscriptionCreate() {
 
         api.post(subdomain, '/subscription', {
-            plan: "team",
-            quantity: 3,
+            plan: "enterprise",
+            quantity: 1,
             frequency: "monthly"
         })
             .then(function (json) {
@@ -92,7 +92,6 @@ export default function Billing() {
                     </div>
                 </div>
                 <div className="section-content">
-
                     <div className="plans">
                         <Plan type="personal_pro" name="Personal Pro" />
                         <Plan type="team" name="Team" />
@@ -111,10 +110,10 @@ export default function Billing() {
             </div>
             <div className="box billing-section">
                 <div className="section-title">
-                    Subscription Details
+                    Current Subscription
                 </div>
                 <div className="section-content">
-                    <SubscriptionDetails subdomain={subdomain} />
+                    <CurrentSubscription subdomain={subdomain} />
                 </div>
             </div>
         </div>

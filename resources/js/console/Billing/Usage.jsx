@@ -18,7 +18,7 @@ export function Usage({subdomain}) {
             />
             <UsageBar 
                 name="Posts"
-                data={data.usage.users}
+                data={data.usage.posts}
             />
             <UsageBar 
                 name="Media Storage"
@@ -58,7 +58,7 @@ function UsageBar({name, data, bytes}) {
             </div>
             <div className="usage-number">
                 <span className="usage-now">{current}</span>
-                <span className="usage-full">/ {total}</span>
+                <span className="usage-full">/ {total === 0 ? "∞" : total}</span>
             </div>
         </div>
         <div className="usage-bar-bar">

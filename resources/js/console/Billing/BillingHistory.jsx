@@ -10,12 +10,6 @@ export default function BillingHistory({subdomain}) {
 
     const { data, loadAjax } = useValues(subscriptionLogic({subdomain}));
 
-    if (data.receipts && data.receipts.length) {
-    for (var i = 0; i < 100; i++) {
-        data.receipts.push(data.receipts[0]);
-    }
-}
-
     return <div className="billing-history">
         { 
             loadAjax.status === 'loading' ?

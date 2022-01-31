@@ -222,12 +222,9 @@
                 &.active {
                     background-color: $color-green;
                 }
-                &.past-due {
+                &.past-due, &.paused {
                     background-color: $color-orange;
                     color: $color-text;
-                }
-                &.paused {
-                    background-color: $color-blue;
                 }
                 &.deleted {
                     background-color: $color-red;

@@ -21,7 +21,7 @@ class SubscriptionObject {
 
     public function __construct(Subscription $subscription) {
 
-        $this->status = $subscription->paddle_status;
+        $this->status = 'paused'; // $subscription->paddle_status;
         $this->quantity = $subscription->quantity;
 
         $planConfig = SubscriptionRepository::getPlanConfigById($subscription->paddle_plan);
