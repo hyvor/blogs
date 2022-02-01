@@ -30,6 +30,11 @@ const api = {
     patch: async (subdomain, endpoint, data = {}) => {
         const res = await axios.patch(getEndpoint(subdomain, endpoint), data);
         return res.data;
+    },
+
+    put: async (subdomain, endpoint, data = {}) => {
+        const res = await axios.put(getEndpoint(subdomain, endpoint), data);
+        return res.data;
     }
 
 }

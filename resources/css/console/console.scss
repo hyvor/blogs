@@ -663,22 +663,24 @@ body {
                     background-size: 10px;
                     padding-right: 30px;
 
-
                     .redirect-type-option {
                         background-color: black;
                     }
-                    // .redirect-select option{
-                    //     background-color: black;
-                    // }
                 }
                 .redirect-select::after{
                     font-size: 5px;
                 }
+                .react-redirect-select{
+                    width: 12%;
+                    display: inline-block;
 
-                // .redirect-select option{
-                //     background-color: black;
-                // }
-                
+                    .inside-select{
+                        flex:1;
+                        // margin-right:3px;
+                        // padding-top: 10px;
+                        // padding-bottom: 10px;
+                    }
+                }
                 .redirect-button{
                     margin-left: 20px;
                     padding-left: 15px;
@@ -694,6 +696,25 @@ body {
                     transition:.1s background-color;
                     &:hover {
                         background-color: $color-hover;
+                    }
+                    .redirect-update{
+                        display: inline-block;
+                        width: 100%;
+                    }
+                    .redirect-update-input{
+                        width: 32%;
+                        padding: 9px 15px;
+                        border-radius: 20px;
+                        background: #f1e8e8;
+                        font-family: inherit;
+                        transition: 0.3s box-shadow;
+                        padding-top: 12px;
+                        margin-right: 10px;
+                        border: none;
+                        outline: none;
+                    }
+                    .redirect-update-button{
+                        margin-left: 10px;
                     }
                 }
                 .redirect-top-bar {
@@ -738,6 +759,13 @@ body {
                     font-size: 12px;
                     font-weight: 600;
                     cursor: pointer;
+                }
+                .redirect-cancel-button{
+                    background-color: $color-accent-light;
+                    margin-left: 10px;
+                    padding-left: 15px;
+                    padding-right: 15px;
+                    color: $color-accent;
                 }
             }
         }

@@ -1,6 +1,7 @@
 import { kea } from "kea";
-import { update } from "lodash";
 import api from "../lib/api";
+import axios from 'axios';
+
 
 
 const redirectsLogic = kea({
@@ -41,16 +42,14 @@ const redirectsLogic = kea({
             actions.addRedirect(redirect);
         },
 
-        update: async ({id}) => {
-            // const redirect = await api.put(props.subdomain, `/redirect/${id}`, {
-            //     old_url: old_url,
-            //     new_url: new_url,
-            //     type: type 
-            // });
-            // actions.updateRedirect(redirect);
-            console.log('The id has come here now');
-        }
-
+        updateData: async ({userId, oldUrl, newUrl, type}) => {
+            const redirect = await api.put(props.subdomain, `/redirect/${userId}`, {
+                    old_url: oldUrl,
+                    new_url: newUrl,
+                    type: type 
+                });
+            actions.addRedirect(redirect);
+        },
     }),
 
     reducers: {
@@ -59,10 +58,8 @@ const redirectsLogic = kea({
             setRedirectList: (_, {redirect}) => redirect,
             removeFromList: (state, {id}) => state.filter(m => m.id !== id),
             addRedirect: (state, {redirect}) => [redirect, ...state],
-            updateRedirect: (state, {id}) => state.filter(m => m.id !== id)
-
+            updateRedirect: (state, {redirect}) => [redirect, ...state],
         }]
-
     },
 
     events: ({actions}) => ({
