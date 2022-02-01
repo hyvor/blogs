@@ -19,8 +19,12 @@ const subscriptionLogic = kea({
             actions.setData(data);
         },
 
-        createSubscription: async () => {
-
+        createSubscription: async ({ onLoad, plan, frequency, quantity }) => {
+            const data = await api.post(props.subdomain, '/subscription', {
+                plan, frequency, quantity
+            });
+            actions.setPayLink(data.payLink);
+            onLoad(data.payLink);
         },
 
         updateSubscription: async () => {
@@ -47,7 +51,7 @@ const subscriptionLogic = kea({
          */
         data: [{}, {
             setData: (_, {data}) => data
-        }]
+        }],
     },
 
     events: ({actions}) => ({

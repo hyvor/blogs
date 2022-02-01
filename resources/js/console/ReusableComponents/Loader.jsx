@@ -15,3 +15,12 @@ export default function Loader({width, height, padding = 0}) {
     </div>;
 
 }
+
+export function FullPageLoader({text}) {
+
+    return <div className="global-full-page-loader">
+        <Loader />
+        <div className="text">{text}</div>
+    </div>
+
+}
