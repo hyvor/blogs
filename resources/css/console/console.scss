@@ -676,19 +676,20 @@ body {
 
                     .inside-select{
                         flex:1;
-                        // margin-right:3px;
-                        // padding-top: 10px;
-                        // padding-bottom: 10px;
                     }
                 }
+                .react-select-style{
+                    padding:10px;
+                }
                 .redirect-button{
-                    margin-left: 20px;
+                    margin-left: 5px;
                     padding-left: 15px;
                     padding-right: 15px;
                 }
                 // Redirect display section
                 .redirect-row {
                     display: flex;
+                    width: 100%;
                     align-items: center;
                     padding: 15px;
                     cursor: pointer;
@@ -702,8 +703,8 @@ body {
                         width: 100%;
                     }
                     .redirect-update-input{
-                        width: 32%;
-                        padding: 9px 15px;
+                        width: 36%;
+                        padding: 9px 10px;
                         border-radius: 20px;
                         background: #f1e8e8;
                         font-family: inherit;
@@ -716,13 +717,35 @@ body {
                     .redirect-update-button{
                         margin-left: 10px;
                     }
+                    .redirect-display-data-one{
+                        // flex: 1;
+                        width: 39%;
+                        // height: 100%;
+                        // background: purple;
+                    }
+                    .redirect-display-data-two{
+                        width: 39%;
+                    }
+                    .redirect-display-data-three{
+                        width: 12%;
+                    }
+                    .redirect-display-data-four{
+                        display: inline-flex;
+                        width: 10%;
+                        .redirect-delete{
+                            margin-right: 30px;
+                        }
+                        .redirect-edit{
+                            margin-right: 15px ;
+                        }
+                    }
                 }
                 .redirect-top-bar {
                     margin-bottom: 15px;
                     margin-left: 10px;
                     margin-top: 10px;
                     font-weight: 600;
-                    padding: 10px 10px 10px 15px;
+                    padding: 10px 10px 10px 5px;
                     border-radius: 40px;
                     flex: 1;
                     align-items: center;
@@ -730,8 +753,8 @@ body {
                     display: flex;
                     margin-right: 20px;
 
-                    .redirect-new-url-top{
-                        margin-left: -70px;
+                    .redirect-top-bar-right{
+                        margin-left: 125px;
                     }
                 }
                 .redirect-left {
@@ -760,12 +783,27 @@ body {
                     font-weight: 600;
                     cursor: pointer;
                 }
-                .redirect-cancel-button{
-                    background-color: $color-accent-light;
+                .redirect-update-form-button{
+                    // background-color: $color-accent-light;
+                    // margin-left: 10px;
+                    // padding-left: 15px;
+                    // padding-right: 15px;
+                    // color: $color-accent;
+                    border-radius: 20px;
+                    border: none;
+                    font-family: inherit;
+                    cursor: pointer;
+                    color:black;
+                    background-color: #ffffff;
                     margin-left: 10px;
-                    padding-left: 15px;
-                    padding-right: 15px;
-                    color: $color-accent;
+                    display: inline-block;
+                    font-size: 15px;
+                }
+                .redirect-cancel-margin{
+                    margin-left: 20px;
+                }
+                .redirect-update-margin{
+                    margin-left: -2px;
                 }
             }
         }

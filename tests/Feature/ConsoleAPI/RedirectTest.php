@@ -17,11 +17,12 @@ class RedirectTest extends TestCase
 
     public function test_redirect_data()
     {
-        // $response = $this->GET('http://blogs.hyvor.test/api/console/v0/blog/test/redirect');
-        // $response->assertStatus(200);
-
-        $response = $this->GET('http://blogs.hyvor.test/console/test/settings/redirects');
+        $response = $this->GET('http://blogs.hyvor.test/api/console/v0/blog/supun/redirect');
+        // dd($response);
         $response->assertStatus(200);
+
+        // $response = $this->GET('http://blogs.hyvor.test/console/test/settings/redirects');
+        // $response->assertStatus(200);
 
     }
 

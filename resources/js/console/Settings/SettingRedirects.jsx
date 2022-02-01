@@ -1,6 +1,6 @@
 import React, {useState} from 'react';
 import { useActions, useValues } from 'kea';
-import { Trash, PencilFill } from 'react-bootstrap-icons';
+import { Trash, PencilFill ,BackspaceReverseFill ,CheckCircleFill} from 'react-bootstrap-icons';
 import {toast} from 'react-toastify'
 import { PopupConfirm } from '../ReusableComponents/Popup';
 import subdomainLogic from '../logic/subdomainLogic';
@@ -34,10 +34,13 @@ export default function SettingRedirects(props) {
                 </div>
                 <div className='redirect-top-bar'>
                     <div className="redirect-left">
-                        <div>Match URL </div>
+                        <div>Match Path </div>
                     </div>
-                    <div className="redirect-left redirect-new-url-top">
-                        <div>Current URL</div>
+                    <div className="redirect-left redirect-top-bar-right">
+                        <div>Redirecting To</div>
+                    </div>
+                    <div className="redirect-left redirect-top-bar-right">
+                        <div>Type</div>
                     </div>
                 </div> 
 
@@ -48,9 +51,9 @@ export default function SettingRedirects(props) {
                         <div>
                            {redirect.length > 0 && (
                                 <div>
-                                    {redirect.slice(0, visible).map(user => (
+                                    {redirect.slice(0, visible).map(redirect => (
                                         <div>
-                                            <GetRedirect id={user.id} old_url={user.old_url} new_url={user.new_url} />
+                                            <GetRedirect id={redirect.id} old_url={redirect.old_url} new_url={redirect.new_url} redirectType={redirect.type}/>
                                         </div>
                                     ))}
                                 </div>
@@ -106,8 +109,8 @@ function CreateRedirect() {
     ];
 
     return <form className='redirect-create' onSubmit={(e)=> {submitRedirect(e)}}>
-        <input className="redirect-input" type="text" id="old_url" value={data.old_url}  onChange={(e)=> {handle(e)}} placeholder='Enter old URL' required/>
-        <input className="redirect-input" type="text" id="new_url" value={data.new_url}  onChange={(e)=> {handle(e)}} placeholder='Enter new URL' required/>
+        <input className="redirect-input" type="text" id="old_url" value={data.old_url}  onChange={(e)=> {handle(e)}} placeholder='Enter Match Path' required/>
+        <input className="redirect-input" type="text" id="new_url" value={data.new_url}  onChange={(e)=> {handle(e)}} placeholder='Enter Redirecting URL' required/>
     
         <div className="react-redirect-select">
             <SelectType options={selectOptions} onChange={handleType} />
@@ -118,7 +121,7 @@ function CreateRedirect() {
 }
 
 
-function GetRedirect ({id, old_url, new_url}){
+function GetRedirect ({id, old_url, new_url, redirectType}){
 
     const subdomain = subdomainLogic.values.subdomain;
     const redirectLogicBuilt = redirectsLogic({subdomain})
@@ -186,6 +189,7 @@ function GetRedirect ({id, old_url, new_url}){
             newUrl: updateRedirectData.newUrl,
             type:updateRedirectData.type,
         });
+        // setUpdateFormOpened(false);
         window.location.reload(false);
     }
     const selectOptions = [
@@ -199,7 +203,7 @@ function GetRedirect ({id, old_url, new_url}){
                 <div className="redirect-row">
                     <form className='redirect-update' onSubmit={(e)=> {updateRedirect(e)}}>
                         <input className="redirect-update-input" type="text" id="old_url" value={updateRedirectData.oldUrl}  onChange={(e)=> {handleOldUrl(e)}} required/>
-                        <input className="redirect-update-input" type="text" id="new_url" value={updateRedirectData.newUrl}  onChange={(e)=> {handleNewUrl(e)}} placeholder='Enter new URL' required/>
+                        <input className="redirect-update-input" type="text" id="new_url" value={updateRedirectData.newUrl}  onChange={(e)=> {handleNewUrl(e)}} required/>
     
                         {/* <select className="redirect-select" id="type" value={updateRedirectData.type} onChange={(e)=> {handleType(e)}}>  
                             <option>Type</option>
@@ -207,23 +211,26 @@ function GetRedirect ({id, old_url, new_url}){
                             <option className="redirect-type-option" value="302">Temporary</option>
                         </select> */}
                         <div className="react-redirect-select">
-                            <SelectType options={selectOptions} onChange={handleType} />
+                            <SelectType options={selectOptions} onChange={handleType} className="react-select-style" />
                         </div>
 
-                        <button value="Submit" className="button small redirect-cancel-button" onClick={handleCancelUpdate}>Cancel</button>
-                        <button value="Submit" className="button small redirect-update-button ">Update</button>
+                        <button value="Submit" className="redirect-update-form-button redirect-cancel-margin" onClick={handleCancelUpdate}><BackspaceReverseFill size={15} /></button>
+                        <button value="Submit" className="redirect-update-form-button redirect-update-margin"><CheckCircleFill size={15} /></button>
                     </form>
                 </div>
             :
                 <div className="redirect-row">
-                    <div className="redirect-left">
+                    <div className="redirect-display-data-one">
                         <div key={id}>{old_url}</div>
                     </div>
-                    <div className="redirect-left">
+                    <div className="redirect-display-data-two">
                         <div key={id}>{new_url}</div>
                     </div>
+                    <div className="redirect-display-data-three">
+                        <div key={id}>{redirectType}</div>
+                    </div>
  
-                    <div className="redirect-right">
+                    <div className="redirect-display-data-four">
  
                         <div className="redirect-edit">
                             <span onClick={handleUpdate}>
@@ -256,10 +263,11 @@ function GetRedirect ({id, old_url, new_url}){
 
 }
 
-function SelectType( { options, onChange } ) {
+function SelectType( { options, onChange} ) {
     return <div className='inside-select'>
         <Select 
             type="small" 
+            // className = {className}
             options={options}
             onChange={onChange}
         />
