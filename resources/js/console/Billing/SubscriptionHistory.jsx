@@ -49,7 +49,11 @@ export default function SubscriptionHistory({subdomain}) {
                     } 
                     </div>
                 </div>:
-                <NoResults text="No subscriptions" />
+                <NoResults 
+                    text="No subscriptions"
+                    padding={40}
+                    imageWidth={150}
+                />
             }
         </div>
     }

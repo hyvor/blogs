@@ -47,7 +47,11 @@ export default function BillingHistory({subdomain}) {
                         } 
                         </div>
                     </div>:
-                    <NoResults text="No previous payments" />
+                    <NoResults 
+                        text="No previous payments"
+                        padding={40}
+                        imageWidth={150}
+                    />
                 }
             </div>
         }

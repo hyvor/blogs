@@ -16,6 +16,7 @@ class SubscriptionInfoObject {
     public string $card_last_four;
     public string $card_expiration;
 
+    public string $update_url;
 
     public float $last_payment;
     public int $last_payment_at;
@@ -24,7 +25,7 @@ class SubscriptionInfoObject {
      * (such as when a subscription has been cancelled):
      */
     public ?float $next_payment;
-    public int $next_payment_at;
+    public ?int $next_payment_at;
 
     public function __construct(Blog|Subscription $blogOrSubscription) {
 
@@ -45,13 +46,16 @@ class SubscriptionInfoObject {
         $this->card_last_four = $subscription->cardLastFour();
         $this->card_expiration = $subscription->cardExpirationDate();
 
+        $this->update_url = $subscription->updateUrl();
+
         $lastPayment = $subscription->lastPayment();
         $this->last_payment = $lastPayment->amount;
         $this->last_payment_at = $lastPayment->date()->timestamp;
 
+
         $nextPayment = $subscription->nextPayment();  
-        $this->next_payment = $nextPayment->amount ?? null;
-        $this->next_payment_at = $nextPayment->date()->timestamp;
+        $this->next_payment = $nextPayment?->amount;
+        $this->next_payment_at = $nextPayment?->date()?->timestamp;
 
     }
 

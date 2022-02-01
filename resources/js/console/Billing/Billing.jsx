@@ -101,9 +101,9 @@ export default function Billing() {
                         Prices are shown in USD, excluding VAT. <br/>
                         <div>
                             <a href="/pricing" className="link" target="_blank">
-                                Pricing & Features
+                                <span>Pricing & Features</span>
+                                <span className="icon"><BoxArrowUpRight /></span>
                             </a>
-                            &nbsp;<BoxArrowUpRight />
                         </div>
                     </div>
                 </div>

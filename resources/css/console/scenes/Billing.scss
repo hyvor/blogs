@@ -145,6 +145,88 @@
             }
         }
 
+        .card {
+            margin: 15px 0;
+            border-radius: 20px;
+            background-color:$color-card;
+            padding:30px;
+
+
+            .card-title {
+                font-weight: 600;
+                font-size: 16px;
+                display: flex;
+                .title-text {
+                    flex:1;
+                }
+                a {
+                    font-size:14px;
+                }
+            }
+            .card-desc {
+                display: flex;
+                .card-details {
+                    padding: 30px;
+                    padding-right: 0;
+                    flex: 1;
+                    display: flex;
+                    flex-direction: column;
+                    justify-content: space-evenly;
+                    font-weight: 600;
+                    & > div {
+                        display: flex;
+                    }
+                    .card-detail-name {
+                        flex: 1;
+                        color: $color-text-light;
+                    }
+                }
+            }
+        }
+
+        .payment-cycle {
+            .payment-top {
+                display: flex;
+                font-weight: 600;
+                align-items: center;
+            }
+            .payment-middle {
+                flex: 1;
+                text-align: center;
+            }
+            .payment-next .payment-amount {
+                text-align: right;
+            }
+            .payment-amount {
+                font-size: 18px;
+                margin: 2px 0;
+            }
+            .payment-bar {
+                margin: 6px 0;
+                width: 100%;
+                height: 15px;
+                background: $color-accent-light;
+                border-radius: 20px;
+                position: relative;
+                overflow: hidden;
+            }
+            .payment-bar-fill {
+                position: absolute;
+                left: 0;
+                top: 0;
+                height: 100%;
+                background: $color-accent;
+                border-radius: 20px;
+                transition: 0.3s width ease-out;
+            }
+            .payment-left-days {
+                text-align: center;
+                font-size:12px;
+                color: $color-text-light;
+                font-weight: normal;
+            }
+        }
+
 
 
     }
