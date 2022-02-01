@@ -78,8 +78,10 @@ class ConsoleSubscriptionController extends Controller {
 
     }
 
-    public function cancelSubscription(Blog $blog) {
-        SubscriptionRepository::cancelSubscription($blog);
+    public function cancelSubscription(Request $request, Blog $blog) {
+        $forced = (bool) $request->input('forced');
+
+        SubscriptionRepository::cancelSubscription($blog, $forced);
         return response()->json();
     }
 

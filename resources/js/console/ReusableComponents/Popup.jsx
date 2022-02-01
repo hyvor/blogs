@@ -30,7 +30,7 @@ PopupHeaderDefault.propTypes = {
 
 export function PopupFooterSingleButton(props) {
     return <div className="popup-footer-single">
-        <button className="button" onClick={props.onClick}>{props.name}</button>
+        <button className={"button " + props.buttonClass} onClick={props.onClick}>{props.name}</button>
     </div>
 }
 PopupFooterSingleButton.propTypes = {
@@ -61,6 +61,20 @@ export function PopupConfirm( { title, text, name, buttonClass, onClick, onCance
                 onCancel={onCancel}
                 buttonClass={buttonClass}
             />
+        }
+    />
+
+}
+
+export function PopupNotice( {title, text, name, onClick, buttonClass} ) {
+
+    return <Popup 
+        header={<PopupHeaderDefault title={title} />}
+        body={
+            <PopupBodyDefault>{text}</PopupBodyDefault>
+        }
+        footer={
+            <PopupFooterSingleButton name={name} onClick={onClick} buttonClass={buttonClass} />
         }
     />
 

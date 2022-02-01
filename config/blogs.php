@@ -20,7 +20,7 @@ return [
         [
             'id' => env('APP_ENV') !== 'production' ? 21525 : 0,
             'name' => 'pro',
-            'frequency' => 'annual',
+            'frequency' => 'yearly',
             'price' => 20
         ],
         [
@@ -44,7 +44,7 @@ return [
         [
             'id' => env('APP_ENV') !== 'production' ? 21529 : 0,
             'name' => 'enterprise',
-            'frequency' => 'monthly',
+            'frequency' => 'yearly',
             'price' => 6000
         ]
     ]

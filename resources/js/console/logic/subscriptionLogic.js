@@ -23,16 +23,19 @@ const subscriptionLogic = kea({
             const data = await api.post(props.subdomain, '/subscription', {
                 plan, frequency, quantity
             });
-            actions.setPayLink(data.payLink);
             onLoad(data.payLink);
         },
 
-        updateSubscription: async () => {
-
+        updateSubscription: async ({ onSuccess, plan, frequency, quantity }) => {
+            await api.patch(props.subdomain, '/subscription', {
+                plan, frequency, quantity
+            })
+            onSuccess();
         },
 
-        cancelSubscription: async () => {
-
+        cancelSubscription: async ({ forced, onSuccess}) => {
+            await api.delete(props.subdomain, '/subscription', {forced});
+            onSuccess();
         }
 
     }),

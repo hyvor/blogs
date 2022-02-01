@@ -1,9 +1,11 @@
-import { useValues } from 'kea';
+import { useActions, useValues } from 'kea';
 import React, { useState } from 'react';
 import { BoxArrowUpRight } from 'react-bootstrap-icons';
+import { toast } from 'react-toastify';
 import blogsLogic from '../logic/blogsLogic';
 import subscriptionLogic from '../logic/subscriptionLogic';
 import { FullPageLoader } from '../ReusableComponents/Loader';
+import { PopupConfirm, PopupNotice } from '../ReusableComponents/Popup';
 
 export default function Plans({subdomain}) {
 
@@ -12,7 +14,12 @@ export default function Plans({subdomain}) {
 
     const [frequency, setFrequency] = useState
         (currentSubscription ? currentSubscription.frequency : 'monthly'); // monthly|yearly
-    const [teamUsers, setTeamUsers] = useState(3); // team
+    const [teamUsers, setTeamUsers] = useState(
+        (currentSubscription && currentSubscription.plan === 'team' ? currentSubscription.quantity : 3)
+    ); // team
+
+    const subscriptionLogicInst = subscriptionLogic({subdomain});
+    const { createSubscriptionAjax, updateSubscriptionAjax, cancelSubscriptionAjax } = useValues(subscriptionLogicInst);
 
 
     return <div>
@@ -40,6 +47,16 @@ export default function Plans({subdomain}) {
                 </div>
             </div>
         </div>
+
+
+        {
+            createSubscriptionAjax.status === 'loading' ||
+            updateSubscriptionAjax.status === 'loading' ||
+            cancelSubscriptionAjax.status === 'loading'
+            ?
+            <FullPageLoader /> : null
+        }
+
     </div>;
 
 }
@@ -56,21 +73,60 @@ function Plan({name, type, teamUsers, setTeamUsers, frequency, subdomain}) {
     const { findBlogBySubdomain } = useValues(blogsLogic);
     const { blog, blog: { subscription: currentSubscription} } = findBlogBySubdomain(subdomain);
 
-    const { createSubscriptionAjax, createSubscription, updateSubscription, updateSubscriptionAjax } 
-        = useValues(subscriptionLogic({subdomain}));
+    const subscriptionLogicInst = subscriptionLogic({subdomain});
+    const { createSubscription, updateSubscription, cancelSubscription } = useActions(subscriptionLogicInst);
 
-    function handleSubscriptionCreate() {
+    const [checkoutLoading, setCheckoutLoading] = useState(false);
+    const [checkoutSuccess, setCheckoutSuccess] = useState(false);
+    const [reloadCountdown, setReloadCountdown] = useState(10);
 
-        createSubscription({
+    const [updateConfirm, setUpdateConfirm] = useState(false);
+
+    function handleUpdate() {
+        setUpdateConfirm(false);
+        updateSubscription({
             plan: type,
             quantity: type === 'team' ? teamUsers : 1,
             frequency,
-            onLoad: (payLink) => {
-                Paddle.Checkout.open({
-                    override: payLink
-                });
+            onSuccess: () => {
+                setCheckoutSuccess("update");
+                setReloadCountdown(10);
+                setInterval(() => {
+                    setReloadCountdown(reloadCountdown => Math.max(0, reloadCountdown - 1));
+                }, 1000);
             }
         });
+    }
+
+    function handleButton() {
+
+        if (blog.subscribed) {
+
+            setUpdateConfirm(true);
+        
+        } else {
+            createSubscription({
+                plan: type,
+                quantity: type === 'team' ? teamUsers : 1,
+                frequency,
+                onLoad: (payLink) => {
+                    setCheckoutLoading(true);
+                    Paddle.Checkout.open({
+                        override: payLink,
+                        loadCallback: () => {
+                            setCheckoutLoading(false);
+                        },
+                        successCallback: () => {
+                            setCheckoutSuccess("create");
+                            setReloadCountdown(10);
+                            setInterval(() => {
+                                setReloadCountdown(reloadCountdown => Math.max(0, reloadCountdown - 1));
+                            }, 1000);
+                        }
+                    });
+                }
+            });
+        }
 
     }
 
@@ -87,18 +143,18 @@ function Plan({name, type, teamUsers, setTeamUsers, frequency, subdomain}) {
         } else {
             price = "$20";
         }
-        isCurrent = currentSubscription?.plan === 'pro' && currentSubscription.frequency === frequency;
+        isCurrent = blog.subscribed && currentSubscription?.plan === 'pro' && currentSubscription.frequency === frequency;
     } else if (type === 'team') {
         price = frequency === 'monthly' ? "$" + (8 * teamUsers) : "$" + (60 * teamUsers);
 
-        isCurrent = currentSubscription?.plan === 'team' && 
+        isCurrent = blog.subscribed && currentSubscription?.plan === 'team' && 
             currentSubscription.frequency === frequency &&
             currentSubscription.quantity === teamUsers;
 
     } else if (type === 'enterprise') {
         price = frequency === 'monthly' ? "$800" : "$6000";
 
-        isCurrent = currentSubscription?.plan === 'enterprise' && currentSubscription.frequency === frequency;
+        isCurrent = blog.subscribed && currentSubscription?.plan === 'enterprise' && currentSubscription.frequency === frequency;
     }
 
     
@@ -121,20 +177,52 @@ function Plan({name, type, teamUsers, setTeamUsers, frequency, subdomain}) {
                 {
                     isCurrent ? 
                     <span className="current-text">Current</span> :
-                    <button 
-                        className={"button small inactive" + (buttonDisabled ? " disabled" : "")}
-                        onClick={handleSubscriptionCreate}
-                    > {
-                        currentSubscription ? "Switch" : "Upgrade"
-                    } </button>
+                    
+                    (
+                        (currentSubscription && currentSubscription.is_on_grace_period) ||
+                        (blog.subscribed && type === 'personal')
+                        ?
+                        null :
+                        <button 
+                            className={"button small inactive" + (buttonDisabled ? " disabled" : "")}
+                            onClick={handleButton}
+                        > {blog.subscribed ? "Switch" : "Upgrade"} </button>
+                    )
+
                 }
             </div>
         </div>
 
 
         {
-            createSubscriptionAjax.status === 'loading' ?
+            checkoutLoading ?
             <FullPageLoader /> : null
+        }
+
+        {
+            checkoutSuccess ? <PopupNotice 
+                title={"Subscription successfully " + (checkoutSuccess === 'create' ? "created" : "updated")}
+                text={<div>Your subscription was successfully {checkoutSuccess === 'create' ? "created" : "updated"}. It will take a few moments for changes to appear in the console. Please reload the page {reloadCountdown !== 0 ? `in ${reloadCountdown} seconds` : "now" }.</div>}
+                name={reloadCountdown !== 0 ? `Reload in ${reloadCountdown} seconds` : "Reload"}
+                buttonClass={reloadCountdown !== 0 ? "disabled inactive" : ""}
+                onClick={() => location.reload()}
+            /> : null
+        }
+
+        {
+            updateConfirm ? <PopupConfirm
+                title="Update Subscription"
+                text={<div>
+                    You are about to change your subscription plan to <b>{name} ({frequency})</b>{
+                        type === 'team' ? 
+                        (` with ${teamUsers} user` + (teamUsers === 1 ? "" : "s")) 
+                        : ""
+                    }. The price will be <b>prorated</b> and you will be charged now.
+                </div>}
+                name="Update"
+                onClick={handleUpdate}
+                onCancel={() => setUpdateConfirm(false)}
+            /> : null
         }
 
     </div>

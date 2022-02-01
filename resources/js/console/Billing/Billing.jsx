@@ -18,12 +18,7 @@ export default function Billing() {
                 <Plans subdomain={subdomain} />
             </div>
             <div className="box billing-section">
-                <div className="section-title">
-                    Current Subscription
-                </div>
-                <div className="section-content">
-                    <CurrentSubscription subdomain={subdomain} />
-                </div>
+                <CurrentSubscription subdomain={subdomain} />
             </div>
         </div>
         <div className="billing-column">

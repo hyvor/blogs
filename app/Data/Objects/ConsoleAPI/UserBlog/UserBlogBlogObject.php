@@ -33,6 +33,10 @@ class UserBlogBlogObject
         $this->trial_ends_at = $blog->customer->trial_ends_at?->timestamp;
         $this->subscribed = $blog->subscribed();
 
+        /**
+         * This is the last subscription
+         * not the active subscription
+         */
         $subscription = $blog->subscription();
 
         if ($subscription) {

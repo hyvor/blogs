@@ -26,6 +26,10 @@ class SubscriptionRepository
     ) : string
     {
 
+        if ($blog->subscribed()) {
+            throw new TrustedException('This blog already has a subscription');
+        }
+
         $quantity = self::validatePlanNameFrequencyAndQuantity($planName, $frequency, $quantity);
 
         $planConfig = self::getPlanConfigFromPlanNameAndFrequency($planName, $frequency);
@@ -72,8 +76,27 @@ class SubscriptionRepository
 
     }
 
-    public static function cancelSubscription(Blog $blog) {
-        $blog->subscription()->cancel();
+    public static function cancelSubscription(Blog $blog, bool $forced = false) {
+        if ($forced) {
+
+            /**
+             * 
+             * Forced cancelling is called after calling Paddle cancel API
+             * which means subscription()->cancelNow() will return an error because
+             * it again calls the API
+             * Therefore, instead of calling cancelNow(), we only do the part that updates
+             * data in our database
+             * 
+             * 
+             * This code is taken from Laravel\Paddle\Subscription::cancelAt()
+             */
+            $blog->subscription()->forceFill([
+                'ends_at' => now(),
+            ])->save();
+
+        } else {
+            $blog->subscription()->cancel();
+        }
     }
     
 
@@ -127,6 +150,7 @@ class SubscriptionRepository
         string $planName, string $frequency
     ) : array 
     {
+
         $plans = config('blogs.paddle_plans');
 
         foreach ($plans as $plan) {

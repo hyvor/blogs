@@ -27,7 +27,7 @@ const api = {
     },
 
     delete: async (subdomain, endpoint, data = {}) => {
-        const res = await axios.delete(getEndpoint(subdomain, endpoint), data);
+        const res = await axios.delete(getEndpoint(subdomain, endpoint), {data});
         return res.data;
     },
 

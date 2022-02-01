@@ -257,6 +257,10 @@ svg, img, span {
         background: $color-orange-light;
         color: $color-orange-dark;
     }
+    &.red {
+        background: $color-red-light;
+        color: $color-red-dark;
+    }
 
 }
 

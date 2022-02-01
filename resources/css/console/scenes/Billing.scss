@@ -67,7 +67,7 @@
                         display: flex;
                         align-items: center;
                         .plan-right-button-wrap {
-                            width: 65px;
+                            min-width: 65px;
                             text-align: center;
                             .current-text {
                                 font-size: 10px;
@@ -140,9 +140,11 @@
                 flex: 1;
                 text-align: center;
                 background: $color-card;
-                margin-right: 8px;
                 border-radius: 20px;
                 padding:15px;
+                &:not(:last-child) {
+                    margin-right: 8px;
+                }
             }
             .card-content {
                 font-size: 20px;
@@ -160,9 +162,16 @@
                 padding: 5px 15px;
                 text-transform: uppercase;
                 border-radius: 20px;
+                color: $color-text-white;
                 &.active {
                     background: $color-green;
-                    color: $color-text-white;
+                }
+                &.past-due, &.paused {
+                    background-color: $color-orange;
+                    color: $color-text;
+                }
+                &.deleted {
+                    background-color: $color-red;
                 }
             }
         }
@@ -249,7 +258,10 @@
             }
         }
 
-
+        .cancel-view {
+            text-align: center;
+            padding: 10px;
+        }
 
     }
 

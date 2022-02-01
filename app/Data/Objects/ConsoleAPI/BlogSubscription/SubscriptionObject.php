@@ -19,6 +19,8 @@ class SubscriptionObject {
     public int $created_at;
     public ?int $ends_at;
 
+    public bool $is_on_grace_period;
+
     public function __construct(Subscription $subscription) {
 
         $this->status = $subscription->paddle_status;
@@ -31,6 +33,8 @@ class SubscriptionObject {
 
         $this->created_at = $subscription->created_at->timestamp;
         $this->ends_at = $subscription->ends_at?->timestamp;
+
+        $this->is_on_grace_period = $subscription->onGracePeriod();
 
     }
 
