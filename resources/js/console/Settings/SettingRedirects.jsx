@@ -84,33 +84,7 @@ function CreateRedirect() {
         type: ""
     });
 
-    const[validatedNewRedirect, validateRedirect] = useState({
-        oldUrlError: "",
-        newUrlError:""
-    })
-
     function handle(e) {
-
-        const field = e.target.name;
-        const value = e.target.value.trim();
-    
-        let errMsg = '';
-    
-        switch (field) {
-          case 'matchTo':
-            let test = (/^(\s)/.test(value) ? true : false)
-                        && (/[/]/.test(value) ? true : false);
-            errMsg = test ? '' : toast.error("The Match Path should start with /");
-            break;
-          case 'redirectTo':
-            let testNew = (/^(\s)/.test(value) ? true : false)
-            && (/[/]/.test(value) ? true : false);
-            errMsg = testNew ? '' : toast.error("The Redirect Path should start with /");
-            // toast.error("the new redirect should be in proper format");
-            break;
-          default:
-        }
-
         const newData = {...createNewRedirect}
         newData[e.target.id] = e.target.value 
         setData(newData)
@@ -123,51 +97,45 @@ function CreateRedirect() {
         })
     }
 
-    // function validate(){
-    //     console.log('testing');
-    //     let oldUrlError = "";
-    //     // let newUrlError = "";
+    function validate(e){
 
-    //     if(createNewRedirect.old_url != 2){
-    //         oldUrlError = 'invalid old url';
-    //     }
-    //     if(oldUrlError){
-    //         validateRedirect({oldUrlError});
-    //         return false;
-    //     }
-    //     return true;
-    // }
+        if(!createNewRedirect.old_url.includes('/')){
+           return false;
+        }
+        if(createNewRedirect.old_url.includes(' ')){
+            toast.error("There shouldn't be spaces in the match URL (Enter a - Instead).")
+            return false;
+        }
+        if(!createNewRedirect.new_url.includes('/')){
+            return false;
+        }
+        if(createNewRedirect.new_url.includes(' ')){
+            toast.error("There shouldn't be spaces in the redirect URL (Enter a - Instead).")
+            return false;
+        }
+        return true;
+    }
 
     function submitRedirect (e) {
         e.preventDefault();
-        // const isValide = e.validate
-        // if(isValide){
-        //     console.log('no errors');
-        // }
+        const isValide = validate(e)
 
-        // const oldUrlMatch = createNewRedirect.old_url;    
-        // const newUrlMatch = createNewRedirect.new_url;  
-
-        // if (oldUrlMatch.includes('/.+@.+\.[A-Za-z]+$/')) {
-            
-        //         return toast.error("It should be an proper URL");
-        // }
-        // if (newUrlMatch == 'done') {
-        //     return toast.error("the new redirect should be in proper format");
-        // }
-
-        create({
-            old_url: createNewRedirect.old_url,
-            new_url: createNewRedirect.new_url,
-            type: createNewRedirect.type,
-        });
-        setData({
-            old_url: "",
-            new_url: "",
-            type: ""
-        });
-        // window.location.reload(false);
+        if(isValide === false){
+            toast.error("Please enter a (/) path when defining sub directories.");
+        }else{
+            create({
+                old_url: createNewRedirect.old_url,
+                new_url: createNewRedirect.new_url,
+                type: createNewRedirect.type,
+            });
+            setData({
+                old_url: "",
+                new_url: "",
+                type: ""
+            });
+        }
     }
+
     const selectOptions = [
         { label: 'Permanent', value: '301' },
         { label: 'Temporary', value: '302'}
@@ -244,18 +212,52 @@ function GetRedirect ({id, old_url, new_url, redirectType}){
     function handleCancelUpdate(){
         setUpdateFormOpened(false);
     }
+
+    function updateValidate(e){
+
+        if(!updateRedirectData.oldUrl.includes('/')){
+           return false;
+        }
+        if(updateRedirectData.oldUrl.includes(' ')){
+            toast.error("There shouldn't be spaces in the match URL (Enter a - Instead).")
+            return false;
+        }
+        if(!updateRedirectData.newUrl.includes('/')){
+            return false;
+        }
+        if(updateRedirectData.newUrl.includes(' ')){
+            toast.error("There shouldn't be spaces in the redirect URL (Enter a - Instead).")
+            return false;
+        }
+        return true;
+    }
+
     function updateRedirect(e){
         e.preventDefault();
         console.log(updateRedirectData.userId);
         
-        updateData({
-            userId: updateRedirectData.userId,
-            oldUrl: updateRedirectData.oldUrl,
-            newUrl: updateRedirectData.newUrl,
-            type:updateRedirectData.type,
-        });
+        const isValide = updateValidate(e)
+
+        if(isValide === false){
+            toast.error("Please enter a (/) path when defining sub directories.");
+        }else{
+            updateData({
+                userId: updateRedirectData.userId,
+                oldUrl: updateRedirectData.oldUrl,
+                newUrl: updateRedirectData.newUrl,
+                type:updateRedirectData.type,
+            });
+            window.location.reload(false);
+        }
+
+        // updateData({
+        //     userId: updateRedirectData.userId,
+        //     oldUrl: updateRedirectData.oldUrl,
+        //     newUrl: updateRedirectData.newUrl,
+        //     type:updateRedirectData.type,
+        // });
         // setUpdateFormOpened(false);
-        window.location.reload(false);
+        // window.location.reload(false);
     }
     const selectOptions = [
         { value: '301', label: 'Permanent' },
