@@ -14,11 +14,6 @@ use App\Models\Redirect;
 
 Class RedirectRepository
 {
-    /*
-    *
-    * This function will get all the redirect data from the database.
-    *
-    */
     public static function getRedirects( int $blogID)
     {
         return Redirect::where('blog_id','=', $blogID)
@@ -29,11 +24,6 @@ Class RedirectRepository
         // return Redirect::paginate(7);
     }
 
-    /*
-    *
-    * This function will create new redirect data and save it in the database.
-    *
-    */
     public static function createRedirect(int $blogID, string $oldURL, string $newURL, $type )
     {
         return Redirect::create([
@@ -44,11 +34,6 @@ Class RedirectRepository
         ]);
     }
 
-    /*
-    *
-    * This function will update an existing redirect and save it in the database.
-    *
-    */
     public static function updateRedirect(int $blogID ,int $id, string $oldURL, string $newURL, $type){
 
         // return Redirect::find($id)
@@ -67,11 +52,6 @@ Class RedirectRepository
         $redirect->save();
     }
 
-    /*
-    *
-    * This function will delete an redirect from the database.
-    *
-    */
     public static function deleteRedirect(int $id){
         $data = Redirect::find($id);
         $data->delete();

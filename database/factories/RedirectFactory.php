@@ -15,7 +15,7 @@ class RedirectFactory extends Factory
 
     // get the faker URL to the factory.
 
-    protected $model = \App\Models\Redirect::class;
+    protected $model = Redirect::class;
     /**
      * Define the model's default state.
      *
