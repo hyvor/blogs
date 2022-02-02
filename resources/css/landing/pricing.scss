@@ -6,6 +6,13 @@ body.pricing {
         padding-top: 75px;
         background: $color-accent-light;
 
+        p {
+            font-size:14px;
+            text-align: center;
+            margin-top: 30px;
+            margin-bottom: 0;
+        }
+
         table {
             width:100%;
             border-collapse: separate;

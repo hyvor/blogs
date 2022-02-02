@@ -1,4 +1,5 @@
 <?php
+
 namespace App\Http\Middleware\App;
 
 use App\Exceptions\DataAPIException;
@@ -7,15 +8,17 @@ use App\Domains\Blog\BlogRepositoryInterface;
 use Closure;
 use Exception;
 
-class DataAPIMiddleware {
-
+class DataAPIMiddleware
+{
     private $blogRepo;
 
-    public function __construct(BlogRepositoryInterface $blogRepo) {
-        $this->blogRepo = $blogRepo; 
+    public function __construct(BlogRepositoryInterface $blogRepo)
+    {
+        $this->blogRepo = $blogRepo;
     }
 
-    public function handle($request, Closure $next) {
+    public function handle($request, Closure $next)
+    {
 
         $subdomain = $request->input('subdomain');
 
@@ -30,12 +33,11 @@ class DataAPIMiddleware {
         }
 
         /**
-         * 
+         *
          * Todo: Change this to use Dependency Injection like SubdomainMiddleware.php
          */
         $request->attributes->set('blog', $blog);
 
         return $next($request);
     }
-
 }

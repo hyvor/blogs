@@ -1,28 +1,38 @@
 <?php
+
 namespace App\Domains\Blog;
 
 use App\Models\Blog;
 use App\Models\User;
+use Illuminate\Support\Facades\App;
 
-class BlogRepository implements BlogRepositoryInterface {
-
-    public function bySubdomain(string $subdomain, array $selectColumns = null) : Blog {
-        $blog = Blog::where('subdomain', $subdomain);
-        if ($selectColumns) {
-            $blog->select($selectColumns);
+class BlogRepository
+{
+    public static function getDomain(Blog $blog)
+    {
+        if ($blog->hosted_at === 'subdomain') {
+            $deliveryDomain = config('blogs.domain_delivery');
+            $domain = "$blog->subdomain.$deliveryDomain";
+        } elseif ($blog->hosted_at === 'blog->customdomain') {
+            $domain = $blog->custom_domain;
+        } else {
+            $domain = $blog->subdirectory;
         }
-        return $blog->first();
+        return $domain;
     }
-    public function byId(int $blogId, array $selectColumns = null) : Blog {
-        $blog = Blog::where('id', $blogId);
-        if ($selectColumns) {
-            $blog->select($selectColumns);
+
+    public static function getFullUrlFromSlug(Blog $blog, ?string $slug)
+    {
+        if (is_null($slug)) {
+            $slug = '';
         }
-        return $blog->first();
-    }
 
-    public function getURL(?string $slug) : string {
-        return '';
-    }
+        $slug = trim($slug, '/');
 
+        $domain = self::getDomain($blog);
+        
+        $protocol = App::environment('local') ? 'http://' : 'https://';
+
+        return $protocol . $domain . ($slug ? '/' . $slug : '');
+    }
 }

@@ -8,17 +8,13 @@
         "php": "^7.3|^8.0",
         "fruitcake/laravel-cors": "^2.0",
         "guzzlehttp/guzzle": "^7.0.1",
+        "hyvor/laravel-filterq": "^0.0.2",
+        "hyvor/scssphp": "2.0.1",
         "laravel/cashier-paddle": "^1.4",
         "laravel/framework": "^8.54",
         "laravel/telescope": "^4.6",
-        "laravel/tinker": "^2.5",
-        "leafo/scssphp": "^0.8.2",
-        "rcrowe/twigbridge": "^0.12.3",
-        "scssphp/scssphp": "^1.9",
-        "stichoza/google-translate-php": "^4.1",
-        "symfony/asset": "^6.0",
-        "symfony/dotenv": "^6.0",
         "symfony/http-foundation": "^5.4",
+        "ueberdosis/prosemirror-to-html": "^2.7",
         "vlucas/phpdotenv": "^5.4"
     },
     "require-dev": {
@@ -27,7 +23,8 @@
         "laravel/sail": "^1.0.1",
         "mockery/mockery": "^1.4.2",
         "nunomaduro/collision": "^5.0",
-        "phpunit/phpunit": "^9.3.3"
+        "phpunit/phpunit": "^9.3.3",
+        "squizlabs/php_codesniffer": "3.*"
     },
     "autoload": {
         "psr-4": {
@@ -37,15 +34,10 @@
 
             "Database\\Seeders\\": "database/seeders/"
         },
-        "files": [
-            "app/Helpers/ImportScssHelper.php"
-        ],
-        "classmap": [
-            "app/twig"
-        ],
 
         "Database\\Seeders\\": "database/seeders/",
-        "Hyvor\\Auth\\": "packages/hyvor/auth/src/"
+        "Hyvor\\Auth\\": "packages/hyvor/auth/src/",
+        "Hyvor\\FilterQ\\": "packages/hyvor/filter-q"
         
     },
     "autoload-dev": {

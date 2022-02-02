@@ -1,31 +1,37 @@
-import React, { useEffect, useRef, useState } from 'react';
-import {EditorState} from "prosemirror-state"
-import {EditorView} from "prosemirror-view"
-import {Schema, DOMParser} from "prosemirror-model"
-import {addListNodes} from "prosemirror-schema-list"
+import React, { useState } from 'react';
+import {EditorState, NodeSelection} from "prosemirror-state"
 
 import HBSchema from './schema';
 import plugins from './plugins';
-import { Node } from 'prosemirror-model';
-// import {schema as HBSchema} from 'prosemirror-schema-basic';
 
 /**
  * 
  */
 import {ProseMirror} from 'use-prosemirror';
 import useUpdateEffect from '../../../helpers/hooks/useUpdateEffect';
+import RichView from './nodeview-rich';
+import Figcaption from './nodeview-figcaption';
 
 
 function getState(val) {
     val = val ? JSON.parse(val) : null
     const newState = {
         schema: HBSchema,
-        plugins: plugins(HBSchema)
+        plugins: plugins(HBSchema),
     }
     if (val) {
         newState.doc = HBSchema.nodeFromJSON( val );
     }
     return () => EditorState.create(newState);
+}
+
+const nodeViews = {
+    rich(...args) {
+        return new RichView(...args);
+    },
+    figcaption(...args) {
+        return new Figcaption(...args);
+    }
 }
 
 export default function Editor(props) {
@@ -41,6 +47,31 @@ export default function Editor(props) {
         setState(state);
     }
 
-    return <ProseMirror state={state} onChange={handleChange} />
 
+    return <ProseMirror 
+        state={state}
+        nodeViews={nodeViews}
+        onChange={handleChange}
+        handleClickOn={handleClickOn}
+    />
+}
+
+function handleClickOn(view, pos, node, posBefore) {
+    // if (pos != posBefore) return false
+    //return false;
+
+    /**
+     * Select figure when clicking on it
+     */
+    if (node.type.name === "figure") {
+        const resolvedPos = view.state.doc.resolve(pos)
+        if (resolvedPos.parent.type.name === 'figcaption')
+            return false;
+
+        const tr = view.state.tr;
+        const resolvedPosBefore = view.state.doc.resolve(posBefore);
+        const nodeSel = new NodeSelection(resolvedPosBefore)
+        view.dispatch(tr.setSelection(nodeSel))
+        return true;
+    }
 }

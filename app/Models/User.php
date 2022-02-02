@@ -7,9 +7,8 @@ use Illuminate\Database\Eloquent\Model;
 
 class User extends Model
 {
-
-    public function blog() {
+    public function blog()
+    {
         return $this->belongsTo(Blog::class);
     }
-
 }

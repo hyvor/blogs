@@ -6,19 +6,22 @@ use App\Http\Controllers\Controller;
 use App\Domains\User\UserRepositoryInterface;
 use Illuminate\Http\Request;
 
-class ConsoleUserController extends Controller {
-
+class ConsoleUserController extends Controller
+{
     private $userRepo;
 
-    public function __construct(UserRepositoryInterface $userRepo) {
+    public function __construct(UserRepositoryInterface $userRepo)
+    {
         $this->userRepo = $userRepo;
     }
 
-    public function getBlogs(Request $request) {
+    public function getBlogs(Request $request)
+    {
         return $this->userRepo->getBlogs(1, 'hyvor');
     }
 
-    public function createBlog(Request $request) {
+    public function createBlog(Request $request)
+    {
         $request->validate([
             'subdomain' => 'required|unique:blogs',
             'name' => 'required|max:255',
@@ -31,11 +34,11 @@ class ConsoleUserController extends Controller {
         );
     }
 
-    public function changeSort(Request $request) {
+    public function changeSort(Request $request)
+    {
         $request->validate([
             'blogs' => 'required|array'
         ]);
         $this->userRepo->changeSorts(1, 'hyvor', $request->input('blogs'));
     }
-
 }

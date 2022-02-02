@@ -1,0 +1,89 @@
+<?php
+namespace App\Http\Controllers\ConsoleAPI;
+
+use App\Data\Objects\ConsoleAPI\BlogSubscription\ReceiptObject;
+use App\Data\Objects\ConsoleAPI\BlogSubscription\SubscriptionInfoObject;
+use App\Data\Objects\ConsoleAPI\BlogSubscription\SubscriptionObject;
+use App\Domains\Subscription\SubscriptionRepository;
+use App\Domains\Subscription\UsageRepository;
+use App\Http\Controllers\Controller;
+use App\Models\Blog;
+use Illuminate\Http\Request;
+use Laravel\Paddle\Receipt;
+use Laravel\Paddle\Subscription;
+
+class ConsoleSubscriptionController extends Controller {
+
+    public function getData(Blog $blog) {
+
+        $receipts = SubscriptionRepository::getReceipts($blog)->map(function (Receipt $receipt) {
+            return new ReceiptObject($receipt);
+        });
+
+        $info = $blog->subscription() ? new SubscriptionInfoObject($blog) : null;
+
+        $subscriptions = SubscriptionRepository::getAllSubscriptions($blog)->map(function (Subscription $subscription) {
+            return new SubscriptionObject($subscription);
+        });
+
+        $usage = UsageRepository::getUsage($blog);
+
+        return response()->json([
+            'receipts' => $receipts,
+            'info' => $info,
+            'subscriptions' => $subscriptions,
+            'usage' => $usage,
+        ]);
+
+    }
+
+    public function createPayLink(Request $request, Blog $blog) {
+
+        $request->validate([
+            'plan' => 'required|string',
+            'frequency' => 'required|string|in:monthly,yearly',
+            'quantity' => 'required|integer'
+        ]);
+
+        $payLink = SubscriptionRepository::createPayLink(
+            $blog,
+            $request->input('plan'),
+            $request->input('frequency'),
+            $request->input('quantity')
+        );
+
+        return response()->json([
+            'payLink' => $payLink
+        ]);
+            
+    }
+
+    public function updateSubscription(Request $request, Blog $blog) {
+
+        $request->validate([
+            'plan' => 'required|string',
+            'frequency' => 'required|string|in:monthly,yearly',
+            'quantity' => 'required|integer'
+        ]);
+
+        SubscriptionRepository::updateSubscription(
+            $blog,
+            $request->input('plan'),
+            $request->input('frequency'),
+            $request->input('quantity')
+        );
+
+        return response()->json();
+
+
+    }
+
+    public function cancelSubscription(Request $request, Blog $blog) {
+        $forced = (bool) $request->input('forced');
+
+        SubscriptionRepository::cancelSubscription($blog, $forced);
+        return response()->json();
+    }
+
+
+}

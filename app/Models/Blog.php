@@ -12,16 +12,27 @@ class Blog extends Model
 {
     use HasFactory;
     use SoftDeletes;
+    use Billable;
 
-    public static function blogsWithThemeName() {
-        $blogs = DB::table('blogs')
-                    ->join('themes', 'themes.id', '=', 'blogs.theme_id')
-                    ->select('blogs.*', 'themes.title as theme_name')
-                    ->get();
-        return $blogs;
+    /**
+     * Get Posts of the blog
+     */
+    public function posts()
+    {
+        return $this->hasMany(Post::class);
     }
 
+    public function counts() 
+    {
+        return $this->morphMany(Count::class, 'countable');
+    }
 
-    use Billable;
+    /**
+     * Get a count
+     */
+    public function count(string $name)
+    {
+        return $this->counts()->where('name', $name)->value('value');
+    }
 
 }

@@ -93,7 +93,6 @@ function PostRow({id, subdomain}) {
             <div className="post-author">by Ishini Avindya</div>
         </div>
 
-
         <div className="post-tags">
             <span className="post-tag">#creative</span>
         </div>
@@ -104,7 +103,7 @@ function PostRow({id, subdomain}) {
 function NoPost() {
 
     return <div>
-        Posts are the heart of your blog.
+        Posts are the heart of the blog!
     </div>
 
 }

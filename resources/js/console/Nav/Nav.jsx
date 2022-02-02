@@ -4,10 +4,17 @@ import BlogsSelector from './BlogsSelector';
 import { useValues } from 'kea';
 import subdomainLogic from '../logic/subdomainLogic';
 import NavLink from '../ReusableComponents/NavLink';
+import blogsLogic from '../logic/blogsLogic';
+import { Exclamation } from 'react-bootstrap-icons';
+import dayjs from 'dayjs';
 
 export default function Nav() {
 
     const { subdomain } = useValues(subdomainLogic);
+    const { findBlogBySubdomain } = useValues(blogsLogic);
+    const { blog, blog: { subscription: currentSubscription} } = findBlogBySubdomain(subdomain);
+
+    const trialDaysDiff = blog.is_on_trial ?  dayjs.unix(blog.trial_ends_at).diff(dayjs(), 'd') : 0;
 
     return <div id="left">
         <div id="left-header" className="box">
@@ -27,7 +34,26 @@ export default function Nav() {
             <div className="left-divider"></div>
 
             <NavLink href={`/console/${subdomain}/theme`}>Theme</NavLink>
-            <NavLink href={`/console/${subdomain}/billing`}>Billing</NavLink>
+
+            <NavLink href={`/console/${subdomain}/billing`}>
+                <span className="name">Billing</span>
+                <span className="mark">
+                    {
+                        blog.is_on_trial ?
+                        <span className="trial-days-left">{trialDaysDiff} days left</span> : null
+                    }
+                    {
+                        currentSubscription && 
+                        (currentSubscription.status === 'past_due' || currentSubscription.status === 'paused')
+                        ?
+                        <span className="subscription-issue-icon">
+                            <Exclamation />
+                        </span>
+                        : null
+                    }
+                </span>
+            </NavLink>
+
             <NavLink href={`/console/${subdomain}/settings`}>Settings</NavLink>
 
         </div>

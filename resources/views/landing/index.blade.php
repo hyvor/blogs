@@ -62,7 +62,7 @@
     <div class="details-table-wrap">
         <div class="details-table">
             <div class="title">
-                <h4>The Console</h4>
+                <h4>A Powerful Console</h4>
                 <div class="title-description">For managing multiple blogs and writing posts</div>
             </div>
             <div class="description">
@@ -283,7 +283,7 @@
 
 </section>
 
-<section class="details-list container">
+<!-- <section class="details-list container">
 
     <h3>For Enterprises</h3>
 
@@ -309,7 +309,7 @@
                     
     </div>
 
-</section>
+</section> -->
 
 <section class="details-list container">
 
@@ -352,7 +352,7 @@
             <h5>Will you add a native newsletter feature?</h5>
             </div>
             <p>
-                We have plans to add a newsletter support in the future.
+                We have plans to add a newsletter support in the future (however, not in the near future). For now, you will need to embed a third-party newsletter form to collect emails.
             </p>
         </div>
 
@@ -368,7 +368,7 @@
             <h5>Can I see usage/analytics of my blog (ex: Total Visitors)?</h5>
             </div>
             <p>
-                No, because of how Hyvor Blogs works, most requests never even reach our servers - only our global CDN. Therefore we do not have a way to track pageviews internally.
+                No, because of how Hyvor Blogs works, most requests never even reach our servers - only our global CDN.  And, we do not place any tracking code on your blog. Therefore, we do not have a way to track pageviews internally. You will need to use a third-party analytics system to track pageviews.
             </p>
         </div>
 
@@ -376,7 +376,7 @@
             <h5>Is there a trial?</h5>
             </div>
             <p>
-                Yes, we provide a 30-days trial with all Team plan features. See our <a href="/pricing" class="link">Pricing</a> page for more details. If you are interested in the Enterprise plan with SAML Login and custom console, please shoot us a message.
+                Yes, we provide a 30-days trial with all Team plan features. See our <a href="/pricing" class="link">Pricing</a> page for more details.
             </p>
         </div>
         

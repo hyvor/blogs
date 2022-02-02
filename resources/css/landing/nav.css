@@ -1,0 +1,55 @@
+nav {
+  position: absolute;
+  top: 0;
+  left: 0;
+  height: 65px;
+  z-index: 1000;
+  width: 100%;
+  display: -webkit-box;
+  display: -ms-flexbox;
+  display: flex;
+  -webkit-box-align: center;
+      -ms-flex-align: center;
+          align-items: center;
+}
+
+nav > .container {
+  display: -webkit-box;
+  display: -ms-flexbox;
+  display: flex;
+}
+
+nav .brand-name {
+  vertical-align: middle;
+  font-weight: 600;
+}
+
+nav img {
+  vertical-align: middle;
+}
+
+nav .navbar-content {
+  display: -webkit-box;
+  display: -ms-flexbox;
+  display: flex;
+  -webkit-box-align: center;
+      -ms-flex-align: center;
+          align-items: center;
+  -webkit-box-pack: end;
+      -ms-flex-pack: end;
+          justify-content: flex-end;
+  -webkit-box-flex: 1;
+      -ms-flex: 1;
+          flex: 1;
+}
+
+nav .navbar-content a {
+  margin-left: 8px;
+  font-weight: 600;
+  text-transform: uppercase;
+  font-size: 14px;
+  color: #333232 !important;
+  position: relative;
+  padding: 8px;
+}
+/*# sourceMappingURL=nav.css.map */

@@ -1,0 +1,48 @@
+<!DOCTYPE html>
+<html>
+<head>
+
+<title>The Blog of Hyvor Blogs</title>
+<link rel="stylesheet" href="/themes/default/styles.css"></link>
+
+{{ __head | raw }}
+
+</head>
+<body class="index-pages">
+
+<div class="header-wrapper">
+    {% include('_header.twig') %}
+</div>
+
+<div class="index-heading">
+
+    <div class="heading-wrap">
+        <h1>The Blog</h1>
+        <h2>Blogging about how to blog</h2>
+    </div>
+
+    <div class="wave"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1440 320"><path fill="#f1e8e8" fill-opacity="1" d="M0,64L48,85.3C96,107,192,149,288,154.7C384,160,480,128,576,138.7C672,149,768,203,864,218.7C960,235,1056,213,1152,218.7C1248,224,1344,256,1392,272L1440,288L1440,0L1392,0C1344,0,1248,0,1152,0C1056,0,960,0,864,0C768,0,672,0,576,0C480,0,384,0,288,0C192,0,96,0,48,0L0,0Z"></path></svg></div>
+
+</div>
+
+<div class="posts">
+
+    {% for post in _posts %}
+        {% include '_post-card.twig'  %}
+    {% endfor %}
+
+</div>
+
+{% include('_footer.twig') %}
+
+{{ __foot | raw }}
+
+<script src="https://unpkg.com/flashload@1.0.1/src/flashload.js"></script>
+<script data-flashload-skip-preloading>
+    FlashLoad.start()
+</script>
+
+</body>
+
+
+</html>

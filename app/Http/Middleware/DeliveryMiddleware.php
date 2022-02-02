@@ -4,9 +4,7 @@ namespace App\Http\Middleware;
 
 use Closure;
 use Illuminate\Http\Request;
-
 use App\Models\Blog;
-
 
 class DeliveryMiddleware
 {
@@ -26,26 +24,21 @@ class DeliveryMiddleware
         $subdomainExistence = Blog::select('subdomain')
             // ->value('deleted_at');
             ->get();
-        
-        foreach($subdomainExistence as $subdomain){
 
-            if($subdomain['subdomain'] != null){
-
-                foreach($blogExistence as $blog){
-                    if($blog['deleted_at'] != null ){
+        foreach ($subdomainExistence as $subdomain) {
+            if ($subdomain['subdomain'] != null) {
+                foreach ($blogExistence as $blog) {
+                    if ($blog['deleted_at'] != null) {
                         echo "hello 280000";
                         // return redirect(' ');
-                    }
-                    else{
+                    } else {
                         return $next($request);
                     }
                 }
-            }
-            else{
+            } else {
                 // return redirect(' ');
                 echo "hello 88888";
             }
-
         }
     }
 }

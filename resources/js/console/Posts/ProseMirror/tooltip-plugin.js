@@ -1,5 +1,5 @@
 import {Plugin, TextSelection} from "prosemirror-state"
-import {toggleMark, setBlockType, wrapIn} from "prosemirror-commands"
+import {toggleMark, setBlockType, wrapIn} from "./commands"
 
 const icons = {
     bold: `<svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-type-bold" viewBox="0 0 16 16">
@@ -20,7 +20,7 @@ const icons = {
     </svg>`
 }
 
-export default function tooltipPlugin(schema) {
+export default function tooltipPlugin() {
     return new Plugin({
         view(editorView) { return new MarksTooltip(editorView) }
     })

@@ -16,11 +16,14 @@ export default function BlogPreview() {
         setIsLoading(false);
     }
 
+    var domain = window.appConfig.domains.delivery;
+    var protocol = domain.match(/\.test/) ? 'http' : 'https';
+
     return <div className="box blog-preview-view">
         <div className="navi">
             <div className="left">
                 <a 
-                    href={ `https://${subdomain}.hyvorblogs.io` }
+                    href={ `https://${subdomain}.${domain}` }
                     target="_blank"
                 >{subdomain}.hyvorblogs.io &nbsp;<BoxArrowUpRight /></a>
             </div>
@@ -41,7 +44,7 @@ export default function BlogPreview() {
             }
             <iframe
                 id="preview-iframe"
-                src={"https://blogs.hyvor.test/theme" /* `https://${subdomain}.hyvorblogs.io` */} 
+                src={`${protocol}://${subdomain}.${domain}`} 
                 style={{
                     width: type === 'laptop' ? "100%" : 360,
                     height: type === 'laptop' ? "100%" : 740,

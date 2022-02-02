@@ -2,21 +2,22 @@
 
 use Illuminate\Support\Facades\Route;
 
-
 use App\Http\Controllers\API\BlogController;
 use App\Http\Controllers\API\PostController;
-
+use Illuminate\Support\Facades\App;
 use Symfony\Component\Routing\Loader\Configurator\RoutingConfigurator;
-
 
 include('app/subdomain.php');
 
-Route::domain(config('app.domain_app'))->group(function() {
-    
+Route::domain(config('blogs.domain_app'))->group(function() {
+
     include('app/pages.php');
     include('app/api-data.php');
     include('app/api-delivery.php');
     include('app/api-console.php');
-    include('app/media.php');
 
 });
+
+if (App::environment('local')) {
+    include 'local.php';
+}

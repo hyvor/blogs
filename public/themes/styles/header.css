@@ -1,0 +1,36 @@
+.hyvor {
+  color: #00ff2a;
+  margin: 20px;
+  font-size: 30px;
+  background-color: #1c616d;
+  text-align: center;
+}
+
+h3 {
+  padding: 5px;
+}
+
+.language {
+  color: #00ff2a;
+  background-color: #1a0f0f;
+  margin: 20px;
+  text-align: center;
+  padding: 10px;
+}
+
+.tags {
+  color: #00ff2a;
+  background-color: #8d4b4b;
+  margin: 20px;
+  text-align: center;
+  padding: 10px;
+}
+
+.functions {
+  color: #00ff2a;
+  background-color: #4b528d;
+  margin: 20px;
+  text-align: center;
+  padding: 10px;
+}
+/*# sourceMappingURL=header.css.map */

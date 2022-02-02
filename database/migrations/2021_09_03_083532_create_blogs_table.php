@@ -22,24 +22,28 @@ class CreateBlogsTable extends Migration
             $table->bigInteger('user_id'); // hyvor user id
             $table->bigInteger('theme_id')->nullable();
 
-
             // data
             $table->string('subdomain')->unique();
             $table->string('name');
             $table->string('description')->nullable();
             $table->string('icon')->nullable();
+            $table->string('featured_image')->nullable();
 
+            $table->enum('hosted_at', ['subdomain', 'customdomain', 'subdirectory'])->default('subdomain');
+            $table->string('custom_domain')->nullable()->unique();
+            $table->string('subdirectory')->nullable();
+        
             $table->string('social_facebook')->nullable();
             $table->string('social_twitter')->nullable();
             $table->string('social_linkedin')->nullable();
             $table->string('social_youtube')->nullable();
             $table->string('social_instagram')->nullable();
+            $table->string('social_github')->nullable();
 
             $table->string('edited_at')->nullable();
 
             $table->integer('posts_count')->default(0);
             $table->integer('users_count')->default(0);
-            
         });
     }
 

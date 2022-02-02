@@ -3,7 +3,7 @@ import PropTypes from 'prop-types'
 
 export function Popup(props) {
     return <div className="popup-wrap">
-        <div className="popup box">
+        <div className="popup box-style">
             <div className="popup-header" style={props.headerStyle}>{props.header}</div>
             <div className="popup-body" style={props.bodyStyle}>{props.body}</div>
             <div className="popup-footer" style={props.footerStyle}>{props.footer}</div>
@@ -30,7 +30,7 @@ PopupHeaderDefault.propTypes = {
 
 export function PopupFooterSingleButton(props) {
     return <div className="popup-footer-single">
-        <button className="button" onClick={props.onClick}>{props.name}</button>
+        <button className={"button " + props.buttonClass} onClick={props.onClick}>{props.name}</button>
     </div>
 }
 PopupFooterSingleButton.propTypes = {
@@ -64,4 +64,21 @@ export function PopupConfirm( { title, text, name, buttonClass, onClick, onCance
         }
     />
 
+<<<<<<< HEAD
+=======
+}
+
+export function PopupNotice( {title, text, name, onClick, buttonClass} ) {
+
+    return <Popup 
+        header={<PopupHeaderDefault title={title} />}
+        body={
+            <PopupBodyDefault>{text}</PopupBodyDefault>
+        }
+        footer={
+            <PopupFooterSingleButton name={name} onClick={onClick} buttonClass={buttonClass} />
+        }
+    />
+
+>>>>>>> origin
 }
