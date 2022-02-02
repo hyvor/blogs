@@ -103,13 +103,20 @@ $pricingRow = '<tr>
             </tr>
 
             <tr>
-                <td>Supported Media</td>
+                <td>Media</td>
                 <td>Images</td>
                 <td>Images</td>
                 <td>Images</td>
                 <td>Any file type</td>
             </tr>
 
+            <tr>
+                <td>Support</td>
+                <td>Community</td>
+                <td>Community</td>
+                <td>+ Email</td>
+                <td>+ Live Chat</td>
+            </tr>
 
             <tr>
                 <td>Custom Domain</td>
