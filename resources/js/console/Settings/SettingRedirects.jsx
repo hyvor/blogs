@@ -8,6 +8,8 @@ import redirectsLogic from '../logic/redirectsLogic';
 import Loader from '../ReusableComponents/Loader';
 import Select from '../ReusableComponents/Select';
 import { components } from 'react-select';
+import Toast from '../ReusableComponents/Toast';
+
 
 
 export default function SettingRedirects(props) {
@@ -76,32 +78,95 @@ function CreateRedirect() {
     const redirectLogicBuilt = redirectsLogic({subdomain})
     const { create } = useActions(redirectLogicBuilt)
 
-    const [data, setData] = useState({
+    const [createNewRedirect, setData] = useState({
         old_url: "",
         new_url: "",
         type: ""
+    });
+
+    const[validatedNewRedirect, validateRedirect] = useState({
+        oldUrlError: "",
+        newUrlError:""
     })
 
     function handle(e) {
-        const newData = {...data}
+
+        const field = e.target.name;
+        const value = e.target.value.trim();
+    
+        let errMsg = '';
+    
+        switch (field) {
+          case 'matchTo':
+            let test = (/^(\s)/.test(value) ? true : false)
+                        && (/[/]/.test(value) ? true : false);
+            errMsg = test ? '' : toast.error("The Match Path should start with /");
+            break;
+          case 'redirectTo':
+            let testNew = (/^(\s)/.test(value) ? true : false)
+            && (/[/]/.test(value) ? true : false);
+            errMsg = testNew ? '' : toast.error("The Redirect Path should start with /");
+            // toast.error("the new redirect should be in proper format");
+            break;
+          default:
+        }
+
+        const newData = {...createNewRedirect}
         newData[e.target.id] = e.target.value 
         setData(newData)
         console.log(newData)
     }
     function handleType({value}){
         console.log(value)
-        setData({...data, 
+        setData({...createNewRedirect, 
             type: value
         })
     }
+
+    // function validate(){
+    //     console.log('testing');
+    //     let oldUrlError = "";
+    //     // let newUrlError = "";
+
+    //     if(createNewRedirect.old_url != 2){
+    //         oldUrlError = 'invalid old url';
+    //     }
+    //     if(oldUrlError){
+    //         validateRedirect({oldUrlError});
+    //         return false;
+    //     }
+    //     return true;
+    // }
+
     function submitRedirect (e) {
         e.preventDefault();
+        // const isValide = e.validate
+        // if(isValide){
+        //     console.log('no errors');
+        // }
+
+        // const oldUrlMatch = createNewRedirect.old_url;    
+        // const newUrlMatch = createNewRedirect.new_url;  
+
+        // if (oldUrlMatch.includes('/.+@.+\.[A-Za-z]+$/')) {
+            
+        //         return toast.error("It should be an proper URL");
+        // }
+        // if (newUrlMatch == 'done') {
+        //     return toast.error("the new redirect should be in proper format");
+        // }
+
         create({
-            old_url: data.old_url,
-            new_url: data.new_url,
-            type: data.type,
+            old_url: createNewRedirect.old_url,
+            new_url: createNewRedirect.new_url,
+            type: createNewRedirect.type,
         });
-        window.location.reload(false);
+        setData({
+            old_url: "",
+            new_url: "",
+            type: ""
+        });
+        // window.location.reload(false);
     }
     const selectOptions = [
         { label: 'Permanent', value: '301' },
@@ -109,8 +174,8 @@ function CreateRedirect() {
     ];
 
     return <form className='redirect-create' onSubmit={(e)=> {submitRedirect(e)}}>
-        <input className="redirect-input" type="text" id="old_url" value={data.old_url}  onChange={(e)=> {handle(e)}} placeholder='Enter Match Path' required/>
-        <input className="redirect-input" type="text" id="new_url" value={data.new_url}  onChange={(e)=> {handle(e)}} placeholder='Enter Redirecting URL' required/>
+        <input className="redirect-input" name="matchTo" type="text" id="old_url" value={createNewRedirect.old_url}  onChange={(e)=> {handle(e)}} placeholder='Enter Match Path' required/>
+        <input className="redirect-input" name="redirectTo" type="text" id="new_url" value={createNewRedirect.new_url}  onChange={(e)=> {handle(e)}} placeholder='Enter Redirecting URL' required/>
     
         <div className="react-redirect-select">
             <SelectType options={selectOptions} onChange={handleType} />
@@ -268,7 +333,7 @@ function SelectType( { options, onChange} ) {
         <Select 
             type="small" 
             // className = {className}
-            options={options}
+            options={options} 
             onChange={onChange}
         />
     </div>

@@ -22,6 +22,7 @@ export default function Settings({type}) {
             break;
         case 'redirects':
             Type = () => <SettingRedirects />;
+            break;
         case 'media':
             Type = () => <SettingsMedia />;
             break;
