@@ -118,11 +118,11 @@ function CreateRedirect() {
 
     function submitRedirect (e) {
         e.preventDefault();
-        const isValide = validate(e)
+        // const isValide = validate(e)
 
-        if(isValide === false){
-            toast.error("Please enter a (/) path when defining sub directories.");
-        }else{
+        // if(isValide === false){
+        //     toast.error("Please enter a (/) path when defining sub directories.");
+        // }else{
             create({
                 old_url: createNewRedirect.old_url,
                 new_url: createNewRedirect.new_url,
@@ -133,7 +133,7 @@ function CreateRedirect() {
                 new_url: "",
                 type: ""
             });
-        }
+        // }
     }
 
     const selectOptions = [
@@ -142,14 +142,14 @@ function CreateRedirect() {
     ];
 
     return <form className='redirect-create' onSubmit={(e)=> {submitRedirect(e)}}>
-        <input className="redirect-input" name="matchTo" type="text" id="old_url" value={createNewRedirect.old_url}  onChange={(e)=> {handle(e)}} placeholder='Enter Match Path' required/>
-        <input className="redirect-input" name="redirectTo" type="text" id="new_url" value={createNewRedirect.new_url}  onChange={(e)=> {handle(e)}} placeholder='Enter Redirecting URL' required/>
+        <input className="redirect-input" name="matchTo" type="text" id="old_url" value={createNewRedirect.old_url}  onChange={(e)=> {handle(e)}} placeholder='Enter Match Path' />
+        <input className="redirect-input" name="redirectTo" type="text" id="new_url" value={createNewRedirect.new_url}  onChange={(e)=> {handle(e)}} placeholder='Enter Redirecting URL' />
     
         <div className="react-redirect-select">
             <SelectType options={selectOptions} onChange={handleType} />
         </div>
     
-        <button value="Submit" className="button small redirect-button ">Create</button>
+        <button className="button small redirect-button ">Create</button>
     </form>
 }
 
@@ -236,19 +236,19 @@ function GetRedirect ({id, old_url, new_url, redirectType}){
         e.preventDefault();
         console.log(updateRedirectData.userId);
         
-        const isValide = updateValidate(e)
+        // const isValide = updateValidate(e)
 
-        if(isValide === false){
-            toast.error("Please enter a (/) path when defining sub directories.");
-        }else{
+        // if(isValide === false){
+        //     toast.error("Please enter a (/) path when defining sub directories.");
+        // }else{
             updateData({
                 userId: updateRedirectData.userId,
                 oldUrl: updateRedirectData.oldUrl,
                 newUrl: updateRedirectData.newUrl,
                 type:updateRedirectData.type,
             });
-            window.location.reload(false);
-        }
+            // window.location.reload(false);
+        // }
 
         // updateData({
         //     userId: updateRedirectData.userId,
@@ -257,7 +257,7 @@ function GetRedirect ({id, old_url, new_url, redirectType}){
         //     type:updateRedirectData.type,
         // });
         // setUpdateFormOpened(false);
-        // window.location.reload(false);
+        window.location.reload(false);
     }
     const selectOptions = [
         { value: '301', label: 'Permanent' },
@@ -281,8 +281,8 @@ function GetRedirect ({id, old_url, new_url, redirectType}){
                             <SelectType options={selectOptions} onChange={handleType} className="react-select-style" />
                         </div>
 
-                        <button value="Submit" className="redirect-update-form-button redirect-cancel-margin" onClick={handleCancelUpdate}><BackspaceReverseFill size={15} /></button>
-                        <button value="Submit" className="redirect-update-form-button redirect-update-margin"><CheckCircleFill size={15} /></button>
+                        <button className="redirect-update-form-button redirect-cancel-margin" onClick={handleCancelUpdate}><BackspaceReverseFill size={15} /></button>
+                        <button className="redirect-update-form-button redirect-update-margin"><CheckCircleFill size={15} /></button>
                     </form>
                 </div>
             :

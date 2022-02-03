@@ -1,10 +1,10 @@
 <?php
 
-namespace App\Domains\Redirect\Types;
+namespace App\Data\Objects\ConsoleAPI;
 
 use App\Models\Redirect;
 
-class RedirectOutputType
+class RedirectObject
 {
     public int $id;
     public int $uploaded_at;

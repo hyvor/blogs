@@ -1,6 +1,8 @@
 import { kea } from "kea";
 import api from "../lib/api";
 import axios from 'axios';
+import {toast} from 'react-toastify'
+
 
 
 
@@ -38,7 +40,12 @@ const redirectsLogic = kea({
                     old_url: old_url,
                     new_url: new_url,
                     type: type 
-                });
+                })
+                // .then(response => {
+                //     if(response.status === 422){
+                //         toast.error("There shouldn't be spaces in the match URL (Enter a - Instead).")
+                //     }
+                // });
             actions.addRedirect(redirect);
         },
 
