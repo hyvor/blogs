@@ -5,13 +5,17 @@ use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 
 use App\Domains\Redirect\RedirectRepository;
-use App\Models\Redirect;
+use App\Domains\Redirect\Types\RedirectOutputType;
+
 use App\Models\Blog;
 
 class ConsoleRedirectController extends Controller {
 
     public function getRedirects(Blog $blog) {
-        $getData = RedirectRepository::getRedirects($blog->id);
+        $getData = RedirectRepository::getRedirects($blog->id)
+                ->map(function ($redirect) {
+                    return new RedirectOutputType($redirect);
+                });
         return response()->json($getData);
     }
 
@@ -27,7 +31,7 @@ class ConsoleRedirectController extends Controller {
         $type = $request->input('type');
 
         $createRedirect = RedirectRepository::createRedirect($blog->id, $oldURL, $newURL, $type);
-        return response()->json($createRedirect);
+        return response()->json(new RedirectOutputType($createRedirect));
     }
 
     public function updateRedirect(Request $request, Blog $blog) {
