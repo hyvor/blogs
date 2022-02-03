@@ -6,12 +6,14 @@ import sceneLogic from './logic/sceneLogic'
 import Nav from './Nav/Nav'
 import Posts from './Posts/Posts'
 import Settings from './Settings/Settings'
+import Theme from './Theme/Theme'
 
 export const scenes = {
     error404: () => <div>404</div>,
     blogPreview: () => <BlogPreview />,
     posts: ({ postId }) => <Posts postId={postId} />,
     settings: ({type}) => <Settings type={type} />,
+    theme: () => <Theme />,
     billing: () => <Billing />
 }
 
@@ -29,9 +31,4 @@ export default function Scene() {
         <div id="middle"><SceneComponent {...params} /></div>
     </div>
 
-}
-
-
-function Theme() {
-    return <div style={{height: "100%"}} className="box"></div>
 }

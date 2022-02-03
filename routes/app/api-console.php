@@ -1,6 +1,7 @@
 <?php
 
 use App\Http\Controllers\ConsoleAPI\ConsoleBlogController;
+use App\Http\Controllers\ConsoleAPI\ConsoleBlogThemeController;
 use App\Http\Controllers\ConsoleAPI\ConsoleEmbedController;
 use App\Http\Controllers\ConsoleAPI\ConsoleMediaController;
 use App\Http\Controllers\ConsoleAPI\ConsolePostController;
@@ -69,10 +70,8 @@ Route::prefix('/api/console/v0/blog/{subdomain}')
 
 
     // theme CRUD
-    Route::get('/theme/files', []);
-    Route::post('/theme/file/{name}', []);
-    Route::post('/theme/{id}', []);
-    Route::post('/theme/upload', []);
+    Route::get('/theme-files', [ConsoleBlogThemeController::class, 'getAllFiles']);
+    Route::put('/theme-file/{id}', [ConsoleBlogThemeController::class, 'createOrUpdateFile']);
 
     // webhooks CRUD
     Route::get('/webhooks', []);

@@ -38,4 +38,9 @@ class BlogThemeRepository
             ->where('folder', $folder)
             ->get();
     }
+
+    public static function getAllFiles(int $blogId) : Collection {
+        return BlogThemeFile::where('blog_id', $blogId)->get();
+    }
+
 }

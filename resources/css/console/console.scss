@@ -9,7 +9,7 @@
 @import './Editor.scss';
 
 @import './scenes/Billing.scss';
-
+@import './scenes/Theme.scss';
 
 body {
     background-color: $color-accent-very-light;
@@ -175,9 +175,11 @@ body {
             margin-right:15px;
             display:flex;
             flex-direction: column;
+            flex-shrink: 0;
         }
         .box-right {
             flex:1;
+            min-width: 0; // stop overflowing https://stackoverflow.com/a/66689926
         }
         .box {
             height:100%;
