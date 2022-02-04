@@ -16,7 +16,7 @@ export default function SettingRedirects(props) {
 
     const subdomain = subdomainLogic.values.subdomain;
     const redirectLogicBuilt = redirectsLogic({subdomain})
-    const { redirect, loadAjax } = useValues(redirectLogicBuilt)
+    const { redirect, loadAjax, createAjax } = useValues(redirectLogicBuilt)
 
     // load data section
     const [visible , setVisible] = useState(50);
@@ -32,7 +32,17 @@ export default function SettingRedirects(props) {
             </div>
             <div className="redirects">
                 <div>
-                    <CreateRedirect/>
+                    {
+                        <CreateRedirect/>
+                    }
+                    {
+                        createAjax.status === 'error' ?
+                        <Toast 
+                            x={console.log(createAjax.error)}
+                            text={createAjax.error}
+                            type="error"
+                        /> : null
+                    }
                 </div>
                 <div className='redirect-top-bar'>
                     <div className="redirect-left">
@@ -97,43 +107,19 @@ function CreateRedirect() {
         })
     }
 
-    function validate(e){
-
-        if(!createNewRedirect.old_url.includes('/')){
-           return false;
-        }
-        if(createNewRedirect.old_url.includes(' ')){
-            toast.error("There shouldn't be spaces in the match URL (Enter a - Instead).")
-            return false;
-        }
-        if(!createNewRedirect.new_url.includes('/')){
-            return false;
-        }
-        if(createNewRedirect.new_url.includes(' ')){
-            toast.error("There shouldn't be spaces in the redirect URL (Enter a - Instead).")
-            return false;
-        }
-        return true;
-    }
-
     function submitRedirect (e) {
         e.preventDefault();
-        // const isValide = validate(e)
 
-        // if(isValide === false){
-        //     toast.error("Please enter a (/) path when defining sub directories.");
-        // }else{
-            create({
-                old_url: createNewRedirect.old_url,
-                new_url: createNewRedirect.new_url,
-                type: createNewRedirect.type,
-            });
-            setData({
-                old_url: "",
-                new_url: "",
-                type: ""
-            });
-        // }
+        create({
+            old_url: createNewRedirect.old_url,
+            new_url: createNewRedirect.new_url,
+            type: createNewRedirect.type,
+        });
+        setData({
+            old_url: "",
+            new_url: "",
+            type: ""
+        });
     }
 
     const selectOptions = [
@@ -159,6 +145,7 @@ function GetRedirect ({id, old_url, new_url, redirectType}){
     const subdomain = subdomainLogic.values.subdomain;
     const redirectLogicBuilt = redirectsLogic({subdomain})
     const { remove , updateData} = useActions(redirectLogicBuilt)
+    const { updateDataAjax } = useValues(redirectLogicBuilt)
 
     // delete section
     const [deletePopupOpened, setDeletePopupOpened] = useState(false);
@@ -193,12 +180,6 @@ function GetRedirect ({id, old_url, new_url, redirectType}){
             newUrl: e.target.value
         })
     }
-    // function handleType(e){
-    //     // e.preventDefault();
-    //     setUpdate({...updateRedirectData, 
-    //         type: e.target.value
-    //     })
-    // }
     function handleType({value}){
         console.log(value)
         setUpdate({...updateRedirectData, 
@@ -213,51 +194,17 @@ function GetRedirect ({id, old_url, new_url, redirectType}){
         setUpdateFormOpened(false);
     }
 
-    function updateValidate(e){
-
-        if(!updateRedirectData.oldUrl.includes('/')){
-           return false;
-        }
-        if(updateRedirectData.oldUrl.includes(' ')){
-            toast.error("There shouldn't be spaces in the match URL (Enter a - Instead).")
-            return false;
-        }
-        if(!updateRedirectData.newUrl.includes('/')){
-            return false;
-        }
-        if(updateRedirectData.newUrl.includes(' ')){
-            toast.error("There shouldn't be spaces in the redirect URL (Enter a - Instead).")
-            return false;
-        }
-        return true;
-    }
-
     function updateRedirect(e){
         e.preventDefault();
         console.log(updateRedirectData.userId);
-        
-        // const isValide = updateValidate(e)
-
-        // if(isValide === false){
-        //     toast.error("Please enter a (/) path when defining sub directories.");
-        // }else{
-            updateData({
-                userId: updateRedirectData.userId,
-                oldUrl: updateRedirectData.oldUrl,
-                newUrl: updateRedirectData.newUrl,
-                type:updateRedirectData.type,
-            });
-            // window.location.reload(false);
-        // }
-
-        // updateData({
-        //     userId: updateRedirectData.userId,
-        //     oldUrl: updateRedirectData.oldUrl,
-        //     newUrl: updateRedirectData.newUrl,
-        //     type:updateRedirectData.type,
-        // });
-        // setUpdateFormOpened(false);
-        window.location.reload(false);
+        updateData({
+            userId: updateRedirectData.userId,
+            oldUrl: updateRedirectData.oldUrl,
+            newUrl: updateRedirectData.newUrl,
+            type:updateRedirectData.type,
+        });
+        setUpdateFormOpened(false);
+        // window.location.reload(false);
     }
     const selectOptions = [
         { value: '301', label: 'Permanent' },
@@ -267,16 +214,13 @@ function GetRedirect ({id, old_url, new_url, redirectType}){
     return <div>
         {
             updateFormOpened ?
-                <div className="redirect-row">
-                    <form className='redirect-update' onSubmit={(e)=> {updateRedirect(e)}}>
+            <div>
+                {
+                    <div className="redirect-row">
+                        <form className='redirect-update' onSubmit={(e)=> {updateRedirect(e)}}>
                         <input className="redirect-update-input" type="text" id="old_url" value={updateRedirectData.oldUrl}  onChange={(e)=> {handleOldUrl(e)}} required/>
                         <input className="redirect-update-input" type="text" id="new_url" value={updateRedirectData.newUrl}  onChange={(e)=> {handleNewUrl(e)}} required/>
-    
-                        {/* <select className="redirect-select" id="type" value={updateRedirectData.type} onChange={(e)=> {handleType(e)}}>  
-                            <option>Type</option>
-                            <option className="redirect-type-option" value="301">Permanent</option>
-                            <option className="redirect-type-option" value="302">Temporary</option>
-                        </select> */}
+
                         <div className="react-redirect-select">
                             <SelectType options={selectOptions} onChange={handleType} className="react-select-style" />
                         </div>
@@ -285,6 +229,16 @@ function GetRedirect ({id, old_url, new_url, redirectType}){
                         <button className="redirect-update-form-button redirect-update-margin"><CheckCircleFill size={15} /></button>
                     </form>
                 </div>
+                }
+                {
+                        updateDataAjax.status === 'error' ?
+                        <Toast 
+                            x={console.log(updateDataAjax.error)}
+                            text={updateDataAjax.error}
+                            type="error"
+                        /> : null
+                    }
+            </div>
             :
                 <div className="redirect-row">
                     <div className="redirect-display-data-one">
@@ -327,7 +281,6 @@ function GetRedirect ({id, old_url, new_url, redirectType}){
                 </div>
         }
     </div>
-
 }
 
 function SelectType( { options, onChange} ) {
