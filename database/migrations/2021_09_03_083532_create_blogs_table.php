@@ -40,6 +40,9 @@ class CreateBlogsTable extends Migration
             $table->string('social_instagram')->nullable();
             $table->string('social_github')->nullable();
 
+            $table->string('custom_head')->nullable();
+            $table->string('custom_footer')->nullable();
+
             $table->string('edited_at')->nullable();
 
             $table->integer('posts_count')->default(0);

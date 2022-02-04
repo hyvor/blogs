@@ -15,17 +15,19 @@ export default function SettingsCode() {
             title="Header Code"
             description="This code will be placed right before the </head> tag. You can use this to add custom CSS and meta tags for the whole blog."
             right={
-                <textarea></textarea>
-            }
+                <textarea className="shortCodeVerticalTextArea"></textarea>
+            } 
         />
 
         <DualSetting 
             title="Footer Code"
             description="This code will be placed right before the </body> tag. If you want to add custom Javascript code (ex: analytics), this is the best place to add it."
             right={
-                <textarea></textarea>
+                <textarea className="shortCodeVerticalTextArea"></textarea>
             }
         />
+        <button type='button' className ="button small shortCodeSave">Save</button>
+        
 
 
     </div>

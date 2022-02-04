@@ -35,4 +35,28 @@ class BlogRepository
 
         return $protocol . $domain . ($slug ? '/' . $slug : '');
     }
+
+    public static function getCustomCode( int $blogID)
+    {
+        return Blog::where('id','=', $blogID)
+            ->get('custom_head', 'custom_footer');
+        // return Redirect::paginate(7);
+    }
+
+    public static function updateBlog(int $blogID, string $codeHead, string $codeFooter)
+    {
+        // dd('repository check');
+
+        $blogUpdate = Blog::find($blogID);
+        $blogUpdate->custom_head=$codeHead;
+        $blogUpdate->custom_footer=$codeFooter;
+
+        $blogUpdate->save();  
+
+        // return Blog::find($blogID)
+        // ->create([
+        //     'custom_head' => $codeHead,
+        //     'custom_footer' => $codeFooter,
+        // ]);
+    }
 }

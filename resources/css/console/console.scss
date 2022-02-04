@@ -723,6 +723,17 @@ body {
     }
 }
 
+.shortCodeVerticalTextArea{
+    min-height: 100px;
+    width:100%;
+    resize: vertical;
+}
+.shortCodeSave{
+    width: 100px;
+    display: block;
+    margin: 20px 0 20px auto;
+}
+
 .onboarding-body {
     .your-blog {
         font-size: 14px;
