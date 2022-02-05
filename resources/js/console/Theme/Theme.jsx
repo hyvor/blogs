@@ -1,5 +1,6 @@
 import { useValues } from "kea";
 import React, { useState } from "react";
+import { CaretDownFill, CaretRightFill } from "react-bootstrap-icons";
 import subdomainLogic from "../logic/subdomainLogic";
 import themeLogic from "../logic/themeLogic";
 import Loader from "../ReusableComponents/Loader";
@@ -10,6 +11,8 @@ export default function Theme() {
 
     const { subdomain } = useValues(subdomainLogic);
     const { loadFilesAjax, files } = useValues(themeLogic({subdomain}));
+
+    const themePrefix = `/console/${subdomain}/settings`;
 
     return <div className="posts-view theme-view">
         <div className="box box-left">
@@ -42,11 +45,26 @@ function Folder( {name} ) {
     const { subdomain } = useValues(subdomainLogic);
     const { findFilesOfFolder } = useValues(themeLogic({subdomain}));
 
+    const [unfolded, setUnfolded] = useState(name ? false : true);
+
     const files = findFilesOfFolder(name);
 
-    return <div className="folder">
-        <div className="folder-name">{name}</div>
-        <div className="folder-files">
+    return <div className={"folder " + (name || 'root')}>
+        {
+            name ?
+            <div className="folder-name" onClick={() => setUnfolded(!unfolded)}>
+                
+                <span className="fold-icon">
+                    {
+                        unfolded ?
+                            <CaretDownFill /> :
+                            <CaretRightFill />
+                    }
+                </span>
+                <span className="name">{name}</span>
+            </div>
+        : null }
+        <div className={"folder-files" + (unfolded ? " unfolded" : "")}>
             {
                 files.map((file) => <File key={file.id} id={file.id} name={file.name} /> )
             }

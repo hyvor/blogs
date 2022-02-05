@@ -11,7 +11,6 @@ import 'codemirror/mode/twig/twig';
 import 'codemirror/mode/htmlmixed/htmlmixed';
 import 'codemirror/mode/css/css';
 
-
 import { useActions, useValues } from "kea";
 import subdomainLogic from "../logic/subdomainLogic";
 import themeLogic from "../logic/themeLogic";
@@ -53,6 +52,7 @@ export default function FileEditor() {
             options={{
                 theme: 'solarized',
                 keyMap: 'sublime',
+                tabSize: 4,
                 mode,
                 lineWrapping: true
             }}

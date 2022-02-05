@@ -15,6 +15,7 @@ const themeLogic = kea({
         // file editor
         editorOpenFile: (id) => ({id}),
         editorCloseFile: (id) => ({id}),
+        editorSetOpenedFiles: (ids) => ({ids}),
         editorSaveFile: (id) => ({id}),
         editorSetActiveFileId: (id) => ({id}),
     },
@@ -45,7 +46,9 @@ const themeLogic = kea({
             editorOpenFile: (state, {id}) => state.indexOf(id) === -1 ?
                 (state.length >= 8 ? state : [...state, id]) : state,
 
-            editorCloseFile: (state, {id}) => state.filter(fileId => fileId !== id)
+            editorCloseFile: (state, {id}) => state.filter(fileId => fileId !== id),
+
+            editorSetOpenedFiles: (_, {ids}) => ids, // set all opened files (for sorting)
         }],
 
         // active editing file

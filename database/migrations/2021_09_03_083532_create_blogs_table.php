@@ -24,6 +24,7 @@ class CreateBlogsTable extends Migration
 
             // data
             $table->string('subdomain')->unique();
+            $table->enum('type', ['normal', 'dev', 'temp'])->default('normal');
             $table->string('name');
             $table->string('description')->nullable();
             $table->string('icon')->nullable();
