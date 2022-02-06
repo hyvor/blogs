@@ -13,6 +13,7 @@
         "laravel/cashier-paddle": "^1.4",
         "laravel/framework": "^8.54",
         "laravel/telescope": "^4.6",
+        "laravel/tinker": "^2.7",
         "symfony/http-foundation": "^5.4",
         "ueberdosis/prosemirror-to-html": "^2.7",
         "vlucas/phpdotenv": "^5.4"

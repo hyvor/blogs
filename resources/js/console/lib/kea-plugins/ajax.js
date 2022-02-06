@@ -3,8 +3,8 @@
  * A simpler version of [kea-loaders](https://github.com/keajs/kea-loaders) plugin
  * 
  * This plugin only saves loading state of the HTTP call and error if any.
- * Actual data has to be managed seperately.
- * This library has nothing to do with what you are doing with the HTTP repsonse (Do anything!)
+ * Actual data has to be managed separately.
+ * This library has nothing to do with what you are doing with the HTTP response (Do anything!)
  * 
  * - Instead of boolean loading status, this plugin uses loading|success|error status
  * - Saves the error message so you can show it to the user

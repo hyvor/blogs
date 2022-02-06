@@ -63,7 +63,6 @@ export function PopupConfirm( { title, text, name, buttonClass, onClick, onCance
             />
         }
     />
-
 }
 
 export function PopupNotice( {title, text, name, onClick, buttonClass} ) {
@@ -77,5 +76,4 @@ export function PopupNotice( {title, text, name, onClick, buttonClass} ) {
             <PopupFooterSingleButton name={name} onClick={onClick} buttonClass={buttonClass} />
         }
     />
-
 }

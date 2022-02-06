@@ -8,6 +8,8 @@ use App\Http\Controllers\ConsoleAPI\ConsolePostController;
 use App\Http\Controllers\ConsoleAPI\ConsoleSubscriptionController;
 use App\Http\Controllers\ConsoleAPI\ConsoleUserController;
 use App\Http\Controllers\ConsoleAPI\ConsoleViewController;
+use App\Http\Controllers\ConsoleAPI\ConsoleRedirectController;
+
 use App\Http\Middleware\App\ConsoleAPI\BlogAccessMiddleware;
 use App\Http\Middleware\App\SubdomainMiddleware;
 use Illuminate\Support\Facades\Route;
@@ -90,6 +92,12 @@ Route::prefix('/api/console/v0/blog/{subdomain}')
     Route::post('/subscription', [ConsoleSubscriptionController::class, 'createPayLink']);
     Route::patch('/subscription', [ConsoleSubscriptionController::class, 'updateSubscription']);
     Route::delete('/subscription', [ConsoleSubscriptionController::class, 'cancelSubscription']);
+
+    // redirects CRUD
+    Route::get('/redirect', [ConsoleRedirectController::class, 'getRedirects']);
+    Route::post('/redirect', [ConsoleRedirectController::class, 'createRedirect']);
+    Route::put('/redirect/{id}', [ConsoleRedirectController::class, 'updateRedirect']);
+    Route::delete('/redirect/{id}', [ConsoleRedirectController::class, 'deleteRedirect']);
 
     // settings RU
     Route::get('/settings', []);

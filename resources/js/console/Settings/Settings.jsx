@@ -7,6 +7,7 @@ import SettingsCode from './SettingsCode';
 import SettingsMedia from './SettingsMedia';
 import SettingsMigrate from './SettingsMigrate';
 import SettingUsers from './SettingUsers';
+import SettingRedirects from './SettingRedirects';
 import SettingsComments from './SettingsComments';
 
 export default function Settings({type}) {
@@ -18,6 +19,9 @@ export default function Settings({type}) {
     switch (type) {
         case 'users':
             Type = () => <SettingUsers />;
+            break;
+        case 'redirects':
+            Type = () => <SettingRedirects />;
             break;
         case 'media':
             Type = () => <SettingsMedia />;
