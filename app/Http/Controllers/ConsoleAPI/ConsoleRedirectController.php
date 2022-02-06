@@ -24,11 +24,11 @@ class ConsoleRedirectController extends Controller {
             'new_url' => 'required|string|regex:/(^([\/\:\.a-zA-z\-\*]+)(\d+)?$)/u',
             'type' => 'required|int',
         ]);
-        $oldURL = $request->input('old_url');
-        $newURL = $request->input('new_url');
+        $oldUrl = $request->input('old_url');
+        $newUrl = $request->input('new_url');
         $type = $request->input('type');
 
-        $createRedirect = RedirectRepository::createRedirect($blog->id, $oldURL, $newURL, $type);
+        $createRedirect = RedirectRepository::createRedirect($blog->id, $oldUrl, $newUrl, $type);
         return response()->json(new RedirectObject($createRedirect));
     }
 
@@ -41,11 +41,11 @@ class ConsoleRedirectController extends Controller {
         ]);
 
         $id = $request->route('id');
-        $oldURL = $request->input('old_url');
-        $newURL = $request->input('new_url');
+        $oldUrl = $request->input('old_url');
+        $newUrl = $request->input('new_url');
         $type = $request->input('type');
 
-        $updateRedirect = RedirectRepository::updateRedirect($blog->id, $id, $oldURL, $newURL, $type);
+        $updateRedirect = RedirectRepository::updateRedirect($blog->id, $id, $oldUrl, $newUrl, $type);
         return response()->json($updateRedirect);
     }
 
