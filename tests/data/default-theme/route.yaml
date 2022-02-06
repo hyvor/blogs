@@ -1,0 +1,15 @@
+post: /{slug}
+page: /{slug}
+
+posts:
+  $tag: 
+    match: /blogs/tag/{slug}
+    filter: tag.slug = $slug
+  $author:
+    match: /blogs/writer/{slug}
+    filter: author.slug = $slug
+  podcast:
+    match: /podcast/{slug}
+    filter: tag.slug = $slug
+  blog:
+    

@@ -48,7 +48,7 @@ class DeliveryRepository {
         $route->add('assets', new Route('/assets/{fileName}'));
         $route->add('styles', new Route('/styles.css'));
 
-        // scopes
+        // collections
         $route->add('tag', new Route('/tag/{slug}'));
         $route->add('author', new Route('/author/{slug}'));
         $route->add('search', new Route('/search/{slug}'));
@@ -134,9 +134,7 @@ class DeliveryRepository {
                     $post
                 );
                 return DeliveryAPIResponseObject::forFile($html, 'text/html');
-            } 
-
-
+            }
 
         }
 
