@@ -36,7 +36,7 @@ class BlogRepository
         return $protocol . $domain . ($slug ? '/' . $slug : '');
     }
 
-    public static function getCustomCode( int $blogID)
+    public static function getBlogData( int $blogID)
     {
         return Blog::where('id','=', $blogID)
             ->get();

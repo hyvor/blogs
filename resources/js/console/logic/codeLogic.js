@@ -19,7 +19,6 @@ const codeLogic = kea({
                 offset,
                 limit: 10,
             });
-            console.log(code.custom_footer);
             actions.getCode(code);
         },
 

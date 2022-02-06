@@ -724,9 +724,18 @@ body {
 }
 
 .shortCodeVerticalTextArea{
-    min-height: 100px;
+    min-height: 150px;
     width:100%;
     resize: vertical;
+    width: 100%;
+    padding: 9px 15px;
+    border-radius: 20px;
+    border: none;
+    background: rgb(241, 232, 232);
+    font-family: inherit;
+    transition: box-shadow 0.3s ease 0s;
+    max-height: 100px;
+    resize: none;
 }
 .shortCodeSave{
     width: 100px;

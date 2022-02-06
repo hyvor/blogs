@@ -11,17 +11,43 @@ export default function SettingsCode() {
 
     const subdomain = subdomainLogic.values.subdomain;
     const codeLogicBuilt = mediaLogic({subdomain})
-    const { code, loadAjax, uploadAjax } = useValues(codeLogicBuilt)
-    const { upload } = useActions(codeLogicBuilt)
+    const { code, loadAjax } = useValues(codeLogicBuilt)
 
-    // console.log(code);
+    return <div className="settings-delete">
+        {
+            loadAjax.status === 'loading' ?
+            <Loader padding={200}/> :
+                <div>
+                    <div className="title">
+                        Custom Code {code.custom_footer}
+                    </div>
+                     <div>
+                       {code.length > 0 && (
+                            <div>
+                                {code.map(codeData => (
+                                    <div>
+                                        <UpdateCode code_head={codeData.custom_head} code_footer={codeData.custom_footer}/>
+                                    </div>
+                                ))}
+                            </div>
+                        )} 
+                    </div> 
+                </div>
+        }
+    </div>
 
-    // console.log {code.custom_footer};
+}
 
-    // const [updateCodeData, setUpdate] = useState({
-    //     codeHead: codeHead,
-    //     codeFooter: codeFooter,
-    // })
+function UpdateCode ({code_head, code_footer}){
+    const subdomain = subdomainLogic.values.subdomain;
+    const codeLogicBuilt = mediaLogic({subdomain})
+    const { updateData } = useActions(codeLogicBuilt)
+    const { updateDataAjax } = useValues(codeLogicBuilt)
+
+    const [updateCodeData, setUpdate] = useState({
+        codeHead: code_head,
+        codeFooter: code_footer,
+    })
     function handleCodeHead(e) {
         e.preventDefault();
         setUpdate({...updateCodeData, 
@@ -36,45 +62,33 @@ export default function SettingsCode() {
     }
     function updateCode(e){
         e.preventDefault();
-        console.log(updateCodeData.userId);
         updateData({
-            // userId: updateCodeData.userId,
             codeHead: updateCodeData.codeHead,
-            codeFooter: updateCodeData.codeHead,
+            codeFooter: updateCodeData.codeFooter,
         });
+        window.location.reload(false);
     }
-
-    return <div className="settings-delete">
-        {
-            loadAjax.status === 'loading' ?
-            <Loader padding={200}/> :
-                <div>
-
-                    <div className="title">
-                        Custom Code {code.custom_footer}
-                    </div>
-        
-                    <form onSubmit={(e)=> {updateCode(e)}}>
-                        <DualSetting 
-                            title="Header Code"
-                            description="This code will be placed right before the </head> tag. You can use this to add custom CSS and meta tags for the whole blog."
-                            right={
-                                <textarea className="shortCodeVerticalTextArea"  value={code.custom_footer} onChange={(e)=> {handleCodeHead(e)}} placeholder={code.code_head}></textarea>
-                            } 
-                        /> 
-
-                        <DualSetting 
-                            title="Footer Code"
-                            description="This code will be placed right before the </body> tag. If you want to add custom Javascript code (ex: analytics), this is the best place to add it."
-                            right={
-                                <textarea className="shortCodeVerticalTextArea" value={code.codeFooter} onChange={(e)=> {handleCodeFooter(e)}} placeholder={code.code_footer}></textarea>
-                            }
-                        />
-                        <button type='button' className ="button small shortCodeSave">Save</button>
-                    </form>
-                </div>
-        }
-
+    return <div>
+        <form onSubmit={(e)=> {updateCode(e)}}>
+            <div>
+            <DualSetting 
+                title="Header Code"
+                description="This code will be placed right before the </head> tag. You can use this to add custom CSS and meta tags for the whole blog."
+                right={
+                    <textarea className="shortCodeVerticalTextArea" value={updateCodeData.codeHead} onChange={handleCodeHead}></textarea>
+                } 
+            /> 
+            </div>
+            <div>
+            <DualSetting 
+                title="Footer Code"
+                description="This code will be placed right before the </body> tag. If you want to add custom Javascript code (ex: analytics), this is the best place to add it."
+                right={
+                    <textarea className="shortCodeVerticalTextArea" value={updateCodeData.codeFooter} onChange={(e)=> {handleCodeFooter(e)}}></textarea>
+                }
+            />
+            </div>
+            <button className ="button small shortCodeSave">Save</button>
+        </form>
     </div>
-
 }

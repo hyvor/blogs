@@ -17,20 +17,19 @@ class ConsoleBlogController extends Controller
         return response()->json(BlogCountsRepository::getPostsCounts($blog->id));
     }
 
-    public function getCustomCode(Blog $blog) {
-
-        $getCustomCode = BlogRepository::getCustomCode($blog->id);
-        return response()->json($getCustomCode);
+    public function getBlogData(Blog $blog) {
+        $getBlogData = BlogRepository::getBlogData($blog->id);
+        return response()->json($getBlogData);
     }
 
     public function updateBlog(Request $request, Blog $blog) {
 
         // $id = $request->route('id');
-        // $codeHead = $request->input('code_head');
-        // $codeFooter = $request->input('code_footer');
+        $codeHead = $request->input('codeHead');
+        $codeFooter = $request->input('codeFooter');
 
-        $codeHead = 'eloquent testing head';
-        $codeFooter = 'footer eloquent';
+        // $codeHead = 'eloquent testing head';
+        // $codeFooter = 'footer eloquent';
 
         $updateCustomCode = BlogRepository::updateBlog($blog->id, $codeHead, $codeFooter);
         return response()->json($updateCustomCode);
