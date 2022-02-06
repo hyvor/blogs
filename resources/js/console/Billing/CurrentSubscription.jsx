@@ -202,13 +202,13 @@ export default function CurrentSubscription({subdomain}) {
                         ) : null
                     }
 
-                    <div className="cancel-view">
                         {
-                            currentSubscription.status !== 'deleted' ?
-                            <button className="button danger" onClick={handleCancel}>Cancel Subscription</button>
+                            currentSubscription && currentSubscription.status !== 'deleted' ?
+                            <div className="cancel-view">
+                                <button className="button danger" onClick={handleCancel}>Cancel Subscription</button>
+                            </div>
                             : null
                         }
-                    </div>
 
                 </div>
 

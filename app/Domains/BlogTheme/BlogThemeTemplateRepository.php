@@ -38,6 +38,10 @@ class BlogThemeTemplateRepository
             '_blog' => new BlogObject($blog),
             '_env' => [],
             '_scope' => $scope,
+            '_foot' => '<script src="/assets/flashload.js"></script>
+            <script data-flashload-skip-replacing>
+                FlashLoad.start()
+            </script>',
             ...self::getVarsFromScope($blog, $scope, $model, $paginationNumber)
         ];
 

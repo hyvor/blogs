@@ -23,7 +23,22 @@ class BlogThemeRepository
 
     public static function getFilesInFolder(int $blogId, ?ThemeFileFolderEnum $folder): Collection
     {
-        
+        self::updateLocalDBFiles($blogId);
+
+        return BlogThemeFile::where('blog_id', $blogId)
+            ->where('folder', $folder)
+            ->get();
+    }
+
+    public static function getAllFiles(int $blogId) : Collection 
+    {
+        self::updateLocalDBFiles($blogId);
+
+        return BlogThemeFile::where('blog_id', $blogId)->get();
+    }
+
+    private static function updateLocalDBFiles(int $blogId) {
+
         /**
          * This is a simple way to refresh the database
          * and run the seeder that so local file changes are updated
@@ -34,8 +49,6 @@ class BlogThemeRepository
             (new BlogThemeFilesSeeder())->run();
         }
 
-        return BlogThemeFile::where('blog_id', $blogId)
-            ->where('folder', $folder)
-            ->get();
     }
+
 }
