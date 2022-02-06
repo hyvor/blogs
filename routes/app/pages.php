@@ -1,9 +1,12 @@
 <?php
 
+use App\Http\Controllers\Pages\DocsController;
 use Illuminate\Support\Facades\Route;
 
 Route::view('/', 'landing.index');
 Route::view('/pricing', 'landing.pricing');
+
+Route::get('/docs/{page?}', [DocsController::class, 'handle']);
 
 
 Route::get('/theme/{page?}', function($page = null) {

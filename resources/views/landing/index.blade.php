@@ -22,11 +22,11 @@
 
             <div class="hero-title">
                 <h1>
-                    A simple blogging platform
+                    Start Your Blog Today!
                 </h1>
                 <h2>
-                    Hyvor Blogs is a platform to start a blog that you own, with a custom theme and domain.
-                </h2> 
+                    Hyvor Blogs is a simple but powerful platform to start a blog with a custom theme and domain.
+                </h2>
                 <a data-no-instant href="/console?signup=1" class="button big">
                     Start a Blog
                 </a>
@@ -349,18 +349,18 @@
     <div class="details-table-wrap">
 
         <div class="faq">
-            <h5>Will you add a native newsletter feature?</h5>
+            <h5>Should I choose Hyvor Blogs?</h5>
             </div>
             <p>
-                We have plans to add a newsletter support in the future (however, not in the near future). For now, you will need to embed a third-party newsletter form to collect emails.
+                Our targetted audiences are personal bloggers and business blogs. If you like to create a blog that you own and that you can customize as you want, Hyvor Blogs would be a good solution.
             </p>
         </div>
 
         <div class="faq">
-            <h5>Will you add a subscriber/member login feature?</h5>
+            <h5>Will there be a subscriber/member login feature?</h5>
             </div>
             <p>
-                One our main goals is to make the blog "static". Login is a dynamic feature. We will not support any additional dynamic feature except search. So, the answer is no. However you can use platforms like Memberstack or Memberspace to set up login and protected content pages for your blog. We may create direct integrations with one of these platforms in the future.
+                One our main goals is to make the blog fast by making it "static". Login is a dynamic feature. We will not support any dynamic features except search. So, the answer is no. However, you can use platforms like Memberful, Memberstack or Memberspace to set up login and protected content pages for your blog. We may create direct integrations with one of these platforms in the future, but there will not be a native subscriber/member login feature.
             </p>
         </div>
 
@@ -368,7 +368,7 @@
             <h5>Can I see usage/analytics of my blog (ex: Total Visitors)?</h5>
             </div>
             <p>
-                No, because of how Hyvor Blogs works, most requests never even reach our servers - only our global CDN.  And, we do not place any tracking code on your blog. Therefore, we do not have a way to track pageviews internally. You will need to use a third-party analytics system to track pageviews.
+                Not natively. Because of how Hyvor Blogs works, most requests never even reach our servers - only our global CDN.  And, we do not place any tracking code on your blog. Therefore, we do not have a way to track pageviews internally. However, you can easily integrate a third-party analytics system to track usage.
             </p>
         </div>
 
@@ -376,7 +376,7 @@
             <h5>Is there a trial?</h5>
             </div>
             <p>
-                Yes, we provide a 30-days trial with all Team plan features. See our <a href="/pricing" class="link">Pricing</a> page for more details.
+                Yes, we provide a 30-days trial all features included. See our <a href="/pricing" class="link">Pricing</a> page for more details. You can also test Hyvor Blogs without signing up.
             </p>
         </div>
         

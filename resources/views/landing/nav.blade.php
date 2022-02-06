@@ -10,7 +10,7 @@
 			<div class="navbar-nav">
 				<a class="nav-item nav-link" href="/docs">Docs</a>
 				<a class="nav-item nav-link" href="/pricing">Pricing</a>
-				<a class="nav-item nav-link" href="/console" data-no-instant>Console</a>
+				<a class="nav-item nav-link" href="/console" data-flashload-skip>Console</a>
 			</div>
 		</div>
 	</div>

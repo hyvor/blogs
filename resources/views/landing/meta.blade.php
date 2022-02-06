@@ -1,5 +1,12 @@
 <meta charset="utf-8">
 
+<?php
+
+    $description = isset($description) ? $description : '';
+    $canonical = isset($canonical) ? $canonical : '';
+
+?>
+
 
 <!-- SEO -->
 <title><?= $title ?></title>
@@ -28,9 +35,14 @@
 
 <link rel="stylesheet" type="text/css" href="/css/landing.css">
 
-<script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/instantclick/3.1.0/instantclick.min.js"></script>
+<script src="/js/flashload.js"></script>
+<script data-flashload-skip-replacing>
+    FlashLoad.start()
+</script>
+
+{{-- <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/instantclick/3.1.0/instantclick.min.js"></script>
 <script>
     window.addEventListener('load', function() {
         InstantClick.init();
     })
-</script>
+</script> --}}
