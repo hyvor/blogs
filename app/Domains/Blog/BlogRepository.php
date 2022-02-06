@@ -39,7 +39,7 @@ class BlogRepository
     public static function getCustomCode( int $blogID)
     {
         return Blog::where('id','=', $blogID)
-            ->get('custom_head', 'custom_footer');
+            ->get();
         // return Redirect::paginate(7);
     }
 
