@@ -11,14 +11,15 @@ class ConsoleViewController extends Controller
     public function __invoke(Request $request)
     {
         $hyvor = [];
-        $blogs = UserRepository::getBlogsOfUser(1, 'hyvor');
+        $blogs = UserRepository::getBlogsOfUser(1);
 
         $config = [
             'hyvorAccount' => $hyvor,
             'blogs' => $blogs,
             'domains' => [
                 'app' => config('blogs.domain_app'),
-                'delivery' => config('blogs.domain_delivery')
+                'delivery' => config('blogs.domain_delivery'),
+                'hyvor' => config('blogs.domain_hyvor'),
             ]
         ];
 

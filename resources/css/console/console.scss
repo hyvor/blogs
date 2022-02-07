@@ -10,6 +10,7 @@
 
 @import './scenes/Billing.scss';
 @import './scenes/Theme.scss';
+@import './scenes/NewBlog.scss';
 
 body {
     background-color: $color-accent-very-light;
@@ -29,6 +30,11 @@ body {
     padding: 15px;
     justify-content: space-between;
     margin-bottom:15px;
+
+    .left-header-pp {
+
+    }
+
 }
 #left-nav {
     font-weight: 600;
@@ -246,6 +252,7 @@ body {
         }
         .posts-loaded-wrap {
             animation: posts-loaded-wrap .3s;
+            padding: 15px;
             @keyframes posts-loaded-wrap {
                 0% {opacity: 0;transform:translateY(10px)}
                 100% {opacity: 1;transform:translateY(0)}
@@ -253,12 +260,9 @@ body {
         }
         .posts-list-item {
             display: block;
-            padding: 15px 25px;
-            transition:0.1s background-color;
+            padding: 15px 20px;
+            border-radius: 20px;
 
-            &:not(:last-child) {
-                border-bottom:1px solid $color-accent-light;
-            }
             .post-title {
                 font-weight:600;    
                 word-break: break-all;
@@ -280,24 +284,28 @@ body {
             }
 
 
+            .posts-status-wrap {
+                margin-bottom: 4px;
+            }
+
             .post-status {
                 font-weight: 600;
-                margin-left: 5px;
                 color: #fff;
                 font-size: 8px;
                 text-transform: uppercase;
                 padding: 1px 7px;
                 border-radius: 20px;
-                margin-top: 3px;
-                float: right;
                 &.scheduled {
-                    background: #4b6ec1;
+                    background: $color-blue;
                 }
                 &.draft {
                     background: #6e6c65;
                 }
                 &.deleted {
-                    background: #db7474;
+                    background: $color-red;
+                }
+                &.published {
+                    background: $color-green;
                 }
             }
 
@@ -921,15 +929,5 @@ body {
                 opacity:1;
             }
         }
-    }
-}
-
-.onboarding-body {
-    .your-blog {
-        font-size: 14px;
-        text-align: right;
-    }
-    .subdomain-rules {
-        font-size:12px;
     }
 }

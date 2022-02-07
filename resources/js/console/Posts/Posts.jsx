@@ -81,10 +81,11 @@ function PostRow({id, subdomain}) {
         key={post.id} 
         href={location.pathname === toLink ? postsLink : toLink }
         className={"posts-list-item" + (false ? " active" : "") + ` ${post.status}` }>
-        <div className="post-title">{
-                    post.status !== 'published' ? 
-                    <span className={`post-status ${post.status}`}>{post.status}</span>
-                    : null}{ post.title || '(Untitled)' }</div>
+
+        <div className="posts-status-wrap">
+            <span className={`post-status ${post.status}`}>{post.status}</span>
+        </div>
+        <div className="post-title">{ post.title || '(Untitled)' }</div>
         
         <div className="post-data">
             <div className="post-date">

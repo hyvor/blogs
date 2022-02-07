@@ -12,12 +12,7 @@ import 'react-toastify/dist/ReactToastify.css';
 
 resetContext({
     plugins: [
-        routerPlugin({
-            pathFromRoutesToWindow: (path) => "/console" + path,
-            pathFromWindowToRoutes: (path) => path.replace(/^\/console/, ''),
-        }),
-        loadersPlugin(),
-        loadersWithHasMorePlugin(),
+        routerPlugin(),
         ajaxPlugin()
     ]
 });

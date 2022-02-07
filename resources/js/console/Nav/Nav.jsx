@@ -11,15 +11,25 @@ import dayjs from 'dayjs';
 export default function Nav() {
 
     const { subdomain } = useValues(subdomainLogic);
+    if (!subdomain) {
+        return null;
+    }
+
     const { findBlogBySubdomain } = useValues(blogsLogic);
     const { blog, blog: { subscription: currentSubscription} } = findBlogBySubdomain(subdomain);
 
     const trialDaysDiff = blog.is_on_trial ?  dayjs.unix(blog.trial_ends_at).diff(dayjs(), 'd') : 0;
-
+    
     return <div id="left">
         <div id="left-header" className="box">
-            <img src="/img/logo.png" id="left-header-image-1" className="round-image-40"></img>
-            <div id="left-header-image-2" className="round-image-40"></div>
+            <a href="/">
+                <img src="/img/logo.png" id="left-header-image-1" className="round-image-40"></img>
+            </a>
+            <div className="left-header-pp">
+                <a href={`https://${appConfig.domains.hyvor}/account`} target="_blank">
+                    <img src="https://i.pravatar.cc/60?img=3" id="left-header-image-1" className="round-image-40"></img>
+                </a>
+            </div>
         </div>
         <div id="left-nav" className="box">
             <BlogsSelector />
