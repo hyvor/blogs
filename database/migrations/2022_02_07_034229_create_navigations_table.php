@@ -20,10 +20,10 @@ class CreateNavigationsTable extends Migration
             // connections
             $table->bigInteger('blog_id')->index();
 
-            $table->string('navigation_name');
-            $table->string('navigation_url');
+            $table->string('name');
+            $table->string('url');
 
-            $table->enum('type', ['head', 'footer']);
+            $table->enum('type', ['header', 'footer']);
         });
     }
 

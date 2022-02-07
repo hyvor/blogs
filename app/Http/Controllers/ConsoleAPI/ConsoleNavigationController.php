@@ -19,6 +19,10 @@ class ConsoleNavigationController extends Controller {
     }
 
     public function createNavigation(Request $request , Blog $blog) {
+
+        // validate the max length of 50
+        // Create a helper class for this
+        
         // $request->validate([
         //     'old_url' => 'required|string',
         //     'new_url' => 'required|string',
