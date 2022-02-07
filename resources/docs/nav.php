@@ -3,10 +3,10 @@ return [
 
     'Intro' => [
         [null, 'Introduction'],
-        ['how', 'How it works'],
         ['themes', 'Themes'],
         ['hosting', 'Hosting'],
         ['editor', 'Using the editor'],
+        ['how', 'How it works'],
     ],
     'Features' => [
         ['users', 'Managing Users'],
@@ -26,7 +26,12 @@ return [
         ['api-data', 'Data API'],
         ['api-delivery', 'Delivery API'],
         ['api-console', 'Console API'],
-        ['design-themes', 'Designing Themes']
+        
+    ],
+    'Theme Development' => [
+        ['themes-intro', 'Introduction'],
+        ['themes-guide', 'Guide'],
+        ['themes-config', 'Config File']
     ],
     'Advanced' => [
         ['routes', 'Routes'],

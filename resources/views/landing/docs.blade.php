@@ -13,8 +13,6 @@
 
     @include('landing.nav')
 
-
-
     <div id="sidebar">
       
         @foreach ($nav as $sectionTitle => $pages)
@@ -50,11 +48,31 @@
     </div>
 
     <script>
+        // nav pos on scroll
         window.addEventListener('scroll', function() {
             var nav = document.getElementById("sidebar");
             nav.style.top = Math.max(65-window.scrollY, 15) + "px";
         });
+
+        // scroll active
+        var active = document.querySelector(".nav-page.active");
+        active && !isInViewport(active) && active.scrollIntoView({
+            block: 'center',
+            inline: "nearest"
+        });
+        function isInViewport(el) {
+            const rect = el.getBoundingClientRect();
+            return (
+                rect.top >= 0 &&
+                rect.left >= 0 &&
+                rect.bottom <= (window.innerHeight || document.documentElement.clientHeight) &&
+                rect.right <= (window.innerWidth || document.documentElement.clientWidth)
+
+            );
+        }
     </script>
+
+    <script src="/js-static/docs-prism.js"></script>
 
 </body>
 </html>
