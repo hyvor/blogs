@@ -9,6 +9,7 @@ use App\Http\Controllers\ConsoleAPI\ConsoleSubscriptionController;
 use App\Http\Controllers\ConsoleAPI\ConsoleUserController;
 use App\Http\Controllers\ConsoleAPI\ConsoleViewController;
 use App\Http\Controllers\ConsoleAPI\ConsoleRedirectController;
+use App\Http\Controllers\ConsoleAPI\ConsoleNavigationController;
 
 use App\Http\Middleware\App\ConsoleAPI\BlogAccessMiddleware;
 use App\Http\Middleware\App\SubdomainMiddleware;
@@ -82,10 +83,10 @@ Route::prefix('/api/console/v0/blog/{subdomain}')
     Route::delete('/webhook/{id}', []);
 
     // navigation CRUD
-    Route::get('/navigations', []);
-    Route::post('/navigation', []);
-    Route::patch('/navigation/{id}', []);
-    Route::delete('/navigation/{id}', []);
+    Route::get('/navigation', [ConsoleNavigationController::class,'getNavigations']);
+    Route::post('/navigation', [ConsoleNavigationController::class,'createNavigation']);
+    Route::put('/navigation/{id}', [ConsoleNavigationController::class,'updateNavigation']);
+    Route::delete('/navigation/{id}', [ConsoleNavigationController::class,'deleteNavigation']);
 
     // billing CRUD
     Route::get('/subscription', [ConsoleSubscriptionController::class, 'getData']);

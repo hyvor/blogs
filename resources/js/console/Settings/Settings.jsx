@@ -9,6 +9,7 @@ import SettingsMigrate from './SettingsMigrate';
 import SettingUsers from './SettingUsers';
 import SettingRedirects from './SettingRedirects';
 import SettingsComments from './SettingsComments';
+import SettingNavigations from './SettingNavigations';
 
 export default function Settings({type}) {
 
@@ -19,6 +20,9 @@ export default function Settings({type}) {
     switch (type) {
         case 'users':
             Type = () => <SettingUsers />;
+            break;
+        case 'navigation':
+            Type = () => <SettingNavigations />;
             break;
         case 'redirects':
             Type = () => <SettingRedirects />;
