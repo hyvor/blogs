@@ -1,6 +1,6 @@
 import React, {useState} from 'react';
 import { useActions, useValues } from 'kea';
-import { Trash, PencilFill ,BackspaceReverseFill ,CheckCircleFill} from 'react-bootstrap-icons';
+import { Trash, PencilFill ,CheckCircleFill, XCircleFill} from 'react-bootstrap-icons';
 import {toast} from 'react-toastify'
 import { PopupConfirm } from '../ReusableComponents/Popup';
 import subdomainLogic from '../logic/subdomainLogic';
@@ -222,10 +222,10 @@ function GetRedirect ({id, old_url, new_url, redirectType}){
                         <input className="redirect-update-input" type="text" id="new_url" value={updateRedirectData.newUrl}  onChange={(e)=> {handleNewUrl(e)}} required/>
 
                         <div className="react-redirect-select">
-                            <SelectType options={selectOptions} onChange={handleType} className="react-select-style" />
+                            <SelectType options={selectOptions} onChange={handleType}/>
                         </div>
 
-                        <button className="redirect-update-form-button redirect-cancel-margin" onClick={handleCancelUpdate}><BackspaceReverseFill size={15} /></button>
+                        <button className="redirect-update-form-button redirect-cancel-margin" onClick={handleCancelUpdate}><XCircleFill size={15} /></button>
                         <button className="redirect-update-form-button redirect-update-margin"><CheckCircleFill size={15} /></button>
                     </form>
                 </div>
@@ -248,7 +248,11 @@ function GetRedirect ({id, old_url, new_url, redirectType}){
                         <div key={id}>{new_url}</div>
                     </div>
                     <div className="redirect-display-data-three">
-                        <div key={id}>{redirectType}</div>
+                        {/* <div key={id}>{redirectType}</div> */}
+                        {
+                            {redirectType} == 302 ? 
+                            <div key={id}>Permanent</div> : <div key={id}>Temporary</div>
+                        }
                     </div>
  
                     <div className="redirect-display-data-four">
@@ -267,7 +271,7 @@ function GetRedirect ({id, old_url, new_url, redirectType}){
                                 deletePopupOpened ?
                                     <PopupConfirm
                                         title="Delete Permanently"
-                                        text="Are you sure to delete this media item permanently? You will not be able to access it anymore."
+                                        text="Are you sure to delete this redirect item permanently? You will not be able to access it anymore."
                                         name="Delete"
                                         buttonClass="danger"
                                         onClick={handleDoDelete}

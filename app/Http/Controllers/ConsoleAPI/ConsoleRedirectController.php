@@ -19,9 +19,10 @@ class ConsoleRedirectController extends Controller {
     }
 
     public function createRedirect(Request $request , Blog $blog) {
+        $regexValidation = 'regex:/(^([\/\:\.a-zA-z\-\*]+)(\d+)?$)/u';
         $request->validate([
-            'old_url' => 'required|string|regex:/(^([\/\:\.a-zA-z\-\*]+)(\d+)?$)/u',
-            'new_url' => 'required|string|regex:/(^([\/\:\.a-zA-z\-\*]+)(\d+)?$)/u',
+            'old_url' => 'required|string|'.$regexValidation,
+            'new_url' => 'required|string|'.$regexValidation,
             'type' => 'required|int',
         ]);
         $oldUrl = $request->input('old_url');
@@ -33,10 +34,10 @@ class ConsoleRedirectController extends Controller {
     }
 
     public function updateRedirect(Request $request, Blog $blog) {
-
+        $regexValidation = 'regex:/(^([\/\:\.a-zA-z\-\*]+)(\d+)?$)/u';
         $request->validate([
-            'old_url' => 'required|string|regex:/(^([\/\:\.a-zA-z\-\*]+)(\d+)?$)/u',
-            'new_url' => 'required|string|regex:/(^([\/\:\.a-zA-z\-\*]+)(\d+)?$)/u',
+            'old_url' => 'required|string|'.$regexValidation,
+            'new_url' => 'required|string|'.$regexValidation,
             'type' => 'required|int',
         ]);
 

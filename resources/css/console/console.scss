@@ -665,12 +665,13 @@ body {
         }
         .redirect-input{
             width: 35%;
-            padding: 9px 15px;
+            padding: 7px;
+            font-size: 13px;
+            padding-left: 12px;
             border-radius: 20px;
             background: #f1e8e8;
             font-family: inherit;
             transition: 0.3s box-shadow;
-            padding-top: 12px;
             margin-right: 9px;
             border: none;
             outline: none;
@@ -712,9 +713,6 @@ body {
                 flex:1;
             }
         }
-        .react-select-style{
-            padding:10px;
-        }
         .redirect-button{
             margin-left: 5px;
             padding-left: 15px;
@@ -737,16 +735,19 @@ body {
                 width: 100%;
             }
             .redirect-update-input{
-                width: 36%;
-                padding: 9px 10px;
+                width: 252px;
+                padding: 7px;
+                font-size: 13px;
                 border-radius: 20px;
                 background: #f1e8e8;
                 font-family: inherit;
                 transition: 0.3s box-shadow;
-                padding-top: 12px;
-                margin-right: 10px;
+                margin-right: 12px;
                 border: none;
                 outline: none;
+            }
+            .react-select-small{
+                margin-left: 3px;
             }
             .redirect-update-button{
                 margin-left: 10px;
@@ -834,7 +835,6 @@ body {
             font-size: 15px;
         }
         .redirect-cancel-margin{
-            margin-left: 15px;
             margin-right: 5px;
             color: $color-text;
         }
