@@ -15,7 +15,7 @@ const codeLogic = kea({
     ajax: ({actions, props}) => ({
 
         load: async ({offset = 0}) => {
-            const code = await api.get(props.subdomain, '/code', {
+            const code = await api.get(props.subdomain, '/blog', {
                 offset,
                 limit: 10,
             });
@@ -23,9 +23,9 @@ const codeLogic = kea({
         },
 
         updateData: async ({ codeHead, codeFooter }) => {
-            const code = await api.put(props.subdomain, '/code', {
-                    codeHead: codeHead,
-                    codeFooter: codeFooter,
+            const code = await api.put(props.subdomain, '/blog', {
+                    custom_head: codeHead,
+                    custom_footer: codeFooter,
                 });
             actions.updateCode(code);
         },

@@ -40,8 +40,8 @@ class CreateBlogsTable extends Migration
             $table->string('social_instagram')->nullable();
             $table->string('social_github')->nullable();
 
-            $table->binary('custom_head')->nullable();
-            $table->binary('custom_footer')->nullable();
+            $table->text('custom_head')->nullable();
+            $table->text('custom_footer')->nullable();
 
             $table->string('edited_at')->nullable();
 

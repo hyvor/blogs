@@ -99,9 +99,9 @@ Route::prefix('/api/console/v0/blog/{subdomain}')
     // misc
     Route::get('/counts', [ConsoleBlogController::class, 'getPostsCounts']);
 
-    // Custom Code Update
-    Route::get('/code', [ConsoleBlogController::class, 'getBlogData']);
-    Route::put('/code', [ConsoleBlogController::class, 'updateBlog']); 
+    // Get data from the blogs table.
+    Route::get('/blog', [ConsoleBlogController::class, 'getBlog']);
+    Route::put('/blog', [ConsoleBlogController::class, 'updateBlog']); 
 
     // platform-specific
     Route::get('/themes', []);

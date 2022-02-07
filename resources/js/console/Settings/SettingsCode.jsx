@@ -5,8 +5,6 @@ import mediaLogic from '../logic/codeLogic';
 import subdomainLogic from '../logic/subdomainLogic';
 import Loader from '../ReusableComponents/Loader';
 
-
-
 export default function SettingsCode() {
 
     const subdomain = subdomainLogic.values.subdomain;
@@ -19,7 +17,7 @@ export default function SettingsCode() {
             <Loader padding={200}/> :
                 <div>
                     <div className="title">
-                        Custom Code {code.custom_footer}
+                        Custom Code
                     </div>
                      <div>
                        {code.length > 0 && (
@@ -69,8 +67,6 @@ function UpdateCode ({code_head, code_footer}){
         window.location.reload(false);
     }
     return <div>
-        <form onSubmit={(e)=> {updateCode(e)}}>
-            <div>
             <DualSetting 
                 title="Header Code"
                 description="This code will be placed right before the </head> tag. You can use this to add custom CSS and meta tags for the whole blog."
@@ -78,8 +74,6 @@ function UpdateCode ({code_head, code_footer}){
                     <textarea className="shortCodeVerticalTextArea" value={updateCodeData.codeHead} onChange={handleCodeHead}></textarea>
                 } 
             /> 
-            </div>
-            <div>
             <DualSetting 
                 title="Footer Code"
                 description="This code will be placed right before the </body> tag. If you want to add custom Javascript code (ex: analytics), this is the best place to add it."
@@ -87,8 +81,6 @@ function UpdateCode ({code_head, code_footer}){
                     <textarea className="shortCodeVerticalTextArea" value={updateCodeData.codeFooter} onChange={(e)=> {handleCodeFooter(e)}}></textarea>
                 }
             />
-            </div>
-            <button className ="button small shortCodeSave">Save</button>
-        </form>
+            <button className="button small shortCodeSave" onClick={(e)=> {updateCode(e)}}>Save</button>
     </div>
 }
