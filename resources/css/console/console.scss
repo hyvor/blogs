@@ -659,12 +659,13 @@ body {
         .redirect-create{
             display: inline-block;
             width: 100%;
-            margin-left: 12px;
+            // margin-left: 3px;
             margin-bottom: 10px;
             margin-top: 10px;
         }
         .redirect-input{
-            width: 35%;
+            // width: 36%;
+            width: 260px;
             padding: 7px;
             font-size: 13px;
             padding-left: 12px;
@@ -734,20 +735,29 @@ body {
                 display: inline-block;
                 width: 100%;
             }
-            .redirect-update-input{
-                width: 252px;
-                padding: 7px;
+            .redirect-update-input-one{
+                width: 245px;
+                padding: 7px 7px 7px 7px;
                 font-size: 13px;
                 border-radius: 20px;
                 background: #f1e8e8;
                 font-family: inherit;
                 transition: 0.3s box-shadow;
-                margin-right: 12px;
+                margin-right: 10px;
                 border: none;
                 outline: none;
             }
-            .react-select-small{
-                margin-left: 3px;
+            .redirect-update-input-two{
+                width: 260px;
+                padding: 7px 7px 7px 7px;
+                font-size: 13px;
+                border-radius: 20px;
+                background: #f1e8e8;
+                font-family: inherit;
+                transition: 0.3s box-shadow;
+                margin-right: 10px;
+                border: none;
+                outline: none;
             }
             .redirect-update-button{
                 margin-left: 10px;
@@ -755,11 +765,12 @@ body {
             .redirect-display-data-one{
                 // flex: 1;
                 width: 39%;
-                // height: 100%;
-                // background: purple;
+                word-wrap: break-word;
+                // overflow: auto;
             }
             .redirect-display-data-two{
                 width: 39%;
+                word-wrap: break-word;
             }
             .redirect-display-data-three{
                 width: 12%;
@@ -771,16 +782,16 @@ body {
                     margin-right: 30px;
                 }
                 .redirect-edit{
-                    margin-right: 15px ;
+                    margin-right: 15px;
+                    margin-left: 10px;
                 }
             }
         }
         .redirect-top-bar {
             margin-bottom: 15px;
-            margin-left: 10px;
             margin-top: 10px;
             font-weight: 600;
-            padding: 10px 10px 10px 5px;
+            padding: 10px 10px 10px 12px;
             border-radius: 40px;
             flex: 1;
             align-items: center;

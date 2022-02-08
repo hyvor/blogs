@@ -1,10 +1,5 @@
 import { kea } from "kea";
 import api from "../lib/api";
-import axios from 'axios';
-import {toast} from 'react-toastify'
-
-
-
 
 const redirectsLogic = kea({
 
@@ -17,18 +12,31 @@ const redirectsLogic = kea({
         removeFromList: (id) => ({id}),
         addRedirect: (redirect) => ({redirect}),
         updateRedirect: (redirect) => ({redirect}),
+        // setRedirectListHasMore: (has) => ({has}),
     },
 
-    ajax: ({actions, props}) => ({
+    ajax: ({actions, props}) => ({ 
 
         load: async ({offset = 0, type}) => {
             const redirect = await api.get(props.subdomain, '/redirect', {
                 offset,
-                limit: 10,
+                limit: 30,
                 type,
             });
             actions.setRedirectList(redirect);
         },
+        // loadRedirectListMore: async ({offset}) => {
+        //     const response = await api.get(props.subdomain, '/redirect', {
+        //         filters: values.filters,
+        //         offset
+        //     });
+        //     // response.forEach(post => {
+        //     //     const builtPostLogic = postLogic.build({id: post.id, data: post}, false);
+        //     //     builtPostLogic.mount();
+        //     // })
+        //     actions.setRedirectListHasMore(response.length === 50);
+        //     // actions.setRedirectList([...values.postsList, ...response.map(val => val.id)])
+        // },
 
         remove: async ({id}) => {
             actions.removeFromList(id);
@@ -41,11 +49,6 @@ const redirectsLogic = kea({
                     new_url: new_url,
                     type: type 
                 })
-                // .then(response => {
-                //     if(response.status === 422){
-                //         toast.error("There shouldn't be spaces in the match URL (Enter a - Instead).")
-                //     }
-                // });
             actions.addRedirect(redirect);
         },
 
@@ -66,6 +69,9 @@ const redirectsLogic = kea({
             removeFromList: (state, {id}) => state.filter(m => m.id !== id),
             addRedirect: (state, {redirect}) => [redirect, ...state],
             updateRedirect: (state, {redirect}) => [redirect, ...state],
+            // redirectListHasMore: [false, {
+            //     setRedirectListHasMore: (_, {has}) => has 
+            // }],
         }]
     },
 

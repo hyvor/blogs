@@ -5,11 +5,11 @@ use App\Models\Redirect;
 
 Class RedirectRepository
 {
-    public static function getRedirects( int $blogId)
+    public static function getRedirects( int $blogId, int $limit = 0, int $offset = 0,)
     {
         return Redirect::where('blog_id','=', $blogId)
-            ->offset(0)
-            ->limit(100)
+            ->offset($offset)
+            ->limit($limit)
             ->latest()
             ->get();
     }
