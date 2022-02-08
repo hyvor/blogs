@@ -44,27 +44,39 @@ class DeliveryRepository {
          *      - custom pages (from theme files)
          */
 
-        // assets
+        // default routes
         $route->add('assets', new Route('/assets/{fileName}'));
         $route->add('styles', new Route('/styles.css'));
+
+        // add dynamic routing
+        $blogRoutes = $blog->routes;
+        $blogLanguages = $blog->languages;
+        foreach ($blogRoutes as $route) {
+
+            $route->add()
+            
+        }
 
         // collections
         $route->add('tag', new Route('/tag/{slug}'));
         $route->add('author', new Route('/author/{slug}'));
         $route->add('search', new Route('/search/{slug}'));
-        $route->add('index', new Route('/'));
+        $route->add('index', (new Route('/{_locale}/contact'))
+            ->setDefault('_locale', 'en')
+    );
 
         $context = new RequestContext();
         $matcher = new UrlMatcher($route, $context);
 
+
         try {
+            dd($matcher->match($path));
             $props = $matcher->match($path);
             $type = $props['_route'];
         } catch (ResourceNotFoundException) {
+            dd("errpr");
             $type = null;
         }
-
-
 
         if ($type === 'assets') {
 

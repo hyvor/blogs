@@ -26,7 +26,6 @@ return [
         ['api-data', 'Data API'],
         ['api-delivery', 'Delivery API'],
         ['api-console', 'Console API'],
-        
     ],
     'Theme Development' => [
         ['themes-intro', 'Introduction'],
@@ -35,7 +34,7 @@ return [
     ],
     'Advanced' => [
         ['routes', 'Routes'],
-        ['multi-lang', 'Multi-language'],
+        ['languages', 'Languages'],
         ['import', 'Importing data'],
         ['export', 'Exporting data'],
     ],

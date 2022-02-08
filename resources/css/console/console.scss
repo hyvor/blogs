@@ -608,7 +608,9 @@ body {
     }
 
     .settings-nav {
-        padding:0 25px;
+        padding: 25px;
+        overflow: auto;
+        padding-top: 0;
         div {height:25px;}
         a {
             display: block;
