@@ -19,8 +19,6 @@ export const scenes = {
     new: () => <NewBlog />,
 }
 
-const noNavScenes = ['new'];
-
 
 export default function Scene() {
 
@@ -30,10 +28,8 @@ export default function Scene() {
 
     const SceneComponent = scenes[scene] || scenes.error404
 
-    const noNav = noNavScenes.indexOf(scene) !== -1;
-
     return <div>
-        { noNav ? null : <Nav /> }
+        <Nav />
         <div id="middle"><SceneComponent {...params} /></div>
     </div>
 

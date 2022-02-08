@@ -1,6 +1,6 @@
 # Data API
 
-Data API returns public data of the bloag as JSON.
+Data API returns public data of the blog in JSON.
 
 ## Calling the API
 
