@@ -23,11 +23,11 @@ export default function Nav() {
     return <div id="left">
         <div id="left-header" className="box">
             <a href="/">
-                <img src="/img/logo.png" id="left-header-image-1" className="round-image-40"></img>
+                <img src="/img/logo-social.png" id="left-header-image-1" className="round-image-40"></img>
             </a>
             <div className="left-header-pp">
                 <a href={`https://${appConfig.domains.hyvor}/account`} target="_blank">
-                    <img src="https://i.pravatar.cc/60?img=3" id="left-header-image-1" className="round-image-40"></img>
+                    <img src={appConfig.hyvorUser.picture} id="left-header-image-1" className="round-image-40"></img>
                 </a>
             </div>
         </div>

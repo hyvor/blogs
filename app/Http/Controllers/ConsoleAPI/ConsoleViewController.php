@@ -4,17 +4,17 @@ namespace App\Http\Controllers\ConsoleAPI;
 
 use App\Http\Controllers\Controller;
 use App\Domains\User\UserRepository;
+use Hyvor\HyvorConnecter\User;
 use Illuminate\Http\Request;
 
 class ConsoleViewController extends Controller
 {
-    public function __invoke(Request $request)
+    public function __invoke(Request $request, User $user)
     {
-        $hyvor = [];
         $blogs = UserRepository::getBlogsOfUser(1);
 
         $config = [
-            'hyvorAccount' => $hyvor,
+            'hyvorUser' => $user,
             'blogs' => $blogs,
             'domains' => [
                 'app' => config('blogs.domain_app'),

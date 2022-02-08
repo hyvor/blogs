@@ -8,6 +8,13 @@ use Illuminate\Support\Facades\App;
 
 class BlogRepository
 {
+
+    public static function createBlog(Blog $blog) {
+
+        
+
+    }
+
     public static function getDomain(Blog $blog)
     {
         if ($blog->hosted_at === 'subdomain') {

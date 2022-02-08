@@ -82,9 +82,6 @@ function PostRow({id, subdomain}) {
         href={location.pathname === toLink ? postsLink : toLink }
         className={"posts-list-item" + (false ? " active" : "") + ` ${post.status}` }>
 
-        <div className="posts-status-wrap">
-            <span className={`post-status ${post.status}`}>{post.status}</span>
-        </div>
         <div className="post-title">{ post.title || '(Untitled)' }</div>
         
         <div className="post-data">
@@ -94,9 +91,16 @@ function PostRow({id, subdomain}) {
             <div className="post-author">by Ishini Avindya</div>
         </div>
 
-        <div className="post-tags">
-            <span className="post-tag">#creative</span>
+        <div className="post-tags-wrap">
+            <div className="post-tags">
+                <span className="post-tag">#creative</span>
+            </div>
+            <div className="post-status-wrap">
+                <span className={`post-status ${post.status}`}>{post.status}</span>
+            </div>
         </div>
+
+        
     </NavLink>
 
 }

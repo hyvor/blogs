@@ -262,6 +262,16 @@ body {
             display: block;
             padding: 15px 20px;
             border-radius: 20px;
+            position: relative;
+
+            &:after {
+                content: "";
+                position: absolute;
+                width: 85%;
+                background: $color-accent-light;
+                bottom: 0;
+                height: 1px;
+            }
 
             .post-title {
                 font-weight:600;    
@@ -290,27 +300,35 @@ body {
 
             .post-status {
                 font-weight: 600;
-                color: #fff;
                 font-size: 8px;
                 text-transform: uppercase;
                 padding: 1px 7px;
                 border-radius: 20px;
                 &.scheduled {
-                    background: $color-blue;
+                    background: $color-blue-light;
+                    color: $color-blue-dark;
                 }
                 &.draft {
-                    background: #6e6c65;
+                    background: #767676;
+                    color: $color-text-white;
                 }
                 &.deleted {
-                    background: $color-red;
+                    background: $color-red-light;
+                    color: $color-red-dark;
                 }
                 &.published {
-                    background: $color-green;
+                    background: $color-green-light;
+                    color: $color-green-dark;
                 }
             }
 
+            .post-tags-wrap {
+                margin-top:8px;
+                display:flex;
+            }
+
             .post-tags {
-                margin-top:4px;
+                flex:1;
             }
         }
 

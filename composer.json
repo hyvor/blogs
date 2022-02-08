@@ -10,6 +10,7 @@
         "fruitcake/laravel-cors": "^2.0",
         "guzzlehttp/guzzle": "^7.0.1",
         "hyvor/laravel-filterq": "^0.0.2",
+        "hyvor/laravel-hyvor-connecter": "dev-main",
         "hyvor/scssphp": "2.0.1",
         "laravel/cashier-paddle": "^1.4",
         "laravel/framework": "^8.54",
@@ -63,6 +64,12 @@
             "@php artisan key:generate --ansi"
         ]
     },
+    "repositories": [
+        {
+          "type": "path",
+          "url": "../package-laravel-hyvor-connecter"
+        }
+    ],
     "extra": {
         "laravel": {
             "dont-discover": []

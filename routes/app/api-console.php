@@ -11,11 +11,13 @@ use App\Http\Controllers\ConsoleAPI\ConsoleViewController;
 use App\Http\Controllers\ConsoleAPI\ConsoleRedirectController;
 
 use App\Http\Middleware\App\ConsoleAPI\BlogAccessMiddleware;
+use App\Http\Middleware\App\LoginRequiredMiddleware;
 use App\Http\Middleware\App\SubdomainMiddleware;
 use Illuminate\Support\Facades\Route;
-use SebastianBergmann\Environment\Console;
 
-Route::get('/console/{any?}', ConsoleViewController::class)->where('any', '.*');
+Route::middleware(LoginRequiredMiddleware::class)
+    ->get('/console/{any?}', ConsoleViewController::class)
+    ->where('any', '.*');
 
 // this is an internal API
 Route::prefix('/api/console')
