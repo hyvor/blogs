@@ -71,7 +71,7 @@ export default function SettingRedirects(props) {
 
                 {
                     loadAjax.status === 'loading' ?
-                    <Loader/> :
+                    <Loader padding={40}/> :
                     (
                         <div>
                             {
