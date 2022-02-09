@@ -29,10 +29,9 @@ Callout | `>! ` in a new line | A text that stands out from other content.| `<as
 Code block | <code>\`\`\`</code> or <code>\`\`\`js</code> | A code block | `<pre><code>`
 Unordered list | `* ` in a new line | An unordered list. Supports nesting | `<ul>`
 Ordered list | `1. ` in a new line | An ordered list. Supports nesting | `<ol>`
-Image | See [images](#images) | An image with a caption | `<img>` inside `<figure>`. [See below](#html-figure)
-Embed: Rich | Paste the link in a new line and click enter | Rich embeds from third-party platforms like Youtube | [See below](#html-rich-embed)
-Embed: Link | Paste the link in a new line and click enter |
-
+Image | See [images](#images) | An image with a caption | `<img>` inside `<figure>`. [See this](theme-development#image)
+Embed: Rich | Paste the link in a new line and click enter | Rich embeds from third-party platforms like Youtube | [See this](theme-development#embed-rich)
+Embed: Link | Paste the link in a new line and click enter | Link preview like a bookmark | [See this](theme-development#embed-link)
 
 ## Headings {#headings}
 

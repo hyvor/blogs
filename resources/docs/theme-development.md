@@ -79,7 +79,7 @@ Type | Description | Examples
 **Main** | These template files are rendered directly. | `index.twig` `post.twig`
 **Partial** | These templates are not rendered directly but included in main template files. They start with an underscore (`_`) | `_footer.twig`
 **Route** | These templates are used to define custom routes for a blog. The file name starts with `route-`. See [custom routes](#custom-routes) below | `route-authors.twig`
-**Component** | These templates are used to define new HTML structures for complex components like link previews. See [Rich: Link](#rich-link). | `component-rich-link.twig`
+**Component** | These templates are used to define new HTML structures for complex components like link previews. See [Embed: Link](#embed-link). | `component-rich-link.twig`
 
 #### styles
 
@@ -464,9 +464,9 @@ For example, let's say you decide that your theme want a page to list all author
 
 ## Advanced Nodes {#advanced-nodes}
 
-Check the "[Using the editor](editor)" tutorial to learn all supported nodes. We try to use the most basic HTML elements to represent each node. However, there are some advanced components that require some attention when writing styles.
+"[Using the editor](editor)" page describes all supported nodes. We try to use the most basic HTML elements to represent each node. However, there are some advanced components that require some attention when writing styles.
 
-#### Image
+#### Image {#image}
 
 ```twig
 <figure>
@@ -474,9 +474,9 @@ Check the "[Using the editor](editor)" tutorial to learn all supported nodes. We
     <figcaption>Here goes the caption</figcaption>
 </figure>
 ```
-Note that figcaption can be empty. So, check if margins are correct when figcaption is not there.
+Note that figcaption can be empty. So, check if margins look good when figcaption is not there.
 
-#### Rich: Embed
+#### Embed: Rich {#embed-rich}
 
 ```twig
 <figure>
@@ -487,7 +487,7 @@ Note that figcaption can be empty. So, check if margins are correct when figcapt
 </figure>
 ```
 
-#### Rich: Link {#rich-link}
+#### Embed: Link {#embed-link}
 
 
 ```twig
