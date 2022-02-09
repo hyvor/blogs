@@ -34,7 +34,7 @@ class Blog extends Model
      */
     public function languages()
     {
-        return $this->hasMany(Lang::class);
+        return $this->hasMany(Language::class);
     }
 
     public function counts() 

@@ -241,19 +241,21 @@ For Single-Object endpoints (`/post`, `/tag`, `/author`)
 
 | Query param | Default | Description |
 | --- | --- | --- |
-| id |  | id of the object |
-| slug |  | slug of the object |
-| keys |  | GraphQL-like filtering (see below) |
+| `id` |  | id of the object |
+| `slug` |  | slug of the object |
+| `language` | | (only for `/post`) language code to fetch a post of a non-default language.
+| `keys` |  | GraphQL-like filtering (see below) |
 
 For Multi-object endpoints (`/posts`, `/pages`, `/tags`, `/authors`)
 
 | Query param | Description | Default |
 | --- | --- | --- |
-| limit | Max number of objects per page in the array | 25 |
-| page | The page number for pagination | 1 |
-| filter | A special notation to write filter logic (think of like the WHERE part in the SQL query). |  |
-| sort | How to sort the list. Supports comma-separated values (like SQL's ORDER BY) |  |
-| keys | GraphQL-like filtering (see below) |  |
+| `limit` | Max number of objects per page in the array | `25` |
+| `page` | The page number for pagination | `1` |
+| `filter` | A special notation to write filter logic (think of like the WHERE part in the SQL query - see below). | `""` |
+| `sort` | How to sort the list. Supports comma-separated values (like SQL's ORDER BY - see below) |  |
+| `keys` | GraphQL-like filtering (see below) |  |
+| `language` | (only for `/posts`) language code to fetch posts of a non-default language. If not set, only posts of the default language are fetched. Set it to `"all"` to get posts of all languages.
 
 ### `filter` param
 

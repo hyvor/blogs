@@ -26,11 +26,7 @@ return [
         ['api-data', 'Data API'],
         ['api-delivery', 'Delivery API'],
         ['api-console', 'Console API'],
-    ],
-    'Theme Development' => [
-        ['themes-intro', 'Introduction'],
-        ['themes-guide', 'Guide'],
-        ['themes-config', 'Config File']
+        ['theme-development', 'Theme Development'],
     ],
     'Advanced' => [
         ['routes', 'Routes'],

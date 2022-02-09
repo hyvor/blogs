@@ -72,11 +72,14 @@ There are four folders in a HB theme. Nested folders are **not supported**.
 
 #### templates
 
-This folder contains all template files such as `index.twig` and partial files such as `_footer.twig`. Only Twig files are supported in this folder.
-    
-<!-- - ~~`custom-authors.twig` - This creates a custom page with the path `authors`. We do not support an authors page (where you list all authors with their name and picture), but you can use `custom-{path}.twig` to generate a page like that. When we get a request to `/authors`, first, we check if there's a post with slug `/authors`. If not, we check if there's a custom template with named `custom-authors.twig`. If we find that, we simply render it and return.~~
-- ~~Custom component files: (`__embed.twig`). This is a special type for advanced components in user-generated content. For example, for `embed` in the content editor, we generate a custom HTML that consists of `figure` and `figcaption` elements. But, you can create custom component files to create a different type of custom HTML element. We'll explain more about this later.~~ -->
+This folder contains templates files. There are several types of template files.
 
+Type | Description | Examples
+---| --- |---|
+**Main** | These template files are rendered directly. | `index.twig` `post.twig`
+**Partial** | These templates are not rendered directly but included in main template files. They start with an underscore (`_`) | `_footer.twig`
+**Route** | These templates are used to define custom routes for a blog. The file name starts with `route-`. See [custom routes](#custom-routes) below | `route-authors.twig`
+**Component** | These templates are used to define new HTML structures for complex components like link previews. See [Rich: Link](#rich-link). | `component-rich-link.twig`
 
 #### styles
 
@@ -178,11 +181,12 @@ You are required to put some placeholders in your theme to make a few things wor
 
 | Placeholder | Scopes | Description |
 | --- | --- | --- |
-| `_head` | all scopes | place before `</head>`. We automatically add SEO tags, styles.css link, and code_head set by the blogger. |
-| `_foot` | all scopes | place before `</body>`. We place the code_foot set by the blogger. |
+| `_head` | all | place before `</head>`. We automatically add SEO tags, styles.css link, and code_head set by the blogger. |
+| `_foot` | all | place before `</body>`. We place the code_foot set by the blogger. |
 | `_comments` | post and page | to embed the commenting system |
 | `_comment_count` (optional) | post and page | to render the comment count of that page. For example, some themes have comment count at the top with a link to the comments section to encourage more comments. Only works when Hyvor Talk is connected. |
 | `_newsletter` | post and page | to embed the newsletter subscription form |
+| `_lang` | all | Language code of the current page. Should be placed as `<html lang="{{ _lang }}">`
 
 Sending all placeholders through the `raw` filter is absolutely required, otherwise, the HTML code in the variables will just be escaped and printed (HB uses Twig with *automatic escaping* turned on).
 
@@ -359,7 +363,12 @@ HAS_DARK_THEME=1
 
 We provide two custom Twig filters.
 
-- `asset_url` - to link assets
+- `data` - a function to call the Data API. See [Fetching data](#fetch-data) below.
+    ```twig
+    {% set posts = data(endpoint="posts", filter="author.slug=user") }
+    ```
+
+- `asset_url` - a filter to link assets
     - Turns an asset filename into its absolute URL.
     - Adds last updated timestamp as a query param (to bypass browser cache on updates)
     
@@ -375,7 +384,7 @@ We provide two custom Twig filters.
     <script src="https://subdomain.hyvorblogs.io/assets/script.js?v=12931923993"></script>
     ```
     
-- `lang` - all strings in the template should use this filter. See below for more details
+- `lang` - a filter for translations.
 
 ## Languages
 
@@ -422,3 +431,91 @@ byAuthor="par {authorName}"
 ```
 
 Keys don't change, only the string.
+
+
+## Fetching Data {#fetch-data}
+
+Use the `data` function to fetch data from our [Data API](api-data).
+
+```twig
+<!-- Fetch data -->
+{% set recent_posts = data(endpoint="posts", sort="published_at DESC", limit="5") %}
+
+<!-- Render UI -->
+<div id="recent-posts">
+    {% for post in recent_posts %}
+        {% include '_recent-post-card.twig' with post  %}  
+    {% endfor %}
+</div>
+```
+
+Use the `endpoint` named argument to set the API endpoint. You can set all other parameters by just sending them as named arguments to the `data` Twig function (Ex: `sort="published_at DESC"`).
+
+## Custom Routes {#custom-routes}
+
+There are two ways to add custom routes:
+
+* The blogger can add custom routes from the console (See [docs](routes#custom)).
+* Theme developers can define custom routes by adding files named `route-{route}.twig` to the `templates` folder.
+
+The first option is more robust, and it providers easier way to automatically set input variables `_posts` (by filtering), `_tag`, `_author`, etc so you can access them without calling the Data API. But, as a theme developer, you will need to use the second option.
+
+For example, let's say you decide that your theme want a page to list all authors of the blog. You can add a `route-authors.twig` to the `templates` folder. If the blog gets a request to `/authors`, this template will be rendered automatically.
+
+## Advanced Nodes {#advanced-nodes}
+
+Check the "[Using the editor](editor)" tutorial to learn all supported nodes. We try to use the most basic HTML elements to represent each node. However, there are some advanced components that require some attention when writing styles.
+
+#### Image
+
+```twig
+<figure>
+    <img src="https://exmaple.com/image.png" />
+    <figcaption>Here goes the caption</figcaption>
+</figure>
+```
+Note that figcaption can be empty. So, check if margins are correct when figcaption is not there.
+
+#### Rich: Embed
+
+```twig
+<figure>
+    <div class="rich-embed">
+        {# embed HTML code goes here... #}
+    </div>
+    <figcaption>Here goes the caption</figcaption>
+</figure>
+```
+
+#### Rich: Link {#rich-link}
+
+
+```twig
+<figure>
+    <a class="rich-link">
+        <div class="rich-link-details">
+            <div class="rich-link-title">{{ data.title }}</div>
+            <div class="rich-link-description">{{ data.description }}</div>
+            <div class="rich-link-domain">{{ data.domain }}</div>
+        </div>
+        <div class="rich-link-thumbnail">
+            <img src="{{ data.thumbnail }}" />
+        </div>
+    </a>
+    <figcaption>{{ data.caption }}</figcaption>
+</figure>
+```
+
+**TIP:** It is possible to change this HTML structure, by adding a `component-rich-link.twig` to `/templates` folder. The `data` object is as follows.
+```json
+{
+    "url": "https://blogs.hyvor.com",
+    "title": "Hyvor Blogs",
+    "description": "A simple blogging platform",
+    "domain": "blogs.hyvor.com",
+    "thumbnail": "https://blogs.hyvor.com/thumbnail.png",
+    "icon": "https://blogs.hyvor.com/icon.png",
+    "site_name": "Hyvor Blogs",
+    "caption": "A link preview of blogs.hyvor.com"
+}
+```

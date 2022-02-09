@@ -144,6 +144,30 @@
                 margin-top:4px;
             }
         }
+
+        h2, h3, h4 {
+            position:relative;
+            a:not(.anchor-link) {
+                text-decoration: none;
+                color:inherit;
+            }
+            .anchor-link {
+                position:absolute;
+                right:100%;
+                margin-right: 7px;
+                opacity:0;
+                transition:.3s opacity;
+                svg {
+                    width:24px;
+                }
+            } 
+
+            &:hover {
+                .anchor-link {
+                    opacity:1;
+                }
+            }
+        }
         
         /* h3 {
             font-size:30px;

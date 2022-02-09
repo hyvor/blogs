@@ -12,9 +12,12 @@ use App\Data\Enums\ThemeFileFolderEnum;
 use App\Data\Enums\DeliveryAPIScopeEnum;
 use App\Domains\BlogTheme\BlogThemeTemplateRepository;
 use App\Domains\Post\PostRepository;
+use App\Domains\Redirect\RedirectRepository;
 use App\Models\Blog;
 use ScssPhp\ScssPhp\Compiler;
 use Symfony\Component\Routing\Exception\ResourceNotFoundException;
+use App\Data\Enums\RedirectTypeEnum;
+use App\Domains\Language\LanguageRepository;
 
 class DeliveryRepository {
 
@@ -29,52 +32,72 @@ class DeliveryRepository {
             $path = '/' . $path; // add leading slash (otherwise matcher doesn't work)
         }
 
+        // check Redirects first
+        $redirect = RedirectRepository::findRedirectForPath($blog->id, $path);
+
+        if ($redirect) {
+            return DeliveryAPIResponseObject::forRedirect($redirect->to, RedirectTypeEnum::from($redirect->type));
+        }
+
+        /**
+         * Check for language
+         */
+        // get fr from /fr/hello-world
+        $possibleLanguageCode = explode('/', $path)[1] ?? null;
+    
+        if ($possibleLanguageCode && strlen($possibleLanguageCode) <= 12) {
+            // fetch all languages and find out the correct one
+            $langs = $blog->languages;
+
+            $defaultLang = $langs->where('is_default', true)->first();
+            $nonDefaultLangs = $langs->where('is_default', false);
+
+            $currentLang = $nonDefaultLangs->firstWhere('code', $possibleLanguageCode);
+
+            if ($currentLang === null) {
+                $currentLang = $defaultLang;
+            }
+        } else {
+            // fetch only the default one
+            $currentLang = $blog->languages()->where('is_default', true);
+        }
+
         /**
          * from https://symfony.com/doc/current/create_framework/routing.html
          */
-        $route = new RouteCollection();
+        $routes = new RouteCollection();
 
         /**
          * Adds the routes to match
          *
          * Important!
          *  dynamic matches these:
-         *      - redirects
          *      - posts or pages (from slugs)
          *      - custom pages (from theme files)
          */
 
         // default routes
-        $route->add('assets', new Route('/assets/{fileName}'));
-        $route->add('styles', new Route('/styles.css'));
+        $routes->add('assets', new Route('/assets/{fileName}'));
+        $routes->add('styles', new Route('/styles.css'));
 
         // add dynamic routing
         $blogRoutes = $blog->routes;
-        $blogLanguages = $blog->languages;
-        foreach ($blogRoutes as $route) {
+        $blogRoutesByName = $blogRoutes->keyBy('name');
+        foreach ($blogRoutes as $routeRow) {
 
-            $route->add()
+            $route = new Route($routeRow->match);
+            $routes->add($routeRow->name, $route);
             
         }
 
-        // collections
-        $route->add('tag', new Route('/tag/{slug}'));
-        $route->add('author', new Route('/author/{slug}'));
-        $route->add('search', new Route('/search/{slug}'));
-        $route->add('index', (new Route('/{_locale}/contact'))
-            ->setDefault('_locale', 'en')
-    );
-
         $context = new RequestContext();
-        $matcher = new UrlMatcher($route, $context);
+        $matcher = new UrlMatcher($routes, $context);
 
 
         try {
-            dd($matcher->match($path));
             $props = $matcher->match($path);
             $type = $props['_route'];
         } catch (ResourceNotFoundException) {
-            dd("errpr");
             $type = null;
         }
 
@@ -133,11 +156,13 @@ class DeliveryRepository {
             );
 
             return DeliveryAPIResponseObject::forFile($html, 'text/html');
-        } else {
-            $slug = trim($path, '/');
+        } elseif (
+            $type === 'post' ||
+            $type === 'page'
+        ) {
 
             // check for post or page
-            $post = PostRepository::getPostByBlogIdAndIdentifier($blog->id, null, $slug);
+            $post = PostRepository::getPostByBlogIdAndIdentifier($blog->id, null, $props['slug']);
 
             if ($post) {
                 $html = BlogThemeTemplateRepository::renderFile(

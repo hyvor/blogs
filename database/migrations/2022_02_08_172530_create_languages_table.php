@@ -24,8 +24,16 @@ return new class extends Migration
             /**
              * code is a valid HTML lang attribute value
              * https://developer.mozilla.org/en-US/docs/Web/HTML/Global_attributes/lang
+             * 
+             * Max length:
+             * Language subtag (3)
+             * Script subtag (4)
+             * Region subtag (3)
+             * two dashes (2)
+             * = 12
              */
-            $table->string('code'); // en|en-US|etc...
+            $table->string('code', 12); // en|en-US|etc...
+            $table->string('name');
             $table->boolean('is_default')->default(false);
 
             // indexes
