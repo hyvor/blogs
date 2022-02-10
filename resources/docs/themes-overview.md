@@ -1,4 +1,4 @@
-# Designing Themes: Guide
+# Designing Themes: Overview
 
 Hyvor Blogs (HB) is opinionated on how themes are created, but allows developers to build any type of theme.
 
@@ -489,7 +489,6 @@ Note that figcaption can be empty. So, check if margins look good when figcaptio
 
 #### Embed: Link {#embed-link}
 
-
 ```twig
 <figure>
     <a class="rich-link">
@@ -518,4 +517,12 @@ Note that figcaption can be empty. So, check if margins look good when figcaptio
     "site_name": "Hyvor Blogs",
     "caption": "A link preview of blogs.hyvor.com"
 }
+```
+
+#### Callout {#callout}
+
+```twig
+<aside style="background-color:#0000000;color:#ffffff">
+    <mark></mark>
+</aside>
 ```

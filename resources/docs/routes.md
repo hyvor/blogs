@@ -74,4 +74,4 @@ You can also change the `index` route to match `/blog`, not `/`. If you do this,
 
 In addition to the default 6 routes, you can add your own routes.
 
-> Please note that theme developers can add custom routes by adding `custom-{route}.twig` files to template files.
+> Please note that you can also add custom routes by adding `route-{route}.twig` files to template files. See [here](themes-overview#custom-routes) from more details.

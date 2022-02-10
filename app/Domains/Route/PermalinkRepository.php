@@ -5,6 +5,8 @@ use App\Domains\Blog\BlogRepository;
 use App\Domains\Post\PostRepository;
 use App\Models\Blog;
 use App\Models\Post;
+use App\Models\Tag;
+use App\Models\User;
 use Illuminate\Support\Carbon;
 
 /**
@@ -86,7 +88,7 @@ class PermalinkRepository {
      * Gets permalink of a post/page
      * only for published posts
      */
-    public static function getPostPermalink(Post $post, Blog $blog) {
+    public static function getPostPermalink(Post $post, Blog $blog) : string {
 
         $path = $blog->routes()->where('name', 'post')->first()->match;
 
@@ -110,6 +112,20 @@ class PermalinkRepository {
 
         return BlogRepository::getFullUrlFromPath($blog, $path);
 
+    }
+
+    public static function getTagPermalink(Tag $tag, Blog $blog) : string {
+        $path = $blog->routes()->where('name', 'tag')->first()->match;
+        $path = str_replace('{slug}', $tag->slug, $path);
+        
+        return BlogRepository::getFullUrlFromPath($blog, $path);
+    }
+
+    public static function getAuthorPermalink(User $author, Blog $blog) : string {
+        $path = $blog->routes()->where('name', 'tag')->first()->match;
+        $path = str_replace('{slug}', $author->slug, $path);
+        
+        return BlogRepository::getFullUrlFromPath($blog, $path);
     }
 
 }
