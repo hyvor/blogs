@@ -17,7 +17,8 @@ use App\Models\Blog;
 use ScssPhp\ScssPhp\Compiler;
 use Symfony\Component\Routing\Exception\ResourceNotFoundException;
 use App\Data\Enums\RedirectTypeEnum;
-use App\Domains\Language\LanguageRepository;
+use App\Domains\Route\PermalinkRepository;
+use Padaliyajay\PHPAutoprefixer\Autoprefixer;
 
 class DeliveryRepository {
 
@@ -26,7 +27,6 @@ class DeliveryRepository {
         string $path,
         array $query
     ) : DeliveryAPIResponseObject|null {
-
 
         if (!preg_match('/^\//', $path)) {
             $path = '/' . $path; // add leading slash (otherwise matcher doesn't work)
@@ -82,7 +82,6 @@ class DeliveryRepository {
 
         // add dynamic routing
         $blogRoutes = $blog->routes;
-        $blogRoutesByName = $blogRoutes->keyBy('name');
         foreach ($blogRoutes as $routeRow) {
 
             $route = new Route($routeRow->match);
@@ -96,12 +95,19 @@ class DeliveryRepository {
 
         try {
             $props = $matcher->match($path);
-            $type = $props['_route'];
+            $matchedRoute = $blogRoutes->keyBy("name")[$props['_route']] ?? null;
         } catch (ResourceNotFoundException) {
-            $type = null;
+            $props = null;            
         }
 
-        if ($type === 'assets') {
+
+        if ($props === null) {
+            return self::notFound();
+        }
+
+
+        // first process assets and styles
+        if ($props['_route'] === 'assets') {
 
             /**
              * asset is simple.
@@ -120,9 +126,10 @@ class DeliveryRepository {
 
             return DeliveryAPIResponseObject::forFile($file->content, $mimeType);
 
-        } elseif ($type === 'styles') {
+        }
+        if ($props['_route'] === 'styles') {
 
-            /**
+             /**
              * Process all SCSS files
              */
 
@@ -136,35 +143,33 @@ class DeliveryRepository {
             $scssCompiler = new Compiler();
             $scssCompiler->registerFiles($filesArray);
 
+            // compile CSS
             $css = $scssCompiler->compileFile('index.scss')->getCss();
 
+            // add auto prefixes
+            $autoprefixer = new Autoprefixer($css);
+            $css = $autoprefixer->compile();
+
             return DeliveryAPIResponseObject::forFile($css, 'text/css');
+        }
 
-        } elseif (
-            $type === 'tag' ||
-            $type === 'author' ||
-            $type === 'index' ||
-            $type === 'search'
-        ) {
-            $scope = DeliveryAPIScopeEnum::from($type);
-
-            $html = BlogThemeTemplateRepository::renderFile(
-                $blog,
-                $scope,
-                $props['slug'] ?? null,
-                $query['page'] ?? 1,
-            );
-
-            return DeliveryAPIResponseObject::forFile($html, 'text/html');
-        } elseif (
-            $type === 'post' ||
-            $type === 'page'
-        ) {
+        if ($matchedRoute->name === 'post' || $matchedRoute->name === 'page') {
 
             // check for post or page
             $post = PostRepository::getPostByBlogIdAndIdentifier($blog->id, null, $props['slug']);
 
             if ($post) {
+
+                if ($matchedRoute->name === 'page' && !$post->is_page) {
+                    return self::notFound();
+                }
+
+                $validPermalink = PermalinkRepository::validatePostPermalink($post, $props);
+
+                if (!$validPermalink) {
+                    return self::notFound();
+                }
+
                 $html = BlogThemeTemplateRepository::renderFile(
                     $blog,
                     DeliveryAPIScopeEnum::from($post->is_page ? 'page' : 'post'),
@@ -175,8 +180,27 @@ class DeliveryRepository {
 
         }
 
+        if ($matchedRoute->name === 'index') {
+
+            $scope = DeliveryAPIScopeEnum::from($matchedRoute->name);
+
+            $html = BlogThemeTemplateRepository::renderFile(
+                $blog,
+                $scope,
+                $props['slug'] ?? null,
+                $query['page'] ?? 1,
+            );
+
+            return DeliveryAPIResponseObject::forFile($html, 'text/html');
+
+        }
+
         return null;
 
+    }
+
+    private static function notFound() {
+        return DeliveryAPIResponseObject::forFile("404", "text/html", 404);
     }
 
 }

@@ -261,4 +261,17 @@ class PostRepository
     {
         Post::find($postId)->delete();
     }
+
+
+    public static function getFirstTag(Post $post) {
+        return $post->tags()->withPivot('order')
+            ->orderBy('order', 'asc')
+            ->first();
+    }
+    public static function getFirstAuthor(Post $post) {
+        return $post->tags()->withPivot('order')
+            ->orderBy('order', 'asc')
+            ->first();
+    }
+
 }

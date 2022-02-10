@@ -13,6 +13,11 @@ class Post extends Model
         'published_at' => 'datetime',
     ];
 
+    public function blog()
+    {
+        return $this->belongsTo(Blog::class);
+    }
+
     public function tags()
     {
         return $this->belongsToMany(Tag::class);
@@ -22,4 +27,6 @@ class Post extends Model
     {
         return $this->belongsToMany(User::class, 'post_author');
     }
+
+
 }

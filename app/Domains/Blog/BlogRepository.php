@@ -28,18 +28,18 @@ class BlogRepository
         return $domain;
     }
 
-    public static function getFullUrlFromSlug(Blog $blog, ?string $slug)
+    public static function getFullUrlFromPath(Blog $blog, ?string $path)
     {
-        if (is_null($slug)) {
-            $slug = '';
+        if (is_null($path)) {
+            $path = '';
         }
 
-        $slug = trim($slug, '/');
+        $path = trim($path, '/');
 
         $domain = self::getDomain($blog);
         
         $protocol = App::environment('local') ? 'http://' : 'https://';
 
-        return $protocol . $domain . ($slug ? '/' . $slug : '');
+        return $protocol . $domain . ($path ? '/' . $path : '');
     }
 }

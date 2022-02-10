@@ -39,25 +39,28 @@ Placeholder | Description |
 `{tag}` | Slug of the first tag of the post |
 `{author}` | Slug of the first author of the post |
 
-Time-based placeholders: (all represent the post's **publish time**)
+Time-based placeholders:
+* Represent the post's **publish time**
+* Only English lowercase is supported for month and day names
 
 Placeholder | Description | Example
 ---|---|--- |
 `{year}` | 4-digit year | `2022`
-`{short_year}` | 2-digit year | `99` or `22`
+`{year_short}` | 2-digit year | `99` or `22`
 `{month}` | 2-digit month number | `01` to `12`
-`{month_integer}` | month number without leading zero | `1` to `12`
+`{month_number}` | month number without leading zero | `1` to `12`
 `{month_short}` | short month name | `jan` to `dec`
 `{month_long}` | long month name | `january` to `december`
 `{day}` | 2-digit day | `01` to `31`
-`{day_integer}` | day without leading zero | `1` to `31`
-`{day_year}` | ordinal day of the year | `001` to `365`
-`{day_year_integer}` | ordinal day of the year without leading zero | `1` to `365`
+`{day_number}` | day without leading zero | `1` to `31`
+`{day_year}` | ordinal day of the year | `1` to `365`
 `{day_week}` | 3-letter weekday | `mon` to `sun`
 `{day_week_long}` | weekday | `monday` to `sunday`
+`{day_week_number}` | weekday as a number | from `1` to `7`
 `{hour}` | hour of the day, in 24-format | `00` to `23`
 `{minute}` | minute of the hour | `00` to `59`
 `{second}` | second of the minute | `00` to `59`
+`{unix}` | UNIX timestamp in seconds | `1448406000`
 
 ## Customizing other default routes
 

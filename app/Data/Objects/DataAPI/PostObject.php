@@ -4,6 +4,7 @@ namespace App\Data\Objects\DataAPI;
 
 use App\Domains\Blog\BlogRepository;
 use App\Domains\Post\PostContentRepository;
+use App\Domains\Route\PermalinkRepository;
 use App\Models\Blog;
 use App\Models\Post;
 
@@ -49,7 +50,7 @@ class PostObject
         $this->content = PostContentRepository::prosemirrorToHtml($post->content);
         $this->title = $post->title;
         $this->description = $post->description;
-        $this->url = BlogRepository::getFullUrlFromSlug($blog, $post->slug);
+        $this->url = PermalinkRepository::getPostPermalink($post, $blog);
         $this->featured_image = $post->featured_image;
         $this->canonical_url = $post->canonical_url;
         $this->reading_time = $post->reading_time;
