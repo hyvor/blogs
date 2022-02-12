@@ -24,8 +24,8 @@ class ConsoleNavigationController extends Controller {
         // Create a helper class for this
         
         // $request->validate([
-        //     'old_url' => 'required|string',
-        //     'new_url' => 'required|string',
+        //     'navigation_name' => 'required|string',
+        //     'navigation_url' => 'required|string',
         //     'type' => 'required|string',
         // ]);
         $navigationName = $request->input('navigation_name');
@@ -44,13 +44,13 @@ class ConsoleNavigationController extends Controller {
         // ]);
 
         $id = $request->route('id');
-        // $navigationName = $request->input('navigation_name');
-        // $navigationUrl = $request->input('navigation_url');
-        // $type = $request->input('type');
+        $navigationName = $request->input('navigation_name');
+        $navigationUrl = $request->input('navigation_url');
+        $type = $request->input('type');
 
-        $navigationName = 'Testing the name update in navigation';
-        $navigationUrl = 'Testing the url update in the navigation';
-        $type = 'head';
+        // $navigationName = 'Testing the name update in navigation';
+        // $navigationUrl = 'Testing the url update in the navigation';
+        // $type = 'head';
 
         $updateNavigation = NavigationRepository::updateNavigation($blog->id, $id, $navigationName, $navigationUrl, $type);
         return response()->json($updateNavigation);

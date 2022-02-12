@@ -16,16 +16,16 @@ Class NavigationRepository
     public static function createNavigation(int $blogId, string $navigationName, string $navigationUrl, $type ){
         return Navigation::create([
             'blog_id' => $blogId,
-            'navigation_name' => $navigationName,
-            'navigation_url' => $navigationUrl,
+            'name' => $navigationName,
+            'url' => $navigationUrl,
             'type' => $type, 
         ]);
     }
 
     public static function updateNavigation(int $blogId ,int $id, string $navigationName, string $navigationUrl, $type){
         $navigation = Navigation::find($id);
-        $navigation->navigation_name=$navigationName;
-        $navigation->navigation_url=$navigationUrl;
+        $navigation->name=$navigationName;
+        $navigation->url=$navigationUrl;
         $navigation->type=$type;
 
         $navigation->save();

@@ -31,20 +31,20 @@ const  navigationLogic = kea({
             await api.delete(props.subdomain, `/navigation/${id}`);
         },
 
-        create: async ({navigationName, navigationUrl, type}) => {
+        create: async ({name, url, type}) => {
             const navigation = await api.post(props.subdomain, '/navigation', {
-                    navigation_name: navigationName,
-                    navigation_url: navigationUrl,
+                    navigation_name: name,
+                    navigation_url: url,
                     type: type 
                 })
           
             actions.addNavigation(navigation);
         },
 
-        updateData: async ({userId, navigationName, navigationUrl, type}) => {
+        updateData: async ({userId, name, url, type}) => {
             const navigation = await api.put(props.subdomain, `/navigation/${userId}`, {
-                    navigation_name: navigationName,
-                    navigation_url: navigationUrl,
+                    navigation_name: name,
+                    navigation_url: url,
                     type: type 
                 });
             actions.updateNavigation(navigation);

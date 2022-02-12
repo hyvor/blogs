@@ -23,9 +23,9 @@ class NavigationFactory extends Factory
     {
         return [
             'blog_id' => '1',
-            'navigation_name' => $this->faker->paragraph,
-            'navigation_url' => $this->faker->paragraph,
-            'type' => 'head',
+            'name' => $this->faker->title,
+            'url' => $this->faker->url(),
+            'type' => 'header',
         ];
     }
 }
