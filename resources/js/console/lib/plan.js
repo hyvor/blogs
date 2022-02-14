@@ -4,17 +4,25 @@
  * blog = array item in blogsLogic (which has both blog and user)
  */
 
-export function isBlogInTeamPlan(blog) {
-    return blog.blog.is_on_trial ||
+import blogsLogic from "../logic/blogsLogic";
+
+function getBlogFromSubdomain(subdomain) {
+    return blogsLogic.values.findBlogBySubdomain(subdomain).blog;
+}
+
+export function isBlogInTeamPlan(subdomain) {
+    const blog = getBlogFromSubdomain(subdomain)
+    return blog.is_on_trial ||
         (
-            blog.blog.subscribed && 
-            ['team', 'enterprise'].indexOf(blog.blog.subscription.plan) >= 0
+            blog.subscribed && 
+            ['team', 'enterprise'].indexOf(blog.subscription.plan) >= 0
         )
 }
-export function isBlogInProPlan(blog) {
-    return blog.blog.is_on_trial ||
+export function isBlogInProPlan(subdomain) {
+    const blog = getBlogFromSubdomain(subdomain)
+    return blog.is_on_trial ||
         (
-            blog.blog.subscribed && 
-            ['pro', 'team', 'enterprise'].indexOf(blog.blog.subscription.plan) >= 0
+            blog.subscribed && 
+            ['pro', 'team', 'enterprise'].indexOf(blog.subscription.plan) >= 0
         )
 }

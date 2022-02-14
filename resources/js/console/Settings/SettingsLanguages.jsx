@@ -1,11 +1,10 @@
 import { useActions, useValues } from 'kea';
 import React from 'react';
 import { useState } from 'react';
-import { ArrowUp, ArrowUpCircleFill, PencilFill, Plus, Trash, TrashFill } from 'react-bootstrap-icons';
+import { ArrowUpCircleFill, PencilFill, Plus, TrashFill } from 'react-bootstrap-icons';
 import NavLink from '../ReusableComponents/NavLink'
 import numberFormatter from '../../helpers/numberFormatter';
 import { isBlogInTeamPlan } from '../lib/plan';
-import blogsLogic from '../logic/blogsLogic';
 import languagesLogic from '../logic/languagesLogic';
 import subdomainLogic from '../logic/subdomainLogic';
 import Callout from '../ReusableComponents/Callout';
@@ -20,8 +19,7 @@ export default function SettingsLanguages() {
     const { languages, loadAjax } = useValues(languageLogicInst);
     const { create, update, remove } = useActions(languageLogicInst);
 
-    const blog = useValues(blogsLogic).findBlogBySubdomain(subdomain)
-    const isInTeamPlan = isBlogInTeamPlan(blog);
+    const isInTeamPlan = isBlogInTeamPlan(subdomain)
 
     const [ isCreating, setIsCreating ] = useState(false);
 
