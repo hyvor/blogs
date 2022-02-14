@@ -12,6 +12,7 @@ export default function Input(props) {
             </div>
             <input 
                 type={props.type} 
+                placeholder={props.placeholder}
                 autoFocus={props.autoFocus || false} 
                 name={props.name}
                 value={props.value} 
@@ -44,6 +45,7 @@ Input.propTypes = {
     onFocus: PropTypes.func,
     maxLength: PropTypes.number,
     autoFocus: PropTypes.bool,
+    placeholder: PropTypes.string,
 
     bottom: PropTypes.element,
 }

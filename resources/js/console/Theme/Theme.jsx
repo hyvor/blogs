@@ -20,7 +20,7 @@ export default function Theme() {
             <div className="theme-folders">
                 {
                     loadFilesAjax.status === 'loading' ?
-                    <Loader spacing={40} /> :
+                    <Loader padding={40} /> :
 
                     <div>
                         <Folder name="templates" />

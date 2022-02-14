@@ -3,6 +3,7 @@
 use App\Http\Controllers\ConsoleAPI\ConsoleBlogController;
 use App\Http\Controllers\ConsoleAPI\ConsoleBlogThemeController;
 use App\Http\Controllers\ConsoleAPI\ConsoleEmbedController;
+use App\Http\Controllers\ConsoleAPI\ConsoleLanguageController;
 use App\Http\Controllers\ConsoleAPI\ConsoleMediaController;
 use App\Http\Controllers\ConsoleAPI\ConsolePostController;
 use App\Http\Controllers\ConsoleAPI\ConsoleSubscriptionController;
@@ -88,6 +89,12 @@ Route::prefix('/api/console/v0/blog/{subdomain}')
     Route::post('/navigation', []);
     Route::patch('/navigation/{id}', []);
     Route::delete('/navigation/{id}', []);
+
+    // languages CRUD
+    Route::get('/languages', [ConsoleLanguageController::class, 'get']);
+    Route::post('/language', [ConsoleLanguageController::class, 'create']);
+    Route::put('/language/{id}', [ConsoleLanguageController::class, 'update']);
+    Route::delete('/language/{id}', [ConsoleLanguageController::class, 'delete']);
 
     // billing CRUD
     Route::get('/subscription', [ConsoleSubscriptionController::class, 'getData']);

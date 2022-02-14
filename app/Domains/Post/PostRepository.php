@@ -44,6 +44,7 @@ class PostRepository
         $status = $filters->status;
         $authorId = $filters->authorId;
         $tagId = $filters->tagId;
+        $languageId = $filters->languageId;
         $startTimestamp = $filters->startTimestamp;
         $endTimestamp = $filters->endTimestamp;
         $search = $filters->search;
@@ -56,12 +57,17 @@ class PostRepository
                 $join->on('post_author.post_id', '=', 'posts.id');
                 $join->on('post_author.author_id', '=', $authorId);
             });
-        })->when($tagId, function ($query) use ($tagId) {
+        })
+        ->when($tagId, function ($query) use ($tagId) {
             $query->join('post_tag', function ($join) use ($tagId) {
                 $join->on('post_tag.post_id', '=', 'posts.id');
                 $join->on('post_tag.tag_id', '=', $tagId);
             });
-        })->when($startTimestamp && $endTimestamp, function ($query) use ($startTimestamp, $endTimestamp) {
+        })
+        ->when($languageId, function ($query) use ($languageId) {
+            $query->where('posts.language_id', $languageId);
+        })
+        ->when($startTimestamp && $endTimestamp, function ($query) use ($startTimestamp, $endTimestamp) {
             $query->whereDate('created_at', '>', $startTimestamp)
                 ->whereDate('created_at', '<', $endTimestamp);
         })

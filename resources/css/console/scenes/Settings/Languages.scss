@@ -1,0 +1,69 @@
+.languages-view {
+
+    @mixin lang-table-grid {
+        display: grid;
+        grid-template-columns: 1fr 1fr 1fr 60px;
+        padding: 10px 15px;
+        border-radius: 20px;
+        align-items: center;
+    }
+
+    .lang-table-header {
+        @include lang-table-grid;
+        font-weight: 600;
+        background: $color-card;
+        margin-bottom: 15px;
+    }
+
+    .lang {
+        @include lang-table-grid;
+        &.default {
+            .lang-delete {
+                visibility: hidden;
+            }
+        }
+    }
+
+    .lang-item {
+        margin-right:5px;
+    }
+
+    .default-tag {
+        padding: 2px 6px;
+        font-size: 9px;
+        background: #886c6b;
+        color: #fff;
+        margin-left: 5px;
+        border-radius: 20px;
+        font-weight: 600;
+    }
+
+    .lang-actions {
+        display: flex;
+        justify-content: center;
+        .lang-edit {
+            margin-right:8px;
+        }
+        .lang-button {
+            display: inline-flex;
+            width: 24px;
+            height: 24px;
+            align-items: center;
+            justify-content: center;
+            background: $color-hover;
+            border-radius: 50%;
+            cursor: pointer;
+            background: $color-hover;
+            &:hover {
+                box-shadow: 0 0 10px rgba(0,0,0,0.1);
+            }
+        }
+    }
+
+    .lang-add {
+        font-weight: 600;
+        margin: 15px;
+        text-align: center;
+    }
+
+}

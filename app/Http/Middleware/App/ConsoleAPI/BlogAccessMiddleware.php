@@ -4,6 +4,7 @@ namespace App\Http\Middleware\App\ConsoleAPI;
 
 use App\Exceptions\TrustedException;
 use App\Models\Blog;
+use App\Models\Language;
 use App\Models\Media;
 use App\Models\Post;
 use Closure;
@@ -13,6 +14,7 @@ class BlogAccessMiddleware
     private $models = [
         'post' => Post::class,
         'media' => Media::class,
+        'language' => Language::class,
     ];
 
     public function __construct(Blog $blog)

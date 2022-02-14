@@ -10,6 +10,7 @@ import SettingUsers from './SettingUsers';
 import SettingRedirects from './SettingRedirects';
 import SettingsComments from './SettingsComments';
 import SettingsRoutes from './SettingsRoutes';
+import SettingsLanguages from './SettingsLanguages';
 
 export default function Settings({type}) {
 
@@ -41,6 +42,9 @@ export default function Settings({type}) {
             break;
         case 'routes':
             Type = () => <SettingsRoutes />;
+            break;
+        case 'languages':
+            Type = () => <SettingsLanguages />;
             break;
     }
 

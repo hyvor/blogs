@@ -52,7 +52,7 @@
         background: $color-red;
     }
     &.light {
-        border: 1px solid transparent;
+        background-color: $color-grey;
         color: $color-accent;
     }
     &.disabled {

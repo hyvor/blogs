@@ -12,6 +12,8 @@
 @import './scenes/Theme.scss';
 @import './scenes/NewBlog.scss';
 
+@import './scenes/Settings/settings.scss';
+
 body {
     background-color: $color-accent-very-light;
     color: $color-text;

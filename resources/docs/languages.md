@@ -4,6 +4,7 @@ You will learn:
 
 * How to change the default language of your blog
 * How to make your blog multi-language
+* Technical SEO for multi-language blogs
 
 Language settings: **Console &rarr; Settings &rarr; Languages**.
 

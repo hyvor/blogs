@@ -16,7 +16,7 @@ $pricingRow = '<tr>
                 <th>
                     <div class="plan-name">Pro</div>
                     <div class="plan-price">
-                        <div class="price">$20</div>
+                        <div class="price">$30</div>
                         <div class="price-details">
                             <span class="period">per year</span>
                         </div>
@@ -143,10 +143,19 @@ $pricingRow = '<tr>
                 <td><?= $svgCheck ?></td>
             </tr>
 
+
+            <tr>
+                <td>Multi-Language</td>
+                <td><?= $svgCancel ?></td>
+                <td><?= $svgCancel ?></td>
+                <td><?= $svgCheck ?></td>
+                <td><?= $svgCheck ?></td>
+            </tr>
+
             <tr>
                 <td>Data API</td>
                 <td><?= $svgCancel ?></td>
-                <td><?= $svgCheck ?></td>
+                <td><?= $svgCancel ?></td>
                 <td><?= $svgCheck ?></td>
                 <td><?= $svgCheck ?></td>
             </tr>
