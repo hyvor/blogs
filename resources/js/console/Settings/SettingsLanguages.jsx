@@ -1,10 +1,14 @@
 import { useActions, useValues } from 'kea';
 import React from 'react';
 import { useState } from 'react';
-import { PencilFill, Plus, Trash, TrashFill } from 'react-bootstrap-icons';
+import { ArrowUp, ArrowUpCircleFill, PencilFill, Plus, Trash, TrashFill } from 'react-bootstrap-icons';
+import NavLink from '../ReusableComponents/NavLink'
 import numberFormatter from '../../helpers/numberFormatter';
+import { isBlogInTeamPlan } from '../lib/plan';
+import blogsLogic from '../logic/blogsLogic';
 import languagesLogic from '../logic/languagesLogic';
 import subdomainLogic from '../logic/subdomainLogic';
+import Callout from '../ReusableComponents/Callout';
 import Input from '../ReusableComponents/Input';
 import Loader from '../ReusableComponents/Loader';
 import { Popup, PopupBodyDefault, PopupConfirm, PopupFooterDoubleButton, PopupHeaderDefault } from '../ReusableComponents/Popup';
@@ -15,6 +19,9 @@ export default function SettingsLanguages() {
     const languageLogicInst = languagesLogic({subdomain});
     const { languages, loadAjax } = useValues(languageLogicInst);
     const { create, update, remove } = useActions(languageLogicInst);
+
+    const blog = useValues(blogsLogic).findBlogBySubdomain(subdomain)
+    const isInTeamPlan = isBlogInTeamPlan(blog);
 
     const [ isCreating, setIsCreating ] = useState(false);
 
@@ -47,12 +54,30 @@ export default function SettingsLanguages() {
                         />) }
                     </div>
 
-                    <div className="lang-add">
-                        <button 
-                            className="button small light" 
-                            onClick={() => setIsCreating(true)}
-                        >Add Language <Plus /></button>
-                    </div>
+                    {
+                        isInTeamPlan ?
+                        <div className="lang-add">
+                            <button 
+                                className="button small light" 
+                                onClick={() => setIsCreating(true)}
+                            >Add Language <Plus /></button>
+                        </div> :
+                        <div className="upgrade-view">
+                            <Callout 
+                                icon={<ArrowUpCircleFill />}
+                                color="orange"
+                                title="Upgrade to add more languages"
+                                text={<div>Upgrade to the <b>Team</b> or <b>Enterprise</b> plan to add more languages and enable multi-language features.
+                                <div style={{marginTop: 10}}>
+                                    <NavLink
+                                        className="button small orange"
+                                        href={`/console/${subdomain}/billing`}
+                                    >Upgrade Now</NavLink>
+                                </div>
+                                </div>}
+                            />
+                        </div>
+                    }
 
                     {
                         isCreating ?

@@ -48,6 +48,13 @@
         color: $color-text;
     }
 
+    &.disabled {
+        cursor: not-allowed;
+        opacity: 0.5;
+    }
+
+
+    // colors
     &.danger {
         background: $color-red;
     }
@@ -55,8 +62,8 @@
         background-color: $color-grey;
         color: $color-accent;
     }
-    &.disabled {
-        cursor: not-allowed;
-        opacity: 0.5;
+    &.orange {
+        background-color: $color-orange-dark;
     }
+
 }
