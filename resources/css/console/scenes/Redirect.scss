@@ -1,3 +1,44 @@
+.redirect-title-bar{
+    padding: 10px 10px 10px 12px;
+    flex: 1;
+    align-items: center;
+    display: flex;
+    margin-right: 20px;
+    margin-left: 270px;
+}
+.redirect-title{
+    font-weight: 600;
+    font-size: 20px;
+}
+.redirect-title-create-button{
+    margin-left: 10px
+}
+
+.redirect-button-popup{
+    background-color: $color-green;
+    font-size: 12px;
+    padding-left: 15px;
+    padding-right: 15px;
+    padding-top: 5px;
+    padding-bottom: 5px;
+    margin-right: 15px;
+
+    .popup-button-content{
+        flex: 1;
+        align-items: center;
+        display: flex;
+
+        .popup-button-content-text{
+            margin-right: 5px;
+        }
+    }
+}
+
+.redirect-popup-input{
+    padding-top: 7px;
+    padding-bottom: 7px;
+}
+
 .redirect-view { 
     .title {
         font-size: 20px;
@@ -134,6 +175,18 @@
                 .redirect-edit{
                     margin-right: 15px;
                     margin-left: 10px;
+                }
+                .redirect-delete-after{
+                    padding: 7px;
+                    background: $color-red-light;
+                    border-radius: 50%;
+                    margin-left: -7px;
+                }
+                .redirect-edit-after{
+                    padding: 7px;
+                    background: $color-orange;
+                    border-radius: 50%;
+                    margin-left: -7px;
                 }
             }
         }
