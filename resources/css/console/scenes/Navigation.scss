@@ -1,18 +1,52 @@
 @import '../../colors.scss';
 
-.navigation-title{
-    font-size: 20px;
-    font-weight: 600;
-    text-align: end;
-    margin-bottom: 20px;
-}
-.navigation-title-text{
-    display: inline-block;
-    margin-right: 220px;
-}
-.navigation-title-button{
-    display: inline-block;
+// .navigation-title{
+//     font-size: 20px;
+//     font-weight: 600;
+//     text-align: end;
+//     margin-bottom: 20px;
+// }
+// .navigation-title-text{
+//     display: inline-block;
+//     margin-right: 220px;
+// }
+// .navigation-title-button{
+//     display: inline-block;
+//     margin-right: 20px;
+// }
+.navigation-title-bar{
+    padding: 10px 10px 0 12px;
+    flex: 1;
+    align-items: center;
+    display: flex;
     margin-right: 20px;
+    margin-left: 270px;
+}
+.navigation-title{
+    font-weight: 600;
+    font-size: 20px;
+}
+.navigation-title-create-button{
+    margin-left: 10px
+}
+.navigation-button-popup{
+    background-color: $color-green;
+    font-size: 12px;
+    padding-left: 15px;
+    padding-right: 15px;
+    padding-top: 5px;
+    padding-bottom: 5px;
+    margin-right: 15px;
+
+    .popup-button-content{
+        flex: 1;
+        align-items: center;
+        display: flex;
+
+        .popup-button-content-text{
+            margin-right: 5px;
+        }
+    }
 }
 .navigation-sub-title {
     font-weight: 600;
