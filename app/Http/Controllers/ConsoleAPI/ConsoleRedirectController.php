@@ -10,14 +10,16 @@ use App\Models\Blog;
 
 class ConsoleRedirectController extends Controller {
 
-    public function getRedirects(Request $request, Blog $blog) {
-        $limit = $request->input('limit') ?? 50;
-        $offset = $request->input('offset');
+    const REGEX = 'regex:/(^([\/\:\.a-zA-z0-9\-\?\_\=\*]+)(\d+)?$)/u';
 
+    public function getRedirects(Request $request, Blog $blog) {
         $request->validate([
             'limit' => 'integer', 
-            'offset' => 'integer',
+            'offset' => 'required|integer',
         ]);
+        
+        $limit = $request->input('limit') ?? 50;
+        $offset = $request->input('offset');
 
         $getData = RedirectRepository::getRedirects($blog->id, $limit, $offset)
                 ->map(function ($redirect) {
@@ -29,10 +31,11 @@ class ConsoleRedirectController extends Controller {
     public function createRedirect(Request $request , Blog $blog) {
         // $url ='regex:/(^(https?:\/\/(www\.)?[-a-zA-Z0-9@:%._\+~#=]{2,256}\.[a-z]{2,4}\b([-a-zA-Z0-9@:%_\+.~#?&//=]*)$)/u';
         // $path = 'regex:/(^([\/\:\.a-zA-z\-\*]+)(\d+)?$)/u';
-        $regexValidation = 'regex:/(^([\/\:\.a-zA-z0-9\-\?\_\=\*]+)(\d+)?$)/u';
+        // $regexValidation = 'regex:/(^([\/\:\.a-zA-z0-9\-\?\_\=\*]+)(\d+)?$)/u';
+        $regexValidation = get_called_class();
         $request->validate([
-            'old_url' => 'required|string|'.$regexValidation,
-            'new_url' => 'required|string|'.$regexValidation,
+            'old_url' => 'required|string|'.$regexValidation::REGEX,
+            'new_url' => 'required|string|'.$regexValidation::REGEX,
             'type' => 'required|int',
         ]);
         $oldUrl = $request->input('old_url');
@@ -44,10 +47,11 @@ class ConsoleRedirectController extends Controller {
     }
 
     public function updateRedirect(Request $request, Blog $blog) {
-        $regexValidation = 'regex:/(^([\/\:\.a-zA-z0-9\-\?\_\=\*]+)(\d+)?$)/u';
+        // $regexValidation = 'regex:/(^([\/\:\.a-zA-z0-9\-\?\_\=\*]+)(\d+)?$)/u';
+        $regexValidation = get_called_class();
         $request->validate([
-            'old_url' => 'required|string|'.$regexValidation,
-            'new_url' => 'required|string|'.$regexValidation,
+            'old_url' => 'required|string|'.$regexValidation::REGEX,
+            'new_url' => 'required|string|'.$regexValidation::REGEX,
             'type' => 'required|int',
         ]);
 

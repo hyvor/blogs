@@ -68,7 +68,10 @@ const redirectsLogic = kea({
             setRedirectList: (_, {redirect}) => redirect,
             removeFromList: (state, {id}) => state.filter(m => m.id !== id),
             addRedirect: (state, {redirect}) => [redirect, ...state],
-            updateRedirect: (state, {redirect}) => [redirect, ...state],
+            // updateRedirect: (state, {redirect}) => [redirect, ...state],
+            updateRedirect:(state, {redirect}) => state.map(
+                stateRedirect => stateRedirect.id === redirect.id ? redirect : stateRedirect
+            ),
             // redirectListHasMore: [false, {
             //     setRedirectListHasMore: (_, {has}) => has 
             // }],

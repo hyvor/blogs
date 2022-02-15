@@ -82,7 +82,7 @@ export default function SettingRedirects(props) {
                                             {
                                                 redirect.slice(0, visible).map(redirect => (
                                                     <div>
-                                                        <GetRedirect id={redirect.id} old_url={redirect.old_url} new_url={redirect.new_url} redirectType={redirect.type}/>
+                                                        <Redirect id={redirect.id} old_url={redirect.old_url} new_url={redirect.new_url} redirectType={redirect.type}/>
                                                     </div>
                                                 ))
                                             }
@@ -178,7 +178,7 @@ function CreateRedirect() {
 }
 
 
-function GetRedirect ({id, old_url, new_url, redirectType}){
+function Redirect ({id, old_url, new_url, redirectType}){
 
     const subdomain = subdomainLogic.values.subdomain;
     const redirectLogicBuilt = redirectsLogic({subdomain})
@@ -243,7 +243,7 @@ function GetRedirect ({id, old_url, new_url, redirectType}){
             type:updateRedirectData.type,
         });
         setUpdateFormOpened(false); 
-        // window.location.reload(false);
+        window.location.reload(false);
     }
     
     const selectOptions = [
@@ -270,6 +270,7 @@ function GetRedirect ({id, old_url, new_url, redirectType}){
                                     <Select 
                                         type="small"  
                                         options={selectOptions} 
+                                        onChange={handleType}
                                         defaultValue={selectOptions[0]}
                                     />
                                 </div>
