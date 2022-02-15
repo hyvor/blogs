@@ -1,11 +1,11 @@
 import { useActions, useValues } from 'kea';
 import React, { useEffect, useRef, useState } from 'react';
 import { BoxArrowUpRight, CaretDownFill, Fullscreen, GearFill, PencilFill, Trash } from 'react-bootstrap-icons';
-import postsLogic from '../logic/postsLogic';
 import Editor from './ProseMirror/Editor';
 import TextareaAutosize from 'react-textarea-autosize';
 import onOutsideClick from '../../helpers/onOutsideClick';
 import postLogic from '../logic/postLogic';
+import { getBlogUrl } from '../lib/blog-helpers';
 
 export default function Post( {subdomain, id} ) {
 
@@ -187,7 +187,7 @@ export default function Post( {subdomain, id} ) {
                                 <span>Settings</span><GearFill />
                             </button>
 
-                            <a href="/se" target="_blank">
+                            <a href={ getBlogUrl(subdomain, '/p/' + post.preview_id) } target="_blank">
                                 <button className="button small inactive view" >
                                     <span>View</span><BoxArrowUpRight />
                                 </button>

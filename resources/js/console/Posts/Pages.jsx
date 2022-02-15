@@ -1,67 +1,46 @@
-import React, { useEffect, useState, useRef } from 'react';
+import React from 'react';
 import Post from './Post';
 import { useActions, useValues } from 'kea';
 import subdomainLogic from '../logic/subdomainLogic';
-import postsLogic from '../logic/postsLogic';
 import Loader from '../ReusableComponents/Loader';
-import NavLink from '../ReusableComponents/NavLink';
-import postLogic from '../logic/postLogic';
-import PostFilters from './PostFilters';
 import NoResults from '../ReusableComponents/NoResults';
+import pagesLogic from '../logic/pagesLogic';
 import PostListRow from './PostListRow';
 import NoPost from './NoPost';
 
-export default function Posts( { postId } ) {
+export default function Pages( { postId } ) {
 
     const { subdomain } = useValues(subdomainLogic)
-    const postLogicSubdomain = postsLogic({subdomain})
-    const { 
-        postsList, loadPostsListAjax, postsListHasMore, loadPostsListMoreAjax,
-        filters
-    } = useValues(postLogicSubdomain);
-    const { 
-        loadPostsListMore, createPost,
-        changeFilter
-    } = useActions(postLogicSubdomain)
-
-    function handleScroll(e) {
-        var el = e.target;
-        if (
-            loadPostsListMoreAjax.status !== 'loading' &&  
-            postsListHasMore &&
-            el.scrollTop + el.clientHeight >= el.scrollHeight
-        ) {
-            loadPostsListMore({ offset: postsList.length })
-        }
-    }
+    const pagesLogicInst = pagesLogic({subdomain})
+    const { pagesList, loadPagesListAjax } = useValues(pagesLogicInst);
+    const { createPage } = useActions(pagesLogicInst)
 
     function handleNew() {
-        createPost();
+        createPage();
     }
 
     return <div className="posts-view">
         <div className="box box-left">
             <div className="middle-heading">
                 <div>
-                    Posts
+                    Pages
                 </div>
                 <button 
                     className="button small"
                     onClick={handleNew}
                 >+ New</button>
             </div>
-            <PostFilters filters={filters} changeFilter={changeFilter} />
-            <div className="posts-list" onScroll={handleScroll}>
+            <div className="posts-list">
                 {
-                    loadPostsListAjax.status === 'loading' ?
+                    loadPagesListAjax.status === 'loading' ?
                     <div className="posts-loading"><Loader /></div> :
 
                     <div className="posts-loaded-wrap">
                         {
-                            postsList.length ?
-                            postsList.map(id => <PostListRow key={id} id={id} subdomain={subdomain} />) :
+                            pagesList.length ?
+                            pagesList.map(id => <PostListRow key={id} id={id} subdomain={subdomain} />) :
                             <NoResults 
-                                text="No posts found"
+                                text="No pages found"
                                 padding={60}
                                 imageWidth={150}
                             />

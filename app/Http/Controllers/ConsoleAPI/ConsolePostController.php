@@ -33,6 +33,18 @@ class ConsolePostController extends Controller
         return response()->json($posts);
     }
 
+    public function getPages(Blog $blog)
+    {
+
+        $pages = PostRepository::getPages($blog->id)
+            ->map(function ($page) use ($blog) {
+                return new PostObject($page, $blog);
+            });
+
+        return response()->json($pages);
+
+    }
+
     public function createPost(Request $request, Blog $blog)
     {
         $isPage = (bool) $request->input('is_page');

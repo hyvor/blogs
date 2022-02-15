@@ -18,6 +18,7 @@ use ScssPhp\ScssPhp\Compiler;
 use Symfony\Component\Routing\Exception\ResourceNotFoundException;
 use App\Data\Enums\RedirectTypeEnum;
 use App\Domains\Route\PermalinkRepository;
+use Illuminate\Contracts\Encryption\DecryptException;
 use Padaliyajay\PHPAutoprefixer\Autoprefixer;
 
 class DeliveryRepository {
@@ -78,6 +79,7 @@ class DeliveryRepository {
 
         // default routes
         $routes->add('assets', new Route('/assets/{fileName}'));
+        $routes->add('preview', new Route('/p/{id}'));
         $routes->add('styles', new Route('/styles.css'));
 
         // add dynamic routing
@@ -97,7 +99,7 @@ class DeliveryRepository {
             $props = $matcher->match($path);
             $matchedRoute = $blogRoutes->keyBy("name")[$props['_route']] ?? null;
         } catch (ResourceNotFoundException) {
-            $props = null;            
+            $props = null;
         }
 
 
@@ -153,6 +155,25 @@ class DeliveryRepository {
             return DeliveryAPIResponseObject::forFile($css, 'text/css');
         }
 
+        if ($props['_route'] === 'preview') {
+
+            try {
+                $id = decrypt($props['id']);
+            } catch (DecryptException) {
+                return self::notFound();
+            }
+
+            $post = PostRepository::getPostById($id);
+
+            $html = BlogThemeTemplateRepository::renderFile(
+                $blog,
+                DeliveryAPIScopeEnum::POST,
+                $post
+            );
+            
+            return DeliveryAPIResponseObject::forFile($html);
+        }
+
         if ($matchedRoute->name === 'post' || $matchedRoute->name === 'page') {
 
             // check for post or page
@@ -175,7 +196,7 @@ class DeliveryRepository {
                     DeliveryAPIScopeEnum::from($post->is_page ? 'page' : 'post'),
                     $post
                 );
-                return DeliveryAPIResponseObject::forFile($html, 'text/html');
+                return DeliveryAPIResponseObject::forFile($html);
             }
 
         }
@@ -191,7 +212,7 @@ class DeliveryRepository {
                 $query['page'] ?? 1,
             );
 
-            return DeliveryAPIResponseObject::forFile($html, 'text/html');
+            return DeliveryAPIResponseObject::forFile($html);
 
         }
 

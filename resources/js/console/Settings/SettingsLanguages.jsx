@@ -4,7 +4,7 @@ import { useState } from 'react';
 import { ArrowUpCircleFill, PencilFill, Plus, TrashFill } from 'react-bootstrap-icons';
 import NavLink from '../ReusableComponents/NavLink'
 import numberFormatter from '../../helpers/numberFormatter';
-import { isBlogInTeamPlan } from '../lib/plan';
+import { isBlogInTeamPlan } from '../lib/blog-helpers';
 import languagesLogic from '../logic/languagesLogic';
 import subdomainLogic from '../logic/subdomainLogic';
 import Callout from '../ReusableComponents/Callout';

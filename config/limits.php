@@ -6,6 +6,21 @@
 return [
 
     /**
+     * This is the Pages limit (static) not posts
+     * Even Webflow has a limit of 100
+     * https://university.webflow.com/lesson/pages-panel#how-many-pages-can-i-create
+     * 
+     * Having a large number of static pages doesn't really undermine Hyvor Blog performances
+     * But pages are not the focus of HB.
+     * Therefore, we put this limit
+     * If anyone needs more than this in the future (which is unlikely),
+     * we will need to update it or remove it
+     * 
+     * Another reason to have this limit is that currently console Pages section doesn't use limit-offset
+     */
+    'max_pages_per_blog' => 100,
+
+    /**
      * Who needs more than 1000?
      */
     'max_redirects_per_blog' => 1000,
@@ -33,7 +48,5 @@ return [
     'max_asset_file_size' => 1000 * 1000, // 1MB
     'max_style_files_per_blog' => 50,
     'max_lang_files_per_blog' => 100, // same as max languages
-
-
 
 ];

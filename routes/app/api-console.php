@@ -48,6 +48,7 @@ Route::prefix('/api/console/v0/blog/{subdomain}')
 
     // posts (and pages) CRUD
     Route::get('/posts', [ConsolePostController::class, 'getPosts']);
+    Route::get('/pages', [ConsolePostController::class, 'getPages']);
     Route::post('/post', [ConsolePostController::class, 'createPost']);
     Route::get('/post/{id}', [ConsolePostController::class, 'getPost']);
     Route::patch('/post/{id}', [ConsolePostController::class, 'updatePost']);

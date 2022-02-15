@@ -68,7 +68,7 @@ class DatabaseSeeder extends Seeder
             }
 
             $posts = [];
-            foreach (range(0, 100) as $i) {
+            foreach (range(0, 200) as $i) {
                 $title = $faker->sentence;
 
                 $paragraphs = $faker->paragraphs(rand(2, 6));
@@ -97,6 +97,8 @@ class DatabaseSeeder extends Seeder
                     'published_at' => $status === 'published' ? $faker->dateTime() : null,
                     'description' => $faker->sentence,
                     'status' => $status,
+
+                    'is_page' => (bool) rand(0,1),
 
                     'reading_time' => 2,
                 ]);
