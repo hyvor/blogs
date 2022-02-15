@@ -13,7 +13,7 @@ class LanguageRepository {
     const DEFAULT_LANGUAGE_NAME = 'English';
 
     public static function getAllLanguages(int $blogId) {
-        return Blog::find($blogId)->languages()->orderBy('is_default', 'DESC')->orderBy('id', 'ASC')->get();
+        return Blog::find($blogId)->languages()->orderBy('is_primary', 'DESC')->orderBy('id', 'ASC')->get();
     }
 
     public static function createLanguage(
@@ -23,7 +23,7 @@ class LanguageRepository {
         return Blog::find($blogId)->languages()->create([
             'code' => $code,
             'name' => $name,
-            'is_default' => $isDefault
+            'is_primary' => $isDefault
         ]);
     }
 
@@ -42,7 +42,7 @@ class LanguageRepository {
         $lang = Language::find($langId);
 
         // can't delete default language (only edit)
-        if ($lang->is_default) {
+        if ($lang->is_primary) {
             throw new TrustedException('Default language cannot be deleted');
         }
 
@@ -68,7 +68,7 @@ class LanguageRepository {
         return $blog->languages()->create([
             'code' => self::DEFAULT_LANGUAGE_CODE,
             'name' => self::DEFAULT_LANGUAGE_NAME,
-            'is_default' => true
+            'is_primary' => true
         ]);
 
     }

@@ -188,7 +188,7 @@ You are required to put some placeholders in your theme to make a few things wor
 | `_newsletter` | post and page | to embed the newsletter subscription form |
 | `_lang` | all | Language code of the current page. Should be placed as `<html lang="{{ _lang }}">`
 
-Sending all placeholders through the `raw` filter is absolutely required, otherwise, the HTML code in the variables will just be escaped and printed (HB uses Twig with *automatic escaping* turned on).
+Sending all placeholders (except `_lang`) through the `raw` filter is absolutely required, otherwise, the HTML code in the variables will just be escaped and printed (HB uses Twig with *automatic escaping* turned on).
 
 ```twig
 {{ _head | raw }}

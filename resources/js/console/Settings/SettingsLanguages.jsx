@@ -99,11 +99,11 @@ function Language({lang, update, remove}) {
         remove({id: lang.id});
     }
 
-    return <div className={"lang" + (lang.is_default ? " default" : "")}>
+    return <div className={"lang" + (lang.is_primary ? " default" : "")}>
         <div className="lang-item">
             <span>{lang.name}</span>
             {
-                lang.is_default ?
+                lang.is_primary ?
                 <span className="default-tag">PRIMARY</span>
                 : null
             }

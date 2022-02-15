@@ -2,15 +2,15 @@
 
 You will learn:
 
-* How to change the default language of your blog
+* How to change the primary language of your blog
 * How to make your blog multi-language
 * Technical SEO for multi-language blogs
 
 Language settings: **Console &rarr; Settings &rarr; Languages**.
 
-## Changing the default language
+## Changing the primary language
 
-**English** (`en`) is the default language for newly created blogs. If you are blogging in a different language, it is important to change the language in Language settings to tell users, browsers, and crawlers what language your blog is using.
+**English** (`en`) is the primary language for newly created blogs. If you are blogging in a different language, it is important to change the language in Language settings to tell users, browsers, and crawlers what language your blog is using.
 
 In settings, each language has a language code and a language name. 
 

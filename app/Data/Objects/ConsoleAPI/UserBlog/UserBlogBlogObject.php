@@ -56,7 +56,7 @@ class UserBlogBlogObject
 
         $this->defaultLanguage = new LanguageObject(
             $blog->languages()
-                ->where('is_default', true)
+                ->where('is_primary', true)
                 ->first()
         );
 

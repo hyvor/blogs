@@ -49,8 +49,8 @@ class DeliveryRepository {
             // fetch all languages and find out the correct one
             $langs = $blog->languages;
 
-            $defaultLang = $langs->where('is_default', true)->first();
-            $nonDefaultLangs = $langs->where('is_default', false);
+            $defaultLang = $langs->where('is_primary', true)->first();
+            $nonDefaultLangs = $langs->where('is_primary', false);
 
             $currentLang = $nonDefaultLangs->firstWhere('code', $possibleLanguageCode);
 
@@ -59,7 +59,7 @@ class DeliveryRepository {
             }
         } else {
             // fetch only the default one
-            $currentLang = $blog->languages()->where('is_default', true);
+            $currentLang = $blog->languages()->where('is_primary', true);
         }
 
         /**

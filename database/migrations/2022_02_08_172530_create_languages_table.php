@@ -34,7 +34,7 @@ return new class extends Migration
              */
             $table->string('code', 12); // en|en-US|etc...
             $table->string('name');
-            $table->boolean('is_default')->default(false);
+            $table->boolean('is_primary')->default(false);
 
             // indexes
             $table->unique(['blog_id', 'code']);

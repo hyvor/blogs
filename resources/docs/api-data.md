@@ -57,11 +57,11 @@ All slugs are lowercase, and can contain `-`
 	
 	"created_at": 1639655890,
 	"updated_at": 1639655890,
-  "published_at": 1639665890,
+  	"published_at": 1639665890,
 
 	"is_featured": false,
 	"is_page": false,
-  "slug": "hello-world",
+  	"slug": "hello-world",
 	"content": "<p></p>",
 	"title": "Hello World",
 	"description": "This is a hello world page",
@@ -72,6 +72,8 @@ All slugs are lowercase, and can contain `-`
 	"code_head": "",
 	"code_foot": "",
 	
+	"language": language object,
+
 	"tags": [ tag objects ],
 	"authors": [ author objects ]
 }
@@ -79,26 +81,52 @@ All slugs are lowercase, and can contain `-`
 
 | Key | Type | Description |
 | --- | --- | --- |
-| id | integer | A unique ID for the post |
-| created_at | integer | The time the post was created (as a draft) |
-| updated_at | integer | Last time the post or its meta data was updated |
-| published_at | integer | Publish time of the post. |
-| is_featured | boolean | Whether the post is featured. There can be multiple featured posts on a blog |
-| is_page | boolean | If it is a page |
-| slug | string | URL slug of the post |
-| content | string | The post content in HTML. See ‣ for more details on supported HTML tags and formatting. |
-| title | string | The title of the post, a string with max length 256 |
-| description | string | null | The description (excerpt) of post, max length 350. null if not set |
-| url | string | Absolute URL of the post |
-| featured_image | string | null | The absolute URL of the featured image. null if not set |
-| canonical_url | string | null | An absolute URL or null. Canonical URL is set by the author if the post was published somewhere else. |
-| reading_time | integer | time in minutes. |
-| code_head | string | Custom code to add before </head> . An empty string if nothing is set. |
-| code_foot | string | Custom code to add before </body> . An empty string if nothing is set. |
-| tags | array  | An array of Tag objects. The primary tag is the index 0 |
-| authors | array | An array of Author objects. The primary author is the index 0 |
+| `id` | `integer` | A unique ID for the post |
+| `created_at` | `integer` | The time the post was created (as a draft) |
+| `updated_at` | `integer` | Last time the post or its meta data was updated |
+| `published_at` | `integer` | Publish time of the post. |
+| `is_featured` | `boolean` | Whether the post is featured. There can be multiple featured posts on a blog |
+| `is_page` | `boolean` | If it is a page |
+| `slug` | `string` | URL slug of the post |
+| `content` | `string` | The post content in HTML. See  for more details on supported HTML tags and formatting. |
+| `title` | `string` | The title of the post, a string with max length 256 |
+| `description` | `string` | null \| The description (excerpt) of post, max length 350. null if not set |
+| `url` | `string` | Absolute URL of the post |
+| `featured_image` | `string` | null \| The absolute URL of the featured image. null if not set |
+| `canonical_url` | `string` | null \| An absolute URL or null. Canonical URL is set by the author if the post was published somewhere else. |
+| `reading_time` | `integer` | time in minutes. |
+| `code_head` | `string` | Custom code to add before `</head>` . An empty string if nothing is set. |
+| `code_foot` | `string` | Custom code to add before `</body>` . An empty string if nothing is set. |
+| `language` | `object` | The language of the post
+| `tags` | `array`  | An array of Tag objects. The primary tag is the index 0 |
+| `authors` | `array` | An array of Author objects. The primary author is the index 0 |
 
-### Tag
+> In posts, **id** is unique. **slug + language.id** is also unique.
+
+### Language Object
+
+```json
+{
+	"id": 9999,
+	"is_primary": true,
+	"code": "en",
+	"name": "English",
+	"variants": {
+		"fr": 1001,
+		"es": 1002
+	}
+}
+```
+
+| Key | Type | Description |
+| --- | --- | --- |
+| `id` | `integer` | A unique ID for the language object |
+| `is_primary` | `boolean` | Whether the language is the primary language of the blog |
+| `code` | `string` | Language code |
+| `name` | `string` | Language name |
+| `variants` | `object` | Variants of this post in other languages. Keys are the language codes, values are the post IDs |
+
+### Tag Object
 
 ```json
 {
@@ -243,7 +271,7 @@ For Single-Object endpoints (`/post`, `/tag`, `/author`)
 | --- | --- | --- |
 | `id` |  | id of the object |
 | `slug` |  | slug of the object |
-| `language` | | (only for `/post`) language code to fetch a post of a non-default language.
+| `language` | Default language code | (only for `/post`) language code to fetch a post of a non-default language.
 | `keys` |  | GraphQL-like filtering (see below) |
 
 For Multi-object endpoints (`/posts`, `/pages`, `/tags`, `/authors`)
