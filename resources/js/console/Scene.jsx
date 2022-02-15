@@ -1,9 +1,10 @@
-import { useMountedLogic, useValues } from 'kea'
+import { useValues } from 'kea'
 import Billing from './Billing/Billing'
 import BlogPreview from './BlogPreview/BlogPreview'
 import blogsLogic from './logic/blogsLogic'
 import sceneLogic from './logic/sceneLogic'
 import Nav from './Nav/Nav'
+import NewBlog from './NewBlog'
 import Posts from './Posts/Posts'
 import Settings from './Settings/Settings'
 import Theme from './Theme/Theme'
@@ -14,7 +15,8 @@ export const scenes = {
     posts: ({ postId }) => <Posts postId={postId} />,
     settings: ({type}) => <Settings type={type} />,
     theme: () => <Theme />,
-    billing: () => <Billing />
+    billing: () => <Billing />,
+    new: () => <NewBlog />,
 }
 
 

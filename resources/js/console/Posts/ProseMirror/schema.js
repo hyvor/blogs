@@ -123,7 +123,7 @@ export const nodes = {
     },
     image: {
         attrs: {
-            src: {default: null}, 
+            src: {default: null},
             alt: {default: null}, 
             title: {default: null}
         },

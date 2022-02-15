@@ -78,4 +78,6 @@ class ConsoleNavigationController extends Controller {
         $deleteNavigation = NavigationRepository::deleteNavigation($id);
         return response()->json($deleteNavigation);
     }
+   
+
 }

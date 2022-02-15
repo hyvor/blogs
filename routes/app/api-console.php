@@ -3,6 +3,7 @@
 use App\Http\Controllers\ConsoleAPI\ConsoleBlogController;
 use App\Http\Controllers\ConsoleAPI\ConsoleBlogThemeController;
 use App\Http\Controllers\ConsoleAPI\ConsoleEmbedController;
+use App\Http\Controllers\ConsoleAPI\ConsoleLanguageController;
 use App\Http\Controllers\ConsoleAPI\ConsoleMediaController;
 use App\Http\Controllers\ConsoleAPI\ConsolePostController;
 use App\Http\Controllers\ConsoleAPI\ConsoleSubscriptionController;
@@ -12,11 +13,13 @@ use App\Http\Controllers\ConsoleAPI\ConsoleRedirectController;
 use App\Http\Controllers\ConsoleAPI\ConsoleNavigationController;
 
 use App\Http\Middleware\App\ConsoleAPI\BlogAccessMiddleware;
+use App\Http\Middleware\App\LoginRequiredMiddleware;
 use App\Http\Middleware\App\SubdomainMiddleware;
 use Illuminate\Support\Facades\Route;
-use SebastianBergmann\Environment\Console;
 
-Route::get('/console/{any?}', ConsoleViewController::class)->where('any', '.*');
+Route::middleware(LoginRequiredMiddleware::class)
+    ->get('/console/{any?}', ConsoleViewController::class)
+    ->where('any', '.*');
 
 // this is an internal API
 Route::prefix('/api/console')
@@ -87,6 +90,12 @@ Route::prefix('/api/console/v0/blog/{subdomain}')
     Route::post('/navigation', [ConsoleNavigationController::class,'createNavigation']);
     Route::put('/navigation/{id}', [ConsoleNavigationController::class,'updateNavigation']);
     Route::delete('/navigation/{id}', [ConsoleNavigationController::class,'deleteNavigation']);
+
+    // languages CRUD
+    Route::get('/languages', [ConsoleLanguageController::class, 'get']);
+    Route::post('/language', [ConsoleLanguageController::class, 'create']);
+    Route::put('/language/{id}', [ConsoleLanguageController::class, 'update']);
+    Route::delete('/language/{id}', [ConsoleLanguageController::class, 'delete']);
 
     // billing CRUD
     Route::get('/subscription', [ConsoleSubscriptionController::class, 'getData']);

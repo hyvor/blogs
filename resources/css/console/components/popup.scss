@@ -24,7 +24,24 @@
     }
     .popup-footer-double {
         padding:25px;
-        text-align: right;
+        text-align: center;
+
+        button {
+            position: relative;
+        }
+        .footer-loader {
+            position: absolute;
+            left: 100%;
+            top: 50%;
+            transform: translateY(-50%);
+            margin-left: 6px;
+        }
+
+        &.loading {
+            button {
+                pointer-events: none;
+            }
+        }
     }
 
     .popup-header-default {

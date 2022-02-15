@@ -12,9 +12,13 @@ use App\Data\Enums\ThemeFileFolderEnum;
 use App\Data\Enums\DeliveryAPIScopeEnum;
 use App\Domains\BlogTheme\BlogThemeTemplateRepository;
 use App\Domains\Post\PostRepository;
+use App\Domains\Redirect\RedirectRepository;
 use App\Models\Blog;
 use ScssPhp\ScssPhp\Compiler;
 use Symfony\Component\Routing\Exception\ResourceNotFoundException;
+use App\Data\Enums\RedirectTypeEnum;
+use App\Domains\Route\PermalinkRepository;
+use Padaliyajay\PHPAutoprefixer\Autoprefixer;
 
 class DeliveryRepository {
 
@@ -24,49 +28,86 @@ class DeliveryRepository {
         array $query
     ) : DeliveryAPIResponseObject|null {
 
-
         if (!preg_match('/^\//', $path)) {
             $path = '/' . $path; // add leading slash (otherwise matcher doesn't work)
+        }
+
+        // check Redirects first
+        $redirect = RedirectRepository::findRedirectForPath($blog->id, $path);
+
+        if ($redirect) {
+            return DeliveryAPIResponseObject::forRedirect($redirect->to, RedirectTypeEnum::from($redirect->type));
+        }
+
+        /**
+         * Check for language
+         */
+        // get fr from /fr/hello-world
+        $possibleLanguageCode = explode('/', $path)[1] ?? null;
+    
+        if ($possibleLanguageCode && strlen($possibleLanguageCode) <= 12) {
+            // fetch all languages and find out the correct one
+            $langs = $blog->languages;
+
+            $defaultLang = $langs->where('is_primary', true)->first();
+            $nonDefaultLangs = $langs->where('is_primary', false);
+
+            $currentLang = $nonDefaultLangs->firstWhere('code', $possibleLanguageCode);
+
+            if ($currentLang === null) {
+                $currentLang = $defaultLang;
+            }
+        } else {
+            // fetch only the default one
+            $currentLang = $blog->languages()->where('is_primary', true);
         }
 
         /**
          * from https://symfony.com/doc/current/create_framework/routing.html
          */
-        $route = new RouteCollection();
+        $routes = new RouteCollection();
 
         /**
          * Adds the routes to match
          *
          * Important!
          *  dynamic matches these:
-         *      - redirects
          *      - posts or pages (from slugs)
          *      - custom pages (from theme files)
          */
 
-        // assets
-        $route->add('assets', new Route('/assets/{fileName}'));
-        $route->add('styles', new Route('/styles.css'));
+        // default routes
+        $routes->add('assets', new Route('/assets/{fileName}'));
+        $routes->add('styles', new Route('/styles.css'));
 
-        // collections
-        $route->add('tag', new Route('/tag/{slug}'));
-        $route->add('author', new Route('/author/{slug}'));
-        $route->add('search', new Route('/search/{slug}'));
-        $route->add('index', new Route('/'));
+        // add dynamic routing
+        $blogRoutes = $blog->routes;
+        foreach ($blogRoutes as $routeRow) {
+
+            $route = new Route($routeRow->match);
+            $routes->add($routeRow->name, $route);
+            
+        }
 
         $context = new RequestContext();
-        $matcher = new UrlMatcher($route, $context);
+        $matcher = new UrlMatcher($routes, $context);
+
 
         try {
             $props = $matcher->match($path);
-            $type = $props['_route'];
+            $matchedRoute = $blogRoutes->keyBy("name")[$props['_route']] ?? null;
         } catch (ResourceNotFoundException) {
-            $type = null;
+            $props = null;            
         }
 
 
+        if ($props === null) {
+            return self::notFound();
+        }
 
-        if ($type === 'assets') {
+
+        // first process assets and styles
+        if ($props['_route'] === 'assets') {
 
             /**
              * asset is simple.
@@ -85,9 +126,10 @@ class DeliveryRepository {
 
             return DeliveryAPIResponseObject::forFile($file->content, $mimeType);
 
-        } elseif ($type === 'styles') {
+        }
+        if ($props['_route'] === 'styles') {
 
-            /**
+             /**
              * Process all SCSS files
              */
 
@@ -101,33 +143,33 @@ class DeliveryRepository {
             $scssCompiler = new Compiler();
             $scssCompiler->registerFiles($filesArray);
 
+            // compile CSS
             $css = $scssCompiler->compileFile('index.scss')->getCss();
 
+            // add auto prefixes
+            $autoprefixer = new Autoprefixer($css);
+            $css = $autoprefixer->compile();
+
             return DeliveryAPIResponseObject::forFile($css, 'text/css');
+        }
 
-        } elseif (
-            $type === 'tag' ||
-            $type === 'author' ||
-            $type === 'index' ||
-            $type === 'search'
-        ) {
-            $scope = DeliveryAPIScopeEnum::from($type);
-
-            $html = BlogThemeTemplateRepository::renderFile(
-                $blog,
-                $scope,
-                $props['slug'] ?? null,
-                $query['page'] ?? 1,
-            );
-
-            return DeliveryAPIResponseObject::forFile($html, 'text/html');
-        } else {
-            $slug = trim($path, '/');
+        if ($matchedRoute->name === 'post' || $matchedRoute->name === 'page') {
 
             // check for post or page
-            $post = PostRepository::getPostByBlogIdAndIdentifier($blog->id, null, $slug);
+            $post = PostRepository::getPostByBlogIdAndIdentifier($blog->id, null, $props['slug']);
 
             if ($post) {
+
+                if ($matchedRoute->name === 'page' && !$post->is_page) {
+                    return self::notFound();
+                }
+
+                $validPermalink = PermalinkRepository::validatePostPermalink($post, $props);
+
+                if (!$validPermalink) {
+                    return self::notFound();
+                }
+
                 $html = BlogThemeTemplateRepository::renderFile(
                     $blog,
                     DeliveryAPIScopeEnum::from($post->is_page ? 'page' : 'post'),
@@ -138,8 +180,27 @@ class DeliveryRepository {
 
         }
 
+        if ($matchedRoute->name === 'index') {
+
+            $scope = DeliveryAPIScopeEnum::from($matchedRoute->name);
+
+            $html = BlogThemeTemplateRepository::renderFile(
+                $blog,
+                $scope,
+                $props['slug'] ?? null,
+                $query['page'] ?? 1,
+            );
+
+            return DeliveryAPIResponseObject::forFile($html, 'text/html');
+
+        }
+
         return null;
 
+    }
+
+    private static function notFound() {
+        return DeliveryAPIResponseObject::forFile("404", "text/html", 404);
     }
 
 }

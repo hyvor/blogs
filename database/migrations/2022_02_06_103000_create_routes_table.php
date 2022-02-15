@@ -22,14 +22,14 @@ class CreateRoutesTable extends Migration
 
             // data
             $table->string('name');
-            $table->enum('type', ['single', 'collection']);
             $table->string('match');
+            $table->string('posts_filter')->nullable();
+            $table->string('template')->nullable();
+            $table->boolean('is_enabled')->default(true);
 
-            $table->enum('single_type', ['post', 'page'])->nullable();
-            $table->enum('collection_type', ['index', 'author', 'tag', 'search'])->nullable();
-            $table->string('collection_filter')->nullable();
-
+            // indexes
             $table->unique(['blog_id', 'name']);
+
         });
     }
 

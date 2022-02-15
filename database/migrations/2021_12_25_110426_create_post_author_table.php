@@ -20,6 +20,9 @@ class CreatePostAuthorTable extends Migration
             // connections
             $table->bigInteger('post_id');
             $table->bigInteger('user_id');
+
+            // data
+            $table->tinyInteger('order')->default(1);
         });
     }
 

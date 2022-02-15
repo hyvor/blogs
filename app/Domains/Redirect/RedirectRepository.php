@@ -1,6 +1,7 @@
 <?php
 namespace App\Domains\Redirect;
 
+use App\Data\Enums\RedirectTypeEnum;
 use App\Models\Redirect;
 
 Class RedirectRepository
@@ -14,25 +15,19 @@ Class RedirectRepository
             ->get();
     }
 
-    public static function createRedirect(int $blogId, string $oldUrl, string $newUrl, $type )
+    public static function createRedirect(
+        int $blogId, string $path, 
+        string $to, RedirectTypeEnum $type = RedirectTypeEnum::TEMPORARY)
     {
         return Redirect::create([
             'blog_id' => $blogId,
-            'old_url' => $oldUrl,
-            'new_url' => $newUrl,
-            'type' => $type, 
+            'path' => $path,
+            'to' => $to,
+            'type' => (string) $type->value,
         ]);
     }
 
     public static function updateRedirect(int $blogId ,int $id, string $oldUrl, string $newUrl, $type){
-
-        // return Redirect::find($id)
-        // ->create([
-        //     'blog_id' => $blogId,
-        //     'old_url' => $oldUrl,
-        //     'new_url' => $newUrl,
-        //     'type' => $type, 
-        // ]);
 
         $redirect = Redirect::find($id);
         $redirect->old_url=$oldUrl;
@@ -45,6 +40,15 @@ Class RedirectRepository
     public static function deleteRedirect(int $id){
         $data = Redirect::find($id);
         $data->delete();
+    }
+
+    public static function findRedirectForPath(int $blogId, string $path) : Redirect|null
+    {
+
+        return Redirect::where('blog_id', $blogId)
+            ->where('path', $path)
+            ->first();
+
     }
 
 }

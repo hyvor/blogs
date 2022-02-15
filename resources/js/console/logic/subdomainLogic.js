@@ -10,14 +10,17 @@ const subdomainLogic = kea({
     path: ['subdomain'],
 
     actions: ({ values }) => ({
-        setSubdomain: (subdomain, oldDomain) => ({ old: oldDomain || values.subdomain, subdomain })
+        setSubdomain: (subdomain, oldDomain, changeRoute) => ({ old: oldDomain, subdomain, changeRoute })
     }),
 
     listeners: () => ({
-        setSubdomain: ({ old, subdomain }) => {
-            var path = location.pathname.replace('/console/' + old, '');
-            router.actions.push("/console/" + subdomain + path);
+        setSubdomain: ({ old, subdomain, changeRoute }) => {
+            if (changeRoute) {
+                var path = old ? location.pathname.replace('/console/' + old, '') : '';
+                router.actions.push("/console/" + subdomain + path);
+            }
             
+            // pre-load posts
             postsLogic({subdomain}).actions.loadPostsList();
         }
     }),
@@ -31,7 +34,11 @@ const subdomainLogic = kea({
     events: ({ actions }) => ({
         afterMount: () => {
             var subdomain = findDefaultActiveSubdomain()
-            actions.setSubdomain(subdomain, subdomain)
+            if (subdomain)
+                actions.setSubdomain(subdomain, subdomain)
+            else {
+                router.actions.push("/console/new");
+            }
         }
     })
 

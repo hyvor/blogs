@@ -7,6 +7,7 @@ import Loader from '../ReusableComponents/Loader';
 import NavLink from '../ReusableComponents/NavLink';
 import postLogic from '../logic/postLogic';
 import PostFilters from './PostFilters';
+import NoResults from '../ReusableComponents/NoResults';
 
 export default function Posts( { postId } ) {
 
@@ -55,7 +56,13 @@ export default function Posts( { postId } ) {
 
                     <div className="posts-loaded-wrap">
                         {
-                            postsList.map(id => <PostRow key={id} id={id} subdomain={subdomain} />)
+                            postsList.length ?
+                            postsList.map(id => <PostRow key={id} id={id} subdomain={subdomain} />) :
+                            <NoResults 
+                                text="No posts found"
+                                padding={60}
+                                imageWidth={150}
+                            />
                         }
                     </div>
                 }
@@ -81,10 +88,8 @@ function PostRow({id, subdomain}) {
         key={post.id} 
         href={location.pathname === toLink ? postsLink : toLink }
         className={"posts-list-item" + (false ? " active" : "") + ` ${post.status}` }>
-        <div className="post-title">{
-                    post.status !== 'published' ? 
-                    <span className={`post-status ${post.status}`}>{post.status}</span>
-                    : null}{ post.title || '(Untitled)' }</div>
+
+        <div className="post-title">{ post.title || '(Untitled)' }</div>
         
         <div className="post-data">
             <div className="post-date">
@@ -93,9 +98,16 @@ function PostRow({id, subdomain}) {
             <div className="post-author">by Ishini Avindya</div>
         </div>
 
-        <div className="post-tags">
-            <span className="post-tag">#creative</span>
+        <div className="post-tags-wrap">
+            <div className="post-tags">
+                <span className="post-tag">#creative</span>
+            </div>
+            <div className="post-status-wrap">
+                <span className={`post-status ${post.status}`}>{post.status}</span>
+            </div>
         </div>
+
+        
     </NavLink>
 
 }

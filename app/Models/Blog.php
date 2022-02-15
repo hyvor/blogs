@@ -5,7 +5,6 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\SoftDeletes;
-use Illuminate\Support\Facades\DB;
 use Laravel\Paddle\Billable;
 
 class Blog extends Model
@@ -20,6 +19,22 @@ class Blog extends Model
     public function posts()
     {
         return $this->hasMany(Post::class);
+    }
+
+    /**
+     * Get routes of the blog
+     */
+    public function routes()
+    {
+        return $this->hasMany(Route::class);
+    }
+
+    /**
+     * Get languages of the blog
+     */
+    public function languages()
+    {
+        return $this->hasMany(Language::class);
     }
 
     public function counts() 

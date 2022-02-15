@@ -10,7 +10,11 @@
 
 @import './scenes/Billing.scss';
 @import './scenes/Theme.scss';
+
 @import './scenes/Navigation.scss';
+@import './scenes/NewBlog.scss';
+
+@import './scenes/Settings/settings.scss';
 
 body {
     background-color: $color-accent-very-light;
@@ -30,6 +34,11 @@ body {
     padding: 15px;
     justify-content: space-between;
     margin-bottom:15px;
+
+    .left-header-pp {
+
+    }
+
 }
 #left-nav {
     font-weight: 600;
@@ -220,7 +229,9 @@ body {
             }
             .posts-filter {
                 flex:1;
-                margin-right:3px;
+                &:not(:last-child) {
+                    margin-right:3px;
+                }
                 .posts-filter-name {
                     margin-bottom:2px;
                     text-align:center;
@@ -228,9 +239,27 @@ body {
                     font-size: 8px;
                 }
             }
-            .post-search {
+            .post-search-and-lang {
                 margin-top: 6px;
                 font-size: 12px;
+                display:flex;
+                .post-search {
+                    flex:3;
+                    input {
+                        padding: 7px 15px;
+                        line-height: 14px;
+                    }
+                }
+                .post-lang {
+                    flex:1;
+                    .posts-filter-name {
+                        display:none;
+                    }
+                    .posts-filter {
+                        margin-right:0;
+                        margin-left:3px;
+                    }
+                }
             }
         }
 
@@ -247,6 +276,7 @@ body {
         }
         .posts-loaded-wrap {
             animation: posts-loaded-wrap .3s;
+            padding: 15px;
             @keyframes posts-loaded-wrap {
                 0% {opacity: 0;transform:translateY(10px)}
                 100% {opacity: 1;transform:translateY(0)}
@@ -254,12 +284,19 @@ body {
         }
         .posts-list-item {
             display: block;
-            padding: 15px 25px;
-            transition:0.1s background-color;
+            padding: 15px 20px;
+            border-radius: 20px;
+            position: relative;
 
-            &:not(:last-child) {
-                border-bottom:1px solid $color-accent-light;
+            &:after {
+                content: "";
+                position: absolute;
+                width: 85%;
+                background: $color-accent-light;
+                bottom: 0;
+                height: 1px;
             }
+
             .post-title {
                 font-weight:600;    
                 word-break: break-all;
@@ -281,29 +318,41 @@ body {
             }
 
 
+            .posts-status-wrap {
+                margin-bottom: 4px;
+            }
+
             .post-status {
                 font-weight: 600;
-                margin-left: 5px;
-                color: #fff;
                 font-size: 8px;
                 text-transform: uppercase;
                 padding: 1px 7px;
                 border-radius: 20px;
-                margin-top: 3px;
-                float: right;
                 &.scheduled {
-                    background: #4b6ec1;
+                    background: $color-blue-light;
+                    color: $color-blue-dark;
                 }
                 &.draft {
-                    background: #6e6c65;
+                    background: #767676;
+                    color: $color-text-white;
                 }
                 &.deleted {
-                    background: #db7474;
+                    background: $color-red-light;
+                    color: $color-red-dark;
+                }
+                &.published {
+                    background: $color-green-light;
+                    color: $color-green-dark;
                 }
             }
 
+            .post-tags-wrap {
+                margin-top:8px;
+                display:flex;
+            }
+
             .post-tags {
-                margin-top:4px;
+                flex:1;
             }
         }
 
@@ -583,7 +632,9 @@ body {
     }
 
     .settings-nav {
-        padding:0 25px;
+        padding: 25px;
+        overflow: auto;
+        padding-top: 0;
         div {height:25px;}
         a {
             display: block;
@@ -604,7 +655,7 @@ body {
         padding: 30px 50px;
         overflow:auto;
 
-        .title {
+        & > div > .title {
             font-size: 20px;
             font-weight: 600;
             text-align: center;
@@ -922,15 +973,5 @@ body {
                 opacity:1;
             }
         }
-    }
-}
-
-.onboarding-body {
-    .your-blog {
-        font-size: 14px;
-        text-align: right;
-    }
-    .subdomain-rules {
-        font-size:12px;
     }
 }

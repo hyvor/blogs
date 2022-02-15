@@ -21,6 +21,9 @@ class CreatePostTagTable extends Migration
             // connections
             $table->bigInteger('post_id');
             $table->bigInteger('tag_id');
+
+            // data
+            $table->tinyInteger('order')->default(1);
         });
     }
 

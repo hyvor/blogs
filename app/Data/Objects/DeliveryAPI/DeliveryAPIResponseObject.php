@@ -38,11 +38,12 @@ class DeliveryAPIResponseObject
     }
 
 
-    public static function forRedirect(RedirectTypeEnum $type, string $to)
+    public static function forRedirect(string $to, RedirectTypeEnum $type)
     {
         $obj = new self(DeliveryAPITypeEnum::REDIRECT);
         $obj->both = $type->value;
         $obj->to = $to;
+        $obj->status = $type->value;
 
         return $obj;
     }

@@ -48,15 +48,22 @@
         color: $color-text;
     }
 
-    &.danger {
-        background: $color-red;
-    }
-    &.light {
-        border: 1px solid transparent;
-        color: $color-accent;
-    }
     &.disabled {
         cursor: not-allowed;
         opacity: 0.5;
     }
+
+
+    // colors
+    &.danger {
+        background: $color-red;
+    }
+    &.light {
+        background-color: $color-grey;
+        color: $color-accent;
+    }
+    &.orange {
+        background-color: $color-orange-dark;
+    }
+
 }
