@@ -36,6 +36,17 @@ Class NavigationRepository
         $data->delete();
     }
 
+    public static function getHeaderCount(){
+        return Navigation::where('type','=', 'header')
+           ->count();
+    }
+
+    public static function getFooterCount(){
+        return Navigation::where('type','=', 'footer')
+           ->count();
+        
+    }
+
 }
 
 

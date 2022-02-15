@@ -2,7 +2,7 @@ import React, {useState, forwardRef} from 'react';
 import { useActions, useValues } from 'kea';
 import subdomainLogic from '../logic/subdomainLogic';
 import navigationLogic from '../logic/navigationLogic';
-import { Trash, PencilFill} from 'react-bootstrap-icons';
+import { Trash, PencilFill, CheckCircleFill} from 'react-bootstrap-icons';
 import { PopupConfirm } from '../ReusableComponents/Popup';
 import Loader from '../ReusableComponents/Loader';
 import {toast} from 'react-toastify'
@@ -10,6 +10,8 @@ import Select from '../ReusableComponents/Select';
 import Toast from '../ReusableComponents/Toast';
 import { ReactSortable } from "react-sortablejs";
 import { components } from 'react-select';
+import NoResults from '../ReusableComponents/NoResults';
+
 
 // const SortableWrap = forwardRef(({children}, ref) => <div className="sort-wrap" ref={ref}>{children}</div>);
 
@@ -19,64 +21,77 @@ export default function SettingNavigations(props) {
     const subdomain = subdomainLogic.values.subdomain;
     const navigationLogicBuilt = navigationLogic({subdomain})
     const { navigation, loadAjax, createAjax } = useValues(navigationLogicBuilt)
-    const { remove, updateData } = useActions(navigationLogicBuilt)
 
     return <div>
         <div className="title">
             Navigation
         </div>
         <div className="">
-            <CreateNavigation />
+            {
+                <CreateNavigation />
+            }
+            {
+                createAjax.status === 'error' ?
+                    <Toast 
+                        x={console.log(createAjax.error)}
+                        text={createAjax.error}
+                        type="error"
+                    /> 
+                : null
+            }
         </div>
         {
                     loadAjax.status === 'loading' ?
                     <Loader/> :
                     (
                         <div>
-                           {navigation.length > 0 && (
-                                <div>
-                                    <div className="navigation-sub-title">Header Navigation</div>
-                                    {/* <ReactSortable list={navigation}>
-                                        <div> */}
-                                    {
-                                        navigation.map(navigation => (
-                                            navigation.type === 'header' ?
-                                                <div>
-                                                    {
-                                                         <GetNavigation id ={navigation.id} name = {navigation.name} url = {navigation.url} type = {navigation.type}/>
-                                                    }
-                                                </div>
+                            {
+                                // navigation.length > 0 && (
+                                navigation.length > 0 ?
+                                    <div>
+                                        <div className="navigation-sub-title">Header Navigation</div>
+                                        {/* <ReactSortable list={navigation}>
+                                            <div> */}
+                                        {
+                                            navigation.map(navigation => (
+                                                navigation.type === 'header' ?
+                                                    <div>
+                                                        {
+                                                            <GetNavigation id ={navigation.id} name = {navigation.name} url = {navigation.url} type = {navigation.type}/>
+                                                        }
+                                                    </div>
                                             : <div></div>
-                                        // //    <div>
-                                        // //         {navigation.name}<br></br>
-                                        // //         {navigation.url}<br></br>
-                                        // //         {navigation.type}
-                                        // //     </div>
-                                        //     // <GetNavigation id={navigation.id} name={navigation.name} url={navigation.url} navigationType={navigation.type}/>
-                                        //      <GetNavigation />
-                                    ))}
-                                    {/* </div>
-                                    </ReactSortable> */}
+                                        ))}
+                                       {/* </div>
+                                       </ReactSortable> */}
 
-                                </div>
-                            )} 
+                                    </div> : 
+                                    <NoResults 
+                                        text="There is no any redirects."
+                                        padding={40}
+                                        imageWidth={250}
+                                    />
+                                // )
+                            } 
                             
-                            {navigation.length > 0 && (
-                                <div>
-                                    <div className="navigation-sub-title">Footer Navigation</div>
-                                    {
-                                        navigation.map(navigation => (
-                                            navigation.type === 'footer' ?
-                                                <div>
-                                                    {
-                                                        // <GetNavigation />
-                                                        <GetNavigation id ={navigation.id} name = {navigation.name} url = {navigation.url} type = {navigation.type}/>
-                                                    }
-                                                </div>
-                                            : null
-                                    ))}
-                                </div>
-                            )} 
+                            {
+                                navigation.length > 0 && (
+                                    <div>
+                                        <div className="navigation-sub-title">Footer Navigation</div>
+                                        {
+                                            navigation.map(navigation => (
+                                                navigation.type === 'footer' ?
+                                                    <div>
+                                                        {
+                                                            <GetNavigation id ={navigation.id} name = {navigation.name} url = {navigation.url} type = {navigation.type}/>
+                                                        }
+                                                    </div>
+                                                : null
+                                            ))
+                                        }
+                                   </div>
+                                )
+                            } 
 
 
 
@@ -164,7 +179,7 @@ function GetNavigation ({id, name, url, type}){
 
     // Styles
     const [styleDeleteIcon, setStyleDeleteIcon] = useState("icon-navigation navigation-delete");
-    const [styleUpdateIcon, setStyleUpdateIcon] = useState("icon-navigation navigation-edit");
+    const [styleUpdateIcon, setStyleUpdateIcon] = useState("hide-navigation-edit");
 
     // delete section
     const [deletePopupOpened, setDeletePopupOpened] = useState(false);
@@ -193,15 +208,21 @@ function GetNavigation ({id, name, url, type}){
         url : url,
         type: type
     })
+    // const [updateNavigationData, setUpdate] = useState({userId: id})
+    // const [updateNavigationName, setName] = useState({name: name})
+    // const [updateNavigationUrl, setUrl] = useState({url: url})
+    // const [updateNavigationType, setType] = useState({type: type})
+
     function handleNavigationName(e) {
         e.preventDefault();
         setUpdate({...updateNavigationData, 
             name: e.target.value
         })
         if(updateNavigationData.name != e.target.value){
-            setStyleUpdateIcon("get-navigation-edit");
-        }else{
             setStyleUpdateIcon("icon-navigation navigation-edit");
+        }
+        if(updateNavigationData.name === name){
+            setStyleUpdateIcon("hide-navigation-edit");
         }
     }
     function handleNavigationUrl(e) {
@@ -210,11 +231,12 @@ function GetNavigation ({id, name, url, type}){
             url: e.target.value
         })
         if(updateNavigationData.url != e.target.value){
-            setStyleUpdateIcon("get-navigation-edit");
-        }else{
             setStyleUpdateIcon("icon-navigation navigation-edit");
+        }else{
+            setStyleUpdateIcon("hide-navigation-edit");
         }
     }
+
     // This is the OnClick handler for the update
     function updateNavigation(e){
         e.preventDefault();
@@ -227,9 +249,12 @@ function GetNavigation ({id, name, url, type}){
         });
         setStyleUpdateIcon("icon-navigation navigation-edit");
         setUpdate({...updateNavigationData, 
+            userId: id,
             name:name,
-            url: url
+            url: url,
+            type:type
         })
+        window.location.reload(false);
     }
     
     return <div>
@@ -240,7 +265,7 @@ function GetNavigation ({id, name, url, type}){
                 <input className="get-navigation-name" value={updateNavigationData.name}  onChange={(e)=> {handleNavigationName(e)}} />
                 <input className="get-navigation-url" value={updateNavigationData.url} onChange={(e)=> {handleNavigationUrl(e)}}/>
                 <button className={styleDeleteIcon} onClick={handleDelete}><Trash size={15} /></button>
-                <button className={styleUpdateIcon} onClick={updateNavigation}><PencilFill size={15} /></button>
+                <button className={styleUpdateIcon} onClick={updateNavigation}><CheckCircleFill size={15} /></button>
                 {/* {
                     updateNavigationData.name === '' || updateNavigationData.url === ''  ? 
                     // updateNavigationData === value ? 
