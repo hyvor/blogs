@@ -2,8 +2,8 @@ import React, {useState, forwardRef} from 'react';
 import { useActions, useValues } from 'kea';
 import subdomainLogic from '../logic/subdomainLogic';
 import navigationLogic from '../logic/navigationLogic';
-import { Trash, PencilFill, CheckCircleFill} from 'react-bootstrap-icons';
-import { PopupConfirm } from '../ReusableComponents/Popup';
+import { Trash, PencilFill, CheckCircleFill, Plus} from 'react-bootstrap-icons';
+// import { PopupConfirm } from '../ReusableComponents/Popup';
 import Loader from '../ReusableComponents/Loader';
 import {toast} from 'react-toastify'
 import Select from '../ReusableComponents/Select';
@@ -11,6 +11,10 @@ import Toast from '../ReusableComponents/Toast';
 import { ReactSortable } from "react-sortablejs";
 import { components } from 'react-select';
 import NoResults from '../ReusableComponents/NoResults';
+import { Popup, PopupBodyDefault, PopupConfirm, PopupFooterDoubleButton, PopupHeaderDefault } from '../ReusableComponents/Popup';
+import Input from '../ReusableComponents/Input';
+
+
 
 
 // const SortableWrap = forwardRef(({children}, ref) => <div className="sort-wrap" ref={ref}>{children}</div>);
@@ -23,12 +27,19 @@ export default function SettingNavigations(props) {
     const { navigation, loadAjax, createAjax } = useValues(navigationLogicBuilt)
 
     return <div>
-        <div className="title">
-            Navigation
-        </div>
+        {/* <div className="title"> */}
+            <div className="navigation-title">
+                <div className="navigation-title-text">
+                    Navigation  
+                </div>
+                <div className="navigation-title-button">
+                    <CreateUpdatePopup/>
+                </div>
+            </div>
+        {/* </div> */}
         <div className="">
             {
-                <CreateNavigation />
+                // <CreateNavigation />
             }
             {
                 createAjax.status === 'error' ?
@@ -100,6 +111,121 @@ export default function SettingNavigations(props) {
         }
     </div>
 }
+
+
+
+function CreateUpdatePopup() {
+
+    // return 'd';
+
+    const subdomain = subdomainLogic.values.subdomain;
+    const navigationLogicBuilt = navigationLogic({subdomain})
+    const { create } = useActions(navigationLogicBuilt)
+
+    const [createPopUpOpened, setCreatePopUpOpened] = useState(false);
+
+    function handleCreateCancel(){
+        setCreatePopUpOpened(false)
+    }
+
+    function handleCreate(e) {
+        e.preventDefault();
+        setCreatePopUpOpened(true);
+    }
+
+    const [ name, setName ] = useState();
+    const [ url, setUrl ] = useState();
+    const [createNewNavigation, setData] = useState({type: ""});
+
+    const selectOptions = [
+        { label: 'Header', value: 'header' },
+        { label: 'Footer', value: 'footer'}
+    ];
+
+    function handleType({value}){
+        console.log(value)
+        setData({...createNewNavigation, 
+            type: value
+        })
+    }
+
+    // OnClick handler for creating an new navigation
+    function submitNavigationData (e) {
+        e.preventDefault();
+        console.log(createNewNavigation.type)
+        create({
+            name: name,
+            url: url,
+            type: createNewNavigation.type,
+        });
+        setName();
+        setUrl();
+        setData({
+            type:""
+        });
+
+        setCreatePopUpOpened(false)
+    }
+
+    return <div>
+            <button className="button small navigation-create-button" onClick={handleCreate}>Create<Plus /></button>
+
+            {
+                createPopUpOpened ?
+                    <Popup
+                        header={<PopupHeaderDefault title='Create Navigation' />}
+                        body={
+                            <PopupBodyDefault>
+                                <div>
+                                    <Input 
+                                        // title="Name"
+                                        type="text"
+                                        name="name"
+                                        value={name}
+                                        onChange={setName}
+                                    />
+                                    <Input 
+                                        // title="Url"
+                                        type="text"
+                                        name="url"
+                                        value={url}
+                                        onChange={setUrl}
+                                    />
+                                    <div className="create-navigation-select">
+                                    <SelectType 
+                                        title="Type"
+                                        options={selectOptions} 
+                                        onChange={handleType}
+                                    />
+                                    </div>
+                                </div>
+                            </PopupBodyDefault>
+                        }
+                        footer={
+                            <PopupFooterDoubleButton
+                                onCancel={handleCreateCancel}
+                                onClick={(e)=> {submitNavigationData(e)}}
+                                name='Create'
+                                // loadingName='Create'
+                                // isLoading={isLoading}
+                            />
+                        }
+                    /> 
+                : null
+            }
+
+    </div>
+    
+
+}
+
+
+
+
+
+
+
+
 
 
 function CreateNavigation() {

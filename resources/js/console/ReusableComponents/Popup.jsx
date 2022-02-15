@@ -1,5 +1,6 @@
 import React from 'react'
 import PropTypes from 'prop-types'
+import Loader from './Loader'
 
 export function Popup(props) {
     return <div className="popup-wrap">
@@ -39,16 +40,28 @@ PopupFooterSingleButton.propTypes = {
 }
 
 // assuming cancel and main buttons
-export function PopupFooterDoubleButton( {onCancel, cancelName, onClick, name, buttonClass = ''} ) {
-    return <div className="popup-footer-single">
+export function PopupFooterDoubleButton( {
+    onCancel, cancelName, onClick, 
+    name,
+    isLoading, loadingName,
+    buttonClass = ''
+} ) {
+    return <div className={"popup-footer-double" + (isLoading ? " loading" : "")}>
         <button className="button text-only" onClick={onCancel}>{cancelName || "Cancel"}</button>
-        <button className={"button " + buttonClass} onClick={onClick}>{name}</button>
+        <button className={"button " + buttonClass} onClick={onClick}>
+            {isLoading ? loadingName : name}
+            {
+                isLoading ?
+                <div className="footer-loader">
+                    <Loader size={20} />
+                </div> : null
+            }
+        </button>
     </div>
 }
 
 
 export function PopupConfirm( { title, text, name, buttonClass, onClick, onCancel } ) {
-
     return <Popup 
         header={<PopupHeaderDefault title={title} />}
         body={

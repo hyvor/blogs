@@ -1,5 +1,19 @@
 @import '../../colors.scss';
 
+.navigation-title{
+    font-size: 20px;
+    font-weight: 600;
+    text-align: end;
+    margin-bottom: 20px;
+}
+.navigation-title-text{
+    display: inline-block;
+    margin-right: 220px;
+}
+.navigation-title-button{
+    display: inline-block;
+    margin-right: 20px;
+}
 .navigation-sub-title {
     font-weight: 600;
     font-size: 15px;
@@ -98,6 +112,12 @@
     width: 100%;
     margin-bottom: 10px;
     margin-top: 10px;
+
+    .create-popup{
+        font-size: 15px;
+        height: 35px;
+        padding-bottom: 7px;
+    }
 
     .create-navigation-name{
         width: 25%;
