@@ -2,6 +2,7 @@
 
 namespace App\Domains\Blog;
 
+use App\Models\Language;
 use App\Models\Post;
 use App\Models\Tag;
 use App\Models\User;
@@ -46,6 +47,11 @@ class BlogCountsRepository
             ->select('id', 'slug', 'posts_count')
             ->get();
 
+        $languages = Language::where('blog_id', $blogId)
+            ->orderBy('created_at', 'asc')
+            ->select('id', 'code')
+            ->get();
+
         return [
             'status' => [
                 'draft' => $status['draft'] ?? 0,
@@ -55,7 +61,8 @@ class BlogCountsRepository
                 'featured' => $featuredCount
             ],
             'authors' => $authors,
-            'tags' => $tags
+            'tags' => $tags,
+            'languages' => $languages
         ];
     }
 }

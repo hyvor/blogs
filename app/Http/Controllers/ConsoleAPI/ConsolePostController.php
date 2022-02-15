@@ -20,6 +20,7 @@ class ConsolePostController extends Controller
                 ->setStatus($filters->status === 'all' ? null : $filters->status)
                 ->setAuthorId($filters->author === 'all' ? null : $filters->author)
                 ->setTagId($filters->tag === 'all' ? null : $filters->tag)
+                ->setLanguageId($filters->language)
                 ->setStartTimestamp($filters->dateStart)
                 ->setEndTimestamp($filters->dateEnd)
                 ->setSearch($filters->search),

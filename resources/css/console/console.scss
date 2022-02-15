@@ -227,7 +227,9 @@ body {
             }
             .posts-filter {
                 flex:1;
-                margin-right:3px;
+                &:not(:last-child) {
+                    margin-right:3px;
+                }
                 .posts-filter-name {
                     margin-bottom:2px;
                     text-align:center;
@@ -235,9 +237,27 @@ body {
                     font-size: 8px;
                 }
             }
-            .post-search {
+            .post-search-and-lang {
                 margin-top: 6px;
                 font-size: 12px;
+                display:flex;
+                .post-search {
+                    flex:3;
+                    input {
+                        padding: 7px 15px;
+                        line-height: 14px;
+                    }
+                }
+                .post-lang {
+                    flex:1;
+                    .posts-filter-name {
+                        display:none;
+                    }
+                    .posts-filter {
+                        margin-right:0;
+                        margin-left:3px;
+                    }
+                }
             }
         }
 

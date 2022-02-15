@@ -7,6 +7,7 @@ import Loader from '../ReusableComponents/Loader';
 import NavLink from '../ReusableComponents/NavLink';
 import postLogic from '../logic/postLogic';
 import PostFilters from './PostFilters';
+import NoResults from '../ReusableComponents/NoResults';
 
 export default function Posts( { postId } ) {
 
@@ -55,7 +56,13 @@ export default function Posts( { postId } ) {
 
                     <div className="posts-loaded-wrap">
                         {
-                            postsList.map(id => <PostRow key={id} id={id} subdomain={subdomain} />)
+                            postsList.length ?
+                            postsList.map(id => <PostRow key={id} id={id} subdomain={subdomain} />) :
+                            <NoResults 
+                                text="No posts found"
+                                padding={60}
+                                imageWidth={150}
+                            />
                         }
                     </div>
                 }

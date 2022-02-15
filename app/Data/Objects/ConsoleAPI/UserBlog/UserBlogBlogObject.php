@@ -2,8 +2,8 @@
 
 namespace App\Data\Objects\ConsoleAPI\UserBlog;
 
-use App\Data\Enums\CountEnum;
 use App\Data\Objects\ConsoleAPI\BlogSubscription\SubscriptionObject;
+use App\Data\Objects\ConsoleAPI\LanguageObject;
 use App\Domains\Count\CountRepository;
 use App\Models\Blog;
 
@@ -29,6 +29,8 @@ class UserBlogBlogObject
      */
     public ?SubscriptionObject $subscription = null;
 
+    public LanguageObject $defaultLanguage;
+
     public function __construct(Blog $blog)
     {
         $plan = null;
@@ -51,6 +53,12 @@ class UserBlogBlogObject
         if ($subscription) {
             $this->subscription = new SubscriptionObject($subscription);
         }
+
+        $this->defaultLanguage = new LanguageObject(
+            $blog->languages()
+                ->where('is_default', true)
+                ->first()
+        );
 
     }
 }

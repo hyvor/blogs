@@ -1,5 +1,6 @@
 import { kea } from "kea";
 import api from "../lib/api";
+import blogsLogic from "./blogsLogic";
 import postLogic from "./postLogic";
 
 const postsLogic = kea({
@@ -74,57 +75,11 @@ const postsLogic = kea({
 
     }),
 
-    /* loadersWithHasMore: ({ values, props, actions }) => ({
-
-        postsList: [[], {
-            getPosts: async ({ offset }) => {
-                const response = await api.get(props.subdomain, '/posts', {
-                    filters: values.filters,
-                    offset
-                });
-                actions.getPostsSetHasMore(response.length === 50);
-
-                response.forEach(post => {
-                    const builtCounterLogic = postLogic.build({id: post.id}, false);
-                    builtCounterLogic.mount();
-                    builtCounterLogic.actions.set(post);
-                })
-
-                return response.map(val => val.id); // just the IDs
-            },
-        }],
-        
-    }), */
-
-    /* loaders: ({ values, props, actions }) => ({
-
-        postsCounts: [{
-            all: null,
-            published: null,
-            draft: null,
-            scheduled: null,
-            deleted: null,
-            your: null
-        }, {
-            loadPostsCounts: async () => {
-                //return await api.get(props.subdomain, '/posts-counts');
-                return null;
-            }
-        }],
-
-        tags: [[], {
-            loadTags: () => {
-
-            }
-        }]
-
-    }), */
-
     listeners: ({actions}) => ({
         changeFilter: () => actions.loadPostsList()
     }),
 
-    reducers: {
+    reducers: ({props}) => ({
 
         // object returned by /counts
         // { all: count, status: {[statuses+featured]: count}, authors/tags: [{id,name,count}],  }
@@ -144,6 +99,7 @@ const postsLogic = kea({
                 status: 'all',
                 author: 'all',
                 tag: 'all',
+                language: blogsLogic.values.findBlogBySubdomain(props.subdomain).blog.defaultLanguage.id,
                 dateStart: null,
                 dateEnd: null,
                 search: ''
@@ -152,7 +108,7 @@ const postsLogic = kea({
                 changeFilter: (state, {name, value}) => ({...state, ...{[name]: value}})
             }
         ]
-    },
+    }),
 
     events: ({actions}) => ({
         afterMount: [

@@ -104,7 +104,7 @@ function Language({lang, update, remove}) {
             <span>{lang.name}</span>
             {
                 lang.is_default ?
-                <span className="default-tag">DEFAULT</span>
+                <span className="default-tag">PRIMARY</span>
                 : null
             }
         </div>
