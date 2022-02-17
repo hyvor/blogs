@@ -88,7 +88,7 @@ export default function SettingsMedia() {
 
 }
 
-function Media({ isDummy, id, uploaded_at, url, name, extension, remove }) {
+function Media({ isDummy, id, uploaded_at, url, original_name, extension, remove }) {
 
     const [deletePopupOpened, setDeletePopupOpened] = useState(false);
     function handleDelete(e) {
@@ -131,7 +131,7 @@ function Media({ isDummy, id, uploaded_at, url, name, extension, remove }) {
             {
                 !isDummy ?
                 <div className="media-data">
-                    <div className="media-title">{name}</div>
+                    <div className="media-title">{original_name}</div>
                     <div className="media-at">{ new Date(uploaded_at * 1000).toDateString() }</div>
                 </div> : null
             }

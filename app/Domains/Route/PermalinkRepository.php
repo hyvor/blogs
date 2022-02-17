@@ -4,6 +4,7 @@ namespace App\Domains\Route;
 use App\Domains\Blog\BlogRepository;
 use App\Domains\Post\PostRepository;
 use App\Models\Blog;
+use App\Models\Media;
 use App\Models\Post;
 use App\Models\Tag;
 use App\Models\User;
@@ -126,6 +127,10 @@ class PermalinkRepository {
         $path = str_replace('{slug}', $author->slug, $path);
         
         return BlogRepository::getFullUrlFromPath($blog, $path);
+    }
+
+    public static function getMediaPermalink(Media $media, Blog $blog) : string {
+        return BlogRepository::getFullUrlFromPath($blog, 'media/' . $media->name);
     }
 
 }

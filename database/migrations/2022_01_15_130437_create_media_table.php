@@ -21,11 +21,13 @@ class CreateMediaTable extends Migration
             $table->bigInteger('blog_id')->index();
 
             // data
-            $table->string('path')->nullable();  // for back-end (delete)
-            $table->string('url'); // for front-end
+            $table->string('name')->nullable();  // unique name of the uploaded file
             $table->integer('size')->default(0); // in bytes
-            $table->string('name'); // filename
+            $table->string('original_name'); // original filename (in user's browser)
             $table->string('extension')->index(); // file extension
+
+
+            $table->unique(['blog_id', 'name']);
         });
     }
 

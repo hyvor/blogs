@@ -2,14 +2,10 @@
 
 namespace App\Http\Controllers\ConsoleAPI;
 
-use App\Domains\Media\Embed\EmbedRepository;
-use App\Domains\Media\Embed\Types\EmbedType;
+use App\Data\Objects\ConsoleAPI\MediaObject;
 use App\Domains\Media\MediaRepository;
-use App\Domains\Media\Types\MediaOutputType;
-use App\Exceptions\TrustedException;
 use App\Http\Controllers\Controller;
 use App\Models\Blog;
-use App\Models\Media;
 use Illuminate\Http\Request;
 
 class ConsoleMediaController extends Controller
@@ -28,7 +24,7 @@ class ConsoleMediaController extends Controller
 
         $media = MediaRepository::get($blog->id, $limit, $offset, $extension)
             ->map(function ($m) {
-                return new MediaOutputType($m);
+                return new MediaObject($m);
             });
 
         return response()->json($media);
@@ -49,7 +45,7 @@ class ConsoleMediaController extends Controller
 
         $media = MediaRepository::upload($blog->id, $file);
 
-        return response()->json(new MediaOutputType($media));
+        return response()->json(new MediaObject($media));
     }
 
     public static function deleteFile(Request $request)

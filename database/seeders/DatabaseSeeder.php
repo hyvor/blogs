@@ -115,13 +115,13 @@ class DatabaseSeeder extends Seeder
             }
 
             foreach (range(0, 15) as $i) {
-                Media::create([
+                /* Media::create([
                     'blog_id' => $blog->id,
                     'url' => 'https://picsum.photos/' . rand(200, 500) . '/' . rand(200, 500),
                     'size' => rand(1000000, 9000000),
                     'name' => $faker->name,
                     'extension' => 'jpg'
-                ]);
+                ]); */
             }
         
         }
