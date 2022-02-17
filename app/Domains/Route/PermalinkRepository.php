@@ -108,9 +108,7 @@ class PermalinkRepository {
 
         $domain = self::getDomain($blog);
         
-        $protocol = App::environment('local') ? 'http://' : 'https://';
-
-        return $protocol . $domain . ($path ? '/' . $path : '');
+        return 'https://' . $domain . ($path ? '/' . $path : '');
     }
 
     /**

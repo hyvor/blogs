@@ -45,7 +45,6 @@ class BlogThemeRepository
          * This is ONLY FOR LOCAL TESTING
          */
         if (App::environment('local')) {
-            return;
             BlogThemeFile::where('blog_id', $blogId)->delete();
             (new BlogThemeFilesSeeder())->run();
         }
