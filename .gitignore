@@ -18,6 +18,7 @@ package-lock.json
 composer.lock
 /.idea
 /.vscode
+Caddyfile
 
 # temp files
 .DS_Store

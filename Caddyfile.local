@@ -1,0 +1,27 @@
+# main domain
+blogs.hyvor.test {
+
+    root * public
+    tls internal
+    php_fastcgi 127.0.0.1:9000
+    file_server
+
+}
+
+# subdomain delivery
+test.hyvorblogs.test {
+
+    root * public
+    tls internal
+    php_fastcgi 127.0.0.1:9000
+
+}
+
+# custom domain delivery
+hyvorblogscustom.test {
+
+    root * public
+    tls internal
+    php_fastcgi 127.0.0.1:9000
+
+}
