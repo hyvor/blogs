@@ -2,6 +2,9 @@
 
 namespace Database\Seeders;
 
+use App\Domains\Language\LanguageRepository;
+use App\Domains\Redirect\RedirectRepository;
+use App\Domains\Route\RouteRepository;
 use App\Models\Blog;
 use App\Models\Media;
 use App\Models\BlogThemeFile;
@@ -37,6 +40,12 @@ class DatabaseSeeder extends Seeder
             $blog->createAsCustomer([
                 'trial_ends_at' => now()->addDays(30)
             ]);
+
+            RouteRepository::addDefaultRoutes($blog);
+            $language = LanguageRepository::addDefaultLanguage($blog);
+            LanguageRepository::createLanguage($blog->id, 'fr', 'French');
+
+            RedirectRepository::createRedirect($blog->id, '/redirects', 'https://example.com');
 
             User::create([
                 'blog_id' => $blog->id,
@@ -81,6 +90,7 @@ class DatabaseSeeder extends Seeder
                 $status = $i === 0 ? 'published' : $status[ array_rand($status) ];
                 $post = Post::create([
                     'blog_id' => $blog->id,
+                    'language_id' => $language->id,
                     'content' => json_encode($prosemirrorJson),
                     'title' => $title,
                     'slug' => Str::slug($title),
@@ -111,6 +121,7 @@ class DatabaseSeeder extends Seeder
                     'extension' => 'jpg'
                 ]);
             }
+        
         }
 
 

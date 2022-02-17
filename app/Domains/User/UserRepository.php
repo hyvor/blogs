@@ -15,7 +15,7 @@ class UserRepository
      * Get blogs of a user
      * returns an array of blogs with basic data
      */
-    public static function getBlogsOfUser(int $hyvorUserId,): Collection
+    public static function getBlogsOfUser(int $hyvorUserId): Collection
     {
         return User::where('user_id', $hyvorUserId)
             ->where('status', 'active')

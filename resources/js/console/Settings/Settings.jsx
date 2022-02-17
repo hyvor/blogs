@@ -9,6 +9,9 @@ import SettingsMigrate from './SettingsMigrate';
 import SettingUsers from './SettingUsers';
 import SettingRedirects from './SettingRedirects';
 import SettingsComments from './SettingsComments';
+import SettingNavigations from './SettingNavigations';
+import SettingsRoutes from './SettingsRoutes';
+import SettingsLanguages from './SettingsLanguages';
 
 export default function Settings({type}) {
 
@@ -19,6 +22,9 @@ export default function Settings({type}) {
     switch (type) {
         case 'users':
             Type = () => <SettingUsers />;
+            break;
+        case 'navigation':
+            Type = () => <SettingNavigations />;
             break;
         case 'redirects':
             Type = () => <SettingRedirects />;
@@ -38,6 +44,12 @@ export default function Settings({type}) {
         case 'delete':
             Type = () => <SettingsDelete />;
             break;
+        case 'routes':
+            Type = () => <SettingsRoutes />;
+            break;
+        case 'languages':
+            Type = () => <SettingsLanguages />;
+            break;
     }
 
     return <div className="posts-view settings-view">
@@ -52,13 +64,16 @@ export default function Settings({type}) {
                 <div></div>
                 <NavLink href={settingsPrefix + "/seo"}>SEO</NavLink>
                 <NavLink href={settingsPrefix + "/navigation"}>Navigation</NavLink>
-                <NavLink href={settingsPrefix + "/redirects"}>Redirects</NavLink>
-                <NavLink href={settingsPrefix + "/webhooks"}>Webhooks</NavLink>
                 <NavLink href={settingsPrefix + "/media"}>Media</NavLink>
+                <NavLink href={settingsPrefix + "/redirects"}>Redirects</NavLink>
+                <NavLink href={settingsPrefix + "/languages"}>Languages</NavLink>
+                <NavLink href={settingsPrefix + "/routes"}>Routes</NavLink>
+                <NavLink href={settingsPrefix + "/webhooks"}>Webhooks</NavLink>
 
                 <div></div>
                 <NavLink href={settingsPrefix + "/comments"}>Comments & Newsletter</NavLink>
                 <NavLink href={settingsPrefix + "/code"}>Custom Code</NavLink>
+                <NavLink href={settingsPrefix + "/highlight"}>Syntax Highlighting</NavLink>
 
                 <div></div>
                 <NavLink href={settingsPrefix + "/migrate"}>Import & Export</NavLink>

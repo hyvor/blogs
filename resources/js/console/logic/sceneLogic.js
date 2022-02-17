@@ -1,13 +1,14 @@
 import { kea } from "kea"
 
 const routes = {
-    '/': 'dashboard',
-    '/:subdomain/posts(/:postId)': 'posts',
-    '/:subdomain/pages(/:page)': 'posts',
-    '/:subdomain': 'blogPreview',
-    '/:subdomain/billing': 'billing',
-    '/:subdomain/settings(/:type)': 'settings',
-    '/:subdomain/theme': 'theme'
+    '/console': 'dashboard',
+    '/console/new': 'new',
+    '/console/:subdomain/posts(/:postId)': 'posts',
+    '/console/:subdomain/pages(/:page)': 'posts',
+    '/console/:subdomain': 'blogPreview',
+    '/console/:subdomain/billing': 'billing',
+    '/console/:subdomain/settings(/:type)': 'settings',
+    '/console/:subdomain/theme': 'theme'
 }
 
 const sceneLogic = kea({

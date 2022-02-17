@@ -8,6 +8,7 @@ return [
     // domains
     'domain_app' => env('DOMAIN_APP'),
     'domain_delivery' => env('DOMAIN_DELIVERY'),
+    'domain_hyvor' => env('DOMAIN_HYVOR'),
 
     'logo' => '/img/logo.png',
 

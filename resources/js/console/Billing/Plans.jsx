@@ -141,7 +141,7 @@ function Plan({name, type, teamUsers, setTeamUsers, frequency, subdomain}) {
             price = <span className="no-monthly">No monthly plan</span>;
             buttonDisabled = true;
         } else {
-            price = "$20";
+            price = "$30";
         }
         isCurrent = blog.subscribed && currentSubscription?.plan === 'pro' && currentSubscription.frequency === frequency;
     } else if (type === 'team') {

@@ -20,11 +20,12 @@ class CreateRedirectsTable extends Migration
             // connections
             $table->bigInteger('blog_id')->index();
 
-            $table->string('old_url');
-            $table->string('new_url');
+            $table->string('path');
+            $table->string('to');
 
-            $table->enum('type', ['301', '302']);
+            $table->enum('type', [301, 302]);
 
+            $table->unique(['blog_id', 'path']);
         });
     }
 

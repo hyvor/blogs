@@ -23,6 +23,7 @@ class CreatePostsTable extends Migration
 
             // connections
             $table->bigInteger('blog_id')->index();
+            $table->bigInteger('language_id')->index();
 
             // status
             $table->enum('status', ['published', 'draft', 'scheduled', 'deleted'])->default('draft');
@@ -45,7 +46,7 @@ class CreatePostsTable extends Migration
             // other
             $table->tinyInteger('reading_time')->nullable();
 
-            $table->unique(['blog_id', 'slug']);
+            $table->unique(['blog_id', 'language_id', 'slug']);
         });
     }
 

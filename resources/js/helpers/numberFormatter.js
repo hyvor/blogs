@@ -1,6 +1,9 @@
 
 // 1000 to 1k
 export default function numberFormatter(num, digits = 1) {
+    if (digits === "comma")
+      return num.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",");
+
     const lookup = [
       { value: 1, symbol: "" },
       { value: 1e3, symbol: "k" },

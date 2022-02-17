@@ -12,7 +12,7 @@ class DocsController extends Controller
     public function handle(Request $request) {
         $page = $request->route('page') ?? 'index';
         $content = $this->getContentFromName($page);
-  
+
         if (is_null($content)) {
             return abort(404);
         }

@@ -16,7 +16,7 @@ export default function PostFilters({ filters, changeFilter }) {
     const blog = findBlogBySubdomain(subdomain)
 
     const statusOptions = [
-        { value: 'all', label: <FilterLabel name="all" count={blog.blog.posts_count} /> },
+        { value: 'all', label: <FilterLabel name="All" count={blog.blog.posts_count} /> },
         { value: 'published', label: <FilterLabel name="published" count={counts && counts.status.published} />},
         { value: 'draft', label: <FilterLabel name="draft" count={counts && counts.status.draft} />},
         { value: 'scheduled', label: <FilterLabel name="scheduled" count={counts && counts.status.scheduled} />},
@@ -25,12 +25,18 @@ export default function PostFilters({ filters, changeFilter }) {
     ]
 
     const [authorsOptions, setAuthorsOptions] = useState([
-        { value: 'all', label: <FilterLabel name="all" count={blog.blog.posts_count} /> },
-        { value: 'you', label: <FilterLabel name="you" count={blog.user.posts_count} /> },
+        { value: 'all', label: <FilterLabel name="All" count={blog.blog.posts_count} /> },
+        { value: 'you', label: <FilterLabel name="You" count={blog.user.posts_count} /> },
     ])
     const [tagsOptions, setTagsOptions] = useState([
-        { value: 'all', label: <FilterLabel name="all" count={blog.blog.posts_count} /> },
+        { value: 'all', label: <FilterLabel name="All" count={blog.blog.posts_count} /> },
     ]);
+
+    const defaultLang = blog.blog.defaultLanguage;
+    const [languageOptions, setLanguageOptions] = useState([
+        { value: defaultLang.id, label: defaultLang.code }
+    ]);
+
     const dateOptions = [
         { value: 'all', label: 'All' },
         { value: 'today', label: 'Today'}
@@ -59,6 +65,15 @@ export default function PostFilters({ filters, changeFilter }) {
         })
         setTagsOptions(tagsCopy);
 
+        const languagesCopy = []
+        counts.languages.forEach(({id, code}) => {
+            languagesCopy.push({
+                value: id,
+                label: code
+            });
+        });
+        setLanguageOptions(languagesCopy);
+
     }, [counts]);
 
     function handleChange(name, v) {
@@ -80,15 +95,23 @@ export default function PostFilters({ filters, changeFilter }) {
             <PostsFilter name="tag" value={filters.tag} options={tagsOptions} onChange={handleChange} />
             <PostsFilter name="date" value={filters.date} options={dateOptions} onChange={handleChange} />
         </div>
-        <div className="post-search">
-            <input 
-                className="input" 
-                value={search} 
-                onChange={(e) => setSearch(e.target.value)}
-                onKeyDown={(e) => e.key === 'Enter' && updateSearch(e)}
-                onBlur={updateSearch}
-                placeholder="Search..."
-            ></input>
+        <div className="post-search-and-lang">
+            <div className="post-search">
+                <input 
+                    className="input" 
+                    value={search} 
+                    onChange={(e) => setSearch(e.target.value)}
+                    onKeyDown={(e) => e.key === 'Enter' && updateSearch(e)}
+                    onBlur={updateSearch}
+                    placeholder="Search..."
+                ></input>
+            </div>
+            {
+                counts && counts.languages.length > 1 ?
+                <div className="post-lang">         
+                    <PostsFilter name="language" value={filters.language} options={languageOptions} onChange={handleChange} />
+                </div> : null
+            }
         </div>
     </div>
 

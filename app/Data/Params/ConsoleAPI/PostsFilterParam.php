@@ -13,6 +13,7 @@ class PostsFilterParam
     public $status;
     public $authorId;
     public $tagId;
+    public $languageId;
     public $startTimestamp;
     public $endTimestamp;
     public $search;
@@ -55,4 +56,10 @@ class PostsFilterParam
         $this->search = $search;
         return $this;
     }
+
+    public function setLanguageId(?int $languageId) {
+        $this->languageId = $languageId;
+        return $this;
+    }
+
 }

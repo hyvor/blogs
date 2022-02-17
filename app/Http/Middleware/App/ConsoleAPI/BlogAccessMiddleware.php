@@ -4,9 +4,11 @@ namespace App\Http\Middleware\App\ConsoleAPI;
 
 use App\Exceptions\TrustedException;
 use App\Models\Blog;
+use App\Models\Language;
 use App\Models\Media;
 use App\Models\Post;
 use App\Models\Redirect;
+use App\Models\Navigation;
 use Closure;
 
 class BlogAccessMiddleware
@@ -15,6 +17,8 @@ class BlogAccessMiddleware
         'post' => Post::class,
         'media' => Media::class,
         'redirect' => Redirect::class,
+        'navigation' => Navigation::class,
+        'language' => Language::class,
     ];
 
     public function __construct(Blog $blog)

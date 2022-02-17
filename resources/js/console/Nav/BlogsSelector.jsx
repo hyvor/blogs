@@ -2,6 +2,7 @@ import { useActions, useValues } from 'kea';
 import React, { useState } from 'react'
 import { useRef } from 'react';
 import { useEffect } from 'react';
+import { router } from "kea-router";
 
 
 import {ChevronExpand} from 'react-bootstrap-icons';
@@ -17,6 +18,8 @@ export default function BlogsSelector() {
     const { blogs, findBlogBySubdomain } = useValues(blogsLogic)
     const { subdomain: activeSubdomain } = useValues(subdomainLogic)
     const { setSubdomain } = useActions(subdomainLogic)
+
+    const { push } = useActions(router);
 
 
     const [ isListOpen, setIsListOpen ] = useState(false);
@@ -43,8 +46,12 @@ export default function BlogsSelector() {
     }
 
     function handleBlogChange(subdomain) {
-        setSubdomain(subdomain)
+        setSubdomain(subdomain, null, true);
         closerRef.current();
+    }
+
+    function handleCreateBlog() {
+        push("/console/new");
     }
 
     return <div className="blog-selector">
@@ -82,7 +89,7 @@ export default function BlogsSelector() {
                 }
             </div>
             <div className="create-button-view">
-                <button className="button medium secondary">Create a blog</button>
+                <button className="button medium secondary" onClick={handleCreateBlog}>Create a blog</button>
             </div>
         </div>
     </div>
