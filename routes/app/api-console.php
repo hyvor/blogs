@@ -17,8 +17,11 @@ use App\Http\Middleware\App\LoginRequiredMiddleware;
 use App\Http\Middleware\App\SubdomainMiddleware;
 use Illuminate\Support\Facades\Route;
 
-Route::middleware(LoginRequiredMiddleware::class)
-    ->get('/console/{any?}', ConsoleViewController::class)
+// Route::middleware(LoginRequiredMiddleware::class)
+//     ->get('/console/{any?}', ConsoleViewController::class)
+//     ->where('any', '.*');
+
+Route::get('/console/{any?}', ConsoleViewController::class)
     ->where('any', '.*');
 
 // this is an internal API

@@ -3,17 +3,15 @@ import { useActions, useValues } from 'kea';
 import subdomainLogic from '../logic/subdomainLogic';
 import navigationLogic from '../logic/navigationLogic';
 import { Trash, PencilFill, CheckCircleFill, Plus} from 'react-bootstrap-icons';
-// import { PopupConfirm } from '../ReusableComponents/Popup';
 import Loader from '../ReusableComponents/Loader';
 import {toast} from 'react-toastify'
 import Select from '../ReusableComponents/Select';
 import Toast from '../ReusableComponents/Toast';
-import { ReactSortable } from "react-sortablejs";
-import { components } from 'react-select';
 import NoResults from '../ReusableComponents/NoResults';
 import { Popup, PopupBodyDefault, PopupConfirm, PopupFooterDoubleButton, PopupHeaderDefault } from '../ReusableComponents/Popup';
 import Input from '../ReusableComponents/Input';
-
+import { components } from 'react-select';
+import { ReactSortable } from "react-sortablejs";
 
 
 export default function SettingNavigations(props) {
@@ -22,35 +20,12 @@ export default function SettingNavigations(props) {
     const navigationLogicBuilt = navigationLogic({subdomain})
     const { navigation, loadAjax, createAjax } = useValues(navigationLogicBuilt)
 
-    return <div>
-        {/* <div className="title"> */}
-            {/* <div className="navigation-title">
-                <div className="navigation-title-text">
-                    Navigation  
-                </div>
-                <div className="navigation-title-button">
-                    <CreateUpdatePopup/>
-                </div>
-            </div> */}
-        {/* </div> */}
+    return <div className="navigation-view">
         <div className="navigation-title-bar">
-                <div className="navigation-title">
+            <div className="navigation-title">
                     Navigation
-                </div>
-                {/* <div className="navigation-title-create-button ">
-            <button type='button' className ="button small inactive navigation-button-popup">
-                <div className="popup-button-content">
-                    <div className="popup-button-content-text">Create</div> 
-                    <Plus />
-                </div>
-            </button>
-            </div> */}
-                    <CreateUpdatePopup/>
             </div>
-        <div className="">
-            {
-                // <CreateNavigation />
-            }
+            <CreatePopup/>
             {
                 createAjax.status === 'error' ?
                     <Toast 
@@ -62,69 +37,59 @@ export default function SettingNavigations(props) {
             }
         </div>
         {
-                    loadAjax.status === 'loading' ?
-                    <Loader/> :
-                    (
-                        <div>
-                            {
-                                // navigation.length > 0 && (
-                                navigation.length > 0 ?
-                                    <div>
-                                        <div className="navigation-sub-title">Header Navigation</div>
-                                        {/* <ReactSortable list={navigation}>
-                                            <div> */}
-                                        {
-                                            navigation.map(navigation => (
-                                                navigation.type === 'header' ?
-                                                    <div>
-                                                        {
-                                                            <GetNavigation id ={navigation.id} name = {navigation.name} url = {navigation.url} type = {navigation.type}/>
-                                                        }
-                                                    </div>
-                                            : <div></div>
-                                        ))}
-                                       {/* </div>
-                                       </ReactSortable> */}
-
-                                    </div> : 
-                                    <NoResults 
-                                        text="There is no any redirects."
-                                        padding={40}
-                                        imageWidth={250}
-                                    />
-                                // )
-                            } 
+            loadAjax.status === 'loading' ?
+                <Loader/> :
+                (
+                    <div className="global-table-view">
+                        {
+                            // navigation.length > 0 && (
+                            navigation.length > 0 ?
+                                <div>
+                                    <div className="navigation-sub-title">Header Navigation</div>
+                                    {
+                                        navigation.map(navigation => (
+                                            navigation.type === 'header' ?
+                                                <div>
+                                                    {
+                                                        <Navigation id ={navigation.id} name = {navigation.name} url = {navigation.url} type = {navigation.type}/>
+                                                    }
+                                                </div>
+                                        : <div></div>
+                                    ))}
+                                </div> : 
+                                <NoResults 
+                                    text="There is no any redirects."
+                                    padding={40}
+                                    imageWidth={250}
+                                />
+                            // )
+                        } 
                             
-                            {
-                                navigation.length > 0 && (
-                                    <div>
-                                        <div className="navigation-sub-title">Footer Navigation</div>
-                                        {
-                                            navigation.map(navigation => (
-                                                navigation.type === 'footer' ?
-                                                    <div>
-                                                        {
-                                                            <GetNavigation id ={navigation.id} name = {navigation.name} url = {navigation.url} type = {navigation.type}/>
-                                                        }
-                                                    </div>
-                                                : null
-                                            ))
-                                        }
-                                   </div>
-                                )
-                            } 
-
-
-
-                        </div>
-                    )
+                        {
+                            navigation.length > 0 && (
+                                <div>
+                                    <div className="navigation-sub-title">Footer Navigation</div>
+                                    {
+                                        navigation.map(navigation => (
+                                            navigation.type === 'footer' ?
+                                                <div>
+                                                    {
+                                                        <Navigation id ={navigation.id} name = {navigation.name} url = {navigation.url} type = {navigation.type}/>
+                                                    }
+                                                </div>
+                                            : null
+                                        ))
+                                    }
+                                </div>
+                            )
+                        } 
+                    </div>
+                )
         }
     </div>
 }
 
-function CreateUpdatePopup() {
-
-    // return 'd';
+function CreatePopup() {
 
     const subdomain = subdomainLogic.values.subdomain;
     const navigationLogicBuilt = navigationLogic({subdomain})
@@ -192,25 +157,26 @@ function CreateUpdatePopup() {
                             <PopupBodyDefault>
                                 <div>
                                     <Input 
-                                        // title="Name"
+                                        title="Name"
                                         type="text"
                                         name="name"
                                         value={name}
                                         onChange={setName}
                                     />
                                     <Input 
-                                        // title="Url"
+                                        title="Url"
                                         type="text"
                                         name="url"
                                         value={url}
                                         onChange={setUrl}
                                     />
                                     <div className="create-navigation-select">
-                                    <SelectType 
-                                        title="Type"
-                                        options={selectOptions} 
-                                        onChange={handleType}
-                                    />
+                                        <div className="popup-type-margin">Type</div>
+                                        <SelectType 
+                                            title="Type"
+                                            options={selectOptions} 
+                                            onChange={handleType}
+                                        />
                                     </div>
                                 </div>
                             </PopupBodyDefault>
@@ -227,12 +193,11 @@ function CreateUpdatePopup() {
                     /> 
                 : null
             }
-
     </div>
 }
 
 
-function GetNavigation ({id, name, url, type}){
+function Navigation ({id, name, url, type}){
 
     const subdomain = subdomainLogic.values.subdomain;
     const navigationLogicBuilt = navigationLogic({subdomain})
@@ -240,26 +205,26 @@ function GetNavigation ({id, name, url, type}){
     const { updateDataAjax } = useValues(navigationLogicBuilt)
 
     // Styles
-    const [styleDeleteIcon, setStyleDeleteIcon] = useState("icon-navigation navigation-delete");
-    const [styleUpdateIcon, setStyleUpdateIcon] = useState("hide-navigation-edit");
+    const [styleDeleteIcon, setStyleDeleteIcon] = useState("table-button");
+    // const [styleUpdateIcon, setStyleUpdateIcon] = useState("hide-navigation-edit");
 
     // delete section
     const [deletePopupOpened, setDeletePopupOpened] = useState(false);
 
     function handleDelete(e) {
         e.preventDefault();
-        setStyleDeleteIcon("get-navigation-delete");
+        setStyleDeleteIcon("table-delete-popup");
         setDeletePopupOpened(true);
     }
     function handleDoDelete() {
         console.log(id);
         toast("File deleted", {autoClose: 1500});
         remove({id});
-        setStyleDeleteIcon("icon-navigation navigation-delete");
+        setStyleDeleteIcon("table-button");
         setDeletePopupOpened(false);
     }
     function handleDeleteCancel(){
-        setStyleDeleteIcon("icon-navigation navigation-delete");
+        setStyleDeleteIcon("table-button");
         setDeletePopupOpened(false)
     }
 
@@ -327,16 +292,26 @@ function GetNavigation ({id, name, url, type}){
     
 
     return <div>
-        <div>
-            <div className="get-navigation">
-             {/* <span className="get-navigation-name">About</span>
-             <span className="get-navigation-url">https://sipes.com/quisquam-eos-eos-nulla-vel-minima-amet.html/dddd/ffff/gggg</span>
-             <input className="get-navigation-name" value={updateNavigationData.name}  onChange={(e)=> {handleNavigationName(e)}} />
-             <input className="get-navigation-url" value={updateNavigationData.url} onChange={(e)=> {handleNavigationUrl(e)}}/> */}
-             <span className="get-navigation-name"> {name}</span>
-             <span className="get-navigation-url"> {url} </span>
-             <button className={styleDeleteIcon} onClick={handleDelete}><Trash size={15} /></button>
-             <button className="icon-navigation navigation-edit" onClick={handleUpdate}><CheckCircleFill size={15} /></button>
+        <div className="global-table-body">
+            <div className="table-body-three">
+                {/* <span className="get-navigation-name">About</span>
+                <span className="get-navigation-url">https://sipes.com/quisquam-eos-eos-nulla-vel-minima-amet.html/dddd/ffff/gggg</span>
+                <input className="get-navigation-name" value={updateNavigationData.name}  onChange={(e)=> {handleNavigationName(e)}} />
+                <input className="get-navigation-url" value={updateNavigationData.url} onChange={(e)=> {handleNavigationUrl(e)}}/> */}
+                <div className="table-item"> {name}</div>
+                <div className="table-item"> {url} </div>
+                <div className="table-actions">
+                    <div className="table-edit" onClick={handleUpdate}>
+                        <span className="table-button">
+                            <PencilFill size={15} />
+                        </span>
+                    </div>
+                    <div className="table-delete" onClick={handleDelete}>
+                        <span className={styleDeleteIcon}>
+                            <Trash size={10} />
+                        </span>
+                    </div>
+                </div>
             </div>
         </div>
         {
@@ -375,19 +350,120 @@ function GetNavigation ({id, name, url, type}){
             /> 
             : null
         }
-     {
-         deletePopupOpened ?
-             <PopupConfirm
-                 title="Delete Permanently"
-                 text="Are you sure you won't to delete this navigation."
-                 name="Delete"
-                 buttonClass="danger"
-                 onClick={handleDoDelete}
-                 // onCancel={() => setDeletePopupOpened(false)}
-                 onCancel={handleDeleteCancel}
-             />
-             : null
-     }
+        {
+            deletePopupOpened ?
+                <PopupConfirm
+                    title="Delete Permanently"
+                    text="Are you sure you won't to delete this navigation."
+                    name="Delete"
+                    buttonClass="danger"
+                    onClick={handleDoDelete}
+                    // onCancel={() => setDeletePopupOpened(false)}
+                    onCancel={handleDeleteCancel}
+                />
+            : null
+        }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+{/* <div className="global-table-view">
+
+
+<div className="global-table-header-four">      
+                        <div className="table-head-item">Name</div> 
+                        <div className="table-head-item">Code</div>
+                        <div>No. of Posts</div>
+                        <div></div>
+                    </div>
+
+
+ <div className="global-table-body">
+<div className="table-body-four"> 
+        <div className="table-item">
+            <span>About</span>
+        </div>
+        <div className="table-item">Hi</div>
+        <div className="table-item">Test</div>
+        <div className="table-actions">
+            <div className="table-edit">
+                <span className="table-button">
+                    <Trash size={10} />
+                </span>
+            </div>
+            <div className="table-delete">
+                <span className="table-delete-popup">
+                    <Plus size={10} />
+                </span>
+            </div>
+        </div>
+    </div>
+    </div>
+
+</div> */}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
  </div>
 
 

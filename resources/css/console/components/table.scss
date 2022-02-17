@@ -1,0 +1,110 @@
+.global-table-view{
+
+    @mixin grid-style {
+        padding: 10px 15px;
+        border-radius: 20px;
+        align-items: center;
+    }
+    @mixin grid-four {
+        display: grid;
+        grid-template-columns: 1fr 1fr 1fr 60px;
+        @include grid-style;
+    }
+    @mixin grid-three {
+        display: grid;
+        grid-template-columns: 180px 420px 1fr ;
+        @include grid-style;
+    }
+    @mixin grid-two {
+        display: grid;
+        grid-template-columns: 1fr 1fr ;
+        @include grid-style;
+    }
+    @mixin grid-one {
+        display: grid;
+        grid-template-columns: 1fr;
+        @include grid-style;
+    }
+
+    .global-table-header-four {
+        @include grid-four;
+        font-weight: 600;
+        background: $color-card;
+        margin-bottom: 15px;
+
+        .table-head-item{
+            margin-right:5px;
+        }
+    }
+    .global-table-header-three {
+        @include grid-three;
+        font-weight: 600;
+        background: $color-card;
+        margin-bottom: 15px;
+
+        .table-head-item{
+            margin-right:5px;
+        }
+    }
+    .global-table-header-one {
+        @include grid-three;
+        font-weight: 600;
+        background: $color-card;
+        margin-bottom: 15px;
+
+        .table-head-item{
+            margin-right:5px;
+        }
+    }
+
+    .global-table-body{
+        .table-body-four {
+            @include grid-four;
+        }
+        .table-body-three {
+            @include grid-three;
+        }
+        .table-item {
+            margin-right:5px;
+        }
+        .table-actions {
+            display: flex;
+            justify-content: center;
+            .table-edit {
+                margin-right:8px;
+            }
+            @mixin action-button-style {
+                display: inline-flex;
+                width: 24px;
+                height: 24px;
+                align-items: center;
+                justify-content: center;
+                border-radius: 50%;
+            }
+            .table-button {
+                @include action-button-style;
+                background: $color-hover;
+                cursor: pointer;
+                background: $color-hover;
+                &:hover {
+                    box-shadow: 0 0 10px rgba(0,0,0,0.1);
+                }
+            }
+            .table-button-delete{
+                @include action-button-style;
+                background: $color-hover;
+                cursor: pointer;
+                background: $color-hover;
+                &:hover {
+                    box-shadow: 0 0 10px rgba(0,0,0,0.1);
+                    background: $color-red;
+                }
+            }
+            .table-delete-popup{
+                @include action-button-style;
+                background-color:$color-red;
+                color:$color-red-light;
+            }
+        }
+    }
+}

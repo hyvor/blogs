@@ -5,13 +5,13 @@
 
 @import './components/button.scss';
 @import './components/popup.scss';
+@import './components/table.scss';
 
 @import './Editor.scss';
 
 @import './scenes/Billing.scss';
 @import './scenes/Theme.scss';
 
-@import './scenes/Navigation.scss';
 @import './scenes/NewBlog.scss';
 
 @import './scenes/Settings/settings.scss';
@@ -35,9 +35,9 @@ body {
     justify-content: space-between;
     margin-bottom:15px;
 
-    .left-header-pp {
+    // .left-header-pp {
 
-    }
+    // }
 
 }
 #left-nav {

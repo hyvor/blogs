@@ -34,16 +34,16 @@ export default function SettingsLanguages() {
                 <Loader 
                     padding={100}
                 /> :
-                <div className="lang-table">
+                <div className="global-table-view">
 
-                    <div className="lang-table-header">      
-                        <div>Name</div> 
-                        <div>Code</div>
-                        <div>No. of Posts</div>
+                    <div className="global-table-header-four">      
+                        <div className="table-head-item">Name</div> 
+                        <div className="table-head-item">Code</div>
+                        <div className="table-head-item">No. of Posts</div>
                         <div></div>
                     </div>
 
-                    <div className="lang-table-body">
+                    <div className="global-table-body">
                         { languages.map(lang => <Language 
                             key={lang.id} 
                             lang={lang} 
@@ -95,12 +95,25 @@ function Language({lang, update, remove}) {
     const [isEditing, setIsEditing] = useState(false);
     const [isDeleting, setIsDeleting] = useState(false);
 
-    function handleDelete() {
+    const [styleDeleteIcon, setStyleDeleteIcon] = useState("table-button");
+
+    function handleDelete(e) {
+        e.preventDefault();
+        setStyleDeleteIcon("table-delete-popup");
+        setIsDeleting(true);
+    }
+    function handleDoDelete() {
         remove({id: lang.id});
+        setStyleDeleteIcon("table-button");
+        setIsDeleting(false)
+    }
+    function handleDeleteCancel(){
+        setStyleDeleteIcon("table-button");
+        setIsDeleting(false)
     }
 
     return <div className={"lang" + (lang.is_primary ? " default" : "")}>
-        <div className="lang-item">
+        <div className="table-item">
             <span>{lang.name}</span>
             {
                 lang.is_primary ?
@@ -108,11 +121,11 @@ function Language({lang, update, remove}) {
                 : null
             }
         </div>
-        <div className="lang-item">{lang.code}</div>
-        <div className="lang-item">{ numberFormatter(3253, 'comma') }</div>
-        <div className="lang-actions">
-            <div className="lang-edit">
-                <span className="lang-button" onClick={() => setIsEditing(true)}>
+        <div className="table-item">{lang.code}</div>
+        <div className="table-item">{ numberFormatter(3253, 'comma') }</div>
+        <div className="table-actions">
+            <div className="table-edit">
+                <span className="table-button" onClick={() => setIsEditing(true)}>
                     <PencilFill size={10} />
                 </span>
                 {
@@ -124,8 +137,8 @@ function Language({lang, update, remove}) {
                     /> : null
                 }
             </div>
-            <div className="lang-delete">
-                <span className="lang-button" onClick={() => setIsDeleting(true)}>
+            <div className="table-delete">
+                <span className={styleDeleteIcon} onClick={handleDelete}>
                     <TrashFill size={10} />
                 </span>
                 {
@@ -135,8 +148,8 @@ function Language({lang, update, remove}) {
                         text="Are you sure to delete this language from this blog?"
                         name="Delete"
                         buttonClass="danger"
-                        onClick={handleDelete}
-                        onCancel={() => setIsDeleting(false)}
+                        onClick={handleDoDelete}
+                        onCancel={handleDeleteCancel}
                     /> : null
                 }
             </div>
