@@ -30,9 +30,12 @@ class CreateBlogsTable extends Migration
             $table->string('icon')->nullable();
             $table->string('featured_image')->nullable();
 
-            $table->enum('hosted_at', ['subdomain', 'customdomain', 'subdirectory'])->default('subdomain');
-            $table->string('custom_domain')->nullable()->unique();
-            $table->string('subdirectory')->nullable();
+            $table->enum('hosting_at', ['subdomain', 'domain', 'self'])->default('subdomain');
+            $table->string('hosting_domain')->nullable()->unique(); // for domain
+            $table->string('hosting_url')->nullable(); // for self
+
+            $table->boolean('seo_indexing')->default(true);
+            $table->text('seo_robots')->nullable();
         
             $table->string('social_facebook')->nullable();
             $table->string('social_twitter')->nullable();

@@ -17,13 +17,14 @@ class BlogRepository
 
     public static function getDomain(Blog $blog)
     {
-        if ($blog->hosted_at === 'subdomain') {
+        if ($blog->hosting_at === 'subdomain') {
             $deliveryDomain = config('blogs.domain_delivery');
             $domain = "$blog->subdomain.$deliveryDomain";
-        } elseif ($blog->hosted_at === 'blog->customdomain') {
-            $domain = $blog->custom_domain;
+        } elseif ($blog->hosting_at === 'domain') {
+            $domain = $blog->hosting_domain;
         } else {
-            $domain = $blog->subdirectory;
+            // domain and path (ex: example.com or example.blog)
+            $domain = preg_replace('/https?:\/\//', '', $blog->hosting_url);
         }
         return $domain;
     }
