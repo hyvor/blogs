@@ -1,13 +1,12 @@
 <?php
 namespace App\Domains\Route;
 
-use App\Domains\Blog\BlogRepository;
-use App\Domains\Post\PostRepository;
 use App\Models\Blog;
+use App\Models\Media;
 use App\Models\Post;
 use App\Models\Tag;
 use App\Models\User;
-use Illuminate\Support\Carbon;
+use Illuminate\Support\Facades\App;
 
 /**
  * Manages permalinks of a post/page
@@ -52,14 +51,14 @@ class PermalinkRepository {
         foreach ($routeMatch as $key => $value) {
 
             if ($key === 'tag') {
-                $firstTag = PostRepository::getFirstTag($post);
+                $firstTag = $post->tags[0] ?? null;
                 if (!$firstTag || $firstTag->slug !== $value) {
                     return false;
                 }
             }
 
             if ($key === 'author') {
-                $firstAuthor = PostRepository::getFirstAuthor($post);
+                $firstAuthor = $post->authors[0] ?? null;
                 if (!$firstAuthor || $firstAuthor->slug !== $value) {
                     return false;
                 }
@@ -84,13 +83,43 @@ class PermalinkRepository {
 
     }
 
+    private static function getDomain(Blog $blog)
+    {
+        if ($blog->hosting_at === 'subdomain') {
+            $deliveryDomain = config('blogs.domain_delivery');
+            $domain = "$blog->subdomain.$deliveryDomain";
+        } elseif ($blog->hosting_at === 'domain') {
+            $domain = $blog->hosting_domain;
+        } else {
+            // domain and path (ex: example.com or example.blog)
+            $domain = preg_replace('/https?:\/\//', '', $blog->hosting_url);
+        }
+        return $domain;
+    }
+
+
+    public static function getFullUrlFromPath(Blog $blog, ?string $path)
+    {
+        if (is_null($path)) {
+            $path = '';
+        }
+
+        $path = trim($path, '/');
+
+        $domain = self::getDomain($blog);
+        
+        $protocol = App::environment('local') ? 'http://' : 'https://';
+
+        return $protocol . $domain . ($path ? '/' . $path : '');
+    }
+
     /**
      * Gets permalink of a post/page
      * only for published posts
      */
     public static function getPostPermalink(Post $post, Blog $blog) : string {
 
-        $path = $blog->routes()->where('name', 'post')->first()->match;
+        $path = RouteRepository::getRoute($blog, 'post')->match;
 
         // build regex for matching dates
         $keys = array_keys(self::DATE_FORMATTERS);
@@ -103,29 +132,36 @@ class PermalinkRepository {
         $path = str_replace('{slug}', $post->slug, $path);
 
         if (str_contains($path, '{tag}')) {
-            $path = str_replace('{tag}', PostRepository::getFirstTag($post)?->slug ?? '', $path);
+            $path = str_replace('{tag}', $post->tags[0]?->slug ?? '', $path);
         }
 
         if (str_contains($path, '{author}')) {
-            $path = str_replace('{author}', PostRepository::getFirstAuthor($post)?->slug ?? '', $path);
+            $path = str_replace('{author}', $post->authors[0]?->slug ?? '', $path);
         }
 
-        return BlogRepository::getFullUrlFromPath($blog, $path);
+        return self::getFullUrlFromPath($blog, $path);
 
     }
 
     public static function getTagPermalink(Tag $tag, Blog $blog) : string {
-        $path = $blog->routes()->where('name', 'tag')->first()->match;
+
+        $path = RouteRepository::getRoute($blog, 'tag')->match;
         $path = str_replace('{slug}', $tag->slug, $path);
         
-        return BlogRepository::getFullUrlFromPath($blog, $path);
+        return self::getFullUrlFromPath($blog, $path);
     }
 
     public static function getAuthorPermalink(User $author, Blog $blog) : string {
-        $path = $blog->routes()->where('name', 'tag')->first()->match;
+
+        $path = RouteRepository::getRoute($blog, 'author')->match;
         $path = str_replace('{slug}', $author->slug, $path);
         
-        return BlogRepository::getFullUrlFromPath($blog, $path);
+        return self::getFullUrlFromPath($blog, $path);
+
+    }
+
+    public static function getMediaPermalink(Media $media, Blog $blog) : string {
+        return self::getFullUrlFromPath($blog, 'media/' . $media->name);
     }
 
 }

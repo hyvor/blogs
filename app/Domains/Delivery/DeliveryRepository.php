@@ -17,7 +17,9 @@ use App\Models\Blog;
 use ScssPhp\ScssPhp\Compiler;
 use Symfony\Component\Routing\Exception\ResourceNotFoundException;
 use App\Data\Enums\RedirectTypeEnum;
+use App\Domains\Media\MediaRepository;
 use App\Domains\Route\PermalinkRepository;
+use Illuminate\Contracts\Encryption\DecryptException;
 use Padaliyajay\PHPAutoprefixer\Autoprefixer;
 
 class DeliveryRepository {
@@ -78,7 +80,9 @@ class DeliveryRepository {
 
         // default routes
         $routes->add('assets', new Route('/assets/{fileName}'));
+        $routes->add('preview', new Route('/p/{id}'));
         $routes->add('styles', new Route('/styles.css'));
+        $routes->add('media', new Route('/media/{fileName}'));
 
         // add dynamic routing
         $blogRoutes = $blog->routes;
@@ -97,7 +101,7 @@ class DeliveryRepository {
             $props = $matcher->match($path);
             $matchedRoute = $blogRoutes->keyBy("name")[$props['_route']] ?? null;
         } catch (ResourceNotFoundException) {
-            $props = null;            
+            $props = null;
         }
 
 
@@ -127,6 +131,28 @@ class DeliveryRepository {
             return DeliveryAPIResponseObject::forFile($file->content, $mimeType);
 
         }
+
+
+        if ($props['_route'] === 'media') {
+
+            /**
+             * Similar to assets, this returns uploaded images
+             */
+
+            $fileName = $props['fileName'];
+            $media = MediaRepository::getByBlogIdAndName($blog->id, $fileName);
+
+            if (!$media) {
+                return null;
+            }
+
+            $content = MediaRepository::getContents($media);
+            $mimeType = MimeTypes::getMime($media->extension);
+
+            return DeliveryAPIResponseObject::forFile($content, $mimeType);
+
+        }
+
         if ($props['_route'] === 'styles') {
 
              /**
@@ -153,6 +179,25 @@ class DeliveryRepository {
             return DeliveryAPIResponseObject::forFile($css, 'text/css');
         }
 
+        if ($props['_route'] === 'preview') {
+
+            try {
+                $id = decrypt($props['id']);
+            } catch (DecryptException) {
+                return self::notFound();
+            }
+
+            $post = PostRepository::getPostById($id);
+
+            $html = BlogThemeTemplateRepository::renderFile(
+                $blog,
+                DeliveryAPIScopeEnum::POST,
+                $post
+            );
+            
+            return DeliveryAPIResponseObject::forFile($html);
+        }
+
         if ($matchedRoute->name === 'post' || $matchedRoute->name === 'page') {
 
             // check for post or page
@@ -175,7 +220,7 @@ class DeliveryRepository {
                     DeliveryAPIScopeEnum::from($post->is_page ? 'page' : 'post'),
                     $post
                 );
-                return DeliveryAPIResponseObject::forFile($html, 'text/html');
+                return DeliveryAPIResponseObject::forFile($html);
             }
 
         }
@@ -191,7 +236,7 @@ class DeliveryRepository {
                 $query['page'] ?? 1,
             );
 
-            return DeliveryAPIResponseObject::forFile($html, 'text/html');
+            return DeliveryAPIResponseObject::forFile($html);
 
         }
 

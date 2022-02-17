@@ -5,7 +5,7 @@ use App\Models\Blog;
 
 class RouteRepository {
 
-    static function addDefaultRoutes(Blog $blog) {
+    public static function addDefaultRoutes(Blog $blog) {
 
         $blog->routes()->createMany([
             // post
@@ -45,5 +45,17 @@ class RouteRepository {
 
     }
 
+    public static function getRoute(Blog $blog, string $name) {
+
+        /**
+         * Even calling ->routes fetches all routes
+         * it fetches the relationship, so it prevents calling more duplicate queries from 
+         * the Blog model's route relationship
+         */
+        $routes = $blog->routes;
+
+        return $routes->where('name', $name)->first();
+
+    }
 
 }

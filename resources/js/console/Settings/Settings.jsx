@@ -12,19 +12,30 @@ import SettingsComments from './SettingsComments';
 import SettingNavigations from './SettingNavigations';
 import SettingsRoutes from './SettingsRoutes';
 import SettingsLanguages from './SettingsLanguages';
+import SettingsGeneral from './SettingsGeneral';
+import SettingsHosting from './SettingsHosting';
+import SettingsSEO from './SettingsSEO';
 
 export default function Settings({type}) {
 
     const { subdomain } = useValues(subdomainLogic); 
     const settingsPrefix = `/console/${subdomain}/settings`;
 
-    var Type = () => null;
+    var Type = () => <SettingsGeneral />;
     switch (type) {
         case 'users':
             Type = () => <SettingUsers />;
             break;
+<<<<<<< HEAD
         case 'navigation':
             Type = () => <SettingNavigations />;
+=======
+        case 'hosting':
+            Type = () => <SettingsHosting />;
+            break;
+        case 'seo':
+            Type = () => <SettingsSEO />;
+>>>>>>> 59d156f17cbab322412d6b7497763a86198e88d6
             break;
         case 'redirects':
             Type = () => <SettingRedirects />;
@@ -62,6 +73,7 @@ export default function Settings({type}) {
                 <NavLink href={settingsPrefix + "/tags"}>Tags</NavLink>
 
                 <div></div>
+                <NavLink href={settingsPrefix + "/hosting"}>Domains</NavLink>
                 <NavLink href={settingsPrefix + "/seo"}>SEO</NavLink>
                 <NavLink href={settingsPrefix + "/navigation"}>Navigation</NavLink>
                 <NavLink href={settingsPrefix + "/media"}>Media</NavLink>

@@ -8,7 +8,8 @@ use App\Models\Post;
 
 class PostObject
 {
-    public $id;
+    public int $id;
+    public string $preview_id; // an encrypted ID for preview
     public $created_at;
     public $updated_at;
     public $published_at;
@@ -37,6 +38,7 @@ class PostObject
         $authors = null;
 
         $this->id = $post->id;
+        $this->preview_id = encrypt($post->id);
         $this->created_at = $post->created_at->timestamp;
         $this->updated_at = $post->updated_at->timestamp;
         $this->published_at = $post->published_at?->timestamp;

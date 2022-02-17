@@ -66,12 +66,7 @@ const postsLogic = kea({
 
             actions.getPostsLoadSuccess([response.id, ...values.postsList])
             actions.navigateToPost(response.id);
-        },        
-
-        savePost: async ({ id, data }) => {
-            const response = await api.patch(props.subdomain, `/post/${id}`, data);
-            actions.setPosts(response); // update the post object
-        }
+        },
 
     }),
 

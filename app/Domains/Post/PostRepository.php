@@ -52,6 +52,7 @@ class PostRepository
         $limit = $limit ?? 50;
 
         return Post::where('blog_id', $blogId)
+        ->where('posts.is_page', false)
         ->when($authorId, function ($query) use ($authorId) {
             $query->join('post_author', function ($join) use ($authorId) {
                 $join->on('post_author.post_id', '=', 'posts.id');
@@ -89,6 +90,14 @@ class PostRepository
         ->limit($limit)
         ->offset($offset)
         ->get();
+    }
+
+    public static function getPages(int $blogId) {
+
+        return Post::where('blog_id', $blogId)
+            ->where('is_page', true)
+            ->get();
+
     }
 
 
@@ -179,6 +188,7 @@ class PostRepository
             ->addWhere();
 
         return $builder
+            ->with(['tags', 'authors'])
             ->where('posts.blog_id', $blogId)
             ->where('posts.status', 'published')
             ->limit($limit)
@@ -270,9 +280,7 @@ class PostRepository
 
 
     public static function getFirstTag(Post $post) {
-        return $post->tags()->withPivot('order')
-            ->orderBy('order', 'asc')
-            ->first();
+        return $post->tags[0];
     }
     public static function getFirstAuthor(Post $post) {
         return $post->tags()->withPivot('order')

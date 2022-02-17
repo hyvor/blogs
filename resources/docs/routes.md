@@ -21,6 +21,14 @@ Route name | Match |  Description | Posts Filter
  
 > Posts Filter is a [FilterQ expression](https://github.com/hyvor/laravel-filterq) to filter posts. These filtered posts will be sent to the template as the `_posts` variable. It is only used in listing pages like index, tag, author. Matched params (`{slug}`) can be used in this expression.
 
+In addition to these default routes, there are some special, non-customizable routes.
+
+Match | Description
+---|---
+`/styles.css` | The main CSS file of the blog (auto-generated from SCSS files in theme styles)
+`/assets/{fileName}` | To serve files in the theme **assets** directory
+`/media/{fileName}` | To serve uploaded media files
+
 ## Changing Post/Page Permalinks {#permalinks}
 
 You can change the **match** value of `post` and `page` routes to change post/page permalinks. By default, it looks like `/{slug}`. You may change it to a different structure which may have date, tag, and/or author name. Here are some examples.

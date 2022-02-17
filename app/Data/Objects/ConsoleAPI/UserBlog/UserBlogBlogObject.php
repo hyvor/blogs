@@ -4,7 +4,9 @@ namespace App\Data\Objects\ConsoleAPI\UserBlog;
 
 use App\Data\Objects\ConsoleAPI\BlogSubscription\SubscriptionObject;
 use App\Data\Objects\ConsoleAPI\LanguageObject;
+use App\Domains\Blog\BlogRepository;
 use App\Domains\Count\CountRepository;
+use App\Domains\Route\PermalinkRepository;
 use App\Models\Blog;
 
 class UserBlogBlogObject
@@ -12,6 +14,7 @@ class UserBlogBlogObject
     public int $id;
     public string $name;
     public string $subdomain;
+    public string $base_url;
     public int $posts_count;
     public int $users_count;
 
@@ -38,6 +41,7 @@ class UserBlogBlogObject
         $this->id = $blog->id;
         $this->name = $blog->name;
         $this->subdomain = $blog->subdomain;
+        $this->base_url = PermalinkRepository::getFullUrlFromPath($blog, '');
         $this->plan = $plan;
 
         $counts = CountRepository::getCounts($blog, ['users', 'posts']);

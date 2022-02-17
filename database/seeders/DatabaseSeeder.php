@@ -28,13 +28,14 @@ class DatabaseSeeder extends Seeder
 
         $faker = \Faker\Factory::create();
 
-        $blogs = [['test', "Test Blog"], ['test2', "Test2 Blog"]];
+        $blogs = [['test', "Test Blog", 'hyvorblogscustom.test'], ['test2', "Test2 Blog"]];
 
         foreach ($blogs as $blogData) {
             $blog = Blog::create([
                 'user_id' => 1,
                 'subdomain' => $blogData[0],
                 'name' => $blogData[1],
+                'hosting_domain' => $blogData[2] ?? null
             ]);
 
             $blog->createAsCustomer([
@@ -68,7 +69,7 @@ class DatabaseSeeder extends Seeder
             }
 
             $posts = [];
-            foreach (range(0, 100) as $i) {
+            foreach (range(0, 200) as $i) {
                 $title = $faker->sentence;
 
                 $paragraphs = $faker->paragraphs(rand(2, 6));
@@ -98,6 +99,8 @@ class DatabaseSeeder extends Seeder
                     'description' => $faker->sentence,
                     'status' => $status,
 
+                    'is_page' => (bool) rand(0,1),
+
                     'reading_time' => 2,
                 ]);
 
@@ -113,13 +116,13 @@ class DatabaseSeeder extends Seeder
             }
 
             foreach (range(0, 15) as $i) {
-                Media::create([
+                /* Media::create([
                     'blog_id' => $blog->id,
                     'url' => 'https://picsum.photos/' . rand(200, 500) . '/' . rand(200, 500),
                     'size' => rand(1000000, 9000000),
                     'name' => $faker->name,
                     'extension' => 'jpg'
-                ]);
+                ]); */
             }
         
         }

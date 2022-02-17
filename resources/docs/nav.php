@@ -9,11 +9,12 @@ return [
         ['how', 'How it works'],
     ],
     'Features' => [
-        ['users', 'Managing Users'],
-        ['tags', 'Managing Tags'],
-        ['media', 'Managing Media'],
-        ['comments', 'Embedding Comments'],
-        ['newsletter', 'Embedding Newsletter'],
+        ['users', 'Users'],
+        ['tags', 'Tags'],
+        ['media', 'Media'],
+        ['comments', 'Comments'],
+        ['newsletter', 'Newsletter'],
+        ['analytics', 'Analytics']
     ],
     'Basic Settings' => [
         ['main', 'Main Settings'],
@@ -34,6 +35,7 @@ return [
     'Advanced' => [
         ['routes', 'Routes'],
         ['languages', 'Languages'],
+        ['website', 'Build a website'],
         ['import', 'Importing data'],
         ['export', 'Exporting data'],
     ],

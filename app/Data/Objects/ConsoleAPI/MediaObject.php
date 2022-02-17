@@ -1,10 +1,10 @@
 <?php
+namespace App\Data\Objects\ConsoleAPI;
 
-namespace App\Domains\Media\Types;
-
+use App\Domains\Route\PermalinkRepository;
 use App\Models\Media;
 
-class MediaOutputType
+class MediaObject
 {
     public int $id;
     public int $uploaded_at;
@@ -19,8 +19,10 @@ class MediaOutputType
         $this->id = $media->id;
         $this->uploaded_at = $media->created_at->timestamp;
         $this->blog_id = $media->blog_id;
-        $this->url = $media->url;
         $this->name = $media->name;
+        $this->url = PermalinkRepository::getMediaPermalink($media, $media->blog);
+        $this->original_name = $media->original_name;
         $this->extension = $media->extension;
+
     }
 }

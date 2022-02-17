@@ -42,7 +42,7 @@ class PostObject
         $this->id = $post->id;
         $this->created_at = $post->created_at->timestamp;
         $this->updated_at = $post->updated_at->timestamp;
-        $this->published_at = $post->published_at?->timestamp;
+        $this->published_at = $post->published_at?->timestamp ?? 0;
 
         $this->is_featured = $post->is_featured;
         $this->is_page = $post->is_page;

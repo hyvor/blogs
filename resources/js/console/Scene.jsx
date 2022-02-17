@@ -5,6 +5,7 @@ import blogsLogic from './logic/blogsLogic'
 import sceneLogic from './logic/sceneLogic'
 import Nav from './Nav/Nav'
 import NewBlog from './NewBlog'
+import Pages from './Posts/Pages'
 import Posts from './Posts/Posts'
 import Settings from './Settings/Settings'
 import Theme from './Theme/Theme'
@@ -13,6 +14,7 @@ export const scenes = {
     error404: () => <div>404</div>,
     blogPreview: () => <BlogPreview />,
     posts: ({ postId }) => <Posts postId={postId} />,
+    pages: ({ postId }) => <Pages postId={postId} />,
     settings: ({type}) => <Settings type={type} />,
     theme: () => <Theme />,
     billing: () => <Billing />,

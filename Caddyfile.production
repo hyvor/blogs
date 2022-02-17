@@ -1,0 +1,37 @@
+# main domain
+blogs.hyvor.com {
+
+    encode gzip
+    root * /var/www/current/public
+    tls internal
+    php_fastcgi 127.0.0.1:9000
+    file_server
+
+}
+
+# subdomain delivery
+test.hyvorblogs.io {
+
+    encode gzip
+    root * /var/www/current/public
+    tls internal
+    php_fastcgi 127.0.0.1:9000
+
+}
+
+# custom domains
+https:// {
+
+    tls {
+        ask https://blogs.hyvor.com/special/caddy/allowed-domain
+    }
+
+    @get {
+        method GET
+    }
+
+    encode gzip
+    root @get /var/www/current/public
+    php_fastcgi @get 127.0.0.1:9000
+
+}

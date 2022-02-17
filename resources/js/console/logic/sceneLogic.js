@@ -4,7 +4,7 @@ const routes = {
     '/console': 'dashboard',
     '/console/new': 'new',
     '/console/:subdomain/posts(/:postId)': 'posts',
-    '/console/:subdomain/pages(/:page)': 'posts',
+    '/console/:subdomain/pages(/:postId)': 'pages',
     '/console/:subdomain': 'blogPreview',
     '/console/:subdomain/billing': 'billing',
     '/console/:subdomain/settings(/:type)': 'settings',

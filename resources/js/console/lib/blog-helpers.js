@@ -6,8 +6,16 @@
 
 import blogsLogic from "../logic/blogsLogic";
 
-function getBlogFromSubdomain(subdomain) {
+export function getBlogFromSubdomain(subdomain) {
     return blogsLogic.values.findBlogBySubdomain(subdomain).blog;
+}
+
+export function getBlogUrl(subdomain, path) {
+    const blog = getBlogFromSubdomain(subdomain)
+    if (path[0] !== '/') {
+        path = '/' + path;
+    }
+    return blog.base_url + path;
 }
 
 export function isBlogInTeamPlan(subdomain) {
