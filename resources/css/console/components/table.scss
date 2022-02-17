@@ -5,9 +5,14 @@
         border-radius: 20px;
         align-items: center;
     }
-    @mixin grid-four {
+    @mixin grid-four-equal {
         display: grid;
         grid-template-columns: 1fr 1fr 1fr 60px;
+        @include grid-style;
+    }
+    @mixin grid-four {
+        display: grid;
+        grid-template-columns: 1fr 1fr 100px 60px;
         @include grid-style;
     }
     @mixin grid-three {
@@ -26,6 +31,16 @@
         @include grid-style;
     }
 
+    .global-table-header-four-equal {
+        @include grid-four-equal;
+        font-weight: 600;
+        background: $color-card;
+        margin-bottom: 15px;
+
+        .table-head-item{
+            margin-right:5px;
+        }
+    }
     .global-table-header-four {
         @include grid-four;
         font-weight: 600;

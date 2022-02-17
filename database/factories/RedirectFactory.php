@@ -25,8 +25,8 @@ class RedirectFactory extends Factory
     {
         return [
             'blog_id' => '1',
-            'old_url' => $this->faker->url(),
-            'new_url' => $this->faker->url(),
+            'path' => $this->faker->url(),
+            'to' => $this->faker->url(),
             'type' => '302',
         ];
     }

@@ -36,7 +36,7 @@ export default function SettingsLanguages() {
                 /> :
                 <div className="global-table-view">
 
-                    <div className="global-table-header-four">      
+                    <div className="global-table-header-four-equal ">      
                         <div className="table-head-item">Name</div> 
                         <div className="table-head-item">Code</div>
                         <div className="table-head-item">No. of Posts</div>

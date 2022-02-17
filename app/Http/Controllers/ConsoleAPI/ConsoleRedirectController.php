@@ -18,7 +18,7 @@ class ConsoleRedirectController extends Controller {
             'offset' => 'required|integer',
         ]);
         
-        $limit = $request->input('limit') ?? 50;
+        $limit = $request->input('limit');
         $offset = $request->input('offset');
 
         $getData = RedirectRepository::getRedirects($blog->id, $limit, $offset)
@@ -31,36 +31,34 @@ class ConsoleRedirectController extends Controller {
     public function createRedirect(Request $request , Blog $blog) {
         // $url ='regex:/(^(https?:\/\/(www\.)?[-a-zA-Z0-9@:%._\+~#=]{2,256}\.[a-z]{2,4}\b([-a-zA-Z0-9@:%_\+.~#?&//=]*)$)/u';
         // $path = 'regex:/(^([\/\:\.a-zA-z\-\*]+)(\d+)?$)/u';
-        // $regexValidation = 'regex:/(^([\/\:\.a-zA-z0-9\-\?\_\=\*]+)(\d+)?$)/u';
         $regexValidation = get_called_class();
         $request->validate([
-            'old_url' => 'required|string|'.$regexValidation::REGEX,
-            'new_url' => 'required|string|'.$regexValidation::REGEX,
+            'path' => 'required|string|'.$regexValidation::REGEX,
+            'to' => 'required|string|'.$regexValidation::REGEX,
             'type' => 'required|int',
         ]);
-        $oldUrl = $request->input('old_url');
-        $newUrl = $request->input('new_url');
+        $path = $request->input('path');
+        $to = $request->input('to');
         $type = $request->input('type');
 
-        $createRedirect = RedirectRepository::createRedirect($blog->id, $oldUrl, $newUrl, $type);
+        $createRedirect = RedirectRepository::createRedirect($blog->id, $path, $to, $type); 
         return response()->json(new RedirectObject($createRedirect));
     }
 
     public function updateRedirect(Request $request, Blog $blog) {
-        // $regexValidation = 'regex:/(^([\/\:\.a-zA-z0-9\-\?\_\=\*]+)(\d+)?$)/u';
         $regexValidation = get_called_class();
         $request->validate([
-            'old_url' => 'required|string|'.$regexValidation::REGEX,
-            'new_url' => 'required|string|'.$regexValidation::REGEX,
+            'path' => 'required|string|'.$regexValidation::REGEX,
+            'to' => 'required|string|'.$regexValidation::REGEX,
             'type' => 'required|int',
         ]);
 
         $id = $request->route('id');
-        $oldUrl = $request->input('old_url');
-        $newUrl = $request->input('new_url');
+        $path = $request->input('path');
+        $to = $request->input('to');
         $type = $request->input('type'); 
 
-        $updateRedirect = RedirectRepository::updateRedirect($blog->id, $id, $oldUrl, $newUrl, $type);
+        $updateRedirect = RedirectRepository::updateRedirect($blog->id, $id, $path, $to, $type);
         return response()->json($updateRedirect);
     }
 

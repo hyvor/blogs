@@ -20,7 +20,7 @@ const redirectsLogic = kea({
         load: async ({offset = 0, type}) => {
             const redirect = await api.get(props.subdomain, '/redirect', {
                 offset,
-                limit: 30,
+                limit: 500,
                 type,
             });
             actions.setRedirectList(redirect);
@@ -43,10 +43,14 @@ const redirectsLogic = kea({
             await api.delete(props.subdomain, `/redirect/${id}`);
         },
 
-        create: async ({old_url, new_url, type}) => {
+        create: async ({oldUrl, newUrl, type}) => {
+            console.log(oldUrl)
+            console.log(newUrl)
+            console.log(type)
+
             const redirect = await api.post(props.subdomain, '/redirect', {
-                    old_url: old_url,
-                    new_url: new_url,
+                    path: oldUrl,
+                    to: newUrl,
                     type: type 
                 })
             actions.addRedirect(redirect);
@@ -54,8 +58,8 @@ const redirectsLogic = kea({
 
         updateData: async ({userId, oldUrl, newUrl, type}) => {
             const redirect = await api.put(props.subdomain, `/redirect/${userId}`, {
-                    old_url: oldUrl,
-                    new_url: newUrl,
+                    path: oldUrl,
+                    to: newUrl,
                     type: type 
                 });
             actions.addRedirect(redirect);

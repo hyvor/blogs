@@ -16,22 +16,23 @@ Class RedirectRepository
     }
 
     public static function createRedirect(
-        int $blogId, string $path, 
-        string $to, RedirectTypeEnum $type = RedirectTypeEnum::TEMPORARY)
+        int $blogId, string $path, string $to, $type)
+        // RedirectTypeEnum $type = RedirectTypeEnum::TEMPORARY)
     {
         return Redirect::create([
             'blog_id' => $blogId,
             'path' => $path,
             'to' => $to,
-            'type' => (string) $type->value,
+            // 'type' => (string) $type->value,
+            'type' => $type,
         ]);
     }
 
-    public static function updateRedirect(int $blogId ,int $id, string $oldUrl, string $newUrl, $type){
+    public static function updateRedirect(int $blogId ,int $id, string $path, string $to, $type){
 
         $redirect = Redirect::find($id);
-        $redirect->old_url=$oldUrl;
-        $redirect->new_url=$newUrl;
+        $redirect->path=$path;
+        $redirect->to=$to;
         $redirect->type=$type;
 
         $redirect->save();
@@ -44,11 +45,9 @@ Class RedirectRepository
 
     public static function findRedirectForPath(int $blogId, string $path) : Redirect|null
     {
-
         return Redirect::where('blog_id', $blogId)
             ->where('path', $path)
             ->first();
-
     }
 
 }
