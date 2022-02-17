@@ -10,6 +10,7 @@ use Symfony\Component\Routing\Matcher\UrlMatcher;
 use Symfony\Component\Routing\RequestContext;
 use App\Data\Enums\ThemeFileFolderEnum;
 use App\Data\Enums\DeliveryAPIScopeEnum;
+use App\Data\Enums\DeliveryAPITypeEnum;
 use App\Domains\BlogTheme\BlogThemeTemplateRepository;
 use App\Domains\Post\PostRepository;
 use App\Domains\Redirect\RedirectRepository;
@@ -24,11 +25,20 @@ use Padaliyajay\PHPAutoprefixer\Autoprefixer;
 
 class DeliveryRepository {
 
-    static function getHtml(
+    static function getLaravelResponse(DeliveryAPIResponseObject $obj) {
+        if ($obj->type === DeliveryAPITypeEnum::FILE) {
+            return response($obj->content, $obj->status)
+                ->header('Content-Type', $obj->mime_type);
+        } elseif ($obj->type === DeliveryAPITypeEnum::REDIRECT) {
+            return redirect($obj->to, $obj->status);
+        }
+    }
+
+    static function getResponseObject (
         Blog $blog,
         string $path,
         array $query
-    ) : DeliveryAPIResponseObject|null {
+    ) : DeliveryAPIResponseObject {
 
         if (!preg_match('/^\//', $path)) {
             $path = '/' . $path; // add leading slash (otherwise matcher doesn't work)
@@ -240,12 +250,14 @@ class DeliveryRepository {
 
         }
 
-        return null;
+        return self::notFound();
 
     }
 
     private static function notFound() {
         return DeliveryAPIResponseObject::forFile("404", "text/html", 404);
     }
+
+
 
 }

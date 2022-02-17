@@ -30,7 +30,7 @@ class DeliveryAPIResponseObject
     public static function forFile(string $content, string $mimeType = 'text/html', int $status = 200)
     {
         $obj = new self(DeliveryAPITypeEnum::FILE);
-        $obj->content = base64_encode($content);
+        $obj->content = $content;
         $obj->mime_type = $mimeType;
         $obj->status = $status;
 
@@ -41,10 +41,26 @@ class DeliveryAPIResponseObject
     public static function forRedirect(string $to, RedirectTypeEnum $type)
     {
         $obj = new self(DeliveryAPITypeEnum::REDIRECT);
-        $obj->both = $type->value;
         $obj->to = $to;
         $obj->status = $type->value;
 
         return $obj;
+    }
+
+    // for caching
+    public static function fromArray(array $arr) {
+
+        $obj = new self( DeliveryAPITypeEnum::from($arr['type']) );
+        $obj->status = $arr['status'];
+
+        if (isset($arr['content'])) {
+            $obj->content = $arr['content'];
+            $obj->mime_type = $arr['mime_type'];
+        }
+
+        if (isset($arr['to'])) {
+            $obj->to = $arr['to'];
+        }
+
     }
 }
