@@ -188,6 +188,7 @@ class PostRepository
             ->addWhere();
 
         return $builder
+            ->with(['tags', 'authors'])
             ->where('posts.blog_id', $blogId)
             ->where('posts.status', 'published')
             ->limit($limit)
@@ -279,9 +280,7 @@ class PostRepository
 
 
     public static function getFirstTag(Post $post) {
-        return $post->tags()->withPivot('order')
-            ->orderBy('order', 'asc')
-            ->first();
+        return $post->tags[0];
     }
     public static function getFirstAuthor(Post $post) {
         return $post->tags()->withPivot('order')

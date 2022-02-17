@@ -2,7 +2,7 @@
 
 namespace App\Data\Objects\DataAPI;
 
-use App\Domains\Blog\BlogRepository;
+use App\Domains\Route\PermalinkRepository;
 use App\Models\Blog;
 use App\Models\User;
 
@@ -24,7 +24,7 @@ class AuthorObject
 
         $this->id = $user->id;
         $this->slug = $user->slug;
-        $this->url = BlogRepository::getFullUrlFromPath($blog, 'author/' . $user->slug);
+        $this->url = PermalinkRepository::getFullUrlFromPath($blog, 'author/' . $user->slug);
         $this->name = $user->name;
         $this->profile_image = $user->profile_image;
         $this->bio = $user->bio;

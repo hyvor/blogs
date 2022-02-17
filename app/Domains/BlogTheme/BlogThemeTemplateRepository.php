@@ -69,14 +69,14 @@ class BlogThemeTemplateRepository
                 return new PostObject($post, $blog);
             });
 
-            $featuredPosts = InternalAPICaller::data($blog->subdomain, 'posts', [
+            /* $featuredPosts = InternalAPICaller::data($blog->subdomain, 'posts', [
                 'limit' => 50,
                 'filter' => 'is_featured=true'
-            ]);
+            ]); */
 
             return [
                 '_posts' => $posts,
-                '_featured_posts' => $featuredPosts->data
+                '_featured_posts' => null, // $featuredPosts->data
             ];
 
         } else if ($scope === DeliveryAPIScopeEnum::POST || $scope === DeliveryAPIScopeEnum::PAGE) {

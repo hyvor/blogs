@@ -17,7 +17,6 @@ export default function BlogPreview() {
     }
 
     var domain = window.appConfig.domains.delivery;
-    var protocol = domain.match(/\.test/) ? 'http' : 'https';
 
     return <div className="box blog-preview-view">
         <div className="navi">
@@ -44,7 +43,7 @@ export default function BlogPreview() {
             }
             <iframe
                 id="preview-iframe"
-                src={`${protocol}://${subdomain}.${domain}`} 
+                src={`https://${subdomain}.${domain}`} 
                 style={{
                     width: type === 'laptop' ? "100%" : 360,
                     height: type === 'laptop' ? "100%" : 740,

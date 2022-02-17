@@ -1,6 +1,7 @@
 # main domain
 blogs.hyvor.test {
 
+    encode gzip
     root * public
     tls internal
     php_fastcgi 127.0.0.1:9000
@@ -11,6 +12,7 @@ blogs.hyvor.test {
 # subdomain delivery
 test.hyvorblogs.test {
 
+    encode gzip
     root * public
     tls internal
     php_fastcgi 127.0.0.1:9000
@@ -20,6 +22,7 @@ test.hyvorblogs.test {
 # custom domain delivery
 hyvorblogscustom.test {
 
+    encode gzip
     root * public
     tls internal
     php_fastcgi 127.0.0.1:9000

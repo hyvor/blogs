@@ -20,12 +20,12 @@ class Post extends Model
 
     public function tags()
     {
-        return $this->belongsToMany(Tag::class);
+        return $this->belongsToMany(Tag::class)->withPivot('order')->orderBy('order', 'ASC');
     }
 
     public function authors()
     {
-        return $this->belongsToMany(User::class, 'post_author');
+        return $this->belongsToMany(User::class, 'post_author')->withPivot('order')->orderBy('order', 'ASC');
     }
 
 

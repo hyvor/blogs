@@ -28,7 +28,7 @@ export default function SettingsSEO() {
             title="Robots.txt"
             description={
                 <div>
-                    Add your robots.txt content here, <b>except sitemaps</b> (They are dynamically added to the bottom of robots.txt)
+                    Add your robots.txt content here, <b>except sitemaps</b> (Sitemaps are dynamically added to the bottom of robots.txt)
                 </div>
             }
             right={
