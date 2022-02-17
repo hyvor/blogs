@@ -15,6 +15,14 @@ class BlogRepository
 
     }
 
+    public static function getBlogBySubdomain(string $subdomain) : ?Blog {
+        return Blog::where('subdomain', $subdomain)->first();
+    }
+
+    public static function getBlogByCustomDomain(string $customDomain) : ?Blog {
+        return Blog::where('hosting_domain', $customDomain)->first();
+    }
+
     public static function getDomain(Blog $blog)
     {
         if ($blog->hosting_at === 'subdomain') {

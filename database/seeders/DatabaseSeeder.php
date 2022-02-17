@@ -28,13 +28,14 @@ class DatabaseSeeder extends Seeder
 
         $faker = \Faker\Factory::create();
 
-        $blogs = [['test', "Test Blog"], ['test2', "Test2 Blog"]];
+        $blogs = [['test', "Test Blog", 'hyvorblogscustom.test'], ['test2', "Test2 Blog"]];
 
         foreach ($blogs as $blogData) {
             $blog = Blog::create([
                 'user_id' => 1,
                 'subdomain' => $blogData[0],
                 'name' => $blogData[1],
+                'hosting_domain' => $blogData[2] ?? null
             ]);
 
             $blog->createAsCustomer([

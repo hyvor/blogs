@@ -1,23 +1,18 @@
 <?php
-
 namespace App\Http\Middleware\App;
 
 use App\Domains\Blog\BlogRepository;
 use App\Models\Blog;
 use Closure;
 
-class SubdomainMiddleware
+class CustomDomainMiddleware 
 {
-    public function handle($request, Closure $next)
+
+    public function handle($request, Closure $next) 
     {
+        $host = $request->getHost();
 
-        $subdomain = $request->route('subdomain');
-
-        if (!$subdomain) {
-            abort(404);
-        }
-
-        $blog = BlogRepository::getBlogBySubdomain($subdomain);
+        $blog = BlogRepository::getBlogByCustomDomain($host);
 
         if (!$blog) {
             abort(404);
@@ -27,4 +22,5 @@ class SubdomainMiddleware
 
         return $next($request);
     }
+
 }

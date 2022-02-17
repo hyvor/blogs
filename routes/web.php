@@ -2,13 +2,18 @@
 
 use Illuminate\Support\Facades\Route;
 
-use App\Http\Controllers\API\BlogController;
-use App\Http\Controllers\API\PostController;
 use Illuminate\Support\Facades\App;
-use Symfony\Component\Routing\Loader\Configurator\RoutingConfigurator;
+use App\Http\Middleware\App\SubdomainMiddleware;
+use App\Http\Controllers\Subdomain\SubdomainController;
+use App\Http\Middleware\App\CustomDomainMiddleware;
 
-include('app/subdomain.php');
 
+if (App::environment('local')) {
+    include 'local.php';
+}
+
+
+// main app
 Route::domain(config('blogs.domain_app'))->group(function() {
 
     include('app/pages.php');
@@ -18,6 +23,11 @@ Route::domain(config('blogs.domain_app'))->group(function() {
 
 });
 
-if (App::environment('local')) {
-    include 'local.php';
-}
+// subdomain
+Route::domain('{subdomain}.' . config('blogs.domain_delivery'))
+    ->middleware(SubdomainMiddleware::class)
+    ->get('{path}', [SubdomainController::class, 'handle'])->where('path', '.*');
+
+// custom domain
+Route::middleware(CustomDomainMiddleware::class)
+    ->get('{path}', [SubdomainController::class, 'handle'])->where('path', '.*');
