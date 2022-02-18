@@ -40,6 +40,7 @@ export default function Nav() {
 
             <NavLink href={`/console/${subdomain}/posts`}>Posts</NavLink>
             <NavLink href={`/console/${subdomain}/pages`}>Pages</NavLink>
+            <NavLink href={`/console/${subdomain}/comments`}>Comments</NavLink>
 
             <div className="left-divider"></div>
 

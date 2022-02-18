@@ -1,5 +1,6 @@
 import { kea, useValues } from "kea";
 import { router } from "kea-router";
+import blogLogic from "./blogLogic";
 import blogsLogic from "./blogsLogic";
 import postsLogic from "./postsLogic";
 import sceneLogic from './sceneLogic';
@@ -22,6 +23,8 @@ const subdomainLogic = kea({
             
             // pre-load posts
             postsLogic({subdomain}).actions.loadPostsList();
+            // pre-load blog settings
+            blogLogic({subdomain}).actions.load();
         }
     }),
 

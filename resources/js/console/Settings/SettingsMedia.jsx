@@ -1,5 +1,4 @@
 import { useActions, useValues } from 'kea';
-import { A } from 'kea-router';
 import React, { useState } from 'react';
 import mediaLogic from '../logic/mediaLogic';
 import subdomainLogic from '../logic/subdomainLogic';
@@ -14,10 +13,12 @@ let uploadInput = null;
 
 export default function SettingsMedia() {
 
-    const subdomain = subdomainLogic.values.subdomain;
+    const {subdomain} = useValues(subdomainLogic);
     const mediaLogicBuilt = mediaLogic({subdomain})
     const { media, loadAjax, uploadAjax } = useValues(mediaLogicBuilt)
     const { remove, upload } = useActions(mediaLogicBuilt)
+
+    console.log(media, loadAjax, uploadAjax);
 
     function handleUpload() {
 
