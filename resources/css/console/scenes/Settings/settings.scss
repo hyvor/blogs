@@ -2,3 +2,39 @@
 @import './Navigation.scss';
 @import './Redirect.scss';
 @import './Code.scss';
+
+.settings-save {
+
+    position: absolute;
+    bottom: 20px;
+    left: 0;
+    width:100%;
+    text-align: center;
+    &.start {
+        opacity: 0;
+    }
+    &.open {
+        animation: .5s save-in ease-in-out both;
+    }
+    &.close {
+        animation: .5s save-out ease-in-out both;
+    }
+
+    @keyframes save-in {
+        0% {opacity:0;transform:scale(0.5)}
+        75% {transform:scale(1.1)}
+        100% {opacity:1;transform:scale(1)}
+    }
+
+    @keyframes save-out {
+        100% {opacity:0;transform:scale(0)}
+    }
+
+}
+
+.swift-settings {
+    margin-left:50px;
+    .global-dual-setting:first-child {
+        border-top: 1px solid $color-accent-light!important;
+    }
+}

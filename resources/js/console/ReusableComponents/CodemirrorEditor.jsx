@@ -15,6 +15,8 @@ export default function CodemirrorEditor({ value, onChange, mode }) {
             theme: 'solarized',
             keyMap: 'sublime',
             tabSize: 4,
+            indentWithTabs: true,
+            indentUnit: 4,
             mode,
             lineWrapping: true,
             lineNumbers: true,

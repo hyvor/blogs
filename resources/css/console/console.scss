@@ -191,6 +191,7 @@ body {
         .box-right {
             flex:1;
             min-width: 0; // stop overflowing https://stackoverflow.com/a/66689926
+            position:relative;
         }
         .box {
             height:100%;

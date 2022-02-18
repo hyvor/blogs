@@ -36,6 +36,15 @@ class CreateBlogsTable extends Migration
 
             $table->boolean('seo_indexing')->default(true);
             $table->text('seo_robots')->nullable();
+
+            $table->text('code_header')->nullable();
+            $table->text('code_footer')->nullable();
+
+            $table->text('newsletter_code')->nullable();
+            $table->text('comments_code')->nullable();
+            $table->enum('comments_type', ['ht', 'other'])->default('ht'); // hyvor talk
+            $table->bigInteger('comments_ht_website_id')->nullable();
+            $table->string('comments_ht_api_key')->nullable();
         
             $table->string('social_facebook')->nullable();
             $table->string('social_twitter')->nullable();

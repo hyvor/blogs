@@ -18,41 +18,62 @@ export default function SettingsComments() {
             Comments  & Newsletter
         </div>
 
-        <DualSetting 
-            title="Comments"
-            description={
-                <div>
-                    Paste the embed code provided by a commenting system here. If you like a privacy-first, easy-to-use commenting system, try <a href="https://talk.hyvor.com" className="link" target="_blank">Hyvor Talk</a> (starts at $5/month).
-                </div>
-            }
-            right={
-                <div>
+        <div>
+
+            <DualSetting 
+                title="Commenting Provider"
+                description={
                     <div>
-                        <Select
-                            options={commentsOptions}
-                            defaultValue={commentsOptions[0]}
-                        />
+                        If you like a privacy-first, easy-to-use commenting system, try <a href="https://talk.hyvor.com" className="link" target="_blank">Hyvor Talk</a> (starts at $5/month). Hyvor Blogs integrates with Hyvor Talk, making it easier to moderate your comments within the HB console.
                     </div>
-                    <textarea></textarea>
-
-                    <Input 
-                        title="Hyvor Talk Website ID"
-                        type="text"
-                        name="ht-website-id"
-                        value={htWebsteId}
-                        onChange={setHtWebsiteId}
+                }
+                right={
+                    <Select
+                        options={commentsOptions}
+                        defaultValue={commentsOptions[0]}
                     />
-                </div>
-            }
-        />
+                }
+            />
 
-        <DualSetting 
-            title="Newsletter Signup Form Code"
-            description="Paste the embed code provided by a email newsletter service here (for the sign up form)."
-            right={
-                <textarea></textarea>
-            }
-        />
+            <div className="swift-settings">
+                <DualSetting 
+                    title="Hyvor Talk Website ID"
+                    description="Paste the website ID provided by Hyvor Talk. This is used to make the comments embed work on your website."
+                    right={
+                        <Input 
+                            title={null}
+                            type="text"
+                            name="ht-website-id"
+                            value={htWebsteId}
+                            onChange={setHtWebsiteId}
+                        />
+                    }
+                />
+
+                <DualSetting 
+                    title="Hyvor Talk API Key"
+                    description="Paste the API key provided by Hyvor Talk. This is used to fetch comments from the HB console, making it easier to moderate comments here, without having to visit the HT console."
+                    right={
+                        <Input 
+                            title={null}
+                            type="text"
+                            name="ht-api-key"
+                            value={htWebsteId}
+                            onChange={setHtWebsiteId}
+                        />
+                    }
+                />
+            </div>
+
+            <DualSetting 
+                title="Newsletter Signup Form Code"
+                description="Paste the embed code provided by a email newsletter service here (for the sign up form)."
+                right={
+                    <textarea className="input"></textarea>
+                }
+            />
+
+        </div>
 
 
     </div>
