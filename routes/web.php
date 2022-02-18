@@ -5,8 +5,8 @@ use Illuminate\Support\Facades\Route;
 use Illuminate\Support\Facades\App;
 use App\Http\Middleware\App\SubdomainMiddleware;
 use App\Http\Controllers\Subdomain\SubdomainController;
-use App\Http\Middleware\App\CustomDomainMiddleware;
-
+use App\Http\Middleware\App\Delivery\CustomDomainMiddleware;
+use App\Http\Middleware\App\Delivery\DeliveryCacheMiddleware;
 
 if (App::environment('local')) {
     include 'local.php';
@@ -26,9 +26,15 @@ Route::domain(config('blogs.domain_app'))->group(function() {
 
 // subdomain
 Route::domain('{subdomain}.' . config('blogs.domain_delivery'))
-    ->middleware(SubdomainMiddleware::class)
+    ->middleware([
+        SubdomainMiddleware::class, 
+        DeliveryCacheMiddleware::class
+    ])
     ->get('{path}', [SubdomainController::class, 'handle'])->where('path', '.*');
 
 // custom domain
-Route::middleware(CustomDomainMiddleware::class)
+Route::middleware([
+        CustomDomainMiddleware::class,
+        DeliveryCacheMiddleware::class
+    ])
     ->get('{path}', [SubdomainController::class, 'handle'])->where('path', '.*');

@@ -1,5 +1,5 @@
 <?php
-namespace App\Http\Middleware\App;
+namespace App\Http\Middleware\App\Delivery;
 
 use App\Domains\Blog\BlogRepository;
 use App\Models\Blog;
