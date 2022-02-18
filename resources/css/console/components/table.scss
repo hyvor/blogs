@@ -118,7 +118,12 @@
             .table-delete-popup{
                 @include action-button-style;
                 background-color:$color-red;
-                color:$color-red-light;
+                color:$color-text;
+            }
+            .table-update-popup{
+                @include action-button-style;
+                background-color:$color-accent-light;
+                color:$color-text;
             }
         }
     }

@@ -6,12 +6,12 @@
         flex: 1;
         align-items: center;
         display: flex;
-        margin-right: 20px;
-        margin-left: 270px;
+        margin-bottom: 20px;
+        // margin-left: 270px;
     }
     .navigation-title{
         font-weight: 600;
-        font-size: 20px;
+        font-size: 18px;
     }
     .navigation-title-create-button{
         margin-left: 10px 
@@ -35,13 +35,13 @@
             }
         }
     }
-    .navigation-sub-title {
-        font-weight: 600;
-        font-size: 15px;
-        margin-top: 15px;
-        margin-bottom: 15px;
-        margin-left: 15px;
-    }
+    // .navigation-sub-title {
+    //     font-weight: 600;
+    //     font-size: 15px;
+    //     margin-top: 15px;
+    //     margin-bottom: 15px;
+    //     margin-left: 15px;
+    // }
     // .get-navigation{
     //     display: inline-block;
     //     width: 100%;

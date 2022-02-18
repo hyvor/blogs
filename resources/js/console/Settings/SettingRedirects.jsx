@@ -217,6 +217,8 @@ function Redirect ({id, old_url, new_url, redirectType}){
     // delete section
     const [deletePopupOpened, setDeletePopupOpened] = useState(false);
     const [styleDeleteIcon, setStyleDeleteIcon] = useState("table-button");
+    const [styleUpdateIcon, setStyleUpdateIcon] = useState("table-button");
+
 
     function handleDelete(e) {
         e.preventDefault();
@@ -253,9 +255,11 @@ function Redirect ({id, old_url, new_url, redirectType}){
     }
     function handleUpdate(e){
         e.preventDefault();
+        setStyleUpdateIcon('table-update-popup')
         setUpdateFormOpened(true);
     }
     function handleCancelUpdate(){
+        setStyleUpdateIcon('table-button')
         setUpdateFormOpened(false);
     }
     function updateRedirect(e){
@@ -267,7 +271,8 @@ function Redirect ({id, old_url, new_url, redirectType}){
             type:updateRedirectData.type,
         });
         setUpdateFormOpened(false); 
-        // window.location.reload(false);
+        setStyleUpdateIcon('table-button')
+        window.location.reload(false);
     }
     
     const selectOptions = [
@@ -303,7 +308,7 @@ function Redirect ({id, old_url, new_url, redirectType}){
                 {/* <div className="redirect-display-data-four"> */}
                 <div className="table-actions">
                      <div className="table-edit">
-                        <span className="table-button" onClick={handleUpdate}>
+                        <span className={styleUpdateIcon} onClick={handleUpdate}>
                             <PencilFill size={10} />
                         </span> 
                         {

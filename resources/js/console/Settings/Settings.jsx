@@ -28,6 +28,7 @@ export default function Settings({type}) {
             break;
         case 'navigation':
             Type = () => <SettingNavigations />;
+            break;
         case 'hosting':
             Type = () => <SettingsHosting />;
             break;

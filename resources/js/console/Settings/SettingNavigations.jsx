@@ -21,12 +21,12 @@ export default function SettingNavigations(props) {
     const { navigation, loadAjax, createAjax } = useValues(navigationLogicBuilt)
 
     return <div className="navigation-view">
-        <div className="navigation-title-bar">
+        {/* <div className="navigation-title-bar">
             <div className="navigation-title">
                     Navigation
             </div>
             <CreatePopup/>
-            {
+            { 
                 createAjax.status === 'error' ?
                     <Toast 
                         x={console.log(createAjax.error)}
@@ -35,6 +35,9 @@ export default function SettingNavigations(props) {
                     /> 
                 : null
             }
+        </div> */}
+        <div className="title">
+            Navigation 
         </div>
         {
             loadAjax.status === 'loading' ?
@@ -45,7 +48,12 @@ export default function SettingNavigations(props) {
                             // navigation.length > 0 && (
                             navigation.length > 0 ?
                                 <div>
-                                    <div className="navigation-sub-title">Header Navigation</div>
+                                    <div className="navigation-title-bar">
+                                        <div className="navigation-title">
+                                            Header Navigation
+                                        </div>
+                                        <CreatePopup type="header"/>
+                                    </div>
                                     {
                                         navigation.map(navigation => (
                                             navigation.type === 'header' ?
@@ -68,7 +76,12 @@ export default function SettingNavigations(props) {
                         {
                             navigation.length > 0 && (
                                 <div>
-                                    <div className="navigation-sub-title">Footer Navigation</div>
+                                    <div className="navigation-title-bar">
+                                        <div className="navigation-title">
+                                            Footer Navigation
+                                        </div>
+                                        <CreatePopup type="footer"/>
+                                    </div>
                                     {
                                         navigation.map(navigation => (
                                             navigation.type === 'footer' ?
@@ -89,7 +102,7 @@ export default function SettingNavigations(props) {
     </div>
 }
 
-function CreatePopup() {
+function CreatePopup({type}) {
 
     const subdomain = subdomainLogic.values.subdomain;
     const navigationLogicBuilt = navigationLogic({subdomain})
@@ -98,6 +111,7 @@ function CreatePopup() {
     const [createPopUpOpened, setCreatePopUpOpened] = useState(false);
 
     function handleCreateCancel(){
+        console.log(type)
         setCreatePopUpOpened(false)
     }
 
@@ -108,35 +122,29 @@ function CreatePopup() {
 
     const [ name, setName ] = useState();
     const [ url, setUrl ] = useState();
-    const [createNewNavigation, setData] = useState({type: ""});
 
-    const selectOptions = [
-        { label: 'Header', value: 'header' },
-        { label: 'Footer', value: 'footer'}
-    ];
-
-    function handleType({value}){
-        console.log(value)
-        setData({...createNewNavigation, 
-            type: value
-        })
-    }
+    // const [createNewNavigation, setData] = useState({type: ""});
+    // const selectOptions = [
+    //     { label: 'Header', value: 'header' },
+    //     { label: 'Footer', value: 'footer'}
+    // ];
+    // function handleType({value}){
+    //     console.log(value)
+    //     setData({...createNewNavigation, 
+    //         type: value
+    //     })
+    // }
 
     // OnClick handler for creating an new navigation
     function submitNavigationData (e) {
         e.preventDefault();
-        console.log(createNewNavigation.type)
         create({
             name: name,
             url: url,
-            type: createNewNavigation.type,
+            type: type,
         });
         setName();
         setUrl();
-        setData({
-            type:""
-        });
-
         setCreatePopUpOpened(false)
     }
 
@@ -170,14 +178,6 @@ function CreatePopup() {
                                         value={url}
                                         onChange={setUrl}
                                     />
-                                    <div className="create-navigation-select">
-                                        <div className="popup-type-margin">Type</div>
-                                        <SelectType 
-                                            title="Type"
-                                            options={selectOptions} 
-                                            onChange={handleType}
-                                        />
-                                    </div>
                                 </div>
                             </PopupBodyDefault>
                         }
@@ -186,8 +186,6 @@ function CreatePopup() {
                                 onCancel={handleCreateCancel}
                                 onClick={(e)=> {submitNavigationData(e)}}
                                 name='Create'
-                                // loadingName='Create'
-                                // isLoading={isLoading}
                             />
                         }
                     /> 
@@ -206,7 +204,7 @@ function Navigation ({id, name, url, type}){
 
     // Styles
     const [styleDeleteIcon, setStyleDeleteIcon] = useState("table-button");
-    // const [styleUpdateIcon, setStyleUpdateIcon] = useState("hide-navigation-edit");
+    const [styleUpdateIcon, setStyleUpdateIcon] = useState("table-button");
 
     // delete section
     const [deletePopupOpened, setDeletePopupOpened] = useState(false);
@@ -239,9 +237,11 @@ function Navigation ({id, name, url, type}){
 
     function handleUpdate(e){
         e.preventDefault();
+        setStyleUpdateIcon('table-update-popup')
         setUpdateFormOpened(true);
     }
     function handleCancelUpdate(){
+        setStyleUpdateIcon('table-button')
         setUpdateFormOpened(false);
     }
 
@@ -287,6 +287,7 @@ function Navigation ({id, name, url, type}){
         setName(name);
         setUrl(url);
         window.location.reload(false);
+        setStyleUpdateIcon('table-button')
         setUpdateFormOpened(false);
     }
     
@@ -302,8 +303,8 @@ function Navigation ({id, name, url, type}){
                 <div className="table-item"> {url} </div>
                 <div className="table-actions">
                     <div className="table-edit" onClick={handleUpdate}>
-                        <span className="table-button">
-                            <PencilFill size={15} />
+                        <span className={styleUpdateIcon}>
+                            <PencilFill size={10} />
                         </span>
                     </div>
                     <div className="table-delete" onClick={handleDelete}>
