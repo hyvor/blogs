@@ -20,23 +20,11 @@ const redirectsLogic = kea({
         load: async ({offset = 0, type}) => {
             const redirect = await api.get(props.subdomain, '/redirect', {
                 offset,
-                limit: 500,
+                limit: 20,
                 type,
             });
             actions.setRedirectList(redirect);
         },
-        // loadRedirectListMore: async ({offset}) => {
-        //     const response = await api.get(props.subdomain, '/redirect', {
-        //         filters: values.filters,
-        //         offset
-        //     });
-        //     // response.forEach(post => {
-        //     //     const builtPostLogic = postLogic.build({id: post.id, data: post}, false);
-        //     //     builtPostLogic.mount();
-        //     // })
-        //     actions.setRedirectListHasMore(response.length === 50);
-        //     // actions.setRedirectList([...values.postsList, ...response.map(val => val.id)])
-        // },
 
         remove: async ({id}) => {
             actions.removeFromList(id);
@@ -72,13 +60,9 @@ const redirectsLogic = kea({
             setRedirectList: (_, {redirect}) => redirect,
             removeFromList: (state, {id}) => state.filter(m => m.id !== id),
             addRedirect: (state, {redirect}) => [redirect, ...state],
-            // updateRedirect: (state, {redirect}) => [redirect, ...state],
             updateRedirect:(state, {redirect}) => state.map(
                 stateRedirect => stateRedirect.id === redirect.id ? redirect : stateRedirect
             ),
-            // redirectListHasMore: [false, {
-            //     setRedirectListHasMore: (_, {has}) => has 
-            // }],
         }]
     },
 

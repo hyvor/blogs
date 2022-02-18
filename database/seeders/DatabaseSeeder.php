@@ -46,7 +46,7 @@ class DatabaseSeeder extends Seeder
             $language = LanguageRepository::addDefaultLanguage($blog);
             LanguageRepository::createLanguage($blog->id, 'fr', 'French');
 
-            RedirectRepository::createRedirect($blog->id, '/redirects', 'https://example.com');
+            RedirectRepository::createRedirect($blog->id, '/redirects', 'https://example.com', '301');
 
             User::create([
                 'blog_id' => $blog->id,

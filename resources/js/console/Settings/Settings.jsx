@@ -9,7 +9,7 @@ import SettingsMigrate from './SettingsMigrate';
 import SettingUsers from './SettingUsers';
 import SettingRedirects from './SettingRedirects';
 import SettingsComments from './SettingsComments';
-import SettingNavigations from './SettingNavigations';
+import SettingNavigation from './SettingNavigation';
 import SettingsRoutes from './SettingsRoutes';
 import SettingsLanguages from './SettingsLanguages';
 import SettingsGeneral from './SettingsGeneral';
@@ -26,16 +26,14 @@ export default function Settings({type}) {
         case 'users':
             Type = () => <SettingUsers />;
             break;
-<<<<<<< HEAD
         case 'navigation':
-            Type = () => <SettingNavigations />;
-=======
+            Type = () => <SettingNavigation />;
+            break;
         case 'hosting':
             Type = () => <SettingsHosting />;
             break;
         case 'seo':
             Type = () => <SettingsSEO />;
->>>>>>> 59d156f17cbab322412d6b7497763a86198e88d6
             break;
         case 'redirects':
             Type = () => <SettingRedirects />;

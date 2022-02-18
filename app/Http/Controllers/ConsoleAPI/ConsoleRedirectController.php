@@ -29,8 +29,7 @@ class ConsoleRedirectController extends Controller {
     }
 
     public function createRedirect(Request $request , Blog $blog) {
-        // $url ='regex:/(^(https?:\/\/(www\.)?[-a-zA-Z0-9@:%._\+~#=]{2,256}\.[a-z]{2,4}\b([-a-zA-Z0-9@:%_\+.~#?&//=]*)$)/u';
-        // $path = 'regex:/(^([\/\:\.a-zA-z\-\*]+)(\d+)?$)/u';
+
         $regexValidation = get_called_class();
         $request->validate([
             'path' => 'required|string|'.$regexValidation::REGEX,
@@ -43,6 +42,7 @@ class ConsoleRedirectController extends Controller {
 
         $createRedirect = RedirectRepository::createRedirect($blog->id, $path, $to, $type); 
         return response()->json(new RedirectObject($createRedirect));
+
     }
 
     public function updateRedirect(Request $request, Blog $blog) {

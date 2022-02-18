@@ -21,6 +21,10 @@ a.link {
     font-family: inherit;
     transition:.3s box-shadow;
 }
+textarea.input {
+    resize:vertical;
+    min-height: 150px;
+}
 .input:focus {
     outline: 0;
     box-shadow: 0 0 2px 0px $color-accent;
