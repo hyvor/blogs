@@ -153,6 +153,14 @@ $pricingRow = '<tr>
             </tr>
 
             <tr>
+                <td>Webhooks</td>
+                <td><?= $svgCancel ?></td>
+                <td><?= $svgCancel ?></td>
+                <td><?= $svgCheck ?></td>
+                <td><?= $svgCheck ?></td>
+            </tr>
+
+            <tr>
                 <td>Data API</td>
                 <td><?= $svgCancel ?></td>
                 <td><?= $svgCancel ?></td>

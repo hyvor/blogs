@@ -14,7 +14,9 @@ return [
         ['media', 'Media'],
         ['comments', 'Comments'],
         ['newsletter', 'Newsletter'],
-        ['analytics', 'Analytics']
+        ['analytics', 'Analytics'],
+        ['custom-domain', 'Custom Domain'],
+        ['edge-caching', 'Edge Caching']
     ],
     'Basic Settings' => [
         ['main', 'Main Settings'],
@@ -35,6 +37,7 @@ return [
     'Advanced' => [
         ['routes', 'Routes'],
         ['languages', 'Languages'],
+        ['subdirectory', 'Subdirectory hosting'],
         ['website', 'Build a website'],
         ['import', 'Importing data'],
         ['export', 'Exporting data'],
