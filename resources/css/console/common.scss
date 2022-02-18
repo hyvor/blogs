@@ -214,7 +214,9 @@ svg, img, span {
 .global-dual-setting {
     display: flex;
     padding: 18px 0;
-    border-bottom: 1px solid $color-accent-light;
+    &:not(:last-child) {
+        border-bottom: 1px solid $color-accent-light;
+    }
     .dual-left {
         flex: 1;
         margin-right: 20px;
@@ -292,4 +294,25 @@ svg, img, span {
 }
 .Toastify__progress-bar {
     height: 4px!important;
+}
+
+
+
+// codemirror
+.react-codemirror2 {
+    height:100%;
+
+    .CodeMirror {
+        height:100%;
+        font-family: 'source-code-pro', Menlo, 'Courier New', Consolas, monospace!important;
+        box-shadow: none!important;
+        border-radius:20px;
+        background-color: $color-card;
+        .CodeMirror-line {
+            padding-left: 15px!important;
+        }
+        .CodeMirror-gutters {
+            background-color: $color-card;
+        }
+    }
 }

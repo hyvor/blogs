@@ -1,6 +1,4 @@
 import React, { useEffect } from "react";
-// import CodeMirror from '@uiw/react-codemirror';
-
 import {Controlled as CodeMirror} from 'react-codemirror2'
 
 import { useActions, useValues } from "kea";

@@ -1,5 +1,14 @@
 .settings-code {
 
-    
+    .global-dual-setting {
+        flex-direction: column;
+        .dual-left {
+            margin-bottom: 20px;
+        }
+    }
+
+    .CodeMirror {
+        min-height: 175px;
+    }
 
 }

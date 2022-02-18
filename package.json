@@ -20,7 +20,6 @@
         "sass-loader": "^12.6.0"
     },
     "dependencies": {
-        "@uiw/react-codemirror": "^3.2.7",
         "codemirror": "^5.65.1",
         "dayjs": "^1.10.7",
         "kea": "^2.5.6",

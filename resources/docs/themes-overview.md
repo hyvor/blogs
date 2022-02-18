@@ -40,7 +40,7 @@ As a theme developer, you are required to create templates for HTML Scopes.
 - `search.twig` (optional, `index.twig` fallback)
 - `404.twig` (required)
 
-## Twig
+## Twig {#twig}
 
 We use [Twig 3.0](https://twig.symfony.com/doc/3.x/) for templating. It is a powerful language with a plenty of in-built tags, filters, and functions. Twig also has nice, easy-to-follow documentation, which was one reason we chose Twig over other template languages. If you haven't used it ever, go through the Twig for [Template Designers](https://twig.symfony.com/doc/3.x/templates.html) page, and you will get an idea of how it works. Basically, it's HTML with superpowers like functions and including other files.
 
@@ -150,7 +150,7 @@ Some other notes:
 > ⚠️    
 > Caching makes the blog super fast. However, it puts some limitations to theme development. You can't render dynamic data like "current date" using Twig. Due to cache, users may see an old date. If absolutely required, you have to use Javascript to render dynamic content inside user's browser. However, displaying the "publish date" of a post works fine because we clear cache whenever the post is updated. Also, displaying the current year will work, because we will make sure to clear the cache on the 1st of January.
 
-## Template Variables
+## Scope Variables {#variables}
 
 - The theme developer (you) creates the **theme**
 - The blogger creates the content (**data**)
