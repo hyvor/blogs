@@ -26,16 +26,13 @@ export default function Settings({type}) {
         case 'users':
             Type = () => <SettingUsers />;
             break;
-<<<<<<< HEAD
         case 'navigation':
             Type = () => <SettingNavigations />;
-=======
         case 'hosting':
             Type = () => <SettingsHosting />;
             break;
         case 'seo':
             Type = () => <SettingsSEO />;
->>>>>>> 59d156f17cbab322412d6b7497763a86198e88d6
             break;
         case 'redirects':
             Type = () => <SettingRedirects />;
