@@ -192,6 +192,7 @@ body {
             flex:1;
             min-width: 0; // stop overflowing https://stackoverflow.com/a/66689926
             position:relative;
+            overflow:hidden;
         }
         .box {
             height:100%;
@@ -364,9 +365,12 @@ body {
 
             .post-editor-top {
                 position:relative;
-                border-bottom:1px solid $color-accent-light;
-                width:700px;
-                margin:auto;
+                //background-color: $color-card;
+                border-bottom: 1px solid $color-accent-light;
+                .post-editor-top-content {
+                    width:700px;
+                    margin:auto;
+                }
             }
             .post-editor-title-row {
                 display:flex;
@@ -379,6 +383,43 @@ body {
             .post-editor-wrap {
                 flex:1;
                 overflow:auto;
+            }
+            .post-editor-bottom {
+                //background: $color-card;
+                border-top: 1px solid $color-accent-light;
+                height:40px;
+                display:flex;
+                align-items:center;
+                .post-editor-bottom-content {
+                    width:700px;
+                    max-width: 100%;
+                    margin:auto;
+                    padding:0 30px;
+                    font-size: 12px;
+                    font-weight: 600;
+                    display: flex;
+                    align-items:center;
+                }
+                #pm-navigator-wrap {
+                    width:50%;
+                    .node-item {
+                        padding: 2px 9px;
+                        display: inline-block;
+                        background: $color-card;
+                        border-radius: 20px;
+                        border: 1px solid $color-accent-light;
+                        margin-right:4px;
+                        cursor: pointer;
+                    }
+                    .pm-navigator {
+                        display: flex;
+                        overflow: auto;
+                    }
+                }
+                .right {
+                    width:50%;
+                    text-align: right;
+                }
             }
 
             .pos-rel {
