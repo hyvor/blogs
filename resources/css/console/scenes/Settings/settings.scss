@@ -2,6 +2,7 @@
 @import './Navigation.scss';
 @import './Redirect.scss';
 @import './Code.scss';
+@import './General.scss';
 
 .settings-save {
 
@@ -35,6 +36,6 @@
 .swift-settings {
     margin-left:50px;
     .global-dual-setting:first-child {
-        border-top: 1px solid $color-accent-light!important;
+        border-top: 1px solid $color-accent-light;
     }
 }
