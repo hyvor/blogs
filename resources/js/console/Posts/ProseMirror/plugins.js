@@ -22,6 +22,8 @@ export default function plugins(schema) {
         wordCountPlugin(),
         slashPlugin(schema),
 
+        //hrPlugin(schema),
+
         // from defaults
         dropCursor(),
         gapCursor(),

@@ -73,13 +73,6 @@ export default function keymapPlugins(schema) {
                 return true;
             }
 
-
-            /**
-             * HR
-             * =====================
-             */
-            
-
         },
         splitListItem(schema.nodes.list_item),
         figcaptionHandler
