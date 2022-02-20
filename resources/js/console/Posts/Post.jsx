@@ -360,6 +360,7 @@ export default function Post( {subdomain, id} ) {
 
             <div 
                 className="post-editor-wrap"
+                spellCheck={false}
                 onClick={() => false && view && view.focus()}
             >
                 {

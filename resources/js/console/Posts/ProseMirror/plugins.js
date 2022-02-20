@@ -8,6 +8,7 @@ import keymapPlugins from "./keymap-plugin";
 import tooltipPlugin from "./tooltip-plugin";
 import navigatorPlugin from "./navigator-plugin";
 import wordCountPlugin from "./wordcount-plugin";
+import slashPlugin from "./slash-plugin";
 
 export default function plugins(schema) {
 
@@ -19,6 +20,7 @@ export default function plugins(schema) {
         tooltipPlugin(schema),
         navigatorPlugin(),
         wordCountPlugin(),
+        slashPlugin(schema),
 
         // from defaults
         dropCursor(),

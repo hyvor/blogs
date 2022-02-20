@@ -15,7 +15,7 @@ export default class RichView {
 
         const url = node.attrs.url;
 
-        this.dom.innerHTML = "Embedding...";
+        this.dom.innerHTML = '<div class="embedding-placeholder">Embedding...</div>';
 
         api.get(subdomainLogic.values.subdomain, '/embed', {url})
             .then(response => {

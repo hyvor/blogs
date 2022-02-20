@@ -5,6 +5,7 @@ import { undo, redo } from 'prosemirror-history'
 import { splitListItem } from "./list"
 import { undoInputRule } from 'prosemirror-inputrules'
 import { NodeSelection, SelectionRange } from 'prosemirror-state'
+import { createRich } from './creators'
 
 export default function keymapPlugins(schema) {
 
@@ -43,6 +44,10 @@ export default function keymapPlugins(schema) {
             if (selection.from !== selection.to) // something was selected
                 return;
 
+            /**
+             * RICH
+             * ===================
+             */
             const parent = selection.$to.parent;
             const url = parent.firstChild?.text;
             if (
@@ -62,14 +67,19 @@ export default function keymapPlugins(schema) {
                 pos = $from.before(same)
                 const nodeSel = NodeSelection.create(state.doc, pos);
 
-                dispatch(state.tr
-                    .replaceWith(nodeSel.from, nodeSel.to, schema.nodes.figure.create({}, [
-                        schema.nodes.rich.create({ url }),
-                        schema.nodes.figcaption.create()
-                    ])
-                ))
+                dispatch(
+                    state.tr.replaceWith(nodeSel.from, nodeSel.to, createRich)
+                )
                 return true;
             }
+
+
+            /**
+             * HR
+             * =====================
+             */
+            
+
         },
         splitListItem(schema.nodes.list_item),
         figcaptionHandler

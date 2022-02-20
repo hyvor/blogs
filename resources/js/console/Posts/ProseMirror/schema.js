@@ -6,8 +6,7 @@ import { addListNodes } from "./list"
  * https://github.com/ProseMirror/prosemirror-schema-basic
  */
 
-const pDOM = ["p", 0], blockquoteDOM = ["blockquote", 0], hrDOM = ["hr"],
-            preDOM = ["pre", ["code", 0]], brDOM = ["br"]
+const pDOM = ["p", 0], blockquoteDOM = ["blockquote", 0], hrDOM = ["hr"], brDOM = ["br"]
 
 // :: Object
 // [Specs](#model.NodeSpec) for the nodes defined in this schema.
@@ -48,17 +47,21 @@ export const nodes = {
     // should hold the number 2 to 6. Parsed and serialized as `<h1>` to
     // `<h6>` elements.
     heading: {
-        attrs: {level: {default: 2}},
+        attrs: {
+            level: {default: 1},
+            id: {default: null},
+        },
         content: "inline*",
         group: "block",
         defining: true,
         selectable: false,
         parseDOM: [
-                {tag: "h2", attrs: {level: 2}},
-                {tag: "h3", attrs: {level: 3}},
-                {tag: "h4", attrs: {level: 4}},
-                {tag: "h5", attrs: {level: 5}},
-                {tag: "h6", attrs: {level: 6}}
+            {tag: "h1", attrs: {level: 1}},
+            {tag: "h2", attrs: {level: 2}},
+            {tag: "h3", attrs: {level: 3}},
+            {tag: "h4", attrs: {level: 4}},
+            {tag: "h5", attrs: {level: 5}},
+            {tag: "h6", attrs: {level: 6}}
         ],
         toDOM(node) { return ["h" + node.attrs.level, 0] }
     },
@@ -67,6 +70,10 @@ export const nodes = {
     // nodes by default. Represented as a `<pre>` element with a
     // `<code>` element inside of it.
     code_block: {
+        attrs: {
+            class: {default: null},
+            data: {default: {}},
+        },
         content: "text*",
         marks: "",
         group: "block",
@@ -74,35 +81,13 @@ export const nodes = {
         defining: true,
         selectable: false,
         parseDOM: [{tag: "pre", preserveWhitespace: "full"}],
-        toDOM() { return preDOM }
+        toDOM() { return ["pre", ["code", 0]] }
     },
 
     // :: NodeSpec The text node.
     text: {
         group: "inline"
     },
-
-    // :: NodeSpec An inline image (`<img>`) node. Supports `src`,
-    // `alt`, and `href` attributes. The latter two default to the empty
-    // string.
-    /* image: {
-        inline: true,
-        attrs: {
-            src: {},
-            alt: {default: null},
-            title: {default: null}
-        },
-        group: "inline",
-        draggable: true,
-        parseDOM: [{tag: "img[src]", getAttrs(dom) {
-            return {
-                src: dom.getAttribute("src"),
-                title: dom.getAttribute("title"),
-                alt: dom.getAttribute("alt")
-            }
-        }}],
-        toDOM(node) { let {src, alt, title} = node.attrs; return ["img", {src, alt, title}] }
-    }, */
 
     figure: {
         content: "(rich|image)+ figcaption",
@@ -112,9 +97,6 @@ export const nodes = {
         parseDOM: [
             {
                 tag: "figure",
-                getAttrs(dom) {
-                    return dom.querySelector("img[src]") ? {} : false; // check for an image element
-                },
             }
         ],
         toDOM() { 
@@ -125,7 +107,9 @@ export const nodes = {
         attrs: {
             src: {default: null},
             alt: {default: null}, 
-            title: {default: null}
+            title: {default: null},
+            width: {default: null},
+            height: {default: null}
         },
         inline: false,
         draggable: false,
@@ -175,6 +159,25 @@ export const nodes = {
         selectable: false,
         parseDOM: [{tag: "figcaption"}],
         toDOM() { return ["figcaption", 0]; },
+    },
+
+    task: {
+        attrs: {
+            check: false,
+        },
+        content: "inline*",
+        group: "block",
+        defining: true,
+        selectable: false,
+        parseDOM: [{
+            tag: "div.task[data-check]",
+            getAttrs(div) {
+                return {
+                    url: div.dataset.check
+                }
+            }
+        }],
+        toDOM(node) { return ["h" + node.attrs.level, 0] }
     },
 
     // :: NodeSpec A hard line break, represented in the DOM as `<br>`.

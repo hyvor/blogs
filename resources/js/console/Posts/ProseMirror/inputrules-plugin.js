@@ -19,7 +19,7 @@ export default function inputRulesPlugin(schema) {
 
 function headingRule(nodeType) {
     return textblockTypeInputRule(
-            new RegExp("^(#{2,6})\\s$"),
+            new RegExp("^(#{1,6})\\s$"),
             nodeType,
             function (match) { 
                 return ({level: match[1].length}); }
