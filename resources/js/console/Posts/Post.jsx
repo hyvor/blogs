@@ -183,19 +183,19 @@ export default function Post( {subdomain, id} ) {
                         <div className="post-editor-settings-buttons">
                             <div className="left">
                                 <button 
-                                    className={"button small" + (!isSettingsOpen ? " inactive" : "")}
+                                    className={"button small" + (!isSettingsOpen ? " secondary" : " inactive")}
                                     onClick={isSettingsOpen ? null : openSettingsView}    
                                 >
                                     <span>Settings</span><GearFill />
                                 </button>
 
                                 <a href={ getBlogUrl(subdomain, '/p/' + post.preview_id) } target="_blank">
-                                    <button className="button small inactive view" >
+                                    <button className="button small secondary view" >
                                         <span>View</span><BoxArrowUpRight />
                                     </button>
                                 </a>
                                 <button 
-                                    className={"button small" + (!isFullScreen ? " inactive" : "")}
+                                    className={"button small" + (!isFullScreen ? " secondary" : " inactive")}
                                     onClick={toggleFullscreen}
                                 >
                                     <Fullscreen />

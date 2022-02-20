@@ -537,7 +537,8 @@ body {
                 }
             }
             .post-editor-settings-view {
-                background: $color-accent-light;
+                background: $color-box;
+                box-shadow: 0 0 40px 20px rgb(0 0 0 / 6%);
                 margin-left: 30px;
                 margin-right: 60px;
                 margin-top: 14px;
@@ -549,7 +550,7 @@ body {
                     content: "";
                     left: 30px;
                     bottom: 100%;
-                    border: 10px solid #f0e7e8;
+                    border: 10px solid $color-box;
                     border-top-color: transparent;
                     border-left-color: transparent;
                     border-right-color: transparent;
@@ -562,9 +563,6 @@ body {
                 .post-setting-title {
                     font-weight: 600;
                     margin-bottom: 5px;
-                }
-                .input {
-                    background: #fff;
                 }
 
                 &.post-setting-description textarea {

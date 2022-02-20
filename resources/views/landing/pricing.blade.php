@@ -10,10 +10,6 @@ $svgCancel = '<svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fil
 $pricingRow = '<tr>
                 <th></th>
                 <th>
-                    <div class="plan-name">Personal</div>
-                    <div class="plan-price"><span class="price">Free</span></div>
-                </th>
-                <th>
                     <div class="plan-name">Pro</div>
                     <div class="plan-price">
                         <div class="price">$30</div>
@@ -80,23 +76,13 @@ $pricingRow = '<tr>
 
             <tr>
                 <td>Users</td>
-                <td>1</td>
                 <td>2</td>
                 <td>3 to 99</td>
                 <td>Unlimited</td>
             </tr>
 
-             <tr>
-                <td>Posts</td>
-                <td>100</td>
-                <td>Unlimited</td>
-                <td>Unlimited</td>
-                <td>Unlimited</td>
-            </tr>
-
             <tr>
                 <td>Media Storage</td>
-                <td>1GB</td>
                 <td>10GB</td>
                 <td>20GB per user</td>
                 <td>2TB</td>
@@ -106,13 +92,11 @@ $pricingRow = '<tr>
                 <td>Media</td>
                 <td>Images</td>
                 <td>Images</td>
-                <td>Images</td>
                 <td>Any file type</td>
             </tr>
 
             <tr>
                 <td>Support</td>
-                <td>Community</td>
                 <td>Community</td>
                 <td>+ Email</td>
                 <td>+ Live Chat</td>
@@ -120,7 +104,6 @@ $pricingRow = '<tr>
 
             <tr>
                 <td>Custom Domain</td>
-                <td><?= $svgCancel ?></td>
                 <td><?= $svgCheck ?></td>
                 <td><?= $svgCheck ?></td>
                 <td><?= $svgCheck ?></td>
@@ -128,7 +111,6 @@ $pricingRow = '<tr>
 
             <tr>
                 <td>Code Injecting</td>
-                <td><?= $svgCancel ?></td>
                 <td><?= $svgCheck ?></td>
                 <td><?= $svgCheck ?></td>
                 <td><?= $svgCheck ?></td>
@@ -137,7 +119,6 @@ $pricingRow = '<tr>
 
             <tr>
                 <td>Custom Themes</td>
-                <td><?= $svgCancel ?></td>
                 <td><?= $svgCheck ?></td>
                 <td><?= $svgCheck ?></td>
                 <td><?= $svgCheck ?></td>
@@ -147,14 +128,12 @@ $pricingRow = '<tr>
             <tr>
                 <td>Multi-Language</td>
                 <td><?= $svgCancel ?></td>
-                <td><?= $svgCancel ?></td>
                 <td><?= $svgCheck ?></td>
                 <td><?= $svgCheck ?></td>
             </tr>
 
             <tr>
                 <td>Webhooks</td>
-                <td><?= $svgCancel ?></td>
                 <td><?= $svgCancel ?></td>
                 <td><?= $svgCheck ?></td>
                 <td><?= $svgCheck ?></td>
@@ -163,14 +142,12 @@ $pricingRow = '<tr>
             <tr>
                 <td>Data API</td>
                 <td><?= $svgCancel ?></td>
-                <td><?= $svgCancel ?></td>
                 <td><?= $svgCheck ?></td>
                 <td><?= $svgCheck ?></td>
             </tr>
 
             <tr>
                 <td>Delivery API</td>
-                <td><?= $svgCancel ?></td>
                 <td><?= $svgCancel ?></td>
                 <td><?= $svgCheck ?></td>
                 <td><?= $svgCheck ?></td>

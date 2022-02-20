@@ -33,17 +33,29 @@ class NavigatorPlugin {
         }
 
         this.navigator.innerHTML = "";
-        const {$from: {path}} = state.selection
+        const {$from, $from: {path}} = state.selection
 
         path.forEach(node => {
             if (node instanceof Node && node.type.name !== 'doc') {
-                var item = document.createElement("span");
-                item.className = "node-item";
-                item.innerHTML = node.type.name;
-                this.navigator.appendChild(item);
+                this.addItem(node)
             }
         });
 
+        const marks = $from.marks();
+
+        marks.forEach(mark => {
+            if (mark.type.name === "link") {
+                this.addItem(mark, true)
+            }
+        });
+
+    }
+
+    addItem(node, isMark) {
+        var item = document.createElement("span");
+        item.className = "node-item";
+        item.innerHTML = node.type.name;
+        this.navigator.appendChild(item);
     }
   
     destroy() { this.navigator.remove() }
