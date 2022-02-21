@@ -203,8 +203,9 @@ $prosemirror-selected-outline: 3px solid #299af3;
     }
 
     p {
-        line-height: 28px;
+        line-height: 30px;
         margin-top: 30px;
+        letter-spacing: 0.2px;
         code {
             background: rgba(135,131,120,0.15);
             color: #EB5757;

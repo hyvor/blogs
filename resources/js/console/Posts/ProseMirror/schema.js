@@ -121,7 +121,9 @@ export const nodes = {
             return {
                 src: img.src, 
                 alt: img.alt, 
-                title: img.title
+                title: img.title,
+                width: img.width,
+                height: img.height
             }; 
           }
         }],
@@ -271,6 +273,6 @@ export const marks = {
 const schemaWithoutList = new Schema({nodes, marks})
 
 export default new Schema({
-    nodes: addListNodes(schemaWithoutList.spec.nodes, "paragraph block*", "block"),
+    nodes: addListNodes(schemaWithoutList.spec.nodes, "block*", "block"),
     marks: schemaWithoutList.spec.marks
 })

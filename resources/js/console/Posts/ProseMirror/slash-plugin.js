@@ -148,19 +148,11 @@ class SlashPlugin {
         if (selection.from !== selection.to)
             return this.hide();
 
-        let {$from, $from: {path}} = selection;
+        let {$from} = selection;
 
         const parent = $from.parent
     
         if (!parent || parent.type.name !== 'paragraph') {
-            return this.hide();
-        } 
-
-        /**
-         * Check if the paragraph is top-level. If yes, numNodes should be 2 (doc and p)
-         */
-        const numNodes = path.filter(node => node instanceof Node).length
-        if (numNodes > 2) {
             return this.hide();
         }
 
