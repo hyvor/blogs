@@ -56,14 +56,14 @@ export const nodes = {
         defining: true,
         selectable: false,
         parseDOM: [
-            {tag: "h1", attrs: {level: 1}},
-            {tag: "h2", attrs: {level: 2}},
-            {tag: "h3", attrs: {level: 3}},
-            {tag: "h4", attrs: {level: 4}},
-            {tag: "h5", attrs: {level: 5}},
-            {tag: "h6", attrs: {level: 6}}
+            {tag: "h1", getAttrs(h) {return {id: h.id, level: 1}}},
+            {tag: "h2", getAttrs(h) {return {id: h.id, level: 2}}},
+            {tag: "h3", getAttrs(h) {return {id: h.id, level: 3}}},
+            {tag: "h4", getAttrs(h) {return {id: h.id, level: 4}}},
+            {tag: "h5", getAttrs(h) {return {id: h.id, level: 5}}},
+            {tag: "h6", getAttrs(h) {return {id: h.id, level: 6}}}
         ],
-        toDOM(node) { return ["h" + node.attrs.level, 0] }
+        toDOM(node) { return ["h" + node.attrs.level, {id: node.attrs.id}, 0] }
     },
 
     // :: NodeSpec A code listing. Disallows marks or non-text inline

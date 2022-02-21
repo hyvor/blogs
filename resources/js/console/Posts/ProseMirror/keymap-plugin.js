@@ -78,6 +78,46 @@ export default function keymapPlugins(schema) {
         figcaptionHandler
     ));
 
+    bind("}", (state, dispatch) => {
+
+        /**
+         * Heading IDS
+         * ===========
+         */
+        const selection = state.selection
+
+        if (selection.from !== selection.to) // something was selected
+            return;
+
+        const parent = selection.$to.parent;
+        const text = parent.firstChild?.text;
+
+        if (
+            parent &&
+            parent.type.name === 'heading' &&
+            text
+        ) {
+
+            const match = text.match(/(.+{#([^}\s]+)$)/)
+            const spacesMatch = text.match(/\s*{#([^}\s]+)$/)
+
+            if (match) {
+                dispatch(
+                    state.tr
+                        .setNodeMarkup(
+                                selection.to - match[1].length - 1, 
+                                undefined, 
+                                {...parent.attrs, id: match[2]}
+                        )
+                        .replaceWith(selection.to - spacesMatch[0].length, selection.to, "")
+                )
+                return true;
+            }
+            
+        }
+        
+    })
+
     return [
         keymap(baseKeymap),
         keymap(extendedKeymap),
