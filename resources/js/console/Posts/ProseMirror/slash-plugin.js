@@ -1,13 +1,11 @@
-import { Node } from "prosemirror-model";
-import {Plugin, TextSelection} from "prosemirror-state"
+import {NodeSelection, Plugin} from "prosemirror-state"
 
 /**
  * React icons are used to save duplicate loading
  */
 import { renderToString } from 'react-dom/server';
 import { Bookmark, CardImage, Code, CodeSlash, Gear, Hr, Lightbulb, Link45deg, Quote, TypeH2, TypeH3, } from "react-bootstrap-icons";
-
-import {setBlockType, wrapIn} from "./commands"
+import { createImage, createQuote, createRich } from "./creators";
 
 
 const matchable = [
@@ -15,19 +13,24 @@ const matchable = [
         name: "Heading - Large",
         description: "To divide main sections of the post",
         icon: <TypeH2 />,
-        keywords: ['heading', 'large', 'title', 'h1', 'h2']
+        keywords: ['heading', 'large', 'title', 'h1', 'h2'],
+        node: 'heading',
+        attrs: {level: 2}
     },
     {
         name: "Heading - Medium",
         description: "To divide small sections of the post",
         icon: <TypeH3 />,
-        keywords: ['heading', 'medium', 'title', 'h2', 'h3', 'h4']
+        keywords: ['heading', 'medium', 'title', 'h2', 'h3', 'h4'],
+        node: 'heading',
+        attrs: {level: 3}
     },
     {
         name: "Image",
         description: "Add an image",
         icon: <CardImage />,
-        keywords: ['image', 'picture', 'upload']
+        keywords: ['image', 'picture', 'upload'],
+        node: createImage
     },
     {
         name: "Embed",
@@ -37,50 +40,57 @@ const matchable = [
             'embed', 'rich',
             'video', 'audio', 'file',
             'youtube', 'twitter', 'soundcloud', 'spotify', 'github', 'maps', 'codepen'
-        ]
+        ],
+        node: createRich
     },
     {
         name: "Code Block",
         description: "A block of code",
         icon: <Code />,
-        keywords: ['code', 'snippet']
+        keywords: ['code', 'snippet'],
+        node: 'code_block'
     },
     {
         name: "Quote",
         description: "Capture a quote",
         icon: <Quote />,
-        keywords: ['quote', 'blockquote']
+        keywords: ['quote', 'blockquote'],
+        node: createQuote
     },
     {
         name: "Callout",
         description: "Write something standing out",
         icon: <Lightbulb />,
-        keywords: ['alert', 'notice', 'callout']
+        keywords: ['alert', 'notice', 'callout'],
+        node: 'callout'
     },
     {
         name: "Link Bookmark",
         description: "Link preview as a bookmark",
         icon: <Bookmark />,
-        keywords: ['bookmark', 'link']
+        keywords: ['bookmark', 'link'],
+        node: 'bookmark'
     },
     {
         name: "Divider",
         description: "Divide sections with a horizontal line",
         icon: <Hr />,
-        keywords: ['hr', 'divider', 'horizontal', 'line']
+        keywords: ['hr', 'divider', 'horizontal', 'line'],
+        node: 'horizontal_line'
     },
     {
         name: "Custom HTML/Twig",
         description: "Add custom HTML (or Twig)",
-        // this is not supported in the react library
         icon: <CodeSlash />,
-        keywords: ['html', 'twig', 'code', 'custom']
+        keywords: ['html', 'twig', 'code', 'custom'],
+        node: 'custom_html'
     },
     {
         name: "Custom Node",
         description: "Add pre-defined custom node",
         icon: <Gear />,
-        keywords: ['custom']
+        keywords: ['custom'],
+        node: 'custom_node'
     },
 ]
 
@@ -221,7 +231,24 @@ class SlashPlugin {
             nameWrap.appendChild(description)
 
             item.onclick = function() {
-                console.log("Clicked")
+
+                let node = m.node;
+                let nodeCreator;
+                if (typeof node === 'function') {
+                    nodeCreator = node(_self.schema)
+                } else {
+                    nodeCreator = _self.schema.nodes[node].create(m.attrs || {});
+                }
+
+                let {$from, to} = view.state.selection, pos
+                let same = $from.sharedDepth(to)
+                pos = $from.before(same)
+                const nodeSel = NodeSelection.create(view.state.doc, pos);
+
+                view.dispatch(
+                    view.state.tr.replaceWith(nodeSel.from, nodeSel.to, nodeCreator)
+                )
+
             }
 
             item.onmouseover = function() {

@@ -175,6 +175,7 @@ $prosemirror-selected-outline: 3px solid #299af3;
     position: absolute;
     content: attr(data-placeholder);
     pointer-events: none;
+    line-height: 30px;
 }
 
 .ProseMirror {
@@ -280,10 +281,19 @@ $prosemirror-selected-outline: 3px solid #299af3;
         border-top: 2px solid $color-text-light-grey;
     }
 
-    blockquote {
+    blockquote, aside {
         margin-top: 30px;
         border-left: 4px solid #000000;
         padding: 10px 15px;
+        & > *:first-child {
+            margin-top:0;
+        }
+    }
+
+    aside {
+        border-left: none;
+        background: #f1f1ef;
+        border-radius: 5px;
     }
 
     figure {

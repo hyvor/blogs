@@ -163,23 +163,16 @@ export const nodes = {
         toDOM() { return ["figcaption", 0]; },
     },
 
-    task: {
+    callout: {
         attrs: {
-            check: false,
+            emoji: {default: null}
         },
         content: "inline*",
         group: "block",
         defining: true,
         selectable: false,
-        parseDOM: [{
-            tag: "div.task[data-check]",
-            getAttrs(div) {
-                return {
-                    url: div.dataset.check
-                }
-            }
-        }],
-        toDOM(node) { return ["h" + node.attrs.level, 0] }
+        parseDOM: [{tag: "aside"}],
+        toDOM() { return ["aside", 0] }
     },
 
     // :: NodeSpec A hard line break, represented in the DOM as `<br>`.
