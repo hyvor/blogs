@@ -185,6 +185,10 @@ $prosemirror-selected-outline: 3px solid #299af3;
         outline: none;
     }
 
+    > *:first-child {
+        margin-top:0;
+    }
+
     padding:25px 30px;
     position: relative;
     min-height:200px;
@@ -193,8 +197,31 @@ $prosemirror-selected-outline: 3px solid #299af3;
 
     blockquote, figure, h1, h2, h3, h4, h5, h6, ol, p, pre, ul {
         margin:0;
-        &:first-child {
-            margin-top:0!important;
+    }
+
+    .heading-wrap {
+        position: relative;
+        div {
+            position: absolute;
+            bottom:100%;
+            left:0;
+            color: $color-text-light;
+            font-size:12px;
+            margin-bottom: -4px;
+            display: flex;
+            width:100%;
+            &:before {
+                content: "#";
+            }
+            input {
+                padding: 0;
+                background: transparent;
+                border: none;
+                width: 100%;
+                outline:none;
+                flex: 1;
+                display:block;
+            }
         }
     }
 
