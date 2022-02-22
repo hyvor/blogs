@@ -12,6 +12,10 @@ use App\Models\Blog;
 class ConsoleNavigationController extends Controller {
 
     public function getNavigations(Blog $blog) {
+
+        // $getItemNumber =  NavigationRepository::getHeaderItemNumber();
+        // dd($getItemNumber);
+
         $getData = NavigationRepository::getNavigations($blog->id)
             ->map(function ($navigation) {
             return new NavigationObject($navigation);
@@ -41,11 +45,35 @@ class ConsoleNavigationController extends Controller {
         $navigationUrl = $request->input('navigation_url');
         $type = $request->input('type');
 
+        if($type == 'header'){
+            $getItemNumber =  NavigationRepository::getHeaderItemNumber();
+            if($getItemNumber == null){
+                $itemNumber = 1;
+            }else{
+                $itemNumber = $getItemNumber['itemNumber'] + 1;
+            }
+            // dd($itemNumber);
+            // $itemNumber = $getItemNumber['itemNumber'] + 1;
+        }
+
+        if($type == 'footer'){
+            $getItemNumber =  NavigationRepository::getFooterItemNumber();
+            if($getItemNumber == null){
+                $itemNumber = 1;
+            }else{
+                $itemNumber = $getItemNumber['itemNumber'] + 1;
+            }
+            // dd($itemNumber);
+            // $itemNumber = $getItemNumber['itemNumber'] + 1;
+        }
+
+        // dd($itemNumber);
+
         if($headerCount){
-            $createNavigation = NavigationRepository::createNavigation($blog->id, $navigationName, $navigationUrl, $type);
+            $createNavigation = NavigationRepository::createNavigation($blog->id, $navigationName, $navigationUrl, $type, $itemNumber);
             return response()->json(new NavigationObject($createNavigation));
         }else if($footerCount){
-            $createNavigation = NavigationRepository::createNavigation($blog->id, $navigationName, $navigationUrl, $type);
+            $createNavigation = NavigationRepository::createNavigation($blog->id, $navigationName, $navigationUrl, $type, $itemNumber);
             return response()->json(new NavigationObject($createNavigation));
         }else{
             // return new TrustedException('You cant have more than 8 links', TrustedException::ERROR_BAD_REQUEST);
@@ -78,6 +106,22 @@ class ConsoleNavigationController extends Controller {
         $deleteNavigation = NavigationRepository::deleteNavigation($id);
         return response()->json($deleteNavigation);
     }
-   
+
+    public function updateItemNumber(Request $request){
+        // dd('hi bro daddy');
+        $id = $request->route('userId');
+        $navigationItemNumber = $request->input('navigation_itemNumber');
+
+        $updateItemNumber = NavigationRepository::updateDestinationItemNumber($id, $navigationItemNumber);
+        return response()->json($updateItemNumber);
+    }
+
+    public function updateSourceItemNumber(Request $request){
+        // dd('hi bro daddy');
+        $id = $request->route('sourceId');
+        $navigationItemNumber = $request->input('itemNumber');
+        $updateItemNumber = NavigationRepository::updateSourceItemNumber($id, $navigationItemNumber);
+        return response()->json($updateItemNumber);
+    }
 
 }
