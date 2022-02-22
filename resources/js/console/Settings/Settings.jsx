@@ -9,7 +9,7 @@ import SettingsMigrate from './SettingsMigrate';
 import SettingUsers from './SettingUsers';
 import SettingRedirects from './SettingRedirects';
 import SettingsComments from './SettingsComments';
-import SettingNavigations from './SettingNavigations';
+import SettingNavigation from './SettingNavigation';
 import SettingsRoutes from './SettingsRoutes';
 import SettingsLanguages from './SettingsLanguages';
 import SettingsGeneral from './SettingsGeneral';
@@ -27,7 +27,9 @@ export default function Settings({type}) {
             Type = () => <SettingUsers />;
             break;
         case 'navigation':
-            Type = () => <SettingNavigations />;
+            Type = () => <SettingNavigation />;
+            break;
+
         case 'hosting':
             Type = () => <SettingsHosting />;
             break;

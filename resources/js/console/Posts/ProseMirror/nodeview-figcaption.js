@@ -7,7 +7,7 @@ export default class Figcaption {
         if (node.content.size == 0) this.dom.classList.add("empty")
 
         this.dom.addEventListener("click", function() {
-            console.log("I am focused")
+            
         })
     }
 

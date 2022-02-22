@@ -5,6 +5,7 @@ import { undo, redo } from 'prosemirror-history'
 import { splitListItem } from "./list"
 import { undoInputRule } from 'prosemirror-inputrules'
 import { NodeSelection, SelectionRange } from 'prosemirror-state'
+import { createRich } from './creators'
 
 export default function keymapPlugins(schema) {
 
@@ -43,6 +44,10 @@ export default function keymapPlugins(schema) {
             if (selection.from !== selection.to) // something was selected
                 return;
 
+            /**
+             * RICH
+             * ===================
+             */
             const parent = selection.$to.parent;
             const url = parent.firstChild?.text;
             if (
@@ -62,22 +67,60 @@ export default function keymapPlugins(schema) {
                 pos = $from.before(same)
                 const nodeSel = NodeSelection.create(state.doc, pos);
 
-                dispatch(state.tr
-                    .replaceWith(nodeSel.from, nodeSel.to, schema.nodes.figure.create({}, [
-                        schema.nodes.rich.create({ url }),
-                        schema.nodes.figcaption.create()
-                    ])
-                ))
+                dispatch(
+                    state.tr.replaceWith(nodeSel.from, nodeSel.to, createRich)
+                )
                 return true;
             }
+
         },
         splitListItem(schema.nodes.list_item),
         figcaptionHandler
     ));
 
+    bind("}", (state, dispatch) => {
+
+        /**
+         * Heading IDS
+         * ===========
+         */
+        const selection = state.selection
+
+        if (selection.from !== selection.to) // something was selected
+            return;
+
+        const parent = selection.$to.parent;
+        const text = parent.firstChild?.text;
+
+        if (
+            parent &&
+            parent.type.name === 'heading' &&
+            text
+        ) {
+
+            const match = text.match(/(.+{#([^}\s]+)$)/)
+            const spacesMatch = text.match(/\s*{#([^}\s]+)$/)
+
+            if (match) {
+                dispatch(
+                    state.tr
+                        .setNodeMarkup(
+                                selection.to - match[1].length - 1, 
+                                undefined, 
+                                {...parent.attrs, id: match[2]}
+                        )
+                        .replaceWith(selection.to - spacesMatch[0].length, selection.to, "")
+                )
+                return true;
+            }
+            
+        }
+        
+    })
+
     return [
+        keymap(baseKeymap),
         keymap(extendedKeymap),
-        keymap(baseKeymap)
     ]
 
 }

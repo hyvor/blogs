@@ -1,8 +1,8 @@
-import React, {useState, forwardRef} from 'react';
+import React, {useState} from 'react';
 import { useActions, useValues } from 'kea';
 import subdomainLogic from '../logic/subdomainLogic';
 import navigationLogic from '../logic/navigationLogic';
-import { Trash, PencilFill, CheckCircleFill, Plus} from 'react-bootstrap-icons';
+import { Trash, PencilFill, Plus} from 'react-bootstrap-icons';
 import Loader from '../ReusableComponents/Loader';
 import {toast} from 'react-toastify'
 import Select from '../ReusableComponents/Select';
@@ -10,11 +10,9 @@ import Toast from '../ReusableComponents/Toast';
 import NoResults from '../ReusableComponents/NoResults';
 import { Popup, PopupBodyDefault, PopupConfirm, PopupFooterDoubleButton, PopupHeaderDefault } from '../ReusableComponents/Popup';
 import Input from '../ReusableComponents/Input';
-import { components } from 'react-select';
-import { ReactSortable } from "react-sortablejs";
 
 
-export default function SettingNavigations(props) {
+export default function SettingNavigation(props) {
 
     const subdomain = subdomainLogic.values.subdomain;
     const navigationLogicBuilt = navigationLogic({subdomain})
