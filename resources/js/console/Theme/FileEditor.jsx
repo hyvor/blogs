@@ -1,15 +1,5 @@
 import React, { useEffect } from "react";
-import CodeMirror from '@uiw/react-codemirror';
-import 'codemirror/addon/display/autorefresh';
-import 'codemirror/addon/comment/comment';
-import 'codemirror/addon/edit/matchbrackets';
-import 'codemirror/keymap/sublime';
-import 'codemirror/theme/solarized.css';
-
-import 'codemirror/mode/javascript/javascript';
-import 'codemirror/mode/twig/twig';
-import 'codemirror/mode/htmlmixed/htmlmixed';
-import 'codemirror/mode/css/css';
+import {Controlled as CodeMirror} from 'react-codemirror2'
 
 import { useActions, useValues } from "kea";
 import subdomainLogic from "../logic/subdomainLogic";
@@ -40,7 +30,7 @@ export default function FileEditor() {
     const modes = {
         scss: 'text/x-scss',
         twig: { name: 'twig', base: 'text/html' },
-        js: 'js'
+        js: 'text/javascript'
     };
     mode = modes[ext] || null;
 
@@ -48,7 +38,6 @@ export default function FileEditor() {
 
         <CodeMirror
             value={activeFile.content}
-            lazyLoadMode={false}
             options={{
                 theme: 'solarized',
                 keyMap: 'sublime',
@@ -56,7 +45,7 @@ export default function FileEditor() {
                 mode,
                 lineWrapping: true
             }}
-            onChange={inst => setFileContent(activeFile.id, inst.doc.getValue())}
+            onBeforeChange={(_, __, value) => setFileContent(activeFile.id, value)}
         />
 
     </div>

@@ -1,4 +1,4 @@
-import React, {useState, forwardRef} from 'react';
+import React, {useState} from 'react';
 import { useActions, useValues } from 'kea';
 import subdomainLogic from '../logic/subdomainLogic';
 import navigationLogic from '../logic/navigationLogic';
@@ -17,7 +17,7 @@ import { ReactSortable } from "react-sortablejs";
 import { list } from 'postcss';
 
 
-export default function SettingNavigations(props) {
+export default function SettingNavigation(props) {
 
     const subdomain = subdomainLogic.values.subdomain;
     const navigationLogicBuilt = navigationLogic({subdomain})

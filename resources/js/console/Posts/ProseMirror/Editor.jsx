@@ -11,6 +11,7 @@ import {ProseMirror} from 'use-prosemirror';
 import useUpdateEffect from '../../../helpers/hooks/useUpdateEffect';
 import RichView from './nodeview-rich';
 import Figcaption from './nodeview-figcaption';
+import Heading from './nodeview-heading';
 
 
 function getState(val) {
@@ -31,6 +32,9 @@ const nodeViews = {
     },
     figcaption(...args) {
         return new Figcaption(...args);
+    },
+    heading(...args) {
+        return new Heading(...args)
     }
 }
 

@@ -65,6 +65,66 @@ $prosemirror-selected-outline: 3px solid #299af3;
             }
         }
     }
+
+    .pm-slash-view {
+        position: absolute;
+        width: 325px;
+        max-height: 275px;
+        overflow:auto;
+        left: 50px;
+        opacity: 0;
+        transform: scale(0);
+        transition: .3s opacity, .3s transform;
+        margin-left:30px; // to fix editor padding
+        background: $color-box;
+        box-shadow: 0 0 15px 2px rgba(0,0,0,0.15);
+        border-radius: 20px;
+        z-index: 1;
+        &.open {
+            opacity: 1;
+            transform: scale(1)
+        }
+        &.bottom {
+            margin-top:26px;
+        }
+        .match-item {
+            padding: 8px 14px;
+            cursor: pointer;
+            position: relative;
+            display: flex;
+            &.active {
+                background-color: $color-accent-light;
+            }
+            &:not(:last-child):after {
+                content: "";
+                position:absolute;
+                width:75%;
+                left:50%;
+                transform:translateX(-50%);
+                bottom:0;
+                height:1px;
+                background-color: $color-accent-light;
+            }
+            .item-icon {
+                display: flex;
+                justify-content: center;
+                align-items: center;
+                width: 30px;
+                font-size: 20px;
+                flex-shrink: 0;
+            }
+            .item-name-wrap {
+                margin-left: 8px;
+            }
+            .item-name {
+                font-weight: 600;
+            }
+            .item-desc {
+                font-size: 12px;
+                color: $color-text-light;
+            }
+        }
+    }
 }
     
 
@@ -115,6 +175,7 @@ $prosemirror-selected-outline: 3px solid #299af3;
     position: absolute;
     content: attr(data-placeholder);
     pointer-events: none;
+    line-height: 30px;
 }
 
 .ProseMirror {
@@ -125,6 +186,10 @@ $prosemirror-selected-outline: 3px solid #299af3;
         outline: none;
     }
 
+    > *:first-child {
+        margin-top:0;
+    }
+
     padding:25px 30px;
     position: relative;
     min-height:200px;
@@ -133,8 +198,31 @@ $prosemirror-selected-outline: 3px solid #299af3;
 
     blockquote, figure, h1, h2, h3, h4, h5, h6, ol, p, pre, ul {
         margin:0;
-        &:first-child {
-            margin-top:0!important;
+    }
+
+    .heading-wrap {
+        position: relative;
+        div {
+            position: absolute;
+            bottom:100%;
+            left:0;
+            color: $color-text-light;
+            font-size:12px;
+            margin-bottom: -4px;
+            display: flex;
+            width:100%;
+            &:before {
+                content: "#";
+            }
+            input {
+                padding: 0;
+                background: transparent;
+                border: none;
+                width: 100%;
+                outline:none;
+                flex: 1;
+                display:block;
+            }
         }
     }
 
@@ -143,8 +231,9 @@ $prosemirror-selected-outline: 3px solid #299af3;
     }
 
     p {
-        line-height: 28px;
+        line-height: 30px;
         margin-top: 30px;
+        letter-spacing: 0.2px;
         code {
             background: rgba(135,131,120,0.15);
             color: #EB5757;
@@ -155,10 +244,56 @@ $prosemirror-selected-outline: 3px solid #299af3;
         }
     }
 
-    blockquote {
-        margin-top: 30px!important;
+    ul, ol {
+        margin-top: 30px;
+    }
+
+    li {
+        > * {
+            margin:5px 0!important;
+        }
+    }
+
+    h1 {
+        margin-top:30px;
+    }
+    h2 {
+        margin-top: 30px;
+    }
+    h3 {
+        margin-top: 25px;
+    }
+    h4 {
+        margin-top:20px;
+    }
+    h5, h6 {
+        margin-top:15px;
+    }
+
+    h2, h3, h4, h5, h6 {
+        & + p {
+            margin-top:10px;
+        }
+    }
+
+    hr {
+        margin: 30px 0;
+        border-top: 2px solid $color-text-light-grey;
+    }
+
+    blockquote, aside {
+        margin-top: 30px;
         border-left: 4px solid #000000;
         padding: 10px 15px;
+        & > *:first-child {
+            margin-top:0;
+        }
+    }
+
+    aside {
+        border-left: none;
+        background: #f1f1ef;
+        border-radius: 5px;
     }
 
     figure {
@@ -209,6 +344,11 @@ $prosemirror-selected-outline: 3px solid #299af3;
     a {
         text-decoration: underline;
         color: #3f51b5;
+    }
+
+    img {
+        display: block;
+        margin: auto;
     }
 
 }

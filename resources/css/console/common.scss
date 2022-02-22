@@ -21,6 +21,10 @@ a.link {
     font-family: inherit;
     transition:.3s box-shadow;
 }
+textarea.input {
+    resize:vertical;
+    min-height: 150px;
+}
 .input:focus {
     outline: 0;
     box-shadow: 0 0 2px 0px $color-accent;
@@ -86,58 +90,76 @@ svg, img, span {
 
 // select
 .react-select {
-    &.react-select-small {
-        .react-select__control {
-            display:flex;
-            min-height: initial;
-            border-radius: 20px;
-            background: $color-input;
-            font-size: 12px;
-            border:none;
-            transition:.3s box-shadow
-            &--is-focused {
-                box-shadow: 0 0 2px 0px $color-accent;
-            }
+    font-size:14px;
+    .react-select__control {
+        display:flex;
+        min-height: initial;
+        border-radius: 20px;
+        background: $color-input;
+        font-size: 12px;
+        border:none;
+        transition:.3s box-shadow;
+    }
+    .react-select__control--is-focused {
+        box-shadow: 0 0 2px 0px $color-accent;
+    }
+    .react-select__menu {
+        width:180px;
+        box-shadow: 0 0 9px 4px rgb(0 0 0 / 5%);
+        border-radius: 20px;
+        overflow:hidden;
+        margin-top: 0;
+    }
+    .react-select__menu-list {
+        padding: 10px;
+    }
+    .react-select__option {
+        border-radius:20px;
+        transition:.05s background;
+        cursor: pointer;
+        font-size:12px;
+        padding:6px 12px;
+        
+    }
+    .react-select__option--is-focused {
+        background: $color-hover;
+        &:active {
+            background: $color-hover;
         }
-        .react-select__menu {
-            width:180px;
-            box-shadow: 0 0 9px 4px rgb(0 0 0 / 5%);
-            border-radius: 20px;
-            overflow:hidden;
-        }
-        .react-select__menu-list {
-            padding: 10px;
-        }
-        .react-select__option {
-            border-radius:20px;
-            transition:.05s background;
-            cursor: pointer;
-        }
-        .react-select__option--is-focused {
+    }
+    .react-select__option--is-selected {
+        background: $color-accent-light;
+        color: $color-text;
+        &:active {
             background: $color-accent-light;
         }
-        .react-select__option--is-selected {
-            background: $color-accent;
-        }
-        .react-select__single-value  {
-            text-overflow: initial;
-            color:inherit;
-        }
-        .react-select__indicator-separator {
-            display:none;
+    }
+    .react-select__single-value  {
+        text-overflow: initial;
+        color:inherit;
+    }
+    .react-select__indicator-separator {
+        display:none;
+    }
+    .react-select__indicator {
+        padding: 0;
+        padding-right: 14px;
+        svg {height:12px;width:12px;}
+    }
+    .react-select__input-container {
+        margin:0;
+        padding:0;
+    }
+    .react-select__value-container {
+        padding: 9px 15px;
+        padding-right: 0;
+    }
+    &.react-select-small {
+        .react-select__value-container {
+            padding:6px;
         }
         .react-select__indicator {
-            padding: 0;
             padding-right: 4px;
-            svg {height:12px;width:12px;}
-        }
-        .react-select__input-container {
-            margin:0;
-            padding:0;
-        }
-        .react-select__value-container {
-            padding: 6px;
-            padding-right: 0;
         }
     }
 }
@@ -210,7 +232,9 @@ svg, img, span {
 .global-dual-setting {
     display: flex;
     padding: 18px 0;
-    border-bottom: 1px solid $color-accent-light;
+    &:not(:first-child) {
+        border-top: 1px solid $color-accent-light;
+    }
     .dual-left {
         flex: 1;
         margin-right: 20px;
@@ -288,4 +312,25 @@ svg, img, span {
 }
 .Toastify__progress-bar {
     height: 4px!important;
+}
+
+
+
+// codemirror
+.react-codemirror2 {
+    height:100%;
+
+    .CodeMirror {
+        height:100%;
+        font-family: 'source-code-pro', Menlo, 'Courier New', Consolas, monospace!important;
+        box-shadow: none!important;
+        border-radius:20px;
+        background-color: $color-input;
+        .CodeMirror-line {
+            padding-left: 15px!important;
+        }
+        .CodeMirror-gutters {
+            background-color: $color-input;
+        }
+    }
 }

@@ -48,6 +48,7 @@ class DatabaseSeeder extends Seeder
 
             // RedirectRepository::createRedirect($blog->id, '/redirects', 'https://example.com');
 
+
             User::create([
                 'blog_id' => $blog->id,
                 'user_id' => $blog->user_id,

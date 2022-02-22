@@ -50,6 +50,8 @@ Route::prefix('/api/console/v0/blog/{subdomain}')
     ])
     ->group(function() {
 
+    Route::get('/blog', [ConsoleBlogController::class, 'getBlog']);
+
     // posts (and pages) CRUD
     Route::get('/posts', [ConsolePostController::class, 'getPosts']);
     Route::get('/pages', [ConsolePostController::class, 'getPages']);

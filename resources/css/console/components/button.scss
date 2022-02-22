@@ -12,6 +12,7 @@
     font-size: 14px;
     padding: 8px 20px;
     display:inline-block;
+    border:1px solid transparent;
 
     &.big {
         padding: 10px 30px;
@@ -30,16 +31,18 @@
     &.inactive {
         background: $color-accent-light;
         color: $color-text;
+        border-color: $color-accent-light;
     }
 
     &.secondary {
         background: none;
-        color: $color-text-light;
+        color: $color-text-medium;
         border: 1px solid $color-grey;
         box-shadow: 0 1px 2px 0 rgba(0,0,0,0.05);
-        transition:.1s color;
+        transition:.1s color, .1s border-color;
         &:hover {
             color: $color-text;
+            border-color: $color-accent-light;
         }
     }
 

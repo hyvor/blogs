@@ -1,32 +1,66 @@
-import React from 'react';
+import React, { useState } from 'react';
 import DualSetting from '../ReusableComponents/DualSetting';
+import CodemirrorEditor, { CODEMIRROR_MODES } from '../ReusableComponents/CodemirrorEditor';
+import SettingsSave from '../ReusableComponents/SettingsSave';
 
 export default function SettingsCode() {
 
-    return <div className="settings-delete">
+    const [headerCode, setHeaderCode] = useState("");
+    const [footerCode, setFooterCode] = useState("");
+
+    const shouldSave = headerCode !== "";
+
+    function handleSave() {
+        
+    }
+    function handleDiscard() {
+
+    }
+
+    return <div className="settings-code">
 
         <div className="title">
             Custom Code
         </div>
 
         
+        <div>
 
-        <DualSetting 
-            title="Header Code"
-            description="This code will be placed right before the </head> tag. You can use this to add custom CSS and meta tags for the whole blog."
-            right={
-                <textarea></textarea>
-            }
+            <DualSetting 
+                title="Head Code"
+                description={
+                    <div>
+                        This HTML code will be placed right before the &lt;/head&gt; tag. You can use this to add custom CSS and meta tags for the whole blog. In addition to HTML, you can also use <a className="link" href="https://blogs.hyvor.test/docs/themes-overview#twig" target="_blank">Twig</a>, and has access to <a className="link" href="https://blogs.hyvor.test/docs/themes-overview#variables" target="_blank">scope variables</a>.
+                    </div>
+                }
+                right={
+                    <CodemirrorEditor 
+                        mode={CODEMIRROR_MODES.twig}
+                        value={headerCode}
+                        onChange={setHeaderCode}
+                    />
+                }
+            />
+
+            <DualSetting 
+                title="Foot Code"
+                description="This HTML code will be placed right before the </body> tag. If you want to add custom Javascript code (ex: analytics), this is the best place to add it. You can use Twig and scope variables."
+                right={
+                    <CodemirrorEditor 
+                        mode={CODEMIRROR_MODES.twig}
+                        value={footerCode}
+                        onChange={setFooterCode}
+                    />
+                }
+            />
+
+        </div>
+
+        <SettingsSave 
+            should={shouldSave}
+            onSave={handleSave}
+            onDiscard={handleDiscard}
         />
-
-        <DualSetting 
-            title="Footer Code"
-            description="This code will be placed right before the </body> tag. If you want to add custom Javascript code (ex: analytics), this is the best place to add it."
-            right={
-                <textarea></textarea>
-            }
-        />
-
 
     </div>
 

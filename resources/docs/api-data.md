@@ -39,7 +39,7 @@ For multi-object endpoints, the response looks like this:
 }
 ```
 
-## Objects
+## Objects {#objects}
 
 Data is returned in JSON objects as specified below.
 
@@ -49,7 +49,7 @@ All slugs are lowercase, and can contain `-`
 
 </aside>
 
-### Post Object
+### Post Object {#post-object}
 
 ```json
 {
@@ -126,7 +126,7 @@ All slugs are lowercase, and can contain `-`
 | `name` | `string` | Language name |
 | `variants` | `object` | Variants of this post in other languages. Keys are the language codes, values are the post IDs |
 
-### Tag Object
+### Tag Object {#tag-object}
 
 ```json
 {
@@ -148,7 +148,7 @@ All slugs are lowercase, and can contain `-`
 | featured_image | string | null | The absolute URL of the featured image. null if not set |
 | posts_count | integer | Number of posts of the tag |
 
-### Author
+### Author {#author-object}
 
 <aside>
 💡 "**Author**" is a "**User**" who has written at least one post.
@@ -197,7 +197,7 @@ All slugs are lowercase, and can contain `-`
 
 </aside>
 
-### Blog
+### Blog {#blog-object}
 
 The `Blog` object is returned from the `/blog` endpoint and contains the settings of the blog.
 
