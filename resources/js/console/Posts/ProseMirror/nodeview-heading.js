@@ -17,6 +17,11 @@ export default class Heading {
         this.inputWrap.contentEditable = false;
         this.dom.appendChild(this.inputWrap)
 
+
+        const type = document.createElement("span");
+        type.innerHTML = "h" + node.attrs.level + "#"
+        this.inputWrap.appendChild(type)
+
         // id input
         this.input = document.createElement("input");
         this.input.value = id;

@@ -211,9 +211,6 @@ $prosemirror-selected-outline: 3px solid #299af3;
             margin-bottom: -4px;
             display: flex;
             width:100%;
-            &:before {
-                content: "#";
-            }
             input {
                 padding: 0;
                 background: transparent;
@@ -294,6 +291,15 @@ $prosemirror-selected-outline: 3px solid #299af3;
         border-left: none;
         background: #f1f1ef;
         border-radius: 5px;
+        display:flex;
+        span {
+            width: 20px;
+            text-align: center;
+            margin-right: 10px;
+        }
+        div {
+            flex:1;
+        }
     }
 
     figure {

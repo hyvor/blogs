@@ -68,7 +68,7 @@ export default function keymapPlugins(schema) {
                 const nodeSel = NodeSelection.create(state.doc, pos);
 
                 dispatch(
-                    state.tr.replaceWith(nodeSel.from, nodeSel.to, createRich)
+                    state.tr.replaceWith(nodeSel.from, nodeSel.to, createRich(schema, url))
                 )
                 return true;
             }

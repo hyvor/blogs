@@ -12,6 +12,7 @@ import useUpdateEffect from '../../../helpers/hooks/useUpdateEffect';
 import RichView from './nodeview-rich';
 import Figcaption from './nodeview-figcaption';
 import Heading from './nodeview-heading';
+import Callout from './nodeview-callout';
 
 
 function getState(val) {
@@ -34,7 +35,10 @@ const nodeViews = {
         return new Figcaption(...args);
     },
     heading(...args) {
-        return new Heading(...args)
+        return new Heading(...args);
+    },
+    callout(...args) {
+        return new Callout(...args)
     }
 }
 

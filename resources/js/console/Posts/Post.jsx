@@ -1,11 +1,12 @@
 import { useActions, useValues } from 'kea';
 import React, { useEffect, useRef, useState } from 'react';
-import { BoxArrowUpRight, CaretDownFill, Fullscreen, GearFill, PencilFill, Trash } from 'react-bootstrap-icons';
+import { BoxArrowUpRight, CaretDownFill, Fullscreen, GearFill, PencilFill } from 'react-bootstrap-icons';
 import Editor from './ProseMirror/Editor';
 import TextareaAutosize from 'react-textarea-autosize';
 import onOutsideClick from '../../helpers/onOutsideClick';
 import postLogic from '../logic/postLogic';
 import { getBlogUrl } from '../lib/blog-helpers';
+import PostSettings from './PostSettings';
 
 export default function Post( {subdomain, id} ) {
 
@@ -79,7 +80,6 @@ export default function Post( {subdomain, id} ) {
         setIsSettingsOpen(false);
     }
 
-    const [ settingsType, setSettingsType ] = useState('basic'); // basic | advanced
 
     // have to first click Edit Post to edit published/scheduled posts
     const [publishedPostEditing, setPublishedPostEditing] = useState(false);
@@ -133,10 +133,6 @@ export default function Post( {subdomain, id} ) {
 
     function showUpdateDetails() {
         alert("Updated");
-    }
-
-    function handleDelete() {
-        deletePost({id})
     }
 
     function toggleFullscreen() {
@@ -210,147 +206,12 @@ export default function Post( {subdomain, id} ) {
                                 <MainButton />
                             </div>
                         </div>
-                        
-                        <div className={"settings-view-wrap " + (isSettingsOpen ? "active" : "inactive") }>
-                            <div ref={settingsViewRef} className="post-editor-settings-view">
 
-                                <div className="setting-select">
-                                    <span onClick={() => setSettingsType('basic')} className={settingsType === 'basic' ? 'active' : ''}>Basic</span>
-                                    <span onClick={() => setSettingsType('advanced')} className={settingsType === 'advanced' ? 'active' : ''}>Advanced</span>
-                                </div>
-
-                                {settingsType === 'basic' ?
-                                <div className="setting-show">
-                                    <div className="post-setting-dual">
-                                        <Setting 
-                                            title="Slug"
-                                            description="The unique part of the URL to identify this post"
-                                        >
-                                            <input 
-                                                className="input" 
-                                                value={post.slug}
-                                                onChange={(e) => updatePostValue("slug", e.target.value)}
-                                            ></input>
-                                        </Setting>
-
-                                        <Setting 
-                                            title="Publish Time"
-                                            className="post-setting-featured-image"
-                                        >
-                                            <input className="input" value="2021-01-01" onChange={() => {}}></input>
-                                        </Setting>
-
-                                    </div>
-
-                                    <div className="post-setting-dual">
-
-                                        <Setting 
-                                            title="Authors"
-                                            description="The unique part of the URL to identify this post"
-                                        >
-                                            <input className="input" value="Ishini Avindya" onChange={() => {}}></input>
-                                        </Setting>
-
-                                        <Setting 
-                                            title="Tags"
-                                            className="post-setting-featured-image"
-                                        >
-                                            <input className="input" value="#creative" onChange={() => {}}></input>
-                                        </Setting>
-
-                                    </div>
-
-                                    <div className="post-setting-dual">
-
-                                        <Setting 
-                                            title="Description"
-                                            description="Summarization of the post for listing pages and search engines."
-                                            className="post-setting-description"
-                                        >
-                                            <textarea 
-                                                className="input"
-                                                placeholder="Write a description..."
-                                                value={post.description}
-                                                onChange={e => updatePostValue('description', e.target.value)}
-                                            ></textarea>
-                                        </Setting>
-
-                                        <Setting 
-                                            title="Featured Image"
-                                            className="post-setting-featured-image"
-                                        >
-                                            <div className="image-uploader">Upload a file</div>
-                                        </Setting>
-
-                                    </div>
-
-                                    <div className="post-setting-dual">
-
-                                        <Setting 
-                                            title="Featured?"
-                                            description="The unique part of the URL to identify this post"
-                                        >
-                                            <input type="checkbox"></input>
-                                        </Setting>
-
-                                        <Setting 
-                                            title="Delete Post"
-                                        >
-                                            <button 
-                                                className="button small danger"
-                                                onClick={handleDelete}
-                                            >Delete <Trash /></button>
-                                        </Setting>
-
-                                    </div>
-                                </div>
-                                : 
-                                <div className="setting-show">
-
-                                    <Setting 
-                                        title="Canonical URL"
-                                        description=""
-                                    >
-                                        <input 
-                                            className="input"
-                                            value={post.canonical_url}
-                                            onChange={e => updatePostValue('canonical_url', e.target.value)}
-                                        ></input>
-                                    </Setting>
-
-                                    <div className="post-setting-dual">
-
-                                        <Setting 
-                                            title="Header HTML Code"
-                                            description="Summarization of the post for listing pages and search engines."
-                                            className="post-setting-description"
-                                        >
-                                            <textarea 
-                                                className="input"
-                                                placeholder="Paste HTML code..."
-                                                value={post.code_head}
-                                                onChange={e => updatePostValue('code_head', e.target.value)}
-                                            ></textarea>
-                                        </Setting>
-
-                                        <Setting 
-                                            title="Footer HTML Code"
-                                            description="Summarization of the post for listing pages and search engines."
-                                            className="post-setting-description"
-                                        >
-                                            <textarea 
-                                                className="input" 
-                                                placeholder="Paste HTML code..."
-                                                value={post.code_foot}
-                                                onChange={e => updatePostValue('code_foot', e.target.value)}
-                                            ></textarea>
-                                        </Setting>
-
-                                    </div> 
-                                </div>
-                                }
-                            </div>  
-                        </div>
+                        <PostSettings 
+                            isSettingsOpen={isSettingsOpen}
+                            settingsViewRef={settingsViewRef}
+                            id={id}
+                        />
 
                     </div>
                 
@@ -387,19 +248,6 @@ export default function Post( {subdomain, id} ) {
         </div>
         
 
-    </div>
-
-}   
-
-function Setting(props) {
-
-    return <div className={"post-setting " + (props.className || "")}>
-        <div className="post-setting-title">{props.title}</div>
-        { false ? <div className="post-setting-description">{props.description}</div> : null }
-
-        <div className="post-setting-content">
-            {props.children}
-        </div>
     </div>
 
 }

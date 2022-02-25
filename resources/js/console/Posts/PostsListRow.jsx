@@ -3,7 +3,7 @@ import NavLink from '../ReusableComponents/NavLink';
 import postLogic from '../logic/postLogic';
 import { useValues } from 'kea';
 
-export default function PostListRow({ id, subdomain }) {
+export default function PostsListRow({ id, subdomain }) {
 
     const { post } = useValues(postLogic({id}))
     const postsLink = `/console/${subdomain}/` + (post.is_page ? 'pages' : 'posts')

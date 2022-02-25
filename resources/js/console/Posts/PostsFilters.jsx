@@ -7,7 +7,7 @@ import subdomainLogic from '../logic/subdomainLogic';
 import blogsLogic from '../logic/blogsLogic';
 import numberFormatter from '../../helpers/numberFormatter';
 
-export default function PostFilters({ filters, changeFilter }) {
+export default function PostsFilters({ filters, changeFilter }) {
 
     const { subdomain } = useValues(subdomainLogic)
     const { counts } = useValues(postsLogic({subdomain}))
