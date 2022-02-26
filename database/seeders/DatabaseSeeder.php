@@ -87,7 +87,7 @@ class DatabaseSeeder extends Seeder
                     ];
                 }
 
-                $status = ['draft', 'published', 'deleted', 'scheduled'];
+                $status = ['draft', 'published', 'scheduled'];
                 $status = $i === 0 ? 'published' : $status[ array_rand($status) ];
                 $post = Post::create([
                     'blog_id' => $blog->id,

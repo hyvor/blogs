@@ -9,7 +9,7 @@ Hyvor Blogs is designed to easily create a blog (Even though it is possible to [
 
 ### Posts
 
-Posts are the heart of the blog. They appear in the feed of the blog. Usually, latest posts appear at the top. It is also possible to "feature" some posts in the homepage. A post can have 4 statuses: Draft, Published, Scheduled, and Deleted. Only published posts are shown publicly.
+Posts are the heart of the blog. They appear in the feed of the blog. Usually, latest posts appear at the top. It is also possible to "feature" some posts in the homepage. A post can have 3 statuses: Draft, Published, and Scheduled. Only published posts are shown publicly.
 
 ### Pages
 

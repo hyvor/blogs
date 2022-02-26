@@ -26,7 +26,7 @@ class CreatePostsTable extends Migration
             $table->bigInteger('language_id')->index();
 
             // status
-            $table->enum('status', ['published', 'draft', 'scheduled', 'deleted'])->default('draft');
+            $table->enum('status', ['published', 'draft', 'scheduled'])->default('draft');
             $table->boolean('is_featured')->default(false);
             $table->boolean('is_page')->default(false);
 

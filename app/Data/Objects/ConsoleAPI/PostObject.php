@@ -18,6 +18,7 @@ class PostObject
     public $is_page;
     public $slug;
     public $content;
+    public $content_unsaved;
     public $title;
     public $description;
     public $url;
@@ -47,6 +48,7 @@ class PostObject
         $this->is_page = $post->is_page;
         $this->slug = $post->slug;
         $this->content = $post->content;
+        $this->content_unsaved = $post->content_unsaved;
         $this->title = $post->title;
         $this->description = $post->description;
         $this->url = $post->url;

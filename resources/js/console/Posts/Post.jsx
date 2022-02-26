@@ -84,23 +84,6 @@ export default function Post( {subdomain, id} ) {
     // have to first click Edit Post to edit published/scheduled posts
     const [publishedPostEditing, setPublishedPostEditing] = useState(false);
 
-
-    // something changed?
-    // null if not
-    // object ({old, new}) if changed
-    function getDiffWithOld() {
-        var diff = {};
-        for (var key in posts[id]) {
-            if (post[key] !== posts[id][key]) {
-                diff[key] = {
-                    old: posts[id][key],
-                    new: post[key]
-                }
-            }
-        }
-        return diff;
-    }
-
     function MainButton() {
         let name, onClick, icon, disabled = false;
 
@@ -110,20 +93,12 @@ export default function Post( {subdomain, id} ) {
                 icon = <PencilFill />
                 onClick = () => setPublishedPostEditing(true);
             } else {
-                const diff = getDiffWithOld();
-                if (diff) {
-                    const count = Object.keys(diff).length;
-                    name = "Save Changes" + (count > 0 ? " (" + count + ")" : "");
-                    onClick = () => showUpdateDetails();
-                    disabled = count === 0;
-                }
+                name  = "Update Post";
+                onClick = () => showUpdateDetails();
             }
         } else if (post.status === 'draft') {
             name = "Publish Post";
             onClick = () => showPublishDetails()
-        } else { // deleted
-            name = "Recover Post";
-            onClick = () => showDeleteDetails()
         }
 
         return <button className="button small main-button" onClick={() => onClick()}>
@@ -199,10 +174,6 @@ export default function Post( {subdomain, id} ) {
                             </div>
 
                             <div className="publish-buttons">
-                                {
-                                    savePostAjax.status === 'loading' ?
-                                    <span className="saving">Saving...</span> : null
-                                }
                                 <MainButton />
                             </div>
                         </div>
@@ -240,6 +211,10 @@ export default function Post( {subdomain, id} ) {
                 <div className="post-editor-bottom-content">
                     <div id="pm-navigator-wrap"></div>
                     <div className="right">
+                        {
+                            savePostAjax.status === 'loading' ?
+                            <span className="saving">Saving...</span> : null
+                        }
                         <span className="words" id="pm-word-count"></span>
                     </div>
                 </div>

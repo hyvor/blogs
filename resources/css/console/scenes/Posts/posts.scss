@@ -159,10 +159,6 @@
                 background: #767676;
                 color: $color-text-white;
             }
-            &.deleted {
-                background: $color-red-light;
-                color: $color-red-dark;
-            }
             &.published {
                 background: $color-green-light;
                 color: $color-green-dark;
@@ -240,6 +236,11 @@
                 width:50%;
                 text-align: right;
             }
+
+            .saving {
+                color: #777;
+                font-size: 12px;
+            }
         }
 
         .pos-rel {
@@ -288,10 +289,6 @@
             background:none;
         }
         .publish-buttons {
-            .saving {
-                color: #777;
-                font-size: 12px;
-            }
             button.main-button {
                 display:inline-flex;
                 align-items: center;
@@ -322,3 +319,5 @@
 
     @import 'PostSettings.scss';
 }
+
+@import 'NoPost.scss';

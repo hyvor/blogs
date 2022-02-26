@@ -20,7 +20,6 @@ export default function PostsFilters({ filters, changeFilter }) {
         { value: 'published', label: <FilterLabel name="published" count={counts && counts.status.published} />},
         { value: 'draft', label: <FilterLabel name="draft" count={counts && counts.status.draft} />},
         { value: 'scheduled', label: <FilterLabel name="scheduled" count={counts && counts.status.scheduled} />},
-        { value: 'deleted', label: <FilterLabel name="deleted" count={counts && counts.status.deleted} />},
         { value: 'featured', label: <FilterLabel name="featured" count={counts && counts.status.featured} />},
     ]
 

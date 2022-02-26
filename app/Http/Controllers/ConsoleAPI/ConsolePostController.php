@@ -94,6 +94,10 @@ class ConsolePostController extends Controller
             $updates['content'] = $request->input('content');
         }
 
+        if ($request->has('content_unsaved')) {
+            $updates['content_unsaved'] = $request->input('content_unsaved');
+        }
+
         if ($request->has('title')) {
             $updates['title'] = $request->input('title');
         }
