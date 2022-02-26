@@ -3,12 +3,15 @@ import React, { useState } from 'react';
 import { Trash } from 'react-bootstrap-icons';
 import postLogic from '../logic/postLogic';
 import CodemirrorEditor, { CODEMIRROR_MODES } from '../ReusableComponents/CodemirrorEditor';
+import { PopupConfirm } from '../ReusableComponents/Popup';
 
 export default function PostSettings({ isSettingsOpen, settingsViewRef, id }) {
 
     const postLogicInst = postLogic({id});
     const { post } = useValues(postLogicInst)
     const { updatePostValue, deletePost } = useActions(postLogicInst)
+
+    const [ isDeleting, setIsDeleting ] = useState(false);
 
     function handleDelete() {
         deletePost({id})
@@ -110,7 +113,7 @@ export default function PostSettings({ isSettingsOpen, settingsViewRef, id }) {
                         >
                             <button 
                                 className="button small danger"
-                                onClick={handleDelete}
+                                onClick={() => setIsDeleting(true)}
                             >Delete <Trash /></button>
                         </Setting>
 
@@ -155,7 +158,25 @@ export default function PostSettings({ isSettingsOpen, settingsViewRef, id }) {
                     </Setting>
                 </div>
             }
-        </div>  
+
+
+            {
+                isDeleting ?
+                <PopupConfirm 
+                    title="Delete Post"
+                    text={<div>
+                        Are you sure to <b>permanently delete</b> this post? 
+                    </div>}
+                    onClick={handleDelete}
+                    onCancel={() => setIsDeleting(false)}
+                    name="Delete"
+                    buttonClass="danger"
+                /> : null
+            }
+
+        </div>
+
+
     </div>
 
 }

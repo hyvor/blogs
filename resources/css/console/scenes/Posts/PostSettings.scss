@@ -9,7 +9,7 @@
     &.active {
         pointer-events: auto;
         opacity: 1;
-        transform:translateY(0px);
+        transform:initial; // transform 0 causes child fixed elements to be relative to this element
     }
     &.inactive {
         pointer-events: none;

@@ -82,16 +82,16 @@ export default function Post( {subdomain, id} ) {
 
 
     // have to first click Edit Post to edit published/scheduled posts
-    const [publishedPostEditing, setPublishedPostEditing] = useState(false);
+    const [nonDraftPostEditing, setNonDraftPostEditing] = useState(false);
 
     function MainButton() {
-        let name, onClick, icon, disabled = false;
+        let name, onClick, icon;
 
         if (post.status === 'published' || post.status === 'scheduled') {
-            if (!publishedPostEditing) {
+            if (!nonDraftPostEditing) {
                 name = "Edit Post";
                 icon = <PencilFill />
-                onClick = () => setPublishedPostEditing(true);
+                onClick = () => setNonDraftPostEditing(true);
             } else {
                 name  = "Update Post";
                 onClick = () => showUpdateDetails();
@@ -201,6 +201,7 @@ export default function Post( {subdomain, id} ) {
                         id={id}
                         value={post.content}
                         onChange={v => updatePostValue('content', v)}
+                        editable={post.status === 'draft' || nonDraftPostEditing}
                     />
                 }
             </div>

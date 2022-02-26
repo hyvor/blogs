@@ -61,6 +61,7 @@ export default function Editor(props) {
         nodeViews={nodeViews}
         onChange={handleChange}
         handleClickOn={handleClickOn}
+        editable={() => props.editable}
     />
 }
 

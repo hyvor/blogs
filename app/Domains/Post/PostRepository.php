@@ -247,8 +247,8 @@ class PostRepository
         if (array_key_exists('content', $updates)) {
             /**
              * content update means either 
-             *  - user is saving an unpublished post
-             *  - user is "updating" a published post
+             *  - user is saving a draft post
+             *  - user is "updating" a non-draft post
              */
             $post->content = $updates['content'];
             $post->content_unsaved = $updates['content_unsaved'];
@@ -256,7 +256,7 @@ class PostRepository
         if (array_key_exists('content_unsaved', $updates)) {
             /**
              * content_unsaved means
-             *  - user is saving a published/scheduled post
+             *  - user is saving a non-draft post
              */
             $post->content_unsaved = $updates['content_unsaved'];
         }

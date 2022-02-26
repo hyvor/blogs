@@ -22,8 +22,8 @@ const postsLogic = kea({
     },
 
     actionToUrl: ({ props }) => ({
-        navigateToPost: ({id}) => `/${props.subdomain}/posts/${id}`,
-        navigateToPosts: () => `/${props.subdomain}/posts`
+        navigateToPost: ({id}) => `/console/${props.subdomain}/posts/${id}`,
+        navigateToPosts: () => `/console/${props.subdomain}/posts`
     }),
 
     ajax: ({ values, props, actions }) => ({
