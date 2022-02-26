@@ -1,20 +1,46 @@
 import { useActions, useValues } from 'kea';
-import React, { useState } from 'react';
+import React, { useState, useRef } from 'react';
 import { Trash } from 'react-bootstrap-icons';
 import postLogic from '../logic/postLogic';
 import CodemirrorEditor, { CODEMIRROR_MODES } from '../ReusableComponents/CodemirrorEditor';
 import { PopupConfirm } from '../ReusableComponents/Popup';
+import { toast } from 'react-toastify'
+import mediaLogic from '../logic/mediaLogic';
+import subdomainLogic from '../logic/subdomainLogic';
 
 export default function PostSettings({ isSettingsOpen, settingsViewRef, id }) {
 
     const postLogicInst = postLogic({id});
     const { post } = useValues(postLogicInst)
-    const { updatePostValue, deletePost } = useActions(postLogicInst)
+    const { updatePostValue, deletePost, savePost } = useActions(postLogicInst)
+
+    const {subdomain} = useValues(subdomainLogic);
+    const mediaLogicInst = mediaLogic({subdomain})
+    const { uploadImage } = useActions(mediaLogicInst)
 
     const [ isDeleting, setIsDeleting ] = useState(false);
 
+    const imageUploadInputRef = useRef(null)
+
     function handleDelete() {
         deletePost({id})
+    }
+
+    function handleUploadInputClick() {
+        imageUploadInputRef.current.click();
+    }
+    function handleUpload(e) {
+        const file = e.target.files[0]
+        if (!file) {
+            return toast.error("No files selected");
+        }
+        uploadImage({
+            file,
+            onUpload: (media) => {
+                updatePostValue("featured_image", media.url)
+                savePost()
+            }
+        })
     }
 
     const [ settingsType, setSettingsType ] = useState('basic'); // basic | advanced
@@ -94,7 +120,24 @@ export default function PostSettings({ isSettingsOpen, settingsViewRef, id }) {
                             title="Featured Image"
                             className="post-setting-featured-image"
                         >
-                            <div className="image-uploader">Upload a file</div>
+                            <div 
+                                className="featured-image"
+                                onClick={handleUploadInputClick}
+                            >
+                                {
+                                    post.featured_image ?
+                                    <img src={post.featured_image} /> :
+                                    <div>Upload a file</div>
+                                }
+                                <input
+                                    ref={imageUploadInputRef}
+                                    type="file" 
+                                    style={{display:'none'}} 
+                                    accept="image/*"
+                                    onChange={handleUpload}
+                                />
+                            </div>
+                            
                         </Setting>
 
                     </div>

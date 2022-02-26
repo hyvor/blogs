@@ -19,7 +19,7 @@
     .setting-select {
         text-align: center;
         padding: 20px;
-        border-bottom: 1px solid $color-accent-mid;
+        border-bottom: 1px solid $color-accent-light;
         span {
             cursor: pointer;
             display: inline-block;
@@ -74,10 +74,10 @@
             margin: 0px;
             resize: none;
         }
-        &.post-setting-featured-image .image-uploader {
+        &.post-setting-featured-image .featured-image {
             width: 100%;
             height: 150px;
-            background: #fff;
+            background: $color-input;
             border-radius: 20px;
             display: flex;
             align-items: center;
