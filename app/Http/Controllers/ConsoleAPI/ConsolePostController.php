@@ -7,12 +7,19 @@ use App\Data\Params\ConsoleAPI\PostsFilterParam;
 use App\Models\Blog;
 use App\Domains\Post\PostRepository;
 use App\Http\Controllers\Controller;
+use App\Models\User;
 use Illuminate\Http\Request;
 
 class ConsolePostController extends Controller
 {
-    public function getPosts(Request $request, Blog $blog)
+
+    public function getPosts(Request $request, Blog $blog, User $user)
     {
+
+        $request->validate([
+            'filters' => 'required|json'
+        ]);
+
         $filters = json_decode($request->input('filters'));
         $posts = PostRepository::getPosts(
             $blog->id,

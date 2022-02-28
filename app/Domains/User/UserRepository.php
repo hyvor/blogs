@@ -110,6 +110,10 @@ class UserRepository
             ->get();
     }
 
+    public static function getUser(int $id) {
+        return User::find($id);
+    }
+
     public static function getUserByBlogIdAndIdentifier(int $blogId, ?int $id, ?string $slug)
     {
         $user = User::where('blog_id', $blogId);

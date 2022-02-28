@@ -11,17 +11,14 @@ use App\Http\Controllers\ConsoleAPI\ConsoleUserController;
 use App\Http\Controllers\ConsoleAPI\ConsoleViewController;
 use App\Http\Controllers\ConsoleAPI\ConsoleRedirectController;
 use App\Http\Controllers\ConsoleAPI\ConsoleNavigationController;
-
-use App\Http\Middleware\App\ConsoleAPI\BlogAccessMiddleware;
-use App\Http\Middleware\App\LoginRequiredMiddleware;
+use App\Http\Middleware\App\ConsoleAPI\ConsoleApiAccessMiddleware;
+use App\Http\Middleware\App\ConsoleAPI\ResourceAccessMiddleware;
+use App\Http\Middleware\App\LoginRequiredElseRedirectMiddleware;
 use App\Http\Middleware\App\SubdomainMiddleware;
 use Illuminate\Support\Facades\Route;
 
-// Route::middleware(LoginRequiredMiddleware::class)
-//     ->get('/console/{any?}', ConsoleViewController::class)
-//     ->where('any', '.*');
-
-Route::get('/console/{any?}', ConsoleViewController::class)
+Route::middleware(LoginRequiredElseRedirectMiddleware::class)
+    ->get('/console/{any?}', ConsoleViewController::class)
     ->where('any', '.*');
 
 // this is an internal API
@@ -37,16 +34,19 @@ Route::prefix('/api/console')
 
 // this is the Console API
 // can be used by both us and others
-// Important! see readme.md to see how to write these routes securely
+// Important! see BlogAccessMiddleware to see how to write these routes securely
 
 Route::prefix('/api/console/v0/blog/{subdomain}')
     ->middleware([
         // converts {subdomain} tp Blog model
         SubdomainMiddleware::class,
 
-        // checks blog access
-        // and relationship to the blog, for resources that have {id} in route
-        BlogAccessMiddleware::class,
+        // check if the user or API key has access to the console API
+        // and set App\Models\User app instance
+        ConsoleApiAccessMiddleware::class,
+
+        // checks relationship to the blog, for resources that have {id} in route
+        ResourceAccessMiddleware::class,
     ])
     ->group(function() {
 
