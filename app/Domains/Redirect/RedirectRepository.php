@@ -6,13 +6,14 @@ use App\Models\Redirect;
 
 Class RedirectRepository
 {
-    public static function getRedirects( int $blogId, int $limit = 0, int $offset = 0,)
+    public static function getRedirects( int $blogId, ?int $limit, int $offset = 0)
     {
+        $limit = $limit ?? 50;
         return Redirect::where('blog_id','=', $blogId)
-            ->offset($offset)
             ->limit($limit)
+            ->offset($offset)
             ->latest()
-            ->get();
+            ->get(); 
     }
 
     public static function createRedirect(

@@ -35,6 +35,9 @@ export default function Posts( { postId } ) {
         }
     }
 
+    // console.log(postsList.length);
+    // console.log('---------------')
+
     function handleNew() {
         createPost();
     }
@@ -51,7 +54,7 @@ export default function Posts( { postId } ) {
                 >+ New</button>
             </div>
             <PostFilters filters={filters} changeFilter={changeFilter} />
-            <div className="posts-list" onScroll={handleScroll}>
+            <div className="posts-list" onScroll={handleScroll}> 
                 {
                     loadPostsListAjax.status === 'loading' ?
                     <div className="posts-loading"><Loader /></div> :

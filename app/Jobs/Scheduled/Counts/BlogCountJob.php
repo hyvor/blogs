@@ -57,8 +57,8 @@ class BlogCountJob implements ShouldQueue, ShouldBeUnique {
             CountRepository::setCount($blog, CountEnum::BLOG_USERS, $row->users);
             CountRepository::setCount($blog, CountEnum::BLOG_POSTS, $row->posts);
             CountRepository::setCount($blog, CountEnum::BLOG_MEDIA, $row->media);
-
-        }
+            // CountRepository::setCount($blog, CountEnum::BLOG_TAGS, $row->tags);
+        } 
 
     }
 

@@ -6,6 +6,7 @@ import TextareaAutosize from 'react-textarea-autosize';
 import onOutsideClick from '../../helpers/onOutsideClick';
 import postLogic from '../logic/postLogic';
 import { getBlogUrl } from '../lib/blog-helpers';
+import SelectTags from './Tags';
 
 export default function Post( {subdomain, id} ) {
 
@@ -251,12 +252,14 @@ export default function Post( {subdomain, id} ) {
                                             <input className="input" value="Ishini Avindya" onChange={() => {}}></input>
                                         </Setting>
 
+                                        {/* This is the place where I should start editing in the tags section. code - Hyvor */}
+                                        
                                         <Setting 
                                             title="Tags"
                                             className="post-setting-featured-image"
                                         >
-                                            <input className="input" value="#creative" onChange={() => {}}></input>
-                                        </Setting>
+                                            {/* <TagSelect postId = {post.id}/>  */}
+                                            <SelectTags postId = {post.id}/>                                        </Setting>
 
                                     </div>
 

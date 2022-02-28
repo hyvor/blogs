@@ -13,13 +13,13 @@ class ConsoleRedirectController extends Controller {
     const REGEX = 'regex:/(^([\/\:\.a-zA-z0-9\-\?\_\=\*]+)(\d+)?$)/u';
 
     public function getRedirects(Request $request, Blog $blog) {
-        $request->validate([
-            'limit' => 'integer', 
-            'offset' => 'required|integer',
-        ]);
+        // $request->validate([
+        //     'limit' => 'integer', 
+        //     'offset' => 'required|integer',
+        // ]); 
         
         $limit = $request->input('limit');
-        $offset = $request->input('offset');
+        $offset = $request->input('offset') ?? 0;
 
         $getData = RedirectRepository::getRedirects($blog->id, $limit, $offset)
                 ->map(function ($redirect) {

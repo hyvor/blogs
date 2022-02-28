@@ -24,7 +24,6 @@ class CreateTagsTable extends Migration
             $table->string('name');
             $table->string('slug');
             $table->string('description')->nullable();
-            $table->string('featured_image')->nullable();
 
             $table->integer('posts_count')->default(0);
 

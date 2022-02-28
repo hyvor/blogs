@@ -5,7 +5,8 @@ import {toast} from 'react-toastify'
 import subdomainLogic from '../logic/subdomainLogic';
 import redirectsLogic from '../logic/redirectsLogic';
 import Loader from '../ReusableComponents/Loader';
-import Select from '../ReusableComponents/Select';
+// import Select from '../ReusableComponents/Select';
+import ReactSelect, { components } from 'react-select';
 import Toast from '../ReusableComponents/Toast';
 import NoResults from '../ReusableComponents/NoResults';
 import Input from '../ReusableComponents/Input';
@@ -16,14 +17,29 @@ export default function SettingRedirects(props) {
 
     const subdomain = subdomainLogic.values.subdomain;
     const redirectLogicBuilt = redirectsLogic({subdomain})
-    const { redirect, loadAjax, createAjax } = useValues(redirectLogicBuilt)
+    const { redirect, loadAjax, createAjax, redirectListHasMore, loadRedirectListMoreAjax } = useValues(redirectLogicBuilt)
+    const { loadRedirectListMore} = useActions(redirectLogicBuilt)
 
-    // load data section
-    const [visible , setVisible] = useState(25);
-    const loadMore = () =>{
-        console.log(visible)
-        setVisible(visible + visible);
+    function handleScroll(e) {
+        var el = e.target;
+        if (
+            loadRedirectListMoreAjax.status !== 'loading' &&  
+            redirectListHasMore &&
+            el.scrollTop + el.clientHeight >= el.scrollHeight
+        ) 
+        {
+            loadRedirectListMore({ offset: redirect.length })
+        }
     }
+
+    console.log(redirectListHasMore)
+    
+    // load data section
+    // const [visible , setVisible] = useState(50);
+    // const loadMore = () =>{
+    //     // console.log(visible)
+    //     setVisible(visible + visible);
+    // }
 
     return <div className="setting-redirects"> 
         <div className="redirect-title-bar">
@@ -56,23 +72,33 @@ export default function SettingRedirects(props) {
                     <div>
                         {
                             redirect.length > 0 ?
-                                <div>
-                                    <div>
+                                <div className="table-body-scroll" onScroll={handleScroll}>
+                                    {/* <div> */}
                                         {
-                                            redirect.slice(0, visible).map(redirect => (
+                                            // redirect.slice(0, visible).map(redirect => (
+                                            loadAjax.status === 'loading' ?
+                                                <Loader />
+                                            :
+                                            <div>
+                                            {
+                                            redirect.map(redirect => (
                                                 <div className="global-table-body">
                                                     <Redirect id={redirect.id} old_url={redirect.path} new_url={redirect.to} redirectType={redirect.type}/>
+
+                                                    {/* <p>{redirect.path}</p> */}
                                                 </div>
                                             ))
+                                            }
+                                            </div>
                                         }
-                                    </div>
+                                    {/* </div>
                                     {
-                                        redirect.length > 25 ?
+                                        redirect.length > 2 ?
                                             <div>
                                                 <button type='button' className ="loadMore-redirect" onClick={loadMore}>Load More</button>
                                             </div>
                                         : null
-                                    } 
+                                    }  */}
                                 </div> : 
                                 <NoResults 
                                     text="There is no any redirects."
@@ -164,14 +190,16 @@ function CreatePopUp() {
                                     onChange={setNewUrl}
                                     placeholder="Redirect Url"
                                 />
-                                <div className="redirect-popup-input">
+                                {/* <div className="redirect-popup-input">
                                     <div className="popup-type-margin">Type</div>
                                     <SelectType 
                                         title="Type"
                                         options={selectOptions} 
                                         onChange={handleType}
                                     />
-                                </div>
+                                </div> */}
+                                <div className="popup-type-margin">Type</div>
+                                <RedirectSelectType onChange = {handleType} options = {selectOptions}/>
                             </div>
                         </PopupBodyDefault>
                     }
@@ -203,6 +231,8 @@ function Redirect ({id, old_url, new_url, redirectType}){
 
     function handleDelete(e) {
         e.preventDefault();
+        console.log({old_url})
+
         setDeletePopupOpened(true);
         setStyleDeleteIcon("table-delete-popup");
     }
@@ -228,8 +258,8 @@ function Redirect ({id, old_url, new_url, redirectType}){
     const [ newUrl, setNewUrl ] = useState(new_url);
 
     function handleType({value}){
-        console.log(value)
-        console.log(redirectType)
+        // console.log(value)
+        // console.log(redirectType)
         setUpdate({...updateRedirectData, 
             type: value
         })
@@ -327,12 +357,12 @@ function Redirect ({id, old_url, new_url, redirectType}){
                                         <PopupFooterDoubleButton
                                             onCancel={handleCancelUpdate}
                                             onClick={(e)=> {updateRedirect(e)}}
-                                            name='Create'
+                                            name='Update'
                                         />
                                     }
                                 /> 
-                                : null
-                            }
+                            : null
+                        }
                         </div>
  
                         <div className="table-delete">
@@ -367,4 +397,128 @@ function SelectType( { options, onChange } ) {
             onChange={onChange}
         />
     </div>
+}
+
+function RedirectSelectType({onChange, options}){
+
+    // const options = [
+    //     { label: 'Permanent', value: '301' },
+    //     { label: 'Temporary', value: '302'}
+    // ]; 
+    
+    // const defaultValue = { label: "Select Tag", value: 0 }
+    
+    const customStyles = {
+
+        control: (provided) => ({
+            ...provided,
+            width: '100%',
+            fontSize: '12px',
+            borderRadius: '20px',
+            border: 'none',
+            background: '#f5f5f5',
+            fontFamily: 'inherit',
+            transition:' 0.3s box-shadow',
+            alignItems: 'center',
+            height: '20px',
+            overflowX: 'auto',
+        }),
+
+        valueContainer: (base, state) => ({
+            ...base,
+            fontFamily: 'Helvetica, sans-serif !important',
+            fontSize: 12,
+            fontWeight: 500,
+            color: '#000',
+            paddingLeft: '15px',
+            paddingRight: '15px',
+            display: 'flex',
+        }),
+
+        // multiValue: (base) => ({
+        //     ...base,
+        //     backgroundColor: "#896c6b",
+        //     borderRadius: "20px"
+        // }),
+        
+        // multiValueLabel: (base) => ({
+        //     ...base,
+        //     color: "#fff",
+        //     fontWeight: "500"
+        // }),
+
+        // multiValueRemove: (base, state) => ({
+        //     ...base,
+        //     color: '#fff',
+        //     borderRadius: '20px',
+        //     backgroundColor: '896c6b',
+        //    '&:hover': {
+        //         backgroundColor: '#f1e8e8',
+        //         color:'black',
+        //     }
+        // }),
+
+
+
+
+
+
+
+
+        // dropdownIndicator: (base) => ({
+        //     ...base,
+        //     display:'none',
+        // }),
+
+        // clearIndicator: (base) => ({
+        //     ...base,
+        //     display:'none',
+        // }),
+
+        // indicatorSeparator:(base)=>({
+        //     ...base,
+        //     display:'none',
+        //   }),
+
+        // option: (provided, state) => ({
+        //     ...provided,
+        //     color: '#000',
+        //     backgroundColor: state.isSelected ? '#f1e8e8' : '#fff',
+        //     width: '95%',
+        //     display: 'flex',
+        //     minHeight: 'initial',
+        //     borderRadius: '20px',
+        //     border: 'none',
+        //     transition: '0.3s box-shadow',
+        //     margin:'10px',
+        //   }),
+
+
+
+
+
+
+
+
+        // singleValue: (provided, state) => {
+        //     const opacity = state.isDisabled ? 0.5 : 1;
+        //     const transition = 'opacity 300ms';
+        
+        //     return { ...provided, opacity, transition };
+        // }
+      }
+
+    const TagSelect = () => (
+        <ReactSelect
+            // defaultValue={defaultValue}
+            // styles={customStyles}
+            options={options}
+            // maxMenuHeight={150}
+            // onChange={() => {}}
+            onChange={onChange}
+            // components={{ DropdownIndicator:() => null, IndicatorSeparator:() => null }}
+        />
+    );
+
+    return <TagSelect/>
 }

@@ -11,6 +11,8 @@ use App\Http\Controllers\ConsoleAPI\ConsoleUserController;
 use App\Http\Controllers\ConsoleAPI\ConsoleViewController;
 use App\Http\Controllers\ConsoleAPI\ConsoleRedirectController;
 use App\Http\Controllers\ConsoleAPI\ConsoleNavigationController;
+use App\Http\Controllers\ConsoleAPI\ConsoleTagController;
+
 
 use App\Http\Middleware\App\ConsoleAPI\BlogAccessMiddleware;
 use App\Http\Middleware\App\LoginRequiredMiddleware;
@@ -67,10 +69,12 @@ Route::prefix('/api/console/v0/blog/{subdomain}')
     Route::delete('/user/{id}', [ConsoleUserController::class, 'deleteUser']);
 
     // tags CRUD
-    Route::get('/tags', []);
-    Route::post('/tag', []);
-    Route::patch('/tag/{id}', []);
-    Route::delete('/tag/{id}', []);
+    Route::get('/tags', [ConsoleTagController::class, 'getTags']);
+    Route::post('/tag', [ConsoleTagController::class, 'createTag']);
+    Route::put('/tag/{tagId}', [ConsoleTagController::class, 'updateTag']);
+    Route::delete('/tag/{tagId}', [ConsoleTagController::class, 'deleteTag']);  
+    Route::get('/get-post-tag', [ConsoleTagController::class, 'getPostTag']);
+    Route::post('/create-post-tag', [ConsoleTagController::class, 'createPostTag']);
 
     // media CRD
     Route::get('/media', [ConsoleMediaController::class, 'getFiles']);

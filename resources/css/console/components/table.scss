@@ -10,6 +10,11 @@
         grid-template-columns: 1fr 1fr 1fr 60px;
         @include grid-style;
     }
+    @mixin grid-five {
+        display: grid;
+        grid-template-columns: 1fr 2fr 1fr 0.5fr 60px;
+        @include grid-style;
+    }
     @mixin grid-four {
         display: grid;
         grid-template-columns: 1fr 1fr 100px 60px;
@@ -33,6 +38,16 @@
 
     .global-table-header-four-equal {
         @include grid-four-equal;
+        font-weight: 600;
+        background: $color-card;
+        margin-bottom: 15px;
+
+        .table-head-item{
+            margin-right:5px;
+        }
+    }
+    .global-table-header-five {
+        @include grid-five;
         font-weight: 600;
         background: $color-card;
         margin-bottom: 15px;
@@ -72,7 +87,14 @@
         }
     }
 
+    .table-body-scroll{
+        max-height: 550px;
+        overflow-y: scroll;
+    }
     .global-table-body{
+        .table-body-five {
+            @include grid-five;
+        }
         .table-body-four {
             @include grid-four;
         }
@@ -87,6 +109,9 @@
             justify-content: center;
             .table-edit {
                 margin-right:8px;
+            }
+            .table-view {
+                margin-left:8px;
             }
             @mixin action-button-style {
                 display: inline-flex;
