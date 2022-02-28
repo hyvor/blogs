@@ -29,7 +29,7 @@ class ConsoleApiAccessMiddleware {
                 throw new TrustedException('Invalid API key');
             }
 
-            $owner = User::find($this->blog->user_id);
+            $owner = UserRepository::getUserByBlogIdAndHyvorUserId($this->blog->id, $this->blog->user_id);
 
             app()->instance(User::class, $owner);
 
@@ -40,7 +40,11 @@ class ConsoleApiAccessMiddleware {
                 throw new TrustedException('You are not logged in');
             }
 
-            $user = UserRepository::getUser($hyvorUser->id);
+            $user = UserRepository::getUserByBlogIdAndHyvorUserId($this->blog->id, $hyvorUser->id);
+
+            if (!$user) {
+                throw new TrustedException('You do not have access to this blog');
+            }
 
             app()->instance(User::class, $user);
 

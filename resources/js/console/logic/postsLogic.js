@@ -29,7 +29,7 @@ const postsLogic = kea({
     ajax: ({ values, props, actions }) => ({
 
         getCounts: async () => {
-            const counts = await api.get(props.subdomain, '/counts');
+            const counts = await api.get(props.subdomain, '/blog/post-counts');
             actions.setCounts(counts);
         },
 
