@@ -3,7 +3,6 @@ import { keymap } from 'prosemirror-keymap'
 import { baseKeymap, chainCommands, exitCode, liftFigcaption, selectNodeBackward } from './commands'
 import { undo, redo } from 'prosemirror-history'
 import { splitListItem } from "./list"
-import { undoInputRule } from 'prosemirror-inputrules'
 import { NodeSelection, SelectionRange } from 'prosemirror-state'
 import { createRich } from './creators'
 
@@ -19,9 +18,6 @@ export default function keymapPlugins(schema) {
     bind("Mod-z", undo)
     bind("Shift-Mod-z", redo)
     bind("Mod-y", redo)
-
-    // undo input rule, if it is the last thing user did
-    bind("Backspace", undoInputRule)
 
     // hard break    
     const 

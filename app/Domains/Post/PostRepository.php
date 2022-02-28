@@ -251,7 +251,7 @@ class PostRepository
              *  - user is "updating" a non-draft post
              */
             $post->content = $updates['content'];
-            $post->content_unsaved = $updates['content_unsaved'];
+            $post->content_unsaved = $updates['content'];
         }
         if (array_key_exists('content_unsaved', $updates)) {
             /**

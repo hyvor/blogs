@@ -180,7 +180,7 @@ $prosemirror-selected-outline: 3px solid #299af3;
 
 .ProseMirror {
 
-    font-size:18px;
+    font-size:16px;
 
     &:focus-visible {
         outline: none;
@@ -220,6 +220,10 @@ $prosemirror-selected-outline: 3px solid #299af3;
                 flex: 1;
                 display:block;
             }
+        }
+
+        & + * {
+            margin-top:10px;
         }
     }
 
@@ -267,11 +271,6 @@ $prosemirror-selected-outline: 3px solid #299af3;
         margin-top:15px;
     }
 
-    h2, h3, h4, h5, h6 {
-        & + p {
-            margin-top:10px;
-        }
-    }
 
     hr {
         margin: 30px 0;
