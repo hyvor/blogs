@@ -1,4 +1,24 @@
-import { smartQuotes, emDash, ellipsis, textblockTypeInputRule, wrappingInputRule, inputRules, InputRule } from 'prosemirror-inputrules';
+import { 
+    smartQuotes, emDash, ellipsis, 
+    textblockTypeInputRule, wrappingInputRule, 
+    inputRules, InputRule } from 'prosemirror-inputrules';
+
+function markInputRule(regexp, markType, getAttrs) {
+    return new InputRule(regexp, (state, match, start, end) => {
+        let attrs = getAttrs instanceof Function ? getAttrs(match) : getAttrs
+        let tr = state.tr
+        if (match[1]) {
+            let textStart = start + match[0].indexOf(match[1])
+            let textEnd = textStart + match[1].length
+            if (textEnd < end) tr.delete(textEnd, end)
+            if (textStart > start) tr.delete(start, textStart)
+            end = start + match[1].length
+        }
+        tr.addMark(start, end, markType.create(attrs))
+        tr.removeStoredMark(markType)
+        return tr
+    })
+}
 
 export default function inputRulesPlugin(schema) {
 
@@ -13,10 +33,30 @@ export default function inputRulesPlugin(schema) {
         orderedListRule(schema.nodes.ordered_list),
         bulletListRule(schema.nodes.bullet_list),
 
-        hrRule(schema.nodes.horizontal_rule)
+        hrRule(schema.nodes.horizontal_rule),
+
+        ...inlineRules(schema.marks)
     ];
 
     return inputRules({rules})
+}
+
+function inlineRules(marks) {
+
+    return [
+
+        // strong (** AND __)
+        markInputRule(/(?:\*\*)([^\*]+)(?:\*\*)$/, marks.strong),
+        markInputRule(/(?:__)([^_]+)(?:__)$/, marks.strong),
+
+        // em (* and _)
+        markInputRule(/(?:^|[^\*])(?:\*)([^\*]+)(?:\*)$/, marks.em),
+        markInputRule(/(?:^|[^_])(?:_)([^_]+)(?:_)$/, marks.em),
+
+        // 
+
+    ];
+
 }
 
 function headingRule(nodeType) {

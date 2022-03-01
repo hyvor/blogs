@@ -1,6 +1,6 @@
 import { useActions, useValues } from 'kea';
 import React, { useEffect, useRef, useState } from 'react';
-import { BoxArrowUpRight, CaretDownFill, Fullscreen, GearFill, PencilFill } from 'react-bootstrap-icons';
+import { BoxArrowUpRight, CaretDownFill, Fullscreen, GearFill, InfoCircle, PencilFill } from 'react-bootstrap-icons';
 import Editor from './ProseMirror/Editor';
 import TextareaAutosize from 'react-textarea-autosize';
 import onOutsideClick from '../../helpers/onOutsideClick';
@@ -191,6 +191,10 @@ export default function Post( {subdomain, id} ) {
                             />
                         </div>
 
+                        <div className="status">
+                            <span>{post.status}</span>
+                        </div>
+
                     </div>
 
                     <div className="post-editor-settings">
@@ -262,6 +266,9 @@ export default function Post( {subdomain, id} ) {
                             <span className="saving">Saving...</span> : null
                         }
                         <span className="words" id="pm-word-count"></span>
+                        <a target="_blank" href="/docs/editor" className="help">
+                            <InfoCircle />
+                        </a>
                     </div>
                 </div>
             </div>

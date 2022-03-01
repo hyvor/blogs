@@ -115,8 +115,8 @@ export default function keymapPlugins(schema) {
     })
 
     return [
-        keymap(baseKeymap),
         keymap(extendedKeymap),
+        keymap(baseKeymap),
     ]
 
 }

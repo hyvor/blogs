@@ -40,6 +40,6 @@ class AuthorObject
             $user->social_github
         );
 
-        $this->posts_count = $user->posts_count;
+        $this->posts_count = 0; //$user->posts_count;
     }
 }
