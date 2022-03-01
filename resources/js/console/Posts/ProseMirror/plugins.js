@@ -9,6 +9,7 @@ import tooltipPlugin from "./tooltip-plugin";
 import navigatorPlugin from "./navigator-plugin";
 import wordCountPlugin from "./wordcount-plugin";
 import slashPlugin from "./slash-plugin";
+import codemark from 'prosemirror-codemark';
 
 export default function plugins(schema) {
 
@@ -28,7 +29,10 @@ export default function plugins(schema) {
         dropCursor(),
         gapCursor(),
 
-        history()
+        history(),
+
+        // https://github.com/curvenote/prosemirror-codemark
+        ...codemark({ markType: schema.marks.code })
     ]
 
 }

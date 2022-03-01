@@ -250,6 +250,11 @@ export const marks = {
         toDOM() { return subDOM }
     },
 
+    mark: {
+        parseDOM: [{tag: "mark"}],
+        toDOM() { return ["mark", 0] }
+    }
+
 
 }
 

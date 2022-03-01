@@ -3,12 +3,21 @@ import {
     textblockTypeInputRule, wrappingInputRule, 
     inputRules, InputRule } from 'prosemirror-inputrules';
 
-function markInputRule(regexp, markType, getAttrs) {
+function markInputRule(regexp, markType, getAttrs, skipStart) {
     return new InputRule(regexp, (state, match, start, end) => {
         let attrs = getAttrs instanceof Function ? getAttrs(match) : getAttrs
         let tr = state.tr
         if (match[1]) {
-            let textStart = start + match[0].indexOf(match[1])
+            let skipMatch;
+            let skipLen = 0;
+
+            if (skipMatch = skipStart && match[0].match(skipStart)) {
+                console.log(skipMatch)
+                skipLen = skipMatch[0].length;
+                start += skipLen;
+            }
+
+            let textStart = start + match[0].indexOf(match[1]) - skipLen
             let textEnd = textStart + match[1].length
             if (textEnd < end) tr.delete(textEnd, end)
             if (textStart > start) tr.delete(start, textStart)
@@ -47,13 +56,29 @@ function inlineRules(marks) {
 
         // strong (** AND __)
         markInputRule(/(?:\*\*)([^\*]+)(?:\*\*)$/, marks.strong),
-        markInputRule(/(?:__)([^_]+)(?:__)$/, marks.strong),
+        markInputRule(/(?:\s__)([^_]+)(?:__)$/, marks.strong),
 
         // em (* and _)
-        markInputRule(/(?:^|[^\*])(?:\*)([^\*]+)(?:\*)$/, marks.em),
-        markInputRule(/(?:^|[^_])(?:_)([^_]+)(?:_)$/, marks.em),
+        markInputRule(/(?:^|[^\*])(?:\*)([^\*]+)(?:\*)$/, marks.em, {}, /^[^\*]/),
+        markInputRule(/(?:^|[^_])(?:_)([^_]+)(?:_)$/, marks.em, {}, /^[^_]/),
 
-        // 
+        // links
+        markInputRule(/(?:\[([^\]]+)\])(\([^\)]+\))$/, marks.link, function(match) {
+            return {href: match[2]}
+        }),
+
+        // code (prosemirror-codemark adds this)
+        // markInputRule(/(?:`)([^`]+)(?:`)$/, marks.code),
+
+        // strikethrough
+        markInputRule(/(?:~~)([^~]+)(?:~~)$/, marks.s),
+
+        // sup & sub
+        markInputRule(/(?:\^)([^\^]+)(?:\^)$/, marks.sup),
+        markInputRule(/(?:~)([^~]+)(?:~)$/, marks.sub),
+
+        // mark
+        markInputRule(/(?:==)([^=]+)(?:==)/, marks.mark),
 
     ];
 

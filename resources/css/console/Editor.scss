@@ -165,6 +165,11 @@ $prosemirror-selected-outline: 3px solid #299af3;
   .ProseMirror-selectednode {
     outline: $prosemirror-selected-outline!important;
   }
+  img.ProseMirror-separator {
+    display: inline !important;
+    border: none !important;
+    margin: 0 !important;
+  }
 
 /////////// main CSS end
 
@@ -354,6 +359,11 @@ $prosemirror-selected-outline: 3px solid #299af3;
     img {
         display: block;
         margin: auto;
+    }
+
+    mark {
+        padding: 0.2em 0.4em;
+        background-color: #fcf8e3;
     }
 
 }

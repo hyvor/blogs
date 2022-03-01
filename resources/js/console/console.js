@@ -21,6 +21,8 @@ import 'codemirror/mode/twig/twig'; // twig
 import 'codemirror/mode/htmlmixed/htmlmixed'; // html
 import 'codemirror/mode/css/css'; // css|scss
 
+import 'prosemirror-codemark/dist/codemark.css';
+
 resetContext({
     plugins: [
         routerPlugin(),
