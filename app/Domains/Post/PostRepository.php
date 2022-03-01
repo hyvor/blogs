@@ -227,7 +227,8 @@ class PostRepository
             $post->published_at = Carbon::createFromTimestamp($updates['published_at']);
         }
         if (array_key_exists('status', $updates)) {
-            $post->status = $updates['status'];
+            $status = $updates['status'];
+            $post->status = $status;
         }
         if (array_key_exists('is_featured', $updates)) {
             $post->is_featured = $updates['is_featured'];
@@ -251,7 +252,7 @@ class PostRepository
              *  - user is "updating" a non-draft post
              */
             $post->content = $updates['content'];
-            $post->content_unsaved = $updates['content'];
+            $post->content_unsaved = null;
         }
         if (array_key_exists('content_unsaved', $updates)) {
             /**
@@ -280,6 +281,7 @@ class PostRepository
         }
 
         $post->save();
+
         return $post;
     }
 

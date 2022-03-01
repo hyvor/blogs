@@ -4,7 +4,6 @@ import { useActions, useValues } from 'kea';
 import subdomainLogic from '../logic/subdomainLogic';
 import postsLogic from '../logic/postsLogic';
 import Loader from '../ReusableComponents/Loader';
-import NavLink from '../ReusableComponents/NavLink';
 import postLogic from '../logic/postLogic';
 import PostsFilters from './PostsFilters';
 import NoResults from '../ReusableComponents/NoResults';
@@ -73,7 +72,7 @@ export default function Posts( { postId } ) {
         <div className="box box-right">
             {
                 postId ?
-                <Post subdomain={subdomain} id={postId} /> : 
+                <Post subdomain={subdomain} id={postId} /> :
                 <NoPost />
             }
         </div>

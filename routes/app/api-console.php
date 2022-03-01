@@ -18,9 +18,13 @@ use App\Http\Middleware\App\LoginRequiredElseRedirectMiddleware;
 use App\Http\Middleware\App\SubdomainMiddleware;
 use Illuminate\Support\Facades\Route;
 
-Route::middleware(LoginRequiredElseRedirectMiddleware::class)
-    ->get('/console/{any?}', ConsoleViewController::class)
+// Route::middleware(LoginRequiredElseRedirectMiddleware::class)
+//     ->get('/console/{any?}', ConsoleViewController::class)
+//     ->where('any', '.*');
+
+Route::get('/console/{any?}', ConsoleViewController::class)
     ->where('any', '.*');
+
 
 // this is an internal API
 Route::prefix('/api/console')

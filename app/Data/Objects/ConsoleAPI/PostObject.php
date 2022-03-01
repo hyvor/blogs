@@ -3,6 +3,7 @@
 namespace App\Data\Objects\ConsoleAPI;
 
 use App\Data\Objects\DataAPI\TagObject;
+use App\Domains\Route\PermalinkRepository;
 use App\Models\Blog;
 use App\Models\Post;
 
@@ -10,23 +11,23 @@ class PostObject
 {
     public int $id;
     public string $preview_id; // an encrypted ID for preview
-    public $created_at;
-    public $updated_at;
-    public $published_at;
-    public $status;
-    public $is_featured;
-    public $is_page;
-    public $slug;
-    public $content;
-    public $content_unsaved;
-    public $title;
-    public $description;
-    public $url;
-    public $featured_image;
-    public $canonical_url;
-    public $reading_time;
-    public $code_head;
-    public $code_foot;
+    public int $created_at;
+    public int $updated_at;
+    public ?int $published_at;
+    public string $status;
+    public bool $is_featured;
+    public bool $is_page;
+    public string $slug;
+    public ?string $content;
+    public ?string $content_unsaved;
+    public ?string $title;
+    public ?string $description;
+    public string $url;
+    public ?string $featured_image;
+    public ?string $canonical_url;
+    public ?int $reading_time;
+    public ?string $code_head;
+    public ?string $code_foot;
 
 
     public function __construct(Post $post, Blog $blog)
@@ -44,14 +45,14 @@ class PostObject
         $this->updated_at = $post->updated_at->timestamp;
         $this->published_at = $post->published_at?->timestamp;
         $this->status = $post->status;
-        $this->is_featured = $post->is_featured;
-        $this->is_page = $post->is_page;
+        $this->is_featured = (bool) $post->is_featured;
+        $this->is_page = (bool) $post->is_page;
         $this->slug = $post->slug;
         $this->content = $post->content;
         $this->content_unsaved = $post->content_unsaved;
         $this->title = $post->title;
         $this->description = $post->description;
-        $this->url = $post->url;
+        $this->url = PermalinkRepository::getPostPermalink($post, $blog);
         $this->featured_image = $post->featured_image;
         $this->canonical_url = $post->canonical_url;
         $this->reading_time = $post->reading_time;

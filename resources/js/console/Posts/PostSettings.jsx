@@ -7,6 +7,10 @@ import { PopupConfirm } from '../ReusableComponents/Popup';
 import { toast } from 'react-toastify'
 import mediaLogic from '../logic/mediaLogic';
 import subdomainLogic from '../logic/subdomainLogic';
+import Checkbox from '../ReusableComponents/Checkbox';
+import dayjs from 'dayjs';
+import DatePicker from 'react-datepicker';
+import Loader from '../ReusableComponents/Loader';
 
 export default function PostSettings({ isSettingsOpen, settingsViewRef, id }) {
 
@@ -16,14 +20,21 @@ export default function PostSettings({ isSettingsOpen, settingsViewRef, id }) {
 
     const {subdomain} = useValues(subdomainLogic);
     const mediaLogicInst = mediaLogic({subdomain})
+    const { uploadImageAjax } = useValues(mediaLogicInst);
     const { uploadImage } = useActions(mediaLogicInst)
 
     const [ isDeleting, setIsDeleting ] = useState(false);
+    const [ isFeaturedImageRemoving, setIsFeaturedImageRemoving ] = useState(false);
 
     const imageUploadInputRef = useRef(null)
 
     function handleDelete() {
         deletePost({id})
+    }
+
+    function handleFeaturedImageRemove() {
+        setIsFeaturedImageRemoving(false)
+        updatePostValue("featured_image", null);
     }
 
     function handleUploadInputClick() {
@@ -42,6 +53,7 @@ export default function PostSettings({ isSettingsOpen, settingsViewRef, id }) {
             }
         })
     }
+
 
     const [ settingsType, setSettingsType ] = useState('basic'); // basic | advanced
 
@@ -71,14 +83,24 @@ export default function PostSettings({ isSettingsOpen, settingsViewRef, id }) {
                                 className="input" 
                                 value={post.slug}
                                 onChange={(e) => updatePostValue("slug", e.target.value)}
+                                maxLength={250}
                             ></input>
                         </Setting>
 
                         <Setting 
                             title="Publish Time"
-                            className="post-setting-featured-image"
+                            className="post-setting-publish-time"
                         >
-                            <input className="input" value="2021-01-01" onChange={() => {}}></input>
+                            {
+                                post.status !== 'published' && post.status !== 'scheduled' ?
+                                <div className="not-published">Not published</div> :
+                                <DatePicker
+                                    selected={dayjs.unix(post.published_at).toDate()}
+                                    onChange={(date) => updatePostValue("published_at", dayjs(date).unix())}
+                                    showTimeInput
+                                    dateFormat="yyyy-MM-dd h:mm aa"
+                                />
+                            }
                         </Setting>
 
                     </div>
@@ -113,6 +135,7 @@ export default function PostSettings({ isSettingsOpen, settingsViewRef, id }) {
                                 placeholder="Write a description..."
                                 value={post.description}
                                 onChange={e => updatePostValue('description', e.target.value)}
+                                maxLength={350}
                             ></textarea>
                         </Setting>
 
@@ -125,9 +148,24 @@ export default function PostSettings({ isSettingsOpen, settingsViewRef, id }) {
                                 onClick={handleUploadInputClick}
                             >
                                 {
-                                    post.featured_image ?
-                                    <img src={post.featured_image} /> :
-                                    <div>Upload a file</div>
+                                    uploadImageAjax.status === 'loading' ?
+                                    <div className="no-image">
+                                        <Loader />
+                                    </div> :
+                                    (
+                                        post.featured_image ?
+                                        <div className="image-preview">
+                                            <img src={post.featured_image} />
+                                            <span className="delete-button" onClick={(e) => {
+                                                e.stopPropagation();
+                                                setIsFeaturedImageRemoving(true)
+                                            }}>
+                                                <Trash size={10} />
+                                            </span>
+                                        </div>
+                                        :
+                                        <div className="no-image">Upload a file</div>
+                                    )
                                 }
                                 <input
                                     ref={imageUploadInputRef}
@@ -148,7 +186,10 @@ export default function PostSettings({ isSettingsOpen, settingsViewRef, id }) {
                             title="Featured?"
                             description="The unique part of the URL to identify this post"
                         >
-                            <input type="checkbox"></input>
+                            <Checkbox 
+                                checked={post.is_featured}
+                                onChange={featured => updatePostValue('is_featured', featured)}
+                            />
                         </Setting>
 
                         <Setting 
@@ -173,6 +214,7 @@ export default function PostSettings({ isSettingsOpen, settingsViewRef, id }) {
                             className="input"
                             value={post.canonical_url}
                             onChange={e => updatePostValue('canonical_url', e.target.value)}
+                            maxLength={250}
                         ></input>
                     </Setting>
 
@@ -213,6 +255,20 @@ export default function PostSettings({ isSettingsOpen, settingsViewRef, id }) {
                     onClick={handleDelete}
                     onCancel={() => setIsDeleting(false)}
                     name="Delete"
+                    buttonClass="danger"
+                /> : null
+            }
+
+            {
+                isFeaturedImageRemoving ?
+                <PopupConfirm 
+                    title="Remove Featured Image"
+                    text={<div>
+                        Are you sure to remove this featured image?
+                    </div>}
+                    onClick={handleFeaturedImageRemove}
+                    onCancel={() => setIsFeaturedImageRemoving(false)}
+                    name="Remove"
                     buttonClass="danger"
                 /> : null
             }
