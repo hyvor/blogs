@@ -12,7 +12,7 @@ a.link {
     }
 }
 
-.input {
+@mixin mixin-input {
     width: 100%;
     padding: 9px 15px;
     border-radius: 20px;
@@ -20,14 +20,17 @@ a.link {
     background:$color-input;
     font-family: inherit;
     transition:.3s box-shadow;
+    &:focus {
+        outline: 0;
+        box-shadow: 0 0 2px 0px $color-accent;
+    }
+}
+.input {
+    @include mixin-input;
 }
 textarea.input {
     resize:vertical;
     min-height: 150px;
-}
-.input:focus {
-    outline: 0;
-    box-shadow: 0 0 2px 0px $color-accent;
 }
 
 .text-normal {

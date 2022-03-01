@@ -8,6 +8,7 @@ import { Trash, Upload } from 'react-bootstrap-icons';
 import { PopupConfirm } from '../ReusableComponents/Popup';
 import Toast from '../ReusableComponents/Toast';
 import NoResults from '../ReusableComponents/NoResults';
+import { useEffect } from 'react';
 
 let uploadInput = null;
 
@@ -16,7 +17,7 @@ export default function SettingsMedia() {
     const {subdomain} = useValues(subdomainLogic);
     const mediaLogicBuilt = mediaLogic({subdomain})
     const { media, loadAjax, uploadAjax } = useValues(mediaLogicBuilt)
-    const { remove, upload } = useActions(mediaLogicBuilt)
+    const { remove, upload, load } = useActions(mediaLogicBuilt)
 
     console.log(media, loadAjax, uploadAjax);
 
@@ -41,6 +42,8 @@ export default function SettingsMedia() {
         }
 
     }
+
+    useEffect(load, [])
 
     return <div className="setting-media">
 

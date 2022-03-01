@@ -22,14 +22,14 @@ const postsLogic = kea({
     },
 
     actionToUrl: ({ props }) => ({
-        navigateToPost: ({id}) => `/${props.subdomain}/posts/${id}`,
-        navigateToPosts: () => `/${props.subdomain}/posts`
+        navigateToPost: ({id}) => `/console/${props.subdomain}/posts/${id}`,
+        navigateToPosts: () => `/console/${props.subdomain}/posts`
     }),
 
     ajax: ({ values, props, actions }) => ({
 
         getCounts: async () => {
-            const counts = await api.get(props.subdomain, '/counts');
+            const counts = await api.get(props.subdomain, '/blog/post-counts');
             actions.setCounts(counts);
         },
 

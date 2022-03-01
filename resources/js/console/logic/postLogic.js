@@ -22,7 +22,7 @@ const postLogic = kea({
 
     },
 
-    ajax: ({actions, values, selectors, props}) => ({
+    ajax: ({actions, selectors, props}) => ({
  
         loadPost: async () => {
             const response = await api.get(subdomainLogic.values.subdomain, `/post/${props.id}`);
@@ -30,9 +30,12 @@ const postLogic = kea({
         },
 
         deletePost: async () => {
-            await api.delete(props.subdomain, `/post/${props.id}`);
-            actions.getPostsLoadSuccess(values.postsList.filter(pId => pId !== id));
-            actions.navigateToPosts();
+            // remove from posts list
+            const subdomain = subdomainLogic.values.subdomain
+            const postsLogicInst = postsLogic({subdomain});
+            postsLogicInst.actions.setPostsList(postsLogicInst.values.postsList.filter(pId => pId !== props.id));
+            postsLogicInst.actions.navigateToPosts();
+            await api.delete(subdomain, `/post/${props.id}`);
         },
 
         savePost: async () => {
@@ -104,12 +107,14 @@ const postLogic = kea({
 
 function getPostDiff(post, postOriginal) {
 
+    // keys are defined to drop authors and tags
     const updatableKeys = [
         'published_at',
         'status',
         'is_featured',
         'slug',
         'content',
+        'content_unsaved',
         'title',
         'description',
         'featured_image',

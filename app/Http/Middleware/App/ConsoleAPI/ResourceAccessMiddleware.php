@@ -12,7 +12,7 @@ use App\Models\Navigation;
 use App\Models\Tag;
 use Closure;
 
-class BlogAccessMiddleware
+class ResourceAccessMiddleware
 {
     private $models = [
         'post' => Post::class,
@@ -32,17 +32,7 @@ class BlogAccessMiddleware
     {
 
         /**
-         * TODO: Check if the user is authorized to access the console
-         */
-
-        // TODO:
-
-
-
-
-
-        /**
-         * Now, if there's an ID in the route,
+         * If there's an ID in the route,
          * it means that we are accesing a model that belongs to the current blog
          * such as a post that belong to the post
          *
@@ -69,7 +59,7 @@ class BlogAccessMiddleware
             $modelType = $split[5];
 
             if (!array_key_exists($modelType, $this->models)) {
-                throw new TrustedException('Unable to find the model to verify blog relationship');
+                throw new TrustedException("Unable to find the $modelType to verify blog relationship");
             }
 
             // ex: Post model

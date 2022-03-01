@@ -1,12 +1,18 @@
 import { useActions, useValues } from 'kea';
 import React, { useEffect, useRef, useState } from 'react';
-import { BoxArrowUpRight, CaretDownFill, Fullscreen, GearFill, PencilFill, Trash } from 'react-bootstrap-icons';
+import { BoxArrowUpRight, CaretDownFill, Fullscreen, GearFill, PencilFill } from 'react-bootstrap-icons';
 import Editor from './ProseMirror/Editor';
 import TextareaAutosize from 'react-textarea-autosize';
 import onOutsideClick from '../../helpers/onOutsideClick';
 import postLogic from '../logic/postLogic';
 import { getBlogUrl } from '../lib/blog-helpers';
+<<<<<<< HEAD
 import SelectTags from './Tags';
+=======
+import PostSettings from './PostSettings';
+import Loader from '../ReusableComponents/Loader';
+import { PopupConfirm } from '../ReusableComponents/Popup';
+>>>>>>> master
 
 export default function Post( {subdomain, id} ) {
 
@@ -41,7 +47,7 @@ export default function Post( {subdomain, id} ) {
         function checkSaveUnload() {
             if (
                 (post.status === 'published' || post.status === 'scheduled') && 
-                Object.keys(getDiff).length > 0
+                Object.keys(getDiff()).length > 0
             ) {
                 return true;
             } else {
@@ -80,64 +86,47 @@ export default function Post( {subdomain, id} ) {
         setIsSettingsOpen(false);
     }
 
-    const [ settingsType, setSettingsType ] = useState('basic'); // basic | advanced
-
-    // have to first click Edit Post to edit published/scheduled posts
-    const [publishedPostEditing, setPublishedPostEditing] = useState(false);
-
-
-    // something changed?
-    // null if not
-    // object ({old, new}) if changed
-    function getDiffWithOld() {
-        var diff = {};
-        for (var key in posts[id]) {
-            if (post[key] !== posts[id][key]) {
-                diff[key] = {
-                    old: posts[id][key],
-                    new: post[key]
-                }
-            }
+    function UnPublishButton() {
+        let name;
+        if (post.status === 'published') {
+            name = "Unpublish";
+        } else if (post.status === 'scheduled') {
+            name = "Unschedule";
         }
-        return diff;
+
+        return name ? <button 
+            className="button small secondary unpublish-button"
+            onClick={() => setIsUnPublishing(true)}
+        >
+            {name}
+        </button> : null;
     }
 
     function MainButton() {
-        let name, onClick, icon, disabled = false;
+        let name, onClick, icon;
 
         if (post.status === 'published' || post.status === 'scheduled') {
-            if (!publishedPostEditing) {
+            if (!nonDraftPostEditing) {
                 name = "Edit Post";
                 icon = <PencilFill />
-                onClick = () => setPublishedPostEditing(true);
+                onClick = () => setNonDraftPostEditing(true);
             } else {
-                const diff = getDiffWithOld();
-                if (diff) {
-                    const count = Object.keys(diff).length;
-                    name = "Save Changes" + (count > 0 ? " (" + count + ")" : "");
-                    onClick = () => showUpdateDetails();
-                    disabled = count === 0;
-                }
+                name  = "Update";
+                onClick = () => showUpdateDetails();
             }
         } else if (post.status === 'draft') {
             name = "Publish Post";
             onClick = () => showPublishDetails()
-        } else { // deleted
-            name = "Recover Post";
-            onClick = () => showDeleteDetails()
+            icon = <CaretDownFill />;
         }
 
         return <button className="button small main-button" onClick={() => onClick()}>
-            <span>{name}</span>{icon || <CaretDownFill />}
+            <span>{name}</span>{icon}
         </button>
     }
 
     function showUpdateDetails() {
         alert("Updated");
-    }
-
-    function handleDelete() {
-        deletePost({id})
     }
 
     function toggleFullscreen() {
@@ -157,6 +146,35 @@ export default function Post( {subdomain, id} ) {
     function checkFullscreenClose(e) {
         if (e.key === "Escape")
             closeFullscreen();
+    }
+
+    const isNotDraft = post.status !== 'draft';
+    const content = isNotDraft ? (post.content_unsaved || post.content) : post.content;
+
+    // have to first click Edit Post to edit published/scheduled posts
+    const [nonDraftPostEditing, setNonDraftPostEditing] = useState(false);
+    const [isUnPublishing, setIsUnPublishing] = useState(false);
+    
+    function handleContentUpdate(v) {
+        updatePostValue(isNotDraft ? 'content_unsaved' : 'content', v);
+    }
+
+    function handleUnPublish() {
+        updatePostValue('status', 'draft');
+        savePost();
+        setIsUnPublishing(false);
+    }
+
+    useEffect(() => {
+        if (loadPostAjax.status === 'success') {
+            setNonDraftPostEditing(isNotDraft && post.content_unsaved)
+        }
+    }, [loadPostAjax.status])
+
+    if (loadPostAjax.status === 'loading') {
+        return <div className="post-loading">
+            <Loader />
+        </div>;
     }
 
     return <div className={"post-editor" + (isFullScreen ? " fullscreen" : "") } ref={viewRef}>
@@ -204,17 +222,12 @@ export default function Post( {subdomain, id} ) {
                             </div>
 
                             <div className="publish-buttons">
-                                {
-                                    savePostAjax.status === 'loading' ?
-                                    <span className="saving">Saving...</span> : null
-                                }
+                                <UnPublishButton />
                                 <MainButton />
                             </div>
                         </div>
-                        
-                        <div className={"settings-view-wrap " + (isSettingsOpen ? "active" : "inactive") }>
-                            <div ref={settingsViewRef} className="post-editor-settings-view">
 
+<<<<<<< HEAD
                                 <div className="setting-select">
                                     <span onClick={() => setSettingsType('basic')} className={settingsType === 'basic' ? 'active' : ''}>Basic</span>
                                     <span onClick={() => setSettingsType('advanced')} className={settingsType === 'advanced' ? 'active' : ''}>Advanced</span>
@@ -354,6 +367,13 @@ export default function Post( {subdomain, id} ) {
                                 }
                             </div>  
                         </div>
+=======
+                        <PostSettings 
+                            isSettingsOpen={isSettingsOpen}
+                            settingsViewRef={settingsViewRef}
+                            id={id}
+                        />
+>>>>>>> master
 
                     </div>
                 
@@ -370,8 +390,9 @@ export default function Post( {subdomain, id} ) {
                     loadPostAjax.status === 'loading' ? null :
                     <Editor 
                         id={id}
-                        value={post.content}
-                        onChange={v => updatePostValue('content', v)}
+                        value={content}
+                        onChange={v => handleContentUpdate(v)}
+                        editable={post.status === 'draft' || nonDraftPostEditing}
                     />
                 }
             </div>
@@ -382,6 +403,10 @@ export default function Post( {subdomain, id} ) {
                 <div className="post-editor-bottom-content">
                     <div id="pm-navigator-wrap"></div>
                     <div className="right">
+                        {
+                            savePostAjax.status === 'loading' ?
+                            <span className="saving">Saving...</span> : null
+                        }
                         <span className="words" id="pm-word-count"></span>
                     </div>
                 </div>
@@ -389,20 +414,17 @@ export default function Post( {subdomain, id} ) {
 
         </div>
         
+        {
+            isUnPublishing ?
+            <PopupConfirm 
+                title={( post.status === 'published' ? 'Unpublish' : 'Unschedule' ) + " Post"}
+                text={"Are you sure to " + ( post.status === 'published' ? 'unpublish' : 'unschedule' ) + " this post? It will be changed to a draft."}
+                name={( post.status === 'published' ? 'Unpublish' : 'Unschedule' )}
+                onClick={handleUnPublish}
+                onCancel={() => setIsUnPublishing(false)}
+            /> : null
+        }
 
-    </div>
-
-}   
-
-function Setting(props) {
-
-    return <div className={"post-setting " + (props.className || "")}>
-        <div className="post-setting-title">{props.title}</div>
-        { false ? <div className="post-setting-description">{props.description}</div> : null }
-
-        <div className="post-setting-content">
-            {props.children}
-        </div>
     </div>
 
 }

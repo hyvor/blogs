@@ -16,6 +16,10 @@ const mediaLogic = kea({
 
     ajax: ({actions, props}) => ({
 
+        /**
+         * Inside media settings
+         * ==================
+         */
         load: async ({offset = 0, type}) => {
             const media = await api.get(props.subdomain, '/media', {
                 offset,
@@ -24,17 +28,26 @@ const mediaLogic = kea({
             });
             actions.setMediaList(media);
         },
-
         remove: async ({id}) => {
             actions.removeFromList(id);
             await api.delete(props.subdomain, `/media/${id}`);
         },
-
         upload: async ({file}) => {
             var formData = new FormData();
             formData.append('file', file, file.name); 
             const media = await api.post(props.subdomain, '/media', formData);
             actions.addMedia(media);
+        },
+
+        /**
+         * Outside media settings (common)
+         * ===============
+         */
+        uploadImage: async ({file, onUpload}) => {
+            var formData = new FormData();
+            formData.append('file', file, file.name);
+            const media = await api.post(props.subdomain, '/media', formData);
+            onUpload(media);
         }
 
     }),
@@ -48,10 +61,6 @@ const mediaLogic = kea({
         }]
 
     },
-
-    events: ({actions}) => ({
-        afterMount: actions.load
-    })
 
 });
 

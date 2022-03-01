@@ -57,7 +57,6 @@ class BlogCountsRepository
                 'draft' => $status['draft'] ?? 0,
                 'published' => $status['published'] ?? 0,
                 'scheduled' => $status['scheduled'] ?? 0,
-                'deleted' => $status['deleted'] ?? 0,
                 'featured' => $featuredCount
             ],
             'authors' => $authors,

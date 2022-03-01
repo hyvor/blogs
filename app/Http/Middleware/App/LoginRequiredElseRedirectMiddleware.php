@@ -7,7 +7,7 @@ use Hyvor\HyvorConnecter\Redirect;
 use Hyvor\HyvorConnecter\User;
 use Illuminate\Http\Request;
 
-class LoginRequiredMiddleware {
+class LoginRequiredElseRedirectMiddleware {
 
     public function handle(Request $request, Closure $next)
     {

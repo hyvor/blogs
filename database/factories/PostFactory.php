@@ -17,7 +17,7 @@ class PostFactory extends Factory
     {
         
         $title = $this->faker->sentence;
-        $status = Arr::random(['draft', 'published', 'deleted', 'scheduled']);
+        $status = Arr::random(['draft', 'published', 'scheduled']);
 
         $paragraphs = $this->faker->paragraphs(rand(2, 6));
         $prosemirrorJson = [

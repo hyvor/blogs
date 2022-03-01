@@ -28,6 +28,8 @@ Match | Description
 `/styles.css` | The main CSS file of the blog (auto-generated from SCSS files in theme styles)
 `/assets/{fileName}` | To serve files in the theme **assets** directory
 `/media/{fileName}` | To serve uploaded media files
+`/robots.txt` | Robots.txt file (customizable in settings)
+`/sitemap.xml` | Blog's sitemap index file
 
 ## Changing Post/Page Permalinks {#permalinks}
 

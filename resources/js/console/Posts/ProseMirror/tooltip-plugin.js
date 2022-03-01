@@ -129,7 +129,7 @@ class MarksTooltip {
             ) return
 
 
-        if (state.selection.empty) {
+        if (state.selection.empty || !view.editable) {
             this.tooltip.style.display = "none"
             return
         }

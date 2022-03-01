@@ -7,7 +7,7 @@ import subdomainLogic from '../logic/subdomainLogic';
 import blogsLogic from '../logic/blogsLogic';
 import numberFormatter from '../../helpers/numberFormatter';
 
-export default function PostFilters({ filters, changeFilter }) {
+export default function PostsFilters({ filters, changeFilter }) {
 
     const { subdomain } = useValues(subdomainLogic)
     const { counts } = useValues(postsLogic({subdomain}))
@@ -17,11 +17,10 @@ export default function PostFilters({ filters, changeFilter }) {
 
     const statusOptions = [
         { value: 'all', label: <FilterLabel name="All" count={blog.blog.posts_count} /> },
-        { value: 'published', label: <FilterLabel name="published" count={counts && counts.status.published} />},
-        { value: 'draft', label: <FilterLabel name="draft" count={counts && counts.status.draft} />},
-        { value: 'scheduled', label: <FilterLabel name="scheduled" count={counts && counts.status.scheduled} />},
-        { value: 'deleted', label: <FilterLabel name="deleted" count={counts && counts.status.deleted} />},
-        { value: 'featured', label: <FilterLabel name="featured" count={counts && counts.status.featured} />},
+        { value: 'published', label: <FilterLabel name="Published" count={counts && counts.status.published} />},
+        { value: 'draft', label: <FilterLabel name="Draft" count={counts && counts.status.draft} />},
+        { value: 'scheduled', label: <FilterLabel name="Scheduled" count={counts && counts.status.scheduled} />},
+        { value: 'featured', label: <FilterLabel name="Featured" count={counts && counts.status.featured} />},
     ]
 
     const [authorsOptions, setAuthorsOptions] = useState([
