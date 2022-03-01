@@ -21,6 +21,16 @@ class Blog extends Model
         return $this->hasMany(Post::class);
     }
 
+    public function users()
+    {
+        return $this->hasMany(User::class);
+    }
+
+    public function tags()
+    {
+        return $this->hasMany(Tag::class);
+    }
+
     /**
      * Get routes of the blog
      */

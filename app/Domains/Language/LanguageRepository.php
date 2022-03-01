@@ -73,5 +73,11 @@ class LanguageRepository {
 
     }
 
+    public static function getPrimaryLanguage(Blog $blog) : Language {
+
+        return $blog->languages()->where('is_primary', true)->first();
+
+    }
+
 
 }

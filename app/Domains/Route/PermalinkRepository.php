@@ -111,6 +111,11 @@ class PermalinkRepository {
         return 'https://' . $domain . ($path ? '/' . $path : '');
     }
 
+    public static function getBlogPermalink(Blog $blog) : string
+    {
+        return self::getFullUrlFromPath($blog, '');
+    }
+
     /**
      * Gets permalink of a post/page
      * only for published posts

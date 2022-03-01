@@ -3,6 +3,7 @@
 use App\Http\Controllers\ConsoleAPI\ConsoleBlogController;
 use App\Http\Controllers\ConsoleAPI\ConsoleBlogThemeController;
 use App\Http\Controllers\ConsoleAPI\ConsoleEmbedController;
+use App\Http\Controllers\ConsoleAPI\ConsoleImportExportController;
 use App\Http\Controllers\ConsoleAPI\ConsoleLanguageController;
 use App\Http\Controllers\ConsoleAPI\ConsoleMediaController;
 use App\Http\Controllers\ConsoleAPI\ConsolePostController;
@@ -147,6 +148,9 @@ Route::prefix('/api/console/v0/blog/{subdomain}')
         Route::get('/theme-files', [ConsoleBlogThemeController::class, 'getAllFiles']);
         Route::put('/theme-file/{id}', [ConsoleBlogThemeController::class, 'createOrUpdateFile']);
 
+        Route::get('/data/export', [ConsoleImportExportController::class, 'export']);
+        Route::get('/data/import', [ConsoleImportExportController::class, 'import']);
+    
     });
 
     /**
