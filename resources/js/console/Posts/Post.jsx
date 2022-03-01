@@ -7,6 +7,8 @@ import onOutsideClick from '../../helpers/onOutsideClick';
 import postLogic from '../logic/postLogic';
 import { getBlogUrl } from '../lib/blog-helpers';
 import PostSettings from './PostSettings';
+import Loader from '../ReusableComponents/Loader';
+import { PopupConfirm } from '../ReusableComponents/Popup';
 
 export default function Post( {subdomain, id} ) {
 
@@ -41,7 +43,7 @@ export default function Post( {subdomain, id} ) {
         function checkSaveUnload() {
             if (
                 (post.status === 'published' || post.status === 'scheduled') && 
-                Object.keys(getDiff).length > 0
+                Object.keys(getDiff()).length > 0
             ) {
                 return true;
             } else {
@@ -80,9 +82,21 @@ export default function Post( {subdomain, id} ) {
         setIsSettingsOpen(false);
     }
 
+    function UnPublishButton() {
+        let name;
+        if (post.status === 'published') {
+            name = "Unpublish";
+        } else if (post.status === 'scheduled') {
+            name = "Unschedule";
+        }
 
-    // have to first click Edit Post to edit published/scheduled posts
-    const [nonDraftPostEditing, setNonDraftPostEditing] = useState(false);
+        return name ? <button 
+            className="button small secondary unpublish-button"
+            onClick={() => setIsUnPublishing(true)}
+        >
+            {name}
+        </button> : null;
+    }
 
     function MainButton() {
         let name, onClick, icon;
@@ -93,16 +107,17 @@ export default function Post( {subdomain, id} ) {
                 icon = <PencilFill />
                 onClick = () => setNonDraftPostEditing(true);
             } else {
-                name  = "Update Post";
+                name  = "Update";
                 onClick = () => showUpdateDetails();
             }
         } else if (post.status === 'draft') {
             name = "Publish Post";
             onClick = () => showPublishDetails()
+            icon = <CaretDownFill />;
         }
 
         return <button className="button small main-button" onClick={() => onClick()}>
-            <span>{name}</span>{icon || <CaretDownFill />}
+            <span>{name}</span>{icon}
         </button>
     }
 
@@ -127,6 +142,35 @@ export default function Post( {subdomain, id} ) {
     function checkFullscreenClose(e) {
         if (e.key === "Escape")
             closeFullscreen();
+    }
+
+    const isNotDraft = post.status !== 'draft';
+    const content = isNotDraft ? (post.content_unsaved || post.content) : post.content;
+
+    // have to first click Edit Post to edit published/scheduled posts
+    const [nonDraftPostEditing, setNonDraftPostEditing] = useState(false);
+    const [isUnPublishing, setIsUnPublishing] = useState(false);
+    
+    function handleContentUpdate(v) {
+        updatePostValue(isNotDraft ? 'content_unsaved' : 'content', v);
+    }
+
+    function handleUnPublish() {
+        updatePostValue('status', 'draft');
+        savePost();
+        setIsUnPublishing(false);
+    }
+
+    useEffect(() => {
+        if (loadPostAjax.status === 'success') {
+            setNonDraftPostEditing(isNotDraft && post.content_unsaved)
+        }
+    }, [loadPostAjax.status])
+
+    if (loadPostAjax.status === 'loading') {
+        return <div className="post-loading">
+            <Loader />
+        </div>;
     }
 
     return <div className={"post-editor" + (isFullScreen ? " fullscreen" : "") } ref={viewRef}>
@@ -174,6 +218,7 @@ export default function Post( {subdomain, id} ) {
                             </div>
 
                             <div className="publish-buttons">
+                                <UnPublishButton />
                                 <MainButton />
                             </div>
                         </div>
@@ -199,8 +244,8 @@ export default function Post( {subdomain, id} ) {
                     loadPostAjax.status === 'loading' ? null :
                     <Editor 
                         id={id}
-                        value={post.content}
-                        onChange={v => updatePostValue('content', v)}
+                        value={content}
+                        onChange={v => handleContentUpdate(v)}
                         editable={post.status === 'draft' || nonDraftPostEditing}
                     />
                 }
@@ -223,6 +268,16 @@ export default function Post( {subdomain, id} ) {
 
         </div>
         
+        {
+            isUnPublishing ?
+            <PopupConfirm 
+                title={( post.status === 'published' ? 'Unpublish' : 'Unschedule' ) + " Post"}
+                text={"Are you sure to " + ( post.status === 'published' ? 'unpublish' : 'unschedule' ) + " this post? It will be changed to a draft."}
+                name={( post.status === 'published' ? 'Unpublish' : 'Unschedule' )}
+                onClick={handleUnPublish}
+                onCancel={() => setIsUnPublishing(false)}
+            /> : null
+        }
 
     </div>
 
