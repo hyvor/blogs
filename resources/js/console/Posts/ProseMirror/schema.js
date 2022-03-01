@@ -193,7 +193,22 @@ const emDOM = ["em", 0],
     subDOM = ["sub", 0];
 
 // :: Object [Specs](#model.MarkSpec) for the marks in the schema.
+/**
+ * Marks with background color should come first https://discuss.prosemirror.net/t/marks-priority/4463
+ */
 export const marks = {
+
+    // :: MarkSpec Code font mark. Represented as a `<code>` element.
+    code: {
+        parseDOM: [{tag: "code"}],
+        toDOM() { return codeDOM }
+    },
+
+    mark: {
+        parseDOM: [{tag: "mark"}],
+        toDOM() { return ["mark", 0] }
+    },
+
     // :: MarkSpec A link. Has `href` and `title` attributes. `title`
     // defaults to the empty string. Rendered and parsed as an `<a>`
     // element.
@@ -228,11 +243,6 @@ export const marks = {
         toDOM() { return strongDOM }
     },
 
-    // :: MarkSpec Code font mark. Represented as a `<code>` element.
-    code: {
-        parseDOM: [{tag: "code"}],
-        toDOM() { return codeDOM }
-    },
 
     // `<s>` for strike
     s: {
@@ -249,11 +259,6 @@ export const marks = {
         parseDOM: [{tag: "sub"}],
         toDOM() { return subDOM }
     },
-
-    mark: {
-        parseDOM: [{tag: "mark"}],
-        toDOM() { return ["mark", 0] }
-    }
 
 
 }
