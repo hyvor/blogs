@@ -73,9 +73,7 @@ class PostRepository
                 ->whereDate('created_at', '<', $endTimestamp);
         })
         // status
-        ->when($status === null, function ($query) {
-            $query->where('posts.status', '!=', 'deleted');
-        }, function ($query) use ($status) {
+        ->when($status, function ($query) use ($status) {
             if ($status === 'featured') {
                 $query->where('is_featured', true);
             } else {
@@ -247,7 +245,20 @@ class PostRepository
             }
         }
         if (array_key_exists('content', $updates)) {
+            /**
+             * content update means either 
+             *  - user is saving a draft post
+             *  - user is "updating" a non-draft post
+             */
             $post->content = $updates['content'];
+            $post->content_unsaved = $updates['content'];
+        }
+        if (array_key_exists('content_unsaved', $updates)) {
+            /**
+             * content_unsaved means
+             *  - user is saving a non-draft post
+             */
+            $post->content_unsaved = $updates['content_unsaved'];
         }
         if (array_key_exists('title', $updates)) {
             $post->title = $updates['title'];

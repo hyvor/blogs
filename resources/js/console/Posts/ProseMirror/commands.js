@@ -9,6 +9,7 @@
 import {joinPoint, canJoin, findWrapping, liftTarget, canSplit, ReplaceAroundStep} from "prosemirror-transform"
 import {Slice, Fragment} from "prosemirror-model"
 import {Selection, TextSelection, NodeSelection, AllSelection} from "prosemirror-state"
+import { undoInputRule } from "prosemirror-inputrules"
 
 // :: (EditorState, ?(tr: Transaction)) → bool
 // Delete the selection, if there is one.
@@ -599,7 +600,7 @@ export function chainCommands(...commands) {
     }
 }
 
-let backspace = chainCommands(deleteSelection, joinBackward, selectNodeBackward)
+let backspace = chainCommands(deleteSelection, undoInputRule, joinBackward, selectNodeBackward)
 let del = chainCommands(deleteSelection, joinForward, selectNodeForward)
 
 // :: Object

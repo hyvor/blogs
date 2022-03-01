@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers\ConsoleAPI;
 
+use App\Data\Objects\ConsoleAPI\UserBlog\UserBlogObject;
 use App\Http\Controllers\Controller;
 use App\Domains\User\UserRepository;
 // use Hyvor\HyvorConnecter\User;
@@ -12,7 +13,9 @@ class ConsoleViewController extends Controller
     // public function __invoke(Request $request, User $user)
     public function __invoke(Request $request)
     {
-        $blogs = UserRepository::getBlogsOfUser(1);
+        $blogs = UserRepository::getBlogsOfUser(1)->map(function($userBlog) {
+            return new UserBlogObject($userBlog);
+        });
 
         $config = [
             // 'hyvorUser' => $user,

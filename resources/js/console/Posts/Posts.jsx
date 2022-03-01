@@ -6,9 +6,9 @@ import postsLogic from '../logic/postsLogic';
 import Loader from '../ReusableComponents/Loader';
 import NavLink from '../ReusableComponents/NavLink';
 import postLogic from '../logic/postLogic';
-import PostFilters from './PostFilters';
+import PostsFilters from './PostsFilters';
 import NoResults from '../ReusableComponents/NoResults';
-import PostListRow from './PostListRow';
+import PostsListRow from './PostsListRow';
 import NoPost from './NoPost';
 
 export default function Posts( { postId } ) {
@@ -50,7 +50,7 @@ export default function Posts( { postId } ) {
                     onClick={handleNew}
                 >+ New</button>
             </div>
-            <PostFilters filters={filters} changeFilter={changeFilter} />
+            <PostsFilters filters={filters} changeFilter={changeFilter} />
             <div className="posts-list" onScroll={handleScroll}>
                 {
                     loadPostsListAjax.status === 'loading' ?
@@ -59,7 +59,7 @@ export default function Posts( { postId } ) {
                     <div className="posts-loaded-wrap">
                         {
                             postsList.length ?
-                            postsList.map(id => <PostListRow key={id} id={id} subdomain={subdomain} />) :
+                            postsList.map(id => <PostsListRow key={id} id={id} subdomain={subdomain} />) :
                             <NoResults 
                                 text="No posts found"
                                 padding={60}

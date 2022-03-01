@@ -74,7 +74,7 @@ class DataAPIController extends Controller
             'slug' => 'required_without:id',
         ]);
 
-        $user = UserRepository::getTagByBlogIdAndIdentifier($blog->id, $id, $slug);
+        $user = UserRepository::getUserByBlogIdAndIdentifier($blog->id, $id, $slug);
         if (!$user) {
             throw new TrustedException('Tag not found', TrustedException::ERROR_NOT_FOUND);
         }
