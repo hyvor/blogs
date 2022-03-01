@@ -68,5 +68,19 @@
     &.orange {
         background-color: $color-orange-dark;
     }
-
 }
+
+.loadMore{
+    width: 100px;
+    display: block;
+    text-align: center;
+    margin: 20px auto;
+    padding: 5px;
+    border-radius: 20px;
+    border: 1px solid transparent;
+    color: #896c6b;
+    transition: .3s;
+    font-size: 12px;
+    font-weight: 600;
+    cursor: pointer;
+} 

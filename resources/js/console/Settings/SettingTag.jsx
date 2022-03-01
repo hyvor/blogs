@@ -14,10 +14,7 @@ import { Popup, PopupBodyDefault, PopupConfirm, PopupFooterDoubleButton, PopupHe
 export default function SettingTag(props) {
     const subdomain = subdomainLogic.values.subdomain;
     const tagsLogicBuilt = tagsLogic({subdomain})
-    const { 
-        tag, 
-        loadAjax, createAjax, tagList, loadTagListAjax, tagListHasMore, loadTagsListMoreAjax,
-    } = useValues(tagsLogicBuilt)
+    const { tag, loadAjax, createAjax, tagListHasMore, loadTagsListMoreAjax } = useValues(tagsLogicBuilt)
     const { loadTagsListMore} = useActions(tagsLogicBuilt)
 
     function handleScroll(e) {
@@ -30,7 +27,6 @@ export default function SettingTag(props) {
         {
             loadTagsListMore({ offset: tag.length })
         }
-        // window.location.reload(false);
     }
 
     console.log(tag.length);
@@ -56,86 +52,70 @@ export default function SettingTag(props) {
         </div>
 
         <div>
+        {
+            tag.length ?
             <div className="global-table-view">
                 <div className="global-table-header-five">      
                     <div className="table-head-item">Name</div> 
-                    <div className="table-head-item">Description</div>
                     <div className="table-head-item">Slug</div>
+                    <div className="table-head-item">Description</div>
                     <div className="table-head-item">Posts</div>
                     <div></div>
                 </div>
 
                 {/* <div className="table-body-scroll"> */}
-                    {
-                        loadAjax.status === 'loading' ?
-                            <Loader padding={40}/> :
-                        (
-                            <div>
-                                {
-                                    // tag.length > 0 ?
-                                    //     <div className="table-body-scroll" onScroll={handleScroll}>
-                                    //         {
-                                    //             loadAjax.status === 'loading' ?
-                                    //                 <Loader />
-                                    //             :
-                                    //             <div>
-                                    //             {
-                                    //                 tag.map(tag => (
-                                    //                     <div className="global-table-body">
-                                    //                         <Tags id={tag.id} name={tag.name} description={tag.description} slug={tag.slug}/>           
-                                    //                     </div>
-                                    //                 ))
-                                    //             }
-                                    //             </div>
-                                    //         }
-                                    //     </div> 
-                                    // : 
-                                    //     <NoResults 
-                                    //         text="There is no any tags."
-                                    //         padding={40}
-                                    //         imageWidth={250}
-                                    //     />
-
-
-                                    <div className="table-body-scroll" onScroll={handleScroll}> 
-                                           {
-                                                loadAjax.status === 'loading' ?
-                                                    <Loader /> :
-
-                                                <div>
-                                                    {
-                                                        tag.length ?
-                                                            <div>
-                                                                {
-                                                                    tag.map(tag => (
-                                                                        <div className="global-table-body">
-                                                                            <Tags key = {tag} id={tag.id} name={tag.name} description={tag.description} slug={tag.slug}/>           
-                                                                        </div>
-                                                                    ))
-                                                                }
-                                                            </div>
+                {
+                    loadAjax.status === 'loading' ?
+                        <Loader padding={40}/> :
+                    (
+                        <div>
+                            {
+                                <div> 
+                                    {
+                                        loadAjax.status === 'loading' ?
+                                            <Loader /> :
+                                            <div>
+                                                {/* {
+                                                    tag.length ? */}
+                                                        <div>
+                                                            {
+                                                                tag.map(tag => (
+                                                                    <div className="global-table-body">
+                                                                        <Tags key = {tag} id={tag.id} name={tag.name} description={tag.description} slug={tag.slug}/>           
+                                                                    </div>
+                                                                ))
+                                                            }
+                                                            {
+                                                                tagListHasMore == true ?
+                                                                    <div>
+                                                                        <button type='button' className ="loadMore" onClick={handleScroll}>Load More</button>
+                                                                    </div>
+                                                                : null
+                                                            }
+                                                        </div>
                             
-                                                        :
-                                                        <NoResults 
-                                                            text="There is no any tags"
-                                                            padding={40}
-                                                            imageWidth={250}
-                                                        />
-                                                    }
-                                                </div>
-                                            }
-                                    </div>
-
-
-
-
-
-                                }  
-                            </div>
-                        )
-                    }
-                {/* </div> */}
+                                                    {/* :
+                                                    <NoResults 
+                                                        text="There are no tags"
+                                                        padding={40}
+                                                        imageWidth={250}
+                                                    />
+                                                } */}
+                                            </div>
+                                    }
+                                </div>
+                            }  
+                        </div>
+                    )
+                }
             </div>
+            :
+            <NoResults 
+                text="There are no tags"
+                padding={40}
+                imageWidth={250}
+            />
+        }
         </div>
     </div> 
 }
@@ -273,6 +253,7 @@ function Tags ({id, name, description, slug}){
     function handleCancelUpdate(){
         setStyleUpdateIcon('table-button')
         setUpdateFormOpened(false);
+        window.location.reload(false);
     }
     function updateTag(e){
         e.preventDefault();
@@ -285,7 +266,7 @@ function Tags ({id, name, description, slug}){
         setUpdateFormOpened(false); 
 
         setStyleUpdateIcon('table-button')
-        // window.location.reload(false);
+        window.location.reload(false);
     }
     
     return <div>

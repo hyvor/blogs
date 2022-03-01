@@ -1,5 +1,9 @@
 .global-table-view{
 
+    max-height: 550px;
+    overflow-y: scroll;
+
+
     @mixin grid-style {
         padding: 10px 15px;
         border-radius: 20px;
@@ -87,10 +91,10 @@
         }
     }
 
-    .table-body-scroll{
-        max-height: 550px;
-        overflow-y: scroll;
-    }
+    // .table-body-scroll{
+    //     max-height: 550px;
+    //     overflow-y: scroll;
+    // }
     .global-table-body{
         .table-body-five {
             @include grid-five;
@@ -102,7 +106,10 @@
             @include grid-three;
         }
         .table-item {
-            margin-right:5px;
+            // margin-right:5px;
+            margin-right: 10px;
+            overflow-x: scroll;
+            white-space: nowrap;
         }
         .table-actions {
             display: flex;

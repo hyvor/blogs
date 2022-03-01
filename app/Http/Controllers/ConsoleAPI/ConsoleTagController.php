@@ -21,82 +21,54 @@ class ConsoleTagController extends Controller {
         $limit = $request->input('limit');
         $offset = $request->input('offset') ?? 0;
 
-        // $limit = 30;
-        // $offset = 0; 
-        // dd($limit);
-
-        // $getData = TagRepository::getTags($blog->id, $limit, $offset)
-        //         ->map(function ($tags) {
-        //         return new TagObject($tags);
-        //     });
-        $getData = TagRepository::getTags($blog->id, $limit, $offset);
+        $getData = TagRepository::getTags($blog->id, $limit, $offset)
+                ->map(function ($tags) {
+                return new TagObject($tags);
+            });
         return response()->json($getData);
     }
 
     public static function createTag(Request $request , Blog $blog) {
 
-        // dd('hi');
-        $request->validate([
-            'name' => 'required|string',
-            'slug' => 'required|string',
-            'description' => 'required|int',
-            'featuredImage' => 'required|string',
-            // 'postsCount' => 'required|int',
-        ]);
+        // $request->validate([
+        //     'name' => 'required|string',
+        //     'slug' => 'required|string',
+        //     'description' => 'required|int',
+        // ]);
 
         $name = $request->input('name');
         $slug = $request->input('slug');
-        // $description = $request->input('description') ?? null;
-        // $featuredImage = $request->input('featuredImage') ?? null;
-        // $postsCount = $request->input('postsCount') ?? null;
+        $description = $request->input('description') ?? null;
 
         if($slug == null){
             $slug = str_replace(" ", "-", $name);
         }
 
-        // dd($name);
-        // dd($slug);
-
-        $description = null;
-        $featuredImage = null;
-        $postsCount = null;
-
-        // dd($description);
-        // dd($description . ' ' . $slug . '');
-
-
-        $createTag = TagRepository::createTag($blog->id, $name, $slug, $description, $featuredImage, $postsCount); 
-        return response()->json(new TagObject($createTag));
+        $createTag = TagRepository::createTag($blog->id, $name, $slug, $description); 
+        return response()->json($createTag);
+        // return response()->json(new TagObject($createTag));
     }
 
     public static function updateTag(Request $request, Blog $blog)
     {
-        $request->validate([
-            'name' => 'required|string',
-            'slug' => 'required|string',
-            'description' => 'required|int',
-            'featuredImage' => 'required|string',
-            'postsCount' => 'required|int',
-        ]);
+        // $request->validate([
+        //     'name' => 'required|string',
+        //     'slug' => 'required|string',
+        //     'description' => 'required|int',
+        // ]);
 
         $id = $request->route('tagId');
         $name = $request->input('name');
         $slug = $request->input('slug');
-        // $name = 'test one';
-        // $slug = 'test-one';
         $description = $request->input('description') ?? null;
-        // $featuredImage = $request->input('featuredImage') ?? null;
-        // $postsCount = $request->input('postsCount') ?? null;
-
 
         // $description = null;
-        $featuredImage = null;
-        $postsCount = null;
+        // $featuredImage = null;
+        // $postsCount = null;
         
-
-        // dd($id);
-        $updateTag = TagRepository::updateTag($id, $name, $slug, $description, $featuredImage, $postsCount);
-        return response()->json($updateTag);
+        $updateOldTag = TagRepository::updateTag($id, $name, $slug, $description);
+        // $updateTag = TagRepository::updateTag($id, $name, $slug, $description);
+        return response()->json($updateOldTag);
     }
 
     public static function deleteTag(Request $request)

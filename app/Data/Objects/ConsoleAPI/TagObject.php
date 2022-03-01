@@ -11,9 +11,9 @@ class TagObject
     public int $blog_id;
     public string $name;
     public string $slug;
-    public string $description; 
-    public string $featured_image; 
-    public string $posts_count; 
+    public ?string $description; 
+    public ?string $featured_image; 
+    public ?string $posts_count; 
 
     public function __construct(Tag $Tag)
     {
@@ -27,4 +27,4 @@ class TagObject
         $this->posts_count = $Tag->posts_count;
         
     }
-}
+} 

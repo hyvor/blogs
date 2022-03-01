@@ -32,36 +32,23 @@ class TagRepository
         return $tags;
     }
 
-    public static function createTag( int $blogId, string $name, string $slug, $description = NULL, $featuredImage = NULL , $postsCount = NULL)
+    public static function createTag( int $blogId, string $name, string $slug, ?string $description)
     {
-        // dd('hello');
-        // dd($description . ' ' . $slug . '');
-        // dd('test value - '.$description);
-        // dd($blogId);
-        // dd($featuredImage);
-        // dd($slug.' '. $name);
         $createTag = Tag::create([
             'blog_id' => $blogId,
             'name' => $name,
             'slug' => $slug,
-            // 'description' => $description,
-            // 'featured_image' => $featuredImage,
-            // 'posts_count' => $postsCount,
-
+            'description' => $description,
         ]);
-        // dd($createTag);
         return $createTag;
     }
 
-    public static function updateTag(int $id, string $name, string $slug, $description, $featuredImage, $postsCount)
+    public static function updateTag(int $id, string $name, string $slug, ?string $description)
     {
-        // dd('test'. $id);
         $tag = Tag::find($id);
         $tag->name=$name;
         $tag->slug=$slug;
-        // $tag->description=$description;
-        // $tag->featuredImage=$featuredImage;
-        // $tag->postsCount=$postsCount;
+        $tag->description=$description;
 
         $tag->save();
     }
@@ -79,7 +66,6 @@ class TagRepository
     *
     */
     public static function createSaveTag($blogId, $postId, $tagId){
-        // dd('another test');
         $createPostTag = PostTag::create([
             'post_id' => $postId,
             'tag_id' => $tagId,
