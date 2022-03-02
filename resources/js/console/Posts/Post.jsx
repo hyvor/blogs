@@ -1,18 +1,14 @@
 import { useActions, useValues } from 'kea';
 import React, { useEffect, useRef, useState } from 'react';
-import { BoxArrowUpRight, CaretDownFill, Fullscreen, GearFill, PencilFill } from 'react-bootstrap-icons';
+import { BoxArrowUpRight, CaretDownFill, Fullscreen, GearFill, InfoCircle, PencilFill } from 'react-bootstrap-icons';
 import Editor from './ProseMirror/Editor';
 import TextareaAutosize from 'react-textarea-autosize';
 import onOutsideClick from '../../helpers/onOutsideClick';
 import postLogic from '../logic/postLogic';
 import { getBlogUrl } from '../lib/blog-helpers';
-<<<<<<< HEAD
-import SelectTags from './Tags';
-=======
 import PostSettings from './PostSettings';
 import Loader from '../ReusableComponents/Loader';
 import { PopupConfirm } from '../ReusableComponents/Popup';
->>>>>>> master
 
 export default function Post( {subdomain, id} ) {
 
@@ -195,6 +191,10 @@ export default function Post( {subdomain, id} ) {
                             />
                         </div>
 
+                        <div className="status">
+                            <span>{post.status}</span>
+                        </div>
+
                     </div>
 
                     <div className="post-editor-settings">
@@ -227,153 +227,11 @@ export default function Post( {subdomain, id} ) {
                             </div>
                         </div>
 
-<<<<<<< HEAD
-                                <div className="setting-select">
-                                    <span onClick={() => setSettingsType('basic')} className={settingsType === 'basic' ? 'active' : ''}>Basic</span>
-                                    <span onClick={() => setSettingsType('advanced')} className={settingsType === 'advanced' ? 'active' : ''}>Advanced</span>
-                                </div>
-
-                                {settingsType === 'basic' ?
-                                <div className="setting-show">
-                                    <div className="post-setting-dual">
-                                        <Setting 
-                                            title="Slug"
-                                            description="The unique part of the URL to identify this post"
-                                        >
-                                            <input 
-                                                className="input" 
-                                                value={post.slug}
-                                                onChange={(e) => updatePostValue("slug", e.target.value)}
-                                            ></input>
-                                        </Setting>
-
-                                        <Setting 
-                                            title="Publish Time"
-                                            className="post-setting-featured-image"
-                                        >
-                                            <input className="input" value="2021-01-01" onChange={() => {}}></input>
-                                        </Setting>
-
-                                    </div>
-
-                                    <div className="post-setting-dual">
-
-                                        <Setting 
-                                            title="Authors"
-                                            description="The unique part of the URL to identify this post"
-                                        >
-                                            <input className="input" value="Ishini Avindya" onChange={() => {}}></input>
-                                        </Setting>
-
-                                        {/* This is the place where I should start editing in the tags section. code - Hyvor */}
-                                        
-                                        <Setting 
-                                            title="Tags"
-                                            className="post-setting-featured-image"
-                                        >
-                                            {/* <TagSelect postId = {post.id}/>  */}
-                                            <SelectTags postId = {post.id}/>                                        </Setting>
-
-                                    </div>
-
-                                    <div className="post-setting-dual">
-
-                                        <Setting 
-                                            title="Description"
-                                            description="Summarization of the post for listing pages and search engines."
-                                            className="post-setting-description"
-                                        >
-                                            <textarea 
-                                                className="input"
-                                                placeholder="Write a description..."
-                                                value={post.description}
-                                                onChange={e => updatePostValue('description', e.target.value)}
-                                            ></textarea>
-                                        </Setting>
-
-                                        <Setting 
-                                            title="Featured Image"
-                                            className="post-setting-featured-image"
-                                        >
-                                            <div className="image-uploader">Upload a file</div>
-                                        </Setting>
-
-                                    </div>
-
-                                    <div className="post-setting-dual">
-
-                                        <Setting 
-                                            title="Featured?"
-                                            description="The unique part of the URL to identify this post"
-                                        >
-                                            <input type="checkbox"></input>
-                                        </Setting>
-
-                                        <Setting 
-                                            title="Delete Post"
-                                        >
-                                            <button 
-                                                className="button small danger"
-                                                onClick={handleDelete}
-                                            >Delete <Trash /></button>
-                                        </Setting>
-
-                                    </div>
-                                </div>
-                                : 
-                                <div className="setting-show">
-
-                                    <Setting 
-                                        title="Canonical URL"
-                                        description=""
-                                    >
-                                        <input 
-                                            className="input"
-                                            value={post.canonical_url}
-                                            onChange={e => updatePostValue('canonical_url', e.target.value)}
-                                        ></input>
-                                    </Setting>
-
-                                    <div className="post-setting-dual">
-
-                                        <Setting 
-                                            title="Header HTML Code"
-                                            description="Summarization of the post for listing pages and search engines."
-                                            className="post-setting-description"
-                                        >
-                                            <textarea 
-                                                className="input"
-                                                placeholder="Paste HTML code..."
-                                                value={post.code_head}
-                                                onChange={e => updatePostValue('code_head', e.target.value)}
-                                            ></textarea>
-                                        </Setting>
-
-                                        <Setting 
-                                            title="Footer HTML Code"
-                                            description="Summarization of the post for listing pages and search engines."
-                                            className="post-setting-description"
-                                        >
-                                            <textarea 
-                                                className="input" 
-                                                placeholder="Paste HTML code..."
-                                                value={post.code_foot}
-                                                onChange={e => updatePostValue('code_foot', e.target.value)}
-                                            ></textarea>
-                                        </Setting>
-
-                                    </div> 
-                                </div>
-                                }
-                            </div>  
-                        </div>
-=======
                         <PostSettings 
                             isSettingsOpen={isSettingsOpen}
                             settingsViewRef={settingsViewRef}
                             id={id}
                         />
->>>>>>> master
 
                     </div>
                 
@@ -408,6 +266,9 @@ export default function Post( {subdomain, id} ) {
                             <span className="saving">Saving...</span> : null
                         }
                         <span className="words" id="pm-word-count"></span>
+                        <a target="_blank" href="/docs/editor" className="help">
+                            <InfoCircle />
+                        </a>
                     </div>
                 </div>
             </div>

@@ -35,9 +35,10 @@ class BlogCountsRepository
             ->count();
 
         $authors = User::where('blog_id', $blogId)
-            ->orderBy('posts_count', 'desc')
+            // ->orderBy('posts_count', 'desc')
             ->limit(15)
-            ->select('id', 'slug', 'posts_count')
+            // ->select('id', 'slug', 'posts_count')
+            ->select('id', 'slug')
             ->get();
 
 

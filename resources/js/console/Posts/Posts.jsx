@@ -52,13 +52,9 @@ export default function Posts( { postId } ) {
                     onClick={handleNew}
                 >+ New</button>
             </div>
-<<<<<<< HEAD
-            <PostFilters filters={filters} changeFilter={changeFilter} />
-            <div className="posts-list" onScroll={handleScroll}> 
-=======
+             
             <PostsFilters filters={filters} changeFilter={changeFilter} />
             <div className="posts-list" onScroll={handleScroll}>
->>>>>>> master
                 {
                     loadPostsListAjax.status === 'loading' ?
                     <div className="posts-loading"><Loader /></div> :

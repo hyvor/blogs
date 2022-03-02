@@ -10,12 +10,12 @@ use App\Models\Blog;
 
 class ConsoleTagController extends Controller {
 
-    public static function getTags(Request $request, Blog $blog)
+    public static function getTag(Request $request, Blog $blog)
     {
         // dd('test');
         // $request->validate([
         //     'limit' => 'integer', 
-        //     'offset' => 'required|integer',
+        //     'offset' => 'required|integer', 
         // ]);
         
         $limit = $request->input('limit');

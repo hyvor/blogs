@@ -14,8 +14,8 @@ use App\Http\Controllers\ConsoleAPI\ConsoleNavigationController;
 use App\Http\Controllers\ConsoleAPI\ConsoleTagController;
 
 
-use App\Http\Middleware\App\ConsoleAPI\BlogAccessMiddleware;
-use App\Http\Middleware\App\LoginRequiredMiddleware;
+// use App\Http\Middleware\App\ConsoleAPI\BlogAccessMiddleware;
+// use App\Http\Middleware\App\LoginRequiredMiddleware;
 
 use App\Http\Middleware\App\ConsoleAPI\ConsoleApiAccessMiddleware;
 use App\Http\Middleware\App\ConsoleAPI\PostAuthorshipMiddleware;
@@ -94,14 +94,6 @@ Route::prefix('/api/console/v0/blog/{subdomain}')
         Route::post('/media', [ConsoleMediaController::class, 'uploadFile']);
         Route::delete('/media/{id}', [ConsoleMediaController::class, 'deleteFile']);
 
-        // tags CRUD
-        Route::get('/tags', [ConsoleTagController::class, 'getTags']);
-        Route::post('/tag', [ConsoleTagController::class, 'createTag']);
-        Route::put('/tag/{tagId}', [ConsoleTagController::class, 'updateTag']);
-        Route::delete('/tag/{tagId}', [ConsoleTagController::class, 'deleteTag']);  
-        Route::get('/get-post-tag', [ConsoleTagController::class, 'getPostTag']);
-        Route::post('/create-post-tag', [ConsoleTagController::class, 'createPostTag']);
-
         // embed R
         Route::get('/embed', [ConsoleEmbedController::class, 'getData']);
 
@@ -110,10 +102,13 @@ Route::prefix('/api/console/v0/blog/{subdomain}')
     Route::middleware('role:owner|admin|editor')->group(function() {
 
         // tags CRUD
-        Route::get('/tags', []);
-        Route::post('/tag', []);
-        Route::patch('/tag/{id}', []);
-        Route::delete('/tag/{id}', []);
+        // Route::get('/tags', ' App\Http\Controllers\ConsoleAPI\ConsoleTagController@getTags')->name('tags');
+        Route::get('/tags', [ConsoleTagController::class], 'getTag');
+        Route::post('/tag', [ConsoleTagController::class, 'createTag']);
+        Route::put('/tag/{tagId}', [ConsoleTagController::class, 'updateTag']);
+        Route::delete('/tag/{tagId}', [ConsoleTagController::class, 'deleteTag']);  
+        Route::get('/get-post-tag', [ConsoleTagController::class, 'getPostTag']);
+        Route::post('/create-post-tag', [ConsoleTagController::class, 'createPostTag']);
 
         // comments
         Route::get('/comments/moderate', []);
