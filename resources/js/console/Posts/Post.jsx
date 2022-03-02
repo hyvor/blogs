@@ -9,7 +9,10 @@ import { getBlogUrl } from '../lib/blog-helpers';
 import PostSettings from './PostSettings';
 import Loader from '../ReusableComponents/Loader';
 import { PopupConfirm } from '../ReusableComponents/Popup';
+import PostPublisher from './PostPublisher';
 
+
+let publisherOutsideCleaner;
 export default function Post( {subdomain, id} ) {
 
     id = parseInt(id)
@@ -74,12 +77,27 @@ export default function Post( {subdomain, id} ) {
     const [isSettingsOpen, setIsSettingsOpen] = useState(false);
     const settingsViewRef = useRef(null);
 
+    /**
+     * Publishing view
+     */
+    const [isPublisherOpen, setIsPublisherOpen] = useState(false);
+    const publisherViewRef = useRef(null);
+
     function openSettingsView() {
         setIsSettingsOpen(true);
         onOutsideClick(settingsViewRef.current, closeSettingsView);
     }
     function closeSettingsView() {
         setIsSettingsOpen(false);
+    }
+
+    function openPublisher() {
+        setIsPublisherOpen(true)
+        publisherOutsideCleaner = onOutsideClick(publisherViewRef.current, closePublisher);
+    }
+    function closePublisher() {
+        setIsPublisherOpen(false)
+        publisherOutsideCleaner && publisherOutsideCleaner()
     }
 
     function UnPublishButton() {
@@ -112,7 +130,7 @@ export default function Post( {subdomain, id} ) {
             }
         } else if (post.status === 'draft') {
             name = "Publish Post";
-            onClick = () => showPublishDetails()
+            onClick = openPublisher;
             icon = <CaretDownFill />;
         }
 
@@ -224,6 +242,13 @@ export default function Post( {subdomain, id} ) {
                             <div className="publish-buttons">
                                 <UnPublishButton />
                                 <MainButton />
+
+                                <PostPublisher
+                                    publisherViewRef={publisherViewRef}
+                                    isOpen={isPublisherOpen}
+                                    updatePostValue={updatePostValue}
+                                    closePublisher={closePublisher}
+                                />
                             </div>
                         </div>
 

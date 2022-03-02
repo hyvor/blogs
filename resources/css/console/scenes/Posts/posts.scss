@@ -299,6 +299,7 @@
             background:none;
         }
         .publish-buttons {
+            position:relative;
             button.main-button {
                 display:inline-flex;
                 align-items: center;
@@ -327,6 +328,7 @@
     }
 
     @import 'PostSettings.scss';
+    @import 'PostPublisher.scss';
 }
 
 @import 'NoPost.scss';

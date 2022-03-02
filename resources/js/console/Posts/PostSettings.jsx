@@ -11,12 +11,12 @@ import Checkbox from '../ReusableComponents/Checkbox';
 import dayjs from 'dayjs';
 import DatePicker from 'react-datepicker';
 import Loader from '../ReusableComponents/Loader';
+import { usePostActions, usePostValues } from './usePost';
 
 export default function PostSettings({ isSettingsOpen, settingsViewRef, id }) {
 
-    const postLogicInst = postLogic({id});
-    const { post } = useValues(postLogicInst)
-    const { updatePostValue, deletePost, savePost } = useActions(postLogicInst)
+    const { post } = usePostValues(id);
+    const { updatePostValue, deletePost, savePost } = usePostActions(id);
 
     const {subdomain} = useValues(subdomainLogic);
     const mediaLogicInst = mediaLogic({subdomain})
