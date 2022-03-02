@@ -202,7 +202,7 @@
                 text-transform: uppercase;
                 margin-left:8px;
                 font-size: 12px;
-                padding-top: 35px;
+                padding-top: 36px;
             }
         }
         .post-editor-title-row {
@@ -286,6 +286,7 @@
         }
 
         .post-editor-title {
+            font-family: $font-content;
             padding-top: 30px;
             padding-bottom: 10px;
             font-size: 25px;

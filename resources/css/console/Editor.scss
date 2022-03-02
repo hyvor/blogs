@@ -186,6 +186,7 @@ $prosemirror-selected-outline: 3px solid #299af3;
 .ProseMirror {
 
     font-size:18px;
+    font-family: $font-content;
 
     &:focus-visible {
         outline: none;
