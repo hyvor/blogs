@@ -38,8 +38,13 @@ const postLogic = kea({
             await api.delete(subdomain, `/post/${props.id}`);
         },
 
-        savePost: async () => {
-            const diff = selectors.getDiff();
+        /**
+         * Usually, you can update post values and call savePost
+         * However, if you want to savePost without updating values first (ex: when publishing)
+         * use update object
+         */
+        savePost: async ({onSave, update = {}}) => {
+            const diff = {...selectors.getDiff(), ...update};
             
             if (Object.keys(diff).length === 0) {
                 return false;
@@ -47,6 +52,8 @@ const postLogic = kea({
 
             const response = await api.patch(subdomainLogic.values.subdomain, `/post/${props.id}`, diff)
             actions.setOriginal(response);
+
+            typeof onSave === 'function' && onSave();
         }
 
     }),

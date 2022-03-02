@@ -30,15 +30,21 @@ export default function Post( {subdomain, id} ) {
      */
     const viewRef = useRef(null);
 
+    function handleAutoSave() {
+        if (!isPublisherOpenRef.current) {
+            savePost();
+        }
+    }
+
     // saving
     useEffect(() => {
 
         // auto save
-        const autoSaveInterval = setInterval(savePost, 10000);
+        const autoSaveInterval = setInterval(handleAutoSave, 10000);
 
         function checkSave(e) {
             if (e.keyCode === 83 && (e.ctrlKey || e.metaKey)) { // ctrl + s
-                savePost();
+                handleAutoSave();
                 e.preventDefault();
             }
         }
@@ -50,7 +56,7 @@ export default function Post( {subdomain, id} ) {
             ) {
                 return true;
             } else {
-                savePost();
+                handleAutoSave();
             }
         }
 
@@ -60,7 +66,7 @@ export default function Post( {subdomain, id} ) {
         window.addEventListener('beforeunload', checkSaveUnload);
 
         // save on outsideClick
-        const removeOutsideEvent = onOutsideClick(viewRef.current, savePost, false, false, false);
+        const removeOutsideEvent = onOutsideClick(viewRef.current, handleAutoSave, false, false, false);
 
         return () => {
             clearInterval(autoSaveInterval)
@@ -81,7 +87,12 @@ export default function Post( {subdomain, id} ) {
      * Publishing view
      */
     const [isPublisherOpen, setIsPublisherOpen] = useState(false);
+    const isPublisherOpenRef = useRef(false); // for setInterval
     const publisherViewRef = useRef(null);
+
+    useEffect(() => {
+        isPublisherOpenRef.current = isPublisherOpen
+    }, [isPublisherOpen])
 
     function openSettingsView() {
         setIsSettingsOpen(true);
@@ -244,9 +255,9 @@ export default function Post( {subdomain, id} ) {
                                 <MainButton />
 
                                 <PostPublisher
+                                    id={id}
                                     publisherViewRef={publisherViewRef}
                                     isOpen={isPublisherOpen}
-                                    updatePostValue={updatePostValue}
                                     closePublisher={closePublisher}
                                 />
                             </div>

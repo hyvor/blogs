@@ -1,9 +1,16 @@
-import React, { useState } from 'react'
+import React, { useEffect, useState } from 'react'
 import Radio from '../ReusableComponents/Radio'
 import DatePicker from 'react-datepicker';
+import { usePostActions, usePostValues } from './usePost';
+import dayjs from 'dayjs';
+import ActionButton from '../ReusableComponents/ActionButton';
 
 export default function PostPublisher({id, publisherViewRef, isOpen, closePublisher}) {
 
+    const { savePostAjax  } = usePostValues(id);
+    const { savePost, updatePostValue } = usePostActions(id);
+
+    const [hasClicked, setHasClicked] = useState(false)
     const [publishTime, setPublishTime] = useState(null)
 
     function handlePublishTimeChange(setTime) {
@@ -11,8 +18,24 @@ export default function PostPublisher({id, publisherViewRef, isOpen, closePublis
     }
 
     function handlePublish() {
-        
+        const update = {};
+        if (publishTime) {
+            update['published_at'] = dayjs(publishTime).unix()
+            update['status'] = 'scheduled';
+        } else {
+            update['status'] = 'published';
+        }
+        setHasClicked(true)
+        savePost({update});
     }
+
+    useEffect(() => {
+        if (hasClicked && savePostAjax.status === 'success') {
+            setTimeout(() => {
+                closePublisher();
+            }, 2500)
+        }
+    }, [savePostAjax.status])
     
     return <div className={"post-publisher " + (isOpen ? "active" : "inactive")}>
 
@@ -39,7 +62,7 @@ export default function PostPublisher({id, publisherViewRef, isOpen, closePublis
             {
                 publishTime !== null ?
                 <div className="publish-time-selector">
-                    <div className="publish-time-title">Time to publish</div>
+                    <div className="publish-time-title">Set publish time</div>
                     <div>
                         <DatePicker
                             selected={publishTime}
@@ -53,8 +76,32 @@ export default function PostPublisher({id, publisherViewRef, isOpen, closePublis
                 : null
             }
             <div className="publisher-buttons">
-                <button onClick={closePublisher} className="button secondary">Cancel</button>
-                <button onClick={handlePublish} className="button">Publish</button>
+                <button onClick={closePublisher} className="button medium secondary">Cancel</button>
+                {
+                    !publishTime ?
+                    <ActionButton 
+                        className="medium"
+                        status={!hasClicked ? "stale" : savePostAjax.status} 
+                        staleName="Publish"
+                        loadingName="Publishing" 
+                        successName="Published"
+                        errorName="Try again"
+                        staleOnClick={handlePublish} 
+                        successOnClick={null}
+                        errorOnClick={handlePublish}
+                    /> :
+                    <ActionButton
+                        className="medium"
+                        status={!hasClicked ? "stale" : savePostAjax.status} 
+                        staleName="Schedule"
+                        loadingName="Scheduling" 
+                        successName="Scheduled"
+                        errorName="Try again"
+                        staleOnClick={handlePublish} 
+                        successOnClick={null}
+                        errorOnClick={handlePublish}
+                    />
+                }
             </div>
         </div>
 
