@@ -53,7 +53,15 @@ const postLogic = kea({
             const response = await api.patch(subdomainLogic.values.subdomain, `/post/${props.id}`, diff)
             actions.setOriginal(response);
 
-            typeof onSave === 'function' && onSave();
+            /**
+             * Really update front-end data
+             */
+            for (var i in update) {
+                actions.updatePostValue(i, update[i]);
+            }
+
+
+            typeof onSave === 'function' && onSave(response);
         }
 
     }),

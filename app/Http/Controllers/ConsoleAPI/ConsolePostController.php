@@ -74,7 +74,7 @@ class ConsolePostController extends Controller
 
     public function updatePost(Request $request, Blog $blog)
     {
-        sleep(3);
+
         $postId = $request->route('id');
         $updates = [];
 

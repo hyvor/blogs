@@ -4,6 +4,7 @@ import DatePicker from 'react-datepicker';
 import { usePostActions, usePostValues } from './usePost';
 import dayjs from 'dayjs';
 import ActionButton from '../ReusableComponents/ActionButton';
+import { toast } from 'react-toastify';
 
 export default function PostPublisher({id, publisherViewRef, isOpen, closePublisher}) {
 
@@ -17,6 +18,11 @@ export default function PostPublisher({id, publisherViewRef, isOpen, closePublis
         setPublishTime(setTime ? new Date() : null);
     }
 
+    function handleClose() {
+        setHasClicked(false);
+        closePublisher();
+    }
+
     function handlePublish() {
         const update = {};
         if (publishTime) {
@@ -26,14 +32,18 @@ export default function PostPublisher({id, publisherViewRef, isOpen, closePublis
             update['status'] = 'published';
         }
         setHasClicked(true)
-        savePost({update});
+        savePost({update, onSave: (post) => {
+            toast.success(
+                !publishTime ?
+                <div>Post Published. <a className="link" href={post.url} target="_blank">View</a></div> :
+                "Post scheduled"
+            , {autoClose: 5000});
+        }});
     }
 
     useEffect(() => {
         if (hasClicked && savePostAjax.status === 'success') {
-            setTimeout(() => {
-                closePublisher();
-            }, 2500)
+            handleClose();
         }
     }, [savePostAjax.status])
     
@@ -76,7 +86,7 @@ export default function PostPublisher({id, publisherViewRef, isOpen, closePublis
                 : null
             }
             <div className="publisher-buttons">
-                <button onClick={closePublisher} className="button medium secondary">Cancel</button>
+                <button onClick={handleClose} className="button medium secondary">Cancel</button>
                 {
                     !publishTime ?
                     <ActionButton 

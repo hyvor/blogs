@@ -10,6 +10,7 @@ import PostSettings from './PostSettings';
 import Loader from '../ReusableComponents/Loader';
 import { PopupConfirm } from '../ReusableComponents/Popup';
 import PostPublisher from './PostPublisher';
+import { toast } from 'react-toastify';
 
 
 let publisherOutsideCleaner;
@@ -186,7 +187,9 @@ export default function Post( {subdomain, id} ) {
 
     function handleUnPublish() {
         updatePostValue('status', 'draft');
-        savePost();
+        savePost({onSave: () => {
+            toast("Post unpublished")
+        }});
         setIsUnPublishing(false);
     }
 
