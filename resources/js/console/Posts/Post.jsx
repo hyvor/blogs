@@ -11,6 +11,7 @@ import Loader from '../ReusableComponents/Loader';
 import { PopupConfirm } from '../ReusableComponents/Popup';
 import PostPublisher from './PostPublisher';
 import { toast } from 'react-toastify';
+import ActionButton from '../ReusableComponents/ActionButton';
 
 
 let publisherOutsideCleaner;
@@ -19,9 +20,8 @@ export default function Post( {subdomain, id} ) {
     id = parseInt(id)
 
     const postLogicInst = postLogic({id});
-    const { post, loadPostAjax, savePostAjax, getDiff } = useValues(postLogicInst)
-    const { updatePostValue, savePost, deletePost } = useActions(postLogicInst)
-
+    const { post, loadPostAjax, savePostAjax, forceSavePostAjax, getDiff } = useValues(postLogicInst)
+    const { updatePostValue, savePost, forceSavePost } = useActions(postLogicInst)
 
     const [isFullScreen, setIsFullScreen] = useState(false);
 
@@ -32,7 +32,7 @@ export default function Post( {subdomain, id} ) {
     const viewRef = useRef(null);
 
     function handleAutoSave() {
-        if (!isPublisherOpenRef.current) {
+        if (!holdAutoSavingRef.current) {
             savePost();
         }
     }
@@ -88,12 +88,7 @@ export default function Post( {subdomain, id} ) {
      * Publishing view
      */
     const [isPublisherOpen, setIsPublisherOpen] = useState(false);
-    const isPublisherOpenRef = useRef(false); // for setInterval
     const publisherViewRef = useRef(null);
-
-    useEffect(() => {
-        isPublisherOpenRef.current = isPublisherOpen
-    }, [isPublisherOpen])
 
     function openSettingsView() {
         setIsSettingsOpen(true);
@@ -137,11 +132,19 @@ export default function Post( {subdomain, id} ) {
                 icon = <PencilFill />
                 onClick = () => setNonDraftPostEditing(true);
             } else {
-                name  = "Update";
-                onClick = () => showUpdateDetails();
+                return <ActionButton 
+                    className="small main-button"
+                    status={!isNonDraftUpdating ? "stale" : forceSavePostAjax.status} 
+                    staleName="Update"
+                    loadingName="Updating" 
+                    successName="Updated"
+                    errorName="Try again"
+                    staleOnClick={handleUpdateNonDraft}
+                    errorOnClick={handleUpdateNonDraft}
+                />
             }
         } else if (post.status === 'draft') {
-            name = "Publish Post";
+            name = "Publish Post";  
             onClick = openPublisher;
             icon = <CaretDownFill />;
         }
@@ -151,8 +154,19 @@ export default function Post( {subdomain, id} ) {
         </button>
     }
 
-    function showUpdateDetails() {
-        alert("Updated");
+    function handleUpdateNonDraft() {
+        setIsNonDraftUpdating(true);
+        forceSavePost({
+            update: {
+                content: post.content_unsaved
+            },
+            onSave: (p) => {
+                setIsNonDraftUpdating(false)
+                toast.success(<div>Post Updated. <a className="link" href={p.url} target="_blank">View</a></div>, {
+                    autoClose: 5000
+                })
+            }
+        });
     }
 
     function toggleFullscreen() {
@@ -180,16 +194,28 @@ export default function Post( {subdomain, id} ) {
     // have to first click Edit Post to edit published/scheduled posts
     const [nonDraftPostEditing, setNonDraftPostEditing] = useState(false);
     const [isUnPublishing, setIsUnPublishing] = useState(false);
-    
+    const [isNonDraftUpdating, setIsNonDraftUpdating] = useState(false);    
+
+    const holdAutoSavingRef = useRef(null); // for setInterval
+
+    useEffect(() => {
+        holdAutoSavingRef.current = isPublisherOpen || isUnPublishing || isNonDraftUpdating
+    }, [isPublisherOpen, isUnPublishing, isNonDraftUpdating])
+
+
     function handleContentUpdate(v) {
         updatePostValue(isNotDraft ? 'content_unsaved' : 'content', v);
     }
 
     function handleUnPublish() {
-        updatePostValue('status', 'draft');
-        savePost({onSave: () => {
-            toast("Post unpublished")
-        }});
+        forceSavePost({
+            update: {
+                status: 'draft',
+            },
+            onSave: () => {
+                toast("Post unpublished")
+            }
+        });
         setIsUnPublishing(false);
     }
 

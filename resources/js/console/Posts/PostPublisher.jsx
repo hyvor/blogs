@@ -8,8 +8,8 @@ import { toast } from 'react-toastify';
 
 export default function PostPublisher({id, publisherViewRef, isOpen, closePublisher}) {
 
-    const { savePostAjax  } = usePostValues(id);
-    const { savePost, updatePostValue } = usePostActions(id);
+    const { forceSavePostAjax  } = usePostValues(id);
+    const { forceSavePost } = usePostActions(id);
 
     const [hasClicked, setHasClicked] = useState(false)
     const [publishTime, setPublishTime] = useState(null)
@@ -32,7 +32,7 @@ export default function PostPublisher({id, publisherViewRef, isOpen, closePublis
             update['status'] = 'published';
         }
         setHasClicked(true)
-        savePost({update, onSave: (post) => {
+        forceSavePost({update, onSave: (post) => {
             toast.success(
                 !publishTime ?
                 <div>Post Published. <a className="link" href={post.url} target="_blank">View</a></div> :
@@ -42,10 +42,10 @@ export default function PostPublisher({id, publisherViewRef, isOpen, closePublis
     }
 
     useEffect(() => {
-        if (hasClicked && savePostAjax.status === 'success') {
+        if (hasClicked && forceSavePostAjax.status === 'success') {
             handleClose();
         }
-    }, [savePostAjax.status])
+    }, [forceSavePostAjax.status])
     
     return <div className={"post-publisher " + (isOpen ? "active" : "inactive")}>
 
@@ -91,7 +91,7 @@ export default function PostPublisher({id, publisherViewRef, isOpen, closePublis
                     !publishTime ?
                     <ActionButton 
                         className="medium"
-                        status={!hasClicked ? "stale" : savePostAjax.status} 
+                        status={!hasClicked ? "stale" : forceSavePostAjax.status} 
                         staleName="Publish"
                         loadingName="Publishing" 
                         successName="Published"
@@ -102,7 +102,7 @@ export default function PostPublisher({id, publisherViewRef, isOpen, closePublis
                     /> :
                     <ActionButton
                         className="medium"
-                        status={!hasClicked ? "stale" : savePostAjax.status} 
+                        status={!hasClicked ? "stale" : forceSavePostAjax.status} 
                         staleName="Schedule"
                         loadingName="Scheduling" 
                         successName="Scheduled"

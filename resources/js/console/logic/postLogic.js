@@ -39,12 +39,10 @@ const postLogic = kea({
         },
 
         /**
-         * Usually, you can update post values and call savePost
-         * However, if you want to savePost without updating values first (ex: when publishing)
-         * use update object
+         * Used for auto saving
          */
-        savePost: async ({onSave, update = {}}) => {
-            const diff = {...selectors.getDiff(), ...update};
+        savePost: async () => {
+            const diff = selectors.getDiff()
             
             if (Object.keys(diff).length === 0) {
                 return false;
@@ -52,14 +50,17 @@ const postLogic = kea({
 
             const response = await api.patch(subdomainLogic.values.subdomain, `/post/${props.id}`, diff)
             actions.setOriginal(response);
+        },
 
-            /**
-             * Really update front-end data
-             */
-            for (var i in update) {
-                actions.updatePostValue(i, update[i]);
-            }
+        /**
+         * Used for forced saving/publishing/unpublishing (usually on button click)
+         */
+        forceSavePost: async ({onSave, update}) => {
 
+            const diff = {...selectors.getDiff(), ...update};
+            
+            const response = await api.patch(subdomainLogic.values.subdomain, `/post/${props.id}`, diff)
+            actions.set(response)
 
             typeof onSave === 'function' && onSave(response);
         }
