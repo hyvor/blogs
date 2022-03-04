@@ -37,7 +37,6 @@ export default function inputRulesPlugin(schema) {
         ellipsis,
 
         headingRule(schema.nodes.heading),
-        codeBlockRule(schema.nodes.code_block),
         blockQuoteRule(schema.nodes.blockquote),
         orderedListRule(schema.nodes.ordered_list),
         bulletListRule(schema.nodes.bullet_list),
@@ -91,10 +90,6 @@ function headingRule(nodeType) {
             function (match) { 
                 return ({level: match[1].length}); }
         )
-}
-
-function codeBlockRule(nodeType) {
-    return textblockTypeInputRule(/^```$/, nodeType)
 }
 
 function blockQuoteRule(nodeType) {

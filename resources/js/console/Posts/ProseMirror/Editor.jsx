@@ -13,6 +13,7 @@ import RichView from './nodeview-rich';
 import Figcaption from './nodeview-figcaption';
 import Heading from './nodeview-heading';
 import Callout from './nodeview-callout';
+import CodeBlock from './nodeview-codeblock';
 
 
 function getState(val) {
@@ -39,6 +40,9 @@ const nodeViews = {
     },
     callout(...args) {
         return new Callout(...args)
+    },
+    code_block(...args) {
+        return new CodeBlock(...args)
     }
 }
 

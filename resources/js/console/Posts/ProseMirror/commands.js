@@ -480,6 +480,19 @@ export function setBlockType(nodeType, attrs) {
     }
 }
 
+export function clearAndChangeNode(node) {
+    return function (state, dispatch) {
+        let {$from, to} = state.selection, pos
+        let same = $from.sharedDepth(to)
+        pos = $from.before(same)
+        const nodeSel = NodeSelection.create(state.doc, pos);
+        const tr = state.tr.replaceWith(nodeSel.from, nodeSel.to, node)
+        dispatch(
+            tr.setSelection(TextSelection.create(tr.doc, nodeSel.from + 1))
+        )
+    }
+}
+
 function markApplies(doc, ranges, type) {
     for (let i = 0; i < ranges.length; i++) {
         let {$from, $to} = ranges[i]

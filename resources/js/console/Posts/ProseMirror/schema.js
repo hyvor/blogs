@@ -71,7 +71,7 @@ export const nodes = {
     // `<code>` element inside of it.
     code_block: {
         attrs: {
-            class: {default: null},
+            language: {default: null},
             data: {default: {}},
         },
         content: "text*",

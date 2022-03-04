@@ -378,18 +378,17 @@ textarea.input {
 // codemirror
 .react-codemirror2 {
     height:100%;
-
-    .CodeMirror {
-        height:100%;
-        font-family: 'source-code-pro', Menlo, 'Courier New', Consolas, monospace!important;
-        box-shadow: none!important;
-        border-radius:20px;
+}
+.CodeMirror {
+    height:100%;
+    font-family: 'source-code-pro', Menlo, 'Courier New', Consolas, monospace!important;
+    box-shadow: none!important;
+    border-radius:20px;
+    background-color: $color-input!important;
+    .CodeMirror-line {
+        padding-left: 15px!important;
+    }
+    .CodeMirror-gutters {
         background-color: $color-input;
-        .CodeMirror-line {
-            padding-left: 15px!important;
-        }
-        .CodeMirror-gutters {
-            background-color: $color-input;
-        }
     }
 }

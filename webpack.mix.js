@@ -19,3 +19,5 @@ mix.sass('resources/css/console/console.scss', 'public/css');
 
 // landing
 mix.sass('resources/css/landing/landing.scss', 'public/css');
+
+mix.copy('node_modules/codemirror/mode/*/*.js', 'public/js/codemirror-modes');

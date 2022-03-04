@@ -342,7 +342,7 @@ $prosemirror-selected-outline: 3px solid #299af3;
         }
     }
 
-    pre {
+    /* pre {
         background-color: #eee;
         padding: 20px;
         border-radius: 2px;
@@ -351,7 +351,15 @@ $prosemirror-selected-outline: 3px solid #299af3;
             font-size:14px;
             font-family: inherit;
         }
+    } */
+    .CodeMirror {
+        font-size:14px;
+        margin-top:30px;
+        height: initial;
+        padding:5px  0;
     }
+
+
     a {
         text-decoration: underline;
         color: #3f51b5;
