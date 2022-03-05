@@ -9,11 +9,13 @@ export default class RichView {
         this.view = view;
         this.getPos = getPos;
 
-        this.dom = document.createElement("div");
-        this.dom.classList.add("rich");
+        this.dom = document.createElement("rich");
+        // this.dom.classList.add("rich");
 
 
         const url = node.attrs.url;
+
+        this.dom.dataset.url = url;
 
         this.dom.innerHTML = '<div class="embedding-placeholder">Embedding...</div>';
 

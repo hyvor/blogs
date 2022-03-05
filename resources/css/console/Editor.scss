@@ -325,6 +325,7 @@ $prosemirror-selected-outline: 3px solid #299af3;
                 position: absolute;
                 left: 50%;
                 transform: translateX(-50%);
+                pointer-events: none;
             }
         }
 

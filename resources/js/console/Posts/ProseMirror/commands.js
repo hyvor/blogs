@@ -14,6 +14,7 @@ import { undoInputRule } from "prosemirror-inputrules"
 // :: (EditorState, ?(tr: Transaction)) → bool
 // Delete the selection, if there is one.
 export function deleteSelection(state, dispatch) {
+    console.log(state.selection)
     if (state.selection.empty) return false
     if (dispatch) dispatch(state.tr.deleteSelection().scrollIntoView())
     return true

@@ -30,6 +30,8 @@ export default function keymapPlugins(schema) {
     bind("Shift-Enter", brCmd)
     if (mac) bind("Ctrl-Enter", brCmd)
 
+    bind("Backspace", figcaptionBackspaceHandler);
+
     // list item
     bind("Enter", chainCommands(
         (state, dispatch) => {
@@ -91,7 +93,7 @@ export default function keymapPlugins(schema) {
 
         },
         splitListItem(schema.nodes.list_item),
-        figcaptionHandler
+        figcaptionEnterHandler
     ));
 
     bind("}", (state, dispatch) => {
@@ -142,7 +144,7 @@ export default function keymapPlugins(schema) {
 
 }
 
-function figcaptionHandler(state, dispatch) {
+function figcaptionEnterHandler(state, dispatch) {
     /**
      * When enter is clicked inside figcaption,
      * we select the parent figure in this function
@@ -166,7 +168,15 @@ function figcaptionHandler(state, dispatch) {
             )
             .scrollIntoView()
         )
-    return false
+    return true
+}
+
+function figcaptionBackspaceHandler(state, dispatch) {
+    const { $from } = state.selection;
+    if ($from.parent.type.name !== 'figcaption') return false;
+
+    if (!$from.parent?.firstChild.text)
+        return true;
 }
 
 // https://prosemirror.net/examples/codemirror/

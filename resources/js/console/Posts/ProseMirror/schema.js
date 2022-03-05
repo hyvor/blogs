@@ -140,7 +140,7 @@ export const nodes = {
         atom: true,
         selectable: false,
         parseDOM: [{
-            tag: "div.rich[data-url]",
+            tag: "rich[data-url]",
             getAttrs(div) {
                 return {
                     url: div.dataset.url
@@ -148,9 +148,8 @@ export const nodes = {
             }
         }],
         toDOM(node) {
-            return ["div", {
-                "data-url": node.attrs.url,
-                class: "rich"
+            return ["rich", {
+                "data-url": node.attrs.url
             }]
         }
     },
