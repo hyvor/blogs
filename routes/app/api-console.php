@@ -84,6 +84,7 @@ Route::prefix('/api/console/v0/blog/{subdomain}')
         Route::get('/media', [ConsoleMediaController::class, 'getFiles']);
         Route::post('/media', [ConsoleMediaController::class, 'uploadFile']);
         Route::delete('/media/{id}', [ConsoleMediaController::class, 'deleteFile']);
+        Route::get('/media/unsplash/search', [ConsoleMediaController::class, 'searchUnsplash']);
 
         // embed R
         Route::get('/embed', [ConsoleEmbedController::class, 'getData']);

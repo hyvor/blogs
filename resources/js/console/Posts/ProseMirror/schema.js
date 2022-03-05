@@ -90,7 +90,7 @@ export const nodes = {
     },
 
     figure: {
-        content: "(rich|image)+ figcaption",
+        content: "(rich|image) figcaption",
         group: "block",
         selectable: true,
         draggable: true,

@@ -279,11 +279,11 @@ textarea.input {
     text-align: center;
     padding: 100px;
     color: $color-text-light;
-    img {
+    img.no-results-img {
         width: 350px;
         display: block;
         margin: auto;
-        margin-bottom: 25px;
+        margin-bottom: 25px!important;
     }
     
 }

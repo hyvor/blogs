@@ -25,6 +25,14 @@ const subdomainLogic = kea({
             postsLogic({subdomain}).actions.loadPostsList();
             // pre-load blog settings
             blogLogic({subdomain}).actions.load();
+
+            /**
+             * This is set because there are some places that
+             * we cannot access kea data. Ex: inside prosemirror nodeviews (image uploading)
+             * In that case, this is the only way to access the current subdomains
+             * Don't use this in the main app
+             */
+            window.currentSubdomain = subdomain;
         }
     }),
 

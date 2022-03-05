@@ -359,6 +359,62 @@ $prosemirror-selected-outline: 3px solid #299af3;
         padding:5px  0;
     }
 
+    .image-wrap {
+        .image-uploader {
+            font-size: 14px;
+            height: 400px;
+            background-color: $color-card;
+            text-align: center;
+            position: relative;
+            .or {
+                margin: 10px 0;
+            }
+            .uploader-content {
+                position:absolute;
+                top:50%;
+                left:0;
+                transform: translateY(-50%);
+                width:100%;
+                transition: .3s all;
+                padding:15px;
+                input {
+                    width: 250px;
+                    transition: .3s width;
+                }
+            }
+            &.searching {
+                .uploader-content {
+                    top:0;
+                    transform:none;
+                }
+                .non-search {
+                    display:none;
+                }
+                input {
+                    width:100%;
+                }
+            }
+            .search-results {
+                display: flex;
+                max-height: 330px;
+                overflow: auto;
+                margin-top: 15px;
+                .images-column {
+                    flex: 1;
+                    &:first-child {
+                        margin-right:10px;
+                    }
+                }
+                img {
+                    width:100%;
+                    margin-bottom:15px;
+                    cursor: pointer;
+                    max-height: initial;
+                }
+            }
+        }
+    }
+
 
     a {
         text-decoration: underline;

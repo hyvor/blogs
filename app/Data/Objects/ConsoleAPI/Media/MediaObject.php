@@ -1,5 +1,5 @@
 <?php
-namespace App\Data\Objects\ConsoleAPI;
+namespace App\Data\Objects\ConsoleAPI\Media;
 
 use App\Domains\Route\PermalinkRepository;
 use App\Models\Media;
@@ -25,4 +25,5 @@ class MediaObject
         $this->extension = $media->extension;
 
     }
+
 }

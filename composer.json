@@ -21,6 +21,7 @@
         "symfony/http-foundation": "^6.0",
         "twig/twig": "^2.0",
         "ueberdosis/prosemirror-to-html": "^2.7",
+        "unsplash/unsplash": "^3.2",
         "vlucas/phpdotenv": "^5.4"
     },
     "require-dev": {

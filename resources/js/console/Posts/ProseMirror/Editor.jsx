@@ -14,6 +14,7 @@ import Figcaption from './nodeview-figcaption';
 import Heading from './nodeview-heading';
 import Callout from './nodeview-callout';
 import CodeBlock from './nodeview-codeblock';
+import Image from './nodeview-image';
 
 
 function getState(val) {
@@ -43,6 +44,9 @@ const nodeViews = {
     },
     code_block(...args) {
         return new CodeBlock(...args)
+    },
+    image(...args) {
+        return new Image(...args)
     }
 }
 
@@ -69,14 +73,14 @@ export default function Editor(props) {
     />
 }
 
-function handleClickOn(view, pos, node, posBefore) {
+function handleClickOn(view, pos, node, posBefore, e) {
     // if (pos != posBefore) return false
     //return false;
 
     /**
      * Select figure when clicking on it
      */
-    if (node.type.name === "figure") {
+    if (node.type.name === "figure" && e.target.nodeName !== "INPUT") {
         const resolvedPos = view.state.doc.resolve(pos)
         if (resolvedPos.parent.type.name === 'figcaption')
             return false;
