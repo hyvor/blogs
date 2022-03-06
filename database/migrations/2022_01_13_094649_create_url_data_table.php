@@ -19,11 +19,15 @@ class CreateUrlDataTable extends Migration
             $table->timestamps();
 
             $table->string('url')->unique();
+            $table->string('final_url');
             $table->enum('type', ['link', 'rich', 'error']);
             $table->text('html')->nullable(); // rich html, if available
             $table->string('title')->nullable();
             $table->string('description')->nullable();
             $table->string('thumbnail')->nullable();
+            $table->string('icon')->nullable();
+            $table->string('site')->nullable();
+
         });
     }
 

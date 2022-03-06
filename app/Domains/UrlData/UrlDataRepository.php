@@ -35,12 +35,16 @@ class UrlDataRepository
                  * We only want either the link or rich
                  */
                 'url' => $url,
-                'type' => $json['type'] === 'link' ? 'link' : 'rich',
+                'final_url' => $json['url'],
+                'type' => isset($json['html']) ? 'rich' : 'link',
                 'html' => $json['html'] ?? null,
-                'title' => _safe_length($json['title'] ?? null),
-                'description' => _safe_length($json['description'] ?? null),
-                'thumbnail' => _safe_length($json['thumbnail_url'] ?? null, 1024)
+                'title' => _safe_length($json['meta']['title'] ?? null),
+                'description' => _safe_length($json['meta']['description'] ?? null),
+                'thumbnail' => _safe_length($json['links']['thumbnail'][0]['href'] ?? null),
+                'icon' => _safe_length($json['links']['icon'][0]['href'] ?? null),
+                'site' => _safe_length($json['meta']['site'] ?? null)
             ]);
+
         } catch (IframelyException) {
             // insert to database before sending response so that we don't make multiple requests to
             // iframely endpoint for error URLs

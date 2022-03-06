@@ -17,7 +17,7 @@ export default class RichView {
 
         this.dom.dataset.url = url;
 
-        this.dom.innerHTML = '<div class="embedding-placeholder">Embedding...</div>';
+        this.dom.innerHTML = '<div class="embedding-placeholder">Loading embed...</div>';
 
         api.get(subdomainLogic.values.subdomain, '/url-data', {url})
             .then(response => {

@@ -514,8 +514,7 @@ Note that figcaption can be empty. So, check if margins look good when figcaptio
     "domain": "blogs.hyvor.com",
     "thumbnail": "https://blogs.hyvor.com/thumbnail.png",
     "icon": "https://blogs.hyvor.com/icon.png",
-    "site_name": "Hyvor Blogs",
-    "caption": "A link preview of blogs.hyvor.com"
+    "site": "Hyvor Blogs",
 }
 ```
 

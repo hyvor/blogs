@@ -176,8 +176,8 @@ export const nodes = {
         attrs: {
             url: {default: null}
         },
-        atom: true,
-        draggable: true,
+        //atom: true,
+        //draggable: true,
         selectable: true,
         group: "block",
         parseDOM: [{

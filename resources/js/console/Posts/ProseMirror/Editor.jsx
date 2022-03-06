@@ -15,6 +15,7 @@ import Heading from './nodeview-heading';
 import Callout from './nodeview-callout';
 import CodeBlock from './nodeview-codeblock';
 import Image from './nodeview-image';
+import Bookmark from './nodeview-bookmark';
 
 
 function getState(val) {
@@ -47,6 +48,9 @@ const nodeViews = {
     },
     image(...args) {
         return new Image(...args)
+    },
+    bookmark(...args) {
+        return new Bookmark(...args)
     }
 }
 

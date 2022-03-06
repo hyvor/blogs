@@ -6,7 +6,7 @@ use Illuminate\Support\Facades\Http;
 
 class Iframely
 {
-    private const ENDPOINT = 'https://iframe.ly/api/oembed';
+    private const ENDPOINT = 'https://iframe.ly/api/iframely';
 
     /**
      * @var string $url - URL to fetch data from
