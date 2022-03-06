@@ -47,7 +47,7 @@ class MarksTooltip {
         this.addItem(schema.marks.strong, icons.bold);
         this.addItem(schema.marks.em, icons.italic);
         this.addItem(schema.marks.code, icons.code)
-        this.addItem(schema.marks.s, icons.strike)
+        this.addItem(schema.marks.strike, icons.strike)
 
         this.update(view, null)
     }

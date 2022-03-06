@@ -1,32 +1,29 @@
 <?php
-
-namespace App\Domains\Post\Prosemirror\Node;
+namespace App\Domains\Post\Content\Nodes;
 
 use App\Domains\Embed\EmbedRepository;
 use Exception;
-use ProseMirrorToHtml\Nodes\Node;
+use Tiptap\Core\Node;
+use Tiptap\Utils\HTML;
 
 class Rich extends Node
 {
-    protected $nodeType = 'rich';
-    protected $tagName = 'div';
+    public static $name = 'rich';
 
-    public function tag() {
-
+    public function parseHTML()
+    {
         return [
             [
-                'tag' => $this->tagName,
-                'attrs' => [
-                    'class' => "rich"
-                ],
-            ]
+                'tag' => 'rich[data-url]',
+            ],
         ];
-
     }
 
-    public function text() {
+    public function renderHTML($node)
+    {
 
-        $url = $this->node->attrs->url;
+        $embedContent = '';
+        $url = $node->attrs->url;
 
         try {
 
@@ -39,13 +36,14 @@ class Rich extends Node
             $embed = EmbedRepository::fetch($url);
 
             if ($embed->type === 'rich') {
-                return $embed->html;
+                $embedContent = $embed->html;
             }
 
-        } catch (Exception) {
-            return "";
-        }
+        } catch (Exception) {}
 
+        return [
+            'content' => $embedContent ? '<rich>' . $embedContent . '</rich>' : ''
+        ];
 
     }
 }

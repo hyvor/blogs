@@ -70,14 +70,14 @@ function inlineRules(marks) {
         // markInputRule(/(?:`)([^`]+)(?:`)$/, marks.code),
 
         // strikethrough
-        markInputRule(/(?:~~)([^~]+)(?:~~)$/, marks.s),
+        markInputRule(/(?:~~)([^~]+)(?:~~)$/, marks.strike),
 
         // sup & sub
         markInputRule(/(?:\^)([^\^]+)(?:\^)$/, marks.sup),
         markInputRule(/(?:~)([^~]+)(?:~)$/, marks.sub),
 
         // mark
-        markInputRule(/(?:==)([^=]+)(?:==)/, marks.mark),
+        markInputRule(/(?:==)([^=]+)(?:==)/, marks.highlight),
 
     ];
 

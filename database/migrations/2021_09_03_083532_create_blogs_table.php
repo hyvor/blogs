@@ -36,6 +36,7 @@ class CreateBlogsTable extends Migration
 
             $table->boolean('seo_indexing')->default(true);
             $table->text('seo_robots')->nullable();
+            $table->boolean('seo_follow_external_links')->default(false);
 
             $table->text('code_head')->nullable();
             $table->text('code_foot')->nullable();

@@ -90,7 +90,7 @@ export const nodes = {
     },
 
     figure: {
-        content: "(rich|image) figcaption",
+        content: "(image|rich) figcaption",
         group: "block",
         selectable: true,
         draggable: true,
@@ -106,8 +106,7 @@ export const nodes = {
     image: {
         attrs: {
             src: {default: null},
-            alt: {default: null}, 
-            title: {default: null},
+            alt: {default: null},
             width: {default: null},
             height: {default: null}
         },
@@ -119,9 +118,8 @@ export const nodes = {
           tag: "img[src]", 
           getAttrs(img) {
             return {
-                src: img.src, 
-                alt: img.alt, 
-                title: img.title,
+                src: img.src,
+                alt: img.alt,
                 width: img.width,
                 height: img.height
             }; 
@@ -203,7 +201,7 @@ export const marks = {
         toDOM() { return codeDOM }
     },
 
-    mark: {
+    highlight: {
         parseDOM: [{tag: "mark"}],
         toDOM() { return ["mark", 0] }
     },
@@ -244,7 +242,7 @@ export const marks = {
 
 
     // `<s>` for strike
-    s: {
+    strike: {
         parseDOM: [{tag: "s"}, {tag: "strike"}, {tag: "del"}],
         toDOM() { return strikeDOM }
     },
