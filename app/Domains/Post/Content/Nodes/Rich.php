@@ -1,7 +1,7 @@
 <?php
 namespace App\Domains\Post\Content\Nodes;
 
-use App\Domains\Embed\EmbedRepository;
+use App\Domains\UrlData\UrlDataRepository;
 use Exception;
 use Tiptap\Core\Node;
 use Tiptap\Utils\HTML;
@@ -33,7 +33,7 @@ class Rich extends Node
              * So, we don't have to worry about the applciation making a HTTP call
              * It is a simple database call
              */
-            $embed = EmbedRepository::fetch($url);
+            $embed = UrlDataRepository::fetch($url);
 
             if ($embed->type === 'rich') {
                 $embedContent = $embed->html;

@@ -1,8 +1,7 @@
 <?php
 
-namespace App\Domains\Embed;
+namespace App\Domains\UrlData;
 
-use App\Domains\Media\Embed\Types\EmbedType;
 use Illuminate\Support\Facades\Http;
 
 class Iframely

@@ -12,6 +12,7 @@ use App\Http\Controllers\ConsoleAPI\ConsoleUserController;
 use App\Http\Controllers\ConsoleAPI\ConsoleViewController;
 use App\Http\Controllers\ConsoleAPI\ConsoleRedirectController;
 use App\Http\Controllers\ConsoleAPI\ConsoleNavigationController;
+use App\Http\Controllers\ConsoleAPI\ConsoleUrlDataController;
 use App\Http\Middleware\App\ConsoleAPI\ConsoleApiAccessMiddleware;
 use App\Http\Middleware\App\ConsoleAPI\PostAuthorshipMiddleware;
 use App\Http\Middleware\App\ConsoleAPI\ResourceAccessMiddleware;
@@ -86,8 +87,8 @@ Route::prefix('/api/console/v0/blog/{subdomain}')
         Route::delete('/media/{id}', [ConsoleMediaController::class, 'deleteFile']);
         Route::get('/media/unsplash/search', [ConsoleMediaController::class, 'searchUnsplash']);
 
-        // embed R
-        Route::get('/embed', [ConsoleEmbedController::class, 'getData']);
+        // url data
+        Route::get('/url-data', [ConsoleUrlDataController::class, 'getData']);
 
     });
 

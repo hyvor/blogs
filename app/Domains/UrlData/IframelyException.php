@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Domains\Embed;
+namespace App\Domains\UrlData;
 
 use App\Exceptions\TrustedException;
 

@@ -1,9 +1,9 @@
 <?php
 
-namespace App\Domains\Embed;
+namespace App\Domains\UrlData;
 
 use App\Exceptions\TrustedException;
-use App\Models\Embed;
+use App\Models\UrlData;
 
 function _safe_length($str, $len = 255)
 {
@@ -13,12 +13,12 @@ function _safe_length($str, $len = 255)
     return mb_substr($str, 0, $len);
 }
 
-class EmbedRepository
+class UrlDataRepository
 {
-    public static function fetch($url): Embed
+    public static function fetch($url): UrlData
     {
 
-        $embed = Embed::where('url', $url)->first();
+        $embed = UrlData::where('url', $url)->first();
 
         if ($embed) {
             return $embed;
@@ -27,7 +27,7 @@ class EmbedRepository
         try {
             $json = Iframely::fetch($url);
 
-            return Embed::create([
+            return UrlData::create([
                 /**
                  * Iframely returns 4 types: link, photo, video, rich
                  * (https://iframely.com/docs/oembed-api#api-response)
@@ -45,7 +45,7 @@ class EmbedRepository
             // insert to database before sending response so that we don't make multiple requests to
             // iframely endpoint for error URLs
 
-            return Embed::create([
+            return UrlData::create([
                 'url' => $url,
                 'type' => 'error'
             ]);

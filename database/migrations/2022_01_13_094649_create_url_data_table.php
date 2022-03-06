@@ -5,7 +5,7 @@ use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\Schema;
 
 // URL data for embeds
-class CreateEmbedsTable extends Migration
+class CreateUrlDataTable extends Migration
 {
     /**
      * Run the migrations.
@@ -14,7 +14,7 @@ class CreateEmbedsTable extends Migration
      */
     public function up()
     {
-        Schema::create('embeds', function (Blueprint $table) {
+        Schema::create('url_data', function (Blueprint $table) {
             $table->id();
             $table->timestamps();
 

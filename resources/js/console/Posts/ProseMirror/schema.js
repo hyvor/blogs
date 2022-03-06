@@ -172,6 +172,29 @@ export const nodes = {
         toDOM() { return ["aside", 0] }
     },
 
+    bookmark: {
+        attrs: {
+            url: {default: null}
+        },
+        atom: true,
+        draggable: true,
+        selectable: true,
+        group: "block",
+        parseDOM: [{
+            tag: "bookmark[data-url]",
+            getAttrs(div) {
+                return {
+                    url: div.dataset.url
+                }
+            }
+        }],
+        toDOM(node) {
+            return ["bookmark", {
+                "data-url": node.attrs.url
+            }]
+        }
+    },
+
     // :: NodeSpec A hard line break, represented in the DOM as `<br>`.
     hard_break: {
         inline: true,
