@@ -345,6 +345,7 @@ $prosemirror-selected-outline: 3px solid #299af3;
     bookmark {
         display: flex;
         margin-top:30px;
+        border-radius: 20px;
         &:hover {
             outline: $prosemirror-hover-outline;
         }

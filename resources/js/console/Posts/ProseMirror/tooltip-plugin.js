@@ -1,4 +1,4 @@
-import {Plugin, TextSelection} from "prosemirror-state"
+import {Plugin, TextSelection, NodeSelection} from "prosemirror-state"
 import {toggleMark, setBlockType, wrapIn} from "./commands"
 
 const icons = {
@@ -134,7 +134,10 @@ class MarksTooltip {
             return
         }
 
-        if (state.selection.constructor.name === 'NodeSelection')
+        if (state.doc.cut(state.selection.from, state.selection.to).textContent === "")
+            return;
+
+        if (state.selection instanceof NodeSelection)
             return;
 
         this.items.forEach(({type, dom}) => {
