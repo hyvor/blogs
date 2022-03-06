@@ -30,7 +30,8 @@ const matchable = [
         description: "Add an image",
         icon: <CardImage />,
         keywords: ['image', 'picture', 'upload'],
-        node: createImage
+        node: createImage,
+        selectNode: true
     },
     {
         name: "Embed",
@@ -261,6 +262,12 @@ class SlashPlugin {
                             TextSelection.create(tr.doc, pos + 1)
                     ).scrollIntoView()
                 )
+
+                /**
+                 * In bookmark, we want to focus the input instead of the view
+                 */
+                if (m.node !== 'bookmark')
+                    view.focus();
 
             }
 

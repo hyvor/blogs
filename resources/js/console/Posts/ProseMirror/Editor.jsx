@@ -73,6 +73,7 @@ export default function Editor(props) {
         nodeViews={nodeViews}
         onChange={handleChange}
         handleClickOn={handleClickOn}
+        handleKeyDown={handleKeyDown}
         editable={() => props.editable}
     />
 }
@@ -94,5 +95,12 @@ function handleClickOn(view, pos, node, posBefore, e) {
         const nodeSel = new NodeSelection(resolvedPosBefore)
         view.dispatch(tr.setSelection(nodeSel))
         return true;
+    }
+}
+
+// prevent tab-key browser navigation
+function handleKeyDown(view, e) {
+    if (e.key === 'Tab') {
+        e.preventDefault();
     }
 }

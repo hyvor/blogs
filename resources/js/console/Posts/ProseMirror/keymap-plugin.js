@@ -2,7 +2,7 @@
 import { keymap } from 'prosemirror-keymap'
 import { baseKeymap, chainCommands, clearAndChangeNode, exitCode, liftFigcaption, selectNodeBackward, setBlockType } from './commands'
 import { undo, redo } from 'prosemirror-history'
-import { splitListItem } from "./list"
+import { splitListItem, sinkListItem, liftListItem } from "./list"
 import { NodeSelection, Selection } from 'prosemirror-state'
 import { createRich } from './creators'
 
@@ -95,6 +95,9 @@ export default function keymapPlugins(schema) {
         splitListItem(schema.nodes.list_item),
         figcaptionEnterHandler
     ));
+
+    bind('Tab', sinkListItem(schema.nodes.list_item))
+    bind('Shift-Tab', liftListItem(schema.nodes.list_item))
 
     bind("}", (state, dispatch) => {
 

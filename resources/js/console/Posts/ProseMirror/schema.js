@@ -296,6 +296,6 @@ export const marks = {
 const schemaWithoutList = new Schema({nodes, marks})
 
 export default new Schema({
-    nodes: addListNodes(schemaWithoutList.spec.nodes, "block*", "block"),
+    nodes: addListNodes(schemaWithoutList.spec.nodes, "block+", "block"),
     marks: schemaWithoutList.spec.marks
 })

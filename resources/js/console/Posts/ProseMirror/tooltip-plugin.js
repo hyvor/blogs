@@ -134,6 +134,9 @@ class MarksTooltip {
             return
         }
 
+        if (state.selection.constructor.name === 'NodeSelection')
+            return;
+
         this.items.forEach(({type, dom}) => {
             let active = isMarkActive(this.view.state, type);
             if (active) {

@@ -37,6 +37,9 @@ export default class Bookmark {
                     this.renderBookmark(response);
                 })
 
+            delete this.selectNode
+            delete this.deselectNode
+
         } else {
             const input = document.createElement("input")
             let lastValue = '';
