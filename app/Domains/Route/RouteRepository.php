@@ -22,18 +22,21 @@ class RouteRepository {
             [
                 'name' => 'index',
                 'match' => '/',
+                'template' => 'index',
                 'posts_filter' => ''
             ],
             // tag
             [
                 'name' => 'tag',
                 'match' => '/tag/{slug}',
+                'template' => 'tag,index',
                 'posts_filter' => 'tag.slug = {slug}',
             ],
             // author
             [
                 'name' => 'author',
                 'match' => '/author/{slug}',
+                'template' => 'author,index',
                 'posts_filter' => 'author.slug = {slug}'
             ],
             // search

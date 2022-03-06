@@ -39,6 +39,7 @@ return [
         ['languages', 'Languages'],
         ['subdirectory', 'Subdirectory hosting'],
         ['website', 'Build a website'],
+        ['multi-collection', 'Multi-collection blog'],
         ['import', 'Importing data'],
         ['export', 'Exporting data'],
     ],
