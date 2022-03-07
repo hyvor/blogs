@@ -21,9 +21,9 @@ class BlogThemeTemplateRepository
 {
     public static function renderFile(
         Blog $blog,
-        DeliveryAPIScopeEnum $scope,
+        ?DeliveryAPIScopeEnum $scope,
         Model $model = null,
-        ?int $paginationNumber = null,
+        int $pageNumber = null,
     ): string|null {
 
         $templateFiles = BlogThemeRepository::getFilesInFolder($blog->id, ThemeFileFolderEnum::TEMPLATES);
@@ -33,19 +33,20 @@ class BlogThemeTemplateRepository
             $loaderArray[$file->name] = $file->content;
         }
 
-        $scopeVariables = self::getVarsFromScope($blog, $scope, $model, $paginationNumber);
+        $blogObject = new BlogObject($blog);
+        $scopeVariables = self::getVarsFromScope($blogObject, $scope, $model, $pageNumber);
 
         $vars = [
-            '_blog' => new BlogObject($blog),
+            '_blog' => $blogObject,
             '_config' => [],
             '_scope' => $scope,
         ];
 
         $vars += $scopeVariables;
 
-        $vars = [
+        $vars += [
             '_head' => self::getHeadCode($vars),
-            '_foot' => self::getFootCode(),
+            '_foot' => self::getFootCode($vars),
         ];
 
         $fileName = self::getFileNameToRenderFromScope($scope, array_keys($loaderArray));
@@ -67,19 +68,20 @@ class BlogThemeTemplateRepository
     }
 
     private static function getVarsFromScope(
-        Blog $blog, 
-        DeliveryAPIScopeEnum $scope, 
+        BlogObject $blogObject, 
+        ?DeliveryAPIScopeEnum $scope, 
         ?Model $model,
-        ?int $page,
+        int $pageNumber = null,
     ): array
     {
 
+        $blog = $blogObject->getBlog();
+
         if ($scope === DeliveryAPIScopeEnum::INDEX) {
-            $page = $page ?? 1;
 
             $posts = PostRepository::getPostsWithFilterQ(
                 $blog->id, null,
-                10, $page * 10,
+                10, $pageNumber * 10,
                 'published_at', 'DESC'
             )->map(function ($post) use ($blog) {
                 return new PostObject($post, $blog);
@@ -89,8 +91,15 @@ class BlogThemeTemplateRepository
                 'limit' => 50,
                 'filter' => 'is_featured=true'
             ]); */
-
+        
             return [
+                '_meta' => new MetaObject(
+                    $blogObject->name,
+                    $blogObject->description,
+                    $blogObject->featured_image,
+                    $blogObject->url,
+                    $blogObject->url
+                ),
                 '_posts' => $posts,
                 '_featured_posts' => null, // $featuredPosts->data
             ];

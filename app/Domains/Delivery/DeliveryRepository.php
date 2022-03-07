@@ -18,6 +18,7 @@ use App\Models\Blog;
 use ScssPhp\ScssPhp\Compiler;
 use Symfony\Component\Routing\Exception\ResourceNotFoundException;
 use App\Data\Enums\RedirectTypeEnum;
+use App\Domains\BlogTheme\BlogThemeRssRepository;
 use App\Domains\BlogTheme\Twig\Renderer;
 use App\Domains\Media\MediaRepository;
 use App\Domains\Route\PermalinkRepository;
@@ -99,7 +100,21 @@ class DeliveryRepository {
         $blogRoutes = $blog->routes;
         foreach ($blogRoutes as $routeRow) {
 
-            $route = new Route($routeRow->match);
+            $defaults = [];
+
+            /**
+             * Add suffix
+             * Which can be a number for pagination
+             * or /rss
+             */
+            if ($routeRow->posts_filter !== null) {
+                $routeRow->match .= '/{suffix}';
+                $defaults = [
+                    'suffix' => null
+                ];
+            }
+
+            $route = new Route($routeRow->match, $defaults);
             $routes->add($routeRow->name, $route);
             
         }
@@ -236,23 +251,37 @@ class DeliveryRepository {
 
         }
 
-        if ($matchedRoute->name === 'index') {
+        if ($matchedRoute->posts_filter !== null) {
 
-            $scope = DeliveryAPIScopeEnum::from($matchedRoute->name);
+            $scope = DeliveryAPIScopeEnum::tryFrom($matchedRoute->name);
 
-            $html = BlogThemeTemplateRepository::renderFile(
-                $blog,
-                $scope,
-                $props['slug'] ?? null,
-                $query['page'] ?? 1,
-            );
+            if ($props['suffix'] === 'rss') {
 
-            return DeliveryAPIResponseObject::forFile($html);
+                $rss = BlogThemeRssRepository::generateRss($matchedRoute->filter);
+                dd($rss);
+
+            } else {
+
+                $html = BlogThemeTemplateRepository::renderFile(
+                    $blog,
+                    $scope,
+                    $props['slug'] ?? null,
+                    self::getPageNumberFromSuffix($props['suffix'])
+                );
+
+                return DeliveryAPIResponseObject::forFile($html);
+
+            }
 
         }
 
         return self::notFound();
 
+    }
+
+
+    private static function getPageNumberFromSuffix(?string $suffix) {
+        return is_numeric($suffix) ? (int) $suffix : 1;
     }
 
     private static function notFound() {
