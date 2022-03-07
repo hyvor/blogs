@@ -19,8 +19,8 @@ class BlogObject
     public array $nav_header;
     public array $nav_footer;
 
-    public string $code_head;
-    public string $code_foot;
+    public ?string $code_head;
+    public ?string $code_foot;
 
     public int $posts_count;
 
@@ -41,6 +41,9 @@ class BlogObject
             $blog->social_instagram,
             $blog->social_github
         );
+
+        $this->code_head = $blog->code_head;
+        $this->code_foot = $blog->code_foot;
 
         // TODO:
     }

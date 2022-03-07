@@ -18,6 +18,7 @@ use App\Models\Blog;
 use ScssPhp\ScssPhp\Compiler;
 use Symfony\Component\Routing\Exception\ResourceNotFoundException;
 use App\Data\Enums\RedirectTypeEnum;
+use App\Domains\BlogTheme\Twig\Renderer;
 use App\Domains\Media\MediaRepository;
 use App\Domains\Route\PermalinkRepository;
 use Illuminate\Contracts\Encryption\DecryptException;
@@ -173,7 +174,7 @@ class DeliveryRepository {
 
             $filesArray = [];
             foreach ($files as $file) {
-                $filesArray[$file->name] = $file->content;
+                $filesArray[$file->name] = Renderer::renderString($file->content, ['color' => 'blue']);
             }
 
             $scssCompiler = new Compiler();

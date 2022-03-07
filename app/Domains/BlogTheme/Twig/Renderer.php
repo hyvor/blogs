@@ -17,9 +17,7 @@ class Renderer {
             $fakeFileName => $string
         ]);
 
-        $twig = new Environment($loader, [
-            'cache' => false
-        ]);
+        $twig = self::getEnvironment($loader);
 
         return $twig->render($fakeFileName, $vars);
     }
@@ -28,12 +26,22 @@ class Renderer {
 
         $loader = new ArrayLoader($files);
 
+        $twig = self::getEnvironment($loader);
+
+        return $twig->render($fileName, $vars);
+
+    }
+
+    private static function getEnvironment(ArrayLoader $loader) {
+
         $twig = new Environment($loader, [
             'cache' => false
         ]);
 
-        return $twig->render($fileName, $vars);
+        // for template_from_string
+        $twig->addExtension(new \Twig\Extension\StringLoaderExtension());
 
+        return $twig;
     }
 
 }

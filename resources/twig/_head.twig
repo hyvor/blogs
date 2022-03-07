@@ -52,3 +52,11 @@
 {% if scope == 'post' and post.alternatives.length %}
 
 {% endif %}
+
+{# Custom Code from blog, post, and tags #}
+{% if _blog.code_head %}
+    {{ include(template_from_string(_blog.code_head)) }}
+{% endif %}
+{% if _post.code_head %}
+    {{ include(template_from_string(_post.code_head)) }}
+{% endif %}
