@@ -8,6 +8,8 @@ use App\Domains\Theme\Types\OutPutDeliveryAPI;
 use App\Data\Enums\ThemeFileFolderEnum;
 use App\Data\Objects\DataAPI\BlogObject;
 use App\Data\Objects\DataAPI\PostObject;
+use App\Data\Objects\DeliveryAPI\MetaObject;
+use App\Domains\BlogTheme\Twig\Renderer;
 use App\Domains\Post\PostRepository;
 use App\Helpers\InternalAPICaller;
 use App\Models\Blog;
@@ -31,23 +33,37 @@ class BlogThemeTemplateRepository
             $loaderArray[$file->name] = $file->content;
         }
 
-        $loader = new TwigArrayLoader($loaderArray);
-        $twig = new TwigEnvironment($loader, ['cache' => false]);
+        $scopeVariables = self::getVarsFromScope($blog, $scope, $model, $paginationNumber);
 
         $vars = [
             '_blog' => new BlogObject($blog),
-            '_env' => [],
+            '_config' => [],
             '_scope' => $scope,
-            '_foot' => '<script src="/assets/flashload.js"></script>
-            <script data-flashload-skip-replacing>
-                FlashLoad.start()
-            </script>',
-            ...self::getVarsFromScope($blog, $scope, $model, $paginationNumber)
+        ];
+
+        $vars += $scopeVariables;
+
+        $vars = [
+            '_head' => self::getHeadCode($vars),
+            '_foot' => self::getFootCode(),
         ];
 
         $fileName = self::getFileNameToRenderFromScope($scope, array_keys($loaderArray));
 
-        return $twig->render($fileName, $vars);
+        return Renderer::renderFromFiles($loaderArray, $vars, $fileName);
+    }
+
+    private static function getHeadCode(array $vars) {
+        return Renderer::renderFile(resource_path('twig/_head.twig'), $vars);
+    }
+
+    private static function getFootCode() {
+
+        return '<script src="/assets/flashload.js"></script>
+        <script data-flashload-skip-replacing>
+            FlashLoad.start()
+        </script>';
+
     }
 
     private static function getVarsFromScope(
@@ -81,8 +97,16 @@ class BlogThemeTemplateRepository
 
         } else if ($scope === DeliveryAPIScopeEnum::POST || $scope === DeliveryAPIScopeEnum::PAGE) {
 
+            $postObject = new PostObject($model, $blog);
             return [
-                '_post' => new PostObject($model, $blog)
+                '_meta' => new MetaObject(
+                    $postObject->title,
+                    $postObject->description,
+                    $postObject->featured_image,
+                    $postObject->url,
+                    $postObject->canonical_url ?? $postObject->url
+                ),
+                '_post' => $postObject,
             ];
 
         }

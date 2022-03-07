@@ -36,7 +36,8 @@ class DatabaseSeeder extends Seeder
                 'subdomain' => $blogData[0],
                 'name' => $blogData[1],
                 'hosting_domain' => $blogData[2] ?? null,
-                'api_key_console' => '123'
+                'api_key_console' => '123',
+                'social_twitter' => 'https://twitter.com/HyvorBlogs'
             ]);
 
             $blog->createAsCustomer([

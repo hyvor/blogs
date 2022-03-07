@@ -160,10 +160,10 @@ When rendering the twig templates, we send data into your template file as objec
 
 There are 4 main objects in HB: `Blog` , `Post` , `Tag` , and `Author`. These objects are explained in the [Data API](api-data) page.
 
-| Variable name | Scope | Description |
+| Variable name | Available Scopes | Description |
 | --- | --- | --- |
 | `_blog` | (all) | A Blog object, that includes all blog-level data/settings. |
-| `_env` | (all) | .env file of your theme parsed as an object |
+| `_config` | (all) | Theme config (`config.yaml`) as an object |
 | `_scope` | (all) | a string. one of `index`, `post`, `page`, `tag`, `author`, or `search` |
 | `_posts` | index, tag, author, search | An array of Post objects. (latest for `index`, posts of the tag for `tag`, so on) |
 | `_featured_posts` | index | An array of Posts objects (all featured posts). |

@@ -146,7 +146,7 @@ class DeliveryRepository {
         if ($props['_route'] === 'media') {
 
             /**
-             * Similar to assets, this returns uploaded images
+             * Similar to assets, this returns uploaded media
              */
 
             $fileName = $props['fileName'];
