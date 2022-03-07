@@ -102,13 +102,17 @@ Route::prefix('/api/console/v0/blog/{subdomain}')
     Route::middleware('role:owner|admin|editor')->group(function() {
 
         // tags CRUD
-        // Route::get('/tags', ' App\Http\Controllers\ConsoleAPI\ConsoleTagController@getTags')->name('tags');
-        Route::get('/tags', [ConsoleTagController::class], 'getTag');
+        Route::get('/tags', [ConsoleTagController::class, 'getTag']);
         Route::post('/tag', [ConsoleTagController::class, 'createTag']);
         Route::put('/tag/{tagId}', [ConsoleTagController::class, 'updateTag']);
-        Route::delete('/tag/{tagId}', [ConsoleTagController::class, 'deleteTag']);  
-        Route::get('/get-post-tag', [ConsoleTagController::class, 'getPostTag']);
-        Route::post('/create-post-tag', [ConsoleTagController::class, 'createPostTag']);
+        Route::delete('/tag/{tagId}', [ConsoleTagController::class, 'deleteTag']);
+
+        // post_tag CRUD
+        Route::get('/getTagList', [ConsoleTagController::class, 'getTagList']);
+        Route::post('/createPostTag', [ConsoleTagController::class, 'createPostTag']);
+        Route::get('/getPostTag', [ConsoleTagController::class, 'getPostTag']);
+        Route::delete('/removePostTag', [ConsoleTagController::class, 'removePostTag']);
+
 
         // comments
         Route::get('/comments/moderate', []);
@@ -133,6 +137,8 @@ Route::prefix('/api/console/v0/blog/{subdomain}')
         Route::post('/navigation', [ConsoleNavigationController::class,'createNavigation']);
         Route::put('/navigation/{id}', [ConsoleNavigationController::class,'updateNavigation']);
         Route::delete('/navigation/{id}', [ConsoleNavigationController::class,'deleteNavigation']);
+
+        // order Navigation
         Route::put('/navNumber/{userId}', [ConsoleNavigationController::class,'updateItemNumber']);
         Route::put('/source/{sourceId}', [ConsoleNavigationController::class,'updateSourceItemNumber']);
 
@@ -154,10 +160,10 @@ Route::prefix('/api/console/v0/blog/{subdomain}')
         Route::post('/settings', []);
 
         // users CRUD
-        Route::get('/users', [ConsoleUserController::class, 'getUsers']);
-        Route::post('/user', [ConsoleUserController::class, 'createUser']);
-        Route::patch('/user/{id}', [ConsoleUserController::class, 'updateUser']);
-        Route::delete('/user/{id}', [ConsoleUserController::class, 'deleteUser']);
+        Route::get('/users', [ConsoleUserController::class, 'getAuthor']);
+        Route::post('/user', [ConsoleUserController::class, 'createAuthor']);
+        Route::patch('/user/{id}', [ConsoleUserController::class, 'updateAuthor']);
+        Route::delete('/user/{id}', [ConsoleUserController::class, 'deleteAuthor']); 
 
         // theme CRUD
         Route::get('/theme-files', [ConsoleBlogThemeController::class, 'getAllFiles']);

@@ -3,10 +3,12 @@ import { useActions, useValues } from 'kea';
 import ReactSelect, { components } from 'react-select';
 import makeAnimated from 'react-select/animated';
 import subdomainLogic from '../logic/subdomainLogic';
+
 import tagsLogic from '../logic/tagsLogic';
 
 
-export default function SelectTags({postId}) {
+export default function SelectAuthors({postId}) {
+
     const subdomain = subdomainLogic.values.subdomain;
     const tagsLogicBuilt = tagsLogic({subdomain})
     const { tag, getSelectedTags } = useValues(tagsLogicBuilt)
@@ -16,7 +18,7 @@ export default function SelectTags({postId}) {
         {value: tag.id , label: tag.name}
     )) 
     
-    const defaultValue = { label: "Select Tag", value: 0 }
+    const defaultValue = { value: 0 , label: "Select Tag" } 
     
     const customStyles = {
 
@@ -112,21 +114,21 @@ export default function SelectTags({postId}) {
         }
       }
 
-    function handleTag(data){
+    // function handleAuthor(data){
         
-        const lastValue = data[data.length - 1];
-        const tagId = lastValue.value
-        const postIdentity = postId.postId
+    //     const lastValue = data[data.length - 1];
+    //     const tagId = lastValue.value
+    //     const postIdentity = postId.postId
 
-        saveId({
-            postId : postIdentity,
-            tagId : tagId,
-        })
+    //     saveId({
+    //         postId : postIdentity,
+    //         tagId : tagId,
+    //     })
 
-        // getSelectedTags({
+    //     getSelectedTags({
 
-        // })
-    }
+    //     })
+    // }
 
     const TagSelect = () => (
         <ReactSelect
@@ -136,7 +138,7 @@ export default function SelectTags({postId}) {
             components={makeAnimated()}
             maxMenuHeight={150}
             // onChange={() => {}}
-            onChange={handleTag}
+            // onChange={handleAuthor}
             isMulti 
             // components={{ DropdownIndicator:() => null, IndicatorSeparator:() => null }}
         />

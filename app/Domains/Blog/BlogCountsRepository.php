@@ -19,7 +19,7 @@ class BlogCountsRepository
      * By tag (15 max)
      */
     public static function getPostsCounts(int $blogId)
-    {
+    { 
 
         $status = [];
         Post::select('status', DB::raw('COUNT(id) as count'))

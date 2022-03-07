@@ -76,11 +76,7 @@ class UserRepository
 
     public function updateUser(int $id, array $updates) 
     {
-
         $user = User::find($id);
-    
-        
-        
     }
 
     public function deleteUser(int $id) {

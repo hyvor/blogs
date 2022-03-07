@@ -16,3 +16,12 @@ There are 6 roles for users. Each user has access to features based on their rol
 | Access to billing | ✔ | ✔ | | | | ✔|
 | Change blog settings | ✔ | ✔ | | | | |
 | Edit Theme | ✔ | ✔ | | | | |
+
+## You will learn :
+
+* What is users in Hyvor Blogs.
+* How to dose users work in the post-settings.
+* How to create, add delete/block users.
+* How to update the name of a user. (isSynd)
+
+Users settings: **Console &rarr; Settings &rarr; Users**.

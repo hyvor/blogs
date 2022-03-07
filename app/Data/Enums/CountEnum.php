@@ -11,6 +11,6 @@ enum CountEnum : string {
     case BLOG_USERS = 'users';
     case BLOG_POSTS = 'posts';
     case BLOG_MEDIA = 'media';
-    case BLOG_TAGS = 'tags';
+    case BLOG_TAGS = 'tags'; 
 
 }

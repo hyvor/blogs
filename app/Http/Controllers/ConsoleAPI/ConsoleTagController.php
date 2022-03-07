@@ -7,9 +7,15 @@ use Illuminate\Http\Request;
 use App\Domains\Tag\TagRepository;
 use App\Data\Objects\ConsoleAPI\TagObject;
 use App\Models\Blog;
+use App\Domains\Post\PostTagRepository;
 
 class ConsoleTagController extends Controller {
 
+    /*
+    *
+    * ConsoleAPI Settings->tags
+    *
+    */
     public static function getTag(Request $request, Blog $blog)
     {
         // dd('test');
@@ -80,34 +86,59 @@ class ConsoleTagController extends Controller {
     }
 
     /*
-    * 
-    * this function will create and save the tag
+    *
+    *
+    * *** ConsoleAPI Posts->Tags ***
+    *
+    * This function will get all the tags and display it in an order (Post_Count)
+    */
+    public static function getTagList(Request $request, Blog $blog){
+        
+        // $postId = $request->input('postId');
+
+        $postId = 184;
+        $getData = PostTagRepository::getTagList($blog->id, $postId);
+        return response()->json($getData);
+    }
+
+    /*
+    *
+    * This function will save the post_id and the tag_id in the post_tag table.
+    * (This function should also save the number of posts in the count table.)
     *
     */
     public static function createPostTag(Request $request , Blog $blog){
-        // dd('test create');
+        dd('test');
         $postId = $request->input('postId');
         $tagId = $request->input('tagId');
 
-        $createTag = TagRepository::createSaveTag($blog->id, $postId, $tagId); 
+        $createTag = PostTagRepository::createSaveTag($postId, $tagId); 
         return response()->json($createTag);
     }
 
     /*
     * 
-    * this function will create and save the tag
+    * This function will get the selected tags and display it in the react-select box.
     *
     */
     public static function getPostTag(Request $request){
-        // dd('test get');
 
-        // $postId = $request->input('postId');
+        $postId = $request->input('postId');
+
         // $tagId = $request->input('tagId');
+        // $postId = 184;
+        $tagId = 12;
 
-        $postId = 97;
-        $tagId = 1;
-
-        $getData = TagRepository::getPostTag($postId, $tagId);
+        $getData = PostTagRepository::getPostTag($postId, $tagId);
         return response()->json($getData);
+    }
+
+    /*
+    * 
+    * This function will remove the selected tags.
+    *
+    */
+    public static function removePostTag(Request $request){
+       return 'hello world';
     }
 }

@@ -11,6 +11,9 @@ import Checkbox from '../ReusableComponents/Checkbox';
 import dayjs from 'dayjs';
 import DatePicker from 'react-datepicker';
 import Loader from '../ReusableComponents/Loader';
+import SelectTags from './PostTags';
+import SelectAuthors from './PostUsers';
+
 
 export default function PostSettings({ isSettingsOpen, settingsViewRef, id }) {
 
@@ -111,14 +114,16 @@ export default function PostSettings({ isSettingsOpen, settingsViewRef, id }) {
                             title="Authors"
                             description="The unique part of the URL to identify this post"
                         >
-                            <input className="input" value="Ishini Avindya" onChange={() => {}}></input>
+                            {/* <input className="input" value="Ishini Avindya" onChange={() => {}}></input> */}
+                            <SelectAuthors postId = {post.id}/>
                         </Setting>
 
                         <Setting 
                             title="Tags"
                             className="post-setting-featured-image"
                         >
-                            <input className="input" value="#creative" onChange={() => {}}></input>
+                            {/* <input className="input" value="#creative" onChange={() => {}}></input> */}
+                            <SelectTags postId = {post.id}/>
                         </Setting>
 
                     </div>
