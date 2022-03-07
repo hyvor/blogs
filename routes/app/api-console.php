@@ -152,6 +152,8 @@ Route::prefix('/api/console/v0/blog/{subdomain}')
 
         Route::get('/data/export', [ConsoleImportExportController::class, 'export']);
         Route::get('/data/import', [ConsoleImportExportController::class, 'import']);
+
+        Route::get('/build', []);
     
     });
 

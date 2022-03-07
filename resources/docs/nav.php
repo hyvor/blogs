@@ -37,11 +37,16 @@ return [
     'Advanced' => [
         ['routes', 'Routes'],
         ['languages', 'Languages'],
+        ['self-hosting', 'Self-hosting'],
         ['subdirectory', 'Subdirectory hosting'],
-        ['website', 'Build a website'],
+        ['website', 'Create a website'],
         ['multi-collection', 'Multi-collection blog'],
         ['import', 'Importing data'],
         ['export', 'Exporting data'],
+    ],
+    'Self-hosting' => [
+        ['self-hosting-delivery-api', 'Using Delivery API'],
+        ['self-hosting-builds', 'Using builds']
     ],
     'Legal' => [
         ['terms', 'Terms'],
