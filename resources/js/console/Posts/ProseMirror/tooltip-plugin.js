@@ -129,16 +129,15 @@ class MarksTooltip {
             ) return
 
 
-        if (state.selection.empty || !view.editable) {
+        if (
+            state.selection.empty || 
+            !view.editable ||
+            state.doc.cut(state.selection.from, state.selection.to).textContent === "" ||
+            state.selection instanceof NodeSelection
+        ) {
             this.tooltip.style.display = "none"
             return
         }
-
-        if (state.doc.cut(state.selection.from, state.selection.to).textContent === "")
-            return;
-
-        if (state.selection instanceof NodeSelection)
-            return;
 
         this.items.forEach(({type, dom}) => {
             let active = isMarkActive(this.view.state, type);

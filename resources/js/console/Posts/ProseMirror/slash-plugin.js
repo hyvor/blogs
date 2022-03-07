@@ -79,6 +79,7 @@ const matchable = [
         icon: <Hr />,
         keywords: ['hr', 'divider', 'horizontal', 'line'],
         node: 'horizontal_rule',
+        selectNode: true
     },
     {
         name: "Custom HTML/Twig",

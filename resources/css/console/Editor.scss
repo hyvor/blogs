@@ -328,8 +328,9 @@ $prosemirror-selected-outline: 3px solid #299af3;
             }
         }
 
-        .rich {
+        rich {
             position:relative;
+            display:block;
             &:before {
                 content: "";
                 position:absolute;
