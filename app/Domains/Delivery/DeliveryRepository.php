@@ -18,16 +18,18 @@ use App\Models\Blog;
 use ScssPhp\ScssPhp\Compiler;
 use Symfony\Component\Routing\Exception\ResourceNotFoundException;
 use App\Data\Enums\RedirectTypeEnum;
-use App\Domains\BlogTheme\BlogThemeRssRepository;
+use App\Domains\BlogTheme\BlogThemeFeedRepository;
 use App\Domains\BlogTheme\Twig\Renderer;
 use App\Domains\Media\MediaRepository;
 use App\Domains\Route\PermalinkRepository;
+use App\Domains\Tag\TagRepository;
+use App\Domains\User\UserRepository;
 use Illuminate\Contracts\Encryption\DecryptException;
 use Padaliyajay\PHPAutoprefixer\Autoprefixer;
 
 class DeliveryRepository {
 
-    static function getLaravelResponse(DeliveryAPIResponseObject $obj) {
+    public static function getLaravelResponse(DeliveryAPIResponseObject $obj) {
         if ($obj->type === DeliveryAPITypeEnum::FILE) {
             return response($obj->content, $obj->status)
                 ->header('Content-Type', $obj->mime_type);
@@ -36,10 +38,9 @@ class DeliveryRepository {
         }
     }
 
-    static function getResponseObject (
+    public static function getResponseObject (
         Blog $blog,
         string $path,
-        array $query
     ) : DeliveryAPIResponseObject {
 
         if (!preg_match('/^\//', $path)) {
@@ -98,6 +99,18 @@ class DeliveryRepository {
 
         // add dynamic routing
         $blogRoutes = $blog->routes;
+
+        // send post and page to the last
+        $blogRoutes = $blogRoutes->sort(function($a, $b) {
+            if ($a->name === 'post' || $a->name === 'page') {
+                return 1;
+            }
+            if ($b->name === 'post' || $b->name === 'page') {
+                return -1;
+            }
+            return 0;
+        });
+
         foreach ($blogRoutes as $routeRow) {
 
             $defaults = [];
@@ -105,7 +118,7 @@ class DeliveryRepository {
             /**
              * Add suffix
              * Which can be a number for pagination
-             * or /rss
+             * or /feed
              */
             if ($routeRow->posts_filter !== null) {
                 $routeRow->match .= '/{suffix}';
@@ -217,6 +230,7 @@ class DeliveryRepository {
 
             $html = BlogThemeTemplateRepository::renderFile(
                 $blog,
+                'post',
                 DeliveryAPIScopeEnum::POST,
                 $post
             );
@@ -243,6 +257,7 @@ class DeliveryRepository {
 
                 $html = BlogThemeTemplateRepository::renderFile(
                     $blog,
+                    $matchedRoute->template,
                     DeliveryAPIScopeEnum::from($post->is_page ? 'page' : 'post'),
                     $post
                 );
@@ -253,19 +268,42 @@ class DeliveryRepository {
 
         if ($matchedRoute->posts_filter !== null) {
 
+            $filter = preg_replace_callback('/\{(.+)\}/', function($matches) use ($props) {
+                $var = $matches[1];
+
+                if (!isset($props[$var]))
+                    return "''";
+
+                return "'$props[$var]'";
+            }, $matchedRoute->posts_filter);
+
             $scope = DeliveryAPIScopeEnum::tryFrom($matchedRoute->name);
 
-            if ($props['suffix'] === 'rss') {
+            if ($props['suffix'] === 'feed') {
 
-                $rss = BlogThemeRssRepository::generateRss($matchedRoute->filter);
-                dd($rss);
+                $feed = BlogThemeFeedRepository::generateFeed($blog, $filter);
+
+                return DeliveryAPIResponseObject::forFile($feed, 'application/atom+xml');
 
             } else {
 
+                $model = match ($scope) {
+
+                    DeliveryAPIScopeEnum::TAG => 
+                        TagRepository::getTagByBlogIdAndIdentifier($blog->id, null, $props['slug']),
+
+                    DeliveryAPIScopeEnum::AUTHOR =>
+                        UserRepository::getUserByBlogIdAndIdentifier($blog->id, null, $props['slug']),
+
+                    default => null
+                };
+
                 $html = BlogThemeTemplateRepository::renderFile(
                     $blog,
+                    $matchedRoute->template,
                     $scope,
-                    $props['slug'] ?? null,
+                    $model,
+                    $filter,
                     self::getPageNumberFromSuffix($props['suffix'])
                 );
 

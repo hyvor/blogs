@@ -11,12 +11,14 @@ class RouteRepository {
             // post
             [
                 'name' => 'post',
-                'match' => '/{tag}/{slug}'
+                'match' => '/{tag}/{slug}',
+                'template' => 'post'
             ],
             // page
             [
                 'name' => 'page',
-                'match' => '/{slug}'
+                'match' => '/{slug}',
+                'template' => 'page,post'
             ],
             // home page (index)
             [
@@ -43,6 +45,7 @@ class RouteRepository {
             [
                 'name' => 'search',
                 'match' => '/search',
+                'template' => 'search,index'
             ]
         ]);
 

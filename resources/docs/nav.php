@@ -32,7 +32,11 @@ return [
     ],
     'Theme Development' => [
         ['themes-overview', 'Overview'],
-        ['themes-tutorial', 'Tutorial']
+        ['themes-templates', 'Templates'],
+        ['themes-styles', 'Styling'],
+        ['themes-language', 'Language'],
+        ['themes-config', 'Configuration'],
+        ['themes-publishing', 'Publishing']
     ],
     'Advanced' => [
         ['routes', 'Routes'],

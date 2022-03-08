@@ -8,6 +8,7 @@ use App\Domains\Theme\Types\OutPutDeliveryAPI;
 use App\Data\Enums\ThemeFileFolderEnum;
 use App\Data\Objects\DataAPI\BlogObject;
 use App\Data\Objects\DataAPI\PostObject;
+use App\Data\Objects\DataAPI\TagObject;
 use App\Data\Objects\DeliveryAPI\MetaObject;
 use App\Domains\BlogTheme\Twig\Renderer;
 use App\Domains\Post\PostRepository;
@@ -21,9 +22,11 @@ class BlogThemeTemplateRepository
 {
     public static function renderFile(
         Blog $blog,
+        string $template,
         ?DeliveryAPIScopeEnum $scope,
-        Model $model = null,
-        int $pageNumber = null,
+        ?Model $model,
+        ?string $filter = null,
+        ?int $pageNumber = null,
     ): string|null {
 
         $templateFiles = BlogThemeRepository::getFilesInFolder($blog->id, ThemeFileFolderEnum::TEMPLATES);
@@ -49,7 +52,11 @@ class BlogThemeTemplateRepository
             '_foot' => self::getFootCode($vars),
         ];
 
-        $fileName = self::getFileNameToRenderFromScope($scope, array_keys($loaderArray));
+        if ($filter !== null) {
+            $vars['_posts'] = self::getPosts($blog, $filter, $pageNumber);
+        }
+
+        $fileName = self::getFileNameToRender($template, array_keys($loaderArray));
 
         return Renderer::renderFromFiles($loaderArray, $vars, $fileName);
     }
@@ -67,6 +74,22 @@ class BlogThemeTemplateRepository
 
     }
 
+    private static function getPosts(
+        Blog $blog,
+        string $filter,
+        int $pageNumber
+    ) {
+
+        return PostRepository::getPostsWithFilterQ(
+            $blog->id, $filter,
+            10, ($pageNumber - 1) * 10,
+            'published_at', 'DESC'
+        )->map(function ($post) use ($blog) {
+            return new PostObject($post, $blog);
+        });
+
+    }
+
     private static function getVarsFromScope(
         BlogObject $blogObject, 
         ?DeliveryAPIScopeEnum $scope, 
@@ -78,14 +101,6 @@ class BlogThemeTemplateRepository
         $blog = $blogObject->getBlog();
 
         if ($scope === DeliveryAPIScopeEnum::INDEX) {
-
-            $posts = PostRepository::getPostsWithFilterQ(
-                $blog->id, null,
-                10, $pageNumber * 10,
-                'published_at', 'DESC'
-            )->map(function ($post) use ($blog) {
-                return new PostObject($post, $blog);
-            });
 
             /* $featuredPosts = InternalAPICaller::data($blog->subdomain, 'posts', [
                 'limit' => 50,
@@ -100,7 +115,6 @@ class BlogThemeTemplateRepository
                     $blogObject->url,
                     $blogObject->url
                 ),
-                '_posts' => $posts,
                 '_featured_posts' => null, // $featuredPosts->data
             ];
 
@@ -118,21 +132,44 @@ class BlogThemeTemplateRepository
                 '_post' => $postObject,
             ];
 
+        } else if ($scope === DeliveryAPIScopeEnum::TAG) {
+
+            $tagObject = new TagObject($model, $blog);
+
+            return [
+                '_meta' => new MetaObject(
+                    $tagObject->name,
+                    $tagObject->name,
+                    $tagObject->featured_image,
+                    $tagObject->url,
+                    $tagObject->url
+                ),
+                '_tag' => $tagObject,
+            ];
+
         }
 
 
     }
 
-    private static function getFileNameToRenderFromScope(DeliveryAPIScopeEnum $scope, array $availableFiles)
+    /**
+     * $template = page,post
+     */
+    private static function getFileNameToRender(string $template, array $availableFiles)
     {
 
-        if ($scope == DeliveryAPIScopeEnum::INDEX) {
-            return 'index.twig';
-        } else if ($scope == DeliveryAPIScopeEnum::POST) {
-            return 'post.twig';
-        } else if ($scope == DeliveryAPIScopeEnum::PAGE) {
-            return in_array('page.twig', $availableFiles) ? 'page.twig' : 'post.twig';
+        $checkFiles = explode(',', $template);
+    
+        foreach ($checkFiles as $file) {
+
+            $file = trim($file) . '.twig';
+            if (in_array($file, $availableFiles)) {
+                return $file;
+            }
+
         }
+
+        return 'index.twig';
 
     }
 }

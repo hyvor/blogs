@@ -26,8 +26,8 @@ In addition to these default routes, there are some special, non-customizable ro
 Match | Description
 ---|---
 `/styles.css` | The main CSS file of the blog (auto-generated from SCSS files in theme styles)
-`/assets/{fileName}` | To serve files in the theme **assets** directory
-`/media/{fileName}` | To serve uploaded media files
+`/assets/{file_name}` | To serve files in the theme **assets** directory
+`/media/{file_name}` | To serve uploaded media files
 `/robots.txt` | Robots.txt file (customizable in settings)
 `/sitemap.xml` | Blog's sitemap index file
 

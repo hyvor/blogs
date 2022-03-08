@@ -15,9 +15,7 @@ class SubdomainController extends Controller
     public function handle(Request $request, Blog $blog)
     {
         $path = $request->route('path') ?? '';
-        $query = $request->all();
-
-        $data = DeliveryRepository::getResponseObject($blog, $path, $query);
+        $data = DeliveryRepository::getResponseObject($blog, $path);
 
         return DeliveryRepository::getLaravelResponse($data);
     }

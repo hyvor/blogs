@@ -1,50 +1,27 @@
-# Designing Themes: Overview
+# Overview
 
-Hyvor Blogs (HB) is opinionated on how themes are created, but allows developers to build any type of theme.
+In this page, you will learn how to create a theme in Hyvor Blogs. Before we get started, let's make sure what we mean by each special word used in this document.
 
-## Terms
-
-Here are some terms used in this document.
-
-- Blogger - the person who owns the blog, and usually edits the theme from the console.
 - Theme Developer - the person who develops a theme (must be you!)
+- Blogger - the person who owns the blog, and can edit your theme from the console.
 - Subdomain - subdomain part of `{subdomain}.hyvorblogs.io`  which is given to the blogger
 - Rendering - combining a theme file with data and returning HTML output
-- Scope (see below)
+- Route - routes of the blog that determines how to render a page or what output to return for a specific URL path.
+- HB - Hyvor Blogs
 
-## Scope
+## Routes {#routes}
 
-When someone creates a blog on HB, we give them a subdomain: ex `steve.hyvorblogs.io`. When our servers get a request to this domain (`steve.hyvorblogs.io/hello-world`), we detect its **Scope** based on the path part of the URL (`/hello-world`). HB supports these Scopes by default:
+Let's say a blog gets request to the URL path `/hello-world`. We use Routes to determine what output to return. By default, `/hello-world` can usually be a `post` or `page` route. So, we check our database if a post with the `/hello-world` slug exists in our database, and then render with `post.twig` or `page.twig` with its data, and send back the output to the user.
 
-| Scope | Matching Path Pattern | HTML | Description |
-| --- | --- | --- | --- |
-| `index` | `/` | Yes | index/homepage: usually lists most recent pages with pagination) |
-| `post` | `/{slug}` | Yes | a post |
-| `page` | `/{slug}` | Yes | a static page (ex: about, contact us) |
-| `author` | `/author/{slug}` | Yes | lists posts of an author |
-| `tag` | `/tags/{slug}` | Yes | lists posts of a tag |
-| `search` | `/search` | Yes | lists posts matched for the current search |
-| `404` | (can be anything) | Yes | not found (404) error  |
-| `asset` | `/assets/{slug}` | No | assets of the theme
-| `styles.css` | `/styles.css` | No | generated CSS file from SCSS files in the `styles` folder of the theme.
+So, before we getting started with theme development, it is important to fully understand how routes work. See our [Routes](routes) guide and come back here to continue.
 
-(It is also possible to customize and create new Scopes using [paths](paths))
-
-As a theme developer, you are required to create templates for HTML Scopes.
-
-- `index.twig` (required)
-- `post.twig` (required)
-- `page.twig` (optional, `post.twig` fallback)
-- `author.twig` (optional, `index.twig` fallback)
-- `tag.twig` (optional, `index.twig` fallback)
-- `search.twig` (optional, `index.twig` fallback)
-- `404.twig` (required)
+As you may have noticed, Routes are a blog-level setting. The blogger sets this. However, some themes may want to use custom routes. We will look into that at the end. 
 
 ## Twig {#twig}
 
 We use [Twig 3.0](https://twig.symfony.com/doc/3.x/) for templating. It is a powerful language with a plenty of in-built tags, filters, and functions. Twig also has nice, easy-to-follow documentation, which was one reason we chose Twig over other template languages. If you haven't used it ever, go through the Twig for [Template Designers](https://twig.symfony.com/doc/3.x/templates.html) page, and you will get an idea of how it works. Basically, it's HTML with superpowers like functions and including other files.
 
-So, if we go back to our last discussion, first we detect the Scope (let's assume `post` for `/hello-world`), then fetch required data from our database, then we call the Twig template file that you created (`post.twig`). Inside this file, you can include other files or even use [inheritance](https://twig.symfony.com/doc/3.x/templates.html#template-inheritance). You can even call our Data API to fetch more data!
+When a blog gets a request, first, we match its path to a Route (let's assume `post` for `/hello-world`), then fetch required data from our database, then we call the Twig template file that you created (`post.twig`). Inside this file, you can include other files or even use [inheritance](https://twig.symfony.com/doc/3.x/templates.html#template-inheritance). You can even call our [Data API](api-data) to fetch more data (More on that below)!
 
 ## Development
 
@@ -55,19 +32,23 @@ Developing themes are quite different from other platforms. Most platforms suppo
 
 To test changes, you can visit your blog’s online URL.
 
+> We know this is not the perfect set up for a developer, as it doesn't provide all the convenient features like Git versioning and hot reloading. We have long-term plans to create a cli tool later to allow you to develop themes offline.
+
 ## Designing
 
-As mentioned earlier, Hyvor Blogs is opinionated. So, we have some rules and limitations to make sure your theme is for a blog (not for an e-commerce site), it is structured, simple, fast, and secure.
+Hyvor Blogs is opinionated. So, we have some rules and limitations to make sure your theme is structured, simple, fast, and secure.
 
 ### 1. Folder Structure
 
-There are four folders in a HB theme. Nested folders are **not supported**.
+There are four folders in a HB theme folder. Nested folders are **not supported**.
 
 ```plain
-- templates
-- styles
-- assets
-- lang
+/
+    /templates
+    /styles
+    /assets
+    /lang
+    config.yaml
 ```
 
 #### templates
@@ -85,7 +66,7 @@ Type | Description | Examples
 
 This folder contains SCSS files. `index.scss` is required. 
 
-While developing and working with other blogging platforms/CMSs, we understood that customizing a theme becomes really hard when the theme developer puts all CSS in a single file. Therefore, we decided that we want to support "chunk-css" files to make it easy to edit for the blogger. And, we use [SCSS](https://sass-lang.com/) instead of CSS to make the theme developer's life easier. All CSS is valid SCSS. So, if you haven’t use SCSS earlier, just use CSS. SCSS just have some cool features like nesting classes. 
+While developing and working with other blogging platforms/CMSs, we understood that customizing a theme becomes really hard when the theme developer puts all CSS in a single file. Therefore, we decided that we want to support "chunk-css" files to make it easy to edit for the blogger. And, we use [SCSS](https://sass-lang.com/) instead of CSS to make the theme developer's life easier. All CSS is valid SCSS. So, if you haven’t use SCSS earlier, just use CSS. SCSS just have some cool features like nesting rules. 
 
 Back to “chunk-css”. let’s say you make a partial file for the blog header (`templates/_header.twig`). Then create an SCSS file to hold its CSS (`header.scss`). This pattern makes understanding and editing easier for the blogger. Finally, import all chunk files to `index.scss` using `@import` statements.
 
@@ -97,11 +78,13 @@ Back to “chunk-css”. let’s say you make a partial file for the blog header
 
 On our side, we process `index.scss` file and generate a `styles.css`, which will be accessible via `/styles.css`. **That is the only CSS file of the whole blog**!
 
+And, don't worry about using vendor prefixes like `-webkit-`. We auto-prefix the `styles.css` file before sending it to the user.
+
 > We strongly encourage you to write CSS from scratch without using any libraries like Bootstrap. A blog theme is very simple and it is totally possible to manage everything on your own without depending on third-party libraries. If you really want to use a library, add it to assets instead of styles.
 
 #### assets
 
-This folder contains assets file. Usually, you may use SVGs, PNGs, or Javascript files. All files in this directory are publicly accessible via `assets/{filename}`. Any file type is supported.
+This folder contains asset files. Usually, you may use SVGs, PNGs, or Javascript files. All files in this directory are publicly accessible via `assets/{file_name}`. Any file type is supported.
 
 #### lang
 
@@ -165,7 +148,7 @@ There are 4 main objects in HB: `Blog` , `Post` , `Tag` , and `Author`. These ob
 | `_blog` | (all) | A Blog object, that includes all blog-level data/settings. |
 | `_config` | (all) | Theme config (`config.yaml`) as an object |
 | `_scope` | (all) | a string. one of `index`, `post`, `page`, `tag`, `author`, or `search` |
-| `_posts` | index, tag, author, search | An array of Post objects. (latest for `index`, posts of the tag for `tag`, so on) |
+| `_posts` | (all)| An array of Post objects, filtered by the [route](routes)'s filter value |
 | `_featured_posts` | index | An array of Posts objects (all featured posts). |
 | `_post` | post and page | A Post object |
 | `_tag` | tag | A Tag object (the current tag) |
@@ -192,142 +175,6 @@ Sending all placeholders (except `_lang`) through the `raw` filter is absolutely
 
 ```twig
 {{ _head | raw }}
-```
-
-## Config
-
-When designing themes that others can use, you have to add options to customize some basic settings of the theme. For theme configurations, there are two files in the root directory: `config.yaml` and `config.def.yaml`. 
-
-### config.yaml
-
-This is the configuration file of the blog. However, this is hidden in the UI. We convert YAML into a beautiful UI using your `config.def.yaml` file.
-
-```yaml
-dark_theme: Yes
-accent_color: 0000000
-image_service:
-    api_key:
-    api_version: 2
-```
-
-### config.def.yaml
-
-This is the definition file that explains what each key is expecting as its value.
-
-```yaml
-dark_theme:
-    $default: Yes
-    $title: Dark theme
-    $description: Turn on dark theme for this blog
-    $type: checkbox
-accent_color:
-    $default: "#000000"
-    $title: Accent Color
-    $description: Main color of the blog
-    $type: color
-image_service:
-    $title: Image Service API Details
-
-    api_key:
-				$default: ~
-        $title: API Key
-        $description: ...
-        $type: text
-        $options:
-             maxlength: 255
-
-    api_version:
-				$default: 1
-        $title: API Version
-        $description: ...
-        $type: number
-        $options:
-             min: 1
-             max: 2
-```
-
-> `config.def.yaml` files are only visible in development blogs. Bloggers do not see it. Neither can they edit it.
-
-#### Supported `$type` s
-
-Types are equivalent to HTML `<input>` types but has some additions to support other form elements, such as `<select>` out of the box.
-
-These are the supported types
-
-| $type | Description |
-| --- | --- |
-| text | `<input type="text">` . Single-line text input. This is the default, if _type is not defined |
-| textarea | `<textarea>`. Multi-line text input. |
-| checkbox | `<input type="checkbox">` . Boolean input |
-| radio | A radio group. See examples below for usage. |
-| select | `<select>` element. See examples below for usage. |
-| color | `<input type="color">`. To choose any color |
-| color_palette | A color palette with only the given color values. |
-| date | Date picker |
-| number | `<input type="number">` Select a number |
-| range | `<input type="range">` |
-
-#### Supported `$options`
-
-| Options | Description |
-| --- | --- |
-| maxlength | Maximum number of characters in an input  |
-| min | Minimum value for an input (usually for number) |
-| max | Maximum value for an input (usually for number) |
-| required | Set if the input is required |
-
-#### Examples
-
-**Radio**
-
-Use radio input type when you have a limited number of values for a configuration. If you have more than, for example, 3 values, consider using Select instead of Radio. The difference between `radio` and `select` is that, `radio` shows all the options to the user while `select` only shows the selected value - the user has to click to see other values.
-
-```yaml
-some_key:
-    $title: When to use caching
-    $type: radio
-    $values: 
-         all: For All Posts and Pages
-         posts: Only Posts
-	       pages: Only Pages
-```
-
-When using `radio` , `_values` is required, which is takes `key: label` pairs. `key` is the actual value that will be saved in the `config.yaml` file. `label` is what the user will see.
-
-**Select**
-
-This is exactly similar to `radio`. Only the UI is different.
-
-```yaml
-some_key:
-    $title: When to use caching
-    $type: select
-    $values: 
-         all: For All Posts and Pages
-         posts: Only Posts
-	       pages: Only Pages
-```
-
-**Color Palette**
-
-Use an YAML array to define `$values`.
-
-```yaml
-some_key:
-    $title: Choose a color
-    $type: color_palette
-    $values: [#000000, #ffffff]
-```
-
-or
-
-```yaml
-some_key:
-		$title: Choose a color
-    $type: color_palette
-    $values:
-        - #000000
-        - #ffffff
 ```
 
 `.env` is the only file in the root of your template. It should contain all the configurations of the theme. There are two required configurations.
