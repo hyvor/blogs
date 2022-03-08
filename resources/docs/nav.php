@@ -34,7 +34,7 @@ return [
         ['themes-overview', 'Overview'],
         ['themes-templates', 'Templates'],
         ['themes-styles', 'Styling'],
-        ['themes-language', 'Language'],
+        ['themes-internationalization', 'Internationalization'],
         ['themes-config', 'Configuration'],
         ['themes-publishing', 'Publishing']
     ],
