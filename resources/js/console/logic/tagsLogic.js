@@ -45,11 +45,13 @@ const tagsLogic = kea({
             actions.addTag(tag);
         },
             
-        updateData: async ({tagId, name, description, slug }) => {
+        updateData: async ({tagId, name, description, slug, codeHead, codeFoot}) => {
             const tag = await api.put(props.subdomain, `/tag/${tagId}`, {
                 name: name,
                 description: description,
                 slug: slug,
+                codeHead: codeHead,
+                codeFoot: codeFoot,
             });
             actions.addTag(tag);
         },

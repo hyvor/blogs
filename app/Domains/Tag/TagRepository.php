@@ -43,12 +43,14 @@ class TagRepository
         return $createTag;
     }
 
-    public static function updateTag(int $id, string $name, string $slug, ?string $description)
+    public static function updateTag(int $id, string $name, string $slug, ?string $description,  ?string $codeHead,  ?string $codeFoot)
     {
         $tag = Tag::find($id);
         $tag->name=$name;
         $tag->slug=$slug;
-        $tag->description=$description;
+        $tag->description=$description; 
+        $tag->code_head=$codeHead; 
+        $tag->code_foot=$codeFoot; 
 
         $tag->save();
     }

@@ -1,6 +1,6 @@
 import React, {useState} from 'react';
 import { useActions, useValues } from 'kea';
-import { Trash, PencilFill, Plus, ArrowBarRight} from 'react-bootstrap-icons';
+import { Trash, PencilFill, Plus, ArrowBarRight, CodeSlash} from 'react-bootstrap-icons';
 import {toast} from 'react-toastify'
 import subdomainLogic from '../logic/subdomainLogic';
 import tagsLogic from '../logic/tagsLogic';
@@ -10,6 +10,10 @@ import Toast from '../ReusableComponents/Toast';
 import NoResults from '../ReusableComponents/NoResults';
 import Input from '../ReusableComponents/Input';
 import { Popup, PopupBodyDefault, PopupConfirm, PopupFooterDoubleButton, PopupHeaderDefault } from '../ReusableComponents/Popup';
+import CodemirrorEditor, { CODEMIRROR_MODES } from '../ReusableComponents/CodemirrorEditor';
+import DualSetting from '../ReusableComponents/DualSetting';
+
+
 
 export default function SettingTag(props) {
     const subdomain = subdomainLogic.values.subdomain;
@@ -29,7 +33,7 @@ export default function SettingTag(props) {
         }
     }
 
-    console.log(tag.length);
+    console.log(tag);
     console.log('test')
     console.log(tagListHasMore);
 
@@ -55,11 +59,12 @@ export default function SettingTag(props) {
         {
             tag.length ?
             <div className="global-table-view">
-                <div className="global-table-header-five">      
+                <div className="global-table-header-six">      
                     <div className="table-head-item">Name</div> 
                     <div className="table-head-item">Slug</div>
                     <div className="table-head-item">Description</div>
-                    <div className="table-head-item">Posts</div>
+                    <div className="table-head-item">Code</div>
+                    <div className="table-head-item">Posts</div> 
                     <div></div>
                 </div>
 
@@ -81,7 +86,7 @@ export default function SettingTag(props) {
                                                             {
                                                                 tag.map(tag => (
                                                                     <div className="global-table-body">
-                                                                        <Tags key = {tag} id={tag.id} name={tag.name} description={tag.description} slug={tag.slug}/>           
+                                                                        <Tags key = {tag} id={tag.id} name={tag.name} description={tag.description} slug={tag.slug} codeHead={tag.code_head} codeFoot={tag.code_foot}/>           
                                                                     </div>
                                                                 ))
                                                             }
@@ -211,17 +216,52 @@ function CreateNewTag(){
     </div>
 }
 
-function Tags ({id, name, description, slug}){
+function Tags ({id, name, description, slug, codeHead, codeFoot}) {
     const [styleUpdateIcon, setStyleUpdateIcon] = useState("table-button");
     const [styleDeleteIcon, setStyleDeleteIcon] = useState("table-button");
+    const [styleCodeIcon, setStyleCodeIcon] = useState("table-button");
     const [updateFormOpened, setUpdateFormOpened] = useState(false);
     const [deletePopupOpened, setDeletePopupOpened] = useState(false);
+    const [codePopupOpened, setCodePopupOpened] = useState(false);
+
 
     const subdomain = subdomainLogic.values.subdomain;
     const tagLogicBuilt = tagsLogic({subdomain})
     const { remove , updateData} = useActions(tagLogicBuilt)
     const { updateDataAjax } = useValues(tagLogicBuilt)
 
+    // Code Section
+
+    const [ tagCodeHead, setCodeHead ] = useState(codeHead);
+    const [ tagCodeFoot, setCodeFoot ] = useState(codeFoot);
+
+    function handleCode(e){
+        e.preventDefault();
+        setStyleCodeIcon('table-code-popup')
+        setCodePopupOpened(true);
+    }
+
+    function handleDoCancelCode(){
+        setStyleCodeIcon("table-button");
+        setCodePopupOpened(false)
+        console.log('test')
+        window.location.reload(false);
+    }
+
+    function updateCode(e){
+        e.preventDefault();
+        updateData({
+            tagId: updateTagData.tagId,
+            codeHead: codeHead,
+            codeFoot: codeFoot,
+        });
+        setUpdateFormOpened(false); 
+
+        setStyleUpdateIcon('table-button')
+        window.location.reload(false);
+    }
+
+    // Delete Section
     function handleDelete(e) {
         e.preventDefault();
         setDeletePopupOpened(true);
@@ -271,11 +311,65 @@ function Tags ({id, name, description, slug}){
     
     return <div>
         <div className="global-table-body">
-            <div className="table-body-five">
+            <div className="table-body-six">
                 <div className="table-item"> {name}</div>
                 <div className="table-item"> {slug} </div>
                 <div className="table-item"> {description}</div>
+                <div className="table-actions">
+                    <div className="table-code" onClick={handleCode}>
+                        <span className={styleCodeIcon}>
+                            <CodeSlash size={10} />
+                        </span>
+                        {
+                            codePopupOpened ?
+                            <div className="popup-width">
+                                <Popup
+                                    header={<PopupHeaderDefault title='Update Code' />}
+                                    body={
+                                    <PopupBodyDefault>
+                                        <DualSetting 
+                                            title="Head Code"
+                                            description={
+                                                <div className="table-code-pop-input">
+                                                     <CodemirrorEditor 
+                                                    mode={CODEMIRROR_MODES.twig}
+                                                    value={tagCodeHead}
+                                                    onChange={setCodeHead}
+                                                />
+                                                </div>
+                                                
+                                            }
+                                        />
+                                        <DualSetting 
+                                            title="Foot Code"
+                                            description={
+                                                <div className="table-code-pop-input">
+                                                    <CodemirrorEditor 
+                                                        mode={CODEMIRROR_MODES.twig}
+                                                        value={tagCodeFoot}
+                                                        onChange={setCodeFoot}
+                                                    />
+                                                </div>
+                                            }
+                                        />
+                                    </PopupBodyDefault>
+                                    }
+                                    footer={
+                                        <PopupFooterDoubleButton
+                                            onCancel={handleDoCancelCode}
+                                            onClick={(e)=> {updateCode(e)}}
+                                            name='Update'
+                                        />
+                                    }
+                                /> 
+                            </div>
+                            : null
+                        }
+                    </div>
+                </div>
+
                 <div className="table-item"> 2000 </div>
+
                 <div className="table-actions">
                     <div className="table-edit" onClick={handleUpdate}>
                         <span className={styleUpdateIcon}>

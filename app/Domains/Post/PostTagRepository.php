@@ -73,6 +73,30 @@ class PostTagRepository
     *
     */
     public static function getPostTag($postId, $tagId){
+
+        $posts = Post::where('id', '=', $postId)
+        ->value('id');
+
+        $tag = Tag::where('id', '=', $tagId)
+        ->value('id');
+
+        $postTag = PostTag::where('post_id', '=', $posts)->pluck('tag_id')->all();
+
+        $tagIdList = array();
+        foreach($postTag as $value)
+        {
+            $tagIdList[] = Tag::where('id', '=', $value)
+            ->select('name')
+            ->first();
+        }
+
+        return $tagIdList;
+
+
+
+
+        
+
         // dd('tests');
         // dd('Post Id '+$postId + ' Tag Id '+$tagId);
         // dd($postId);
@@ -118,14 +142,6 @@ class PostTagRepository
         //     }
         // }
 
-        $posts = Post::where('id', '=', $postId)
-        ->value('id');
-
-        $tag = Tag::where('id', '=', $tagId)
-        ->value('id');
-
-        $postTag = PostTag::where('post_id', '=', $posts)->pluck('tag_id')->all();
-
 
         // $postTag = PostTag::where('post_id', '=', $posts)
         // ->where('tag_id', '=', $tag)
@@ -163,16 +179,6 @@ class PostTagRepository
         // $connection = Tag::where('id', '=', $postTag)
         // ->value('name');
         // return $connection;
-
-        $tagIdList = array();
-        foreach($postTag as $value)
-        {
-            $tagIdList[] = Tag::where('id', '=', $value)
-            ->select('name')
-            ->first();
-        }
-
-        return $tagIdList;
     }
     
 }

@@ -12,19 +12,22 @@ class TagObject
     public string $name;
     public string $slug;
     public ?string $description; 
-    public ?string $featured_image; 
     public ?string $posts_count; 
+    public ?string $code_head; 
+    public ?string $featured_image; 
 
-    public function __construct(Tag $Tag)
+
+    public function __construct(Tag $tag)
     {
-        $this->id = $Tag->id;
-        $this->	created_at = $Tag->created_at->timestamp;
-        $this->blog_id = $Tag->blog_id;
-        $this->name = $Tag->name;
-        $this->slug = $Tag->slug;
-        $this->description = $Tag->description;
-        $this->featured_image = $Tag->featured_image;
-        $this->posts_count = $Tag->posts_count;
+        $this->id = $tag->id;
+        $this->	created_at = $tag->created_at->timestamp;
+        $this->blog_id = $tag->blog_id;
+        $this->name = $tag->name;
+        $this->slug = $tag->slug;
+        $this->description = $tag->description;
+        $this->posts_count = $tag->posts_count;
+        $this->code_head = $tag->code_head;
+        $this->code_foot = $tag->code_foot;
         
     }
 } 

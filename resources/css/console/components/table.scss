@@ -14,9 +14,14 @@
         grid-template-columns: 1fr 1fr 1fr 60px;
         @include grid-style;
     }
+    @mixin grid-six {
+        display: grid;
+        grid-template-columns: 1fr 2fr 1fr 0.5fr 0.5fr 60px; 
+        @include grid-style;
+    }
     @mixin grid-five {
         display: grid;
-        grid-template-columns: 1fr 2fr 1fr 0.5fr 60px;
+        grid-template-columns: 1fr 2fr 1fr 0.5fr 60px; 
         @include grid-style;
     }
     @mixin grid-four {
@@ -50,6 +55,17 @@
             margin-right:5px;
         }
     }
+    .global-table-header-six {
+        @include grid-six;
+        font-weight: 600;
+        background: $color-card;
+        margin-bottom: 15px;
+
+        .table-head-item{
+            margin-right:5px;
+        }
+    }
+
     .global-table-header-five {
         @include grid-five;
         font-weight: 600;
@@ -96,6 +112,9 @@
     //     overflow-y: scroll;
     // }
     .global-table-body{
+        .table-body-six {
+            @include grid-six;
+        }
         .table-body-five {
             @include grid-five;
         }
@@ -114,6 +133,9 @@
         .table-actions {
             display: flex;
             justify-content: center;
+            .table-code{
+                margin-right: 20px;
+            }
             .table-edit {
                 margin-right:8px;
             }
@@ -153,6 +175,11 @@
                 color:$color-text;
             }
             .table-update-popup{
+                @include action-button-style;
+                background-color:$color-accent-light;
+                color:$color-text;
+            }
+            .table-code-popup{
                 @include action-button-style;
                 background-color:$color-accent-light;
                 color:$color-text;

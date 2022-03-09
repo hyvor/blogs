@@ -2,7 +2,9 @@
 
 namespace App\Data\Objects\ConsoleAPI;
 
-use App\Data\Objects\DataAPI\TagObject;
+use App\Data\Objects\ConsoleAPI\TagObject;
+use App\Data\Objects\ConsoleAPI\AuthorObject;
+
 use App\Domains\Route\PermalinkRepository;
 use App\Models\Blog;
 use App\Models\Post;
@@ -37,7 +39,9 @@ class PostObject
             return new TagObject($tag, $blog);
         })->toArray();
 
-        $authors = null;
+        $authors = $post->authors->map(function ($author) use ($blog) {
+            return new AuthorObject($author, $blog);
+        })->toArray();
 
         $this->id = $post->id;
         $this->preview_id = encrypt($post->id);
