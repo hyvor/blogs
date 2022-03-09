@@ -220,7 +220,8 @@ function Tags ({id, name, description, slug, codeHead, codeFoot}) {
     const [styleUpdateIcon, setStyleUpdateIcon] = useState("table-button");
     const [styleDeleteIcon, setStyleDeleteIcon] = useState("table-button");
     const [styleCodeIcon, setStyleCodeIcon] = useState("table-button");
-    const [updateFormOpened, setUpdateFormOpened] = useState(false);
+    const [updatePopUpOpened, setUpdatePopUpOpened] = useState(false);
+
     const [deletePopupOpened, setDeletePopupOpened] = useState(false);
     const [codePopupOpened, setCodePopupOpened] = useState(false);
 
@@ -255,7 +256,7 @@ function Tags ({id, name, description, slug, codeHead, codeFoot}) {
             codeHead: codeHead,
             codeFoot: codeFoot,
         });
-        setUpdateFormOpened(false); 
+        // setUpdateFormOpened(false); 
 
         setStyleUpdateIcon('table-button')
         window.location.reload(false);
@@ -285,14 +286,16 @@ function Tags ({id, name, description, slug, codeHead, codeFoot}) {
     const [ tagDescription, setDescription ] = useState(description);
     const [ tagSlug, setSlug ] = useState(slug);
 
+    // Update section
+
     function handleUpdate(e){
         e.preventDefault();
         setStyleUpdateIcon('table-update-popup')
-        setUpdateFormOpened(true);
+        setUpdatePopUpOpened(true);
     }
     function handleCancelUpdate(){
         setStyleUpdateIcon('table-button')
-        setUpdateFormOpened(false);
+        setUpdatePopUpOpened(false);
         window.location.reload(false);
     }
     function updateTag(e){
@@ -303,7 +306,7 @@ function Tags ({id, name, description, slug, codeHead, codeFoot}) {
             description: description,
             slug:slug,
         });
-        setUpdateFormOpened(false); 
+        setUpdatePopUpOpened(false); 
 
         setStyleUpdateIcon('table-button')
         window.location.reload(false);
@@ -375,8 +378,9 @@ function Tags ({id, name, description, slug, codeHead, codeFoot}) {
                         <span className={styleUpdateIcon}>
                             <PencilFill size={10} />
                         </span>
+                       
                         {
-                            updateFormOpened ?
+                            updatePopUpOpened ?
                                 <Popup
                                     header={<PopupHeaderDefault title='Update Tag' />}
                                     body={

@@ -1,0 +1,65 @@
+.settingUser{
+
+    .user-title-bar{
+        padding: 10px 10px 10px 12px;
+        flex: 1;
+        align-items: center;
+        display: flex;
+        margin-left: 285px;
+    }
+    .user-title{
+        font-weight: 600;
+        font-size: 20px;
+    }
+
+    .user-title-create-button{
+        margin-left: 5px
+    }
+
+    .user-button-popup{
+        background-color: $color-accent-light;    
+        font-size: 12px;
+        padding-top: 5px;
+        padding-bottom: 5px;
+    
+        .popup-button-content{
+            flex: 1;
+            align-items: center;
+            display: flex;
+    
+            .popup-button-content-text{
+                margin-right: 5px;
+            }
+        }
+    }
+
+    .global-table-view .global-table-body .table-item {
+        .user-role{
+            background-color: $color-accent-light;
+            width: 50px;
+            text-align: center;
+            border-radius: 20px;
+            border: 1px solid transparent;
+            transition: 0.3s;
+            font-size: 12px;
+        }
+    }
+    .popup-width{
+        .popup-wrap .popup{
+            width: 500px;
+        }
+    }
+
+    .container-file { 
+        position:relative;
+        padding:0;
+        margin:0;
+    }
+    .input-file { 
+        height:20px;
+        margin:0;
+        padding-left:30px;
+        display:none;
+    }
+  
+}

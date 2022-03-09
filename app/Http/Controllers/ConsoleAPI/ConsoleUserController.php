@@ -3,8 +3,10 @@
 namespace App\Http\Controllers\ConsoleAPI;
 
 use App\Http\Controllers\Controller;
-use App\Domains\User\UserRepositoryInterface;
+use App\Domains\User\UserRepository;
 use Illuminate\Http\Request;
+use App\Models\Blog;
+
 
 class ConsoleUserController extends Controller
 {
@@ -24,9 +26,18 @@ class ConsoleUserController extends Controller
     * ConsoleAPI Settings->users
     *
     */
-    public static function getAuthor(Request $request)
+    public static function getAuthor(Request $request , Blog $blog)
     {
-        return 'get Author';
+        // $limit = $request->input('limit');
+        // $offset = $request->input('offset') ?? 0;
+
+        // $getData = UserRepository::getTags($blog->id, $limit, $offset)
+        //         ->map(function ($tags) {
+        //         return new TagObject($tags);
+        //     });
+        // return response()->json($getData);
+
+        return 'get user';
     }
 
     public static function createAuthor(Request $request) {
