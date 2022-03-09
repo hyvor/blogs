@@ -104,7 +104,7 @@ class PermalinkRepository {
             $path = '';
         }
 
-        $path = trim($path, '/');
+        $path = ltrim($path, '/');
 
         $domain = self::getDomain($blog);
         

@@ -38,6 +38,10 @@ class DeliveryRepository {
         }
     }
 
+    /**
+     * $path
+     * The request path with a leading slash
+     */
     public static function getResponseObject (
         Blog $blog,
         string $path,

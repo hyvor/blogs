@@ -37,4 +37,4 @@ Route::middleware([
         CustomDomainMiddleware::class,
         DeliveryCacheMiddleware::class
     ])
-    ->get('{path}', [SubdomainController::class, 'handle'])->where('path', '.*');
+    ->get('{any}', [SubdomainController::class, 'handle'])->where('any', '.*');
