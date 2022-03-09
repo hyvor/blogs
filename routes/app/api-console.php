@@ -2,43 +2,50 @@
 
 use App\Http\Controllers\ConsoleAPI\ConsoleBlogController;
 use App\Http\Controllers\ConsoleAPI\ConsoleBlogThemeController;
-use App\Http\Controllers\ConsoleAPI\ConsoleEmbedController;
 use App\Http\Controllers\ConsoleAPI\ConsoleImportExportController;
 use App\Http\Controllers\ConsoleAPI\ConsoleLanguageController;
 use App\Http\Controllers\ConsoleAPI\ConsoleMediaController;
 use App\Http\Controllers\ConsoleAPI\ConsolePostController;
 use App\Http\Controllers\ConsoleAPI\ConsoleSubscriptionController;
 use App\Http\Controllers\ConsoleAPI\ConsoleUserController;
-use App\Http\Controllers\ConsoleAPI\ConsoleViewController;
 use App\Http\Controllers\ConsoleAPI\ConsoleRedirectController;
 use App\Http\Controllers\ConsoleAPI\ConsoleNavigationController;
 use App\Http\Controllers\ConsoleAPI\ConsoleUrlDataController;
 use App\Http\Middleware\App\ConsoleAPI\ConsoleApiAccessMiddleware;
 use App\Http\Middleware\App\ConsoleAPI\PostAuthorshipMiddleware;
 use App\Http\Middleware\App\ConsoleAPI\ResourceAccessMiddleware;
-use App\Http\Middleware\App\LoginRequiredElseRedirectMiddleware;
 use App\Http\Middleware\App\SubdomainMiddleware;
 use Illuminate\Support\Facades\Route;
 
-Route::middleware(LoginRequiredElseRedirectMiddleware::class)
-    ->get('/console/{any?}', ConsoleViewController::class)
-    ->where('any', '.*');
 
-// this is an internal API
-Route::prefix('/api/console')
+/**
+ * This is an internal API for user-level functions
+ * Outside users cannot use it
+ * Used in our Console
+ */
+Route::prefix('/api/user')
     // add middleware
     ->group(function() {
 
-    Route::post('/user/blog', [ConsoleUserController::class, 'createBlog']);
-    Route::patch('/user/blogs/sort', [ConsoleUserController::class, 'changeSort']);
+    Route::post('/blog', [ConsoleUserController::class, 'createBlog']);
+    Route::patch('/blogs/sort', [ConsoleUserController::class, 'changeSort']);
+    Route::get('/blog/check-subdomain', [ConsoleUserController::class, 'checkSubdomain']);
 
-    Route::get('/themes', []);
+    
 
 });
 
-// this is the Console API
-// can be used by both us and others
-// Important! see BlogAccessMiddleware to see how to write these routes securely
+/**
+ * 
+ * Console API
+ * ======================
+ * 
+ * this is the Console API
+ * can be used by both us and others
+ * Important! see BlogAccessMiddleware to see how to write these routes securely
+ */
+
+
 
 Route::prefix('/api/console/v0/blog/{subdomain}')
     ->middleware([

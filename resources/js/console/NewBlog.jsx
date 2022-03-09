@@ -96,12 +96,12 @@ export default function NewBlog() {
             footer={
                 <div className="popup-footer-single">
                     <ActionButton
-                        status={!isNonDraftUpdating ? "stale" : forceSavePostAjax.status} 
+                        status={"stale"} 
                         staleName="Create"
                         loadingName="Creating"
                         errorName="Try again"
-                        staleOnClick={handleUpdateNonDraft}
-                        errorOnClick={handleUpdateNonDraft}
+                        staleOnClick={null}
+                        errorOnClick={null}
                     />
                 </div>
             }

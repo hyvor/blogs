@@ -18,4 +18,12 @@ class ConsoleUserController extends Controller
     {
         
     }
+
+    public function checkSubdomain(Request $request)
+    {
+
+        
+
+    }
+
 }
