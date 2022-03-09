@@ -47,7 +47,7 @@ export default function BlogsSelector() {
 
     function handleBlogChange(subdomain) {
         setSubdomain(subdomain, null, true);
-        closerRef.current();
+        closerRef.current(true);
     }
 
     function handleCreateBlog() {

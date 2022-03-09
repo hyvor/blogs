@@ -3,6 +3,7 @@ import React, { useState } from 'react'
 import { CaretLeftFill } from 'react-bootstrap-icons';
 import blogsLogic from './logic/blogsLogic';
 import subdomainLogic from './logic/subdomainLogic';
+import ActionButton from './ReusableComponents/ActionButton';
 import Input from './ReusableComponents/Input'
 import { Popup, PopupBodyDefault, PopupFooterSingleButton, PopupHeaderDefault } from './ReusableComponents/Popup'
 
@@ -18,14 +19,14 @@ export default function NewBlog() {
 
     const [name, setName] = useState('');
 
-    function onNameChange(val) {
+    function handleNameChange(val) {
         setName(val);
 
         var subdomain = val.toLowerCase().replace(/[^a-z0-9-]/g, '-').replace(/-+/g, '-').replace(/(^-|-$)/g, '');
         setSubdomain(subdomain);
     }
 
-    function onSubdomainChange(val) {
+    function handleSubdomainChange(val) {
         val = val.toLowerCase();
         setSubdomain(val);
 
@@ -71,7 +72,7 @@ export default function NewBlog() {
                         name="blog-name"
                         autocomplete={false}
                         value={name}
-                        onChange={onNameChange}
+                        onChange={handleNameChange}
                         maxLength={50}
                     />
                     <Input 
@@ -83,7 +84,7 @@ export default function NewBlog() {
                         name="blog-subdomain"
                         autocomplete={false}
                         value={subdomain}
-                        onChange={onSubdomainChange}
+                        onChange={handleSubdomainChange}
                         error={subdomainError}
                         bottom={
                             <div className="your-blog"><b>{subdomain}.hyvorblogs.io</b></div>
@@ -92,6 +93,18 @@ export default function NewBlog() {
                     />
                 </div>
             </PopupBodyDefault>}
+            footer={
+                <div className="popup-footer-single">
+                    <ActionButton
+                        status={!isNonDraftUpdating ? "stale" : forceSavePostAjax.status} 
+                        staleName="Create"
+                        loadingName="Creating"
+                        errorName="Try again"
+                        staleOnClick={handleUpdateNonDraft}
+                        errorOnClick={handleUpdateNonDraft}
+                    />
+                </div>
+            }
             footer={<PopupFooterSingleButton name="Continue" onClick={() => {}} />}
         />
     </div>
