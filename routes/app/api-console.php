@@ -12,6 +12,7 @@ use App\Http\Controllers\ConsoleAPI\ConsoleRedirectController;
 use App\Http\Controllers\ConsoleAPI\ConsoleNavigationController;
 use App\Http\Controllers\ConsoleAPI\ConsoleUrlDataController;
 use App\Http\Middleware\App\ConsoleAPI\ConsoleApiAccessMiddleware;
+use App\Http\Middleware\App\ConsoleAPI\ConsoleApiUserEndpointsAccessMiddleware;
 use App\Http\Middleware\App\ConsoleAPI\PostAuthorshipMiddleware;
 use App\Http\Middleware\App\ConsoleAPI\ResourceAccessMiddleware;
 use App\Http\Middleware\App\SubdomainMiddleware;
@@ -20,18 +21,16 @@ use Illuminate\Support\Facades\Route;
 
 /**
  * This is an internal API for user-level functions
- * Outside users cannot use it
- * Used in our Console
+ * This cannot be accessed via API keys
+ * Used only in our Console
  */
-Route::prefix('/api/user')
-    // add middleware
+Route::prefix('/api/console/v0')
+    ->middleware(ConsoleApiUserEndpointsAccessMiddleware::class)
     ->group(function() {
 
     Route::post('/blog', [ConsoleUserController::class, 'createBlog']);
     Route::patch('/blogs/sort', [ConsoleUserController::class, 'changeSort']);
     Route::get('/blog/check-subdomain', [ConsoleUserController::class, 'checkSubdomain']);
-
-    
 
 });
 

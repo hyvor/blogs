@@ -17,13 +17,13 @@ class LanguageRepository {
     }
 
     public static function createLanguage(
-        int $blogId, string $code, string $name, bool $isDefault = false
+        Blog $blog, string $code, string $name, bool $isPrimary = false
     ) : Language {
 
-        return Blog::find($blogId)->languages()->create([
+        return $blog->languages()->create([
             'code' => $code,
             'name' => $name,
-            'is_primary' => $isDefault
+            'is_primary' => $isPrimary
         ]);
     }
 
@@ -61,16 +61,6 @@ class LanguageRepository {
         }
 
         $lang->delete();
-    }
-
-    public static function addDefaultLanguage(Blog $blog) : Language {
-
-        return $blog->languages()->create([
-            'code' => self::DEFAULT_LANGUAGE_CODE,
-            'name' => self::DEFAULT_LANGUAGE_NAME,
-            'is_primary' => true
-        ]);
-
     }
 
     public static function getPrimaryLanguage(Blog $blog) : Language {

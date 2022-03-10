@@ -6,6 +6,11 @@
 return [
 
     /**
+     * Number of days for the trial
+     */
+    'trial_days' => 14,
+
+    /**
      * This is the Pages limit (static) not posts
      * Even Webflow has a limit of 100
      * https://university.webflow.com/lesson/pages-panel#how-many-pages-can-i-create

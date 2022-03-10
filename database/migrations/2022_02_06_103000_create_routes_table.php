@@ -25,8 +25,8 @@ class CreateRoutesTable extends Migration
             $table->string('match');
             $table->string('template');
             $table->string('posts_filter')->nullable();
-            $table->boolean('is_enabled')->default(true);
             $table->string('content_type')->nullable();
+            $table->boolean('is_enabled')->default(true);
 
             // indexes
             $table->unique(['blog_id', 'name']);

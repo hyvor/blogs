@@ -2,6 +2,7 @@
 
 namespace Database\Seeders;
 
+use App\Domains\Blog\FillNewBlog;
 use App\Domains\Language\LanguageRepository;
 use App\Domains\Redirect\RedirectRepository;
 use App\Domains\Route\RouteRepository;
@@ -40,25 +41,11 @@ class DatabaseSeeder extends Seeder
                 'social_twitter' => 'https://twitter.com/HyvorBlogs'
             ]);
 
-            $blog->createAsCustomer([
-                'trial_ends_at' => now()->addDays(30)
-            ]);
+            ['language' => $language] = FillNewBlog::fill($blog);
 
-            RouteRepository::addDefaultRoutes($blog);
-            $language = LanguageRepository::addDefaultLanguage($blog);
-            LanguageRepository::createLanguage($blog->id, 'fr', 'French');
+            LanguageRepository::createLanguage($blog, 'fr', 'French');
 
             RedirectRepository::createRedirect($blog->id, '/redirects', 'https://example.com', '301');
-
-            User::create([
-                'blog_id' => $blog->id,
-                'user_id' => $blog->user_id,
-                'role' => 'owner',
-                'status' => 'active',
-                'slug' => "test",
-                'name' => 'Test User',
-                'email' => 'test@hyvor.com'
-            ]);
 
             $tags = [];
             foreach (range(0, 9) as $i) {
