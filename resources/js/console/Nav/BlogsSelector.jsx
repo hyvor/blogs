@@ -88,6 +88,11 @@ export default function BlogsSelector() {
                     onStart={() => {
                         setIsDragging(true);
                     }}
+
+                    /**
+                     * Otherwise it doesn't when blog preview page is opened
+                     */
+                    forceFallback={true}
                 >
                     {
                         blogs.map(({blog, user}) => {
@@ -95,8 +100,8 @@ export default function BlogsSelector() {
                                 key={blog.id} 
                                 className={"blog" + (blog.subdomain === activeSubdomain ? " active" : "")}
                                 onClick={() => handleBlogChange(blog.subdomain)}
-                                onMouseDown={setDragging}
-                                onMouseUp={unsetDragging}
+                                onMouseDown={() => setIsDragging(true)}
+                                onMouseUp={() => setIsDragging(false)}
                             >
                                 <div className="blog-row-wrap">
                                     <div className="blog-row">
