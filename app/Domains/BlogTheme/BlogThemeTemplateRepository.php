@@ -42,7 +42,7 @@ class BlogThemeTemplateRepository
         $vars = [
             '_blog' => $blogObject,
             '_config' => [],
-            '_scope' => $scope,
+            '_scope' => $scope->value,
         ];
 
         $vars += $scopeVariables;

@@ -117,12 +117,14 @@ All slugs are lowercase, and can contain `-`
 			"code": "fr",
 			"name": "French",
 			"is_primary": false,
+			"post_url": "https://subdomain.hyvorblogs.io/fr/hello-world"
 		},
 		{
 			"id": 1002,
 			"code": "es",
 			"name": "Spanish",
-			"is_primary": false
+			"is_primary": false,
+			"post_url": "https://subdomain.hyvorblogs.io/es/hello-world"
 		}
 	]
 }
@@ -134,7 +136,7 @@ All slugs are lowercase, and can contain `-`
 | `code` | `string` | Language code |
 | `name` | `string` | Language name |
 | `is_primary` | `boolean` | Whether the language is the primary language of the blog |
-| `variants` | `array` | Array of Language objects. These objects are similar to the Post Language objects, except it does not have the variants key. |
+| `variants` | `array` | Array of **Post Language Variant** objects. These objects are similar to the Post Language objects, except it does not have the variants key, and have post URL in it. |
 
 ### Tag Object {#tag-object}
 

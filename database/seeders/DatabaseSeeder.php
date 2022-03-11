@@ -93,7 +93,7 @@ class DatabaseSeeder extends Seeder
                     'reading_time' => 2,
                 ]);
 
-                $post = Post::create([
+                Post::create([
                     'blog_id' => $blog->id,
                     'language_id' => $secondLanguage->id,
                     'content' => json_encode($prosemirrorJson),

@@ -22,10 +22,10 @@ class PostLanguageObject {
         $this->name = $language->name;
         $this->is_primary =  $language->is_primary;
 
-        $variantPosts = PostLanguageRepository::getVariants($post, ['id', 'language_id']);
+        $variantPosts = PostLanguageRepository::getVariants($post);
 
         foreach ($variantPosts as $variantPost) {
-            $this->variants[] = new LanguageObject($variantPost->language);
+            $this->variants[] = new PostLanguageVariantObject($variantPost, $blog);
         }
 
     }

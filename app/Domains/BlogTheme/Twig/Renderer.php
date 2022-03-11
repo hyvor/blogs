@@ -1,6 +1,7 @@
 <?php
 namespace App\Domains\BlogTheme\Twig;
 
+use Illuminate\Support\Facades\App;
 use Twig\Environment;
 use Twig\Loader\ArrayLoader;
 
@@ -34,12 +35,20 @@ class Renderer {
 
     private static function getEnvironment(ArrayLoader $loader) {
 
+        $isLocal = App::environment('local');
+
         $twig = new Environment($loader, [
-            'cache' => false
+            'cache' => false,
+            'debug' => $isLocal
         ]);
 
         // for template_from_string
         $twig->addExtension(new \Twig\Extension\StringLoaderExtension());
+
+        // debugging
+        if ($isLocal) {
+            $twig->addExtension(new \Twig\Extension\DebugExtension());
+        }
 
         return $twig;
     }

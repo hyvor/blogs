@@ -48,9 +48,11 @@
 {% endif %}
 
 
-{# Alternative Languages ========= #}
-{% if scope == 'post' and post.alternatives.length %}
-
+{# Alternative Languages for posts ========= #}
+{% if _scope == 'post' %}
+    {% for variant in _post.language.variants %}
+        <link rel="alternate" href="{{ variant.post_url }}" hreflang="{{ variant.code }}" />
+    {% endfor %}
 {% endif %}
 
 {# Custom Code from blog, post, and tags #}

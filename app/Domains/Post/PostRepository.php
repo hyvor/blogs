@@ -32,6 +32,14 @@ class PostRepository
         return $post->first();
     }
 
+    public static function getPostByBlogIdSlugAndLanguageId(int $blogId, string $slug, int $languageId) : ?Post
+    {
+        return Post::where('blog_id', $blogId)
+            ->where('slug', $slug)
+            ->where('language_id', $languageId)
+            ->first();
+    }
+
     /**
      * Get posts of a blog
      * with filters, limit, and offset

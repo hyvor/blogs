@@ -12,12 +12,11 @@ class PostLanguageRepository {
     /**
      * Return variant posts 
      */
-    public static function getVariants(Post $post, null|array|string $select = '*') {
+    public static function getVariants(Post $post) {
 
         return Post::where('blog_id', $post->blog_id)
             ->where('slug', $post->slug)
             ->withOnly('language')
-            ->select($select)
             ->where('id', '!=', $post->id)
             ->get();
 

@@ -42,10 +42,7 @@ class DeliveryRepository {
      * $path
      * The request path with a leading slash
      */
-    public static function getResponseObject (
-        Blog $blog,
-        string $path,
-    ) : DeliveryAPIResponseObject {
+    public static function getResponseObject (Blog $blog, string $path) : DeliveryAPIResponseObject {
 
         if (!preg_match('/^\//', $path)) {
             $path = '/' . $path; // add leading slash (otherwise matcher doesn't work)
@@ -62,7 +59,8 @@ class DeliveryRepository {
          * Check for language
          */
         // get fr from /fr/hello-world
-        $possibleLanguageCode = explode('/', $path)[1] ?? null;
+        $pathExploded = explode('/', $path);
+        $possibleLanguageCode = $pathExploded[1] ?? null;
     
         if ($possibleLanguageCode && strlen($possibleLanguageCode) <= 12) {
             // fetch all languages and find out the correct one
@@ -73,12 +71,16 @@ class DeliveryRepository {
 
             $currentLang = $nonDefaultLangs->firstWhere('code', $possibleLanguageCode);
 
-            if ($currentLang === null) {
+            if ($currentLang) {
+                // skip "" and "fr"
+                $path = implode( "/", array_slice($pathExploded, 2) );
+            } else {
                 $currentLang = $defaultLang;
             }
+
         } else {
             // fetch only the default one
-            $currentLang = $blog->languages()->where('is_primary', true);
+            $currentLang = $blog->languages()->where('is_primary', true)->first();
         }
 
         /**
@@ -88,11 +90,6 @@ class DeliveryRepository {
 
         /**
          * Adds the routes to match
-         *
-         * Important!
-         *  dynamic matches these:
-         *      - posts or pages (from slugs)
-         *      - custom pages (from theme files)
          */
 
         // default routes
@@ -246,6 +243,7 @@ class DeliveryRepository {
 
             // check for post or page
             $post = PostRepository::getPostByBlogIdAndIdentifier($blog->id, null, $props['slug']);
+            $post = PostRepository::getPostByBlogIdSlugAndLanguageId($blog->id, $props['slug'], $currentLang->id);
 
             if ($post) {
 
