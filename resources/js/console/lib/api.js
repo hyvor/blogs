@@ -6,6 +6,10 @@
 
 import axios from "axios";
 
+export function getUserEndpoint(endpoint) {
+    return '/api/console/v0' + endpoint;
+}
+
 export function getEndpoint(subdomain, endpoint) {
     return '/api/console/v0/blog/' + subdomain + endpoint
 }
