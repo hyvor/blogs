@@ -41,7 +41,7 @@ class UserBlogBlogObject
         $this->id = $blog->id;
         $this->name = $blog->name;
         $this->subdomain = $blog->subdomain;
-        $this->base_url = PermalinkRepository::getFullUrlFromPath($blog, '');
+        $this->base_url = PermalinkRepository::getBlogPermalink($blog);
         $this->plan = $plan;
 
         $counts = CountRepository::getCounts($blog, ['users', 'posts']);
