@@ -23,6 +23,7 @@ class PostObject
     public ?string $featured_image;
     public ?string $canonical_url;
     public ?int $reading_time;
+    public PostLanguageObject $language;
     public ?string $code_head;
     public ?string $code_foot;
 
@@ -56,7 +57,10 @@ class PostObject
         $this->code_head = $post->code_head;
         $this->code_foot = $post->code_foot;
 
+        $this->language = new PostLanguageObject($post, $blog);
+
         $this->tags = $tags;
         $this->authors = $authors;
+
     }
 }

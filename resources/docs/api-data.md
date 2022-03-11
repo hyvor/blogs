@@ -97,34 +97,44 @@ All slugs are lowercase, and can contain `-`
 | `reading_time` | `integer` | time in minutes. |
 | `code_head` | `string` | Custom code to add before `</head>` . An empty string if nothing is set. |
 | `code_foot` | `string` | Custom code to add before `</body>` . An empty string if nothing is set. |
-| `language` | `object` | The language of the post
+| `language` | `object` | A Post Language object (see below)
 | `tags` | `array`  | An array of Tag objects. The primary tag is the index 0 |
 | `authors` | `array` | An array of Author objects. The primary author is the index 0 |
 
 > In posts, **id** is unique. **slug + language.id** is also unique.
 
-### Language Object
+### Post Language Object {#post-language-object}
 
 ```json
 {
-	"id": 9999,
-	"is_primary": true,
+	"id": 1000,
 	"code": "en",
 	"name": "English",
-	"variants": {
-		"fr": 1001,
-		"es": 1002
-	}
+	"is_primary": true,
+	"variants": [
+		{
+			"id": 1001,
+			"code": "fr",
+			"name": "French",
+			"is_primary": false,
+		},
+		{
+			"id": 1002,
+			"code": "es",
+			"name": "Spanish",
+			"is_primary": false
+		}
+	]
 }
 ```
 
 | Key | Type | Description |
 | --- | --- | --- |
-| `id` | `integer` | A unique ID for the language object |
-| `is_primary` | `boolean` | Whether the language is the primary language of the blog |
+| `id` | `integer` | A unique ID for the language |
 | `code` | `string` | Language code |
 | `name` | `string` | Language name |
-| `variants` | `object` | Variants of this post in other languages. Keys are the language codes, values are the post IDs |
+| `is_primary` | `boolean` | Whether the language is the primary language of the blog |
+| `variants` | `array` | Array of Language objects. These objects are similar to the Post Language objects, except it does not have the variants key. |
 
 ### Tag Object {#tag-object}
 

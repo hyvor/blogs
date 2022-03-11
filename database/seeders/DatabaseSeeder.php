@@ -43,7 +43,7 @@ class DatabaseSeeder extends Seeder
 
             ['language' => $language] = FillNewBlog::fill($blog);
 
-            LanguageRepository::createLanguage($blog, 'fr', 'French');
+            $secondLanguage = LanguageRepository::createLanguage($blog, 'fr', 'French');
 
             RedirectRepository::createRedirect($blog->id, '/redirects', 'https://example.com', '301');
 
@@ -81,6 +81,21 @@ class DatabaseSeeder extends Seeder
                 $post = Post::create([
                     'blog_id' => $blog->id,
                     'language_id' => $language->id,
+                    'content' => json_encode($prosemirrorJson),
+                    'title' => $title,
+                    'slug' => Str::slug($title),
+                    'published_at' => $status === 'published' ? $faker->dateTime() : null,
+                    'description' => $faker->sentence,
+                    'status' => $status,
+
+                    'is_page' => (bool) rand(0,1),
+
+                    'reading_time' => 2,
+                ]);
+
+                $post = Post::create([
+                    'blog_id' => $blog->id,
+                    'language_id' => $secondLanguage->id,
                     'content' => json_encode($prosemirrorJson),
                     'title' => $title,
                     'slug' => Str::slug($title),

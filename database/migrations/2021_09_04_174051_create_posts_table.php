@@ -27,13 +27,14 @@ class CreatePostsTable extends Migration
 
             // status
             $table->enum('status', ['published', 'draft', 'scheduled'])->default('draft');
-            $table->boolean('is_featured')->default(false);
             $table->boolean('is_page')->default(false);
+            $table->boolean('is_featured')->default(false);
+
 
             // basic
+            $table->string('slug')->nullable();
             $table->text('content')->nullable();
             $table->text('content_unsaved')->nullable();
-            $table->string('slug')->nullable();
             $table->string('title')->nullable();
             $table->string('description', 350)->default('');
             $table->string('featured_image')->nullable();

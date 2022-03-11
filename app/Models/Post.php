@@ -13,6 +13,16 @@ class Post extends Model
         'published_at' => 'datetime',
     ];
 
+    /**
+     * Eager load with these relations
+     * because these are always wanted
+     */
+    protected $with = [
+        'tags',
+        'authors',
+        'language'
+    ];
+
     public function blog()
     {
         return $this->belongsTo(Blog::class);
@@ -26,6 +36,11 @@ class Post extends Model
     public function authors()
     {
         return $this->belongsToMany(User::class, 'post_author')->withPivot('order')->orderBy('order', 'ASC');
+    }
+
+    public function language()
+    {
+        return $this->belongsTo(Language::class);
     }
 
 
