@@ -39,13 +39,13 @@ class BlogCreateTest extends TestCase
     public function testEmptyName() {
         $this->callBlogCreateApi([
             'subdomain' => 'test'
-        ])->assertStatus(422);
+        ])->assertStatus(400);
     }
 
     public function testEmptySubdomain() {
         $this->callBlogCreateApi([
             'name' => 'some name'
-        ])->assertStatus(422);
+        ])->assertStatus(400);
     }
 
     /**

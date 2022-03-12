@@ -71,6 +71,14 @@ class Handler extends ExceptionHandler
                         $error = $exception->validator->errors()->first();
                     }
 
+                    /**
+                     * Laravel input validation sends 422
+                     * But, in our APIs we only return 400
+                     */
+                    if ($httpCode === 422) {
+                        $httpCode = 400;
+                    }
+
                     return response()->json([
                         'error' => $error,
                         'errorCode' => $code
