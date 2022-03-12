@@ -7,6 +7,15 @@ class PostLanguageRepository {
 
     public static function getPrimaryPost(Post $post) {
 
+        if ($post->language->is_primary)
+            return $post;
+
+        return Post::where('posts.blog_id', $post->blog_id)
+            ->where('posts.slug', $post->slug)
+            ->join('languages', 'languages.id', '=', 'posts.language_id')
+            ->where('languages.is_primary', true)
+            ->first();
+
     }
 
     /**

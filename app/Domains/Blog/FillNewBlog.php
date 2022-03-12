@@ -50,7 +50,7 @@ class FillNewBlog {
             // post
             [
                 'name' => 'post',
-                'match' => '/{tag}/{slug}',
+                'match' => '/{slug}',
                 'template' => 'post'
             ],
             // page

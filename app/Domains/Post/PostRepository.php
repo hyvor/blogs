@@ -194,7 +194,6 @@ class PostRepository
             ->addWhere();
 
         return $builder
-            ->with(['tags', 'authors'])
             ->where('posts.blog_id', $blogId)
             ->where('posts.status', 'published')
             ->limit($limit)

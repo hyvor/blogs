@@ -142,6 +142,15 @@ class PermalinkRepository {
             $path = str_replace('{author}', $post->authors[0]?->slug ?? '', $path);
         }
 
+        /**
+         * Add language
+         */
+        $language = $post->language;
+
+        if (!$language->is_primary) {
+            $path = "{$language->code}" . $path;
+        }
+
         return self::getFullUrlFromPath($blog, $path);
 
     }

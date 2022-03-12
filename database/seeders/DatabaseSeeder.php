@@ -78,13 +78,15 @@ class DatabaseSeeder extends Seeder
 
                 $status = ['draft', 'published', 'scheduled'];
                 $status = $i === 0 ? 'published' : $status[ array_rand($status) ];
+
+                $publishedAt = $status === 'published' ? $faker->dateTime() : null;
                 $post = Post::create([
                     'blog_id' => $blog->id,
                     'language_id' => $language->id,
                     'content' => json_encode($prosemirrorJson),
                     'title' => $title,
                     'slug' => Str::slug($title),
-                    'published_at' => $status === 'published' ? $faker->dateTime() : null,
+                    'published_at' => $publishedAt,
                     'description' => $faker->sentence,
                     'status' => $status,
 
@@ -93,13 +95,13 @@ class DatabaseSeeder extends Seeder
                     'reading_time' => 2,
                 ]);
 
-                Post::create([
+                $secondLanguagePost = Post::create([
                     'blog_id' => $blog->id,
                     'language_id' => $secondLanguage->id,
                     'content' => json_encode($prosemirrorJson),
                     'title' => $title,
                     'slug' => Str::slug($title),
-                    'published_at' => $status === 'published' ? $faker->dateTime() : null,
+                    'published_at' => $publishedAt,
                     'description' => $faker->sentence,
                     'status' => $status,
 

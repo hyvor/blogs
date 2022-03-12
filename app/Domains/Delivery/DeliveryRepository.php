@@ -73,7 +73,7 @@ class DeliveryRepository {
 
             if ($currentLang) {
                 // skip "" and "fr"
-                $path = implode( "/", array_slice($pathExploded, 2) );
+                $path = '/' . implode( "/", array_slice($pathExploded, 2) );
             } else {
                 $currentLang = $defaultLang;
             }
@@ -115,6 +115,7 @@ class DeliveryRepository {
         foreach ($blogRoutes as $routeRow) {
 
             $defaults = [];
+            $requirements = [];
 
             /**
              * Add suffix
@@ -126,9 +127,13 @@ class DeliveryRepository {
                 $defaults = [
                     'suffix' => null
                 ];
+                // feed or page number
+                $requirements = [
+                    'suffix' => '(feed|(page\/\d+))'
+                ];
             }
 
-            $route = new Route($routeRow->match, $defaults);
+            $route = new Route($routeRow->match, $defaults, $requirements);
             $routes->add($routeRow->name, $route);
             
         }
@@ -242,7 +247,6 @@ class DeliveryRepository {
         if ($matchedRoute->name === 'post' || $matchedRoute->name === 'page') {
 
             // check for post or page
-            $post = PostRepository::getPostByBlogIdAndIdentifier($blog->id, null, $props['slug']);
             $post = PostRepository::getPostByBlogIdSlugAndLanguageId($blog->id, $props['slug'], $currentLang->id);
 
             if ($post) {

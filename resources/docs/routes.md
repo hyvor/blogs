@@ -50,6 +50,8 @@ Placeholder | Description |
 `{tag}` | Slug of the first tag of the post |
 `{author}` | Slug of the first author of the post |
 
+> Please note that if you use `{tag}` (or `{author}`) in the post/page URL, all post **should have** at least one tag (or author). Otherwise, the post/page URL will show 404 error.
+
 Time-based placeholders:
 * Represent the post's **publish time**
 * Only English lowercase is supported for month and day names
