@@ -115,13 +115,14 @@ class UserRepository
         return User::find($id);
     }
 
-    public static function getUserByBlogIdAndHyvorUserId(int $blogId, int $hyvorUserId) : ?User {
+    public static function getUserByBlogIdAndHyvorUserId(int $blogId, int $hyvorUserId) : ?User 
+    {
         return User::where('blog_id', $blogId)
             ->where('user_id', $hyvorUserId)
             ->first();
     }
 
-    public static function getUserByBlogIdAndIdentifier(int $blogId, ?int $id, ?string $slug)
+    public static function getUserByBlogIdAndIdentifier(int $blogId, ?int $id, ?string $slug) : ?User
     {
         $user = User::where('blog_id', $blogId);
         if ($id) {
@@ -130,6 +131,11 @@ class UserRepository
             $user->where('slug', $slug);
         }
         return $user->first();
+    }
+
+    public static function getUserByBlogIdAndSlug(int $blogId, string $slug) : ?User
+    {
+        return self::getUserByBlogIdAndIdentifier($blogId, null, $slug);
     }
 
     /**

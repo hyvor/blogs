@@ -110,14 +110,18 @@ class PostRepository
     /**
      * Getting posts with FilterQ
      * This is for the Data API
+     * 
+     * ALWAYS USE NAMED ARGUMENT WHEN USING THIS FUNCTION
      */
     public static function getPostsWithFilterQ(
-        int $blogId, ?string $filterQExpression, 
-        int $limit, int $offset,
-        string $orderBy, string $orderMethod
+        int $blogId, ?string $filter, 
+        int $limit, 
+        int $offset = 0,
+        string $orderBy = 'published_at', 
+        string $orderMethod = 'DESC'
     ) : Collection {
 
-        $builder = FilterQ::expression($filterQExpression)
+        $builder = FilterQ::expression($filter)
             ->builder(Post::class)
             ->keys(function($keys) {
 

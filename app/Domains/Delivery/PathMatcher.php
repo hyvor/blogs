@@ -8,6 +8,7 @@ use App\Domains\Delivery\RouteProcessors\AssetsProcessor;
 use App\Domains\Delivery\RouteProcessors\MediaProcessor;
 use App\Domains\Delivery\RouteProcessors\PreviewProcessor;
 use App\Domains\Delivery\RouteProcessors\StylesProcessor;
+use App\Domains\Language\LanguageRepository;
 use App\Domains\Redirect\RedirectRepository;
 use App\Models\Blog;
 
@@ -32,7 +33,10 @@ class PathMatcher {
         $this->callFuncs([
             'matchRedirect',
             'matchDefaultRoutes',
-            'matchBlogRoutes'
+
+            'setLanguage',
+            'matchNonPostRoutes'
+            
         ]);
 
     }
@@ -101,17 +105,96 @@ class PathMatcher {
     }
 
     /**
-     * These routes can conflict
-     * Therefore, if a route matches, and resource was not found, it tries to match other routes again
+     * Set the language based on the path prefix
      */
-    private function matchBlogRoutes() {
+    private function setLanguage() {
 
-        $blogRoutesMatcher = new BlogRoutesMatcher($this->blog, $this->path);
-        $responseObject = $blogRoutesMatcher->getResponseObject();
+        // Get fr from /fr/hello-world
+        $pathExploded = explode('/', $this->path);
+        $possibleLanguageCode = $pathExploded[1] ?? null;
+    
+        if ($possibleLanguageCode && strlen($possibleLanguageCode) <= 12) {
+            // fetch all languages and find out the correct one
+            $langs = $this->blog->languages;
 
-        if ($responseObject) {
-            $this->setMatched($responseObject);
+            // messing with the collection
+            $defaultLang = $langs->where('is_primary', true)->first();
+            $nonDefaultLangs = $langs->where('is_primary', false);
+
+            $lang = $nonDefaultLangs->firstWhere('code', $possibleLanguageCode);
+
+            if ($lang) {
+                /**
+                 * Set new path to match, removing the language part
+                 */
+                $this->path = '/' . implode( "/", array_slice($pathExploded, 2) );
+            } else {
+                $lang = $defaultLang;
+            }
+
+        } else {
+            // fetch only the default one
+            $lang = LanguageRepository::getPrimaryLanguage($this->blog);
         }
+
+        $this->language = $lang;
+
+    }
+
+
+    /**
+     * Match non-post/page routes
+     */
+    private function matchNonPostRoutes() {
+        $nonPostRoutes = $this->blog->routes->filter(function ($route) {
+            return $route !== 'post' && $route !== 'page';
+        });
+
+        $routeMatcher = new RouteMatcher($this->path);
+
+        foreach ($nonPostRoutes as $route) {
+
+            $match = $route->match;
+            $defaults = [];
+            $requirements = [];
+
+            /**
+             * Add suffix
+             * Which can be "page/x" for pagination
+             * or /feed
+             */
+            if ($route->posts_filter !== null) {
+                $match .= '/{suffix}';
+                $defaults = [
+                    'suffix' => null
+                ];
+                // feed or page number
+                $requirements = [
+                    'suffix' => '(feed|(page\/\d+))'
+                ];
+            }
+
+            $routeMatcher->add($route->name, $match, $defaults, $requirements, $route);            
+        }
+
+        $matchedRoute = $routeMatcher->match();
+        $route = $nonPostRoutes->firstWhere('name', $matchedRoute->name);
+
+        if ($matchedRoute) {
+            $processor = new RouteProcessor($this->blog, $matchedRoute, $this->language);
+
+            $responseObject = $processor->getResponseObject();
+
+            if ($responseObject) {
+                $this->setMatched($responseObject);
+            }
+        }
+
+    }
+
+    private function matchPostRoutes() {
+
+        
 
     }
 

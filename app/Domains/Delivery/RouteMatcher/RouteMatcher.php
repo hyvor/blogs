@@ -1,6 +1,7 @@
 <?php
 namespace App\Domains\Delivery\RouteMatcher;
 
+use App\Models\Route as ModelsRoute;
 use Symfony\Component\Routing\Exception\ResourceNotFoundException;
 use Symfony\Component\Routing\Matcher\UrlMatcher;
 use Symfony\Component\Routing\RequestContext;
@@ -18,16 +19,25 @@ class RouteMatcher {
     public RouteCollection $collection;
     public string $path;
 
+    public $routeModels = []; // name=>route
+
     public function __construct($path) 
     {
         $this->collection = new RouteCollection();
         $this->path = $path;
     }
 
-    public function add(string $routeName, string $match, array $defaults = [], array $requirements = []) 
+    public function add(
+        string $routeName, string $match, 
+        array $defaults = [], array $requirements = [], 
+        ModelsRoute $routeModel = null)
     {
         $route = new Route($match, $defaults, $requirements);
         $this->collection->add($routeName, $route);
+
+        if ($route) {
+            $this->routeModels[$routeName] = $routeModel;
+        }
     }
 
     public function match() : ?MatchedRoute
@@ -37,7 +47,9 @@ class RouteMatcher {
 
         try {
             $props = $urlMatcher->match($this->path);
-            $return = new MatchedRoute($props);
+            $routeModel = $this->routeModels[$props['_route']] ?? null;
+
+            $return = new MatchedRoute($props, $routeModel);
         } catch (ResourceNotFoundException) {
             $return = null;
         }

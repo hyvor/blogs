@@ -7,7 +7,6 @@ use App\Models\Blog;
 
 class BlogObject
 {
-    private Blog $blog;
 
     public string $subdomain;
     public string $name;
@@ -29,7 +28,6 @@ class BlogObject
 
     public function __construct(Blog $blog)
     {
-        $this->blog = $blog;
 
         $this->subdomain = $blog->subdomain;
         $this->name = $blog->name;
@@ -54,7 +52,4 @@ class BlogObject
         // TODO:
     }
 
-    public function getBlog() {
-        return $this->blog;
-    }
 }

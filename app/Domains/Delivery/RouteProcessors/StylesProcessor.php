@@ -4,10 +4,9 @@ namespace App\Domains\Delivery\RouteProcessors;
 use App\Data\Enums\ThemeFileFolderEnum;
 use App\Data\Objects\DeliveryAPI\DeliveryAPIResponseObject;
 use App\Domains\BlogTheme\BlogThemeRepository;
-use App\Domains\BlogTheme\Twig\Renderer;
-use App\Domains\BlogTheme\Twig\TwigRenderer;
 use App\Domains\Delivery\PathMatcher;
 use App\Domains\Delivery\RouteMatcher\MatchedRoute;
+use App\Domains\Delivery\Twig\TwigRenderer;
 use Padaliyajay\PHPAutoprefixer\Autoprefixer;
 use ScssPhp\ScssPhp\Compiler;
 
@@ -15,7 +14,7 @@ class StylesProcessor implements RouteProcessorInterface {
 
     private ?DeliveryAPIResponseObject $responseObject = null;
 
-    public function __construct(PathMatcher $pathMatcher) {
+    public function __construct(PathMatcher $pathMatcher, MatchedRoute $matchedRoute) {
 
         $files = BlogThemeRepository::getFilesInFolder($pathMatcher->blog, ThemeFileFolderEnum::STYLES);
 

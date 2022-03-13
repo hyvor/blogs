@@ -49,7 +49,7 @@
 
 
 {# Alternative Languages for posts ========= #}
-{% if _scope == 'post' %}
+{% if _route == 'post' %}
     {% for variant in _post.language.variants %}
         <link rel="alternate" href="{{ variant.post_url }}" hreflang="{{ variant.code }}" />
     {% endfor %}

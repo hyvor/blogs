@@ -45,7 +45,7 @@ There are 4 main objects in HB: `Blog` , `Post` , `Tag` , and `Author`. These ob
 | --- | --- | --- |
 | `_blog` | (all) | A Blog object, that includes all blog-level data/settings. |
 | `_config` | (all) | Theme config (`config.yaml`) as an object |
-| `_scope` | (all) | a string. one of `index`, `post`, `page`, `tag`, `author`, or `search` |
+| `_route` | (all) | Current [route](routes) name. |
 | `_posts` | (all)| An array of Post objects, filtered by the [route](routes)'s filter value |
 | `_featured_posts` | index | An array of Posts objects (all featured posts). |
 | `_post` | post and page | A Post object |
@@ -53,7 +53,6 @@ There are 4 main objects in HB: `Blog` , `Post` , `Tag` , and `Author`. These ob
 | `_author` | author | An Author object (the current author) |
 
 Each Route gets different variables. We prefix each variable with `_` so that it won't conflict with the variables you define inside the theme files (Obviously, you shouldn't prefix `_` your variables inside the Twig template)
-
 
 ## Placeholders
 
@@ -73,7 +72,6 @@ Sending all placeholders (except `_lang`) through the `raw` filter is absolutely
 ```twig
 {{ _head | raw }}
 ```
-
 
 ## Twig Filters & Functions
 

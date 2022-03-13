@@ -95,6 +95,24 @@ In addition to the default 6 routes, you can add your own routes. Some examples 
 > Please note that you (or theme developers) can also add custom routes by adding `route-{route}.twig` files to template files. See [here](themes-overview#custom-routes) from more details.
 
 
+## Route Conflicts
+
+Usually, route conflicts can happen when two or more routes has the **same match** value. In Hyvor Blogs, `post` and `page` routes can have the same match values. (You can see, the default values of those two routes are the same: `/{slug}`). However, other routes match cannot have duplicate match values.
+
+## Turning off routes
+
+You can turn off routes except the `post` and `page` routes. Turning off routes will remove those pages from your blog. You can turn them on later.
+
+## Suffixes & Prefixes
+
+These suffixes are supported:
+
+* `/feed` - For the atom feed (`posts_filter` should be set)
+* `/page/{page_number}` - For pagination
+
+Matches can be prefixed with a language code. See [languages](languages) for setting up multiple languages on your blog.
+
+
 ## Building a website {#website}
 
 We usually call a website "a blog" when it has posts and the home page lists all of them. That is the default behavior of Hyvor Blogs. Even out of its purpose, you can use Hyvor Blogs to create a general website. For example, you can create a landing page for the homepage, and have your blog in the `/blog` subdirectory.
@@ -112,11 +130,3 @@ By default, your blog has one post collection, and all posts will be listed the 
   * `/podcast` -> to list podcast episodes (using the filter `tag.slug = podcast`)
 
 See [multi-collection blog](/blog/multi-collection-blog) tutorial on our blog.
-
-## Route Conflicts
-
-Usually, route conflicts can happen when two or more routes has the **same match** value. In Hyvor Blogs, `post` and `page` routes can have the same match values. (You can see, the default values of those two routes are the same: `/{slug}`). However, other routes match cannot have duplicate match values.
-
-## Turning off routes
-
-You can turn off routes except the `post` and `page` routes. Turning off routes will remove those pages from your blog. You can turn them on later.

@@ -1,5 +1,5 @@
 <?php
-namespace App\Domains\BlogTheme\Twig;
+namespace App\Domains\Delivery\Twig;
 
 use Illuminate\Support\Facades\App;
 use Twig\Environment;
