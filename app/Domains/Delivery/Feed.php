@@ -1,5 +1,5 @@
 <?php
-namespace App\Domains\BlogTheme;
+namespace App\Domains\Delivery;
 
 use App\Data\Objects\DataAPI\BlogObject;
 use App\Data\Objects\DataAPI\PostObject;

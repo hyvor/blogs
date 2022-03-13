@@ -11,11 +11,13 @@ use App\Domains\Delivery\RouteProcessors\StylesProcessor;
 use App\Domains\Language\LanguageRepository;
 use App\Domains\Redirect\RedirectRepository;
 use App\Models\Blog;
+use App\Models\Language;
 
 class PathMatcher {
 
     public Blog $blog;
     public string $path;
+    public Language $language;
 
     private bool $matched = false;
     private DeliveryAPIResponseObject $responseObject;

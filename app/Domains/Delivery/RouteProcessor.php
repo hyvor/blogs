@@ -2,16 +2,9 @@
 namespace App\Domains\Delivery;
 
 use App\Data\Objects\DeliveryAPI\DeliveryAPIResponseObject;
-use App\Domains\BlogTheme\Feed;
 use App\Domains\Delivery\RouteMatcher\MatchedRoute;
-use App\Domains\Tag\TagRepository;
-use App\Domains\User\UserRepository;
 use App\Models\Blog;
 use App\Models\Language;
-use App\Models\Post;
-use App\Models\Route;
-use App\Models\Tag;
-use App\Models\User;
 
 class RouteProcessor {
 
@@ -65,7 +58,14 @@ class RouteProcessor {
             $this->matchedRoute->param('suffix') === 'feed'
         ) {
 
-            Feed::generateFeed($this->blog, $this->filter);
+            /**
+             * TODO: Feed change header data based on the matchedRoute
+             */
+
+            $feed = Feed::generateFeed($this->blog, $this->filter);
+
+            $this->responseObject = DeliveryAPIResponseObject::forFile($feed, 'application/atom+xml');
+
             return true;
 
         }
