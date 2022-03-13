@@ -5,7 +5,7 @@ use Illuminate\Support\Facades\App;
 use Twig\Environment;
 use Twig\Loader\ArrayLoader;
 
-class Renderer {
+class TwigRenderer {
 
     public static function renderFile(string $file, array $vars) {
         return self::renderString(file_get_contents($file), $vars);

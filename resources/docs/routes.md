@@ -81,8 +81,9 @@ Similar to `post` and `page` routes, other default routes (`index`, `tag`, `auth
 
 * `/author/{slug}` &#8594; `/creator/{slug}`
 * `/tag/{slug}` &#8594; `/category/{slug}`
+* `/search/{search}` &#8594; `/find/{search}`
+* `/` &#8594; `/blog`
 
-You can also change the `index` route to match `/blog`, not `/`. If you do this, you have to make sure you have a landing for `/`. See custom routes below to learn how to do that. 
 ## Custom Routes {#custom}
 
 In addition to the default 6 routes, you can add your own routes. Some examples use cases are:
@@ -98,7 +99,7 @@ In addition to the default 6 routes, you can add your own routes. Some examples 
 
 We usually call a website "a blog" when it has posts and the home page lists all of them. That is the default behavior of Hyvor Blogs. Even out of its purpose, you can use Hyvor Blogs to create a general website. For example, you can create a landing page for the homepage, and have your blog in the `/blog` subdirectory.
 
-See our [build a website](website) tutorial.
+See our [build a website](/blog/website-with-hyvor-blogs) tutorial on our blog.
 
 ## Multiple Post Collections {#collections}
 
@@ -110,4 +111,12 @@ By default, your blog has one post collection, and all posts will be listed the 
   * `/blog` -> to list blog posts (using the filter `tag.slug != podcast`)
   * `/podcast` -> to list podcast episodes (using the filter `tag.slug = podcast`)
 
-See [multi-collection blog](multi-collection) tutorial.
+See [multi-collection blog](/blog/multi-collection-blog) tutorial on our blog.
+
+## Route Conflicts
+
+Usually, route conflicts can happen when two or more routes has the **same match** value. In Hyvor Blogs, `post` and `page` routes can have the same match values. (You can see, the default values of those two routes are the same: `/{slug}`). However, other routes match cannot have duplicate match values.
+
+## Turning off routes
+
+You can turn off routes except the `post` and `page` routes. Turning off routes will remove those pages from your blog. You can turn them on later.

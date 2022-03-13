@@ -95,6 +95,14 @@ class DatabaseSeeder extends Seeder
                     'reading_time' => 2,
                 ]);
 
+                $prosemirrorJson['content'][] = [
+                    'type' => 'paragraph',
+                    'content' => [[
+                        'type' => 'text',
+                        'text' => "This is french"
+                    ]]
+                ];
+
                 $secondLanguagePost = Post::create([
                     'blog_id' => $blog->id,
                     'language_id' => $secondLanguage->id,

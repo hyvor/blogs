@@ -25,6 +25,7 @@ All Blogs in HB are public. The Data API only returns public data of the blog. T
 - `/posts`
 - `/tags`
 - `/authors`
+- `/languages`
 
 ## Response Format
 
@@ -104,6 +105,29 @@ All slugs are lowercase, and can contain `-`
 > In posts, **id** is unique. **slug + language.id** is also unique.
 
 ### Post Language Object {#post-language-object}
+
+```json
+{
+	"language": a language object,
+	"variants": [ post language variant objects ]
+	"variants": [
+		{
+			"id": 1001,
+			"code": "fr",
+			"name": "French",
+			"is_primary": false,
+			"post_url": "https://subdomain.hyvorblogs.io/fr/hello-world"
+		},
+		{
+			"id": 1002,
+			"code": "es",
+			"name": "Spanish",
+			"is_primary": false,
+			"post_url": "https://subdomain.hyvorblogs.io/es/hello-world"
+		}
+	]
+}
+```
 
 ```json
 {
@@ -269,6 +293,20 @@ Both fr and fr-fr are valid. |
 | nav_header, nav_footer | array of objects | Navigation links for the blog header and the footer. |
 | code_head, code_foot | string | Custom HTML code for before </head>, and </body> for all pages. |
 | posts_count | int | Total published posts |
+
+
+## Language Object {#language-object}
+
+Language objects are returned in the `/languages` endpoint. This is similar to the Post Language Object except this does not have variants key.
+
+```json
+{
+	"id": 1000,
+	"code": "en",
+	"name": "English",
+	"is_primary": true
+}
+```
 
 ## Query Parameters
 

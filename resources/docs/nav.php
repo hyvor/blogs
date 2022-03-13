@@ -44,7 +44,6 @@ return [
         ['self-hosting', 'Self-hosting'],
         ['subdirectory', 'Subdirectory hosting'],
         ['website', 'Create a website'],
-        ['multi-collection', 'Multi-collection blog'],
         ['import', 'Importing data'],
         ['export', 'Exporting data'],
     ],

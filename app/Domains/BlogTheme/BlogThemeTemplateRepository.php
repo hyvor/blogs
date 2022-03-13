@@ -14,6 +14,7 @@ use App\Domains\BlogTheme\Twig\Renderer;
 use App\Domains\Post\PostRepository;
 use App\Helpers\InternalAPICaller;
 use App\Models\Blog;
+use App\Models\Language;
 use Illuminate\Database\Eloquent\Model;
 use Twig\Loader\ArrayLoader as TwigArrayLoader;
 use Twig\Environment as TwigEnvironment;
@@ -23,6 +24,7 @@ class BlogThemeTemplateRepository
     public static function renderFile(
         Blog $blog,
         string $template,
+        Language $language,
         ?DeliveryAPIScopeEnum $scope,
         ?Model $model,
         ?string $filter = null,
@@ -43,6 +45,7 @@ class BlogThemeTemplateRepository
             '_blog' => $blogObject,
             '_config' => [],
             '_scope' => $scope->value,
+            '_lang' => $
         ];
 
         $vars += $scopeVariables;

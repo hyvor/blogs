@@ -60,4 +60,21 @@ class Blog extends Model
         return $this->counts()->where('name', $name)->value('value');
     }
 
+    /**
+     * Redirects
+     */
+    public function redirects()
+    {
+        return $this->hasMany(Redirect::class);
+    }
+
+
+    /**
+     * Theme files
+     */
+    public function themeFiles()
+    {
+        return $this->hasMany(BlogThemeFile::class);
+    }
+
 }

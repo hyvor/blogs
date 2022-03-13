@@ -3,6 +3,7 @@
 namespace App\Domains\BlogTheme;
 
 use App\Data\Enums\ThemeFileFolderEnum;
+use App\Models\Blog;
 use App\Models\BlogThemeFile;
 use Database\Seeders\BlogThemeFilesSeeder;
 use Illuminate\Database\Eloquent\Collection;
@@ -10,22 +11,21 @@ use Illuminate\Support\Facades\App;
 
 class BlogThemeRepository
 {
-    public static function getFile(int $blogId, string $fileName, ?string $folder = null): ?BlogTHemeFile
+    public static function getFile(Blog $blog, string $fileName, ?ThemeFileFolderEnum $folder = null): ?BlogThemeFile
     {
 
-        $file = BlogThemeFile::where('blog_id', $blogId)
+        return $blog->themeFiles()
             ->where('name', $fileName)
-            ->where('folder', $folder)
+            ->where('folder', $folder->value)
             ->first();
 
-        return $file;
     }
 
-    public static function getFilesInFolder(int $blogId, ?ThemeFileFolderEnum $folder): Collection
+    public static function getFilesInFolder(Blog $blog, ?ThemeFileFolderEnum $folder): Collection
     {
-        self::updateLocalDBFiles($blogId);
+        self::updateLocalDBFiles($blog->id);
 
-        return BlogThemeFile::where('blog_id', $blogId)
+        return $blog->themeFiles()
             ->where('folder', $folder)
             ->get();
     }

@@ -44,6 +44,10 @@ class DeliveryRepository {
      */
     public static function getResponseObject (Blog $blog, string $path) : DeliveryAPIResponseObject {
 
+        $matcher = new PathMatcher($blog, $path);
+
+        return $matcher->getResponseObject();
+
         if (!preg_match('/^\//', $path)) {
             $path = '/' . $path; // add leading slash (otherwise matcher doesn't work)
         }
@@ -237,6 +241,7 @@ class DeliveryRepository {
             $html = BlogThemeTemplateRepository::renderFile(
                 $blog,
                 'post',
+                $currentLang,
                 DeliveryAPIScopeEnum::POST,
                 $post
             );
@@ -264,6 +269,7 @@ class DeliveryRepository {
                 $html = BlogThemeTemplateRepository::renderFile(
                     $blog,
                     $matchedRoute->template,
+                    $currentLang,
                     DeliveryAPIScopeEnum::from($post->is_page ? 'page' : 'post'),
                     $post
                 );
@@ -307,6 +313,7 @@ class DeliveryRepository {
                 $html = BlogThemeTemplateRepository::renderFile(
                     $blog,
                     $matchedRoute->template,
+                    $currentLang,
                     $scope,
                     $model,
                     $filter,
