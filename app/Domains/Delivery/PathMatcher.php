@@ -35,8 +35,9 @@ class PathMatcher {
             'matchDefaultRoutes',
 
             'setLanguage',
-            'matchNonPostRoutes'
-            
+            'matchNonPostRoutes',
+            'matchPostRoutes',
+
         ]);
 
     }
@@ -147,7 +148,7 @@ class PathMatcher {
      */
     private function matchNonPostRoutes() {
         $nonPostRoutes = $this->blog->routes->filter(function ($route) {
-            return $route !== 'post' && $route !== 'page';
+            return $route->name !== 'post' && $route->name !== 'page';
         });
 
         $routeMatcher = new RouteMatcher($this->path);
@@ -177,24 +178,54 @@ class PathMatcher {
             $routeMatcher->add($route->name, $match, $defaults, $requirements, $route);            
         }
 
+        $this->matchAndSetResponseObject($routeMatcher);
+
+    }
+
+    /**
+     * Post and page routes can conflict
+     * Therefore match both explicitly
+     */
+    private function matchPostRoutes() {
+
+        $postRoutes = $this->blog->routes->filter(function ($route) {
+            return $route->name === 'post' || $route->name === 'page';
+        });
+
+        foreach ($postRoutes as $route) {
+
+            $routeMatcher = new RouteMatcher($this->path);
+
+            $routeMatcher->add($route->name, $route->match, [], [], $route);
+
+            $matched = $this->matchAndSetResponseObject($routeMatcher);
+
+            if ($matched) {
+                return; // do not process other route
+            }
+
+        }
+
+    }
+
+    private function matchAndSetResponseObject(RouteMatcher $routeMatcher) : bool {
+
         $matchedRoute = $routeMatcher->match();
-        $route = $nonPostRoutes->firstWhere('name', $matchedRoute->name);
 
         if ($matchedRoute) {
+
             $processor = new RouteProcessor($this->blog, $matchedRoute, $this->language);
 
             $responseObject = $processor->getResponseObject();
 
             if ($responseObject) {
                 $this->setMatched($responseObject);
+                return true;
             }
+
         }
 
-    }
-
-    private function matchPostRoutes() {
-
-        
+        return false;
 
     }
 

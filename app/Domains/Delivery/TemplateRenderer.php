@@ -11,6 +11,7 @@ use App\Domains\BlogTheme\BlogThemeRepository;
 use App\Domains\Delivery\RouteMatcher\MatchedRoute;
 use App\Domains\Delivery\Twig\TwigRenderer;
 use App\Domains\Post\PostRepository;
+use App\Domains\Route\PermalinkRepository;
 use App\Domains\Tag\TagRepository;
 use App\Domains\User\UserRepository;
 use App\Models\Blog;
@@ -26,7 +27,7 @@ class TemplateRenderer {
     private Language $language;
     private ?string $filter;
 
-    private Tag|User|Post|null $model;
+    private Tag|User|Post|null|false $model;
 
     public function __construct(Blog $blog, MatchedRoute $matchedRoute, Language $language, ?string $filter) {
         $this->blog = $blog;
@@ -245,7 +246,33 @@ class TemplateRenderer {
 
         } else if ($this->matchedRoute->name === 'post' || $this->matchedRoute->name === 'page') {
 
-            
+            $post = PostRepository::getPostByBlogIdSlugAndLanguageId(
+                $this->blog->id, 
+                $slug, 
+                $this->language->id
+            );
+
+            if ($post) {
+
+                // if page was matched, it should be a post
+                // don't worry, PathMatcher will re-match the page if post and page has the same match
+                if (
+                    ($this->matchedRoute->name === 'page' && !$post->is_page) ||
+                    ($this->matchedRoute->name === 'post' && $post->is_page)
+                ) {
+                    return false;
+                }
+
+                // post permalink should be valid
+                $validPermalink = PermalinkRepository::validatePostPermalink($post, $this->matchedRoute->params);
+                if (!$validPermalink) {
+                    return false;
+                }
+
+                return $post;
+            }
+
+            return false;
             
         }
 
