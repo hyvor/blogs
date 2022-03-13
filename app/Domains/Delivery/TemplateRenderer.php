@@ -39,7 +39,9 @@ class TemplateRenderer {
     public function getResponseObject() : ?DeliveryAPIResponseObject
     {
 
-        $this->model = $this->getModel();
+        if (!isset($this->model)) {
+            $this->model = $this->getModel();
+        }
 
         // required model was not found
         if ($this->model === false) {
@@ -128,7 +130,7 @@ class TemplateRenderer {
                 )
             ];
 
-        } else if ($routeName === 'post' || $routeName === 'page') {
+        } else if ($routeName === 'post' || $routeName === 'page' || $routeName === 'preview') {
 
             $postObject = new PostObject($this->model, $this->blog);
             return [
@@ -278,6 +280,11 @@ class TemplateRenderer {
 
         return null;
 
+    }
+
+    // preview repository sets model before getting response object
+    public function setModel($model) {
+        $this->model = $model;
     }
 
 }

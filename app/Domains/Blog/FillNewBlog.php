@@ -86,7 +86,7 @@ class FillNewBlog {
                 'match' => '/search',
                 'template' => 'search,index'
             ]
-            ];
+        ];
 
 
         foreach ($defaultRoutes as $route) {

@@ -4,6 +4,8 @@ namespace App\Domains\Delivery\RouteProcessors;
 use App\Data\Objects\DeliveryAPI\DeliveryAPIResponseObject;
 use App\Domains\Delivery\PathMatcher;
 use App\Domains\Delivery\RouteMatcher\MatchedRoute;
+use App\Domains\Delivery\TemplateRenderer;
+use App\Domains\Post\PostRepository;
 use Illuminate\Contracts\Encryption\DecryptException;
 
 class PreviewProcessor {
@@ -15,8 +17,7 @@ class PreviewProcessor {
      */
     public function __construct(PathMatcher $pathMatcher, MatchedRoute $matchedRoute) {
 
-        //TODO:
-        /* try {
+        try {
             $id = decrypt($matchedRoute->param('id'));
         } catch (DecryptException) {
             return;
@@ -24,18 +25,25 @@ class PreviewProcessor {
 
         $post = PostRepository::getPostById($id);
 
-        $html = BlogThemeTemplateRepository::renderFile(
+        $blog = $pathMatcher->blog;
+        $routes = $blog->routes;
+
+
+        /**
+         * Fake-update the route
+         */
+        $route = $routes->firstWhere('name', $post->is_page ? 'page' : 'post');
+        $matchedRoute->route = $route;
+
+        $templateRenderer = new TemplateRenderer(
             $blog,
-            'post',
-            $currentLang,
-            DeliveryAPIScopeEnum::POST,
-            $post
+            $matchedRoute,
+            $post->language,
+            null
         );
-        
-        return DeliveryAPIResponseObject::forFile($html);
+        $templateRenderer->setModel($post);
 
-        $this->responseObject = DeliveryAPIResponseObject::forFile($css, 'text/css'); */
-
+        $this->responseObject = $templateRenderer->getResponseObject();
     }
 
     public function getResponseObject() : ?DeliveryAPIResponseObject {
