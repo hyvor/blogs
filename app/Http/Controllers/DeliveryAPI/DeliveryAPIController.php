@@ -21,12 +21,9 @@ class DeliveryAPIController
          * Returns an output as specified [here]()
          */
 
-        $response = DeliveryRepository::getHtml(
+        $response = DeliveryRepository::getResponseObject(
             $blog,
             $request->route('path') ?? '',
-            [
-                'page' => $request->input('page')
-            ]
         );
 
         return response()->json($response);

@@ -1,5 +1,7 @@
 # Self-Hosting on Subdirectory
 
+This guide explains how to self-host your blog using our [Delivery API](api-delivery) and [Webhooks](webhooks).
+
 By default, your blog runs on a subdomain of **hyvorblogs.io**. You can also set up a [custom domain](custom-domain) (such as **myblog.com** or **blog.example.com**) easily. However, what if you wanted to host your blog on a subdirectory of your website (**example.com/blog**)? That process is not straightforward, and highly depends on how your website is configured.
 
 ## Using a reverse-proxy {#reverse-proxy}
@@ -13,6 +15,8 @@ The first option is configuring your web server to work as a reverse proxy when 
 ### How it works
 
 Let's say someone requested `/blog/hello-world` on your website. Then, your server sends a request to our Delivery API and learn how to respond to this request (path is now `/hello-world` inside HB). Delivery API tells what content and headers to send back to the user. Then, your server caches the Delivery API response and sends the response back to the user. If you update the `/hello-world` post, there should be a way to clear cache. This is done using webhooks.
+
+### Libraries {libraries}
 
 Currently, we have libraries for the following frameworks.
 
