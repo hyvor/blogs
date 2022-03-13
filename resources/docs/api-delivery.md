@@ -26,7 +26,7 @@ So, why is there a Delivery API? Let's say you already have an app or website. Y
 
 You can easily set up self-hosting on subdirectory of your application using the [libraries](self-hosting-delivery-api#libraries) we provide for popular web frameworks. If your programming language or framework is not supported, you can build your own mini-library using this and [webhooks](webhooks) documentations.
 
-## Success Response
+## Response Object {#response-object}
 
 Success response of the Delivery API is always an object of one of the following type.
 

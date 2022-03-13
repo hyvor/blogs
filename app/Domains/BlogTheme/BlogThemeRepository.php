@@ -46,7 +46,7 @@ class BlogThemeRepository
          */
         if (App::environment('local')) {
             BlogThemeFile::where('blog_id', $blogId)->delete();
-            (new BlogThemeFilesSeeder())->run();
+            (new BlogThemeFilesSeeder())->run($blogId);
         }
 
     }

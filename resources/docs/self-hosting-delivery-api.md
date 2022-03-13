@@ -16,11 +16,18 @@ The first option is configuring your web server to work as a reverse proxy when 
 
 Let's say someone requested `/blog/hello-world` on your website. Then, your server sends a request to our Delivery API and learn how to respond to this request (path is now `/hello-world` inside HB). Delivery API tells what content and headers to send back to the user. Then, your server caches the Delivery API response and sends the response back to the user. If you update the `/hello-world` post, there should be a way to clear cache. This is done using webhooks.
 
-### Libraries {libraries}
+### Libraries {#libraries}
 
 Currently, we have libraries for the following frameworks.
 
-* [Laravel](https://github.com/hyvor/hb-delivery-laravel)
+* **Laravel**
+  * [Github](https://github.com/hyvor/hyvor-blogs-laravel)
+  * [Blog Tutorial](https://blogs.hyvor.com/blog/laravel-blog)
+
+>  🙏 We are looking for help to cover more frameworks. If you are an experienced package developer and like to work with us, please contact us. We can make a deal :)
+
+The following frameworks are our next priorities.
+
 * Ruby on Rails
 * Express.js
 * Django
@@ -28,12 +35,10 @@ Currently, we have libraries for the following frameworks.
 
 See library-specific guides on Github for more information on how to self-host one or more blogs inside your web applications. Generally, you have to import those library to your project and tweak some configurations to make it work. They take care of calling the delivery API, caching, and cache invalidation.
 
-> We are looking for help to cover more frameworks and programing languages. If you are interested, let us know.
+Other platform guides:
 
-Other platforms:
-
-* [Cloudflare Workers](x)
-* [Fastly Compute@Edge](x)
+* [Cloudflare Workers](https://blogs.hyvor.com/blog/blog-on-cloudflare-worker)
+* [Fastly Compute@Edge](https://blogs.hyvor.com/blog/blog-on-fastly-compute-edge)
 
 ## Headless
 

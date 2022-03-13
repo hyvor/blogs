@@ -23,8 +23,15 @@ class DeliveryAPIController
 
         $response = DeliveryRepository::getResponseObject(
             $blog,
-            $request->route('path') ?? '',
+            $request->input('path', ''),
         );
+
+        /**
+         * Base-64 encode
+         */
+        if (isset($response->content)) {
+            $response->content = base64_encode($response->content);
+        }
 
         return response()->json($response);
     }

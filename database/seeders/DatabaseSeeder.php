@@ -37,6 +37,8 @@ class DatabaseSeeder extends Seeder
                 'subdomain' => $blogData[0],
                 'name' => $blogData[1],
                 'hosting_domain' => $blogData[2] ?? null,
+                'hosting_at' => $blogData[0] === 'test2' ? 'self' : 'subdomain',
+                'hosting_url' => $blogData[0] === 'test2' ? 'https://blogs.hyvor.test/blog' : null,
                 'api_key_console' => '123',
                 'social_twitter' => 'https://twitter.com/HyvorBlogs'
             ]);
