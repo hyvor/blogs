@@ -11,6 +11,7 @@ use App\Http\Controllers\ConsoleAPI\ConsoleUserController;
 use App\Http\Controllers\ConsoleAPI\ConsoleRedirectController;
 use App\Http\Controllers\ConsoleAPI\ConsoleNavigationController;
 use App\Http\Controllers\ConsoleAPI\ConsoleUrlDataController;
+use App\Http\Controllers\ConsoleAPI\ConsoleWebhookController;
 use App\Http\Middleware\App\ConsoleAPI\ConsoleApiAccessMiddleware;
 use App\Http\Middleware\App\ConsoleAPI\ConsoleApiUserEndpointsAccessMiddleware;
 use App\Http\Middleware\App\ConsoleAPI\PostAuthorshipMiddleware;
@@ -119,10 +120,10 @@ Route::prefix('/api/console/v0/blog/{subdomain}')
     Route::middleware('role:owner|admin')->group(function() {
 
         // webhooks CRUD
-        Route::get('/webhooks', []);
-        Route::post('/webhook', []);
-        Route::patch('/webhook/{id}', []);
-        Route::delete('/webhook/{id}', []);
+        Route::get('/webhooks', [ConsoleWebhookController::class, 'getWebhooks']);
+        Route::post('/webhook', [ConsoleWebhookController::class, 'createWebhook']);
+        Route::patch('/webhook/{id}', [ConsoleWebhookController::class, 'updateWebhook']);
+        Route::delete('/webhook/{id}', [ConsoleWebhookController::class, 'deleteWebhook']);
 
         // navigation CRUD
         Route::get('/navigation', [ConsoleNavigationController::class,'getNavigations']);

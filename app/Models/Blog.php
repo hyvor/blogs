@@ -68,6 +68,14 @@ class Blog extends Model
         return $this->hasMany(Redirect::class);
     }
 
+    /**
+     * Webhooks
+     */
+    public function webhooks()
+    {
+        return $this->hasMany(Webhook::class);
+    }
+
 
     /**
      * Theme files

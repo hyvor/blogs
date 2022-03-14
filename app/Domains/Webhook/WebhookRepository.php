@@ -2,6 +2,7 @@
 namespace App\Domains\Webhook;
 
 use App\Models\Blog;
+use App\Models\Webhook;
 
 class WebhookRepository
 {
@@ -11,21 +12,25 @@ class WebhookRepository
         return $blog->webhooks;
     }
 
-    public static function createWebhook(Blog $blog)
+    public static function createWebhook(Blog $blog, string $url, array $events)
     {
-        $blog->webhooks()->create();
+        $blog->webhooks()->create([
+            'url' => $url,
+            'events' => $events,
+        ]);
     }
 
-    public static function updateWebhook()
+    public static function updateWebhook(int $id, string $url, array $events)
     {
-
-        
-
+        Webhook::find($id)->update([
+            'url' => $url,
+            'events' => $events,
+        ]);
     }
 
-    public static function deleteWebhook()
+    public static function deleteWebhook(int $id)
     {
-
+        Webhook::find($id)->delete();
     }
 
 }
