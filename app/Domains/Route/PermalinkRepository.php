@@ -120,7 +120,8 @@ class PermalinkRepository {
      * Gets permalink of a post/page
      * only for published posts
      */
-    public static function getPostPermalink(Post $post, Blog $blog) : string {
+    public static function getPostPermalink(Post $post, Blog $blog, $onlyPath = false) : string 
+    {
 
         $path = RouteRepository::getRoute($blog, 'post')->match;
 
@@ -151,29 +152,49 @@ class PermalinkRepository {
             $path = "{$language->code}" . $path;
         }
 
-        return self::getFullUrlFromPath($blog, $path);
+        return  $onlyPath ? self::getPath($path) : self::getFullUrlFromPath($blog, $path);
 
     }
+    
 
-    public static function getTagPermalink(Tag $tag, Blog $blog) : string {
+    public static function getTagPermalink(Tag $tag, Blog $blog, $onlyPath = false) : string 
+    {
 
         $path = RouteRepository::getRoute($blog, 'tag')->match;
         $path = str_replace('{slug}', $tag->slug, $path);
         
-        return self::getFullUrlFromPath($blog, $path);
+        return $onlyPath ? self::getPath($path) : self::getFullUrlFromPath($blog, $path);
     }
 
-    public static function getAuthorPermalink(User $author, Blog $blog) : string {
+    public static function getAuthorPermalink(User $author, Blog $blog, $onlyPath = false) : string 
+    {
 
         $path = RouteRepository::getRoute($blog, 'author')->match;
         $path = str_replace('{slug}', $author->slug, $path);
         
-        return self::getFullUrlFromPath($blog, $path);
+        return $onlyPath ? self::getPath($path) : self::getFullUrlFromPath($blog, $path);
 
     }
 
-    public static function getMediaPermalink(Media $media, Blog $blog) : string {
-        return self::getFullUrlFromPath($blog, 'media/' . $media->name);
+    public static function getMediaPermalink(Media $media, Blog $blog, $onlyPath = false) : string 
+    {
+        $path = 'media/' . $media->name;
+        return $onlyPath ? self::getPath($path) : self::getFullUrlFromPath($blog, $path);
+    }
+
+    /**
+     * Always return path with leading /
+     */
+    private static function getPath($path)
+    {
+        if (!$path) {
+            return '/';
+        } else {
+            // remove if have
+            $path = ltrim($path, '/');
+            // add again and return
+            return '/' . $path;
+        }
     }
 
 }

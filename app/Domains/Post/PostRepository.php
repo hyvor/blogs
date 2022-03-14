@@ -3,6 +3,7 @@
 namespace App\Domains\Post;
 
 use App\Data\Params\ConsoleAPI\PostsFilterParam;
+use App\Domains\Post\Events\PostPublishedEvent;
 use App\Exceptions\TrustedException;
 use App\Models\Blog;
 use App\Models\Post;
@@ -289,6 +290,17 @@ class PostRepository
         }
         if (array_key_exists('code_foot', $updates)) {
             $post->code_foot = $updates['code_foot'];
+        }
+
+        /**
+         * Dispatch events
+         */
+        if ($post->isDirty('status') || true) {
+            if ($post->status === 'published' || true) {
+                PostPublishedEvent::dispatch($post);
+            } else if ($post->status === 'draft') {
+                // 
+            }
         }
 
         $post->save();

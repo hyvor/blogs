@@ -45,6 +45,14 @@ return [
     'max_routes_per_blog' => 50,
 
     /**
+     * Webhooks means a HTTP calls on event
+     * They are not "soft"
+     * So, 5 per blog is a good limit
+     * Users can different events for each webhook
+     */
+    'max_webhooks_per_blog' => 5,
+
+    /**
      * Template-related limitations
      */
     'max_template_files_per_blog' => 50,
