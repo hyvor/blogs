@@ -19,14 +19,20 @@ class Post extends Model
      * because these are always wanted
      */
     protected $with = [
+        'variants',
         'tags',
         'authors',
-        'language'
     ];
 
     public function blog()
     {
         return $this->belongsTo(Blog::class);
+    }
+
+
+    public function variants()
+    {
+        return $this->hasMany(PostsVariant::class);
     }
 
     public function tags()
@@ -37,11 +43,6 @@ class Post extends Model
     public function authors()
     {
         return $this->belongsToMany(User::class, 'post_author')->withPivot('order')->orderBy('order', 'ASC');
-    }
-
-    public function language()
-    {
-        return $this->belongsTo(Language::class);
     }
 
 }

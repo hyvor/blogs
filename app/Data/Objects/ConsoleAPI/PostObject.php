@@ -5,6 +5,7 @@ namespace App\Data\Objects\ConsoleAPI;
 use App\Data\Objects\DataAPI\TagObject;
 use App\Domains\Route\PermalinkRepository;
 use App\Models\Blog;
+use App\Models\Language;
 use App\Models\Post;
 
 class PostObject
@@ -30,7 +31,7 @@ class PostObject
     public ?string $code_foot;
 
 
-    public function __construct(Post $post, Blog $blog)
+    public function __construct(Post $post, Blog $blog, Language $language)
     {
 
         $tags = $post->tags->map(function ($tag) use ($blog) {
@@ -52,7 +53,7 @@ class PostObject
         $this->content_unsaved = $post->content_unsaved;
         $this->title = $post->title;
         $this->description = $post->description;
-        $this->url = PermalinkRepository::getPostPermalink($post, $blog);
+        $this->url = PermalinkRepository::getPostPermalink($post, $blog, $language);
         $this->featured_image = $post->featured_image;
         $this->canonical_url = $post->canonical_url;
         $this->reading_time = $post->reading_time;

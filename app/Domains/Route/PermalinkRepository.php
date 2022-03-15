@@ -2,6 +2,7 @@
 namespace App\Domains\Route;
 
 use App\Models\Blog;
+use App\Models\Language;
 use App\Models\Media;
 use App\Models\Post;
 use App\Models\Tag;
@@ -120,7 +121,10 @@ class PermalinkRepository {
      * Gets permalink of a post/page
      * only for published posts
      */
-    public static function getPostPermalink(Post $post, Blog $blog, $onlyPath = false) : string 
+    public static function getPostPermalink(
+        Post $post, Blog $blog, Language $language, 
+        $onlyPath = false
+    ) : string
     {
 
         $path = RouteRepository::getRoute($blog, 'post')->match;
@@ -146,8 +150,6 @@ class PermalinkRepository {
         /**
          * Add language
          */
-        $language = $post->language;
-
         if (!$language->is_primary) {
             $path = "{$language->code}" . $path;
         }

@@ -11,6 +11,7 @@ use App\Models\Media;
 use App\Models\BlogThemeFile;
 use App\Models\Post;
 use App\Models\PostAuthor;
+use App\Models\PostsVariant;
 use App\Models\PostTag;
 use App\Models\Tag;
 use App\Models\User;
@@ -26,7 +27,6 @@ class DatabaseSeeder extends Seeder
      */
     public function run()
     {
-
         $faker = \Faker\Factory::create();
 
         $blogs = [['test', "Test Blog", 'hyvorblogscustom.test'], ['test2', "Test2 Blog"]];
@@ -82,20 +82,23 @@ class DatabaseSeeder extends Seeder
                 $status = $i === 0 ? 'published' : $status[ array_rand($status) ];
 
                 $publishedAt = $status === 'published' ? $faker->dateTime() : null;
+
                 $post = Post::create([
                     'blog_id' => $blog->id,
+                    'is_page' => (bool) rand(0,1),
+                    'slug' => Str::slug($title),
+                ]);
+
+                $englishPost = PostsVariant::create([
+                    'post_id' => $post->id,
                     'language_id' => $language->id,
                     'content' => json_encode($prosemirrorJson),
                     'title' => $title,
-                    'slug' => Str::slug($title),
                     'published_at' => $publishedAt,
                     'description' => $faker->sentence,
                     'status' => $status,
-
-                    'is_page' => (bool) rand(0,1),
-
-                    'reading_time' => 2,
                 ]);
+
 
                 $prosemirrorJson['content'][] = [
                     'type' => 'paragraph',
@@ -105,19 +108,14 @@ class DatabaseSeeder extends Seeder
                     ]]
                 ];
 
-                $secondLanguagePost = Post::create([
-                    'blog_id' => $blog->id,
+                $frenchPost = PostsVariant::create([
+                    'post_id' => $post->id,
                     'language_id' => $secondLanguage->id,
                     'content' => json_encode($prosemirrorJson),
                     'title' => $title,
-                    'slug' => Str::slug($title),
                     'published_at' => $publishedAt,
                     'description' => $faker->sentence,
                     'status' => $status,
-
-                    'is_page' => (bool) rand(0,1),
-
-                    'reading_time' => 2,
                 ]);
 
                 PostTag::create([

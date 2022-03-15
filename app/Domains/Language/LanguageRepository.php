@@ -48,7 +48,7 @@ class LanguageRepository {
 
         // can't delete if there are posts in this language
         $posts = PostRepository::getPosts(
-            $lang->blog_id,
+            $lang->blog,
             (new PostsFilterParam)->setLanguageId($lang->id),
             1
         );
@@ -67,6 +67,14 @@ class LanguageRepository {
 
         return $blog->languages()->where('is_primary', true)->first();
 
+    }
+
+    /**
+     * @return Language primary language if the current one is not found
+     */
+    public static function getLanguageById(Blog $blog, ?int $languageId) : Language
+    {
+        return $blog->languages()->where('id', $languageId)->first() ?? self::getPrimaryLanguage($blog);
     }
 
 

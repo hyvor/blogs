@@ -3,9 +3,11 @@
 namespace App\Domains\Post;
 
 use App\Data\Params\ConsoleAPI\PostsFilterParam;
+use App\Domains\Language\LanguageRepository;
 use App\Domains\Post\Events\PostPublishedEvent;
 use App\Exceptions\TrustedException;
 use App\Models\Blog;
+use App\Models\Language;
 use App\Models\Post;
 use App\Models\Tag;
 use App\Models\User;
@@ -47,56 +49,57 @@ class PostRepository
      * This is for the ConsoleAPI
      */
     public static function getPosts(
-        int $blogId, PostsFilterParam $filters, ?int $limit, int $offset = 0
+        Blog $blog, Language $language, PostsFilterParam $filters, ?int $limit, int $offset = 0
     ) : Collection
     {
         $status = $filters->status;
         $authorId = $filters->authorId;
         $tagId = $filters->tagId;
-        $languageId = $filters->languageId;
         $startTimestamp = $filters->startTimestamp;
         $endTimestamp = $filters->endTimestamp;
         $search = $filters->search;
 
         $limit = $limit ?? 50;
 
-        return Post::where('blog_id', $blogId)
-        ->where('posts.is_page', false)
-        ->when($authorId, function ($query) use ($authorId) {
-            $query->join('post_author', function ($join) use ($authorId) {
-                $join->on('post_author.post_id', '=', 'posts.id');
-                $join->on('post_author.author_id', '=', $authorId);
-            });
-        })
-        ->when($tagId, function ($query) use ($tagId) {
-            $query->join('post_tag', function ($join) use ($tagId) {
-                $join->on('post_tag.post_id', '=', 'posts.id');
-                $join->on('post_tag.tag_id', '=', $tagId);
-            });
-        })
-        ->when($languageId, function ($query) use ($languageId) {
-            $query->where('posts.language_id', $languageId);
-        })
-        ->when($startTimestamp && $endTimestamp, function ($query) use ($startTimestamp, $endTimestamp) {
-            $query->whereDate('created_at', '>', $startTimestamp)
-                ->whereDate('created_at', '<', $endTimestamp);
-        })
-        // status
-        ->when($status, function ($query) use ($status) {
-            if ($status === 'featured') {
-                $query->where('is_featured', true);
-            } else {
-                $query->where('posts.status', $status);
-            }
-        })
-        ->when($search, function ($query) use ($search) {
-            $query->where('posts.title', 'LIKE', "$search%");
-        })
-        ->orderByRaw("FIELD(posts.status, 'draft') DESC") // drafts first
-        ->orderBy('created_at', 'desc')
-        ->limit($limit)
-        ->offset($offset)
-        ->get();
+        return Post::where('blog_id', $blog->id)
+            ->join('posts_variants', function($join) use ($language) {
+                $join->on('posts_variants.post_id', '=', 'posts.id');
+                $join->where('posts_variants.language_id', '=', $language->id);
+            })
+            ->where('posts.is_page', false)
+            ->when($authorId, function ($query) use ($authorId) {
+                $query->join('post_author', function ($join) use ($authorId) {
+                    $join->on('post_author.post_id', '=', 'posts.id');
+                    $join->on('post_author.author_id', '=', $authorId);
+                });
+            })
+            ->when($tagId, function ($query) use ($tagId) {
+                $query->join('post_tag', function ($join) use ($tagId) {
+                    $join->on('post_tag.post_id', '=', 'posts.id');
+                    $join->on('post_tag.tag_id', '=', $tagId);
+                });
+            })
+            ->when($startTimestamp && $endTimestamp, function ($query) use ($startTimestamp, $endTimestamp) {
+                $query->whereDate('created_at', '>', $startTimestamp)
+                    ->whereDate('created_at', '<', $endTimestamp);
+            })
+            // status
+            ->when($status, function ($query) use ($status) {
+                if ($status === 'featured') {
+                    $query->where('is_featured', true);
+                } else {
+                    $query->where('posts.status', $status);
+                }
+            })
+            ->when($search, function ($query) use ($search) {
+                $query->where('posts.title', 'LIKE', "$search%");
+            })
+            ->orderByRaw("FIELD(posts_variants.status, 'draft') DESC") // drafts first
+            ->orderBy('posts.created_at', 'desc')
+            ->limit($limit)
+            ->offset($offset)
+            ->get();
+
     }
 
     public static function getPages(int $blogId) {

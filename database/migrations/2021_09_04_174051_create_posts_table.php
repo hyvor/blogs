@@ -18,26 +18,17 @@ class CreatePostsTable extends Migration
 
             // time
             $table->timestamps();
-            $table->timestamp('published_at')->nullable();
             $table->softDeletes();
 
             // connections
             $table->bigInteger('blog_id')->index();
-            $table->bigInteger('language_id')->index();
 
             // status
-            $table->enum('status', ['published', 'draft', 'scheduled'])->default('draft');
             $table->boolean('is_page')->default(false);
             $table->boolean('is_featured')->default(false);
 
-
             // basic
             $table->string('slug')->nullable();
-            $table->text('content')->nullable();
-            $table->text('content_unsaved')->nullable();
-            $table->string('title')->nullable();
-            $table->string('description', 350)->default('');
-            $table->string('featured_image')->nullable();
 
             // advanced
             $table->string('canonical_url')->nullable();
@@ -47,7 +38,7 @@ class CreatePostsTable extends Migration
             // other
             $table->tinyInteger('reading_time')->nullable();
 
-            $table->unique(['blog_id', 'language_id', 'slug']);
+            $table->unique(['blog_id', 'slug']);
         });
     }
 

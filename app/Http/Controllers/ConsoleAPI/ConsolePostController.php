@@ -4,6 +4,7 @@ namespace App\Http\Controllers\ConsoleAPI;
 
 use App\Data\Objects\ConsoleAPI\PostObject;
 use App\Data\Params\ConsoleAPI\PostsFilterParam;
+use App\Domains\Language\LanguageRepository;
 use App\Models\Blog;
 use App\Domains\Post\PostRepository;
 use App\Http\Controllers\Controller;
@@ -21,20 +22,23 @@ class ConsolePostController extends Controller
         ]);
 
         $filters = json_decode($request->input('filters'));
+
+        $language = LanguageRepository::getLanguageById($blog, $filters->language);
+
         $posts = PostRepository::getPosts(
-            $blog->id,
+            $blog,
+            $language,
             (new PostsFilterParam())
                 ->setStatus($filters->status === 'all' ? null : $filters->status)
                 ->setAuthorId($filters->author === 'all' ? null : $filters->author)
                 ->setTagId($filters->tag === 'all' ? null : $filters->tag)
-                ->setLanguageId($filters->language)
                 ->setStartTimestamp($filters->dateStart)
                 ->setEndTimestamp($filters->dateEnd)
                 ->setSearch($filters->search),
             $request->input('limit'),
             $request->input('offset') ?? 0
-        )->map(function ($post) use ($blog) {
-            return new PostObject($post, $blog);
+        )->map(function ($post) use ($blog, $language) {
+            return new PostObject($post, $blog, $language);
         });
 
         return response()->json($posts);
