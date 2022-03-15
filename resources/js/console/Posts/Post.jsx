@@ -12,6 +12,8 @@ import { PopupConfirm } from '../ReusableComponents/Popup';
 import PostPublisher from './PostPublisher';
 import { toast } from 'react-toastify';
 import ActionButton from '../ReusableComponents/ActionButton';
+import languagesLogic from '../logic/languagesLogic';
+import PostLanguageSelector from './PostLanguageSelector';
 
 
 let publisherOutsideCleaner;
@@ -23,6 +25,8 @@ export default function Post( {subdomain, id} ) {
     const { post, loadPostAjax, savePostAjax, forceSavePostAjax, getDiff } = useValues(postLogicInst)
     const { updatePostValue, savePost, forceSavePost } = useActions(postLogicInst)
 
+    const { languages } = useValues(languagesLogic({subdomain}))
+ 
     const [isFullScreen, setIsFullScreen] = useState(false);
 
 
@@ -237,6 +241,8 @@ export default function Post( {subdomain, id} ) {
             <div className="post-editor-top">
 
                 <div className="post-editor-top-content">
+
+                    <PostLanguageSelector languages={languages} />
 
                     <div className="post-editor-title-row">
 

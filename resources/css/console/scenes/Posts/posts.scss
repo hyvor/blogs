@@ -205,6 +205,24 @@
                 padding-top: 36px;
             }
         }
+
+        .post-languages {
+            margin-top:20px;
+            .lang-tag {
+                display: inline-block;
+                padding: 1px 9px;
+                margin-right: 3px;
+                background: $color-input;
+                font-weight: 600;
+                font-size: 12px;
+                border-radius: 20px;
+                cursor:pointer;
+                &.active {
+                    background: $color-accent-light;
+                }
+            }
+        }
+
         .post-editor-title-row {
             display:flex;
             position:relative;
@@ -287,7 +305,7 @@
 
         .post-editor-title {
             font-family: $font-content;
-            padding-top: 30px;
+            padding-top: 10px;
             padding-bottom: 10px;
             font-size: 25px;
             font-weight: 600;

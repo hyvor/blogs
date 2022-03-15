@@ -9,14 +9,18 @@ class PostsVariant extends Model
 {
     use HasFactory;
 
+    protected $casts = [
+        'published_at' => 'datetime',
+    ];
+
 
     public function post()
     {
-        $this->belongTo(Post::class);
+        return $this->belongTo(Post::class);
     }
 
     public function language()
     {
-        $this->belongsTo(Language::class);
+        return $this->belongsTo(Language::class);
     }
 }

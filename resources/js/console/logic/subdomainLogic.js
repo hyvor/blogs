@@ -4,6 +4,7 @@ import blogLogic from "./blogLogic";
 import blogsLogic from "./blogsLogic";
 import postsLogic from "./postsLogic";
 import sceneLogic from './sceneLogic';
+import languagesLogic from './languagesLogic';
 
 
 const subdomainLogic = kea({
@@ -25,6 +26,8 @@ const subdomainLogic = kea({
             postsLogic({subdomain}).actions.loadPostsList();
             // pre-load blog settings
             blogLogic({subdomain}).actions.load();
+            // pre-load languages
+            languagesLogic({subdomain}).actions.load();
 
             /**
              * This is set because there are some places that

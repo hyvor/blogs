@@ -2,7 +2,7 @@
 
 namespace App\Http\Controllers\ConsoleAPI;
 
-use App\Data\Objects\ConsoleAPI\PostObject;
+use App\Data\Objects\ConsoleAPI\Post\PostObject;
 use App\Data\Params\ConsoleAPI\PostsFilterParam;
 use App\Domains\Language\LanguageRepository;
 use App\Models\Blog;
@@ -23,9 +23,10 @@ class ConsolePostController extends Controller
 
         $filters = json_decode($request->input('filters'));
 
-        $language = LanguageRepository::getLanguageById($blog, $filters->language);
+        $language = LanguageRepository::getPrimaryLanguage($blog);
 
         $posts = PostRepository::getPosts(
+
             $blog,
             $language,
             (new PostsFilterParam())
@@ -37,8 +38,11 @@ class ConsolePostController extends Controller
                 ->setSearch($filters->search),
             $request->input('limit'),
             $request->input('offset') ?? 0
-        )->map(function ($post) use ($blog, $language) {
-            return new PostObject($post, $blog, $language);
+
+        )->map(function ($post) use ($blog) {
+
+            return new PostObject($post, $blog);
+
         });
 
         return response()->json($posts);
