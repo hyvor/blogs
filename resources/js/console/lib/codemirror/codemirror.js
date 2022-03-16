@@ -17,5 +17,6 @@ import 'codemirror/mode/javascript/javascript'; // js
 import 'codemirror/mode/twig/twig'; // twig
 import 'codemirror/mode/htmlmixed/htmlmixed'; // html
 import 'codemirror/mode/css/css'; // css|scss
+import 'codemirror/mode/yaml/yaml'; // yaml
 
 import './loadmode';

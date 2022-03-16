@@ -2,12 +2,14 @@ import React from 'react'
 import {Controlled as CodeMirror} from 'react-codemirror2'
 
 export const CODEMIRROR_MODES = {
-    scss: 'text/x-scss',
+    scss: { name: 'twig', base: 'text/x-scss'},
     twig: { name: 'twig', base: 'text/html' },
-    js: 'text/javascript',   
+    js: 'text/javascript',
+    yaml: 'text/x-yaml'
 }
 
 export default function CodemirrorEditor({ value, onChange, mode }) {
+
 
     return <CodeMirror
         value={value}

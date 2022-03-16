@@ -1,9 +1,10 @@
 import { useActions, useValues } from 'kea';
-import React, { forwardRef } from 'react';
+import React, { forwardRef, useState } from 'react';
 import subdomainLogic from '../logic/subdomainLogic';
 import themeLogic from '../logic/themeLogic';
 import FileEditor from './FileEditor';
 import { ReactSortable } from "react-sortablejs";
+import { useEffect } from 'react';
 
 const SortableWrap = forwardRef(({children}, ref) => <div className="sort-wrap" ref={ref}>{children}</div>);
 
@@ -14,17 +15,25 @@ export default function FileBrowser() {
     const { editorOpenedFilesIds, editorActiveFileId, getFileById, hasFileUpdated } = useValues(themeLogicInst);
     const { editorCloseFile, editorSetActiveFileId, editorSetOpenedFiles } = useActions(themeLogicInst)
 
-    function handleClose(e, id) {
+    const [ fileList, setFileList ] = useState([])
 
+    useEffect(() => {
+        setFileList(editorOpenedFilesIds.map(id => ({id})));
+    }, [editorOpenedFilesIds])
+
+    function handleSetFileList(list) {
+        editorSetOpenedFiles(list.map(l => l.id));
+    }
+
+    function handleClose(e, id) {
         e.stopPropagation();
         editorCloseFile(id);
-
     }
 
     return <div className="editor-view">
 
         <div className="editor-nav">
-            <ReactSortable tag={SortableWrap} list={editorOpenedFilesIds} setList={editorSetOpenedFiles}>
+            <ReactSortable tag={SortableWrap} list={fileList} setList={handleSetFileList}>
                 {
                     editorOpenedFilesIds.map(id => {
                         const file = getFileById(id)

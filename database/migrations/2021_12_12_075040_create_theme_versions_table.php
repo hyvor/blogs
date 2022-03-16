@@ -4,7 +4,7 @@ use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\Schema;
 
-class CreateThemesTable extends Migration
+return new class extends Migration
 {
     /**
      * Run the migrations.
@@ -13,12 +13,14 @@ class CreateThemesTable extends Migration
      */
     public function up()
     {
-        Schema::create('themes', function (Blueprint $table) {
+        Schema::create('themes_versions', function (Blueprint $table) {
             $table->id();
             $table->timestamps();
 
-            $table->string('name');
-            $table->string('current_version');
+            $table->bigInteger('theme_id');
+            $table->string('version');
+
+            $table->unique(['theme_id', 'version']);
         });
     }
 
@@ -29,7 +31,6 @@ class CreateThemesTable extends Migration
      */
     public function down()
     {
-        Schema::dropIfExists('themes');
-        Schema::dropIfExists('posts_tags');
+        Schema::dropIfExists('themes_versions');
     }
-}
+};
