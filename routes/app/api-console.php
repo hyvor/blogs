@@ -107,6 +107,8 @@ Route::prefix('/api/console/v0/blog/{subdomain}')
         Route::put('/tag/{tagId}', [ConsoleTagController::class, 'updateTag']);
         Route::delete('/tag/{tagId}', [ConsoleTagController::class, 'deleteTag']);
 
+        Route::get('/postTags/{postId}', [ConsoleTagController::class, 'selectedPostTag']);
+
         // post_tag CRUD
         Route::get('/getTagList', [ConsoleTagController::class, 'getTagList']);
         Route::post('/createPostTag', [ConsoleTagController::class, 'createPostTag']);
@@ -162,7 +164,7 @@ Route::prefix('/api/console/v0/blog/{subdomain}')
         // users CRUD
         Route::get('/users', [ConsoleUserController::class, 'getAuthor']);
         Route::post('/user', [ConsoleUserController::class, 'createAuthor']);
-        Route::patch('/user/{id}', [ConsoleUserController::class, 'updateAuthor']);
+        Route::patch('/user/{id}', [ConsoleUserController::class, 'updateAuthor']); 
         Route::delete('/user/{id}', [ConsoleUserController::class, 'deleteAuthor']); 
 
         // theme CRUD

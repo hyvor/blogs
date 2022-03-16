@@ -10,20 +10,24 @@ const postTagLogic = kea({
     actions: {
         setPostTagList: (pt) => ({pt}),
         addPostTag: (pt) => ({pt}),
-        setPostTag: (pt) => ({pt}),
+        // setPostTag: (pt) => ({pt}),
     },
 
     ajax: ({ actions, props }) => ({ 
 
-        // Post tag section starts from here.
         load: async ({postId}) => {
-            const pt = await api.get(props.subdomain, '/getTagList', {
-                postId: postId,
-            });
-            // console.log(pt);
+            const pt = await api.get(props.subdomain, `/postTags/${postId}`);
             actions.setPostTagList(pt);
         },
 
+        // Post tag section starts from here.
+        // load: async ({postId}) => {
+        //     const pt = await api.get(props.subdomain, '/getTagList', {
+        //         postId: postId,
+        //     });
+        //     actions.setPostTagList(pt);
+        // },
+ 
         createId: async ({postId, tagId}) => {
             console.log('tag id '+ tagId + ' post id ' + postId);
             const pt = await api.post(props.subdomain, '/createPostTag', {
@@ -31,16 +35,14 @@ const postTagLogic = kea({
                 tagId: tagId,
             })
             actions.addPostTag(pt);
-        },
+        }, 
 
-        loadSelectedTags: async ({postId}) => {
-            const pt = await api.get(props.subdomain, '/getPostTag', {
-                postId: postId,
-            });
-            // console.log('load the selected tags')
-            // console.log(pt);
-            actions.setPostTag(pt);
-        },
+        // loadSelectedTags: async ({postId}) => {
+        //     const pt = await api.get(props.subdomain, '/getPostTag', {
+        //         postId: postId,
+        //     });
+        //     actions.setPostTag(pt);
+        // },
     }),
 
     reducers: {
@@ -51,9 +53,9 @@ const postTagLogic = kea({
             addPostTag: (state, {postTag}) => [postTag, ...state],
         }],
 
-        selectedPT: [[], {
-            setPostTag: (_, {pt}) => pt,
-        }],
+        // selectedPT: [[], {
+        //     setPostTag: (_, {pt}) => pt,
+        // }],
     },
 
     events: ({actions}) => ({

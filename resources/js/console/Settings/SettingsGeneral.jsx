@@ -2,15 +2,71 @@ import React, { useState } from 'react';
 import DualSetting from '../ReusableComponents/DualSetting';
 import Input from '../ReusableComponents/Input';
 import Select from '../ReusableComponents/Select';
+import SettingsSave from '../ReusableComponents/SettingsSave';
 
+
+// Should find a way to set up the should save section in the pop-up.
 export default function SettingsGeneral() {
 
-    const commentsOptions = [
-        { value: 'talk', label: 'Hyvor Talk' },
-        { value: 'other', label: 'Other' },
-    ];
+    // const commentsOptions = [
+    //     { value: 'talk', label: 'Hyvor Talk' },
+    //     { value: 'other', label: 'Other' },
+    // ];
 
-    const [htWebsteId, setHtWebsiteId] = useState(null);
+    const [subdomain, setSubdomain] = useState('');
+    const [name, setName] = useState('');
+    const [description, setDescription] = useState('');
+    const [icon, setIcon] = useState('');
+    const [featuredImage, setFeaturedImage] = useState('');
+    const [facebook, setFacebook] = useState('');
+    const [twitter, setTwitter] = useState('');
+    const [linkedin, setLinkedin] = useState('');
+    const [youtube, setYoutube] = useState('');
+    const [instagram, setInstagram] = useState('');
+    const [github, setGithub] = useState('');
+
+
+    // const [htWebsteId, setHtWebsiteId] = useState(null);
+
+    // const shouldSave = subdomain !== "";
+    
+    
+    function shouldSave() {
+        // console.log('hello')
+        // const shouldSave
+        // if(subdomain){
+             return subdomain !== ""
+        // }
+        // subdomain !== ""
+        // name !== ""
+        // description !== ""
+        // icon !== ""
+        // featuredImage !== ""
+        // facebook !== ""
+        // twitter !== ""
+        // linkedin !== ""
+        // youtube !== ""
+        // instagram !== ""
+        // github !== ""
+    }
+
+    function handleSave() {
+        
+    }
+    function handleDiscard() {
+        setSubdomain('');
+        setName('');
+        setDescription('');
+        setIcon('');
+        setFeaturedImage('');
+        setFacebook('');
+        setTwitter('');
+        setLinkedin('');
+        setYoutube('');
+        setInstagram('');
+        setGithub('');
+
+    }
 
     return <div className="settings-general">
 
@@ -19,7 +75,7 @@ export default function SettingsGeneral() {
         </div>
 
         <DualSetting 
-            title="Subdomain"
+            title="Subdomain" 
             description="Subdomain is used to uniquely identify your blog within Hyvor Blogs"
             right={
                 <div>
@@ -27,8 +83,8 @@ export default function SettingsGeneral() {
                         title={null}
                         type="text"
                         name="subdomain"
-                        value={htWebsteId}
-                        onChange={setHtWebsiteId}
+                        value={subdomain}
+                        onChange={setSubdomain}
                     />
                 </div>
             }
@@ -42,8 +98,8 @@ export default function SettingsGeneral() {
                     title={null}
                     type="text"
                     name="name"
-                    value={htWebsteId}
-                    onChange={setHtWebsiteId}
+                    value={name}
+                    onChange={setName}
                 />
             }
         />
@@ -55,9 +111,9 @@ export default function SettingsGeneral() {
                 <Input 
                     title={null}
                     type="text"
-                    name="name"
-                    value={htWebsteId}
-                    onChange={setHtWebsiteId}
+                    name="description" 
+                    value={description}
+                    onChange={setDescription}
                 />
             }
         />
@@ -69,9 +125,9 @@ export default function SettingsGeneral() {
                 <Input 
                     title={null}
                     type="text"
-                    name="name"
-                    value={htWebsteId}
-                    onChange={setHtWebsiteId}
+                    name="icon"
+                    value={icon}
+                    onChange={setIcon}
                 />
             }
         />
@@ -83,9 +139,9 @@ export default function SettingsGeneral() {
                 <Input 
                     title={null}
                     type="text"
-                    name="name"
-                    value={htWebsteId}
-                    onChange={setHtWebsiteId}
+                    name="featured Image"
+                    value={featuredImage}
+                    onChange={setFeaturedImage}
                 />
             }
         />
@@ -104,8 +160,8 @@ export default function SettingsGeneral() {
                         title={null}
                         type="text"
                         name="facebook"
-                        value={htWebsteId}
-                        onChange={setHtWebsiteId}
+                        value={facebook}
+                        onChange={setFacebook}
                     />
                 }
             />
@@ -116,8 +172,8 @@ export default function SettingsGeneral() {
                         title={null}
                         type="text"
                         name="twitter"
-                        value={htWebsteId}
-                        onChange={setHtWebsiteId}
+                        value={twitter}
+                        onChange={setTwitter}
                     />
                 }
             />
@@ -128,8 +184,8 @@ export default function SettingsGeneral() {
                         title={null}
                         type="text"
                         name="linkedin"
-                        value={htWebsteId}
-                        onChange={setHtWebsiteId}
+                        value={linkedin}
+                        onChange={setLinkedin}
                     />
                 }
             />
@@ -140,8 +196,8 @@ export default function SettingsGeneral() {
                         title={null}
                         type="text"
                         name="youtube"
-                        value={htWebsteId}
-                        onChange={setHtWebsiteId}
+                        value={youtube}
+                        onChange={setYoutube}
                     />
                 }
             />
@@ -152,8 +208,8 @@ export default function SettingsGeneral() {
                         title={null}
                         type="text"
                         name="instagram"
-                        value={htWebsteId}
-                        onChange={setHtWebsiteId}
+                        value={instagram}
+                        onChange={setInstagram}
                     />
                 }
             />
@@ -164,13 +220,18 @@ export default function SettingsGeneral() {
                         title={null}
                         type="text"
                         name="github"
-                        value={htWebsteId}
-                        onChange={setHtWebsiteId}
+                        value={github}
+                        onChange={setGithub}
                     />
                 }
             />
         </div>
 
+        <SettingsSave 
+            should={shouldSave}
+            onSave={handleSave}
+            onDiscard={handleDiscard}
+        />
 
     </div>
 

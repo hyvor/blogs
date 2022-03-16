@@ -59,6 +59,7 @@ class ConsolePostController extends Controller
         return response()->json(new PostObject($post, $blog));
     }
 
+    // Get all the post from the database
     public function getPost(Request $request, Blog $blog)
     {
         $postId = (int) $request->route('id');
@@ -128,6 +129,14 @@ class ConsolePostController extends Controller
         if ($request->has('code_foot')) {
             $updates['code_foot'] = $request->input('code_foot');
         }
+
+        if ($request->has('tag')) {
+            $updates['tag'] = $request->input('tag');
+        }
+
+        // if ($request->has('author')) {
+        //     $updates['author'] = $request->input('author');
+        // }
 
         $post = PostRepository::updatePost($postId, $updates);
         return response()->json(new PostObject($post, $blog));

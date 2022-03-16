@@ -92,6 +92,14 @@ class ConsoleTagController extends Controller {
         return response()->json($deleteTag);
     }
 
+
+    public static function selectedPostTag(Request $request, Blog $blog){
+
+        $postId = (int) $request->route('postId');
+        $getData = PostTagRepository::selectedPostTag($blog->id, $postId);
+        return response()->json($getData);
+
+    }
     /*
     *
     *

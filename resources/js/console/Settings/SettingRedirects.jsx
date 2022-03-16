@@ -460,6 +460,9 @@ function RedirectSelectType({options, onChange, defaultValue}){
             border: 'none',
             transition: '0.3s box-shadow',
             margin:'10px',
+            '&:hover': {
+                backgroundColor: '#f1e8e8',
+            },
           }),
 
         singleValue: (provided, state) => {

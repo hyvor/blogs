@@ -13,6 +13,7 @@ import DatePicker from 'react-datepicker';
 import Loader from '../ReusableComponents/Loader';
 import SelectTags from './PostTags';
 import SelectAuthors from './PostUsers';
+import postTagLogic from '../logic/posts/postTagLogic';
 
 
 export default function PostSettings({ isSettingsOpen, settingsViewRef, id }) {
@@ -25,6 +26,10 @@ export default function PostSettings({ isSettingsOpen, settingsViewRef, id }) {
     const mediaLogicInst = mediaLogic({subdomain})
     const { uploadImageAjax } = useValues(mediaLogicInst);
     const { uploadImage } = useActions(mediaLogicInst)
+
+
+    const postTagLogicBuilt = postTagLogic({subdomain})
+    const { load } = useActions(postTagLogicBuilt) 
 
     const [ isDeleting, setIsDeleting ] = useState(false);
     const [ isFeaturedImageRemoving, setIsFeaturedImageRemoving ] = useState(false);
@@ -56,6 +61,9 @@ export default function PostSettings({ isSettingsOpen, settingsViewRef, id }) {
             }
         })
     }
+
+    // This will pass the post Id to the back-end to get the selected tags.
+    load({postId : post.id})
 
 
     const [ settingsType, setSettingsType ] = useState('basic'); // basic | advanced

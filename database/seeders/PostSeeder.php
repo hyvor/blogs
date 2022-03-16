@@ -24,6 +24,7 @@ class PostSeeder extends Seeder
             'description' => "testing the deletation",
             'reading_time' => "2",
             'blog_id' => "1",
+            'language_id'=>"1",
         ]);
     }
 }

@@ -39,9 +39,10 @@ class PostObject
             return new TagObject($tag, $blog);
         })->toArray();
 
-        $authors = $post->authors->map(function ($author) use ($blog) {
-            return new AuthorObject($author, $blog);
-        })->toArray();
+        // $authors = $post->authors->map(function ($author) use ($blog) {
+        //     return new AuthorObject($author, $blog);
+        // })->toArray();
+        $authors = null;
 
         $this->id = $post->id;
         $this->preview_id = encrypt($post->id);

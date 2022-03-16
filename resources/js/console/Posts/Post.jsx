@@ -16,7 +16,7 @@ export default function Post( {subdomain, id} ) {
 
     const postLogicInst = postLogic({id});
     const { post, loadPostAjax, savePostAjax, getDiff } = useValues(postLogicInst)
-    const { updatePostValue, savePost, deletePost } = useActions(postLogicInst)
+    const { updatePostValue, savePost, deletePost } = useActions(postLogicInst) 
 
 
     const [isFullScreen, setIsFullScreen] = useState(false);
@@ -38,7 +38,7 @@ export default function Post( {subdomain, id} ) {
                 savePost();
                 e.preventDefault();
             }
-        }
+        } 
 
         function checkSaveUnload() {
             if (

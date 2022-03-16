@@ -7,6 +7,7 @@ use App\Exceptions\TrustedException;
 use App\Models\Blog;
 use App\Models\Post;
 use App\Models\Tag;
+use App\Models\PostTag;
 use App\Models\User;
 use App\Types\Post\PostInputListFiltersType;
 use Carbon\Carbon;
@@ -219,6 +220,8 @@ class PostRepository
     public static function updatePost(int $postId, array $updates)
     {
         $post = Post::find($postId);
+        // $postTag = PostTag::find($postId);
+
 
         if (
             array_key_exists('published_at', $updates) &&
@@ -279,6 +282,17 @@ class PostRepository
         if (array_key_exists('code_foot', $updates)) {
             $post->code_foot = $updates['code_foot'];
         }
+
+        if (array_key_exists('tag', $updates)) {
+            // $postTag->code_head = $updates['tag'];
+            $post = Tag::create([
+                'post_id' => $postId,
+                'tag_id' => $updates['tag'],
+            ]);
+        }
+        // if (array_key_exists('code_foot', $updates)) {
+        //     $post->code_foot = $updates['code_foot'];
+        // }
 
         $post->save();
 

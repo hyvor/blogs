@@ -10,6 +10,24 @@ use Illuminate\Support\Facades\DB;
 
 class PostTagRepository
 {
+    public static function selectedPostTag(int $blogId, int $postId){
+        // dd($tagId);
+
+        $postTag = PostTag::where('post_id', '=', $postId)->pluck('tag_id')->all();
+
+        $tagIdList = array();
+        foreach($postTag as $value)
+        {
+            $tagIdList[] = Tag::where('id', '=', $value)
+            ->select('name')
+            ->first();
+        }
+
+        return $tagIdList;
+    }
+
+
+
 
     public static function getTagList(int $blogId, int $postId)
     {

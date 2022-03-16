@@ -1,6 +1,6 @@
 import React, {useState} from 'react';
 import { useActions, useValues } from 'kea';
-import { Trash, PencilFill, Plus, ArrowBarRight, CodeSlash} from 'react-bootstrap-icons';
+import { Trash, PencilFill, Plus, BoxArrowInRight, CodeSlash} from 'react-bootstrap-icons';
 import {toast} from 'react-toastify'
 import subdomainLogic from '../logic/subdomainLogic';
 import tagsLogic from '../logic/tagsLogic';
@@ -33,10 +33,6 @@ export default function SettingTag(props) {
         }
     }
 
-    console.log(tag);
-    console.log('test')
-    console.log(tagListHasMore);
-
     return <div className="settingsTag">
         <div className="tag-title-bar">
             <div className="tag-title">
@@ -63,8 +59,8 @@ export default function SettingTag(props) {
                     <div className="table-head-item">Name</div> 
                     <div className="table-head-item">Slug</div>
                     <div className="table-head-item">Description</div>
-                    <div className="table-head-item">Code</div>
                     <div className="table-head-item">Posts</div> 
+                    <div className="table-head-item">Code</div>
                     <div></div>
                 </div>
 
@@ -131,6 +127,7 @@ function CreateNewTag(){
     const { create } = useActions(tagLogicBuilt)  
 
     const [createPopUpOpened, setCreatePopUpOpened] = useState(false);
+
     function handleCreateCancel(){
         setCreatePopUpOpened(false)
     }
@@ -143,6 +140,29 @@ function CreateNewTag(){
     const [ description, setDescription ] = useState();
     const [ slug, setSlug ] = useState();
 
+    function onNameChange(val) {
+        setName(val);
+        var slug = val.toLowerCase().replace(/[^a-z0-9-]/g, '-').replace(/-+/g, '-').replace(/(^-|-$)/g, '');
+        setSlug(slug);
+    }
+
+    function onSlugChange(val){
+        val = val.toLowerCase();
+        setSlug(val);
+
+        var allowedRegex = /[^a-z0-9-]/;
+
+        if (val.substr(0, 1) === '-') {
+            setSlugError('Cannot start with -');
+        } else if (val.substr(val.length - 1) === '-') {
+            setSlugError('Cannot end with -');
+        } else if (val.match(allowedRegex)) {
+            const firstLetter = val.match(allowedRegex)[0]
+            setSlugError('Cannot contain ' + firstLetter);
+        } else {
+            setSlugError(null)
+        }
+    }
 
     function submitTag (e) {
         e.preventDefault();
@@ -181,7 +201,7 @@ function CreateNewTag(){
                                     type="text"
                                     name="name"
                                     value={name}
-                                    onChange={setName}
+                                    onChange={onNameChange}
                                     placeholder="Tag name"
                                 />
                                 <Input 
@@ -189,8 +209,8 @@ function CreateNewTag(){
                                     type="text"
                                     name="url"
                                     value={slug}
-                                    onChange={setSlug}
-                                    placeholder="SLug"
+                                    onChange={onSlugChange}
+                                    placeholder="Slug"
                                 />
                                 <Input 
                                     title="Description"
@@ -318,6 +338,7 @@ function Tags ({id, name, description, slug, codeHead, codeFoot}) {
                 <div className="table-item"> {name}</div>
                 <div className="table-item"> {slug} </div>
                 <div className="table-item"> {description}</div>
+                <div className="table-item"> 2000 </div>
                 <div className="table-actions">
                     <div className="table-code" onClick={handleCode}>
                         <span className={styleCodeIcon}>
@@ -370,8 +391,6 @@ function Tags ({id, name, description, slug, codeHead, codeFoot}) {
                         }
                     </div>
                 </div>
-
-                <div className="table-item"> 2000 </div>
 
                 <div className="table-actions">
                     <div className="table-edit" onClick={handleUpdate}>
@@ -443,7 +462,7 @@ function Tags ({id, name, description, slug, codeHead, codeFoot}) {
                     </div>
                     <div className="table-view">
                         <span className='table-button'>
-                            <ArrowBarRight size={10} />
+                            <BoxArrowInRight size={10} />
                         </span>
                     </div>
                 </div>

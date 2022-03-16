@@ -96,16 +96,16 @@
             margin-right:5px;
         }
     }
-    .global-table-header-one {
-        @include grid-three;
-        font-weight: 600;
-        background: $color-card;
-        margin-bottom: 15px;
+    // .global-table-header-one {
+    //     @include grid-three;
+    //     font-weight: 600;
+    //     background: $color-card;
+    //     margin-bottom: 15px;
 
-        .table-head-item{
-            margin-right:5px;
-        }
-    }
+    //     .table-head-item{
+    //         margin-right:5px;
+    //     }
+    // }
 
     // .table-body-scroll{
     //     max-height: 550px;
