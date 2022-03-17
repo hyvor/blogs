@@ -184,6 +184,12 @@ class PermalinkRepository {
         return $onlyPath ? self::getPath($path) : self::getFullUrlFromPath($blog, $path);
     }
 
+    public static function getAssetPermalink(string $assetName, Blog $blog, $onlyPath = false) : string
+    {
+        $path = 'assets/' . $assetName;
+        return $onlyPath ? self::getPath($path) : self::getFullUrlFromPath($blog, $path);
+    }
+
     /**
      * Always return path with leading /
      */

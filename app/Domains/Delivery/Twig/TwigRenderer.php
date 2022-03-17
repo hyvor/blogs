@@ -42,6 +42,9 @@ class TwigRenderer {
             'debug' => $isLocal
         ]);
 
+        // hb-defined filters and functions
+        $twig->addExtension(new TwigExtensions);
+
         // for template_from_string
         $twig->addExtension(new \Twig\Extension\StringLoaderExtension());
 

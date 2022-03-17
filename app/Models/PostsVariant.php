@@ -9,9 +9,6 @@ class PostsVariant extends Model
 {
     use HasFactory;
 
-    protected $casts = [
-        'published_at' => 'datetime',
-    ];
 
 
     public function post()

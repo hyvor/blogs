@@ -14,7 +14,7 @@
         </div>
         
         <div class="post-card-data">
-            <div class="post-date">January 13, 2021</div>
+            <div class="post-date">{{ post.published_at | date('F j, Y') }}</div>
             <h3>{{ post.title }}</h3>
 
 

@@ -15,7 +15,9 @@ class PostLanguageObject {
 
     public function __construct(Post $post, Blog $blog) {
 
-        $language = $post->language;
+        
+
+        $language = $post->variants[0]->language;
 
         $this->id = $language->id;
         $this->code = $language->code;

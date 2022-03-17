@@ -87,6 +87,7 @@ class DatabaseSeeder extends Seeder
                     'blog_id' => $blog->id,
                     'is_page' => (bool) rand(0,1),
                     'slug' => Str::slug($title),
+                    'published_at' => $publishedAt,
                 ]);
 
                 $englishPost = PostsVariant::create([
@@ -94,7 +95,6 @@ class DatabaseSeeder extends Seeder
                     'language_id' => $language->id,
                     'content' => json_encode($prosemirrorJson),
                     'title' => $title,
-                    'published_at' => $publishedAt,
                     'description' => $faker->sentence,
                     'status' => $status,
                 ]);
@@ -113,7 +113,6 @@ class DatabaseSeeder extends Seeder
                     'language_id' => $secondLanguage->id,
                     'content' => json_encode($prosemirrorJson),
                     'title' => $title,
-                    'published_at' => $publishedAt,
                     'description' => $faker->sentence,
                     'status' => $status,
                 ]);

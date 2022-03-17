@@ -47,10 +47,10 @@ class PostObject
         $this->is_featured = $post->is_featured;
         $this->is_page = $post->is_page;
         $this->slug = $post->slug;
-        $this->content = PostContentRepository::getHtml($post->content, $blog);
+        $this->content = PostContentRepository::getHtml($post->variants[0]->content, $blog);
         $this->title = $post->title;
         $this->description = $post->description;
-        $this->url = PermalinkRepository::getPostPermalink($post, $blog);
+        $this->url = PermalinkRepository::getPostPermalink($post, $blog, $post->variants[0]->language);
         $this->featured_image = $post->featured_image;
         $this->canonical_url = $post->canonical_url;
         $this->reading_time = $post->reading_time;

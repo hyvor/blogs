@@ -20,6 +20,11 @@ class Post extends Model
         'authors',
     ];
 
+
+    protected $casts = [
+        'published_at' => 'datetime',
+    ];
+
     public function blog()
     {
         return $this->belongsTo(Blog::class);

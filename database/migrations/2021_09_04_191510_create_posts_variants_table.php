@@ -16,7 +16,6 @@ return new class extends Migration
         Schema::create('posts_variants', function (Blueprint $table) {
             $table->id();
             $table->timestamps();
-            $table->timestamp('published_at')->nullable();
 
             // connections
             $table->bigInteger('post_id');

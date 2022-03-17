@@ -203,10 +203,10 @@ class PostRepository
 
         return $builder
             ->where('posts.blog_id', $blogId)
-            ->where('posts.status', 'published')
+            //->where('posts.status', 'published')
             ->limit($limit)
             ->offset($offset)
-            ->orderBy($orderBy, $orderMethod)
+            //->orderBy($orderBy, $orderMethod)
             ->select('posts.*')
             ->get();
 

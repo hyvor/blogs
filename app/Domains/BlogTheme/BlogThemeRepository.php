@@ -21,6 +21,17 @@ class BlogThemeRepository
 
     }
 
+    public static function getMultipleFiles(
+        Blog $blog, array $fileNames, 
+        ?ThemeFileFolderEnum $folder = null
+    ) : Collection
+    {
+        return $blog->themeFiles()
+            ->whereIn('name', $fileNames)
+            ->where('folder', $folder->value)
+            ->get();
+    }
+
     public static function getFilesInFolder(Blog $blog, ?ThemeFileFolderEnum $folder): Collection
     {
         self::updateLocalDBFiles($blog->id);

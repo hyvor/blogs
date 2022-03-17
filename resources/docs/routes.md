@@ -10,14 +10,14 @@ Routes are used to configure how specific requests are handled. A route matches 
 
 A new blog will have these 6 default routes.
 
-Route name | Match |  Description | Posts Filter
+Route name | Match |  Description | Template | Posts Filter
 ---|---|---|---|---|---|---|---|
-`post` | `/{slug}` | Matches a post | |
-`page` | `/{slug}` | Matches a page | |
-`index` | `/` | Main index page (lists all posts) | `""`
-`tag` | `/tag/{slug}` | Tag index page (lists all posts of a specific tag) | `tag.slug = {slug}`
-`author` | `/author/{slug}` | Author index page (lists all posts of a specific author) | `author.slug = {slug}`
-`search` | `/search/{search}` | Search results page (lists all posts that matches the current search term) |  |
+`post` | `/{slug}` | Matches a post | post | |
+`page` | `/{slug}` | Matches a page | page,post | |
+`index` | `/` | Main index page (lists all posts) | index |
+`tag` | `/tag/{slug}` | Tag index page (lists all posts of a specific tag) | tag,index | `tag.slug = {slug}`
+`author` | `/author/{slug}` | Author index page (lists all posts of a specific author) | author,index | `author.slug = {slug}`
+`search` | `/search/{search}` | Search results page (lists all posts that matches the current search term) | search,index  | |
  
 > Posts Filter is a [FilterQ expression](https://github.com/hyvor/laravel-filterq) to filter posts. These filtered posts will be sent to the template as the `_posts` variable. It is only used in listing pages like index, tag, author. Matched params (`{slug}`) can be used in this expression.
 
