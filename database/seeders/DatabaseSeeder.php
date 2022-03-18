@@ -100,22 +100,26 @@ class DatabaseSeeder extends Seeder
                 ]);
 
 
-                $prosemirrorJson['content'][] = [
-                    'type' => 'paragraph',
-                    'content' => [[
-                        'type' => 'text',
-                        'text' => "This is french"
-                    ]]
-                ];
+                if (rand(0,1) === 0) {
 
-                $frenchPost = PostsVariant::create([
-                    'post_id' => $post->id,
-                    'language_id' => $secondLanguage->id,
-                    'content' => json_encode($prosemirrorJson),
-                    'title' => $title . ' French',
-                    'description' => $faker->sentence,
-                    'status' => $status,
-                ]);
+                    $prosemirrorJson['content'][] = [
+                        'type' => 'paragraph',
+                        'content' => [[
+                            'type' => 'text',
+                            'text' => "This is french"
+                        ]]
+                    ];
+                    
+                    $frenchPost = PostsVariant::create([
+                        'post_id' => $post->id,
+                        'language_id' => $secondLanguage->id,
+                        'content' => json_encode($prosemirrorJson),
+                        'title' => $title . ' French',
+                        'description' => $faker->sentence,
+                        'status' => $status,
+                    ]);
+                    
+                }
 
                 PostTag::create([
                     'post_id' => $post->id,

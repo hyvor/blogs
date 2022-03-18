@@ -14,6 +14,7 @@ import { toast } from 'react-toastify';
 import ActionButton from '../ReusableComponents/ActionButton';
 import languagesLogic from '../logic/languagesLogic';
 import PostLanguageSelector from './PostLanguageSelector';
+import blogsLogic from '../logic/blogsLogic';
 
 
 let publisherOutsideCleaner;
@@ -23,12 +24,18 @@ export default function Post( {subdomain, id} ) {
 
     const postLogicInst = postLogic({id});
     const { post, loadPostAjax, savePostAjax, forceSavePostAjax, getDiff } = useValues(postLogicInst)
-    const { updatePostValue, savePost, forceSavePost } = useActions(postLogicInst)
+    const { updatePostValue, updatePostVariantValue, savePost, forceSavePost } = useActions(postLogicInst)
+
+    const { findBlogBySubdomain } = useValues(blogsLogic)
 
     const { languages } = useValues(languagesLogic({subdomain}))
  
     const [isFullScreen, setIsFullScreen] = useState(false);
 
+    const [currentLanguageId, setCurrentLanguageId] = useState( findBlogBySubdomain(subdomain).blog.default_language.id );
+
+    const variants = post.variants || [];
+    const variant = variants.find(variant => variant.language_id === currentLanguageId) || {};
 
     /**
      * Disallow outside clicking when the content has changed
@@ -242,7 +249,13 @@ export default function Post( {subdomain, id} ) {
 
                 <div className="post-editor-top-content">
 
-                    <PostLanguageSelector languages={languages} />
+                    <PostLanguageSelector
+                        id={id}
+                        languages={languages} 
+                        variants={variants}
+                        currentLanguageId={currentLanguageId}
+                        onChange={setCurrentLanguageId}
+                    />
 
                     <div className="post-editor-title-row">
 
@@ -250,7 +263,7 @@ export default function Post( {subdomain, id} ) {
                             <TextareaAutosize 
                                 className="post-editor-title" 
                                 placeholder="Title..."
-                                value={post.title || ""}
+                                value={variant.title || ""}
                                 onChange={(e) => updatePostValue('title', e.target.value)}
                             />
                         </div>

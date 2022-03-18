@@ -373,7 +373,12 @@ textarea.input {
     height: 4px!important;
 }
 
-
+// tooltip
+.__react_component_tooltip {
+    padding: 4px 15px!important;
+    border-radius:20px!important;
+    font-weight:600!important;
+}
 
 // codemirror
 .react-codemirror2 {

@@ -16,3 +16,7 @@ There are 6 roles for users. Each user has access to features based on their rol
 | Access to billing | ✔ | ✔ | | | | ✔|
 | Change blog settings | ✔ | ✔ | | | | |
 | Edit Theme | ✔ | ✔ | | | | |
+
+## Languages Access
+
+Currently, all your users have access to all languages. We are working on introducing languages access settings. Stay tuned!

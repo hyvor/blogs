@@ -95,7 +95,7 @@ const postsLogic = kea({
                 status: 'all',
                 author: 'all',
                 tag: 'all',
-                language_id: blogsLogic.values.findBlogBySubdomain(props.subdomain).blog.defaultLanguage.id,
+                language_id: blogsLogic.values.findBlogBySubdomain(props.subdomain).blog.default_language.id,
                 dateStart: null,
                 dateEnd: null,
                 search: ''

@@ -18,7 +18,8 @@ const postLogic = kea({
 
         set: (obj) => ({obj}),
         setOriginal: (obj) => ({obj}),
-        updatePostValue: (key, value) => ({key, value})
+        updatePostValue: (key, value) => ({key, value}),
+        updatePostVariantValue: (key, value, languageId) => ({key, value, languageId}),
 
     },
 

@@ -32,7 +32,7 @@ class UserBlogBlogObject
      */
     public ?SubscriptionObject $subscription = null;
 
-    public LanguageObject $defaultLanguage;
+    public LanguageObject $default_language;
 
     public function __construct(Blog $blog)
     {
@@ -58,7 +58,7 @@ class UserBlogBlogObject
             $this->subscription = new SubscriptionObject($subscription);
         }
 
-        $this->defaultLanguage = new LanguageObject(
+        $this->default_language = new LanguageObject(
             $blog->languages()
                 ->where('is_primary', true)
                 ->first()
