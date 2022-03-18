@@ -61,7 +61,7 @@ class PostRepository
 
         $limit = $limit ?? 50;
 
-        return Post::where('blog_id', $blog->id)
+        return Post::where('posts.blog_id', $blog->id)
             ->join('posts_variants', function($join) use ($language) {
                 $join->on('posts_variants.post_id', '=', 'posts.id');
                 $join->where('posts_variants.language_id', '=', $language->id);
@@ -94,6 +94,8 @@ class PostRepository
             ->when($search, function ($query) use ($search) {
                 $query->where('posts.title', 'LIKE', "$search%");
             })
+            // to prevent selecting posts_variants data
+            ->select('posts.*')
             ->orderByRaw("FIELD(posts_variants.status, 'draft') DESC") // drafts first
             ->orderBy('posts.created_at', 'desc')
             ->limit($limit)
@@ -206,7 +208,7 @@ class PostRepository
             //->where('posts.status', 'published')
             ->limit($limit)
             ->offset($offset)
-            //->orderBy($orderBy, $orderMethod)
+            // ->orderBy($orderBy, $orderMethod)
             ->select('posts.*')
             ->get();
 

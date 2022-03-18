@@ -112,7 +112,7 @@ class DatabaseSeeder extends Seeder
                     'post_id' => $post->id,
                     'language_id' => $secondLanguage->id,
                     'content' => json_encode($prosemirrorJson),
-                    'title' => $title,
+                    'title' => $title . ' French',
                     'description' => $faker->sentence,
                     'status' => $status,
                 ]);

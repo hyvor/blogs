@@ -23,7 +23,7 @@ class ConsolePostController extends Controller
 
         $filters = json_decode($request->input('filters'));
 
-        $language = LanguageRepository::getPrimaryLanguage($blog);
+        $language = LanguageRepository::getLanguageById($blog, $filters->language_id);
 
         $posts = PostRepository::getPosts(
 

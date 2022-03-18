@@ -58,7 +58,12 @@ export default function Posts( { postId } ) {
                     <div className="posts-loaded-wrap">
                         {
                             postsList.length ?
-                            postsList.map(id => <PostsListRow key={id} id={id} subdomain={subdomain} />) :
+                            postsList.map(id => <PostsListRow 
+                                    key={id} 
+                                    id={id} 
+                                    subdomain={subdomain} 
+                                    filters={filters} 
+                            />) :
                             <NoResults 
                                 text="No posts found"
                                 padding={60}
