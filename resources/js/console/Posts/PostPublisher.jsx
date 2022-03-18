@@ -6,7 +6,7 @@ import dayjs from 'dayjs';
 import ActionButton from '../ReusableComponents/ActionButton';
 import { toast } from 'react-toastify';
 
-export default function PostPublisher({id, publisherViewRef, isOpen, closePublisher}) {
+export default function PostPublisher({id, publisherViewRef, isOpen, closePublisher, currentLanguageId}) {
 
     const { forceSavePostAjax  } = usePostValues(id);
     const { forceSavePost } = usePostActions(id);
@@ -24,12 +24,12 @@ export default function PostPublisher({id, publisherViewRef, isOpen, closePublis
     }
 
     function handlePublish() {
-        const update = {};
+        const update = {variants: {[currentLanguageId]: {}}};
         if (publishTime) {
-            update['published_at'] = dayjs(publishTime).unix()
-            update['status'] = 'scheduled';
+            update.variants[currentLanguageId]['published_at'] = dayjs(publishTime).unix()
+            update.variants[currentLanguageId]['status'] = 'scheduled';
         } else {
-            update['status'] = 'published';
+            update.variants[currentLanguageId]['status'] = 'published';
         }
         setHasClicked(true)
         forceSavePost({update, onSave: (post) => {

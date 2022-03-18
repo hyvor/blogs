@@ -43,7 +43,7 @@ class PostObject
         // variants
         $this->variants = $post->variants->map(function($variant) use ($blog, $post) {
             return new PostVariantObject($variant, $post, $blog);
-        });
+        })->keyBy('language_id');
 
         // tags
         $this->tags = $post->tags->map(function ($tag) use ($blog) {

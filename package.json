@@ -22,6 +22,8 @@
     "dependencies": {
         "codemirror": "^5.65.1",
         "dayjs": "^1.10.7",
+        "deep-object-diff": "^1.1.7",
+        "deepmerge": "^4.2.2",
         "kea": "^2.5.6",
         "kea-loaders": "^0.5.1",
         "kea-router": "^1.0.6",

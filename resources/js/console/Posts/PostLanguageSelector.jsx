@@ -1,13 +1,12 @@
 import React from 'react'
 import { Check, Clock, Dot, Plus } from 'react-bootstrap-icons';
-import Tooltip from '../ReusableComponents/Tooltip';
 
 export default function PostLanguageSelector({ languages, variants, currentLanguageId, onChange }) {
 
     return <div className="post-languages">
         {
             languages.map(lang => {
-                const variant = variants.find(variant => variant.language_id === lang.id)
+                const variant = variants[lang.id]
                 let statusIcon;
                 let tip;
                 if (!variant) {
@@ -37,8 +36,6 @@ export default function PostLanguageSelector({ languages, variants, currentLangu
                 </span>
             })
         }
-
-        <Tooltip place="bottom" />
 
     </div>
 

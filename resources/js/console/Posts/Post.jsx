@@ -15,6 +15,7 @@ import ActionButton from '../ReusableComponents/ActionButton';
 import languagesLogic from '../logic/languagesLogic';
 import PostLanguageSelector from './PostLanguageSelector';
 import blogsLogic from '../logic/blogsLogic';
+import Tooltip from '../ReusableComponents/Tooltip';
 
 
 let publisherOutsideCleaner;
@@ -35,7 +36,7 @@ export default function Post( {subdomain, id} ) {
     const [currentLanguageId, setCurrentLanguageId] = useState( findBlogBySubdomain(subdomain).blog.default_language.id );
 
     const variants = post.variants || [];
-    const variant = variants.find(variant => variant.language_id === currentLanguageId) || {};
+    const variant = variants[currentLanguageId] || {};
 
     /**
      * Disallow outside clicking when the content has changed
@@ -137,9 +138,9 @@ export default function Post( {subdomain, id} ) {
     function MainButton() {
         let name, onClick, icon;
 
-        if (post.status === 'published' || post.status === 'scheduled') {
+        if (variant.status === 'published' || variant.status === 'scheduled') {
             if (!nonDraftPostEditing) {
-                name = "Edit Post";
+                name = "Edit";
                 icon = <PencilFill />
                 onClick = () => setNonDraftPostEditing(true);
             } else {
@@ -154,8 +155,8 @@ export default function Post( {subdomain, id} ) {
                     errorOnClick={handleUpdateNonDraft}
                 />
             }
-        } else if (post.status === 'draft') {
-            name = "Publish Post";  
+        } else if (variant.status === 'draft') {
+            name = "Publish";  
             onClick = openPublisher;
             icon = <CaretDownFill />;
         }
@@ -200,7 +201,7 @@ export default function Post( {subdomain, id} ) {
     }
 
     const isNotDraft = post.status !== 'draft';
-    const content = isNotDraft ? (post.content_unsaved || post.content) : post.content;
+    const content = isNotDraft ? (variant.content_unsaved || variant.content) : variant.content;
 
     // have to first click Edit Post to edit published/scheduled posts
     const [nonDraftPostEditing, setNonDraftPostEditing] = useState(false);
@@ -215,7 +216,11 @@ export default function Post( {subdomain, id} ) {
 
 
     function handleContentUpdate(v) {
-        updatePostValue(isNotDraft ? 'content_unsaved' : 'content', v);
+        handlePostVariantValueChange(isNotDraft ? 'content_unsaved' : 'content', v);
+    }
+
+    function handlePostVariantValueChange(key, value) {
+        updatePostVariantValue(key, value, currentLanguageId)
     }
 
     function handleUnPublish() {
@@ -264,13 +269,13 @@ export default function Post( {subdomain, id} ) {
                                 className="post-editor-title" 
                                 placeholder="Title..."
                                 value={variant.title || ""}
-                                onChange={(e) => updatePostValue('title', e.target.value)}
+                                onChange={(e) => handlePostVariantValueChange('title', e.target.value)}
                             />
                         </div>
 
-                        <div className="status">
-                            <span>{post.status}</span>
-                        </div>
+                        {/* <div className="status">
+                            <span>{variant.status}</span>
+                        </div> */}
 
                     </div>
 
@@ -293,6 +298,7 @@ export default function Post( {subdomain, id} ) {
                                 <button 
                                     className={"button small" + (!isFullScreen ? " secondary" : " inactive")}
                                     onClick={toggleFullscreen}
+                                    data-tip="Toggle Fullscreen"
                                 >
                                     <Fullscreen />
                                 </button>
@@ -304,6 +310,7 @@ export default function Post( {subdomain, id} ) {
 
                                 <PostPublisher
                                     id={id}
+                                    currentLanguageId={currentLanguageId}
                                     publisherViewRef={publisherViewRef}
                                     isOpen={isPublisherOpen}
                                     closePublisher={closePublisher}
@@ -334,7 +341,7 @@ export default function Post( {subdomain, id} ) {
                         id={id}
                         value={content}
                         onChange={v => handleContentUpdate(v)}
-                        editable={post.status === 'draft' || nonDraftPostEditing}
+                        editable={variant.status === 'draft' || nonDraftPostEditing}
                     />
                 }
             </div>
@@ -369,6 +376,8 @@ export default function Post( {subdomain, id} ) {
                 onCancel={() => setIsUnPublishing(false)}
             /> : null
         }
+
+        <Tooltip place="bottom" />
 
     </div>
 

@@ -13,7 +13,7 @@ export default function PostsListRow({ id, subdomain }) {
     const postsLink = `/console/${subdomain}/` + (post.is_page ? 'pages' : 'posts')
     const toLink = `${postsLink}/${post.id}`
 
-    const variant = post.variants[0];
+    const variant = post.variants[languages[0].id];
 
     return <NavLink
         key={post.id} 
@@ -35,7 +35,7 @@ export default function PostsListRow({ id, subdomain }) {
 
 
         {
-            languages.length > 1 ?
+            /* languages.length > 1 ?
             <div className="post-languages">
                 {
                     post.variants.map(variant => {
@@ -44,7 +44,7 @@ export default function PostsListRow({ id, subdomain }) {
                         return lang ? <span key={lang.id} className="post-lang-tag">{ lang.code }</span> : null
                     })
                 }
-            </div> : null  }
+            </div> : null  */ }
 
         <div className="post-tags-wrap">
 

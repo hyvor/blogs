@@ -7,6 +7,8 @@ import slugify from "../../helpers/slugify";
 import api from "../lib/api";
 import postsLogic from "./postsLogic";
 import subdomainLogic from "./subdomainLogic";
+import { diff } from 'deep-object-diff';
+import merge from 'deepmerge'
 
 const postLogic = kea({
 
@@ -88,7 +90,7 @@ const postLogic = kea({
         getDiff: [
             (selectors) => [selectors.post, selectors.postOriginal],
             (post, postOriginal) => {
-                return getPostDiff(post, postOriginal)
+                return diff(postOriginal, post)
             }
         ]
 
@@ -99,7 +101,17 @@ const postLogic = kea({
         // post's current state in the front-end
         post: [{}, { 
             set: (_, {obj}) => obj,
-            updatePostValue: (state, {key, value}) => ({...state, ...{[key]: value}})
+            updatePostValue: (state, {key, value}) => ({...state, ...{[key]: value}}),
+            updatePostVariantValue: (state, {key, value, languageId}) => {
+                const obj = {
+                    variants: {
+                        [languageId]: {
+                            [key]: value
+                        }
+                    }
+                }
+                return merge(state, obj);
+            }
         }],
 
         // the really saved post in the back-end
