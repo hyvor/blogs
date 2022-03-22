@@ -9,6 +9,7 @@ use App\Models\PostsVariant;
 class PostVariantObject {
 
     public string $status;
+    public ?int $published_at;
     public bool $is_featured;
     public bool $is_page;
     public string $slug;
@@ -24,6 +25,7 @@ class PostVariantObject {
         $language = $variant->language;
 
         $this->status = $variant->status;
+        $this->published_at = $post->published_at?->timestamp;
         $this->content = $variant->content;
         $this->content_unsaved = $variant->content_unsaved;
         $this->title = $variant->title;

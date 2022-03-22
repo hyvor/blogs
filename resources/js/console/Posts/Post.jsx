@@ -29,11 +29,12 @@ export default function Post( {subdomain, id} ) {
 
     const { findBlogBySubdomain } = useValues(blogsLogic)
 
-    const { languages } = useValues(languagesLogic({subdomain}))
+    const { languages, getLanguageById } = useValues(languagesLogic({subdomain}))
  
     const [isFullScreen, setIsFullScreen] = useState(false);
 
     const [currentLanguageId, setCurrentLanguageId] = useState( findBlogBySubdomain(subdomain).blog.default_language.id );
+    const currentLanguage = getLanguageById(currentLanguageId);
 
     const variants = post.variants || [];
     const variant = variants[currentLanguageId] || {};
@@ -290,7 +291,7 @@ export default function Post( {subdomain, id} ) {
                                     <span>Settings</span><GearFill />
                                 </button>
 
-                                <a href={ getBlogUrl(subdomain, '/p/' + post.preview_id) } target="_blank">
+                                <a href={ getBlogUrl(subdomain, '/p/' + post.preview_id + "/" + currentLanguage.code) } target="_blank">
                                     <button className="button small secondary view" >
                                         <span>View</span><BoxArrowUpRight />
                                     </button>
@@ -322,6 +323,7 @@ export default function Post( {subdomain, id} ) {
                             isSettingsOpen={isSettingsOpen}
                             settingsViewRef={settingsViewRef}
                             id={id}
+                            currentLanguageId={currentLanguageId}
                         />
 
                     </div>

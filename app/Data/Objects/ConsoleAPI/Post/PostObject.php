@@ -15,7 +15,6 @@ class PostObject
     public string $preview_id; // an encrypted ID for preview
     public int $created_at;
     public int $updated_at;
-    public ?int $published_at;
     public bool $is_featured;
     public bool $is_page;
     public string $slug;
@@ -31,7 +30,6 @@ class PostObject
         $this->preview_id = encrypt($post->id);
         $this->created_at = $post->created_at->timestamp;
         $this->updated_at = $post->updated_at->timestamp;
-        $this->published_at = $post->published_at?->timestamp;
         $this->slug = $post->slug;
         $this->is_page = (bool) $post->is_page;
         $this->is_featured = (bool) $post->is_featured;

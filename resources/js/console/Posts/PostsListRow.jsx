@@ -24,7 +24,7 @@ export default function PostsListRow({ id, subdomain }) {
         
         <div className="post-data">
             <div className="post-date">
-                { dayjs.unix(post.published_at || post.created_at).format('MMM D, YYYY') }
+                { dayjs.unix(variant.published_at || post.created_at).format('MMM D, YYYY') }
             </div>
             {
                 !post.is_page ?

@@ -82,7 +82,7 @@ class PathMatcher {
         $routeMatcher = new RouteMatcher($this->path);
 
         $routeMatcher->add('assets', '/assets/{file_name}');
-        $routeMatcher->add('preview', '/p/{id}');
+        $routeMatcher->add('preview', '/p/{id}/{lang}', ['lang' => null]);
         $routeMatcher->add('styles', '/styles.css');
         $routeMatcher->add('media', '/media/{file_name}');
 

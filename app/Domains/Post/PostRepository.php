@@ -301,7 +301,7 @@ class PostRepository
          * Dispatch events
          */
         if ($post->isDirty('status') || true) {
-            if ($post->status === 'published' || true) {
+            if ($post->status === 'published') {
                 PostPublishedEvent::dispatch($post);
             } else if ($post->status === 'draft') {
                 // 

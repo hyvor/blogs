@@ -134,34 +134,4 @@ const postLogic = kea({
 
 })
 
-function getPostDiff(post, postOriginal) {
-
-    // keys are defined to drop authors and tags
-    const updatableKeys = [
-        'published_at',
-        'status',
-        'is_featured',
-        'slug',
-        'content',
-        'content_unsaved',
-        'title',
-        'description',
-        'featured_image',
-        'canonical_url',
-        'code_head',
-        'code_foot'
-    ];
-
-    const diff = {};
-
-    for (var i in postOriginal) {
-        if (updatableKeys.indexOf(i) !== -1 && postOriginal[i] !== post[i]) {
-            diff[i] = post[i];
-        }
-    }
-
-    return diff;
-
-}
-
 export default postLogic;
