@@ -9,6 +9,7 @@ use App\Exceptions\TrustedException;
 use App\Models\Blog;
 use App\Models\Language;
 use App\Models\Post;
+use App\Models\PostsVariant;
 use App\Models\Tag;
 use App\Models\User;
 use App\Types\Post\PostInputListFiltersType;
@@ -237,19 +238,6 @@ class PostRepository
     {
         $post = Post::find($postId);
 
-        if (
-            array_key_exists('published_at', $updates) &&
-            in_array($post->status, ['published', 'scheduled'])
-        ) {
-            $post->published_at = Carbon::createFromTimestamp($updates['published_at']);
-        }
-        if (array_key_exists('status', $updates)) {
-            $status = $updates['status'];
-            $post->status = $status;
-        }
-        if (array_key_exists('is_featured', $updates)) {
-            $post->is_featured = $updates['is_featured'];
-        }
         if (array_key_exists('slug', $updates)) {
             $slug = $updates['slug'];
             if (
@@ -262,30 +250,8 @@ class PostRepository
                 $post->slug = $updates['slug'];
             }
         }
-        if (array_key_exists('content', $updates)) {
-            /**
-             * content update means either 
-             *  - user is saving a draft post
-             *  - user is "updating" a non-draft post
-             */
-            $post->content = $updates['content'];
-            $post->content_unsaved = null;
-        }
-        if (array_key_exists('content_unsaved', $updates)) {
-            /**
-             * content_unsaved means
-             *  - user is saving a non-draft post
-             */
-            $post->content_unsaved = $updates['content_unsaved'];
-        }
-        if (array_key_exists('title', $updates)) {
-            $post->title = $updates['title'];
-        }
-        if (array_key_exists('description', $updates)) {
-            $post->description = $updates['description'];
-        }
-        if (array_key_exists('featured_image', $updates)) {
-            $post->featured_image = $updates['featured_image'];
+        if (array_key_exists('is_featured', $updates)) {
+            $post->is_featured = $updates['is_featured'];
         }
         if (array_key_exists('canonical_url', $updates)) {
             $post->canonical_url = $updates['canonical_url'];
@@ -300,17 +266,91 @@ class PostRepository
         /**
          * Dispatch events
          */
-        if ($post->isDirty('status') || true) {
+        // add to an observer
+        /* if ($post->isDirty('status') || true) {
             if ($post->status === 'published') {
                 PostPublishedEvent::dispatch($post);
             } else if ($post->status === 'draft') {
                 // 
             }
-        }
+        } */
 
         $post->save();
 
         return $post;
+    }
+
+    public static function updatePostVariant(int $postId, int $languageId, array $updates)
+    {
+
+        $variant = self::getPostVariantByPostIdAndLanguageId($postId, $languageId);
+
+        if (!$variant) {
+            return;
+        }
+
+        // status
+        if (array_key_exists('status', $updates)) {
+            $status = $updates['status'];
+            $variant->status = $status;
+        }
+
+        // published_at
+        if (
+            array_key_exists('published_at', $updates) &&
+            in_array($variant->status, ['published', 'scheduled'])
+        ) {
+            $variant->published_at = Carbon::createFromTimestamp($updates['published_at']);
+        }
+
+        // content
+        if (array_key_exists('content', $updates)) {
+            /**
+             * content update means either 
+             *  - user is saving a draft post
+             *  - user is "updating" a non-draft post
+             */
+            $variant->content = $updates['content'];
+            $variant->content_unsaved = null;
+        }
+
+        // content_unsaved
+        if (array_key_exists('content_unsaved', $updates)) {
+            /**
+             * content_unsaved means
+             *  - user is saving a non-draft variant
+             */
+            $variant->content_unsaved = $updates['content_unsaved'];
+        }
+
+        // title
+        if (array_key_exists('title', $updates)) {
+            $variant->title = $updates['title'];
+        }
+
+        // description
+        if (array_key_exists('description', $updates)) {
+            $variant->description = $updates['description'];
+        }
+
+        // featured_image
+        if (array_key_exists('featured_image', $updates)) {
+            $variant->featured_image = $updates['featured_image'];
+        }
+
+        $variant->save();
+
+        return $variant;
+
+    }
+
+    public static function getPostVariantByPostIdAndLanguageId(int $postId, int $languageId) : ?PostsVariant
+    {
+
+        return PostsVariant::where('language_id', $languageId)
+            ->where('post_id', $postId)
+            ->first();
+
     }
 
 

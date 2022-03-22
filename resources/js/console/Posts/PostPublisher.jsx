@@ -26,7 +26,7 @@ export default function PostPublisher({id, publisherViewRef, isOpen, closePublis
     function handlePublish() {
         const update = {variants: {[currentLanguageId]: {}}};
         if (publishTime) {
-            update.variants[currentLanguageId]['published_at'] = dayjs(publishTime).unix()
+            update['published_at'] = dayjs(publishTime).unix()
             update.variants[currentLanguageId]['status'] = 'scheduled';
         } else {
             update.variants[currentLanguageId]['status'] = 'published';

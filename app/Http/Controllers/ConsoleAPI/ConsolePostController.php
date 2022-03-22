@@ -84,61 +84,36 @@ class ConsolePostController extends Controller
     {
 
         $postId = $request->route('id');
-        $updates = [];
 
-        /**
-         * Some strings become null when empty
-         * So, always use ->has() to check if the variable is set
-         */
-        if ($request->has('published_at')) {
-            $updates['published_at'] = $request->input('published_at');
+        $postUpdates = [];
+        $postUpdatables = [
+            'slug',
+            'is_featured',
+            'canonical_url',
+            'code_head',
+            'code_foot'
+        ];
+
+        foreach ($postUpdatables as $postUpdatable) {
+            if ($request->has($postUpdatable)) {
+                $postUpdates[$postUpdatable] = $request->input($postUpdatable);
+            }
         }
 
-        if ($request->has('status')) {
-            $updates['status'] = $request->input('status');
+        if (count($postUpdates) > 0) {
+            PostRepository::updatePost($postId, $postUpdates);
         }
 
-        if ($request->has('is_featured')) {
-            $updates['is_featured'] = (bool) $request->input('is_featured');
+        $variants = $request->input('variants');
+
+        if (is_array($variants)) {
+            foreach ($variants as $languageId => $variantUpdates) {
+                PostRepository::updatePostVariant($postId, $languageId, $variantUpdates);
+            }
         }
 
-        if ($request->has('slug')) {
-            $updates['slug'] = $request->input('slug');
-        }
+        $post = PostRepository::getPostById($postId);
 
-        if ($request->has('content')) {
-            $updates['content'] = $request->input('content');
-        }
-
-        if ($request->has('content_unsaved')) {
-            $updates['content_unsaved'] = $request->input('content_unsaved');
-        }
-
-        if ($request->has('title')) {
-            $updates['title'] = $request->input('title');
-        }
-
-        if ($request->has('description')) {
-            $updates['description'] = $request->input('description');
-        }
-
-        if ($request->has('featured_image')) {
-            $updates['featured_image'] = $request->input('featured_image');
-        }
-
-        if ($request->has('canonical_url')) {
-            $updates['canonical_url'] = $request->input('canonical_url');
-        }
-
-        if ($request->has('code_head')) {
-            $updates['code_head'] = $request->input('code_head');
-        }
-
-        if ($request->has('code_foot')) {
-            $updates['code_foot'] = $request->input('code_foot');
-        }
-
-        $post = PostRepository::updatePost($postId, $updates);
         return response()->json(new PostObject($post, $blog));
     }
 }

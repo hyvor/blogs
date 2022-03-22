@@ -65,7 +65,7 @@ export default function Post( {subdomain, id} ) {
 
         function checkSaveUnload() {
             if (
-                (post.status === 'published' || post.status === 'scheduled') && 
+                (variant.status === 'published' || variant.status === 'scheduled') && 
                 Object.keys(getDiff()).length > 0
             ) {
                 return true;
@@ -122,9 +122,9 @@ export default function Post( {subdomain, id} ) {
 
     function UnPublishButton() {
         let name;
-        if (post.status === 'published') {
+        if (variant.status === 'published') {
             name = "Unpublish";
-        } else if (post.status === 'scheduled') {
+        } else if (variant.status === 'scheduled') {
             name = "Unschedule";
         }
 
@@ -201,7 +201,7 @@ export default function Post( {subdomain, id} ) {
             closeFullscreen();
     }
 
-    const isNotDraft = post.status !== 'draft';
+    const isNotDraft = variant.status !== 'draft';
     const content = isNotDraft ? (variant.content_unsaved || variant.content) : variant.content;
 
     // have to first click Edit Post to edit published/scheduled posts
@@ -225,10 +225,9 @@ export default function Post( {subdomain, id} ) {
     }
 
     function handleUnPublish() {
+        const update = {variants: {[currentLanguageId]: {status: 'draft'}}};  
         forceSavePost({
-            update: {
-                status: 'draft',
-            },
+            update,
             onSave: () => {
                 toast("Post unpublished")
             }
@@ -371,9 +370,9 @@ export default function Post( {subdomain, id} ) {
         {
             isUnPublishing ?
             <PopupConfirm 
-                title={( post.status === 'published' ? 'Unpublish' : 'Unschedule' ) + " Post"}
-                text={"Are you sure to " + ( post.status === 'published' ? 'unpublish' : 'unschedule' ) + " this post? It will be changed to a draft."}
-                name={( post.status === 'published' ? 'Unpublish' : 'Unschedule' )}
+                title={( variant.status === 'published' ? 'Unpublish' : 'Unschedule' ) + " Post"}
+                text={"Are you sure to " + ( variant.status === 'published' ? 'unpublish' : 'unschedule' ) + " this post? It will be changed to a draft."}
+                name={( variant.status === 'published' ? 'Unpublish' : 'Unschedule' )}
                 onClick={handleUnPublish}
                 onCancel={() => setIsUnPublishing(false)}
             /> : null
