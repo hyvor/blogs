@@ -1,7 +1,7 @@
 import React from 'react'
 import { Check, Clock, Dot, Plus } from 'react-bootstrap-icons';
 
-export default function PostLanguageSelector({ languages, variants, currentLanguageId, onChange }) {
+export default function PostLanguageSelector({ languages, variants, currentLanguageId, onChange, onCreate }) {
 
     return <div className="post-languages">
         {
@@ -9,9 +9,11 @@ export default function PostLanguageSelector({ languages, variants, currentLangu
                 const variant = variants[lang.id]
                 let statusIcon;
                 let tip;
+                let onClick = () => onChange(lang.id);
                 if (!variant) {
                     statusIcon = <Plus />
                     tip = `Add ${lang.name} post`;
+                    onClick = () => onCreate(lang.id)
                 } else if (variant.status === 'published') {
                     statusIcon = <Check />
                     tip = `${lang.name} - Published`;
@@ -27,7 +29,7 @@ export default function PostLanguageSelector({ languages, variants, currentLangu
                     key={lang.id}
                     className={"lang-tag" + (currentLanguageId === lang.id ? " active" : "")}
                     data-tip={tip}
-                    onClick={() => onChange(lang.id)}
+                    onClick={onClick}
                 >
                     <span className="code">{lang.code}</span>
                     <span className="status-icon">

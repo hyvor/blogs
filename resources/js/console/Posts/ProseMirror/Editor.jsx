@@ -60,7 +60,7 @@ export default function Editor(props) {
 
     useUpdateEffect(() => {
         setState(getState(props.value))
-    }, [props.id]);
+    }, [props.id, props.value]);
 
     function handleChange(state) {
         props.onChange(JSON.stringify(state.doc.toJSON()));

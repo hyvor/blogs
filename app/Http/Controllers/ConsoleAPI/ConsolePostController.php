@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\ConsoleAPI;
 
 use App\Data\Objects\ConsoleAPI\Post\PostObject;
+use App\Data\Objects\ConsoleAPI\Post\PostVariantObject;
 use App\Data\Params\ConsoleAPI\PostsFilterParam;
 use App\Domains\Language\LanguageRepository;
 use App\Models\Blog;
@@ -74,10 +75,10 @@ class ConsolePostController extends Controller
         return response()->json(new PostObject($post, $blog));
     }
 
-    public function deletePost(Request $request, Blog $blog)
+    public function deletePost(Request $request)
     {
         $postId = $request->route('id');
-        PostRepository::deletePost($postId, $blog->id);
+        PostRepository::deletePost($postId);
     }
 
     public function updatePost(Request $request, Blog $blog)
@@ -115,5 +116,24 @@ class ConsolePostController extends Controller
         $post = PostRepository::getPostById($postId);
 
         return response()->json(new PostObject($post, $blog));
+    }
+
+
+    public function createPostVariant(Request $request, Blog $blog)
+    {
+        $postId = $request->route('id');
+        $languageId = $request->input('language_id');
+
+        $variant = PostRepository::createPostVariant($postId, $languageId);
+
+        return response()->json(new PostVariantObject($variant, $variant->post, $blog));
+    }
+
+    public function deletePostVariant(Request $request)
+    {
+        $postId = $request->route('id');
+        $languageId = $request->input('language_id');
+
+        PostRepository::deletePostVariant($postId, $languageId);
     }
 }

@@ -280,6 +280,18 @@ class PostRepository
         return $post;
     }
 
+    public static function createPostVariant(int $postId, int $languageId) : PostsVariant
+    {
+
+        $variant = PostsVariant::create([
+            'post_id' => $postId,
+            'language_id' => $languageId
+        ]);
+
+        return PostsVariant::find($variant->id);
+
+    }
+
     public static function updatePostVariant(int $postId, int $languageId, array $updates)
     {
 
@@ -351,6 +363,13 @@ class PostRepository
             ->where('post_id', $postId)
             ->first();
 
+    }
+
+    public static function deletePostVariant(int $postId, int $languageId)
+    {
+        PostsVariant::where('language_id', $languageId)
+            ->where('post_id', $postId)
+            ->delete();
     }
 
 
