@@ -52,3 +52,7 @@ In addition, HB will add `hreflang` alternate tags. For example, if you have thr
 ```
 
 For posts, we will add these alternate tags **only if** we can find its translated posts.
+
+
+## Translating the Theme {#translate-theme}
+

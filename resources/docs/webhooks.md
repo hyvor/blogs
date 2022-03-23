@@ -6,10 +6,11 @@ Each blog can have up to 5 webhooks. Each webhook has a URL and can subscribe to
  --- | ---
 `blog.updated` | When any setting of the blog is updated
 `post.created` | When a new post is created
-`post.updated` | When any data of the post is updated
-`post.updated.status` | When post status is updated
-`post.updated.content` | When post content is updated
-`post.updated.meta` | When post meta data is updated (including tags and authors)
+`post.published` | When a new post is published
+`post.published.updated` | When a published post's content or meta data is updated
+`post.published.unpublished` | When a published post is set to draft
+`post.scheduled` | When a post is scheduled
+`post.deleted`  | When a post is deleted
 `page.{events}` | (all post events are available for pages)
 `tag.created` | When a new tag is created in the blog
 `tag.updated` | When a tag is updated
@@ -17,12 +18,8 @@ Each blog can have up to 5 webhooks. Each webhook has a URL and can subscribe to
 `user.created` | When a new user is added to the blog
 `user.updated` | When  a user is updated
 `user.deleted` | When a user is deleted
-`cache` | When cache of one or more paths should be cleared
-`cache.all` | When cache of the whole blog needs to be cleared
-
-
-* `post.updated.{sub_event}` events are only triggered for published or scheduled posts (not for drafts).
-* `post.updated` (a general event for its sub-categories) is triggered on all `post.updated.{sub_event}` events. You do not want to subsribe to `post.updated` and its sub-events at the same time.
+`cache.single` | When cache of one paths should be cleared
+`cache.templates` | When cache of all template-generated paths should be cleared (index, posts, feeds, etc.). This is usually called when a post is published, updated, or deleted.
 
 ### Post Request Format
 
@@ -103,8 +100,7 @@ For example, if the status changed, the `diff` object will look like the followi
     ...
     "data": {
         "cache": [
-            "/hello-world",
-            "/fr/hello-world"
+            "/media/image.png",
         ]
     }
 }

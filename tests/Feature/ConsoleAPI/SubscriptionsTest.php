@@ -37,7 +37,7 @@ class SubscriptionsTest extends TestCase
     }
     public function testPayLinkInvalidFrequency() {
         $this->callEndpoint('post', ['plan' => "team", 'frequency' => 'annual', 'quantity' => 3])
-            ->assertStatus(422);
+            ->assertStatus(400);
     }
     public function testPayLinkProMonthlyBilling() {
         $this->callEndpoint('post', ['plan' => "pro", 'frequency' => 'monthly', 'quantity' => 1])
@@ -53,7 +53,7 @@ class SubscriptionsTest extends TestCase
     }
     public function testPayLinkInvalidParams() {
         $this->callEndpoint('post', [])
-            ->assertStatus(422);
+            ->assertStatus(400);
     }
 
 }

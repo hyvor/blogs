@@ -6,6 +6,11 @@
 return [
 
     /**
+     * Number of days for the trial
+     */
+    'trial_days' => 14,
+
+    /**
      * This is the Pages limit (static) not posts
      * Even Webflow has a limit of 100
      * https://university.webflow.com/lesson/pages-panel#how-many-pages-can-i-create
@@ -38,6 +43,14 @@ return [
      * Users will rarely need 50 routes. If someone creates custom pages, a little more will be needed
      */
     'max_routes_per_blog' => 50,
+
+    /**
+     * Webhooks means a HTTP calls on event
+     * They are not "soft"
+     * So, 5 per blog is a good limit
+     * Users can different events for each webhook
+     */
+    'max_webhooks_per_blog' => 5,
 
     /**
      * Template-related limitations

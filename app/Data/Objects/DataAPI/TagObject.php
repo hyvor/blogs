@@ -8,11 +8,11 @@ use App\Models\Tag;
 
 class TagObject
 {
-    public $id;
-    public $name;
-    public $slug;
-    public $url;
-    public $featured_image;
+    public int $id;
+    public string $name;
+    public string $slug;
+    public string $url;
+    public ?string $featured_image;
     public $posts_count;
 
     public function __construct(Tag $tag, Blog $blog)

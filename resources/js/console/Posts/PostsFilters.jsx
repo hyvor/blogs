@@ -6,6 +6,7 @@ import postsLogic from '../logic/postsLogic';
 import subdomainLogic from '../logic/subdomainLogic';
 import blogsLogic from '../logic/blogsLogic';
 import numberFormatter from '../../helpers/numberFormatter';
+import languagesLogic from '../logic/languagesLogic';
 
 export default function PostsFilters({ filters, changeFilter }) {
 
@@ -29,11 +30,6 @@ export default function PostsFilters({ filters, changeFilter }) {
     ])
     const [tagsOptions, setTagsOptions] = useState([
         { value: 'all', label: <FilterLabel name="All" count={blog.blog.posts_count} /> },
-    ]);
-
-    const defaultLang = blog.blog.defaultLanguage;
-    const [languageOptions, setLanguageOptions] = useState([
-        { value: defaultLang.id, label: defaultLang.code }
     ]);
 
     const dateOptions = [
@@ -105,12 +101,6 @@ export default function PostsFilters({ filters, changeFilter }) {
                     placeholder="Search..."
                 ></input>
             </div>
-            {
-                counts && counts.languages.length > 1 ?
-                <div className="post-lang">         
-                    <PostsFilter name="language" value={filters.language} options={languageOptions} onChange={handleChange} />
-                </div> : null
-            }
         </div>
     </div>
 

@@ -3,6 +3,7 @@
 namespace App\Domains\User;
 
 use App\Data\Enums\UserRoleEnum;
+use App\Data\Enums\UserStatusEnum;
 use App\Data\Objects\ConsoleAPI\UserBlog\UserBlogObject;
 use App\Domains\Post\PostAuthorRepository;
 use App\Models\Blog;
@@ -30,11 +31,11 @@ class UserRepository
      * For Hyvor users, send $hyvorUserId
      * For dummy users, send array $userData
      */
-    public function createUser(
+    public static function createUser(
         int $blogId,
         ?int $hyvorUserId,
         UserRoleEnum $role,
-        string $status = 'invited',
+        UserStatusEnum $status = UserStatusEnum::INVITED,
         array $userData = [],
     ): User {
 
@@ -61,7 +62,7 @@ class UserRepository
             'blog_id' => $blogId,
             'slug' => $slug,
             'user_id' => $hyvorUserId,
-            'status' => $status,
+            'status' => $status->value,
             'role' => $role->value,
             'name' => $userData['name'],
             'email' => $userData['email'],
@@ -74,7 +75,7 @@ class UserRepository
         return $user;
     }
 
-    public function updateUser(int $id, array $updates) 
+    public static function updateUser(int $id, array $updates) 
     {
 
         $user = User::find($id);
@@ -83,7 +84,7 @@ class UserRepository
         
     }
 
-    public function deleteUser(int $id) {
+    public static function deleteUser(int $id) {
 
         PostAuthorRepository::deleteAllWithAuthor($id);
 
@@ -114,13 +115,14 @@ class UserRepository
         return User::find($id);
     }
 
-    public static function getUserByBlogIdAndHyvorUserId(int $blogId, int $hyvorUserId) : ?User {
+    public static function getUserByBlogIdAndHyvorUserId(int $blogId, int $hyvorUserId) : ?User 
+    {
         return User::where('blog_id', $blogId)
             ->where('user_id', $hyvorUserId)
             ->first();
     }
 
-    public static function getUserByBlogIdAndIdentifier(int $blogId, ?int $id, ?string $slug)
+    public static function getUserByBlogIdAndIdentifier(int $blogId, ?int $id, ?string $slug) : ?User
     {
         $user = User::where('blog_id', $blogId);
         if ($id) {
@@ -131,17 +133,21 @@ class UserRepository
         return $user->first();
     }
 
+    public static function getUserByBlogIdAndSlug(int $blogId, string $slug) : ?User
+    {
+        return self::getUserByBlogIdAndIdentifier($blogId, null, $slug);
+    }
+
     /**
      * To sort the order displayed of blogs displayed in the console
      * $arr = [blogId, blogId] in the correct sort
      */
-    public function changeBlogSorts(int $userId, string $userType, array $arr)
+    public static function changeBlogSorts(int $userId, array $arr) : void
     {
         $i = 1;
         foreach ($arr as $blogId) {
             User::where('blog_id', $blogId)
                 ->where('user_id', $userId)
-                ->where('user_type', $userType)
                 ->update([
                     'sort' => $i
                 ]);
@@ -161,7 +167,7 @@ class UserRepository
      * If that doesn't work, use a random string
      * It should work almost every time.
      */
-    private function findSlugForUser(int $blogId, array $userData) 
+    private static function findSlugForUser(int $blogId, array $userData) 
     {
 
         $checks = [

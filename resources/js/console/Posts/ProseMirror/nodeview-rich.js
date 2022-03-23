@@ -9,15 +9,17 @@ export default class RichView {
         this.view = view;
         this.getPos = getPos;
 
-        this.dom = document.createElement("div");
-        this.dom.classList.add("rich");
+        this.dom = document.createElement("rich");
+        // this.dom.classList.add("rich");
 
 
         const url = node.attrs.url;
 
-        this.dom.innerHTML = '<div class="embedding-placeholder">Embedding...</div>';
+        this.dom.dataset.url = url;
 
-        api.get(subdomainLogic.values.subdomain, '/embed', {url})
+        this.dom.innerHTML = '<div class="embedding-placeholder">Loading embed...</div>';
+
+        api.get(subdomainLogic.values.subdomain, '/url-data', {url})
             .then(response => {
                 if (response.type === 'rich') {
                     setInnerHTMLWithScripts(this.dom, response.html);

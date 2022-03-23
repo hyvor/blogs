@@ -38,8 +38,9 @@ const postsLogic = kea({
          * we want seperate loading states
          */
         loadPostsList: async () => {
+            const filters = values.filters
             const posts = await api.get(props.subdomain, '/posts', {
-                filters: values.filters
+                filters
             });
             posts.forEach(post => {
                 const builtPostLogic = postLogic.build({id: post.id, data: post}, false);
@@ -94,7 +95,7 @@ const postsLogic = kea({
                 status: 'all',
                 author: 'all',
                 tag: 'all',
-                language: blogsLogic.values.findBlogBySubdomain(props.subdomain).blog.defaultLanguage.id,
+                language_id: blogsLogic.values.findBlogBySubdomain(props.subdomain).blog.default_language.id,
                 dateStart: null,
                 dateEnd: null,
                 search: ''
@@ -103,6 +104,7 @@ const postsLogic = kea({
                 changeFilter: (state, {name, value}) => ({...state, ...{[name]: value}})
             }
         ]
+
     }),
 
     events: ({actions}) => ({

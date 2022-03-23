@@ -1,13 +1,15 @@
 import { useValues } from 'kea';
 import React, { useState } from 'react'
 import subdomainLogic from '../logic/subdomainLogic';
-import { BoxArrowUpRight, Laptop, Phone } from 'react-bootstrap-icons';
+import blogsLogic from '../logic/blogsLogic'
+import { BoxArrowUpRight, Laptop, Phone, Tablet } from 'react-bootstrap-icons';
 import Loader from '../ReusableComponents/Loader';
 
 
 export default function BlogPreview() {
 
     const { subdomain } = useValues(subdomainLogic);
+    const { findBlogBySubdomain } = useValues(blogsLogic)
     const [type, setType] = useState('laptop');
 
     const [isLoading, setIsLoading] = useState(true);
@@ -18,17 +20,20 @@ export default function BlogPreview() {
 
     var domain = window.appConfig.domains.delivery;
 
+    const blog = findBlogBySubdomain(subdomain)
+
     return <div className="box blog-preview-view">
         <div className="navi">
             <div className="left">
                 <a 
-                    href={ `https://${subdomain}.${domain}` }
+                    href={ blog.blog.base_url }
                     target="_blank"
-                >{subdomain}.hyvorblogs.io &nbsp;<BoxArrowUpRight /></a>
+                >{ blog.blog.base_url.replace(/^https?:\/\//, '') } &nbsp;<BoxArrowUpRight /></a>
             </div>
             <div className="right">
                 <span onClick={() => setType('laptop')} className={type == 'laptop' ? "active" : ""}><Laptop /></span>
-                <span onClick={() => setType('phone')} className={type == 'phone' ? "active" : ""}><Phone /></span>
+                <span onClick={() => setType('tablet')} className={type == 'tablet' ? "active" : ""}><Tablet /></span>
+                <span onClick={() => setType('phone')} className={type == 'phone' ? "active" : ""}><Phone size={14} /></span>
             </div>
         </div>
         <div 
@@ -45,7 +50,7 @@ export default function BlogPreview() {
                 id="preview-iframe"
                 src={`https://${subdomain}.${domain}`} 
                 style={{
-                    width: type === 'laptop' ? "100%" : 360,
+                    width: type === 'laptop' ? "100%" : (type === 'tablet' ? 600 : 360),
                     height: type === 'laptop' ? "100%" : 740,
                     display: isLoading ? "none" : "block"
                 }}

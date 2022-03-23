@@ -2,10 +2,12 @@
 
 namespace App\Data\Objects\DataAPI;
 
+use App\Domains\Route\PermalinkRepository;
 use App\Models\Blog;
 
 class BlogObject
 {
+
     public string $subdomain;
     public string $name;
     public ?string $description;
@@ -19,8 +21,8 @@ class BlogObject
     public array $nav_header;
     public array $nav_footer;
 
-    public string $code_head;
-    public string $code_foot;
+    public ?string $code_head;
+    public ?string $code_foot;
 
     public int $posts_count;
 
@@ -33,6 +35,8 @@ class BlogObject
         $this->icon = $blog->icon;
         $this->featured_image = $blog->featured_image;
 
+        $this->url = PermalinkRepository::getBlogPermalink($blog);
+
         $this->social = new SocialMediaObject(
             $blog->social_facebook,
             $blog->social_twitter,
@@ -42,6 +46,10 @@ class BlogObject
             $blog->social_github
         );
 
+        $this->code_head = $blog->code_head;
+        $this->code_foot = $blog->code_foot;
+
         // TODO:
     }
+
 }

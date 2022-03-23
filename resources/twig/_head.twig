@@ -1,0 +1,69 @@
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+
+{% if _meta %}
+
+    <title>{{ _meta.title }}</title>
+    <meta name="description" content="{{ _meta.description }}" />
+    <link rel="canonical" href="{{ _meta.canonical_url }}" />
+
+    {# OG Tags ========== #}
+    <meta property="og:site_name" content="{{ _blog.name }}" />
+    <meta property="og:type" content="article" />
+    <meta property="og:title" content="{{ _meta.title }}" />
+    <meta property="og:locale " content="{{ _lang }}" />
+    <meta property="og:description" content="{{ _meta.description }}" />
+    <meta property="og:url" content="{{ _meta.url }}" />
+    <meta property="og:image" content="{{ _meta.featured_image }}" />
+
+    {% if scope == 'post' %}
+        <meta property="article:published_time" content="{{ post.published_at | date(c) }}" />
+        <meta property="article:modified_time" content="2022-03-05T20:07:57.000Z" />
+
+        {# Authors #}
+        {% for author in post.authors %}
+            <meta property="article:author" content="{{ author.name }}" />
+        {% endfor %}
+        
+        {# Tags #}
+        {% for tag in post.tags %}
+            <meta property="article:tag" content="{{ tag.name }}" />
+        {% endfor %}
+    {% endif %}
+
+    {# Twitter Tags ========== #}
+    <meta name="twitter:card" content="summary_large_image" />
+    <meta name="twitter:title" content="{{ _meta.title }}" />
+    <meta name="twitter:description" content="{{ _meta.description }}" />
+    <meta name="twitter:url" content="{{ _meta.url }}" />
+    <meta name="twitter:image" content="{{ _meta.featured_image }}" />
+
+    {% if _blog.social.twitter %}
+        <meta name="twitter:site" content="@{{ _blog.social.twitter|split('/')|last }}" />
+    {% endif %}
+    {% if scope == 'post' and _post.author[0].social.twitter %}
+        <meta name="twitter:creator" content="@{{ _post.author[0].social.twitter|split('/')|last }}" />
+    {% endif %}
+
+{% endif %}
+
+
+{# Alternative Languages for posts ========= #}
+{% if _route == 'post' %}
+    {% for variant in _post.language.variants %}
+        <link rel="alternate" href="{{ variant.post_url }}" hreflang="{{ variant.code }}" />
+    {% endfor %}
+{% endif %}
+
+{# Custom Code from blog, post, and tags #}
+{% if _blog.code_head %}
+    {{ include(template_from_string(_blog.code_head)) }}
+{% endif %}
+{% if _post.code_head %}
+    {{ include(template_from_string(_post.code_head)) }}
+{% endif %}
+
+<link rel="alternate" type="application/atom+xml" title="{{ _blog.name }}" href="{{ _blog.url }}/feed" />
+<meta name="generator" content="Hyvor Blogs" />
+
+<link rel="stylesheet" href="{{ _blog.url }}/styles.css"></link>

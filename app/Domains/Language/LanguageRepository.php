@@ -17,13 +17,13 @@ class LanguageRepository {
     }
 
     public static function createLanguage(
-        int $blogId, string $code, string $name, bool $isDefault = false
+        Blog $blog, string $code, string $name, bool $isPrimary = false
     ) : Language {
 
-        return Blog::find($blogId)->languages()->create([
+        return $blog->languages()->create([
             'code' => $code,
             'name' => $name,
-            'is_primary' => $isDefault
+            'is_primary' => $isPrimary
         ]);
     }
 
@@ -48,7 +48,7 @@ class LanguageRepository {
 
         // can't delete if there are posts in this language
         $posts = PostRepository::getPosts(
-            $lang->blog_id,
+            $lang->blog,
             (new PostsFilterParam)->setLanguageId($lang->id),
             1
         );
@@ -63,13 +63,32 @@ class LanguageRepository {
         $lang->delete();
     }
 
-    public static function addDefaultLanguage(Blog $blog) : Language {
+    public static function getPrimaryLanguage(Blog $blog) : Language {
 
-        return $blog->languages()->create([
-            'code' => self::DEFAULT_LANGUAGE_CODE,
-            'name' => self::DEFAULT_LANGUAGE_NAME,
-            'is_primary' => true
-        ]);
+        return $blog->languages()->where('is_primary', true)->first();
+
+    }
+
+    /**
+     * @return Language primary language if the current one is not found
+     */
+    public static function getLanguageById(Blog $blog, ?int $languageId) : Language
+    {
+        return $blog->languages()->where('id', $languageId)->first() ?? self::getPrimaryLanguage($blog);
+    }
+
+    /**
+     * @return Language primary language if the requested one is not found
+     */
+    public static function getLanguageByCode(Blog $blog, string $code) : Language
+    {   
+        return $blog->languages()->where('code', $code)->first() ?? self::getPrimaryLanguage($blog);
+    }
+
+    public static function getFallbackLanguage(Blog $blog, Language $language) : Language
+    {
+
+        return self::getPrimaryLanguage($blog);
 
     }
 

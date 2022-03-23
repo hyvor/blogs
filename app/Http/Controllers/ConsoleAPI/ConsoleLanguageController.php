@@ -31,7 +31,7 @@ class ConsoleLanguageController extends Controller {
         $code = $request->get('code');
         $name = $request->get('name');
 
-        $language = LanguageRepository::createLanguage($blog->id, $code, $name);
+        $language = LanguageRepository::createLanguage($blog, $code, $name);
 
         return response()->json( new LanguageObject($language) );
 

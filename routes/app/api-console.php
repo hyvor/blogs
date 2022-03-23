@@ -2,19 +2,20 @@
 
 use App\Http\Controllers\ConsoleAPI\ConsoleBlogController;
 use App\Http\Controllers\ConsoleAPI\ConsoleBlogThemeController;
-use App\Http\Controllers\ConsoleAPI\ConsoleEmbedController;
+use App\Http\Controllers\ConsoleAPI\ConsoleImportExportController;
 use App\Http\Controllers\ConsoleAPI\ConsoleLanguageController;
 use App\Http\Controllers\ConsoleAPI\ConsoleMediaController;
 use App\Http\Controllers\ConsoleAPI\ConsolePostController;
 use App\Http\Controllers\ConsoleAPI\ConsoleSubscriptionController;
 use App\Http\Controllers\ConsoleAPI\ConsoleUserController;
-use App\Http\Controllers\ConsoleAPI\ConsoleViewController;
 use App\Http\Controllers\ConsoleAPI\ConsoleRedirectController;
 use App\Http\Controllers\ConsoleAPI\ConsoleNavigationController;
+use App\Http\Controllers\ConsoleAPI\ConsoleUrlDataController;
+use App\Http\Controllers\ConsoleAPI\ConsoleWebhookController;
 use App\Http\Middleware\App\ConsoleAPI\ConsoleApiAccessMiddleware;
+use App\Http\Middleware\App\ConsoleAPI\ConsoleApiUserEndpointsAccessMiddleware;
 use App\Http\Middleware\App\ConsoleAPI\PostAuthorshipMiddleware;
 use App\Http\Middleware\App\ConsoleAPI\ResourceAccessMiddleware;
-use App\Http\Middleware\App\LoginRequiredElseRedirectMiddleware;
 use App\Http\Middleware\App\SubdomainMiddleware;
 use Illuminate\Support\Facades\Route;
 
@@ -27,20 +28,35 @@ Route::get('/console/{any?}', ConsoleViewController::class)
 
 
 // this is an internal API
-Route::prefix('/api/console')
+// Route::prefix('/api/console')
     // add middleware
+
+/**
+ * This is an internal API for user-level functions
+ * This cannot be accessed via API keys
+ * Used only in our Console
+ */
+Route::prefix('/api/console/v0')
+    ->middleware(ConsoleApiUserEndpointsAccessMiddleware::class)
     ->group(function() {
 
-    Route::post('/user/blog', [ConsoleUserController::class, 'createBlog']);
-    Route::patch('/user/blogs/sort', [ConsoleUserController::class, 'changeSort']);
-
-    Route::get('/themes', []);
+    Route::post('/blog', [ConsoleUserController::class, 'createBlog']);
+    Route::patch('/blogs/sort', [ConsoleUserController::class, 'changeSort']);
+    Route::get('/blog/check-subdomain', [ConsoleUserController::class, 'checkSubdomain']);
 
 });
 
-// this is the Console API
-// can be used by both us and others
-// Important! see BlogAccessMiddleware to see how to write these routes securely
+/**
+ * 
+ * Console API
+ * ======================
+ * 
+ * this is the Console API
+ * can be used by both us and others
+ * Important! see BlogAccessMiddleware to see how to write these routes securely
+ */
+
+
 
 Route::prefix('/api/console/v0/blog/{subdomain}')
     ->middleware([
@@ -87,9 +103,10 @@ Route::prefix('/api/console/v0/blog/{subdomain}')
         Route::get('/media', [ConsoleMediaController::class, 'getFiles']);
         Route::post('/media', [ConsoleMediaController::class, 'uploadFile']);
         Route::delete('/media/{id}', [ConsoleMediaController::class, 'deleteFile']);
+        Route::get('/media/unsplash/search', [ConsoleMediaController::class, 'searchUnsplash']);
 
-        // embed R
-        Route::get('/embed', [ConsoleEmbedController::class, 'getData']);
+        // url data
+        Route::get('/url-data', [ConsoleUrlDataController::class, 'getData']);
 
     });
 
@@ -114,10 +131,10 @@ Route::prefix('/api/console/v0/blog/{subdomain}')
     Route::middleware('role:owner|admin')->group(function() {
 
         // webhooks CRUD
-        Route::get('/webhooks', []);
-        Route::post('/webhook', []);
-        Route::patch('/webhook/{id}', []);
-        Route::delete('/webhook/{id}', []);
+        Route::get('/webhooks', [ConsoleWebhookController::class, 'getWebhooks']);
+        Route::post('/webhook', [ConsoleWebhookController::class, 'createWebhook']);
+        Route::patch('/webhook/{id}', [ConsoleWebhookController::class, 'updateWebhook']);
+        Route::delete('/webhook/{id}', [ConsoleWebhookController::class, 'deleteWebhook']);
 
         // navigation CRUD
         Route::get('/navigation', [ConsoleNavigationController::class,'getNavigations']);
@@ -151,6 +168,11 @@ Route::prefix('/api/console/v0/blog/{subdomain}')
         Route::get('/theme-files', [ConsoleBlogThemeController::class, 'getAllFiles']);
         Route::put('/theme-file/{id}', [ConsoleBlogThemeController::class, 'createOrUpdateFile']);
 
+        Route::get('/data/export', [ConsoleImportExportController::class, 'export']);
+        Route::get('/data/import', [ConsoleImportExportController::class, 'import']);
+
+        Route::get('/build', []);
+    
     });
 
     /**

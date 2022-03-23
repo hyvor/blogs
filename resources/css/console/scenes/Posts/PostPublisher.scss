@@ -1,0 +1,69 @@
+
+.post-publisher {
+    position:absolute;
+    width:350px;
+    right:0;
+    z-index: 1;
+    transition:.125s transform, .125s opacity;
+    &.active {
+        pointer-events: auto;
+        opacity: 1;
+        transform:initial; // transform 0 causes child fixed elements to be relative to this element
+    }
+    &.inactive {
+        pointer-events: none;
+        opacity: 0;
+        transform:translateY(-10px);
+    }   
+
+    .post-publisher-view {
+        background: $color-box;
+        box-shadow: 0 0 40px 20px rgb(0 0 0 / 6%);
+        margin-left: 30px;
+        margin-top: 14px;
+        border-radius: 20px;
+        position: relative;
+        &:before {
+            position: absolute;
+            content: "";
+            right: 30px;
+            bottom: 100%;
+            border: 10px solid $color-box;
+            border-top-color: transparent;
+            border-left-color: transparent;
+            border-right-color: transparent;
+        }
+    }
+
+    .publisher-head {
+        padding: 15px;
+        text-align: center;
+        font-weight: 600;
+        font-size: 16px;
+        border-bottom:1px solid $color-accent-light;
+    }
+
+    .publisher-select-time {
+        padding: 20px 40px 10px;
+        display: flex;
+        .global-radio-wrap:first-child {
+            flex: 1;
+        }
+    }
+
+    .publish-time-selector {
+        padding: 0 40px 20px;
+        .publish-time-title {
+            color: $color-text-light;
+            margin-bottom: 4px;
+        }
+    }
+
+    .publisher-buttons {
+        padding: 15px;
+        text-align: right;
+        border-top:1px solid $color-accent-light;
+        button:first-child {margin-right:6px}
+    }
+
+}

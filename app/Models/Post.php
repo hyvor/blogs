@@ -2,12 +2,24 @@
 
 namespace App\Models;
 
+use App\Domains\Post\PostLanguageRepository;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\SoftDeletes;
 
 class Post extends Model
 {
     use SoftDeletes;
+
+    /**
+     * Eager load with these relations
+     * because these are always wanted
+     */
+    protected $with = [
+        'variants',
+        'tags',
+        'authors',
+    ];
+
 
     protected $casts = [
         'published_at' => 'datetime',
@@ -16,6 +28,12 @@ class Post extends Model
     public function blog()
     {
         return $this->belongsTo(Blog::class);
+    }
+
+
+    public function variants()
+    {
+        return $this->hasMany(PostsVariant::class);
     }
 
     public function tags()
@@ -27,6 +45,5 @@ class Post extends Model
     {
         return $this->belongsToMany(User::class, 'post_author')->withPivot('order')->orderBy('order', 'ASC');
     }
-
 
 }

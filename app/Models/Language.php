@@ -8,4 +8,10 @@ use Illuminate\Database\Eloquent\Model;
 class Language extends Model
 {
     use HasFactory;
+
+    public function fallback()
+    {
+        $this->hasOne(Language::class, 'id', 'fallback_language_id');
+    }
+
 }
