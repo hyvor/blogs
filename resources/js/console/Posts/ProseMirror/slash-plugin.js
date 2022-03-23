@@ -1,4 +1,4 @@
-import {NodeSelection, Plugin} from "prosemirror-state"
+import {NodeSelection, Plugin, TextSelection} from "prosemirror-state"
 
 /**
  * React icons are used to save duplicate loading
@@ -30,7 +30,8 @@ const matchable = [
         description: "Add an image",
         icon: <CardImage />,
         keywords: ['image', 'picture', 'upload'],
-        node: createImage
+        node: createImage,
+        selectNode: true
     },
     {
         name: "Embed",
@@ -69,14 +70,16 @@ const matchable = [
         description: "Link preview as a bookmark",
         icon: <Bookmark />,
         keywords: ['bookmark', 'link'],
-        node: 'bookmark'
+        node: 'bookmark',
+        selectNode: true
     },
     {
         name: "Divider",
         description: "Divide sections with a horizontal line",
         icon: <Hr />,
         keywords: ['hr', 'divider', 'horizontal', 'line'],
-        node: 'horizontal_line'
+        node: 'horizontal_rule',
+        selectNode: true
     },
     {
         name: "Custom HTML/Twig",
@@ -233,11 +236,11 @@ class SlashPlugin {
             item.onclick = function() {
 
                 let node = m.node;
-                let nodeCreator;
+                let createdNode;
                 if (typeof node === 'function') {
-                    nodeCreator = node(_self.schema)
+                    createdNode = node(_self.schema)
                 } else {
-                    nodeCreator = _self.schema.nodes[node].create(m.attrs || {});
+                    createdNode = _self.schema.nodes[node].create(m.attrs || {});
                 }
 
                 let {$from, to} = view.state.selection, pos
@@ -245,9 +248,27 @@ class SlashPlugin {
                 pos = $from.before(same)
                 const nodeSel = NodeSelection.create(view.state.doc, pos);
 
+                const tr = view.state.tr
+
                 view.dispatch(
-                    view.state.tr.replaceWith(nodeSel.from, nodeSel.to, nodeCreator)
+                    tr.replaceWith(nodeSel.from, nodeSel.to, createdNode)
                 )
+
+                const tr2 = view.state.tr
+
+                view.dispatch(
+                    tr2.setSelection(
+                        m.selectNode ?
+                            NodeSelection.create(tr.doc, pos) :
+                            TextSelection.create(tr.doc, pos + 1)
+                    ).scrollIntoView()
+                )
+
+                /**
+                 * In bookmark, we want to focus the input instead of the view
+                 */
+                if (m.node !== 'bookmark')
+                    view.focus();
 
             }
 

@@ -13,6 +13,9 @@ import RichView from './nodeview-rich';
 import Figcaption from './nodeview-figcaption';
 import Heading from './nodeview-heading';
 import Callout from './nodeview-callout';
+import CodeBlock from './nodeview-codeblock';
+import Image from './nodeview-image';
+import Bookmark from './nodeview-bookmark';
 
 
 function getState(val) {
@@ -39,6 +42,15 @@ const nodeViews = {
     },
     callout(...args) {
         return new Callout(...args)
+    },
+    code_block(...args) {
+        return new CodeBlock(...args)
+    },
+    image(...args) {
+        return new Image(...args)
+    },
+    bookmark(...args) {
+        return new Bookmark(...args)
     }
 }
 
@@ -61,18 +73,19 @@ export default function Editor(props) {
         nodeViews={nodeViews}
         onChange={handleChange}
         handleClickOn={handleClickOn}
+        handleKeyDown={handleKeyDown}
         editable={() => props.editable}
     />
 }
 
-function handleClickOn(view, pos, node, posBefore) {
+function handleClickOn(view, pos, node, posBefore, e) {
     // if (pos != posBefore) return false
     //return false;
 
     /**
      * Select figure when clicking on it
      */
-    if (node.type.name === "figure") {
+    if (node.type.name === "figure" && e.target.nodeName !== "INPUT") {
         const resolvedPos = view.state.doc.resolve(pos)
         if (resolvedPos.parent.type.name === 'figcaption')
             return false;
@@ -82,5 +95,12 @@ function handleClickOn(view, pos, node, posBefore) {
         const nodeSel = new NodeSelection(resolvedPosBefore)
         view.dispatch(tr.setSelection(nodeSel))
         return true;
+    }
+}
+
+// prevent tab-key browser navigation
+function handleKeyDown(view, e) {
+    if (e.key === 'Tab') {
+        e.preventDefault();
     }
 }

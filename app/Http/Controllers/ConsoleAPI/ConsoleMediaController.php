@@ -2,8 +2,10 @@
 
 namespace App\Http\Controllers\ConsoleAPI;
 
-use App\Data\Objects\ConsoleAPI\MediaObject;
+use App\Data\Objects\ConsoleAPI\Media\MediaObject;
+use App\Data\Objects\ConsoleAPI\Media\UnsplashImageObject;
 use App\Domains\Media\MediaRepository;
+use App\Domains\Media\UnsplashRepository;
 use App\Http\Controllers\Controller;
 use App\Models\Blog;
 use Illuminate\Http\Request;
@@ -52,5 +54,22 @@ class ConsoleMediaController extends Controller
     {
         $id = $request->route('id');
         MediaRepository::delete($id);
+    }
+
+    public static function searchUnsplash(Request $request) {
+        $request->validate([
+            'search' => 'required|string',
+            'page' => 'required|integer'
+        ]);
+
+        $search = $request->input('search');
+        $page = (int) $request->input('page');
+
+        $images = UnsplashRepository::search($search, $page)->map(function($image) {
+            return new UnsplashImageObject($image);
+        });
+
+        return response()->json($images);
+        
     }
 }

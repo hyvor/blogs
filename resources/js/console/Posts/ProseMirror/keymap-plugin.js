@@ -1,9 +1,9 @@
 
 import { keymap } from 'prosemirror-keymap'
-import { baseKeymap, chainCommands, exitCode, liftFigcaption, selectNodeBackward } from './commands'
+import { baseKeymap, chainCommands, clearAndChangeNode, exitCode, liftFigcaption, selectNodeBackward, setBlockType } from './commands'
 import { undo, redo } from 'prosemirror-history'
-import { splitListItem } from "./list"
-import { NodeSelection, SelectionRange } from 'prosemirror-state'
+import { splitListItem, sinkListItem, liftListItem } from "./list"
+import { NodeSelection, Selection } from 'prosemirror-state'
 import { createRich } from './creators'
 
 export default function keymapPlugins(schema) {
@@ -22,15 +22,15 @@ export default function keymapPlugins(schema) {
     // hard break    
     const 
         br = schema.nodes.hard_break, 
-        cmd = chainCommands(
-            exitCode, 
-            function (state, dispatch) {
+        brCmd = function (state, dispatch) {
                 dispatch(state.tr.replaceSelectionWith(br.create()).scrollIntoView())
                 return true
-            });
-    bind("Mod-Enter", cmd)
-    bind("Shift-Enter", cmd)
-    if (mac) bind("Ctrl-Enter", cmd)
+            };
+    bind("Mod-Enter", brCmd)
+    bind("Shift-Enter", brCmd)
+    if (mac) bind("Ctrl-Enter", brCmd)
+
+    bind("Backspace", figcaptionBackspaceHandler);
 
     // list item
     bind("Enter", chainCommands(
@@ -42,15 +42,16 @@ export default function keymapPlugins(schema) {
 
             /**
              * RICH
+             * TODO: Remove this and use UI to create a rich embed
              * ===================
              */
             const parent = selection.$to.parent;
-            const url = parent.firstChild?.text;
+            const text = parent.firstChild?.text;
             if (
                 parent &&
                 parent.type.name === 'paragraph' && 
-                url &&
-                url.match(
+                text &&
+                text.match(
                     /^https:\/\/[^\s]+$/i
                 )
             ) {
@@ -64,15 +65,39 @@ export default function keymapPlugins(schema) {
                 const nodeSel = NodeSelection.create(state.doc, pos);
 
                 dispatch(
-                    state.tr.replaceWith(nodeSel.from, nodeSel.to, createRich(schema, url))
+                    state.tr.replaceWith(nodeSel.from, nodeSel.to, createRich(schema, text))
                 )
                 return true;
             }
 
+            /**
+             * Code
+             * ================
+             */
+            let codeMatch
+            if (
+                codeMatch = 
+                    parent && 
+                    parent.type.name === 'paragraph' &&
+                    text &&
+                    text.match(/^```([a-zA-Z0-9+#.]*)$/)
+            ) {
+
+                clearAndChangeNode(schema.nodes.code_block.create({
+                    language: codeMatch[1]
+                }))(state, dispatch)
+
+                return true;
+
+            }
+
         },
         splitListItem(schema.nodes.list_item),
-        figcaptionHandler
+        figcaptionEnterHandler
     ));
+
+    bind('Tab', sinkListItem(schema.nodes.list_item))
+    bind('Shift-Tab', liftListItem(schema.nodes.list_item))
 
     bind("}", (state, dispatch) => {
 
@@ -115,13 +140,14 @@ export default function keymapPlugins(schema) {
     })
 
     return [
-        keymap(baseKeymap),
         keymap(extendedKeymap),
+        keymap(baseKeymap),
+        getCodeBlockKeymap()
     ]
 
 }
 
-function figcaptionHandler(state, dispatch) {
+function figcaptionEnterHandler(state, dispatch) {
     /**
      * When enter is clicked inside figcaption,
      * we select the parent figure in this function
@@ -145,5 +171,39 @@ function figcaptionHandler(state, dispatch) {
             )
             .scrollIntoView()
         )
-    return false
+    return true
+}
+
+function figcaptionBackspaceHandler(state, dispatch) {
+    const { $from } = state.selection;
+    if ($from.parent.type.name !== 'figcaption') return false;
+
+    if (!$from.parent?.firstChild.text)
+        return true;
+}
+
+// https://prosemirror.net/examples/codemirror/
+function getCodeBlockKeymap() {
+
+    function arrowHandler(dir) {
+        return (state, dispatch, view) => {
+          if (state.selection.empty && view.endOfTextblock(dir)) {
+            let side = dir == "left" || dir == "up" ? -1 : 1, $head = state.selection.$head
+            let nextPos = Selection.near(state.doc.resolve(side > 0 ? $head.after() : $head.before()), side)
+            if (nextPos.$head && nextPos.$head.parent.type.name == "code_block") {
+              dispatch(state.tr.setSelection(nextPos))
+              return true
+            }
+          }
+          return false
+        }
+    }
+
+    return keymap({
+        ArrowLeft: arrowHandler("left"),
+        ArrowRight: arrowHandler("right"),
+        ArrowUp: arrowHandler("up"),
+        ArrowDown: arrowHandler("down")
+    })
+
 }

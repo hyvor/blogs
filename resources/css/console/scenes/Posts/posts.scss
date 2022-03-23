@@ -73,7 +73,7 @@
                     line-height: 14px;
                 }
             }
-            .post-lang {
+            /* .post-lang {
                 flex:1;
                 .posts-filter-name {
                     display:none;
@@ -82,7 +82,7 @@
                     margin-right:0;
                     margin-left:3px;
                 }
-            }
+            } */
         }
     }
 
@@ -165,6 +165,20 @@
             }
         }
 
+        .post-languages {
+            margin-top: 8px;
+            .post-lang-tag {
+                display: inline-block;
+                padding: 0px 8px;
+                font-size: 12px;
+                background: $color-text-medium;
+                color: $color-text-white;
+                border-radius: 20px;
+                margin-right: 3px;
+                font-weight: 600;
+            }
+        }
+
         .post-tags-wrap {
             margin-top:8px;
             display:flex;
@@ -192,9 +206,40 @@
             border-bottom: 1px solid $color-accent-light;
             .post-editor-top-content {
                 width:700px;
+                padding: 0 30px;
                 margin:auto;
             }
+            .status {
+                padding-bottom: 16px;
+                color: $color-text-light;
+                font-weight: 600;
+                text-transform: uppercase;
+                margin-left:8px;
+                font-size: 12px;
+                padding-top: 36px;
+            }
         }
+
+        .post-languages {
+            margin-top:20px;
+            .lang-tag {
+                display: inline-block;
+                padding: 1px 9px;
+                margin-right: 3px;
+                background: $color-input;
+                font-weight: 600;
+                font-size: 12px;
+                border-radius: 20px;
+                cursor:pointer;
+                .status-icon {
+                    margin-left:5px;
+                }
+                &.active {
+                    background: $color-accent-light;
+                }
+            }
+        }
+
         .post-editor-title-row {
             display:flex;
             position:relative;
@@ -216,8 +261,8 @@
             .post-editor-bottom-content {
                 width:700px;
                 max-width: 100%;
+                padding: 0 30px;
                 margin:auto;
-                padding:0 30px;
                 font-size: 12px;
                 font-weight: 600;
                 display: flex;
@@ -249,6 +294,9 @@
                 font-size: 12px;
                 margin-right: 10px;
             }
+            .help {
+                margin-left:10px;
+            }
         }
 
         .pos-rel {
@@ -273,7 +321,8 @@
         }
 
         .post-editor-title {
-            padding: 30px;
+            font-family: $font-content;
+            padding-top: 10px;
             padding-bottom: 10px;
             font-size: 25px;
             font-weight: 600;
@@ -286,18 +335,18 @@
             background:none;
         }
         .publish-buttons {
+            position:relative;
             button.main-button {
                 display:inline-flex;
                 align-items: center;
                 svg {width:9px;margin-left:6px}
             }
-            button {
+            > button {
                 margin-left: 9px;
             }
         }
         .post-editor-settings {
             position:relative;
-            padding: 0 30px;
             margin-bottom: 25px;
         }
         .post-editor-settings-buttons {
@@ -315,6 +364,7 @@
     }
 
     @import 'PostSettings.scss';
+    @import 'PostPublisher.scss';
 }
 
 @import 'NoPost.scss';

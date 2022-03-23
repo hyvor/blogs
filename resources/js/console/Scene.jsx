@@ -16,7 +16,7 @@ export const scenes = {
     posts: ({ postId }) => <Posts postId={postId} />,
     pages: ({ postId }) => <Pages postId={postId} />,
     settings: ({type}) => <Settings type={type} />,
-    theme: () => <Theme />,
+    theme: ({type}) => <Theme type={type} />,
     billing: () => <Billing />,
     new: () => <NewBlog />,
 }

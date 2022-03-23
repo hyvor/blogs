@@ -8,17 +8,17 @@ const themeLogic = kea({
 
     path: key => ['theme', key],
 
-    actions: {
+    actions: ({values}) => ({
         setFiles: (files) => ({files}),
         setFileContent: (id, content) => ({id, content}),
 
         // file editor
         editorOpenFile: (id) => ({id}),
-        editorCloseFile: (id) => ({id}),
+        editorCloseFile: (id) => ({id, index: values.editorOpenedFilesIds.indexOf(id)}),
         editorSetOpenedFiles: (ids) => ({ids}),
         editorSaveFile: (id) => ({id}),
         editorSetActiveFileId: (id) => ({id}),
-    },
+    }),
 
     ajax: ({actions, props}) => ({
 
@@ -54,11 +54,27 @@ const themeLogic = kea({
         // active editing file
         editorActiveFileId: [null, {
             editorOpenFile: (_, {id}) => id,
-            editorCloseFile: (currentId, {id}) => currentId === id ? null : currentId,
             editorSetActiveFileId: (_, {id}) => id
         }]
 
     },
+
+    listeners: ({values, actions}) => ({
+
+        editorCloseFile: ({id, index}) => {
+
+            const previousFileId = values.editorOpenedFilesIds[index - 1];
+            if (values.editorActiveFileId === id && previousFileId) {
+                actions.editorSetActiveFileId(previousFileId)
+            }
+
+            if (values.editorOpenedFilesIds.length === 0) {
+                actions.editorSetActiveFileId(null)
+            }
+
+        }
+
+    }),
 
     selectors: {
         findFilesOfFolder: [

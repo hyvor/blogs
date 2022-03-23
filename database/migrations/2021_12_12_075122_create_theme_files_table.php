@@ -15,15 +15,16 @@ class CreateThemeFilesTable extends Migration
     {
         Schema::create('theme_files', function (Blueprint $table) {
             $table->id();
+            $table->timestamps();
 
             // Connections
-            $table->bigInteger('theme_id')->nullable();
+            $table->bigInteger('theme_version_id')->nullable();
 
             $table->string('name');
             $table->binary('content');
-            $table->enum('type', ['templates', 'assets','styles'])->nullable();
+            $table->enum('folder', ['templates', 'assets', 'styles', 'lang'])->nullable();
 
-            $table->timestamps();
+            $table->unique(['theme_version_id', 'folder', 'name']);
         });
     }
 

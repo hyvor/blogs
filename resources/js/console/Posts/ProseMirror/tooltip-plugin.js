@@ -1,4 +1,4 @@
-import {Plugin, TextSelection} from "prosemirror-state"
+import {Plugin, TextSelection, NodeSelection} from "prosemirror-state"
 import {toggleMark, setBlockType, wrapIn} from "./commands"
 
 const icons = {
@@ -47,7 +47,7 @@ class MarksTooltip {
         this.addItem(schema.marks.strong, icons.bold);
         this.addItem(schema.marks.em, icons.italic);
         this.addItem(schema.marks.code, icons.code)
-        this.addItem(schema.marks.s, icons.strike)
+        this.addItem(schema.marks.strike, icons.strike)
 
         this.update(view, null)
     }
@@ -129,7 +129,12 @@ class MarksTooltip {
             ) return
 
 
-        if (state.selection.empty || !view.editable) {
+        if (
+            state.selection.empty || 
+            !view.editable ||
+            state.doc.cut(state.selection.from, state.selection.to).textContent === "" ||
+            state.selection instanceof NodeSelection
+        ) {
             this.tooltip.style.display = "none"
             return
         }

@@ -276,7 +276,12 @@ export function createParagraphNear(state, dispatch) {
     let type = defaultBlockAt($to.parent.contentMatchAt($to.indexAfter()))
     if (!type || !type.isTextblock) return false
     if (dispatch) {
-        let side = (!$from.parentOffset && $to.index() < $to.parent.childCount ? $from : $to).pos
+        /**
+         * Commented this because this caused creating paragraph
+         * before the selected node
+         */
+        // let side = (!$from.parentOffset && $to.index() < $to.parent.childCount ? $from : $to).pos
+        let side = $to.pos;
         let tr = state.tr.insert(side, type.createAndFill())
         tr.setSelection(TextSelection.create(tr.doc, side + 1))
         dispatch(tr.scrollIntoView())
@@ -477,6 +482,19 @@ export function setBlockType(nodeType, attrs) {
         if (!applicable) return false
         if (dispatch) dispatch(state.tr.setBlockType(from, to, nodeType, attrs).scrollIntoView())
         return true
+    }
+}
+
+export function clearAndChangeNode(node) {
+    return function (state, dispatch) {
+        let {$from, to} = state.selection, pos
+        let same = $from.sharedDepth(to)
+        pos = $from.before(same)
+        const nodeSel = NodeSelection.create(state.doc, pos);
+        const tr = state.tr.replaceWith(nodeSel.from, nodeSel.to, node)
+        dispatch(
+            tr.setSelection(TextSelection.create(tr.doc, nodeSel.from + 1))
+        )
     }
 }
 

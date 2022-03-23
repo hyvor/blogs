@@ -10,15 +10,20 @@ use Illuminate\Support\Facades\DB;
 
 class TagRepository
 {
-    public static function getTagByBlogIdAndIdentifier(int $blogId, ?int $id, ?string $slug)
+    public static function getTagByBlogIdAndIdentifier(int $blogId, ?int $id, ?string $slug) : ?Tag
     {
-        $post = Tag::where('blog_id', $blogId);
+        $tag = Tag::where('blog_id', $blogId);
         if ($id) {
-            $post->where('id', $id);
+            $tag->where('id', $id);
         } else {
-            $post->where('slug', $slug);
+            $tag->where('slug', $slug);
         }
-        return $post->first();
+        return $tag->first();
+    }
+
+    public static function getTagByBlogIdAndSlug(int $blogId, string $slug) : ?Tag 
+    {
+        return self::getTagByBlogIdAndIdentifier($blogId, null, $slug);
     }
 
     // public static function getTags(int $blogId, ?int $limit, int $offset = 0, int $languageId)
@@ -108,7 +113,8 @@ class TagRepository
     * this function will create and save the tag
     *
     */
-    public static function createSaveTag($blogId, $postId, $tagId){
+    public static function createSaveTag($blogId, $postId, $tagId)
+    {
         $createPostTag = PostTag::create([
             'post_id' => $postId,
             'tag_id' => $tagId,
@@ -121,7 +127,8 @@ class TagRepository
     * this function will create and save the tag
     *
     */
-    public static function getPostTag($postId, $tagId){
+    public static function getPostTag($postId, $tagId)
+    {
         // dd('tests');
         // dd('Post Id '+$postId + ' Tag Id '+$tagId);
         // dd($postId);

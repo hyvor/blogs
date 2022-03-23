@@ -30,8 +30,8 @@ Code block | <code>\`\`\`</code> or <code>\`\`\`js</code> | A code block | `<pre
 Unordered list | `* ` in a new line | An unordered list. Supports nesting | `<ul>`
 Ordered list | `1. ` in a new line | An ordered list. Supports nesting | `<ol>`
 Image | See [images](#images) | An image with a caption | `<img>` inside `<figure>`. [See this](themes-overview#image)
-Embed: Rich | Paste the link in a new line and click enter | Rich embeds from third-party platforms like Youtube | [See this](themes-overview#embed-rich)
-Embed: Link | Paste the link in a new line and click enter | Link preview like a bookmark | [See this](themes-overview#embed-link)
+Embed | Paste the link in a new line and click enter | Rich embeds from third-party platforms like Youtube | [See this](themes-overview#embed-rich)
+Link Bookmark | Paste the link in a new line and click enter | Link preview like a bookmark | [See this](themes-overview#embed-link)
 
 ## Headings {#headings}
 

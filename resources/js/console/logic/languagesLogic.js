@@ -1,5 +1,6 @@
 import { kea } from "kea";
 import api from "../lib/api";
+import blogsLogic from "./blogsLogic";
 
 const languagesLogic = kea({
 
@@ -40,7 +41,7 @@ const languagesLogic = kea({
 
     }),
 
-    reducers: {
+    reducers: ({props}) => ({
 
         languages: [[], {
             setLanguages: (_, {langs}) => langs,
@@ -49,7 +50,15 @@ const languagesLogic = kea({
                 stateLang => stateLang.id === lang.id ? lang : stateLang
             ),
             removeLanguage: (state, {id}) => state.filter(lang => lang.id !== id)
-        }]
+        }],
+    }),
+
+    selectors: {
+
+        getLanguageById: [
+            s => [s.languages],
+            languages => id => languages.find(l => l.id == id)
+        ]
 
     },
 

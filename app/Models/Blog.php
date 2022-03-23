@@ -21,6 +21,16 @@ class Blog extends Model
         return $this->hasMany(Post::class);
     }
 
+    public function users()
+    {
+        return $this->hasMany(User::class);
+    }
+
+    public function tags()
+    {
+        return $this->hasMany(Tag::class);
+    }
+
     /**
      * Get routes of the blog
      */
@@ -48,6 +58,31 @@ class Blog extends Model
     public function count(string $name)
     {
         return $this->counts()->where('name', $name)->value('value');
+    }
+
+    /**
+     * Redirects
+     */
+    public function redirects()
+    {
+        return $this->hasMany(Redirect::class);
+    }
+
+    /**
+     * Webhooks
+     */
+    public function webhooks()
+    {
+        return $this->hasMany(Webhook::class);
+    }
+
+
+    /**
+     * Theme files
+     */
+    public function themeFiles()
+    {
+        return $this->hasMany(BlogThemeFile::class);
     }
 
 }

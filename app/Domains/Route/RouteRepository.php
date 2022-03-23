@@ -1,46 +1,26 @@
 <?php
 namespace App\Domains\Route;
 
+use App\Exceptions\TrustedException;
 use App\Models\Blog;
 
 class RouteRepository {
 
-    public static function addDefaultRoutes(Blog $blog) {
-
-        $blog->routes()->createMany([
-            // post
-            [
-                'name' => 'post',
-                'match' => '/{tag}/{slug}'
-            ],
-            // page
-            [
-                'name' => 'page',
-                'match' => '/{slug}'
-            ],
-            // home page (index)
-            [
-                'name' => 'index',
-                'match' => '/',
-                'posts_filter' => ''
-            ],
-            // tag
-            [
-                'name' => 'tag',
-                'match' => '/tag/{slug}',
-                'posts_filter' => 'tag.slug = {slug}',
-            ],
-            // author
-            [
-                'name' => 'author',
-                'match' => '/author/{slug}',
-                'posts_filter' => 'author.slug = {slug}'
-            ],
-            // search
-            [
-                'name' => 'search',
-                'match' => '/search',
-            ]
+    public static function createRoute(
+        Blog $blog,
+        string $name,
+        string $match,
+        string $template,
+        string $postsFilter = null,
+        string $contentType = null,
+    ) {
+        
+        $blog->routes()->create([
+            'name' => $name,
+            'match' => $match,
+            'template' => $template,
+            'posts_filter' => $postsFilter,
+            'content_type' => $contentType
         ]);
 
     }

@@ -11,16 +11,17 @@ import Checkbox from '../ReusableComponents/Checkbox';
 import dayjs from 'dayjs';
 import DatePicker from 'react-datepicker';
 import Loader from '../ReusableComponents/Loader';
+
 import SelectTags from './PostTags';
 import SelectAuthors from './PostUsers';
 import postTagLogic from '../logic/posts/postTagLogic';
 
+import { usePostActions, usePostValues } from './usePost';
 
-export default function PostSettings({ isSettingsOpen, settingsViewRef, id }) {
+export default function PostSettings({ isSettingsOpen, settingsViewRef, id, currentLanguageId }) {
 
-    const postLogicInst = postLogic({id});
-    const { post } = useValues(postLogicInst)
-    const { updatePostValue, deletePost, savePost } = useActions(postLogicInst)
+    const { post } = usePostValues(id);
+    const { updatePostValue, updatePostVariantValue, deletePost, savePost } = usePostActions(id);
 
     const {subdomain} = useValues(subdomainLogic);
     const mediaLogicInst = mediaLogic({subdomain})
@@ -35,6 +36,8 @@ export default function PostSettings({ isSettingsOpen, settingsViewRef, id }) {
     const [ isFeaturedImageRemoving, setIsFeaturedImageRemoving ] = useState(false);
 
     const imageUploadInputRef = useRef(null)
+
+    const variant = post.variants[currentLanguageId]
 
     function handleDelete() {
         deletePost({id})
@@ -146,8 +149,8 @@ export default function PostSettings({ isSettingsOpen, settingsViewRef, id }) {
                             <textarea 
                                 className="input"
                                 placeholder="Write a description..."
-                                value={post.description}
-                                onChange={e => updatePostValue('description', e.target.value)}
+                                value={variant.description}
+                                onChange={e => updatePostVariantValue('description', e.target.value)}
                                 maxLength={350}
                             ></textarea>
                         </Setting>

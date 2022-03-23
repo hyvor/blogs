@@ -72,9 +72,8 @@ $prosemirror-selected-outline: 3px solid #299af3;
         max-height: 275px;
         overflow:auto;
         left: 50px;
-        opacity: 0;
-        transform: scale(0);
-        transition: .3s opacity, .3s transform;
+        opacity:0;
+        pointer-events: none;
         margin-left:30px; // to fix editor padding
         background: $color-box;
         box-shadow: 0 0 15px 2px rgba(0,0,0,0.15);
@@ -82,7 +81,7 @@ $prosemirror-selected-outline: 3px solid #299af3;
         z-index: 1;
         &.open {
             opacity: 1;
-            transform: scale(1)
+            pointer-events: auto;
         }
         &.bottom {
             margin-top:26px;
@@ -165,6 +164,11 @@ $prosemirror-selected-outline: 3px solid #299af3;
   .ProseMirror-selectednode {
     outline: $prosemirror-selected-outline!important;
   }
+  img.ProseMirror-separator {
+    display: inline !important;
+    border: none !important;
+    margin: 0 !important;
+  }
 
 /////////// main CSS end
 
@@ -180,7 +184,8 @@ $prosemirror-selected-outline: 3px solid #299af3;
 
 .ProseMirror {
 
-    font-size:16px;
+    font-size:18px;
+    font-family: $font-content;
 
     &:focus-visible {
         outline: none;
@@ -319,11 +324,13 @@ $prosemirror-selected-outline: 3px solid #299af3;
                 position: absolute;
                 left: 50%;
                 transform: translateX(-50%);
+                pointer-events: none;
             }
         }
 
-        .rich {
+        rich {
             position:relative;
+            display:block;
             &:before {
                 content: "";
                 position:absolute;
@@ -336,7 +343,73 @@ $prosemirror-selected-outline: 3px solid #299af3;
         }
     }
 
-    pre {
+    bookmark {
+        display: flex;
+        margin-top:30px;
+        border-radius: 20px;
+        &:hover {
+            outline: $prosemirror-hover-outline;
+        }
+        &.url-input {
+            outline:none!important;
+        }
+        input {
+            font-size: 14px;
+            border: none;
+            padding: 8px;
+            width: 100%;
+            border:1px solid #eee;
+        }
+        .bookmark-wrap {
+            cursor: default;
+            display: flex;
+            border: 1px solid $color-grey;
+            border-radius: 20px;
+            overflow: hidden;
+            box-shadow: 0 0 5px rgb(0 0 0 / 6%);
+            width: 100%;
+            white-space: normal;
+            .bookmark-link-details {
+                flex: 2;
+                display: flex;
+                flex-direction: column;
+                padding: 15px 20px;
+                .bookmark-link-title {
+                    font-weight: 600;
+                }
+                .bookmark-link-description {
+                    font-size: 16px;
+                    margin-top: 4px;
+                    color: $color-text-light;
+                    overflow: hidden;
+                    // https://stackoverflow.com/a/13924997/9059939
+                    text-overflow: ellipsis;
+                    display: -webkit-box;
+                    -webkit-line-clamp: 2;
+                    line-clamp: 2;
+                    -webkit-box-orient: vertical;
+                }
+                .bookmark-link-domain {
+                    font-size: 14px;
+                    margin-top: 12px;
+                }
+            }
+            .bookmark-link-thumbnail {
+                flex: 1;
+                position: relative;
+                img {
+                    object-fit: cover;
+                    position: absolute;
+                    top: 0;
+                    left: 0;
+                    width: 100%;
+                    height: 100%;
+                }
+            }
+        }
+    }
+
+    /* pre {
         background-color: #eee;
         padding: 20px;
         border-radius: 2px;
@@ -345,7 +418,71 @@ $prosemirror-selected-outline: 3px solid #299af3;
             font-size:14px;
             font-family: inherit;
         }
+    } */
+    .CodeMirror {
+        font-size:14px;
+        margin-top:30px;
+        height: initial;
+        padding:5px  0;
     }
+
+    .image-wrap {
+        .image-uploader {
+            font-size: 14px;
+            height: 400px;
+            background-color: $color-card;
+            text-align: center;
+            position: relative;
+            .or {
+                margin: 10px 0;
+            }
+            .uploader-content {
+                position:absolute;
+                top:50%;
+                left:0;
+                transform: translateY(-50%);
+                width:100%;
+                transition: .3s all;
+                padding:15px;
+                input {
+                    width: 250px;
+                    transition: .3s width;
+                }
+            }
+            &.searching {
+                .uploader-content {
+                    top:0;
+                    transform:none;
+                }
+                .non-search {
+                    display:none;
+                }
+                input {
+                    width:100%;
+                }
+            }
+            .search-results {
+                display: flex;
+                max-height: 330px;
+                overflow: auto;
+                margin-top: 15px;
+                .images-column {
+                    flex: 1;
+                    &:first-child {
+                        margin-right:10px;
+                    }
+                }
+                img {
+                    width:100%;
+                    margin-bottom:15px;
+                    cursor: pointer;
+                    max-height: initial;
+                }
+            }
+        }
+    }
+
+
     a {
         text-decoration: underline;
         color: #3f51b5;
@@ -354,6 +491,11 @@ $prosemirror-selected-outline: 3px solid #299af3;
     img {
         display: block;
         margin: auto;
+    }
+
+    mark {
+        padding: 0.2em 0.4em;
+        background-color: #fcf8e3;
     }
 
 }

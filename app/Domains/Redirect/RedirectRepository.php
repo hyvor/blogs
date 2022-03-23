@@ -2,6 +2,7 @@
 namespace App\Domains\Redirect;
 
 use App\Data\Enums\RedirectTypeEnum;
+use App\Models\Blog;
 use App\Models\Redirect;
 
 Class RedirectRepository
@@ -44,9 +45,12 @@ Class RedirectRepository
         $data->delete();
     }
 
-    public static function findRedirectForPath(int $blogId, string $path) : Redirect|null
+    /**
+     * TODO: Update this to match wildcards
+     */
+    public static function findRedirectForPath(Blog $blog, string $path) : Redirect|null
     {
-        return Redirect::where('blog_id', $blogId)
+        return $blog->redirects()
             ->where('path', $path)
             ->first();
     }

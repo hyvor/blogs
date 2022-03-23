@@ -14,10 +14,17 @@ class SubdomainController extends Controller
 
     public function handle(Request $request, Blog $blog)
     {
-        $path = $request->route('path') ?? '';
-        $query = $request->all();
 
-        $data = DeliveryRepository::getResponseObject($blog, $path, $query);
+        /**
+         * We cannot use $request->path() because laravel has logic to remove trailing slash
+         * We have to exactly know if there's a trailing slash or not
+         * That's why getPathInfo() is used. It is a Symfony function and it does not trim trailing slash
+         * And, it always has the leading /
+         */
+        $path = $request->getPathInfo();
+        $data = DeliveryRepository::getResponseObject($blog, $path);
+
+
 
         return DeliveryRepository::getLaravelResponse($data);
     }

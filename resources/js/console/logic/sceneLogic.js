@@ -8,7 +8,7 @@ const routes = {
     '/console/:subdomain': 'blogPreview',
     '/console/:subdomain/billing': 'billing',
     '/console/:subdomain/settings(/:type)': 'settings',
-    '/console/:subdomain/theme': 'theme'
+    '/console/:subdomain/theme(/:type)': 'theme'
 }
 
 const sceneLogic = kea({

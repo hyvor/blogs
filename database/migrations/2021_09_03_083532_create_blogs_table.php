@@ -25,6 +25,7 @@ class CreateBlogsTable extends Migration
             // data
             $table->string('subdomain')->unique();
             $table->enum('type', ['normal', 'dev', 'temp'])->default('normal');
+            $table->bigInteger('dev_theme_id')->nullable();
             $table->string('name');
             $table->string('description')->nullable();
             $table->string('icon')->nullable();
@@ -36,6 +37,7 @@ class CreateBlogsTable extends Migration
 
             $table->boolean('seo_indexing')->default(true);
             $table->text('seo_robots')->nullable();
+            $table->boolean('seo_follow_external_links')->default(false);
 
             $table->text('code_head')->nullable();
             $table->text('code_foot')->nullable();

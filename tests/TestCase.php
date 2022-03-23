@@ -3,6 +3,7 @@
 namespace Tests;
 
 use Illuminate\Foundation\Testing\TestCase as BaseTestCase;
+use Illuminate\Support\Facades\URL;
 
 abstract class TestCase extends BaseTestCase
 {
@@ -15,4 +16,14 @@ abstract class TestCase extends BaseTestCase
      * @var bool
      */
     protected $seed = true;
+
+
+    protected function callConsoleApi(string $method, string $endpoint, $data = null) {
+        return $this->call($method, URL::to('/api/console/v0/blog/test' . $endpoint), $data);
+    }
+
+    protected function callConsoleUserApi(string $method, string $endpoint, $data = null) {
+        return $this->call($method, URL::to('/api/console/v0' . $endpoint), $data);
+    }
+
 }

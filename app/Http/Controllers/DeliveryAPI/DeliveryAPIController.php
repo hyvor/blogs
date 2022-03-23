@@ -21,13 +21,17 @@ class DeliveryAPIController
          * Returns an output as specified [here]()
          */
 
-        $response = DeliveryRepository::getHtml(
+        $response = DeliveryRepository::getResponseObject(
             $blog,
-            $request->route('path') ?? '',
-            [
-                'page' => $request->input('page')
-            ]
+            $request->input('path', ''),
         );
+
+        /**
+         * Base-64 encode
+         */
+        if (isset($response->content)) {
+            $response->content = base64_encode($response->content);
+        }
 
         return response()->json($response);
     }
