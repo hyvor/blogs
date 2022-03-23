@@ -9,9 +9,20 @@ class TagsVariant extends Model
 {
     use HasFactory; 
 
-    public function counts() 
+
+    public function tag()
     {
-        return $this->morphMany(Count::class, 'countable');
+        $this->belongTo(Tag::class);
     }
+
+    public function language()
+    {
+        return $this->belongsTo(Language::class);
+    }
+
+    // public function counts() 
+    // {
+    //     return $this->morphMany(Count::class, 'countable');
+    // }
     
 }

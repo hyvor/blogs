@@ -12,6 +12,7 @@ use App\Models\Post;
 use App\Models\PostAuthor;
 use App\Models\PostTag;
 use App\Models\Tag;
+use App\Models\TagsVariant;
 use App\Models\User;
 use Illuminate\Support\Str;
 use Illuminate\Database\Seeder;
@@ -61,12 +62,20 @@ class DatabaseSeeder extends Seeder
             ]);
 
             $tags = [];
+            $tagsVariant = [];
             foreach (range(0, 9) as $i) {
                 $name = $faker->name();
                 $tags[] = Tag::create([
                     'blog_id' => $blog->id,
-                    'name' => $name,
+                    // 'name' => $name,
                     'slug' => Str::slug($name),
+                ]);
+
+                $tagsVariant[] = TagsVariant::create([
+                    'tag_id' => 1,
+                    'language_id' => $language->id,
+                    'name' => $name,
+                    // 'slug' => Str::slug($name),
                 ]);
             }
 

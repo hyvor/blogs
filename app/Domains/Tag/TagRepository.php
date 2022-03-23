@@ -4,6 +4,8 @@ namespace App\Domains\Tag;
 
 use App\Models\Tag;
 use App\Models\PostTag;
+use App\Models\TagsVariant;
+use App\Models\Language;
 use Illuminate\Support\Facades\DB;
 
 class TagRepository
@@ -19,28 +21,67 @@ class TagRepository
         return $post->first();
     }
 
+    // public static function getTags(int $blogId, ?int $limit, int $offset = 0, int $languageId)
     public static function getTags(int $blogId, ?int $limit, int $offset = 0)
     {
         $limit = $limit ?? 50;
-        $tags = Tag::where('blog_id','=', $blogId)
-            ->limit($limit)
-            ->offset($offset)
-            ->latest()
-            ->get();
-        
-            // dd("tags");
+
+        // The query without the language.
+        // $tags = Tag::where('blog_id','=', $blogId)
+        //     ->limit($limit)
+        //     ->offset($offset)
+        //     ->latest()
+        //     ->get();
+
+        // The query with the language filter.
+        // $language = Language::where('blog_id','=', $blogId)
+        // ->where('id','=', $languageId)
+        // ->value('languages.id');
+
+        // $tags = Tag::where('blog_id', '=', $blogId)
+        // ->join('tags_variants', function($join) use ($language) {
+        //     $join->on('tags_variants.tag_id', '=', 'tags.id');
+        //     $join->where('tags_variants.language_id', '=', $language);
+        // })
+        // ->limit($limit)
+        // ->offset($offset)
+        // ->latest()
+        // ->get();
+
+        // The query without the language filter.
+        $tags = Tag::where('blog_id', '=', $blogId)
+        ->join('tags_variants', function($join) {
+            $join->on('tags_variants.tag_id', '=', 'tags.id');
+            $join->select('tags.slug');
+        })
+        ->limit($limit)
+        ->offset($offset)
+        ->latest()
+        ->get();
+
         return $tags;
+
     }
 
     public static function createTag( int $blogId, string $name, string $slug, ?string $description)
     {
         $createTag = Tag::create([
             'blog_id' => $blogId,
-            'name' => $name,
             'slug' => $slug,
+        ]);
+
+        $createTagVariant = TagsVariant::create([
+            'tag_id' => 1,
+            'language_id' => 1,
+            'name' => $name,
             'description' => $description,
         ]);
-        return $createTag;
+
+
+        // $createTag = 'hell create one';
+        // $createTagVarient = 'hello create two';
+
+        return [$createTag , $createTagVariant];
     }
 
     public static function updateTag(int $id, string $name, string $slug, ?string $description,  ?string $codeHead,  ?string $codeFoot)
@@ -52,7 +93,7 @@ class TagRepository
         $tag->code_head=$codeHead; 
         $tag->code_foot=$codeFoot; 
 
-        $tag->save();
+        $tag->save(); 
     }
 
     public static function deleteTag(int $id)

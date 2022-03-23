@@ -103,17 +103,17 @@ Route::prefix('/api/console/v0/blog/{subdomain}')
 
         // tags CRUD
         Route::get('/tags', [ConsoleTagController::class, 'getTag']);
-        Route::post('/tag', [ConsoleTagController::class, 'createTag']);
+        Route::post('/tags', [ConsoleTagController::class, 'createTag']);
         Route::put('/tag/{tagId}', [ConsoleTagController::class, 'updateTag']);
         Route::delete('/tag/{tagId}', [ConsoleTagController::class, 'deleteTag']);
 
         Route::get('/postTags/{postId}', [ConsoleTagController::class, 'selectedPostTag']);
 
         // post_tag CRUD
-        Route::get('/getTagList', [ConsoleTagController::class, 'getTagList']);
-        Route::post('/createPostTag', [ConsoleTagController::class, 'createPostTag']);
-        Route::get('/getPostTag', [ConsoleTagController::class, 'getPostTag']);
-        Route::delete('/removePostTag', [ConsoleTagController::class, 'removePostTag']);
+        // Route::get('/getTagList', [ConsoleTagController::class, 'getTagList']);
+        // Route::post('/createPostTag', [ConsoleTagController::class, 'createPostTag']);
+        // Route::get('/getPostTag', [ConsoleTagController::class, 'getPostTag']);
+        // Route::delete('/removePostTag', [ConsoleTagController::class, 'removePostTag']);
 
 
         // comments

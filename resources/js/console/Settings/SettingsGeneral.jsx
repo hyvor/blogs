@@ -73,6 +73,7 @@ export default function SettingsGeneral() {
         <div className="title">
             General Settings
         </div>
+        <div>en</div>
 
         <DualSetting 
             title="Subdomain" 

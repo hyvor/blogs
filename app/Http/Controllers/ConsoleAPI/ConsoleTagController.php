@@ -5,10 +5,9 @@ use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 
 use App\Domains\Tag\TagRepository;
-use App\Data\Objects\ConsoleAPI\TagObject;
+use App\Data\Objects\ConsoleAPI\Tag\TagObject;
 use App\Models\Blog;
 use App\Domains\Post\PostTagRepository;
-
 class ConsoleTagController extends Controller {
 
     /*
@@ -26,11 +25,17 @@ class ConsoleTagController extends Controller {
         
         $limit = $request->input('limit');
         $offset = $request->input('offset') ?? 0;
+        // $languageId = $request->input('languageId');
+        // $languageId = 1;
 
         $getData = TagRepository::getTags($blog->id, $limit, $offset)
-                ->map(function ($tags) {
-                return new TagObject($tags);
+                // ->map(function ($tags, $blog) {
+                // return new TagObject($tags, $blog);
+                ->map(function ($tags) use ($blog) {
+                    return new TagObject($tags, $blog);
             });
+
+        // $getData = TagRepository::getTags($blog->id, $limit, $offset);
         return response()->json($getData);
     }
 
@@ -41,6 +46,8 @@ class ConsoleTagController extends Controller {
         //     'slug' => 'required|string',
         //     'description' => 'required|int',
         // ]);
+
+        dd('hello world');
 
         $name = $request->input('name');
         $slug = $request->input('slug');
@@ -57,7 +64,7 @@ class ConsoleTagController extends Controller {
 
     public static function updateTag(Request $request, Blog $blog)
     {
-        // dd('test');
+        dd('test');
         // $request->validate([
         //     'name' => 'required|string',
         //     'slug' => 'required|string',
@@ -85,7 +92,7 @@ class ConsoleTagController extends Controller {
 
     public static function deleteTag(Request $request)
     {
-        // dd('test');
+        dd('test');
         $id = $request->route('tagId');
         $deleteTag = TagRepository::deleteTag($id);
 

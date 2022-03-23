@@ -26,6 +26,7 @@ class CreateUsersTable extends Migration
             $table->enum('role', ['owner', 'admin', 'editor', 'writer', 'contributor', 'finance']);
 
             // user data
+            // name, bio, location should be deleted later.
             $table->string('slug');
             $table->string('name', 50);
             $table->string('email');

@@ -17,7 +17,12 @@ const tagsLogic = kea({
 
     ajax: ({ values, actions, props }) => ({ 
 
-        load: async ({offset = 0, type}) => {
+        load: async ({offset = 0, type, languageId}) => {
+            // console.log(languageId)
+            // const tag =  await api.get(props.subdomain, '/tags', {
+            //     languageId :languageId,
+            //     // languageId : 1,
+            // });
             const tag =  await api.get(props.subdomain, '/tags');
             actions.setTagsListHasMore(tag.length === 50);
             actions.setTagList(tag);
@@ -36,7 +41,8 @@ const tagsLogic = kea({
             await api.delete(props.subdomain, `/tag/${id}`);
         },
             
-        create: async ({name, description, slug}) => {
+        create: async ({name, description, slug, language}) => {
+            // console.log(language)
             const tag = await api.post(props.subdomain, '/tag', {
                 name: name,
                 description: description,

@@ -257,6 +257,22 @@ function Users (){
         setDeletePopupOpened(false)
     }
 
+    // If the user is an hyvor userType
+    const [isChecked, setIsChecked] = useState(0);
+    const [checkboxEvent, setCheckBoxEvent] = useState('pointerEvent');
+
+    function onCheckChange(){
+        setIsChecked(1);
+
+        if(isChecked == 0){
+            setCheckBoxEvent()
+        }
+    
+        if(isChecked == 1){
+            setCheckBoxEvent('pointerEvent');
+        }
+    }
+
     return <div>
         <div className="global-table-body">
             <div className="table-body-five">
@@ -275,7 +291,7 @@ function Users (){
                         {
                             updatePopUpOpened ?
 
-                                userType == 'guest' ?
+                                userType == 'hyvor' ?
 
                                     <div className="popup-width">
                                         <Popup
@@ -425,33 +441,47 @@ function Users (){
                                             body={
                                                 <PopupBodyDefault>
                                                     <div>
-                                                        <ProfileImage/>
+                                                            <div className="isSynced">
+                                                                <input 
+                                                                    type="checkbox" 
+                                                                    name="topping" 
+                                                                    // value={isChecked} 
+                                                                    checked={isChecked}  
+                                                                    onChange={onCheckChange} 
+                                                                />
+                                                                is_synced
+                                                            </div>
 
-                                                        <Input 
-                                                            title="User Name"
-                                                            type="text"
-                                                            name="name"
-                                                            // value={name}
-                                                            // onChange={setName}
-                                                            placeholder="Tag name"
-                                                        />
-                                                        <Input 
-                                                            title="Slug"
-                                                            type="text"
-                                                            name="url"
-                                                            // value={slug}
-                                                            // onChange={setSlug}
-                                                            placeholder="SLug"
-                                                        />
+                                                        <div className={checkboxEvent}>
+                                                            <ProfileImage/>
 
-                                                        <Input 
-                                                            title="Description"
-                                                            type="text"
-                                                            name="description"
-                                                            // value={description}
-                                                            // onChange={setDescription}
-                                                            placeholder="Description"
-                                                        />
+                                                            <Input 
+                                                                title="User Name"
+                                                                type="text"
+                                                                name="name"
+                                                                // value={name}
+                                                                // onChange={setName}
+                                                                placeholder="User name"
+                                                            />
+                                                            <Input 
+                                                                title="Slug"
+                                                                type="text"
+                                                                name="url"
+                                                                // value={slug}
+                                                                // onChange={setSlug}
+                                                                placeholder="Slug"
+                                                            />
+
+                                                            <Input 
+                                                                title="Description"
+                                                                type="text"
+                                                                name="description"
+                                                                // value={description}
+                                                                // onChange={setDescription}
+                                                                placeholder="Description"
+                                                            />
+                                                        </div>
+
                                                     </div>
                                                 </PopupBodyDefault>
                                             }

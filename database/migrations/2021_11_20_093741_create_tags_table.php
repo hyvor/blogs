@@ -20,19 +20,17 @@ class CreateTagsTable extends Migration
             // connections
             $table->bigInteger('blog_id')->index();
 
-            // data
-            $table->string('name');
             $table->string('slug');
-            $table->string('description')->nullable();
 
             $table->integer('posts_count')->default(0); 
 
             $table->text('code_head')->nullable();
             $table->text('code_foot')->nullable();
 
-
             $table->unique(['blog_id', 'slug']);
-        });
+
+
+        }); 
     }
 
     /**

@@ -91,4 +91,32 @@
     .popup-type-margin{
         margin-bottom: 5px;
     }
+
+    .isSynced{
+        text-align: right;
+        margin-top: 15px;
+
+        input[type="checkbox"]{
+            position: relative;
+            top: -1px;
+            width: 12px;
+            height: 12px;
+            margin: -1px 0px 0 0;
+            vertical-align: middle;
+            background: white left top no-repeat;
+            border: 1px solid #ccc;
+            cursor: pointer;
+          }
+          input[type="checkbox"]:checked {
+            background: #D9534F -19px top no-repeat;
+          }
+          
+          input[type="checkbox"] {
+            margin-right: 4px;
+          }
+    }
+
+    .pointerEvent{
+        pointer-events: none;
+    }
 }

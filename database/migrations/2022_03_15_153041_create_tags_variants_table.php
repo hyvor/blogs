@@ -15,18 +15,20 @@ return new class extends Migration
     {
         Schema::create('tags_variants', function (Blueprint $table) {
             $table->id();
-            $table->timestamps();
 
             // connections
-            $table->bigInteger('blog_id')->index();
+            $table->bigInteger('tag_id')->index();
             $table->bigInteger('language_id')->index();
 
             // data
             $table->string('name');
-            $table->string('slug');
-            $table->string('description')->nullable();
+            $table->string('description')->nullable(); 
 
-            $table->integer('posts_count')->default(0); 
+            $table->timestamps();
+
+            // $table->string('updated_a')->index();
+            // $table->string('created_at')->index();
+
         });
     }
 

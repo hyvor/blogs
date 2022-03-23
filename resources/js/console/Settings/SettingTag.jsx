@@ -5,21 +5,24 @@ import {toast} from 'react-toastify'
 import subdomainLogic from '../logic/subdomainLogic';
 import tagsLogic from '../logic/tagsLogic';
 import Loader from '../ReusableComponents/Loader';
-import Select from '../ReusableComponents/Select';
 import Toast from '../ReusableComponents/Toast';
 import NoResults from '../ReusableComponents/NoResults';
 import Input from '../ReusableComponents/Input';
 import { Popup, PopupBodyDefault, PopupConfirm, PopupFooterDoubleButton, PopupHeaderDefault } from '../ReusableComponents/Popup';
-import CodemirrorEditor, { CODEMIRROR_MODES } from '../ReusableComponents/CodemirrorEditor';
 import DualSetting from '../ReusableComponents/DualSetting';
-
+import languagesLogic from '../logic/languagesLogic';
+import ReactSelect, { components } from 'react-select';
+import CodemirrorEditor, { CODEMIRROR_MODES } from '../ReusableComponents/CodemirrorEditor';
 
 
 export default function SettingTag(props) {
     const subdomain = subdomainLogic.values.subdomain;
     const tagsLogicBuilt = tagsLogic({subdomain})
     const { tag, loadAjax, createAjax, tagListHasMore, loadTagsListMoreAjax } = useValues(tagsLogicBuilt)
-    const { loadTagsListMore} = useActions(tagsLogicBuilt)
+    const { loadTagsListMore, load} = useActions(tagsLogicBuilt)
+
+    const languageLogicInst = languagesLogic({subdomain});
+    const { languages } = useValues(languageLogicInst);
 
     function handleScroll(e) {
         var el = e.target;
@@ -50,6 +53,19 @@ export default function SettingTag(props) {
                 }
             </div>
         </div>
+
+        {/* {
+            languages > 1 ? null :
+                <div className = "language-select">
+                    {
+                        languages.map(lang => (
+                            <div>
+                                <LanguageSelect id = {lang.id} code = {lang.code} name = {lang.name}/>
+                            </div>
+                        ))
+                    }
+                </div>
+        } */}
 
         <div>
         {
@@ -126,7 +142,16 @@ function CreateNewTag(){
     const tagLogicBuilt = tagsLogic({subdomain})
     const { create } = useActions(tagLogicBuilt)  
 
+    // const languageLogicInst = languagesLogic({subdomain});
+    // const { languages } = useValues(languageLogicInst);
+
     const [createPopUpOpened, setCreatePopUpOpened] = useState(false);
+
+    // const selectOptions = [
+    //     { label: 'Permanent', value: '301' },
+    //     { label: 'Temporary', value: '302'}
+    // ]; 
+
 
     function handleCreateCancel(){
         setCreatePopUpOpened(false)
@@ -139,6 +164,7 @@ function CreateNewTag(){
     const [ name, setName ] = useState();
     const [ description, setDescription ] = useState();
     const [ slug, setSlug ] = useState();
+
 
     function onNameChange(val) {
         setName(val);
@@ -164,16 +190,31 @@ function CreateNewTag(){
         }
     }
 
+    // const [ language, setLanguage ] = useState({language: ""});
+
+    // const selectOptions =  languages.map(lang => (
+    //     {label: lang.name , value: lang.id}
+    // ))
+
+    // function handleType({value}){
+    //     setLanguage({...language, 
+    //         language: value
+    //     })
+    //     console.log(value)
+    // }
+
     function submitTag (e) {
         e.preventDefault();
         create({
             name: name,
             description: description,
             slug: slug,
+            // language: language.language,
         });
         setName();
         setDescription();
         setSlug();
+        // setLanguage();
         setCreatePopUpOpened(false)
     }
 
@@ -220,6 +261,10 @@ function CreateNewTag(){
                                     onChange={setDescription}
                                     placeholder="Description"
                                 />
+                                {/* <div>
+                                    <div className="popup-type-margin">Role</div>
+                                    <SelectLanguage  options = {selectOptions}  onChange={handleType}/>
+                                </div> */}
                             </div>
                         </PopupBodyDefault>
                     }
@@ -237,6 +282,7 @@ function CreateNewTag(){
 }
 
 function Tags ({id, name, description, slug, codeHead, codeFoot}) {
+
     const [styleUpdateIcon, setStyleUpdateIcon] = useState("table-button");
     const [styleDeleteIcon, setStyleDeleteIcon] = useState("table-button");
     const [styleCodeIcon, setStyleCodeIcon] = useState("table-button");
@@ -401,7 +447,12 @@ function Tags ({id, name, description, slug, codeHead, codeFoot}) {
                         {
                             updatePopUpOpened ?
                                 <Popup
-                                    header={<PopupHeaderDefault title='Update Tag' />}
+                                    header={
+                                        <div>
+                                            <div>en</div>
+                                            <PopupHeaderDefault title='Update Tag' />
+                                        </div>
+                                    }
                                     body={
                                     <PopupBodyDefault>
                                         <div>
@@ -443,7 +494,7 @@ function Tags ({id, name, description, slug, codeHead, codeFoot}) {
                             : null
                         }
                     </div>
-                    <div className="table-delete">
+                    {/* <div className="table-delete">
                         <span className={styleDeleteIcon} onClick={handleDelete}>
                             <Trash size={10} />
                         </span>
@@ -459,7 +510,7 @@ function Tags ({id, name, description, slug, codeHead, codeFoot}) {
                                 />
                             : null
                         }
-                    </div>
+                    </div> */}
                     <div className="table-view">
                         <span className='table-button'>
                             <BoxArrowInRight size={10} />
@@ -469,4 +520,120 @@ function Tags ({id, name, description, slug, codeHead, codeFoot}) {
             </div>
         </div>
     </div>
+}
+
+// function LanguageSelect ({id, code, name}) {
+//     const { subdomain } = useValues(subdomainLogic);
+    
+
+//     const tagsLogicBuilt = tagsLogic({subdomain})
+//     const { load } = useActions(tagsLogicBuilt)
+
+//     const [languageButtonStyle, setLanguageButtonStyle] = useState("language-code");
+
+//     function languageSelect(){
+//         setLanguageButtonStyle('language-code-selected')
+//         load({ languageId: id})
+//     }
+
+//     return <div>
+//         <div className = {languageButtonStyle} onClick={languageSelect}>
+//             {code} 
+//         </div>
+//     </div>
+
+// }
+
+function SelectLanguage({options, onChange, defaultValue}) {
+    
+    const customStyles = {
+
+        control: (provided) => ({
+            ...provided,
+            width: '100%',
+            fontSize: '12px',
+            // padding: '3px 5px',
+            borderRadius: '20px',
+            border: 'none',
+            background: '#f5f5f5',
+            fontFamily: 'inherit',
+            transition:' 0.3s box-shadow',
+            alignItems: 'center',
+            height: '20px',
+            overflowX: 'auto',
+        }),
+
+        valueContainer: (base, state) => ({
+            ...base,
+            fontFamily: 'Helvetica, sans-serif !important',
+            fontSize: 12,
+            fontWeight: 500,
+            color: '#000',
+            paddingLeft: '15px',
+            paddingRight: '15px',
+            display: 'flex',
+            // paddingTop: '-20px',
+            // paddingBottom: '-20px',
+
+        }),
+
+        option: (provided, state) => ({
+            ...provided,
+            color: '#000',
+            backgroundColor: state.isSelected ? '#f1e8e8' : '#fff',
+            width: '95%',
+            display: 'flex',
+            minHeight: 'initial',
+            borderRadius: '20px',
+            border: 'none',
+            transition: '0.3s box-shadow',
+            margin:'10px',
+            '&:hover': {
+                backgroundColor: '#f1e8e8',
+            },
+        }),
+
+        singleValue: (provided, state) => {
+            const opacity = state.isDisabled ? 0.5 : 1;
+            const transition = 'opacity 300ms';
+        
+            return { ...provided, opacity, transition };
+        },
+
+        dropdownIndicator: (base) => ({
+            ...base,
+            display:'none',
+        }),
+
+        clearIndicator: (base) => ({
+            ...base,
+            display:'none',
+        }),
+
+        indicatorSeparator:(base)=>({
+            ...base,
+            display:'none',
+          }),
+      }
+
+    function handleTag(data){
+        
+        const lastValue = data[data.length - 1];
+        const tagId = lastValue.value
+    }
+    
+    const SelectLanguage = () => (
+        <ReactSelect
+            defaultValue={defaultValue}
+            styles={customStyles}
+            options={options}
+            maxMenuHeight={150}
+            // onChange={() => {}}
+            onChange={onChange}
+            // isMulti 
+        />
+    );
+
+    return <SelectLanguage/>
+
 }
