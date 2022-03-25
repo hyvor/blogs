@@ -11,7 +11,9 @@ class UsageRepository {
     public static function getUsage(Blog $blog) : array {
 
         $counts = CountRepository::getCounts($blog, [
-            'users', 'posts', 'media'
+            CountEnum::BLOG_USERS,
+            CountEnum::BLOG_POSTS,
+            CountEnum::BLOG_MEDIA
         ]);
 
         $limits = self::getLimits($blog);

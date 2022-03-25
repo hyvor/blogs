@@ -2,6 +2,9 @@
 
 namespace App\Domains\Blog;
 
+use App\Data\Enums\CountEnum;
+use App\Domains\Count\CountRepository;
+use App\Models\Blog;
 use App\Models\Language;
 use App\Models\Post;
 use App\Models\Tag;
@@ -21,47 +24,40 @@ class BlogCountsRepository
     public static function getPostsCounts(int $blogId)
     {
 
-        $status = [];
-        Post::select('status', DB::raw('COUNT(id) as count'))
-            ->groupBy('status')
-            ->where('blog_id', $blogId)
-            ->get()
-            ->map(function ($row) use (&$status) {
-                $status[$row->status] = $row->count;
-            });
+        $postsCounts = CountRepository::getCounts(new Blog, [
+            CountEnum::BLOG_POSTS,
+            CountEnum::BLOG_POSTS_DRAFT,
+            CountEnum::BLOG_POSTS_SCHEDULED,
+            CountEnum::BLOG_POSTS_FEATURED
+        ]);
 
         $featuredCount = Post::where('blog_id', $blogId)
             ->where('is_featured', true)
             ->count();
 
         $authors = User::where('blog_id', $blogId)
+            ->select('users.id', 'users.slug')
+            ->selectRaw(CountRepository::getSubQueryForCount(new User, CountEnum::USER_POSTS, 'posts_count'))
             ->orderBy('posts_count', 'desc')
             ->limit(15)
-            ->select('id', 'slug', 'posts_count')
             ->get();
-
 
         $tags = Tag::where('blog_id', $blogId)
+            ->select('tags.id', 'tags.slug')
+            ->selectRaw(CountRepository::getSubQueryForCount(new Tag, CountEnum::TAG_POSTS, 'posts_count'))
             ->orderBy('posts_count', 'desc')
             ->limit(15)
-            ->select('id', 'slug', 'posts_count')
-            ->get();
-
-        $languages = Language::where('blog_id', $blogId)
-            ->orderBy('created_at', 'asc')
-            ->select('id', 'code')
             ->get();
 
         return [
             'status' => [
-                'draft' => $status['draft'] ?? 0,
-                'published' => $status['published'] ?? 0,
-                'scheduled' => $status['scheduled'] ?? 0,
-                'featured' => $featuredCount
+                'published' =>  $postsCounts[CountEnum::BLOG_POSTS->value],
+                'draft' => $postsCounts[CountEnum::BLOG_POSTS_DRAFT->value],
+                'scheduled' =>  $postsCounts[CountEnum::BLOG_POSTS_SCHEDULED->value],
+                'featured' =>  $postsCounts[CountEnum::BLOG_POSTS->value],
             ],
             'authors' => $authors,
             'tags' => $tags,
-            'languages' => $languages
         ];
     }
 }

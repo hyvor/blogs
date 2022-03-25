@@ -60,14 +60,14 @@ export default function PostsFilters({ filters, changeFilter }) {
         })
         setTagsOptions(tagsCopy);
 
-        const languagesCopy = []
+        /* const languagesCopy = []
         counts.languages.forEach(({id, code}) => {
             languagesCopy.push({
                 value: id,
                 label: code
             });
         });
-        setLanguageOptions(languagesCopy);
+        setLanguageOptions(languagesCopy); */
 
     }, [counts]);
 
