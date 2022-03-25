@@ -19,9 +19,9 @@ class UsageRepository {
         $limits = self::getLimits($blog);
 
         return [
-            'users' => new UsageObject($counts['users'], $limits['users']),
-            'posts' => new UsageObject($counts['posts'], $limits['posts']),
-            'media' => new UsageObject($counts['media'], $limits['media']),
+            'users' => new UsageObject($counts[ CountEnum::BLOG_USERS->value ], $limits['users']),
+            'posts' => new UsageObject($counts[ CountEnum::BLOG_POSTS->value ], $limits['posts']),
+            'media' => new UsageObject($counts[ CountEnum::BLOG_MEDIA->value ], $limits['media']),
         ];
 
     }

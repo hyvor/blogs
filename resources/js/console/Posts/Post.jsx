@@ -348,6 +348,7 @@ export default function Post( {subdomain, id} ) {
                     <Editor 
                         id={id}
                         value={content}
+                        currentLanguageId={currentLanguageId}
                         onChange={v => handleContentUpdate(v)}
                         editable={variant.status === 'draft' || nonDraftPostEditing}
                     />
