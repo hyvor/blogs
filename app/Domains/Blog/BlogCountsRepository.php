@@ -43,7 +43,7 @@ class BlogCountsRepository
             ->get();
 
         $tags = Tag::where('blog_id', $blogId)
-            ->select('tags.id', 'tags.slug')
+            ->select('tags.id', 'tags.name')
             ->selectRaw(CountRepository::getSubQueryForCount(new Tag, CountEnum::TAG_POSTS, 'posts_count'))
             ->orderBy('posts_count', 'desc')
             ->limit(15)

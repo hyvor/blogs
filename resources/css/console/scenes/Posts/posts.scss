@@ -167,16 +167,6 @@
 
         .post-languages {
             margin-top: 8px;
-            .post-lang-tag {
-                display: inline-block;
-                padding: 0px 8px;
-                font-size: 12px;
-                background: $color-text-medium;
-                color: $color-text-white;
-                border-radius: 20px;
-                margin-right: 3px;
-                font-weight: 600;
-            }
         }
 
         .post-tags-wrap {
@@ -186,6 +176,13 @@
 
         .post-tags {
             flex:1;
+        }
+        .post-tag {
+            font-size: 11px;
+            background: $color-input;
+            padding: 2px 7px;
+            border-radius: 20px;
+            font-weight: 600;
         }
     }
 

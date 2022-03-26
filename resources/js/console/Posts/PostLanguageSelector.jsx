@@ -1,5 +1,5 @@
 import React from 'react'
-import { Check, Clock, Dot, Plus } from 'react-bootstrap-icons';
+import { Check, Clock, Dot, Pencil, Plus } from 'react-bootstrap-icons';
 
 export default function PostLanguageSelector({ languages, variants, currentLanguageId, onChange, onCreate }) {
 
@@ -41,4 +41,16 @@ export default function PostLanguageSelector({ languages, variants, currentLangu
 
     </div>
 
+}
+
+export function getLangTagIconByPostStatus(status) {
+    let icon;
+    if (status === 'published') {
+        icon = <Check />
+    } else if (status === 'scheduled') {
+        icon = <Clock size={9} />
+    } else if (status === 'draft') {
+        icon = <Pencil size={7} />
+    }
+    return icon;
 }

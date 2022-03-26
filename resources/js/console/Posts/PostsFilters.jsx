@@ -52,10 +52,10 @@ export default function PostsFilters({ filters, changeFilter }) {
         setAuthorsOptions(authorsCopy);
 
         const tagsCopy = [...tagsOptions]
-        counts.tags.forEach(({id, slug, posts_count}) => {
+        counts.tags.forEach(({id, name, posts_count}) => {
             tagsCopy.push({
                 value: id,
-                label:  <FilterLabel name={"#" + slug} count={posts_count} />,
+                label:  <FilterLabel name={name} count={posts_count} />,
             })
         })
         setTagsOptions(tagsCopy);
