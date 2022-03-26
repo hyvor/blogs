@@ -51,7 +51,7 @@ return [
         ['self-hosting-delivery-api', 'Using Delivery API'],
         ['self-hosting-builds', 'Using builds']
     ],
-    'Legal' => [
+    'Platform & Legal' => [
         ['terms', 'Terms'],
         ['privacy', 'Privacy Policy'],
     ]
