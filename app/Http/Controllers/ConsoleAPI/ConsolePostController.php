@@ -19,26 +19,41 @@ class ConsolePostController extends Controller
     {
 
         $request->validate([
-            'filters' => 'required|json'
+            'status' => 'string',
+            'author_id' => 'integer',
+            'tag_id' => 'integer',
+            
         ]);
 
         $filters = json_decode($request->input('filters'));
 
-        $language = LanguageRepository::getLanguageById($blog, $filters->language_id);
+        $status = $request->input('status');
+        $authorId = $request->input('author_id');
+        $tagId = $request->input('tag_id');
+
+        $startTimestamp = $request->input('start_timestamp');
+        $endTimestamp = $request->input('end_timestamp');
+        $search = $request->input('search');
+
+        $limit = 50;
+        $offset = $request->input('offset') ?? 0;
 
         $posts = PostRepository::getPosts(
 
             $blog,
-            $language,
-            (new PostsFilterParam())
-                ->setStatus($filters->status === 'all' ? null : $filters->status)
-                ->setAuthorId($filters->author === 'all' ? null : $filters->author)
-                ->setTagId($filters->tag === 'all' ? null : $filters->tag)
-                ->setStartTimestamp($filters->dateStart)
-                ->setEndTimestamp($filters->dateEnd)
-                ->setSearch($filters->search),
-            $request->input('limit'),
-            $request->input('offset') ?? 0
+
+            $status,
+
+            $authorId,
+            $tagId,
+
+            $startTimestamp,
+            $endTimestamp,
+
+            $search,
+
+            $limit,
+            $offset
 
         )->map(function ($post) use ($blog) {
 

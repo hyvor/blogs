@@ -39,9 +39,7 @@ const postsLogic = kea({
          */
         loadPostsList: async () => {
             const filters = values.filters
-            const posts = await api.get(props.subdomain, '/posts', {
-                filters
-            });
+            const posts = await api.get(props.subdomain, '/posts', getPostParamsFromFilters(filters));
             posts.forEach(post => {
                 const builtPostLogic = postLogic.build({id: post.id, data: post}, false);
                 builtPostLogic.mount();
@@ -50,10 +48,9 @@ const postsLogic = kea({
             actions.setPostsList(posts.map(val => val.id))
         },
         loadPostsListMore: async ({offset}) => {
-            const response = await api.get(props.subdomain, '/posts', {
-                filters: values.filters,
-                offset
-            });
+            const response = await api.get(props.subdomain, '/posts', 
+                {...getPostParamsFromFilters(filters), offset}
+            );
             response.forEach(post => {
                 const builtPostLogic = postLogic.build({id: post.id, data: post}, false);
                 builtPostLogic.mount();
@@ -91,13 +88,14 @@ const postsLogic = kea({
         }],
 
         filters: [
+            // these are sent to the backend
             {
                 status: 'all',
                 author: 'all',
                 tag: 'all',
-                language_id: blogsLogic.values.findBlogBySubdomain(props.subdomain).blog.default_language.id,
-                dateStart: null,
-                dateEnd: null,
+                languageId: blogsLogic.values.findBlogBySubdomain(props.subdomain).blog.default_language.id,
+                startDate: null,
+                endDate: null,
                 search: ''
             },
             {
@@ -116,3 +114,14 @@ const postsLogic = kea({
 })
 
 export default postsLogic
+
+function getPostParamsFromFilters(filters) {
+    return {
+        status: filters.status === 'all' ? null : filters.status,
+        author_id: filters.author === 'all' ? null : filters.author,
+        tag_id: filters.tag === 'all' ? null : filters.tag,
+        start_timestamp: null,
+        end_timestamp: null,
+        search: null
+    }
+}
