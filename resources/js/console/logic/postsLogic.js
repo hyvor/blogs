@@ -1,3 +1,4 @@
+import dayjs from "dayjs";
 import { kea } from "kea";
 import api from "../lib/api";
 import blogsLogic from "./blogsLogic";
@@ -99,7 +100,13 @@ const postsLogic = kea({
                 search: ''
             },
             {
-                changeFilter: (state, {name, value}) => ({...state, ...{[name]: value}})
+                changeFilter: (state, {name, value}) => {
+                    if (typeof name === 'object') {
+                        return {...state, ...name}
+                    } else {
+                        return {...state, ...{[name]: value}}
+                    }
+                }
             }
         ]
 
@@ -120,8 +127,8 @@ function getPostParamsFromFilters(filters) {
         status: filters.status === 'all' ? null : filters.status,
         author_id: filters.author === 'all' ? null : filters.author,
         tag_id: filters.tag === 'all' ? null : filters.tag,
-        start_timestamp: null,
-        end_timestamp: null,
+        start_timestamp: filters.startDate ? dayjs(filters.startDate).unix() : null,
+        end_timestamp: filters.endDate ? dayjs(filters.endDate).unix() : null,
         search: null
     }
 }

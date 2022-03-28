@@ -22,7 +22,8 @@ class ConsolePostController extends Controller
             'status' => 'string',
             'author_id' => 'integer',
             'tag_id' => 'integer',
-            
+            'start_timestamp' => 'integer',
+            'end_timestamp' => 'integer',
         ]);
 
         $filters = json_decode($request->input('filters'));

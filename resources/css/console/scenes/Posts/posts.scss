@@ -61,28 +61,32 @@
                 text-transform: uppercase;
                 font-size: 8px;
             }
-        }
-        .post-search-and-lang {
-            margin-top: 6px;
-            font-size: 12px;
-            display:flex;
-            .post-search {
-                flex:3;
-                input {
-                    padding: 7px 15px;
-                    line-height: 14px;
+            .posts-filter-select-wrap {
+                display:flex;
+                align-items: center;
+                .react-select {
+                    flex:1;
                 }
             }
-            /* .post-lang {
-                flex:1;
-                .posts-filter-name {
-                    display:none;
+            .custom-date {
+                margin-left: 4px;
+                .react-datepicker {
+                    position: absolute;
+                    z-index: 1;
+                    margin-top: 8px;
                 }
-                .posts-filter {
-                    margin-right:0;
-                    margin-left:3px;
+                .custom-date-icon {
+                    cursor: pointer;
                 }
-            } */
+            }
+        }
+        .post-search {
+            margin-top: 6px;
+            font-size: 12px;
+            input {
+                padding: 7px 15px;
+                line-height: 14px;
+            }
         }
     }
 

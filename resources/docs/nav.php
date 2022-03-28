@@ -54,6 +54,9 @@ return [
     'Platform & Legal' => [
         ['terms', 'Terms'],
         ['privacy', 'Privacy Policy'],
+    ],
+    'Misc' => [
+        ['oss', 'Open Source'],
     ]
 
 ];

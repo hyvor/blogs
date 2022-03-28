@@ -83,8 +83,16 @@ class PostRepository
                 });
             })
             ->when($startTimestamp && $endTimestamp, function ($query) use ($startTimestamp, $endTimestamp) {
-                $query->whereDate('created_at', '>', $startTimestamp)
-                    ->whereDate('created_at', '<', $endTimestamp);
+                $query
+                    ->whereRaw(
+                        '
+                            COALESCE(posts.published_at, posts.created_at) > ? AND
+                            COALESCE(posts.published_at, posts.created_at) < ?
+                        ',
+                        [
+                            Carbon::createFromTimestamp($startTimestamp)->toDateTimeString(),
+                            Carbon::createFromTimestamp($endTimestamp)->toDateTimeString()
+                        ]);
             })
             ->when($status, function ($query) use ($status) {
                 if ($status === 'featured') {
