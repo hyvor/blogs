@@ -39,33 +39,37 @@ class UserRepository
         array $userData = [],
     ): User {
 
-        if ($hyvorUserId) {
-            $user = Userbase::fromId($hyvorUserId, false, true);
+        // This is the place where I got the ( cURL error 6: Could not resolve host: api ) Error so I had to comment it.
+        // if ($hyvorUserId) {
+        //     $user = Userbase::fromId($hyvorUserId, false, true);
 
-            if (!$user) {
-                throw new TrustedException("User not found");
-            }
+        //     if (!$user) {
+        //         throw new TrustedException("User not found");
+        //     }
 
-            $userData = [
-                'name' => $user->name,
-                'email' => $user->email,
-                'picture' => $user->picture,
-                'location' => $user->location,
-                'bio' => $user->bio,
-                'url' => $user->url
-            ];
-        }
+        //     $userData = [
+        //         'name' => $user->name,
+        //         'email' => $user->email,
+        //         'picture' => $user->picture,
+        //         'location' => $user->location,
+        //         'bio' => $user->bio,
+        //         'url' => $user->url
+        //     ];
+        // }
 
-        $slug = self::findSlugForUser($blogId, $userData);
+        // $slug = self::findSlugForUser($blogId, $userData);
 
         $user = User::create([
             'blog_id' => $blogId,
-            'slug' => $slug,
+            // 'slug' => $slug,
+            'slug' => 'test',
             'user_id' => $hyvorUserId,
             'status' => $status->value,
             'role' => $role->value,
-            'name' => $userData['name'],
-            'email' => $userData['email'],
+            // 'name' => $userData['name'],
+            'name' => 'test',
+            // 'email' => $userData['email'],
+            'email' => 'test@test.com',
             'picture' => $userData['picture'] ?? null,
             'location' => $userData['location'] ?? null,
             'bio' => $userData['bio'] ?? null,
@@ -91,6 +95,27 @@ class UserRepository
         }
 
         $user->delete();
+    }
+
+        
+    /*
+    *
+    * these functions are for author Variants
+    *
+    */
+    public static function createAuthorVariant() {
+
+        return 'create Author';
+    }
+
+    public static function updateAuthorVariant()
+    {
+       return 'update author';
+    }
+
+    public static function deleteAuthorVariant()
+    {
+       return 'delete author';
     }
 
     /**

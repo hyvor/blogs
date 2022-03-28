@@ -9,6 +9,10 @@ class TagsVariant extends Model
 {
     use HasFactory; 
 
+    protected $table = 'tags_variants';
+
+    public $timestamps = false;
+
 
     public function tag()
     {

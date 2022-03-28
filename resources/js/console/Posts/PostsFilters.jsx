@@ -67,7 +67,7 @@ export default function PostsFilters({ filters, changeFilter }) {
                 label: code
             });
         });
-        setLanguageOptions(languagesCopy);
+        // setLanguageOptions(languagesCopy);
 
     }, [counts]);
 

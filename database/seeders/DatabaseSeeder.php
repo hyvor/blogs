@@ -19,6 +19,9 @@ use App\Models\User;
 use Illuminate\Support\Str;
 use Illuminate\Database\Seeder;
 
+use Illuminate\Http\Client\ConnectionException;
+
+
 class DatabaseSeeder extends Seeder
 {
     /**
@@ -48,8 +51,6 @@ class DatabaseSeeder extends Seeder
 
             $secondLanguage = LanguageRepository::createLanguage($blog, 'fr', 'French');
 
-            // RedirectRepository::createRedirect($blog->id, '/redirects', 'https://example.com');
-
 
             $tags = [];
             $tagsVariant = [];
@@ -65,9 +66,11 @@ class DatabaseSeeder extends Seeder
                     'tag_id' => 1,
                     'language_id' => $language->id,
                     'name' => $name,
-                    // 'slug' => Str::slug($name),
                 ]);
             }
+
+
+
 
             $posts = [];
             foreach (range(0, 200) as $i) {
@@ -142,6 +145,10 @@ class DatabaseSeeder extends Seeder
                 ]);
             }
 
+
+
+
+
             foreach (range(0, 15) as $i) {
                 /* Media::create([
                     'blog_id' => $blog->id,
@@ -151,6 +158,10 @@ class DatabaseSeeder extends Seeder
                     'extension' => 'jpg'
                 ]); */
             }
+
+
+
+
         
         }
 

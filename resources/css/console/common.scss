@@ -442,31 +442,57 @@ textarea.input {
     }
 }
 
-.language-select{
+// .language-select{
+//     display: flex;
+//     align-items: center;
+//     justify-content: center;
+//     margin-bottom: 5px;
+
+//     @mixin language-common {
+//         padding: 3px 7px 3px 7px;
+//         border-radius: 20px;
+//         margin-right: 5px;
+//         border: 2px solid #e3cecd;
+//         cursor: pointer;
+//         font-size: 12px;
+//     }
+
+//     .language-code{
+//         @include language-common;
+//         background-color: $color-box;
+//     }
+
+//     .language-code-selected{
+//         @include language-common;
+//         // background-color: $color-accent;
+//         // color: $color-box;
+//         background-color: $color-box;
+//     }
+// }
+
+.global-languages-list{
+    margin-top: -10px;
     display: flex;
     align-items: center;
     justify-content: center;
-    margin-bottom: 5px;
-
-    @mixin language-common {
-        padding: 3px 7px 3px 7px;
-        border-radius: 20px;
-        margin-right: 5px;
-        border: 2px solid #e3cecd;
-        cursor: pointer;
+    
+    .lang-tag {
+        display: inline-block;
+        padding: 1px 9px;
+        margin-right: 3px;
+        background: $color-input;
+        font-weight: 600;
         font-size: 12px;
-    }
+        border-radius: 20px;
+        cursor:pointer;
 
-    .language-code{
-        @include language-common;
-        background-color: $color-box;
-    }
-
-    .language-code-selected{
-        @include language-common;
-        // background-color: $color-accent;
-        // color: $color-box;
-        background-color: $color-box;
+        .status-icon {
+            margin-left:5px;
+        }
+        
+        &.active {
+            background: $color-accent-light;
+        }
     }
 }
 

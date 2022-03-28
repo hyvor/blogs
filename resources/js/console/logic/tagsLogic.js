@@ -10,19 +10,19 @@ const tagsLogic = kea({
     actions: {
         setTagList: (tag) => ({tag}),
         setTagsListHasMore: (has) => ({has}),
-        removeFromList: (id) => ({id}),
+        // removeFromList: (id) => ({id}),
         addTag: (tag) => ({tag}),
         updateTag: (tag) => ({tag}),
+
+        setVariantList: (tagVariant) => ({tagVariant}),
+        removeVariantList: (id) => ({id}),
+        addTagVarian: (tagVariant) => ({tagVariant}),
+        updateTagVarian: (tagVariant) => ({tagVariant}),
     },
 
     ajax: ({ values, actions, props }) => ({ 
 
-        load: async ({offset = 0, type, languageId}) => {
-            // console.log(languageId)
-            // const tag =  await api.get(props.subdomain, '/tags', {
-            //     languageId :languageId,
-            //     // languageId : 1,
-            // });
+        load: async ({offset = 0, type}) => {
             const tag =  await api.get(props.subdomain, '/tags');
             actions.setTagsListHasMore(tag.length === 50);
             actions.setTagList(tag);
@@ -36,14 +36,13 @@ const tagsLogic = kea({
             actions.setTagList([...values.tag, ...response])
         },
 
-        remove: async ({id}) => {
-            actions.removeFromList(id);
-            await api.delete(props.subdomain, `/tag/${id}`);
-        },
+        // remove: async ({id}) => {
+        //     actions.removeFromList(id);
+        //     await api.delete(props.subdomain, `/tag/${id}`);
+        // },
             
-        create: async ({name, description, slug, language}) => {
-            // console.log(language)
-            const tag = await api.post(props.subdomain, '/tag', {
+        create: async ({name, description, slug}) => {
+            const tag = await api.post(props.subdomain, '/tags', {
                 name: name,
                 description: description,
                 slug: slug,
@@ -59,7 +58,48 @@ const tagsLogic = kea({
                 codeHead: codeHead,
                 codeFoot: codeFoot,
             });
-            actions.addTag(tag);
+            actions.updateTag(tag);
+        },
+
+        // tag variant sections
+        loadVariant: async ({tagId, languageId}) => {
+            console.log(tagId)
+            console.log(languageId)
+            const tagVariant = await api.get(props.subdomain, '/tagVariant', {
+                tagId: tagId,
+                languageId: languageId,
+            })
+            actions.setVariantList(tagVariant);
+        },
+
+        removeVariant: async ({tagId, languageId}) => {
+            // console.log(tagId)
+            // console.log(languageId)
+            const tagVariant = await api.delete(props.subdomain, '/tagVariant', {
+                tagId: tagId,
+                languageId: languageId,
+            })
+            actions.removeVariantList(tagVariant);
+        },
+            
+        createVariant: async ({tagId, languageId}) => {
+            // console.log(tagId)
+            // console.log(languageId)
+            const tagVariant = await api.post(props.subdomain, '/tagVariant', {
+                tagId: tagId,
+                languageId: languageId,
+            })
+            actions.addTagVarian(tagVariant);
+        },
+            
+        updateDataVariant: async ({tagId, languageId, name, description}) => {
+            const tagVariant = await api.put(props.subdomain, '/tagVariant', {
+                tagId: tagId,
+                languageId: languageId,
+                name: name,
+                description: description,
+            });
+            actions.updateTagVarian(tagVariant);
         },
 
     }),
@@ -68,7 +108,7 @@ const tagsLogic = kea({
 
         tag: [[], {
             setTagList: (_, {tag}) => tag,
-            removeFromList: (state, {id}) => state.filter(m => m.id !== id),
+            // removeFromList: (state, {id}) => state.filter(m => m.id !== id),
             addTag: (state, {tag}) => [tag, ...state],
             updateTag:(state, {tag}) => state.map(
                 stateTag => stateTag.id === tag.id ? tag : stateTag
@@ -76,6 +116,15 @@ const tagsLogic = kea({
         }],
         tagListHasMore: [false, {
             setTagsListHasMore: (_, {has}) => has 
+        }],
+        tagVariant: [[], {
+            setVariantList: (_, {tagVariant}) => tagVariant,
+            removeVariantList: (state, {id}) => state.filter(m => m.id !== id),
+            addTagVarian: (state, {tagVariant}) => [tagVariant, ...state],
+            
+            updateTagVarian:(state, {tagVariant}) => state.map(
+                stateTagVariant => stateTagVariant.id === tag.id ? tagVariant : stateTagVariant
+            ),
         }],
     },
 

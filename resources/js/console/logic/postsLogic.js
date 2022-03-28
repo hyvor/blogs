@@ -42,6 +42,8 @@ const postsLogic = kea({
             const posts = await api.get(props.subdomain, '/posts', {
                 filters
             });
+            console.log(filters)
+
             posts.forEach(post => {
                 const builtPostLogic = postLogic.build({id: post.id, data: post}, false);
                 builtPostLogic.mount();

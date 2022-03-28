@@ -17,9 +17,9 @@ class NavigationSeeder extends Seeder
         DB::table('navigations')->insert(
             [
                 'blog_id' => "1",
-                'old_url' => "hyvor talk",
-                'new_url' => "hyvor blogs",
-                'type' => "head",
+                'name' => "hyvor talk",
+                'url' => "hyvor blogs",
+                'type' => "header",
             ],
         );
     }

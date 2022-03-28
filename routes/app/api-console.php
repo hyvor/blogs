@@ -12,6 +12,9 @@ use App\Http\Controllers\ConsoleAPI\ConsoleRedirectController;
 use App\Http\Controllers\ConsoleAPI\ConsoleNavigationController;
 use App\Http\Controllers\ConsoleAPI\ConsoleTagController;
 
+use App\Http\Controllers\ConsoleAPI\ConsoleViewController;
+
+
 
 // use App\Http\Middleware\App\ConsoleAPI\BlogAccessMiddleware;
 // use App\Http\Middleware\App\LoginRequiredMiddleware;
@@ -125,13 +128,19 @@ Route::prefix('/api/console/v0/blog/{subdomain}')
         Route::put('/tag/{tagId}', [ConsoleTagController::class, 'updateTag']);
         Route::delete('/tag/{tagId}', [ConsoleTagController::class, 'deleteTag']);
 
+        // tag variant crud
+        Route::get('/tagVariant', [ConsoleTagController::class, 'getTagVariant']);
+        Route::post('/tagVariant', [ConsoleTagController::class, 'createTagVariant']);
+        Route::put('/tagVariant', [ConsoleTagController::class, 'updateTagVariant']);
+        Route::delete('/tagVariant', [ConsoleTagController::class, 'deleteTagVariant']);
+
         Route::get('/postTags/{postId}', [ConsoleTagController::class, 'selectedPostTag']);
 
         // post_tag CRUD
         // Route::get('/getTagList', [ConsoleTagController::class, 'getTagList']);
         // Route::post('/createPostTag', [ConsoleTagController::class, 'createPostTag']);
         // Route::get('/getPostTag', [ConsoleTagController::class, 'getPostTag']);
-        // Route::delete('/removePostTag', [ConsoleTagController::class, 'removePostTag']);
+        // Route::delete('/removePostTag', [ConsoleTagController::class, 'deleteTagVariant']);
 
 
         // comments

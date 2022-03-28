@@ -8,7 +8,6 @@ use App\Data\Objects\ConsoleAPI\UserBlog\UserBlogObject;
 use App\Domains\Blog\BlogRepository;
 use App\Domains\User\UserRepository;
 use App\Http\Controllers\Controller;
-use App\Domains\User\UserRepository;
 use App\Domains\User\UserRepositoryInterface;
 use Hyvor\HyvorConnecter\User;
 
@@ -21,7 +20,6 @@ class ConsoleUserController extends Controller
 
     public function createBlog(Request $request, User $hyvorUser)
     {
-
         $request->validate([
             'name' => 'required|string',
             'subdomain' => 'required|string',
@@ -38,14 +36,11 @@ class ConsoleUserController extends Controller
             $subdomain,
             $type
         );
-
         return response()->json(new UserBlogObject($user));
-
     }
 
     public function changeSort(Request $request, User $hyvorUser)
     {
-
         $request->validate([
             'blog_ids' => 'required|array',
             'blog_ids.*' => 'integer'
@@ -54,10 +49,22 @@ class ConsoleUserController extends Controller
         $blogIds = $request->input('blog_ids');
 
         UserRepository::changeBlogSorts($hyvorUser->id, $blogIds);
-        
     }
 
-<<<<<<< HEAD
+    public function checkSubdomain(Request $request)
+    {
+        $request->validate([
+            'subdomain' => 'required|string'
+        ]);
+
+        $subdomain = $request->input('subdomain');
+
+        $blog = BlogRepository::getBlogBySubdomain($subdomain);
+
+        return response()->json($blog ? false : true);
+
+    }
+
     /*
     *
     * ConsoleAPI Settings->users
@@ -71,7 +78,7 @@ class ConsoleUserController extends Controller
         // $getData = UserRepository::getTags($blog->id, $limit, $offset)
         //         ->map(function ($tags) {
         //         return new TagObject($tags);
-        //     });
+        //     }); 
         // return response()->json($getData);
 
         return 'get user';
@@ -88,6 +95,27 @@ class ConsoleUserController extends Controller
     }
 
     public static function deleteAuthor(Request $request)
+    {
+       return 'delete author';
+    }
+
+        
+    /*
+    *
+    * these functions are for author Variants
+    *
+    */
+    public static function createAuthorVariant(Request $request) {
+
+        return 'create Author';
+    }
+
+    public static function updateAuthorVariant(Request $request)
+    {
+       return 'update author';
+    }
+
+    public static function deleteAuthorVariant(Request $request)
     {
        return 'delete author';
     }
@@ -134,21 +162,4 @@ class ConsoleUserController extends Controller
        return 'hello world';
     }
 
-
-=======
-    public function checkSubdomain(Request $request)
-    {
-        $request->validate([
-            'subdomain' => 'required|string'
-        ]);
-
-        $subdomain = $request->input('subdomain');
-
-        $blog = BlogRepository::getBlogBySubdomain($subdomain);
-
-        return response()->json($blog ? false : true);
-
-    }
-
->>>>>>> master
 }

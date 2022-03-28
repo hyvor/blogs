@@ -47,8 +47,6 @@ class ConsoleTagController extends Controller {
         //     'description' => 'required|int',
         // ]);
 
-        dd('hello world');
-
         $name = $request->input('name');
         $slug = $request->input('slug');
         $description = $request->input('description') ?? null;
@@ -57,14 +55,13 @@ class ConsoleTagController extends Controller {
             $slug = str_replace(" ", "-", $name);
         }
 
-        $createTag = TagRepository::createTag($blog->id, $name, $slug, $description); 
+        $createTag = TagRepository::createTag($blog, $blog->id, $name, $slug, $description); 
         return response()->json($createTag);
         // return response()->json(new TagObject($createTag));
     }
 
     public static function updateTag(Request $request, Blog $blog)
     {
-        dd('test');
         // $request->validate([
         //     'name' => 'required|string',
         //     'slug' => 'required|string',
@@ -74,39 +71,78 @@ class ConsoleTagController extends Controller {
         // ]);
 
         $id = $request->route('tagId');
-        $name = $request->input('name');
+        // $name = $request->input('name');
         $slug = $request->input('slug');
-        $description = $request->input('description') ?? null;
+        // $description = $request->input('description') ?? null;
         $codeHead = $request->input('codeHead') ?? null;
         $codeFoot = $request->input('codeFoot') ?? null;
-
-
-        // $description = null;
-        // $featuredImage = null;
-        // $postsCount = null;
         
-        $updateOldTag = TagRepository::updateTag($id, $name, $slug, $description, $codeHead, $codeFoot);
-        // $updateTag = TagRepository::updateTag($id, $name, $slug, $description);
+        $updateOldTag = TagRepository::updateTag($id, $slug, $codeHead, $codeFoot);
         return response()->json($updateOldTag);
     }
 
-    public static function deleteTag(Request $request)
+    // public static function deleteTag(Request $request)
+    // {
+    //     $id = $request->route('tagId');
+    //     $deleteTag = TagRepository::deleteTag($id);
+    //     return response()->json($deleteTag);
+    // }
+
+
+    /*
+    *
+    * *** Tag validation section ***
+    *
+    */
+    public static function getTagVariant(Request $request)
     {
-        dd('test');
-        $id = $request->route('tagId');
-        $deleteTag = TagRepository::deleteTag($id);
+        $tagId =(int) $request->get('tagId');
+        $languageId =(int) $request->input('languageId');
 
-        return response()->json($deleteTag);
+        // $tagId = 2;
+        // $languageId = 2;
+
+        $getVariant = TagRepository::getTagVariant($tagId, $languageId);
+
+        return response()->json($getVariant);
     }
 
+    public static function createTagVariant(Request $request)
+    {
+        $tagId = $request->input('tagId');
+        $languageId = $request->input('languageId');
+        $createVariant = TagRepository::createTagVariant($tagId, $languageId);
 
-    public static function selectedPostTag(Request $request, Blog $blog){
-
-        $postId = (int) $request->route('postId');
-        $getData = PostTagRepository::selectedPostTag($blog->id, $postId);
-        return response()->json($getData);
-
+        return response()->json($createVariant);
     }
+
+    public static function updateTagVariant(Request $request)
+    {
+        $tagId = $request->input('tagId');
+        $languageId = $request->input('languageId');
+        $name = $request->input('name');
+        $description = $request->input('description');
+
+        // dd($tagId);
+
+        $updateVariant = TagRepository::updateTagVariant($tagId, $languageId, $name, $description);
+
+        return response()->json($updateVariant);
+    }
+
+    public static function deleteTagVariant(Request $request)
+    {
+        $tagId = $request->route('tagId');
+        $languageId = $request->input('languageId');
+
+        // $tagId = 1;
+        // $languageId = 2;
+        
+        $deleteVariant = TagRepository::deleteTagVariant($tagId, $languageId);
+
+        return response()->json($deleteVariant);
+    }
+
     /*
     *
     *
@@ -121,6 +157,14 @@ class ConsoleTagController extends Controller {
         $postId = 184;
         $getData = PostTagRepository::getTagList($blog->id, $postId);
         return response()->json($getData);
+    }
+
+    public static function selectedPostTag(Request $request, Blog $blog){
+
+        $postId = (int) $request->route('postId');
+        $getData = PostTagRepository::selectedPostTag($blog->id, $postId);
+        return response()->json($getData);
+
     }
 
     /*

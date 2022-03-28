@@ -7,9 +7,10 @@ use App\Models\PostTag;
 use App\Models\TagsVariant;
 use App\Models\Language;
 use Illuminate\Support\Facades\DB;
+use App\Domains\Language\LanguageRepository;
 
 class TagRepository
-{
+{    
     public static function getTagByBlogIdAndIdentifier(int $blogId, ?int $id, ?string $slug) : ?Tag
     {
         $tag = Tag::where('blog_id', $blogId);
@@ -68,44 +69,109 @@ class TagRepository
 
     }
 
-    public static function createTag( int $blogId, string $name, string $slug, ?string $description)
+    public static function createTag( $blog, int $blogId, string $name, string $slug, ?string $description)
     {
         $createTag = Tag::create([
             'blog_id' => $blogId,
             'slug' => $slug,
         ]);
 
-        $createTagVariant = TagsVariant::create([
-            'tag_id' => 1,
-            'language_id' => 1,
+        $tagId = $createTag->id;
+        $getLanguage = $blog->languages()->where('is_primary', true)->first();
+        $primaryLanguage = $getLanguage->id;
+
+        TagsVariant::create([
+            'tag_id' => $tagId,
+            'language_id' => $primaryLanguage,
             'name' => $name,
             'description' => $description,
         ]);
 
-
-        // $createTag = 'hell create one';
-        // $createTagVarient = 'hello create two';
-
-        return [$createTag , $createTagVariant];
+        // return [$createTag , $createTagVariant];
     }
 
-    public static function updateTag(int $id, string $name, string $slug, ?string $description,  ?string $codeHead,  ?string $codeFoot)
+    public static function updateTag(int $id, string $slug,  ?string $codeHead,  ?string $codeFoot)
     {
+        // this should be able to edit the slug
         $tag = Tag::find($id);
-        $tag->name=$name;
         $tag->slug=$slug;
-        $tag->description=$description; 
         $tag->code_head=$codeHead; 
         $tag->code_foot=$codeFoot; 
 
         $tag->save(); 
     }
 
-    public static function deleteTag(int $id)
+    // public static function deleteTag(int $id)
+    // {
+    //     $data = Tag::find($id);
+    //     $data->delete();
+    // }
+
+    /*
+    * 
+    * this functions are used for the tag_variants table
+    *
+    */
+    public static function getTagVariant($tagId, $languageId)
     {
-        // dd($id);
-        $data = Tag::find($id);
-        $data->delete();
+        $tags = TagsVariant::where('tag_id', '=', $tagId)
+        ->where('language_id', '=', $languageId)
+        ->get();
+
+        // dd($tags);
+    }
+
+    public static function createTagVariant($tagId, $languageId){
+        // the tag_id, language_id and name and the description should be added
+        $language = Language::where('id','=', $languageId)
+        ->value('is_primary');
+
+        if($language == 0){
+            
+            $tagVariantCheck = TagsVariant::where('tag_id','=', $tagId)
+            ->value('language_id');
+
+            if($tagVariantCheck == null){
+                TagsVariant::create([
+                    'tag_id' => $tagId,
+                    'language_id' => $languageId,
+                ]);
+            }
+        }
+
+    }
+
+    public static function updateTagVariant($tagId, $languageId,$name, $description){
+        // name and description should be added or edited. 
+        TagsVariant::where('tag_id','=',$tagId)
+            ->where('language_id','=',$languageId)
+            ->update([
+                'name' => $name,
+                'description' => $description,
+            ]);
+    }
+
+    public static function deleteTagVariant($tagId, $languageId){
+        // if it is some other language other oly the data in the variants table should be deleted. (only the variants data should be deleted)
+        // if language is the default language the data in tags table and the tags_variants table all should be deleted. (all the data should be deleted.)
+
+        $language = Language::where('id','=', $languageId)
+        ->value('is_primary');
+
+        if($language == 0){
+            TagsVariant::where('tag_id','=',$tagId)
+                ->where('language_id','=',$languageId)
+                ->delete();
+        }
+        else{
+            TagsVariant::where('tag_id','=',$tagId)
+                ->where('language_id','=',$languageId)
+                ->delete();
+
+            Tag::find($tagId)
+                ->delete();
+        }
+
     }
 
     /*

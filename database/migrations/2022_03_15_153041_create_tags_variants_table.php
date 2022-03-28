@@ -21,7 +21,7 @@ return new class extends Migration
             $table->bigInteger('language_id')->index();
 
             // data
-            $table->string('name');
+            $table->string('name')->nullable();
             $table->string('description')->nullable(); 
 
             $table->timestamps();

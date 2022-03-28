@@ -266,7 +266,6 @@ class PostRepository
             $post->code_foot = $updates['code_foot'];
         }
 
-<<<<<<< HEAD
         if (array_key_exists('tag', $updates)) {
             // $postTag->code_head = $updates['tag'];
             $post = Tag::create([
@@ -274,10 +273,10 @@ class PostRepository
                 'tag_id' => $updates['tag'],
             ]);
         }
+        
         // if (array_key_exists('code_foot', $updates)) {
         //     $post->code_foot = $updates['code_foot'];
         // }
-=======
         /**
          * Dispatch events
          */
@@ -289,7 +288,6 @@ class PostRepository
                 // 
             }
         } */
->>>>>>> master
 
         $post->save();
 

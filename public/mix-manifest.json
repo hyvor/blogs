@@ -1,5 +1,6 @@
 {
     "/js/console.js": "/js/console.js",
+    "/css/console.css": "/css/console.css",
     "/css/landing.css": "/css/landing.css",
     "/js/codemirror-modes/apl.js": "/js/codemirror-modes/apl.js",
     "/js/codemirror-modes/asciiarmor.js": "/js/codemirror-modes/asciiarmor.js",
@@ -121,6 +122,5 @@
     "/js/codemirror-modes/yacas.js": "/js/codemirror-modes/yacas.js",
     "/js/codemirror-modes/yaml-frontmatter.js": "/js/codemirror-modes/yaml-frontmatter.js",
     "/js/codemirror-modes/yaml.js": "/js/codemirror-modes/yaml.js",
-    "/js/codemirror-modes/z80.js": "/js/codemirror-modes/z80.js",
-    "/css/console.css": "/css/console.css"
+    "/js/codemirror-modes/z80.js": "/js/codemirror-modes/z80.js"
 }

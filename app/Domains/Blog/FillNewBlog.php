@@ -21,9 +21,13 @@ class FillNewBlog {
         self::addTrial($blog);
 
         $user = self::fillOwner($blog);
+        // dd($user);
+
         self::fillRoutes($blog);
         self::fillPosts($blog, $user);
-        $language = self::fillLanguage($blog);
+        self::fillPosts($blog);
+        $language = self::fillLanguage($blog); 
+
 
         return [
             'user' => $user,

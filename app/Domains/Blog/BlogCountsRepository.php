@@ -21,14 +21,15 @@ class BlogCountsRepository
     public static function getPostsCounts(int $blogId)
     { 
 
+        // I commented this part because this query should be joined with the posts_variants table
         $status = [];
-        Post::select('status', DB::raw('COUNT(id) as count'))
-            ->groupBy('status')
-            ->where('blog_id', $blogId)
-            ->get()
-            ->map(function ($row) use (&$status) {
-                $status[$row->status] = $row->count;
-            });
+        // Post::select('status', DB::raw('COUNT(id) as count'))
+        //     ->groupBy('status')
+        //     ->where('blog_id', $blogId)
+        //     ->get()
+        //     ->map(function ($row) use (&$status) {
+        //         $status[$row->status] = $row->count;
+        //     });
 
         $featuredCount = Post::where('blog_id', $blogId)
             ->where('is_featured', true)
