@@ -7,22 +7,22 @@ Class NavigationRepository
 {
     public static function getNavigations( int $blogId){
         return Navigation::where('blog_id','=', $blogId)
-            // ->orderBy('itemNumber', 'desc')
-            ->orderBy('itemNumber')
+            // ->orderBy('sort', 'desc')
+            ->orderBy('sort')
             ->offset(0)
             ->limit(100)
             ->latest()
             ->get();
     }
 
-    public static function createNavigation(int $blogId, string $navigationName, string $navigationUrl, $type, int $itemNumber ){
-        // dd($itemNumber);
+    public static function createNavigation(int $blogId, string $navigationName, string $navigationUrl, $type, int $sort ){
+        // dd($sort);
         return Navigation::create([
             'blog_id' => $blogId,
             'name' => $navigationName,
             'url' => $navigationUrl,
             'type' => $type, 
-            'itemNumber' => $itemNumber
+            'sort' => $sort
         ]);
     }
 
@@ -42,28 +42,28 @@ Class NavigationRepository
 
     public static function getHeaderItemNumber(){
         return Navigation::where('type','=', 'header')
-           ->get('itemNumber')
+           ->get('sort')
            ->last();
     }
 
     public static function getFooterItemNumber(){
         return Navigation::where('type','=', 'footer')
-           ->get('itemNumber')
+           ->get('sort')
            ->last();
     }
 
-    public static function updateDestinationItemNumber($id, $navigationItemNumber){
+    public static function updateDestinationSort($id, $navigationSort){
         $navigation = Navigation::find($id);
-        $navigation->itemNumber=$navigationItemNumber;
+        $navigation->sort=$navigationSort;
 
         $navigation->save();
     }
 
-    public static function updateSourceItemNumber($id, $navigationItemNumber){
+    public static function updateSourceSort($id, $navigationSort){
         // dd($navigationItemNumber);
 
         $navigation = Navigation::find($id);
-        $navigation->itemNumber=$navigationItemNumber;
+        $navigation->sort=$navigationSort;
 
         $navigation->save();
     }

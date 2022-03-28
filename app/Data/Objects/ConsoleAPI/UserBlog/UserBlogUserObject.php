@@ -8,7 +8,7 @@ class UserBlogUserObject
 {
     public int $id;
     public string $role;
-    public int $posts_count;
+    public $posts_count;
 
     public function __construct(User $user)
     {

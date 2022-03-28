@@ -96,8 +96,8 @@ Route::prefix('/api/console/v0/blog/{subdomain}')
     Route::post('/navigation', [ConsoleNavigationController::class,'createNavigation']);
     Route::put('/navigation/{id}', [ConsoleNavigationController::class,'updateNavigation']);
     Route::delete('/navigation/{id}', [ConsoleNavigationController::class,'deleteNavigation']);
-    Route::put('/navNumber/{userId}', [ConsoleNavigationController::class,'updateItemNumber']);
-    Route::put('/source/{sourceId}', [ConsoleNavigationController::class,'updateSourceItemNumber']);
+    Route::put('/navigation/sort/{navigationId}', [ConsoleNavigationController::class,'updateSort']);
+    Route::put('/navigation/source/{sourceId}', [ConsoleNavigationController::class,'updateSourceSort']);
 
     // languages CRUD
     Route::get('/languages', [ConsoleLanguageController::class, 'get']);

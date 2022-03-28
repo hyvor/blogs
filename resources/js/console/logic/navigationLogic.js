@@ -56,9 +56,9 @@ const  navigationLogic = kea({
             console.log('Navigation' + NavigationId + ' I think its working')
             console.log('Lets see '+ destinationId + ' destination ID')
 
-            const navigation = await api.put(props.subdomain, `/navNumber/${NavigationId}`, {
-                    navigation_itemNumber: destinationId,
-                });
+            const navigation = await api.put(props.subdomain, `/navigation/sort/${NavigationId}`, {
+                navigationSort: destinationId,
+            });
             actions.updateDestination(navigation);
         },
 
@@ -66,8 +66,8 @@ const  navigationLogic = kea({
             console.log(destinationId)
             console.log(sourceId + ' source ID')
 
-            const navigation = await api.put(props.subdomain, `/source/${destinationId}`, {
-                    itemNumber: sourceId,
+            const navigation = await api.put(props.subdomain, `/navigation/source/${destinationId}`, {
+                    sort: sourceId,
                 });
             actions.updateSource(navigation);
         },
