@@ -71,7 +71,7 @@ class Blog extends Model
      */
     public function themeFiles()
     {
-        return $this->hasMany(BlogThemeFile::class);
+        return $this->morphMany(ThemeFile::class, 'themable');
     }
 
 }

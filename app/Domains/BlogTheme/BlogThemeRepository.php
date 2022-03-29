@@ -9,7 +9,7 @@ use Database\Seeders\BlogThemeFilesSeeder;
 use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Support\Facades\App;
 
-class BlogThemeRepository
+class ThemeFilesRepository
 {
     public static function getFile(Blog $blog, string $fileName, ?ThemeFileFolderEnum $folder = null): ?BlogThemeFile
     {

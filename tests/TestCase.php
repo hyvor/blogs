@@ -26,4 +26,8 @@ abstract class TestCase extends BaseTestCase
         return $this->call($method, URL::to('/api/console/v0' . $endpoint), $data);
     }
 
+    protected function callCliAPI(string $method, string $endpoint, $data = []) {
+        return $this->call($method, URL::to('/api/cli' . $endpoint), $data);
+    }
+
 }

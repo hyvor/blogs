@@ -84,18 +84,18 @@ class PermalinkRepository {
 
     }
 
-    private static function getDomain(Blog $blog)
+    private static function getBlogBasePathWithProtocol(Blog $blog)
     {
+
         if ($blog->hosting_at === 'subdomain') {
             $deliveryDomain = config('blogs.domain_delivery');
-            $domain = "$blog->subdomain.$deliveryDomain";
+            return "https://$blog->subdomain.$deliveryDomain";
         } elseif ($blog->hosting_at === 'domain') {
-            $domain = $blog->hosting_domain;
-        } else {
-            // domain and path (ex: example.com or example.blog)
-            $domain = preg_replace('/https?:\/\//', '', $blog->hosting_url);
+            return "https://" . $blog->hosting_domain;
+        } elseif ($blog->hosting_at === 'self') {
+            return $blog->hosting_url;
         }
-        return $domain;
+
     }
 
 
@@ -107,9 +107,9 @@ class PermalinkRepository {
 
         $path = ltrim($path, '/');
 
-        $domain = self::getDomain($blog);
+        $domain = self::getBlogBasePathWithProtocol($blog);
         
-        return 'https://' . $domain . ($path ? '/' . $path : '');
+        return $domain . ($path ? '/' . $path : '');
     }
 
     public static function getBlogPermalink(Blog $blog) : string

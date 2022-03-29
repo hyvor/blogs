@@ -3,12 +3,11 @@ namespace App\Domains\Delivery;
 
 use App\Data\Objects\DeliveryAPI\DeliveryAPIResponseObject;
 use App\Domains\Delivery\RouteMatcher\MatchedRoute;
-use App\Models\Blog;
 use App\Models\Language;
 
 class RouteProcessor {
 
-    public Blog $blog;
+    public PathMatcher $pathMatcher;
     public MatchedRoute $matchedRoute;
     public Language $language;
 
@@ -16,9 +15,9 @@ class RouteProcessor {
 
     private ?DeliveryAPIResponseObject $responseObject = null;
 
-    public function __construct(Blog $blog,  MatchedRoute $matchedRoute, Language $language) 
+    public function __construct(PathMatcher $pathMatcher,  MatchedRoute $matchedRoute, Language $language) 
     {
-        $this->blog = $blog;
+        $this->pathMatcher = $pathMatcher;
         $this->matchedRoute = $matchedRoute;
         $this->language = $language;
 
@@ -62,7 +61,7 @@ class RouteProcessor {
              * TODO: Feed change header data based on the matchedRoute
              */
 
-            $feed = Feed::generateFeed($this->blog, $this->filter);
+            $feed = Feed::generateFeed($this->pathMatcher->blog, $this->filter);
 
             $this->responseObject = DeliveryAPIResponseObject::forFile($feed, 'application/atom+xml');
 
@@ -77,7 +76,7 @@ class RouteProcessor {
     {
 
         $renderer = new TemplateRenderer(
-            $this->blog, $this->matchedRoute, $this->language,
+            $this->pathMatcher, $this->matchedRoute, $this->language,
             $this->filter
         );
         $this->responseObject = $renderer->getResponseObject();
