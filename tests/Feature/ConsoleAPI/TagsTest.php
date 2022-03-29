@@ -1,12 +1,11 @@
 <?php
 
-namespace Tests\Feature\ConsoleAPI;
+// namespace Tests\Feature\ConsoleAPI;
 
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Foundation\Testing\WithoutMiddleware;
 use Tests\TestCase;
 use App\Models\Tag;
-use App\Models\Blog;
 
 // To run the TagsTest class only run this command in the command line.
 // php artisan test  --filter 'TagsTest'

@@ -28,12 +28,12 @@ class CreateUsersTable extends Migration
             // user data
             // name, bio, location should be deleted later.
             $table->string('slug');
-            $table->string('name', 50);
+            // $table->string('name', 50);
             $table->string('email');
             $table->string('picture')->nullable();
-            $table->string('bio')->nullable();
+            // $table->string('bio')->nullable();
             $table->string('url')->nullable();
-            $table->string('location', 30)->nullable();
+            // $table->string('location', 30)->nullable();
 
             // social
             $table->string('social_facebook')->nullable();

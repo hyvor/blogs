@@ -7,8 +7,20 @@ use Illuminate\Database\Eloquent\Model;
 
 class UsersVariant extends Model
 {
+    public $timestamps = false;
+
+    public function user()
+    {
+        $this->belongTo(User::class);
+    }
+
+    public function language()
+    {
+        return $this->belongsTo(Language::class);
+    }
+
     public function blog()
     {
         return $this->belongsTo(Blog::class);
-    }
+    } 
 }

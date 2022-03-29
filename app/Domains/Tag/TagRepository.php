@@ -8,6 +8,7 @@ use App\Models\TagsVariant;
 use App\Models\Language;
 use Illuminate\Support\Facades\DB;
 use App\Domains\Language\LanguageRepository;
+use App\Models\Post;
 
 class TagRepository
 {    
@@ -27,38 +28,17 @@ class TagRepository
         return self::getTagByBlogIdAndIdentifier($blogId, null, $slug);
     }
 
-    // public static function getTags(int $blogId, ?int $limit, int $offset = 0, int $languageId)
-    public static function getTags(int $blogId, ?int $limit, int $offset = 0)
+    public static function getTags($blog, int $blogId, ?int $limit, int $offset = 0)
     {
+        // we should load only the tag data which include in english or the primary language
         $limit = $limit ?? 50;
 
-        // The query without the language.
-        // $tags = Tag::where('blog_id','=', $blogId)
-        //     ->limit($limit)
-        //     ->offset($offset)
-        //     ->latest()
-        //     ->get();
+        $language = LanguageRepository::getPrimaryLanguage($blog);
 
-        // The query with the language filter.
-        // $language = Language::where('blog_id','=', $blogId)
-        // ->where('id','=', $languageId)
-        // ->value('languages.id');
-
-        // $tags = Tag::where('blog_id', '=', $blogId)
-        // ->join('tags_variants', function($join) use ($language) {
-        //     $join->on('tags_variants.tag_id', '=', 'tags.id');
-        //     $join->where('tags_variants.language_id', '=', $language);
-        // })
-        // ->limit($limit)
-        // ->offset($offset)
-        // ->latest()
-        // ->get();
-
-        // The query without the language filter.
-        $tags = Tag::where('blog_id', '=', $blogId)
-        ->join('tags_variants', function($join) {
+        $tags = Tag::where('tags.blog_id', '=', $blogId)
+        ->join('tags_variants', function($join) use ($language) {
             $join->on('tags_variants.tag_id', '=', 'tags.id');
-            $join->select('tags.slug');
+            $join->where('tags_variants.language_id', '=',  $language->id);
         })
         ->limit($limit)
         ->offset($offset)
@@ -119,6 +99,7 @@ class TagRepository
         ->get();
 
         // dd($tags);
+        return $tags;
     }
 
     public static function createTagVariant($tagId, $languageId){

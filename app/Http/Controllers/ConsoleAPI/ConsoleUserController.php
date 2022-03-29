@@ -3,6 +3,9 @@
 namespace App\Http\Controllers\ConsoleAPI;
 
 use App\Data\Enums\BlogTypeEnum;
+use App\Data\Enums\UserRoleEnum;
+use App\Data\Enums\UserStatusEnum;
+
 use App\Data\Objects\ConsoleAPI\BlogObject;
 use App\Data\Objects\ConsoleAPI\UserBlog\UserBlogObject;
 use App\Domains\Blog\BlogRepository;
@@ -13,6 +16,8 @@ use Hyvor\HyvorConnecter\User;
 
 use Illuminate\Http\Request;
 use App\Models\Blog;
+use App\Data\Objects\ConsoleAPI\User\UserObject;
+
 
 
 class ConsoleUserController extends Controller
@@ -70,55 +75,179 @@ class ConsoleUserController extends Controller
     * ConsoleAPI Settings->users
     *
     */
-    public static function getAuthor(Request $request , Blog $blog)
+
+    // we should get the user data from the default language.
+
+    // If the user is adding or creating a user that user should also be in the default language.
+    // user should be able to add a user or create a guest user. and also user should be able to add a hyvor user too.
+
+    // user should be able to delete or block a user.
+    // user also should be able to delete an specific language. ( But if the default language is deleted the user should be deleted)
+
+    // user also should have the access to switch between languages. and if the user switch between language for the first time the language should be created.
+
+    // user should be able to update user name and etc according to the language.
+    
+
+    public static function getAuthor(Blog $blog)
     {
-        // $limit = $request->input('limit');
-        // $offset = $request->input('offset') ?? 0;
-
-        // $getData = UserRepository::getTags($blog->id, $limit, $offset)
-        //         ->map(function ($tags) {
-        //         return new TagObject($tags);
-        //     }); 
-        // return response()->json($getData);
-
-        return 'get user';
+        $getData = UserRepository::getAuthor($blog)
+                ->map(function ($users) use ($blog) {
+                    return new UserObject($users, $blog);
+                });
+        return response()->json($getData); 
     }
 
-    public static function createAuthor(Request $request) {
+    public static function createAuthor(Request $request, Blog $blog) {
 
-        return 'create Author';
+        $role = UserRoleEnum::from($request->input('role'));
+        $status =  UserStatusEnum::from($request->input('status'));
+
+        if ($request->has('slug')) {
+            $userData['slug'] = $request->input('slug');
+        }
+        if ($request->has('email')) {
+            $userData['email'] = $request->input('email');
+        }
+        if ($request->has('picture')) {
+            $userData['picture'] = $request->input('picture');
+        }
+        if ($request->has('url')) {
+            $userData['url'] = $request->input('url');
+        }
+
+        if ($request->has('social_facebook')) {
+            $userData['social_facebook'] = $request->input('social_facebook');
+        }
+        if ($request->has('social_twitter')) {
+            $userData['social_twitter'] = $request->input('social_twitter');
+        }
+
+        if ($request->has('social_linkedin')) {
+            $userData['social_linkedin'] = $request->input('social_linkedin');
+        }
+
+        if ($request->has('social_youtube')) {
+            $userData['social_youtube'] = $request->input('social_youtube');
+        }
+
+        if ($request->has('social_instagram')) {
+            $userData['social_instagram'] = $request->input('social_instagram');
+        }
+
+        // Variants
+        if ($request->has('name')) {
+            $userData['name'] = $request->input('name');
+        }
+
+        if ($request->has('bio')) {
+            $userData['bio'] = $request->input('bio');
+        }
+
+        if ($request->has('location')) {
+            $userData['location'] = $request->input('location');
+        }
+
+        if($userData['slug'] == null){
+            $userData['slug'] = str_replace(" ", "-", $userData['name']);
+        }
+
+        $createUser = UserRepository::createUser($blog, $blog->user_id, $role, $status, $userData); 
+        return response()->json($createUser);
     }
 
-    public static function updateAuthor(Request $request)
+    public static function updateAuthor(Request $request, Blog $blog)
     {
-       return 'update author';
+        $userId = $request->route('id');
+        $languageId =  $request->input('languageId');
+        $role = UserRoleEnum::from($request->input('role'));
+        $status =  UserStatusEnum::from($request->input('status'));
+
+        if ($request->has('slug')) {
+            $userData['slug'] = $request->input('slug');
+        }
+        if ($request->has('email')) {
+            $userData['email'] = $request->input('email');
+        }
+        if ($request->has('picture')) {
+            $userData['picture'] = $request->input('picture');
+        }
+        if ($request->has('url')) {
+            $userData['url'] = $request->input('url');
+        }
+
+        if ($request->has('social_facebook')) {
+            $userData['social_facebook'] = $request->input('social_facebook');
+        }
+        if ($request->has('social_twitter')) {
+            $userData['social_twitter'] = $request->input('social_twitter');
+        }
+
+        if ($request->has('social_linkedin')) {
+            $userData['social_linkedin'] = $request->input('social_linkedin');
+        }
+
+        if ($request->has('social_youtube')) {
+            $userData['social_youtube'] = $request->input('social_youtube');
+        }
+
+        if ($request->has('social_instagram')) {
+            $userData['social_instagram'] = $request->input('social_instagram');
+        }
+
+        // Variants
+        if ($request->has('name')) {
+            $userData['name'] = $request->input('name');
+        }
+
+        if ($request->has('bio')) {
+            $userData['bio'] = $request->input('bio');
+        }
+
+        if ($request->has('location')) {
+            $userData['location'] = $request->input('location');
+        }
+
+        if($userData['slug'] == null){
+            $userData['slug'] = str_replace(" ", "-", $userData['name']);
+        }
+        
+        $updateOldTag = UserRepository::updateAuthor( $userId, $languageId, $blog, $blog->user_id, $role, $status, $userData);
+        return response()->json($updateOldTag);
     }
 
     public static function deleteAuthor(Request $request)
     {
-       return 'delete author';
+        $userId = $request->route('id');
+        $languageId = $request->input('languageId');
+        $deleteData = UserRepository::deleteAuthorVariant($userId, $languageId);
+
+        return response()->json($deleteData);
     }
 
-        
+
     /*
-    *
     * these functions are for author Variants
-    *
     */
+    public static function getAuthorVariant(Request $request)
+    {
+        $userId =(int) $request->get('userId');
+        $languageId =(int) $request->input('languageId');
+
+        $getVariant = UserRepository::getAuthorVariant($userId, $languageId);
+
+        return response()->json($getVariant);
+    }
+
     public static function createAuthorVariant(Request $request) {
 
-        return 'create Author';
+        $userId = $request->input('userId');
+        $languageId = $request->input('languageId');
+        $createVariant = UserRepository::createAuthorVariant($userId, $languageId);
+
+        return response()->json($createVariant);
     }
 
-    public static function updateAuthorVariant(Request $request)
-    {
-       return 'update author';
-    }
-
-    public static function deleteAuthorVariant(Request $request)
-    {
-       return 'delete author';
-    }
 
     /*
     *

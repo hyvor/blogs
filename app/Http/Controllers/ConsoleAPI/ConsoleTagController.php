@@ -17,7 +17,6 @@ class ConsoleTagController extends Controller {
     */
     public static function getTag(Request $request, Blog $blog)
     {
-        // dd('test');
         // $request->validate([
         //     'limit' => 'integer', 
         //     'offset' => 'required|integer', 
@@ -25,17 +24,11 @@ class ConsoleTagController extends Controller {
         
         $limit = $request->input('limit');
         $offset = $request->input('offset') ?? 0;
-        // $languageId = $request->input('languageId');
-        // $languageId = 1;
 
-        $getData = TagRepository::getTags($blog->id, $limit, $offset)
-                // ->map(function ($tags, $blog) {
-                // return new TagObject($tags, $blog);
+        $getData = TagRepository::getTags($blog, $blog->id, $limit, $offset)
                 ->map(function ($tags) use ($blog) {
                     return new TagObject($tags, $blog);
             });
-
-        // $getData = TagRepository::getTags($blog->id, $limit, $offset);
         return response()->json($getData);
     }
 

@@ -15,14 +15,14 @@ return new class extends Migration
     {
         Schema::create('users_variants', function (Blueprint $table) {
             $table->id();
-            $table->timestamps();
+            // $table->timestamps();
 
             // connection
-            $table->bigInteger('language_id')->index();
-            $table->bigInteger('user_id')->nullable(); // Normal Id from hyvor blogs users table.
+            $table->bigInteger('user_table_id')->index(); // The id from the users table.
+            $table->bigInteger('language_id')->index(); 
 
             // user data
-            $table->string('name', 50);
+            $table->string('name', 50)->nullable();
             $table->string('bio')->nullable();
             $table->string('location', 30)->nullable();
 

@@ -7,7 +7,7 @@ import tagsLogic from '../../logic/tagsLogic';
 
 
 
-export default function TagLanguageSelector({id, languages, variant, currentLanguageId, onChange }) 
+export default function TagLanguageSelector({id, languages, variant, loadVariant, currentLanguageId, onChange }) 
 {
     const subdomain = subdomainLogic.values.subdomain;
 
@@ -20,9 +20,14 @@ export default function TagLanguageSelector({id, languages, variant, currentLang
     // };
 
     // console.log(variant.language_id);
-    // console.log(createVariant);
+    // console.log(currentLanguageId);
 
     createVariant({
+        tagId: id,
+        languageId: currentLanguageId
+    });
+
+    loadVariant({
         tagId: id,
         languageId: currentLanguageId
     });

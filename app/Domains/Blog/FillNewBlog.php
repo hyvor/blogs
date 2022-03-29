@@ -42,9 +42,10 @@ class FillNewBlog {
         ]);
     }
 
-    private static function fillOwner(Blog $blog) : User {
+    // private static function fillOwner(Blog $blog) : User {
+    private static function fillOwner(Blog $blog) {
         // create the user (owner)
-        return UserRepository::createUser($blog->id, $blog->user_id, UserRoleEnum::OWNER, UserStatusEnum::ACTIVE);
+        return UserRepository::createUser($blog, $blog->user_id, UserRoleEnum::OWNER, UserStatusEnum::ACTIVE);
     }
 
     // add default routes

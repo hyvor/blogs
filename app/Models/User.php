@@ -7,8 +7,17 @@ use Illuminate\Database\Eloquent\Model;
 
 class User extends Model
 {
+    protected $with = [
+        'variants',
+    ];
+
+    public function variants()
+    {
+        return $this->hasMany(UsersVariant::class);
+    }
+
     public function blog()
     {
         return $this->belongsTo(Blog::class);
-    }
+    } 
 }

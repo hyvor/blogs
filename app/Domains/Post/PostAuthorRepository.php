@@ -21,7 +21,6 @@ class PostAuthorRepository {
             ->delete();
     }
 
-<<<<<<< HEAD
     public static function getAuthorList(){}
 
     public static function createAuthor(){}
@@ -33,11 +32,8 @@ class PostAuthorRepository {
     public static function removePostAuthor(){}
 
 
-=======
     public static function getPrimaryAuthor(Post $post) : ?User {
         return $post->authors()->first();
     }
     
->>>>>>> master
-
 }

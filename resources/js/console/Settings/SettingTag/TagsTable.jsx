@@ -17,6 +17,8 @@ import TagLanguageSelector from './TagLanguageSelector';
 
 export default function Tags ({tag, subdomain}) 
 {
+    // I should create the update section. and also I have to find the error which is occurring in the logic.
+
     const tagLogicBuilt = tagsLogic({subdomain})
     const { remove , updateData, removeVariant, loadVariant} = useActions(tagLogicBuilt)
     const { updateDataAjax, tagVariant } = useValues(tagLogicBuilt)
@@ -40,15 +42,6 @@ export default function Tags ({tag, subdomain})
         getDescription = variant.description
     }
 
-
-
-    loadVariant({
-        tagId: tag.id,
-        languageId: currentLanguageId
-    });
-
-    console.log(tagVariant)
-    
     // function getName(){
     //     if(tag.id == variant.tag_id){
     //         const nameData =  variant.name;
@@ -57,7 +50,7 @@ export default function Tags ({tag, subdomain})
     //     }
     // }
 
-    // console.log(currentLanguageId)
+    // console.log('currentLanguageId');
 
 
     // update section
@@ -224,6 +217,7 @@ export default function Tags ({tag, subdomain})
                                                 id={tag.id} 
                                                 languages={languages} 
                                                 variant={variant}
+                                                loadVariant= {loadVariant}
                                                 currentLanguageId={currentLanguageId}
                                                 onChange={setCurrentLanguageId}
                                             />

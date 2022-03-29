@@ -194,6 +194,11 @@ Route::prefix('/api/console/v0/blog/{subdomain}')
         Route::patch('/user/{id}', [ConsoleUserController::class, 'updateAuthor']); 
         Route::delete('/user/{id}', [ConsoleUserController::class, 'deleteAuthor']); 
 
+        Route::get('/userVariant', [ConsoleUserController::class, 'getAuthorVariant']);
+        Route::post('/userVariant', [ConsoleUserController::class, 'createAuthorVariant']);
+        // Route::put('/userVariant', [ConsoleUserController::class, 'updateAuthorVariant']);
+        // Route::delete('/userVariant', [ConsoleUserController::class, 'deleteAuthorVariant']);
+
         // theme CRUD
         Route::get('/theme-files', [ConsoleBlogThemeController::class, 'getAllFiles']);
         Route::put('/theme-file/{id}', [ConsoleBlogThemeController::class, 'createOrUpdateFile']);
