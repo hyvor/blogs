@@ -15,6 +15,6 @@ class UserBlogUserObject
 
         $this->id = $user->id;
         $this->role = $user->role;
-        $this->posts_count = $user->posts_count;
+        $this->posts_count = 0;// $user->posts_count;
     }
 }

@@ -2,6 +2,7 @@
 namespace App\Domains\Route;
 
 use App\Models\Blog;
+use App\Models\Language;
 use App\Models\Media;
 use App\Models\Post;
 use App\Models\Tag;
@@ -104,18 +105,27 @@ class PermalinkRepository {
             $path = '';
         }
 
-        $path = trim($path, '/');
+        $path = ltrim($path, '/');
 
         $domain = self::getDomain($blog);
         
         return 'https://' . $domain . ($path ? '/' . $path : '');
     }
 
+    public static function getBlogPermalink(Blog $blog) : string
+    {
+        return self::getFullUrlFromPath($blog, '');
+    }
+
     /**
      * Gets permalink of a post/page
      * only for published posts
      */
-    public static function getPostPermalink(Post $post, Blog $blog) : string {
+    public static function getPostPermalink(
+        Post $post, Blog $blog, Language $language, 
+        $onlyPath = false
+    ) : string
+    {
 
         $path = RouteRepository::getRoute($blog, 'post')->match;
 
@@ -137,29 +147,62 @@ class PermalinkRepository {
             $path = str_replace('{author}', $post->authors[0]?->slug ?? '', $path);
         }
 
-        return self::getFullUrlFromPath($blog, $path);
+        /**
+         * Add language
+         */
+        if (!$language->is_primary) {
+            $path = "{$language->code}" . $path;
+        }
+
+        return  $onlyPath ? self::getPath($path) : self::getFullUrlFromPath($blog, $path);
 
     }
+    
 
-    public static function getTagPermalink(Tag $tag, Blog $blog) : string {
+    public static function getTagPermalink(Tag $tag, Blog $blog, $onlyPath = false) : string 
+    {
 
         $path = RouteRepository::getRoute($blog, 'tag')->match;
         $path = str_replace('{slug}', $tag->slug, $path);
         
-        return self::getFullUrlFromPath($blog, $path);
+        return $onlyPath ? self::getPath($path) : self::getFullUrlFromPath($blog, $path);
     }
 
-    public static function getAuthorPermalink(User $author, Blog $blog) : string {
+    public static function getAuthorPermalink(User $author, Blog $blog, $onlyPath = false) : string 
+    {
 
         $path = RouteRepository::getRoute($blog, 'author')->match;
         $path = str_replace('{slug}', $author->slug, $path);
         
-        return self::getFullUrlFromPath($blog, $path);
+        return $onlyPath ? self::getPath($path) : self::getFullUrlFromPath($blog, $path);
 
     }
 
-    public static function getMediaPermalink(Media $media, Blog $blog) : string {
-        return self::getFullUrlFromPath($blog, 'media/' . $media->name);
+    public static function getMediaPermalink(Media $media, Blog $blog, $onlyPath = false) : string 
+    {
+        $path = 'media/' . $media->name;
+        return $onlyPath ? self::getPath($path) : self::getFullUrlFromPath($blog, $path);
+    }
+
+    public static function getAssetPermalink(string $assetName, Blog $blog, $onlyPath = false) : string
+    {
+        $path = 'assets/' . $assetName;
+        return $onlyPath ? self::getPath($path) : self::getFullUrlFromPath($blog, $path);
+    }
+
+    /**
+     * Always return path with leading /
+     */
+    private static function getPath($path)
+    {
+        if (!$path) {
+            return '/';
+        } else {
+            // remove if have
+            $path = ltrim($path, '/');
+            // add again and return
+            return '/' . $path;
+        }
     }
 
 }

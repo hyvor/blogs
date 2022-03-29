@@ -19,25 +19,27 @@ class BlogCountsRepository
      * By tag (15 max)
      */
     public static function getPostsCounts(int $blogId)
-    {
+    { 
 
+        // I commented this part because this query should be joined with the posts_variants table
         $status = [];
-        Post::select('status', DB::raw('COUNT(id) as count'))
-            ->groupBy('status')
-            ->where('blog_id', $blogId)
-            ->get()
-            ->map(function ($row) use (&$status) {
-                $status[$row->status] = $row->count;
-            });
+        // Post::select('status', DB::raw('COUNT(id) as count'))
+        //     ->groupBy('status')
+        //     ->where('blog_id', $blogId)
+        //     ->get()
+        //     ->map(function ($row) use (&$status) {
+        //         $status[$row->status] = $row->count;
+        //     });
 
         $featuredCount = Post::where('blog_id', $blogId)
             ->where('is_featured', true)
             ->count();
 
         $authors = User::where('blog_id', $blogId)
-            ->orderBy('posts_count', 'desc')
+            // ->orderBy('posts_count', 'desc')
             ->limit(15)
-            ->select('id', 'slug', 'posts_count')
+            // ->select('id', 'slug', 'posts_count')
+            ->select('id', 'slug')
             ->get();
 
 
@@ -57,7 +59,6 @@ class BlogCountsRepository
                 'draft' => $status['draft'] ?? 0,
                 'published' => $status['published'] ?? 0,
                 'scheduled' => $status['scheduled'] ?? 0,
-                'deleted' => $status['deleted'] ?? 0,
                 'featured' => $featuredCount
             ],
             'authors' => $authors,

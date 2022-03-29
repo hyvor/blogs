@@ -1,5 +1,5 @@
 <?php
-return [
+return [ 
 
     'Intro' => [
         [null, 'Introduction'],
@@ -32,15 +32,24 @@ return [
     ],
     'Theme Development' => [
         ['themes-overview', 'Overview'],
-        ['themes-tutorial', 'Tutorial']
+        ['themes-templates', 'Templates'],
+        ['themes-styles', 'Styling'],
+        ['themes-internationalization', 'Internationalization'],
+        ['themes-config', 'Configuration'],
+        ['themes-publishing', 'Publishing']
     ],
     'Advanced' => [
         ['routes', 'Routes'],
         ['languages', 'Languages'],
+        ['self-hosting', 'Self-hosting'],
         ['subdirectory', 'Subdirectory hosting'],
-        ['website', 'Build a website'],
+        ['website', 'Create a website'],
         ['import', 'Importing data'],
         ['export', 'Exporting data'],
+    ],
+    'Self-hosting' => [
+        ['self-hosting-delivery-api', 'Using Delivery API'],
+        ['self-hosting-builds', 'Using builds']
     ],
     'Legal' => [
         ['terms', 'Terms'],

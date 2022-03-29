@@ -9,6 +9,7 @@
 import {joinPoint, canJoin, findWrapping, liftTarget, canSplit, ReplaceAroundStep} from "prosemirror-transform"
 import {Slice, Fragment} from "prosemirror-model"
 import {Selection, TextSelection, NodeSelection, AllSelection} from "prosemirror-state"
+import { undoInputRule } from "prosemirror-inputrules"
 
 // :: (EditorState, ?(tr: Transaction)) → bool
 // Delete the selection, if there is one.
@@ -275,7 +276,12 @@ export function createParagraphNear(state, dispatch) {
     let type = defaultBlockAt($to.parent.contentMatchAt($to.indexAfter()))
     if (!type || !type.isTextblock) return false
     if (dispatch) {
-        let side = (!$from.parentOffset && $to.index() < $to.parent.childCount ? $from : $to).pos
+        /**
+         * Commented this because this caused creating paragraph
+         * before the selected node
+         */
+        // let side = (!$from.parentOffset && $to.index() < $to.parent.childCount ? $from : $to).pos
+        let side = $to.pos;
         let tr = state.tr.insert(side, type.createAndFill())
         tr.setSelection(TextSelection.create(tr.doc, side + 1))
         dispatch(tr.scrollIntoView())
@@ -479,6 +485,19 @@ export function setBlockType(nodeType, attrs) {
     }
 }
 
+export function clearAndChangeNode(node) {
+    return function (state, dispatch) {
+        let {$from, to} = state.selection, pos
+        let same = $from.sharedDepth(to)
+        pos = $from.before(same)
+        const nodeSel = NodeSelection.create(state.doc, pos);
+        const tr = state.tr.replaceWith(nodeSel.from, nodeSel.to, node)
+        dispatch(
+            tr.setSelection(TextSelection.create(tr.doc, nodeSel.from + 1))
+        )
+    }
+}
+
 function markApplies(doc, ranges, type) {
     for (let i = 0; i < ranges.length; i++) {
         let {$from, $to} = ranges[i]
@@ -599,7 +618,7 @@ export function chainCommands(...commands) {
     }
 }
 
-let backspace = chainCommands(deleteSelection, joinBackward, selectNodeBackward)
+let backspace = chainCommands(deleteSelection, undoInputRule, joinBackward, selectNodeBackward)
 let del = chainCommands(deleteSelection, joinForward, selectNodeForward)
 
 // :: Object

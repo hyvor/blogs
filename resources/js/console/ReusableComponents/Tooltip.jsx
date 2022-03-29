@@ -1,11 +1,8 @@
 
-// TODO:
-export function TooltipWrap(props) {
-    return <div className="tooltip-wrap">
-        { props.chilren }
-    </div>
-}
+import ReactTooltip from 'react-tooltip';
 
-export function Tooltip(props) {
+export default function Tooltip(props) {
+
+    return <ReactTooltip effect="solid" {...props} />
 
 }

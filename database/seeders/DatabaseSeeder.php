@@ -2,6 +2,7 @@
 
 namespace Database\Seeders;
 
+use App\Domains\Blog\FillNewBlog;
 use App\Domains\Language\LanguageRepository;
 use App\Domains\Redirect\RedirectRepository;
 use App\Domains\Route\RouteRepository;
@@ -10,11 +11,16 @@ use App\Models\Media;
 use App\Models\BlogThemeFile;
 use App\Models\Post;
 use App\Models\PostAuthor;
+use App\Models\PostsVariant;
 use App\Models\PostTag;
 use App\Models\Tag;
+use App\Models\TagsVariant;
 use App\Models\User;
 use Illuminate\Support\Str;
 use Illuminate\Database\Seeder;
+
+use Illuminate\Http\Client\ConnectionException;
+
 
 class DatabaseSeeder extends Seeder
 {
@@ -25,7 +31,6 @@ class DatabaseSeeder extends Seeder
      */
     public function run()
     {
-
         $faker = \Faker\Factory::create();
 
         $blogs = [['test', "Test Blog", 'hyvorblogscustom.test'], ['test2', "Test2 Blog"]];
@@ -35,39 +40,37 @@ class DatabaseSeeder extends Seeder
                 'user_id' => 1,
                 'subdomain' => $blogData[0],
                 'name' => $blogData[1],
-                'hosting_domain' => $blogData[2] ?? null
+                'hosting_domain' => $blogData[2] ?? null,
+                'hosting_at' => $blogData[0] === 'test2' ? 'self' : 'subdomain',
+                'hosting_url' => $blogData[0] === 'test2' ? 'https://blogs.hyvor.test/blog' : null,
+                'api_key_console' => '123',
+                'social_twitter' => 'https://twitter.com/HyvorBlogs'
             ]);
 
-            $blog->createAsCustomer([
-                'trial_ends_at' => now()->addDays(30)
-            ]);
+            ['language' => $language] = FillNewBlog::fill($blog);
 
-            RouteRepository::addDefaultRoutes($blog);
-            $language = LanguageRepository::addDefaultLanguage($blog);
-            LanguageRepository::createLanguage($blog->id, 'fr', 'French');
+            $secondLanguage = LanguageRepository::createLanguage($blog, 'fr', 'French');
 
-            // RedirectRepository::createRedirect($blog->id, '/redirects', 'https://example.com');
-
-
-            User::create([
-                'blog_id' => $blog->id,
-                'user_id' => $blog->user_id,
-                'role' => 'owner',
-                'status' => 'active',
-                'slug' => "test",
-                'name' => 'Test User',
-                'email' => 'test@hyvor.com'
-            ]);
 
             $tags = [];
+            $tagsVariant = [];
             foreach (range(0, 9) as $i) {
                 $name = $faker->name();
                 $tags[] = Tag::create([
                     'blog_id' => $blog->id,
-                    'name' => $name,
+                    // 'name' => $name,
                     'slug' => Str::slug($name),
                 ]);
+
+                $tagsVariant[] = TagsVariant::create([
+                    'tag_id' => 1,
+                    'language_id' => $language->id,
+                    'name' => $name,
+                ]);
             }
+
+
+
 
             $posts = [];
             foreach (range(0, 200) as $i) {
@@ -88,22 +91,48 @@ class DatabaseSeeder extends Seeder
                     ];
                 }
 
-                $status = ['draft', 'published', 'deleted', 'scheduled'];
+                $status = ['draft', 'published', 'scheduled'];
                 $status = $i === 0 ? 'published' : $status[ array_rand($status) ];
+
+                $publishedAt = $status === 'published' ? $faker->dateTime() : null;
+
                 $post = Post::create([
                     'blog_id' => $blog->id,
+                    'is_page' => (bool) rand(0,1),
+                    'slug' => Str::slug($title),
+                    'published_at' => $publishedAt,
+                ]);
+
+                $englishPost = PostsVariant::create([
+                    'post_id' => $post->id,
                     'language_id' => $language->id,
                     'content' => json_encode($prosemirrorJson),
                     'title' => $title,
-                    'slug' => Str::slug($title),
-                    'published_at' => $status === 'published' ? $faker->dateTime() : null,
                     'description' => $faker->sentence,
                     'status' => $status,
-
-                    'is_page' => (bool) rand(0,1),
-
-                    'reading_time' => 2,
                 ]);
+
+
+                if (rand(0,1) === 0) {
+
+                    $prosemirrorJson['content'][] = [
+                        'type' => 'paragraph',
+                        'content' => [[
+                            'type' => 'text',
+                            'text' => "This is french"
+                        ]]
+                    ];
+                    
+                    $frenchPost = PostsVariant::create([
+                        'post_id' => $post->id,
+                        'language_id' => $secondLanguage->id,
+                        'content' => json_encode($prosemirrorJson),
+                        'title' => $title . ' French',
+                        'description' => $faker->sentence,
+                        'status' => $status,
+                    ]);
+                    
+                }
 
                 PostTag::create([
                     'post_id' => $post->id,
@@ -116,6 +145,10 @@ class DatabaseSeeder extends Seeder
                 ]);
             }
 
+
+
+
+
             foreach (range(0, 15) as $i) {
                 /* Media::create([
                     'blog_id' => $blog->id,
@@ -125,6 +158,10 @@ class DatabaseSeeder extends Seeder
                     'extension' => 'jpg'
                 ]); */
             }
+
+
+
+
         
         }
 

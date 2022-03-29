@@ -8,6 +8,8 @@ use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Str;
 
+use Illuminate\Http\Client\ConnectionException;
+
 class BlogThemeFilesSeeder extends Seeder
 {
     /**
@@ -15,7 +17,7 @@ class BlogThemeFilesSeeder extends Seeder
      *
      * @return void
      */
-    public function run()
+    public function run($blogId = null)
     {
 
         /**
@@ -43,7 +45,7 @@ class BlogThemeFilesSeeder extends Seeder
                 $content = file_get_contents($filePath);
 
                 BlogThemeFile::create([
-                    'blog_id' => 1,
+                    'blog_id' => $blogId ?? 1,
                     'name' => $file,
                     'content' => $content,
                     'folder' => $folder === '' ? null : $folder

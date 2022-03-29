@@ -2,11 +2,27 @@
 
 .theme-view {
 
+    .middle-heading {
+        justify-content: center;
+        border-bottom:1px solid $color-accent-light;
+        margin-bottom: 25px!important;
+        padding-bottom: 25px!important;
+    }
+
+    .theme-left-wrap {
+        flex:1;
+    }
+
+    .theme-left-bottom {
+        padding: 15px;
+        text-align: center;
+        border-top:1px solid $color-accent-light;
+    }
+
     .theme-folders {
 
-        padding:0 25px;
+        padding:10px 30px;
         overflow: auto;
-        flex:1;
 
         .folder {
             margin-bottom: 2px;
@@ -109,6 +125,9 @@
             flex: 1;
             margin-top: 15px;
             overflow: auto;
+            .CodeMirror {
+                height:100%;
+            }
         }
 
     }

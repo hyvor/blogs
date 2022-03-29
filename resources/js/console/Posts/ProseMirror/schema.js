@@ -71,7 +71,7 @@ export const nodes = {
     // `<code>` element inside of it.
     code_block: {
         attrs: {
-            class: {default: null},
+            language: {default: null},
             data: {default: {}},
         },
         content: "text*",
@@ -90,7 +90,7 @@ export const nodes = {
     },
 
     figure: {
-        content: "(rich|image)+ figcaption",
+        content: "(image|rich) figcaption",
         group: "block",
         selectable: true,
         draggable: true,
@@ -106,8 +106,7 @@ export const nodes = {
     image: {
         attrs: {
             src: {default: null},
-            alt: {default: null}, 
-            title: {default: null},
+            alt: {default: null},
             width: {default: null},
             height: {default: null}
         },
@@ -119,9 +118,8 @@ export const nodes = {
           tag: "img[src]", 
           getAttrs(img) {
             return {
-                src: img.src, 
-                alt: img.alt, 
-                title: img.title,
+                src: img.src,
+                alt: img.alt,
                 width: img.width,
                 height: img.height
             }; 
@@ -140,7 +138,7 @@ export const nodes = {
         atom: true,
         selectable: false,
         parseDOM: [{
-            tag: "div.rich[data-url]",
+            tag: "rich[data-url]",
             getAttrs(div) {
                 return {
                     url: div.dataset.url
@@ -148,9 +146,8 @@ export const nodes = {
             }
         }],
         toDOM(node) {
-            return ["div", {
-                "data-url": node.attrs.url,
-                class: "rich"
+            return ["rich", {
+                "data-url": node.attrs.url
             }]
         }
     },
@@ -165,7 +162,7 @@ export const nodes = {
 
     callout: {
         attrs: {
-            emoji: {default: null}
+            emoji: {default: "💡"}
         },
         content: "inline*",
         group: "block",
@@ -173,6 +170,29 @@ export const nodes = {
         selectable: false,
         parseDOM: [{tag: "aside"}],
         toDOM() { return ["aside", 0] }
+    },
+
+    bookmark: {
+        attrs: {
+            url: {default: null}
+        },
+        //atom: true,
+        //draggable: true,
+        selectable: true,
+        group: "block",
+        parseDOM: [{
+            tag: "bookmark[data-url]",
+            getAttrs(div) {
+                return {
+                    url: div.dataset.url
+                }
+            }
+        }],
+        toDOM(node) {
+            return ["bookmark", {
+                "data-url": node.attrs.url
+            }]
+        }
     },
 
     // :: NodeSpec A hard line break, represented in the DOM as `<br>`.
@@ -193,7 +213,22 @@ const emDOM = ["em", 0],
     subDOM = ["sub", 0];
 
 // :: Object [Specs](#model.MarkSpec) for the marks in the schema.
+/**
+ * Marks with background color should come first https://discuss.prosemirror.net/t/marks-priority/4463
+ */
 export const marks = {
+
+    // :: MarkSpec Code font mark. Represented as a `<code>` element.
+    code: {
+        parseDOM: [{tag: "code"}],
+        toDOM() { return codeDOM }
+    },
+
+    highlight: {
+        parseDOM: [{tag: "mark"}],
+        toDOM() { return ["mark", 0] }
+    },
+
     // :: MarkSpec A link. Has `href` and `title` attributes. `title`
     // defaults to the empty string. Rendered and parsed as an `<a>`
     // element.
@@ -228,14 +263,9 @@ export const marks = {
         toDOM() { return strongDOM }
     },
 
-    // :: MarkSpec Code font mark. Represented as a `<code>` element.
-    code: {
-        parseDOM: [{tag: "code"}],
-        toDOM() { return codeDOM }
-    },
 
     // `<s>` for strike
-    s: {
+    strike: {
         parseDOM: [{tag: "s"}, {tag: "strike"}, {tag: "del"}],
         toDOM() { return strikeDOM }
     },
@@ -266,6 +296,6 @@ export const marks = {
 const schemaWithoutList = new Schema({nodes, marks})
 
 export default new Schema({
-    nodes: addListNodes(schemaWithoutList.spec.nodes, "block*", "block"),
+    nodes: addListNodes(schemaWithoutList.spec.nodes, "block+", "block"),
     marks: schemaWithoutList.spec.marks
 })

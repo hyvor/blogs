@@ -1,31 +1,74 @@
+import axios from 'axios';
 import { useActions, useValues } from 'kea';
-import React, { useState } from 'react'
+import React, { useEffect, useRef, useState } from 'react'
 import { CaretLeftFill } from 'react-bootstrap-icons';
+import { getUserEndpoint } from './lib/api';
 import blogsLogic from './logic/blogsLogic';
 import subdomainLogic from './logic/subdomainLogic';
+import ActionButton from './ReusableComponents/ActionButton';
 import Input from './ReusableComponents/Input'
 import { Popup, PopupBodyDefault, PopupFooterSingleButton, PopupHeaderDefault } from './ReusableComponents/Popup'
+import Toast from './ReusableComponents/Toast';
 
 
 export default function NewBlog() {
 
     const [subdomain, setSubdomain] = useState('');
     const [subdomainError, setSubdomainError] = useState(null);
-    const [subdomainSuccess, setSubdomainSuccess] = useState(null);
 
-    const { blogs } = useValues(blogsLogic)
+    const [subdomainEdited, setSubdomainEdited] = useState(false)
+
+    const { blogs, createBlogAjax } = useValues(blogsLogic)
+    const { createBlog } = useActions(blogsLogic)
     const { setSubdomain: setSubdomainInLogic } = useActions(subdomainLogic)
 
     const [name, setName] = useState('');
+    const [nameError, setNameError] = useState(null)
 
-    function onNameChange(val) {
-        setName(val);
+    const abortControllerRef = useRef(null);
 
-        var subdomain = val.toLowerCase().replace(/[^a-z0-9-]/g, '-').replace(/-+/g, '-').replace(/(^-|-$)/g, '');
-        setSubdomain(subdomain);
+    const [isCreating, setIsCreating] = useState(false);
+
+    useEffect(() => {
+        if (subdomain === "") {
+            setSubdomainError(null);
+        } else {
+            abortControllerRef.current && abortControllerRef.current.abort();
+            checkSubdomain();
+        }
+    }, [subdomain])
+
+    function checkSubdomain() {
+        abortControllerRef.current = new AbortController();
+
+        return axios.get(
+            getUserEndpoint('/blog/check-subdomain'),
+            {
+                signal: abortControllerRef.current.signal,
+                params: {
+                    subdomain
+                }
+            }
+        ).then(({data: isAvailable}) => {
+            if (!isAvailable)
+                setSubdomainError("Subdomain already taken");
+        }).catch(() => {})
+
     }
 
-    function onSubdomainChange(val) {
+    function handleNameChange(val) {
+        setName(val);
+        setNameError(null);
+
+        if (!subdomainEdited) {
+            var subdomain = val.toLowerCase().replace(/[^a-z0-9-]/g, '-').replace(/-+/g, '-').replace(/(^-|-$)/g, '');
+            setSubdomain(subdomain);
+        }
+    }
+
+    function handleSubdomainChange(val) {
+        setSubdomainEdited(true);
+
         val = val.toLowerCase();
         setSubdomain(val);
 
@@ -45,6 +88,19 @@ export default function NewBlog() {
 
     function handleBack() {
         setSubdomainInLogic(blogs[0].blog.subdomain, null, true);
+    }
+
+    function handleCreate() {
+
+        if (name.trim() === "") {
+            return setNameError("Name cannot be empty");
+        }
+        if (subdomain.trim() === "") {
+            return setSubdomainError("Subdomain cannot be empty");
+        }
+
+        setIsCreating(true);
+        createBlog({name, subdomain});
     }
 
     return <div className="new-blog-scene">
@@ -71,7 +127,8 @@ export default function NewBlog() {
                         name="blog-name"
                         autocomplete={false}
                         value={name}
-                        onChange={onNameChange}
+                        error={nameError}
+                        onChange={handleNameChange}
                         maxLength={50}
                     />
                     <Input 
@@ -83,7 +140,7 @@ export default function NewBlog() {
                         name="blog-subdomain"
                         autocomplete={false}
                         value={subdomain}
-                        onChange={onSubdomainChange}
+                        onChange={handleSubdomainChange}
                         error={subdomainError}
                         bottom={
                             <div className="your-blog"><b>{subdomain}.hyvorblogs.io</b></div>
@@ -92,8 +149,28 @@ export default function NewBlog() {
                     />
                 </div>
             </PopupBodyDefault>}
-            footer={<PopupFooterSingleButton name="Continue" onClick={() => {}} />}
+            footer={
+                <div className="popup-footer-single">
+                    <ActionButton
+                        status={!isCreating ?  "stale" : createBlogAjax.status} 
+                        staleName="Create"
+                        loadingName="Creating"
+                        successName="Created"
+                        errorName="Try again"
+                        staleOnClick={handleCreate}
+                        errorOnClick={handleCreate}
+                    />
+                </div>
+            }
         />
+        {
+            createBlogAjax.status === 'error' ?
+                <Toast
+                    text={createBlogAjax.error}
+                    type="error"
+                /> 
+            : null
+        }
     </div>
 
 }

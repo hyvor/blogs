@@ -5,7 +5,7 @@ import subdomainLogic from '../logic/subdomainLogic';
 import Loader from '../ReusableComponents/Loader';
 import NoResults from '../ReusableComponents/NoResults';
 import pagesLogic from '../logic/pagesLogic';
-import PostListRow from './PostListRow';
+import PostsListRow from './PostsListRow';
 import NoPost from './NoPost';
 
 export default function Pages( { postId } ) {
@@ -38,7 +38,7 @@ export default function Pages( { postId } ) {
                     <div className="posts-loaded-wrap">
                         {
                             pagesList.length ?
-                            pagesList.map(id => <PostListRow key={id} id={id} subdomain={subdomain} />) :
+                            pagesList.map(id => <PostsListRow key={id} id={id} subdomain={subdomain} />) :
                             <NoResults 
                                 text="No pages found"
                                 padding={60}

@@ -17,6 +17,7 @@ class DeliveryAPIResponseObject
     public string $to;
 
     // for both
+    public bool $cache;
     public int $status;
 
     public function __construct(DeliveryAPITypeEnum $type)
@@ -27,11 +28,12 @@ class DeliveryAPIResponseObject
     /**
      * Files content is base64 encoded
      */
-    public static function forFile(string $content, string $mimeType = 'text/html', int $status = 200)
+    public static function forFile(string $content, string $mimeType = 'text/html', bool $cache = true, int $status = 200)
     {
         $obj = new self(DeliveryAPITypeEnum::FILE);
         $obj->content = $content;
         $obj->mime_type = $mimeType;
+        $obj->cache = $cache;
         $obj->status = $status;
 
         return $obj;
@@ -42,6 +44,7 @@ class DeliveryAPIResponseObject
     {
         $obj = new self(DeliveryAPITypeEnum::REDIRECT);
         $obj->to = $to;
+        $obj->cache = true;
         $obj->status = $type->value;
 
         return $obj;

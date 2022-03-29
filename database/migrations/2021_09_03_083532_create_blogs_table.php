@@ -19,14 +19,15 @@ class CreateBlogsTable extends Migration
             $table->softDeletes();
 
             // connections
-            $table->bigInteger('user_id'); // hyvor user id
+            $table->bigInteger('user_id'); // hyvor user id (owner)
             $table->bigInteger('theme_id')->nullable();
 
             // data
             $table->string('subdomain')->unique();
             $table->enum('type', ['normal', 'dev', 'temp'])->default('normal');
-            $table->string('name');
-            $table->string('description')->nullable();
+            $table->bigInteger('dev_theme_id')->nullable();
+            $table->string('name'); //If there is variants this will be a variant
+            $table->string('description')->nullable(); //If there is variants this will be a variant
             $table->string('icon')->nullable();
             $table->string('featured_image')->nullable();
 
@@ -36,6 +37,7 @@ class CreateBlogsTable extends Migration
 
             $table->boolean('seo_indexing')->default(true);
             $table->text('seo_robots')->nullable();
+            $table->boolean('seo_follow_external_links')->default(false);
 
             $table->text('code_head')->nullable();
             $table->text('code_foot')->nullable();
@@ -45,6 +47,9 @@ class CreateBlogsTable extends Migration
             $table->string('comments_ht_api_key')->nullable();
             $table->text('comments_code')->nullable();
             $table->text('newsletter_code')->nullable();
+
+            $table->string('api_key_data')->nullable();
+            $table->string('api_key_console')->nullable();
         
             $table->string('social_facebook')->nullable();
             $table->string('social_twitter')->nullable();

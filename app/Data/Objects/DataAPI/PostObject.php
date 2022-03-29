@@ -2,8 +2,7 @@
 
 namespace App\Data\Objects\DataAPI;
 
-use App\Domains\Blog\BlogRepository;
-use App\Domains\Post\PostContentRepository;
+use App\Domains\Post\Content\PostContentRepository;
 use App\Domains\Route\PermalinkRepository;
 use App\Models\Blog;
 use App\Models\Post;
@@ -24,6 +23,7 @@ class PostObject
     public ?string $featured_image;
     public ?string $canonical_url;
     public ?int $reading_time;
+    public PostLanguageObject $language;
     public ?string $code_head;
     public ?string $code_foot;
 
@@ -47,17 +47,20 @@ class PostObject
         $this->is_featured = $post->is_featured;
         $this->is_page = $post->is_page;
         $this->slug = $post->slug;
-        $this->content = PostContentRepository::prosemirrorToHtml($post->content);
+        $this->content = PostContentRepository::getHtml($post->variants[0]->content, $blog);
         $this->title = $post->title;
         $this->description = $post->description;
-        $this->url = PermalinkRepository::getPostPermalink($post, $blog);
+        $this->url = PermalinkRepository::getPostPermalink($post, $blog, $post->variants[0]->language);
         $this->featured_image = $post->featured_image;
         $this->canonical_url = $post->canonical_url;
         $this->reading_time = $post->reading_time;
         $this->code_head = $post->code_head;
         $this->code_foot = $post->code_foot;
 
+        $this->language = new PostLanguageObject($post, $blog);
+
         $this->tags = $tags;
         $this->authors = $authors;
+
     }
 }

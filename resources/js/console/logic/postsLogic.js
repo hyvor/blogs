@@ -22,14 +22,14 @@ const postsLogic = kea({
     },
 
     actionToUrl: ({ props }) => ({
-        navigateToPost: ({id}) => `/${props.subdomain}/posts/${id}`,
-        navigateToPosts: () => `/${props.subdomain}/posts`
+        navigateToPost: ({id}) => `/console/${props.subdomain}/posts/${id}`,
+        navigateToPosts: () => `/console/${props.subdomain}/posts`
     }),
 
     ajax: ({ values, props, actions }) => ({
 
         getCounts: async () => {
-            const counts = await api.get(props.subdomain, '/counts');
+            const counts = await api.get(props.subdomain, '/blog/post-counts');
             actions.setCounts(counts);
         },
 
@@ -38,9 +38,12 @@ const postsLogic = kea({
          * we want seperate loading states
          */
         loadPostsList: async () => {
+            const filters = values.filters
             const posts = await api.get(props.subdomain, '/posts', {
-                filters: values.filters
+                filters
             });
+            console.log(filters)
+
             posts.forEach(post => {
                 const builtPostLogic = postLogic.build({id: post.id, data: post}, false);
                 builtPostLogic.mount();
@@ -94,7 +97,7 @@ const postsLogic = kea({
                 status: 'all',
                 author: 'all',
                 tag: 'all',
-                language: blogsLogic.values.findBlogBySubdomain(props.subdomain).blog.defaultLanguage.id,
+                language_id: blogsLogic.values.findBlogBySubdomain(props.subdomain).blog.default_language.id,
                 dateStart: null,
                 dateEnd: null,
                 search: ''
@@ -103,6 +106,7 @@ const postsLogic = kea({
                 changeFilter: (state, {name, value}) => ({...state, ...{[name]: value}})
             }
         ]
+
     }),
 
     events: ({actions}) => ({

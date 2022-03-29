@@ -26,7 +26,7 @@ class ExampleTest extends TestCase
     {
 
         $test = new Test(1);
-        dd(json_encode($test));
+        // dd(json_encode($test));
 
         $this->assertTrue(true);
     }

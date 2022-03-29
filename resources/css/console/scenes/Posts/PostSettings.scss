@@ -1,0 +1,136 @@
+
+
+.settings-view-wrap {
+    position:absolute;
+    width:100%;
+    left:0;
+    z-index: 1;
+    transition:.125s transform, .125s opacity;
+    &.active {
+        pointer-events: auto;
+        opacity: 1;
+        transform:initial; // transform 0 causes child fixed elements to be relative to this element
+    }
+    &.inactive {
+        pointer-events: none;
+        opacity: 0;
+        transform:translateY(-10px);
+    }
+    .setting-select {
+        text-align: center;
+        padding: 20px;
+        border-bottom: 1px solid $color-accent-light;
+        span {
+            cursor: pointer;
+            display: inline-block;
+            padding: 4px 10px;
+            font-size: 12px;
+            border-radius: 20px;
+            transition: .1s background, .1s color;
+            &.active {
+                font-weight: 600;
+                background: $color-accent;
+                color: #fff;
+            }
+        }
+    }
+    .setting-show {
+        padding:20px;
+    }
+
+
+    .post-editor-settings-view {
+        background: $color-box;
+        box-shadow: 0 0 40px 20px rgb(0 0 0 / 6%);
+        margin-right: 60px;
+        margin-top: 14px;
+        min-height: 200px;
+        border-radius: 20px;
+        position: relative;
+        &:before {
+            position: absolute;
+            content: "";
+            left: 30px;
+            bottom: 100%;
+            border: 10px solid $color-box;
+            border-top-color: transparent;
+            border-left-color: transparent;
+            border-right-color: transparent;
+        }
+    }
+
+    .post-setting {
+        margin-bottom:15px;
+        flex:1;
+        .post-setting-title {
+            font-weight: 600;
+            margin-bottom: 5px;
+        }
+
+        &.post-setting-description textarea {
+            height: 150px;
+            padding: 15px;
+            margin: 0px;
+            resize: none;
+        }
+        &.post-setting-featured-image .featured-image {
+            height:150px;      
+            background: $color-input;
+            border-radius: 20px;
+            .image-preview {
+                width: 100%;
+                height: 100%;
+                cursor: pointer;
+                display: flex;
+                align-items: center;
+                justify-content: center;
+                position:relative;
+            }
+            .no-image {
+                cursor:pointer;
+                color: $color-text-light;
+                width: 100%;
+                height: 100%;
+                display: flex;
+                align-items: center;
+                justify-content: center;
+            }
+            .delete-button {
+                position: absolute;
+                top: 10px;
+                right: 10px;
+                background: $color-red;
+                border-radius: 50%;
+                width: 20px;
+                height: 20px;
+                display: inline-flex;
+                align-items: center;
+                justify-content: center;
+                color: #fff;
+                opacity: 0;
+                transition:.3s opacity;
+            }
+            &:hover {
+                .delete-button {
+                    opacity: 1;
+                }
+            }
+        }
+        &.post-setting-publish-time {
+            .not-published {
+                margin-top: 10px;
+                color: $color-text-light;
+            }
+        }
+    }
+    .post-setting-dual {
+        display: flex;
+        .post-setting:first-child {
+            margin-right:15px;
+        }
+    }
+
+    .CodeMirror {
+        height: 150px;
+    }
+}

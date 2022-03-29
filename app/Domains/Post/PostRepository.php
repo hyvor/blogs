@@ -3,10 +3,15 @@
 namespace App\Domains\Post;
 
 use App\Data\Params\ConsoleAPI\PostsFilterParam;
+use App\Domains\Language\LanguageRepository;
+use App\Domains\Post\Events\PostPublishedEvent;
 use App\Exceptions\TrustedException;
 use App\Models\Blog;
+use App\Models\Language;
 use App\Models\Post;
+use App\Models\PostsVariant;
 use App\Models\Tag;
+use App\Models\PostTag;
 use App\Models\User;
 use App\Types\Post\PostInputListFiltersType;
 use Carbon\Carbon;
@@ -32,64 +37,73 @@ class PostRepository
         return $post->first();
     }
 
+    public static function getPostByBlogIdSlugAndLanguageId(int $blogId, string $slug, int $languageId) : ?Post
+    {
+        return Post::where('blog_id', $blogId)
+            ->where('slug', $slug)
+            ->where('language_id', $languageId)
+            ->first();
+    }
+
     /**
      * Get posts of a blog
      * with filters, limit, and offset
      * This is for the ConsoleAPI
      */
     public static function getPosts(
-        int $blogId, PostsFilterParam $filters, ?int $limit, int $offset = 0
+        Blog $blog, Language $language, PostsFilterParam $filters, ?int $limit, int $offset = 0
     ) : Collection
     {
         $status = $filters->status;
         $authorId = $filters->authorId;
         $tagId = $filters->tagId;
-        $languageId = $filters->languageId;
         $startTimestamp = $filters->startTimestamp;
         $endTimestamp = $filters->endTimestamp;
         $search = $filters->search;
 
         $limit = $limit ?? 50;
 
-        return Post::where('blog_id', $blogId)
-        ->where('posts.is_page', false)
-        ->when($authorId, function ($query) use ($authorId) {
-            $query->join('post_author', function ($join) use ($authorId) {
-                $join->on('post_author.post_id', '=', 'posts.id');
-                $join->on('post_author.author_id', '=', $authorId);
-            });
-        })
-        ->when($tagId, function ($query) use ($tagId) {
-            $query->join('post_tag', function ($join) use ($tagId) {
-                $join->on('post_tag.post_id', '=', 'posts.id');
-                $join->on('post_tag.tag_id', '=', $tagId);
-            });
-        })
-        ->when($languageId, function ($query) use ($languageId) {
-            $query->where('posts.language_id', $languageId);
-        })
-        ->when($startTimestamp && $endTimestamp, function ($query) use ($startTimestamp, $endTimestamp) {
-            $query->whereDate('created_at', '>', $startTimestamp)
-                ->whereDate('created_at', '<', $endTimestamp);
-        })
-        // status
-        ->when($status === null, function ($query) {
-            $query->where('posts.status', '!=', 'deleted');
-        }, function ($query) use ($status) {
-            if ($status === 'featured') {
-                $query->where('is_featured', true);
-            } else {
-                $query->where('posts.status', $status);
-            }
-        })
-        ->when($search, function ($query) use ($search) {
-            $query->where('posts.title', 'LIKE', "$search%");
-        })
-        ->orderByRaw("FIELD(posts.status, 'draft') DESC") // drafts first
-        ->orderBy('created_at', 'desc')
-        ->limit($limit)
-        ->offset($offset)
-        ->get();
+        return Post::where('posts.blog_id', $blog->id)
+            ->join('posts_variants', function($join) use ($language) {
+                $join->on('posts_variants.post_id', '=', 'posts.id');
+                $join->where('posts_variants.language_id', '=', $language->id);
+            })
+            ->where('posts.is_page', false)
+            ->when($authorId, function ($query) use ($authorId) {
+                $query->join('post_author', function ($join) use ($authorId) {
+                    $join->on('post_author.post_id', '=', 'posts.id');
+                    $join->on('post_author.author_id', '=', $authorId);
+                });
+            })
+            ->when($tagId, function ($query) use ($tagId) {
+                $query->join('post_tag', function ($join) use ($tagId) {
+                    $join->on('post_tag.post_id', '=', 'posts.id');
+                    $join->on('post_tag.tag_id', '=', $tagId);
+                });
+            })
+            ->when($startTimestamp && $endTimestamp, function ($query) use ($startTimestamp, $endTimestamp) {
+                $query->whereDate('created_at', '>', $startTimestamp)
+                    ->whereDate('created_at', '<', $endTimestamp);
+            })
+            // status
+            ->when($status, function ($query) use ($status) {
+                if ($status === 'featured') {
+                    $query->where('is_featured', true);
+                } else {
+                    $query->where('posts.status', $status);
+                }
+            })
+            ->when($search, function ($query) use ($search) {
+                $query->where('posts.title', 'LIKE', "$search%");
+            })
+            // to prevent selecting posts_variants data
+            ->select('posts.*')
+            ->orderByRaw("FIELD(posts_variants.status, 'draft') DESC") // drafts first
+            ->orderBy('posts.created_at', 'desc')
+            ->limit($limit)
+            ->offset($offset)
+            ->get();
+
     }
 
     public static function getPages(int $blogId) {
@@ -104,14 +118,18 @@ class PostRepository
     /**
      * Getting posts with FilterQ
      * This is for the Data API
+     * 
+     * ALWAYS USE NAMED ARGUMENT WHEN USING THIS FUNCTION
      */
     public static function getPostsWithFilterQ(
-        int $blogId, ?string $filterQExpression, 
-        int $limit, int $offset,
-        string $orderBy, string $orderMethod
+        int $blogId, ?string $filter, 
+        int $limit, 
+        int $offset = 0,
+        string $orderBy = 'published_at', 
+        string $orderMethod = 'DESC'
     ) : Collection {
 
-        $builder = FilterQ::expression($filterQExpression)
+        $builder = FilterQ::expression($filter)
             ->builder(Post::class)
             ->keys(function($keys) {
 
@@ -188,12 +206,11 @@ class PostRepository
             ->addWhere();
 
         return $builder
-            ->with(['tags', 'authors'])
             ->where('posts.blog_id', $blogId)
-            ->where('posts.status', 'published')
+            //->where('posts.status', 'published')
             ->limit($limit)
             ->offset($offset)
-            ->orderBy($orderBy, $orderMethod)
+            // ->orderBy($orderBy, $orderMethod)
             ->select('posts.*')
             ->get();
 
@@ -221,19 +238,9 @@ class PostRepository
     public static function updatePost(int $postId, array $updates)
     {
         $post = Post::find($postId);
+        // $postTag = PostTag::find($postId);
 
-        if (
-            array_key_exists('published_at', $updates) &&
-            in_array($post->status, ['published', 'scheduled'])
-        ) {
-            $post->published_at = Carbon::createFromTimestamp($updates['published_at']);
-        }
-        if (array_key_exists('status', $updates)) {
-            $post->status = $updates['status'];
-        }
-        if (array_key_exists('is_featured', $updates)) {
-            $post->is_featured = $updates['is_featured'];
-        }
+
         if (array_key_exists('slug', $updates)) {
             $slug = $updates['slug'];
             if (
@@ -246,17 +253,8 @@ class PostRepository
                 $post->slug = $updates['slug'];
             }
         }
-        if (array_key_exists('content', $updates)) {
-            $post->content = $updates['content'];
-        }
-        if (array_key_exists('title', $updates)) {
-            $post->title = $updates['title'];
-        }
-        if (array_key_exists('description', $updates)) {
-            $post->description = $updates['description'];
-        }
-        if (array_key_exists('featured_image', $updates)) {
-            $post->featured_image = $updates['featured_image'];
+        if (array_key_exists('is_featured', $updates)) {
+            $post->is_featured = $updates['is_featured'];
         }
         if (array_key_exists('canonical_url', $updates)) {
             $post->canonical_url = $updates['canonical_url'];
@@ -268,8 +266,105 @@ class PostRepository
             $post->code_foot = $updates['code_foot'];
         }
 
+        if (array_key_exists('tag', $updates)) {
+            // $postTag->code_head = $updates['tag'];
+            $post = Tag::create([
+                'post_id' => $postId,
+                'tag_id' => $updates['tag'],
+            ]);
+        }
+        
+        // if (array_key_exists('code_foot', $updates)) {
+        //     $post->code_foot = $updates['code_foot'];
+        // }
+        /**
+         * Dispatch events
+         */
+        // add to an observer
+        /* if ($post->isDirty('status') || true) {
+            if ($post->status === 'published') {
+                PostPublishedEvent::dispatch($post);
+            } else if ($post->status === 'draft') {
+                // 
+            }
+        } */
+
         $post->save();
+
         return $post;
+    }
+
+    public static function updatePostVariant(int $postId, int $languageId, array $updates)
+    {
+
+        $variant = self::getPostVariantByPostIdAndLanguageId($postId, $languageId);
+
+        if (!$variant) {
+            return;
+        }
+
+        // status
+        if (array_key_exists('status', $updates)) {
+            $status = $updates['status'];
+            $variant->status = $status;
+        }
+
+        // published_at
+        if (
+            array_key_exists('published_at', $updates) &&
+            in_array($variant->status, ['published', 'scheduled'])
+        ) {
+            $variant->published_at = Carbon::createFromTimestamp($updates['published_at']);
+        }
+
+        // content
+        if (array_key_exists('content', $updates)) {
+            /**
+             * content update means either 
+             *  - user is saving a draft post
+             *  - user is "updating" a non-draft post
+             */
+            $variant->content = $updates['content'];
+            $variant->content_unsaved = null;
+        }
+
+        // content_unsaved
+        if (array_key_exists('content_unsaved', $updates)) {
+            /**
+             * content_unsaved means
+             *  - user is saving a non-draft variant
+             */
+            $variant->content_unsaved = $updates['content_unsaved'];
+        }
+
+        // title
+        if (array_key_exists('title', $updates)) {
+            $variant->title = $updates['title'];
+        }
+
+        // description
+        if (array_key_exists('description', $updates)) {
+            $variant->description = $updates['description'];
+        }
+
+        // featured_image
+        if (array_key_exists('featured_image', $updates)) {
+            $variant->featured_image = $updates['featured_image'];
+        }
+
+        $variant->save();
+
+        return $variant;
+
+    }
+
+    public static function getPostVariantByPostIdAndLanguageId(int $postId, int $languageId) : ?PostsVariant
+    {
+
+        return PostsVariant::where('language_id', $languageId)
+            ->where('post_id', $postId)
+            ->first();
+
     }
 
 

@@ -15,12 +15,10 @@ class CreateThemesTable extends Migration
     {
         Schema::create('themes', function (Blueprint $table) {
             $table->id();
-            $table->string('name');
             $table->timestamps();
 
-            // connections
-            $table->bigInteger('post_id');
-            $table->bigInteger('tag_id');
+            $table->string('name');
+            $table->string('current_version');
         });
     }
 

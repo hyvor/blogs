@@ -25,7 +25,7 @@ class CountRepository {
         $ret = [];
         foreach ($names as $name) {
             $ret[$name] = $counts->get($name)?->value ?? 0;
-        }
+        } 
 
         return $ret;
 

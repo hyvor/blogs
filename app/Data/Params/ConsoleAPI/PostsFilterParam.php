@@ -20,7 +20,7 @@ class PostsFilterParam
 
     public function setStatus(?string $status)
     {
-        if (!in_array($status, [null, 'published', 'deleted', 'draft', 'scheduled', 'featured'])) {
+        if (!in_array($status, [null, 'published', 'draft', 'scheduled', 'featured'])) {
             throw new TrustedException('Invalid status for filteing: ' . $status);
         }
         $this->status = $status;

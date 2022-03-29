@@ -13,10 +13,12 @@ const mix = require('laravel-mix');
 
 
 // console
-mix.js('resources/js/console/console.js', 'public/js')
-    .react();
+mix.js('resources/js/console/console.js', 'public/js').react();
 mix.sass('resources/css/console/console.scss', 'public/css');
 
 
 // landing
 mix.sass('resources/css/landing/landing.scss', 'public/css');
+
+// copy codemirror modes for autoloading
+mix.copy('node_modules/codemirror/mode/*/*.js', 'public/js/codemirror-modes');

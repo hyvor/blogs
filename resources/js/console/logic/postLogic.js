@@ -7,6 +7,8 @@ import slugify from "../../helpers/slugify";
 import api from "../lib/api";
 import postsLogic from "./postsLogic";
 import subdomainLogic from "./subdomainLogic";
+import { diff } from 'deep-object-diff';
+import merge from 'deepmerge'
 
 const postLogic = kea({
 
@@ -18,11 +20,12 @@ const postLogic = kea({
 
         set: (obj) => ({obj}),
         setOriginal: (obj) => ({obj}),
-        updatePostValue: (key, value) => ({key, value})
+        updatePostValue: (key, value) => ({key, value}),
+        updatePostVariantValue: (key, value, languageId) => ({key, value, languageId}),
 
     },
 
-    ajax: ({actions, values, selectors, props}) => ({
+    ajax: ({actions, selectors, props}) => ({
  
         loadPost: async () => {
             const response = await api.get(subdomainLogic.values.subdomain, `/post/${props.id}`);
@@ -30,13 +33,19 @@ const postLogic = kea({
         },
 
         deletePost: async () => {
-            await api.delete(props.subdomain, `/post/${props.id}`);
-            actions.getPostsLoadSuccess(values.postsList.filter(pId => pId !== id));
-            actions.navigateToPosts();
+            // remove from posts list
+            const subdomain = subdomainLogic.values.subdomain
+            const postsLogicInst = postsLogic({subdomain});
+            postsLogicInst.actions.setPostsList(postsLogicInst.values.postsList.filter(pId => pId !== props.id));
+            postsLogicInst.actions.navigateToPosts();
+            await api.delete(subdomain, `/post/${props.id}`);
         },
 
+        /**
+         * Used for auto saving
+         */
         savePost: async () => {
-            const diff = selectors.getDiff();
+            const diff = selectors.getDiff()
             
             if (Object.keys(diff).length === 0) {
                 return false;
@@ -44,6 +53,19 @@ const postLogic = kea({
 
             const response = await api.patch(subdomainLogic.values.subdomain, `/post/${props.id}`, diff)
             actions.setOriginal(response);
+        },
+
+        /**
+         * Used for forced saving/publishing/unpublishing (usually on button click)
+         */
+        forceSavePost: async ({onSave, update}) => {
+
+            const diff = {...selectors.getDiff(), ...update};
+            
+            const response = await api.patch(subdomainLogic.values.subdomain, `/post/${props.id}`, diff)
+            actions.set(response)
+
+            typeof onSave === 'function' && onSave(response);
         }
 
     }),
@@ -68,7 +90,7 @@ const postLogic = kea({
         getDiff: [
             (selectors) => [selectors.post, selectors.postOriginal],
             (post, postOriginal) => {
-                return getPostDiff(post, postOriginal)
+                return diff(postOriginal, post)
             }
         ]
 
@@ -79,7 +101,17 @@ const postLogic = kea({
         // post's current state in the front-end
         post: [{}, { 
             set: (_, {obj}) => obj,
-            updatePostValue: (state, {key, value}) => ({...state, ...{[key]: value}})
+            updatePostValue: (state, {key, value}) => ({...state, ...{[key]: value}}),
+            updatePostVariantValue: (state, {key, value, languageId}) => {
+                const obj = {
+                    variants: {
+                        [languageId]: {
+                            [key]: value
+                        }
+                    }
+                }
+                return merge(state, obj);
+            }
         }],
 
         // the really saved post in the back-end
@@ -101,33 +133,5 @@ const postLogic = kea({
     })
 
 })
-
-function getPostDiff(post, postOriginal) {
-
-    const updatableKeys = [
-        'published_at',
-        'status',
-        'is_featured',
-        'slug',
-        'content',
-        'title',
-        'description',
-        'featured_image',
-        'canonical_url',
-        'code_head',
-        'code_foot'
-    ];
-
-    const diff = {};
-
-    for (var i in postOriginal) {
-        if (updatableKeys.indexOf(i) !== -1 && postOriginal[i] !== post[i]) {
-            diff[i] = post[i];
-        }
-    }
-
-    return diff;
-
-}
 
 export default postLogic;

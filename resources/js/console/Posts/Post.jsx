@@ -1,50 +1,80 @@
 import { useActions, useValues } from 'kea';
 import React, { useEffect, useRef, useState } from 'react';
-import { BoxArrowUpRight, CaretDownFill, Fullscreen, GearFill, PencilFill, Trash } from 'react-bootstrap-icons';
+import { BoxArrowUpRight, CaretDownFill, Fullscreen, GearFill, InfoCircle, PencilFill } from 'react-bootstrap-icons';
 import Editor from './ProseMirror/Editor';
 import TextareaAutosize from 'react-textarea-autosize';
 import onOutsideClick from '../../helpers/onOutsideClick';
 import postLogic from '../logic/postLogic';
 import { getBlogUrl } from '../lib/blog-helpers';
+import PostSettings from './PostSettings';
+import Loader from '../ReusableComponents/Loader';
+import { PopupConfirm } from '../ReusableComponents/Popup';
+import PostPublisher from './PostPublisher';
+import { toast } from 'react-toastify';
+import ActionButton from '../ReusableComponents/ActionButton';
+import languagesLogic from '../logic/languagesLogic';
+import PostLanguageSelector from './PostLanguageSelector';
+import blogsLogic from '../logic/blogsLogic';
+import Tooltip from '../ReusableComponents/Tooltip';
 
+
+let publisherOutsideCleaner;
 export default function Post( {subdomain, id} ) {
 
     id = parseInt(id)
 
     const postLogicInst = postLogic({id});
-    const { post, loadPostAjax, savePostAjax, getDiff } = useValues(postLogicInst)
-    const { updatePostValue, savePost, deletePost } = useActions(postLogicInst)
 
+    // const { post, loadPostAjax, savePostAjax, getDiff } = useValues(postLogicInst)
+    // const { updatePostValue, savePost, deletePost } = useActions(postLogicInst) 
 
+    const { post, loadPostAjax, savePostAjax, forceSavePostAjax, getDiff } = useValues(postLogicInst)
+    const { updatePostValue, updatePostVariantValue, savePost, forceSavePost } = useActions(postLogicInst)
+
+    const { findBlogBySubdomain } = useValues(blogsLogic)
+
+    const { languages, getLanguageById } = useValues(languagesLogic({subdomain}))
+ 
     const [isFullScreen, setIsFullScreen] = useState(false);
 
+    const [currentLanguageId, setCurrentLanguageId] = useState( findBlogBySubdomain(subdomain).blog.default_language.id );
+    const currentLanguage = getLanguageById(currentLanguageId);
+
+    const variants = post.variants || [];
+    const variant = variants[currentLanguageId] || {};
 
     /**
      * Disallow outside clicking when the content has changed
      */
     const viewRef = useRef(null);
 
+    function handleAutoSave() {
+        if (!holdAutoSavingRef.current) {
+            savePost();
+        }
+    }
+
     // saving
     useEffect(() => {
 
         // auto save
-        const autoSaveInterval = setInterval(savePost, 10000);
+        const autoSaveInterval = setInterval(handleAutoSave, 10000);
 
         function checkSave(e) {
             if (e.keyCode === 83 && (e.ctrlKey || e.metaKey)) { // ctrl + s
-                savePost();
+                handleAutoSave();
                 e.preventDefault();
             }
-        }
+        } 
 
         function checkSaveUnload() {
             if (
-                (post.status === 'published' || post.status === 'scheduled') && 
-                Object.keys(getDiff).length > 0
+                (variant.status === 'published' || variant.status === 'scheduled') && 
+                Object.keys(getDiff()).length > 0
             ) {
                 return true;
             } else {
-                savePost();
+                handleAutoSave();
             }
         }
 
@@ -54,7 +84,7 @@ export default function Post( {subdomain, id} ) {
         window.addEventListener('beforeunload', checkSaveUnload);
 
         // save on outsideClick
-        const removeOutsideEvent = onOutsideClick(viewRef.current, savePost, false, false, false);
+        const removeOutsideEvent = onOutsideClick(viewRef.current, handleAutoSave, false, false, false);
 
         return () => {
             clearInterval(autoSaveInterval)
@@ -71,6 +101,12 @@ export default function Post( {subdomain, id} ) {
     const [isSettingsOpen, setIsSettingsOpen] = useState(false);
     const settingsViewRef = useRef(null);
 
+    /**
+     * Publishing view
+     */
+    const [isPublisherOpen, setIsPublisherOpen] = useState(false);
+    const publisherViewRef = useRef(null);
+
     function openSettingsView() {
         setIsSettingsOpen(true);
         onOutsideClick(settingsViewRef.current, closeSettingsView);
@@ -79,64 +115,75 @@ export default function Post( {subdomain, id} ) {
         setIsSettingsOpen(false);
     }
 
-    const [ settingsType, setSettingsType ] = useState('basic'); // basic | advanced
+    function openPublisher() {
+        setIsPublisherOpen(true)
+        publisherOutsideCleaner = onOutsideClick(publisherViewRef.current, closePublisher);
+    }
+    function closePublisher() {
+        setIsPublisherOpen(false)
+        publisherOutsideCleaner && publisherOutsideCleaner()
+    }
 
-    // have to first click Edit Post to edit published/scheduled posts
-    const [publishedPostEditing, setPublishedPostEditing] = useState(false);
-
-
-    // something changed?
-    // null if not
-    // object ({old, new}) if changed
-    function getDiffWithOld() {
-        var diff = {};
-        for (var key in posts[id]) {
-            if (post[key] !== posts[id][key]) {
-                diff[key] = {
-                    old: posts[id][key],
-                    new: post[key]
-                }
-            }
+    function UnPublishButton() {
+        let name;
+        if (variant.status === 'published') {
+            name = "Unpublish";
+        } else if (variant.status === 'scheduled') {
+            name = "Unschedule";
         }
-        return diff;
+
+        return name ? <button 
+            className="button small secondary unpublish-button"
+            onClick={() => setIsUnPublishing(true)}
+        >
+            {name}
+        </button> : null;
     }
 
     function MainButton() {
-        let name, onClick, icon, disabled = false;
+        let name, onClick, icon;
 
-        if (post.status === 'published' || post.status === 'scheduled') {
-            if (!publishedPostEditing) {
-                name = "Edit Post";
+        if (variant.status === 'published' || variant.status === 'scheduled') {
+            if (!nonDraftPostEditing) {
+                name = "Edit";
                 icon = <PencilFill />
-                onClick = () => setPublishedPostEditing(true);
+                onClick = () => setNonDraftPostEditing(true);
             } else {
-                const diff = getDiffWithOld();
-                if (diff) {
-                    const count = Object.keys(diff).length;
-                    name = "Save Changes" + (count > 0 ? " (" + count + ")" : "");
-                    onClick = () => showUpdateDetails();
-                    disabled = count === 0;
-                }
+                return <ActionButton 
+                    className="small main-button"
+                    status={!isNonDraftUpdating ? "stale" : forceSavePostAjax.status} 
+                    staleName="Update"
+                    loadingName="Updating" 
+                    successName="Updated"
+                    errorName="Try again"
+                    staleOnClick={handleUpdateNonDraft}
+                    errorOnClick={handleUpdateNonDraft}
+                />
             }
-        } else if (post.status === 'draft') {
-            name = "Publish Post";
-            onClick = () => showPublishDetails()
-        } else { // deleted
-            name = "Recover Post";
-            onClick = () => showDeleteDetails()
+        } else if (variant.status === 'draft') {
+            name = "Publish";  
+            onClick = openPublisher;
+            icon = <CaretDownFill />;
         }
 
         return <button className="button small main-button" onClick={() => onClick()}>
-            <span>{name}</span>{icon || <CaretDownFill />}
+            <span>{name}</span>{icon}
         </button>
     }
 
-    function showUpdateDetails() {
-        alert("Updated");
-    }
-
-    function handleDelete() {
-        deletePost({id})
+    function handleUpdateNonDraft() {
+        setIsNonDraftUpdating(true);
+        forceSavePost({
+            update: {
+                content: post.content_unsaved
+            },
+            onSave: (p) => {
+                setIsNonDraftUpdating(false)
+                toast.success(<div>Post Updated. <a className="link" href={p.url} target="_blank">View</a></div>, {
+                    autoClose: 5000
+                })
+            }
+        });
     }
 
     function toggleFullscreen() {
@@ -158,6 +205,52 @@ export default function Post( {subdomain, id} ) {
             closeFullscreen();
     }
 
+    const isNotDraft = variant.status !== 'draft';
+    const content = isNotDraft ? (variant.content_unsaved || variant.content) : variant.content;
+
+    // have to first click Edit Post to edit published/scheduled posts
+    const [nonDraftPostEditing, setNonDraftPostEditing] = useState(false);
+    const [isUnPublishing, setIsUnPublishing] = useState(false);
+    const [isNonDraftUpdating, setIsNonDraftUpdating] = useState(false);    
+
+    const holdAutoSavingRef = useRef(null); // for setInterval
+
+    useEffect(() => {
+        holdAutoSavingRef.current = isPublisherOpen || isUnPublishing || isNonDraftUpdating
+    }, [isPublisherOpen, isUnPublishing, isNonDraftUpdating])
+
+
+    function handleContentUpdate(v) {
+        handlePostVariantValueChange(isNotDraft ? 'content_unsaved' : 'content', v);
+    }
+
+    function handlePostVariantValueChange(key, value) {
+        updatePostVariantValue(key, value, currentLanguageId)
+    }
+
+    function handleUnPublish() {
+        const update = {variants: {[currentLanguageId]: {status: 'draft'}}};  
+        forceSavePost({
+            update,
+            onSave: () => {
+                toast("Post unpublished")
+            }
+        });
+        setIsUnPublishing(false);
+    }
+
+    useEffect(() => {
+        if (loadPostAjax.status === 'success') {
+            setNonDraftPostEditing(isNotDraft && post.content_unsaved)
+        }
+    }, [loadPostAjax.status])
+
+    if (loadPostAjax.status === 'loading') {
+        return <div className="post-loading">
+            <Loader />
+        </div>;
+    }
+
     return <div className={"post-editor" + (isFullScreen ? " fullscreen" : "") } ref={viewRef}>
 
         <div className="pos-rel"> {/* this element is required to make the tooltip work correctly */}
@@ -165,16 +258,31 @@ export default function Post( {subdomain, id} ) {
 
                 <div className="post-editor-top-content">
 
+                    <PostLanguageSelector
+                        id={id}
+                        languages={languages} 
+                        variants={variants}
+                        currentLanguageId={currentLanguageId}
+                        onChange={setCurrentLanguageId}
+                    />
+
                     <div className="post-editor-title-row">
 
                         <div className="title-textarea-wrap">
                             <TextareaAutosize 
                                 className="post-editor-title" 
                                 placeholder="Title..."
-                                value={post.title || ""}
-                                onChange={(e) => updatePostValue('title', e.target.value)}
+                                value={variant.title || ""}
+                                onChange={(e) => handlePostVariantValueChange('title', e.target.value)}
                             />
                         </div>
+
+                        <div className="status">
+                            <span>{post.status}</span>
+                        </div>
+                        {/* <div className="status">
+                            <span>{variant.status}</span>
+                        </div> */}
 
                     </div>
 
@@ -189,7 +297,7 @@ export default function Post( {subdomain, id} ) {
                                     <span>Settings</span><GearFill />
                                 </button>
 
-                                <a href={ getBlogUrl(subdomain, '/p/' + post.preview_id) } target="_blank">
+                                <a href={ getBlogUrl(subdomain, '/p/' + post.preview_id + "/" + currentLanguage.code) } target="_blank">
                                     <button className="button small secondary view" >
                                         <span>View</span><BoxArrowUpRight />
                                     </button>
@@ -197,160 +305,32 @@ export default function Post( {subdomain, id} ) {
                                 <button 
                                     className={"button small" + (!isFullScreen ? " secondary" : " inactive")}
                                     onClick={toggleFullscreen}
+                                    data-tip="Toggle Fullscreen"
                                 >
                                     <Fullscreen />
                                 </button>
                             </div>
 
                             <div className="publish-buttons">
-                                {
-                                    savePostAjax.status === 'loading' ?
-                                    <span className="saving">Saving...</span> : null
-                                }
+                                <UnPublishButton />
                                 <MainButton />
+
+                                <PostPublisher
+                                    id={id}
+                                    currentLanguageId={currentLanguageId}
+                                    publisherViewRef={publisherViewRef}
+                                    isOpen={isPublisherOpen}
+                                    closePublisher={closePublisher}
+                                />
                             </div>
                         </div>
-                        
-                        <div className={"settings-view-wrap " + (isSettingsOpen ? "active" : "inactive") }>
-                            <div ref={settingsViewRef} className="post-editor-settings-view">
 
-                                <div className="setting-select">
-                                    <span onClick={() => setSettingsType('basic')} className={settingsType === 'basic' ? 'active' : ''}>Basic</span>
-                                    <span onClick={() => setSettingsType('advanced')} className={settingsType === 'advanced' ? 'active' : ''}>Advanced</span>
-                                </div>
-
-                                {settingsType === 'basic' ?
-                                <div className="setting-show">
-                                    <div className="post-setting-dual">
-                                        <Setting 
-                                            title="Slug"
-                                            description="The unique part of the URL to identify this post"
-                                        >
-                                            <input 
-                                                className="input" 
-                                                value={post.slug}
-                                                onChange={(e) => updatePostValue("slug", e.target.value)}
-                                            ></input>
-                                        </Setting>
-
-                                        <Setting 
-                                            title="Publish Time"
-                                            className="post-setting-featured-image"
-                                        >
-                                            <input className="input" value="2021-01-01" onChange={() => {}}></input>
-                                        </Setting>
-
-                                    </div>
-
-                                    <div className="post-setting-dual">
-
-                                        <Setting 
-                                            title="Authors"
-                                            description="The unique part of the URL to identify this post"
-                                        >
-                                            <input className="input" value="Ishini Avindya" onChange={() => {}}></input>
-                                        </Setting>
-
-                                        <Setting 
-                                            title="Tags"
-                                            className="post-setting-featured-image"
-                                        >
-                                            <input className="input" value="#creative" onChange={() => {}}></input>
-                                        </Setting>
-
-                                    </div>
-
-                                    <div className="post-setting-dual">
-
-                                        <Setting 
-                                            title="Description"
-                                            description="Summarization of the post for listing pages and search engines."
-                                            className="post-setting-description"
-                                        >
-                                            <textarea 
-                                                className="input"
-                                                placeholder="Write a description..."
-                                                value={post.description}
-                                                onChange={e => updatePostValue('description', e.target.value)}
-                                            ></textarea>
-                                        </Setting>
-
-                                        <Setting 
-                                            title="Featured Image"
-                                            className="post-setting-featured-image"
-                                        >
-                                            <div className="image-uploader">Upload a file</div>
-                                        </Setting>
-
-                                    </div>
-
-                                    <div className="post-setting-dual">
-
-                                        <Setting 
-                                            title="Featured?"
-                                            description="The unique part of the URL to identify this post"
-                                        >
-                                            <input type="checkbox"></input>
-                                        </Setting>
-
-                                        <Setting 
-                                            title="Delete Post"
-                                        >
-                                            <button 
-                                                className="button small danger"
-                                                onClick={handleDelete}
-                                            >Delete <Trash /></button>
-                                        </Setting>
-
-                                    </div>
-                                </div>
-                                : 
-                                <div className="setting-show">
-
-                                    <Setting 
-                                        title="Canonical URL"
-                                        description=""
-                                    >
-                                        <input 
-                                            className="input"
-                                            value={post.canonical_url}
-                                            onChange={e => updatePostValue('canonical_url', e.target.value)}
-                                        ></input>
-                                    </Setting>
-
-                                    <div className="post-setting-dual">
-
-                                        <Setting 
-                                            title="Header HTML Code"
-                                            description="Summarization of the post for listing pages and search engines."
-                                            className="post-setting-description"
-                                        >
-                                            <textarea 
-                                                className="input"
-                                                placeholder="Paste HTML code..."
-                                                value={post.code_head}
-                                                onChange={e => updatePostValue('code_head', e.target.value)}
-                                            ></textarea>
-                                        </Setting>
-
-                                        <Setting 
-                                            title="Footer HTML Code"
-                                            description="Summarization of the post for listing pages and search engines."
-                                            className="post-setting-description"
-                                        >
-                                            <textarea 
-                                                className="input" 
-                                                placeholder="Paste HTML code..."
-                                                value={post.code_foot}
-                                                onChange={e => updatePostValue('code_foot', e.target.value)}
-                                            ></textarea>
-                                        </Setting>
-
-                                    </div> 
-                                </div>
-                                }
-                            </div>  
-                        </div>
+                        <PostSettings 
+                            isSettingsOpen={isSettingsOpen}
+                            settingsViewRef={settingsViewRef}
+                            id={id}
+                            currentLanguageId={currentLanguageId}
+                        />
 
                     </div>
                 
@@ -367,8 +347,9 @@ export default function Post( {subdomain, id} ) {
                     loadPostAjax.status === 'loading' ? null :
                     <Editor 
                         id={id}
-                        value={post.content}
-                        onChange={v => updatePostValue('content', v)}
+                        value={content}
+                        onChange={v => handleContentUpdate(v)}
+                        editable={variant.status === 'draft' || nonDraftPostEditing}
                     />
                 }
             </div>
@@ -379,27 +360,33 @@ export default function Post( {subdomain, id} ) {
                 <div className="post-editor-bottom-content">
                     <div id="pm-navigator-wrap"></div>
                     <div className="right">
+                        {
+                            savePostAjax.status === 'loading' ?
+                            <span className="saving">Saving...</span> : null
+                        }
                         <span className="words" id="pm-word-count"></span>
+                        <a target="_blank" href="/docs/editor" className="help">
+                            <InfoCircle />
+                        </a>
                     </div>
                 </div>
             </div>
 
         </div>
         
+        {
+            isUnPublishing ?
+            <PopupConfirm 
+                title={( variant.status === 'published' ? 'Unpublish' : 'Unschedule' ) + " Post"}
+                text={"Are you sure to " + ( variant.status === 'published' ? 'unpublish' : 'unschedule' ) + " this post? It will be changed to a draft."}
+                name={( variant.status === 'published' ? 'Unpublish' : 'Unschedule' )}
+                onClick={handleUnPublish}
+                onCancel={() => setIsUnPublishing(false)}
+            /> : null
+        }
 
-    </div>
+        <Tooltip place="bottom" />
 
-}   
-
-function Setting(props) {
-
-    return <div className={"post-setting " + (props.className || "")}>
-        <div className="post-setting-title">{props.title}</div>
-        { false ? <div className="post-setting-description">{props.description}</div> : null }
-
-        <div className="post-setting-content">
-            {props.children}
-        </div>
     </div>
 
 }

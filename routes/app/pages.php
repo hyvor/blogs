@@ -2,6 +2,15 @@
 
 use App\Http\Controllers\Pages\DocsController;
 use Illuminate\Support\Facades\Route;
+use App\Http\Middleware\App\LoginRequiredElseRedirectMiddleware;
+use App\Http\Controllers\ConsoleAPI\ConsoleViewController;
+
+// console
+Route::middleware(LoginRequiredElseRedirectMiddleware::class)
+    ->get('/console/{any?}', ConsoleViewController::class)
+    ->where('any', '.*');
+
+
 
 Route::view('/', 'landing.index');
 Route::view('/pricing', 'landing.pricing');

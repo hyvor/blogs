@@ -25,6 +25,7 @@ All Blogs in HB are public. The Data API only returns public data of the blog. T
 - `/posts`
 - `/tags`
 - `/authors`
+- `/languages`
 
 ## Response Format
 
@@ -73,6 +74,7 @@ All slugs are lowercase, and can contain `-`
 	"code_foot": "",
 	
 	"language": language object,
+	"variants": [ post variant objects ],
 
 	"tags": [ tag objects ],
 	"authors": [ author objects ]
@@ -97,34 +99,55 @@ All slugs are lowercase, and can contain `-`
 | `reading_time` | `integer` | time in minutes. |
 | `code_head` | `string` | Custom code to add before `</head>` . An empty string if nothing is set. |
 | `code_foot` | `string` | Custom code to add before `</body>` . An empty string if nothing is set. |
-| `language` | `object` | The language of the post
+| `language` | `object` | A [Language object](#language-object)
+| `variants` | `array` | Array of [Post Variant objects](#post-variant-object). These objects are similar to the Post Language objects, except it does not have the variants key, and have post URL in it. |
 | `tags` | `array`  | An array of Tag objects. The primary tag is the index 0 |
 | `authors` | `array` | An array of Author objects. The primary author is the index 0 |
 
 > In posts, **id** is unique. **slug + language.id** is also unique.
 
-### Language Object
+### Language Object {#language-object}
 
 ```json
 {
-	"id": 9999,
-	"is_primary": true,
+	"id": 1000,
 	"code": "en",
 	"name": "English",
-	"variants": {
-		"fr": 1001,
-		"es": 1002
-	}
+	"is_primary": true
 }
 ```
 
 | Key | Type | Description |
 | --- | --- | --- |
-| `id` | `integer` | A unique ID for the language object |
-| `is_primary` | `boolean` | Whether the language is the primary language of the blog |
+| `id` | `integer` | A unique ID for the language |
 | `code` | `string` | Language code |
 | `name` | `string` | Language name |
-| `variants` | `object` | Variants of this post in other languages. Keys are the language codes, values are the post IDs |
+| `is_primary` | `boolean` | Whether the language is the primary language of the blog |
+
+### Post Variant Object {#post-variant-object}
+
+```json
+{
+	"language": a language object,
+	"url": "https://subdomain.hyvorblogs.io/fr/hello-world"
+}
+```
+
+Example:
+
+```json
+{
+	"language": {
+		"id": 1001,
+		"code": "fr",
+		"name": "French",
+		"is_primary": false
+	},
+	"url": "https://subdomain.hyvorblogs.io/fr/hello-world"
+}
+```
+
+
 
 ### Tag Object {#tag-object}
 
@@ -257,6 +280,20 @@ Both fr and fr-fr are valid. |
 | nav_header, nav_footer | array of objects | Navigation links for the blog header and the footer. |
 | code_head, code_foot | string | Custom HTML code for before </head>, and </body> for all pages. |
 | posts_count | int | Total published posts |
+
+
+## Language Object {#language-object}
+
+Language objects are returned in the `/languages` endpoint. This is similar to the Post Language Object except this does not have variants key.
+
+```json
+{
+	"id": 1000,
+	"code": "en",
+	"name": "English",
+	"is_primary": true
+}
+```
 
 ## Query Parameters
 

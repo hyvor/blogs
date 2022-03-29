@@ -2,32 +2,47 @@
 
 namespace App\Http\Controllers\ConsoleAPI;
 
-use App\Data\Objects\ConsoleAPI\PostObject;
+use App\Data\Objects\ConsoleAPI\Post\PostObject;
 use App\Data\Params\ConsoleAPI\PostsFilterParam;
+use App\Domains\Language\LanguageRepository;
 use App\Models\Blog;
 use App\Domains\Post\PostRepository;
 use App\Http\Controllers\Controller;
+use App\Models\User;
 use Illuminate\Http\Request;
 
 class ConsolePostController extends Controller
 {
-    public function getPosts(Request $request, Blog $blog)
+
+    public function getPosts(Request $request, Blog $blog, User $user)
     {
+
+        $request->validate([
+            'filters' => 'required|json'
+        ]);
+
         $filters = json_decode($request->input('filters'));
+
+        $language = LanguageRepository::getLanguageById($blog, $filters->language_id);
+
         $posts = PostRepository::getPosts(
-            $blog->id,
+
+            $blog,
+            $language,
             (new PostsFilterParam())
                 ->setStatus($filters->status === 'all' ? null : $filters->status)
                 ->setAuthorId($filters->author === 'all' ? null : $filters->author)
                 ->setTagId($filters->tag === 'all' ? null : $filters->tag)
-                ->setLanguageId($filters->language)
                 ->setStartTimestamp($filters->dateStart)
                 ->setEndTimestamp($filters->dateEnd)
                 ->setSearch($filters->search),
             $request->input('limit'),
             $request->input('offset') ?? 0
+
         )->map(function ($post) use ($blog) {
+
             return new PostObject($post, $blog);
+
         });
 
         return response()->json($posts);
@@ -52,6 +67,7 @@ class ConsolePostController extends Controller
         return response()->json(new PostObject($post, $blog));
     }
 
+    // Get all the post from the database
     public function getPost(Request $request, Blog $blog)
     {
         $postId = (int) $request->route('id');
@@ -67,31 +83,44 @@ class ConsolePostController extends Controller
 
     public function updatePost(Request $request, Blog $blog)
     {
+
         $postId = $request->route('id');
-        $updates = [];
 
-        /**
-         * Some strings become null when empty
-         * So, always use ->has() to check if the variable is set
-         */
-        if ($request->has('published_at')) {
-            $updates['published_at'] = $request->input('published_at');
+        $postUpdates = [];
+        $postUpdatables = [
+            'slug',
+            'is_featured',
+            'canonical_url',
+            'code_head',
+            'code_foot'
+        ];
+
+        foreach ($postUpdatables as $postUpdatable) {
+            if ($request->has($postUpdatable)) {
+                $postUpdates[$postUpdatable] = $request->input($postUpdatable);
+            }
         }
 
-        if ($request->has('status')) {
-            $updates['status'] = $request->input('status');
+        if (count($postUpdates) > 0) {
+            PostRepository::updatePost($postId, $postUpdates);
         }
 
-        if ($request->has('is_featured')) {
-            $updates['is_featured'] = (bool) $request->input('is_featured');
+        $variants = $request->input('variants');
+
+        if (is_array($variants)) {
+            foreach ($variants as $languageId => $variantUpdates) {
+                PostRepository::updatePostVariant($postId, $languageId, $variantUpdates);
+            }
         }
 
-        if ($request->has('slug')) {
-            $updates['slug'] = $request->input('slug');
-        }
+        $post = PostRepository::getPostById($postId);
 
         if ($request->has('content')) {
             $updates['content'] = $request->input('content');
+        }
+
+        if ($request->has('content_unsaved')) {
+            $updates['content_unsaved'] = $request->input('content_unsaved');
         }
 
         if ($request->has('title')) {
@@ -118,7 +147,16 @@ class ConsolePostController extends Controller
             $updates['code_foot'] = $request->input('code_foot');
         }
 
+        if ($request->has('tag')) {
+            $updates['tag'] = $request->input('tag');
+        }
+
+        // if ($request->has('author')) {
+        //     $updates['author'] = $request->input('author');
+        // }
+
         $post = PostRepository::updatePost($postId, $updates);
+
         return response()->json(new PostObject($post, $blog));
     }
 }

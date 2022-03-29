@@ -26,13 +26,14 @@ class CreateUsersTable extends Migration
             $table->enum('role', ['owner', 'admin', 'editor', 'writer', 'contributor', 'finance']);
 
             // user data
+            // name, bio, location should be deleted later.
             $table->string('slug');
-            $table->string('name', 50);
+            // $table->string('name', 50);
             $table->string('email');
-            $table->string('profile_image')->nullable();
-            $table->string('bio')->nullable();
-            $table->string('website_url')->nullable();
-            $table->string('location', 30)->nullable();
+            $table->string('picture')->nullable();
+            // $table->string('bio')->nullable();
+            $table->string('url')->nullable();
+            // $table->string('location', 30)->nullable();
 
             // social
             $table->string('social_facebook')->nullable();
@@ -42,7 +43,6 @@ class CreateUsersTable extends Migration
             $table->string('social_instagram')->nullable();
 
             // misc
-            $table->integer('posts_count')->default(0);
             $table->integer('sort')->default(0); // for ordering in the console
 
             $table->unique(['blog_id', 'slug']);

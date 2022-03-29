@@ -23,7 +23,7 @@ class BlogCountJob implements ShouldQueue, ShouldBeUnique {
                 DB::raw('
                     blogs.id,
                     (
-                        SELECT COUNT(users.id) 
+                        SELECT COUNT(users.id)  
                         FROM users 
                         WHERE
                             users.blog_id = blogs.id AND
@@ -44,7 +44,14 @@ class BlogCountJob implements ShouldQueue, ShouldBeUnique {
                         FROM media 
                         WHERE
                             media.blog_id = blogs.id
-                    ) as media
+                    ) as media,
+
+                    (
+                        SELECT COUNT(tags.id) 
+                        FROM tags 
+                        WHERE
+                            tags.blog_id = blogs.id 
+                    ) as tags,
                     '
                 )
             )
@@ -57,8 +64,8 @@ class BlogCountJob implements ShouldQueue, ShouldBeUnique {
             CountRepository::setCount($blog, CountEnum::BLOG_USERS, $row->users);
             CountRepository::setCount($blog, CountEnum::BLOG_POSTS, $row->posts);
             CountRepository::setCount($blog, CountEnum::BLOG_MEDIA, $row->media);
-
-        }
+            CountRepository::setCount($blog, CountEnum::BLOG_TAGS, $row->tags);
+        } 
 
     }
 

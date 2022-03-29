@@ -19,6 +19,7 @@ return new class extends Migration
 
             // connections
             $table->bigInteger('blog_id');
+            $table->bigInteger('fallback_language_id')->nullable();
 
             // data
             /**
