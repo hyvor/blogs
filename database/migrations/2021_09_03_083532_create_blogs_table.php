@@ -24,7 +24,7 @@ class CreateBlogsTable extends Migration
 
             // data
             $table->string('subdomain')->unique();
-            $table->enum('type', ['normal', 'dev', 'temp'])->default('normal');
+            $table->enum('type', ['default', 'temp'])->default('default');
             $table->bigInteger('dev_theme_id')->nullable();
             $table->string('name'); //If there is variants this will be a variant
             $table->string('description')->nullable(); //If there is variants this will be a variant

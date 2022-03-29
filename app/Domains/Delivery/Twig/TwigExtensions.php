@@ -3,7 +3,7 @@ namespace App\Domains\Delivery\Twig;
 
 use App\Data\Enums\ThemeFileFolderEnum;
 use App\Domains\Blog\BlogRepository;
-use App\Domains\BlogTheme\BlogThemeRepository;
+use App\Domains\ThemeFiles\ThemeFilesRepository;
 use App\Domains\Language\LanguageRepository;
 use App\Domains\Route\PermalinkRepository;
 use App\Models\Blog;
@@ -64,7 +64,7 @@ class TwigExtensions extends AbstractExtension
     {
 
         $blog = $this->getBlogFromContext($context);
-        $file = BlogThemeRepository::getFile($blog, $assetName, ThemeFileFolderEnum::ASSETS);
+        $file = ThemeFilesRepository::getFile($blog, $assetName, ThemeFileFolderEnum::ASSETS);
 
         return $file?->content ?? "";
 

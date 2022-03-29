@@ -4,6 +4,8 @@ import postLogic from '../logic/postLogic';
 import { useValues } from 'kea';
 import dayjs from 'dayjs';
 import languagesLogic from '../logic/languagesLogic';
+import LangTag from '../ReusableComponents/LangTag';
+import { getLangTagIconByPostStatus } from './PostLanguageSelector';
 
 export default function PostsListRow({ id, subdomain }) {
 
@@ -14,6 +16,8 @@ export default function PostsListRow({ id, subdomain }) {
     const toLink = `${postsLink}/${post.id}`
 
     const variant = post.variants[languages[0].id];
+
+    const authorsNames = post.authors.map(author => author.name).join(", ");
 
     return <NavLink
         key={post.id} 
@@ -28,35 +32,43 @@ export default function PostsListRow({ id, subdomain }) {
             </div>
             {
                 !post.is_page ?
-                <div className="post-author">by Ishini Avindya</div> :
+                <div className="post-author">
+                    by {authorsNames}
+                </div> :
                 null
             }
         </div>
 
 
         {
-            /* languages.length > 1 ?
+            languages.length > 1 ?
             <div className="post-languages">
                 {
-                    post.variants.map(variant => {
+                    Object.entries(post.variants).map(([, variant]) => {
                         const lang = getLanguageById(variant.language_id)
 
-                        return lang ? <span key={lang.id} className="post-lang-tag">{ lang.code }</span> : null
+                        return lang ?
+                            <LangTag 
+                                code={lang.code}
+                                icon={getLangTagIconByPostStatus(variant.status)}  
+                            /> : null
                     })
                 }
-            </div> : null  */ }
+            </div> : null  }
 
         <div className="post-tags-wrap">
 
             <div className="post-tags">
             {
                 !post.is_page ?
-                <span className="post-tag">#creative</span>
+                post.tags.map(tag => {
+                    return <span className="post-tag">{tag.name}</span>
+                })
                 : null
             }
             </div>
             <div className="post-status-wrap">
-                <span className={`post-status ${post.status}`}>{post.status}</span>
+                <span className={`post-status ${variant.status}`}>{variant.status}</span>
             </div>
         </div>
 

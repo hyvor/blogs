@@ -13,14 +13,11 @@ return new class extends Migration
      */
     public function up()
     {
-        Schema::create('themes_versions', function (Blueprint $table) {
+        Schema::create('local_devs', function (Blueprint $table) {
             $table->id();
             $table->timestamps();
 
-            $table->bigInteger('theme_id');
-            $table->string('version');
-
-            $table->unique(['theme_id', 'version']);
+            $table->string('uuid')->unique();
         });
     }
 
@@ -31,6 +28,6 @@ return new class extends Migration
      */
     public function down()
     {
-        Schema::dropIfExists('themes_versions');
+        Schema::dropIfExists('local_devs');
     }
 };

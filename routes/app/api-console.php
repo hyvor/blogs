@@ -107,6 +107,9 @@ Route::prefix('/api/console/v0/blog/{subdomain}')
             Route::get('/post/{id}', [ConsolePostController::class, 'getPost']);
             Route::patch('/post/{id}', [ConsolePostController::class, 'updatePost']);
             Route::delete('/post/{id}', [ConsolePostController::class, 'deletePost']);
+
+            Route::post('/post/{id}/variant', [ConsolePostController::class, 'createPostVariant']);
+            Route::delete('/post/{id}/variant', [ConsolePostController::class, 'deletePostVariant']);
         });
 
         // media CRD

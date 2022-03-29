@@ -53,13 +53,7 @@ textarea.input {
 }
 
 
-.post-tag {
-    font-size: 11px;
-    background: #eee;
-    padding: 2px 7px;
-    border-radius: 20px;
-    font-weight: 600;
-}
+
 
 .input-view {
     margin-bottom:15px;
@@ -358,6 +352,23 @@ textarea.input {
         color: $color-red-dark;
     }
 
+}
+
+.global-lang-tag {
+    display: inline-block;
+    padding: 1px 9px;
+    margin-right: 3px;
+    background: $color-input;
+    font-weight: 600;
+    font-size: 12px;
+    border-radius: 20px;
+    cursor:pointer;
+    .status-icon {
+        margin-left:5px;
+    }
+    &.active {
+        background: $color-accent-light;
+    }
 }
 
 

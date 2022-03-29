@@ -44,6 +44,7 @@ class Handler extends ExceptionHandler
 
     public function render($request, Throwable $exception)
     {
+        dd($exception);
 
         if (!config('app.debug')) { // not in debug mode
             if ($request->getHost() === config('blogs.domain_app')) {
@@ -93,6 +94,6 @@ class Handler extends ExceptionHandler
             }
         }
 
-        return parent::render($request, $exception);
+        //return parent::render($request, $exception);
     }
 }

@@ -18,13 +18,15 @@ class CreateThemeFilesTable extends Migration
             $table->timestamps();
 
             // Connections
-            $table->bigInteger('theme_version_id')->nullable();
+            $table->bigInteger('themable_id');
+            $table->string('themable_type'); // blog|local_dev
 
-            $table->string('name');
-            $table->binary('content');
+            // data
             $table->enum('folder', ['templates', 'assets', 'styles', 'lang'])->nullable();
+            $table->string('name');
+            $table->binary('content')->nullable();
 
-            $table->unique(['theme_version_id', 'folder', 'name']);
+            $table->unique(['themable_id', 'themable_type', 'name', 'folder']);
         });
     }
 
@@ -35,6 +37,6 @@ class CreateThemeFilesTable extends Migration
      */
     public function down()
     {
-        Schema::dropIfExists('theme_files');
+        Schema::dropIfExists('blog_theme_files');
     }
 }

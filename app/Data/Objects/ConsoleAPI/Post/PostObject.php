@@ -28,7 +28,6 @@ class PostObject
     public function __construct(Post $post, Blog $blog)
     {
 
-<<<<<<< HEAD:app/Data/Objects/ConsoleAPI/PostObject.php
         $tags = $post->tags->map(function ($tag) use ($blog) {
             return new TagObject($tag, $blog);
         })->toArray();
@@ -38,8 +37,6 @@ class PostObject
         // })->toArray();
         $authors = null;
 
-=======
->>>>>>> master:app/Data/Objects/ConsoleAPI/Post/PostObject.php
         $this->id = $post->id;
         $this->preview_id = encrypt($post->id);
         $this->created_at = $post->created_at->timestamp;
@@ -62,6 +59,8 @@ class PostObject
             return new TagObject($tag, $blog);
         })->toArray();
 
-        $this->authors = null;
+        $this->authors = $post->authors->map(function ($author) use ($blog) {
+            return new AuthorObject($author, $blog);
+        });
     }
 }

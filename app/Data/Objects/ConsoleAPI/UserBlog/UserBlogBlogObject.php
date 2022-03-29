@@ -2,6 +2,7 @@
 
 namespace App\Data\Objects\ConsoleAPI\UserBlog;
 
+use App\Data\Enums\CountEnum;
 use App\Data\Objects\ConsoleAPI\BlogSubscription\SubscriptionObject;
 use App\Data\Objects\ConsoleAPI\LanguageObject;
 use App\Domains\Blog\BlogRepository;
@@ -44,9 +45,12 @@ class UserBlogBlogObject
         $this->base_url = PermalinkRepository::getBlogPermalink($blog);
         $this->plan = $plan;
 
-        $counts = CountRepository::getCounts($blog, ['users', 'posts']);
-        $this->posts_count = $counts['users'];
-        $this->users_count = $counts['posts'];
+        $counts = CountRepository::getCounts($blog, [
+            CountEnum::BLOG_USERS,
+            CountEnum::BLOG_POSTS
+        ]);
+        $this->posts_count = $counts[ CountEnum::BLOG_POSTS->value ];
+        $this->users_count = $counts[ CountEnum::BLOG_USERS->value ];
 
         $this->is_on_trial = $blog->onTrial();
         $this->trial_ends_at = $blog->customer->trial_ends_at?->timestamp;

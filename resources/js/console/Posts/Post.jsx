@@ -29,7 +29,7 @@ export default function Post( {subdomain, id} ) {
     // const { updatePostValue, savePost, deletePost } = useActions(postLogicInst) 
 
     const { post, loadPostAjax, savePostAjax, forceSavePostAjax, getDiff } = useValues(postLogicInst)
-    const { updatePostValue, updatePostVariantValue, savePost, forceSavePost } = useActions(postLogicInst)
+    const { updatePostValue, updatePostVariantValue, savePost, createVariant, forceSavePost } = useActions(postLogicInst)
 
     const { findBlogBySubdomain } = useValues(blogsLogic)
 
@@ -228,6 +228,12 @@ export default function Post( {subdomain, id} ) {
         updatePostVariantValue(key, value, currentLanguageId)
     }
 
+    function handleCreateVariant(languageId) {
+        createVariant({languageId, onCreate: () => {
+            setCurrentLanguageId(languageId);
+        }})
+    }
+
     function handleUnPublish() {
         const update = {variants: {[currentLanguageId]: {status: 'draft'}}};  
         forceSavePost({
@@ -264,6 +270,7 @@ export default function Post( {subdomain, id} ) {
                         variants={variants}
                         currentLanguageId={currentLanguageId}
                         onChange={setCurrentLanguageId}
+                        onCreate={handleCreateVariant}
                     />
 
                     <div className="post-editor-title-row">
@@ -348,6 +355,7 @@ export default function Post( {subdomain, id} ) {
                     <Editor 
                         id={id}
                         value={content}
+                        currentLanguageId={currentLanguageId}
                         onChange={v => handleContentUpdate(v)}
                         editable={variant.status === 'draft' || nonDraftPostEditing}
                     />
