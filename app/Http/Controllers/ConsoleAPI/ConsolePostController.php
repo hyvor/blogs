@@ -84,6 +84,7 @@ class ConsolePostController extends Controller
         return response()->json(new PostObject($post, $blog));
     }
 
+    // Get all the post from the database
     public function getPost(Request $request, Blog $blog)
     {
         $postId = (int) $request->route('id');
@@ -130,6 +131,48 @@ class ConsolePostController extends Controller
         }
 
         $post = PostRepository::getPostById($postId);
+
+        if ($request->has('content')) {
+            $updates['content'] = $request->input('content');
+        }
+
+        if ($request->has('content_unsaved')) {
+            $updates['content_unsaved'] = $request->input('content_unsaved');
+        }
+
+        if ($request->has('title')) {
+            $updates['title'] = $request->input('title');
+        }
+
+        if ($request->has('description')) {
+            $updates['description'] = $request->input('description');
+        }
+
+        if ($request->has('featured_image')) {
+            $updates['featured_image'] = $request->input('featured_image');
+        }
+
+        if ($request->has('canonical_url')) {
+            $updates['canonical_url'] = $request->input('canonical_url');
+        }
+
+        if ($request->has('code_head')) {
+            $updates['code_head'] = $request->input('code_head');
+        }
+
+        if ($request->has('code_foot')) {
+            $updates['code_foot'] = $request->input('code_foot');
+        }
+
+        if ($request->has('tag')) {
+            $updates['tag'] = $request->input('tag');
+        }
+
+        // if ($request->has('author')) {
+        //     $updates['author'] = $request->input('author');
+        // }
+
+        $post = PostRepository::updatePost($postId, $updates);
 
         return response()->json(new PostObject($post, $blog));
     }

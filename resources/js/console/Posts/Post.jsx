@@ -24,6 +24,10 @@ export default function Post( {subdomain, id} ) {
     id = parseInt(id)
 
     const postLogicInst = postLogic({id});
+
+    // const { post, loadPostAjax, savePostAjax, getDiff } = useValues(postLogicInst)
+    // const { updatePostValue, savePost, deletePost } = useActions(postLogicInst) 
+
     const { post, loadPostAjax, savePostAjax, forceSavePostAjax, getDiff } = useValues(postLogicInst)
     const { updatePostValue, updatePostVariantValue, savePost, createVariant, forceSavePost } = useActions(postLogicInst)
 
@@ -61,7 +65,7 @@ export default function Post( {subdomain, id} ) {
                 handleAutoSave();
                 e.preventDefault();
             }
-        }
+        } 
 
         function checkSaveUnload() {
             if (
@@ -280,6 +284,9 @@ export default function Post( {subdomain, id} ) {
                             />
                         </div>
 
+                        <div className="status">
+                            <span>{post.status}</span>
+                        </div>
                         {/* <div className="status">
                             <span>{variant.status}</span>
                         </div> */}

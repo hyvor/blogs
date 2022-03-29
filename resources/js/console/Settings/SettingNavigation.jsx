@@ -2,7 +2,7 @@ import React, {useState} from 'react';
 import { useActions, useValues } from 'kea';
 import subdomainLogic from '../logic/subdomainLogic';
 import navigationLogic from '../logic/navigationLogic';
-import { Trash, PencilFill, Plus} from 'react-bootstrap-icons';
+import { Trash, PencilFill, CheckCircleFill, Plus, HddStackFill} from 'react-bootstrap-icons';
 import Loader from '../ReusableComponents/Loader';
 import {toast} from 'react-toastify'
 import Select from '../ReusableComponents/Select';
@@ -10,6 +10,11 @@ import Toast from '../ReusableComponents/Toast';
 import NoResults from '../ReusableComponents/NoResults';
 import { Popup, PopupBodyDefault, PopupConfirm, PopupFooterDoubleButton, PopupHeaderDefault } from '../ReusableComponents/Popup';
 import Input from '../ReusableComponents/Input';
+import { DragDropContext, Droppable, Draggable, resetServerContext } from 'react-beautiful-dnd';
+import axios from "axios";
+import { components } from 'react-select';
+import { ReactSortable } from "react-sortablejs";
+import { list } from 'postcss';
 
 
 export default function SettingNavigation(props) {
@@ -17,77 +22,215 @@ export default function SettingNavigation(props) {
     const subdomain = subdomainLogic.values.subdomain;
     const navigationLogicBuilt = navigationLogic({subdomain})
     const { navigation, loadAjax, createAjax } = useValues(navigationLogicBuilt)
+    const { updateItemNumber, updateSourceNav} = useActions(navigationLogicBuilt)
+
+    function saveItemNumber(NavigationId,destinationId, sourceId) {
+        // console.log("Navigation" + NavigationId)
+        // console.log("Destination ID" + destinationId)
+
+        NavigationId= parseInt(NavigationId)
+        destinationId= parseInt(destinationId)
+
+        updateItemNumber({ NavigationId, destinationId });
+        updateSourceNav({ destinationId, sourceId });
+
+        //  window.location.reload(false);
+    }
+
+    const onDragEnd = (params) => {
+        const sourceIndex = params.source.index;
+        const destinationIndex = params.destination.index;
+        const { destination, source } = params;                                
+        navigation.splice(destinationIndex, 0, navigation.splice(sourceIndex, 1)[0]);
+
+        if(!destination || !source){
+            return;
+        }
+        if (destination.droppableId === source.droppableId && destination.index === source.index) {
+            return;
+        }
+
+        // console.log("droppable ID " + destination.droppableId + ' source droppable id '+source.droppableId)
+
+        // const getDraggableId = params.draggableId;
+        // const reOrderedNavigation = navigation.map((navigation) => {
+        //     if (navigation.id === getDraggableId.substring(10)) {
+
+        //         console.log("CONDITION 1", navigation);
+        //         navigation.itemNumber = destinationIndex;
+        //         return navigation;
+        //     }
+        //     else {
+        //       console.log("CONDITION 3", navigation);
+        //       return navigation;
+        //     }
+        //   });
+        //   saveItemNumber(reOrderedNavigation)
+
+        const destinationId = destinationIndex + 1;
+        const sourceId = sourceIndex + 1;
+        const getDraggableId = params.draggableId;
+        const NavigationId = getDraggableId.substring(10);
+
+        // updateItemNumber({NavigationId, destinationId});
+        return saveItemNumber(NavigationId, destinationId, sourceId);
+    }
 
     return <div className="navigation-view">
-        <div className="navigation-title-bar">
-            <div className="navigation-title">
-                    Navigation
-            </div>
-            <CreatePopup/>
-            {
-                createAjax.status === 'error' ?
-                    <Toast 
-                        x={console.log(createAjax.error)}
-                        text={createAjax.error}
-                        type="error"
-                    /> 
-                : null
-            }
+        <div className="title">
+            Navigation 
         </div>
         {
             loadAjax.status === 'loading' ?
                 <Loader/> :
                 (
                     <div className="global-table-view">
-                        {
-                            // navigation.length > 0 && (
-                            navigation.length > 0 ?
+                        <DragDropContext onDragEnd={onDragEnd}>
+                            <div className="navigation-title-bar">
+                                <div className="navigation-title">
+                                    Header Navigation
+                                </div>
+                                <CreatePopup type="header"/>
+                            </div>
+                            {
+                                navigation.length > 0 ?
                                 <div>
-                                    <div className="navigation-sub-title">Header Navigation</div>
-                                    {
-                                        navigation.map(navigation => (
-                                            navigation.type === 'header' ?
-                                                <div>
-                                                    {
-                                                        <Navigation id ={navigation.id} name = {navigation.name} url = {navigation.url} type = {navigation.type}/>
-                                                    }
-                                                </div>
-                                        : <div></div>
-                                    ))}
+                                    <Droppable droppableId="droppable-1">
+                                        {(provided, _ ) => (
+                                            <div
+                                                ref={provided.innerRef}
+                                                {...provided.droppableProps}
+                                            >
+                                                {
+                                                    navigation.map((navigation, i) => (
+                                                    // navigation.map((navigation) => (
+                                                        navigation.type === 'header' ?
+                                                            <div>
+                                                                <Draggable draggableId={"draggable-"+navigation.id} index={i} key={navigation.id}>
+                                                                {/* <Draggable key = {navigation.id} draggableId={"draggable-"+navigation.id} index={navigation.itemNumber}> */}
+                                                                    {(provided, snapshot) => (
+                                                                        <div 
+                                                                            ref={provided.innerRef} 
+                                                                            {...provided.draggableProps} 
+                                                                            // // style={{ }}
+                                                                        >
+                                                                            {
+                                                                                <div className="sort">
+                                                                                    <div {...provided.dragHandleProps}>
+                                                                                        <HddStackFill size={10} />
+                                                                                    </div>
+                                                                                    <Navigation id ={navigation.id} name = {navigation.name} url = {navigation.url} type = {navigation.type}/>
+                                                                                </div>
+                                                                                // <Navigation id ={navigation.id} name = {navigation.name} url = {navigation.url} type = {navigation.type} />
+                                                                            }
+                                                                        </div>
+                                                                    )}
+                                                                </Draggable>
+                                                            </div>
+                                                        : <div></div>
+                                                    ))
+                                                }
+                                                {provided.placeholder}
+                                            </div>
+                                        )}
+                                    </Droppable>
                                 </div> : 
                                 <NoResults 
                                     text="There is no any redirects."
                                     padding={40}
                                     imageWidth={250}
                                 />
-                            // )
-                        } 
+                            } 
+                        </DragDropContext>
+
+                        {/* ------- Footer Navigation Section -------- */}
                             
-                        {
-                            navigation.length > 0 && (
-                                <div>
-                                    <div className="navigation-sub-title">Footer Navigation</div>
-                                    {
-                                        navigation.map(navigation => (
-                                            navigation.type === 'footer' ?
-                                                <div>
-                                                    {
-                                                        <Navigation id ={navigation.id} name = {navigation.name} url = {navigation.url} type = {navigation.type}/>
-                                                    }
-                                                </div>
-                                            : null
-                                        ))
-                                    }
+                            {/* <DragDropContext onDragEnd={(params) => { 
+                                   const sourceIndex = params.source.index;
+                                   const destinationIndex = params.destination.index;
+                                   const { destination, source } = params;                                
+                                   navigation.splice(destinationIndex, 0, navigation.splice(sourceIndex, 1)[0]);
+   
+                                   if(!destination || !source){
+                                       return;
+                                   }
+                                   if (destination.droppableId === source.droppableId && destination.index === source.index) {
+                                       return;
+                                   }
+   
+                                   const destinationId = destinationIndex + 1;
+                                   const sourceId = sourceIndex + 1;
+                                   const getDraggableId = params.draggableId;
+                                   const NavigationId = getDraggableId.substring(10);
+   
+                                   return saveItemNumber(NavigationId, destinationId, sourceId);
+
+                            }}
+                            > */}
+                            <DragDropContext onDragEnd={onDragEnd}>
+
+                                <div className="navigation-title-bar">
+                                    <div className="navigation-title">
+                                        Footer Navigation
+                                    </div>
+                                    <CreatePopup type="footer"/>
                                 </div>
-                            )
-                        } 
+                                {
+                                    navigation.length > 0 && (
+                                        <div>
+                                            <Droppable droppableId="droppable-1">
+                                                {(provided, _ ) => (
+                                                    <div
+                                                        ref={provided.innerRef}
+                                                        {...provided.droppableProps}
+                                                    >
+                                                        {
+                                                            navigation.map((navigation, i) => (
+                                                                navigation.type === 'footer' ?
+                                                                    // <div>
+                                                                    //     {
+                                                                    //         <Navigation id ={navigation.id} name = {navigation.name} url = {navigation.url} type = {navigation.type}/>
+                                                                    //     }
+                                                                    // </div>
+                                                                    <div>
+                                                                        <Draggable key = {navigation.id} draggableId={"droppable-"+navigation.id} index={i}>
+                                                                            {(provided, snapshot) => (
+                                                                                <div 
+                                                                                    ref={provided.innerRef} 
+                                                                                    {...provided.draggableProps} 
+                                                                                    {...provided.dragHandleProps}
+                                                                                >
+                                                                                    {
+                                                                                        <div className="sort">
+                                                                                        <div {...provided.dragHandleProps}>
+                                                                                            <HddStackFill size={10} />
+                                                                                        </div>
+                                                                                        <Navigation id ={navigation.id} name = {navigation.name} url = {navigation.url} type = {navigation.type}/>
+                                                                                    </div>
+                                                                                        // <Navigation id ={navigation.id} name = {navigation.name} url = {navigation.url} type = {navigation.type}  />
+                                                                                    }
+                                                                                </div>
+                                                                            )}
+                                                                        </Draggable>
+                                                                    </div>
+                                                                : null
+                                                            ))
+                                                        }
+                                                        {provided.placeholder}
+                                                    </div>
+                                                )}
+                                            </Droppable>
+                                        </div>
+                                    )
+                                } 
+                            </DragDropContext>
                     </div>
                 )
         }
     </div>
 }
 
-function CreatePopup() {
+function CreatePopup({type}) {
 
     const subdomain = subdomainLogic.values.subdomain;
     const navigationLogicBuilt = navigationLogic({subdomain})
@@ -96,6 +239,7 @@ function CreatePopup() {
     const [createPopUpOpened, setCreatePopUpOpened] = useState(false);
 
     function handleCreateCancel(){
+        console.log(type)
         setCreatePopUpOpened(false)
     }
 
@@ -106,35 +250,30 @@ function CreatePopup() {
 
     const [ name, setName ] = useState();
     const [ url, setUrl ] = useState();
-    const [createNewNavigation, setData] = useState({type: ""});
 
-    const selectOptions = [
-        { label: 'Header', value: 'header' },
-        { label: 'Footer', value: 'footer'}
-    ];
-
-    function handleType({value}){
-        console.log(value)
-        setData({...createNewNavigation, 
-            type: value
-        })
-    }
+    // const [createNewNavigation, setData] = useState({type: ""});
+    // const selectOptions = [
+    //     { label: 'Header', value: 'header' },
+    //     { label: 'Footer', value: 'footer'}
+    // ];
+    // function handleType({value}){
+    //     console.log(value)
+    //     setData({...createNewNavigation, 
+    //         type: value
+    //     })
+    // }
 
     // OnClick handler for creating an new navigation
     function submitNavigationData (e) {
+        console.log(type)
         e.preventDefault();
-        console.log(createNewNavigation.type)
         create({
             name: name,
             url: url,
-            type: createNewNavigation.type,
+            type: type,
         });
         setName();
         setUrl();
-        setData({
-            type:""
-        });
-
         setCreatePopUpOpened(false)
     }
 
@@ -168,14 +307,6 @@ function CreatePopup() {
                                         value={url}
                                         onChange={setUrl}
                                     />
-                                    <div className="create-navigation-select">
-                                        <div className="popup-type-margin">Type</div>
-                                        <SelectType 
-                                            title="Type"
-                                            options={selectOptions} 
-                                            onChange={handleType}
-                                        />
-                                    </div>
                                 </div>
                             </PopupBodyDefault>
                         }
@@ -184,8 +315,6 @@ function CreatePopup() {
                                 onCancel={handleCreateCancel}
                                 onClick={(e)=> {submitNavigationData(e)}}
                                 name='Create'
-                                // loadingName='Create'
-                                // isLoading={isLoading}
                             />
                         }
                     /> 
@@ -204,7 +333,7 @@ function Navigation ({id, name, url, type}){
 
     // Styles
     const [styleDeleteIcon, setStyleDeleteIcon] = useState("table-button");
-    // const [styleUpdateIcon, setStyleUpdateIcon] = useState("hide-navigation-edit");
+    const [styleUpdateIcon, setStyleUpdateIcon] = useState("table-button");
 
     // delete section
     const [deletePopupOpened, setDeletePopupOpened] = useState(false);
@@ -237,9 +366,11 @@ function Navigation ({id, name, url, type}){
 
     function handleUpdate(e){
         e.preventDefault();
+        setStyleUpdateIcon('table-update-popup')
         setUpdateFormOpened(true);
     }
     function handleCancelUpdate(){
+        setStyleUpdateIcon('table-button')
         setUpdateFormOpened(false);
     }
 
@@ -285,6 +416,7 @@ function Navigation ({id, name, url, type}){
         setName(name);
         setUrl(url);
         window.location.reload(false);
+        setStyleUpdateIcon('table-button')
         setUpdateFormOpened(false);
     }
     
@@ -296,12 +428,24 @@ function Navigation ({id, name, url, type}){
                 <span className="get-navigation-url">https://sipes.com/quisquam-eos-eos-nulla-vel-minima-amet.html/dddd/ffff/gggg</span>
                 <input className="get-navigation-name" value={updateNavigationData.name}  onChange={(e)=> {handleNavigationName(e)}} />
                 <input className="get-navigation-url" value={updateNavigationData.url} onChange={(e)=> {handleNavigationUrl(e)}}/> */}
-                <div className="table-item"> {name}</div>
+                <div className="table-item"> 
+                    {/* <div className="sort">
+                        <div className="sort-icon"
+                            ref={provided.innerRef} 
+                            {...provided.draggableProps} 
+                            {...provided.dragHandleProps}
+                        >
+                            <HddStackFill size={10} />
+                        </div>
+                        {name}
+                    </div> */}
+                    {name}
+                </div>
                 <div className="table-item"> {url} </div>
                 <div className="table-actions">
                     <div className="table-edit" onClick={handleUpdate}>
-                        <span className="table-button">
-                            <PencilFill size={15} />
+                        <span className={styleUpdateIcon}>
+                            <PencilFill size={10} />
                         </span>
                     </div>
                     <div className="table-delete" onClick={handleDelete}>

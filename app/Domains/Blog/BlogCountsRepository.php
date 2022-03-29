@@ -22,7 +22,7 @@ class BlogCountsRepository
      * By tag (15 max)
      */
     public static function getPostsCounts(int $blogId)
-    {
+    { 
 
         $postsCounts = CountRepository::getCounts(new Blog, [
             CountEnum::BLOG_POSTS,

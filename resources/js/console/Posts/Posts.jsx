@@ -34,6 +34,9 @@ export default function Posts( { postId } ) {
         }
     }
 
+    // console.log(postsList.length);
+    // console.log('---------------')
+
     function handleNew() {
         createPost();
     }
@@ -49,6 +52,7 @@ export default function Posts( { postId } ) {
                     onClick={handleNew}
                 >+ New</button>
             </div>
+             
             <PostsFilters filters={filters} changeFilter={changeFilter} />
             <div className="posts-list" onScroll={handleScroll}>
                 {

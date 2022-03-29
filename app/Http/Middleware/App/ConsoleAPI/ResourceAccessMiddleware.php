@@ -9,6 +9,8 @@ use App\Models\Media;
 use App\Models\Post;
 use App\Models\Redirect;
 use App\Models\Navigation;
+use App\Models\Tag;
+use App\Models\User;
 use Closure;
 
 class ResourceAccessMiddleware
@@ -19,6 +21,8 @@ class ResourceAccessMiddleware
         'redirect' => Redirect::class,
         'navigation' => Navigation::class,
         'language' => Language::class,
+        'tag' => Tag::class,
+        'user' => User::class,
     ];
 
     public function __construct(Blog $blog)

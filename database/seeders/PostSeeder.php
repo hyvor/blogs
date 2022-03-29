@@ -6,6 +6,8 @@ use Illuminate\Database\Seeder;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Str;
+use Illuminate\Http\Client\ConnectionException;
+
 
 class PostSeeder extends Seeder
 {
@@ -24,6 +26,7 @@ class PostSeeder extends Seeder
             'description' => "testing the deletation",
             'reading_time' => "2",
             'blog_id' => "1",
+            'language_id'=>"1",
         ]);
     }
 }

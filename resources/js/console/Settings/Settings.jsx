@@ -6,10 +6,11 @@ import SettingsDelete from './SettingsDelete';
 import SettingsCode from './SettingsCode';
 import SettingsMedia from './SettingsMedia';
 import SettingsMigrate from './SettingsMigrate';
-import SettingUsers from './SettingUsers';
+import SettingUsers from './SettingUser/SettingUsers';
 import SettingRedirects from './SettingRedirects';
 import SettingsComments from './SettingsComments';
 import SettingNavigation from './SettingNavigation';
+import SettingTag from './SettingTag/SettingTag';
 import SettingsRoutes from './SettingsRoutes';
 import SettingsLanguages from './SettingsLanguages';
 import SettingsGeneral from './SettingsGeneral';
@@ -25,6 +26,9 @@ export default function Settings({type}) {
     switch (type) {
         case 'users':
             Type = () => <SettingUsers />;
+            break;
+        case 'tags':
+            Type = () => <SettingTag />;
             break;
         case 'navigation':
             Type = () => <SettingNavigation />;

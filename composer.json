@@ -9,7 +9,6 @@
         "erusev/parsedown-extra": "^0.8.1",
         "fruitcake/laravel-cors": "^2.0",
         "guzzlehttp/guzzle": "^7.0.1",
-        "hyvor/hyvor-blogs-laravel": "dev-main",
         "hyvor/laravel-filterq": "^0.0.2",
         "hyvor/laravel-hyvor-connecter": "dev-main",
         "hyvor/scssphp": "2.0.1",

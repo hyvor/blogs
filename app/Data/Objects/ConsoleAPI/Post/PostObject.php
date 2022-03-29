@@ -2,8 +2,9 @@
 
 namespace App\Data\Objects\ConsoleAPI\Post;
 
-use App\Data\Objects\DataAPI\AuthorObject;
-use App\Data\Objects\DataAPI\TagObject;
+use App\Data\Objects\ConsoleAPI\TagObject;
+use App\Data\Objects\ConsoleAPI\AuthorObject;
+
 use App\Domains\Route\PermalinkRepository;
 use App\Models\Blog;
 use App\Models\Language;
@@ -26,6 +27,15 @@ class PostObject
 
     public function __construct(Post $post, Blog $blog)
     {
+
+        $tags = $post->tags->map(function ($tag) use ($blog) {
+            return new TagObject($tag, $blog);
+        })->toArray();
+
+        // $authors = $post->authors->map(function ($author) use ($blog) {
+        //     return new AuthorObject($author, $blog);
+        // })->toArray();
+        $authors = null;
 
         $this->id = $post->id;
         $this->preview_id = encrypt($post->id);
