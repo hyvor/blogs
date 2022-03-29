@@ -17,9 +17,10 @@ class NavigationSeeder extends Seeder
         DB::table('navigations')->insert(
             [
                 'blog_id' => "1",
-                'name' => "hyvor talk",
-                'url' => "hyvor blogs",
+                'name' => "about",
+                'url' => "https://ask.buzz/",
                 'type' => "header",
+                'sort' => '1'
             ],
         );
     }
