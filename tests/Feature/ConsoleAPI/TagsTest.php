@@ -1,6 +1,6 @@
 <?php
 
-// namespace Tests\Feature\ConsoleAPI;
+namespace Tests\Feature\ConsoleAPI;
 
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Foundation\Testing\WithoutMiddleware;
