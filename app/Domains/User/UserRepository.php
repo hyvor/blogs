@@ -74,30 +74,30 @@ class UserRepository
     ) {
 
         // This is the place where I got the ( cURL error 6: Could not resolve host: api ) Error so I had to comment it.
-        // if ($hyvorUserId) {
-        //     $user = Userbase::fromId($hyvorUserId, false, true);
+        if ($hyvorUserId) {
+            $user = Userbase::fromId($hyvorUserId, false, true);
 
-        //     if (!$user) {
-        //         throw new TrustedException("User not found");
-        //     }
+            if (!$user) {
+                throw new TrustedException("User not found");
+            }
 
-        //     $userData = [
-        //         'name' => $user->name,
-        //         'email' => $user->email,
-        //         'picture' => $user->picture,
-        //         'location' => $user->location,
-        //         'bio' => $user->bio,
-        //         'url' => $user->url
-        //     ];
-        // }
+            $userData = [
+                'name' => $user->name,
+                'email' => $user->email,
+                'picture' => $user->picture,
+                'location' => $user->location,
+                'bio' => $user->bio,
+                'url' => $user->url
+            ];
+        }
 
-        // $slug = self::findSlugForUser($blogId, $userData);
+        $slug = self::findSlugForUser($blog->id, $userData);
 
         $user = User::create([
             'blog_id' => $blog->id,
-            'slug' => $userData['slug'],
-            // 'user_id' => $hyvorUserId,
-            'user_id' => 2,
+            'slug' => $slug,
+            'user_id' => $hyvorUserId,
+            // 'user_id' => 2,
             'status' => $status->value,
             'role' => $role->value,
             'email' => $userData['email'],

@@ -20,13 +20,14 @@ class FillNewBlog {
 
         self::addTrial($blog);
 
+        $language = self::fillLanguage($blog); 
+
         $user = self::fillOwner($blog);
         // dd($user);
 
         self::fillRoutes($blog);
         self::fillPosts($blog, $user);
         self::fillPosts($blog);
-        $language = self::fillLanguage($blog); 
 
 
         return [

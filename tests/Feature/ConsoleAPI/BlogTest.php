@@ -11,7 +11,7 @@ use App\Models\Blog;
 // To run the TagsTest class only run this command in the command line.
 // php artisan test  --filter 'TagsTest'
 
-class TagsTest extends TestCase
+class BlogTest extends TestCase
 {
     use RefreshDatabase;
 

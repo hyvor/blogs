@@ -18,7 +18,7 @@ return new class extends Migration
             // $table->timestamps();
 
             // connection
-            $table->bigInteger('user_table_id')->index(); // The id from the users table.
+            $table->bigInteger('user_id')->index(); // The id from the users table.
             $table->bigInteger('language_id')->index(); 
 
             // user data

@@ -8,7 +8,7 @@ use Illuminate\Foundation\Testing\RefreshDatabase;
 use Tests\TestCase;
 use Illuminate\Support\Str;
 
-class UpdateFIlesTest extends TestCase
+class UpdateFilesTest extends TestCase
 {
 
     use RefreshDatabase;
