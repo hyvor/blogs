@@ -18,6 +18,7 @@ use App\Models\Language;
 use App\Models\Post;
 use App\Models\Tag;
 use App\Models\User;
+use Twig\Error\Error;
 
 class TemplateRenderer {
 
@@ -78,8 +79,13 @@ class TemplateRenderer {
 
         $fileName = $this->getFileNameToRender(array_keys($loaderArray));
 
-        // finally render
-        return TwigRenderer::renderFromFiles($loaderArray, $vars, $fileName);
+        try {
+            $html = TwigRenderer::renderFromFiles($loaderArray, $vars, $fileName);
+        } catch (Error $e) {
+            $html = $this->getRenderError($e->getMessage());
+        }
+
+        return $html;
     }
 
     private function getVariables() {
@@ -104,6 +110,17 @@ class TemplateRenderer {
 
         if ($this->filter !== null) {
             $vars['_posts'] = $this->getPosts();
+        }
+
+        /**
+         * Convert all object to arrays
+         * To allow merge filter to work
+         * Make sure any object methods are not misused
+         */
+        foreach ($vars as &$var) {
+            if (is_object($var)) {
+                $var = (array) $var;
+            }
         }
 
         return $vars;
@@ -199,6 +216,7 @@ class TemplateRenderer {
 
     private function getHeadCode($vars)
     {
+        return file_get_contents(resource_path('twig/_head.twig'));
         return TwigRenderer::renderFile(resource_path('twig/_head.twig'), $vars);
     }
 
@@ -289,6 +307,15 @@ class TemplateRenderer {
     // preview repository sets model before getting response object
     public function setModel($model) {
         $this->model = $model;
+    }
+
+    public function getRenderError($message) {
+        return <<<HTML
+            <div style="font-family:monospace;">
+                Twig Template Error:<br><br>
+                <div style="font-size:18px">$message</div>
+            </div>
+        HTML;
     }
 
 }

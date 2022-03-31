@@ -80,16 +80,15 @@ class ThemeFilesRepository
 
     private static function updateLocalDBFiles(int $blogId) {
 
-        return;
         /**
          * This is a simple way to refresh the database
          * and run the seeder that so local file changes are updated
          * This is ONLY FOR LOCAL TESTING
          */
-        /* if (App::environment('local')) {
-            BlogThemeFile::where('blog_id', $blogId)->delete();
+        if (App::environment('local')) {
+            Blog::find($blogId)->themeFiles()->delete();
             (new BlogThemeFilesSeeder())->run($blogId);
-        } */
+        }
 
     }
 
