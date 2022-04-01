@@ -7,34 +7,32 @@ import tagsLogic from '../../logic/tagsLogic';
 
 
 
-export default function TagLanguageSelector({id, languages, variant, loadVariant, currentLanguageId, onChange }) 
+export default function TagLanguageSelector({id, subdomain, languages, variant, loadVariant, currentLanguageId, onChange }) 
 {
-    const subdomain = subdomainLogic.values.subdomain;
+    // const tagLogicBuilt = tagsLogic({subdomain})
+    // const { createVariant} = useActions(tagLogicBuilt)
 
-    const tagLogicBuilt = tagsLogic({subdomain})
-    const { createVariant} = useActions(tagLogicBuilt)
-
-    // const handleRemove = () => {
-    //     const filteredPlayers = allPlayers.filter((player) => player.name !== name);
-    //     setCurrentLanguageId(filteredPlayers);
-    // };
-
-    // console.log(variant.language_id);
-    // console.log(currentLanguageId);
-
-    createVariant({
-        tagId: id,
-        languageId: currentLanguageId
-    });
-
-    loadVariant({
-        tagId: id,
-        languageId: currentLanguageId
-    });
-
+    // createVariant({
+    //     tagId: id,
+    //     languageId: currentLanguageId
+    // });
 
     return <div>
         <div className="global-languages-list">
+        {
+            languages.map(lang => (
+            <span 
+                key={lang.id}
+                className={"lang-tag" + (currentLanguageId === lang.id ? " active" : "")}
+                onClick={() => onChange(lang.id)}
+            >
+                <span className="code">{lang.code}</span>
+                <span className="status-icon">
+                    <Plus />
+                </span>
+            </span>
+            ))
+        }
         {/* {
             languages.map(lang => {
                 const variant = variant.language_id
@@ -67,20 +65,6 @@ export default function TagLanguageSelector({id, languages, variant, loadVariant
                 </span>
             })
         } */}
-        {
-            languages.map(lang => (
-            <span 
-                key={lang.id}
-                className={"lang-tag" + (currentLanguageId === lang.id ? " active" : "")}
-                onClick={() => onChange(lang.id)}
-            >
-                <span className="code">{lang.code}</span>
-                <span className="status-icon">
-                    <Plus />
-                </span>
-            </span>
-            ))
-        }
         </div> 
     </div>
 }

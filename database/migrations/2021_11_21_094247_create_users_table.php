@@ -19,21 +19,18 @@ class CreateUsersTable extends Migration
 
             // connection
             $table->bigInteger('blog_id');
-            $table->bigInteger('user_id')->nullable(); // hyvor user ID
+            $table->bigInteger('hyvor_user_id')->nullable(); // hyvor user ID
+            $table->bigInteger('picture_id')->nullable();
+
             $table->boolean('is_synced', true)->default(false); // synced with hyvor data
 
             $table->enum('status', ['invited', 'active', 'blocked'])->default('invited');
             $table->enum('role', ['owner', 'admin', 'editor', 'writer', 'contributor', 'finance']);
 
             // user data
-            // name, bio, location should be deleted later.
             $table->string('slug');
-            // $table->string('name', 50);
             $table->string('email');
-            $table->string('picture')->nullable();
-            // $table->string('bio')->nullable();
             $table->string('url')->nullable();
-            // $table->string('location', 30)->nullable();
 
             // social
             $table->string('social_facebook')->nullable();
@@ -47,6 +44,7 @@ class CreateUsersTable extends Migration
 
             $table->unique(['blog_id', 'slug']);
             $table->unique(['blog_id', 'user_id']);
+            $table->unique(['blog_id', 'picture_id']);
         });
     }
 

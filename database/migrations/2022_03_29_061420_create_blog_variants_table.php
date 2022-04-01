@@ -15,14 +15,14 @@ return new class extends Migration
     {
         Schema::create('blog_variants', function (Blueprint $table) {
             $table->id();
-            $table->timestamps();
+            // $table->timestamps();
 
              // connections
              $table->bigInteger('blog_id')->index(); 
              $table->bigInteger('language_id')->index(); 
  
              // data
-             $table->string('name');
+             $table->string('name')->nullable();
              $table->string('description')->nullable();
  
         });

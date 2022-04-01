@@ -8,6 +8,8 @@ use App\Exceptions\TrustedException;
 use App\Domains\Navigation\NavigationRepository;
 use App\Data\Objects\ConsoleAPI\NavigationObject;
 use App\Models\Blog;
+use App\Data\Enums\NavigationTypeEnum;
+
 
 class ConsoleNavigationController extends Controller {
 
@@ -28,13 +30,11 @@ class ConsoleNavigationController extends Controller {
         $getHeaderCount = NavigationRepository::getHeaderCount();
         $getFooterCount = NavigationRepository::getFooterCount();
 
-        // dd($getHeaderCount);
 
         $headerCount = $getHeaderCount < 8;
         $footerCount = $getFooterCount < 8;
 
         // validate the max length of 50
-        // Create a helper class for this
         
         // $request->validate([
         //     'navigation_name' => 'required|string',
@@ -43,17 +43,15 @@ class ConsoleNavigationController extends Controller {
         // ]);
         $navigationName = $request->input('navigation_name');
         $navigationUrl = $request->input('navigation_url');
-        $type = $request->input('type');
+        $type = NavigationTypeEnum::from($request->input('type'));
 
         if($type == 'header'){
             $getItemNumber =  NavigationRepository::getHeaderItemNumber();
             if($getItemNumber == null){
                 $sort = 1;
             }else{
-                $sort = $getItemNumber['itemNumber'] + 1;
+                $sort = $getItemNumber['sort'] + 1;
             }
-            // dd($sort);
-            // $sort = $getItemNumber['itemNumber'] + 1;
         }
 
         if($type == 'footer'){
@@ -61,13 +59,9 @@ class ConsoleNavigationController extends Controller {
             if($getItemNumber == null){
                 $sort = 1;
             }else{
-                $sort = $getItemNumber['itemNumber'] + 1;
+                $sort = $getItemNumber['sort'] + 1;
             }
-            // dd($itemNumber);
-            // $itemNumber = $getItemNumber['itemNumber'] + 1;
         }
-
-        // dd($itemNumber);
 
         if($headerCount){
             $createNavigation = NavigationRepository::createNavigation($blog->id, $navigationName, $navigationUrl, $type, $sort);
@@ -91,13 +85,9 @@ class ConsoleNavigationController extends Controller {
         $id = $request->route('id');
         $navigationName = $request->input('navigation_name');
         $navigationUrl = $request->input('navigation_url');
-        $type = $request->input('type');
+        $type =  NavigationTypeEnum::from($request->input('type'));
 
-        // $navigationName = 'Testing the name update in navigation';
-        // $navigationUrl = 'Testing the url update in the navigation';
-        // $type = 'head';
-
-        $updateNavigation = NavigationRepository::updateNavigation($blog->id, $id, $navigationName, $navigationUrl, $type);
+        $updateNavigation = NavigationRepository::updateNavigation($id, $navigationName, $navigationUrl, $type);
         return response()->json($updateNavigation);
     }
 

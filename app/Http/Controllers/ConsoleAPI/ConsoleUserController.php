@@ -41,7 +41,7 @@ class ConsoleUserController extends Controller
             $subdomain,
             $type
         );
-        return response()->json(new UserBlogObject($user));
+        // return response()->json(new UserBlogObject($user));
     }
 
     public function changeSort(Request $request, User $hyvorUser)
@@ -95,7 +95,7 @@ class ConsoleUserController extends Controller
                 ->map(function ($users) use ($blog) {
                     return new UserObject($users, $blog);
                 });
-        return response()->json($getData); 
+        return response()->json($getData);  
     }
 
     public static function createAuthor(Request $request, Blog $blog) {
@@ -109,6 +109,8 @@ class ConsoleUserController extends Controller
         if ($request->has('email')) {
             $userData['email'] = $request->input('email');
         }
+
+        // this should be changed and it should connect with the media
         if ($request->has('picture')) {
             $userData['picture'] = $request->input('picture');
         }
@@ -152,7 +154,8 @@ class ConsoleUserController extends Controller
             $userData['slug'] = str_replace(" ", "-", $userData['name']);
         }
 
-        $createUser = UserRepository::createUser($blog, $blog->user_id, $role, $status, $userData); 
+        // I changed here from user_id to hyvor_user_id
+        $createUser = UserRepository::createUser($blog, $blog->hyvor_user_id, $role, $status, $userData); 
         return response()->json($createUser);
     }
 
@@ -212,8 +215,9 @@ class ConsoleUserController extends Controller
             $userData['slug'] = str_replace(" ", "-", $userData['name']);
         }
         
-        $updateOldTag = UserRepository::updateAuthor( $userId, $languageId, $blog, $blog->user_id, $role, $status, $userData);
-        return response()->json($updateOldTag);
+        // I changed here from user_id to hyvor_user_id
+        $updateUser = UserRepository::updateAuthor( $userId, $languageId, $blog, $blog->hyvor_user_id, $role, $status, $userData);
+        return response()->json($updateUser);
     }
 
     public static function deleteAuthor(Request $request)
@@ -229,15 +233,15 @@ class ConsoleUserController extends Controller
     /*
     * these functions are for author Variants
     */
-    public static function getAuthorVariant(Request $request)
-    {
-        $userId =(int) $request->get('userId');
-        $languageId =(int) $request->input('languageId');
+    // public static function getAuthorVariant(Request $request)
+    // {
+    //     $userId =(int) $request->get('userId');
+    //     $languageId =(int) $request->input('languageId');
 
-        $getVariant = UserRepository::getAuthorVariant($userId, $languageId);
+    //     $getVariant = UserRepository::getAuthorVariant($userId, $languageId);
 
-        return response()->json($getVariant);
-    }
+    //     return response()->json($getVariant);
+    // }
 
     public static function createAuthorVariant(Request $request) {
 

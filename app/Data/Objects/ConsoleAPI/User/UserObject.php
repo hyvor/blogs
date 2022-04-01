@@ -12,13 +12,15 @@ class UserObject
     public int $created_at;
     public int $updated_at;
     public int $blog_id;
-    public int $user_id;
+    public ?int $hyvor_user_id;
+
     public bool $is_synced;
+
     public string $status;
     public string $role;
-
     public string $slug;
     public string $email; 
+    
     public ?string $picture; 
     public ?string $url; 
 
@@ -34,14 +36,15 @@ class UserObject
         $this->created_at = $user->created_at->timestamp;
         $this->updated_at = $user->updated_at->timestamp;        
         $this->blog_id = $user->blog_id;
+        $this->hyvor_user_id = $user->hyvor_user_id;
 
-        $this->user_id = $user->user_id;
         $this->is_synced = $user->is_synced;
         $this->status = $user->status;
+        
         $this->role = $user->role;
-
         $this->slug = $user->slug;
         $this->email = $user->email;
+
         $this->picture = $user->picture;
         $this->url = $user->url;
 

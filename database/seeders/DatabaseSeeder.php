@@ -7,6 +7,7 @@ use App\Domains\Language\LanguageRepository;
 use App\Domains\Redirect\RedirectRepository;
 use App\Domains\Route\RouteRepository;
 use App\Models\Blog;
+use App\Models\BlogVariant;
 use App\Models\Media;
 use App\Models\BlogThemeFile;
 use App\Models\Post;
@@ -37,9 +38,9 @@ class DatabaseSeeder extends Seeder
 
         foreach ($blogs as $blogData) {
             $blog = Blog::create([
-                'user_id' => 1,
+                'hyvor_user_id' => 1,
                 'subdomain' => $blogData[0],
-                'name' => $blogData[1],
+                // 'name' => $blogData[1],
                 'hosting_domain' => $blogData[2] ?? null,
                 'hosting_at' => $blogData[0] === 'test2' ? 'self' : 'subdomain',
                 'hosting_url' => $blogData[0] === 'test2' ? 'https://blogs.hyvor.test/blog' : null,
@@ -51,6 +52,11 @@ class DatabaseSeeder extends Seeder
 
             $secondLanguage = LanguageRepository::createLanguage($blog, 'fr', 'French');
 
+            BlogVariant::create([
+                'blog_id' => $blog->id,
+                'language_id' => $language->id,
+                'name' => $blogData[1],
+            ]);
 
             $tags = [];
             $tagsVariant = [];
@@ -58,7 +64,6 @@ class DatabaseSeeder extends Seeder
                 $name = $faker->name();
                 $tags[] = Tag::create([
                     'blog_id' => $blog->id,
-                    // 'name' => $name,
                     'slug' => Str::slug($name),
                 ]);
 

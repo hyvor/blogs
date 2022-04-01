@@ -45,7 +45,8 @@ class FillNewBlog {
     // private static function fillOwner(Blog $blog) : User {
     private static function fillOwner(Blog $blog) {
         // create the user (owner)
-        return UserRepository::createUser($blog, $blog->user_id, UserRoleEnum::OWNER, UserStatusEnum::ACTIVE);
+        // I changed here from user_id to hyvor_user_id
+        return UserRepository::createUser($blog, $blog->hyvor_user_id, UserRoleEnum::OWNER, UserStatusEnum::ACTIVE);
     }
 
     // add default routes

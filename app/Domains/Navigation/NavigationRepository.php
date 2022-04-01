@@ -2,6 +2,7 @@
 namespace App\Domains\Navigation;
 
 use App\Models\Navigation;
+use App\Data\Enums\NavigationTypeEnum;
 
 Class NavigationRepository
 {
@@ -15,7 +16,7 @@ Class NavigationRepository
             ->get();
     }
 
-    public static function createNavigation(int $blogId, string $navigationName, string $navigationUrl, $type, int $sort ){
+    public static function createNavigation(int $blogId, string $navigationName, string $navigationUrl, NavigationTypeEnum $type, int $sort ){
         // dd($sort);
         return Navigation::create([
             'blog_id' => $blogId,
@@ -26,7 +27,8 @@ Class NavigationRepository
         ]);
     }
 
-    public static function updateNavigation(int $blogId ,int $id, string $navigationName, string $navigationUrl, $type){
+    public static function updateNavigation(int $id, string $navigationName, string $navigationUrl, NavigationTypeEnum $type){
+      
         $navigation = Navigation::find($id);
         $navigation->name=$navigationName;
         $navigation->url=$navigationUrl;
@@ -41,9 +43,12 @@ Class NavigationRepository
     }
 
     public static function getHeaderItemNumber(){
-        return Navigation::where('type','=', 'header')
+        $headerItemNumber =  Navigation::where('type','=', 'header')
            ->get('sort')
            ->last();
+
+           dd($headerItemNumber);
+        return $headerItemNumber;
     }
 
     public static function getFooterItemNumber(){

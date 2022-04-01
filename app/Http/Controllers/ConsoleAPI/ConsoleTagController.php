@@ -64,23 +64,16 @@ class ConsoleTagController extends Controller {
         // ]);
 
         $id = $request->route('tagId');
-        // $name = $request->input('name');
         $slug = $request->input('slug');
-        // $description = $request->input('description') ?? null;
+        $languageId = $request->input('languageId');
         $codeHead = $request->input('codeHead') ?? null;
         $codeFoot = $request->input('codeFoot') ?? null;
+        $name = $request->input('name') ?? null;
+        $description = $request->input('description') ?? null;
         
-        $updateOldTag = TagRepository::updateTag($id, $slug, $codeHead, $codeFoot);
+        $updateOldTag = TagRepository::updateTag($id, $languageId, $slug, $codeHead, $codeFoot, $name, $description );
         return response()->json($updateOldTag);
     }
-
-    // public static function deleteTag(Request $request)
-    // {
-    //     $id = $request->route('tagId');
-    //     $deleteTag = TagRepository::deleteTag($id);
-    //     return response()->json($deleteTag);
-    // }
-
 
     /*
     *
@@ -109,29 +102,24 @@ class ConsoleTagController extends Controller {
         return response()->json($createVariant);
     }
 
-    public static function updateTagVariant(Request $request)
-    {
-        $tagId = $request->input('tagId');
-        $languageId = $request->input('languageId');
-        $name = $request->input('name');
-        $description = $request->input('description');
+    // public static function updateTagVariant(Request $request)
+    // {
+    //     $tagId = $request->input('tagId');
+    //     $languageId = $request->input('languageId');
+    //     $name = $request->input('name');
+    //     $description = $request->input('description');
 
-        // dd($tagId);
+    //     $updateVariant = TagRepository::updateTagVariant($tagId, $languageId, $name, $description);
 
-        $updateVariant = TagRepository::updateTagVariant($tagId, $languageId, $name, $description);
+    //     return response()->json($updateVariant);
+    // }
 
-        return response()->json($updateVariant);
-    }
-
-    public static function deleteTagVariant(Request $request)
+    public static function deleteTag(Request $request)
     {
         $tagId = $request->route('tagId');
         $languageId = $request->input('languageId');
 
-        // $tagId = 1;
-        // $languageId = 2;
-        
-        $deleteVariant = TagRepository::deleteTagVariant($tagId, $languageId);
+        $deleteVariant = TagRepository::deleteTag($tagId, $languageId);
 
         return response()->json($deleteVariant);
     }

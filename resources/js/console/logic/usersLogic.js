@@ -21,7 +21,7 @@ const usersLogic = kea({
             const user =  await api.get(props.subdomain, '/users');
             actions.setUsersListHasMore(user.length === 50);
             actions.setUsersList(user);
-        },
+        }, 
 
         loadUsersListMore: async ({offset}) => {
             const response = await api.get(props.subdomain, '/users', {
@@ -36,8 +36,13 @@ const usersLogic = kea({
             await api.delete(props.subdomain, `/user/${id}`);
         },
             
-        create: async ({name}) => {
+        create: async ({name, email, slug, role, status}) => {
+            // console.log(name, email,slug, role, status)
             const user = await api.post(props.subdomain, '/user', {
+                role:role,
+                status:status,
+                slug:slug,
+                email:email,
                 name: name,
             })
             actions.addUser(user);

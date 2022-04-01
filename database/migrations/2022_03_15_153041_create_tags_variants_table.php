@@ -24,7 +24,7 @@ return new class extends Migration
             $table->string('name')->nullable();
             $table->string('description')->nullable(); 
 
-            $table->timestamps();
+            // $table->timestamps();
 
             // $table->string('updated_a')->index();
             // $table->string('created_at')->index();

@@ -11,6 +11,10 @@ use App\Models\Navigation;
 // To run the Navigation Test class only run this command in the command line.
 // php artisan test  --filter 'NavigationsTest'
 
+
+// Must update the navigation test file and must connect the tests to the repository.
+// We don't need to do validation tests.
+
 class NavigationsTest extends TestCase
 {
 

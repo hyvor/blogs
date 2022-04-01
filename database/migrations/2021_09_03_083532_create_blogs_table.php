@@ -19,17 +19,15 @@ class CreateBlogsTable extends Migration
             $table->softDeletes();
 
             // connections
-            $table->bigInteger('user_id'); // hyvor user id (owner)
+            $table->bigInteger('hyvor_user_id'); // hyvor user id (owner)
             $table->bigInteger('theme_id')->nullable();
+            $table->bigInteger('icon_id')->nullable();
+            $table->bigInteger('featured_image_id')->nullable();
 
             // data
             $table->string('subdomain')->unique();
             $table->enum('type', ['normal', 'dev', 'temp'])->default('normal');
             $table->bigInteger('dev_theme_id')->nullable();
-            $table->string('name'); //If there is variants this will be a variant
-            $table->string('description')->nullable(); //If there is variants this will be a variant
-            $table->string('icon')->nullable();
-            $table->string('featured_image')->nullable();
 
             $table->enum('hosting_at', ['subdomain', 'domain', 'self'])->default('subdomain');
             $table->string('hosting_domain')->nullable()->unique(); // for domain
@@ -57,6 +55,10 @@ class CreateBlogsTable extends Migration
             $table->string('social_youtube')->nullable();
             $table->string('social_instagram')->nullable();
             $table->string('social_github')->nullable();
+
+            $table->unique(['icon_id']);
+            $table->unique(['featured_image_id']);
+
 
         });
     }

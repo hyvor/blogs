@@ -1,22 +1,93 @@
-import React, {useState} from 'react';
+import React, {useState, useEffect} from 'react';
 import { useActions, useValues } from 'kea';
 import { Trash, PencilFill, Plus, BoxArrowInRight} from 'react-bootstrap-icons';
+import { Popup, PopupBodyDefault, PopupConfirm, PopupFooterDoubleButton, PopupHeaderDefault } from '../../ReusableComponents/Popup';
+import ProfileImage from '../../ReusableComponents/ProfileImage';
+import ReactSelect, { components } from 'react-select';
+import DualSetting from '../../ReusableComponents/DualSetting';
+import Input from '../../ReusableComponents/Input';
+import languagesLogic from '../../logic/languagesLogic';
+import blogsLogic from '../../logic/blogsLogic';
+import UserLanguageSelector from './UserLanguageSelector';
+
+
+
 import {toast} from 'react-toastify'
 import subdomainLogic from '../../logic/subdomainLogic';
 import usersLogic from '../../logic/usersLogic';
 import Loader from '../../ReusableComponents/Loader';
 import Toast from '../../ReusableComponents/Toast';
 import NoResults from '../../ReusableComponents/NoResults';
-import Input from '../../ReusableComponents/Input';
-import { Popup, PopupBodyDefault, PopupConfirm, PopupFooterDoubleButton, PopupHeaderDefault } from '../../ReusableComponents/Popup';
-import ProfileImage from '../../ReusableComponents/ProfileImage';
-import ReactSelect, { components } from 'react-select';
-import DualSetting from '../../ReusableComponents/DualSetting';
 
 
 
-export default function Users(props) {
 
+export default function Users({user, subdomain}) {
+
+    // Language Section
+    const { languages, getLanguageById } = useValues(languagesLogic({subdomain}))
+    const { findBlogBySubdomain } = useValues(blogsLogic)
+    const [currentLanguageId, setCurrentLanguageId] = useState( findBlogBySubdomain(subdomain).blog.default_language.id );
+    const currentLanguage = getLanguageById(currentLanguageId);
+
+    const variants = user.variants || [];
+    const variant = variants[currentLanguageId] || {};
+
+    // console.log(variant.language_id); // this get the data from the user variant database
+    // console.log(currentLanguage.is_primary) // this get the data from the language logic (true)
+    // console.log(currentLanguageId) // this get the current language Id of an specific user.
+    // console.log(currentLanguage.name)
+
+    // To get the data of the current language we will have to include a if statement and then add the language data in to it.
+    // And then we can pass the language data accordingly.
+    // And also we will have to add a form disable function in it.
+
+    // To disable editing in other languages.
+    const [pointerEvent, setPointerEvent] = useState();
+
+    // To display data in the table
+    const [getTableName, setTableName] = useState(null);
+    useEffect(() => {
+        if(currentLanguage.is_primary === true){
+            if(currentLanguage.id === variant.language_id){
+                if(user.id === variant.user_id){
+                    setTableName(variant.name)
+                }
+            }
+        }
+    })
+
+    // To display data in the pop-up
+    const [variantName, setVariantName] = useState(null);
+    const [variantBio, setVariantBio] = useState(null);
+    const [variantLocation, setVariantLocation] = useState(null);
+
+    useEffect(() => {
+        if(currentLanguage.is_primary == true)
+        {
+            setPointerEvent()
+            if(currentLanguageId == variant.language_id){
+                if(user.id == variant.user_id){
+                    setVariantName(variant.name)
+                    setVariantBio(variant.bio)
+                    setVariantLocation(variant.location)
+                }
+            }
+        }
+        else
+        {
+            setPointerEvent("pointerEvent")
+            if(currentLanguageId == variant.language_id){
+                if(user.id == variant.user_id){
+                    setVariantName(variant.name)
+                    setVariantBio(variant.bio)
+                    setVariantLocation(variant.location)
+                }
+            }
+        }
+    })
+
+    
     const [styleUpdateIcon, setStyleUpdateIcon] = useState("table-button");
     const [styleDeleteIcon, setStyleDeleteIcon] = useState("table-button");
 
@@ -26,13 +97,28 @@ export default function Users(props) {
     // Get usr type
     const [userType, setUserType] = useState("guest");
 
-
     const selectOptions = [
-        { label: 'Permanent', value: '301' },
-        { label: 'Temporary', value: '302'}
+        { label: 'owner', value: 'owner' },
+        { label: 'admin', value: 'admin'},
+        { label: 'editor', value: 'editor' },
+        { label: 'writer', value: 'writer'},
+        { label: 'contributor', value: 'contributor' },
+        { label: 'finance', value: 'finance'}
     ];  
 
     // Update section
+    const [updateTagData, setUpdate] = useState({userId: user.id})
+    const [ userSlug, setSlug ] = useState(user.slug);
+    const [ userEmail, setEmail ] = useState(user.email);
+    const [ userUrl, setUrl ] = useState(user.url);
+    
+    const [ facebook, setFacebook ] = useState(user.social_facebook);
+    const [ twitter, setTwitter ] = useState(user.social_twitter);
+    const [ linkedIn, setLinkedIn ] = useState(user.social_linkedin);
+    const [ youtube, setYoutube ] = useState(user.social_youtube);
+    const [ instagram, setInstagram ] = useState(user.social_instagram);
+    
+
     function handleUpdate(e) {
         e.preventDefault();
         setStyleUpdateIcon('table-update-popup')
@@ -55,7 +141,7 @@ export default function Users(props) {
         setStyleDeleteIcon("table-delete-popup");
     }
     function handleDoDelete() {
-        console.log(id);
+        // console.log(id);
         // toast("File deleted", {autoClose: 1500});
         // remove({id});
         setDeletePopupOpened(false);
@@ -67,29 +153,29 @@ export default function Users(props) {
     }
 
     // If the user is an hyvor userType
-    const [isChecked, setIsChecked] = useState(0);
-    const [checkboxEvent, setCheckBoxEvent] = useState('pointerEvent');
+    // const [isChecked, setIsChecked] = useState(0);
+    // const [checkboxEvent, setCheckBoxEvent] = useState('pointerEvent');
 
-    function onCheckChange(){
-        setIsChecked(1);
+    // function onCheckChange(){
+    //     setIsChecked(1);
 
-        if(isChecked == 0){
-            setCheckBoxEvent()
-        }
+    //     if(isChecked == 0){
+    //         setCheckBoxEvent()
+    //     }
     
-        if(isChecked == 1){
-            setCheckBoxEvent('pointerEvent');
-        }
-    }
+    //     if(isChecked == 1){
+    //         setCheckBoxEvent('pointerEvent');
+    //     }
+    // }
 
     return <div>
         <div className="global-table-body">
             <div className="table-body-five">
-                <div className="table-item"> Rasif</div>
-                <div className="table-item"> rasif-sahl </div>
-                <div className="table-item"> Sahl </div>
+                <div className="table-item"> {getTableName}</div>
+                <div className="table-item"> {user.slug} </div>
+                <div className="table-item"> {user.email} </div>
                 <div className="table-item"> 
-                    <div className="user-role">Admin</div>
+                    <div className="user-role">{user.role}</div>
                 </div>
                 <div className="table-actions">
                     <div className="table-edit" >
@@ -100,10 +186,23 @@ export default function Users(props) {
                         {
                             updatePopUpOpened ?
 
-                                userType == 'hyvor' ?
+                                userType == 'guest' ?
 
                                     <div className="popup-width">
                                         <Popup
+                                            header={
+                                                <div>
+                                                    <PopupHeaderDefault title='Update User' />
+                                                    <UserLanguageSelector 
+                                                        id={user.id} 
+                                                        subdomain={subdomain}
+                                                        languages={languages} 
+                                                        variant={variant}
+                                                        currentLanguageId={currentLanguageId}
+                                                        onChange={setCurrentLanguageId}
+                                                    />
+                                                </div>
+                                            }
                                             body={
                                                 <PopupBodyDefault>
                                                     <div>
@@ -113,124 +212,151 @@ export default function Users(props) {
                                                             title="Name"
                                                             type="text"
                                                             name="name"
-                                                            // value={name}
-                                                            // onChange={setName}
+                                                            value={variantName}
+                                                            onChange={setVariantName}
                                                             placeholder="Name"
                                                         />
-                                                        <Input 
-                                                            title="Slug"
-                                                            type="text"
-                                                            name="slug"
-                                                            // value={slug}
-                                                            // onChange={setSlug}
-                                                            placeholder="Slug"
-                                                        />
+
+                                                        <div className={pointerEvent}>
+                                                            <Input 
+                                                                title="Slug"
+                                                                type="text"
+                                                                name="slug"
+                                                                value={userSlug}
+                                                                onChange={setSlug}
+                                                                placeholder="Slug"
+                                                            />
+                                                        </div>
+
+                                                        <div className={pointerEvent}>
+                                                            <DualSetting 
+                                                                left={
+                                                                    <Input 
+                                                                        title="Email"
+                                                                        type="text"
+                                                                        name="email"
+                                                                        value={userEmail}
+                                                                        onChange={setEmail}
+                                                                        placeholder="Email"
+                                                                    />
+                                                                }
+                                                                right={
+                                                                    <div>
+                                                                        <div className="popup-type-margin">Role</div>
+                                                                        <SelectUserRole  options = {selectOptions}/>
+                                                                    </div>
+                                                                }
+                                                            />
+                                                        </div>
 
                                                         <DualSetting 
                                                             left={
-                                                                <Input 
-                                                                    title="Email"
-                                                                    type="text"
-                                                                    name="email"
-                                                                    // value={description}
-                                                                    // onChange={setDescription}
-                                                                    placeholder="Description"
-                                                                />
-                                                            }
-                                                            right={
-                                                                <div>
-                                                                    <div className="popup-type-margin">Role</div>
-                                                                    <SelectUserRole  options = {selectOptions}/>
+                                                                <div className={pointerEvent}>
+                                                                    <Input 
+                                                                        title="Url"
+                                                                        type="text"
+                                                                        name="url"
+                                                                        value={userUrl}
+                                                                        onChange={setUrl}
+                                                                        placeholder="Url"
+                                                                    />
                                                                 </div>
-                                                            }
-                                                        />
-
-                                                        <DualSetting 
-                                                            left={
-                                                                <Input 
-                                                                    title="Url"
-                                                                    type="text"
-                                                                    name="url"
-                                                                    // value={url}
-                                                                    // onChange={setUrl}
-                                                                    placeholder="Url"
-                                                                />
                                                             }
                                                             right={
                                                                 <Input 
                                                                 title="Location"
                                                                 type="text"
                                                                 name="location"
-                                                                // value={location}
-                                                                // onChange={setLocation}
+                                                                value={variantLocation}
+                                                                onChange={setVariantLocation}
                                                                 placeholder="Location"
                                                             />
                                                             }
                                                         />
 
-                                                        <DualSetting 
-                                                            left={
-                                                                <Input 
-                                                                    title="Facebook"
-                                                                    type="text"
-                                                                    name="facebook"
-                                                                    // value={facebook}
-                                                                    // onChange={setFacebook}
-                                                                    placeholder="Facebook"
-                                                                />
-                                                            }
-                                                            right={
-                                                                <Input 
-                                                                title="Twitter"
-                                                                type="text"
-                                                                name="twitter"
-                                                                // value={twitter}
-                                                                // onChange={setTwitter}
-                                                                placeholder="Twitter"
+                                                        <div className={pointerEvent}>
+                                                            <DualSetting 
+                                                                left={
+                                                                    <Input 
+                                                                        title="Facebook"
+                                                                        type="text"
+                                                                        name="facebook"
+                                                                        value={facebook}
+                                                                        onChange={setFacebook}
+                                                                        placeholder="Facebook"
+                                                                    />
+                                                                }
+                                                                right={
+                                                                    <Input 
+                                                                        title="Twitter"
+                                                                        type="text"
+                                                                        name="twitter"
+                                                                        value={twitter}
+                                                                        onChange={setTwitter}
+                                                                        placeholder="Twitter"
+                                                                    />
+                                                                }
                                                             />
-                                                            }
-                                                        />
 
-                                                        <DualSetting 
-                                                            left={
-                                                                <Input 
-                                                                    title="LinkedIn"
-                                                                    type="text"
-                                                                    name="LinkedIn"
-                                                                    // value={inkedIn}
-                                                                    // onChange={setLinkedIn}
-                                                                    placeholder="linkedIn"
-                                                                />
-                                                            }
-                                                            right={
-                                                                <Input 
-                                                                title="Youtube"
-                                                                type="text"
-                                                                name="youtube"
-                                                                // value={youtube}
-                                                                // onChange={setYoutube}
-                                                                placeholder="Youtube"
+                                                            <DualSetting 
+                                                                left={
+                                                                    <Input 
+                                                                        title="LinkedIn"
+                                                                        type="text"
+                                                                        name="LinkedIn"
+                                                                        value={linkedIn}
+                                                                        onChange={setLinkedIn}
+                                                                        placeholder="linkedIn"
+                                                                    />
+                                                                }
+                                                                right={
+                                                                    <Input 
+                                                                        title="Youtube"
+                                                                        type="text"
+                                                                        name="youtube"
+                                                                        value={youtube}
+                                                                        onChange={setYoutube}
+                                                                        placeholder="Youtube"
+                                                                    />
+                                                                }
                                                             />
-                                                            }
-                                                        />
 
-                                                        <Input 
-                                                            title="Instagram"
-                                                            type="text"
-                                                            name="instagram"
-                                                            // value={instagram}
-                                                            // onChange={setInstagram}
-                                                            placeholder="Instagram"
-                                                        /> 
+                                                            <Input 
+                                                                title="Instagram"
+                                                                type="text"
+                                                                name="instagram"
+                                                                value={instagram}
+                                                                onChange={setInstagram}
+                                                                placeholder="Instagram"
+                                                            /> 
+                                                        </div>
 
                                                         <div className="popup-type-margin">Bio</div>
                                                         <textarea 
                                                             className="input"
                                                             placeholder="Write a bio..."
-                                                            // value={post.description}
-                                                            // onChange={e => updatePostValue('description', e.target.value)}
+                                                            value={variantBio}
+                                                            onChange={setVariantBio}
                                                             maxLength={350}
                                                         ></textarea>
+
+                                                        <div className="table-delete">
+                                                            <span className = 'button danger' onClick={handleDelete}>
+                                                                Delete
+                                                            </span>
+                                                            {
+                                                                deletePopupOpened ?
+                                                                <PopupConfirm
+                                                                    title="Delete Permanently"
+                                                                    text="Are you sure to delete this user permanently? You will not be able to access it anymore."
+                                                                    name="Delete"
+                                                                    buttonClass="danger"
+                                                                    onClick={handleDoDelete}
+                                                                    onCancel={handleDeleteCancel}
+                                                                />
+                                                                : null
+                                                            }
+                                                        </div> 
                                                     </div>
                                                 </PopupBodyDefault>
                                             }
@@ -247,10 +373,23 @@ export default function Users(props) {
 
                                     <div className="popup-width">
                                         <Popup
+                                            header={
+                                                <div>
+                                                    <PopupHeaderDefault title='Update Hyvor User' />
+                                                    <UserLanguageSelector 
+                                                        id={user.id} 
+                                                        subdomain={subdomain}
+                                                        languages={languages} 
+                                                        variant={variant}
+                                                        currentLanguageId={currentLanguageId}
+                                                        onChange={setCurrentLanguageId}
+                                                    />
+                                                </div>
+                                            }
                                             body={
                                                 <PopupBodyDefault>
                                                     <div>
-                                                            <div className="isSynced">
+                                                            {/* <div className="isSynced">
                                                                 <input 
                                                                     type="checkbox" 
                                                                     name="topping" 
@@ -259,9 +398,9 @@ export default function Users(props) {
                                                                     onChange={onCheckChange} 
                                                                 />
                                                                 is_synced
-                                                            </div>
+                                                            </div> */}
 
-                                                        <div className={checkboxEvent}>
+                                                        {/* <div className={checkboxEvent}> */}
                                                             <ProfileImage/>
 
                                                             <Input 
@@ -289,7 +428,25 @@ export default function Users(props) {
                                                                 // onChange={setDescription}
                                                                 placeholder="Description"
                                                             />
-                                                        </div>
+
+                                                            <div className="table-delete">
+                                                                <span className = 'button danger' onClick={handleDelete}>
+                                                                    Delete
+                                                                </span>
+                                                                {
+                                                                    deletePopupOpened ?
+                                                                    <PopupConfirm
+                                                                        title="Delete Permanently"
+                                                                        text="Are you sure to delete this user permanently? You will not be able to access it anymore."
+                                                                        name="Delete"
+                                                                        buttonClass="danger"
+                                                                        onClick={handleDoDelete}
+                                                                        onCancel={handleDeleteCancel}
+                                                                    />
+                                                                    : null
+                                                                }
+                                                        </div> 
+                                                        {/* </div> */}
 
                                                     </div>
                                                 </PopupBodyDefault>
@@ -309,7 +466,7 @@ export default function Users(props) {
                     </div>
 
 
-                    <div className="table-delete">
+                    {/* <div className="table-delete">
                         <span className={styleDeleteIcon} onClick={handleDelete}>
                             <Trash size={10} />
                         </span>
@@ -317,7 +474,7 @@ export default function Users(props) {
                             deletePopupOpened ?
                                 <PopupConfirm
                                     title="Delete Permanently"
-                                    text="Are you sure to delete this tag permanently? You will not be able to access it anymore."
+                                    text="Are you sure to delete this user permanently? You will not be able to access it anymore."
                                     name="Delete"
                                     buttonClass="danger"
                                     onClick={handleDoDelete}
@@ -325,7 +482,7 @@ export default function Users(props) {
                                 />
                             : null
                         }
-                    </div>
+                    </div> */}
                     <div className="table-view">
                         <span className='table-button'>
                             <BoxArrowInRight size={10} />
@@ -413,7 +570,7 @@ function SelectUserRole({options, onChange, defaultValue}) {
     function handleTag(data){
         
         const lastValue = data[data.length - 1];
-        const tagId = lastValue.value
+        const userId = lastValue.value
     }
     
     const SelectUserRole = () => (

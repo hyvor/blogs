@@ -13,8 +13,9 @@ class BlogFactory extends Factory
      */
     public function definition()
     {
+        // I changed here from user_id to hyvor_user_id
         return [
-            'user_id' => 1,
+            'hyvor_user_id' => 1,
             'subdomain' => $this->faker->word(),
             'name' => $this->faker->name()
         ];

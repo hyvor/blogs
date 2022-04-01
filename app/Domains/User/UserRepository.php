@@ -14,7 +14,6 @@ use Illuminate\Support\Str;
 use App\Domains\Language\LanguageRepository;
 use App\Models\Language;
 
-
 use Hyvor\HyvorConnecter\Userbase;
 use App\Domains\User\Types\UserBlogOutputConsoleType;
 use App\Models\Blog;
@@ -48,12 +47,13 @@ class UserRepository
     {
         $language = LanguageRepository::getPrimaryLanguage($blog);
 
-        $users = User::where('users.blog_id', '=', $blog->id)
+        $users = User::where('blog_id', '=', $blog->id)
         ->join('users_variants', function($join) use ($language) {
             $join->on('users_variants.user_id', '=', 'users.id');
             $join->where('users_variants.language_id', '=',  $language->id);
         })
-        ->latest()
+        // ->latest()
+        ->select('users.*')
         ->get();
 
         return $users;
@@ -95,13 +95,12 @@ class UserRepository
 
         $user = User::create([
             'blog_id' => $blog->id,
+            'picture_id' => $userData['picture'] ?? null,
             'slug' => $userData['slug'],
-            // 'user_id' => $hyvorUserId,
-            'user_id' => 2,
+            'hyvor_user_id' => $hyvorUserId ,
             'status' => $status->value,
             'role' => $role->value,
             'email' => $userData['email'],
-            'picture' => $userData['picture'] ?? null,
             'url' => $userData['url'] ?? null,
             'social_facebook' => $userData['social_facebook'] ?? null,
             'social_twitter' => $userData['social_twitter'] ?? null,
@@ -109,6 +108,8 @@ class UserRepository
             'social_youtube' => $userData['social_youtube'] ?? null,
             'social_instagram' => $userData['social_instagram'] ?? null,
         ]);
+
+        // dd($user);
 
         $getLanguage = $blog->languages()->where('is_primary', true)->first();
 
@@ -123,7 +124,7 @@ class UserRepository
         // return $user;
     }
 
-    public static function updateAuthor( 
+    public static function updateAuthor(
         int $userId, 
         int $languageId,
         $blog,
@@ -183,14 +184,16 @@ class UserRepository
     * these functions are for author Variants
     *
     */
-    public static function getAuthorVariant($userId, $languageId)
-    {
-        $users = UsersVariant::where('user_id', '=', $userId)
-        ->where('language_id', '=', $languageId)
-        ->get();
 
-        return $users;
-    }
+    // This function was created to get specific data about variants but we don't need it anymore.
+    // public static function getAuthorVariant($userId, $languageId)
+    // {
+    //     $users = UsersVariant::where('user_id', '=', $userId)
+    //     ->where('language_id', '=', $languageId)
+    //     ->get();
+
+    //     return $users;
+    // }
 
     // This function is used to create a variant if it doesn'texist.'
     public static function createAuthorVariant($userId, $languageId) 
@@ -222,7 +225,7 @@ class UserRepository
     */
     public static function getBlogsOfUser(int $hyvorUserId): Collection
     {
-        return User::where('user_id', $hyvorUserId)
+        return User::where('hyvor_user_id', $hyvorUserId)
             ->where('status', 'active')
             ->orderBy('sort', 'ASC')
             ->orderBy('created_at', 'ASC')
@@ -237,7 +240,7 @@ class UserRepository
     public static function getUserByBlogIdAndHyvorUserId(int $blogId, int $hyvorUserId) : ?User 
     {
         return User::where('blog_id', $blogId)
-            ->where('user_id', $hyvorUserId)
+            ->where('hyvor_user_id', $hyvorUserId)
             ->first();
     }
 
@@ -268,7 +271,7 @@ class UserRepository
         $i = 1;
         foreach ($arr as $blogId) {
             User::where('blog_id', $blogId)
-                ->where('user_id', $userId)
+                ->where('hyvor_user_id', $userId)
                 ->update([
                     'sort' => $i
                 ]);
