@@ -133,42 +133,78 @@ class Highlighter
 
         $code = '';
 
+        $lineNumber = 1;
+
+        $hasLineNumbers = $this->lineNumbers && $this->annotations->hasLineNumbers();
+        $maxLineNumber = max($this->annotations->getMaxLineNumber(), count($lines));
+
+        $hasDiff = $this->annotations->hasDiffAdd() || $this->annotations->hasDiffRemove();
+        $hasFocus = $this->annotations->hasFocus();
+
+        $blur = 'blur(2px)';
+
         foreach ($lines as $index => $line) {
 
-            $lineNumber = $index + 1;
+            $lineBackground = null;
+            $lineFilter = null;
+            $lineTransition = null;
+            $lineClass = ['line'];
 
-            $lineBackground = match ($lineNumber) {
-                2 => 
+            $realLineNumber = $index + 1;
+
+            $shouldFocus = $this->annotations->shouldFocus($realLineNumber);
+            $shouldDiffAdd = $this->annotations->shouldDiffAdd($realLineNumber);
+            $shouldDiffRemove = $this->annotations->shouldDiffRemove($realLineNumber);
+
+            if ($shouldFocus) {
+                $lineClass[] = 'focus';
+            } else if ($shouldDiffAdd) {
+                $lineBackground = $this->theme->colors->{'diffEditor.insertedTextBackground'} ?? '#00ff0022';
+                $lineClass[] = 'diff-add';
+            } else if ($shouldDiffRemove) {
+                $lineBackground = $this->theme->colors->{'diffEditor.removedTextBackground'} ?? '#ff000022';
+                $lineClass[] = 'diff-remove';
+            } else if ($this->annotations->shouldHighlight($realLineNumber)) {
+                $lineBackground = 
                     $this->theme->colors->{'editor.lineHighlightBackground'} ??
                     $this->theme->colors->{'editor.selectionHighlightBackground'} ?? 
                     $this->theme->colors->{'editor.selectionBackground'} ??
-                    $backgroundColor,
-                10 => $this->theme->colors->{'diffEditor.removedTextBackground'} ?? '#ff000022',
-                11 => $this->theme->colors->{'diffEditor.insertedTextBackground'} ?? '#00ff0022',
-                default => null
-            };
-
-            if ($lineBackground) {
-                $lineStyle = $this->getStylesArrayAsCssString([
-                    'background-color' => $lineBackground,
-                ]);
-            } else {
-                $lineStyle = '';
+                    $backgroundColor;
+                $lineClass[] = 'highlight';
             }
 
-            $code .= "<div class=\"line\" style=\"$lineStyle\">";
-
-            if ($this->lineNumbers) {
-                $code .=  $this->getLineNumberSpan($lineNumber);
+            if ($hasFocus && !$shouldFocus) {
+                $lineFilter = $blur;
+                $lineTransition = 'filter 0.3s';
             }
 
-            $numTokens = count($line);
-            foreach ($line as $tokenIndex => $token) {
+            $lineClass = implode(' ', $lineClass);
 
-                /* if ($numTokens === $tokenIndex + 1) {
-                    // last token - check for line annotations via comments
-                    $annotations = $this->getLineAnnotations();
-                } */
+            $lineStyle = $this->getStylesArrayAsCssString([
+                'background-color' => $lineBackground,
+                'filter' => $lineFilter,
+                'transition' => $lineTransition
+            ]);
+
+            $code .= "<div class=\"$lineClass\" style=\"$lineStyle\">";
+
+            if ($hasLineNumbers) {
+                $renumberedLineNumber = $this->annotations->getRenumberedLineNumber($realLineNumber, $lineNumber);
+                $code .=  $this->getLineNumberSpan(
+                    $renumberedLineNumber, 
+                    $maxLineNumber
+                );
+
+                if ($renumberedLineNumber !== false) {
+                    $lineNumber = $renumberedLineNumber;
+                }
+            }
+
+            if ($hasDiff) {
+                $code .= $this->getDiffMarkSpan($shouldDiffAdd, $shouldDiffRemove);
+            }
+
+            foreach ($line as $token) {
 
                 $tokenColor = $token->color ?? $foregroundColor;
                 $tokenContent = htmlspecialchars($token->content);
@@ -186,6 +222,8 @@ class Highlighter
             }
 
             $code .= "</div>";
+            
+            $lineNumber++;
 
         }
 
@@ -194,11 +232,16 @@ class Highlighter
         ]);
 
         $preClasses = [];
+        $preOnMouseEnter = '';
+        $preOnMouseLeave = '';
+
         if ($this->annotations->hasHighlight()) {
             $preClasses[] = 'has-highlight';
         }
-        if ($this->annotations->hasFocus()) {
+        if ($hasFocus) {
             $preClasses[] = 'has-focus';
+            $preOnMouseEnter = "this.querySelectorAll('.line:not(.focus)').forEach(function(line){line.style.filter = ''});";
+            $preOnMouseLeave = "this.querySelectorAll('.line:not(.focus)').forEach(function(line){line.style.filter = '$blur'});";
         }
         if ($this->annotations->hasDiffAdd()) {
             $preClasses[] = 'has-diff-add';
@@ -206,18 +249,28 @@ class Highlighter
         if ($this->annotations->hasDiffRemove()) {
             $preClasses[] = 'has-diff-remove';
         }
-
+        if ($this->annotations->hasError()) {
+            $preClasses[] = 'has-annotation-error';
+        }
 
         $preClasses = implode(' ', $preClasses);
 
         $this->html = <<<HTML
-            <pre style="$preStyle" class="$preClasses"><code>$code</code></pre>
+            <pre style="$preStyle" class="$preClasses" onmouseenter="$preOnMouseEnter" onmouseleave="$preOnMouseLeave"><code>$code</code></pre>
         HTML;
 
     }
 
-    private function getLineNumberSpan($number)
+    /**
+     * Spacing should be done correctly
+     * Based on the max value
+     */
+    private function getLineNumberSpan(int|false $number, int $max)
     {
+
+        $numLength = $number === false ? 0 : strlen((string) $number);
+        $maxLength = strlen((string) $max);
+        $diffLength = $maxLength - $numLength;
 
         $color = $this->theme->colors->{'editorLineNumber.foreground'} ?? $this->theme->fg;
 
@@ -228,7 +281,7 @@ class Highlighter
             'text-align' => 'right'
         ]);
 
-        $numberDisplay = $number > 9 ? $number : " " . $number;
+        $numberDisplay = str_repeat(" ", $diffLength) . ($number === false ? '' : $number);
 
         return "<span class=\"line-number\" style=\"$styles\">$numberDisplay</span>";
 
@@ -238,9 +291,41 @@ class Highlighter
     {
         $keyed = [];
         foreach ($styles as $key => $value) {
+            if (!$value)
+                continue;
             $keyed[] = "$key:$value";
         }
         return implode(';', $keyed);
+    }
+
+    private function getDiffMarkSpan(bool $shouldDiffAdd, bool $shouldDiffRemove)
+    {
+        $content = " ";
+        if ($shouldDiffAdd) {
+            $content = "+";
+        } else if ($shouldDiffRemove) {
+            $content = "-";
+        }
+
+        $style = $this->getStylesArrayAsCssString([
+            '-webkit-user-select' => 'none',
+            'user-select' => 'none',
+            'color' => $shouldDiffRemove ?
+
+                // red
+                $this->theme->colors->{'terminal.ansiRed'} ??
+                $this->theme->colors->{'terminal.ansiBrightRed'} ??
+                '#f07178'
+                
+                :
+
+                // green
+                $this->theme->colors->{'terminal.ansiGreen'} ??
+                $this->theme->colors->{'terminal.ansiBrightGreen'} ??
+                '#cceccd'
+        ]);
+
+        return "<span class=\"diff-mark\" style=\"$style\">$content</span>";
     }
 
 }

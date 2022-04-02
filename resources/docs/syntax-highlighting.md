@@ -71,7 +71,7 @@ Annotations are used for highlighting and re-numbering. Let's see some examples.
 | `+=12` | Highlights the 12th line in green (Diff add)
 | `-=20` | Highlights the 20th line in red (Diff remove)
 | `renumber=4:21` | Number of the 4th line will be changed to 21. The next line will have 22.
-| `renumber=6:` | Number of the 6th line will be hidden
+| `renumber=6:null` | Number of the 6th line will be hidden
 | `highlight=1 +=12` | You can have multiple space separated annotations
 | `numbers=true` | Enable line numbers (to override global settings)
 | `numbers=false` | Disable line numbers (to override global settings)

@@ -4,19 +4,26 @@ namespace Hyvor\SyntaxHighlighter;
 class Annotations
 {
 
-    public bool|null $numbers = null;
-    public array $renumbers = [];
-    public array $highlightLines = [];
-    public array $diffAddLines = [];
-    public array $diffRemoveLines = [];
+    private bool|null $numbers = null;
+    private array $renumbers = [];
+    private array $highlightLines = [];
+    private array $focusLines = [];
+    private array $diffAddLines = [];
+    private array $diffRemoveLines = [];
+
+    private $hasError = false;
 
     public function __construct(string $annotations)
     {
 
         $annotations = preg_split('/\s+/', $annotations);        
 
-        foreach ($annotations as $annotation) {
-            $this->processAnnotation($annotation);
+        try {
+            foreach ($annotations as $annotation) {
+                $this->processAnnotation($annotation);
+            }
+        } catch (\Exception) {
+            $this->hasError = true;
         }
 
     }
@@ -32,7 +39,6 @@ class Annotations
         if ($key == null || $value === null) {
             return;
         }
-
 
         if (in_array($key, ['highlight', 'focus', '+', '-'])) {
 
@@ -63,7 +69,16 @@ class Annotations
 
         } else if ($key === 'renumber') {
 
+            $renumbers = explode(',', $value);
 
+            foreach ($renumbers as $renumber) {
+                $split = explode(":", $renumber);
+                
+                $from = $split[0];
+                $to = $split[1] === 'null' ? false : (int) $split[1];
+
+                $this->renumbers[$from] = $to;
+            }
 
         }
 
@@ -104,24 +119,65 @@ class Annotations
         return $lines;
     }
 
-    public function hasHighlight()
+    public function hasHighlight() : bool
     {
         return count($this->highlightLines) > 0;
     }
 
-    public function hasFocus()
+    public function hasFocus() : bool
     {
         return count($this->focusLines) > 0;
     }
 
-    public function hasDiffAdd()
+    public function hasDiffAdd() : bool
     {
         return count($this->diffAddLines) > 0;
     }
 
-    public function hasDiffRemove()
+    public function hasDiffRemove() : bool
     {
         return count($this->diffRemoveLines) > 0;
+    }
+
+    public function shouldHighlight(int $lineNumber) : bool
+    {
+        return in_array($lineNumber, $this->highlightLines);
+    }
+
+    public function shouldFocus(int $lineNumber) : bool
+    {
+        return in_array($lineNumber, $this->focusLines);
+    }
+
+    public function shouldDiffAdd(int $lineNumber) : bool
+    {
+        return in_array($lineNumber, $this->diffAddLines);
+    }
+
+    public function shouldDiffRemove(int $lineNumber) : bool
+    {
+        return in_array($lineNumber, $this->diffRemoveLines);
+    }
+
+    public function hasLineNumbers() : bool
+    {
+        return $this->numbers !== false;
+    }
+
+
+    public function getMaxLineNumber() : int
+    {
+        return count($this->renumbers) ? max($this->renumbers) : -1;
+    }
+
+    public function getRenumberedLineNumber(int $realLineNumber, int $orElseLineNumber) : int
+    {
+        return isset($this->renumbers[$realLineNumber]) ? $this->renumbers[$realLineNumber] : $orElseLineNumber;
+    }
+
+    public function hasError() : bool
+    {
+        return $this->hasError;
     }
 
 }
