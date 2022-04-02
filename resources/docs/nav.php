@@ -16,7 +16,8 @@ return [
         ['newsletter', 'Newsletter'],
         ['analytics', 'Analytics'],
         ['custom-domain', 'Custom Domain'],
-        ['edge-caching', 'Edge Caching']
+        ['edge-caching', 'Edge Caching'],
+        ['syntax-highlighting', 'Syntax Highlighting']
     ],
     'Basic Settings' => [
         ['main', 'Main Settings'],
