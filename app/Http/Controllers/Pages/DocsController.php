@@ -82,6 +82,7 @@ class DocsController extends Controller
 
             $themeTags = '';
             $previews = '';
+            
             foreach ($themes as $theme) {
                 if ($theme === 'css-variables') continue;
                 $themeTags .= "<span>$theme</span>";
@@ -92,6 +93,7 @@ class DocsController extends Controller
                     $highlighted
                 </div>";
             }
+
             $markdown = str_replace('{{theme_tags}}', $themeTags, $markdown);
             $markdown = str_replace('{{themes_number}}', count($themes), $markdown);
             $markdown = str_replace('{{theme_previews}}', $previews, $markdown);

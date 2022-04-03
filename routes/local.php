@@ -42,11 +42,9 @@ Route::get('/syntax', function() {
     }
     JS;
 
-    /* $value = "var x = <div>
-This line is awesome { /* wow }
-</div>"; */
+    $value = file_get_contents('https://prismjs.com/prism.js');
 
-    $code = Highlighter::highlight($value, 'jsx', 'monokai', true, 'highlight=2-4 +=19 renumber=12:100,5:#d2,6:5 focus=2-6');
+    $code = Highlighter::highlight($value, 'js', 'monokai', true, '');
 
     return response(<<<HTML
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.5.0/styles/night-owl.min.css" integrity="sha512-i5X6Fdn/ZqvGSqPrdMa3FgcpXM/Nr6YccSKFYT93zljl/HZDEpvBbE5Pxp91eiWGccZLrL/LDQJd7fjTRYsVaA==" crossorigin="anonymous" referrerpolicy="no-referrer" />
