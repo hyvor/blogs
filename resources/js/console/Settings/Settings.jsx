@@ -77,6 +77,7 @@ export default function Settings({type}) {
                 <div></div>
                 <NavLink href={settingsPrefix + "/hosting"}>Domains</NavLink>
                 <NavLink href={settingsPrefix + "/seo"}>SEO</NavLink>
+                <NavLink href={settingsPrefix + "/color-mode"}>Light & Dark Modes</NavLink>
                 <NavLink href={settingsPrefix + "/navigation"}>Navigation</NavLink>
                 <NavLink href={settingsPrefix + "/media"}>Media</NavLink>
                 <NavLink href={settingsPrefix + "/redirects"}>Redirects</NavLink>

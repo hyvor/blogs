@@ -35,28 +35,10 @@ class CreateBlogsTable extends Migration
             $table->string('hosting_domain')->nullable()->unique(); // for domain
             $table->string('hosting_url')->nullable(); // for self
 
-            $table->boolean('seo_indexing')->default(true);
-            $table->text('seo_robots')->nullable();
-            $table->boolean('seo_follow_external_links')->default(false);
-
-            $table->text('code_head')->nullable();
-            $table->text('code_foot')->nullable();
-
-            $table->enum('comments_type', ['ht', 'other'])->default('ht'); // hyvor talk
-            $table->bigInteger('comments_ht_website_id')->nullable();
-            $table->string('comments_ht_api_key')->nullable();
-            $table->text('comments_code')->nullable();
-            $table->text('newsletter_code')->nullable();
+            $table->json('meta')->nullable();
 
             $table->string('api_key_data')->nullable();
             $table->string('api_key_console')->nullable();
-        
-            $table->string('social_facebook')->nullable();
-            $table->string('social_twitter')->nullable();
-            $table->string('social_linkedin')->nullable();
-            $table->string('social_youtube')->nullable();
-            $table->string('social_instagram')->nullable();
-            $table->string('social_github')->nullable();
 
         });
     }
