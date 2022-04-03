@@ -43,7 +43,7 @@ class CreateUsersTable extends Migration
             $table->integer('sort')->default(0); // for ordering in the console
 
             $table->unique(['blog_id', 'slug']);
-            $table->unique(['blog_id', 'user_id']);
+            $table->unique(['blog_id', 'hyvor_user_id']);
             $table->unique(['blog_id', 'picture_id']);
         });
     }

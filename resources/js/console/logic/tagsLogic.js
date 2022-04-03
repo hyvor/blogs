@@ -12,15 +12,12 @@ const tagsLogic = kea({
         setTagsListHasMore: (has) => ({has}),
         removeFromList: (id) => ({id}),
         addTag: (tag) => ({tag}),
+        addTagVarian: (tag) => ({tag}),
         updateTag: (tag) => ({tag}),
 
-        setVariantList: (tagVariant) => ({tagVariant}),
-        removeVariantList: (id) => ({id}),
-        addTagVarian: (tagVariant) => ({tagVariant}),
-        updateTagVarian: (tagVariant) => ({tagVariant}),
-
-
-        // addTagVarian: (tag) => ({tag}),
+        // setVariantList: (tagVariant) => ({tagVariant}),
+        // removeVariantList: (id) => ({id}),
+        // updateTagVarian: (tagVariant) => ({tagVariant}),
     },
 
     ajax: ({ values, actions, props }) => ({ 
@@ -39,9 +36,12 @@ const tagsLogic = kea({
             actions.setTagList([...values.tag, ...response])
         },
 
-        remove: async ({id}) => {
+        remove: async ({id, languageId}) => {
+            // console.log(id, languageId)
             actions.removeFromList(id);
-            await api.delete(props.subdomain, `/tag/${id}`);
+            await api.delete(props.subdomain, `/tag/${id}`, {
+                languageId: languageId,
+            });
         },
             
         create: async ({name, description, slug}) => {
@@ -52,10 +52,21 @@ const tagsLogic = kea({
             })
             actions.addTag(tag);
         },
+
+        createVariant: async ({tagId, languageId}) => {
+            // console.log(tagId, languageId)
+            const tag = await api.post(props.subdomain, '/tagVariant', {
+                tagId: tagId,
+                languageId: languageId,
+            })
+            actions.addTagVarian(tag);
+        },
             
-        updateData: async ({tagId, name, description, slug, codeHead, codeFoot}) => {
+        updateData: async ({tagId, name,languageId, description, slug, codeHead, codeFoot}) => {
+            // console.log(tagId, name, description, slug, codeHead, codeFoot)
             const tag = await api.put(props.subdomain, `/tag/${tagId}`, {
                 name: name,
+                languageId:languageId,
                 description: description,
                 slug: slug,
                 codeHead: codeHead,
@@ -75,44 +86,31 @@ const tagsLogic = kea({
         // },
 
         // tag variant sections
-        loadVariant: async ({tagId, languageId}) => {
-            // console.log(tagId)
-            // console.log(languageId)
-            const tagVariant = await api.get(props.subdomain, '/tagVariant', {
-                tagId: tagId,
-                languageId: languageId,
-            })
-            console.log(tagVariant)
-            // actions.setVariantList(tagVariant);
-        },
+        // loadVariant: async ({tagId, languageId}) => {
+        //     const tagVariant = await api.get(props.subdomain, '/tagVariant', {
+        //         tagId: tagId,
+        //         languageId: languageId,
+        //     })
+        //     actions.setVariantList(tagVariant);
+        // },
 
-        removeVariant: async ({tagId, languageId}) => {
-            const tagVariant = await api.delete(props.subdomain, '/tagVariant', {
-                tagId: tagId,
-                languageId: languageId,
-            })
-            actions.removeVariantList(tagVariant);
-        },
+        // removeVariant: async ({tagId, languageId}) => {
+        //     const tagVariant = await api.delete(props.subdomain, '/tagVariant', {
+        //         tagId: tagId,
+        //         languageId: languageId,
+        //     })
+        //     actions.removeVariantList(tagVariant);
+        // },
             
-        createVariant: async ({tagId, languageId}) => {
-            console.log(tagId)
-            console.log(languageId)
-            // const tagVariant = await api.post(props.subdomain, '/tagVariant', {
-            //     tagId: tagId,
-            //     languageId: languageId,
-            // })
-            // actions.addTagVarian(tagVariant);
-        },
-            
-        updateDataVariant: async ({tagId, languageId, name, description}) => {
-            const tagVariant = await api.put(props.subdomain, '/tagVariant', {
-                tagId: tagId,
-                languageId: languageId,
-                name: name,
-                description: description,
-            });
-            actions.updateTagVarian(tagVariant);
-        },
+        // updateDataVariant: async ({tagId, languageId, name, description}) => {
+        //     const tagVariant = await api.put(props.subdomain, '/tagVariant', {
+        //         tagId: tagId,
+        //         languageId: languageId,
+        //         name: name,
+        //         description: description,
+        //     });
+        //     actions.updateTagVarian(tagVariant);
+        // },
 
     }),
 
@@ -122,24 +120,22 @@ const tagsLogic = kea({
             setTagList: (_, {tag}) => tag,
             removeFromList: (state, {id}) => state.filter(m => m.id !== id),
             addTag: (state, {tag}) => [tag, ...state],
+            addTagVarian: (state, {tag}) => [tag, ...state],
             updateTag:(state, {tag}) => state.map(
                 stateTag => stateTag.id === tag.id ? tag : stateTag
             ),
-
-            // addTagVarian: (state, {tag}) => [tag, ...state],
         }],
         tagListHasMore: [false, {
             setTagsListHasMore: (_, {has}) => has 
         }],
-        tagVariant: [[], {
-            setVariantList: (_, {tagVariant}) => tagVariant,
-            removeVariantList: (state, {id}) => state.filter(m => m.id !== id),
-            addTagVarian: (state, {tagVariant}) => [tagVariant, ...state],
-            
-            updateTagVarian:(state, {tagVariant}) => state.map(
-                stateTagVariant => stateTagVariant.id === tag.id ? tagVariant : stateTagVariant
-            ),
-        }],
+
+        // tagVariant: [[], {
+        //     setVariantList: (_, {tagVariant}) => tagVariant,
+        //     removeVariantList: (state, {id}) => state.filter(m => m.id !== id),            
+        //     updateTagVarian:(state, {tagVariant}) => state.map(
+        //         stateTagVariant => stateTagVariant.id === tag.id ? tagVariant : stateTagVariant
+        //     ),
+        // }],
     },
 
     events: ({actions}) => ({

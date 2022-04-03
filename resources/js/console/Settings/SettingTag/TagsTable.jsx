@@ -18,8 +18,8 @@ export default function Tags ({tag, subdomain})
     // I should create the update section. and also I have to find the error which is occurring in the logic.
 
     const tagLogicBuilt = tagsLogic({subdomain})
-    const { remove , updateData, removeVariant, loadVariant} = useActions(tagLogicBuilt)
-    const { updateDataAjax, tagVariant } = useValues(tagLogicBuilt)
+    const { remove , updateData} = useActions(tagLogicBuilt)
+    const { updateDataAjax } = useValues(tagLogicBuilt)
 
     // language
     const { languages, getLanguageById } = useValues(languagesLogic({subdomain}))
@@ -82,11 +82,6 @@ export default function Tags ({tag, subdomain})
      })
 
 
-
-
-
-
-
     // update section
     const [styleUpdateIcon, setStyleUpdateIcon] = useState("table-button");
     const [updatePopUpOpened, setUpdatePopUpOpened] = useState(false);
@@ -109,7 +104,12 @@ export default function Tags ({tag, subdomain})
         e.preventDefault();
         updateData({
             tagId: updateTagData.tagId,
-            slug:tag.slug,
+            name: variantName,
+            languageId : currentLanguageId,
+            description: variantDescription,
+            slug: tagSlug,
+            codeHead: tagCodeHead,
+            codeFoot: tagCodeFoot,
         });
         setUpdatePopUpOpened(false); 
  
@@ -160,11 +160,10 @@ export default function Tags ({tag, subdomain})
     }
     function handleDoDelete() {
         toast("File deleted", {autoClose: 1500});
-        // remove({id});
-        removeVariant({
-            tagId: updateTagData.tagId,
-            languageId: currentLanguageId
-        })
+        remove({
+            id:tag.id,
+            languageId:currentLanguageId
+        });
         setDeletePopupOpened(false);
         setStyleDeleteIcon("table-button");
     }

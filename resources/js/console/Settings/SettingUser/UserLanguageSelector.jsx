@@ -8,13 +8,13 @@ import usersLogic from '../../logic/usersLogic';
 
 export default function UserLanguageSelector({id, subdomain, languages, variant, currentLanguageId, onChange }) 
 {
-    // const usersLogicBuilt = usersLogic({subdomain})
-    // const { createVariant} = useActions(usersLogicBuilt)
+    const usersLogicBuilt = usersLogic({subdomain})
+    const { createVariant} = useActions(usersLogicBuilt)
 
-    // createVariant({
-    //     tagId: id,
-    //     languageId: currentLanguageId
-    // });
+    createVariant({
+        userId: id,
+        languageId: currentLanguageId 
+    });
 
     return <div>
         <div className="global-languages-list">

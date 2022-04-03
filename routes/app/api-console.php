@@ -127,10 +127,10 @@ Route::prefix('/api/console/v0/blog/{subdomain}')
         Route::post('/tags', [ConsoleTagController::class, 'createTag']);
         Route::put('/tag/{tagId}', [ConsoleTagController::class, 'updateTag']);
         Route::delete('/tag/{tagId}', [ConsoleTagController::class, 'deleteTag']);
+        Route::post('/tagVariant', [ConsoleTagController::class, 'createTagVariant']);
 
         // tag variant crud
-        Route::get('/tagVariant', [ConsoleTagController::class, 'getTagVariant']);
-        Route::post('/tagVariant', [ConsoleTagController::class, 'createTagVariant']);
+        // Route::get('/tagVariant', [ConsoleTagController::class, 'getTagVariant']);
         // Route::put('/tagVariant', [ConsoleTagController::class, 'updateTagVariant']);
         // Route::delete('/tagVariant', [ConsoleTagController::class, 'deleteTagVariant']);
 
@@ -194,9 +194,9 @@ Route::prefix('/api/console/v0/blog/{subdomain}')
         Route::post('/user', [ConsoleUserController::class, 'createAuthor']);
         Route::patch('/user/{id}', [ConsoleUserController::class, 'updateAuthor']); 
         Route::delete('/user/{id}', [ConsoleUserController::class, 'deleteAuthor']); 
+        Route::post('/userVariant', [ConsoleUserController::class, 'createAuthorVariant']);
 
         // Route::get('/userVariant', [ConsoleUserController::class, 'getAuthorVariant']);
-        Route::post('/userVariant', [ConsoleUserController::class, 'createAuthorVariant']);
         // Route::put('/userVariant', [ConsoleUserController::class, 'updateAuthorVariant']);
         // Route::delete('/userVariant', [ConsoleUserController::class, 'deleteAuthorVariant']);
 

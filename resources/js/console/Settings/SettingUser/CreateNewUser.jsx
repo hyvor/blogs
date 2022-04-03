@@ -37,7 +37,6 @@ export default function CreateNewUser(props) {
 
     function handleRole({value}){
         setRole({...role, type: value})
-        console.log('redirect test')
     }
 
     function handleStatus({value}){

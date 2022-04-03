@@ -12,6 +12,7 @@ const usersLogic = kea({
         setUsersListHasMore: (has) => ({has}),
         removeFromList: (id) => ({id}),
         addUser: (user) => ({user}),
+        addUserVarian: (user) => ({user}),
         updateUser: (user) => ({user}),
     },
 
@@ -20,7 +21,7 @@ const usersLogic = kea({
         load: async ({offset = 0, type}) => {
             const user =  await api.get(props.subdomain, '/users');
             actions.setUsersListHasMore(user.length === 50);
-            actions.setUsersList(user);
+            actions.setUsersList(user); 
         }, 
 
         loadUsersListMore: async ({offset}) => {
@@ -31,9 +32,12 @@ const usersLogic = kea({
             actions.setUsersList([...values.user, ...response])
         },
 
-        remove: async ({id}) => {
+        remove: async ({id, languageId}) => {
+            // console.log(id, languageId)
             actions.removeFromList(id);
-            await api.delete(props.subdomain, `/user/${id}`);
+            await api.delete(props.subdomain, `/user/${id}`,{
+                languageId: languageId,
+            });
         },
             
         create: async ({name, email, slug, role, status}) => {
@@ -47,10 +51,38 @@ const usersLogic = kea({
             })
             actions.addUser(user);
         },
+
+        createVariant: async ({userId, languageId}) => {
+            // console.log(userId, languageId)
+            const user = await api.post(props.subdomain, '/userVariant', {
+                userId: userId,
+                languageId: languageId,
+            })
+            actions.addUserVarian(user);
+        },
             
-        updateData: async ({userId, name }) => {
-            const user = await api.put(props.subdomain, `/user/${userId}`, {
+        updateData: async ({
+            id, name, email, slug, role, status, url, social_facebook, social_twitter, 
+            social_linkedin, social_youtube, social_instagram, bio, location 
+            }) => {
+
+            console.log(id, name, email, slug, role, status, url, social_facebook, social_twitter, 
+            social_linkedin, social_youtube, social_instagram, bio, location )
+
+            const user = await api.patch(props.subdomain, `/user/${id}`, {
+                role:role,
+                status:status,
+                slug:slug,
+                email:email,
                 name: name,
+                url:url,
+                social_facebook:social_facebook,
+                social_twitter:social_twitter,
+                social_linkedin:social_linkedin,
+                social_youtube: social_youtube,
+                social_instagram:social_instagram,
+                bio:bio,
+                location:location,
             });
             actions.updateUser(user);
         },
@@ -63,6 +95,7 @@ const usersLogic = kea({
             setUsersList: (_, {user}) => user,
             removeFromList: (state, {id}) => state.filter(m => m.id !== id),
             addUser: (state, {user}) => [user, ...state],
+            addTagVarian: (state, {user}) => [user, ...state],
             updateUser:(state, {user}) => state.map(
                 stateUser => stateUser.id === user.id ? user : stateUser
             ),

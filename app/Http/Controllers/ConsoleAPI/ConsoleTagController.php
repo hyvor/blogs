@@ -80,18 +80,15 @@ class ConsoleTagController extends Controller {
     * *** Tag validation section ***
     *
     */
-    public static function getTagVariant(Request $request)
-    {
-        $tagId =(int) $request->get('tagId');
-        $languageId =(int) $request->input('languageId');
+    // public static function getTagVariant(Request $request)
+    // {
+    //     $tagId =(int) $request->get('tagId');
+    //     $languageId =(int) $request->input('languageId');
 
-        // $tagId = 2;
-        // $languageId = 2;
+    //     $getVariant = TagRepository::getTagVariant($tagId, $languageId);
 
-        $getVariant = TagRepository::getTagVariant($tagId, $languageId);
-
-        return response()->json($getVariant);
-    }
+    //     return response()->json($getVariant);
+    // }
 
     public static function createTagVariant(Request $request)
     {

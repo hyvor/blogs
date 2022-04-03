@@ -21,10 +21,10 @@ import TextareaAutosize from 'react-textarea-autosize';
 //  Remaining 
 /*
 *
-* Create User Variant in language select if a variant is not selected.
-* Update User data in language select
-* Delete User according to an condition.
-* hyvor User or Guest User filter.
+* Create User Variant in language select if a variant is not selected. ( Done -- )
+* Update User data in language select.  ( Done -- )
+* Delete User according to an condition.  ( Done -- )
+* hyvor User or Guest User filter. ( Done -- )
 * Setting up image upload.
 * Testing the select option error.
 * 

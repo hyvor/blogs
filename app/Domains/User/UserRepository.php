@@ -97,7 +97,7 @@ class UserRepository
             'blog_id' => $blog->id,
             'picture_id' => $userData['picture'] ?? null,
             'slug' => $userData['slug'],
-            'hyvor_user_id' => $hyvorUserId ,
+            'hyvor_user_id' => $hyvorUserId ?? null,
             'status' => $status->value,
             'role' => $role->value,
             'email' => $userData['email'],

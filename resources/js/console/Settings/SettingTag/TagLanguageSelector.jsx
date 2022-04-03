@@ -9,13 +9,13 @@ import tagsLogic from '../../logic/tagsLogic';
 
 export default function TagLanguageSelector({id, subdomain, languages, variant, loadVariant, currentLanguageId, onChange }) 
 {
-    // const tagLogicBuilt = tagsLogic({subdomain})
-    // const { createVariant} = useActions(tagLogicBuilt)
+    const tagLogicBuilt = tagsLogic({subdomain})
+    const { createVariant} = useActions(tagLogicBuilt)
 
-    // createVariant({
-    //     tagId: id,
-    //     languageId: currentLanguageId
-    // });
+    createVariant({
+        tagId: id,
+        languageId: currentLanguageId
+    });
 
     return <div>
         <div className="global-languages-list">
