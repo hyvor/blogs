@@ -217,6 +217,7 @@ class TemplateRenderer {
     private function getHeadCode($vars)
     {
         return file_get_contents(resource_path('twig/_head.twig'));
+
         return TwigRenderer::renderFile(resource_path('twig/_head.twig'), $vars);
     }
 
