@@ -12,12 +12,14 @@ return [
         ['users', 'Users'],
         ['tags', 'Tags'],
         ['media', 'Media'],
-        ['comments', 'Comments'],
-        ['newsletter', 'Newsletter'],
-        ['analytics', 'Analytics'],
         ['custom-domain', 'Custom Domain'],
         ['edge-caching', 'Edge Caching'],
         ['syntax-highlighting', 'Syntax Highlighting']
+    ],
+    'Services' => [
+        ['comments', 'Comments'],
+        ['newsletter', 'Newsletter'],
+        ['analytics', 'Analytics'],
     ],
     'Basic Settings' => [
         ['main', 'Main Settings'],
