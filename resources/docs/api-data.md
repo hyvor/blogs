@@ -1,15 +1,9 @@
 # Data API
 
-Data API returns public data of the blog in JSON.
+Data API returns **public data** of the blog in JSON format. It does not require any API keys. There are two ways to call the API:
 
-## Calling the API
-
-There are two ways.
-
-- Inside theme template files, you can call the Data API using Twig tags. [Designing Themes: Guide](https://www.notion.so/Designing-Themes-Guide-84a658337f9c43b6b38cc6cfda313864)  for more details. This request happens internally when the template is rendered.
-- You can call `blogs.hyvor.com/api/data/v0/blog/{subdomain}` via HTTP `GET` method
-
-All Blogs in HB are public. The Data API only returns public data of the blog. Therefore, it does not require any API keys. We cache most API responses to make subsequent requests faster. Data API does not have rate limiting.
+- Via Public Endpoint: `https://blogs.hyvor.com/api/data/v0/blog/{subdomain}` (HTTP GET method)
+- Via template files. See [themes documentation](themes-templates#fetch-data)
 
 ## Endpoints
 
@@ -26,18 +20,25 @@ All Blogs in HB are public. The Data API only returns public data of the blog. T
 - `/posts/search`
 - `/tags`
 - `/authors`
-- `/languages`
 
 ## Response Format
 
-For single-object endpoints, the response is an object. For `/post`, it is a `Post` object. (Objects are described below).
+For single-object endpoints, the response is an object. For `/post`, it is a `Post` object (See Below for object definitions).
+
+```json
+// A Post Object
+{
+	"id": 1000,
+	...
+}
+```
 
 For multi-object endpoints, the response looks like this:
 
 ```json
 {
 	"data": [{}, {}], // array of objects
-	"counts": {} // a Counts object - explained at the end
+	"pagination": {} // a Pagination object
 }
 ```
 
@@ -45,11 +46,7 @@ For multi-object endpoints, the response looks like this:
 
 Data is returned in JSON objects as specified below.
 
-<aside>
-💡 All timestamps are **[Unix Timestamps](https://www.unixtimestamp.com/)**
-All slugs are lowercase, and can contain `-`
-
-</aside>
+> All timestamps are in **[Unix Timestamp](https://www.unixtimestamp.com/)** format (integer).
 
 ### Post Object {#post-object}
 
@@ -86,62 +83,26 @@ All slugs are lowercase, and can contain `-`
 | --- | --- | --- |
 | `id` | `integer` | A unique ID for the post |
 | `created_at` | `integer` | The time the post was created (as a draft) |
-| `updated_at` | `integer` | Last time the post or its meta data was updated |
+| `updated_at` | `integer` | The time the post or its meta data was updated |
 | `published_at` | `integer` | Publish time of the post. |
 | `is_featured` | `boolean` | Whether the post is featured. There can be multiple featured posts on a blog |
-| `is_page` | `boolean` | If it is a page |
-| `slug` | `string` | URL slug of the post |
-| `content` | `string` | The post content in HTML. See  for more details on supported HTML tags and formatting. |
-| `title` | `string` | The title of the post, a string with max length 256 |
-| `description` | `string` | null \| The description (excerpt) of post, max length 350. null if not set |
-| `url` | `string` | Absolute URL of the post |
-| `featured_image` | `string` | null \| The absolute URL of the featured image. null if not set |
-| `canonical_url` | `string` | null \| An absolute URL or null. Canonical URL is set by the author if the post was published somewhere else. |
-| `reading_time` | `integer` | time in minutes. |
-| `code_head` | `string` | Custom code to add before `</head>` . An empty string if nothing is set. |
-| `code_foot` | `string` | Custom code to add before `</body>` . An empty string if nothing is set. |
+| `is_page` | `boolean` | Whether it is a page. See [Posts & Pages](posts-pages) |
+| `slug` | `string` | The URL slug of the post |
+| `url` | `string` | The absolute URL of the post, generated based on where the blog is [hosted](hosting) |
+| `content` | `string` | The post content in HTML. See [Content & The Editor](content-editor) to see supported HTML tags |
+| `title` | `string` | The title of the post, max length 256 |
+| `description` | `string|null` | The description (excerpt) of post, max length 350, null if not set |
+| `featured_image` | `string|null` | The absolute URL of the featured image. null if not set |
+| `canonical_url` | `string|null` | An absolute URL or null. Canonical URL is set by the author if the post was published somewhere else. |
+| `reading_time` | `integer` | Reading time in minutes. |
+| `code_head` | `string` | [Custom code](custom-code) to add before `</head>` . An empty string if nothing is set. |
+| `code_foot` | `string` | [Custom code](custom-code) to add before `</body>` . An empty string if nothing is set. |
 | `language` | `object` | A [Language object](#language-object)
-| `variants` | `array` | Array of [Post Variant objects](#post-variant-object). These objects are similar to the Post Language objects, except it does not have the variants key, and have post URL in it. |
-| `tags` | `array`  | An array of Tag objects. The primary tag is the index 0 |
-| `authors` | `array` | An array of Author objects. The primary author is the index 0 |
+| `variants` | `array` | An array of [Variant objects](#variant-object). |
+| `tags` | `array`  | An array of [Tag objects](#tag-object). The primary tag is the index 0 |
+| `authors` | `array` | An array of [Author objects](#author-object). The primary author is the index 0 |
 
-> In posts, **id** is unique. **slug + language.id** is also unique.
-
-### Language Object {#language-object}
-
-```json
-{
-	"id": 1000,
-	"code": "en",
-	"name": "English",
-	"is_primary": true
-}
-```
-
-| Key | Type | Description |
-| --- | --- | --- |
-| `id` | `integer` | A unique ID for the language |
-| `code` | `string` | Language code |
-| `name` | `string` | Language name |
-| `is_primary` | `boolean` | Whether the language is the primary language of the blog |
-
-### Variant Object {#variant-object}
-
-A variant object contains data of a language variant of a post, tag, or an author. Note that `language` in this object is a [Language Object](#language-object).
-
-```json
-{
-	"language": {
-		"id": 1001,
-		"code": "fr",
-		"name": "French",
-		"is_primary": false
-	},
-	"url": "https://subdomain.hyvorblogs.io/fr/hello-world"
-}
-```
-
-
+> In posts, **id** attribute is globally unique within Hyvor Blogs. The **slug** attribute is unique within the blog.
 
 ### Tag Object {#tag-object}
 
@@ -153,24 +114,26 @@ A variant object contains data of a language variant of a post, tag, or an autho
 	"url": "https://subdomain.hyvorblogs.io/tag/hello-world",
 	"featured_image": "https://example.com/image.png",
 	"posts_count": 20,
+
+	"language": language object,
+	"variants": [ variant objects ],
 }
 ```
 
 | Key | Type | Description |
 | --- | --- | --- |
-| id | integer | A unique ID for the tag |
-| name | string | Name (or title) of the tag |
-| slug | string | URL slug of the tag (full URL will be /tag/{slug}) |
-| url | string |  |
-| featured_image | string | null | The absolute URL of the featured image. null if not set |
-| posts_count | integer | Number of posts of the tag |
+| `id` | `integer` | A unique ID for the tag |
+| `name` | `string` | Name (or title) of the tag |
+| `slug` | `string` | URL slug of the tag (full URL will be /tag/{slug}) |
+| `url` | `string` |  |
+| `featured_image` | `string|null` | The absolute URL of the featured image. null if not set |
+| `posts_count` | `integer` | Number of posts of the tag |
+| `language` | `object` | A [Language object](#language-object)
+| `variants` | `array` | An array of [Variant objects](#variant-object) |
 
-### Author {#author-object}
+### Author Object {#author-object}
 
-<aside>
-💡 "**Author**" is a "**User**" who has written at least one post.
-
-</aside>
+> Author is a [user](users) who has written at least one post
 
 ```json
 {
@@ -190,33 +153,29 @@ A variant object contains data of a language variant of a post, tag, or an autho
 		"instagram": null,
 		"github": null,
 	},
-	"posts_count": 32
+	"posts_count": 32,
+
+	"language": language object,
+	"variants": [ variant objects ],
 }
 ```
 
 | Key | Type | Description |
 | --- | --- | --- |
-| id | integer | A unique ID for the author |
-| slug | string | URL slug of the author (full URL will be /author/{slug}) |
-| url | string | Full URL of the user |
-| name | string | Author's name. Max length 50 |
-| profile_image | string | null | The absolute URL of the author's picture. Usually, a small squared image |
-| bio | string | null | Author's bio (max 256) |
-| website_url | string | null | The absolute URL of the author's website |
-| location | string | null | Author’s location. Max length 30 |
-| social | object | An object with absolute URLs for the author's social media. |
-| posts_count | integer | number of posts written by the author |
+| `id` | `integer` | A unique ID for the author |
+| `slug` | `string` | URL slug of the author (full URL will be /author/{slug}) |
+| `url` | `string` | Full URL of the user |
+| `name` | `string` | Author's name. Max length 50 |
+| `profile_image` | `string|null` | The absolute URL of the author's picture. Usually, a small squared image |
+| `bio` | `string|null` | Author's bio (max 256) |
+| `website_url` | `string|null` | The absolute URL of the author's website |
+| `location` | `string|null` | Author’s location. Max length 30 |
+| `social` | `object` | An object with absolute URLs for the author's social media. |
+| `posts_count` | `integer` | number of posts written by the author |
+| `language` | `object` | A [Language object](#language-object)
+| `variants` | `array` | An array of [Variant objects](#variant-object). |
 
-<aside>
-💡 By default, `name`, `profile_image`, `cover_image` , `bio` , `website`, `country`, and social media data are synced from the author's **Hyvor Account**. However, admins of the blog can change their details at the blog level, which will stop syncing.
-
-(It doesn't matter for the API, just mentioned it here if you wondered where the data is taken from)
-
-</aside>
-
-### Blog {#blog-object}
-
-The `Blog` object is returned from the `/blog` endpoint and contains the settings of the blog.
+### Blog Object {#blog-object}
 
 ```json
 {
@@ -251,7 +210,9 @@ The `Blog` object is returned from the `/blog` endpoint and contains the setting
 			"name": "Privacy",
 			"url": "/privacy"
 		}
-	]
+	],
+
+	"languages": [ language objects ],
 
 	"code_head": "",
 	"code_foot": "",
@@ -262,23 +223,19 @@ The `Blog` object is returned from the `/blog` endpoint and contains the setting
 
 | Key | Type | Description |
 | --- | --- | --- |
-| subdomain | string | Subdomain of the blog |
-| name | string | Name/title of the blog |
-| description | string | A short description of the blog (256 max) |
-| icon | string | null | The absolute URL of the blog icon. Usually, a small square image. |
-| featured_image | string | The absolute URL of the featured/cover image |
-| lang | string | ISO 639-1 language codes. Maybe followed by a country code.
-Both fr and fr-fr are valid. |
-| url | string | Absolute URL of the blog. |
-| social | object | see Author object |
-| nav_header, nav_footer | array of objects | Navigation links for the blog header and the footer. |
-| code_head, code_foot | string | Custom HTML code for before </head>, and </body> for all pages. |
-| posts_count | int | Total published posts |
+| `subdomain` | `string` | Subdomain of the blog |
+| `name` | `string` | Name/title of the blog |
+| `description` | `string` | A short description of the blog (256 max) |
+| `icon` | `string` | null | The absolute URL of the blog icon. Usually, a small square image. |
+| `featured_image` | `string` | The absolute URL of the featured/cover image |
+| `url` | `string` | Absolute URL of the blog. |
+| `social` | `object` | see Author object |
+| `nav_header`, `nav_footer` | `array of objects` | Navigation links for the blog header and the footer. |
+| `languages`| `array of objects` | All available languages of the blog
+| `code_head`, `code_foot` | string | Custom HTML code for before </head>, and </body> for all pages. |
+| `posts_count` | int | Total published posts |
 
-
-## Language Object {#language-object}
-
-Language objects are returned in the `/languages` endpoint. This is similar to the Post Language Object except this does not have variants key.
+### Language Object {#language-object}
 
 ```json
 {
@@ -289,23 +246,50 @@ Language objects are returned in the `/languages` endpoint. This is similar to t
 }
 ```
 
+| Key | Type | Description |
+| --- | --- | --- |
+| `id` | `integer` | A unique ID for the language |
+| `code` | `string` | Language code |
+| `name` | `string` | Language name |
+| `is_primary` | `boolean` | Whether the language is the primary language of the blog |
+
+### Variant Object {#variant-object}
+
+A variant object contains data of a language variant of a post, tag, or an author. `language` in this object is a [Language Object](#language-object).
+
+```json
+{
+	"language": {
+		"id": 1001,
+		"code": "fr",
+		"name": "French",
+		"is_primary": false
+	},
+	"url": "https://subdomain.hyvorblogs.io/fr/hello-world"
+}
+```
+
 ## Query Parameters
 
-For Single-Object endpoints (`/post`, `/tag`, `/author`)
+#### For Single-Object endpoints
 
-<aside>
-💡 Either the `id` or the `slug` is required
+(`/post`, `/tag`, `/author`)
 
-</aside>
 
 | Query param | Default | Description |
 | --- | --- | --- |
 | `id` |  | id of the object |
 | `slug` |  | slug of the object |
-| `language` | Default language code | (only for `/post`) language code to fetch a post of a non-default language.
-| `keys` |  | GraphQL-like filtering (see below) |
+| `language` | Primary language code | Language code to localize strings in objects. If not provided, the primary language will be used.
+| `keys` |  | GraphQL-like filtering (See [keys](#keys)) |
 
-For Multi-object endpoints (`/posts`, `/pages`, `/tags`, `/authors`)
+> Either the `id` or the `slug` is required for those endpoints.
+
+`/blog` endpoint only takes `language` and `keys` as an input.
+
+#### For Multi-object endpoints 
+
+(`/posts`, `/pages`, `/tags`, `/authors`)
 
 | Query param | Description | Default |
 | --- | --- | --- |
@@ -407,7 +391,7 @@ Here are some examples.
 - `published_at ASC` - sorted by `published_at` in ascending order
 - `is_featured DESC, published_at DESC` - featured posts first, then ordered by publish time in descending order. `DESC` is optional. `is_featured, published_at` is identical with the former.
 
-### `keys` param
+### `keys` param {#keys}
 
 The `keys` can be used to include or exclude keys from the Objects. All endpoints support the `keys` param.
 

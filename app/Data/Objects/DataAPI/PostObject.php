@@ -26,16 +26,16 @@ class PostObject
     public bool $is_featured;
     public bool $is_page;
     public string $slug;
+    public string $url;
     public string $content;
-    public ?string $title;
+    public string $title;
     public ?string $description;
-    public ?string $url;
     public ?string $featured_image;
     public ?string $canonical_url;
-    public ?int $reading_time;
+    public int $reading_time;
     public LanguageObject $language;
-    public ?string $code_head;
-    public ?string $code_foot;
+    public string $code_head;
+    public string $code_foot;
 
     public array $variants;
     public array $tags;
@@ -56,15 +56,15 @@ class PostObject
         $this->is_featured = $post->is_featured;
         $this->is_page = $post->is_page;
         $this->slug = $post->slug;
+        $this->url = PermalinkRepository::getPostPermalink($post, $blog, $language);
         $this->content = PostContentRepository::getHtml($variant->content, $blog);
         $this->title = $variant->title;
         $this->description = $variant->description;
-        $this->url = PermalinkRepository::getPostPermalink($post, $blog, $language);
         $this->featured_image = $post->featured_image;
         $this->canonical_url = $post->canonical_url;
         $this->reading_time = $post->reading_time;
 
-        // TODO: Add 
+        // TODO: Add Tag code
         $this->code_head = $post->code_head;
         $this->code_foot = $post->code_foot;
 

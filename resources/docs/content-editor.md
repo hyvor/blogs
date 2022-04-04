@@ -1,4 +1,4 @@
-# Editor
+# Content & Editor
 
 Hyvor Blogs comes with a rich text editor.
 
