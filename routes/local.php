@@ -7,6 +7,7 @@ use App\Models\Blog;
 use App\Models\Post;
 use Hyvor\SyntaxHighlighter\Highlighter;
 use Illuminate\Support\Facades\Route;
+use MeiliSearch\Client;
 
 Route::get('/run-blog-counts', function() {
     dispatch(new BlogCountJob);

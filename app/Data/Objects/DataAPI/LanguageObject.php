@@ -1,12 +1,9 @@
 <?php
 namespace App\Data\Objects\DataAPI;
 
-use App\Domains\Post\PostLanguageRepository;
-use App\Models\Blog;
 use App\Models\Language;
-use App\Models\Post;
 
-class PostLanguageObject {
+class LanguageObject {
 
     public int $id;
     public string $code;

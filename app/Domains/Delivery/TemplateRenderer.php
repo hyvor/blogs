@@ -18,26 +18,24 @@ use App\Models\Language;
 use App\Models\Post;
 use App\Models\Tag;
 use App\Models\User;
+use Illuminate\Support\Collection;
 use Twig\Error\Error;
 
 class TemplateRenderer {
 
     private PathMatcher $pathMatcher;
     private MatchedRoute $matchedRoute;
-    private Language $language;
     private ?string $filter;
 
     private Tag|User|Post|null|false $model;
 
     public function __construct(
         PathMatcher $pathMatcher, 
-        MatchedRoute $matchedRoute, 
-        Language $language, 
+        MatchedRoute $matchedRoute,
         ?string $filter
     ) {
         $this->pathMatcher = $pathMatcher;
         $this->matchedRoute = $matchedRoute;
-        $this->language = $language;
         $this->filter = $filter;
     }
 
@@ -98,7 +96,7 @@ class TemplateRenderer {
             '_blog' => $blogObject,
             '_config' => [],
             '_route' => $this->matchedRoute->name,
-            '_lang' => $this->language->code
+            '_lang' => $this->pathMatcher->language->code
         ];
 
         $vars += $scopeVariables;
@@ -113,15 +111,10 @@ class TemplateRenderer {
         }
 
         /**
-         * Convert all object to arrays
-         * To allow merge filter to work
-         * Make sure any object methods are not misused
+         * This is to make sure only data from objects are sent
+         * and the developer does not have access to PHP methods
          */
-        foreach ($vars as &$var) {
-            if (is_object($var)) {
-                $var = (array) $var;
-            }
-        }
+        $vars = json_decode(json_encode($vars), true);
 
         return $vars;
 
@@ -153,7 +146,7 @@ class TemplateRenderer {
 
         } else if ($routeName === 'post' || $routeName === 'page' || $routeName === 'preview') {
 
-            $postObject = new PostObject($this->model, $this->pathMatcher->blog);
+            $postObject = new PostObject($this->model, $this->pathMatcher->blog, $this->pathMatcher->language);
             return [
                 '_meta' => new MetaObject(
                     $postObject->title,
@@ -196,7 +189,7 @@ class TemplateRenderer {
             limit: 10, 
             offset: ($pageNumber - 1) * 10
         )->map(function ($post) {
-            return new PostObject($post, $this->pathMatcher->blog);
+            return new PostObject($post, $this->pathMatcher->blog, $this->pathMatcher->language);
         });
 
     }
@@ -271,10 +264,9 @@ class TemplateRenderer {
 
         } else if ($this->matchedRoute->name === 'post' || $this->matchedRoute->name === 'page') {
 
-            $post = PostRepository::getPostByBlogIdSlugAndLanguageId(
+            $post = PostRepository::getPostByBlogIdAndSlug(
                 $this->pathMatcher->blog->id, 
-                $slug, 
-                $this->language->id
+                $slug
             );
 
             if ($post) {

@@ -9,7 +9,7 @@ use App\Exceptions\TrustedException;
 use App\Models\Blog;
 use App\Models\Language;
 use App\Models\Post;
-use App\Models\PostsVariant;
+use App\Models\PostVariant;
 use App\Models\Tag;
 use App\Models\PostTag;
 use App\Models\User;
@@ -37,11 +37,10 @@ class PostRepository
         return $post->first();
     }
 
-    public static function getPostByBlogIdSlugAndLanguageId(int $blogId, string $slug, int $languageId) : ?Post
+    public static function getPostByBlogIdAndSlug(int $blogId, string $slug) : ?Post
     {
         return Post::where('blog_id', $blogId)
             ->where('slug', $slug)
-            ->where('language_id', $languageId)
             ->first();
     }
 
@@ -303,15 +302,15 @@ class PostRepository
         return $post;
     }
 
-    public static function createPostVariant(int $postId, int $languageId) : PostsVariant
+    public static function createPostVariant(int $postId, int $languageId) : PostVariant
     {
 
-        $variant = PostsVariant::create([
+        $variant = PostVariant::create([
             'post_id' => $postId,
             'language_id' => $languageId
         ]);
 
-        return PostsVariant::find($variant->id);
+        return PostVariant::find($variant->id);
 
     }
 
@@ -379,10 +378,10 @@ class PostRepository
 
     }
 
-    public static function getPostVariantByPostIdAndLanguageId(int $postId, int $languageId) : ?PostsVariant
+    public static function getPostVariantByPostIdAndLanguageId(int $postId, int $languageId) : ?PostVariant
     {
 
-        return PostsVariant::where('language_id', $languageId)
+        return PostVariant::where('language_id', $languageId)
             ->where('post_id', $postId)
             ->first();
 
@@ -390,7 +389,7 @@ class PostRepository
 
     public static function deletePostVariant(int $postId, int $languageId)
     {
-        PostsVariant::where('language_id', $languageId)
+        PostVariant::where('language_id', $languageId)
             ->where('post_id', $postId)
             ->delete();
     }

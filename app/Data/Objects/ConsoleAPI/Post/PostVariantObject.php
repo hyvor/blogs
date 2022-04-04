@@ -4,7 +4,7 @@ namespace App\Data\Objects\ConsoleAPI\Post;
 use App\Domains\Route\PermalinkRepository;
 use App\Models\Blog;
 use App\Models\Post;
-use App\Models\PostsVariant;
+use App\Models\PostVariant;
 
 class PostVariantObject {
 
@@ -20,7 +20,7 @@ class PostVariantObject {
     public string $url;
     public ?string $featured_image;
 
-    public function __construct(PostsVariant $variant, Post $post, Blog $blog) {
+    public function __construct(PostVariant $variant, Post $post, Blog $blog) {
 
         $language = $variant->language;
 

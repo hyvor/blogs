@@ -5,6 +5,8 @@ namespace App\Http\Controllers\DataAPI;
 use App\Data\Objects\DataAPI\AuthorObject;
 use App\Data\Objects\DataAPI\PostObject;
 use App\Data\Objects\DataAPI\TagObject;
+use App\Domains\Language\LanguageRepository;
+use App\Domains\Post\Content\PostSearchRepository;
 use Illuminate\Http\Request;
 use App\Http\Controllers\Controller;
 use App\Exceptions\TrustedException;
@@ -12,9 +14,6 @@ use App\Models\Blog;
 use App\Domains\Post\PostRepository;
 use App\Domains\Tag\TagRepository;
 use App\Domains\User\UserRepository;
-use App\Models\Post;
-
-use Hyvor\FilterQ\Facades\FilterQ;
 
 class DataAPIController extends Controller
 {
@@ -131,6 +130,47 @@ class DataAPIController extends Controller
             'data' => $filteredPosts,
             'count' => null
         ]);
+    }
+
+    public function postsSearch(Request $request, Blog $blog)
+    {
+
+        $request->validate([
+            'search' => 'string|required',
+            'language' => 'string',
+            'limit' => 'int',
+            'page' => 'int'
+        ]);
+
+        $search = $request->input('search');
+        $languageCode = $request->input('language') ?? null;
+        $language = $languageCode ? 
+            LanguageRepository::getLanguageByCode($blog, $languageCode) : 
+            LanguageRepository::getPrimaryLanguage($blog);
+
+        $limit = $request->input('limit') ?? 20;
+        $page = $request->input('page') ?? 1;
+        $offset = ($page - 1) * $limit;
+
+        $searchData = PostSearchRepository::search(
+            search: $search,
+            limit: $limit,
+            offset: $offset,
+            blogId: $blog->id,
+            languageId: $language->id,
+            isPage: false,
+            isPublished: true,
+        );
+
+        $posts = $searchData['posts']->map(function($post) use ($blog, $language) {
+            return new PostObject($post, $blog, $language);
+        });
+        
+        return response()->json([
+            'data' => $posts,
+            'count' => null
+        ]);
+
     }
 
 }

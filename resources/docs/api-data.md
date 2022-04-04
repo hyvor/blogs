@@ -23,6 +23,7 @@ All Blogs in HB are public. The Data API only returns public data of the blog. T
 **Multi-object**
 
 - `/posts`
+- `/posts/search`
 - `/tags`
 - `/authors`
 - `/languages`
@@ -74,7 +75,7 @@ All slugs are lowercase, and can contain `-`
 	"code_foot": "",
 	
 	"language": language object,
-	"variants": [ post variant objects ],
+	"variants": [ variant objects ],
 
 	"tags": [ tag objects ],
 	"authors": [ author objects ]
@@ -124,16 +125,9 @@ All slugs are lowercase, and can contain `-`
 | `name` | `string` | Language name |
 | `is_primary` | `boolean` | Whether the language is the primary language of the blog |
 
-### Post Variant Object {#post-variant-object}
+### Variant Object {#variant-object}
 
-```json
-{
-	"language": a language object,
-	"url": "https://subdomain.hyvorblogs.io/fr/hello-world"
-}
-```
-
-Example:
+A variant object contains data of a language variant of a post, tag, or an author. Note that `language` in this object is a [Language Object](#language-object).
 
 ```json
 {
@@ -448,7 +442,6 @@ A counts object is included in all multi-object endpoints (`/posts`, `/authors`,
 ```json
 {
 	"total": 100,
-	"total_with_filters": 50,
 	"pages": 10,
 	"limit": 5,
 	"page": 1,

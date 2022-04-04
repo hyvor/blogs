@@ -23,6 +23,7 @@ class Post extends Model
 
     protected $casts = [
         'published_at' => 'datetime',
+        'is_page' => 'boolean',
     ];
 
     public function blog()
@@ -33,7 +34,7 @@ class Post extends Model
 
     public function variants()
     {
-        return $this->hasMany(PostsVariant::class);
+        return $this->hasMany(PostVariant::class);
     }
 
     public function tags()

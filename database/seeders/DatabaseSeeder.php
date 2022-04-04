@@ -4,6 +4,7 @@ namespace Database\Seeders;
 
 use App\Domains\Blog\FillNewBlog;
 use App\Domains\Language\LanguageRepository;
+use App\Domains\Post\Content\PostSearchRepository;
 use App\Domains\Redirect\RedirectRepository;
 use App\Domains\Route\RouteRepository;
 use App\Models\Blog;
@@ -11,7 +12,7 @@ use App\Models\Media;
 use App\Models\BlogThemeFile;
 use App\Models\Post;
 use App\Models\PostAuthor;
-use App\Models\PostsVariant;
+use App\Models\PostVariant;
 use App\Models\PostTag;
 use App\Models\Tag;
 use App\Models\TagsVariant;
@@ -102,7 +103,7 @@ class DatabaseSeeder extends Seeder
                     'published_at' => $publishedAt,
                 ]);
 
-                $englishPost = PostsVariant::create([
+                $englishPost = PostVariant::create([
                     'post_id' => $post->id,
                     'language_id' => $language->id,
                     'content' => json_encode($prosemirrorJson),
@@ -122,7 +123,7 @@ class DatabaseSeeder extends Seeder
                         ]]
                     ];
                     
-                    $frenchPost = PostsVariant::create([
+                    $frenchPost = PostVariant::create([
                         'post_id' => $post->id,
                         'language_id' => $secondLanguage->id,
                         'content' => json_encode($prosemirrorJson),
@@ -164,6 +165,7 @@ class DatabaseSeeder extends Seeder
         
         }
 
+        PostSearchRepository::setFilterableAttributes();
 
         $this->call([
             BlogThemeFilesSeeder::class

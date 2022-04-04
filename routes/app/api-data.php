@@ -15,6 +15,7 @@ Route::prefix('/api/data/v0/blog/{subdomain}')
     Route::get('/blog', [DataAPIController::class, 'blog']);
 
     Route::get('/posts', [DataAPIController::class, 'posts']);
+    Route::get('/posts/search', [DataAPIController::class, 'posts/search']);
     Route::get('/tags', [DataAPIController::class, 'tags']);
     Route::get('/authors', [DataAPIController::class, 'authors']);
 

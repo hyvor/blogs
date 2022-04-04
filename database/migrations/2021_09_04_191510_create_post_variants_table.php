@@ -13,7 +13,7 @@ return new class extends Migration
      */
     public function up()
     {
-        Schema::create('posts_variants', function (Blueprint $table) {
+        Schema::create('post_variants', function (Blueprint $table) {
             $table->id();
             $table->timestamps();
 
