@@ -5,12 +5,12 @@ use App\Domains\User\Events\CacheShouldClearEvent;
 use App\Domains\Post\Events\PostPublishedEvent;
 use App\Domains\Route\PermalinkRepository;
 use App\Models\Tag;
-use App\Domains\Tag\Events\TagEvents;
+use App\Domains\Tag\Events\TagEvent;
 
 use Illuminate\Support\Facades\DB;
 use Carbon\Carbon;
 
-class TagListeners
+class TagListener
 {
     /*
     *
@@ -30,7 +30,7 @@ class TagListeners
     * @param  object  $event
     * @return void
     */
-    public function handle(TagEvents $event)
+    public function handle(TagEvent $event)
     {
         // Great all 03 of them are linked perfectly. ( Observers, Events, Listeners )
 

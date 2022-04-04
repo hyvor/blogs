@@ -1,23 +1,29 @@
 import React from 'react'
 import { useActions, useValues } from 'kea';
 import { Check, Clock, Dot, Plus } from 'react-bootstrap-icons';
-import subdomainLogic from '../logic/subdomainLogic';
+// import subdomainLogic from '../logic/subdomainLogic';
 import languagesLogic from '../logic/languagesLogic';
+import tagsLogic from '../../logic/tagsLogic';
 
 
-export default function LanguageSelector({id, languages, variant, currentLanguageId, onChange }) 
+export default function GeneralLanguageSelector({id, subdomain, languages, currentLanguageId, onChange }) 
 {
-    // const handleRemove = () => {
-    //     const filteredPlayers = allPlayers.filter((player) => player.name !== name);
-    //     setCurrentLanguageId(filteredPlayers);
-    // };
-
-    // console.log(variant.language_id);
-    // console.log(currentLanguageId);
-
-
     return <div>
         <div className="global-languages-list">
+        {
+            languages.map(lang => (
+            <span 
+                key={lang.id}
+                className={"lang-tag" + (currentLanguageId === lang.id ? " active" : "")}
+                onClick={() => onChange(lang.id)}
+            >
+                <span className="code">{lang.code}</span>
+                <span className="status-icon">
+                    <Plus />
+                </span>
+            </span>
+            ))
+        }
         {/* {
             languages.map(lang => {
                 const variant = variant.language_id
@@ -50,20 +56,6 @@ export default function LanguageSelector({id, languages, variant, currentLanguag
                 </span>
             })
         } */}
-        {
-            languages.map(lang => (
-            <span 
-                key={lang.id}
-                className={"lang-tag" + (currentLanguageId === lang.id ? " active" : "")}
-                onClick={() => onChange(lang.id)}
-            >
-                <span className="code">{lang.code}</span>
-                <span className="status-icon">
-                    <Plus />
-                </span>
-            </span>
-            ))
-        }
         </div> 
     </div>
 }

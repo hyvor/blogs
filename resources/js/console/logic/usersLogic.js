@@ -95,7 +95,7 @@ const usersLogic = kea({
             setUsersList: (_, {user}) => user,
             removeFromList: (state, {id}) => state.filter(m => m.id !== id),
             addUser: (state, {user}) => [user, ...state],
-            addTagVarian: (state, {user}) => [user, ...state],
+            addUserVarian: (state, {user}) => [user, ...state],
             updateUser:(state, {user}) => state.map(
                 stateUser => stateUser.id === user.id ? user : stateUser
             ),

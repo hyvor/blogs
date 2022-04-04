@@ -39,7 +39,7 @@ class UserBlogBlogObject
         $plan = null;
 
         $this->id = $blog->id;
-        // $this->name = $blog->name;
+        $this->name = $blog->name;
         $this->subdomain = $blog->subdomain;
         $this->base_url = PermalinkRepository::getBlogPermalink($blog);
         $this->plan = $plan;

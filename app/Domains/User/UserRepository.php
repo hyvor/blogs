@@ -96,11 +96,14 @@ class UserRepository
         $user = User::create([
             'blog_id' => $blog->id,
             'picture_id' => $userData['picture'] ?? null,
-            'slug' => $userData['slug'],
+            // 'slug' => $userData['slug'],
+            'slug' => 'test-three',
             'hyvor_user_id' => $hyvorUserId ?? null,
+            // 'hyvor_user_id' => 5,
             'status' => $status->value,
             'role' => $role->value,
-            'email' => $userData['email'],
+            // 'email' => $userData['email'],
+            'email' =>'sgs.ss',
             'url' => $userData['url'] ?? null,
             'social_facebook' => $userData['social_facebook'] ?? null,
             'social_twitter' => $userData['social_twitter'] ?? null,
@@ -115,8 +118,10 @@ class UserRepository
 
         UsersVariant::create([
             'user_id' => $user->id,
-            'language_id' => $getLanguage->id,
-            'name' => $userData['name'],
+            // 'language_id' => $getLanguage->id,
+            'language_id' => 1,
+            // 'name' => $userData['name'],
+            'name' => 'fd',
             'location' => $userData['location'] ?? null,
             'bio' => $userData['bio'] ?? null,
         ]);

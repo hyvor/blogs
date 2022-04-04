@@ -1,17 +1,12 @@
 import React, { useState } from 'react';
-import DualSetting from '../ReusableComponents/DualSetting';
-import Input from '../ReusableComponents/Input';
-import Select from '../ReusableComponents/Select';
-import SettingsSave from '../ReusableComponents/SettingsSave';
+import DualSetting from '../../ReusableComponents/DualSetting';
+import Input from '../../ReusableComponents/Input';
+import Select from '../../ReusableComponents/Select';
+import SettingsSave from '../../ReusableComponents/SettingsSave';
 
 
 // Should find a way to set up the should save section in the pop-up.
 export default function SettingsGeneral() {
-
-    // const commentsOptions = [
-    //     { value: 'talk', label: 'Hyvor Talk' },
-    //     { value: 'other', label: 'Other' },
-    // ];
 
     const [subdomain, setSubdomain] = useState('');
     const [name, setName] = useState('');
@@ -73,7 +68,13 @@ export default function SettingsGeneral() {
         <div className="title">
             General Settings
         </div>
-        <div>en</div>
+        {/* <GeneralLanguageSelector 
+            id={tag.id} 
+            subdomain={subdomain}
+            languages={languages} 
+            currentLanguageId={currentLanguageId}
+            onChange={setCurrentLanguageId}
+        /> */}
 
         <DualSetting 
             title="Subdomain" 

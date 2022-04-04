@@ -42,16 +42,15 @@ Class NavigationRepository
         $data->delete();
     }
 
-    public static function getHeaderItemNumber(){
-        $headerItemNumber =  Navigation::where('type','=', 'header')
+    public static function getHeaderSort(){
+        $headerSort =  Navigation::where('type','=', 'header')
            ->get('sort')
            ->last();
 
-           dd($headerItemNumber);
-        return $headerItemNumber;
+        return $headerSort;
     }
 
-    public static function getFooterItemNumber(){
+    public static function getFooterSort(){
         return Navigation::where('type','=', 'footer')
            ->get('sort')
            ->last();
@@ -65,8 +64,6 @@ Class NavigationRepository
     }
 
     public static function updateSourceSort($id, $navigationSort){
-        // dd($navigationItemNumber);
-
         $navigation = Navigation::find($id);
         $navigation->sort=$navigationSort;
 

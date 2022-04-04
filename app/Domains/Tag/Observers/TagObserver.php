@@ -2,8 +2,8 @@
 namespace App\Domains\Tag\Observers;
 
 use App\Models\Tag;
-use App\Domains\Tag\Events\TagEvents;
-use App\Domains\Tag\Events\UpdateTagEvents;
+use App\Domains\Tag\Events\TagEvent;
+use App\Domains\Tag\Events\UpdateTagEvent;
 
 // Event Testing - https://laracasts.com/discuss/channels/eloquent/event-listener-or-model-observer 
 // Observers, Events, Listeners - https://iwconnect.com/using-laravel-observers-and-events-to-create-history-logs/
@@ -11,7 +11,7 @@ use App\Domains\Tag\Events\UpdateTagEvents;
 // https://dev.to/kingsconsult/laravel-8-events-and-listeners-with-practical-example-9m7
 
 
-class TagObservers
+class TagObserver
 {
     /**
      * Handle the Tag "created" event.
@@ -36,7 +36,7 @@ class TagObservers
         // Now we should find a way to create the webhook using this method.
         
         // $tag->slug = 'hello.com';
-        event(new TagEvents($tag));
+        event(new TagEvent($tag));
     }
   
      /**
@@ -48,7 +48,7 @@ class TagObservers
     public function updating(Tag $tag)
     {
         dd('Observer');
-        event(new UpdateTagEvents($tag));
+        event(new UpdateTagEvent($tag));
     }
 
     /**
@@ -60,7 +60,7 @@ class TagObservers
     public function updated(Tag $tag)
     {
         dd('Observer');
-        event(new TagEvents($tag));
+        event(new TagEvent($tag));
     }
   
     /**

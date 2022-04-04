@@ -9,6 +9,9 @@ const blogLogic = kea({
 
     actions: ({values}) => ({
         setBlog: (blog) => ({blog}),
+        addBlogVarian: (user) => ({user}),
+        updateBlog: (user) => ({user}),
+
         updateBlogData: (key, value) => ({key, value}),
         save: () => false,
         setToOriginal: () => ({original: values.blogOriginal}),
@@ -19,6 +22,36 @@ const blogLogic = kea({
         load: async () => {
             const blog = await api.get(props.subdomain, '/blog');
             actions.setBlog(blog);
+        },
+        createVariant: async ({languageId}) => {
+            // console.log(languageId)
+            const blog = await api.post(props.subdomain, '/userVariant', {
+                languageId: languageId,
+            })
+            actions.addBlogVarian(blog);
+        },
+            
+        updateData: async ({
+            id, name, social_facebook, social_twitter, 
+            social_linkedin, social_youtube, social_instagram,
+            }) => {
+
+            // console.log(id, name, social_facebook, social_twitter, 
+            // social_linkedin, social_youtube, social_instagram )
+
+            const blog = await api.patch(props.subdomain, 'blog', {
+                subdomain:subdomain,
+                name: name,
+                icon:icon,
+                social_facebook:social_facebook,
+                social_twitter:social_twitter,
+                social_linkedin:social_linkedin,
+                social_youtube: social_youtube,
+                social_instagram:social_instagram,
+                featureImageId:featureImageId,
+                description:description,
+            });
+            actions.updateBlog(blog);
         },
 
     }),
@@ -31,6 +64,11 @@ const blogLogic = kea({
 
         blog: [{}, {
             setBlog: (_, {blog}) => blog,
+            addBlogVarian: (state, {blog}) => [blog, ...state],
+            updateBlog:(state, {user}) => state.map(
+                stateUser => stateUser.id === user.id ? user : stateUser
+            ),
+
             updateBlogData: (state, {key, value}) => ({...state, ...{[key]: value}}),
             setToOriginal: (_, {original}) => original 
         }]

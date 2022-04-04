@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Data\Objects\ConsoleAPI\Blog;
+namespace App\Data\Objects\ConsoleAPI;
 
 use App\Models\BlogVariant;
 use App\Models\Blog;

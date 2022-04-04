@@ -1,16 +1,16 @@
 <?php
-namespace App\Domains\Tag\Listeners;
+namespace App\Domains\User\Listeners;
 
 use App\Domains\User\Events\CacheShouldClearEvent;
 use App\Domains\Post\Events\PostPublishedEvent;
 use App\Domains\Route\PermalinkRepository;
-use App\Models\Tag;
-use App\Domains\Tag\Events\TagEvents;
+use App\Models\User;
+use App\Domains\User\Events\UserEvent;
 
 use Illuminate\Support\Facades\DB;
 use Carbon\Carbon;
 
-class UpdateTagListeners
+class UserListener
 {
     /*
     *
@@ -30,12 +30,11 @@ class UpdateTagListeners
     * @param  object  $event
     * @return void
     */
-    public function handle(TagEvents $event)
+    public function handle(UserEvent $event)
     {
         // Great all 03 of them are linked perfectly. ( Observers, Events, Listeners )
 
-        dd('Event Listener');
-        $userInfo = $event->tag;
+        $userInfo = $event->user;
         return $userInfo;
     }
 

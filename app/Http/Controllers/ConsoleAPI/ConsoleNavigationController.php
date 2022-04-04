@@ -15,9 +15,6 @@ class ConsoleNavigationController extends Controller {
 
     public function getNavigations(Blog $blog) {
 
-        // $getItemNumber =  NavigationRepository::getHeaderItemNumber();
-        // dd($getItemNumber);
-
         $getData = NavigationRepository::getNavigations($blog->id)
             ->map(function ($navigation) {
             return new NavigationObject($navigation);
@@ -46,20 +43,20 @@ class ConsoleNavigationController extends Controller {
         $type = NavigationTypeEnum::from($request->input('type'));
 
         if($type == 'header'){
-            $getItemNumber =  NavigationRepository::getHeaderItemNumber();
-            if($getItemNumber == null){
+            $getSort =  NavigationRepository::getHeaderSort();
+            if($getSort == null){
                 $sort = 1;
             }else{
-                $sort = $getItemNumber['sort'] + 1;
+                $sort = $getSort['sort'] + 1;
             }
         }
 
         if($type == 'footer'){
-            $getItemNumber =  NavigationRepository::getFooterItemNumber();
-            if($getItemNumber == null){
+            $getSort =  NavigationRepository::getFooterSort();
+            if($getSort == null){
                 $sort = 1;
             }else{
-                $sort = $getItemNumber['sort'] + 1;
+                $sort = $getSort['sort'] + 1;
             }
         }
 

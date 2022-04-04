@@ -10,7 +10,7 @@ use Illuminate\Contracts\Broadcasting\ShouldBroadcast;
 use Illuminate\Foundation\Events\Dispatchable;
 use Illuminate\Queue\SerializesModels;
 
-class TagEvents 
+class TagEvent
 {
 
     use SerializesModels, InteractsWithSockets, Dispatchable;

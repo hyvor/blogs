@@ -16,7 +16,7 @@ class BlogRepository
         int $userId, 
         string $name, string $subdomain, 
         BlogTypeEnum $type = BlogTypeEnum::NORMAL    
-    // ) : ?User {
+    // ) : ? User {
     ) {
 
 
@@ -59,7 +59,7 @@ class BlogRepository
     * ConsoleAPI Settings->General
     *
     */
-    public static function getBlogGeneral($blog) {
+    public static function getBlog($blog) {
         $language = LanguageRepository::getPrimaryLanguage($blog);
 
         $blogData = Blog::where('blogs.id', '=', $blog->id)
@@ -67,13 +67,14 @@ class BlogRepository
             $join->on('blog_variants.blog_id', '=', 'blogs.id');
             $join->where('blog_variants.language_id', '=',  $language->id);
         })
+        ->select('blogs.*')
         ->get();
 
         // dd($blogData);
         return $blogData;
     } 
 
-    public static function updateBlogGeneral($blog, $languageId, array $blogData = []) {
+    public static function updateBlog($blog, $languageId, array $blogData = []) {
 
         // dd($blogData['subdomain']);
         // I must thinks a bit more about this about how to add the media.
@@ -98,7 +99,7 @@ class BlogRepository
             ]);
     }
 
-    public static function createBlogGeneralVariant($blog, $languageId) {
+    public static function createBlogVariant($blog, $languageId) {
         $language = Language::where('id','=', $languageId)
         ->value('is_primary');
 

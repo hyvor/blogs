@@ -13,7 +13,7 @@ import SettingNavigation from './SettingNavigation';
 import SettingTag from './SettingTag/SettingTag';
 import SettingsRoutes from './SettingsRoutes';
 import SettingsLanguages from './SettingsLanguages';
-import SettingsGeneral from './SettingsGeneral';
+import SettingsGeneral from './SettingGeneral/SettingsGeneral';
 import SettingsHosting from './SettingsHosting';
 import SettingsSEO from './SettingsSEO';
 

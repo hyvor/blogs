@@ -91,6 +91,11 @@ Route::prefix('/api/console/v0/blog/{subdomain}')
         // blog
         Route::get('/blog', [ConsoleBlogController::class, 'getBlog']);
         Route::get('/blog/post-counts', [ConsoleBlogController::class, 'getPostsCounts']);
+
+        // Blog General CRUD 
+        Route::get('/blogData', [ConsoleBlogController::class, 'getBlogData']);
+        Route::post('/blogVariant', [ConsoleBlogController::class, 'createBlogVariant']);
+        Route::put('/blog', [ConsoleBlogController::class, 'updateBlog']);
         
         /**
          * In post routes, role is checked internally on some actions
@@ -167,11 +172,6 @@ Route::prefix('/api/console/v0/blog/{subdomain}')
         Route::delete('/navigation/{id}', [ConsoleNavigationController::class,'deleteNavigation']);
         Route::put('/navigation/sort/{navigationId}', [ConsoleNavigationController::class,'updateSort']);
         Route::put('/navigation/source/{sourceId}', [ConsoleNavigationController::class,'updateSourceSort']);
-
-        // Blog General CRUD 
-        Route::get('/blogGeneral', [ConsoleBlogController::class, 'getBlogGeneral']);
-        Route::post('/blogGeneral', [ConsoleBlogController::class, 'createBlogGeneralVariant']);
-        Route::put('/blogGeneral', [ConsoleBlogController::class, 'updateBlogGeneral']);
 
         // languages CRUD
         Route::get('/languages', [ConsoleLanguageController::class, 'get']);

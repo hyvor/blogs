@@ -27,10 +27,14 @@ class TagRepository
         return self::getTagByBlogIdAndIdentifier($blogId, null, $slug);
     }
 
-    public static function getTags($blog, int $blogId, ?int $limit, int $offset = 0)
-    {
-        // we should load only the tag data which include in english or the primary language
 
+    /*
+    *
+    * ConsoleAPI Settings->Tags
+    *
+    */
+    public static function getTags($blog, ?int $limit, int $offset = 0)
+    {
         $limit = $limit ?? 50;
         $language = LanguageRepository::getPrimaryLanguage($blog);
 
@@ -50,13 +54,12 @@ class TagRepository
 
     public static function createTag( 
         $blog, 
-        int $blogId, 
         string $name, 
         string $slug, 
         ?string $description
     ){
         $createTag = Tag::create([
-            'blog_id' => $blogId,
+            'blog_id' => $blog->id,
             'slug' => $slug,
         ]);
 
@@ -127,13 +130,13 @@ class TagRepository
     * this functions are used for the tag_variants table
     *
     */
-    public static function getTagVariant($tagId, $languageId)
-    {
-        $tags = TagsVariant::where('tag_id', '=', $tagId)
-        ->where('language_id', '=', $languageId)
-        ->get();
-        return $tags;
-    }
+    // public static function getTagVariant($tagId, $languageId)
+    // {
+    //     $tags = TagsVariant::where('tag_id', '=', $tagId)
+    //     ->where('language_id', '=', $languageId)
+    //     ->get(); 
+    //     return $tags;
+    // }
 
     public static function createTagVariant($tagId, $languageId){
         // the tag_id, language_id and name and the description should be added

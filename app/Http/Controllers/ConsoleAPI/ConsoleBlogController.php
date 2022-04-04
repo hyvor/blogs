@@ -25,20 +25,18 @@ class ConsoleBlogController extends Controller
     }
 
     /*
-    *
     * ConsoleAPI Settings->General
-    *
     */
-    public static function getBlogGeneral(Blog $blog)
+    public static function getBlogData(Blog $blog)
     {
-        $getData = BlogRepository::getBlogGeneral($blog)
-                ->map(function ($tags) use ($blog) {
-                    return new BlogGeneralObject($tags, $blog);
+        $getData = BlogRepository::getBlog($blog)
+                ->map(function ($blog) {
+                    return new BlogObject($blog);
             });
         return response()->json($getData);
     }
 
-    public static function updateBlogGeneral(Request $request, Blog $blog)
+    public static function updateBlog(Request $request, Blog $blog)
     {
         $languageId =  $request->input('languageId');
         
@@ -83,14 +81,14 @@ class ConsoleBlogController extends Controller
         }
 
         
-        $updateBlogData = BlogRepository::updateBlogGeneral($blog, $languageId, $blogData);
+        $updateBlogData = BlogRepository::updateBlog($blog, $languageId, $blogData);
         return response()->json($updateBlogData);
     }
 
-    public static function createBlogGeneralVariant(Request $request, Blog $blog)
+    public static function createBlogVariant(Request $request, Blog $blog)
     {
         $languageId = $request->input('languageId');
-        $createVariant = BlogRepository::createBlogGeneralVariant($blog, $languageId);
+        $createVariant = BlogRepository::createBlogVariant($blog, $languageId);
 
         return response()->json($createVariant);
     }

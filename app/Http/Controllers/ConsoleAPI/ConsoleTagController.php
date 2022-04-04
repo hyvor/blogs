@@ -25,7 +25,7 @@ class ConsoleTagController extends Controller {
         $limit = $request->input('limit');
         $offset = $request->input('offset') ?? 0;
 
-        $getData = TagRepository::getTags($blog, $blog->id, $limit, $offset)
+        $getData = TagRepository::getTags($blog, $limit, $offset)
                 ->map(function ($tags) use ($blog) {
                     return new TagObject($tags, $blog);
             });
@@ -48,7 +48,7 @@ class ConsoleTagController extends Controller {
             $slug = str_replace(" ", "-", $name);
         }
 
-        $createTag = TagRepository::createTag($blog, $blog->id, $name, $slug, $description); 
+        $createTag = TagRepository::createTag($blog, $name, $slug, $description); 
         return response()->json($createTag);
         // return response()->json(new TagObject($createTag));
     }
@@ -121,6 +121,8 @@ class ConsoleTagController extends Controller {
         return response()->json($deleteVariant);
     }
 
+
+    
     /*
     *
     *
