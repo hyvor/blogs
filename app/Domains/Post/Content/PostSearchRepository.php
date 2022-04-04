@@ -17,6 +17,16 @@ class PostSearchRepository
         'is_page'
     ];
 
+    /**
+     * These are ordered by relevancy
+     */
+    private const SEARCHABLE_ATTRIBUTES = [
+        'title',
+        'description',
+        'content',
+        'slug'
+    ];
+
     public static function search(
         string $search,
         int $limit,
@@ -44,16 +54,20 @@ class PostSearchRepository
             'limit' => $limit,
             'offset' => $offset,
             'filter' => $filter,
-            'attributesToRetrieve' => ['id'],
+            'attributesToRetrieve' => ['post_id', 'title'],
         ]);
 
         $hits = $results->getHits();
         // $total = 
 
-        $postIds = collect($hits)->map(fn ($hit) => $hit['post_id']);
+        $postIds = collect($hits)->map(fn ($hit) => $hit['post_id'])->all();
+
+        $postIdsForField = implode(',', $postIds);
 
         return [
-            'posts' => Post::whereIn('id', $postIds)->get(),
+            'posts' => Post::whereIn('id', $postIds)
+                ->orderByRaw("FIELD(id, $postIdsForField)")
+                ->get(),
             'nbHits' => $results->getNbHits()
         ];
 
@@ -73,7 +87,7 @@ class PostSearchRepository
                             : sprintf('%s="%s"', $key, $value);
         });
 
-        $filters->values()->implode(' AND ');
+        return $filters->values()->implode(' AND ');
     }
 
     public static function getSearchDocument(PostVariant $postVariant) : array
@@ -117,9 +131,13 @@ class PostSearchRepository
      */
     public static function setFilterableAttributes() : void
     {
-
         self::getIndex()->updateFilterableAttributes(self::FILTERABLE_ATTRIBUTES);
+    }
 
+
+    public static function setSearchableAttributes() : void
+    {
+        self::getIndex()->updateSearchableAttributes(self::SEARCHABLE_ATTRIBUTES);
     }
 
     private static function getIndex()

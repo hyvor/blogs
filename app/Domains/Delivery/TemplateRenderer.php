@@ -10,6 +10,7 @@ use App\Data\Objects\DeliveryAPI\MetaObject;
 use App\Domains\ThemeFiles\ThemeFilesRepository;
 use App\Domains\Delivery\RouteMatcher\MatchedRoute;
 use App\Domains\Delivery\Twig\TwigRenderer;
+use App\Domains\Post\Content\PostSearchRepository;
 use App\Domains\Post\PostRepository;
 use App\Domains\Route\PermalinkRepository;
 use App\Domains\Tag\TagRepository;
@@ -106,9 +107,7 @@ class TemplateRenderer {
             '_foot' => $this->getFootCode($vars),
         ];
 
-        if ($this->filter !== null) {
-            $vars['_posts'] = $this->getPosts();
-        }
+        $vars['_posts'] = $this->getPosts();
 
         /**
          * This is to make sure only data from objects are sent
@@ -183,12 +182,35 @@ class TemplateRenderer {
 
         $pageNumber = $this->getPageNumber();
 
-        return PostRepository::getPostsWithFilterQ(
-            blogId: $this->pathMatcher->blog->id, 
-            filter: $this->filter,
-            limit: 10, 
-            offset: ($pageNumber - 1) * 10
-        )->map(function ($post) {
+        $limit = 10;
+        $offset = ($pageNumber - 1) * 10;
+
+        if ($this->matchedRoute->name === 'search') {
+
+            $search = $this->matchedRoute->param('search');
+
+            $searchData = PostSearchRepository::search(
+                search: $search,
+                limit: $limit,
+                offset: $offset,
+                blogId: $this->pathMatcher->blog->id,
+                languageId: $this->pathMatcher->language->id,
+                isPage: false,
+                isPublished: true
+            );
+
+            $postCollection = $searchData['posts'];
+
+        } else {
+            $postCollection = PostRepository::getPostsWithFilterQ(
+                blogId: $this->pathMatcher->blog->id, 
+                filter: $this->filter,
+                limit: $limit,
+                offset: $offset
+            );
+        }
+
+        return $postCollection->map(function ($post) {
             return new PostObject($post, $this->pathMatcher->blog, $this->pathMatcher->language);
         });
 

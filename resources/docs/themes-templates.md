@@ -5,8 +5,6 @@ When a blog gets a request, first, we match its path to a Route (let's assume th
 
 Inside this file, you can include other files or even use [inheritance](https://twig.symfony.com/doc/3.x/templates.html#template-inheritance). You can even call our [Data API](api-data) to fetch more data (More on that below)!
 
-
-
 #### templates
 
 This folder contains templates files. There are several types of template files.
@@ -29,7 +27,6 @@ Why Flashload? Browser reloads are slow. They load the same CSS/JS resources mul
 We previously learned that there's only one `styles.css` for a blog that contains all CSS of the blog. This `styles.css` should be loaded inside the `<head>` of the page. When the user navigates to another page, Flashload sends an AJAX request to that path and pre-fetches the HTML page. Then, it updates **only the `<body>` part**. (Remember, we already have all CSS loaded in the first request, so we don't want to load it again).
 
 The simply rule is to add shared resources of the blog to `<head>`.
-
 
 ## Route Variables {#variables}
 
@@ -67,11 +64,13 @@ You are required to put some placeholders in your theme to make a few things wor
 | `_newsletter` | post and page | to embed the newsletter subscription form |
 | `_lang` | all | Language code of the current page. Should be placed as `<html lang="{{ _lang }}">`
 
-Sending all placeholders (except `_lang`) through the `raw` filter is absolutely required, otherwise, the HTML code in the variables will just be escaped and printed (HB uses Twig with *automatic escaping* turned on).
-
+Sending all placeholders (except `_lang`) through the `template` filter is absolutely required to make them render as templates.
+  
 ```twig
-{{ _head | raw }}
+{{ _head | template }}
 ```
+
+> `{{ _head | template }}` is equal to `{{ include(template_from_string(_head)) }}` in Twig. We defined the custom `template` filter to make it easier for you to write it, as it is used frequently in HB templates.
 
 ## Twig Filters & Functions
 
