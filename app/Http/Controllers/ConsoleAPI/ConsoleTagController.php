@@ -1,0 +1,203 @@
+<?php
+namespace App\Http\Controllers\ConsoleAPI;
+
+use App\Http\Controllers\Controller;
+use Illuminate\Http\Request;
+
+use App\Domains\Tag\TagRepository;
+use App\Data\Objects\ConsoleAPI\Tag\TagObject;
+use App\Models\Blog;
+use App\Domains\Post\PostTagRepository;
+class ConsoleTagController extends Controller {
+
+    /*
+    *
+    * ConsoleAPI Settings->tags
+    *
+    */
+    public static function getTag(Request $request, Blog $blog)
+    {
+        // $request->validate([
+        //     'limit' => 'integer', 
+        //     'offset' => 'required|integer', 
+        // ]);
+        
+        $limit = $request->input('limit');
+        $offset = $request->input('offset') ?? 0;
+
+        $getData = TagRepository::getTags($blog, $blog->id, $limit, $offset)
+                ->map(function ($tags) use ($blog) {
+                    return new TagObject($tags, $blog);
+            });
+        return response()->json($getData);
+    }
+
+    public static function createTag(Request $request , Blog $blog) {
+
+        // $request->validate([
+        //     'name' => 'required|string',
+        //     'slug' => 'required|string',
+        //     'description' => 'required|int',
+        // ]);
+
+        $name = $request->input('name');
+        $slug = $request->input('slug');
+        $description = $request->input('description') ?? null;
+
+        if($slug == null){
+            $slug = str_replace(" ", "-", $name);
+        }
+
+        $createTag = TagRepository::createTag($blog, $blog->id, $name, $slug, $description); 
+        return response()->json($createTag);
+        // return response()->json(new TagObject($createTag));
+    }
+
+    public static function updateTag(Request $request, Blog $blog)
+    {
+        // $request->validate([
+        //     'name' => 'required|string',
+        //     'slug' => 'required|string',
+        //     'description' => 'required|int',
+        //     'codeHead' => 'required|string',
+        //     'codeFoot' => 'required|string',
+        // ]);
+
+        $id = $request->route('tagId');
+        // $name = $request->input('name');
+        $slug = $request->input('slug');
+        // $description = $request->input('description') ?? null;
+        $codeHead = $request->input('codeHead') ?? null;
+        $codeFoot = $request->input('codeFoot') ?? null;
+        
+        $updateOldTag = TagRepository::updateTag($id, $slug, $codeHead, $codeFoot);
+        return response()->json($updateOldTag);
+    }
+
+    // public static function deleteTag(Request $request)
+    // {
+    //     $id = $request->route('tagId');
+    //     $deleteTag = TagRepository::deleteTag($id);
+    //     return response()->json($deleteTag);
+    // }
+
+
+    /*
+    *
+    * *** Tag validation section ***
+    *
+    */
+    public static function getTagVariant(Request $request)
+    {
+        $tagId =(int) $request->get('tagId');
+        $languageId =(int) $request->input('languageId');
+
+        // $tagId = 2;
+        // $languageId = 2;
+
+        $getVariant = TagRepository::getTagVariant($tagId, $languageId);
+
+        return response()->json($getVariant);
+    }
+
+    public static function createTagVariant(Request $request)
+    {
+        $tagId = $request->input('tagId');
+        $languageId = $request->input('languageId');
+        $createVariant = TagRepository::createTagVariant($tagId, $languageId);
+
+        return response()->json($createVariant);
+    }
+
+    public static function updateTagVariant(Request $request)
+    {
+        $tagId = $request->input('tagId');
+        $languageId = $request->input('languageId');
+        $name = $request->input('name');
+        $description = $request->input('description');
+
+        // dd($tagId);
+
+        $updateVariant = TagRepository::updateTagVariant($tagId, $languageId, $name, $description);
+
+        return response()->json($updateVariant);
+    }
+
+    public static function deleteTagVariant(Request $request)
+    {
+        $tagId = $request->route('tagId');
+        $languageId = $request->input('languageId');
+
+        // $tagId = 1;
+        // $languageId = 2;
+        
+        $deleteVariant = TagRepository::deleteTagVariant($tagId, $languageId);
+
+        return response()->json($deleteVariant);
+    }
+
+    /*
+    *
+    *
+    * *** ConsoleAPI Posts->Tags ***
+    *
+    * This function will get all the tags and display it in an order (Post_Count)
+    */
+    public static function getTagList(Request $request, Blog $blog){
+        
+        // $postId = $request->input('postId');
+
+        $postId = 184;
+        $getData = PostTagRepository::getTagList($blog->id, $postId);
+        return response()->json($getData);
+    }
+
+    public static function selectedPostTag(Request $request, Blog $blog){
+
+        $postId = (int) $request->route('postId');
+        $getData = PostTagRepository::selectedPostTag($blog->id, $postId);
+        return response()->json($getData);
+
+    }
+
+    /*
+    *
+    * This function will save the post_id and the tag_id in the post_tag table.
+    * (This function should also save the number of posts in the count table.)
+    *
+    */
+    public static function createPostTag(Request $request , Blog $blog){
+        dd('test');
+        $postId = $request->input('postId');
+        $tagId = $request->input('tagId');
+
+        $createTag = PostTagRepository::createSaveTag($postId, $tagId); 
+        return response()->json($createTag);
+    }
+
+    /*
+    * 
+    * This function will get the selected tags and display it in the react-select box.
+    *
+    */
+    public static function getPostTag(Request $request){
+
+        $postId = $request->input('postId');
+
+        // $tagId = $request->input('tagId');
+        // $postId = 184;
+        $tagId = 12;
+
+        $getData = PostTagRepository::getPostTag($postId, $tagId);
+        return response()->json($getData);
+    }
+
+    /*
+    * 
+    * This function will remove the selected tags.
+    *
+    */
+    public static function removePostTag(Request $request){
+       return 'hello world';
+    }
+}

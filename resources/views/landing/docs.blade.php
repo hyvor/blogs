@@ -9,7 +9,7 @@
         'canonical' => "https://blogs.hyvor.com/docs/$pageName",
     ])
 </head>
-<body class="docs-page">
+<body class="docs-page {{$pageName}}">
 
     @include('landing.nav')
 

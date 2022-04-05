@@ -4,6 +4,7 @@ namespace App\Domains\Delivery;
 use App\Data\Objects\DeliveryAPI\DeliveryAPIResponseObject;
 use App\Data\Enums\DeliveryAPITypeEnum;
 use App\Models\Blog;
+use App\Models\LocalDev;
 
 class DeliveryRepository {
 
@@ -21,9 +22,12 @@ class DeliveryRepository {
         }
     }
 
-    public static function getResponseObject (Blog $blog, string $path) : DeliveryAPIResponseObject {
+    public static function getResponseObject (
+        Blog $blog, string $path, 
+        LocalDev $localDev = null) : DeliveryAPIResponseObject 
+    {
         
-        $matcher = new PathMatcher($blog, $path);
+        $matcher = new PathMatcher($blog, $path, $localDev);
         return $matcher->getResponseObject();
 
     }

@@ -47,18 +47,18 @@ class LanguageRepository {
         }
 
         // can't delete if there are posts in this language
-        $posts = PostRepository::getPosts(
-            $lang->blog,
-            (new PostsFilterParam)->setLanguageId($lang->id),
-            1
-        );
+        // $posts = PostRepository::getPosts(
+        //     $lang->blog,
+        //     (new PostsFilterParam)->setLanguageId($lang->id),
+        //     1
+        // );
 
-        if (count($posts) !== 0) {
-            throw new TrustedException(
-                'You cannot delete a language that has posts assigned to it. 
-                Delete or change language of those posts before deleting this language'
-            );
-        }
+        // if (count($posts) !== 0) {
+        //     throw new TrustedException(
+        //         'You cannot delete a language that has posts assigned to it. 
+        //         Delete or change language of those posts before deleting this language'
+        //     );
+        // }
 
         $lang->delete();
     }

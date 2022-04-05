@@ -54,7 +54,7 @@ There are 4 main objects in HB: `Blog` , `Post` , `Tag` , and `Author`. These ob
 
 Each Route gets different variables. We prefix each variable with `_` so that it won't conflict with the variables you define inside the theme files (Obviously, you shouldn't prefix `_` your variables inside the Twig template)
 
-## Placeholders
+## Placeholders {#placeholders}
 
 You are required to put some placeholders in your theme to make a few things work.
 

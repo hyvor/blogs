@@ -23,5 +23,5 @@ class TagSeeder extends Seeder
             'description' => "hello world",
             'feature_image_media_id' => "1",
         ]);
-    }
+    } 
 }

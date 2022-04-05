@@ -7,30 +7,35 @@ use App\Data\Objects\DataAPI\PostObject;
 use App\Data\Objects\DataAPI\TagObject;
 use App\Data\Objects\DeliveryAPI\DeliveryAPIResponseObject;
 use App\Data\Objects\DeliveryAPI\MetaObject;
-use App\Domains\BlogTheme\BlogThemeRepository;
+use App\Domains\ThemeFiles\ThemeFilesRepository;
 use App\Domains\Delivery\RouteMatcher\MatchedRoute;
 use App\Domains\Delivery\Twig\TwigRenderer;
 use App\Domains\Post\PostRepository;
 use App\Domains\Route\PermalinkRepository;
 use App\Domains\Tag\TagRepository;
 use App\Domains\User\UserRepository;
-use App\Models\Blog;
 use App\Models\Language;
 use App\Models\Post;
 use App\Models\Tag;
 use App\Models\User;
+use Twig\Error\Error;
 
 class TemplateRenderer {
 
-    private Blog $blog;
+    private PathMatcher $pathMatcher;
     private MatchedRoute $matchedRoute;
     private Language $language;
     private ?string $filter;
 
     private Tag|User|Post|null|false $model;
 
-    public function __construct(Blog $blog, MatchedRoute $matchedRoute, Language $language, ?string $filter) {
-        $this->blog = $blog;
+    public function __construct(
+        PathMatcher $pathMatcher, 
+        MatchedRoute $matchedRoute, 
+        Language $language, 
+        ?string $filter
+    ) {
+        $this->pathMatcher = $pathMatcher;
         $this->matchedRoute = $matchedRoute;
         $this->language = $language;
         $this->filter = $filter;
@@ -62,8 +67,8 @@ class TemplateRenderer {
      
         
         // ready files loader array
-        $templateFiles = BlogThemeRepository::getFilesInFolder(
-            $this->blog, 
+        $templateFiles = ThemeFilesRepository::getFilesInFolder(
+            $this->pathMatcher->getThemable(), 
             ThemeFileFolderEnum::TEMPLATES
         );
 
@@ -74,12 +79,17 @@ class TemplateRenderer {
 
         $fileName = $this->getFileNameToRender(array_keys($loaderArray));
 
-        // finally render
-        return TwigRenderer::renderFromFiles($loaderArray, $vars, $fileName);
+        try {
+            $html = TwigRenderer::renderFromFiles($loaderArray, $vars, $fileName);
+        } catch (Error $e) {
+            $html = $this->getRenderError($e->getMessage());
+        }
+
+        return $html;
     }
 
     private function getVariables() {
-        $blog = $this->blog;
+        $blog = $this->pathMatcher->blog;
 
         $blogObject = new BlogObject($blog);
         $scopeVariables = $this->getRouteVariables($blogObject);
@@ -102,6 +112,17 @@ class TemplateRenderer {
             $vars['_posts'] = $this->getPosts();
         }
 
+        /**
+         * Convert all object to arrays
+         * To allow merge filter to work
+         * Make sure any object methods are not misused
+         */
+        foreach ($vars as &$var) {
+            if (is_object($var)) {
+                $var = (array) $var;
+            }
+        }
+
         return $vars;
 
     }
@@ -113,7 +134,7 @@ class TemplateRenderer {
 
         if ($routeName === 'index') {
 
-            $blogObject = new BlogObject($this->blog);
+            $blogObject = new BlogObject($this->pathMatcher->blog);
 
             return [
                 '_meta' => new MetaObject(
@@ -124,7 +145,7 @@ class TemplateRenderer {
                     $blogObject->url
                 ),
                 '_featured_posts' => PostRepository::getPostsWithFilterQ(
-                    blogId: $this->blog->id,
+                    blogId: $this->pathMatcher->blog->id,
                     filter: $this->filter,
                     limit: 30, // hard limit - who has 30 featured posts?
                 )
@@ -132,7 +153,7 @@ class TemplateRenderer {
 
         } else if ($routeName === 'post' || $routeName === 'page' || $routeName === 'preview') {
 
-            $postObject = new PostObject($this->model, $this->blog);
+            $postObject = new PostObject($this->model, $this->pathMatcher->blog);
             return [
                 '_meta' => new MetaObject(
                     $postObject->title,
@@ -146,7 +167,7 @@ class TemplateRenderer {
 
         } else if ($routeName === 'tag') {
 
-            $tagObject = new TagObject($this->model, $this->blog);
+            $tagObject = new TagObject($this->model, $this->pathMatcher->blog);
 
             return [
                 '_meta' => new MetaObject(
@@ -170,12 +191,12 @@ class TemplateRenderer {
         $pageNumber = $this->getPageNumber();
 
         return PostRepository::getPostsWithFilterQ(
-            blogId: $this->blog->id, 
+            blogId: $this->pathMatcher->blog->id, 
             filter: $this->filter,
             limit: 10, 
             offset: ($pageNumber - 1) * 10
         )->map(function ($post) {
-            return new PostObject($post, $this->blog);
+            return new PostObject($post, $this->pathMatcher->blog);
         });
 
     }
@@ -195,6 +216,8 @@ class TemplateRenderer {
 
     private function getHeadCode($vars)
     {
+        return file_get_contents(resource_path('twig/_head.twig'));
+
         return TwigRenderer::renderFile(resource_path('twig/_head.twig'), $vars);
     }
 
@@ -236,20 +259,20 @@ class TemplateRenderer {
 
         if ($this->matchedRoute->name === 'tag') {
 
-            $model = TagRepository::getTagByBlogIdAndSlug($this->blog->id, $slug);
+            $model = TagRepository::getTagByBlogIdAndSlug($this->pathMatcher->blog->id, $slug);
 
             return $model !== null ? $model : false;
 
         } else if ($this->matchedRoute->name === 'author') {
 
-            $model = UserRepository::getUserByBlogIdAndSlug($this->blog->id, $slug);
+            $model = UserRepository::getUserByBlogIdAndSlug($this->pathMatcher->blog->id, $slug);
 
             return $model !== null ? $model : false;
 
         } else if ($this->matchedRoute->name === 'post' || $this->matchedRoute->name === 'page') {
 
             $post = PostRepository::getPostByBlogIdSlugAndLanguageId(
-                $this->blog->id, 
+                $this->pathMatcher->blog->id, 
                 $slug, 
                 $this->language->id
             );
@@ -285,6 +308,15 @@ class TemplateRenderer {
     // preview repository sets model before getting response object
     public function setModel($model) {
         $this->model = $model;
+    }
+
+    public function getRenderError($message) {
+        return <<<HTML
+            <div style="font-family:monospace;">
+                Twig Template Error:<br><br>
+                <div style="font-size:18px">$message</div>
+            </div>
+        HTML;
     }
 
 }

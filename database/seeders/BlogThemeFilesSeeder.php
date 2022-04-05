@@ -2,11 +2,15 @@
 
 namespace Database\Seeders;
 
+use App\Models\Blog;
 use App\Models\BlogThemeFile;
+use App\Models\ThemeFile;
 use Illuminate\Database\Seeder;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Str;
+
+use Illuminate\Http\Client\ConnectionException;
 
 class BlogThemeFilesSeeder extends Seeder
 {
@@ -42,8 +46,9 @@ class BlogThemeFilesSeeder extends Seeder
 
                 $content = file_get_contents($filePath);
 
-                BlogThemeFile::create([
-                    'blog_id' => $blogId ?? 1,
+                ThemeFile::create([
+                    'themable_id' => $blogId ?? 1,
+                    'themable_type' => Blog::class,
                     'name' => $file,
                     'content' => $content,
                     'folder' => $folder === '' ? null : $folder

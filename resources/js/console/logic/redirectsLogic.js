@@ -9,21 +9,33 @@ const redirectsLogic = kea({
 
     actions: {
         setRedirectList: (redirect) => ({redirect}),
+        setRedirectListHasMore: (has) => ({has}),
+
         removeFromList: (id) => ({id}),
         addRedirect: (redirect) => ({redirect}),
         updateRedirect: (redirect) => ({redirect}),
-        // setRedirectListHasMore: (has) => ({has}),
     },
 
-    ajax: ({actions, props}) => ({ 
+    ajax: ({ values, actions, props }) => ({ 
 
         load: async ({offset = 0, type}) => {
-            const redirect = await api.get(props.subdomain, '/redirect', {
-                offset,
-                limit: 20,
-                type,
-            });
+            // const redirect = await api.get(props.subdomain, '/redirect', {
+            //     offset,
+            //     limit: 20,
+            //     type,
+            // });
+            const redirect = await api.get(props.subdomain, '/redirect');
+            actions.setRedirectListHasMore(redirect.length === 50);
             actions.setRedirectList(redirect);
+        },
+
+        loadRedirectListMore: async ({offset}) => {
+            // console.log(offset)
+            const response = await api.get(props.subdomain, '/redirect', {
+                offset
+            });
+            actions.setRedirectListHasMore(response.length === 50);
+            actions.setRedirectList([...values.redirect, ...response])
         },
 
         remove: async ({id}) => {
@@ -32,9 +44,9 @@ const redirectsLogic = kea({
         },
 
         create: async ({oldUrl, newUrl, type}) => {
-            console.log(oldUrl)
-            console.log(newUrl)
-            console.log(type)
+            // console.log(oldUrl)
+            // console.log(newUrl)
+            // console.log(type)
 
             const redirect = await api.post(props.subdomain, '/redirect', {
                     path: oldUrl,
@@ -63,7 +75,16 @@ const redirectsLogic = kea({
             updateRedirect:(state, {redirect}) => state.map(
                 stateRedirect => stateRedirect.id === redirect.id ? redirect : stateRedirect
             ),
-        }]
+        }],
+
+        redirectList: [[], {
+            setRedirectList: (_, {redirect}) => redirect
+        }],
+
+        redirectListHasMore: [false, {
+            setRedirectListHasMore: (_, {has}) => has 
+        }],
+
     },
 
     events: ({actions}) => ({

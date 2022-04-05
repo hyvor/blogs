@@ -2,6 +2,7 @@
 
 namespace App\Models;
 
+use App\Models\Concerns\Countable;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\SoftDeletes;
@@ -12,6 +13,7 @@ class Blog extends Model
     use HasFactory;
     use SoftDeletes;
     use Billable;
+    use Countable;
 
     /**
      * Get Posts of the blog
@@ -47,19 +49,6 @@ class Blog extends Model
         return $this->hasMany(Language::class);
     }
 
-    public function counts() 
-    {
-        return $this->morphMany(Count::class, 'countable');
-    }
-
-    /**
-     * Get a count
-     */
-    public function count(string $name)
-    {
-        return $this->counts()->where('name', $name)->value('value');
-    }
-
     /**
      * Redirects
      */
@@ -82,7 +71,7 @@ class Blog extends Model
      */
     public function themeFiles()
     {
-        return $this->hasMany(BlogThemeFile::class);
+        return $this->morphMany(ThemeFile::class, 'themable');
     }
 
 }

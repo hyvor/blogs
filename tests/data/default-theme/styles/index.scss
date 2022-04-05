@@ -1,11 +1,14 @@
 @import url('https://fonts.googleapis.com/css2?family=Nunito:wght@400;700&display=swap');
 
+@import 'colors.scss';
+
 body {
     margin: 0;
     font-family: 'Nunito', sans-serif;
     font-size:16px;
     line-height: 1.75;
-    background-color:#fffaf8;
+    background-color: var(--color-background);
+    color: var(--color-text);
 }
 
 svg {vertical-align: middle}

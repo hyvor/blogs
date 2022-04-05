@@ -10,8 +10,18 @@ use App\Http\Controllers\ConsoleAPI\ConsoleSubscriptionController;
 use App\Http\Controllers\ConsoleAPI\ConsoleUserController;
 use App\Http\Controllers\ConsoleAPI\ConsoleRedirectController;
 use App\Http\Controllers\ConsoleAPI\ConsoleNavigationController;
+use App\Http\Controllers\ConsoleAPI\ConsoleTagController;
+
+use App\Http\Controllers\ConsoleAPI\ConsoleViewController;
+
+
+
+// use App\Http\Middleware\App\ConsoleAPI\BlogAccessMiddleware;
+// use App\Http\Middleware\App\LoginRequiredMiddleware;
+
 use App\Http\Controllers\ConsoleAPI\ConsoleUrlDataController;
 use App\Http\Controllers\ConsoleAPI\ConsoleWebhookController;
+
 use App\Http\Middleware\App\ConsoleAPI\ConsoleApiAccessMiddleware;
 use App\Http\Middleware\App\ConsoleAPI\ConsoleApiUserEndpointsAccessMiddleware;
 use App\Http\Middleware\App\ConsoleAPI\PostAuthorshipMiddleware;
@@ -97,6 +107,9 @@ Route::prefix('/api/console/v0/blog/{subdomain}')
             Route::get('/post/{id}', [ConsolePostController::class, 'getPost']);
             Route::patch('/post/{id}', [ConsolePostController::class, 'updatePost']);
             Route::delete('/post/{id}', [ConsolePostController::class, 'deletePost']);
+
+            Route::post('/post/{id}/variant', [ConsolePostController::class, 'createPostVariant']);
+            Route::delete('/post/{id}/variant', [ConsolePostController::class, 'deletePostVariant']);
         });
 
         // media CRD
@@ -113,15 +126,38 @@ Route::prefix('/api/console/v0/blog/{subdomain}')
     Route::middleware('role:owner|admin|editor')->group(function() {
 
         // tags CRUD
-        Route::get('/tags', []);
-        Route::post('/tag', []);
-        Route::patch('/tag/{id}', []);
-        Route::delete('/tag/{id}', []);
+        Route::get('/tags', [ConsoleTagController::class, 'getTag']);
+        Route::post('/tags', [ConsoleTagController::class, 'createTag']);
+        Route::put('/tag/{tagId}', [ConsoleTagController::class, 'updateTag']);
+        Route::delete('/tag/{tagId}', [ConsoleTagController::class, 'deleteTag']);
+
+        // tag variant crud
+        Route::get('/tagVariant', [ConsoleTagController::class, 'getTagVariant']);
+        Route::post('/tagVariant', [ConsoleTagController::class, 'createTagVariant']);
+        Route::put('/tagVariant', [ConsoleTagController::class, 'updateTagVariant']);
+        Route::delete('/tagVariant', [ConsoleTagController::class, 'deleteTagVariant']);
+
+        Route::get('/postTags/{postId}', [ConsoleTagController::class, 'selectedPostTag']);
+
+        // post_tag CRUD
+        // Route::get('/getTagList', [ConsoleTagController::class, 'getTagList']);
+        // Route::post('/createPostTag', [ConsoleTagController::class, 'createPostTag']);
+        // Route::get('/getPostTag', [ConsoleTagController::class, 'getPostTag']);
+        // Route::delete('/removePostTag', [ConsoleTagController::class, 'deleteTagVariant']);
+
 
         // comments
         Route::get('/comments/moderate', []);
 
     });
+
+    // navigation CRUD
+    Route::get('/navigation', [ConsoleNavigationController::class,'getNavigations']);
+    Route::post('/navigation', [ConsoleNavigationController::class,'createNavigation']);
+    Route::put('/navigation/{id}', [ConsoleNavigationController::class,'updateNavigation']);
+    Route::delete('/navigation/{id}', [ConsoleNavigationController::class,'deleteNavigation']);
+    Route::put('/navigation/sort/{navigationId}', [ConsoleNavigationController::class,'updateSort']);
+    Route::put('/navigation/source/{sourceId}', [ConsoleNavigationController::class,'updateSourceSort']);
 
 
     /**
@@ -142,6 +178,11 @@ Route::prefix('/api/console/v0/blog/{subdomain}')
         Route::put('/navigation/{id}', [ConsoleNavigationController::class,'updateNavigation']);
         Route::delete('/navigation/{id}', [ConsoleNavigationController::class,'deleteNavigation']);
 
+        // order Navigation
+        Route::put('/navNumber/{userId}', [ConsoleNavigationController::class,'updateItemNumber']);
+        Route::put('/source/{sourceId}', [ConsoleNavigationController::class,'updateSourceItemNumber']);
+
+
         // languages CRUD
         Route::get('/languages', [ConsoleLanguageController::class, 'get']);
         Route::post('/language', [ConsoleLanguageController::class, 'create']);
@@ -159,10 +200,15 @@ Route::prefix('/api/console/v0/blog/{subdomain}')
         Route::post('/settings', []);
 
         // users CRUD
-        Route::get('/users', [ConsoleUserController::class, 'getUsers']);
-        Route::post('/user', [ConsoleUserController::class, 'createUser']);
-        Route::patch('/user/{id}', [ConsoleUserController::class, 'updateUser']);
-        Route::delete('/user/{id}', [ConsoleUserController::class, 'deleteUser']);
+        Route::get('/users', [ConsoleUserController::class, 'getAuthor']);
+        Route::post('/user', [ConsoleUserController::class, 'createAuthor']);
+        Route::patch('/user/{id}', [ConsoleUserController::class, 'updateAuthor']); 
+        Route::delete('/user/{id}', [ConsoleUserController::class, 'deleteAuthor']); 
+
+        Route::get('/userVariant', [ConsoleUserController::class, 'getAuthorVariant']);
+        Route::post('/userVariant', [ConsoleUserController::class, 'createAuthorVariant']);
+        // Route::put('/userVariant', [ConsoleUserController::class, 'updateAuthorVariant']);
+        // Route::delete('/userVariant', [ConsoleUserController::class, 'deleteAuthorVariant']);
 
         // theme CRUD
         Route::get('/theme-files', [ConsoleBlogThemeController::class, 'getAllFiles']);

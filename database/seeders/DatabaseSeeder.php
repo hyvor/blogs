@@ -14,9 +14,13 @@ use App\Models\PostAuthor;
 use App\Models\PostsVariant;
 use App\Models\PostTag;
 use App\Models\Tag;
+use App\Models\TagsVariant;
 use App\Models\User;
 use Illuminate\Support\Str;
 use Illuminate\Database\Seeder;
+
+use Illuminate\Http\Client\ConnectionException;
+
 
 class DatabaseSeeder extends Seeder
 {
@@ -47,17 +51,26 @@ class DatabaseSeeder extends Seeder
 
             $secondLanguage = LanguageRepository::createLanguage($blog, 'fr', 'French');
 
-            RedirectRepository::createRedirect($blog->id, '/redirects', 'https://example.com', '301');
 
             $tags = [];
+            $tagsVariant = [];
             foreach (range(0, 9) as $i) {
                 $name = $faker->name();
                 $tags[] = Tag::create([
                     'blog_id' => $blog->id,
-                    'name' => $name,
+                    // 'name' => $name,
                     'slug' => Str::slug($name),
                 ]);
+
+                $tagsVariant[] = TagsVariant::create([
+                    'tag_id' => 1,
+                    'language_id' => $language->id,
+                    'name' => $name,
+                ]);
             }
+
+
+
 
             $posts = [];
             foreach (range(0, 200) as $i) {
@@ -132,6 +145,10 @@ class DatabaseSeeder extends Seeder
                 ]);
             }
 
+
+
+
+
             foreach (range(0, 15) as $i) {
                 /* Media::create([
                     'blog_id' => $blog->id,
@@ -141,6 +158,10 @@ class DatabaseSeeder extends Seeder
                     'extension' => 'jpg'
                 ]); */
             }
+
+
+
+
         
         }
 

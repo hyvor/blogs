@@ -2,7 +2,7 @@
 namespace App\Domains\Delivery\Twig;
 
 use App\Data\Enums\ThemeFileFolderEnum;
-use App\Domains\BlogTheme\BlogThemeRepository;
+use App\Domains\ThemeFiles\ThemeFilesRepository;
 use App\Domains\Language\LanguageRepository;
 use App\Models\Blog;
 use App\Models\BlogThemeFile;
@@ -26,7 +26,7 @@ class TwigLanguage {
         /**
          * Get the current language, fallback, and HB default
          */
-        $files = BlogThemeRepository::getMultipleFiles($blog, [
+        $files = ThemeFilesRepository::getMultipleFiles($blog, [
             $languageFileName,
             $fallbackFileName,
             $defaultFileName,

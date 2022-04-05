@@ -1,5 +1,9 @@
 .global-table-view{
 
+    // max-height: 550px;
+    // overflow-y: scroll;
+
+
     @mixin grid-style {
         padding: 10px 15px;
         border-radius: 20px;
@@ -8,6 +12,16 @@
     @mixin grid-four-equal {
         display: grid;
         grid-template-columns: 1fr 1fr 1fr 60px;
+        @include grid-style;
+    }
+    @mixin grid-six {
+        display: grid;
+        grid-template-columns: 1fr 2fr 1fr 0.5fr 0.5fr 60px; 
+        @include grid-style;
+    }
+    @mixin grid-five {
+        display: grid;
+        grid-template-columns: 1fr 2fr 1fr 0.5fr 60px; 
         @include grid-style;
     }
     @mixin grid-four {
@@ -41,6 +55,27 @@
             margin-right:5px;
         }
     }
+    .global-table-header-six {
+        @include grid-six;
+        font-weight: 600;
+        background: $color-card;
+        margin-bottom: 15px;
+
+        .table-head-item{
+            margin-right:5px;
+        }
+    }
+
+    .global-table-header-five {
+        @include grid-five;
+        font-weight: 600;
+        background: $color-card;
+        margin-bottom: 15px;
+
+        .table-head-item{
+            margin-right:5px;
+        }
+    }
     .global-table-header-four {
         @include grid-four;
         font-weight: 600;
@@ -61,18 +96,28 @@
             margin-right:5px;
         }
     }
-    .global-table-header-one {
-        @include grid-three;
-        font-weight: 600;
-        background: $color-card;
-        margin-bottom: 15px;
+    // .global-table-header-one {
+    //     @include grid-three;
+    //     font-weight: 600;
+    //     background: $color-card;
+    //     margin-bottom: 15px;
 
-        .table-head-item{
-            margin-right:5px;
-        }
-    }
+    //     .table-head-item{
+    //         margin-right:5px;
+    //     }
+    // }
 
+    // .table-body-scroll{
+    //     max-height: 550px;
+    //     overflow-y: scroll;
+    // }
     .global-table-body{
+        .table-body-six {
+            @include grid-six;
+        }
+        .table-body-five {
+            @include grid-five;
+        }
         .table-body-four {
             @include grid-four;
         }
@@ -80,13 +125,22 @@
             @include grid-three;
         }
         .table-item {
-            margin-right:5px;
+            // margin-right:5px;
+            margin-right: 10px;
+            overflow-x: scroll;
+            white-space: nowrap;
         }
         .table-actions {
             display: flex;
             justify-content: center;
+            .table-code{
+                margin-right: 20px;
+            }
             .table-edit {
                 margin-right:8px;
+            }
+            .table-view {
+                margin-left:8px;
             }
             @mixin action-button-style {
                 display: inline-flex;
@@ -118,7 +172,17 @@
             .table-delete-popup{
                 @include action-button-style;
                 background-color:$color-red;
-                color:$color-red-light;
+                color:$color-text;
+            }
+            .table-update-popup{
+                @include action-button-style;
+                background-color:$color-accent-light;
+                color:$color-text;
+            }
+            .table-code-popup{
+                @include action-button-style;
+                background-color:$color-accent-light;
+                color:$color-text;
             }
         }
     }

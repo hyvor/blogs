@@ -3,7 +3,7 @@ namespace App\Domains\Delivery\RouteProcessors;
 
 use App\Data\Enums\ThemeFileFolderEnum;
 use App\Data\Objects\DeliveryAPI\DeliveryAPIResponseObject;
-use App\Domains\BlogTheme\BlogThemeRepository;
+use App\Domains\ThemeFiles\ThemeFilesRepository;
 use App\Domains\Delivery\PathMatcher;
 use App\Domains\Delivery\RouteMatcher\MatchedRoute;
 use App\Domains\Delivery\Twig\TwigRenderer;
@@ -16,7 +16,10 @@ class StylesProcessor implements RouteProcessorInterface {
 
     public function __construct(PathMatcher $pathMatcher, MatchedRoute $matchedRoute) {
 
-        $files = BlogThemeRepository::getFilesInFolder($pathMatcher->blog, ThemeFileFolderEnum::STYLES);
+        $files = ThemeFilesRepository::getFilesInFolder(
+            $pathMatcher->getThemable(), 
+            ThemeFileFolderEnum::STYLES
+        );
 
         $filesArray = [];
 

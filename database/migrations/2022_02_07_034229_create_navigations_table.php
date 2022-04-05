@@ -24,6 +24,7 @@ class CreateNavigationsTable extends Migration
             $table->string('url');
 
             $table->enum('type', ['header', 'footer']);
+            $table->integer('sort')->nullable();
         });
     }
 

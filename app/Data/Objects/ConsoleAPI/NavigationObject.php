@@ -12,6 +12,7 @@ class NavigationObject
     public string $name;
     public string $url;
     public string $type; 
+    public string $sort; 
 
     public function __construct(Navigation $Navigation)
     {
@@ -21,5 +22,6 @@ class NavigationObject
         $this->name = $Navigation->name;
         $this->url = $Navigation->url;
         $this->type = $Navigation->type;
+        $this->sort = $Navigation->sort;
     }
 }

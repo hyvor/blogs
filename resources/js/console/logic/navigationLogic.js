@@ -13,6 +13,8 @@ const  navigationLogic = kea({
         removeFromList: (id) => ({id}),
         addNavigation: (navigation) => ({navigation}),
         updateNavigation: (navigation) => ({navigation}),
+        updateDestination: (navigation) => ({navigation}),
+        updateSource: (navigation) => ({navigation}),
     },
 
     ajax: ({actions, props}) => ({
@@ -49,6 +51,26 @@ const  navigationLogic = kea({
                 });
             actions.updateNavigation(navigation);
         },
+
+        updateItemNumber: async ({NavigationId, destinationId}) => {
+            console.log('Navigation' + NavigationId + ' I think its working')
+            console.log('Lets see '+ destinationId + ' destination ID')
+
+            const navigation = await api.put(props.subdomain, `/navigation/sort/${NavigationId}`, {
+                navigationSort: destinationId,
+            });
+            actions.updateDestination(navigation);
+        },
+
+        updateSourceNav: async ({destinationId, sourceId}) => {
+            console.log(destinationId)
+            console.log(sourceId + ' source ID')
+
+            const navigation = await api.put(props.subdomain, `/navigation/source/${destinationId}`, {
+                    sort: sourceId,
+                });
+            actions.updateSource(navigation);
+        },
     }),
 
     reducers: {
@@ -58,6 +80,8 @@ const  navigationLogic = kea({
             removeFromList: (state, {id}) => state.filter(m => m.id !== id),
             addNavigation: (state, {navigation}) => [navigation, ...state],
             updateNavigation: (state, {navigation}) => [navigation, ...state],
+            updateDestination: (state, {navigation}) => [navigation, ...state],
+            updateSource: (state, {navigation}) => [navigation, ...state],
         }]
     },
 

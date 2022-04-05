@@ -11,6 +11,11 @@ import Checkbox from '../ReusableComponents/Checkbox';
 import dayjs from 'dayjs';
 import DatePicker from 'react-datepicker';
 import Loader from '../ReusableComponents/Loader';
+
+import SelectTags from './PostTags';
+import SelectAuthors from './PostUsers';
+import postTagLogic from '../logic/posts/postTagLogic';
+
 import { usePostActions, usePostValues } from './usePost';
 
 export default function PostSettings({ isSettingsOpen, settingsViewRef, id, currentLanguageId }) {
@@ -22,6 +27,10 @@ export default function PostSettings({ isSettingsOpen, settingsViewRef, id, curr
     const mediaLogicInst = mediaLogic({subdomain})
     const { uploadImageAjax } = useValues(mediaLogicInst);
     const { uploadImage } = useActions(mediaLogicInst)
+
+
+    const postTagLogicBuilt = postTagLogic({subdomain})
+    const { load } = useActions(postTagLogicBuilt) 
 
     const [ isDeleting, setIsDeleting ] = useState(false);
     const [ isFeaturedImageRemoving, setIsFeaturedImageRemoving ] = useState(false);
@@ -55,6 +64,9 @@ export default function PostSettings({ isSettingsOpen, settingsViewRef, id, curr
             }
         })
     }
+
+    // This will pass the post Id to the back-end to get the selected tags.
+    load({postId : post.id})
 
 
     const [ settingsType, setSettingsType ] = useState('basic'); // basic | advanced
@@ -113,14 +125,16 @@ export default function PostSettings({ isSettingsOpen, settingsViewRef, id, curr
                             title="Authors"
                             description="The unique part of the URL to identify this post"
                         >
-                            <input className="input" value="Ishini Avindya" onChange={() => {}}></input>
+                            {/* <input className="input" value="Ishini Avindya" onChange={() => {}}></input> */}
+                            <SelectAuthors postId = {post.id}/>
                         </Setting>
 
                         <Setting 
                             title="Tags"
                             className="post-setting-featured-image"
                         >
-                            <input className="input" value="#creative" onChange={() => {}}></input>
+                            {/* <input className="input" value="#creative" onChange={() => {}}></input> */}
+                            <SelectTags postId = {post.id}/>
                         </Setting>
 
                     </div>

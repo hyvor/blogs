@@ -67,3 +67,46 @@
 <meta name="generator" content="Hyvor Blogs" />
 
 <link rel="stylesheet" href="{{ _blog.url }}/styles.css"></link>
+
+
+<script>
+    {# Theme Modes <https://blogs.hyvor.com/docs/themes-styles#light-dark> #}
+
+    window._hb = {};
+    (function() {
+
+        var lsKey = 'color-mode-pref';
+        var allowedModes = ['light', 'dark'];
+
+        window._hb.changeColorMode = function(pref, noSave) {
+            var renderMode = _hb.getColorMode(pref)
+            var a, r; // add, remove classes
+            if (renderMode === 'dark') {
+                a = 'mode-dark';
+                r = 'mode-light';
+            } else {
+                a = 'mode-light';
+                r = 'mode-dark';
+            }
+            var html = document.documentElement;
+            html.classList.remove(r, 'mode-preference-light', 'mode-preference-dark', 'mode-preference-os');
+            html.classList.add(a, 'mode-preference-' + pref);
+            if (!noSave) {
+                localStorage.setItem(lsKey, pref)
+            }
+        }
+        window._hb.getColorModePreference = function() {
+            return localStorage.getItem(lsKey) || 'os'; // os|light|dark
+        }
+        window._hb.getColorMode = function(pref) {
+            var mode = pref || _hb.getColorModePreference();
+            if (mode === 'os') {
+                mode = window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light';
+            }
+            return mode
+        }
+
+        _hb.changeColorMode(_hb.getColorModePreference(), true)
+    })()
+
+</script>
