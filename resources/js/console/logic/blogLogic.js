@@ -32,14 +32,14 @@ const blogLogic = kea({
         },
             
         updateData: async ({
-            id, name, social_facebook, social_twitter, 
+            name, social_facebook, social_twitter, 
             social_linkedin, social_youtube, social_instagram,
             }) => {
 
             // console.log(id, name, social_facebook, social_twitter, 
             // social_linkedin, social_youtube, social_instagram )
 
-            const blog = await api.patch(props.subdomain, 'blog', {
+            const blog = await api.patch(props.subdomain, '/blog', {
                 subdomain:subdomain,
                 name: name,
                 icon:icon,

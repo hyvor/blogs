@@ -1,14 +1,45 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect} from 'react';
+import { useActions, useValues } from 'kea';
 import DualSetting from '../../ReusableComponents/DualSetting';
 import Input from '../../ReusableComponents/Input';
 import Select from '../../ReusableComponents/Select';
 import SettingsSave from '../../ReusableComponents/SettingsSave';
 
+import subdomainLogic from '../../logic/subdomainLogic';
+import blogLogic from '../../logic/blogLogic';
+import blogsLogic from '../../logic/blogsLogic';
+import languagesLogic from '../../logic/languagesLogic';
+import GeneralLanguageSelector from './GeneralLanguageSelector';
+
 
 // Should find a way to set up the should save section in the pop-up.
 export default function SettingsGeneral() {
 
-    const [subdomain, setSubdomain] = useState('');
+    const subdomain = subdomainLogic.values.subdomain;
+    const blogLogicBuilt = blogLogic({subdomain})
+    const { remove , updateData} = useActions(blogLogicBuilt)
+    const { blog, updateDataAjax } = useValues(blogLogicBuilt)
+
+
+    const { languages, getLanguageById } = useValues(languagesLogic({subdomain}))
+    const { findBlogBySubdomain } = useValues(blogsLogic)
+    const [currentLanguageId, setCurrentLanguageId] = useState( findBlogBySubdomain(subdomain).blog.default_language.id );
+    const currentLanguage = getLanguageById(currentLanguageId);
+
+    const variants = blog.variants || [];
+    const variant = variants[currentLanguageId] || {};
+
+    console.log(currentLanguage);
+
+
+
+
+
+
+
+
+
+    const [subdomainEdit, setSubdomain] = useState('');
     const [name, setName] = useState('');
     const [description, setDescription] = useState('');
     const [icon, setIcon] = useState('');
@@ -30,7 +61,7 @@ export default function SettingsGeneral() {
         // console.log('hello')
         // const shouldSave
         // if(subdomain){
-             return subdomain !== ""
+             return subdomainEdit !== ""
         // }
         // subdomain !== ""
         // name !== ""
@@ -68,13 +99,13 @@ export default function SettingsGeneral() {
         <div className="title">
             General Settings
         </div>
-        {/* <GeneralLanguageSelector 
-            id={tag.id} 
+        <GeneralLanguageSelector 
+            id={blog.id} 
             subdomain={subdomain}
             languages={languages} 
             currentLanguageId={currentLanguageId}
             onChange={setCurrentLanguageId}
-        /> */}
+        />
 
         <DualSetting 
             title="Subdomain" 
@@ -85,7 +116,7 @@ export default function SettingsGeneral() {
                         title={null}
                         type="text"
                         name="subdomain"
-                        value={subdomain}
+                        value={subdomainEdit}
                         onChange={setSubdomain}
                     />
                 </div>

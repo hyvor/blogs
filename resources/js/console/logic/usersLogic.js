@@ -33,11 +33,11 @@ const usersLogic = kea({
         },
 
         remove: async ({id, languageId}) => {
-            // console.log(id, languageId)
-            actions.removeFromList(id);
-            await api.delete(props.subdomain, `/user/${id}`,{
-                languageId: languageId,
-            });
+            console.log(id, languageId)
+            // actions.removeFromList(id);
+            // await api.delete(props.subdomain, `/user/${id}`,{
+            //     languageId: languageId,
+            // });
         },
             
         create: async ({name, email, slug, role, status}) => {

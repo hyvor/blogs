@@ -2,7 +2,6 @@ import React from 'react'
 import { useActions, useValues } from 'kea';
 import { Check, Clock, Dot, Plus } from 'react-bootstrap-icons';
 // import subdomainLogic from '../logic/subdomainLogic';
-import languagesLogic from '../logic/languagesLogic';
 import tagsLogic from '../../logic/tagsLogic';
 
 

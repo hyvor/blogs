@@ -20,14 +20,13 @@ import Toast from '../../ReusableComponents/Toast';
 import NoResults from '../../ReusableComponents/NoResults'; 
 
 
-
-
 export default function Users({user, subdomain}) {
 
     const usersLogicBuilt = usersLogic({subdomain})
     const { remove , updateData} = useActions(usersLogicBuilt)
     const { updateDataAjax } = useValues(usersLogicBuilt)
 
+    
     // Language Section
     const { languages, getLanguageById } = useValues(languagesLogic({subdomain}))
     const { findBlogBySubdomain } = useValues(blogsLogic)
@@ -37,6 +36,7 @@ export default function Users({user, subdomain}) {
     const variants = user.variants || [];
     const variant = variants[currentLanguageId] || {};
 
+    // console.log(variant);
     // console.log(variant.language_id); // this get the data from the user variant database
     // console.log(currentLanguage.is_primary) // this get the data from the language logic (true)
     // console.log(currentLanguageId) // this get the current language Id of an specific user.
@@ -46,7 +46,7 @@ export default function Users({user, subdomain}) {
     // And then we can pass the language data accordingly.
     // And also we will have to add a form disable function in it.
 
-    console.log(user.hyvor_user_id)
+    // console.log(user.hyvor_user_id)
 
     // To disable editing in other languages.
     const [pointerEvent, setPointerEvent] = useState();

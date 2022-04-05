@@ -1,4 +1,4 @@
-import React from 'react'
+import React, {useState, useEffect, memo, useMemo, useCallback} from 'react'
 import { useActions, useValues } from 'kea';
 import { Check, Clock, Dot, Plus } from 'react-bootstrap-icons';
 import languagesLogic from '../../logic/languagesLogic';
@@ -11,11 +11,19 @@ export default function UserLanguageSelector({id, subdomain, languages, variant,
     const usersLogicBuilt = usersLogic({subdomain})
     const { createVariant} = useActions(usersLogicBuilt)
 
-    createVariant({
-        userId: id,
-        languageId: currentLanguageId 
-    });
+    useEffect(() => {
+        // memo(props => {
+        // console.log('test');
+        createVariant({
+            userId: id,
+            languageId: currentLanguageId 
+        });
+    })
 
+    // console.log(id)
+    // console.log(variant)
+    // console.log(languages)
+    // console.log(currentLanguageId)
     return <div>
         <div className="global-languages-list">
         {
@@ -30,15 +38,15 @@ export default function UserLanguageSelector({id, subdomain, languages, variant,
                     <Plus />
                 </span>
             </span>
+           ))
+         }
 
-            // <span className="lang-tag">
-            //     <span className="code">en</span>
-            //     <span className="status-icon">
-            //         <Plus />
-            //     </span>
-            // </span>
-            ))
-        }
+            {/* <span className="lang-tag">
+                <span className="code">en</span>
+                <span className="status-icon">
+                    <Plus />
+                </span>
+            </span> */}
         </div> 
     </div>
 }
