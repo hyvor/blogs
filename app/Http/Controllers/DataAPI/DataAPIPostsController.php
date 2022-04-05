@@ -5,7 +5,7 @@ namespace App\Http\Controllers\DataAPI;
 use App\Data\Objects\DataAPI\PaginationObject;
 use App\Data\Objects\DataAPI\PostObject;
 use App\Domains\Language\LanguageRepository;
-use App\Domains\Post\Content\PostSearchRepository;
+use App\Domains\Post\PostSearchRepository;
 use Illuminate\Http\Request;
 use App\Http\Controllers\Controller;
 use App\Exceptions\TrustedException;
@@ -139,7 +139,7 @@ class DataAPIPostsController extends Controller
         
         return response()->json([
             'data' => $posts,
-            'count' => null
+            'pagination' => new PaginationObject($limit, $page, $searchData[''])
         ]);
 
     }

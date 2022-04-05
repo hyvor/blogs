@@ -1,5 +1,5 @@
 <?php
-namespace App\Domains\Post\Content;
+namespace App\Domains\Post;
 
 use App\Models\Post;
 use App\Models\PostVariant;
@@ -27,6 +27,11 @@ class PostSearchRepository
         'slug'
     ];
 
+    /**
+     * Better to use named arguments when using this function
+     * 
+     * @return array{'posts': Collection, 'total': int}
+     */
     public static function search(
         string $search,
         int $limit,
@@ -68,7 +73,7 @@ class PostSearchRepository
             'posts' => Post::whereIn('id', $postIds)
                 ->orderByRaw("FIELD(id, $postIdsForField)")
                 ->get(),
-            'nbHits' => $results->getNbHits()
+            'total' => $results->getNbHits()
         ];
 
     }

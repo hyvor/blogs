@@ -3,7 +3,7 @@
 namespace App\Models;
 
 use App\Domains\Post\Content\PostContentRepository;
-use App\Domains\Post\Content\PostSearchRepository;
+use App\Domains\Post\PostSearchRepository;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Laravel\Scout\Searchable;

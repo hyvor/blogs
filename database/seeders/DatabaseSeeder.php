@@ -4,7 +4,7 @@ namespace Database\Seeders;
 
 use App\Domains\Blog\FillNewBlog;
 use App\Domains\Language\LanguageRepository;
-use App\Domains\Post\Content\PostSearchRepository;
+use App\Domains\Post\PostSearchRepository;
 use App\Domains\Redirect\RedirectRepository;
 use App\Domains\Route\RouteRepository;
 use App\Models\Blog;

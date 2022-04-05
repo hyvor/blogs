@@ -10,7 +10,7 @@ use App\Data\Objects\DeliveryAPI\MetaObject;
 use App\Domains\ThemeFiles\ThemeFilesRepository;
 use App\Domains\Delivery\RouteMatcher\MatchedRoute;
 use App\Domains\Delivery\Twig\TwigRenderer;
-use App\Domains\Post\Content\PostSearchRepository;
+use App\Domains\Post\PostSearchRepository;
 use App\Domains\Post\PostRepository;
 use App\Domains\Route\PermalinkRepository;
 use App\Domains\Tag\TagRepository;

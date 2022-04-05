@@ -6,7 +6,7 @@ use App\Data\Objects\DataAPI\AuthorObject;
 use App\Data\Objects\DataAPI\PostObject;
 use App\Data\Objects\DataAPI\TagObject;
 use App\Domains\Language\LanguageRepository;
-use App\Domains\Post\Content\PostSearchRepository;
+use App\Domains\Post\PostSearchRepository;
 use Illuminate\Http\Request;
 use App\Http\Controllers\Controller;
 use App\Exceptions\TrustedException;

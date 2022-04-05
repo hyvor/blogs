@@ -1,7 +1,7 @@
 <?php
 namespace Tests\Feature\DataAPI;
 
-use App\Domains\Post\Content\PostSearchRepository;
+use App\Domains\Post\PostSearchRepository;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Tests\TestCase;
 
