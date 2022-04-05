@@ -19,7 +19,7 @@ class TagObject
     {
 
         $this->id = $tag->id;
-        $this->name = $tag->name;
+        $this->name = $tag->name ?? '';
         $this->slug = $tag->slug;
         $this->url = PermalinkRepository::getTagPermalink($tag, $blog);
         $this->featured_image = $tag->featured_image;

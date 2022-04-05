@@ -22,6 +22,7 @@ const postLogic = kea({
         setOriginal: (obj) => ({obj}),
         updatePostValue: (key, value) => ({key, value}),
         updatePostVariantValue: (key, value, languageId) => ({key, value, languageId}),
+        addVariant: (variant) => ({variant}),
 
     },
 
@@ -53,6 +54,18 @@ const postLogic = kea({
 
             const response = await api.patch(subdomainLogic.values.subdomain, `/post/${props.id}`, diff)
             actions.setOriginal(response);
+        },
+
+        createVariant: async ({languageId, onCreate}) => {
+
+            const variant = await api.post(subdomainLogic.values.subdomain, `/post/${props.id}/variant`, {
+                language_id: languageId
+            });
+
+            actions.addVariant(variant);
+
+            onCreate && onCreate();
+
         },
 
         /**
@@ -111,13 +124,27 @@ const postLogic = kea({
                     }
                 }
                 return merge(state, obj);
+            },
+            addVariant: (state, {variant}) => {
+                return merge(state, {
+                    variants: {
+                        [variant.language_id]: variant
+                    }
+                })
             }
         }],
 
         // the really saved post in the back-end
         postOriginal: [{}, {
             set: (_, {obj}) => obj,
-            setOriginal: (_, {obj}) => obj
+            setOriginal: (_, {obj}) => obj,
+            addVariant: (state, {variant}) => {
+                return merge(state, {
+                    variants: {
+                        [variant.language_id]: variant
+                    }
+                })
+            }
         }]
 
     }),

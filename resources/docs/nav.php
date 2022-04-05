@@ -12,11 +12,14 @@ return [
         ['users', 'Users'],
         ['tags', 'Tags'],
         ['media', 'Media'],
+        ['custom-domain', 'Custom Domain'],
+        ['edge-caching', 'Edge Caching'],
+        ['syntax-highlighting', 'Syntax Highlighting']
+    ],
+    'Services' => [
         ['comments', 'Comments'],
         ['newsletter', 'Newsletter'],
         ['analytics', 'Analytics'],
-        ['custom-domain', 'Custom Domain'],
-        ['edge-caching', 'Edge Caching']
     ],
     'Basic Settings' => [
         ['main', 'Main Settings'],
@@ -51,9 +54,12 @@ return [
         ['self-hosting-delivery-api', 'Using Delivery API'],
         ['self-hosting-builds', 'Using builds']
     ],
-    'Legal' => [
+    'Platform & Legal' => [
         ['terms', 'Terms'],
         ['privacy', 'Privacy Policy'],
+    ],
+    'Misc' => [
+        ['oss', 'Open Source'],
     ]
 
 ];

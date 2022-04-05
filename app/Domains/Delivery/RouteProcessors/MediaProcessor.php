@@ -1,9 +1,7 @@
 <?php
 namespace App\Domains\Delivery\RouteProcessors;
 
-use App\Data\Enums\ThemeFileFolderEnum;
 use App\Data\Objects\DeliveryAPI\DeliveryAPIResponseObject;
-use App\Domains\BlogTheme\BlogThemeRepository;
 use App\Domains\Delivery\PathMatcher;
 use App\Domains\Delivery\RouteMatcher\MatchedRoute;
 use App\Domains\Media\MediaRepository;

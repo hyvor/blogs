@@ -51,17 +51,19 @@ class PostRepository
      * This is for the ConsoleAPI
      */
     public static function getPosts(
-        Blog $blog, Language $language, PostsFilterParam $filters, ?int $limit, int $offset = 0
+        Blog $blog,
+        ?string $status,
+        ?int $authorId,
+        ?int $tagId,
+        ?int $startTimestamp,
+        ?int $endTimestamp,
+        ?string $search,
+        ?int $limit, 
+        int $offset = 0
     ) : Collection
     {
-        $status = $filters->status;
-        $authorId = $filters->authorId;
-        $tagId = $filters->tagId;
-        $startTimestamp = $filters->startTimestamp;
-        $endTimestamp = $filters->endTimestamp;
-        $search = $filters->search;
 
-        $limit = $limit ?? 50;
+        $language = LanguageRepository::getPrimaryLanguage($blog);
 
         return Post::where('posts.blog_id', $blog->id)
             ->join('posts_variants', function($join) use ($language) {
@@ -72,20 +74,27 @@ class PostRepository
             ->when($authorId, function ($query) use ($authorId) {
                 $query->join('post_author', function ($join) use ($authorId) {
                     $join->on('post_author.post_id', '=', 'posts.id');
-                    $join->on('post_author.author_id', '=', $authorId);
+                    $join->where('post_author.author_id', '=', $authorId);
                 });
             })
             ->when($tagId, function ($query) use ($tagId) {
                 $query->join('post_tag', function ($join) use ($tagId) {
                     $join->on('post_tag.post_id', '=', 'posts.id');
-                    $join->on('post_tag.tag_id', '=', $tagId);
+                    $join->where('post_tag.tag_id', '=', $tagId);
                 });
             })
             ->when($startTimestamp && $endTimestamp, function ($query) use ($startTimestamp, $endTimestamp) {
-                $query->whereDate('created_at', '>', $startTimestamp)
-                    ->whereDate('created_at', '<', $endTimestamp);
+                $query
+                    ->whereRaw(
+                        '
+                            COALESCE(posts.published_at, posts.created_at) > ? AND
+                            COALESCE(posts.published_at, posts.created_at) < ?
+                        ',
+                        [
+                            Carbon::createFromTimestamp($startTimestamp)->toDateTimeString(),
+                            Carbon::createFromTimestamp($endTimestamp)->toDateTimeString()
+                        ]);
             })
-            // status
             ->when($status, function ($query) use ($status) {
                 if ($status === 'featured') {
                     $query->where('is_featured', true);
@@ -294,6 +303,18 @@ class PostRepository
         return $post;
     }
 
+    public static function createPostVariant(int $postId, int $languageId) : PostsVariant
+    {
+
+        $variant = PostsVariant::create([
+            'post_id' => $postId,
+            'language_id' => $languageId
+        ]);
+
+        return PostsVariant::find($variant->id);
+
+    }
+
     public static function updatePostVariant(int $postId, int $languageId, array $updates)
     {
 
@@ -365,6 +386,13 @@ class PostRepository
             ->where('post_id', $postId)
             ->first();
 
+    }
+
+    public static function deletePostVariant(int $postId, int $languageId)
+    {
+        PostsVariant::where('language_id', $languageId)
+            ->where('post_id', $postId)
+            ->delete();
     }
 
 

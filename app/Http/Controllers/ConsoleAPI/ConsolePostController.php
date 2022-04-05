@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\ConsoleAPI;
 
 use App\Data\Objects\ConsoleAPI\Post\PostObject;
+use App\Data\Objects\ConsoleAPI\Post\PostVariantObject;
 use App\Data\Params\ConsoleAPI\PostsFilterParam;
 use App\Domains\Language\LanguageRepository;
 use App\Models\Blog;
@@ -18,26 +19,42 @@ class ConsolePostController extends Controller
     {
 
         $request->validate([
-            'filters' => 'required|json'
+            'status' => 'string',
+            'author_id' => 'integer',
+            'tag_id' => 'integer',
+            'start_timestamp' => 'integer',
+            'end_timestamp' => 'integer',
         ]);
 
         $filters = json_decode($request->input('filters'));
 
-        $language = LanguageRepository::getLanguageById($blog, $filters->language_id);
+        $status = $request->input('status');
+        $authorId = $request->input('author_id');
+        $tagId = $request->input('tag_id');
+
+        $startTimestamp = $request->input('start_timestamp');
+        $endTimestamp = $request->input('end_timestamp');
+        $search = $request->input('search');
+
+        $limit = 50;
+        $offset = $request->input('offset') ?? 0;
 
         $posts = PostRepository::getPosts(
 
             $blog,
-            $language,
-            (new PostsFilterParam())
-                ->setStatus($filters->status === 'all' ? null : $filters->status)
-                ->setAuthorId($filters->author === 'all' ? null : $filters->author)
-                ->setTagId($filters->tag === 'all' ? null : $filters->tag)
-                ->setStartTimestamp($filters->dateStart)
-                ->setEndTimestamp($filters->dateEnd)
-                ->setSearch($filters->search),
-            $request->input('limit'),
-            $request->input('offset') ?? 0
+
+            $status,
+
+            $authorId,
+            $tagId,
+
+            $startTimestamp,
+            $endTimestamp,
+
+            $search,
+
+            $limit,
+            $offset
 
         )->map(function ($post) use ($blog) {
 
@@ -75,10 +92,10 @@ class ConsolePostController extends Controller
         return response()->json(new PostObject($post, $blog));
     }
 
-    public function deletePost(Request $request, Blog $blog)
+    public function deletePost(Request $request)
     {
         $postId = $request->route('id');
-        PostRepository::deletePost($postId, $blog->id);
+        PostRepository::deletePost($postId);
     }
 
     public function updatePost(Request $request, Blog $blog)
@@ -158,5 +175,24 @@ class ConsolePostController extends Controller
         $post = PostRepository::updatePost($postId, $updates);
 
         return response()->json(new PostObject($post, $blog));
+    }
+
+
+    public function createPostVariant(Request $request, Blog $blog)
+    {
+        $postId = $request->route('id');
+        $languageId = $request->input('language_id');
+
+        $variant = PostRepository::createPostVariant($postId, $languageId);
+
+        return response()->json(new PostVariantObject($variant, $variant->post, $blog));
+    }
+
+    public function deletePostVariant(Request $request)
+    {
+        $postId = $request->route('id');
+        $languageId = $request->input('language_id');
+
+        PostRepository::deletePostVariant($postId, $languageId);
     }
 }

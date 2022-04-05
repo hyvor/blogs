@@ -12,17 +12,19 @@ use App\Domains\Language\LanguageRepository;
 use App\Domains\Redirect\RedirectRepository;
 use App\Models\Blog;
 use App\Models\Language;
+use App\Models\LocalDev;
 
 class PathMatcher {
 
     public Blog $blog;
     public string $path;
+    public ?LocalDev $localDev = null;
     public Language $language;
 
     private bool $matched = false;
     private DeliveryAPIResponseObject $responseObject;
 
-    public function __construct(Blog $blog, string $path) {
+    public function __construct(Blog $blog, string $path, ?LocalDev $localDev = null) {
 
         // add leading slash if not
         if (!preg_match('/^\//', $path)) {
@@ -31,6 +33,7 @@ class PathMatcher {
 
         $this->blog = $blog;
         $this->path = $path;
+        $this->localDev = $localDev;
 
         $this->callFuncs([
             'matchRedirect',
@@ -216,7 +219,7 @@ class PathMatcher {
 
         if ($matchedRoute) {
 
-            $processor = new RouteProcessor($this->blog, $matchedRoute, $this->language);
+            $processor = new RouteProcessor($this, $matchedRoute, $this->language);
 
             $responseObject = $processor->getResponseObject();
 
@@ -245,6 +248,10 @@ class PathMatcher {
         } else {
             return DeliveryAPIResponseObject::forFile("404", "text/html", 404);
         }
+    }
+
+    public function getThemable() {
+        return $this->localDev ?? $this->blog;
     }
 
 }

@@ -7,9 +7,6 @@ use Illuminate\Foundation\Testing\WithoutMiddleware;
 use Tests\TestCase;
 use App\Models\Tag;
 
-// To run the TagsTest class only run this command in the command line.
-// php artisan test  --filter 'TagsTest'
-
 class TagsTest extends TestCase
 {
     use RefreshDatabase;
