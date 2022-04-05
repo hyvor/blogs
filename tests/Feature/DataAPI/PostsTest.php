@@ -5,26 +5,27 @@ namespace Tests\Feature\DataAPI;
 use App\Exceptions\TrustedException;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Foundation\Testing\WithFaker;
+use Illuminate\Testing\Fluent\AssertableJson;
 use Tests\TestCase;
 
-class DataAPIPostsTest extends TestCase
+class PostsTest extends TestCase
 {
 
     use RefreshDatabase;
 
-    private function callEndpoint($data = null) {
-        return $this->get('/api/data/v0/blog/test/posts' . ($data ? '?' . http_build_query($data) : ''));
-    }
-
-    public function testPostsWithoutParams()
+    public function test_posts_without_params()
     {
-        $response = $this->callEndpoint();
-        $response->assertStatus(200);
+        $response = $this->callDataApi('/posts');
+        $response->assertStatus(200)
+            ->assertJson(function (AssertableJson $json) {
+                $json->has('data')
+                    ->has('pagination');
+            });
     }
 
-    public function testPostsInvalid() {
+    public function test_posts_invalid() {
 
-        $response = $this->callEndpoint([
+        $response = $this->callDataApi('/posts', [
             'sort' => 'something_invalid'
         ]);
 
@@ -32,9 +33,9 @@ class DataAPIPostsTest extends TestCase
 
     }
 
-    public function testPostsSortByPublishedAt() 
+    public function test_posts_sort_published_at_desc() 
     {
-        $response = $this->callEndpoint([
+        $response = $this->callDataApi('/posts', [
             'sort' => 'published_at',
             'limit' => 3
         ])->json();
@@ -45,9 +46,9 @@ class DataAPIPostsTest extends TestCase
         );
     }
 
-    public function testPostsSortByPublishedAtAsc() 
+    public function test_posts_sort_published_at_asc() 
     {
-        $response = $this->callEndpoint([
+        $response = $this->callDataApi('/posts', [
             'sort' => 'published_at ASC',
             'limit' => 3
         ])->json();
@@ -58,14 +59,13 @@ class DataAPIPostsTest extends TestCase
         );
     }
 
-    public function testFilterById() {
-        $response = $this->callEndpoint([
+    public function test_posts_filter_by() {
+        $response = $this->callDataApi('/posts', [
             'filter' => 'id=1'
         ]);
         $response
             ->assertJsonPath('data.0.id', 1)
             ->assertJsonCount(1, 'data');
     }
-
 
 }

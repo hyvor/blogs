@@ -128,14 +128,19 @@ class PostRepository
      * This is for the Data API
      * 
      * ALWAYS USE NAMED ARGUMENT WHEN USING THIS FUNCTION
+     * 
+     * @return array{'posts': Collection, 'total': int}
      */
     public static function getPostsWithFilterQ(
-        int $blogId, ?string $filter, 
+        Blog $blog,
+        Language $language,
+        ?string $filter, 
         int $limit, 
         int $offset = 0,
-        string $orderBy = 'published_at', 
-        string $orderMethod = 'DESC'
-    ) : Collection {
+        array $orderBys = [
+            ['published_at', 'DESC']
+        ]
+    ) : array {
 
         $builder = FilterQ::expression($filter)
             ->builder(Post::class)
@@ -213,14 +218,23 @@ class PostRepository
             })
             ->addWhere();
 
-        return $builder
-            ->where('posts.blog_id', $blogId)
-            //->where('posts.status', 'published')
+        foreach ($orderBys as $orderBy) {
+            $builder->orderBy($orderBy[0], $orderBy[1]);
+        }
+
+        $posts = $builder->where('posts.blog_id', $blog->id)
+            // ->where('posts.status', 'published');
             ->limit($limit)
             ->offset($offset)
-            // ->orderBy($orderBy, $orderMethod)
             ->select('posts.*')
             ->get();
+
+        $total = $builder->count();
+
+        return [
+            'posts' => $posts,
+            'total' => $total
+        ];
 
     }
 

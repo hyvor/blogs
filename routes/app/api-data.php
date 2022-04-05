@@ -1,6 +1,7 @@
 <?php
 
 use App\Http\Controllers\DataAPI\DataAPIController;
+use App\Http\Controllers\DataAPI\DataAPIPostsController;
 use App\Http\Middleware\App\DataAPIMiddleware;
 use App\Http\Middleware\App\SubdomainMiddleware;
 use Illuminate\Support\Facades\Route;
@@ -9,14 +10,16 @@ Route::prefix('/api/data/v0/blog/{subdomain}')
     ->middleware(SubdomainMiddleware::class)
     ->group(function() {
 
-    Route::get('/post', [DataAPIController::class, 'post']);
-    Route::get('/tag', [DataAPIController::class, 'tag']);
-    Route::get('/author', [DataAPIController::class, 'author']);
-    Route::get('/blog', [DataAPIController::class, 'blog']);
+    Route::get('/post', [DataAPIPostsController::class, 'post']);
+    Route::get('/posts', [DataAPIPostsController::class, 'posts']);
+    Route::get('/posts/search', [DataAPIPostsController::class, 'postsSearch']);
 
-    Route::get('/posts', [DataAPIController::class, 'posts']);
-    Route::get('/posts/search', [DataAPIController::class, 'posts/search']);
+    Route::get('/tag', [DataAPIController::class, 'tag']);
     Route::get('/tags', [DataAPIController::class, 'tags']);
+
+    Route::get('/author', [DataAPIController::class, 'author']);
     Route::get('/authors', [DataAPIController::class, 'authors']);
+
+    Route::get('/blog', [DataAPIController::class, 'blog']);
 
 });

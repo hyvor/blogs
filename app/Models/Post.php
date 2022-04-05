@@ -3,12 +3,14 @@
 namespace App\Models;
 
 use App\Domains\Post\PostLanguageRepository;
+use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\SoftDeletes;
 
 class Post extends Model
 {
     use SoftDeletes;
+    use HasFactory;
 
     /**
      * Eager load with these relations

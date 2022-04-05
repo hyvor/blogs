@@ -15,7 +15,7 @@ class BlogFactory extends Factory
     {
         return [
             'user_id' => 1,
-            'subdomain' => $this->faker->word(),
+            'subdomain' => $this->faker->uuid(),
             'name' => $this->faker->name()
         ];
     }

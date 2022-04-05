@@ -255,7 +255,7 @@ Data is returned in JSON objects as specified below.
 
 ### Variant Object {#variant-object}
 
-A variant object contains data of a language variant of a post, tag, or an author. `language` in this object is a [Language Object](#language-object).
+A variant object contains data of a language variant of a post, tag, or an author.
 
 ```json
 {
@@ -269,6 +269,32 @@ A variant object contains data of a language variant of a post, tag, or an autho
 }
 ```
 
+
+| Key | Type | Description |
+| --- | --- | --- |
+| `language` | `object` | a [Language Object](#language-object) |
+| `url` | `string` | URL of the variant |
+### Pagination Object {#pagination-object}
+
+A pagination object is included in all multi-object endpoints (`/posts`, `/authors`, `/tags`).
+
+```json
+{
+	"total": 100,
+	"pages": 10,
+	"limit": 5,
+	"page": 1,
+}
+```
+
+| Key | Type | Description |
+| --- | --- | --- |
+| `total` | `integer` | The total number of results possible with the current filters |
+| `pages` | `integer` | The number of the total pagination pages based on the limit you set. `pages = round_to_upper(total/limit)` |
+| `limit` | `integer` | Current limit |
+| `page` | `integer` | Current page |
+
+
 ## Query Parameters
 
 #### For Single-Object endpoints
@@ -276,12 +302,12 @@ A variant object contains data of a language variant of a post, tag, or an autho
 (`/post`, `/tag`, `/author`)
 
 
-| Query param | Default | Description |
+| Query param | Description |
 | --- | --- | --- |
-| `id` |  | id of the object |
-| `slug` |  | slug of the object |
-| `language` | Primary language code | Language code to localize strings in objects. If not provided, the primary language will be used.
-| `keys` |  | GraphQL-like filtering (See [keys](#keys)) |
+| `id` |  id of the object |
+| `slug` | slug of the object |
+| `language` | Language code to localize strings in objects. If not provided, the primary language will be used.
+| `keys` | GraphQL-like filtering (See [keys](#keys)) |
 
 > Either the `id` or the `slug` is required for those endpoints.
 
@@ -293,7 +319,7 @@ A variant object contains data of a language variant of a post, tag, or an autho
 
 | Query param | Description | Default |
 | --- | --- | --- |
-| `limit` | Max number of objects per page in the array | `25` |
+| `limit` | Max number of objects per page (Max `250` allowed) | `25` |
 | `page` | The page number for pagination | `1` |
 | `filter` | A special notation to write filter logic (think of like the WHERE part in the SQL query - see below). | `""` |
 | `sort` | How to sort the list. Supports comma-separated values (like SQL's ORDER BY - see below) |  |
@@ -418,29 +444,6 @@ Let's say you only want to get the post ID and tag ID of the posts. Use `keys=id
 	]
 }
 ```
-
-### Extra: Counts Object
-
-A counts object is included in all multi-object endpoints (`/posts`, `/authors`, `/tags`). You can use this information for pagination.
-
-```json
-{
-	"total": 100,
-	"pages": 10,
-	"limit": 5,
-	"page": 1,
-}
-```
-
-| Key | Type | Description |
-| --- | --- | --- |
-| total | integer | The total number of results that can be returned from this endpoint. 
-Ex: If the blog has 100 posts, /posts will have total of 100. |
-| total_with_filters | integer | The total number of results that  |
-| pages | integer | The number of the total pagination pages based on the limit you set.
-pages = total_with_filters / limit |
-| limit | integer | Just returns the limit you set in the request. |
-| page | integer | Just returns the page you set in the request |
 
 ## FAQ
 

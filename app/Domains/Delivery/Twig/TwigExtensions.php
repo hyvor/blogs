@@ -110,7 +110,7 @@ class TwigExtensions extends AbstractExtension
     {
 
         if (!isset($this->blog)) {
-            $subdomain = $context['_blog']->subdomain;
+            $subdomain = $context['_blog']['subdomain'];
             $this->blog = BlogRepository::getBlogBySubdomain($subdomain);
         }
 

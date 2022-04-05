@@ -137,10 +137,11 @@ class TemplateRenderer {
                     $blogObject->url
                 ),
                 '_featured_posts' => PostRepository::getPostsWithFilterQ(
-                    blogId: $this->pathMatcher->blog->id,
+                    blog: $this->pathMatcher->blog,
+                    language: $this->pathMatcher->language,
                     filter: $this->filter,
                     limit: 30, // hard limit - who has 30 featured posts?
-                )
+                )['posts']
             ];
 
         } else if ($routeName === 'post' || $routeName === 'page' || $routeName === 'preview') {
@@ -203,11 +204,12 @@ class TemplateRenderer {
 
         } else {
             $postCollection = PostRepository::getPostsWithFilterQ(
-                blogId: $this->pathMatcher->blog->id, 
+                blog: $this->pathMatcher->blog, 
+                language: $this->pathMatcher->language,
                 filter: $this->filter,
                 limit: $limit,
                 offset: $offset
-            );
+            )['posts'];
         }
 
         return $postCollection->map(function ($post) {

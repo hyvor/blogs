@@ -62,11 +62,11 @@ class PostObject
         $this->description = $variant->description;
         $this->featured_image = $post->featured_image;
         $this->canonical_url = $post->canonical_url;
-        $this->reading_time = $post->reading_time;
+        $this->reading_time = $post->reading_time ?? 0;
 
         // TODO: Add Tag code
-        $this->code_head = $post->code_head;
-        $this->code_foot = $post->code_foot;
+        $this->code_head = $post->code_head ?? '';
+        $this->code_foot = $post->code_foot ?? '';
 
         $this->language = new LanguageObject($language);
         $this->variants = $variants
