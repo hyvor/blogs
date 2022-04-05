@@ -1,6 +1,7 @@
 <?php
 namespace App\Domains\Post;
 
+use App\Domains\Post\Content\PostContentRepository;
 use App\Models\Post;
 use App\Models\PostVariant;
 use MeiliSearch\Client;
