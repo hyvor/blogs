@@ -330,9 +330,39 @@ A pagination object is included in all multi-object endpoints (`/posts`, `/autho
 
 Example: `(published_at > 1639665890 & published_at < 1639695890) | is_featured=true`
 
-The filter param allows you to write advanced logic like this, using comparison and logical operators. You can also group logic using parentheses.
+Our Data API uses [Laravel FilterQ](https://github.com/hyvor/laravel-filterq) under the hood, which allows you to write advanced logic like the above example, using comparison and logical operators. You can also group logic using parentheses.
 
-Please see the [FilterQ Expressions](https://github.com/hyvor/laravel-filterq#filterq-expressions) documentation for supported operators and values.
+A condition consists of three parts:
+
+- `key`
+- `operator`
+- `value`
+
+### Operators
+
+- `=` - equals
+- `!=` - not equal
+- `>` - greater than
+- `<` - less than
+- `>=` - greater than or equals
+- `<=` - less than or equals
+
+### Values
+
+- `null`
+- bool: `true` or `false`
+- string: `'hello'` or `hello`
+  - Strings without quotes should match `[a-zA-Z_][a-zA-Z0-9_-]+` and cannot be `true`, `false`, or `null`.
+- numbers: `250`, `-250`, `2.5`
+
+### Logical Operators
+
+You can use Logical Operations to combine multiple conditions.
+
+- `&` - AND
+- `|` - OR
+
+Please see the [FilterQ Expressions](https://github.com/hyvor/laravel-filterq#filterq-expressions) documentation if you need more details.
 #### Supported Keys for Filtering
 
 
@@ -345,7 +375,7 @@ Please see the [FilterQ Expressions](https://github.com/hyvor/laravel-filterq#fi
 |  | `is_featured` |`=`, `!=` | `boolean` |  |
 |  | `slug` | `=`, `!=` | `string` |  |
 |  | `featured_image` | `=`, `!=` | `null` | only to check if null or not |
-|  | `canonical_url` | `=`, `!=` | `null` |  |
+|  | `canonical_url` | `=`, `!=` | `null` | only to check if null or not |
 |  | `words` | all | `integer` |  |
 |  | `tag.id` | all | `integer` | Matches the id of the tags of the post. |
 |  | `tag.slug` | `=`, `!=` | `string` | Matches the slug of the tags of the post. |
@@ -356,44 +386,9 @@ Please see the [FilterQ Expressions](https://github.com/hyvor/laravel-filterq#fi
 |  | `posts_count` | all | `integer` |  |
 | | `created_at` | all | `date` | See [Date](#filter-date) |
 
-
-#### Filtering Examples
-
-(Note that when calling the API, the filter value should be URL encoded, however, for the sake of clarity, we have shown it without encoding)
-
-To get posts authored by Alex:
-
-```plain
-/posts?filter=author.slug=alex
-```
-
-To get featured posts
-
-```plain
-/posts?filter=is_featured=true
-```
-
-To get posts with either the tag `audio` or `video`.
-
-```plain
-/posts?filter=tag.slug=audio|tag.slug=video
-```
-
-To get tags that have at least 5 posts
-
-```plain
-/tags?filter=posts_count>=5
-```
-
-To get authors who are added after January 1st 2020.
-
-```plain
-/authors?filter=created_at>='2020-01-01'
-```
-
 #### Date Values {#filter-date}
 
-Some endpoints supports filtering with keys that has date values. Here are some valid values for date keys.
+Here are some valid values for date keys.
 
 * `'2022-01-01'`
 * `'yesterday'`
@@ -405,9 +400,69 @@ Some endpoints supports filtering with keys that has date values. Here are some 
 * `1639655890` <- UNIX Timestamp
 
 For example: In `/posts` endpoint, you may use `published_at>'-7 days'` to get posts published in the last 7 days.
+#### Filtering Examples
 
-> Under the hood, we use [PHP's strtotime](https://www.php.net/manual/en/function.strtotime.php) function. You can find more supported formats in the PHP documentation.
+> Note that when calling the API, the filter value should be URL-encoded.
 
+To get posts authored by Alex:
+
+```js
+// filter
+author.slug=alex
+
+// URL-encoded
+/posts?filter=author.slug%3Dalex
+```
+
+To get featured posts
+
+```js
+// filter
+is_featured=true
+
+// URL-encoded
+/posts?filter=is_featured%3Dtrue
+```
+
+To get posts with either the tag `audio` or `video`.
+
+```js
+// filter
+tag.slug=audio|tag.slug=video
+
+// URL-encoded
+/posts?filter=tag.slug%3Daudio%7Ctag.slug%3Dvideo
+```
+
+To get tags that have at least 5 posts
+
+```js
+// filter
+posts_count>=5
+
+// URL-encoded
+/tags?filter=posts_count%3E%3D5
+```
+
+To get authors who are added after January 1st 2020.
+
+```js
+// filter
+created_at>='2020-01-01'
+
+// URL-encoded
+/authors?filter=created_at%3E%3D%272020-01-01%27
+```
+
+To get posts published in the last 7 days.
+
+```js
+// filter
+published_at>'-7 days'
+
+// URL-encoded
+/posts?filter=published_at%3E%27-7%20days%27
+```
 
 ### `sort` param
 
@@ -415,9 +470,10 @@ Here's a list of supported sort values. You can combine multiple as comma-separa
 
 | Endpoint | Sort | Description |
 | --- | --- | --- |
-| `/posts` <br> Default `published_at DESC`  | | `published_at` |  Post publish time |
+| `/posts` <br> Default `published_at DESC`  | `published_at` |  Post publish time |
 | | `created_at` | Post create time |
 | | `updated_at` | Post last update time |
+| | `id` | Post ID |
 | | `is_featured` | Think of this as an integer, 1 for true and 0 for false . |
 | | `title` | alphabetically |
 | | `words` |  |

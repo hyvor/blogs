@@ -134,11 +134,11 @@ class PostRepository
     public static function getPostsWithFilterQ(
         Blog $blog,
         Language $language,
-        ?string $filter, 
-        int $limit, 
+        ?string $filter,
+        int $limit,
         int $offset = 0,
         array $orderBys = [
-            ['published_at', 'DESC']
+            ['posts.published_at', 'DESC']
         ],
         bool $isPages = false
     ) : array {
@@ -148,43 +148,54 @@ class PostRepository
             ->keys(function($keys) {
 
                 $keys->add('id')
-                    ->column('posts.id');
+                    ->column('posts.id')
+                    ->valueType('int');
 
                 $keys->add('published_at')
-                    ->column('posts.published_at');
-
-                $keys->add('updated_at')
-                    ->column('post_variants.updated_at');
+                    ->column('posts.published_at')
+                    ->valueType('date');
 
                 $keys->add('created_at')
-                    ->column('posts.created_at');
+                    ->column('posts.created_at')
+                    ->valueType('date');
+
+                $keys->add('updated_at')
+                    ->column('post_variants.updated_at')
+                    ->valueType('date');
 
                 $keys->add('is_featured')
                     ->column('posts.is_featured')
+                    ->valueType('bool')
                     ->operators('=,!=');
 
                 $keys->add('slug')
                     ->column('posts.slug')
+                    ->valueType('string|int')
                     ->operators('=,!=');
 
                 $keys->add('featured_image')
                     ->column('posts.featured_image')
+                    ->valueType('null')
                     ->operators('=,!=');
 
                 $keys->add('canonical_url')
                     ->column('posts.canonical_url')
+                    ->valueType('null')
                     ->operators('=,!=');
 
                 $keys->add('words')
-                    ->column('post_variants.words');
+                    ->column('post_variants.words')
+                    ->valueType('int');
 
                 $keys->add('tag.id')
                     ->column('post_tag.tag_id')
+                    ->valueType('int')
                     ->join('post_tag', 'post_tag.post_id', '=', 'posts.id', 'left');
 
                 $keys->add('tag.slug')
                     ->column('tags.slug')
                     ->operators('=,!=')
+                    ->valueType('int|string')
                     ->join(function($query) {
                         $query->leftJoin('post_tag', 'post_tag.post_id', '=', 'posts.id')
                             ->join('tags', 'tags.id', '=', 'post_tag.tag_id');
@@ -192,11 +203,13 @@ class PostRepository
 
                 $keys->add('author.id')
                     ->column('post_author.user_id')
+                    ->valueType('int')
                     ->join('post_author', 'post_author.post_id', '=', 'posts.id', 'left');
 
                 $keys->add('author.slug')
                     ->column('users.slug')
                     ->operators('=,!=')
+                    ->valueType('int|string')
                     ->join(function($query) {
                         $query->leftJoin('post_author', 'post_author.post_id', '=', 'posts.id')
                             ->leftJoin('users', 'users.id', '=', 'post_author.user_id');

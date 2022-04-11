@@ -10,7 +10,7 @@
         "fruitcake/laravel-cors": "^2.0",
         "guzzlehttp/guzzle": "^7.0.1",
         "http-interop/http-factory-guzzle": "^1.2",
-        "hyvor/laravel-filterq": "^0.0.2",
+        "hyvor/laravel-filterq": "^1.0",
         "hyvor/laravel-hyvor-connecter": "dev-main",
         "hyvor/scssphp": "2.0.1",
         "laravel/cashier-paddle": "^1.4",
@@ -36,7 +36,6 @@
         "laravel/sail": "^1.0.1",
         "mockery/mockery": "^1.4.2",
         "nunomaduro/collision": "^6.0",
-        "phpstan/phpstan": "^1.5",
         "phpunit/phpunit": "^9.3.3",
         "spatie/laravel-ignition": "^1.0",
         "squizlabs/php_codesniffer": "3.*"

@@ -22,7 +22,7 @@ class CreatePostsTable extends Migration
             $table->softDeletes();
 
             // connections
-            $table->bigInteger('blog_id')->index();
+            $table->bigInteger('blog_id');
 
             // status
             $table->boolean('is_page')->default(false);
@@ -36,6 +36,16 @@ class CreatePostsTable extends Migration
             $table->text('code_foot')->nullable();
 
             $table->unique(['blog_id', 'slug']);
+
+            $table->index('blog_id');
+            $table->index(['blog_id', 'created_at']);
+            $table->index(['blog_id', 'updated_at']);
+            $table->index(['blog_id', 'published_at']);
+            $table->index(['blog_id', 'is_page']);
+            $table->index(['blog_id', 'is_featured']);
+            $table->index(['blog_id', 'featured_image']);
+            $table->index(['blog_id', 'canonical_url']);
+
         });
     }
 

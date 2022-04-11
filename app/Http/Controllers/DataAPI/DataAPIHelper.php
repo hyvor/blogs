@@ -29,7 +29,7 @@ class DataAPIHelper
     /**
      * Returns an array of order bys
      * 
-     * @param $allowed array{string: string}
+     * @param $allowed array{string, string}
      */
     public static function getSort(?string $sort, array $allowed) : array
     {
@@ -44,12 +44,13 @@ class DataAPIHelper
         $ret = [];
         $orderBys = explode(',', $sort);
 
-        foreach ($orderBys as $orderBy) {
+        foreach ($orderBys as $one) {
 
-            $split = explode(' ', $sort);
+            $one = trim($one);
+            $split = preg_split('/\s+/', $one);
             $orderBy = $split[0];
             $orderMethod = strtoupper($split[1] ?? 'desc');
-    
+
             if (!array_key_exists($orderBy, $allowed)) {
                 throw new TrustedException("Sort by $orderBy not supported", TrustedException::ERROR_BAD_REQUEST);
             }
@@ -72,17 +73,17 @@ class DataAPIHelper
      * Default = 25
      * Max = 250
      */
-    public static function getLimit(?int $limit)
+    public static function getLimit(?int $limit) : int
     {
         return min($limit ?? 25, 250);
     }
 
-    public static function getPage(?int $page)
+    public static function getPage(?int $page) : int
     {
         return $page ?? 1;
     }
 
-    public static function getOffset(int $page, $limit)
+    public static function getOffset(int $page, int $limit) : int
     {
         return ($page - 1) * $limit;
     }

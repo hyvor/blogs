@@ -29,6 +29,10 @@ return new class extends Migration
             $table->string('description', 350)->default('');
             $table->integer('words')->nullable();
 
+            $table->unique(['post_id', 'language_id']);
+            $table->index('status');
+            $table->index('words');
+
         });
     }
 

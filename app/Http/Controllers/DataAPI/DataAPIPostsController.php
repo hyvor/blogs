@@ -14,6 +14,18 @@ use App\Domains\Post\PostRepository;
 
 class DataAPIPostsController extends Controller
 {
+
+    const ALLOWED_SORTS = 
+    [
+        'published_at' => 'posts.published_at',
+        'created_at' => 'posts.created_at',
+        'id' => 'posts.id',
+        'updated_at' => 'posts.updated_at',
+        'is_featured' => 'posts.is_featured',
+        'title' => 'post_variants.title',
+        'words' => 'post_variants.words'
+    ];
+
     public function post(Request $request, Blog $blog)
     {
 
@@ -76,14 +88,7 @@ class DataAPIPostsController extends Controller
 
         $orderBys  = DataAPIHelper::getSort(
             $sort,
-            [
-                'published_at' => 'posts.published_at',
-                'created_at' => 'posts.created_at',
-                'updated_at' => 'posts.updated_at',
-                'is_featured' => 'posts.is_featured',
-                'title' => 'post_variants.title',
-                'words' => 'post_variants.words'
-            ]
+            self::ALLOWED_SORTS
         );
 
         $data = PostRepository::getPostsWithFilterQ(
