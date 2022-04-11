@@ -28,13 +28,16 @@ class DataAPIHelper
 
     /**
      * Returns an array of order bys
+     * 
+     * @param $allowed array{string: string}
      */
     public static function getSort(?string $sort, array $allowed) : array
     {
 
         if (!$sort) {
             return [
-                [$allowed[0], 'DESC']
+                // reset gives the first array element
+                [reset($allowed), 'DESC']
             ];
         }
 
@@ -47,7 +50,7 @@ class DataAPIHelper
             $orderBy = $split[0];
             $orderMethod = strtoupper($split[1] ?? 'desc');
     
-            if (!in_array($orderBy, $allowed)) {
+            if (!array_key_exists($orderBy, $allowed)) {
                 throw new TrustedException("Sort by $orderBy not supported", TrustedException::ERROR_BAD_REQUEST);
             }
     
@@ -57,7 +60,7 @@ class DataAPIHelper
                 $orderMethod = 'DESC';
             }
 
-            $ret[] = [$orderBy, $orderMethod];
+            $ret[] = [$allowed[$orderBy], $orderMethod];
 
         }
 

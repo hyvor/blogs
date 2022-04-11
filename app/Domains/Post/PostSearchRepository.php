@@ -113,7 +113,7 @@ class PostSearchRepository
              */
             'title' => $postVariant->title,
             'description' => $postVariant->description,
-            'content' => PostContentRepository::getText($postVariant->content, $blog),
+            'content' => $post->content ? PostContentRepository::getText($postVariant->content, $blog) : '',
             'slug' => $post->slug,
 
             /**
@@ -137,13 +137,17 @@ class PostSearchRepository
      */
     public static function setFilterableAttributes() : void
     {
-        self::getIndex()->updateFilterableAttributes(self::FILTERABLE_ATTRIBUTES);
+        if (self::isMeilisearch()) {
+            self::getIndex()->updateFilterableAttributes(self::FILTERABLE_ATTRIBUTES);
+        }
     }
 
 
     public static function setSearchableAttributes() : void
     {
-        self::getIndex()->updateSearchableAttributes(self::SEARCHABLE_ATTRIBUTES);
+        if (self::isMeilisearch()) {
+            self::getIndex()->updateSearchableAttributes(self::SEARCHABLE_ATTRIBUTES);
+        }
     }
 
     private static function getIndex()
@@ -152,6 +156,11 @@ class PostSearchRepository
         $client = new Client(config('scout.meilisearch.host'), config('scout.meilisearch.key'));
         return $client->index(self::SEARCH_INDEX_NAME);
 
+    }
+
+    private static function isMeilisearch()
+    {
+        return config('scout.driver') === 'meilisearch';
     }
 
 }

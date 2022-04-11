@@ -106,14 +106,18 @@ class DatabaseSeeder extends Seeder
                 $englishPost = PostVariant::create([
                     'post_id' => $post->id,
                     'language_id' => $language->id,
-                    'content' => json_encode($prosemirrorJson),
                     'title' => $title,
                     'description' => $faker->sentence,
                     'status' => $status,
                 ]);
 
+                // update is separate to trigger observer's update
+                $englishPost->update([
+                    'content' => json_encode($prosemirrorJson)
+                ]);
 
-                if (rand(0,1) === 0) {
+
+                // if (rand(0,1) === 0) {
 
                     $prosemirrorJson['content'][] = [
                         'type' => 'paragraph',
@@ -126,13 +130,16 @@ class DatabaseSeeder extends Seeder
                     $frenchPost = PostVariant::create([
                         'post_id' => $post->id,
                         'language_id' => $secondLanguage->id,
-                        'content' => json_encode($prosemirrorJson),
                         'title' => $title . ' French',
                         'description' => $faker->sentence,
                         'status' => $status,
                     ]);
+
+                    $frenchPost->update([
+                        'content' => json_encode($prosemirrorJson)
+                    ]);
                     
-                }
+                // }
 
                 PostTag::create([
                     'post_id' => $post->id,

@@ -67,7 +67,7 @@ Data is returned in JSON objects as specified below.
 	"url": "https://subdomain.hyvorblogs.io/hello-world",
 	"featured_image": "https://example.com/image.png",
 	"canonical_url": null,
-	"reading_time": 2,
+	"words": 500,
 	"code_head": "",
 	"code_foot": "",
 	
@@ -94,7 +94,7 @@ Data is returned in JSON objects as specified below.
 | `description` | `string|null` | The description (excerpt) of post, max length 350, null if not set |
 | `featured_image` | `string|null` | The absolute URL of the featured image. null if not set |
 | `canonical_url` | `string|null` | An absolute URL or null. Canonical URL is set by the author if the post was published somewhere else. |
-| `reading_time` | `integer` | Reading time in minutes. |
+| `words` | `integer` | Number of words in the content |
 | `code_head` | `string` | [Custom code](custom-code) to add before `</head>` . An empty string if nothing is set. |
 | `code_foot` | `string` | [Custom code](custom-code) to add before `</body>` . An empty string if nothing is set. |
 | `language` | `object` | A [Language object](#language-object)
@@ -302,7 +302,7 @@ A pagination object is included in all multi-object endpoints (`/posts`, `/autho
 (`/post`, `/tag`, `/author`)
 
 
-| Query param | Description |
+| Param | Description |
 | --- | --- | --- |
 | `id` |  id of the object |
 | `slug` | slug of the object |
@@ -317,14 +317,14 @@ A pagination object is included in all multi-object endpoints (`/posts`, `/autho
 
 (`/posts`, `/pages`, `/tags`, `/authors`)
 
-| Query param | Description | Default |
+| Param | Description | Default |
 | --- | --- | --- |
-| `limit` | Max number of objects per page (Max `250` allowed) | `25` |
+| `limit` | Limit for objects per page (Max `250` allowed) | `25` |
 | `page` | The page number for pagination | `1` |
-| `filter` | A special notation to write filter logic (think of like the WHERE part in the SQL query - see below). | `""` |
-| `sort` | How to sort the list. Supports comma-separated values (like SQL's ORDER BY - see below) |  |
-| `keys` | GraphQL-like filtering (see below) |  |
-| `language` | (only for `/posts`) language code to fetch posts of a non-default language. If not set, only posts of the default language are fetched. Set it to `"all"` to get posts of all languages.
+| `filter` | [FilterQ](https://github.com/hyvor/laravel-filterq) expression for SQL-like filtering | `""` |
+| `sort` | How to sort the list. Supports comma-separated values. See [`sort` param](#sort) | Depends on the endpoint |
+| `keys` | GraphQL-like filtering (see below) | `null` |
+| `language` | Language code to get posts or localize strings in tags and authors (if available). | Primary language |
 
 ### `filter` param
 
@@ -332,67 +332,82 @@ Example: `(published_at > 1639665890 & published_at < 1639695890) | is_featured=
 
 The filter param allows you to write advanced logic like this, using comparison and logical operators. You can also group logic using parentheses.
 
-A condition consists of three parts:
+Please see the [FilterQ Expressions](https://github.com/hyvor/laravel-filterq#filterq-expressions) documentation for supported operators and values.
+#### Supported Keys for Filtering
 
-- `key`
-- `operator`
-- `value`
 
-### - Operators
-
-- `=` - equals
-- `!=` - not equal
-- `>` - greater than
-- `<` - less than
-- `>=` - greater than or equals
-- `<=` - less than or equals
-- `~` - SQL `LIKE`
-
-### - Values
-
-- `null`
-- `true` or `false`
-- `'string'`
-    - Always wrapped with `'`
-    - `'` and `"` must be escaped
-- `250` - integer number
-
-### - Logical Operators
-
-You can use Logical Operations to combine multiple conditions.
-
-- `&` - AND
-- `|` - OR
-
-### - Supported Keys and Operators in each endpoint
-
-Most keys are object keys of each endpoint. But, we support additional keys like `tag.id` to allow to do something similar to SQL JOINS.
-
-| Endpoint | Key | Supported Operators | Value | Description |
+| Endpoint | Key | Supported Operators | Value Type | Description |
 | --- | --- | --- | --- | --- |
-| /posts | id | all except ~ | integer |  |
-|  | published_at | all except ~ | integer | (UNIX timestamp) |
-|  | updated_at | all except ~ | integer |  |
-|  | is_featured | =, != | boolean |  |
-|  | slug | =, !=, ~ | string |  |
-|  | title | ~ | string | Ex: Hello% matches any post with a slug that starts with Hello |
-|  | description | ~ , =, != | string for ~
-null for =, != |  |
-|  | featured_image | =, != | null | only to check if null or not |
-|  | canonical_url | =, != | null |  |
-|  | reading_time | all except ~ | integer |  |
-|  | tag.id | =, != | integer | Matches the id of the tags of the post. |
-|  | tag.slug | =, != | string | Matches the slug of the tags of the post. |
-|  | author.id | =, != | integer | Similar to tag.id |
-|  | author.slug | =, != | string | Similar to tag.slug |
-| /tags and /authors | id | all except ~ | integer |  |
-|  | slug | =, != | string |  |
-|  | posts_count | all except ~ | integer |  |
+| `/posts` | `id` | all | `integer` |  |
+|  | `published_at` | all | `date` | See [Date](#filter-date) |
+|  | `updated_at` | all | `date` | See [Date](#filter-date) |
+| | `created_at` | all | `date` | See [Date](#filter-date) |
+|  | `is_featured` |`=`, `!=` | `boolean` |  |
+|  | `slug` | `=`, `!=` | `string` |  |
+|  | `featured_image` | `=`, `!=` | `null` | only to check if null or not |
+|  | `canonical_url` | `=`, `!=` | `null` |  |
+|  | `words` | all | `integer` |  |
+|  | `tag.id` | all | `integer` | Matches the id of the tags of the post. |
+|  | `tag.slug` | `=`, `!=` | `string` | Matches the slug of the tags of the post. |
+|  | `author.id` | all | `integer` | Similar to tag.id |
+|  | `author.slug` | `=`, `!=` | `string` | Similar to tag.slug |
+| `/tags` and `/authors` | `id` | all | `integer` |  |
+|  | `slug` | `=`, `!=` | `string` |  |
+|  | `posts_count` | all | `integer` |  |
+| | `created_at` | all | `date` | See [Date](#filter-date) |
 
-Examples: 
-    To select posts by Alex, call `/posts` with filter  `author.slug='alex'`
-    To select posts with a title that starts with "Top", call `/posts` with filter `title~'Top%'`
-    To select tags that have at least 5 posts, call `/tags` with filter `posts_count >= 5`
+
+#### Filtering Examples
+
+(Note that when calling the API, the filter value should be URL encoded, however, for the sake of clarity, we have shown it without encoding)
+
+To get posts authored by Alex:
+
+```plain
+/posts?filter=author.slug=alex
+```
+
+To get featured posts
+
+```plain
+/posts?filter=is_featured=true
+```
+
+To get posts with either the tag `audio` or `video`.
+
+```plain
+/posts?filter=tag.slug=audio|tag.slug=video
+```
+
+To get tags that have at least 5 posts
+
+```plain
+/tags?filter=posts_count>=5
+```
+
+To get authors who are added after January 1st 2020.
+
+```plain
+/authors?filter=created_at>='2020-01-01'
+```
+
+#### Date Values {#filter-date}
+
+Some endpoints supports filtering with keys that has date values. Here are some valid values for date keys.
+
+* `'2022-01-01'`
+* `'yesterday'`
+* `'first day of this year'`
+* `'last day of next month'`
+* `'+1 day'`
+* `'-1 week'`
+* `'next Thursday'`
+* `1639655890` <- UNIX Timestamp
+
+For example: In `/posts` endpoint, you may use `published_at>'-7 days'` to get posts published in the last 7 days.
+
+> Under the hood, we use [PHP's strtotime](https://www.php.net/manual/en/function.strtotime.php) function. You can find more supported formats in the PHP documentation.
+
 
 ### `sort` param
 
@@ -400,18 +415,16 @@ Here's a list of supported sort values. You can combine multiple as comma-separa
 
 | Endpoint | Sort | Description |
 | --- | --- | --- |
-| /posts
-(default published_at DESC) | published_at |  |
-|  | created_at |  |
-|  | updated_at |  |
-|  | is_featured | Think of this as an integer, 1 for true and 0 for false . |
-|  | title | alphabetically |
-|  | reading_time |  |
-| /tags and /authors | posts_count | number of posts of the tag/author |
+| `/posts` <br> Default `published_at DESC`  | | `published_at` |  Post publish time |
+| | `created_at` | Post create time |
+| | `updated_at` | Post last update time |
+| | `is_featured` | Think of this as an integer, 1 for true and 0 for false . |
+| | `title` | alphabetically |
+| | `words` |  |
+| `/tags` and `/authors` <br> Default `posts_count DESC` | `posts_count` | number of posts of the tag/author |
+| | `created_at` | |
 
-The default sort method is `DESC`.
-
-Here are some examples.
+The default sort method is `DESC`. Here are some examples for the sort param.
 
 - `published_at` - sorted by `published_at` in descending order
 - `published_at ASC` - sorted by `published_at` in ascending order
@@ -425,8 +438,8 @@ If you call the `/posts` endpoint, with `keys=id,content`, call post objects wil
 
 ```json
 {
-   "id": 1000,
-	 "content": "<p></p>"
+	"id": 1000,
+	"content": "<p></p>"
 }
 ```
 
@@ -438,19 +451,19 @@ Let's say you only want to get the post ID and tag ID of the posts. Use `keys=id
 {
 	"id": 1000,
 	"tags": [
-			{
-				"id": 2000
-			}
+		{
+			"id": 2000
+		}
 	]
 }
 ```
 
 ## FAQ
 
-- How can I get pages
+- How can I get pages?
 (Pages are like posts but static and not listed in the feed - like contact us page)
     
     To get a single page, call the `/post` endpoint with the page ID or slug.
-    To get multiple pages, call the `/posts` endpoint with `?pages=true` param. It will return only pages. You can other params as usual.
+    To get multiple pages, call the `/posts` endpoint with `?pages=true` param. It will return only pages. You can add other params as usual.
     
 - Do you have libraries (SDK) for programming languages?

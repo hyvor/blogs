@@ -28,11 +28,12 @@ class PostObject
     public string $slug;
     public string $url;
     public string $content;
+    public int $words;
     public string $title;
     public ?string $description;
     public ?string $featured_image;
     public ?string $canonical_url;
-    public int $reading_time;
+    
     public LanguageObject $language;
     public string $code_head;
     public string $code_foot;
@@ -58,11 +59,12 @@ class PostObject
         $this->slug = $post->slug;
         $this->url = PermalinkRepository::getPostPermalink($post, $blog, $language);
         $this->content = PostContentRepository::getHtml($variant->content, $blog);
+        $this->words = $variant->words ?? 0;
         $this->title = $variant->title;
         $this->description = $variant->description;
         $this->featured_image = $post->featured_image;
         $this->canonical_url = $post->canonical_url;
-        $this->reading_time = $post->reading_time ?? 0;
+
 
         // TODO: Add Tag code
         $this->code_head = $post->code_head ?? '';

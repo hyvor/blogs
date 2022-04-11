@@ -27,7 +27,8 @@ return new class extends Migration
             $table->text('content_unsaved')->nullable();
             $table->string('title')->nullable();
             $table->string('description', 350)->default('');
-            $table->string('featured_image')->nullable();
+            $table->integer('words')->nullable();
+
         });
     }
 

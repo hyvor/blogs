@@ -65,9 +65,9 @@ class PostRepository
         $language = LanguageRepository::getPrimaryLanguage($blog);
 
         return Post::where('posts.blog_id', $blog->id)
-            ->join('posts_variants', function($join) use ($language) {
-                $join->on('posts_variants.post_id', '=', 'posts.id');
-                $join->where('posts_variants.language_id', '=', $language->id);
+            ->join('post_variants', function($join) use ($language) {
+                $join->on('post_variants.post_id', '=', 'posts.id');
+                $join->where('post_variants.language_id', '=', $language->id);
             })
             ->where('posts.is_page', false)
             ->when($authorId, function ($query) use ($authorId) {
@@ -104,9 +104,9 @@ class PostRepository
             ->when($search, function ($query) use ($search) {
                 $query->where('posts.title', 'LIKE', "$search%");
             })
-            // to prevent selecting posts_variants data
+            // to prevent selecting post_variants data
             ->select('posts.*')
-            ->orderByRaw("FIELD(posts_variants.status, 'draft') DESC") // drafts first
+            ->orderByRaw("FIELD(post_variants.status, 'draft') DESC") // drafts first
             ->orderBy('posts.created_at', 'desc')
             ->limit($limit)
             ->offset($offset)
@@ -139,7 +139,8 @@ class PostRepository
         int $offset = 0,
         array $orderBys = [
             ['published_at', 'DESC']
-        ]
+        ],
+        bool $isPages = false
     ) : array {
 
         $builder = FilterQ::expression($filter)
@@ -147,16 +148,16 @@ class PostRepository
             ->keys(function($keys) {
 
                 $keys->add('id')
-                    ->column('posts.id')
-                    ->operators('~', true);
+                    ->column('posts.id');
 
                 $keys->add('published_at')
-                    ->column('posts.published_at')
-                    ->operators('~', true);
+                    ->column('posts.published_at');
 
                 $keys->add('updated_at')
-                    ->column('posts.updated_at')
-                    ->operators('~', true);
+                    ->column('post_variants.updated_at');
+
+                $keys->add('created_at')
+                    ->column('posts.created_at');
 
                 $keys->add('is_featured')
                     ->column('posts.is_featured')
@@ -164,15 +165,7 @@ class PostRepository
 
                 $keys->add('slug')
                     ->column('posts.slug')
-                    ->operators('=,!=,~');
-
-                $keys->add('title')
-                    ->column('posts.title')
-                    ->operators('~');
-
-                $keys->add('description')
-                    ->column('posts.description')
-                    ->operators('~,=,!=');
+                    ->operators('=,!=');
 
                 $keys->add('featured_image')
                     ->column('posts.featured_image')
@@ -182,13 +175,11 @@ class PostRepository
                     ->column('posts.canonical_url')
                     ->operators('=,!=');
 
-                $keys->add('reading_time')
-                    ->column('posts.reading_time')
-                    ->operators('~', true);
+                $keys->add('words')
+                    ->column('post_variants.words');
 
                 $keys->add('tag.id')
                     ->column('post_tag.tag_id')
-                    ->operators('=,!=')
                     ->join('post_tag', 'post_tag.post_id', '=', 'posts.id', 'left');
 
                 $keys->add('tag.slug')
@@ -201,7 +192,6 @@ class PostRepository
 
                 $keys->add('author.id')
                     ->column('post_author.user_id')
-                    ->operators('=,!=')
                     ->join('post_author', 'post_author.post_id', '=', 'posts.id', 'left');
 
                 $keys->add('author.slug')
@@ -213,17 +203,20 @@ class PostRepository
                     });
 
             })
-            ->operators(function($operators) {
-                $operators->add('~', 'LIKE');
-            })
             ->addWhere();
 
         foreach ($orderBys as $orderBy) {
             $builder->orderBy($orderBy[0], $orderBy[1]);
         }
 
-        $posts = $builder->where('posts.blog_id', $blog->id)
-            // ->where('posts.status', 'published');
+        $posts = $builder
+            ->join('post_variants', function($join) use ($language) {
+                $join->on('post_variants.post_id', '=', 'posts.id');
+                $join->where('post_variants.language_id', '=', $language->id);
+            })
+            ->where('posts.blog_id', $blog->id)
+            ->where('post_variants.status', 'published')
+            ->where('posts.is_page', $isPages)
             ->limit($limit)
             ->offset($offset)
             ->select('posts.*')

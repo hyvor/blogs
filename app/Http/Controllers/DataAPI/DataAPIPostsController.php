@@ -62,6 +62,7 @@ class DataAPIPostsController extends Controller
             'filter' => 'string',
             'sort' => 'string',
             'keys' => 'string',
+            'pages' => 'boolean'
         ]);
 
         $language = DataAPIHelper::getLanguage($blog, $request->input('language'));
@@ -71,12 +72,17 @@ class DataAPIPostsController extends Controller
         $filter = $request->input('filter');
         $keys = $request->input('keys');
         $sort = $request->input('sort');
+        $pages = (bool) $request->input('pages');
 
         $orderBys  = DataAPIHelper::getSort(
-            $sort, 
+            $sort,
             [
-                'published_at', 'created_at', 'updated_at', 
-                'is_featured', 'reading_time', 'title'
+                'published_at' => 'posts.published_at',
+                'created_at' => 'posts.created_at',
+                'updated_at' => 'posts.updated_at',
+                'is_featured' => 'posts.is_featured',
+                'title' => 'post_variants.title',
+                'words' => 'post_variants.words'
             ]
         );
 
@@ -86,7 +92,8 @@ class DataAPIPostsController extends Controller
             filter: $filter,
             limit: $limit,
             offset: $offset,
-            orderBys: $orderBys
+            orderBys: $orderBys,
+            isPages: $pages
         );
         
         $posts = $data['posts']->map(function ($post) use ($blog, $language) {

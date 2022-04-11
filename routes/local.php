@@ -1,5 +1,6 @@
 <?php
 
+use App\Domains\Post\Content\PostContentMetaRepository;
 use App\Domains\Post\Content\PostContentRepository;
 use App\Domains\Post\Content\SyntaxHighlighting;
 use App\Jobs\Scheduled\Counts\BlogCountJob;
@@ -70,4 +71,11 @@ Route::get('/syntax', function() {
     $code
     HTML);
 
+});
+
+Route::get('/text', function() {
+    $json = '{}';
+
+    dump(PostContentRepository::getText($json, Blog::find(1)));
+    dump(PostContentMetaRepository::updateMeta(Post::find(1), $json));
 });

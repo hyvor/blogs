@@ -28,16 +28,12 @@ class CreatePostsTable extends Migration
             $table->boolean('is_page')->default(false);
             $table->boolean('is_featured')->default(false);
 
-            // basic
+            // data
             $table->string('slug')->nullable();
-
-            // advanced
+            $table->string('featured_image')->nullable();
             $table->string('canonical_url')->nullable();
             $table->text('code_head')->nullable();
             $table->text('code_foot')->nullable();
-
-            // other
-            $table->tinyInteger('reading_time')->nullable();
 
             $table->unique(['blog_id', 'slug']);
         });
