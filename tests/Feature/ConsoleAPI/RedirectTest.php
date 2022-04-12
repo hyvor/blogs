@@ -12,13 +12,15 @@ use App\Models\Redirect;
 // To run the RedirectTest class only run this command in the command line.
 // php artisan test  --filter 'RedirectTest'
 
+
+// don't use the callEndPoint function use the testCase Function.
+// If path is wrong invalid path
 class RedirectTest extends TestCase
 {
     use RefreshDatabase;
 
     private function callEndpoint($method, $redirect,  $data = null) {
         return $this->call($method, 'http://blogs.hyvor.test/api/console/v0/blog/test/'.$redirect, $data);
-
     }
 
     public function test_redirect_get_data()

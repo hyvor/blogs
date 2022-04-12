@@ -1,6 +1,5 @@
 
 .settings-general {
-
     .social-media {
         .global-dual-setting {
             padding: 7px 0;
@@ -16,6 +15,14 @@
                 flex:3;
             }
         }
+    }
+
+    .global-languages-list .lang-tag {
+        margin-bottom:10px
+    }
+
+    .pointerEvent{
+        pointer-events: none;
     }
 
 }

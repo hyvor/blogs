@@ -70,36 +70,36 @@ class UserRepository
         UserRoleEnum $role,
         UserStatusEnum $status = UserStatusEnum::INVITED,
         array $userData = [],
-    // ): User {
-    ) {
+    ): User {
+    // ) {
 
         // This is the place where I got the ( cURL error 6: Could not resolve host: api ) Error so I had to comment it.
-        if ($hyvorUserId) {
-            $user = Userbase::fromId($hyvorUserId, false, true);
+        // if ($hyvorUserId) {
+        //     $user = Userbase::fromId($hyvorUserId, false, true);
 
-            if (!$user) {
-                throw new TrustedException("User not found");
-            }
+        //     if (!$user) {
+        //         throw new TrustedException("User not found");
+        //     }
 
-            $userData = [
-                'name' => $user->name,
-                'email' => $user->email,
-                'picture' => $user->picture,
-                'location' => $user->location,
-                'bio' => $user->bio,
-                'url' => $user->url
-            ];
-        }
+        //     $userData = [
+        //         'name' => $user->name,
+        //         'email' => $user->email,
+        //         'picture' => $user->picture,
+        //         'location' => $user->location,
+        //         'bio' => $user->bio,
+        //         'url' => $user->url
+        //     ];
+        // }
 
-        $slug = self::findSlugForUser($blog->id, $userData);
+        // $slug = self::findSlugForUser($blog->id, $userData);
 
         $user = User::create([
             'blog_id' => $blog->id,
             'picture_id' => $userData['picture'] ?? null,
-            // 'slug' => $userData['slug'],
+            // 'slug' => $userData['slug'], 
             'slug' => 'test-three',
-            'hyvor_user_id' => $hyvorUserId ?? null,
-            // 'hyvor_user_id' => 5,
+            // 'hyvor_user_id' => $hyvorUserId ?? null,
+            'hyvor_user_id' => 5,
             'status' => $status->value,
             'role' => $role->value,
             // 'email' => $userData['email'],
@@ -111,8 +111,6 @@ class UserRepository
             'social_youtube' => $userData['social_youtube'] ?? null,
             'social_instagram' => $userData['social_instagram'] ?? null,
         ]);
-
-        // dd($user);
 
         $getLanguage = $blog->languages()->where('is_primary', true)->first();
 
@@ -126,7 +124,7 @@ class UserRepository
             'bio' => $userData['bio'] ?? null,
         ]);
 
-        // return $user;
+        return $user;
     }
 
     public static function updateAuthor(

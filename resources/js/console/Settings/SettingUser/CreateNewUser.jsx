@@ -1,4 +1,4 @@
-import React, {useState} from 'react';
+import React, {useState, useEffect} from 'react';
 import { useActions, useValues } from 'kea';
 import { Trash, PencilFill, Plus, BoxArrowInRight} from 'react-bootstrap-icons';
 import { Popup, PopupBodyDefault, PopupConfirm, PopupFooterDoubleButton, PopupHeaderDefault } from '../../ReusableComponents/Popup';
@@ -30,17 +30,10 @@ export default function CreateNewUser(props) {
     const [slugError, setSlugError] = useState(null);
     const [name, setName] = useState('');
     const [email, setEmail] = useState('');
-
-    const [status, setStatus] = useState({statusType: ""});
     const [role, setRole] = useState({type: ""});
-
 
     function handleRole({value}){
         setRole({...role, type: value})
-    }
-
-    function handleStatus({value}){
-        setStatus({...status, statusType: value})
     }
 
     const selectRole = [
@@ -51,13 +44,6 @@ export default function CreateNewUser(props) {
         { label: 'contributor', value: 'contributor' },
         { label: 'finance', value: 'finance'}
     ]; 
-
-    const selectStatus = [
-        { label: 'invited', value: 'invited' },
-        { label: 'active', value: 'active'},
-        { label: 'blocked', value: 'blocked' },
-    ]; 
-
 
     function onNameChange(val) {
         setName(val);
@@ -92,15 +78,20 @@ export default function CreateNewUser(props) {
     }
     function submitUser (e) {
         e.preventDefault();
-        console.log(name)
-        console.log(role.type)
-        console.log(status.statusType)
+
+        let status
+        if(settingsType == 'Guest User'){
+            status = 'active';
+        }
+        else{
+            status = 'invited';
+        }
         create({
             name: name,
             email: email,
             slug: slug,
             role: role.type,
-            status: status.statusType
+            status: status
         });
         setName();
         setEmail();
@@ -146,12 +137,12 @@ export default function CreateNewUser(props) {
                                 settingsType === 'Guest User' ?
                                     <div>
                                         <Input 
-                                            title="Guest Name"
+                                            title="Name"
                                             type="text"
                                             name="name"
                                             value={name}
                                             onChange={onNameChange}
-                                            placeholder="Guest name"
+                                            placeholder="Name"
                                         />
                                         <Input 
                                             title="Slug"
@@ -167,9 +158,9 @@ export default function CreateNewUser(props) {
                                             name="email"
                                             value={email}
                                             onChange={setEmail}
-                                            placeholder="Description"
+                                            placeholder="Email"
                                         />
-                                        <DualSetting 
+                                        {/* <DualSetting 
                                             left={
                                                 <div>
                                                     <div className="popup-type-margin">Status</div>
@@ -182,24 +173,27 @@ export default function CreateNewUser(props) {
                                                         <SelectUserRole  options = {selectRole} onChange = {handleRole} defaultValue={handleRole[0]}/>
                                                 </div>
                                             }
-                                        />                               
-                                    </div>
+                                        /> */}
+
+                                        <div className="popup-type-margin">Role</div>
+                                            <SelectUserRole  options = {selectRole} onChange = {handleRole} defaultValue={handleRole[0]}/>
+                                        </div>
                                 : 
                                 <div>
                                     <Input 
-                                        title="User Name Or Email"
+                                        title="Username or Email"
                                         type="text"
                                         name="name"
                                         // value={name}
                                         // onChange={setName}
-                                        placeholder="User name or email"
+                                        placeholder="Username or email"
                                     />
                 
                                     <div className="popup-type-margin">Role</div>
                                     <SelectUserRole  options = {selectRole}/>
                 
-                                    <div className="popup-type-margin margin-top">Status</div>
-                                    <SelectUserRole  options = {selectStatus}/>
+                                    {/* <div className="popup-type-margin margin-top">Status</div>
+                                    <SelectUserRole  options = {selectStatus}/> */}
                                 </div>                   
                             }
                         </PopupBodyDefault>

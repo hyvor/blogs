@@ -92,20 +92,7 @@ export default function Users({user, subdomain}) {
                 }
             }
         }
-        // else
-        // {
-        //     if(variant.name == null || variant.bio == null || variant.location == null)
-        //     {
-        //         if(currentLanguageId == variant.language_id){
-        //             if(user.id == variant.user_id){
-        //                 setVariantName()
-        //                 setVariantBio()
-        //                 setVariantLocation()
-        //             }
-        //         }
-        //     }
-        // }
-    })
+    },[])
 
     
     const [styleUpdateIcon, setStyleUpdateIcon] = useState("table-button");
@@ -164,10 +151,16 @@ export default function Users({user, subdomain}) {
     const [ youtube, setYoutube ] = useState(user.social_youtube);
     const [ instagram, setInstagram ] = useState(user.social_instagram);
     
-    function handleVariationName({value}){
-        setVariantName({value})
-    }
+    // function handleVariationName({e}){
+    //     setVariantName({value})
+    // }
 
+    // const [user, setUser] = useState({name: ''})
+    // const handleChange = e => {
+    //     setUser({...user, name: e.target.value})
+    //  }
+
+     
     function handleUpdate(e) {
         e.preventDefault();
         setStyleUpdateIcon('table-update-popup')
@@ -207,8 +200,6 @@ export default function Users({user, subdomain}) {
         setStyleDeleteIcon("table-delete-popup");
     }
     function handleDoDelete() {
-        // console.log(id);
-        // toast("File deleted", {autoClose: 1500});
         remove({
             id:user.id,
             languageId:currentLanguageId
@@ -220,22 +211,6 @@ export default function Users({user, subdomain}) {
         setStyleDeleteIcon("table-button");
         setDeletePopupOpened(false)
     }
-
-    // If the user is an hyvor userType
-    // const [isChecked, setIsChecked] = useState(0);
-    // const [checkboxEvent, setCheckBoxEvent] = useState('pointerEvent');
-
-    // function onCheckChange(){
-    //     setIsChecked(1);
-
-    //     if(isChecked == 0){
-    //         setCheckBoxEvent()
-    //     }
-    
-    //     if(isChecked == 1){
-    //         setCheckBoxEvent('pointerEvent');
-    //     }
-    // }
 
     return <div>
         <div className="global-table-body">
@@ -254,119 +229,113 @@ export default function Users({user, subdomain}) {
 
                         {
                             updatePopUpOpened ?
-                                userType == 'guest' ?
-                                    <div className="popup-width">
-                                        <Popup
-                                            header={
+                                // userType == 'guest' ?
+                                <div className="popup-width">
+                                    <Popup
+                                        header={
+                                            <div>
+                                                <PopupHeaderDefault title='Update User' />
+                                                <UserLanguageSelector 
+                                                    id={user.id} 
+                                                    subdomain={subdomain}
+                                                    languages={languages} 
+                                                    variants={variants} 
+                                                    currentLanguageId={currentLanguageId}
+                                                    onChange={setCurrentLanguageId}
+                                                />
+                                            </div>
+                                        }
+                                        body={
+                                            <PopupBodyDefault>
                                                 <div>
-                                                    <PopupHeaderDefault title='Update User' />
-                                                    <UserLanguageSelector 
-                                                        id={user.id} 
-                                                        subdomain={subdomain}
-                                                        languages={languages} 
-                                                        variant={variant}
-                                                        currentLanguageId={currentLanguageId}
-                                                        onChange={setCurrentLanguageId}
+                                                    <ProfileImage/>
+                                                    <Input 
+                                                        title="Name"
+                                                        type="text"
+                                                        name="name"
+                                                        value={variantName}
+                                                        onChange={setVariantName}
+                                                        placeholder="Name"
                                                     />
-                                                </div>
-                                            }
-                                            body={
-                                                <PopupBodyDefault>
-                                                    <div>
-                                                        <ProfileImage/>
-
+                                                    <div className={pointerEvent}>
                                                         <Input 
-                                                            title="Name"
+                                                            title="Slug"
                                                             type="text"
-                                                            name="name"
-                                                            value={variantName}
-                                                            onChange={handleVariationName}
-                                                            placeholder="Name"
+                                                            name="slug"
+                                                            value={userSlug}
+                                                            onChange={setSlug}
+                                                            placeholder="Slug"
                                                         />
-
-                                                        <div className={pointerEvent}>
-                                                            <Input 
-                                                                title="Slug"
-                                                                type="text"
-                                                                name="slug"
-                                                                value={userSlug}
-                                                                onChange={setSlug}
-                                                                placeholder="Slug"
-                                                            />
-                                                        </div>
-
-                                                        <div className={pointerEvent}>
-                                                            <DualSetting 
-                                                                left={
-                                                                    <Input 
-                                                                        title="Email"
-                                                                        type="text"
-                                                                        name="email"
-                                                                        value={userEmail}
-                                                                        onChange={setEmail}
-                                                                        placeholder="Email"
-                                                                    />
-                                                                }
-                                                                right={
-                                                                    <Input 
-                                                                        title="Url"
-                                                                        type="text"
-                                                                        name="url"
-                                                                        value={userUrl}
-                                                                        onChange={setUrl}
-                                                                        placeholder="Url"
-                                                                    />
-                                                                }
-                                                            />
-                                                        </div>
-
-                                                        <div className={pointerEvent}>
-                                                            <DualSetting 
-                                                                left={
-                                                                    <div>
-                                                                        <div className="popup-type-margin">Role</div>
-                                                                        <SelectUserRole  options = {selectRole} onChange = {handleRole}/>
-                                                                    </div>
-                                                                }
-                                                                right={
-                                                                    <div>
-                                                                        <div className="popup-type-margin">Status</div>
-                                                                        <SelectUserRole  options = {selectStatus} onChange = {handleStatus}/>
-                                                                    </div>
-                                                                }
-                                                            />
-                                                        </div>
-
-                                                        
+                                                    </div>
+                                                    <div className={pointerEvent}>
                                                         <DualSetting 
                                                             left={
                                                                 <Input 
-                                                                    title="Location"
+                                                                    title="Email"
                                                                     type="text"
-                                                                    name="location"
-                                                                    value={variantLocation}
-                                                                    onChange={setVariantLocation}
-                                                                    placeholder="Location"
+                                                                    name="email"
+                                                                    value={userEmail}
+                                                                    onChange={setEmail}
+                                                                    placeholder="Email"
                                                                 />
                                                             }
                                                             right={
-                                                                <div className={pointerEvent}>
-                                                                    <Input 
-                                                                        title="Facebook"
-                                                                        type="text"
-                                                                        name="facebook"
-                                                                        value={facebook}
-                                                                        onChange={setFacebook}
-                                                                        placeholder="Facebook"
-                                                                    />
-                                                                </div>
+                                                                <Input 
+                                                                    title="Url"
+                                                                    type="text"
+                                                                    name="url"
+                                                                    value={userUrl}
+                                                                    onChange={setUrl}
+                                                                    placeholder="Url"
+                                                                />
                                                             }
                                                         />
-
-                                                        <div className={pointerEvent}>
-                                                            <DualSetting 
-                                                                left={
-                                                                    <Input 
+                                                    </div>
+                                                    <div className={pointerEvent}>
+                                                        <DualSetting 
+                                                            left={
+                                                                <div>
+                                                                    <div className="popup-type-margin">Role</div>
+                                                                    <SelectUserRole  options = {selectRole} onChange = {handleRole}/>
+                                                                </div>
+                                                            }
+                                                            right={
+                                                                <div>
+                                                                    <div className="popup-type-margin">Status</div>
+                                                                    <SelectUserRole  options = {selectStatus} onChange = {handleStatus}/>
+                                                                </div>
+                                                                }
+                                                        />
+                                                    </div>
+                                                    
+                                                     <DualSetting 
+                                                        left={
+                                                            <Input 
+                                                                title="Location"
+                                                                type="text"
+                                                                name="location"
+                                                                value={variantLocation}
+                                                                onChange={setVariantLocation}
+                                                                placeholder="Location"
+                                                            />
+                                                        }
+                                                        right={
+                                                            <div className={pointerEvent}>
+                                                                <Input 
+                                                                    title="Facebook"
+                                                                    type="text"
+                                                                    name="facebook"
+                                                                    value={facebook}
+                                                                    onChange={setFacebook}
+                                                                    placeholder="Facebook"
+                                                                />
+                                                            </div>
+                                                        }
+                                                    />
+                                                    <div className={pointerEvent}>
+                                                        <DualSetting 
+                                                            left={
+                                                                <Input 
                                                                     title="Twitter"
                                                                     type="text"
                                                                     name="twitter"
@@ -374,10 +343,9 @@ export default function Users({user, subdomain}) {
                                                                     onChange={setTwitter}
                                                                     placeholder="Twitter"
                                                                 />
-                                                                }
-                                                                right={
-
-                                                                    <Input 
+                                                            }
+                                                            right={
+                                                                <Input 
                                                                     title="LinkedIn"
                                                                     type="text"
                                                                     name="LinkedIn"
@@ -385,203 +353,73 @@ export default function Users({user, subdomain}) {
                                                                     onChange={setLinkedIn}
                                                                     placeholder="linkedIn"
                                                                 />
-                                                                }
-                                                            />
-
-                                                            <DualSetting 
-                                                                left={                                                                  
-                                                                    <Input 
-                                                                        title="Youtube"
-                                                                        type="text"
-                                                                        name="youtube"
-                                                                        value={youtube}
-                                                                        onChange={setYoutube}
-                                                                        placeholder="Youtube"
-                                                                    />
-                                                                }
-                                                                right={                                                                    
-                                                                    <Input 
-                                                                        title="Instagram"
-                                                                        type="text"
-                                                                        name="instagram"
-                                                                        value={instagram}
-                                                                        onChange={setInstagram}
-                                                                        placeholder="Instagram"
-                                                                    /> 
-                                                                }
-                                                            />
-                                                        </div>
-
-                                                        <div className="popup-type-margin">Bio</div>
-                                                        <textarea 
-                                                            className="input"
-                                                            placeholder="Write a bio..."
-                                                            value={variantBio}
-                                                            onChange={setVariantBio}
-                                                            maxLength={350}
-                                                        ></textarea>
-
-                                                        <div className="table-delete">
-                                                            <span className = 'button danger' onClick={handleDelete}>
-                                                                Delete
-                                                            </span>
-                                                            {
-                                                                deletePopupOpened ?
-                                                                <PopupConfirm
-                                                                    title="Delete Permanently"
-                                                                    text="Are you sure to delete this user permanently? You will not be able to access it anymore."
-                                                                    name="Delete"
-                                                                    buttonClass="danger"
-                                                                    onClick={handleDoDelete}
-                                                                    onCancel={handleDeleteCancel}
-                                                                />
-                                                                : null
                                                             }
-                                                        </div> 
-                                                    </div>
-                                                </PopupBodyDefault>
-                                            }
-                                            footer={
-                                                <PopupFooterDoubleButton
-                                                    onCancel={handleUpdateCancel}
-                                                    onClick={(e)=> {submitUser(e)}}
-                                                    name='Create'
-                                                />
-                                            }
-                                        /> 
-                                    </div>
-                                : 
-
-                                    <div className="popup-width">
-                                        <Popup
-                                            header={
-                                                <div>
-                                                    <PopupHeaderDefault title='Update Hyvor User' />
-                                                    <UserLanguageSelector 
-                                                        id={user.id} 
-                                                        subdomain={subdomain}
-                                                        languages={languages} 
-                                                        variant={variant}
-                                                        currentLanguageId={currentLanguageId}
-                                                        onChange={setCurrentLanguageId}
-                                                    />
-                                                </div>
-                                            }
-                                            body={
-                                                <PopupBodyDefault>
-                                                    <div>
-                                                            {/* <div className="isSynced">
-                                                                <input 
-                                                                    type="checkbox" 
-                                                                    name="topping" 
-                                                                    // value={isChecked} 
-                                                                    checked={isChecked}  
-                                                                    onChange={onCheckChange} 
-                                                                />
-                                                                is_synced
-                                                            </div> */}
-
-                                                        {/* <div className={checkboxEvent}> */}
-                                                        <ProfileImage/>
-
-                                                        <Input 
-                                                            title="User Name"
-                                                            type="text"
-                                                            name="name"
-                                                            value={variantName}
-                                                            onChange={handleVariationName}
-                                                            placeholder="User name"
                                                         />
-
-                                                        <div className={pointerEvent}>
-                                                            <Input 
-                                                                title="Slug"
-                                                                type="text"
-                                                                name="url"
-                                                                value={userSlug}
-                                                                onChange={setSlug}
-                                                                placeholder="Slug"
-                                                            />
-
-                                                            <DualSetting 
-                                                                left={
-                                                                    <div>
-                                                                        <div className="popup-type-margin">Role</div>
-                                                                        <SelectUserRole  options = {selectRole} onChange = {handleRole}/>
-                                                                    </div>
-                                                                }
-                                                                right={
-                                                                    <div>
-                                                                        <div className="popup-type-margin">Status</div>
-                                                                        <SelectUserRole  options = {selectStatus} onChange = {handleStatus}/>
-                                                                    </div>
-                                                                }
-                                                            />
-                                                        </div>
-
-                                                        <div className="popup-type-margin">Bio</div>
-                                                        <textarea 
-                                                            className="input"
-                                                            placeholder="Write a bio..."
-                                                            value={variantBio}
-                                                            onChange={setVariantBio}
-                                                            maxLength={350}
-                                                        ></textarea>
-
-                                                        <div className="table-delete">
-                                                            <span className = 'button danger' onClick={handleDelete}>
-                                                                Delete
-                                                            </span>
-                                                            {
-                                                                deletePopupOpened ?
-                                                                <PopupConfirm
-                                                                    title="Delete Permanently"
-                                                                    text="Are you sure to delete this user permanently? You will not be able to access it anymore."
-                                                                    name="Delete"
-                                                                    buttonClass="danger"
-                                                                    onClick={handleDoDelete}
-                                                                    onCancel={handleDeleteCancel}
+                                                        <DualSetting 
+                                                            left={                                                                  
+                                                                <Input 
+                                                                    title="Youtube"
+                                                                    type="text"
+                                                                    name="youtube"
+                                                                    value={youtube}
+                                                                    onChange={setYoutube}
+                                                                    placeholder="Youtube"
                                                                 />
-                                                                : null
                                                             }
-                                                        </div> 
-                                                        {/* </div> */}
-
+                                                            right={                                                                    
+                                                                <Input 
+                                                                    title="Instagram"
+                                                                    type="text"
+                                                                    name="instagram"
+                                                                    value={instagram}
+                                                                    onChange={setInstagram}
+                                                                    placeholder="Instagram"
+                                                                /> 
+                                                            }
+                                                        />
                                                     </div>
-                                                </PopupBodyDefault>
-                                            }
-                                            footer={
-                                                <PopupFooterDoubleButton
-                                                    onCancel={handleUpdateCancel}
-                                                    onClick={(e)=> {submitUser(e)}}
-                                                    name='Create'
-                                                />
-                                            }
-                                        /> 
-                                    </div>
 
+                                                    <div className="popup-type-margin">Bio</div>
+                                                    <textarea 
+                                                        className="input"
+                                                        placeholder="Write a bio..."
+                                                        value={variantBio}
+                                                        onChange={setVariantBio}
+                                                        maxLength={350}
+                                                    ></textarea>
+
+                                                    <div className="table-delete">
+                                                        <span className = 'button danger' onClick={handleDelete}>
+                                                            Delete
+                                                        </span>
+                                                        {
+                                                            deletePopupOpened ?
+                                                            <PopupConfirm
+                                                                title="Delete Permanently"
+                                                                text="Are you sure to delete this user permanently? You will not be able to access it anymore."
+                                                                name="Delete"
+                                                                buttonClass="danger"
+                                                                onClick={handleDoDelete}
+                                                                onCancel={handleDeleteCancel}
+                                                            />
+                                                            : null
+                                                        }
+                                                    </div> 
+                                                </div>
+                                            </PopupBodyDefault>
+                                        }
+                                        footer={
+                                            <PopupFooterDoubleButton
+                                                onCancel={handleUpdateCancel}
+                                                onClick={(e)=> {submitUser(e)}}
+                                                name='Update'
+                                            />
+                                        }
+                                    /> 
+                                </div>
                             : null
                         }
                     </div>
-
-
-                    {/* <div className="table-delete">
-                        <span className={styleDeleteIcon} onClick={handleDelete}>
-                            <Trash size={10} />
-                        </span>
-                        {
-                            deletePopupOpened ?
-                                <PopupConfirm
-                                    title="Delete Permanently"
-                                    text="Are you sure to delete this user permanently? You will not be able to access it anymore."
-                                    name="Delete"
-                                    buttonClass="danger"
-                                    onClick={handleDoDelete}
-                                    onCancel={handleDeleteCancel}
-                                />
-                            : null
-                        }
-                    </div> */}
                     <div className="table-view">
                         <span className='table-button'>
                             <BoxArrowInRight size={10} />
@@ -591,7 +429,6 @@ export default function Users({user, subdomain}) {
             </div>
         </div>
     </div>
-
 }
 
 function SelectUserRole({options, onChange, defaultValue}) {

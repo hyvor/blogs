@@ -12,56 +12,79 @@ import languagesLogic from '../../logic/languagesLogic';
 import GeneralLanguageSelector from './GeneralLanguageSelector';
 
 
+
 // Should find a way to set up the should save section in the pop-up.
 export default function SettingsGeneral() {
 
     const subdomain = subdomainLogic.values.subdomain;
     const blogLogicBuilt = blogLogic({subdomain})
-    const { remove , updateData} = useActions(blogLogicBuilt)
-    const { blog, updateDataAjax } = useValues(blogLogicBuilt)
-
+    const { blog } = useValues(blogLogicBuilt)
+    const { updateData} = useActions(blogLogicBuilt)
 
     const { languages, getLanguageById } = useValues(languagesLogic({subdomain}))
     const { findBlogBySubdomain } = useValues(blogsLogic)
     const [currentLanguageId, setCurrentLanguageId] = useState( findBlogBySubdomain(subdomain).blog.default_language.id );
     const currentLanguage = getLanguageById(currentLanguageId);
-
     const variants = blog.variants || [];
     const variant = variants[currentLanguageId] || {};
 
-    console.log(currentLanguage);
 
+    const [pointerEvent, setPointerEvent] = useState();
 
-
-
-
-
-
-
-
+    // To display data in the pop-up
+    const [variantName, setName] = useState();
+    const [variantDescription, setDescription] = useState();
     const [subdomainEdit, setSubdomain] = useState('');
-    const [name, setName] = useState('');
-    const [description, setDescription] = useState('');
     const [icon, setIcon] = useState('');
     const [featuredImage, setFeaturedImage] = useState('');
     const [facebook, setFacebook] = useState('');
     const [twitter, setTwitter] = useState('');
-    const [linkedin, setLinkedin] = useState('');
+    const [linkedIn, setLinkedin] = useState('');
     const [youtube, setYoutube] = useState('');
     const [instagram, setInstagram] = useState('');
     const [github, setGithub] = useState('');
 
+    useEffect(() => {
+        if (typeof(blog) !== 'undefined') {
+            setSubdomain(blog.subdomain);
+            setIcon(blog.social_facebook);
+            setFeaturedImage(blog.social_facebook);
+            setFacebook(blog.social_facebook);
+            setTwitter(blog.social_twitter);
+            setLinkedin(blog.social_linkedin);
+            setYoutube(blog.social_youtube);
+            setInstagram(blog.social_instagram);
+            setGithub(blog.social_github);
+            setName(variant.name)
+            setDescription(variant.description)
+
+        }
+    },[blog])
+    
+    function handleSave(e) {
+        e.preventDefault();
+        updateData({
+            subdomainEdit:subdomainEdit,
+            name: variantName,
+            description:variantDescription,
+            icon:icon,
+            featureImageId:featuredImage,
+            social_facebook:facebook,
+            social_twitter:twitter,
+            social_linkedin:linkedIn,
+            social_youtube: youtube,
+            social_instagram:instagram,
+            social_github:github
+        });
+    }
 
     // const [htWebsteId, setHtWebsiteId] = useState(null);
-
     // const shouldSave = subdomain !== "";
-    
-    
     function shouldSave() {
-        // console.log('hello')
+        console.log('should save')
         // const shouldSave
         // if(subdomain){
-             return subdomainEdit !== ""
+            //  return subdomainEdit !== ""
         // }
         // subdomain !== ""
         // name !== ""
@@ -70,15 +93,12 @@ export default function SettingsGeneral() {
         // featuredImage !== ""
         // facebook !== ""
         // twitter !== ""
-        // linkedin !== ""
+        // linkedIn !== ""
         // youtube !== ""
         // instagram !== ""
         // github !== ""
     }
 
-    function handleSave() {
-        
-    }
     function handleDiscard() {
         setSubdomain('');
         setName('');
@@ -100,7 +120,6 @@ export default function SettingsGeneral() {
             General Settings
         </div>
         <GeneralLanguageSelector 
-            id={blog.id} 
             subdomain={subdomain}
             languages={languages} 
             currentLanguageId={currentLanguageId}
@@ -131,7 +150,7 @@ export default function SettingsGeneral() {
                     title={null}
                     type="text"
                     name="name"
-                    value={name}
+                    value={variantName}
                     onChange={setName}
                 />
             }
@@ -145,7 +164,7 @@ export default function SettingsGeneral() {
                     title={null}
                     type="text"
                     name="description" 
-                    value={description}
+                    value={variantDescription}
                     onChange={setDescription}
                 />
             }
@@ -216,8 +235,8 @@ export default function SettingsGeneral() {
                     <Input 
                         title={null}
                         type="text"
-                        name="linkedin"
-                        value={linkedin}
+                        name="linkedIn"
+                        value={linkedIn}
                         onChange={setLinkedin}
                     />
                 }

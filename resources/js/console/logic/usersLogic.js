@@ -34,10 +34,10 @@ const usersLogic = kea({
 
         remove: async ({id, languageId}) => {
             console.log(id, languageId)
-            // actions.removeFromList(id);
-            // await api.delete(props.subdomain, `/user/${id}`,{
-            //     languageId: languageId,
-            // });
+            actions.removeFromList(id);
+            await api.delete(props.subdomain, `/user/${id}`,{
+                languageId: languageId,
+            });
         },
             
         create: async ({name, email, slug, role, status}) => {
@@ -54,7 +54,7 @@ const usersLogic = kea({
 
         createVariant: async ({userId, languageId}) => {
             // console.log(userId, languageId)
-            const user = await api.post(props.subdomain, '/userVariant', {
+            const user = await api.post(props.subdomain, '/user/variant', {
                 userId: userId,
                 languageId: languageId,
             })
@@ -95,13 +95,16 @@ const usersLogic = kea({
             setUsersList: (_, {user}) => user,
             removeFromList: (state, {id}) => state.filter(m => m.id !== id),
             addUser: (state, {user}) => [user, ...state],
-            addUserVarian: (state, {user}) => [user, ...state],
+            // addUserVarian: (state, {user}) => [user, ...state],
             updateUser:(state, {user}) => state.map(
                 stateUser => stateUser.id === user.id ? user : stateUser
             ),
         }],
         userListHasMore: [false, {
             setUsersListHasMore: (_, {has}) => has 
+        }],
+        createNewVarian: [[], {
+            addUserVarian: (state, {user}) => [user, ...state],
         }],
     },
 

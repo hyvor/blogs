@@ -79,7 +79,7 @@ export default function Tags ({tag, subdomain})
                  }
              }
          }
-     })
+     }, [])
 
 
     // update section
@@ -249,7 +249,7 @@ export default function Tags ({tag, subdomain})
                                                 id={tag.id} 
                                                 subdomain={subdomain}
                                                 languages={languages} 
-                                                variant={variant}
+                                                variants={variants}
                                                 currentLanguageId={currentLanguageId}
                                                 onChange={setCurrentLanguageId}
                                             />

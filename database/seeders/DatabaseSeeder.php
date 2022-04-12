@@ -20,7 +20,7 @@ use App\Models\User;
 use Illuminate\Support\Str;
 use Illuminate\Database\Seeder;
 
-use Illuminate\Http\Client\ConnectionException;
+// use Illuminate\Http\Client\ConnectionException;
 
 
 class DatabaseSeeder extends Seeder
@@ -57,6 +57,7 @@ class DatabaseSeeder extends Seeder
                 'language_id' => $language->id,
                 'name' => $blogData[1],
             ]);
+
 
             $tags = [];
             $tagsVariant = [];

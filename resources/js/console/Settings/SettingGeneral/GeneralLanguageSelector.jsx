@@ -1,12 +1,18 @@
 import React from 'react'
 import { useActions, useValues } from 'kea';
 import { Check, Clock, Dot, Plus } from 'react-bootstrap-icons';
-// import subdomainLogic from '../logic/subdomainLogic';
-import tagsLogic from '../../logic/tagsLogic';
+import blogLogic from '../../logic/blogLogic';
 
 
-export default function GeneralLanguageSelector({id, subdomain, languages, currentLanguageId, onChange }) 
+export default function GeneralLanguageSelector({subdomain, languages, currentLanguageId, onChange }) 
 {
+    const blogLogicBuilt = blogLogic({subdomain})
+    const { createVariant} = useActions(blogLogicBuilt)
+
+    createVariant({
+        languageId: currentLanguageId 
+    });
+
     return <div>
         <div className="global-languages-list">
         {

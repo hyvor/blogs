@@ -7,7 +7,7 @@ import tagsLogic from '../../logic/tagsLogic';
 
 
 
-export default function TagLanguageSelector({id, subdomain, languages, variant, loadVariant, currentLanguageId, onChange }) 
+export default function TagLanguageSelector({id, subdomain, languages, variants, currentLanguageId, onChange }) 
 {
     const tagLogicBuilt = tagsLogic({subdomain})
     const { createVariant} = useActions(tagLogicBuilt)
@@ -19,7 +19,7 @@ export default function TagLanguageSelector({id, subdomain, languages, variant, 
 
     return <div>
         <div className="global-languages-list">
-        {
+        {/* {
             languages.map(lang => (
             <span 
                 key={lang.id}
@@ -32,30 +32,21 @@ export default function TagLanguageSelector({id, subdomain, languages, variant, 
                 </span>
             </span>
             ))
-        }
-        {/* {
+        } */}
+        {
             languages.map(lang => {
-                const variant = variant.language_id
+                const variant = variants[lang.id]
                 let statusIcon;
-                let tip;
                 if (!variant) {
                     statusIcon = <Plus />
-                    tip = `Add ${lang.name} post`;
-                } else if (variant.status === 'published') {
+                } else {
                     statusIcon = <Check />
-                    tip = `${lang.name} - Published`;
-                } else if (variant.status === 'scheduled') {
-                    statusIcon = <Clock size={9} />
-                    tip = `${lang.name} - Scheduled`;
-                } else if (variant.status === 'draft') {
-                    statusIcon = <Dot />
-                    tip = `${lang.name} - Draft`;
                 }
 
                 return <span 
                     key={lang.id}
                     className={"lang-tag" + (currentLanguageId === lang.id ? " active" : "")}
-                    data-tip={tip}
+                    // data-tip={tip}
                     onClick={() => onChange(lang.id)}
                 >
                     <span className="code">{lang.code}</span>
@@ -64,7 +55,9 @@ export default function TagLanguageSelector({id, subdomain, languages, variant, 
                     </span>
                 </span>
             })
-        } */}
+        }
+
+       
         </div> 
     </div>
 }

@@ -31,4 +31,13 @@
             }
         }
     }
+    .popup-width .popup-wrap .popup {
+        width: 500px;
+        max-height: 500px;
+        overflow: auto;
+    }
+
+    .global-dual-setting:not(:first-child) {
+        border-top: none; 
+    }
 }

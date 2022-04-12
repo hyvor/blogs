@@ -52,9 +52,9 @@
 
 .settings-save {
 
-    position: absolute;
+    position: fixed;
     bottom: 20px;
-    left: 0;
+    left: 300px;
     width:100%;
     text-align: center;
     &.start {

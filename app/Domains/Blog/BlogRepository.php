@@ -8,6 +8,8 @@ use App\Models\Blog;
 use App\Models\BlogVariant;
 use App\Domains\Language\LanguageRepository;
 use App\Models\Language;
+use App\Domains\Media\MediaRepository;
+
 
 class BlogRepository
 {
@@ -59,35 +61,42 @@ class BlogRepository
     * ConsoleAPI Settings->General
     *
     */
-    public static function getBlog($blog) {
-        $language = LanguageRepository::getPrimaryLanguage($blog);
+    // public static function getBlog($blog) {
+    //     $language = LanguageRepository::getPrimaryLanguage($blog);
 
-        $blogData = Blog::where('blogs.id', '=', $blog->id)
-        ->join('blog_variants', function($join) use ($language) {
-            $join->on('blog_variants.blog_id', '=', 'blogs.id');
-            $join->where('blog_variants.language_id', '=',  $language->id);
-        })
-        ->select('blogs.*')
-        ->get();
+    //     $blogData = Blog::where('blogs.id', '=', $blog->id)
+    //     ->join('blog_variants', function($join) use ($language) {
+    //         $join->on('blog_variants.blog_id', '=', 'blogs.id');
+    //         $join->where('blog_variants.language_id', '=',  $language->id);
+    //     })
+    //     ->select('blogs.*')
+    //     ->get();
 
-        // dd($blogData);
-        return $blogData;
-    } 
+    //     // dd($blogData);
+    //     return $blogData;
+    // } 
 
-    public static function updateBlog($blog, $languageId, array $blogData = []) {
+    public static function updateBlog($blog, $languageId, $featuredImage, $ico , array $blogData = []) {
 
-        // dd($blogData['subdomain']);
+        dd($blogData['subdomain']);
         // I must thinks a bit more about this about how to add the media.
+        $media = MediaRepository::upload($blog->id, $featuredImage);
+
+        $mediaId = $media->id;
+
+        dd($mediaId);
+
         Blog::find($blog->id)
             ->update([
                 'subdomain' => $blogData['subdomain'],
-                'icon_id' => $blogData['icon'] ?? null,
+                'icon_id' => $icon ?? null,
                 'featured_image_id' => $blogData['featureImageId'] ?? null,
                 'social_facebook' => $blogData['social_facebook'] ?? null,
                 'social_twitter' => $blogData['social_twitter'] ?? null,
                 'social_linkedin' => $blogData['social_linkedin'] ?? null,
                 'social_youtube' => $blogData['social_youtube'] ?? null,
                 'social_instagram' => $blogData['social_instagram'] ?? null,
+                'social_github' => $blogData['social_github'] ?? null,
             ]);
 
         BlogVariant::where([

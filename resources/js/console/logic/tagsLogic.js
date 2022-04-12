@@ -54,8 +54,8 @@ const tagsLogic = kea({
         },
 
         createVariant: async ({tagId, languageId}) => {
-            // console.log(tagId, languageId)
-            const tag = await api.post(props.subdomain, '/tagVariant', {
+            console.log(tagId, languageId)
+            const tag = await api.post(props.subdomain, '/tag/variant', {
                 tagId: tagId,
                 languageId: languageId,
             })
@@ -115,12 +115,11 @@ const tagsLogic = kea({
     }),
 
     reducers: {
-
         tag: [[], {
             setTagList: (_, {tag}) => tag,
             removeFromList: (state, {id}) => state.filter(m => m.id !== id),
             addTag: (state, {tag}) => [tag, ...state],
-            addTagVarian: (state, {tag}) => [tag, ...state],
+            // addTagVarian: (state, {tag}) => [tag, ...state],
             updateTag:(state, {tag}) => state.map(
                 stateTag => stateTag.id === tag.id ? tag : stateTag
             ),
@@ -128,14 +127,9 @@ const tagsLogic = kea({
         tagListHasMore: [false, {
             setTagsListHasMore: (_, {has}) => has 
         }],
-
-        // tagVariant: [[], {
-        //     setVariantList: (_, {tagVariant}) => tagVariant,
-        //     removeVariantList: (state, {id}) => state.filter(m => m.id !== id),            
-        //     updateTagVarian:(state, {tagVariant}) => state.map(
-        //         stateTagVariant => stateTagVariant.id === tag.id ? tagVariant : stateTagVariant
-        //     ),
-        // }],
+        createNewVarian: [[], {
+            addTagVarian: (state, {tag}) => [tag, ...state],
+        }],
     },
 
     events: ({actions}) => ({

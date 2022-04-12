@@ -11,7 +11,6 @@ const blogLogic = kea({
         setBlog: (blog) => ({blog}),
         addBlogVarian: (user) => ({user}),
         updateBlog: (user) => ({user}),
-
         updateBlogData: (key, value) => ({key, value}),
         save: () => false,
         setToOriginal: () => ({original: values.blogOriginal}),
@@ -24,34 +23,35 @@ const blogLogic = kea({
             actions.setBlog(blog);
         },
         createVariant: async ({languageId}) => {
-            // console.log(languageId)
-            const blog = await api.post(props.subdomain, '/userVariant', {
+            console.log(languageId)
+            const blog = await api.post(props.subdomain, '/blog/variant', {
                 languageId: languageId,
             })
             actions.addBlogVarian(blog);
         },
             
         updateData: async ({
-            name, social_facebook, social_twitter, 
-            social_linkedin, social_youtube, social_instagram,
+            subdomainEdit, name, description, icon, featureImageId, social_facebook, social_twitter, 
+            social_linkedin, social_youtube, social_instagram, social_github
             }) => {
 
-            // console.log(id, name, social_facebook, social_twitter, 
-            // social_linkedin, social_youtube, social_instagram )
+            console.log( subdomainEdit, name, description, icon, featureImageId, social_facebook, social_twitter, 
+                social_linkedin, social_youtube, social_instagram, social_github )
 
             const blog = await api.patch(props.subdomain, '/blog', {
-                subdomain:subdomain,
+                subdomain:subdomainEdit,
                 name: name,
+                description:description,
                 icon:icon,
+                featureImageId:featureImageId,
                 social_facebook:social_facebook,
                 social_twitter:social_twitter,
                 social_linkedin:social_linkedin,
                 social_youtube: social_youtube,
                 social_instagram:social_instagram,
-                featureImageId:featureImageId,
-                description:description,
+                social_github:social_github,
             });
-            actions.updateBlog(blog);
+            actions.updateBlogData(blog);
         },
 
     }),
@@ -65,10 +65,9 @@ const blogLogic = kea({
         blog: [{}, {
             setBlog: (_, {blog}) => blog,
             addBlogVarian: (state, {blog}) => [blog, ...state],
-            updateBlog:(state, {user}) => state.map(
-                stateUser => stateUser.id === user.id ? user : stateUser
-            ),
-
+            // updateBlog:(state, {user}) => state.map(
+            //     stateUser => stateUser.id === user.id ? user : stateUser
+            // ),
             updateBlogData: (state, {key, value}) => ({...state, ...{[key]: value}}),
             setToOriginal: (_, {original}) => original 
         }]

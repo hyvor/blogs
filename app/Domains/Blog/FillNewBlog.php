@@ -23,7 +23,6 @@ class FillNewBlog {
         $language = self::fillLanguage($blog); 
 
         $user = self::fillOwner($blog);
-        // dd($user);
 
         self::fillRoutes($blog);
         self::fillPosts($blog, $user);

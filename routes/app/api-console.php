@@ -11,6 +11,7 @@ use App\Http\Controllers\ConsoleAPI\ConsoleUserController;
 use App\Http\Controllers\ConsoleAPI\ConsoleRedirectController;
 use App\Http\Controllers\ConsoleAPI\ConsoleNavigationController;
 use App\Http\Controllers\ConsoleAPI\ConsoleTagController;
+use App\Http\Controllers\ConsoleAPI\ConsoleRouteController;
 
 use App\Http\Controllers\ConsoleAPI\ConsoleViewController;
 
@@ -93,8 +94,8 @@ Route::prefix('/api/console/v0/blog/{subdomain}')
         Route::get('/blog/post-counts', [ConsoleBlogController::class, 'getPostsCounts']);
 
         // Blog General CRUD 
-        Route::get('/blogData', [ConsoleBlogController::class, 'getBlogData']);
-        Route::post('/blogVariant', [ConsoleBlogController::class, 'createBlogVariant']);
+        // Route::get('/blogData', [ConsoleBlogController::class, 'getBlogData']);
+        Route::post('/blog/variant', [ConsoleBlogController::class, 'createBlogVariant']);
         Route::put('/blog', [ConsoleBlogController::class, 'updateBlog']);
         
         /**
@@ -133,9 +134,9 @@ Route::prefix('/api/console/v0/blog/{subdomain}')
         // tags CRUD
         Route::get('/tags', [ConsoleTagController::class, 'getTag']);
         Route::post('/tags', [ConsoleTagController::class, 'createTag']);
-        Route::put('/tag/{tagId}', [ConsoleTagController::class, 'updateTag']);
-        Route::delete('/tag/{tagId}', [ConsoleTagController::class, 'deleteTag']);
-        Route::post('/tagVariant', [ConsoleTagController::class, 'createTagVariant']);
+        Route::put('/tag/{id}', [ConsoleTagController::class, 'updateTag']);
+        Route::delete('/tag/{id}', [ConsoleTagController::class, 'deleteTag']);
+        Route::post('/tag/variant', [ConsoleTagController::class, 'createTagVariant']);
 
         // tag variant crud
         // Route::get('/tagVariant', [ConsoleTagController::class, 'getTagVariant']);
@@ -197,11 +198,17 @@ Route::prefix('/api/console/v0/blog/{subdomain}')
         Route::post('/user', [ConsoleUserController::class, 'createAuthor']);
         Route::patch('/user/{id}', [ConsoleUserController::class, 'updateAuthor']); 
         Route::delete('/user/{id}', [ConsoleUserController::class, 'deleteAuthor']); 
-        Route::post('/userVariant', [ConsoleUserController::class, 'createAuthorVariant']);
+        Route::post('/user/variant', [ConsoleUserController::class, 'createAuthorVariant']);
 
         // Route::get('/userVariant', [ConsoleUserController::class, 'getAuthorVariant']);
         // Route::put('/userVariant', [ConsoleUserController::class, 'updateAuthorVariant']);
         // Route::delete('/userVariant', [ConsoleUserController::class, 'deleteAuthorVariant']);
+
+        // route CRUD
+        Route::get('/route', [ConsoleRouteController::class, 'getRoute']);
+        Route::post('/route', [ConsoleRouteController::class, 'createRoute']);
+        Route::put('/route/{id}', [ConsoleRouteController::class, 'updateRoute']);
+        Route::delete('/route/{id}', [ConsoleRouteController::class, 'deleteRoute']);
 
         // theme CRUD
         Route::get('/theme-files', [ConsoleBlogThemeController::class, 'getAllFiles']);

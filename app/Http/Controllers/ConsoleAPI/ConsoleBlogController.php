@@ -27,31 +27,25 @@ class ConsoleBlogController extends Controller
     /*
     * ConsoleAPI Settings->General
     */
-    public static function getBlogData(Blog $blog)
-    {
-        $getData = BlogRepository::getBlog($blog)
-                ->map(function ($blog) {
-                    return new BlogObject($blog);
-            });
-        return response()->json($getData);
-    }
+    // public static function getBlogData(Blog $blog)
+    // {
+    //     $getData = BlogRepository::getBlog($blog)
+    //             ->map(function ($blog) {
+    //                 return new BlogObject($blog);
+    //         });
+    //     return response()->json($getData);
+    // }
 
     public static function updateBlog(Request $request, Blog $blog)
     {
         $languageId =  $request->input('languageId');
+
+        $featuredImage = $request->file('featureImageId');
+        $icon = $request->file('icon');
         
         if($request->has('subdomain')) {
             $blogData['subdomain'] = $request->input('subdomain');
         }
-
-        // Should be changed
-        if ($request->has('icon')) {
-            $blogData['icon'] = $request->input('icon');
-        }
-        if ($request->has('featureImageId')) {
-            $blogData['featureImageId'] = $request->input('featureImageId');
-        }
-
         if ($request->has('social_facebook')) {
             $blogData['social_facebook'] = $request->input('social_facebook');
         }
@@ -71,6 +65,10 @@ class ConsoleBlogController extends Controller
             $blogData['social_instagram'] = $request->input('social_instagram');
         }
 
+        if ($request->has('social_github')) {
+            $blogData['social_github'] = $request->input('social_github');
+        }
+
         // Variants
         if ($request->has('name')) {
             $blogData['name'] = $request->input('name');
@@ -81,7 +79,7 @@ class ConsoleBlogController extends Controller
         }
 
         
-        $updateBlogData = BlogRepository::updateBlog($blog, $languageId, $blogData);
+        $updateBlogData = BlogRepository::updateBlog($blog, $languageId, $featuredImage, $icon, $blogData);
         return response()->json($updateBlogData);
     }
 

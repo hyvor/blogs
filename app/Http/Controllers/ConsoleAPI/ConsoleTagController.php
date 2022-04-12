@@ -63,7 +63,7 @@ class ConsoleTagController extends Controller {
         //     'codeFoot' => 'required|string',
         // ]);
 
-        $id = $request->route('tagId');
+        $id = $request->route('id');
         $slug = $request->input('slug');
         $languageId = $request->input('languageId');
         $codeHead = $request->input('codeHead') ?? null;
