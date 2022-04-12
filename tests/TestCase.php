@@ -20,7 +20,7 @@ abstract class TestCase extends BaseTestCase
 
     protected function callDataApi(string $endpoint, $data = [], $subdomain = 'test') {
         $endpoint = trim($endpoint, '/');
-        return $this->call('GET', URL::to("/api/data/v0/blog/$subdomain/$endpoint"), $data);
+        return $this->call('GET', URL::to("/api/data/v0/$subdomain/$endpoint"), $data);
     }
 
     protected function callConsoleApi(string $method, string $endpoint, $data = null) {

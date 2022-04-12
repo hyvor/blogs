@@ -12,6 +12,10 @@ class PostVariant extends Model
 {
     use HasFactory;
     use Searchable;
+    
+    protected $with = [
+        'language'
+    ];
 
     public function post()
     {

@@ -20,24 +20,6 @@ use Exception;
 class DataAPIController extends Controller
 {
 
-    public function tag(Request $request, Blog $blog)
-    {
-        $id = $request->input('id');
-        $slug = $request->input('slug');
-        $keys = $request->input('keys');
-
-        $request->validate([
-            'id' => 'required_without:slug',
-            'slug' => 'required_without:id',
-        ]);
-
-        $tag = TagRepository::getTagByBlogIdAndIdentifier($blog->id, $id, $slug);
-        if (!$tag) {
-            throw new TrustedException('Tag not found', TrustedException::ERROR_NOT_FOUND);
-        }
-
-        return response()->json(DataAPIKeysFilter::filter(new TagObject($tag, $blog), $keys));
-    }
 
     public function author(Request $request, Blog $blog)
     {

@@ -56,14 +56,15 @@ class DatabaseSeeder extends Seeder
             $tagsVariant = [];
             foreach (range(0, 9) as $i) {
                 $name = $faker->name();
-                $tags[] = Tag::create([
+                $tag = Tag::create([
                     'blog_id' => $blog->id,
                     // 'name' => $name,
                     'slug' => Str::slug($name),
                 ]);
+                $tags[] = $tag;
 
                 $tagsVariant[] = TagsVariant::create([
-                    'tag_id' => 1,
+                    'tag_id' => $tag->id,
                     'language_id' => $language->id,
                     'name' => $name,
                 ]);
