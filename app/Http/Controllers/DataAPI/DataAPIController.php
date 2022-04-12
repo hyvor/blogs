@@ -20,7 +20,6 @@ use Exception;
 class DataAPIController extends Controller
 {
 
-
     public function author(Request $request, Blog $blog)
     {
         $id = $request->input('id');
