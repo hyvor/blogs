@@ -162,7 +162,9 @@ export const nodes = {
 
     callout: {
         attrs: {
-            emoji: {default: "💡"}
+            emoji: {default: "💡"},
+            bg: {default: "#f1f1ef"},
+            fg: {default: "#000000"}
         },
         content: "inline*",
         group: "block",

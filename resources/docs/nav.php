@@ -5,7 +5,7 @@ return [
         [null, 'Introduction'],
         ['themes', 'Themes'],
         ['hosting', 'Hosting'],
-        ['content-editor', 'Content & The Editor'],
+        ['writing', 'Writing'],
         ['how', 'How it works'],
     ],
     'Features' => [

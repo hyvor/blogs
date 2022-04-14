@@ -89,7 +89,7 @@ Data is returned in JSON objects as specified below.
 | `is_page` | `boolean` | Whether it is a page. See [Posts & Pages](posts-pages) |
 | `slug` | `string` | The URL slug of the post |
 | `url` | `string` | The absolute URL of the post, generated based on where the blog is [hosted](hosting) |
-| `content` | `string` | The post content in HTML. See [Content & The Editor](content-editor) to see supported HTML tags |
+| `content` | `string` | The post content in HTML. See [Content & The Editor](writing) to see supported HTML tags |
 | `title` | `string` | The title of the post, max length 256 |
 | `description` | `string|null` | The description (excerpt) of post, max length 350, null if not set |
 | `featured_image` | `string|null` | The absolute URL of the featured image. null if not set |

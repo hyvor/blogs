@@ -12,7 +12,7 @@ import useUpdateEffect from '../../../helpers/hooks/useUpdateEffect';
 import RichView from './nodeview-rich';
 import Figcaption from './nodeview-figcaption';
 import Heading from './nodeview-heading';
-import Callout from './nodeview-callout';
+import Callout from './Callout/nodeview-callout';
 import CodeBlock from './nodeview-codeblock';
 import Image from './nodeview-image';
 import Bookmark from './nodeview-bookmark';

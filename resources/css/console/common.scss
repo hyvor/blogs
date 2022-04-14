@@ -423,6 +423,57 @@ textarea.input {
     }
 }
 
+// emoji-picker
+.emoji-picker.light {
+    font-family: inherit!important;
+    font-size: inherit;
+    border-radius: 20px;
+    border: none;
+    box-shadow: 0 0 20px 4px rgb(0 0 0 / 10%);
+    * {
+        font-family: inherit!important;
+    }
+    --category-button-active-color: #{$color-accent};
+    --hover-color: #{$color-accent-light};
+    .emoji-picker__search-container {
+        margin: 10px 10px 5px;
+    }
+    .emoji-picker__search {
+        margin: 0 0px;
+        border-radius: 20px;
+        background: $color-input;
+        border: none;
+        padding: 0 15px;
+    }
+    .emoji-picker__search-icon {
+        top: calc(50% - 0.6em);
+    }
+    .emoji-picker__emoji {
+        border-radius: 5px;
+    }
+    .emoji-picker__content {
+        padding: 5px 10px;
+    }
+    .emoji-picker__preview {
+        padding:10px;
+    }
+}
+
+// color-picker
+.sketch-picker {
+    border-radius: 20px!important;
+    box-shadow: 0 0 20px 4px rgb(0 0 0 / 10%)!important;
+    * {
+        box-sizing: initial;
+    }
+    input {
+        @include mixin-input;
+        &:not(:hover) {
+            box-shadow: none!important;
+        }
+    }
+}
+
 .global-avatar {
     .avatar{
         margin-top: 20px;

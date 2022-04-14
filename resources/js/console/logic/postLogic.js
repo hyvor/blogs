@@ -46,6 +46,7 @@ const postLogic = kea({
          * Used for auto saving
          */
         savePost: async () => {
+            return;
             const diff = selectors.getDiff()
             
             if (Object.keys(diff).length === 0) {
