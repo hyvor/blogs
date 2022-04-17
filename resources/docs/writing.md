@@ -80,7 +80,15 @@ Hyvor Blogs supports the following blocks.
 
 To add images, [open the blocks list](#block-adding) (`/` in a new line), and choose **Image**. You will see a new element added to your post. It allows to you choose an image from [Unsplash](https://unsplash.com/) or upload one from your device.
 
-* 
+For uploads, max file size is **50MB**. The following formats are supported.
+
+* PNG - `.png`
+* JPEG - `.jpg`, `.jpeg`, `.jfif`, `.pjpeg`, `.pjp`
+* GIF - `.gif`
+* APNG - `.apng`
+* AVIF - `.avif`
+* SVG - `.svg`
+* WebP - `.webp`
 
 ## Formatting {#formatting}
 

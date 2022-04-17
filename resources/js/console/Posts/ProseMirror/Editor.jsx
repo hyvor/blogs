@@ -14,7 +14,7 @@ import Figcaption from './nodeview-figcaption';
 import Heading from './nodeview-heading';
 import Callout from './Callout/nodeview-callout';
 import CodeBlock from './nodeview-codeblock';
-import Image from './nodeview-image';
+import Image from './Image/nodeview-image';
 import Bookmark from './nodeview-bookmark';
 
 

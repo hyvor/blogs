@@ -29,8 +29,6 @@ export default class Image {
     updateInside() {
         const { src, alt, title, width, height } = this.node.attrs;
 
-        
-
         if (src) {
             // render image
             const img = document.createElement("img");
@@ -44,12 +42,12 @@ export default class Image {
         }
     }
 
-    handleUpload(url, alt = null, title = null) {
+    handleUpload(url, alt = null) {
         this.view.dispatch(
             this.view.state.tr.setNodeMarkup(
                 this.getPos(),
                 null,
-                {...this.node.attrs, ...{src: url, alt, title}}
+                {...this.node.attrs, ...{src: url, alt}}
             )
         )
     }
