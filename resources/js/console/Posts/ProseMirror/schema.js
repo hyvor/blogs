@@ -92,7 +92,7 @@ export const nodes = {
     figure: {
         content: "(image|rich) figcaption",
         group: "block",
-        selectable: true,
+        selectable: false,
         draggable: true,
         parseDOM: [
             {
@@ -133,10 +133,10 @@ export const nodes = {
         attrs: {
             url: {default: null}
         },
-        content: "text*",
-        group: "figure",
-        atom: true,
-        selectable: false,
+        // content: "text*",
+        group: "figure block",
+        // atom: true,
+        selectable: true,
         parseDOM: [{
             tag: "rich[data-url]",
             getAttrs(div) {

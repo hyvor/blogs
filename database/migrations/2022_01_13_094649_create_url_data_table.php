@@ -18,7 +18,16 @@ class CreateUrlDataTable extends Migration
             $table->id();
             $table->timestamps();
 
-            $table->string('url')->unique();
+            /**
+             * If first fetched for link, and then checked for rich
+             * We may assume that link only has "link" type,
+             * even though "rich" is available.
+             * 
+             * So, 
+             */
+            $table->enum('fetch_type', ['link', 'rich']);
+
+            $table->string('url');
             $table->string('final_url');
             $table->enum('type', ['link', 'rich', 'error']);
             $table->text('html')->nullable(); // rich html, if available
@@ -27,6 +36,8 @@ class CreateUrlDataTable extends Migration
             $table->string('thumbnail')->nullable();
             $table->string('icon')->nullable();
             $table->string('site')->nullable();
+            
+            $table->unique(['fetch_type', 'url']);
 
         });
     }

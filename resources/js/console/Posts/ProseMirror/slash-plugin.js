@@ -42,7 +42,7 @@ const matchable = [
             'video', 'audio', 'file',
             'youtube', 'twitter', 'soundcloud', 'spotify', 'github', 'maps', 'codepen'
         ],
-        node: createRich
+        node: 'rich'
     },
     {
         name: "Code Block",
@@ -265,9 +265,10 @@ class SlashPlugin {
                 )
 
                 /**
-                 * In bookmark, we want to focus the input instead of the view
+                 * In bookmark and embed(rich),
+                 * we want to focus the input instead of the view
                  */
-                if (m.node !== 'bookmark')
+                if (m.node !== 'bookmark' && m.name !== 'Embed')
                     view.focus();
 
             }

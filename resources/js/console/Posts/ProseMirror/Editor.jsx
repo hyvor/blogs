@@ -32,7 +32,7 @@ function getState(val) {
 
 const nodeViews = {
     rich(...args) {
-        return new RichView(...args);
+        return new RichView(HBSchema, ...args);
     },
     figcaption(...args) {
         return new Figcaption(...args);

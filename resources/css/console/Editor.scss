@@ -369,6 +369,36 @@ $prosemirror-selected-outline: 3px solid #299af3;
             }
         }
     }
+    
+    rich, bookmark {
+        display: block;
+        input {
+            font-size: 14px;
+            border: none;
+            // border-radius: 20px;
+            padding: 8px;
+            width: 100%;
+            border:1px solid #eee;
+        }
+        &.url-input, &.loading {
+            & + figcaption {
+                display: none;
+            }
+        }
+    }
+
+    .embedding-placeholder {
+        flex:1;
+        font-size: 14px;
+        padding: 100px;
+        text-align: center;
+        color: $color-text-light;
+        background: $color-card;
+    }
+    
+    rich.url-input {
+        margin-top: 30px;
+    }
 
     bookmark {
         display: flex;
@@ -379,13 +409,6 @@ $prosemirror-selected-outline: 3px solid #299af3;
         }
         &.url-input {
             outline:none!important;
-        }
-        input {
-            font-size: 14px;
-            border: none;
-            padding: 8px;
-            width: 100%;
-            border:1px solid #eee;
         }
         .bookmark-wrap {
             cursor: default;
