@@ -9,9 +9,10 @@ export default function ImageUploader({onUpload}) {
 
     const [search, setSearch] = useState('');
     const [ajaxStatus, setAjaxStatus] = useState(null);
-    const abortControllerRef = useRef(null)
+    const abortControllerRef = useRef(new AbortController())
     const [images, setImages] = useState([]);
     const [isUploading, setIsUploading] = useState(false);
+    const [hasMore, setHasMore] = useState(false)
     
     const fileUploadInputRef = useRef(null);
 
@@ -19,24 +20,19 @@ export default function ImageUploader({onUpload}) {
         if (!search.trim()) return
 
         // abort old request
-        // console.log(abortControllerRef.current)
         abortControllerRef.current && abortControllerRef.current.abort();
 
         setAjaxStatus('loading')
         setImages([]);
 
-        load().catch(() => {
-            setAjaxStatus('error')
-        })
-
-        return () => abortControllerRef.current.abort()
+        load();
 
     }, [search]);
 
     function load(page = 1) {
-        if (!abortControllerRef.current)
-            abortControllerRef.current = new AbortController();
-        return axios.get(
+        abortControllerRef.current = new AbortController()
+        
+        axios.get(
             getEndpoint(window.currentSubdomain, '/media/unsplash/search'),
             {
                 signal: abortControllerRef.current.signal,
@@ -47,8 +43,9 @@ export default function ImageUploader({onUpload}) {
             }
         ).then(({data: newImages}) => {
             setAjaxStatus('success')
-            setImages([...images, ...newImages])
-        })
+            setImages(page === 1 ? newImages : [...images, ...newImages])
+            setHasMore(newImages.length === 30)
+        }).catch(() => {})
     }
     
     function openUploader() {
@@ -150,6 +147,9 @@ export default function ImageUploader({onUpload}) {
                                                 <Images
                                                     images={images}
                                                     onUpload={onUpload}
+                                                    load={load}
+                                                    hasMore={hasMore}
+                                                    setHasMore={setHasMore}
                                                 /> :
                                                 <NoResults imageWidth={150}/>
                                         )
@@ -166,14 +166,28 @@ export default function ImageUploader({onUpload}) {
 }
 
 
-function Images({images, onUpload}) {
+function Images({images, onUpload, load, hasMore, setHasMore}) {
 
     const left = [];
     const right = [];
 
     images.forEach((img, i) => (i % 2 === 0 ? right : left).push(img));
+    
+    function handleScroll(e) {
+        const el = e.target;
+        if (
+            hasMore &&
+            el.scrollTop + el.clientHeight >= el.scrollHeight
+        ) {
+            setHasMore(false)
+            load( (images.length / 30) + 1)
+        }
+    }
 
-    return <div className="search-results">
+    return <div 
+        className="search-results"
+        onScroll={handleScroll}
+    >
         <ImageColumn onUpload={onUpload} images={left} />
         <ImageColumn onUpload={onUpload} images={right} />
     </div>
