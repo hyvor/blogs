@@ -47,7 +47,7 @@ const nodeViews = {
         return new CodeBlock(...args)
     },
     image(...args) {
-        return new Image(...args)
+        return new Image(HBSchema, ...args)
     },
     bookmark(...args) {
         return new Bookmark(...args)

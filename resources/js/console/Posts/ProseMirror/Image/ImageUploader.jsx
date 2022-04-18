@@ -19,7 +19,7 @@ export default function ImageUploader({onUpload}) {
         if (!search.trim()) return
 
         // abort old request
-        console.log(abortControllerRef.current)
+        // console.log(abortControllerRef.current)
         abortControllerRef.current && abortControllerRef.current.abort();
 
         setAjaxStatus('loading')
@@ -186,7 +186,10 @@ function ImageColumn({images, onUpload}) {
             images.map(img => {
                 return <img
                     key={img.url}
-                    onClick={() => onUpload(img.url, img.alt, img.title)}
+                    onClick={() => onUpload(img.url, img.alt, {
+                        author: img.author,
+                        authorUrl: img.authorUrl
+                    })}
                     src={img.url} title={img.title} alt={img.alt} />
             })
         }

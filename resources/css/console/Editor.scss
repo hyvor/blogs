@@ -240,14 +240,15 @@ $prosemirror-selected-outline: 3px solid #299af3;
         line-height: 30px;
         margin-top: 30px;
         letter-spacing: 0.2px;
-        code {
-            background: rgba(135,131,120,0.15);
-            color: #EB5757;
-            border-radius: 3px;
-            font-size: 85%;
-            padding: 0.2em 0.4em;
-            font-family: monospace;
-        }
+    }
+
+    :not(pre) > code {
+        background: rgba(135,131,120,0.15);
+        color: #EB5757;
+        border-radius: 3px;
+        font-size: 85%;
+        padding: 0.2em 0.4em;
+        font-family: monospace;
     }
 
     ul, ol {
@@ -453,6 +454,18 @@ $prosemirror-selected-outline: 3px solid #299af3;
     }
 
     .image-wrap {
+        position:relative;
+        
+        .alt-input {
+            position: absolute;
+            top: 10px;
+            right: 10px;
+            width: 200px;
+            padding: 4px 10px;
+            border: 1px solid #aaa;
+            font-size: 12px;
+        }
+        
         .image-uploader {
             font-size: 14px;
             height: 400px;
