@@ -6,7 +6,6 @@ import { history } from 'prosemirror-history';
 import inputRulesPlugin from "./inputrules-plugin";
 import keymapPlugins from "./keymap-plugin";
 import tooltipPlugin from "./tooltip-plugin";
-import navigatorPlugin from "./navigator-plugin";
 import wordCountPlugin from "./wordcount-plugin";
 import slashPlugin from "./slash-plugin";
 import codemark from 'prosemirror-codemark';
@@ -19,7 +18,7 @@ export default function plugins(schema) {
 
         placeholderPlugin('Start writing...'),
         tooltipPlugin(schema),
-        navigatorPlugin(),
+        // navigatorPlugin(),
         wordCountPlugin(),
         slashPlugin(schema),
 

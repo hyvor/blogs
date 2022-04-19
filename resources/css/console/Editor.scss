@@ -459,22 +459,44 @@ $prosemirror-selected-outline: 3px solid #299af3;
         }
     }
 
-    /* pre {
-        background-color: #eee;
-        padding: 20px;
-        border-radius: 2px;
+    .code-wrap {
         margin-top:30px;
-        code {
-            font-size:14px;
-            font-family: inherit;
+        .code-toolbar {
+            white-space: normal;
+            padding: 10px;
+            background: $color-input;
+            border-radius: 20px 20px 0 0;
+            border-bottom: 1px solid #dddddd;
         }
-    } */
-    .CodeMirror {
-        font-size:14px;
-        margin-top:30px;
-        height: initial;
-        padding:5px  0;
+        .code-toolbar-labels {
+            display: flex;
+            font-size: 12px;
+            div {
+                flex: 1;
+                padding-left: 4px;
+            }
+        }
+        .code-toolbar-inputs {
+            display: flex;
+            input {
+                flex: 1;
+                min-width: 0;
+                margin-right: 5px;
+                padding: 5px 10px;
+                font-size: 12px;
+                margin-top: 5px;
+                background: #fff;
+            }
+        }
+        
+        .CodeMirror {
+            font-size:14px;
+            height: initial;
+            padding:5px  0;
+            border-radius: 0 0 20px 20px;
+        }
     }
+    
 
     .image-wrap {
         position:relative;

@@ -40,12 +40,14 @@ export default function keymapPlugins(schema) {
             if (selection.from !== selection.to) // something was selected
                 return;
 
+            // This is removed
+            // Slash UI is used instead
+
             /**
              * RICH
-             * TODO: Remove this and use UI to create a rich embed
              * ===================
              */
-            const parent = selection.$to.parent;
+            /*const parent = selection.$to.parent;
             const text = parent.firstChild?.text;
             if (
                 parent &&
@@ -68,12 +70,15 @@ export default function keymapPlugins(schema) {
                     state.tr.replaceWith(nodeSel.from, nodeSel.to, createRich(schema, text))
                 )
                 return true;
-            }
+            }*/
 
             /**
              * Code
              * ================
              */
+
+            const parent = selection.$to.parent;
+            const text = parent.firstChild?.text;
             let codeMatch
             if (
                 codeMatch = 

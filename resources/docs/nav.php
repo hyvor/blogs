@@ -61,6 +61,7 @@ return [
         ['privacy', 'Privacy Policy'],
     ],
     'Misc' => [
+        ['js', 'Javascript Usage'],
         ['oss', 'Open Source'],
     ]
 

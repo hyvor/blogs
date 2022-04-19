@@ -101,6 +101,6 @@ function handleClickOn(view, pos, node, posBefore, e) {
 // prevent tab-key browser navigation
 function handleKeyDown(view, e) {
     if (e.key === 'Tab') {
-        e.preventDefault();
+       //  e.preventDefault();
     }
 }

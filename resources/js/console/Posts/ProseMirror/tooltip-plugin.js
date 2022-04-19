@@ -127,8 +127,7 @@ class MarksTooltip {
             lastState.doc.eq(state.doc) &&
             lastState.selection.eq(state.selection)
             ) return
-
-
+        
         if (
             state.selection.empty || 
             !view.editable ||

@@ -72,7 +72,8 @@ export const nodes = {
     code_block: {
         attrs: {
             language: {default: null},
-            data: {default: {}},
+            annotations: {default: null},
+            name: {default: null},
         },
         content: "text*",
         marks: "",
