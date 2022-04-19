@@ -16,7 +16,7 @@ import Callout from './Callout/nodeview-callout';
 import CodeBlock from './nodeview-codeblock';
 import Image from './Image/nodeview-image';
 import Bookmark from './nodeview-bookmark';
-
+import CustomHtml from "./nodeview-custom-html";
 
 function getState(val) {
     val = val ? JSON.parse(val) : null
@@ -45,6 +45,9 @@ const nodeViews = {
     },
     code_block(...args) {
         return new CodeBlock(...args)
+    },
+    custom_html(...args) {
+        return new CustomHtml(...args)
     },
     image(...args) {
         return new Image(HBSchema, ...args)

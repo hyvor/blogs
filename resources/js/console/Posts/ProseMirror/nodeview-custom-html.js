@@ -3,10 +3,10 @@ import {chainCommands, exitCode, joinBackward, selectNodeBackward} from "./comma
 import {undo, redo} from "prosemirror-history"
 import { TextSelection, Selection } from "prosemirror-state"
 import schema from './schema'
+import {CODEMIRROR_MODES} from "../../ReusableComponents/CodemirrorEditor";
+import {computeChange} from "./nodeview-codeblock";
 
-// https://prosemirror.net/examples/codemirror/
-
-export default class CodeBlock {
+export default class CustomHtml {
 
     constructor(node, view, getPos) {
         // Store for later
@@ -19,9 +19,11 @@ export default class CodeBlock {
         this.dom = document.createElement("div");
         this.dom.className = 'code-wrap';
         
-        this.createToolbar()
-        this.updateFromAttrs()
-        
+        const topbar = document.createElement("div");
+        topbar.className = 'topbar'
+        topbar.innerHTML = 'Custom HTML/Twig';
+        this.dom.appendChild(topbar);
+
         const codemirrorWrap = document.createElement("div");
         this.dom.appendChild(codemirrorWrap)
 
@@ -30,7 +32,7 @@ export default class CodeBlock {
             value: this.node.textContent,
             lineNumbers: true,
             lineWrapping: true,
-            mode: 'plain',
+            mode: CODEMIRROR_MODES.twig,
             tabSize: 4,
             indentWithTabs: true,
             indentUnit: 4,
@@ -75,7 +77,7 @@ export default class CodeBlock {
         let state = this.view.state
         let selection = this.asProseMirrorSelection(state.doc)
         if (!selection.eq(state.selection))
-                this.view.dispatch(state.tr.setSelection(selection))
+            this.view.dispatch(state.tr.setSelection(selection))
     }
 
     asProseMirrorSelection(doc) {
@@ -89,18 +91,18 @@ export default class CodeBlock {
         this.cm.focus()
         this.updating = true
         this.cm.setSelection(this.cm.posFromIndex(anchor),
-                             this.cm.posFromIndex(head))
+            this.cm.posFromIndex(head))
         this.updating = false
     }
 
     valueChanged() {
         let change = computeChange(this.node.textContent, this.cm.getValue())
         if (change) {
-          let start = this.getPos() + 1
-          let tr = this.view.state.tr.replaceWith(
-            start + change.from, start + change.to,
-            change.text ? schema.text(change.text) : null)
-          this.view.dispatch(tr)
+            let start = this.getPos() + 1
+            let tr = this.view.state.tr.replaceWith(
+                start + change.from, start + change.to,
+                change.text ? schema.text(change.text) : null)
+            this.view.dispatch(tr)
         }
     }
 
@@ -137,7 +139,7 @@ export default class CodeBlock {
         let pos = this.cm.getCursor()
         if (this.cm.somethingSelected() ||
             pos.line != (dir < 0 ? this.cm.firstLine() : this.cm.lastLine()) ||
-                (unit == "char" &&
+            (unit == "char" &&
                 pos.ch != (dir < 0 ? 0 : this.cm.getLine(pos.line).length)))
             return CodeMirror.Pass
         this.view.focus()
@@ -149,7 +151,7 @@ export default class CodeBlock {
 
     update(node) {
         if (node.type != this.node.type) return false
-            
+
         // console.log(this.node.attrs.language, node.attrs.language)
         if (
             this.node.attrs.language !== node.attrs.language ||
@@ -160,14 +162,14 @@ export default class CodeBlock {
             this.updateFromAttrs()
             return true;
         }
-        
+
         this.node = node
         let change = computeChange(this.cm.getValue(), node.textContent)
         if (change) {
-          this.updating = true
-          this.cm.replaceRange(change.text, this.cm.posFromIndex(change.from),
-                               this.cm.posFromIndex(change.to))
-          this.updating = false
+            this.updating = true
+            this.cm.replaceRange(change.text, this.cm.posFromIndex(change.from),
+                this.cm.posFromIndex(change.to))
+            this.updating = false
         }
         return true
     }
@@ -175,67 +177,4 @@ export default class CodeBlock {
     selectNode() { this.cm.focus() }
     stopEvent() { return true }
 
-    createToolbar() {
-        const _self = this;
-        const toolbar = document.createElement("div");
-        toolbar.className = 'code-toolbar';
-        
-        const labels = document.createElement('div');
-        labels.innerHTML = `
-            <div>Language</div>
-            <div>Annotations <a 
-                href="/docs/syntax-highlighting#annotations" 
-                target="_blank"
-            ><svg xmlns="http://www.w3.org/2000/svg" width="12" height="12" fill="currentColor" class="bi bi-info-circle" viewBox="0 0 16 16">
-  <path d="M8 15A7 7 0 1 1 8 1a7 7 0 0 1 0 14zm0 1A8 8 0 1 0 8 0a8 8 0 0 0 0 16z"/>
-  <path d="m8.93 6.588-2.29.287-.082.38.45.083c.294.07.352.176.288.469l-.738 3.468c-.194.897.105 1.319.808 1.319.545 0 1.178-.252 1.465-.598l.088-.416c-.2.176-.492.246-.686.246-.275 0-.375-.193-.304-.533L8.93 6.588zM9 4.5a1 1 0 1 1-2 0 1 1 0 0 1 2 0z"/>
-</svg></a></div>
-            <div>File Name</div>
-        `;
-        labels.className = 'code-toolbar-labels';
-        toolbar.appendChild(labels)
-
-        const inputs = document.createElement('div');
-        inputs.className = 'code-toolbar-inputs'
-        toolbar.appendChild(inputs)
-        
-        function createInput(type) {
-            const input = document.createElement("input")
-            input.className = 'input'
-            input.type = 'text'
-            input.oninput = (e) => {
-                _self.view.dispatch(
-                    _self.view.state.tr.setNodeMarkup(
-                        _self.getPos(),
-                        null,
-                        {..._self.node.attrs, [type]: e.target.value }
-                    )
-                )
-            }
-            return inputs.appendChild(input)
-        }
-        
-        this.inputLang = createInput('language');
-        this.inputAno = createInput('annotations');
-        this.inputName = createInput('name');
-        
-        this.dom.appendChild(toolbar)
-        
-    }
-
-    updateFromAttrs() {
-        this.inputLang.value = this.node.attrs.language;
-        this.inputAno.value = this.node.attrs.annotations;
-        this.inputName.value = this.node.attrs.name;
-    }
-    
-}
-
-export function computeChange(oldVal, newVal) {
-    if (oldVal == newVal) return null
-    let start = 0, oldEnd = oldVal.length, newEnd = newVal.length
-    while (start < oldEnd && oldVal.charCodeAt(start) == newVal.charCodeAt(start)) ++start
-    while (oldEnd > start && newEnd > start &&
-           oldVal.charCodeAt(oldEnd - 1) == newVal.charCodeAt(newEnd - 1)) { oldEnd--; newEnd-- }
-    return {from: start, to: oldEnd, text: newVal.slice(start, newEnd)}
 }

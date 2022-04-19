@@ -84,6 +84,17 @@ export const nodes = {
         parseDOM: [{tag: "pre", preserveWhitespace: "full"}],
         toDOM() { return ["pre", ["code", 0]] }
     },
+    
+    custom_html: {
+        content: "text*",
+        marks: "",
+        group: "block",
+        code: true,
+        defining: true,
+        selectable: false,
+        parseDOM: [{tag: "custom", preserveWhitespace: "full"}],
+        toDOM() { return ["custom", 0] }
+    },
 
     // :: NodeSpec The text node.
     text: {
