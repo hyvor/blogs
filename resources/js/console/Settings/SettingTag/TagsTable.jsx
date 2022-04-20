@@ -1,6 +1,6 @@
 import React, {useState, useEffect} from 'react';
 import { useActions, useValues } from 'kea';
-import { Trash, PencilFill, Plus, BoxArrowInRight, CodeSlash} from 'react-bootstrap-icons';
+import { Trash, PencilFill, Plus, BoxArrowInRight, CodeSlash, Link} from 'react-bootstrap-icons';
 import {toast} from 'react-toastify'
 import tagsLogic from '../../logic/tagsLogic';
 import languagesLogic from '../../logic/languagesLogic';
@@ -321,7 +321,7 @@ export default function Tags ({tag, subdomain})
                     </div>
                     <div className="table-view">
                         <span className='table-button'>
-                            <BoxArrowInRight size={10} />
+                            <Link size={10} />
                         </span>
                     </div>
                 </div>

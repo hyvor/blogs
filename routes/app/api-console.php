@@ -94,10 +94,11 @@ Route::prefix('/api/console/v0/blog/{subdomain}')
         Route::get('/blog/post-counts', [ConsoleBlogController::class, 'getPostsCounts']);
 
         // Blog General CRUD 
-        // Route::get('/blogData', [ConsoleBlogController::class, 'getBlogData']);
         Route::post('/blog/variant', [ConsoleBlogController::class, 'createBlogVariant']);
         Route::put('/blog', [ConsoleBlogController::class, 'updateBlog']);
-        
+        Route::post('/blog/feature/image', [ConsoleBlogController::class, 'updateBlogFeatureImage']);
+        Route::post('/blog/icon', [ConsoleBlogController::class, 'updateBlogIcon']);
+
         /**
          * In post routes, role is checked internally on some actions
          * such as publishing posts
@@ -199,7 +200,9 @@ Route::prefix('/api/console/v0/blog/{subdomain}')
         Route::patch('/user/{id}', [ConsoleUserController::class, 'updateAuthor']); 
         Route::delete('/user/{id}', [ConsoleUserController::class, 'deleteAuthor']); 
         Route::post('/user/variant', [ConsoleUserController::class, 'createAuthorVariant']);
+        Route::post('/user/picture', [ConsoleUserController::class, 'updatePicture']);
 
+        // Route::get('/user/picture', [ConsoleUserController::class, 'getPicture']);
         // Route::get('/userVariant', [ConsoleUserController::class, 'getAuthorVariant']);
         // Route::put('/userVariant', [ConsoleUserController::class, 'updateAuthorVariant']);
         // Route::delete('/userVariant', [ConsoleUserController::class, 'deleteAuthorVariant']);

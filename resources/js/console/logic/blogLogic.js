@@ -14,6 +14,10 @@ const blogLogic = kea({
         updateBlogData: (key, value) => ({key, value}),
         save: () => false,
         setToOriginal: () => ({original: values.blogOriginal}),
+
+        addFeatureImage: (blog) => ({blog}),
+        addIcon: (blog) => ({blog}),
+
     }),
 
     ajax: ({actions, props}) => ({
@@ -23,7 +27,7 @@ const blogLogic = kea({
             actions.setBlog(blog);
         },
         createVariant: async ({languageId}) => {
-            console.log(languageId)
+            // console.log(languageId)
             const blog = await api.post(props.subdomain, '/blog/variant', {
                 languageId: languageId,
             })
@@ -31,19 +35,17 @@ const blogLogic = kea({
         },
             
         updateData: async ({
-            subdomainEdit, name, description, icon, featureImageId, social_facebook, social_twitter, 
+            subdomainEdit, name, description, social_facebook, social_twitter, 
             social_linkedin, social_youtube, social_instagram, social_github
             }) => {
 
-            console.log( subdomainEdit, name, description, icon, featureImageId, social_facebook, social_twitter, 
+            console.log( subdomainEdit, name, description, social_facebook, social_twitter, 
                 social_linkedin, social_youtube, social_instagram, social_github )
 
             const blog = await api.patch(props.subdomain, '/blog', {
                 subdomain:subdomainEdit,
                 name: name,
                 description:description,
-                icon:icon,
-                featureImageId:featureImageId,
                 social_facebook:social_facebook,
                 social_twitter:social_twitter,
                 social_linkedin:social_linkedin,
@@ -52,6 +54,29 @@ const blogLogic = kea({
                 social_github:social_github,
             });
             actions.updateBlogData(blog);
+        },
+
+
+        uploadFeatureImage: async ({featureImage}) => {
+
+            var formData = new FormData();
+            formData.append('featureImage', featureImage, featureImage.name); 
+            const image = await api.post(props.subdomain, '/blog/feature/image', formData);
+            actions.addFeatureImage(image);
+        },
+
+
+        uploadIcon: async ({icon}) => {
+            // console.log(icon)
+            // const user = await api.post(props.subdomain, '/blog/icon', {
+            //     icon: icon,
+            // })
+            // actions.updateIcon(user);
+
+            var formData = new FormData();
+            formData.append('icon', icon, icon.name); 
+            const iconUpdate = await api.post(props.subdomain, '/blog/icon', formData);
+            actions.addIcon(iconUpdate);
         },
 
     }),
@@ -70,7 +95,15 @@ const blogLogic = kea({
             // ),
             updateBlogData: (state, {key, value}) => ({...state, ...{[key]: value}}),
             setToOriginal: (_, {original}) => original 
-        }]
+        }],
+
+        featureImage: [[], {
+            addFeatureImage: (state, {featureImage}) => [featureImage, ...state]
+        }],
+
+        icon: [[], {
+            addIcon: (state, {icon}) => [icon, ...state]
+        }],
 
     },
 

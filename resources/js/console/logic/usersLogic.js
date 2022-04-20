@@ -14,6 +14,9 @@ const usersLogic = kea({
         addUser: (user) => ({user}),
         addUserVarian: (user) => ({user}),
         updateUser: (user) => ({user}),
+
+        // setPicture: (user) => ({user}),
+        addPicture: (user) => ({user}),
     },
 
     ajax: ({ values, actions, props }) => ({ 
@@ -87,6 +90,20 @@ const usersLogic = kea({
             actions.updateUser(user);
         },
 
+        // loadPicture: async () => {
+        //     const user = await api.get(props.subdomain, '/user/picture' , {
+        //         userId:1,
+        //     });
+        //     actions.setPicture(user);
+        // },
+
+        upload: async ({file}) => {
+            var formData = new FormData();
+            formData.append('file', file, file.name); 
+            const user = await api.post(props.subdomain, '/user/picture', formData);
+            actions.addPicture(user);
+        },
+
     }),
 
     reducers: {
@@ -106,6 +123,10 @@ const usersLogic = kea({
         createNewVarian: [[], {
             addUserVarian: (state, {user}) => [user, ...state],
         }],
+        picture: [[], {
+            // setPicture: (_, {user}) => user,
+            addPicture: (state, {user}) => [user, ...state]
+        }], 
     },
 
     events: ({actions}) => ({

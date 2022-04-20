@@ -1,6 +1,6 @@
 import React, {useState, useEffect} from 'react';
 import { useActions, useValues } from 'kea';
-import { Trash, PencilFill, Plus, BoxArrowInRight} from 'react-bootstrap-icons';
+import { Trash, PencilFill, Plus, BoxArrowInRight, Link} from 'react-bootstrap-icons';
 import { Popup, PopupBodyDefault, PopupConfirm, PopupFooterDoubleButton, PopupHeaderDefault } from '../../ReusableComponents/Popup';
 import ProfileImage from '../../ReusableComponents/ProfileImage';
 import ReactSelect, { components } from 'react-select';
@@ -11,22 +11,20 @@ import blogsLogic from '../../logic/blogsLogic';
 import UserLanguageSelector from './UserLanguageSelector';
 import usersLogic from '../../logic/usersLogic';
 
-
-
 import {toast} from 'react-toastify'
 import subdomainLogic from '../../logic/subdomainLogic';
 import Loader from '../../ReusableComponents/Loader';
 import Toast from '../../ReusableComponents/Toast';
 import NoResults from '../../ReusableComponents/NoResults'; 
 
+let uploadInput = null;
 
 export default function Users({user, subdomain}) {
 
     const usersLogicBuilt = usersLogic({subdomain})
-    const { remove , updateData} = useActions(usersLogicBuilt)
-    const { updateDataAjax } = useValues(usersLogicBuilt)
+    const { remove , updateData, upload} = useActions(usersLogicBuilt)
+    const { updateDataAjax, uploadAjax, picture } = useValues(usersLogicBuilt)
 
-    
     // Language Section
     const { languages, getLanguageById } = useValues(languagesLogic({subdomain}))
     const { findBlogBySubdomain } = useValues(blogsLogic)
@@ -62,6 +60,28 @@ export default function Users({user, subdomain}) {
             }
         }
     })
+
+    function handleUpload() { 
+
+        if (!uploadInput) {
+            uploadInput = document.createElement('input')
+            uploadInput.type = "file";
+            uploadInput.hidden = true;
+            document.body.appendChild(uploadInput);
+            uploadInput.click();
+            uploadInput.onchange = function(e) {
+                const files = e.target.files;
+                if (!files.length) return;
+                if (files.length > 1) {
+                    return toast.error("Only one file allowed");
+                }
+                upload({file: files[0]});
+            }
+        } else {
+            uploadInput.click();
+        }
+
+    }
 
     // To display data in the pop-up
     const [variantName, setVariantName] = useState(null);
@@ -118,7 +138,7 @@ export default function Users({user, subdomain}) {
     const [role, setRole] = useState({type: ""});
 
     function handleRole({value}){
-        setRole({...role, type: value})
+        setRole({...role, type: value}) 
     }
 
     function handleStatus({value}){
@@ -248,7 +268,20 @@ export default function Users({user, subdomain}) {
                                         body={
                                             <PopupBodyDefault>
                                                 <div>
-                                                    <ProfileImage/>
+                                                    {/* <ProfileImage/> */}
+                                                    <div className="global-avatar">
+                                                        <div class="avatar">
+                                                        {/* <input type="file" id="actual-btn" hidden/> */}
+                                                        <img src={user.picture_url} alt="Avatar" className="avatar-center"/>
+                                                    </div>
+                                                    <input type="file" id="actual-btn" hidden/>
+                                                    
+                                                    <div for="actual-btn" className="upload-lable"
+                                                        onClick={uploadAjax.status === 'loading' ? null: handleUpload}>
+                                                            {uploadAjax.status === 'loading' ? "Uploading..." : <span> Choose File</span>}
+                                                    </div>
+                                                </div>
+
                                                     <Input 
                                                         title="Name"
                                                         type="text"
@@ -422,7 +455,7 @@ export default function Users({user, subdomain}) {
                     </div>
                     <div className="table-view">
                         <span className='table-button'>
-                            <BoxArrowInRight size={10} />
+                            <Link size={10} />
                         </span>
                     </div>
                 </div>

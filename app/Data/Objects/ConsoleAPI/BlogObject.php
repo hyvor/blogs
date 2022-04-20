@@ -11,8 +11,8 @@ class BlogObject {
     public ?int $created_at;
     public ?int $updated_at;
     public ?string $subdomain;
-    public ?int $icon_id ;
-    public ?int $featured_image_id; 
+    public ?string $icon_url;
+    public ?string $featured_image_url; 
 
     public ?string $social_facebook;
     public ?string $social_twitter; 
@@ -34,8 +34,8 @@ class BlogObject {
         $this->updated_at = $blog->updated_at->timestamp;        
         $this->subdomain = $blog->subdomain;
 
-        $this->icon_id  = $blog->icon_id ;
-        $this->featured_image_id = $blog->featured_image_id;
+        $this->icon_url = $blog->icon_url  ;
+        $this->featured_image_url = $blog->featured_image_url;
 
         $this->social_facebook = $blog->social_facebook;
         $this->social_twitter = $blog->social_twitter;

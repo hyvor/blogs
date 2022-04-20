@@ -13,6 +13,10 @@ use Illuminate\Support\Collection;
 use Illuminate\Support\Str;
 use App\Domains\Language\LanguageRepository;
 use App\Models\Language;
+use App\Models\Media;
+use App\Domains\Media\MediaRepository;
+use App\Domains\Route\PermalinkRepository;
+
 
 use Hyvor\HyvorConnecter\Userbase;
 use App\Domains\User\Types\UserBlogOutputConsoleType; 
@@ -95,7 +99,7 @@ class UserRepository
 
         $user = User::create([
             'blog_id' => $blog->id,
-            'picture_id' => $userData['picture'] ?? null,
+            'picture_id' => $userData['pictureId'] ?? null,
             // 'slug' => $userData['slug'], 
             'slug' => 'test-three',
             // 'hyvor_user_id' => $hyvorUserId ?? null,
@@ -143,14 +147,14 @@ class UserRepository
                 'status' => $status->value,
                 'role' => $role->value,
                 'email' => $userData['email'] ?? null,
-                'picture' => $userData['picture'] ?? null,
+                'picture_id' => $userData['pictureId'] ?? null,
                 'url' => $userData['url'] ?? null,
                 'social_facebook' => $userData['social_facebook'] ?? null,
                 'social_twitter' => $userData['social_twitter'] ?? null,
                 'social_linkedin' => $userData['social_linkedin'] ?? null,
                 'social_youtube' => $userData['social_youtube'] ?? null,
                 'social_instagram' => $userData['social_instagram'] ?? null,
-            ]);
+            ]); 
 
         UsersVariant::where([
                 'user_id' => $userId ,
@@ -187,7 +191,6 @@ class UserRepository
     * these functions are for author Variants
     *
     */
-
     // This function was created to get specific data about variants but we don't need it anymore.
     // public static function getAuthorVariant($userId, $languageId)
     // {
@@ -198,7 +201,7 @@ class UserRepository
     //     return $users;
     // }
 
-    // This function is used to create a variant if it doesn'texist.'
+    // This function is used to create a variant if it doesn't exist.'
     public static function createAuthorVariant($userId, $languageId) 
     {
         $language = Language::where('id','=', $languageId)
@@ -218,7 +221,33 @@ class UserRepository
         }
     }
 
+    public static function updatePicture($blog, $file) {
 
+        $media = MediaRepository::upload($blog->id, $file);
+        $pictureUrl = PermalinkRepository::getMediaPermalink($media, $blog);
+
+        // dd($pictureUrl);
+        // $pictureId = $media->id;
+
+        User::find($blog->id)
+            ->update([
+                'picture_url' => $pictureUrl,
+            ]);
+    }
+
+    public static function getPicture($userId) {
+
+        $pictureId = User::where('id','=', $userId)
+        ->value('picture_id');
+
+        if($pictureId !== null){
+            $media = MediaRepository::getOne($pictureId);
+        }
+        else{
+            $media = null;
+        }
+        return $media;
+    }
 
     /*
     *

@@ -25,8 +25,11 @@ class ConsoleBlogController extends Controller
     }
 
     /*
+    *
     * ConsoleAPI Settings->General
+    *
     */
+
     // public static function getBlogData(Blog $blog)
     // {
     //     $getData = BlogRepository::getBlog($blog)
@@ -40,9 +43,6 @@ class ConsoleBlogController extends Controller
     {
         $languageId =  $request->input('languageId');
 
-        $featuredImage = $request->file('featureImageId');
-        $icon = $request->file('icon');
-        
         if($request->has('subdomain')) {
             $blogData['subdomain'] = $request->input('subdomain');
         }
@@ -78,8 +78,7 @@ class ConsoleBlogController extends Controller
             $blogData['description'] = $request->input('description');
         }
 
-        
-        $updateBlogData = BlogRepository::updateBlog($blog, $languageId, $featuredImage, $icon, $blogData);
+        $updateBlogData = BlogRepository::updateBlog($blog, $languageId, $blogData);
         return response()->json($updateBlogData);
     }
 
@@ -91,6 +90,25 @@ class ConsoleBlogController extends Controller
         return response()->json($createVariant);
     }
 
+    public static function updateBlogFeatureImage(Request $request, Blog $blog)
+    {
+        $file = $request->file('featureImage'); 
+        // $request->validate([
+        //     'file' => 'required|file'
+        // ]);
 
+        $featureImage = BlogRepository::updateBlogFeatureImage($blog, $file);
+        return response()->json($featureImage);
+    }
 
+    public static function updateBlogIcon(Request $request, Blog $blog)
+    {
+        $file = $request->file('icon'); 
+        // $request->validate([
+        //     'file' => 'required|file'
+        // ]);
+
+        $icon = BlogRepository::updateBlogIcon($blog, $file);
+        return response()->json($icon);
+    }
 }

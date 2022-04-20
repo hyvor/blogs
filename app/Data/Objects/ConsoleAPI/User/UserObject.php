@@ -21,7 +21,7 @@ class UserObject
     public string $slug;
     public string $email; 
     
-    public ?string $picture; 
+    public ?string $picture_url; 
     public ?string $url; 
 
     public ?string $social_facebook;
@@ -45,7 +45,7 @@ class UserObject
         $this->slug = $user->slug;
         $this->email = $user->email;
 
-        $this->picture = $user->picture;
+        $this->picture_url = $user->picture_url;
         $this->url = $user->url;
 
         $this->social_facebook = $user->social_facebook;

@@ -9,7 +9,7 @@ use App\Models\BlogVariant;
 use App\Domains\Language\LanguageRepository;
 use App\Models\Language;
 use App\Domains\Media\MediaRepository;
-
+use App\Domains\Route\PermalinkRepository;
 
 class BlogRepository
 {
@@ -76,21 +76,11 @@ class BlogRepository
     //     return $blogData;
     // } 
 
-    public static function updateBlog($blog, $languageId, $featuredImage, $ico , array $blogData = []) {
-
-        dd($blogData['subdomain']);
-        // I must thinks a bit more about this about how to add the media.
-        $media = MediaRepository::upload($blog->id, $featuredImage);
-
-        $mediaId = $media->id;
-
-        dd($mediaId);
+    public static function updateBlog($blog, $languageId, array $blogData = []) {
 
         Blog::find($blog->id)
             ->update([
                 'subdomain' => $blogData['subdomain'],
-                'icon_id' => $icon ?? null,
-                'featured_image_id' => $blogData['featureImageId'] ?? null,
                 'social_facebook' => $blogData['social_facebook'] ?? null,
                 'social_twitter' => $blogData['social_twitter'] ?? null,
                 'social_linkedin' => $blogData['social_linkedin'] ?? null,
@@ -124,6 +114,35 @@ class BlogRepository
                 ]);
             }
         }
+    }
+
+
+    public static function updateBlogFeatureImage($blog, $file) {
+
+        $media = MediaRepository::upload($blog->id, $file);
+        $featureImageUrl = PermalinkRepository::getMediaPermalink($media, $blog);
+
+        // dd($featureImageUrl);
+        // $featureImageId = $media->id;
+
+        Blog::find($blog->id)
+            ->update([
+                'featured_image_url' => $featureImageUrl,
+            ]);
+    }
+
+    public static function updateBlogIcon($blog, $file) {
+
+        $media = MediaRepository::upload($blog->id, $file);
+        $iconUrl = PermalinkRepository::getMediaPermalink($media, $blog);
+
+        // dd($iconUrl);
+        // $icon = $media->id;
+
+        Blog::find($blog->id)
+            ->update([
+                'icon_url' => $iconUrl,
+            ]);
     }
 
 }

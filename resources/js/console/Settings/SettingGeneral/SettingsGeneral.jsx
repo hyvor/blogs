@@ -1,8 +1,8 @@
-import React, { useState, useEffect} from 'react';
+import React, { useState, useEffect, useRef} from 'react';
 import { useActions, useValues } from 'kea';
 import DualSetting from '../../ReusableComponents/DualSetting';
 import Input from '../../ReusableComponents/Input';
-import Select from '../../ReusableComponents/Select';
+import { Trash, Upload } from 'react-bootstrap-icons';
 import SettingsSave from '../../ReusableComponents/SettingsSave';
 
 import subdomainLogic from '../../logic/subdomainLogic';
@@ -11,6 +11,13 @@ import blogsLogic from '../../logic/blogsLogic';
 import languagesLogic from '../../logic/languagesLogic';
 import GeneralLanguageSelector from './GeneralLanguageSelector';
 
+import toast from '../../ReusableComponents/Toast';
+import axios from 'axios';
+import { getUserEndpoint } from '../../lib/api';
+
+
+let uploadInput = null;
+let uploadIconInput = null;
 
 
 // Should find a way to set up the should save section in the pop-up.
@@ -18,8 +25,8 @@ export default function SettingsGeneral() {
 
     const subdomain = subdomainLogic.values.subdomain;
     const blogLogicBuilt = blogLogic({subdomain})
-    const { blog } = useValues(blogLogicBuilt)
-    const { updateData} = useActions(blogLogicBuilt)
+    const { blog, uploadFeatureImageAjax, uploadIconAjax } = useValues(blogLogicBuilt)
+    const { updateData, uploadFeatureImage, uploadIcon} = useActions(blogLogicBuilt)
 
     const { languages, getLanguageById } = useValues(languagesLogic({subdomain}))
     const { findBlogBySubdomain } = useValues(blogsLogic)
@@ -28,47 +35,145 @@ export default function SettingsGeneral() {
     const variants = blog.variants || [];
     const variant = variants[currentLanguageId] || {};
 
-
     const [pointerEvent, setPointerEvent] = useState();
+    const [subdomainError, setSubdomainError] = useState(null);
+    const [subdomainEdited, setSubdomainEdited] = useState(false)
+    const abortControllerRef = useRef(null);
 
-    // To display data in the pop-up
+    console.log(blog)
+
+
+    const [icon, setIcon] = useState();
+    const [featuredImage, setFeaturedImage] = useState();
+
+    const [subdomainEdit, setSubdomainEdit] = useState();
+    const [facebook, setFacebook] = useState();
+    const [twitter, setTwitter] = useState();
+    const [linkedIn, setLinkedin] = useState();
+    const [youtube, setYoutube] = useState();
+    const [instagram, setInstagram] = useState();
+    const [github, setGithub] = useState();
+
     const [variantName, setName] = useState();
     const [variantDescription, setDescription] = useState();
-    const [subdomainEdit, setSubdomain] = useState('');
-    const [icon, setIcon] = useState('');
-    const [featuredImage, setFeaturedImage] = useState('');
-    const [facebook, setFacebook] = useState('');
-    const [twitter, setTwitter] = useState('');
-    const [linkedIn, setLinkedin] = useState('');
-    const [youtube, setYoutube] = useState('');
-    const [instagram, setInstagram] = useState('');
-    const [github, setGithub] = useState('');
 
     useEffect(() => {
-        if (typeof(blog) !== 'undefined') {
-            setSubdomain(blog.subdomain);
-            setIcon(blog.social_facebook);
-            setFeaturedImage(blog.social_facebook);
-            setFacebook(blog.social_facebook);
-            setTwitter(blog.social_twitter);
-            setLinkedin(blog.social_linkedin);
-            setYoutube(blog.social_youtube);
-            setInstagram(blog.social_instagram);
-            setGithub(blog.social_github);
-            setName(variant.name)
-            setDescription(variant.description)
+        setFeaturedImage(blog.featured_image_url)
+        setIcon(blog.icon_url)
 
-        }
+        setSubdomainEdit(blog.subdomain)
+        setFacebook(blog.social_facebook)
+        setTwitter(blog.social_twitter)
+        setLinkedin(blog.social_linkedin)
+        setYoutube(blog.social_youtube)
+        setInstagram(blog.social_instagram)
+        setGithub(blog.social_github)
     },[blog])
-    
+
+    useEffect(() => {
+        setName(variant.name)
+        setDescription(variant.description)
+    },[variant])
+
+    // subdomain error Handling
+    useEffect(() => {
+        if (subdomainEdit === "") {
+            setSubdomainError(null);
+        } else {
+            abortControllerRef.current && abortControllerRef.current.abort();
+            checkSubdomain();
+        }
+    }, [subdomainEdit])
+
+    // TO-DO this function should be checked. 
+    function checkSubdomain() {
+        abortControllerRef.current = new AbortController();
+
+        return axios.get(
+            getUserEndpoint('/blog/check-subdomain'),
+            {
+                signal: abortControllerRef.current.signal,
+                params: {
+                    subdomainEdit
+                }
+            }
+        ).then(({data: isAvailable}) => {
+            if (!isAvailable)
+                setSubdomainError("Subdomain already taken");
+        }).catch(() => {})
+    }
+
+    function handleSubdomainChange(val) {
+        setSubdomainEdited(true);
+
+        val = val.toLowerCase();
+        setSubdomainEdit(val);
+
+        var allowedRegex = /[^a-z0-9-]/;
+
+        if (val.substr(0, 1) === '-') {
+            setSubdomainError('Cannot start with -');
+        } else if (val.substr(val.length - 1) === '-') {
+            setSubdomainError('Cannot end with -');
+        } else if (val.match(allowedRegex)) {
+            const firstLetter = val.match(allowedRegex)[0]
+            setSubdomainError('Cannot contain ' + firstLetter);
+        } else {
+            setSubdomainError(null)
+        }
+    }
+
+
+    // FeatureImage and Icon section
+    function handleFeatureImage() { 
+        if (!uploadInput) {
+            uploadInput = document.createElement('input')
+            uploadInput.type = "file";
+            uploadInput.hidden = true;
+            document.body.appendChild(uploadInput);
+            uploadInput.click();
+            uploadInput.onchange = function(e) {
+                const files = e.target.files;
+                if (!files.length) return;
+                if (files.length > 1) {
+                    return toast.error("Only one file allowed");
+                }
+                uploadFeatureImage({featureImage: files[0]});
+            }
+        } else {
+            uploadInput.click();
+        }
+    }
+
+    function handleIcon() { 
+        if (!uploadIconInput) {
+            uploadIconInput = document.createElement('input')
+            uploadIconInput.type = "file";
+            uploadIconInput.hidden = true;
+            document.body.appendChild(uploadIconInput);
+            uploadIconInput.click();
+            uploadIconInput.onchange = function(e) {
+                const files = e.target.files;
+                if (!files.length) return;
+                if (files.length > 1) {
+                    return toast.error("Only one file allowed");
+                }
+                uploadIcon({icon: files[0]});
+            }
+        } else {
+            uploadIconInput.click();
+        }
+    }
+
     function handleSave(e) {
         e.preventDefault();
+        if (subdomainEdit.trim() === "") {
+            return setSubdomainError("Subdomain cannot be empty");
+        }
         updateData({
             subdomainEdit:subdomainEdit,
             name: variantName,
             description:variantDescription,
-            icon:icon,
-            featureImageId:featuredImage,
             social_facebook:facebook,
             social_twitter:twitter,
             social_linkedin:linkedIn,
@@ -78,10 +183,8 @@ export default function SettingsGeneral() {
         });
     }
 
-    // const [htWebsteId, setHtWebsiteId] = useState(null);
-    // const shouldSave = subdomain !== "";
     function shouldSave() {
-        console.log('should save')
+        // console.log('should save')
         // const shouldSave
         // if(subdomain){
             //  return subdomainEdit !== ""
@@ -100,17 +203,17 @@ export default function SettingsGeneral() {
     }
 
     function handleDiscard() {
-        setSubdomain('');
-        setName('');
-        setDescription('');
-        setIcon('');
-        setFeaturedImage('');
-        setFacebook('');
-        setTwitter('');
-        setLinkedin('');
-        setYoutube('');
-        setInstagram('');
-        setGithub('');
+    //     setSubdomainEdit('');
+    //     setName('');
+    //     setDescription('');
+    //     setIcon('');
+    //     setFeaturedImage('');
+    //     setFacebook('');
+    //     setTwitter('');
+    //     setLinkedin('');
+    //     setYoutube('');
+    //     setInstagram('');
+    //     setGithub('');
 
     }
 
@@ -131,17 +234,21 @@ export default function SettingsGeneral() {
             description="Subdomain is used to uniquely identify your blog within Hyvor Blogs"
             right={
                 <div>
-                    <Input 
+                     <Input 
                         title={null}
                         type="text"
-                        name="subdomain"
-                        value={subdomainEdit}
-                        onChange={setSubdomain}
+                        name="subdomainCheck"
+                        id="subdomainCheck"
+                        // value={blog.subdomain}
+                        value = {subdomainEdit} 
+                        // onChange={setSubdomainEdit}
+                        onChange={handleSubdomainChange}
+                        error={subdomainError}
+                        // onChange={handleSubdomain}
                     />
                 </div>
             }
         />
-
         <DualSetting 
             title="Name"
             description="Name of your blog"
@@ -155,7 +262,6 @@ export default function SettingsGeneral() {
                 />
             }
         />
-
         <DualSetting 
             title="Description"
             description="A short description (or sub-title) for your blog"
@@ -174,13 +280,25 @@ export default function SettingsGeneral() {
             title="Icon"
             description="The icon of your blog"
             right={
-                <Input 
-                    title={null}
-                    type="text"
-                    name="icon"
-                    value={icon}
-                    onChange={setIcon}
-                />
+                // <Input 
+                //     title={null}
+                //     type="text"
+                //     name="icon"
+                //     value={icon}
+                //     onChange={setIcon}
+                // />
+                // <div>
+                <div class="image-head">
+                    {/* <img src="https://picsum.photos/200/200" alt="Avatar" className="image-center"/> */}
+                    <img src={icon} alt="Avatar" className="image-center"/>
+                    <button 
+                        onClick={uploadIconAjax.status === 'loading' ? null: handleIcon}
+                        className="button-style uploadButton button small inactive">
+                        {uploadIconAjax.status === 'loading' ? "Uploading..." : 
+                            <span>Upload <Upload /></span>
+                        }
+                    </button>
+                </div>
             }
         />
 
@@ -188,13 +306,25 @@ export default function SettingsGeneral() {
             title="Featured Image"
             description="A featured image for the homepage of your blog. Useful when sharing on social media"
             right={
-                <Input 
-                    title={null}
-                    type="text"
-                    name="featured Image"
-                    value={featuredImage}
-                    onChange={setFeaturedImage}
-                />
+                // <Input 
+                //     title={null}
+                //     type="text"
+                //     name="featured Image"
+                //     value={featuredImage}
+                //     onChange={setFeaturedImage}
+                // />
+
+                <div class="image-head">
+                    <img src={featuredImage} alt="Avatar" className="image-center"/>
+                    <button 
+                        onClick={uploadFeatureImageAjax.status === 'loading' ? null: handleFeatureImage}
+                        className="button-style uploadButton button small inactive">
+                            {   
+                                uploadFeatureImageAjax.status === 'loading' ? "Uploading..." : 
+                                    <span>Upload <Upload /></span> 
+                            }
+                    </button>
+                </div>
             }
         />
 

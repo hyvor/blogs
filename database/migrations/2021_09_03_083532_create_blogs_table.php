@@ -21,8 +21,8 @@ class CreateBlogsTable extends Migration
             // connections
             $table->bigInteger('hyvor_user_id'); // hyvor user id (owner)
             $table->bigInteger('theme_id')->nullable();
-            $table->bigInteger('icon_id')->nullable();
-            $table->bigInteger('featured_image_id')->nullable();
+            $table->string('icon_url')->nullable();
+            $table->string('featured_image_Url')->nullable();
 
             // data
             $table->string('subdomain')->unique();

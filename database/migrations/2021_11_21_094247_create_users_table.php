@@ -20,7 +20,7 @@ class CreateUsersTable extends Migration
             // connection
             $table->bigInteger('blog_id');
             $table->bigInteger('hyvor_user_id')->nullable(); // hyvor user ID
-            $table->bigInteger('picture_id')->nullable();
+            $table->string('picture_url')->nullable();
 
             $table->boolean('is_synced', true)->default(false); // synced with hyvor data
 

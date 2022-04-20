@@ -10,7 +10,7 @@ class BlogVariantObject
     public int $id;
     public int $blog_id;
     public int $language_id;
-    public string $name;
+    public ?string $name;
     public ?string $description;
 
 
@@ -19,7 +19,7 @@ class BlogVariantObject
         $language = $blogVariant->language;
 
         $this->id = $blogVariant->id;
-        $this->tag_id = $blogVariant->tag_id;
+        $this->blog_id = $blogVariant->blog_id;
 
         $this->language_id = $language->id;
 
