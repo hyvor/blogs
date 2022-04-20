@@ -6,7 +6,7 @@ use App\Data\Enums\UserRoleEnum;
 use App\Data\Enums\UserStatusEnum;
 use App\Domains\Post\PostAuthorRepository;
 use App\Models\User;
-use App\Models\UsersVariant;
+use App\Models\UserVariant;
 use App\Exceptions\TrustedException;
 use Exception;
 use Illuminate\Support\Collection;
@@ -112,7 +112,7 @@ class UserRepository
 
         $getLanguage = $blog->languages()->where('is_primary', true)->first();
 
-        UsersVariant::create([
+        UserVariant::create([
             'user_id' => $user->id,
             'language_id' => $getLanguage->id,
             'name' => $userData['name'],
@@ -148,7 +148,7 @@ class UserRepository
                 'social_instagram' => $userData['social_instagram'] ?? null,
             ]);
 
-        UsersVariant::where([
+        UserVariant::where([
                 'user_id' => $userId ,
                 'language_id'=> $languageId,
             ]) ->update([
@@ -165,12 +165,12 @@ class UserRepository
         ->value('is_primary');
 
         if($language == 0){
-            UsersVariant::where('user_id','=',$userId)
+            UserVariant::where('user_id','=',$userId)
                 ->where('language_id','=',$languageId)
                 ->delete();
         }
         else{
-            UsersVariant::where('user_id','=',$userId)
+            UserVariant::where('user_id','=',$userId)
                 ->delete();
 
             User::find($userId)
@@ -185,7 +185,7 @@ class UserRepository
     */
     public static function getAuthorVariant($userId, $languageId)
     {
-        $users = UsersVariant::where('user_id', '=', $userId)
+        $users = UserVariant::where('user_id', '=', $userId)
         ->where('language_id', '=', $languageId)
         ->get();
 
@@ -199,12 +199,12 @@ class UserRepository
         ->value('is_primary');
 
         if($language == 0){
-            $userVariantCheck = UsersVariant::where('user_id','=', $userId)
+            $userVariantCheck = UserVariant::where('user_id','=', $userId)
             ->where('language_id','=', $languageId)
             ->first();
 
             if($userVariantCheck == null){
-                UsersVariant::create([
+                UserVariant::create([
                     'user_id' => $userId,
                     'language_id' => $languageId,
                 ]);

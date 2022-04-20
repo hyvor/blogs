@@ -2,6 +2,7 @@
 
 namespace App\Domains\UrlData;
 
+use App\Data\Enums\UrlDataFetchTypeEnum;
 use App\Exceptions\TrustedException;
 use App\Models\UrlData;
 
@@ -15,10 +16,12 @@ function _safe_length($str, $len = 255)
 
 class UrlDataRepository
 {
-    public static function fetch($url): UrlData
+    public static function fetch($url, UrlDataFetchTypeEnum $fetchType): UrlData
     {
 
-        $embed = UrlData::where('url', $url)->first();
+        $embed = UrlData::where('url', $url)
+            ->where('fetch_type', $fetchType)
+            ->first();
 
         if ($embed) {
             return $embed;
@@ -28,6 +31,7 @@ class UrlDataRepository
             $json = Iframely::fetch($url);
 
             return UrlData::create([
+                'fetch_type' => $fetchType,
                 /**
                  * Iframely returns 4 types: link, photo, video, rich
                  * (https://iframely.com/docs/oembed-api#api-response)

@@ -24,7 +24,7 @@ class AuthorObject
 
         $this->id = $user->id;
         $this->slug = $user->slug;
-        $this->url = PermalinkRepository::getFullUrlFromPath($blog, 'author/' . $user->slug);
+        $this->url = PermalinkRepository::getAuthorPermalink($user, $blog);
         $this->name = $user->name ?? '';
         $this->profile_image = $user->profile_image;
         $this->bio = $user->bio;

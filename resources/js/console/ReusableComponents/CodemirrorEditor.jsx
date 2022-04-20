@@ -22,6 +22,10 @@ export default function CodemirrorEditor({ value, onChange, mode }) {
             mode,
             lineWrapping: true,
             lineNumbers: true,
+            matchBrackets: true,
+            matchTags: {bothTags: true},
+            autoCloseBrackets: true,
+            autoCloseTags: true,
         }}
         onBeforeChange={(_, __, value) => onChange(value)}
     />

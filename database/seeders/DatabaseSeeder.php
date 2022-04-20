@@ -4,6 +4,7 @@ namespace Database\Seeders;
 
 use App\Domains\Blog\FillNewBlog;
 use App\Domains\Language\LanguageRepository;
+use App\Domains\Post\PostSearchRepository;
 use App\Domains\Redirect\RedirectRepository;
 use App\Domains\Route\RouteRepository;
 use App\Models\Blog;
@@ -11,7 +12,7 @@ use App\Models\Media;
 use App\Models\BlogThemeFile;
 use App\Models\Post;
 use App\Models\PostAuthor;
-use App\Models\PostsVariant;
+use App\Models\PostVariant;
 use App\Models\PostTag;
 use App\Models\Tag;
 use App\Models\TagsVariant;
@@ -43,8 +44,7 @@ class DatabaseSeeder extends Seeder
                 'hosting_domain' => $blogData[2] ?? null,
                 'hosting_at' => $blogData[0] === 'test2' ? 'self' : 'subdomain',
                 'hosting_url' => $blogData[0] === 'test2' ? 'https://blogs.hyvor.test/blog' : null,
-                'api_key_console' => '123',
-                'social_twitter' => 'https://twitter.com/HyvorBlogs'
+                'api_key_console' => '123'
             ]);
 
             ['language' => $language] = FillNewBlog::fill($blog);
@@ -56,14 +56,15 @@ class DatabaseSeeder extends Seeder
             $tagsVariant = [];
             foreach (range(0, 9) as $i) {
                 $name = $faker->name();
-                $tags[] = Tag::create([
+                $tag = Tag::create([
                     'blog_id' => $blog->id,
                     // 'name' => $name,
                     'slug' => Str::slug($name),
                 ]);
+                $tags[] = $tag;
 
                 $tagsVariant[] = TagsVariant::create([
-                    'tag_id' => 1,
+                    'tag_id' => $tag->id,
                     'language_id' => $language->id,
                     'name' => $name,
                 ]);
@@ -103,17 +104,21 @@ class DatabaseSeeder extends Seeder
                     'published_at' => $publishedAt,
                 ]);
 
-                $englishPost = PostsVariant::create([
+                $englishPost = PostVariant::create([
                     'post_id' => $post->id,
                     'language_id' => $language->id,
-                    'content' => json_encode($prosemirrorJson),
                     'title' => $title,
                     'description' => $faker->sentence,
                     'status' => $status,
                 ]);
 
+                // update is separate to trigger observer's update
+                $englishPost->update([
+                    'content' => json_encode($prosemirrorJson)
+                ]);
 
-                if (rand(0,1) === 0) {
+
+                // if (rand(0,1) === 0) {
 
                     $prosemirrorJson['content'][] = [
                         'type' => 'paragraph',
@@ -123,16 +128,19 @@ class DatabaseSeeder extends Seeder
                         ]]
                     ];
                     
-                    $frenchPost = PostsVariant::create([
+                    $frenchPost = PostVariant::create([
                         'post_id' => $post->id,
                         'language_id' => $secondLanguage->id,
-                        'content' => json_encode($prosemirrorJson),
                         'title' => $title . ' French',
                         'description' => $faker->sentence,
                         'status' => $status,
                     ]);
+
+                    $frenchPost->update([
+                        'content' => json_encode($prosemirrorJson)
+                    ]);
                     
-                }
+                // }
 
                 PostTag::create([
                     'post_id' => $post->id,
@@ -165,6 +173,8 @@ class DatabaseSeeder extends Seeder
         
         }
 
+        PostSearchRepository::setFilterableAttributes();
+        PostSearchRepository::setSearchableAttributes();
 
         $this->call([
             BlogThemeFilesSeeder::class

@@ -2,7 +2,7 @@
 
 namespace App\Data\Objects\ConsoleAPI\User;
 
-use App\Models\UsersVariant;
+use App\Models\UserVariant;
 use App\Models\User;
 use App\Models\Language;
 use App\Models\Blog;
@@ -18,7 +18,7 @@ class UserVariantObject
     public ?string $location;
 
 
-    public function __construct(UsersVariant $userVariant)
+    public function __construct(UserVariant $userVariant)
     {
         $language = $userVariant->language;
 

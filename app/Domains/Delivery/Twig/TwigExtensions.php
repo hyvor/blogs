@@ -6,7 +6,6 @@ use App\Domains\Blog\BlogRepository;
 use App\Domains\ThemeFiles\ThemeFilesRepository;
 use App\Domains\Language\LanguageRepository;
 use App\Domains\Route\PermalinkRepository;
-use App\Models\Blog;
 use Twig\Extension\AbstractExtension;
 use Twig\TwigFilter;
 use Twig\TwigFunction;
@@ -38,6 +37,11 @@ class TwigExtensions extends AbstractExtension
             new TwigFilter('asset_url', [$this, 'assetUrlFilter'], ['needs_context' => true]),
             new TwigFilter('asset', [$this, 'assetFilter'], ['needs_context' => true, 'is_safe' => ['html']]),
             new TwigFilter('lang', [$this, 'langFilter'], ['needs_context' => true, 'is_variadic' => true]),
+            new TwigFilter('template', [$this, 'templateFilter'], [
+                'needs_environment' => true,
+                'needs_context' => true,
+                'is_safe' => ['html']
+            ])
         ];
 
     }
@@ -84,6 +88,16 @@ class TwigExtensions extends AbstractExtension
 
     }
 
+    public function templateFilter(\Twig\Environment $env, $context, $string)
+    {
+
+        $template = $env->createTemplate($string);
+        $html = $template->render($context);
+        return $html;
+
+    }
+
+
     public function dataFunction()
     {
 
@@ -96,7 +110,7 @@ class TwigExtensions extends AbstractExtension
     {
 
         if (!isset($this->blog)) {
-            $subdomain = $context['_blog']->subdomain;
+            $subdomain = $context['_blog']['subdomain'];
             $this->blog = BlogRepository::getBlogBySubdomain($subdomain);
         }
 

@@ -72,7 +72,8 @@ export const nodes = {
     code_block: {
         attrs: {
             language: {default: null},
-            data: {default: {}},
+            annotations: {default: null},
+            name: {default: null},
         },
         content: "text*",
         marks: "",
@@ -83,6 +84,17 @@ export const nodes = {
         parseDOM: [{tag: "pre", preserveWhitespace: "full"}],
         toDOM() { return ["pre", ["code", 0]] }
     },
+    
+    custom_html: {
+        content: "text*",
+        marks: "",
+        group: "block",
+        code: true,
+        defining: true,
+        selectable: false,
+        parseDOM: [{tag: "custom", preserveWhitespace: "full"}],
+        toDOM() { return ["custom", 0] }
+    },
 
     // :: NodeSpec The text node.
     text: {
@@ -92,7 +104,7 @@ export const nodes = {
     figure: {
         content: "(image|rich) figcaption",
         group: "block",
-        selectable: true,
+        selectable: false,
         draggable: true,
         parseDOM: [
             {
@@ -133,10 +145,10 @@ export const nodes = {
         attrs: {
             url: {default: null}
         },
-        content: "text*",
-        group: "figure",
-        atom: true,
-        selectable: false,
+        // content: "text*",
+        group: "figure block",
+        // atom: true,
+        selectable: true,
         parseDOM: [{
             tag: "rich[data-url]",
             getAttrs(div) {
@@ -162,7 +174,9 @@ export const nodes = {
 
     callout: {
         attrs: {
-            emoji: {default: "💡"}
+            emoji: {default: "💡"},
+            bg: {default: "#f1f1ef"},
+            fg: {default: "#000000"}
         },
         content: "inline*",
         group: "block",

@@ -1,19 +1,19 @@
 <?php
-
+/*
 namespace App\Domains\BlogTheme;
 
 use App\Data\Enums\ThemeFileFolderEnum;
 use App\Models\Blog;
-use App\Models\BlogThemeFile;
+use App\Models\ThemeFile;
 use Database\Seeders\BlogThemeFilesSeeder;
 use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Support\Facades\App;
 
 class ThemeFilesRepository
 {
-    public static function getFile(Blog $blog, string $fileName, ?ThemeFileFolderEnum $folder = null): ?BlogThemeFile
+    public static function getFile(Blog $blog, string $fileName, ?ThemeFileFolderEnum $folder = null): ?ThemeFile
     {
-
+        dd("DAW");
         return $blog->themeFiles()
             ->where('name', $fileName)
             ->where('folder', $folder->value)
@@ -48,13 +48,14 @@ class ThemeFilesRepository
         return BlogThemeFile::where('blog_id', $blogId)->get();
     }
 
-    private static function updateLocalDBFiles(int $blogId) {
+    private static function updateLocalDBFiles(int $blogId) 
+    {
 
         /**
          * This is a simple way to refresh the database
          * and run the seeder that so local file changes are updated
          * This is ONLY FOR LOCAL TESTING
-         */
+         
         if (App::environment('local')) {
             BlogThemeFile::where('blog_id', $blogId)->delete();
             (new BlogThemeFilesSeeder())->run($blogId);
@@ -62,4 +63,4 @@ class ThemeFilesRepository
 
     }
 
-}
+}*/

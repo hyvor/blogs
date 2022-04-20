@@ -53,6 +53,16 @@ class Handler extends ExceptionHandler
                     $request->is('api/*')
                 ) {
                     $code = isset($exception->status) ? $exception->status : $exception->getCode();
+
+
+                    /**
+                     * Laravel input validation sends 422
+                     * But, in our APIs we only return 400
+                     */
+                    if ($code === 422) {
+                        $code = 400;
+                    }
+
                     $httpCode = in_array($code, [400, 401, 402, 403, 404, 422, 500]) ? $code : 500;
 
                     $error = 
@@ -69,14 +79,6 @@ class Handler extends ExceptionHandler
 
                     if ($exception instanceof ValidationException) {
                         $error = $exception->validator->errors()->first();
-                    }
-
-                    /**
-                     * Laravel input validation sends 422
-                     * But, in our APIs we only return 400
-                     */
-                    if ($httpCode === 422) {
-                        $httpCode = 400;
                     }
 
                     return response()->json([

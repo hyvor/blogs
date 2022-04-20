@@ -70,7 +70,6 @@ class FillNewBlog {
                 'name' => 'index',
                 'match' => '/',
                 'template' => 'index',
-                'posts_filter' => ''
             ],
             // tag
             [
@@ -89,7 +88,7 @@ class FillNewBlog {
             // search
             [
                 'name' => 'search',
-                'match' => '/search',
+                'match' => '/search/{search}',
                 'template' => 'search,index'
             ]
         ];

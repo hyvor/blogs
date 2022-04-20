@@ -366,7 +366,6 @@ export default function Post( {subdomain, id} ) {
                 className="post-editor-bottom"
             >
                 <div className="post-editor-bottom-content">
-                    <div id="pm-navigator-wrap"></div>
                     <div className="right">
                         {
                             savePostAjax.status === 'loading' ?

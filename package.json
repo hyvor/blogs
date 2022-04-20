@@ -11,7 +11,7 @@
     },
     "devDependencies": {
         "@babel/preset-react": "^7.16.7",
-        "axios": "^0.21.4",
+        "axios": "^0.22.0",
         "laravel-mix": "^6.0.43",
         "lodash": "^4.17.19",
         "postcss": "^8.4.6",
@@ -20,6 +20,7 @@
         "sass-loader": "^12.6.0"
     },
     "dependencies": {
+        "@joeattardi/emoji-button": "^4.6.4",
         "codemirror": "^5.65.1",
         "dayjs": "^1.11.0",
         "deep-object-diff": "^1.1.7",
@@ -40,6 +41,7 @@
         "react-beautiful-dnd": "^13.1.0",
         "react-bootstrap-icons": "^1.7.2",
         "react-codemirror2": "^7.2.1",
+        "react-color": "^2.19.3",
         "react-datepicker": "^4.7.0",
         "react-dom": "^17.0.2",
         "react-redux": "^7.2.6",

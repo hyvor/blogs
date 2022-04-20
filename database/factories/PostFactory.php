@@ -2,6 +2,7 @@
 
 namespace Database\Factories;
 
+use App\Models\Blog;
 use Illuminate\Database\Eloquent\Factories\Factory;
 use Illuminate\Support\Arr;
 use Illuminate\Support\Str;
@@ -15,32 +16,14 @@ class PostFactory extends Factory
      */
     public function definition()
     {
-        
-        $title = $this->faker->sentence;
-        $status = Arr::random(['draft', 'published', 'scheduled']);
-
-        $paragraphs = $this->faker->paragraphs(rand(2, 6));
-        $prosemirrorJson = [
-            'type' => 'doc',
-            'content' => []
-        ];
-        foreach ($paragraphs as $para) {
-            $prosemirrorJson['content'][] = [
-                'type' => 'paragraph',
-                'content' => [[
-                    'type' => 'text',
-                    'text' => $para
-                ]]
-            ];
-        }
 
         return [
-            'content' => json_encode($prosemirrorJson),
-            'title' => $title,
-            'slug' => Str::slug($title),
-            'published_at' => $status === 'published' ? now() : null,
-            'description' => $this->faker->sentence,
-            'status' => $status,
+            'blog_id' => Blog::factory(),
+
+            'is_page' => false,
+            'is_featured' => false,
+
+            'slug' => Str::slug($this->faker->text),
         ];
     }
 }

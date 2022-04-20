@@ -13,7 +13,7 @@ return new class extends Migration
      */
     public function up()
     {
-        Schema::create('posts_variants', function (Blueprint $table) {
+        Schema::create('post_variants', function (Blueprint $table) {
             $table->id();
             $table->timestamps();
 
@@ -27,7 +27,12 @@ return new class extends Migration
             $table->text('content_unsaved')->nullable();
             $table->string('title')->nullable();
             $table->string('description', 350)->default('');
-            $table->string('featured_image')->nullable();
+            $table->integer('words')->nullable();
+
+            $table->unique(['post_id', 'language_id']);
+            $table->index('status');
+            $table->index('words');
+
         });
     }
 

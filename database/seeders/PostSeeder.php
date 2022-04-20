@@ -24,7 +24,7 @@ class PostSeeder extends Seeder
             'slug' => "rasif",
             'title' => "Checking",
             'description' => "testing the deletation",
-            'reading_time' => "2",
+            'words' => 500,
             'blog_id' => "1",
             'language_id'=>"1",
         ]);

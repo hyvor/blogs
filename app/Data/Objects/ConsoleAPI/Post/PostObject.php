@@ -2,13 +2,12 @@
 
 namespace App\Data\Objects\ConsoleAPI\Post;
 
-use App\Data\Objects\ConsoleAPI\TagObject;
-use App\Data\Objects\ConsoleAPI\AuthorObject;
-
-use App\Domains\Route\PermalinkRepository;
+use App\Data\Objects\ConsoleAPI\Author\AuthorObject;
+use App\Data\Objects\ConsoleAPI\Tag\TagObject;
+use App\Data\Objects\ConsoleAPI\User\UserObject;
 use App\Models\Blog;
-use App\Models\Language;
 use App\Models\Post;
+use Illuminate\Support\Collection;
 
 class PostObject
 {
@@ -25,17 +24,23 @@ class PostObject
     public ?string $code_head;
     public ?string $code_foot;
 
+    /**
+     * @var array{int: PostVariantObject}
+     */
+    public array $variants;
+
+    /**
+     * @var TagObject[]
+     */
+    public array $tags;
+    
+    /**
+     * @var UserObject[]
+     */
+    public array $authors;
+
     public function __construct(Post $post, Blog $blog)
     {
-
-        $tags = $post->tags->map(function ($tag) use ($blog) {
-            return new TagObject($tag, $blog);
-        })->toArray();
-
-        // $authors = $post->authors->map(function ($author) use ($blog) {
-        //     return new AuthorObject($author, $blog);
-        // })->toArray();
-        $authors = null;
 
         $this->id = $post->id;
         $this->preview_id = encrypt($post->id);
@@ -52,7 +57,7 @@ class PostObject
         // variants
         $this->variants = $post->variants->map(function($variant) use ($blog, $post) {
             return new PostVariantObject($variant, $post, $blog);
-        })->keyBy('language_id');
+        })->keyBy('language_id')->toArray();
 
         // tags
         $this->tags = $post->tags->map(function ($tag) use ($blog) {
@@ -60,7 +65,8 @@ class PostObject
         })->toArray();
 
         $this->authors = $post->authors->map(function ($author) use ($blog) {
-            return new AuthorObject($author, $blog);
-        });
+            return new UserObject($author, $blog);
+        })->toArray();
+        
     }
 }
