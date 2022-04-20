@@ -75,6 +75,9 @@
         ],
         "post-create-project-cmd": [
             "@php artisan key:generate --ansi"
+        ],
+        "serve": [
+            "concurrently \"php artisan serve --host=blogs.hyvor.test --port=8080\" \"php artisan serve --host=test.hyvorblogs.test --port=8081\""
         ]
     },
     "repositories": [

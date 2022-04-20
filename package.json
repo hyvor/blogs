@@ -12,6 +12,7 @@
     "devDependencies": {
         "@babel/preset-react": "^7.16.7",
         "axios": "^0.22.0",
+        "concurrently": "^7.1.0",
         "laravel-mix": "^6.0.43",
         "lodash": "^4.17.19",
         "postcss": "^8.4.6",

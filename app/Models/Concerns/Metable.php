@@ -4,7 +4,7 @@ namespace App\Models\Concerns;
 trait Metable
 {
 
-    public function getMeta(string $name)
+    public function getMeta(string $name) : string
     {
 
         if (!array_key_exists($name, $this->metableDefinition)) {
@@ -20,7 +20,7 @@ trait Metable
     
     }
 
-    public function getAllMeta()
+    public function getAllMeta() : array
     {
 
         $ret = [];
@@ -34,7 +34,7 @@ trait Metable
 
     }
 
-    public function setMeta(string $name, $value)
+    public function setMeta(string $name, $value) : void
     {
 
         if (!array_key_exists($name, $this->metableDefinition)) {
