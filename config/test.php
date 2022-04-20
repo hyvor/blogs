@@ -5,6 +5,9 @@
  */
 
 return [
+    
+    // testing hyvor user ID
+    'hyvor_user_id' => 1,
 
     // blog for testing
     'blog_id' => 1,

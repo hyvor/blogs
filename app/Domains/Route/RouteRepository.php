@@ -5,6 +5,48 @@ use App\Exceptions\TrustedException;
 use App\Models\Blog;
 
 class RouteRepository {
+    
+    const DEFAULT_ROUTES = [
+        // post
+        [
+            'name' => 'post',
+            'match' => '/{slug}',
+            'template' => 'post'
+        ],
+        // page
+        [
+            'name' => 'page',
+            'match' => '/{slug}',
+            'template' => 'page,post'
+        ],
+        // home page (index)
+        [
+            'name' => 'index',
+            'match' => '/',
+            'template' => 'index',
+        ],
+        // tag
+        [
+            'name' => 'tag',
+            'match' => '/tag/{slug}',
+            'template' => 'tag,index',
+            'posts_filter' => 'tag.slug = {slug}',
+        ],
+        // author
+        [
+            'name' => 'author',
+            'match' => '/author/{slug}',
+            'template' => 'author,index',
+            'posts_filter' => 'author.slug = {slug}'
+        ],
+        // search
+        [
+            'name' => 'search',
+            'match' => '/search/{search}',
+            'template' => 'search,index'
+        ]
+    ];
+
 
     public static function createRoute(
         Blog $blog,

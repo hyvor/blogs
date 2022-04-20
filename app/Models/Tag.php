@@ -19,7 +19,7 @@ class Tag extends Model
 
     public function variants()
     {
-        return $this->hasMany(TagsVariant::class);
+        return $this->hasMany(TagVariant::class);
     }
 
     public function counts() 

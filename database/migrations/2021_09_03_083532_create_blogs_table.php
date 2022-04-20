@@ -19,7 +19,7 @@ class CreateBlogsTable extends Migration
             $table->softDeletes();
 
             // connections
-            $table->bigInteger('user_id'); // hyvor user id (owner)
+            $table->bigInteger('hyvor_user_id'); // hyvor user id (owner)
             $table->bigInteger('theme_id')->nullable();
 
             // data

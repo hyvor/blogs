@@ -4,7 +4,7 @@ namespace App\Domains\Tag;
 
 use App\Models\Tag;
 use App\Models\PostTag;
-use App\Models\TagsVariant;
+use App\Models\TagVariant;
 use App\Models\Language;
 use Illuminate\Support\Facades\DB;
 use App\Domains\Language\LanguageRepository;
@@ -60,7 +60,7 @@ class TagRepository
         $getLanguage = $blog->languages()->where('is_primary', true)->first();
         $primaryLanguage = $getLanguage->id;
 
-        TagsVariant::create([
+        TagVariant::create([
             'tag_id' => $tagId,
             'language_id' => $primaryLanguage,
             'name' => $name,
@@ -94,7 +94,7 @@ class TagRepository
     */
     public static function getTagVariant($tagId, $languageId)
     {
-        $tags = TagsVariant::where('tag_id', '=', $tagId)
+        $tags = TagVariant::where('tag_id', '=', $tagId)
         ->where('language_id', '=', $languageId)
         ->get();
 
@@ -109,11 +109,11 @@ class TagRepository
 
         if($language == 0){
             
-            $tagVariantCheck = TagsVariant::where('tag_id','=', $tagId)
+            $tagVariantCheck = TagVariant::where('tag_id','=', $tagId)
             ->value('language_id');
 
             if($tagVariantCheck == null){
-                TagsVariant::create([
+                TagVariant::create([
                     'tag_id' => $tagId,
                     'language_id' => $languageId,
                 ]);
@@ -124,7 +124,7 @@ class TagRepository
 
     public static function updateTagVariant($tagId, $languageId,$name, $description){
         // name and description should be added or edited. 
-        TagsVariant::where('tag_id','=',$tagId)
+        TagVariant::where('tag_id','=',$tagId)
             ->where('language_id','=',$languageId)
             ->update([
                 'name' => $name,
@@ -140,12 +140,12 @@ class TagRepository
         ->value('is_primary');
 
         if($language == 0){
-            TagsVariant::where('tag_id','=',$tagId)
+            TagVariant::where('tag_id','=',$tagId)
                 ->where('language_id','=',$languageId)
                 ->delete();
         }
         else{
-            TagsVariant::where('tag_id','=',$tagId)
+            TagVariant::where('tag_id','=',$tagId)
                 ->where('language_id','=',$languageId)
                 ->delete();
 
