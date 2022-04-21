@@ -2,7 +2,7 @@
 namespace App\Domains\User\Observers;
 
 use App\Models\User;
-use App\Models\UsersVariant;
+use App\Models\UserVariant;
 use App\Domains\User\Events\UserEvent;
 
 

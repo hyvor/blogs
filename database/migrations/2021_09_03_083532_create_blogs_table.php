@@ -38,10 +38,6 @@ class CreateBlogsTable extends Migration
             $table->string('api_key_data')->nullable();
             $table->string('api_key_console')->nullable();
 
-            $table->unique(['icon_id']);
-            $table->unique(['featured_image_id']);
-
-
         });
     }
 

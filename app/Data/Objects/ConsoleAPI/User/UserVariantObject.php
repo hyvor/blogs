@@ -2,7 +2,7 @@
 
 namespace App\Data\Objects\ConsoleAPI\User;
 
-use App\Models\UsersVariant;
+use App\Models\UserVariant;
 
 class UserVariantObject
 {
@@ -14,7 +14,7 @@ class UserVariantObject
     public ?string $location;
 
 
-    public function __construct(UsersVariant $userVariant)
+    public function __construct(UserVariant $userVariant)
     {
         $language = $userVariant->language;
         $this->id = $userVariant->id;

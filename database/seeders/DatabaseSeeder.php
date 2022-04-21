@@ -4,6 +4,7 @@ namespace Database\Seeders;
 
 use App\Domains\Post\PostSearchRepository;
 use App\Models\Blog;
+use App\Models\BlogVariant;
 use App\Models\Language;
 use App\Models\Post;
 use App\Models\PostAuthor;
@@ -34,17 +35,14 @@ class DatabaseSeeder extends Seeder
             ->state(new Sequence(
                 [
                     'subdomain' => 'test',
-                    'name' => 'Test Blog'
                 ],
                 [
                     'subdomain' => 'custom',
-                    'name' => 'Custom domain-hosted',
                     'hosting_at' => 'self',
                     'hosting_domain' => 'hyvorblogscustom.test'
                 ],
                 [
                     'subdomain' => 'self',
-                    'name' => 'HB Blog (Self-hosted)',
                     'hosting_at' => 'self',
                     'hosting_url' => 'https://blogs.hyvor.test/blog'
                 ]
@@ -59,6 +57,16 @@ class DatabaseSeeder extends Seeder
                 'code' => 'fr',
                 'name' => "French" 
             ]);
+            
+            BlogVariant::factory()
+                ->count(2)
+                ->state(new Sequence(
+                    ['language_id' => $english],
+                    ['language_id' => $french]
+                ))
+                ->create([
+                    'blog_id' => $blog
+                ]);
             
             // tags
             $tags = Tag::factory()

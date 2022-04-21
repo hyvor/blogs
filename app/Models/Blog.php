@@ -60,7 +60,7 @@ class Blog extends Model
     ];
 
     protected $with = [
-        'variants',
+        'variants'
     ];
 
     public function variants()

@@ -30,7 +30,7 @@ class CreatePostsTable extends Migration
 
             // data
             $table->string('slug')->nullable();
-            $table->string('featured_image')->nullable();
+            $table->string('featured_image_url')->nullable();
             $table->string('canonical_url')->nullable();
             $table->text('code_head')->nullable();
             $table->text('code_foot')->nullable();
@@ -43,7 +43,7 @@ class CreatePostsTable extends Migration
             $table->index(['blog_id', 'published_at']);
             $table->index(['blog_id', 'is_page']);
             $table->index(['blog_id', 'is_featured']);
-            $table->index(['blog_id', 'featured_image']);
+            $table->index(['blog_id', 'featured_image_url']);
             $table->index(['blog_id', 'canonical_url']);
 
         });

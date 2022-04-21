@@ -12,7 +12,6 @@ class BlogFactory extends Factory
         return [
             'hyvor_user_id' => config('test.hyvor_user_id'),
             'subdomain' => $this->faker->uuid(),
-            'name' => $this->faker->name()
         ];
     }
 }

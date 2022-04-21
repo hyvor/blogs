@@ -6,7 +6,7 @@ use App\Data\Enums\UserRoleEnum;
 use App\Data\Enums\UserStatusEnum;
 use App\Domains\Post\PostAuthorRepository;
 use App\Models\User;
-use App\Models\UsersVariant;
+use App\Models\UserVariant;
 use App\Exceptions\TrustedException;
 use Exception;
 use Illuminate\Support\Collection;
@@ -99,11 +99,11 @@ class UserRepository
 
         $user = User::create([
             'blog_id' => $blog->id,
-            'picture_id' => $userData['pictureId'] ?? null,
+           // 'picture_id' => $userData['pictureId'] ?? null,
             // 'slug' => $userData['slug'], 
             'slug' => 'test-three',
             // 'hyvor_user_id' => $hyvorUserId ?? null,
-            'hyvor_user_id' => 5,
+            'hyvor_user_id' => $hyvorUserId,
             'status' => $status->value,
             'role' => $role->value,
             // 'email' => $userData['email'],
@@ -118,7 +118,7 @@ class UserRepository
 
         $getLanguage = $blog->languages()->where('is_primary', true)->first();
 
-        UsersVariant::create([
+        UserVariant::create([
             'user_id' => $user->id,
             // 'language_id' => $getLanguage->id,
             'language_id' => 1,
@@ -156,7 +156,7 @@ class UserRepository
                 'social_instagram' => $userData['social_instagram'] ?? null,
             ]); 
 
-        UsersVariant::where([
+        UserVariant::where([
                 'user_id' => $userId ,
                 'language_id'=> $languageId,
             ]) ->update([
@@ -173,12 +173,12 @@ class UserRepository
         ->value('is_primary');
 
         if($language == 0){
-            UsersVariant::where('user_id','=',$userId)
+            UserVariant::where('user_id','=',$userId)
                 ->where('language_id','=',$languageId)
                 ->delete();
         }
         else{
-            UsersVariant::where('user_id','=',$userId)
+            UserVariant::where('user_id','=',$userId)
                 ->delete();
 
             User::find($userId)
@@ -194,7 +194,7 @@ class UserRepository
     // This function was created to get specific data about variants but we don't need it anymore.
     // public static function getAuthorVariant($userId, $languageId)
     // {
-    //     $users = UsersVariant::where('user_id', '=', $userId)
+    //     $users = UserVariant::where('user_id', '=', $userId)
     //     ->where('language_id', '=', $languageId)
     //     ->get();
 
@@ -208,12 +208,12 @@ class UserRepository
         ->value('is_primary');
 
         if($language == 0){
-            $userVariantCheck = UsersVariant::where('user_id','=', $userId)
+            $userVariantCheck = UserVariant::where('user_id','=', $userId)
             ->where('language_id','=', $languageId)
             ->first();
 
             if($userVariantCheck == null){
-                UsersVariant::create([
+                UserVariant::create([
                     'user_id' => $userId,
                     'language_id' => $languageId,
                 ]);
