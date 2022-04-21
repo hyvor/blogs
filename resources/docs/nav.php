@@ -22,6 +22,7 @@ return [
         ['comments', 'Comments'],
         ['newsletter', 'Newsletter'],
         ['analytics', 'Analytics'],
+        ['forms', 'Forms']
     ],
     'Basic Settings' => [
         ['main', 'Main Settings'],

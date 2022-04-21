@@ -67,6 +67,7 @@ class BlogObserver
          */
         
         
+        
     }
 
     public function updated(PostVariant $variant)
