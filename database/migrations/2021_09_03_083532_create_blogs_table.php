@@ -35,8 +35,8 @@ class CreateBlogsTable extends Migration
 
             $table->json('meta')->nullable();
 
-            $table->string('api_key_data')->nullable();
-            $table->string('api_key_console')->nullable();
+            // $table->string('api_key_data')->nullable();
+            // $table->string('api_key_console')->nullable();
 
         });
     }

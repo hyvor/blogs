@@ -49,11 +49,11 @@ class Blog extends Model
         'newsletter_code' => ['string|null', null],
 
         // color mode
-        'color_mode_allowed' => ['enum:light,dark,both', 'both'],
+        'color_modes' => ['enum:light,dark,both', 'both'],
         'color_mode_default' => ['enum:light,dark,os', 'os'],
 
         // syntax highlighting
-        'syntax_on' => ['bool', true],
+        'syntax' => ['bool', true],
         'syntax_line_numbers' => ['bool', true],
         'syntax_theme' => ['string|null', null],
 
