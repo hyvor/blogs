@@ -30,6 +30,9 @@ class CacheRepository
     ) : void
     {
         
+        if (config('app.debug') === true)
+            return;
+        
         $tag = self::getCacheKeyTag($blog);
         $key = self::getCacheKey($blog, $path);
         Cache::tags($tag)->put($key, serialize($responseObject));

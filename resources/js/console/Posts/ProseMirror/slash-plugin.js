@@ -88,13 +88,13 @@ const matchable = [
         keywords: ['html', 'twig', 'code', 'custom'],
         node: 'custom_html'
     },
-    {
+    /*{
         name: "Custom Node",
         description: "Add pre-defined custom node",
         icon: <Gear />,
         keywords: ['custom'],
         node: 'custom_node'
-    },
+    },*/
 ]
 
 

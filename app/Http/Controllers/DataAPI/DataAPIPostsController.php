@@ -126,23 +126,22 @@ class DataAPIPostsController extends Controller
         ]);
 
         $search = $request->input('search');
-        $languageCode = $request->input('language') ?? null;
-        $language = $languageCode ? 
-            LanguageRepository::getLanguageByCode($blog, $languageCode) : 
-            LanguageRepository::getPrimaryLanguage($blog);
+        $language = DataAPIHelper::getLanguage($blog, $request->input('language'));
 
-        $limit = $request->input('limit') ?? 20;
-        $page = $request->input('page') ?? 1;
-        $offset = ($page - 1) * $limit;
+        $limit = DataAPIHelper::getLimit($request->input('limit'));
+        $page = DataAPIHelper::getPage($request->input('page'));
+        $offset = DataAPIHelper::getOffset($page, $limit);
 
         $searchData = PostSearchRepository::search(
+
+            blog: $blog,
+            language: $language,
             search: $search,
             limit: $limit,
             offset: $offset,
-            blogId: $blog->id,
-            languageId: $language->id,
             isPage: false,
             isPublished: true,
+            
         );
 
         $posts = $searchData['posts']->map(function($post) use ($blog, $language) {
@@ -151,7 +150,7 @@ class DataAPIPostsController extends Controller
         
         return response()->json([
             'data' => $posts,
-            'pagination' => new PaginationObject($limit, $page, $searchData[''])
+            'pagination' => new PaginationObject($limit, $page, $searchData['total'])
         ]);
 
     }

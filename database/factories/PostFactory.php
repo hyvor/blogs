@@ -24,6 +24,7 @@ class PostFactory extends Factory
             'is_featured' => false,
 
             'slug' => Str::slug($this->faker->text),
+            'published_at' => $this->faker->dateTime()
         ];
     }
 }

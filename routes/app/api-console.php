@@ -11,6 +11,7 @@ use App\Http\Controllers\ConsoleAPI\ConsoleUserController;
 use App\Http\Controllers\ConsoleAPI\ConsoleRedirectController;
 use App\Http\Controllers\ConsoleAPI\ConsoleNavigationController;
 use App\Http\Controllers\ConsoleAPI\ConsoleTagController;
+use App\Http\Controllers\ConsoleAPI\ConsoleRouteController;
 
 use App\Http\Controllers\ConsoleAPI\ConsoleViewController;
 
@@ -33,8 +34,8 @@ use Illuminate\Support\Facades\Route;
 //     ->get('/console/{any?}', ConsoleViewController::class)
 //     ->where('any', '.*');
 
-// Route::get('/console/{any?}', ConsoleViewController::class)
-//     ->where('any', '.*');
+Route::get('/console/{any?}', ConsoleViewController::class)
+    ->where('any', '.*');
 
 
 // this is an internal API
@@ -91,7 +92,13 @@ Route::prefix('/api/console/v0/blog/{subdomain}')
         // blog
         Route::get('/blog', [ConsoleBlogController::class, 'getBlog']);
         Route::get('/blog/post-counts', [ConsoleBlogController::class, 'getPostsCounts']);
-        
+
+        // Blog General CRUD 
+        Route::post('/blog/variant', [ConsoleBlogController::class, 'createBlogVariant']);
+        Route::put('/blog', [ConsoleBlogController::class, 'updateBlog']);
+        Route::post('/blog/feature/image', [ConsoleBlogController::class, 'updateBlogFeatureImage']);
+        Route::post('/blog/icon', [ConsoleBlogController::class, 'updateBlogIcon']);
+
         /**
          * In post routes, role is checked internally on some actions
          * such as publishing posts
@@ -128,14 +135,14 @@ Route::prefix('/api/console/v0/blog/{subdomain}')
         // tags CRUD
         Route::get('/tags', [ConsoleTagController::class, 'getTag']);
         Route::post('/tags', [ConsoleTagController::class, 'createTag']);
-        Route::put('/tag/{tagId}', [ConsoleTagController::class, 'updateTag']);
-        Route::delete('/tag/{tagId}', [ConsoleTagController::class, 'deleteTag']);
+        Route::put('/tag/{id}', [ConsoleTagController::class, 'updateTag']);
+        Route::delete('/tag/{id}', [ConsoleTagController::class, 'deleteTag']);
+        Route::post('/tag/variant', [ConsoleTagController::class, 'createTagVariant']);
 
         // tag variant crud
-        Route::get('/tagVariant', [ConsoleTagController::class, 'getTagVariant']);
-        Route::post('/tagVariant', [ConsoleTagController::class, 'createTagVariant']);
-        Route::put('/tagVariant', [ConsoleTagController::class, 'updateTagVariant']);
-        Route::delete('/tagVariant', [ConsoleTagController::class, 'deleteTagVariant']);
+        // Route::get('/tagVariant', [ConsoleTagController::class, 'getTagVariant']);
+        // Route::put('/tagVariant', [ConsoleTagController::class, 'updateTagVariant']);
+        // Route::delete('/tagVariant', [ConsoleTagController::class, 'deleteTagVariant']);
 
         Route::get('/postTags/{postId}', [ConsoleTagController::class, 'selectedPostTag']);
 
@@ -150,15 +157,6 @@ Route::prefix('/api/console/v0/blog/{subdomain}')
         Route::get('/comments/moderate', []);
 
     });
-
-    // navigation CRUD
-    Route::get('/navigation', [ConsoleNavigationController::class,'getNavigations']);
-    Route::post('/navigation', [ConsoleNavigationController::class,'createNavigation']);
-    Route::put('/navigation/{id}', [ConsoleNavigationController::class,'updateNavigation']);
-    Route::delete('/navigation/{id}', [ConsoleNavigationController::class,'deleteNavigation']);
-    Route::put('/navigation/sort/{navigationId}', [ConsoleNavigationController::class,'updateSort']);
-    Route::put('/navigation/source/{sourceId}', [ConsoleNavigationController::class,'updateSourceSort']);
-
 
     /**
      * Settings, users, and theme
@@ -177,11 +175,8 @@ Route::prefix('/api/console/v0/blog/{subdomain}')
         Route::post('/navigation', [ConsoleNavigationController::class,'createNavigation']);
         Route::put('/navigation/{id}', [ConsoleNavigationController::class,'updateNavigation']);
         Route::delete('/navigation/{id}', [ConsoleNavigationController::class,'deleteNavigation']);
-
-        // order Navigation
-        Route::put('/navNumber/{userId}', [ConsoleNavigationController::class,'updateItemNumber']);
-        Route::put('/source/{sourceId}', [ConsoleNavigationController::class,'updateSourceItemNumber']);
-
+        Route::put('/navigation/sort/{navigationId}', [ConsoleNavigationController::class,'updateSort']);
+        Route::put('/navigation/source/{sourceId}', [ConsoleNavigationController::class,'updateSourceSort']);
 
         // languages CRUD
         Route::get('/languages', [ConsoleLanguageController::class, 'get']);
@@ -204,11 +199,19 @@ Route::prefix('/api/console/v0/blog/{subdomain}')
         Route::post('/user', [ConsoleUserController::class, 'createAuthor']);
         Route::patch('/user/{id}', [ConsoleUserController::class, 'updateAuthor']); 
         Route::delete('/user/{id}', [ConsoleUserController::class, 'deleteAuthor']); 
+        Route::post('/user/variant', [ConsoleUserController::class, 'createAuthorVariant']);
+        Route::post('/user/picture', [ConsoleUserController::class, 'updatePicture']);
 
-        Route::get('/userVariant', [ConsoleUserController::class, 'getAuthorVariant']);
-        Route::post('/userVariant', [ConsoleUserController::class, 'createAuthorVariant']);
+        // Route::get('/user/picture', [ConsoleUserController::class, 'getPicture']);
+        // Route::get('/userVariant', [ConsoleUserController::class, 'getAuthorVariant']);
         // Route::put('/userVariant', [ConsoleUserController::class, 'updateAuthorVariant']);
         // Route::delete('/userVariant', [ConsoleUserController::class, 'deleteAuthorVariant']);
+
+        // route CRUD
+        Route::get('/route', [ConsoleRouteController::class, 'getRoute']);
+        Route::post('/route', [ConsoleRouteController::class, 'createRoute']);
+        Route::put('/route/{id}', [ConsoleRouteController::class, 'updateRoute']);
+        Route::delete('/route/{id}', [ConsoleRouteController::class, 'deleteRoute']);
 
         // theme CRUD
         Route::get('/theme-files', [ConsoleBlogThemeController::class, 'getAllFiles']);

@@ -13,7 +13,7 @@ use App\Models\Blog;
 class UserBlogBlogObject
 {
     public int $id;
-    public string $name;
+    // public string $name;
     public string $subdomain;
     public string $base_url;
     public int $posts_count;
@@ -40,7 +40,7 @@ class UserBlogBlogObject
         $plan = null;
 
         $this->id = $blog->id;
-        $this->name = $blog->name;
+        $this->name = $blog->variants[0]->name;
         $this->subdomain = $blog->subdomain;
         $this->base_url = PermalinkRepository::getBlogPermalink($blog);
         $this->plan = $plan;

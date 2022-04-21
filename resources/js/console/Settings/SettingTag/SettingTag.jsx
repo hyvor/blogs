@@ -8,6 +8,16 @@ import NoResults from '../../ReusableComponents/NoResults';
 import CreateTag from './CreateTag';
 import Tags from './TagsTable';
 
+
+//  Remaining 
+/*
+*
+* Create tag Variant in language select if a variant is not selected. ( Done -- )
+* Update tag data (according to an language if required) ( Done -- )
+* Delete tag according to an condition. ( Done -- )
+* 
+*/
+
 export default function SettingTag(props) {
     const subdomain = subdomainLogic.values.subdomain;
     const tagsLogicBuilt = tagsLogic({subdomain})

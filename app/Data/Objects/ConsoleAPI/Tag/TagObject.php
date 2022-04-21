@@ -3,7 +3,6 @@
 namespace App\Data\Objects\ConsoleAPI\Tag;
 
 use App\Models\Tag;
-use App\Models\Language;
 use App\Models\Blog;
 
 class TagObject

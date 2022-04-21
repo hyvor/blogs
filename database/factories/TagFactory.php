@@ -6,15 +6,8 @@ use Illuminate\Database\Eloquent\Factories\Factory;
 use Illuminate\Support\Str;
 use App\Models\Tag;
 
-/**
- * @extends \Illuminate\Database\Eloquent\Factories\Factory<\App\Models\Tag>
- */
 class TagFactory extends Factory
 {
-    // step:1 = php artisan tinker
-    // step:2 = \App\Models\Tag::factory()->count(5)->create();
-
-    // get the faker URL to the factory.
 
     protected $model = Tag::class;
 
@@ -25,12 +18,9 @@ class TagFactory extends Factory
      */
     public function definition()
     {
-        $name = $this->faker->name();
         return [
-            'blog_id' => '1',
-            'name' => $name,
-            'slug' => Str::slug($name),
-            // 'type' => 'header',
+            'blog_id' => config('test.blog_id'),
+            'slug' => Str::slug($this->faker->name()),
         ];
     }
 }

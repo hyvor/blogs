@@ -19,5 +19,8 @@ composer.lock
 /.vscode
 Caddyfile
 
+/cypress/screenshots/
+cypress/videos/
+
 # temp files
 .DS_Store

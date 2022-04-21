@@ -33,7 +33,7 @@ image_service:
     $title: Image Service API Details
 
     api_key:
-				$default: ~
+		$default: ~
         $title: API Key
         $description: ...
         $type: text

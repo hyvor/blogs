@@ -14,14 +14,14 @@ class NavigationObject
     public string $type; 
     public string $sort; 
 
-    public function __construct(Navigation $Navigation)
+    public function __construct(Navigation $navigation)
     {
-        $this->id = $Navigation->id;
-        $this->uploaded_at = $Navigation->created_at->timestamp;
-        $this->blog_id = $Navigation->blog_id;
-        $this->name = $Navigation->name;
-        $this->url = $Navigation->url;
-        $this->type = $Navigation->type;
-        $this->sort = $Navigation->sort;
+        $this->id = $navigation->id;
+        $this->uploaded_at = $navigation->created_at->timestamp;
+        $this->blog_id = $navigation->blog_id;
+        $this->name = $navigation->name;
+        $this->url = $navigation->url;
+        $this->type = $navigation->type;
+        $this->sort = $navigation->sort;
     }
 }

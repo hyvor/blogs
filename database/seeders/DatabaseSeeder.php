@@ -2,25 +2,20 @@
 
 namespace Database\Seeders;
 
-use App\Domains\Blog\FillNewBlog;
-use App\Domains\Language\LanguageRepository;
 use App\Domains\Post\PostSearchRepository;
-use App\Domains\Redirect\RedirectRepository;
-use App\Domains\Route\RouteRepository;
 use App\Models\Blog;
-use App\Models\Media;
-use App\Models\BlogThemeFile;
+use App\Models\BlogVariant;
+use App\Models\Language;
 use App\Models\Post;
 use App\Models\PostAuthor;
 use App\Models\PostVariant;
 use App\Models\PostTag;
 use App\Models\Tag;
-use App\Models\TagsVariant;
-use App\Models\User;
+use App\Models\TagVariant;
+use Faker\Factory;
+use Illuminate\Database\Eloquent\Factories\Sequence;
 use Illuminate\Support\Str;
 use Illuminate\Database\Seeder;
-
-use Illuminate\Http\Client\ConnectionException;
 
 
 class DatabaseSeeder extends Seeder
@@ -32,145 +27,114 @@ class DatabaseSeeder extends Seeder
      */
     public function run()
     {
-        $faker = \Faker\Factory::create();
-
-        $blogs = [['test', "Test Blog", 'hyvorblogscustom.test'], ['test2', "Test2 Blog"]];
-
-        foreach ($blogs as $blogData) {
-            $blog = Blog::create([
-                'user_id' => 1,
-                'subdomain' => $blogData[0],
-                'name' => $blogData[1],
-                'hosting_domain' => $blogData[2] ?? null,
-                'hosting_at' => $blogData[0] === 'test2' ? 'self' : 'subdomain',
-                'hosting_url' => $blogData[0] === 'test2' ? 'https://blogs.hyvor.test/blog' : null,
-                'api_key_console' => '123'
+        $faker = Factory::create();
+        $fakerFr = Factory::create('fr_FR');
+        
+        $blogs = Blog::factory()
+            ->count(3)
+            ->state(new Sequence(
+                [
+                    'subdomain' => 'test',
+                ],
+                [
+                    'subdomain' => 'custom',
+                    'hosting_at' => 'self',
+                    'hosting_domain' => 'hyvorblogscustom.test'
+                ],
+                [
+                    'subdomain' => 'self',
+                    'hosting_at' => 'self',
+                    'hosting_url' => 'https://blogs.hyvor.test/blog'
+                ]
+            ))
+            ->create();
+        
+        foreach ($blogs as $blog) {
+            
+            $english = $blog->languages[0];
+            $french = Language::factory()->create([
+                'blog_id' => $blog,
+                'code' => 'fr',
+                'name' => "French" 
             ]);
-
-            ['language' => $language] = FillNewBlog::fill($blog);
-
-            $secondLanguage = LanguageRepository::createLanguage($blog, 'fr', 'French');
-
-
-            $tags = [];
-            $tagsVariant = [];
-            foreach (range(0, 9) as $i) {
-                $name = $faker->name();
-                $tag = Tag::create([
-                    'blog_id' => $blog->id,
-                    // 'name' => $name,
-                    'slug' => Str::slug($name),
+            
+            BlogVariant::factory()
+                ->count(2)
+                ->state(new Sequence(
+                    ['language_id' => $english],
+                    ['language_id' => $french]
+                ))
+                ->create([
+                    'blog_id' => $blog
                 ]);
-                $tags[] = $tag;
-
-                $tagsVariant[] = TagsVariant::create([
-                    'tag_id' => $tag->id,
-                    'language_id' => $language->id,
-                    'name' => $name,
+            
+            // tags
+            $tags = Tag::factory()
+                ->count(10)
+                ->has(
+                    TagVariant::factory()
+                        ->count(2)
+                        ->state(new Sequence(
+                            [
+                                'language_id' => $english,
+                                'name' => $faker->name
+                            ],
+                            [
+                                'language_id' => $french,
+                                'name' => $fakerFr->name
+                            ]
+                        ))
+                    , 
+                    'variants'
+                )
+                ->create([
+                    'blog_id' => $blog
                 ]);
-            }
-
-
-
-
-            $posts = [];
-            foreach (range(0, 200) as $i) {
-                $title = $faker->sentence;
-
-                $paragraphs = $faker->paragraphs(rand(2, 6));
-                $prosemirrorJson = [
-                    'type' => 'doc',
-                    'content' => []
-                ];
-                foreach ($paragraphs as $para) {
-                    $prosemirrorJson['content'][] = [
-                        'type' => 'paragraph',
-                        'content' => [[
-                            'type' => 'text',
-                            'text' => $para
-                        ]]
-                    ];
-                }
-
-                $status = ['draft', 'published', 'scheduled'];
-                $status = $i === 0 ? 'published' : $status[ array_rand($status) ];
-
-                $publishedAt = $status === 'published' ? $faker->dateTime() : null;
-
-                $post = Post::create([
-                    'blog_id' => $blog->id,
-                    'is_page' => (bool) rand(0,1),
-                    'slug' => Str::slug($title),
-                    'published_at' => $publishedAt,
+            
+            // users
+            // TODO:
+            
+            // posts
+            $posts = Post::factory()
+                ->count(200)
+                ->has(
+                    PostVariant::factory()
+                        ->count(2)
+                        ->state(new Sequence(
+                            ['language_id' => $english],
+                            ['language_id' => $french]
+                        ))
+                        ->state(function() {
+                            return [
+                                'status' => collect(['draft', 'published', 'scheduled'])->random(),
+                            ];
+                        }),
+                    'variants'
+                )
+                ->state(new Sequence(
+                    ['is_page' => true],
+                    ['is_page' => false]
+                ))
+                ->create([
+                    'blog_id' => $blog,
                 ]);
-
-                $englishPost = PostVariant::create([
-                    'post_id' => $post->id,
-                    'language_id' => $language->id,
-                    'title' => $title,
-                    'description' => $faker->sentence,
-                    'status' => $status,
-                ]);
-
-                // update is separate to trigger observer's update
-                $englishPost->update([
-                    'content' => json_encode($prosemirrorJson)
-                ]);
-
-
-                // if (rand(0,1) === 0) {
-
-                    $prosemirrorJson['content'][] = [
-                        'type' => 'paragraph',
-                        'content' => [[
-                            'type' => 'text',
-                            'text' => "This is french"
-                        ]]
-                    ];
-                    
-                    $frenchPost = PostVariant::create([
-                        'post_id' => $post->id,
-                        'language_id' => $secondLanguage->id,
-                        'title' => $title . ' French',
-                        'description' => $faker->sentence,
-                        'status' => $status,
-                    ]);
-
-                    $frenchPost->update([
-                        'content' => json_encode($prosemirrorJson)
-                    ]);
-                    
-                // }
+            
+            // connect posts and tags
+            $posts->map(function($post) use ($tags) {
 
                 PostTag::create([
                     'post_id' => $post->id,
-                    'tag_id' => $tags[ array_rand($tags) ]->id
+                    'tag_id' => $tags->random()->id
                 ]);
-
-                PostAuthor::create([
+    
+                // TODO:
+                /*PostAuthor::create([
                     'post_id' => $post->id,
                     'user_id' => 1
-                ]);
-            }
-
-
-
-
-
-            foreach (range(0, 15) as $i) {
-                /* Media::create([
-                    'blog_id' => $blog->id,
-                    'url' => 'https://picsum.photos/' . rand(200, 500) . '/' . rand(200, 500),
-                    'size' => rand(1000000, 9000000),
-                    'name' => $faker->name,
-                    'extension' => 'jpg'
-                ]); */
-            }
-
-
-
-
-        
+                ]);*/
+                
+            });
+            
         }
 
         PostSearchRepository::setFilterableAttributes();
@@ -181,4 +145,5 @@ class DatabaseSeeder extends Seeder
         ]);
 
     }
+    
 }

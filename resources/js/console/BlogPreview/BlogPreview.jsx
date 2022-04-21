@@ -48,7 +48,7 @@ export default function BlogPreview() {
             }
             <iframe
                 id="preview-iframe"
-                src={`https://${subdomain}.${domain}`} 
+                src={ blog.blog.base_url }
                 style={{
                     width: type === 'laptop' ? "100%" : (type === 'tablet' ? 600 : 360),
                     height: type === 'laptop' ? "100%" : 740,

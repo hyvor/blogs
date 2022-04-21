@@ -13,7 +13,7 @@ return new class extends Migration
      */
     public function up()
     {
-        Schema::create('tags_variants', function (Blueprint $table) {
+        Schema::create('tag_variants', function (Blueprint $table) {
             $table->id();
             $table->timestamps();
 

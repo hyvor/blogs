@@ -90,7 +90,7 @@ class TemplateRenderer {
     private function getVariables() {
         $blog = $this->pathMatcher->blog;
 
-        $blogObject = new BlogObject($blog);
+        $blogObject = new BlogObject($blog, $this->pathMatcher->language);
         $scopeVariables = $this->getRouteVariables($blogObject);
 
         $vars = [
@@ -126,13 +126,13 @@ class TemplateRenderer {
 
         if ($routeName === 'index') {
 
-            $blogObject = new BlogObject($this->pathMatcher->blog);
+            $blogObject = new BlogObject($this->pathMatcher->blog, $this->pathMatcher->language);
 
             return [
                 '_meta' => new MetaObject(
                     $blogObject->name,
                     $blogObject->description,
-                    $blogObject->featured_image,
+                    $blogObject->featured_image_url,
                     $blogObject->url,
                     $blogObject->url
                 ),
@@ -151,7 +151,7 @@ class TemplateRenderer {
                 '_meta' => new MetaObject(
                     $postObject->title,
                     $postObject->description,
-                    $postObject->featured_image,
+                    $postObject->featured_image_url,
                     $postObject->url,
                     $postObject->canonical_url ?? $postObject->url
                 ),
@@ -160,13 +160,13 @@ class TemplateRenderer {
 
         } else if ($routeName === 'tag') {
 
-            $tagObject = new TagObject($this->model, $this->pathMatcher->blog);
+            $tagObject = new TagObject($this->model, $this->pathMatcher->blog, $this->pathMatcher->language);
 
             return [
                 '_meta' => new MetaObject(
                     $tagObject->name,
                     $tagObject->name,
-                    $tagObject->featured_image,
+                    null,
                     $tagObject->url,
                     $tagObject->url
                 ),
@@ -191,11 +191,11 @@ class TemplateRenderer {
             $search = $this->matchedRoute->param('search');
 
             $searchData = PostSearchRepository::search(
+                blog: $this->pathMatcher->blog,
+                language: $this->pathMatcher->language,
                 search: $search,
                 limit: $limit,
                 offset: $offset,
-                blogId: $this->pathMatcher->blog->id,
-                languageId: $this->pathMatcher->language->id,
                 isPage: false,
                 isPublished: true
             );

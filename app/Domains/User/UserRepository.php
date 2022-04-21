@@ -13,10 +13,13 @@ use Illuminate\Support\Collection;
 use Illuminate\Support\Str;
 use App\Domains\Language\LanguageRepository;
 use App\Models\Language;
+use App\Models\Media;
+use App\Domains\Media\MediaRepository;
+use App\Domains\Route\PermalinkRepository;
 
 
 use Hyvor\HyvorConnecter\Userbase;
-use App\Domains\User\Types\UserBlogOutputConsoleType;
+use App\Domains\User\Types\UserBlogOutputConsoleType; 
 use App\Models\Blog;
 use App\Data\Objects\ConsoleAPI\UserBlog\UserBlogObject;
 
@@ -48,12 +51,13 @@ class UserRepository
     {
         $language = LanguageRepository::getPrimaryLanguage($blog);
 
-        $users = User::where('users.blog_id', '=', $blog->id)
+        $users = User::where('blog_id', '=', $blog->id)
         ->join('users_variants', function($join) use ($language) {
             $join->on('users_variants.user_id', '=', 'users.id');
             $join->where('users_variants.language_id', '=',  $language->id);
         })
-        ->latest()
+        // ->latest()
+        ->select('users.*')
         ->get();
 
         return $users;
@@ -70,38 +74,40 @@ class UserRepository
         UserRoleEnum $role,
         UserStatusEnum $status = UserStatusEnum::INVITED,
         array $userData = [],
-    // ): User {
-    ) {
+    ): User {
+    // ) {
 
         // This is the place where I got the ( cURL error 6: Could not resolve host: api ) Error so I had to comment it.
-        if ($hyvorUserId) {
-            $user = Userbase::fromId($hyvorUserId, false, true);
+        // if ($hyvorUserId) {
+        //     $user = Userbase::fromId($hyvorUserId, false, true);
 
-            if (!$user) {
-                throw new TrustedException("User not found");
-            }
+        //     if (!$user) {
+        //         throw new TrustedException("User not found");
+        //     }
 
-            $userData = [
-                'name' => $user->name,
-                'email' => $user->email,
-                'picture' => $user->picture,
-                'location' => $user->location,
-                'bio' => $user->bio,
-                'url' => $user->url
-            ];
-        }
+        //     $userData = [
+        //         'name' => $user->name,
+        //         'email' => $user->email,
+        //         'picture' => $user->picture,
+        //         'location' => $user->location,
+        //         'bio' => $user->bio,
+        //         'url' => $user->url
+        //     ];
+        // }
 
-        $slug = self::findSlugForUser($blog->id, $userData);
+        // $slug = self::findSlugForUser($blog->id, $userData);
 
         $user = User::create([
             'blog_id' => $blog->id,
-            'slug' => $slug,
-            'user_id' => $hyvorUserId,
-            // 'user_id' => 2,
+           // 'picture_id' => $userData['pictureId'] ?? null,
+            // 'slug' => $userData['slug'], 
+            'slug' => 'test-three',
+            // 'hyvor_user_id' => $hyvorUserId ?? null,
+            'hyvor_user_id' => $hyvorUserId,
             'status' => $status->value,
             'role' => $role->value,
-            'email' => $userData['email'],
-            'picture' => $userData['picture'] ?? null,
+            // 'email' => $userData['email'],
+            'email' =>'sgs.ss',
             'url' => $userData['url'] ?? null,
             'social_facebook' => $userData['social_facebook'] ?? null,
             'social_twitter' => $userData['social_twitter'] ?? null,
@@ -114,16 +120,18 @@ class UserRepository
 
         UserVariant::create([
             'user_id' => $user->id,
-            'language_id' => $getLanguage->id,
-            'name' => $userData['name'],
+            // 'language_id' => $getLanguage->id,
+            'language_id' => 1,
+            // 'name' => $userData['name'],
+            'name' => 'fd',
             'location' => $userData['location'] ?? null,
             'bio' => $userData['bio'] ?? null,
         ]);
 
-        // return $user;
+        return $user;
     }
 
-    public static function updateAuthor( 
+    public static function updateAuthor(
         int $userId, 
         int $languageId,
         $blog,
@@ -139,14 +147,14 @@ class UserRepository
                 'status' => $status->value,
                 'role' => $role->value,
                 'email' => $userData['email'] ?? null,
-                'picture' => $userData['picture'] ?? null,
+                'picture_id' => $userData['pictureId'] ?? null,
                 'url' => $userData['url'] ?? null,
                 'social_facebook' => $userData['social_facebook'] ?? null,
                 'social_twitter' => $userData['social_twitter'] ?? null,
                 'social_linkedin' => $userData['social_linkedin'] ?? null,
                 'social_youtube' => $userData['social_youtube'] ?? null,
                 'social_instagram' => $userData['social_instagram'] ?? null,
-            ]);
+            ]); 
 
         UserVariant::where([
                 'user_id' => $userId ,
@@ -183,16 +191,17 @@ class UserRepository
     * these functions are for author Variants
     *
     */
-    public static function getAuthorVariant($userId, $languageId)
-    {
-        $users = UserVariant::where('user_id', '=', $userId)
-        ->where('language_id', '=', $languageId)
-        ->get();
+    // This function was created to get specific data about variants but we don't need it anymore.
+    // public static function getAuthorVariant($userId, $languageId)
+    // {
+    //     $users = UserVariant::where('user_id', '=', $userId)
+    //     ->where('language_id', '=', $languageId)
+    //     ->get();
 
-        return $users;
-    }
+    //     return $users;
+    // }
 
-    // This function is used to create a variant if it doesn'texist.'
+    // This function is used to create a variant if it doesn't exist.'
     public static function createAuthorVariant($userId, $languageId) 
     {
         $language = Language::where('id','=', $languageId)
@@ -212,7 +221,33 @@ class UserRepository
         }
     }
 
+    public static function updatePicture($blog, $file) {
 
+        $media = MediaRepository::upload($blog->id, $file);
+        $pictureUrl = PermalinkRepository::getMediaPermalink($media, $blog);
+
+        // dd($pictureUrl);
+        // $pictureId = $media->id;
+
+        User::find($blog->id)
+            ->update([
+                'picture_url' => $pictureUrl,
+            ]);
+    }
+
+    public static function getPicture($userId) {
+
+        $pictureId = User::where('id','=', $userId)
+        ->value('picture_id');
+
+        if($pictureId !== null){
+            $media = MediaRepository::getOne($pictureId);
+        }
+        else{
+            $media = null;
+        }
+        return $media;
+    }
 
     /*
     *
@@ -222,7 +257,7 @@ class UserRepository
     */
     public static function getBlogsOfUser(int $hyvorUserId): Collection
     {
-        return User::where('user_id', $hyvorUserId)
+        return User::where('hyvor_user_id', $hyvorUserId)
             ->where('status', 'active')
             ->orderBy('sort', 'ASC')
             ->orderBy('created_at', 'ASC')
@@ -237,7 +272,7 @@ class UserRepository
     public static function getUserByBlogIdAndHyvorUserId(int $blogId, int $hyvorUserId) : ?User 
     {
         return User::where('blog_id', $blogId)
-            ->where('user_id', $hyvorUserId)
+            ->where('hyvor_user_id', $hyvorUserId)
             ->first();
     }
 
@@ -268,7 +303,7 @@ class UserRepository
         $i = 1;
         foreach ($arr as $blogId) {
             User::where('blog_id', $blogId)
-                ->where('user_id', $userId)
+                ->where('hyvor_user_id', $userId)
                 ->update([
                     'sort' => $i
                 ]);

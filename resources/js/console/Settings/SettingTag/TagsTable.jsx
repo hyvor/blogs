@@ -1,6 +1,6 @@
-import React, {useState} from 'react';
+import React, {useState, useEffect} from 'react';
 import { useActions, useValues } from 'kea';
-import { Trash, PencilFill, Plus, BoxArrowInRight, CodeSlash} from 'react-bootstrap-icons';
+import { Trash, PencilFill, Plus, BoxArrowInRight, CodeSlash, Link} from 'react-bootstrap-icons';
 import {toast} from 'react-toastify'
 import tagsLogic from '../../logic/tagsLogic';
 import languagesLogic from '../../logic/languagesLogic';
@@ -9,8 +9,6 @@ import Input from '../../ReusableComponents/Input';
 import { Popup, PopupBodyDefault, PopupConfirm, PopupFooterDoubleButton, PopupHeaderDefault } from '../../ReusableComponents/Popup';
 import DualSetting from '../../ReusableComponents/DualSetting';
 import CodemirrorEditor, { CODEMIRROR_MODES } from '../../ReusableComponents/CodemirrorEditor';
-import LanguageSelector from '../../ReusableComponents/LanguageSelector';
-
 import TagLanguageSelector from './TagLanguageSelector';
 
 
@@ -20,8 +18,8 @@ export default function Tags ({tag, subdomain})
     // I should create the update section. and also I have to find the error which is occurring in the logic.
 
     const tagLogicBuilt = tagsLogic({subdomain})
-    const { remove , updateData, removeVariant, loadVariant} = useActions(tagLogicBuilt)
-    const { updateDataAjax, tagVariant } = useValues(tagLogicBuilt)
+    const { remove , updateData} = useActions(tagLogicBuilt)
+    const { updateDataAjax } = useValues(tagLogicBuilt)
 
     // language
     const { languages, getLanguageById } = useValues(languagesLogic({subdomain}))
@@ -34,23 +32,54 @@ export default function Tags ({tag, subdomain})
     const variants = tag.variants || [];
     const variant = variants[currentLanguageId] || {};
 
-    let getName;
-    let getDescription;
 
-    if(tag.id == variant.tag_id){
-        getName = variant.name
-        getDescription = variant.description
-    }
+    const [ getName, setName ] = useState(null);
+    const [ getDescription, setDescription ] = useState(null);
 
-    // function getName(){
-    //     if(tag.id == variant.tag_id){
-    //         const nameData =  variant.name;
-    //         setGetName(nameData)
-    //         return nameData;
-    //     }
-    // }
+     // To disable editing in other languages.
+     const [pointerEvent, setPointerEvent] = useState();
 
-    // console.log('currentLanguageId');
+     // To display data in the table
+    //  const [getTableName, setTableName] = useState(null);
+     useEffect(() => {
+         if(currentLanguage.is_primary === true){
+             if(currentLanguage.id === variant.language_id){
+                 if(tag.id === variant.tag_id){
+                    setName(variant.name)
+                    setDescription(variant.description)
+                 }
+             }
+         }
+     })
+ 
+
+
+     // To display data in the pop-up
+     const [variantName, setVariantName] = useState(null);
+     const [variantDescription, setVariantDescription] = useState(null);
+ 
+     useEffect(() => {
+         if(currentLanguage.is_primary == true)
+         {
+             setPointerEvent()
+             if(currentLanguageId == variant.language_id){
+                 if(tag.id == variant.tag_id){
+                     setVariantName(variant.name)
+                     setVariantDescription(variant.description)
+                 }
+             }
+         }
+         else
+         {
+             setPointerEvent("pointerEvent")
+             if(currentLanguageId == variant.language_id){
+                 if(tag.id == variant.tag_id){
+                    setVariantName(variant.name)
+                    setVariantDescription(variant.description)
+                 }
+             }
+         }
+     }, [])
 
 
     // update section
@@ -58,8 +87,6 @@ export default function Tags ({tag, subdomain})
     const [updatePopUpOpened, setUpdatePopUpOpened] = useState(false);
 
     const [updateTagData, setUpdate] = useState({tagId: tag.id})
-    const [ tagName, setName ] = useState(getName);
-    const [ tagDescription, setDescription ] = useState(getDescription);
     const [ tagSlug, setSlug ] = useState(tag.slug);
  
     function handleUpdate(e){
@@ -77,7 +104,12 @@ export default function Tags ({tag, subdomain})
         e.preventDefault();
         updateData({
             tagId: updateTagData.tagId,
-            slug:tag.slug,
+            name: variantName,
+            languageId : currentLanguageId,
+            description: variantDescription,
+            slug: tagSlug,
+            codeHead: tagCodeHead,
+            codeFoot: tagCodeFoot,
         });
         setUpdatePopUpOpened(false); 
  
@@ -128,11 +160,10 @@ export default function Tags ({tag, subdomain})
     }
     function handleDoDelete() {
         toast("File deleted", {autoClose: 1500});
-        // remove({id});
-        removeVariant({
-            tagId: updateTagData.tagId,
-            languageId: currentLanguageId
-        })
+        remove({
+            id:tag.id,
+            languageId:currentLanguageId
+        });
         setDeletePopupOpened(false);
         setStyleDeleteIcon("table-button");
     }
@@ -158,13 +189,13 @@ export default function Tags ({tag, subdomain})
                             <div className="popup-width">
                                 <Popup
                                     header={<PopupHeaderDefault title='Update Code' />}
-                                    body={
+                                    body={ 
                                     <PopupBodyDefault>
                                         <DualSetting 
                                             title="Head Code"
                                             description={
                                                 <div className="table-code-pop-input">
-                                                     <CodemirrorEditor 
+                                                <CodemirrorEditor 
                                                     mode={CODEMIRROR_MODES.twig}
                                                     value={tagCodeHead}
                                                     onChange={setCodeHead}
@@ -209,15 +240,16 @@ export default function Tags ({tag, subdomain})
                        
                         {
                             updatePopUpOpened ?
+                            <div className="popup-width">
                                 <Popup
                                     header={
                                         <div>
                                             <PopupHeaderDefault title='Update Tag' />
                                             <TagLanguageSelector 
                                                 id={tag.id} 
+                                                subdomain={subdomain}
                                                 languages={languages} 
-                                                variant={variant}
-                                                loadVariant= {loadVariant}
+                                                variants={variants}
                                                 currentLanguageId={currentLanguageId}
                                                 onChange={setCurrentLanguageId}
                                             />
@@ -230,10 +262,11 @@ export default function Tags ({tag, subdomain})
                                                 title="Name"
                                                 type="text"
                                                 name="name"
-                                                value={tagName}
-                                                onChange={setName}
+                                                value={variantName}
+                                                onChange={setVariantName}
                                                 placeholder="Name"
                                             />
+                                            <div className={pointerEvent}>
                                             <Input 
                                                 title="Slug"
                                                 type="text"
@@ -242,14 +275,18 @@ export default function Tags ({tag, subdomain})
                                                 onChange={setSlug}
                                                 placeholder="Slug"
                                             />
-                                            <Input 
+                                            </div>
+                                            
+                                            <div className="popup-type-margin">Description</div>
+                                            <textarea 
+                                                className="input"
                                                 title="Description"
                                                 type="text"
                                                 name="url"
-                                                value={tagDescription}
-                                                onChange={setDescription}
+                                                value={variantDescription}
+                                                onChange={setVariantDescription}
                                                 placeholder="Description"
-                                            />
+                                            ></textarea>
                                             <div className="table-delete">
                                                 <span className = 'button danger' onClick={handleDelete}>
                                                     Delete
@@ -278,12 +315,13 @@ export default function Tags ({tag, subdomain})
                                         />
                                     }
                                 /> 
+                            </div>
                             : null
                         }
                     </div>
                     <div className="table-view">
                         <span className='table-button'>
-                            <BoxArrowInRight size={10} />
+                            <Link size={10} />
                         </span>
                     </div>
                 </div>
