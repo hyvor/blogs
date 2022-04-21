@@ -5,19 +5,17 @@ namespace Tests\Feature\ConsoleAPI;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Foundation\Testing\WithoutMiddleware;
 use Tests\TestCase;
-use App\Models\Tag;
 use App\Models\Blog;
 
-// To run the TagsTest class only run this command in the command line.
-// php artisan test  --filter 'TagsTest'
+// To run the BlogTest class only run this command in the command line.
+// php artisan test  --filter 'BlogTest'
 
 class BlogTest extends TestCase
 {
     use RefreshDatabase;
 
-    private function callEndpoint($method, $data = null) {
-        // return $this->call($method, '/api/console/v0/blog/test/blogs'. ($data ? '?' . http_build_query($data) : ''));
-        return $this->call($method, '/api/console/v0/blog/test/blogs', $data);
+    private function callEndpoint($method, $blog, $data = null) {
+        return $this->call($method, 'http://blogs.hyvor.test/api/console/v0/blog/test/'.$blog , $data);
     }
 
     /**
@@ -27,59 +25,33 @@ class BlogTest extends TestCase
     */
     public function test_get_request()
     {
-        $response = $this->callEndpoint('GET', ['limit' => 2]);
-        $response->assertStatus(404);
+        $response = $this->callEndpoint('GET', 'blogData', []);
+        $response->assertStatus(200);
     }
 
-    public function test_blog_validation()
+    public function test_createVariant_request()
     {
-        $blog = Tag::make([
-            'name' => 'Testing redirects',
-            'slug' => 'this is the new url'
+        $response = $this->callEndpoint('POST', 'blogVariant', [
+            'languageId' => 2,
         ]);
-        $this->assertTrue($blog->name != $blog->slug);
+        $response->assertStatus(200);
     }
 
-    public function test_blog_name_not_null()
+    public function test_put_request()
     {
-        $blog = Tag::make([
-            'name' => 'Testing redirects',
-            'slug' => 'this is the new url'
+        $response = $this->callEndpoint('PUT', 'blog', [
+            'subdomain' => 'test',
+            'icon' => null,
+            'featureImageId' => null,
+            'social_facebook' => null,
+            'social_twitter' => null,
+            'social_linkedin' => null,
+            'social_youtube' => null,
+            'social_instagram' =>  null,
+            'name' => 'test user',
+            'description' =>  null,
         ]);
-        $this->assertTrue($blog->name != null);
+        $response->assertStatus(200);
     }
 
-    public function test_blog_slug_not_null()
-    {
-        $blog = Tag::make([
-            'name' => 'Testing redirects',
-            'slug' => 'this is the new url'
-        ]);
-
-        $blogSlug = str_replace(' ', '-', $blog->slug);
-        $this->assertTrue($blogSlug != null);
-    }
-
-    public function test_create_new_blog()
-    {
-        $response = $this->callEndpoint('POST',[
-            'blog_id' => 1,
-            'name' => 'testing create new blog',
-            'slug' => 'test completed',
-            'description' => 'another test description'
-        ]);
-
-        $response->assertStatus(405);
-        // $response->assertStatus(200);
-    }
-
-    public function test_update_blog()
-    {
-        $response = $this->callEndpoint('PUT',[
-            'name' => 'testing update new blog',
-            'slug' => 'test new update completed',
-        ]);
-
-        $response->assertStatus(405);
-    }
 }

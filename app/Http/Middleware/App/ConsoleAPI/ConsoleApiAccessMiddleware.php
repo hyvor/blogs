@@ -28,8 +28,8 @@ class ConsoleApiAccessMiddleware {
             if ($apiKey !== $this->blog->api_key_console) {
                 throw new TrustedException('Invalid API key');
             }
-
-            $owner = UserRepository::getUserByBlogIdAndHyvorUserId($this->blog->id, $this->blog->user_id);
+            // I changed here from user_id to hyvor_user_id
+            $owner = UserRepository::getUserByBlogIdAndHyvorUserId($this->blog->id, $this->blog->hyvor_user_id);
 
             app()->instance(User::class, $owner);
 

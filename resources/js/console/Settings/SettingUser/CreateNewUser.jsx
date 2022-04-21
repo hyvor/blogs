@@ -1,22 +1,27 @@
-import React, {useState} from 'react';
+import React, {useState, useEffect} from 'react';
 import { useActions, useValues } from 'kea';
 import { Trash, PencilFill, Plus, BoxArrowInRight} from 'react-bootstrap-icons';
-import {toast} from 'react-toastify'
+import { Popup, PopupBodyDefault, PopupConfirm, PopupFooterDoubleButton, PopupHeaderDefault } from '../../ReusableComponents/Popup';
+import Input from '../../ReusableComponents/Input';
+import ReactSelect, { components } from 'react-select';
+import DualSetting from '../../ReusableComponents/DualSetting';
 import subdomainLogic from '../../logic/subdomainLogic';
 import usersLogic from '../../logic/usersLogic';
+
+import {toast} from 'react-toastify'
 import Loader from '../../ReusableComponents/Loader';
 import Toast from '../../ReusableComponents/Toast';
 import NoResults from '../../ReusableComponents/NoResults';
-import Input from '../../ReusableComponents/Input';
-import { Popup, PopupBodyDefault, PopupConfirm, PopupFooterDoubleButton, PopupHeaderDefault } from '../../ReusableComponents/Popup';
 import ProfileImage from '../../ReusableComponents/ProfileImage';
-import ReactSelect, { components } from 'react-select';
-import DualSetting from '../../ReusableComponents/DualSetting';
 import TextareaAutosize from 'react-textarea-autosize';
 
 
 
 export default function CreateNewUser(props) {
+
+    const subdomain = subdomainLogic.values.subdomain;
+    const usersLogicBuilt = usersLogic({subdomain})
+    const { create } = useActions(usersLogicBuilt) 
 
     const [createPopUpOpened, setCreatePopUpOpened] = useState(false);
     const [ settingsType, setSettingsType ] = useState('Guest User'); // Guest User | Hyvor User
@@ -24,15 +29,24 @@ export default function CreateNewUser(props) {
     const [slug, setSlug] = useState('');
     const [slugError, setSlugError] = useState(null);
     const [name, setName] = useState('');
+    const [email, setEmail] = useState('');
+    const [role, setRole] = useState({type: ""});
 
-    const selectOptions = [
-        { label: 'Permanent', value: '301' },
-        { label: 'Temporary', value: '302'}
+    function handleRole({value}){
+        setRole({...role, type: value})
+    }
+
+    const selectRole = [
+        { label: 'owner', value: 'owner' },
+        { label: 'admin', value: 'admin'},
+        { label: 'editor', value: 'editor' },
+        { label: 'writer', value: 'writer'},
+        { label: 'contributor', value: 'contributor' },
+        { label: 'finance', value: 'finance'}
     ]; 
 
     function onNameChange(val) {
         setName(val);
-
         var slug = val.toLowerCase().replace(/[^a-z0-9-]/g, '-').replace(/-+/g, '-').replace(/(^-|-$)/g, '');
         setSlug(slug);
     }
@@ -64,6 +78,25 @@ export default function CreateNewUser(props) {
     }
     function submitUser (e) {
         e.preventDefault();
+
+        let status
+        if(settingsType == 'Guest User'){
+            status = 'active';
+        }
+        else{
+            status = 'invited';
+        }
+        create({
+            name: name,
+            email: email,
+            slug: slug,
+            role: role.type,
+            status: status
+        });
+        setName();
+        setEmail();
+        setSlug();
+        
         setCreatePopUpOpened(false)
     }
 
@@ -75,7 +108,7 @@ export default function CreateNewUser(props) {
                     <Plus />
                 </div>
             </button>
-        </div>
+        </div> 
         {
             createPopUpOpened ?
             
@@ -104,12 +137,12 @@ export default function CreateNewUser(props) {
                                 settingsType === 'Guest User' ?
                                     <div>
                                         <Input 
-                                            title="Guest Name"
+                                            title="Name"
                                             type="text"
                                             name="name"
                                             value={name}
                                             onChange={onNameChange}
-                                            placeholder="Guest name"
+                                            placeholder="Name"
                                         />
                                         <Input 
                                             title="Slug"
@@ -119,37 +152,48 @@ export default function CreateNewUser(props) {
                                             onChange={onSlugChange}
                                             placeholder="Slug"
                                         />
-                                        <DualSetting 
+                                        <Input 
+                                            title="Email"
+                                            type="text"
+                                            name="email"
+                                            value={email}
+                                            onChange={setEmail}
+                                            placeholder="Email"
+                                        />
+                                        {/* <DualSetting 
                                             left={
-                                                <Input 
-                                                    title="Email"
-                                                    type="text"
-                                                    name="email"
-                                                    // value={description}
-                                                    // onChange={setDescription}
-                                                    placeholder="Description"
-                                                />
+                                                <div>
+                                                    <div className="popup-type-margin">Status</div>
+                                                        <SelectUserRole  options = {selectStatus} onChange = {handleStatus}/>
+                                                </div>
                                             }
                                             right={
                                                 <div>
                                                     <div className="popup-type-margin">Role</div>
-                                                        <SelectUserRole  options = {selectOptions}/>
+                                                        <SelectUserRole  options = {selectRole} onChange = {handleRole} defaultValue={handleRole[0]}/>
                                                 </div>
                                             }
-                                        />                               
-                                    </div>
+                                        /> */}
+
+                                        <div className="popup-type-margin">Role</div>
+                                            <SelectUserRole  options = {selectRole} onChange = {handleRole} defaultValue={handleRole[0]}/>
+                                        </div>
                                 : 
                                 <div>
                                     <Input 
-                                        title="User Name Or Email"
+                                        title="Username or Email"
                                         type="text"
                                         name="name"
                                         // value={name}
                                         // onChange={setName}
-                                        placeholder="User name or email"
+                                        placeholder="Username or email"
                                     />
+                
                                     <div className="popup-type-margin">Role</div>
-                                    <SelectUserRole  options = {selectOptions}/>
+                                    <SelectUserRole  options = {selectRole}/>
+                
+                                    {/* <div className="popup-type-margin margin-top">Status</div>
+                                    <SelectUserRole  options = {selectStatus}/> */}
                                 </div>                   
                             }
                         </PopupBodyDefault>
@@ -252,9 +296,7 @@ function SelectUserRole({options, onChange, defaultValue}) {
             styles={customStyles}
             options={options}
             maxMenuHeight={150}
-            // onChange={() => {}}
             onChange={onChange}
-            // isMulti 
         />
     );
 

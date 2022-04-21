@@ -41,7 +41,7 @@ class ConsoleUserController extends Controller
             $subdomain,
             $type
         );
-        return response()->json(new UserBlogObject($user));
+        // return response()->json(new UserBlogObject($user));
     }
 
     public function changeSort(Request $request, User $hyvorUser)
@@ -76,26 +76,13 @@ class ConsoleUserController extends Controller
     *
     */
 
-    // we should get the user data from the default language.
-
-    // If the user is adding or creating a user that user should also be in the default language.
-    // user should be able to add a user or create a guest user. and also user should be able to add a hyvor user too.
-
-    // user should be able to delete or block a user.
-    // user also should be able to delete an specific language. ( But if the default language is deleted the user should be deleted)
-
-    // user also should have the access to switch between languages. and if the user switch between language for the first time the language should be created.
-
-    // user should be able to update user name and etc according to the language.
-    
-
     public static function getAuthor(Blog $blog)
     {
         $getData = UserRepository::getAuthor($blog)
                 ->map(function ($users) use ($blog) {
                     return new UserObject($users, $blog);
                 });
-        return response()->json($getData); 
+        return response()->json($getData);  
     }
 
     public static function createAuthor(Request $request, Blog $blog) {
@@ -109,8 +96,10 @@ class ConsoleUserController extends Controller
         if ($request->has('email')) {
             $userData['email'] = $request->input('email');
         }
-        if ($request->has('picture')) {
-            $userData['picture'] = $request->input('picture');
+
+        // this should be changed and it should connect with the media
+        if ($request->has('pictureId')) {
+            $userData['pictureId'] = $request->input('pictureId');
         }
         if ($request->has('url')) {
             $userData['url'] = $request->input('url');
@@ -152,7 +141,8 @@ class ConsoleUserController extends Controller
             $userData['slug'] = str_replace(" ", "-", $userData['name']);
         }
 
-        $createUser = UserRepository::createUser($blog, $blog->user_id, $role, $status, $userData); 
+        // I changed here from user_id to hyvor_user_id
+        $createUser = UserRepository::createUser($blog, $blog->hyvor_user_id, $role, $status, $userData); 
         return response()->json($createUser);
     }
 
@@ -169,8 +159,8 @@ class ConsoleUserController extends Controller
         if ($request->has('email')) {
             $userData['email'] = $request->input('email');
         }
-        if ($request->has('picture')) {
-            $userData['picture'] = $request->input('picture');
+        if ($request->has('pictureId')) {
+            $userData['pictureId'] = $request->input('pictureId');
         }
         if ($request->has('url')) {
             $userData['url'] = $request->input('url');
@@ -212,8 +202,9 @@ class ConsoleUserController extends Controller
             $userData['slug'] = str_replace(" ", "-", $userData['name']);
         }
         
-        $updateOldTag = UserRepository::updateAuthor( $userId, $languageId, $blog, $blog->user_id, $role, $status, $userData);
-        return response()->json($updateOldTag);
+        // I changed here from user_id to hyvor_user_id
+        $updateUser = UserRepository::updateAuthor( $userId, $languageId, $blog, $blog->hyvor_user_id, $role, $status, $userData);
+        return response()->json($updateUser);
     }
 
     public static function deleteAuthor(Request $request)
@@ -229,15 +220,15 @@ class ConsoleUserController extends Controller
     /*
     * these functions are for author Variants
     */
-    public static function getAuthorVariant(Request $request)
-    {
-        $userId =(int) $request->get('userId');
-        $languageId =(int) $request->input('languageId');
+    // public static function getAuthorVariant(Request $request)
+    // {
+    //     $userId =(int) $request->get('userId');
+    //     $languageId =(int) $request->input('languageId');
 
-        $getVariant = UserRepository::getAuthorVariant($userId, $languageId);
+    //     $getVariant = UserRepository::getAuthorVariant($userId, $languageId);
 
-        return response()->json($getVariant);
-    }
+    //     return response()->json($getVariant);
+    // }
 
     public static function createAuthorVariant(Request $request) {
 
@@ -248,6 +239,23 @@ class ConsoleUserController extends Controller
         return response()->json($createVariant);
     }
 
+    public static function getPicture(Request $request, Blog $blog)
+    {
+        $userId = $request->input('userId');
+        $icon = UserRepository::getPicture($userId);
+        return response()->json($icon);
+    }
+
+    public static function updatePicture(Request $request, Blog $blog)
+    {
+        $file = $request->file('file');  
+        // $request->validate([
+        //     'file' => 'required|file'
+        // ]);
+
+        $icon = UserRepository::updatePicture($blog, $file);
+        return response()->json($icon);
+    }
 
     /*
     *

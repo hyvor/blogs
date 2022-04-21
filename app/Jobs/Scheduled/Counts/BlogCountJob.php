@@ -27,7 +27,7 @@ class BlogCountJob implements ShouldQueue, ShouldBeUnique {
                         FROM users 
                         WHERE
                             users.blog_id = blogs.id AND
-                            users.user_id IS NOT NULL AND 
+                            users.hyvor_user_id IS NOT NULL AND 
                             users.status = "active"
                     ) as users,
                     (

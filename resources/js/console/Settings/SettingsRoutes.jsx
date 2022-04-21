@@ -1,4 +1,4 @@
-import React, {useState} from 'react';
+import React, {useState, useEffect} from 'react';
 import { useActions, useValues } from 'kea';
 import { Trash, PencilFill, Plus, BoxArrowInRight, CodeSlash} from 'react-bootstrap-icons';
 import {toast} from 'react-toastify'
@@ -10,9 +10,18 @@ import Toast from '../ReusableComponents/Toast';
 import NoResults from '../ReusableComponents/NoResults';
 import Input from '../ReusableComponents/Input';
 import { Popup, PopupBodyDefault, PopupConfirm, PopupFooterDoubleButton, PopupHeaderDefault } from '../ReusableComponents/Popup';
+import DualSetting from '../ReusableComponents/DualSetting';
+
 
 
 export default function SettingsRoutes() {
+
+
+    const subdomain = subdomainLogic.values.subdomain;
+    const routeLogicBuilt = routesLogic({subdomain})
+    const { route, loadAjax, createAjax, redirectListHasMore, loadRedirectListMoreAjax } = useValues(routeLogicBuilt)
+    const { loadRedirectListMore} = useActions(routeLogicBuilt)
+
 
     return <div className="settingRoute">
         <div className="route-title-bar">
@@ -20,36 +29,78 @@ export default function SettingsRoutes() {
                 Routes
             </div>
             <div>
-                <CreateNewRoute />
+                <CreateNewRoute routeLogicBuilt = {routeLogicBuilt}/>
+                {
+                    createAjax.status === 'error' ?
+                    <Toast 
+                        x={console.log(createAjax.error)}
+                        text={createAjax.error}
+                        type="error"
+                    /> : null
+                }
             </div>
         </div>
         <div>
             {
+                route.length > 0 ?
                 <div className="global-table-view">
-                    <div className="global-table-header-three">      
+                    <div className="global-table-header-four">      
                         <div className="table-head-item">Route Name</div> 
                         <div className="table-head-item">Match</div>
+                        <div className="table-head-item">Template</div> 
                         <div></div>
                     </div>
-
-                    <div>
-                        <div className="global-table-body">
-                            <Routes/>           
-                        </div>                                   
-                        <div>
-                            <button type='button' className ="loadMore">Load More</button>
-                        </div>
-                    </div>                            
+                    {
+                        loadAjax.status === 'loading' ?
+                        <Loader padding={40}/> :
+                        (
+                            <div>
+                                <div>
+                                    {
+                                        loadAjax.status === 'loading' ?
+                                            <Loader />
+                                        :
+                                        <div>
+                                            {
+                                                route.map(route => (
+                                                    <div className="global-table-body">
+                                                        <Routes key = {route.id} routeLogicBuilt = {routeLogicBuilt} route={route}/>
+                                                    </div>
+                                                ))
+                                            }
+                                        </div>
+                                    }
+                                    {/* <div>
+                                        <button type='button' className ="loadMore">Load More</button>
+                                    </div>      */}
+                                </div> 
+                            </div>
+                        )
+                    }
                 </div>
+                : 
+                <NoResults 
+                    text="There is no any redirects."
+                    padding={40}
+                    imageWidth={250}
+                />
             }
+
         </div>
     </div>
 
 }
 
-function CreateNewRoute() {
+function CreateNewRoute({routeLogicBuilt}) {
+
+    const { create } = useActions(routeLogicBuilt)  
 
     const [createPopUpOpened, setCreatePopUpOpened] = useState(false);
+
+    const [ name, setName ] = useState();
+    const [ match, setMatch ] = useState();
+    const [ template, setTemplate ] = useState();
+
 
     function handleCreateCancel(){
         setCreatePopUpOpened(false)
@@ -57,6 +108,20 @@ function CreateNewRoute() {
     function handleCreate(e) {
         e.preventDefault();
         setCreatePopUpOpened(true);
+    }
+
+    function saveData(e) {
+        e.preventDefault();
+        create({
+            name: name,
+            match: match,
+            template:template,
+        });
+        setName();
+        setMatch();
+        setTemplate();
+        setCreatePopUpOpened(false);
+        window.location.reload(false);
     }
 
     return <div>
@@ -81,17 +146,25 @@ function CreateNewRoute() {
                                     title="Route name"
                                     type="text"
                                     name="name"
-                                    // value={name}
-                                    // onChange={setName}
+                                    value={name}
+                                    onChange={setName}
                                     placeholder="Route name"
                                 />
                                 <Input 
                                     title="Match path"
                                     type="text"
                                     name="url"
-                                    // value={slug}
-                                    // onChange={setSlug}
+                                    value={match}
+                                    onChange={setMatch}
                                     placeholder="Match path"
+                                />
+                                <Input 
+                                    title="Template"
+                                    type="text"
+                                    name="url"
+                                    value={template}
+                                    onChange={setTemplate}
+                                    placeholder="Template"
                                 />
                             </div>
                         </PopupBodyDefault>
@@ -100,6 +173,7 @@ function CreateNewRoute() {
                         <PopupFooterDoubleButton
                             onCancel={handleCreateCancel}
                             // onClick={(e)=> {submitTag(e)}}
+                            onClick={saveData}
                             name='Create'
                         />
                     }
@@ -109,14 +183,23 @@ function CreateNewRoute() {
     </div>
 }
 
-function Routes(){
+function Routes({routeLogicBuilt, route}){
+
+    const { remove , updateData} = useActions(routeLogicBuilt)
+    const { updateDataAjax } = useValues(routeLogicBuilt)
+
     const [styleUpdateIcon, setStyleUpdateIcon] = useState("table-button");
     const [styleDeleteIcon, setStyleDeleteIcon] = useState("table-button");
 
     const [updatePopUpOpened, setUpdatePopUpOpened] = useState(false);
     const [deletePopupOpened, setDeletePopupOpened] = useState(false);
 
-    const [ routeName, setRouteName ] = useState('rasif');
+    
+    const [ routeName, setRouteName ] = useState(route.name);
+    const [ routeMatch, setRouteMatch ] = useState(route.match);
+    const [ routeTemplate, setRouteTemplate ] = useState(route.template);
+    const [ routePostsFilter, setRoutePostsFilter ] = useState(route.posts_filter);
+    const [ routeContentType, setRouteContentType ] = useState(route.content_type);
 
 
     // Update section
@@ -125,14 +208,23 @@ function Routes(){
         setStyleUpdateIcon('table-update-popup')
         setUpdatePopUpOpened(true);
     }
-    function submitUser (e) {
-        e.preventDefault();
-        setStyleUpdateIcon('table-button')
-        setUpdatePopUpOpened(false)
-    }
     function handleUpdateCancel(){
         setStyleUpdateIcon('table-button')
         setUpdatePopUpOpened(false)
+    }
+    function submitUser (e) {
+        e.preventDefault();
+        setStyleUpdateIcon('table-button')
+        updateData({
+            id:route.id,
+            name: routeName,
+            match: routeMatch,
+            template:routeTemplate,
+            postsFilter: routePostsFilter,
+            contentType:routePostsFilter,
+        });
+        setUpdatePopUpOpened(false)
+        window.location.reload(false);
     }
 
      // Delete Section
@@ -141,20 +233,24 @@ function Routes(){
         setDeletePopupOpened(true);
         setStyleDeleteIcon("table-delete-popup");
     }
-    function handleDoDelete() {
-        setDeletePopupOpened(false);
-        setStyleDeleteIcon("table-button");
-    }
     function handleDeleteCancel(){
         setStyleDeleteIcon("table-button");
         setDeletePopupOpened(false)
+    } 
+    function handleDoDelete() {
+        toast("Route deleted", {autoClose: 1500});
+        remove({id:route.id});
+
+        setDeletePopupOpened(false);
+        setStyleDeleteIcon("table-button");
     }
 
     return <div>
         <div className="global-table-body">
-            <div className="table-body-three">
-                <div className="table-item"> {routeName}</div>
-                <div className="table-item"> rasif-sahl </div>
+            <div className="table-body-four">
+                <div className="table-item"> {route.name}</div>
+                <div className="table-item"> {route.match} </div>
+                <div className="table-item"> {route.template}</div>
                 
                 <div className="table-actions">
                     <div className="table-edit" >
@@ -166,7 +262,7 @@ function Routes(){
                             updatePopUpOpened ?
                                 <div className="popup-width">
                                     <Popup
-                                        header={ <PopupHeaderDefault title='Create New Route' /> }
+                                        header={ <PopupHeaderDefault title='Update Route' /> }
                                         body={
                                             <PopupBodyDefault>
                                                 <div>
@@ -174,17 +270,48 @@ function Routes(){
                                                         title="Route Name"
                                                         type="text"
                                                         name="name"
-                                                        // value={name}
-                                                        // onChange={setName}
+                                                        value={routeName}
+                                                        onChange={setRouteName}
                                                         placeholder="Route name"
                                                     />
                                                     <Input 
                                                         title="Match Path"
                                                         type="text"
                                                         name="url"
-                                                        // value={slug}
-                                                        // onChange={setSlug}
+                                                        value={routeMatch}
+                                                        onChange={setRouteMatch}
                                                         placeholder="Match Path"
+                                                    />
+                                                     <Input 
+                                                        title="Template"
+                                                        type="text"
+                                                        name="name"
+                                                        value={routeTemplate}
+                                                        onChange={setRouteTemplate}
+                                                        placeholder="Template"
+                                                    />
+
+                                                    <DualSetting 
+                                                        left={
+                                                            <Input 
+                                                                title="Posts Filter"
+                                                                type="text"
+                                                                name="url"
+                                                                value={routePostsFilter}
+                                                                onChange={setRoutePostsFilter}
+                                                                placeholder="Posts Filter"
+                                                            />
+                                                        }
+                                                        right={
+                                                            <Input 
+                                                                title="Content Type"
+                                                                type="text"
+                                                                name="name"
+                                                                value={routeContentType}
+                                                                onChange={setRouteContentType}
+                                                                placeholder="Content Type"
+                                                            />
+                                                        }
                                                     />
                                                 </div>
                                             </PopupBodyDefault>
@@ -193,7 +320,7 @@ function Routes(){
                                             <PopupFooterDoubleButton
                                                 onCancel={handleUpdateCancel}
                                                 onClick={(e)=> {submitUser(e)}}
-                                                name='Create'
+                                                name='Update'
                                             />
                                         }
                                     /> 
@@ -203,7 +330,7 @@ function Routes(){
                     </div>
 
                     {
-                        routeName === ('post' || 'page' || 'Post' || 'Page') ? null
+                        routeName === ('post' || 'page') ? null
                         :
                             <div className="table-delete">
                                 <span className={styleDeleteIcon} onClick={handleDelete}>

@@ -11,13 +11,17 @@ use App\Models\Navigation;
 // To run the Navigation Test class only run this command in the command line.
 // php artisan test  --filter 'NavigationsTest'
 
+
+// Must update the navigation test file and must connect the tests to the repository.
+// We don't need to do validation tests.
+
 class NavigationsTest extends TestCase
 {
 
     use RefreshDatabase;
 
     private function callEndpoint($method, $data = null) {
-        return $this->call($method, '/api/console/v0/blog/test/navigation', $data);
+        return $this->call($method, 'http://blogs.hyvor.test/api/console/v0/blog/test/navigation', $data);
     }
 
     /**
@@ -28,7 +32,18 @@ class NavigationsTest extends TestCase
     public function test_get_request()
     {
         $response = $this->callEndpoint('GET', ['limit' => 2]);
-        $response->assertStatus(404);
+        $response->assertStatus(200);
+    }
+
+    public function test_post_request()
+    {
+        $response = $this->callEndpoint('POST', [
+            'navigation_name' => 'home',
+            'navigation_url' => 'www.example.com',
+            'type' => 'header',
+        ]);
+        $response->assertStatus(500);
+
     }
 
     public function test_navigation_validation()
@@ -67,41 +82,36 @@ class NavigationsTest extends TestCase
         $this->assertTrue($navigation->type != null);
     }
 
-    public function test_create_new_navigation()
-    {
-        $response = $this->callEndpoint('POST',[
-            'blog_id' => 1,
-            'name' => 'testing create new Navigation',
-            'url' => 'test completed',
-            'type' => 'header'
-        ]);
-
-        $response->assertStatus(405);
-        // $response->assertStatus(200);
-    }
 
     public function test_update_navigation()
     {
-        $response = $this->callEndpoint('PUT',[
-            'name' => 'testing update new Navigation',
-            'slug' => 'test new update completed',
+        // $response = $this->callEndpoint('PUT',[
+        //     'navigation_name' => 'about',
+        //     'navigation_url' => 'testNew.com',
+        //     'type' => 'header'
+        // ]);
+
+        $id = 1;
+        $response = $this->put('http://blogs.hyvor.test/api/console/v0/blog/test/navigation/'.$id,[
+            'navigation_name' => 'about',
+            'navigation_url' => 'testNew.com',
             'type' => 'header'
         ]);
 
-        $response->assertStatus(405);
+        $response->assertStatus(500);
     }
 
     public function test_navNumber()
     {
         $id = 1;
-        $response = $this->get('/api/console/v0/blog/test/navNumber/' . $id);
+        $response = $this->get('/api/console/v0/blog/test/navigation/sort/' . $id);
         $response->assertStatus(404);
     }
 
     public function test_navigation_sourceId()
     {
         $id = 1;
-        $response = $this->get('/api/console/v0/blog/test/source/' . $id);
+        $response = $this->get('/api/console/v0/blog/test/navigation/source/' . $id);
         $response->assertStatus(404);
     }
 }

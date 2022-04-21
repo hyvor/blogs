@@ -86,12 +86,12 @@ export default function CreateTag(props) {
                             <div>
                                     
                                 <Input 
-                                    title="Tag name"
+                                    title="Name"
                                     type="text"
                                     name="name"
                                     value={name}
                                     onChange={onNameChange}
-                                    placeholder="Tag name"
+                                    placeholder="Name"
                                 />
                                 <Input 
                                     title="Slug"
@@ -101,14 +101,17 @@ export default function CreateTag(props) {
                                     onChange={onSlugChange}
                                     placeholder="Slug"
                                 />
-                                <Input 
+
+                                <div className="popup-type-margin">Description</div>
+                                <textarea 
+                                    className="input"
                                     title="Description"
                                     type="text"
                                     name="url"
                                     value={description}
                                     onChange={setDescription}
                                     placeholder="Description"
-                                />
+                                ></textarea>
                             </div>
                         </PopupBodyDefault>
                     }

@@ -12,7 +12,7 @@ class TagVariantObject
     public int $id;
     public int $tag_id;
     public int $language_id;
-    public string $name;
+    public ?string $name;
     public ?string $description;
 
 

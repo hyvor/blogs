@@ -13,7 +13,7 @@ use App\Models\Blog;
 class UserBlogBlogObject
 {
     public int $id;
-    public string $name;
+    // public string $name;
     public string $subdomain;
     public string $base_url;
     public int $posts_count;
