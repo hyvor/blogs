@@ -96,7 +96,7 @@ class ConsoleNavigationController extends Controller {
 
     public function updateSort(Request $request){
         // dd('hi bro daddy');
-        $id = $request->route('navigationId');
+        $id = $request->route('id');
         $navigationSort = $request->input('navigationSort');
 
         $updateSort = NavigationRepository::updateDestinationSort($id, $navigationSort);
@@ -105,7 +105,7 @@ class ConsoleNavigationController extends Controller {
 
     public function updateSourceSort(Request $request){
         // dd('hi bro daddy');
-        $id = $request->route('sourceId');
+        $id = $request->route('id');
         $navigationSort = $request->input('sort');
         $updateSort = NavigationRepository::updateSourceSort($id, $navigationSort);
         return response()->json($updateSort);

@@ -130,12 +130,12 @@ class ConsoleTagController extends Controller {
     *
     * This function will get all the tags and display it in an order (Post_Count)
     */
-    public static function getTagList(Request $request, Blog $blog){
+    public static function getPostTags(Request $request, Blog $blog){
         
         // $postId = $request->input('postId');
 
         $postId = 184;
-        $getData = PostTagRepository::getTagList($blog->id, $postId);
+        $getData = PostTagRepository::getPostTags($blog->id, $postId);
         return response()->json($getData);
     }
 

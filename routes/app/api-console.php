@@ -57,7 +57,7 @@ Route::prefix('/api/console/v0')
 
 });
 
-/**
+/** 
  * 
  * Console API
  * ======================
@@ -144,10 +144,10 @@ Route::prefix('/api/console/v0/blog/{subdomain}')
         // Route::put('/tagVariant', [ConsoleTagController::class, 'updateTagVariant']);
         // Route::delete('/tagVariant', [ConsoleTagController::class, 'deleteTagVariant']);
 
-        Route::get('/postTags/{postId}', [ConsoleTagController::class, 'selectedPostTag']);
+        Route::get('/postTags/{id}', [ConsoleTagController::class, 'selectedPostTag']);
 
         // post_tag CRUD
-        // Route::get('/getTagList', [ConsoleTagController::class, 'getTagList']);
+        // Route::get('/getTagList', [ConsoleTagController::class, 'getPostTags']);
         // Route::post('/createPostTag', [ConsoleTagController::class, 'createPostTag']);
         // Route::get('/getPostTag', [ConsoleTagController::class, 'getPostTag']);
         // Route::delete('/removePostTag', [ConsoleTagController::class, 'deleteTagVariant']);
@@ -175,8 +175,8 @@ Route::prefix('/api/console/v0/blog/{subdomain}')
         Route::post('/navigation', [ConsoleNavigationController::class,'createNavigation']);
         Route::put('/navigation/{id}', [ConsoleNavigationController::class,'updateNavigation']);
         Route::delete('/navigation/{id}', [ConsoleNavigationController::class,'deleteNavigation']);
-        Route::put('/navigation/sort/{navigationId}', [ConsoleNavigationController::class,'updateSort']);
-        Route::put('/navigation/source/{sourceId}', [ConsoleNavigationController::class,'updateSourceSort']);
+        Route::put('/navigation/sort/{id}', [ConsoleNavigationController::class,'updateSort']);
+        Route::put('/navigation/source/{id}', [ConsoleNavigationController::class,'updateSourceSort']);
 
         // languages CRUD
         Route::get('/languages', [ConsoleLanguageController::class, 'get']);
