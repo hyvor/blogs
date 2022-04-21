@@ -3,10 +3,12 @@ namespace App\Domains\Navigation;
 
 use App\Models\Navigation;
 use App\Data\Enums\NavigationTypeEnum;
+use Illuminate\Support\Collection;
 
 Class NavigationRepository
 {
-    public static function getNavigations( int $blogId){
+    public static function getNavigations(int $blogId) : Collection
+    {
         return Navigation::where('blog_id','=', $blogId)
             // ->orderBy('sort', 'desc')
             ->orderBy('sort')
@@ -16,33 +18,44 @@ Class NavigationRepository
             ->get();
     }
 
-    public static function createNavigation(int $blogId, string $navigationName, string $navigationUrl, NavigationTypeEnum $type, int $sort ){
-        // dd($sort);
+    public static function createNavigation(
+        int $blogId, 
+        string $navigationName, 
+        string $navigationUrl, 
+        NavigationTypeEnum $type, 
+        int $sort 
+    ) : Navigation
+    {
         return Navigation::create([
             'blog_id' => $blogId,
             'name' => $navigationName,
             'url' => $navigationUrl,
-            'type' => $type, 
+            'type' => $type->value, 
             'sort' => $sort
         ]);
     }
 
-    public static function updateNavigation(int $id, string $navigationName, string $navigationUrl, NavigationTypeEnum $type){
-      
+    public static function updateNavigation(
+        int $id, 
+        string $navigationName, 
+        string $navigationUrl, 
+        NavigationTypeEnum $type
+    ) : void {
+
         $navigation = Navigation::find($id);
         $navigation->name=$navigationName;
         $navigation->url=$navigationUrl;
-        $navigation->type=$type;
+        $navigation->type=$type->value;
 
         $navigation->save();
     }
 
-    public static function deleteNavigation(int $id){
+    public static function deleteNavigation(int $id) : void {
         $data = Navigation::find($id);
         $data->delete();
     }
 
-    public static function getHeaderSort(){
+    public static function getHeaderSort() : Navigation {
         $headerSort =  Navigation::where('type','=', 'header')
            ->get('sort')
            ->last();
@@ -50,36 +63,35 @@ Class NavigationRepository
         return $headerSort;
     }
 
-    public static function getFooterSort(){
+    public static function getFooterSort() : Navigation {
         return Navigation::where('type','=', 'footer')
            ->get('sort')
            ->last();
     }
 
-    public static function updateDestinationSort($id, $navigationSort){
+    public static function updateDestinationSort(int $id, $navigationSort){
         $navigation = Navigation::find($id);
         $navigation->sort=$navigationSort;
 
         $navigation->save();
     }
 
-    public static function updateSourceSort($id, $navigationSort){
+    public static function updateSourceSort(int $id, $navigationSort){
         $navigation = Navigation::find($id);
         $navigation->sort=$navigationSort;
 
         $navigation->save();
     }
 
-    public static function getHeaderCount(){
+    public static function getHeaderCount() : int {
         return Navigation::where('type','=', 'header')
            ->count();
     } 
 
-    public static function getFooterCount(){
+    public static function getFooterCount() : int {
         return Navigation::where('type','=', 'footer')
            ->count();
     }
-
 }
 
 

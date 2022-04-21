@@ -133,16 +133,11 @@ Route::prefix('/api/console/v0/blog/{subdomain}')
     Route::middleware('role:owner|admin|editor')->group(function() {
 
         // tags CRUD
-        Route::get('/tags', [ConsoleTagController::class, 'getTag']);
-        Route::post('/tags', [ConsoleTagController::class, 'createTag']);
+        Route::get('/tags', [ConsoleTagController::class, 'getTags']);
+        Route::post('/tag', [ConsoleTagController::class, 'createTag']);
         Route::put('/tag/{id}', [ConsoleTagController::class, 'updateTag']);
         Route::delete('/tag/{id}', [ConsoleTagController::class, 'deleteTag']);
         Route::post('/tag/variant', [ConsoleTagController::class, 'createTagVariant']);
-
-        // tag variant crud
-        // Route::get('/tagVariant', [ConsoleTagController::class, 'getTagVariant']);
-        // Route::put('/tagVariant', [ConsoleTagController::class, 'updateTagVariant']);
-        // Route::delete('/tagVariant', [ConsoleTagController::class, 'deleteTagVariant']);
 
         Route::get('/postTags/{id}', [ConsoleTagController::class, 'selectedPostTag']);
 
@@ -195,20 +190,15 @@ Route::prefix('/api/console/v0/blog/{subdomain}')
         Route::post('/settings', []);
 
         // users CRUD
-        Route::get('/users', [ConsoleUserController::class, 'getAuthor']);
+        Route::get('/users', [ConsoleUserController::class, 'getAuthors']);
         Route::post('/user', [ConsoleUserController::class, 'createAuthor']);
         Route::patch('/user/{id}', [ConsoleUserController::class, 'updateAuthor']); 
         Route::delete('/user/{id}', [ConsoleUserController::class, 'deleteAuthor']); 
         Route::post('/user/variant', [ConsoleUserController::class, 'createAuthorVariant']);
         Route::post('/user/picture', [ConsoleUserController::class, 'updatePicture']);
 
-        // Route::get('/user/picture', [ConsoleUserController::class, 'getPicture']);
-        // Route::get('/userVariant', [ConsoleUserController::class, 'getAuthorVariant']);
-        // Route::put('/userVariant', [ConsoleUserController::class, 'updateAuthorVariant']);
-        // Route::delete('/userVariant', [ConsoleUserController::class, 'deleteAuthorVariant']);
-
         // route CRUD
-        Route::get('/route', [ConsoleRouteController::class, 'getRoute']);
+        Route::get('/route', [ConsoleRouteController::class, 'getRoutes']);
         Route::post('/route', [ConsoleRouteController::class, 'createRoute']);
         Route::put('/route/{id}', [ConsoleRouteController::class, 'updateRoute']);
         Route::delete('/route/{id}', [ConsoleRouteController::class, 'deleteRoute']);

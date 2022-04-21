@@ -15,7 +15,7 @@ class ConsoleTagController extends Controller {
     * ConsoleAPI Settings->tags
     *
     */
-    public static function getTag(Request $request, Blog $blog)
+    public static function getTags(Request $request, Blog $blog)
     {
         // $request->validate([
         //     'limit' => 'integer', 
@@ -75,42 +75,6 @@ class ConsoleTagController extends Controller {
         return response()->json($updateOldTag);
     }
 
-    /*
-    *
-    * *** Tag validation section ***
-    *
-    */
-    // public static function getTagVariant(Request $request)
-    // {
-    //     $tagId =(int) $request->get('tagId');
-    //     $languageId =(int) $request->input('languageId');
-
-    //     $getVariant = TagRepository::getTagVariant($tagId, $languageId);
-
-    //     return response()->json($getVariant);
-    // }
-
-    public static function createTagVariant(Request $request)
-    {
-        $tagId = $request->input('tagId');
-        $languageId = $request->input('languageId');
-        $createVariant = TagRepository::createTagVariant($tagId, $languageId);
-
-        return response()->json($createVariant);
-    }
-
-    // public static function updateTagVariant(Request $request)
-    // {
-    //     $tagId = $request->input('tagId');
-    //     $languageId = $request->input('languageId');
-    //     $name = $request->input('name');
-    //     $description = $request->input('description');
-
-    //     $updateVariant = TagRepository::updateTagVariant($tagId, $languageId, $name, $description);
-
-    //     return response()->json($updateVariant);
-    // }
-
     public static function deleteTag(Request $request)
     {
         $tagId = $request->route('tagId');
@@ -121,10 +85,21 @@ class ConsoleTagController extends Controller {
         return response()->json($deleteVariant);
     }
 
-
-    
     /*
     *
+    * *** Tag validation section ***
+    *
+    */
+    public static function createTagVariant(Request $request)
+    {
+        $tagId = $request->input('tagId');
+        $languageId = $request->input('languageId');
+        $createVariant = TagRepository::createTagVariant($tagId, $languageId);
+
+        return response()->json($createVariant);
+    }
+
+    /*
     *
     * *** ConsoleAPI Posts->Tags ***
     *

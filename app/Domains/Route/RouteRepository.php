@@ -4,6 +4,7 @@ namespace App\Domains\Route;
 use App\Exceptions\TrustedException;
 use App\Models\Blog;
 use App\Models\Route;
+use Illuminate\Database\Eloquent\Collection;
 class RouteRepository {
 
 
@@ -18,7 +19,7 @@ class RouteRepository {
         return $routes->where('name', $name)->first();
     }
 
-    public static function getRoutes(Blog $blog) {
+    public static function getRoutes(Blog $blog) : Collection {
 
         return Route::where('blog_id','=', $blog->id)
             ->latest()
@@ -32,8 +33,8 @@ class RouteRepository {
         string $template,
         string $postsFilter = null,
         string $contentType = null, 
-    ) {
-        
+    ) : void 
+    {
         $blog->routes()->create([
             'name' => $name,
             'match' => $match,
@@ -43,9 +44,16 @@ class RouteRepository {
         ]);
     }
 
-    public static function updateRoute($id, $name, $match, $template, $postsFilter, $contentType ){
-
-        Route::find($id)
+    public static function updateRoute(
+        int $id, 
+        string $name, 
+        string $match, 
+        string $template, 
+        string $postsFilter = null, 
+        string $contentType = null,
+    ) : bool 
+    {
+        return Route::find($id)
             ->update([
                 'name' => $name,
                 'match' => $match,
@@ -55,9 +63,8 @@ class RouteRepository {
             ]);
     }
 
-    public static function deleteRoute(int $id){
+    public static function deleteRoute(int $id) : bool {
         $data = Route::find($id);
-        $data->delete();
+        return $data->delete();
     }
-
 }
