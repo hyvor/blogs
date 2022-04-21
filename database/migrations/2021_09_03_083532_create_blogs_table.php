@@ -22,7 +22,7 @@ class CreateBlogsTable extends Migration
             $table->bigInteger('hyvor_user_id'); // hyvor user id (owner)
             $table->bigInteger('theme_id')->nullable();
             $table->string('icon_url')->nullable();
-            $table->string('featured_image_Url')->nullable();
+            $table->string('featured_image_url')->nullable();
 
             // data
             $table->string('subdomain')->unique();
@@ -55,10 +55,6 @@ class CreateBlogsTable extends Migration
             $table->string('social_youtube')->nullable();
             $table->string('social_instagram')->nullable();
             $table->string('social_github')->nullable();
-
-            $table->unique(['icon_id']);
-            $table->unique(['featured_image_id']);
-
 
         });
     }

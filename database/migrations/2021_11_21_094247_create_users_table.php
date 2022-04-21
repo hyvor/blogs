@@ -44,7 +44,6 @@ class CreateUsersTable extends Migration
 
             $table->unique(['blog_id', 'slug']);
             $table->unique(['blog_id', 'hyvor_user_id']);
-            $table->unique(['blog_id', 'picture_id']);
         });
     }
 
