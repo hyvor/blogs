@@ -2,6 +2,8 @@
 namespace App\Domains\Post;
 
 use App\Domains\Post\Content\PostContentRepository;
+use App\Models\Blog;
+use App\Models\Language;
 use App\Models\Post;
 use App\Models\PostVariant;
 use MeiliSearch\Client;
@@ -34,11 +36,11 @@ class PostSearchRepository
      * @return array{'posts': Collection, 'total': int}
      */
     public static function search(
+        Blog $blog,
+        Language $language,
         string $search,
         int $limit,
         int $offset,
-        int $blogId,
-        int $languageId,
         bool $isPage,
         ?bool $isPublished = null
     ) : array {
@@ -46,8 +48,8 @@ class PostSearchRepository
         $index = self::getIndex();
 
         $conditions = [
-            'blog_id' => $blogId,
-            'language_id' => $languageId,
+            'blog_id' => $blog->id,
+            'language_id' => $language->id,
             'is_page' => $isPage,
         ];
         if ($isPublished !== null) {
@@ -60,20 +62,25 @@ class PostSearchRepository
             'limit' => $limit,
             'offset' => $offset,
             'filter' => $filter,
-            'attributesToRetrieve' => ['post_id', 'title'],
+            'attributesToRetrieve' => ['post_id'],
         ]);
 
         $hits = $results->getHits();
         // $total = 
-
-        $postIds = collect($hits)->map(fn ($hit) => $hit['post_id'])->all();
-
-        $postIdsForField = implode(',', $postIds);
+        
+        
+        if (count($hits) > 0) {
+            $postIds = collect($hits)->map(fn ($hit) => $hit['post_id'])->all();
+            $postIdsForField = implode(',', $postIds);
+            $posts = Post::whereIn('id', $postIds)
+                ->orderByRaw("FIELD(id, $postIdsForField)")
+                ->get();
+        } else {
+            $posts = collect([]);
+        }
 
         return [
-            'posts' => Post::whereIn('id', $postIds)
-                ->orderByRaw("FIELD(id, $postIdsForField)")
-                ->get(),
+            'posts' => $posts,
             'total' => $results->getNbHits()
         ];
 

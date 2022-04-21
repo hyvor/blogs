@@ -11,6 +11,8 @@
 |
 */
 
+use App\Models\Blog;
+
 uses(Tests\TestCase::class)->in('Feature');
 
 /*
@@ -35,7 +37,7 @@ uses(Tests\TestCase::class)->in('Feature');
 |
 */
 
-function something()
+function blog()
 {
-    // ..
+    return Blog::find(config('test.blog_id'));
 }
