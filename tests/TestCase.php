@@ -30,11 +30,11 @@ abstract class TestCase extends BaseTestCase
     }
 
     protected function callConsoleApi(
-        string $method, string $endpoint, $data = null, $subdomain = 'test'
+        string $method, string $endpoint, $data = [], $subdomain = 'test'
     ) : TestResponse 
     {
         $endpoint = trim($endpoint, '/');
-        return $this->call($method, URL::to("/api/console/v0/$subdomain/$endpoint"), $data);
+        return $this->call($method, URL::to("/api/console/v0/blog/$subdomain/$endpoint"), $data);
     }
 
     protected function callConsoleUserApi(string $method, string $endpoint, $data = null) {

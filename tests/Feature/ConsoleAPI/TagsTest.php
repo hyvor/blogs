@@ -2,104 +2,103 @@
 
 namespace Tests\Feature\ConsoleAPI;
 
-use Illuminate\Foundation\Testing\RefreshDatabase;
-use Illuminate\Foundation\Testing\WithoutMiddleware;
-use Tests\TestCase;
+use App\Models\Language;
+use Illuminate\Testing\Fluent\AssertableJson;
 use App\Models\Tag;
 
-class TagsTest extends TestCase
-{
-    use RefreshDatabase;
+it('fetches tags', function() {
+   
+    $this
+        ->callConsoleApi('GET', 'tags', [
+           'limit' => 5
+        ])
+        ->assertStatus(200)
+        ->assertJson(function (AssertableJson $json) {
+            $json->count(5)
+                ->has('0', function (AssertableJson $json) {
+                    $json->has('id')
+                        ->has('slug')
+                        ->etc();
+                });
+        });
+    
+});
 
-    private function callEndpoint($method, $tag,  $data = null) {
-        return $this->call($method, 'http://blogs.hyvor.test/api/console/v0/blog/test/'.$tag, $data);
-    }
+it('fetches tags with offset', function() {
+    
+    $tagsCount = Tag::where('blog_id', config('test.blog_id'))->count();
 
-    /**
-    * A basic test example.
-    *
-    * @return void
-    */
-    public function test_get_request()
-    {
-        $response = $this->callEndpoint('GET', 'tags', [
-            'limit' => 2
-        ]);
-        $response->assertStatus(200);
-    }
+    $this
+        ->callConsoleApi('GET', 'tags', [
+            'limit' => $tagsCount,
+            'offset' => $tagsCount - 1
+        ])
+        ->assertStatus(200)
+        ->assertJson(function (AssertableJson $json) {
+            $json->count(1);
+        });
+    
+});
+    
 
-    public function test_post_request()
-    {
-        $response = $this->callEndpoint('POST', 'tags', [
-            'name' => 'testing create new tag',
-            'slug' => 'test completed',
-            'description' => 'another test description'
-        ]);
+it('creates a tag success', function() {
 
-        $response->assertStatus(200);
-    }
+    $data = 'test';
+    $language = Language::where('blog_id', config('test.blog_id'))
+        ->where('is_primary', true)
+        ->first();
+    
+    $this
+        ->callConsoleApi('POST', 'tag', [
+            'name' => $data,
+            'slug' => $data,
+            'description' => $data
+        ])
+        ->assertStatus(200)
+        ->assertJson(function (AssertableJson $json) use ($data, $language) {
+            $json->has('id')
+                ->where('slug', $data)
+                ->has("variants.{$language->id}", function (AssertableJson $json) use ($data) {
+                    $json->where('name', $data)
+                        ->where('description', $data)
+                        ->etc();
+                })
+                ->etc();
+        });
+    
+});
 
-    public function test_put_request()
-    {
-        $tagId = 1;
-        $response = $this->callEndpoint('PUT', 'tag/'.$tagId, [
-            'name' => 'hyvor',
-            'slug' => 'test-new',
-            'languageId' => 1,
-            'codeHead' => null,
-            'codeFoot' => null,
-            'description' => 'test new update completed',
-        ]);
-        $response->assertStatus(200);
-    }
+it('creating tag fails on empty name', function() {
 
-    public function test_delete_request()
-    {
-        $tagId = 1;
-        $response = $this->callEndpoint('DELETE', 'tag/'.$tagId , [
-            'languageId' => 1,
-        ]);
-        $response->assertStatus(200);
-    }
+    $this
+        ->callConsoleApi('POST', 'tag')
+        ->assertStatus(400);
+    
+});
 
-    public function test_delete_Variant_request()
-    {
-        $tagId = 1;
-        $response = $this->callEndpoint('DELETE', 'tag/'.$tagId , [
-            'languageId' => 2,
-        ]);
-        $response->assertStatus(200);
-    }
+it('creating tag with null slug works', function() {
 
-    public function test_createVariant_request()
-    {
-        $response = $this->callEndpoint('POST', 'tagVariant', [
-            'tagId' => 1,
-            'languageId' => 2,
-        ]);
-        $response->assertStatus(200);
-    }
+    $this
+        ->callConsoleApi('POST', 'tag', [
+            'name' => 'May Day'
+        ])
+        ->assertStatus(200)
+        ->assertJson(function (AssertableJson $json) {
+            $json->where('slug', 'may-day')
+                ->etc();
+        });
+    
+});
 
+it('creating tag with existing slug fails', function() {
 
-    public function test_tag_validation()
-    {
-        $tag = Tag::make([
-            'name' => 'hyvor',
-            'slug' => 'test-new',
-        ]);
-        $this->assertTrue(
-            $tag->name != null,
-            $tag->slug != null,
-        );
-    }
-
-    public function test_slug_validation_null()
-    {
-        $tag = Tag::make([
-            'slug' => 'this is the new url'
-        ]);
-
-        $tagSlug = str_replace(' ', '-', $tag->slug);
-        $this->assertTrue($tagSlug != null);
-    }
-}
+    $tag = Tag::where('blog_id', config('test.blog_id'))->first();
+    
+    $this
+        ->callConsoleApi('POST', 'tag', [
+            'name' => 'Name',
+            'slug' => $tag->slug
+        ])
+        ->assertStatus(500);
+    
+});

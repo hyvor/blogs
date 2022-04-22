@@ -1,6 +1,7 @@
 <?php
 namespace App\Http\Controllers\ConsoleAPI;
 
+use App\Exceptions\TrustedException;
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 
@@ -8,6 +9,8 @@ use App\Domains\Tag\TagRepository;
 use App\Data\Objects\ConsoleAPI\Tag\TagObject;
 use App\Models\Blog;
 use App\Domains\Post\PostTagRepository;
+use Illuminate\Support\Str;
+
 class ConsoleTagController extends Controller {
 
     /*
@@ -17,40 +20,48 @@ class ConsoleTagController extends Controller {
     */
     public static function getTags(Request $request, Blog $blog)
     {
-        // $request->validate([
-        //     'limit' => 'integer', 
-        //     'offset' => 'required|integer', 
-        // ]);
+         $request->validate([
+             'limit' => 'integer', 
+             'offset' => 'integer', 
+         ]);
         
-        $limit = $request->input('limit');
+        $limit = $request->input('limit') ?? 50;
         $offset = $request->input('offset') ?? 0;
 
         $getData = TagRepository::getTags($blog, $limit, $offset)
-                ->map(function ($tags) use ($blog) {
-                    return new TagObject($tags, $blog);
+            ->map(function ($tags) use ($blog) {
+                return new TagObject($tags, $blog);
             });
+        
         return response()->json($getData);
     }
 
     public static function createTag(Request $request , Blog $blog) {
 
-        // $request->validate([
-        //     'name' => 'required|string',
-        //     'slug' => 'required|string',
-        //     'description' => 'required|int',
-        // ]);
+         $request->validate([
+             'name' => 'required|string',
+             'slug' => 'string',
+             'description' => 'string',
+         ]);
 
         $name = $request->input('name');
         $slug = $request->input('slug');
         $description = $request->input('description') ?? null;
 
-        if($slug == null){
-            $slug = str_replace(" ", "-", $name);
+        if ($slug == null) {
+            $slug = Str::slug($name);
+        }
+        
+        $currentTag = TagRepository::getTagByBlogIdAndSlug($blog->id, $slug);
+        
+        if ($currentTag) {
+            throw new TrustedException('Slug already exists');
         }
 
-        $createTag = TagRepository::createTag($blog, $name, $slug, $description); 
-        return response()->json($createTag);
-        // return response()->json(new TagObject($createTag));
+        $tag = TagRepository::createTag($blog, $name, $slug, $description); 
+        
+        return response()->json(new TagObject($tag, $blog));
+        
     }
 
     public static function updateTag(Request $request, Blog $blog)
