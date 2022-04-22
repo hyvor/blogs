@@ -11,13 +11,13 @@ use App\Models\Blog;
 class ConsoleRouteController extends Controller {
 
 
-    public function getRoute(Request $request, Blog $blog) {
+    public function getRoutes(Request $request, Blog $blog) {
 
         $getData = RouteRepository::getRoutes($blog)
                 ->map(function ($route) {
                 return new RouteObject($route);
             });
-        return response()->json($getData); 
+        return response()->json($getData);
     }
 
     public function createRoute(Request $request, Blog $blog) {

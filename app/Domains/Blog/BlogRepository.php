@@ -76,8 +76,8 @@ class BlogRepository
     //     return $blogData;
     // } 
 
-    public static function updateBlog($blog, $languageId, array $blogData = []) {
-
+    public static function updateBlog($blog, $languageId, array $blogData = []) : void
+    {
         Blog::find($blog->id)
             ->update([
                 'subdomain' => $blogData['subdomain'],
@@ -89,8 +89,9 @@ class BlogRepository
                 'social_github' => $blogData['social_github'] ?? null,
             ]);
 
+            // dd($blogData['name']);
         BlogVariant::where([
-                'blog_id' => $blog->id ,
+                'blog_id' => $blog->id,
                 'language_id'=> $languageId,
             ]) ->update([
                 'name' => $blogData['name'] ?? null,
@@ -98,7 +99,8 @@ class BlogRepository
             ]);
     }
 
-    public static function createBlogVariant($blog, $languageId) {
+    public static function createBlogVariant($blog, int $languageId) : void 
+    {
         $language = Language::where('id','=', $languageId)
         ->value('is_primary');
 
@@ -117,29 +119,27 @@ class BlogRepository
     }
 
 
-    public static function updateBlogFeatureImage($blog, $file) {
+    public static function updateBlogFeatureImage($blog, $file) : bool {
 
         $media = MediaRepository::upload($blog->id, $file);
         $featureImageUrl = PermalinkRepository::getMediaPermalink($media, $blog);
-
         // dd($featureImageUrl);
         // $featureImageId = $media->id;
 
-        Blog::find($blog->id)
+        return Blog::find($blog->id)
             ->update([
                 'featured_image_url' => $featureImageUrl,
             ]);
     }
 
-    public static function updateBlogIcon($blog, $file) {
+    public static function updateBlogIcon($blog, $file) : bool {
 
         $media = MediaRepository::upload($blog->id, $file);
         $iconUrl = PermalinkRepository::getMediaPermalink($media, $blog);
-
         // dd($iconUrl);
         // $icon = $media->id;
 
-        Blog::find($blog->id)
+        return Blog::find($blog->id)
             ->update([
                 'icon_url' => $iconUrl,
             ]);

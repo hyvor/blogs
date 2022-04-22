@@ -27,11 +27,8 @@ class ConsoleNavigationController extends Controller {
         $getHeaderCount = NavigationRepository::getHeaderCount();
         $getFooterCount = NavigationRepository::getFooterCount();
 
-
         $headerCount = $getHeaderCount < 8;
         $footerCount = $getFooterCount < 8;
-
-        // validate the max length of 50
         
         // $request->validate([
         //     'navigation_name' => 'required|string',
@@ -42,7 +39,7 @@ class ConsoleNavigationController extends Controller {
         $navigationUrl = $request->input('navigation_url');
         $type = NavigationTypeEnum::from($request->input('type'));
 
-        if($type == 'header'){
+        if($type->value == 'header'){
             $getSort =  NavigationRepository::getHeaderSort();
             if($getSort == null){
                 $sort = 1;
@@ -50,8 +47,8 @@ class ConsoleNavigationController extends Controller {
                 $sort = $getSort['sort'] + 1;
             }
         }
-
-        if($type == 'footer'){
+        
+        if($type->value == 'footer'){
             $getSort =  NavigationRepository::getFooterSort();
             if($getSort == null){
                 $sort = 1;
@@ -82,7 +79,7 @@ class ConsoleNavigationController extends Controller {
         $id = $request->route('id');
         $navigationName = $request->input('navigation_name');
         $navigationUrl = $request->input('navigation_url');
-        $type =  NavigationTypeEnum::from($request->input('type'));
+        $type = NavigationTypeEnum::from($request->input('type'));
 
         $updateNavigation = NavigationRepository::updateNavigation($id, $navigationName, $navigationUrl, $type);
         return response()->json($updateNavigation);
@@ -95,8 +92,7 @@ class ConsoleNavigationController extends Controller {
     }
 
     public function updateSort(Request $request){
-        // dd('hi bro daddy');
-        $id = $request->route('navigationId');
+        $id = $request->route('id');
         $navigationSort = $request->input('navigationSort');
 
         $updateSort = NavigationRepository::updateDestinationSort($id, $navigationSort);
@@ -105,7 +101,7 @@ class ConsoleNavigationController extends Controller {
 
     public function updateSourceSort(Request $request){
         // dd('hi bro daddy');
-        $id = $request->route('sourceId');
+        $id = $request->route('id');
         $navigationSort = $request->input('sort');
         $updateSort = NavigationRepository::updateSourceSort($id, $navigationSort);
         return response()->json($updateSort);

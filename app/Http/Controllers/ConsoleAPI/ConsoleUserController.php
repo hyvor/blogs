@@ -75,10 +75,9 @@ class ConsoleUserController extends Controller
     * ConsoleAPI Settings->users
     *
     */
-
-    public static function getAuthor(Blog $blog)
+    public static function getAuthors(Blog $blog)
     {
-        $getData = UserRepository::getAuthor($blog)
+        $getData = UserRepository::getAuthors($blog)
                 ->map(function ($users) use ($blog) {
                     return new UserObject($users, $blog);
                 });
@@ -97,9 +96,8 @@ class ConsoleUserController extends Controller
             $userData['email'] = $request->input('email');
         }
 
-        // this should be changed and it should connect with the media
-        if ($request->has('pictureId')) {
-            $userData['pictureId'] = $request->input('pictureId');
+        if ($request->has('pictureUrl')) {
+            $userData['pictureUrl'] = $request->input('pictureUrl');
         }
         if ($request->has('url')) {
             $userData['url'] = $request->input('url');
@@ -159,9 +157,9 @@ class ConsoleUserController extends Controller
         if ($request->has('email')) {
             $userData['email'] = $request->input('email');
         }
-        if ($request->has('pictureId')) {
-            $userData['pictureId'] = $request->input('pictureId');
-        }
+        // if ($request->has('pictureUrl')) {
+        //     $userData['pictureUrl'] = $request->input('pictureUrl');
+        // }
         if ($request->has('url')) {
             $userData['url'] = $request->input('url');
         }
@@ -211,25 +209,17 @@ class ConsoleUserController extends Controller
     {
         $userId = $request->route('id');
         $languageId = $request->input('languageId');
-        $deleteData = UserRepository::deleteAuthorVariant($userId, $languageId);
+        $deleteData = UserRepository::deleteAuthor($userId, $languageId);
 
         return response()->json($deleteData);
     }
 
 
     /*
+    *
     * these functions are for author Variants
+    *
     */
-    // public static function getAuthorVariant(Request $request)
-    // {
-    //     $userId =(int) $request->get('userId');
-    //     $languageId =(int) $request->input('languageId');
-
-    //     $getVariant = UserRepository::getAuthorVariant($userId, $languageId);
-
-    //     return response()->json($getVariant);
-    // }
-
     public static function createAuthorVariant(Request $request) {
 
         $userId = $request->input('userId');
@@ -237,13 +227,6 @@ class ConsoleUserController extends Controller
         $createVariant = UserRepository::createAuthorVariant($userId, $languageId);
 
         return response()->json($createVariant);
-    }
-
-    public static function getPicture(Request $request, Blog $blog)
-    {
-        $userId = $request->input('userId');
-        $icon = UserRepository::getPicture($userId);
-        return response()->json($icon);
     }
 
     public static function updatePicture(Request $request, Blog $blog)

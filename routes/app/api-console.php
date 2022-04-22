@@ -57,7 +57,7 @@ Route::prefix('/api/console/v0')
 
 });
 
-/**
+/** 
  * 
  * Console API
  * ======================
@@ -133,21 +133,16 @@ Route::prefix('/api/console/v0/blog/{subdomain}')
     Route::middleware('role:owner|admin|editor')->group(function() {
 
         // tags CRUD
-        Route::get('/tags', [ConsoleTagController::class, 'getTag']);
-        Route::post('/tags', [ConsoleTagController::class, 'createTag']);
+        Route::get('/tags', [ConsoleTagController::class, 'getTags']);
+        Route::post('/tag', [ConsoleTagController::class, 'createTag']);
         Route::put('/tag/{id}', [ConsoleTagController::class, 'updateTag']);
         Route::delete('/tag/{id}', [ConsoleTagController::class, 'deleteTag']);
         Route::post('/tag/variant', [ConsoleTagController::class, 'createTagVariant']);
 
-        // tag variant crud
-        // Route::get('/tagVariant', [ConsoleTagController::class, 'getTagVariant']);
-        // Route::put('/tagVariant', [ConsoleTagController::class, 'updateTagVariant']);
-        // Route::delete('/tagVariant', [ConsoleTagController::class, 'deleteTagVariant']);
-
-        Route::get('/postTags/{postId}', [ConsoleTagController::class, 'selectedPostTag']);
+        Route::get('/postTags/{id}', [ConsoleTagController::class, 'selectedPostTag']);
 
         // post_tag CRUD
-        // Route::get('/getTagList', [ConsoleTagController::class, 'getTagList']);
+        // Route::get('/getTagList', [ConsoleTagController::class, 'getPostTags']);
         // Route::post('/createPostTag', [ConsoleTagController::class, 'createPostTag']);
         // Route::get('/getPostTag', [ConsoleTagController::class, 'getPostTag']);
         // Route::delete('/removePostTag', [ConsoleTagController::class, 'deleteTagVariant']);
@@ -175,8 +170,8 @@ Route::prefix('/api/console/v0/blog/{subdomain}')
         Route::post('/navigation', [ConsoleNavigationController::class,'createNavigation']);
         Route::put('/navigation/{id}', [ConsoleNavigationController::class,'updateNavigation']);
         Route::delete('/navigation/{id}', [ConsoleNavigationController::class,'deleteNavigation']);
-        Route::put('/navigation/sort/{navigationId}', [ConsoleNavigationController::class,'updateSort']);
-        Route::put('/navigation/source/{sourceId}', [ConsoleNavigationController::class,'updateSourceSort']);
+        Route::put('/navigation/sort/{id}', [ConsoleNavigationController::class,'updateSort']);
+        Route::put('/navigation/source/{id}', [ConsoleNavigationController::class,'updateSourceSort']);
 
         // languages CRUD
         Route::get('/languages', [ConsoleLanguageController::class, 'get']);
@@ -195,20 +190,15 @@ Route::prefix('/api/console/v0/blog/{subdomain}')
         Route::post('/settings', []);
 
         // users CRUD
-        Route::get('/users', [ConsoleUserController::class, 'getAuthor']);
+        Route::get('/users', [ConsoleUserController::class, 'getAuthors']);
         Route::post('/user', [ConsoleUserController::class, 'createAuthor']);
         Route::patch('/user/{id}', [ConsoleUserController::class, 'updateAuthor']); 
         Route::delete('/user/{id}', [ConsoleUserController::class, 'deleteAuthor']); 
         Route::post('/user/variant', [ConsoleUserController::class, 'createAuthorVariant']);
         Route::post('/user/picture', [ConsoleUserController::class, 'updatePicture']);
 
-        // Route::get('/user/picture', [ConsoleUserController::class, 'getPicture']);
-        // Route::get('/userVariant', [ConsoleUserController::class, 'getAuthorVariant']);
-        // Route::put('/userVariant', [ConsoleUserController::class, 'updateAuthorVariant']);
-        // Route::delete('/userVariant', [ConsoleUserController::class, 'deleteAuthorVariant']);
-
         // route CRUD
-        Route::get('/route', [ConsoleRouteController::class, 'getRoute']);
+        Route::get('/route', [ConsoleRouteController::class, 'getRoutes']);
         Route::post('/route', [ConsoleRouteController::class, 'createRoute']);
         Route::put('/route/{id}', [ConsoleRouteController::class, 'updateRoute']);
         Route::delete('/route/{id}', [ConsoleRouteController::class, 'deleteRoute']);

@@ -99,6 +99,5 @@ it('creating tag with existing slug fails', function() {
             'name' => 'Name',
             'slug' => $tag->slug
         ])
-        ->assertStatus(405);
-    
+        ->assertStatus(500);
 });

@@ -1,6 +1,7 @@
 <?php
 namespace App\Http\Controllers\ConsoleAPI;
 
+use App\Exceptions\TrustedException;
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 
@@ -8,6 +9,8 @@ use App\Domains\Tag\TagRepository;
 use App\Data\Objects\ConsoleAPI\Tag\TagObject;
 use App\Models\Blog;
 use App\Domains\Post\PostTagRepository;
+use Illuminate\Support\Str;
+
 class ConsoleTagController extends Controller {
 
     /*
@@ -15,42 +18,50 @@ class ConsoleTagController extends Controller {
     * ConsoleAPI Settings->tags
     *
     */
-    public static function getTag(Request $request, Blog $blog)
+    public static function getTags(Request $request, Blog $blog)
     {
-        // $request->validate([
-        //     'limit' => 'integer', 
-        //     'offset' => 'required|integer', 
-        // ]);
+         $request->validate([
+             'limit' => 'integer', 
+             'offset' => 'integer', 
+         ]);
         
-        $limit = $request->input('limit');
+        $limit = $request->input('limit') ?? 50;
         $offset = $request->input('offset') ?? 0;
 
         $getData = TagRepository::getTags($blog, $limit, $offset)
-                ->map(function ($tags) use ($blog) {
-                    return new TagObject($tags, $blog);
+            ->map(function ($tags) use ($blog) {
+                return new TagObject($tags, $blog);
             });
+        
         return response()->json($getData);
     }
 
     public static function createTag(Request $request , Blog $blog) {
 
-        // $request->validate([
-        //     'name' => 'required|string',
-        //     'slug' => 'required|string',
-        //     'description' => 'required|int',
-        // ]);
+         $request->validate([
+             'name' => 'required|string',
+             'slug' => 'string',
+             'description' => 'string',
+         ]);
 
         $name = $request->input('name');
         $slug = $request->input('slug');
         $description = $request->input('description') ?? null;
 
-        if($slug == null){
-            $slug = str_replace(" ", "-", $name);
+        if ($slug == null) {
+            $slug = Str::slug($name);
+        }
+        
+        $currentTag = TagRepository::getTagByBlogIdAndSlug($blog->id, $slug);
+        
+        if ($currentTag) {
+            throw new TrustedException('Slug already exists');
         }
 
-        $createTag = TagRepository::createTag($blog, $name, $slug, $description); 
-        return response()->json($createTag);
-        // return response()->json(new TagObject($createTag));
+        $tag = TagRepository::createTag($blog, $name, $slug, $description); 
+        
+        return response()->json(new TagObject($tag, $blog));
+        
     }
 
     public static function updateTag(Request $request, Blog $blog)
@@ -75,42 +86,6 @@ class ConsoleTagController extends Controller {
         return response()->json($updateOldTag);
     }
 
-    /*
-    *
-    * *** Tag validation section ***
-    *
-    */
-    // public static function getTagVariant(Request $request)
-    // {
-    //     $tagId =(int) $request->get('tagId');
-    //     $languageId =(int) $request->input('languageId');
-
-    //     $getVariant = TagRepository::getTagVariant($tagId, $languageId);
-
-    //     return response()->json($getVariant);
-    // }
-
-    public static function createTagVariant(Request $request)
-    {
-        $tagId = $request->input('tagId');
-        $languageId = $request->input('languageId');
-        $createVariant = TagRepository::createTagVariant($tagId, $languageId);
-
-        return response()->json($createVariant);
-    }
-
-    // public static function updateTagVariant(Request $request)
-    // {
-    //     $tagId = $request->input('tagId');
-    //     $languageId = $request->input('languageId');
-    //     $name = $request->input('name');
-    //     $description = $request->input('description');
-
-    //     $updateVariant = TagRepository::updateTagVariant($tagId, $languageId, $name, $description);
-
-    //     return response()->json($updateVariant);
-    // }
-
     public static function deleteTag(Request $request)
     {
         $tagId = $request->route('tagId');
@@ -121,21 +96,32 @@ class ConsoleTagController extends Controller {
         return response()->json($deleteVariant);
     }
 
-
-    
     /*
     *
+    * *** Tag validation section ***
+    *
+    */
+    public static function createTagVariant(Request $request)
+    {
+        $tagId = $request->input('tagId');
+        $languageId = $request->input('languageId');
+        $createVariant = TagRepository::createTagVariant($tagId, $languageId);
+
+        return response()->json($createVariant);
+    }
+
+    /*
     *
     * *** ConsoleAPI Posts->Tags ***
     *
     * This function will get all the tags and display it in an order (Post_Count)
     */
-    public static function getTagList(Request $request, Blog $blog){
+    public static function getPostTags(Request $request, Blog $blog){
         
         // $postId = $request->input('postId');
 
         $postId = 184;
-        $getData = PostTagRepository::getTagList($blog->id, $postId);
+        $getData = PostTagRepository::getPostTags($blog->id, $postId);
         return response()->json($getData);
     }
 
