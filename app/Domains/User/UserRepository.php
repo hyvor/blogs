@@ -10,13 +10,14 @@ use App\Models\UserVariant;
 use App\Exceptions\TrustedException;
 use Exception;
 use Illuminate\Support\Collection;
+use Illuminate\Http\UploadedFile;
 use Illuminate\Support\Str;
 use App\Domains\Language\LanguageRepository;
 use App\Models\Language;
 use App\Models\Media;
 use App\Domains\Media\MediaRepository;
 use App\Domains\Route\PermalinkRepository;
-
+use App\Models\Blog;
 
 use Hyvor\HyvorConnecter\Userbase;
 use App\Domains\User\Types\UserBlogOutputConsoleType; 
@@ -99,15 +100,15 @@ class UserRepository
 
         $user = User::create([
             'blog_id' => $blog->id,
-           // 'picture_id' => $userData['pictureId'] ?? null,
-            // 'slug' => $userData['slug'], 
-            'slug' => 'test-three',
-            // 'hyvor_user_id' => $hyvorUserId ?? null,
-            'hyvor_user_id' => $hyvorUserId,
+            'picture_url' => $userData['pictureUrl'] ?? null,
+            'slug' => $userData['slug'], 
+            // 'slug' => 'test-three',
+            // 'hyvor_user_id' => $hyvorUserId,
+            'hyvor_user_id' => 6,
             'status' => $status->value,
             'role' => $role->value,
-            // 'email' => $userData['email'],
-            'email' =>'sgs.ss',
+            'email' => $userData['email'],
+            // 'email' =>'sgs.ss',
             'url' => $userData['url'] ?? null,
             'social_facebook' => $userData['social_facebook'] ?? null,
             'social_twitter' => $userData['social_twitter'] ?? null,
@@ -120,10 +121,10 @@ class UserRepository
 
         UserVariant::create([
             'user_id' => $user->id,
-            // 'language_id' => $getLanguage->id,
-            'language_id' => 1,
-            // 'name' => $userData['name'],
-            'name' => 'fd',
+            'language_id' => $getLanguage->id,
+            // 'language_id' => 1,
+            'name' => $userData['name'],
+            // 'name' => 'fd',
             'location' => $userData['location'] ?? null,
             'bio' => $userData['bio'] ?? null,
         ]);
@@ -139,7 +140,8 @@ class UserRepository
         UserRoleEnum $role,
         UserStatusEnum $status = UserStatusEnum::INVITED,
         array $userData = [],
-    ){
+    ) : void
+    {
 
         User::find($userId)
             ->update([
@@ -166,8 +168,7 @@ class UserRepository
             ]);
     }
 
-    // This function is used to delete users according to specific conditions.
-    public static function deleteAuthorVariant( int $userId, int $languageId)
+    public static function deleteAuthor(int $userId, int $languageId) : void
     {
         $language = Language::where('id','=', $languageId)
         ->value('is_primary');
@@ -191,18 +192,7 @@ class UserRepository
     * these functions are for author Variants
     *
     */
-    // This function was created to get specific data about variants but we don't need it anymore.
-    // public static function getAuthorVariant($userId, $languageId)
-    // {
-    //     $users = UserVariant::where('user_id', '=', $userId)
-    //     ->where('language_id', '=', $languageId)
-    //     ->get();
-
-    //     return $users;
-    // }
-
-    // This function is used to create a variant if it doesn't exist.'
-    public static function createAuthorVariant($userId, $languageId) 
+    public static function createAuthorVariant(int $userId, int $languageId) : void
     {
         $language = Language::where('id','=', $languageId)
         ->value('is_primary');
@@ -221,32 +211,17 @@ class UserRepository
         }
     }
 
-    public static function updatePicture($blog, $file) {
+    public static function updatePicture($blog, UploadedFile $file) : bool {
 
         $media = MediaRepository::upload($blog->id, $file);
         $pictureUrl = PermalinkRepository::getMediaPermalink($media, $blog);
-
         // dd($pictureUrl);
         // $pictureId = $media->id;
 
-        User::find($blog->id)
+        return User::find($blog->id)
             ->update([
                 'picture_url' => $pictureUrl,
             ]);
-    }
-
-    public static function getPicture($userId) {
-
-        $pictureId = User::where('id','=', $userId)
-        ->value('picture_id');
-
-        if($pictureId !== null){
-            $media = MediaRepository::getOne($pictureId);
-        }
-        else{
-            $media = null;
-        }
-        return $media;
     }
 
     /*

@@ -27,9 +27,7 @@ class PostTagRepository
     }
 
 
-
-
-    public static function getTagList(int $blogId, int $postId)
+    public static function getPostTags(int $blogId, int $postId)
     {
         $post = Post::where('id', '=', $postId)
         ->value('id');

@@ -8,7 +8,7 @@ use App\Models\TagVariant;
 use App\Models\Language;
 use Illuminate\Support\Facades\DB;
 use App\Domains\Language\LanguageRepository;
-
+use Illuminate\Database\Eloquent\Collection;
 class TagRepository
 {    
     public static function getTagByBlogIdAndIdentifier(int $blogId, ?int $id, ?string $slug) : ?Tag
@@ -33,7 +33,7 @@ class TagRepository
     * ConsoleAPI Settings->Tags
     *
     */
-    public static function getTags($blog, ?int $limit, int $offset = 0)
+    public static function getTags($blog, ?int $limit, int $offset = 0) : Collection
     {
         $limit = $limit ?? 50;
         $language = LanguageRepository::getPrimaryLanguage($blog);
@@ -45,7 +45,7 @@ class TagRepository
         })
         ->select('tags.*')
         ->limit($limit)
-        ->offset($offset)
+        ->offset($offset) 
         ->latest()
         ->get();
 
@@ -57,7 +57,8 @@ class TagRepository
         string $name, 
         string $slug, 
         ?string $description
-    ){
+    ) : Tag
+    {
         $createTag = Tag::create([
             'blog_id' => $blog->id,
             'slug' => $slug,
@@ -85,7 +86,8 @@ class TagRepository
         ?string $codeFoot,
         ?string $name,
         ?string $description
-    ){
+    ): void
+    {
 
         Tag::find($id)
         ->update([
@@ -100,11 +102,10 @@ class TagRepository
                 'name' => $name,
                 'description' => $description,
             ]);
+            
     }
 
-    public static function deleteTag($tagId, $languageId){
-        // if it is some other language other oly the data in the variants table should be deleted. (only the variants data should be deleted)
-        // if language is the default language the data in tags table and the tags_variants table all should be deleted. (all the data should be deleted.)
+    public static function deleteTag($tagId, $languageId) : void{
 
         $language = Language::where('id','=', $languageId)
         ->value('is_primary');
@@ -132,14 +133,14 @@ class TagRepository
     */
     // public static function getTagVariant($tagId, $languageId)
     // {
-    //     $tags = TagVariant::where('tag_id', '=', $tagId)
+    //     $tags = TagsVariant::where('tag_id', '=', $tagId)
     //     ->where('language_id', '=', $languageId)
     //     ->get(); 
     //     return $tags;
     // }
 
     public static function createTagVariant($tagId, $languageId){
-        // the tag_id, language_id and name and the description should be added
+
         $language = Language::where('id','=', $languageId)
         ->value('is_primary');
 

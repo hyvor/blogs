@@ -30,15 +30,6 @@ class ConsoleBlogController extends Controller
     *
     */
 
-    // public static function getBlogData(Blog $blog)
-    // {
-    //     $getData = BlogRepository::getBlog($blog)
-    //             ->map(function ($blog) {
-    //                 return new BlogObject($blog);
-    //         });
-    //     return response()->json($getData);
-    // }
-
     public static function updateBlog(Request $request, Blog $blog)
     {
         $languageId =  $request->input('languageId');
