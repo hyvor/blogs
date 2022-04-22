@@ -49,7 +49,6 @@ class RouteRepository {
     ];
 
 
-
     public static function getRoute(Blog $blog, string $name) {
 
         /**
@@ -110,4 +109,3 @@ class RouteRepository {
         return $data->delete();
     }
 }
-

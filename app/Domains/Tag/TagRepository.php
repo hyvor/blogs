@@ -6,7 +6,6 @@ use App\Models\Tag;
 use App\Models\PostTag;
 use App\Models\TagVariant;
 use App\Models\Language;
-use Illuminate\Support\Facades\DB;
 use App\Domains\Language\LanguageRepository;
 use Illuminate\Database\Eloquent\Collection;
 class TagRepository
@@ -33,21 +32,21 @@ class TagRepository
     * ConsoleAPI Settings->Tags
     *
     */
-    public static function getTags($blog, ?int $limit, int $offset = 0) : Collection
+    public static function getTags($blog, int $limit, int $offset) : Collection
     {
-        $limit = $limit ?? 50;
+        
         $language = LanguageRepository::getPrimaryLanguage($blog);
 
         $tags = Tag::where('blog_id', '=', $blog->id)
-        ->join('tags_variants', function($join) use ($language) {
-            $join->on('tags_variants.tag_id', '=', 'tags.id');
-            $join->where('tags_variants.language_id', '=',  $language->id);
-        })
-        ->select('tags.*')
-        ->limit($limit)
-        ->offset($offset) 
-        ->latest()
-        ->get();
+            ->join('tag_variants', function($join) use ($language) {
+                $join->on('tag_variants.tag_id', '=', 'tags.id');
+                $join->where('tag_variants.language_id', '=',  $language->id);
+            })
+            ->select('tags.*')
+            ->limit($limit)
+            ->offset($offset) 
+            ->latest()
+            ->get();
 
         return $tags;
     }
@@ -59,12 +58,12 @@ class TagRepository
         ?string $description
     ) : Tag
     {
-        $createTag = Tag::create([
+        $tag = Tag::create([
             'blog_id' => $blog->id,
             'slug' => $slug,
         ]);
 
-        $tagId = $createTag->id;
+        $tagId = $tag->id;
         $getLanguage = $blog->languages()->where('is_primary', true)->first();
         $primaryLanguage = $getLanguage->id;
 
@@ -75,7 +74,7 @@ class TagRepository
             'description' => $description,
         ]);
 
-        return $createTag;
+        return $tag;
     }
 
     public static function updateTag(
@@ -166,12 +165,8 @@ class TagRepository
         return $createPostTag;
     }
 
-    /*
-    * 
-    * this function will create and save the tag
-    *
-    */
-    public static function getPostTag($postId, $tagId)
+    
+    /*public static function getPostTag($postId, $tagId)
     {
         // dd('tests');
         // dd('Post Id '+$postId + ' Tag Id '+$tagId);
@@ -182,7 +177,7 @@ class TagRepository
         //     ->join('post_tag', 'tags.id' ,$tagId.'', '=', 'post_tag.tag_id')
         //     ->join('posts', 'posts.id', $postId.'', '=', 'post_tag.post_id')
         //     ->get();
-
+        
         $connection = DB::table('tags')
             ->select('tags.name')
             ->join('post_tag', 'tags.id' ,$tagId ,'=', 'post_tag.tag_id')
@@ -194,6 +189,6 @@ class TagRepository
         //     ->join('posts', 'posts.id', '=', 'post_tag.post_id')
         //     ->get();
         return $connection;
-    }
+    }*/
     
 }

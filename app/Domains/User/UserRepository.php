@@ -47,7 +47,7 @@ class UserRepository
         $user->delete();
     }
 
-    public static function getAuthors($blog) : Collection
+    public static function getAuthor($blog)
     {
         $language = LanguageRepository::getPrimaryLanguage($blog);
 
@@ -56,6 +56,7 @@ class UserRepository
             $join->on('users_variants.user_id', '=', 'users.id');
             $join->where('users_variants.language_id', '=',  $language->id);
         })
+        // ->latest()
         ->select('users.*')
         ->get();
 
@@ -69,7 +70,7 @@ class UserRepository
     */
     public static function createUser(
         $blog,
-        int $hyvorUserId = null,
+        ?int $hyvorUserId,
         UserRoleEnum $role,
         UserStatusEnum $status = UserStatusEnum::INVITED,
         array $userData = [],
@@ -101,8 +102,8 @@ class UserRepository
             'picture_url' => $userData['pictureUrl'] ?? null,
             // 'slug' => $userData['slug'], 
             'slug' => 'test-three',
-            'hyvor_user_id' => $hyvorUserId,
-            // 'hyvor_user_id' => 1,
+            // 'hyvor_user_id' => $hyvorUserId,
+            'hyvor_user_id' => 1,
             'status' => $status->value,
             'role' => $role->value,
             // 'email' => $userData['email'],
@@ -147,6 +148,7 @@ class UserRepository
                 'status' => $status->value,
                 'role' => $role->value,
                 'email' => $userData['email'] ?? null,
+                'picture_id' => $userData['pictureId'] ?? null,
                 'url' => $userData['url'] ?? null,
                 'social_facebook' => $userData['social_facebook'] ?? null,
                 'social_twitter' => $userData['social_twitter'] ?? null,
@@ -189,9 +191,6 @@ class UserRepository
     * these functions are for author Variants
     *
     */
-
-
-
     public static function createAuthorVariant(int $userId, int $languageId) : void
     {
         $language = Language::where('id','=', $languageId)
