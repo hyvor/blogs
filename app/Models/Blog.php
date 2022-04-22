@@ -3,7 +3,8 @@
 namespace App\Models;
 
 use App\Models\Concerns\Countable;
-use App\Models\Concerns\Metable;
+use Hyvor\JsonMeta\Definer;
+use Hyvor\JsonMeta\Metable;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\SoftDeletes;
@@ -17,47 +18,40 @@ class Blog extends Model
     use Countable;
     use Metable;
 
-    /**
-     * Meta
-     */
-    protected $metableDefinition = [
+    // meta
+    protected function metaDefinition(Definer $definer)
+    {
+        
+        $definer->add('social_facebook')->type('string|null')->default(null);
+        $definer->add('social_twitter')->type('string|null')->default(null);
+        $definer->add('social_linkedin')->type('string|null')->default(null);
+        $definer->add('social_youtube')->type('string|null')->default(null);
+        $definer->add('social_instagram')->type('string|null')->default(null);
+        $definer->add('social_github')->type('string|null')->default(null);
 
-        // social media
-        'social_facebook' => ['string|null', null],
-        'social_twitter' => ['string|null', null],
-        'social_linkedin' => ['string|null', null],
-        'social_youtube' => ['string|null', null],
-        'social_instagram' => ['string|null', null],
-        'social_github' => ['string|null', null],
+        $definer->add('code_head')->type('string|null')->default(null);
+        $definer->add('code_foot')->type('string|null')->default(null);
+        
+        $definer->add('seo_indexing')->type('bool')->default(true);
+        $definer->add('seo_robots_txt')->type('string|null')->default(null);
+        $definer->add('seo_follow_external_links')->type('bool')->default(false);
 
-        // code
-        'code_head' => ['string|null', null],
-        'code_foot' => ['string|null', null],
+        $definer->add('comments_type')->type('enum:ht,other')->default('ht');
+        $definer->add('comments_ht_website_id')->type('int|null')->default(null);
+        $definer->add('comments_ht_api_key')->type('string|null')->default(null);
+        $definer->add('comments_code')->type('string|null')->default(null);
 
-        // seo
-        'seo_indexing' => ['bool', true],
-        'seo_robots' => ['string|null', null],
-        'seo_follow_external_links' => ['bool', false],
+        $definer->add('newsletter_code')->type('string|null')->default(null);
+        
+        $definer->add('color_modes')->type('enum:light,dark,both')->default('both');
+        $definer->add('color_mode_default')->type('enum:light,dark,os')->default('os');
 
-        // comments
-        'comments_type' => ['enum:ht,other', 'ht'],
-        'comments_ht_website_id' => ['int|null', null],
-        'comments_ht_api_key' => ['string|null', null],
-        'comments_code' => ['string|null', null],
+        $definer->add('syntax_on')->type('bool')->default(true);
+        $definer->add('syntax_line_numbers')->type('bool')->default(true);
+        $definer->add('syntax_theme')->type('string|null')->default(null);
 
-        // newsletter
-        'newsletter_code' => ['string|null', null],
 
-        // color mode
-        'color_modes' => ['enum:light,dark,both', 'both'],
-        'color_mode_default' => ['enum:light,dark,os', 'os'],
-
-        // syntax highlighting
-        'syntax' => ['bool', true],
-        'syntax_line_numbers' => ['bool', true],
-        'syntax_theme' => ['string|null', null],
-
-    ];
+    }
 
     protected $with = [
         'variants'
