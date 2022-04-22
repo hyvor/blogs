@@ -5,19 +5,24 @@
     "keywords": ["framework", "laravel"],
     "license": "MIT",
     "require": {
-        "php": "^7.3|^8.0",
+        "php": "^8.1",
+        "algolia/algoliasearch-client-php": "^3.2",
         "erusev/parsedown-extra": "^0.8.1",
         "fruitcake/laravel-cors": "^2.0",
         "guzzlehttp/guzzle": "^7.0.1",
-        "hyvor/laravel-filterq": "^0.0.2",
+        "http-interop/http-factory-guzzle": "^1.2",
+        "hyvor/laravel-filterq": "^1.0",
         "hyvor/laravel-hyvor-connecter": "dev-main",
         "hyvor/scssphp": "2.0.1",
         "laravel/cashier-paddle": "^1.4",
         "laravel/framework": "^9.0",
+        "laravel/scout": "^9.4",
         "laravel/telescope": "^4.6",
         "laravel/tinker": "^2.7",
         "league/flysystem-aws-s3-v3": "^3.0",
+        "meilisearch/meilisearch-php": "^0.23.1",
         "padaliyajay/php-autoprefixer": "^1.3",
+        "predis/predis": "^1.1",
         "scrivo/highlight.php": "v9.18.1.9",
         "symfony/http-foundation": "^6.0",
         "symfony/process": "^6.0",
@@ -33,6 +38,8 @@
         "laravel/sail": "^1.0.1",
         "mockery/mockery": "^1.4.2",
         "nunomaduro/collision": "^6.0",
+        "pestphp/pest": "^1.21",
+        "pestphp/pest-plugin-laravel": "^1.2",
         "phpunit/phpunit": "^9.3.3",
         "spatie/laravel-ignition": "^1.0",
         "squizlabs/php_codesniffer": "3.*"
@@ -71,6 +78,9 @@
         ],
         "post-create-project-cmd": [
             "@php artisan key:generate --ansi"
+        ],
+        "serve": [
+            "concurrently \"php artisan serve --host=blogs.hyvor.test --port=8080\" \"php artisan serve --host=test.hyvorblogs.test --port=8081\""
         ]
     },
     "repositories": [
@@ -91,7 +101,10 @@
     "config": {
         "optimize-autoloader": true,
         "preferred-install": "dist",
-        "sort-packages": true
+        "sort-packages": true,
+        "allow-plugins": {
+            "pestphp/pest-plugin": true
+        }
     },
     "minimum-stability": "dev",
     "prefer-stable": true

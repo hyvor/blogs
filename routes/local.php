@@ -1,5 +1,6 @@
 <?php
 
+use App\Domains\Post\Content\PostContentMetaRepository;
 use App\Domains\Post\Content\PostContentRepository;
 use App\Domains\Post\Content\SyntaxHighlighting;
 use App\Jobs\Scheduled\Counts\BlogCountJob;
@@ -7,6 +8,7 @@ use App\Models\Blog;
 use App\Models\Post;
 use Hyvor\SyntaxHighlighter\Highlighter;
 use Illuminate\Support\Facades\Route;
+use MeiliSearch\Client;
 
 Route::get('/run-blog-counts', function() {
     dispatch(new BlogCountJob);
@@ -69,4 +71,11 @@ Route::get('/syntax', function() {
     $code
     HTML);
 
+});
+
+Route::get('/text', function() {
+    $json = '{}';
+
+    dump(PostContentRepository::getText($json, Blog::find(1)));
+    dump(PostContentMetaRepository::updateMeta(Post::find(1), $json));
 });

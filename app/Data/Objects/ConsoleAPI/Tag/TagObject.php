@@ -13,8 +13,10 @@ class TagObject
     public int $blog_id;
     public string $slug;
     public ?string $posts_count; 
-    public ?string $code_head; 
-    public ?string $featured_image; 
+    public ?string $code_head;
+    public ?string $featured_image;
+    
+    public array $variants;
 
 
     public function __construct(Tag $tag, Blog $blog)
@@ -34,7 +36,7 @@ class TagObject
         
         $this->variants = $tag->variants->map(function($variant) use ($blog) {
             return new TagVariantObject($variant, $blog);
-        })->keyBy('language_id');
+        })->keyBy('language_id')->toArray();
         
     }
 } 

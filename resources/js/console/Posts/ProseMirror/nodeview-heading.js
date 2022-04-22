@@ -40,6 +40,7 @@ export default class Heading {
     }
 
     update(node) {
+
         if (node.type.name === 'heading') {
             this.contentDOM.id = node.attrs.id;
             this.input.value = node.attrs.id;

@@ -76,7 +76,7 @@ class RouteProcessor {
     {
 
         $renderer = new TemplateRenderer(
-            $this->pathMatcher, $this->matchedRoute, $this->language,
+            $this->pathMatcher, $this->matchedRoute,
             $this->filter
         );
         $this->responseObject = $renderer->getResponseObject();

@@ -26,11 +26,6 @@ class PathMatcher {
 
     public function __construct(Blog $blog, string $path, ?LocalDev $localDev = null) {
 
-        // add leading slash if not
-        if (!preg_match('/^\//', $path)) {
-            $path = '/' . $path;
-        }
-
         $this->blog = $blog;
         $this->path = $path;
         $this->localDev = $localDev;
@@ -246,7 +241,12 @@ class PathMatcher {
         if ($this->matched()) {
             return $this->responseObject;
         } else {
-            return DeliveryAPIResponseObject::forFile("404", "text/html", 404);
+            return DeliveryAPIResponseObject::forFile(
+                "404", 
+                "text/html", 
+                true,
+                404
+            );
         }
     }
 

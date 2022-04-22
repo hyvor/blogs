@@ -16,6 +16,7 @@ const postTagLogic = kea({
     ajax: ({ actions, props }) => ({ 
 
         load: async ({postId}) => {
+            return;
             const pt = await api.get(props.subdomain, `/postTags/${postId}`);
             actions.setPostTagList(pt);
         },

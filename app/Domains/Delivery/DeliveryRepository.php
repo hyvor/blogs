@@ -3,6 +3,7 @@ namespace App\Domains\Delivery;
 
 use App\Data\Objects\DeliveryAPI\DeliveryAPIResponseObject;
 use App\Data\Enums\DeliveryAPITypeEnum;
+use App\Domains\Cache\CacheRepository;
 use App\Models\Blog;
 use App\Models\LocalDev;
 
@@ -24,12 +25,31 @@ class DeliveryRepository {
 
     public static function getResponseObject (
         Blog $blog, string $path, 
-        LocalDev $localDev = null) : DeliveryAPIResponseObject 
+        LocalDev $localDev = null) : DeliveryAPIResponseObject
     {
+
+        // add leading slash if not
+        if (!preg_match('/^\//', $path)) {
+            $path = '/' . $path;
+        }
+        
+        // first, check cache
+        if (!$localDev) {
+            $responseObject = CacheRepository::get($blog, $path);
+            if ($responseObject instanceof DeliveryAPIResponseObject) {
+                return $responseObject;
+            }
+        }
         
         $matcher = new PathMatcher($blog, $path, $localDev);
-        return $matcher->getResponseObject();
+        $responseObject = $matcher->getResponseObject();
 
+        if (!$localDev) {
+            CacheRepository::set($blog, $path, $responseObject);
+        }
+            
+        return $responseObject;    
+        
     }
 
 }

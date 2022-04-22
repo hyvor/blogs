@@ -6,18 +6,12 @@ use Illuminate\Database\Eloquent\Factories\Factory;
 
 class BlogFactory extends Factory
 {
-    /**
-     * Define the model's default state.
-     *
-     * @return array
-     */
+    
     public function definition()
     {
-        // I changed here from user_id to hyvor_user_id
         return [
-            'hyvor_user_id' => 1,
-            'subdomain' => $this->faker->word(),
-            'name' => $this->faker->name()
+            'hyvor_user_id' => config('test.hyvor_user_id'),
+            'subdomain' => $this->faker->uuid(),
         ];
     }
 }

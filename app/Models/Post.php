@@ -3,12 +3,14 @@
 namespace App\Models;
 
 use App\Domains\Post\PostLanguageRepository;
+use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\SoftDeletes;
 
 class Post extends Model
 {
     use SoftDeletes;
+    use HasFactory;
 
     /**
      * Eager load with these relations
@@ -23,6 +25,7 @@ class Post extends Model
 
     protected $casts = [
         'published_at' => 'datetime',
+        'is_page' => 'boolean',
     ];
 
     public function blog()
@@ -33,7 +36,7 @@ class Post extends Model
 
     public function variants()
     {
-        return $this->hasMany(PostsVariant::class);
+        return $this->hasMany(PostVariant::class);
     }
 
     public function tags()

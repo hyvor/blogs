@@ -2,7 +2,7 @@
 
 namespace App\Data\Objects\ConsoleAPI\Tag;
 
-use App\Models\TagsVariant;
+use App\Models\TagVariant;
 use App\Models\Tag;
 use App\Models\Language;
 use App\Models\Blog;
@@ -16,7 +16,7 @@ class TagVariantObject
     public ?string $description;
 
 
-    public function __construct(TagsVariant $tagVariant)
+    public function __construct(TagVariant $tagVariant)
     {
         $language = $tagVariant->language;
 

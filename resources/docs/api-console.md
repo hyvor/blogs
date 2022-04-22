@@ -58,7 +58,7 @@ Jump to each category:
     "url": "https://myblog.hyvorblogs.io/hello-world",
     "featured_image": "https://myblog.hyvorblogs.io/media/image.png",
     "canonical_url": null,
-    "reading_time": 2,
+    "words": 500,
     "code_head": null,
     "code_foot": null,
     "tags": [ Tag Objects ],

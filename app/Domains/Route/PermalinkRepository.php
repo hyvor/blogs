@@ -87,11 +87,15 @@ class PermalinkRepository {
     private static function getBlogBasePathWithProtocol(Blog $blog)
     {
 
+        $isLocal = app()->environment('local');
+        $protocol = $isLocal ? 'http://' : 'https://';
+        
         if ($blog->hosting_at === 'subdomain') {
             $deliveryDomain = config('blogs.domain_delivery');
-            return "https://$blog->subdomain.$deliveryDomain";
+            $port = $isLocal ? ':8081' : '';
+            return "$protocol$blog->subdomain.$deliveryDomain$port";
         } elseif ($blog->hosting_at === 'domain') {
-            return "https://" . $blog->hosting_domain;
+            return 'https://' . $blog->hosting_domain;
         } elseif ($blog->hosting_at === 'self') {
             return $blog->hosting_url;
         }

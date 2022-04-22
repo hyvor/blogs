@@ -22,12 +22,14 @@ const subdomainLogic = kea({
                 router.actions.push("/console/" + subdomain + path);
             }
             
-            // pre-load posts
-            postsLogic({subdomain}).actions.loadPostsList();
+            
             // pre-load blog settings
             blogLogic({subdomain}).actions.load();
             // pre-load languages
-            languagesLogic({subdomain}).actions.load();
+            languagesLogic({subdomain}).actions.load(() => {
+                // pre-load posts
+                postsLogic({subdomain}).actions.loadPostsList();
+            });
 
             /**
              * This is set because there are some places that

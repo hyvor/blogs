@@ -80,9 +80,9 @@ class LanguageRepository {
     /**
      * @return Language primary language if the requested one is not found
      */
-    public static function getLanguageByCode(Blog $blog, string $code) : Language
+    public static function getLanguageByCode(Blog $blog, ?string $code) : ?Language
     {   
-        return $blog->languages()->where('code', $code)->first() ?? self::getPrimaryLanguage($blog);
+        return $blog->languages()->where('code', $code)->first();
     }
 
     public static function getFallbackLanguage(Blog $blog, Language $language) : Language

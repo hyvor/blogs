@@ -2,25 +2,14 @@
 
 namespace App\Providers;
 
+use App\Domains\Blog\Observers\BlogObserver;
 use App\Domains\Cache\Listeners\ClearPostCacheListener;
 use App\Domains\Post\Events\PostPublishedEvent;
+use App\Domains\Post\Observers\PostVariantObserver;
+use App\Models\Blog;
+use App\Models\PostVariant;
 use Illuminate\Foundation\Support\Providers\EventServiceProvider as ServiceProvider;
 use Illuminate\Support\Facades\Event;
-
-use App\Domains\Tag\Events\TagEvent;
-use App\Domains\Tag\Events\UpdateTagEvent;
-
-use App\Domains\Tag\Listeners\TagListener;
-use App\Domains\Tag\Listeners\UpdateTagListener;
-
-use App\Domains\Tag\Observers\TagObserver;
-use App\Models\Tag;
-
-use App\Domains\User\Events\UserEvent;
-use App\Domains\User\Listeners\UserListener;
-use App\Domains\User\Observers\UserObserver;
-use App\Models\User;
-
 
 class EventServiceProvider extends ServiceProvider
 {
@@ -30,20 +19,24 @@ class EventServiceProvider extends ServiceProvider
      * @var array
      */
     protected $listen = [
-        // TagEvent::class => [
-        //     TagListener::class,
-        // ],
-        // UpdateTagEvent::class => [
-        //     UpdateTagListener::class,
-        // ],
-        // UserEvent::class => [
-        //     UserListener::class,
-        // ],
+        
+        
+
     ];
 
     protected $subscribe = [
 
         ClearPostCacheListener::class
+
+    ];
+
+    protected $observers = [
+        
+        Blog::class => [BlogObserver::class],
+
+        PostVariant::class => [PostVariantObserver::class],
+        
+        
 
     ];
 
@@ -54,9 +47,6 @@ class EventServiceProvider extends ServiceProvider
      */
     public function boot()
     {
-        // parent::boot();
-        // Tag::observe(TagObserver::class);
-        // User::observe(UserObserver::class);
 
     }
 }

@@ -12,11 +12,11 @@ import useUpdateEffect from '../../../helpers/hooks/useUpdateEffect';
 import RichView from './nodeview-rich';
 import Figcaption from './nodeview-figcaption';
 import Heading from './nodeview-heading';
-import Callout from './nodeview-callout';
+import Callout from './Callout/nodeview-callout';
 import CodeBlock from './nodeview-codeblock';
-import Image from './nodeview-image';
+import Image from './Image/nodeview-image';
 import Bookmark from './nodeview-bookmark';
-
+import CustomHtml from "./nodeview-custom-html";
 
 function getState(val) {
     val = val ? JSON.parse(val) : null
@@ -32,7 +32,7 @@ function getState(val) {
 
 const nodeViews = {
     rich(...args) {
-        return new RichView(...args);
+        return new RichView(HBSchema, ...args);
     },
     figcaption(...args) {
         return new Figcaption(...args);
@@ -46,8 +46,11 @@ const nodeViews = {
     code_block(...args) {
         return new CodeBlock(...args)
     },
+    custom_html(...args) {
+        return new CustomHtml(...args)
+    },
     image(...args) {
-        return new Image(...args)
+        return new Image(HBSchema, ...args)
     },
     bookmark(...args) {
         return new Bookmark(...args)
@@ -101,6 +104,6 @@ function handleClickOn(view, pos, node, posBefore, e) {
 // prevent tab-key browser navigation
 function handleKeyDown(view, e) {
     if (e.key === 'Tab') {
-        e.preventDefault();
+       //  e.preventDefault();
     }
 }

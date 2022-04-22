@@ -13,22 +13,21 @@ return new class extends Migration
      */
     public function up()
     {
-        Schema::create('tags_variants', function (Blueprint $table) {
+        Schema::create('tag_variants', function (Blueprint $table) {
             $table->id();
+            $table->timestamps();
 
             // connections
-            $table->bigInteger('tag_id')->index();
-            $table->bigInteger('language_id')->index();
+            $table->bigInteger('tag_id');
+            $table->bigInteger('language_id');
 
             // data
-            $table->string('name')->nullable();
-            $table->string('description')->nullable(); 
-
-            // $table->timestamps();
-
-            // $table->string('updated_a')->index();
-            // $table->string('created_at')->index();
-
+            $table->string('name');
+            $table->string('description')->nullable();
+            
+            // indexes
+            $table->index('tag_id');
+            $table->index('language_id');
         });
     }
 

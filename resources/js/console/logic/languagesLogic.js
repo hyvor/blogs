@@ -17,9 +17,10 @@ const languagesLogic = kea({
 
     ajax: ({actions, props}) => ({
 
-        load: async () => {
+        load: async (onLoad) => {
             const langs = await api.get(props.subdomain, '/languages');
             actions.setLanguages(langs);
+            onLoad && onLoad()
         },
 
         create: async ({code, name, onCreate}) => {

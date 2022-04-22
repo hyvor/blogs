@@ -15,12 +15,6 @@ export default class Bookmark {
         this.renderNode(node);
     }
 
-    update(node) {
-        if (node.type.name != "bookmark") return false
-        this.renderNode(node)
-        return true
-    }
-
     renderNode(node) {
 
         const url = node.attrs.url;
@@ -32,7 +26,10 @@ export default class Bookmark {
             this.dom.innerHTML = '<div class="embedding-placeholder">Loading bookmark...</div>';
             this.dom.classList.remove("url-input")
 
-            api.get(subdomainLogic.values.subdomain, "/url-data", {url})
+            api.get(subdomainLogic.values.subdomain, "/url-data", {
+                url, 
+                type: "link"
+            })
                 .then(response => {
                     this.renderBookmark(response);
                 })
@@ -65,17 +62,14 @@ export default class Bookmark {
 
                 lastValue = input.value;
             }
-            //input.onkeypress = e => e.stopPropagation();
 
             this.dom.classList.add("url-input");
             this.dom.appendChild(input);
 
             this.selectNode = () => {
-                console.log("Focusing");
                 input.focus();
             }
             this.deselectNode = () => {
-                console.log("Deselect");
                 input.blur();
             }
 
@@ -86,21 +80,22 @@ export default class Bookmark {
 
     renderBookmark(urlData) {
         
+        const thumbnail = urlData.thumbnail ? `<div class="bookmark-link-thumbnail">
+            <img alt="Thumbnail" src="${urlData.thumbnail}" />
+        </div>` : ''
+        
         this.dom.innerHTML = `<div class="bookmark-wrap">
             <div class="bookmark-link-details">
                 <div class="bookmark-link-title">${urlData.title}</div>
                 <div class="bookmark-link-description">${urlData.description}</div>
                 <div class="bookmark-link-domain">${urlData.domain}</div>
             </div>
-            <div class="bookmark-link-thumbnail">
-                <img src="${urlData.thumbnail}" />
-            </div>
+            ${thumbnail}
         </div>`
 
     }
 
     stopEvent() { return true }
-
 
     removeInput() {
         const pos = this.getPos()

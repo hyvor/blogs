@@ -240,14 +240,15 @@ $prosemirror-selected-outline: 3px solid #299af3;
         line-height: 30px;
         margin-top: 30px;
         letter-spacing: 0.2px;
-        code {
-            background: rgba(135,131,120,0.15);
-            color: #EB5757;
-            border-radius: 3px;
-            font-size: 85%;
-            padding: 0.2em 0.4em;
-            font-family: monospace;
-        }
+    }
+
+    :not(pre) > code {
+        background: rgba(135,131,120,0.15);
+        color: #EB5757;
+        border-radius: 3px;
+        font-size: 85%;
+        padding: 0.2em 0.4em;
+        font-family: monospace;
     }
 
     ul, ol {
@@ -293,16 +294,42 @@ $prosemirror-selected-outline: 3px solid #299af3;
 
     aside {
         border-left: none;
-        background: #f1f1ef;
         border-radius: 5px;
         display:flex;
-        span {
-            width: 20px;
+        padding:0;
+        position:relative;
+        .emoji-icon {
             text-align: center;
-            margin-right: 10px;
+            cursor: pointer;
+            user-select: none;
+            display: inline-block;
+            padding: 10px 12px;
         }
-        div {
-            flex:1;
+        .content-div {
+            flex: 1;
+            padding: 10px 10px 10px 0;
+        }
+        .color-pickers-wrap {
+            position: absolute;
+            right: 0;
+            bottom: 100%;
+        }
+        .color-picker {
+            display: inline-block;
+            width: 15px;
+            height: 15px;
+            border-radius: 50%;
+            margin-right: 5px;
+            cursor: pointer;
+            border: 1px solid #aaa;
+            position:relative;
+            .color-picker-view {
+                position: absolute;
+                top: 100%;
+                right: 0;
+                margin-top: 4px;
+                width: 200px;
+            }
         }
     }
 
@@ -342,6 +369,36 @@ $prosemirror-selected-outline: 3px solid #299af3;
             }
         }
     }
+    
+    rich, bookmark {
+        display: block;
+        input {
+            font-size: 14px;
+            border: none;
+            // border-radius: 20px;
+            padding: 8px;
+            width: 100%;
+            border:1px solid #eee;
+        }
+        &.url-input, &.loading {
+            & + figcaption {
+                display: none;
+            }
+        }
+    }
+
+    .embedding-placeholder {
+        flex:1;
+        font-size: 14px;
+        padding: 100px;
+        text-align: center;
+        color: $color-text-light;
+        background: $color-card;
+    }
+    
+    rich.url-input {
+        margin-top: 30px;
+    }
 
     bookmark {
         display: flex;
@@ -352,13 +409,6 @@ $prosemirror-selected-outline: 3px solid #299af3;
         }
         &.url-input {
             outline:none!important;
-        }
-        input {
-            font-size: 14px;
-            border: none;
-            padding: 8px;
-            width: 100%;
-            border:1px solid #eee;
         }
         .bookmark-wrap {
             cursor: default;
@@ -409,24 +459,65 @@ $prosemirror-selected-outline: 3px solid #299af3;
         }
     }
 
-    /* pre {
-        background-color: #eee;
-        padding: 20px;
-        border-radius: 2px;
+    .code-wrap {
         margin-top:30px;
-        code {
-            font-size:14px;
-            font-family: inherit;
+        .code-toolbar {
+            white-space: normal;
+            padding: 10px;
+            background: $color-input;
+            border-radius: 20px 20px 0 0;
+            border-bottom: 1px solid #dddddd;
         }
-    } */
-    .CodeMirror {
-        font-size:14px;
-        margin-top:30px;
-        height: initial;
-        padding:5px  0;
+        .code-toolbar-labels {
+            display: flex;
+            font-size: 12px;
+            div {
+                flex: 1;
+                padding-left: 4px;
+            }
+        }
+        .code-toolbar-inputs {
+            display: flex;
+            input {
+                flex: 1;
+                min-width: 0;
+                margin-right: 5px;
+                padding: 5px 10px;
+                font-size: 12px;
+                margin-top: 5px;
+                background: #fff;
+            }
+        }
+        
+        .CodeMirror {
+            font-size:14px;
+            height: initial;
+            padding:5px  0;
+            border-radius: 0 0 20px 20px;
+        }
+        .topbar {
+            background: $color-input;
+            border-radius: 20px 20px 0 0;
+            border-bottom: 1px solid #dddddd;
+            font-size:12px;
+            padding: 10px 15px;
+        }
     }
+    
 
     .image-wrap {
+        position:relative;
+        
+        .alt-input {
+            position: absolute;
+            top: 10px;
+            right: 10px;
+            width: 200px;
+            padding: 4px 10px;
+            border: 1px solid #aaa;
+            font-size: 12px;
+        }
+        
         .image-uploader {
             font-size: 14px;
             height: 400px;

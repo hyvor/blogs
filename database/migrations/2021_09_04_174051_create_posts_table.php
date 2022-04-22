@@ -22,24 +22,30 @@ class CreatePostsTable extends Migration
             $table->softDeletes();
 
             // connections
-            $table->bigInteger('blog_id')->index();
+            $table->bigInteger('blog_id');
 
             // status
             $table->boolean('is_page')->default(false);
             $table->boolean('is_featured')->default(false);
 
-            // basic
+            // data
             $table->string('slug')->nullable();
-
-            // advanced
+            $table->string('featured_image_url')->nullable();
             $table->string('canonical_url')->nullable();
             $table->text('code_head')->nullable();
             $table->text('code_foot')->nullable();
 
-            // other
-            $table->tinyInteger('reading_time')->nullable();
-
             $table->unique(['blog_id', 'slug']);
+
+            $table->index('blog_id');
+            $table->index(['blog_id', 'created_at']);
+            $table->index(['blog_id', 'updated_at']);
+            $table->index(['blog_id', 'published_at']);
+            $table->index(['blog_id', 'is_page']);
+            $table->index(['blog_id', 'is_featured']);
+            $table->index(['blog_id', 'featured_image_url']);
+            $table->index(['blog_id', 'canonical_url']);
+
         });
     }
 

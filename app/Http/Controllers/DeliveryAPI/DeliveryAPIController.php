@@ -35,9 +35,4 @@ class DeliveryAPIController
 
         return response()->json($response);
     }
-
-    private static function notFound()
-    {
-        return response()->json(DeliveryAPIResponseObject::forFile('404', 'text/html', 404));
-    }
 }

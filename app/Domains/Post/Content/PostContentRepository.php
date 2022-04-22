@@ -30,9 +30,20 @@ use Tiptap\Editor;
 
 class PostContentRepository {
 
-    public static function getHtml(string $json, Blog $blog) {
+    public static function getHtml(string $json, Blog $blog) 
+    {
+        return self::getEditor($json, $blog)->getHTML();
+    }
 
-        $renderer = new Editor([
+    public static function getText(string $json, Blog $blog)
+    {
+        return self::getEditor($json, $blog)->getText();
+    }
+
+    private static function getEditor(string $json, Blog $blog) : Editor
+    {
+
+        $editor = new Editor([
             'extensions' => [
 
                 // core
@@ -68,9 +79,9 @@ class PostContentRepository {
             ]
         ]);
 
-        $renderer->setContent($json);
+        $editor->setContent($json);
 
-        return $renderer->getHTML();
+        return $editor;
 
     }
 

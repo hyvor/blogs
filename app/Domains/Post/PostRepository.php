@@ -9,7 +9,7 @@ use App\Exceptions\TrustedException;
 use App\Models\Blog;
 use App\Models\Language;
 use App\Models\Post;
-use App\Models\PostsVariant;
+use App\Models\PostVariant;
 use App\Models\Tag;
 use App\Models\PostTag;
 use App\Models\User;
@@ -37,11 +37,10 @@ class PostRepository
         return $post->first();
     }
 
-    public static function getPostByBlogIdSlugAndLanguageId(int $blogId, string $slug, int $languageId) : ?Post
+    public static function getPostByBlogIdAndSlug(int $blogId, string $slug) : ?Post
     {
         return Post::where('blog_id', $blogId)
             ->where('slug', $slug)
-            ->where('language_id', $languageId)
             ->first();
     }
 
@@ -66,9 +65,9 @@ class PostRepository
         $language = LanguageRepository::getPrimaryLanguage($blog);
 
         return Post::where('posts.blog_id', $blog->id)
-            ->join('posts_variants', function($join) use ($language) {
-                $join->on('posts_variants.post_id', '=', 'posts.id');
-                $join->where('posts_variants.language_id', '=', $language->id);
+            ->join('post_variants', function($join) use ($language) {
+                $join->on('post_variants.post_id', '=', 'posts.id');
+                $join->where('post_variants.language_id', '=', $language->id);
             })
             ->where('posts.is_page', false)
             ->when($authorId, function ($query) use ($authorId) {
@@ -105,9 +104,9 @@ class PostRepository
             ->when($search, function ($query) use ($search) {
                 $query->where('posts.title', 'LIKE', "$search%");
             })
-            // to prevent selecting posts_variants data
+            // to prevent selecting post_variants data
             ->select('posts.*')
-            ->orderByRaw("FIELD(posts_variants.status, 'draft') DESC") // drafts first
+            ->orderByRaw("FIELD(post_variants.status, 'draft') DESC") // drafts first
             ->orderBy('posts.created_at', 'desc')
             ->limit($limit)
             ->offset($offset)
@@ -129,14 +128,20 @@ class PostRepository
      * This is for the Data API
      * 
      * ALWAYS USE NAMED ARGUMENT WHEN USING THIS FUNCTION
+     * 
+     * @return array{'posts': Collection, 'total': int}
      */
     public static function getPostsWithFilterQ(
-        int $blogId, ?string $filter, 
-        int $limit, 
+        Blog $blog,
+        Language $language,
+        ?string $filter,
+        int $limit,
         int $offset = 0,
-        string $orderBy = 'published_at', 
-        string $orderMethod = 'DESC'
-    ) : Collection {
+        array $orderBys = [
+            ['posts.published_at', 'DESC']
+        ],
+        bool $isPages = false
+    ) : array {
 
         $builder = FilterQ::expression($filter)
             ->builder(Post::class)
@@ -144,52 +149,53 @@ class PostRepository
 
                 $keys->add('id')
                     ->column('posts.id')
-                    ->operators('~', true);
+                    ->valueType('int');
 
                 $keys->add('published_at')
                     ->column('posts.published_at')
-                    ->operators('~', true);
+                    ->valueType('date');
+
+                $keys->add('created_at')
+                    ->column('posts.created_at')
+                    ->valueType('date');
 
                 $keys->add('updated_at')
-                    ->column('posts.updated_at')
-                    ->operators('~', true);
+                    ->column('post_variants.updated_at')
+                    ->valueType('date');
 
                 $keys->add('is_featured')
                     ->column('posts.is_featured')
+                    ->valueType('bool')
                     ->operators('=,!=');
 
                 $keys->add('slug')
                     ->column('posts.slug')
-                    ->operators('=,!=,~');
-
-                $keys->add('title')
-                    ->column('posts.title')
-                    ->operators('~');
-
-                $keys->add('description')
-                    ->column('posts.description')
-                    ->operators('~,=,!=');
+                    ->valueType('string|int')
+                    ->operators('=,!=');
 
                 $keys->add('featured_image')
                     ->column('posts.featured_image')
+                    ->valueType('null')
                     ->operators('=,!=');
 
                 $keys->add('canonical_url')
                     ->column('posts.canonical_url')
+                    ->valueType('null')
                     ->operators('=,!=');
 
-                $keys->add('reading_time')
-                    ->column('posts.reading_time')
-                    ->operators('~', true);
+                $keys->add('words')
+                    ->column('post_variants.words')
+                    ->valueType('int');
 
                 $keys->add('tag.id')
                     ->column('post_tag.tag_id')
-                    ->operators('=,!=')
+                    ->valueType('int')
                     ->join('post_tag', 'post_tag.post_id', '=', 'posts.id', 'left');
 
                 $keys->add('tag.slug')
                     ->column('tags.slug')
                     ->operators('=,!=')
+                    ->valueType('int|string')
                     ->join(function($query) {
                         $query->leftJoin('post_tag', 'post_tag.post_id', '=', 'posts.id')
                             ->join('tags', 'tags.id', '=', 'post_tag.tag_id');
@@ -197,31 +203,44 @@ class PostRepository
 
                 $keys->add('author.id')
                     ->column('post_author.user_id')
-                    ->operators('=,!=')
+                    ->valueType('int')
                     ->join('post_author', 'post_author.post_id', '=', 'posts.id', 'left');
 
                 $keys->add('author.slug')
                     ->column('users.slug')
                     ->operators('=,!=')
+                    ->valueType('int|string')
                     ->join(function($query) {
                         $query->leftJoin('post_author', 'post_author.post_id', '=', 'posts.id')
                             ->leftJoin('users', 'users.id', '=', 'post_author.user_id');
                     });
 
             })
-            ->operators(function($operators) {
-                $operators->add('~', 'LIKE');
-            })
             ->addWhere();
 
-        return $builder
-            ->where('posts.blog_id', $blogId)
-            //->where('posts.status', 'published')
+        foreach ($orderBys as $orderBy) {
+            $builder->orderBy($orderBy[0], $orderBy[1]);
+        }
+
+        $posts = $builder
+            ->join('post_variants', function($join) use ($language) {
+                $join->on('post_variants.post_id', '=', 'posts.id');
+                $join->where('post_variants.language_id', '=', $language->id);
+            })
+            ->where('posts.blog_id', $blog->id)
+            ->where('post_variants.status', 'published')
+            ->where('posts.is_page', $isPages)
             ->limit($limit)
             ->offset($offset)
-            // ->orderBy($orderBy, $orderMethod)
             ->select('posts.*')
             ->get();
+
+        $total = $builder->count();
+
+        return [
+            'posts' => $posts,
+            'total' => $total
+        ];
 
     }
 
@@ -303,15 +322,15 @@ class PostRepository
         return $post;
     }
 
-    public static function createPostVariant(int $postId, int $languageId) : PostsVariant
+    public static function createPostVariant(int $postId, int $languageId) : PostVariant
     {
 
-        $variant = PostsVariant::create([
+        $variant = PostVariant::create([
             'post_id' => $postId,
             'language_id' => $languageId
         ]);
 
-        return PostsVariant::find($variant->id);
+        return PostVariant::find($variant->id);
 
     }
 
@@ -379,10 +398,10 @@ class PostRepository
 
     }
 
-    public static function getPostVariantByPostIdAndLanguageId(int $postId, int $languageId) : ?PostsVariant
+    public static function getPostVariantByPostIdAndLanguageId(int $postId, int $languageId) : ?PostVariant
     {
 
-        return PostsVariant::where('language_id', $languageId)
+        return PostVariant::where('language_id', $languageId)
             ->where('post_id', $postId)
             ->first();
 
@@ -390,7 +409,7 @@ class PostRepository
 
     public static function deletePostVariant(int $postId, int $languageId)
     {
-        PostsVariant::where('language_id', $languageId)
+        PostVariant::where('language_id', $languageId)
             ->where('post_id', $postId)
             ->delete();
     }

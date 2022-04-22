@@ -17,7 +17,7 @@ class User extends Model
 
     public function variants()
     {
-        return $this->hasMany(UsersVariant::class);
+        return $this->hasMany(UserVariant::class);
     }
 
 

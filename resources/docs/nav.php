@@ -5,14 +5,16 @@ return [
         [null, 'Introduction'],
         ['themes', 'Themes'],
         ['hosting', 'Hosting'],
-        ['editor', 'Using the editor'],
+        ['writing', 'Writing'],
         ['how', 'How it works'],
     ],
     'Features' => [
+        ['posts-pages', 'Posts & Pages'],
         ['users', 'Users'],
         ['tags', 'Tags'],
         ['media', 'Media'],
         ['custom-domain', 'Custom Domain'],
+        ['custom-code', 'Custom Code'],
         ['edge-caching', 'Edge Caching'],
         ['syntax-highlighting', 'Syntax Highlighting']
     ],
@@ -20,6 +22,7 @@ return [
         ['comments', 'Comments'],
         ['newsletter', 'Newsletter'],
         ['analytics', 'Analytics'],
+        ['forms', 'Forms']
     ],
     'Basic Settings' => [
         ['main', 'Main Settings'],
@@ -59,6 +62,7 @@ return [
         ['privacy', 'Privacy Policy'],
     ],
     'Misc' => [
+        ['js', 'Javascript Usage'],
         ['oss', 'Open Source'],
     ]
 

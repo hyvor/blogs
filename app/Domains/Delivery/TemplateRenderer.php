@@ -10,6 +10,7 @@ use App\Data\Objects\DeliveryAPI\MetaObject;
 use App\Domains\ThemeFiles\ThemeFilesRepository;
 use App\Domains\Delivery\RouteMatcher\MatchedRoute;
 use App\Domains\Delivery\Twig\TwigRenderer;
+use App\Domains\Post\PostSearchRepository;
 use App\Domains\Post\PostRepository;
 use App\Domains\Route\PermalinkRepository;
 use App\Domains\Tag\TagRepository;
@@ -18,26 +19,24 @@ use App\Models\Language;
 use App\Models\Post;
 use App\Models\Tag;
 use App\Models\User;
+use Illuminate\Support\Collection;
 use Twig\Error\Error;
 
 class TemplateRenderer {
 
     private PathMatcher $pathMatcher;
     private MatchedRoute $matchedRoute;
-    private Language $language;
     private ?string $filter;
 
     private Tag|User|Post|null|false $model;
 
     public function __construct(
         PathMatcher $pathMatcher, 
-        MatchedRoute $matchedRoute, 
-        Language $language, 
+        MatchedRoute $matchedRoute,
         ?string $filter
     ) {
         $this->pathMatcher = $pathMatcher;
         $this->matchedRoute = $matchedRoute;
-        $this->language = $language;
         $this->filter = $filter;
     }
 
@@ -91,14 +90,14 @@ class TemplateRenderer {
     private function getVariables() {
         $blog = $this->pathMatcher->blog;
 
-        $blogObject = new BlogObject($blog);
+        $blogObject = new BlogObject($blog, $this->pathMatcher->language);
         $scopeVariables = $this->getRouteVariables($blogObject);
 
         $vars = [
             '_blog' => $blogObject,
             '_config' => [],
             '_route' => $this->matchedRoute->name,
-            '_lang' => $this->language->code
+            '_lang' => $this->pathMatcher->language->code
         ];
 
         $vars += $scopeVariables;
@@ -108,20 +107,13 @@ class TemplateRenderer {
             '_foot' => $this->getFootCode($vars),
         ];
 
-        if ($this->filter !== null) {
-            $vars['_posts'] = $this->getPosts();
-        }
+        $vars['_posts'] = $this->getPosts();
 
         /**
-         * Convert all object to arrays
-         * To allow merge filter to work
-         * Make sure any object methods are not misused
+         * This is to make sure only data from objects are sent
+         * and the developer does not have access to PHP methods
          */
-        foreach ($vars as &$var) {
-            if (is_object($var)) {
-                $var = (array) $var;
-            }
-        }
+        $vars = json_decode(json_encode($vars), true);
 
         return $vars;
 
@@ -134,31 +126,32 @@ class TemplateRenderer {
 
         if ($routeName === 'index') {
 
-            $blogObject = new BlogObject($this->pathMatcher->blog);
+            $blogObject = new BlogObject($this->pathMatcher->blog, $this->pathMatcher->language);
 
             return [
                 '_meta' => new MetaObject(
                     $blogObject->name,
                     $blogObject->description,
-                    $blogObject->featured_image,
+                    $blogObject->featured_image_url,
                     $blogObject->url,
                     $blogObject->url
                 ),
                 '_featured_posts' => PostRepository::getPostsWithFilterQ(
-                    blogId: $this->pathMatcher->blog->id,
+                    blog: $this->pathMatcher->blog,
+                    language: $this->pathMatcher->language,
                     filter: $this->filter,
                     limit: 30, // hard limit - who has 30 featured posts?
-                )
+                )['posts']
             ];
 
         } else if ($routeName === 'post' || $routeName === 'page' || $routeName === 'preview') {
 
-            $postObject = new PostObject($this->model, $this->pathMatcher->blog);
+            $postObject = new PostObject($this->model, $this->pathMatcher->blog, $this->pathMatcher->language);
             return [
                 '_meta' => new MetaObject(
                     $postObject->title,
                     $postObject->description,
-                    $postObject->featured_image,
+                    $postObject->featured_image_url,
                     $postObject->url,
                     $postObject->canonical_url ?? $postObject->url
                 ),
@@ -167,13 +160,13 @@ class TemplateRenderer {
 
         } else if ($routeName === 'tag') {
 
-            $tagObject = new TagObject($this->model, $this->pathMatcher->blog);
+            $tagObject = new TagObject($this->model, $this->pathMatcher->blog, $this->pathMatcher->language);
 
             return [
                 '_meta' => new MetaObject(
                     $tagObject->name,
                     $tagObject->name,
-                    $tagObject->featured_image,
+                    null,
                     $tagObject->url,
                     $tagObject->url
                 ),
@@ -190,13 +183,37 @@ class TemplateRenderer {
 
         $pageNumber = $this->getPageNumber();
 
-        return PostRepository::getPostsWithFilterQ(
-            blogId: $this->pathMatcher->blog->id, 
-            filter: $this->filter,
-            limit: 10, 
-            offset: ($pageNumber - 1) * 10
-        )->map(function ($post) {
-            return new PostObject($post, $this->pathMatcher->blog);
+        $limit = 10;
+        $offset = ($pageNumber - 1) * 10;
+
+        if ($this->matchedRoute->name === 'search') {
+
+            $search = $this->matchedRoute->param('search');
+
+            $searchData = PostSearchRepository::search(
+                blog: $this->pathMatcher->blog,
+                language: $this->pathMatcher->language,
+                search: $search,
+                limit: $limit,
+                offset: $offset,
+                isPage: false,
+                isPublished: true
+            );
+
+            $postCollection = $searchData['posts'];
+
+        } else {
+            $postCollection = PostRepository::getPostsWithFilterQ(
+                blog: $this->pathMatcher->blog, 
+                language: $this->pathMatcher->language,
+                filter: $this->filter,
+                limit: $limit,
+                offset: $offset
+            )['posts'];
+        }
+
+        return $postCollection->map(function ($post) {
+            return new PostObject($post, $this->pathMatcher->blog, $this->pathMatcher->language);
         });
 
     }
@@ -271,10 +288,9 @@ class TemplateRenderer {
 
         } else if ($this->matchedRoute->name === 'post' || $this->matchedRoute->name === 'page') {
 
-            $post = PostRepository::getPostByBlogIdSlugAndLanguageId(
+            $post = PostRepository::getPostByBlogIdAndSlug(
                 $this->pathMatcher->blog->id, 
-                $slug, 
-                $this->language->id
+                $slug
             );
 
             if ($post) {
