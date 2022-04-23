@@ -88,7 +88,7 @@ class TagRepository
     ): void
     {
 
-        Tag::find($id)
+        $tag = Tag::find($id)
         ->update([
             'slug' => $slug,
             'code_head' => $codeHead,
@@ -101,7 +101,8 @@ class TagRepository
                 'name' => $name,
                 'description' => $description,
             ]);
-            
+    
+        // return $tag;
     }
 
     public static function deleteTag($tagId, $languageId) : void{

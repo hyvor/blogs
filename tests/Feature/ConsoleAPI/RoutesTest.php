@@ -2,99 +2,95 @@
 
 namespace Tests\Feature\ConsoleAPI;
 
-use Tests\TestCase;
-use Illuminate\Foundation\Testing\RefreshDatabase;
+use Illuminate\Testing\Fluent\AssertableJson;
+
+//  To run the user tests - php artisan test  --filter 'RoutesTest'
+
+it('fetches routes', function() {
+    $this
+        ->callConsoleApi('GET', 'route')
+        ->assertStatus(200);
+});
 
 
-class RoutesTest extends TestCase
-{
-    use RefreshDatabase;
+it('creates a route success', function() {
 
-    private function callEndpoint($method, $route, $data = null) {
-        return $this->call($method, 'http://blogs.hyvor.test/api/console/v0/blog/test/'.$route , $data);
-    }
+    $data = 'about';
+    $this
+        ->callConsoleApi('POST', 'route', [
+            'name' => $data,
+            'match' => $data,
+            'template' => $data
+        ])
+        ->assertStatus(200)
+        ->assertJson(function (AssertableJson $json) use ($data) {
+            $json->has('id')
+                ->where('match', $data)
+                ->etc();
+        });
+    
+});
 
-    /**
-    * A basic test example.
-    *
-    * @return void
-    */
-    public function test_get_request()
-    {
-        $response = $this->callEndpoint('GET', '', [
-            'limit' => 2
-        ]);
-        $response->assertStatus(404);
-    }
-
-    public function test_post_request()
-    {
-        $response = $this->callEndpoint('POST',[
-            'blog_id' => 1,
-            'name' => 'testing create new blog',
-            'slug' => 'test completed',
-            'description' => 'another test description'
-        ]);
-        $response->assertStatus(405);
-    }
-
-    public function test_put_request()
-    {
-        $response = $this->callEndpoint('PUT',[
-            'name' => 'testing update new blog',
-            'slug' => 'test new update completed',
-        ]);
-        $response->assertStatus(405);
-    }
-
-    public function test_delete_request()
-    {
-        $id = 1;
-        $response = $this->callEndpoint('DELETE', 'user/'.$id , [
-            'languageId' => 1,
-        ]);
-        $response->assertStatus(200);
-    }
-
-    public function test_delete_Variant_request()
-    {
-        $id = 1;
-        $response = $this->callEndpoint('DELETE', 'user/'.$id , [
-            'languageId' => 2,
-        ]);
-        $response->assertStatus(200);
-    }
+it('creating route fails on empty fields', function() {
+    $this
+        ->callConsoleApi('POST', 'route')
+        ->assertStatus(500);    
+});
 
 
+it('creates a route fails if name is null', function() {
 
+    $data = 'about';
+    $this
+        ->callConsoleApi('POST', 'route', [
+            'name' => null,
+            'match' => $data,
+            'template' => $data
+        ])
+        ->assertStatus(500);
+});
 
-    // public function test_blog_validation()
-    // {
-    //     $blog = Blog::make([
-    //         'name' => 'Testing redirects',
-    //         'slug' => 'this is the new url'
-    //     ]);
-    //     $this->assertTrue($blog->name != $blog->slug);
-    // }
+it('creates a route fails if match is null', function() {
 
-    // public function test_blog_name_not_null()
-    // {
-    //     $blog = Blog::make([
-    //         'name' => 'Testing redirects',
-    //         'slug' => 'this is the new url'
-    //     ]);
-    //     $this->assertTrue($blog->name != null);
-    // }
+    $data = 'about';
+    $this
+        ->callConsoleApi('POST', 'route', [
+            'name' =>  $data,
+            'match' =>null,
+            'template' => $data
+        ])
+        ->assertStatus(500);
+});
 
-    // public function test_blog_slug_not_null()
-    // {
-    //     $blog = Blog::make([
-    //         'name' => 'Testing redirects',
-    //         'slug' => 'this is the new url'
-    //     ]);
+it('creates a route fails if template is null', function() {
 
-    //     $blogSlug = str_replace(' ', '-', $blog->slug);
-    //     $this->assertTrue($blogSlug != null);
-    // }
+    $data = 'about';
+    $this
+        ->callConsoleApi('POST', 'route', [
+            'name' =>  $data,
+            'match' =>$data,
+            'template' => null
+        ])
+        ->assertStatus(500);
+});
 
-}
+it('deleting route success', function() {
+
+    $id = 1;
+    $this
+        ->callConsoleApi('DELETE', 'route/'.$id)
+        ->assertStatus(200);    
+});
+
+it('updating a route success', function() {
+
+    $id = 1;
+    $data = 'New data';
+    $this
+        ->callConsoleApi('PUT', 'route/'.$id, [
+            'name' => $data,
+            'match' => $data,
+            'template' => $data
+        ])
+        ->assertStatus(200);
+});

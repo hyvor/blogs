@@ -69,9 +69,9 @@ class ConsoleTagController extends Controller {
         // $request->validate([
         //     'name' => 'required|string',
         //     'slug' => 'required|string',
-        //     'description' => 'required|int',
-        //     'codeHead' => 'required|string',
-        //     'codeFoot' => 'required|string',
+        //     'description' => 'int',
+        //     'codeHead' => 'string',
+        //     'codeFoot' => 'string',
         // ]);
 
         $id = $request->route('id');
@@ -82,8 +82,10 @@ class ConsoleTagController extends Controller {
         $name = $request->input('name') ?? null;
         $description = $request->input('description') ?? null;
         
-        $updateOldTag = TagRepository::updateTag($id, $languageId, $slug, $codeHead, $codeFoot, $name, $description );
-        return response()->json($updateOldTag);
+        $tag = TagRepository::updateTag($id, $languageId, $slug, $codeHead, $codeFoot, $name, $description );
+        return response()->json($tag); 
+        // return response()->json(new TagObject($tag, $blog));
+
     }
 
     public static function deleteTag(Request $request)

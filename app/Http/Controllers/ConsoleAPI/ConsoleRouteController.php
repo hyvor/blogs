@@ -28,8 +28,8 @@ class ConsoleRouteController extends Controller {
         $postsFilter = $request->input('postsFilter') ?? null;
         $contentType = $request->input('contentType') ?? null;
 
-        $createRoute = RouteRepository::createRoute($blog, $name, $match, $template, $postsFilter, $contentType); 
-        return response()->json($createRoute);
+        $route = RouteRepository::createRoute($blog, $name, $match, $template, $postsFilter, $contentType); 
+        return response()->json(new RouteObject($route, $blog));
     }
 
     public function updateRoute(Request $request, Blog $blog) {
@@ -41,8 +41,8 @@ class ConsoleRouteController extends Controller {
         $postsFilter = $request->input('postsFilter') ?? null;
         $contentType = $request->input('contentType') ?? null;
         
-        $updateRoute = RouteRepository::updateRoute($id, $name, $match, $template, $postsFilter, $contentType );
-        return response()->json($updateRoute);
+        $route = RouteRepository::updateRoute($id, $name, $match, $template, $postsFilter, $contentType );
+        return response()->json($route);
     }
 
     public function deleteRoute(Request $request) {

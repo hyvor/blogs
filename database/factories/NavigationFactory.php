@@ -25,7 +25,7 @@ class NavigationFactory extends Factory
             'blog_id' => '1',
             'name' => $this->faker->title,
             'url' => $this->faker->url(),
-            'type' => 'header',
+            'type' => 'footer',
         ];
     }
 }

@@ -74,9 +74,9 @@ class RouteRepository {
         string $template,
         string $postsFilter = null,
         string $contentType = null, 
-    ) : void 
+    ) : Route 
     {
-        $blog->routes()->create([
+        return $blog->routes()->create([
             'name' => $name,
             'match' => $match,
             'template' => $template,

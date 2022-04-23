@@ -77,7 +77,7 @@ class ConsoleUserController extends Controller
     */
     public static function getAuthors(Blog $blog)
     {
-        $getData = UserRepository::getAuthors($blog)
+        $getData = UserRepository::getAuthors($blog) 
                 ->map(function ($users) use ($blog) {
                     return new UserObject($users, $blog);
                 });
