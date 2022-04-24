@@ -36,6 +36,6 @@ if (input.type === 'tokens') {
 
 } else if (input.type === 'themes') {
 
-    process.stdout.write(JSON.stringify(shiki.BUNDLED_THEMES));
+    process.stdout.write(JSON.stringify(shiki.BUNDLED_THEMES.filter(x => x !== 'css-variables')));
 
 }

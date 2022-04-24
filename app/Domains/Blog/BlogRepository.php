@@ -10,6 +10,7 @@ use App\Domains\Language\LanguageRepository;
 use App\Models\Language;
 use App\Domains\Media\MediaRepository;
 use App\Domains\Route\PermalinkRepository;
+use Hyvor\JsonMeta\Definer;
 
 class BlogRepository
 {
@@ -55,48 +56,42 @@ class BlogRepository
     public static function getBlogByCustomDomain(string $customDomain) : ?Blog {
         return Blog::where('hosting_domain', $customDomain)->first();
     }
-    
-    /*
-    *
-    * ConsoleAPI Settings->General
-    *
-    */
-    // public static function getBlog($blog) {
-    //     $language = LanguageRepository::getPrimaryLanguage($blog);
 
-    //     $blogData = Blog::where('blogs.id', '=', $blog->id)
-    //     ->join('blog_variants', function($join) use ($language) {
-    //         $join->on('blog_variants.blog_id', '=', 'blogs.id');
-    //         $join->where('blog_variants.language_id', '=',  $language->id);
-    //     })
-    //     ->select('blogs.*')
-    //     ->get();
-
-    //     // dd($blogData);
-    //     return $blogData;
-    // } 
-
-    public static function updateBlog($blog, $languageId, array $blogData = []) : void
+    /**
+     * @param Blog $blog
+     * @param array<string, mixed> $update
+     * @return Blog
+     */
+    public static function updateBlog(Blog $blog, array $updates) : Blog
     {
-        Blog::find($blog->id)
-            ->update([
-                'subdomain' => $blogData['subdomain'],
-                'social_facebook' => $blogData['social_facebook'] ?? null,
-                'social_twitter' => $blogData['social_twitter'] ?? null,
-                'social_linkedin' => $blogData['social_linkedin'] ?? null,
-                'social_youtube' => $blogData['social_youtube'] ?? null,
-                'social_instagram' => $blogData['social_instagram'] ?? null,
-                'social_github' => $blogData['social_github'] ?? null,
-            ]);
-
-            // dd($blogData['name']);
-        BlogVariant::where([
-                'blog_id' => $blog->id,
-                'language_id'=> $languageId,
-            ]) ->update([
-                'name' => $blogData['name'] ?? null,
-                'description' => $blogData['description']  ?? null,
-            ]);
+        
+        $metaKeys = $blog->getMetaKeys();
+        
+        $metaUpdates = []; // metadata
+        $realUpdates = []; // real columns
+        $updatables = [
+            'icon_url', 'featured_image_url',
+            'subdomain', 'hosting_at', 'hosting_domain',
+            'hosting_url'
+        ];
+        
+        foreach ($updates as $key => $value) {
+            if (in_array($key, $metaKeys)) {
+                $metaUpdates[$key] = $value;
+            } else if (in_array($key, $updatables)) {
+                $realUpdates[$key] = $value;
+            }
+        }
+        
+        if ($metaUpdates !== []) {
+            $blog->setMeta($metaUpdates);
+        }
+        
+        if ($realUpdates !== []) {
+            $blog->update($realUpdates);
+        }
+        
+        return $blog;
     }
 
     public static function createBlogVariant($blog, int $languageId) : void 

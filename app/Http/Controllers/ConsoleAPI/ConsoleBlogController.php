@@ -32,45 +32,9 @@ class ConsoleBlogController extends Controller
 
     public static function updateBlog(Request $request, Blog $blog)
     {
-        $languageId =  $request->input('languageId');
-
-        if($request->has('subdomain')) {
-            $blogData['subdomain'] = $request->input('subdomain');
-        }
-        if ($request->has('social_facebook')) {
-            $blogData['social_facebook'] = $request->input('social_facebook');
-        }
-        if ($request->has('social_twitter')) {
-            $blogData['social_twitter'] = $request->input('social_twitter');
-        }
-
-        if ($request->has('social_linkedin')) {
-            $blogData['social_linkedin'] = $request->input('social_linkedin');
-        }
-
-        if ($request->has('social_youtube')) {
-            $blogData['social_youtube'] = $request->input('social_youtube');
-        }
-
-        if ($request->has('social_instagram')) {
-            $blogData['social_instagram'] = $request->input('social_instagram');
-        }
-
-        if ($request->has('social_github')) {
-            $blogData['social_github'] = $request->input('social_github');
-        }
-
-        // Variants
-        if ($request->has('name')) {
-            $blogData['name'] = $request->input('name');
-        }
-
-        if ($request->has('description')) {
-            $blogData['description'] = $request->input('description');
-        }
-
-        $updateBlogData = BlogRepository::updateBlog($blog, $languageId, $blogData);
-        return response()->json($updateBlogData);
+        $updates = $request->all();
+        $blog = BlogRepository::updateBlog($blog, $updates);
+        return response()->json(new BlogObject($blog));
     }
 
     public static function createBlogVariant(Request $request, Blog $blog)

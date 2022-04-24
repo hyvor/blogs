@@ -70,10 +70,10 @@ class BlogObserver
         
     }
 
-    public function updated(PostVariant $variant)
+    public function updated(Blog $blog)
     {
 
-        PostContentMetaRepository::updateWordCount($variant);
+        
 
     }
 

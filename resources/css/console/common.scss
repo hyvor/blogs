@@ -303,7 +303,12 @@ textarea.input {
     .dual-right {
         flex:1;
     }
-
+    &.column {
+        flex-direction: column;
+        .dual-left {
+            margin-bottom: 20px;
+        }
+    }
 }
 
 .global-form-dual-setting { 
@@ -332,6 +337,7 @@ textarea.input {
     .title {
         font-size: 16px;
         font-weight: 600;
+        display:flex;
         .icon {
             margin-right:6px;
             display: inline-flex;

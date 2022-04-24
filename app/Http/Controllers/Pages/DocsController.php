@@ -89,7 +89,6 @@ class DocsController extends Controller
             $previews = '';
             
             foreach ($themes as $theme) {
-                if ($theme === 'css-variables') continue;
                 $themeTags .= "<span>$theme</span>";
 
                 $highlighted = Highlighter::highlight(
