@@ -8,7 +8,7 @@ use Illuminate\Support\Collection;
  * Main task of this class is to use the ?key= param to
  * filter objects based on keys
  */
-class DataAPIKeysFilter
+class KeysFilter
 {
     // default is exclude nothing
     // which means include everything
@@ -119,12 +119,12 @@ class DataAPIKeysFilter
         $this->keys = array_map('trim', explode(',', $keys));
     }
 
-    public function getData()
+    public function getData() : array
     {
         return $this->data;
     }
 
-    public static function filter($input, $keys)
+    public static function filter(object $input, ?string $keys) : array
     {
         return (new self($input, $keys))->getData();
     }

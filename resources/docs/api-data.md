@@ -329,7 +329,7 @@ Data is returned in JSON objects as specified below.
 	"title": "Hello World",
 	"description": "This is a hello world page",
 	"url": "https://subdomain.hyvorblogs.io/hello-world",
-	"featured_image": "https://example.com/image.png",
+	"featured_image_url": "https://example.com/image.png",
 	"canonical_url": null,
 	"words": 500,
 	"code_head": "",
@@ -343,28 +343,28 @@ Data is returned in JSON objects as specified below.
 }
 ```
 
-| Key | Type | Description |
-| --- | --- | --- |
-| `id` | `integer` | A unique ID for the post |
-| `created_at` | `integer` | The time the post was created (as a draft) |
-| `updated_at` | `integer` | The time the post or its meta data was updated |
-| `published_at` | `integer` | Publish time of the post. |
-| `is_featured` | `boolean` | Whether the post is featured. There can be multiple featured posts on a blog |
-| `is_page` | `boolean` | Whether it is a page. See [Posts & Pages](posts-pages) |
-| `slug` | `string` | The URL slug of the post |
-| `url` | `string` | The absolute URL of the post, generated based on where the blog is [hosted](hosting) |
-| `content` | `string` | The post content in HTML. See [Content & The Editor](writing) to see supported HTML tags |
-| `title` | `string` | The title of the post, max length 256 |
-| `description` | `string|null` | The description (excerpt) of post, max length 350, null if not set |
-| `featured_image` | `string|null` | The absolute URL of the featured image. null if not set |
-| `canonical_url` | `string|null` | An absolute URL or null. Canonical URL is set by the author if the post was published somewhere else. |
-| `words` | `integer` | Number of words in the content |
-| `code_head` | `string` | [Custom code](custom-code) to add before `</head>` . An empty string if nothing is set. |
-| `code_foot` | `string` | [Custom code](custom-code) to add before `</body>` . An empty string if nothing is set. |
-| `language` | `object` | A [Language object](#language-object)
-| `variants` | `array` | An array of [Variant objects](#variant-object). |
-| `tags` | `array`  | An array of [Tag objects](#tag-object). The primary tag is the index 0 |
-| `authors` | `array` | An array of [Author objects](#author-object). The primary author is the index 0 |
+| Key               | Type | Description |
+|-------------------| --- | --- |
+| `id`              | `integer` | A unique ID for the post |
+| `created_at`      | `integer` | The time the post was created (as a draft) |
+| `updated_at`      | `integer` | The time the post or its meta data was updated |
+| `published_at`    | `integer` | Publish time of the post. |
+| `is_featured`     | `boolean` | Whether the post is featured. There can be multiple featured posts on a blog |
+| `is_page`         | `boolean` | Whether it is a page. See [Posts & Pages](posts-pages) |
+| `slug`            | `string` | The URL slug of the post |
+| `url`             | `string` | The absolute URL of the post, generated based on where the blog is [hosted](hosting) |
+| `content`         | `string` | The post content in HTML. See [Content & The Editor](writing) to see supported HTML tags |
+| `title`           | `string` | The title of the post, max length 256 |
+| `description`     | `string|null` | The description (excerpt) of post, max length 350, null if not set |
+| `featured_image_url` | `string|null` | The absolute URL of the featured image. null if not set |
+| `canonical_url`   | `string|null` | An absolute URL or null. Canonical URL is set by the author if the post was published somewhere else. |
+| `words`           | `integer` | Number of words in the content |
+| `code_head`       | `string` | [Custom code](custom-code) to add before `</head>` . An empty string if nothing is set. |
+| `code_foot`       | `string` | [Custom code](custom-code) to add before `</body>` . An empty string if nothing is set. |
+| `language`        | `object` | A [Language object](#language-object)
+| `variants`        | `array` | An array of [Variant objects](#variant-object). |
+| `tags`            | `array`  | An array of [Tag objects](#tag-object). The primary tag is the index 0 |
+| `authors`         | `array` | An array of [Author objects](#author-object). The primary author is the index 0 |
 
 > In posts, **id** attribute is globally unique within Hyvor Blogs. The **slug** attribute is unique within the blog.
 

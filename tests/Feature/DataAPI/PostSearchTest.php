@@ -40,6 +40,6 @@ it('does not work without search query', function() {
    
     $this
         ->callDataApi('/posts/search')
-        ->assertStatus(400);
+        ->assertUnprocessable();
     
 });

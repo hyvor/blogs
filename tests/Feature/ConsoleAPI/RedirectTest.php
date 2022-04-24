@@ -63,14 +63,14 @@ it('creates redirect should fail if type is not 302 or 301', function() {
             'to' => $data,
             'type' => 'hello'
         ])
-        ->assertStatus(400);
+        ->assertUnprocessable();
 });
 
 it('creating redirects fails on empty values', function() {
 
     $this
         ->callConsoleApi('POST', 'redirect')
-        ->assertStatus(400);    
+        ->assertUnprocessable();    
 });
 
 it('creates redirect should fail if (path) has spaces', function() {
@@ -82,7 +82,7 @@ it('creates redirect should fail if (path) has spaces', function() {
             'to' => $data,
             'type' => '301'
         ])
-        ->assertStatus(400);
+        ->assertUnprocessable();
 });
 
 it('creates redirect should fail if (to) has spaces', function() {
@@ -94,7 +94,7 @@ it('creates redirect should fail if (to) has spaces', function() {
             'to' => 'this is also wrong',
             'type' => 'hello'
         ])
-        ->assertStatus(400);
+        ->assertUnprocessable();
 });
 
 it('creates redirect should fail if (to) has a null value', function() {
@@ -106,7 +106,7 @@ it('creates redirect should fail if (to) has a null value', function() {
             'to' => null,
             'type' => 'hello'
         ])
-        ->assertStatus(400);
+        ->assertUnprocessable();
 });
 
 it('creates redirect should fail if (path) has a null value', function() {
@@ -118,7 +118,7 @@ it('creates redirect should fail if (path) has a null value', function() {
             'to' => $data,
             'type' => 'hello'
         ])
-        ->assertStatus(400);
+        ->assertUnprocessable();
 });
 
 it('deleting redirect success', function() {
@@ -152,7 +152,7 @@ it('updating redirect should fail if (path) has spaces', function() {
             'to' => $data,
             'type' => '301'
         ])
-        ->assertStatus(400);
+        ->assertUnprocessable();
 });
 
 it('updating redirect should fail if (to) has spaces', function() {
@@ -165,7 +165,7 @@ it('updating redirect should fail if (to) has spaces', function() {
             'to' => 'this is also wrong',
             'type' => 'hello'
         ])
-        ->assertStatus(400);
+        ->assertUnprocessable();
 });
 
 it('updating redirect should fail if (to) has a null value', function() {
@@ -178,7 +178,7 @@ it('updating redirect should fail if (to) has a null value', function() {
             'to' => null,
             'type' => 'hello'
         ])
-        ->assertStatus(400);
+        ->assertUnprocessable();
 });
 
 it('updating redirect should fail if (path) has a null value', function() {
@@ -191,5 +191,5 @@ it('updating redirect should fail if (path) has a null value', function() {
             'to' => $data,
             'type' => 'hello'
         ])
-        ->assertStatus(400);
+        ->assertUnprocessable();
 });

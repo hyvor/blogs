@@ -70,7 +70,7 @@ it('creating tag fails on empty name', function() {
 
     $this
         ->callConsoleApi('POST', 'tag')
-        ->assertStatus(400);    
+        ->assertUnprocessable();    
 });
 
 it('creating tag with null slug works', function() {

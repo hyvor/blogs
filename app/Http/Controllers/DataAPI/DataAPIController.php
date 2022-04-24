@@ -39,24 +39,7 @@ class DataAPIController extends Controller
             throw new TrustedException('This user is not an author', TrustedException::ERROR_BAD_REQUEST);
         }
 
-        return response()->json(DataAPIKeysFilter::filter(new AuthorObject($user, $blog), $keys));
-    }
-
-    private function getLanguage(Blog $blog, ?string $code) : Language
-    {
-
-        if (is_null($code)) {
-            return LanguageRepository::getPrimaryLanguage($blog);
-        } else {
-            $language = LanguageRepository::getLanguageByCode($blog, $code);
-
-            if (!$language) {
-                throw new TrustedException('Language not found', TrustedException::ERROR_BAD_REQUEST);
-            }
-
-            return $language;
-        }
-
+        return response()->json(KeysFilter::filter(new AuthorObject($user, $blog), $keys));
     }
 
 }

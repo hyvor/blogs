@@ -8,7 +8,7 @@ use App\Http\Controllers\Controller;
 use App\Models\Blog;
 use Illuminate\Http\Request;
 
-class DataAPITagsController extends Controller
+class TagsController extends Controller
 {
 
     public function tag(Request $request, Blog $blog)
@@ -22,7 +22,7 @@ class DataAPITagsController extends Controller
 
         $id = $request->input('id');
         $slug = $request->input('slug');
-        $language = DataAPIHelper::getLanguage($blog, $request->input('language'));
+        $language = Helper::getLanguage($blog, $request->input('language'));
         $keys = $request->input('keys');
         
         $tag = TagRepository::getTagByBlogIdAndIdentifier($blog->id, $id, $slug);
@@ -32,7 +32,7 @@ class DataAPITagsController extends Controller
         }
 
         return response()->json(
-            DataAPIKeysFilter::filter(new TagObject($tag, $blog, $language), $keys)
+            KeysFilter::filter(new TagObject($tag, $blog, $language), $keys)
         );
 
     }

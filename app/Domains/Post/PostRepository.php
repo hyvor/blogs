@@ -2,22 +2,15 @@
 
 namespace App\Domains\Post;
 
-use App\Data\Params\ConsoleAPI\PostsFilterParam;
 use App\Domains\Language\LanguageRepository;
-use App\Domains\Post\Events\PostPublishedEvent;
-use App\Exceptions\TrustedException;
 use App\Models\Blog;
 use App\Models\Language;
 use App\Models\Post;
 use App\Models\PostVariant;
 use App\Models\Tag;
-use App\Models\PostTag;
-use App\Models\User;
-use App\Types\Post\PostInputListFiltersType;
 use Carbon\Carbon;
 use Hyvor\FilterQ\Facades\FilterQ;
 use Illuminate\Database\Eloquent\Collection;
-use Illuminate\Support\Facades\DB;
 
 class PostRepository
 {
@@ -173,8 +166,8 @@ class PostRepository
                     ->valueType('string|int')
                     ->operators('=,!=');
 
-                $keys->add('featured_image')
-                    ->column('posts.featured_image')
+                $keys->add('featured_image_url')
+                    ->column('posts.featured_image_url')
                     ->valueType('null')
                     ->operators('=,!=');
 

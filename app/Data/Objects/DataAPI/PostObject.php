@@ -36,7 +36,7 @@ class PostObject
     public int $words;
     public string $title;
     public ?string $description;
-    public ?string $featured_image;
+    public ?string $featured_image_url;
     public ?string $canonical_url;
     
     public LanguageObject $language;

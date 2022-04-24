@@ -70,7 +70,7 @@ it('does not work with wrong language', function() {
 
     $this->callDataApi('/posts', [
         'language' => 'jp'
-    ])->assertStatus(400);
+    ])->assertUnprocessable();
     
 });
 
@@ -127,7 +127,7 @@ it('does not work for invalid limit', function() {
 
     $this->callDataApi('/posts', [
         'limit' => 0,
-    ])->assertStatus(400);
+    ])->assertUnprocessable();
     
 });
 
@@ -135,7 +135,7 @@ it('does not work for invalid page', function() {
 
     $this->callDataApi('/posts', [
         'page' => -1,
-    ])->assertStatus(400);
+    ])->assertUnprocessable();
     
 });
 
@@ -143,7 +143,7 @@ it('does not work for invalid sort', function() {
 
     $this->callDataApi('/posts', [
         'sort' => 'something_invalid'
-    ])->assertStatus(400);
+    ])->assertUnprocessable();
     
 });
 
@@ -151,7 +151,7 @@ it('does not work for invalid sort method', function() {
 
     $this->callDataApi('/posts', [
         'sort' => 'published_at SOME'
-    ])->assertStatus(400);
+    ])->assertUnprocessable();
     
 });
 
@@ -370,10 +370,10 @@ it('filters by slug', function() {
 it('filters by featured image', function() {
 
     $post = getAPost();
-    $post->update(['featured_image' => 'some-new-url']);
+    $post->update(['featured_image_url' => 'some-new-url']);
 
     $response = $this->callDataApi('/posts', [
-        'filter' => "featured_image!=null"
+        'filter' => "featured_image_url!=null"
     ]);
     $response->assertJsonPath('data.0.id', $post->id);
     

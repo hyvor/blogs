@@ -54,6 +54,16 @@ it('works with post id', function() {
     
 });
 
+it('requires an integer id', function() {
+   
+    $this
+        ->callDataApi('/post', [
+            'id' => 'something'
+        ])
+        ->assertUnprocessable();
+    
+});
+
 it('works with post slug', function() {
     
     $this
@@ -83,7 +93,7 @@ it('does not work with invalid language', function() {
         ->callDataApi('/post', [
             'id' => $this->post->id,
             'language' => 'jp'
-        ])->assertStatus(400);
+        ])->assertUnprocessable();
     
 });
 
@@ -93,7 +103,7 @@ it('returns 404 for missing posts', function() {
         ->callDataApi('/post', [
             'id' => $this->post->id + 1,
         ])
-        ->assertStatus(404);
+        ->assertNotFound();
     
 });
 
@@ -109,7 +119,7 @@ it('returns 404 for missing variant', function() {
             'id' => $this->post->id,
             'language' => $this->blog->languages[1]->code
         ])
-        ->assertStatus(404);
+        ->assertNotFound();
     
 });
 
@@ -123,7 +133,7 @@ it('do not return unpublished posts', function() {
         ->callDataApi('/post', [
             'id' => $this->post->id,
         ])
-        ->assertStatus(400);
+        ->assertUnprocessable();
     
 });
 
@@ -133,7 +143,7 @@ it('do not return posts when blog id is wrong', function() {
         ->callDataApi('/post', [
             'id' => $this->post->id,
         ], Blog::find(2)->subdomain)
-        ->assertStatus(404);
+        ->assertNotFound();
     
 });
 

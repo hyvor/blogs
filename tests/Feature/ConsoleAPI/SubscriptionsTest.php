@@ -33,27 +33,27 @@ class SubscriptionsTest extends TestCase
     }
     public function testPayLinkInvalidPlan() {
         $this->callEndpoint('post', ['plan' => "invalid", 'frequency' => 'monthly', 'quantity' => 3])
-            ->assertStatus(400);
+            ->assertUnprocessable();
     }
     public function testPayLinkInvalidFrequency() {
         $this->callEndpoint('post', ['plan' => "team", 'frequency' => 'annual', 'quantity' => 3])
-            ->assertStatus(400);
+            ->assertUnprocessable();
     }
     public function testPayLinkProMonthlyBilling() {
         $this->callEndpoint('post', ['plan' => "pro", 'frequency' => 'monthly', 'quantity' => 1])
-            ->assertStatus(400);
+            ->assertUnprocessable();
     }
     public function testPayLinkInvalidQuantity() {
         $this->callEndpoint('post', ['plan' => "team", 'frequency' => 'monthly', 'quantity' => 1])
-            ->assertStatus(400);
+            ->assertUnprocessable();
     }
     public function testPayLinkInvalidQuantityHigh() {
         $this->callEndpoint('post', ['plan' => "team", 'frequency' => 'monthly', 'quantity' => 100])
-            ->assertStatus(400);
+            ->assertUnprocessable();
     }
     public function testPayLinkInvalidParams() {
         $this->callEndpoint('post', [])
-            ->assertStatus(400);
+            ->assertUnprocessable();
     }
 
 }
