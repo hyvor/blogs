@@ -1,9 +1,12 @@
 # Data API
 
-Data API returns **public data** of the blog in JSON format. It does not require any API keys. There are two ways to call the API:
+* Returns **public data** of the blog. Therefore, no API keys are required.
+* All responses are in the JSON format.
+* All endpoints use the HTTP `GET` method.
+* The base path is: `https://blogs.hyvor.com/api/data/v0/blog/{subdomain}`
+  * Replace `{subdomain}` with the subdomain of your blog.
 
-- Via Public Endpoint: `https://blogs.hyvor.com/api/data/v0/blog/{subdomain}` (HTTP GET method)
-- Via template files. See [themes documentation](themes-templates#fetch-data)
+> In addition to calling the API via HTTP, it is possible call it within template files using the Twig [data() function](themes-templates#fetch-data). It is the preferred method if you want to display some UI (Ex: Recent posts) in your blog, because the `data()` function calls the Data API internally at the time of rendering the template. So, do you don't want to make AJAX requests in the front-end to fetch data.
 
 ## Endpoints
 
@@ -23,12 +26,13 @@ Data API returns **public data** of the blog in JSON format. It does not require
 
 ## Response Format
 
-For single-object endpoints, the response is an object. For `/post`, it is a `Post` object (See Below for object definitions).
+For single-object endpoints, the response is an object. For example, `/post` endpoint returns a `Post` object (See below for object definitions).
 
 ```json
 // A Post Object
 {
 	"id": 1000,
+    "slug": "post",
 	...
 }
 ```
@@ -41,6 +45,266 @@ For multi-object endpoints, the response looks like this:
 	"pagination": {} // a Pagination object
 }
 ```
+
+
+## Query Parameters
+
+#### Single-Object endpoints
+
+For `/post`, `/tag`, and `/author`
+
+| Param | Description | Type
+| --- | --- | --- | --- |
+| `id` |  id of the object | `integer`
+| `slug` | slug of the object | `string`
+| `language` | See [language param](#language) | `string`
+| `keys` | See [keys param](#keys) | `string`
+
+> Either the `id` or the `slug` is required for those endpoints.
+
+For `/blog`
+
+The `/blog` endpoint only takes `language` and `keys` as an input.
+
+#### Multi-object endpoints
+
+`/posts`, `/posts/search`, `/tags`, and `/authors`
+
+| Param      | Description                     | Type                       | Default  |
+|------------|---------------------------------|----------------------------|----------|
+| `language` | See [language param](#language) | `string` |          |
+| `limit`    | See [limit param](#limit)       | `integer`                  | `25`     |
+| `page`     | See [page param](#page)         | `integer`                  | `1`      |
+| `filter`   | See [filter param](#filter)     | `string`                   | `""`     |
+| `sort`     | See [sort param](#sort)         | `string`                   | [VARIES] |
+| `keys`     | See [keys param](#keys)         | `string`                   |          |
+
+The `/posts/search` endpoint has a required `search` param in addition to the above params.
+
+| Param | Description                     | Type      | Default                |
+| --- |---------------------------------|-----------|------------------------|
+| `search` | Value to search                 | `string`  | [REQUIRED]             |
+
+## Query Parameters Descriptions
+
+### `language` param {#language}
+
+If your blog has [multiple languages](languages), you can set the `language` param to a language code of a language in your blog. If this param is not provided, the primary language of the blog is used. That language will be used to localize strings in posts, authors, tags, and the blog.
+
+> **Note**: There is an important distinction between posts (`/post`, `/posts`, and `/posts/search`) and other endpoints when using languages. Let's say you have two languages in your blog: `en` (primary) and `fr`. If you call the `/posts` endpoint with language the language code `fr`, **only the posts that have a `fr` variant** will be returned. However, in other endpoints (authors, tags), all records will be returned regardless of they have a `fr` variant or not. Missing translations will be filled with primary language strings.
+> 
+> The reason is that, when someone visits your blog's `/fr` index page, we only want to show the posts that are translated into French. We do not want to "fallback" post contents. However, fallbacking author/tags data is fine in most cases.
+> 
+> ----
+>
+> In other words, `language` in post(s) endpoints works as a filter, while it works as a translator in other endpoints.
+
+### `limit` param {#limit}
+
+The `limit` param can be used to limit the number of records returned in multi-object endpoints. The default is `25`. Max is `250`.
+
+### `page` param {#page}
+
+The `page` param can be used to paginate results. This works in combination with the limit param. The default value is `1`.
+
+```plain
+To get the first 20 results:
+/posts?limit=20
+
+To get the next 20 results (page 2):
+/posts?limit=20&page=2
+```
+
+
+
+### `filter` param {#filter}
+
+Example: `(published_at > 1639665890 & published_at < 1639695890) | is_featured=true`
+
+Our Data API uses [Laravel FilterQ](https://github.com/hyvor/laravel-filterq) under the hood, which allows you to write advanced logic like the above example, using comparison and logical operators. You can also group logic using parentheses.
+
+A condition consists of three parts:
+
+- `key`
+- `operator`
+- `value`
+
+### Operators
+
+- `=` - equals
+- `!=` - not equal
+- `>` - greater than
+- `<` - less than
+- `>=` - greater than or equals
+- `<=` - less than or equals
+
+### Values
+
+- `null`
+- bool: `true` or `false`
+- string: `'hello'` or `hello`
+    - Strings without quotes should match `[a-zA-Z_][a-zA-Z0-9_-]+` and cannot be `true`, `false`, or `null`.
+- numbers: `250`, `-250`, `2.5`
+
+### Logical Operators
+
+You can use Logical Operations to combine multiple conditions.
+
+- `&` - AND
+- `|` - OR
+
+Please see the [FilterQ Expressions](https://github.com/hyvor/laravel-filterq#filterq-expressions) documentation if you need more details.
+#### Supported Keys for Filtering
+
+
+| Endpoint | Key | Supported Operators | Value Type | Description |
+| --- | --- | --- | --- | --- |
+| `/posts` | `id` | all | `integer` |  |
+|  | `published_at` | all | `date` | See [Date](#filter-date) |
+|  | `updated_at` | all | `date` | See [Date](#filter-date) |
+| | `created_at` | all | `date` | See [Date](#filter-date) |
+|  | `is_featured` |`=`, `!=` | `boolean` |  |
+|  | `slug` | `=`, `!=` | `string` |  |
+|  | `featured_image` | `=`, `!=` | `null` | only to check if null or not |
+|  | `canonical_url` | `=`, `!=` | `null` | only to check if null or not |
+|  | `words` | all | `integer` |  |
+|  | `tag.id` | all | `integer` | Matches the id of the tags of the post. |
+|  | `tag.slug` | `=`, `!=` | `string` | Matches the slug of the tags of the post. |
+|  | `author.id` | all | `integer` | Similar to tag.id |
+|  | `author.slug` | `=`, `!=` | `string` | Similar to tag.slug |
+| `/tags` and `/authors` | `id` | all | `integer` |  |
+|  | `slug` | `=`, `!=` | `string` |  |
+|  | `posts_count` | all | `integer` |  |
+| | `created_at` | all | `date` | See [Date](#filter-date) |
+
+#### Date Values {#filter-date}
+
+Here are some valid values for date keys.
+
+* `'2022-01-01'`
+* `'yesterday'`
+* `'first day of this year'`
+* `'last day of next month'`
+* `'+1 day'`
+* `'-1 week'`
+* `'next Thursday'`
+* `1639655890` <- UNIX Timestamp
+
+For example: In `/posts` endpoint, you may use `published_at>'-7 days'` to get posts published in the last 7 days.
+#### Filtering Examples
+
+> Note that when calling the API, the filter value should be URL-encoded.
+
+To get posts authored by Alex:
+
+```js
+// filter
+author.slug=alex
+
+// URL-encoded
+/posts?filter=author.slug%3Dalex
+```
+
+To get featured posts
+
+```js
+// filter
+is_featured=true
+
+// URL-encoded
+/posts?filter=is_featured%3Dtrue
+```
+
+To get posts with either the tag `audio` or `video`.
+
+```js
+// filter
+tag.slug=audio|tag.slug=video
+
+// URL-encoded
+/posts?filter=tag.slug%3Daudio%7Ctag.slug%3Dvideo
+```
+
+To get tags that have at least 5 posts
+
+```js
+// filter
+posts_count>=5
+
+// URL-encoded
+/tags?filter=posts_count%3E%3D5
+```
+
+To get authors who are added after January 1st 2020.
+
+```js
+// filter
+created_at>='2020-01-01'
+
+// URL-encoded
+/authors?filter=created_at%3E%3D%272020-01-01%27
+```
+
+To get posts published in the last 7 days.
+
+```js
+// filter
+published_at>'-7 days'
+
+// URL-encoded
+/posts?filter=published_at%3E%27-7%20days%27
+```
+
+### `sort` param {#sort}
+
+Here's a list of supported sort values. You can combine multiple as comma-separated-values, which then will be executed in its order, similar to `ORDER BY` in SQL.
+
+| Endpoint | Sort | Description |
+| --- | --- | --- |
+| `/posts` <br> Default `published_at DESC`  | `published_at` |  Post publish time |
+| | `created_at` | Post create time |
+| | `updated_at` | Post last update time |
+| | `id` | Post ID |
+| | `is_featured` | Think of this as an integer, 1 for true and 0 for false . |
+| | `title` | alphabetically |
+| | `words` |  |
+| `/tags` and `/authors` <br> Default `posts_count DESC` | `posts_count` | number of posts of the tag/author |
+| | `created_at` | |
+
+The default sort method is `DESC`. Here are some examples for the sort param.
+
+- `published_at` - sorted by `published_at` in descending order
+- `published_at ASC` - sorted by `published_at` in ascending order
+- `is_featured DESC, published_at DESC` - featured posts first, then ordered by publish time in descending order. `DESC` is optional. `is_featured, published_at` is identical with the former.
+
+### `keys` param {#keys}
+
+The `keys` can be used to include or exclude keys from the Objects. All endpoints support the `keys` param.
+
+If you call the `/posts` endpoint, with `keys=id,content`, call post objects will be converted to only contain those two keys.
+
+```json
+{
+	"id": 1000,
+	"content": "<p></p>"
+}
+```
+
+Use `!` at the start to exclude tags. For example, `keys=!content,description` will exclude `content` and `description` from the Post object.
+
+Let's say you only want to get the post ID and tag ID of the posts. Use `keys=id,tags.id`. You will get objects like this.
+
+```json
+{
+	"id": 1000,
+	"tags": [
+		{
+			"id": 2000
+		}
+	]
+}
+```
+
 
 ## Objects {#objects}
 
@@ -294,225 +558,6 @@ A pagination object is included in all multi-object endpoints (`/posts`, `/autho
 | `limit` | `integer` | Current limit |
 | `page` | `integer` | Current page |
 
-
-## Query Parameters
-
-#### For Single-Object endpoints
-
-(`/post`, `/tag`, `/author`)
-
-
-| Param | Description |
-| --- | --- | --- |
-| `id` |  id of the object |
-| `slug` | slug of the object |
-| `language` | Language code to localize strings in objects. If not provided, the primary language will be used.
-| `keys` | GraphQL-like filtering (See [keys](#keys)) |
-
-> Either the `id` or the `slug` is required for those endpoints.
-
-`/blog` endpoint only takes `language` and `keys` as an input.
-
-#### For Multi-object endpoints 
-
-(`/posts`, `/pages`, `/tags`, `/authors`)
-
-| Param | Description | Default |
-| --- | --- | --- |
-| `limit` | Limit for objects per page (Max `250` allowed) | `25` |
-| `page` | The page number for pagination | `1` |
-| `filter` | [FilterQ](https://github.com/hyvor/laravel-filterq) expression for SQL-like filtering | `""` |
-| `sort` | How to sort the list. Supports comma-separated values. See [`sort` param](#sort) | Depends on the endpoint |
-| `keys` | GraphQL-like filtering (see below) | `null` |
-| `language` | Language code to get posts or localize strings in tags and authors (if available). | Primary language |
-
-### `filter` param
-
-Example: `(published_at > 1639665890 & published_at < 1639695890) | is_featured=true`
-
-Our Data API uses [Laravel FilterQ](https://github.com/hyvor/laravel-filterq) under the hood, which allows you to write advanced logic like the above example, using comparison and logical operators. You can also group logic using parentheses.
-
-A condition consists of three parts:
-
-- `key`
-- `operator`
-- `value`
-
-### Operators
-
-- `=` - equals
-- `!=` - not equal
-- `>` - greater than
-- `<` - less than
-- `>=` - greater than or equals
-- `<=` - less than or equals
-
-### Values
-
-- `null`
-- bool: `true` or `false`
-- string: `'hello'` or `hello`
-  - Strings without quotes should match `[a-zA-Z_][a-zA-Z0-9_-]+` and cannot be `true`, `false`, or `null`.
-- numbers: `250`, `-250`, `2.5`
-
-### Logical Operators
-
-You can use Logical Operations to combine multiple conditions.
-
-- `&` - AND
-- `|` - OR
-
-Please see the [FilterQ Expressions](https://github.com/hyvor/laravel-filterq#filterq-expressions) documentation if you need more details.
-#### Supported Keys for Filtering
-
-
-| Endpoint | Key | Supported Operators | Value Type | Description |
-| --- | --- | --- | --- | --- |
-| `/posts` | `id` | all | `integer` |  |
-|  | `published_at` | all | `date` | See [Date](#filter-date) |
-|  | `updated_at` | all | `date` | See [Date](#filter-date) |
-| | `created_at` | all | `date` | See [Date](#filter-date) |
-|  | `is_featured` |`=`, `!=` | `boolean` |  |
-|  | `slug` | `=`, `!=` | `string` |  |
-|  | `featured_image` | `=`, `!=` | `null` | only to check if null or not |
-|  | `canonical_url` | `=`, `!=` | `null` | only to check if null or not |
-|  | `words` | all | `integer` |  |
-|  | `tag.id` | all | `integer` | Matches the id of the tags of the post. |
-|  | `tag.slug` | `=`, `!=` | `string` | Matches the slug of the tags of the post. |
-|  | `author.id` | all | `integer` | Similar to tag.id |
-|  | `author.slug` | `=`, `!=` | `string` | Similar to tag.slug |
-| `/tags` and `/authors` | `id` | all | `integer` |  |
-|  | `slug` | `=`, `!=` | `string` |  |
-|  | `posts_count` | all | `integer` |  |
-| | `created_at` | all | `date` | See [Date](#filter-date) |
-
-#### Date Values {#filter-date}
-
-Here are some valid values for date keys.
-
-* `'2022-01-01'`
-* `'yesterday'`
-* `'first day of this year'`
-* `'last day of next month'`
-* `'+1 day'`
-* `'-1 week'`
-* `'next Thursday'`
-* `1639655890` <- UNIX Timestamp
-
-For example: In `/posts` endpoint, you may use `published_at>'-7 days'` to get posts published in the last 7 days.
-#### Filtering Examples
-
-> Note that when calling the API, the filter value should be URL-encoded.
-
-To get posts authored by Alex:
-
-```js
-// filter
-author.slug=alex
-
-// URL-encoded
-/posts?filter=author.slug%3Dalex
-```
-
-To get featured posts
-
-```js
-// filter
-is_featured=true
-
-// URL-encoded
-/posts?filter=is_featured%3Dtrue
-```
-
-To get posts with either the tag `audio` or `video`.
-
-```js
-// filter
-tag.slug=audio|tag.slug=video
-
-// URL-encoded
-/posts?filter=tag.slug%3Daudio%7Ctag.slug%3Dvideo
-```
-
-To get tags that have at least 5 posts
-
-```js
-// filter
-posts_count>=5
-
-// URL-encoded
-/tags?filter=posts_count%3E%3D5
-```
-
-To get authors who are added after January 1st 2020.
-
-```js
-// filter
-created_at>='2020-01-01'
-
-// URL-encoded
-/authors?filter=created_at%3E%3D%272020-01-01%27
-```
-
-To get posts published in the last 7 days.
-
-```js
-// filter
-published_at>'-7 days'
-
-// URL-encoded
-/posts?filter=published_at%3E%27-7%20days%27
-```
-
-### `sort` param
-
-Here's a list of supported sort values. You can combine multiple as comma-separated-values, which then will be executed in its order, similar to `ORDER BY` in SQL.
-
-| Endpoint | Sort | Description |
-| --- | --- | --- |
-| `/posts` <br> Default `published_at DESC`  | `published_at` |  Post publish time |
-| | `created_at` | Post create time |
-| | `updated_at` | Post last update time |
-| | `id` | Post ID |
-| | `is_featured` | Think of this as an integer, 1 for true and 0 for false . |
-| | `title` | alphabetically |
-| | `words` |  |
-| `/tags` and `/authors` <br> Default `posts_count DESC` | `posts_count` | number of posts of the tag/author |
-| | `created_at` | |
-
-The default sort method is `DESC`. Here are some examples for the sort param.
-
-- `published_at` - sorted by `published_at` in descending order
-- `published_at ASC` - sorted by `published_at` in ascending order
-- `is_featured DESC, published_at DESC` - featured posts first, then ordered by publish time in descending order. `DESC` is optional. `is_featured, published_at` is identical with the former.
-
-### `keys` param {#keys}
-
-The `keys` can be used to include or exclude keys from the Objects. All endpoints support the `keys` param.
-
-If you call the `/posts` endpoint, with `keys=id,content`, call post objects will be converted to only contain those two keys.
-
-```json
-{
-	"id": 1000,
-	"content": "<p></p>"
-}
-```
-
-Use `!` at the start to exclude tags. For example, `keys=!content,description` will exclude `content` and `description` from the Post object.
-
-Let's say you only want to get the post ID and tag ID of the posts. Use `keys=id,tags.id`. You will get objects like this.
-
-```json
-{
-	"id": 1000,
-	"tags": [
-		{
-			"id": 2000
-		}
-	]
-}
-```
 
 ## FAQ
 

@@ -1,4 +1,4 @@
-<?php
+<?PHP
 namespace App\Http\Controllers\ConsoleAPI;
 
 use App\Http\Controllers\Controller;
