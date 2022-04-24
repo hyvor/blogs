@@ -155,7 +155,7 @@ class PermalinkRepository {
          * Add language
          */
         if (!$language->is_primary) {
-            $path = "{$language->code}" . $path;
+            $path = "/{$language->code}" . $path;
         }
 
         return  $onlyPath ? self::getPath($path) : self::getFullUrlFromPath($blog, $path);
@@ -163,11 +163,15 @@ class PermalinkRepository {
     }
     
 
-    public static function getTagPermalink(Tag $tag, Blog $blog, $onlyPath = false) : string 
+    public static function getTagPermalink(Tag $tag, Blog $blog, Language $language, $onlyPath = false) : string 
     {
 
         $path = RouteRepository::getRoute($blog, 'tag')->match;
         $path = str_replace('{slug}', $tag->slug, $path);
+
+        if (!$language->is_primary) {
+            $path = "/{$language->code}" . $path;
+        }
         
         return $onlyPath ? self::getPath($path) : self::getFullUrlFromPath($blog, $path);
     }

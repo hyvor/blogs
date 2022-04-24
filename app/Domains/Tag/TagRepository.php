@@ -2,11 +2,14 @@
 
 namespace App\Domains\Tag;
 
+use App\Helpers\CollectionWithTotal;
+use App\Models\Blog;
 use App\Models\Tag;
 use App\Models\PostTag;
 use App\Models\TagVariant;
 use App\Models\Language;
 use App\Domains\Language\LanguageRepository;
+use Hyvor\FilterQ\Facades\FilterQ;
 use Illuminate\Database\Eloquent\Collection;
 class TagRepository
 {    
@@ -24,6 +27,56 @@ class TagRepository
     public static function getTagByBlogIdAndSlug(int $blogId, string $slug) : ?Tag 
     {
         return self::getTagByBlogIdAndIdentifier($blogId, null, $slug);
+    }
+    
+    public static function getTagsWithFilterQ(
+        Blog $blog,
+        ?string $filter,
+        int $limit,
+        int $offset,
+        array $orderBys = [
+            ['tags.posts_count', 'DESC']
+        ],
+    ) : CollectionWithTotal {
+        
+        $builder = FilterQ::expression($filter)
+            ->builder(Tag::class)
+            ->keys(function($keys) {
+
+                $keys->add('id')
+                    ->column('tags.id')
+                    ->valueType('int');
+
+                $keys->add('slug')
+                    ->column('tags.slug')
+                    ->valueType('string|int')
+                    ->operators('=,!=');
+                
+                $keys->add('posts_count')
+                    ->column('tags.posts_count')
+                    ->valueType('int');
+                
+                $keys->add('created_at')
+                    ->column('tags.created_at')
+                    ->valueType('date');
+                
+            })
+            ->addWhere();
+
+        foreach ($orderBys as $orderBy) {
+            $builder->orderBy($orderBy[0], $orderBy[1]);
+        }
+        
+        $tags = $builder
+            ->where('tags.blog_id', $blog->id)
+            ->limit($limit)
+            ->offset($offset)
+            ->get();
+        
+        $total = $builder->count();
+        
+        return new CollectionWithTotal($tags, $total);
+        
     }
 
 

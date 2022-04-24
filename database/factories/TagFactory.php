@@ -21,6 +21,7 @@ class TagFactory extends Factory
         return [
             'blog_id' => config('test.blog_id'),
             'slug' => Str::slug($this->faker->name()),
+            'posts_count' => 0
         ];
     }
 }

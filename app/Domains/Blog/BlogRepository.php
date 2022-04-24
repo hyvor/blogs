@@ -27,7 +27,7 @@ class BlogRepository
 
         if ($blog) {
             throw new TrustedException('This subdomain is already taken, please choose a different subdomain', 
-                TrustedException::ERROR_BAD_REQUEST
+                TrustedException::ERROR_INVALID_INPUT
             );
         }
 

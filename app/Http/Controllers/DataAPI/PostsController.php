@@ -56,7 +56,7 @@ class PostsController extends Controller
 
         // Data API only return published posts
         if ($variant->status !== 'published') {
-            throw new TrustedException('This post is not yet published', TrustedException::ERROR_BAD_REQUEST);
+            throw new TrustedException('This post is not yet published', TrustedException::ERROR_INVALID_INPUT);
         }
 
         return response()->json(
@@ -102,16 +102,15 @@ class PostsController extends Controller
             isPages: $pages
         );
         
-        $posts = $data['posts']->map(function ($post) use ($blog, $language) {
+        $posts = $data->collection->map(function ($post) use ($blog, $language) {
             return new PostObject($post, $blog, $language);
         });
-        $total = $data['total'];
 
         $filteredPosts = KeysFilter::filter($posts, $keys);
 
         return response()->json([
             'data' => $filteredPosts,
-            'pagination' => new PaginationObject($limit, $page, $total)
+            'pagination' => new PaginationObject($limit, $page, $data->total)
         ]);
 
     }

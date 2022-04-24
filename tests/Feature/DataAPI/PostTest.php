@@ -9,11 +9,12 @@ use App\Models\PostVariant;
 use Illuminate\Database\Eloquent\Factories\Sequence;
 use Illuminate\Testing\Fluent\AssertableJson;
 
-function getPostObject(Post $post, Blog $blog, Language $language) {
+function getPostObject(Post $post, Blog $blog, Language $language)
+{
     return json_decode(json_encode(new PostObject($post, $blog, $language)), true);
 }
 
-beforeEach(function() {
+beforeEach(function () {
 
     $this->blog = Blog::find(config('test.blog_id'));
 
@@ -25,10 +26,9 @@ beforeEach(function() {
                     ['language_id' => $this->blog->languages[0]],
                     ['language_id' => $this->blog->languages[1]],
                 ))
-                ->state(function() {
+                ->state(function () {
                     return ['status' => 'published'];
-                })
-            ,
+                }),
             'variants'
         )
         ->create([
@@ -40,10 +40,9 @@ beforeEach(function() {
 
     $this->postObject = getPostObject($this->post, $this->blog, $this->blog->languages[0]);
     $this->postObject2 = getPostObject($this->post, $this->blog, $this->blog->languages[1]);
-    
 });
 
-it('works with post id', function() {
+it('works with post id', function () {
 
     $this
         ->callDataApi('/post', [
@@ -51,20 +50,18 @@ it('works with post id', function() {
         ])
         ->assertOk()
         ->assertExactJson($this->postObject);
-    
 });
 
-it('requires an integer id', function() {
+it('requires an integer id', function () {
    
     $this
         ->callDataApi('/post', [
             'id' => 'something'
         ])
         ->assertUnprocessable();
-    
 });
 
-it('works with post slug', function() {
+it('works with post slug', function () {
     
     $this
         ->callDataApi('/post', [
@@ -72,42 +69,38 @@ it('works with post slug', function() {
         ])
         ->assertOk()
         ->assertExactJson($this->postObject);
-    
 });
 
-it('works with id and lang', function() {
+it('works with id and lang', function () {
 
-    $response = $this
+    $this
         ->callDataApi('/post', [
             'id' => $this->post->id,
             'language' => $this->blog->languages[1]->code
         ])
         ->assertOk()
         ->assertExactJson($this->postObject2);
-    
 });
 
-it('does not work with invalid language', function() {
+it('does not work with invalid language', function () {
 
     $this
         ->callDataApi('/post', [
             'id' => $this->post->id,
             'language' => 'jp'
         ])->assertUnprocessable();
-    
 });
 
-it('returns 404 for missing posts', function() {
+it('returns 404 for missing posts', function () {
 
     $this
         ->callDataApi('/post', [
             'id' => $this->post->id + 1,
         ])
         ->assertNotFound();
-    
 });
 
-it('returns 404 for missing variant', function() {
+it('returns 404 for missing variant', function () {
 
     // delete variant
     PostVariant::where('post_id', $this->post->id)
@@ -120,10 +113,9 @@ it('returns 404 for missing variant', function() {
             'language' => $this->blog->languages[1]->code
         ])
         ->assertNotFound();
-    
 });
 
-it('do not return unpublished posts', function() {
+it('do not return unpublished posts', function () {
 
     PostVariant::where('post_id', $this->post->id)
         ->where('language_id', $this->blog->languages[0]->id)
@@ -134,20 +126,18 @@ it('do not return unpublished posts', function() {
             'id' => $this->post->id,
         ])
         ->assertUnprocessable();
-    
 });
 
-it('do not return posts when blog id is wrong', function() {
+it('do not return posts when blog id is wrong', function () {
 
     $this
         ->callDataApi('/post', [
             'id' => $this->post->id,
         ], Blog::find(2)->subdomain)
         ->assertNotFound();
-    
 });
 
-it('filters keys', function() {
+it('filters keys', function () {
 
     $this
         ->callDataApi('/post', [
@@ -160,5 +150,4 @@ it('filters keys', function() {
                 ->has('slug')
                 ->missing('url');
         });
-    
 });

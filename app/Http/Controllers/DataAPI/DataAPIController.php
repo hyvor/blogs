@@ -36,7 +36,7 @@ class DataAPIController extends Controller
             throw new TrustedException('Tag not found', TrustedException::ERROR_NOT_FOUND);
         }
         if (!$user->posts_count > 0) {
-            throw new TrustedException('This user is not an author', TrustedException::ERROR_BAD_REQUEST);
+            throw new TrustedException('This user is not an author', TrustedException::ERROR_INVALID_INPUT);
         }
 
         return response()->json(KeysFilter::filter(new AuthorObject($user, $blog), $keys));

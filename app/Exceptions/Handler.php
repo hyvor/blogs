@@ -52,7 +52,7 @@ class Handler extends ExceptionHandler
                 if (
                     $request->is('api/*')
                 ) {
-                    $code = isset($exception->status) ? $exception->status : $exception->getCode();
+                    $code = $exception->status ?? $exception->getCode();
 
 
                     /**
@@ -63,7 +63,7 @@ class Handler extends ExceptionHandler
                         $code = 422;
                     }
 
-                    $httpCode = in_array($code, [400, 401, 402, 403, 404, 422, 500]) ? $code : 500;
+                    $httpCode = in_array($code, [400, 401, 402, 403, 404, 422, 500]) ? $code : 422;
 
                     $error = 
                         $exception instanceof TrustedException ||
@@ -83,7 +83,7 @@ class Handler extends ExceptionHandler
 
                     return response()->json([
                         'error' => $error,
-                        'errorCode' => $code
+                        'error_code' => $code
                     ], $httpCode);
                 }
             } else {

@@ -3,6 +3,7 @@
 namespace App\Domains\Post;
 
 use App\Domains\Language\LanguageRepository;
+use App\Helpers\CollectionWithTotal;
 use App\Models\Blog;
 use App\Models\Language;
 use App\Models\Post;
@@ -121,8 +122,6 @@ class PostRepository
      * This is for the Data API
      * 
      * ALWAYS USE NAMED ARGUMENT WHEN USING THIS FUNCTION
-     * 
-     * @return array{'posts': Collection, 'total': int}
      */
     public static function getPostsWithFilterQ(
         Blog $blog,
@@ -134,7 +133,7 @@ class PostRepository
             ['posts.published_at', 'DESC']
         ],
         bool $isPages = false
-    ) : array {
+    ) : CollectionWithTotal {
 
         $builder = FilterQ::expression($filter)
             ->builder(Post::class)
@@ -230,10 +229,7 @@ class PostRepository
 
         $total = $builder->count();
 
-        return [
-            'posts' => $posts,
-            'total' => $total
-        ];
+        return new CollectionWithTotal($posts, $total);
 
     }
 

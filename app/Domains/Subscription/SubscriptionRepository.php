@@ -57,7 +57,7 @@ class SubscriptionRepository
             $currentSubscription->paddle_plan === $planId &&
             $currentSubscription->quantity === $quantity
         ) {
-            throw new TrustedException('Cannot update to the same plan', TrustedException::ERROR_BAD_REQUEST);
+            throw new TrustedException('Cannot update to the same plan', TrustedException::ERROR_INVALID_INPUT);
         }
 
         if ($currentSubscription->paddle_plan === $planId) {
@@ -109,24 +109,24 @@ class SubscriptionRepository
     {
 
         if (!in_array($planName, ['pro', 'team', 'enterprise'])) {
-            throw new TrustedException("Invalid plan: $planName", TrustedException::ERROR_BAD_REQUEST);
+            throw new TrustedException("Invalid plan: $planName", TrustedException::ERROR_INVALID_INPUT);
         }
 
         if (!in_array($frequency, ['monthly', 'yearly'])) {
-            throw new TrustedException("Invalid frequency: $frequency", TrustedException::ERROR_BAD_REQUEST);
+            throw new TrustedException("Invalid frequency: $frequency", TrustedException::ERROR_INVALID_INPUT);
         }
 
         if ($planName === 'pro' && $frequency === 'monthly') {
             // for PRO plan
             throw new TrustedException(
                 "$planName plan does not support monthly billing", 
-                TrustedException::ERROR_BAD_REQUEST);
+                TrustedException::ERROR_INVALID_INPUT);
         }
 
         if ($planName === 'team' && ($quantity < 3 || $quantity > 99)) {
             throw new TrustedException(
                 "Team plan quantity is out of range. $quantity received", 
-                TrustedException::ERROR_BAD_REQUEST
+                TrustedException::ERROR_INVALID_INPUT
             );
         }
 

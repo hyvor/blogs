@@ -22,7 +22,7 @@ class CreateTagsTable extends Migration
 
             $table->string('slug');
 
-            $table->integer('posts_count')->default(0); 
+            $table->integer('posts_count')->default(0);
 
             $table->text('code_head')->nullable();
             $table->text('code_foot')->nullable();

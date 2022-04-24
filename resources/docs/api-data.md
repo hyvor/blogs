@@ -373,6 +373,7 @@ Data is returned in JSON objects as specified below.
 ```json
 {
 	"id": 2000,
+    "created_at": 1639655890,
 	"name": "Hello World",
 	"slug": "hello-world",
 	"url": "https://subdomain.hyvorblogs.io/tag/hello-world",
@@ -558,6 +559,29 @@ A pagination object is included in all multi-object endpoints (`/posts`, `/autho
 | `limit` | `integer` | Current limit |
 | `page` | `integer` | Current page |
 
+## Error Handling
+
+In case of an error, the HTTP status code will be a non-200 status code. 
+
+For 4xx errors, the response will be a JSON object.
+
+```json
+{
+    "error": "ID is required",
+    "error_code": "422"
+}
+```
+
+These HTTP codes are possible:
+
+* **404 Not Found** - Resource not found
+  * 404 can be returned in a single-object endpoints when the object is not found
+  * Make sure ID/slug (and language for posts) is correct
+* **422 Unprocessable Entity** - Invalid input
+  * Check the query params
+  * You can find more details in the JSON output of the error
+
+5xx errors means something is wrong on our side. Check our [status page](https://blogs.hyvor.com) for any downtimes. If the issue persists, [contact us](contact).
 
 ## FAQ
 
