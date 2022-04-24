@@ -12,7 +12,7 @@ it('fetches tags', function() {
         ->callConsoleApi('GET', 'tags', [
            'limit' => 5
         ])
-        ->assertStatus(200)
+        ->assertOk()
         ->assertJson(function (AssertableJson $json) {
             $json->count(5)
                 ->has('0', function (AssertableJson $json) {
@@ -31,7 +31,7 @@ it('fetches tags with offset', function() {
             'limit' => $tagsCount,
             'offset' => $tagsCount - 1
         ])
-        ->assertStatus(200)
+        ->assertOk()
         ->assertJson(function (AssertableJson $json) {
             $json->count(1);
         });
@@ -52,7 +52,7 @@ it('creates a tag success', function() {
             'slug' => $data,
             'description' => $data
         ])
-        ->assertStatus(200)
+        ->assertOk()
         ->assertJson(function (AssertableJson $json) use ($data, $language) {
             $json->has('id')
                 ->where('slug', $data)
@@ -79,7 +79,7 @@ it('creating tag with null slug works', function() {
         ->callConsoleApi('POST', 'tag', [
             'name' => 'May Day'
         ])
-        ->assertStatus(200)
+        ->assertOk()
         ->assertJson(function (AssertableJson $json) {
             $json->where('slug', 'may-day')
                 ->etc();
@@ -115,5 +115,5 @@ it('update a tag success', function() {
             'codeHead' => null,
             'codeFoot' => null,
         ])
-        ->assertStatus(200);
+        ->assertOk();
 });

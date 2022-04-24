@@ -7,9 +7,7 @@ use App\Models\Language;
 use App\Models\Post;
 use App\Models\PostVariant;
 use Illuminate\Database\Eloquent\Factories\Sequence;
-use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Testing\Fluent\AssertableJson;
-use Tests\TestCase;
 
 function getPostObject(Post $post, Blog $blog, Language $language) {
     return json_decode(json_encode(new PostObject($post, $blog, $language)), true);
@@ -74,7 +72,7 @@ it('works with id and lang', function() {
             'id' => $this->post->id,
             'language' => $this->blog->languages[1]->code
         ])
-        ->assertStatus(200)
+        ->assertOk()
         ->assertExactJson($this->postObject2);
     
 });
@@ -146,7 +144,7 @@ it('filters keys', function() {
             'id' => $this->post->id,
             'keys' => 'id,slug'
         ])
-        ->assertStatus(200)
+        ->assertOk()
         ->assertJson(function (AssertableJson $json) {
             $json->has('id')
                 ->has('slug')

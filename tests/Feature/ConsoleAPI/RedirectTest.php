@@ -13,7 +13,7 @@ it('fetches redirects', function() {
         ->callConsoleApi('GET', 'redirect', [
            'limit' => 5
         ])
-        ->assertStatus(200)
+        ->assertOk()
         ->assertJson(function (AssertableJson $json) {
             $json->count(5)
                 ->has('0', function (AssertableJson $json) {
@@ -32,7 +32,7 @@ it('fetches redirect with offset', function() {
             'limit' => $redirectsCount,
             'offset' => $redirectsCount - 1
         ])
-        ->assertStatus(200)
+        ->assertOk()
         ->assertJson(function (AssertableJson $json) {
             $json->count(1);
         });
@@ -47,7 +47,7 @@ it('creates a redirect success', function() {
             'to' => 'test-two',
             'type' => '302'
         ])
-        ->assertStatus(200)
+        ->assertOk()
         ->assertJson(function (AssertableJson $json) {
             $json->has('id')
                 ->etc();
@@ -126,7 +126,7 @@ it('deleting redirect success', function() {
     $id = 1;
     $this
         ->callConsoleApi('DELETE', 'redirect/'.$id)
-        ->assertStatus(200);    
+        ->assertOk();    
 });
 
 it('updating a route success', function() {
@@ -139,7 +139,7 @@ it('updating a route success', function() {
             'match' => $data,
             'template' => '301'
         ])
-        ->assertStatus(200);
+        ->assertOk();
 });
 
 it('updating redirect should fail if (path) has spaces', function() {

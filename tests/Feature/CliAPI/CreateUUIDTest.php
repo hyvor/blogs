@@ -14,7 +14,7 @@ class CreateUUIDTest extends TestCase
     {
         $response = $this->callCliAPI('post', '/new');
         
-        $response->assertStatus(200)
+        $response->assertOk()
             ->assertJson(function ($json) {
                 $json->whereType('uuid', 'string');
             });

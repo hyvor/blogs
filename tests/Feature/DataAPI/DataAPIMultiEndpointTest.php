@@ -20,7 +20,7 @@ class DataAPIMultiEndpointTest extends TestCase {
             'limit' => 4
         ]);
         $response
-            ->assertStatus(200)
+            ->assertOk()
             ->assertJsonCount(4, 'data');
     }
 

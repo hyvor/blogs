@@ -32,7 +32,7 @@ it('searches posts', function() {
         ->callDataApi('/posts/search', [
             'search' => "English"
         ])
-        ->assertStatus(200);
+        ->assertOk();
     
 });
 

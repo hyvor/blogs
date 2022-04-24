@@ -21,7 +21,7 @@ beforeEach(function() {
 it('fetches posts without params', function() {
     $this
         ->callDataApi('/posts')
-        ->assertStatus(200)
+        ->assertOk()
         ->assertJson(function (AssertableJson $json) {
             $json
                 ->has('data', 25, fn (AssertableJson $json) =>
@@ -55,7 +55,7 @@ it('works with language', function() {
         ->callDataApi('/posts', [
             'language' => 'fr'
         ])
-        ->assertStatus(200)
+        ->assertOk()
         ->assertJson(function (AssertableJson $json) {
             $json->has('data', 25, fn (AssertableJson $json) =>
             $json->where('language.code', 'fr')
@@ -80,7 +80,7 @@ it('gives correct limit', function() {
         ->callDataApi('/posts', [
             'limit' => 3
         ])
-        ->assertStatus(200)
+        ->assertOk()
         ->assertJson(function (AssertableJson $json) {
             $json->has('data', 3)
                 ->etc();
@@ -112,7 +112,7 @@ it('gives correct page for pagination', function() {
         'sort' => 'id ASC'
     ], $blog->subdomain);
 
-    $response->assertStatus(200)
+    $response->assertOk()
         ->assertJson(function (AssertableJson $json) use ($posts) {
             $json->has('data.0', function (AssertableJson $json) use ($posts) {
                 $json->where('id', $posts[2]->id)

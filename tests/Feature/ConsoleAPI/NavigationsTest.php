@@ -11,7 +11,7 @@ use App\Domains\Navigation\NavigationRepository;
 it('fetches navigation', function() {
     $this
         ->callConsoleApi('GET', 'navigation')
-        ->assertStatus(200);
+        ->assertOk();
 });
 
 it('creates a navigation success', function() {
@@ -23,7 +23,7 @@ it('creates a navigation success', function() {
             'navigation_url' => $data,
             'type' => 'header'
         ])
-        ->assertStatus(200);
+        ->assertOk();
 });
 
 it('creating navigation fails on empty fields', function() {
@@ -111,7 +111,7 @@ it('deleting navigation success', function() {
     $id = 1;
     $this
         ->callConsoleApi('DELETE', 'navigation/'.$id)
-        ->assertStatus(200);    
+        ->assertOk();    
 });
 
 it('updating a navigation success', function() {
@@ -124,7 +124,7 @@ it('updating a navigation success', function() {
             'navigation_url' => $data,
             'type' => 'header'
         ])
-        ->assertStatus(200);
+        ->assertOk();
 });
 
 it('updating a navigation fails if (name) is null', function() {
@@ -160,7 +160,7 @@ it('update the sort', function() {
         ->callConsoleApi('PUT', '/navigation/sort/'.$id, [
             'navigationSort' => 2,
         ])
-        ->assertStatus(200);
+        ->assertOk();
 });
 
 it('update the navigation source', function() {
@@ -170,5 +170,5 @@ it('update the navigation source', function() {
         ->callConsoleApi('PUT', '/navigation/source/'.$id, [
             'sort' => 2,
         ])
-        ->assertStatus(200);
+        ->assertOk();
 });

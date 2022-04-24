@@ -23,7 +23,7 @@ class BlogCreateTest extends TestCase
         $this->callBlogCreateApi([
             'name' => 'another test blog',
             'subdomain' => 'another-test'
-        ])->assertStatus(200)->assertJson(function ($json) {
+        ])->assertOk()->assertJson(function ($json) {
             $json->has('user');
             $json->has('blog');
         });

@@ -26,7 +26,7 @@ class SubscriptionsTest extends TestCase
             'quantity' => 3
         ]);
 
-        $response->assertStatus(200)->assertJson(function (AssertableJson $json) {
+        $response->assertOk()->assertJson(function (AssertableJson $json) {
             $json->whereType('payLink', 'string');
         });
 

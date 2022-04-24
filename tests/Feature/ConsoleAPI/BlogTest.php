@@ -26,7 +26,7 @@ class BlogTest extends TestCase
     public function test_get_request()
     {
         $response = $this->callEndpoint('GET', 'blogData', []);
-        $response->assertStatus(200);
+        $response->assertOk();
     }
 
     public function test_createVariant_request()
@@ -34,7 +34,7 @@ class BlogTest extends TestCase
         $response = $this->callEndpoint('POST', 'blogVariant', [
             'languageId' => 2,
         ]);
-        $response->assertStatus(200);
+        $response->assertOk();
     }
 
     public function test_put_request()
@@ -51,7 +51,7 @@ class BlogTest extends TestCase
             'name' => 'test user',
             'description' =>  null,
         ]);
-        $response->assertStatus(200);
+        $response->assertOk();
     }
 
 }

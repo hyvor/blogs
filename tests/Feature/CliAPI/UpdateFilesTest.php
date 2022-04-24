@@ -31,7 +31,7 @@ class UpdateFilesTest extends TestCase
             ]
         ]);
 
-        $response->assertStatus(200);
+        $response->assertOk();
 
         $indexTwig = ThemeFilesRepository::getFile($this->localDev, 'index.twig', ThemeFileFolderEnum::TEMPLATES);
 
@@ -48,7 +48,7 @@ class UpdateFilesTest extends TestCase
             ]
         ]);
 
-        $response->assertStatus(200);
+        $response->assertOk();
 
         $indexTwig = ThemeFilesRepository::getFile($this->localDev, 'index.twig', ThemeFileFolderEnum::TEMPLATES);
         $this->assertEquals($indexTwig->content, 'New string');
