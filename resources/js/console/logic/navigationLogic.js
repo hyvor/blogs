@@ -35,8 +35,8 @@ const  navigationLogic = kea({
 
         create: async ({name, url, type}) => {
             const navigation = await api.post(props.subdomain, '/navigation', {
-                    navigation_name: name,
-                    navigation_url: url,
+                    name: name,
+                    url: url,
                     type: type 
                 })
           
@@ -45,16 +45,16 @@ const  navigationLogic = kea({
 
         updateData: async ({userId, name, url, type}) => {
             const navigation = await api.put(props.subdomain, `/navigation/${userId}`, {
-                    navigation_name: name,
-                    navigation_url: url,
+                    name: name,
+                    url: url,
                     type: type 
                 });
             actions.updateNavigation(navigation);
         },
 
         updateItemNumber: async ({NavigationId, destinationId}) => {
-            console.log('Navigation' + NavigationId + ' I think its working')
-            console.log('Lets see '+ destinationId + ' destination ID')
+            // console.log('Navigation' + NavigationId + ' I think its working')
+            // console.log('Lets see '+ destinationId + ' destination ID')
 
             const navigation = await api.put(props.subdomain, `/navigation/sort/${NavigationId}`, {
                 navigationSort: destinationId,
@@ -63,8 +63,8 @@ const  navigationLogic = kea({
         },
 
         updateSourceNav: async ({destinationId, sourceId}) => {
-            console.log(destinationId)
-            console.log(sourceId + ' source ID')
+            // console.log(destinationId)
+            // console.log(sourceId + ' source ID')
 
             const navigation = await api.put(props.subdomain, `/navigation/source/${destinationId}`, {
                     sort: sourceId,

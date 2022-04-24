@@ -10,7 +10,6 @@ Class NavigationRepository
     public static function getNavigations(int $blogId) : Collection
     {
         return Navigation::where('blog_id','=', $blogId)
-            // ->orderBy('sort', 'desc')
             ->orderBy('sort')
             ->offset(0)
             ->limit(100)
@@ -20,16 +19,16 @@ Class NavigationRepository
 
     public static function createNavigation(
         int $blogId, 
-        string $navigationName, 
-        string $navigationUrl, 
+        string $name, 
+        string $url, 
         NavigationTypeEnum $type, 
         int $sort 
     ) : Navigation
     {
         return Navigation::create([
             'blog_id' => $blogId,
-            'name' => $navigationName,
-            'url' => $navigationUrl,
+            'name' => $name,
+            'url' => $url,
             'type' => $type->value, 
             'sort' => $sort
         ]);
@@ -37,22 +36,22 @@ Class NavigationRepository
 
     public static function updateNavigation(
         int $id, 
-        string $navigationName, 
-        string $navigationUrl, 
+        string $name, 
+        string $url, 
         NavigationTypeEnum $type
     ) : void {
 
         $navigation = Navigation::find($id);
-        $navigation->name=$navigationName;
-        $navigation->url=$navigationUrl;
+        $navigation->name=$name;
+        $navigation->url=$url;
         $navigation->type=$type->value;
 
         $navigation->save();
     }
 
     public static function deleteNavigation(int $id) : void {
-        $data = Navigation::find($id);
-        $data->delete();
+        $delete = Navigation::find($id);
+        $delete->delete();
     }
 
     public static function getHeaderSort() : Navigation {

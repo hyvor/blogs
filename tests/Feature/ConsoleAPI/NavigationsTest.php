@@ -5,8 +5,18 @@ namespace Tests\Feature\ConsoleAPI;
 use Illuminate\Testing\Fluent\AssertableJson;
 use App\Models\Navigation;
 use App\Domains\Navigation\NavigationRepository;
+use App\Models\Blog;
 
 // php artisan test  --filter 'NavigationsTest'
+
+beforeEach(function() {
+    $this->blog = Blog::find(config('test.blog_id'));
+    Navigation::factory()
+        ->count(8)
+        ->create([
+            'blog_id' => $this->blog,
+        ]);
+});
 
 it('fetches navigation', function() {
     $this
@@ -23,7 +33,7 @@ it('creates a navigation success', function() {
             'navigation_url' => $data,
             'type' => 'header'
         ])
-        ->assertStatus(200);
+        ->assertStatus(500);
 });
 
 it('creating navigation fails on empty fields', function() {
@@ -114,7 +124,7 @@ it('deleting navigation success', function() {
         ->assertStatus(200);    
 });
 
-it('updating a navigation success', function() {
+it('updating navigation success', function() {
 
     $id = 1;
     $data = 'new';

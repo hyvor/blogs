@@ -12,7 +12,7 @@ class NavigationObject
     public string $name;
     public string $url;
     public string $type; 
-    public string $sort; 
+    public ?int $sort; 
 
     public function __construct(Navigation $navigation)
     {

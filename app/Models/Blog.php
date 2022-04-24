@@ -112,9 +112,17 @@ class Blog extends Model
     /**
      * Redirects
      */
-    public function redirects()
+    public function redirect() 
     {
         return $this->hasMany(Redirect::class);
+    }
+
+    /**
+    * Navigation
+    */
+    public function navigation() 
+    {
+        return $this->hasMany(Navigation::class);
     }
 
     /**

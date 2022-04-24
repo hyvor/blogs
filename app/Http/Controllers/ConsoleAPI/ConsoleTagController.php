@@ -59,20 +59,18 @@ class ConsoleTagController extends Controller {
         }
 
         $tag = TagRepository::createTag($blog, $name, $slug, $description); 
-        
         return response()->json(new TagObject($tag, $blog));
-        
     }
 
     public static function updateTag(Request $request, Blog $blog)
     {
-        // $request->validate([
-        //     'name' => 'required|string',
-        //     'slug' => 'required|string',
-        //     'description' => 'int',
-        //     'codeHead' => 'string',
-        //     'codeFoot' => 'string',
-        // ]);
+        $request->validate([
+            'name' => 'required|string',
+            'slug' => 'required|string',
+            'description' => 'string',
+            'codeHead' => 'string',
+            'codeFoot' => 'string',
+        ]);
 
         $id = $request->route('id');
         $slug = $request->input('slug');
@@ -82,10 +80,14 @@ class ConsoleTagController extends Controller {
         $name = $request->input('name') ?? null;
         $description = $request->input('description') ?? null;
         
+        $currentTag = TagRepository::getTagByBlogIdAndSlug($blog->id, $slug);
+        
+        if ($currentTag) {
+            throw new TrustedException('Slug already exists');
+        }
+        
         $tag = TagRepository::updateTag($id, $languageId, $slug, $codeHead, $codeFoot, $name, $description );
         return response()->json($tag); 
-        // return response()->json(new TagObject($tag, $blog));
-
     }
 
     public static function deleteTag(Request $request)

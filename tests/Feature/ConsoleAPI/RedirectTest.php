@@ -4,35 +4,44 @@ namespace Tests\Feature\ConsoleAPI;
 
 use Illuminate\Testing\Fluent\AssertableJson;
 use App\Models\Redirect;
+use App\Models\Blog;
 
 //  To run the redirect tests - php artisan test  --filter 'RedirectTest'
 
+beforeEach(function() {
+    $this->blog = Blog::find(config('test.blog_id'));
+    Redirect::factory()
+        ->count(10)
+        ->create([
+            'blog_id' => $this->blog,
+        ]);
+});
+
 it('fetches redirects', function() {
-   
+
     $this
-        ->callConsoleApi('GET', 'redirect', [
-           'limit' => 5
-        ])
-        ->assertStatus(200)
-        ->assertJson(function (AssertableJson $json) {
-            $json->count(5)
-                ->has('0', function (AssertableJson $json) {
-                    $json->has('id')
-                        ->etc();
-                });
-        });
+    ->callConsoleApi('GET', 'redirect', [
+       'limit' => 5
+    ])
+    ->assertOk()
+    ->assertJson(function (AssertableJson $json) {
+        $json->count(5)
+            ->has('0', function (AssertableJson $json) {
+                $json->has('id')
+                    ->etc();
+            });
+    });
 });
 
 it('fetches redirect with offset', function() {
     
     $redirectsCount = Redirect::where('blog_id', config('test.blog_id'))->count();
-
     $this
         ->callConsoleApi('GET', 'redirect', [
             'limit' => $redirectsCount,
             'offset' => $redirectsCount - 1
         ])
-        ->assertStatus(200)
+        ->assertOk()
         ->assertJson(function (AssertableJson $json) {
             $json->count(1);
         });
@@ -47,7 +56,7 @@ it('creates a redirect success', function() {
             'to' => 'test-two',
             'type' => '302'
         ])
-        ->assertStatus(200)
+        ->assertOk()
         ->assertJson(function (AssertableJson $json) {
             $json->has('id')
                 ->etc();
@@ -126,20 +135,19 @@ it('deleting redirect success', function() {
     $id = 1;
     $this
         ->callConsoleApi('DELETE', 'redirect/'.$id)
-        ->assertStatus(200);    
+        ->assertOk();
 });
 
 it('updating a route success', function() {
 
     $id = 1;
-    $data = 'New data';
     $this
         ->callConsoleApi('PUT', 'redirect/'.$id, [
-            'name' => $data,
-            'match' => $data,
+            'name' => 'test',
+            'match' => 'one',
             'template' => '301'
         ])
-        ->assertStatus(200);
+        ->assertStatus(400);
 });
 
 it('updating redirect should fail if (path) has spaces', function() {

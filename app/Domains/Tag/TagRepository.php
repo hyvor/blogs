@@ -26,7 +26,6 @@ class TagRepository
         return self::getTagByBlogIdAndIdentifier($blogId, null, $slug);
     }
 
-
     /*
     *
     * ConsoleAPI Settings->Tags

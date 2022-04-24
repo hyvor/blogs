@@ -139,6 +139,12 @@ class ConsoleUserController extends Controller
             $userData['slug'] = str_replace(" ", "-", $userData['name']);
         }
 
+        $currentUser = UserRepository::getUserByBlogIdAndSlug($blog->id, $userData['slug']);
+        
+        if ($currentUser) {
+            throw new UserRepository('Slug already exists');
+        }
+
         // I changed here from user_id to hyvor_user_id
         $createUser = UserRepository::createUser($blog, $blog->hyvor_user_id, $role, $status, $userData); 
         return response()->json($createUser);
@@ -198,6 +204,12 @@ class ConsoleUserController extends Controller
 
         if($userData['slug'] == null){
             $userData['slug'] = str_replace(" ", "-", $userData['name']);
+        }
+
+        $currentUser = UserRepository::getUserByBlogIdAndSlug($blog->id, $userData['slug']);
+        
+        if ($currentUser) {
+            throw new UserRepository('Slug already exists');
         }
         
         // I changed here from user_id to hyvor_user_id

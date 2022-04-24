@@ -62,7 +62,8 @@ class ConsoleRedirectController extends Controller {
         return response()->json($updateRedirect);
     }
 
-    public function deleteRedirect(Request $request) {
+    public function deleteRedirect(Request $request, Blog $blog) {
+        // dd('hello');
         $id = $request->route('id');
         $deleteRedirect = RedirectRepository::deleteRedirect($id);
 

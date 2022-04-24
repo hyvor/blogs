@@ -11,11 +11,13 @@ Class RedirectRepository
     public static function getRedirects( int $blogId, ?int $limit, int $offset = 0) : Collection
     {
         $limit = $limit ?? 50;
-        return Redirect::where('blog_id','=', $blogId)
+        $redirect =  Redirect::where('blog_id','=', $blogId)
             ->limit($limit)
             ->offset($offset)
             ->latest()
             ->get(); 
+            
+        return $redirect;
     } 
 
     public static function createRedirect(
