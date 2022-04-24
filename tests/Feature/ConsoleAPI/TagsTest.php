@@ -21,13 +21,11 @@ it('fetches tags', function() {
                         ->etc();
                 });
         });
-    
 });
 
 it('fetches tags with offset', function() {
     
     $tagsCount = Tag::where('blog_id', config('test.blog_id'))->count();
-
     $this
         ->callConsoleApi('GET', 'tags', [
             'limit' => $tagsCount,
@@ -72,8 +70,7 @@ it('creating tag fails on empty name', function() {
 
     $this
         ->callConsoleApi('POST', 'tag')
-        ->assertStatus(400);
-    
+        ->assertStatus(400);    
 });
 
 it('creating tag with null slug works', function() {
@@ -100,5 +97,23 @@ it('creating tag with existing slug fails', function() {
             'slug' => $tag->slug
         ])
         ->assertStatus(500);
-    
+});
+
+it('update a tag success', function() {
+
+    $data = 'test';
+    $language = Language::where('blog_id', config('test.blog_id'))
+        ->where('is_primary', true)
+        ->first();
+
+    $this
+        ->callConsoleApi('PUT', 'tag/1', [
+            'name' => $data,
+            'slug' => $data,
+            'description' => $data,
+            'languageId'=>$language->id,
+            'codeHead' => null,
+            'codeFoot' => null,
+        ])
+        ->assertStatus(200);
 });

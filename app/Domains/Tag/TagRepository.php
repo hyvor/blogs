@@ -88,7 +88,7 @@ class TagRepository
     ): void
     {
 
-        Tag::find($id)
+        $tag = Tag::find($id)
         ->update([
             'slug' => $slug,
             'code_head' => $codeHead,
@@ -101,7 +101,8 @@ class TagRepository
                 'name' => $name,
                 'description' => $description,
             ]);
-            
+    
+        // return $tag;
     }
 
     public static function deleteTag($tagId, $languageId) : void{
@@ -130,14 +131,6 @@ class TagRepository
     * this functions are used for the tag_variants table
     *
     */
-    // public static function getTagVariant($tagId, $languageId)
-    // {
-    //     $tags = TagsVariant::where('tag_id', '=', $tagId)
-    //     ->where('language_id', '=', $languageId)
-    //     ->get(); 
-    //     return $tags;
-    // }
-
     public static function createTagVariant($tagId, $languageId){
 
         $language = Language::where('id','=', $languageId)

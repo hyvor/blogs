@@ -35,6 +35,15 @@ class CreateBlogsTable extends Migration
 
             $table->json('meta')->nullable();
 
+            $table->string('api_key_data')->nullable();
+            $table->string('api_key_console')->nullable();
+        
+            // $table->string('social_facebook')->nullable();
+            // $table->string('social_twitter')->nullable();
+            // $table->string('social_linkedin')->nullable();
+            // $table->string('social_youtube')->nullable();
+            // $table->string('social_instagram')->nullable();
+            // $table->string('social_github')->nullable();
             // $table->string('api_key_data')->nullable();
             // $table->string('api_key_console')->nullable();
 

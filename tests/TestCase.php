@@ -33,6 +33,7 @@ abstract class TestCase extends BaseTestCase
         string $method, string $endpoint, $data = [], $subdomain = 'test'
     ) : TestResponse 
     {
+        // dd($data);
         $endpoint = trim($endpoint, '/');
         return $this->call($method, URL::to("/api/console/v0/blog/$subdomain/$endpoint"), $data);
     }

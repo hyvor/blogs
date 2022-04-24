@@ -47,14 +47,14 @@ class UserRepository
         $user->delete();
     }
 
-    public static function getAuthor($blog)
+    public static function getAuthors($blog)
     {
         $language = LanguageRepository::getPrimaryLanguage($blog);
 
         $users = User::where('blog_id', '=', $blog->id)
-        ->join('users_variants', function($join) use ($language) {
-            $join->on('users_variants.user_id', '=', 'users.id');
-            $join->where('users_variants.language_id', '=',  $language->id);
+        ->join('user_variants', function($join) use ($language) {
+            $join->on('user_variants.user_id', '=', 'users.id');
+            $join->where('user_variants.language_id', '=',  $language->id);
         })
         // ->latest()
         ->select('users.*')
@@ -101,7 +101,7 @@ class UserRepository
             'blog_id' => $blog->id,
             'picture_url' => $userData['pictureUrl'] ?? null,
             // 'slug' => $userData['slug'], 
-            'slug' => 'test-three',
+            'slug' => 'test',
             // 'hyvor_user_id' => $hyvorUserId,
             'hyvor_user_id' => 1,
             'status' => $status->value,
@@ -123,7 +123,7 @@ class UserRepository
             'language_id' => $getLanguage->id,
             // 'language_id' => 1,
             // 'name' => $userData['name'],
-            'name' => 'fd',
+            'name' => 'test',
             'location' => $userData['location'] ?? null,
             'bio' => $userData['bio'] ?? null,
         ]);

@@ -2,101 +2,194 @@
 
 namespace Tests\Feature\ConsoleAPI;
 
-use Illuminate\Foundation\Testing\RefreshDatabase;
-use Illuminate\Foundation\Testing\WithFaker;
 use Illuminate\Testing\Fluent\AssertableJson;
-use Tests\TestCase;
-use Illuminate\Database\Eloquent\Factories\Factory;
 use App\Models\Redirect;
 
-// To run the RedirectTest class only run this command in the command line.
-// php artisan test  --filter 'RedirectTest'
+//  To run the redirect tests - php artisan test  --filter 'RedirectTest'
 
+it('fetches redirects', function() {
+   
+    $this
+        ->callConsoleApi('GET', 'redirect', [
+           'limit' => 5
+        ])
+        ->assertStatus(200)
+        ->assertJson(function (AssertableJson $json) {
+            $json->count(5)
+                ->has('0', function (AssertableJson $json) {
+                    $json->has('id')
+                        ->etc();
+                });
+        });
+});
 
-// don't use the callEndPoint function use the testCase Function.
-// If path is wrong invalid path
-class RedirectTest extends TestCase
-{
-    use RefreshDatabase;
+it('fetches redirect with offset', function() {
+    
+    $redirectsCount = Redirect::where('blog_id', config('test.blog_id'))->count();
 
-    private function callEndpoint($method, $redirect,  $data = null) {
-        return $this->call($method, 'http://blogs.hyvor.test/api/console/v0/blog/test/'.$redirect, $data);
-    }
+    $this
+        ->callConsoleApi('GET', 'redirect', [
+            'limit' => $redirectsCount,
+            'offset' => $redirectsCount - 1
+        ])
+        ->assertStatus(200)
+        ->assertJson(function (AssertableJson $json) {
+            $json->count(1);
+        });
+    
+});
 
-    public function test_redirect_get_data()
-    {
-        $response = $this->callEndpoint('GET', 'redirect', [
-            'limit' => 2
-        ]);
-        $response->assertStatus(200);
-    }
+it('creates a redirect success', function() {
 
-    public function test_post_request()
-    {
-        $response = $this->callEndpoint('POST', 'redirect', [
-            'path' => 'testing create new redirect',
-            'to' => 'test completed',
-            'type' => 301,
-        ]);
-        $response->assertStatus(400);
-    }
+    $this
+        ->callConsoleApi('POST', 'redirect', [
+            'path' => 'test-one',
+            'to' => 'test-two',
+            'type' => '302'
+        ])
+        ->assertStatus(200)
+        ->assertJson(function (AssertableJson $json) {
+            $json->has('id')
+                ->etc();
+        }); 
+});
 
-    public function test_put_request()
-    {
-        $id = 1;
-        $response = $this->callEndpoint('PUT', 'redirect/'.$id, [
-            'path' => 'testing update new redirect',
-            'to' => 'test new update completed',
-            'type' => 301
-        ]);
-        $response->assertStatus(500);
-    }
+it('creates redirect should fail if type is not 302 or 301', function() {
 
-    public function test_delete_request()
-    {
-        $id = 1;
-        $response = $this->callEndpoint('DELETE', 'redirect/'.$id, []);
-        $response->assertStatus(500);
-    }
+    $data = 'about';
+    $this
+        ->callConsoleApi('POST', 'redirect', [
+            'path' => $data,
+            'to' => $data,
+            'type' => 'hello'
+        ])
+        ->assertStatus(400);
+});
 
-    public function test_redirect_equality_validation()
-    {
-        $redirect = Redirect::make([
-            'path' => 'Testing redirects',
-            'to' => 'this is the new url'
-        ]);
-        $this->assertTrue($redirect->path != $redirect->to);
-    }
+it('creating redirects fails on empty values', function() {
 
-    public function test_redirect_validation()
-    {
-        $redirect = Redirect::make([
-            'path' => 'Testing redirects',
-            'to' => 'this is the new url',
-            'type' => '301',
-        ]);
-        $this->assertTrue(
-            $redirect->path != null,
-            $redirect->to != null,
-            $redirect->type != null,
-        );
-    }
+    $this
+        ->callConsoleApi('POST', 'redirect')
+        ->assertStatus(400);    
+});
 
-    public function test_redirect_not_null()
-    {
-        $redirect = Redirect::make([
-            'to' => 'this is the new url'
-        ]);
-        $redirectSlug = str_replace(' ', '-', $redirect->to);
-        $this->assertTrue($redirectSlug != null);
-    }
+it('creates redirect should fail if (path) has spaces', function() {
 
-    // this is to check whether the database is linked properly.
-    // public function test_redirect_database(){
-    //     $this->assertDatabaseHas('redirects', [
-    //         'path' => null,
-    //     ]);
+    $data = 'about';
+    $this
+        ->callConsoleApi('POST', 'redirect', [
+            'path' => 'this is wrong',
+            'to' => $data,
+            'type' => '301'
+        ])
+        ->assertStatus(400);
+});
 
-    // }
+it('creates redirect should fail if (to) has spaces', function() {
 
-}
+    $data = 'about';
+    $this
+        ->callConsoleApi('POST', 'redirect', [
+            'path' => $data,
+            'to' => 'this is also wrong',
+            'type' => 'hello'
+        ])
+        ->assertStatus(400);
+});
+
+it('creates redirect should fail if (to) has a null value', function() {
+
+    $data = 'about';
+    $this
+        ->callConsoleApi('POST', 'redirect', [
+            'path' => $data,
+            'to' => null,
+            'type' => 'hello'
+        ])
+        ->assertStatus(400);
+});
+
+it('creates redirect should fail if (path) has a null value', function() {
+
+    $data = 'about';
+    $this
+        ->callConsoleApi('POST', 'redirect', [
+            'path' => null,
+            'to' => $data,
+            'type' => 'hello'
+        ])
+        ->assertStatus(400);
+});
+
+it('deleting redirect success', function() {
+
+    $id = 1;
+    $this
+        ->callConsoleApi('DELETE', 'redirect/'.$id)
+        ->assertStatus(200);    
+});
+
+it('updating a route success', function() {
+
+    $id = 1;
+    $data = 'New data';
+    $this
+        ->callConsoleApi('PUT', 'redirect/'.$id, [
+            'name' => $data,
+            'match' => $data,
+            'template' => '301'
+        ])
+        ->assertStatus(200);
+});
+
+it('updating redirect should fail if (path) has spaces', function() {
+
+    $id = 1;
+    $data = 'about';
+    $this
+        ->callConsoleApi('PUT', 'redirect/'.$id, [
+            'path' => 'this is wrong',
+            'to' => $data,
+            'type' => '301'
+        ])
+        ->assertStatus(400);
+});
+
+it('updating redirect should fail if (to) has spaces', function() {
+
+    $id = 1;
+    $data = 'about';
+    $this
+        ->callConsoleApi('PUT', 'redirect/'.$id, [
+            'path' => $data,
+            'to' => 'this is also wrong',
+            'type' => 'hello'
+        ])
+        ->assertStatus(400);
+});
+
+it('updating redirect should fail if (to) has a null value', function() {
+
+    $id = 1;
+    $data = 'about';
+    $this
+        ->callConsoleApi('PUT', 'redirect/'.$id, [
+            'path' => $data,
+            'to' => null,
+            'type' => 'hello'
+        ])
+        ->assertStatus(400);
+});
+
+it('updating redirect should fail if (path) has a null value', function() {
+
+    $id = 1;
+    $data = 'about';
+    $this
+        ->callConsoleApi('PUT', 'redirect/'.$id, [
+            'path' => null,
+            'to' => $data,
+            'type' => 'hello'
+        ])
+        ->assertStatus(400);
+});

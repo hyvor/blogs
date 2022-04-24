@@ -39,9 +39,9 @@ class BlogRepository
             'type' => $type->value
         ]);
 
-        ['user' => $user] = FillNewBlog::fill($blog);
+        // ['user' => $user] = FillNewBlog::fill($blog);
 
-        return $user;
+        // return $user;
 
     }
 
