@@ -14,7 +14,7 @@ class Feed {
         /**
          * Get only last 15 posts
          */
-        $limit = 15;
+        /*$limit = 15;
 
         $posts = PostRepository::getPostsWithFilterQ(
             blogId: $blog->id,
@@ -32,7 +32,7 @@ class Feed {
             '_posts' => $posts
         ];
 
-        return TwigRenderer::renderFile(resource_path('twig/_feed.twig'), $vars);
+        return TwigRenderer::renderFile(resource_path('twig/_feed.twig'), $vars);*/
 
     }
 

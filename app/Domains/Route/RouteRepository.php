@@ -25,6 +25,7 @@ class RouteRepository {
             'name' => 'index',
             'match' => '/',
             'template' => 'index',
+            'posts_filter' => ''
         ],
         // tag
         [

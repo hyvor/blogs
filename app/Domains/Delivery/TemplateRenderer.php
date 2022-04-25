@@ -3,6 +3,7 @@ namespace App\Domains\Delivery;
 
 use App\Data\Enums\ThemeFileFolderEnum;
 use App\Data\Objects\DataAPI\BlogObject;
+use App\Data\Objects\DataAPI\PaginationObject;
 use App\Data\Objects\DataAPI\PostObject;
 use App\Data\Objects\DataAPI\TagObject;
 use App\Data\Objects\DeliveryAPI\DeliveryAPIResponseObject;
@@ -16,6 +17,7 @@ use App\Domains\Route\PermalinkRepository;
 use App\Domains\Tag\TagRepository;
 use App\Domains\User\UserRepository;
 use App\Models\Language;
+use App\Models\LocalDev;
 use App\Models\Post;
 use App\Models\Tag;
 use App\Models\User;
@@ -67,7 +69,7 @@ class TemplateRenderer {
         
         // ready files loader array
         $templateFiles = ThemeFilesRepository::getFilesInFolder(
-            $this->pathMatcher->getThemable(), 
+            $this->pathMatcher->getThemable(),
             ThemeFileFolderEnum::TEMPLATES
         );
 
@@ -107,8 +109,16 @@ class TemplateRenderer {
             '_foot' => $this->getFootCode($vars),
         ];
 
-        $vars['_posts'] = $this->getPosts();
-
+        ['posts' => $posts, 'pagination' => $pagination] = $this->getPostsAndPagination();
+        
+        $vars['_posts'] = $posts;
+        $vars['_pagination'] = $pagination;
+        
+        $themable = $this->pathMatcher->getThemable();
+        if ($themable instanceof LocalDev) {
+            $vars['_local_dev_uuid'] = $themable->uuid;
+        }
+        
         /**
          * This is to make sure only data from objects are sent
          * and the developer does not have access to PHP methods
@@ -156,6 +166,8 @@ class TemplateRenderer {
                     $postObject->canonical_url ?? $postObject->url
                 ),
                 '_post' => $postObject,
+                '_comments' => '',
+                '_newsletter' => ''
             ];
 
         } else if ($routeName === 'tag') {
@@ -179,7 +191,7 @@ class TemplateRenderer {
 
     }
 
-    private function getPosts() {
+    private function getPostsAndPagination() {
 
         $pageNumber = $this->getPageNumber();
 
@@ -190,7 +202,7 @@ class TemplateRenderer {
 
             $search = $this->matchedRoute->param('search');
 
-            $searchData = PostSearchRepository::search(
+            $collectionWithTotal = PostSearchRepository::search(
                 blog: $this->pathMatcher->blog,
                 language: $this->pathMatcher->language,
                 search: $search,
@@ -200,21 +212,24 @@ class TemplateRenderer {
                 isPublished: true
             );
 
-            $postCollection = $searchData['posts'];
-
         } else {
-            $postCollection = PostRepository::getPostsWithFilterQ(
+            
+            $collectionWithTotal = PostRepository::getPostsWithFilterQ(
                 blog: $this->pathMatcher->blog, 
                 language: $this->pathMatcher->language,
                 filter: $this->filter,
                 limit: $limit,
                 offset: $offset
-            )->collection;
+            );
+            
         }
-
-        return $postCollection->map(function ($post) {
-            return new PostObject($post, $this->pathMatcher->blog, $this->pathMatcher->language);
-        });
+        
+        return [
+            'posts' => $collectionWithTotal->collection->map(function ($post) {
+                return new PostObject($post, $this->pathMatcher->blog, $this->pathMatcher->language);
+            }),
+            'pagination' => new PaginationObject($limit, $pageNumber, $collectionWithTotal->total)
+        ];
 
     }
 
@@ -234,8 +249,6 @@ class TemplateRenderer {
     private function getHeadCode($vars)
     {
         return file_get_contents(resource_path('twig/_head.twig'));
-
-        return TwigRenderer::renderFile(resource_path('twig/_head.twig'), $vars);
     }
 
     private function getFootCode() 

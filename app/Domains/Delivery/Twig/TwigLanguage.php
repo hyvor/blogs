@@ -7,6 +7,7 @@ use App\Domains\Language\LanguageRepository;
 use App\Models\Blog;
 use App\Models\BlogThemeFile;
 use App\Models\Language;
+use App\Models\LocalDev;
 use Symfony\Component\Yaml\Yaml;
 use Illuminate\Support\Str;
 
@@ -14,7 +15,7 @@ class TwigLanguage {
 
     private array $languageStrings;
 
-    public function __construct(Blog $blog, Language $language)
+    public function __construct(Blog $blog, Blog|LocalDev $themable, Language $language)
     {
         
         $fallback = LanguageRepository::getFallbackLanguage($blog, $language);
@@ -26,7 +27,7 @@ class TwigLanguage {
         /**
          * Get the current language, fallback, and HB default
          */
-        $files = ThemeFilesRepository::getMultipleFiles($blog, [
+        $files = ThemeFilesRepository::getMultipleFiles($themable, [
             $languageFileName,
             $fallbackFileName,
             $defaultFileName,

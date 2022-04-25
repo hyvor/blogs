@@ -35,7 +35,7 @@ class RouteMatcher {
         $route = new Route($match, $defaults, $requirements);
         $this->collection->add($routeName, $route);
 
-        if ($route) {
+        if ($routeModel) {
             $this->routeModels[$routeName] = $routeModel;
         }
     }

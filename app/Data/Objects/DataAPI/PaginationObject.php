@@ -8,6 +8,9 @@ class PaginationObject
     public int $pages;
     public int $limit;
     public int $page;
+    
+    public ?int $page_prev;
+    public ?int $page_next;
 
     public function __construct(int $limit, int $page, int $total)
     {
@@ -16,6 +19,9 @@ class PaginationObject
         $this->pages = ceil($total / $limit);
         $this->limit = $limit;
         $this->page = $page;
+        
+        $this->page_prev = $page > 1 ? $page - 1 : null;
+        $this->page_next = $page < $this->pages ? $page + 1 : null;
 
     }
 

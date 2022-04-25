@@ -222,12 +222,12 @@ class PostRepository
             ->where('posts.blog_id', $blog->id)
             ->where('post_variants.status', 'published')
             ->where('posts.is_page', $isPages)
+            ->select('posts.*')
             ->limit($limit)
             ->offset($offset)
-            ->select('posts.*')
             ->get();
 
-        $total = $builder->count();
+        $total = $builder->offset(0)->count();
 
         return new CollectionWithTotal($posts, $total);
 

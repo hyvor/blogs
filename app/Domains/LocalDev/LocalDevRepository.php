@@ -2,6 +2,7 @@
 namespace App\Domains\LocalDev;
 
 use App\Data\Enums\ThemeFileFolderEnum;
+use App\Models\Blog;
 use App\Models\LocalDev;
 use Illuminate\Support\Str;
 
@@ -20,6 +21,13 @@ class LocalDevRepository
     public static function getLocalDevByUUID(string $uuid) : ?LocalDev
     {
         return LocalDev::where('uuid', $uuid)->first();
+    }
+    
+    public static function updateBlogAttributes(Blog $blog)
+    {
+        
+        
+        
     }
 
 }
