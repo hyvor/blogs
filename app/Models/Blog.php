@@ -121,6 +121,11 @@ class Blog extends Model
     {
         return $this->hasMany(Redirect::class);
     }
+    
+    public function navigations()
+    {
+        return $this->hasMany(Navigation::class);
+    }
 
     /**
      * Webhooks

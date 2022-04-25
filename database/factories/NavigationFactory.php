@@ -7,10 +7,6 @@ use App\Models\Navigation;
 
 class NavigationFactory extends Factory
 {
-    // step:1 = php artisan tinker
-    // step:2 = \App\Models\Navigation::factory()->count(5)->create();
-
-    // get the faker URL to the factory.
 
     protected $model = Navigation::class;
 
@@ -22,8 +18,8 @@ class NavigationFactory extends Factory
     public function definition()
     {
         return [
-            'blog_id' => '1',
-            'name' => $this->faker->title,
+            'blog_id' => config('test.blog_id'),
+            'name' => $this->faker->word,
             'url' => $this->faker->url(),
             'type' => 'footer',
         ];

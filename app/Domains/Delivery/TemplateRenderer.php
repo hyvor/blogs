@@ -141,7 +141,7 @@ class TemplateRenderer {
                     language: $this->pathMatcher->language,
                     filter: $this->filter,
                     limit: 30, // hard limit - who has 30 featured posts?
-                )['posts']
+                )->collection
             ];
 
         } else if ($routeName === 'post' || $routeName === 'page' || $routeName === 'preview') {
@@ -209,7 +209,7 @@ class TemplateRenderer {
                 filter: $this->filter,
                 limit: $limit,
                 offset: $offset
-            )['posts'];
+            )->collection;
         }
 
         return $postCollection->map(function ($post) {
