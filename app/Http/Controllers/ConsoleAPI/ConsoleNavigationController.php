@@ -40,20 +40,20 @@ class ConsoleNavigationController extends Controller {
         $type = NavigationTypeEnum::from($request->input('type'));
 
         if($type->value == 'header'){
-            $getSort =  NavigationRepository::getHeaderSort();
-            if($getSort == null){
+            $sortHead =  NavigationRepository::getHeaderSort();
+            if($sortHead == null){
                 $sort = 1;
             }else{
-                $sort = $getSort['sort'] + 1;
+                $sort = $sortHead['sort'] + 1;
             }
         }
         
         if($type->value == 'footer'){
-            $getSort =  NavigationRepository::getFooterSort();
-            if($getSort == null){
+            $sortFooter =  NavigationRepository::getFooterSort();
+            if($sortFooter == null){
                 $sort = 1;
             }else{
-                $sort = $getSort['sort'] + 1;
+                $sort = $sortFooter['sort'] + 1;
             }
         }
 

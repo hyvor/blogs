@@ -44,17 +44,18 @@ const tagsLogic = kea({
             });
         },
             
-        create: async ({name, description, slug}) => {
-            const tag = await api.post(props.subdomain, '/tags', {
+        create: async ({name, slug, description}) => {
+            // console.log(name, slug, description)
+            const tag = await api.post(props.subdomain, '/tag', {
                 name: name,
-                description: description,
                 slug: slug,
+                description: description,
             })
             actions.addTag(tag);
         },
 
         createVariant: async ({tagId, languageId}) => {
-            console.log(tagId, languageId)
+            // console.log(tagId, languageId)
             const tag = await api.post(props.subdomain, '/tag/variant', {
                 tagId: tagId,
                 languageId: languageId,
@@ -62,56 +63,18 @@ const tagsLogic = kea({
             actions.addTagVarian(tag);
         },
             
-        updateData: async ({tagId, name,languageId, description, slug, codeHead, codeFoot}) => {
-            // console.log(tagId, name, description, slug, codeHead, codeFoot)
-            const tag = await api.put(props.subdomain, `/tag/${tagId}`, {
+        updateData: async ({id, name,languageId, description, slug, codeHead, codeFoot}) => {
+            console.log(id, name, languageId, description, slug, codeHead, codeFoot)
+            const tag = await api.put(props.subdomain, `/tag/${id}`, {
                 name: name,
-                languageId:languageId,
-                description: description,
                 slug: slug,
+                description: description,
+                languageId:languageId,
                 codeHead: codeHead,
                 codeFoot: codeFoot,
             });
             actions.updateTag(tag);
         },
-
-
-        // createVariant: async ({tagId, languageId}) => {
-        //     console.log('kdkdkd')
-        //     const tag = await api.post(props.subdomain, '/tagVariant', {
-        //         tagId: tagId,
-        //         languageId: languageId,
-        //     })
-        //     actions.addTagVarian(tag);
-        // },
-
-        // tag variant sections
-        // loadVariant: async ({tagId, languageId}) => {
-        //     const tagVariant = await api.get(props.subdomain, '/tagVariant', {
-        //         tagId: tagId,
-        //         languageId: languageId,
-        //     })
-        //     actions.setVariantList(tagVariant);
-        // },
-
-        // removeVariant: async ({tagId, languageId}) => {
-        //     const tagVariant = await api.delete(props.subdomain, '/tagVariant', {
-        //         tagId: tagId,
-        //         languageId: languageId,
-        //     })
-        //     actions.removeVariantList(tagVariant);
-        // },
-            
-        // updateDataVariant: async ({tagId, languageId, name, description}) => {
-        //     const tagVariant = await api.put(props.subdomain, '/tagVariant', {
-        //         tagId: tagId,
-        //         languageId: languageId,
-        //         name: name,
-        //         description: description,
-        //     });
-        //     actions.updateTagVarian(tagVariant);
-        // },
-
     }),
 
     reducers: {
@@ -119,7 +82,6 @@ const tagsLogic = kea({
             setTagList: (_, {tag}) => tag,
             removeFromList: (state, {id}) => state.filter(m => m.id !== id),
             addTag: (state, {tag}) => [tag, ...state],
-            // addTagVarian: (state, {tag}) => [tag, ...state],
             updateTag:(state, {tag}) => state.map(
                 stateTag => stateTag.id === tag.id ? tag : stateTag
             ),

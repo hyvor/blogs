@@ -15,15 +15,12 @@ import TagLanguageSelector from './TagLanguageSelector';
 
 export default function Tags ({tag, subdomain}) 
 {
-    // I should create the update section. and also I have to find the error which is occurring in the logic.
-
     const tagLogicBuilt = tagsLogic({subdomain})
     const { remove , updateData} = useActions(tagLogicBuilt)
     const { updateDataAjax } = useValues(tagLogicBuilt)
 
     // language
     const { languages, getLanguageById } = useValues(languagesLogic({subdomain}))
-
     const { findBlogBySubdomain } = useValues(blogsLogic)
     
     const [currentLanguageId, setCurrentLanguageId] = useState( findBlogBySubdomain(subdomain).blog.default_language.id );
@@ -32,57 +29,63 @@ export default function Tags ({tag, subdomain})
     const variants = tag.variants || [];
     const variant = variants[currentLanguageId] || {};
 
-
     const [ getName, setName ] = useState(null);
     const [ getDescription, setDescription ] = useState(null);
 
-     // To disable editing in other languages.
-     const [pointerEvent, setPointerEvent] = useState();
+    // To disable editing in other languages.
+    const [pointerEvent, setPointerEvent] = useState();
 
-     // To display data in the table
+    // To display data in the table
     //  const [getTableName, setTableName] = useState(null);
-     useEffect(() => {
-         if(currentLanguage.is_primary === true){
-             if(currentLanguage.id === variant.language_id){
-                 if(tag.id === variant.tag_id){
+    useEffect(() => {
+        if(currentLanguage.is_primary === true){
+            if(currentLanguage.id === variant.language_id){
+                if(tag.id === variant.tag_id){
                     setName(variant.name)
                     setDescription(variant.description)
-                 }
-             }
-         }
-     })
+                }
+            }
+        }
+    })
  
 
+    // console.log(currentLanguageId)
+    // console.log(variant.language_id)
+    // console.log(variant.name)
 
-     // To display data in the pop-up
-     const [variantName, setVariantName] = useState(null);
-     const [variantDescription, setVariantDescription] = useState(null);
+    // To display data in the pop-up
+    const [variantName, setVariantName] = useState(null);
+    const [variantDescription, setVariantDescription] = useState(null);
  
-     useEffect(() => {
-         if(currentLanguage.is_primary == true)
-         {
-             setPointerEvent()
-             if(currentLanguageId == variant.language_id){
-                 if(tag.id == variant.tag_id){
-                     setVariantName(variant.name)
-                     setVariantDescription(variant.description)
-                 }
-             }
-         }
-         else
-         {
-             setPointerEvent("pointerEvent")
-             if(currentLanguageId == variant.language_id){
-                 if(tag.id == variant.tag_id){
+    useEffect(() => {
+        if(currentLanguage.is_primary == true)
+        {
+            setPointerEvent()
+            if(currentLanguageId == variant.language_id){
+                if(tag.id == variant.tag_id){
                     setVariantName(variant.name)
                     setVariantDescription(variant.description)
-                 }
-             }
-         }
-     }, [])
+                }
+            }
+        }
+        else
+        {
+            setPointerEvent("pointerEvent")
+            if(currentLanguageId == variant.language_id){
+                if(tag.id == variant.tag_id){
+                    setVariantName(variant.name)
+                    setVariantDescription(variant.description)
+                }
+            }
+        }
+    }, [])
 
 
     // update section
+    function onVariantDescriptionChange(e) {
+        setVariantDescription(e.target.value);
+    }
+
     const [styleUpdateIcon, setStyleUpdateIcon] = useState("table-button");
     const [updatePopUpOpened, setUpdatePopUpOpened] = useState(false);
 
@@ -103,7 +106,7 @@ export default function Tags ({tag, subdomain})
     function updateTag(e){
         e.preventDefault();
         updateData({
-            tagId: updateTagData.tagId,
+            id: updateTagData.tagId,
             name: variantName,
             languageId : currentLanguageId,
             description: variantDescription,
@@ -112,18 +115,16 @@ export default function Tags ({tag, subdomain})
             codeFoot: tagCodeFoot,
         });
         setUpdatePopUpOpened(false); 
- 
         setStyleUpdateIcon('table-button')
         window.location.reload(false);
     }
      
-
     // Code Section
     const [styleCodeIcon, setStyleCodeIcon] = useState("table-button");
     const [codePopupOpened, setCodePopupOpened] = useState(false);
 
-    const [ tagCodeHead, setCodeHead ] = useState(tag.codeHead);
-    const [ tagCodeFoot, setCodeFoot ] = useState(tag.codeFoot);
+    const [ tagCodeHead, setCodeHead ] = useState(tag.code_head);
+    const [ tagCodeFoot, setCodeFoot ] = useState(tag.code_foot);
 
     function handleCode(e){
         e.preventDefault();
@@ -140,9 +141,13 @@ export default function Tags ({tag, subdomain})
     function updateCode(e){
         e.preventDefault();
         updateData({
-            tagId: updateTagData.tagId,
-            codeHead: codeHead,
-            codeFoot: codeFoot,
+            id: updateTagData.tagId,
+            name: variantName,
+            languageId : currentLanguageId,
+            description: variantDescription,
+            slug: tagSlug,
+            codeHead: tagCodeHead,
+            codeFoot: tagCodeFoot,
         });
         setCodePopupOpened(false)
         setStyleUpdateIcon('table-button')
@@ -165,6 +170,8 @@ export default function Tags ({tag, subdomain})
             languageId:currentLanguageId
         });
         setDeletePopupOpened(false);
+        setCodePopupOpened(false)
+        window.location.reload(false);
         setStyleDeleteIcon("table-button");
     }
     function handleDeleteCancel(){
@@ -284,7 +291,7 @@ export default function Tags ({tag, subdomain})
                                                 type="text"
                                                 name="url"
                                                 value={variantDescription}
-                                                onChange={setVariantDescription}
+                                                onChange={onVariantDescriptionChange}
                                                 placeholder="Description"
                                             ></textarea>
                                             <div className="table-delete">

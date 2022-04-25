@@ -139,7 +139,7 @@ Route::prefix('/api/console/v0/blog/{subdomain}')
         Route::delete('/tag/{id}', [ConsoleTagController::class, 'deleteTag']);
         Route::post('/tag/variant', [ConsoleTagController::class, 'createTagVariant']);
 
-        Route::get('/postTags/{id}', [ConsoleTagController::class, 'selectedPostTag']);
+        Route::get('/post/{id}/tags', [ConsoleTagController::class, 'selectedPostTag']);
 
         // post_tag CRUD
         // Route::get('/getTagList', [ConsoleTagController::class, 'getPostTags']);

@@ -58,9 +58,13 @@ class ResourceAccessMiddleware
 
             // ex: [api, console, v0, blog, supun, post, 1]
             $split = explode("/", $path);
+            
 
             // ex: post (model type)
             $modelType = $split[5];
+
+            // dd($this->models[$modelType]::find($id));
+            // dd($this->models[$modelType]::where('id','=',$id)->get());
 
             if (!array_key_exists($modelType, $this->models)) {
                 throw new TrustedException("Unable to find the $modelType to verify blog relationship");

@@ -24,9 +24,8 @@ export default function CreateTag(props) {
     }
 
     const [ name, setName ] = useState();
-    const [ description, setDescription ] = useState();
     const [ slug, setSlug ] = useState();
-
+    const [ description, setDescription ] = useState();
 
     function onNameChange(val) {
         setName(val);
@@ -52,17 +51,20 @@ export default function CreateTag(props) {
         }
     }
 
+    function onDescriptionChange(e) {
+        setDescription(e.target.value);
+    }
+
     function submitTag (e) {
         e.preventDefault();
         create({
             name: name,
-            description: description,
             slug: slug,
+            description: description,
         });
         setName();
-        setDescription();
         setSlug();
-        // setLanguage();
+        setDescription();
         setCreatePopUpOpened(false)
     }
 
@@ -107,9 +109,9 @@ export default function CreateTag(props) {
                                     className="input"
                                     title="Description"
                                     type="text"
-                                    name="url"
+                                    name="description"
                                     value={description}
-                                    onChange={setDescription}
+                                    onChange={onDescriptionChange}
                                     placeholder="Description"
                                 ></textarea>
                             </div>
