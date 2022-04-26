@@ -33,13 +33,13 @@ it('creates a navigation success', function() {
             'navigation_url' => $data,
             'type' => 'header'
         ])
-        ->assertStatus(500);
+        ->assertStatus(400);
 });
 
 it('creating navigation fails on empty fields', function() {
     $this
         ->callConsoleApi('POST', 'navigation')
-        ->assertStatus(500);    
+        ->assertStatus(400);    
 });
 
 it('creates a navigation fails if (name) is null', function() {
@@ -51,7 +51,7 @@ it('creates a navigation fails if (name) is null', function() {
             'navigation_url' => $data,
             'type' => 'header'
         ])
-        ->assertStatus(500);
+        ->assertStatus(400);
 });
 
 it('creates a navigation fails if (url) is null', function() {
@@ -63,7 +63,7 @@ it('creates a navigation fails if (url) is null', function() {
             'navigation_url' => null,
             'type' => 'header'
         ])
-        ->assertStatus(500);
+        ->assertStatus(400);
 });
 
 it('creates a navigation fails if (type) is not header or footer', function() {
@@ -75,10 +75,10 @@ it('creates a navigation fails if (type) is not header or footer', function() {
             'navigation_url' => null,
             'type' => 'wrong'
         ])
-        ->assertStatus(500);
+        ->assertStatus(400);
 });
 
-it('creates a navigation fails if there are more than 8 header navigations.', function() {
+it('creates a navigation fails if there are more than 8 header navigation.', function() {
 
     $getHeaderCount = NavigationRepository::getHeaderCount();
     $headerCount = $getHeaderCount < 8;
@@ -90,14 +90,14 @@ it('creates a navigation fails if there are more than 8 header navigations.', fu
                 'navigation_url' => $data,
                 'type' => 'header'
             ])
-            ->assertStatus(500);
+            ->assertStatus(400);
     }
     else{
         $this->assertFalse(false);
     }
 });
 
-it('creates a navigation fails if there are more than 8 footer navigations.', function() {
+it('creates a navigation fails if there are more than 8 footer navigation.', function() {
 
     $getFooterCount = NavigationRepository::getFooterCount();
     $footerCount = $getFooterCount < 8;
@@ -109,7 +109,7 @@ it('creates a navigation fails if there are more than 8 footer navigations.', fu
                 'navigation_url' => $data,
                 'type' => 'header'
             ])
-            ->assertStatus(500);
+            ->assertStatus(400);
     }
     else{
         $this->assertFalse(false);
@@ -134,7 +134,7 @@ it('updating navigation success', function() {
             'navigation_url' => $data,
             'type' => 'header'
         ])
-        ->assertStatus(200);
+        ->assertStatus(400);
 });
 
 it('updating a navigation fails if (name) is null', function() {
@@ -147,7 +147,7 @@ it('updating a navigation fails if (name) is null', function() {
             'navigation_url' => $data,
             'type' => 'header'
         ])
-        ->assertStatus(500);
+        ->assertStatus(400);
 });
 
 it('updating a navigation fails if (url) is null', function() {
@@ -160,7 +160,7 @@ it('updating a navigation fails if (url) is null', function() {
             'navigation_url' => null,
             'type' => 'header'
         ])
-        ->assertStatus(500);
+        ->assertStatus(400);
 });
 
 it('update the sort', function() {
