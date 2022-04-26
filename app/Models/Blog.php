@@ -33,8 +33,13 @@ class Blog extends Model
         $definer->add('code_foot')->type('string|null')->default(null);
         
         $definer->add('seo_indexing')->type('bool')->default(true);
-        $definer->add('seo_robots_txt')->type('string|null')->default(null);
-        $definer->add('seo_follow_external_links')->type('bool')->default(false);
+        $definer->add('seo_robots_txt')->type('string|null')->default(<<<TEXT
+        User-agent: *
+        Sitemap: {{ _blog.url }}/sitemap.xml
+        Disallow: /p/
+        TEXT
+        );
+        $definer->add('seo_external_links_follow')->type('enum:nofollow,follow')->default('follow');
 
         $definer->add('comments_type')->type('enum:ht,other')->default('ht');
         $definer->add('comments_ht_website_id')->type('int|null')->default(null);
@@ -115,6 +120,11 @@ class Blog extends Model
     public function redirect() 
     {
         return $this->hasMany(Redirect::class);
+    }
+    
+    public function navigations()
+    {
+        return $this->hasMany(Navigation::class);
     }
 
     /**

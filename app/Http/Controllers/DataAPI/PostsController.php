@@ -12,7 +12,7 @@ use App\Exceptions\TrustedException;
 use App\Models\Blog;
 use App\Domains\Post\PostRepository;
 
-class DataAPIPostsController extends Controller
+class PostsController extends Controller
 {
 
     const ALLOWED_SORTS = 
@@ -30,14 +30,15 @@ class DataAPIPostsController extends Controller
     {
 
         $request->validate([
-            'id' => 'required_without:slug',
-            'slug' => 'required_without:id',
-            'language' => 'string'
+            'id' => 'int|required_without:slug',
+            'slug' => 'string|required_without:id',
+            'language' => 'string',
+            'keys' => 'string'
         ]);
 
         $id = $request->input('id');
         $slug = $request->input('slug');
-        $language = DataAPIHelper::getLanguage($blog, $request->input('language'));
+        $language = Helper::getLanguage($blog, $request->input('language'));
         $keys = $request->input('keys');
 
 
@@ -55,11 +56,11 @@ class DataAPIPostsController extends Controller
 
         // Data API only return published posts
         if ($variant->status !== 'published') {
-            throw new TrustedException('This post is not yet published', TrustedException::ERROR_BAD_REQUEST);
+            throw new TrustedException('This post is not yet published', TrustedException::ERROR_INVALID_INPUT);
         }
 
         return response()->json(
-            DataAPIKeysFilter::filter(new PostObject($post, $blog, $language), $keys)
+            KeysFilter::filter(new PostObject($post, $blog, $language), $keys)
         );
 
     }
@@ -77,16 +78,16 @@ class DataAPIPostsController extends Controller
             'pages' => 'boolean'
         ]);
 
-        $language = DataAPIHelper::getLanguage($blog, $request->input('language'));
-        $limit = DataAPIHelper::getLimit($request->input('limit'));
-        $page = DataAPIHelper::getPage($request->input('page'));
-        $offset = DataAPIHelper::getOffset($page, $limit);
+        $language = Helper::getLanguage($blog, $request->input('language'));
+        $limit = Helper::getLimit($request->input('limit'));
+        $page = Helper::getPage($request->input('page'));
+        $offset = Helper::getOffset($page, $limit);
         $filter = $request->input('filter');
         $keys = $request->input('keys');
         $sort = $request->input('sort');
         $pages = (bool) $request->input('pages');
 
-        $orderBys  = DataAPIHelper::getSort(
+        $orderBys  = Helper::getSort(
             $sort,
             self::ALLOWED_SORTS
         );
@@ -101,16 +102,15 @@ class DataAPIPostsController extends Controller
             isPages: $pages
         );
         
-        $posts = $data['posts']->map(function ($post) use ($blog, $language) {
+        $posts = $data->collection->map(function ($post) use ($blog, $language) {
             return new PostObject($post, $blog, $language);
         });
-        $total = $data['total'];
 
-        $filteredPosts = DataAPIKeysFilter::filter($posts, $keys);
+        $filteredPosts = KeysFilter::filter($posts, $keys);
 
         return response()->json([
             'data' => $filteredPosts,
-            'pagination' => new PaginationObject($limit, $page, $total)
+            'pagination' => new PaginationObject($limit, $page, $data->total)
         ]);
 
     }
@@ -126,11 +126,11 @@ class DataAPIPostsController extends Controller
         ]);
 
         $search = $request->input('search');
-        $language = DataAPIHelper::getLanguage($blog, $request->input('language'));
+        $language = Helper::getLanguage($blog, $request->input('language'));
 
-        $limit = DataAPIHelper::getLimit($request->input('limit'));
-        $page = DataAPIHelper::getPage($request->input('page'));
-        $offset = DataAPIHelper::getOffset($page, $limit);
+        $limit = Helper::getLimit($request->input('limit'));
+        $page = Helper::getPage($request->input('page'));
+        $offset = Helper::getOffset($page, $limit);
 
         $searchData = PostSearchRepository::search(
 

@@ -1,97 +1,132 @@
 <?php
 
-use App\Http\Controllers\DataAPI\DataAPIHelper;
-use App\Http\Controllers\DataAPI\DataAPIPostsController;
-use Tests\TestCase;
+use App\Exceptions\TrustedException;
+use App\Http\Controllers\DataAPI\Helper;
+use App\Http\Controllers\DataAPI\PostsController;
+use App\Models\Blog;
 
-class HelperTest extends TestCase
-{
-
-
-    public function test_helper_sort()
-    {
-        $orderBys = DataAPIHelper::getSort('published_at', DataAPIPostsController::ALLOWED_SORTS);
-
-        $this->assertEquals(
-            [
-                [DataAPIPostsController::ALLOWED_SORTS['published_at'], 'DESC']
-            ],
-            $orderBys
-        );
-    }
-
-    public function test_helper_sort_null()
-    {
-        $orderBys = DataAPIHelper::getSort(null, DataAPIPostsController::ALLOWED_SORTS);
-
-        $this->assertEquals(
-            [
-                [DataAPIPostsController::ALLOWED_SORTS['published_at'], 'DESC']
-            ],
-            $orderBys
-        );
-    }
-
-    public function test_helper_sort_multi()
-    {
-
-        $orderBys = DataAPIHelper::getSort('published_at DESC,id ASC', DataAPIPostsController::ALLOWED_SORTS);
-
-        $this->assertEquals(
-            [
-                [DataAPIPostsController::ALLOWED_SORTS['published_at'], 'DESC'],
-                [DataAPIPostsController::ALLOWED_SORTS['id'], 'ASC']
-            ],
-            $orderBys
-        );
-
-    }
-
-    public function test_helper_sort_multi_with_space()
-    {
-
-        $orderBys = DataAPIHelper::getSort('published_at DESC, id ASC', DataAPIPostsController::ALLOWED_SORTS);
-
-        $this->assertEquals(
-            [
-                [DataAPIPostsController::ALLOWED_SORTS['published_at'], 'DESC'],
-                [DataAPIPostsController::ALLOWED_SORTS['id'], 'ASC']
-            ],
-            $orderBys
-        );
-
-    }
-
-    public function test_helper_sort_multi_with_additional_spaces()
-    {
-
-        $orderBys = DataAPIHelper::getSort('published_at  DESC, id  ASC ', DataAPIPostsController::ALLOWED_SORTS);
-
-        $this->assertEquals(
-            [
-                [DataAPIPostsController::ALLOWED_SORTS['published_at'], 'DESC'],
-                [DataAPIPostsController::ALLOWED_SORTS['id'], 'ASC']
-            ],
-            $orderBys
-        );
-
-    }
-
-    public function test_limit() {
-        $this->assertEquals(
-            DataAPIHelper::getLimit(25),
-            25
-        );
-        $this->assertEquals(
-            DataAPIHelper::getLimit(null),
-            25
-        );
-        $this->assertEquals(
-            DataAPIHelper::getLimit(1000),
-            250
-        );
-    }
-
+it('returns the correct language', function() {
+   
+    $blog = Blog::find(config('test.blog_id'));
     
+    $en = $blog->languages[0];
+    $fr = $blog->languages[1];
+    
+    $this->assertEquals($en, Helper::getLanguage($blog, 'en'));
+    $this->assertEquals($en, Helper::getLanguage($blog, null));
+    $this->assertEquals($fr, Helper::getLanguage($blog, 'fr'));
+    
+});
 
-}
+it('throws an error if language is not found', function() {
+    
+    $blog = Blog::find(config('test.blog_id'));
+    
+    $this->expectException(TrustedException::class);
+    
+    Helper::getLanguage($blog, 'jp');
+    
+});
+
+it('tests sort', function() {
+
+    $orderBys = Helper::getSort('published_at', PostsController::ALLOWED_SORTS);
+
+    $this->assertEquals(
+        [
+            [PostsController::ALLOWED_SORTS['published_at'], 'DESC']
+        ],
+        $orderBys
+    );
+    
+});
+
+it('tests sort with null', function() {
+
+    $orderBys = Helper::getSort(null, PostsController::ALLOWED_SORTS);
+
+    $this->assertEquals(
+        [
+            [PostsController::ALLOWED_SORTS['published_at'], 'DESC']
+        ],
+        $orderBys
+    );
+    
+});
+
+it('tests multi sort', function() {
+
+    $orderBys = Helper::getSort('published_at DESC,id ASC', PostsController::ALLOWED_SORTS);
+
+    $this->assertEquals(
+        [
+            [PostsController::ALLOWED_SORTS['published_at'], 'DESC'],
+            [PostsController::ALLOWED_SORTS['id'], 'ASC']
+        ],
+        $orderBys
+    );
+    
+});
+
+it('tests multi sort with space', function() {
+
+    $orderBys = Helper::getSort('published_at DESC, id ASC', PostsController::ALLOWED_SORTS);
+
+    $this->assertEquals(
+        [
+            [PostsController::ALLOWED_SORTS['published_at'], 'DESC'],
+            [PostsController::ALLOWED_SORTS['id'], 'ASC']
+        ],
+        $orderBys
+    );
+    
+});
+
+it('tests multi sort with additional spaces', function() {
+    
+    $orderBys = Helper::getSort('published_at  DESC, id  ASC ', PostsController::ALLOWED_SORTS);
+
+    $this->assertEquals(
+        [
+            [PostsController::ALLOWED_SORTS['published_at'], 'DESC'],
+            [PostsController::ALLOWED_SORTS['id'], 'ASC']
+        ],
+        $orderBys
+    );
+    
+});
+
+it('tests limit', function() {
+
+    $this->assertEquals(
+        Helper::getLimit(20),
+        20
+    );
+    $this->assertEquals(
+        Helper::getLimit(null),
+        Helper::DEFAULT_LIMIT
+    );
+    $this->assertEquals(
+        Helper::getLimit(Helper::MAX_LIMIT + 100),
+        Helper::MAX_LIMIT
+    );
+    
+});
+
+it('tests page', function() {
+   
+    $this->assertEquals(
+        Helper::getPage(null),
+        Helper::DEFAULT_PAGE
+    );
+    
+});
+
+it('tests offset', function() {
+   
+    $this->assertEquals(
+        Helper::getOffset(2, 20),
+        20
+    );
+    
+});

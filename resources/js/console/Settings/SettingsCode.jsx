@@ -2,27 +2,20 @@ import React, { useState } from 'react';
 import DualSetting from '../ReusableComponents/DualSetting';
 import CodemirrorEditor, { CODEMIRROR_MODES } from '../ReusableComponents/CodemirrorEditor';
 import SettingsSave from '../ReusableComponents/SettingsSave';
+import {useBlogActions, useBlogValues} from "./useBlog";
 
 export default function SettingsCode() {
 
-    const [headerCode, setHeaderCode] = useState("");
-    const [footerCode, setFooterCode] = useState("");
+    const { blog } = useBlogValues();
+    const { updateBlogData } = useBlogActions();
 
-    const shouldSave = headerCode !== "";
-
-    function handleSave() {
-        
-    }
-    function handleDiscard() {
-
-    }
+    const keys = ['code_head', 'code_foot'];
 
     return <div className="settings-code">
 
         <div className="title">
             Custom Code
         </div>
-
         
         <div>
 
@@ -30,37 +23,35 @@ export default function SettingsCode() {
                 title="Head Code"
                 description={
                     <div>
-                        This HTML code will be placed right before the &lt;/head&gt; tag. You can use this to add custom CSS and meta tags for the whole blog. In addition to HTML, you can also use <a className="link" href="https://blogs.hyvor.test/docs/themes-overview#twig" target="_blank">Twig</a>, and has access to <a className="link" href="https://blogs.hyvor.test/docs/themes-overview#variables" target="_blank">scope variables</a>.
+                        This HTML code will be placed right before the &lt;/head&gt; tag. You can use this to add custom CSS and meta tags for the whole blog. In addition to HTML, you can also use <a className="link" href="/docs/themes-overview#twig" target="_blank">Twig</a>, and has access to <a className="link" href="/docs/themes-overview#variables" target="_blank">scope variables</a>.
                     </div>
                 }
                 right={
-                    <CodemirrorEditor 
+                    <CodemirrorEditor
                         mode={CODEMIRROR_MODES.twig}
-                        value={headerCode}
-                        onChange={setHeaderCode}
+                        value={blog.code_head}
+                        onChange={v => updateBlogData('code_head', v)}
                     />
                 }
+                column={true}
             />
 
             <DualSetting 
                 title="Foot Code"
                 description="This HTML code will be placed right before the </body> tag. If you want to add custom Javascript code (ex: analytics), this is the best place to add it. You can use Twig and scope variables."
                 right={
-                    <CodemirrorEditor 
+                    <CodemirrorEditor
                         mode={CODEMIRROR_MODES.twig}
-                        value={footerCode}
-                        onChange={setFooterCode}
+                        value={blog.code_foot}
+                        onChange={v => updateBlogData('code_foot', v)}
                     />
                 }
+                column={true}
             />
 
         </div>
 
-        <SettingsSave 
-            should={shouldSave}
-            onSave={handleSave}
-            onDiscard={handleDiscard}
-        />
+        <SettingsSave keys={keys} />
 
     </div>
 

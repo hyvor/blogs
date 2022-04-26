@@ -2,6 +2,7 @@
 namespace App\Domains\Post;
 
 use App\Domains\Post\Content\PostContentRepository;
+use App\Helpers\CollectionWithTotal;
 use App\Models\Blog;
 use App\Models\Language;
 use App\Models\Post;
@@ -32,8 +33,6 @@ class PostSearchRepository
 
     /**
      * Better to use named arguments when using this function
-     * 
-     * @return array{'posts': Collection, 'total': int}
      */
     public static function search(
         Blog $blog,
@@ -43,7 +42,7 @@ class PostSearchRepository
         int $offset,
         bool $isPage,
         ?bool $isPublished = null
-    ) : array {
+    ) : CollectionWithTotal {
 
         $index = self::getIndex();
 
@@ -66,8 +65,6 @@ class PostSearchRepository
         ]);
 
         $hits = $results->getHits();
-        // $total = 
-        
         
         if (count($hits) > 0) {
             $postIds = collect($hits)->map(fn ($hit) => $hit['post_id'])->all();
@@ -78,11 +75,8 @@ class PostSearchRepository
         } else {
             $posts = collect([]);
         }
-
-        return [
-            'posts' => $posts,
-            'total' => $results->getNbHits()
-        ];
+        
+        return new CollectionWithTotal($posts, $results->getNbHits());
 
     }
 

@@ -4,8 +4,8 @@ namespace App\Data\Objects\ConsoleAPI;
 use App\Data\Enums\ColorModeAllowedEnum;
 use App\Data\Enums\ColorModeDefaultEnum;
 use App\Data\Enums\CommentsTypeEnum;
+use App\Data\Enums\SeoExternalLinksFollowEnum;
 use App\Models\Blog;
-use App\Data\Objects\ConsoleAPI\BlogVariantObject;
 
 class BlogObject {
 
@@ -29,7 +29,7 @@ class BlogObject {
     
     public bool $seo_indexing;
     public ?string $seo_robots_txt;
-    public bool $seo_follow_external_links;
+    public SeoExternalLinksFollowEnum $seo_external_links_follow;
 
     public CommentsTypeEnum $comments_type;
     public ?int $comments_ht_website_id;
@@ -69,6 +69,9 @@ class BlogObject {
         $this->social_instagram = $meta->social_instagram;
         $this->social_github = $meta->social_github;
         
+        $this->code_head = $meta->code_head;
+        $this->code_foot = $meta->code_foot;
+        
         $this->comments_type = CommentsTypeEnum::from($meta->comments_type);
         $this->comments_ht_website_id = $meta->comments_ht_website_id;
         $this->comments_ht_api_key = $meta->comments_ht_api_key;
@@ -78,7 +81,7 @@ class BlogObject {
 
         $this->seo_indexing = (bool) $meta->seo_indexing;
         $this->seo_robots_txt = $meta->seo_robots_txt;
-        $this->seo_follow_external_links = (bool) $meta->seo_follow_external_links;
+        $this->seo_external_links_follow = SeoExternalLinksFollowEnum::from($meta->seo_external_links_follow); 
 
         $this->color_modes = ColorModeAllowedEnum::from($meta->color_modes);
         $this->color_mode_default = ColorModeDefaultEnum::from($meta->color_mode_default);
@@ -89,7 +92,7 @@ class BlogObject {
         
         $this->variants = $blog->variants->map(function($variant) use ($blog) {
             return new BlogVariantObject($variant, $blog);
-        })->keyBy('language_id');
+        })->keyBy('language_id')->toArray();
 
     }
 

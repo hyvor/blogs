@@ -18,7 +18,7 @@ namespace App\Exceptions;
 
 class TrustedException extends \Exception
 {
-    public const ERROR_BAD_REQUEST = 400; // This means that client-side input fails validation.
+    public const ERROR_INVALID_INPUT = 422; // This means that client-side input fails validation.
     public const ERROR_UNAUTHORIZED = 401; // This means the user isn’t authenticated.
 
 

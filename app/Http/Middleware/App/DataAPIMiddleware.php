@@ -3,6 +3,7 @@
 namespace App\Http\Middleware\App;
 
 use App\Exceptions\DataAPIException;
+use App\Exceptions\TrustedException;
 use App\Models\Blog;
 use App\Domains\Blog\BlogRepositoryInterface;
 use Closure;
@@ -29,7 +30,7 @@ class DataAPIMiddleware
         $blog = $this->blogRepo->bySubdomain($subdomain);
 
         if (!$blog) {
-            throw new DataAPIException("Subdomain not found ($subdomain)", 400);
+            throw new DataAPIException("Subdomain not found ($subdomain)", TrustedException::ERROR_INVALID_INPUT);
         }
 
         /**

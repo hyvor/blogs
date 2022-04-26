@@ -8,13 +8,19 @@ import Radio from '../ReusableComponents/Radio';
 import Select from '../ReusableComponents/Select';
 import SettingsSave from '../ReusableComponents/SettingsSave';
 import { useBlogActions, useBlogValues } from './useBlog';
+import CodemirrorEditor, {CODEMIRROR_MODES} from "../ReusableComponents/CodemirrorEditor";
 
 export default function SettingsComments() {
 
-    const { blog, getDiff } = useBlogValues();
-    const { updateBlogData, save, setToOriginal } = useBlogActions();
-
-    const [htWebsteId, setHtWebsiteId] = useState(null);
+    const { blog } = useBlogValues();
+    const { updateBlogData } = useBlogActions();
+    
+    const keys = [
+        'comments_type', 
+        'comments_ht_website_id', 'comments_ht_api_key', 
+        'comments_code',
+        'newsletter_code'
+    ];
 
     function handleCommentsTypeChange(e) {
         updateBlogData('comments_type', e.target.value);
@@ -68,8 +74,8 @@ export default function SettingsComments() {
                                     title={null}
                                     type="text"
                                     name="ht-website-id"
-                                    value={htWebsteId}
-                                    onChange={setHtWebsiteId}
+                                    value={blog.comments_ht_website_id}
+                                    onChange={val => updateBlogData('comments_ht_website_id', val)}
                                 />
                             }
                         />
@@ -78,12 +84,12 @@ export default function SettingsComments() {
                             title="Hyvor Talk API Key"
                             description="Paste the API key provided by Hyvor Talk. This is used to fetch comments from the HB console, making it easier to moderate comments here, without having to visit the HT console."
                             right={
-                                <Input 
+                                <Input
                                     title={null}
                                     type="text"
-                                    name="ht-api-key"
-                                    value={htWebsteId}
-                                    onChange={setHtWebsiteId}
+                                    name="ht-website-id"
+                                    value={blog.comments_ht_api_key}
+                                    onChange={val => updateBlogData('comments_ht_api_key', val)}
                                 />
                             }
                         />
@@ -97,8 +103,13 @@ export default function SettingsComments() {
                             </div>
                         }
                         right={
-                            <textarea className="input"></textarea>
+                            <CodemirrorEditor
+                                mode={CODEMIRROR_MODES.twig}
+                                value={blog.comments_code}
+                                onChange={val => updateBlogData('comments_code', val)}
+                            />
                         }
+                        column={true}
                     />
                 }
             </div>
@@ -107,17 +118,18 @@ export default function SettingsComments() {
                 title="Newsletter Signup Form Code"
                 description="Paste the embed code provided by a email newsletter service here (for the sign up form)."
                 right={
-                    <textarea className="input"></textarea>
+                    <CodemirrorEditor
+                        mode={CODEMIRROR_MODES.twig}
+                        value={blog.newsletter_code}
+                        onChange={val => updateBlogData('newsletter_code', val)}
+                    />
                 }
+                column={true}
             />
 
         </div>
 
-        <SettingsSave
-            should={getDiff !== null}
-            onSave={save}
-            onDiscard={setToOriginal}
-        />
+        <SettingsSave keys={keys} />
 
     </div>
 

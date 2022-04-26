@@ -16,6 +16,8 @@ import SettingsLanguages from './SettingsLanguages';
 import SettingsGeneral from './SettingGeneral/SettingsGeneral';
 import SettingsHosting from './SettingsHosting';
 import SettingsSEO from './SettingsSEO';
+import SettingsColorMode from "./SettingsColorMode";
+import SettingsHighlight from "./SettingsHighlight";
 
 export default function Settings({type}) {
 
@@ -62,6 +64,12 @@ export default function Settings({type}) {
             break;
         case 'languages':
             Type = () => <SettingsLanguages />;
+            break;
+        case 'color-mode':
+            Type = () => <SettingsColorMode />; 
+            break;
+        case 'highlight':
+            Type = () => <SettingsHighlight />;
             break;
     }
 

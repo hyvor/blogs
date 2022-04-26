@@ -2,6 +2,7 @@
 
 namespace App\Helpers;
 
+use App\Exceptions\TrustedException;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 
@@ -11,21 +12,26 @@ class InternalAPICaller
     {
 
         $domain = config('blogs.domain_app');
+        $endpoint = trim($endpoint, '/');
 
         $request = Request::create(
-            "https://$domain/api/data/v0/blog/$subdomain/$endpoint",
+            "https://$domain/api/data/v0/$subdomain/$endpoint",
             'GET',
             $query
         );
 
-        try {
-            $response = app()->handle($request);
-            $data = $response->getContent();
-
+        $response = app()->handle($request);
+        $data = $response->getContent();
+        
+        if ($response->isSuccessful()) {
             return json_decode($data);
-        } catch (\Exception $e) {
-            return null;
+        } else {
+            
+            $error = json_decode($data)->error ?? 'Something went wrong';
+            throw new TrustedException($error);
+            
         }
+
     }
 
     public static function delivery(string $subdomain, string $path, array $query)

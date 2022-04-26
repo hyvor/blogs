@@ -95,7 +95,7 @@ Route::prefix('/api/console/v0/blog/{subdomain}')
 
         // Blog General CRUD 
         Route::post('/blog/variant', [ConsoleBlogController::class, 'createBlogVariant']);
-        Route::put('/blog', [ConsoleBlogController::class, 'updateBlog']);
+        Route::patch('/blog', [ConsoleBlogController::class, 'updateBlog']);
         Route::post('/blog/feature/image', [ConsoleBlogController::class, 'updateBlogFeatureImage']);
         Route::post('/blog/icon', [ConsoleBlogController::class, 'updateBlogIcon']);
 

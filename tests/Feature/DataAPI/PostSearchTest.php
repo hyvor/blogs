@@ -32,7 +32,7 @@ it('searches posts', function() {
         ->callDataApi('/posts/search', [
             'search' => "English"
         ])
-        ->assertStatus(200);
+        ->assertOk();
     
 });
 
@@ -40,6 +40,6 @@ it('does not work without search query', function() {
    
     $this
         ->callDataApi('/posts/search')
-        ->assertStatus(400);
+        ->assertUnprocessable();
     
 });

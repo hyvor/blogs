@@ -20,8 +20,14 @@ class BlogObject
 
     public SocialMediaObject $social;
 
-    public array $nav_header;
-    public array $nav_footer;
+    /**
+     * @var NavObject[]
+     */
+    public array $nav_header = [];
+    /**
+     * @var NavObject[]
+     */
+    public array $nav_footer = [];
     
     public LanguageObject $languageObject;
 
@@ -54,8 +60,18 @@ class BlogObject
 
         $this->code_head = $blog->code_head;
         $this->code_foot = $blog->code_foot;
+        
+        $blog->navigations->each(function ($nav) {
+            
+            $navObject = new NavObject($nav);
+            if ($nav->type === 'header') {
+                $this->nav_header[] = $navObject;
+            } else {
+                $this->nav_footer[] = $navObject;
+            }
+            
+        });
 
-        // TODO:
     }
 
 }

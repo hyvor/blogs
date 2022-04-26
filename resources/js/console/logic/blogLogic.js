@@ -9,18 +9,12 @@ const blogLogic = kea({
 
     actions: ({values}) => ({
         setBlog: (blog) => ({blog}),
-        addBlogVarian: (user) => ({user}),
-        updateBlog: (user) => ({user}),
+        setOriginal: (blog) => ({blog}),
         updateBlogData: (key, value) => ({key, value}),
-        save: () => false,
-        setToOriginal: () => ({original: values.blogOriginal}),
-
-        addFeatureImage: (blog) => ({blog}),
-        addIcon: (blog) => ({blog}),
-
+        discardChanges: (keys) => ({keys, original: values.blogOriginal}),
     }),
 
-    ajax: ({actions, props}) => ({
+    ajax: ({actions, selectors, props}) => ({
 
         load: async () => {
             const blog = await api.get(props.subdomain, '/blog');
@@ -31,52 +25,13 @@ const blogLogic = kea({
             const blog = await api.post(props.subdomain, '/blog/variant', {
                 languageId: languageId,
             })
-            actions.addBlogVarian(blog);
+            actions.addBlogVariant(blog);
         },
-            
-        updateData: async ({
-            subdomainEdit, name, description, social_facebook, social_twitter, 
-            social_linkedin, social_youtube, social_instagram, social_github
-            }) => {
-
-            console.log( subdomainEdit, name, description, social_facebook, social_twitter, 
-                social_linkedin, social_youtube, social_instagram, social_github )
-
-            const blog = await api.patch(props.subdomain, '/blog', {
-                subdomain:subdomainEdit,
-                name: name,
-                description:description,
-                social_facebook:social_facebook,
-                social_twitter:social_twitter,
-                social_linkedin:social_linkedin,
-                social_youtube: social_youtube,
-                social_instagram:social_instagram,
-                social_github:social_github,
-            });
-            actions.updateBlogData(blog);
-        },
-
-
-        uploadFeatureImage: async ({featureImage}) => {
-
-            var formData = new FormData();
-            formData.append('featureImage', featureImage, featureImage.name); 
-            const image = await api.post(props.subdomain, '/blog/feature/image', formData);
-            actions.addFeatureImage(image);
-        },
-
-
-        uploadIcon: async ({icon}) => {
-            // console.log(icon)
-            // const user = await api.post(props.subdomain, '/blog/icon', {
-            //     icon: icon,
-            // })
-            // actions.updateIcon(user);
-
-            var formData = new FormData();
-            formData.append('icon', icon, icon.name); 
-            const iconUpdate = await api.post(props.subdomain, '/blog/icon', formData);
-            actions.addIcon(iconUpdate);
+        
+        save: async ({keys}) => {
+            const diff = selectors.getDiff()(keys);
+            const blog = await api.patch(props.subdomain, '/blog', diff);
+            actions.setOriginal(blog);
         },
 
     }),
@@ -85,16 +40,19 @@ const blogLogic = kea({
 
         blogOriginal: [{}, {
             setBlog: (_, {blog}) => blog,
+            setOriginal: (_, {blog}) => blog
         }],
 
         blog: [{}, {
             setBlog: (_, {blog}) => blog,
-            addBlogVarian: (state, {blog}) => [blog, ...state],
-            // updateBlog:(state, {user}) => state.map(
-            //     stateUser => stateUser.id === user.id ? user : stateUser
-            // ),
-            updateBlogData: (state, {key, value}) => ({...state, ...{[key]: value}}),
-            setToOriginal: (_, {original}) => original 
+            updateBlogData: (state, {key, value}) => ({...state, ...{[key]: value === '' ? null : value}}),
+            discardChanges: (blog, {original, keys}) => {
+                const obj = {}
+                keys.forEach(key => {
+                    obj[key] = original[key]
+                })
+                return {...blog, ...obj};
+            } 
         }],
 
         featureImage: [[], {
@@ -113,13 +71,15 @@ const blogLogic = kea({
         getDiff: [
             (selectors) => [selectors.blog, selectors.blogOriginal],
             (blog, blogOriginal) => {
-                const diff = {};
-                for (var i in blogOriginal) {
-                    if (blog[i] !== blogOriginal[i]) {
-                        diff[i] = blog[i]
+                return (keys) => {
+                    const diff = {};
+                    for (var i in blogOriginal) {
+                        if (keys.indexOf(i) >= 0 && blog[i] !== blogOriginal[i]) {
+                            diff[i] = blog[i]
+                        }
                     }
+                    return Object.keys(diff).length > 0 ? diff : null;
                 }
-                return Object.keys(diff).length > 0 ? diff : null;
             }
         ]
 

@@ -7,6 +7,7 @@
 @import './User.scss';
 @import './Route.scss';
 @import './Media.scss';
+@import './Highlight.scss';
 
 .settings-view {
 
@@ -48,12 +49,17 @@
             margin-bottom:20px;
         }
     }
+
+
+    .CodeMirror {
+        height: 200px;
+    }
 }
 
 .settings-save {
 
     position: fixed;
-    bottom: 20px;
+    bottom: 30px;
     left: 300px;
     width:100%;
     text-align: center;

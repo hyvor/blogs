@@ -41,6 +41,9 @@ class CacheRepository
     
     public static function get(Blog $blog, string $path) : ?DeliveryAPIResponseObject
     {
+
+        if (config('app.debug') === true)
+            return null;
         
         $tag = self::getCacheKeyTag($blog);
         $key = self::getCacheKey($blog, $path);

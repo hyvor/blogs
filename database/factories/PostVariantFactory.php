@@ -35,7 +35,7 @@ class PostVariantFactory extends Factory
             'status' => Arr::random(['draft', 'published', 'scheduled']),
             'content' => $content,
             'title' => $this->faker->sentence,
-            'description' => $this->faker->sentence,
+            'description' => $this->faker->paragraph,
         ];
 
     }

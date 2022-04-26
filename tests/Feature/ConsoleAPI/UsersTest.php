@@ -14,7 +14,7 @@ it('fetches users', function() {
    
     $this
         ->callConsoleApi('GET', 'users')
-        ->assertStatus(200)
+        ->assertOk()
         ->assertJson(function (AssertableJson $json) {
             $json->has('0', function (AssertableJson $json) {
                     $json->has('id')
@@ -65,7 +65,7 @@ it('deleting user with the default language', function() {
         ->callConsoleApi('DELETE', 'user/'.$id, [
             'languageId' => 1,
         ])
-        ->assertStatus(200);    
+        ->assertOk();    
 });
 
 it('deleting user variant except the default language', function() {
@@ -75,7 +75,7 @@ it('deleting user variant except the default language', function() {
         ->callConsoleApi('DELETE', 'user/'.$id, [
             'languageId' => 2,
         ])
-        ->assertStatus(200);   
+        ->assertOk();   
 });
 
 it('when deleting if the language ID is null', function() {
@@ -96,7 +96,7 @@ it('create variant ( It should not be the default language )', function() {
             'userId' => 1,
             'languageId' => 2,
         ])
-        ->assertStatus(200);
+        ->assertOk();
 });
 
 it('create variant ( If language id is null ) ', function() {
@@ -120,7 +120,7 @@ class UsersTest extends TestCase
     // public function test_get_request()
     // {
     //     $response = $this->callEndpoint('GET', 'users', ['limit' => 2]);
-    //     $response->assertStatus(200);
+    //     $response->assertOk();
     // }
 
     // public function test_post_request()

@@ -23,7 +23,7 @@ class BlogCreateTest extends TestCase
         $this->callBlogCreateApi([
             'name' => 'another test blog',
             'subdomain' => 'another-test'
-        ])->assertStatus(200)->assertJson(function ($json) {
+        ])->assertOk()->assertJson(function ($json) {
             $json->has('user');
             $json->has('blog');
         });
@@ -33,19 +33,19 @@ class BlogCreateTest extends TestCase
         $this->callBlogCreateApi([
             'name' => 'A name',
             'subdomain' => 'test' // this is duplicate from seeder
-        ])->assertStatus(400);
+        ])->assertUnprocessable();
     }
 
     public function testEmptyName() {
         $this->callBlogCreateApi([
             'subdomain' => 'test'
-        ])->assertStatus(400);
+        ])->assertUnprocessable();
     }
 
     public function testEmptySubdomain() {
         $this->callBlogCreateApi([
             'name' => 'some name'
-        ])->assertStatus(400);
+        ])->assertUnprocessable();
     }
 
     /**

@@ -6,6 +6,7 @@ use App\Domains\Post\PostSearchRepository;
 use App\Models\Blog;
 use App\Models\BlogVariant;
 use App\Models\Language;
+use App\Models\Navigation;
 use App\Models\Post;
 use App\Models\PostAuthor;
 use App\Models\PostVariant;
@@ -134,6 +135,16 @@ class DatabaseSeeder extends Seeder
                 ]);*/
                 
             });
+            
+            Navigation::factory()
+                ->count(10)
+                ->state(new Sequence(
+                    ['type' => 'header'],
+                    ['type' => 'footer'],
+                ))
+                ->create([
+                    'blog_id' => $blog
+                ]);
             
         }
 

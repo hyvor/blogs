@@ -2,22 +2,16 @@
 
 namespace App\Domains\Post;
 
-use App\Data\Params\ConsoleAPI\PostsFilterParam;
 use App\Domains\Language\LanguageRepository;
-use App\Domains\Post\Events\PostPublishedEvent;
-use App\Exceptions\TrustedException;
+use App\Helpers\CollectionWithTotal;
 use App\Models\Blog;
 use App\Models\Language;
 use App\Models\Post;
 use App\Models\PostVariant;
 use App\Models\Tag;
-use App\Models\PostTag;
-use App\Models\User;
-use App\Types\Post\PostInputListFiltersType;
 use Carbon\Carbon;
 use Hyvor\FilterQ\Facades\FilterQ;
 use Illuminate\Database\Eloquent\Collection;
-use Illuminate\Support\Facades\DB;
 
 class PostRepository
 {
@@ -128,8 +122,6 @@ class PostRepository
      * This is for the Data API
      * 
      * ALWAYS USE NAMED ARGUMENT WHEN USING THIS FUNCTION
-     * 
-     * @return array{'posts': Collection, 'total': int}
      */
     public static function getPostsWithFilterQ(
         Blog $blog,
@@ -141,7 +133,7 @@ class PostRepository
             ['posts.published_at', 'DESC']
         ],
         bool $isPages = false
-    ) : array {
+    ) : CollectionWithTotal {
 
         $builder = FilterQ::expression($filter)
             ->builder(Post::class)
@@ -173,8 +165,8 @@ class PostRepository
                     ->valueType('string|int')
                     ->operators('=,!=');
 
-                $keys->add('featured_image')
-                    ->column('posts.featured_image')
+                $keys->add('featured_image_url')
+                    ->column('posts.featured_image_url')
                     ->valueType('null')
                     ->operators('=,!=');
 
@@ -230,17 +222,14 @@ class PostRepository
             ->where('posts.blog_id', $blog->id)
             ->where('post_variants.status', 'published')
             ->where('posts.is_page', $isPages)
+            ->select('posts.*')
             ->limit($limit)
             ->offset($offset)
-            ->select('posts.*')
             ->get();
 
-        $total = $builder->count();
+        $total = $builder->offset(0)->count();
 
-        return [
-            'posts' => $posts,
-            'total' => $total
-        ];
+        return new CollectionWithTotal($posts, $total);
 
     }
 

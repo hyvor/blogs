@@ -7,182 +7,147 @@ use App\Models\Language;
 use App\Models\Post;
 use App\Models\PostVariant;
 use Illuminate\Database\Eloquent\Factories\Sequence;
-use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Testing\Fluent\AssertableJson;
-use Tests\TestCase;
 
-class PostTest extends TestCase
+function getPostObject(Post $post, Blog $blog, Language $language)
 {
+    return json_decode(json_encode(new PostObject($post, $blog, $language)), true);
+}
 
-    use RefreshDatabase;
+beforeEach(function () {
 
-    private Blog $blog;
-    private array $languages;
-    private Post $post;
-    private array $postObject;
-    private array $postObject2;
+    $this->blog = Blog::find(config('test.blog_id'));
 
-    /**
-     * Adds a post with 2 languages in it
-     */
-    protected function setUp() : void
-    {
-
-        parent::setUp();
-
-        $this->blog = Blog::find(1);
-
-        $post = Post::factory()
-            ->has(
-                PostVariant::factory()
-                    ->count(2)
-                    ->state(new Sequence(
-                        ['language_id' => $this->blog->languages[0]],
-                        ['language_id' => $this->blog->languages[1]],
-                    ))
-                    ->state(function() {
-                        return ['status' => 'published'];
-                    })
-                    ,
-                'variants'
-            )
-            ->create([
-                'blog_id' => $this->blog,
-            ]);
-
-        // refetch with relationships
-        $this->post = Post::find($post->id);
-
-        $this->postObject = json_decode(
-            json_encode(
-                new PostObject($this->post, $this->blog, $this->blog->languages[0]
-            )
-        ), true);
-        $this->postObject2 = json_decode(
-            json_encode(
-                new PostObject($this->post, $this->blog, $this->blog->languages[1]
-            )
-        ), true);
-
-    }
-
-    public function test_post_with_id()
-    {
-
-        $response = $this->callDataApi('/post', [
-            'id' => $this->post->id      
+    $post = Post::factory()
+        ->has(
+            PostVariant::factory()
+                ->count(2)
+                ->state(new Sequence(
+                    ['language_id' => $this->blog->languages[0]],
+                    ['language_id' => $this->blog->languages[1]],
+                ))
+                ->state(function () {
+                    return ['status' => 'published'];
+                }),
+            'variants'
+        )
+        ->create([
+            'blog_id' => $this->blog,
         ]);
 
-        $response->assertStatus(200)->assertExactJson($this->postObject);
+    // re-fetch with relationships
+    $this->post = Post::find($post->id);
 
-    }
+    $this->postObject = getPostObject($this->post, $this->blog, $this->blog->languages[0]);
+    $this->postObject2 = getPostObject($this->post, $this->blog, $this->blog->languages[1]);
+});
 
-    public function test_post_with_slug()
-    {
+it('works with post id', function () {
 
-        $response = $this->callDataApi('/post', [
+    $this
+        ->callDataApi('/post', [
+            'id' => $this->post->id
+        ])
+        ->assertOk()
+        ->assertExactJson($this->postObject);
+});
+
+it('requires an integer id', function () {
+   
+    $this
+        ->callDataApi('/post', [
+            'id' => 'something'
+        ])
+        ->assertUnprocessable();
+});
+
+it('works with post slug', function () {
+    
+    $this
+        ->callDataApi('/post', [
             'slug' => $this->post->slug
-        ]);
+        ])
+        ->assertOk()
+        ->assertExactJson($this->postObject);
+});
 
-        $response->assertStatus(200)->assertExactJson($this->postObject);
+it('works with id and lang', function () {
 
-    }
-
-    public function test_post_with_id_and_lang()
-    {
-
-        $response = $this->callDataApi('/post', [
+    $this
+        ->callDataApi('/post', [
             'id' => $this->post->id,
             'language' => $this->blog->languages[1]->code
-        ]);
+        ])
+        ->assertOk()
+        ->assertExactJson($this->postObject2);
+});
 
-        $response->assertStatus(200)->assertExactJson($this->postObject2);
+it('does not work with invalid language', function () {
 
-    }
-
-    public function test_post_with_invalid_language()
-    {
-
-        $response = $this->callDataApi('/post', [
+    $this
+        ->callDataApi('/post', [
             'id' => $this->post->id,
             'language' => 'jp'
-        ]);
+        ])->assertUnprocessable();
+});
 
-        $response->assertStatus(400);
+it('returns 404 for missing posts', function () {
 
-    }
-
-    public function test_post_missing()
-    {
-
-        $response = $this->callDataApi('/post', [
+    $this
+        ->callDataApi('/post', [
             'id' => $this->post->id + 1,
-        ]);
+        ])
+        ->assertNotFound();
+});
 
-        $response->assertStatus(404);
+it('returns 404 for missing variant', function () {
 
-    }
+    // delete variant
+    PostVariant::where('post_id', $this->post->id)
+        ->where('language_id', $this->blog->languages[1]->id)
+        ->delete();
 
-    public function test_post_with_invalid_variant()
-    {
-
-        // delete variant
-        PostVariant::where('post_id', $this->post->id)
-            ->where('language_id', $this->blog->languages[1]->id)
-            ->delete();
-
-        $response = $this->callDataApi('/post', [
+    $this
+        ->callDataApi('/post', [
             'id' => $this->post->id,
             'language' => $this->blog->languages[1]->code
-        ]);
+        ])
+        ->assertNotFound();
+});
 
-        $response->assertStatus(404);
+it('do not return unpublished posts', function () {
 
-    }
+    PostVariant::where('post_id', $this->post->id)
+        ->where('language_id', $this->blog->languages[0]->id)
+        ->update(['status' => 'draft']);
 
-    public function test_cant_get_unpublished_posts()
-    {
-
-        PostVariant::where('post_id', $this->post->id)
-            ->where('language_id', $this->blog->languages[0]->id)
-            ->update(['status' => 'draft']);
-
-        $response = $this->callDataApi('/post', [
+    $this
+        ->callDataApi('/post', [
             'id' => $this->post->id,
-        ]);
+        ])
+        ->assertUnprocessable();
+});
 
-        $response->assertStatus(400);
+it('do not return posts when blog id is wrong', function () {
 
-    }
-
-    public function test_wrong_blog_id_cant_access_posts()
-    {
-
-        $response = $this->callDataApi('/post', [
+    $this
+        ->callDataApi('/post', [
             'id' => $this->post->id,
-        ], Blog::find(2)->subdomain);
+        ], Blog::find(2)->subdomain)
+        ->assertNotFound();
+});
 
-        $response->assertStatus(404); // post not found
+it('filters keys', function () {
 
-    }
-
-    // a basic keys filtering check
-    // more thorough tests are done in KeyFilteringTest.php
-    public function test_keys_filtering()
-    {
-
-        $response = $this->callDataApi('/post', [
+    $this
+        ->callDataApi('/post', [
             'id' => $this->post->id,
             'keys' => 'id,slug'
-        ]);
-
-        $response->assertStatus(200)
-            ->assertJson(function (AssertableJson $json) {
-                $json->has('id')
-                    ->has('slug')
-                    ->missing('url');
-            });
-
-    }
-
-}
+        ])
+        ->assertOk()
+        ->assertJson(function (AssertableJson $json) {
+            $json->has('id')
+                ->has('slug')
+                ->missing('url');
+        });
+});

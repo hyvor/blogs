@@ -6,6 +6,7 @@ use App\Data\Objects\ConsoleAPI\UserBlog\UserBlogObject;
 use App\Http\Controllers\Controller;
 use App\Domains\User\UserRepository;
 // use Hyvor\HyvorConnecter\User;
+use Hyvor\SyntaxHighlighter\Highlighter;
 use Illuminate\Http\Request;
 
 class ConsoleViewController extends Controller
@@ -24,7 +25,9 @@ class ConsoleViewController extends Controller
                 'app' => config('blogs.domain_app'),
                 'delivery' => config('blogs.domain_delivery'),
                 'hyvor' => config('blogs.domain_hyvor'),
-            ]
+            ],
+            
+            'syntax_themes' => Highlighter::getAllThemes()
         ];
 
         return view('console', ['config' => $config]);

@@ -2,6 +2,7 @@
 namespace App\Domains\Delivery\RouteProcessors;
 
 use App\Data\Enums\ThemeFileFolderEnum;
+use App\Data\Objects\DataAPI\BlogObject;
 use App\Data\Objects\DeliveryAPI\DeliveryAPIResponseObject;
 use App\Domains\ThemeFiles\ThemeFilesRepository;
 use App\Domains\Delivery\PathMatcher;
@@ -27,7 +28,9 @@ class StylesProcessor implements RouteProcessorInterface {
          * Step 1: First, compile Twig inside SCSS files
          */
         foreach ($files as $file) {
-            $filesArray[$file->name] = TwigRenderer::renderString($file->content, ['color' => 'blue']);
+            $filesArray[$file->name] = TwigRenderer::renderString($file->content, [
+                'color' => 'blue'
+            ]);
         }
 
         $scssCompiler = new Compiler();

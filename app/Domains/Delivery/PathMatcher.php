@@ -177,7 +177,7 @@ class PathMatcher {
 
             $routeMatcher->add($route->name, $match, $defaults, $requirements, $route);            
         }
-
+        
         $this->matchAndSetResponseObject($routeMatcher);
 
     }
@@ -211,7 +211,7 @@ class PathMatcher {
     private function matchAndSetResponseObject(RouteMatcher $routeMatcher) : bool {
 
         $matchedRoute = $routeMatcher->match();
-
+        
         if ($matchedRoute) {
 
             $processor = new RouteProcessor($this, $matchedRoute, $this->language);
@@ -250,7 +250,8 @@ class PathMatcher {
         }
     }
 
-    public function getThemable() {
+    public function getThemable() : Blog|LocalDev
+    {
         return $this->localDev ?? $this->blog;
     }
 

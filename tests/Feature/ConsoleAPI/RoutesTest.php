@@ -9,7 +9,7 @@ use Illuminate\Testing\Fluent\AssertableJson;
 it('fetches routes', function() {
     $this
         ->callConsoleApi('GET', 'route')
-        ->assertStatus(200);
+        ->assertOk();
 });
 
 
@@ -22,7 +22,7 @@ it('creates a route success', function() {
             'match' => $data,
             'template' => $data
         ])
-        ->assertStatus(200)
+        ->assertOk()
         ->assertJson(function (AssertableJson $json) use ($data) {
             $json->has('id')
                 ->where('match', $data)
@@ -32,9 +32,9 @@ it('creates a route success', function() {
 });
 
 it('creating route fails on empty fields', function() {
-    $this
-        ->callConsoleApi('POST', 'route')
-        ->assertStatus(500);    
+    dd($this
+        ->callConsoleApi('POST', 'route'))
+        ->assertStatus(500);
 });
 
 
@@ -79,7 +79,7 @@ it('deleting route success', function() {
     $id = 1;
     $this
         ->callConsoleApi('DELETE', 'route/'.$id)
-        ->assertStatus(200);    
+        ->assertOk();    
 });
 
 it('updating a route success', function() {
@@ -92,5 +92,5 @@ it('updating a route success', function() {
             'match' => $data,
             'template' => $data
         ])
-        ->assertStatus(200);
+        ->assertOk();
 });

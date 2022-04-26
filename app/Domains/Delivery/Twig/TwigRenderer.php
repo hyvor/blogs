@@ -3,6 +3,8 @@ namespace App\Domains\Delivery\Twig;
 
 use Illuminate\Support\Facades\App;
 use Twig\Environment;
+use Twig\Extension\StringLoaderExtension;
+use Twig\Extra\String\StringExtension;
 use Twig\Loader\ArrayLoader;
 
 class TwigRenderer {
@@ -46,7 +48,10 @@ class TwigRenderer {
         $twig->addExtension(new TwigExtensions);
 
         // for template_from_string
-        $twig->addExtension(new \Twig\Extension\StringLoaderExtension());
+        $twig->addExtension(new StringLoaderExtension);
+        
+        // string filters
+        $twig->addExtension(new StringExtension);
 
         // debugging
         if ($isLocal) {

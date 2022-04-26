@@ -20,6 +20,7 @@ beforeEach(function() {
 it('fetches redirects', function() {
 
     $this
+<<<<<<< HEAD
     ->callConsoleApi('GET', 'redirect', [
        'limit' => 5
     ])
@@ -31,6 +32,19 @@ it('fetches redirects', function() {
                     ->etc();
             });
     });
+=======
+        ->callConsoleApi('GET', 'redirect', [
+           'limit' => 5
+        ])
+        ->assertOk()
+        ->assertJson(function (AssertableJson $json) {
+            $json->count(5)
+                ->has('0', function (AssertableJson $json) {
+                    $json->has('id')
+                        ->etc();
+                });
+        });
+>>>>>>> origin
 });
 
 it('fetches redirect with offset', function() {
@@ -72,14 +86,14 @@ it('creates redirect should fail if type is not 302 or 301', function() {
             'to' => $data,
             'type' => 'hello'
         ])
-        ->assertStatus(400);
+        ->assertUnprocessable();
 });
 
 it('creating redirects fails on empty values', function() {
 
     $this
         ->callConsoleApi('POST', 'redirect')
-        ->assertStatus(400);    
+        ->assertUnprocessable();    
 });
 
 it('creates redirect should fail if (path) has spaces', function() {
@@ -91,7 +105,7 @@ it('creates redirect should fail if (path) has spaces', function() {
             'to' => $data,
             'type' => '301'
         ])
-        ->assertStatus(400);
+        ->assertUnprocessable();
 });
 
 it('creates redirect should fail if (to) has spaces', function() {
@@ -103,7 +117,7 @@ it('creates redirect should fail if (to) has spaces', function() {
             'to' => 'this is also wrong',
             'type' => 'hello'
         ])
-        ->assertStatus(400);
+        ->assertUnprocessable();
 });
 
 it('creates redirect should fail if (to) has a null value', function() {
@@ -115,7 +129,7 @@ it('creates redirect should fail if (to) has a null value', function() {
             'to' => null,
             'type' => 'hello'
         ])
-        ->assertStatus(400);
+        ->assertUnprocessable();
 });
 
 it('creates redirect should fail if (path) has a null value', function() {
@@ -127,7 +141,7 @@ it('creates redirect should fail if (path) has a null value', function() {
             'to' => $data,
             'type' => 'hello'
         ])
-        ->assertStatus(400);
+        ->assertUnprocessable();
 });
 
 it('deleting redirect success', function() {
@@ -135,7 +149,11 @@ it('deleting redirect success', function() {
     $id = 1;
     $this
         ->callConsoleApi('DELETE', 'redirect/'.$id)
+<<<<<<< HEAD
         ->assertOk();
+=======
+        ->assertOk();    
+>>>>>>> origin
 });
 
 it('updating a route success', function() {
@@ -147,7 +165,11 @@ it('updating a route success', function() {
             'match' => 'one',
             'template' => '301'
         ])
+<<<<<<< HEAD
         ->assertStatus(400);
+=======
+        ->assertOk();
+>>>>>>> origin
 });
 
 it('updating redirect should fail if (path) has spaces', function() {
@@ -160,7 +182,7 @@ it('updating redirect should fail if (path) has spaces', function() {
             'to' => $data,
             'type' => '301'
         ])
-        ->assertStatus(400);
+        ->assertUnprocessable();
 });
 
 it('updating redirect should fail if (to) has spaces', function() {
@@ -173,7 +195,7 @@ it('updating redirect should fail if (to) has spaces', function() {
             'to' => 'this is also wrong',
             'type' => 'hello'
         ])
-        ->assertStatus(400);
+        ->assertUnprocessable();
 });
 
 it('updating redirect should fail if (to) has a null value', function() {
@@ -186,7 +208,7 @@ it('updating redirect should fail if (to) has a null value', function() {
             'to' => null,
             'type' => 'hello'
         ])
-        ->assertStatus(400);
+        ->assertUnprocessable();
 });
 
 it('updating redirect should fail if (path) has a null value', function() {
@@ -199,5 +221,5 @@ it('updating redirect should fail if (path) has a null value', function() {
             'to' => $data,
             'type' => 'hello'
         ])
-        ->assertStatus(400);
+        ->assertUnprocessable();
 });
