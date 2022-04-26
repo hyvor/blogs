@@ -1,0 +1,52 @@
+@import '../colors.scss';
+@import '../font.scss';
+@import '../normalize.scss';
+
+@import '../console/components/button.scss';
+
+@import './nav.scss';
+@import './footer.scss';
+
+@import './index.scss';
+@import './pricing.scss';
+@import './docs.scss';
+
+a.link {
+    font-weight: 600;
+    color: $color-accent;
+    cursor: pointer;
+    text-decoration: underline;
+}
+
+#instantclick-bar {
+    background: $color-accent;
+}
+
+// some copies from bootstrap
+.container {
+    width: 100%;
+    padding-right: 15px;
+    padding-left: 15px;
+    margin-right: auto;
+    margin-left: auto;
+} 
+@media (min-width: 576px) {
+    .container {
+        width: 540px;
+    }
+}
+@media (min-width: 768px) {
+    .container {
+        width: 720px;
+    }
+}
+@media (min-width: 992px) {
+    .container {
+        width: 960px;
+    }
+}
+@media (min-width: 1200px) {
+    .container {
+        width: 1140px;
+    }
+}

@@ -1,0 +1,20 @@
+.post-no {
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    height: 100%;
+
+    .view {
+        width: 350px;
+        text-align: center;
+    }
+
+    img {
+        max-width: 100%;
+    }
+
+    .title {
+        margin-top: 40px;
+    }
+
+}

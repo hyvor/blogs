@@ -1,0 +1,90 @@
+
+
+// for both console and landing pages
+.button {
+    background: $color-accent;
+    color: #fff;
+    border-radius: 20px;
+    border: none;
+    font-weight: 600;
+    font-family: inherit;
+    cursor: pointer;
+    font-size: 14px;
+    padding: 8px 20px;
+    display:inline-block;
+    border:1px solid transparent;
+
+    &.big {
+        padding: 10px 30px;
+    }
+
+    &.small {
+        font-size: 12px!important;
+        padding: 5px 10px;
+    }
+
+    &.medium {
+        font-size:12px;
+        padding:6px 14px;
+    }
+
+    &.inactive {
+        background: $color-accent-light;
+        color: $color-text;
+        border-color: $color-accent-light;
+    }
+
+    &.secondary {
+        background: none;
+        color: $color-text-medium;
+        border: 1px solid $color-grey;
+        box-shadow: 0 1px 2px 0 rgba(0,0,0,0.05);
+        transition:.1s color, .1s border-color;
+        &:hover {
+            color: $color-text;
+            border-color: $color-accent-light;
+        }
+    }
+
+    &.text-only {
+        background-color:transparent;
+        color: $color-text;
+    }
+
+    &.disabled {
+        cursor: not-allowed;
+        opacity: 0.5;
+    }
+
+
+    // colors
+    &.danger {
+        background: $color-red;
+    }
+    &.light {
+        background-color: $color-grey;
+        color: $color-accent;
+    }
+    &.orange {
+        background-color: $color-orange-dark;
+    }
+
+    &.green {
+        background-color: $color-green;
+    }
+}
+
+.loadMore{
+    width: 100px;
+    display: block;
+    text-align: center;
+    margin: 20px auto;
+    padding: 5px;
+    border-radius: 20px;
+    border: 1px solid transparent;
+    color: #896c6b;
+    transition: .3s;
+    font-size: 12px;
+    font-weight: 600;
+    cursor: pointer;
+} 

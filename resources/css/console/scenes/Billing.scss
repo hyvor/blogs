@@ -1,0 +1,353 @@
+@import '../../colors.scss';
+
+.billing-view {
+    height:100%;
+    display: flex;
+
+    .billing-column {
+        display:flex;
+        flex:1;
+        flex-direction: column;
+    }
+
+    .billing-section {
+        margin:0 5px;
+        margin-bottom:10px;
+        padding:30px;
+        .section-title {
+            font-size: 20px;
+            font-weight: 600;
+            margin-bottom: 15px;
+
+            &.plans-title {
+                display:flex;
+                align-items: center;
+                .title {
+                    flex:1;
+                    a {
+                        font-size:12px;
+                    }
+                }
+                .frequency-selector {
+                    font-size: 12px;
+                    font-weight: initial;
+                    background: $color-accent-light;
+                    border-radius: 20px;
+                    padding:2px 0;
+                    span {
+                        border-radius: 20px;
+                        padding: 2px 6px;
+                        cursor: pointer;
+                        font-weight: 600;
+                        &.active {
+                            background: $color-accent;
+                            color: $color-text-white;
+                        }
+                    }
+                }
+            }
+        }
+        .section-content {
+            .plans {
+                .plan {
+                    padding: 15px;
+                    border-radius: 20px;
+                    background: $color-card;
+                    margin-bottom: 10px;
+                    display:flex;
+                    &.current {
+                        box-shadow: 0 0 2px 0px #886c6b;
+                    }
+                    .plan-left {
+                        flex:1;
+                        align-items: center;
+                        display: flex;
+                    }
+                    .plan-right {
+                        display: flex;
+                        align-items: center;
+                        .plan-right-button-wrap {
+                            min-width: 65px;
+                            text-align: center;
+                            .current-text {
+                                font-size: 10px;
+                                text-transform: uppercase;
+                                font-weight: 600;
+                                color: $color-accent;
+                            }
+                        }
+                    }
+                    .plan-name {
+                        font-size: 16px;
+                        font-weight: 600;
+                    }
+                    .plan-price {
+                        font-size:14px;
+                        font-weight: 600;
+                        margin-right: 10px;
+                        .no-monthly {
+                            font-size: 11px;
+                            font-weight: normal;
+                            color: $color-text-light;
+                        }
+                    }
+                    .plan-button {
+                        
+                    }
+
+                    .team-users-selector {
+                        margin-left: 10px;
+                        border-radius: 20px;
+                        overflow: hidden;
+                        display: inline-flex;
+                        align-items: center;
+                        user-select: none;
+                        .minus, .plus {
+                            margin-right: 4px;
+                            width:20px;
+                            height:20px;
+                            display: inline-flex;
+                            align-items: center;
+                            justify-content:center;
+                            border-radius: 50%;
+                            background: $color-accent-light;
+                            font-weight: 600;
+                            cursor: pointer;
+                        }
+                        .count {
+                            margin-right:4px;
+                        }
+                    }
+                }
+            }
+        }
+
+
+        .section-desc {
+            font-size: 12px;
+            text-align: center;
+            padding: 10px;
+            color: $color-text-light;
+        }
+    }
+
+    .subscription-details {
+
+        .details-row {
+            display: flex;   
+            margin-bottom:15px;
+            .details-card {
+                flex: 1;
+                text-align: center;
+                background: $color-card;
+                border-radius: 20px;
+                padding:15px;
+                &:not(:last-child) {
+                    margin-right: 8px;
+                }
+            }
+            .card-content {
+                font-size: 20px;
+                text-transform: capitalize;
+                font-weight: 600;
+                margin-top: 5px;
+                .helper-text {
+                    font-size:14px;
+                    text-transform: initial;
+                    font-weight: normal;
+                }
+            }
+            .plan-status {
+                font-size: 12px;
+                padding: 5px 15px;
+                text-transform: uppercase;
+                border-radius: 20px;
+                color: $color-text-white;
+                &.active {
+                    background: $color-green;
+                }
+                &.past-due, &.paused {
+                    background-color: $color-orange;
+                    color: $color-text;
+                }
+                &.deleted {
+                    background-color: $color-red;
+                }
+            }
+        }
+
+        .card {
+            margin: 15px 0;
+            border-radius: 20px;
+            background-color:$color-card;
+            padding:30px;
+
+
+            .card-title {
+                font-weight: 600;
+                font-size: 16px;
+                display: flex;
+                .title-text {
+                    flex:1;
+                }
+                a {
+                    font-size:14px;
+                }
+            }
+            .card-desc {
+                display: flex;
+                .card-details {
+                    padding: 30px;
+                    padding-right: 0;
+                    flex: 1;
+                    display: flex;
+                    flex-direction: column;
+                    justify-content: space-evenly;
+                    font-weight: 600;
+                    & > div {
+                        display: flex;
+                    }
+                    .card-detail-name {
+                        flex: 1;
+                        color: $color-text-light;
+                    }
+                }
+            }
+        }
+
+        .payment-cycle {
+            .payment-top {
+                display: flex;
+                font-weight: 600;
+                align-items: center;
+            }
+            .payment-middle {
+                flex: 1;
+                text-align: center;
+            }
+            .payment-next .payment-amount {
+                text-align: right;
+            }
+            .payment-amount {
+                font-size: 18px;
+                margin: 2px 0;
+            }
+            .payment-bar {
+                margin: 6px 0;
+                width: 100%;
+                height: 15px;
+                background: $color-accent-light;
+                border-radius: 20px;
+                position: relative;
+                overflow: hidden;
+            }
+            .payment-bar-fill {
+                position: absolute;
+                left: 0;
+                top: 0;
+                height: 100%;
+                background: $color-accent;
+                border-radius: 20px;
+                transition: 0.3s width ease-out;
+            }
+            .payment-left-days {
+                text-align: center;
+                font-size:12px;
+                color: $color-text-light;
+                font-weight: normal;
+            }
+        }
+
+        .cancel-view {
+            text-align: center;
+            padding: 10px;
+        }
+
+    }
+
+    .usage {
+
+        .usage-bar-top {
+            display: flex;
+            font-weight: 600;
+
+            .usage-name {
+                flex: 1;
+            }
+            .usage-now {
+                margin-right: 4px;
+            }
+
+            .usage-full {
+                color: $color-text-light;
+                font-size: 12px;
+            }
+        }
+
+        .usage-bar-bar {
+            margin: 6px 0 15px;
+            width:100%;
+            height: 15px;
+            background: $color-accent-light;
+            border-radius: 20px;
+            position: relative;
+            overflow: hidden;
+        }
+        .usage-bar-fill {
+            position: absolute;
+            left: 0;
+            top: 0;
+            height: 100%;
+            background: $color-accent;
+            border-radius: 20px;
+            transition: .3s width ease-out;
+        }
+
+    }
+
+    .billing-history {
+
+        .receipts-row {
+            display: flex;
+            padding: 10px 20px;
+            text-align: center;
+            &.header {
+                background: $color-card;
+                border-radius: 20px;
+                font-weight: 600;
+            }
+            & > div {
+                flex: 1;
+                text-transform: capitalize;
+            }
+        }
+        .receipts-results-wrap {
+            max-height: 300px;
+            overflow: auto;
+        }
+
+        &.subscription-history {
+            .status-tag {
+                display: inline-block;
+                padding: 2px 10px;
+                border-radius: 20px;
+                font-size: 10px;
+                font-weight: 600;
+                text-transform: uppercase;
+                color: $color-text-white;
+                &.active {
+                    background-color: $color-green;
+                }
+                &.past-due, &.paused {
+                    background-color: $color-orange;
+                    color: $color-text;
+                }
+                &.deleted {
+                    background-color: $color-red;
+                }
+            }
+        }
+
+    }
+
+}

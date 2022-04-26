@@ -1,0 +1,42 @@
+<!DOCTYPE html>
+<html lang="{{ _lang }}">
+<head>
+
+<title>The Blog of Hyvor Blogs</title>
+
+{{ include(template_from_string(_head)) }}
+
+</head>
+<body class="index-pages">
+
+<div class="header-wrapper">
+    {% include('_header.twig') %}
+</div>
+
+<div class="index-heading">
+
+    <div class="heading-wrap">
+        <h1>The Blog</h1>
+        <h2>Blogging about how to blog</h2>
+    </div>
+
+    <div class="wave">{{ 'wave.svg' | asset }}</div>
+
+</div>
+
+<div class="posts">
+
+    {% for post in _posts %}
+        {% include '_post-card.twig'  %}
+    {% endfor %}
+
+</div>
+
+{% include('_footer.twig') %}
+
+{{ _foot | raw }}
+
+</body>
+
+
+</html>

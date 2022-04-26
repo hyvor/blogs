@@ -1,0 +1,81 @@
+@import '../colors.scss';
+
+body.pricing {
+
+    .pricing-table {
+        padding-top: 75px;
+        background: $color-accent-light;
+
+        p {
+            font-size:14px;
+            text-align: center;
+            margin-top: 30px;
+            margin-bottom: 0;
+        }
+
+        table {
+            width:100%;
+            border-collapse: separate;
+            border-spacing: 0 20px;
+            font-size:14px;
+        }
+
+        tr:not(:first-child):not(:last-child) {
+            box-shadow: 0 0 30px rgb(0 0 0 / 5%);
+            border-radius: 20px;
+            td {
+                background: #fff;
+                &:first-child {
+                    border-top-left-radius: 20px;
+                    border-bottom-left-radius: 20px;
+                    background: $color-box;
+                    font-weight: 600;
+                    vertical-align: middle;
+                }
+                &:last-child {
+                    border-top-right-radius: 20px;
+                    border-bottom-right-radius: 20px;
+                }
+            }
+        }
+
+        th, td {
+            padding:30px;
+            width:20%;
+            vertical-align: top;
+        }
+
+        .plan-name {
+            font-size: 14px;
+            color: $color-text;
+        }
+        .plan-price {
+            margin-top: 10px;
+            display: flex;
+        }
+
+        .price {
+            font-size:30px;
+            line-height:30px;
+        }
+        .price-details {
+            display: flex;
+            flex-direction: column;
+            margin-left: 6px;
+            font-weight: normal;
+            font-size: 12px;
+            color: $color-text;
+            .period {
+                line-height:1;
+                margin-bottom:2px;
+            }
+        }
+        .plan-price-monthly {
+            font-size: 14px;
+            font-weight: normal;
+            color:$color-text;
+            margin-top: 4px;    
+        }
+    }
+
+}

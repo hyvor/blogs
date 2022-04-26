@@ -1,0 +1,47 @@
+
+.settings-general {
+    .social-media {
+        .global-dual-setting {
+            padding: 7px 0;
+            border: none!important;
+            align-items: center;
+            .input-view {
+                margin-bottom: 0;
+            }
+            .dual-title {
+                margin-bottom: 0;
+            }
+            .dual-right {
+                flex:3;
+            }
+        }
+    }
+
+    .global-languages-list .lang-tag {
+        margin-bottom:10px
+    }
+
+    .pointerEvent{
+        pointer-events: none;
+    }
+
+    .uploadButton{
+        margin: 20px 20px 20px 0px;
+    }
+
+    .image-head{
+         width: 100%;
+         display: flex;
+
+        .image-center{
+            width: 75px;
+            height: 75px;
+            border-radius: 50%;
+        }
+
+        .button-style{
+            margin-left: 25px;
+        }
+    }
+
+}

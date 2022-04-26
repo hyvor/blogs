@@ -1,0 +1,592 @@
+@import '../colors.scss';
+
+$prosemirror-hover-outline: 2px solid #8cf;
+$prosemirror-selected-outline: 3px solid #299af3;
+
+.post-editor {
+
+    .pm-tooltip {
+        position:absolute;
+        background: #fff;
+        box-shadow: 0 0 20px 8px rgba(136, 108, 107, 0.11);
+        border-radius: 20px;
+        padding: 5px 10px;
+        margin-bottom: 10px;
+        z-index: 100;
+        span {
+            display: inline-flex;
+            cursor: pointer;
+            transition: 0.1s background-color;
+            width: 25px;
+            height: 25px;
+            align-items: center;
+            justify-content: center;
+            border-radius:50%;
+            margin-right:2px;
+            &:hover {
+                background-color: $color-hover;
+            }
+            &.active {
+                background-color: $color-accent-light;
+            }
+            &:after {
+                content: "";
+                top: 100%;
+                left: 50%;
+                transform: translateX(-50%);
+                width: 0;
+                height: 0;
+                border: 5px solid #fff;
+                border-bottom-color: transparent;
+                position: absolute;
+                border-left-color: transparent;
+                border-right-color: transparent;
+            }
+        }
+        // link input is shown
+        &.linking {
+            display: flex;
+            align-items: center;
+            span {
+                display:none;
+            }
+            input {
+                border:none;
+                font-size: 14px;
+                width: 200px;
+                outline:0;
+                padding: 5px;
+            }
+            .input-close {
+                font-size:12px;
+                cursor: pointer;
+                display:inline-block;
+                padding:4px;
+            }
+        }
+    }
+
+    .pm-slash-view {
+        position: absolute;
+        width: 325px;
+        max-height: 275px;
+        overflow:auto;
+        left: 50px;
+        opacity:0;
+        pointer-events: none;
+        margin-left:30px; // to fix editor padding
+        background: $color-box;
+        box-shadow: 0 0 15px 2px rgba(0,0,0,0.15);
+        border-radius: 20px;
+        z-index: 1;
+        &.open {
+            opacity: 1;
+            pointer-events: auto;
+        }
+        &.bottom {
+            margin-top:26px;
+        }
+        .match-item {
+            padding: 8px 14px;
+            cursor: pointer;
+            position: relative;
+            display: flex;
+            &.active {
+                background-color: $color-accent-light;
+            }
+            &:not(:last-child):after {
+                content: "";
+                position:absolute;
+                width:75%;
+                left:50%;
+                transform:translateX(-50%);
+                bottom:0;
+                height:1px;
+                background-color: $color-accent-light;
+            }
+            .item-icon {
+                display: flex;
+                justify-content: center;
+                align-items: center;
+                width: 30px;
+                font-size: 20px;
+                flex-shrink: 0;
+            }
+            .item-name-wrap {
+                margin-left: 8px;
+            }
+            .item-name {
+                font-weight: 600;
+            }
+            .item-desc {
+                font-size: 12px;
+                color: $color-text-light;
+            }
+        }
+    }
+}
+    
+
+
+// main CSS
+
+.ProseMirror {
+    position: relative;
+  }
+
+  .ProseMirror {
+    word-wrap: break-word;
+    white-space: pre-wrap;
+    white-space: break-spaces;
+    -webkit-font-variant-ligatures: none;
+    font-variant-ligatures: none;
+    font-feature-settings: "liga" 0; /* the above doesn't seem to work in Edge */
+  }
+
+  .ProseMirror pre {
+    white-space: pre-wrap;
+  }
+
+  .ProseMirror li {
+    position: relative;
+  }
+
+  .ProseMirror-hideselection *::selection {
+    background: transparent;
+  }
+  .ProseMirror-hideselection *::-moz-selection {
+    background: transparent;
+  }
+  .ProseMirror-hideselection {
+    caret-color: transparent;
+  }
+
+  .ProseMirror-selectednode {
+    outline: $prosemirror-selected-outline!important;
+  }
+  img.ProseMirror-separator {
+    display: inline !important;
+    border: none !important;
+    margin: 0 !important;
+  }
+
+/////////// main CSS end
+
+
+// placeholder
+.ProseMirror[data-placeholder]::before {
+    color: $color-text-light;
+    position: absolute;
+    content: attr(data-placeholder);
+    pointer-events: none;
+    line-height: 30px;
+}
+
+.ProseMirror {
+
+    font-size:18px;
+    font-family: $font-content;
+
+    &:focus-visible {
+        outline: none;
+    }
+
+    > *:first-child {
+        margin-top:0;
+    }
+
+    padding:25px 30px;
+    position: relative;
+    min-height:200px;
+    margin:auto;
+    width:700px;
+
+    blockquote, figure, h1, h2, h3, h4, h5, h6, ol, p, pre, ul {
+        margin:0;
+    }
+
+    .heading-wrap {
+        position: relative;
+        div {
+            position: absolute;
+            bottom:100%;
+            left:0;
+            color: $color-text-light;
+            font-size:12px;
+            margin-bottom: -4px;
+            display: flex;
+            width:100%;
+            input {
+                padding: 0;
+                background: transparent;
+                border: none;
+                width: 100%;
+                outline:none;
+                flex: 1;
+                display:block;
+            }
+        }
+
+        & + * {
+            margin-top:10px;
+        }
+    }
+
+    > * {
+        margin-bottom: 0;
+    }
+
+    p {
+        line-height: 30px;
+        margin-top: 30px;
+        letter-spacing: 0.2px;
+    }
+
+    :not(pre) > code {
+        background: rgba(135,131,120,0.15);
+        color: #EB5757;
+        border-radius: 3px;
+        font-size: 85%;
+        padding: 0.2em 0.4em;
+        font-family: monospace;
+    }
+
+    ul, ol {
+        margin-top: 30px;
+    }
+
+    li {
+        > * {
+            margin:5px 0!important;
+        }
+    }
+
+    h1 {
+        margin-top:30px;
+    }
+    h2 {
+        margin-top: 30px;
+    }
+    h3 {
+        margin-top: 25px;
+    }
+    h4 {
+        margin-top:20px;
+    }
+    h5, h6 {
+        margin-top:15px;
+    }
+
+
+    hr {
+        margin: 30px 0;
+        border-top: 2px solid $color-text-light-grey;
+    }
+
+    blockquote, aside {
+        margin-top: 30px;
+        border-left: 4px solid #000000;
+        padding: 10px 15px;
+        & > *:first-child {
+            margin-top:0;
+        }
+    }
+
+    aside {
+        border-left: none;
+        border-radius: 5px;
+        display:flex;
+        padding:0;
+        position:relative;
+        .emoji-icon {
+            text-align: center;
+            cursor: pointer;
+            user-select: none;
+            display: inline-block;
+            padding: 10px 12px;
+        }
+        .content-div {
+            flex: 1;
+            padding: 10px 10px 10px 0;
+        }
+        .color-pickers-wrap {
+            position: absolute;
+            right: 0;
+            bottom: 100%;
+        }
+        .color-picker {
+            display: inline-block;
+            width: 15px;
+            height: 15px;
+            border-radius: 50%;
+            margin-right: 5px;
+            cursor: pointer;
+            border: 1px solid #aaa;
+            position:relative;
+            .color-picker-view {
+                position: absolute;
+                top: 100%;
+                right: 0;
+                margin-top: 4px;
+                width: 200px;
+            }
+        }
+    }
+
+    figure {
+        margin-top:45px;
+
+        &:hover {
+            outline: $prosemirror-hover-outline;
+        }
+
+        figcaption {
+            padding: 7px;
+            font-size: 14px;
+            text-align: center;
+
+            &.empty:before {
+                content: "Enter caption...";
+                color: #aaa;
+                position: absolute;
+                left: 50%;
+                transform: translateX(-50%);
+                pointer-events: none;
+            }
+        }
+
+        rich {
+            position:relative;
+            display:block;
+            &:before {
+                content: "";
+                position:absolute;
+                z-index:1;
+                width:100%;
+                height:100%;
+                top:0;
+                left:0;
+            }
+        }
+    }
+    
+    rich, bookmark {
+        display: block;
+        input {
+            font-size: 14px;
+            border: none;
+            // border-radius: 20px;
+            padding: 8px;
+            width: 100%;
+            border:1px solid #eee;
+        }
+        &.url-input, &.loading {
+            & + figcaption {
+                display: none;
+            }
+        }
+    }
+
+    .embedding-placeholder {
+        flex:1;
+        font-size: 14px;
+        padding: 100px;
+        text-align: center;
+        color: $color-text-light;
+        background: $color-card;
+    }
+    
+    rich.url-input {
+        margin-top: 30px;
+    }
+
+    bookmark {
+        display: flex;
+        margin-top:30px;
+        border-radius: 20px;
+        &:hover {
+            outline: $prosemirror-hover-outline;
+        }
+        &.url-input {
+            outline:none!important;
+        }
+        .bookmark-wrap {
+            cursor: default;
+            display: flex;
+            border: 1px solid $color-grey;
+            border-radius: 20px;
+            overflow: hidden;
+            box-shadow: 0 0 5px rgb(0 0 0 / 6%);
+            width: 100%;
+            white-space: normal;
+            .bookmark-link-details {
+                flex: 2;
+                display: flex;
+                flex-direction: column;
+                padding: 15px 20px;
+                .bookmark-link-title {
+                    font-weight: 600;
+                }
+                .bookmark-link-description {
+                    font-size: 16px;
+                    margin-top: 4px;
+                    color: $color-text-light;
+                    overflow: hidden;
+                    // https://stackoverflow.com/a/13924997/9059939
+                    text-overflow: ellipsis;
+                    display: -webkit-box;
+                    -webkit-line-clamp: 2;
+                    line-clamp: 2;
+                    -webkit-box-orient: vertical;
+                }
+                .bookmark-link-domain {
+                    font-size: 14px;
+                    margin-top: 12px;
+                }
+            }
+            .bookmark-link-thumbnail {
+                flex: 1;
+                position: relative;
+                img {
+                    object-fit: cover;
+                    position: absolute;
+                    top: 0;
+                    left: 0;
+                    width: 100%;
+                    height: 100%;
+                }
+            }
+        }
+    }
+
+    .code-wrap {
+        margin-top:30px;
+        .code-toolbar {
+            white-space: normal;
+            padding: 10px;
+            background: $color-input;
+            border-radius: 20px 20px 0 0;
+            border-bottom: 1px solid #dddddd;
+        }
+        .code-toolbar-labels {
+            display: flex;
+            font-size: 12px;
+            div {
+                flex: 1;
+                padding-left: 4px;
+            }
+        }
+        .code-toolbar-inputs {
+            display: flex;
+            input {
+                flex: 1;
+                min-width: 0;
+                margin-right: 5px;
+                padding: 5px 10px;
+                font-size: 12px;
+                margin-top: 5px;
+                background: #fff;
+            }
+        }
+        
+        .CodeMirror {
+            font-size:14px;
+            height: initial;
+            padding:5px  0;
+            border-radius: 0 0 20px 20px;
+        }
+        .topbar {
+            background: $color-input;
+            border-radius: 20px 20px 0 0;
+            border-bottom: 1px solid #dddddd;
+            font-size:12px;
+            padding: 10px 15px;
+        }
+    }
+    
+
+    .image-wrap {
+        position:relative;
+        
+        .alt-input {
+            position: absolute;
+            top: 10px;
+            right: 10px;
+            width: 200px;
+            padding: 4px 10px;
+            border: 1px solid #aaa;
+            font-size: 12px;
+        }
+        
+        .image-uploader {
+            font-size: 14px;
+            height: 400px;
+            background-color: $color-card;
+            text-align: center;
+            position: relative;
+            .or {
+                margin: 10px 0;
+            }
+            .uploader-content {
+                position:absolute;
+                top:50%;
+                left:0;
+                transform: translateY(-50%);
+                width:100%;
+                transition: .3s all;
+                padding:15px;
+                input {
+                    width: 250px;
+                    transition: .3s width;
+                }
+            }
+            &.searching {
+                .uploader-content {
+                    top:0;
+                    transform:none;
+                }
+                .non-search {
+                    display:none;
+                }
+                input {
+                    width:100%;
+                }
+            }
+            .search-results {
+                display: flex;
+                max-height: 330px;
+                overflow: auto;
+                margin-top: 15px;
+                .images-column {
+                    flex: 1;
+                    &:first-child {
+                        margin-right:10px;
+                    }
+                }
+                img {
+                    width:100%;
+                    margin-bottom:15px;
+                    cursor: pointer;
+                    max-height: initial;
+                }
+            }
+        }
+    }
+
+
+    a {
+        text-decoration: underline;
+        color: #3f51b5;
+    }
+
+    img {
+        display: block;
+        margin: auto;
+    }
+
+    mark {
+        padding: 0.2em 0.4em;
+        background-color: #fcf8e3;
+    }
+
+}

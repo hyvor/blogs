@@ -15,12 +15,37 @@ class CreatePostsTable extends Migration
     {
         Schema::create('posts', function (Blueprint $table) {
             $table->id();
-            $table->string('slug');
-            $table->string('title');
-            $table->string('blog_id');
-            $table->text('body');
-            $table->datetime('published_at')->nullable();
+
+            // time
             $table->timestamps();
+            $table->timestamp('published_at')->nullable();
+            $table->softDeletes();
+
+            // connections
+            $table->bigInteger('blog_id');
+
+            // status
+            $table->boolean('is_page')->default(false);
+            $table->boolean('is_featured')->default(false);
+
+            // data
+            $table->string('slug')->nullable();
+            $table->string('featured_image_url')->nullable();
+            $table->string('canonical_url')->nullable();
+            $table->text('code_head')->nullable();
+            $table->text('code_foot')->nullable();
+
+            $table->unique(['blog_id', 'slug']);
+
+            $table->index('blog_id');
+            $table->index(['blog_id', 'created_at']);
+            $table->index(['blog_id', 'updated_at']);
+            $table->index(['blog_id', 'published_at']);
+            $table->index(['blog_id', 'is_page']);
+            $table->index(['blog_id', 'is_featured']);
+            $table->index(['blog_id', 'featured_image_url']);
+            $table->index(['blog_id', 'canonical_url']);
+
         });
     }
 

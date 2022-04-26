@@ -11,7 +11,11 @@ const mix = require('laravel-mix');
  |
  */
 
-mix.js('resources/js/app.js', 'public/js')
-    .postCss('resources/css/app.css', 'public/css', [
-        //
-    ]);
+
+// console
+mix.js('resources/js/console/console.js', 'public/js').react();
+mix.sass('resources/css/console/console.scss', 'public/css');
+
+
+// landing
+mix.sass('resources/css/landing/landing.scss', 'public/css');

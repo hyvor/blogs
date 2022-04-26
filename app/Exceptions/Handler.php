@@ -2,7 +2,10 @@
 
 namespace App\Exceptions;
 
+use Hyvor\FilterQ\Exceptions\FilterQException;
 use Illuminate\Foundation\Exceptions\Handler as ExceptionHandler;
+use Illuminate\Validation\ValidationException;
+use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 use Throwable;
 
 class Handler extends ExceptionHandler
@@ -37,5 +40,61 @@ class Handler extends ExceptionHandler
         $this->reportable(function (Throwable $e) {
             //
         });
+    }
+
+    public function render($request, Throwable $exception)
+    {
+
+        if (!config('app.debug')) { // not in debug mode
+            if ($request->getHost() === config('blogs.domain_app')) {
+                // app domain
+
+                if (
+                    $request->is('api/*')
+                ) {
+                    $code = $exception->status ?? $exception->getCode();
+
+
+                    /**
+                     * Laravel input validation sends 422
+                     * But, in our APIs we only return 400
+                     */
+                    if ($code === 400) {
+                        $code = 422;
+                    }
+
+                    $httpCode = in_array($code, [400, 401, 402, 403, 404, 422, 500]) ? $code : 422;
+
+                    $error = 
+                        $exception instanceof TrustedException ||
+                        $exception instanceof FilterQException 
+                        ?
+                        $exception->getMessage() :
+                        'Something went wrong on our side.';
+
+                    if ($exception instanceof NotFoundHttpException) {
+                        $httpCode = 404;
+                        $error = 'API Endpoint not found';
+                    }
+
+                    if ($exception instanceof ValidationException) {
+                        $error = $exception->validator->errors()->first();
+                    }
+
+                    return response()->json([
+                        'error' => $error,
+                        'error_code' => $code
+                    ], $httpCode);
+                }
+            } else {
+                // subdomains
+
+                if ($exception instanceof SubdomainNotFoundException) {
+                    return redirect('https://' . config('blogs.domain_app'));
+                }
+            }
+        }
+
+        return parent::render($request, $exception);
     }
 }

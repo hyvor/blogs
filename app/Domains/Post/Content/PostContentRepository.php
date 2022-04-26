@@ -1,0 +1,88 @@
+<?php
+namespace App\Domains\Post\Content;
+
+use App\Domains\Post\Content\Marks\Code;
+use App\Domains\Post\Content\Marks\Em;
+use App\Domains\Post\Content\Marks\Highlight;
+use App\Domains\Post\Content\Marks\Link;
+use App\Domains\Post\Content\Marks\Strike;
+use App\Domains\Post\Content\Marks\Strong;
+use App\Domains\Post\Content\Marks\Sub;
+use App\Domains\Post\Content\Marks\Sup;
+use App\Domains\Post\Content\Nodes\Blockquote;
+use App\Domains\Post\Content\Nodes\BulletList;
+use App\Domains\Post\Content\Nodes\Callout;
+use App\Domains\Post\Content\Nodes\CodeBlock;
+use App\Domains\Post\Content\Nodes\Doc;
+use App\Domains\Post\Content\Nodes\Figcaption;
+use App\Domains\Post\Content\Nodes\Figure;
+use App\Domains\Post\Content\Nodes\HardBreak;
+use App\Domains\Post\Content\Nodes\Heading;
+use App\Domains\Post\Content\Nodes\HorizontalRule;
+use App\Domains\Post\Content\Nodes\Image;
+use App\Domains\Post\Content\Nodes\ListItem;
+use App\Domains\Post\Content\Nodes\OrderedList;
+use App\Domains\Post\Content\Nodes\Paragraph;
+use App\Domains\Post\Content\Nodes\Rich;
+use App\Domains\Post\Content\Nodes\Text;
+use App\Models\Blog;
+use Tiptap\Editor;
+
+class PostContentRepository {
+
+    public static function getHtml(string $json, Blog $blog) 
+    {
+        return self::getEditor($json, $blog)->getHTML();
+    }
+
+    public static function getText(string $json, Blog $blog)
+    {
+        return self::getEditor($json, $blog)->getText();
+    }
+
+    private static function getEditor(string $json, Blog $blog) : Editor
+    {
+
+        $editor = new Editor([
+            'extensions' => [
+
+                // core
+                new Doc,
+                new Text,
+
+                // nodes
+                new Paragraph,
+                new Blockquote,
+                new HorizontalRule,
+                new Heading,
+                new CodeBlock,
+                new Figure,
+                new Figcaption,
+                new Image,
+                new Rich,
+                new Callout,
+                new HardBreak,
+                new BulletList,
+                new OrderedList,
+                new ListItem,
+
+                // marks
+                new Code,
+                new Highlight,
+                new Link(['blog' => $blog]),
+                new Strong,
+                new Em,
+                new Strike,
+                new Sub,
+                new Sup,
+
+            ]
+        ]);
+
+        $editor->setContent($json);
+
+        return $editor;
+
+    }
+
+}

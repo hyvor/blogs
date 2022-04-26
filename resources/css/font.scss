@@ -1,0 +1,9 @@
+@import url('https://fonts.googleapis.com/css2?family=IBM+Plex+Serif:wght@400;600&family=Nunito:wght@400;700&display=swap');
+
+$font-primary: 'Nunito', sans-serif;
+$font-content: 'IBM Plex Serif', serif;
+
+body {
+    font-family: $font-primary;
+    font-size:14px;
+}

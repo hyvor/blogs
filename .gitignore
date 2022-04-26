@@ -1,8 +1,10 @@
 /node_modules
 /public/hot
 /public/storage
+/public/js
+/public/css
 /storage/*.key
-/vendor
+vendor
 .env
 .env.backup
 .phpunit.result.cache
@@ -11,5 +13,14 @@ Homestead.json
 Homestead.yaml
 npm-debug.log
 yarn-error.log
+package-lock.json
+composer.lock
 /.idea
 /.vscode
+Caddyfile
+
+/cypress/screenshots/
+cypress/videos/
+
+# temp files
+.DS_Store
