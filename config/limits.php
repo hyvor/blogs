@@ -62,4 +62,10 @@ return [
     'max_style_files_per_blog' => 50,
     'max_lang_files_per_blog' => 100, // same as max languages
 
+     /**
+     * The number of navigation's for the header and footer are limited for 8. Because of the UI design.
+     */
+    'max_navigation_per_blog_header' => 8,
+    'max_navigation_per_blog_footer' => 8,
+
 ];
