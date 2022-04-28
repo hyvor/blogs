@@ -2,6 +2,7 @@
 
 namespace App\Models;
 
+use App\Data\Enums\BlogTypeEnum;
 use App\Models\Concerns\Countable;
 use Hyvor\JsonMeta\Definer;
 use Hyvor\JsonMeta\Metable;
@@ -17,6 +18,10 @@ class Blog extends Model
     use Billable;
     use Countable;
     use Metable;
+    
+    protected $casts = [
+        'type' => BlogTypeEnum::class
+    ];
 
     // meta
     protected function metaDefinition(Definer $definer)
@@ -141,7 +146,7 @@ class Blog extends Model
      */
     public function themeFiles()
     {
-        return $this->morphMany(ThemeFile::class, 'themable');
+        return $this->hasMany(ThemeFile::class);
     }
 
 }

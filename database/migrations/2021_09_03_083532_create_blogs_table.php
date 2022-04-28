@@ -21,13 +21,12 @@ class CreateBlogsTable extends Migration
             // connections
             $table->bigInteger('hyvor_user_id'); // hyvor user id (owner)
             $table->bigInteger('theme_id')->nullable();
-            $table->string('icon_url')->nullable();
-            $table->string('featured_image_Url')->nullable();
+            $table->string('logo_url')->nullable();
+            $table->string('cover_url')->nullable();
 
             // data
             $table->string('subdomain')->unique();
-            $table->enum('type', ['default', 'temp'])->default('default');
-            $table->bigInteger('dev_theme_id')->nullable();
+            $table->enum('type', ['default', 'dev', 'temp'])->default('default');
 
             $table->enum('hosting_at', ['subdomain', 'domain', 'self'])->default('subdomain');
             $table->string('hosting_domain')->nullable()->unique(); // for domain
@@ -37,15 +36,9 @@ class CreateBlogsTable extends Migration
 
             $table->string('api_key_data')->nullable();
             $table->string('api_key_console')->nullable();
-        
-            // $table->string('social_facebook')->nullable();
-            // $table->string('social_twitter')->nullable();
-            // $table->string('social_linkedin')->nullable();
-            // $table->string('social_youtube')->nullable();
-            // $table->string('social_instagram')->nullable();
-            // $table->string('social_github')->nullable();
-            // $table->string('api_key_data')->nullable();
-            // $table->string('api_key_console')->nullable();
+            
+            // index
+            $table->index('type');
 
         });
     }

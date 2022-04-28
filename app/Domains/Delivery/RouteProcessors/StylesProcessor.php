@@ -18,7 +18,7 @@ class StylesProcessor implements RouteProcessorInterface {
     public function __construct(PathMatcher $pathMatcher, MatchedRoute $matchedRoute) {
 
         $files = ThemeFilesRepository::getFilesInFolder(
-            $pathMatcher->getThemable(), 
+            $pathMatcher->blog, 
             ThemeFileFolderEnum::STYLES
         );
 

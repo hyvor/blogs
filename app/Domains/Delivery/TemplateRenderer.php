@@ -16,12 +16,9 @@ use App\Domains\Post\PostRepository;
 use App\Domains\Route\PermalinkRepository;
 use App\Domains\Tag\TagRepository;
 use App\Domains\User\UserRepository;
-use App\Models\Language;
-use App\Models\LocalDev;
 use App\Models\Post;
 use App\Models\Tag;
 use App\Models\User;
-use Illuminate\Support\Collection;
 use Twig\Error\Error;
 
 class TemplateRenderer {
@@ -69,7 +66,7 @@ class TemplateRenderer {
         
         // ready files loader array
         $templateFiles = ThemeFilesRepository::getFilesInFolder(
-            $this->pathMatcher->getThemable(),
+            $this->pathMatcher->blog,
             ThemeFileFolderEnum::TEMPLATES
         );
 
@@ -114,18 +111,11 @@ class TemplateRenderer {
         $vars['_posts'] = $posts;
         $vars['_pagination'] = $pagination;
         
-        $themable = $this->pathMatcher->getThemable();
-        if ($themable instanceof LocalDev) {
-            $vars['_local_dev_uuid'] = $themable->uuid;
-        }
-        
         /**
          * This is to make sure only data from objects are sent
          * and the developer does not have access to PHP methods
          */
-        $vars = json_decode(json_encode($vars), true);
-
-        return $vars;
+        return json_decode(json_encode($vars), true);
 
     }
 

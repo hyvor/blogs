@@ -16,7 +16,7 @@ class AssetsProcessor implements RouteProcessorInterface {
 
         $fileName = $matchedRoute->param('file_name');
         $file = ThemeFilesRepository::getFile(
-            $pathMatcher->getThemable(), 
+            $pathMatcher->blog, 
             $fileName, 
             ThemeFileFolderEnum::ASSETS
         );

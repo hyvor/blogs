@@ -2,24 +2,14 @@
 namespace App\Http\Controllers\CliAPI;
 
 use App\Data\Enums\ThemeFileFolderEnum;
-use App\Domains\Blog\BlogRepository;
 use App\Domains\Delivery\DeliveryRepository;
-use App\Domains\LocalDev\LocalDevRepository;
 use App\Domains\ThemeFiles\ThemeFilesRepository;
-use App\Models\LocalDev;
+use App\Models\Blog;
 use Illuminate\Http\Request;
 
 class CliAPIController {
 
-    public function createNewLocalDeveloper()
-    {
-        $localDev = LocalDevRepository::createNewDev();
-        return response()->json([
-            'uuid' => $localDev->uuid
-        ]);
-    }
-
-    public function updateFiles(Request $request, LocalDev $localDev)
+    public function updateFiles(Request $request, Blog $blog)
     {
 
         $files = (array) $request->input('files');
@@ -35,7 +25,7 @@ class CliAPIController {
 
             if ($file) {
                 ThemeFilesRepository::createOrUpdateFile(
-                    $localDev,
+                    $blog,
                     $folder,
                     $file,
                     base64_decode($content)
@@ -47,25 +37,12 @@ class CliAPIController {
         return response()->json();
     }
 
-    public function delivery(Request $request, LocalDev $localDev)
+    public function delivery(Request $request, Blog $blog)
     {
         $path = $request->input('path');
-        $subdomain = $request->input('subdomain');
         $host = $request->input('host');
-        $blog = BlogRepository::getBlogById(1);
 
-        /**
-         * Change URLs for navigation
-         */
-        if ($host) {
-            $url = 'http://' . $host;
-
-            $blog->hosting_at = 'self';
-            $blog->hosting_url = $url;
-            $blog->url = $url;
-        }
-
-        $response = DeliveryRepository::getResponseObject($blog, $path, $localDev);
+        $response = DeliveryRepository::getResponseObject($blog, $path);
 
         if (isset($response->content)) {
             $response->content = base64_encode($response->content);
