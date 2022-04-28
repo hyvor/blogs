@@ -2,7 +2,7 @@ import React from 'react';
 import { router } from 'kea-router'
 import { useValues } from 'kea';
 
-export default function NavLink(props = {}) {
+export default function NavLink(props: any = {}) {
 
     let { location: { pathname } } = useValues(router);
 

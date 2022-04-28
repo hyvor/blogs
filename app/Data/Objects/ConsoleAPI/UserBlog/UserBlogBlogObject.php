@@ -2,6 +2,7 @@
 
 namespace App\Data\Objects\ConsoleAPI\UserBlog;
 
+use App\Data\Enums\BlogTypeEnum;
 use App\Data\Enums\CountEnum;
 use App\Data\Objects\ConsoleAPI\BlogSubscription\SubscriptionObject;
 use App\Data\Objects\ConsoleAPI\LanguageObject;
@@ -13,9 +14,12 @@ use App\Models\Blog;
 class UserBlogBlogObject
 {
     public int $id;
-    // public string $name;
+    public string $name;
     public string $subdomain;
+    public BlogTypeEnum $type;
     public string $base_url;
+    public ?string $logo_url;
+
     public int $posts_count;
     public int $users_count;
 
@@ -42,7 +46,9 @@ class UserBlogBlogObject
         $this->id = $blog->id;
         $this->name = $blog->variants[0]->name;
         $this->subdomain = $blog->subdomain;
+        $this->type = $blog->type;
         $this->base_url = PermalinkRepository::getBlogPermalink($blog);
+        $this->logo_url = 'https://picsum.photos/100/100' ?? $blog->logo_url;
         $this->plan = $plan;
 
         $counts = CountRepository::getCounts($blog, [

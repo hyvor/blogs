@@ -4,11 +4,11 @@ import React, { useEffect, useRef, useState } from 'react'
 import { CaretLeftFill } from 'react-bootstrap-icons';
 import { getUserEndpoint } from './lib/api';
 import blogsLogic from './logic/blogsLogic';
-import subdomainLogic from './logic/subdomainLogic';
 import ActionButton from './ReusableComponents/ActionButton';
 import Input from './ReusableComponents/Input'
-import { Popup, PopupBodyDefault, PopupFooterSingleButton, PopupHeaderDefault } from './ReusableComponents/Popup'
+import { Popup, PopupBodyDefault, PopupHeaderDefault } from './ReusableComponents/Popup'
 import Toast from './ReusableComponents/Toast';
+import { router } from 'kea-router'
 
 
 export default function NewBlog() {
@@ -20,7 +20,8 @@ export default function NewBlog() {
 
     const { blogs, createBlogAjax } = useValues(blogsLogic)
     const { createBlog } = useActions(blogsLogic)
-    const { setSubdomain: setSubdomainInLogic } = useActions(subdomainLogic)
+
+    const { push } = useActions(router);
 
     const [name, setName] = useState('');
     const [nameError, setNameError] = useState(null)
@@ -87,7 +88,7 @@ export default function NewBlog() {
     }
 
     function handleBack() {
-        setSubdomainInLogic(blogs[0].blog.subdomain, null, true);
+        push('/console');
     }
 
     function handleCreate() {

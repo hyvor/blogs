@@ -13,6 +13,7 @@ export default function Welcome() {
                 <div className="links-list">
                     <Link name="Pricing" href="/pricing" />
                     <Link name="Docs" href="/docs" />
+                    <Link name="Blog" href="/blog" />
                     <Link name="Roadmap" href="https://community.blogs.hyvor.com/roadmap" />
                     <Link name="Changelog" href="https://community.blogs.hyvor.com/changelog" />
                 </div>

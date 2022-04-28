@@ -30,6 +30,7 @@ class DatabaseSeeder extends Seeder
     {
         $faker = Factory::create();
         $fakerFr = Factory::create('fr_FR');
+
         
         $blogs = Blog::factory()
             ->count(3)
@@ -49,6 +50,10 @@ class DatabaseSeeder extends Seeder
                 ]
             ))
             ->create();
+
+        $blogs->push(
+            ...Blog::factory()->count(20)->create()
+        );
         
         foreach ($blogs as $blog) {
             
