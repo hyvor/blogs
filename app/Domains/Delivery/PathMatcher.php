@@ -18,17 +18,15 @@ class PathMatcher {
 
     public Blog $blog;
     public string $path;
-    public ?LocalDev $localDev = null;
     public Language $language;
 
     private bool $matched = false;
     private DeliveryAPIResponseObject $responseObject;
 
-    public function __construct(Blog $blog, string $path, ?LocalDev $localDev = null) {
+    public function __construct(Blog $blog, string $path) {
 
         $this->blog = $blog;
         $this->path = $path;
-        $this->localDev = $localDev;
 
         $this->callFuncs([
             'matchRedirect',

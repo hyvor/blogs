@@ -8,7 +8,6 @@ class CreateThemeFilesTable extends Migration
 {
     /**
      * Run the migrations.
-     *
      * @return void
      */
     public function up()
@@ -16,17 +15,17 @@ class CreateThemeFilesTable extends Migration
         Schema::create('theme_files', function (Blueprint $table) {
             $table->id();
             $table->timestamps();
-
-            // Connections
-            $table->bigInteger('themable_id');
-            $table->string('themable_type'); // blog|local_dev
+                
+            // connection
+            $table->bigInteger('blog_id');
 
             // data
             $table->enum('folder', ['templates', 'assets', 'styles', 'lang'])->nullable();
             $table->string('name');
             $table->binary('content')->nullable();
 
-            $table->unique(['themable_id', 'themable_type', 'name', 'folder']);
+            // index
+            $table->unique(['blog_id', 'folder', 'name']);
         });
     }
 

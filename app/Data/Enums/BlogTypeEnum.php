@@ -3,7 +3,7 @@ namespace App\Data\Enums;
 
 enum BlogTypeEnum: string {
 
-    case NORMAL = 'normal';
+    case DEFAULT = 'default';
     case DEV = 'dev';
     case TEMP = 'temp';
 

@@ -56,7 +56,7 @@ class BlogRepository
     public static function getBlogByCustomDomain(string $customDomain) : ?Blog {
         return Blog::where('hosting_domain', $customDomain)->first();
     }
-
+    
     /**
      * @param Blog $blog
      * @param array<string, mixed> $update

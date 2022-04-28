@@ -59,14 +59,14 @@ class ThemeFilesRepository
     }
 
     public static function createOrUpdateFile(
-        Blog|LocalDev $themable, 
+        Blog $blog, 
         ?ThemeFileFolderEnum $folder,
         string $name,
         $content
     ) : void 
     {
 
-        $themable->themeFiles()->updateOrCreate(
+        $blog->themeFiles()->updateOrCreate(
             [
                 'folder' => $folder,
                 'name' => $name,
