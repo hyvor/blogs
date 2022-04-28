@@ -1,0 +1,53 @@
+
+.welcome-view {
+
+    overflow:hidden;
+    height:100%;
+    display: flex;
+    flex-direction: column;
+
+    h1 {
+        margin: 20px;
+        margin-bottom:0;
+        text-align: center;
+        font-size: 26px;
+        padding: 20px 20px 40px;
+        border-bottom: 1px solid $color-accent-light;
+    }
+
+    .content-wrap {
+        display: flex;
+        flex: 1;
+    }
+
+    .blogs-list {
+        flex: 1;
+    }
+
+    .links {
+        width: 275px;
+        margin-left: 20px;
+        padding: 20px;
+        border-left: 1px solid $color-accent-light;
+    }
+    .links-title {
+        font-weight: 600;
+        font-size: 16px;
+    }
+    .links-list {
+        display: flex;
+        flex-direction: column;
+        margin: 10px 0 30px 0;
+        a {
+            padding: 4px 15px;
+            color: $color-link;
+            font-weight: 600;
+            display: block;
+            border-radius:20px;
+            &:hover {
+                background-color: $color-hover;
+            }
+        }
+    }
+
+}

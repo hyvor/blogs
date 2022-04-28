@@ -18,8 +18,6 @@ export default function BlogPreview() {
         setIsLoading(false);
     }
 
-    var domain = window.appConfig.domains.delivery;
-
     const blog = findBlogBySubdomain(subdomain)
 
     return <div className="box blog-preview-view">

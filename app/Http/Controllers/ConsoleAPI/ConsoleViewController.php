@@ -6,21 +6,34 @@ use App\Data\Objects\ConsoleAPI\UserBlog\UserBlogObject;
 use App\Http\Controllers\Controller;
 use App\Domains\User\UserRepository;
 // use Hyvor\HyvorConnecter\User;
+use Hyvor\HyvorConnecter\HyvorUser;
+use Hyvor\HyvorConnecter\Login;
+use Hyvor\HyvorConnecter\Redirect;
 use Hyvor\SyntaxHighlighter\Highlighter;
 use Illuminate\Http\Request;
 
 class ConsoleViewController extends Controller
 {
-    // public function __invoke(Request $request, User $user)
+    
     public function __invoke(Request $request)
     {
-        $blogs = UserRepository::getBlogsOfUser(1)->map(function($userBlog) {
-            return new UserBlogObject($userBlog);
-        });
+        
+        $hyvorUser = Login::check();
+        
+        if ($hyvorUser === null) {
+            return Redirect::toLogin();
+        }
+        
+        $blogs = UserRepository::getBlogsOfUser($hyvorUser->id)->mapInto(UserBlogObject::class);
 
         $config = [
-            // 'hyvorUser' => $user,
+            // state
+            
+            'hyvorUser' => $hyvorUser,
             'blogs' => $blogs,
+            
+            // static
+            
             'domains' => [
                 'app' => config('blogs.domain_app'),
                 'delivery' => config('blogs.domain_delivery'),
@@ -31,5 +44,6 @@ class ConsoleViewController extends Controller
         ];
 
         return view('console', ['config' => $config]);
+        
     }
 }

@@ -3,12 +3,13 @@ import Billing from './Billing/Billing'
 import BlogPreview from './BlogPreview/BlogPreview'
 import blogsLogic from './logic/blogsLogic'
 import sceneLogic from './logic/sceneLogic'
-import Nav from './Nav/Nav'
+import Left from './Left/Left'
 import NewBlog from './NewBlog'
 import Pages from './Posts/Pages'
 import Posts from './Posts/Posts'
 import Settings from './Settings/Settings'
 import Theme from './Theme/Theme'
+import Welcome from "./Welcome/Welcome"
 
 export const scenes = {
     error404: () => <div>404</div>,
@@ -19,6 +20,7 @@ export const scenes = {
     theme: ({type}) => <Theme type={type} />,
     billing: () => <Billing />,
     new: () => <NewBlog />,
+    welcome: () => <Welcome />
 }
 
 
@@ -31,7 +33,7 @@ export default function Scene() {
     const SceneComponent = scenes[scene] || scenes.error404
 
     return <div>
-        <Nav />
+        <Left />
         <div id="middle"><SceneComponent {...params} /></div>
     </div>
 

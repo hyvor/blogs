@@ -151,9 +151,9 @@ class DatabaseSeeder extends Seeder
         PostSearchRepository::setFilterableAttributes();
         PostSearchRepository::setSearchableAttributes();
 
-        $this->call([
+        /*$this->call([
             BlogThemeFilesSeeder::class
-        ]);
+        ]);*/
 
     }
     

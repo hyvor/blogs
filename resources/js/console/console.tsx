@@ -19,8 +19,7 @@ resetContext({
 });
 
 function App() {
-
-
+    
     return <Provider>
         <Scene />
         <ToastContainer />

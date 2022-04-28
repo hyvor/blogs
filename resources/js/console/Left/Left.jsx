@@ -8,7 +8,7 @@ import blogsLogic from '../logic/blogsLogic';
 import { Exclamation } from 'react-bootstrap-icons';
 import dayjs from 'dayjs';
 
-export default function Nav() {
+export default function Left() {
 
     const { subdomain } = useValues(subdomainLogic);
     if (!subdomain) {
@@ -22,15 +22,27 @@ export default function Nav() {
     
     return <div id="left">
         <div id="left-header" className="box">
-            <a href="/">
-                <img src="/img/logo-social.png" id="left-header-image-1" className="round-image-40"></img>
-            </a>
-            {/* <div className="left-header-pp">
-                <a href={`https://${appConfig.domains.hyvor}/account`} target="_blank">
-                    <img src={appConfig.hyvorUser.picture} id="left-header-image-1" className="round-image-40"></img>
+            <NavLink href={"/console"} className="console-link" exact={1}>
+                <img
+                    src="/img/logo-social.png"
+                    className="round-image-40"
+                    alt="Hyvor Talk Logo"
+                />
+            </NavLink>
+             <div className="left-header-pp">
+                <a
+                    href={`https://${appConfig.domains.hyvor}/account`}
+                    target="_blank">
+                    <img
+                        src={appConfig.hyvorUser.picture}
+                        className="round-image-40"
+                        alt="Profile Picture"
+                    />
                 </a>
-            </div> */}
+            </div>
         </div>
+
+
         <div id="left-nav" className="box">
             <BlogsSelector />
 

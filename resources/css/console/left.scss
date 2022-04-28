@@ -16,6 +16,10 @@
 
     // }
 
+    .console-link.active img {
+        box-shadow: 0 0 3px 1px $color-accent;
+    }
+
 }
 #left-nav {
     font-weight: 600;
