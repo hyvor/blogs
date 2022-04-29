@@ -2,8 +2,11 @@
 
 namespace App\Domains\Subscription;
 
+use App\Data\Enums\SubscriptionFrequencyEnum;
+use App\Data\Enums\SubscriptionPlanEnum;
 use App\Exceptions\TrustedException;
 use App\Models\Blog;
+use Illuminate\Database\Eloquent\Collection;
 
 class SubscriptionRepository
 {
@@ -21,8 +24,10 @@ class SubscriptionRepository
     public const SUBSCRIPTION_NAME = 'default';
 
     public static function createPayLink(
-        Blog $blog, string $planName, 
-        string $frequency, int $quantity = 1
+        Blog $blog,
+        SubscriptionPlanEnum $planName,
+        SubscriptionFrequencyEnum $frequency,
+        int $quantity = 1
     ) : string
     {
 
@@ -30,7 +35,7 @@ class SubscriptionRepository
             throw new TrustedException('This blog already has a subscription');
         }
 
-        $quantity = self::validatePlanNameFrequencyAndQuantity($planName, $frequency, $quantity);
+        $quantity = self::validateAndGetQuantity($planName, $frequency, $quantity);
 
         $planConfig = self::getPlanConfigFromPlanNameAndFrequency($planName, $frequency);
         $planId = $planConfig['id'];
@@ -43,11 +48,13 @@ class SubscriptionRepository
     }
 
     public static function updateSubscription(
-        Blog $blog, string $planName,
-        string $frequency, int $quantity
+        Blog $blog,
+        SubscriptionPlanEnum $planName,
+        SubscriptionFrequencyEnum $frequency,
+        int $quantity
     ) {
 
-        $quantity = self::validatePlanNameFrequencyAndQuantity($planName, $frequency, $quantity);
+        $quantity = self::validateAndGetQuantity($planName, $frequency, $quantity);
         $planConfig = self::getPlanConfigFromPlanNameAndFrequency($planName, $frequency);
         $planId = $planConfig['id'];
 
@@ -103,34 +110,35 @@ class SubscriptionRepository
     /** 
      * Validate and return quantity
      */
-    private static function validatePlanNameFrequencyAndQuantity(
-        string $planName, string $frequency, int $quantity
+    private static function validateAndGetQuantity(
+        SubscriptionPlanEnum $planName,
+        SubscriptionFrequencyEnum $frequency,
+        int $quantity
     ) : int
     {
 
-        if (!in_array($planName, ['pro', 'team', 'enterprise'])) {
-            throw new TrustedException("Invalid plan: $planName", TrustedException::ERROR_INVALID_INPUT);
-        }
-
-        if (!in_array($frequency, ['monthly', 'yearly'])) {
-            throw new TrustedException("Invalid frequency: $frequency", TrustedException::ERROR_INVALID_INPUT);
-        }
-
-        if ($planName === 'pro' && $frequency === 'monthly') {
+        if (
+            $planName === SubscriptionPlanEnum::PRO &&
+            $frequency === SubscriptionFrequencyEnum::MONTHLY
+        ) {
             // for PRO plan
             throw new TrustedException(
                 "$planName plan does not support monthly billing", 
-                TrustedException::ERROR_INVALID_INPUT);
+                TrustedException::ERROR_INVALID_INPUT
+            );
         }
 
-        if ($planName === 'team' && ($quantity < 3 || $quantity > 99)) {
+        if (
+            $planName === SubscriptionPlanEnum::TEAM &&
+            ($quantity < 3 || $quantity > 99)
+        ) {
             throw new TrustedException(
                 "Team plan quantity is out of range. $quantity received", 
                 TrustedException::ERROR_INVALID_INPUT
             );
         }
 
-        return $planName === 'team' ? $quantity : 1;
+        return $planName === SubscriptionPlanEnum::TEAM ? $quantity : 1;
 
     }
 
@@ -147,25 +155,33 @@ class SubscriptionRepository
     }
 
     public static function getPlanConfigFromPlanNameAndFrequency(
-        string $planName, string $frequency
+        SubscriptionPlanEnum $planName,
+        SubscriptionFrequencyEnum $frequency
     ) : array 
     {
 
         $plans = config('blogs.paddle_plans');
 
         foreach ($plans as $plan) {
-            if ($plan['name'] === $planName && $plan['frequency'] === $frequency) {
+            if (
+                $plan['name'] === $planName &&
+                $plan['frequency'] === $frequency
+            ) {
                 return $plan;
             }
         }
+
+        throw new TrustedException('Plan not found');
     }
 
 
-    public static function getReceipts(Blog $blog) {
+    public static function getReceipts(Blog $blog): Collection
+    {
         return $blog->receipts()->get();
     }
 
-    public static function getAllSubscriptions(Blog $blog) {
+    public static function getAllSubscriptions(Blog $blog): Collection
+    {
         return $blog->subscriptions()->get();
     }
 

@@ -52,7 +52,7 @@ export default function CurrentSubscription({subdomain}) {
             downgradePopup ?
             <PopupConfirm 
                 title="Downgrade Now"
-                text="Are you sure you want to downgrade to the personal plan now? You cannot recover it later (You will need to pay for a subscription separately)."
+                text="Are you sure you want to force downgrade now? You will need to create a new subscription if you need to access the features again."
                 name="Downgrade"
                 onClick={handleDowngradeNowReal}
                 onCancel={() => setDowngradePopup(false)}
@@ -64,7 +64,7 @@ export default function CurrentSubscription({subdomain}) {
             cancelPopup ?
             <PopupConfirm 
                 title="Cancel Subscription"
-                text="Are you sure you want to cancel the subscription? You will no longer have access to paid features."
+                text="Are you sure you want to cancel the subscription? You will no longer be able to access the blog after the billing period."
                 onClick={handleCancelReal}
                 name="Cancel Subscription"
                 buttonClass="danger"
@@ -138,12 +138,12 @@ export default function CurrentSubscription({subdomain}) {
 
                     {
                         currentSubscription && currentSubscription.status === 'deleted' ?
-                        <Callout 
+                        <Callout
                             title="Subscription Cancelled"
                             icon={<ExclamationCircle />}
                             text={
                                 <div>
-                                    This subscription is now cancelled. You will have access to this plan's features until <b><FriendlyDate time={currentSubscription.ends_at} /></b>. Thereafter, this blog will be downgraded to the Personal plan.
+                                    This subscription is now cancelled. You will have access to this plan's features until <b><FriendlyDate time={currentSubscription.ends_at} /></b>. Thereafter, this blog will be downgraded.
                                     <div style={{marginTop: 10}}>
                                         <button 
                                             className="button danger small"
@@ -241,7 +241,7 @@ function InfoSection({info}) {
                     <div className="payment-amount">${ info.last_payment }
                     </div>
                 </div>
-                <div className="payment-middle"></div>
+                <div className="payment-middle"/>
                 <div className="payment-next">
                     <div className="payment-name">Next Payment</div>
                     <div className="payment-amount">{  
@@ -249,10 +249,10 @@ function InfoSection({info}) {
                 </div>
             </div>
             <div className="payment-bar">
-                <div 
+                <div
                     className="payment-bar-fill"
                     style={{width: paymentWidth}}
-                ></div>
+                />
             </div>
             <div className="payment-top">
                 <div className="payment-last">

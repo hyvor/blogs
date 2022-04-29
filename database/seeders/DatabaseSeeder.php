@@ -51,9 +51,9 @@ class DatabaseSeeder extends Seeder
             ))
             ->create();
 
-        $blogs->push(
+        /*$blogs->push(
             ...Blog::factory()->count(20)->create()
-        );
+        );*/
         
         foreach ($blogs as $blog) {
             

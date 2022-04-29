@@ -7,6 +7,8 @@ import NavLink from '../ReusableComponents/NavLink';
 import blogsLogic from '../logic/blogsLogic';
 import { Exclamation } from 'react-bootstrap-icons';
 import dayjs from 'dayjs';
+import {UserBlog} from "../objects/userblog";
+import {appConfig} from "../helpers";
 
 export default function Left() {
 
@@ -16,7 +18,7 @@ export default function Left() {
     }
 
     const { findBlogBySubdomain } = useValues(blogsLogic);
-    const { blog, blog: { subscription: currentSubscription} } = findBlogBySubdomain(subdomain);
+    const { blog, blog: { subscription: currentSubscription } } : UserBlog  = findBlogBySubdomain(subdomain);
 
     const trialDaysDiff = blog.is_on_trial ?  dayjs.unix(blog.trial_ends_at).diff(dayjs(), 'd') : 0;
     
@@ -31,10 +33,10 @@ export default function Left() {
             </NavLink>
              <div className="left-header-pp">
                 <a
-                    href={`https://${appConfig.domains.hyvor}/account`}
+                    href={`https://${appConfig().domains.hyvor}/account`}
                     target="_blank">
                     <img
-                        src={appConfig.hyvorUser.picture}
+                        src={appConfig().hyvorUser.picture}
                         className="round-image-40"
                         alt="Profile Picture"
                     />
@@ -48,13 +50,13 @@ export default function Left() {
 
             <NavLink href={`/console/${subdomain}`} exact={1}>Blog</NavLink>
 
-            <div className="left-divider"></div>
+            <div className="left-divider"/>
 
             <NavLink href={`/console/${subdomain}/posts`}>Posts</NavLink>
             <NavLink href={`/console/${subdomain}/pages`}>Pages</NavLink>
             <NavLink href={`/console/${subdomain}/comments`}>Comments</NavLink>
 
-            <div className="left-divider"></div>
+            <div className="left-divider"/>
 
             <NavLink href={`/console/${subdomain}/theme`}>Theme</NavLink>
 
@@ -64,6 +66,10 @@ export default function Left() {
                     {
                         blog.is_on_trial ?
                         <span className="trial-days-left">{trialDaysDiff} days left</span> : null
+                    }
+                    {
+                        !blog.subscribed && !blog.is_on_trial ?
+                        <span className="trial-days-left red">Upgrade Required</span> : null
                     }
                     {
                         currentSubscription && 

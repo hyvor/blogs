@@ -1,8 +1,9 @@
 <?php
 namespace App\Data\Objects\ConsoleAPI\BlogSubscription;
 
+use App\Data\Enums\SubscriptionFrequencyEnum;
+use App\Data\Enums\SubscriptionPlanEnum;
 use App\Domains\Subscription\SubscriptionRepository;
-use App\Models\Blog;
 use Laravel\Paddle\Subscription;
 
 class SubscriptionObject {
@@ -12,9 +13,9 @@ class SubscriptionObject {
      * active|past_due|paused|deleted
      */
     public string $status;
-    public int $quantity; 
-    public string $plan; // pro|team|enterprise
-    public string $frequency; // monthly|yearly
+    public int $quantity;
+    public SubscriptionPlanEnum $plan;
+    public SubscriptionFrequencyEnum $frequency;
 
     public int $created_at;
     public ?int $ends_at;

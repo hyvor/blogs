@@ -1,6 +1,8 @@
 <?php
 namespace App\Http\Controllers\ConsoleAPI;
 
+use App\Data\Enums\SubscriptionFrequencyEnum;
+use App\Data\Enums\SubscriptionPlanEnum;
 use App\Data\Objects\ConsoleAPI\BlogSubscription\ReceiptObject;
 use App\Data\Objects\ConsoleAPI\BlogSubscription\SubscriptionInfoObject;
 use App\Data\Objects\ConsoleAPI\BlogSubscription\SubscriptionObject;
@@ -9,6 +11,7 @@ use App\Domains\Subscription\UsageRepository;
 use App\Http\Controllers\Controller;
 use App\Models\Blog;
 use Illuminate\Http\Request;
+use Illuminate\Validation\Rules\Enum;
 use Laravel\Paddle\Receipt;
 use Laravel\Paddle\Subscription;
 
@@ -40,15 +43,15 @@ class ConsoleSubscriptionController extends Controller {
     public function createPayLink(Request $request, Blog $blog) {
 
         $request->validate([
-            'plan' => 'required|string',
-            'frequency' => 'required|string|in:monthly,yearly',
+            'plan' => ['required', 'string', new Enum(SubscriptionPlanEnum::class)],
+            'frequency' => ['required', 'string', new Enum(SubscriptionFrequencyEnum::class)],
             'quantity' => 'required|integer'
         ]);
 
         $payLink = SubscriptionRepository::createPayLink(
             $blog,
-            $request->input('plan'),
-            $request->input('frequency'),
+            SubscriptionPlanEnum::from($request->input('plan')),
+            SubscriptionFrequencyEnum::from($request->input('frequency')),
             $request->input('quantity')
         );
 
@@ -61,20 +64,19 @@ class ConsoleSubscriptionController extends Controller {
     public function updateSubscription(Request $request, Blog $blog) {
 
         $request->validate([
-            'plan' => 'required|string',
-            'frequency' => 'required|string|in:monthly,yearly',
+            'plan' => ['required', 'string', new Enum(SubscriptionPlanEnum::class)],
+            'frequency' => ['required', 'string', new Enum(SubscriptionFrequencyEnum::class)],
             'quantity' => 'required|integer'
         ]);
 
         SubscriptionRepository::updateSubscription(
             $blog,
-            $request->input('plan'),
-            $request->input('frequency'),
+            SubscriptionPlanEnum::from($request->input('plan')),
+            SubscriptionFrequencyEnum::from($request->input('frequency')),
             $request->input('quantity')
         );
 
         return response()->json();
-
 
     }
 

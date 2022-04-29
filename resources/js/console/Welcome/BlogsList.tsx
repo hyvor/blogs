@@ -3,7 +3,7 @@ import {useValues} from "kea";
 import blogsLogic from "../logic/blogsLogic";
 import {UserBlog} from '../objects/userblog';
 import NavLink from "../ReusableComponents/NavLink";
-import {BlogType} from "../enums/BlogType";
+import {BlogType} from "../enums";
 
 export default function BlogsList() {
 

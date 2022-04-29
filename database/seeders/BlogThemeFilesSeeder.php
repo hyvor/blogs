@@ -47,8 +47,7 @@ class BlogThemeFilesSeeder extends Seeder
                 $content = file_get_contents($filePath);
 
                 ThemeFile::create([
-                    'themable_id' => $blogId ?? 1,
-                    'themable_type' => Blog::class,
+                    'blog_id' => $blogId ?? 1,
                     'name' => $file,
                     'content' => $content,
                     'folder' => $folder === '' ? null : $folder

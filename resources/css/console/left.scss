@@ -47,6 +47,10 @@
                 border-radius: 20px;
                 background-color: $color-blue-light;
                 color: $color-blue-dark;
+                &.red {
+                    background-color: $color-red-light;
+                    color: $color-red-dark;
+                }
             }
             .subscription-issue-icon {
                 display: inline-flex;

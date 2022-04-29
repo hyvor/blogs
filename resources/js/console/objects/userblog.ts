@@ -1,4 +1,5 @@
-import {BlogType} from "../enums/BlogType";
+import {BlogType} from "../enums";
+import {Subscription} from "./subscription";
 
 export type UserBlog = {
     user: UserBlogUser;
@@ -17,10 +18,10 @@ export type UserBlogBlog = {
     users_count: number;
 
     is_on_trial: boolean;
-    trial_ends_at: boolean | null;
+    trial_ends_at: number | null;
     subscribed: boolean;
+    subscription: Subscription;
 
-    subscription: any;
     default_language: any;
 };
 
