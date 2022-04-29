@@ -3,10 +3,10 @@ namespace Tests\Feature\CliAPI;
 
 use App\Data\Enums\ThemeFileFolderEnum;
 use App\Domains\LocalDev\LocalDevRepository;
-use App\Domains\ThemeFiles\ThemeFilesRepository;
+use App\Domains\Theme\ThemeFilesRepository;
 use Illuminate\Foundation\Testing\RefreshDatabase;
-use Tests\TestCase;
 use Illuminate\Support\Str;
+use Tests\TestCase;
 
 class UpdateFilesTest extends TestCase
 {

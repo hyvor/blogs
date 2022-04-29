@@ -3,9 +3,9 @@ namespace App\Domains\Delivery\RouteProcessors;
 
 use App\Data\Enums\ThemeFileFolderEnum;
 use App\Data\Objects\DeliveryAPI\DeliveryAPIResponseObject;
-use App\Domains\ThemeFiles\ThemeFilesRepository;
 use App\Domains\Delivery\PathMatcher;
 use App\Domains\Delivery\RouteMatcher\MatchedRoute;
+use App\Domains\Theme\ThemeFilesRepository;
 use App\Helpers\MimeTypes;
 
 class AssetsProcessor implements RouteProcessorInterface {

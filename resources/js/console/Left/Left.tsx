@@ -64,7 +64,7 @@ export default function Left() {
                 <span className="name">Billing</span>
                 <span className="mark">
                     {
-                        blog.is_on_trial ?
+                        blog.is_on_trial && !blog.subscribed ?
                         <span className="trial-days-left">{trialDaysDiff} days left</span> : null
                     }
                     {

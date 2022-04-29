@@ -92,7 +92,7 @@ export default function CurrentSubscription({subdomain}) {
                 <div>
 
                     {
-                        blog.is_on_trial ?
+                        blog.is_on_trial && !blog.subscribed ?
                         <Callout 
                             title="30-days trial"
                             icon={<Clock />}

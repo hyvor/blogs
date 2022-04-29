@@ -3,7 +3,7 @@ namespace App\Http\Controllers\CliAPI;
 
 use App\Data\Enums\ThemeFileFolderEnum;
 use App\Domains\Delivery\DeliveryRepository;
-use App\Domains\ThemeFiles\ThemeFilesRepository;
+use App\Domains\Theme\ThemeFilesRepository;
 use App\Models\Blog;
 use Illuminate\Http\Request;
 
@@ -14,6 +14,10 @@ class CliAPIController {
 
         $files = (array) $request->input('files');
         $reset = (bool) $request->input('reset');
+
+        if ($reset) {
+            ThemeFilesRepository::deleteAllFiles($blog);
+        }
 
         foreach ($files as $path => $content) {
 
@@ -41,6 +45,8 @@ class CliAPIController {
     {
         $path = $request->input('path');
         $host = $request->input('host');
+
+        $blog->hosting_url = 'http://' . $host;
 
         $response = DeliveryRepository::getResponseObject($blog, $path);
 

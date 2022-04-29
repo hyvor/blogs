@@ -21,9 +21,9 @@ class CliAPIMiddleware
         
         $blog = BlogRepository::getBlogBySubdomain($subdomain);
 
-        if ($blog === null || $blog->type !== BlogTypeEnum::DEV) {
+        /*if ($blog === null || $blog->type !== BlogTypeEnum::DEV) {
             throw new TrustedException('Invalid Subdomain');
-        }
+        }*/
 
         app()->instance(Blog::class, $blog);
 

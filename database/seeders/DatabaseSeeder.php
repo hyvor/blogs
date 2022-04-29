@@ -33,7 +33,7 @@ class DatabaseSeeder extends Seeder
 
         
         $blogs = Blog::factory()
-            ->count(3)
+            ->count(4)
             ->state(new Sequence(
                 [
                     'subdomain' => 'test',
@@ -47,6 +47,12 @@ class DatabaseSeeder extends Seeder
                     'subdomain' => 'self',
                     'hosting_at' => 'self',
                     'hosting_url' => 'https://blogs.hyvor.test/blog'
+                ],
+                [
+                    'subdomain' => 'dev',
+                    'type' => 'dev',
+                    'hosting_at' => 'self',
+                    'hosting_url' => 'http://127.0.0.1:8885'
                 ]
             ))
             ->create();

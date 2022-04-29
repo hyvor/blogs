@@ -13,6 +13,7 @@
         "hyvor/laravel-filterq": "^1.0",
         "hyvor/laravel-hyvor-connecter": "dev-main",
         "hyvor/laravel-json-meta": "0.0.3",
+        "hyvor/php-svg-icons": "dev-main",
         "hyvor/scssphp": "2.0.1",
         "laravel/cashier-paddle": "^1.4",
         "laravel/framework": "^9.0",
