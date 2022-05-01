@@ -103,7 +103,7 @@ class PermalinkRepository {
     }
 
 
-    public static function getFullUrlFromPath(Blog $blog, ?string $path)
+    public static function getFullUrlFromPath(Blog $blog, ?string $path = null)
     {
         if (is_null($path)) {
             $path = '';
@@ -180,11 +180,15 @@ class PermalinkRepository {
         return $onlyPath ? self::getPath($path) : self::getFullUrlFromPath($blog, $path);
     }
 
-    public static function getAuthorPermalink(User $author, Blog $blog, $onlyPath = false) : string 
+    public static function getAuthorPermalink(User $author, Blog $blog, Language $language, $onlyPath = false) : string
     {
 
         $path = RouteRepository::getRoute($blog, 'author')->match;
         $path = str_replace('{slug}', $author->slug, $path);
+
+        if (!$language->is_primary) {
+            $path = "/{$language->code}" . $path;
+        }
         
         return $onlyPath ? self::getPath($path) : self::getFullUrlFromPath($blog, $path);
 

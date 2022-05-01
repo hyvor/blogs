@@ -1,12 +1,36 @@
 <?php
 namespace App\Domains\Navigation;
 
+use App\Models\Blog;
 use App\Models\Navigation;
 use App\Data\Enums\NavigationTypeEnum;
 use Illuminate\Support\Collection;
 
 Class NavigationRepository
 {
+
+    const DEFUALT_HEADER_NAVIGATION = [
+        [
+            'name' => 'Home',
+            'url' => '/'
+        ],
+        [
+            'name' => 'About',
+            'url' => '/about'
+        ]
+    ];
+
+    const DEFUALT_FOOTER_NAVIGATION = [
+        [
+            'name' => 'Privacy Policy',
+            'url' => '/privacy'
+        ],
+        [
+            'name' => 'Contact',
+            'url' => '/contact'
+        ]
+    ];
+
     public static function getNavigations(int $blogId) : Collection
     {
         return Navigation::where('blog_id','=', $blogId)
@@ -19,15 +43,15 @@ Class NavigationRepository
     }
 
     public static function createNavigation(
-        int $blogId, 
+        Blog $blog,
         string $navigationName, 
         string $navigationUrl, 
         NavigationTypeEnum $type, 
-        int $sort 
+        int $sort = 0
     ) : Navigation
     {
         return Navigation::create([
-            'blog_id' => $blogId,
+            'blog_id' => $blog->id,
             'name' => $navigationName,
             'url' => $navigationUrl,
             'type' => $type->value, 

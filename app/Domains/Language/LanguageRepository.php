@@ -9,9 +9,6 @@ use App\Models\Language;
 
 class LanguageRepository {
 
-    const DEFAULT_LANGUAGE_CODE = 'en';
-    const DEFAULT_LANGUAGE_NAME = 'English';
-
     public static function getAllLanguages(int $blogId) {
         return Blog::find($blogId)->languages()->orderBy('is_primary', 'DESC')->orderBy('id', 'ASC')->get();
     }

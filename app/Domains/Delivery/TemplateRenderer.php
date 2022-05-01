@@ -2,6 +2,7 @@
 namespace App\Domains\Delivery;
 
 use App\Data\Enums\ThemeFileFolderEnum;
+use App\Data\Objects\DataAPI\AuthorObject;
 use App\Data\Objects\DataAPI\BlogObject;
 use App\Data\Objects\DataAPI\PaginationObject;
 use App\Data\Objects\DataAPI\PostObject;
@@ -179,6 +180,21 @@ class TemplateRenderer {
                     $tagObject->url
                 ),
                 '_tag' => $tagObject,
+            ];
+
+        } else if ($routeName === 'author') {
+
+            $authorObject = new AuthorObject($this->model, $this->pathMatcher->blog, $this->pathMatcher->language);
+
+            return [
+                '_meta' => new MetaObject(
+                    $authorObject->name,
+                    $authorObject->bio,
+                    $authorObject->picture_url,
+                    $authorObject->url,
+                    $authorObject->url
+                ),
+                '_author' => $authorObject
             ];
 
         }

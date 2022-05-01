@@ -5,50 +5,8 @@ use App\Exceptions\TrustedException;
 use App\Models\Blog;
 use App\Models\Route;
 use Illuminate\Database\Eloquent\Collection;
-class RouteRepository {
-    
-    const DEFAULT_ROUTES = [
-        // post
-        [
-            'name' => 'post',
-            'match' => '/{slug}',
-            'template' => 'post'
-        ],
-        // page
-        [
-            'name' => 'page',
-            'match' => '/{slug}',
-            'template' => 'page,post'
-        ],
-        // home page (index)
-        [
-            'name' => 'index',
-            'match' => '/',
-            'template' => 'index',
-            'posts_filter' => ''
-        ],
-        // tag
-        [
-            'name' => 'tag',
-            'match' => '/tag/{slug}',
-            'template' => 'tag,index',
-            'posts_filter' => 'tag.slug = {slug}',
-        ],
-        // author
-        [
-            'name' => 'author',
-            'match' => '/author/{slug}',
-            'template' => 'author,index',
-            'posts_filter' => 'author.slug = {slug}'
-        ],
-        // search
-        [
-            'name' => 'search',
-            'match' => '/search/{search}',
-            'template' => 'search,index'
-        ]
-    ];
-
+class RouteRepository
+{
 
     public static function getRoute(Blog $blog, string $name) {
 

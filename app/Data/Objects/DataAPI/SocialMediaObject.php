@@ -10,8 +10,17 @@ class SocialMediaObject
     public ?string $youtube;
     public ?string $instagram;
     public ?string $github;
+    public ?string $tiktok;
 
-    public function __construct($facebook, $twitter, $linkedin, $youtube, $instagram, $github)
+    public function __construct(
+        ?string $facebook,
+        ?string $twitter,
+        ?string $linkedin,
+        ?string $youtube,
+        ?string $instagram,
+        ?string $github,
+        ?string $tiktok
+    )
     {
         $this->facebook = $facebook;
         $this->twitter = $twitter;
@@ -19,5 +28,6 @@ class SocialMediaObject
         $this->youtube = $youtube;
         $this->instagram = $instagram;
         $this->github = $github;
+        $this->tiktok = $tiktok;
     }
 }

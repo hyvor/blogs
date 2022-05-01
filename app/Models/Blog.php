@@ -31,6 +31,7 @@ class Blog extends Model
         $definer->add('social_twitter')->type('string|null')->default(null);
         $definer->add('social_linkedin')->type('string|null')->default(null);
         $definer->add('social_youtube')->type('string|null')->default(null);
+        $definer->add('social_tiktok')->type('string|null')->default(null);
         $definer->add('social_instagram')->type('string|null')->default(null);
         $definer->add('social_github')->type('string|null')->default(null);
 

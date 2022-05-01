@@ -10,6 +10,7 @@ class User extends Model
 {
 
     use Countable;
+    use HasFactory;
 
     protected $with = [
         'variants',

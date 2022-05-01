@@ -7,6 +7,9 @@ use Illuminate\Database\Eloquent\Model;
 
 class UserVariant extends Model
 {
+
+    use HasFactory;
+
     public $timestamps = false;
 
     public function user()

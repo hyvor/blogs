@@ -47,7 +47,7 @@ class UserBlogBlogObject
         $this->name = $blog->variants[0]->name;
         $this->subdomain = $blog->subdomain;
         $this->type = $blog->type;
-        $this->base_url = PermalinkRepository::getBlogPermalink($blog);
+        $this->base_url = PermalinkRepository::getFullUrlFromPath($blog);
         $this->logo_url = 'https://picsum.photos/100/100' ?? $blog->logo_url;
         $this->plan = $plan;
 

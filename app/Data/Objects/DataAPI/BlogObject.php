@@ -54,13 +54,17 @@ class BlogObject
         $this->icon_url = $blog->icon;
         $this->featured_image_url = $blog->featured_image_url;
 
+
+        $meta = $blog->getAllMeta();
+
         $this->social = new SocialMediaObject(
-            $blog->social_facebook,
-            $blog->social_twitter,
-            $blog->social_linkedin,
-            $blog->social_youtube,
-            $blog->social_instagram,
-            $blog->social_github
+            $meta->social_facebook,
+            $meta->social_twitter,
+            $meta->social_linkedin,
+            $meta->social_youtube,
+            $meta->social_instagram,
+            $meta->social_github,
+            $meta->social_tiktok
         );
 
         $this->code_head = $blog->code_head;

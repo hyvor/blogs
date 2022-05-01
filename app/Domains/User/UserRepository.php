@@ -108,7 +108,7 @@ class UserRepository
             'role' => $role->value,
             // 'email' => $userData['email'],
             'email' =>'sgs.ss',
-            'url' => $userData['url'] ?? null,
+            'website_url' => $userData['url'] ?? null,
             'social_facebook' => $userData['social_facebook'] ?? null,
             'social_twitter' => $userData['social_twitter'] ?? null,
             'social_linkedin' => $userData['social_linkedin'] ?? null,

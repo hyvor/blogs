@@ -13,6 +13,8 @@ use App\Models\PostVariant;
 use App\Models\PostTag;
 use App\Models\Tag;
 use App\Models\TagVariant;
+use App\Models\User;
+use App\Models\UserVariant;
 use Faker\Factory;
 use Illuminate\Database\Eloquent\Factories\Sequence;
 use Illuminate\Support\Str;
@@ -57,6 +59,7 @@ class DatabaseSeeder extends Seeder
             ))
             ->create();
 
+        // Add additional 20 blogs
         /*$blogs->push(
             ...Blog::factory()->count(20)->create()
         );*/
@@ -67,7 +70,8 @@ class DatabaseSeeder extends Seeder
             $french = Language::factory()->create([
                 'blog_id' => $blog,
                 'code' => 'fr',
-                'name' => "French" 
+                'name' => "French",
+                'is_primary' => false
             ]);
             
             BlogVariant::factory()
@@ -87,12 +91,8 @@ class DatabaseSeeder extends Seeder
                     TagVariant::factory()
                         ->count(2)
                         ->state(new Sequence(
-                            [
-                                'language_id' => $english
-                            ],
-                            [
-                                'language_id' => $french
-                            ]
+                            ['language_id' => $english],
+                            ['language_id' => $french]
                         ))
                     , 
                     'variants'
@@ -102,8 +102,26 @@ class DatabaseSeeder extends Seeder
                 ]);
             
             // users
-            // TODO:
-            
+            $users = User::factory()
+                ->count(2)
+                ->has(
+                    UserVariant::factory()
+                        ->count(2)
+                        ->state(new Sequence(
+                            ['language_id' => $english],
+                            ['language_id' => $french]
+                        )),
+                    'variants'
+                )
+                ->state(new Sequence(
+                    ['role' => 'owner', 'hyvor_user_id' => 2],
+                    ['role' => 'admin', 'hyvor_user_id' => 3]
+                ))
+                ->create([
+                    'blog_id' => $blog,
+                    'status' => 'active'
+                ]);
+
             // posts
             $posts = Post::factory()
                 ->count(200)
@@ -130,22 +148,21 @@ class DatabaseSeeder extends Seeder
                 ]);
             
             // connect posts and tags
-            $posts->map(function($post) use ($tags) {
+            $posts->map(function($post) use ($tags, $users) {
 
-                PostTag::create([
+                $tags->random(3)->map(fn($tag) => PostTag::create([
                     'post_id' => $post->id,
-                    'tag_id' => $tags->random()->id
-                ]);
-    
-                // TODO:
-                /*PostAuthor::create([
+                    'tag_id' => $tag->id
+                ]));
+
+                $users->map(fn($user) => PostAuthor::create([
                     'post_id' => $post->id,
-                    'user_id' => 1
-                ]);*/
+                    'user_id' => $user->id
+                ]));
                 
             });
             
-            Navigation::factory()
+            /*Navigation::factory()
                 ->count(10)
                 ->state(new Sequence(
                     ['type' => 'header'],
@@ -153,7 +170,7 @@ class DatabaseSeeder extends Seeder
                 ))
                 ->create([
                     'blog_id' => $blog
-                ]);
+                ]);*/
             
         }
 

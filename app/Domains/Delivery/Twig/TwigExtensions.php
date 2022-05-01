@@ -35,7 +35,6 @@ class TwigExtensions extends AbstractExtension
     // to prevent duplicate queries
     public $blog;
     public $twigLanguageHandler;
-    public Blog|LocalDev $themable;
 
     public function getFilters()
     {
@@ -180,7 +179,7 @@ class TwigExtensions extends AbstractExtension
 
     }
 
-    public function iconFunction($library, $iconName, $width = 16, $height = 16) : string
+    public function iconFunction($library, $iconName, $width = null, $height = null) : string
     {
 
         try {
@@ -201,6 +200,7 @@ class TwigExtensions extends AbstractExtension
             $route === 'post' || $route === 'page' ||
             $route === 'tag' || $route === 'author'
         ) {
+
             $object = match($route) {
                 'post', 'page' => $context['_post'],
                 'tag' => $context['_tag'],
