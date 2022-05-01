@@ -68,6 +68,9 @@ class TwigExtensions extends AbstractExtension
             ]),
             new TwigFunction('language_variant_url', [$this, 'languageVariantUrlFunction'], [
                 'needs_context' => true
+            ]),
+            new TwigFunction('is_current_url', [$this, 'isCurrentUrlFunction'], [
+                'needs_context' => true
             ])
         ];
 
@@ -235,6 +238,32 @@ class TwigExtensions extends AbstractExtension
         }
 
         return '';
+
+    }
+
+    // checks if a given URL is the current one
+    public function isCurrentUrlFunction($context, string $url) : bool
+    {
+
+        $currentUrl = $context['_meta']['url'];
+        $blogBaseUrl = $context['_blog']['base_url'];
+
+        $currentPath = substr($currentUrl, strlen($blogBaseUrl));
+        $currentPath = trim($currentPath, '/');
+
+        // absolute URL
+        if (preg_match('/^https?:\/\//', $url)) {
+            // if not starting with the blog base URL, it is not the current one
+            if (!substr($url, 0, strlen($blogBaseUrl)) == $blogBaseUrl) {
+                return false;
+            } else {
+                $path = substr($url, strlen($blogBaseUrl));
+                $path = trim($path, '/');
+                return $path === $currentPath;
+            }
+        } else {
+            return trim($url, '/') === $currentPath;
+        }
 
     }
 
