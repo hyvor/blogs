@@ -88,12 +88,10 @@ class DatabaseSeeder extends Seeder
                         ->count(2)
                         ->state(new Sequence(
                             [
-                                'language_id' => $english,
-                                'name' => $faker->name
+                                'language_id' => $english
                             ],
                             [
-                                'language_id' => $french,
-                                'name' => $fakerFr->name
+                                'language_id' => $french
                             ]
                         ))
                     , 

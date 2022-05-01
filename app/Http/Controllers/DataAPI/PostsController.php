@@ -122,7 +122,8 @@ class PostsController extends Controller
             'search' => 'string|required',
             'language' => 'string',
             'limit' => 'int',
-            'page' => 'int'
+            'page' => 'int',
+            'keys' => 'string'
         ]);
 
         $search = $request->input('search');
@@ -131,6 +132,7 @@ class PostsController extends Controller
         $limit = Helper::getLimit($request->input('limit'));
         $page = Helper::getPage($request->input('page'));
         $offset = Helper::getOffset($page, $limit);
+        $keys = $request->input('keys');
 
         $searchData = PostSearchRepository::search(
 
@@ -144,13 +146,15 @@ class PostsController extends Controller
             
         );
 
-        $posts = $searchData['posts']->map(function($post) use ($blog, $language) {
+        $posts = $searchData->collection->map(function($post) use ($blog, $language) {
             return new PostObject($post, $blog, $language);
         });
+
+        $filteredPosts = KeysFilter::filter($posts, $keys);
         
         return response()->json([
-            'data' => $posts,
-            'pagination' => new PaginationObject($limit, $page, $searchData['total'])
+            'data' => $filteredPosts,
+            'pagination' => new PaginationObject($limit, $page, $searchData->total)
         ]);
 
     }

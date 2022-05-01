@@ -17,6 +17,7 @@ class BlogObject
     public ?string $featured_image_url;
     public string $lang;
     public string $url;
+    public string $base_url;
 
     public SocialMediaObject $social;
 
@@ -28,8 +29,11 @@ class BlogObject
      * @var NavObject[]
      */
     public array $nav_footer = [];
-    
-    public LanguageObject $languageObject;
+
+    /**
+     * @var LanguageObject[]
+     */
+    public array $languages;
 
     public ?string $code_head;
     public ?string $code_foot;
@@ -44,7 +48,8 @@ class BlogObject
         $this->subdomain = $blog->subdomain;
         $this->name = VariantsHelper::getVariantValue('name', $variants, $language);
         $this->description = VariantsHelper::getVariantValue('description', $variants, $language);
-        $this->url = PermalinkRepository::getBlogPermalink($blog);
+        $this->url = PermalinkRepository::getBlogPermalink($blog, $language);
+        $this->base_url = PermalinkRepository::getFullUrlFromPath($blog, '');
         
         $this->icon_url = $blog->icon;
         $this->featured_image_url = $blog->featured_image_url;
@@ -71,6 +76,8 @@ class BlogObject
             }
             
         });
+
+        $this->languages = $blog->languages->mapInto(LanguageObject::class)->toArray();
 
     }
 

@@ -116,9 +116,13 @@ class PermalinkRepository {
         return $domain . ($path ? '/' . $path : '');
     }
 
-    public static function getBlogPermalink(Blog $blog) : string
+    public static function getBlogPermalink(Blog $blog, Language $language) : string
     {
-        return self::getFullUrlFromPath($blog, '');
+        $path = '';
+        if (!$language->is_primary) {
+            $path = $language->code;
+        }
+        return self::getFullUrlFromPath($blog, $path);
     }
 
     /**

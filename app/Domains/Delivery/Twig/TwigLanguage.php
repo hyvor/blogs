@@ -15,7 +15,7 @@ class TwigLanguage {
 
     private array $languageStrings;
 
-    public function __construct(Blog $blog, Blog|LocalDev $themable, Language $language)
+    public function __construct(Blog $blog, Language $language)
     {
         
         $fallback = LanguageRepository::getFallbackLanguage($blog, $language);
@@ -27,7 +27,7 @@ class TwigLanguage {
         /**
          * Get the current language, fallback, and HB default
          */
-        $files = ThemeFilesRepository::getMultipleFiles($themable, [
+        $files = ThemeFilesRepository::getMultipleFiles($blog, [
             $languageFileName,
             $fallbackFileName,
             $defaultFileName,

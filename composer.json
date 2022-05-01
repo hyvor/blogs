@@ -94,6 +94,10 @@
         {
             "type": "path",
             "url": "../package-hyvor-blogs-laravel"
+        },
+        {
+            "type": "path",
+            "url": "../package-php-svg-icons"
         }
     ],
     "extra": {

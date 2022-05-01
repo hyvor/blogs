@@ -2,6 +2,7 @@
 
 use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Schema;
 
 class CreateThemeFilesTable extends Migration
@@ -22,11 +23,15 @@ class CreateThemeFilesTable extends Migration
             // data
             $table->enum('folder', ['templates', 'assets', 'styles', 'lang'])->nullable();
             $table->string('name');
-            $table->binary('content')->nullable();
+            // $table->blob('content')->nullable();
 
             // index
             $table->unique(['blog_id', 'folder', 'name']);
         });
+
+        // https://stackoverflow.com/a/20099781/9059939
+        // upto 16MB
+        DB::statement("ALTER TABLE theme_files ADD content MEDIUMBLOB NULL AFTER name");
     }
 
     /**

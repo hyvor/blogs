@@ -4,12 +4,13 @@ namespace App\Domains\Delivery\Twig;
 use App\Data\Enums\ThemeFileFolderEnum;
 use App\Domains\Blog\BlogRepository;
 use App\Domains\Language\LanguageRepository;
-use App\Domains\LocalDev\LocalDevRepository;
+use App\Domains\Route\PermalinkRepository;
 use App\Domains\Theme\ThemeFilesRepository;
 use App\Exceptions\TrustedException;
 use App\Helpers\InternalAPICaller;
 use App\Models\Blog;
-use App\Models\LocalDev;
+use Hyvor\SvgIcons\Exception\SvgIconException;
+use Hyvor\SvgIcons\Icon;
 use Twig\Error\Error;
 use Twig\Extension\AbstractExtension;
 use Twig\TwigFilter;
@@ -43,6 +44,7 @@ class TwigExtensions extends AbstractExtension
             new TwigFilter('asset_url', [$this, 'assetUrlFilter'], ['needs_context' => true]),
             new TwigFilter('asset', [$this, 'assetFilter'], ['needs_context' => true, 'is_safe' => ['html']]),
             new TwigFilter('lang', [$this, 'langFilter'], ['needs_context' => true, 'is_variadic' => true]),
+            new TwigFilter('lang_by_number', [$this, 'langByNumberFilter'], ['needs_context' => true, 'is_variadic' => true]),
             new TwigFilter('template', [$this, 'templateFilter'], [
                 'needs_environment' => true,
                 'needs_context' => true,
@@ -62,6 +64,12 @@ class TwigExtensions extends AbstractExtension
                 'needs_context' => true,
                 'is_variadic' => true
             ]),
+            new TwigFunction('icon', [$this, 'iconFunction'], [
+                'is_safe' => ['html']
+            ]),
+            new TwigFunction('language_variant_url', [$this, 'languageVariantUrlFunction'], [
+                'needs_context' => true
+            ])
         ];
 
     }
@@ -76,15 +84,15 @@ class TwigExtensions extends AbstractExtension
          * So, we simple use the BlogObject 
          */
         
-        return $context['_blog']['url'] . '/assets/' . $assetName;
+        return $context['_blog']['base_url'] . '/assets/' . $assetName;
 
     }
 
     public function assetFilter($context, $assetName)
     {
 
-        $themable = $this->getThemableFromContext($context);
-        $file = ThemeFilesRepository::getFile($themable, $assetName, ThemeFileFolderEnum::ASSETS);
+        $blog = $this->getBlogFromContext($context);
+        $file = ThemeFilesRepository::getFile($blog, $assetName, ThemeFileFolderEnum::ASSETS);
 
         return $file?->content ?? "";
 
@@ -94,14 +102,32 @@ class TwigExtensions extends AbstractExtension
     {
 
         $blog = $this->getBlogFromContext($context);
-        $themable = $this->getThemableFromContext($context);
-        $currentLanguage = LanguageRepository::getLanguageByCode($blog, $context['_lang']);
+        $currentLanguage = LanguageRepository::getLanguageByCode($blog, $context['_lang']['code']);
 
         if (!isset($this->twigLanguageHandler)) {
-            $this->twigLanguageHandler = new TwigLanguage($blog, $themable, $currentLanguage);
+            $this->twigLanguageHandler = new TwigLanguage($blog, $currentLanguage);
         }
 
         return $this->twigLanguageHandler->get($key, $args);
+
+    }
+
+    public function langByNumberFilter($context, $value, array $args = []) {
+
+        $zero = $args['zero'] ?? null;
+        $one = $args['one'] ?? null;
+        $multi = $args['multi'] ?? null;
+
+        $value = (int) $value;
+
+        $key = $multi;
+        if ($value === 0) {
+            $key = $zero;
+        } else if ($value === 1) {
+            $key = $one;
+        }
+
+        return $this->langFilter($context, $key, [$value]);
 
     }
 
@@ -154,6 +180,63 @@ class TwigExtensions extends AbstractExtension
 
     }
 
+    public function iconFunction($library, $iconName, $width = 16, $height = 16) : string
+    {
+
+        try {
+            $icon = new Icon($library, $iconName);
+            return $icon->getSvg($width, $height);
+        } catch (SvgIconException) {
+            return '';
+        }
+
+    }
+
+    public function languageVariantUrlFunction($context, string $languageCode) : string
+    {
+
+        $route = $context['_route'];
+
+        if (
+            $route === 'post' || $route === 'page' ||
+            $route === 'tag' || $route === 'author'
+        ) {
+            $object = match($route) {
+                'post', 'page' => $context['_post'],
+                'tag' => $context['_tag'],
+                'author' => $context['_author']
+            };
+
+            if ($object['language']['code'] === $languageCode) {
+                return $object['url'];
+            }
+
+            $variants = $object['variants'];
+
+            foreach ($variants as $variant) {
+                if ($variant['language']['code'] === $languageCode) {
+                    return $variant['url'];
+                }
+            }
+        }
+
+        $language = collect($context['_blog']['languages'])->firstWhere('code', $languageCode);
+
+        if (!$language) {
+            return ''; // language not found?
+        }
+
+        if ($route === 'index') {
+            $blog = $this->getBlogFromContext($context);
+            return PermalinkRepository::getBlogPermalink(
+                $blog,
+                LanguageRepository::getLanguageByCode($blog, $language['code'])
+            );
+        }
+
+        return '';
+
+    }
 
     private function getBlogFromContext($context)
     {
@@ -165,22 +248,6 @@ class TwigExtensions extends AbstractExtension
 
         return $this->blog;
 
-    }
-    
-    private function getThemableFromContext($context) : Blog|LocalDev
-    {
-        
-        if (!isset($this->themable)) {
-            
-            if (isset($context['_local_dev_uuid'])) {
-                $this->themable = LocalDevRepository::getLocalDevByUUID($context['_local_dev_uuid']);
-            } else {
-                $this->themable = BlogRepository::getBlogBySubdomain($context['_blog']['subdomain']);
-            }
-            
-        }
-        
-        return $this->themable;
     }
     
 

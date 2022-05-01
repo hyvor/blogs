@@ -47,6 +47,7 @@ class CliAPIController {
         $host = $request->input('host');
 
         $blog->hosting_url = 'http://' . $host;
+        $blog->save();
 
         $response = DeliveryRepository::getResponseObject($blog, $path);
 

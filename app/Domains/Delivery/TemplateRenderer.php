@@ -6,6 +6,7 @@ use App\Data\Objects\DataAPI\BlogObject;
 use App\Data\Objects\DataAPI\PaginationObject;
 use App\Data\Objects\DataAPI\PostObject;
 use App\Data\Objects\DataAPI\TagObject;
+use App\Data\Objects\DataAPI\LanguageObject;
 use App\Data\Objects\DeliveryAPI\DeliveryAPIResponseObject;
 use App\Data\Objects\DeliveryAPI\MetaObject;
 use App\Domains\Delivery\RouteMatcher\MatchedRoute;
@@ -20,6 +21,7 @@ use App\Models\Post;
 use App\Models\Tag;
 use App\Models\User;
 use Twig\Error\Error;
+
 
 class TemplateRenderer {
 
@@ -93,10 +95,14 @@ class TemplateRenderer {
         $scopeVariables = $this->getRouteVariables($blogObject);
 
         $vars = [
+            // HB-specific
+            '___url' => config('app.url'),
+
+            // data
             '_blog' => $blogObject,
             '_config' => [],
             '_route' => $this->matchedRoute->name,
-            '_lang' => $this->pathMatcher->language->code
+            '_lang' => new LanguageObject($this->pathMatcher->language)
         ];
 
         $vars += $scopeVariables;

@@ -67,7 +67,7 @@ class PostObject
         $this->words = $variant->words ?? 0;
         $this->title = $variant->title;
         $this->description = $variant->description;
-        $this->featured_image_url = 'https://attila.peteramende.de/content/images/size/w1920/2021/01/solen-feyissa-cAwVP9odQoI-unsplash.jpg' ?? $post->featured_image_url;
+        $this->featured_image_url = $post->featured_image_url;
         $this->canonical_url = $post->canonical_url;
 
 
