@@ -29,5 +29,6 @@
         <server name="SESSION_DRIVER" value="array"/>
         <server name="TELESCOPE_ENABLED" value="false"/>
         <server name="SCOUT_DRIVER" value="collection" />
+        <server name="FILESYSTEM_DRIVER" value="local" />
     </php>
 </phpunit>

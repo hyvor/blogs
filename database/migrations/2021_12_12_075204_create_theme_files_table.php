@@ -31,7 +31,7 @@ class CreateThemeFilesTable extends Migration
 
         // https://stackoverflow.com/a/20099781/9059939
         // upto 16MB
-        DB::statement("ALTER TABLE theme_files ADD content MEDIUMBLOB NULL AFTER name");
+        DB::statement("ALTER TABLE theme_files ADD content MEDIUMBLOB NULL");
     }
 
     /**

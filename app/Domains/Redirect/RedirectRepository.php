@@ -19,7 +19,9 @@ Class RedirectRepository
     } 
 
     public static function createRedirect(
-        int $blogId, string $path, string $to, $type
+        int $blogId,
+        string $path, string $to,
+        RedirectTypeEnum $type
     ) : Redirect
     {
         return Redirect::create([

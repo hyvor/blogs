@@ -12,7 +12,7 @@ use App\Domains\Language\LanguageRepository;
 use App\Domains\Redirect\RedirectRepository;
 use App\Models\Blog;
 use App\Models\Language;
-use App\Models\LocalDev;
+use Exception;
 
 class PathMatcher {
 
@@ -23,7 +23,12 @@ class PathMatcher {
     private bool $matched = false;
     private DeliveryAPIResponseObject $responseObject;
 
-    public function __construct(Blog $blog, string $path) {
+    public function __construct(Blog $blog, string $path)
+    {
+
+        if ($path[0] !== '/') {
+            throw new Exception('Path should start with /');
+        }
 
         $this->blog = $blog;
         $this->path = $path;
@@ -35,13 +40,13 @@ class PathMatcher {
             'setLanguage',
             'matchNonPostRoutes',
             'matchPostRoutes',
-
         ]);
 
     }
 
     // calls functions with match check after each
-    private function callFuncs(array $funcs) {
+    private function callFuncs(array $funcs)
+    {
         foreach ($funcs as $func) {
             $this->{$func}();
             if ($this->matched())
@@ -52,7 +57,8 @@ class PathMatcher {
     /**
      * Matches for redirects
      */
-    private function matchRedirect() {
+    private function matchRedirect()
+    {
 
         $redirect = RedirectRepository::findRedirectForPath($this->blog, $this->path);
 
@@ -68,12 +74,13 @@ class PathMatcher {
     }
 
     /**
-     * This routes do not conflict
+     * Unlike posts/pages, these routes do not conflict
      * Therefore, it is not needed to match in a loop
      * If there's no match, nothing happens
      * The PathMatcher moves to the next step
      */
-    private function matchDefaultRoutes() {
+    private function matchDefaultRoutes()
+    {
 
         $routeMatcher = new RouteMatcher($this->path);
 
@@ -106,12 +113,13 @@ class PathMatcher {
     /**
      * Set the language based on the path prefix
      */
-    private function setLanguage() {
+    private function setLanguage()
+    {
 
         // Get fr from /fr/hello-world
         $pathExploded = explode('/', $this->path);
         $possibleLanguageCode = $pathExploded[1] ?? null;
-    
+
         if ($possibleLanguageCode && strlen($possibleLanguageCode) <= 12) {
             // fetch all languages and find out the correct one
             $langs = $this->blog->languages;
@@ -144,7 +152,8 @@ class PathMatcher {
     /**
      * Match non-post/page routes
      */
-    private function matchNonPostRoutes() {
+    private function matchNonPostRoutes()
+    {
         $nonPostRoutes = $this->blog->routes->filter(function ($route) {
             return $route->name !== 'post' && $route->name !== 'page';
         });
@@ -184,7 +193,8 @@ class PathMatcher {
      * Post and page routes can conflict
      * Therefore match both explicitly
      */
-    private function matchPostRoutes() {
+    private function matchPostRoutes()
+    {
 
         $postRoutes = $this->blog->routes->filter(function ($route) {
             return $route->name === 'post' || $route->name === 'page';
@@ -206,36 +216,58 @@ class PathMatcher {
 
     }
 
-    private function matchAndSetResponseObject(RouteMatcher $routeMatcher) : bool {
+    private function matchAndSetResponseObject(RouteMatcher $routeMatcher) : bool
+    {
 
         $matchedRoute = $routeMatcher->match();
         
-        if ($matchedRoute) {
+        if (!$matchedRoute)
+            return false;
 
-            $processor = new RouteProcessor($this, $matchedRoute, $this->language);
+        $filter = $matchedRoute->route->posts_filter === null ?
+            null :
+            // Replace {slug} in posts_filter with the matched route params
+            preg_replace_callback('/\{(.+)\}/', function($matches) use ($matchedRoute) {
+                $var = $matches[1];
+                $param = $matchedRoute->param($var) ?? '';
+                return "'$param'";
+            }, $matchedRoute->route->posts_filter);
 
-            $responseObject = $processor->getResponseObject();
+        // feed
+        if (
+            $filter !== null &&
+            $matchedRoute->param('suffix') === 'feed'
+        ) {
+            $feed = Feed::generateFeed($this->pathMatcher->blog, $this->filter);
+            $responseObject = DeliveryAPIResponseObject::forFile($feed, 'application/atom+xml');
+            $this->setMatched($responseObject);
+            return true;
+        }
 
-            if ($responseObject) {
-                $this->setMatched($responseObject);
-                return true;
-            }
-
+        // template
+        $templateRenderer = new TemplateRenderer($this, $matchedRoute, $filter);
+        $responseObject = $templateRenderer->getResponseObject();
+        if ($responseObject) {
+            $this->setMatched($responseObject);
+            return true;
         }
 
         return false;
 
     }
 
-    private function setMatched(DeliveryAPIResponseObject $responseObject) {
+    private function setMatched(DeliveryAPIResponseObject $responseObject)
+    {
         $this->matched = true;
         $this->responseObject = $responseObject;
     }
-    private function matched() {
+    private function matched()
+    {
         return $this->matched;
     }
 
-    public function getResponseObject() {
+    public function getResponseObject()
+    {
         if ($this->matched()) {
             return $this->responseObject;
         } else {
@@ -246,11 +278,6 @@ class PathMatcher {
                 404
             );
         }
-    }
-
-    public function getThemable() : Blog|LocalDev
-    {
-        return $this->localDev ?? $this->blog;
     }
 
 }

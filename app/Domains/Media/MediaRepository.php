@@ -3,6 +3,7 @@
 namespace App\Domains\Media;
 
 use App\Domains\Media\Exceptions\UploadException;
+use App\Models\Blog;
 use App\Models\Media;
 use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Http\UploadedFile;
@@ -42,12 +43,12 @@ class MediaRepository
             ->first();
     }
 
-    public static function upload(int $blogId, UploadedFile $file): Media
+    public static function upload(Blog $blog, UploadedFile $file): Media
     {
 
         try {
 
-            $prefix = self::getPathPrefix($blogId); 
+            $prefix = self::getPathPrefix($blog->id);
             $path = Storage::putFile($prefix, $file);
 
             $fileName = self::getFileNameFromPath($path);
@@ -57,7 +58,7 @@ class MediaRepository
         }
 
         $media = Media::create([
-            'blog_id' => $blogId,
+            'blog_id' => $blog->id,
             'name' => $fileName,
             'size' => $file->getSize(),
             'original_name' => $file->getClientOriginalName(),

@@ -13,7 +13,7 @@
 
 use App\Models\Blog;
 
-uses(Tests\TestCase::class)->in('Feature');
+uses(Tests\TestCase::class)->in('Feature', 'Unit');
 
 /*
 |--------------------------------------------------------------------------
@@ -36,6 +36,10 @@ uses(Tests\TestCase::class)->in('Feature');
 | global functions to help you to reduce the number of lines of code in your test files.
 |
 */
+
+uses()->beforeEach(function() {
+    $this->blog = Blog::find(config('test.blog_id'));
+})->in('Feature', 'Unit');
 
 function blog()
 {
