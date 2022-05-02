@@ -372,7 +372,7 @@ export default function Post( {subdomain, id} ) {
                             <span className="saving">Saving...</span> : null
                         }
                         <span className="words" id="pm-word-count"></span>
-                        <a target="_blank" href="/docs/editor" className="help">
+                        <a target="_blank" href="/docs/writing" className="help">
                             <InfoCircle />
                         </a>
                     </div>

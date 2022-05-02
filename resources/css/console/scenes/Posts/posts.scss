@@ -103,7 +103,6 @@
     }
     .posts-loaded-wrap {
         animation: posts-loaded-wrap .3s;
-        padding: 15px;
         @keyframes posts-loaded-wrap {
             0% {opacity: 0;transform:translateY(10px)}
             100% {opacity: 1;transform:translateY(0)}
@@ -111,8 +110,8 @@
     }
     .posts-list-item {
         display: block;
-        padding: 15px 20px;
-        border-radius: 20px;
+        padding: 25px 30px;
+        border-left:3px solid transparent;
         position: relative;
 
         &:not(:last-child):after {
@@ -141,7 +140,8 @@
             background: $color-hover;
         }
         &.active {
-            background: $color-accent-light;
+            background: $color-accent-active;
+            border-color: $color-accent;
         }
 
 
@@ -266,27 +266,9 @@
                 margin:auto;
                 font-size: 12px;
                 font-weight: 600;
-                display: flex;
                 align-items:center;
             }
-            #pm-navigator-wrap {
-                width:50%;
-                .node-item {
-                    padding: 2px 9px;
-                    display: inline-block;
-                    background: $color-card;
-                    border-radius: 20px;
-                    border: 1px solid $color-accent-light;
-                    margin-right:4px;
-                    cursor: pointer;
-                }
-                .pm-navigator {
-                    display: flex;
-                    overflow: auto;
-                }
-            }
             .right {
-                width:50%;
                 text-align: right;
             }
 
@@ -318,6 +300,12 @@
             overflow:auto;
             .pos-rel {
                 display:block; /** not flex, so that heading does not stick */
+            }
+            .post-editor-bottom {
+                position: fixed;
+                bottom: 0;
+                left: 0;
+                width: 100%;
             }
         }
 

@@ -98,11 +98,12 @@ export default class Callout {
         picker.addEventListener('click', function () {
             const pickerWrap = document.createElement("div");
             document.body.appendChild(pickerWrap)
-            
+
             pickerWrap.style.position = 'fixed';
             const cord = picker.getBoundingClientRect()
             pickerWrap.style.top = (cord.top + 25) + "px";
             pickerWrap.style.left = (cord.left - 200) + "px";
+            pickerWrap.style.zIndex = "100000";
             
             const preset = type === 'bg' ? 
                 [

@@ -23,17 +23,18 @@
 }
 #left-nav {
     font-weight: 600;
-    padding:15px;
+    padding: 15px 0 30px;
     a {
         display: flex;
-        padding: 12px 18px;
+        padding: 12px 29px;
         cursor: pointer;
-        border-radius:20px;
+        border-left:3px solid transparent;
         &:hover {
             background-color: $color-hover;
         }
         &.active {
-            background: $color-accent-light;
+            background: $color-accent-active;
+            border-color: $color-accent;
         }
 
         .name {
@@ -69,7 +70,8 @@
     }
     .blog-selector {
         position:relative;
-        margin-bottom:24px;
+        margin-bottom: 24px;
+        padding: 0 15px;
         &:after {
             position: absolute;
             content: "";
