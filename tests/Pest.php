@@ -12,8 +12,11 @@
 */
 
 use App\Models\Blog;
+use Tests\TestCase;
+use Tests\UnitTestCase;
 
-uses(Tests\TestCase::class)->in('Feature', 'Unit');
+uses(TestCase::class)->in('Feature', 'Unit');
+uses(UnitTestCase::class)->in('Unit');
 
 /*
 |--------------------------------------------------------------------------

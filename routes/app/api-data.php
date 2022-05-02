@@ -1,9 +1,9 @@
 <?php
 
-use App\Http\Controllers\DataAPI\DataAPIController;
-use App\Http\Controllers\DataAPI\PostsController;
-use App\Http\Controllers\DataAPI\TagsController;
-use App\Http\Middleware\App\DataAPIMiddleware;
+use App\Http\Controllers\DataApi\AuthorsController;
+use App\Http\Controllers\DataApi\BlogController;
+use App\Http\Controllers\DataApi\PostsController;
+use App\Http\Controllers\DataApi\TagsController;
 use App\Http\Middleware\App\SubdomainMiddleware;
 use Illuminate\Support\Facades\Route;
 
@@ -18,9 +18,9 @@ Route::prefix('/api/data/v0/{subdomain}')
     Route::get('/tag', [TagsController::class, 'tag']);
     Route::get('/tags', [TagsController::class, 'tags']);
 
-    Route::get('/author', [DataAPIController::class, 'author']);
-    Route::get('/authors', [DataAPIController::class, 'authors']);
+    Route::get('/author', [AuthorsController::class, 'author']);
+    Route::get('/authors', [AuthorsController::class, 'authors']);
 
-    Route::get('/blog', [DataAPIController::class, 'blog']);
+    Route::get('/blog', [BlogController::class, 'blog']);
 
 });

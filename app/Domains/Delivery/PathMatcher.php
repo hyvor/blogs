@@ -4,10 +4,11 @@ namespace App\Domains\Delivery;
 use App\Data\Enums\RedirectTypeEnum;
 use App\Data\Objects\DeliveryAPI\DeliveryAPIResponseObject;
 use App\Domains\Delivery\RouteMatcher\RouteMatcher;
-use App\Domains\Delivery\RouteProcessors\AssetsProcessor;
-use App\Domains\Delivery\RouteProcessors\MediaProcessor;
-use App\Domains\Delivery\RouteProcessors\PreviewProcessor;
-use App\Domains\Delivery\RouteProcessors\StylesProcessor;
+use App\Domains\Delivery\Processors\AssetsProcessor;
+use App\Domains\Delivery\Processors\MediaProcessor;
+use App\Domains\Delivery\Processors\PreviewProcessor;
+use App\Domains\Delivery\Processors\StylesProcessor;
+use App\Domains\Delivery\TemplateRenderer\TemplateRenderer;
 use App\Domains\Language\LanguageRepository;
 use App\Domains\Redirect\RedirectRepository;
 use App\Models\Blog;
@@ -238,7 +239,7 @@ class PathMatcher {
             $filter !== null &&
             $matchedRoute->param('suffix') === 'feed'
         ) {
-            $feed = Feed::generateFeed($this->pathMatcher->blog, $this->filter);
+            $feed = Feed::generateFeed($this->blog, $this->language, $filter);
             $responseObject = DeliveryAPIResponseObject::forFile($feed, 'application/atom+xml');
             $this->setMatched($responseObject);
             return true;

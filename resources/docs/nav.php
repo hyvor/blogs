@@ -2,7 +2,7 @@
 return [ 
 
     'Intro' => [
-        [null, 'Introduction'],
+        [null, 'Getting Started'],
         ['themes', 'Themes'],
         ['hosting', 'Hosting'],
         ['writing', 'Writing'],
@@ -60,6 +60,7 @@ return [
     'Platform & Legal' => [
         ['terms', 'Terms'],
         ['privacy', 'Privacy Policy'],
+        ['content-policy', 'Content Policy']
     ],
     'Misc' => [
         ['js', 'Javascript Usage'],

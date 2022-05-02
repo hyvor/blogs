@@ -1,5 +1,5 @@
 <?php
-namespace App\Domains\Delivery\RouteProcessors;
+namespace App\Domains\Delivery\Processors;
 
 use App\Data\Enums\ThemeFileFolderEnum;
 use App\Data\Objects\DeliveryAPI\DeliveryAPIResponseObject;
@@ -12,9 +12,10 @@ use ScssPhp\ScssPhp\Compiler;
 
 class StylesProcessor implements RouteProcessorInterface {
 
-    private ?DeliveryAPIResponseObject $responseObject = null;
+    private ?DeliveryAPIResponseObject $responseObject;
 
-    public function __construct(PathMatcher $pathMatcher, MatchedRoute $matchedRoute) {
+    public function __construct(PathMatcher $pathMatcher, MatchedRoute $matchedRoute)
+    {
 
         $files = ThemeFilesRepository::getFilesInFolder(
             $pathMatcher->blog, 
@@ -22,26 +23,20 @@ class StylesProcessor implements RouteProcessorInterface {
         );
 
         $filesArray = [];
-
-        /**
-         * Step 1: First, compile Twig inside SCSS files
-         */
         foreach ($files as $file) {
-            $filesArray[$file->name] = TwigRenderer::renderString($file->content, [
-                'color' => 'blue'
-            ]);
+            $filesArray[$file->name] = $file->content;
         }
 
         $scssCompiler = new Compiler();
         $scssCompiler->registerFiles($filesArray);
 
         /**
-         * Step 2: SCSS -> CSS
+         * Step 1: SCSS -> CSS
          */
         $css = $scssCompiler->compileFile('index.scss')->getCss();
 
         /**
-         * Step 3: Auto-prefix
+         * Step 2: Auto-prefix
          */
         $autoprefixer = new Autoprefixer($css);
         $css = $autoprefixer->compile();
@@ -50,7 +45,8 @@ class StylesProcessor implements RouteProcessorInterface {
 
     }
 
-    public function getResponseObject() : ?DeliveryAPIResponseObject {
+    public function getResponseObject() : ?DeliveryAPIResponseObject
+    {
         return $this->responseObject;
     }
 

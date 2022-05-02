@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Http\Controllers\DataAPI;
+namespace App\Http\Controllers\DataApi;
 
 use Illuminate\Support\Collection;
 

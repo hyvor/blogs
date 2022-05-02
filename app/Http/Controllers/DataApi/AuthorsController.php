@@ -1,50 +1,58 @@
 <?php
-namespace App\Http\Controllers\DataAPI;
+namespace App\Http\Controllers\DataApi;
 
+use App\Data\Objects\DataAPI\AuthorObject;
 use App\Data\Objects\DataAPI\PaginationObject;
-use App\Data\Objects\DataAPI\PostObject;
 use App\Data\Objects\DataAPI\TagObject;
 use App\Domains\Tag\TagRepository;
+use App\Domains\User\UserRepository;
 use App\Exceptions\TrustedException;
 use App\Http\Controllers\Controller;
 use App\Models\Blog;
 use Illuminate\Http\Request;
 
-class TagsController extends Controller
+class AuthorsController extends Controller
 {
-    
+
     const ALLOWED_SORTS = [
-        'posts_count' => 'tags.posts_count',
-        'created_at' => 'tags.created_at'
+        'posts_count' => 'users.posts_count',
+        'created_at' => 'users.created_at'
     ];
 
-    public function tag(Request $request, Blog $blog)
+    public function author(Request $request, Blog $blog)
     {
 
         $request->validate([
             'id' => 'int|required_without:slug',
             'slug' => 'string|required_without:id',
-            'language' => 'string'
+            'language' => 'string',
+            'keys' => 'string'
         ]);
 
         $id = $request->input('id');
         $slug = $request->input('slug');
         $language = Helper::getLanguage($blog, $request->input('language'));
         $keys = $request->input('keys');
-        
-        $tag = TagRepository::getTagByBlogIdAndIdentifier($blog->id, $id, $slug);
 
-        if (!$tag) {
-            throw new TrustedException('Tag not found', TrustedException::ERROR_NOT_FOUND);
+        $author = UserRepository::getUserByBlogIdAndIdentifier($blog->id, $id, $slug);
+
+        if (!$author) {
+            throw new TrustedException('Author not found', TrustedException::ERROR_NOT_FOUND);
+        }
+
+        // must have written one post to be an author
+        // otherwise, it can be a user like finance
+        if ($author->posts_count === 0) {
+            throw new TrustedException('User is not an author', TrustedException::ERROR_INVALID_INPUT);
         }
 
         return response()->json(
-            KeysFilter::filter(new TagObject($tag, $blog, $language), $keys)
+            KeysFilter::filter(new AuthorObject($author, $blog, $language), $keys)
         );
 
     }
 
-    public function tags(Request $request, Blog $blog)
+    public function authors(Request $request, Blog $blog)
     {
 
         $request->validate([
@@ -63,8 +71,8 @@ class TagsController extends Controller
         $filter = $request->input('filter');
         $keys = $request->input('keys');
         $orderBys = Helper::getSort($request->input('sort'), self::ALLOWED_SORTS);
-        
-        $data = TagRepository::getTagsWithFilterQ(
+
+        $data = UserRepository::getAuthorsWithFilterQ(
             blog: $blog,
             filter: $filter,
             limit: $limit,
@@ -72,14 +80,14 @@ class TagsController extends Controller
             orderBys: $orderBys,
         );
 
-        $tags = $data->collection->map(function ($tag) use ($blog, $language) {
-            return new TagObject($tag, $blog, $language);
+        $authors = $data->collection->map(function ($author) use ($blog, $language) {
+            return new AuthorObject($author, $blog, $language);
         });
 
-        $filteredPosts = KeysFilter::filter($tags, $keys);
+        $filteredAuthors = KeysFilter::filter($authors, $keys);
 
         return response()->json([
-            'data' => $filteredPosts,
+            'data' => $filteredAuthors,
             'pagination' => new PaginationObject($limit, $page, $data->total)
         ]);
 

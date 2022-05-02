@@ -5,10 +5,13 @@ namespace App\Domains\User;
 use App\Data\Enums\UserRoleEnum;
 use App\Data\Enums\UserStatusEnum;
 use App\Domains\Post\PostAuthorRepository;
+use App\Helpers\CollectionWithTotal;
+use App\Models\Tag;
 use App\Models\User;
 use App\Models\UserVariant;
 use App\Exceptions\TrustedException;
 use Exception;
+use Hyvor\FilterQ\Facades\FilterQ;
 use Illuminate\Support\Collection;
 use Illuminate\Http\UploadedFile;
 use Illuminate\Support\Str;
@@ -61,6 +64,57 @@ class UserRepository
         ->get();
 
         return $users;
+    }
+
+    public static function getAuthorsWithFilterQ(
+        Blog $blog,
+        ?string $filter,
+        int $limit,
+        int $offset,
+        array $orderBys = [
+            ['users.posts_count', 'DESC']
+        ],
+    ) : CollectionWithTotal {
+
+        $builder = FilterQ::expression($filter)
+            ->builder(User::class)
+            ->keys(function($keys) {
+
+                $keys->add('id')
+                    ->column('users.id')
+                    ->valueType('int');
+
+                $keys->add('slug')
+                    ->column('users.slug')
+                    ->valueType('string|int')
+                    ->operators('=,!=');
+
+                $keys->add('posts_count')
+                    ->column('users.posts_count')
+                    ->valueType('int');
+
+                $keys->add('created_at')
+                    ->column('users.created_at')
+                    ->valueType('date');
+
+            })
+            ->addWhere();
+
+        foreach ($orderBys as $orderBy) {
+            $builder->orderBy($orderBy[0], $orderBy[1]);
+        }
+
+        $tags = $builder
+            ->where('users.blog_id', $blog->id)
+            ->where('users.posts_count', '>', 0)
+            ->limit($limit)
+            ->offset($offset)
+            ->get();
+
+        $total = $builder->count();
+
+        return new CollectionWithTotal($tags, $total);
+
     }
 
     /**

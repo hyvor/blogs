@@ -39,10 +39,13 @@ class CreateUsersTable extends Migration
             $table->string('social_github')->nullable();
 
             // misc
+            $table->integer('posts_count')->default(0);
             $table->integer('sort')->default(0); // for ordering in the console
 
             $table->unique(['blog_id', 'slug']);
             $table->unique(['blog_id', 'hyvor_user_id']);
+            $table->index(['blog_id', 'created_at']);
+            $table->index(['blog_id', 'posts_count']);
         });
     }
 

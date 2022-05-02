@@ -1,5 +1,5 @@
 <?php
-namespace App\Domains\Delivery\RouteProcessors;
+namespace App\Domains\Delivery\Processors;
 
 use App\Data\Objects\DeliveryAPI\DeliveryAPIResponseObject;
 use App\Domains\Delivery\PathMatcher;

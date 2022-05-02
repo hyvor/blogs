@@ -1,5 +1,5 @@
 <?php
-namespace App\Domains\Delivery;
+namespace App\Domains\Delivery\TemplateRenderer;
 
 use App\Data\Enums\ThemeFileFolderEnum;
 use App\Data\Objects\DataAPI\AuthorObject;
@@ -10,6 +10,7 @@ use App\Data\Objects\DataAPI\PostObject;
 use App\Data\Objects\DataAPI\TagObject;
 use App\Data\Objects\DeliveryAPI\DeliveryAPIResponseObject;
 use App\Data\Objects\DeliveryAPI\MetaObject;
+use App\Domains\Delivery\PathMatcher;
 use App\Domains\Delivery\RouteMatcher\MatchedRoute;
 use App\Domains\Delivery\Twig\TwigRenderer;
 use App\Domains\Post\PostRepository;
@@ -22,7 +23,7 @@ use App\Models\Post;
 use App\Models\Tag;
 use App\Models\User;
 use Twig\Error\Error;
-
+use function config;
 
 class TemplateRenderer {
 
@@ -54,13 +55,17 @@ class TemplateRenderer {
             return null;
         }
 
-        $output = $this->render();
+        try {
+            $output = $this->render();
+        } catch (TemplatePageNotFoundException) {
+            return null;
+        }
 
         return DeliveryAPIResponseObject::forFile($output);
 
     }
 
-    private function render()
+    private function render(): string
     {
 
         // get vars
@@ -203,6 +208,9 @@ class TemplateRenderer {
 
     }
 
+    /**
+     * @throws TemplatePageNotFoundException
+     */
     private function getPostsAndPagination() {
 
         $pageNumber = $this->getPageNumber();
@@ -234,6 +242,10 @@ class TemplateRenderer {
                 offset: $offset
             );
             
+        }
+
+        if (count($collectionWithTotal->collection) === 0 && $pageNumber > 1) {
+            throw new TemplatePageNotFoundException;
         }
         
         return [

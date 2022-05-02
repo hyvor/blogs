@@ -1,8 +1,8 @@
 <?php
 
 use App\Exceptions\TrustedException;
-use App\Http\Controllers\DataAPI\Helper;
-use App\Http\Controllers\DataAPI\PostsController;
+use App\Http\Controllers\DataApi\Helper;
+use App\Http\Controllers\DataApi\PostsController;
 use App\Models\Blog;
 
 it('returns the correct language', function() {

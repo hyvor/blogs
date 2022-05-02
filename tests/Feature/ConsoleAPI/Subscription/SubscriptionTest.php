@@ -5,7 +5,6 @@ namespace Tests\Feature\ConsoleAPI\Subscription;
 use App\Data\Enums\SubscriptionFrequencyEnum;
 use App\Data\Enums\SubscriptionPlanEnum;
 use App\Domains\Subscription\SubscriptionRepository;
-use App\Exceptions\TrustedException;
 
 /**
  * Here we are not testing the Paddle API

@@ -17,6 +17,25 @@ class Callout extends Node
         ];
     }
 
+    public function addAttributes()
+    {
+        return [
+            'emoji' => [
+                'parseHTML' => function ($DOMNode) {
+                    $children = $DOMNode->childNodes;
+
+                    foreach ($children as $child) {
+                        if ($child->nodeName === 'span') {
+                            return $child->nodeValue;
+                        }
+                    }
+
+                    return null;
+                },
+            ],
+        ];
+    }
+
     public function renderHTML($node)
     {
         $content = $node->content[0]->text ?? '';

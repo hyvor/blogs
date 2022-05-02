@@ -1,10 +1,10 @@
 <?php
-namespace App\Domains\Delivery\RouteProcessors;
+namespace App\Domains\Delivery\Processors;
 
 use App\Data\Objects\DeliveryAPI\DeliveryAPIResponseObject;
 use App\Domains\Delivery\PathMatcher;
 use App\Domains\Delivery\RouteMatcher\MatchedRoute;
-use App\Domains\Delivery\TemplateRenderer;
+use App\Domains\Delivery\TemplateRenderer\TemplateRenderer;
 use App\Domains\Post\PostRepository;
 use Illuminate\Contracts\Encryption\DecryptException;
 

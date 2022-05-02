@@ -6,33 +6,31 @@ use App\Data\Objects\DataAPI\PostObject;
 use App\Domains\Delivery\Twig\TwigRenderer;
 use App\Domains\Post\PostRepository;
 use App\Models\Blog;
+use App\Models\Language;
 
 class Feed {
 
-    public static function generateFeed(Blog $blog, $filter) {
+    public static function generateFeed(Blog $blog, Language $language, string $filter): string
+    {
 
         /**
-         * Get only last 15 posts
+         * Get only last 25 posts
          */
-        /*$limit = 15;
+        $limit = 25;
 
         $posts = PostRepository::getPostsWithFilterQ(
-            blogId: $blog->id,
+            blog: $blog,
+            language: $language,
             filter: $filter,
             limit: $limit,
-            offset: 0,
-            orderBy: 'published_at',
-            orderMethod: 'DESC'
-        )->map(function($post) use ($blog) {
-            return new PostObject($post, $blog);
-        });
+        )->collection->map(fn($post) => new PostObject($post, $blog, $language));
 
         $vars = [
-            '_blog' => new BlogObject($blog),
+            '_blog' => new BlogObject($blog, $language),
             '_posts' => $posts
         ];
 
-        return TwigRenderer::renderFile(resource_path('twig/_feed.twig'), $vars);*/
+        return TwigRenderer::renderFile(resource_path('twig/_feed.twig'), $vars);
 
     }
 

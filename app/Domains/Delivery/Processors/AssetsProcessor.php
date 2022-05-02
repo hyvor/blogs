@@ -1,5 +1,5 @@
 <?php
-namespace App\Domains\Delivery\RouteProcessors;
+namespace App\Domains\Delivery\Processors;
 
 use App\Data\Enums\ThemeFileFolderEnum;
 use App\Data\Objects\DeliveryAPI\DeliveryAPIResponseObject;
@@ -12,7 +12,8 @@ class AssetsProcessor implements RouteProcessorInterface {
 
     private ?DeliveryAPIResponseObject $responseObject = null;
 
-    public function __construct(PathMatcher $pathMatcher, MatchedRoute $matchedRoute) {
+    public function __construct(PathMatcher $pathMatcher, MatchedRoute $matchedRoute)
+    {
 
         $fileName = $matchedRoute->param('file_name');
         $file = ThemeFilesRepository::getFile(

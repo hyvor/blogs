@@ -6,7 +6,6 @@ use App\Data\Enums\DeliveryAPITypeEnum;
 use App\Data\Enums\RedirectTypeEnum;
 use App\Data\Enums\ThemeFileFolderEnum;
 use App\Domains\Delivery\PathMatcher;
-use App\Domains\Language\LanguageRepository;
 use App\Domains\Media\MediaRepository;
 use App\Domains\Redirect\RedirectRepository;
 use App\Domains\Theme\ThemeFilesRepository;
@@ -31,7 +30,7 @@ it('matches redirect', function() {
     );
 
     $pathMatcher = new PathMatcher($this->blog, $from);
-    $responseObject =  $pathMatcher->getResponseObject();
+    $responseObject = $pathMatcher->getResponseObject();
 
     $this->assertEquals(DeliveryAPITypeEnum::REDIRECT, $responseObject->type);
     $this->assertEquals($to, $responseObject->to);

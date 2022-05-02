@@ -233,7 +233,7 @@ class PostRepository
 
     }
 
-    public static function createPost(int $blogId, bool $isPage)
+    public static function createPost(Blog $blog, bool $isPage)
     {
 
         /**
@@ -245,18 +245,15 @@ class PostRepository
          */
 
         $post = Post::create([
-            'blog_id' => $blogId,
+            'blog_id' => $blog->id,
             'is_page' => $isPage
         ]);
 
         return Post::find($post->id);
     }
 
-    public static function updatePost(int $postId, array $updates)
+    public static function updatePost(Post $post, array $updates)
     {
-        $post = Post::find($postId);
-        // $postTag = PostTag::find($postId);
-
 
         if (array_key_exists('slug', $updates)) {
             $slug = $updates['slug'];
@@ -269,6 +266,10 @@ class PostRepository
             } else {
                 $post->slug = $updates['slug'];
             }
+        }
+        // published_at
+        if (array_key_exists('published_at', $updates)) {
+            $post->published_at = Carbon::createFromTimestamp($updates['published_at']);
         }
         if (array_key_exists('is_featured', $updates)) {
             $post->is_featured = $updates['is_featured'];
@@ -286,7 +287,7 @@ class PostRepository
         if (array_key_exists('tag', $updates)) {
             // $postTag->code_head = $updates['tag'];
             $post = Tag::create([
-                'post_id' => $postId,
+                'post_id' => $post->id,
                 'tag_id' => $updates['tag'],
             ]);
         }
@@ -311,22 +312,22 @@ class PostRepository
         return $post;
     }
 
-    public static function createPostVariant(int $postId, int $languageId) : PostVariant
+    public static function createPostVariant(Post $post, Language $language) : PostVariant
     {
 
         $variant = PostVariant::create([
-            'post_id' => $postId,
-            'language_id' => $languageId
+            'post_id' => $post->id,
+            'language_id' => $language->id
         ]);
 
         return PostVariant::find($variant->id);
 
     }
 
-    public static function updatePostVariant(int $postId, int $languageId, array $updates)
+    public static function updatePostVariant(Post $post, Language $language, array $updates)
     {
 
-        $variant = self::getPostVariantByPostIdAndLanguageId($postId, $languageId);
+        $variant = self::getPostVariantByPostIdAndLanguageId($post->id, $language->id);
 
         if (!$variant) {
             return;
@@ -336,14 +337,6 @@ class PostRepository
         if (array_key_exists('status', $updates)) {
             $status = $updates['status'];
             $variant->status = $status;
-        }
-
-        // published_at
-        if (
-            array_key_exists('published_at', $updates) &&
-            in_array($variant->status, ['published', 'scheduled'])
-        ) {
-            $variant->published_at = Carbon::createFromTimestamp($updates['published_at']);
         }
 
         // content

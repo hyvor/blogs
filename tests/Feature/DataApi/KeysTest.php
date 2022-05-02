@@ -3,7 +3,7 @@
 namespace Tests\Feature\DataAPI;
 
 use App\Data\Objects\DataAPI\PostObject;
-use App\Http\Controllers\DataAPI\KeysFilter;
+use App\Http\Controllers\DataApi\KeysFilter;
 use App\Models\Post;
 
 beforeEach(function() {

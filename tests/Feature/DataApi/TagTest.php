@@ -33,8 +33,8 @@ beforeEach(function() {
     
     $this->tag = Tag::find($tag->id);
     
-    $this->tagEn = getTagObjectArray($tag, $this->blog, $this->blog->languages[0]);
-    $this->tagFr = getTagObjectArray($tag, $this->blog, $this->blog->languages[1]);
+    $this->authorEn = getTagObjectArray($tag, $this->blog, $this->blog->languages[0]);
+    $this->authorFr = getTagObjectArray($tag, $this->blog, $this->blog->languages[1]);
     
 });
 
@@ -45,7 +45,7 @@ it('fetches a tag by id', function() {
             'id' => $this->tag->id
         ])
         ->assertOk()
-        ->assertExactJson($this->tagEn);
+        ->assertExactJson($this->authorEn);
     
 });
 
@@ -56,7 +56,7 @@ it('fetches a tag by slug', function() {
             'slug' => $this->tag->slug
         ])
         ->assertOk()
-        ->assertExactJson($this->tagEn);
+        ->assertExactJson($this->authorEn);
     
 });
 
@@ -88,7 +88,7 @@ it('fetches tag by id and language', function() {
             'language' => $this->blog->languages[1]->code
         ])
         ->assertOk()
-        ->assertExactJson($this->tagFr);
+        ->assertExactJson($this->authorFr);
 
 });
 

@@ -11,6 +11,7 @@ use App\Models\User;
 class AuthorObject
 {
     public int $id;
+    public int $created_at;
     public string $slug;
     public string $url;
     public string $name;
@@ -33,6 +34,7 @@ class AuthorObject
         $variants = $user->variants;
 
         $this->id = $user->id;
+        $this->created_at = $user->created_at->timestamp;
         $this->slug = $user->slug;
         $this->url = PermalinkRepository::getAuthorPermalink($user, $blog, $language);
         $this->name = VariantsHelper::getVariantValue('name', $variants, $language);
@@ -61,6 +63,6 @@ class AuthorObject
                 return new VariantObject($variantLanguage, $url);
             })->toArray();
 
-        $this->posts_count = 0; //$user->posts_count;
+        $this->posts_count = $user->posts_count;
     }
 }

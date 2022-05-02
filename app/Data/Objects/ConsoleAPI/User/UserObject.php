@@ -14,8 +14,6 @@ class UserObject
     public int $blog_id;
     public ?int $hyvor_user_id;
 
-    public bool $is_synced;
-
     public string $status;
     public string $role;
     public string $slug;
@@ -38,7 +36,6 @@ class UserObject
         $this->blog_id = $user->blog_id;
         $this->hyvor_user_id = $user->hyvor_user_id;
 
-        $this->is_synced = $user->is_synced;
         $this->status = $user->status;
         
         $this->role = $user->role;

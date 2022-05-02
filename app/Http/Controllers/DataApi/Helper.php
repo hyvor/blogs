@@ -1,5 +1,5 @@
 <?php
-namespace App\Http\Controllers\DataAPI;
+namespace App\Http\Controllers\DataApi;
 
 use App\Domains\Language\LanguageRepository;
 use App\Exceptions\TrustedException;

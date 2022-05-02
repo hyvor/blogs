@@ -11,6 +11,7 @@ use App\Models\Language;
 use App\Domains\Language\LanguageRepository;
 use Hyvor\FilterQ\Facades\FilterQ;
 use Illuminate\Database\Eloquent\Collection;
+
 class TagRepository
 {    
     public static function getTagByBlogIdAndIdentifier(int $blogId, ?int $id, ?string $slug) : ?Tag

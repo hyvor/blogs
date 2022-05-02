@@ -3,6 +3,7 @@ namespace App\Domains\Delivery\Twig;
 
 use Illuminate\Support\Facades\App;
 use Twig\Environment;
+use Twig\Extension\DebugExtension;
 use Twig\Extension\StringLoaderExtension;
 use Twig\Extra\String\StringExtension;
 use Twig\Loader\ArrayLoader;
@@ -55,7 +56,7 @@ class TwigRenderer {
 
         // debugging
         if ($isLocal) {
-            $twig->addExtension(new \Twig\Extension\DebugExtension());
+            $twig->addExtension(new DebugExtension());
         }
 
         return $twig;

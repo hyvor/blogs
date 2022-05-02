@@ -46,4 +46,10 @@ abstract class TestCase extends BaseTestCase
         return $this->call($method, URL::to('/api/cli' . $endpoint), $data);
     }
 
+    protected function callDeliveryApi(string $endpoint, $data = [], $subdomain = 'test') : TestResponse
+    {
+        $endpoint = trim($endpoint, '/');
+        return $this->call('GET', URL::to("/api/delivery/v0/$subdomain/$endpoint"), $data);
+    }
+
 }

@@ -32,18 +32,22 @@ class PostContentRepository {
 
     public static function getHtml(string $json, Blog $blog) 
     {
-        return self::getEditor($json, $blog)->getHTML();
+        return self::getEditor($blog)->setContent($json)->getHTML();
     }
 
     public static function getText(string $json, Blog $blog)
     {
-        return self::getEditor($json, $blog)->getText();
+        return self::getEditor($blog)->setContent($json)->getText();
     }
 
-    private static function getEditor(string $json, Blog $blog) : Editor
+    public static function getJsonFromHtml(string $html, Blog $blog)
     {
+        return self::getEditor($blog)->setContent($html)->getJSON();
+    }
 
-        $editor = new Editor([
+    private static function getEditor(Blog $blog) : Editor
+    {
+        return new Editor([
             'extensions' => [
 
                 // core
@@ -78,10 +82,6 @@ class PostContentRepository {
 
             ]
         ]);
-
-        $editor->setContent($json);
-
-        return $editor;
 
     }
 

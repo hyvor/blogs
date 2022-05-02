@@ -443,6 +443,8 @@ it('filters by author ID', function() {
     $blog = Blog::find(config('test.blog_id'));
     $user = $blog->users[0];
     $post = getAPost();
+
+    PostAuthor::where('post_id', $post->id)->delete();
     PostAuthor::create(['post_id' => $post->id, 'user_id' => $user->id]);
 
     $response = $this->callDataApi('/posts', [
@@ -458,6 +460,9 @@ it('filters by author slug', function() {
     $blog = Blog::find(config('test.blog_id'));
     $user = $blog->users[0];
     $post = getAPost();
+
+
+    PostAuthor::where('post_id', $post->id)->delete();
     PostAuthor::create(['post_id' => $post->id, 'user_id' => $user->id]);
 
     $response = $this->callDataApi('/posts', [
