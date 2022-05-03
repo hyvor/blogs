@@ -5,7 +5,18 @@ import { useValues } from 'kea';
 import subdomainLogic from '../logic/subdomainLogic';
 import NavLink from '../ReusableComponents/NavLink';
 import blogsLogic from '../logic/blogsLogic';
-import { Exclamation } from 'react-bootstrap-icons';
+import {
+    Brush,
+    Chat, Coin,
+    CurrencyDollar,
+    Droplet,
+    Exclamation,
+    Files, Gear,
+    House,
+    Palette,
+    Pencil,
+    Wallet
+} from 'react-bootstrap-icons';
 import dayjs from 'dayjs';
 import {UserBlog} from "../objects/userblog";
 import {appConfig} from "../helpers";
@@ -48,19 +59,20 @@ export default function Left() {
         <div id="left-nav" className="box">
             <BlogsSelector />
 
-            <NavLink href={`/console/${subdomain}`} exact={1}>Blog</NavLink>
+            <NavLink href={`/console/${subdomain}`} exact={1}><House /><span className="name">Blog</span></NavLink>
 
             <div className="left-divider"/>
 
-            <NavLink href={`/console/${subdomain}/posts`}>Posts</NavLink>
-            <NavLink href={`/console/${subdomain}/pages`}>Pages</NavLink>
-            <NavLink href={`/console/${subdomain}/comments`}>Comments</NavLink>
+            <NavLink href={`/console/${subdomain}/posts`}><Pencil /><span className="name">Posts</span></NavLink>
+            <NavLink href={`/console/${subdomain}/pages`}><Files /> <span className="name">Pages</span></NavLink>
+            <NavLink href={`/console/${subdomain}/comments`}><Chat /><span className="name">Comments</span></NavLink>
 
             <div className="left-divider"/>
 
-            <NavLink href={`/console/${subdomain}/theme`}>Theme</NavLink>
+            <NavLink href={`/console/${subdomain}/theme`}><Palette /><span className="name">Theme</span></NavLink>
 
             <NavLink href={`/console/${subdomain}/billing`}>
+                <Coin />
                 <span className="name">Billing</span>
                 <span className="mark">
                     {
@@ -83,7 +95,7 @@ export default function Left() {
                 </span>
             </NavLink>
 
-            <NavLink href={`/console/${subdomain}/settings`}>Settings</NavLink>
+            <NavLink href={`/console/${subdomain}/settings`}><Gear/><span className="name">Settings</span></NavLink>
 
         </div>
     </div>

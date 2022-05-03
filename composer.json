@@ -84,6 +84,9 @@
         ],
         "serve": [
             "concurrently \"php artisan serve --host=blogs.hyvor.test --port=8080\" \"php artisan serve --host=test.hyvorblogs.test --port=8081\""
+        ],
+        "expose": [
+            "ngrok http 8080 --host-header=blogs.hyvor.test"
         ]
     },
     "repositories": [

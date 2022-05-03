@@ -42,7 +42,7 @@ export default function Posts( { postId } ) {
     }
 
     return <div className="posts-view">
-        <div className="box box-left">
+        <div id="posts-selector" className="box box-left">
             <div className="middle-heading">
                 <div>
                     Posts
@@ -78,7 +78,7 @@ export default function Posts( { postId } ) {
                 }
             </div>
         </div>
-        <div className="box box-right">
+        <div id="post-viewer" className="box box-right">
             {
                 postId ?
                 <Post subdomain={subdomain} id={postId} /> :

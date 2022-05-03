@@ -200,6 +200,7 @@ $prosemirror-selected-outline: 3px solid #299af3;
     min-height:200px;
     margin:auto;
     width:700px;
+    max-width: 100%;
 
     blockquote, figure, h1, h2, h3, h4, h5, h6, ol, p, pre, ul {
         margin:0;

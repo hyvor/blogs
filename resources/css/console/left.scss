@@ -37,6 +37,12 @@
             border-color: $color-accent;
         }
 
+        svg {
+            margin-right: 8px;
+            width: 15px;
+            height: 18px;
+        }
+
         .name {
             flex:1;
         }

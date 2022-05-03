@@ -1,3 +1,6 @@
+$breakpoint: 1200px;
+
+
 @import '../normalize';
 @import '../font';
 @import './common';
@@ -85,3 +88,7 @@ body {
     } 
 
 } */
+
+
+
+@import './Mobile.scss';

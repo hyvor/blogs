@@ -55,4 +55,10 @@
         }
     }
 
+    @media screen and (max-width: $breakpoint) {
+        .iframe, iframe {
+            min-height: 600px;
+        }
+    }
+
 }
