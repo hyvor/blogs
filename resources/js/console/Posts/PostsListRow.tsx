@@ -6,29 +6,32 @@ import dayjs from 'dayjs';
 import languagesLogic from '../logic/languagesLogic';
 import LangTag from '../ReusableComponents/LangTag';
 import { getLangTagIconByPostStatus } from './PostLanguageSelector';
+import {Post} from "../objects/post";
 
-export default function PostsListRow({ id, subdomain }) {
+export default function PostsListRow({ id , subdomain } : {id: number, subdomain: string}) {
 
     const { languages, getLanguageById } = useValues(languagesLogic({subdomain}))
 
-    const { post } = useValues(postLogic({id}))
+    const { post } : { post?: Post, } = useValues(postLogic({id}))
     const postsLink = `/console/${subdomain}/` + (post.is_page ? 'pages' : 'posts')
     const toLink = `${postsLink}/${post.id}`
 
-    const variant = post.variants[languages[0].id];
+    const languageId = languages[0].id;
 
-    const authorsNames = post.authors.map(author => author.name).join(", ");
+    const variant = post.variants[languageId];
+
+    const authorsNames = post.authors.map(author => author.variants[languageId].name).join(", ");
 
     return <NavLink
         key={post.id} 
         href={location.pathname === toLink ? postsLink : toLink }
-        className={"posts-list-item" + (false ? " active" : "") + ` ${post.status}` }>
+        className={"posts-list-item" + (false ? " active" : "") + ` ${variant.status}` }>
 
         <div className="post-title">{ variant.title || '(Untitled)' }</div>
         
         <div className="post-data">
             <div className="post-date">
-                { dayjs.unix(variant.published_at || post.created_at).format('MMM D, YYYY') }
+                { dayjs.unix(post.published_at || post.created_at).format('MMM D, YYYY') }
             </div>
             {
                 !post.is_page ?
@@ -48,7 +51,7 @@ export default function PostsListRow({ id, subdomain }) {
                         const lang = getLanguageById(variant.language_id)
 
                         return lang ?
-                            <LangTag 
+                            <LangTag
                                 code={lang.code}
                                 icon={getLangTagIconByPostStatus(variant.status)}  
                             /> : null
@@ -62,7 +65,7 @@ export default function PostsListRow({ id, subdomain }) {
             {
                 !post.is_page ?
                 post.tags.map(tag => {
-                    return <span className="post-tag">{tag.name}</span>
+                    return <span className="post-tag">{tag.variants[languageId].name}</span>
                 })
                 : null
             }

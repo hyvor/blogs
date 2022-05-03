@@ -1,11 +1,4 @@
 
-#left {
-    position:absolute;
-    left:15px;
-    top:15px;
-    width:250px;
-    padding-bottom:15px;
-}
 #left-header {
     display: flex;
     padding: 15px;
@@ -103,7 +96,7 @@
             left:100%;
             top:-15px;
             z-index: 1;
-            padding:15px;
+            padding:25px 0 15px 0;
             
             &.active {
                 pointer-events: auto;
@@ -132,8 +125,7 @@
             }
 
             .blog {
-                padding: 6px 15px;
-                border-radius: 20px;
+                padding: 6px 25px;
                 cursor: pointer;
                 display:flex;
                 align-items: center;
@@ -141,7 +133,8 @@
                     background-color: $color-hover;
                 }
                 &.active {
-                    background-color: $color-accent-light;
+                    background-color: $color-accent-active;
+                    border-left: 3px solid $color-accent;
 
                     .global-tag-role {background-color:#fff}
                 }
@@ -180,4 +173,80 @@
             }
         }
     }
+}
+
+
+#left {
+    position:absolute;
+    left:15px;
+    top:15px;
+    width:250px;
+    padding-bottom:15px;
+
+    @media screen and (max-width: $breakpoint) {
+
+        left: 0;
+        top: 0;
+        width: 100%;
+        #left-header {
+            background: transparent;
+            box-shadow: none;
+            padding: 10px;
+            border-bottom: 1px solid $color-accent-light;
+            border-radius: 0;
+            margin-bottom: 0;
+        }
+        .blog-selector {
+            position: absolute;
+            top: 0;
+            left: 60px;
+            right: 60px;
+            padding-top: 5px;
+            text-align: center;
+            .value {
+                margin-top: 4px;
+            }
+            &:after {
+                display:none;
+            }
+            .popup-list {
+                text-align:initial;
+                top: 100%;
+                left: 50%;
+                &.active {
+                    transform: translateX(-50%) translateY(0);
+                }
+                &.inactive {
+                    transform: translateX(-50%) translateY(-30px);
+                }
+            }
+        }
+        #left-nav {
+            background: transparent;
+            box-shadow: none;
+            display: flex;
+            padding: 0;
+            border-bottom: 1px solid $color-accent-light;
+            border-radius: 0;
+            a {
+                flex: 1;
+                text-align: center;
+                display: block;
+                border-left-width: 0;
+                border-top: 3px solid transparent;
+                padding: 15px 0;
+                &.active {
+                    border-top-color: $color-accent;
+                }
+                .name, .mark {
+                    display: none;
+                }
+            }
+            .left-divider {
+                display:none;
+            }
+        }
+
+    }
+
 }

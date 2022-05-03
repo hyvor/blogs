@@ -1,30 +1,27 @@
 <?php
-
 namespace App\Data\Objects\ConsoleAPI\Tag;
 
-use App\Models\TagVariant;
-use App\Models\Tag;
-use App\Models\Language;
+use App\Domains\Route\PermalinkRepository;
 use App\Models\Blog;
+use App\Models\Tag;
+use App\Models\TagVariant;
 
 class TagVariantObject
 {
-    public int $id;
-    public int $tag_id;
+
     public int $language_id;
+    public string $url;
     public ?string $name;
     public ?string $description;
 
 
-    public function __construct(TagVariant $tagVariant)
+    public function __construct(TagVariant $tagVariant, Tag $tag, Blog $blog)
     {
         $language = $tagVariant->language;
 
-        // dd($language->id);
-        $this->id = $tagVariant->id;
-        $this->tag_id = $tagVariant->tag_id;
-
         $this->language_id = $language->id;
+
+        $this->url = PermalinkRepository::getTagPermalink($tag, $blog, $language);
 
         $this->name = $tagVariant->name;
         $this->description = $tagVariant->description;

@@ -2,6 +2,7 @@
 
 namespace App\Models;
 
+use App\Data\Enums\PostStatusEnum;
 use App\Domains\Post\Content\PostContentRepository;
 use App\Domains\Post\PostSearchRepository;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
@@ -12,6 +13,10 @@ class PostVariant extends Model
 {
     use HasFactory;
     use Searchable;
+
+    protected $casts = [
+        'status' => PostStatusEnum::class
+    ];
     
     protected $with = [
         'language'

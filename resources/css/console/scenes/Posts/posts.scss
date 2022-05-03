@@ -160,8 +160,8 @@
                 color: $color-blue-dark;
             }
             &.draft {
-                background: #767676;
-                color: $color-text-white;
+                background: $color-purple-light;
+                color: $color-purple-dark;
             }
             &.published {
                 background: $color-green-light;
@@ -187,6 +187,18 @@
             padding: 2px 7px;
             border-radius: 20px;
             font-weight: 600;
+            margin-right:3px;
+            margin-bottom: 3px;
+            display: inline-block;
+        }
+
+        &.active {
+            .post-tag {
+                background: $color-accent-light;
+            }
+            .global-lang-tag {
+                background: $color-accent-light;
+            }
         }
     }
 

@@ -2,12 +2,10 @@
 
 namespace App\Data\Objects\ConsoleAPI\Post;
 
-use App\Data\Objects\ConsoleAPI\Author\AuthorObject;
 use App\Data\Objects\ConsoleAPI\Tag\TagObject;
 use App\Data\Objects\ConsoleAPI\User\UserObject;
 use App\Models\Blog;
 use App\Models\Post;
-use Illuminate\Support\Collection;
 
 class PostObject
 {
@@ -16,11 +14,12 @@ class PostObject
     public string $preview_id; // an encrypted ID for preview
     public int $created_at;
     public int $updated_at;
+    public ?int $published_at;
     public bool $is_featured;
     public bool $is_page;
     public string $slug;
+    public ?string $featured_image_url;
     public ?string $canonical_url;
-    public ?int $reading_time;
     public ?string $code_head;
     public ?string $code_foot;
 
@@ -46,11 +45,12 @@ class PostObject
         $this->preview_id = encrypt($post->id);
         $this->created_at = $post->created_at->timestamp;
         $this->updated_at = $post->updated_at->timestamp;
+        $this->published_at = $post->published_at->timestamp;
         $this->slug = $post->slug;
         $this->is_page = (bool) $post->is_page;
         $this->is_featured = (bool) $post->is_featured;
+        $this->featured_image_url = $post->featured_image_url;
         $this->canonical_url = $post->canonical_url;
-        $this->reading_time = $post->reading_time;
         $this->code_head = $post->code_head;
         $this->code_foot = $post->code_foot;
 
