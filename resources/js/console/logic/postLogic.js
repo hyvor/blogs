@@ -30,6 +30,7 @@ const postLogic = kea({
  
         loadPost: async () => {
             const response = await api.get(subdomainLogic.values.subdomain, `/post/${props.id}`);
+            console.log(response)
             actions.set(response);
         },
 
@@ -112,7 +113,7 @@ const postLogic = kea({
     reducers: ({actions, props, selectors}) => ({
 
         // post's current state in the front-end
-        post: [{}, { 
+        post: [null, {
             set: (_, {obj}) => obj,
             updatePostValue: (state, {key, value}) => ({...state, ...{[key]: value}}),
             updatePostVariantValue: (state, {key, value, languageId}) => {
@@ -135,7 +136,7 @@ const postLogic = kea({
         }],
 
         // the really saved post in the back-end
-        postOriginal: [{}, {
+        postOriginal: [null, {
             set: (_, {obj}) => obj,
             setOriginal: (_, {obj}) => obj,
             addVariant: (state, {variant}) => {

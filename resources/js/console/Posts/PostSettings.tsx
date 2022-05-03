@@ -1,7 +1,6 @@
 import { useActions, useValues } from 'kea';
-import React, { useState, useRef } from 'react';
+import React, {useState, useRef, ReactNode} from 'react';
 import { Trash } from 'react-bootstrap-icons';
-import postLogic from '../logic/postLogic';
 import CodemirrorEditor, { CODEMIRROR_MODES } from '../ReusableComponents/CodemirrorEditor';
 import { PopupConfirm } from '../ReusableComponents/Popup';
 import { toast } from 'react-toastify'
@@ -17,10 +16,19 @@ import SelectAuthors from './PostUsers';
 import postTagLogic from '../logic/posts/postTagLogic';
 
 import { usePostActions, usePostValues } from './usePost';
+import {Post} from "../objects/post";
+import {Media} from "../objects/media";
 
-export default function PostSettings({ isSettingsOpen, settingsViewRef, id, currentLanguageId }) {
+type PostSettingsProps = {
+    isSettingsOpen: boolean;
+    settingsViewRef: any,
+    id: number;
+    currentLanguageId: number
+};
 
-    const { post } = usePostValues(id);
+export default function PostSettings({ isSettingsOpen, settingsViewRef, id, currentLanguageId } : PostSettingsProps) {
+
+    const { post } : { post? : Post } = usePostValues(id);
     const { updatePostValue, updatePostVariantValue, deletePost, savePost } = usePostActions(id);
 
     const {subdomain} = useValues(subdomainLogic);
@@ -37,7 +45,7 @@ export default function PostSettings({ isSettingsOpen, settingsViewRef, id, curr
 
     const imageUploadInputRef = useRef(null)
 
-    const variant = post.variants[currentLanguageId]
+    const variant = post.variants[currentLanguageId];
 
     function handleDelete() {
         deletePost({id})
@@ -51,14 +59,14 @@ export default function PostSettings({ isSettingsOpen, settingsViewRef, id, curr
     function handleUploadInputClick() {
         imageUploadInputRef.current.click();
     }
-    function handleUpload(e) {
-        const file = e.target.files[0]
+    function handleUpload(e: React.ChangeEvent<HTMLInputElement>) {
+        const file = e.currentTarget.files[0]
         if (!file) {
             return toast.error("No files selected");
         }
         uploadImage({
             file,
-            onUpload: (media) => {
+            onUpload: (media: Media) => {
                 updatePostValue("featured_image", media.url)
                 savePost()
             }
@@ -67,7 +75,6 @@ export default function PostSettings({ isSettingsOpen, settingsViewRef, id, curr
 
     // This will pass the post Id to the back-end to get the selected tags.
     load({postId : post.id})
-
 
     const [ settingsType, setSettingsType ] = useState('basic'); // basic | advanced
 
@@ -93,12 +100,12 @@ export default function PostSettings({ isSettingsOpen, settingsViewRef, id, curr
                             title="Slug"
                             description="The unique part of the URL to identify this post"
                         >
-                            <input 
-                                className="input" 
+                            <input
+                                className="input"
                                 value={post.slug}
                                 onChange={(e) => updatePostValue("slug", e.target.value)}
                                 maxLength={250}
-                            ></input>
+                            />
                         </Setting>
 
                         <Setting 
@@ -106,11 +113,11 @@ export default function PostSettings({ isSettingsOpen, settingsViewRef, id, curr
                             className="post-setting-publish-time"
                         >
                             {
-                                post.status !== 'published' && post.status !== 'scheduled' ?
+                                variant.status !== 'published' && variant.status !== 'scheduled' ?
                                 <div className="not-published">Not published</div> :
                                 <DatePicker
                                     selected={dayjs.unix(post.published_at).toDate()}
-                                    onChange={(date) => updatePostValue("published_at", dayjs(date).unix())}
+                                    onChange={(date: Date) => updatePostValue("published_at", dayjs(date).unix())}
                                     showTimeInput
                                     dateFormat="yyyy-MM-dd h:mm aa"
                                 />
@@ -146,13 +153,13 @@ export default function PostSettings({ isSettingsOpen, settingsViewRef, id, curr
                             description="Summarization of the post for listing pages and search engines."
                             className="post-setting-description"
                         >
-                            <textarea 
+                            <textarea
                                 className="input"
                                 placeholder="Write a description..."
                                 value={variant.description}
                                 onChange={e => updatePostVariantValue('description', e.target.value)}
                                 maxLength={350}
-                            ></textarea>
+                            />
                         </Setting>
 
                         <Setting 
@@ -169,9 +176,9 @@ export default function PostSettings({ isSettingsOpen, settingsViewRef, id, curr
                                         <Loader />
                                     </div> :
                                     (
-                                        post.featured_image ?
+                                        post.featured_image_url ?
                                         <div className="image-preview">
-                                            <img src={post.featured_image} />
+                                            <img src={post.featured_image_url} alt="Featured Image" />
                                             <span className="delete-button" onClick={(e) => {
                                                 e.stopPropagation();
                                                 setIsFeaturedImageRemoving(true)
@@ -188,7 +195,7 @@ export default function PostSettings({ isSettingsOpen, settingsViewRef, id, curr
                                     type="file" 
                                     style={{display:'none'}} 
                                     accept="image/*"
-                                    onChange={handleUpload}
+                                    onChange={e => handleUpload(e)}
                                 />
                             </div>
                             
@@ -204,7 +211,7 @@ export default function PostSettings({ isSettingsOpen, settingsViewRef, id, curr
                         >
                             <Checkbox 
                                 checked={post.is_featured}
-                                onChange={featured => updatePostValue('is_featured', featured)}
+                                onChange={(featured: boolean) => updatePostValue('is_featured', featured)}
                             />
                         </Setting>
 
@@ -226,12 +233,12 @@ export default function PostSettings({ isSettingsOpen, settingsViewRef, id, curr
                         title="Canonical URL"
                         description=""
                     >
-                        <input 
+                        <input
                             className="input"
                             value={post.canonical_url}
                             onChange={e => updatePostValue('canonical_url', e.target.value)}
                             maxLength={250}
-                        ></input>
+                        />
                     </Setting>
 
                     <Setting 
@@ -242,7 +249,7 @@ export default function PostSettings({ isSettingsOpen, settingsViewRef, id, curr
                         <CodemirrorEditor
                             mode={CODEMIRROR_MODES.twig}
                             value={post.code_head}
-                            onChange={val => updatePostValue('code_head', val)}
+                            onChange={(val: string) => updatePostValue('code_head', val)}
                         />
                     </Setting>
 
@@ -254,7 +261,7 @@ export default function PostSettings({ isSettingsOpen, settingsViewRef, id, curr
                         <CodemirrorEditor
                             mode={CODEMIRROR_MODES.twig}
                             value={post.code_foot}
-                            onChange={val => updatePostValue('code_foot', val)}
+                            onChange={(val: string) => updatePostValue('code_foot', val)}
                         />
                     </Setting>
                 </div>
@@ -296,15 +303,22 @@ export default function PostSettings({ isSettingsOpen, settingsViewRef, id, curr
 
 }
 
-function Setting(props) {
+type SettingProps = {
+    title: string,
+    description?: string,
+    className?: string,
+    children: ReactNode
+}
 
-    return <div className={"post-setting " + (props.className || "")}>
-        <div className="post-setting-title">{props.title}</div>
-        { false ? <div className="post-setting-description">{props.description}</div> : null }
+const Setting: React.FC<SettingProps> = ({ title, description, className, children }) => (
+
+    <div className={"post-setting " + (className || "")}>
+        <div className="post-setting-title">{title}</div>
+        <div style={{display: "none"}} className="post-setting-description">{description}</div>
 
         <div className="post-setting-content">
-            {props.children}
+            {children}
         </div>
     </div>
 
-}
+);

@@ -1,10 +1,9 @@
-import { kea, useValues } from "kea";
+import { kea } from "kea";
 import { router } from "kea-router";
 import blogLogic from "./blogLogic";
 import blogsLogic from "./blogsLogic";
 import postsLogic from "./postsLogic";
 import sceneLogic from './sceneLogic';
-import languagesLogic from './languagesLogic';
 
 
 const subdomainLogic = kea({
@@ -25,11 +24,7 @@ const subdomainLogic = kea({
             
             // pre-load blog settings
             blogLogic({subdomain}).actions.load();
-            // pre-load languages
-            languagesLogic({subdomain}).actions.load(() => {
-                // pre-load posts
-                postsLogic({subdomain}).actions.loadPostsList();
-            });
+            postsLogic({subdomain}).actions.loadPostsList();
 
             /**
              * This is set because there are some places that

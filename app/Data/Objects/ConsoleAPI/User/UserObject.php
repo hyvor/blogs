@@ -4,6 +4,7 @@ namespace App\Data\Objects\ConsoleAPI\User;
 
 use App\Data\Enums\UserRoleEnum;
 use App\Data\Enums\UserStatusEnum;
+use App\Data\Objects\ConsoleAPI\LanguageObject;
 use App\Models\User;
 use App\Models\Language;
 use App\Models\Blog;
@@ -30,6 +31,11 @@ class UserObject
     public ?string $social_instagram;
     public ?string $social_github;
 
+    /**
+     * @var array<int, UserVariantObject>
+     */
+    public array $variants;
+
     public function __construct(User $user, Blog $blog)
     {
         $this->id = $user->id;
@@ -55,7 +61,7 @@ class UserObject
         
         $this->variants = $user->variants->map(function($variant) use ($blog) {
             return new UserVariantObject($variant, $blog);
-        })->keyBy('language_id');
+        })->keyBy('language_id')->toArray();
         
     }
 } 

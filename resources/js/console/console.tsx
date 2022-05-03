@@ -10,6 +10,7 @@ import './lib/codemirror/codemirror';
 
 import 'react-toastify/dist/ReactToastify.css';
 import 'prosemirror-codemark/dist/codemark.css';
+import {createRoot} from "react-dom/client";
 
 resetContext({
     plugins: [
@@ -27,5 +28,5 @@ function App() {
 
 }
 
-
-ReactDOM.render(<App />, document.getElementById("app"));
+const root = createRoot(document.getElementById("app"))
+root.render(<App />);

@@ -11,7 +11,6 @@ use Illuminate\Http\Request;
 class ConsoleLanguageController extends Controller {
 
     public static function get(Blog $blog) {
-        
         $languages = LanguageRepository::getAllLanguages($blog->id)
             ->map(function (Language $language) {
                 return new LanguageObject($language);

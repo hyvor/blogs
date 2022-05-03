@@ -40,13 +40,13 @@ export default function Post( {subdomain, id} ) {
     const [currentLanguageId, setCurrentLanguageId] = useState( findBlogBySubdomain(subdomain).blog.default_language.id );
     const currentLanguage = getLanguageById(currentLanguageId);
 
-    const variants = post.variants || [];
-    const variant = variants[currentLanguageId] || {};
-
     /**
      * Disallow outside clicking when the content has changed
      */
     const viewRef = useRef(null);
+
+    const variants = post ? (post.variants || []) : {};
+    const variant = variants[currentLanguageId] || {};
 
     function handleAutoSave() {
         if (!holdAutoSavingRef.current) {
@@ -205,13 +205,13 @@ export default function Post( {subdomain, id} ) {
             closeFullscreen();
     }
 
-    const isNotDraft = variant.status !== 'draft';
+    const isNotDraft =  variant.status !== 'draft';
     const content = isNotDraft ? (variant.content_unsaved || variant.content) : variant.content;
 
     // have to first click Edit Post to edit published/scheduled posts
     const [nonDraftPostEditing, setNonDraftPostEditing] = useState(false);
     const [isUnPublishing, setIsUnPublishing] = useState(false);
-    const [isNonDraftUpdating, setIsNonDraftUpdating] = useState(false);    
+    const [isNonDraftUpdating, setIsNonDraftUpdating] = useState(false);
 
     const holdAutoSavingRef = useRef(null); // for setInterval
 
@@ -332,7 +332,7 @@ export default function Post( {subdomain, id} ) {
                             </div>
                         </div>
 
-                        <PostSettings 
+                        <PostSettings
                             isSettingsOpen={isSettingsOpen}
                             settingsViewRef={settingsViewRef}
                             id={id}

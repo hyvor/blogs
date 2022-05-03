@@ -1,5 +1,7 @@
 # Console API
 
+> The Console API is not yet ready for public access.
+
 The Console API allows you to do administrative tasks of a blog. This is the same API we use internally in the Console. You can use it to automate some tasks or even build a completely new mini-console by yourself.
 
 ## Calling the API
@@ -19,8 +21,7 @@ The Console API is huge, and is categorized by what "resource" you want to acces
 
 Jump to each category:
 
-* [Posts](#posts)
-* [Pages](#pages)
+* [Posts & Pages](#posts)
 * [Tags](#tags)
 * [Users](#users)
 * [Media](#media)
@@ -36,7 +37,18 @@ Jump to each category:
 * [Blog Meta Data](#blog-meta)
 * [Other Endpoints](#other)
 
-### Posts {#posts}
+### Posts & Pages {#posts}
+
+Endpoints
+
+* [`GET /posts`](#endpoint-posts-get) - Get posts
+* [`GET /pages`](#endpoint-pages-get) - Get pages
+* [`POST /post`](#endpoint-post-create) - Create a post/page
+* [`GET /post/{id}`](#endpoint-post-get) - Get a post/page
+* [`PATCH /post/{id}`](#endpoint-post-update) - Update a post/page
+* [`DELETE /post/{id}`](#endpoint-post-delete) - Delete a post/page
+* [`POST /post/{id}/variant`](#endpoint-post-variant-create) - Create a post language variant
+* [`DELETE /post/{id}/variant`](#endpoint-post-variant-delete) - Delete a post language variant
 
 #### Post Object {#post-object}
 

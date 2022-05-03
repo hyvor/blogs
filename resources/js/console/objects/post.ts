@@ -1,5 +1,6 @@
 import {Tag} from "./tag";
 import {User} from "./user";
+import {Language} from "./language";
 
 export type Post = {
 
@@ -19,10 +20,10 @@ export type Post = {
     code_head: string | null;
     code_foot: string | null;
 
-    variants: {[key: number] : PostVariant},
+    variants: {[key: number]: PostVariant};
 
-    tags: Tag[],
-    authors: User[]
+    tags: Tag[];
+    authors: User[];
 
 };
 

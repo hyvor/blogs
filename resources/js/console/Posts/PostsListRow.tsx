@@ -13,10 +13,14 @@ export default function PostsListRow({ id , subdomain } : {id: number, subdomain
     const { languages, getLanguageById } = useValues(languagesLogic({subdomain}))
 
     const { post } : { post?: Post, } = useValues(postLogic({id}))
+
+    if (!post)
+        return null;
+
     const postsLink = `/console/${subdomain}/` + (post.is_page ? 'pages' : 'posts')
     const toLink = `${postsLink}/${post.id}`
 
-    const languageId = languages[0].id;
+    const languageId = languages[0].id
 
     const variant = post.variants[languageId];
 
@@ -52,6 +56,7 @@ export default function PostsListRow({ id , subdomain } : {id: number, subdomain
 
                         return lang ?
                             <LangTag
+                                key={lang.id}
                                 code={lang.code}
                                 icon={getLangTagIconByPostStatus(variant.status)}  
                             /> : null
@@ -65,7 +70,7 @@ export default function PostsListRow({ id , subdomain } : {id: number, subdomain
             {
                 !post.is_page ?
                 post.tags.map(tag => {
-                    return <span className="post-tag">{tag.variants[languageId].name}</span>
+                    return <span key={tag.id} className="post-tag">{tag.variants[languageId].name}</span>
                 })
                 : null
             }

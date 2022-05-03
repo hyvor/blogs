@@ -24,7 +24,7 @@ class PostObject
     public ?string $code_foot;
 
     /**
-     * @var array{int: PostVariantObject}
+     * @var array<int, PostVariantObject>
      */
     public array $variants;
 

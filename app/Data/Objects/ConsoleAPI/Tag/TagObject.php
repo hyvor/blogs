@@ -2,6 +2,7 @@
 
 namespace App\Data\Objects\ConsoleAPI\Tag;
 
+use App\Data\Objects\ConsoleAPI\LanguageObject;
 use App\Models\Tag;
 use App\Models\Blog;
 use App\Models\TagVariant;
@@ -16,7 +17,10 @@ class TagObject
     public ?string $code_head;
     public ?string $code_foot;
     public ?string $featured_image_url;
-    
+
+    /**
+     * @var array<int, TagVariantObject>
+     */
     public array $variants;
 
 
