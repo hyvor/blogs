@@ -17,7 +17,7 @@ class PostObject
     public ?int $published_at;
     public bool $is_featured;
     public bool $is_page;
-    public string $slug;
+    public ?string $slug;
     public ?string $featured_image_url;
     public ?string $canonical_url;
     public ?string $code_head;
@@ -45,7 +45,7 @@ class PostObject
         $this->preview_id = encrypt($post->id);
         $this->created_at = $post->created_at->timestamp;
         $this->updated_at = $post->updated_at->timestamp;
-        $this->published_at = $post->published_at->timestamp;
+        $this->published_at = $post->published_at?->timestamp;
         $this->slug = $post->slug;
         $this->is_page = (bool) $post->is_page;
         $this->is_featured = (bool) $post->is_featured;

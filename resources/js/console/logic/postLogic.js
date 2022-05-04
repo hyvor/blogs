@@ -57,6 +57,19 @@ const postLogic = kea({
             actions.setOriginal(response);
         },
 
+        /**
+         * Used for forced saving/publishing/unpublishing (usually on button click)
+         */
+        forceSavePost: async ({onSave, update}) => {
+
+            const diff = {...selectors.getDiff(), ...update};
+
+            const response = await api.patch(subdomainLogic.values.subdomain, `/post/${props.id}`, diff)
+            actions.set(response)
+
+            typeof onSave === 'function' && onSave(response);
+        },
+
         createVariant: async ({languageId, onCreate}) => {
 
             const variant = await api.post(subdomainLogic.values.subdomain, `/post/${props.id}/variant`, {
@@ -68,19 +81,6 @@ const postLogic = kea({
             onCreate && onCreate();
 
         },
-
-        /**
-         * Used for forced saving/publishing/unpublishing (usually on button click)
-         */
-        forceSavePost: async ({onSave, update}) => {
-
-            const diff = {...selectors.getDiff(), ...update};
-            
-            const response = await api.patch(subdomainLogic.values.subdomain, `/post/${props.id}`, diff)
-            actions.set(response)
-
-            typeof onSave === 'function' && onSave(response);
-        }
 
     }),
 

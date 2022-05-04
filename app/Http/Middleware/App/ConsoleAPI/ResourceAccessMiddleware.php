@@ -69,10 +69,23 @@ class ResourceAccessMiddleware
             // ex: Post model
             $model = $this->models[$modelType]::find($id);
 
+            if (!$model) {
+                throw new TrustedException(
+                    "Unable to find the $modelType",
+                    TrustedException::ERROR_NOT_FOUND
+                );
+            }
+
+            app()->instance($this->models[$modelType], $model);
+
+
             // now check if the model's blog_id
             // is currently accessed blog's ID
             if ($model->blog_id !== $this->blog->id) {
-                throw new TrustedException("This $modelType belongs to another blog. Ensure the subdomain is correct");
+                throw new TrustedException(
+                    "This $modelType belongs to another blog. Ensure the subdomain is correct",
+                    TrustedException::ERROR_FORBIDDEN
+                );
             }
         }
 

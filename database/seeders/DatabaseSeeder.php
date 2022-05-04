@@ -17,6 +17,7 @@ use App\Models\User;
 use App\Models\UserVariant;
 use Faker\Factory;
 use Illuminate\Database\Eloquent\Factories\Sequence;
+use Illuminate\Support\Facades\App;
 use Illuminate\Support\Str;
 use Illuminate\Database\Seeder;
 
@@ -30,6 +31,7 @@ class DatabaseSeeder extends Seeder
      */
     public function run()
     {
+
         $faker = Factory::create();
         $fakerFr = Factory::create('fr_FR');
 
@@ -123,6 +125,10 @@ class DatabaseSeeder extends Seeder
                 ]);
 
             // posts
+            /**
+             * posts and pages 100 each
+             * about 33 draft, 33 published, 33 scheduled
+             */
             $posts = Post::factory()
                 ->count(200)
                 ->has(

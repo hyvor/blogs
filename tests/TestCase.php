@@ -2,6 +2,7 @@
 
 namespace Tests;
 
+use App\Models\Blog;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Foundation\Testing\TestCase as BaseTestCase;
 use Illuminate\Support\Facades\URL;
@@ -33,7 +34,6 @@ abstract class TestCase extends BaseTestCase
         string $method, string $endpoint, $data = [], $subdomain = 'test'
     ) : TestResponse 
     {
-        // dd($data);
         $endpoint = trim($endpoint, '/');
         return $this->call($method, URL::to("/api/console/v0/blog/$subdomain/$endpoint"), $data);
     }

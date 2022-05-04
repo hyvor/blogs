@@ -5,6 +5,7 @@ namespace App\Domains\Blog\Fillers;
 use App\Domains\Post\Content\PostContentRepository;
 use App\Domains\Post\PostRepository;
 use App\Models\Blog;
+use Illuminate\Support\Facades\App;
 
 class PostsFiller implements FillerInterface
 {
@@ -53,6 +54,9 @@ class PostsFiller implements FillerInterface
 
     public function fill()
     {
+
+        if (App::environment('testing'))
+            return;
 
         foreach ($this->data as $row) {
 

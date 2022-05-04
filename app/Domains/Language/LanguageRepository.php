@@ -69,9 +69,9 @@ class LanguageRepository {
     /**
      * @return Language primary language if the current one is not found
      */
-    public static function getLanguageById(Blog $blog, ?int $languageId) : Language
+    public static function getLanguageById(Blog $blog, ?int $languageId) : ?Language
     {
-        return $blog->languages()->where('id', $languageId)->first() ?? self::getPrimaryLanguage($blog);
+        return $blog->languages()->where('id', $languageId)->first();
     }
 
     /**

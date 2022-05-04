@@ -12,6 +12,7 @@
 */
 
 use App\Models\Blog;
+use App\Models\User;
 use Tests\TestCase;
 use Tests\UnitTestCase;
 
@@ -42,6 +43,7 @@ uses(UnitTestCase::class)->in('Unit');
 
 uses()->beforeEach(function() {
     $this->blog = Blog::find(config('test.blog_id'));
+    $this->user = User::where('hyvor_user_id', config('test.hyvor_user_id'))->first();
 })->in('Feature', 'Unit');
 
 function blog()

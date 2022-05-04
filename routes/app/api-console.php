@@ -116,6 +116,7 @@ Route::prefix('/api/console/v0/blog/{subdomain}')
             Route::delete('/post/{id}', [ConsolePostController::class, 'deletePost']);
 
             Route::post('/post/{id}/variant', [ConsolePostController::class, 'createPostVariant']);
+            Route::patch('/post/{id}/variant', [ConsolePostController::class, 'updatePostVariant']);
             Route::delete('/post/{id}/variant', [ConsolePostController::class, 'deletePostVariant']);
         });
 

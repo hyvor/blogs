@@ -74,19 +74,6 @@ class Blog extends Model
     }
 
     /**
-     * Get Media of the blog
-     */
-    public function mediaIcon()
-    {
-        return $this->hasOne(Media::class, 'icon_id');
-    }
-
-    public function mediaPicture()
-    {
-        return $this->hasOne(Media::class, 'featured_image_id');
-    }
-
-    /**
      * Get Posts of the blog
      */
     public function posts()

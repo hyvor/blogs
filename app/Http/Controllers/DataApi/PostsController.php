@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers\DataApi;
 
+use App\Data\Enums\PostStatusEnum;
 use App\Data\Objects\DataAPI\PaginationObject;
 use App\Data\Objects\DataAPI\PostObject;
 use App\Domains\Language\LanguageRepository;
@@ -55,7 +56,7 @@ class PostsController extends Controller
         }
 
         // Data API only return published posts
-        if ($variant->status !== 'published') {
+        if ($variant->status !== PostStatusEnum::PUBLISHED) {
             throw new TrustedException('This post is not yet published', TrustedException::ERROR_INVALID_INPUT);
         }
 

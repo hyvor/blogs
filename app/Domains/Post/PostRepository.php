@@ -3,6 +3,7 @@
 namespace App\Domains\Post;
 
 use App\Domains\Language\LanguageRepository;
+use App\Exceptions\TrustedException;
 use App\Helpers\CollectionWithTotal;
 use App\Models\Blog;
 use App\Models\Language;
@@ -51,7 +52,7 @@ class PostRepository
         ?int $startTimestamp,
         ?int $endTimestamp,
         ?string $search,
-        ?int $limit, 
+        int $limit,
         int $offset = 0
     ) : Collection
     {
@@ -67,7 +68,7 @@ class PostRepository
             ->when($authorId, function ($query) use ($authorId) {
                 $query->join('post_author', function ($join) use ($authorId) {
                     $join->on('post_author.post_id', '=', 'posts.id');
-                    $join->where('post_author.author_id', '=', $authorId);
+                    $join->where('post_author.user_id', '=', $authorId);
                 });
             })
             ->when($tagId, function ($query) use ($tagId) {
@@ -90,9 +91,9 @@ class PostRepository
             })
             ->when($status, function ($query) use ($status) {
                 if ($status === 'featured') {
-                    $query->where('is_featured', true);
+                    $query->where('posts.is_featured', true);
                 } else {
-                    $query->where('posts.status', $status);
+                    $query->where('post_variants.status', $status);
                 }
             })
             ->when($search, function ($query) use ($search) {
@@ -100,7 +101,7 @@ class PostRepository
             })
             // to prevent selecting post_variants data
             ->select('posts.*')
-            ->orderByRaw("FIELD(post_variants.status, 'draft') DESC") // drafts first
+            ->orderByRaw("CASE post_variants.status WHEN 'draft' THEN 1 ELSE 2 END") // drafts first
             ->orderBy('posts.created_at', 'desc')
             ->limit($limit)
             ->offset($offset)
@@ -236,6 +237,15 @@ class PostRepository
     public static function createPost(Blog $blog, bool $isPage)
     {
 
+        // create post
+        $post = Post::create([
+            'blog_id' => $blog->id,
+            'is_page' => $isPage
+        ]);
+
+        // create post variant (primary language)
+        self::createPostVariant($post, LanguageRepository::getPrimaryLanguage($blog));
+
         /**
          * Because Laravel doesn't fetch database default values for other columns
          * you have to manually fetch the record again by ID to prevent
@@ -243,12 +253,6 @@ class PostRepository
          *
          * #ref https://github.com/laravel/framework/issues/21449
          */
-
-        $post = Post::create([
-            'blog_id' => $blog->id,
-            'is_page' => $isPage
-        ]);
-
         return Post::find($post->id);
     }
 
@@ -274,6 +278,9 @@ class PostRepository
         if (array_key_exists('is_featured', $updates)) {
             $post->is_featured = $updates['is_featured'];
         }
+        if (array_key_exists('featured_image_url', $updates)) {
+            $post->featured_image_url = $updates['featured_image_url'];
+        }
         if (array_key_exists('canonical_url', $updates)) {
             $post->canonical_url = $updates['canonical_url'];
         }
@@ -291,25 +298,16 @@ class PostRepository
                 'tag_id' => $updates['tag'],
             ]);
         }
-        
-        // if (array_key_exists('code_foot', $updates)) {
-        //     $post->code_foot = $updates['code_foot'];
-        // }
-        /**
-         * Dispatch events
-         */
-        // add to an observer
-        /* if ($post->isDirty('status') || true) {
-            if ($post->status === 'published') {
-                PostPublishedEvent::dispatch($post);
-            } else if ($post->status === 'draft') {
-                // 
-            }
-        } */
 
         $post->save();
 
         return $post;
+    }
+
+
+    public static function deletePost(Post $post)
+    {
+        $post->delete();
     }
 
     public static function createPostVariant(Post $post, Language $language) : PostVariant
@@ -330,7 +328,7 @@ class PostRepository
         $variant = self::getPostVariantByPostIdAndLanguageId($post->id, $language->id);
 
         if (!$variant) {
-            return;
+            throw new TrustedException('Variant not found', TrustedException::ERROR_INVALID_INPUT);
         }
 
         // status
@@ -361,17 +359,12 @@ class PostRepository
 
         // title
         if (array_key_exists('title', $updates)) {
-            $variant->title = $updates['title'];
+            $variant->title = mb_substr($updates['title'], 0, 255);
         }
 
         // description
         if (array_key_exists('description', $updates)) {
-            $variant->description = $updates['description'];
-        }
-
-        // featured_image
-        if (array_key_exists('featured_image', $updates)) {
-            $variant->featured_image = $updates['featured_image'];
+            $variant->description = mb_substr($updates['description'], 0, 350);
         }
 
         $variant->save();
@@ -389,17 +382,11 @@ class PostRepository
 
     }
 
-    public static function deletePostVariant(int $postId, int $languageId)
+    public static function deletePostVariant(Post $post, int $languageId)
     {
         PostVariant::where('language_id', $languageId)
-            ->where('post_id', $postId)
+            ->where('post_id', $post->id)
             ->delete();
-    }
-
-
-    public static function deletePost(int $postId)
-    {
-        Post::find($postId)->delete();
     }
 
 
