@@ -1,4 +1,5 @@
 <?php
+
 namespace App\Domains\Delivery\Processors;
 
 use App\Data\Enums\ThemeFileFolderEnum;
@@ -8,21 +9,20 @@ use App\Domains\Delivery\RouteMatcher\MatchedRoute;
 use App\Domains\Theme\ThemeFilesRepository;
 use App\Helpers\MimeTypes;
 
-class AssetsProcessor implements RouteProcessorInterface {
-
+class AssetsProcessor implements RouteProcessorInterface
+{
     private ?DeliveryAPIResponseObject $responseObject = null;
 
     public function __construct(PathMatcher $pathMatcher, MatchedRoute $matchedRoute)
     {
-
         $fileName = $matchedRoute->param('file_name');
         $file = ThemeFilesRepository::getFile(
-            $pathMatcher->blog, 
-            $fileName, 
+            $pathMatcher->blog,
+            $fileName,
             ThemeFileFolderEnum::ASSETS
         );
 
-        if (!$file) {
+        if (! $file) {
             return;
         }
 
@@ -30,11 +30,10 @@ class AssetsProcessor implements RouteProcessorInterface {
         $mimeType = MimeTypes::getMimeFromExtension($extension);
 
         $this->responseObject = DeliveryAPIResponseObject::forFile($file->content, $mimeType);
-
     }
 
-    public function getResponseObject() : ?DeliveryAPIResponseObject {
+    public function getResponseObject(): ?DeliveryAPIResponseObject
+    {
         return $this->responseObject;
     }
-
 }

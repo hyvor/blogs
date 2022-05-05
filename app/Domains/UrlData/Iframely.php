@@ -9,7 +9,7 @@ class Iframely
     private const ENDPOINT = 'https://iframe.ly/api/iframely';
 
     /**
-     * @var string $url - URL to fetch data from
+     * @var string - URL to fetch data from
      *
      * Fetches data from iframely's oembed endpoint
      * https://iframely.com/docs/oembed-api
@@ -18,7 +18,7 @@ class Iframely
     {
         $params = http_build_query([
             'url' => $url,
-            'api_key' => config('services.iframely.key')
+            'api_key' => config('services.iframely.key'),
         ]);
 
         $requestUrl = self::ENDPOINT . '?' . $params;

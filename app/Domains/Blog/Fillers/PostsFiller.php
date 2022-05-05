@@ -9,7 +9,6 @@ use Illuminate\Support\Facades\App;
 
 class PostsFiller implements FillerInterface
 {
-
     private array $data = [
 
         // posts
@@ -18,14 +17,14 @@ class PostsFiller implements FillerInterface
             'slug' => 'welcome',
             'title' => 'Welcome to Hyvor Blogs',
             'file' => 'post-welcome.html',
-            'description' => 'A warm welcome to Hyvor Blogs. We have put together a few resources to help you get started with Hyvor Blogs'
+            'description' => 'A warm welcome to Hyvor Blogs. We have put together a few resources to help you get started with Hyvor Blogs',
         ],
         [
             'type' => 'post',
             'slug' => 'content-style',
             'title' => 'Content Style Guide',
             'file' => 'post-content-style.html',
-            'description' => 'A post to show you all content styles available on Hyvor Blogs'
+            'description' => 'A post to show you all content styles available on Hyvor Blogs',
         ],
 
         // pages
@@ -50,16 +49,17 @@ class PostsFiller implements FillerInterface
 
     ];
 
-    public function __construct(private Blog $blog) {}
+    public function __construct(private Blog $blog)
+    {
+    }
 
     public function fill()
     {
-
-        if (App::environment('testing'))
+        if (App::environment('testing')) {
             return;
+        }
 
         foreach ($this->data as $row) {
-
             $isPage = $row['type'] === 'page';
             $post = PostRepository::createPost($this->blog, $isPage);
 
@@ -72,18 +72,15 @@ class PostsFiller implements FillerInterface
 
             PostRepository::updatePost($post, [
                 'slug' => $row['slug'],
-                'published_at' => now()->timestamp
+                'published_at' => now()->timestamp,
             ]);
 
             PostRepository::updatePostVariant($post, $language, [
                 'status' => 'published',
                 'content' => $content,
                 'title' => $row['title'],
-                'description' => $row['description'] ?? ''
+                'description' => $row['description'] ?? '',
             ]);
-
         }
-
     }
-
 }

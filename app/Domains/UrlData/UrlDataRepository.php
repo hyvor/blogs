@@ -8,9 +8,10 @@ use App\Models\UrlData;
 
 function _safe_length($str, $len = 255)
 {
-    if (!$str) {
+    if (! $str) {
         return $str; // null
     }
+
     return mb_substr($str, 0, $len);
 }
 
@@ -18,7 +19,6 @@ class UrlDataRepository
 {
     public static function fetch($url, UrlDataFetchTypeEnum $fetchType): UrlData
     {
-
         $embed = UrlData::where('url', $url)
             ->where('fetch_type', $fetchType)
             ->first();
@@ -46,16 +46,15 @@ class UrlDataRepository
                 'description' => _safe_length($json['meta']['description'] ?? null),
                 'thumbnail' => _safe_length($json['links']['thumbnail'][0]['href'] ?? null),
                 'icon' => _safe_length($json['links']['icon'][0]['href'] ?? null),
-                'site' => _safe_length($json['meta']['site'] ?? null)
+                'site' => _safe_length($json['meta']['site'] ?? null),
             ]);
-
         } catch (IframelyException) {
             // insert to database before sending response so that we don't make multiple requests to
             // iframely endpoint for error URLs
 
             return UrlData::create([
                 'url' => $url,
-                'type' => 'error'
+                'type' => 'error',
             ]);
 
             throw new TrustedException('Unable to fetch');

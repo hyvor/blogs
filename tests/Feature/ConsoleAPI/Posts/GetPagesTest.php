@@ -4,7 +4,7 @@ namespace Tests\Feature\ConsoleAPI\Posts;
 
 use Illuminate\Testing\Fluent\AssertableJson;
 
-it('gets pages', function() {
+it('gets pages', function () {
     $this
         ->callConsoleApi('GET', '/pages')
         ->assertOk()

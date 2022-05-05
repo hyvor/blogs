@@ -1,4 +1,5 @@
 <?php
+
 namespace App\Data\Objects\ConsoleAPI\BlogSubscription;
 
 use App\Data\Enums\SubscriptionFrequencyEnum;
@@ -6,8 +7,8 @@ use App\Data\Enums\SubscriptionPlanEnum;
 use App\Domains\Subscription\SubscriptionRepository;
 use Laravel\Paddle\Subscription;
 
-class SubscriptionObject {
-
+class SubscriptionObject
+{
     /**
      * https://developer.paddle.com/webhook-reference/ZG9jOjI1MzUzOTk1-subscription-updated
      * active|past_due|paused|deleted
@@ -22,8 +23,8 @@ class SubscriptionObject {
 
     public bool $is_on_grace_period;
 
-    public function __construct(Subscription $subscription) {
-
+    public function __construct(Subscription $subscription)
+    {
         $this->status = $subscription->paddle_status;
         $this->quantity = $subscription->quantity;
 
@@ -36,7 +37,5 @@ class SubscriptionObject {
         $this->ends_at = $subscription->ends_at?->timestamp;
 
         $this->is_on_grace_period = $subscription->onGracePeriod();
-
     }
-
 }

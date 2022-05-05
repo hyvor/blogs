@@ -9,7 +9,6 @@ use App\Models\Language;
 
 class BlogObject
 {
-
     public string $subdomain;
     public string $name;
     public ?string $description;
@@ -42,7 +41,6 @@ class BlogObject
 
     public function __construct(Blog $blog, Language $language)
     {
-        
         $variants = $blog->variants;
 
         $this->subdomain = $blog->subdomain;
@@ -50,7 +48,7 @@ class BlogObject
         $this->description = VariantsHelper::getVariantValue('description', $variants, $language);
         $this->url = PermalinkRepository::getBlogPermalink($blog, $language);
         $this->base_url = PermalinkRepository::getFullUrlFromPath($blog, '');
-        
+
         $this->icon_url = $blog->icon;
         $this->featured_image_url = $blog->featured_image_url;
 
@@ -69,20 +67,16 @@ class BlogObject
 
         $this->code_head = $blog->code_head;
         $this->code_foot = $blog->code_foot;
-        
+
         $blog->navigations->each(function ($nav) {
-            
             $navObject = new NavObject($nav);
             if ($nav->type === 'header') {
                 $this->nav_header[] = $navObject;
             } else {
                 $this->nav_footer[] = $navObject;
             }
-            
         });
 
         $this->languages = $blog->languages->mapInto(LanguageObject::class)->toArray();
-
     }
-
 }

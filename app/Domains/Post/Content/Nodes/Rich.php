@@ -1,10 +1,10 @@
 <?php
+
 namespace App\Domains\Post\Content\Nodes;
 
 use App\Domains\UrlData\UrlDataRepository;
 use Exception;
 use Tiptap\Core\Node;
-use Tiptap\Utils\HTML;
 
 class Rich extends Node
 {
@@ -21,7 +21,6 @@ class Rich extends Node
 
     public function renderHTML($node)
     {
-
         $embedContent = '';
         $url = $node->attrs->url;
 
@@ -38,12 +37,11 @@ class Rich extends Node
             if ($embed->type === 'rich') {
                 $embedContent = $embed->html;
             }
-
-        } catch (Exception) {}
+        } catch (Exception) {
+        }
 
         return [
-            'content' => $embedContent ? '<rich>' . $embedContent . '</rich>' : ''
+            'content' => $embedContent ? '<rich>' . $embedContent . '</rich>' : '',
         ];
-
     }
 }

@@ -1,4 +1,5 @@
 <?php
+
 namespace App\Domains\Post\Content;
 
 use App\Domains\Post\Content\Marks\Code;
@@ -28,9 +29,9 @@ use App\Domains\Post\Content\Nodes\Text;
 use App\Models\Blog;
 use Tiptap\Editor;
 
-class PostContentRepository {
-
-    public static function getHtml(string $json, Blog $blog) 
+class PostContentRepository
+{
+    public static function getHtml(string $json, Blog $blog)
     {
         return self::getEditor($blog)->setContent($json)->getHTML();
     }
@@ -45,44 +46,42 @@ class PostContentRepository {
         return self::getEditor($blog)->setContent($html)->getJSON();
     }
 
-    private static function getEditor(Blog $blog) : Editor
+    private static function getEditor(Blog $blog): Editor
     {
         return new Editor([
             'extensions' => [
 
                 // core
-                new Doc,
-                new Text,
+                new Doc(),
+                new Text(),
 
                 // nodes
-                new Paragraph,
-                new Blockquote,
-                new HorizontalRule,
-                new Heading,
-                new CodeBlock,
-                new Figure,
-                new Figcaption,
-                new Image,
-                new Rich,
-                new Callout,
-                new HardBreak,
-                new BulletList,
-                new OrderedList,
-                new ListItem,
+                new Paragraph(),
+                new Blockquote(),
+                new HorizontalRule(),
+                new Heading(),
+                new CodeBlock(),
+                new Figure(),
+                new Figcaption(),
+                new Image(),
+                new Rich(),
+                new Callout(),
+                new HardBreak(),
+                new BulletList(),
+                new OrderedList(),
+                new ListItem(),
 
                 // marks
-                new Code,
-                new Highlight,
+                new Code(),
+                new Highlight(),
                 new Link(['blog' => $blog]),
-                new Strong,
-                new Em,
-                new Strike,
-                new Sub,
-                new Sup,
+                new Strong(),
+                new Em(),
+                new Strike(),
+                new Sub(),
+                new Sup(),
 
-            ]
+            ],
         ]);
-
     }
-
 }

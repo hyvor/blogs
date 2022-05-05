@@ -37,7 +37,7 @@ class Link extends Mark
             'a',
             HTML::mergeAttributes([
                 'target' => '_blank',
-                'rel' => $rel
+                'rel' => $rel,
             ], $HTMLAttributes),
             0,
         ];
@@ -47,12 +47,12 @@ class Link extends Mark
      * All links has the noopener and noreferrer privacy options
      * noopener - https://developer.mozilla.org/en-US/docs/Web/HTML/Link_types/noopener
      * noreferrer - https://developer.mozilla.org/en-US/docs/Web/HTML/Link_types/noreferrer
-     * 
+     *
      * No follow is added based on blog settings
      */
-    private static function getLinkRel(Blog $blog) {
+    private static function getLinkRel(Blog $blog)
+    {
         return 'noopener noreferrer' .
             ($blog->seo_follow_external_links ? '' : ' nofollow');
     }
-
 }

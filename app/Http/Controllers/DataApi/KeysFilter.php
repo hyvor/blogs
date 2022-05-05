@@ -2,8 +2,6 @@
 
 namespace App\Http\Controllers\DataApi;
 
-use Illuminate\Support\Collection;
-
 /**
  * Main task of this class is to use the ?key= param to
  * filter objects based on keys
@@ -26,7 +24,6 @@ class KeysFilter
 
     private function filterObject($object, $start = '')
     {
-
         $ret = [];
 
         if (is_iterable($object)) {
@@ -47,7 +44,7 @@ class KeysFilter
                 $fullKey = $start ? $start . '.' . $key : $key;
                 if ($this->type === 'exclude') {
                     if (
-                        !in_array($fullKey, $this->keys)
+                        ! in_array($fullKey, $this->keys)
                     ) {
                         $ret[$key] = $this->filterObject($value, $fullKey);
                     }
@@ -119,12 +116,12 @@ class KeysFilter
         $this->keys = array_map('trim', explode(',', $keys));
     }
 
-    public function getData() : array
+    public function getData(): array
     {
         return $this->data;
     }
 
-    public static function filter(object $input, ?string $keys) : array
+    public static function filter(object $input, ?string $keys): array
     {
         return (new self($input, $keys))->getData();
     }

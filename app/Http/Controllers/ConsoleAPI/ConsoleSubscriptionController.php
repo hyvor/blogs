@@ -1,4 +1,5 @@
 <?php
+
 namespace App\Http\Controllers\ConsoleAPI;
 
 use App\Data\Enums\SubscriptionFrequencyEnum;
@@ -15,10 +16,10 @@ use Illuminate\Validation\Rules\Enum;
 use Laravel\Paddle\Receipt;
 use Laravel\Paddle\Subscription;
 
-class ConsoleSubscriptionController extends Controller {
-
-    public function getData(Blog $blog) {
-
+class ConsoleSubscriptionController extends Controller
+{
+    public function getData(Blog $blog)
+    {
         $receipts = SubscriptionRepository::getReceipts($blog)->map(function (Receipt $receipt) {
             return new ReceiptObject($receipt);
         });
@@ -37,15 +38,14 @@ class ConsoleSubscriptionController extends Controller {
             'subscriptions' => $subscriptions,
             'usage' => $usage,
         ]);
-
     }
 
-    public function createPayLink(Request $request, Blog $blog) {
-
+    public function createPayLink(Request $request, Blog $blog)
+    {
         $request->validate([
             'plan' => ['required', 'string', new Enum(SubscriptionPlanEnum::class)],
             'frequency' => ['required', 'string', new Enum(SubscriptionFrequencyEnum::class)],
-            'quantity' => 'required|integer'
+            'quantity' => 'required|integer',
         ]);
 
         $payLink = SubscriptionRepository::createPayLink(
@@ -56,17 +56,16 @@ class ConsoleSubscriptionController extends Controller {
         );
 
         return response()->json([
-            'payLink' => $payLink
+            'payLink' => $payLink,
         ]);
-            
     }
 
-    public function updateSubscription(Request $request, Blog $blog) {
-
+    public function updateSubscription(Request $request, Blog $blog)
+    {
         $request->validate([
             'plan' => ['required', 'string', new Enum(SubscriptionPlanEnum::class)],
             'frequency' => ['required', 'string', new Enum(SubscriptionFrequencyEnum::class)],
-            'quantity' => 'required|integer'
+            'quantity' => 'required|integer',
         ]);
 
         SubscriptionRepository::updateSubscription(
@@ -77,15 +76,14 @@ class ConsoleSubscriptionController extends Controller {
         );
 
         return response()->json();
-
     }
 
-    public function cancelSubscription(Request $request, Blog $blog) {
+    public function cancelSubscription(Request $request, Blog $blog)
+    {
         $forced = (bool) $request->input('forced');
 
         SubscriptionRepository::cancelSubscription($blog, $forced);
+
         return response()->json();
     }
-
-
 }

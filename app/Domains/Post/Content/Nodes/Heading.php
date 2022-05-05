@@ -20,7 +20,7 @@ class Heading extends Node
     public function addAttributes()
     {
         return [
-            'id' => []
+            'id' => [],
         ];
     }
 

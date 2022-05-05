@@ -2,10 +2,8 @@
 
 namespace App\Data\Objects\ConsoleAPI\Tag;
 
-use App\Data\Objects\ConsoleAPI\LanguageObject;
-use App\Models\Tag;
 use App\Models\Blog;
-use App\Models\TagVariant;
+use App\Models\Tag;
 
 class TagObject
 {
@@ -26,7 +24,6 @@ class TagObject
 
     public function __construct(Tag $tag, Blog $blog)
     {
-
         $this->id = $tag->id;
         $this->created_at = $tag->created_at->timestamp;
         $this->updated_at = $tag->updated_at->timestamp;
@@ -36,9 +33,8 @@ class TagObject
         $this->code_foot = $tag->code_foot;
 
         $this->variants = $tag->variants
-            ->map(fn($variant) => new TagVariantObject($variant, $tag, $blog))
+            ->map(fn ($variant) => new TagVariantObject($variant, $tag, $blog))
             ->keyBy('language_id')
             ->toArray();
-        
     }
-} 
+}

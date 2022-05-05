@@ -4,8 +4,7 @@ namespace Tests\Feature\ConsoleAPI\Posts;
 
 use Illuminate\Testing\Fluent\AssertableJson;
 
-it('updates a post', function() {
-
+it('updates a post', function () {
     $post = $this->blog->posts()->first();
 
     $slug = 'hello-world';
@@ -22,10 +21,11 @@ it('updates a post', function() {
             'canonical_url' => $canonicalUrl,
             'featured_image_url' => $featuredImageUrl,
             'code_head' => $codeHead,
-            'code_foot' => $codeFoot
+            'code_foot' => $codeFoot,
         ])
         ->assertOk()
-        ->assertJson(fn(AssertableJson $json) =>
+        ->assertJson(
+            fn (AssertableJson $json) =>
             $json
                 ->where('slug', $slug)
                 ->where('is_featured', $isFeatured)
@@ -35,5 +35,4 @@ it('updates a post', function() {
                 ->where('code_foot', $codeFoot)
                 ->etc()
         );
-
 });

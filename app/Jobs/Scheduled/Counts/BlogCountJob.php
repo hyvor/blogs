@@ -1,26 +1,26 @@
 <?php
+
 namespace App\Jobs\Scheduled\Counts;
 
+use App\Data\Enums\CountEnum;
 use App\Domains\Count\CountRepository;
 use App\Models\Blog;
 use Illuminate\Contracts\Queue\ShouldBeUnique;
 use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Support\Facades\DB;
-use App\Data\Enums\CountEnum;
-use App\Models\Count;
 
 /**
  * Updates counts of all blogs
  * Called every 12 hours
  */
-class BlogCountJob implements ShouldQueue, ShouldBeUnique {
-
-
-    public function handle() {
-
+class BlogCountJob implements ShouldQueue, ShouldBeUnique
+{
+    public function handle()
+    {
         $rows = DB::table('blogs')
-            ->select( 
-                DB::raw('
+            ->select(
+                DB::raw(
+                    '
                     blogs.id,
                     (
                         SELECT COUNT(users.id)  
@@ -65,8 +65,6 @@ class BlogCountJob implements ShouldQueue, ShouldBeUnique {
             CountRepository::setCount($blog, CountEnum::BLOG_POSTS, $row->posts);
             CountRepository::setCount($blog, CountEnum::BLOG_MEDIA, $row->media);
             CountRepository::setCount($blog, CountEnum::BLOG_TAGS, $row->tags);
-        } 
-
+        }
     }
-
 }

@@ -1,13 +1,14 @@
 <?php
+
 namespace App\Domains\Delivery;
 
 use App\Data\Enums\RedirectTypeEnum;
 use App\Data\Objects\DeliveryAPI\DeliveryAPIResponseObject;
-use App\Domains\Delivery\RouteMatcher\RouteMatcher;
 use App\Domains\Delivery\Processors\AssetsProcessor;
 use App\Domains\Delivery\Processors\MediaProcessor;
 use App\Domains\Delivery\Processors\PreviewProcessor;
 use App\Domains\Delivery\Processors\StylesProcessor;
+use App\Domains\Delivery\RouteMatcher\RouteMatcher;
 use App\Domains\Delivery\TemplateRenderer\TemplateRenderer;
 use App\Domains\Language\LanguageRepository;
 use App\Domains\Redirect\RedirectRepository;
@@ -15,8 +16,8 @@ use App\Models\Blog;
 use App\Models\Language;
 use Exception;
 
-class PathMatcher {
-
+class PathMatcher
+{
     public Blog $blog;
     public string $path;
     public Language $language;
@@ -26,7 +27,6 @@ class PathMatcher {
 
     public function __construct(Blog $blog, string $path)
     {
-
         if ($path[0] !== '/') {
             throw new Exception('Path should start with /');
         }
@@ -42,7 +42,6 @@ class PathMatcher {
             'matchNonPostRoutes',
             'matchPostRoutes',
         ]);
-
     }
 
     // calls functions with match check after each
@@ -50,8 +49,9 @@ class PathMatcher {
     {
         foreach ($funcs as $func) {
             $this->{$func}();
-            if ($this->matched())
+            if ($this->matched()) {
                 return;
+            }
         }
     }
 
@@ -60,18 +60,16 @@ class PathMatcher {
      */
     private function matchRedirect()
     {
-
         $redirect = RedirectRepository::findRedirectForPath($this->blog, $this->path);
 
         if ($redirect) {
             $this->setMatched(
                 DeliveryAPIResponseObject::forRedirect(
-                    $redirect->to, 
+                    $redirect->to,
                     RedirectTypeEnum::from($redirect->type)
                 )
             );
         }
-
     }
 
     /**
@@ -82,7 +80,6 @@ class PathMatcher {
      */
     private function matchDefaultRoutes()
     {
-
         $routeMatcher = new RouteMatcher($this->path);
 
         $routeMatcher->add('assets', '/assets/{file_name}');
@@ -93,8 +90,7 @@ class PathMatcher {
         $matchedRoute = $routeMatcher->match();
 
         if ($matchedRoute) {
-
-            $processor = match($matchedRoute->name) {
+            $processor = match ($matchedRoute->name) {
                 'assets' => AssetsProcessor::class,
                 'preview' => PreviewProcessor::class,
                 'styles' => StylesProcessor::class,
@@ -106,9 +102,7 @@ class PathMatcher {
             if ($responseObject) {
                 $this->setMatched($responseObject);
             }
-
         }
-
     }
 
     /**
@@ -135,18 +129,16 @@ class PathMatcher {
                 /**
                  * Set new path to match, removing the language part
                  */
-                $this->path = '/' . implode( "/", array_slice($pathExploded, 2) );
+                $this->path = '/' . implode("/", array_slice($pathExploded, 2));
             } else {
                 $lang = $defaultLang;
             }
-
         } else {
             // fetch only the default one
             $lang = LanguageRepository::getPrimaryLanguage($this->blog);
         }
 
         $this->language = $lang;
-
     }
 
 
@@ -162,7 +154,6 @@ class PathMatcher {
         $routeMatcher = new RouteMatcher($this->path);
 
         foreach ($nonPostRoutes as $route) {
-
             $match = $route->match;
             $defaults = [];
             $requirements = [];
@@ -175,19 +166,18 @@ class PathMatcher {
             if ($route->posts_filter !== null) {
                 $match .= '/{suffix}';
                 $defaults = [
-                    'suffix' => null
+                    'suffix' => null,
                 ];
                 // feed or page number
                 $requirements = [
-                    'suffix' => '(feed|(page\/\d+))'
+                    'suffix' => '(feed|(page\/\d+))',
                 ];
             }
 
-            $routeMatcher->add($route->name, $match, $defaults, $requirements, $route);            
+            $routeMatcher->add($route->name, $match, $defaults, $requirements, $route);
         }
-        
-        $this->matchAndSetResponseObject($routeMatcher);
 
+        $this->matchAndSetResponseObject($routeMatcher);
     }
 
     /**
@@ -196,13 +186,11 @@ class PathMatcher {
      */
     private function matchPostRoutes()
     {
-
         $postRoutes = $this->blog->routes->filter(function ($route) {
             return $route->name === 'post' || $route->name === 'page';
         });
 
         foreach ($postRoutes as $route) {
-
             $routeMatcher = new RouteMatcher($this->path);
 
             $routeMatcher->add($route->name, $route->match, [], [], $route);
@@ -212,25 +200,24 @@ class PathMatcher {
             if ($matched) {
                 return; // do not process other route
             }
-
         }
-
     }
 
-    private function matchAndSetResponseObject(RouteMatcher $routeMatcher) : bool
+    private function matchAndSetResponseObject(RouteMatcher $routeMatcher): bool
     {
-
         $matchedRoute = $routeMatcher->match();
-        
-        if (!$matchedRoute)
+
+        if (! $matchedRoute) {
             return false;
+        }
 
         $filter = $matchedRoute->route->posts_filter === null ?
             null :
             // Replace {slug} in posts_filter with the matched route params
-            preg_replace_callback('/\{(.+)\}/', function($matches) use ($matchedRoute) {
+            preg_replace_callback('/\{(.+)\}/', function ($matches) use ($matchedRoute) {
                 $var = $matches[1];
                 $param = $matchedRoute->param($var) ?? '';
+
                 return "'$param'";
             }, $matchedRoute->route->posts_filter);
 
@@ -242,6 +229,7 @@ class PathMatcher {
             $feed = Feed::generateFeed($this->blog, $this->language, $filter);
             $responseObject = DeliveryAPIResponseObject::forFile($feed, 'application/atom+xml');
             $this->setMatched($responseObject);
+
             return true;
         }
 
@@ -250,11 +238,11 @@ class PathMatcher {
         $responseObject = $templateRenderer->getResponseObject();
         if ($responseObject) {
             $this->setMatched($responseObject);
+
             return true;
         }
 
         return false;
-
     }
 
     private function setMatched(DeliveryAPIResponseObject $responseObject)
@@ -273,12 +261,11 @@ class PathMatcher {
             return $this->responseObject;
         } else {
             return DeliveryAPIResponseObject::forFile(
-                "404", 
-                "text/html", 
+                "404",
+                "text/html",
                 true,
                 404
             );
         }
     }
-
 }

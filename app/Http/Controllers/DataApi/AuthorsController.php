@@ -1,10 +1,9 @@
 <?php
+
 namespace App\Http\Controllers\DataApi;
 
 use App\Data\Objects\DataAPI\AuthorObject;
 use App\Data\Objects\DataAPI\PaginationObject;
-use App\Data\Objects\DataAPI\TagObject;
-use App\Domains\Tag\TagRepository;
 use App\Domains\User\UserRepository;
 use App\Exceptions\TrustedException;
 use App\Http\Controllers\Controller;
@@ -13,20 +12,18 @@ use Illuminate\Http\Request;
 
 class AuthorsController extends Controller
 {
-
-    const ALLOWED_SORTS = [
+    public const ALLOWED_SORTS = [
         'posts_count' => 'users.posts_count',
-        'created_at' => 'users.created_at'
+        'created_at' => 'users.created_at',
     ];
 
     public function author(Request $request, Blog $blog)
     {
-
         $request->validate([
             'id' => 'int|required_without:slug',
             'slug' => 'string|required_without:id',
             'language' => 'string',
-            'keys' => 'string'
+            'keys' => 'string',
         ]);
 
         $id = $request->input('id');
@@ -36,7 +33,7 @@ class AuthorsController extends Controller
 
         $author = UserRepository::getUserByBlogIdAndIdentifier($blog->id, $id, $slug);
 
-        if (!$author) {
+        if (! $author) {
             throw new TrustedException('Author not found', TrustedException::ERROR_NOT_FOUND);
         }
 
@@ -49,19 +46,17 @@ class AuthorsController extends Controller
         return response()->json(
             KeysFilter::filter(new AuthorObject($author, $blog, $language), $keys)
         );
-
     }
 
     public function authors(Request $request, Blog $blog)
     {
-
         $request->validate([
             'language' => 'string',
             'limit' => 'int|min:1',
             'page' => 'int|min:1',
             'filter' => 'string',
             'sort' => 'string',
-            'keys' => 'string'
+            'keys' => 'string',
         ]);
 
         $language = Helper::getLanguage($blog, $request->input('language'));
@@ -88,9 +83,7 @@ class AuthorsController extends Controller
 
         return response()->json([
             'data' => $filteredAuthors,
-            'pagination' => new PaginationObject($limit, $page, $data->total)
+            'pagination' => new PaginationObject($limit, $page, $data->total),
         ]);
-
     }
-
 }

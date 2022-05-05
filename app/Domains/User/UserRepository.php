@@ -4,44 +4,39 @@ namespace App\Domains\User;
 
 use App\Data\Enums\UserRoleEnum;
 use App\Data\Enums\UserStatusEnum;
+use App\Domains\Language\LanguageRepository;
+use App\Domains\Media\MediaRepository;
 use App\Domains\Post\PostAuthorRepository;
+use App\Domains\Route\PermalinkRepository;
+use App\Exceptions\TrustedException;
 use App\Helpers\CollectionWithTotal;
-use App\Models\Tag;
+use App\Models\Blog;
+use App\Models\Language;
 use App\Models\User;
 use App\Models\UserVariant;
-use App\Exceptions\TrustedException;
 use Exception;
 use Hyvor\FilterQ\Facades\FilterQ;
-use Illuminate\Support\Collection;
-use Illuminate\Http\UploadedFile;
-use Illuminate\Support\Str;
-use App\Domains\Language\LanguageRepository;
-use App\Models\Language;
-use App\Models\Media;
-use App\Domains\Media\MediaRepository;
-use App\Domains\Route\PermalinkRepository;
-use App\Models\Blog;
-
 use Hyvor\HyvorConnecter\Userbase;
-use App\Domains\User\Types\UserBlogOutputConsoleType; 
-use App\Data\Objects\ConsoleAPI\UserBlog\UserBlogObject;
+use Illuminate\Http\UploadedFile;
+use Illuminate\Support\Collection;
 
+use Illuminate\Support\Str;
 
 /**
- * 
- * There are two user types: 
+ *
+ * There are two user types:
  *  - Hyvor users
  *  - non-Hyvor users (dummy users)
- * 
+ *
  * For dummy users, user_id is null
  */
 class UserRepository
 {
-    public static function deleteUser(int $id) {
-
+    public static function deleteUser(int $id)
+    {
         PostAuthorRepository::deleteAllWithAuthor($id);
 
-        $user = User::find($id); 
+        $user = User::find($id);
 
         if ($user->role === UserRoleEnum::OWNER->value) {
             throw new Exception('Owner cannot be deleted');
@@ -55,9 +50,9 @@ class UserRepository
         $language = LanguageRepository::getPrimaryLanguage($blog);
 
         $users = User::where('blog_id', '=', $blog->id)
-        ->join('user_variants', function($join) use ($language) {
+        ->join('user_variants', function ($join) use ($language) {
             $join->on('user_variants.user_id', '=', 'users.id');
-            $join->where('user_variants.language_id', '=',  $language->id);
+            $join->where('user_variants.language_id', '=', $language->id);
         })
         // ->latest()
         ->select('users.*')
@@ -72,14 +67,12 @@ class UserRepository
         int $limit,
         int $offset,
         array $orderBys = [
-            ['users.posts_count', 'DESC']
+            ['users.posts_count', 'DESC'],
         ],
-    ) : CollectionWithTotal {
-
+    ): CollectionWithTotal {
         $builder = FilterQ::expression($filter)
             ->builder(User::class)
-            ->keys(function($keys) {
-
+            ->keys(function ($keys) {
                 $keys->add('id')
                     ->column('users.id')
                     ->valueType('int');
@@ -96,7 +89,6 @@ class UserRepository
                 $keys->add('created_at')
                     ->column('users.created_at')
                     ->valueType('date');
-
             })
             ->addWhere();
 
@@ -114,11 +106,10 @@ class UserRepository
         $total = $builder->count();
 
         return new CollectionWithTotal($tags, $total);
-
     }
 
     /**
-    * 
+    *
     * For Hyvor users, send $hyvorUserId
     * For dummy users, send array $userData
     */
@@ -129,7 +120,7 @@ class UserRepository
         UserStatusEnum $status = UserStatusEnum::INVITED,
         array $userData = [],
     ): User {
-    // ) {
+        // ) {
 
         // This is the place where I got the ( cURL error 6: Could not resolve host: api ) Error so I had to comment it.
         // if ($hyvorUserId) {
@@ -154,14 +145,14 @@ class UserRepository
         $user = User::create([
             'blog_id' => $blog->id,
             'picture_url' => $userData['pictureUrl'] ?? null,
-            // 'slug' => $userData['slug'], 
+            // 'slug' => $userData['slug'],
             'slug' => 'test',
             // 'hyvor_user_id' => $hyvorUserId,
             'hyvor_user_id' => 1,
             'status' => $status->value,
             'role' => $role->value,
             // 'email' => $userData['email'],
-            'email' =>'sgs.ss',
+            'email' => 'sgs.ss',
             'website_url' => $userData['url'] ?? null,
             'social_facebook' => $userData['social_facebook'] ?? null,
             'social_twitter' => $userData['social_twitter'] ?? null,
@@ -186,16 +177,14 @@ class UserRepository
     }
 
     public static function updateAuthor(
-        int $userId, 
+        int $userId,
         int $languageId,
         $blog,
         ?int $hyvorUserId,
         UserRoleEnum $role,
         UserStatusEnum $status = UserStatusEnum::INVITED,
         array $userData = [],
-    ) : void
-    {
-
+    ): void {
         User::find($userId)
             ->update([
                 'slug' => $userData['slug'],
@@ -209,53 +198,52 @@ class UserRepository
                 'social_linkedin' => $userData['social_linkedin'] ?? null,
                 'social_youtube' => $userData['social_youtube'] ?? null,
                 'social_instagram' => $userData['social_instagram'] ?? null,
-            ]); 
+            ]);
 
         UserVariant::where([
                 'user_id' => $userId ,
-                'language_id'=> $languageId,
+                'language_id' => $languageId,
             ]) ->update([
                 'name' => $userData['name'] ?? null,
-                'location' => $userData['location']  ?? null,
-                'bio' => $userData['bio']  ?? null
+                'location' => $userData['location'] ?? null,
+                'bio' => $userData['bio'] ?? null,
             ]);
     }
 
-    public static function deleteAuthor(int $userId, int $languageId) : void
+    public static function deleteAuthor(int $userId, int $languageId): void
     {
-        $language = Language::where('id','=', $languageId)
+        $language = Language::where('id', '=', $languageId)
         ->value('is_primary');
 
-        if($language == 0){
-            UserVariant::where('user_id','=',$userId)
-                ->where('language_id','=',$languageId)
+        if ($language == 0) {
+            UserVariant::where('user_id', '=', $userId)
+                ->where('language_id', '=', $languageId)
                 ->delete();
-        }
-        else{
-            UserVariant::where('user_id','=',$userId)
+        } else {
+            UserVariant::where('user_id', '=', $userId)
                 ->delete();
 
             User::find($userId)
                 ->delete();
         }
     }
-        
+
     /*
     *
     * these functions are for author Variants
     *
     */
-    public static function createAuthorVariant(int $userId, int $languageId) : void
+    public static function createAuthorVariant(int $userId, int $languageId): void
     {
-        $language = Language::where('id','=', $languageId)
+        $language = Language::where('id', '=', $languageId)
         ->value('is_primary');
 
-        if($language == 0){
-            $userVariantCheck = UserVariant::where('user_id','=', $userId)
-            ->where('language_id','=', $languageId)
+        if ($language == 0) {
+            $userVariantCheck = UserVariant::where('user_id', '=', $userId)
+            ->where('language_id', '=', $languageId)
             ->first();
 
-            if($userVariantCheck == null){
+            if ($userVariantCheck == null) {
                 UserVariant::create([
                     'user_id' => $userId,
                     'language_id' => $languageId,
@@ -264,8 +252,8 @@ class UserRepository
         }
     }
 
-    public static function updatePicture($blog, UploadedFile $file) : bool {
-
+    public static function updatePicture($blog, UploadedFile $file): bool
+    {
         $media = MediaRepository::upload($blog->id, $file);
         $pictureUrl = PermalinkRepository::getMediaPermalink($media, $blog);
         // dd($pictureUrl);
@@ -293,18 +281,19 @@ class UserRepository
             ->get();
     }
 
-    public static function getUser(int $id) : ?User {
+    public static function getUser(int $id): ?User
+    {
         return User::find($id);
     }
 
-    public static function getUserByBlogIdAndHyvorUserId(int $blogId, int $hyvorUserId) : ?User 
+    public static function getUserByBlogIdAndHyvorUserId(int $blogId, int $hyvorUserId): ?User
     {
         return User::where('blog_id', $blogId)
             ->where('hyvor_user_id', $hyvorUserId)
             ->first();
     }
 
-    public static function getUserByBlogIdAndIdentifier(int $blogId, ?int $id, ?string $slug) : ?User
+    public static function getUserByBlogIdAndIdentifier(int $blogId, ?int $id, ?string $slug): ?User
     {
         $user = User::where('blog_id', $blogId);
         if ($id) {
@@ -312,10 +301,11 @@ class UserRepository
         } else {
             $user->where('slug', $slug);
         }
+
         return $user->first();
     }
 
-    public static function getUserByBlogIdAndSlug(int $blogId, string $slug) : ?User
+    public static function getUserByBlogIdAndSlug(int $blogId, string $slug): ?User
     {
         return self::getUserByBlogIdAndIdentifier($blogId, null, $slug);
     }
@@ -326,14 +316,14 @@ class UserRepository
     * $arr = [blogId, blogId] in the correct sort
     *
     */
-    public static function changeBlogSorts(int $userId, array $arr) : void
+    public static function changeBlogSorts(int $userId, array $arr): void
     {
         $i = 1;
         foreach ($arr as $blogId) {
             User::where('blog_id', $blogId)
                 ->where('hyvor_user_id', $userId)
                 ->update([
-                    'sort' => $i
+                    'sort' => $i,
                 ]);
             $i++;
         }
@@ -351,27 +341,23 @@ class UserRepository
      * If that doesn't work, use a random string
      * It should work almost every time.
      */
-    private static function findSlugForUser(int $blogId, array $userData) 
+    private static function findSlugForUser(int $blogId, array $userData)
     {
-
         $checks = [
             $userData['name'],
             $userData['email'],
-            Str::random()
+            Str::random(),
         ];
 
         foreach ($checks as $check) {
-
             $slug = Str::slug($check);
 
-            if (!
-                User::where('blog_id', $blogId)
+            if (! User::where('blog_id', $blogId)
                     ->where('slug', $slug)
                     ->exists()
             ) {
                 return $slug;
             }
-
         }
 
         throw new TrustedException('Unable to find a slug for the user');

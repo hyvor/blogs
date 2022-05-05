@@ -11,61 +11,56 @@ use Illuminate\Support\Facades\Cache;
  */
 class CacheRepository
 {
-    
-    private static function getCacheKeyTag(Blog $blog) : string
+    private static function getCacheKeyTag(Blog $blog): string
     {
         return "blog_cache_{$blog->id}";
     }
 
-    private static function getCacheKey(Blog $blog, string $path) : string
+    private static function getCacheKey(Blog $blog, string $path): string
     {
         $tag = self::getCacheKeyTag($blog);
+
         return $tag . "_$path";
     }
-    
-    
+
+
     public static function set(
-        Blog $blog, string $path, 
+        Blog $blog,
+        string $path,
         DeliveryAPIResponseObject $responseObject
-    ) : void
-    {
-        
-        if (config('app.debug') === true)
+    ): void {
+        if (config('app.debug') === true) {
             return;
-        
+        }
+
         $tag = self::getCacheKeyTag($blog);
         $key = self::getCacheKey($blog, $path);
         Cache::tags($tag)->put($key, serialize($responseObject));
-        
     }
-    
-    public static function get(Blog $blog, string $path) : ?DeliveryAPIResponseObject
-    {
 
-        if (config('app.debug') === true)
+    public static function get(Blog $blog, string $path): ?DeliveryAPIResponseObject
+    {
+        if (config('app.debug') === true) {
             return null;
-        
+        }
+
         $tag = self::getCacheKeyTag($blog);
         $key = self::getCacheKey($blog, $path);
         $cache = Cache::tags($tag)->get($key);
-        
+
         return $cache ? unserialize($cache) : null;
-           
     }
-    
-    public static function clear(Blog $blog, string $path) {
-        
+
+    public static function clear(Blog $blog, string $path)
+    {
         $tag = self::getCacheKeyTag($blog);
         $key = self::getCacheKey($blog, $path);
         Cache::tags($tag)->forget($key);
-        
-    }
-    
-    public static function clearAll(Blog $blog) {
-        
-        $tag = self::getCacheKeyTag($blog);
-        Cache::tags($tag)->flush();
-        
     }
 
+    public static function clearAll(Blog $blog)
+    {
+        $tag = self::getCacheKeyTag($blog);
+        Cache::tags($tag)->flush();
+    }
 }

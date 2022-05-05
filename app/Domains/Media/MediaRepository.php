@@ -11,11 +11,11 @@ use Illuminate\Support\Facades\Storage;
 
 /**
  *  Terms
- * 
+ *
  *  fileName = a unique name for each file within
  *  prefix = blog/$blogId (unique for each blog)
  *  path = "blog/$blogId/$fileName"
- * 
+ *
  */
 class MediaRepository
 {
@@ -36,7 +36,7 @@ class MediaRepository
         return Media::find($id);
     }
 
-    public static function getByBlogIdAndName(int $blogId, string $name) 
+    public static function getByBlogIdAndName(int $blogId, string $name)
     {
         return Media::where('blog_id', $blogId)
             ->where('name', $name)
@@ -45,14 +45,11 @@ class MediaRepository
 
     public static function upload(Blog $blog, UploadedFile $file): Media
     {
-
         try {
-
             $prefix = self::getPathPrefix($blog->id);
             $path = Storage::putFile($prefix, $file);
 
             $fileName = self::getFileNameFromPath($path);
-
         } catch (\Exception $e) {
             throw new UploadException('Error while uploading');
         }
@@ -62,18 +59,18 @@ class MediaRepository
             'name' => $fileName,
             'size' => $file->getSize(),
             'original_name' => $file->getClientOriginalName(),
-            'extension' => $file->extension()
+            'extension' => $file->extension(),
         ]);
 
         return $media;
     }
 
-    public static function getContents(Media $media) {
-        
-        $content = Storage::get( self::getPath($media->blog_id, $media->name) );
+    public static function getContents(Media $media)
+    {
+        $content = Storage::get(self::getPath($media->blog_id, $media->name));
+
         return $content;
-        
-    } 
+    }
 
     public static function delete(int $id)
     {
@@ -87,17 +84,20 @@ class MediaRepository
         $media->delete();
     }
 
-    private static function getPathPrefix(int $blogId) {
+    private static function getPathPrefix(int $blogId)
+    {
         return "blog/$blogId";
     }
 
-    private static function getPath(int $blogId, string $filName) {
+    private static function getPath(int $blogId, string $filName)
+    {
         return self::getPathPrefix($blogId) . '/' . $filName;
     }
 
-    private static function getFileNameFromPath(string $path) {
+    private static function getFileNameFromPath(string $path)
+    {
         $split = explode('/', $path);
+
         return $split[ count($split) - 1 ];
     }
-
 }

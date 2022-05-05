@@ -6,12 +6,12 @@ use App\Exceptions\TrustedException;
 use App\Models\Blog;
 use App\Models\Language;
 use App\Models\Media;
+use App\Models\Navigation;
 use App\Models\Post;
 use App\Models\Redirect;
-use App\Models\Navigation;
+use App\Models\Route;
 use App\Models\Tag;
 use App\Models\User;
-use App\Models\Route;
 use Closure;
 
 class ResourceAccessMiddleware
@@ -62,14 +62,14 @@ class ResourceAccessMiddleware
             // ex: post (model type)
             $modelType = $split[5];
 
-            if (!array_key_exists($modelType, $this->models)) {
+            if (! array_key_exists($modelType, $this->models)) {
                 throw new TrustedException("Unable to find the $modelType to verify blog relationship");
             }
 
             // ex: Post model
             $model = $this->models[$modelType]::find($id);
 
-            if (!$model) {
+            if (! $model) {
                 throw new TrustedException(
                     "Unable to find the $modelType",
                     TrustedException::ERROR_NOT_FOUND

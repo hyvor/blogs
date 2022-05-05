@@ -2,16 +2,15 @@
 
 namespace Tests\Feature\ConsoleAPI;
 
-use Illuminate\Testing\Fluent\AssertableJson;
 use App\Models\Redirect;
+use Illuminate\Testing\Fluent\AssertableJson;
 
 //  To run the redirect tests - php artisan test  --filter 'RedirectTest'
 
-it('fetches redirects', function() {
-   
+it('fetches redirects', function () {
     $this
         ->callConsoleApi('GET', 'redirect', [
-           'limit' => 5
+           'limit' => 5,
         ])
         ->assertOk()
         ->assertJson(function (AssertableJson $json) {
@@ -23,173 +22,158 @@ it('fetches redirects', function() {
         });
 });
 
-it('fetches redirect with offset', function() {
-    
+it('fetches redirect with offset', function () {
     $redirectsCount = Redirect::where('blog_id', config('test.blog_id'))->count();
 
     $this
         ->callConsoleApi('GET', 'redirect', [
             'limit' => $redirectsCount,
-            'offset' => $redirectsCount - 1
+            'offset' => $redirectsCount - 1,
         ])
         ->assertOk()
         ->assertJson(function (AssertableJson $json) {
             $json->count(1);
         });
-    
 });
 
-it('creates a redirect success', function() {
-
+it('creates a redirect success', function () {
     $this
         ->callConsoleApi('POST', 'redirect', [
             'path' => 'test-one',
             'to' => 'test-two',
-            'type' => '302'
+            'type' => '302',
         ])
         ->assertOk()
         ->assertJson(function (AssertableJson $json) {
             $json->has('id')
                 ->etc();
-        }); 
+        });
 });
 
-it('creates redirect should fail if type is not 302 or 301', function() {
-
+it('creates redirect should fail if type is not 302 or 301', function () {
     $data = 'about';
     $this
         ->callConsoleApi('POST', 'redirect', [
             'path' => $data,
             'to' => $data,
-            'type' => 'hello'
+            'type' => 'hello',
         ])
         ->assertUnprocessable();
 });
 
-it('creating redirects fails on empty values', function() {
-
+it('creating redirects fails on empty values', function () {
     $this
         ->callConsoleApi('POST', 'redirect')
-        ->assertUnprocessable();    
+        ->assertUnprocessable();
 });
 
-it('creates redirect should fail if (path) has spaces', function() {
-
+it('creates redirect should fail if (path) has spaces', function () {
     $data = 'about';
     $this
         ->callConsoleApi('POST', 'redirect', [
             'path' => 'this is wrong',
             'to' => $data,
-            'type' => '301'
+            'type' => '301',
         ])
         ->assertUnprocessable();
 });
 
-it('creates redirect should fail if (to) has spaces', function() {
-
+it('creates redirect should fail if (to) has spaces', function () {
     $data = 'about';
     $this
         ->callConsoleApi('POST', 'redirect', [
             'path' => $data,
             'to' => 'this is also wrong',
-            'type' => 'hello'
+            'type' => 'hello',
         ])
         ->assertUnprocessable();
 });
 
-it('creates redirect should fail if (to) has a null value', function() {
-
+it('creates redirect should fail if (to) has a null value', function () {
     $data = 'about';
     $this
         ->callConsoleApi('POST', 'redirect', [
             'path' => $data,
             'to' => null,
-            'type' => 'hello'
+            'type' => 'hello',
         ])
         ->assertUnprocessable();
 });
 
-it('creates redirect should fail if (path) has a null value', function() {
-
+it('creates redirect should fail if (path) has a null value', function () {
     $data = 'about';
     $this
         ->callConsoleApi('POST', 'redirect', [
             'path' => null,
             'to' => $data,
-            'type' => 'hello'
+            'type' => 'hello',
         ])
         ->assertUnprocessable();
 });
 
-it('deleting redirect success', function() {
-
+it('deleting redirect success', function () {
     $id = 1;
     $this
         ->callConsoleApi('DELETE', 'redirect/'.$id)
-        ->assertOk();    
+        ->assertOk();
 });
 
-it('updating a route success', function() {
-
+it('updating a route success', function () {
     $id = 1;
     $data = 'New data';
     $this
         ->callConsoleApi('PUT', 'redirect/'.$id, [
             'name' => $data,
             'match' => $data,
-            'template' => '301'
+            'template' => '301',
         ])
         ->assertOk();
 });
 
-it('updating redirect should fail if (path) has spaces', function() {
-
+it('updating redirect should fail if (path) has spaces', function () {
     $id = 1;
     $data = 'about';
     $this
         ->callConsoleApi('PUT', 'redirect/'.$id, [
             'path' => 'this is wrong',
             'to' => $data,
-            'type' => '301'
+            'type' => '301',
         ])
         ->assertUnprocessable();
 });
 
-it('updating redirect should fail if (to) has spaces', function() {
-
+it('updating redirect should fail if (to) has spaces', function () {
     $id = 1;
     $data = 'about';
     $this
         ->callConsoleApi('PUT', 'redirect/'.$id, [
             'path' => $data,
             'to' => 'this is also wrong',
-            'type' => 'hello'
+            'type' => 'hello',
         ])
         ->assertUnprocessable();
 });
 
-it('updating redirect should fail if (to) has a null value', function() {
-
+it('updating redirect should fail if (to) has a null value', function () {
     $id = 1;
     $data = 'about';
     $this
         ->callConsoleApi('PUT', 'redirect/'.$id, [
             'path' => $data,
             'to' => null,
-            'type' => 'hello'
+            'type' => 'hello',
         ])
         ->assertUnprocessable();
 });
 
-it('updating redirect should fail if (path) has a null value', function() {
-
+it('updating redirect should fail if (path) has a null value', function () {
     $id = 1;
     $data = 'about';
     $this
         ->callConsoleApi('PUT', 'redirect/'.$id, [
             'path' => null,
             'to' => $data,
-            'type' => 'hello'
+            'type' => 'hello',
         ])
         ->assertUnprocessable();
 });

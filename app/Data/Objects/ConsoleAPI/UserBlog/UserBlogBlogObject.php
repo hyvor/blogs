@@ -6,7 +6,6 @@ use App\Data\Enums\BlogTypeEnum;
 use App\Data\Enums\CountEnum;
 use App\Data\Objects\ConsoleAPI\BlogSubscription\SubscriptionObject;
 use App\Data\Objects\ConsoleAPI\LanguageObject;
-use App\Domains\Blog\BlogRepository;
 use App\Domains\Count\CountRepository;
 use App\Domains\Route\PermalinkRepository;
 use App\Models\Blog;
@@ -32,7 +31,7 @@ class UserBlogBlogObject
      * This is the last subscription
      * not the active subscription
      * it can be a deleted subscription
-     * 
+     *
      * Therefore use $this->subscribed to make sure the user is subscribed
      */
     public ?SubscriptionObject $subscription = null;
@@ -53,7 +52,7 @@ class UserBlogBlogObject
 
         $counts = CountRepository::getCounts($blog, [
             CountEnum::BLOG_USERS,
-            CountEnum::BLOG_POSTS
+            CountEnum::BLOG_POSTS,
         ]);
         $this->posts_count = $counts[ CountEnum::BLOG_POSTS->value ];
         $this->users_count = $counts[ CountEnum::BLOG_USERS->value ];
@@ -73,6 +72,5 @@ class UserBlogBlogObject
                 ->where('is_primary', true)
                 ->first()
         );
-
     }
 }

@@ -1,59 +1,63 @@
 <?php
+
 namespace Tests\Feature\ConsoleAPI;
 
-use App\Exceptions\TrustedException;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Testing\Fluent\AssertableJson;
 use Tests\TestCase;
 
 class SubscriptionsTest extends TestCase
 {
-
     use RefreshDatabase;
 
-    private function callEndpoint($method, $data = null) {
+    private function callEndpoint($method, $data = null)
+    {
         return $this->call($method, '/api/console/v0/blog/test/subscription', $data);
     }
 
-    /** 
+    /**
      * PayLink creations
      **/
-    public function testPayLinkCreationSuccess() {
-
+    public function testPayLinkCreationSuccess()
+    {
         $response = $this->callEndpoint('post', [
             'plan' => 'team',
             'frequency' => 'monthly',
-            'quantity' => 3
+            'quantity' => 3,
         ]);
 
         $response->assertOk()->assertJson(function (AssertableJson $json) {
             $json->whereType('payLink', 'string');
         });
-
     }
-    public function testPayLinkInvalidPlan() {
+    public function testPayLinkInvalidPlan()
+    {
         $this->callEndpoint('post', ['plan' => "invalid", 'frequency' => 'monthly', 'quantity' => 3])
             ->assertUnprocessable();
     }
-    public function testPayLinkInvalidFrequency() {
+    public function testPayLinkInvalidFrequency()
+    {
         $this->callEndpoint('post', ['plan' => "team", 'frequency' => 'annual', 'quantity' => 3])
             ->assertUnprocessable();
     }
-    public function testPayLinkProMonthlyBilling() {
+    public function testPayLinkProMonthlyBilling()
+    {
         $this->callEndpoint('post', ['plan' => "pro", 'frequency' => 'monthly', 'quantity' => 1])
             ->assertUnprocessable();
     }
-    public function testPayLinkInvalidQuantity() {
+    public function testPayLinkInvalidQuantity()
+    {
         $this->callEndpoint('post', ['plan' => "team", 'frequency' => 'monthly', 'quantity' => 1])
             ->assertUnprocessable();
     }
-    public function testPayLinkInvalidQuantityHigh() {
+    public function testPayLinkInvalidQuantityHigh()
+    {
         $this->callEndpoint('post', ['plan' => "team", 'frequency' => 'monthly', 'quantity' => 100])
             ->assertUnprocessable();
     }
-    public function testPayLinkInvalidParams() {
+    public function testPayLinkInvalidParams()
+    {
         $this->callEndpoint('post', [])
             ->assertUnprocessable();
     }
-
 }

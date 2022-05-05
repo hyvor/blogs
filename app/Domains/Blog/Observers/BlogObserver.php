@@ -1,7 +1,6 @@
 <?php
+
 namespace App\Domains\Blog\Observers;
-
-
 
 use App\Data\Enums\UserRoleEnum;
 use App\Data\Enums\UserStatusEnum;
@@ -14,18 +13,17 @@ use App\Models\Blog;
 
 class BlogObserver
 {
-
     public function created(Blog $blog)
     {
 
         // FILL NEW BLOG
-        
+
         /**
          * Start Trial
          * ============
          */
         $blog->createAsCustomer([
-            'trial_ends_at' => now()->addDays(config('limits.trial_days'))
+            'trial_ends_at' => now()->addDays(config('limits.trial_days')),
         ]);
 
 
@@ -33,7 +31,7 @@ class BlogObserver
             LanguageFiller::class,
             RouteFiller::class,
             NavigationFiller::class,
-            PostsFiller::class
+            PostsFiller::class,
         ];
         foreach ($fillers as $filler) {
             (new $filler($blog))->fill();
@@ -49,14 +47,9 @@ class BlogObserver
             UserRoleEnum::OWNER,
             UserStatusEnum::ACTIVE
         );
-        
     }
 
     public function updated(Blog $blog)
     {
-
-        
-
     }
-
 }

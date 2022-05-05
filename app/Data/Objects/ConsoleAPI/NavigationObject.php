@@ -11,8 +11,8 @@ class NavigationObject
     public int $blog_id;
     public string $name;
     public string $url;
-    public string $type; 
-    public string $sort; 
+    public string $type;
+    public string $sort;
 
     public function __construct(Navigation $navigation)
     {

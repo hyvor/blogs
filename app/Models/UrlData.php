@@ -9,8 +9,8 @@ use Illuminate\Database\Eloquent\Model;
 class UrlData extends Model
 {
     use HasFactory;
-    
+
     protected $casts = [
-        'fetch_type' => UrlDataFetchTypeEnum::class
+        'fetch_type' => UrlDataFetchTypeEnum::class,
     ];
 }

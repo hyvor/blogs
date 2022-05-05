@@ -1,16 +1,15 @@
 <?php
+
 namespace App\Domains\Media;
 
-use App\Data\Objects\ConsoleAPI\MediaObject;
-
-class UnsplashRepository {
-
-    public static function search(string $search, $page = 1) {
-
+class UnsplashRepository
+{
+    public static function search(string $search, $page = 1)
+    {
         \Unsplash\HttpClient::init([
-            'applicationId'	=> config('services.unsplash.access_key'),
-            'secret'	=> config('services.unsplash.secret_key'),
-            'utmSource' => 'Hyvor Blogs'
+            'applicationId' => config('services.unsplash.access_key'),
+            'secret' => config('services.unsplash.secret_key'),
+            'utmSource' => 'Hyvor Blogs',
         ]);
 
         $limit = 30;
@@ -18,5 +17,4 @@ class UnsplashRepository {
 
         return collect($response->getResults());
     }
-
 }

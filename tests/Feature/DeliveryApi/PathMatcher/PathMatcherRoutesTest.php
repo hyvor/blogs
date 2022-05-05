@@ -12,8 +12,7 @@ use App\Domains\Theme\ThemeFilesRepository;
 use App\Models\Post;
 use App\Models\PostVariant;
 
-it('matches index page', function() {
-
+it('matches index page', function () {
     $content = 'Hello World';
 
     ThemeFilesRepository::createOrUpdateFile(
@@ -24,15 +23,13 @@ it('matches index page', function() {
     );
 
     $pathMatcher = new PathMatcher($this->blog, '/');
-    $responseObject =  $pathMatcher->getResponseObject();
+    $responseObject = $pathMatcher->getResponseObject();
 
     $this->assertEquals(DeliveryAPITypeEnum::FILE, $responseObject->type);
     $this->assertEquals($content, $responseObject->content);
-
 });
 
-it('matches tag page', function() {
-
+it('matches tag page', function () {
     $content = 'I am a tag';
 
     ThemeFilesRepository::createOrUpdateFile(
@@ -45,16 +42,14 @@ it('matches tag page', function() {
     $tag = $this->blog->tags[0];
 
     $pathMatcher = new PathMatcher($this->blog, "/tag/$tag->slug");
-    $responseObject =  $pathMatcher->getResponseObject();
+    $responseObject = $pathMatcher->getResponseObject();
 
     $this->assertEquals(DeliveryAPITypeEnum::FILE, $responseObject->type);
     $this->assertEquals($content, $responseObject->content);
-
 });
 
 
-it('matches author page', function() {
-
+it('matches author page', function () {
     $content = 'I am an author';
 
     ThemeFilesRepository::createOrUpdateFile(
@@ -67,15 +62,13 @@ it('matches author page', function() {
     $user = $this->blog->users[0];
 
     $pathMatcher = new PathMatcher($this->blog, "/author/$user->slug");
-    $responseObject =  $pathMatcher->getResponseObject();
+    $responseObject = $pathMatcher->getResponseObject();
 
     $this->assertEquals(DeliveryAPITypeEnum::FILE, $responseObject->type);
     $this->assertEquals($content, $responseObject->content);
-
 });
 
-it('matches custom route', function() {
-
+it('matches custom route', function () {
     RouteRepository::createRoute(
         $this->blog,
         'test',
@@ -93,16 +86,14 @@ it('matches custom route', function() {
     );
 
     $pathMatcher = new PathMatcher($this->blog, "/test");
-    $responseObject =  $pathMatcher->getResponseObject();
+    $responseObject = $pathMatcher->getResponseObject();
 
 
     $this->assertEquals(DeliveryAPITypeEnum::FILE, $responseObject->type);
     $this->assertEquals($content, $responseObject->content);
-
 });
 
-it('matches index with page number', function() {
-
+it('matches index with page number', function () {
     $twig = '{{ _pagination.page }}';
     $result = '2';
 
@@ -114,15 +105,13 @@ it('matches index with page number', function() {
     );
 
     $pathMatcher = new PathMatcher($this->blog, '/page/2');
-    $responseObject =  $pathMatcher->getResponseObject();
+    $responseObject = $pathMatcher->getResponseObject();
 
     $this->assertEquals(DeliveryAPITypeEnum::FILE, $responseObject->type);
     $this->assertEquals($result, $responseObject->content);
-
 });
 
-it('returns not found when pages are not found in larger collections', function() {
-
+it('returns not found when pages are not found in larger collections', function () {
     ThemeFilesRepository::createOrUpdateFile(
         $this->blog,
         ThemeFileFolderEnum::TEMPLATES,
@@ -131,15 +120,13 @@ it('returns not found when pages are not found in larger collections', function(
     );
 
     $pathMatcher = new PathMatcher($this->blog, '/page/50000');
-    $responseObject =  $pathMatcher->getResponseObject();
+    $responseObject = $pathMatcher->getResponseObject();
 
     $this->assertEquals(DeliveryAPITypeEnum::FILE, $responseObject->type);
     $this->assertEquals(404, $responseObject->status);
-
 });
 
-it('returns success even when pages are not found but when the page number is 1', function() {
-
+it('returns success even when pages are not found but when the page number is 1', function () {
     $twig = '{{ _pagination.total }}';
     $result = '0';
 
@@ -153,27 +140,23 @@ it('returns success even when pages are not found but when the page number is 1'
     Post::query()->delete();
 
     $pathMatcher = new PathMatcher($this->blog, '/');
-    $responseObject =  $pathMatcher->getResponseObject();
+    $responseObject = $pathMatcher->getResponseObject();
 
     $this->assertEquals(DeliveryAPITypeEnum::FILE, $responseObject->type);
     $this->assertEquals(200, $responseObject->status);
     $this->assertEquals($result, $responseObject->content);
-
 });
 
 
-it('matches index with feed', function() {
-
+it('matches index with feed', function () {
     $pathMatcher = new PathMatcher($this->blog, '/feed');
-    $responseObject =  $pathMatcher->getResponseObject();
+    $responseObject = $pathMatcher->getResponseObject();
 
     $this->assertEquals(DeliveryAPITypeEnum::FILE, $responseObject->type);
     $this->assertEquals('application/atom+xml', $responseObject->mime_type);
-
 });
 
-it('matches a post', function() {
-
+it('matches a post', function () {
     $twig = '{{ _post.id }}';
 
     ThemeFilesRepository::createOrUpdateFile(
@@ -192,16 +175,14 @@ it('matches a post', function() {
         ->first();
 
     $pathMatcher = new PathMatcher($this->blog, "/$variant->slug");
-    $responseObject =  $pathMatcher->getResponseObject();
+    $responseObject = $pathMatcher->getResponseObject();
 
     $this->assertEquals(DeliveryAPITypeEnum::FILE, $responseObject->type);
     $this->assertEquals(200, $responseObject->status);
     $this->assertEquals("$variant->id", $responseObject->content);
-
 });
 
-it('matches a page', function() {
-
+it('matches a page', function () {
     $twig = '{{ _post.id }}';
 
     ThemeFilesRepository::createOrUpdateFile(
@@ -220,16 +201,14 @@ it('matches a page', function() {
         ->first();
 
     $pathMatcher = new PathMatcher($this->blog, "/$variant->slug");
-    $responseObject =  $pathMatcher->getResponseObject();
+    $responseObject = $pathMatcher->getResponseObject();
 
     $this->assertEquals(DeliveryAPITypeEnum::FILE, $responseObject->type);
     $this->assertEquals(200, $responseObject->status);
     $this->assertEquals("$variant->id", $responseObject->content);
-
 });
 
-it('matches a post with language', function() {
-
+it('matches a post with language', function () {
     $twig = '{{ _post.id }}{{ _lang.id }}';
 
     ThemeFilesRepository::createOrUpdateFile(
@@ -248,10 +227,9 @@ it('matches a post with language', function() {
         ->first();
 
     $pathMatcher = new PathMatcher($this->blog, "/{$this->blog->languages[1]->code}/$variant->slug");
-    $responseObject =  $pathMatcher->getResponseObject();
+    $responseObject = $pathMatcher->getResponseObject();
 
     $this->assertEquals(DeliveryAPITypeEnum::FILE, $responseObject->type);
     $this->assertEquals(200, $responseObject->status);
     $this->assertEquals("{$variant->id}{$this->blog->languages[1]->id}", $responseObject->content);
-
 });

@@ -16,12 +16,12 @@ use Illuminate\Database\Eloquent\Collection;
 
 class PostRepository
 {
-    public static function getPostById(int $postId) : ?Post
+    public static function getPostById(int $postId): ?Post
     {
         return Post::find($postId);
     }
 
-    public static function getPostByBlogIdAndIdentifier(int $blogId, ?int $id, ?string $slug) : ?Post
+    public static function getPostByBlogIdAndIdentifier(int $blogId, ?int $id, ?string $slug): ?Post
     {
         $post = Post::where('blog_id', $blogId);
         if ($id) {
@@ -29,10 +29,11 @@ class PostRepository
         } else {
             $post->where('slug', $slug);
         }
+
         return $post->first();
     }
 
-    public static function getPostByBlogIdAndSlug(int $blogId, string $slug) : ?Post
+    public static function getPostByBlogIdAndSlug(int $blogId, string $slug): ?Post
     {
         return Post::where('blog_id', $blogId)
             ->where('slug', $slug)
@@ -54,13 +55,11 @@ class PostRepository
         ?string $search,
         int $limit,
         int $offset = 0
-    ) : Collection
-    {
-
+    ): Collection {
         $language = LanguageRepository::getPrimaryLanguage($blog);
 
         return Post::where('posts.blog_id', $blog->id)
-            ->join('post_variants', function($join) use ($language) {
+            ->join('post_variants', function ($join) use ($language) {
                 $join->on('post_variants.post_id', '=', 'posts.id');
                 $join->where('post_variants.language_id', '=', $language->id);
             })
@@ -86,8 +85,9 @@ class PostRepository
                         ',
                         [
                             Carbon::createFromTimestamp($startTimestamp)->toDateTimeString(),
-                            Carbon::createFromTimestamp($endTimestamp)->toDateTimeString()
-                        ]);
+                            Carbon::createFromTimestamp($endTimestamp)->toDateTimeString(),
+                        ]
+                    );
             })
             ->when($status, function ($query) use ($status) {
                 if ($status === 'featured') {
@@ -106,22 +106,20 @@ class PostRepository
             ->limit($limit)
             ->offset($offset)
             ->get();
-
     }
 
-    public static function getPages(int $blogId) {
-
+    public static function getPages(int $blogId)
+    {
         return Post::where('blog_id', $blogId)
             ->where('is_page', true)
             ->get();
-
     }
 
 
     /**
      * Getting posts with FilterQ
      * This is for the Data API
-     * 
+     *
      * ALWAYS USE NAMED ARGUMENT WHEN USING THIS FUNCTION
      */
     public static function getPostsWithFilterQ(
@@ -131,15 +129,13 @@ class PostRepository
         int $limit,
         int $offset = 0,
         array $orderBys = [
-            ['posts.published_at', 'DESC']
+            ['posts.published_at', 'DESC'],
         ],
         bool $isPages = false
-    ) : CollectionWithTotal {
-
+    ): CollectionWithTotal {
         $builder = FilterQ::expression($filter)
             ->builder(Post::class)
-            ->keys(function($keys) {
-
+            ->keys(function ($keys) {
                 $keys->add('id')
                     ->column('posts.id')
                     ->valueType('int');
@@ -189,7 +185,7 @@ class PostRepository
                     ->column('tags.slug')
                     ->operators('=,!=')
                     ->valueType('int|string')
-                    ->join(function($query) {
+                    ->join(function ($query) {
                         $query->leftJoin('post_tag', 'post_tag.post_id', '=', 'posts.id')
                             ->join('tags', 'tags.id', '=', 'post_tag.tag_id');
                     });
@@ -203,11 +199,10 @@ class PostRepository
                     ->column('users.slug')
                     ->operators('=,!=')
                     ->valueType('int|string')
-                    ->join(function($query) {
+                    ->join(function ($query) {
                         $query->leftJoin('post_author', 'post_author.post_id', '=', 'posts.id')
                             ->leftJoin('users', 'users.id', '=', 'post_author.user_id');
                     });
-
             })
             ->addWhere();
 
@@ -216,7 +211,7 @@ class PostRepository
         }
 
         $posts = $builder
-            ->join('post_variants', function($join) use ($language) {
+            ->join('post_variants', function ($join) use ($language) {
                 $join->on('post_variants.post_id', '=', 'posts.id');
                 $join->where('post_variants.language_id', '=', $language->id);
             })
@@ -231,7 +226,6 @@ class PostRepository
         $total = $builder->offset(0)->count();
 
         return new CollectionWithTotal($posts, $total);
-
     }
 
     public static function createPost(Blog $blog, bool $isPage)
@@ -240,7 +234,7 @@ class PostRepository
         // create post
         $post = Post::create([
             'blog_id' => $blog->id,
-            'is_page' => $isPage
+            'is_page' => $isPage,
         ]);
 
         // create post variant (primary language)
@@ -258,7 +252,6 @@ class PostRepository
 
     public static function updatePost(Post $post, array $updates)
     {
-
         if (array_key_exists('slug', $updates)) {
             $slug = $updates['slug'];
             if (
@@ -310,24 +303,21 @@ class PostRepository
         $post->delete();
     }
 
-    public static function createPostVariant(Post $post, Language $language) : PostVariant
+    public static function createPostVariant(Post $post, Language $language): PostVariant
     {
-
         $variant = PostVariant::create([
             'post_id' => $post->id,
-            'language_id' => $language->id
+            'language_id' => $language->id,
         ]);
 
         return PostVariant::find($variant->id);
-
     }
 
     public static function updatePostVariant(Post $post, Language $language, array $updates)
     {
-
         $variant = self::getPostVariantByPostIdAndLanguageId($post->id, $language->id);
 
-        if (!$variant) {
+        if (! $variant) {
             throw new TrustedException('Variant not found', TrustedException::ERROR_INVALID_INPUT);
         }
 
@@ -340,7 +330,7 @@ class PostRepository
         // content
         if (array_key_exists('content', $updates)) {
             /**
-             * content update means either 
+             * content update means either
              *  - user is saving a draft post
              *  - user is "updating" a non-draft post
              */
@@ -370,16 +360,13 @@ class PostRepository
         $variant->save();
 
         return $variant;
-
     }
 
-    public static function getPostVariantByPostIdAndLanguageId(int $postId, int $languageId) : ?PostVariant
+    public static function getPostVariantByPostIdAndLanguageId(int $postId, int $languageId): ?PostVariant
     {
-
         return PostVariant::where('language_id', $languageId)
             ->where('post_id', $postId)
             ->first();
-
     }
 
     public static function deletePostVariant(Post $post, int $languageId)
@@ -390,13 +377,14 @@ class PostRepository
     }
 
 
-    public static function getFirstTag(Post $post) {
+    public static function getFirstTag(Post $post)
+    {
         return $post->tags[0];
     }
-    public static function getFirstAuthor(Post $post) {
+    public static function getFirstAuthor(Post $post)
+    {
         return $post->tags()->withPivot('order')
             ->orderBy('order', 'asc')
             ->first();
     }
-
 }

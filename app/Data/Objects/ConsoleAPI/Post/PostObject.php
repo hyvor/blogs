@@ -9,7 +9,6 @@ use App\Models\Post;
 
 class PostObject
 {
-
     public int $id;
     public string $preview_id; // an encrypted ID for preview
     public int $created_at;
@@ -32,7 +31,7 @@ class PostObject
      * @var TagObject[]
      */
     public array $tags;
-    
+
     /**
      * @var UserObject[]
      */
@@ -40,7 +39,6 @@ class PostObject
 
     public function __construct(Post $post, Blog $blog)
     {
-
         $this->id = $post->id;
         $this->preview_id = encrypt($post->id);
         $this->created_at = $post->created_at->timestamp;
@@ -55,7 +53,7 @@ class PostObject
         $this->code_foot = $post->code_foot;
 
         // variants
-        $this->variants = $post->variants->map(function($variant) use ($blog, $post) {
+        $this->variants = $post->variants->map(function ($variant) use ($blog, $post) {
             return new PostVariantObject($variant, $post, $blog);
         })->keyBy('language_id')->toArray();
 
@@ -67,6 +65,5 @@ class PostObject
         $this->authors = $post->authors->map(function ($author) use ($blog) {
             return new UserObject($author, $blog);
         })->toArray();
-        
     }
 }

@@ -39,7 +39,8 @@ class AuthorObject
         $this->url = PermalinkRepository::getAuthorPermalink($user, $blog, $language);
         $this->name = VariantsHelper::getVariantValue('name', $variants, $language);
         $this->picture_url = $user->picture_url;
-        $this->bio = VariantsHelper::getVariantValue('name', $variants, $language);;
+        $this->bio = VariantsHelper::getVariantValue('name', $variants, $language);
+        ;
         $this->website_url = $user->website_url;
         $this->location = VariantsHelper::getVariantValue('location', $variants, $language);
 
@@ -57,9 +58,10 @@ class AuthorObject
 
         $this->variants = $variants
             ->where('language_id', '!=', $language->id)
-            ->map(function($variant) use ($user, $blog) {
+            ->map(function ($variant) use ($user, $blog) {
                 $variantLanguage = $variant->language;
                 $url = PermalinkRepository::getAuthorPermalink($user, $blog, $variantLanguage);
+
                 return new VariantObject($variantLanguage, $url);
             })->toArray();
 

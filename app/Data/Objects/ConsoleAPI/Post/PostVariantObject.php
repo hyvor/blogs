@@ -1,4 +1,5 @@
 <?php
+
 namespace App\Data\Objects\ConsoleAPI\Post;
 
 use App\Data\Enums\PostStatusEnum;
@@ -7,8 +8,8 @@ use App\Models\Blog;
 use App\Models\Post;
 use App\Models\PostVariant;
 
-class PostVariantObject {
-
+class PostVariantObject
+{
     public int $language_id;
 
     public PostStatusEnum $status;
@@ -18,8 +19,8 @@ class PostVariantObject {
     public ?string $title;
     public ?string $description;
 
-    public function __construct(PostVariant $variant, Post $post, Blog $blog) {
-
+    public function __construct(PostVariant $variant, Post $post, Blog $blog)
+    {
         $language = $variant->language;
 
         $this->status = $variant->status;
@@ -29,7 +30,5 @@ class PostVariantObject {
         $this->title = $variant->title;
         $this->description = $variant->description;
         $this->language_id = $language->id;
-
     }
-
 }

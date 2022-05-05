@@ -12,25 +12,22 @@ use Illuminate\Support\Facades\App;
 
 class ThemeFilesRepository
 {
-
     public static function getFile(
         Blog $blog,
-        string $fileName, 
-        ?ThemeFileFolderEnum $folder = null): ?ThemeFile
-    {
-
+        string $fileName,
+        ?ThemeFileFolderEnum $folder = null
+    ): ?ThemeFile {
         return $blog->themeFiles()
             ->where('name', $fileName)
             ->where('folder', $folder->value)
             ->first();
-
     }
 
     public static function getMultipleFiles(
-        Blog $blog, array $fileNames,
+        Blog $blog,
+        array $fileNames,
         ?ThemeFileFolderEnum $folder = null
-    ) : Collection
-    {
+    ): Collection {
         return $blog->themeFiles()
             ->whereIn('name', $fileNames)
             ->where('folder', $folder->value)
@@ -40,8 +37,7 @@ class ThemeFilesRepository
     public static function getFilesInFolder(
         Blog $blog,
         ?ThemeFileFolderEnum $folder
-    ) : Collection
-    {
+    ): Collection {
         self::updateLocalDBFiles($blog->id);
 
         return $blog->themeFiles()
@@ -49,7 +45,7 @@ class ThemeFilesRepository
             ->get();
     }
 
-    public static function getAllFilesOfBlog(int $blogId) : Collection 
+    public static function getAllFilesOfBlog(int $blogId): Collection
     {
         self::updateLocalDBFiles($blogId);
 
@@ -57,23 +53,20 @@ class ThemeFilesRepository
     }
 
     public static function createOrUpdateFile(
-        Blog $blog, 
+        Blog $blog,
         ?ThemeFileFolderEnum $folder,
         string $name,
         $content
-    ) : void 
-    {
-
+    ): void {
         $blog->themeFiles()->updateOrCreate(
             [
                 'folder' => $folder,
                 'name' => $name,
             ],
             [
-                'content' => $content
+                'content' => $content,
             ]
         );
-
     }
 
     public static function deleteAllFiles(Blog $blog)
@@ -81,8 +74,9 @@ class ThemeFilesRepository
         $blog->themeFiles()->delete();
     }
 
-    private static function updateLocalDBFiles(int $blogId) {
-        
+    private static function updateLocalDBFiles(int $blogId)
+    {
+
         /**
          * This is a simple way to refresh the database
          * and run the seeder that so local file changes are updated
@@ -96,7 +90,5 @@ class ThemeFilesRepository
             self::deleteAllFiles($blog);
             (new BlogThemeFilesSeeder())->run($blogId);
         }
-
     }
-
 }

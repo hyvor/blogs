@@ -9,8 +9,8 @@ use ParsedownExtra;
 
 class DocsController extends Controller
 {
-
-    public function handle(Request $request) {
+    public function handle(Request $request)
+    {
         $page = $request->route('page') ?? 'index';
         $content = $this->getContentFromName($page);
 
@@ -30,11 +30,12 @@ class DocsController extends Controller
             'pageName' => $page,
             'content' => $content,
             'title' => $title,
-            'nav' => include(resource_path('docs/nav.php'))
+            'nav' => include(resource_path('docs/nav.php')),
         ]);
     }
 
-    private function getContentFromName($name) {
+    private function getContentFromName($name)
+    {
         $name = $name ? $name : 'index';
         $file = resource_path("docs/$name.md");
 
@@ -45,8 +46,8 @@ class DocsController extends Controller
         }
     }
 
-    private function replaceDynamicData($page, $markdown) {
-
+    private function replaceDynamicData($page, $markdown)
+    {
         if ($page === 'syntax-highlighting') {
 
             // replace languages
@@ -55,7 +56,7 @@ class DocsController extends Controller
             $languageTags = '';
             foreach ($languages as $language) {
                 $names = [$language->id];
-                
+
                 if (isset($language->aliases)) {
                     $names = array_merge($names, $language->aliases);
                 }
@@ -87,15 +88,15 @@ class DocsController extends Controller
 
             $themeTags = '';
             $previews = '';
-            
+
             foreach ($themes as $theme) {
                 $themeTags .= "<span>$theme</span>";
 
                 $highlighted = Highlighter::highlight(
-                    $code, 
-                    'jsx', 
+                    $code,
+                    'jsx',
                     $theme,
-                    true, 
+                    true,
                     'highlight=2-3 +=10 -=11 renumber=11:10'
                 );
                 $previews .= "<div>
@@ -107,11 +108,8 @@ class DocsController extends Controller
             $markdown = str_replace('{{theme_tags}}', $themeTags, $markdown);
             $markdown = str_replace('{{themes_number}}', count($themes), $markdown);
             $markdown = str_replace('{{theme_previews}}', $previews, $markdown);
-
         }
 
         return $markdown;
-
     }
-
 }

@@ -1,11 +1,11 @@
 <?php
+
 namespace App\Data\Objects\DataAPI;
 
 use App\Models\Language;
 
 class VariantObject
 {
-
     public LanguageObject $language;
     public string $url;
 
@@ -14,5 +14,4 @@ class VariantObject
         $this->language = new LanguageObject($language);
         $this->url = $url;
     }
-    
 }

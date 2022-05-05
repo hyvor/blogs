@@ -1,29 +1,31 @@
 <?php
+
 namespace App\Domains\Route;
 
-use App\Exceptions\TrustedException;
 use App\Models\Blog;
 use App\Models\Route;
 use Illuminate\Database\Eloquent\Collection;
+
 class RouteRepository
 {
-
-    public static function getRoute(Blog $blog, string $name) {
+    public static function getRoute(Blog $blog, string $name)
+    {
 
         /**
         * Even calling ->routes fetches all routes
-        * it fetches the relationship, so it prevents calling more duplicate queries from 
+        * it fetches the relationship, so it prevents calling more duplicate queries from
         * the Blog model's route relationship
         */
         $routes = $blog->routes;
+
         return $routes->where('name', $name)->first();
     }
 
-    public static function getRoutes(Blog $blog) : Collection {
-
-        return Route::where('blog_id','=', $blog->id)
+    public static function getRoutes(Blog $blog): Collection
+    {
+        return Route::where('blog_id', '=', $blog->id)
             ->latest()
-            ->get(); 
+            ->get();
     }
 
     public static function createRoute(
@@ -32,27 +34,25 @@ class RouteRepository
         string $match,
         string $template,
         string $postsFilter = null,
-        string $contentType = null, 
-    ) : Route 
-    {
+        string $contentType = null,
+    ): Route {
         return $blog->routes()->create([
             'name' => $name,
             'match' => $match,
             'template' => $template,
             'posts_filter' => $postsFilter,
-            'content_type' => $contentType
+            'content_type' => $contentType,
         ]);
     }
 
     public static function updateRoute(
-        int $id, 
-        string $name, 
-        string $match, 
-        string $template, 
-        string $postsFilter = null, 
+        int $id,
+        string $name,
+        string $match,
+        string $template,
+        string $postsFilter = null,
         string $contentType = null,
-    ) : bool 
-    {
+    ): bool {
         return Route::find($id)
             ->update([
                 'name' => $name,
@@ -63,8 +63,10 @@ class RouteRepository
             ]);
     }
 
-    public static function deleteRoute(int $id) : bool {
+    public static function deleteRoute(int $id): bool
+    {
         $data = Route::find($id);
+
         return $data->delete();
     }
 }

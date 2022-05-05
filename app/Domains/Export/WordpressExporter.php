@@ -1,30 +1,29 @@
 <?php
+
 namespace App\Domains\Export;
 
 use App\Domains\Language\LanguageRepository;
 use App\Domains\Post\PostAuthorRepository;
 use App\Domains\Route\PermalinkRepository;
-use Carbon\Carbon;
 
 /**
  * To export blog content in WordPress format
- * 
+ *
  * Trying to be exact as this export file in WordPress
  * https://github.com/WordPress/WordPress/blob/c569c157f0400344786ce94744c49afce1566e77/wp-admin/includes/export.php
  */
-class WordpressExporter implements ExporterInterface {
-
+class WordpressExporter implements ExporterInterface
+{
     use ExporterTrait;
 
     /**
      * In WordPress, media are also returned added as posts (type = attachment) to the export file.
      * However, there's no real use of doing this as only meta data of media are added. We only add posts and pages
-     * 
+     *
      * @return string WXR file
      */
     public function getFile()
     {
-
         $whrVersion = '1.2';
 
         $blog = $this->getBlog();
@@ -32,8 +31,7 @@ class WordpressExporter implements ExporterInterface {
         $primaryLanguage = LanguageRepository::getPrimaryLanguage($blog)->code;
         $pubDate = now()->format('D, d M Y H:i:s +0000');
 
-        $authors = $this->loopAuthors(function($author, $ret) {
-
+        $authors = $this->loopAuthors(function ($author, $ret) {
             $authorEmail = self::CDATA($author->email);
             $authorName = self::CDATA($author->name);
             $authorNameSplit = explode(' ', $author, 2);
@@ -54,16 +52,14 @@ class WordpressExporter implements ExporterInterface {
             XML;
 
             return $ret;
-
         }, '');
 
-        $tags = $this->loopTags(function($tag, $ret) {
-
+        $tags = $this->loopTags(function ($tag, $ret) {
             $tagSlug = self::CDATA($tag->slug);
             $tagParent = self::CDATA('');
             $tagName = self::CDATA($tag->name);
 
-            $tagDescription = $tag->description ? 
+            $tagDescription = $tag->description ?
                 '<wp:category_description>' . self::CDATA($tag->description) . '</wp:category_description>' : '';
 
             $ret .= <<<XML
@@ -79,11 +75,9 @@ class WordpressExporter implements ExporterInterface {
             XML;
 
             return $ret;
-
         }, '');
 
         $posts = $this->loopPosts(function ($post, $ret) {
-
             $title = self::CDATA($post->title);
             $link = PermalinkRepository::getPostPermalink($post, $this->blog);
 
@@ -102,7 +96,7 @@ class WordpressExporter implements ExporterInterface {
 
             $postName = self::CDATA($post->slug);
 
-            $status = match($post->status) {
+            $status = match ($post->status) {
                 'published' => 'publish',
                 'draft' => 'draft',
                 'scheduled' => 'scheduled',
@@ -161,9 +155,8 @@ class WordpressExporter implements ExporterInterface {
             XML;
 
             return $ret;
-
         }, '');
-     
+
         return <<<XML
 
             <rss version="2.0"
@@ -194,17 +187,16 @@ class WordpressExporter implements ExporterInterface {
             </rss>
 
         XML;
-
     }
 
-    static function CDATA($str) {
-		if (mb_detect_encoding($str, ['UTF-8']) !== 'UTF-8') {
-			$str = utf8_encode($str);
-		}
-		// $str = ent2ncr(esc_html($str));
-		$str = '<![CDATA[' . str_replace( ']]>', ']]]]><![CDATA[>', $str ) . ']]>';
+    public static function CDATA($str)
+    {
+        if (mb_detect_encoding($str, ['UTF-8']) !== 'UTF-8') {
+            $str = utf8_encode($str);
+        }
+        // $str = ent2ncr(esc_html($str));
+        $str = '<![CDATA[' . str_replace(']]>', ']]]]><![CDATA[>', $str) . ']]>';
 
-		return $str;
-	}
-
+        return $str;
+    }
 }

@@ -1,4 +1,5 @@
 <?php
+
 namespace App\Data\Objects\ConsoleAPI\Tag;
 
 use App\Domains\Route\PermalinkRepository;
@@ -8,7 +9,6 @@ use App\Models\TagVariant;
 
 class TagVariantObject
 {
-
     public int $language_id;
     public string $url;
     public ?string $name;
@@ -26,4 +26,4 @@ class TagVariantObject
         $this->name = $tagVariant->name;
         $this->description = $tagVariant->description;
     }
-} 
+}

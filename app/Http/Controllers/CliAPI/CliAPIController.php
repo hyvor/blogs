@@ -1,4 +1,5 @@
 <?php
+
 namespace App\Http\Controllers\CliAPI;
 
 use App\Data\Enums\ThemeFileFolderEnum;
@@ -7,11 +8,10 @@ use App\Domains\Theme\ThemeFilesRepository;
 use App\Models\Blog;
 use Illuminate\Http\Request;
 
-class CliAPIController {
-
+class CliAPIController
+{
     public function updateFiles(Request $request, Blog $blog)
     {
-
         $files = (array) $request->input('files');
         $reset = (bool) $request->input('reset');
 
@@ -20,7 +20,6 @@ class CliAPIController {
         }
 
         foreach ($files as $path => $content) {
-
             $path = trim($path, '/');
             $split = explode('/', $path);
 
@@ -35,7 +34,6 @@ class CliAPIController {
                     base64_decode($content)
                 );
             }
-
         }
 
         return response()->json();
@@ -57,5 +55,4 @@ class CliAPIController {
 
         return response()->json($response);
     }
-
 }

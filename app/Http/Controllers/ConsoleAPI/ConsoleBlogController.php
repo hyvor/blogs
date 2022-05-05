@@ -4,18 +4,16 @@ namespace App\Http\Controllers\ConsoleAPI;
 
 use App\Data\Objects\ConsoleAPI\BlogObject;
 use App\Domains\Blog\BlogCountsRepository;
-use App\Http\Controllers\Controller;
-use App\Models\Blog;
-
-use Illuminate\Http\Request;
 use App\Domains\Blog\BlogRepository;
-use App\Data\Objects\ConsoleAPI\Blog\BlogGeneralObject;
+use App\Http\Controllers\Controller;
 
+use App\Models\Blog;
+use Illuminate\Http\Request;
 
 class ConsoleBlogController extends Controller
 {
-
-    public function getBlog(Blog $blog) {
+    public function getBlog(Blog $blog)
+    {
         return response()->json(new BlogObject($blog));
     }
 
@@ -34,6 +32,7 @@ class ConsoleBlogController extends Controller
     {
         $updates = $request->all();
         $blog = BlogRepository::updateBlog($blog, $updates);
+
         return response()->json(new BlogObject($blog));
     }
 
@@ -47,23 +46,25 @@ class ConsoleBlogController extends Controller
 
     public static function updateBlogFeatureImage(Request $request, Blog $blog)
     {
-        $file = $request->file('featureImage'); 
+        $file = $request->file('featureImage');
         // $request->validate([
         //     'file' => 'required|file'
         // ]);
 
         $featureImage = BlogRepository::updateBlogFeatureImage($blog, $file);
+
         return response()->json($featureImage);
     }
 
     public static function updateBlogIcon(Request $request, Blog $blog)
     {
-        $file = $request->file('icon'); 
+        $file = $request->file('icon');
         // $request->validate([
         //     'file' => 'required|file'
         // ]);
 
         $icon = BlogRepository::updateBlogIcon($blog, $file);
+
         return response()->json($icon);
     }
 }

@@ -1,4 +1,5 @@
 <?php
+
 namespace App\Domains\Post;
 
 use App\Domains\Post\Content\PostContentRepository;
@@ -9,16 +10,15 @@ use App\Models\Post;
 use App\Models\PostVariant;
 use MeiliSearch\Client;
 
-class PostSearchRepository 
+class PostSearchRepository
 {
-
     public const SEARCH_INDEX_NAME = 'posts';
 
     private const FILTERABLE_ATTRIBUTES = [
         'blog_id',
         'language_id',
         'is_published',
-        'is_page'
+        'is_page',
     ];
 
     /**
@@ -28,7 +28,7 @@ class PostSearchRepository
         'title',
         'description',
         'content',
-        'slug'
+        'slug',
     ];
 
     /**
@@ -42,8 +42,7 @@ class PostSearchRepository
         int $offset,
         bool $isPage,
         ?bool $isPublished = null
-    ) : CollectionWithTotal {
-
+    ): CollectionWithTotal {
         $index = self::getIndex();
 
         $conditions = [
@@ -54,7 +53,7 @@ class PostSearchRepository
         if ($isPublished !== null) {
             $conditions['is_published'] = $isPublished;
         }
-    
+
         $filter = self::getSearchFilter($conditions);
 
         $results = $index->search($search, [
@@ -65,7 +64,7 @@ class PostSearchRepository
         ]);
 
         $hits = $results->getHits();
-        
+
         if (count($hits) > 0) {
             $postIds = collect($hits)->map(fn ($hit) => $hit['post_id'])->all();
             $postIdsForField = implode(',', $postIds);
@@ -75,9 +74,8 @@ class PostSearchRepository
         } else {
             $posts = collect([]);
         }
-        
-        return new CollectionWithTotal($posts, $results->getNbHits());
 
+        return new CollectionWithTotal($posts, $results->getNbHits());
     }
 
 
@@ -97,15 +95,14 @@ class PostSearchRepository
         return $filters->values()->implode(' AND ');
     }
 
-    public static function getSearchDocument(PostVariant $postVariant) : array
+    public static function getSearchDocument(PostVariant $postVariant): array
     {
-
         $post = $postVariant->post;
         $blog = $post->blog;
 
         return [
 
-            // identifier 
+            // identifier
             'id' => $postVariant->id,
             'post_id' => $postVariant->post_id,
 
@@ -122,21 +119,20 @@ class PostSearchRepository
              */
             'blog_id' => $blog->id,
             'language_id' => $postVariant->language_id,
-            'is_published' => $postVariant->status === 'published',    // search only needs to know if the post is published 
+            'is_published' => $postVariant->status === 'published',    // search only needs to know if the post is published
                                                                 // (data API vs console API search)
-            'is_page' => $post->is_page
+            'is_page' => $post->is_page,
 
         ];
-
     }
 
     /**
      * Updates filterable attributes
      * https://docs.meilisearch.com/learn/advanced/filtering_and_faceted_search.html
-     * 
+     *
      * This should be called when attributes change
      */
-    public static function setFilterableAttributes() : void
+    public static function setFilterableAttributes(): void
     {
         if (self::isMeilisearch()) {
             self::getIndex()->updateFilterableAttributes(self::FILTERABLE_ATTRIBUTES);
@@ -144,7 +140,7 @@ class PostSearchRepository
     }
 
 
-    public static function setSearchableAttributes() : void
+    public static function setSearchableAttributes(): void
     {
         if (self::isMeilisearch()) {
             self::getIndex()->updateSearchableAttributes(self::SEARCHABLE_ATTRIBUTES);
@@ -153,15 +149,13 @@ class PostSearchRepository
 
     private static function getIndex()
     {
-
         $client = new Client(config('scout.meilisearch.host'), config('scout.meilisearch.key'));
-        return $client->index(self::SEARCH_INDEX_NAME);
 
+        return $client->index(self::SEARCH_INDEX_NAME);
     }
 
     private static function isMeilisearch()
     {
         return config('scout.driver') === 'meilisearch';
     }
-
 }

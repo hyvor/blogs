@@ -5,8 +5,7 @@ namespace Tests\Unit\Delivery\PathMatcher;
 use App\Domains\Delivery\PathMatcher;
 use App\Domains\Language\LanguageRepository;
 
-it('correctly sets the language', function() {
-
+it('correctly sets the language', function () {
     $languages = $this->blog->languages;
 
     // EN
@@ -32,10 +31,9 @@ it('correctly sets the language', function() {
     // fr-FR
     $langWithCountry = LanguageRepository::createLanguage($this->blog, 'fr-FR', 'French (France)');
     $this->blog->refresh();
-    $pathMatcher= new PathMatcher($this->blog, "/fr-FR/hello-world");
+    $pathMatcher = new PathMatcher($this->blog, "/fr-FR/hello-world");
     $pathMatcherLanguageWithCountry = $pathMatcher->language;
 
     $this->assertEquals($langWithCountry->id, $pathMatcherLanguageWithCountry->id);
     $this->assertEquals('/hello-world', $pathMatcher->path);
-
 });

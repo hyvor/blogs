@@ -7,10 +7,8 @@ use Illuminate\Http\Request;
 
 class ThemesController extends Controller
 {
-
     public function handle(Request $request)
     {
-
         $route = $request->route('name');
         $themeName = $route ?? 'default';
 
@@ -18,7 +16,5 @@ class ThemesController extends Controller
             'route' => $route ? "/$route" : '',
             'themeName' => $themeName,
         ]);
-
     }
-
 }

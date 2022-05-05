@@ -1,4 +1,5 @@
 <?php
+
 namespace App\Domains\Delivery\TemplateRenderer;
 
 use App\Data\Enums\ThemeFileFolderEnum;
@@ -22,11 +23,11 @@ use App\Domains\User\UserRepository;
 use App\Models\Post;
 use App\Models\Tag;
 use App\Models\User;
-use Twig\Error\Error;
 use function config;
+use Twig\Error\Error;
 
-class TemplateRenderer {
-
+class TemplateRenderer
+{
     private PathMatcher $pathMatcher;
     private MatchedRoute $matchedRoute;
     private ?string $filter;
@@ -34,7 +35,7 @@ class TemplateRenderer {
     private Tag|User|Post|null|false $model;
 
     public function __construct(
-        PathMatcher $pathMatcher, 
+        PathMatcher $pathMatcher,
         MatchedRoute $matchedRoute,
         ?string $filter
     ) {
@@ -43,10 +44,9 @@ class TemplateRenderer {
         $this->filter = $filter;
     }
 
-    public function getResponseObject() : ?DeliveryAPIResponseObject
+    public function getResponseObject(): ?DeliveryAPIResponseObject
     {
-
-        if (!isset($this->model)) {
+        if (! isset($this->model)) {
             $this->model = $this->getModel();
         }
 
@@ -62,7 +62,6 @@ class TemplateRenderer {
         }
 
         return DeliveryAPIResponseObject::forFile($output);
-
     }
 
     private function render(): string
@@ -70,8 +69,8 @@ class TemplateRenderer {
 
         // get vars
         $vars = $this->getVariables();
-     
-        
+
+
         // ready files loader array
         $templateFiles = ThemeFilesRepository::getFilesInFolder(
             $this->pathMatcher->blog,
@@ -94,7 +93,8 @@ class TemplateRenderer {
         return $html;
     }
 
-    private function getVariables() {
+    private function getVariables()
+    {
         $blog = $this->pathMatcher->blog;
 
         $blogObject = new BlogObject($blog, $this->pathMatcher->language);
@@ -108,7 +108,7 @@ class TemplateRenderer {
             '_blog' => $blogObject,
             '_config' => [],
             '_route' => $this->matchedRoute->name,
-            '_lang' => new LanguageObject($this->pathMatcher->language)
+            '_lang' => new LanguageObject($this->pathMatcher->language),
         ];
 
         $vars += $scopeVariables;
@@ -119,25 +119,22 @@ class TemplateRenderer {
         ];
 
         ['posts' => $posts, 'pagination' => $pagination] = $this->getPostsAndPagination();
-        
+
         $vars['_posts'] = $posts;
         $vars['_pagination'] = $pagination;
-        
+
         /**
          * This is to make sure only data from objects are sent
          * and the developer does not have access to PHP methods
          */
         return json_decode(json_encode($vars), true);
-
     }
 
-    private function getRouteVariables() : array
+    private function getRouteVariables(): array
     {
-
         $routeName = $this->matchedRoute->name;
 
         if ($routeName === 'index') {
-
             $blogObject = new BlogObject($this->pathMatcher->blog, $this->pathMatcher->language);
 
             return [
@@ -153,12 +150,11 @@ class TemplateRenderer {
                     language: $this->pathMatcher->language,
                     filter: $this->filter,
                     limit: 30, // hard limit - who has 30 featured posts?
-                )->collection
+                )->collection,
             ];
-
-        } else if ($routeName === 'post' || $routeName === 'page' || $routeName === 'preview') {
-
+        } elseif ($routeName === 'post' || $routeName === 'page' || $routeName === 'preview') {
             $postObject = new PostObject($this->model, $this->pathMatcher->blog, $this->pathMatcher->language);
+
             return [
                 '_meta' => new MetaObject(
                     $postObject->title,
@@ -169,11 +165,9 @@ class TemplateRenderer {
                 ),
                 '_post' => $postObject,
                 '_comments' => '',
-                '_newsletter' => ''
+                '_newsletter' => '',
             ];
-
-        } else if ($routeName === 'tag') {
-
+        } elseif ($routeName === 'tag') {
             $tagObject = new TagObject($this->model, $this->pathMatcher->blog, $this->pathMatcher->language);
 
             return [
@@ -186,9 +180,7 @@ class TemplateRenderer {
                 ),
                 '_tag' => $tagObject,
             ];
-
-        } else if ($routeName === 'author') {
-
+        } elseif ($routeName === 'author') {
             $authorObject = new AuthorObject($this->model, $this->pathMatcher->blog, $this->pathMatcher->language);
 
             return [
@@ -199,27 +191,24 @@ class TemplateRenderer {
                     $authorObject->url,
                     $authorObject->url
                 ),
-                '_author' => $authorObject
+                '_author' => $authorObject,
             ];
-
         }
 
         return [];
-
     }
 
     /**
      * @throws TemplatePageNotFoundException
      */
-    private function getPostsAndPagination() {
-
+    private function getPostsAndPagination()
+    {
         $pageNumber = $this->getPageNumber();
 
         $limit = 10;
         $offset = ($pageNumber - 1) * 10;
 
         if ($this->matchedRoute->name === 'search') {
-
             $search = $this->matchedRoute->param('search');
 
             $collectionWithTotal = PostSearchRepository::search(
@@ -231,43 +220,39 @@ class TemplateRenderer {
                 isPage: false,
                 isPublished: true
             );
-
         } else {
-            
             $collectionWithTotal = PostRepository::getPostsWithFilterQ(
-                blog: $this->pathMatcher->blog, 
+                blog: $this->pathMatcher->blog,
                 language: $this->pathMatcher->language,
                 filter: $this->filter,
                 limit: $limit,
                 offset: $offset
             );
-            
         }
 
         if (count($collectionWithTotal->collection) === 0 && $pageNumber > 1) {
-            throw new TemplatePageNotFoundException;
+            throw new TemplatePageNotFoundException();
         }
-        
+
         return [
             'posts' => $collectionWithTotal->collection->map(function ($post) {
                 return new PostObject($post, $this->pathMatcher->blog, $this->pathMatcher->language);
             }),
-            'pagination' => new PaginationObject($limit, $pageNumber, $collectionWithTotal->total)
+            'pagination' => new PaginationObject($limit, $pageNumber, $collectionWithTotal->total),
         ];
-
     }
 
-    private function getPageNumber() : int {
-
+    private function getPageNumber(): int
+    {
         $suffix = $this->matchedRoute->param('suffix');
 
         if (preg_match('/^page\/(\d+)$/', $suffix, $matches)) {
             $number = (int) $matches[1];
+
             return $number > 0 ? $number : 1;
         }
 
         return 1;
-
     }
 
     private function getHeadCode($vars)
@@ -275,7 +260,7 @@ class TemplateRenderer {
         return file_get_contents(resource_path('twig/_head.twig'));
     }
 
-    private function getFootCode() 
+    private function getFootCode()
     {
         return '<script src="/assets/flashload.js"></script>
         <script data-flashload-skip-replacing>
@@ -286,20 +271,16 @@ class TemplateRenderer {
 
     private function getFileNameToRender(array $availableFiles)
     {
-
         $checkFiles = explode(',', $this->matchedRoute->route->template);
-    
-        foreach ($checkFiles as $file) {
 
+        foreach ($checkFiles as $file) {
             $file = trim($file) . '.twig';
             if (in_array($file, $availableFiles)) {
                 return $file;
             }
-
         }
 
         return 'index.twig';
-
     }
 
     /**
@@ -307,26 +288,21 @@ class TemplateRenderer {
      * null - no model for this route
      * false - there should be a model, but couldn't find it. So, return 404
      */
-    private function getModel() : Post|Tag|User|null|false {
-
+    private function getModel(): Post|Tag|User|null|false
+    {
         $slug = $this->matchedRoute->param('slug');
 
         if ($this->matchedRoute->name === 'tag') {
-
             $model = TagRepository::getTagByBlogIdAndSlug($this->pathMatcher->blog->id, $slug);
 
             return $model !== null ? $model : false;
-
-        } else if ($this->matchedRoute->name === 'author') {
-
+        } elseif ($this->matchedRoute->name === 'author') {
             $model = UserRepository::getUserByBlogIdAndSlug($this->pathMatcher->blog->id, $slug);
 
             return $model !== null ? $model : false;
-
-        } else if ($this->matchedRoute->name === 'post' || $this->matchedRoute->name === 'page') {
-
+        } elseif ($this->matchedRoute->name === 'post' || $this->matchedRoute->name === 'page') {
             $post = PostRepository::getPostByBlogIdAndSlug(
-                $this->pathMatcher->blog->id, 
+                $this->pathMatcher->blog->id,
                 $slug
             );
 
@@ -335,7 +311,7 @@ class TemplateRenderer {
                 // if page was matched, it should be a post
                 // don't worry, PathMatcher will re-match the page if post and page has the same match
                 if (
-                    ($this->matchedRoute->name === 'page' && !$post->is_page) ||
+                    ($this->matchedRoute->name === 'page' && ! $post->is_page) ||
                     ($this->matchedRoute->name === 'post' && $post->is_page)
                 ) {
                     return false;
@@ -343,7 +319,7 @@ class TemplateRenderer {
 
                 // post permalink should be valid
                 $validPermalink = PermalinkRepository::validatePostPermalink($post, $this->matchedRoute->params);
-                if (!$validPermalink) {
+                if (! $validPermalink) {
                     return false;
                 }
 
@@ -351,19 +327,19 @@ class TemplateRenderer {
             }
 
             return false;
-            
         }
 
         return null;
-
     }
 
     // preview repository sets model before getting response object
-    public function setModel($model) {
+    public function setModel($model)
+    {
         $this->model = $model;
     }
 
-    public function getRenderError($message) {
+    public function getRenderError($message)
+    {
         return <<<HTML
             <div style="font-family:monospace;">
                 Twig Template Error:<br><br>
@@ -371,5 +347,4 @@ class TemplateRenderer {
             </div>
         HTML;
     }
-
 }

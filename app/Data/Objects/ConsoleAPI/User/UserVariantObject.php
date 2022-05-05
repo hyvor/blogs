@@ -6,7 +6,6 @@ use App\Models\UserVariant;
 
 class UserVariantObject
 {
-
     public int $language_id;
     public ?string $name;
     public ?string $bio;
@@ -22,6 +21,5 @@ class UserVariantObject
         $this->name = $userVariant->name;
         $this->bio = $userVariant->bio;
         $this->location = $userVariant->location;
-
     }
-} 
+}

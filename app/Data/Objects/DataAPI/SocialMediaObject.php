@@ -20,8 +20,7 @@ class SocialMediaObject
         ?string $instagram,
         ?string $github,
         ?string $tiktok
-    )
-    {
+    ) {
         $this->facebook = $facebook;
         $this->twitter = $twitter;
         $this->linkedin = $linkedin;

@@ -4,10 +4,8 @@ namespace App\Data\Objects\ConsoleAPI\User;
 
 use App\Data\Enums\UserRoleEnum;
 use App\Data\Enums\UserStatusEnum;
-use App\Data\Objects\ConsoleAPI\LanguageObject;
-use App\Models\User;
-use App\Models\Language;
 use App\Models\Blog;
+use App\Models\User;
 
 class UserObject
 {
@@ -20,13 +18,13 @@ class UserObject
     public UserRoleEnum $role;
     public string $slug;
     public string $email;
-    
-    public ?string $picture_url; 
+
+    public ?string $picture_url;
     public ?string $website_url;
 
     public ?string $social_facebook;
-    public ?string $social_twitter; 
-    public ?string $social_linkedin; 
+    public ?string $social_twitter;
+    public ?string $social_linkedin;
     public ?string $social_youtube;
     public ?string $social_instagram;
     public ?string $social_github;
@@ -44,7 +42,7 @@ class UserObject
         $this->hyvor_user_id = $user->hyvor_user_id;
 
         $this->status = $user->status;
-        
+
         $this->role = $user->role;
         $this->slug = $user->slug;
         $this->email = $user->email;
@@ -58,10 +56,9 @@ class UserObject
         $this->social_youtube = $user->social_youtube;
         $this->social_instagram = $user->social_instagram;
         $this->social_github = $user->social_github;
-        
-        $this->variants = $user->variants->map(function($variant) use ($blog) {
+
+        $this->variants = $user->variants->map(function ($variant) use ($blog) {
             return new UserVariantObject($variant, $blog);
         })->keyBy('language_id')->toArray();
-        
     }
-} 
+}

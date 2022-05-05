@@ -10,7 +10,6 @@ use App\Models\Tag;
 
 class TagObject
 {
-    
     public int $id;
     public int $created_at;
     public string $slug;
@@ -18,17 +17,16 @@ class TagObject
     public string $name;
     public ?string $description;
     public int $posts_count;
-    
+
     public LanguageObject $language;
-    
+
     /**
      * @var VariantObject[]
      */
     public array $variants;
-    
+
     public function __construct(Tag $tag, Blog $blog, Language $language)
     {
-        
         $variants = $tag->variants;
 
         $this->id = $tag->id;
@@ -40,14 +38,14 @@ class TagObject
         $this->posts_count = $tag->posts_count ?? 0;
 
         $this->language = new LanguageObject($language);
-        
+
         $this->variants = $variants
             ->where('language_id', '!=', $language->id)
-            ->map(function($variant) use ($tag, $blog) {
+            ->map(function ($variant) use ($tag, $blog) {
                 $variantLanguage = $variant->language;
                 $url = PermalinkRepository::getTagPermalink($tag, $blog, $variantLanguage);
-                return new VariantObject($variantLanguage, $url);
-        })->toArray();
 
+                return new VariantObject($variantLanguage, $url);
+            })->toArray();
     }
 }

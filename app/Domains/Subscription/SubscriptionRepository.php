@@ -10,14 +10,13 @@ use Illuminate\Database\Eloquent\Collection;
 
 class SubscriptionRepository
 {
-
     /**
      * This is an internal name for the subscription
      * In Laravel Paddle Cashier, you can give names for each subscription
      * So that each model can have multiple subscriptions
-     * 
+     *
      * https://laravel.com/docs/8.x/cashier-paddle#creating-subscriptions
-     * 
+     *
      * But, for us, we only need one subscription type.
      * So, always use this const when you have to send subscription name to a function
      */
@@ -28,9 +27,7 @@ class SubscriptionRepository
         SubscriptionPlanEnum $planName,
         SubscriptionFrequencyEnum $frequency,
         int $quantity = 1
-    ) : string
-    {
-
+    ): string {
         if ($blog->subscribed()) {
             throw new TrustedException('This blog already has a subscription');
         }
@@ -42,9 +39,8 @@ class SubscriptionRepository
 
         return $blog->newSubscription(self::SUBSCRIPTION_NAME, $planId)
             ->create([
-                'quantity' => $quantity
+                'quantity' => $quantity,
             ]);
-
     }
 
     public static function updateSubscription(
@@ -53,7 +49,6 @@ class SubscriptionRepository
         SubscriptionFrequencyEnum $frequency,
         int $quantity
     ) {
-
         $quantity = self::validateAndGetQuantity($planName, $frequency, $quantity);
         $planConfig = self::getPlanConfigFromPlanNameAndFrequency($planName, $frequency);
         $planId = $planConfig['id'];
@@ -71,59 +66,54 @@ class SubscriptionRepository
 
             // change quantity
             $currentSubscription->updateQuantity($quantity);
-
         } else {
 
             // change plan
             $currentSubscription->swapAndInvoice($planId, [
-                'quantity' => $quantity
+                'quantity' => $quantity,
             ]);
-
         }
-
     }
 
-    public static function cancelSubscription(Blog $blog, bool $forced = false) {
+    public static function cancelSubscription(Blog $blog, bool $forced = false)
+    {
         if ($forced) {
 
             /**
-             * 
+             *
              * Forced cancelling is called after calling Paddle cancel API
              * which means subscription()->cancelNow() will return an error because
              * it again calls the API
              * Therefore, instead of calling cancelNow(), we only do the part that updates
              * data in our database
-             * 
-             * 
+             *
+             *
              * This code is taken from Laravel\Paddle\Subscription::cancelAt()
              */
             $blog->subscription()->forceFill([
                 'ends_at' => now(),
             ])->save();
-
         } else {
             $blog->subscription()->cancel();
         }
     }
-    
 
-    /** 
+
+    /**
      * Validate and return quantity
      */
     private static function validateAndGetQuantity(
         SubscriptionPlanEnum $planName,
         SubscriptionFrequencyEnum $frequency,
         int $quantity
-    ) : int
-    {
-
+    ): int {
         if (
             $planName === SubscriptionPlanEnum::PRO &&
             $frequency === SubscriptionFrequencyEnum::MONTHLY
         ) {
             // for PRO plan
             throw new TrustedException(
-                "$planName plan does not support monthly billing", 
+                "$planName plan does not support monthly billing",
                 TrustedException::ERROR_INVALID_INPUT
             );
         }
@@ -133,17 +123,16 @@ class SubscriptionRepository
             ($quantity < 3 || $quantity > 99)
         ) {
             throw new TrustedException(
-                "Team plan quantity is out of range. $quantity received", 
+                "Team plan quantity is out of range. $quantity received",
                 TrustedException::ERROR_INVALID_INPUT
             );
         }
 
         return $planName === SubscriptionPlanEnum::TEAM ? $quantity : 1;
-
     }
 
 
-    public static function getPlanConfigById(int $planId) : array
+    public static function getPlanConfigById(int $planId): array
     {
         $plans = config('blogs.paddle_plans');
 
@@ -157,9 +146,7 @@ class SubscriptionRepository
     public static function getPlanConfigFromPlanNameAndFrequency(
         SubscriptionPlanEnum $planName,
         SubscriptionFrequencyEnum $frequency
-    ) : array 
-    {
-
+    ): array {
         $plans = config('blogs.paddle_plans');
 
         foreach ($plans as $plan) {
@@ -184,5 +171,4 @@ class SubscriptionRepository
     {
         return $blog->subscriptions()->get();
     }
-
 }

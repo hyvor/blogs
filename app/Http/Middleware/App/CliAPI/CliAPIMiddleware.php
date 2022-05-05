@@ -1,4 +1,5 @@
 <?php
+
 namespace App\Http\Middleware\App\CliAPI;
 
 use App\Data\Enums\BlogTypeEnum;
@@ -9,16 +10,14 @@ use Illuminate\Http\Request;
 
 class CliAPIMiddleware
 {
-
     public function handle(Request $request, $next)
     {
-
         $subdomain = $request->route('subdomain');
 
-        if (!$subdomain) {
+        if (! $subdomain) {
             throw new TrustedException('Subdomain should be set');
         }
-        
+
         $blog = BlogRepository::getBlogBySubdomain($subdomain);
 
         /*if ($blog === null || $blog->type !== BlogTypeEnum::DEV) {
@@ -28,7 +27,5 @@ class CliAPIMiddleware
         app()->instance(Blog::class, $blog);
 
         return $next($request);
-
     }
-
 }

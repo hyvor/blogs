@@ -5,20 +5,18 @@ namespace App\Http\Controllers\ConsoleAPI;
 use App\Data\Objects\ConsoleAPI\Post\PostObject;
 use App\Data\Objects\ConsoleAPI\Post\PostVariantObject;
 use App\Domains\Language\LanguageRepository;
-use App\Exceptions\TrustedException;
-use App\Models\Blog;
 use App\Domains\Post\PostRepository;
+use App\Exceptions\TrustedException;
 use App\Http\Controllers\Controller;
+use App\Models\Blog;
 use App\Models\Post;
 use App\Models\User;
 use Illuminate\Http\Request;
 
 class ConsolePostController extends Controller
 {
-
     public function getPosts(Request $request, Blog $blog, User $user)
     {
-
         $request->validate([
             'status' => 'string|in:featured,published,draft,scheduled',
             'author_id' => 'integer',
@@ -39,22 +37,15 @@ class ConsolePostController extends Controller
         $offset = $request->input('offset', 0);
 
         $posts = PostRepository::getPosts(
-
             $blog,
-
             $status,
-
             $authorId,
             $tagId,
-
             $startTimestamp,
             $endTimestamp,
-
             $search,
-
             $limit,
             $offset
-
         )->map(function ($post) use ($blog) {
             return new PostObject($post, $blog);
         });
@@ -64,20 +55,19 @@ class ConsolePostController extends Controller
 
     public function getPages(Blog $blog)
     {
-
         $pages = PostRepository::getPages($blog->id)
             ->map(function ($page) use ($blog) {
                 return new PostObject($page, $blog);
             });
 
         return response()->json($pages);
-
     }
 
     public function createPost(Request $request, Blog $blog)
     {
         $isPage = (bool) $request->input('is_page');
         $post = PostRepository::createPost($blog, $isPage);
+
         return response()->json(new PostObject($post, $blog));
     }
 
@@ -87,7 +77,7 @@ class ConsolePostController extends Controller
         $postId = (int) $request->route('id');
         $post = PostRepository::getPostById($postId);
 
-        if (!$post) {
+        if (! $post) {
             throw new TrustedException('Post not found', TrustedException::ERROR_NOT_FOUND);
         }
 
@@ -101,14 +91,13 @@ class ConsolePostController extends Controller
 
     public function updatePost(Request $request, Blog $blog, Post $post)
     {
-
         $request->validate([
             'slug' => 'string|max:255|nullable',
             'is_featured' => 'boolean',
             'canonical_url' => 'string|max:255|nullable',
             'featured_image_url' => 'string|max:255|nullable',
             'code_head' => 'string|nullable',
-            'code_foot' => 'string|nullable'
+            'code_foot' => 'string|nullable',
         ]);
 
         $postUpdates = [];
@@ -139,15 +128,14 @@ class ConsolePostController extends Controller
 
     public function createPostVariant(Request $request, Blog $blog, Post $post)
     {
-
         $request->validate([
-            'language_id' => 'required|integer'
+            'language_id' => 'required|integer',
         ]);
 
         $languageId = (int) $request->input('language_id');
         $language = LanguageRepository::getLanguageById($blog, $languageId);
 
-        if (!$language) {
+        if (! $language) {
             throw new TrustedException('Language not found', TrustedException::ERROR_INVALID_INPUT);
         }
 
@@ -164,26 +152,25 @@ class ConsolePostController extends Controller
 
     public function updatePostVariant(Request $request, Blog $blog, Post $post)
     {
-
         $request->validate([
             'language_id' => 'required|integer',
             'status' => 'string|in:draft,published,scheduled',
             'content' => 'string|nullable',
             'content_unsaved' => 'string|nullable',
             'title' => 'string|max:255|nullable',
-            'description' => 'string|max:255|nullable'
+            'description' => 'string|max:255|nullable',
         ]);
 
         $languageId = (int) $request->input('language_id');
         $language = LanguageRepository::getLanguageById($blog, $languageId);
 
-        if (!$language) {
+        if (! $language) {
             throw new TrustedException('Language not found', TrustedException::ERROR_INVALID_INPUT);
         }
 
         $variant = PostRepository::getPostVariantByPostIdAndLanguageId($post->id, $languageId);
 
-        if (!$variant) {
+        if (! $variant) {
             throw new TrustedException('Variant not found', TrustedException::ERROR_NOT_FOUND);
         }
 
@@ -210,19 +197,18 @@ class ConsolePostController extends Controller
         $variant->refresh();
 
         return response()->json(new PostVariantObject($variant, $variant->post, $blog));
-
     }
 
     public function deletePostVariant(Request $request, Blog $blog, Post $post)
     {
         $request->validate([
-            'language_id' => 'required|integer'
+            'language_id' => 'required|integer',
         ]);
 
         $languageId = (int) $request->input('language_id');
         $language = LanguageRepository::getLanguageById($blog, $languageId);
 
-        if (!$language) {
+        if (! $language) {
             throw new TrustedException('Language not found', TrustedException::ERROR_INVALID_INPUT);
         }
 

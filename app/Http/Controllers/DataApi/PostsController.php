@@ -5,18 +5,16 @@ namespace App\Http\Controllers\DataApi;
 use App\Data\Enums\PostStatusEnum;
 use App\Data\Objects\DataAPI\PaginationObject;
 use App\Data\Objects\DataAPI\PostObject;
-use App\Domains\Language\LanguageRepository;
-use App\Domains\Post\PostSearchRepository;
-use Illuminate\Http\Request;
-use App\Http\Controllers\Controller;
-use App\Exceptions\TrustedException;
-use App\Models\Blog;
 use App\Domains\Post\PostRepository;
+use App\Domains\Post\PostSearchRepository;
+use App\Exceptions\TrustedException;
+use App\Http\Controllers\Controller;
+use App\Models\Blog;
+use Illuminate\Http\Request;
 
 class PostsController extends Controller
 {
-
-    const ALLOWED_SORTS = 
+    public const ALLOWED_SORTS =
     [
         'published_at' => 'posts.published_at',
         'created_at' => 'posts.created_at',
@@ -24,17 +22,16 @@ class PostsController extends Controller
         'updated_at' => 'posts.updated_at',
         'is_featured' => 'posts.is_featured',
         'title' => 'post_variants.title',
-        'words' => 'post_variants.words'
+        'words' => 'post_variants.words',
     ];
 
     public function post(Request $request, Blog $blog)
     {
-
         $request->validate([
             'id' => 'int|required_without:slug',
             'slug' => 'string|required_without:id',
             'language' => 'string',
-            'keys' => 'string'
+            'keys' => 'string',
         ]);
 
         $id = $request->input('id');
@@ -45,13 +42,13 @@ class PostsController extends Controller
 
         $post = PostRepository::getPostByBlogIdAndIdentifier($blog->id, $id, $slug);
 
-        if (!$post) {
+        if (! $post) {
             throw new TrustedException('Post not found', TrustedException::ERROR_NOT_FOUND);
         }
 
         $variant = PostRepository::getPostVariantByPostIdAndLanguageId($post->id, $language->id);
 
-        if (!$variant) {
+        if (! $variant) {
             throw new TrustedException('Post variant not found', TrustedException::ERROR_NOT_FOUND);
         }
 
@@ -63,12 +60,10 @@ class PostsController extends Controller
         return response()->json(
             KeysFilter::filter(new PostObject($post, $blog, $language), $keys)
         );
-
     }
 
     public function posts(Request $request, Blog $blog)
     {
-
         $request->validate([
             'language' => 'string',
             'limit' => 'int|min:1',
@@ -76,7 +71,7 @@ class PostsController extends Controller
             'filter' => 'string',
             'sort' => 'string',
             'keys' => 'string',
-            'pages' => 'boolean'
+            'pages' => 'boolean',
         ]);
 
         $language = Helper::getLanguage($blog, $request->input('language'));
@@ -88,7 +83,7 @@ class PostsController extends Controller
         $sort = $request->input('sort');
         $pages = (bool) $request->input('pages');
 
-        $orderBys  = Helper::getSort(
+        $orderBys = Helper::getSort(
             $sort,
             self::ALLOWED_SORTS
         );
@@ -102,7 +97,7 @@ class PostsController extends Controller
             orderBys: $orderBys,
             isPages: $pages
         );
-        
+
         $posts = $data->collection->map(function ($post) use ($blog, $language) {
             return new PostObject($post, $blog, $language);
         });
@@ -111,20 +106,18 @@ class PostsController extends Controller
 
         return response()->json([
             'data' => $filteredPosts,
-            'pagination' => new PaginationObject($limit, $page, $data->total)
+            'pagination' => new PaginationObject($limit, $page, $data->total),
         ]);
-
     }
 
     public function postsSearch(Request $request, Blog $blog)
     {
-
         $request->validate([
             'search' => 'string|required',
             'language' => 'string',
             'limit' => 'int',
             'page' => 'int',
-            'keys' => 'string'
+            'keys' => 'string',
         ]);
 
         $search = $request->input('search');
@@ -136,7 +129,6 @@ class PostsController extends Controller
         $keys = $request->input('keys');
 
         $searchData = PostSearchRepository::search(
-
             blog: $blog,
             language: $language,
             search: $search,
@@ -144,20 +136,17 @@ class PostsController extends Controller
             offset: $offset,
             isPage: false,
             isPublished: true,
-            
         );
 
-        $posts = $searchData->collection->map(function($post) use ($blog, $language) {
+        $posts = $searchData->collection->map(function ($post) use ($blog, $language) {
             return new PostObject($post, $blog, $language);
         });
 
         $filteredPosts = KeysFilter::filter($posts, $keys);
-        
+
         return response()->json([
             'data' => $filteredPosts,
-            'pagination' => new PaginationObject($limit, $page, $searchData->total)
+            'pagination' => new PaginationObject($limit, $page, $searchData->total),
         ]);
-
     }
-
 }

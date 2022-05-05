@@ -2,11 +2,9 @@
 
 namespace Tests\Feature\ConsoleAPI\Posts;
 
-
 use Illuminate\Testing\Fluent\AssertableJson;
 
-it('updates post variant', function() {
-
+it('updates post variant', function () {
     $post = $this->blog->posts()->first();
     $variant = $post->variants[0];
     $language = $variant->language;
@@ -24,9 +22,10 @@ it('updates post variant', function() {
             'content' => $content,
             'content_unsaved' => $contentUnsaved,
             'title' => $title,
-            'description' => $description
+            'description' => $description,
         ])
-        ->assertJson(fn (AssertableJson $json) =>
+        ->assertJson(
+            fn (AssertableJson $json) =>
             $json
                 ->where('status', $status)
                 ->where('content', $content)
@@ -35,5 +34,4 @@ it('updates post variant', function() {
                 ->where('description', $description)
                 ->etc()
         );
-
 });

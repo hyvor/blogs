@@ -30,29 +30,23 @@ class BlogCacheClear extends Command
      */
     public function handle()
     {
-        
         $subdomain = $this->argument('subdomain');
-        
+
         if ($subdomain) {
-            
             $blog = BlogRepository::getBlogBySubdomain($subdomain);
             CacheRepository::clearAll($blog);
 
             $this->info("Cleared cache of the blog $subdomain");
-            
         } else {
-            
             $blogs = Blog::select('id')->get();
 
             $this->info("Clearing cache of " . count($blogs) . " blogs");
-            
+
             foreach ($blogs as $blog) {
                 CacheRepository::clearAll($blog);
             }
-            
+
             $this->info("Cache cleared!");
-            
         }
-        
     }
 }

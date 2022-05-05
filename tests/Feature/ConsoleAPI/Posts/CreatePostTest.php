@@ -5,12 +5,12 @@ namespace Tests\Feature\ConsoleAPI\Posts;
 use App\Models\PostVariant;
 use Illuminate\Testing\Fluent\AssertableJson;
 
-it('creates a post and the primary variant', function() {
-
+it('creates a post and the primary variant', function () {
     $post = $this
         ->callConsoleApi('POST', '/post')
         ->assertOk()
-        ->assertJson(fn (AssertableJson $json) =>
+        ->assertJson(
+            fn (AssertableJson $json) =>
             $json->has('id')
                 ->where('is_page', false)
                 ->etc()
@@ -24,18 +24,16 @@ it('creates a post and the primary variant', function() {
         ->first();
 
     $this->assertNotNull($variant);
-
 });
 
-it('creates a page', function() {
-
+it('creates a page', function () {
     $this
         ->callConsoleApi('POST', '/post', ['is_page' => true])
         ->assertOk()
-        ->assertJson(fn (AssertableJson $json) =>
+        ->assertJson(
+            fn (AssertableJson $json) =>
             $json->has('id')
                 ->where('is_page', true)
                 ->etc()
         );
-
 });

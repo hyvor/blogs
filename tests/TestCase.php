@@ -2,7 +2,6 @@
 
 namespace Tests;
 
-use App\Models\Blog;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Foundation\Testing\TestCase as BaseTestCase;
 use Illuminate\Support\Facades\URL;
@@ -23,33 +22,40 @@ abstract class TestCase extends BaseTestCase
 
 
     protected function callDataApi(
-        string $endpoint, $data = [], $subdomain = 'test'
-    ) : TestResponse 
-    {
+        string $endpoint,
+        $data = [],
+        $subdomain = 'test'
+    ): TestResponse {
         $endpoint = trim($endpoint, '/');
+
         return $this->call('GET', URL::to("/api/data/v0/$subdomain/$endpoint"), $data);
     }
 
     protected function callConsoleApi(
-        string $method, string $endpoint, $data = [], $subdomain = 'test'
-    ) : TestResponse 
-    {
+        string $method,
+        string $endpoint,
+        $data = [],
+        $subdomain = 'test'
+    ): TestResponse {
         $endpoint = trim($endpoint, '/');
+
         return $this->call($method, URL::to("/api/console/v0/blog/$subdomain/$endpoint"), $data);
     }
 
-    protected function callConsoleUserApi(string $method, string $endpoint, $data = null) {
+    protected function callConsoleUserApi(string $method, string $endpoint, $data = null)
+    {
         return $this->call($method, URL::to('/api/console/v0' . $endpoint), $data);
     }
 
-    protected function callCliAPI(string $method, string $endpoint, $data = []) {
+    protected function callCliAPI(string $method, string $endpoint, $data = [])
+    {
         return $this->call($method, URL::to('/api/cli' . $endpoint), $data);
     }
 
-    protected function callDeliveryApi(string $endpoint, $data = [], $subdomain = 'test') : TestResponse
+    protected function callDeliveryApi(string $endpoint, $data = [], $subdomain = 'test'): TestResponse
     {
         $endpoint = trim($endpoint, '/');
+
         return $this->call('GET', URL::to("/api/delivery/v0/$subdomain/$endpoint"), $data);
     }
-
 }

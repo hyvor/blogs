@@ -8,15 +8,11 @@ namespace App\Domains\Theme;
 
 class GithubSyncService
 {
-
     public static function fetchAndUpdate()
     {
-
         $zipball = "https://github.com/hyvor/hyvor-blogs-themes/zipball/main";
         $zip = file_get_contents($zipball);
 
         dd($zip);
-
     }
-
 }

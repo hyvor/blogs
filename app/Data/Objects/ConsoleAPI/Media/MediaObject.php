@@ -1,4 +1,5 @@
 <?php
+
 namespace App\Data\Objects\ConsoleAPI\Media;
 
 use App\Domains\Route\PermalinkRepository;
@@ -14,14 +15,11 @@ class MediaObject
 
     public function __construct(Media $media)
     {
-
         $this->id = $media->id;
         $this->uploaded_at = $media->created_at->timestamp;
         $this->name = $media->name;
         $this->url = PermalinkRepository::getMediaPermalink($media, $media->blog);
         $this->original_name = $media->original_name;
         $this->extension = $media->extension;
-
     }
-
 }

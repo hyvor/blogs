@@ -13,12 +13,11 @@ use App\Helpers\MimeTypes;
 use App\Models\Blog;
 use Illuminate\Http\UploadedFile;
 
-beforeEach(function() {
+beforeEach(function () {
     $this->blog = Blog::find(config('test.blog_id'));
 });
 
-it('matches redirect', function() {
-
+it('matches redirect', function () {
     $from = '/redirect';
     $to = 'https://somewhere.com';
 
@@ -35,11 +34,9 @@ it('matches redirect', function() {
     $this->assertEquals(DeliveryAPITypeEnum::REDIRECT, $responseObject->type);
     $this->assertEquals($to, $responseObject->to);
     $this->assertEquals(RedirectTypeEnum::PERMANENT->value, $responseObject->status);
-
 });
 
-it('matches assets', function() {
-
+it('matches assets', function () {
     $file = 'script.js';
     $content = 'var x = null';
 
@@ -51,17 +48,15 @@ it('matches assets', function() {
     );
 
     $pathMatcher = new PathMatcher($this->blog, "/assets/$file");
-    $responseObject =  $pathMatcher->getResponseObject();
+    $responseObject = $pathMatcher->getResponseObject();
 
     $this->assertEquals(DeliveryAPITypeEnum::FILE, $responseObject->type);
     $this->assertEquals($content, $responseObject->content);
-
 });
 
 // TODO: IT MATCHES PREVIEW PAGES
 
-it('matches styles.css', function() {
-
+it('matches styles.css', function () {
     $file = 'index.scss';
     $content = 'body {color: red;}';
 
@@ -73,17 +68,15 @@ it('matches styles.css', function() {
     );
 
     $pathMatcher = new PathMatcher($this->blog, "/styles.css");
-    $responseObject =  $pathMatcher->getResponseObject();
+    $responseObject = $pathMatcher->getResponseObject();
 
     $this->assertEquals(DeliveryAPITypeEnum::FILE, $responseObject->type);
     // SCSS processing alters the format, so do not test this
     // $this->assertEquals($content, $responseObject->content);
     $this->assertEquals(MimeTypes::getMimeFromExtension('css'), $responseObject->mime_type);
-
 });
 
-it('matches media', function() {
-
+it('matches media', function () {
     $fileName = 'test.jpg';
 
     $file = UploadedFile::fake()->image($fileName);
@@ -91,13 +84,11 @@ it('matches media', function() {
     $media = MediaRepository::upload($this->blog, $file);
 
     $pathMatcher = new PathMatcher($this->blog, "/media/$media->name");
-    $responseObject =  $pathMatcher->getResponseObject();
+    $responseObject = $pathMatcher->getResponseObject();
 
 
     $this->assertEquals(DeliveryAPITypeEnum::FILE, $responseObject->type);
     $this->assertEquals(200, $responseObject->status);
     $this->assertEquals($file->getContent(), $responseObject->content);
     $this->assertEquals(MimeTypes::getMimeFromExtension('jpg'), $responseObject->mime_type);
-
 });
-

@@ -1,4 +1,5 @@
 <?php
+
 namespace App\Domains\Delivery\Twig;
 
 use App\Data\Enums\ThemeFileFolderEnum;
@@ -18,12 +19,12 @@ use Twig\TwigFunction;
 
 /**
  * Defines three filters
- *     
- *  asset_url - 
+ *
+ *  asset_url -
  *  asset
  *  lang
- *  
- * 
+ *
+ *
  * And one function
  *  data - to call the Data API
  */
@@ -31,14 +32,12 @@ use Twig\TwigFunction;
 
 class TwigExtensions extends AbstractExtension
 {
-
     // to prevent duplicate queries
     public $blog;
     public $twigLanguageHandler;
 
     public function getFilters()
     {
-        
         return [
             new TwigFilter('asset_url', [$this, 'assetUrlFilter'], ['needs_context' => true]),
             new TwigFilter('asset', [$this, 'assetFilter'], ['needs_context' => true, 'is_safe' => ['html']]),
@@ -47,75 +46,67 @@ class TwigExtensions extends AbstractExtension
             new TwigFilter('template', [$this, 'templateFilter'], [
                 'needs_environment' => true,
                 'needs_context' => true,
-                'is_safe' => ['html']
+                'is_safe' => ['html'],
             ]),
-            new TwigFilter('pagination_page_url', [$this, 'paginationPageUrlFilter'], ['needs_context' => true])
+            new TwigFilter('pagination_page_url', [$this, 'paginationPageUrlFilter'], ['needs_context' => true]),
         ];
-
     }
 
 
     public function getFunctions()
     {
-
         return [
             new TwigFunction('data', [$this, 'dataFunction'], [
                 'needs_context' => true,
-                'is_variadic' => true
+                'is_variadic' => true,
             ]),
             new TwigFunction('icon', [$this, 'iconFunction'], [
-                'is_safe' => ['html']
+                'is_safe' => ['html'],
             ]),
             new TwigFunction('language_variant_url', [$this, 'languageVariantUrlFunction'], [
-                'needs_context' => true
+                'needs_context' => true,
             ]),
             new TwigFunction('is_current_url', [$this, 'isCurrentUrlFunction'], [
-                'needs_context' => true
-            ])
+                'needs_context' => true,
+            ]),
         ];
-
     }
 
     public function assetUrlFilter($context, $assetName)
     {
 
         /**
-         * Here, we cannot use PermalinkRepository 
+         * Here, we cannot use PermalinkRepository
          * because it requires Blog $blog, which has a wrong base URL
          * when taken through ->getBlogFromContext for LocalDev requests
-         * So, we simple use the BlogObject 
+         * So, we simple use the BlogObject
          */
-        
-        return $context['_blog']['base_url'] . '/assets/' . $assetName;
 
+        return $context['_blog']['base_url'] . '/assets/' . $assetName;
     }
 
     public function assetFilter($context, $assetName)
     {
-
         $blog = $this->getBlogFromContext($context);
         $file = ThemeFilesRepository::getFile($blog, $assetName, ThemeFileFolderEnum::ASSETS);
 
         return $file?->content ?? "";
-
     }
 
     public function langFilter($context, $key, array $args = [])
     {
-
         $blog = $this->getBlogFromContext($context);
         $currentLanguage = LanguageRepository::getLanguageByCode($blog, $context['_lang']['code']);
 
-        if (!isset($this->twigLanguageHandler)) {
+        if (! isset($this->twigLanguageHandler)) {
             $this->twigLanguageHandler = new TwigLanguage($blog, $currentLanguage);
         }
 
         return $this->twigLanguageHandler->get($key, $args);
-
     }
 
-    public function langByNumberFilter($context, $value, array $args = []) {
-
+    public function langByNumberFilter($context, $value, array $args = [])
+    {
         $zero = $args['zero'] ?? null;
         $one = $args['one'] ?? null;
         $multi = $args['multi'] ?? null;
@@ -125,86 +116,77 @@ class TwigExtensions extends AbstractExtension
         $key = $multi;
         if ($value === 0) {
             $key = $zero;
-        } else if ($value === 1) {
+        } elseif ($value === 1) {
             $key = $one;
         }
 
         return $this->langFilter($context, $key, [$value]);
-
     }
 
     public function templateFilter(\Twig\Environment $env, $context, $string)
     {
-
         $template = $env->createTemplate($string);
         $html = $template->render($context);
-        return $html;
 
+        return $html;
     }
-    
+
     public function paginationPageUrlFilter($context, int $pageNumber)
     {
-        
         $url = $context['_meta']['url'];
         $url = preg_replace('/\/page\/\d+$/', '', $url);
-        
+
         $url = rtrim($url, '/');
         if ($pageNumber > 1) {
             $url .= '/page/' . $pageNumber;
         }
-        
+
         return $url;
-        
     }
 
 
     public function dataFunction($context, array $params = [])
     {
-
         $blog = $this->getBlogFromContext($context);
-        
+
         $endpoint = $params['endpoint'] ?? null;
-        
-        if (!$endpoint) {
+
+        if (! $endpoint) {
             throw new Error('endpoint is required for the data() function');
         }
-        
+
         unset($params['endpoint']);
-        
+
         try {
             $response = InternalAPICaller::data($blog->subdomain, $endpoint, $params);
         } catch (TrustedException $e) {
             // throw twig error
             throw new Error("Error when calling the Data API  /$endpoint endpoint: " . $e->getMessage());
         }
-        
-        return $response;
 
+        return $response;
     }
 
-    public function iconFunction($library, $iconName, $width = null, $height = null) : string
+    public function iconFunction($library, $iconName, $width = null, $height = null): string
     {
-
         try {
             $icon = new Icon($library, $iconName);
+
             return $icon->getSvg($width, $height);
         } catch (SvgIconException) {
             return '';
         }
-
     }
 
-    public function languageVariantUrlFunction($context, string $languageCode) : string
+    public function languageVariantUrlFunction($context, string $languageCode): string
     {
-
         $route = $context['_route'];
 
         if (
             $route === 'post' || $route === 'page' ||
             $route === 'tag' || $route === 'author'
         ) {
-
-            $object = match($route) {
+            $object = match ($route) {
                 'post', 'page' => $context['_post'],
                 'tag' => $context['_tag'],
                 'author' => $context['_author']
@@ -225,12 +207,13 @@ class TwigExtensions extends AbstractExtension
 
         $language = collect($context['_blog']['languages'])->firstWhere('code', $languageCode);
 
-        if (!$language) {
+        if (! $language) {
             return ''; // language not found?
         }
 
         if ($route === 'index') {
             $blog = $this->getBlogFromContext($context);
+
             return PermalinkRepository::getBlogPermalink(
                 $blog,
                 LanguageRepository::getLanguageByCode($blog, $language['code'])
@@ -238,13 +221,11 @@ class TwigExtensions extends AbstractExtension
         }
 
         return '';
-
     }
 
     // checks if a given URL is the current one
-    public function isCurrentUrlFunction($context, string $url) : bool
+    public function isCurrentUrlFunction($context, string $url): bool
     {
-
         $currentUrl = $context['_meta']['url'];
         $blogBaseUrl = $context['_blog']['base_url'];
 
@@ -254,30 +235,26 @@ class TwigExtensions extends AbstractExtension
         // absolute URL
         if (preg_match('/^https?:\/\//', $url)) {
             // if not starting with the blog base URL, it is not the current one
-            if (!substr($url, 0, strlen($blogBaseUrl)) == $blogBaseUrl) {
+            if (! substr($url, 0, strlen($blogBaseUrl)) == $blogBaseUrl) {
                 return false;
             } else {
                 $path = substr($url, strlen($blogBaseUrl));
                 $path = trim($path, '/');
+
                 return $path === $currentPath;
             }
         } else {
             return trim($url, '/') === $currentPath;
         }
-
     }
 
     private function getBlogFromContext($context)
     {
-
-        if (!isset($this->blog)) {
+        if (! isset($this->blog)) {
             $subdomain = $context['_blog']['subdomain'];
             $this->blog = BlogRepository::getBlogBySubdomain($subdomain);
         }
 
         return $this->blog;
-
     }
-    
-
 }
