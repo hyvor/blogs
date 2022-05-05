@@ -207,13 +207,12 @@ Route::prefix('/api/console/v0/blog/{subdomain}')
         Route::get('/theme-files', [ConsoleBlogThemeController::class, 'getAllFiles']);
         Route::put('/theme-file/{id}', [ConsoleBlogThemeController::class, 'createOrUpdateFile']);
 
+        // import and export
         Route::get('/data/export', [ConsoleImportExportController::class, 'export']);
         Route::get('/data/import', [ConsoleImportExportController::class, 'import']);
         Route::post('/data/import/file', [ConsoleImportExportController::class, 'uploadFile']);
 
-
         Route::get('/build', []);
-    
     });
 
     /**
