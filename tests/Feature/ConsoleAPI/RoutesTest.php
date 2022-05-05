@@ -30,8 +30,8 @@ it('creates a route success', function () {
 });
 
 it('creating route fails on empty fields', function () {
-    dd($this
-        ->callConsoleApi('POST', 'route'))
+    $this
+        ->callConsoleApi('POST', 'route')
         ->assertStatus(500);
 });
 

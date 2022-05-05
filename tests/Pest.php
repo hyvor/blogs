@@ -17,7 +17,7 @@ use Tests\TestCase;
 use Tests\UnitTestCase;
 
 uses(TestCase::class)->in('Feature', 'Unit');
-uses(UnitTestCase::class)->in('Unit');
+// uses(UnitTestCase::class)->in('Unit');
 
 /*
 |--------------------------------------------------------------------------
