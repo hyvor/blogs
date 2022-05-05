@@ -11,7 +11,7 @@
         "guzzlehttp/guzzle": "^7.0.1",
         "http-interop/http-factory-guzzle": "^1.2",
         "hyvor/laravel-filterq": "^1.0",
-        "hyvor/laravel-hyvor-connecter": "dev-main",
+        "hyvor/laravel-hyvor-connecter": "^1.0",
         "hyvor/laravel-json-meta": "0.0.3",
         "hyvor/php-svg-icons": "dev-main",
         "hyvor/scssphp": "2.0.1",
@@ -90,18 +90,7 @@
         ]
     },
     "repositories": [
-        {
-          "type": "path",
-          "url": "../package-laravel-hyvor-connecter"
-        },
-        {
-            "type": "path",
-            "url": "../package-hyvor-blogs-laravel"
-        },
-        {
-            "type": "path",
-            "url": "../package-php-svg-icons"
-        }
+        {"type": "composer", "url": "https://hyvor.repo.repman.io"}
     ],
     "extra": {
         "laravel": {

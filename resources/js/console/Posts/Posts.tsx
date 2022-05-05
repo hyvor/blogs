@@ -9,7 +9,6 @@ import NoResults from '../ReusableComponents/NoResults';
 import PostsListRow from './PostsListRow';
 import NoPost from "./NoPost";
 import languagesLogic from "../logic/languagesLogic";
-import {Language} from "../objects/language";
 
 export default function Posts( { postId } : { postId: number | null } ) {
 
@@ -37,16 +36,11 @@ export default function Posts( { postId } : { postId: number | null } ) {
         }
     }
 
-    // console.log(postsList.length);
-    // console.log('---------------')
-
     function handleNew() {
         createPost();
     }
 
-    return languageLoadAjax.status === 'loading' ||
-        loadPostsListAjax.status === 'loading'
-        ?
+    return languageLoadAjax.status === 'loading' ?
         <div className="posts-not-ready box">
             <Loader size={40} />
         </div>
@@ -63,21 +57,25 @@ export default function Posts( { postId } : { postId: number | null } ) {
                 </div>
                 <PostsFilters filters={filters} changeFilter={changeFilter} />
                 <div className="posts-list" onScroll={handleScroll}>
-                    <div className="posts-loaded-wrap">
-                        {
-                            postsList.length ?
-                            postsList.map((id : number) => <PostsListRow
-                                    key={id}
-                                    id={id}
-                                    subdomain={subdomain}
-                            />) :
-                            <NoResults
-                                text="No posts found"
-                                padding={60}
-                                imageWidth={150}
-                            />
-                        }
-                    </div>
+                    {
+                        loadPostsListAjax.status === 'loading' ?
+                            <div className="posts-loading"><Loader/></div> :
+                            <div className="posts-loaded-wrap">
+                                {
+                                    postsList.length ?
+                                        postsList.map((id: number) => <PostsListRow
+                                            key={id}
+                                            id={id}
+                                            subdomain={subdomain}
+                                        />) :
+                                        <NoResults
+                                            text="No posts found"
+                                            padding={60}
+                                            imageWidth={150}
+                                        />
+                                }
+                            </div>
+                    }
                 </div>
             </div>
             <div id="post-viewer" className="box box-right">

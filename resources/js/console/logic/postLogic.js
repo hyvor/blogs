@@ -10,6 +10,22 @@ import subdomainLogic from "./subdomainLogic";
 import { diff } from 'deep-object-diff';
 import merge from 'deepmerge'
 
+async function updatePost(postId, diff) {
+
+    if (diff.variants) {
+        for (let languageId in diff.variants) {
+            await api.patch(
+                subdomainLogic.values.subdomain, `/post/${postId}/variant`,
+                {...diff.variants[languageId], ...{language_id: languageId}}
+            )
+        }
+        delete diff.variants;
+    }
+
+    return await api.patch(subdomainLogic.values.subdomain, `/post/${postId}`, diff)
+
+}
+
 const postLogic = kea({
 
     key: props => props.id,
@@ -53,7 +69,8 @@ const postLogic = kea({
                 return false;
             }
 
-            const response = await api.patch(subdomainLogic.values.subdomain, `/post/${props.id}`, diff)
+            const response = await updatePost(props.id, diff);
+            // const response = await api.patch(subdomainLogic.values.subdomain, `/post/${props.id}`, diff)
             actions.setOriginal(response);
         },
 
@@ -64,7 +81,7 @@ const postLogic = kea({
 
             const diff = {...selectors.getDiff(), ...update};
 
-            const response = await api.patch(subdomainLogic.values.subdomain, `/post/${props.id}`, diff)
+            const response = await updatePost(props.id, diff);
             actions.set(response)
 
             typeof onSave === 'function' && onSave(response);
