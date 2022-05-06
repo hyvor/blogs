@@ -107,6 +107,62 @@ class WordpressParser implements ParserInterface
         * category
         */
 
+        // 99% correct but some are not working
+        // $post = $data->filterXPath('rss/channel')->children('item')->each(function (Crawler $node, $i) {
+        //     $item = array (
+        //         'postId' => $node->children('wp|post_id')->text(),
+        //         'title' => $node->children('title')->text(),
+        //         'postType' => $node->children('wp|post_type')->text('null'),
+        //         'postContent' => $node->children('content|encoded')->text(),
+        //         'postedAt' => $node->children('wp|post_date')->text(),
+        //         'description' => $node->children('description')->text(null),
+        //     );
+        //     return $item;
+        // });
+
+        // Successful code part two
+        $post = $data->filterXPath('rss/channel/item[wp:post_type="post"]')->each(function (Crawler $node, $i) {
+            $item = array (
+                'postId' => $node->children('wp|post_id')->extract(['_text']),
+                'title' => $node->filter('title')->extract(['_text']),
+                'postedAt' => $node->filter('wp|post_date')->extract(['_text']),
+                'postType' => $node->children('wp|post_type')->extract(['_text']),
+                'postedAt' => $node->children('wp|post_date')->extract(['_text']),
+                'description' => $node->children('description')->extract(['_text']),
+                'category' => $node->filter('category')->extract(['_text']),
+                'postContent' => $node->children('content|encoded')->extract(['_text']),
+            );
+            return $item;
+        });
+
+        // dd($post);
+
+        // Filter pages
+        // Successful code part two
+        $page = $data->filterXPath('rss/channel/item[wp:post_type="page"]')->each(function (Crawler $node, $i) {
+            $item = array (
+                'postId' => $node->children('wp|post_id')->extract(['_text']),
+                'title' => $node->filter('title')->extract(['_text']),
+                'postedAt' => $node->filter('wp|post_date')->extract(['_text']),
+                'postType' => $node->children('wp|post_type')->extract(['_text']),
+                'postedAt' => $node->children('wp|post_date')->extract(['_text']),
+                'description' => $node->children('description')->extract(['_text']),
+                'category' => $node->filter('category')->extract(['_text']),
+                'postContent' => $node->children('content|encoded')->extract(['_text']),
+            );
+            return $item;
+        });
+
+        dd($page);
+
+
+
+
+
+
+
+    
+
         // $rss = $data->filterXPath('rss')->each(function (Crawler $node, $i) {
         //     // return $node->children('rss/channel/item[wp:post_type="post"]');
         //     $item = array (
@@ -114,7 +170,6 @@ class WordpressParser implements ParserInterface
         //                return $node->children('title')->text();
         //             }),
 
-                
         //         // 'children' => $node->filterXPath('rss/channel')->children('item')->text(),
         //         // 'previousAll' => $node->filterXPath('rss/channel')->previousAll(),
         //     );
@@ -124,87 +179,6 @@ class WordpressParser implements ParserInterface
 
         // $test = $data->filterXPath('rss/channel/item')->eq(10);
         // dd($test);
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-        
-        // 99% correct but some are not working
-        $post = $data->filterXPath('rss/channel')->children('item')->each(function (Crawler $node, $i) {
-            $item = array (
-                'postId' => $node->children('wp|post_id')->text(),
-                'title' => $node->children('title')->text(),
-                'postType' => $node->children('wp|post_type')->text('null'),
-                'postContent' => $node->children('content|encoded')->text(),
-                'postedAt' => $node->children('wp|post_date')->text(),
-                'description' => $node->children('description')->text(null),
-            );
-            return $item;
-        });
-
-        // Successful code part two
-        // $post = $data->filterXPath('rss/channel/item[wp:post_type="post"]')->each(function (Crawler $node, $i) {
-        //     $item = array (
-        //         'postId' => $node->children('wp|post_id')->extract(['_text']),
-        //         'title' => $node->filter('title')->extract(['_text']),
-        //         'postedAt' => $node->filter('wp|post_date')->extract(['_text']),
-        //         'postType' => $node->children('wp|post_type')->extract(['_text']),
-        //         'postedAt' => $node->children('wp|post_date')->extract(['_text']),
-        //         'description' => $node->children('description')->extract(['_text']),
-        //         'category' => $node->filter('category')->extract(['_text']),
-        //         'postContent' => $node->children('content|encoded')->extract(['_text']),
-        //     );
-        //     return $item;
-        // });
-
-        // dd($post);
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 
         // $rss = $data->filterXPath('rss')->each(function (Crawler $node, $i) {
         //     // return $node->children('rss/channel/item[wp:post_type="post"]');
@@ -216,15 +190,9 @@ class WordpressParser implements ParserInterface
         //         // 'postedAt' => $node->children('wp:post_date')->text(),
         //         // 'description' => $node->children('description')->text(null),
 
-
-
         //         // 'postAuthor' => $node->children('dc:creator')->text('creator null'),
         //         // 'test2' => $node->filterXPath('rss/channel/item/content:encoded')->text('Default text content'),
         //         // 'description' => $node->filterXPath('rss/channel/item/description')->text('Default text content'),
-
-
-
-
 
         //         // 'postCategory' => $node->children('category')->text(),
                 
@@ -278,9 +246,6 @@ class WordpressParser implements ParserInterface
 
         //     dd($item);
         // });
-
-
-
 
 
         // This was almost done.
@@ -345,9 +310,6 @@ class WordpressParser implements ParserInterface
 
 
 
-
-
-
         // $postData = $data->each(function (Crawler $parentCrawler, $i) {
 
         //     $item = array (
@@ -361,10 +323,6 @@ class WordpressParser implements ParserInterface
 
         //     return $item;
         // });
-
-
-
-
 
 
         // Almost correct method
@@ -420,9 +378,6 @@ class WordpressParser implements ParserInterface
         // }
 
 
-
-
-
         // $item = array (
         //     'postId' => $data->filterXPath('rss/channel/item/wp:post_id')->each(function (Crawler $node, $i) {
         //             return $node->text();
@@ -433,8 +388,6 @@ class WordpressParser implements ParserInterface
         //     );
 
         //     dd($item);
-
-
 
 
         // $days = $data->filterXPath('rss/channel/item');
@@ -483,40 +436,6 @@ class WordpressParser implements ParserInterface
         $postCategory = $data->filterXPath('rss/channel/item/category')->each(function (Crawler $node, $i) {
             return $node->text();
         });
-
-
-
-
-
-
-
-
-
-
-
-
-        // Filter pages
-        // Successful code part two
-        $page = $data->filterXPath('rss/channel/item[wp:post_type="page"]')->each(function (Crawler $node, $i) {
-            $item = array (
-                'postId' => $node->children('wp|post_id')->extract(['_text']),
-                'title' => $node->filter('title')->extract(['_text']),
-                'postedAt' => $node->filter('wp|post_date')->extract(['_text']),
-                'postType' => $node->children('wp|post_type')->extract(['_text']),
-                'postedAt' => $node->children('wp|post_date')->extract(['_text']),
-                'description' => $node->children('description')->extract(['_text']),
-                'category' => $node->filter('category')->extract(['_text']),
-                'postContent' => $node->children('content|encoded')->extract(['_text']),
-            );
-            return $item;
-        });
-
-        dd($page);
-
-
-
-
-
 
 
 
