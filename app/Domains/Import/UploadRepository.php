@@ -11,15 +11,11 @@ use App\Models\Blog;
 class UploadRepository
 {
     public static function uploadFile(Blog $blog, UploadedFile $file){
-        try {
-            // $prefix = 'public/import/$blogId'; 
-            // $path = Storage::putFile($prefix, $file);
-            $path = Storage::disk('local')->put( 'import/'.$file , $file);
-            $fileName = self::getFileNameFromPath($path);
 
-        } catch (\Exception $e) {
-            throw new UploadException('Error while uploading');
-        }
+        // $prefix = 'public/import/$blogId'; 
+        // $path = Storage::putFile($prefix, $file);
+        $path = Storage::disk('local')->put( 'import/'.$file , $file);
+        $fileName = self::getFileNameFromPath($path);
 
         $import = Import::create([
             'blog_id' => $blog->id,
