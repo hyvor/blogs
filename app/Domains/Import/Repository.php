@@ -31,12 +31,14 @@ class Repository
     }
     
 
-    public static function blogData(?string $blogTitle, ?string $blogDescription, ?string $blogLanguage){
+    public static function blogData(?string $blogTitle, ?string $blogDescription, ?string $blogLanguage)
+    {
         // dd($this->blog);
         // return Importer::blogData($blogTitle, $blogDescription, $blogLanguage);
     }
 
-    public function authorData(?array $name, ?array $email){
+    public function authorData(array $authors, ?int $authorCount)
+    {
         // language id also should be added when adding the tags to the database.
         // user role should be guest by default to all users.
         // slug should be added according to user name if required with the (-)
@@ -51,7 +53,8 @@ class Repository
     }
 
 
-    public static function tagData(?array $name){
+    public static function tagData(?array $name, ?int $tagCount)
+    {
         // it just has the tag name so I should generate the slug for it.
         // language id also should be added when adding the tags to the database.
         // if the tag already exist we have to either add a special character to the slug
@@ -68,8 +71,12 @@ class Repository
         // return Importer::tagData($name, $slug, $tagCount);
     }
 
-    public static function postData(Blog $blog){
+    public static function postData(array $posts, ?int $postCount)
+    {
         // if there is asssing tags or authors for a specific post it should be added. (post_tag)
         // return Importer::postData($blog);
     }
+
+    public static function pageData(array $pages, ?int $pageCount)
+    {}
 } 
