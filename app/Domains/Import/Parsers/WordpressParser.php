@@ -7,13 +7,6 @@ use App\Models\Blog;
 use App\Domains\Import\ParserInterface;
 use Symfony\Component\DomCrawler\Crawler;
 
-
-// learn name prams
-// psr12 coding stand.
-
-// creaet meta data to post_count and
-// status pending, success, error in the database
-
 class WordpressParser implements ParserInterface
 {
     public function __construct(public string $file)
@@ -26,74 +19,112 @@ class WordpressParser implements ParserInterface
         $repo = new Repository();
         $data = new Crawler($this->file);
 
-        // Blog section
-        $blogTitle = $data->filterXPath('rss/channel/title')->text();
-        $blogDescription = $data->filterXPath('rss/channel/description')->text();
-        $blogLanguage = $data->filterXPath('rss/channel/language')->text();
+        // language section
+        $language = $data->filterXPath('rss/channel/language')->text();
 
-        $repo->blogData(
-            blogTitle: $blogTitle,
-            blogDescription: $blogDescription,
-            blogLanguage: $blogLanguage
+        $repo->language(
+            language: $language,
         );
 
         // Authors section
-        $authorIds = $data->filterXPath('rss/channel/wp:author/wp:author_id')->each(function (Crawler $node, $i) {
-            return $node->text('There is no author id');
-        });
+        $data->filterXPath('rss/channel/wp:author')->each(function (Crawler $node, $i) {
+            $repo = new Repository();
+            $authorId = $node->children('wp|author_id')->extract(['_text']);
+            $authorName = $node->children('wp|author_login')->extract(['_text']);
+            $authorEmail = $node->children('wp|author_email')->extract(['_text']);
 
-        $authors = $data->filterXPath('rss/channel/wp:author')->each(function (Crawler $node, $i) {
-            $item = array (
-                'authorId' => $node->children('wp|author_id')->text(),
-                'authorName' => $node->children('wp|author_login')->text('null'),
-                'authorEmail' => $node->children('wp|author_email')->text('null'),
+            $tagCount = count($authorEmail);
+            // dd($authorId);
+
+            $repo->author(
+                id:$authorId,
+                name : $authorName,
+                email :$authorEmail,
             );
-            return $item;
         });
-
-        $authorCount = count($authors);
-
-        // dd($authors);
-
-        $repo->authorData(
-            authors:$authors,
-            authorCount : $authorCount,
-        );
 
         // Tags section
-        $tagIds = $data->filterXPath('rss/channel/wp:category/wp:term_id')->each(function (Crawler $node, $i) {
-            return $node->text('There is no tag id');
+        $data->filterXPath('rss/channel/wp:category')->each(function (Crawler $node, $i) {
+            $repo = new Repository();
+            $tagId = $node->children('wp|term_id')->extract(['_text']);
+            $tagName = $node->children('wp|cat_name')->extract(['_text']);
+
+            $repo->tag(
+                id:$tagId,
+                name : $tagName,
+            );
         });
-
-        $tagNames = $data->filterXPath('rss/channel/wp:category/wp:cat_name')->each(function (Crawler $node, $i) {
-            return $node->text('There is no tag name');
-        });
-        
-        $tagCount = count($tagNames);
-
-        // dd($tagCount);
-
-        $repo->tagData(
-            name: $tagNames,
-            tagCount: $tagCount,
-        );
 
         // Post section
+        $data->filterXPath('rss/channel/item[wp:post_type="post"]')->each(function (Crawler $node, $i) {
+            $repo = new Repository();
 
-        /*
-        * id -
-        * title -
-        * post type (post_type) -
-        * content - 
-        * created_at - 
-        * updated_at
-        * description -
-        * word count (words)
-        * status -
-        * slug 
-        * creator - 
-        * category
-        */
+            $postId = $node->children('wp|post_id')->extract(['_text']);
+            $title = $node->filter('title')->extract(['_text']);
+            $createdAt = $node->filter('wp|post_date')->extract(['_text']);
+            $postType = $node->children('wp|post_type')->extract(['_text']);
+            $description = $node->children('description')->extract(['_text']);
+            $category = $node->filter('category')->extract(['_text']);
+            $postStatus = $node->filter('wp|status')->extract(['_text']);
+            $postContent = $node->children('content|encoded')->extract(['_text']);
+
+            // Repository::post($postId, $title, $createdAt, $postType, $description, $category, $postStatus, $postContent);
+
+            $repo->post(
+                id:$postId,
+                title : $title,
+                createdAt:$createdAt,
+                postType : $postType,
+                description:$description,
+                category : $category,
+                status:$postStatus,
+                content : $postContent,
+            );
+        });
+
+        // Page section
+        $data->filterXPath('rss/channel/item[wp:post_type="page"]')->each(function (Crawler $node, $i) {
+            $repo = new Repository();
+
+            $postId = $node->children('wp|post_id')->extract(['_text']);
+            $title = $node->filter('title')->extract(['_text']);
+            $createdAt = $node->filter('wp|post_date')->extract(['_text']);
+            $postType = $node->children('wp|post_type')->extract(['_text']);
+            $description = $node->children('description')->extract(['_text']);
+            $category = $node->filter('category')->extract(['_text']);
+            $postStatus = $node->filter('wp|status')->extract(['_text']);
+            $postContent = $node->children('content|encoded')->extract(['_text']);
+
+            // Repository::page($postId, $title, $createdAt, $postType, $description, $category, $postStatus, $postContent);
+
+            $repo->page(
+                id:$postId,
+                title : $title,
+                createdAt:$createdAt,
+                postType : $postType,
+                description:$description,
+                category : $category,
+                status:$postStatus,
+                content : $postContent,
+            );
+
+        });
+
+
+
+
+
+
+
+
+
+
+        // tags
+        // $tagNames = $data->filterXPath('rss/channel/wp:category/wp:cat_name')->each(function (Crawler $node, $i) {
+        //     return $node->text('There is no tag name');
+        // });
+
+
 
         // 99% correct but some are not working
         // $post = $data->filterXPath('rss/channel')->children('item')->each(function (Crawler $node, $i) {
@@ -108,51 +139,28 @@ class WordpressParser implements ParserInterface
         //     return $item;
         // });
 
-        $posts = $data->filterXPath('rss/channel/item[wp:post_type="post"]')->each(function (Crawler $node, $i) {
-            $item = array (
-                'postId' => $node->children('wp|post_id')->extract(['_text']),
-                'title' => $node->filter('title')->extract(['_text']),
-                'createdAt' => $node->filter('wp|post_date')->extract(['_text']),
-                'postType' => $node->children('wp|post_type')->extract(['_text']),
-                'description' => $node->children('description')->extract(['_text']),
-                'category' => $node->filter('category')->extract(['_text']),
-                'postStatus' => $node->filter('wp|status')->extract(['_text']),
-                'postContent' => $node->children('content|encoded')->extract(['_text']),
-            );
-            return $item;
-        });
+        // Perfect method but in this method the way the data is been fetch has an issue.
+        // $posts = $data->filterXPath('rss/channel/item[wp:post_type="post"]')->each(function (Crawler $node, $i) {
+        //     $item = array (
+        //         'postId' => $node->children('wp|post_id')->extract(['_text']),
+        //         'title' => $node->filter('title')->extract(['_text']),
+        //         'createdAt' => $node->filter('wp|post_date')->extract(['_text']),
+        //         'postType' => $node->children('wp|post_type')->extract(['_text']),
+        //         'description' => $node->children('description')->extract(['_text']),
+        //         'category' => $node->filter('category')->extract(['_text']),
+        //         'postStatus' => $node->filter('wp|status')->extract(['_text']),
+        //         'postContent' => $node->children('content|encoded')->extract(['_text']),
+        //     );
+        //     return $item;
+        // });
 
-        $postCount = count($posts);
-
+        // $postCount = count($posts);
         // dd($posts);
 
-        $repo->postData(
-            posts: $posts,
-            postCount : $postCount,
-        );
-
-        // Page section
-        $pages = $data->filterXPath('rss/channel/item[wp:post_type="page"]')->each(function (Crawler $node, $i) {
-            $item = array (
-                'postId' => $node->children('wp|post_id')->extract(['_text']),
-                'title' => $node->filter('title')->extract(['_text']),
-                'createdAt' => $node->filter('wp|post_date')->extract(['_text']),
-                'postType' => $node->children('wp|post_type')->extract(['_text']),
-                'description' => $node->children('description')->extract(['_text']),
-                'category' => $node->filter('category')->extract(['_text']),
-                'postContent' => $node->children('content|encoded')->extract(['_text']),
-            );
-            return $item;
-        });
-
-        $pageCount = count($pages);
-
-        dd($pages);
-
-        $repo->pageData(
-            pages: $pages,
-            pageCount : $pageCount,
-        );
+        // $repo->postData(
+        //     posts: $posts,
+        //     postCount : $postCount,
+        // );
 
 
 
@@ -160,7 +168,13 @@ class WordpressParser implements ParserInterface
 
 
 
-    
+
+
+
+
+
+
+
 
         // $rss = $data->filterXPath('rss')->each(function (Crawler $node, $i) {
         //     // return $node->children('rss/channel/item[wp:post_type="post"]');
@@ -267,32 +281,32 @@ class WordpressParser implements ParserInterface
 
         // dd($data);
 
-        $postData = $data->filterXPath('rss')->each(function (Crawler $parentCrawler, $i) {
+        // $postData = $data->filterXPath('rss')->each(function (Crawler $parentCrawler, $i) {
 
-            // dd($parentCrawler);
-            // $item = $parentCrawler->filterXPath('rss/channel/item/wp:post_id')->text('Default text content');
-            // [not(wp:post_type=attachment)]
-            $item = array (
-            'postId' => $parentCrawler->filterXPath('rss/channel/item[wp:post_type="post"]/dc:creator')->each(function (Crawler $node, $i) {
-                   return $node->text('There is no id');
-                }),
-            'title' => $parentCrawler->filterXPath('rss/channel/item[wp:post_type="post"]/title')->each(function (Crawler $node, $i) {
-                    return $node->text();
-                }),
+        //     // dd($parentCrawler);
+        //     // $item = $parentCrawler->filterXPath('rss/channel/item/wp:post_id')->text('Default text content');
+        //     // [not(wp:post_type=attachment)]
+        //     $item = array (
+        //     'postId' => $parentCrawler->filterXPath('rss/channel/item[wp:post_type="post"]/dc:creator')->each(function (Crawler $node, $i) {
+        //            return $node->text('There is no id');
+        //         }),
+        //     'title' => $parentCrawler->filterXPath('rss/channel/item[wp:post_type="post"]/title')->each(function (Crawler $node, $i) {
+        //             return $node->text();
+        //         }),
 
-            // 'postId' => $parentCrawler->filterXPath('rss/channel/item/wp:post_id')->text('There is no id.'),
-            // 'title' => $parentCrawler->filterXPath('rss/channel/item/title')->text('Default text content'),
-            // 'postType' => $parentCrawler->filterXPath('rss/channel/item/wp:post_type')->text('Default text content'),
-            // 'postContent' => $parentCrawler->filterXPath('rss/channel/item/content:encoded')->text('Default text content'),
-            // 'postedAt' => $parentCrawler->filterXPath('rss/channel/item/wp:post_date')->text('Default text content'),
-            // 'description' => $parentCrawler->filterXPath('rss/channel/item/description')->text('Default text content'),
-            // 'postAuthor' => $parentCrawler->filterXPath('rss/channel/item/dc:creator')->text('Default text content'),
-            // 'postCategory' => $parentCrawler->filterXPath('rss/channel/item/category')->text('Default text content'),
+        //     // 'postId' => $parentCrawler->filterXPath('rss/channel/item/wp:post_id')->text('There is no id.'),
+        //     // 'title' => $parentCrawler->filterXPath('rss/channel/item/title')->text('Default text content'),
+        //     // 'postType' => $parentCrawler->filterXPath('rss/channel/item/wp:post_type')->text('Default text content'),
+        //     // 'postContent' => $parentCrawler->filterXPath('rss/channel/item/content:encoded')->text('Default text content'),
+        //     // 'postedAt' => $parentCrawler->filterXPath('rss/channel/item/wp:post_date')->text('Default text content'),
+        //     // 'description' => $parentCrawler->filterXPath('rss/channel/item/description')->text('Default text content'),
+        //     // 'postAuthor' => $parentCrawler->filterXPath('rss/channel/item/dc:creator')->text('Default text content'),
+        //     // 'postCategory' => $parentCrawler->filterXPath('rss/channel/item/category')->text('Default text content'),
 
-            );
+        //     );
 
-            return $item;
-        });
+        //     return $item;
+        // });
 
         // dd($postData);
         

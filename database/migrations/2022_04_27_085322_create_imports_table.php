@@ -23,6 +23,7 @@ return new class extends Migration
             // data
             $table->string('name')->nullable();
             $table->integer('size')->default(0);
+            $table->enum('type', ['wordpress', 'ghost', 'hyvor', 'blogger', 'tumblr', 'substack'])->nullable();
             $table->enum('status', ['pending', 'success', 'error'])->nullable();
              
             $table->json('meta')->nullable();

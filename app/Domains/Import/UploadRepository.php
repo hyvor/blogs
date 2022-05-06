@@ -21,8 +21,6 @@ class UploadRepository
             'blog_id' => $blog->id,
             'name' => $fileName,
             'size' => $file->getSize(),
-            'original_name' => $file->getClientOriginalName(),
-            'extension' => $file->extension()
         ]);
         return $import;
     }

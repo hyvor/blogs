@@ -29,54 +29,74 @@ class Repository
 
         dispatch(new ImportJob($platform, $file));
     }
-    
 
-    public static function blogData(?string $blogTitle, ?string $blogDescription, ?string $blogLanguage)
+    /**
+    * @var array<array<string,mixed>>
+    */
+    public array $authors = [];
+
+    /**
+    * @var array<array<string,mixed>>
+    */
+    public array $tags = [];
+
+    /**
+    * @var array<array<string,mixed>>
+    */
+    public array $posts = [];
+    
+    /**
+    * @var array<array<string,mixed>>
+    */
+    public array $pages = [];
+
+    public static function language(?string $language)
     {
-        // dd($this->blog);
+        // dd($language);
         // return Importer::blogData($blogTitle, $blogDescription, $blogLanguage);
     }
 
-    public function authorData(array $authors, ?int $authorCount)
+    public function author(
+        $id, 
+        $name,
+        $email
+    )
     {
-        // language id also should be added when adding the tags to the database.
-        // user role should be guest by default to all users.
-        // slug should be added according to user name if required with the (-)
-        // if the username already exist we have to either add a special character to the slug
-        // dd($name, $email);
+        // dd($name);
+    }
 
-        $slug = 'test-test';
-        $role = 'admin';
-        $status = 'active';
-        $authorCount = 10;
-        // return Importer::authorData($name, $email, $slug, $role, $status, $authorCount );
+    public function tag(
+        $id, 
+        $name
+    )
+    {
+        // dd($name);
     }
 
 
-    public static function tagData(?array $name, ?int $tagCount)
+    public static function post(
+        $id, 
+        $title, 
+        $createdAt, 
+        $postType, 
+        $description, 
+        $category, 
+        $status, 
+        $content
+    )
     {
-        // it just has the tag name so I should generate the slug for it.
-        // language id also should be added when adding the tags to the database.
-        // if the tag already exist we have to either add a special character to the slug
-
-        $slug = 'test-test';
-        $tagCount = 10;
-
-        // if ($slug == null) {
-        //     $slug = Str::slug($name);
-        // }
-        
-        // $currentTag = TagRepository::getTagByBlogIdAndSlug($blog->id, $slug);
-
-        // return Importer::tagData($name, $slug, $tagCount);
+        // dd($category);
     }
 
-    public static function postData(array $posts, ?int $postCount)
-    {
-        // if there is asssing tags or authors for a specific post it should be added. (post_tag)
-        // return Importer::postData($blog);
-    }
-
-    public static function pageData(array $pages, ?int $pageCount)
+    public static function page(
+        $id, 
+        $title, 
+        $createdAt, 
+        $postType, 
+        $description, 
+        $category, 
+        $status, 
+        $content
+    )
     {}
 } 
