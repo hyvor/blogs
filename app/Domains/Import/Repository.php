@@ -98,5 +98,7 @@ class Repository
         $status, 
         $content
     )
-    {}
+    {
+        // dd($title);
+    }
 } 

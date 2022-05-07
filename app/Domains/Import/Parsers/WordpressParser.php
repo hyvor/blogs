@@ -9,6 +9,8 @@ use Symfony\Component\DomCrawler\Crawler;
 
 class WordpressParser implements ParserInterface
 {
+    public $repo;
+    
     public function __construct(public string $file)
     {
         $this->file = $file;
@@ -16,19 +18,18 @@ class WordpressParser implements ParserInterface
 
     public function parse() : Repository
     {
-        $repo = new Repository();
+        $this->repo = new Repository();
         $data = new Crawler($this->file);
 
         // language section
         $language = $data->filterXPath('rss/channel/language')->text();
 
-        $repo->language(
+        $this->repo->language(
             language: $language,
         );
 
         // Authors section
         $data->filterXPath('rss/channel/wp:author')->each(function (Crawler $node, $i) {
-            $repo = new Repository();
             $authorId = $node->children('wp|author_id')->extract(['_text']);
             $authorName = $node->children('wp|author_login')->extract(['_text']);
             $authorEmail = $node->children('wp|author_email')->extract(['_text']);
@@ -36,7 +37,7 @@ class WordpressParser implements ParserInterface
             $tagCount = count($authorEmail);
             // dd($authorId);
 
-            $repo->author(
+            $this->repo->author(
                 id:$authorId,
                 name : $authorName,
                 email :$authorEmail,
@@ -45,11 +46,10 @@ class WordpressParser implements ParserInterface
 
         // Tags section
         $data->filterXPath('rss/channel/wp:category')->each(function (Crawler $node, $i) {
-            $repo = new Repository();
             $tagId = $node->children('wp|term_id')->extract(['_text']);
             $tagName = $node->children('wp|cat_name')->extract(['_text']);
 
-            $repo->tag(
+            $this->repo->tag(
                 id:$tagId,
                 name : $tagName,
             );
@@ -57,7 +57,6 @@ class WordpressParser implements ParserInterface
 
         // Post section
         $data->filterXPath('rss/channel/item[wp:post_type="post"]')->each(function (Crawler $node, $i) {
-            $repo = new Repository();
 
             $postId = $node->children('wp|post_id')->extract(['_text']);
             $title = $node->filter('title')->extract(['_text']);
@@ -70,7 +69,7 @@ class WordpressParser implements ParserInterface
 
             // Repository::post($postId, $title, $createdAt, $postType, $description, $category, $postStatus, $postContent);
 
-            $repo->post(
+            $this->repo->post(
                 id:$postId,
                 title : $title,
                 createdAt:$createdAt,
@@ -84,7 +83,6 @@ class WordpressParser implements ParserInterface
 
         // Page section
         $data->filterXPath('rss/channel/item[wp:post_type="page"]')->each(function (Crawler $node, $i) {
-            $repo = new Repository();
 
             $postId = $node->children('wp|post_id')->extract(['_text']);
             $title = $node->filter('title')->extract(['_text']);
@@ -97,7 +95,7 @@ class WordpressParser implements ParserInterface
 
             // Repository::page($postId, $title, $createdAt, $postType, $description, $category, $postStatus, $postContent);
 
-            $repo->page(
+            $this->repo->page(
                 id:$postId,
                 title : $title,
                 createdAt:$createdAt,
@@ -462,6 +460,6 @@ class WordpressParser implements ParserInterface
 
         dd('$postAuthor');
 
-        return $repo;
+        return $this->repo;
     }
 }
