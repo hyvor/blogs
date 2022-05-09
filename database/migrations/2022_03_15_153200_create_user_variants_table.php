@@ -19,7 +19,7 @@ return new class extends Migration
 
             // connection
             $table->bigInteger('user_id')->index(); // The id from the users table.
-            $table->bigInteger('language_id')->index(); 
+            $table->bigInteger('language_id')->index();
 
             // user data
             $table->string('name', 30)->nullable();

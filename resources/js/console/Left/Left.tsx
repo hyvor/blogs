@@ -47,7 +47,7 @@ export default function Left() {
                     href={`https://${appConfig().domains.hyvor}/account`}
                     target="_blank">
                     <img
-                        src={appConfig().hyvorUser.picture}
+                        src={appConfig().hyvorUser.picture_url}
                         className="round-image-40"
                         alt="Profile Picture"
                     />
