@@ -356,7 +356,7 @@ $prosemirror-selected-outline: 3px solid #299af3;
             }
         }
 
-        rich {
+        x-embed {
             position:relative;
             display:block;
             &:before {
@@ -371,7 +371,7 @@ $prosemirror-selected-outline: 3px solid #299af3;
         }
     }
     
-    rich, bookmark {
+    x-embed, bookmark {
         display: block;
         input {
             font-size: 14px;
@@ -397,7 +397,7 @@ $prosemirror-selected-outline: 3px solid #299af3;
         background: $color-card;
     }
     
-    rich.url-input {
+    x-embed.url-input {
         margin-top: 30px;
     }
 
@@ -518,6 +518,14 @@ $prosemirror-selected-outline: 3px solid #299af3;
             border: 1px solid #aaa;
             font-size: 12px;
         }
+
+        input[type="range"] {
+            position: absolute;
+            top: 25px;
+            right: 10px;
+            width: 200px;
+            background: transparent;
+        }
         
         .image-uploader {
             font-size: 14px;
@@ -574,7 +582,6 @@ $prosemirror-selected-outline: 3px solid #299af3;
         }
     }
 
-
     a {
         text-decoration: underline;
         color: #3f51b5;
@@ -583,6 +590,7 @@ $prosemirror-selected-outline: 3px solid #299af3;
     img {
         display: block;
         margin: auto;
+        object-fit: cover;
     }
 
     mark {

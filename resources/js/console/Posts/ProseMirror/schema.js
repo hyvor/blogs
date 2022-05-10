@@ -102,7 +102,7 @@ export const nodes = {
     },
 
     figure: {
-        content: "(image|rich) figcaption",
+        content: "(image|embed) figcaption",
         group: "block",
         selectable: false,
         draggable: true,
@@ -141,7 +141,7 @@ export const nodes = {
           return ["img", {...node.attrs}]; 
         }
     },
-    rich: {
+    embed: {
         attrs: {
             url: {default: null}
         },
@@ -150,7 +150,7 @@ export const nodes = {
         // atom: true,
         selectable: true,
         parseDOM: [{
-            tag: "rich[data-url]",
+            tag: "x-embed[data-url]",
             getAttrs(div) {
                 return {
                     url: div.dataset.url
@@ -158,7 +158,7 @@ export const nodes = {
             }
         }],
         toDOM(node) {
-            return ["rich", {
+            return ["x-embed", {
                 "data-url": node.attrs.url
             }]
         }
@@ -261,7 +261,6 @@ export const marks = {
     link: {
         attrs: {
             href: {},
-            title: {default: null}
         },
         inclusive: false,
         parseDOM: [{tag: "a[href]", getAttrs(dom) {

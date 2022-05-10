@@ -38,8 +38,7 @@ class Blog extends Model
         $definer->add('code_foot')->type('string|null')->default(null);
 
         $definer->add('seo_indexing')->type('bool')->default(true);
-        $definer->add('seo_robots_txt')->type('string|null')->default(
-            <<<TEXT
+        $definer->add('seo_robots_txt')->type('string|null')->default(<<<TEXT
         User-agent: *
         Sitemap: {{ _blog.url }}/sitemap.xml
         Disallow: /p/

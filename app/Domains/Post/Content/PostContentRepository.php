@@ -11,9 +11,11 @@ use App\Domains\Post\Content\Marks\Strong;
 use App\Domains\Post\Content\Marks\Sub;
 use App\Domains\Post\Content\Marks\Sup;
 use App\Domains\Post\Content\Nodes\Blockquote;
+use App\Domains\Post\Content\Nodes\Bookmark;
 use App\Domains\Post\Content\Nodes\BulletList;
 use App\Domains\Post\Content\Nodes\Callout;
 use App\Domains\Post\Content\Nodes\CodeBlock;
+use App\Domains\Post\Content\Nodes\CustomHtml;
 use App\Domains\Post\Content\Nodes\Doc;
 use App\Domains\Post\Content\Nodes\Figcaption;
 use App\Domains\Post\Content\Nodes\Figure;
@@ -24,7 +26,7 @@ use App\Domains\Post\Content\Nodes\Image;
 use App\Domains\Post\Content\Nodes\ListItem;
 use App\Domains\Post\Content\Nodes\OrderedList;
 use App\Domains\Post\Content\Nodes\Paragraph;
-use App\Domains\Post\Content\Nodes\Rich;
+use App\Domains\Post\Content\Nodes\Embed;
 use App\Domains\Post\Content\Nodes\Text;
 use App\Models\Blog;
 use Tiptap\Editor;
@@ -60,16 +62,18 @@ class PostContentRepository
                 new Blockquote(),
                 new HorizontalRule(),
                 new Heading(),
-                new CodeBlock(),
+                new CodeBlock(['blog' => $blog]),
+                new CustomHtml(),
                 new Figure(),
                 new Figcaption(),
                 new Image(),
-                new Rich(),
+                new Embed(),
                 new Callout(['blog' => $blog]),
                 new HardBreak(),
                 new BulletList(),
                 new OrderedList(),
                 new ListItem(),
+                new Bookmark(['blog' => $blog]),
 
                 // marks
                 new Code(),
@@ -83,5 +87,10 @@ class PostContentRepository
 
             ],
         ]);
+    }
+
+    public static function getDefaultBlockTemplate(string $name)
+    {
+        return file_get_contents(resource_path("twig/blocks/$name.twig"));
     }
 }

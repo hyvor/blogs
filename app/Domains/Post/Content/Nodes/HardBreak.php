@@ -9,13 +9,6 @@ class HardBreak extends Node
 {
     public static $name = 'hard_break';
 
-    public function addOptions()
-    {
-        return [
-            'HTMLAttributes' => [],
-        ];
-    }
-
     public function parseHTML()
     {
         return [
@@ -27,6 +20,6 @@ class HardBreak extends Node
 
     public function renderHTML($node, $HTMLAttributes = [])
     {
-        return ['br', HTML::mergeAttributes($this->options['HTMLAttributes'], $HTMLAttributes)];
+        return ['br'];
     }
 }

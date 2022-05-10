@@ -2,19 +2,24 @@
 
 namespace App\Domains\Post\Content\Nodes;
 
+use App\Data\Enums\UrlDataFetchTypeEnum;
 use App\Domains\UrlData\UrlDataRepository;
+use DOMElement;
 use Exception;
 use Tiptap\Core\Node;
 
-class Rich extends Node
+class Embed extends Node
 {
-    public static $name = 'rich';
+    public static $name = 'embed';
 
     public function parseHTML()
     {
         return [
             [
-                'tag' => 'rich[data-url]',
+                'tag' => 'x-embed[data-url]',
+                'getAttrs' => fn (DOMElement $node) => [
+                        'url' => $node->getAttribute('data-url')
+                ]
             ],
         ];
     }
@@ -32,16 +37,14 @@ class Rich extends Node
              * So, we don't have to worry about the applciation making a HTTP call
              * It is a simple database call
              */
-            $embed = UrlDataRepository::fetch($url);
+            $urlData = UrlDataRepository::fetch($url, UrlDataFetchTypeEnum::EMBED);
+            $embedContent = $urlData->html;
 
-            if ($embed->type === 'rich') {
-                $embedContent = $embed->html;
-            }
         } catch (Exception) {
         }
 
         return [
-            'content' => $embedContent ? '<rich>' . $embedContent . '</rich>' : '',
+            'content' => $embedContent ? '<x-embed>' . $embedContent . '</x-embed>' : '',
         ];
     }
 }

@@ -4,9 +4,9 @@ import subdomainLogic from "../../logic/subdomainLogic";
 import schema from "./schema";
 import {NodeSelection, TextSelection} from "prosemirror-state";
 import {toast} from "react-toastify";
-import {createRich} from "./creators";
+import {createEmbed} from "./creators";
 
-export default class RichView {
+export default class EmbedView {
 
     constructor(schema, node, view, getPos) {
         this.schema = schema;
@@ -14,8 +14,7 @@ export default class RichView {
         this.view = view;
         this.getPos = getPos;
 
-        this.dom = document.createElement("rich");
-        // this.dom.classList.add("rich");
+        this.dom = document.createElement("x-embed");
 
         const url = node.attrs.url;
         
@@ -25,9 +24,9 @@ export default class RichView {
             this.dom.innerHTML = '<div class="embedding-placeholder">Loading embed...</div>';
             this.dom.classList.add("loading");
             
-            api.get(subdomainLogic.values.subdomain, '/url-data', {url, type: 'rich'})
+            api.get(subdomainLogic.values.subdomain, '/url-data', {url, type: 'embed'})
                 .then(response => {
-                    if (response.type === 'rich') {
+                    if (response.result === 'ok') {
                         this.dom.classList.remove("loading");
                         setInnerHTMLWithScripts(this.dom, response.html);
                     } else {
@@ -47,7 +46,7 @@ export default class RichView {
 
             /**
              * WET with nodeview-bookmark
-             * When the URL is empty, rich is rendered without figure
+             * When the URL is empty, embed is rendered without figure
              */
 
             const input = document.createElement("input")
@@ -71,7 +70,7 @@ export default class RichView {
                         this.view.state.tr.replaceWith(
                             nodeSel.from,
                             nodeSel.to,
-                            createRich(this.schema, input.value)
+                            createEmbed(this.schema, input.value)
                         )
                     )
                 }
