@@ -13,7 +13,7 @@ Route::get('/github-sync', function() {
 Route::get('callout', function() {
 
     $json = PostContentRepository::getJsonFromHtml("
-        <aside data-emoji=\"💡\">The only real valuable thing is intuition.</aside>
+        <aside data-emoji=\"💡\" style=\"background-color: #ffd969\" data-fg=\"#000\">The only real valuable thing is intuition.</aside>
     ", Blog::find(1));
 
     dd($json);

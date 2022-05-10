@@ -182,8 +182,20 @@ export const nodes = {
         group: "block",
         defining: true,
         selectable: false,
-        parseDOM: [{tag: "aside"}],
-        toDOM() { return ["aside", 0] }
+        parseDOM: [{
+            tag: "aside",
+            getAttrs(aside) {
+                return {
+                    emoji: aside.dataset.emoji,
+                    bg: aside.style.backgroundColor,
+                    fg: aside.style.color
+                }
+            }
+        }],
+        toDOM(node) { return ["aside", {
+            'data-emoji': node.attrs.emoji,
+            style: `background-color: ${node.attrs.bg}; color: ${node.attrs.fg}`
+        }, 0] }
     },
 
     bookmark: {

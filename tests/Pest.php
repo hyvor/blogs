@@ -46,6 +46,7 @@ uses()->beforeEach(function () {
     $this->user = User::where('hyvor_user_id', config('test.hyvor_user_id'))->first();
 })->in('Feature', 'Unit');
 
+
 function blog()
 {
     return Blog::find(config('test.blog_id'));

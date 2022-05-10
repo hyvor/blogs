@@ -21,7 +21,6 @@ use Illuminate\Support\Facades\App;
 use Illuminate\Support\Str;
 use Illuminate\Database\Seeder;
 
-
 class DatabaseSeeder extends Seeder
 {
     /**
@@ -31,11 +30,10 @@ class DatabaseSeeder extends Seeder
      */
     public function run()
     {
-
         $faker = Factory::create();
         $fakerFr = Factory::create('fr_FR');
 
-        
+
         $blogs = Blog::factory()
             ->count(4)
             ->state(new Sequence(
@@ -65,9 +63,8 @@ class DatabaseSeeder extends Seeder
         /*$blogs->push(
             ...Blog::factory()->count(20)->create()
         );*/
-        
+
         foreach ($blogs as $blog) {
-            
             $english = $blog->languages[0];
             $french = Language::factory()->create([
                 'blog_id' => $blog,
@@ -75,7 +72,7 @@ class DatabaseSeeder extends Seeder
                 'name' => "French",
                 'is_primary' => false
             ]);
-            
+
             BlogVariant::factory()
                 ->count(2)
                 ->state(new Sequence(
@@ -85,7 +82,7 @@ class DatabaseSeeder extends Seeder
                 ->create([
                     'blog_id' => $blog
                 ]);
-            
+
             // tags
             $tags = Tag::factory()
                 ->count(10)
@@ -95,14 +92,13 @@ class DatabaseSeeder extends Seeder
                         ->state(new Sequence(
                             ['language_id' => $english],
                             ['language_id' => $french]
-                        ))
-                    , 
+                        )),
                     'variants'
                 )
                 ->create([
                     'blog_id' => $blog
                 ]);
-            
+
             // users
             $users = User::factory()
                 ->count(2)
@@ -129,7 +125,7 @@ class DatabaseSeeder extends Seeder
              * posts and pages 10 each
              * about 3 draft, 3 published, 3 scheduled
              */
-            $posts = Post::factory()
+            /*$posts = Post::factory()
                 ->count(10)
                 ->has(
                     PostVariant::factory()
@@ -138,7 +134,7 @@ class DatabaseSeeder extends Seeder
                             ['language_id' => $english],
                             ['language_id' => $french]
                         ))
-                        ->state(function() {
+                        ->state(function () {
                             return [
                                 'status' => collect(['draft', 'published', 'scheduled'])->random(),
                             ];
@@ -152,22 +148,20 @@ class DatabaseSeeder extends Seeder
                 ->create([
                     'blog_id' => $blog,
                 ]);
-            
-            // connect posts and tags
-            $posts->map(function($post) use ($tags, $users) {
 
-                $tags->random(3)->map(fn($tag) => PostTag::create([
+            // connect posts and tags
+            $posts->map(function ($post) use ($tags, $users) {
+                $tags->random(3)->map(fn ($tag) => PostTag::create([
                     'post_id' => $post->id,
                     'tag_id' => $tag->id
                 ]));
 
-                $users->map(fn($user) => PostAuthor::create([
+                $users->map(fn ($user) => PostAuthor::create([
                     'post_id' => $post->id,
                     'user_id' => $user->id
                 ]));
-                
-            });
-            
+            });*/
+
             /*Navigation::factory()
                 ->count(10)
                 ->state(new Sequence(
@@ -177,7 +171,6 @@ class DatabaseSeeder extends Seeder
                 ->create([
                     'blog_id' => $blog
                 ]);*/
-            
         }
 
         PostSearchRepository::setFilterableAttributes();
@@ -186,7 +179,5 @@ class DatabaseSeeder extends Seeder
         /*$this->call([
             BlogThemeFilesSeeder::class
         ]);*/
-
     }
-    
 }

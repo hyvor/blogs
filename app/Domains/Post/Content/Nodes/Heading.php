@@ -2,6 +2,7 @@
 
 namespace App\Domains\Post\Content\Nodes;
 
+use DOMElement;
 use Tiptap\Core\Node;
 use Tiptap\Utils\HTML;
 
@@ -13,7 +14,6 @@ class Heading extends Node
     {
         return [
             'levels' => [1, 2, 3, 4, 5, 6],
-            'HTMLAttributes' => [],
         ];
     }
 
@@ -29,9 +29,12 @@ class Heading extends Node
         return array_map(function ($level) {
             return [
                 'tag' => "h{$level}",
-                'attrs' => [
-                    'level' => $level,
-                ],
+                'getAttrs' => function (DOMElement $node) use ($level) {
+                    return [
+                        'level' => $level,
+                        'id' => $node->getAttribute('id')
+                    ];
+                }
             ];
         }, $this->options['levels']);
     }
@@ -42,11 +45,11 @@ class Heading extends Node
 
         $level = $hasLevel ?
             $node->attrs->level :
-            $this->options['levels'][0];
+            2;
 
         return [
             "h{$level}",
-            HTML::mergeAttributes($this->options['HTMLAttributes'], $HTMLAttributes),
+            $HTMLAttributes,
             0,
         ];
     }

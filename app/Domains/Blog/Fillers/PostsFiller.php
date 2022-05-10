@@ -59,13 +59,11 @@ class PostsFiller implements FillerInterface
             return;
         }
 
+        $language = $this->blog->languages[0];
+
         foreach ($this->data as $row) {
             $isPage = $row['type'] === 'page';
             $post = PostRepository::createPost($this->blog, $isPage);
-
-            $language = $this->blog->languages[0];
-
-            PostRepository::createPostVariant($post, $language);
 
             $content = file_get_contents(resource_path("posts/{$row['file']}"));
             $content = PostContentRepository::getJsonFromHtml($content, $this->blog);

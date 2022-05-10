@@ -66,6 +66,7 @@ export default function Editor(props) {
     }, [props.id, props.currentLanguageId]);
 
     function handleChange(state) {
+        console.log(JSON.stringify(state.doc.toJSON()));
         props.onChange(JSON.stringify(state.doc.toJSON()));
         setState(state);
     }

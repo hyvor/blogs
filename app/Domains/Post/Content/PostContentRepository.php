@@ -31,12 +31,12 @@ use Tiptap\Editor;
 
 class PostContentRepository
 {
-    public static function getHtml(string $json, Blog $blog)
+    public static function getHtml(array|string $json, Blog $blog)
     {
         return self::getEditor($blog)->setContent($json)->getHTML();
     }
 
-    public static function getText(string $json, Blog $blog)
+    public static function getText(array|string $json, Blog $blog)
     {
         return self::getEditor($blog)->setContent($json)->getText();
     }
@@ -65,7 +65,7 @@ class PostContentRepository
                 new Figcaption(),
                 new Image(),
                 new Rich(),
-                new Callout(),
+                new Callout(['blog' => $blog]),
                 new HardBreak(),
                 new BulletList(),
                 new OrderedList(),

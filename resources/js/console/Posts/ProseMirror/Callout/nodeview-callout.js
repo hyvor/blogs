@@ -79,6 +79,8 @@ export default class Callout {
     updateFromAttrs() {
         this.emoji.innerHTML = this.node.attrs.emoji;
         this.changeColors(this.node.attrs.bg, this.node.attrs.fg)
+
+        this.dom.dataset.emoji = this.node.attrs.emoji;
     }
     
     changeColors(bg, fg) {
