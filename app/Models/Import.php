@@ -15,11 +15,10 @@ class Import extends Model
     // meta
     protected function metaDefinition(Definer $definer)
     {
-        $definer->add('posts_count')->type('int|null')->default(null);
         $definer->add('authors_count')->type('int|null')->default(null);
         $definer->add('tags_count')->type('int|null')->default(null);
+        $definer->add('posts_count')->type('int|null')->default(null);
         $definer->add('pages_count')->type('int|null')->default(null);
-
     }
 
 }

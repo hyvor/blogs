@@ -1,34 +1,16 @@
 <?php
 
 namespace App\Domains\Import;
-use App\Data\Enums\ImportFormatEnum;
-use  App\Domains\Import\Jobs\ImportJob;
-use App\Models\Blog;
-use App\Domains\Import\Importer;
-use App\Models\Import;
-use Illuminate\Support\Facades\Storage;
-use App\Domains\Tag\TagRepository;
-use Illuminate\Support\Str;
 
-
-use App\Models\User;
-use App\Models\Tag;
-use App\Models\UserVariant;
-use App\Models\TagVariant;
-
+use App\Data\Enums\UserRoleEnum;
+use App\Data\Enums\UserStatusEnum;
 
 class Repository
 {
-    static function import(int $blogId, ImportFormatEnum $platform) {
-        $fileName = Import::select('name')
-            ->where('blog_id','=', $blogId)
-            ->value('name');
-        
-        // $wordpressPath = Storage::get('import\'.$fileName);
-        $file = Storage::get('public\wordpress.xml');
-
-        dispatch(new ImportJob($platform, $file));
-    }
+    /**
+    * @var array<array<string,mixed>>
+    */
+    public array $lang = [];
 
     /**
     * @var array<array<string,mixed>>
@@ -50,55 +32,198 @@ class Repository
     */
     public array $pages = [];
 
-    public static function language(?string $language)
+    public function language(
+        ?string $language,
+        ?string $languageCode,
+    )
     {
-        // dd($language);
-        // return Importer::blogData($blogTitle, $blogDescription, $blogLanguage);
+        $this->lang[] = [
+            'language' => $language,
+            'languageCode' => $languageCode,
+        ];
+        return $this->lang;
     }
 
+
+     // Not null :- slug, name
+     public function tag(
+        int $id,
+        string $slug,
+        ?string $created_at = null,
+        ?string $updated_at = null,
+        ?int $posts_count = 0,
+        ?string $code_head = null,
+        ?string $code_foot = null,
+        ?string $featured_image = null,
+        string $name = null,
+        ?string $description = null,
+    )
+    {
+        $this->tags[] = [
+            'id' => $id,
+            'created_at' => $created_at,
+            'updated_at' => $updated_at,
+            'slug' => $slug,
+            'posts_count' => $posts_count,
+            'code_head' => $code_head,
+            'code_foot' => $code_foot,
+            'featured_image_url' => $featured_image,
+            'name' => $name,
+            'description' => $description,
+        ];
+        // dd($slug);
+        // dd($this->tags);
+        return $this->tags;
+    }
+
+
+    // Not null :- status, role, slug, email,
     public function author(
-        $id, 
-        $name,
-        $email
+        int $id,
+        UserStatusEnum $status,
+        UserRoleEnum $role,
+        string $slug,
+        string $email,
+        ?string $created_at = null,
+        ?string $updated_at = null,
+        ?string $picture_url = null,
+        ?string $url = null,
+        ?string $social_facebook = null,
+        ?string $social_twitter = null,
+        ?string $social_linkedin = null,
+        ?string $social_youtube = null,
+        ?string $social_instagram = null,
+        ?string $name = null,
+        ?string $bio = null,
+        ?string $location = null,
     )
     {
-        // dd($name);
+        $this->authors[] = [
+            'id' => $id,
+            'created_at' => $created_at,
+            'updated_at' => $updated_at,
+            'picture_url' => $picture_url,
+            'status' => $status->value,
+            'role' => $role->value,
+            'slug' => $slug,
+            'email' => $email,
+            'url' => $url,
+            'social_facebook' => $social_facebook,
+            'social_twitter' => $social_twitter,
+            'social_linkedin' => $social_linkedin,
+            'social_youtube' => $social_youtube,
+            'social_instagram' => $social_instagram,
+            'name' => $name,
+            'bio' => $bio,
+            'location' => $location,
+        ];
+        // dd($this->authors);
+        // dd($slug);
+        return $this->authors;
     }
 
-    public function tag(
-        $id, 
-        $name
+
+    // Not null :- status, content(NA), is_page, is_featured, slug
+    public function post(
+        int $id,
+        bool $is_page,
+        string $slug,
+        string $status, // checking whether the post is published or not
+        array $authors = null,
+
+        ?string $created_at = null,
+        ?string $updated_at = null,
+        ?string $published_at = null,
+        ?bool $is_featured = false,
+        ?string $featured_image_url = null,
+        ?string $canonical_url = null,
+        ?string $code_head = null,
+        ?string $code_foot = null,
+        ?string $content = null,
+        ?string $title = null,
+        ?string $description = null, 
+        ?array $tags = null,      
     )
     {
-        // dd($name);
+        // dd($id);
+        $this->posts[] = [
+            'id' => $id,
+            'created_at' => $created_at,
+            'updated_at' => $updated_at,
+            'published_at' => $published_at,
+            'is_page' => $is_page,
+            'is_featured' => $is_featured,
+            'slug' => $slug,
+            'featured_image_url' => $featured_image_url,
+            'canonical_url' => $canonical_url,
+            'code_head' => $code_head,
+            'code_foot' => $code_foot,
+            'status' => $status,
+            'title' => $title,
+            'description' => $description,
+            'tags' => $tags,
+            'authors' => $authors,
+            'content' => $content,
+        ];
+        // dd($published_at);
+        // dd($this->posts);
+        return $this->posts;
     }
 
+    public function page(
+        int $id,
+        bool $is_page,
+        string $slug,
+        string $status, // checking whether the post is published or not
+        array $authors = null,
 
-    public static function post(
-        $id, 
-        $title, 
-        $createdAt, 
-        $postType, 
-        $description, 
-        $category, 
-        $status, 
-        $content
+        ?string $created_at = null,
+        ?string $updated_at = null,
+        ?string $published_at = null,
+        ?bool $is_featured = false,
+        ?string $featured_image_url = null,
+        ?string $canonical_url = null,
+        ?string $code_head = null,
+        ?string $code_foot = null,
+        ?string $content = null,
+        ?string $title = null,
+        ?string $description = null, 
+        ?array $tags = null,     
     )
     {
-        // dd($category);
-    }
-
-    public static function page(
-        $id, 
-        $title, 
-        $createdAt, 
-        $postType, 
-        $description, 
-        $category, 
-        $status, 
-        $content
-    )
-    {
+        // dd($is_page);
+        $this->pages[] = [
+            'id' => $id,
+            'created_at' => $created_at,
+            'updated_at' => $updated_at,
+            'published_at' => $published_at,
+            'is_page' => $is_page,
+            'is_featured' => $is_featured,
+            'slug' => $slug,
+            'featured_image_url' => $featured_image_url,
+            'canonical_url' => $canonical_url,
+            'code_head' => $code_head,
+            'code_foot' => $code_foot,
+            'status' => $status,
+            'title' => $title,
+            'description' => $description,
+            'tags' => $tags,
+            'authors' => $authors,
+            'content' => $content,
+        ];
         // dd($title);
+        // dd($this->pages);
+        return $this->pages;
     }
+
+    // static function import(int $blogId, ImportFormatEnum $platform) {
+    //     $fileName = Import::select('name')
+    //         ->where('blog_id','=', $blogId)
+    //         ->value('name');
+        
+    //     // $wordpressPath = Storage::get('import\'.$fileName);
+    //     $file = Storage::get('public\wordpress.xml');
+
+    //     dispatch(new ImportJob($platform, $file));
+    // }
 } 

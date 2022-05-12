@@ -9,6 +9,10 @@ use App\Data\Enums\ImportFormatEnum;
 use App\Domains\Import\UploadRepository;
 use App\Domains\Import\Repository;
 
+use  App\Domains\Import\Jobs\ImportJob;
+use App\Models\Import;
+use Illuminate\Support\Facades\Storage;
+
 // crawler should come to the parser
 class ConsoleImportExportController extends Controller {
 
@@ -23,16 +27,25 @@ class ConsoleImportExportController extends Controller {
         $request->validate([
             'file' => 'required|file',
         ]);
-        $import = UploadRepository::uploadFile($blog->id, $file);
+
+        $import = UploadRepository::uploadFile($blog, $file);
         return response()->json($import);
     }
 
-    public function import(Request $request, Blog $blog) {
+    public function import(Request $request, Blog $blog, Import $import) {
         $platform = ImportFormatEnum::from($request->input('platform'));
         $request->validate([
             'platform' => 'required|string',
         ]);
-        $import = Repository::import($blog->id, $platform);
-        return response()->json($import);
+
+        $fileName = Import::select('name')
+            ->where('blog_id','=', $blog->id)
+            ->value('name');
+    
+        // $wordpressPath = Storage::get('import\'.$fileName);
+        $file = Storage::get('public\wordpress.xml');
+
+        dispatch(new ImportJob($platform, $file, $blog, $import));
+        // return response()->json($import);
     }
 }

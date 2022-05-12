@@ -3,14 +3,31 @@
 namespace App\Domains\Import\Parsers;
 
 use App\Domains\Import\Repository;
-use App\Models\Blog;
 use App\Domains\Import\ParserInterface;
 use Symfony\Component\DomCrawler\Crawler;
+use App\Data\Enums\UserRoleEnum;
+use App\Data\Enums\UserStatusEnum;
+use Illuminate\Support\Str;
+use Carbon\Carbon;
 
+// always use mb functions not strlen --- done
+// no need to divide with the words --- done
+// add the length to the limits.php --- done
+// remove the wordCount --- done
+// we don't need the content type --- done
+// created at date format should be changed to date --- done
+// language update --- done
+// need to update the repository according to our objects. (all the data what is included in the object should be included.) --- done
+// then must check the repository with the database --- done
+// update the function name in the importer --- done
+// remove the unwonted variable data in the importer. --- done
+// update the functions in the importer. --- done
+// update the functions in the repository. --- done
+
+// we need the tag from the id. --- done
+// we need the authors too.
 class WordpressParser implements ParserInterface
-{
-    public $repo;
-    
+{    
     public function __construct(public string $file)
     {
         $this->file = $file;
@@ -18,100 +35,200 @@ class WordpressParser implements ParserInterface
 
     public function parse() : Repository
     {
-        $this->repo = new Repository();
+        $repo = new Repository();
         $data = new Crawler($this->file);
 
-        // language section
-        $language = $data->filterXPath('rss/channel/language')->text();
+        $languageCode = $data->filterXPath('rss/channel/language')->text();
+        $language = locale_get_display_language($languageCode);
 
-        $this->repo->language(
+        $repo->language(
             language: $language,
+            languageCode: $languageCode,
         );
 
         // Authors section
-        $data->filterXPath('rss/channel/wp:author')->each(function (Crawler $node, $i) {
-            $authorId = $node->children('wp|author_id')->extract(['_text']);
-            $authorName = $node->children('wp|author_login')->extract(['_text']);
-            $authorEmail = $node->children('wp|author_email')->extract(['_text']);
+        $data->filterXPath('rss/channel/wp:author')->each(function (Crawler $node, $i) use ($repo) {
 
-            $tagCount = count($authorEmail);
-            // dd($authorId);
+            $authorId = $node->children('wp|author_id')->text('empty');
+            $authorName = $node->children('wp|author_login')->text('empty');
+            $authorEmail = $node->children('wp|author_email')->text('empty');
 
-            $this->repo->author(
-                id:$authorId,
-                name : $authorName,
-                email :$authorEmail,
+            $role = UserRoleEnum::from('editor');
+            $status = UserStatusEnum::from('active');
+            $slug = Str::slug($authorName.rand());
+            $created_at = date("Y/m/d h:i:s");
+            $updated_at = date("Y/m/d h:i:s");
+
+            $repo->author(
+                id: $authorId,
+                name: $authorName,
+                role: $role,
+                status: $status,
+                slug: $slug,
+                email: $authorEmail,
+                created_at: $created_at,
+                updated_at: $updated_at,
             );
         });
 
         // Tags section
-        $data->filterXPath('rss/channel/wp:category')->each(function (Crawler $node, $i) {
-            $tagId = $node->children('wp|term_id')->extract(['_text']);
-            $tagName = $node->children('wp|cat_name')->extract(['_text']);
+        $data->filterXPath('rss/channel/wp:category')->each(function (Crawler $node, $i) use ($repo) {
 
-            $this->repo->tag(
-                id:$tagId,
-                name : $tagName,
+            $tagId = $node->children('wp|term_id')->text('null');
+            $tagName = $node->children('wp|cat_name')->text('null');
+            $slug = Str::slug($tagName.rand());
+
+            $created_at = date("Y/m/d h:i:s");
+            $updated_at = date("Y/m/d h:i:s");
+
+            $repo->tag(
+                id: $tagId,
+                name: $tagName,
+                slug: $slug,
+                created_at: $created_at,
+                updated_at: $updated_at,
             );
         });
 
         // Post section
-        $data->filterXPath('rss/channel/item[wp:post_type="post"]')->each(function (Crawler $node, $i) {
+        $data->filterXPath('rss/channel/item[wp:post_type="post"]')->each(function (Crawler $node, $i) use ($repo) {
 
-            $postId = $node->children('wp|post_id')->extract(['_text']);
-            $title = $node->filter('title')->extract(['_text']);
-            $createdAt = $node->filter('wp|post_date')->extract(['_text']);
-            $postType = $node->children('wp|post_type')->extract(['_text']);
-            $description = $node->children('description')->extract(['_text']);
-            $category = $node->filter('category')->extract(['_text']);
-            $postStatus = $node->filter('wp|status')->extract(['_text']);
-            $postContent = $node->children('content|encoded')->extract(['_text']);
+            $postId = $node->children('wp|post_id')->text('null');
+            $title = $node->filter('title')->text('null');
+            $created_at = $node->filter('wp|post_date')->text('null');
+            $description = $node->children('description')->text('null');
+            $tags = $node->children('category')->extract(['_text']);
+            $postStatus = $node->filter('wp|status')->text('null');
+            $postContent = $node->children('content|encoded')->text('null');
+            $authors = $node->children('dc|creator')->extract(['_text']);
 
-            // Repository::post($postId, $title, $createdAt, $postType, $description, $category, $postStatus, $postContent);
+            $published_at = date("Y/m/d h:i:s");
 
-            $this->repo->post(
-                id:$postId,
-                title : $title,
-                createdAt:$createdAt,
-                postType : $postType,
-                description:$description,
-                category : $category,
-                status:$postStatus,
-                content : $postContent,
+            if (mb_strlen($description) > config('limits.max_post_description_length')) {
+                $description = substr($description, 0, config('limits.max_post_description_length'));
+                // $endPoint = strrpos($stringCut, ' ');
+                // $description = $endPoint? substr($stringCut, 0, $endPoint) : substr($stringCut, 0);
+            }
+
+            if (mb_strlen($title) > config('limits.max_post_title_length')) {
+                $title = substr($title, 0, config('limits.max_post_title_length'));
+                // $endPoint = strrpos($stringCut, ' ');
+                // $title = $endPoint? substr($stringCut, 0, $endPoint) : substr($stringCut, 0);
+            }
+
+            if ($postStatus === 'future' || $postStatus == 'pending' || $postStatus == 'trash' || $postStatus == 'auto-draft' || $postStatus == 'inherit' || $postStatus == 'new') {
+                $postStatus = 'draft';
+            }
+
+            if($postStatus == 'publish'){
+                $postStatus = 'published';
+            }
+
+            $slug = Str::slug($title);
+            $is_page = false;
+
+            $repo->post(
+                id: $postId,
+                is_page: $is_page,
+                title: $title,
+                description: $description,
+                tags: $tags,
+                authors: $authors,
+                status: $postStatus,
+                slug: $slug,
+                created_at: $created_at,
+                updated_at: $created_at,
+                published_at: $published_at,
+                content: $postContent,
             );
         });
 
         // Page section
-        $data->filterXPath('rss/channel/item[wp:post_type="page"]')->each(function (Crawler $node, $i) {
+        $data->filterXPath('rss/channel/item[wp:post_type="page"]')->each(function (Crawler $node, $i) use($repo) {
 
-            $postId = $node->children('wp|post_id')->extract(['_text']);
-            $title = $node->filter('title')->extract(['_text']);
-            $createdAt = $node->filter('wp|post_date')->extract(['_text']);
-            $postType = $node->children('wp|post_type')->extract(['_text']);
-            $description = $node->children('description')->extract(['_text']);
-            $category = $node->filter('category')->extract(['_text']);
-            $postStatus = $node->filter('wp|status')->extract(['_text']);
-            $postContent = $node->children('content|encoded')->extract(['_text']);
+            $postId = $node->children('wp|post_id')->text('null');
+            $title = $node->filter('title')->text('null');
+            $created_at = $node->filter('wp|post_date')->text('null');
+            $description = $node->children('description')->text('null');
+            $tags = $node->children('category')->extract(['_text']);
+            $pageStatus = $node->filter('wp|status')->text('null');
+            $pageContent = $node->children('content|encoded')->text('null');
+            $authors = $node->children('dc|creator')->extract(['_text']);
 
-            // Repository::page($postId, $title, $createdAt, $postType, $description, $category, $postStatus, $postContent);
+            $published_at = date("Y/m/d h:i:s");
 
-            $this->repo->page(
-                id:$postId,
-                title : $title,
-                createdAt:$createdAt,
-                postType : $postType,
-                description:$description,
-                category : $category,
-                status:$postStatus,
-                content : $postContent,
+            if (strlen($description) > config('limits.max_post_description_length')) {
+                $description = substr($description, 0, config('limits.max_post_description_length'));
+            }
+
+            if (strlen($title) > config('limits.max_post_title_length')) {
+                $title = substr($title, 0, config('limits.max_post_title_length'));
+            }
+
+            $slug = Str::slug($title);
+            $is_page = true;
+
+            $repo->page(
+                id: $postId,
+                is_page: $is_page,
+                title: $title,
+                description: $description,
+                tags: $tags,
+                authors: $authors,
+                status: $pageStatus,
+                slug: $slug,
+                created_at: $created_at,
+                updated_at: $created_at,
+                published_at: $published_at,
+                content: $pageContent,
             );
-
         });
 
+        // dd('$postAuthor');
+        return $repo;
+    }
+}
 
 
 
 
+
+
+
+
+
+        // $data->filterXPath('rss/channel/wp:author')->each(function (Crawler $node, $i) use ($repo) {
+        //     $authorId = $node->children('wp|author_id')->extract(['_text']);
+        //     $authorName = $node->children('wp|author_login')->extract(['_text']);
+        //     $authorEmail = $node->children('wp|author_email')->extract(['_text']);
+
+        //     $repo->author(
+        //         id:$authorId,
+        //         name : $authorName,
+        //         email :$authorEmail,
+        //     );
+        // });
+
+
+
+        // $title = 'Lorem Ipsum is simply dummy text of the printing and typesetting industry. 
+            // Lorem Ipsum has been the industrys 
+            // standard dummy text ever since the 1500s, 
+            // when an unknown printer took a galley of type and scrambled it to make a type specimen book. 
+            // It has survived not only five centuries, but also the leap into electronic typesetting, 
+            // remaining essentially unchanged. It was popularised in the 1960s with the release of 
+            // Letraset sheets containing Lorem Ipsum passages, and more recently with desktop publishing 
+            // software like Aldus PageMaker including versions of Lorem Ipsum.
+            // when an unknown printer took a galley of type and scrambled it to make a type specimen book. 
+            // It has survived not only five centuries, but also the leap into electronic typesetting, 
+            // remaining essentially unchanged. It was popularised in the 1960s with the release of 
+            // Letraset sheets containing Lorem Ipsum passages, and more recently with desktop publishing 
+            // software like Aldus PageMaker including versions of Lorem Ipsum.
+            // when an unknown printer took a galley of type and scrambled it to make a type specimen book. 
+            // It has survived not only five centuries, but also the leap into electronic typesetting, 
+            // remaining essentially unchanged. It was popularised in the 1960s with the release of 
+            // Letraset sheets containing Lorem Ipsum passages, and more recently with desktop publishing 
+            // software like Aldus PageMaker including versions of Lorem Ipsum.';
 
 
 
@@ -447,19 +564,3 @@ class WordpressParser implements ParserInterface
         // $postCategory = $data->filterXPath('rss/channel/item/category')->each(function (Crawler $node, $i) {
         //     return $node->text();
         // });
-
-
-
-
-
-
-
-
-
-
-
-        dd('$postAuthor');
-
-        return $this->repo;
-    }
-}

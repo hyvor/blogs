@@ -22,11 +22,17 @@ class UploadRepository
             'name' => $fileName,
             'size' => $file->getSize(),
         ]);
+
+        // self::getImportBlogId($import->blog_id);
         return $import;
     }
 
     private static function getFileNameFromPath(string $path) {
         $split = explode('/', $path);
         return $split[ count($split) - 1 ];
+    }
+
+    private static function getImportBlogId(int $blogId) {
+        return $blogId;
     }
 }

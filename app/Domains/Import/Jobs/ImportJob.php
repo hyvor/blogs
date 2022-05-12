@@ -12,13 +12,17 @@ use App\Domains\Import\Parsers\BloggerParser;
 use App\Domains\Import\Parsers\TumblrParser;
 use App\Domains\Import\Parsers\SubstackParser;
 
+use App\Models\Blog;
+use App\Models\import;
+
+
 class ImportJob implements ShouldQueue {
 
     // public function parse(ImportFormatEnum $platform, $file)
-    public function __construct(ImportFormatEnum $platform, $file)
+    public function __construct(ImportFormatEnum $platform, $file, Blog $blog, Import $import)
     {
         $parserClass = match($platform->value){
-            'wordpress' => WordpressParser::class,
+            'wordpress' => WordpressParser::class, 
             'ghost' => GhostParser::class,
             'hyvor' => HyvorParser::class,
             'blogger' => BloggerParser::class,
@@ -29,6 +33,7 @@ class ImportJob implements ShouldQueue {
         $parser = new $parserClass($file);
         $repository = $parser->parse();
 
-        Importer::import($repository);
+        $importer = new Importer($repository, $blog, $import);
+        $importer->import();
     }
 }
