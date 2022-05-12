@@ -1,30 +1,34 @@
 import axios from 'axios';
-import { useActions, useValues } from 'kea';
-import React, { useEffect, useRef, useState } from 'react'
-import { CaretLeftFill } from 'react-bootstrap-icons';
-import { getUserEndpoint } from './lib/api';
+import {useActions, useValues} from 'kea';
+import React, {useEffect, useRef, useState} from 'react'
+import {CaretLeftFill, ExclamationCircle} from 'react-bootstrap-icons';
+import {getUserEndpoint} from './lib/api';
 import blogsLogic from './logic/blogsLogic';
 import ActionButton from './ReusableComponents/ActionButton';
 import Input from './ReusableComponents/Input'
-import { Popup, PopupBodyDefault, PopupHeaderDefault } from './ReusableComponents/Popup'
-import Toast from './ReusableComponents/Toast';
-import { router } from 'kea-router'
+import {Popup, PopupBodyDefault, PopupHeaderDefault} from './ReusableComponents/Popup'
+import Toast, {ToastType} from './ReusableComponents/Toast';
+import {router} from 'kea-router'
+import Callout, {CalloutColors} from "./ReusableComponents/Callout";
 
 
-export default function NewBlog() {
+export default function NewBlog({ type }: { type: string | null }) {
 
-    const [subdomain, setSubdomain] = useState('');
-    const [subdomainError, setSubdomainError] = useState(null);
+    const isDev : boolean = type === 'dev';
 
-    const [subdomainEdited, setSubdomainEdited] = useState(false)
+    const [subdomain, setSubdomain] = useState<string>('');
+    const [subdomainError, setSubdomainError] = useState<string|null>(null);
 
-    const { blogs, createBlogAjax } = useValues(blogsLogic)
-    const { createBlog } = useActions(blogsLogic)
+    const [subdomainEdited, setSubdomainEdited] = useState<boolean>(false);
+
+    // TODO: Remove any after ajax type hinting
+    const { blogs, createBlogAjax } : any = useValues(blogsLogic)
+    const { createBlog } : any = useActions(blogsLogic)
 
     const { push } = useActions(router);
 
-    const [name, setName] = useState('');
-    const [nameError, setNameError] = useState(null)
+    const [name, setName] = useState<string>('');
+    const [nameError, setNameError] = useState<string|null>(null)
 
     const abortControllerRef = useRef(null);
 
@@ -57,23 +61,27 @@ export default function NewBlog() {
 
     }
 
-    function handleNameChange(val) {
+    function handleNameChange(val: string) {
         setName(val);
         setNameError(null);
 
         if (!subdomainEdited) {
-            var subdomain = val.toLowerCase().replace(/[^a-z0-9-]/g, '-').replace(/-+/g, '-').replace(/(^-|-$)/g, '');
+            const subdomain = val
+                .toLowerCase()
+                .replace(/[^a-z0-9-]/g, '-')
+                .replace(/-+/g, '-')
+                .replace(/(^-|-$)/g, '');
             setSubdomain(subdomain);
         }
     }
 
-    function handleSubdomainChange(val) {
+    function handleSubdomainChange(val: string) {
         setSubdomainEdited(true);
 
         val = val.toLowerCase();
         setSubdomain(val);
 
-        var allowedRegex = /[^a-z0-9-]/;
+        const allowedRegex = /[^a-z0-9-]/;
 
         if (val.substr(0, 1) === '-') {
             setSubdomainError('Cannot start with -');
@@ -101,12 +109,12 @@ export default function NewBlog() {
         }
 
         setIsCreating(true);
-        createBlog({name, subdomain});
+        createBlog({name, subdomain, isDev});
     }
 
     return <div className="new-blog-scene">
         <Popup 
-            header={<PopupHeaderDefault title="Start a new blog" />}
+            header={<PopupHeaderDefault title={ isDev ? "Create Dev Blog" : "Start a new blog"} />}
             body={<PopupBodyDefault>
                 <div className="onboarding-body">
 
@@ -122,32 +130,52 @@ export default function NewBlog() {
                         </div> : null
                     }
 
+                    {
+                        isDev &&
+                        <Callout
+                            icon={<ExclamationCircle />}
+                            color={CalloutColors.ORANGE}
+                            title="Development Blog"
+                            text={
+                                <div>You are creating a development blog, which can only be used for theme development. Click <a
+                                    className="link"
+                                    onClick={() => push('/console/new')}
+                                >here</a> to create a normal blog.</div>
+                            }
+                        />
+                    }
+
                     <Input 
                         title="Blog Name"
                         type="text"
                         name="blog-name"
-                        autocomplete={false}
+                        autoComplete={false}
                         value={name}
                         error={nameError}
                         onChange={handleNameChange}
                         maxLength={50}
                     />
-                    <Input 
-                        title={<div>
-                            <div>Subdomain</div>
-                            <div className="subdomain-rules">Only a-z, 0-9, and hyphens (-)</div>
-                        </div>}
-                        type="text"
-                        name="blog-subdomain"
-                        autocomplete={false}
-                        value={subdomain}
-                        onChange={handleSubdomainChange}
-                        error={subdomainError}
-                        bottom={
-                            <div className="your-blog"><b>{subdomain}.hyvorblogs.io</b></div>
-                        }
-                        maxLength={35}
-                    />
+
+                    {
+                        !isDev &&
+                        <Input
+                            title={<div>
+                                <div>Subdomain</div>
+                                <div className="subdomain-rules">Only a-z, 0-9, and hyphens (-)</div>
+                            </div>}
+                            type="text"
+                            name="blog-subdomain"
+                            autoComplete={false}
+                            value={subdomain}
+                            onChange={handleSubdomainChange}
+                            error={subdomainError}
+                            bottom={
+                                <div className="your-blog"><b>{subdomain}.hyvorblogs.io</b></div>
+                            }
+                            maxLength={35}
+                        />
+                    }
+
                 </div>
             </PopupBodyDefault>}
             footer={
@@ -168,8 +196,8 @@ export default function NewBlog() {
             createBlogAjax.status === 'error' ?
                 <Toast
                     text={createBlogAjax.error}
-                    type="error"
-                /> 
+                    type={ToastType.ERROR}
+                />
             : null
         }
     </div>

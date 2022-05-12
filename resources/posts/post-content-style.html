@@ -8,18 +8,29 @@ Paragraphs are the default blocks. In fact, this is a paragraph.
 
 <h2>Text Styles</h2>
 
-<p>
-    Hyvor Blogs supports all basic text styles such as <b>bold</b>, <i>italic</i>, <s>strike</s>, <sup>superscript</sup>, <sub>subscript</sub>, and <a href="">links</a>.
-</p>
+<ul>
+    <li><b>bold</b></li>
+    <li><em>italic</em></li>
+    <li><s>strike</s></li>
+    <li><code>strike</code></li>
+    <li>super<sup>script</sup></li>
+    <li>sub<sub>script</sub></li>
+    <li><mark>highlight</mark></li>
+</ul>
 
-<h2>Headings</h2>
+<h2>Heading 2</h2>
 
 <p>
     Headings are used to write subtitles in posts. Mainly <code>h2</code> and <code>h3</code> are used, but Hyvor Blogs supports from <code>h1</code> to <code>h6</code>
 </p>
 
-<h2>Heading 2</h2>
-<h2>Heading 3</h2>
+<h3>Heading 3</h3>
+
+<p>
+    Below is a horizontal line, which can be used to divide sections in your posts.
+</p>
+
+<hr>
 
 <h2>Unordered list</h2>
 
@@ -60,11 +71,7 @@ Words can be like X-rays, if you use them properly—they’ll go through anythi
     <p>—Aldous Huxley, Brave New World</p>
 </blockquote>
 
-<h2>Callouts</h2>
-
-<p>
-Callouts are used to make something stand out from the rest of the content. You can use them for alerts, notices, etc. It supports an emoji express the idea better.
-</p>
+<h2>Callout</h2>
 
 <aside data-emoji="💡" style="background-color:#f1f1ef;color:#000000;">
     The only real valuable thing is intuition.
@@ -80,4 +87,36 @@ Callouts are used to make something stand out from the rest of the content. You 
     <figcaption>
         by <a href="https://unsplash.com/photos/IZ01rjX0XQA">Thomas Vimare</a> on <a href="https://unsplash.com">Unsplash</a>
     </figcaption>
+</figure>
+
+<h2>Code Block</h2>
+
+<pre class="language-php" data-annotations="h=5-11" data-name="filterq.php">
+use Hyvor\FilterQ\Facades\FilterQ;
+
+$query = FilterQ::expression('id=100|slug=hello')
+    ->builder(Post::class)
+    ->keys(function($keys) {
+        $keys->add('id')->column('posts.id');
+        $keys->add('slug');
+        $keys->add('author.name')
+            ->column('authors.name')
+            ->join('authors', 'authors.id', '=', 'posts.author_id', 'left');
+    })
+    ->addWhere();
+
+$posts = $query
+    ->limit(25)
+    ->orderBy('id', 'DESC')
+    ->get();</pre>
+
+<h2>Bookmark</h2>
+
+<x-bookmark data-url="https://github.com"></x-bookmark>
+
+<h2>Embed</h2>
+
+<figure>
+    <x-embed data-url="https://www.youtube.com/watch?v=dQw4w9WgXcQ"></x-embed>
+    <figcaption>Rick Astley - Never Gonna Give You Up</figcaption>
 </figure>

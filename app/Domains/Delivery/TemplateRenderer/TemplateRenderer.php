@@ -23,6 +23,8 @@ use App\Domains\User\UserRepository;
 use App\Models\Post;
 use App\Models\Tag;
 use App\Models\User;
+use Symfony\Component\Yaml\Exception\ParseException;
+use Symfony\Component\Yaml\Yaml;
 use function config;
 use Twig\Error\Error;
 
@@ -67,15 +69,14 @@ class TemplateRenderer
     private function render(): string
     {
 
-        // get vars
-        $vars = $this->getVariables();
-
-
         // ready files loader array
         $templateFiles = ThemeFilesRepository::getFilesInFolder(
             $this->pathMatcher->blog,
             ThemeFileFolderEnum::TEMPLATES
         );
+
+        // get vars
+        $vars = $this->getVariables();
 
         $loaderArray = [];
         foreach ($templateFiles as $file) {
@@ -100,13 +101,15 @@ class TemplateRenderer
         $blogObject = new BlogObject($blog, $this->pathMatcher->language);
         $scopeVariables = $this->getRouteVariables($blogObject);
 
+
+
         $vars = [
             // HB-specific
             '___url' => config('app.url'),
 
             // data
             '_blog' => $blogObject,
-            '_config' => [],
+            '_config' => $this->getConfig(),
             '_route' => $this->matchedRoute->name,
             '_lang' => new LanguageObject($this->pathMatcher->language),
         ];
@@ -130,6 +133,26 @@ class TemplateRenderer
         return json_decode(json_encode($vars), true);
     }
 
+    private function getConfig()
+    {
+
+        $configFile = ThemeFilesRepository::getFile(
+            $this->pathMatcher->blog,
+            'config.yaml'
+        );
+
+        if (!$configFile) {
+            throw new Error('Config.yaml file not found');
+        }
+
+        try {
+            return Yaml::parse($configFile->content);
+        } catch (ParseException) {
+            throw new Error('Unable to parse conig.yaml');
+        }
+
+    }
+
     private function getRouteVariables(): array
     {
         $routeName = $this->matchedRoute->name;
@@ -141,7 +164,7 @@ class TemplateRenderer
                 '_meta' => new MetaObject(
                     $blogObject->name,
                     $blogObject->description,
-                    $blogObject->featured_image_url,
+                    $blogObject->cover_url,
                     $blogObject->url,
                     $blogObject->url
                 ),
@@ -164,8 +187,8 @@ class TemplateRenderer
                     $postObject->canonical_url ?? $postObject->url
                 ),
                 '_post' => $postObject,
-                '_comments' => '',
-                '_newsletter' => '',
+                '_comments' => $this->pathMatcher->blog->getMeta('comments_code'),
+                '_newsletter' => $this->pathMatcher->blog->getMeta('newsletter_code'),
             ];
         } elseif ($routeName === 'tag') {
             $tagObject = new TagObject($this->model, $this->pathMatcher->blog, $this->pathMatcher->language);
@@ -262,10 +285,7 @@ class TemplateRenderer
 
     private function getFootCode()
     {
-        return '<script src="/assets/flashload.js"></script>
-        <script data-flashload-skip-replacing>
-            FlashLoad.start()
-        </script>';
+        return file_get_contents(resource_path('twig/_foot.twig'));
     }
 
 

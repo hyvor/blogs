@@ -19,7 +19,7 @@ class ThemeFilesRepository
     ): ?ThemeFile {
         return $blog->themeFiles()
             ->where('name', $fileName)
-            ->where('folder', $folder->value)
+            ->where('folder', $folder ? $folder->value : null)
             ->first();
     }
 

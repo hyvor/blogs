@@ -7,4 +7,5 @@ enum BlogTypeEnum: string
     case DEFAULT = 'default';
     case DEV = 'dev';
     case TEMP = 'temp';
+
 }

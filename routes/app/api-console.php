@@ -7,6 +7,7 @@ use App\Http\Controllers\ConsoleAPI\ConsoleLanguageController;
 use App\Http\Controllers\ConsoleAPI\ConsoleMediaController;
 use App\Http\Controllers\ConsoleAPI\ConsolePostController;
 use App\Http\Controllers\ConsoleAPI\ConsoleSubscriptionController;
+use App\Http\Controllers\ConsoleAPI\ConsoleUserBlogController;
 use App\Http\Controllers\ConsoleAPI\ConsoleUserController;
 use App\Http\Controllers\ConsoleAPI\ConsoleRedirectController;
 use App\Http\Controllers\ConsoleAPI\ConsoleNavigationController;
@@ -51,9 +52,9 @@ Route::prefix('/api/console/v0')
     ->middleware(ConsoleApiUserEndpointsAccessMiddleware::class)
     ->group(function() {
 
-    Route::post('/blog', [ConsoleUserController::class, 'createBlog']);
-    Route::patch('/blogs/sort', [ConsoleUserController::class, 'changeSort']);
-    Route::get('/blog/check-subdomain', [ConsoleUserController::class, 'checkSubdomain']);
+    Route::post('/blog', [ConsoleUserBlogController::class, 'createBlog']);
+    Route::patch('/blogs/sort', [ConsoleUserBlogController::class, 'changeSort']);
+    Route::get('/blog/check-subdomain', [ConsoleUserBlogController::class, 'checkSubdomain']);
 
 });
 

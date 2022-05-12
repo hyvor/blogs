@@ -13,7 +13,8 @@ export default function Input(props) {
             <input 
                 type={props.type} 
                 placeholder={props.placeholder}
-                autoFocus={props.autoFocus || false} 
+                autoFocus={props.autoFocus || false}
+                autoComplete={props.autoComplete}
                 name={props.name}
                 value={props.value} 
                 onChange={(e) => props.onChange(e.target.value)}
@@ -45,6 +46,7 @@ Input.propTypes = {
     onFocus: PropTypes.func,
     maxLength: PropTypes.number,
     autoFocus: PropTypes.bool,
+    autoComplete: PropTypes.bool,
     placeholder: PropTypes.string,
 
     bottom: PropTypes.element,

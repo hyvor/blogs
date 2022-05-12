@@ -40,3 +40,36 @@ test('json to HTML', function () {
     expect($code->nodeName)->toBe('code');
 
 });
+
+
+test('HTML to JSON', function () {
+
+    $name = 'app.php';
+    $content = '$x = null';
+    $annotations = 'h=1';
+
+    $html = "<pre class=\"language-php\" data-name=\"$name\" data-annotations=\"$annotations\">$content</pre>";
+
+    $json = PostContentRepository::getJsonFromHtml($html, blog());
+
+    expect($json)
+        ->toEqual(json_encode([
+            'type' => 'doc',
+            'content' => [
+                [
+                    'type' => 'code_block',
+                    'attrs' => [
+                        'language' => 'php',
+                        'name' => $name,
+                        'annotations' => $annotations
+                    ],
+                    'content' => [
+                        [
+                            'type' => 'text',
+                            'text' => $content
+                        ]
+                    ]
+                ]
+            ]
+        ]));
+});

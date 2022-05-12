@@ -12,8 +12,8 @@ class BlogObject
     public string $subdomain;
     public string $name;
     public ?string $description;
-    public ?string $icon_url;
-    public ?string $featured_image_url;
+    public ?string $logo_url;
+    public ?string $cover_url;
     public string $lang;
     public string $url;
     public string $base_url;
@@ -49,8 +49,10 @@ class BlogObject
         $this->url = PermalinkRepository::getBlogPermalink($blog, $language);
         $this->base_url = PermalinkRepository::getFullUrlFromPath($blog, '');
 
-        $this->icon_url = $blog->icon;
-        $this->featured_image_url = $blog->featured_image_url;
+        $this->icon_url = $blog->icon_url;
+        $this->logo_url = $blog->logo_url ?? $blog->icon_url;
+        $this->logo_url = 'http://blogs.hyvor.test:8080/img/logo.png';
+        $this->cover_url = $blog->cover_url;
 
 
         $meta = $blog->getAllMeta();

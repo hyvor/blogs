@@ -10,6 +10,8 @@
  * - Saves the error message so you can show it to the user
  */
 
+import {KeaPlugin, ListenerFunction} from "kea";
+
 /**
  * Docs
  * 
@@ -37,7 +39,12 @@
  * createPost({}) // data is always an object
  */
 
- export const ajaxPlugin = (options) => {
+type AjaxReducerType = {
+    status: 'loading' | 'success' | 'error' | null,
+    error: string | null
+};
+
+ export const ajaxPlugin = () : KeaPlugin => {
 
     return {
         name: 'ajax',
@@ -49,39 +56,42 @@
 
                 // run the loaders function with the already created logic as an input,
                 // so it can do ({ actions, ... }) => ({ ... })
-                const ajax = typeof input.ajax === 'function' ? input.ajax(logic) : input.ajax
+                const ajax: Record<string, Function> = typeof input.ajax === 'function' ? input.ajax(logic) : input.ajax
 
                 for (const [key, handler] of Object.entries(ajax)) {
                     
                     logic.extend({
 
                         actions: () => {
-                            const newActions = {};
+                            const newActions: Record<string, (...args: any[]) => any> = {};
                             newActions[key] = (params) => params || {};
-                            newActions[key + "Start"] = false;
-                            newActions[key + "Success"] = false;
+                            newActions[key + "Start"] = () => false;
+                            newActions[key + "Success"] = () => false;
                             newActions[key + "Error"] = (error) => ({error});
 
                             return newActions;
                         },
 
                         reducers: () => {
-                            const newReducers =  {};
+                            const newReducers: Record<string, [
+                                AjaxReducerType,
+                                { [x: string]: (state: any, payload: any) => AjaxReducerType }
+                            ]> =  {};
 
                             newReducers[key + "Ajax"] = [{
                                 status: null,
                                 error: null
                             }, {
                                 [key + "Start"]: () => ({
-                                    status: "loading",
+                                    status: 'loading',
                                     error: null
                                 }),
                                 [key + "Success"]: () => ({
-                                    status: "success",
+                                    status: 'success',
                                     error: null
                                 }),
                                 [key + "Error"]: (_, {error}) => ({
-                                    status: "error",
+                                    status: 'error',
                                     error
                                 })
                             }]
@@ -91,7 +101,7 @@
                         },
 
                         listeners: ({actions}) => {
-                            const newListeners = {};
+                            const newListeners: Record<string, ListenerFunction> = {};
 
                             newListeners[key] = (payload = {}, breakpoint, action) => {
                                 actions[key + "Start"]();
@@ -100,7 +110,7 @@
                                     if (response && response.then && typeof response.then === "function") {
                                         return response
                                             .then(() => actions[key + "Success"]())
-                                            .catch(error => {
+                                            .catch((error: Error) => {
                                                 actions[key + "Error"](error.message)
                                                 throw error;
                                             })

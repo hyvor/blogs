@@ -11,6 +11,7 @@ use App\Domains\Post\Content\PostContentRepository;
 use App\Domains\Theme\ThemeFilesRepository;
 use App\Domains\UrlData\UrlDataRepository;
 use App\Models\Blog;
+use DOMElement;
 use Tiptap\Core\Node;
 
 class Bookmark extends Node
@@ -19,7 +20,14 @@ class Bookmark extends Node
 
     public function parseHTML()
     {
-
+        return [
+            [
+                'tag' => 'x-bookmark',
+                'getAttrs' => fn(DOMElement $node) => [
+                    'url' => $node->getAttribute('data-url')
+                ]
+            ]
+        ];
     }
 
     public function renderHTML($node)

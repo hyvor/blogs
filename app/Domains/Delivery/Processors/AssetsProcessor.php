@@ -13,6 +13,10 @@ class AssetsProcessor implements RouteProcessorInterface
 {
     private ?DeliveryAPIResponseObject $responseObject = null;
 
+    private const DEAULT_ASSETS = [
+        'flashload.js'
+    ];
+
     public function __construct(PathMatcher $pathMatcher, MatchedRoute $matchedRoute)
     {
         $fileName = $matchedRoute->param('file_name');
@@ -22,14 +26,18 @@ class AssetsProcessor implements RouteProcessorInterface
             ThemeFileFolderEnum::ASSETS
         );
 
-        if (! $file) {
+        if ($file) {
+            $content = $file->content;
+        } else if (in_array($fileName, self::DEAULT_ASSETS)) {
+            $content = file_get_contents(resource_path("assets/$fileName"));
+        } else {
             return;
         }
 
         $extension = pathinfo($fileName, PATHINFO_EXTENSION);
         $mimeType = MimeTypes::getMimeFromExtension($extension);
 
-        $this->responseObject = DeliveryAPIResponseObject::forFile($file->content, $mimeType);
+        $this->responseObject = DeliveryAPIResponseObject::forFile($content, $mimeType);
     }
 
     public function getResponseObject(): ?DeliveryAPIResponseObject

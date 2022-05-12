@@ -286,6 +286,13 @@ class UserRepository
         return User::find($id);
     }
 
+    public static function getUserByBlogOwnership(int $blogId)
+    {
+        return User::where('blog_id', $blogId)
+            ->where('role', UserRoleEnum::OWNER)
+            ->first();
+    }
+
     public static function getUserByBlogIdAndHyvorUserId(int $blogId, int $hyvorUserId): ?User
     {
         return User::where('blog_id', $blogId)

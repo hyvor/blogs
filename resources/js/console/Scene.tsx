@@ -10,19 +10,19 @@ import Posts from './Posts/Posts'
 import Settings from './Settings/Settings'
 import Theme from './Theme/Theme'
 import Welcome from "./Welcome/Welcome"
+import React from 'react'
 
 export const scenes = {
     error404: () => <div>404</div>,
     blogPreview: () => <BlogPreview />,
-    posts: ({ postId }) => <Posts postId={postId} />,
-    pages: ({ postId }) => <Pages postId={postId} />,
-    settings: ({type}) => <Settings type={type} />,
-    theme: ({type}) => <Theme type={type} />,
+    posts: ({ postId } : { postId?: number }) => <Posts postId={postId} />,
+    pages: ({ postId } : { postId?: number }) => <Pages postId={postId} />,
+    settings: ({type} : {type?: string}) => <Settings type={type} />,
+    theme: ({type} : {type?: string }) => <Theme type={type} />,
     billing: () => <Billing />,
-    new: () => <NewBlog />,
+    new: ({type} : {type? : string}) => <NewBlog type={type} />,
     welcome: () => <Welcome />
 }
-
 
 export default function Scene() {
 
@@ -30,7 +30,7 @@ export default function Scene() {
 
     const { scene, params } = useValues(sceneLogic)
 
-    const SceneComponent = scenes[scene] || scenes.error404
+    const SceneComponent = scenes[scene as keyof typeof scenes] || scenes.error404
 
     return <div>
         <Left />

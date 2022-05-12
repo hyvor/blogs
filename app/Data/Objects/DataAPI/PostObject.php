@@ -66,6 +66,7 @@ class PostObject
         $this->title = $variant->title;
         $this->description = $variant->description;
         $this->featured_image_url = $post->featured_image_url;
+        $this->featured_image_url = 'https://picsum.photos/820/360';
         $this->canonical_url = $post->canonical_url;
 
 

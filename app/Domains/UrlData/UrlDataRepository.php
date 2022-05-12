@@ -53,7 +53,7 @@ class UrlDataRepository
                 'description' => _safe_length($json['meta']['description'] ?? null),
                 'thumbnail_url' => _safe_length($json['links']['thumbnail'][0]['href'] ?? null),
                 'icon_url' => _safe_length($json['links']['icon'][0]['href'] ?? null),
-                'domain' => _safe_length($json['meta']['site'] ?? null),
+                'site' => _safe_length($json['meta']['site'] ?? null),
             ]);
         } catch (IframelyException) {
 

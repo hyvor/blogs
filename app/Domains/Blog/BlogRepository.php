@@ -16,7 +16,7 @@ class BlogRepository
         int $userId,
         string $name,
         string $subdomain,
-        BlogTypeEnum $type = BlogTypeEnum::NORMAL
+        BlogTypeEnum $type = BlogTypeEnum::DEFAULT
     // ) : ? User {
     ) {
         $blog = self::getBlogBySubdomain($subdomain);
@@ -31,14 +31,16 @@ class BlogRepository
         // create the blog
         $blog = Blog::create([
             'hyvor_user_id' => $userId, // I changed here from user_id to hyvor_user_id
-            'name' => $name,
             'subdomain' => $subdomain,
             'type' => $type->value,
         ]);
 
-        // ['user' => $user] = FillNewBlog::fill($blog);
+        BlogVariant::create([
+            'blog_id' => $blog->id,
+            'name' => $name
+        ]);
 
-        // return $user;
+        return $blog;
     }
 
     public static function getBlogById(int $id): ?Blog

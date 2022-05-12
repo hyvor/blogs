@@ -34,10 +34,16 @@ class CodeBlock extends Node
                     return preg_replace(
                         "/^language-/",
                         "",
-                        $DOMNode->childNodes[0]->getAttribute('class')
+                        $DOMNode->getAttribute('class')
                     ) ?: null;
                 },
                 'rendered' => false,
+            ],
+            'name' => [
+                'parseHTML' => fn($node) => $node->getAttribute('data-name')
+            ],
+            'annotations' => [
+                'parseHTML' => fn($node) => $node->getAttribute('data-annotations')
             ],
         ];
     }

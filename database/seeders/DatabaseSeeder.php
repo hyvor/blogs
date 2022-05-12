@@ -125,8 +125,8 @@ class DatabaseSeeder extends Seeder
              * posts and pages 10 each
              * about 3 draft, 3 published, 3 scheduled
              */
-            /*$posts = Post::factory()
-                ->count(10)
+            $posts = Post::factory()
+                ->count(300)
                 ->has(
                     PostVariant::factory()
                         ->count(2)
@@ -160,7 +160,7 @@ class DatabaseSeeder extends Seeder
                     'post_id' => $post->id,
                     'user_id' => $user->id
                 ]));
-            });*/
+            });
 
             /*Navigation::factory()
                 ->count(10)
