@@ -13,6 +13,11 @@ use App\Models\PostVariant;
 use App\Models\PostTag;
 use App\Models\PostAuthor;
 
+use Illuminate\Support\Facades\DB;
+use Tests\TestCase;
+
+
+
 use App\Domains\Import\Repository;
 use Symfony\Component\DomCrawler\Crawler;
 use Illuminate\Support\Str;
@@ -246,33 +251,60 @@ test('pass page data to the repository.', function () use($repo, $data){
     // dd($repo);
 });
 
+
+/* 
+*
+* the error is occurring here when we are trying to save the dta a in the database.....
+*
+*/
 test('pass an array of data to the importer and save data in the database.', function () use($repo){
     // dd($repo->posts);
 
     foreach($repo->tags as $tag) {
         // dd($tag);
         // dd($tag['name']);
-        $tag = Tag::create([
-            'created_at' => $tag['created_at'],
-            'updated_at' => $tag['updated_at'],
-            'blog_id' => 1,
-            'slug' => $tag['slug'],
-            'posts_count' => $tag['posts_count'],
-            'code_head' => $tag['code_head'],
-            'code_foot' => $tag['code_foot'],
-        ]);
+        $tag =  DB::table('tags')->get($tag['name']);
+            // ->create([
+            //     'created_at' => $tag['created_at'],
+            //     'updated_at' => $tag['updated_at'],
+            //     'blog_id' => 1,
+            //     'slug' => $tag['slug'],
+            //     'posts_count' => $tag['posts_count'],
+            //     'code_head' => $tag['code_head'],
+            //     'code_foot' => $tag['code_foot'],
+            // ]);
 
-        $getLanguage = $this->blog->languages()->where('is_primary', true)->first();
-        $primaryLanguage = $getLanguage->id;
+        // $tag = Tag::create([
+        //     'created_at' => $tag['created_at'],
+        //     'updated_at' => $tag['updated_at'],
+        //     'blog_id' => 1,
+        //     'slug' => $tag['slug'],
+        //     'posts_count' => $tag['posts_count'],
+        //     'code_head' => $tag['code_head'],
+        //     'code_foot' => $tag['code_foot'],
+        // ]);
 
-        $vv = TagVariant::create([
-            'tag_id' => $tag->id,
-            'language_id' => $primaryLanguage,
-            'name' => $tag['name'],
-            'description' => $tag['description'],
-        ]);
+        dd($tag);
+
+        // $getLanguage = $this->blog->languages()->where('is_primary', true)->first();
+        // $primaryLanguage = $getLanguage->id;
+
+        // $vv = TagVariant::create([
+        //     'tag_id' => $tag->id,
+        //     'language_id' => $primaryLanguage,
+        //     'name' => $tag['name'],
+        //     'description' => $tag['description'],
+        // ]);
     }
 
     // $this->assertJson(200);
 
 });
+
+
+// class WordPressParserTest extends TestCase
+// {
+//     function test_data(){
+//         dd($this->repo);
+//     }
+// }
