@@ -1,19 +1,16 @@
 <?php
 namespace App\Http\Controllers\ConsoleAPI;
 
+use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Storage;
+use App\Models\Blog;
+use App\Models\Import;
 use App\Domains\Export\WordpressExporter;
 use App\Http\Controllers\Controller;
-use App\Models\Blog;
-use Illuminate\Http\Request;
 use App\Data\Enums\ImportFormatEnum;
 use App\Domains\Import\UploadRepository;
-use App\Domains\Import\Repository;
-
 use  App\Domains\Import\Jobs\ImportJob;
-use App\Models\Import;
-use Illuminate\Support\Facades\Storage;
 
-// crawler should come to the parser
 class ConsoleImportExportController extends Controller {
 
     public function export(Blog $blog) {
@@ -44,7 +41,6 @@ class ConsoleImportExportController extends Controller {
     
         // $wordpressPath = Storage::get('import\'.$fileName);
         $file = Storage::get('public\wordpress.xml');
-
         dispatch(new ImportJob($platform, $file, $blog, $import));
         // return response()->json($import);
     }

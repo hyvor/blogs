@@ -74,7 +74,6 @@ class Importer
                 featured_image_url: $tag['featured_image_url'],
                 name: $tag['name'],
                 description: $tag['description'],
-                tagCount: $tagCount,
             );
         }
 
@@ -98,7 +97,6 @@ class Importer
                 name: $author['name'],
                 bio: $author['bio'],
                 location: $author['location'],
-                authorCount: $authorCount
             );
         }
 
@@ -121,7 +119,6 @@ class Importer
                 tags: $post['tags'],
                 authors: $post['authors'],
                 content: $post['content'],
-                postCount: $postCount,
                 is_featured: $post['is_featured'],
             );
         }
@@ -145,7 +142,6 @@ class Importer
                 tags: $page['tags'],
                 authors: $page['authors'],
                 content: $page['content'],
-                pageCount: $pageCount,
                 is_featured: $page['is_featured'],
             );
         }
@@ -170,7 +166,6 @@ class Importer
         string $featured_image_url = null,
         string $name = null,
         string $description = null,
-        int $tagCount,
         int $posts_count = 0,
     )
     {
@@ -196,13 +191,6 @@ class Importer
         ]);
 
         $this->tagsArray[] = [$name => $tag->id];
-
-        Import::where([
-            'blog_id' => $this->blog->id,
-            'language_id'=> $getLanguage->id,
-        ]) ->update([
-            'tags_count' => $tagCount ?? null,
-        ]);
     }
 
     public function author(
@@ -222,7 +210,6 @@ class Importer
         string $name = null,
         string $bio = null,
         string $location = null,
-        int $authorCount,
     )
     {
         // dd($status);
@@ -273,7 +260,6 @@ class Importer
         array $tags = null,
         array $authors = null,
         string $content = null,
-        int $postCount,
         bool $is_featured = false,
     )
     {
@@ -302,8 +288,6 @@ class Importer
             'code_foot' => $code_foot,
         ]);
 
-        // dd($post);
-
         $getLanguage = $this->blog->languages()->where('is_primary', true)->first();
 
         PostVariant::create([
@@ -324,7 +308,6 @@ class Importer
                             'post_id' => $post->id,
                             'tag_id' => $tagValue,
                         ]);
-                        // dd($postTag);
                     }
                 }
             }
@@ -332,17 +315,13 @@ class Importer
 
         // post_authors section
         foreach($this->authorsArray as $authorData) {
-            // dd($authorData);
             foreach($authorData as $authorKey=>$authorValue){
-                // dd($authorKey,$authorValue);
                 foreach($authors as $author) {
                     if( $authorKey == $author){
-                        // dd($author, $authorKey);
                         $postAuthor = PostAuthor::create([
                             'post_id' => $post->id,
                             'user_id' => $authorValue,
                         ]);
-                        // dd($postAuthor);
                     }
                 }
             }
@@ -365,7 +344,6 @@ class Importer
         array $tags = null,
         array $authors = null,
         string $content = null,
-        int $pageCount,
         bool $is_featured = false,
     )
     {
@@ -404,7 +382,6 @@ class Importer
             'description' => $description,
         ]);
 
-        // dd($page->id);
         // post_tags section
         foreach($this->tagsArray as $tagData) {
             foreach($tagData as $tagKey=>$tagValue){
@@ -414,7 +391,6 @@ class Importer
                             'post_id' => $page->id,
                             'tag_id' => $tagValue,
                         ]);
-                        // dd($postTag);
                     }
                 }
             }
@@ -422,17 +398,13 @@ class Importer
 
         // post_authors section
         foreach($this->authorsArray as $authorData) {
-            // dd($authorData);
             foreach($authorData as $authorKey=>$authorValue){
-                // dd($authorKey,$authorValue);
                 foreach($authors as $author) {
                     if( $authorKey == $author){
-                        // dd($author, $authorKey);
                         $postAuthor = PostAuthor::create([
                             'post_id' => $page->id,
                             'user_id' => $authorValue,
                         ]);
-                        // dd($postAuthor);
                     }
                 }
             }

@@ -4,17 +4,14 @@ namespace App\Domains\Import\Jobs;
 use Illuminate\Contracts\Queue\ShouldQueue;
 use App\Data\Enums\ImportFormatEnum;
 use App\Domains\Import\Importer;
-
+use App\Models\Blog;
+use App\Models\import;
 use App\Domains\Import\Parsers\WordpressParser;
 use App\Domains\Import\Parsers\HyvorParser;
 use App\Domains\Import\Parsers\GhostParser;
 use App\Domains\Import\Parsers\BloggerParser;
 use App\Domains\Import\Parsers\TumblrParser;
 use App\Domains\Import\Parsers\SubstackParser;
-
-use App\Models\Blog;
-use App\Models\import;
-
 
 class ImportJob implements ShouldQueue {
 

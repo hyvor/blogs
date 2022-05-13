@@ -44,7 +44,6 @@ class Repository
         return $this->lang;
     }
 
-
      // Not null :- slug, name
      public function tag(
         int $id,
@@ -75,7 +74,6 @@ class Repository
         // dd($this->tags);
         return $this->tags;
     }
-
 
     // Not null :- status, role, slug, email,
     public function author(
@@ -122,7 +120,6 @@ class Repository
         return $this->authors;
     }
 
-
     // Not null :- status, content(NA), is_page, is_featured, slug
     public function post(
         int $id,
@@ -130,7 +127,6 @@ class Repository
         string $slug,
         string $status, // checking whether the post is published or not
         array $authors = null,
-
         ?string $created_at = null,
         ?string $updated_at = null,
         ?string $published_at = null,
@@ -145,7 +141,6 @@ class Repository
         ?array $tags = null,      
     )
     {
-        // dd($id);
         $this->posts[] = [
             'id' => $id,
             'created_at' => $created_at,
@@ -191,7 +186,6 @@ class Repository
         ?array $tags = null,     
     )
     {
-        // dd($is_page);
         $this->pages[] = [
             'id' => $id,
             'created_at' => $created_at,
@@ -215,15 +209,4 @@ class Repository
         // dd($this->pages);
         return $this->pages;
     }
-
-    // static function import(int $blogId, ImportFormatEnum $platform) {
-    //     $fileName = Import::select('name')
-    //         ->where('blog_id','=', $blogId)
-    //         ->value('name');
-        
-    //     // $wordpressPath = Storage::get('import\'.$fileName);
-    //     $file = Storage::get('public\wordpress.xml');
-
-    //     dispatch(new ImportJob($platform, $file));
-    // }
 } 
