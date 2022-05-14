@@ -8,9 +8,22 @@ use Symfony\Component\DomCrawler\Crawler;
 use App\Data\Enums\UserRoleEnum;
 use App\Data\Enums\UserStatusEnum;
 use Illuminate\Support\Str;
+use Illuminate\Support\Facades\Storage;
+use App\Models\import;
+
 
 class WordpressParser implements ParserInterface
 {    
+    /**
+    * @var array<array<string,mixed>>
+    */
+    public array $authorsArray = [];
+
+    /**
+    * @var array<array<string,mixed>>
+    */
+    public array $tagsArray = [];
+
     public function __construct(public string $file)
     {
         $this->file = $file;
@@ -39,8 +52,11 @@ class WordpressParser implements ParserInterface
             $role = UserRoleEnum::from('editor');
             $status = UserStatusEnum::from('active');
             $slug = Str::slug($authorName.rand());
-            $created_at = date("Y/m/d h:i:s");
-            $updated_at = date("Y/m/d h:i:s");
+            $createdAt = date("Y/m/d h:i:s");
+            $updatedAt = date("Y/m/d h:i:s");
+
+            $this->authorsArray[] = [$authorName => $authorId];
+            // dd($this->authorsArray);
 
             $repo->author(
                 id: $authorId,
@@ -49,11 +65,12 @@ class WordpressParser implements ParserInterface
                 status: $status,
                 slug: $slug,
                 email: $authorEmail,
-                created_at: $created_at,
-                updated_at: $updated_at,
+                createdAt: $createdAt,
+                updatedAt: $updatedAt,
             );
         });
 
+        
         // Tags section
         $data->filterXPath('rss/channel/wp:category')->each(function (Crawler $node, $i) use ($repo) {
 
@@ -61,31 +78,35 @@ class WordpressParser implements ParserInterface
             $tagName = $node->children('wp|cat_name')->text('null');
             $slug = Str::slug($tagName.rand());
 
-            $created_at = date("Y/m/d h:i:s");
-            $updated_at = date("Y/m/d h:i:s");
+            $createdAt = date("Y/m/d h:i:s");
+            $updatedAt = date("Y/m/d h:i:s");
+
+            $this->tagsArray[] = [$tagName => $tagId];
+            // dump($this->tagsArray);
 
             $repo->tag(
                 id: $tagId,
                 name: $tagName,
                 slug: $slug,
-                created_at: $created_at,
-                updated_at: $updated_at,
+                createdAt: $createdAt,
+                updatedAt: $updatedAt,
             );
         });
 
+        
         // Post section
         $data->filterXPath('rss/channel/item[wp:post_type="post"]')->each(function (Crawler $node, $i) use ($repo) {
 
             $postId = $node->children('wp|post_id')->text('null');
             $title = $node->filter('title')->text('null');
-            $created_at = $node->filter('wp|post_date')->text('null');
+            $createdAt = $node->filter('wp|post_date')->text('null');
             $description = $node->children('description')->text('null');
             $tags = $node->children('category')->extract(['_text']);
             $postStatus = $node->filter('wp|status')->text('null');
             $postContent = $node->children('content|encoded')->text('null');
             $authors = $node->children('dc|creator')->extract(['_text']);
 
-            $published_at = date("Y/m/d h:i:s");
+            $publishedAt = date("Y/m/d h:i:s");
 
             if (mb_strlen($description) > config('limits.max_post_description_length')) {
                 $description = substr($description, 0, config('limits.max_post_description_length'));
@@ -106,20 +127,40 @@ class WordpressParser implements ParserInterface
             }
 
             $slug = Str::slug($title);
-            $is_page = false;
+            $isPage = false;
+
+            foreach($this->tagsArray as $tagData) {
+                foreach($tagData as $tagKey=>$tagValue){
+                    foreach($tags as $tag) {
+                        if( $tagKey == $tag){
+                            $tagIds[] = $tagValue;
+                        }
+                    }
+                }
+            }
+
+            foreach($this->authorsArray as $authorData) {
+                foreach($authorData as $authorKey=>$authorValue){
+                    foreach($authors as $author) {
+                        if( $authorKey == $author){
+                            $authorIds[] = $authorValue;
+                        }
+                    }
+                }
+            }
 
             $repo->post(
                 id: $postId,
-                is_page: $is_page,
+                isPage: $isPage,
                 title: $title,
                 description: $description,
-                tags: $tags,
-                authors: $authors,
+                tags: $tagIds,
+                authors: $authorIds,
                 status: $postStatus,
                 slug: $slug,
-                created_at: $created_at,
-                updated_at: $created_at,
-                published_at: $published_at,
+                createdAt: $createdAt,
+                updatedAt: $createdAt,
+                publishedAt: $publishedAt,
                 content: $postContent,
             );
         });
@@ -136,7 +177,7 @@ class WordpressParser implements ParserInterface
             $pageContent = $node->children('content|encoded')->text('null');
             $authors = $node->children('dc|creator')->extract(['_text']);
 
-            $published_at = date("Y/m/d h:i:s");
+            $publishedAt = date("Y/m/d h:i:s");
 
             if (strlen($description) > config('limits.max_post_description_length')) {
                 $description = substr($description, 0, config('limits.max_post_description_length'));
@@ -147,20 +188,29 @@ class WordpressParser implements ParserInterface
             }
 
             $slug = Str::slug($title);
-            $is_page = true;
+            $isPage = true;
 
-            $repo->page(
+            foreach($this->authorsArray as $authorData) {
+                foreach($authorData as $authorKey=>$authorValue){
+                    foreach($authors as $author) {
+                        if( $authorKey == $author){
+                            $authorIds[] = $authorValue;
+                        }
+                    }
+                }
+            }
+
+            $repo->post(
                 id: $postId,
-                is_page: $is_page,
+                isPage: $isPage,
                 title: $title,
                 description: $description,
-                tags: $tags,
-                authors: $authors,
+                authors: $authorIds,
                 status: $pageStatus,
                 slug: $slug,
-                created_at: $created_at,
-                updated_at: $created_at,
-                published_at: $published_at,
+                createdAt: $created_at,
+                updatedAt: $created_at,
+                publishedAt: $publishedAt,
                 content: $pageContent,
             );
         });

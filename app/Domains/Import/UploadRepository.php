@@ -7,11 +7,12 @@ use Illuminate\Http\UploadedFile;
 use App\Domains\Media\Exceptions\UploadException;
 use App\Models\Import;
 use App\Models\Blog;
+use App\Data\Enums\ImportFormatEnum;
 
 class UploadRepository
 {
-    public static function uploadFile(Blog $blog, UploadedFile $file){
-
+    public static function uploadFile(ImportFormatEnum $platform, Blog $blog, UploadedFile $file)
+    {
         // $prefix = 'public/import/$blogId'; 
         // $path = Storage::putFile($prefix, $file);
         $path = Storage::disk('local')->put( 'import/'.$file , $file);
@@ -20,7 +21,7 @@ class UploadRepository
         $import = Import::create([
             'blog_id' => $blog->id,
             'name' => $fileName,
-            'size' => $file->getSize(),
+            'type' => $platform,
         ]);
 
         // self::getImportBlogId($import->blog_id);
