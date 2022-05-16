@@ -2,37 +2,18 @@
 
 namespace Tests\Unit\Import\Parsers;
 
-use App\Models\Import;
-use App\Models\Blog;
-use App\Models\User;
-use App\Models\UserVariant;
-use App\Models\Tag;
-use App\Models\TagVariant;
-use App\Models\Post;
-use App\Models\PostVariant;
-use App\Models\PostTag;
-use App\Models\PostAuthor;
-
-use Illuminate\Support\Facades\DB;
-use Tests\TestCase;
-
-
-
 use App\Domains\Import\Repository;
-use Symfony\Component\DomCrawler\Crawler;
-use Illuminate\Support\Str;
-use App\Data\Enums\UserRoleEnum;
-use App\Data\Enums\UserStatusEnum;
+use App\Domains\Import\Parsers\WordpressParser;
 
-// first need dummy export data in xml ---done
-// second need to pass the export data to the repository ---done
-// then need to pass the passed data to the importer and then check the whether its saving in the database.
+// php artisan test  --filter 'WordPressParserTest'
+// If this test needs to work properly then we will have to add the html/body part to the filterXpath in the wordpress parser.
 
-$content = <<<XML
+$file = <<<XML
         <?xml version="1.0" encoding="UTF-8" ?>
         <rss>
             <channel>
                 <title>Hyvor Blogs Blog</title>
+				<language>en-US</language>
                 <wp:author>
                     <wp:author_id>hi</wp:author_id>
                     <wp:author_login>bro</wp:author_login>
@@ -101,25 +82,74 @@ $content = <<<XML
         </rss>
 XML;
 
-// $repo = new Repository();
-// $data = new Crawler($content);
+it('parsers the language', function () use($file){
+
+	$parser = new WordpressParser($file);
+    $repo = $parser->parse();
+
+	foreach($repo->lang as $lang) {
+		$language = $lang['language'];
+		$languageCode = $lang['languageCode'];
+	}
+
+	$this->assertEquals('English', $language);
+});
+
+it('parsers the authors', function ()  use($file){
+
+	$parser = new WordpressParser($file);
+    $repo = $parser->parse();
+
+	foreach($repo->authors as $author) {
+			$status = $author['status'];
+			$role = $author['role'];
+			$slug = $author['slug'];
+			$email = $author['email'];
+			$url = $author['url'];
+			$name = $author['name'];
+	}
+
+	$this->assertEquals('Rasif', $name);
+});
 
 
-// test('pass tag data to repository.', function () use ($repo, $data){
+it('parsers the tags', function ()  use($file){
 
-//     $tagId = 1;
-//     $tagName = 'test';
-//     $slug = Str::slug($tagName.rand());
-//     $created_at = date("Y/m/d h:i:s");
-//     $updated_at = date("Y/m/d h:i:s");
+	$parser = new WordpressParser($file);
+    $repo = $parser->parse();
 
-//     $repo->tag(
-//         id: $tagId,
-//         name: $tagName,
-//         slug: $slug,
-//         created_at: $created_at,
-//         updated_at: $updated_at,
-//     );
-    
-//     $this->assertJson(200);
-// });
+	foreach($repo->tags as $tag) {
+		$slug = $tag['slug']; 
+        $postsCount= $tag['postsCount'];
+        $codeHead = $tag['codeHead'];
+        $codeFoot = $tag['codeFoot'];
+		$featuredImageUrl = $tag['featuredImageUrl'];
+		$name = $tag['name'];
+		$description = $tag['description'];
+	}
+
+	$this->assertEquals('alternatives', $name);
+});
+
+it('parsers the posts', function ()  use($file){
+
+	$parser = new WordpressParser($file);
+    $repo = $parser->parse();
+
+	foreach($repo->posts as $post) {
+		$slug = $post['slug'];
+		$featuredImageUrl = $post['featuredImageUrl'];
+		$canonicalUrl = $post['canonicalUrl'];
+		$codeHead = $post['codeHead'];
+		$codeFoot = $post['codeFoot'];
+		$status = $post['status'];
+		$title = $post['title'];
+		$description = $post['description'];
+		$tags = $post['tags'];
+		$authors = $post['authors'];
+		$content = $post['content'];
+		$isFeatured = $post['isFeatured'];
+	}
+
+	$this->assertEquals('About', $title);
+});

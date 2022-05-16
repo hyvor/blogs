@@ -19,10 +19,10 @@ class ConsoleImportExportController extends Controller {
     }
 
     public function import(Request $request, Blog $blog, Import $import) {
-        $request->validate([
-            'platform' => 'required|string',
-            'file' => 'required|file',
-        ]);
+        // $request->validate([
+        //     'platform' => 'required|string',
+        //     'file' => 'required|file',
+        // ]);
 
         $platform = ImportFormatEnum::from($request->input('platform'));
         $file = $request->file('file');
