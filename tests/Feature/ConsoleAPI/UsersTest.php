@@ -99,6 +99,7 @@ it('create variant ( If language id is null ) ', function () {
             'languageId' => null,
         ])
         ->assertStatus(500);
+<<<<<<< .merge_file_S1rSgT
 });
 
 class UsersTest extends TestCase
@@ -158,3 +159,6 @@ class UsersTest extends TestCase
     //     $response->assertStatus(500);
     // }
 }
+=======
+});
+>>>>>>> .merge_file_T7kQbO
