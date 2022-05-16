@@ -227,7 +227,7 @@ class Importer
             'role' => $role,
             'slug' => $slug, 
             'email' => $email,
-            'url' => $url,
+            'website_url' => $url,
             'social_facebook' => $socialFacebook,
             'social_twitter' => $socialTwitter,
             'social_linkedin' => $socialLinkedin,
