@@ -7,6 +7,8 @@ use Illuminate\Database\Eloquent\Model;
 
 class UserVariant extends Model
 {
+    use HasFactory;
+
     public $timestamps = false;
 
     public function user()
@@ -22,5 +24,5 @@ class UserVariant extends Model
     public function blog()
     {
         return $this->belongsTo(Blog::class);
-    } 
+    }
 }

@@ -1,19 +1,18 @@
 <?php
+
 namespace App\Domains\Tag\Events;
 
 use App\Models\Tag;
-use Illuminate\Broadcasting\Channel;
 use Illuminate\Broadcasting\InteractsWithSockets;
-use Illuminate\Broadcasting\PresenceChannel;
 use Illuminate\Broadcasting\PrivateChannel;
-use Illuminate\Contracts\Broadcasting\ShouldBroadcast;
 use Illuminate\Foundation\Events\Dispatchable;
 use Illuminate\Queue\SerializesModels;
 
 class UpdateTagEvent
 {
-
-    use SerializesModels, InteractsWithSockets, Dispatchable;
+    use SerializesModels;
+    use InteractsWithSockets;
+    use Dispatchable;
 
     public Tag $tag;
 
@@ -26,7 +25,7 @@ class UpdateTagEvent
     {
         // Great this data is coming from the tag observer.
         dd('Event');
-        $this->tag = $tag; 
+        $this->tag = $tag;
     }
 
     /**
@@ -38,5 +37,4 @@ class UpdateTagEvent
     {
         return new PrivateChannel('channel-name');
     }
-
 }

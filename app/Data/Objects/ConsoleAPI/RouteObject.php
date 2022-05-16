@@ -11,10 +11,10 @@ class RouteObject
     public int $blog_id;
     public string $name;
     public string $match;
-    public string $template; 
+    public string $template;
     public ?string $posts_filter;
     public ?string $content_type;
-    public ?int $is_enabled; 
+    public ?int $is_enabled;
 
     public function __construct(Route $route)
     {

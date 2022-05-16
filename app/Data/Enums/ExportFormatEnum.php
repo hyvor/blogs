@@ -1,9 +1,9 @@
 <?php
+
 namespace App\Data\Enums;
 
-enum ExportFormatEnum {
-
+enum ExportFormatEnum
+{
     case WORDPRESS;
     case JSON;
-
 }

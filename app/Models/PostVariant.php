@@ -2,7 +2,7 @@
 
 namespace App\Models;
 
-use App\Domains\Post\Content\PostContentRepository;
+use App\Data\Enums\PostStatusEnum;
 use App\Domains\Post\PostSearchRepository;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
@@ -12,9 +12,13 @@ class PostVariant extends Model
 {
     use HasFactory;
     use Searchable;
-    
+
+    protected $casts = [
+        'status' => PostStatusEnum::class,
+    ];
+
     protected $with = [
-        'language'
+        'language',
     ];
 
     public function post()
@@ -36,5 +40,4 @@ class PostVariant extends Model
     {
         return PostSearchRepository::getSearchDocument($this);
     }
-
 }

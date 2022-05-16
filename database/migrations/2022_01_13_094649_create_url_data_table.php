@@ -25,16 +25,16 @@ class CreateUrlDataTable extends Migration
              * 
              * So, 
              */
-            $table->enum('fetch_type', ['link', 'rich']);
+            $table->enum('result', ['ok', 'err']);
+            $table->enum('fetch_type', ['link', 'embed']);
 
             $table->string('url');
             $table->string('final_url');
-            $table->enum('type', ['link', 'rich', 'error']);
-            $table->text('html')->nullable(); // rich html, if available
+            $table->text('html')->nullable(); // embed html, if available
             $table->string('title')->nullable();
             $table->string('description')->nullable();
-            $table->string('thumbnail')->nullable();
-            $table->string('icon')->nullable();
+            $table->string('thumbnail_url')->nullable();
+            $table->string('icon_url')->nullable();
             $table->string('site')->nullable();
             
             $table->unique(['fetch_type', 'url']);

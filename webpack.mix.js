@@ -13,7 +13,7 @@ const mix = require('laravel-mix');
 
 
 // console
-mix.js('resources/js/console/console.js', 'public/js').react();
+mix.ts('resources/js/console/console.tsx', 'public/js').react();
 mix.sass('resources/css/console/console.scss', 'public/css');
 
 

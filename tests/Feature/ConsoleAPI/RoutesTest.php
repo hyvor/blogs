@@ -6,21 +6,20 @@ use Illuminate\Testing\Fluent\AssertableJson;
 
 //  To run the user tests - php artisan test  --filter 'RoutesTest'
 
-it('fetches routes', function() {
+it('fetches routes', function () {
     $this
         ->callConsoleApi('GET', 'route')
         ->assertOk();
 });
 
 
-it('creates a route success', function() {
-
+it('creates a route success', function () {
     $data = 'about';
     $this
         ->callConsoleApi('POST', 'route', [
             'name' => $data,
             'match' => $data,
-            'template' => $data
+            'template' => $data,
         ])
         ->assertOk()
         ->assertJson(function (AssertableJson $json) use ($data) {
@@ -28,69 +27,63 @@ it('creates a route success', function() {
                 ->where('match', $data)
                 ->etc();
         });
-    
 });
 
-it('creating route fails on empty fields', function() {
-    dd($this
-        ->callConsoleApi('POST', 'route'))
+it('creating route fails on empty fields', function () {
+    $this
+        ->callConsoleApi('POST', 'route')
         ->assertStatus(500);
 });
 
 
-it('creates a route fails if name is null', function() {
-
+it('creates a route fails if name is null', function () {
     $data = 'about';
     $this
         ->callConsoleApi('POST', 'route', [
             'name' => null,
             'match' => $data,
-            'template' => $data
+            'template' => $data,
         ])
         ->assertStatus(500);
 });
 
-it('creates a route fails if match is null', function() {
-
+it('creates a route fails if match is null', function () {
     $data = 'about';
     $this
         ->callConsoleApi('POST', 'route', [
-            'name' =>  $data,
-            'match' =>null,
-            'template' => $data
+            'name' => $data,
+            'match' => null,
+            'template' => $data,
         ])
         ->assertStatus(500);
 });
 
-it('creates a route fails if template is null', function() {
-
+it('creates a route fails if template is null', function () {
     $data = 'about';
     $this
         ->callConsoleApi('POST', 'route', [
-            'name' =>  $data,
-            'match' =>$data,
-            'template' => null
+            'name' => $data,
+            'match' => $data,
+            'template' => null,
         ])
         ->assertStatus(500);
 });
 
-it('deleting route success', function() {
-
+it('deleting route success', function () {
     $id = 1;
     $this
         ->callConsoleApi('DELETE', 'route/'.$id)
-        ->assertOk();    
+        ->assertOk();
 });
 
-it('updating a route success', function() {
-
+it('updating a route success', function () {
     $id = 1;
     $data = 'New data';
     $this
         ->callConsoleApi('PUT', 'route/'.$id, [
             'name' => $data,
             'match' => $data,
-            'template' => $data
+            'template' => $data,
         ])
         ->assertOk();
 });

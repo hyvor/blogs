@@ -1,10 +1,11 @@
 <?php
+
 namespace App\Domains\Delivery\RouteMatcher;
 
 use App\Models\Route;
 
-class MatchedRoute {
-
+class MatchedRoute
+{
     // matched route name
     public string $name;
 
@@ -16,7 +17,8 @@ class MatchedRoute {
     /**
      * $props from Symfony\Component\Routing\Matcher\UrlMatcher::match
      */
-    public function __construct($props, ?Route $route) {
+    public function __construct($props, ?Route $route)
+    {
         $this->route = $route;
 
         foreach ($props as $key => $value) {
@@ -28,8 +30,8 @@ class MatchedRoute {
         }
     }
 
-    public function param($key) {
+    public function param($key)
+    {
         return $this->params[$key] ?? null;
     }
-
 }

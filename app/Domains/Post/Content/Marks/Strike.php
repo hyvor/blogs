@@ -30,5 +30,4 @@ class Strike extends Mark
     {
         return ['s', 0];
     }
-
 }

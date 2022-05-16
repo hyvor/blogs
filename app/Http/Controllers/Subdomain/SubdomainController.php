@@ -2,16 +2,13 @@
 
 namespace App\Http\Controllers\Subdomain;
 
-use App\Data\Enums\DeliveryAPITypeEnum;
 use App\Domains\Delivery\DeliveryRepository;
-use App\Helpers\InternalAPICaller;
-use Illuminate\Http\Request;
 use App\Http\Controllers\Controller;
 use App\Models\Blog;
+use Illuminate\Http\Request;
 
 class SubdomainController extends Controller
 {
-
     public function handle(Request $request, Blog $blog)
     {
 
@@ -28,5 +25,4 @@ class SubdomainController extends Controller
 
         return DeliveryRepository::getLaravelResponse($data);
     }
-
 }

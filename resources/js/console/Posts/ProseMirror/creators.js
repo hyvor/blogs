@@ -1,7 +1,7 @@
 
-export function createRich(schema, url) {
+export function createEmbed(schema, url) {
     return schema.nodes.figure.create({}, [
-        schema.nodes.rich.create({ url }),
+        schema.nodes.embed.create({ url }),
         schema.nodes.figcaption.create()
     ])
 }

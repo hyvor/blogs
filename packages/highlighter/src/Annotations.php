@@ -11,7 +11,7 @@ class Annotations
     private array $diffAddLines = [];
     private array $diffRemoveLines = [];
 
-    private $hasError = false;
+    private bool $hasError = false;
 
     public function __construct(string $annotations)
     {
@@ -40,7 +40,7 @@ class Annotations
             return;
         }
 
-        if (in_array($key, ['highlight', 'focus', '+', '-'])) {
+        if (in_array($key, ['h', 'f', '+', '-'])) {
 
             $lines = [];
             $ranges = explode(',', $value);
@@ -49,9 +49,9 @@ class Annotations
                 array_push($lines, ...$this->processRange($range));
             }
 
-            if ($key === 'highlight') {
+            if ($key === 'h') {
                 $this->highlightLines = $lines;
-            } else if ($key === 'focus') {
+            } else if ($key === 'f') {
                 $this->focusLines = $lines;
             } else if ($key === '+') {
                 $this->diffAddLines = $lines;
@@ -172,7 +172,7 @@ class Annotations
 
     public function getRenumberedLineNumber(int $realLineNumber, int $orElseLineNumber) : int
     {
-        return isset($this->renumbers[$realLineNumber]) ? $this->renumbers[$realLineNumber] : $orElseLineNumber;
+        return $this->renumbers[$realLineNumber] ?? $orElseLineNumber;
     }
 
     public function hasError() : bool

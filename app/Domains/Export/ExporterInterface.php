@@ -1,9 +1,9 @@
 <?php
+
 namespace App\Domains\Export;
 
-interface ExporterInterface {
-
+interface ExporterInterface
+{
     public function __construct(int $blogId);
     public function getFile();
-
 }

@@ -1,6 +1,5 @@
 import { kea } from "kea";
 import api from "../lib/api";
-import blogsLogic from "./blogsLogic";
 
 const languagesLogic = kea({
 
@@ -17,10 +16,9 @@ const languagesLogic = kea({
 
     ajax: ({actions, props}) => ({
 
-        load: async (onLoad) => {
+        load: async () => {
             const langs = await api.get(props.subdomain, '/languages');
             actions.setLanguages(langs);
-            onLoad && onLoad()
         },
 
         create: async ({code, name, onCreate}) => {

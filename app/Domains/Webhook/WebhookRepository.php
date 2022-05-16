@@ -1,4 +1,5 @@
 <?php
+
 namespace App\Domains\Webhook;
 
 use App\Models\Blog;
@@ -6,7 +7,6 @@ use App\Models\Webhook;
 
 class WebhookRepository
 {
-
     public static function getWebhooks(Blog $blog)
     {
         return $blog->webhooks;
@@ -32,5 +32,4 @@ class WebhookRepository
     {
         Webhook::find($id)->delete();
     }
-
 }

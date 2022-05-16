@@ -14,7 +14,7 @@ class BlogVariantFactory extends Factory
         return [
             'blog_id' => Blog::factory(),
             'language_id' => Language::factory(),
-            'name' => $this->faker->word,
+            'name' => $this->faker->name(),
             'description' => $this->faker->sentence
         ];
     }

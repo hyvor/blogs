@@ -1,4 +1,5 @@
 <?php
+
 namespace Hyvor\SyntaxHighlighter;
 
 use stdClass;
@@ -6,14 +7,13 @@ use Symfony\Component\Process\Exception\ProcessFailedException;
 use Symfony\Component\Process\ExecutableFinder;
 use Symfony\Component\Process\Process;
 
-class Highlighter 
+class Highlighter
 {
-
     private array $tokens;
     private stdClass $theme;
     private Annotations $annotations;
 
-    public string $html;
+    public array $data = [];
 
     public static function highlight(
         string $code,
@@ -21,45 +21,38 @@ class Highlighter
         string $themeName,
         bool $lineNumbers,
         string $annotations
-    )
-    {
-
+    ) : array {
         $highlighter = new self(
-            $code, 
-            $language, 
+            $code,
+            $language,
             $themeName,
             $lineNumbers,
             $annotations
         );
-        
+
         $highlighter->tokens();
         $highlighter->html();
 
-        return $highlighter->html;
-
+        return $highlighter->data;
     }
 
 
     public static function getAllLanguages()
     {
-
         $languages = self::callJs([
             'type' => 'languages'
         ]);
 
         return $languages;
-
     }
 
     public static function getAllThemes()
     {
-
         $themes = self::callJs([
             'type' => 'themes'
         ]);
 
         return $themes;
-
     }
 
     public function __construct(
@@ -75,9 +68,8 @@ class Highlighter
     /**
      * Gets TextMate grammar tokens (via Shiki) by calling ../js/index.js via node
      */
-    public function tokens() 
+    public function tokens()
     {
-
         $data = self::callJs([
             'type' => 'tokens',
             'theme' => $this->themeName,
@@ -87,7 +79,6 @@ class Highlighter
 
         $this->tokens =  $data->tokens;
         $this->theme = $data->theme;
-
     }
 
     public static function callJs(array $arguments)
@@ -116,7 +107,6 @@ class Highlighter
         }
 
         return json_decode($process->getOutput());
-
     }
 
 
@@ -125,7 +115,6 @@ class Highlighter
      */
     public function html()
     {
-        
         $foregroundColor = $this->theme->fg;
         $backgroundColor = $this->theme->bg;
 
@@ -144,7 +133,6 @@ class Highlighter
         $blur = 'blur(2px)';
 
         foreach ($lines as $index => $line) {
-
             $lineBackground = null;
             $lineFilter = null;
             $lineTransition = null;
@@ -158,16 +146,16 @@ class Highlighter
 
             if ($shouldFocus) {
                 $lineClass[] = 'focus';
-            } else if ($shouldDiffAdd) {
+            } elseif ($shouldDiffAdd) {
                 $lineBackground = $this->theme->colors->{'diffEditor.insertedTextBackground'} ?? '#00ff0022';
                 $lineClass[] = 'diff-add';
-            } else if ($shouldDiffRemove) {
+            } elseif ($shouldDiffRemove) {
                 $lineBackground = $this->theme->colors->{'diffEditor.removedTextBackground'} ?? '#ff000022';
                 $lineClass[] = 'diff-remove';
-            } else if ($this->annotations->shouldHighlight($realLineNumber)) {
-                $lineBackground = 
+            } elseif ($this->annotations->shouldHighlight($realLineNumber)) {
+                $lineBackground =
                     $this->theme->colors->{'editor.lineHighlightBackground'} ??
-                    $this->theme->colors->{'editor.selectionHighlightBackground'} ?? 
+                    $this->theme->colors->{'editor.selectionHighlightBackground'} ??
                     $this->theme->colors->{'editor.selectionBackground'} ??
                     $backgroundColor;
                 $lineClass[] = 'highlight';
@@ -191,7 +179,7 @@ class Highlighter
             if ($hasLineNumbers) {
                 $renumberedLineNumber = $this->annotations->getRenumberedLineNumber($realLineNumber, $lineNumber);
                 $code .=  $this->getLineNumberSpan(
-                    $renumberedLineNumber, 
+                    $renumberedLineNumber,
                     $maxLineNumber
                 );
 
@@ -205,10 +193,9 @@ class Highlighter
             }
 
             foreach ($line as $token) {
-
                 $tokenColor = $token->color ?? $foregroundColor;
                 $tokenContent = htmlspecialchars($token->content);
-                
+
                 $styles = [
                     "color: $tokenColor"
                 ];
@@ -218,20 +205,18 @@ class Highlighter
                 $styles = implode(';', $styles);
 
                 $code .= "<span style=\"$styles\">$tokenContent</span>";
-
             }
 
             $code .= "</div>";
-            
-            $lineNumber++;
 
+            $lineNumber++;
         }
 
         $preStyle = $this->getStylesArrayAsCssString([
             'background-color' => $backgroundColor
         ]);
 
-        $preClasses = [];
+        $preClasses = ["language-$this->language"];
         $preOnMouseEnter = '';
         $preOnMouseLeave = '';
 
@@ -255,10 +240,19 @@ class Highlighter
 
         $preClasses = implode(' ', $preClasses);
 
-        $this->html = <<<HTML
-            <pre style="$preStyle" class="$preClasses" onmouseenter="$preOnMouseEnter" onmouseleave="$preOnMouseLeave"><code>$code</code></pre>
-        HTML;
+        $this->data = [
+            'pre' => [
+                'style' => $preStyle,
+                'class' => $preClasses,
+                'onmouseenter' => $preOnMouseEnter,
+                'onmouseleave' => $preOnMouseLeave
+            ],
+            'code' => $code
+        ];
 
+        /*$this->html = <<<HTML
+            <pre style="$preStyle" class="$preClasses" onmouseenter="$preOnMouseEnter" onmouseleave="$preOnMouseLeave"><code>$code</code></pre>
+        HTML;*/
     }
 
     /**
@@ -267,7 +261,6 @@ class Highlighter
      */
     private function getLineNumberSpan(int|false $number, int $max)
     {
-
         $numLength = $number === false ? 0 : strlen((string) $number);
         $maxLength = strlen((string) $max);
         $diffLength = $maxLength - $numLength;
@@ -284,15 +277,15 @@ class Highlighter
         $numberDisplay = str_repeat(" ", $diffLength) . ($number === false ? '' : $number);
 
         return "<span class=\"line-number\" style=\"$styles\">$numberDisplay</span>";
-
     }
 
     private function getStylesArrayAsCssString(array $styles)
     {
         $keyed = [];
         foreach ($styles as $key => $value) {
-            if (!$value)
+            if (!$value) {
                 continue;
+            }
             $keyed[] = "$key:$value";
         }
         return implode(';', $keyed);
@@ -303,7 +296,7 @@ class Highlighter
         $content = " ";
         if ($shouldDiffAdd) {
             $content = "+";
-        } else if ($shouldDiffRemove) {
+        } elseif ($shouldDiffRemove) {
             $content = "-";
         }
 
@@ -316,7 +309,7 @@ class Highlighter
                 $this->theme->colors->{'terminal.ansiRed'} ??
                 $this->theme->colors->{'terminal.ansiBrightRed'} ??
                 '#f07178'
-                
+
                 :
 
                 // green
@@ -327,5 +320,4 @@ class Highlighter
 
         return "<span class=\"diff-mark\" style=\"$style\">$content</span>";
     }
-
 }

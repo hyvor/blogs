@@ -6,12 +6,12 @@ use App\Exceptions\TrustedException;
 use App\Models\Blog;
 use App\Models\Language;
 use App\Models\Media;
+use App\Models\Navigation;
 use App\Models\Post;
 use App\Models\Redirect;
-use App\Models\Navigation;
+use App\Models\Route;
 use App\Models\Tag;
 use App\Models\User;
-use App\Models\Route;
 use Closure;
 
 class ResourceAccessMiddleware
@@ -63,20 +63,37 @@ class ResourceAccessMiddleware
             // ex: post (model type)
             $modelType = $split[5];
 
+<<<<<<< HEAD
             // dd($this->models[$modelType]::find($id));
             // dd($this->models[$modelType]::where('id','=',$id)->get());
 
             if (!array_key_exists($modelType, $this->models)) {
+=======
+            if (! array_key_exists($modelType, $this->models)) {
+>>>>>>> rasif-import
                 throw new TrustedException("Unable to find the $modelType to verify blog relationship");
             }
 
             // ex: Post model
             $model = $this->models[$modelType]::find($id);
 
+            if (! $model) {
+                throw new TrustedException(
+                    "Unable to find the $modelType",
+                    TrustedException::ERROR_NOT_FOUND
+                );
+            }
+
+            app()->instance($this->models[$modelType], $model);
+
+
             // now check if the model's blog_id
             // is currently accessed blog's ID
             if ($model->blog_id !== $this->blog->id) {
-                throw new TrustedException("This $modelType belongs to another blog. Ensure the subdomain is correct");
+                throw new TrustedException(
+                    "This $modelType belongs to another blog. Ensure the subdomain is correct",
+                    TrustedException::ERROR_FORBIDDEN
+                );
             }
         }
 

@@ -3,7 +3,6 @@
 namespace App\Domains\Post\Content\Marks;
 
 use Tiptap\Core\Mark;
-use Tiptap\Utils\HTML;
 use Tiptap\Utils\InlineStyle;
 
 class Strong extends Mark
@@ -37,5 +36,4 @@ class Strong extends Mark
     {
         return ['strong', 0];
     }
-
 }

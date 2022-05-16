@@ -20,17 +20,15 @@ class CreateUsersTable extends Migration
             // connection
             $table->bigInteger('blog_id');
             $table->bigInteger('hyvor_user_id')->nullable(); // hyvor user ID
-            $table->string('picture_url')->nullable();
 
-            $table->boolean('is_synced', true)->default(false); // synced with hyvor data
-
-            $table->enum('status', ['invited', 'active', 'blocked'])->default('invited');
             $table->enum('role', ['owner', 'admin', 'editor', 'writer', 'contributor', 'finance']);
+            $table->enum('status', ['invited', 'active', 'blocked'])->default('invited');
 
             // user data
             $table->string('slug');
             $table->string('email');
-            $table->string('url')->nullable();
+            $table->string('website_url')->nullable();
+            $table->string('picture_url')->nullable();
 
             // social
             $table->string('social_facebook')->nullable();
@@ -38,12 +36,16 @@ class CreateUsersTable extends Migration
             $table->string('social_linkedin')->nullable();
             $table->string('social_youtube')->nullable();
             $table->string('social_instagram')->nullable();
+            $table->string('social_github')->nullable();
 
             // misc
+            $table->integer('posts_count')->default(0);
             $table->integer('sort')->default(0); // for ordering in the console
 
             $table->unique(['blog_id', 'slug']);
             $table->unique(['blog_id', 'hyvor_user_id']);
+            $table->index(['blog_id', 'created_at']);
+            $table->index(['blog_id', 'posts_count']);
         });
     }
 

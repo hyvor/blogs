@@ -11,8 +11,13 @@ class NavigationObject
     public int $blog_id;
     public string $name;
     public string $url;
+<<<<<<< HEAD
     public string $type; 
     public ?int $sort; 
+=======
+    public string $type;
+    public string $sort;
+>>>>>>> rasif-import
 
     public function __construct(Navigation $navigation)
     {

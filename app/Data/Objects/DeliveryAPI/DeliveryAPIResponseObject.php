@@ -51,9 +51,9 @@ class DeliveryAPIResponseObject
     }
 
     // for caching
-    public static function fromArray(array $arr) {
-
-        $obj = new self( DeliveryAPITypeEnum::from($arr['type']) );
+    public static function fromArray(array $arr)
+    {
+        $obj = new self(DeliveryAPITypeEnum::from($arr['type']));
         $obj->status = $arr['status'];
 
         if (isset($arr['content'])) {
@@ -64,6 +64,5 @@ class DeliveryAPIResponseObject
         if (isset($arr['to'])) {
             $obj->to = $arr['to'];
         }
-
     }
 }

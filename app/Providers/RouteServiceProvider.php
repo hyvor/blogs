@@ -10,7 +10,6 @@ use Illuminate\Support\Facades\Route;
 
 class RouteServiceProvider extends ServiceProvider
 {
-
     /**
      * Define your route model bindings, pattern filters, etc.
      *
@@ -25,6 +24,11 @@ class RouteServiceProvider extends ServiceProvider
                 ->namespace($this->namespace)
                 ->group(base_path('routes/web.php'));
         });
+
+        /**
+         * Make all {id} params to be integer
+         */
+        Route::pattern('id', '[0-9]+');
     }
 
     /**

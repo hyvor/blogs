@@ -32,7 +32,6 @@ export default function Plans({subdomain}) {
         </div>
         <div className="section-content">
             <div className="plans">
-                <Plan subdomain={subdomain} frequency={frequency} type="personal" name="Personal" />
                 <Plan subdomain={subdomain} frequency={frequency} type="pro" name="Pro" />
                 <Plan subdomain={subdomain} frequency={frequency} teamUsers={teamUsers} setTeamUsers={setTeamUsers} type="team" name="Team" />
                 <Plan subdomain={subdomain} frequency={frequency} type="enterprise" name="Enterprise" />
@@ -130,13 +129,11 @@ function Plan({name, type, teamUsers, setTeamUsers, frequency, subdomain}) {
 
     }
 
-    let price = "Free";
+    let price = "";
     let buttonDisabled = false;
     let isCurrent = false;
 
-    if (type === 'personal') {
-        isCurrent = blog.subscribed === false;
-    } else if (type === 'pro') {
+    if (type === 'pro') {
         if (frequency === 'monthly') {
             price = <span className="no-monthly">No monthly plan</span>;
             buttonDisabled = true;
@@ -177,10 +174,8 @@ function Plan({name, type, teamUsers, setTeamUsers, frequency, subdomain}) {
                 {
                     isCurrent ? 
                     <span className="current-text">Current</span> :
-                    
                     (
-                        (currentSubscription && currentSubscription.is_on_grace_period) ||
-                        (blog.subscribed && type === 'personal')
+                        (currentSubscription && currentSubscription.is_on_grace_period)
                         ?
                         null :
                         <button 

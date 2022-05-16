@@ -3,9 +3,7 @@
 namespace Tests\Feature\ConsoleAPI;
 
 use Illuminate\Foundation\Testing\RefreshDatabase;
-use Illuminate\Foundation\Testing\WithoutMiddleware;
 use Tests\TestCase;
-use App\Models\Blog;
 
 // To run the BlogTest class only run this command in the command line.
 // php artisan test  --filter 'BlogTest'
@@ -14,8 +12,9 @@ class BlogTest extends TestCase
 {
     use RefreshDatabase;
 
-    private function callEndpoint($method, $blog, $data = null) {
-        return $this->call($method, 'http://blogs.hyvor.test/api/console/v0/blog/test/'.$blog , $data);
+    private function callEndpoint($method, $blog, $data = null)
+    {
+        return $this->call($method, 'http://blogs.hyvor.test/api/console/v0/blog/test/'.$blog, $data);
     }
 
     /**
@@ -47,11 +46,10 @@ class BlogTest extends TestCase
             'social_twitter' => null,
             'social_linkedin' => null,
             'social_youtube' => null,
-            'social_instagram' =>  null,
+            'social_instagram' => null,
             'name' => 'test user',
-            'description' =>  null,
+            'description' => null,
         ]);
         $response->assertOk();
     }
-
 }

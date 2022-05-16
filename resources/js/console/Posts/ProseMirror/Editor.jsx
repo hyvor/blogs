@@ -9,7 +9,6 @@ import plugins from './plugins';
  */
 import {ProseMirror} from 'use-prosemirror';
 import useUpdateEffect from '../../../helpers/hooks/useUpdateEffect';
-import RichView from './nodeview-rich';
 import Figcaption from './nodeview-figcaption';
 import Heading from './nodeview-heading';
 import Callout from './Callout/nodeview-callout';
@@ -17,6 +16,7 @@ import CodeBlock from './nodeview-codeblock';
 import Image from './Image/nodeview-image';
 import Bookmark from './nodeview-bookmark';
 import CustomHtml from "./nodeview-custom-html";
+import EmbedView from "./nodeview-embed";
 
 function getState(val) {
     val = val ? JSON.parse(val) : null
@@ -31,8 +31,8 @@ function getState(val) {
 }
 
 const nodeViews = {
-    rich(...args) {
-        return new RichView(HBSchema, ...args);
+    embed(...args) {
+        return new EmbedView(HBSchema, ...args);
     },
     figcaption(...args) {
         return new Figcaption(...args);

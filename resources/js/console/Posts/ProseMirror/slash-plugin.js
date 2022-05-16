@@ -5,7 +5,7 @@ import {NodeSelection, Plugin, TextSelection} from "prosemirror-state"
  */
 import { renderToString } from 'react-dom/server';
 import { Bookmark, CardImage, Code, CodeSlash, Gear, Hr, Lightbulb, Link45deg, Quote, TypeH2, TypeH3, } from "react-bootstrap-icons";
-import { createImage, createQuote, createRich } from "./creators";
+import { createImage, createQuote, createEmbed } from "./creators";
 
 
 const matchable = [
@@ -42,7 +42,7 @@ const matchable = [
             'video', 'audio', 'file',
             'youtube', 'twitter', 'soundcloud', 'spotify', 'github', 'maps', 'codepen'
         ],
-        node: 'rich'
+        node: 'embed'
     },
     {
         name: "Code Block",
@@ -265,7 +265,7 @@ class SlashPlugin {
                 )
 
                 /**
-                 * In bookmark and embed(rich),
+                 * In bookmark and embed,
                  * we want to focus the input instead of the view
                  */
                 if (m.node !== 'bookmark' && m.name !== 'Embed')

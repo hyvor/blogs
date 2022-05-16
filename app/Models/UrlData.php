@@ -2,6 +2,7 @@
 
 namespace App\Models;
 
+use App\Data\Enums\ResultEnum;
 use App\Data\Enums\UrlDataFetchTypeEnum;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
@@ -9,8 +10,9 @@ use Illuminate\Database\Eloquent\Model;
 class UrlData extends Model
 {
     use HasFactory;
-    
+
     protected $casts = [
-        'fetch_type' => UrlDataFetchTypeEnum::class
+        'result' => ResultEnum::class,
+        'fetch_type' => UrlDataFetchTypeEnum::class,
     ];
 }

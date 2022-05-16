@@ -10,7 +10,6 @@ class Webhook extends Model
     use HasFactory;
 
     protected $casts = [
-        'events' => 'array'
+        'events' => 'array',
     ];
-
 }

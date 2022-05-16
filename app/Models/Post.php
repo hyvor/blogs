@@ -2,7 +2,6 @@
 
 namespace App\Models;
 
-use App\Domains\Post\PostLanguageRepository;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\SoftDeletes;
@@ -48,5 +47,4 @@ class Post extends Model
     {
         return $this->belongsToMany(User::class, 'post_author')->withPivot('order')->orderBy('order', 'ASC');
     }
-
 }

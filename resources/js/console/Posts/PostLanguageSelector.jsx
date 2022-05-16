@@ -50,7 +50,7 @@ export function getLangTagIconByPostStatus(status) {
     } else if (status === 'scheduled') {
         icon = <Clock size={9} />
     } else if (status === 'draft') {
-        icon = <Pencil size={7} />
+        icon = <Dot size={7} />
     }
     return icon;
 }

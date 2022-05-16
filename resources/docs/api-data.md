@@ -375,6 +375,7 @@ Data is returned in JSON objects as specified below.
 	"id": 2000,
     "created_at": 1639655890,
 	"name": "Hello World",
+    "description": "Saying hello to the world",
 	"slug": "hello-world",
 	"url": "https://subdomain.hyvorblogs.io/tag/hello-world",
 	"featured_image": "https://example.com/image.png",
@@ -389,6 +390,7 @@ Data is returned in JSON objects as specified below.
 | --- | --- | --- |
 | `id` | `integer` | A unique ID for the tag |
 | `name` | `string` | Name (or title) of the tag |
+| `description` | `string|null` | Description of the tag |
 | `slug` | `string` | URL slug of the tag (full URL will be /tag/{slug}) |
 | `url` | `string` |  |
 | `featured_image` | `string|null` | The absolute URL of the featured image. null if not set |

@@ -22,7 +22,7 @@ class ThemeFilesRepository
     }
 
     public static function getMultipleFiles(
-        Blog $blog, array $fileNames, 
+        Blog $blog, array $fileNames,
         ?ThemeFileFolderEnum $folder = null
     ) : Collection
     {
@@ -41,21 +41,21 @@ class ThemeFilesRepository
             ->get();
     }
 
-    public static function getAllFiles(int $blogId) : Collection 
+    public static function getAllFiles(int $blogId) : Collection
     {
         self::updateLocalDBFiles($blogId);
 
         return BlogThemeFile::where('blog_id', $blogId)->get();
     }
 
-    private static function updateLocalDBFiles(int $blogId) 
+    private static function updateLocalDBFiles(int $blogId)
     {
 
         /**
          * This is a simple way to refresh the database
          * and run the seeder that so local file changes are updated
          * This is ONLY FOR LOCAL TESTING
-         
+
         if (App::environment('local')) {
             BlogThemeFile::where('blog_id', $blogId)->delete();
             (new BlogThemeFilesSeeder())->run($blogId);

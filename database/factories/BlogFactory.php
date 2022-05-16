@@ -12,6 +12,16 @@ class BlogFactory extends Factory
         return [
             'hyvor_user_id' => config('test.hyvor_user_id'),
             'subdomain' => $this->faker->uuid(),
+
+            'meta' => json_encode([
+                'social_facebook' => $this->faker->url(),
+                'social_twitter' => $this->faker->url(),
+                'social_linkedin' => $this->faker->url(),
+                'social_youtube' => $this->faker->url(),
+                'social_tiktok' => $this->faker->url(),
+                'social_instagram' => $this->faker->url(),
+                'social_github' => $this->faker->url()
+            ])
         ];
     }
 }

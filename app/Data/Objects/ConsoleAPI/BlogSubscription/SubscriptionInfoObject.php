@@ -1,16 +1,15 @@
 <?php
+
 namespace App\Data\Objects\ConsoleAPI\BlogSubscription;
 
 use App\Models\Blog;
-use Laravel\Paddle\Payment;
 use Laravel\Paddle\Subscription;
-
 
 /**
  * Subscription info from Paddle
  */
-class SubscriptionInfoObject {
-
+class SubscriptionInfoObject
+{
     public string $email;
     public string $card_brand;
     public string $card_last_four;
@@ -21,19 +20,19 @@ class SubscriptionInfoObject {
     public float $last_payment;
     public int $last_payment_at;
     /**
-     * nextPayment will return null when the billing cycle has ended 
+     * nextPayment will return null when the billing cycle has ended
      * (such as when a subscription has been cancelled):
      */
     public ?float $next_payment;
     public ?int $next_payment_at;
 
-    public function __construct(Blog|Subscription $blogOrSubscription) {
-
-        $subscription = $blogOrSubscription instanceof Blog ? 
+    public function __construct(Blog|Subscription $blogOrSubscription)
+    {
+        $subscription = $blogOrSubscription instanceof Blog ?
             $blogOrSubscription->subscription() :
             $blogOrSubscription;
 
-        
+
         /**
          * !!!! Caution
          * These functions make a call to the Paddle API
@@ -53,10 +52,8 @@ class SubscriptionInfoObject {
         $this->last_payment_at = $lastPayment->date()->timestamp;
 
 
-        $nextPayment = $subscription->nextPayment();  
+        $nextPayment = $subscription->nextPayment();
         $this->next_payment = $nextPayment?->amount;
         $this->next_payment_at = $nextPayment?->date()?->timestamp;
-
     }
-
 }

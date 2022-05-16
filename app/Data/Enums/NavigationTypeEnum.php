@@ -1,9 +1,9 @@
 <?php
+
 namespace App\Data\Enums;
 
-enum NavigationTypeEnum: string {
-
+enum NavigationTypeEnum: string
+{
     case HEADER = 'header';
     case FOOTER = 'footer';
-
 }

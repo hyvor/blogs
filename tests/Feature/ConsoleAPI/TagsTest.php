@@ -3,14 +3,13 @@
 namespace Tests\Feature\ConsoleAPI;
 
 use App\Models\Language;
-use Illuminate\Testing\Fluent\AssertableJson;
 use App\Models\Tag;
+use Illuminate\Testing\Fluent\AssertableJson;
 
-it('fetches tags', function() {
-   
+it('fetches tags', function () {
     $this
         ->callConsoleApi('GET', 'tags', [
-           'limit' => 5
+           'limit' => 5,
         ])
         ->assertOk()
         ->assertJson(function (AssertableJson $json) {
@@ -23,34 +22,31 @@ it('fetches tags', function() {
         });
 });
 
-it('fetches tags with offset', function() {
-    
+it('fetches tags with offset', function () {
     $tagsCount = Tag::where('blog_id', config('test.blog_id'))->count();
     $this
         ->callConsoleApi('GET', 'tags', [
             'limit' => $tagsCount,
-            'offset' => $tagsCount - 1
+            'offset' => $tagsCount - 1,
         ])
         ->assertOk()
         ->assertJson(function (AssertableJson $json) {
             $json->count(1);
         });
-    
 });
-    
 
-it('creates a tag success', function() {
 
+it('creates a tag success', function () {
     $data = 'test';
     $language = Language::where('blog_id', config('test.blog_id'))
         ->where('is_primary', true)
         ->first();
-    
+
     $this
         ->callConsoleApi('POST', 'tag', [
             'name' => $data,
             'slug' => $data,
-            'description' => $data
+            'description' => $data,
         ])
         ->assertOk()
         ->assertJson(function (AssertableJson $json) use ($data, $language) {
@@ -63,44 +59,38 @@ it('creates a tag success', function() {
                 })
                 ->etc();
         });
-    
 });
 
-it('creating tag fails on empty name', function() {
-
+it('creating tag fails on empty name', function () {
     $this
         ->callConsoleApi('POST', 'tag')
-        ->assertUnprocessable();    
+        ->assertUnprocessable();
 });
 
-it('creating tag with null slug works', function() {
-
+it('creating tag with null slug works', function () {
     $this
         ->callConsoleApi('POST', 'tag', [
-            'name' => 'May Day'
+            'name' => 'May Day',
         ])
         ->assertOk()
         ->assertJson(function (AssertableJson $json) {
             $json->where('slug', 'may-day')
                 ->etc();
         });
-    
 });
 
-it('creating tag with existing slug fails', function() {
-
+it('creating tag with existing slug fails', function () {
     $tag = Tag::where('blog_id', config('test.blog_id'))->first();
-    
+
     $this
         ->callConsoleApi('POST', 'tag', [
             'name' => 'Name',
-            'slug' => $tag->slug
+            'slug' => $tag->slug,
         ])
         ->assertStatus(500);
 });
 
-it('update a tag success', function() {
-
+it('update a tag success', function () {
     $data = 'test';
     $language = Language::where('blog_id', config('test.blog_id'))
         ->where('is_primary', true)
@@ -111,7 +101,7 @@ it('update a tag success', function() {
             'name' => $data,
             'slug' => $data,
             'description' => $data,
-            'languageId'=>$language->id,
+            'languageId' => $language->id,
             'codeHead' => null,
             'codeFoot' => null,
         ])

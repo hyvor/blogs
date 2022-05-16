@@ -2,12 +2,12 @@
 
 namespace App\Domains\Subdomain\Type;
 
-use Symfony\Component\Routing\RouteCollection;
-use Symfony\Component\Routing\Route;
+use Symfony\Component\HttpFoundation\Request;
+use Symfony\Component\Routing;
 use Symfony\Component\Routing\Matcher\UrlMatcher;
 use Symfony\Component\Routing\RequestContext;
-use Symfony\Component\Routing;
-use Symfony\Component\HttpFoundation\Request;
+use Symfony\Component\Routing\Route;
+use Symfony\Component\Routing\RouteCollection;
 
 class DeliverData
 {
@@ -47,6 +47,7 @@ class DeliverData
             dd('hello world');
             // Returns the assets of the theme
             $urlName = $Attribute['name'];
+
             return AssetsRepository::assets($urlName);
         } elseif ($Attribute['_route'] == 'page') {
             // Returns the sub pages of th theme

@@ -1,0 +1,122 @@
+<blockquote>
+    If you have any questions on how to add any of these blocks or text styles in the Editor, read our <a href="http://blogs.hyvor.com/docs/writing">Writing & Publishing documentation</a>.
+</blockquote>
+
+<p>
+Paragraphs are the default blocks. In fact, this is a paragraph.
+</p>
+
+<h2>Text Styles</h2>
+
+<ul>
+    <li><b>bold</b></li>
+    <li><em>italic</em></li>
+    <li><s>strike</s></li>
+    <li><code>strike</code></li>
+    <li>super<sup>script</sup></li>
+    <li>sub<sub>script</sub></li>
+    <li><mark>highlight</mark></li>
+</ul>
+
+<h2>Heading 2</h2>
+
+<p>
+    Headings are used to write subtitles in posts. Mainly <code>h2</code> and <code>h3</code> are used, but Hyvor Blogs supports from <code>h1</code> to <code>h6</code>
+</p>
+
+<h3>Heading 3</h3>
+
+<p>
+    Below is a horizontal line, which can be used to divide sections in your posts.
+</p>
+
+<hr>
+
+<h2>Unordered list</h2>
+
+<ul>
+    <li>List item 1</li>
+    <li>List item 2</li>
+    <li>
+        <p>List item 3</p>
+        <ul>
+            <li>Nested list item 1</li>
+            <li>Nested list item 2</li>
+        </ul>
+    </li>
+</ul>
+
+<h2>Ordered list</h2>
+
+<ol>
+    <li>List item 1</li>
+    <li>List item 2</li>
+    <li>
+        <p>List item 3</p>
+        <ul>
+            <li>Nested list item 1</li>
+            <li>Nested list item 2</li>
+        </ul>
+    </li>
+</ol>
+
+
+<h2>Blockquote</h2>
+
+<p>Blockquotes can be used when quoting something published/said elsewhere.</p>
+
+<blockquote>
+    <p>
+Words can be like X-rays, if you use them properly—they’ll go through anything. You read and you’re pierced.</p>
+    <p>—Aldous Huxley, Brave New World</p>
+</blockquote>
+
+<h2>Callout</h2>
+
+<aside data-emoji="💡" style="background-color:#f1f1ef;color:#000000;">
+    The only real valuable thing is intuition.
+</aside>
+
+<h2>Images</h2>
+
+<figure>
+    <img
+        src="https://images.unsplash.com/photo-1468581264429-2548ef9eb732?ixlib=rb-1.2.1&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=2070&q=80"
+        alt="Sea"
+    />
+    <figcaption>
+        by <a href="https://unsplash.com/photos/IZ01rjX0XQA">Thomas Vimare</a> on <a href="https://unsplash.com">Unsplash</a>
+    </figcaption>
+</figure>
+
+<h2>Code Block</h2>
+
+<pre class="language-php" data-annotations="h=5-11" data-name="filterq.php">
+use Hyvor\FilterQ\Facades\FilterQ;
+
+$query = FilterQ::expression('id=100|slug=hello')
+    ->builder(Post::class)
+    ->keys(function($keys) {
+        $keys->add('id')->column('posts.id');
+        $keys->add('slug');
+        $keys->add('author.name')
+            ->column('authors.name')
+            ->join('authors', 'authors.id', '=', 'posts.author_id', 'left');
+    })
+    ->addWhere();
+
+$posts = $query
+    ->limit(25)
+    ->orderBy('id', 'DESC')
+    ->get();</pre>
+
+<h2>Bookmark</h2>
+
+<x-bookmark data-url="https://github.com"></x-bookmark>
+
+<h2>Embed</h2>
+
+<figure>
+    <x-embed data-url="https://www.youtube.com/watch?v=dQw4w9WgXcQ"></x-embed>
+    <figcaption>Rick Astley - Never Gonna Give You Up</figcaption>
+</figure>

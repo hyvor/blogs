@@ -7,6 +7,7 @@ use App\Http\Controllers\ConsoleAPI\ConsoleLanguageController;
 use App\Http\Controllers\ConsoleAPI\ConsoleMediaController;
 use App\Http\Controllers\ConsoleAPI\ConsolePostController;
 use App\Http\Controllers\ConsoleAPI\ConsoleSubscriptionController;
+use App\Http\Controllers\ConsoleAPI\ConsoleUserBlogController;
 use App\Http\Controllers\ConsoleAPI\ConsoleUserController;
 use App\Http\Controllers\ConsoleAPI\ConsoleRedirectController;
 use App\Http\Controllers\ConsoleAPI\ConsoleNavigationController;
@@ -51,9 +52,9 @@ Route::prefix('/api/console/v0')
     ->middleware(ConsoleApiUserEndpointsAccessMiddleware::class)
     ->group(function() {
 
-    Route::post('/blog', [ConsoleUserController::class, 'createBlog']);
-    Route::patch('/blogs/sort', [ConsoleUserController::class, 'changeSort']);
-    Route::get('/blog/check-subdomain', [ConsoleUserController::class, 'checkSubdomain']);
+    Route::post('/blog', [ConsoleUserBlogController::class, 'createBlog']);
+    Route::patch('/blogs/sort', [ConsoleUserBlogController::class, 'changeSort']);
+    Route::get('/blog/check-subdomain', [ConsoleUserBlogController::class, 'checkSubdomain']);
 
 });
 
@@ -116,6 +117,7 @@ Route::prefix('/api/console/v0/blog/{subdomain}')
             Route::delete('/post/{id}', [ConsolePostController::class, 'deletePost']);
 
             Route::post('/post/{id}/variant', [ConsolePostController::class, 'createPostVariant']);
+            Route::patch('/post/{id}/variant', [ConsolePostController::class, 'updatePostVariant']);
             Route::delete('/post/{id}/variant', [ConsolePostController::class, 'deletePostVariant']);
         });
 
@@ -207,11 +209,11 @@ Route::prefix('/api/console/v0/blog/{subdomain}')
         Route::get('/theme-files', [ConsoleBlogThemeController::class, 'getAllFiles']);
         Route::put('/theme-file/{id}', [ConsoleBlogThemeController::class, 'createOrUpdateFile']);
 
+        // import and export
         Route::get('/data/export', [ConsoleImportExportController::class, 'export']);
-        Route::get('/data/import', [ConsoleImportExportController::class, 'import']);
+        Route::post('/data/import', [ConsoleImportExportController::class, 'import']);
 
         Route::get('/build', []);
-    
     });
 
     /**

@@ -2,13 +2,13 @@
 
 use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Schema;
 
 class CreateThemeFilesTable extends Migration
 {
     /**
      * Run the migrations.
-     *
      * @return void
      */
     public function up()
@@ -16,18 +16,22 @@ class CreateThemeFilesTable extends Migration
         Schema::create('theme_files', function (Blueprint $table) {
             $table->id();
             $table->timestamps();
-
-            // Connections
-            $table->bigInteger('themable_id');
-            $table->string('themable_type'); // blog|local_dev
+                
+            // connection
+            $table->bigInteger('blog_id');
 
             // data
             $table->enum('folder', ['templates', 'assets', 'styles', 'lang'])->nullable();
             $table->string('name');
-            $table->binary('content')->nullable();
+            // $table->blob('content')->nullable();
 
-            $table->unique(['themable_id', 'themable_type', 'name', 'folder']);
+            // index
+            $table->unique(['blog_id', 'folder', 'name']);
         });
+
+        // https://stackoverflow.com/a/20099781/9059939
+        // upto 16MB
+        DB::statement("ALTER TABLE theme_files ADD content MEDIUMBLOB NULL");
     }
 
     /**

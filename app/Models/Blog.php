@@ -2,6 +2,7 @@
 
 namespace App\Models;
 
+use App\Data\Enums\BlogTypeEnum;
 use App\Models\Concerns\Countable;
 use Hyvor\JsonMeta\Definer;
 use Hyvor\JsonMeta\Metable;
@@ -18,20 +19,24 @@ class Blog extends Model
     use Countable;
     use Metable;
 
+    protected $casts = [
+        'type' => BlogTypeEnum::class,
+    ];
+
     // meta
     protected function metaDefinition(Definer $definer)
     {
-        
         $definer->add('social_facebook')->type('string|null')->default(null);
         $definer->add('social_twitter')->type('string|null')->default(null);
         $definer->add('social_linkedin')->type('string|null')->default(null);
         $definer->add('social_youtube')->type('string|null')->default(null);
+        $definer->add('social_tiktok')->type('string|null')->default(null);
         $definer->add('social_instagram')->type('string|null')->default(null);
         $definer->add('social_github')->type('string|null')->default(null);
 
         $definer->add('code_head')->type('string|null')->default(null);
         $definer->add('code_foot')->type('string|null')->default(null);
-        
+
         $definer->add('seo_indexing')->type('bool')->default(true);
         $definer->add('seo_robots_txt')->type('string|null')->default(<<<TEXT
         User-agent: *
@@ -47,37 +52,22 @@ class Blog extends Model
         $definer->add('comments_code')->type('string|null')->default(null);
 
         $definer->add('newsletter_code')->type('string|null')->default(null);
-        
+
         $definer->add('color_modes')->type('enum:light,dark,both')->default('both');
         $definer->add('color_mode_default')->type('enum:light,dark,os')->default('os');
 
         $definer->add('syntax_on')->type('bool')->default(true);
         $definer->add('syntax_line_numbers')->type('bool')->default(true);
         $definer->add('syntax_theme')->type('string|null')->default(null);
-
-
     }
 
     protected $with = [
-        'variants'
+        'variants',
     ];
 
     public function variants()
     {
         return $this->hasMany(BlogVariant::class);
-    }
-
-    /**
-     * Get Media of the blog
-     */
-    public function mediaIcon()
-    {
-        return $this->hasOne(Media::class, 'icon_id');
-    }
-
-    public function mediaPicture()
-    {
-        return $this->hasOne(Media::class, 'featured_image_id');
     }
 
     /**
@@ -121,7 +111,7 @@ class Blog extends Model
     {
         return $this->hasMany(Redirect::class);
     }
-    
+
     public function navigations()
     {
         return $this->hasMany(Navigation::class);
@@ -149,7 +139,6 @@ class Blog extends Model
      */
     public function themeFiles()
     {
-        return $this->morphMany(ThemeFile::class, 'themable');
+        return $this->hasMany(ThemeFile::class);
     }
-
 }

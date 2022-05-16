@@ -3,7 +3,6 @@
 namespace App\Data\Objects\ConsoleAPI;
 
 use App\Models\BlogVariant;
-use App\Models\Blog;
 
 class BlogVariantObject
 {
@@ -26,4 +25,4 @@ class BlogVariantObject
         $this->name = $blogVariant->name;
         $this->description = $blogVariant->description;
     }
-} 
+}

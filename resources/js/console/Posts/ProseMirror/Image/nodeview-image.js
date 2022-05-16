@@ -36,6 +36,19 @@ export default class Image {
     updateFromAttrs(node) {
         const { alt, width, height } = node.attrs;
         this.altInput.value = alt
+
+        if (width === null) {
+            this.img.removeAttribute("width");
+        } else {
+            this.img.width = width;
+        }
+
+        if (height === null) {
+            this.img.removeAttribute("height");
+        } else {
+            this.img.height = height;
+        }
+
         return true;
     }
 
@@ -66,6 +79,37 @@ export default class Image {
                 )
             }
             this.altInput = altInput
+
+            const rangeInput = document.createElement("input")
+            rangeInput.type = 'range';
+            rangeInput.min = 1
+            rangeInput.max = 100
+            rangeInput.value = 100
+            rangeInput.step = 1
+
+            rangeInput.oninput = function(e) {
+                const value = parseInt(e.target.value)
+                let width, height
+                if (value === 100) {
+                    width = null;
+                    height = null;
+                } else {
+                    width = _self.img.naturalWidth * value / 100
+                    height = _self.img.naturalHeight * value / 100
+                }
+                
+                _self.view.dispatch(
+                    _self.view.state.tr.setNodeMarkup(
+                        _self.getPos(),
+                        null,
+                        {..._self.node.attrs, width, height }
+                    )
+                )
+            }
+
+            this.rangeInput = rangeInput
+
+            this.dom.appendChild(rangeInput)
 
         } else {
             // render image selector
@@ -113,7 +157,7 @@ export default class Image {
     }
 
     stopEvent(e) {
-        return e.target.isEqualNode(this.altInput)
+        return e.target.isEqualNode(this.altInput) || e.target.isEqualNode(this.rangeInput)
     }
 
 }

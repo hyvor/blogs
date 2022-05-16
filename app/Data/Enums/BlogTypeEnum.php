@@ -1,9 +1,10 @@
 <?php
+
 namespace App\Data\Enums;
 
-enum BlogTypeEnum: string {
-
-    case NORMAL = 'normal';
+enum BlogTypeEnum: string
+{
+    case DEFAULT = 'default';
     case DEV = 'dev';
     case TEMP = 'temp';
 

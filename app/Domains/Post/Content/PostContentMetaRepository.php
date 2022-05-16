@@ -1,4 +1,5 @@
 <?php
+
 namespace App\Domains\Post\Content;
 
 use App\Models\PostVariant;
@@ -8,12 +9,11 @@ use App\Models\PostVariant;
  */
 class PostContentMetaRepository
 {
-
-    public static function updateWordCount(PostVariant $variant) : void
+    public static function updateWordCount(PostVariant $variant): void
     {
-
-        if (!$variant->content)
+        if (! $variant->content) {
             return;
+        }
 
         $post = $variant->post;
         $blog = $post->blog;
@@ -23,7 +23,5 @@ class PostContentMetaRepository
 
         $variant->words = $words;
         $variant->saveQuietly();
-
     }
-
 }

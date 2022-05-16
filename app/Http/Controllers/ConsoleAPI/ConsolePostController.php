@@ -4,29 +4,26 @@ namespace App\Http\Controllers\ConsoleAPI;
 
 use App\Data\Objects\ConsoleAPI\Post\PostObject;
 use App\Data\Objects\ConsoleAPI\Post\PostVariantObject;
-use App\Data\Params\ConsoleAPI\PostsFilterParam;
 use App\Domains\Language\LanguageRepository;
-use App\Models\Blog;
 use App\Domains\Post\PostRepository;
+use App\Exceptions\TrustedException;
 use App\Http\Controllers\Controller;
+use App\Models\Blog;
+use App\Models\Post;
 use App\Models\User;
 use Illuminate\Http\Request;
 
 class ConsolePostController extends Controller
 {
-
     public function getPosts(Request $request, Blog $blog, User $user)
     {
-
         $request->validate([
-            'status' => 'string',
+            'status' => 'string|in:featured,published,draft,scheduled',
             'author_id' => 'integer',
             'tag_id' => 'integer',
             'start_timestamp' => 'integer',
             'end_timestamp' => 'integer',
         ]);
-
-        $filters = json_decode($request->input('filters'));
 
         $status = $request->input('status');
         $authorId = $request->input('author_id');
@@ -36,30 +33,21 @@ class ConsolePostController extends Controller
         $endTimestamp = $request->input('end_timestamp');
         $search = $request->input('search');
 
-        $limit = 50;
-        $offset = $request->input('offset') ?? 0;
+        $limit = $request->input('limit', 50);
+        $offset = $request->input('offset', 0);
 
         $posts = PostRepository::getPosts(
-
             $blog,
-
             $status,
-
             $authorId,
             $tagId,
-
             $startTimestamp,
             $endTimestamp,
-
             $search,
-
             $limit,
             $offset
-
         )->map(function ($post) use ($blog) {
-
             return new PostObject($post, $blog);
-
         });
 
         return response()->json($posts);
@@ -67,20 +55,19 @@ class ConsolePostController extends Controller
 
     public function getPages(Blog $blog)
     {
-
         $pages = PostRepository::getPages($blog->id)
             ->map(function ($page) use ($blog) {
                 return new PostObject($page, $blog);
             });
 
         return response()->json($pages);
-
     }
 
     public function createPost(Request $request, Blog $blog)
     {
         $isPage = (bool) $request->input('is_page');
-        $post = PostRepository::createPost($blog->id, $isPage);
+        $post = PostRepository::createPost($blog, $isPage);
+
         return response()->json(new PostObject($post, $blog));
     }
 
@@ -89,27 +76,38 @@ class ConsolePostController extends Controller
     {
         $postId = (int) $request->route('id');
         $post = PostRepository::getPostById($postId);
+
+        if (! $post) {
+            throw new TrustedException('Post not found', TrustedException::ERROR_NOT_FOUND);
+        }
+
         return response()->json(new PostObject($post, $blog));
     }
 
-    public function deletePost(Request $request)
+    public function deletePost(Post $post)
     {
-        $postId = $request->route('id');
-        PostRepository::deletePost($postId);
+        PostRepository::deletePost($post);
     }
 
-    public function updatePost(Request $request, Blog $blog)
+    public function updatePost(Request $request, Blog $blog, Post $post)
     {
-
-        $postId = $request->route('id');
+        $request->validate([
+            'slug' => 'string|max:255|nullable',
+            'is_featured' => 'boolean',
+            'canonical_url' => 'string|max:255|nullable',
+            'featured_image_url' => 'string|max:255|nullable',
+            'code_head' => 'string|nullable',
+            'code_foot' => 'string|nullable',
+        ]);
 
         $postUpdates = [];
         $postUpdatables = [
             'slug',
             'is_featured',
             'canonical_url',
+            'featured_image_url',
             'code_head',
-            'code_foot'
+            'code_foot',
         ];
 
         foreach ($postUpdatables as $postUpdatable) {
@@ -119,80 +117,110 @@ class ConsolePostController extends Controller
         }
 
         if (count($postUpdates) > 0) {
-            PostRepository::updatePost($postId, $postUpdates);
+            PostRepository::updatePost($post, $postUpdates);
         }
 
-        $variants = $request->input('variants');
-
-        if (is_array($variants)) {
-            foreach ($variants as $languageId => $variantUpdates) {
-                PostRepository::updatePostVariant($postId, $languageId, $variantUpdates);
-            }
-        }
-
-        $post = PostRepository::getPostById($postId);
-
-        if ($request->has('content')) {
-            $updates['content'] = $request->input('content');
-        }
-
-        if ($request->has('content_unsaved')) {
-            $updates['content_unsaved'] = $request->input('content_unsaved');
-        }
-
-        if ($request->has('title')) {
-            $updates['title'] = $request->input('title');
-        }
-
-        if ($request->has('description')) {
-            $updates['description'] = $request->input('description');
-        }
-
-        if ($request->has('featured_image')) {
-            $updates['featured_image'] = $request->input('featured_image');
-        }
-
-        if ($request->has('canonical_url')) {
-            $updates['canonical_url'] = $request->input('canonical_url');
-        }
-
-        if ($request->has('code_head')) {
-            $updates['code_head'] = $request->input('code_head');
-        }
-
-        if ($request->has('code_foot')) {
-            $updates['code_foot'] = $request->input('code_foot');
-        }
-
-        if ($request->has('tag')) {
-            $updates['tag'] = $request->input('tag');
-        }
-
-        // if ($request->has('author')) {
-        //     $updates['author'] = $request->input('author');
-        // }
-
-        $post = PostRepository::updatePost($postId, $updates);
+        $post->refresh();
 
         return response()->json(new PostObject($post, $blog));
     }
 
 
-    public function createPostVariant(Request $request, Blog $blog)
+    public function createPostVariant(Request $request, Blog $blog, Post $post)
     {
-        $postId = $request->route('id');
-        $languageId = $request->input('language_id');
+        $request->validate([
+            'language_id' => 'required|integer',
+        ]);
 
-        $variant = PostRepository::createPostVariant($postId, $languageId);
+        $languageId = (int) $request->input('language_id');
+        $language = LanguageRepository::getLanguageById($blog, $languageId);
+
+        if (! $language) {
+            throw new TrustedException('Language not found', TrustedException::ERROR_INVALID_INPUT);
+        }
+
+        $variant = PostRepository::getPostVariantByPostIdAndLanguageId($post->id, $language->id);
+
+        if ($variant) {
+            throw new TrustedException('Variant already exists', TrustedException::ERROR_INVALID_INPUT);
+        }
+
+        $variant = PostRepository::createPostVariant($post, $language);
 
         return response()->json(new PostVariantObject($variant, $variant->post, $blog));
     }
 
-    public function deletePostVariant(Request $request)
+    public function updatePostVariant(Request $request, Blog $blog, Post $post)
     {
-        $postId = $request->route('id');
-        $languageId = $request->input('language_id');
+        $request->validate([
+            'language_id' => 'required|integer',
+            'status' => 'string|in:draft,published,scheduled',
+            'content' => 'string|nullable',
+            'content_unsaved' => 'string|nullable',
+            'title' => 'string|max:255|nullable',
+            'description' => 'string|max:255|nullable',
+        ]);
 
-        PostRepository::deletePostVariant($postId, $languageId);
+        $languageId = (int) $request->input('language_id');
+        $language = LanguageRepository::getLanguageById($blog, $languageId);
+
+        if (! $language) {
+            throw new TrustedException('Language not found', TrustedException::ERROR_INVALID_INPUT);
+        }
+
+        $variant = PostRepository::getPostVariantByPostIdAndLanguageId($post->id, $languageId);
+
+        if (! $variant) {
+            throw new TrustedException('Variant not found', TrustedException::ERROR_NOT_FOUND);
+        }
+
+        $variantUpdateables = [
+            'status',
+            'content',
+            'content_unsaved',
+            'title',
+            'description',
+        ];
+
+        $variantUpdates = [];
+
+        foreach ($variantUpdateables as $updateable) {
+            if ($request->has($updateable)) {
+                $variantUpdates[$updateable] = $request->input($updateable);
+            }
+        }
+
+        if (count($variantUpdates) > 0) {
+            PostRepository::updatePostVariant($post, $language, $variantUpdates);
+        }
+
+        $variant->refresh();
+
+        return response()->json(new PostVariantObject($variant, $variant->post, $blog));
+    }
+
+    public function deletePostVariant(Request $request, Blog $blog, Post $post)
+    {
+        $request->validate([
+            'language_id' => 'required|integer',
+        ]);
+
+        $languageId = (int) $request->input('language_id');
+        $language = LanguageRepository::getLanguageById($blog, $languageId);
+
+        if (! $language) {
+            throw new TrustedException('Language not found', TrustedException::ERROR_INVALID_INPUT);
+        }
+
+        if ($language->is_primary) {
+            throw new TrustedException(
+                'Primary language variant cannot be deleted. Delete the post instead',
+                TrustedException::ERROR_INVALID_INPUT
+            );
+        }
+
+        PostRepository::deletePostVariant($post, $languageId);
+
+        return response()->json();
     }
 }
