@@ -89,9 +89,12 @@ const postLogic = kea({
 
         createVariant: async ({languageId, onCreate}) => {
 
-            const variant = await api.post(subdomainLogic.values.subdomain, `/post/${props.id}/variant`, {
-                language_id: languageId
-            });
+            const variant = await api.post(subdomainLogic.values.subdomain,
+                `/post/${props.id}/variant`,
+                {
+                    language_id: languageId
+                }
+            );
 
             actions.addVariant(variant);
 

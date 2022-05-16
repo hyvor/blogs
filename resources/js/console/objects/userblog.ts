@@ -1,5 +1,6 @@
 import {BlogType} from "../enums";
 import {Subscription} from "./subscription";
+import {UserRole} from "./user";
 
 export type UserBlog = {
     user: UserBlogUser;
@@ -28,6 +29,6 @@ export type UserBlogBlog = {
 export type UserBlogUser = {
 
     id: number;
-    role: string;
+    role: UserRole;
 
 };

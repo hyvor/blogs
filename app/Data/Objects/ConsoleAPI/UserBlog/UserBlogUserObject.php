@@ -13,6 +13,6 @@ class UserBlogUserObject
     public function __construct(User $user)
     {
         $this->id = $user->id;
-        $this->role = $user->role;
+        $this->role = UserRoleEnum::FINANCE; // $user->role;
     }
 }
