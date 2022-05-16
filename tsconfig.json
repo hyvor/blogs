@@ -1,12 +1,13 @@
 {
     "compilerOptions": {
         "noImplicitAny": true,
-        "module": "es6",
+        "module": "CommonJS",
         "target": "es5",
         "sourceMap": true,
         "jsx": "react",
         "allowJs": true,
         "moduleResolution": "node",
+        "esModuleInterop": true,
         "allowSyntheticDefaultImports": true
     },
     "include": ["resources/js"]
