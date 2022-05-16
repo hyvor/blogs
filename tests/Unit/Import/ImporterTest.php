@@ -30,12 +30,12 @@ beforeEach(function() {
 
     // $this->import = Import::factory()->create();
 
-    // $this->import = Import::factory()->count(1)->create([
-    //     'blog_id' => 1, 
-    //     'name' => $faker->name,
-    //     'type' => 'wordpress',
-    //     'status' => 'success',
-    // ]);
+    $this->import = Import::factory()->count(1)->create([
+        'blog_id' => 1, 
+        'name' => $faker->name,
+        'type' => 'wordpress',
+        'status' => 'success',
+    ]);
 
     $this->blog = [
         'id' => 1, 
@@ -50,8 +50,8 @@ it('get authors from the repository and save it in the database', function() {
     $role = UserRoleEnum::from('editor');
     $status = UserStatusEnum::from('active');
 
-    // dd($this->import);
-    dd(blog());
+    dd($this->import);
+    // dd(blog());
     
     $this->repo->author(
         id: 1,
