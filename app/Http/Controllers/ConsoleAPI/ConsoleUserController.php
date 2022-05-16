@@ -6,70 +6,19 @@ use App\Data\Enums\BlogTypeEnum;
 use App\Data\Enums\UserRoleEnum;
 use App\Data\Enums\UserStatusEnum;
 
-use App\Data\Objects\ConsoleAPI\BlogObject;
+use App\Data\Objects\ConsoleAPI\User\UserObject;
 use App\Data\Objects\ConsoleAPI\UserBlog\UserBlogObject;
 use App\Domains\Blog\BlogRepository;
 use App\Domains\User\UserRepository;
 use App\Http\Controllers\Controller;
-use App\Domains\User\UserRepositoryInterface;
-use Hyvor\HyvorConnecter\User;
 
-use Illuminate\Http\Request;
 use App\Models\Blog;
-use App\Data\Objects\ConsoleAPI\User\UserObject;
-
-
+use Hyvor\HyvorConnecter\HyvorUser;
+use Hyvor\HyvorConnecter\User;
+use Illuminate\Http\Request;
 
 class ConsoleUserController extends Controller
 {
-
-    public function createBlog(Request $request, User $hyvorUser)
-    {
-        $request->validate([
-            'name' => 'required|string',
-            'subdomain' => 'required|string',
-            'type' => 'string|in:normal,temp,dev'
-        ]);
-
-        $name = $request->input('name');
-        $subdomain = $request->input('subdomain');
-        $type = BlogTypeEnum::from($request->input('type') ?? 'normal');
-
-        $user = BlogRepository::createBlog(
-            $hyvorUser->id,     
-            $name,
-            $subdomain,
-            $type
-        );
-        // return response()->json(new UserBlogObject($user));
-    }
-
-    public function changeSort(Request $request, User $hyvorUser)
-    {
-        $request->validate([
-            'blog_ids' => 'required|array',
-            'blog_ids.*' => 'integer'
-        ]);
-
-        $blogIds = $request->input('blog_ids');
-
-        UserRepository::changeBlogSorts($hyvorUser->id, $blogIds);
-    }
-
-    public function checkSubdomain(Request $request)
-    {
-        $request->validate([
-            'subdomain' => 'required|string'
-        ]);
-
-        $subdomain = $request->input('subdomain');
-
-        $blog = BlogRepository::getBlogBySubdomain($subdomain);
-
-        return response()->json($blog ? false : true);
-
-    }
-
     /*
     *
     * ConsoleAPI Settings->users
@@ -77,17 +26,18 @@ class ConsoleUserController extends Controller
     */
     public static function getAuthors(Blog $blog)
     {
-        $getData = UserRepository::getAuthors($blog) 
+        $getData = UserRepository::getAuthors($blog)
                 ->map(function ($users) use ($blog) {
                     return new UserObject($users, $blog);
                 });
-        return response()->json($getData);  
+
+        return response()->json($getData);
     }
 
-    public static function createAuthor(Request $request, Blog $blog) {
-
+    public static function createAuthor(Request $request, Blog $blog)
+    {
         $role = UserRoleEnum::from($request->input('role'));
-        $status =  UserStatusEnum::from($request->input('status'));
+        $status = UserStatusEnum::from($request->input('status'));
 
         if ($request->has('slug')) {
             $userData['slug'] = $request->input('slug');
@@ -135,21 +85,22 @@ class ConsoleUserController extends Controller
             $userData['location'] = $request->input('location');
         }
 
-        if($userData['slug'] == null){
+        if ($userData['slug'] == null) {
             $userData['slug'] = str_replace(" ", "-", $userData['name']);
         }
 
         // I changed here from user_id to hyvor_user_id
-        $createUser = UserRepository::createUser($blog, $blog->hyvor_user_id, $role, $status, $userData); 
+        $createUser = UserRepository::createUser($blog, $blog->hyvor_user_id, $role, $status, $userData);
+
         return response()->json($createUser);
     }
 
     public static function updateAuthor(Request $request, Blog $blog)
     {
         $userId = $request->route('id');
-        $languageId =  $request->input('languageId');
+        $languageId = $request->input('languageId');
         $role = UserRoleEnum::from($request->input('role'));
-        $status =  UserStatusEnum::from($request->input('status'));
+        $status = UserStatusEnum::from($request->input('status'));
 
         if ($request->has('slug')) {
             $userData['slug'] = $request->input('slug');
@@ -196,12 +147,13 @@ class ConsoleUserController extends Controller
             $userData['location'] = $request->input('location');
         }
 
-        if($userData['slug'] == null){
+        if ($userData['slug'] == null) {
             $userData['slug'] = str_replace(" ", "-", $userData['name']);
         }
-        
+
         // I changed here from user_id to hyvor_user_id
-        $updateUser = UserRepository::updateAuthor( $userId, $languageId, $blog, $blog->hyvor_user_id, $role, $status, $userData);
+        $updateUser = UserRepository::updateAuthor($userId, $languageId, $blog, $blog->hyvor_user_id, $role, $status, $userData);
+
         return response()->json($updateUser);
     }
 
@@ -220,8 +172,8 @@ class ConsoleUserController extends Controller
     * these functions are for author Variants
     *
     */
-    public static function createAuthorVariant(Request $request) {
-
+    public static function createAuthorVariant(Request $request)
+    {
         $userId = $request->input('userId');
         $languageId = $request->input('languageId');
         $createVariant = UserRepository::createAuthorVariant($userId, $languageId);
@@ -231,12 +183,13 @@ class ConsoleUserController extends Controller
 
     public static function updatePicture(Request $request, Blog $blog)
     {
-        $file = $request->file('file');  
+        $file = $request->file('file');
         // $request->validate([
         //     'file' => 'required|file'
         // ]);
 
         $icon = UserRepository::updatePicture($blog, $file);
+
         return response()->json($icon);
     }
 
@@ -247,8 +200,8 @@ class ConsoleUserController extends Controller
     *
     * This function will get all the Authors and display it in an order (Post_Count)
     */
-    public static function getAuthorList(Request $request){
-        
+    public static function getAuthorList(Request $request)
+    {
         return 'get Author list';
     }
 
@@ -258,28 +211,28 @@ class ConsoleUserController extends Controller
     * (This function should also save the number of posts in the count table.)
     *
     */
-    public static function createPostAuthor(Request $request){
-        
+    public static function createPostAuthor(Request $request)
+    {
         return 'create post Author';
     }
 
     /*
-    * 
+    *
     * This function will get the selected Authors and display it in the react-select box.
     *
     */
-    public static function getPostAuthor(Request $request){
-
+    public static function getPostAuthor(Request $request)
+    {
         return 'get post Author';
     }
 
     /*
-    * 
+    *
     * This function will remove the selected Author.
     *
     */
-    public static function removePostAuthor(Request $request){
-       return 'hello world';
+    public static function removePostAuthor(Request $request)
+    {
+        return 'hello world';
     }
-
 }

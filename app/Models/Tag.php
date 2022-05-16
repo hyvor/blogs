@@ -7,9 +7,9 @@ use Illuminate\Database\Eloquent\Model;
 
 class Tag extends Model
 {
-    use HasFactory; 
+    use HasFactory;
 
-      /**
+    /**
      * Eager load with these relations
      * because these are always wanted
      */
@@ -22,9 +22,8 @@ class Tag extends Model
         return $this->hasMany(TagVariant::class);
     }
 
-    public function counts() 
+    public function counts()
     {
         return $this->morphMany(Count::class, 'countable');
     }
-    
 }

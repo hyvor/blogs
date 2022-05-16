@@ -10,7 +10,7 @@ class TagVariant extends Model
     use HasFactory;
 
     public $timestamps = false;
-    
+
     public function tag()
     {
         $this->belongsTo(Tag::class);
@@ -20,5 +20,4 @@ class TagVariant extends Model
     {
         return $this->belongsTo(Language::class);
     }
-    
 }

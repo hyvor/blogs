@@ -2,10 +2,10 @@
 
 namespace App\Data\Objects\ConsoleAPI\UserBlog;
 
+use App\Data\Enums\BlogTypeEnum;
 use App\Data\Enums\CountEnum;
 use App\Data\Objects\ConsoleAPI\BlogSubscription\SubscriptionObject;
 use App\Data\Objects\ConsoleAPI\LanguageObject;
-use App\Domains\Blog\BlogRepository;
 use App\Domains\Count\CountRepository;
 use App\Domains\Route\PermalinkRepository;
 use App\Models\Blog;
@@ -13,9 +13,12 @@ use App\Models\Blog;
 class UserBlogBlogObject
 {
     public int $id;
-    // public string $name;
+    public string $name;
     public string $subdomain;
+    public BlogTypeEnum $type;
     public string $base_url;
+    public ?string $logo_url;
+
     public int $posts_count;
     public int $users_count;
 
@@ -28,7 +31,7 @@ class UserBlogBlogObject
      * This is the last subscription
      * not the active subscription
      * it can be a deleted subscription
-     * 
+     *
      * Therefore use $this->subscribed to make sure the user is subscribed
      */
     public ?SubscriptionObject $subscription = null;
@@ -42,12 +45,14 @@ class UserBlogBlogObject
         $this->id = $blog->id;
         $this->name = $blog->variants[0]->name;
         $this->subdomain = $blog->subdomain;
-        $this->base_url = PermalinkRepository::getBlogPermalink($blog);
+        $this->type = $blog->type;
+        $this->base_url = PermalinkRepository::getFullUrlFromPath($blog);
+        $this->logo_url = 'https://picsum.photos/100/100' ?? $blog->logo_url;
         $this->plan = $plan;
 
         $counts = CountRepository::getCounts($blog, [
             CountEnum::BLOG_USERS,
-            CountEnum::BLOG_POSTS
+            CountEnum::BLOG_POSTS,
         ]);
         $this->posts_count = $counts[ CountEnum::BLOG_POSTS->value ];
         $this->users_count = $counts[ CountEnum::BLOG_USERS->value ];
@@ -67,6 +72,5 @@ class UserBlogBlogObject
                 ->where('is_primary', true)
                 ->first()
         );
-
     }
 }

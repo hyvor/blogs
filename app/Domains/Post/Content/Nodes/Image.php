@@ -9,13 +9,6 @@ class Image extends Node
 {
     public static $name = 'image';
 
-    public function addOptions()
-    {
-        return [
-            'HTMLAttributes' => [],
-        ];
-    }
-
     public function parseHTML()
     {
         return [
@@ -28,14 +21,15 @@ class Image extends Node
     public function addAttributes()
     {
         return [
-            'src' => [],
-            'alt' => [],
-            'title' => [],
+            'src' => null,
+            'alt' => null,
+            'width' => null,
+            'height' => null
         ];
     }
 
     public function renderHTML($node, $HTMLAttributes = [])
     {
-        return ['img', HTML::mergeAttributes($this->options['HTMLAttributes'], $HTMLAttributes), 0];
+        return ['img', $HTMLAttributes, 0];
     }
 }

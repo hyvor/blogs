@@ -74,12 +74,31 @@ Sending all placeholders (except `_lang`) through the `template` filter is absol
 
 ## Twig Filters & Functions
 
-We provide two custom Twig filters.
+We provide two custom Twig functions and filters.
 
 - `data` - a function to call the Data API. See [Fetching data](#fetch-data) below.
     ```twig
     {% set posts = data(endpoint="posts", filter="author.slug=user") }
     ```
+  
+- `icon` - a function to get an icon.
+    ```twig
+    {{ icon('bootstrap', 'arrow-down', 20, 20) }}
+    ```
+    Function definition: `icon(iconLibrary, iconName, width, height)`
+    * All icon names are lowercase, and words are separated by `-` (`arrow-down`).
+    * These icon libraries are supported
+      * [bootstrap](https://icons.getbootstrap.com/)
+      * [fontawesome](https://fontawesome.com/icons) (Free icons only)
+         * append `-regular` to regular icons (`calendar-regular`)
+         * append `-solid` to solid icons (`calendar-solid`)
+         * Do not append anything for brand icons (`github`)
+      * [ionicons](https://ionic.io/ionicons)
+      * [heroicons](https://heroicons.com/)
+         * append `-solid` to solid icons (`archive-solid`)
+         * append `-outline` to outline icons (`archive-outline`)
+      * [octicons](https://primer.github.io/octicons)
+      * [css.gg](https://css.gg/)
 
 - `asset_url` - a filter to link assets
     - Turns an asset filename into its absolute URL.

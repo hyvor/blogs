@@ -8,11 +8,9 @@ use Illuminate\Database\Eloquent\Model;
 
 class ThemeFile extends Model
 {
-
     use HasFactory;
 
     protected $casts = [
-        'folder' => ThemeFileFolderEnum::class
+        'folder' => ThemeFileFolderEnum::class,
     ];
-
 }

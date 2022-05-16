@@ -21,7 +21,7 @@ class ConsoleMediaController extends Controller
         $request->validate([
             'limit' => 'integer',
             'offset' => 'integer',
-            'extension' => 'string'
+            'extension' => 'string',
         ]);
 
         $media = MediaRepository::get($blog->id, $limit, $offset, $extension)
@@ -37,7 +37,7 @@ class ConsoleMediaController extends Controller
         $file = $request->file('file');
 
         $request->validate([
-            'file' => 'required|file'
+            'file' => 'required|file',
         ]);
 
         // jpg, jpeg, png, bmp, gif, svg, or webp
@@ -56,20 +56,20 @@ class ConsoleMediaController extends Controller
         MediaRepository::delete($id);
     }
 
-    public static function searchUnsplash(Request $request) {
+    public static function searchUnsplash(Request $request)
+    {
         $request->validate([
             'search' => 'required|string',
-            'page' => 'required|integer'
+            'page' => 'required|integer',
         ]);
 
         $search = $request->input('search');
         $page = (int) $request->input('page');
 
-        $images = UnsplashRepository::search($search, $page)->map(function($image) {
+        $images = UnsplashRepository::search($search, $page)->map(function ($image) {
             return new UnsplashImageObject($image);
         });
 
         return response()->json($images);
-        
     }
 }

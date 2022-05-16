@@ -2,22 +2,22 @@
 
 namespace App\Domains\Post;
 
-use App\Models\Tag;
-use App\Models\PostTag;
 use App\Models\Post;
+use App\Models\PostTag;
+use App\Models\Tag;
 
 use Illuminate\Support\Facades\DB;
 
 class PostTagRepository
 {
-    public static function selectedPostTag(int $blogId, int $postId){
+    public static function selectedPostTag(int $blogId, int $postId)
+    {
         // dd($tagId);
 
         $postTag = PostTag::where('post_id', '=', $postId)->pluck('tag_id')->all();
 
-        $tagIdList = array();
-        foreach($postTag as $value)
-        {
+        $tagIdList = [];
+        foreach ($postTag as $value) {
             $tagIdList[] = Tag::where('id', '=', $value)
             ->select('name')
             ->first();
@@ -34,12 +34,13 @@ class PostTagRepository
 
         $postTag = PostTag::where('post_id', '=', $post)->pluck('tag_id')->toArray();
 
-        $tagIdList = array();
-        for ($i=0, $len=count($postTag); $i<$len; $i++) {
+        $tagIdList = [];
+        for ($i = 0, $len = count($postTag); $i < $len; $i++) {
             $tagIdList[] = $postTag[$i];
         }
 
         $getList = DB::table('tags')->select('tags.name', 'tags.id')->whereNotIn('id', $tagIdList)->get();
+
         return $getList;
 
 
@@ -56,10 +57,9 @@ class PostTagRepository
         // ->leftJoin('post_tag','post_tag.tag_id','=','tags.id')
         // ->whereNull('post_tag.tag_id')
         // ->get();
-
     }
 
-    public static function createTag( int $blogId, string $name, string $slug, ?string $description)
+    public static function createTag(int $blogId, string $name, string $slug, ?string $description)
     {
         $createTag = Tag::create([
             'blog_id' => $blogId,
@@ -67,29 +67,32 @@ class PostTagRepository
             'slug' => $slug,
             'description' => $description,
         ]);
+
         return $createTag;
     }
 
     /*
-    * 
+    *
     * this function will create and save the tag
     *
     */
-    public static function createSaveTag($postId, $tagId){
+    public static function createSaveTag($postId, $tagId)
+    {
         $createPostTag = PostTag::create([
             'post_id' => $postId,
             'tag_id' => $tagId,
         ]);
+
         return $createPostTag;
     }
 
     /*
-    * 
+    *
     * this function will create and save the tag
     *
     */
-    public static function getPostTag($postId, $tagId){
-
+    public static function getPostTag($postId, $tagId)
+    {
         $posts = Post::where('id', '=', $postId)
         ->value('id');
 
@@ -98,9 +101,8 @@ class PostTagRepository
 
         $postTag = PostTag::where('post_id', '=', $posts)->pluck('tag_id')->all();
 
-        $tagIdList = array();
-        foreach($postTag as $value)
-        {
+        $tagIdList = [];
+        foreach ($postTag as $value) {
             $tagIdList[] = Tag::where('id', '=', $value)
             ->select('name')
             ->first();
@@ -111,7 +113,7 @@ class PostTagRepository
 
 
 
-        
+
 
         // dd('tests');
         // dd('Post Id '+$postId + ' Tag Id '+$tagId);
@@ -188,7 +190,7 @@ class PostTagRepository
         // dd($cc);
         // $connection = Tag::where('id', '=', $cc)
         //     ->value('name');
-        //     return $connection; 
+        //     return $connection;
 
 
         // return 'test';
@@ -196,5 +198,4 @@ class PostTagRepository
         // ->value('name');
         // return $connection;
     }
-    
 }

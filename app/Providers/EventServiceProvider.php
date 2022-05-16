@@ -4,7 +4,6 @@ namespace App\Providers;
 
 use App\Domains\Blog\Observers\BlogObserver;
 use App\Domains\Cache\Listeners\ClearPostCacheListener;
-use App\Domains\Post\Events\PostPublishedEvent;
 use App\Domains\Post\Observers\PostVariantObserver;
 use App\Models\Blog;
 use App\Models\PostVariant;
@@ -19,24 +18,24 @@ class EventServiceProvider extends ServiceProvider
      * @var array
      */
     protected $listen = [
-        
-        
+
+
 
     ];
 
     protected $subscribe = [
 
-        ClearPostCacheListener::class
+        ClearPostCacheListener::class,
 
     ];
 
     protected $observers = [
-        
+
         Blog::class => [BlogObserver::class],
 
         PostVariant::class => [PostVariantObserver::class],
-        
-        
+
+
 
     ];
 
@@ -47,6 +46,5 @@ class EventServiceProvider extends ServiceProvider
      */
     public function boot()
     {
-
     }
 }

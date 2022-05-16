@@ -1,4 +1,5 @@
 <?php
+
 namespace App\Domains\Language;
 
 use App\Data\Params\ConsoleAPI\PostsFilterParam;
@@ -7,27 +8,28 @@ use App\Exceptions\TrustedException;
 use App\Models\Blog;
 use App\Models\Language;
 
-class LanguageRepository {
-
-    const DEFAULT_LANGUAGE_CODE = 'en';
-    const DEFAULT_LANGUAGE_NAME = 'English';
-
-    public static function getAllLanguages(int $blogId) {
+class LanguageRepository
+{
+    public static function getAllLanguages(int $blogId)
+    {
         return Blog::find($blogId)->languages()->orderBy('is_primary', 'DESC')->orderBy('id', 'ASC')->get();
     }
 
     public static function createLanguage(
-        Blog $blog, string $code, string $name, bool $isPrimary = false
-    ) : Language {
-
+        Blog $blog,
+        string $code,
+        string $name,
+        bool $isPrimary = false
+    ): Language {
         return $blog->languages()->create([
             'code' => $code,
             'name' => $name,
-            'is_primary' => $isPrimary
+            'is_primary' => $isPrimary,
         ]);
     }
 
-    public static function updateLanguage(int $langId, string $code, string $name) {
+    public static function updateLanguage(int $langId, string $code, string $name)
+    {
         $lang = Language::find($langId);
 
         $lang->code = $code;
@@ -36,9 +38,10 @@ class LanguageRepository {
         $lang->save();
 
         return $lang;
-    } 
+    }
 
-    public static function deleteLanguage(int $langId) {
+    public static function deleteLanguage(int $langId)
+    {
         $lang = Language::find($langId);
 
         // can't delete default language (only edit)
@@ -55,7 +58,7 @@ class LanguageRepository {
 
         // if (count($posts) !== 0) {
         //     throw new TrustedException(
-        //         'You cannot delete a language that has posts assigned to it. 
+        //         'You cannot delete a language that has posts assigned to it.
         //         Delete or change language of those posts before deleting this language'
         //     );
         // }
@@ -63,34 +66,29 @@ class LanguageRepository {
         $lang->delete();
     }
 
-    public static function getPrimaryLanguage(Blog $blog) : Language {
-
+    public static function getPrimaryLanguage(Blog $blog): Language
+    {
         return $blog->languages()->where('is_primary', true)->first();
-
     }
 
     /**
      * @return Language primary language if the current one is not found
      */
-    public static function getLanguageById(Blog $blog, ?int $languageId) : Language
+    public static function getLanguageById(Blog $blog, ?int $languageId): ?Language
     {
-        return $blog->languages()->where('id', $languageId)->first() ?? self::getPrimaryLanguage($blog);
+        return $blog->languages()->where('id', $languageId)->first();
     }
 
     /**
      * @return Language primary language if the requested one is not found
      */
-    public static function getLanguageByCode(Blog $blog, ?string $code) : ?Language
-    {   
+    public static function getLanguageByCode(Blog $blog, ?string $code): ?Language
+    {
         return $blog->languages()->where('code', $code)->first();
     }
 
-    public static function getFallbackLanguage(Blog $blog, Language $language) : Language
+    public static function getFallbackLanguage(Blog $blog, Language $language): Language
     {
-
         return self::getPrimaryLanguage($blog);
-
     }
-
-
 }

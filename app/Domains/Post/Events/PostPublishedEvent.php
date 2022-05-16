@@ -1,22 +1,20 @@
 <?php
+
 namespace App\Domains\Post\Events;
 
 use App\Models\Post;
 use Illuminate\Foundation\Events\Dispatchable;
 use Illuminate\Queue\SerializesModels;
 
-class PostPublishedEvent 
+class PostPublishedEvent
 {
-
-    use SerializesModels, Dispatchable;
+    use SerializesModels;
+    use Dispatchable;
 
     public Post $post;
 
     public function __construct(Post $post)
     {
-
         $this->post = $post;
-
     }
-
 }

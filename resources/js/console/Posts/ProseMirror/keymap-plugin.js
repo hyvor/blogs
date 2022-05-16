@@ -4,7 +4,7 @@ import { baseKeymap, chainCommands, clearAndChangeNode, exitCode, liftFigcaption
 import { undo, redo } from 'prosemirror-history'
 import { splitListItem, sinkListItem, liftListItem } from "./list"
 import { NodeSelection, Selection } from 'prosemirror-state'
-import { createRich } from './creators'
+import { createEmbed } from './creators'
 
 export default function keymapPlugins(schema) {
 
@@ -44,7 +44,7 @@ export default function keymapPlugins(schema) {
             // Slash UI is used instead
 
             /**
-             * RICH
+             * EMBED
              * ===================
              */
             /*const parent = selection.$to.parent;
@@ -67,7 +67,7 @@ export default function keymapPlugins(schema) {
                 const nodeSel = NodeSelection.create(state.doc, pos);
 
                 dispatch(
-                    state.tr.replaceWith(nodeSel.from, nodeSel.to, createRich(schema, text))
+                    state.tr.replaceWith(nodeSel.from, nodeSel.to, createEmbed(schema, text))
                 )
                 return true;
             }*/

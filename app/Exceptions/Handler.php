@@ -44,8 +44,7 @@ class Handler extends ExceptionHandler
 
     public function render($request, Throwable $exception)
     {
-
-        if (!config('app.debug')) { // not in debug mode
+        if (! config('app.debug')) { // not in debug mode
             if ($request->getHost() === config('blogs.domain_app')) {
                 // app domain
 
@@ -65,9 +64,9 @@ class Handler extends ExceptionHandler
 
                     $httpCode = in_array($code, [400, 401, 402, 403, 404, 422, 500]) ? $code : 422;
 
-                    $error = 
+                    $error =
                         $exception instanceof TrustedException ||
-                        $exception instanceof FilterQException 
+                        $exception instanceof FilterQException
                         ?
                         $exception->getMessage() :
                         'Something went wrong on our side.';
@@ -83,7 +82,7 @@ class Handler extends ExceptionHandler
 
                     return response()->json([
                         'error' => $error,
-                        'error_code' => $code
+                        'error_code' => $code,
                     ], $httpCode);
                 }
             } else {

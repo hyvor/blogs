@@ -11,7 +11,7 @@
     <meta property="og:site_name" content="{{ _blog.name }}" />
     <meta property="og:type" content="article" />
     <meta property="og:title" content="{{ _meta.title }}" />
-    <meta property="og:locale " content="{{ _lang }}" />
+    <meta property="og:locale " content="{{ _lang.code }}" />
     <meta property="og:description" content="{{ _meta.description }}" />
     <meta property="og:url" content="{{ _meta.url }}" />
     <meta property="og:image" content="{{ _meta.featured_image }}" />
@@ -66,14 +66,17 @@
 <link rel="alternate" type="application/atom+xml" title="{{ _blog.name }}" href="{{ _blog.url }}/feed" />
 <meta name="generator" content="Hyvor Blogs" />
 
-<link rel="stylesheet" href="{{ _blog.url }}/styles.css" />
+<link rel="stylesheet" href="{{ _blog.base_url }}/styles.css" />
 
 <script>
-    {# Theme Modes <https://blogs.hyvor.com/docs/themes-styles#light-dark> #}
 
-    window._hb = {};
+    window._hb = {
+        _url: "{{ ___url }}",
+        subdomain: "{{ _blog.subdomain }}"
+    };
     (function() {
 
+        {# Theme Modes <https://blogs.hyvor.com/docs/themes-styles#light-dark> #}
         var lsKey = 'color-mode-pref';
         var allowedModes = ['light', 'dark'];
 
@@ -106,6 +109,23 @@
         }
 
         _hb.changeColorMode(_hb.getColorModePreference(), true)
+
+        {# Data API #}
+        window._hb.dataApi = function(version, endpoint, params, onSuccess, onError) {
+            var url = _hb._url + "/api/data/" + version + "/" + _hb.subdomain + "/" + endpoint
+                + (params ? ("?" + new URLSearchParams(params || {}).toString()) : "");
+            var xhr = new XMLHttpRequest();
+            xhr.onload = function() {
+                onSuccess(JSON.parse(this.responseText))
+            }
+            xhr.onerror = function() {
+                onError && onError()
+            }
+            xhr.open('GET', url, true)
+            xhr.send();
+
+            return xhr;
+        }
     })()
 
 </script>

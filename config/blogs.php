@@ -3,6 +3,10 @@
 /**
  * Hyvor Blogs internal configurations like logo URL
  */
+
+use App\Data\Enums\SubscriptionFrequencyEnum;
+use App\Data\Enums\SubscriptionPlanEnum;
+
 return [
 
     // domains
@@ -20,32 +24,32 @@ return [
     'paddle_plans' => [
         [
             'id' => env('APP_ENV') !== 'production' ? 21525 : 0,
-            'name' => 'pro',
-            'frequency' => 'yearly',
-            'price' => 20
+            'name' => SubscriptionPlanEnum::PRO,
+            'frequency' => SubscriptionFrequencyEnum::YEARLY,
+            'price' => 30
         ],
         [
             'id' => env('APP_ENV') !== 'production' ? 21526 : 0,
-            'name' => 'team',
-            'frequency' => 'monthly',
+            'name' => SubscriptionPlanEnum::TEAM,
+            'frequency' => SubscriptionFrequencyEnum::MONTHLY,
             'price' => 8
         ],
         [
             'id' => env('APP_ENV') !== 'production' ? 21527 : 0,
-            'name' => 'team',
-            'frequency' => 'yearly',
+            'name' => SubscriptionPlanEnum::TEAM,
+            'frequency' => SubscriptionFrequencyEnum::YEARLY,
             'price' => 60
         ],
         [
             'id' => env('APP_ENV') !== 'production' ? 21528 : 0,
-            'name' => 'enterprise',
-            'frequency' => 'monthly',
+            'name' => SubscriptionPlanEnum::ENTERPRISE,
+            'frequency' => SubscriptionFrequencyEnum::MONTHLY,
             'price' => 800
         ],
         [
             'id' => env('APP_ENV') !== 'production' ? 21529 : 0,
-            'name' => 'enterprise',
-            'frequency' => 'yearly',
+            'name' => SubscriptionPlanEnum::ENTERPRISE,
+            'frequency' => SubscriptionFrequencyEnum::YEARLY,
             'price' => 6000
         ]
     ]

@@ -2,159 +2,144 @@
 
 namespace Tests\Feature\ConsoleAPI;
 
-use Illuminate\Testing\Fluent\AssertableJson;
-use App\Models\Navigation;
 use App\Domains\Navigation\NavigationRepository;
 
 // php artisan test  --filter 'NavigationsTest'
 
-it('fetches navigation', function() {
+it('fetches navigation', function () {
     $this
         ->callConsoleApi('GET', 'navigation')
         ->assertOk();
 });
 
-it('creates a navigation success', function() {
-
+it('creates a navigation success', function () {
     $data = 'about';
     $this
         ->callConsoleApi('POST', 'navigation', [
             'navigation_name' => $data,
             'navigation_url' => $data,
-            'type' => 'header'
+            'type' => 'header',
         ])
         ->assertOk();
 });
 
-it('creating navigation fails on empty fields', function() {
+it('creating navigation fails on empty fields', function () {
     $this
         ->callConsoleApi('POST', 'navigation')
-        ->assertStatus(500);    
+        ->assertStatus(500);
 });
 
-it('creates a navigation fails if (name) is null', function() {
-
+it('creates a navigation fails if (name) is null', function () {
     $data = 'about';
     $this
         ->callConsoleApi('POST', 'navigation', [
             'navigation_name' => null,
             'navigation_url' => $data,
-            'type' => 'header'
+            'type' => 'header',
         ])
         ->assertStatus(500);
 });
 
-it('creates a navigation fails if (url) is null', function() {
-
+it('creates a navigation fails if (url) is null', function () {
     $data = 'about';
     $this
         ->callConsoleApi('POST', 'navigation', [
             'navigation_name' => $data,
             'navigation_url' => null,
-            'type' => 'header'
+            'type' => 'header',
         ])
         ->assertStatus(500);
 });
 
-it('creates a navigation fails if (type) is not header or footer', function() {
-
+it('creates a navigation fails if (type) is not header or footer', function () {
     $data = 'about';
     $this
         ->callConsoleApi('POST', 'navigation', [
             'navigation_name' => $data,
             'navigation_url' => null,
-            'type' => 'wrong'
+            'type' => 'wrong',
         ])
         ->assertStatus(500);
 });
 
-it('creates a navigation fails if there are more than 8 header navigations.', function() {
-
+it('creates a navigation fails if there are more than 8 header navigations.', function () {
     $getHeaderCount = NavigationRepository::getHeaderCount();
     $headerCount = $getHeaderCount < 8;
     $data = 'about';
-    if($headerCount){
+    if ($headerCount) {
         $this
             ->callConsoleApi('POST', 'navigation', [
                 'navigation_name' => $data,
                 'navigation_url' => $data,
-                'type' => 'header'
+                'type' => 'header',
             ])
             ->assertStatus(500);
-    }
-    else{
+    } else {
         $this->assertFalse(false);
     }
 });
 
-it('creates a navigation fails if there are more than 8 footer navigations.', function() {
-
+it('creates a navigation fails if there are more than 8 footer navigations.', function () {
     $getFooterCount = NavigationRepository::getFooterCount();
     $footerCount = $getFooterCount < 8;
     $data = 'about';
-    if($footerCount){
+    if ($footerCount) {
         $this
             ->callConsoleApi('POST', 'navigation', [
                 'navigation_name' => $data,
                 'navigation_url' => $data,
-                'type' => 'header'
+                'type' => 'header',
             ])
             ->assertStatus(500);
-    }
-    else{
+    } else {
         $this->assertFalse(false);
     }
 });
 
-it('deleting navigation success', function() {
-
+it('deleting navigation success', function () {
     $id = 1;
     $this
         ->callConsoleApi('DELETE', 'navigation/'.$id)
-        ->assertOk();    
+        ->assertOk();
 });
 
-it('updating a navigation success', function() {
-
+it('updating a navigation success', function () {
     $id = 1;
     $data = 'new';
     $this
         ->callConsoleApi('PUT', 'navigation/'.$id, [
             'navigation_name' => $data,
             'navigation_url' => $data,
-            'type' => 'header'
+            'type' => 'header',
         ])
         ->assertOk();
 });
 
-it('updating a navigation fails if (name) is null', function() {
-
+it('updating a navigation fails if (name) is null', function () {
     $id = 1;
     $data = 'new';
     $this
         ->callConsoleApi('PUT', 'navigation/'.$id, [
             'navigation_name' => null,
             'navigation_url' => $data,
-            'type' => 'header'
+            'type' => 'header',
         ])
         ->assertStatus(500);
 });
 
-it('updating a navigation fails if (url) is null', function() {
-
+it('updating a navigation fails if (url) is null', function () {
     $id = 1;
     $data = 'new';
     $this
         ->callConsoleApi('PUT', 'navigation/'.$id, [
             'navigation_name' => $data,
             'navigation_url' => null,
-            'type' => 'header'
+            'type' => 'header',
         ])
         ->assertStatus(500);
 });
 
-it('update the sort', function() {
-
+it('update the sort', function () {
     $id = 1;
     $this
         ->callConsoleApi('PUT', '/navigation/sort/'.$id, [
@@ -163,8 +148,7 @@ it('update the sort', function() {
         ->assertOk();
 });
 
-it('update the navigation source', function() {
-
+it('update the navigation source', function () {
     $id = 1;
     $this
         ->callConsoleApi('PUT', '/navigation/source/'.$id, [

@@ -14,11 +14,11 @@ class ConsoleUrlDataController extends Controller
     {
         $request->validate([
             'url' => 'required|url',
-            'type' => 'required|in:link,rich'
+            'type' => 'required|in:link,embed',
         ]);
         $url = $request->input('url');
         $type = $request->input('type');
-        
+
         $embed = new UrlDataObject(
             UrlDataRepository::fetch(
                 $url,

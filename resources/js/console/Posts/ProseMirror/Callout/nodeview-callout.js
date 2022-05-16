@@ -79,6 +79,8 @@ export default class Callout {
     updateFromAttrs() {
         this.emoji.innerHTML = this.node.attrs.emoji;
         this.changeColors(this.node.attrs.bg, this.node.attrs.fg)
+
+        this.dom.dataset.emoji = this.node.attrs.emoji;
     }
     
     changeColors(bg, fg) {
@@ -98,11 +100,12 @@ export default class Callout {
         picker.addEventListener('click', function () {
             const pickerWrap = document.createElement("div");
             document.body.appendChild(pickerWrap)
-            
+
             pickerWrap.style.position = 'fixed';
             const cord = picker.getBoundingClientRect()
             pickerWrap.style.top = (cord.top + 25) + "px";
             pickerWrap.style.left = (cord.left - 200) + "px";
+            pickerWrap.style.zIndex = "100000";
             
             const preset = type === 'bg' ? 
                 [

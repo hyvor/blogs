@@ -10,6 +10,22 @@ import subdomainLogic from "./subdomainLogic";
 import { diff } from 'deep-object-diff';
 import merge from 'deepmerge'
 
+async function updatePost(postId, diff) {
+
+    if (diff.variants) {
+        for (let languageId in diff.variants) {
+            await api.patch(
+                subdomainLogic.values.subdomain, `/post/${postId}/variant`,
+                {...diff.variants[languageId], ...{language_id: languageId}}
+            )
+        }
+        delete diff.variants;
+    }
+
+    return await api.patch(subdomainLogic.values.subdomain, `/post/${postId}`, diff)
+
+}
+
 const postLogic = kea({
 
     key: props => props.id,
@@ -30,6 +46,7 @@ const postLogic = kea({
  
         loadPost: async () => {
             const response = await api.get(subdomainLogic.values.subdomain, `/post/${props.id}`);
+            console.log(response)
             actions.set(response);
         },
 
@@ -52,8 +69,22 @@ const postLogic = kea({
                 return false;
             }
 
-            const response = await api.patch(subdomainLogic.values.subdomain, `/post/${props.id}`, diff)
+            const response = await updatePost(props.id, diff);
+            // const response = await api.patch(subdomainLogic.values.subdomain, `/post/${props.id}`, diff)
             actions.setOriginal(response);
+        },
+
+        /**
+         * Used for forced saving/publishing/unpublishing (usually on button click)
+         */
+        forceSavePost: async ({onSave, update}) => {
+
+            const diff = {...selectors.getDiff(), ...update};
+
+            const response = await updatePost(props.id, diff);
+            actions.set(response)
+
+            typeof onSave === 'function' && onSave(response);
         },
 
         createVariant: async ({languageId, onCreate}) => {
@@ -67,19 +98,6 @@ const postLogic = kea({
             onCreate && onCreate();
 
         },
-
-        /**
-         * Used for forced saving/publishing/unpublishing (usually on button click)
-         */
-        forceSavePost: async ({onSave, update}) => {
-
-            const diff = {...selectors.getDiff(), ...update};
-            
-            const response = await api.patch(subdomainLogic.values.subdomain, `/post/${props.id}`, diff)
-            actions.set(response)
-
-            typeof onSave === 'function' && onSave(response);
-        }
 
     }),
 
@@ -112,7 +130,7 @@ const postLogic = kea({
     reducers: ({actions, props, selectors}) => ({
 
         // post's current state in the front-end
-        post: [{}, { 
+        post: [null, {
             set: (_, {obj}) => obj,
             updatePostValue: (state, {key, value}) => ({...state, ...{[key]: value}}),
             updatePostVariantValue: (state, {key, value, languageId}) => {
@@ -135,7 +153,7 @@ const postLogic = kea({
         }],
 
         // the really saved post in the back-end
-        postOriginal: [{}, {
+        postOriginal: [null, {
             set: (_, {obj}) => obj,
             setOriginal: (_, {obj}) => obj,
             addVariant: (state, {variant}) => {

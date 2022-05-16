@@ -7,7 +7,7 @@ use Illuminate\Database\Eloquent\Model;
 
 /**
  * This table is used for saving counted (or summed) data of any model
- * 
+ *
  * It uses polymorphic one-to-many relationships
  * (https://laravel.com/docs/8.x/eloquent-relationships#one-to-many-polymorphic-relations)
  */
@@ -20,9 +20,8 @@ class Count extends Model
         'value' => 'integer',
     ];
 
-    public function countable() 
+    public function countable()
     {
         $this->morphTo();
     }
-
 }

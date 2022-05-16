@@ -1,23 +1,21 @@
 <?php
+
 namespace App\Domains\Delivery\Twig;
 
 use App\Data\Enums\ThemeFileFolderEnum;
-use App\Domains\ThemeFiles\ThemeFilesRepository;
 use App\Domains\Language\LanguageRepository;
+use App\Domains\Theme\ThemeFilesRepository;
 use App\Models\Blog;
-use App\Models\BlogThemeFile;
 use App\Models\Language;
-use App\Models\LocalDev;
-use Symfony\Component\Yaml\Yaml;
 use Illuminate\Support\Str;
+use Symfony\Component\Yaml\Yaml;
 
-class TwigLanguage {
-
+class TwigLanguage
+{
     private array $languageStrings;
 
-    public function __construct(Blog $blog, Blog|LocalDev $themable, Language $language)
+    public function __construct(Blog $blog, Language $language)
     {
-        
         $fallback = LanguageRepository::getFallbackLanguage($blog, $language);
 
         $languageFileName = $language->code  . '.yaml';
@@ -27,7 +25,7 @@ class TwigLanguage {
         /**
          * Get the current language, fallback, and HB default
          */
-        $files = ThemeFilesRepository::getMultipleFiles($themable, [
+        $files = ThemeFilesRepository::getMultipleFiles($blog, [
             $languageFileName,
             $fallbackFileName,
             $defaultFileName,
@@ -50,7 +48,6 @@ class TwigLanguage {
         if (isset($files[$languageFileName]) && $languageFileName !== $defaultFileName) {
             $this->extendStrings($files[$languageFileName]);
         }
-
     }
 
     private function setStrings($file)
@@ -66,7 +63,7 @@ class TwigLanguage {
             if (isset($newStrings[$key])) {
                 $value = $newStrings[$key];
             }
-        } 
+        }
     }
 
     private function parseYaml(string $content)
@@ -74,14 +71,13 @@ class TwigLanguage {
         return Yaml::parse($content);
     }
 
-    public function get($key, $args) {
-
+    public function get($key, $args)
+    {
         $val = $this->languageStrings[$key] ?? '';
 
         if (isset($args[0])) {
             $val = str_replace('*', $args[0], $val);
         } else {
-
             $val = preg_replace_callback('/{(.+?)}/', function ($match) use ($args) {
                 /**
                  * Twig BUG: https://github.com/twigphp/Twig/issues/3475
@@ -89,14 +85,11 @@ class TwigLanguage {
                  * If the argument was authorName, $args has it as author_name now
                  */
                 $snakeParam = Str::snake($match[1]);
-                
+
                 return $args[$snakeParam] ?? '';
             }, $val);
-
         }
 
         return $val;
-
     }
-
 }

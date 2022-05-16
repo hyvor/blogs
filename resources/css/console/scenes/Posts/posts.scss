@@ -1,3 +1,11 @@
+.posts-not-ready {
+    display: flex;
+    width: 100%;
+    height: 100%;
+    align-items: center;
+    justify-content: center;
+}
+
 .posts-view {
     display:flex;
     height:100%;
@@ -103,7 +111,6 @@
     }
     .posts-loaded-wrap {
         animation: posts-loaded-wrap .3s;
-        padding: 15px;
         @keyframes posts-loaded-wrap {
             0% {opacity: 0;transform:translateY(10px)}
             100% {opacity: 1;transform:translateY(0)}
@@ -111,8 +118,8 @@
     }
     .posts-list-item {
         display: block;
-        padding: 15px 20px;
-        border-radius: 20px;
+        padding: 25px 30px;
+        border-left:3px solid transparent;
         position: relative;
 
         &:not(:last-child):after {
@@ -141,7 +148,8 @@
             background: $color-hover;
         }
         &.active {
-            background: $color-accent-light;
+            background: $color-accent-active;
+            border-color: $color-accent;
         }
 
 
@@ -160,8 +168,8 @@
                 color: $color-blue-dark;
             }
             &.draft {
-                background: #767676;
-                color: $color-text-white;
+                background: $color-purple-light;
+                color: $color-purple-dark;
             }
             &.published {
                 background: $color-green-light;
@@ -187,6 +195,18 @@
             padding: 2px 7px;
             border-radius: 20px;
             font-weight: 600;
+            margin-right:3px;
+            margin-bottom: 3px;
+            display: inline-block;
+        }
+
+        &.active {
+            .post-tag {
+                background: $color-accent-light;
+            }
+            .global-lang-tag {
+                background: $color-accent-light;
+            }
         }
     }
 
@@ -209,6 +229,7 @@
                 width:700px;
                 padding: 0 30px;
                 margin:auto;
+                max-width: 100%;
             }
             .status {
                 padding-bottom: 16px;
@@ -266,27 +287,9 @@
                 margin:auto;
                 font-size: 12px;
                 font-weight: 600;
-                display: flex;
                 align-items:center;
             }
-            #pm-navigator-wrap {
-                width:50%;
-                .node-item {
-                    padding: 2px 9px;
-                    display: inline-block;
-                    background: $color-card;
-                    border-radius: 20px;
-                    border: 1px solid $color-accent-light;
-                    margin-right:4px;
-                    cursor: pointer;
-                }
-                .pm-navigator {
-                    display: flex;
-                    overflow: auto;
-                }
-            }
             .right {
-                width:50%;
                 text-align: right;
             }
 
@@ -318,6 +321,12 @@
             overflow:auto;
             .pos-rel {
                 display:block; /** not flex, so that heading does not stick */
+            }
+            .post-editor-bottom {
+                position: fixed;
+                bottom: 0;
+                left: 0;
+                width: 100%;
             }
         }
 

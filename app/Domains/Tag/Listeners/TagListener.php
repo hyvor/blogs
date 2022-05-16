@@ -1,14 +1,8 @@
 <?php
+
 namespace App\Domains\Tag\Listeners;
 
-use App\Domains\User\Events\CacheShouldClearEvent;
-use App\Domains\Post\Events\PostPublishedEvent;
-use App\Domains\Route\PermalinkRepository;
-use App\Models\Tag;
 use App\Domains\Tag\Events\TagEvent;
-
-use Illuminate\Support\Facades\DB;
-use Carbon\Carbon;
 
 class TagListener
 {
@@ -20,7 +14,7 @@ class TagListener
     */
     public function __construct()
     {
-        // 
+        //
     }
 
     /*
@@ -36,11 +30,11 @@ class TagListener
 
         dd('Event Listener');
         $userInfo = $event->tag;
+
         return $userInfo;
     }
 
     public function subscribe($events)
     {
     }
-
 }

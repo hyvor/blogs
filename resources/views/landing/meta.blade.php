@@ -4,6 +4,7 @@
 
     $description = isset($description) ? $description : '';
     $canonical = isset($canonical) ? $canonical : '';
+    $image = $image ?? '';
 
 ?>
 

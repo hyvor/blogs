@@ -6,10 +6,10 @@ import Spinner from './Spinner';
  * status = stale|loading|success|error
  */
 export default function ActionButton({
-    className, 
+    className = '',
     status, 
     staleName, loadingName, successName, errorName,
-    staleOnClick, successOnClick, errorOnClick
+    staleOnClick = null, successOnClick = null, errorOnClick = null
 }) {
 
     let name;

@@ -106,11 +106,14 @@ class MarksTooltip {
                         }
                     })
                     input.focus()
+                    return
                 }
 
             } else {
                 toggleMark(type)(view.state, view.dispatch, view);
             }
+
+            view.focus();
         });
 
         this.items.push({

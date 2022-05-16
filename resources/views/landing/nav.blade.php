@@ -8,6 +8,7 @@
 
 		<div class="navbar-content">
 			<div class="navbar-nav">
+				<a class="nav-item nav-link" href="/themes">Themes</a>
 				<a class="nav-item nav-link" href="/docs">Docs</a>
 				<a class="nav-item nav-link" href="/pricing">Pricing</a>
 				<a class="nav-item nav-link" href="/console" data-flashload-skip>Console</a>

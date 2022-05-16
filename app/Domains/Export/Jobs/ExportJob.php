@@ -1,4 +1,5 @@
 <?php
+
 namespace App\Domains\Export\Jobs;
 
 use App\Data\Enums\ExportFormatEnum;
@@ -6,16 +7,16 @@ use App\Domains\Export\ExporterInterface;
 use App\Domains\Export\WordpressExporter;
 use Illuminate\Contracts\Queue\ShouldQueue;
 
-class ExportJob implements ShouldQueue {
-
+class ExportJob implements ShouldQueue
+{
     protected int $blogId;
     protected ExporterInterface $exporter;
 
-    public function __construct(int $blogId, ExportFormatEnum $format) 
+    public function __construct(int $blogId, ExportFormatEnum $format)
     {
         $this->blogId = $blogId;
 
-        $exporterClass = match($format) {
+        $exporterClass = match ($format) {
             ExportFormatEnum::WORDPRESS => WordpressExporter::class,
             ExportFormatEnum::JSON => JSONExporter::class
         };
@@ -23,8 +24,8 @@ class ExportJob implements ShouldQueue {
         $this->exporter = new $exporterClass($blogId);
     }
 
-    public function handle() {
+    public function handle()
+    {
         $file = $this->exporter->getFile();
     }
-
 }

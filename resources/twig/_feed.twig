@@ -28,10 +28,10 @@
                     <name>{{ author.name }}</name>
                     <uri>{{ author.url }}</uri>
                 </author>
-            {% endfor %}    
+            {% endfor %}
 
             {% for tag in post.tags %}
-                <category term="{{ tag.slug }}" label="{{ tag.name }}" />
+                <category term="{{ tag.slug }}" label="{{ tag.name }}"></category>
             {% endfor %}
 
             {% if post.canonical_url %}

@@ -17,10 +17,6 @@ export function Usage({subdomain}) {
                 data={data.usage.users}
             />
             <UsageBar 
-                name="Posts"
-                data={data.usage.posts}
-            />
-            <UsageBar 
                 name="Media Storage"
                 data={data.usage.media}
                 bytes={true}

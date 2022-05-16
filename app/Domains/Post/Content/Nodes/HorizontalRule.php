@@ -9,13 +9,6 @@ class HorizontalRule extends Node
 {
     public static $name = 'horizontal_rule';
 
-    public function addOptions()
-    {
-        return [
-            'HTMLAttributes' => [],
-        ];
-    }
-
     public function parseHTML()
     {
         return [
@@ -25,8 +18,8 @@ class HorizontalRule extends Node
         ];
     }
 
-    public function renderHTML($node, $HTMLAttributes = [])
+    public function renderHTML($node)
     {
-        return ['hr', HTML::mergeAttributes($this->options['HTMLAttributes'], $HTMLAttributes)];
+        return ['hr'];
     }
 }

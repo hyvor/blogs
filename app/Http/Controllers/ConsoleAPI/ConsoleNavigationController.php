@@ -1,35 +1,36 @@
 <?php
+
 namespace App\Http\Controllers\ConsoleAPI;
 
+use App\Data\Enums\NavigationTypeEnum;
+use App\Data\Objects\ConsoleAPI\NavigationObject;
+
+use App\Domains\Navigation\NavigationRepository;
+use App\Exceptions\TrustedException;
 use App\Http\Controllers\Controller;
+use App\Models\Blog;
 use Illuminate\Http\Request;
 
-use App\Exceptions\TrustedException;
-use App\Domains\Navigation\NavigationRepository;
-use App\Data\Objects\ConsoleAPI\NavigationObject;
-use App\Models\Blog;
-use App\Data\Enums\NavigationTypeEnum;
-
-
-class ConsoleNavigationController extends Controller {
-
-    public function getNavigations(Blog $blog) {
-
+class ConsoleNavigationController extends Controller
+{
+    public function getNavigations(Blog $blog)
+    {
         $getData = NavigationRepository::getNavigations($blog->id)
             ->map(function ($navigation) {
-            return new NavigationObject($navigation);
-        });
+                return new NavigationObject($navigation);
+            });
+
         return response()->json($getData);
     }
 
-    public function createNavigation(Request $request , Blog $blog) {
-
+    public function createNavigation(Request $request, Blog $blog)
+    {
         $getHeaderCount = NavigationRepository::getHeaderCount();
         $getFooterCount = NavigationRepository::getFooterCount();
 
         $headerCount = $getHeaderCount < 8;
         $footerCount = $getFooterCount < 8;
-        
+
         // $request->validate([
         //     'navigation_name' => 'required|string',
         //     'navigation_url' => 'required|string',
@@ -39,37 +40,40 @@ class ConsoleNavigationController extends Controller {
         $navigationUrl = $request->input('navigation_url');
         $type = NavigationTypeEnum::from($request->input('type'));
 
-        if($type->value == 'header'){
-            $getSort =  NavigationRepository::getHeaderSort();
-            if($getSort == null){
+        if ($type->value == 'header') {
+            $getSort = NavigationRepository::getHeaderSort();
+            if ($getSort == null) {
                 $sort = 1;
-            }else{
-                $sort = $getSort['sort'] + 1;
-            }
-        }
-        
-        if($type->value == 'footer'){
-            $getSort =  NavigationRepository::getFooterSort();
-            if($getSort == null){
-                $sort = 1;
-            }else{
+            } else {
                 $sort = $getSort['sort'] + 1;
             }
         }
 
-        if($headerCount){
+        if ($type->value == 'footer') {
+            $getSort = NavigationRepository::getFooterSort();
+            if ($getSort == null) {
+                $sort = 1;
+            } else {
+                $sort = $getSort['sort'] + 1;
+            }
+        }
+
+        if ($headerCount) {
             $createNavigation = NavigationRepository::createNavigation($blog->id, $navigationName, $navigationUrl, $type, $sort);
+
             return response()->json(new NavigationObject($createNavigation));
-        }else if($footerCount){
+        } elseif ($footerCount) {
             $createNavigation = NavigationRepository::createNavigation($blog->id, $navigationName, $navigationUrl, $type, $sort);
+
             return response()->json(new NavigationObject($createNavigation));
-        }else{
+        } else {
             // return new TrustedException('You cant have more than 8 links', TrustedException::ERROR_INVALID_INPUT);
             abort(404);
         }
     }
 
-    public function updateNavigation(Request $request, Blog $blog) {
+    public function updateNavigation(Request $request, Blog $blog)
+    {
         // $request->validate([
         //     'navigation_name' => 'required|string',
         //     'navigation_url' => 'required|string',
@@ -82,29 +86,35 @@ class ConsoleNavigationController extends Controller {
         $type = NavigationTypeEnum::from($request->input('type'));
 
         $updateNavigation = NavigationRepository::updateNavigation($id, $navigationName, $navigationUrl, $type);
+
         return response()->json($updateNavigation);
     }
 
-    public function deleteNavigation(Request $request) {
+    public function deleteNavigation(Request $request)
+    {
         $id = $request->route('id');
         $deleteNavigation = NavigationRepository::deleteNavigation($id);
+
         return response()->json($deleteNavigation);
     }
 
-    public function updateSort(Request $request){
+    public function updateSort(Request $request)
+    {
         $id = $request->route('id');
         $navigationSort = $request->input('navigationSort');
 
         $updateSort = NavigationRepository::updateDestinationSort($id, $navigationSort);
+
         return response()->json($updateSort);
     }
 
-    public function updateSourceSort(Request $request){
+    public function updateSourceSort(Request $request)
+    {
         // dd('hi bro daddy');
         $id = $request->route('id');
         $navigationSort = $request->input('sort');
         $updateSort = NavigationRepository::updateSourceSort($id, $navigationSort);
+
         return response()->json($updateSort);
     }
-
 }

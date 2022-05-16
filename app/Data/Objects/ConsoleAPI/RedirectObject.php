@@ -11,7 +11,7 @@ class RedirectObject
     public int $blog_id;
     public string $path;
     public string $to;
-    public int $type; 
+    public int $type;
 
     public function __construct(Redirect $redirect)
     {

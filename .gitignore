@@ -8,6 +8,7 @@ vendor
 .env
 .env.backup
 .phpunit.result.cache
+.php-cs-fixer.cache
 docker-compose.override.yml
 Homestead.json
 Homestead.yaml
@@ -18,6 +19,7 @@ composer.lock
 /.idea
 /.vscode
 Caddyfile
+*Type.ts
 
 /cypress/screenshots/
 cypress/videos/

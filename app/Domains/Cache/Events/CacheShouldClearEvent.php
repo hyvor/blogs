@@ -1,4 +1,5 @@
 <?php
+
 namespace App\Domains\Cache\Events;
 
 use App\Data\Objects\DeliveryAPI\DeliveryAPIResponseObject;
@@ -7,10 +8,10 @@ use App\Models\Blog;
 use Illuminate\Foundation\Events\Dispatchable;
 use Illuminate\Queue\SerializesModels;
 
-class CacheShouldClearEvent 
+class CacheShouldClearEvent
 {
-
-    use Dispatchable, SerializesModels;
+    use Dispatchable;
+    use SerializesModels;
 
     /**
      * A path
@@ -33,11 +34,8 @@ class CacheShouldClearEvent
      */
     public function __construct(Blog $blog, string $path)
     {
-
         $this->blog = $blog;
         $this->path = $path;
         $this->responseObject = DeliveryRepository::getResponseObject($blog, $path);
-
     }
-
 }

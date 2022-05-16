@@ -350,4 +350,8 @@
 
     }
 
+    @media screen and (max-width: $breakpoint) {
+        display: block;
+    }
+
 }

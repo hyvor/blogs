@@ -18,7 +18,7 @@ class UserBlogObject
     public UserBlogUserObject $user;
 
     /**
-     * @var User $user should be fetched with the following relations
+     * @var User should be fetched with the following relations
      * 'blog', 'blog.subscriptions'
      * If not fetched with those relations, this function will create new queries to fetch them
      */

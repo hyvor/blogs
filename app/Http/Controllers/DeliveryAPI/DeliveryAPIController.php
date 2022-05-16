@@ -2,10 +2,9 @@
 
 namespace App\Http\Controllers\DeliveryAPI;
 
-use App\Data\Objects\DeliveryAPI\DeliveryAPIResponseObject;
-use Illuminate\Http\Request;
-use App\Models\Blog;
 use App\Domains\Delivery\DeliveryRepository;
+use App\Models\Blog;
+use Illuminate\Http\Request;
 
 class DeliveryAPIController
 {

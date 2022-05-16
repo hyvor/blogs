@@ -1,3 +1,6 @@
+$breakpoint: 1200px;
+
+
 @import '../normalize';
 @import '../font';
 @import './common';
@@ -12,6 +15,7 @@
 
 @import './Editor.scss';
 
+@import './scenes/Welcome.scss';
 @import './scenes/BlogPreview.scss';
 @import './scenes/Billing.scss';
 @import './scenes/Theme.scss';
@@ -84,3 +88,7 @@ body {
     } 
 
 } */
+
+
+
+@import './Mobile.scss';

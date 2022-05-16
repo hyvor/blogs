@@ -13,5 +13,4 @@ class Language extends Model
     {
         $this->hasOne(Language::class, 'id', 'fallback_language_id');
     }
-
 }

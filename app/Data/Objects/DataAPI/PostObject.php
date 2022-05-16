@@ -7,14 +7,13 @@ use App\Domains\Route\PermalinkRepository;
 use App\Models\Blog;
 use App\Models\Language;
 use App\Models\Post;
-use App\Models\PostVariant;
 
 /**
- * 
+ *
  * Post Object in the DataAPI is in fact a Post Variant object
  * We name it as a Post Object and include all post-related data there without language distinction
  * so that theme developer does not have to write logic to find the correct version in the current language
- * 
+ *
  */
 
 class PostObject
@@ -38,7 +37,7 @@ class PostObject
     public ?string $description;
     public ?string $featured_image_url;
     public ?string $canonical_url;
-    
+
     public LanguageObject $language;
     public string $code_head;
     public string $code_foot;
@@ -50,7 +49,6 @@ class PostObject
 
     public function __construct(Post $post, Blog $blog, Language $language)
     {
-
         $variants = $post->variants;
         $variant = $variants->firstWhere('language_id', $language->id);
 
@@ -67,7 +65,8 @@ class PostObject
         $this->words = $variant->words ?? 0;
         $this->title = $variant->title;
         $this->description = $variant->description;
-        $this->featured_image_url = 'https://attila.peteramende.de/content/images/size/w1920/2021/01/solen-feyissa-cAwVP9odQoI-unsplash.jpg' ?? $post->featured_image_url;
+        $this->featured_image_url = $post->featured_image_url;
+        $this->featured_image_url = 'https://picsum.photos/820/360';
         $this->canonical_url = $post->canonical_url;
 
 
@@ -78,11 +77,12 @@ class PostObject
         $this->language = new LanguageObject($language);
         $this->variants = $variants
             ->where('language_id', '!=', $language->id)
-            ->map(function($variant) use ($post, $blog) {
+            ->map(function ($variant) use ($post, $blog) {
                 $variantLanguage = $variant->language;
                 $url = PermalinkRepository::getPostPermalink($post, $blog, $variantLanguage);
+
                 return new VariantObject($variantLanguage, $url);
-        })->toArray();
+            })->toArray();
 
         $this->tags = $post->tags->map(function ($tag) use ($blog, $language) {
             return new TagObject($tag, $blog, $language);
@@ -91,6 +91,5 @@ class PostObject
         $this->authors = $post->authors->map(function ($author) use ($blog, $language) {
             return new AuthorObject($author, $blog, $language);
         })->toArray();
-
     }
 }

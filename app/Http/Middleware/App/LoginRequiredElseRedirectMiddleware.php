@@ -1,4 +1,5 @@
 <?php
+
 namespace App\Http\Middleware\App;
 
 use Closure;
@@ -7,13 +8,12 @@ use Hyvor\HyvorConnecter\Redirect;
 use Hyvor\HyvorConnecter\User;
 use Illuminate\Http\Request;
 
-class LoginRequiredElseRedirectMiddleware {
-
+class LoginRequiredElseRedirectMiddleware
+{
     public function handle(Request $request, Closure $next)
     {
-
         $user = Login::check();
-        if (!$user) {
+        if (! $user) {
             return Redirect::to('login');
         }
 
@@ -21,5 +21,4 @@ class LoginRequiredElseRedirectMiddleware {
 
         return $next($request);
     }
-
 }
