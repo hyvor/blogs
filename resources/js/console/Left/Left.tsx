@@ -1,7 +1,7 @@
-import React, {FC, ReactNode} from 'react';
+import React, {FC, ReactNode, useEffect, useRef} from 'react';
 import BlogsSelector from './BlogsSelector';
 
-import { useValues } from 'kea';
+import {useActions, useValues} from 'kea';
 import subdomainLogic from '../logic/subdomainLogic';
 import NavLink from '../ReusableComponents/NavLink';
 import blogsLogic from '../logic/blogsLogic';
@@ -27,6 +27,7 @@ import {
     canAccessPosts, canAccessSettings,
     canAccessTheme
 } from "../services/permissions";
+import {router} from "kea-router";
 
 export default function Left() {
 
@@ -39,16 +40,6 @@ export default function Left() {
     const { blog, blog: { subscription: currentSubscription } } : UserBlog  = findBlogBySubdomain(subdomain);
 
     const trialDaysDiff = blog.is_on_trial ?  dayjs.unix(blog.trial_ends_at).diff(dayjs(), 'd') : 0;
-
-
-    function LeftLink({path, icon, name, extra = null, permission} : LeftLinkProps) {
-        const perm = typeof permission === 'function' ? permission() : true;
-        return <NavLink
-            href={`/console/${subdomain}${path}`}
-            exact={path === ''}
-            className={!perm ? "no-perm" : ""}
-        >{icon}<span className="name">{name}</span>{extra}</NavLink>
-    }
     
     return <div id="left">
         <div id="left-header" className="box">
@@ -119,6 +110,36 @@ export default function Left() {
         </div>
     </div>
 }
+
+function LeftLink({path, icon, name, extra = null, permission} : LeftLinkProps) {
+
+    const { subdomain } = useValues(subdomainLogic);
+    const { push } = useActions(router);
+    const perm = typeof permission === 'function' ? permission() : true;
+
+    const ref = useRef(null);
+
+    useEffect(() => {
+
+        /**
+         * Redirect the user to Blog Preview when accessing unauthorized routes via the direct URL
+         * Just a simple check
+         */
+        const link = ref.current
+        if (link.classList.contains('no-perm') && link.classList.contains('active')) {
+            push('/console/' + subdomain);
+        }
+
+    }, []);
+
+    return <NavLink
+        ref={ref}
+        href={`/console/${subdomain}${path}`}
+        exact={path === ''}
+        className={!perm ? "no-perm" : ""}
+    >{icon}<span className="name">{name}</span>{extra}</NavLink>
+}
+
 
 type LeftLinkProps = {
     path: string,
