@@ -99,5 +99,5 @@ it('create variant ( If language id is null ) ', function () {
             'languageId' => null,
         ])
         ->assertStatus(500);
-
 });
+

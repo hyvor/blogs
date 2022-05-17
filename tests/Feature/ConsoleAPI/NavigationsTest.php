@@ -6,6 +6,15 @@ use App\Domains\Navigation\NavigationRepository;
 
 // php artisan test  --filter 'NavigationsTest'
 
+beforeEach(function() {
+    $this->id = 1;
+    $this->name = 'About';
+    $this->url = 'about';
+    $this->type = 'header';
+    $this->primaryLanguage = 1;
+    $this->secondaryLanguage = 2;
+});
+
 it('fetches navigation', function () {
     $this
         ->callConsoleApi('GET', 'navigation')
@@ -13,11 +22,10 @@ it('fetches navigation', function () {
 });
 
 it('creates a navigation success', function () {
-    $data = 'about';
     $this
         ->callConsoleApi('POST', 'navigation', [
-            'navigation_name' => $data,
-            'navigation_url' => $data,
+            'name' =>  $this->name,
+            'url' => $this->url,
             'type' => 'header',
         ])
         ->assertOk();
@@ -26,133 +34,159 @@ it('creates a navigation success', function () {
 it('creating navigation fails on empty fields', function () {
     $this
         ->callConsoleApi('POST', 'navigation')
-        ->assertStatus(500);
+        ->assertStatus(422);
 });
 
 it('creates a navigation fails if (name) is null', function () {
-    $data = 'about';
     $this
         ->callConsoleApi('POST', 'navigation', [
-            'navigation_name' => null,
-            'navigation_url' => $data,
+            'name' => null,
+            'url' => $this->url,
             'type' => 'header',
         ])
-        ->assertStatus(500);
+        ->assertStatus(422);
 });
 
 it('creates a navigation fails if (url) is null', function () {
-    $data = 'about';
     $this
         ->callConsoleApi('POST', 'navigation', [
-            'navigation_name' => $data,
-            'navigation_url' => null,
+            'name' => $this->name,
+            'url' => null,
             'type' => 'header',
         ])
-        ->assertStatus(500);
+        ->assertStatus(422);
 });
 
 it('creates a navigation fails if (type) is not header or footer', function () {
-    $data = 'about';
     $this
         ->callConsoleApi('POST', 'navigation', [
-            'navigation_name' => $data,
-            'navigation_url' => null,
+            'name' => $this->name,
+            'url' => $this->url,
             'type' => 'wrong',
         ])
-        ->assertStatus(500);
+        ->assertStatus(422);
 });
 
 it('creates a navigation fails if there are more than 8 header navigations.', function () {
-    $getHeaderCount = NavigationRepository::getHeaderCount();
+    $getHeaderCount = NavigationRepository::getHeaderCount(blog());
     $headerCount = $getHeaderCount < 8;
-    $data = 'about';
     if ($headerCount) {
         $this
             ->callConsoleApi('POST', 'navigation', [
-                'navigation_name' => $data,
-                'navigation_url' => $data,
+                'name' => $this->name,
+                'url' => $this->url,
                 'type' => 'header',
             ])
-            ->assertStatus(500);
+            ->assertStatus(200);
     } else {
         $this->assertFalse(false);
     }
 });
 
 it('creates a navigation fails if there are more than 8 footer navigations.', function () {
-    $getFooterCount = NavigationRepository::getFooterCount();
+    $getFooterCount = NavigationRepository::getFooterCount(blog());
     $footerCount = $getFooterCount < 8;
-    $data = 'about';
     if ($footerCount) {
         $this
             ->callConsoleApi('POST', 'navigation', [
-                'navigation_name' => $data,
-                'navigation_url' => $data,
+                'name' => $this->name,
+                'url' => $this->url,
                 'type' => 'header',
             ])
-            ->assertStatus(500);
+            ->assertStatus(200);
     } else {
         $this->assertFalse(false);
     }
 });
 
-it('deleting navigation success', function () {
-    $id = 1;
+it('deleting all the navigation data if language is in primary language.', function () {
     $this
-        ->callConsoleApi('DELETE', 'navigation/'.$id)
+        ->callConsoleApi('DELETE', 'navigation/'. $this->id, [
+            'languageId' => $this->primaryLanguage,
+        ])
+        ->assertOk();
+});
+
+it('delete only the variant data if language is not in primary language.', function () {
+    $this
+        ->callConsoleApi('DELETE', 'navigation/'.$this->id, [
+            'languageId' => $this->secondaryLanguage,
+        ])
         ->assertOk();
 });
 
 it('updating a navigation success', function () {
-    $id = 1;
-    $data = 'new';
     $this
-        ->callConsoleApi('PUT', 'navigation/'.$id, [
-            'navigation_name' => $data,
-            'navigation_url' => $data,
+        ->callConsoleApi('PUT', 'navigation/'.$this->id, [
+            'languageId' => 1,
+            'name' => $this->name,
+            'url' => $this->url,
             'type' => 'header',
         ])
         ->assertOk();
 });
 
 it('updating a navigation fails if (name) is null', function () {
-    $id = 1;
-    $data = 'new';
     $this
-        ->callConsoleApi('PUT', 'navigation/'.$id, [
-            'navigation_name' => null,
-            'navigation_url' => $data,
+        ->callConsoleApi('PUT', 'navigation/'.$this->id, [
+            'name' => null,
+            'url' => $this->url,
             'type' => 'header',
         ])
-        ->assertStatus(500);
+        ->assertStatus(422);
 });
 
 it('updating a navigation fails if (url) is null', function () {
-    $id = 1;
-    $data = 'new';
     $this
-        ->callConsoleApi('PUT', 'navigation/'.$id, [
-            'navigation_name' => $data,
-            'navigation_url' => null,
+        ->callConsoleApi('PUT', 'navigation/'.$this->id, [
+            'name' => $this->name,
+            'url' => null,
             'type' => 'header',
         ])
-        ->assertStatus(500);
+        ->assertStatus(422);
+});
+
+it('updating a navigation fails if (type) is null', function () {
+    $this
+        ->callConsoleApi('PUT', 'navigation/'.$this->id, [
+            'name' => $this->name,
+            'url' => $this->url,
+            'type' => null,
+        ])
+        ->assertStatus(422);
 });
 
 it('update the sort', function () {
-    $id = 1;
     $this
-        ->callConsoleApi('PUT', '/navigation/sort/'.$id, [
+        ->callConsoleApi('PUT', '/navigation/sort/'.$this->id, [
             'navigationSort' => 2,
         ])
         ->assertOk();
 });
 
 it('update the navigation source', function () {
-    $id = 1;
     $this
-        ->callConsoleApi('PUT', '/navigation/source/'.$id, [
+        ->callConsoleApi('PUT', '/navigation/source/'.$this->id, [
             'sort' => 2,
         ])
         ->assertOk();
+});
+
+it('create variant ( It should not be the default language )', function () {
+    $this
+        ->callConsoleApi('POST', '/navigation/variant', [
+            'id' => $this->id,
+            'languageId' => $this->secondaryLanguage,
+        ])
+        ->assertOk();
+});
+
+it('create variant ( If language id is null ) ', function () {
+    $id = 1;
+    $this
+        ->callConsoleApi('POST', '/navigation/variant', [
+            'id' => 1,
+            'languageId' => null,
+        ])
+        ->assertStatus(422);
 });

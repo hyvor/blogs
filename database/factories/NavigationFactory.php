@@ -19,7 +19,6 @@ class NavigationFactory extends Factory
     {
         return [
             'blog_id' => config('test.blog_id'),
-            'name' => $this->faker->word,
             'url' => $this->faker->url(),
             'type' => 'footer',
         ];

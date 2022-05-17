@@ -4,7 +4,7 @@ use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\Schema;
 
-class CreateNavigationsTable extends Migration
+return new class extends Migration
 {
     /**
      * Run the migrations.
@@ -13,17 +13,20 @@ class CreateNavigationsTable extends Migration
      */
     public function up()
     {
-        Schema::create('navigations', function (Blueprint $table) {
+        Schema::create('navigation_variants', function (Blueprint $table) {
             $table->id();
             $table->timestamps();
 
             // connections
-            $table->bigInteger('blog_id')->index();
+            $table->bigInteger('navigation_id');
+            $table->bigInteger('language_id');
 
-            $table->string('url');
-
-            $table->enum('type', ['header', 'footer']);
-            $table->integer('sort')->nullable();
+            // data
+            $table->string('name');
+            
+            // indexes
+            $table->index('navigation_id');
+            $table->index('language_id');
         });
     }
 
@@ -34,6 +37,6 @@ class CreateNavigationsTable extends Migration
      */
     public function down()
     {
-        Schema::dropIfExists('navigations');
+        Schema::dropIfExists('navigation_variants');
     }
-}
+};
