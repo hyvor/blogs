@@ -30,5 +30,6 @@ export type UserBlogUser = {
 
     id: number;
     role: UserRole;
+    posts_count: number;
 
 };

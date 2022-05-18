@@ -1,6 +1,6 @@
-import React, { useEffect, useState } from 'react';
+import React, {ReactNode, useEffect, useState} from 'react';
 import Select from '../ReusableComponents/Select';
-import { components } from 'react-select';
+import {components, GroupBase, SingleValueProps} from 'react-select';
 import { useValues } from 'kea';
 import postsLogic from '../logic/postsLogic';
 import subdomainLogic from '../logic/subdomainLogic';
@@ -11,14 +11,26 @@ import { Calendar } from 'react-bootstrap-icons';
 import dayjs from 'dayjs';
 import onOutsideClick from '../../helpers/onOutsideClick';
 import ReactDatePicker from 'react-datepicker';
+import {UserBlog} from "../objects/userblog";
+import {Filters} from "../types";
 
-export default function PostsFilters({ filters, changeFilter }) {
+interface PostsFiltersProps {
+    filters: Filters,
+    changeFilter: Function
+}
+
+interface SelectOption {
+    value: any,
+    label: ReactNode
+}
+
+export default function PostsFilters({ filters, changeFilter } : PostsFiltersProps) {
 
     const { subdomain } = useValues(subdomainLogic)
-    const { counts } = useValues(postsLogic({subdomain}))
+    const { counts } = useValues(postsLogic({subdomain})) as { counts: PostCounts }
     const { findBlogBySubdomain } = useValues(blogsLogic)
 
-    const blog = findBlogBySubdomain(subdomain)
+    const blog: UserBlog = findBlogBySubdomain(subdomain)
 
     const statusOptions = [
         { value: 'all', label: <FilterLabel name="All" count={blog.blog.posts_count} /> },
@@ -28,11 +40,11 @@ export default function PostsFilters({ filters, changeFilter }) {
         { value: 'featured', label: <FilterLabel name="Featured" count={counts && counts.status.featured} />},
     ]
 
-    const [authorsOptions, setAuthorsOptions] = useState([
+    const [authorsOptions, setAuthorsOptions] = useState<Array<SelectOption>>([
         { value: 'all', label: <FilterLabel name="All" count={blog.blog.posts_count} /> },
         { value: 'you', label: <FilterLabel name="You" count={blog.user.posts_count} /> },
     ])
-    const [tagsOptions, setTagsOptions] = useState([
+    const [tagsOptions, setTagsOptions] = useState<Array<SelectOption>>([
         { value: 'all', label: <FilterLabel name="All" count={blog.blog.posts_count} /> },
     ]);
 
@@ -51,11 +63,11 @@ export default function PostsFilters({ filters, changeFilter }) {
         if (!counts) return;
 
         const authorsCopy = [...authorsOptions];
-        counts.authors.forEach(({id, slug, posts_count}) => {
+        counts.authors.forEach(({id, name, posts_count}) => {
             if (id === blog.user.id) return;
             authorsCopy.push({
                 value: id,
-                label: <FilterLabel name={slug} count={posts_count} />
+                label: <FilterLabel name={name} count={posts_count} />
             })
         })
         setAuthorsOptions(authorsCopy);
@@ -71,10 +83,10 @@ export default function PostsFilters({ filters, changeFilter }) {
 
     }, [counts]);
 
-    function handleChange(name, v) {
+    function handleChange(name: string, v: SelectOption) {
         changeFilter(name, v.value);
     }
-    function handleDateChange(start, end) {
+    function handleDateChange(start: any, end: any) {
         if (start === 'date') {
             setCurrentDateOption(end.value);
             const text = end.value; // something like last-7
@@ -98,14 +110,13 @@ export default function PostsFilters({ filters, changeFilter }) {
                 end = null
             }
         }
-        console.log(start, end)
 
         changeFilter({
             startDate: start,
             endDate: end
         });
     }
-    function updateSearch(e) {
+    function updateSearch(e: any) {
         if (filters.search !== e.target.value)
             changeFilter('search', e.target.value)
     }
@@ -122,32 +133,42 @@ export default function PostsFilters({ filters, changeFilter }) {
             <PostsFilter name="date" value={currentDateOption} options={dateOptions} onChange={handleDateChange} />
         </div>
         <div className="post-search">
-            <input 
-                className="input" 
-                value={search} 
+            <input
+                className="input"
+                value={search}
                 onChange={(e) => setSearch(e.target.value)}
                 onKeyDown={(e) => e.key === 'Enter' && updateSearch(e)}
                 onBlur={updateSearch}
                 placeholder="Search..."
-            ></input>
+            />
         </div>
     </div>
 
 }
 
-function FilterLabel( {name, count} ) {
+function FilterLabel( {name, count} : {name: string, count: number} ) {
 
     return <span className="filter-label">
         <span className="name">{name}</span>
-        <span className="count">{ numberFormatter(count || 0) }</span>
+        <span className="count">{ numberFormatter(count) }</span>
     </span>
 
 }
- 
 
-function PostsFilter( { name, value, options, onChange } ) {
 
-    const SingleValue = p => {
+interface PostsFilterProps {
+    name: string,
+    value: string | number,
+    options: Array<{
+        value: string | number;
+        label: string | ReactNode
+    }>,
+    onChange: Function, //(name: string, value: string | number) => {}
+}
+
+function PostsFilter( { name, value, options, onChange } : PostsFilterProps ) {
+
+    const SingleValue = (p : any) => {
         const name = p.data.label.props ? p.data.label.props.name : p.data.label;
         return <components.SingleValue {...p}>
           {name}
@@ -162,10 +183,11 @@ function PostsFilter( { name, value, options, onChange } ) {
 
             <Select 
                 value={valueCalculated}
-                type="small" 
+                type="small"
                 options={options}
-                onChange={(v) => onChange(name, v)}
+                onChange={(v: SelectOption) => onChange(name, v)}
 
+                // for testing
                 defaultMenuIsOpen={false}
 
                 
@@ -185,14 +207,14 @@ function PostsFilter( { name, value, options, onChange } ) {
     </div>   
 }
 
-function CustomDate({ onChange }) {
+function CustomDate({ onChange }: {onChange: Function}) {
 
     const [ isOpened, setIsOpened ] = useState(true);
 
     const [ startDate, setStartDate ] = useState(dayjs().subtract(7, 'day').toDate());
     const [ endDate, setEndDate ] = useState(dayjs().toDate());
 
-    function handleChange([start, end]) {
+    function handleChange([start, end]: [Date, Date]) {
         setStartDate(start)
         setEndDate(end)
 
@@ -201,10 +223,6 @@ function CustomDate({ onChange }) {
             setIsOpened(false)
         }
     }
-
-    useEffect(() => {
-
-    }, []);
 
     return <span className="custom-date">
         <span className="custom-date-icon" onClick={() => setIsOpened(!isOpened)}>
