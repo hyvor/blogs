@@ -1,5 +1,4 @@
 import { kea } from "kea";
-import type { sceneLogicType } from "./sceneLogicType";
 const routes = {
     '/console': 'welcome',
     '/console/new(/:type)': 'new',
@@ -11,13 +10,13 @@ const routes = {
     '/console/:subdomain/theme(/:type)': 'theme'
 
 };
-const sceneLogic = kea<sceneLogicType>({
+const sceneLogic = kea({
     actions: {
-        setScene: (scene: string, params: object | null) => ({ scene, params }),
+        setScene: (scene, params) => ({ scene, params }),
     },
     reducers: {
         scene: [
-            null as string | null,
+            null,
             {
                 setScene: (_, payload) => payload.scene,
             },
