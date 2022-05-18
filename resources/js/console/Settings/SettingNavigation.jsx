@@ -10,7 +10,7 @@ import Toast from '../ReusableComponents/Toast';
 import NoResults from '../ReusableComponents/NoResults';
 import { Popup, PopupBodyDefault, PopupConfirm, PopupFooterDoubleButton, PopupHeaderDefault } from '../ReusableComponents/Popup';
 import Input from '../ReusableComponents/Input';
-import { DragDropContext, Droppable, Draggable, resetServerContext } from 'react-beautiful-dnd';
+// import { DragDropContext, Droppable, Draggable, resetServerContext } from 'react-beautiful-dnd';
 import axios from "axios";
 import { components } from 'react-select';
 import { ReactSortable } from "react-sortablejs";
@@ -18,6 +18,8 @@ import { list } from 'postcss';
 
 
 export default function SettingNavigation(props) {
+
+    return null;
 
     const subdomain = subdomainLogic.values.subdomain;
     const navigationLogicBuilt = navigationLogic({subdomain})
