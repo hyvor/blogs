@@ -5,6 +5,8 @@ namespace Tests\Feature\ConsoleAPI;
 use App\Domains\Navigation\NavigationRepository;
 
 // php artisan test  --filter 'NavigationsTest'
+// assert unprosseble
+// popup model
 
 beforeEach(function() {
     $this->id = 1;
