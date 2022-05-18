@@ -8,7 +8,7 @@ import Input from '../../ReusableComponents/Input';
 import { Popup, PopupBodyDefault, PopupConfirm, PopupFooterDoubleButton, PopupHeaderDefault } from '../../ReusableComponents/Popup';
 
 
-export default function CreatePopup({type}) 
+export default function CreatePopup({type})
 {
     const subdomain = subdomainLogic.values.subdomain;
     const navigationLogicBuilt = navigationLogic({subdomain})

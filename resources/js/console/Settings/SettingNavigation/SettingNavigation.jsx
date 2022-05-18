@@ -20,8 +20,8 @@ import CreatePopup from './CreateNavigation';
 import Navigation from './NavigationTable';
 
 
-export default function SettingNavigation(props) {
-
+export default function SettingNavigation(props) 
+{
     const subdomain = subdomainLogic.values.subdomain;
     const navigationLogicBuilt = navigationLogic({subdomain})
     const { navigation, loadAjax, createAjax } = useValues(navigationLogicBuilt)
@@ -33,7 +33,6 @@ export default function SettingNavigation(props) {
 
         NavigationId= parseInt(NavigationId)
         destinationId= parseInt(destinationId)
-
         updateItemNumber({ NavigationId, destinationId });
         updateSourceNav({ destinationId, sourceId });
 
@@ -122,7 +121,7 @@ export default function SettingNavigation(props) {
                                                                                     <div {...provided.dragHandleProps}>
                                                                                         <HddStackFill size={10} />
                                                                                     </div>
-                                                                                    <Navigation id ={navigation.id} name = {navigation.name} url = {navigation.url} type = {navigation.type}/>
+                                                                                    <Navigation key={navigation} navigation={navigation} subdomain ={subdomain}/>
                                                                                 </div>
                                                                                 // <Navigation id ={navigation.id} name = {navigation.name} url = {navigation.url} type = {navigation.type} />
                                                                             }
@@ -208,7 +207,7 @@ export default function SettingNavigation(props) {
                                                                                         <div {...provided.dragHandleProps}>
                                                                                             <HddStackFill size={10} />
                                                                                         </div>
-                                                                                        <Navigation id ={navigation.id} name = {navigation.name} url = {navigation.url} type = {navigation.type}/>
+                                                                                        <Navigation key={navigation} navigation={navigation} subdomain ={subdomain}/>
                                                                                     </div>
                                                                                         // <Navigation id ={navigation.id} name = {navigation.name} url = {navigation.url} type = {navigation.type}  />
                                                                                     }

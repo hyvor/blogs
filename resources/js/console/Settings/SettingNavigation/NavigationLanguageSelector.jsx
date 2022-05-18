@@ -3,14 +3,14 @@ import { useActions, useValues } from 'kea';
 import { Check, Clock, Dot, Plus } from 'react-bootstrap-icons';
 import subdomainLogic from '../../logic/subdomainLogic';
 import languagesLogic from '../../logic/languagesLogic';
-import navigationLogic from '../../logic/tagsLogic';
+import navigationLogic from '../../logic/navigationLogic';
 
 
 
 export default function TagLanguageSelector({id, subdomain, languages, variants, currentLanguageId, onChange }) 
 {
-    const tagLogicBuilt = tagsLogic({subdomain})
-    const { createVariant} = useActions(tagLogicBuilt)
+    const navigationLogicBuilt = navigationLogic({subdomain})
+    const { createVariant} = useActions(navigationLogicBuilt)
 
     createVariant({
         navigationId: id,

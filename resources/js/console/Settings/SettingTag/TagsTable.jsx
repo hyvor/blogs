@@ -15,8 +15,6 @@ import TagLanguageSelector from './TagLanguageSelector';
 
 export default function Tags ({tag, subdomain}) 
 {
-    // I should create the update section. and also I have to find the error which is occurring in the logic.
-
     const tagLogicBuilt = tagsLogic({subdomain})
     const { remove , updateData} = useActions(tagLogicBuilt)
     const { updateDataAjax } = useValues(tagLogicBuilt)
