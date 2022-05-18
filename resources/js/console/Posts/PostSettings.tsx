@@ -12,12 +12,12 @@ import DatePicker from 'react-datepicker';
 import Loader from '../ReusableComponents/Loader';
 
 import SelectTags from './PostTags';
-import SelectAuthors from './PostUsers';
 import postTagLogic from '../logic/posts/postTagLogic';
 
 import { usePostActions, usePostValues } from './usePost';
 import {Post} from "../objects/post";
 import {Media} from "../objects/media";
+import PostAuthors from "./PostAuthors";
 
 type PostSettingsProps = {
     isSettingsOpen: boolean;
@@ -133,7 +133,7 @@ export default function PostSettings({ isSettingsOpen, settingsViewRef, id, curr
                             description="The unique part of the URL to identify this post"
                         >
                             {/* <input className="input" value="Ishini Avindya" onChange={() => {}}></input> */}
-                            <SelectAuthors postId = {post.id}/>
+                            <PostAuthors post={post} languageId={currentLanguageId} />
                         </Setting>
 
                         <Setting 

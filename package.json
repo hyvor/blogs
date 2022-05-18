@@ -36,7 +36,19 @@
         "dayjs": "^1.11.2",
         "deep-object-diff": "^1.1.7",
         "deepmerge": "^4.2.2",
+<<<<<<< HEAD
+=======
+<<<<<<< HEAD
+<<<<<<< HEAD
+        "kea": "^2.6.0",
+        "kea-loaders": "^0.5.1",
+        "kea-router": "^1.0.6",
+=======
+>>>>>>> master
         "kea": "^2.6",
+=======
+        "kea": "^2.6.0",
+>>>>>>> 3371e395061f54446598ef5c8a4709df83cbab35
         "kea-router": "^1.0.7",
         "prosemirror-codemark": "^0.3.6",
         "prosemirror-dropcursor": "^1.4.0",
