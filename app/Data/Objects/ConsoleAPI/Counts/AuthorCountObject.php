@@ -1,20 +1,22 @@
 <?php
 
-namespace App\Data\Objects\ConsoleAPI\UserBlog;
+namespace App\Data\Objects\ConsoleAPI\Counts;
 
-use App\Data\Enums\UserRoleEnum;
 use App\Models\User;
 
-class UserBlogUserObject
+class AuthorCountObject
 {
+
     public int $id;
-    public UserRoleEnum $role;
+    public string $name;
     public int $posts_count;
 
+    // called from BlogCountsRepository with custom column names
     public function __construct(User $user)
     {
         $this->id = $user->id;
-        $this->role = $user->role;
+        $this->name = $user->name;
         $this->posts_count = $user->posts_count;
     }
+
 }

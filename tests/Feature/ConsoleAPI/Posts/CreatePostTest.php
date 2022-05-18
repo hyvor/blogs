@@ -2,6 +2,8 @@
 
 namespace Tests\Feature\ConsoleAPI\Posts;
 
+use App\Domains\User\UserRepository;
+use App\Models\PostAuthor;
 use App\Models\PostVariant;
 use Illuminate\Testing\Fluent\AssertableJson;
 
@@ -36,4 +38,21 @@ it('creates a page', function () {
                 ->where('is_page', true)
                 ->etc()
         );
+});
+
+it('adds the author', function() {
+
+    $post = $this
+        ->callConsoleApi('POST', '/post')
+        ->assertOk()
+        ->json();
+
+    $user = UserRepository::getUserByBlogIdAndHyvorUserId(config('test.blog_id'), config('test.hyvor_user_id'));
+
+    expect(
+        PostAuthor::where('post_id', $post['id'])
+            ->where('user_id', $user->id)
+            ->first()
+    )->toBeInstanceOf(PostAuthor::class);
+
 });
