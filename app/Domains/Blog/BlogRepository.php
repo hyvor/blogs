@@ -17,26 +17,17 @@ class BlogRepository
         string $name,
         string $subdomain,
         BlogTypeEnum $type = BlogTypeEnum::DEFAULT
-    // ) : ? User {
-    ) {
-        $blog = self::getBlogBySubdomain($subdomain);
+    ) : Blog {
 
-        if ($blog) {
-            throw new TrustedException(
-                'This subdomain is already taken, please choose a different subdomain',
-                TrustedException::ERROR_INVALID_INPUT
-            );
-        }
-
-        // create the blog
         $blog = Blog::create([
-            'hyvor_user_id' => $userId, // I changed here from user_id to hyvor_user_id
+            'hyvor_user_id' => $userId,
             'subdomain' => $subdomain,
             'type' => $type->value,
         ]);
 
         BlogVariant::create([
             'blog_id' => $blog->id,
+            'language_id' => $blog->languages[0]->id,
             'name' => $name
         ]);
 
@@ -111,32 +102,5 @@ class BlogRepository
                 ]);
             }
         }
-    }
-
-
-    public static function updateBlogFeatureImage($blog, $file): bool
-    {
-        $media = MediaRepository::upload($blog->id, $file);
-        $featureImageUrl = PermalinkRepository::getMediaPermalink($media, $blog);
-        // dd($featureImageUrl);
-        // $featureImageId = $media->id;
-
-        return Blog::find($blog->id)
-            ->update([
-                'featured_image_url' => $featureImageUrl,
-            ]);
-    }
-
-    public static function updateBlogIcon($blog, $file): bool
-    {
-        $media = MediaRepository::upload($blog->id, $file);
-        $iconUrl = PermalinkRepository::getMediaPermalink($media, $blog);
-        // dd($iconUrl);
-        // $icon = $media->id;
-
-        return Blog::find($blog->id)
-            ->update([
-                'icon_url' => $iconUrl,
-            ]);
     }
 }

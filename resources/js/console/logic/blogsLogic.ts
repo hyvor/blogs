@@ -22,6 +22,7 @@ interface Actions {
     addBlog: (userBlog: UserBlog) => {userBlog: UserBlog},
     setBlogs: (blogs: Array<UserBlog>) => {blogs: Array<UserBlog>}
     createBlog: (props: CreateBlogProps) => {}
+    saveBlogSort: () => {}
 }
 
 type blogsLogicType = MakeLogicType<Values, Actions>
@@ -36,13 +37,19 @@ const blogsLogic = kea<blogsLogicType>({
     ajax: ({ actions, values } : blogsLogicType) => ({
         createBlog: async ({ name, subdomain, isDev} : CreateBlogProps) => {
 
-            const res: AxiosResponse<UserBlog> =  await axios.post(
-                getUserEndpoint('/blog'),
-                {name, subdomain, isDev}
-            );
+            const data : any = {name};
+
+            if (isDev) {
+                data.is_dev = isDev;
+            } else {
+                data.subdomain = subdomain;
+            }
+
+            const res: AxiosResponse<UserBlog> =  await axios.post(getUserEndpoint('/blog'), data);
             const userBlog = res.data;
             actions.addBlog(userBlog);
             subdomainLogic.actions.setSubdomain(userBlog.blog.subdomain, null, true);
+
         },
         saveBlogsSort: async () => {
             const ids = values.blogs.map(b => b.blog.id);

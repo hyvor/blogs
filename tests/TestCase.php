@@ -42,7 +42,7 @@ abstract class TestCase extends BaseTestCase
         return $this->call($method, URL::to("/api/console/v0/blog/$subdomain/$endpoint"), $data);
     }
 
-    protected function callConsoleUserApi(string $method, string $endpoint, $data = null)
+    protected function callConsoleUserApi(string $method, string $endpoint, $data = []) : TestResponse
     {
         return $this->call($method, URL::to('/api/console/v0' . $endpoint), $data);
     }

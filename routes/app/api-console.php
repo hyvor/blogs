@@ -15,12 +15,6 @@ use App\Http\Controllers\ConsoleAPI\ConsoleTagController;
 use App\Http\Controllers\ConsoleAPI\ConsoleRouteController;
 
 use App\Http\Controllers\ConsoleAPI\ConsoleViewController;
-
-
-
-// use App\Http\Middleware\App\ConsoleAPI\BlogAccessMiddleware;
-// use App\Http\Middleware\App\LoginRequiredMiddleware;
-
 use App\Http\Controllers\ConsoleAPI\ConsoleUrlDataController;
 use App\Http\Controllers\ConsoleAPI\ConsoleWebhookController;
 
@@ -31,17 +25,8 @@ use App\Http\Middleware\App\ConsoleAPI\ResourceAccessMiddleware;
 use App\Http\Middleware\App\SubdomainMiddleware;
 use Illuminate\Support\Facades\Route;
 
-// Route::middleware(LoginRequiredElseRedirectMiddleware::class)
-//     ->get('/console/{any?}', ConsoleViewController::class)
-//     ->where('any', '.*');
-
 Route::get('/console/{any?}', ConsoleViewController::class)
     ->where('any', '.*');
-
-
-// this is an internal API
-// Route::prefix('/api/console')
-    // add middleware
 
 /**
  * This is an internal API for user-level functions
@@ -119,6 +104,9 @@ Route::prefix('/api/console/v0/blog/{subdomain}')
             Route::post('/post/{id}/variant', [ConsolePostController::class, 'createPostVariant']);
             Route::patch('/post/{id}/variant', [ConsolePostController::class, 'updatePostVariant']);
             Route::delete('/post/{id}/variant', [ConsolePostController::class, 'deletePostVariant']);
+
+            Route::patch('/post/{id}/tags', [ConsolePostController::class, 'updateTags']);
+            Route::patch('/post/{id}/authors', [ConsolePostController::class, 'updateAuthors']);
         });
 
         // media CRD
@@ -136,19 +124,11 @@ Route::prefix('/api/console/v0/blog/{subdomain}')
 
         // tags CRUD
         Route::get('/tags', [ConsoleTagController::class, 'getTags']);
+        Route::get('/tags/search', [ConsoleTagController::class, 'searchTags']);
         Route::post('/tag', [ConsoleTagController::class, 'createTag']);
         Route::put('/tag/{id}', [ConsoleTagController::class, 'updateTag']);
         Route::delete('/tag/{id}', [ConsoleTagController::class, 'deleteTag']);
         Route::post('/tag/variant', [ConsoleTagController::class, 'createTagVariant']);
-
-        Route::get('/postTags/{id}', [ConsoleTagController::class, 'selectedPostTag']);
-
-        // post_tag CRUD
-        // Route::get('/getTagList', [ConsoleTagController::class, 'getPostTags']);
-        // Route::post('/createPostTag', [ConsoleTagController::class, 'createPostTag']);
-        // Route::get('/getPostTag', [ConsoleTagController::class, 'getPostTag']);
-        // Route::delete('/removePostTag', [ConsoleTagController::class, 'deleteTagVariant']);
-
 
         // comments
         Route::get('/comments/moderate', []);
@@ -193,6 +173,7 @@ Route::prefix('/api/console/v0/blog/{subdomain}')
 
         // users CRUD
         Route::get('/users', [ConsoleUserController::class, 'getAuthors']);
+        Route::get('/users/search', [ConsoleUserController::class, 'searchUsers']);
         Route::post('/user', [ConsoleUserController::class, 'createAuthor']);
         Route::patch('/user/{id}', [ConsoleUserController::class, 'updateAuthor']); 
         Route::delete('/user/{id}', [ConsoleUserController::class, 'deleteAuthor']); 

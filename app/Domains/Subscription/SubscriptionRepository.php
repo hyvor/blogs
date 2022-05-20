@@ -59,7 +59,7 @@ class SubscriptionRepository
             $currentSubscription->paddle_plan === $planId &&
             $currentSubscription->quantity === $quantity
         ) {
-            throw new TrustedException('Cannot update to the same plan', TrustedException::ERROR_INVALID_INPUT);
+            throw new TrustedException('Cannot update to the same plan', TrustedException::ERROR_UNPROCESSABLE);
         }
 
         if ($currentSubscription->paddle_plan === $planId) {
@@ -114,7 +114,7 @@ class SubscriptionRepository
             // for PRO plan
             throw new TrustedException(
                 "$planName plan does not support monthly billing",
-                TrustedException::ERROR_INVALID_INPUT
+                TrustedException::ERROR_UNPROCESSABLE
             );
         }
 
@@ -124,7 +124,7 @@ class SubscriptionRepository
         ) {
             throw new TrustedException(
                 "Team plan quantity is out of range. $quantity received",
-                TrustedException::ERROR_INVALID_INPUT
+                TrustedException::ERROR_UNPROCESSABLE
             );
         }
 

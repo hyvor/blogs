@@ -140,13 +140,13 @@ class ConsolePostController extends Controller
         $language = LanguageRepository::getLanguageById($blog, $languageId);
 
         if (! $language) {
-            throw new TrustedException('Language not found', TrustedException::ERROR_INVALID_INPUT);
+            throw new TrustedException('Language not found', TrustedException::ERROR_UNPROCESSABLE);
         }
 
         $variant = PostRepository::getPostVariantByPostIdAndLanguageId($post->id, $language->id);
 
         if ($variant) {
-            throw new TrustedException('Variant already exists', TrustedException::ERROR_INVALID_INPUT);
+            throw new TrustedException('Variant already exists', TrustedException::ERROR_UNPROCESSABLE);
         }
 
         $variant = PostRepository::createPostVariant($post, $language);
@@ -169,7 +169,7 @@ class ConsolePostController extends Controller
         $language = LanguageRepository::getLanguageById($blog, $languageId);
 
         if (! $language) {
-            throw new TrustedException('Language not found', TrustedException::ERROR_INVALID_INPUT);
+            throw new TrustedException('Language not found', TrustedException::ERROR_UNPROCESSABLE);
         }
 
         $variant = PostRepository::getPostVariantByPostIdAndLanguageId($post->id, $languageId);
@@ -213,13 +213,13 @@ class ConsolePostController extends Controller
         $language = LanguageRepository::getLanguageById($blog, $languageId);
 
         if (! $language) {
-            throw new TrustedException('Language not found', TrustedException::ERROR_INVALID_INPUT);
+            throw new TrustedException('Language not found', TrustedException::ERROR_UNPROCESSABLE);
         }
 
         if ($language->is_primary) {
             throw new TrustedException(
                 'Primary language variant cannot be deleted. Delete the post instead',
-                TrustedException::ERROR_INVALID_INPUT
+                TrustedException::ERROR_UNPROCESSABLE
             );
         }
 

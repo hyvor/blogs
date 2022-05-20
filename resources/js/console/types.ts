@@ -12,3 +12,4 @@ export interface Filters {
     endDate: Date | null,
     search: string
 }
+

@@ -27,7 +27,7 @@ class DataAPIMiddleware
         $blog = $this->blogRepo->bySubdomain($subdomain);
 
         if (! $blog) {
-            throw new DataAPIException("Subdomain not found ($subdomain)", TrustedException::ERROR_INVALID_INPUT);
+            throw new DataAPIException("Subdomain not found ($subdomain)", TrustedException::ERROR_UNPROCESSABLE);
         }
 
         /**
