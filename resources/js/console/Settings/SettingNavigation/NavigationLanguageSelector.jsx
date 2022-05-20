@@ -6,15 +6,15 @@ import languagesLogic from '../../logic/languagesLogic';
 import navigationLogic from '../../logic/navigationLogic';
 
 
-
 export default function TagLanguageSelector({id, subdomain, languages, variants, currentLanguageId, onChange }) 
 {
     const navigationLogicBuilt = navigationLogic({subdomain})
-    const { createVariant} = useActions(navigationLogicBuilt)
+    const { createVariant } = useActions(navigationLogicBuilt)
 
     createVariant({
         navigationId: id,
-        languageId: currentLanguageId
+        languageId: currentLanguageId,
+        name: null
     });
 
     return <div>

@@ -96,7 +96,12 @@ export default function SettingNavigation(props)
                             </div>
                             {
                                 navigation.length > 0 ?
-                                <div>
+                                <div className="global-table-view">
+                                    <div className="global-table-header-three">      
+                                        <div className="table-head-item table-header-margin">Name</div> 
+                                        <div className="table-head-item table-header-margin">Url</div>
+                                        <div></div>
+                                    </div>
                                     <Droppable droppableId="droppable-1">
                                         {(provided, _ ) => (
                                             <div
@@ -121,7 +126,9 @@ export default function SettingNavigation(props)
                                                                                     <div {...provided.dragHandleProps}>
                                                                                         <HddStackFill size={10} />
                                                                                     </div>
-                                                                                    <Navigation key={navigation} navigation={navigation} subdomain ={subdomain}/>
+                                                                                    {/* <div className="global-table-body"> */}
+                                                                                        <Navigation key={navigation} navigation={navigation} subdomain ={subdomain}/>
+                                                                                    {/* </div> */}
                                                                                 </div>
                                                                                 // <Navigation id ={navigation.id} name = {navigation.name} url = {navigation.url} type = {navigation.type} />
                                                                             }
@@ -179,7 +186,12 @@ export default function SettingNavigation(props)
                                 </div>
                                 {
                                     navigation.length > 0 && (
-                                        <div>
+                                        <div className="global-table-view">
+                                            <div className="global-table-header-three">      
+                                                <div className="table-head-item table-header-margin">Name</div> 
+                                                <div className="table-head-item table-header-margin">Url</div>
+                                                <div></div>
+                                            </div>
                                             <Droppable droppableId="droppable-1">
                                                 {(provided, _ ) => (
                                                     <div

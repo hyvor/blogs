@@ -42,6 +42,14 @@ class ConsoleNavigationController extends Controller
         $url = $request->input('url');
         $type = NavigationTypeEnum::from($request->input('type'));
 
+        if ($name == null) {
+            throw new TrustedException('Name should not be empty.');
+        }
+
+        if ($url == null) {
+            throw new TrustedException('url should not be empty.');
+        }
+
         if ($type->value == 'header') {
             $getSort = NavigationRepository::getHeaderSort();
             if ($getSort == null) {

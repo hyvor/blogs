@@ -45,6 +45,12 @@ export default function CreatePopup({type})
     function submitNavigationData (e) {
         console.log(type)
         e.preventDefault();
+        if (!name) {
+            return toast.error("Name should not be empty");
+        }
+        if (!url) {
+            return toast.error("Url should not be empty");
+        }
         create({
             name: name,
             url: url,

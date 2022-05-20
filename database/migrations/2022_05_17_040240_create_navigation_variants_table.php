@@ -22,7 +22,7 @@ return new class extends Migration
             $table->bigInteger('language_id');
 
             // data
-            $table->string('name');
+            $table->string('name')->nullable();
             
             // indexes
             $table->index('navigation_id');

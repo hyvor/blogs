@@ -17,6 +17,7 @@ $breakpoint: 1200px;
 
 @import './scenes/Welcome.scss';
 @import './scenes/BlogPreview.scss';
+@import './scenes/Comments.scss';
 @import './scenes/Billing.scss';
 @import './scenes/Theme.scss';
 @import './scenes/Posts/posts.scss';
@@ -51,6 +52,16 @@ body {
         padding: 0 25px;
         display:flex;
     }
+}
+
+.load-language{
+    position: absolute;
+    top: 50%;
+    left: 265px;
+    right: 0;
+    bottom: 0;
+    overflow: auto;
+    padding: 15px;
 }
 
 /* .setting-users {
