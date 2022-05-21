@@ -6,6 +6,8 @@ import subdomainLogic from "./subdomainLogic";
 import { UserBlog } from "../objects/userblog";
 import {appConfig} from "../helpers";
 
+import type { blogsLogicType } from "./blogsLogicType";
+
 interface Values {
     blogs: Array<UserBlog>,
     findBlogBySubdomain: (subdomain: string) => UserBlog,

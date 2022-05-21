@@ -20,10 +20,16 @@ const subdomainLogic = kea({
                 var path = old ? location.pathname.replace('/console/' + old, '') : '';
                 router.actions.push("/console/" + subdomain + path);
             }
-            
+
             // pre-load blog settings
-            blogLogic({subdomain}).actions.load();
-            postsLogic({subdomain}).actions.loadPostsList();
+            const blogLogicInst = blogLogic({subdomain})
+            blogLogicInst.mount()
+            blogLogicInst.actions.load();
+
+            // pre-load posts
+            const postsLogicInst = postsLogic({subdomain})
+            postsLogicInst.mount();
+            postsLogicInst.actions.loadPostsList();
 
             /**
              * This is set because there are some places that

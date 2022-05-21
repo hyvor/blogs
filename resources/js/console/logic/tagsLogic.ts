@@ -3,11 +3,14 @@ import api from "../lib/api";
 import {Tag} from "../types";
 
 
+import type { tagsLogicType } from "./tagsLogicType";
+
+
 export interface IDKeyedTags {
     [key: number]: Tag
 }
 
-const tagsLogic = kea({
+const tagsLogic = kea<tagsLogicType>({
 
     key: props => props.subdomain,
     path: (key: string) => [key, 'tags'],

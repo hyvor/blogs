@@ -1,21 +1,19 @@
-import { kea } from 'kea'
+import { kea, key, path, actions, reducers } from 'kea';
 import {User} from "../types";
+
+import type { usersLogicType } from "./usersLogicType";
 
 export interface IDKeyedUsers {
     [key: number]: User
 }
 
-const usersLogic = kea({
-
-    key: props => props.subdomain,
-
-    path: (key: string) => [key, 'users'],
-
-    actions: {
+const usersLogic = kea<usersLogicType>([
+    key(props => props.subdomain),
+    path((key: string) => [key, 'users']),
+    actions({
         addUsers: (users: Array<User>) => ({users})
-    },
-
-    reducers: {
+    }),
+    reducers({
 
         users: [
             {},
@@ -31,9 +29,8 @@ const usersLogic = kea({
             }
         ],
 
-    },
-
-})
+    })
+])
 
 export default usersLogic
 

@@ -1,9 +1,12 @@
-import { kea } from "kea";
+import {actions, kea, key, path} from "kea";
+import {ajax} from 'kea-ajax';
 import api from "../lib/api";
 import {Blog, Language, PostCounts, Tag, User} from "../types";
 import usersLogic from "./usersLogic";
 import tagsLogic from "./tagsLogic";
 import languagesLogic from "./languagesLogic";
+
+import type { blogLogicType } from "./blogLogicType";
 
 interface BlogResponse {
     blog: Blog,
@@ -13,20 +16,19 @@ interface BlogResponse {
     languages: Array<Language>
 }
 
-const blogLogic = kea({
+const blogLogic = kea<blogLogicType>([
 
-    key: props => props.subdomain,
+    key((props: {subdomain: string}) => props.subdomain),
+    path((key) => [key, 'blog']),
 
-    path: (key : string) => [key, 'blog'],
-
-    actions: ({values}) => ({
+    actions(({values}) => ({
         setBlog: (blog: Blog) => ({blog}),
         /*setOriginal: (blog) => ({blog}),
         updateBlogData: (key, value) => ({key, value}),
         discardChanges: (keys) => ({keys, original: values.blogOriginal}),*/
-    }),
+    })),
 
-    ajax: ({actions, selectors, props} : any) => ({
+    ajax(({actions, selectors, props}) => ({
 
         load: async () => {
             const data : BlogResponse = await api.get(props.subdomain, '/blog');
@@ -44,7 +46,7 @@ const blogLogic = kea({
             languagesLogicInst.actions.setLanguages(data.languages);
 
             actions.setBlog(data.blog);
-        },
+        }
         /*createVariant: async ({languageId}) => {
             // console.log(languageId)
             const blog = await api.post(props.subdomain, '/blog/variant', {
@@ -59,9 +61,9 @@ const blogLogic = kea({
             actions.setOriginal(blog);
         },*/
 
-    }),
+    }))
 
-    reducers: {
+   // reducers: {
 
 
 
@@ -82,7 +84,7 @@ const blogLogic = kea({
             } 
         }],*/
 
-    },
+    // },
 
     /*selectors: {
 
@@ -104,6 +106,6 @@ const blogLogic = kea({
 
     },*/
 
-});
+]);
 
 export default blogLogic;
