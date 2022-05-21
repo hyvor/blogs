@@ -1,23 +1,40 @@
 import axios, {AxiosResponse} from "axios";
-import { kea } from "kea";
+import {kea, MakeLogicType} from "kea";
 import { getUserEndpoint } from "../lib/api";
 import subdomainLogic from "./subdomainLogic";
 
 import { UserBlog } from "../objects/userblog";
-import type { blogsLogicType } from "./blogsLogicType";
 import {appConfig} from "../helpers";
+
+interface Values {
+    blogs: Array<UserBlog>,
+    findBlogBySubdomain: (subdomain: string) => UserBlog,
+    createBlogAjax: any
+}
+
+interface CreateBlogProps {
+    name: string,
+    subdomain: string,
+    isDev?: boolean
+}
+
+interface Actions {
+    addBlog: (userBlog: UserBlog) => {userBlog: UserBlog},
+    setBlogs: (blogs: Array<UserBlog>) => {blogs: Array<UserBlog>}
+    createBlog: (props: CreateBlogProps) => {}
+}
+
+type blogsLogicType = MakeLogicType<Values, Actions>
 
 const blogsLogic = kea<blogsLogicType>({
 
     actions: {
-        addBlog: (userBlog: UserBlog) => ({ userBlog }),
-        setBlogs: (blogs: Array<UserBlog>) => ({ blogs }),
+        addBlog: (userBlog) => ({ userBlog }),
+        setBlogs: (blogs) => ({ blogs }),
     },
 
     ajax: ({ actions, values } : blogsLogicType) => ({
-        createBlog: async (
-            { name, subdomain, isDev} :
-            { name: string, subdomain: string, isDev?: boolean}) => {
+        createBlog: async ({ name, subdomain, isDev} : CreateBlogProps) => {
 
             const res: AxiosResponse<UserBlog> =  await axios.post(
                 getUserEndpoint('/blog'),
@@ -42,11 +59,12 @@ const blogsLogic = kea<blogsLogicType>({
             }
         ]
     },
+
     selectors: {
         findBlogBySubdomain: [
             (s) => [s.blogs],
-            (blogs) => {
-                return sub => blogs.find(b => b.blog.subdomain === sub);
+            (blogs: Array<UserBlog>) => {
+                return (sub : string) => blogs.find(b => b.blog.subdomain === sub);
             }
         ]
     }

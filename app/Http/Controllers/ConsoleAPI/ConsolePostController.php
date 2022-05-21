@@ -5,11 +5,13 @@ namespace App\Http\Controllers\ConsoleAPI;
 use App\Data\Objects\ConsoleAPI\Post\PostObject;
 use App\Data\Objects\ConsoleAPI\Post\PostVariantObject;
 use App\Domains\Language\LanguageRepository;
+use App\Domains\Post\PostAuthorRepository;
 use App\Domains\Post\PostRepository;
 use App\Exceptions\TrustedException;
 use App\Http\Controllers\Controller;
 use App\Models\Blog;
 use App\Models\Post;
+use App\Models\PostAuthor;
 use App\Models\User;
 use Illuminate\Http\Request;
 
@@ -63,10 +65,12 @@ class ConsolePostController extends Controller
         return response()->json($pages);
     }
 
-    public function createPost(Request $request, Blog $blog)
+    public function createPost(Request $request, Blog $blog, User $user)
     {
         $isPage = (bool) $request->input('is_page');
         $post = PostRepository::createPost($blog, $isPage);
+
+        PostAuthorRepository::create($post->id, $user->id);
 
         return response()->json(new PostObject($post, $blog));
     }

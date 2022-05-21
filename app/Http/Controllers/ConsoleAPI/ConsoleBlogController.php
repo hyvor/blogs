@@ -19,7 +19,7 @@ class ConsoleBlogController extends Controller
 
     public function getPostsCounts(Blog $blog)
     {
-        return response()->json(BlogCountsRepository::getPostsCounts($blog->id));
+        return response()->json(BlogCountsRepository::getPostsCounts($blog));
     }
 
     /*

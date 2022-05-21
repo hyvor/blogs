@@ -111,12 +111,11 @@ textarea.input {
         padding: 10px;
     }
     .react-select__option {
-        border-radius:20px;
         transition:.05s background;
         cursor: pointer;
         font-size:12px;
         padding:6px 12px;
-        
+        border-radius: 20px;
     }
     .react-select__option--is-focused {
         background: $color-hover;
@@ -125,7 +124,7 @@ textarea.input {
         }
     }
     .react-select__option--is-selected {
-        background: $color-accent-light;
+        background: $color-accent-active;
         color: $color-text;
         &:active {
             background: $color-accent-light;
@@ -150,6 +149,10 @@ textarea.input {
     .react-select__value-container {
         padding: 9px 15px;
         padding-right: 0;
+        &.react-select__value-container--is-multi.react-select__value-container--has-value {
+            padding-top: 5px;
+            padding-bottom: 5px;
+        }
     }
     &.react-select-small {
         .react-select__value-container {
@@ -159,6 +162,25 @@ textarea.input {
             padding-right: 4px;
         }
     }
+
+    .react-select__multi-value {
+        border-radius: 20px;
+        background: $color-accent-light;
+        overflow: hidden;
+        margin-left: 0;
+        .react-select__multi-value__remove {
+            padding-left:2px;
+            cursor: pointer;
+            svg {
+                width: 12px;
+            }
+            &:hover {
+                background: $color-red;
+                color: $color-red-dark;
+            }
+        }
+    }
+
 }
 
 
