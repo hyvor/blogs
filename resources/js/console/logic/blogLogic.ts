@@ -31,15 +31,15 @@ const blogLogic = kea({
         load: async () => {
             const data : BlogResponse = await api.get(props.subdomain, '/blog');
 
-            const usersLogicInst = usersLogic.build({subdomain: props.subdomain}, false)
+            const usersLogicInst = usersLogic.build({subdomain: props.subdomain})
             usersLogicInst.mount();
             usersLogicInst.actions.addUsers(data.users);
 
-            const tagsLogicInst = tagsLogic.build({subdomain: props.subdomain}, false)
+            const tagsLogicInst = tagsLogic.build({subdomain: props.subdomain})
             tagsLogicInst.mount();
             tagsLogicInst.actions.addTags(data.tags);
 
-            const languagesLogicInst = languagesLogic.build({subdomain: props.subdomain}, false)
+            const languagesLogicInst = languagesLogic.build({subdomain: props.subdomain})
             languagesLogicInst.mount();
             languagesLogicInst.actions.setLanguages(data.languages);
 
