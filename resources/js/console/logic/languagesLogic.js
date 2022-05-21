@@ -5,7 +5,7 @@ const languagesLogic = kea({
 
     key: props => props.subdomain,
 
-    path: key => ['languages', key],
+    path: key => [key, 'languages'],
 
     actions: {
         setLanguages: (langs) => ({langs}),
@@ -57,13 +57,14 @@ const languagesLogic = kea({
         getLanguageById: [
             s => [s.languages],
             languages => id => languages.find(l => l.id == id)
+        ],
+
+        primaryLanguage: [
+            s => [s.languages],
+            languages => languages.find(l => l.is_primary === true)
         ]
 
     },
-
-    events: ({actions}) => ({
-        afterMount: actions.load
-    })
 
 });
 

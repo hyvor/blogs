@@ -14,6 +14,33 @@ use Illuminate\Database\Eloquent\Collection;
 
 class TagRepository
 {
+
+    /**
+     * Get tags of a blog.
+     *
+     * @param $blog
+     * @param int $limit
+     * @param int $offset
+     * @return Collection<Tag>
+     */
+    public static function getTags($blog, int $limit, int $offset = 0): Collection
+    {
+        $language = LanguageRepository::getPrimaryLanguage($blog);
+
+        $tags = Tag::where('blog_id', '=', $blog->id)
+            ->join('tag_variants', function ($join) use ($language) {
+                $join->on('tag_variants.tag_id', '=', 'tags.id');
+                $join->where('tag_variants.language_id', '=', $language->id);
+            })
+            ->select('tags.*')
+            ->limit($limit)
+            ->offset($offset)
+            ->latest()
+            ->get();
+
+        return $tags;
+    }
+
     public static function getTagByBlogIdAndIdentifier(int $blogId, ?int $id, ?string $slug): ?Tag
     {
         $tag = Tag::where('blog_id', $blogId);
@@ -75,30 +102,6 @@ class TagRepository
         $total = $builder->count();
 
         return new CollectionWithTotal($tags, $total);
-    }
-
-
-    /*
-    *
-    * ConsoleAPI Settings->Tags
-    *
-    */
-    public static function getTags($blog, int $limit, int $offset): Collection
-    {
-        $language = LanguageRepository::getPrimaryLanguage($blog);
-
-        $tags = Tag::where('blog_id', '=', $blog->id)
-            ->join('tag_variants', function ($join) use ($language) {
-                $join->on('tag_variants.tag_id', '=', 'tags.id');
-                $join->where('tag_variants.language_id', '=', $language->id);
-            })
-            ->select('tags.*')
-            ->limit($limit)
-            ->offset($offset)
-            ->latest()
-            ->get();
-
-        return $tags;
     }
 
     public static function createTag(

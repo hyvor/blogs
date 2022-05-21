@@ -17,9 +17,6 @@ class BlogVariantObject
     {
         $language = $blogVariant->language;
 
-        $this->id = $blogVariant->id;
-        $this->blog_id = $blogVariant->blog_id;
-
         $this->language_id = $language->id;
 
         $this->name = $blogVariant->name;

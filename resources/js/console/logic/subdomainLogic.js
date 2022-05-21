@@ -21,7 +21,6 @@ const subdomainLogic = kea({
                 router.actions.push("/console/" + subdomain + path);
             }
             
-            
             // pre-load blog settings
             blogLogic({subdomain}).actions.load();
             postsLogic({subdomain}).actions.loadPostsList();

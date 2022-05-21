@@ -32,6 +32,7 @@
     "dependencies": {
         "@joeattardi/emoji-button": "^4.6.4",
         "@react-forked/dnd": "^14.0.2",
+        "@reduxjs/toolkit": "^1.8.1",
         "codemirror": "^5.65.1",
         "dayjs": "^1.11.0",
         "deep-object-diff": "^1.1.7",
@@ -53,7 +54,7 @@
         "react-color": "^2.19.3",
         "react-datepicker": "^4.7.0",
         "react-dom": "^18.0.0",
-        "react-redux": "^7.2.6",
+        "react-redux": "^7.2.8",
         "react-select": "^5.2.2",
         "react-sortablejs": "^6.1.1",
         "react-switch": "^6.0.0",

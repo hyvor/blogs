@@ -76,8 +76,7 @@ Route::prefix('/api/console/v0/blog/{subdomain}')
     Route::middleware('role:owner|admin|editor|writer|contributor')->group(function() {
 
         // blog
-        Route::get('/blog', [ConsoleBlogController::class, 'getBlog']);
-        Route::get('/blog/post-counts', [ConsoleBlogController::class, 'getPostsCounts']);
+        Route::get('/blog', [ConsoleBlogController::class, 'getBlogData']);
 
         // Blog General CRUD 
         Route::post('/blog/variant', [ConsoleBlogController::class, 'createBlogVariant']);

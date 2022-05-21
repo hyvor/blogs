@@ -2,6 +2,7 @@
 
 namespace App\Models;
 
+use App\Data\Enums\BlogHostingAtEnum;
 use App\Data\Enums\BlogTypeEnum;
 use App\Models\Concerns\Countable;
 use Hyvor\JsonMeta\Definer;
@@ -21,6 +22,7 @@ class Blog extends Model
 
     protected $casts = [
         'type' => BlogTypeEnum::class,
+        'hosting_at' => BlogHostingAtEnum::class
     ];
 
     // meta

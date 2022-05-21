@@ -8,7 +8,6 @@ import PostsFilters from './PostsFilters';
 import NoResults from '../ReusableComponents/NoResults';
 import PostsListRow from './PostsListRow';
 import NoPost from "./NoPost";
-import languagesLogic from "../logic/languagesLogic";
 
 export default function Posts( { postId } : { postId: number | null } ) {
 
@@ -22,8 +21,6 @@ export default function Posts( { postId } : { postId: number | null } ) {
         loadPostsListMore, createPost,
         changeFilter
     } = useActions(postLogicSubdomain)
-
-    const { loadAjax: languageLoadAjax } = useValues(languagesLogic({subdomain}))
 
     function handleScroll(e: React.UIEvent<HTMLDivElement>) {
         var el = e.currentTarget;
@@ -40,50 +37,46 @@ export default function Posts( { postId } : { postId: number | null } ) {
         createPost();
     }
 
-    return languageLoadAjax.status === 'loading' ?
-        <div className="posts-not-ready box">
-            <Loader size={40} />
-        </div>
-        : <div className="posts-view">
-            <div id="posts-selector" className="box box-left">
-                <div className="middle-heading">
-                    <div>
-                        Posts
-                    </div>
-                    <button
-                        className="button small"
-                        onClick={handleNew}
-                    >+ New</button>
+    return <div className="posts-view">
+        <div id="posts-selector" className="box box-left">
+            <div className="middle-heading">
+                <div>
+                    Posts
                 </div>
-                <PostsFilters filters={filters} changeFilter={changeFilter} />
-                <div className="posts-list" onScroll={handleScroll}>
-                    {
-                        loadPostsListAjax.status === 'loading' ?
-                            <div className="posts-loading"><Loader/></div> :
-                            <div className="posts-loaded-wrap">
-                                {
-                                    postsList.length ?
-                                        postsList.map((id: number) => <PostsListRow
-                                            key={id}
-                                            id={id}
-                                            subdomain={subdomain}
-                                        />) :
-                                        <NoResults
-                                            text="No posts found"
-                                            padding={60}
-                                            imageWidth={150}
-                                        />
-                                }
-                            </div>
-                    }
-                </div>
+                <button
+                    className="button small"
+                    onClick={handleNew}
+                >+ New</button>
             </div>
-            <div id="post-viewer" className="box box-right">
+            <PostsFilters filters={filters} changeFilter={changeFilter} />
+            <div className="posts-list" onScroll={handleScroll}>
                 {
-                    postId ?
-                    <Post subdomain={subdomain} id={postId} /> :
-                    <NoPost />
+                    loadPostsListAjax.status === 'loading' ?
+                        <div className="posts-loading"><Loader/></div> :
+                        <div className="posts-loaded-wrap">
+                            {
+                                postsList.length ?
+                                    postsList.map((id: number) => <PostsListRow
+                                        key={id}
+                                        id={id}
+                                        subdomain={subdomain}
+                                    />) :
+                                    <NoResults
+                                        text="No posts found"
+                                        padding={60}
+                                        imageWidth={150}
+                                    />
+                            }
+                        </div>
                 }
             </div>
         </div>
+        <div id="post-viewer" className="box box-right">
+            {
+                postId ?
+                <Post subdomain={subdomain} id={postId} /> :
+                <NoPost />
+            }
+        </div>
+    </div>
 }

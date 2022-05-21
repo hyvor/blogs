@@ -2,7 +2,9 @@
 
 namespace App\Data\Objects\ConsoleAPI;
 
-use App\Data\Enums\ColorModeAllowedEnum;
+use App\Data\Enums\BlogHostingAtEnum;
+use App\Data\Enums\BlogTypeEnum;
+use App\Data\Enums\ColorModesEnum;
 use App\Data\Enums\ColorModeDefaultEnum;
 use App\Data\Enums\CommentsTypeEnum;
 use App\Data\Enums\SeoExternalLinksFollowEnum;
@@ -10,12 +12,16 @@ use App\Models\Blog;
 
 class BlogObject
 {
-    public ?int $id;
-    public ?int $created_at;
-    public ?int $updated_at;
-    public ?string $subdomain;
-    public ?string $icon_url;
-    public ?string $featured_image_url;
+    public int $id;
+    public int $created_at;
+    public string $subdomain;
+    public BlogTypeEnum $type;
+    public BlogHostingAtEnum $hosting_at;
+    public ?string $hosting_domain;
+    public ?string $hosting_url;
+
+    public ?string $logo_url;
+    public ?string $cover_url;
 
     // meta
     public ?string $social_facebook;
@@ -39,7 +45,7 @@ class BlogObject
 
     public ?string $newsletter_code;
 
-    public ColorModeAllowedEnum $color_modes;
+    public ColorModesEnum $color_modes;
     public ColorModeDefaultEnum $color_mode_default;
 
     public bool $syntax_on;
@@ -47,7 +53,7 @@ class BlogObject
     public ?string $syntax_theme;
 
     /**
-     * @var array<int: BlogVariantObject>
+     * @var array<int, BlogVariantObject>
      */
     public array $variants;
 
@@ -55,11 +61,10 @@ class BlogObject
     {
         $this->id = $blog->id;
         $this->created_at = $blog->created_at->timestamp;
-        $this->updated_at = $blog->updated_at->timestamp;
         $this->subdomain = $blog->subdomain;
 
-        $this->icon_url = $blog->icon_url;
-        $this->featured_image_url = $blog->featured_image_url;
+        $this->logo_url = $blog->logo_url;
+        $this->cover_url = $blog->cover_url;
 
         $meta = $blog->getAllMeta();
 
@@ -84,7 +89,7 @@ class BlogObject
         $this->seo_robots_txt = $meta->seo_robots_txt;
         $this->seo_external_links_follow = SeoExternalLinksFollowEnum::from($meta->seo_external_links_follow);
 
-        $this->color_modes = ColorModeAllowedEnum::from($meta->color_modes);
+        $this->color_modes = ColorModesEnum::from($meta->color_modes);
         $this->color_mode_default = ColorModeDefaultEnum::from($meta->color_mode_default);
 
         $this->syntax_on = (bool) $meta->syntax_on;

@@ -10,19 +10,32 @@ import subdomainLogic from "./subdomainLogic";
 import { diff } from 'deep-object-diff';
 import merge from 'deepmerge'
 
-async function updatePost(postId, diff) {
+async function updatePost(post, diff) {
 
     if (diff.variants) {
         for (let languageId in diff.variants) {
             await api.patch(
-                subdomainLogic.values.subdomain, `/post/${postId}/variant`,
+                subdomainLogic.values.subdomain, `/post/${post.id}/variant`,
                 {...diff.variants[languageId], ...{language_id: languageId}}
             )
         }
         delete diff.variants;
     }
 
-    return await api.patch(subdomainLogic.values.subdomain, `/post/${postId}`, diff)
+    if (diff.authors) {
+        await api.patch(subdomainLogic.values.subdomain, `/post/${post.id}/authors`, {
+            ids: post.authors.map(author => author.id)
+        });
+        delete diff.authors
+    }
+    if (diff.tags) {
+        await api.patch(subdomainLogic.values.subdomain, `/post/${post.id}/tags`, {
+            ids: post.tags.map(author => author.id)
+        });
+        delete diff.tags
+    }
+
+    return await api.patch(subdomainLogic.values.subdomain, `/post/${post.id}`, diff)
 
 }
 
@@ -42,7 +55,7 @@ const postLogic = kea({
 
     },
 
-    ajax: ({actions, selectors, props}) => ({
+    ajax: ({actions, selectors, props, values}) => ({
  
         loadPost: async () => {
             const response = await api.get(subdomainLogic.values.subdomain, `/post/${props.id}`);
@@ -69,7 +82,7 @@ const postLogic = kea({
                 return false;
             }
 
-            const response = await updatePost(props.id, diff);
+            const response = await updatePost(values.post, diff);
             // const response = await api.patch(subdomainLogic.values.subdomain, `/post/${props.id}`, diff)
             actions.setOriginal(response);
         },
@@ -81,7 +94,7 @@ const postLogic = kea({
 
             const diff = {...selectors.getDiff(), ...update};
 
-            const response = await updatePost(props.id, diff);
+            const response = await updatePost(values.post, diff);
             actions.set(response)
 
             typeof onSave === 'function' && onSave(response);
@@ -124,7 +137,9 @@ const postLogic = kea({
         getDiff: [
             (selectors) => [selectors.post, selectors.postOriginal],
             (post, postOriginal) => {
-                return diff(postOriginal, post)
+                const d = diff(postOriginal, post)
+                if (d.preview_id) delete d.preview_id;
+                return d;
             }
         ]
 

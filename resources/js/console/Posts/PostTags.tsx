@@ -4,58 +4,56 @@ import {useActions, useValues} from "kea";
 import subdomainLogic from "../logic/subdomainLogic";
 import AsyncSelect from "react-select/async";
 import api from "../lib/api";
-import {User} from "../types";
-import usersLogic, {IDKeyedUsers} from "../logic/usersLogic";
+import {Tag, User} from "../types";
 import {getPrimaryLanguage} from "../lib/blog-helpers";
+import tagsLogic, {IDKeyedTags} from "../logic/tagsLogic";
 
 interface SelectOption {
     value: number;
     label: string;
 }
 
-export default function PostAuthors({ post, updatePostValue } : { post: Post, updatePostValue: Function }) {
+export default function PostTags({ post, updatePostValue } : { post: Post, updatePostValue: Function }) {
 
     const subdomain = subdomainLogic.values.subdomain
 
-    const usersLogicInst = usersLogic({subdomain});
-    const { users } = useValues(usersLogicInst) as { users: IDKeyedUsers }
-    const { addUsers } = useActions(usersLogicInst)
+    const tagsLogicInst = tagsLogic({subdomain})
+    const { tags } = useValues(tagsLogicInst) as { tags: IDKeyedTags }
+    const { addTags } = useActions(tagsLogicInst)
     const languageId = getPrimaryLanguage(subdomain).id
 
     const options: Array<SelectOption> = [];
 
-    for (let id in users) {
+    for (let id in tags) {
         options.push({
             value: parseInt(id),
-            label: users[id].variants[languageId].name
+            label: tags[id].variants[languageId].name
         })
     }
 
-    const defaultValue = post.authors.map(author => (
-        {value: author.id , label: author.variants[languageId].name }
+    const defaultValue = post.tags.map(tag => (
+        {value: tag.id , label: tag.variants[languageId].name }
     ))
 
     async function loader(input: string) : Promise<Array<SelectOption>> {
 
-        const users : Array<User> = await api.get(subdomain, '/users/search', {
+        const tags : Array<Tag> = await api.get(subdomain, '/tags/search', {
             search: input
         });
 
-        addUsers(users)
+        addTags(tags)
 
-        return users.map(user => ({
-            value: user.id,
-            label: user.variants[languageId].name
+        return tags.map(tag => ({
+            value: tag.id,
+            label: tag.variants[languageId].name
         }))
 
     }
 
     function handleChange(options: Array<SelectOption>) {
-
-        const authors : Array<User> = [];
-        options.forEach(({value}) => authors.push(users[value]))
-        updatePostValue('authors', authors);
-
+        const postTags : Array<Tag> = [];
+        options.forEach(({value}) => postTags.push(tags[value]))
+        updatePostValue('tags', postTags);
     }
 
     return <AsyncSelect

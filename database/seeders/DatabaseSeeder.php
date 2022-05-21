@@ -125,9 +125,9 @@ class DatabaseSeeder extends Seeder
              * posts and pages 10 each
              * about 3 draft, 3 published, 3 scheduled
              */
-            if (false) {
+            if (true) {
                 $posts = Post::factory()
-                    ->count(300)
+                    ->count(10)
                     ->has(
                         PostVariant::factory()
                             ->count(2)

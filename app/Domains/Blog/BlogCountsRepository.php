@@ -5,6 +5,7 @@ namespace App\Domains\Blog;
 use App\Data\Enums\CountEnum;
 use App\Data\Objects\ConsoleAPI\Counts\AuthorCountObject;
 use App\Data\Objects\ConsoleAPI\Counts\TagCountObject;
+use App\Data\Objects\ConsoleAPI\User\UserObject;
 use App\Domains\Count\CountRepository;
 use App\Domains\Language\LanguageRepository;
 use App\Models\Blog;
@@ -43,7 +44,7 @@ class BlogCountsRepository
                 $join->on('user_variants.user_id', '=', 'users.id');
                 $join->where('user_variants.language_id', '=', $primaryLanguage->id);
             })
-            ->select('users.id', 'users.posts_count', 'user_variants.name')
+            ->select('users.*')
             ->orderBy('posts_count', 'desc')
             ->limit(15)
             ->get();
@@ -65,7 +66,7 @@ class BlogCountsRepository
                 'scheduled' => $postsCounts[CountEnum::BLOG_POSTS_SCHEDULED->value],
                 'featured' => $postsCounts[CountEnum::BLOG_POSTS->value],
             ],
-            'authors' => $authors->mapInto(AuthorCountObject::class),
+            'authors' => $authors->map(fn ($author) => new UserObject($author, $blog)),
             'tags' => $tags->mapInto(TagCountObject::class),
         ];
     }

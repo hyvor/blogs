@@ -1,26 +1,51 @@
 import { kea } from "kea";
 import api from "../lib/api";
+import {Blog, Language, PostCounts, Tag, User} from "../types";
+import usersLogic from "./usersLogic";
+import tagsLogic from "./tagsLogic";
+import languagesLogic from "./languagesLogic";
+
+interface BlogResponse {
+    blog: Blog,
+    counts: PostCounts,
+    users: Array<User>,
+    tags: Array<Tag>,
+    languages: Array<Language>
+}
 
 const blogLogic = kea({
 
     key: props => props.subdomain,
 
-    path: key => ['blog', key],
+    path: (key : string) => [key, 'blog'],
 
     actions: ({values}) => ({
-        setBlog: (blog) => ({blog}),
-        setOriginal: (blog) => ({blog}),
+        setBlog: (blog: Blog) => ({blog}),
+        /*setOriginal: (blog) => ({blog}),
         updateBlogData: (key, value) => ({key, value}),
-        discardChanges: (keys) => ({keys, original: values.blogOriginal}),
+        discardChanges: (keys) => ({keys, original: values.blogOriginal}),*/
     }),
 
-    ajax: ({actions, selectors, props}) => ({
+    ajax: ({actions, selectors, props} : any) => ({
 
         load: async () => {
-            const blog = await api.get(props.subdomain, '/blog');
-            actions.setBlog(blog);
+            const data : BlogResponse = await api.get(props.subdomain, '/blog');
+
+            const usersLogicInst = usersLogic.build({subdomain: props.subdomain}, false)
+            usersLogicInst.mount();
+            usersLogicInst.actions.addUsers(data.users);
+
+            const tagsLogicInst = tagsLogic.build({subdomain: props.subdomain}, false)
+            tagsLogicInst.mount();
+            tagsLogicInst.actions.addTags(data.tags);
+
+            const languagesLogicInst = languagesLogic.build({subdomain: props.subdomain}, false)
+            languagesLogicInst.mount();
+            languagesLogicInst.actions.setLanguages(data.languages);
+
+            actions.setBlog(data.blog);
         },
-        createVariant: async ({languageId}) => {
+        /*createVariant: async ({languageId}) => {
             // console.log(languageId)
             const blog = await api.post(props.subdomain, '/blog/variant', {
                 languageId: languageId,
@@ -32,13 +57,15 @@ const blogLogic = kea({
             const diff = selectors.getDiff()(keys);
             const blog = await api.patch(props.subdomain, '/blog', diff);
             actions.setOriginal(blog);
-        },
+        },*/
 
     }),
 
     reducers: {
 
-        blogOriginal: [{}, {
+
+
+        /*blogOriginal: [{}, {
             setBlog: (_, {blog}) => blog,
             setOriginal: (_, {blog}) => blog
         }],
@@ -53,19 +80,11 @@ const blogLogic = kea({
                 })
                 return {...blog, ...obj};
             } 
-        }],
-
-        featureImage: [[], {
-            addFeatureImage: (state, {featureImage}) => [featureImage, ...state]
-        }],
-
-        icon: [[], {
-            addIcon: (state, {icon}) => [icon, ...state]
-        }],
+        }],*/
 
     },
 
-    selectors: {
+    /*selectors: {
 
         // diff of orignal and state
         getDiff: [
@@ -83,7 +102,7 @@ const blogLogic = kea({
             }
         ]
 
-    },
+    },*/
 
 });
 

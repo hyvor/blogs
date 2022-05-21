@@ -1,7 +1,7 @@
 import { kea } from 'kea'
-import {User} from "../objects/user";
+import {User} from "../types";
 
-interface IDKeyedUser {
+export interface IDKeyedUsers {
     [key: number]: User
 }
 
@@ -9,25 +9,19 @@ const usersLogic = kea({
 
     key: props => props.subdomain,
 
-    path: (key: string) => ['users', key],
+    path: (key: string) => [key, 'users'],
 
     actions: {
-
         addUsers: (users: Array<User>) => ({users})
-
     },
 
     reducers: {
 
-        /**
-         * User objects keyed by ID
-         */
         users: [
             {},
             {
-                addUsers: (state: IDKeyedUser, { users } : { users: Array<User> }) => {
-
-                    const usersKeyed : IDKeyedUser = {};
+                addUsers: (state: IDKeyedUsers, { users } : { users: Array<User> }) => {
+                    const usersKeyed : IDKeyedUsers = {};
                     for (let user of users) {
                         usersKeyed[user.id] = user;
                     }
@@ -37,10 +31,11 @@ const usersLogic = kea({
             }
         ],
 
-    }
+    },
 
 })
 
+export default usersLogic
 
 // import { kea } from "kea";
 // import api from "../lib/api";

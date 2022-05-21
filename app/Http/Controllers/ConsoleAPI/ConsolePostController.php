@@ -5,7 +5,7 @@ namespace App\Http\Controllers\ConsoleAPI;
 use App\Data\Objects\ConsoleAPI\Post\PostObject;
 use App\Data\Objects\ConsoleAPI\Post\PostVariantObject;
 use App\Domains\Language\LanguageRepository;
-use App\Domains\Post\PostAuthorRepository;
+use App\Domains\Post\PostTagAuthorRepository;
 use App\Domains\Post\PostRepository;
 use App\Exceptions\TrustedException;
 use App\Http\Controllers\Controller;
@@ -70,7 +70,7 @@ class ConsolePostController extends Controller
         $isPage = (bool) $request->input('is_page');
         $post = PostRepository::createPost($blog, $isPage);
 
-        PostAuthorRepository::create($post->id, $user->id);
+        PostTagAuthorRepository::createAuthor($post->id, $user->id);
 
         return response()->json(new PostObject($post, $blog));
     }
@@ -227,4 +227,34 @@ class ConsolePostController extends Controller
 
         return response()->json();
     }
+
+
+    public function updateTags(Request $request, Blog $blog, Post $post)
+    {
+
+        $request->validate([
+            'ids' => 'array',
+            'ids.*' => 'integer'
+        ]);
+
+        $ids = $request->input('ids');
+
+        PostTagAuthorRepository::updateTags($post, $ids);
+
+    }
+
+    public function updateAuthors(Request $request, Post $post)
+    {
+
+        $request->validate([
+            'ids' => 'array',
+            'ids.*' => 'integer'
+        ]);
+
+        $ids = $request->input('ids');
+
+        PostTagAuthorRepository::updateAuthors($post, $ids);
+
+    }
+
 }

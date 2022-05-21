@@ -1,9 +1,9 @@
 import {Post} from "../objects/post";
 import subdomainLogic from "../logic/subdomainLogic";
 import blogsLogic from "../logic/blogsLogic";
-import {UserBlog} from "../objects/userblog";
-import {UserRole} from "../objects/user";
+import {UserBlog} from "../objects/userblog"
 import {appConfig} from "../helpers";
+import {UserRole} from "../enums";
 
 function getRole() : UserRole {
     const subdomain = subdomainLogic.values.subdomain;

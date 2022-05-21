@@ -1,6 +1,4 @@
-import {Tag} from "./tag";
-import {User} from "./user";
-import {Language} from "./language";
+import {Tag, User} from "../types";
 
 export type Post = {
 

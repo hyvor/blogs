@@ -10,7 +10,10 @@ import Posts from './Posts/Posts'
 import Settings from './Settings/Settings'
 import Theme from './Theme/Theme'
 import Welcome from "./Welcome/Welcome"
-import React from 'react'
+import React, {ReactNode} from 'react'
+import blogLogic from "./logic/blogLogic";
+import Loader from "./ReusableComponents/Loader";
+import subdomainLogic from "./logic/subdomainLogic";
 
 export const scenes = {
     error404: () => <div>404</div>,
@@ -34,7 +37,22 @@ export default function Scene() {
 
     return <div>
         <Left />
-        <div id="middle"><SceneComponent {...params} /></div>
+        <Middle><SceneComponent {...params} /></Middle>
     </div>
+
+}
+
+function Middle({ children } : {children: ReactNode}) {
+
+    // load blog data
+    const { loadAjax } = useValues(blogLogic({subdomain: subdomainLogic.values.subdomain}))
+
+    return <div id="middle">{
+        loadAjax.status === 'loading' ?
+        <div className="posts-not-ready box">
+            <Loader size={40} />
+        </div> :
+        children
+    }</div>
 
 }
