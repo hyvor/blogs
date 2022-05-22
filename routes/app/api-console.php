@@ -151,6 +151,7 @@ Route::prefix('/api/console/v0/blog/{subdomain}')
         Route::post('/navigation', [ConsoleNavigationController::class,'createNavigation']);
         Route::put('/navigation/{id}', [ConsoleNavigationController::class,'updateNavigation']);
         Route::delete('/navigation/{id}', [ConsoleNavigationController::class,'deleteNavigation']);
+        Route::post('/navigation/variant', [ConsoleNavigationController::class, 'createNavigationVariant']);
         Route::put('/navigation/sort/{id}', [ConsoleNavigationController::class,'updateSort']);
         Route::put('/navigation/source/{id}', [ConsoleNavigationController::class,'updateSourceSort']);
 

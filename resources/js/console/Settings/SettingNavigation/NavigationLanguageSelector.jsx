@@ -3,36 +3,22 @@ import { useActions, useValues } from 'kea';
 import { Check, Clock, Dot, Plus } from 'react-bootstrap-icons';
 import subdomainLogic from '../../logic/subdomainLogic';
 import languagesLogic from '../../logic/languagesLogic';
-import tagsLogic from '../../logic/tagsLogic';
-
+import navigationLogic from '../../logic/navigationLogic';
 
 
 export default function TagLanguageSelector({id, subdomain, languages, variants, currentLanguageId, onChange }) 
 {
-    const tagLogicBuilt = tagsLogic({subdomain})
-    const { createVariant } = useActions(tagLogicBuilt)
+    const navigationLogicBuilt = navigationLogic({subdomain})
+    const { createVariant } = useActions(navigationLogicBuilt)
 
     createVariant({
-        tagId: id,
-        languageId: currentLanguageId
+        navigationId: id,
+        languageId: currentLanguageId,
+        name: null
     });
 
     return <div>
         <div className="global-languages-list">
-        {/* {
-            languages.map(lang => (
-            <span 
-                key={lang.id}
-                className={"lang-tag" + (currentLanguageId === lang.id ? " active" : "")}
-                onClick={() => onChange(lang.id)}
-            >
-                <span className="code">{lang.code}</span>
-                <span className="status-icon">
-                    <Plus />
-                </span>
-            </span>
-            ))
-        } */}
         {
             languages.map(lang => {
                 const variant = variants[lang.id]
