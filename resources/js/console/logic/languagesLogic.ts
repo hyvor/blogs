@@ -10,7 +10,7 @@ const languagesLogic = kea<languagesLogicType>([
 
     key((props) => props.subdomain),
 
-    path(key => ['subdomain', key, 'languages']),
+    path(key => [key, 'languages']),
 
     actions({
         setLanguages: (langs: Language[]) => ({langs}),

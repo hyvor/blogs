@@ -1,12 +1,13 @@
-import {actions, kea, key, path, reducers} from "kea";
+import {actions, kea, key, path, props, reducers, selectors} from "kea";
 import {ajax} from 'kea-ajax';
 import api from "../lib/api";
-import {Blog, Language, PostCounts, Tag, User} from "../types";
+import {Blog, BlogVariant, Language, PostCounts, Tag, User} from "../types";
 import usersLogic from "./usersLogic";
 import tagsLogic from "./tagsLogic";
 import languagesLogic from "./languagesLogic";
 
 import type { blogLogicType } from "./blogLogicType";
+import merge from "deepmerge";
 
 interface BlogResponse {
     blog: Blog,
@@ -16,15 +17,19 @@ interface BlogResponse {
     languages: Array<Language>
 }
 
+// @ts-ignore
 const blogLogic = kea<blogLogicType>([
 
-    key((props: {subdomain: string}) => props.subdomain),
+    props({} as {subdomain: string}),
+    key((props) => props.subdomain),
     path((key) => [key, 'blog']),
 
     actions(({values}) => ({
         setBlog: (blog: Blog) => ({blog}),
         setOriginal: (blog: Blog) => ({blog}),
-        updateBlogValue: (key: string, value: any) => ({key, value}),
+        updateBlogValue: (key: keyof Blog, value: any) => ({key, value}),
+        updateBlogVariantValue: (key: keyof BlogVariant, value: any, languageId: number) => ({key, value, languageId}),
+        discardChanges: (keys: Array<keyof Blog>) => ({keys, original: values.blogOriginal}),
         /*setOriginal: (blog) => ({blog}),
         updateBlogData: (key, value) => ({key, value}),
         discardChanges: (keys) => ({keys, original: values.blogOriginal}),*/
@@ -48,20 +53,20 @@ const blogLogic = kea<blogLogicType>([
             languagesLogicInst.actions.setLanguages(data.languages);
 
             actions.setBlog(data.blog);
-        }
+        },
         /*createVariant: async ({languageId}) => {
             // console.log(languageId)
             const blog = await api.post(props.subdomain, '/blog/variant', {
                 languageId: languageId,
             })
             actions.addBlogVariant(blog);
-        },
+        },*/
         
         save: async ({keys}) => {
-            const diff = selectors.getDiff()(keys);
-            const blog = await api.patch(props.subdomain, '/blog', diff);
+            const diff = selectors.getDiff(keys);
+            const blog = await api.patch<Blog>(props.subdomain, '/blog', diff);
             actions.setOriginal(blog);
-        },*/
+        },
 
     })),
 
@@ -79,7 +84,19 @@ const blogLogic = kea<blogLogicType>([
             null as Blog | null,
             {
                 setBlog: (_, {blog}) => blog,
-                updateBlogData: (state, {key, value}) => ({...state, ...{[key]: value === '' ? null : value}}),
+                updateBlogValue: (state, {key, value}) => (
+                    {...state, ...{[key]: value === '' ? null : value}}
+                ),
+                updateBlogVariantValue: (state, {key, value, languageId}) => {
+                    const obj = {
+                        variants: {
+                            [languageId]: {
+                                [key]: value
+                            }
+                        }
+                    }
+                    return merge(state, obj) as Blog;
+                },
                 discardChanges: (blog, {original, keys}) => {
                     const obj : Partial<Blog> = {}
                     keys.forEach((key: keyof Blog) => {
@@ -90,17 +107,18 @@ const blogLogic = kea<blogLogicType>([
                 }
             }
         ]
-    })
+    }),
 
-    /*selectors: {
+    selectors({
 
         // diff of orignal and state
         getDiff: [
             (selectors) => [selectors.blog, selectors.blogOriginal],
-            (blog, blogOriginal) => {
-                return (keys) => {
-                    const diff = {};
-                    for (var i in blogOriginal) {
+            (blog: Blog, blogOriginal: Blog) => {
+                return (keys: Array<keyof Blog>) => {
+                    const diff = {} as Record<keyof Blog, any>;
+                    let i: keyof Blog;
+                    for (i in blogOriginal) {
                         if (keys.indexOf(i) >= 0 && blog[i] !== blogOriginal[i]) {
                             diff[i] = blog[i]
                         }
@@ -110,7 +128,7 @@ const blogLogic = kea<blogLogicType>([
             }
         ]
 
-    },*/
+    })
 
 ]);
 

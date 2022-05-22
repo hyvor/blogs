@@ -1,6 +1,14 @@
 import React from 'react'
 
-export default function DualSetting({ left, title, description, right, column }) {
+interface DualSettingProps {
+    left?: React.ReactNode,
+    title: React.ReactNode,
+    description?: React.ReactNode,
+    right: React.ReactNode,
+    column?: boolean
+}
+
+export default function DualSetting({ left, title, description, right, column = false } : DualSettingProps){
 
     return <div className={"global-dual-setting" + (column ? " column" : "")}>
 

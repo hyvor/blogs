@@ -28,6 +28,7 @@ class BlogObject
     public ?string $social_twitter;
     public ?string $social_linkedin;
     public ?string $social_youtube;
+    public ?string $social_tiktok;
     public ?string $social_instagram;
     public ?string $social_github;
 
@@ -72,6 +73,7 @@ class BlogObject
         $this->social_twitter = $meta->social_twitter;
         $this->social_linkedin = $meta->social_linkedin;
         $this->social_youtube = $meta->social_youtube;
+        $this->social_tiktok = $meta->social_tiktok;
         $this->social_instagram = $meta->social_instagram;
         $this->social_github = $meta->social_github;
 
