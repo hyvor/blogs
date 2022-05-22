@@ -150,7 +150,7 @@ export default function NewBlog({ type }: { type: string | null }) {
                         title="Blog Name"
                         type="text"
                         name="blog-name"
-                        autoComplete={false}
+                        autoComplete="off"
                         value={name}
                         error={nameError}
                         onChange={handleNameChange}
@@ -166,7 +166,7 @@ export default function NewBlog({ type }: { type: string | null }) {
                             </div>}
                             type="text"
                             name="blog-subdomain"
-                            autoComplete={false}
+                            autoComplete="off"
                             value={subdomain}
                             onChange={handleSubdomainChange}
                             error={subdomainError}

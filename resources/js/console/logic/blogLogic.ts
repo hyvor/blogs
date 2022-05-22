@@ -22,7 +22,7 @@ const blogLogic = kea<blogLogicType>([
 
     props({} as {subdomain: string}),
     key((props) => props.subdomain),
-    path((key) => [key, 'blog']),
+    path((key) => ['blog', key]),
 
     actions(({values}) => ({
         setBlog: (blog: Blog) => ({blog}),

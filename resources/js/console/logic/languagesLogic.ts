@@ -10,7 +10,7 @@ const languagesLogic = kea<languagesLogicType>([
 
     key((props) => props.subdomain),
 
-    path(key => [key, 'languages']),
+    path(key => ['languages', key]),
 
     actions({
         setLanguages: (langs: Language[]) => ({langs}),
@@ -55,15 +55,17 @@ const languagesLogic = kea<languagesLogicType>([
     })),
 
     reducers(({props}) => ({
-
-        languages: [[], {
-            setLanguages: (_, {langs}) => langs,
-            addLanguage: (state, {lang}) => [...state, lang],
-            updateLanguage: (state, {lang}) => state.map(
-                stateLang => stateLang.id === lang.id ? lang : stateLang
-            ),
-            removeLanguage: (state, {id}) => state.filter(lang => lang.id !== id)
-        }],
+        languages: [
+            [] as Language[],
+            {
+                setLanguages: (_, {langs}) => langs,
+                addLanguage: (state, {lang}) => [...state, lang],
+                updateLanguage: (state, {lang}) => state.map(
+                    stateLang => stateLang.id === lang.id ? lang : stateLang
+                ),
+                removeLanguage: (state, {id}) => state.filter(lang => lang.id !== id)
+            }
+        ],
     })),
 
     selectors({

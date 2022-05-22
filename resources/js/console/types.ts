@@ -43,8 +43,8 @@ export interface Blog {
     hosting_domain: string | null,
     hosting_url: string | null,
 
-    icon_url: string | null,
     logo_url: string | null,
+    cover_url: string | null,
 
     social_facebook: string | null,
     social_twitter: string | null,
@@ -159,4 +159,16 @@ export type Language = {
     code: string;
     name: string;
     is_primary: boolean;
+}
+
+// === MEDIA
+
+export type Media = {
+
+    id: number;
+    uploaded_at: number;
+    url: string;
+    name: string;
+    extension: string;
+
 }

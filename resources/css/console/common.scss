@@ -321,9 +321,7 @@ textarea.input {
 .global-dual-setting { 
     display: flex;
     padding: 18px 0;
-    &:not(:first-child) {
-        border-top: 1px solid $color-accent-light;
-    }
+    border-top: 1px solid $color-accent-light;
     .dual-left {
         flex: 1;
         margin-right: 20px;
