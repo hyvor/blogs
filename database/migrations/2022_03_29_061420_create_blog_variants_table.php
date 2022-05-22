@@ -22,8 +22,8 @@ return new class extends Migration
              $table->bigInteger('language_id')->index(); 
  
              // data
-             $table->string('name')->nullable();
-             $table->string('description')->nullable();
+             $table->string('name', config('limits.max_blog_name_length'))->nullable();
+             $table->string('description', config('limits.max_blog_description_length'))->nullable();
  
         });
     }

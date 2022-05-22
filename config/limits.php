@@ -63,8 +63,10 @@ return [
     'max_lang_files_per_blog' => 100, // same as max languages
 
     /** 
-    * Post related limitations.
+    * String lengths
     */
+    'max_blog_name_length' => 160,
+    'max_blog_description_length' => 255,
     'max_post_description_length' => 350,
     'max_post_title_length' => 255,
 

@@ -77,19 +77,16 @@ Route::prefix('/api/console/v0/blog/{subdomain}')
 
         // blog
         Route::get('/blog', [ConsoleBlogController::class, 'getBlogData']);
-
-        // Blog General CRUD 
-        Route::post('/blog/variant', [ConsoleBlogController::class, 'createBlogVariant']);
         Route::patch('/blog', [ConsoleBlogController::class, 'updateBlog']);
-        Route::post('/blog/feature/image', [ConsoleBlogController::class, 'updateBlogFeatureImage']);
-        Route::post('/blog/icon', [ConsoleBlogController::class, 'updateBlogIcon']);
+        Route::post('/blog/variant', [ConsoleBlogController::class, 'createBlogVariant']);
+        Route::patch('/blog/variant', [ConsoleBlogController::class, 'updateBlogVariant']);
 
         /**
          * In post routes, role is checked internally on some actions
          * such as publishing posts
          * or editing posts or others
          */
-        // posts (and pages) CRUD
+        // posts (and pages)
         Route::get('/posts', [ConsolePostController::class, 'getPosts']);
         Route::get('/pages', [ConsolePostController::class, 'getPages']);
         Route::post('/post', [ConsolePostController::class, 'createPost']);
@@ -121,7 +118,7 @@ Route::prefix('/api/console/v0/blog/{subdomain}')
 
     Route::middleware('role:owner|admin|editor')->group(function() {
 
-        // tags CRUD
+        // tags
         Route::get('/tags', [ConsoleTagController::class, 'getTags']);
         Route::get('/tags/search', [ConsoleTagController::class, 'searchTags']);
         Route::post('/tag', [ConsoleTagController::class, 'createTag']);
@@ -140,13 +137,13 @@ Route::prefix('/api/console/v0/blog/{subdomain}')
      */
     Route::middleware('role:owner|admin')->group(function() {
 
-        // webhooks CRUD
+        // webhooks
         Route::get('/webhooks', [ConsoleWebhookController::class, 'getWebhooks']);
         Route::post('/webhook', [ConsoleWebhookController::class, 'createWebhook']);
         Route::patch('/webhook/{id}', [ConsoleWebhookController::class, 'updateWebhook']);
         Route::delete('/webhook/{id}', [ConsoleWebhookController::class, 'deleteWebhook']);
 
-        // navigation CRUD
+        // navigation
         Route::get('/navigation', [ConsoleNavigationController::class,'getNavigations']);
         Route::post('/navigation', [ConsoleNavigationController::class,'createNavigation']);
         Route::put('/navigation/{id}', [ConsoleNavigationController::class,'updateNavigation']);
@@ -155,23 +152,19 @@ Route::prefix('/api/console/v0/blog/{subdomain}')
         Route::put('/navigation/sort/{id}', [ConsoleNavigationController::class,'updateSort']);
         Route::put('/navigation/source/{id}', [ConsoleNavigationController::class,'updateSourceSort']);
 
-        // languages CRUD
+        // languages
         Route::get('/languages', [ConsoleLanguageController::class, 'get']);
         Route::post('/language', [ConsoleLanguageController::class, 'create']);
         Route::put('/language/{id}', [ConsoleLanguageController::class, 'update']);
         Route::delete('/language/{id}', [ConsoleLanguageController::class, 'delete']);
         
-        // redirects CRUD
+        // redirects
         Route::get('/redirect', [ConsoleRedirectController::class, 'getRedirects']);
         Route::post('/redirect', [ConsoleRedirectController::class, 'createRedirect']);
         Route::put('/redirect/{id}', [ConsoleRedirectController::class, 'updateRedirect']);
         Route::delete('/redirect/{id}', [ConsoleRedirectController::class, 'deleteRedirect']);
 
-        // settings RU
-        Route::get('/settings', []);
-        Route::post('/settings', []);
-
-        // users CRUD
+        // users
         Route::get('/users', [ConsoleUserController::class, 'getAuthors']);
         Route::get('/users/search', [ConsoleUserController::class, 'searchUsers']);
         Route::post('/user', [ConsoleUserController::class, 'createAuthor']);
@@ -180,13 +173,13 @@ Route::prefix('/api/console/v0/blog/{subdomain}')
         Route::post('/user/variant', [ConsoleUserController::class, 'createAuthorVariant']);
         Route::post('/user/picture', [ConsoleUserController::class, 'updatePicture']);
 
-        // route CRUD
+        // route
         Route::get('/route', [ConsoleRouteController::class, 'getRoutes']);
         Route::post('/route', [ConsoleRouteController::class, 'createRoute']);
         Route::put('/route/{id}', [ConsoleRouteController::class, 'updateRoute']);
         Route::delete('/route/{id}', [ConsoleRouteController::class, 'deleteRoute']);
 
-        // theme CRUD
+        // theme
         Route::get('/theme-files', [ConsoleBlogThemeController::class, 'getAllFiles']);
         Route::put('/theme-file/{id}', [ConsoleBlogThemeController::class, 'createOrUpdateFile']);
 
@@ -203,7 +196,7 @@ Route::prefix('/api/console/v0/blog/{subdomain}')
      */
     Route::middleware('role:owner|admin|finance')->group(function() {
 
-        // billing CRUD
+        // billing
         Route::get('/subscription', [ConsoleSubscriptionController::class, 'getData']);
         Route::post('/subscription', [ConsoleSubscriptionController::class, 'createPayLink']);
         Route::patch('/subscription', [ConsoleSubscriptionController::class, 'updateSubscription']);

@@ -62,12 +62,16 @@ class BlogObject
     {
         $this->id = $blog->id;
         $this->created_at = $blog->created_at->timestamp;
-        $this->subdomain = $blog->subdomain;
 
-        $this->logo_url = $blog->logo_url;
-        $this->cover_url = $blog->cover_url;
+        $this->subdomain = $blog->subdomain;
+        $this->hosting_at = $blog->hosting_at;
+        $this->hosting_domain = $blog->hosting_domain;
+        $this->hosting_url = $blog->hosting_url;
 
         $meta = $blog->getAllMeta();
+
+        $this->logo_url = $meta->logo_url;
+        $this->cover_url = $meta->cover_url;
 
         $this->social_facebook = $meta->social_facebook;
         $this->social_twitter = $meta->social_twitter;

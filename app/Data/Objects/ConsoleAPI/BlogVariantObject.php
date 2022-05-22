@@ -7,7 +7,6 @@ use App\Models\BlogVariant;
 class BlogVariantObject
 {
     public int $id;
-    public int $blog_id;
     public int $language_id;
     public ?string $name;
     public ?string $description;
