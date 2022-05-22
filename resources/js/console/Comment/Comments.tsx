@@ -8,6 +8,6 @@ export default function Comments()
     const { subdomain } = useValues(subdomainLogic); 
 
     return <div className="comments">
-    <div>Hyvor comments</div>
-</div>
+        <div>Hyvor comments</div>
+    </div>
 }

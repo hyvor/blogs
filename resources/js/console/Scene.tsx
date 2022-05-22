@@ -11,15 +11,17 @@ import Settings from './Settings/Settings'
 import Theme from './Theme/Theme'
 import Welcome from "./Welcome/Welcome"
 import React, {ReactNode} from 'react'
-import blogLogic from "./logic/blogLogic";
-import Loader from "./ReusableComponents/Loader";
-import subdomainLogic from "./logic/subdomainLogic";
+import blogLogic from "./logic/blogLogic"
+import Loader from "./ReusableComponents/Loader"
+import subdomainLogic from "./logic/subdomainLogic"
+import Comments from "./Comment/Comments"
 
 export const scenes = {
     error404: () => <div>404</div>,
     blogPreview: () => <BlogPreview />,
     posts: ({ postId } : { postId?: number }) => <Posts postId={postId} />,
     pages: ({ postId } : { postId?: number }) => <Pages postId={postId} />,
+    comments: () => <Comments />,
     settings: ({type} : {type?: string}) => <Settings type={type} />,
     theme: ({type} : {type?: string }) => <Theme type={type} />,
     billing: () => <Billing />,
