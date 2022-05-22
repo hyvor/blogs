@@ -12,7 +12,8 @@ import {
 // === CONSOLE
 
 export type ConsoleWindow = (typeof window) & {
-    appConfig: appConfig
+    appConfig: appConfig,
+    currentSubdomain?: string
 }
 
 export interface Filters {

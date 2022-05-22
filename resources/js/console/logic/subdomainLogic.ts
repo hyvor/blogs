@@ -1,4 +1,4 @@
-import { kea } from "kea";
+import {actions, events, kea, listeners, path, reducers} from "kea";
 import { router } from "kea-router";
 import blogLogic from "./blogLogic";
 import blogsLogic from "./blogsLogic";
@@ -6,15 +6,21 @@ import postsLogic from "./postsLogic";
 import sceneLogic from './sceneLogic';
 
 
-const subdomainLogic = kea({
+import type { subdomainLogicType } from "./subdomainLogicType";
+import {ConsoleWindow} from "../types";
 
-    path: ['subdomain'],
 
-    actions: ({ values }) => ({
-        setSubdomain: (subdomain, oldDomain, changeRoute) => ({ old: oldDomain, subdomain, changeRoute })
-    }),
+const subdomainLogic = kea<subdomainLogicType>([
 
-    listeners: () => ({
+    path(['subdomain']),
+
+    actions(({ values }) => ({
+        setSubdomain:
+            (subdomain: string, oldDomain: string, changeRoute: boolean = false) =>
+            ({ old: oldDomain, subdomain, changeRoute })
+    })),
+
+    listeners(() => ({
         setSubdomain: ({ old, subdomain, changeRoute }) => {
             if (changeRoute) {
                 var path = old ? location.pathname.replace('/console/' + old, '') : '';
@@ -37,17 +43,20 @@ const subdomainLogic = kea({
              * In that case, this is the only way to access the current subdomains
              * Don't use this in the main app
              */
-            window.currentSubdomain = subdomain;
+            (window as ConsoleWindow).currentSubdomain = subdomain;
         }
-    }),
+    })),
 
-    reducers: () => ({
-        subdomain: [null, {
-            setSubdomain: (_, { subdomain }) => subdomain
-        }]
-    }),
+    reducers(() => ({
+        subdomain: [
+            null as string | null,
+            {
+                setSubdomain: (_, { subdomain }) => subdomain
+            }
+        ]
+    })),
 
-    events: ({ actions }) => ({
+    events(({ actions }) => ({
         afterMount: () => {
             var subdomain = findDefaultActiveSubdomain()
             if (subdomain)
@@ -56,9 +65,9 @@ const subdomainLogic = kea({
                 router.actions.push("/console/new");
             }
         }
-    })
+    }))
 
-})
+])
 
 
 function findDefaultActiveSubdomain() {

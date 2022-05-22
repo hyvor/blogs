@@ -1,4 +1,4 @@
-import {actions, kea, key, path} from "kea";
+import {actions, kea, key, path, reducers} from "kea";
 import {ajax} from 'kea-ajax';
 import api from "../lib/api";
 import {Blog, Language, PostCounts, Tag, User} from "../types";
@@ -23,6 +23,8 @@ const blogLogic = kea<blogLogicType>([
 
     actions(({values}) => ({
         setBlog: (blog: Blog) => ({blog}),
+        setOriginal: (blog: Blog) => ({blog}),
+        updateBlogValue: (key: string, value: any) => ({key, value}),
         /*setOriginal: (blog) => ({blog}),
         updateBlogData: (key, value) => ({key, value}),
         discardChanges: (keys) => ({keys, original: values.blogOriginal}),*/
@@ -61,30 +63,34 @@ const blogLogic = kea<blogLogicType>([
             actions.setOriginal(blog);
         },*/
 
-    }))
+    })),
 
-   // reducers: {
+    reducers({
 
+        blogOriginal: [
+            null as Blog | null,
+            {
+                setBlog: (_, {blog}) => blog,
+                setOriginal: (_, {blog}) => blog
+            }
+        ],
 
-
-        /*blogOriginal: [{}, {
-            setBlog: (_, {blog}) => blog,
-            setOriginal: (_, {blog}) => blog
-        }],
-
-        blog: [{}, {
-            setBlog: (_, {blog}) => blog,
-            updateBlogData: (state, {key, value}) => ({...state, ...{[key]: value === '' ? null : value}}),
-            discardChanges: (blog, {original, keys}) => {
-                const obj = {}
-                keys.forEach(key => {
-                    obj[key] = original[key]
-                })
-                return {...blog, ...obj};
-            } 
-        }],*/
-
-    // },
+        blog: [
+            null as Blog | null,
+            {
+                setBlog: (_, {blog}) => blog,
+                updateBlogData: (state, {key, value}) => ({...state, ...{[key]: value === '' ? null : value}}),
+                discardChanges: (blog, {original, keys}) => {
+                    const obj : Partial<Blog> = {}
+                    keys.forEach((key: keyof Blog) => {
+                        // @ts-ignore
+                        obj[key] = original[key]
+                    })
+                    return {...blog, ...obj};
+                }
+            }
+        ]
+    })
 
     /*selectors: {
 

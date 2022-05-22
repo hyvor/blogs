@@ -3,8 +3,8 @@
     "scripts": {
         "dev": "npm run development",
         "development": "mix",
-        "watch:con": "concurrently \"npm run watch:mix\" \"npm run watch:kea\" -n APP,KEA -c blue,green",
-        "watch": "mix watch",
+        "watch": "concurrently \"npm run watch:mix\" \"npm run kea:watch\" -n APP,KEA -c blue,green",
+        "watch:mix": "mix watch",
         "kea:watch": "kea-typegen watch",
         "kea:build": "kea-typegen write",
         "watch-poll": "mix watch -- --watch-options-poll=1000",

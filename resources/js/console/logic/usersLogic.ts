@@ -8,7 +8,7 @@ export interface IDKeyedUsers {
 }
 
 const usersLogic = kea<usersLogicType>([
-    key(props => props.subdomain),
+    key((props: {subdomain: string}) => props.subdomain),
     path((key: string) => [key, 'users']),
     actions({
         addUsers: (users: Array<User>) => ({users})

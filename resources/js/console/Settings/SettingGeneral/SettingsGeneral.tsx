@@ -25,8 +25,8 @@ export default function SettingsGeneral() {
 
     const subdomain = subdomainLogic.values.subdomain;
     const blogLogicBuilt = blogLogic({subdomain})
-    const { blog, uploadFeatureImageAjax, uploadIconAjax } = useValues(blogLogicBuilt)
-    const { updateData, uploadFeatureImage, uploadIcon} = useActions(blogLogicBuilt)
+    const { blog } = useValues(blogLogicBuilt)
+    const { updateBlogValue } = useActions(blogLogicBuilt)
 
     const { languages, getLanguageById } = useValues(languagesLogic({subdomain}))
     const { findBlogBySubdomain } = useValues(blogsLogic)

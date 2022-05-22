@@ -12,7 +12,7 @@ export interface IDKeyedTags {
 
 const tagsLogic = kea<tagsLogicType>({
 
-    key: props => props.subdomain,
+    key: (props: {subdomain: string}) => props.subdomain,
     path: (key: string) => [key, 'tags'],
 
     actions: {
