@@ -89,7 +89,6 @@ class ConsoleNavigationController extends Controller
         // ]);
 
         $id = $request->route('id');
-
         $languageId = $request->input('languageId');
         $name = $request->input('name');
         $url = $request->input('url');
@@ -104,7 +103,6 @@ class ConsoleNavigationController extends Controller
     {
         $id = $request->route('id');
         $languageId = $request->input('languageId');
-
         $deleteNavigation = NavigationRepository::deleteNavigation($id, $languageId);
 
         return response()->json($deleteNavigation);
@@ -138,6 +136,7 @@ class ConsoleNavigationController extends Controller
 
     public function updateSourceSort(Request $request)
     {
+        // dd('hi bro daddy');
         $id = $request->route('id');
         $navigationSort = $request->input('sort');
         $updateSort = NavigationRepository::updateSourceSort($id, $navigationSort);
