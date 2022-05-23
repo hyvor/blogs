@@ -216,6 +216,7 @@ class TagRepository
                 TagVariant::create([
                     'tag_id' => $tagId,
                     'language_id' => $languageId,
+                    'name' => 'Enter new language tag name',
                 ]);
             }
         }

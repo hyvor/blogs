@@ -53,30 +53,26 @@ class ConsoleTagController extends Controller
             $slug = Str::slug($name);
         }
 
-        $currentTag = TagRepository::getTagByBlogIdAndSlug($blog->id, $slug);
+        $checkSlugExist = TagRepository::getTagByBlogIdAndSlug($blog->id, $slug);
 
-        if ($currentTag) {
+        if ($checkSlugExist) {
             throw new TrustedException('Slug already exists');
         }
 
-<<<<<<< HEAD
-        $tag = TagRepository::createTag($blog, $name, $slug, $description); 
-=======
         $tag = TagRepository::createTag($blog, $name, $slug, $description);
 
->>>>>>> rasif-import
         return response()->json(new TagObject($tag, $blog));
     }
 
     public static function updateTag(Request $request, Blog $blog)
     {
-        // $request->validate([
-        //     'name' => 'required|string',
-        //     'slug' => 'string',
-        //     'description' => 'string',
-        //     'codeHead' => 'string',
-        //     'codeFoot' => 'string',
-        // ]);
+        $request->validate([
+            'name' => 'required|string',
+            'slug' => 'required|string',
+            'description' => 'string',
+            'codeHead' => 'string',
+            'codeFoot' => 'string',
+        ]);
 
         $id = $request->route('id');
         $slug = $request->input('slug');
@@ -85,17 +81,17 @@ class ConsoleTagController extends Controller
         $codeFoot = $request->input('codeFoot') ?? null;
         $name = $request->input('name') ?? null;
         $description = $request->input('description') ?? null;
-<<<<<<< HEAD
-        
-        $tag = TagRepository::updateTag($id, $languageId, $slug, $codeHead, $codeFoot, $name, $description );
-        return response()->json($tag); 
-=======
+
+        $checkSlugExist = TagRepository::getTagByBlogIdAndSlug($blog->id, $slug);
+
+        if ($checkSlugExist) {
+            throw new TrustedException('Slug already exists');
+        }
 
         $tag = TagRepository::updateTag($id, $languageId, $slug, $codeHead, $codeFoot, $name, $description);
 
         return response()->json($tag);
         // return response()->json(new TagObject($tag, $blog));
->>>>>>> rasif-import
     }
 
     public static function deleteTag(Request $request)
@@ -122,37 +118,37 @@ class ConsoleTagController extends Controller
         return response()->json($createVariant);
     }
 
+
+
+
+
+
+
     /*
     *
     * *** ConsoleAPI Posts->Tags ***
     *
     * This function will get all the tags and display it in an order (Post_Count)
     */
-    public static function getPostTags(Request $request, Blog $blog)
-    {
+    // public static function getPostTags(Request $request, Blog $blog)
+    // {
 
-        // $postId = $request->input('postId');
+    //     // $postId = $request->input('postId');
 
-        $postId = 184;
-        $getData = PostTagRepository::getPostTags($blog->id, $postId);
+    //     $postId = 184;
+    //     $getData = PostTagRepository::getPostTags($blog->id, $postId);
 
-        return response()->json($getData);
-    }
+    //     return response()->json($getData);
+    // }
 
-<<<<<<< HEAD
-    public static function selectedPostTag(Request $request, Blog $blog){
+    // public static function selectedPostTag(Request $request, Blog $blog){
 
-        $postId = (int) $request->route('id');
-        dd($postId);
-=======
-    public static function selectedPostTag(Request $request, Blog $blog)
-    {
-        $postId = (int) $request->route('postId');
->>>>>>> rasif-import
-        $getData = PostTagRepository::selectedPostTag($blog->id, $postId);
+    //     $postId = (int) $request->route('id');
 
-        return response()->json($getData);
-    }
+    //     $getData = PostTagRepository::selectedPostTag($blog->id, $postId);
+
+    //     return response()->json($getData);
+    // }
 
     /*
     *
@@ -160,42 +156,47 @@ class ConsoleTagController extends Controller
     * (This function should also save the number of posts in the count table.)
     *
     */
-    public static function createPostTag(Request $request, Blog $blog)
-    {
-        dd('test');
-        $postId = $request->input('postId');
-        $tagId = $request->input('tagId');
+    // public static function createPostTag(Request $request, Blog $blog)
+    // {
+    //     dd('test');
+    //     $postId = $request->input('postId');
+    //     $tagId = $request->input('tagId');
 
-        $createTag = PostTagRepository::createSaveTag($postId, $tagId);
+    //     $createTag = PostTagRepository::createSaveTag($postId, $tagId);
 
-        return response()->json($createTag);
-    }
+    //     return response()->json($createTag);
+    // }
 
     /*
     *
     * This function will get the selected tags and display it in the react-select box.
     *
     */
-    public static function getPostTag(Request $request)
-    {
-        $postId = $request->input('postId');
+    // public static function getPostTag(Request $request)
+    // {
+    //     $postId = $request->input('postId');
 
-        // $tagId = $request->input('tagId');
-        // $postId = 184;
-        $tagId = 12;
+    //     // $tagId = $request->input('tagId');
+    //     // $postId = 184;
+    //     $tagId = 12;
 
-        $getData = PostTagRepository::getPostTag($postId, $tagId);
+    //     $getData = PostTagRepository::getPostTag($postId, $tagId);
 
-        return response()->json($getData);
-    }
+    //     return response()->json($getData);
+    // }
 
     /*
     *
     * This function will remove the selected tags.
     *
     */
-    public static function removePostTag(Request $request)
-    {
-        return 'hello world';
-    }
+    // public static function removePostTag(Request $request)
+    // {
+    //     return 'hello world';
+    // }
+
+
+
+
+
 }

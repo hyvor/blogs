@@ -63,14 +63,7 @@ class ResourceAccessMiddleware
             // ex: post (model type)
             $modelType = $split[5];
 
-<<<<<<< HEAD
-            // dd($this->models[$modelType]::find($id));
-            // dd($this->models[$modelType]::where('id','=',$id)->get());
-
-            if (!array_key_exists($modelType, $this->models)) {
-=======
             if (! array_key_exists($modelType, $this->models)) {
->>>>>>> rasif-import
                 throw new TrustedException("Unable to find the $modelType to verify blog relationship");
             }
 

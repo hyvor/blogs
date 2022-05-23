@@ -85,18 +85,18 @@ class UserRepository
 
     }
 
-    public static function deleteUser(int $id)
-    {
-        PostTagAuthorRepository::deleteAllWithAuthor($id);
+    // public static function deleteUser(int $id)
+    // {
+    //     PostTagAuthorRepository::deleteAllWithAuthor($id);
 
-        $user = User::find($id);
+    //     $user = User::find($id);
 
-        if ($user->role === UserRoleEnum::OWNER->value) {
-            throw new Exception('Owner cannot be deleted');
-        }
+    //     if ($user->role === UserRoleEnum::OWNER->value) {
+    //         throw new Exception('Owner cannot be deleted');
+    //     }
 
-        $user->delete();
-    }
+    //     $user->delete();
+    // }
 
     public static function getAuthorsWithFilterQ(
         Blog $blog,
@@ -157,39 +157,35 @@ class UserRepository
         UserStatusEnum $status = UserStatusEnum::INVITED,
         array $userData = [],
     ): User {
-        // ) {
 
         // This is the place where I got the ( cURL error 6: Could not resolve host: api ) Error so I had to comment it.
-        // if ($hyvorUserId) {
-        //     $user = Userbase::fromId($hyvorUserId, false, true);
+        if ($hyvorUserId) {
+            $user = Userbase::fromId($hyvorUserId, false, true);
 
-        //     if (!$user) {
-        //         throw new TrustedException("User not found");
-        //     }
+            if (!$user) {
+                throw new TrustedException("User not found");
+            }
 
-        //     $userData = [
-        //         'name' => $user->name,
-        //         'email' => $user->email,
-        //         'picture' => $user->picture,
-        //         'location' => $user->location,
-        //         'bio' => $user->bio,
-        //         'url' => $user->url
-        //     ];
-        // }
+            $userData = [
+                'name' => $user->name,
+                'email' => $user->email,
+                'picture' => $user->picture,
+                'location' => $user->location,
+                'bio' => $user->bio,
+                'url' => $user->url
+            ];
+        }
 
         // $slug = self::findSlugForUser($blog->id, $userData);
 
         $user = User::create([
             'blog_id' => $blog->id,
             'picture_url' => $userData['pictureUrl'] ?? null,
-            // 'slug' => $userData['slug'],
-            'slug' => 'test',
-            // 'hyvor_user_id' => $hyvorUserId,
-            'hyvor_user_id' => 1,
+            'slug' => $userData['slug'],
+            'hyvor_user_id' => $hyvorUserId,
             'status' => $status->value,
             'role' => $role->value,
-            // 'email' => $userData['email'],
-            'email' => 'sgs.ss',
+            'email' => $userData['email'],
             'website_url' => $userData['url'] ?? null,
             'social_facebook' => $userData['social_facebook'] ?? null,
             'social_twitter' => $userData['social_twitter'] ?? null,
@@ -203,9 +199,7 @@ class UserRepository
         UserVariant::create([
             'user_id' => $user->id,
             'language_id' => $getLanguage->id,
-            // 'language_id' => 1,
-            // 'name' => $userData['name'],
-            'name' => 'test',
+            'name' => $userData['name'],
             'location' => $userData['location'] ?? null,
             'bio' => $userData['bio'] ?? null,
         ]);
@@ -213,11 +207,9 @@ class UserRepository
         return $user;
     }
 
-    public static function updateAuthor(
+    public static function updateUser(
         int $userId,
         int $languageId,
-        $blog,
-        ?int $hyvorUserId,
         UserRoleEnum $role,
         UserStatusEnum $status = UserStatusEnum::INVITED,
         array $userData = [],
@@ -228,8 +220,8 @@ class UserRepository
                 'status' => $status->value,
                 'role' => $role->value,
                 'email' => $userData['email'] ?? null,
-                'picture_id' => $userData['pictureId'] ?? null,
-                'url' => $userData['url'] ?? null,
+                'picture_url' => $userData['pictureUrl'] ?? null,
+                'website_url' => $userData['websiteUrl'] ?? null,
                 'social_facebook' => $userData['social_facebook'] ?? null,
                 'social_twitter' => $userData['social_twitter'] ?? null,
                 'social_linkedin' => $userData['social_linkedin'] ?? null,
@@ -284,6 +276,7 @@ class UserRepository
                 UserVariant::create([
                     'user_id' => $userId,
                     'language_id' => $languageId,
+                    'name' => 'Enter new user variant name'
                 ]);
             }
         }

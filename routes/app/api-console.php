@@ -165,12 +165,12 @@ Route::prefix('/api/console/v0/blog/{subdomain}')
         Route::delete('/redirect/{id}', [ConsoleRedirectController::class, 'deleteRedirect']);
 
         // users
-        Route::get('/users', [ConsoleUserController::class, 'getAuthors']);
+        Route::get('/users', [ConsoleUserController::class, 'getUsers']);
         Route::get('/users/search', [ConsoleUserController::class, 'searchUsers']);
-        Route::post('/user', [ConsoleUserController::class, 'createAuthor']);
-        Route::patch('/user/{id}', [ConsoleUserController::class, 'updateAuthor']); 
-        Route::delete('/user/{id}', [ConsoleUserController::class, 'deleteAuthor']); 
-        Route::post('/user/variant', [ConsoleUserController::class, 'createAuthorVariant']);
+        Route::post('/user', [ConsoleUserController::class, 'createUser']);
+        Route::patch('/user/{id}', [ConsoleUserController::class, 'updateUser']); 
+        Route::delete('/user/{id}', [ConsoleUserController::class, 'deleteUser']); 
+        Route::post('/user/variant', [ConsoleUserController::class, 'createUserVariant']);
         Route::post('/user/picture', [ConsoleUserController::class, 'updatePicture']);
 
         // route

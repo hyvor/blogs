@@ -11,7 +11,7 @@ class TagObject
     public int $created_at;
     public int $updated_at;
     public string $slug;
-    public int $posts_count;
+    public ?int $posts_count;
     public ?string $code_head;
     public ?string $code_foot;
     public ?string $featured_image_url;

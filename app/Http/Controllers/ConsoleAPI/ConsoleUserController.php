@@ -16,18 +16,27 @@ use App\Models\Blog;
 use Hyvor\HyvorConnecter\HyvorUser;
 use Hyvor\HyvorConnecter\User;
 use Illuminate\Http\Request;
+use App\Exceptions\TrustedException;
 
 class ConsoleUserController extends Controller
 {
 
-    public static function getAuthors(Blog $blog)
+    public static function getUsers(Request $request, Blog $blog)
     {
-        $getData = UserRepository::getAuthors($blog)
+        $request->validate([
+            'limit' => 'integer',
+            'offset' => 'integer',
+        ]);
+
+       $limit = $request->input('limit') ?? 50;
+       $offset = $request->input('offset') ?? 0;
+
+        $Users = UserRepository::getUsers($blog, $limit, $offset)
                 ->map(function ($users) use ($blog) {
                     return new UserObject($users, $blog);
                 });
 
-        return response()->json($getData);
+        return response()->json($Users);
     }
 
     public static function searchUsers(Request $request, Blog $blog)
@@ -46,7 +55,7 @@ class ConsoleUserController extends Controller
 
     }
 
-    public static function createAuthor(Request $request, Blog $blog)
+    public static function createUser(Request $request, Blog $blog)
     {
         $role = UserRoleEnum::from($request->input('role'));
         $status = UserStatusEnum::from($request->input('status'));
@@ -107,13 +116,15 @@ class ConsoleUserController extends Controller
             throw new UserRepository('Slug already exists');
         }
 
+        $hyvorUserId = null;
+
         // I changed here from user_id to hyvor_user_id
-        $createUser = UserRepository::createUser($blog, $blog->hyvor_user_id, $role, $status, $userData);
+        $createUser = UserRepository::createUser($blog, $hyvorUserId, $role, $status, $userData);
 
         return response()->json($createUser);
     }
 
-    public static function updateAuthor(Request $request, Blog $blog)
+    public static function updateUser(Request $request, Blog $blog)
     {
         $userId = $request->route('id');
         $languageId = $request->input('languageId');
@@ -126,11 +137,11 @@ class ConsoleUserController extends Controller
         if ($request->has('email')) {
             $userData['email'] = $request->input('email');
         }
-        // if ($request->has('pictureUrl')) {
-        //     $userData['pictureUrl'] = $request->input('pictureUrl');
-        // }
-        if ($request->has('url')) {
-            $userData['url'] = $request->input('url');
+        if ($request->has('pictureUrl')) {
+            $userData['pictureUrl'] = $request->input('pictureUrl');
+        }
+        if ($request->has('websiteUrl')) {
+            $userData['websiteUrl'] = $request->input('websiteUrl');
         }
 
         if ($request->has('social_facebook')) {
@@ -172,17 +183,17 @@ class ConsoleUserController extends Controller
         $currentUser = UserRepository::getUserByBlogIdAndSlug($blog->id, $userData['slug']);
         
         if ($currentUser) {
-            throw new UserRepository('Slug already exists');
+            throw new TrustedException('Slug already exists');
         }
         
 
         // I changed here from user_id to hyvor_user_id
-        $updateUser = UserRepository::updateAuthor($userId, $languageId, $blog, $blog->hyvor_user_id, $role, $status, $userData);
+        $updateUser = UserRepository::updateUser($userId, $languageId, $role, $status, $userData);
 
         return response()->json($updateUser);
     }
 
-    public static function deleteAuthor(Request $request)
+    public static function deleteUser(Request $request)
     {
         $userId = $request->route('id');
         $languageId = $request->input('languageId');
@@ -197,7 +208,7 @@ class ConsoleUserController extends Controller
     * these functions are for author Variants
     *
     */
-    public static function createAuthorVariant(Request $request)
+    public static function createUserVariant(Request $request)
     {
         $userId = $request->input('userId');
         $languageId = $request->input('languageId');
