@@ -2,7 +2,7 @@ import React from 'react';
 import { router } from 'kea-router'
 import { useValues } from 'kea';
 
-export default function NavLink(props: any = {}) {
+const NavLink = React.forwardRef((props: any = {}, ref) => {
 
     let { location: { pathname } } = useValues(router);
 
@@ -19,6 +19,7 @@ export default function NavLink(props: any = {}) {
 
     return <a
         {...props}
+        ref={ref}
         onClick={(event) => {
             if (!props.target) {
                 event.preventDefault()
@@ -29,4 +30,6 @@ export default function NavLink(props: any = {}) {
         className={clsName}
     />
 
-}
+});
+
+export default NavLink

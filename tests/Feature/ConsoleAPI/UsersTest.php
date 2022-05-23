@@ -100,3 +100,4 @@ it('create variant ( If language id is null ) ', function () {
         ])
         ->assertStatus(500);
 });
+

@@ -63,7 +63,7 @@ const postsLogic = kea({
         createPost: async () => {
             const response = await api.post(props.subdomain, '/post');
 
-            actions.getPostsLoadSuccess([response.id, ...values.postsList])
+            actions.setPostsList([response.id, ...values.postsList])
             actions.navigateToPost(response.id);
         },
 
@@ -94,7 +94,6 @@ const postsLogic = kea({
                 status: 'all',
                 author: 'all',
                 tag: 'all',
-                languageId: blogsLogic.values.findBlogBySubdomain(props.subdomain).blog.default_language.id,
                 startDate: null,
                 endDate: null,
                 search: ''

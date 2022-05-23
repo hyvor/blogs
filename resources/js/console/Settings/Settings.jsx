@@ -9,7 +9,7 @@ import SettingsMigrate from './SettingsMigrate';
 import SettingUsers from './SettingUser/SettingUsers';
 import SettingRedirects from './SettingRedirects';
 import SettingsComments from './SettingsComments';
-import SettingNavigation from './SettingNavigation';
+import SettingNavigation from './SettingNavigation/SettingNavigation';
 import SettingTag from './SettingTag/SettingTag';
 import SettingsRoutes from './SettingsRoutes';
 import SettingsLanguages from './SettingsLanguages';

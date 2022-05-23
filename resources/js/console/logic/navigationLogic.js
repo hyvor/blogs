@@ -15,6 +15,7 @@ const  navigationLogic = kea({
         updateNavigation: (navigation) => ({navigation}),
         updateDestination: (navigation) => ({navigation}),
         updateSource: (navigation) => ({navigation}),
+        addNavigationVarian: (navigation) => ({navigation}),
     },
 
     ajax: ({actions, props}) => ({
@@ -28,23 +29,38 @@ const  navigationLogic = kea({
             actions.getNavigationList(navigation);
         },
 
-        remove: async ({id}) => {
-            actions.removeFromList(id);
-            await api.delete(props.subdomain, `/navigation/${id}`);
+        remove: async ({id, languageId}) => {
+            console.log(id, languageId);
+            // actions.removeFromList(id);
+            // await api.delete(props.subdomain, `/navigation/${id}`, {
+            //     languageId: languageId,
+            // });
         },
 
         create: async ({name, url, type}) => {
+            console.log(name, url,type)
             const navigation = await api.post(props.subdomain, '/navigation', {
                     name: name,
                     url: url,
                     type: type 
                 })
-          
             actions.addNavigation(navigation);
         },
 
-        updateData: async ({userId, name, url, type}) => {
+        createVariant: async ({navigationId, languageId, name}) => {
+            // console.log(navigationId, languageId, name)
+            const navigation = await api.post(props.subdomain, '/navigation/variant', {
+                id: navigationId,
+                languageId: languageId,
+                name: name,
+            })
+            actions.addNavigationVarian(navigation);
+        },
+
+        updateData: async ({userId, languageId, name, url, type}) => {
+            console.log(userId, languageId, name, url, type)
             const navigation = await api.put(props.subdomain, `/navigation/${userId}`, {
+                    languageId: languageId,
                     name: name,
                     url: url,
                     type: type 
@@ -82,7 +98,10 @@ const  navigationLogic = kea({
             updateNavigation: (state, {navigation}) => [navigation, ...state],
             updateDestination: (state, {navigation}) => [navigation, ...state],
             updateSource: (state, {navigation}) => [navigation, ...state],
-        }]
+        }],
+        createNewVarian: [[], {
+            addNavigationVarian: (state, {navigation}) => [navigation, ...state],
+        }],
     },
 
     events: ({actions}) => ({

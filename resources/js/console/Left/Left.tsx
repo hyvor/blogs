@@ -1,7 +1,7 @@
-import React from 'react';
+import React, {FC, ReactNode, useEffect, useRef} from 'react';
 import BlogsSelector from './BlogsSelector';
 
-import { useValues } from 'kea';
+import {useActions, useValues} from 'kea';
 import subdomainLogic from '../logic/subdomainLogic';
 import NavLink from '../ReusableComponents/NavLink';
 import blogsLogic from '../logic/blogsLogic';
@@ -20,6 +20,14 @@ import {
 import dayjs from 'dayjs';
 import {UserBlog} from "../objects/userblog";
 import {appConfig} from "../helpers";
+import {
+    canAccessBilling,
+    canAccessComments,
+    canAccessPages,
+    canAccessPosts, canAccessSettings,
+    canAccessTheme
+} from "../services/permissions";
+import {router} from "kea-router";
 
 export default function Left() {
 
@@ -59,44 +67,84 @@ export default function Left() {
         <div id="left-nav" className="box">
             <BlogsSelector />
 
-            <NavLink href={`/console/${subdomain}`} exact={1}><House /><span className="name">Blog</span></NavLink>
+            <LeftLink path="" icon={<House />} name="Blog" />
 
             <div className="left-divider"/>
 
-            <NavLink href={`/console/${subdomain}/posts`}><Pencil /><span className="name">Posts</span></NavLink>
-            <NavLink href={`/console/${subdomain}/pages`}><Files /> <span className="name">Pages</span></NavLink>
-            <NavLink href={`/console/${subdomain}/comments`}><Chat /><span className="name">Comments</span></NavLink>
+            <LeftLink path="/posts" icon={<Pencil />} name="Posts" permission={canAccessPosts} />
+            <LeftLink path="/pages" icon={<Files />} name="Pages" permission={canAccessPages} />
+            <LeftLink path="/comments" icon={<Chat />} name="Comments" permission={canAccessComments} />
 
             <div className="left-divider"/>
 
-            <NavLink href={`/console/${subdomain}/theme`}><Palette /><span className="name">Theme</span></NavLink>
 
-            <NavLink href={`/console/${subdomain}/billing`}>
-                <Coin />
-                <span className="name">Billing</span>
-                <span className="mark">
-                    {
-                        blog.is_on_trial && !blog.subscribed ?
-                        <span className="trial-days-left">{trialDaysDiff} days left</span> : null
-                    }
-                    {
-                        !blog.subscribed && !blog.is_on_trial ?
-                        <span className="trial-days-left red">Upgrade Required</span> : null
-                    }
-                    {
-                        currentSubscription && 
-                        (currentSubscription.status === 'past_due' || currentSubscription.status === 'paused')
-                        ?
-                        <span className="subscription-issue-icon">
+            <LeftLink path="/theme" icon={<Palette />} name="Theme" permission={canAccessTheme} />
+
+            <LeftLink path="/billing" icon={<Coin />} name="Billing"
+                permission={canAccessBilling}
+                extra={
+                    <span className="mark">
+                        {
+                            blog.is_on_trial && !blog.subscribed ?
+                                <span className="trial-days-left">{trialDaysDiff} days left</span> : null
+                        }
+                        {
+                            !blog.subscribed && !blog.is_on_trial ?
+                                <span className="trial-days-left red">Upgrade Required</span> : null
+                        }
+                        {
+                            currentSubscription &&
+                            (currentSubscription.status === 'past_due' || currentSubscription.status === 'paused')
+                                ?
+                                <span className="subscription-issue-icon">
                             <Exclamation />
                         </span>
-                        : null
-                    }
+                                : null
+                        }
                 </span>
-            </NavLink>
+                }
+            />
 
-            <NavLink href={`/console/${subdomain}/settings`}><Gear/><span className="name">Settings</span></NavLink>
+            <LeftLink path="/settings" icon={<Gear />} name="Settings" permission={canAccessSettings} />
 
         </div>
     </div>
 }
+
+function LeftLink({path, icon, name, extra = null, permission} : LeftLinkProps) {
+
+    const { subdomain } = useValues(subdomainLogic);
+    const { push } = useActions(router);
+    const perm = typeof permission === 'function' ? permission() : true;
+
+    const ref = useRef(null);
+
+    useEffect(() => {
+
+        /**
+         * Redirect the user to Blog Preview when accessing unauthorized routes via the direct URL
+         * Just a simple check
+         */
+        const link = ref.current
+        if (link.classList.contains('no-perm') && link.classList.contains('active')) {
+            push('/console/' + subdomain);
+        }
+
+    }, []);
+
+    return <NavLink
+        ref={ref}
+        href={`/console/${subdomain}${path}`}
+        exact={path === ''}
+        className={!perm ? "no-perm" : ""}
+    >{icon}<span className="name">{name}</span>{extra}</NavLink>
+}
+
+
+type LeftLinkProps = {
+    path: string,
+    icon: ReactNode,
+    name: string,
+    extra?: ReactNode,
+    permission?: Function
+};

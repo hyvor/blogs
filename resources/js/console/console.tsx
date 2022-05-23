@@ -1,5 +1,4 @@
 import React from 'react';
-import ReactDOM from 'react-dom';
 import { resetContext, Provider } from 'kea'
 import { routerPlugin } from 'kea-router'
 import Scene from './Scene';
