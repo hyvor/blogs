@@ -7,7 +7,6 @@ use App\Models\BlogVariant;
 class BlogVariantObject
 {
     public int $id;
-    public int $blog_id;
     public int $language_id;
     public ?string $name;
     public ?string $description;
@@ -16,9 +15,6 @@ class BlogVariantObject
     public function __construct(BlogVariant $blogVariant)
     {
         $language = $blogVariant->language;
-
-        $this->id = $blogVariant->id;
-        $this->blog_id = $blogVariant->blog_id;
 
         $this->language_id = $language->id;
 

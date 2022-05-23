@@ -1,15 +1,17 @@
 import { kea } from "kea";
+
 const routes = {
     '/console': 'welcome',
     '/console/new(/:type)': 'new',
     '/console/:subdomain/posts(/:postId)': 'posts',
     '/console/:subdomain/pages(/:postId)': 'pages',
+    '/console/:subdomain/comments': 'comments',
     '/console/:subdomain': 'blogPreview',
     '/console/:subdomain/billing': 'billing',
     '/console/:subdomain/settings(/:type)': 'settings',
     '/console/:subdomain/theme(/:type)': 'theme'
-
 };
+
 const sceneLogic = kea({
     actions: {
         setScene: (scene, params) => ({ scene, params }),

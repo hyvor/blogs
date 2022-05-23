@@ -30,13 +30,7 @@ class CreateBlogsTable extends Migration
             $table->string('hosting_domain')->nullable()->unique(); // for domain
             $table->string('hosting_url')->nullable(); // for self
 
-            $table->string('logo_url')->nullable();
-            $table->string('cover_url')->nullable();
-
             $table->json('meta')->nullable();
-
-            $table->string('api_key_data')->nullable();
-            $table->string('api_key_console')->nullable();
             
             // index
             $table->index('type');

@@ -75,7 +75,7 @@ class ConsoleNavigationController extends Controller
             $createNavigation = NavigationRepository::createNavigation($blog, $name, $url, $type, $sort);
             return response()->json(new NavigationObject($createNavigation));
         } else {
-            // return new TrustedException('You cant have more than 8 links', TrustedException::ERROR_INVALID_INPUT);
+            // return new TrustedException('You cant have more than 8 links', TrustedException::ERROR_UNPROCESSABLE);
             abort(404);
         }
     }

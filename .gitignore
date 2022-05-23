@@ -19,7 +19,7 @@ composer.lock
 /.idea
 /.vscode
 Caddyfile
-*Type.ts
+*LogicType.ts
 
 /cypress/screenshots/
 cypress/videos/

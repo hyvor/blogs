@@ -2,6 +2,8 @@
 
 namespace App\Exceptions;
 
+use Throwable;
+
 /**
  * This class is extended by Exception classes that
  * throw trusted errors (doesn't contain anything like class name or table names)
@@ -18,7 +20,7 @@ namespace App\Exceptions;
 
 class TrustedException extends \Exception
 {
-    public const ERROR_INVALID_INPUT = 422; // This means that client-side input fails validation.
+    public const ERROR_UNPROCESSABLE = 422; // This means that client-side input fails validation.
     public const ERROR_UNAUTHORIZED = 401; // This means the user isn’t authenticated.
 
 
@@ -27,4 +29,9 @@ class TrustedException extends \Exception
     public const ERROR_FORBIDDEN = 403;
 
     public const ERROR_NOT_FOUND = 404; // not found
+
+    public function __construct(string $message = "", int $code = self::ERROR_UNPROCESSABLE, ?Throwable $previous = null)
+    {
+        parent::__construct($message, $code, $previous);
+    }
 }

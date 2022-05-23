@@ -11,7 +11,6 @@ use Illuminate\Testing\Fluent\AssertableJson;
 
 beforeEach(function () {
     $this->endpoint = '/posts';
-    $this->defaultLimit = 50;
     $this->defaultLanguage = $this->blog->languages[0];
     $this->post = Post::where('blog_id', $this->blog->id)
         ->where('is_page', false)
@@ -23,7 +22,6 @@ it('gets posts', function () {
         ->callConsoleApi('GET', $this->endpoint)
         ->assertJson(function (AssertableJson $json) {
             $json
-                ->has($this->defaultLimit)
                 ->each(function (AssertableJson $json) {
                     $json->where('is_page', false)
                         ->etc();

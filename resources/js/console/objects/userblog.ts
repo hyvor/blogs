@@ -1,6 +1,5 @@
-import {BlogType} from "../enums";
+import {BlogType, UserRole} from "../enums";
 import {Subscription} from "./subscription";
-import {UserRole} from "./user";
 
 export type UserBlog = {
     user: UserBlogUser;

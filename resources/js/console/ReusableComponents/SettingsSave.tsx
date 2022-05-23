@@ -7,8 +7,11 @@ import subdomainLogic from "../logic/subdomainLogic";
 import blogLogic from "../logic/blogLogic";
 import Loader from "./Loader";
 import {CheckCircle} from "react-bootstrap-icons";
+import {Blog, BlogVariant} from "../types";
 
-export default function SettingsSave({ keys }) {
+
+
+export default function SettingsSave({ keys, variantKeys } : {keys: Array<keyof Blog>, variantKeys: Array<keyof BlogVariant>}) {
 
     const [isDiscarding, setIsDiscarding] = useState(false);
     const [isUpdated, setIsUpdated] = useState(false);

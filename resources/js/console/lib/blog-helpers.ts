@@ -5,12 +5,18 @@
  */
 
 import blogsLogic from "../logic/blogsLogic";
+import languagesLogic from "../logic/languagesLogic";
+import {Language} from "../types";
 
-export function getBlogFromSubdomain(subdomain) {
+export function getBlogFromSubdomain(subdomain: string) {
     return blogsLogic.values.findBlogBySubdomain(subdomain).blog;
 }
 
-export function getBlogUrl(subdomain, path) {
+export function getPrimaryLanguage(subdomain: string) : Language {
+    return languagesLogic({subdomain}).values.primaryLanguage
+}
+
+export function getBlogUrl(subdomain: string, path: string) {
     const blog = getBlogFromSubdomain(subdomain)
     if (path[0] !== '/') {
         path = '/' + path;
@@ -18,7 +24,7 @@ export function getBlogUrl(subdomain, path) {
     return blog.base_url + path;
 }
 
-export function isBlogInTeamPlan(subdomain) {
+export function isBlogInTeamPlan(subdomain: string) {
     const blog = getBlogFromSubdomain(subdomain)
     return blog.is_on_trial ||
         (
@@ -26,7 +32,7 @@ export function isBlogInTeamPlan(subdomain) {
             ['team', 'enterprise'].indexOf(blog.subscription.plan) >= 0
         )
 }
-export function isBlogInProPlan(subdomain) {
+export function isBlogInProPlan(subdomain: string) {
     const blog = getBlogFromSubdomain(subdomain)
     return blog.is_on_trial ||
         (

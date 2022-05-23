@@ -18,11 +18,10 @@ class CreatePostAuthorTable extends Migration
             $table->timestamps();
 
             // connections
-            $table->bigInteger('post_id');
-            $table->bigInteger('user_id');
+            $table->bigInteger('post_id')->index();
+            $table->bigInteger('user_id')->index();
 
-            // data
-            $table->tinyInteger('order')->default(1);
+            $table->unique(['post_id', 'user_id']);
         });
     }
 

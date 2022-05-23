@@ -6,9 +6,12 @@ use App\Data\Enums\BlogTypeEnum;
 use App\Data\Objects\ConsoleAPI\UserBlog\UserBlogObject;
 use App\Domains\Blog\BlogRepository;
 use App\Domains\User\UserRepository;
+use App\Exceptions\TrustedException;
 use App\Http\Controllers\Controller;
+use App\Rules\Subdomain;
 use Hyvor\HyvorConnecter\HyvorUser;
 use Illuminate\Http\Request;
+use Illuminate\Support\Str;
 
 class ConsoleUserBlogController extends Controller
 {
@@ -16,13 +19,17 @@ class ConsoleUserBlogController extends Controller
     {
         $request->validate([
             'name' => 'required|string',
-            'subdomain' => 'required|string',
+            'subdomain' => ['required_unless:is_dev,true', new Subdomain(checkUnique: true)],
             'is_dev' => 'boolean'
         ]);
 
         $name = $request->input('name');
         $subdomain = $request->input('subdomain');
-        $isDev = $request->input('is_dev');
+        $isDev = $request->input('is_dev', false);
+
+        if ($isDev) {
+            $subdomain = 'dev-' . ((string) Str::uuid());
+        }
 
         $blog = BlogRepository::createBlog(
             $hyvorUser->id,
@@ -36,7 +43,7 @@ class ConsoleUserBlogController extends Controller
         return response()->json(new UserBlogObject($user));
     }
 
-    public function changeSort(Request $request, User $hyvorUser)
+    public function changeSort(Request $request, HyvorUser $hyvorUser)
     {
         $request->validate([
             'blog_ids' => 'required|array',
@@ -60,7 +67,11 @@ class ConsoleUserBlogController extends Controller
 
         $blog = BlogRepository::getBlogBySubdomain($subdomain);
 
-        return response()->json($blog ? false : true);
+        if ($blog) {
+            throw new TrustedException('Subdomain already taken');
+        }
+
+        return response()->json();
     }
 
 }

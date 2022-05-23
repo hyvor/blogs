@@ -3,7 +3,7 @@
 namespace App\Domains\Export;
 
 use App\Domains\Language\LanguageRepository;
-use App\Domains\Post\PostAuthorRepository;
+use App\Domains\Post\PostTagAuthorRepository;
 use App\Domains\Route\PermalinkRepository;
 
 /**
@@ -86,7 +86,7 @@ class WordpressExporter implements ExporterInterface
             $postDate = self::CDATA($publishedAt->toDateTimeString());
             $postUpdatedDate = self::CDATA($post->updated_at->toDateTimeString());
 
-            $primaryAuthor = PostAuthorRepository::getPrimaryAuthor($post);
+            $primaryAuthor = PostTagAuthorRepository::getPrimaryAuthor($post);
             $primaryAuthorEmail = self::CDATA($primaryAuthor?->email ?? '');
             $content = $post->content;
             $excerpt = self::CDATA($post->description);

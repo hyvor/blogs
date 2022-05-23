@@ -19,11 +19,7 @@ use Illuminate\Http\Request;
 
 class ConsoleUserController extends Controller
 {
-    /*
-    *
-    * ConsoleAPI Settings->users
-    *
-    */
+
     public static function getAuthors(Blog $blog)
     {
         $getData = UserRepository::getAuthors($blog)
@@ -32,6 +28,22 @@ class ConsoleUserController extends Controller
                 });
 
         return response()->json($getData);
+    }
+
+    public static function searchUsers(Request $request, Blog $blog)
+    {
+
+        $request->validate([
+            'search' => 'required|string'
+        ]);
+
+        $search = $request->input('search');
+
+        $users = UserRepository::searchUsers($blog, $search, limit: 10)
+            ->map(fn ($user) => new UserObject($user, $blog));
+
+        return response()->json($users);
+
     }
 
     public static function createAuthor(Request $request, Blog $blog)
@@ -157,15 +169,13 @@ class ConsoleUserController extends Controller
             $userData['slug'] = str_replace(" ", "-", $userData['name']);
         }
 
-<<<<<<< HEAD
         $currentUser = UserRepository::getUserByBlogIdAndSlug($blog->id, $userData['slug']);
         
         if ($currentUser) {
             throw new UserRepository('Slug already exists');
         }
         
-=======
->>>>>>> rasif-import
+
         // I changed here from user_id to hyvor_user_id
         $updateUser = UserRepository::updateAuthor($userId, $languageId, $blog, $blog->hyvor_user_id, $role, $status, $userData);
 
@@ -208,46 +218,6 @@ class ConsoleUserController extends Controller
         return response()->json($icon);
     }
 
-    /*
-    *
-    *
-    * *** ConsoleAPI Posts->Author ***
-    *
-    * This function will get all the Authors and display it in an order (Post_Count)
-    */
-    public static function getAuthorList(Request $request)
-    {
-        return 'get Author list';
-    }
 
-    /*
-    *
-    * This function will save the post_id and the Author_id in the post_Author table.
-    * (This function should also save the number of posts in the count table.)
-    *
-    */
-    public static function createPostAuthor(Request $request)
-    {
-        return 'create post Author';
-    }
 
-    /*
-    *
-    * This function will get the selected Authors and display it in the react-select box.
-    *
-    */
-    public static function getPostAuthor(Request $request)
-    {
-        return 'get post Author';
-    }
-
-    /*
-    *
-    * This function will remove the selected Author.
-    *
-    */
-    public static function removePostAuthor(Request $request)
-    {
-        return 'hello world';
-    }
 }

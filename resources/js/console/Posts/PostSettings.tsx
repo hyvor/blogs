@@ -18,6 +18,7 @@ import { usePostActions, usePostValues } from './usePost';
 import {Post} from "../objects/post";
 import {Media} from "../objects/media";
 import PostAuthors from "./PostAuthors";
+import PostTags from "./PostTags";
 
 type PostSettingsProps = {
     isSettingsOpen: boolean;
@@ -132,16 +133,14 @@ export default function PostSettings({ isSettingsOpen, settingsViewRef, id, curr
                             title="Authors"
                             description="The unique part of the URL to identify this post"
                         >
-                            {/* <input className="input" value="Ishini Avindya" onChange={() => {}}></input> */}
-                            <PostAuthors post={post} languageId={currentLanguageId} />
+                            <PostAuthors post={post} updatePostValue={updatePostValue} />
                         </Setting>
 
                         <Setting 
                             title="Tags"
                             className="post-setting-featured-image"
                         >
-                            {/* <input className="input" value="#creative" onChange={() => {}}></input> */}
-                            <SelectTags postId = {post.id}/>
+                            <PostTags post={post} updatePostValue={updatePostValue} />
                         </Setting>
 
                     </div>

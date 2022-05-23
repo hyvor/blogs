@@ -2,17 +2,24 @@
 
 namespace App\Domains\Language;
 
-use App\Data\Params\ConsoleAPI\PostsFilterParam;
-use App\Domains\Post\PostRepository;
 use App\Exceptions\TrustedException;
 use App\Models\Blog;
 use App\Models\Language;
+use Illuminate\Support\Collection;
 
 class LanguageRepository
 {
-    public static function getAllLanguages(int $blogId)
+
+    /**
+     * @param Blog $blog
+     * @return Collection<Language>
+     */
+    public static function getAllLanguages(Blog $blog) : Collection
     {
-        return Blog::find($blogId)->languages()->orderBy('is_primary', 'DESC')->orderBy('id', 'ASC')->get();
+        return $blog->languages()
+            ->orderBy('is_primary', 'DESC')
+            ->orderBy('id', 'ASC')
+            ->get();
     }
 
     public static function createLanguage(
