@@ -10,7 +10,7 @@ export interface IDKeyedTags {
     [key: number]: Tag
 }
 
-const tagsLogic = kea<tagsLogicType>({
+const tagsLogic = kea<tagsLogicType<IDKeyedTags>>({
 
     key: (props: {subdomain: string}) => props.subdomain,
     path: (key: string) => [key, 'tags'],
@@ -22,9 +22,9 @@ const tagsLogic = kea<tagsLogicType>({
     reducers: {
 
         tags: [
-            {},
+            {} as IDKeyedTags,
             {
-                addTags: (state: IDKeyedTags, { tags } : { tags: Array<Tag> }) => {
+                addTags: (state, { tags } : { tags: Array<Tag> }) => {
                     const tagsKeyed : IDKeyedTags = {};
                     for (let tag of tags) {
                         tagsKeyed[tag.id] = tag;

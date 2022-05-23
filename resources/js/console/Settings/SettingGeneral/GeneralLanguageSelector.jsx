@@ -9,9 +9,9 @@ export default function GeneralLanguageSelector({subdomain, languages, currentLa
     const blogLogicBuilt = blogLogic({subdomain})
     const { createVariant} = useActions(blogLogicBuilt)
 
-    /*createVariant({
+    createVariant({
         languageId: currentLanguageId 
-    });*/
+    });
 
     return <div>
         <div className="global-languages-list">

@@ -237,6 +237,9 @@ textarea.input {
         border-radius: 100%;
         animation: global-spinner-dot-before 2.0s infinite ease-in-out both; 
     }
+    &.dark .global-spinner-dot:before {
+        background-color: #000;
+    }
 
     .global-spinner-dot:nth-child(1) { animation-delay: -1.1s; }
     .global-spinner-dot:nth-child(2) { animation-delay: -1.0s; }
@@ -574,6 +577,7 @@ textarea.input {
 
 .global-languages-list{
     margin-top: -10px;
+    margin-bottom: 10px;
     display: flex;
     align-items: center;
     justify-content: center;

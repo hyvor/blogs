@@ -13,7 +13,6 @@ use App\Data\Objects\ConsoleAPI\BlogVariantObject;
 use App\Data\Objects\ConsoleAPI\LanguageObject;
 use App\Data\Objects\ConsoleAPI\Tag\TagObject;
 use App\Data\Objects\ConsoleAPI\User\UserObject;
-use App\Domains\Blog\BlogCountsRepository;
 use App\Domains\Blog\BlogRepository;
 use App\Domains\Count\CountRepository;
 use App\Domains\Language\LanguageRepository;
@@ -75,25 +74,26 @@ class ConsoleBlogController extends Controller
     {
 
         $validate = [
-            'subdomain' => new Subdomain(),
+
+            'subdomain' => new Subdomain(checkUnique: true),
             'hosting_at' => new Enum(BlogHostingAtEnum::class),
             'hosting_domain' => new BlogHostingDomain(),
             'hosting_url' => 'string|url|nullable',
 
             // meta
-            'logo_url' => 'string|nullable',
-            'cover_url' => 'string|nullable',
+            'logo_url' => 'url|nullable',
+            'cover_url' => 'url|nullable',
 
-            'social_facebook' => 'string|null',
-            'social_twitter' => 'string|null',
-            'social_linkedin' => 'string|null',
-            'social_youtube' => 'string|null',
-            'social_tiktok' => 'string|null',
-            'social_instagram' => 'string|null',
-            'social_github' => 'string|null',
+            'social_facebook' => 'url|nullable',
+            'social_twitter' => 'url|nullable',
+            'social_linkedin' => 'url|nullable',
+            'social_youtube' => 'url|nullable',
+            'social_tiktok' => 'url|nullable',
+            'social_instagram' => 'url|nullable',
+            'social_github' => 'url|nullable',
 
-            'code_head' => 'string|null',
-            'code_foot' => 'string|null',
+            'code_head' => 'string|nullable',
+            'code_foot' => 'string|nullable',
 
             'seo_indexing' => 'boolean',
             'seo_robots_txt' => 'string|nullable',
@@ -102,8 +102,8 @@ class ConsoleBlogController extends Controller
             'comments_type' => new Enum(CommentsTypeEnum::class),
             'comments_ht_website_id' => 'integer|nullable',
             'comments_ht_api_key' => 'string|nullable',
-            'comments_code' => 'string|null',
-            'newsletter_code' => 'string|null',
+            'comments_code' => 'string|nullable',
+            'newsletter_code' => 'string|nullable',
 
             'color_modes' => new Enum(ColorModesEnum::class),
             'color_mode_default' => new Enum(ColorModeDefaultEnum::class),

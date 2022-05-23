@@ -18,7 +18,7 @@ export default function SettingsGeneral() {
     const subdomain = subdomainLogic.values.subdomain;
     const blogLogicBuilt = blogLogic({subdomain})
     const { blog } = useValues(blogLogicBuilt)
-    const { updateBlogValue, updateBlogVariantValue } = useActions(blogLogicBuilt)
+    const { updateBlogValue, updateBlogVariantValue, createVariant } = useActions(blogLogicBuilt)
 
     const { primaryLanguage, getLanguageById } = useValues(languagesLogic({subdomain}))
     const [currentLanguageId, setCurrentLanguageId] = useState( primaryLanguage.id );
@@ -77,10 +77,10 @@ export default function SettingsGeneral() {
 
         <LanguageSelector
             languageId={currentLanguageId}
-            hasVariant={Boolean(blog.variants[currentLanguageId])}
+            variantsLanguageIds={Object.keys(blog.variants).map(v => parseInt(v))}
             onChange={(languageId) => setCurrentLanguageId(languageId)}
+            variantCreator={createVariant}
         />
-
 
         <DualSetting 
             title="Name"

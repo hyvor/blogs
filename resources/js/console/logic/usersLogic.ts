@@ -1,4 +1,4 @@
-import { kea, key, path, actions, reducers } from 'kea';
+import {kea, key, path, actions, reducers, props} from 'kea';
 import {User} from "../types";
 
 import type { usersLogicType } from "./usersLogicType";
@@ -8,7 +8,8 @@ export interface IDKeyedUsers {
 }
 
 const usersLogic = kea<usersLogicType>([
-    key((props: {subdomain: string}) => props.subdomain),
+    props({} as {subdomain: string}),
+    key((props) => props.subdomain),
     path((key: string) => [key, 'users']),
     actions({
         addUsers: (users: Array<User>) => ({users})
@@ -58,7 +59,8 @@ export default usersLogic
 //     ajax: ({ values, actions, props }) => ({
 //
 //         load: async ({offset = 0, type}) => {
-//             const user =  await api.get(props.subdomain, '/users');
+//             const users =  await api.get(props.subdomain, '/users');
+//             actions.addUsers(users)
 //             actions.setUsersListHasMore(user.length === 50);
 //             actions.setUsersList(user);
 //         },
@@ -156,8 +158,8 @@ export default usersLogic
 //         userListHasMore: [false, {
 //             setUsersListHasMore: (_, {has}) => has
 //         }],
-//         createNewVarian: [[], {
-//             addUserVarian: (state, {user}) => [user, ...state],
+//         createNewVariant: [[], {
+//             addUserVariant: (state, {user}) => [user, ...state],
 //         }],
 //         picture: [[], {
 //             // setPicture: (_, {user}) => user,

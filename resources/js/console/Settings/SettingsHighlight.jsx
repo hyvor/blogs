@@ -8,7 +8,7 @@ import SettingsSave from "../ReusableComponents/SettingsSave";
 export default function SettingsHighlight() {
     
     const { blog } = useBlogValues();
-    const { updateBlogData } = useBlogActions();
+    const { updateBlogValue } = useBlogActions();
 
     const keys = ['syntax_on', 'syntax_theme', 'syntax_line_numbers'];
     
@@ -28,7 +28,7 @@ export default function SettingsHighlight() {
             right={
                 <Switch
                     checked={blog.syntax_on}
-                    onChange={checked => updateBlogData('syntax_on', checked)}
+                    onChange={checked => updateBlogValue('syntax_on', checked)}
                 />
             }
         />
@@ -52,7 +52,7 @@ export default function SettingsHighlight() {
                             <Select
                                 options={themes}
                                 defaultValue={themes.find(t => t.value === (blog.syntax_theme || 'nord'))}
-                                onChange={v => updateBlogData('syntax_theme', v.value)}
+                                onChange={v => updateBlogValue('syntax_theme', v.value)}
                             />
                         }
                     />
@@ -63,7 +63,7 @@ export default function SettingsHighlight() {
                         right={
                             <Switch
                                 checked={blog.syntax_line_numbers}
-                                onChange={checked => updateBlogData('syntax_line_numbers', checked)}
+                                onChange={checked => updateBlogValue('syntax_line_numbers', checked)}
                             />
                         }
                     />

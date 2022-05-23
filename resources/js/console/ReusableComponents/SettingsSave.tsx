@@ -9,9 +9,10 @@ import Loader from "./Loader";
 import {CheckCircle} from "react-bootstrap-icons";
 import {Blog, BlogVariant} from "../types";
 
-
-
-export default function SettingsSave({ keys, variantKeys } : {keys: Array<keyof Blog>, variantKeys: Array<keyof BlogVariant>}) {
+export default function SettingsSave(
+    { keys, variantKeys = [] } :
+    { keys: Array<keyof Blog>, variantKeys: Array<keyof BlogVariant> }
+) {
 
     const [isDiscarding, setIsDiscarding] = useState(false);
     const [isUpdated, setIsUpdated] = useState(false);
@@ -19,8 +20,8 @@ export default function SettingsSave({ keys, variantKeys } : {keys: Array<keyof 
     const { subdomain } = useValues(subdomainLogic);
 
     const blogLogicInst = blogLogic({subdomain})
-    const { saveAjax, getDiff } = useValues(blogLogicInst)
-    const { save, discardChanges } =  useActions(blogLogicInst)
+    const { updateBlogAjax, getDiff, getVariantDiff } = useValues(blogLogicInst)
+    const { updateBlog, discardChanges } =  useActions(blogLogicInst)
     
     const [status, setStatus] = useState(null);
 
@@ -28,24 +29,24 @@ export default function SettingsSave({ keys, variantKeys } : {keys: Array<keyof 
         setIsDiscarding(true);
     }
     
-    const should = getDiff(keys)
+    const should = getDiff(keys) || getVariantDiff(variantKeys)
 
     useUpdateEffect(() => {
         setIsUpdated(true);
     }, [should])
     
     useUpdateEffect(() => {
-        setStatus(saveAjax.status)
-        if (saveAjax.status === 'success') {
+        setStatus(updateBlogAjax.status)
+        if (updateBlogAjax.status === 'success') {
             setIsUpdated(false);
             setTimeout(() => {
                 setStatus(null)
             }, 2000);
         }
-    }, [saveAjax.status])
+    }, [updateBlogAjax.status])
     
     function handleSave() {
-        save({keys})
+        updateBlog({keys, variantKeys})
     }
     function handleDiscardConfirm() {
         discardChanges(keys)

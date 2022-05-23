@@ -7,15 +7,15 @@ import {useBlogActions, useBlogValues} from "./useBlog";
 export default function SettingsColorMode() {
     
     const { blog } = useBlogValues();
-    const { updateBlogData } = useBlogActions();
+    const { updateBlogValue } = useBlogActions();
 
     const keys = ['color_modes', 'color_mode_default'];
     
     function handleColorModeChange(e) {
-        updateBlogData("color_modes", e.target.value);
+        updateBlogValue("color_modes", e.target.value);
     }
     function handleColorModeDefaultChange(e) {
-        updateBlogData("color_mode_default", e.target.value);
+        updateBlogValue("color_mode_default", e.target.value);
     }
     
     return <div className="settings-color-mode">

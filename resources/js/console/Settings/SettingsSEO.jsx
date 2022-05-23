@@ -11,7 +11,7 @@ import {useBlogActions, useBlogValues} from "./useBlog";
 export default function SettingsSEO() {
     
     const { blog } = useBlogValues();
-    const { updateBlogData } = useBlogActions();
+    const { updateBlogValue } = useBlogActions();
     
     const keys = [
         'seo_indexing', 'seo_robots_txt', 
@@ -19,7 +19,7 @@ export default function SettingsSEO() {
     ];
     
     function handleExternalLinkFollowChange(e) {
-        updateBlogData("seo_external_links_follow", e.target.value);
+        updateBlogValue("seo_external_links_follow", e.target.value);
     }
     
     return <div className="settings-seo">
@@ -35,7 +35,7 @@ export default function SettingsSEO() {
                 <div>
                     <Switch 
                         checked={blog.seo_indexing}
-                        onChange={checked => updateBlogData('seo_indexing', checked)}
+                        onChange={checked => updateBlogValue('seo_indexing', checked)}
                     />
                     {
                         !blog.seo_indexing ?
@@ -83,7 +83,7 @@ export default function SettingsSEO() {
                 <CodemirrorEditor
                     mode={CODEMIRROR_MODES.twig}
                     value={blog.seo_robots_txt}
-                    onChange={val => updateBlogData('seo_robots_txt', val)}
+                    onChange={val => updateBlogValue('seo_robots_txt', val)}
                 />
             }
             column={true}

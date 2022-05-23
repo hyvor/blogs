@@ -39,7 +39,7 @@
     }
 
     .settings-right {
-        padding: 30px 50px;
+        padding: 30px 50px 90px;
         overflow:auto;
 
         & > div > .title {
@@ -57,17 +57,20 @@
 }
 
 .settings-save {
-
     position: fixed;
-    bottom: 30px;
-    left: 300px;
-    width:100%;
+    bottom: 15px;
+    left: 610px;
+    right: 15px;
     text-align: center;
+    padding: 40px 20px 20px;
+    background: linear-gradient(0deg, #fff, transparent);
+    pointer-events: none;
     &.start {
         opacity: 0;
     }
     &.open {
         animation: .5s save-in ease-in-out both;
+        pointer-events: initial;
     }
     &.close {
         animation: .5s save-out ease-in-out both;

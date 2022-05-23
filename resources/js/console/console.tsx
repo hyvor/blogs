@@ -1,8 +1,7 @@
 import React from 'react';
-import { resetContext, Provider } from 'kea'
+import { resetContext } from 'kea'
 import { routerPlugin } from 'kea-router'
 import Scene from './Scene';
-// import { ajaxPlugin } from './lib/kea-plugins/ajax';
 import { ToastContainer } from 'react-toastify'
 
 import './lib/codemirror/codemirror';
