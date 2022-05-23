@@ -17,15 +17,9 @@
         "@types/react-datepicker": "^4.4.1",
         "@types/react-dom": "^18.0.1",
         "axios": "^0.22.0",
-<<<<<<< HEAD
-        "concurrently": "^7.2.0",
-        "cypress": "^9.6.1",
-        "kea-typegen": "^1.4.4",
-=======
         "concurrently": "^7.1.0",
         "cypress": "^9.5.4",
         "kea-typegen": "3.0.0",
->>>>>>> f4c524cfd2775a41896ceb19f5e818054c3d3071
         "laravel-mix": "^6.0.6",
         "lodash": "^4.17.19",
         "postcss": "^8.4.13",
@@ -42,18 +36,9 @@
         "dayjs": "^1.11.2",
         "deep-object-diff": "^1.1.7",
         "deepmerge": "^4.2.2",
-<<<<<<< HEAD
-<<<<<<< HEAD
         "kea": "^2.6.0",
         "kea-loaders": "^0.5.1",
         "kea-router": "^1.0.6",
-=======
-        "kea": "^2.6",
-=======
-        "kea": "^2.6.0",
->>>>>>> 3371e395061f54446598ef5c8a4709df83cbab35
-        "kea-router": "^1.0.7",
->>>>>>> f4c524cfd2775a41896ceb19f5e818054c3d3071
         "prosemirror-codemark": "^0.3.5",
         "prosemirror-dropcursor": "^1.4.0",
         "prosemirror-gapcursor": "^1.2.2",
