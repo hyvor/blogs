@@ -29,11 +29,6 @@ const postsLogic = kea({
 
     ajax: ({ values, props, actions }) => ({
 
-        getCounts: async () => {
-            const counts = await api.get(props.subdomain, '/blog/post-counts');
-            actions.setCounts(counts);
-        },
-
         /**
          * First and more loading uses seperate actiosn because
          * we want seperate loading states
@@ -110,12 +105,6 @@ const postsLogic = kea({
         ]
 
     }),
-
-    events: ({actions}) => ({
-        afterMount: [
-            actions.getCounts
-        ]
-    })
 
 })
 

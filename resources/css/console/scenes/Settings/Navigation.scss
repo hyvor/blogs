@@ -8,6 +8,10 @@
         display: flex;
         margin-bottom: 20px;
         // margin-left: 270px;
+
+        .footer-title-bar{
+            margin-top: 25px;
+        }
     }
     .navigation-title{
         font-weight: 600;
@@ -218,5 +222,9 @@
     }
     .popup-type-margin{
         margin-bottom: 5px;
+    }
+
+    .table-header-margin{
+        margin-left: 20px;
     }
 }

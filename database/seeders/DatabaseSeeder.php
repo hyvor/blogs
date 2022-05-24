@@ -125,42 +125,44 @@ class DatabaseSeeder extends Seeder
              * posts and pages 10 each
              * about 3 draft, 3 published, 3 scheduled
              */
-            $posts = Post::factory()
-                ->count(300)
-                ->has(
-                    PostVariant::factory()
-                        ->count(2)
-                        ->state(new Sequence(
-                            ['language_id' => $english],
-                            ['language_id' => $french]
-                        ))
-                        ->state(function () {
-                            return [
-                                'status' => collect(['draft', 'published', 'scheduled'])->random(),
-                            ];
-                        }),
-                    'variants'
-                )
-                ->state(new Sequence(
-                    ['is_page' => true],
-                    ['is_page' => false]
-                ))
-                ->create([
-                    'blog_id' => $blog,
-                ]);
+            if (true) {
+                $posts = Post::factory()
+                    ->count(10)
+                    ->has(
+                        PostVariant::factory()
+                            ->count(2)
+                            ->state(new Sequence(
+                                ['language_id' => $english],
+                                ['language_id' => $french]
+                            ))
+                            ->state(function () {
+                                return [
+                                    'status' => collect(['draft', 'published', 'scheduled'])->random(),
+                                ];
+                            }),
+                        'variants'
+                    )
+                    ->state(new Sequence(
+                        ['is_page' => true],
+                        ['is_page' => false]
+                    ))
+                    ->create([
+                        'blog_id' => $blog,
+                    ]);
 
-            // connect posts and tags
-            $posts->map(function ($post) use ($tags, $users) {
-                $tags->random(3)->map(fn ($tag) => PostTag::create([
-                    'post_id' => $post->id,
-                    'tag_id' => $tag->id
-                ]));
+                // connect posts and tags
+                $posts->map(function ($post) use ($tags, $users) {
+                    $tags->random(3)->map(fn($tag) => PostTag::create([
+                        'post_id' => $post->id,
+                        'tag_id' => $tag->id
+                    ]));
 
-                $users->map(fn ($user) => PostAuthor::create([
-                    'post_id' => $post->id,
-                    'user_id' => $user->id
-                ]));
-            });
+                    $users->map(fn($user) => PostAuthor::create([
+                        'post_id' => $post->id,
+                        'user_id' => $user->id
+                    ]));
+                });
+            }
 
             /*Navigation::factory()
                 ->count(10)

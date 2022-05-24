@@ -2,6 +2,7 @@
 
 namespace App\Domains\Blog;
 
+use App\Data\Enums\BlogHostingAtEnum;
 use App\Data\Enums\BlogTypeEnum;
 use App\Domains\Media\MediaRepository;
 use App\Domains\Route\PermalinkRepository;
@@ -9,6 +10,7 @@ use App\Exceptions\TrustedException;
 use App\Models\Blog;
 use App\Models\BlogVariant;
 use App\Models\Language;
+use Hyvor\JsonMeta\MetableException;
 
 class BlogRepository
 {
@@ -17,26 +19,17 @@ class BlogRepository
         string $name,
         string $subdomain,
         BlogTypeEnum $type = BlogTypeEnum::DEFAULT
-    // ) : ? User {
-    ) {
-        $blog = self::getBlogBySubdomain($subdomain);
+    ) : Blog {
 
-        if ($blog) {
-            throw new TrustedException(
-                'This subdomain is already taken, please choose a different subdomain',
-                TrustedException::ERROR_INVALID_INPUT
-            );
-        }
-
-        // create the blog
         $blog = Blog::create([
-            'hyvor_user_id' => $userId, // I changed here from user_id to hyvor_user_id
+            'hyvor_user_id' => $userId,
             'subdomain' => $subdomain,
             'type' => $type->value,
         ]);
 
         BlogVariant::create([
             'blog_id' => $blog->id,
+            'language_id' => $blog->languages[0]->id,
             'name' => $name
         ]);
 
@@ -60,7 +53,7 @@ class BlogRepository
 
     /**
      * @param Blog $blog
-     * @param array<string, mixed> $update
+     * @param array $updates
      * @return Blog
      */
     public static function updateBlog(Blog $blog, array $updates): Blog
@@ -70,9 +63,10 @@ class BlogRepository
         $metaUpdates = []; // metadata
         $realUpdates = []; // real columns
         $updatables = [
-            'icon_url', 'featured_image_url',
-            'subdomain', 'hosting_at', 'hosting_domain',
-            'hosting_url',
+            'subdomain',
+            'hosting_at',
+            'hosting_domain',
+            'hosting_url'
         ];
 
         foreach ($updates as $key => $value) {
@@ -87,56 +81,63 @@ class BlogRepository
             $blog->setMeta($metaUpdates);
         }
 
-        if ($realUpdates !== []) {
+        if (count($realUpdates)) {
+
+            // free up custom domains
+            if (
+                array_key_exists('hosting_at', $realUpdates) &&
+                $realUpdates['hosting_at'] !== BlogHostingAtEnum::DOMAIN->value
+            ) {
+                $realUpdates['hosting_domain'] = null;
+            }
+
             $blog->update($realUpdates);
         }
 
         return $blog;
     }
 
-    public static function createBlogVariant($blog, int $languageId): void
+    public static function createBlogVariant(Blog $blog, Language $language): BlogVariant
     {
-        $language = Language::where('id', '=', $languageId)
-        ->value('is_primary');
 
-        if ($language == 0) {
-            $userVariantCheck = BlogVariant::where('blog_id', '=', $blog->id)
-            ->where('language_id', '=', $languageId)
+        $variant = BlogVariant::where('blog_id', $blog->id)
+            ->where('language_id', $language->id)
             ->first();
 
-            if ($userVariantCheck == null) {
-                BlogVariant::create([
-                    'blog_id' => $blog->id,
-                    'language_id' => $languageId,
-                ]);
-            }
+        if ($variant) {
+            throw new TrustedException('Variant already there');
         }
+
+        return BlogVariant::create([
+            'blog_id' => $blog->id,
+            'language_id' => $language->id
+        ]);
+
     }
 
-
-    public static function updateBlogFeatureImage($blog, $file): bool
+    /**
+     * @param Blog $blog
+     * @param Language $language
+     * @param array{name?: string, description?: string|null} $updates
+     * @return BlogVariant
+     */
+    public static function updateBlogVariant(Blog $blog, Language $language, array $updates)
     {
-        $media = MediaRepository::upload($blog->id, $file);
-        $featureImageUrl = PermalinkRepository::getMediaPermalink($media, $blog);
-        // dd($featureImageUrl);
-        // $featureImageId = $media->id;
 
-        return Blog::find($blog->id)
-            ->update([
-                'featured_image_url' => $featureImageUrl,
-            ]);
-    }
+        $variant = BlogVariant::where('blog_id', $blog->id)
+            ->where('language_id', $language->id)
+            ->first();
 
-    public static function updateBlogIcon($blog, $file): bool
-    {
-        $media = MediaRepository::upload($blog->id, $file);
-        $iconUrl = PermalinkRepository::getMediaPermalink($media, $blog);
-        // dd($iconUrl);
-        // $icon = $media->id;
+        if (array_key_exists('name', $updates)) {
+            $variant->name = $updates['name'];
+        }
+        if (array_key_exists('description', $updates)) {
+            $variant->description = $updates['description'];
+        }
 
-        return Blog::find($blog->id)
-            ->update([
-                'icon_url' => $iconUrl,
-            ]);
+        $variant->save();
+
+        return $variant;
+
     }
 }

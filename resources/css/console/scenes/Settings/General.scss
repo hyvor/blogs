@@ -21,14 +21,6 @@
         margin-bottom:10px
     }
 
-    .pointerEvent{
-        pointer-events: none;
-    }
-
-    .uploadButton{
-        margin: 20px 20px 20px 0px;
-    }
-
     .image-head{
          width: 100%;
          display: flex;
@@ -42,6 +34,12 @@
         .button-style{
             margin-left: 25px;
         }
+    }
+
+    .non-primary-language-hider.hidden {
+        pointer-events: none;
+        opacity: 0.2;
+        filter: blur(0.4px);
     }
 
 }

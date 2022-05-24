@@ -40,7 +40,7 @@ class AuthorsController extends Controller
         // must have written one post to be an author
         // otherwise, it can be a user like finance
         if ($author->posts_count === 0) {
-            throw new TrustedException('User is not an author', TrustedException::ERROR_INVALID_INPUT);
+            throw new TrustedException('User is not an author', TrustedException::ERROR_UNPROCESSABLE);
         }
 
         return response()->json(

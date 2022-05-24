@@ -18,7 +18,8 @@ import Tags from './TagsTable';
 * 
 */
 
-export default function SettingTag(props) {
+export default function SettingTag(props) 
+{
     const subdomain = subdomainLogic.values.subdomain;
     const tagsLogicBuilt = tagsLogic({subdomain})
     const { tag, loadAjax, createAjax, tagListHasMore, loadTagsListMoreAjax } = useValues(tagsLogicBuilt)

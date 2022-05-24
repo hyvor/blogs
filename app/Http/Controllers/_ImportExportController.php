@@ -120,3 +120,61 @@ class ImportExportController extends Controller
     }
 }
  */
+
+
+
+ 
+
+
+//   new update section
+  // public static function Wordpress(Blog $blog, ImportFormatEnum $platform){
+
+    //     $fileName = Import::select('name')
+    //         ->where('blog_id','=', $blog->id)
+    //         ->value('name');
+        
+    //     // $wordpressPath = Storage::get('import\'.$fileName);
+    //     $wordpressPath = Storage::get('public\wordpress.xml');
+    //     // dd($wordpressPath);
+
+    //     // $xmlObject = simplexml_load_string($wordpressPath);
+    //     // $json = json_encode($xmlObject);
+    //     // $phpArray = json_decode($json, true); 
+    //     // dd($phpArray);
+
+    //     // $rss = new \DOMDocument($wordpressPath);
+    //     // $rss->load($wordpressPath);
+    //     // $feed = array();
+    //     // return WordpressImporter::wordpress($phpArray);
+
+    //     $data = new Crawler($wordpressPath);
+    //     // $data->addXmlContent($wordpressPath);
+    //     return WordpressImporter::wordpress($blog, $data);
+    // }
+
+
+    // public static function import(Blog $blog, ImportFormatEnum $platform){
+    //     if($platform = ImportFormatEnum::WORDPRESS){
+    //         dispatch(ImportJob::Wordpress($blog, $platform));
+    //     }
+
+    //     if($platform = ImportFormatEnum::GHOST){
+    //         dispatch(new ImportJob($blog, $platform));
+    //     }
+
+    //     if($platform = ImportFormatEnum::HYVOR){
+    //         dispatch(new ImportJob($blog, $platform));
+    //     }
+
+    //     if($platform = ImportFormatEnum::BLOGGER){
+    //         dispatch(new ImportJob($blog, $platform));
+    //     }
+
+    //     if($platform = ImportFormatEnum::TUMBLR){
+    //         dispatch(new ImportJob($blog, $platform));
+    //     }
+
+    //     if($platform = ImportFormatEnum::SUBSTACK){
+    //         dispatch(new ImportJob($blog, $platform));
+    //     }
+    // }

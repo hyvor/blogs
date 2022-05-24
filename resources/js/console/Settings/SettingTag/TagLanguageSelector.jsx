@@ -10,7 +10,7 @@ import tagsLogic from '../../logic/tagsLogic';
 export default function TagLanguageSelector({id, subdomain, languages, variants, currentLanguageId, onChange }) 
 {
     const tagLogicBuilt = tagsLogic({subdomain})
-    const { createVariant} = useActions(tagLogicBuilt)
+    const { createVariant } = useActions(tagLogicBuilt)
 
     createVariant({
         tagId: id,

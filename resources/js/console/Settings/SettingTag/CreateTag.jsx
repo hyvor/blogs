@@ -8,7 +8,8 @@ import Input from '../../ReusableComponents/Input';
 import { Popup, PopupBodyDefault, PopupConfirm, PopupFooterDoubleButton, PopupHeaderDefault } from '../../ReusableComponents/Popup';
 
 
-export default function CreateTag(props) {
+export default function CreateTag(props) 
+{
     const subdomain = subdomainLogic.values.subdomain;
     const tagLogicBuilt = tagsLogic({subdomain})
     const { create } = useActions(tagLogicBuilt)  

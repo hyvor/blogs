@@ -2,6 +2,7 @@
 
 namespace App\Models;
 
+use App\Data\Enums\BlogHostingAtEnum;
 use App\Data\Enums\BlogTypeEnum;
 use App\Models\Concerns\Countable;
 use Hyvor\JsonMeta\Definer;
@@ -21,44 +22,50 @@ class Blog extends Model
 
     protected $casts = [
         'type' => BlogTypeEnum::class,
+        'hosting_at' => BlogHostingAtEnum::class
     ];
 
     // meta
     protected function metaDefinition(Definer $definer)
     {
-        $definer->add('social_facebook')->type('string|null')->default(null);
-        $definer->add('social_twitter')->type('string|null')->default(null);
-        $definer->add('social_linkedin')->type('string|null')->default(null);
-        $definer->add('social_youtube')->type('string|null')->default(null);
-        $definer->add('social_tiktok')->type('string|null')->default(null);
-        $definer->add('social_instagram')->type('string|null')->default(null);
-        $definer->add('social_github')->type('string|null')->default(null);
 
-        $definer->add('code_head')->type('string|null')->default(null);
-        $definer->add('code_foot')->type('string|null')->default(null);
+        $definer->add('logo_url')->default(null);
+        $definer->add('cover_url')->default(null);
 
-        $definer->add('seo_indexing')->type('bool')->default(true);
-        $definer->add('seo_robots_txt')->type('string|null')->default(<<<TEXT
+        $definer->add('social_facebook')->default(null);
+        $definer->add('social_twitter')->default(null);
+        $definer->add('social_linkedin')->default(null);
+        $definer->add('social_youtube')->default(null);
+        $definer->add('social_tiktok')->default(null);
+        $definer->add('social_instagram')->default(null);
+        $definer->add('social_github')->default(null);
+
+        $definer->add('code_head')->default(null);
+        $definer->add('code_foot')->default(null);
+
+        $definer->add('seo_indexing')->default(true);
+        $definer->add('seo_robots_txt')->default(<<<TEXT
         User-agent: *
         Sitemap: {{ _blog.url }}/sitemap.xml
         Disallow: /p/
         TEXT
         );
-        $definer->add('seo_external_links_follow')->type('enum:nofollow,follow')->default('follow');
+        $definer->add('seo_external_links_follow')->default('follow');
 
-        $definer->add('comments_type')->type('enum:ht,other')->default('ht');
-        $definer->add('comments_ht_website_id')->type('int|null')->default(null);
-        $definer->add('comments_ht_api_key')->type('string|null')->default(null);
-        $definer->add('comments_code')->type('string|null')->default(null);
+        $definer->add('comments_type')->default('ht');
+        $definer->add('comments_ht_website_id')->default(null);
+        $definer->add('comments_ht_api_key')->default(null);
+        $definer->add('comments_code')->default(null);
 
-        $definer->add('newsletter_code')->type('string|null')->default(null);
+        $definer->add('newsletter_code')->default(null);
 
-        $definer->add('color_modes')->type('enum:light,dark,both')->default('both');
-        $definer->add('color_mode_default')->type('enum:light,dark,os')->default('os');
+        $definer->add('color_modes')->default('both');
+        $definer->add('color_mode_default')->default('os');
 
-        $definer->add('syntax_on')->type('bool')->default(true);
-        $definer->add('syntax_line_numbers')->type('bool')->default(true);
-        $definer->add('syntax_theme')->type('string|null')->default(null);
+        $definer->add('syntax_on')->default(true);
+        $definer->add('syntax_line_numbers')->default(true);
+        $definer->add('syntax_theme')->default(null);
+
     }
 
     protected $with = [
@@ -70,9 +77,6 @@ class Blog extends Model
         return $this->hasMany(BlogVariant::class);
     }
 
-    /**
-     * Get Posts of the blog
-     */
     public function posts()
     {
         return $this->hasMany(Post::class);
@@ -88,25 +92,16 @@ class Blog extends Model
         return $this->hasMany(Tag::class);
     }
 
-    /**
-     * Get routes of the blog
-     */
     public function routes()
     {
         return $this->hasMany(Route::class);
     }
 
-    /**
-     * Get languages of the blog
-     */
     public function languages()
     {
         return $this->hasMany(Language::class);
     }
 
-    /**
-     * Redirects
-     */
     public function redirects()
     {
         return $this->hasMany(Redirect::class);
@@ -117,18 +112,11 @@ class Blog extends Model
         return $this->hasMany(Navigation::class);
     }
 
-    /**
-     * Webhooks
-     */
     public function webhooks()
     {
         return $this->hasMany(Webhook::class);
     }
 
-
-    /**
-     * Theme files
-     */
     public function themeFiles()
     {
         return $this->hasMany(ThemeFile::class);

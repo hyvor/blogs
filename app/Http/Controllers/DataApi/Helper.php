@@ -21,7 +21,7 @@ class Helper
             $language = LanguageRepository::getLanguageByCode($blog, $code);
 
             if (! $language) {
-                throw new TrustedException('Language not found', TrustedException::ERROR_INVALID_INPUT);
+                throw new TrustedException('Language not found', TrustedException::ERROR_UNPROCESSABLE);
             }
 
             return $language;
@@ -52,13 +52,13 @@ class Helper
             $orderMethod = strtoupper($split[1] ?? 'desc');
 
             if (! array_key_exists($orderBy, $allowed)) {
-                throw new TrustedException("Sort by $orderBy not supported", TrustedException::ERROR_INVALID_INPUT);
+                throw new TrustedException("Sort by $orderBy not supported", TrustedException::ERROR_UNPROCESSABLE);
             }
 
             if (! in_array($orderMethod, ['ASC', 'DESC'])) {
                 throw new TrustedException(
                     "Sort method $orderMethod not supported",
-                    TrustedException::ERROR_INVALID_INPUT
+                    TrustedException::ERROR_UNPROCESSABLE
                 );
                 $orderMethod = 'DESC';
             }

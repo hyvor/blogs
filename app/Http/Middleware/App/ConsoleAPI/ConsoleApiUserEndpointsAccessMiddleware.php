@@ -4,8 +4,8 @@ namespace App\Http\Middleware\App\ConsoleAPI;
 
 use App\Exceptions\TrustedException;
 use Closure;
+use Hyvor\HyvorConnecter\HyvorUser;
 use Hyvor\HyvorConnecter\Login;
-use Hyvor\HyvorConnecter\User;
 use Illuminate\Http\Request;
 
 class ConsoleApiUserEndpointsAccessMiddleware
@@ -17,7 +17,7 @@ class ConsoleApiUserEndpointsAccessMiddleware
             throw new TrustedException('You are not logged in');
         }
 
-        app()->instance(User::class, $hyvorUser);
+        app()->instance(HyvorUser::class, $hyvorUser);
 
         return $next($request);
     }

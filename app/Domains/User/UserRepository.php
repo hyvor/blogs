@@ -6,7 +6,7 @@ use App\Data\Enums\UserRoleEnum;
 use App\Data\Enums\UserStatusEnum;
 use App\Domains\Language\LanguageRepository;
 use App\Domains\Media\MediaRepository;
-use App\Domains\Post\PostAuthorRepository;
+use App\Domains\Post\PostTagAuthorRepository;
 use App\Domains\Route\PermalinkRepository;
 use App\Exceptions\TrustedException;
 use App\Helpers\CollectionWithTotal;
@@ -32,9 +32,62 @@ use Illuminate\Support\Str;
  */
 class UserRepository
 {
+
+    /**
+     * @param Blog $blog
+     * @param int $limit
+     * @param int $offset
+     * @return Collection<User>
+     */
+    public static function getUsers(Blog $blog, int $limit, int $offset = 0)
+    {
+        $language = LanguageRepository::getPrimaryLanguage($blog);
+
+        return User::where('blog_id', '=', $blog->id)
+            ->join('user_variants', function ($join) use ($language) {
+                $join
+                    ->on('user_variants.user_id', '=', 'users.id')
+                    ->where('user_variants.language_id', '=', $language->id);
+            })
+            ->orderBy('users.posts_count', 'DESC')
+            ->select('users.*')
+            ->limit($limit)
+            ->offset($offset)
+            ->get();
+
+    }
+
+    /**
+     * Search users by their primary language name
+     *
+     * @param Blog $blog
+     * @param string $search
+     * @param int $limit
+     * @return Collection<User>
+     */
+    public static function searchUsers(Blog $blog, string $search, int $limit)
+    {
+
+        $search = str_replace('%', '', $search); // to make it safe
+        $search .= '%';
+
+        $primaryLanguage = LanguageRepository::getPrimaryLanguage($blog);
+
+        return User::join('user_variants', fn($join) =>
+                $join->on('user_variants.user_id', '=', 'users.id')
+                    ->where('user_variants.language_id', '=', $primaryLanguage->id)
+            )
+            ->where('users.blog_id', $blog->id)
+            ->where('user_variants.name', 'LIKE', $search)
+            ->limit($limit)
+            ->select('users.*')
+            ->get();
+
+    }
+
     public static function deleteUser(int $id)
     {
-        PostAuthorRepository::deleteAllWithAuthor($id);
+        PostTagAuthorRepository::deleteAllWithAuthor($id);
 
         $user = User::find($id);
 
@@ -43,22 +96,6 @@ class UserRepository
         }
 
         $user->delete();
-    }
-
-    public static function getAuthors($blog)
-    {
-        $language = LanguageRepository::getPrimaryLanguage($blog);
-
-        $users = User::where('blog_id', '=', $blog->id)
-        ->join('user_variants', function ($join) use ($language) {
-            $join->on('user_variants.user_id', '=', 'users.id');
-            $join->where('user_variants.language_id', '=', $language->id);
-        })
-        // ->latest()
-        ->select('users.*')
-        ->get();
-
-        return $users;
     }
 
     public static function getAuthorsWithFilterQ(

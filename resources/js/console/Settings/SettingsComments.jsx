@@ -13,7 +13,7 @@ import CodemirrorEditor, {CODEMIRROR_MODES} from "../ReusableComponents/Codemirr
 export default function SettingsComments() {
 
     const { blog } = useBlogValues();
-    const { updateBlogData } = useBlogActions();
+    const { updateBlogValue } = useBlogActions();
     
     const keys = [
         'comments_type', 
@@ -23,7 +23,7 @@ export default function SettingsComments() {
     ];
 
     function handleCommentsTypeChange(e) {
-        updateBlogData('comments_type', e.target.value);
+        updateBlogValue('comments_type', e.target.value);
     }
 
     return <div className="settings-delete">
@@ -75,7 +75,7 @@ export default function SettingsComments() {
                                     type="text"
                                     name="ht-website-id"
                                     value={blog.comments_ht_website_id}
-                                    onChange={val => updateBlogData('comments_ht_website_id', val)}
+                                    onChange={val => updateBlogValue('comments_ht_website_id', val)}
                                 />
                             }
                         />
@@ -89,7 +89,7 @@ export default function SettingsComments() {
                                     type="text"
                                     name="ht-website-id"
                                     value={blog.comments_ht_api_key}
-                                    onChange={val => updateBlogData('comments_ht_api_key', val)}
+                                    onChange={val => updateBlogValue('comments_ht_api_key', val)}
                                 />
                             }
                         />
@@ -106,7 +106,7 @@ export default function SettingsComments() {
                             <CodemirrorEditor
                                 mode={CODEMIRROR_MODES.twig}
                                 value={blog.comments_code}
-                                onChange={val => updateBlogData('comments_code', val)}
+                                onChange={val => updateBlogValue('comments_code', val)}
                             />
                         }
                         column={true}
@@ -121,7 +121,7 @@ export default function SettingsComments() {
                     <CodemirrorEditor
                         mode={CODEMIRROR_MODES.twig}
                         value={blog.newsletter_code}
-                        onChange={val => updateBlogData('newsletter_code', val)}
+                        onChange={val => updateBlogValue('newsletter_code', val)}
                     />
                 }
                 column={true}

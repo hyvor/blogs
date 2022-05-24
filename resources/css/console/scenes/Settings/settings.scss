@@ -19,27 +19,27 @@
     }
 
     .settings-nav {
-        padding: 25px;
+        padding: 0 0 25px 0;
         overflow: auto;
-        padding-top: 0;
         div {height:25px;}
         a {
             display: block;
-            padding: 12px 18px;
-            cursor: pointer;
-            border-radius: 20px;
             font-weight: 600;
+            padding: 12px 29px;
+            cursor: pointer;
+            border-left: 3px solid transparent;
             &:hover {
                 background-color: $color-hover;
             }
             &.active {
-                background: $color-accent-light;
+                background: $color-accent-active;
+                border-color: $color-accent;
             }
         }
     }
 
     .settings-right {
-        padding: 30px 50px;
+        padding: 30px 50px 90px;
         overflow:auto;
 
         & > div > .title {
@@ -57,17 +57,20 @@
 }
 
 .settings-save {
-
     position: fixed;
-    bottom: 30px;
-    left: 300px;
-    width:100%;
+    bottom: 15px;
+    left: 610px;
+    right: 15px;
     text-align: center;
+    padding: 40px 20px 20px;
+    background: linear-gradient(0deg, #fff, transparent);
+    pointer-events: none;
     &.start {
         opacity: 0;
     }
     &.open {
         animation: .5s save-in ease-in-out both;
+        pointer-events: initial;
     }
     &.close {
         animation: .5s save-out ease-in-out both;

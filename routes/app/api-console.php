@@ -15,12 +15,6 @@ use App\Http\Controllers\ConsoleAPI\ConsoleTagController;
 use App\Http\Controllers\ConsoleAPI\ConsoleRouteController;
 
 use App\Http\Controllers\ConsoleAPI\ConsoleViewController;
-
-
-
-// use App\Http\Middleware\App\ConsoleAPI\BlogAccessMiddleware;
-// use App\Http\Middleware\App\LoginRequiredMiddleware;
-
 use App\Http\Controllers\ConsoleAPI\ConsoleUrlDataController;
 use App\Http\Controllers\ConsoleAPI\ConsoleWebhookController;
 
@@ -31,17 +25,8 @@ use App\Http\Middleware\App\ConsoleAPI\ResourceAccessMiddleware;
 use App\Http\Middleware\App\SubdomainMiddleware;
 use Illuminate\Support\Facades\Route;
 
-// Route::middleware(LoginRequiredElseRedirectMiddleware::class)
-//     ->get('/console/{any?}', ConsoleViewController::class)
-//     ->where('any', '.*');
-
 Route::get('/console/{any?}', ConsoleViewController::class)
     ->where('any', '.*');
-
-
-// this is an internal API
-// Route::prefix('/api/console')
-    // add middleware
 
 /**
  * This is an internal API for user-level functions
@@ -91,21 +76,17 @@ Route::prefix('/api/console/v0/blog/{subdomain}')
     Route::middleware('role:owner|admin|editor|writer|contributor')->group(function() {
 
         // blog
-        Route::get('/blog', [ConsoleBlogController::class, 'getBlog']);
-        Route::get('/blog/post-counts', [ConsoleBlogController::class, 'getPostsCounts']);
-
-        // Blog General CRUD 
-        Route::post('/blog/variant', [ConsoleBlogController::class, 'createBlogVariant']);
+        Route::get('/blog', [ConsoleBlogController::class, 'getBlogData']);
         Route::patch('/blog', [ConsoleBlogController::class, 'updateBlog']);
-        Route::post('/blog/feature/image', [ConsoleBlogController::class, 'updateBlogFeatureImage']);
-        Route::post('/blog/icon', [ConsoleBlogController::class, 'updateBlogIcon']);
+        Route::post('/blog/variant', [ConsoleBlogController::class, 'createBlogVariant']);
+        Route::patch('/blog/variant', [ConsoleBlogController::class, 'updateBlogVariant']);
 
         /**
          * In post routes, role is checked internally on some actions
          * such as publishing posts
          * or editing posts or others
          */
-        // posts (and pages) CRUD
+        // posts (and pages)
         Route::get('/posts', [ConsolePostController::class, 'getPosts']);
         Route::get('/pages', [ConsolePostController::class, 'getPages']);
         Route::post('/post', [ConsolePostController::class, 'createPost']);
@@ -119,6 +100,9 @@ Route::prefix('/api/console/v0/blog/{subdomain}')
             Route::post('/post/{id}/variant', [ConsolePostController::class, 'createPostVariant']);
             Route::patch('/post/{id}/variant', [ConsolePostController::class, 'updatePostVariant']);
             Route::delete('/post/{id}/variant', [ConsolePostController::class, 'deletePostVariant']);
+
+            Route::patch('/post/{id}/tags', [ConsolePostController::class, 'updateTags']);
+            Route::patch('/post/{id}/authors', [ConsolePostController::class, 'updateAuthors']);
         });
 
         // media CRD
@@ -134,21 +118,13 @@ Route::prefix('/api/console/v0/blog/{subdomain}')
 
     Route::middleware('role:owner|admin|editor')->group(function() {
 
-        // tags CRUD
+        // tags
         Route::get('/tags', [ConsoleTagController::class, 'getTags']);
+        Route::get('/tags/search', [ConsoleTagController::class, 'searchTags']);
         Route::post('/tag', [ConsoleTagController::class, 'createTag']);
         Route::put('/tag/{id}', [ConsoleTagController::class, 'updateTag']);
         Route::delete('/tag/{id}', [ConsoleTagController::class, 'deleteTag']);
         Route::post('/tag/variant', [ConsoleTagController::class, 'createTagVariant']);
-
-        Route::get('/postTags/{id}', [ConsoleTagController::class, 'selectedPostTag']);
-
-        // post_tag CRUD
-        // Route::get('/getTagList', [ConsoleTagController::class, 'getPostTags']);
-        // Route::post('/createPostTag', [ConsoleTagController::class, 'createPostTag']);
-        // Route::get('/getPostTag', [ConsoleTagController::class, 'getPostTag']);
-        // Route::delete('/removePostTag', [ConsoleTagController::class, 'deleteTagVariant']);
-
 
         // comments
         Route::get('/comments/moderate', []);
@@ -161,59 +137,57 @@ Route::prefix('/api/console/v0/blog/{subdomain}')
      */
     Route::middleware('role:owner|admin')->group(function() {
 
-        // webhooks CRUD
+        // webhooks
         Route::get('/webhooks', [ConsoleWebhookController::class, 'getWebhooks']);
         Route::post('/webhook', [ConsoleWebhookController::class, 'createWebhook']);
         Route::patch('/webhook/{id}', [ConsoleWebhookController::class, 'updateWebhook']);
         Route::delete('/webhook/{id}', [ConsoleWebhookController::class, 'deleteWebhook']);
 
-        // navigation CRUD
+        // navigation
         Route::get('/navigation', [ConsoleNavigationController::class,'getNavigations']);
         Route::post('/navigation', [ConsoleNavigationController::class,'createNavigation']);
         Route::put('/navigation/{id}', [ConsoleNavigationController::class,'updateNavigation']);
         Route::delete('/navigation/{id}', [ConsoleNavigationController::class,'deleteNavigation']);
+        Route::post('/navigation/variant', [ConsoleNavigationController::class, 'createNavigationVariant']);
         Route::put('/navigation/sort/{id}', [ConsoleNavigationController::class,'updateSort']);
         Route::put('/navigation/source/{id}', [ConsoleNavigationController::class,'updateSourceSort']);
 
-        // languages CRUD
+        // languages
         Route::get('/languages', [ConsoleLanguageController::class, 'get']);
         Route::post('/language', [ConsoleLanguageController::class, 'create']);
         Route::put('/language/{id}', [ConsoleLanguageController::class, 'update']);
         Route::delete('/language/{id}', [ConsoleLanguageController::class, 'delete']);
         
-        // redirects CRUD
+        // redirects
         Route::get('/redirect', [ConsoleRedirectController::class, 'getRedirects']);
         Route::post('/redirect', [ConsoleRedirectController::class, 'createRedirect']);
         Route::put('/redirect/{id}', [ConsoleRedirectController::class, 'updateRedirect']);
         Route::delete('/redirect/{id}', [ConsoleRedirectController::class, 'deleteRedirect']);
 
-        // settings RU
-        Route::get('/settings', []);
-        Route::post('/settings', []);
-
-        // users CRUD
+        // users
         Route::get('/users', [ConsoleUserController::class, 'getAuthors']);
+        Route::get('/users/search', [ConsoleUserController::class, 'searchUsers']);
         Route::post('/user', [ConsoleUserController::class, 'createAuthor']);
         Route::patch('/user/{id}', [ConsoleUserController::class, 'updateAuthor']); 
         Route::delete('/user/{id}', [ConsoleUserController::class, 'deleteAuthor']); 
         Route::post('/user/variant', [ConsoleUserController::class, 'createAuthorVariant']);
         Route::post('/user/picture', [ConsoleUserController::class, 'updatePicture']);
 
-        // route CRUD
+        // route
         Route::get('/route', [ConsoleRouteController::class, 'getRoutes']);
         Route::post('/route', [ConsoleRouteController::class, 'createRoute']);
         Route::put('/route/{id}', [ConsoleRouteController::class, 'updateRoute']);
         Route::delete('/route/{id}', [ConsoleRouteController::class, 'deleteRoute']);
 
-        // theme CRUD
+        // theme
         Route::get('/theme-files', [ConsoleBlogThemeController::class, 'getAllFiles']);
         Route::put('/theme-file/{id}', [ConsoleBlogThemeController::class, 'createOrUpdateFile']);
 
+        // import and export
         Route::get('/data/export', [ConsoleImportExportController::class, 'export']);
-        Route::get('/data/import', [ConsoleImportExportController::class, 'import']);
+        Route::post('/data/import', [ConsoleImportExportController::class, 'import']);
 
         Route::get('/build', []);
-    
     });
 
     /**
@@ -222,7 +196,7 @@ Route::prefix('/api/console/v0/blog/{subdomain}')
      */
     Route::middleware('role:owner|admin|finance')->group(function() {
 
-        // billing CRUD
+        // billing
         Route::get('/subscription', [ConsoleSubscriptionController::class, 'getData']);
         Route::post('/subscription', [ConsoleSubscriptionController::class, 'createPayLink']);
         Route::patch('/subscription', [ConsoleSubscriptionController::class, 'updateSubscription']);

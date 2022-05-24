@@ -62,7 +62,7 @@ class Handler extends ExceptionHandler
                         $code = 422;
                     }
 
-                    $httpCode = in_array($code, [400, 401, 402, 403, 404, 422, 500]) ? $code : 422;
+                    $httpCode = in_array($code, [401, 403, 404, 422, 500]) ? $code : 500;
 
                     $error =
                         $exception instanceof TrustedException ||

@@ -7,7 +7,7 @@ import {useBlogActions, useBlogValues} from "./useBlog";
 export default function SettingsCode() {
 
     const { blog } = useBlogValues();
-    const { updateBlogData } = useBlogActions();
+    const { updateBlogValue } = useBlogActions();
 
     const keys = ['code_head', 'code_foot'];
 
@@ -30,7 +30,7 @@ export default function SettingsCode() {
                     <CodemirrorEditor
                         mode={CODEMIRROR_MODES.twig}
                         value={blog.code_head}
-                        onChange={v => updateBlogData('code_head', v)}
+                        onChange={v => updateBlogValue('code_head', v)}
                     />
                 }
                 column={true}
@@ -43,7 +43,7 @@ export default function SettingsCode() {
                     <CodemirrorEditor
                         mode={CODEMIRROR_MODES.twig}
                         value={blog.code_foot}
-                        onChange={v => updateBlogData('code_foot', v)}
+                        onChange={v => updateBlogValue('code_foot', v)}
                     />
                 }
                 column={true}

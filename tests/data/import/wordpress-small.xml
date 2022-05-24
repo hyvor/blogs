@@ -35,10 +35,10 @@
 	<wp:base_site_url>https://blogs.hyvor.com/blog</wp:base_site_url>
 	<wp:base_blog_url>https://blogs.hyvor.com/blog</wp:base_blog_url>
 
-		<wp:author><wp:author_id>1</wp:author_id><wp:author_login><![CDATA[supun@hyvor.com]]></wp:author_login><wp:author_email><![CDATA[supun@hyvor.com]]></wp:author_email><wp:author_display_name><![CDATA[supun@hyvor.com]]></wp:author_display_name><wp:author_first_name><![CDATA[]]></wp:author_first_name><wp:author_last_name><![CDATA[]]></wp:author_last_name></wp:author>
+	<wp:author><wp:author_id>1</wp:author_id><wp:author_login><![CDATA[supun@hyvor.com]]></wp:author_login><wp:author_email><![CDATA[supun@hyvor.com]]></wp:author_email><wp:author_display_name><![CDATA[supun@hyvor.com]]></wp:author_display_name><wp:author_first_name><![CDATA[]]></wp:author_first_name><wp:author_last_name><![CDATA[]]></wp:author_last_name></wp:author>
 	<wp:author><wp:author_id>2</wp:author_id><wp:author_login><![CDATA[ishini]]></wp:author_login><wp:author_email><![CDATA[ishini@hyvor.com]]></wp:author_email><wp:author_display_name><![CDATA[ishini]]></wp:author_display_name><wp:author_first_name><![CDATA[]]></wp:author_first_name><wp:author_last_name><![CDATA[]]></wp:author_last_name></wp:author>
 
-		<wp:category>
+	<wp:category>
 		<wp:term_id>4</wp:term_id>
 		<wp:category_nicename><![CDATA[alternatives-to-wordpress]]></wp:category_nicename>
 		<wp:category_parent><![CDATA[]]></wp:category_parent>

@@ -318,7 +318,7 @@ class PostRepository
         $variant = self::getPostVariantByPostIdAndLanguageId($post->id, $language->id);
 
         if (! $variant) {
-            throw new TrustedException('Variant not found', TrustedException::ERROR_INVALID_INPUT);
+            throw new TrustedException('Variant not found', TrustedException::ERROR_UNPROCESSABLE);
         }
 
         // status

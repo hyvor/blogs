@@ -20,7 +20,6 @@ class CreateNavigationsTable extends Migration
             // connections
             $table->bigInteger('blog_id')->index();
 
-            $table->string('name');
             $table->string('url');
 
             $table->enum('type', ['header', 'footer']);

@@ -2,6 +2,7 @@
 
 namespace App\Domains\Route;
 
+use App\Data\Enums\BlogHostingAtEnum;
 use App\Models\Blog;
 use App\Models\Language;
 use App\Models\Media;
@@ -84,14 +85,14 @@ class PermalinkRepository
         $isLocal = app()->environment('local');
         $protocol = $isLocal ? 'http://' : 'https://';
 
-        if ($blog->hosting_at === 'subdomain') {
+        if ($blog->hosting_at === BlogHostingAtEnum::SUBDOMAIN) {
             $deliveryDomain = config('blogs.domain_delivery');
             $port = $isLocal ? ':8081' : '';
 
             return "$protocol$blog->subdomain.$deliveryDomain$port";
-        } elseif ($blog->hosting_at === 'domain') {
+        } elseif ($blog->hosting_at === BlogHostingAtEnum::DOMAIN) {
             return 'https://' . $blog->hosting_domain;
-        } elseif ($blog->hosting_at === 'self') {
+        } elseif ($blog->hosting_at === BlogHostingAtEnum::SELF) {
             return $blog->hosting_url;
         }
     }
