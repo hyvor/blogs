@@ -135,7 +135,7 @@ function LeftLink({path, icon, name, extra = null, permission} : LeftLinkProps) 
     return <NavLink
         ref={ref}
         href={`/console/${subdomain}${path}`}
-        exact={path === ''}
+        exact={path === '' ? 1 : 0}
         className={!perm ? "no-perm" : ""}
     >{icon}<span className="name">{name}</span>{extra}</NavLink>
 }

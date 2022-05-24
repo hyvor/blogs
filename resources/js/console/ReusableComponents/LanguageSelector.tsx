@@ -27,6 +27,7 @@ export default function LanguageSelector(
             {
                 languages.map(lang =>
                     <LangTag
+                        key={lang.id}
                         lang={lang}
                         isActive={languageId === lang.id}
                         onChange={onChange}
