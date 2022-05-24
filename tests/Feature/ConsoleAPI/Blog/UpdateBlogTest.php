@@ -2,4 +2,4 @@
 
 namespace Tests\Feature\ConsoleAPI\Blog;
 
-it();
+// it();

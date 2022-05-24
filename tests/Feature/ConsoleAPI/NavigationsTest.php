@@ -3,7 +3,6 @@
 namespace Tests\Feature\ConsoleAPI;
 
 use App\Domains\Navigation\NavigationRepository;
-use App\Models\Blog;
 
 // php artisan test  --filter 'NavigationsTest'
 // assert unprosseble
@@ -16,15 +15,6 @@ beforeEach(function() {
     $this->type = 'header';
     $this->primaryLanguage = 1;
     $this->secondaryLanguage = 2;
-});
-
-beforeEach(function() {
-    $this->blog = Blog::find(config('test.blog_id'));
-    Navigation::factory()
-        ->count(8)
-        ->create([
-            'blog_id' => $this->blog,
-        ]);
 });
 
 it('fetches navigation', function () {
@@ -46,12 +36,7 @@ it('creates a navigation success', function () {
 it('creating navigation fails on empty fields', function () {
     $this
         ->callConsoleApi('POST', 'navigation')
-<<<<<<< HEAD
-        ->assertStatus(400);    
-        // ->assertStatus(500);
-=======
         ->assertStatus(422);
->>>>>>> rasif-hycor-console-navigation
 });
 
 it('creates a navigation fails if (name) is null', function () {
@@ -61,11 +46,7 @@ it('creates a navigation fails if (name) is null', function () {
             'url' => $this->url,
             'type' => 'header',
         ])
-<<<<<<< HEAD
-        ->assertStatus(400);
-=======
         ->assertStatus(422);
->>>>>>> rasif-hycor-console-navigation
 });
 
 it('creates a navigation fails if (url) is null', function () {
@@ -75,11 +56,7 @@ it('creates a navigation fails if (url) is null', function () {
             'url' => null,
             'type' => 'header',
         ])
-<<<<<<< HEAD
-        ->assertStatus(400);
-=======
         ->assertStatus(422);
->>>>>>> rasif-hycor-console-navigation
 });
 
 it('creates a navigation fails if (type) is not header or footer', function () {
@@ -89,11 +66,7 @@ it('creates a navigation fails if (type) is not header or footer', function () {
             'url' => $this->url,
             'type' => 'wrong',
         ])
-<<<<<<< HEAD
-        ->assertStatus(400);
-=======
         ->assertStatus(422);
->>>>>>> rasif-hycor-console-navigation
 });
 
 it('creates a navigation fails if there are more than 8 header navigations.', function () {
@@ -106,14 +79,8 @@ it('creates a navigation fails if there are more than 8 header navigations.', fu
                 'url' => $this->url,
                 'type' => 'header',
             ])
-<<<<<<< HEAD
-            ->assertStatus(400);
-    }
-    else {
-=======
             ->assertStatus(200);
     } else {
->>>>>>> rasif-hycor-console-navigation
         $this->assertFalse(false);
     }
 });
@@ -128,14 +95,8 @@ it('creates a navigation fails if there are more than 8 footer navigations.', fu
                 'url' => $this->url,
                 'type' => 'header',
             ])
-<<<<<<< HEAD
-            ->assertStatus(400);
-    }
-    else{
-=======
             ->assertStatus(200);
     } else {
->>>>>>> rasif-hycor-console-navigation
         $this->assertFalse(false);
     }
 });
@@ -164,7 +125,6 @@ it('updating a navigation success', function () {
             'url' => $this->url,
             'type' => 'header',
         ])
-        // ->assertStatus(400);
         ->assertOk();
 });
 
@@ -175,11 +135,7 @@ it('updating a navigation fails if (name) is null', function () {
             'url' => $this->url,
             'type' => 'header',
         ])
-<<<<<<< HEAD
-        ->assertStatus(400);
-=======
         ->assertStatus(422);
->>>>>>> rasif-hycor-console-navigation
 });
 
 it('updating a navigation fails if (url) is null', function () {
@@ -189,9 +145,6 @@ it('updating a navigation fails if (url) is null', function () {
             'url' => null,
             'type' => 'header',
         ])
-<<<<<<< HEAD
-        ->assertStatus(400);
-=======
         ->assertStatus(422);
 });
 
@@ -203,7 +156,6 @@ it('updating a navigation fails if (type) is null', function () {
             'type' => null,
         ])
         ->assertStatus(422);
->>>>>>> rasif-hycor-console-navigation
 });
 
 it('update the sort', function () {

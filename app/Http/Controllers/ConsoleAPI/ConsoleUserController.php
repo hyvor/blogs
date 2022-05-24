@@ -197,7 +197,7 @@ class ConsoleUserController extends Controller
     {
         $userId = $request->route('id');
         $languageId = $request->input('languageId');
-        $deleteData = UserRepository::deleteAuthor($userId, $languageId);
+        $deleteData = UserRepository::deleteUser($userId, $languageId);
 
         return response()->json($deleteData);
     }
@@ -205,14 +205,20 @@ class ConsoleUserController extends Controller
 
     /*
     *
-    * these functions are for author Variants
+    * these functions are for user Variants
     *
     */
     public static function createUserVariant(Request $request)
     {
+        $request->validate([
+            'userId' => 'required|int',
+            'languageId' => 'required|int'
+        ]);
+
         $userId = $request->input('userId');
         $languageId = $request->input('languageId');
-        $createVariant = UserRepository::createAuthorVariant($userId, $languageId);
+        
+        $createVariant = UserRepository::createUserVariant($userId, $languageId);
 
         return response()->json($createVariant);
     }

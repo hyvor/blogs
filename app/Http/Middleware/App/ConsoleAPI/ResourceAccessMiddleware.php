@@ -13,7 +13,6 @@ use App\Models\Route;
 use App\Models\Tag;
 use App\Models\User;
 use Closure;
-
 class ResourceAccessMiddleware
 {
     private $models = [
@@ -77,7 +76,9 @@ class ResourceAccessMiddleware
                 );
             }
 
-            app()->instance($this->models[$modelType], $model);
+            if($modelType !== "user") {
+                app()->instance($this->models[$modelType], $model);
+            }
 
 
             // now check if the model's blog_id

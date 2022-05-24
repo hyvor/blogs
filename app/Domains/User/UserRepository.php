@@ -159,33 +159,35 @@ class UserRepository
     ): User {
 
         // This is the place where I got the ( cURL error 6: Could not resolve host: api ) Error so I had to comment it.
-        if ($hyvorUserId) {
-            $user = Userbase::fromId($hyvorUserId, false, true);
+        // if ($hyvorUserId) {
+        //     $user = Userbase::fromId($hyvorUserId, false, true);
 
-            if (!$user) {
-                throw new TrustedException("User not found");
-            }
+        //     if (!$user) {
+        //         throw new TrustedException("User not found");
+        //     }
 
-            $userData = [
-                'name' => $user->name,
-                'email' => $user->email,
-                'picture' => $user->picture,
-                'location' => $user->location,
-                'bio' => $user->bio,
-                'url' => $user->url
-            ];
-        }
+        //     $userData = [
+        //         'name' => $user->name,
+        //         'email' => $user->email,
+        //         'picture' => $user->picture,
+        //         'location' => $user->location,
+        //         'bio' => $user->bio,
+        //         'url' => $user->url
+        //     ];
+        // }
 
         // $slug = self::findSlugForUser($blog->id, $userData);
 
         $user = User::create([
             'blog_id' => $blog->id,
             'picture_url' => $userData['pictureUrl'] ?? null,
-            'slug' => $userData['slug'],
+            // 'slug' => $userData['slug'],
+            'slug' => 'he',
             'hyvor_user_id' => $hyvorUserId,
             'status' => $status->value,
             'role' => $role->value,
-            'email' => $userData['email'],
+            // 'email' => $userData['email'],
+            'email' => 'dd@dd',
             'website_url' => $userData['url'] ?? null,
             'social_facebook' => $userData['social_facebook'] ?? null,
             'social_twitter' => $userData['social_twitter'] ?? null,
@@ -199,7 +201,8 @@ class UserRepository
         UserVariant::create([
             'user_id' => $user->id,
             'language_id' => $getLanguage->id,
-            'name' => $userData['name'],
+            // 'name' => $userData['name'],
+            'name' => 'fdf',
             'location' => $userData['location'] ?? null,
             'bio' => $userData['bio'] ?? null,
         ]);
@@ -239,7 +242,8 @@ class UserRepository
             ]);
     }
 
-    public static function deleteAuthor(int $userId, int $languageId): void
+    // change
+    public static function deleteUser(int $userId, int $languageId): void
     {
         $language = Language::where('id', '=', $languageId)
         ->value('is_primary');
@@ -259,10 +263,10 @@ class UserRepository
 
     /*
     *
-    * these functions are for author Variants
+    * these functions are for user Variants
     *
     */
-    public static function createAuthorVariant(int $userId, int $languageId): void
+    public static function createUserVariant(int $userId, int $languageId): void
     {
         $language = Language::where('id', '=', $languageId)
         ->value('is_primary');
