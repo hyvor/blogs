@@ -1,0 +1,116 @@
+import React, {MouseEventHandler, ReactNode} from 'react'
+import PropTypes from 'prop-types'
+import Loader from './Loader'
+
+interface PopupProps {
+    header: ReactNode,
+    body: ReactNode,
+    footer: ReactNode,
+}
+
+export function Popup(props: PopupProps) {
+    return <div className="popup-wrap">
+        <div className="popup box-style">
+            <div className="popup-header">{props.header}</div>
+            <div className="popup-body">{props.body}</div>
+            <div className="popup-footer">{props.footer}</div>
+        </div>
+    </div>
+}
+
+export function PopupBodyDefault(props: {children: ReactNode}) {
+    return <div className="popup-body-default">{props.children}</div>
+}
+
+export function PopupHeaderDefault(props: {title: ReactNode}) {
+    return <div className="popup-header-default">{props.title}</div>
+}
+
+export function PopupFooterSingleButton(
+    props:
+    {buttonClass?: string, onClick: Function, name: ReactNode}
+) {
+    return <div className="popup-footer-single">
+        <button className={"button " + props.buttonClass} onClick={() => props.onClick()}>{props.name}</button>
+    </div>
+}
+
+interface PopupFooterDoubleButtonProps {
+
+    isLoading?: boolean,
+    name: ReactNode,
+    loadingName?: ReactNode,
+    buttonClass?: string,
+
+    onClick: Function
+    cancelName?: string,
+    onCancel: Function
+}
+
+// assuming cancel and main buttons
+export function PopupFooterDoubleButton( {
+    onCancel, cancelName, onClick, 
+    name,
+    isLoading, loadingName,
+    buttonClass = ''
+} : PopupFooterDoubleButtonProps ) {
+    return <div className={"popup-footer-double" + (isLoading ? " loading" : "")}>
+        <button className="button text-only" onClick={() => onCancel()}>{cancelName || "Cancel"}</button>
+        <button className={"button " + buttonClass} onClick={() => onClick()}>
+            {isLoading ? loadingName : name}
+            {
+                isLoading ?
+                <div className="footer-loader">
+                    <Loader size={20} />
+                </div> : null
+            }
+        </button>
+    </div>
+}
+
+interface PopupConfirmProps {
+    title: ReactNode,
+    text: ReactNode,
+    name: ReactNode,
+    buttonClass?: string,
+    onClick: Function,
+    onCancel: Function
+}
+
+export function PopupConfirm( { title, text, name, buttonClass, onClick, onCancel } : PopupConfirmProps ) {
+    return <Popup 
+        header={<PopupHeaderDefault title={title} />}
+        body={
+            <PopupBodyDefault>{text}</PopupBodyDefault>
+        }
+        footer={
+            <PopupFooterDoubleButton
+                name={name}
+                onClick={onClick}
+                onCancel={onCancel}
+                buttonClass={buttonClass}
+            />
+        }
+    />
+}
+
+interface PopupNoticeProps {
+    title: ReactNode,
+    text: ReactNode,
+    name: ReactNode,
+    onClick: Function,
+    buttonClass?: string
+}
+
+export function PopupNotice( {title, text, name, onClick, buttonClass} : PopupNoticeProps ) {
+
+    return <Popup 
+        header={<PopupHeaderDefault title={title} />}
+        body={
+            <PopupBodyDefault>{text}</PopupBodyDefault>
+        }
+        footer={
+            <PopupFooterSingleButton name={name} onClick={onClick} buttonClass={buttonClass} />
+        }
+    />
+}

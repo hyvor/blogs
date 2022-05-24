@@ -6,7 +6,7 @@ import SettingsDelete from './SettingsDelete';
 import SettingsCode from './SettingsCode';
 import SettingsMedia from './SettingsMedia';
 import SettingsMigrate from './SettingsMigrate';
-import SettingUsers from './SettingUser/SettingUsers';
+import SettingsUsers from './SettingsUsers/SettingsUsers';
 import SettingRedirects from './SettingRedirects';
 import SettingsComments from './SettingsComments';
 import SettingNavigation from './SettingNavigation/SettingNavigation';
@@ -19,7 +19,7 @@ import SettingsSEO from './SettingsSEO';
 import SettingsColorMode from "./SettingsColorMode";
 import SettingsHighlight from "./SettingsHighlight";
 
-export default function Settings({type}) {
+export default function Settings({type} : {type: string}) {
 
     const { subdomain } = useValues(subdomainLogic); 
     const settingsPrefix = `/console/${subdomain}/settings`;
@@ -27,7 +27,7 @@ export default function Settings({type}) {
     var Type = () => <SettingsGeneral />;
     switch (type) {
         case 'users':
-            Type = () => <SettingUsers />;
+            Type = () => <SettingsUsers />;
             break;
         case 'tags':
             Type = () => <SettingTag />;
@@ -82,7 +82,7 @@ export default function Settings({type}) {
                 <NavLink href={settingsPrefix + "/users"}>Users</NavLink>
                 <NavLink href={settingsPrefix + "/tags"}>Tags</NavLink>
 
-                <div></div>
+                <div />
                 <NavLink href={settingsPrefix + "/hosting"}>Domains</NavLink>
                 <NavLink href={settingsPrefix + "/seo"}>SEO</NavLink>
                 <NavLink href={settingsPrefix + "/color-mode"}>Light & Dark Modes</NavLink>
@@ -93,12 +93,12 @@ export default function Settings({type}) {
                 <NavLink href={settingsPrefix + "/routes"}>Routes</NavLink>
                 <NavLink href={settingsPrefix + "/webhooks"}>Webhooks</NavLink>
 
-                <div></div>
+                <div />
                 <NavLink href={settingsPrefix + "/comments"}>Comments & Newsletter</NavLink>
                 <NavLink href={settingsPrefix + "/code"}>Custom Code</NavLink>
                 <NavLink href={settingsPrefix + "/highlight"}>Syntax Highlighting</NavLink>
 
-                <div></div>
+                <div />
                 <NavLink href={settingsPrefix + "/migrate"}>Import & Export</NavLink>
                 <NavLink href={settingsPrefix + "/delete"}>Delete Blog</NavLink>
             </div>

@@ -40,7 +40,7 @@
         "deep-object-diff": "^1.1.7",
         "deepmerge": "^4.2.2",
         "kea": "^3.0.1",
-        "kea-ajax": "^1.0.1",
+        "kea-ajax": "^1.0.2",
         "kea-router": "^3.0.0",
         "prosemirror-codemark": "^0.3.5",
         "prosemirror-dropcursor": "^1.4.0",

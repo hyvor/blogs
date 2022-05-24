@@ -7,7 +7,7 @@ import blogsLogic from './logic/blogsLogic';
 import ActionButton from './ReusableComponents/ActionButton';
 import Input from './ReusableComponents/Input'
 import {Popup, PopupBodyDefault, PopupHeaderDefault} from './ReusableComponents/Popup'
-import Toast, {ToastType} from './ReusableComponents/Toast';
+import Toast from './ReusableComponents/Toast';
 import {router} from 'kea-router'
 import Callout, {CalloutColors} from "./ReusableComponents/Callout";
 
@@ -197,7 +197,7 @@ export default function NewBlog({ type }: { type: string | null }) {
             createBlogAjax.status === 'error' ?
                 <Toast
                     text={createBlogAjax.error}
-                    type={ToastType.ERROR}
+                    type="error"
                 />
             : null
         }

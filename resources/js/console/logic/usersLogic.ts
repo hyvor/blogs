@@ -2,24 +2,64 @@ import {kea, key, path, actions, reducers, props} from 'kea';
 import {User} from "../types";
 
 import type { usersLogicType } from "./usersLogicType";
+import {ajax} from "kea-ajax";
+import api from "../lib/api";
+import {UserRole, UserStatus} from "../enums";
 
 export interface IDKeyedUsers {
     [key: number]: User
 }
 
-const usersLogic = kea<usersLogicType>([
+const usersLogic = kea<usersLogicType<IDKeyedUsers>>([
+
     props({} as {subdomain: string}),
     key((props) => props.subdomain),
     path((key: string) => [key, 'users']),
+
     actions({
-        addUsers: (users: Array<User>) => ({users})
+        addUsers: (users: Array<User>) => ({users}),
+        setUsersList: (usersList: number[]) => ({usersList}),
+        setUsersListHasMore: (hasMore: boolean) => ({hasMore}),
     }),
+
+    ajax(({props, values, actions}) => ({
+
+        load: async () => {
+            const users =  await api.get<User[]>(props.subdomain, '/users');
+            actions.addUsers(users)
+            actions.setUsersList(users.map(user => user.id));
+            actions.setUsersListHasMore(users.length === 50);
+        },
+
+        loadMore: async ({offset}) => {
+            const users =  await api.get<User[]>(props.subdomain, '/users', {offset});
+            actions.addUsers(users)
+            actions.setUsersList([...values.usersList, ...users.map(user => user.id)]);
+            actions.setUsersListHasMore(users.length === 50);
+        },
+
+        create: async (
+            {name, email, slug, role} :
+            {name: string, email: string, slug: string, role: UserRole}
+        ) => {
+            const user = await api.post<User>(props.subdomain, '/user', {
+                name,
+                role,
+                slug,
+                email,
+            })
+            actions.addUsers([user]);
+            actions.setUsersList([user.id, ...values.usersList]);
+        },
+
+    })),
+
     reducers({
 
         users: [
-            {},
+            {} as IDKeyedUsers,
             {
-                addUsers: (state: IDKeyedUsers, { users } : { users: Array<User> }) => {
+                addUsers: (state, { users } : { users: Array<User> }) => {
                     const usersKeyed : IDKeyedUsers = {};
                     for (let user of users) {
                         usersKeyed[user.id] = user;
@@ -29,6 +69,20 @@ const usersLogic = kea<usersLogicType>([
                 }
             }
         ],
+
+        usersList: [
+            [] as number[],
+            {
+                setUsersList: (_, {usersList}) => usersList
+            }
+        ],
+
+        usersListHasMore: [
+            false,
+            {
+                setUsersListHasMore: (_, {hasMore}) => hasMore
+            }
+        ]
 
     })
 ])

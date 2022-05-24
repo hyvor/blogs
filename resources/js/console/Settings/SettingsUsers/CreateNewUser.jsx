@@ -100,15 +100,14 @@ export default function CreateNewUser(props) {
         setCreatePopUpOpened(false)
     }
 
-    return <div>
-        <div className="user-title-create-button ">
-            <button type='button' className ="button small inactive user-button-popup">
-                <div className="popup-button-content" onClick={handleCreate}>
-                    <div className="popup-button-content-text">Add User</div> 
-                    <Plus />
-                </div>
-            </button>
-        </div> 
+    return <span className="user-creator">
+        <button
+            className="button small inactive user-button-popup"
+            onClick={handleCreate}
+        >
+            <span className="popup-button-content-text">Add User</span>
+            <Plus />
+        </button>
         {
             createPopUpOpened ?
             
@@ -209,7 +208,7 @@ export default function CreateNewUser(props) {
             </div>
             : null
         }
-    </div>
+    </span>
 }
 
 function SelectUserRole({options, onChange, defaultValue}) {

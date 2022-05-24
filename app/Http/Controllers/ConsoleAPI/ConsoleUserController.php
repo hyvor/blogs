@@ -20,14 +20,20 @@ use Illuminate\Http\Request;
 class ConsoleUserController extends Controller
 {
 
-    public static function getAuthors(Blog $blog)
+    public static function getUsers(Request $request, Blog $blog)
     {
-        $getData = UserRepository::getAuthors($blog)
-                ->map(function ($users) use ($blog) {
-                    return new UserObject($users, $blog);
-                });
 
-        return response()->json($getData);
+        $request->validate([
+            'offset' => 'integer'
+        ]);
+
+        $limit = 50;
+        $offset = $request->input('offset', 0);
+
+        $users = UserRepository::getUsers($blog, $limit, $offset)->map(fn($user) => new UserObject($user, $blog));
+
+        return response()->json($users);
+
     }
 
     public static function searchUsers(Request $request, Blog $blog)

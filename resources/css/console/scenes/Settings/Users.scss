@@ -1,19 +1,7 @@
-.settingUser{
+.settings-users {
 
-    .user-title-bar{
-        padding: 10px 10px 10px 12px;
-        flex: 1;
-        align-items: center;
-        display: flex;
-        margin-left: 285px;
-    }
-    .user-title{
-        font-weight: 600;
-        font-size: 20px;
-    }
-
-    .user-title-create-button{
-        margin-left: 5px
+    .user-creator {
+        margin-left: 8px;
     }
 
     .user-button-popup{
@@ -33,17 +21,6 @@
         }
     }
 
-    .global-table-view .global-table-body .table-item {
-        .user-role{
-            background-color: $color-accent-light;
-            width: 50px;
-            text-align: center;
-            border-radius: 20px;
-            border: 1px solid transparent;
-            transition: 0.3s;
-            font-size: 12px;
-        }
-    }
     .popup-width{
         .popup-wrap .popup{
             width: 600px;

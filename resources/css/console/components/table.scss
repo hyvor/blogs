@@ -55,6 +55,7 @@
             margin-right:5px;
         }
     }
+
     .global-table-header-six {
         @include grid-six;
         font-weight: 600;
@@ -66,6 +67,7 @@
         }
     }
 
+
     .global-table-header-five {
         @include grid-five;
         font-weight: 600;
@@ -76,6 +78,8 @@
             margin-right:5px;
         }
     }
+
+
     .global-table-header-four {
         @include grid-four;
         font-weight: 600;
@@ -86,6 +90,7 @@
             margin-right:5px;
         }
     }
+
     .global-table-header-three {
         @include grid-three;
         font-weight: 600;
@@ -96,21 +101,7 @@
             margin-right:5px;
         }
     }
-    // .global-table-header-one {
-    //     @include grid-three;
-    //     font-weight: 600;
-    //     background: $color-card;
-    //     margin-bottom: 15px;
 
-    //     .table-head-item{
-    //         margin-right:5px;
-    //     }
-    // }
-
-    // .table-body-scroll{
-    //     max-height: 550px;
-    //     overflow-y: scroll;
-    // }
     .global-table-body{
         .table-body-six {
             @include grid-six;
@@ -142,6 +133,7 @@
             .table-view {
                 margin-left:8px;
             }
+
             @mixin action-button-style {
                 display: inline-flex;
                 width: 24px;
@@ -155,11 +147,14 @@
                 background: $color-hover;
                 cursor: pointer;
                 background: $color-hover;
+                margin-right: 4px;
                 &:hover {
                     box-shadow: 0 0 10px rgba(0,0,0,0.1);
                 }
             }
-            .table-button-delete{
+
+            // TODO: use generic classes
+            /*.table-button-delete{
                 @include action-button-style;
                 background: $color-hover;
                 cursor: pointer;
@@ -183,7 +178,7 @@
                 @include action-button-style;
                 background-color:$color-accent-light;
                 color:$color-text;
-            }
+            }*/
         }
     }
 }

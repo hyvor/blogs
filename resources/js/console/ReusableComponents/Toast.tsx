@@ -5,14 +5,9 @@
 import {toast} from 'react-toastify'
 import React, { Fragment, useEffect } from 'react'
 
-export enum ToastType {
-    SUCCESS = 'success',
-    ERROR = 'error'
-}
-
 type ToastProps = {
     text: string;
-    type: ToastType,
+    type: 'success' | 'error',
     options?: object
 };
 

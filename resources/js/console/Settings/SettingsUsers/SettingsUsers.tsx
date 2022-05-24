@@ -1,58 +1,39 @@
-import React, {useState} from 'react';
+import React, {useEffect, useState} from 'react';
 import { useActions, useValues } from 'kea';
 import subdomainLogic from '../../logic/subdomainLogic';
 import usersLogic from '../../logic/usersLogic';
 import Loader from '../../ReusableComponents/Loader';
 import Toast from '../../ReusableComponents/Toast';
 import NoResults from '../../ReusableComponents/NoResults';
-import Users from './UsersTable';
 import CreateNewUser from './CreateNewUser';
+import User from "./User";
 
+export default function SettingsUsers() {
 
-import { Trash, PencilFill, Plus, BoxArrowInRight} from 'react-bootstrap-icons';
-import {toast} from 'react-toastify'
-import Input from '../../ReusableComponents/Input';
-import { Popup, PopupBodyDefault, PopupConfirm, PopupFooterDoubleButton, PopupHeaderDefault } from '../../ReusableComponents/Popup';
-import ProfileImage from '../../ReusableComponents/ProfileImage';
-import ReactSelect, { components } from 'react-select';
-import DualSetting from '../../ReusableComponents/DualSetting';
-import TextareaAutosize from 'react-textarea-autosize';
-
-//  Remaining 
-/*
-*
-* Create User Variant in language select if a variant is not selected. ( Done -- )
-* Update User data in language select.  ( Done -- )
-* Delete User according to an condition.  ( Done -- )
-* hyvor User or Guest User filter. ( Done -- )
-* Setting up image upload.
-* Testing the select option error.
-* 
-*/
-
-export default function SettingUsers(props) {
     const subdomain = subdomainLogic.values.subdomain;
     const usersLogicBuilt = usersLogic({subdomain})
-    const { user, loadAjax, createAjax, loadTagsListMoreAjax } = useValues(usersLogicBuilt)
-    const { loadTagsListMore, load} = useActions(usersLogicBuilt)
+    const { usersList, users, loadAjax, createAjax, loadMoreAjax } = useValues(usersLogicBuilt)
+    const { load, loadMore } = useActions(usersLogicBuilt)
+
+    useEffect(() => {
+        load();
+    }, [])
 
 
-    return <div className="settingUser">
-        <div className="user-title-bar">
-            <div className="user-title">
-                Users
-            </div>
-            <div>
+    return <div className="settings-users">
+
+        <div className="title">
+            Users
+            <span>
                 <CreateNewUser />
                 {
                     createAjax.status === 'error' ?
-                    <Toast 
-                        x={console.log(createAjax.error)}
+                    <Toast
                         text={createAjax.error}
                         type="error"
                     /> : null
                 }
-            </div> 
+            </span>
         </div>
 
         <div>
@@ -62,24 +43,28 @@ export default function SettingUsers(props) {
                 :
                     <div>
                         {
-                            user.length ?
+                            usersList.length ?
                                 <div className="global-table-view">
                                     <div className="global-table-header-five">      
                                         <div className="table-head-item">Name</div> 
                                         <div className="table-head-item">Slug</div>
                                         <div className="table-head-item">Email</div>
                                         <div className="table-head-item">Role</div>
-                                        <div></div>
+                                        <div />
                                     </div>
 
                                     <div>
                                         <div className="global-table-body">
                                             {
-                                                user.map(user => (
-                                                     <div className="global-table-body">
-                                                        <Users key = {user} user={user} subdomain ={subdomain}/>           
+                                                usersList.map(userId => {
+                                                    const user = users[userId];
+                                                    return <div
+                                                        key={userId}
+                                                        className="global-table-body"
+                                                    >
+                                                        <User user={user} />
                                                     </div>
-                                                ))
+                                                })
                                             }          
                                         </div>                                   
                                         {/* <div>
