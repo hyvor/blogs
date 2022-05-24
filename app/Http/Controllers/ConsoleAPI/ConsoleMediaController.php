@@ -45,7 +45,7 @@ class ConsoleMediaController extends Controller
             'file' => 'required|image'
         ]); */
 
-        $media = MediaRepository::upload($blog->id, $file);
+        $media = MediaRepository::upload($blog, $file);
 
         return response()->json(new MediaObject($media));
     }

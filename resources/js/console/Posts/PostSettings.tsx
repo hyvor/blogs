@@ -16,9 +16,9 @@ import postTagLogic from '../logic/posts/postTagLogic';
 
 import { usePostActions, usePostValues } from './usePost';
 import {Post} from "../objects/post";
-import {Media} from "../objects/media";
 import PostAuthors from "./PostAuthors";
 import PostTags from "./PostTags";
+import {Media} from "../types";
 
 type PostSettingsProps = {
     isSettingsOpen: boolean;

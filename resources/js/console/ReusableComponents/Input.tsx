@@ -61,7 +61,7 @@ export default function Input(
                 autoFocus={autoFocus || false}
                 autoComplete={autoComplete}
                 name={name}
-                value={value}
+                value={value || ''}
                 onChange={(e) => onChange(e.target.value)}
                 onKeyDown={onKeyDown}
                 onBlur={onBlur}

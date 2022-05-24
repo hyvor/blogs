@@ -91,7 +91,9 @@
         "expose": "ngrok http 8080 --host-header=blogs.hyvor.test",
 
         "test": "vendor/bin/pest",
-        "fix": "vendor/bin/php-cs-fixer fix --allow-risky=yes"
+        "fix": "vendor/bin/php-cs-fixer fix --allow-risky=yes",
+
+        "minio": "minio server storage/app/minio"
     },
     "repositories": [
         {"type": "composer", "url": "https://hyvor.repo.repman.io"}

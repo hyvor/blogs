@@ -10,6 +10,7 @@ import languagesLogic from '../../logic/languagesLogic';
 import GeneralLanguageSelector from './GeneralLanguageSelector';
 import {BlogVariant} from "../../types";
 import LanguageSelector from "../../ReusableComponents/LanguageSelector";
+import ImageSelector from "../../ReusableComponents/ImageSelector";
 
 
 // Should find a way to set up the should save section in the pop-up.
@@ -24,50 +25,6 @@ export default function SettingsGeneral() {
     const [currentLanguageId, setCurrentLanguageId] = useState( primaryLanguage.id );
     const currentLanguage = getLanguageById(currentLanguageId)
     const variant = blog.variants[currentLanguageId] || {} as BlogVariant;
-
-    const [ isLogoUploading, setIsLogoUploading ] = useState(false)
-    const [ isCoverUploading, setIsCoverUploading ] = useState(false)
-
-    // FeatureImage and Icon section
-    /*function handleFeatureImage() {
-        if (!uploadInput) {
-            uploadInput = document.createElement('input')
-            uploadInput.type = "file";
-            uploadInput.hidden = true;
-            document.body.appendChild(uploadInput);
-            uploadInput.click();
-            uploadInput.onchange = function(e) {
-                const files = e.target.files;
-                if (!files.length) return;
-                if (files.length > 1) {
-                    return toast.error("Only one file allowed");
-                }
-                uploadFeatureImage({featureImage: files[0]});
-            }
-        } else {
-            uploadInput.click();
-        }
-    }
-
-    function handleIcon() { 
-        if (!uploadIconInput) {
-            uploadIconInput = document.createElement('input')
-            uploadIconInput.type = "file";
-            uploadIconInput.hidden = true;
-            document.body.appendChild(uploadIconInput);
-            uploadIconInput.click();
-            uploadIconInput.onchange = function(e) {
-                const files = e.target.files;
-                if (!files.length) return;
-                if (files.length > 1) {
-                    return toast.error("Only one file allowed");
-                }
-                uploadIcon({icon: files[0]});
-            }
-        } else {
-            uploadIconInput.click();
-        }
-    }*/
 
     return <div className="settings-general">
 
@@ -115,25 +72,12 @@ export default function SettingsGeneral() {
                 title="Logo"
                 description="The logo of your blog"
                 right={
-                    <Input
-                        title={null}
-                        type="text"
-                        name="icon"
-                        value={blog.logo_url}
-                        onChange={value => updateBlogValue('logo_url', value)}
-                    />
-                    // <div>
-                    /*<div class="image-head">
-                        {/!* <img src="https://picsum.photos/200/200" alt="Avatar" className="image-center"/> *!/}
-                        <img src={icon} alt="Avatar" className="image-center"/>
-                        <button
-                            onClick={uploadIconAjax.status === 'loading' ? null: handleIcon}
-                            className="button-style uploadButton button small inactive">
-                            {uploadIconAjax.status === 'loading' ? "Uploading..." :
-                                <span>Upload <Upload /></span>
-                            }
-                        </button>
-                    </div>*/
+                    <div className="image-head">
+                        <ImageSelector
+                            src={blog.logo_url}
+                            onChange={url => updateBlogValue('logo_url', url)}
+                        />
+                    </div>
                 }
             />
 
@@ -141,25 +85,10 @@ export default function SettingsGeneral() {
                 title="Cover Image"
                 description="A cover image for the blog. Some themes may not display this."
                 right={
-                    <Input
-                        title={null}
-                        type="text"
-                        name="featured-image"
-                        value={null}
-                        onChange={() => {}}
+                    <ImageSelector
+                        src={blog.cover_url}
+                        onChange={(url) => updateBlogValue('cover_url', url)}
                     />
-
-                    /*<div class="image-head">
-                        <img src={featuredImage} alt="Avatar" className="image-center"/>
-                        <button
-                            onClick={uploadFeatureImageAjax.status === 'loading' ? null: handleFeatureImage}
-                            className="button-style uploadButton button small inactive">
-                                {
-                                    uploadFeatureImageAjax.status === 'loading' ? "Uploading..." :
-                                        <span>Upload <Upload /></span>
-                                }
-                        </button>
-                    </div>*/
                 }
             />
 
@@ -270,6 +199,9 @@ export default function SettingsGeneral() {
                     'social_linkedin',
                     'social_tiktok',
                     'social_github',
+
+                    'logo_url',
+                    'cover_url'
                 ]}
             variantKeys={
                 [
