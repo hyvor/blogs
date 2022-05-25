@@ -9,8 +9,6 @@ export default function SettingsCode() {
     const { blog } = useBlogValues();
     const { updateBlogValue } = useBlogActions();
 
-    const keys = ['code_head', 'code_foot'];
-
     return <div className="settings-code">
 
         <div className="title">
@@ -30,7 +28,7 @@ export default function SettingsCode() {
                     <CodemirrorEditor
                         mode={CODEMIRROR_MODES.twig}
                         value={blog.code_head}
-                        onChange={v => updateBlogValue('code_head', v)}
+                        onChange={(v: string) => updateBlogValue('code_head', v)}
                     />
                 }
                 column={true}
@@ -43,7 +41,7 @@ export default function SettingsCode() {
                     <CodemirrorEditor
                         mode={CODEMIRROR_MODES.twig}
                         value={blog.code_foot}
-                        onChange={v => updateBlogValue('code_foot', v)}
+                        onChange={(v: string) => updateBlogValue('code_foot', v)}
                     />
                 }
                 column={true}
@@ -51,7 +49,12 @@ export default function SettingsCode() {
 
         </div>
 
-        <SettingsSave keys={keys} />
+        <SettingsSave keys={
+            [
+                'code_head',
+                'code_foot'
+            ]
+        } />
 
     </div>
 

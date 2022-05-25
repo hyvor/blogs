@@ -1,6 +1,15 @@
-import React from 'react';
+import React, {ReactNode} from 'react';
 
-export default function Radio(props) {
+interface RadioProps {
+    placeholder?: ReactNode,
+    name: string,
+    value: string,
+    onChange: (value: string) => void,
+    checkFor: string,
+    disabled?: boolean
+}
+
+export default function Radio(props: RadioProps) {
     
     return <div className="global-radio-wrap">
         <label className="radio-container">
@@ -9,11 +18,11 @@ export default function Radio(props) {
                 type="radio" 
                 name={props.name} 
                 value={props.value} 
-                onChange={props.onChange} 
+                onChange={(e) => props.onChange(e.target.value)}
                 checked={props.checkFor === props.value}   
                 disabled={props.disabled || false} 
             />
-            <span className="checkmark"></span>
+            <span className="checkmark"/>
         </label>
     </div>
 

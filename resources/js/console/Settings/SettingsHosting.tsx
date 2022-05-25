@@ -1,15 +1,22 @@
-import React, { useState } from 'react';
+import React from 'react';
 import DualSetting from '../ReusableComponents/DualSetting';
 import Input from '../ReusableComponents/Input';
 import Radio from '../ReusableComponents/Radio';
+import {useBlogActions, useBlogValues} from "./useBlog";
+import SettingsSave from "../ReusableComponents/SettingsSave";
+import Callout, {CalloutColors} from "../ReusableComponents/Callout";
+import {ExclamationCircle} from "react-bootstrap-icons";
 
 export default function SettingsHosting() {
 
-    const [hostedAt, setHostedAt] = useState('subdomain');
+    const { blog, blogOriginal } = useBlogValues()
+    const { updateBlogValue } = useBlogActions()
 
-    function handleHostedAtChange(e) {
-        setHostedAt(e.target.value);
+    function handleHostedAtChange(value: string) {
+        updateBlogValue('hosting_at', value)
     }
+
+    const hostedAt = blog.hosting_at
 
     return <div className="settings-delete">
 
@@ -17,8 +24,21 @@ export default function SettingsHosting() {
             Hosting
         </div>
 
+        <DualSetting
+            title="Subdomain"
+            description="The subdomain part of your hyvorblogs.io domain. This is used to uniquely identify your blog within Hyvor Blogs."
+            right={
+                <Input
+                    type="text"
+                    name="subdomain"
+                    value={blog.subdomain}
+                    onChange={value => updateBlogValue('subdomain', value)}
+                />
+            }
+        />
+
         <DualSetting 
-            title="Hosting on"
+            title="Hosting on/at"
             description="Where do you like to host your blog?"
             right={
                 <div>
@@ -59,12 +79,11 @@ export default function SettingsHosting() {
                 title="Custom Domain"
                 description="Custom domain "
                 right={
-                    <Input 
-                        title={null}
+                    <Input
                         type="text"
                         name="custom-domain"
-                        value={""}
-                        onChange={null}
+                        value={blog.hosting_domain}
+                        onChange={value => updateBlogValue('hosting_domain', value)}
                     />
                 }
             /> : null
@@ -80,16 +99,41 @@ export default function SettingsHosting() {
                 description="Set the absolute URL where you are self-hosting your blog."
                 right={
                     <Input 
-                        title={null}
                         type="text"
                         name="self-hosting-url"
-                        value={""}
-                        onChange={null}
+                        value={blog.hosting_url}
+                        onChange={value => updateBlogValue('hosting_url', value)}
                     />
                 }
             /> : null
 
         }
+
+        {
+            blogOriginal.subdomain !== blog.subdomain ||
+            blogOriginal.hosting_at !== blog.hosting_at ||
+            blogOriginal.hosting_domain !== blog.hosting_domain ||
+            blogOriginal.hosting_url !== blog.hosting_url ?
+                <Callout
+                    icon={<ExclamationCircle />}
+                    color={CalloutColors.ORANGE}
+                    title="Be careful when changing the URL!"
+                    text={
+                        <div>Changing the hosting URL/Domain can break old URLs, create duplicate pages, and affect SEO. Consult our <a className="link" href="/docs/hosting" target="_blank">documentation</a> for tips on correctly setting up redirects to minimize the risks.</div>
+                    }
+                /> : null
+        }
+
+        <SettingsSave
+            keys={
+                [
+                    'hosting_url',
+                    'hosting_domain',
+                    'hosting_at',
+                    'subdomain'
+                ]
+            }
+        />
 
     </div>
 

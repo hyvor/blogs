@@ -2,8 +2,8 @@ import React, {FocusEventHandler, KeyboardEventHandler} from 'react'
 
 interface InputProps {
 
-    value: string | null,
-    onChange: (value: string) => void,
+    value: any,
+    onChange: (value: any) => void,
 
     type?: string,
     placeholder?: string,

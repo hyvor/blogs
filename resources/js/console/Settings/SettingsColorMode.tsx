@@ -8,14 +8,12 @@ export default function SettingsColorMode() {
     
     const { blog } = useBlogValues();
     const { updateBlogValue } = useBlogActions();
-
-    const keys = ['color_modes', 'color_mode_default'];
     
-    function handleColorModeChange(e) {
-        updateBlogValue("color_modes", e.target.value);
+    function handleColorModeChange(value: string) {
+        updateBlogValue("color_modes", value);
     }
-    function handleColorModeDefaultChange(e) {
-        updateBlogValue("color_mode_default", e.target.value);
+    function handleColorModeDefaultChange(value: string) {
+        updateBlogValue("color_mode_default", value);
     }
     
     return <div className="settings-color-mode">
@@ -88,7 +86,11 @@ export default function SettingsColorMode() {
                 /> : null
         }
         
-        <SettingsSave keys={keys} />
+        <SettingsSave keys={
+            [
+                'color_modes', 'color_mode_default'
+            ]
+        } />
         
     </div>
     

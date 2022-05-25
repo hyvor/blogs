@@ -67,24 +67,19 @@ const blogLogic = kea<blogLogicType>([
 
         updateBlog: async ({keys, variantKeys}) => {
 
-            try {
-                // update variants
-                if (variantKeys) {
-                    const variantDiff = values.getVariantDiff(variantKeys);
+            // update variants
+            if (variantKeys) {
+                const variantDiff = values.getVariantDiff(variantKeys);
 
-                    for (let languageId in variantDiff) {
-                        const data = variantDiff[languageId]
-                        await actions.updateVariant({data, languageId})
-                    }
+                for (let languageId in variantDiff) {
+                    const data = variantDiff[languageId]
+                    await actions.updateVariant({data, languageId})
                 }
-
-                const diff = values.getDiff(keys);
-                const blog = await api.patch<Blog>(props.subdomain, '/blog', diff);
-                actions.setOriginal(blog);
-
-            } catch (e) {
-                console.error(e)
             }
+
+            const diff = values.getDiff(keys);
+            const blog = await api.patch<Blog>(props.subdomain, '/blog', diff);
+            actions.setOriginal(blog);
 
         },
 

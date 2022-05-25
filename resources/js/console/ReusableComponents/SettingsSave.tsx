@@ -8,10 +8,11 @@ import blogLogic from "../logic/blogLogic";
 import Loader from "./Loader";
 import {CheckCircle} from "react-bootstrap-icons";
 import {Blog, BlogVariant} from "../types";
+import {toast} from "react-toastify";
 
 export default function SettingsSave(
     { keys, variantKeys = [] } :
-    { keys: Array<keyof Blog>, variantKeys: Array<keyof BlogVariant> }
+    { keys: Array<keyof Blog>, variantKeys?: Array<keyof BlogVariant> }
 ) {
 
     const [isDiscarding, setIsDiscarding] = useState(false);
@@ -42,6 +43,8 @@ export default function SettingsSave(
             setTimeout(() => {
                 setStatus(null)
             }, 2000);
+        } else if (updateBlogAjax.status === 'error') {
+            toast.error(updateBlogAjax.error)
         }
     }, [updateBlogAjax.status])
     

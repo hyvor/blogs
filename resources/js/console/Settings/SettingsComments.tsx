@@ -1,11 +1,7 @@
-import { useActions, useValues } from 'kea';
-import React, { useState } from 'react';
-import blogLogic from '../logic/blogLogic';
-import subdomainLogic from '../logic/subdomainLogic';
+import React  from 'react';
 import DualSetting from '../ReusableComponents/DualSetting';
 import Input from '../ReusableComponents/Input';
 import Radio from '../ReusableComponents/Radio';
-import Select from '../ReusableComponents/Select';
 import SettingsSave from '../ReusableComponents/SettingsSave';
 import { useBlogActions, useBlogValues } from './useBlog';
 import CodemirrorEditor, {CODEMIRROR_MODES} from "../ReusableComponents/CodemirrorEditor";
@@ -14,16 +10,9 @@ export default function SettingsComments() {
 
     const { blog } = useBlogValues();
     const { updateBlogValue } = useBlogActions();
-    
-    const keys = [
-        'comments_type', 
-        'comments_ht_website_id', 'comments_ht_api_key', 
-        'comments_code',
-        'newsletter_code'
-    ];
 
-    function handleCommentsTypeChange(e) {
-        updateBlogValue('comments_type', e.target.value);
+    function handleCommentsTypeChange(value: string) {
+        updateBlogValue('comments_type', value);
     }
 
     return <div className="settings-delete">
@@ -38,7 +27,7 @@ export default function SettingsComments() {
                 title="Commenting System"
                 description={
                     <div>
-                        If you like a privacy-first, easy-to-use commenting system, try <a href="https://talk.hyvor.com" className="link" target="_blank">Hyvor Talk</a> (starts at $5/month). Hyvor Blogs integrates with Hyvor Talk, making it easier to moderate your comments within the HB console.
+                        If you like a privacy-first, easy-to-use commenting system, try <a href="https://talk.hyvor.com" className="link" target="_blank">Hyvor Talk</a>. Hyvor Blogs integrates with Hyvor Talk, making it easier to moderate your comments within the HB console.
                     </div>
                 }
                 right={
@@ -70,8 +59,7 @@ export default function SettingsComments() {
                             title="Hyvor Talk Website ID"
                             description="Paste the website ID provided by Hyvor Talk. This is used to make the comments embed work on your website."
                             right={
-                                <Input 
-                                    title={null}
+                                <Input
                                     type="text"
                                     name="ht-website-id"
                                     value={blog.comments_ht_website_id}
@@ -80,19 +68,22 @@ export default function SettingsComments() {
                             }
                         />
 
-                        <DualSetting 
-                            title="Hyvor Talk API Key"
-                            description="Paste the API key provided by Hyvor Talk. This is used to fetch comments from the HB console, making it easier to moderate comments here, without having to visit the HT console."
-                            right={
-                                <Input
-                                    title={null}
-                                    type="text"
-                                    name="ht-website-id"
-                                    value={blog.comments_ht_api_key}
-                                    onChange={val => updateBlogValue('comments_ht_api_key', val)}
-                                />
-                            }
-                        />
+                        {
+
+                            <DualSetting
+                                title="Hyvor Talk API Key"
+                                description="Paste the API key provided by Hyvor Talk to moderate comments within the HB Console."
+                                right={
+                                    <Input
+                                        type="text"
+                                        name="ht-website-id"
+                                        value={blog.comments_ht_api_key}
+                                        onChange={val => updateBlogValue('comments_ht_api_key', val)}
+                                    />
+                                }
+                            />
+
+                        }
                     </div>
                 :
                     <DualSetting 
@@ -106,7 +97,7 @@ export default function SettingsComments() {
                             <CodemirrorEditor
                                 mode={CODEMIRROR_MODES.twig}
                                 value={blog.comments_code}
-                                onChange={val => updateBlogValue('comments_code', val)}
+                                onChange={(val: string) => updateBlogValue('comments_code', val)}
                             />
                         }
                         column={true}
@@ -121,7 +112,7 @@ export default function SettingsComments() {
                     <CodemirrorEditor
                         mode={CODEMIRROR_MODES.twig}
                         value={blog.newsletter_code}
-                        onChange={val => updateBlogValue('newsletter_code', val)}
+                        onChange={(val: string) => updateBlogValue('newsletter_code', val)}
                     />
                 }
                 column={true}
@@ -129,7 +120,14 @@ export default function SettingsComments() {
 
         </div>
 
-        <SettingsSave keys={keys} />
+        <SettingsSave keys={
+            [
+                'comments_type',
+                'comments_ht_website_id', 'comments_ht_api_key',
+                'comments_code',
+                'newsletter_code'
+            ]
+        } />
 
     </div>
 

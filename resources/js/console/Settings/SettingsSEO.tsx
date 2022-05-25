@@ -1,25 +1,20 @@
-import React, { useState } from 'react';
+import React from 'react';
 import DualSetting from '../ReusableComponents/DualSetting';
 import Switch from '../ReusableComponents/Switch';
-import SettingsSave from "../ReusableComponents/SettingsSave";
-import CodemirrorEditor, {CODEMIRROR_MODES} from "../ReusableComponents/CodemirrorEditor";
-import Radio from "../ReusableComponents/Radio";
-import Callout from "../ReusableComponents/Callout";
+import Callout, {CalloutColors} from "../ReusableComponents/Callout";
 import {ExclamationCircle} from "react-bootstrap-icons";
 import {useBlogActions, useBlogValues} from "./useBlog";
+import CodemirrorEditor, {CODEMIRROR_MODES} from "../ReusableComponents/CodemirrorEditor";
+import SettingsSave from "../ReusableComponents/SettingsSave";
+import Radio from "../ReusableComponents/Radio";
 
 export default function SettingsSEO() {
     
     const { blog } = useBlogValues();
     const { updateBlogValue } = useBlogActions();
     
-    const keys = [
-        'seo_indexing', 'seo_robots_txt', 
-        'seo_external_links_follow'
-    ];
-    
-    function handleExternalLinkFollowChange(e) {
-        updateBlogValue("seo_external_links_follow", e.target.value);
+    function handleExternalLinkFollowChange(value: string) {
+        updateBlogValue("seo_external_links_follow", value);
     }
     
     return <div className="settings-seo">
@@ -39,9 +34,9 @@ export default function SettingsSEO() {
                     />
                     {
                         !blog.seo_indexing ?
-                        <Callout 
+                        <Callout
                             icon={<ExclamationCircle />}
-                            color="orange"
+                            color={CalloutColors.ORANGE}
                             title="Search engines won't index your blog!"
                             text="A 'nofollow' meta tag is added to the header of every page in your blog, which prevents your blog from appearing on search results."
                         /> : null }
@@ -83,14 +78,19 @@ export default function SettingsSEO() {
                 <CodemirrorEditor
                     mode={CODEMIRROR_MODES.twig}
                     value={blog.seo_robots_txt}
-                    onChange={val => updateBlogValue('seo_robots_txt', val)}
+                    onChange={(val: string) => updateBlogValue('seo_robots_txt', val)}
                 />
             }
             column={true}
         />
 
         <SettingsSave
-            keys={keys}
+            keys={
+                [
+                    'seo_indexing', 'seo_robots_txt',
+                    'seo_external_links_follow'
+                ]
+            }
         />
 
     </div>

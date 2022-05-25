@@ -4,15 +4,14 @@ import Switch from "../ReusableComponents/Switch";
 import Select from "../ReusableComponents/Select";
 import {useBlogActions, useBlogValues} from "./useBlog";
 import SettingsSave from "../ReusableComponents/SettingsSave";
+import {appConfig} from "../helpers";
 
 export default function SettingsHighlight() {
     
     const { blog } = useBlogValues();
     const { updateBlogValue } = useBlogActions();
-
-    const keys = ['syntax_on', 'syntax_theme', 'syntax_line_numbers'];
     
-    const themes = window.appConfig.syntax_themes.map(t => ({
+    const themes = appConfig().syntax_themes.map(t => ({
         value: t, label: t
     }));
 
@@ -52,7 +51,7 @@ export default function SettingsHighlight() {
                             <Select
                                 options={themes}
                                 defaultValue={themes.find(t => t.value === (blog.syntax_theme || 'nord'))}
-                                onChange={v => updateBlogValue('syntax_theme', v.value)}
+                                onChange={(v: any) => updateBlogValue('syntax_theme', v.value)}
                             />
                         }
                     />
@@ -71,7 +70,13 @@ export default function SettingsHighlight() {
                 </Fragment> : null
         }
 
-        <SettingsSave keys={keys} />
+        <SettingsSave keys={
+            [
+                'syntax_on',
+                'syntax_theme',
+                'syntax_line_numbers'
+            ]
+        } />
 
     </div>
 
