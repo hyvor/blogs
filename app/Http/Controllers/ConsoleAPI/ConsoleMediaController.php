@@ -12,11 +12,9 @@ use Illuminate\Http\Request;
 
 class ConsoleMediaController extends Controller
 {
-    public static function getFiles(Request $request, Blog $blog)
+
+    public static function getMedia(Request $request, Blog $blog)
     {
-        $limit = $request->input('limit') ?? 50;
-        $offset = $request->input('offset');
-        $extension = $request->input('extension');
 
         $request->validate([
             'limit' => 'integer',
@@ -24,26 +22,22 @@ class ConsoleMediaController extends Controller
             'extension' => 'string',
         ]);
 
-        $media = MediaRepository::get($blog->id, $limit, $offset, $extension)
-            ->map(function ($m) {
-                return new MediaObject($m);
-            });
+        $limit = $request->input('limit', 50);
+        $offset = $request->input('offset', 0);
+        $extension = $request->input('extension');
+
+        $media = MediaRepository::get($blog, $limit, $offset, $extension)->mapInto(MediaObject::class);
 
         return response()->json($media);
+
     }
 
     public static function uploadFile(Request $request, Blog $blog)
     {
-        $file = $request->file('file');
-
         $request->validate([
-            'file' => 'required|file',
+            'file' => 'required|file|max:' . config('limits.max_media_upload_size_kb'),
         ]);
-
-        // jpg, jpeg, png, bmp, gif, svg, or webp
-        /* $request->validate([
-            'file' => 'required|image'
-        ]); */
+        $file = $request->file('file');
 
         $media = MediaRepository::upload($blog, $file);
 
@@ -58,6 +52,7 @@ class ConsoleMediaController extends Controller
 
     public static function searchUnsplash(Request $request)
     {
+
         $request->validate([
             'search' => 'required|string',
             'page' => 'required|integer',

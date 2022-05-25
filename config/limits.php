@@ -53,6 +53,11 @@ return [
     'max_webhooks_per_blog' => 5,
 
     /**
+     * Media max uploading size for any file type
+     */
+    'max_media_upload_size_kb' => 25 * 1000, // 25MB
+
+    /**
      * Template-related limitations
      */
     'max_template_files_per_blog' => 50,

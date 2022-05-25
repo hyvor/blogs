@@ -4,7 +4,7 @@ import subdomainLogic from '../logic/subdomainLogic';
 import NavLink from '../ReusableComponents/NavLink';
 import SettingsDelete from './SettingsDelete';
 import SettingsCode from './SettingsCode';
-import SettingsMedia from './SettingsMedia';
+import SettingsMedia from './SettingsMedia/SettingsMedia';
 import SettingsMigrate from './SettingsMigrate';
 import SettingsUsers from './SettingsUsers/SettingsUsers';
 import SettingRedirects from './SettingRedirects';
