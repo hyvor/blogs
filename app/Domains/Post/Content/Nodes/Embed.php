@@ -18,8 +18,8 @@ class Embed extends Node
             [
                 'tag' => 'x-embed[data-url]',
                 'getAttrs' => fn (DOMElement $node) => [
-                        'url' => $node->getAttribute('data-url')
-                ]
+                        'url' => $node->getAttribute('data-url'),
+                ],
             ],
         ];
     }
@@ -39,7 +39,6 @@ class Embed extends Node
              */
             $urlData = UrlDataRepository::fetch($url, UrlDataFetchTypeEnum::EMBED);
             $embedContent = $urlData->html;
-
         } catch (Exception) {
         }
 

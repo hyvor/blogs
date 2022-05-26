@@ -24,7 +24,6 @@ class ConsoleLanguageController extends Controller
 
     public static function create(Request $request, Blog $blog)
     {
-
         $request->validate([
             'code' => 'required|string|max:12',
             'name' => 'required|string|max:255',
@@ -42,7 +41,6 @@ class ConsoleLanguageController extends Controller
         $language = LanguageRepository::createLanguage($blog, $code, $name);
 
         return response()->json(new LanguageObject($language));
-
     }
 
     public static function update(Request $request, Blog $blog, Language $language)
@@ -66,7 +64,6 @@ class ConsoleLanguageController extends Controller
 
     public static function delete(Language $language)
     {
-
         if ($language->is_primary) {
             throw new TrustedException('Primary language cannot be deleted');
         }

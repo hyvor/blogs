@@ -6,7 +6,6 @@ use App\Models\Tag;
 
 class TagCountObject
 {
-
     public int $id;
     public string $name;
     public int $posts_count;
@@ -18,5 +17,4 @@ class TagCountObject
         $this->name = $tag->name;
         $this->posts_count = $tag->posts_count;
     }
-
 }

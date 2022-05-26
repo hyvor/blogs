@@ -22,13 +22,12 @@ class Blog extends Model
 
     protected $casts = [
         'type' => BlogTypeEnum::class,
-        'hosting_at' => BlogHostingAtEnum::class
+        'hosting_at' => BlogHostingAtEnum::class,
     ];
 
     // meta
     protected function metaDefinition(Definer $definer)
     {
-
         $definer->add('logo_url')->default(null);
         $definer->add('cover_url')->default(null);
 
@@ -44,7 +43,8 @@ class Blog extends Model
         $definer->add('code_foot')->default(null);
 
         $definer->add('seo_indexing')->default(true);
-        $definer->add('seo_robots_txt')->default(<<<TEXT
+        $definer->add('seo_robots_txt')->default(
+            <<<TEXT
         User-agent: *
         Sitemap: {{ _blog.url }}/sitemap.xml
         Disallow: /p/
@@ -65,7 +65,6 @@ class Blog extends Model
         $definer->add('syntax_on')->default(true);
         $definer->add('syntax_line_numbers')->default(true);
         $definer->add('syntax_theme')->default(null);
-
     }
 
     protected $with = [

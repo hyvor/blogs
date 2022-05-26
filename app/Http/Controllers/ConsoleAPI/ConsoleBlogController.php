@@ -32,7 +32,6 @@ use Illuminate\Validation\Rules\Enum;
 
 class ConsoleBlogController extends Controller
 {
-
     /**
      * Get initial data of a blog that is required to load it in the Console.
      *
@@ -41,7 +40,6 @@ class ConsoleBlogController extends Controller
      */
     public function getBlogData(Blog $blog)
     {
-
         $counts = CountRepository::getCounts(new Blog(), [
             CountEnum::BLOG_POSTS,
             CountEnum::BLOG_POSTS_DRAFT,
@@ -57,9 +55,9 @@ class ConsoleBlogController extends Controller
                 'scheduled' => $counts[CountEnum::BLOG_POSTS_SCHEDULED->value],
                 'featured' => $counts[CountEnum::BLOG_POSTS->value],
             ],
-            'users' => UserRepository::getUsers($blog, limit: 15)->map(fn($user) => new UserObject($user, $blog)),
-            'tags' => TagRepository::getTags($blog, limit: 15)->map(fn($tag) => new TagObject($tag, $blog)),
-            'languages' => LanguageRepository::getAllLanguages($blog)->map(fn($language) => new LanguageObject($language))
+            'users' => UserRepository::getUsers($blog, limit: 15)->map(fn ($user) => new UserObject($user, $blog)),
+            'tags' => TagRepository::getTags($blog, limit: 15)->map(fn ($tag) => new TagObject($tag, $blog)),
+            'languages' => LanguageRepository::getAllLanguages($blog)->map(fn ($language) => new LanguageObject($language)),
         ]);
     }
 
@@ -72,7 +70,6 @@ class ConsoleBlogController extends Controller
      */
     public static function updateBlog(Request $request, Blog $blog)
     {
-
         $validate = [
 
             'subdomain' => new Subdomain(checkUnique: true),
@@ -110,7 +107,7 @@ class ConsoleBlogController extends Controller
 
             'syntax_on' => 'boolean',
             'syntax_line_numbers' => 'boolean',
-            'syntax_theme' => 'string|nullable'
+            'syntax_theme' => 'string|nullable',
         ];
         $request->validate($validate);
 
@@ -132,22 +129,20 @@ class ConsoleBlogController extends Controller
      */
     public static function createBlogVariant(Request $request, Blog $blog)
     {
-
         $request->validate([
-            'language_id' => 'required|integer'
+            'language_id' => 'required|integer',
         ]);
 
         $languageId = $request->input('language_id');
         $language = LanguageRepository::getLanguageById($blog, $languageId);
 
-        if (!$language) {
+        if (! $language) {
             throw new TrustedException('Language not found');
         }
 
         $variant = BlogRepository::createBlogVariant($blog, $language);
 
         return response()->json(new BlogVariantObject($variant));
-
     }
 
     /**
@@ -160,29 +155,30 @@ class ConsoleBlogController extends Controller
      */
     public static function updateBlogVariant(Request $request, Blog $blog)
     {
-
         $request->validate([
             'language_id' => 'required|integer',
             'name' => new BlogName(),
-            'description' => new BlogDescription()
+            'description' => new BlogDescription(),
         ]);
 
         $languageId = $request->input('language_id');
 
         $language = LanguageRepository::getLanguageById($blog, $languageId);
 
-        if (!$language) {
+        if (! $language) {
             throw new TrustedException('Language not found');
         }
 
         $updates = [];
-        if ($request->has('name')) $updates['name'] = $request->input('name');
-        if ($request->has('description')) $updates['description'] = $request->input('description');
+        if ($request->has('name')) {
+            $updates['name'] = $request->input('name');
+        }
+        if ($request->has('description')) {
+            $updates['description'] = $request->input('description');
+        }
 
         $variant = BlogRepository::updateBlogVariant($blog, $language, $updates);
 
         return response()->json(new BlogVariantObject($variant));
-
     }
-
 }

@@ -25,7 +25,6 @@ class BlogHostingDomain implements Rule
      */
     public function passes($attribute, $value)
     {
-
         if (is_null($value)) {
             return true;
         }
@@ -35,7 +34,6 @@ class BlogHostingDomain implements Rule
         }
 
         return false;
-
     }
 
     /**

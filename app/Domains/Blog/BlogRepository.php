@@ -4,13 +4,10 @@ namespace App\Domains\Blog;
 
 use App\Data\Enums\BlogHostingAtEnum;
 use App\Data\Enums\BlogTypeEnum;
-use App\Domains\Media\MediaRepository;
-use App\Domains\Route\PermalinkRepository;
 use App\Exceptions\TrustedException;
 use App\Models\Blog;
 use App\Models\BlogVariant;
 use App\Models\Language;
-use Hyvor\JsonMeta\MetableException;
 
 class BlogRepository
 {
@@ -19,8 +16,7 @@ class BlogRepository
         string $name,
         string $subdomain,
         BlogTypeEnum $type = BlogTypeEnum::DEFAULT
-    ) : Blog {
-
+    ): Blog {
         $blog = Blog::create([
             'hyvor_user_id' => $userId,
             'subdomain' => $subdomain,
@@ -30,7 +26,7 @@ class BlogRepository
         BlogVariant::create([
             'blog_id' => $blog->id,
             'language_id' => $blog->languages[0]->id,
-            'name' => $name
+            'name' => $name,
         ]);
 
         return $blog;
@@ -66,7 +62,7 @@ class BlogRepository
             'subdomain',
             'hosting_at',
             'hosting_domain',
-            'hosting_url'
+            'hosting_url',
         ];
 
         foreach ($updates as $key => $value) {
@@ -99,7 +95,6 @@ class BlogRepository
 
     public static function createBlogVariant(Blog $blog, Language $language): BlogVariant
     {
-
         $variant = BlogVariant::where('blog_id', $blog->id)
             ->where('language_id', $language->id)
             ->first();
@@ -110,9 +105,8 @@ class BlogRepository
 
         return BlogVariant::create([
             'blog_id' => $blog->id,
-            'language_id' => $language->id
+            'language_id' => $language->id,
         ]);
-
     }
 
     /**
@@ -123,7 +117,6 @@ class BlogRepository
      */
     public static function updateBlogVariant(Blog $blog, Language $language, array $updates)
     {
-
         $variant = BlogVariant::where('blog_id', $blog->id)
             ->where('language_id', $language->id)
             ->first();
@@ -138,6 +131,5 @@ class BlogRepository
         $variant->save();
 
         return $variant;
-
     }
 }

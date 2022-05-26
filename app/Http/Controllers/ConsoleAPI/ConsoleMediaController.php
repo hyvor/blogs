@@ -12,10 +12,8 @@ use Illuminate\Http\Request;
 
 class ConsoleMediaController extends Controller
 {
-
     public static function getMedia(Request $request, Blog $blog)
     {
-
         $request->validate([
             'limit' => 'integer',
             'offset' => 'integer',
@@ -29,7 +27,6 @@ class ConsoleMediaController extends Controller
         $media = MediaRepository::get($blog, $limit, $offset, $extension)->mapInto(MediaObject::class);
 
         return response()->json($media);
-
     }
 
     public static function uploadFile(Request $request, Blog $blog)
@@ -52,7 +49,6 @@ class ConsoleMediaController extends Controller
 
     public static function searchUnsplash(Request $request)
     {
-
         $request->validate([
             'search' => 'required|string',
             'page' => 'required|integer',

@@ -6,8 +6,7 @@ use App\Domains\Language\Jobs\DeleteLanguageVariants;
 use App\Models\Language;
 use Illuminate\Support\Facades\Queue;
 
-it('deletes a language', function() {
-
+it('deletes a language', function () {
     Queue::fake();
 
     $language = Language::factory()->create(['code' => 'si', 'blog_id' => blog()]);
@@ -16,15 +15,12 @@ it('deletes a language', function() {
         ->assertOk();
 
     Queue::assertPushed(DeleteLanguageVariants::class);
-
 });
 
-it('does not delete the primary language', function() {
-
+it('does not delete the primary language', function () {
     $language = blog()->languages[0];
 
     $this->callConsoleApi('DELETE', "/language/$language->id")
         ->assertUnprocessable()
         ->assertSee(['Primary', 'cannot']);
-
 });

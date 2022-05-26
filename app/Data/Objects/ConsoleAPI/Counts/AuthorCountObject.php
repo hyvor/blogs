@@ -6,7 +6,6 @@ use App\Models\User;
 
 class AuthorCountObject
 {
-
     public int $id;
     public string $name;
     public int $posts_count;
@@ -18,5 +17,4 @@ class AuthorCountObject
         $this->name = $user->name;
         $this->posts_count = $user->posts_count;
     }
-
 }

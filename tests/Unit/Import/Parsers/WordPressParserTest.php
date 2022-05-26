@@ -2,7 +2,6 @@
 
 namespace Tests\Unit\Import\Parsers;
 
-use App\Domains\Import\Repository;
 use App\Domains\Import\Parsers\WordpressParser;
 
 // php artisan test  --filter 'WordPressParserTest'
@@ -82,74 +81,70 @@ $file = <<<XML
         </rss>
 XML;
 
-it('parsers the language', function () use($file){
-
-	$parser = new WordpressParser($file);
+it('parsers the language', function () use ($file) {
+    $parser = new WordpressParser($file);
     $repo = $parser->parse();
 
-	foreach($repo->lang as $lang) {
-		$language = $lang['language'];
-		$languageCode = $lang['languageCode'];
-	}
+    foreach ($repo->lang as $lang) {
+        $language = $lang['language'];
+        $languageCode = $lang['languageCode'];
+    }
 
-	$this->assertEquals('English', $language);
+    $this->assertEquals('English', $language);
 });
 
-it('parsers the authors', function ()  use($file){
-
-	$parser = new WordpressParser($file);
+it('parsers the authors', function () use ($file) {
+    $parser = new WordpressParser($file);
     $repo = $parser->parse();
 
-	foreach($repo->authors as $author) {
-			$status = $author['status'];
-			$role = $author['role'];
-			$slug = $author['slug'];
-			$email = $author['email'];
-			$url = $author['url'];
-			$name = $author['name'];
-	}
+    foreach ($repo->authors as $author) {
+        $status = $author['status'];
+        $role = $author['role'];
+        $slug = $author['slug'];
+        $email = $author['email'];
+        $url = $author['url'];
+        $name = $author['name'];
+    }
 
-	$this->assertEquals('Rasif', $name);
+    $this->assertEquals('Rasif', $name);
 });
 
 
-it('parsers the tags', function ()  use($file){
-
-	$parser = new WordpressParser($file);
+it('parsers the tags', function () use ($file) {
+    $parser = new WordpressParser($file);
     $repo = $parser->parse();
 
-	foreach($repo->tags as $tag) {
-		$slug = $tag['slug']; 
-        $postsCount= $tag['postsCount'];
+    foreach ($repo->tags as $tag) {
+        $slug = $tag['slug'];
+        $postsCount = $tag['postsCount'];
         $codeHead = $tag['codeHead'];
         $codeFoot = $tag['codeFoot'];
-		$featuredImageUrl = $tag['featuredImageUrl'];
-		$name = $tag['name'];
-		$description = $tag['description'];
-	}
+        $featuredImageUrl = $tag['featuredImageUrl'];
+        $name = $tag['name'];
+        $description = $tag['description'];
+    }
 
-	$this->assertEquals('alternatives', $name);
+    $this->assertEquals('alternatives', $name);
 });
 
-it('parsers the posts', function ()  use($file){
-
-	$parser = new WordpressParser($file);
+it('parsers the posts', function () use ($file) {
+    $parser = new WordpressParser($file);
     $repo = $parser->parse();
 
-	foreach($repo->posts as $post) {
-		$slug = $post['slug'];
-		$featuredImageUrl = $post['featuredImageUrl'];
-		$canonicalUrl = $post['canonicalUrl'];
-		$codeHead = $post['codeHead'];
-		$codeFoot = $post['codeFoot'];
-		$status = $post['status'];
-		$title = $post['title'];
-		$description = $post['description'];
-		$tags = $post['tags'];
-		$authors = $post['authors'];
-		$content = $post['content'];
-		$isFeatured = $post['isFeatured'];
-	}
+    foreach ($repo->posts as $post) {
+        $slug = $post['slug'];
+        $featuredImageUrl = $post['featuredImageUrl'];
+        $canonicalUrl = $post['canonicalUrl'];
+        $codeHead = $post['codeHead'];
+        $codeFoot = $post['codeFoot'];
+        $status = $post['status'];
+        $title = $post['title'];
+        $description = $post['description'];
+        $tags = $post['tags'];
+        $authors = $post['authors'];
+        $content = $post['content'];
+        $isFeatured = $post['isFeatured'];
+    }
 
-	$this->assertEquals('About', $title);
+    $this->assertEquals('About', $title);
 });

@@ -16,8 +16,7 @@ class Callout extends Node
             [
                 'tag' => 'aside',
                 'getAttrs' => function ($DOMNode) {
-
-                }
+                },
             ],
         ];
     }
@@ -27,7 +26,7 @@ class Callout extends Node
         return [
             'emoji' => [
                 'parseHTML' => fn ($DOMNode) => $DOMNode->getAttribute('data-emoji'),
-                'rendered' => false
+                'rendered' => false,
             ],
             'bg' => [
                 'parseHTML' => fn ($DOMNode) => InlineStyle::getAttribute($DOMNode, 'background-color'),
@@ -35,7 +34,7 @@ class Callout extends Node
             ],
             'fg' => [
                 'parseHTML' => fn ($DOMNode) => InlineStyle::getAttribute($DOMNode, 'color'),
-                'rendered' => false
+                'rendered' => false,
             ],
         ];
     }
@@ -55,12 +54,11 @@ class Callout extends Node
          */
         $inside = PostContentRepository::getHtml([
             'type' => 'doc',
-            'content' => $content
+            'content' => $content,
         ], $this->options['blog']);
 
         return [
-            'content' => "<aside style=\"background-color:{$node->attrs->bg};color:{$node->attrs->fg}\"><span>{$node->attrs->emoji}</span><div>$inside</div></aside>"
+            'content' => "<aside style=\"background-color:{$node->attrs->bg};color:{$node->attrs->fg}\"><span>{$node->attrs->emoji}</span><div>$inside</div></aside>",
         ];
-
     }
 }

@@ -32,19 +32,17 @@ class OneOf implements Rule
 
     public function passes($attribute, $value)
     {
-
         foreach ($this->rules as $rule) {
-
             try {
                 Validator::validate([$attribute => $value], [$attribute => $rule]);
+
                 return true;
             } catch (ValidationException) {
                 $this->failedRules[] = $rule;
             }
-
         }
-        return false;
 
+        return false;
     }
 
     /**

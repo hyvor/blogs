@@ -7,8 +7,7 @@ use App\Data\Enums\UrlDataFetchTypeEnum;
 use App\Domains\Post\Content\PostContentRepository;
 use App\Models\UrlData;
 
-beforeEach(function() {
-
+beforeEach(function () {
     $this->url = 'https://example.com';
     $this->html = "<div>Hello World</div>";
 
@@ -18,33 +17,29 @@ beforeEach(function() {
         'url' => $this->url,
         'final_url' => $this->url,
         'result' => ResultEnum::OK,
-        'html' => $this->html
+        'html' => $this->html,
     ]);
-
 });
 
-test('json to HTML', function() {
-
+test('json to HTML', function () {
     $json = [
         'type' => 'doc',
         'content' => [
             [
                 'type' => 'embed',
                 'attrs' => [
-                    'url' => $this->url
-                ]
-            ]
-        ]
+                    'url' => $this->url,
+                ],
+            ],
+        ],
     ];
 
     $post = PostContentRepository::getHtml($json, blog());
 
     expect($post)->toBe("<x-embed>$this->html</x-embed>");
-
 });
 
-test('HTML to JSON', function() {
-
+test('HTML to JSON', function () {
     $html = "<x-embed data-url=\"$this->url\"></x-embed>";
 
     $json = PostContentRepository::getJsonFromHtml($html, blog());
@@ -55,10 +50,9 @@ test('HTML to JSON', function() {
             [
                 'type' => 'embed',
                 'attrs' => [
-                    'url' => $this->url
-                ]
-            ]
-        ]
+                    'url' => $this->url,
+                ],
+            ],
+        ],
     ]));
-
 });

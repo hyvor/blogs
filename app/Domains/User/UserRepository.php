@@ -32,7 +32,6 @@ use Illuminate\Support\Str;
  */
 class UserRepository
 {
-
     /**
      * @param Blog $blog
      * @param int $limit
@@ -54,7 +53,6 @@ class UserRepository
             ->limit($limit)
             ->offset($offset)
             ->get();
-
     }
 
     /**
@@ -67,22 +65,22 @@ class UserRepository
      */
     public static function searchUsers(Blog $blog, string $search, int $limit)
     {
-
         $search = str_replace('%', '', $search); // to make it safe
         $search .= '%';
 
         $primaryLanguage = LanguageRepository::getPrimaryLanguage($blog);
 
-        return User::join('user_variants', fn($join) =>
+        return User::join(
+            'user_variants',
+            fn ($join) =>
                 $join->on('user_variants.user_id', '=', 'users.id')
                     ->where('user_variants.language_id', '=', $primaryLanguage->id)
-            )
+        )
             ->where('users.blog_id', $blog->id)
             ->where('user_variants.name', 'LIKE', $search)
             ->limit($limit)
             ->select('users.*')
             ->get();
-
     }
 
     public static function deleteUser(int $id)

@@ -2,45 +2,37 @@
 
 namespace App\Http\Controllers\ConsoleAPI;
 
-use App\Data\Enums\BlogTypeEnum;
 use App\Data\Enums\UserRoleEnum;
 use App\Data\Enums\UserStatusEnum;
 
 use App\Data\Objects\ConsoleAPI\User\UserObject;
-use App\Data\Objects\ConsoleAPI\UserBlog\UserBlogObject;
-use App\Domains\Blog\BlogRepository;
 use App\Domains\User\UserRepository;
 use App\Http\Controllers\Controller;
 
 use App\Models\Blog;
-use Hyvor\HyvorConnecter\HyvorUser;
 use Hyvor\HyvorConnecter\User;
 use Illuminate\Http\Request;
 
 class ConsoleUserController extends Controller
 {
-
     public static function getUsers(Request $request, Blog $blog)
     {
-
         $request->validate([
-            'offset' => 'integer'
+            'offset' => 'integer',
         ]);
 
         $limit = 50;
         $offset = $request->input('offset', 0);
 
-        $users = UserRepository::getUsers($blog, $limit, $offset)->map(fn($user) => new UserObject($user, $blog));
+        $users = UserRepository::getUsers($blog, $limit, $offset)->map(fn ($user) => new UserObject($user, $blog));
 
         return response()->json($users);
-
     }
 
     public static function searchUsers(Request $request, Blog $blog)
     {
-
         $request->validate([
-            'search' => 'required|string'
+            'search' => 'required|string',
         ]);
 
         $search = $request->input('search');
@@ -49,7 +41,6 @@ class ConsoleUserController extends Controller
             ->map(fn ($user) => new UserObject($user, $blog));
 
         return response()->json($users);
-
     }
 
     public static function createAuthor(Request $request, Blog $blog)
@@ -210,7 +201,4 @@ class ConsoleUserController extends Controller
 
         return response()->json($icon);
     }
-
-
-
 }

@@ -4,8 +4,8 @@ namespace App\Data\Objects\ConsoleAPI;
 
 use App\Data\Enums\BlogHostingAtEnum;
 use App\Data\Enums\BlogTypeEnum;
-use App\Data\Enums\ColorModesEnum;
 use App\Data\Enums\ColorModeDefaultEnum;
+use App\Data\Enums\ColorModesEnum;
 use App\Data\Enums\CommentsTypeEnum;
 use App\Data\Enums\SeoExternalLinksFollowEnum;
 use App\Models\Blog;

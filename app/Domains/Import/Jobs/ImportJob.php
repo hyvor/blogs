@@ -1,26 +1,27 @@
 <?php
+
 namespace App\Domains\Import\Jobs;
 
-use Illuminate\Contracts\Queue\ShouldQueue;
 use App\Data\Enums\ImportFormatEnum;
 use App\Domains\Import\Importer;
+use App\Domains\Import\Parsers\BloggerParser;
+use App\Domains\Import\Parsers\GhostParser;
+use App\Domains\Import\Parsers\HyvorParser;
+use App\Domains\Import\Parsers\MediumParser;
+use App\Domains\Import\Parsers\SubstackParser;
+use App\Domains\Import\Parsers\TumblrParser;
+use App\Domains\Import\Parsers\WordpressParser;
 use App\Models\Blog;
 use App\Models\import;
-use App\Domains\Import\Parsers\WordpressParser;
-use App\Domains\Import\Parsers\MediumParser;
-use App\Domains\Import\Parsers\HyvorParser;
-use App\Domains\Import\Parsers\GhostParser;
-use App\Domains\Import\Parsers\BloggerParser;
-use App\Domains\Import\Parsers\TumblrParser;
-use App\Domains\Import\Parsers\SubstackParser;
+use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Support\Facades\Storage;
 
-class ImportJob implements ShouldQueue {
-
+class ImportJob implements ShouldQueue
+{
     // public function parse(ImportFormatEnum $platform, $file)
     public function __construct(ImportFormatEnum $platform, Blog $blog, Import $import)
     {
-        $parserClass = match($platform->value){
+        $parserClass = match ($platform->value) {
             'wordpress' => WordpressParser::class,
             'medium' => MediumParser::class,
             'ghost' => GhostParser::class,
@@ -31,7 +32,7 @@ class ImportJob implements ShouldQueue {
         };
 
         $fileName = Import::select('name')
-            ->where('blog_id','=', $blog->id)
+            ->where('blog_id', '=', $blog->id)
             ->value('name');
 
         // $wordpressPath = Storage::get('import\'.$fileName);

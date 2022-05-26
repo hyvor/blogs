@@ -21,11 +21,11 @@ test('json to HTML', function () {
                     'content' => [
                         [
                             'type' => 'text',
-                            'text' => $content
-                        ]
-                    ]
-                ]
-            ]
+                            'text' => $content,
+                        ],
+                    ],
+                ],
+            ],
         ]);
 
         $html = PostContentRepository::getHtml($json, blog());
@@ -49,11 +49,11 @@ test('json to HTML without ID', function () {
                     'content' => [
                         [
                             'type' => 'text',
-                            'text' => $content
-                        ]
-                    ]
-                ]
-            ]
+                            'text' => $content,
+                        ],
+                    ],
+                ],
+            ],
         ]);
 
         $html = PostContentRepository::getHtml($json, blog());
@@ -74,11 +74,11 @@ test('h7 is h2', function () {
                 'content' => [
                     [
                         'type' => 'text',
-                        'text' => ''
-                    ]
-                ]
-            ]
-        ]
+                        'text' => '',
+                    ],
+                ],
+            ],
+        ],
     ]);
 
     $html = PostContentRepository::getHtml($json, blog());
@@ -102,15 +102,15 @@ test('HTML to JSON', function () {
                     'type' => 'heading',
                     'attrs' => [
                         'level' => 2,
-                        'id' => $id
+                        'id' => $id,
                     ],
                     'content' => [
                         [
                             'type' => 'text',
-                            'text' => $content
-                        ]
-                    ]
-                ]
-            ]
+                            'text' => $content,
+                        ],
+                    ],
+                ],
+            ],
         ]));
 });

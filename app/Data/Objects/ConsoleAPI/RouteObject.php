@@ -17,7 +17,6 @@ class RouteObject
 
     public function __construct(Route $route)
     {
-
         $this->id = $route->id;
         $this->created_at = $route->created_at->timestamp;
         $this->name = $route->name;
@@ -26,6 +25,5 @@ class RouteObject
         $this->posts_filter = $route->posts_filter;
         $this->content_type = $route->content_type;
         $this->is_enabled = (bool) $route->is_enabled;
-
     }
 }

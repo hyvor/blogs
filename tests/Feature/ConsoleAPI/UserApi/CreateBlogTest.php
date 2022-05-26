@@ -8,8 +8,7 @@ use App\Models\Blog;
 use App\Models\BlogVariant;
 use Illuminate\Testing\Fluent\AssertableJson;
 
-it('validates', function() {
-
+it('validates', function () {
     $this->callConsoleUserApi('POST', '/blog')
         ->assertUnprocessable()
         ->assertSee(['name', 'required']);
@@ -17,42 +16,44 @@ it('validates', function() {
     $this->callConsoleUserApi('POST', '/blog', ['name' => 'test'])
         ->assertUnprocessable()
         ->assertSee(['subdomain', 'required']);
-
 });
 
-it('creates a blog', function() {
-
+it('creates a blog', function () {
     $blogId = $this->callConsoleUserApi('POST', '/blog', [
         'name' => 'Testing',
-        'subdomain' => 'new-blog'
+        'subdomain' => 'new-blog',
     ])
         ->assertOk()
-        ->assertJson(fn (AssertableJson $json) =>
+        ->assertJson(
+            fn (AssertableJson $json) =>
             $json->has('blog')
-                ->has('user', fn (AssertableJson $json) =>
+                ->has(
+                    'user',
+                    fn (AssertableJson $json) =>
                     $json->where('role', UserRoleEnum::OWNER->value)
                         ->etc()
                 )
-    )->json()['blog']['id'];
+        )->json()['blog']['id'];
 
     $blog = Blog::find($blogId);
 
     expect($blog->subdomain)->toBe('new-blog');
     expect($blog->type)->toBe(BlogTypeEnum::DEFAULT);
     expect(BlogVariant::where('blog_id', $blogId)->count())->toBe(1);
-
 });
 
-it('creates a dev blog', function() {
-
+it('creates a dev blog', function () {
     $blogId = $this->callConsoleUserApi('POST', '/blog', [
         'name' => 'Testing',
-        'is_dev' => true
+        'is_dev' => true,
     ])
         ->assertOk()
-        ->assertJson(fn (AssertableJson $json) =>
+        ->assertJson(
+            fn (AssertableJson $json) =>
         $json->has('blog')
-            ->has('user', fn (AssertableJson $json) =>
+            ->has(
+                'user',
+                fn (AssertableJson $json) =>
             $json->where('role', UserRoleEnum::OWNER->value)
                 ->etc()
             )
@@ -65,19 +66,16 @@ it('creates a dev blog', function() {
     expect($blog->subdomain)->toMatch(
         '/^dev-[0-9A-F]{8}-[0-9A-F]{4}-4[0-9A-F]{3}-[89AB][0-9A-F]{3}-[0-9A-F]{12}$/i'
     );
-
 });
 
-it('cant create a blog with already existing subdomain', function() {
-
+it('cant create a blog with already existing subdomain', function () {
     $blog = Blog::first();
 
     $this
         ->callConsoleUserApi('POST', '/blog', [
             'name' => 'Testing',
-            'subdomain' => $blog->subdomain
+            'subdomain' => $blog->subdomain,
         ])
         ->assertUnprocessable()
         ->assertSee(['Subdomain', 'taken']);
-
 });

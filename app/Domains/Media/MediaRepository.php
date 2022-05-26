@@ -19,7 +19,6 @@ use Illuminate\Support\Facades\Storage;
  */
 class MediaRepository
 {
-
     public static function get(Blog $blog, int $limit = 0, int $offset = 0, string|null $extension = null): Collection
     {
         return Media::where('blog_id', $blog->id)

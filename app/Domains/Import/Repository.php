@@ -26,7 +26,7 @@ class Repository
     * @var array<array<string,mixed>>
     */
     public array $posts = [];
-    
+
     /**
     * @var array<array<string,mixed>>
     */
@@ -35,18 +35,18 @@ class Repository
     public function language(
         ?string $language,
         ?string $languageCode,
-    )
-    {
+    ) {
         // dd($language);
         $this->lang[] = [
             'language' => $language,
             'languageCode' => $languageCode,
         ];
+
         return $this->lang;
     }
 
-     // Not null :- slug, name
-     public function tag(
+    // Not null :- slug, name
+    public function tag(
         int $id,
         string $slug,
         ?string $createdAt = null,
@@ -57,8 +57,7 @@ class Repository
         ?string $featuredImageUrl = null,
         string $name = null,
         ?string $description = null,
-    )
-    {
+    ) {
         $this->tags[] = [
             'id' => $id,
             'createdAt' => $createdAt,
@@ -95,8 +94,7 @@ class Repository
         ?string $name = null,
         ?string $bio = null,
         ?string $location = null,
-    )
-    {
+    ) {
         $this->authors[] = [
             'id' => $id,
             'createdAt' => $createdAt,
@@ -138,10 +136,9 @@ class Repository
         ?string $codeFoot = null,
         ?string $content = null,
         ?string $title = null,
-        ?string $description = null, 
-        ?array $tags = null,      
-    )
-    {
+        ?string $description = null,
+        ?array $tags = null,
+    ) {
         $this->posts[] = [
             'id' => $id,
             'createdAt' => $createdAt,
@@ -165,4 +162,4 @@ class Repository
         // dd($this->posts);
         return $this->posts;
     }
-} 
+}

@@ -123,7 +123,7 @@ class ImportExportController extends Controller
 
 
 
- 
+
 
 
 //   new update section
@@ -132,14 +132,14 @@ class ImportExportController extends Controller
     //     $fileName = Import::select('name')
     //         ->where('blog_id','=', $blog->id)
     //         ->value('name');
-        
+
     //     // $wordpressPath = Storage::get('import\'.$fileName);
     //     $wordpressPath = Storage::get('public\wordpress.xml');
     //     // dd($wordpressPath);
 
     //     // $xmlObject = simplexml_load_string($wordpressPath);
     //     // $json = json_encode($xmlObject);
-    //     // $phpArray = json_decode($json, true); 
+    //     // $phpArray = json_decode($json, true);
     //     // dd($phpArray);
 
     //     // $rss = new \DOMDocument($wordpressPath);

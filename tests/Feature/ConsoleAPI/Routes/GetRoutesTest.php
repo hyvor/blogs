@@ -4,8 +4,7 @@ namespace Tests\Feature\ConsoleAPI\Routes;
 
 use Illuminate\Testing\Fluent\AssertableJson;
 
-it('gets routes', function() {
-
+it('gets routes', function () {
     $this->callConsoleApi('GET', '/routes')
         ->assertOk()
         ->assertJson(function (AssertableJson $json) {
@@ -17,5 +16,4 @@ it('gets routes', function() {
                     ->etc();
             });
         });
-
 });

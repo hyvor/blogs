@@ -5,21 +5,19 @@ namespace Tests\Feature\ConsoleAPI\Redirects;
 use App\Models\Redirect;
 use Illuminate\Testing\Fluent\AssertableJson;
 
-beforeEach(function() {
-
+beforeEach(function () {
     Redirect::factory()->count(3)->create([
-        'blog_id' => blog()
+        'blog_id' => blog(),
     ]);
-
 });
 
-it('get redirects', function() {
-
+it('get redirects', function () {
     $this->callConsoleApi('GET', '/redirects', [
         'limit' => 2,
     ])
         ->assertOk()
-        ->assertJson(fn (AssertableJson $json) => $json
+        ->assertJson(
+            fn (AssertableJson $json) => $json
             ->has(2)
             ->each(function (AssertableJson $json) {
                 $json->has('id')
@@ -28,16 +26,13 @@ it('get redirects', function() {
                     ->etc();
             })
         );
-
 });
 
-it('works with offset', function() {
-
+it('works with offset', function () {
     $this->callConsoleApi('GET', '/redirects', [
         'limit' => 2,
-        'offset' => 2
+        'offset' => 2,
     ])
         ->assertOk()
         ->assertJsonCount(1);
-
 });

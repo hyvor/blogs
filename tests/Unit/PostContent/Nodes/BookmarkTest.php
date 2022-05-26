@@ -9,8 +9,7 @@ use App\Domains\Post\Content\PostContentRepository;
 use App\Domains\Theme\ThemeFilesRepository;
 use App\Models\UrlData;
 
-beforeEach(function() {
-
+beforeEach(function () {
     $this->url = 'https://example.com';
     $this->title = "I am title";
     $this->description = "I am description";
@@ -28,23 +27,21 @@ beforeEach(function() {
         'description' => $this->description,
         'thumbnail_url' => $this->thumbnail_url,
         'icon_url' => $this->icon_url,
-        'site' => $this->site
+        'site' => $this->site,
     ]);
-
 });
 
-test('JSON to HTML', function() {
-
+test('JSON to HTML', function () {
     $json = json_encode([
         'type' => 'doc',
         'content' => [
             [
                 'type' => 'bookmark',
                 'attrs' => [
-                    'url' => $this->url
-                ]
-            ]
-        ]
+                    'url' => $this->url,
+                ],
+            ],
+        ],
     ]);
 
     $html = PostContentRepository::getHtml($json, blog());
@@ -56,11 +53,9 @@ test('JSON to HTML', function() {
     );
 
     $this->assertStringNotContainsString($this->site, $html);
-
 });
 
-test('custom template', function() {
-
+test('custom template', function () {
     $template = <<<TWIG
         <a class="bookmark">
             {{ data.url }}
@@ -85,10 +80,10 @@ test('custom template', function() {
             [
                 'type' => 'bookmark',
                 'attrs' => [
-                    'url' => $this->url
-                ]
-            ]
-        ]
+                    'url' => $this->url,
+                ],
+            ],
+        ],
     ];
 
     $html = PostContentRepository::getHtml($json, blog());
@@ -101,5 +96,4 @@ test('custom template', function() {
         $this->thumbnail_url,
         $this->icon_url
     );
-
 });

@@ -40,8 +40,7 @@ it('creates a page', function () {
         );
 });
 
-it('adds the author', function() {
-
+it('adds the author', function () {
     $post = $this
         ->callConsoleApi('POST', '/post')
         ->assertOk()
@@ -54,5 +53,4 @@ it('adds the author', function() {
             ->where('user_id', $user->id)
             ->first()
     )->toBeInstanceOf(PostAuthor::class);
-
 });

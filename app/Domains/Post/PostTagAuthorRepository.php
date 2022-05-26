@@ -11,7 +11,6 @@ use App\Models\User;
 
 class PostTagAuthorRepository
 {
-
     /**
      * @param Post $post
      * @param array<integer> $ids
@@ -19,7 +18,6 @@ class PostTagAuthorRepository
      */
     public static function updateTags(Post $post, array $ids)
     {
-
         $dbCount = Tag::where('blog_id', $post->blog_id)
             ->whereIn('id', $ids)
             ->count();
@@ -35,10 +33,9 @@ class PostTagAuthorRepository
         foreach ($ids as $id) {
             PostTag::create([
                 'post_id' => $post->id,
-                'tag_id' => $id
+                'tag_id' => $id,
             ]);
         }
-
     }
 
 
@@ -49,7 +46,6 @@ class PostTagAuthorRepository
      */
     public static function updateAuthors(Post $post, array $ids)
     {
-
         $dbCount = User::where('blog_id', $post->blog_id)
             ->whereIn('id', $ids)
             ->count();
@@ -65,19 +61,16 @@ class PostTagAuthorRepository
         foreach ($ids as $id) {
             PostAuthor::create([
                 'post_id' => $post->id,
-                'user_id' => $id
+                'user_id' => $id,
             ]);
         }
-
     }
 
     public static function createAuthor(int $postId, int $userId)
     {
         PostAuthor::create([
             'post_id' => $postId,
-            'user_id' => $userId
+            'user_id' => $userId,
         ]);
     }
-
-
 }

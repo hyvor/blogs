@@ -3,7 +3,6 @@
 namespace App\Domains\Post\Content\Nodes;
 
 use Tiptap\Core\Node;
-use Tiptap\Utils\HTML;
 
 class HorizontalRule extends Node
 {

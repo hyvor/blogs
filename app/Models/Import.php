@@ -2,10 +2,10 @@
 
 namespace App\Models;
 
+use Hyvor\JsonMeta\Definer;
+use Hyvor\JsonMeta\Metable;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
-use Hyvor\JsonMeta\Metable;
-use Hyvor\JsonMeta\Definer;
 
 class Import extends Model
 {
@@ -20,5 +20,4 @@ class Import extends Model
         $definer->add('posts_count')->type('int|null')->default(null);
         $definer->add('pages_count')->type('int|null')->default(null);
     }
-
 }

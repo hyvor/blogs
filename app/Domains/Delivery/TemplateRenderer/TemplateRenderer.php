@@ -23,9 +23,9 @@ use App\Domains\User\UserRepository;
 use App\Models\Post;
 use App\Models\Tag;
 use App\Models\User;
+use function config;
 use Symfony\Component\Yaml\Exception\ParseException;
 use Symfony\Component\Yaml\Yaml;
-use function config;
 use Twig\Error\Error;
 
 class TemplateRenderer
@@ -135,13 +135,12 @@ class TemplateRenderer
 
     private function getConfig()
     {
-
         $configFile = ThemeFilesRepository::getFile(
             $this->pathMatcher->blog,
             'config.yaml'
         );
 
-        if (!$configFile) {
+        if (! $configFile) {
             throw new Error('Config.yaml file not found');
         }
 
@@ -150,7 +149,6 @@ class TemplateRenderer
         } catch (ParseException) {
             throw new Error('Unable to parse conig.yaml');
         }
-
     }
 
     private function getRouteVariables(): array

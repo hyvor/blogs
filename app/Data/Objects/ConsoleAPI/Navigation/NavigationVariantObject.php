@@ -2,9 +2,8 @@
 
 namespace App\Data\Objects\ConsoleAPI\Navigation;
 
-use App\Models\NavigationVariant;
 use App\Models\Navigation;
-
+use App\Models\NavigationVariant;
 
 class NavigationVariantObject
 {

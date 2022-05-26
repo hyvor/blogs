@@ -53,8 +53,9 @@ class Link extends Mark
 
     private static function isLinkInternal(Blog $blog, string $href): bool
     {
-        if (!preg_match('/^https?:\/\//', $href))
+        if (! preg_match('/^https?:\/\//', $href)) {
             return true;
+        }
 
         $blogUrl = PermalinkRepository::getFullUrlFromPath($blog);
         $blogDomain = parse_url($blogUrl, PHP_URL_HOST);

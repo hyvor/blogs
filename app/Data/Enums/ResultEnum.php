@@ -6,5 +6,4 @@ enum ResultEnum : string
 {
     case OK = 'ok';
     case ERR = 'err';
-
 }

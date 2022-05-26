@@ -6,7 +6,6 @@ use App\Models\Language;
 
 use App\Models\User;
 use Illuminate\Testing\Fluent\AssertableJson;
-use Tests\TestCase;
 
 // To run the user tests - php artisan test  --filter 'UsersTest'
 
@@ -100,4 +99,3 @@ it('create variant ( If language id is null ) ', function () {
         ])
         ->assertStatus(500);
 });
-

@@ -20,7 +20,7 @@ class ConsoleUserBlogController extends Controller
         $request->validate([
             'name' => 'required|string',
             'subdomain' => ['required_unless:is_dev,true', new Subdomain(checkUnique: true)],
-            'is_dev' => 'boolean'
+            'is_dev' => 'boolean',
         ]);
 
         $name = $request->input('name');
@@ -73,5 +73,4 @@ class ConsoleUserBlogController extends Controller
 
         return response()->json();
     }
-
 }

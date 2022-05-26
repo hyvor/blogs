@@ -4,10 +4,8 @@ namespace App\Domains\UrlData;
 
 use App\Data\Enums\ResultEnum;
 use App\Data\Enums\UrlDataFetchTypeEnum;
-use App\Data\Enums\UrlDataTypeEnum;
 use App\Exceptions\TrustedException;
 use App\Models\UrlData;
-use GrahamCampbell\ResultType\Result;
 
 function _safe_length($str, $len = 255)
 {
@@ -66,7 +64,6 @@ class UrlDataRepository
             ]);
 
             throw new TrustedException('Unable to fetch data');
-
         }
     }
 }

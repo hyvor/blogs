@@ -23,10 +23,10 @@ class Bookmark extends Node
         return [
             [
                 'tag' => 'x-bookmark',
-                'getAttrs' => fn(DOMElement $node) => [
-                    'url' => $node->getAttribute('data-url')
-                ]
-            ]
+                'getAttrs' => fn (DOMElement $node) => [
+                    'url' => $node->getAttribute('data-url'),
+                ],
+            ],
         ];
     }
 
@@ -40,7 +40,7 @@ class Bookmark extends Node
         $url = $node->attrs?->url;
         $empty = ['content' => ''];
 
-        if (!$url) {
+        if (! $url) {
             return $empty;
         }
 
@@ -55,18 +55,16 @@ class Bookmark extends Node
             ThemeFileFolderEnum::TEMPLATES
         )?->content;
 
-        if (!$template) {
+        if (! $template) {
             $template = PostContentRepository::getDefaultBlockTemplate('bookmark');
         }
 
         $content = TwigRenderer::renderString($template, [
-            'data' => new UrlDataObject($urlData)
+            'data' => new UrlDataObject($urlData),
         ]);
 
         return [
-            'content' => $content
+            'content' => $content,
         ];
-
     }
-
 }

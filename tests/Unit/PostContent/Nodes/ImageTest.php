@@ -4,8 +4,7 @@ namespace Tests\Unit\PostContent\Nodes;
 
 use App\Domains\Post\Content\PostContentRepository;
 
-test('json to HTML', function() {
-
+test('json to HTML', function () {
     $src = 'https://example.com/image.png';
     $alt = 'ALT';
     $width = 100;
@@ -20,20 +19,18 @@ test('json to HTML', function() {
                     'src' => $src,
                     'alt' => $alt,
                     'width' => $width,
-                    'height' => $height
-                ]
+                    'height' => $height,
+                ],
             ],
-        ]
+        ],
     ];
 
     $html = PostContentRepository::getHtml($json, blog());
 
     expect($html)->toBe("<img src=\"$src\" alt=\"$alt\" width=\"$width\" height=\"$height\">");
-
 });
 
-test('json to HTML with figure', function() {
-
+test('json to HTML with figure', function () {
     $src = 'https://example.com/image.png';
     $alt = 'ALT';
     $caption = 'Caption';
@@ -48,25 +45,24 @@ test('json to HTML with figure', function() {
                         'type' => 'image',
                         'attrs' => [
                             'src' => $src,
-                            'alt' => $alt
-                        ]
+                            'alt' => $alt,
+                        ],
                     ],
                     [
                         'type' => 'figcaption',
                         'content' => [
                             [
                                 'type' => 'text',
-                                'text' => $caption
-                            ]
-                        ]
-                    ]
-                ]
-            ]
-        ]
+                                'text' => $caption,
+                            ],
+                        ],
+                    ],
+                ],
+            ],
+        ],
     ];
 
     $html = PostContentRepository::getHtml($json, blog());
 
     expect($html)->toBe("<figure><img src=\"$src\" alt=\"$alt\"><figcaption>$caption</figcaption></figure>");
-
 });

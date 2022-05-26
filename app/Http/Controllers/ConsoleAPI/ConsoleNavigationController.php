@@ -37,7 +37,7 @@ class ConsoleNavigationController extends Controller
         //     'url' => 'required|string',
         //     'type' => 'required|string',
         // ]);
-        
+
         $name = $request->input('name');
         $url = $request->input('url');
         $type = NavigationTypeEnum::from($request->input('type'));
@@ -70,9 +70,11 @@ class ConsoleNavigationController extends Controller
 
         if ($headerCount) {
             $createNavigation = NavigationRepository::createNavigation($blog, $name, $url, $type, $sort);
+
             return response()->json(new NavigationObject($createNavigation));
         } elseif ($footerCount) {
             $createNavigation = NavigationRepository::createNavigation($blog, $name, $url, $type, $sort);
+
             return response()->json(new NavigationObject($createNavigation));
         } else {
             // return new TrustedException('You cant have more than 8 links', TrustedException::ERROR_UNPROCESSABLE);

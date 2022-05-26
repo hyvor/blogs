@@ -3,13 +3,12 @@
 namespace App\Domains\Navigation;
 
 use App\Data\Enums\NavigationTypeEnum;
-use App\Data\Objects\DataAPI\NavObject;
+use App\Domains\Language\LanguageRepository;
 use App\Models\Blog;
+use App\Models\Language;
 use App\Models\Navigation;
 use App\Models\NavigationVariant;
 use Illuminate\Support\Collection;
-use App\Models\Language;
-use App\Domains\Language\LanguageRepository;
 
 class NavigationRepository
 {
@@ -57,8 +56,7 @@ class NavigationRepository
         string $url,
         NavigationTypeEnum $type,
         int $sort = 0
-    ): Navigation 
-    {
+    ): Navigation {
         $navigation = Navigation::create([
             'blog_id' => $blog->id,
             'url' => $url,
@@ -85,8 +83,7 @@ class NavigationRepository
         ?string $name,
         ?string $url,
         NavigationTypeEnum $type
-    ): void 
-    {
+    ): void {
         // $navigation = Navigation::find($id);
         // $navigation->name = $navigationName;
         // $navigation->url = $navigationUrl;

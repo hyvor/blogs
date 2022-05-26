@@ -15,10 +15,9 @@ use Illuminate\Validation\Rules\Enum;
 
 class ConsoleRedirectController extends Controller
 {
-
     public function get(Request $request, Blog $blog)
     {
-         $request->validate([
+        $request->validate([
              'limit' => 'integer',
              'offset' => 'integer',
          ]);
@@ -33,7 +32,6 @@ class ConsoleRedirectController extends Controller
 
     public function create(Request $request, Blog $blog)
     {
-
         $request->validate([
             'path' => ['required', new RedirectPath($blog)],
             'to' => ['required', 'url'],
@@ -46,12 +44,10 @@ class ConsoleRedirectController extends Controller
         $redirect = RedirectRepository::createRedirect($blog, $path, $to, $type);
 
         return response()->json(new RedirectObject($redirect));
-
     }
 
     public function update(Request $request, Blog $blog, Redirect $redirect)
     {
-
         $request->validate([
             'path' => ['required', new RedirectPath($blog)],
             'to' => ['required', 'url'],
@@ -65,14 +61,12 @@ class ConsoleRedirectController extends Controller
         $redirect = RedirectRepository::updateRedirect($redirect, $path, $to, $type);
 
         return response()->json(new RedirectObject($redirect));
-
     }
 
     public function delete(Redirect $redirect)
     {
-
         RedirectRepository::deleteRedirect($redirect);
-        return response()->json();
 
+        return response()->json();
     }
 }

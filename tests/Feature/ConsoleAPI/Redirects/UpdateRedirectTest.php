@@ -5,8 +5,7 @@ namespace Tests\Feature\ConsoleAPI\Redirects;
 use App\Models\Redirect;
 use Illuminate\Testing\Fluent\AssertableJson;
 
-it('updates a redirect', function() {
-
+it('updates a redirect', function () {
     $redirect = Redirect::factory()->create(['blog_id' => blog()]);
 
     $path = '/example';
@@ -16,21 +15,20 @@ it('updates a redirect', function() {
     $this->callConsoleApi('PUT', "/redirect/$redirect->id", [
         'path' => $path,
         'to' => $to,
-        'type' => $type
+        'type' => $type,
     ])
         ->assertOk()
-        ->assertJson(fn (AssertableJson $json) =>
+        ->assertJson(
+            fn (AssertableJson $json) =>
             $json->where('path', $path)
                 ->where('to', $to)
                 ->where('type', $type)
                 ->etc()
         );
-
 });
 
 
-it('does not create a redirect when path is taken', function() {
-
+it('does not create a redirect when path is taken', function () {
     $path = '/example';
     $to = 'https://example.com';
     $type = 'permanent';
@@ -41,9 +39,8 @@ it('does not create a redirect when path is taken', function() {
     $this->callConsoleApi('PUT', "/redirect/$r2->id", [
         'path' => $path,
         'to' => $to,
-        'type' => $type
+        'type' => $type,
     ])
         ->assertUnprocessable()
         ->assertSee(['path', 'exists']);
-
 });

@@ -21,11 +21,11 @@ test('json to HTML', function () {
                                 'content' => [
                                     [
                                         'type' => 'text',
-                                        'text' => $content
-                                    ]
-                                ]
-                            ]
-                        ]
+                                        'text' => $content,
+                                    ],
+                                ],
+                            ],
+                        ],
                     ],
                     [
                         'type' => 'list_item',
@@ -35,15 +35,15 @@ test('json to HTML', function () {
                                 'content' => [
                                     [
                                         'type' => 'text',
-                                        'text' => $content
-                                    ]
-                                ]
-                            ]
-                        ]
-                    ]
-                ]
-            ]
-        ]
+                                        'text' => $content,
+                                    ],
+                                ],
+                            ],
+                        ],
+                    ],
+                ],
+            ],
+        ],
     ];
 
     $html = PostContentRepository::getHtml($json, blog());
@@ -73,14 +73,14 @@ test('HTML to JSON', function () {
                                     'content' => [
                                         [
                                             'type' => 'text',
-                                            'text' => $content
-                                        ]
-                                    ]
-                                ]
-                            ]
-                        ]
-                    ]
-                ]
-            ]
+                                            'text' => $content,
+                                        ],
+                                    ],
+                                ],
+                            ],
+                        ],
+                    ],
+                ],
+            ],
         ]));
 });

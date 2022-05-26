@@ -4,8 +4,7 @@ namespace Tests\Feature\ConsoleAPI\Routes;
 
 use Illuminate\Testing\Fluent\AssertableJson;
 
-it('creates a route', function() {
-
+it('creates a route', function () {
     $name = 'Hyvor';
     $match = '/hyvor';
     $template = 'index.twig';
@@ -17,10 +16,11 @@ it('creates a route', function() {
         'match' => $match,
         'template' => $template,
         'posts_filter' => $postsFilter,
-        'content_type' => $contentType
+        'content_type' => $contentType,
     ])
         ->assertOk()
-        ->assertJson(fn (AssertableJson $json) =>
+        ->assertJson(
+            fn (AssertableJson $json) =>
             $json->where('name', $name)
                 ->where('match', $match)
                 ->where('template', $template)
@@ -28,5 +28,4 @@ it('creates a route', function() {
                 ->where('content_type', $contentType)
                 ->etc()
         );
-
 });

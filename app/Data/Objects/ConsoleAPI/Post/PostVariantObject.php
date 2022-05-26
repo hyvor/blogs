@@ -30,6 +30,5 @@ class PostVariantObject
         $this->content_unsaved = $variant->content_unsaved;
         $this->title = $variant->title;
         $this->description = $variant->description;
-
     }
 }

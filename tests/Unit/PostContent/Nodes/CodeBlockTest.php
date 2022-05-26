@@ -19,11 +19,11 @@ test('json to HTML', function () {
                 'content' => [
                     [
                         'type' => 'text',
-                        'text' => $code
-                    ]
-                ]
-            ]
-        ]
+                        'text' => $code,
+                    ],
+                ],
+            ],
+        ],
     ]);
 
     $html = PostContentRepository::getHtml($json, blog());
@@ -38,12 +38,10 @@ test('json to HTML', function () {
     // <code>
     $code = $pre->firstChild;
     expect($code->nodeName)->toBe('code');
-
 });
 
 
 test('HTML to JSON', function () {
-
     $name = 'app.php';
     $content = '$x = null';
     $annotations = 'h=1';
@@ -61,15 +59,15 @@ test('HTML to JSON', function () {
                     'attrs' => [
                         'language' => 'php',
                         'name' => $name,
-                        'annotations' => $annotations
+                        'annotations' => $annotations,
                     ],
                     'content' => [
                         [
                             'type' => 'text',
-                            'text' => $content
-                        ]
-                    ]
-                ]
-            ]
+                            'text' => $content,
+                        ],
+                    ],
+                ],
+            ],
         ]));
 });

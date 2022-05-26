@@ -5,13 +5,12 @@ namespace App\Http\Controllers\ConsoleAPI;
 use App\Data\Objects\ConsoleAPI\Post\PostObject;
 use App\Data\Objects\ConsoleAPI\Post\PostVariantObject;
 use App\Domains\Language\LanguageRepository;
-use App\Domains\Post\PostTagAuthorRepository;
 use App\Domains\Post\PostRepository;
+use App\Domains\Post\PostTagAuthorRepository;
 use App\Exceptions\TrustedException;
 use App\Http\Controllers\Controller;
 use App\Models\Blog;
 use App\Models\Post;
-use App\Models\PostAuthor;
 use App\Models\User;
 use Illuminate\Http\Request;
 
@@ -231,30 +230,25 @@ class ConsolePostController extends Controller
 
     public function updateTags(Request $request, Blog $blog, Post $post)
     {
-
         $request->validate([
             'ids' => 'array',
-            'ids.*' => 'integer'
+            'ids.*' => 'integer',
         ]);
 
         $ids = $request->input('ids');
 
         PostTagAuthorRepository::updateTags($post, $ids);
-
     }
 
     public function updateAuthors(Request $request, Post $post)
     {
-
         $request->validate([
             'ids' => 'array',
-            'ids.*' => 'integer'
+            'ids.*' => 'integer',
         ]);
 
         $ids = $request->input('ids');
 
         PostTagAuthorRepository::updateAuthors($post, $ids);
-
     }
-
 }

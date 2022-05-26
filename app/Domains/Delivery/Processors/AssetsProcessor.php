@@ -14,7 +14,7 @@ class AssetsProcessor implements RouteProcessorInterface
     private ?DeliveryAPIResponseObject $responseObject = null;
 
     private const DEAULT_ASSETS = [
-        'flashload.js'
+        'flashload.js',
     ];
 
     public function __construct(PathMatcher $pathMatcher, MatchedRoute $matchedRoute)
@@ -28,7 +28,7 @@ class AssetsProcessor implements RouteProcessorInterface
 
         if ($file) {
             $content = $file->content;
-        } else if (in_array($fileName, self::DEAULT_ASSETS)) {
+        } elseif (in_array($fileName, self::DEAULT_ASSETS)) {
             $content = file_get_contents(resource_path("assets/$fileName"));
         } else {
             return;

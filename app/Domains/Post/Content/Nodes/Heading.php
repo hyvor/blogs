@@ -4,7 +4,6 @@ namespace App\Domains\Post\Content\Nodes;
 
 use DOMElement;
 use Tiptap\Core\Node;
-use Tiptap\Utils\HTML;
 
 class Heading extends Node
 {
@@ -32,9 +31,9 @@ class Heading extends Node
                 'getAttrs' => function (DOMElement $node) use ($level) {
                     return [
                         'level' => $level,
-                        'id' => $node->getAttribute('id')
+                        'id' => $node->getAttribute('id'),
                     ];
-                }
+                },
             ];
         }, $this->options['levels']);
     }

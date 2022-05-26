@@ -9,9 +9,9 @@ test('json to HTML', function () {
         'type' => 'doc',
         'content' => [
             [
-                'type' => 'horizontal_rule'
-            ]
-        ]
+                'type' => 'horizontal_rule',
+            ],
+        ],
     ]);
 
     $html = PostContentRepository::getHtml($json, blog());
@@ -22,7 +22,6 @@ test('json to HTML', function () {
 
 
 test('HTML to JSON', function () {
-
     $html = "<hr/>";
 
     $json = PostContentRepository::getJsonFromHtml($html, blog());
@@ -33,7 +32,7 @@ test('HTML to JSON', function () {
             'content' => [
                 [
                     'type' => 'horizontal_rule',
-                ]
-            ]
+                ],
+            ],
         ]));
 });

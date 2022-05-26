@@ -2,20 +2,19 @@
 
 namespace App\Domains\Import;
 
-use Illuminate\Support\Facades\Storage;
-use Illuminate\Http\UploadedFile;
-use App\Domains\Media\Exceptions\UploadException;
-use App\Models\Import;
-use App\Models\Blog;
 use App\Data\Enums\ImportFormatEnum;
+use App\Models\Blog;
+use App\Models\Import;
+use Illuminate\Http\UploadedFile;
+use Illuminate\Support\Facades\Storage;
 
 class UploadRepository
 {
     public static function uploadFile(ImportFormatEnum $platform, Blog $blog, UploadedFile $file)
     {
-        // $prefix = 'public/import/$blogId'; 
+        // $prefix = 'public/import/$blogId';
         // $path = Storage::putFile($prefix, $file);
-        $path = Storage::disk('local')->put( 'import/'.$file , $file);
+        $path = Storage::disk('local')->put('import/'.$file, $file);
         $fileName = self::getFileNameFromPath($path);
 
         $import = Import::create([
@@ -28,12 +27,15 @@ class UploadRepository
         return $import;
     }
 
-    private static function getFileNameFromPath(string $path) {
+    private static function getFileNameFromPath(string $path)
+    {
         $split = explode('/', $path);
+
         return $split[ count($split) - 1 ];
     }
 
-    private static function getImportBlogId(int $blogId) {
+    private static function getImportBlogId(int $blogId)
+    {
         return $blogId;
     }
 }

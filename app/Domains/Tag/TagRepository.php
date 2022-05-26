@@ -14,7 +14,6 @@ use Illuminate\Database\Eloquent\Collection;
 
 class TagRepository
 {
-
     /**
      * Get tags of a blog.
      *

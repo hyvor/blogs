@@ -13,7 +13,6 @@ use Illuminate\Contracts\Queue\ShouldQueue;
 
 class DeleteLanguageVariants implements ShouldQueue, ShouldBeUnique
 {
-
     protected Language $language;
 
     public function __construct(Language $language)
@@ -34,7 +33,6 @@ class DeleteLanguageVariants implements ShouldQueue, ShouldBeUnique
      */
     public function handle()
     {
-
         $languageId = $this->language->id;
 
         BlogVariant::where('language_id', $languageId)->delete();
@@ -42,7 +40,5 @@ class DeleteLanguageVariants implements ShouldQueue, ShouldBeUnique
         TagVariant::where('language_id', $languageId)->delete();
         UserVariant::where('language_id', $languageId)->delete();
         NavigationVariant::where('language_id', $languageId)->delete();
-
     }
-
 }

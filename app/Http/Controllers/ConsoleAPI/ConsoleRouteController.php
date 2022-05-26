@@ -20,13 +20,12 @@ class ConsoleRouteController extends Controller
 
     public function create(Request $request, Blog $blog)
     {
-
         $request->validate([
             'name' => 'required|string',
             'match' => 'required|string',
             'template' => 'required|string',
             'posts_filter' => 'required|string|nullable',
-            'content_type' => 'required|string|nullable'
+            'content_type' => 'required|string|nullable',
         ]);
 
         $name = $request->input('name');
@@ -42,13 +41,12 @@ class ConsoleRouteController extends Controller
 
     public function update(Request $request, Blog $blog)
     {
-
         $request->validate([
             'name' => 'required|string',
             'match' => 'required|string',
             'template' => 'required|string',
             'posts_filter' => 'required|string|nullable',
-            'content_type' => 'required|string|nullable'
+            'content_type' => 'required|string|nullable',
         ]);
 
         $id = $request->route('id');

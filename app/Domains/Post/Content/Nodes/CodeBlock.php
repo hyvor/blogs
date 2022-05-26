@@ -9,7 +9,6 @@ use App\Domains\Theme\ThemeFilesRepository;
 use App\Models\Blog;
 use Hyvor\SyntaxHighlighter\Highlighter;
 use Tiptap\Core\Node;
-use Tiptap\Utils\HTML;
 
 class CodeBlock extends Node
 {
@@ -40,10 +39,10 @@ class CodeBlock extends Node
                 'rendered' => false,
             ],
             'name' => [
-                'parseHTML' => fn($node) => $node->getAttribute('data-name')
+                'parseHTML' => fn ($node) => $node->getAttribute('data-name'),
             ],
             'annotations' => [
-                'parseHTML' => fn($node) => $node->getAttribute('data-annotations')
+                'parseHTML' => fn ($node) => $node->getAttribute('data-annotations'),
             ],
         ];
     }
@@ -70,11 +69,10 @@ class CodeBlock extends Node
             'style' => '',
             'class' => '',
             'onmouseenter' => '',
-            'onmouseleave' => ''
+            'onmouseleave' => '',
         ];
 
         if ($syntaxOn) {
-
             [
                 'pre' => $pre,
                 'code' => $code
@@ -85,7 +83,6 @@ class CodeBlock extends Node
                 lineNumbers: $lineNumbers,
                 annotations: $annotations
             );
-
         }
 
         $template = ThemeFilesRepository::getFile(
@@ -94,7 +91,7 @@ class CodeBlock extends Node
             ThemeFileFolderEnum::TEMPLATES
         )?->content;
 
-        if (!$template) {
+        if (! $template) {
             $template = PostContentRepository::getDefaultBlockTemplate('code');
         }
 
@@ -105,12 +102,12 @@ class CodeBlock extends Node
                 'language' => $language,
                 'name' => $fileName,
                 'theme' => $themeName,
-                'line_numbers' => $lineNumbers
-            ]
+                'line_numbers' => $lineNumbers,
+            ],
         ]);
 
         return [
-            'content' => $content
+            'content' => $content,
         ];
     }
 }

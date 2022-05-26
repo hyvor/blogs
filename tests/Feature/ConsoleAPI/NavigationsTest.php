@@ -8,7 +8,7 @@ use App\Domains\Navigation\NavigationRepository;
 // assert unprosseble
 // popup model
 
-beforeEach(function() {
+beforeEach(function () {
     $this->id = 1;
     $this->name = 'About';
     $this->url = 'about';
@@ -26,7 +26,7 @@ it('fetches navigation', function () {
 it('creates a navigation success', function () {
     $this
         ->callConsoleApi('POST', 'navigation', [
-            'name' =>  $this->name,
+            'name' => $this->name,
             'url' => $this->url,
             'type' => 'header',
         ])

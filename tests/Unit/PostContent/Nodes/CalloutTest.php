@@ -19,25 +19,25 @@ test('json to HTML', function () {
                 'attrs' => [
                     'emoji' => $emoji,
                     'bg' => $bg,
-                    'fg' => $fg
+                    'fg' => $fg,
                 ],
                 'content' => [
                     [
                         'type' => 'text',
-                        'text' => $content
+                        'text' => $content,
                     ],
                     [
                         'type' => 'text',
                         'text' => $bold,
                         'marks' => [
                             [
-                                'type' => 'bold'
-                            ]
-                        ]
-                    ]
-                ]
-            ]
-        ]
+                                'type' => 'bold',
+                            ],
+                        ],
+                    ],
+                ],
+            ],
+        ],
     ]);
 
     $html = PostContentRepository::getHtml($json, blog());
@@ -66,15 +66,15 @@ test('HTML to JSON', function () {
                     'attrs' => [
                         'emoji' => $emoji,
                         'bg' => $bg,
-                        'fg' => $fg
+                        'fg' => $fg,
                     ],
                     'content' => [
                         [
                             'type' => 'text',
-                            'text' => $content
-                        ]
-                    ]
-                ]
-            ]
+                            'text' => $content,
+                        ],
+                    ],
+                ],
+            ],
         ]));
 });

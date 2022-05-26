@@ -1,4 +1,5 @@
 <?php
+
 namespace App\Domains\Post\Content\Marks;
 
 use App\Domains\Post\Content\PostContentRepository;

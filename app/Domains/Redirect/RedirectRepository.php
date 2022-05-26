@@ -23,15 +23,12 @@ class RedirectRepository
         string $path,
         string $to,
         RedirectTypeEnum $type
-    ) : Redirect
-    {
-
+    ): Redirect {
         return $blog->redirects()->create([
             'path' => $path,
             'to' => $to,
             'type' => $type,
         ]);
-
     }
 
     public static function updateRedirect(
@@ -39,9 +36,7 @@ class RedirectRepository
         string $path,
         string $to,
         RedirectTypeEnum $type
-    ): Redirect
-    {
-
+    ): Redirect {
         $redirect->path = $path;
         $redirect->to = $to;
         $redirect->type = $type;
@@ -49,7 +44,6 @@ class RedirectRepository
         $redirect->save();
 
         return $redirect;
-
     }
 
     public static function deleteRedirect(Redirect $redirect): void

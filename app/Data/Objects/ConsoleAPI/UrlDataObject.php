@@ -2,7 +2,6 @@
 
 namespace App\Data\Objects\ConsoleAPI;
 
-use App\Data\Enums\UrlDataTypeEnum;
 use App\Models\UrlData;
 
 // either a link or embed media

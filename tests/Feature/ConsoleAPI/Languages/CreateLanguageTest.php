@@ -4,32 +4,29 @@ namespace Tests\Feature\ConsoleAPI\Languages;
 
 use Illuminate\Testing\Fluent\AssertableJson;
 
-it('creates a language', function() {
-
+it('creates a language', function () {
     $code = 'si';
     $name = 'සිංහල';
 
     $this->callConsoleApi('POST', '/language', [
         'code' => $code,
-        'name' => $name
+        'name' => $name,
     ])
         ->assertOk()
-        ->assertJson(fn (AssertableJson $json) =>
+        ->assertJson(
+            fn (AssertableJson $json) =>
             $json->has('id')
                 ->where('code', $code)
                 ->where('name', $name)
                 ->etc()
         );
-
 });
 
-it('does not create language if the code already exists', function() {
-
+it('does not create language if the code already exists', function () {
     $this->callConsoleApi('POST', '/language', [
         'code' => 'en',
-        'name' => 'English'
+        'name' => 'English',
     ])
         ->assertUnprocessable()
         ->assertSee(['Language', 'exists']);
-
 });

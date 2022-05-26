@@ -9,12 +9,11 @@ use Illuminate\Support\Collection;
 
 class LanguageRepository
 {
-
     /**
      * @param Blog $blog
      * @return Collection<Language>
      */
-    public static function getAllLanguages(Blog $blog) : Collection
+    public static function getAllLanguages(Blog $blog): Collection
     {
         return $blog->languages()
             ->orderBy('is_primary', 'DESC')
@@ -28,18 +27,15 @@ class LanguageRepository
         string $name,
         bool $isPrimary = false
     ): Language {
-
         return $blog->languages()->create([
             'code' => $code,
             'name' => $name,
             'is_primary' => $isPrimary,
         ]);
-
     }
 
     public static function updateLanguage(Language $language, string $code, string $name)
     {
-
         $language->code = $code;
         $language->name = $name;
 

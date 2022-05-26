@@ -2,18 +2,15 @@
 
 namespace App\Domains\Import\Parsers;
 
-use App\Domains\Import\Repository;
-use App\Domains\Import\ParserInterface;
-use Symfony\Component\DomCrawler\Crawler;
 use App\Data\Enums\UserRoleEnum;
 use App\Data\Enums\UserStatusEnum;
+use App\Domains\Import\ParserInterface;
+use App\Domains\Import\Repository;
 use Illuminate\Support\Str;
-use Illuminate\Support\Facades\Storage;
-use App\Models\import;
-
+use Symfony\Component\DomCrawler\Crawler;
 
 class WordpressParser implements ParserInterface
-{    
+{
     /**
     * @var array<array<string,mixed>>
     */
@@ -29,7 +26,7 @@ class WordpressParser implements ParserInterface
         $this->file = $file;
     }
 
-    public function parse() : Repository
+    public function parse(): Repository
     {
         $repo = new Repository();
         $data = new Crawler($this->file);
@@ -44,7 +41,6 @@ class WordpressParser implements ParserInterface
 
         // Authors section
         $data->filterXPath('rss/channel/wp:author')->each(function (Crawler $node, $i) use ($repo) {
-
             $authorId = $node->children('wp|author_id')->text('empty');
             $authorName = $node->children('wp|author_login')->text('empty');
             $authorEmail = $node->children('wp|author_email')->text('empty');
@@ -70,10 +66,9 @@ class WordpressParser implements ParserInterface
             );
         });
 
-        
+
         // Tags section
         $data->filterXPath('rss/channel/wp:category')->each(function (Crawler $node, $i) use ($repo) {
-
             $tagId = $node->children('wp|term_id')->text('null');
             $tagName = $node->children('wp|cat_name')->text('null');
             $slug = Str::slug($tagName.rand());
@@ -93,10 +88,9 @@ class WordpressParser implements ParserInterface
             );
         });
 
-        
+
         // Post section
         $data->filterXPath('rss/channel/item[wp:post_type="post"]')->each(function (Crawler $node, $i) use ($repo) {
-
             $postId = $node->children('wp|post_id')->text('null');
             $title = $node->filter('title')->text('null');
             $createdAt = $node->filter('wp|post_date')->text('null');
@@ -122,27 +116,27 @@ class WordpressParser implements ParserInterface
                 $postStatus = 'draft';
             }
 
-            if($postStatus == 'publish'){
+            if ($postStatus == 'publish') {
                 $postStatus = 'published';
             }
 
             $slug = Str::slug($title);
             $isPage = false;
 
-            foreach($this->tagsArray as $tagData) {
-                foreach($tagData as $tagKey=>$tagValue){
-                    foreach($tags as $tag) {
-                        if( $tagKey == $tag){
+            foreach ($this->tagsArray as $tagData) {
+                foreach ($tagData as $tagKey => $tagValue) {
+                    foreach ($tags as $tag) {
+                        if ($tagKey == $tag) {
                             $tagIds[] = $tagValue;
                         }
                     }
                 }
             }
 
-            foreach($this->authorsArray as $authorData) {
-                foreach($authorData as $authorKey=>$authorValue){
-                    foreach($authors as $author) {
-                        if( $authorKey == $author){
+            foreach ($this->authorsArray as $authorData) {
+                foreach ($authorData as $authorKey => $authorValue) {
+                    foreach ($authors as $author) {
+                        if ($authorKey == $author) {
                             $authorIds[] = $authorValue;
                         }
                     }
@@ -166,8 +160,7 @@ class WordpressParser implements ParserInterface
         });
 
         // Page section
-        $data->filterXPath('rss/channel/item[wp:post_type="page"]')->each(function (Crawler $node, $i) use($repo) {
-
+        $data->filterXPath('rss/channel/item[wp:post_type="page"]')->each(function (Crawler $node, $i) use ($repo) {
             $postId = $node->children('wp|post_id')->text('null');
             $title = $node->filter('title')->text('null');
             $created_at = $node->filter('wp|post_date')->text('null');
@@ -190,10 +183,10 @@ class WordpressParser implements ParserInterface
             $slug = Str::slug($title);
             $isPage = true;
 
-            foreach($this->authorsArray as $authorData) {
-                foreach($authorData as $authorKey=>$authorValue){
-                    foreach($authors as $author) {
-                        if( $authorKey == $author){
+            foreach ($this->authorsArray as $authorData) {
+                foreach ($authorData as $authorKey => $authorValue) {
+                    foreach ($authors as $author) {
+                        if ($authorKey == $author) {
                             $authorIds[] = $authorValue;
                         }
                     }

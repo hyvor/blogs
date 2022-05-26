@@ -4,8 +4,7 @@ namespace Tests\Feature\ConsoleAPI\Languages;
 
 use Illuminate\Testing\Fluent\AssertableJson;
 
-it('updates the language', function() {
-
+it('updates the language', function () {
     $language = blog()->languages[0];
 
     $code = 'si';
@@ -13,10 +12,11 @@ it('updates the language', function() {
 
     $this->callConsoleApi('PUT', "/language/$language->id", [
         'code' => $code,
-        'name' => $name
+        'name' => $name,
     ])
         ->assertOk()
-        ->assertJson(fn (AssertableJson $json) =>
+        ->assertJson(
+            fn (AssertableJson $json) =>
             $json->has('id')
                 ->where('code', $code)
                 ->where('name', $name)
@@ -27,19 +27,16 @@ it('updates the language', function() {
 
     expect($language->code)->toBe($code);
     expect($language->name)->toBe($name);
-
 });
 
-it('cannot take other languages', function() {
-
+it('cannot take other languages', function () {
     $language = blog()->languages[0];
     $language2 = blog()->languages[1];
 
     $this->callConsoleApi('PUT', "/language/$language->id", [
         'code' => $language2->code,
-        'name' => 'some name'
+        'name' => 'some name',
     ])
         ->assertUnprocessable()
         ->assertSee(['code', 'exists']);
-
 });

@@ -24,12 +24,10 @@ class CustomHtml extends Node
 
     public function renderHTML($node)
     {
-
         $code = $node->content[0]->text ?? '';
 
         return [
-            'content' => "<p>$code</p>"
+            'content' => "<p>$code</p>",
         ];
-
     }
 }

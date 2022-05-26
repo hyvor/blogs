@@ -7,7 +7,6 @@ use Unsplash\Search;
 
 class UnsplashRepository
 {
-
     public static function search(string $search, $page = 1)
     {
         HttpClient::init([

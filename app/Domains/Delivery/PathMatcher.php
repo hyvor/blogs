@@ -2,7 +2,6 @@
 
 namespace App\Domains\Delivery;
 
-use App\Data\Enums\RedirectTypeEnum;
 use App\Data\Objects\DeliveryAPI\DeliveryAPIResponseObject;
 use App\Domains\Delivery\Processors\AssetsProcessor;
 use App\Domains\Delivery\Processors\MediaProcessor;

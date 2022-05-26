@@ -10,8 +10,7 @@ use App\Models\PostVariant;
 use App\Models\TagVariant;
 use App\Models\UserVariant;
 
-it('deletes all variants', function() {
-
+it('deletes all variants', function () {
     $blog = blog();
     $language = Language::factory()->create(['blog_id' => $blog]);
 
@@ -37,5 +36,4 @@ it('deletes all variants', function() {
     expect(UserVariant::where(['language_id' => $language->id])->count())->toBe(0);
     expect(TagVariant::where(['language_id' => $language->id])->count())->toBe(0);
     expect(NavigationVariant::where(['language_id' => $language->id])->count())->toBe(0);
-
 });

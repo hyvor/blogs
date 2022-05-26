@@ -2,18 +2,18 @@
 
 namespace App\Domains\Import;
 
-use App\Models\Import;
+use App\Domains\Language\LanguageRepository;
 use App\Models\Blog;
-use App\Models\User;
-use App\Models\UserVariant;
+use App\Models\Import;
+use App\Models\Post;
+use App\Models\PostAuthor;
+use App\Models\PostTag;
+use App\Models\PostVariant;
 use App\Models\Tag;
 use App\Models\TagVariant;
-use App\Models\Post;
-use App\Models\PostVariant;
-use App\Models\PostTag;
-use App\Models\PostAuthor;
-use App\Domains\Import\Repository;
-use App\Domains\Language\LanguageRepository;
+use App\Models\User;
+use App\Models\UserVariant;
+
 class Importer
 {
     /**
@@ -52,7 +52,7 @@ class Importer
 
         // dd($this->import->setMeta(['authors_count' => 12]));
 
-        foreach($this->repository->lang as $lang) {
+        foreach ($this->repository->lang as $lang) {
             // dd($tag);
             // dd($tag['name']);
             self::language(
@@ -60,15 +60,15 @@ class Importer
                 languageCode: $lang['languageCode'],
             );
         }
-        
-        foreach($this->repository->tags as $tag) {
+
+        foreach ($this->repository->tags as $tag) {
             // dd($tag);
             // dd($tag['name']);
             self::tag(
                 id: $tag['id'],
                 createdAt: $tag['createdAt'],
                 updatedAt: $tag['updatedAt'],
-                slug: $tag['slug'], 
+                slug: $tag['slug'],
                 postsCount: $tag['postsCount'],
                 codeHead: $tag['codeHead'],
                 codeFoot: $tag['codeFoot'],
@@ -78,7 +78,7 @@ class Importer
             );
         }
 
-        foreach($this->repository->authors as $author) {
+        foreach ($this->repository->authors as $author) {
             // dd($author);
             // dd($author['name']);
             self::author(
@@ -102,7 +102,7 @@ class Importer
             );
         }
 
-        foreach($this->repository->posts as $post) {
+        foreach ($this->repository->posts as $post) {
             // dd($post);
             // dd($post['authors']);
             self::post(
@@ -147,14 +147,12 @@ class Importer
         //         is_featured: $page['is_featured'],
         //     );
         // }
-
     }
 
-    public function language (
+    public function language(
         ?string $language,
         ?string $languageCode,
-    )
-    {
+    ) {
         // dd($language);
         // $test = LanguageRepository::createLanguage($this->blog, $languageCode, $language);
     }
@@ -170,8 +168,7 @@ class Importer
         string $name = null,
         string $description = null,
         int $postsCount = 0,
-    )
-    {
+    ) {
         // dd($updated_at);
         $tag = Tag::create([
             'created_at' => $createdAt,
@@ -214,8 +211,7 @@ class Importer
         string $name = null,
         string $bio = null,
         string $location = null,
-    )
-    {
+    ) {
         // dd($status);
 
         $user = User::create([
@@ -225,7 +221,7 @@ class Importer
             'picture_url' => $pictureUrl,
             'status' => $status,
             'role' => $role,
-            'slug' => $slug, 
+            'slug' => $slug,
             'email' => $email,
             'website_url' => $url,
             'social_facebook' => $socialFacebook,
@@ -260,22 +256,21 @@ class Importer
         string $codeFoot = null,
         string $status, // checking whether the post is published or not
         string $title = null,
-        string $description = null, 
+        string $description = null,
         array $tags = null,
         array $authors = null,
         string $content = null,
         bool $isFeatured = false,
-    )
-    {
+    ) {
         // dd($featured_image_url);
         // dd($this->tagsArray);
 
         $slugExist = Post::where('blog_id', $this->blog->id)
             ->where('slug', $slug)
             ->first();
-        
+
         if ($slugExist) {
-                $slug = $slug.' 1';
+            $slug = $slug.' 1';
         }
 
         $post = Post::create([
@@ -304,12 +299,12 @@ class Importer
         ]);
 
         // post_tags section
-        foreach($this->tagsArray as $tagData) {
-            foreach($tagData as $tagKey => $tagValue){
-                if($tags != null){
-                    foreach($tags as $tag) {
+        foreach ($this->tagsArray as $tagData) {
+            foreach ($tagData as $tagKey => $tagValue) {
+                if ($tags != null) {
+                    foreach ($tags as $tag) {
                         // dd($tagKey, $tag);
-                        if( $tagKey == $tag){
+                        if ($tagKey == $tag) {
                             $postTag = PostTag::create([
                                 'post_id' => $post->id,
                                 'tag_id' => $tagValue,
@@ -322,11 +317,11 @@ class Importer
         }
 
         // post_authors section
-        foreach($this->authorsArray as $authorData) {
-            foreach($authorData as $authorKey => $authorValue){
-                foreach($authors as $author) {
-                    // dd($authorKey, $author);               
-                    if( $authorKey == $author){
+        foreach ($this->authorsArray as $authorData) {
+            foreach ($authorData as $authorKey => $authorValue) {
+                foreach ($authors as $author) {
+                    // dd($authorKey, $author);
+                    if ($authorKey == $author) {
                         $postAuthor = PostAuthor::create([
                             'post_id' => $post->id,
                             'user_id' => $authorValue,
