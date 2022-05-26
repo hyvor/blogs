@@ -63,7 +63,7 @@ export default function PostTags({ post, updatePostValue } : { post: Post, updat
         defaultValue={defaultValue}
         isMulti
         classNamePrefix="react-select"
-        className="react-select react-select-normal"
+        className="react-select react-select-normal react-select-multi"
         onChange={handleChange}
     />
 

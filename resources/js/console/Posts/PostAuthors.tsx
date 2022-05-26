@@ -65,7 +65,7 @@ export default function PostAuthors({ post, updatePostValue } : { post: Post, up
         defaultValue={defaultValue}
         isMulti
         classNamePrefix="react-select"
-        className="react-select react-select-normal"
+        className="react-select react-select-normal react-select-multi"
         onChange={handleChange}
     />
 

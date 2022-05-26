@@ -87,6 +87,13 @@
                     cursor: pointer;
                 }
             }
+
+            .react-select {
+                font-size: 12px;
+                .react-select__control {
+                    height: initial;
+                }
+            }
         }
         .post-search {
             margin-top: 6px;

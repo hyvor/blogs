@@ -96,6 +96,7 @@ textarea.input {
         border:none;
         transition:.3s box-shadow;
         height: 34px;
+        min-height: 34px;
     }
     .react-select__control--is-focused {
         box-shadow: 0 0 2px 0px $color-accent;
@@ -178,6 +179,12 @@ textarea.input {
                 background: $color-red;
                 color: $color-red-dark;
             }
+        }
+    }
+
+    &.react-select-multi {
+        .react-select__control {
+            height: initial;
         }
     }
 
