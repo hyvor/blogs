@@ -174,10 +174,10 @@ Route::prefix('/api/console/v0/blog/{subdomain}')
         Route::post('/user/picture', [ConsoleUserController::class, 'updatePicture']);
 
         // route
-        Route::get('/route', [ConsoleRouteController::class, 'getRoutes']);
-        Route::post('/route', [ConsoleRouteController::class, 'createRoute']);
-        Route::put('/route/{id}', [ConsoleRouteController::class, 'updateRoute']);
-        Route::delete('/route/{id}', [ConsoleRouteController::class, 'deleteRoute']);
+        Route::get('/routes', [ConsoleRouteController::class, 'get']);
+        Route::post('/route', [ConsoleRouteController::class, 'create']);
+        Route::put('/route/{id}', [ConsoleRouteController::class, 'update']);
+        Route::delete('/route/{id}', [ConsoleRouteController::class, 'delete']);
 
         // theme
         Route::get('/theme-files', [ConsoleBlogThemeController::class, 'getAllFiles']);

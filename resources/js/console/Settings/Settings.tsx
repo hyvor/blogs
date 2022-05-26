@@ -11,7 +11,7 @@ import SettingRedirects from './Redirects/Redirects';
 import Comments from './Comments';
 import SettingNavigation from './Navigation/SettingNavigation';
 import Tags from './Tags/Tags';
-import SettingsRoutes from './SettingsRoutes';
+import SettingsRoutes from './Routes/Routes';
 import Languages from './Languages/Languages';
 import SettingsGeneral from './General/SettingsGeneral';
 import Hosting from './Hosting';

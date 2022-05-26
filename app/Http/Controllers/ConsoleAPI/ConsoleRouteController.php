@@ -11,31 +11,46 @@ use Illuminate\Http\Request;
 
 class ConsoleRouteController extends Controller
 {
-    public function getRoutes(Request $request, Blog $blog)
+    public function get(Blog $blog)
     {
-        $getData = RouteRepository::getRoutes($blog)
-                ->map(function ($route) {
-                    return new RouteObject($route);
-                });
+        $routes = RouteRepository::getRoutes($blog)->mapInto(RouteObject::class);
 
-        return response()->json($getData);
+        return response()->json($routes);
     }
 
-    public function createRoute(Request $request, Blog $blog)
+    public function create(Request $request, Blog $blog)
     {
+
+        $request->validate([
+            'name' => 'required|string',
+            'match' => 'required|string',
+            'template' => 'required|string',
+            'posts_filter' => 'required|string|nullable',
+            'content_type' => 'required|string|nullable'
+        ]);
+
         $name = $request->input('name');
         $match = $request->input('match');
         $template = $request->input('template');
-        $postsFilter = $request->input('postsFilter') ?? null;
-        $contentType = $request->input('contentType') ?? null;
+        $postsFilter = $request->input('posts_filter');
+        $contentType = $request->input('content_type');
 
         $route = RouteRepository::createRoute($blog, $name, $match, $template, $postsFilter, $contentType);
 
-        return response()->json(new RouteObject($route, $blog));
+        return response()->json(new RouteObject($route));
     }
 
-    public function updateRoute(Request $request, Blog $blog)
+    public function update(Request $request, Blog $blog)
     {
+
+        $request->validate([
+            'name' => 'required|string',
+            'match' => 'required|string',
+            'template' => 'required|string',
+            'posts_filter' => 'required|string|nullable',
+            'content_type' => 'required|string|nullable'
+        ]);
+
         $id = $request->route('id');
         $name = $request->input('name');
         $match = $request->input('match');
@@ -48,7 +63,7 @@ class ConsoleRouteController extends Controller
         return response()->json($route);
     }
 
-    public function deleteRoute(Request $request)
+    public function delete(Request $request)
     {
         $id = $request->route('id');
         $deleteRoute = RouteRepository::deleteRoute($id);

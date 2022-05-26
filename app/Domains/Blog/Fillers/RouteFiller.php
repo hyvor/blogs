@@ -25,7 +25,7 @@ class RouteFiller implements FillerInterface
             'name' => 'index',
             'match' => '/',
             'template' => 'index',
-            'posts_filter' => '',
+            'posts_filter' => '*',
         ],
         // tag
         [
@@ -40,12 +40,6 @@ class RouteFiller implements FillerInterface
             'match' => '/author/{slug}',
             'template' => 'author,index',
             'posts_filter' => 'author.slug = {slug}',
-        ],
-        // search
-        [
-            'name' => 'search',
-            'match' => '/search/{search}',
-            'template' => 'search,index',
         ],
     ];
 

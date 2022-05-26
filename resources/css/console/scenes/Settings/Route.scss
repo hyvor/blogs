@@ -1,43 +1,9 @@
-.settingRoute{
-    .route-title-bar{
-        padding: 10px 10px 10px 12px;
-        flex: 1;
-        align-items: center;
-        display: flex;
-        margin-left: 285px;
-    }
-    .route-title{
-        font-weight: 600;
-        font-size: 20px;
-    }
+.settings-routes {
 
-    .route-title-create-button{
-        margin-left: 5px
-    }
-
-    .route-button-popup{
-        background-color: $color-accent-light;    
-        font-size: 12px;
-        padding-top: 5px;
-        padding-bottom: 5px;
-    
-        .popup-button-content{
-            flex: 1;
-            align-items: center;
-            display: flex;
-    
-            .popup-button-content-text{
-                margin-right: 5px;
-            }
+    .global-table-view {
+        .table-head, .table-row {
+            grid-template-columns: 1fr 1fr 1fr 1fr 1fr 60px;
         }
     }
-    .popup-width .popup-wrap .popup {
-        width: 500px;
-        max-height: 500px;
-        overflow: auto;
-    }
 
-    .global-dual-setting:not(:first-child) {
-        border-top: none; 
-    }
 }

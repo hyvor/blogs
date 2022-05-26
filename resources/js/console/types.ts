@@ -197,3 +197,16 @@ export interface Redirect {
     to: string;
     type: 'temporary' | 'permanent'
 }
+
+// === ROUTES
+
+export interface Route {
+    id: number;
+    created_at: number;
+    name: string;
+    match: string;
+    template: string;
+    posts_filter: string | null;
+    content_type: string | null;
+    is_enabled: boolean
+}

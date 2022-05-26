@@ -1,6 +1,5 @@
-import {ConsoleWindow} from "./types";
-import {appConfig as appConfigType} from "./objects/appConfig";
+import {appConfig, ConsoleWindow} from "./types";
 
-export function appConfig() : appConfigType {
+export function appConfig() : appConfig {
     return (window as ConsoleWindow).appConfig;
 }

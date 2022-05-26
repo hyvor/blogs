@@ -24,7 +24,7 @@ class RouteRepository
     public static function getRoutes(Blog $blog): Collection
     {
         return Route::where('blog_id', '=', $blog->id)
-            ->latest()
+            ->oldest()
             ->get();
     }
 
@@ -33,8 +33,8 @@ class RouteRepository
         string $name,
         string $match,
         string $template,
-        string $postsFilter = null,
-        string $contentType = null,
+        ?string $postsFilter = null,
+        ?string $contentType = null,
     ): Route {
         return $blog->routes()->create([
             'name' => $name,
@@ -47,7 +47,6 @@ class RouteRepository
 
     public static function updateRoute(
         int $id,
-        string $name,
         string $match,
         string $template,
         string $postsFilter = null,
@@ -55,7 +54,6 @@ class RouteRepository
     ): bool {
         return Route::find($id)
             ->update([
-                'name' => $name,
                 'match' => $match,
                 'template' => $template,
                 'posts_filter' => $postsFilter ?? null,

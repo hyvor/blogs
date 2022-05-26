@@ -1,6 +1,6 @@
 <?php
 
-namespace Tests\Feature\ConsoleAPI\Language;
+namespace Tests\Feature\ConsoleAPI\Languages;
 
 use App\Domains\Language\Jobs\DeleteLanguageVariants;
 use App\Models\Language;

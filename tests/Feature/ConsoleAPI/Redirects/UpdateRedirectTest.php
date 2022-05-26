@@ -1,6 +1,6 @@
 <?php
 
-namespace Tests\Feature\ConsoleAPI\Redirect;
+namespace Tests\Feature\ConsoleAPI\Redirects;
 
 use App\Models\Redirect;
 use Illuminate\Testing\Fluent\AssertableJson;

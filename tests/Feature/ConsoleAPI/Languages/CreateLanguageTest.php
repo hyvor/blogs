@@ -1,6 +1,6 @@
 <?php
 
-namespace Tests\Feature\ConsoleAPI\Language;
+namespace Tests\Feature\ConsoleAPI\Languages;
 
 use Illuminate\Testing\Fluent\AssertableJson;
 
