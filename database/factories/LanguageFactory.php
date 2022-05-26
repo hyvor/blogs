@@ -4,6 +4,7 @@ namespace Database\Factories;
 use App\Models\Blog;
 use Illuminate\Database\Eloquent\Factories\Factory;
 use Illuminate\Support\Arr;
+use Illuminate\Support\Str;
 
 class LanguageFactory extends Factory
 {
@@ -11,13 +12,11 @@ class LanguageFactory extends Factory
     public function definition()
     {
 
-        $code = Arr::random(['en', 'fr', 'es']);
-
         return [
             'blog_id' => Blog::factory(),
-            'code' => $code,
-            'name' => $this->faker->name,
-            'is_primary' => $code === 'en',
+            'code' => Str::random(2),
+            'name' => $this->faker->word,
+            'is_primary' => false,
         ];
 
     }

@@ -1,9 +1,11 @@
 import React, {useState} from "react";
-import {PencilFill, Trash, TrashFill} from "react-bootstrap-icons";
+import {PencilFill, Trash } from "react-bootstrap-icons";
 import {Language} from "../../types";
 import {PopupConfirm} from "../../ReusableComponents/Popup";
 import CreateUpdateLanguagePopup from "./CreateUpdateLanguagePopup";
 import {TableRow, TableRowItem} from "../../ReusableComponents/Table";
+import Input from "../../ReusableComponents/Input";
+import {toast} from "react-toastify";
 
 interface LanguageProps {
     language: Language,
@@ -16,9 +18,16 @@ export default function Language({language, remove} : LanguageProps) {
     const [isDeleting, setIsDeleting] = useState(false);
 
     function handleDelete() {
+
+        if (language.code !== deleteConfirmCode) {
+            return toast.error("Please type the language code correctly");
+        }
+
         remove({id: language.id});
         setIsDeleting(false)
     }
+
+    const [ deleteConfirmCode, setDeleteConfirmCode ] = useState<string>('');
 
     return <TableRow>
         <TableRowItem>
@@ -52,7 +61,26 @@ export default function Language({language, remove} : LanguageProps) {
             isDeleting ?
                 <PopupConfirm
                     title="Delete Language"
-                    text="Are you sure to delete this language from this blog?"
+                    text={
+                        <div>
+                            <p>
+                                Are you sure to delete the <b>{ language.name }</b> language? This will permanently delete all { language.name } translations in:
+                            </p>
+                            <ul>
+                                <li>Blog (name and description)</li>
+                                <li>Posts</li>
+                                <li>Users</li>
+                                <li>Tags</li>
+                                <li>Navigations</li>
+                            </ul>
+                            <p>Please type the language code (<b>{language.code}</b>) below to confirm the delete</p>
+                            <Input
+                                value={deleteConfirmCode}
+                                onChange={setDeleteConfirmCode}
+                                placeholder="Type language code"
+                            />
+                        </div>
+                    }
                     name="Delete"
                     buttonClass="danger"
                     onClick={handleDelete}

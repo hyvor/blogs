@@ -135,11 +135,11 @@ class DatabaseSeeder extends Seeder
                                 ['language_id' => $english],
                                 ['language_id' => $french]
                             ))
-                            ->state(function () {
-                                return [
-                                    'status' => collect(['draft', 'published', 'scheduled'])->random(),
-                                ];
-                            }),
+                            ->state(new Sequence(
+                                ['status' => 'draft'],
+                                ['status' => 'published'],
+                                ['status' => 'scheduled']
+                            )),
                         'variants'
                     )
                     ->state(new Sequence(

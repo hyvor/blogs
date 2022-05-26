@@ -24,6 +24,8 @@ return new class extends Migration
              // data
              $table->string('name', config('limits.max_blog_name_length'))->nullable();
              $table->string('description', config('limits.max_blog_description_length'))->nullable();
+
+             $table->unique(['blog_id', 'language_id']);
  
         });
     }

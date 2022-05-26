@@ -14,7 +14,7 @@ class ConsoleLanguageController extends Controller
 {
     public static function get(Blog $blog)
     {
-        $languages = LanguageRepository::getAllLanguages($blog->id)
+        $languages = LanguageRepository::getAllLanguages($blog)
             ->map(function (Language $language) {
                 return new LanguageObject($language);
             });
@@ -45,27 +45,33 @@ class ConsoleLanguageController extends Controller
 
     }
 
-    public static function update(Request $request)
+    public static function update(Request $request, Blog $blog, Language $language)
     {
         $request->validate([
             'code' => 'required|string|max:12',
             'name' => 'required|string|max:255',
         ]);
 
-        $id = $request->route('id');
         $code = $request->get('code');
         $name = $request->get('name');
 
-        $language = LanguageRepository::updateLanguage($id, $code, $name);
+        if ($code !== $language->code && LanguageRepository::getLanguageByCode($blog, $code)) {
+            throw new TrustedException('Language code already exists');
+        }
+
+        $language = LanguageRepository::updateLanguage($language, $code, $name);
 
         return response()->json(new LanguageObject($language));
     }
 
-    public static function delete(Request $request)
+    public static function delete(Language $language)
     {
-        $id = (int) $request->route('id');
 
-        LanguageRepository::deleteLanguage($id);
+        if ($language->is_primary) {
+            throw new TrustedException('Primary language cannot be deleted');
+        }
+
+        LanguageRepository::deleteLanguage($language);
 
         return response()->json();
     }

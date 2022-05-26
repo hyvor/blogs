@@ -26,6 +26,7 @@ return new class extends Migration
             $table->string('bio')->nullable();
             $table->string('location', 50)->nullable();
 
+            $table->unique(['user_id', 'language_id']);
         });
     }
 

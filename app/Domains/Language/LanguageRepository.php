@@ -2,7 +2,7 @@
 
 namespace App\Domains\Language;
 
-use App\Exceptions\TrustedException;
+use App\Domains\Language\Jobs\DeleteLanguageVariants;
 use App\Models\Blog;
 use App\Models\Language;
 use Illuminate\Support\Collection;
@@ -37,42 +37,22 @@ class LanguageRepository
 
     }
 
-    public static function updateLanguage(int $langId, string $code, string $name)
+    public static function updateLanguage(Language $language, string $code, string $name)
     {
-        $lang = Language::find($langId);
 
-        $lang->code = $code;
-        $lang->name = $name;
+        $language->code = $code;
+        $language->name = $name;
 
-        $lang->save();
+        $language->save();
 
-        return $lang;
+        return $language;
     }
 
-    public static function deleteLanguage(int $langId)
+    public static function deleteLanguage(Language $language)
     {
-        $lang = Language::find($langId);
+        $language->delete();
 
-        // can't delete default language (only edit)
-        if ($lang->is_primary) {
-            throw new TrustedException('Default language cannot be deleted');
-        }
-
-        // can't delete if there are posts in this language
-        // $posts = PostRepository::getPosts(
-        //     $lang->blog,
-        //     (new PostsFilterParam)->setLanguageId($lang->id),
-        //     1
-        // );
-
-        // if (count($posts) !== 0) {
-        //     throw new TrustedException(
-        //         'You cannot delete a language that has posts assigned to it.
-        //         Delete or change language of those posts before deleting this language'
-        //     );
-        // }
-
-        $lang->delete();
+        dispatch(new DeleteLanguageVariants($language));
     }
 
     public static function getPrimaryLanguage(Blog $blog): Language
@@ -80,17 +60,11 @@ class LanguageRepository
         return $blog->languages()->where('is_primary', true)->first();
     }
 
-    /**
-     * @return Language primary language if the current one is not found
-     */
     public static function getLanguageById(Blog $blog, ?int $languageId): ?Language
     {
         return $blog->languages()->where('id', $languageId)->first();
     }
 
-    /**
-     * @return Language primary language if the requested one is not found
-     */
     public static function getLanguageByCode(Blog $blog, ?string $code): ?Language
     {
         return $blog->languages()->where('code', $code)->first();
