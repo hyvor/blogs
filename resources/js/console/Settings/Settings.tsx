@@ -12,7 +12,7 @@ import Comments from './Comments';
 import SettingNavigation from './Navigation/SettingNavigation';
 import Tags from './Tags/Tags';
 import SettingsRoutes from './SettingsRoutes';
-import SettingsLanguages from './SettingsLanguages';
+import Languages from './Languages/Languages';
 import SettingsGeneral from './General/SettingsGeneral';
 import Hosting from './Hosting';
 import SEO from './SEO';
@@ -63,7 +63,7 @@ export default function Settings({type} : {type: string}) {
             Type = () => <SettingsRoutes />;
             break;
         case 'languages':
-            Type = () => <SettingsLanguages />;
+            Type = () => <Languages />;
             break;
         case 'color-mode':
             Type = () => <ColorMode />;

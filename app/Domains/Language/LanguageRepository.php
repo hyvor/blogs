@@ -28,11 +28,13 @@ class LanguageRepository
         string $name,
         bool $isPrimary = false
     ): Language {
+
         return $blog->languages()->create([
             'code' => $code,
             'name' => $name,
             'is_primary' => $isPrimary,
         ]);
+
     }
 
     public static function updateLanguage(int $langId, string $code, string $name)

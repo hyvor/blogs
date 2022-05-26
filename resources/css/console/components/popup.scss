@@ -38,7 +38,7 @@
         }
 
         &.loading {
-            button {
+            button:last-child {
                 pointer-events: none;
             }
         }

@@ -1,6 +1,6 @@
 
 // 1000 to 1k
-export default function numberFormatter(num, digits = 1) {
+export default function numberFormatter(num: number, digits: any = 1) {
     if (digits === "comma")
       return num.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",");
 

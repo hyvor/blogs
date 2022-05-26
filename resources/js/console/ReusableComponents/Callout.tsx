@@ -8,7 +8,7 @@ export enum CalloutColors {
 
 type CalloutProps = {
     icon: ReactNode;
-    color: CalloutColors;
+    color: CalloutColors | 'blue' | 'orange' | 'red';
     title?: string;
     text: ReactNode;
 }

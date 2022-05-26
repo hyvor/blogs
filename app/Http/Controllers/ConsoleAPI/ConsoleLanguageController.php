@@ -4,6 +4,7 @@ namespace App\Http\Controllers\ConsoleAPI;
 
 use App\Data\Objects\ConsoleAPI\LanguageObject;
 use App\Domains\Language\LanguageRepository;
+use App\Exceptions\TrustedException;
 use App\Http\Controllers\Controller;
 use App\Models\Blog;
 use App\Models\Language;
@@ -23,6 +24,7 @@ class ConsoleLanguageController extends Controller
 
     public static function create(Request $request, Blog $blog)
     {
+
         $request->validate([
             'code' => 'required|string|max:12',
             'name' => 'required|string|max:255',
@@ -31,9 +33,16 @@ class ConsoleLanguageController extends Controller
         $code = $request->get('code');
         $name = $request->get('name');
 
+        $language = LanguageRepository::getLanguageByCode($blog, $code);
+
+        if ($language) {
+            throw new TrustedException('Language already exists');
+        }
+
         $language = LanguageRepository::createLanguage($blog, $code, $name);
 
         return response()->json(new LanguageObject($language));
+
     }
 
     public static function update(Request $request)
