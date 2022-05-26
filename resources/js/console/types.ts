@@ -1,4 +1,3 @@
-import {appConfig} from "./objects/appConfig";
 import {
     BlogHostingAt,
     BlogType,
@@ -8,12 +7,27 @@ import {
     SeoExternalLinksFollow, UserRole,
     UserStatus
 } from "./enums";
+import {UserBlog} from "./objects/userblog";
 
 // === CONSOLE
 
 export type ConsoleWindow = (typeof window) & {
     appConfig: appConfig,
     currentSubdomain?: string
+}
+
+export interface appConfig {
+
+    hyvorUser: any,
+    blogs: UserBlog[],
+
+    domains: {
+        app: string,
+        delivery: string,
+        hyvor: string
+    },
+
+    syntax_themes: string[]
 }
 
 export interface Filters {

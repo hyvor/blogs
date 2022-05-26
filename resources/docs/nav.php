@@ -12,6 +12,7 @@ return [
         ['posts-pages', 'Posts & Pages'],
         ['users', 'Users'],
         ['tags', 'Tags'],
+        ['languages', 'Languages'],
         ['media', 'Media'],
         ['custom-domain', 'Custom Domain'],
         ['custom-code', 'Custom Code'],
@@ -46,7 +47,6 @@ return [
     ],
     'Advanced' => [
         ['routes', 'Routes'],
-        ['languages', 'Languages'],
         ['self-hosting', 'Self-hosting'],
         ['subdirectory', 'Subdirectory hosting'],
         ['website', 'Create a website'],

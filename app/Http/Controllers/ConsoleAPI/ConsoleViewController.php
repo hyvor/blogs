@@ -5,7 +5,7 @@ namespace App\Http\Controllers\ConsoleAPI;
 use App\Data\Objects\ConsoleAPI\UserBlog\UserBlogObject;
 use App\Domains\User\UserRepository;
 use App\Http\Controllers\Controller;
-// use Hyvor\HyvorConnecter\User;
+use Hyvor\HyvorConnecter\HyvorUser;
 use Hyvor\HyvorConnecter\Login;
 use Hyvor\HyvorConnecter\Redirect;
 use Hyvor\SyntaxHighlighter\Highlighter;
@@ -15,6 +15,7 @@ class ConsoleViewController extends Controller
 {
     public function __invoke(Request $request)
     {
+
         $hyvorUser = Login::check();
 
         if ($hyvorUser === null) {

@@ -10,17 +10,22 @@ Language settings: **Console &rarr; Settings &rarr; Languages**.
 
 ## Changing the primary language
 
-**English** (`en`) is the primary language for newly created blogs. If you are blogging in a different language, it is important to change the language in Language settings to tell users, browsers, and crawlers what language your blog is using.
+**English** (`en`) is the primary language for newly created blogs. If you are blogging in a different language, it is important to change the language in Language settings to tell users, browsers, and crawlers the language of your blog.
 
-In settings, each language has a language code and a language name. 
+In language settings, each language has a **code** and a **name**. 
 
-* **Code**: The language code should be a valid HTML `lang` attribute value. It should be a valid [ISO 639-1 language code](https://en.wikipedia.org/wiki/List_of_ISO_639-1_codes) such as `en` or `fr`. That can also be followed by a [alpha-2 country code](https://en.wikipedia.org/wiki/List_of_ISO_3166_country_codes) (for regional languages) such as in `en-US`, `en-GB`, `fr-FR`, or `fr-CA`. (See [MDN](https://developer.mozilla.org/en-US/docs/Web/HTML/Global_attributes/lang) or [W3C](https://www.w3.org/2005/05/font-size-test/starhtml-test.html) docs for more details on the HTML `lang` attribute)
+* **Code**: The language code should be a valid HTML [`lang` attribute](https://developer.mozilla.org/en-US/docs/Web/HTML/Global_attributes/lang) value. Some examples are
+  * `en`
+  * `en-US`
+  * `en-GB`
+  * `fr`
+  * `fr-FR`
 
-* **Name**: The language name is text to explain the language code. We recommend you to write it in native letter. However, there are no rules. This name has no usage by default. But, some themes may use the name to show a message like "This post is translated into Español, 简体中文, and Nederlands".
-
-To change the default language, edit the code and name of the current default language and save.
+* **Name**: The language name is text to explain the language code. We recommend you to write it in the native alphabet. Some [themes](themes) may use the name to show a message like "This post is translated into Español, 简体中文, and Nederlands".
 
 ## Multi-language Blogs
+
+> Multi-languages feature is only available in the **Team** and **Enterprise** plans.
 
 Hyvor Blogs comes with in-built support for multi-language blogs. Therefore, it is simple to set up a multi-language blog. Only thing you have to do is adding a new language in settings. Make sure you use a correct language code as explained above.
 
