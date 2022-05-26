@@ -66,7 +66,7 @@ class PathMatcher
             $this->setMatched(
                 DeliveryAPIResponseObject::forRedirect(
                     $redirect->to,
-                    RedirectTypeEnum::from($redirect->type)
+                    $redirect->type
                 )
             );
         }

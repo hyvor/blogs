@@ -4,7 +4,7 @@ import CodemirrorEditor, { CODEMIRROR_MODES } from '../ReusableComponents/Codemi
 import SettingsSave from '../ReusableComponents/SettingsSave';
 import {useBlogActions, useBlogValues} from "./useBlog";
 
-export default function SettingsCode() {
+export default function Code() {
 
     const { blog } = useBlogValues();
     const { updateBlogValue } = useBlogActions();

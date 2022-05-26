@@ -11,6 +11,6 @@ class Redirect extends Model
     use HasFactory;
 
     protected $casts = [
-        'type ' => RedirectTypeEnum::class,
+        'type' => RedirectTypeEnum::class,
     ];
 }

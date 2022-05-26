@@ -3,21 +3,21 @@ import React from 'react';
 import subdomainLogic from '../logic/subdomainLogic';
 import NavLink from '../ReusableComponents/NavLink';
 import SettingsDelete from './SettingsDelete';
-import SettingsCode from './SettingsCode';
-import SettingsMedia from './SettingsMedia/SettingsMedia';
+import Code from './Code';
+import SettingsMedia from './Media/SettingsMedia';
 import SettingsMigrate from './SettingsMigrate';
-import SettingsUsers from './SettingsUsers/SettingsUsers';
-import SettingRedirects from './SettingRedirects';
-import SettingsComments from './SettingsComments';
-import SettingNavigation from './SettingNavigation/SettingNavigation';
-import SettingTag from './SettingTag/SettingTag';
+import SettingsUsers from './Users/SettingsUsers';
+import SettingRedirects from './Redirects/Redirects';
+import Comments from './Comments';
+import SettingNavigation from './Navigation/SettingNavigation';
+import Tags from './Tags/Tags';
 import SettingsRoutes from './SettingsRoutes';
 import SettingsLanguages from './SettingsLanguages';
-import SettingsGeneral from './SettingGeneral/SettingsGeneral';
-import SettingsHosting from './SettingsHosting';
-import SettingsSEO from './SettingsSEO';
-import SettingsColorMode from "./SettingsColorMode";
-import SettingsHighlight from "./SettingsHighlight";
+import SettingsGeneral from './General/SettingsGeneral';
+import Hosting from './Hosting';
+import SEO from './SEO';
+import ColorMode from "./ColorMode";
+import Highlight from "./Highlight";
 
 export default function Settings({type} : {type: string}) {
 
@@ -30,16 +30,16 @@ export default function Settings({type} : {type: string}) {
             Type = () => <SettingsUsers />;
             break;
         case 'tags':
-            Type = () => <SettingTag />;
+            Type = () => <Tags />;
             break;
         case 'navigation':
             Type = () => <SettingNavigation />;
             break;
         case 'hosting':
-            Type = () => <SettingsHosting />;
+            Type = () => <Hosting />;
             break;
         case 'seo':
-            Type = () => <SettingsSEO />;
+            Type = () => <SEO />;
             break;
         case 'redirects':
             Type = () => <SettingRedirects />;
@@ -48,10 +48,10 @@ export default function Settings({type} : {type: string}) {
             Type = () => <SettingsMedia />;
             break;
         case 'code':
-            Type = () => <SettingsCode />
+            Type = () => <Code />
             break;
         case 'comments':
-            Type = () => <SettingsComments />
+            Type = () => <Comments />
             break;
         case 'migrate':
             Type = () => <SettingsMigrate />;
@@ -66,10 +66,10 @@ export default function Settings({type} : {type: string}) {
             Type = () => <SettingsLanguages />;
             break;
         case 'color-mode':
-            Type = () => <SettingsColorMode />;
+            Type = () => <ColorMode />;
             break;
         case 'highlight':
-            Type = () => <SettingsHighlight />;
+            Type = () => <Highlight />;
             break;
     }
 

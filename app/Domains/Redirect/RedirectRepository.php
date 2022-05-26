@@ -9,11 +9,9 @@ use Illuminate\Support\Collection;
 
 class RedirectRepository
 {
-    public static function getRedirects(int $blogId, ?int $limit, int $offset = 0): Collection
+    public static function getRedirects(Blog $blog, ?int $limit, int $offset = 0): Collection
     {
-        $limit = $limit ?? 50;
-
-        return Redirect::where('blog_id', '=', $blogId)
+        return $blog->redirects()
             ->limit($limit)
             ->offset($offset)
             ->latest()
@@ -21,33 +19,42 @@ class RedirectRepository
     }
 
     public static function createRedirect(
-        int $blogId,
+        Blog $blog,
         string $path,
         string $to,
         RedirectTypeEnum $type
-    ): Redirect {
-        return Redirect::create([
-            'blog_id' => $blogId,
+    ) : Redirect
+    {
+
+        return $blog->redirects()->create([
             'path' => $path,
             'to' => $to,
             'type' => $type,
         ]);
+
     }
 
-    public static function updateRedirect(int $blogId, int $id, string $path, string $to, $type): void
+    public static function updateRedirect(
+        Redirect $redirect,
+        string $path,
+        string $to,
+        RedirectTypeEnum $type
+    ): Redirect
     {
-        $redirect = Redirect::find($id);
+
         $redirect->path = $path;
         $redirect->to = $to;
         $redirect->type = $type;
 
         $redirect->save();
+
+        return $redirect;
+
     }
 
-    public static function deleteRedirect(int $id): void
+    public static function deleteRedirect(Redirect $redirect): void
     {
-        $data = Redirect::find($id);
-        $data->delete();
+        $redirect->delete();
     }
 
     /**

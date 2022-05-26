@@ -74,17 +74,19 @@
     }
 }
 
-.loadMore{
-    width: 100px;
-    display: block;
-    text-align: center;
-    margin: 20px auto;
-    padding: 5px;
-    border-radius: 20px;
-    border: 1px solid transparent;
-    color: #896c6b;
-    transition: .3s;
-    font-size: 12px;
-    font-weight: 600;
+.icon-button {
+    display: inline-flex;
+    width: 24px;
+    height: 24px;
+    border-radius: 50%;
+    background-color: $color-card;
     cursor: pointer;
-} 
+    align-items: center;
+    justify-content: center;
+    margin: 0 2px;
+    border: 0;
+    transition: .3s box-shadow;
+    &:hover {
+        box-shadow: 0 0 10px rgba(0,0,0,0.1);
+    }
+}

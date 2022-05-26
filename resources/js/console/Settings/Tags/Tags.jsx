@@ -6,7 +6,7 @@ import Loader from '../../ReusableComponents/Loader';
 import Toast from '../../ReusableComponents/Toast';
 import NoResults from '../../ReusableComponents/NoResults';
 import CreateTag from './CreateTag';
-import Tags from './TagsTable';
+import TagsTable from './TagsTable';
 
 
 //  Remaining 
@@ -18,7 +18,7 @@ import Tags from './TagsTable';
 * 
 */
 
-export default function SettingTag(props) 
+export default function Tags(props)
 {
     const subdomain = subdomainLogic.values.subdomain;
     const tagsLogicBuilt = tagsLogic({subdomain})
@@ -77,7 +77,7 @@ export default function SettingTag(props)
                                         {
                                             tag.map(tag => (
                                                 <div className="global-table-body">
-                                                    <Tags key = {tag} tag={tag} subdomain ={subdomain}/>           
+                                                    <TagsTable key = {tag} tag={tag} subdomain ={subdomain}/>
                                                 </div>
                                             ))
                                         }

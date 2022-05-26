@@ -159,10 +159,10 @@ Route::prefix('/api/console/v0/blog/{subdomain}')
         Route::delete('/language/{id}', [ConsoleLanguageController::class, 'delete']);
         
         // redirects
-        Route::get('/redirect', [ConsoleRedirectController::class, 'getRedirects']);
-        Route::post('/redirect', [ConsoleRedirectController::class, 'createRedirect']);
-        Route::put('/redirect/{id}', [ConsoleRedirectController::class, 'updateRedirect']);
-        Route::delete('/redirect/{id}', [ConsoleRedirectController::class, 'deleteRedirect']);
+        Route::get('/redirects', [ConsoleRedirectController::class, 'get']);
+        Route::post('/redirect', [ConsoleRedirectController::class, 'create']);
+        Route::put('/redirect/{id}', [ConsoleRedirectController::class, 'update']);
+        Route::delete('/redirect/{id}', [ConsoleRedirectController::class, 'delete']);
 
         // users
         Route::get('/users', [ConsoleUserController::class, 'getUsers']);

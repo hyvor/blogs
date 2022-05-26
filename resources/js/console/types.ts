@@ -173,3 +173,13 @@ export type Media = {
     extension: string;
 
 }
+
+// === REDIRECT
+
+export interface Redirect {
+    id: number;
+    created_at: number;
+    path: string;
+    to: string;
+    type: 'temporary' | 'permanent'
+}

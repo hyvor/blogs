@@ -1,4 +1,4 @@
-import React, {FocusEventHandler, KeyboardEventHandler} from 'react'
+import React, {FocusEventHandler, KeyboardEventHandler, ReactNode} from 'react'
 
 interface InputProps {
 
@@ -73,5 +73,21 @@ export default function Input(
             {bottom ? <div className="input-bottom">{bottom}</div> : null}
         </div>
     );
+
+}
+
+interface InputViewProps {
+    title: string,
+    content: ReactNode
+}
+
+export function InputView({ title, content }: InputViewProps) {
+
+    return <div className="input-view">
+        <div className="input-top">
+            <div className="input-title">{ title }</div>
+        </div>
+        { content }
+    </div>
 
 }

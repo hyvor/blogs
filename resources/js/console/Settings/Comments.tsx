@@ -6,7 +6,7 @@ import SettingsSave from '../ReusableComponents/SettingsSave';
 import { useBlogActions, useBlogValues } from './useBlog';
 import CodemirrorEditor, {CODEMIRROR_MODES} from "../ReusableComponents/CodemirrorEditor";
 
-export default function SettingsComments() {
+export default function Comments() {
 
     const { blog } = useBlogValues();
     const { updateBlogValue } = useBlogActions();

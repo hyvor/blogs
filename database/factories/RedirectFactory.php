@@ -2,32 +2,20 @@
 
 namespace Database\Factories;
 
+use App\Data\Enums\RedirectTypeEnum;
+use App\Models\Blog;
 use Illuminate\Database\Eloquent\Factories\Factory;
-use App\Models\Redirect;
-
-use Illuminate\Support\Str;
-
 
 class RedirectFactory extends Factory
 {
-    // step:1 = php artisan tinker
-    // step:2 = \App\Models\Redirect::factory()->count(5)->create();
 
-    // get the faker URL to the factory.
-
-    protected $model = Redirect::class;
-    /**
-     * Define the model's default state.
-     *
-     * @return array
-     */
     public function definition()
     {
         return [
-            'blog_id' => '1',
-            'path' => $this->faker->url(),
+            'blog_id' => Blog::factory(),
+            'path' => '/' . $this->faker->unique()->word(),
             'to' => $this->faker->url(),
-            'type' => '302',
+            'type' => RedirectTypeEnum::TEMPORARY,
         ];
     }
 }

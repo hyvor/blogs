@@ -23,7 +23,7 @@ class CreateRedirectsTable extends Migration
             $table->string('path');
             $table->string('to');
 
-            $table->enum('type', [301, 302]);
+            $table->enum('type', ['permanent', 'temporary']);
 
             $table->unique(['blog_id', 'path']);
         });

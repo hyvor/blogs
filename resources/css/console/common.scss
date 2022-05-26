@@ -93,9 +93,9 @@ textarea.input {
         min-height: initial;
         border-radius: 20px;
         background: $color-input;
-        font-size: 12px;
         border:none;
         transition:.3s box-shadow;
+        height: 34px;
     }
     .react-select__control--is-focused {
         box-shadow: 0 0 2px 0px $color-accent;
@@ -147,7 +147,7 @@ textarea.input {
         padding:0;
     }
     .react-select__value-container {
-        padding: 9px 15px;
+        padding: 0px 15px;
         padding-right: 0;
         &.react-select__value-container--is-multi.react-select__value-container--has-value {
             padding-top: 5px;

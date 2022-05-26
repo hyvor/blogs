@@ -8,7 +8,7 @@ import CodemirrorEditor, {CODEMIRROR_MODES} from "../ReusableComponents/Codemirr
 import SettingsSave from "../ReusableComponents/SettingsSave";
 import Radio from "../ReusableComponents/Radio";
 
-export default function SettingsSEO() {
+export default function SEO() {
     
     const { blog } = useBlogValues();
     const { updateBlogValue } = useBlogActions();

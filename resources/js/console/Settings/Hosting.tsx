@@ -7,7 +7,7 @@ import SettingsSave from "../ReusableComponents/SettingsSave";
 import Callout, {CalloutColors} from "../ReusableComponents/Callout";
 import {ExclamationCircle} from "react-bootstrap-icons";
 
-export default function SettingsHosting() {
+export default function Hosting() {
 
     const { blog, blogOriginal } = useBlogValues()
     const { updateBlogValue } = useBlogActions()

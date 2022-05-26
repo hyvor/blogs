@@ -2,76 +2,77 @@
 
 namespace App\Http\Controllers\ConsoleAPI;
 
+use App\Data\Enums\RedirectTypeEnum;
 use App\Data\Objects\ConsoleAPI\RedirectObject;
 use App\Domains\Redirect\RedirectRepository;
 
 use App\Http\Controllers\Controller;
 use App\Models\Blog;
+use App\Models\Redirect;
+use App\Rules\RedirectPath;
 use Illuminate\Http\Request;
+use Illuminate\Validation\Rules\Enum;
 
 class ConsoleRedirectController extends Controller
 {
-    public const REGEX = 'regex:/(^([\/\:\.a-zA-z0-9\-\?\_\=\*]+)(\d+)?$)/u';
 
-    public function getRedirects(Request $request, Blog $blog)
+    public function get(Request $request, Blog $blog)
     {
-        // $request->validate([
-        //     'limit' => 'integer',
-        //     'offset' => 'required|integer',
-        // ]);
+         $request->validate([
+             'limit' => 'integer',
+             'offset' => 'integer',
+         ]);
 
-        $limit = $request->input('limit');
-        $offset = $request->input('offset') ?? 0;
+        $limit = $request->input('limit', 25);
+        $offset = $request->input('offset', 0);
 
-        $getData = RedirectRepository::getRedirects($blog->id, $limit, $offset)
-                ->map(function ($redirect) {
-                    return new RedirectObject($redirect);
-                });
+        $redirects = RedirectRepository::getRedirects($blog, $limit, $offset)->mapInto(RedirectObject::class);
 
-        return response()->json($getData);
+        return response()->json($redirects);
     }
 
-    public function createRedirect(Request $request, Blog $blog)
+    public function create(Request $request, Blog $blog)
     {
-        $regexValidation = get_called_class();
+
         $request->validate([
-            'path' => 'required|string|'.$regexValidation::REGEX,
-            'to' => 'required|string|'.$regexValidation::REGEX,
-            'type' => 'required|int',
+            'path' => ['required', new RedirectPath($blog)],
+            'to' => ['required', 'url'],
+            'type' => ['required', new Enum(RedirectTypeEnum::class)],
         ]);
         $path = $request->input('path');
         $to = $request->input('to');
-        $type = $request->input('type');
+        $type = RedirectTypeEnum::from($request->input('type'));
 
-        $createRedirect = RedirectRepository::createRedirect($blog->id, $path, $to, $type);
+        $redirect = RedirectRepository::createRedirect($blog, $path, $to, $type);
 
-        return response()->json(new RedirectObject($createRedirect));
+        return response()->json(new RedirectObject($redirect));
+
     }
 
-    public function updateRedirect(Request $request, Blog $blog)
+    public function update(Request $request, Blog $blog, Redirect $redirect)
     {
-        $regexValidation = get_called_class();
+
         $request->validate([
-            'path' => 'required|string|'.$regexValidation::REGEX,
-            'to' => 'required|string|'.$regexValidation::REGEX,
-            'type' => 'required|int',
+            'path' => ['required', new RedirectPath($blog)],
+            'to' => ['required', 'url'],
+            'type' => ['required', new Enum(RedirectTypeEnum::class)],
         ]);
 
-        $id = $request->route('id');
         $path = $request->input('path');
         $to = $request->input('to');
-        $type = $request->input('type');
+        $type = RedirectTypeEnum::from($request->input('type'));
 
-        $updateRedirect = RedirectRepository::updateRedirect($blog->id, $id, $path, $to, $type);
+        $redirect = RedirectRepository::updateRedirect($redirect, $path, $to, $type);
 
-        return response()->json($updateRedirect);
+        return response()->json(new RedirectObject($redirect));
+
     }
 
-    public function deleteRedirect(Request $request)
+    public function delete(Redirect $redirect)
     {
-        $id = $request->route('id');
-        $deleteRedirect = RedirectRepository::deleteRedirect($id);
 
-        return response()->json($deleteRedirect);
+        RedirectRepository::deleteRedirect($redirect);
+        return response()->json();
+
     }
 }

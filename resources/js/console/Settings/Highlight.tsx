@@ -6,7 +6,7 @@ import {useBlogActions, useBlogValues} from "./useBlog";
 import SettingsSave from "../ReusableComponents/SettingsSave";
 import {appConfig} from "../helpers";
 
-export default function SettingsHighlight() {
+export default function Highlight() {
     
     const { blog } = useBlogValues();
     const { updateBlogValue } = useBlogActions();

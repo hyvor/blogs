@@ -4,7 +4,7 @@ import Radio from "../ReusableComponents/Radio";
 import SettingsSave from "../ReusableComponents/SettingsSave";
 import {useBlogActions, useBlogValues} from "./useBlog";
 
-export default function SettingsColorMode() {
+export default function ColorMode() {
     
     const { blog } = useBlogValues();
     const { updateBlogValue } = useBlogActions();
