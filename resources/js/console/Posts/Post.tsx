@@ -16,19 +16,15 @@ import languagesLogic from '../logic/languagesLogic';
 import PostLanguageSelector from './PostLanguageSelector';
 import blogsLogic from '../logic/blogsLogic';
 import Tooltip from '../ReusableComponents/Tooltip';
+import {Post, PostVariant} from "../types";
 
 
-let publisherOutsideCleaner;
-export default function Post( {subdomain, id} ) {
+let publisherOutsideCleaner: any;
 
-    id = parseInt(id)
+export default function Post( {subdomain, id} : {subdomain: string, id: number} ) {
 
     const postLogicInst = postLogic({id});
-
-    // const { post, loadPostAjax, savePostAjax, getDiff } = useValues(postLogicInst)
-    // const { updatePostValue, savePost, deletePost } = useActions(postLogicInst) 
-
-    const { post, loadPostAjax, savePostAjax, forceSavePostAjax, getDiff } = useValues(postLogicInst)
+    const { post, loadPostAjax, savePostAjax, forceSavePostAjax, diff } = useValues(postLogicInst)
     const { updatePostValue, updatePostVariantValue, savePost, createVariant, forceSavePost } = useActions(postLogicInst)
 
     const { findBlogBySubdomain } = useValues(blogsLogic)
@@ -46,7 +42,7 @@ export default function Post( {subdomain, id} ) {
     const viewRef = useRef(null);
 
     const variants = post ? (post.variants || []) : {};
-    const variant = variants[currentLanguageId] || {};
+    const variant = variants[currentLanguageId] || {} as PostVariant;
 
     function handleAutoSave() {
         if (!holdAutoSavingRef.current) {
@@ -60,8 +56,8 @@ export default function Post( {subdomain, id} ) {
         // auto save
         const autoSaveInterval = setInterval(handleAutoSave, 10000);
 
-        function checkSave(e) {
-            if (e.keyCode === 83 && (e.ctrlKey || e.metaKey)) { // ctrl + s
+        function checkSave(e: KeyboardEvent) {
+            if (e.key === 's' && (e.ctrlKey || e.metaKey)) { // ctrl + s
                 handleAutoSave();
                 e.preventDefault();
             }
@@ -70,7 +66,7 @@ export default function Post( {subdomain, id} ) {
         function checkSaveUnload() {
             if (
                 (variant.status === 'published' || variant.status === 'scheduled') && 
-                Object.keys(getDiff()).length > 0
+                Object.keys(diff).length > 0
             ) {
                 return true;
             } else {
@@ -141,7 +137,7 @@ export default function Post( {subdomain, id} ) {
     }
 
     function MainButton() {
-        let name, onClick, icon;
+        let name, onClick: any, icon;
 
         if (variant.status === 'published' || variant.status === 'scheduled') {
             if (!nonDraftPostEditing) {
@@ -175,11 +171,11 @@ export default function Post( {subdomain, id} ) {
         setIsNonDraftUpdating(true);
         forceSavePost({
             update: {
-                content: post.content_unsaved
+                content: variant.content_unsaved
             },
-            onSave: (p) => {
+            onSave: (p: Post) => {
                 setIsNonDraftUpdating(false)
-                toast.success(<div>Post Updated. <a className="link" href={p.url} target="_blank">View</a></div>, {
+                toast.success(<div>Post Updated. <a className="link" href={p.variants[currentLanguageId].url} target="_blank">View</a></div>, {
                     autoClose: 5000
                 })
             }
@@ -200,7 +196,7 @@ export default function Post( {subdomain, id} ) {
         window.removeEventListener("keyup", checkFullscreenClose);
         setIsFullScreen(false);
     }
-    function checkFullscreenClose(e) {
+    function checkFullscreenClose(e: KeyboardEvent) {
         if (e.key === "Escape")
             closeFullscreen();
     }
@@ -220,15 +216,15 @@ export default function Post( {subdomain, id} ) {
     }, [isPublisherOpen, isUnPublishing, isNonDraftUpdating])
 
 
-    function handleContentUpdate(v) {
+    function handleContentUpdate(v: string) {
         handlePostVariantValueChange(isNotDraft ? 'content_unsaved' : 'content', v);
     }
 
-    function handlePostVariantValueChange(key, value) {
+    function handlePostVariantValueChange(key: string, value: any) {
         updatePostVariantValue(key, value, currentLanguageId)
     }
 
-    function handleCreateVariant(languageId) {
+    function handleCreateVariant(languageId: number) {
         createVariant({languageId, onCreate: () => {
             setCurrentLanguageId(languageId);
         }})
@@ -247,7 +243,7 @@ export default function Post( {subdomain, id} ) {
 
     useEffect(() => {
         if (loadPostAjax.status === 'success') {
-            setNonDraftPostEditing(isNotDraft && post.content_unsaved)
+            setNonDraftPostEditing(!!(isNotDraft && variant.content_unsaved))
         }
     }, [loadPostAjax.status])
 
@@ -265,7 +261,6 @@ export default function Post( {subdomain, id} ) {
                 <div className="post-editor-top-content">
 
                     <PostLanguageSelector
-                        id={id}
                         languages={languages} 
                         variants={variants}
                         currentLanguageId={currentLanguageId}
@@ -285,7 +280,7 @@ export default function Post( {subdomain, id} ) {
                         </div>
 
                         <div className="status">
-                            <span>{post.status}</span>
+                            <span>{variant.status}</span>
                         </div>
                         {/* <div className="status">
                             <span>{variant.status}</span>
@@ -348,18 +343,14 @@ export default function Post( {subdomain, id} ) {
             <div 
                 className="post-editor-wrap"
                 spellCheck={false}
-                onClick={() => false && view && view.focus()}
             >
-                {
-                    loadPostAjax.status === 'loading' ? null :
-                    <Editor 
-                        id={id}
-                        value={content}
-                        currentLanguageId={currentLanguageId}
-                        onChange={v => handleContentUpdate(v)}
-                        editable={variant.status === 'draft' || nonDraftPostEditing}
-                    />
-                }
+                <Editor
+                    id={id}
+                    value={content}
+                    currentLanguageId={currentLanguageId}
+                    onChange={(v: string) => handleContentUpdate(v)}
+                    editable={variant.status === 'draft' || nonDraftPostEditing}
+                />
             </div>
 
             <div
@@ -371,7 +362,7 @@ export default function Post( {subdomain, id} ) {
                             savePostAjax.status === 'loading' ?
                             <span className="saving">Saving...</span> : null
                         }
-                        <span className="words" id="pm-word-count"></span>
+                        <span className="words" id="pm-word-count"/>
                         <a target="_blank" href="/docs/writing" className="help">
                             <InfoCircle />
                         </a>

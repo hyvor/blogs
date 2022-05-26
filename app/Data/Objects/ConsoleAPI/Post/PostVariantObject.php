@@ -23,12 +23,13 @@ class PostVariantObject
     {
         $language = $variant->language;
 
+        $this->language_id = $language->id;
         $this->status = $variant->status;
         $this->url = PermalinkRepository::getPostPermalink($post, $blog, $language);
         $this->content = $variant->content;
         $this->content_unsaved = $variant->content_unsaved;
         $this->title = $variant->title;
         $this->description = $variant->description;
-        $this->language_id = $language->id;
+
     }
 }

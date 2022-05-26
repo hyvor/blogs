@@ -5,8 +5,9 @@ Hyvor Blogs is created thanks to amazing free and open-source software (FOSS). W
 ## Front-end {#frontend}
 
 * HTML, CSS, and Javascript
+* [Typescript](https://www.typescriptlang.org/)
 * [React](https://reactjs.org/)
-* [Kea.js](https://keajs.org/) - State management, a wrapper around Redux
+* [Kea.js](https://keajs.org/) - App state management, a wrapper around Redux
 * [Prosemirror](https://prosemirror.net/) - The post editor is built on top of this
 * [Codemirror](https://codemirror.net/) - All code editors in the Console are built using this
 * [Day.js](https://day.js.org/) - Handles date management and displaying
@@ -17,7 +18,7 @@ Hyvor Blogs is created thanks to amazing free and open-source software (FOSS). W
 
 * [PHP](https://php.net) - Our loving programming language
 * [Laravel](https://laravel.com/) - The PHP framework that makes our life easier
-* [PHPUnit](https://phpunit.de/) - To test everything in PHP
+* [PHPUnit](https://phpunit.de/) and [Pest](https://pestphp.com/) - To test everything in PHP
 * [PHPStan](https://phpstan.org/) - PHP Static Analysis
 * [Shiki.js](https://github.com/shikijs/shiki) - Syntax Highlighting
 * [Twig](https://twig.symfony.com/) - Templating language for blogs
@@ -30,5 +31,6 @@ Hyvor Blogs is created thanks to amazing free and open-source software (FOSS). W
 
 Feel free to check out our open source projects that we developed along with Hyvor Blogs.
 
-* [Flashload](https://github.com/hyvor/flashload) - Makes browser navigation faster
+* [Flashload.js](https://github.com/hyvor/flashload) - Makes browser navigation faster
+* [Kea Ajax Plugin](https://github.com/hyvor/kea-ajax) - AJAX requests made easy in Kea.js
 * [Laravel FilterQ](https://github.com/hyvor/laravel-filterq) - Advanced filtering for Laravel APIs

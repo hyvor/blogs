@@ -2,15 +2,18 @@
  * Logic for a single post
  */
 
-import { kea } from "kea";
+import {actions, events, kea, key, listeners, path, props, reducers, selectors} from "kea";
 import slugify from "../../helpers/slugify";
 import api from "../lib/api";
 import postsLogic from "./postsLogic";
 import subdomainLogic from "./subdomainLogic";
 import { diff } from 'deep-object-diff';
 import merge from 'deepmerge'
+import {postLogicType} from "./postLogicType";
+import {Post} from "../types";
+import {ajax} from "kea-ajax";
 
-async function updatePost(post, diff) {
+async function updatePost(post: Post, diff: Partial<Post>) {
 
     if (diff.variants) {
         for (let languageId in diff.variants) {
@@ -35,27 +38,25 @@ async function updatePost(post, diff) {
         delete diff.tags
     }
 
-    return await api.patch(subdomainLogic.values.subdomain, `/post/${post.id}`, diff)
+    return await api.patch<Post>(subdomainLogic.values.subdomain, `/post/${post.id}`, diff)
 
 }
 
-const postLogic = kea({
+const postLogic = kea<postLogicType>([
 
-    key: props => props.id,
+    props({} as {id: number, data?: Post}),
+    key(props => props.id),
+    path(key => ['post', key]),
 
-    path: key => ['post', key],
-
-    actions: {
-
+    actions({
         set: (obj) => ({obj}),
         setOriginal: (obj) => ({obj}),
         updatePostValue: (key, value) => ({key, value}),
         updatePostVariantValue: (key, value, languageId) => ({key, value, languageId}),
         addVariant: (variant) => ({variant}),
+    }),
 
-    },
-
-    ajax: ({actions, selectors, props, values}) => ({
+    ajax(({actions, selectors, props, values}) => ({
  
         loadPost: async () => {
             const response = await api.get(subdomainLogic.values.subdomain, `/post/${props.id}`);
@@ -76,7 +77,7 @@ const postLogic = kea({
          * Used for auto saving
          */
         savePost: async () => {
-            const diff = selectors.getDiff()
+            const diff = values.diff
             
             if (Object.keys(diff).length === 0) {
                 return false;
@@ -92,7 +93,7 @@ const postLogic = kea({
          */
         forceSavePost: async ({onSave, update}) => {
 
-            const diff = {...selectors.getDiff(), ...update};
+            const diff = {...values.diff, ...update};
 
             const response = await updatePost(values.post, diff);
             actions.set(response)
@@ -115,9 +116,9 @@ const postLogic = kea({
 
         },
 
-    }),
+    })),
 
-    listeners: ({actions, values}) => ({
+    listeners(({actions, values}) => ({
 
         updatePostValue: ({key, value}) => {
 
@@ -129,63 +130,69 @@ const postLogic = kea({
 
         }
 
-    }),
+    })),
 
-    selectors: {
+    selectors({
 
         // diff of orignal and state
-        getDiff: [
+        diff: [
             (selectors) => [selectors.post, selectors.postOriginal],
             (post, postOriginal) => {
-                const d = diff(postOriginal, post)
+                const d = diff(postOriginal, post) as Partial<Post>
                 if (d.preview_id) delete d.preview_id;
                 return d;
             }
         ]
 
-    },  
-
-    reducers: ({actions, props, selectors}) => ({
-
-        // post's current state in the front-end
-        post: [null, {
-            set: (_, {obj}) => obj,
-            updatePostValue: (state, {key, value}) => ({...state, ...{[key]: value}}),
-            updatePostVariantValue: (state, {key, value, languageId}) => {
-                const obj = {
-                    variants: {
-                        [languageId]: {
-                            [key]: value
-                        }
-                    }
-                }
-                return merge(state, obj);
-            },
-            addVariant: (state, {variant}) => {
-                return merge(state, {
-                    variants: {
-                        [variant.language_id]: variant
-                    }
-                })
-            }
-        }],
-
-        // the really saved post in the back-end
-        postOriginal: [null, {
-            set: (_, {obj}) => obj,
-            setOriginal: (_, {obj}) => obj,
-            addVariant: (state, {variant}) => {
-                return merge(state, {
-                    variants: {
-                        [variant.language_id]: variant
-                    }
-                })
-            }
-        }]
-
     }),
 
-    events: ({actions, values, props}) => ({
+    reducers(({actions, props, selectors}) => ({
+
+        // post's current state in the front-end
+        post: [
+            null as Post | null,
+            {
+                set: (_, {obj}) => obj,
+                updatePostValue: (state, {key, value}) => ({...state, ...{[key]: value}}),
+                updatePostVariantValue: (state, {key, value, languageId}) => {
+                    const obj = {
+                        variants: {
+                            [languageId]: {
+                                [key]: value
+                            }
+                        }
+                    }
+                    return merge(state, obj) as Post;
+                },
+                addVariant: (state, {variant}) => {
+                    return merge(state, {
+                        variants: {
+                            [variant.language_id]: variant
+                        }
+                    }) as Post
+                }
+            }
+        ],
+
+        // the really saved post in the back-end
+        postOriginal: [
+            null as Post | null,
+            {
+                set: (_, {obj}) => obj,
+                setOriginal: (_, {obj}) => obj,
+                addVariant: (state, {variant}) => {
+                    return merge(state, {
+                        variants: {
+                            [variant.language_id]: variant
+                        }
+                    }) as Post
+                }
+            }
+        ]
+
+    })),
+
+    events(({actions, values, props}) => ({
         afterMount: () =>  {
             if (props.data) {
                 actions.set(props.data);
@@ -193,8 +200,8 @@ const postLogic = kea({
                 actions.loadPost();
             }
         }
-    })
+    }))
 
-})
+])
 
 export default postLogic;
