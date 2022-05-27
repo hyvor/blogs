@@ -4,7 +4,7 @@ import api from "../lib/api";
 import postLogic from "./postLogic";
 
 import type { postsLogicType } from "./postsLogicType";
-import {Post} from "../types";
+import {Filters, Post} from "../types";
 import {actionToUrl} from "kea-router";
 import {ajax} from "kea-ajax";
 
@@ -101,7 +101,7 @@ const postsLogic = kea<postsLogicType>([
                 startDate: null,
                 endDate: null,
                 search: ''
-            },
+            } as Filters,
             {
                 changeFilter: (state, {name, value}) => {
                     if (typeof name === 'object') {
@@ -119,7 +119,7 @@ const postsLogic = kea<postsLogicType>([
 
 export default postsLogic
 
-function getPostParamsFromFilters(filters: any) {
+function getPostParamsFromFilters(filters: Filters) {
     return {
         status: filters.status === 'all' ? null : filters.status,
         author_id: filters.author === 'all' ? null : filters.author,

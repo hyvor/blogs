@@ -6,19 +6,14 @@ import subdomainLogic from '../logic/subdomainLogic';
 import NavLink from '../ReusableComponents/NavLink';
 import blogsLogic from '../logic/blogsLogic';
 import {
-    Brush,
     Chat, Coin,
-    CurrencyDollar,
-    Droplet,
     Exclamation,
     Files, Gear,
     House,
     Palette,
     Pencil,
-    Wallet
 } from 'react-bootstrap-icons';
 import dayjs from 'dayjs';
-import {UserBlog} from "../objects/userblog";
 import {appConfig} from "../helpers";
 import {
     canAccessBilling,
@@ -37,9 +32,12 @@ export default function Left() {
     }
 
     const { findBlogBySubdomain } = useValues(blogsLogic);
-    const { blog, blog: { subscription: currentSubscription } } : UserBlog  = findBlogBySubdomain(subdomain);
+    const { blog, blog: { subscription: currentSubscription } }  = findBlogBySubdomain(subdomain);
 
-    const trialDaysDiff = blog.is_on_trial ?  dayjs.unix(blog.trial_ends_at).diff(dayjs(), 'd') : 0;
+    const trialDaysDiff =
+        blog.is_on_trial && blog.trial_ends_at ?
+            dayjs.unix(blog.trial_ends_at).diff(dayjs(), 'd') :
+            0;
     
     return <div id="left">
         <div id="left-header" className="box">
@@ -117,7 +115,7 @@ function LeftLink({path, icon, name, extra = null, permission} : LeftLinkProps) 
     const { push } = useActions(router);
     const perm = typeof permission === 'function' ? permission() : true;
 
-    const ref = useRef(null);
+    const ref = useRef<HTMLAnchorElement | null>(null);
 
     useEffect(() => {
 
@@ -125,7 +123,7 @@ function LeftLink({path, icon, name, extra = null, permission} : LeftLinkProps) 
          * Redirect the user to Blog Preview when accessing unauthorized routes via the direct URL
          * Just a simple check
          */
-        const link = ref.current
+        const link = ref.current as HTMLAnchorElement
         if (link.classList.contains('no-perm') && link.classList.contains('active')) {
             push('/console/' + subdomain);
         }

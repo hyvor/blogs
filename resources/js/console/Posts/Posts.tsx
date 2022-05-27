@@ -1,17 +1,17 @@
 import React, { useEffect, useState, useRef } from 'react';
-import Post from './Post';
+import Post from './Post/Post';
 import { useActions, useValues } from 'kea';
-import subdomainLogic from '../logic/subdomainLogic';
 import postsLogic from '../logic/postsLogic';
 import Loader from '../ReusableComponents/Loader';
 import PostsFilters from './PostsFilters';
 import NoResults from '../ReusableComponents/NoResults';
 import PostsListRow from './PostsListRow';
 import NoPost from "./NoPost";
+import {useSubdomain} from "../logic-helpers/subdomain";
 
-export default function Posts( { postId } : { postId: number | null } ) {
+export default function Posts( { postId } : { postId: number | undefined } ) {
 
-    const { subdomain } = useValues(subdomainLogic)
+    const subdomain = useSubdomain()
     const postLogicSubdomain = postsLogic({subdomain})
     const { 
         postsList, loadPostsListAjax, postsListHasMore, loadPostsListMoreAjax,
@@ -73,7 +73,7 @@ export default function Posts( { postId } : { postId: number | null } ) {
         </div>
         <div id="post-viewer" className="box box-right">
             {
-                postId ?
+                postId && loadPostsListAjax.status === 'success' ?
                 <Post subdomain={subdomain} id={postId} /> :
                 <NoPost />
             }

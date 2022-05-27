@@ -1,8 +1,8 @@
 import axios from 'axios';
 import React, { useEffect, useRef, useState } from 'react';
-import api, { getEndpoint } from '../../../lib/api';
-import Loader from '../../../ReusableComponents/Loader';
-import NoResults from '../../../ReusableComponents/NoResults';
+import api, { getEndpoint } from '../../../../lib/api';
+import Loader from '../../../../ReusableComponents/Loader';
+import NoResults from '../../../../ReusableComponents/NoResults';
 import {toast} from "react-toastify";
 
 export default function ImageUploader({onUpload}) {

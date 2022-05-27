@@ -15,6 +15,7 @@ import blogLogic from "./logic/blogLogic"
 import Loader from "./ReusableComponents/Loader"
 import subdomainLogic from "./logic/subdomainLogic"
 import Comments from "./Comment/Comments"
+import {router} from "kea-router";
 
 export const scenes = {
     error404: () => <div>404</div>,
@@ -47,7 +48,14 @@ export default function Scene() {
 function Middle({ children } : {children: ReactNode}) {
 
     // load blog data
-    const { loadAjax } = useValues(blogLogic({subdomain: subdomainLogic.values.subdomain}))
+
+    const subdomain = subdomainLogic.values.subdomain
+
+    if (subdomain === null) {
+        return <div id="middle">{ children }</div>
+    }
+
+    const { loadAjax } = useValues(blogLogic({subdomain}))
 
     return <div id="middle">{
         loadAjax.status === 'loading' ?

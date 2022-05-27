@@ -32,8 +32,8 @@ export interface appConfig {
 
 export interface Filters {
     status: string,
-    author: string | number,
-    tag: number | null,
+    author: string | number | null,
+    tag: string | number | null,
     startDate: Date | null,
     endDate: Date | null,
     search: string
@@ -128,11 +128,13 @@ export type Post = {
 
 };
 
+export type PostStatus = 'draft' | 'published' | 'scheduled'
+
 export type PostVariant = {
 
     language_id: number;
 
-    status: 'draft' | 'published' | 'scheduled',
+    status: PostStatus,
     url: string,
 
     content: string | null;

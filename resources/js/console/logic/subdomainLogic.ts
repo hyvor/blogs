@@ -16,7 +16,7 @@ const subdomainLogic = kea<subdomainLogicType>([
 
     actions(({ values }) => ({
         setSubdomain:
-            (subdomain: string, oldDomain: string, changeRoute: boolean = false) =>
+            (subdomain: string, oldDomain: string | null, changeRoute: boolean = false) =>
             ({ old: oldDomain, subdomain, changeRoute })
     })),
 

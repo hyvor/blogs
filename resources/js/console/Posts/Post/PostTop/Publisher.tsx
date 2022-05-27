@@ -1,41 +1,53 @@
-import React, { useEffect, useState } from 'react'
-import Radio from '../ReusableComponents/Radio'
+import React, {useEffect, useRef, useState} from 'react'
+import Radio from '../../../ReusableComponents/Radio'
 import DatePicker from 'react-datepicker';
-import { usePostActions, usePostValues } from './usePost';
+import { usePostActions, usePostValues } from '../helpers';
 import dayjs from 'dayjs';
-import ActionButton from '../ReusableComponents/ActionButton';
+import ActionButton from '../../../ReusableComponents/ActionButton';
 import { toast } from 'react-toastify';
+import {Post} from "../../../types";
+import onOutsideClick from "../../../../helpers/onOutsideClick";
 
-export default function PostPublisher({id, publisherViewRef, isOpen, closePublisher, currentLanguageId}) {
+export default function Publisher({id} : {id: number}) {
 
-    const { forceSavePostAjax  } = usePostValues(id);
-    const { forceSavePost } = usePostActions(id);
+    const { forceSavePostAjax, editorState, currentLanguageId  } = usePostValues(id);
+    const { forceSavePost, changeEditorState } = usePostActions(id);
 
     const [hasClicked, setHasClicked] = useState(false)
-    const [publishTime, setPublishTime] = useState(null)
+    const [publishTime, setPublishTime] = useState<Date | null>(null)
 
-    function handlePublishTimeChange(setTime) {
+    const publisherViewRef = useRef<HTMLDivElement | null>(null)
+
+    function handlePublishTimeChange(setTime: boolean) {
         setPublishTime(setTime ? new Date() : null);
     }
 
     function handleClose() {
         setHasClicked(false);
-        closePublisher();
+        changeEditorState('isPublishing', false);
     }
 
     function handlePublish() {
-        const update = {variants: {[currentLanguageId]: {}}};
-        if (publishTime) {
-            update['published_at'] = dayjs(publishTime).unix()
-            update.variants[currentLanguageId]['status'] = 'scheduled';
-        } else {
-            update.variants[currentLanguageId]['status'] = 'published';
+        const update = {variants: {[currentLanguageId]: {}}} as Partial<Post>;
+
+        if (update.variants) { // TS fix
+            if (publishTime) {
+                update['published_at'] = dayjs(publishTime).unix()
+                update.variants[currentLanguageId]['status'] = 'scheduled';
+            } else {
+                update.variants[currentLanguageId]['status'] = 'published';
+            }
         }
+
         setHasClicked(true)
         forceSavePost({update, onSave: (post) => {
             toast.success(
                 !publishTime ?
-                <div>Post Published. <a className="link" href={post.url} target="_blank">View</a></div> :
+                <div>Post Published. <a
+                    className="link"
+                    href={post.variants[currentLanguageId].url}
+                    target="_blank"
+                >View</a></div> :
                 "Post scheduled"
             , {autoClose: 5000});
         }});
@@ -46,10 +58,16 @@ export default function PostPublisher({id, publisherViewRef, isOpen, closePublis
             handleClose();
         }
     }, [forceSavePostAjax.status])
-    
-    return <div className={"post-publisher " + (isOpen ? "active" : "inactive")}>
 
-        <div 
+    useEffect(() => {
+        if (editorState.isPublishing) {
+            onOutsideClick(publisherViewRef.current, () => changeEditorState('isPublishing', false));
+        }
+    }, [editorState.isPublishing])
+    
+    return <div className={"post-publisher " + (editorState.isPublishing ? "active" : "inactive")}>
+
+        <div
             ref={publisherViewRef}
             className="post-publisher-view" >
             <div className="publisher-head">Publish Post</div>
@@ -91,24 +109,22 @@ export default function PostPublisher({id, publisherViewRef, isOpen, closePublis
                     !publishTime ?
                     <ActionButton 
                         className="medium"
-                        status={!hasClicked ? "stale" : forceSavePostAjax.status} 
+                        status={!hasClicked ? "stale" : (forceSavePostAjax.status || 'stale')}
                         staleName="Publish"
                         loadingName="Publishing" 
                         successName="Published"
                         errorName="Try again"
-                        staleOnClick={handlePublish} 
-                        successOnClick={null}
+                        staleOnClick={handlePublish}
                         errorOnClick={handlePublish}
                     /> :
                     <ActionButton
                         className="medium"
-                        status={!hasClicked ? "stale" : forceSavePostAjax.status} 
+                        status={!hasClicked ? "stale" : (forceSavePostAjax.status || 'stale')}
                         staleName="Schedule"
                         loadingName="Scheduling" 
                         successName="Scheduled"
                         errorName="Try again"
-                        staleOnClick={handlePublish} 
-                        successOnClick={null}
+                        staleOnClick={handlePublish}
                         errorOnClick={handlePublish}
                     />
                 }

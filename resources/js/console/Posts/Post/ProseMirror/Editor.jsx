@@ -8,7 +8,7 @@ import plugins from './plugins';
  * 
  */
 import {ProseMirror} from 'use-prosemirror';
-import useUpdateEffect from '../../../helpers/hooks/useUpdateEffect';
+import useUpdateEffect from '../../../../helpers/hooks/useUpdateEffect';
 import Figcaption from './nodeview-figcaption';
 import Heading from './nodeview-heading';
 import Callout from './Callout/nodeview-callout';

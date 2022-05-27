@@ -12,7 +12,7 @@ import {router} from 'kea-router'
 import Callout, {CalloutColors} from "./ReusableComponents/Callout";
 
 
-export default function NewBlog({ type }: { type: string | null }) {
+export default function NewBlog({ type }: { type: string | undefined }) {
 
     const isDev : boolean = type === 'dev';
 
@@ -30,7 +30,7 @@ export default function NewBlog({ type }: { type: string | null }) {
     const [name, setName] = useState<string>('');
     const [nameError, setNameError] = useState<string|null>(null)
 
-    const abortControllerRef = useRef(null);
+    const abortControllerRef = useRef<AbortController | null>(null);
 
     const [isCreating, setIsCreating] = useState(false);
 
@@ -89,7 +89,8 @@ export default function NewBlog({ type }: { type: string | null }) {
         } else if (val.substr(val.length - 1) === '-') {
             setSubdomainError('Cannot end with -');
         } else if (val.match(allowedRegex)) {
-            const firstLetter = val.match(allowedRegex)[0]
+            const match = val.match(allowedRegex)
+            const firstLetter = match ? match[0] : '';
             setSubdomainError('Cannot contain ' + firstLetter);
         } else {
             setSubdomainError(null)

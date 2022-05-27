@@ -2,9 +2,9 @@ import React, {useState} from 'react'
 import { useValues } from 'kea'
 import { Plus } from 'react-bootstrap-icons'
 import languagesLogic from "../logic/languagesLogic"
-import subdomainLogic from "../logic/subdomainLogic"
 import {Language} from "../types"
 import Spinner from "./Spinner";
+import getSubdomain from "../logic-helpers/subdomain";
 
 type onChangeType = (languageId: number) => void;
 type variantCreatorType = (props: {languageId: number, onCreate: Function}) => void;
@@ -20,7 +20,7 @@ export default function LanguageSelector(
     { languageId, variantsLanguageIds, onChange, variantCreator } : LanguageSelectorProps
 ) {
 
-    const { languages } = useValues(languagesLogic({subdomain: subdomainLogic.values.subdomain}))
+    const { languages } = useValues(languagesLogic({subdomain: getSubdomain()}))
 
     return <div>
         <div className="global-languages-list">

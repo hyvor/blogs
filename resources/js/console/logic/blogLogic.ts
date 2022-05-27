@@ -8,7 +8,7 @@ import languagesLogic from "./languagesLogic";
 
 import type { blogLogicType } from "./blogLogicType";
 import merge from "deepmerge";
-import subdomainLogic from "./subdomainLogic";
+import getSubdomain from "../logic-helpers/subdomain";
 
 interface BlogResponse {
     blog: Blog,
@@ -62,7 +62,7 @@ const blogLogic = kea<blogLogicType>([
         },
 
         updateVariant: async ({data, languageId}) => {
-            await api.patch(subdomainLogic.values.subdomain, `/blog/variant`, {...data, ...{language_id: languageId}})
+            await api.patch(getSubdomain(), `/blog/variant`, {...data, ...{language_id: languageId}})
         },
 
         updateBlog: async ({keys, variantKeys}) => {
@@ -72,14 +72,17 @@ const blogLogic = kea<blogLogicType>([
                 const variantDiff = values.getVariantDiff(variantKeys);
 
                 for (let languageId in variantDiff) {
-                    const data = variantDiff[languageId]
+                    const data = variantDiff[languageId as unknown as keyof typeof variantDiff]
                     await actions.updateVariant({data, languageId})
                 }
             }
 
             const diff = values.getDiff(keys);
-            const blog = await api.patch<Blog>(props.subdomain, '/blog', diff);
-            actions.setOriginal(blog);
+
+            if (diff) {
+                const blog = await api.patch<Blog>(props.subdomain, '/blog', diff);
+                actions.setOriginal(blog);
+            }
 
         },
 
@@ -88,7 +91,7 @@ const blogLogic = kea<blogLogicType>([
     reducers({
 
         blogOriginal: [
-            null as Blog | null,
+            {} as Blog,
             {
                 setBlog: (_, {blog}) => blog,
                 setOriginal: (_, {blog}) => blog,
@@ -104,11 +107,11 @@ const blogLogic = kea<blogLogicType>([
         ],
 
         blog: [
-            null as Blog | null,
+            {} as Blog,
             {
                 setBlog: (_, {blog}) => blog,
                 updateBlogValue: (state, {key, value}) => (
-                    {...state, ...{[key]: value === '' ? null : value}}
+                    {...state, ...{[key]: value === '' ? null : value}} as Blog
                 ),
                 updateBlogVariantValue: (state, {key, value, languageId}) => {
                     const obj = {
@@ -134,7 +137,7 @@ const blogLogic = kea<blogLogicType>([
                         // @ts-ignore
                         obj[key] = original[key]
                     })
-                    return {...blog, ...obj};
+                    return {...blog, ...obj} as Blog;
                 }
             }
         ]

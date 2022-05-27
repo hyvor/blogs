@@ -38,6 +38,7 @@ const blogsLogic = kea<blogsLogicType>([
             const userBlog = res.data;
             actions.addBlog(userBlog);
             subdomainLogic.actions.setSubdomain(userBlog.blog.subdomain, null, true);
+
         },
         saveBlogsSort: async () => {
             const ids = values.blogs.map(b => b.blog.id);
@@ -60,7 +61,7 @@ const blogsLogic = kea<blogsLogicType>([
         findBlogBySubdomain: [
             (s) => [s.blogs],
             (blogs: Array<UserBlog>) => {
-                return (sub : string) => blogs.find(b => b.blog.subdomain === sub);
+                return (sub : string) : UserBlog => blogs.find(b => b.blog.subdomain === sub) as UserBlog;
             }
         ]
     })

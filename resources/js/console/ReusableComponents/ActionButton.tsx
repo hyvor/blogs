@@ -1,16 +1,29 @@
-import React from 'react'
+import React, {MouseEventHandler} from 'react'
 import { ArrowClockwise, CheckCircle, ExclamationCircle } from 'react-bootstrap-icons';
 import Spinner from './Spinner';
 
 /**
  * status = stale|loading|success|error
  */
+
+interface ActionsButtonProps {
+    className?: string,
+    status: 'stale' | 'loading' | 'success' | 'error',
+    staleName: string,
+    loadingName: string,
+    successName: string,
+    errorName: string,
+    staleOnClick?: MouseEventHandler,
+    successOnClick?: MouseEventHandler,
+    errorOnClick? :MouseEventHandler
+}
+
 export default function ActionButton({
     className = '',
     status, 
     staleName, loadingName, successName, errorName,
-    staleOnClick = null, successOnClick = null, errorOnClick = null
-}) {
+    staleOnClick, successOnClick, errorOnClick
+} : ActionsButtonProps) {
 
     let name;
     let icon;

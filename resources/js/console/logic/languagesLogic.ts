@@ -72,12 +72,12 @@ const languagesLogic = kea<languagesLogicType>([
 
         getLanguageById: [
             s => [s.languages],
-            (languages) : (id: number) => Language => id => languages.find(l => l.id == id)
+            (languages) : (id: number) => Language | undefined => id => languages.find(l => l.id == id)
         ],
 
         primaryLanguage: [
             s => [s.languages],
-            (languages) : Language => languages.find(l => l.is_primary === true)
+            (languages) : Language => languages.find(l => l.is_primary) as Language
         ]
 
     }),

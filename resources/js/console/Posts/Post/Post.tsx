@@ -1,29 +1,49 @@
-import { useActions, useValues } from 'kea';
 import React, { useEffect, useRef, useState } from 'react';
-import { BoxArrowUpRight, CaretDownFill, Fullscreen, GearFill, InfoCircle, PencilFill } from 'react-bootstrap-icons';
-import Editor from './ProseMirror/Editor';
-import TextareaAutosize from 'react-textarea-autosize';
-import onOutsideClick from '../../helpers/onOutsideClick';
-import postLogic from '../logic/postLogic';
-import { getBlogUrl } from '../lib/blog-helpers';
-import PostSettings from './PostSettings';
-import Loader from '../ReusableComponents/Loader';
-import { PopupConfirm } from '../ReusableComponents/Popup';
-import PostPublisher from './PostPublisher';
+import onOutsideClick from '../../../helpers/onOutsideClick';
+import Loader from '../../ReusableComponents/Loader';
 import { toast } from 'react-toastify';
-import ActionButton from '../ReusableComponents/ActionButton';
-import languagesLogic from '../logic/languagesLogic';
-import PostLanguageSelector from './PostLanguageSelector';
-import blogsLogic from '../logic/blogsLogic';
-import Tooltip from '../ReusableComponents/Tooltip';
-import {Post, PostVariant} from "../types";
-
+import Tooltip from '../../ReusableComponents/Tooltip';
+import {Post, PostVariant} from "../../types";
+import {usePostValues, useAutoSave} from "./helpers";
+import PostTop from "./PostTop/PostTop";
+import PostBottom from "./PostBottom";
+import PostMiddle from "./PostMiddle";
 
 let publisherOutsideCleaner: any;
 
-export default function Post( {subdomain, id} : {subdomain: string, id: number} ) {
+export default function Post( { id }: { id: number }) {
 
-    const postLogicInst = postLogic({id});
+    const { loadPostAjax, editorState } = usePostValues(id)
+
+    useAutoSave(id);
+
+    if (loadPostAjax.status === 'loading') {
+        return <div className="post-loading">
+            <Loader />
+        </div>;
+    }
+
+    return <div className={"post-editor" + (editorState.isFullscreen ? " fullscreen" : "") }>
+
+        <div className="pos-rel"> {/* this element is required to make the tooltip work correctly */}
+
+            <PostTop id={id} />
+            <PostMiddle id={id} />
+            <PostBottom id={id} />
+
+            <Tooltip place="bottom" />
+
+            {/*<Unpublisher />*/}
+
+        </div>
+
+    </div>
+
+}
+
+export function Postold( {subdomain, id} : {subdomain: string, id: number} ) {
+
+    /*const postLogicInst = postLogic({id});
     const { post, loadPostAjax, savePostAjax, forceSavePostAjax, diff } = useValues(postLogicInst)
     const { updatePostValue, updatePostVariantValue, savePost, createVariant, forceSavePost } = useActions(postLogicInst)
 
@@ -34,7 +54,17 @@ export default function Post( {subdomain, id} : {subdomain: string, id: number} 
     const [isFullScreen, setIsFullScreen] = useState(false);
 
     const [currentLanguageId, setCurrentLanguageId] = useState( findBlogBySubdomain(subdomain).blog.default_language.id );
-    const currentLanguage = getLanguageById(currentLanguageId);
+    const currentLanguage = getLanguageById(currentLanguageId);*/
+
+    /*if (!currentLanguage) {
+        return null;
+    }*/
+
+    /*if (loadPostAjax.status === 'loading') {
+        return <div className="post-loading">
+            <Loader />
+        </div>;
+    }*/
 
     /**
      * Disallow outside clicking when the content has changed
@@ -51,6 +81,7 @@ export default function Post( {subdomain, id} : {subdomain: string, id: number} 
     }
 
     // saving
+    /*
     useEffect(() => {
 
         // auto save
@@ -88,7 +119,7 @@ export default function Post( {subdomain, id} : {subdomain: string, id: number} 
             window.removeEventListener('beforeunload', checkSaveUnload);
             removeOutsideEvent(false);
         }
-    }, [id])
+    }, [id]) */
 
     /**
      * Settings view
@@ -103,13 +134,13 @@ export default function Post( {subdomain, id} : {subdomain: string, id: number} 
     const [isPublisherOpen, setIsPublisherOpen] = useState(false);
     const publisherViewRef = useRef(null);
 
-    function openSettingsView() {
+    /*function openSettingsView() {
         setIsSettingsOpen(true);
         onOutsideClick(settingsViewRef.current, closeSettingsView);
     }
     function closeSettingsView() {
         setIsSettingsOpen(false);
-    }
+    }*/
 
     function openPublisher() {
         setIsPublisherOpen(true)
@@ -120,7 +151,7 @@ export default function Post( {subdomain, id} : {subdomain: string, id: number} 
         publisherOutsideCleaner && publisherOutsideCleaner()
     }
 
-    function UnPublishButton() {
+    /*function UnPublishButton() {
         let name;
         if (variant.status === 'published') {
             name = "Unpublish";
@@ -134,9 +165,8 @@ export default function Post( {subdomain, id} : {subdomain: string, id: number} 
         >
             {name}
         </button> : null;
-    }
-
-    function MainButton() {
+    }*/
+    /*function MainButton() {
         let name, onClick: any, icon;
 
         if (variant.status === 'published' || variant.status === 'scheduled') {
@@ -147,7 +177,7 @@ export default function Post( {subdomain, id} : {subdomain: string, id: number} 
             } else {
                 return <ActionButton 
                     className="small main-button"
-                    status={!isNonDraftUpdating ? "stale" : forceSavePostAjax.status} 
+                    status={!isNonDraftUpdating ? "stale" : forceSavePostAjax.status!}
                     staleName="Update"
                     loadingName="Updating" 
                     successName="Updated"
@@ -165,7 +195,7 @@ export default function Post( {subdomain, id} : {subdomain: string, id: number} 
         return <button className="button small main-button" onClick={() => onClick()}>
             <span>{name}</span>{icon}
         </button>
-    }
+    }*/
 
     function handleUpdateNonDraft() {
         setIsNonDraftUpdating(true);
@@ -205,30 +235,30 @@ export default function Post( {subdomain, id} : {subdomain: string, id: number} 
     const content = isNotDraft ? (variant.content_unsaved || variant.content) : variant.content;
 
     // have to first click Edit Post to edit published/scheduled posts
-    const [nonDraftPostEditing, setNonDraftPostEditing] = useState(false);
+    /*const [nonDraftPostEditing, setNonDraftPostEditing] = useState(false);
     const [isUnPublishing, setIsUnPublishing] = useState(false);
-    const [isNonDraftUpdating, setIsNonDraftUpdating] = useState(false);
+    const [isNonDraftUpdating, setIsNonDraftUpdating] = useState(false);*/
 
-    const holdAutoSavingRef = useRef(null); // for setInterval
+    const holdAutoSavingRef = useRef(false); // for setInterval
 
     useEffect(() => {
         holdAutoSavingRef.current = isPublisherOpen || isUnPublishing || isNonDraftUpdating
     }, [isPublisherOpen, isUnPublishing, isNonDraftUpdating])
 
 
-    function handleContentUpdate(v: string) {
+    /*function handleContentUpdate(v: string) {
         handlePostVariantValueChange(isNotDraft ? 'content_unsaved' : 'content', v);
-    }
+    }*/
 
-    function handlePostVariantValueChange(key: string, value: any) {
+    /*function handlePostVariantValueChange(key: string, value: any) {
         updatePostVariantValue(key, value, currentLanguageId)
     }
-
+*//*
     function handleCreateVariant(languageId: number) {
         createVariant({languageId, onCreate: () => {
             setCurrentLanguageId(languageId);
         }})
-    }
+    }*/
 
     function handleUnPublish() {
         const update = {variants: {[currentLanguageId]: {status: 'draft'}}};  
@@ -247,21 +277,15 @@ export default function Post( {subdomain, id} : {subdomain: string, id: number} 
         }
     }, [loadPostAjax.status])
 
-    if (loadPostAjax.status === 'loading') {
-        return <div className="post-loading">
-            <Loader />
-        </div>;
-    }
+    /*return <div className={"post-editor" + (isFullScreen ? " fullscreen" : "") } ref={viewRef}>
 
-    return <div className={"post-editor" + (isFullScreen ? " fullscreen" : "") } ref={viewRef}>
-
-        <div className="pos-rel"> {/* this element is required to make the tooltip work correctly */}
+        {/!*<div className="pos-rel">  this element is required to make the tooltip work correctly
             <div className="post-editor-top">
 
                 <div className="post-editor-top-content">
 
-                    <PostLanguageSelector
-                        languages={languages} 
+                    <LanguageSelector
+                        languages={languages}
                         variants={variants}
                         currentLanguageId={currentLanguageId}
                         onChange={setCurrentLanguageId}
@@ -271,8 +295,8 @@ export default function Post( {subdomain, id} : {subdomain: string, id: number} 
                     <div className="post-editor-title-row">
 
                         <div className="title-textarea-wrap">
-                            <TextareaAutosize 
-                                className="post-editor-title" 
+                            <TextareaAutosize
+                                className="post-editor-title"
                                 placeholder="Title..."
                                 value={variant.title || ""}
                                 onChange={(e) => handlePostVariantValueChange('title', e.target.value)}
@@ -282,9 +306,9 @@ export default function Post( {subdomain, id} : {subdomain: string, id: number} 
                         <div className="status">
                             <span>{variant.status}</span>
                         </div>
-                        {/* <div className="status">
+                         <div className="status">
                             <span>{variant.status}</span>
-                        </div> */}
+                        </div>
 
                     </div>
 
@@ -292,9 +316,9 @@ export default function Post( {subdomain, id} : {subdomain: string, id: number} 
 
                         <div className="post-editor-settings-buttons">
                             <div className="left">
-                                <button 
+                                <button
                                     className={"button small" + (!isSettingsOpen ? " secondary" : " inactive")}
-                                    onClick={isSettingsOpen ? null : openSettingsView}    
+                                    onClick={isSettingsOpen ? undefined : openSettingsView}
                                 >
                                     <span>Settings</span><GearFill />
                                 </button>
@@ -304,7 +328,7 @@ export default function Post( {subdomain, id} : {subdomain: string, id: number} 
                                         <span>View</span><BoxArrowUpRight />
                                     </button>
                                 </a>
-                                <button 
+                                <button
                                     className={"button small" + (!isFullScreen ? " secondary" : " inactive")}
                                     onClick={toggleFullscreen}
                                     data-tip="Toggle Fullscreen"
@@ -327,7 +351,7 @@ export default function Post( {subdomain, id} : {subdomain: string, id: number} 
                             </div>
                         </div>
 
-                        <PostSettings
+                        <Settings
                             isSettingsOpen={isSettingsOpen}
                             settingsViewRef={settingsViewRef}
                             id={id}
@@ -335,12 +359,12 @@ export default function Post( {subdomain, id} : {subdomain: string, id: number} 
                         />
 
                     </div>
-                
+
                 </div>
-                
+
             </div>
 
-            <div 
+            <div
                 className="post-editor-wrap"
                 spellCheck={false}
             >
@@ -370,9 +394,9 @@ export default function Post( {subdomain, id} : {subdomain: string, id: number} 
                 </div>
             </div>
 
-        </div>
+        </div>*!/}
         
-        {
+        {/!*{
             isUnPublishing ?
             <PopupConfirm 
                 title={( variant.status === 'published' ? 'Unpublish' : 'Unschedule' ) + " Post"}
@@ -381,10 +405,10 @@ export default function Post( {subdomain, id} : {subdomain: string, id: number} 
                 onClick={handleUnPublish}
                 onCancel={() => setIsUnPublishing(false)}
             /> : null
-        }
+        }*!/}
 
-        <Tooltip place="bottom" />
+        {/!*<Tooltip place="bottom" />*!/}
 
-    </div>
+    </div>*/
 
 }

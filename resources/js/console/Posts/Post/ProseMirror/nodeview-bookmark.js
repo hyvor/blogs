@@ -1,6 +1,6 @@
 import { NodeSelection, TextSelection } from "prosemirror-state";
-import api from "../../lib/api";
-import subdomainLogic from "../../logic/subdomainLogic";
+import api from "../../../lib/api";
+import subdomainLogic from "../../../logic/subdomainLogic";
 import schema from "./schema";
 
 

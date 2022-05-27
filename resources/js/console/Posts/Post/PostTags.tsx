@@ -1,21 +1,21 @@
 import React from 'react';
-import {Post} from "../objects/post";
 import {useActions, useValues} from "kea";
-import subdomainLogic from "../logic/subdomainLogic";
 import AsyncSelect from "react-select/async";
-import api from "../lib/api";
-import {Tag, User} from "../types";
-import {getPrimaryLanguage} from "../lib/blog-helpers";
-import tagsLogic, {IDKeyedTags} from "../logic/tagsLogic";
+import api from "../../lib/api";
+import {Post, Tag, User} from "../../types";
+import {getPrimaryLanguage} from "../../lib/blog-helpers";
+import tagsLogic, {IDKeyedTags} from "../../logic/tagsLogic";
+import getSubdomain from "../../logic-helpers/subdomain";
+import {OnChangeValue} from "react-select";
 
 interface SelectOption {
     value: number;
-    label: string;
+    label: string | null;
 }
 
 export default function PostTags({ post, updatePostValue } : { post: Post, updatePostValue: Function }) {
 
-    const subdomain = subdomainLogic.values.subdomain
+    const subdomain = getSubdomain()
 
     const tagsLogicInst = tagsLogic({subdomain})
     const { tags } = useValues(tagsLogicInst) as { tags: IDKeyedTags }
@@ -50,7 +50,7 @@ export default function PostTags({ post, updatePostValue } : { post: Post, updat
 
     }
 
-    function handleChange(options: Array<SelectOption>) {
+    function handleChange(options: OnChangeValue<SelectOption, true>) {
         const postTags : Array<Tag> = [];
         options.forEach(({value}) => postTags.push(tags[value]))
         updatePostValue('tags', postTags);

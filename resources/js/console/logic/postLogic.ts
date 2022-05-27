@@ -1,24 +1,22 @@
-/**
- * Logic for a single post
- */
-
 import {actions, events, kea, key, listeners, path, props, reducers, selectors} from "kea";
 import slugify from "../../helpers/slugify";
 import api from "../lib/api";
 import postsLogic from "./postsLogic";
-import subdomainLogic from "./subdomainLogic";
-import { diff } from 'deep-object-diff';
 import merge from 'deepmerge'
-import {postLogicType} from "./postLogicType";
-import {Post} from "../types";
+import type { postLogicType } from "./postLogicType";
+import {Language, Post, PostVariant} from "../types";
 import {ajax} from "kea-ajax";
+import getSubdomain from "../logic-helpers/subdomain";
+import {diff} from "deep-object-diff";
+import languagesLogic from "./languagesLogic";
+import {PostEditorState} from "../states";
 
 async function updatePost(post: Post, diff: Partial<Post>) {
 
     if (diff.variants) {
         for (let languageId in diff.variants) {
             await api.patch(
-                subdomainLogic.values.subdomain, `/post/${post.id}/variant`,
+                getSubdomain(), `/post/${post.id}/variant`,
                 {...diff.variants[languageId], ...{language_id: languageId}}
             )
         }
@@ -26,21 +24,22 @@ async function updatePost(post: Post, diff: Partial<Post>) {
     }
 
     if (diff.authors) {
-        await api.patch(subdomainLogic.values.subdomain, `/post/${post.id}/authors`, {
+        await api.patch(getSubdomain(), `/post/${post.id}/authors`, {
             ids: post.authors.map(author => author.id)
         });
         delete diff.authors
     }
     if (diff.tags) {
-        await api.patch(subdomainLogic.values.subdomain, `/post/${post.id}/tags`, {
+        await api.patch(getSubdomain(), `/post/${post.id}/tags`, {
             ids: post.tags.map(author => author.id)
         });
         delete diff.tags
     }
 
-    return await api.patch<Post>(subdomainLogic.values.subdomain, `/post/${post.id}`, diff)
+    return await api.patch<Post>(getSubdomain(), `/post/${post.id}`, diff)
 
 }
+
 
 const postLogic = kea<postLogicType>([
 
@@ -48,25 +47,25 @@ const postLogic = kea<postLogicType>([
     key(props => props.id),
     path(key => ['post', key]),
 
-    actions({
-        set: (obj) => ({obj}),
-        setOriginal: (obj) => ({obj}),
-        updatePostValue: (key, value) => ({key, value}),
-        updatePostVariantValue: (key, value, languageId) => ({key, value, languageId}),
-        addVariant: (variant) => ({variant}),
-    }),
+    actions(({values}) => ({
+        set: (obj: Post) => ({obj}),
+        setOriginal: (obj: Post) => ({obj}),
+        updatePostValue: (key: string, value: any) => ({key, value}),
+        updateCurrentPostVariantValue: (key: string, value: any) => ({key, value, languageId: values.currentLanguageId}),
+        addVariant: (variant: PostVariant) => ({variant}),
+        changeEditorState: (key: keyof PostEditorState, value: any) => ({key, value})
+    })),
 
     ajax(({actions, selectors, props, values}) => ({
  
         loadPost: async () => {
-            const response = await api.get(subdomainLogic.values.subdomain, `/post/${props.id}`);
-            console.log(response)
+            const response = await api.get<Post>(getSubdomain(), `/post/${props.id}`);
             actions.set(response);
         },
 
         deletePost: async () => {
             // remove from posts list
-            const subdomain = subdomainLogic.values.subdomain
+            const subdomain = getSubdomain()
             const postsLogicInst = postsLogic({subdomain});
             postsLogicInst.actions.setPostsList(postsLogicInst.values.postsList.filter(pId => pId !== props.id));
             postsLogicInst.actions.navigateToPosts();
@@ -84,14 +83,14 @@ const postLogic = kea<postLogicType>([
             }
 
             const response = await updatePost(values.post, diff);
-            // const response = await api.patch(subdomainLogic.values.subdomain, `/post/${props.id}`, diff)
+            // const response = await api.patch(getSubdomain(), `/post/${props.id}`, diff)
             actions.setOriginal(response);
         },
 
         /**
          * Used for forced saving/publishing/unpublishing (usually on button click)
          */
-        forceSavePost: async ({onSave, update}) => {
+        forceSavePost: async ({onSave, update} : { update: Partial<Post>, onSave: (post: Post) => void}) => {
 
             const diff = {...values.diff, ...update};
 
@@ -101,9 +100,9 @@ const postLogic = kea<postLogicType>([
             typeof onSave === 'function' && onSave(response);
         },
 
-        createVariant: async ({languageId, onCreate}) => {
+        createVariant: async ({languageId, onCreate} : {languageId: number, onCreate: Function}) => {
 
-            const variant = await api.post(subdomainLogic.values.subdomain,
+            const variant = await api.post<PostVariant>(getSubdomain(),
                 `/post/${props.id}/variant`,
                 {
                     language_id: languageId
@@ -111,7 +110,6 @@ const postLogic = kea<postLogicType>([
             );
 
             actions.addVariant(variant);
-
             onCreate && onCreate();
 
         },
@@ -132,29 +130,16 @@ const postLogic = kea<postLogicType>([
 
     })),
 
-    selectors({
 
-        // diff of orignal and state
-        diff: [
-            (selectors) => [selectors.post, selectors.postOriginal],
-            (post, postOriginal) => {
-                const d = diff(postOriginal, post) as Partial<Post>
-                if (d.preview_id) delete d.preview_id;
-                return d;
-            }
-        ]
-
-    }),
-
-    reducers(({actions, props, selectors}) => ({
+    reducers(({values}) => ({
 
         // post's current state in the front-end
         post: [
-            null as Post | null,
+            {} as Post,
             {
                 set: (_, {obj}) => obj,
-                updatePostValue: (state, {key, value}) => ({...state, ...{[key]: value}}),
-                updatePostVariantValue: (state, {key, value, languageId}) => {
+                updatePostValue: (state, {key, value}) => ({...state, ...{[key]: value}} as Post),
+                updateCurrentPostVariantValue: (state, {key, value, languageId}) => {
                     const obj = {
                         variants: {
                             [languageId]: {
@@ -176,7 +161,7 @@ const postLogic = kea<postLogicType>([
 
         // the really saved post in the back-end
         postOriginal: [
-            null as Post | null,
+            {} as Post,
             {
                 set: (_, {obj}) => obj,
                 setOriginal: (_, {obj}) => obj,
@@ -188,12 +173,64 @@ const postLogic = kea<postLogicType>([
                     }) as Post
                 }
             }
+        ],
+
+        currentLanguageId: [
+            languagesLogic({subdomain: getSubdomain()}).values.primaryLanguage.id as number,
+            {
+                changeCurrentLanguageId: (_, {languageId}) => languageId
+            }
+        ],
+
+        editorState: [
+            {
+                languageId: languagesLogic({subdomain: getSubdomain()}).values.primaryLanguage.id,
+                isFullscreen: false,
+                isChangingSettings: false,
+                isPublishing: false,
+                isUnpublishing: false,
+                isNonDraftEditing: false
+            } as PostEditorState,
+            {
+                changeEditorState: (state, {key, value}) => (
+                    {...state, [key]: value} as PostEditorState
+                )
+            }
         ]
 
     })),
 
+    selectors({
+
+        // diff of orignal and state
+        diff: [
+            s => [s.post, s.postOriginal],
+            (post, postOriginal) => {
+                const d = diff(postOriginal, post) as Partial<Post>
+                if (d.preview_id) delete d.preview_id;
+                return d;
+            }
+        ],
+
+        currentVariant: [
+            s => [s.post, s.currentLanguageId],
+            (post, currentLanguageId) : PostVariant => post.variants[currentLanguageId]
+        ],
+
+        currentLanguage: [
+            s => [s.currentLanguageId],
+            (currentLanguageId) : Language =>
+                languagesLogic({subdomain: getSubdomain()})
+                    .values.getLanguageById(currentLanguageId) as Language
+        ]
+
+    }),
+
     events(({actions, values, props}) => ({
         afterMount: () =>  {
+            if (values.post.id)
+                return;
+
             if (props.data) {
                 actions.set(props.data);
             } else {

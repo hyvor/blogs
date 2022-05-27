@@ -1,24 +1,21 @@
 import { useActions, useValues } from 'kea';
 import React, {useState, useRef, ReactNode} from 'react';
 import { Trash } from 'react-bootstrap-icons';
-import CodemirrorEditor, { CODEMIRROR_MODES } from '../ReusableComponents/CodemirrorEditor';
-import { PopupConfirm } from '../ReusableComponents/Popup';
+import CodemirrorEditor, { CODEMIRROR_MODES } from '../../ReusableComponents/CodemirrorEditor';
+import { PopupConfirm } from '../../ReusableComponents/Popup';
 import { toast } from 'react-toastify'
-import mediaLogic from '../logic/mediaLogic';
-import subdomainLogic from '../logic/subdomainLogic';
-import Checkbox from '../ReusableComponents/Checkbox';
+import mediaLogic from '../../logic/mediaLogic';
+import subdomainLogic from '../../logic/subdomainLogic';
+import Checkbox from '../../ReusableComponents/Checkbox';
 import dayjs from 'dayjs';
 import DatePicker from 'react-datepicker';
-import Loader from '../ReusableComponents/Loader';
+import Loader from '../../ReusableComponents/Loader';
 
-import SelectTags from './PostTags';
-import postTagLogic from '../logic/posts/postTagLogic';
-
-import { usePostActions, usePostValues } from './usePost';
-import {Post} from "../objects/post";
+import { usePostActions, usePostValues } from './helpers';
 import PostAuthors from "./PostAuthors";
 import PostTags from "./PostTags";
-import {Media} from "../types";
+import {Media} from "../../types";
+import getSubdomain from "../../logic-helpers/subdomain";
 
 type PostSettingsProps = {
     isSettingsOpen: boolean;
@@ -27,29 +24,25 @@ type PostSettingsProps = {
     currentLanguageId: number
 };
 
-export default function PostSettings({ isSettingsOpen, settingsViewRef, id, currentLanguageId } : PostSettingsProps) {
+export default function Settings({ isSettingsOpen, settingsViewRef, id, currentLanguageId } : PostSettingsProps) {
 
-    const { post } : { post? : Post } = usePostValues(id);
-    const { updatePostValue, updatePostVariantValue, deletePost, savePost } = usePostActions(id);
+    const { post } = usePostValues(id);
+    const { updatePostValue, updateCurrentPostVariantValue, deletePost, savePost } = usePostActions(id);
 
     const {subdomain} = useValues(subdomainLogic);
-    const mediaLogicInst = mediaLogic({subdomain})
+    const mediaLogicInst = mediaLogic({subdomain: getSubdomain()})
     const { uploadImageAjax } = useValues(mediaLogicInst);
     const { uploadImage } = useActions(mediaLogicInst)
-
-
-    const postTagLogicBuilt = postTagLogic({subdomain})
-    const { load } = useActions(postTagLogicBuilt) 
 
     const [ isDeleting, setIsDeleting ] = useState(false);
     const [ isFeaturedImageRemoving, setIsFeaturedImageRemoving ] = useState(false);
 
-    const imageUploadInputRef = useRef(null)
+    const imageUploadInputRef = useRef<HTMLInputElement | null>(null)
 
     const variant = post.variants[currentLanguageId];
 
     function handleDelete() {
-        deletePost({id})
+        deletePost()
     }
 
     function handleFeaturedImageRemove() {
@@ -58,10 +51,10 @@ export default function PostSettings({ isSettingsOpen, settingsViewRef, id, curr
     }
 
     function handleUploadInputClick() {
-        imageUploadInputRef.current.click();
+        (imageUploadInputRef.current as HTMLInputElement).click();
     }
     function handleUpload(e: React.ChangeEvent<HTMLInputElement>) {
-        const file = e.currentTarget.files[0]
+        const file = (e.currentTarget as any).files[0]
         if (!file) {
             return toast.error("No files selected");
         }
@@ -73,9 +66,6 @@ export default function PostSettings({ isSettingsOpen, settingsViewRef, id, curr
             }
         })
     }
-
-    // This will pass the post Id to the back-end to get the selected tags.
-    load({postId : post.id})
 
     const [ settingsType, setSettingsType ] = useState('basic'); // basic | advanced
 
@@ -117,7 +107,7 @@ export default function PostSettings({ isSettingsOpen, settingsViewRef, id, curr
                                 variant.status !== 'published' && variant.status !== 'scheduled' ?
                                 <div className="not-published">Not published</div> :
                                 <DatePicker
-                                    selected={dayjs.unix(post.published_at).toDate()}
+                                    selected={dayjs.unix(post.published_at as number).toDate()}
                                     onChange={(date: Date) => updatePostValue("published_at", dayjs(date).unix())}
                                     showTimeInput
                                     dateFormat="yyyy-MM-dd h:mm aa"
@@ -155,8 +145,8 @@ export default function PostSettings({ isSettingsOpen, settingsViewRef, id, curr
                             <textarea
                                 className="input"
                                 placeholder="Write a description..."
-                                value={variant.description}
-                                onChange={e => updatePostVariantValue('description', e.target.value)}
+                                value={variant.description || ''}
+                                onChange={e => updateCurrentPostVariantValue('description', e.target.value)}
                                 maxLength={350}
                             />
                         </Setting>
@@ -234,7 +224,7 @@ export default function PostSettings({ isSettingsOpen, settingsViewRef, id, curr
                     >
                         <input
                             className="input"
-                            value={post.canonical_url}
+                            value={post.canonical_url || ''}
                             onChange={e => updatePostValue('canonical_url', e.target.value)}
                             maxLength={250}
                         />

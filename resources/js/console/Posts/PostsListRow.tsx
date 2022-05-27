@@ -5,17 +5,12 @@ import { useValues } from 'kea';
 import dayjs from 'dayjs';
 import languagesLogic from '../logic/languagesLogic';
 import LangTag from '../ReusableComponents/LangTag';
-import { getLangTagIconByPostStatus } from './PostLanguageSelector';
-import {Post} from "../objects/post";
+import { getLangTagIconByPostStatus } from './Post/PostLanguageSelector';
 
 export default function PostsListRow({ id , subdomain } : {id: number, subdomain: string}) {
 
     const { languages, getLanguageById } = useValues(languagesLogic({subdomain}))
-
-    const { post } : { post?: Post, } = useValues(postLogic({id}))
-
-    if (!post)
-        return null;
+    const { post } = useValues(postLogic({id}))
 
     const postsLink = `/console/${subdomain}/` + (post.is_page ? 'pages' : 'posts')
     const toLink = `${postsLink}/${post.id}`
@@ -29,7 +24,7 @@ export default function PostsListRow({ id , subdomain } : {id: number, subdomain
     return <NavLink
         key={post.id} 
         href={location.pathname === toLink ? postsLink : toLink }
-        className={"posts-list-item" + (false ? " active" : "") + ` ${variant.status}` }>
+        className={"posts-list-item" + ` ${variant.status}` }>
 
         <div className="post-title">{ variant.title || '(Untitled)' }</div>
         
@@ -69,14 +64,14 @@ export default function PostsListRow({ id , subdomain } : {id: number, subdomain
             <div className="post-tags">
             {
                 !post.is_page ?
-                post.tags.map(tag => {
-                    return <span key={tag.id} className="post-tag">{tag.variants[languageId].name}</span>
-                })
+                    post.tags.map(tag => {
+                        return <span key={tag.id} className="post-tag">{tag.variants[languageId].name}</span>
+                    })
                 : null
             }
             </div>
             <div className="post-status-wrap">
-                <span className={`post-status ${variant.status}`}>{variant.status}</span>
+                <span className={`global-post-status ${variant.status}`}>{variant.status}</span>
             </div>
         </div>
 

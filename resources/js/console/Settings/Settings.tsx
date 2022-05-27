@@ -19,7 +19,7 @@ import SEO from './SEO';
 import ColorMode from "./ColorMode";
 import Highlight from "./Highlight";
 
-export default function Settings({type} : {type: string}) {
+export default function Settings({type} : {type: string | undefined}) {
 
     const { subdomain } = useValues(subdomainLogic); 
     const settingsPrefix = `/console/${subdomain}/settings`;

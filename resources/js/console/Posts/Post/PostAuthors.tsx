@@ -1,21 +1,22 @@
 import React from 'react';
-import {Post} from "../objects/post";
 import {useActions, useValues} from "kea";
-import subdomainLogic from "../logic/subdomainLogic";
+import subdomainLogic from "../../logic/subdomainLogic";
 import AsyncSelect from "react-select/async";
-import api from "../lib/api";
-import {User} from "../types";
-import usersLogic, {IDKeyedUsers} from "../logic/usersLogic";
-import {getPrimaryLanguage} from "../lib/blog-helpers";
+import api from "../../lib/api";
+import {Post, User} from "../../types";
+import usersLogic, {IDKeyedUsers} from "../../logic/usersLogic";
+import {getPrimaryLanguage} from "../../lib/blog-helpers";
+import getSubdomain from "../../logic-helpers/subdomain";
+import {OnChangeValue} from "react-select";
 
 interface SelectOption {
     value: number;
-    label: string;
+    label: string | null;
 }
 
 export default function PostAuthors({ post, updatePostValue } : { post: Post, updatePostValue: Function }) {
 
-    const subdomain = subdomainLogic.values.subdomain
+    const subdomain = getSubdomain()
 
     const usersLogicInst = usersLogic({subdomain});
     const { users } = useValues(usersLogicInst) as { users: IDKeyedUsers }
@@ -50,7 +51,7 @@ export default function PostAuthors({ post, updatePostValue } : { post: Post, up
 
     }
 
-    function handleChange(options: Array<SelectOption>) {
+    function handleChange(options: OnChangeValue<SelectOption, true>) {
 
         const authors : Array<User> = [];
         options.forEach(({value}) => authors.push(users[value]))

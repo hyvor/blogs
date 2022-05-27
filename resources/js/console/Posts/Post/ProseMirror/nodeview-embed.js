@@ -1,6 +1,6 @@
-import setInnerHTMLWithScripts from "../../../helpers/setInnerHTMLWithScripts";
-import api from "../../lib/api";
-import subdomainLogic from "../../logic/subdomainLogic";
+import setInnerHTMLWithScripts from "../../../../helpers/setInnerHTMLWithScripts";
+import api from "../../../lib/api";
+import subdomainLogic from "../../../logic/subdomainLogic";
 import schema from "./schema";
 import {NodeSelection, TextSelection} from "prosemirror-state";
 import {toast} from "react-toastify";

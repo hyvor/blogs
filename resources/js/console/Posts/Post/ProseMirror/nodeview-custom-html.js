@@ -3,7 +3,7 @@ import {chainCommands, exitCode, joinBackward, selectNodeBackward} from "./comma
 import {undo, redo} from "prosemirror-history"
 import { TextSelection, Selection } from "prosemirror-state"
 import schema from './schema'
-import {CODEMIRROR_MODES} from "../../ReusableComponents/CodemirrorEditor";
+import {CODEMIRROR_MODES} from "../../../ReusableComponents/CodemirrorEditor";
 import {computeChange} from "./nodeview-codeblock";
 
 export default class CustomHtml {

@@ -1,5 +1,5 @@
 import React from 'react';
-import Post from './Post';
+import Post from './Post/Post';
 import { useActions, useValues } from 'kea';
 import subdomainLogic from '../logic/subdomainLogic';
 import Loader from '../ReusableComponents/Loader';
