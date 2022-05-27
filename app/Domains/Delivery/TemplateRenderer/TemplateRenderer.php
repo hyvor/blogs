@@ -141,13 +141,14 @@ class TemplateRenderer
         );
 
         if (! $configFile) {
-            throw new Error('Config.yaml file not found');
+            return [];
+            // throw new Error('Config.yaml file not found');
         }
 
         try {
             return Yaml::parse($configFile->content);
         } catch (ParseException) {
-            throw new Error('Unable to parse conig.yaml');
+            throw new Error('Unable to parse config.yaml');
         }
     }
 

@@ -22,7 +22,7 @@ it('matches redirect', function () {
     $to = 'https://somewhere.com';
 
     RedirectRepository::createRedirect(
-        $this->blog->id,
+        $this->blog,
         $from,
         $to,
         RedirectTypeEnum::PERMANENT
@@ -33,7 +33,7 @@ it('matches redirect', function () {
 
     $this->assertEquals(DeliveryAPITypeEnum::REDIRECT, $responseObject->type);
     $this->assertEquals($to, $responseObject->to);
-    $this->assertEquals(RedirectTypeEnum::PERMANENT->value, $responseObject->status);
+    $this->assertEquals(301, $responseObject->status);
 });
 
 it('matches assets', function () {

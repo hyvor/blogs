@@ -70,8 +70,8 @@ class BlogObject
         $this->code_head = $blog->code_head;
         $this->code_foot = $blog->code_foot;
 
-        $blog->navigations->each(function ($nav) {
-            $navObject = new NavObject($nav);
+        $blog->navigations->each(function ($nav) use ($language) {
+            $navObject = new NavObject($nav, $language);
             if ($nav->type === 'header') {
                 $this->nav_header[] = $navObject;
             } else {

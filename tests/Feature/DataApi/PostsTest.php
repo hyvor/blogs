@@ -22,13 +22,8 @@ it('fetches posts without params', function () {
         ->assertOk()
         ->assertJson(function (AssertableJson $json) {
             $json
-                ->has(
-                    'data',
-                    25,
-                    fn (AssertableJson $json) =>
-                    $json->where('language.code', 'en')
-                        ->etc()
-                )
+                ->has('data')
+                ->has('data.0', fn(AssertableJson $json) => $json->where('language.code', 'en')->etc())
                 ->has('pagination');
         });
 });
@@ -55,13 +50,8 @@ it('works with language', function () {
         ])
         ->assertOk()
         ->assertJson(function (AssertableJson $json) {
-            $json->has(
-                'data',
-                25,
-                fn (AssertableJson $json) =>
-            $json->where('language.code', 'fr')
-                ->etc()
-            )
+            $json->has('data')
+                ->has('data.0', fn (AssertableJson $json) => $json->where('language.code', 'fr')->etc())
                 ->has('pagination');
         });
 });
@@ -366,7 +356,7 @@ it('filters by tag ID', function () {
     $blog = Blog::find(config('test.blog_id'));
     $tag = $blog->tags[0];
     $post = getAPost();
-    PostTag::create(['post_id' => $post->id, 'tag_id' => $tag->id]);
+    PostTag::updateOrCreate(['post_id' => $post->id, 'tag_id' => $tag->id]);
 
     $response = $this->callDataApi('/posts', [
         'filter' => "tag.id=$tag->id",

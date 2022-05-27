@@ -97,6 +97,14 @@ it('matches index with page number', function () {
     $twig = '{{ _pagination.page }}';
     $result = '2';
 
+    // add posts to make sure there are 2 pages
+    Post::factory()
+        ->count($this->count)
+        ->has(PostVariant::factory()->create())
+        ->create([
+            'blog_id' => config('test.blog_id')
+        ]);
+
     ThemeFilesRepository::createOrUpdateFile(
         $this->blog,
         ThemeFileFolderEnum::TEMPLATES,

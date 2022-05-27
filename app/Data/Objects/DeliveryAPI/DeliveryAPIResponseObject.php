@@ -45,7 +45,7 @@ class DeliveryAPIResponseObject
         $obj = new self(DeliveryAPITypeEnum::REDIRECT);
         $obj->to = $to;
         $obj->cache = true;
-        $obj->status = $type->value;
+        $obj->status = $type === RedirectTypeEnum::PERMANENT ? 301 : 302;
 
         return $obj;
     }
