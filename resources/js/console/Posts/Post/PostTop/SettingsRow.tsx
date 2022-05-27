@@ -1,16 +1,31 @@
 import {BoxArrowUpRight, Fullscreen, GearFill} from "react-bootstrap-icons";
 import {getBlogUrl} from "../../../lib/blog-helpers";
-import React from "react";
+import React, {useEffect} from "react";
 import {usePostActions, usePostValues} from "../helpers";
 import getSubdomain from "../../../logic-helpers/subdomain";
 import UnpublishButton from "./UnpublishButton";
 import MainButton from "./MainButton";
 import Publisher from "./Publisher";
+import PostSettings from "./PostSettings";
 
 export default function SettingsRow({id}: {id: number}) {
 
     const { post, editorState, currentLanguage } = usePostValues(id);
     const { changeEditorState } = usePostActions(id)
+
+    function checkFullscreenClose(e: KeyboardEvent) {
+        if (e.key === "Escape")
+            changeEditorState('isFullscreen', false);
+    }
+
+    useEffect(() => {
+        if (editorState.isFullscreen) {
+            window.addEventListener("keyup", checkFullscreenClose)
+            return () => {
+                window.removeEventListener("keyup", checkFullscreenClose);
+            }
+        }
+    }, [editorState.isFullscreen])
 
     return <div className="post-editor-settings">
 
@@ -48,12 +63,7 @@ export default function SettingsRow({id}: {id: number}) {
             </div>
         </div>
 
-        {/*<Settings
-            isSettingsOpen={editorState.isChangingSettings}
-            settingsViewRef={settingsViewRef}
-            id={id}
-            currentLanguageId={currentLanguageId}
-        />*/}
+        <PostSettings id={id} />
 
     </div>
 

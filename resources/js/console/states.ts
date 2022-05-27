@@ -8,4 +8,5 @@ export interface PostEditorState {
     isPublishing: boolean,
     isUnpublishing: boolean,
     isNonDraftEditing: boolean,
+    isNonDraftUpdating: boolean
 }

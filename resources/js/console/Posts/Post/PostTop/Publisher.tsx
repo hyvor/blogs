@@ -8,9 +8,11 @@ import { toast } from 'react-toastify';
 import {Post} from "../../../types";
 import onOutsideClick from "../../../../helpers/onOutsideClick";
 
+let outsideClickListenerRemover : any;
+
 export default function Publisher({id} : {id: number}) {
 
-    const { forceSavePostAjax, editorState, currentLanguageId  } = usePostValues(id);
+    const { forceSavePostAjax, editorState  } = usePostValues(id);
     const { forceSavePost, changeEditorState } = usePostActions(id);
 
     const [hasClicked, setHasClicked] = useState(false)
@@ -28,14 +30,14 @@ export default function Publisher({id} : {id: number}) {
     }
 
     function handlePublish() {
-        const update = {variants: {[currentLanguageId]: {}}} as Partial<Post>;
+        const update = {variants: {[editorState.languageId]: {}}} as Partial<Post>;
 
         if (update.variants) { // TS fix
             if (publishTime) {
                 update['published_at'] = dayjs(publishTime).unix()
-                update.variants[currentLanguageId]['status'] = 'scheduled';
+                update.variants[editorState.languageId]['status'] = 'scheduled';
             } else {
-                update.variants[currentLanguageId]['status'] = 'published';
+                update.variants[editorState.languageId]['status'] = 'published';
             }
         }
 
@@ -45,7 +47,7 @@ export default function Publisher({id} : {id: number}) {
                 !publishTime ?
                 <div>Post Published. <a
                     className="link"
-                    href={post.variants[currentLanguageId].url}
+                    href={post.variants[editorState.languageId].url}
                     target="_blank"
                 >View</a></div> :
                 "Post scheduled"
@@ -61,7 +63,9 @@ export default function Publisher({id} : {id: number}) {
 
     useEffect(() => {
         if (editorState.isPublishing) {
-            onOutsideClick(publisherViewRef.current, () => changeEditorState('isPublishing', false));
+            outsideClickListenerRemover = onOutsideClick(publisherViewRef.current, () => changeEditorState('isPublishing', false));
+        } else {
+            outsideClickListenerRemover && outsideClickListenerRemover()
         }
     }, [editorState.isPublishing])
     

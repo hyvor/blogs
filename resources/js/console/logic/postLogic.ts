@@ -51,8 +51,9 @@ const postLogic = kea<postLogicType>([
         set: (obj: Post) => ({obj}),
         setOriginal: (obj: Post) => ({obj}),
         updatePostValue: (key: string, value: any) => ({key, value}),
-        updateCurrentPostVariantValue: (key: string, value: any) => ({key, value, languageId: values.currentLanguageId}),
+        updateCurrentPostVariantValue: (key: string, value: any) => ({key, value, languageId: values.editorState.languageId}),
         addVariant: (variant: PostVariant) => ({variant}),
+        removeVariant: (languageId: number) => ({languageId}),
         changeEditorState: (key: keyof PostEditorState, value: any) => ({key, value})
     })),
 
@@ -114,6 +115,16 @@ const postLogic = kea<postLogicType>([
 
         },
 
+        deleteVariant: async ({languageId} : {languageId: number}) => {
+
+            actions.removeVariant(languageId);
+
+            await api.delete(getSubdomain(), `/post/${props.id}/variant`, {
+                language_id: languageId
+            });
+
+        }
+
     })),
 
     listeners(({actions, values}) => ({
@@ -155,6 +166,11 @@ const postLogic = kea<postLogicType>([
                             [variant.language_id]: variant
                         }
                     }) as Post
+                },
+                removeVariant: (state, {languageId}) => {
+                    const copy = {...state}
+                    delete copy.variants[languageId]
+                    return copy;
                 }
             }
         ],
@@ -171,14 +187,12 @@ const postLogic = kea<postLogicType>([
                             [variant.language_id]: variant
                         }
                     }) as Post
+                },
+                removeVariant: (state, {languageId}) => {
+                    const copy = {...state}
+                    delete copy.variants[languageId]
+                    return copy;
                 }
-            }
-        ],
-
-        currentLanguageId: [
-            languagesLogic({subdomain: getSubdomain()}).values.primaryLanguage.id as number,
-            {
-                changeCurrentLanguageId: (_, {languageId}) => languageId
             }
         ],
 
@@ -189,7 +203,10 @@ const postLogic = kea<postLogicType>([
                 isChangingSettings: false,
                 isPublishing: false,
                 isUnpublishing: false,
-                isNonDraftEditing: false
+                // just editing the post
+                isNonDraftEditing: false,
+                // updater opened
+                isNonDraftUpdating: false,
             } as PostEditorState,
             {
                 changeEditorState: (state, {key, value}) => (
@@ -213,15 +230,13 @@ const postLogic = kea<postLogicType>([
         ],
 
         currentVariant: [
-            s => [s.post, s.currentLanguageId],
-            (post, currentLanguageId) : PostVariant => post.variants[currentLanguageId]
+            s => [s.post, s.editorState],
+            (post, editorState) : PostVariant => post.variants[editorState.languageId]
         ],
 
         currentLanguage: [
-            s => [s.currentLanguageId],
-            (currentLanguageId) : Language =>
-                languagesLogic({subdomain: getSubdomain()})
-                    .values.getLanguageById(currentLanguageId) as Language
+            s => [s.editorState, languagesLogic({subdomain: getSubdomain()}).selectors.getLanguageById],
+            (editorState, getLang) : Language => getLang(editorState.languageId) as Language
         ]
 
     }),

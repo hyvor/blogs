@@ -8,25 +8,23 @@ import {Post} from "../../../types";
 export default  function MainButton({id} : {id: number}) {
     let name, onClick: any, icon;
 
-    const { currentVariant, currentLanguageId, editorState, forceSavePostAjax } = usePostValues(id)
+    const { currentVariant, editorState, forceSavePostAjax } = usePostValues(id)
     const { changeEditorState, forceSavePost } = usePostActions(id)
 
-    const [ isNonDraftUpdating,  setIsNonDraftUpdating ] = useState(false)
-
     function handleUpdateNonDraft() {
-        setIsNonDraftUpdating(true);
+        changeEditorState('isNonDraftUpdating', true);
         forceSavePost({
             update: {
                 variants: {
-                    [currentLanguageId]: {
+                    [editorState.languageId]: {
                         content: currentVariant.content_unsaved
                     }
                 } as Partial<Post>
             },
             onSave: (p: Post) => {
-                setIsNonDraftUpdating(false)
+                changeEditorState('isNonDraftUpdating', false)
                 toast.success(
-                    <div>Post Updated. <a className="link" href={p.variants[currentLanguageId].url} target="_blank">View</a></div>,
+                    <div>Post Updated. <a className="link" href={p.variants[editorState.languageId].url} target="_blank">View</a></div>,
                     {
                         autoClose: 5000
                     }
@@ -43,7 +41,7 @@ export default  function MainButton({id} : {id: number}) {
         } else {
             return <ActionButton
                 className="small main-button"
-                status={!isNonDraftUpdating ? "stale" : (forceSavePostAjax.status || 'stale')}
+                status={!editorState.isNonDraftUpdating ? "stale" : (forceSavePostAjax.status || 'stale')}
                 staleName="Update"
                 loadingName="Updating"
                 successName="Updated"

@@ -1,35 +1,41 @@
 import { useActions, useValues } from 'kea';
-import React, {useState, useRef, ReactNode} from 'react';
+import React, {useState, useRef, ReactNode, useEffect} from 'react';
 import { Trash } from 'react-bootstrap-icons';
-import CodemirrorEditor, { CODEMIRROR_MODES } from '../../ReusableComponents/CodemirrorEditor';
-import { PopupConfirm } from '../../ReusableComponents/Popup';
+import CodemirrorEditor, { CODEMIRROR_MODES } from '../../../ReusableComponents/CodemirrorEditor';
+import { PopupConfirm } from '../../../ReusableComponents/Popup';
 import { toast } from 'react-toastify'
-import mediaLogic from '../../logic/mediaLogic';
-import subdomainLogic from '../../logic/subdomainLogic';
-import Checkbox from '../../ReusableComponents/Checkbox';
+import mediaLogic from '../../../logic/mediaLogic';
+import Checkbox from '../../../ReusableComponents/Checkbox';
 import dayjs from 'dayjs';
 import DatePicker from 'react-datepicker';
-import Loader from '../../ReusableComponents/Loader';
+import Loader from '../../../ReusableComponents/Loader';
 
-import { usePostActions, usePostValues } from './helpers';
-import PostAuthors from "./PostAuthors";
-import PostTags from "./PostTags";
-import {Media} from "../../types";
-import getSubdomain from "../../logic-helpers/subdomain";
+import { usePostActions, usePostValues } from '../helpers';
+import PostAuthors from "../PostAuthors";
+import PostTags from "../PostTags";
+import {Media} from "../../../types";
+import getSubdomain from "../../../logic-helpers/subdomain";
+import onOutsideClick from "../../../../helpers/onOutsideClick";
+import languagesLogic from "../../../logic/languagesLogic";
 
 type PostSettingsProps = {
-    isSettingsOpen: boolean;
-    settingsViewRef: any,
     id: number;
-    currentLanguageId: number
 };
 
-export default function Settings({ isSettingsOpen, settingsViewRef, id, currentLanguageId } : PostSettingsProps) {
+let outsideClickListenerRemover: any;
 
-    const { post } = usePostValues(id);
-    const { updatePostValue, updateCurrentPostVariantValue, deletePost, savePost } = usePostActions(id);
+export default function PostSettings({ id } : PostSettingsProps) {
 
-    const {subdomain} = useValues(subdomainLogic);
+    const { post, editorState, currentLanguage } = usePostValues(id);
+    const {
+        updatePostValue, updateCurrentPostVariantValue,
+        deletePost, deleteVariant,
+        savePost,
+        changeEditorState
+    } = usePostActions(id);
+
+    const publisherViewRef = useRef<HTMLDivElement | null>(null)
+
     const mediaLogicInst = mediaLogic({subdomain: getSubdomain()})
     const { uploadImageAjax } = useValues(mediaLogicInst);
     const { uploadImage } = useActions(mediaLogicInst)
@@ -39,10 +45,18 @@ export default function Settings({ isSettingsOpen, settingsViewRef, id, currentL
 
     const imageUploadInputRef = useRef<HTMLInputElement | null>(null)
 
-    const variant = post.variants[currentLanguageId];
+    const variant = post.variants[editorState.languageId];
 
     function handleDelete() {
-        deletePost()
+        if (currentLanguage.is_primary) {
+            deletePost()
+        } else {
+            toast(currentLanguage.name + " variant deleted");
+            changeEditorState('languageId', languagesLogic({subdomain: getSubdomain()}).values.primaryLanguage.id)
+            changeEditorState('isChangingSettings', false)
+            setIsDeleting(false)
+            deleteVariant({languageId: currentLanguage.id})
+        }
     }
 
     function handleFeaturedImageRemove() {
@@ -69,8 +83,19 @@ export default function Settings({ isSettingsOpen, settingsViewRef, id, currentL
 
     const [ settingsType, setSettingsType ] = useState('basic'); // basic | advanced
 
-    return <div className={"settings-view-wrap " + (isSettingsOpen ? "active" : "inactive") }>
-        <div ref={settingsViewRef} className="post-editor-settings-view">
+    useEffect(() => {
+        if (editorState.isChangingSettings) {
+            outsideClickListenerRemover = onOutsideClick(
+                publisherViewRef.current,
+                () => changeEditorState('isChangingSettings', false)
+            );
+        } else {
+            outsideClickListenerRemover && outsideClickListenerRemover()
+        }
+    }, [editorState.isChangingSettings])
+
+    return <div className={"settings-view-wrap " + (editorState.isChangingSettings ? "active" : "inactive") }>
+        <div ref={publisherViewRef} className="post-editor-settings-view">
 
             <div className="setting-select">
                 <span 
@@ -205,7 +230,7 @@ export default function Settings({ isSettingsOpen, settingsViewRef, id, currentL
                         </Setting>
 
                         <Setting 
-                            title="Delete Post"
+                            title={currentLanguage.is_primary ? "Delete Post" : `Delete ${currentLanguage.name} Variant`}
                         >
                             <button 
                                 className="button small danger"
@@ -261,9 +286,10 @@ export default function Settings({ isSettingsOpen, settingsViewRef, id, currentL
                 isDeleting ?
                 <PopupConfirm 
                     title="Delete Post"
-                    text={<div>
-                        Are you sure to <b>permanently delete</b> this post? 
-                    </div>}
+                    text={currentLanguage.is_primary ?
+                        <div>Are you sure to <b>permanently delete</b> this post?</div> :
+                        <div>Are you sure to <b>permanently delete</b> the {currentLanguage.name} variant of this post?</div>
+                    }
                     onClick={handleDelete}
                     onCancel={() => setIsDeleting(false)}
                     name="Delete"

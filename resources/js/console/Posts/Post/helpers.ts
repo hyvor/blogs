@@ -14,11 +14,13 @@ export function usePostActions(id: number) {
 
 export function useAutoSave(id: number) {
 
-    const { currentVariant, diff } = usePostValues(id);
+    const { currentVariant, diff, editorState } = usePostValues(id);
     const { savePost } = usePostActions(id)
 
     function handleAutoSave() {
-        savePost();
+        if (!editorState.isUnpublishing && !editorState.isPublishing && !editorState.isNonDraftEditing) {
+            savePost();
+        }
     }
 
     useEffect(() => {
