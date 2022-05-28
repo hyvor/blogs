@@ -9,7 +9,6 @@ use App\Domains\Route\PermalinkRepository;
 use App\Domains\Theme\ThemeFilesRepository;
 use App\Exceptions\TrustedException;
 use App\Helpers\InternalAPICaller;
-use App\Models\Blog;
 use Hyvor\SvgIcons\Exception\SvgIconException;
 use Hyvor\SvgIcons\Icon;
 use Twig\Error\Error;
@@ -49,6 +48,9 @@ class TwigExtensions extends AbstractExtension
                 'is_safe' => ['html'],
             ]),
             new TwigFilter('pagination_page_url', [$this, 'paginationPageUrlFilter'], ['needs_context' => true]),
+            new TwigFilter('language_variant_url', [$this, 'languageVariantUrlFilter'], [
+                'needs_context' => true,
+            ]),
         ];
     }
 
@@ -62,9 +64,6 @@ class TwigExtensions extends AbstractExtension
             ]),
             new TwigFunction('icon', [$this, 'iconFunction'], [
                 'is_safe' => ['html'],
-            ]),
-            new TwigFunction('language_variant_url', [$this, 'languageVariantUrlFunction'], [
-                'needs_context' => true,
             ]),
             new TwigFunction('is_current_url', [$this, 'isCurrentUrlFunction'], [
                 'needs_context' => true,
@@ -144,41 +143,7 @@ class TwigExtensions extends AbstractExtension
         return $url;
     }
 
-
-    public function dataFunction($context, array $params = [])
-    {
-        $blog = $this->getBlogFromContext($context);
-
-        $endpoint = $params['endpoint'] ?? null;
-
-        if (! $endpoint) {
-            throw new Error('endpoint is required for the data() function');
-        }
-
-        unset($params['endpoint']);
-
-        try {
-            $response = InternalAPICaller::data($blog->subdomain, $endpoint, $params);
-        } catch (TrustedException $e) {
-            // throw twig error
-            throw new Error("Error when calling the Data API  /$endpoint endpoint: " . $e->getMessage());
-        }
-
-        return $response;
-    }
-
-    public function iconFunction($library, $iconName, $width = null, $height = null): string
-    {
-        try {
-            $icon = new Icon($library, $iconName);
-
-            return $icon->getSvg($width, $height);
-        } catch (SvgIconException) {
-            return '';
-        }
-    }
-
-    public function languageVariantUrlFunction($context, string $languageCode): string
+    public function languageVariantUrlFilter($context, string $languageCode): string
     {
         $route = $context['_route'];
 
@@ -221,6 +186,40 @@ class TwigExtensions extends AbstractExtension
         }
 
         return '';
+    }
+
+
+    public function dataFunction($context, array $params = [])
+    {
+        $blog = $this->getBlogFromContext($context);
+
+        $endpoint = $params['endpoint'] ?? null;
+
+        if (! $endpoint) {
+            throw new Error('endpoint is required for the data() function');
+        }
+
+        unset($params['endpoint']);
+
+        try {
+            $response = InternalAPICaller::data($blog->subdomain, $endpoint, $params);
+        } catch (TrustedException $e) {
+            // throw twig error
+            throw new Error("Error when calling the Data API  /$endpoint endpoint: " . $e->getMessage());
+        }
+
+        return $response;
+    }
+
+    public function iconFunction($library, $iconName, $width = null, $height = null): string
+    {
+        try {
+            $icon = new Icon($library, $iconName);
+
+            return $icon->getSvg($width, $height);
+        } catch (SvgIconException) {
+            return '';
+        }
     }
 
     // checks if a given URL is the current one

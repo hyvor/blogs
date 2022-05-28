@@ -138,11 +138,17 @@
         }
 
 
-        p img, li img {
+        p img, li img, figure img {
             border-radius: 5px;
             margin: 40px auto;
             display: block;
             box-shadow:0 0 20px 0px rgba(0,0,0,0.2);
+        }
+
+        figcaption {
+            text-align: center;
+            margin-top: -20px;
+            color: $color-text-light;
         }
 
         h2, h3 {

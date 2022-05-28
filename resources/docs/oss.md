@@ -33,4 +33,5 @@ Feel free to check out our open source projects that we developed along with Hyv
 
 * [Flashload.js](https://github.com/hyvor/flashload) - Makes browser navigation faster
 * [Kea Ajax Plugin](https://github.com/hyvor/kea-ajax) - AJAX requests made easy in Kea.js
-* [Laravel FilterQ](https://github.com/hyvor/laravel-filterq) - Advanced filtering for Laravel APIs
+* [Laravel FilterQ](https://github.com/hyvor/laravel-filterq) - Advanced filtering for Laravel APIs. Powers our [Data API](api-data) filtering.
+* [PHP SVG Icons](https://github.com/hyvor/php-svg-icons) - A collection of SVG icons, ready to use in PHP. Powers the `icon`  [Twig Helper](themes-templates#twig-helpers).

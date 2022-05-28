@@ -3,7 +3,13 @@
 
 When a blog gets a request, first, we match its path to a Route (let's assume the route `post` for `/hello-world`). Then, we fetch required data from our database, then we call the Twig template file defined in that route (`post.twig`).
 
+
 Inside this file, you can include other files or even use [inheritance](https://twig.symfony.com/doc/3.x/templates.html#template-inheritance). You can even call our [Data API](api-data) to fetch more data (More on that below)!
+
+
+## Twig {#twig}
+
+We use [Twig 3.0](https://twig.symfony.com/doc/3.x/) for templating. It is a powerful language with a plenty of in-built tags, filters, and functions. Twig also has nice, easy-to-follow documentation, which was one reason we chose Twig over other template languages. If you haven't used it ever, go through the [Twig for Template Designers](https://twig.symfony.com/doc/3.x/templates.html) page, and you will get an idea of how it works. Basically, it's HTML with superpowers.
 
 #### templates
 
@@ -27,6 +33,28 @@ Why Flashload? Browser reloads are slow. They load the same CSS/JS resources mul
 We previously learned that there's only one `styles.css` for a blog that contains all CSS of the blog. This `styles.css` should be loaded inside the `<head>` of the page. When the user navigates to another page, Flashload sends an AJAX request to that path and pre-fetches the HTML page. Then, it updates **only the `<body>` part**. (Remember, we already have all CSS loaded in the first request, so we don't want to load it again).
 
 The simply rule is to add shared resources of the blog to `<head>`.
+
+
+## Caching
+
+Another important behavior of HB is that we use caching EXTENSIVELY. We use a technique called **first-request-caching**.
+
+- Someone requests `/hello-world` path of a blog.
+- We don't have any cached output for this path. We fetch data from our database, combine it with the template, and generate the HTML output, and send the response back to the user. Behind the scenes, we save the generated HTML output in Fastly's Edge Cache.
+- When someone else requests the same path, the HTML output is directly sent from the nearest Fastly Edge servers. The request never even reach our servers.
+
+When using a cache, clearing cache is the most important thing. We have to make sure outdated content is not delivered when something changes. Here are the events that we clear cache for each scope.
+
+- whenever whatever data is changed in the blog
+- whenever the theme is edited
+- on January 1st
+
+And,
+
+- `/search` and `/p/{hash}` (preview pages) routes are always dynamic, never cached.
+
+> ⚠️    
+> Caching makes the blog super fast. However, it puts some limitations to theme development. You can't render dynamic data like "current date" using Twig. Due to cache, users may see an old date. If absolutely required, you have to use Javascript to render dynamic content inside user's browser. However, displaying the "publish date" of a post works fine because we clear cache whenever the post is updated. Also, displaying the current year will work, because we will make sure to clear the cache on the 1st of January.
 
 ## Route Variables {#variables}
 
@@ -72,9 +100,11 @@ Sending all placeholders (except `_lang`) through the `template` filter is absol
 
 > `{{ _head | template }}` is equal to `{{ include(template_from_string(_head)) }}` in Twig. We defined the custom `template` filter to make it easier for you to write it, as it is used frequently in HB templates.
 
-## Twig Filters & Functions
+## Twig Helpers {#twig-helpers}
 
-We provide two custom Twig functions and filters.
+We provide a few custom Twig functions and filters to make writing templates easier.
+
+### Functions {#helper-functions}
 
 - `data` - a function to call the Data API. See [Fetching data](#fetch-data) below.
     ```twig
@@ -99,6 +129,9 @@ We provide two custom Twig functions and filters.
          * append `-outline` to outline icons (`archive-outline`)
       * [octicons](https://primer.github.io/octicons)
       * [css.gg](https://css.gg/)
+    > Under the hood, we use the [php-svg-icons](https://github.com/hyvor/php-svg-icons) open-source library. If you need to add more icon libraries, please send a PR there.
+
+### Filters {#helper-filters}
 
 - `asset_url` - a filter to link assets
     - Turns an asset filename into its absolute URL.
@@ -115,11 +148,22 @@ We provide two custom Twig functions and filters.
 
     <script src="https://subdomain.hyvorblogs.io/assets/script.js?v=12931923993"></script>
     ```
+
+- `asset` - a filter to directly print assets (only for text assets like SVGs)
+    ```html
+    {{ 'beauty.svg' | asset }}
+    ```
+  
+- `pagination_page_url` - a filter to convert a page number to full URL
+    ```html
+    <a href="{{ _pagination.page_prev | pagination_page_url }}">Previous Page</a>
+    ```
     
-- `lang` - a filter for translations. Learn more in [languages](themes-languages).
+- `lang` - a filter for translations. Learn more in [internationalization](themes-internationalization).
+- `lang_by_number` - See [conditional strings based on a number](themes-internationalization#lang-by-number)
+- `language_variant_url` - See [language switcher](themes-internationalization#language-switcher)
 
-
-
+> The difference between functions and filters can be quite confusing in Twig. Our general rule is to use functions when multiple inputs are taken (`data` and `icon`) and use filters when only a single input matters (`asset_url`, `asset`, etc.).
 
 ## Fetching Data {#fetch-data}
 
