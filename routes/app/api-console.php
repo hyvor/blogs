@@ -1,7 +1,7 @@
 <?php
 
 use App\Http\Controllers\ConsoleAPI\ConsoleBlogController;
-use App\Http\Controllers\ConsoleAPI\ConsoleBlogThemeController;
+use App\Http\Controllers\ConsoleAPI\ConsoleThemeController;
 use App\Http\Controllers\ConsoleAPI\ConsoleImportExportController;
 use App\Http\Controllers\ConsoleAPI\ConsoleLanguageController;
 use App\Http\Controllers\ConsoleAPI\ConsoleMediaController;
@@ -180,8 +180,9 @@ Route::prefix('/api/console/v0/blog/{subdomain}')
         Route::delete('/route/{id}', [ConsoleRouteController::class, 'delete']);
 
         // theme
-        Route::get('/theme-files', [ConsoleBlogThemeController::class, 'getAllFiles']);
-        Route::put('/theme-file/{id}', [ConsoleBlogThemeController::class, 'createOrUpdateFile']);
+        Route::post('/theme', [ConsoleThemeController::class, 'uploadTheme']);
+        Route::get('/theme/files', [ConsoleThemeController::class, 'getAllFiles']);
+        Route::put('/theme-file/{id}', [ConsoleThemeController::class, 'createOrUpdateFile']);
 
         // import and export
         Route::get('/data/export', [ConsoleImportExportController::class, 'export']);

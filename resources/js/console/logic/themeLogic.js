@@ -23,7 +23,7 @@ const themeLogic = kea({
     ajax: ({actions, props}) => ({
 
         loadFiles: async () => {
-            const files = await api.get(props.subdomain, '/theme-files');
+            const files = await api.get(props.subdomain, '/theme/files');
             actions.setFiles(files);
         },
 

@@ -45,11 +45,11 @@ class ThemeFilesRepository
             ->get();
     }
 
-    public static function getAllFilesOfBlog(int $blogId): Collection
+    public static function getAllFilesOfBlog(Blog $blog): Collection
     {
-        self::updateLocalDBFiles($blogId);
+        self::updateLocalDBFiles($blog->id);
 
-        return ThemeFile::where('blog_id', $blogId)->get();
+        return $blog->themeFiles()->get();
     }
 
     public static function createOrUpdateFile(

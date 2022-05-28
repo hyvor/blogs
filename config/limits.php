@@ -55,11 +55,12 @@ return [
     /**
      * Media max uploading size for any file type
      */
-    'max_media_upload_size_kb' => 25 * 1000, // 25MB
+    'max_media_upload_size_kb' => 50 * 1000, // 50MB
 
     /**
      * Template-related limitations
      */
+    'max_theme_zip_size_kb' => 50 * 1000, // 50MB
     'max_template_files_per_blog' => 50,
     'max_template_file_size' => 50 * 1000, // 50kb
     'max_assets_per_blog' => 30,

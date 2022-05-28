@@ -4,6 +4,7 @@
 /public/js
 /public/css
 /storage/*.key
+/--coverage-php
 vendor
 .env
 .env.backup
