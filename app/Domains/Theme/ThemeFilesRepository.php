@@ -77,6 +77,8 @@ class ThemeFilesRepository
     private static function updateLocalDBFiles(int $blogId)
     {
 
+        return;
+
         /**
          * This is a simple way to refresh the database
          * and run the seeder that so local file changes are updated

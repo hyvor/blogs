@@ -28,6 +28,7 @@ function getThemeFile(?ThemeFileFolderEnum $folder, string $file) {
     return ThemeFilesRepository::getFile(blog(), $file, $folder);
 }
 
+
 it('works', function() {
 
     $this->importer->import();
@@ -38,7 +39,6 @@ it('works', function() {
     expect($trace[0])->toContain('skipped', 'index-in-invalid.twig');
     expect($trace[1])->toContain('invalid.yaml');
 
-    //
     expect(getThemeFile(ThemeFileFolderEnum::ASSETS, 'image.svg'))->toBeInstanceOf(ThemeFile::class);
     expect(getThemeFile(ThemeFileFolderEnum::LANG, 'en.yaml'))->toBeInstanceOf(ThemeFile::class);
     expect(getThemeFile(ThemeFileFolderEnum::TEMPLATES, '@base.twig'))->toBeInstanceOf(ThemeFile::class);
@@ -48,5 +48,17 @@ it('works', function() {
 
     expect(getThemeFile(null, 'invalid.yaml'))->toBeNull();
     expect(getThemeFile(ThemeFileFolderEnum::ASSETS, 'something-else.svg'))->toBeNull();
+
+    expect(getThemeFile(null, 'config.yaml')->content)->toBe('THEME_NAME=sample');
+
+
+});
+
+it('fails on invalid input', function() {
+
+    $importer = new ThemeImporter(blog(), 'hi');
+    $importer->import();
+
+    expect($importer->success())->toBeFalse();
 
 });
