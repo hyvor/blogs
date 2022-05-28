@@ -6,12 +6,14 @@ use App\Data\Enums\ThemeFileFolderEnum;
 use App\Domains\Theme\ThemeFilesRepository;
 use PhpZip\ZipFile;
 
-it('downloads', function() {
+it('downloads the theme as a zip', function() {
 
     $blog = blog();
     $content = 'Hi';
 
     ThemeFilesRepository::createOrUpdateFile($blog, ThemeFileFolderEnum::TEMPLATES, 'index.twig', $content);
+    ThemeFilesRepository::createOrUpdateFile($blog, null, 'config.yaml', '');
+
 
     $zip = $this->callConsoleApi('GET', '/theme/download');
 
@@ -19,5 +21,6 @@ it('downloads', function() {
     $zipFile->openFromString($zip->streamedContent());
 
     expect($zipFile['templates/index.twig'])->toBe($content);
+    expect($zipFile['config.yaml'])->toBe('');
 
 });
