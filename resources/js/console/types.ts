@@ -27,7 +27,11 @@ export interface appConfig {
         hyvor: string
     },
 
-    syntax_themes: string[]
+    syntax_themes: string[],
+
+    limits: {
+        max_theme_zip_size_kb: number
+    }
 }
 
 export interface Filters {

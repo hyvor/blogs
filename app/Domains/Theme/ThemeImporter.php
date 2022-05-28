@@ -60,7 +60,7 @@ class ThemeImporter
 
             }
 
-        } catch (ZipException) {
+        } catch (ZipException $e) {
             $this->success = false;
         }
 

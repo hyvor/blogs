@@ -2,6 +2,7 @@ import React, {Fragment, useState} from "react";
 import {PopupConfirm} from "../ReusableComponents/Popup";
 import {getEndpoint} from "../lib/api";
 import getSubdomain from "../logic-helpers/subdomain";
+import {CloudDownload} from "react-bootstrap-icons";
 
 export default function Download() {
 
@@ -13,7 +14,7 @@ export default function Download() {
     }
 
     return <Fragment>
-        <button onClick={() => setIsDownloading(true)} className="button inactive small">Download ZIP</button>
+        <button onClick={() => setIsDownloading(true)} className="button inactive small">Download <CloudDownload /></button>
         {
             isDownloading ?
                 <PopupConfirm

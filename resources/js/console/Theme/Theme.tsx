@@ -9,6 +9,7 @@ import FileBrowser from "./FileBrowser";
 import getSubdomain from "../logic-helpers/subdomain";
 import {ThemeFolder} from "../types";
 import Download from "./Download";
+import Upload from "./Upload";
 
 export default function Theme() {
 
@@ -45,7 +46,7 @@ export default function Theme() {
             </div>
 
             <div className="theme-bottom">
-                <button className="button inactive small">Upload theme</button>
+                <Upload />
                 <Download />
             </div>
         </div>

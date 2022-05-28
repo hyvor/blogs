@@ -10,23 +10,31 @@ const themeLogic = kea<themeLogicType>([
     key(props => props.subdomain),
     path(key => ['theme', key]),
     actions(({values}) => ({
-        setFiles: (files) => ({files}),
-        setFileContent: (id, content) => ({id, content}),
+        setFiles: (files: ThemeFile[]) => ({files}),
+        setFileContent: (id: number, content: string) => ({id, content}),
 
         // file editor
-        editorOpenFile: (id) => ({id}),
-        editorCloseFile: (id) => ({id, index: values.editorOpenedFilesIds.indexOf(id)}),
-        editorSetOpenedFiles: (ids) => ({ids}),
-        editorSaveFile: (id) => ({id}),
-        editorSetActiveFileId: (id) => ({id}),
+        editorOpenFile: (id: number) => ({id}),
+        editorCloseFile: (id: number) => ({id, index: values.editorOpenedFilesIds.indexOf(id)}),
+        editorSetOpenedFiles: (ids: number[]) => ({ids}),
+        editorSaveFile: (id: number) => ({id}),
+        editorSetActiveFileId: (id: number | null) => ({id}),
     })),
 
     ajax(({actions, props}) => ({
 
         loadFiles: async () => {
-            const files = await api.get(props.subdomain, '/theme/files');
+            const files = await api.get<ThemeFile[]>(props.subdomain, '/theme/files');
             actions.setFiles(files);
         },
+
+        uploadTheme: async({zip, onUpload} : {zip: File, onUpload: Function}) => {
+            const formData = new FormData()
+            formData.append('zip', zip)
+            const files = await api.post<ThemeFile[]>(props.subdomain, '/theme', formData);
+            actions.setFiles(files)
+            onUpload();
+        }
 
     })),
 
