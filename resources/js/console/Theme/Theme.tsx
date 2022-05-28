@@ -1,15 +1,18 @@
 import { useValues } from "kea";
 import React, { useState } from "react";
-import { BrushFill, CaretDownFill, CaretRightFill } from "react-bootstrap-icons";
+import { CaretDownFill, CaretRightFill } from "react-bootstrap-icons";
 import subdomainLogic from "../logic/subdomainLogic";
 import themeLogic from "../logic/themeLogic";
 import Loader from "../ReusableComponents/Loader";
 import File from "./File";
 import FileBrowser from "./FileBrowser";
+import getSubdomain from "../logic-helpers/subdomain";
+import {ThemeFolder} from "../types";
+import Download from "./Download";
 
-export default function Theme({type}) {
+export default function Theme() {
 
-    const { subdomain } = useValues(subdomainLogic);
+    const subdomain = getSubdomain();
     const { loadFilesAjax, files } = useValues(themeLogic({subdomain}));
 
     const themePrefix = `/console/${subdomain}/theme`;
@@ -40,6 +43,11 @@ export default function Theme({type}) {
                     }
                 </div>
             </div>
+
+            <div className="theme-bottom">
+                <button className="button inactive small">Upload theme</button>
+                <Download />
+            </div>
         </div>
         <div className="box box-right theme-right">
             <FileBrowser />
@@ -48,12 +56,11 @@ export default function Theme({type}) {
 
 }
 
-function Folder( {name} ) {
+function Folder( {name} : {name: ThemeFolder} ) {
 
-    const { subdomain } = useValues(subdomainLogic);
-    const { findFilesOfFolder } = useValues(themeLogic({subdomain}));
+    const { findFilesOfFolder } = useValues(themeLogic({subdomain: getSubdomain()}));
 
-    const [unfolded, setUnfolded] = useState(name ? false : true);
+    const [unfolded, setUnfolded] = useState(!name);
 
     const files = findFilesOfFolder(name);
 

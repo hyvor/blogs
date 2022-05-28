@@ -181,6 +181,7 @@ Route::prefix('/api/console/v0/blog/{subdomain}')
 
         // theme
         Route::post('/theme', [ConsoleThemeController::class, 'uploadTheme']);
+        Route::get('/theme/download', [ConsoleThemeController::class, 'downloadTheme']);
         Route::get('/theme/files', [ConsoleThemeController::class, 'getAllFiles']);
         Route::put('/theme-file/{id}', [ConsoleThemeController::class, 'createOrUpdateFile']);
 

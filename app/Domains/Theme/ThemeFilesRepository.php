@@ -9,9 +9,29 @@ use App\Models\ThemeFile;
 use Database\Seeders\BlogThemeFilesSeeder;
 use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Support\Facades\App;
+use PhpZip\ZipFile;
 
 class ThemeFilesRepository
 {
+
+    public static function getZip(Blog $blog) : ZipFile
+    {
+
+        $zip = new ZipFile();
+
+        $files = self::getAllFilesOfBlog($blog);
+
+        foreach ($files as $file) {
+
+            $entryName = $file->folder === null ? $file->name : "{$file->folder->value}/$file->name";
+            $zip->addFromString($entryName, $file->content);
+
+        }
+
+        return $zip;
+
+    }
+
     public static function getFile(
         Blog $blog,
         string $fileName,
@@ -45,6 +65,10 @@ class ThemeFilesRepository
             ->get();
     }
 
+    /**
+     * @param Blog $blog
+     * @return Collection<ThemeFile>
+     */
     public static function getAllFilesOfBlog(Blog $blog): Collection
     {
         self::updateLocalDBFiles($blog->id);

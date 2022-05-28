@@ -19,6 +19,16 @@
         border-top:1px solid $color-accent-light;
     }
 
+    .theme-bottom {
+        padding: 15px;
+        display: flex;
+        justify-content: center;
+        border-top: 1px solid $color-accent-light;
+        button:first-child {
+            margin-right: 5px;
+        }
+    }
+
     .theme-folders {
 
         padding:10px 30px;

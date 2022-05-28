@@ -252,3 +252,14 @@ export interface Route {
     content_type: string | null;
     is_enabled: boolean
 }
+
+// === THEME
+
+export type ThemeFolder = 'templates' | 'assets' | 'styles' | 'lang' | null
+
+export interface ThemeFile {
+    id: number,
+    name: string,
+    content: string | null,
+    folder: ThemeFolder
+}

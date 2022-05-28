@@ -36,9 +36,20 @@ class ConsoleThemeController extends Controller
 
     }
 
+    public function downloadTheme(Blog $blog)
+    {
+
+        $zip = ThemeFilesRepository::getZip($blog);
+
+        $filename = 'hb-theme-of-' . $blog->subdomain . '-' . date('Y-m-d') . '.zip';
+
+        return $zip->outputAsSymfonyResponse($filename, 'application/zip');
+
+    }
+
     public function getAllFiles(Blog $blog)
     {
-        $files = ThemeFilesRepository::getAllFilesOfBlog($blog->id)->mapInto(FileObject::class);
+        $files = ThemeFilesRepository::getAllFilesOfBlog($blog)->mapInto(FileObject::class);
 
         return response()->json($files);
     }
