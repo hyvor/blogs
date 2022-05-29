@@ -70,15 +70,18 @@
 
 <script>
 
+    {#  DONT TOUCH THIS CODE. WRITE TESTS IF POSSIBLE #}
+
     window._hb = {
         _url: "{{ ___url }}",
-        subdomain: "{{ _blog.subdomain }}"
+        subdomain: "{{ _blog.subdomain }}",
+        color_modes: "{{ _blog.color_modes }}",
+        color_mode_default: "{{ _blog.color_mode_default }}"
     };
     (function() {
 
         {# Theme Modes <https://blogs.hyvor.com/docs/themes-styles#light-dark> #}
         var lsKey = 'color-mode-pref';
-        var allowedModes = ['light', 'dark'];
 
         window._hb.changeColorMode = function(pref, noSave) {
             var renderMode = _hb.getColorMode(pref)
@@ -98,7 +101,7 @@
             }
         }
         window._hb.getColorModePreference = function() {
-            return localStorage.getItem(lsKey) || 'os'; // os|light|dark
+            return localStorage.getItem(lsKey) || _hb.color_mode_default; // os|light|dark
         }
         window._hb.getColorMode = function(pref) {
             var mode = pref || _hb.getColorModePreference();
@@ -108,7 +111,10 @@
             return mode
         }
 
-        _hb.changeColorMode(_hb.getColorModePreference(), true)
+        _hb.changeColorMode(
+            _hb.color_modes !== "both" ? _hb.color_modes : _hb.getColorModePreference(),
+            true
+        )
 
         {# Data API #}
         window._hb.dataApi = function(version, endpoint, params, onSuccess, onError) {
@@ -126,6 +132,9 @@
 
             return xhr;
         }
+
     })()
+
+    console.log("%c Hi 👋 This blog is powered by Hyvor Blogs", "font-size:12px;font-family: monospace;display: inline-block;padding: 8px 19px;border: 1px dashed #896c6b;");
 
 </script>

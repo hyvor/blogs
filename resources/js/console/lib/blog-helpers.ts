@@ -7,6 +7,7 @@
 import blogsLogic from "../logic/blogsLogic";
 import languagesLogic from "../logic/languagesLogic";
 import {Language} from "../types";
+import {BlogType} from "../enums";
 
 export function getBlogFromSubdomain(subdomain: string) {
     return blogsLogic.values.findBlogBySubdomain(subdomain).blog;
@@ -39,4 +40,9 @@ export function isBlogInProPlan(subdomain: string) {
             blog.subscribed && 
             ['pro', 'team', 'enterprise'].indexOf(blog.subscription.plan) >= 0
         )
+}
+
+export function isDevBlog(subdomain: string) {
+    const blog = getBlogFromSubdomain(subdomain);
+    return blog.type === BlogType.DEV
 }

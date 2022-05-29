@@ -31,7 +31,6 @@ class ThemeImporter
             $zip->openFromString($this->zipContent);
 
             foreach ($zip as $entry => $content) {
-
                 // $entry = assets/image.svg
 
                 $split = explode('/', $entry);
@@ -63,6 +62,7 @@ class ThemeImporter
         } catch (ZipException $e) {
             $this->success = false;
         }
+        die;
 
     }
 

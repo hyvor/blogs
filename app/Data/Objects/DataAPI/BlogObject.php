@@ -2,6 +2,8 @@
 
 namespace App\Data\Objects\DataAPI;
 
+use App\Data\Enums\ColorModeDefaultEnum;
+use App\Data\Enums\ColorModesEnum;
 use App\Data\Objects\DataAPI\Helpers\VariantsHelper;
 use App\Domains\Route\PermalinkRepository;
 use App\Models\Blog;
@@ -39,6 +41,9 @@ class BlogObject
 
     public int $posts_count;
 
+    public ColorModesEnum $color_modes;
+    public ColorModeDefaultEnum $color_mode_default;
+
     public function __construct(Blog $blog, Language $language)
     {
         $variants = $blog->variants;
@@ -54,7 +59,6 @@ class BlogObject
         $this->logo_url = 'http://blogs.hyvor.test:8080/img/logo.png';
         $this->cover_url = $blog->cover_url;
 
-
         $meta = $blog->getAllMeta();
 
         $this->social = new SocialMediaObject(
@@ -66,6 +70,9 @@ class BlogObject
             $meta->social_github,
             $meta->social_tiktok
         );
+
+        $this->color_modes = ColorModesEnum::from($meta->color_modes);
+        $this->color_mode_default = ColorModeDefaultEnum::from($meta->color_mode_default);
 
         $this->code_head = $blog->code_head;
         $this->code_foot = $blog->code_foot;

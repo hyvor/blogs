@@ -18,10 +18,11 @@ import Hosting from './Hosting';
 import SEO from './SEO';
 import ColorMode from "./ColorMode";
 import Highlight from "./Highlight";
+import getSubdomain from "../logic-helpers/subdomain";
 
 export default function Settings({type} : {type: string | undefined}) {
 
-    const { subdomain } = useValues(subdomainLogic); 
+    const subdomain = getSubdomain();
     const settingsPrefix = `/console/${subdomain}/settings`;
 
     var Type = () => <SettingsGeneral />;
@@ -81,6 +82,7 @@ export default function Settings({type} : {type: string | undefined}) {
                 <NavLink href={settingsPrefix} exact={1}>General</NavLink>
                 <NavLink href={settingsPrefix + "/users"}>Users</NavLink>
                 <NavLink href={settingsPrefix + "/tags"}>Tags</NavLink>
+
 
                 <div />
                 <NavLink href={settingsPrefix + "/hosting"}>Hosting</NavLink>
