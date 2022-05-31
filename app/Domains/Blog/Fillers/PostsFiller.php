@@ -2,6 +2,7 @@
 
 namespace App\Domains\Blog\Fillers;
 
+use App\Data\Enums\BlogTypeEnum;
 use App\Domains\Post\Content\PostContentRepository;
 use App\Domains\Post\PostRepository;
 use App\Models\Blog;
@@ -80,5 +81,12 @@ class PostsFiller implements FillerInterface
                 'description' => $row['description'] ?? '',
             ]);
         }
+
+        if ($this->blog->type === BlogTypeEnum::DEV) {
+
+
+
+        }
+
     }
 }

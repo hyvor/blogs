@@ -9,6 +9,10 @@ class Language extends Model
 {
     use HasFactory;
 
+    protected $casts = [
+        'is_primary' => 'boolean'
+    ];
+
     public function fallback()
     {
         $this->hasOne(Language::class, 'id', 'fallback_language_id');

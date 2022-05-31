@@ -8,13 +8,18 @@ use App\Domains\Blog\Fillers\LanguageFiller;
 use App\Domains\Blog\Fillers\NavigationFiller;
 use App\Domains\Blog\Fillers\PostsFiller;
 use App\Domains\Blog\Fillers\RouteFiller;
+use App\Domains\Blog\Fillers\TagsFiller;
 use App\Domains\User\UserRepository;
 use App\Models\Blog;
+use Illuminate\Support\Facades\App;
 
 class BlogObserver
 {
     public function created(Blog $blog)
     {
+
+        if (App::environment('testing'))
+            return;
 
         // FILL NEW BLOG
 
@@ -27,16 +32,6 @@ class BlogObserver
         ]);
 
 
-        $fillers = [
-            LanguageFiller::class,
-            RouteFiller::class,
-            NavigationFiller::class,
-            PostsFiller::class,
-        ];
-        foreach ($fillers as $filler) {
-            (new $filler($blog))->fill();
-        }
-
         /**
          * Add the user as an owner
          * ============
@@ -47,6 +42,19 @@ class BlogObserver
             UserRoleEnum::OWNER,
             UserStatusEnum::ACTIVE
         );
+
+
+        $fillers = [
+            LanguageFiller::class,
+            TagsFiller::class,
+            RouteFiller::class,
+            NavigationFiller::class,
+            PostsFiller::class,
+        ];
+        foreach ($fillers as $filler) {
+            (new $filler($blog))->fill();
+        }
+
     }
 
     public function updated(Blog $blog)

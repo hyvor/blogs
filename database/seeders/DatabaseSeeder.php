@@ -65,7 +65,12 @@ class DatabaseSeeder extends Seeder
         );*/
 
         foreach ($blogs as $blog) {
-            $english = $blog->languages[0];
+            $english = Language::factory()->create([
+                'blog_id' => $blog,
+                'code' => 'en',
+                'name' => "English",
+                'is_primary' => true
+            ]);
             $french = Language::factory()->create([
                 'blog_id' => $blog,
                 'code' => 'fr',

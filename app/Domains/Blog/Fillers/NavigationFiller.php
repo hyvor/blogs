@@ -21,6 +21,18 @@ class NavigationFiller implements FillerInterface
             'url' => '/about',
         ],
         [
+            'type' => NavigationTypeEnum::HEADER,
+            'name' => 'Author',
+            'url' => '/author',
+            'isDev' => true,
+        ],
+        [
+            'type' => NavigationTypeEnum::HEADER,
+            'name' => 'Tag',
+            'url' => '/tag',
+            'isDev' => true,
+        ],
+        [
             'type' => NavigationTypeEnum::FOOTER,
             'name' => 'Privacy Policy',
             'url' => '/privacy',
@@ -33,19 +45,36 @@ class NavigationFiller implements FillerInterface
     ];
 
     public function __construct(private Blog $blog)
+    {}
+
+    public function fill()
     {
-        if ($blog->type === BlogTypeEnum::DEV) {
+        if ($this->blog->type === BlogTypeEnum::DEV) {
+
             $this->navs[] = [
                 'type' => NavigationTypeEnum::HEADER,
                 'name' => 'Content Style',
                 'url' => '/content-style',
             ];
-        }
-    }
+            $this->navs[] = [
+                'type' => NavigationTypeEnum::HEADER,
+                'name' => 'Author',
+                'url' => "/author/" . $this->blog->users[0]->slug,
+            ];
+            $this->navs[] = [
+                'type' => NavigationTypeEnum::HEADER,
+                'name' => 'Tag',
+                'url' => '/tag/' . $this->blog->tags[0]->slug,
+            ];
 
-    public function fill()
-    {
+        }
+
         foreach ($this->navs as $nav) {
+
+            if (isset($nav['isDev']) && $this->blog->type !== BlogTypeEnum::DEV) {
+                continue;
+            }
+
             NavigationRepository::createNavigation(
                 $this->blog,
                 $nav['name'],
@@ -53,5 +82,6 @@ class NavigationFiller implements FillerInterface
                 $nav['type'],
             );
         }
+
     }
 }

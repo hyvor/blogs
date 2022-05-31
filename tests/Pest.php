@@ -11,7 +11,9 @@
 |
 */
 
+use App\Data\Enums\BlogTypeEnum;
 use App\Models\Blog;
+use App\Models\BlogVariant;
 use App\Models\User;
 use Tests\TestCase;
 use Tests\UnitTestCase;
@@ -50,4 +52,14 @@ uses()->beforeEach(function () {
 function blog()
 {
     return Blog::find(config('test.blog_id'));
+}
+
+function newBlog(BlogTypeEnum $type = BlogTypeEnum::DEFAULT)
+{
+    return Blog::factory()->has(
+        BlogVariant::factory(),
+        'variants'
+    )->create([
+        'type' => $type
+    ]);
 }

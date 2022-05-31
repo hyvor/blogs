@@ -104,7 +104,7 @@ class TagRepository
     }
 
     public static function createTag(
-        $blog,
+        Blog $blog,
         string $name,
         string $slug,
         ?string $description
