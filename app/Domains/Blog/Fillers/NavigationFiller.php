@@ -12,35 +12,18 @@ class NavigationFiller implements FillerInterface
     private $navs = [
         [
             'type' => NavigationTypeEnum::HEADER,
-            'name' => 'Home',
-            'url' => '/',
-        ],
-        [
-            'type' => NavigationTypeEnum::HEADER,
             'name' => 'About',
             'url' => '/about',
         ],
         [
             'type' => NavigationTypeEnum::HEADER,
-            'name' => 'Author',
-            'url' => '/author',
-            'isDev' => true,
-        ],
-        [
-            'type' => NavigationTypeEnum::HEADER,
-            'name' => 'Tag',
-            'url' => '/tag',
-            'isDev' => true,
+            'name' => 'Contact',
+            'url' => '/contact',
         ],
         [
             'type' => NavigationTypeEnum::FOOTER,
             'name' => 'Privacy Policy',
             'url' => '/privacy',
-        ],
-        [
-            'type' => NavigationTypeEnum::FOOTER,
-            'name' => 'Contact',
-            'url' => '/contact',
         ],
     ];
 

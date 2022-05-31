@@ -12,27 +12,6 @@ use Illuminate\Support\Collection;
 
 class NavigationRepository
 {
-    public const DEFUALT_HEADER_NAVIGATION = [
-        [
-            'name' => 'Home',
-            'url' => '/',
-        ],
-        [
-            'name' => 'About',
-            'url' => '/about',
-        ],
-    ];
-
-    public const DEFUALT_FOOTER_NAVIGATION = [
-        [
-            'name' => 'Privacy Policy',
-            'url' => '/privacy',
-        ],
-        [
-            'name' => 'Contact',
-            'url' => '/contact',
-        ],
-    ];
 
     public static function getNavigations(Blog $blog): Collection
     {
@@ -57,6 +36,7 @@ class NavigationRepository
         NavigationTypeEnum $type,
         int $sort = 0
     ): Navigation {
+
         $navigation = Navigation::create([
             'blog_id' => $blog->id,
             'url' => $url,
@@ -64,15 +44,16 @@ class NavigationRepository
             'sort' => $sort,
         ]);
 
-        $navigationId = $navigation->id;
-        $getLanguage = $blog->languages()->where('is_primary', true)->first();
-        $primaryLanguage = $getLanguage->id;
+        $language = $blog
+            ->languages()
+            ->where('is_primary', true)
+            ->first();
 
-        NavigationVariant::create([
-            'navigation_id' => $navigationId,
-            'language_id' => $primaryLanguage,
-            'name' => $name,
-        ]);
+        self::createNavigationVariant(
+            $navigation,
+            $language,
+            $name
+        );
 
         return $navigation;
     }
@@ -125,28 +106,19 @@ class NavigationRepository
         }
     }
 
-    /*
-    *
-    * This functions are used for navigation variant.
-    */
-    public static function createNavigationVariant($navigationId, $languageId, $name)
+    public static function createNavigationVariant(
+        Navigation $navigation,
+        Language $language,
+        string $name
+    )
     {
-        $language = Language::where('id', '=', $languageId)
-            ->value('is_primary');
 
-        if ($language == 0) {
-            $navigationVariantCheck = NavigationVariant::where('navigation_id', '=', $navigationId)
-                ->where('language_id', '=', $languageId)
-                ->first();
+        NavigationVariant::create([
+            'navigation_id' => $navigation->id,
+            'language_id' => $language->id,
+            'name' => $name
+        ]);
 
-            if ($navigationVariantCheck == null) {
-                NavigationVariant::create([
-                    'navigation_id' => $navigationId,
-                    'language_id' => $languageId,
-                    'name' => $name,
-                ]);
-            }
-        }
     }
 
     /*

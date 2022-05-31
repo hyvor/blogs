@@ -65,7 +65,8 @@ class TagRepository
         array $orderBys = [
             ['tags.posts_count', 'DESC'],
         ],
-    ): CollectionWithTotal {
+    ): CollectionWithTotal
+    {
         $builder = FilterQ::expression($filter)
             ->builder(Tag::class)
             ->keys(function ($keys) {
@@ -103,26 +104,20 @@ class TagRepository
         return new CollectionWithTotal($tags, $total);
     }
 
-    public static function createTag(
-        Blog $blog,
-        string $name,
-        string $slug,
-        ?string $description
-    ): Tag {
+    public static function createTag(Blog $blog, string $name): Tag
+    {
+
         $tag = Tag::create([
             'blog_id' => $blog->id,
-            'slug' => $slug,
+            'slug' => UniqueSlugGenerator::generate($blog, [$name]),
         ]);
 
-        $tagId = $tag->id;
-        $getLanguage = $blog->languages()->where('is_primary', true)->first();
-        $primaryLanguage = $getLanguage->id;
+        $language = LanguageRepository::getPrimaryLanguage($blog);
 
         TagVariant::create([
-            'tag_id' => $tagId,
-            'language_id' => $primaryLanguage,
+            'tag_id' => $tag->id,
+            'language_id' => $language->id,
             'name' => $name,
-            'description' => $description,
         ]);
 
         return $tag;
@@ -136,7 +131,8 @@ class TagRepository
         ?string $codeFoot,
         ?string $name,
         ?string $description
-    ): void {
+    ): void
+    {
         $tag = Tag::find($id)
         ->update([
             'slug' => $slug,

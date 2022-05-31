@@ -15,6 +15,7 @@ use App\Data\Enums\BlogTypeEnum;
 use App\Models\Blog;
 use App\Models\BlogVariant;
 use App\Models\User;
+use Hyvor\HyvorConnecter\HyvorUser;
 use Tests\TestCase;
 use Tests\UnitTestCase;
 
@@ -62,4 +63,10 @@ function newBlog(BlogTypeEnum $type = BlogTypeEnum::DEFAULT)
     )->create([
         'type' => $type
     ]);
+}
+
+
+function hyvorUser($fill = [])
+{
+    return HyvorUser::dummy($fill);
 }

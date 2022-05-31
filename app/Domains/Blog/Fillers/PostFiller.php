@@ -6,10 +6,14 @@ use App\Data\Enums\BlogTypeEnum;
 use App\Domains\Post\Content\PostContentRepository;
 use App\Domains\Post\PostRepository;
 use App\Models\Blog;
-use Illuminate\Support\Facades\App;
+use App\Models\Post;
+use App\Models\PostAuthor;
+use App\Models\PostTag;
+use App\Models\PostVariant;
 
-class PostsFiller implements FillerInterface
+class PostFiller implements FillerInterface
 {
+
     private array $data = [
 
         // posts
@@ -56,9 +60,6 @@ class PostsFiller implements FillerInterface
 
     public function fill()
     {
-        if (App::environment('testing')) {
-            return;
-        }
 
         $language = $this->blog->languages[0];
 
@@ -80,11 +81,49 @@ class PostsFiller implements FillerInterface
                 'title' => $row['title'],
                 'description' => $row['description'] ?? '',
             ]);
+
+            if (!$isPage) {
+
+                PostTag::create(['post_id' => $post->id, 'tag_id' => $this->blog->tags[0]->id]);
+                PostAuthor::create(['post_id' => $post->id, 'user_id' => $this->blog->users[0]->id]);
+
+            }
+
         }
 
         if ($this->blog->type === BlogTypeEnum::DEV) {
 
+            $posts = Post::factory()->count(100)->create(['blog_id' => $this->blog->id]);
 
+            foreach ($posts as $post) {
+
+                // add variant
+                PostVariant::factory()->create(['post_id' => $post->id, 'language_id' => $language->id]);
+
+                // add 1-3 post tags
+                $tagIds = $this->blog->tags->pluck('id');
+
+                for ($i = 0; $i < rand(1, 3); $i++) {
+                    $randomId = $tagIds->random();
+                    PostTag::create([
+                        'post_id' => $post->id,
+                        'tag_id' => $randomId
+                    ]);
+                    $tagIds = $tagIds->reject(fn ($id) => $id === $randomId);
+                }
+
+                // add 1-3 post authors
+                $userIds = $this->blog->users->pluck('id');
+                for ($i = 0; $i < rand(1, 3); $i++) {
+                    $randomId = $userIds->random();
+                    PostAuthor::create([
+                        'post_id' => $post->id,
+                        'user_id' => $randomId
+                    ]);
+                    $userIds = $userIds->reject(fn($id) => $id === $randomId);
+                }
+
+            }
 
         }
 

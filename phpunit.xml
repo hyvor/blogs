@@ -30,5 +30,6 @@
         <server name="TELESCOPE_ENABLED" value="false"/>
         <server name="SCOUT_DRIVER" value="collection" />
         <server name="FILESYSTEM_DRIVER" value="local" />
+        <server name="HYVOR_DUMMY" value="true"/>
     </php>
 </phpunit>

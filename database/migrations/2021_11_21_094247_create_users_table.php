@@ -26,7 +26,7 @@ class CreateUsersTable extends Migration
 
             // user data
             $table->string('slug');
-            $table->string('email');
+            $table->string('email')->nullable();
             $table->string('website_url')->nullable();
             $table->string('picture_url')->nullable();
 
@@ -42,6 +42,7 @@ class CreateUsersTable extends Migration
             $table->integer('posts_count')->default(0);
             $table->integer('sort')->default(0); // for ordering in the console
 
+            // indexes
             $table->unique(['blog_id', 'slug']);
             $table->unique(['blog_id', 'hyvor_user_id']);
             $table->index(['blog_id', 'created_at']);

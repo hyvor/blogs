@@ -15,7 +15,7 @@ class UserFactory extends Factory
         $email = $this->faker->email();
         return [
             'blog_id' => Blog::factory(),
-            'hyvor_user_id' => config('test.hyvor_user_id'),
+            'hyvor_user_id' => rand(),
             'role' => 'owner',
             'status' => 'invited',
             'slug' => Str::slug($this->faker->name()),

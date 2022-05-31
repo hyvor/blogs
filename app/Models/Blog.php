@@ -7,11 +7,19 @@ use App\Data\Enums\BlogTypeEnum;
 use App\Models\Concerns\Countable;
 use Hyvor\JsonMeta\Definer;
 use Hyvor\JsonMeta\Metable;
+use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\SoftDeletes;
 use Laravel\Paddle\Billable;
 
+/**
+ * @property BlogTypeEnum type
+ * @property int hyvor_user_id
+ *
+ * @property Collection $tags
+ * @property Collection $users
+ */
 class Blog extends Model
 {
     use HasFactory;

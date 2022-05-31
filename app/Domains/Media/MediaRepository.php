@@ -7,6 +7,7 @@ use App\Models\Blog;
 use App\Models\Media;
 use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Http\UploadedFile;
+use Illuminate\Support\Facades\Http;
 use Illuminate\Support\Facades\Storage;
 
 /**
@@ -54,15 +55,41 @@ class MediaRepository
             throw new UploadException('Error while uploading');
         }
 
-        $media = Media::create([
+        return Media::create([
             'blog_id' => $blog->id,
             'name' => $fileName,
             'size' => $file->getSize(),
             'original_name' => $file->getClientOriginalName(),
             'extension' => $file->extension(),
         ]);
+    }
 
-        return $media;
+    public static function uploadFromUrl(Blog $blog, string $url) : Media
+    {
+
+        $response = Http::get($url);
+
+        if (!$response->successful())
+            throw new UploadException;
+
+        $file = $response->body();
+
+        if (!$file)
+            throw new UploadException;
+
+        $size = (int) $response->header('content-size');
+
+        $path = Storage::put(self::getPathPrefix($blog->id), $file);
+
+        $fileName = self::getFileNameFromPath($path);
+
+        return Media::create([
+            'blog_id' => $blog->id,
+            'name' => $fileName,
+            'size' => $size,
+            'original_name' => $fileName,
+        ]);
+
     }
 
     public static function getContents(Media $media)

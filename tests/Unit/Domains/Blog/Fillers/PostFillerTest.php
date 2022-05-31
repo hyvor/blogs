@@ -1,0 +1,52 @@
+<?php
+
+namespace Tests\Unit\Domains\Blog\Fillers;
+
+use App\Data\Enums\BlogTypeEnum;
+use App\Domains\Blog\Fillers\LanguageFiller;
+use App\Domains\Blog\Fillers\PostFiller;
+use App\Domains\Blog\Fillers\TagFiller;
+use App\Domains\Blog\Fillers\UserFiller;
+use App\Models\Post;
+
+it('fills with posts', function() {
+
+    $blog = newBlog();
+
+    (new LanguageFiller($blog))->fill();
+    (new UserFiller($blog))->fill();
+    (new TagFiller($blog))->fill();
+
+    $filler = new PostFiller($blog);
+    $filler->fill();
+
+    $posts = $blog->posts;
+    expect(count($posts))->toBe(5);
+
+    expect($posts->firstWhere('slug', 'welcome'))->toBeInstanceOf(Post::class);
+    expect($posts->firstWhere('slug', 'content-style'))->toBeInstanceOf(Post::class);
+    expect($posts->firstWhere('slug', 'about'))->toBeInstanceOf(Post::class);
+    expect($posts->firstWhere('slug', 'privacy'))->toBeInstanceOf(Post::class);
+    expect($posts->firstWhere('slug', 'contact'))->toBeInstanceOf(Post::class);
+
+    $post1 = $posts[0];
+
+    expect($post1->tags[0]->slug)->toBe('welcome');
+    expect($post1->authors[0]->id)->toBe($blog->users[0]->id);
+
+});
+
+it('adds more posts for DEV blogs', function() {
+
+    $blog = newBlog(BlogTypeEnum::DEV);
+
+    (new LanguageFiller($blog))->fill();
+    (new UserFiller($blog))->fill();
+    (new TagFiller($blog))->fill();
+
+    $filler = new PostFiller($blog);
+    $filler->fill();
+
+    expect($blog->posts()->count())->toBeGreaterThan(100);
+
+});

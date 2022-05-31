@@ -3,7 +3,7 @@
 namespace App\Http\Controllers\ConsoleAPI;
 
 use App\Data\Objects\ConsoleAPI\UserBlog\UserBlogObject;
-use App\Domains\User\UserRepository;
+use App\Domains\User\UserBlogRepository;
 use App\Http\Controllers\Controller;
 use Hyvor\HyvorConnecter\Login;
 use Hyvor\HyvorConnecter\Redirect;
@@ -12,6 +12,7 @@ use Illuminate\Http\Request;
 
 class ConsoleViewController extends Controller
 {
+
     public function __invoke(Request $request)
     {
         $hyvorUser = Login::check();
@@ -20,7 +21,7 @@ class ConsoleViewController extends Controller
             return Redirect::toLogin();
         }
 
-        $blogs = UserRepository::getBlogsOfUser($hyvorUser->id)->mapInto(UserBlogObject::class);
+        $blogs = UserBlogRepository::getBlogsOfUser($hyvorUser)->mapInto(UserBlogObject::class);
 
         $config = [
             // state

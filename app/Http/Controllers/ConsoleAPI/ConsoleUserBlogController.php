@@ -5,6 +5,7 @@ namespace App\Http\Controllers\ConsoleAPI;
 use App\Data\Enums\BlogTypeEnum;
 use App\Data\Objects\ConsoleAPI\UserBlog\UserBlogObject;
 use App\Domains\Blog\BlogRepository;
+use App\Domains\User\UserBlogRepository;
 use App\Domains\User\UserRepository;
 use App\Exceptions\TrustedException;
 use App\Http\Controllers\Controller;
@@ -38,13 +39,14 @@ class ConsoleUserBlogController extends Controller
             $isDev ? BlogTypeEnum::DEV : BlogTypeEnum::DEFAULT
         );
 
-        $user = UserRepository::getUserByBlogOwnership($blog->id);
+        $user = UserRepository::getOwnerOfBlog($blog);
 
         return response()->json(new UserBlogObject($user));
     }
 
     public function changeSort(Request $request, HyvorUser $hyvorUser)
     {
+
         $request->validate([
             'blog_ids' => 'required|array',
             'blog_ids.*' => 'integer',
@@ -52,9 +54,10 @@ class ConsoleUserBlogController extends Controller
 
         $blogIds = $request->input('blog_ids');
 
-        UserRepository::changeBlogSorts($hyvorUser->id, $blogIds);
+        UserBlogRepository::changeBlogSorts($hyvorUser, $blogIds);
 
         return response()->json();
+
     }
 
     public function checkSubdomain(Request $request)
