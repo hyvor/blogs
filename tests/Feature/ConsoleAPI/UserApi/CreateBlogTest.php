@@ -19,6 +19,7 @@ it('validates', function () {
 });
 
 it('creates a blog', function () {
+
     $blogId = $this->callConsoleUserApi('POST', '/blog', [
         'name' => 'Testing',
         'subdomain' => 'new-blog',

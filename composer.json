@@ -1,12 +1,12 @@
 {
-    "name": "laravel/laravel",
+    "name": "hyvor/blogs",
     "type": "project",
-    "description": "The Laravel Framework.",
-    "keywords": ["framework", "laravel"],
+    "description": "Hyvor Blogs",
     "license": "MIT",
     "require": {
         "php": "^8.1",
         "ext-dom": "*",
+        "ext-intl": "*",
         "erusev/parsedown-extra": "^0.8.1",
         "fruitcake/laravel-cors": "^2.0",
         "guzzlehttp/guzzle": "^7.0.1",
@@ -33,6 +33,7 @@
         "symfony/http-foundation": "^6.0",
         "symfony/process": "^6.0",
         "symfony/yaml": "^6.0",
+        "twig/intl-extra": "^3.4",
         "twig/string-extra": "^3.3",
         "twig/twig": "^2.0",
         "ueberdosis/tiptap-php": "^1.1",
@@ -88,12 +89,11 @@
         "post-create-project-cmd": [
             "@php artisan key:generate --ansi"
         ],
+
         "serve": "concurrently \"php artisan serve --host=blogs.hyvor.test --port=8080\" \"php artisan serve --host=test.hyvorblogs.test --port=8081\"",
         "expose": "ngrok http 8080 --host-header=blogs.hyvor.test",
-
         "test": "vendor/bin/pest -p",
         "fix": "vendor/bin/php-cs-fixer fix --allow-risky=yes",
-
         "minio": "minio server storage/app/minio"
     },
     "repositories": [

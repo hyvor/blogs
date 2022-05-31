@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers\CliAPI;
 
+use App\Data\Enums\BlogHostingAtEnum;
 use App\Data\Enums\ThemeFileFolderEnum;
 use App\Domains\Delivery\DeliveryRepository;
 use App\Domains\Theme\ThemeFilesRepository;
@@ -44,6 +45,7 @@ class CliAPIController
         $path = $request->input('path');
         $host = $request->input('host');
 
+        $blog->hosting_at = BlogHostingAtEnum::SELF;
         $blog->hosting_url = 'http://' . $host;
         $blog->save();
 

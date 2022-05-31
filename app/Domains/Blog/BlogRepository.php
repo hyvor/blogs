@@ -4,6 +4,12 @@ namespace App\Domains\Blog;
 
 use App\Data\Enums\BlogHostingAtEnum;
 use App\Data\Enums\BlogTypeEnum;
+use App\Domains\Blog\Fillers\LanguageFiller;
+use App\Domains\Blog\Fillers\NavigationFiller;
+use App\Domains\Blog\Fillers\PostFiller;
+use App\Domains\Blog\Fillers\RouteFiller;
+use App\Domains\Blog\Fillers\TagFiller;
+use App\Domains\Blog\Fillers\UserFiller;
 use App\Exceptions\TrustedException;
 use App\Models\Blog;
 use App\Models\BlogVariant;
@@ -17,11 +23,31 @@ class BlogRepository
         string $subdomain,
         BlogTypeEnum $type = BlogTypeEnum::DEFAULT
     ): Blog {
+
         $blog = Blog::create([
             'hyvor_user_id' => $userId,
             'subdomain' => $subdomain,
             'type' => $type->value,
         ]);
+
+        // start trial
+        $blog->createAsCustomer([
+            'trial_ends_at' => now()->addDays(config('limits.trial_days')),
+        ]);
+
+        // fill data
+        $fillers = [
+            LanguageFiller::class,
+            UserFiller::class,
+            TagFiller::class,
+            PostFiller::class,
+            RouteFiller::class,
+            NavigationFiller::class,
+        ];
+
+        foreach ($fillers as $filler) {
+            (new $filler($blog))->fill();
+        }
 
         BlogVariant::create([
             'blog_id' => $blog->id,

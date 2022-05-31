@@ -6,6 +6,7 @@ use Illuminate\Support\Facades\App;
 use Twig\Environment;
 use Twig\Extension\DebugExtension;
 use Twig\Extension\StringLoaderExtension;
+use Twig\Extra\Intl\IntlExtension;
 use Twig\Extra\String\StringExtension;
 use Twig\Loader\ArrayLoader;
 
@@ -40,6 +41,7 @@ class TwigRenderer
 
     private static function getEnvironment(ArrayLoader $loader)
     {
+
         $isLocal = App::environment('local');
 
         $twig = new Environment($loader, [
@@ -55,6 +57,9 @@ class TwigRenderer
 
         // string filters
         $twig->addExtension(new StringExtension());
+
+        // format_datetime https://twig.symfony.com/doc/3.x/filters/format_datetime.html
+        $twig->addExtension(new IntlExtension());
 
         // debugging
         if ($isLocal) {

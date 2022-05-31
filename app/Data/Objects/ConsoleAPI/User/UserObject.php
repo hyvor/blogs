@@ -17,7 +17,7 @@ class UserObject
     public UserStatusEnum $status;
     public UserRoleEnum $role;
     public string $slug;
-    public string $email;
+    public ?string $email;
 
     public ?string $picture_url;
     public ?string $website_url;
