@@ -102,7 +102,9 @@ class UserRepository
         array $orderBys = [
             ['users.posts_count', 'DESC'],
         ],
-    ): CollectionWithTotal {
+    ): CollectionWithTotal
+    {
+
         $builder = FilterQ::expression($filter)
             ->builder(User::class)
             ->keys(function ($keys) {
@@ -132,6 +134,7 @@ class UserRepository
         $tags = $builder
             ->where('users.blog_id', $blog->id)
             ->where('users.posts_count', '>', 0)
+            ->select('users.*')
             ->limit($limit)
             ->offset($offset)
             ->get();

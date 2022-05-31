@@ -217,7 +217,7 @@ it('filters by id', function () {
 it('filters by slug', function () {
     $this
         ->callDataApi('/authors', [
-            'filter' => "slug={$this->author->slug}",
+            'filter' => "slug='{$this->author->slug}'",
         ])
         ->assertJsonPath('data.0.slug', $this->author->slug)
         ->assertJsonCount(1, 'data');

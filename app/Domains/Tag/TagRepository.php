@@ -94,6 +94,7 @@ class TagRepository
 
         $tags = $builder
             ->where('tags.blog_id', $blog->id)
+            ->select('tags.*')
             ->limit($limit)
             ->offset($offset)
             ->get();

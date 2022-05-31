@@ -219,7 +219,7 @@ it('filters by id', function () {
 it('filters by slug', function () {
     $this
         ->callDataApi('/tags', [
-            'filter' => "slug={$this->tag->slug}",
+            'filter' => "slug='{$this->tag->slug}'",
         ])
         ->assertJsonPath('data.0.slug', $this->tag->slug)
         ->assertJsonCount(1, 'data');
@@ -227,7 +227,7 @@ it('filters by slug', function () {
 
 it('filters by posts_count', function () {
     $this->tags->random(3)->each(function ($tag) {
-        $tag->update(['posts_count' => rand(100, 200)]);
+        $tag->update(['posts_count' => rand(101, 200)]);
     });
 
     $this

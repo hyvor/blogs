@@ -18,7 +18,7 @@ class UserFactory extends Factory
             'hyvor_user_id' => rand(),
             'role' => 'owner',
             'status' => 'invited',
-            'slug' => Str::slug($this->faker->name()),
+            'slug' => Str::slug(Str::random(25)),
             'email' => $email,
             'website_url' => $this->faker->url(),
             'picture_url' => "https://i.pravatar.cc/150?u=$email",
@@ -27,7 +27,8 @@ class UserFactory extends Factory
             'social_linkedin' => $this->faker->url(),
             'social_youtube' => $this->faker->url(),
             'social_instagram' => $this->faker->url(),
-            'social_github' => $this->faker->url()
+            'social_github' => $this->faker->url(),
+            'posts_count' => 0
         ];
     }
 }

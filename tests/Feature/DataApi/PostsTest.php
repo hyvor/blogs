@@ -356,12 +356,15 @@ it('filters by tag ID', function () {
     $blog = Blog::find(config('test.blog_id'));
     $tag = $blog->tags[0];
     $post = getAPost();
+    PostTag::where('post_id', $post->id)->delete();
     PostTag::updateOrCreate(['post_id' => $post->id, 'tag_id' => $tag->id]);
 
     $response = $this->callDataApi('/posts', [
         'filter' => "tag.id=$tag->id",
     ]);
+
     $response->assertJsonPath('data.0.tags.0.id', $tag->id);
+
 });
 
 it('filters by tag slug', function () {
@@ -407,7 +410,7 @@ it('filters by author slug', function () {
     PostAuthor::create(['post_id' => $post->id, 'user_id' => $user->id]);
 
     $response = $this->callDataApi('/posts', [
-        'filter' => "author.slug=$user->slug",
+        'filter' => "author.slug='$user->slug'",
     ]);
     $response->assertJsonPath('data.0.authors.0.slug', $user->slug);
 });

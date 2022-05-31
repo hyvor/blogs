@@ -2,11 +2,11 @@
 
 namespace Database\Seeders;
 
+use App\Domains\Blog\Fillers\RouteFiller;
 use App\Domains\Post\PostSearchRepository;
 use App\Models\Blog;
 use App\Models\BlogVariant;
 use App\Models\Language;
-use App\Models\Navigation;
 use App\Models\Post;
 use App\Models\PostAuthor;
 use App\Models\PostVariant;
@@ -17,8 +17,6 @@ use App\Models\User;
 use App\Models\UserVariant;
 use Faker\Factory;
 use Illuminate\Database\Eloquent\Factories\Sequence;
-use Illuminate\Support\Facades\App;
-use Illuminate\Support\Str;
 use Illuminate\Database\Seeder;
 
 class DatabaseSeeder extends Seeder
@@ -117,8 +115,8 @@ class DatabaseSeeder extends Seeder
                     'variants'
                 )
                 ->state(new Sequence(
-                    ['role' => 'owner', 'hyvor_user_id' => 2],
-                    ['role' => 'admin', 'hyvor_user_id' => 3]
+                    ['role' => 'owner', 'hyvor_user_id' => config('test.hyvor_user_id')],
+                    ['role' => 'admin', 'hyvor_user_id' => 2]
                 ))
                 ->create([
                     'blog_id' => $blog,
@@ -130,58 +128,55 @@ class DatabaseSeeder extends Seeder
              * posts and pages 10 each
              * about 3 draft, 3 published, 3 scheduled
              */
-            if (true) {
-                $posts = Post::factory()
-                    ->count(10)
-                    ->has(
-                        PostVariant::factory()
-                            ->count(2)
-                            ->state(new Sequence(
-                                ['language_id' => $english],
-                                ['language_id' => $french]
-                            ))
-                            ->state(new Sequence(
-                                ['status' => 'draft'],
-                                ['status' => 'published'],
-                                ['status' => 'scheduled']
-                            )),
-                        'variants'
-                    )
-                    ->state(new Sequence(
-                        ['is_page' => true],
-                        ['is_page' => false]
-                    ))
-                    ->create([
-                        'blog_id' => $blog,
-                    ]);
-
-                // connect posts and tags
-                $posts->map(function ($post) use ($tags, $users) {
-                    $tags->random(3)->map(fn($tag) => PostTag::create([
-                        'post_id' => $post->id,
-                        'tag_id' => $tag->id
-                    ]));
-
-                    $users->map(fn($user) => PostAuthor::create([
-                        'post_id' => $post->id,
-                        'user_id' => $user->id
-                    ]));
-                });
-            }
-
-            /*Navigation::factory()
+            $posts = Post::factory()
                 ->count(10)
+                ->has(
+                    PostVariant::factory()
+                        ->count(2)
+                        ->state(new Sequence(
+                            ['language_id' => $english],
+                            ['language_id' => $french]
+                        ))
+                        ->state(new Sequence(
+                            ['status' => 'draft'],
+                            ['status' => 'published'],
+                            ['status' => 'scheduled']
+                        )),
+                    'variants'
+                )
                 ->state(new Sequence(
-                    ['type' => 'header'],
-                    ['type' => 'footer'],
+                    ['is_page' => true],
+                    ['is_page' => false]
                 ))
                 ->create([
-                    'blog_id' => $blog
-                ]);*/
+                    'blog_id' => $blog,
+                ]);
+
+            // connect posts and tags
+            $posts->map(function ($post) use ($tags, $users) {
+                $tags->random(3)->map(fn($tag) => PostTag::create([
+                    'post_id' => $post->id,
+                    'tag_id' => $tag->id
+                ]));
+
+                $users->map(fn($user) => PostAuthor::create([
+                    'post_id' => $post->id,
+                    'user_id' => $user->id
+                ]));
+            });
+
+
+            /**
+             * Other fillers are mimicked inside this seeder
+             * However, we'll here just use the Route filler as the code will be the same for testing
+             */
+            (new RouteFiller($blog))->fill();
+
         }
 
         PostSearchRepository::setFilterableAttributes();
         PostSearchRepository::setSearchableAttributes();
+
 
         /*$this->call([
             BlogThemeFilesSeeder::class

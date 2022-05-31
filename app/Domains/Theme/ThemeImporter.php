@@ -59,7 +59,6 @@ class ThemeImporter
         } catch (ZipException $e) {
             $this->success = false;
         }
-        die;
     }
 
     private function fileAllowed(?ThemeFileFolderEnum $folder, string $fileName): bool

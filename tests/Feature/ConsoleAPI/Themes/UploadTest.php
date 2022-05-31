@@ -2,7 +2,6 @@
 
 namespace Tests\Feature\ConsoleAPI\Themes;
 
-require_once 'tests/Unit/Themes/ThemeImporterTest.php';
 
 use Illuminate\Http\UploadedFile;
 use PhpZip\ZipFile;
