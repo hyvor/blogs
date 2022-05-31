@@ -13,7 +13,6 @@ use App\Models\PostVariant;
 
 class PostFiller implements FillerInterface
 {
-
     private array $data = [
 
         // posts
@@ -60,7 +59,6 @@ class PostFiller implements FillerInterface
 
     public function fill()
     {
-
         $language = $this->blog->languages[0];
 
         foreach ($this->data as $row) {
@@ -82,17 +80,13 @@ class PostFiller implements FillerInterface
                 'description' => $row['description'] ?? '',
             ]);
 
-            if (!$isPage) {
-
+            if (! $isPage) {
                 PostTag::create(['post_id' => $post->id, 'tag_id' => $this->blog->tags[0]->id]);
                 PostAuthor::create(['post_id' => $post->id, 'user_id' => $this->blog->users[0]->id]);
-
             }
-
         }
 
         if ($this->blog->type === BlogTypeEnum::DEV) {
-
             $posts = Post::factory()->count(100)->create(['blog_id' => $this->blog->id]);
 
             foreach ($posts as $post) {
@@ -107,7 +101,7 @@ class PostFiller implements FillerInterface
                     $randomId = $tagIds->random();
                     PostTag::create([
                         'post_id' => $post->id,
-                        'tag_id' => $randomId
+                        'tag_id' => $randomId,
                     ]);
                     $tagIds = $tagIds->reject(fn ($id) => $id === $randomId);
                 }
@@ -118,14 +112,11 @@ class PostFiller implements FillerInterface
                     $randomId = $userIds->random();
                     PostAuthor::create([
                         'post_id' => $post->id,
-                        'user_id' => $randomId
+                        'user_id' => $randomId,
                     ]);
-                    $userIds = $userIds->reject(fn($id) => $id === $randomId);
+                    $userIds = $userIds->reject(fn ($id) => $id === $randomId);
                 }
-
             }
-
         }
-
     }
 }

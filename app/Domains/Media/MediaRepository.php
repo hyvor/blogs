@@ -64,18 +64,19 @@ class MediaRepository
         ]);
     }
 
-    public static function uploadFromUrl(Blog $blog, string $url) : Media
+    public static function uploadFromUrl(Blog $blog, string $url): Media
     {
-
         $response = Http::get($url);
 
-        if (!$response->successful())
-            throw new UploadException;
+        if (! $response->successful()) {
+            throw new UploadException();
+        }
 
         $file = $response->body();
 
-        if (!$file)
-            throw new UploadException;
+        if (! $file) {
+            throw new UploadException();
+        }
 
         $size = (int) $response->header('content-size');
 
@@ -89,7 +90,6 @@ class MediaRepository
             'size' => $size,
             'original_name' => $fileName,
         ]);
-
     }
 
     public static function getContents(Media $media)

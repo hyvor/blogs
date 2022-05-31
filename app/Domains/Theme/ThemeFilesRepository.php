@@ -13,23 +13,18 @@ use PhpZip\ZipFile;
 
 class ThemeFilesRepository
 {
-
-    public static function getZip(Blog $blog) : ZipFile
+    public static function getZip(Blog $blog): ZipFile
     {
-
         $zip = new ZipFile();
 
         $files = self::getAllFilesOfBlog($blog);
 
         foreach ($files as $file) {
-
             $entryName = $file->folder === null ? $file->name : "{$file->folder->value}/$file->name";
             $zip->addFromString($entryName, $file->content);
-
         }
 
         return $zip;
-
     }
 
     public static function getFile(
@@ -100,7 +95,6 @@ class ThemeFilesRepository
 
     private static function updateLocalDBFiles(int $blogId)
     {
-
         return;
 
         /**

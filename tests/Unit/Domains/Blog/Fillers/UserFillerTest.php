@@ -7,8 +7,7 @@ use App\Data\Enums\UserRoleEnum;
 use App\Domains\Blog\Fillers\LanguageFiller;
 use App\Domains\Blog\Fillers\UserFiller;
 
-it('fills the owner', function() {
-
+it('fills the owner', function () {
     $blog = newBlog();
 
     (new LanguageFiller($blog))->fill();
@@ -21,11 +20,9 @@ it('fills the owner', function() {
     $owner = $blog->users[0];
 
     expect($owner->role)->toBe(UserRoleEnum::OWNER);
-
 });
 
-it('adds more users for dev blogs', function() {
-
+it('adds more users for dev blogs', function () {
     $blog = newBlog(BlogTypeEnum::DEV);
 
     (new LanguageFiller($blog))->fill();
@@ -34,5 +31,4 @@ it('adds more users for dev blogs', function() {
     $filler->fill();
 
     expect(count($blog->users))->toBe(6);
-
 });

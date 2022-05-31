@@ -7,7 +7,7 @@ require_once 'tests/Unit/Themes/ThemeImporterTest.php';
 use Illuminate\Http\UploadedFile;
 use PhpZip\ZipFile;
 
-it('uploads a theme', function() {
+it('uploads a theme', function () {
 
     // same as ThemeImporterTest Unit Test
     $zip = new ZipFile();
@@ -26,7 +26,7 @@ it('uploads a theme', function() {
     );
 
     $files = $this->callConsoleApi('POST', '/theme', [
-        'zip' => $zip
+        'zip' => $zip,
     ])
         ->assertOk()
         ->json();
@@ -44,5 +44,4 @@ it('uploads a theme', function() {
     expect(
         $files->where('folder', null)->firstWhere('name', 'config.yaml')['content']
     )->toBe('THEME_NAME=sample');
-
 });

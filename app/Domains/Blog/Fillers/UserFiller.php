@@ -11,9 +11,9 @@ use Faker\Factory;
 
 class UserFiller implements FillerInterface
 {
-
     public function __construct(private Blog $blog)
-    {}
+    {
+    }
 
     public function fill()
     {
@@ -27,14 +27,11 @@ class UserFiller implements FillerInterface
         );
 
         if ($this->blog->type === BlogTypeEnum::DEV) {
-
             $faker = Factory::create();
 
             foreach (range(1, 5) as $i) {
                 UserRepository::createGuestUser($this->blog, $faker->name());
             }
-
         }
-
     }
 }

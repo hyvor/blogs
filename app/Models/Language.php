@@ -10,7 +10,7 @@ class Language extends Model
     use HasFactory;
 
     protected $casts = [
-        'is_primary' => 'boolean'
+        'is_primary' => 'boolean',
     ];
 
     public function fallback()

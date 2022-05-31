@@ -8,7 +8,7 @@ use App\Domains\Theme\ThemeImporter;
 use App\Models\ThemeFile;
 use PhpZip\ZipFile;
 
-beforeEach(function() {
+beforeEach(function () {
 
     // imports the sample-theme
 
@@ -21,16 +21,15 @@ beforeEach(function() {
 
     $this->blog = blog();
     $this->importer = new ThemeImporter($this->blog, file_get_contents($path));
-
 });
 
-function getThemeFile(?ThemeFileFolderEnum $folder, string $file) {
+function getThemeFile(?ThemeFileFolderEnum $folder, string $file)
+{
     return ThemeFilesRepository::getFile(blog(), $file, $folder);
 }
 
 
-it('works', function() {
-
+it('works', function () {
     $this->importer->import();
 
     // test skipping
@@ -50,15 +49,11 @@ it('works', function() {
     expect(getThemeFile(ThemeFileFolderEnum::ASSETS, 'something-else.svg'))->toBeNull();
 
     expect(getThemeFile(null, 'config.yaml')->content)->toBe('THEME_NAME=sample');
-
-
 });
 
-it('fails on invalid input', function() {
-
+it('fails on invalid input', function () {
     $importer = new ThemeImporter(blog(), 'hi');
     $importer->import();
 
     expect($importer->success())->toBeFalse();
-
 });

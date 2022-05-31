@@ -61,7 +61,7 @@ function newBlog(BlogTypeEnum $type = BlogTypeEnum::DEFAULT)
         BlogVariant::factory(),
         'variants'
     )->create([
-        'type' => $type
+        'type' => $type,
     ]);
 }
 

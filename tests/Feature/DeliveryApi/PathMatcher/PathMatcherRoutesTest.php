@@ -102,7 +102,7 @@ it('matches index with page number', function () {
         ->count($this->count)
         ->has(PostVariant::factory()->create())
         ->create([
-            'blog_id' => config('test.blog_id')
+            'blog_id' => config('test.blog_id'),
         ]);
 
     ThemeFilesRepository::createOrUpdateFile(

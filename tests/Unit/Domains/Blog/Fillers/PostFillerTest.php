@@ -9,8 +9,7 @@ use App\Domains\Blog\Fillers\TagFiller;
 use App\Domains\Blog\Fillers\UserFiller;
 use App\Models\Post;
 
-it('fills with posts', function() {
-
+it('fills with posts', function () {
     $blog = newBlog();
 
     (new LanguageFiller($blog))->fill();
@@ -33,11 +32,9 @@ it('fills with posts', function() {
 
     expect($post1->tags[0]->slug)->toBe('welcome');
     expect($post1->authors[0]->id)->toBe($blog->users[0]->id);
-
 });
 
-it('adds more posts for DEV blogs', function() {
-
+it('adds more posts for DEV blogs', function () {
     $blog = newBlog(BlogTypeEnum::DEV);
 
     (new LanguageFiller($blog))->fill();
@@ -48,5 +45,4 @@ it('adds more posts for DEV blogs', function() {
     $filler->fill();
 
     expect($blog->posts()->count())->toBeGreaterThan(100);
-
 });

@@ -65,8 +65,7 @@ class TagRepository
         array $orderBys = [
             ['tags.posts_count', 'DESC'],
         ],
-    ): CollectionWithTotal
-    {
+    ): CollectionWithTotal {
         $builder = FilterQ::expression($filter)
             ->builder(Tag::class)
             ->keys(function ($keys) {
@@ -106,7 +105,6 @@ class TagRepository
 
     public static function createTag(Blog $blog, string $name): Tag
     {
-
         $tag = Tag::create([
             'blog_id' => $blog->id,
             'slug' => UniqueSlugGenerator::generate($blog, [$name]),
@@ -131,8 +129,7 @@ class TagRepository
         ?string $codeFoot,
         ?string $name,
         ?string $description
-    ): void
-    {
+    ): void {
         $tag = Tag::find($id)
         ->update([
             'slug' => $slug,

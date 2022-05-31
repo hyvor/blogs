@@ -12,7 +12,6 @@ use Illuminate\Support\Collection;
 
 class NavigationRepository
 {
-
     public static function getNavigations(Blog $blog): Collection
     {
         $language = LanguageRepository::getPrimaryLanguage($blog);
@@ -36,7 +35,6 @@ class NavigationRepository
         NavigationTypeEnum $type,
         int $sort = 0
     ): Navigation {
-
         $navigation = Navigation::create([
             'blog_id' => $blog->id,
             'url' => $url,
@@ -110,15 +108,12 @@ class NavigationRepository
         Navigation $navigation,
         Language $language,
         string $name
-    )
-    {
-
+    ) {
         NavigationVariant::create([
             'navigation_id' => $navigation->id,
             'language_id' => $language->id,
-            'name' => $name
+            'name' => $name,
         ]);
-
     }
 
     /*

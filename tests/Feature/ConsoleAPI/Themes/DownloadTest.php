@@ -6,8 +6,7 @@ use App\Data\Enums\ThemeFileFolderEnum;
 use App\Domains\Theme\ThemeFilesRepository;
 use PhpZip\ZipFile;
 
-it('downloads the theme as a zip', function() {
-
+it('downloads the theme as a zip', function () {
     $blog = blog();
     $content = 'Hi';
 
@@ -22,5 +21,4 @@ it('downloads the theme as a zip', function() {
 
     expect($zipFile['templates/index.twig'])->toBe($content);
     expect($zipFile['config.yaml'])->toBe('');
-
 });

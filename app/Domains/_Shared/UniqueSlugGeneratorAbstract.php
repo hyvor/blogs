@@ -3,8 +3,6 @@
 namespace App\Domains\_Shared;
 
 use App\Models\Blog;
-use App\Models\Tag;
-use App\Models\User;
 use Illuminate\Support\Str;
 
 /**
@@ -12,10 +10,11 @@ use Illuminate\Support\Str;
  */
 abstract class UniqueSlugGeneratorAbstract
 {
+    public function __construct(protected Blog $blog)
+    {
+    }
 
-    public function __construct(protected Blog $blog) {}
-
-    abstract public function exists(string $slug) : bool;
+    abstract public function exists(string $slug): bool;
 
     /**
      * It checks if the slug versions of the given strings are
@@ -29,7 +28,7 @@ abstract class UniqueSlugGeneratorAbstract
         foreach ($checks as $check) {
             $slug = Str::slug($check);
 
-            if (!$this->exists($slug)) {
+            if (! $this->exists($slug)) {
                 return $slug;
             }
         }
@@ -44,7 +43,7 @@ abstract class UniqueSlugGeneratorAbstract
     public static function generate(Blog $blog, array $checks)
     {
         $generator = new static($blog);
+
         return $generator->generateSlug($checks);
     }
-
 }

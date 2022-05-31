@@ -9,7 +9,6 @@ use Hyvor\HyvorConnecter\HyvorUser;
 
 class UniqueSlugGenerator extends UniqueSlugGeneratorAbstract
 {
-
     public function exists(string $slug): bool
     {
         return User::where('blog_id', $this->blog->id)->where('slug', $slug)->exists();
@@ -24,5 +23,4 @@ class UniqueSlugGenerator extends UniqueSlugGeneratorAbstract
     {
         return static::generate($blog, [$name]);
     }
-
 }

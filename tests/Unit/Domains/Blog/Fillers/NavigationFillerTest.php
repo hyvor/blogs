@@ -8,8 +8,7 @@ use App\Domains\Blog\Fillers\NavigationFiller;
 use App\Domains\Blog\Fillers\TagFiller;
 use App\Domains\Blog\Fillers\UserFiller;
 
-it('fills with navigations', function() {
-
+it('fills with navigations', function () {
     $blog = newBlog();
 
     $languageFiller = new LanguageFiller($blog);
@@ -23,11 +22,9 @@ it('fills with navigations', function() {
     expect($nav->firstWhere('url', '/about'))->not()->toBeNull();
     expect($nav->firstWhere('url', '/privacy'))->not()->toBeNull();
     expect($nav->firstWhere('url', '/contact'))->not()->toBeNull();
-
 });
 
-it('fills additional for dev blogs', function() {
-
+it('fills additional for dev blogs', function () {
     $blog = newBlog(BlogTypeEnum::DEV);
 
     $languageFiller = new LanguageFiller($blog);
@@ -50,5 +47,4 @@ it('fills additional for dev blogs', function() {
 
     expect($nav->firstWhere('url', "/author/$authorSlug"))->not()->toBeNull();
     expect($nav->firstWhere('url', "/tag/$tagSlug"))->not()->toBeNull();
-
 });

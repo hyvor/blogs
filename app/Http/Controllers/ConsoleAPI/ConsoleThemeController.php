@@ -12,10 +12,8 @@ use Illuminate\Http\Request;
 
 class ConsoleThemeController extends Controller
 {
-
     public function uploadTheme(Request $request, Blog $blog)
     {
-
         $request->validate([
             'zip' => 'required|file|max:' . config('limits.max_media_upload_size_kb'),
         ]);
@@ -28,23 +26,20 @@ class ConsoleThemeController extends Controller
         $importer = new ThemeImporter($blog, $content);
         $importer->import();
 
-        if (!$importer->success()) {
+        if (! $importer->success()) {
             throw new TrustedException('Unable to import the theme');
         }
 
         return response()->json(ThemeFilesRepository::getAllFilesOfBlog($blog)->mapInto(FileObject::class));
-
     }
 
     public function downloadTheme(Blog $blog)
     {
-
         $zip = ThemeFilesRepository::getZip($blog);
 
         $filename = 'hb-theme-of-' . $blog->subdomain . '-' . date('Y-m-d') . '.zip';
 
         return $zip->outputAsSymfonyResponse($filename, 'application/zip');
-
     }
 
     public function getAllFiles(Blog $blog)

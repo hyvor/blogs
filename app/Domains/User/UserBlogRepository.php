@@ -12,7 +12,6 @@ use Illuminate\Support\Collection;
  */
 class UserBlogRepository
 {
-
     public static function getBlogsOfUser(HyvorUser $hyvorUser): Collection
     {
         return User::where('hyvor_user_id', $hyvorUser->id)
@@ -40,5 +39,4 @@ class UserBlogRepository
             $i++;
         }
     }
-
 }

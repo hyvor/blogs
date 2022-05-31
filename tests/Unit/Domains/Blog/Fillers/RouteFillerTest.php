@@ -5,8 +5,7 @@ namespace Tests\Unit\Domains\Blog\Fillers;
 use App\Domains\Blog\Fillers\RouteFiller;
 use App\Models\Route;
 
-it('fills default routes', function() {
-
+it('fills default routes', function () {
     $blog = newBlog();
 
     (new RouteFiller($blog))->fill();
@@ -18,5 +17,4 @@ it('fills default routes', function() {
     expect($routes->firstWhere('name', 'index'))->toBeInstanceOf(Route::class);
     expect($routes->firstWhere('name', 'tag'))->toBeInstanceOf(Route::class);
     expect($routes->firstWhere('name', 'author'))->toBeInstanceOf(Route::class);
-
 });

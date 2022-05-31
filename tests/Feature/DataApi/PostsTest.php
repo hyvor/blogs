@@ -23,7 +23,7 @@ it('fetches posts without params', function () {
         ->assertJson(function (AssertableJson $json) {
             $json
                 ->has('data')
-                ->has('data.0', fn(AssertableJson $json) => $json->where('language.code', 'en')->etc())
+                ->has('data.0', fn (AssertableJson $json) => $json->where('language.code', 'en')->etc())
                 ->has('pagination');
         });
 });

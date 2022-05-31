@@ -46,7 +46,6 @@ class ConsoleUserBlogController extends Controller
 
     public function changeSort(Request $request, HyvorUser $hyvorUser)
     {
-
         $request->validate([
             'blog_ids' => 'required|array',
             'blog_ids.*' => 'integer',
@@ -57,7 +56,6 @@ class ConsoleUserBlogController extends Controller
         UserBlogRepository::changeBlogSorts($hyvorUser, $blogIds);
 
         return response()->json();
-
     }
 
     public function checkSubdomain(Request $request)

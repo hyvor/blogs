@@ -12,7 +12,6 @@ use Illuminate\Http\Request;
 
 class ConsoleViewController extends Controller
 {
-
     public function __invoke(Request $request)
     {
         $hyvorUser = Login::check();
@@ -40,8 +39,8 @@ class ConsoleViewController extends Controller
             'syntax_themes' => Highlighter::getAllThemes(),
 
             'limits' => [
-                'max_theme_zip_size_kb' => config('limits.max_theme_zip_size_kb')
-            ]
+                'max_theme_zip_size_kb' => config('limits.max_theme_zip_size_kb'),
+            ],
         ];
 
         return view('console', ['config' => $config]);

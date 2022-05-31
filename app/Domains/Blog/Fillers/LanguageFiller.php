@@ -5,7 +5,6 @@ namespace App\Domains\Blog\Fillers;
 use App\Data\Enums\BlogTypeEnum;
 use App\Domains\Language\LanguageRepository;
 use App\Models\Blog;
-use Illuminate\Support\Facades\App;
 
 class LanguageFiller implements FillerInterface
 {
@@ -28,8 +27,6 @@ class LanguageFiller implements FillerInterface
         );
 
         if ($this->blog->type === BlogTypeEnum::DEV) {
-
-
             LanguageRepository::createLanguage(
                 $this->blog,
                 'en-GB',
@@ -41,8 +38,6 @@ class LanguageFiller implements FillerInterface
                 'fr',
                 'French'
             );
-
         }
-
     }
 }

@@ -9,7 +9,6 @@ use App\Domains\Media\Exceptions\UploadException;
 use App\Domains\Media\MediaRepository;
 use App\Domains\Post\PostTagAuthorRepository;
 use App\Domains\Route\PermalinkRepository;
-use App\Exceptions\TrustedException;
 use App\Helpers\CollectionWithTotal;
 use App\Models\Blog;
 use App\Models\Language;
@@ -17,12 +16,9 @@ use App\Models\User;
 use App\Models\UserVariant;
 use Exception;
 use Hyvor\FilterQ\Facades\FilterQ;
-use Hyvor\HyvorConnecter\HyvorUser;
 use Hyvor\HyvorConnecter\Userbase;
 use Illuminate\Http\UploadedFile;
 use Illuminate\Support\Collection;
-
-use Illuminate\Support\Str;
 
 /**
  *
@@ -106,9 +102,7 @@ class UserRepository
         array $orderBys = [
             ['users.posts_count', 'DESC'],
         ],
-    ): CollectionWithTotal
-    {
-
+    ): CollectionWithTotal {
         $builder = FilterQ::expression($filter)
             ->builder(User::class)
             ->keys(function ($keys) {
@@ -152,23 +146,20 @@ class UserRepository
         int $hyvorUserId,
         UserRoleEnum $role,
         UserStatusEnum $status = UserStatusEnum::INVITED,
-    ) : User
-    {
-
+    ): User {
         $hyvorUser = Userbase::fromId($hyvorUserId);
 
-        if (!$hyvorUser) {
+        if (! $hyvorUser) {
             throw new Exception('User not found');
         }
 
         $pictureUrl = null;
         if ($hyvorUser->picture_url) {
-
             try {
                 $media = MediaRepository::uploadFromUrl($blog, $hyvorUser->picture_url);
                 $pictureUrl = PermalinkRepository::getMediaPermalink($media, $blog);
-            } catch (UploadException) {}
-
+            } catch (UploadException) {
+            }
         }
 
         $user = User::create([
@@ -193,20 +184,17 @@ class UserRepository
         );
 
         return $user;
-
     }
 
     public static function createGuestUser(
         Blog $blog,
         string $name,
-    ) : User
-    {
-
+    ): User {
         $user = User::create([
             'blog_id' => $blog->id,
             'role' => UserRoleEnum::CONTRIBUTOR,
             'status' => UserStatusEnum::ACTIVE,
-            'slug' => UniqueSlugGenerator::forGuestUser($blog, $name)
+            'slug' => UniqueSlugGenerator::forGuestUser($blog, $name),
         ]);
 
         $language = LanguageRepository::getPrimaryLanguage($blog);
@@ -214,7 +202,6 @@ class UserRepository
         self::createUserVariant($user, $language, $name);
 
         return $user;
-
     }
 
     public static function updateUser(
@@ -276,17 +263,14 @@ class UserRepository
         string $name,
         ?string $location = null,
         ?string $bio = null,
-    ): void
-    {
-
+    ): void {
         UserVariant::create([
             'user_id' => $user->id,
             'language_id' => $language->id,
             'name' => $name,
             'location' => $location,
-            'bio' => $bio
+            'bio' => $bio,
         ]);
-
     }
 
     public static function updatePicture($blog, UploadedFile $file): bool
@@ -344,5 +328,4 @@ class UserRepository
     {
         return self::getUserByBlogIdAndIdentifier($blogId, null, $slug);
     }
-
 }

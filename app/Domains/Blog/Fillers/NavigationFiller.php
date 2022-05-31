@@ -28,12 +28,12 @@ class NavigationFiller implements FillerInterface
     ];
 
     public function __construct(private Blog $blog)
-    {}
+    {
+    }
 
     public function fill()
     {
         if ($this->blog->type === BlogTypeEnum::DEV) {
-
             $this->navs[] = [
                 'type' => NavigationTypeEnum::HEADER,
                 'name' => 'Content Style',
@@ -49,11 +49,9 @@ class NavigationFiller implements FillerInterface
                 'name' => 'Tag',
                 'url' => '/tag/' . $this->blog->tags[0]->slug,
             ];
-
         }
 
         foreach ($this->navs as $nav) {
-
             if (isset($nav['isDev']) && $this->blog->type !== BlogTypeEnum::DEV) {
                 continue;
             }
@@ -65,6 +63,5 @@ class NavigationFiller implements FillerInterface
                 $nav['type'],
             );
         }
-
     }
 }

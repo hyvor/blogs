@@ -2,15 +2,12 @@
 
 namespace App\Domains\Blog\Observers;
 
-use App\Data\Enums\UserRoleEnum;
-use App\Data\Enums\UserStatusEnum;
 use App\Domains\Blog\Fillers\LanguageFiller;
 use App\Domains\Blog\Fillers\NavigationFiller;
 use App\Domains\Blog\Fillers\PostFiller;
 use App\Domains\Blog\Fillers\RouteFiller;
 use App\Domains\Blog\Fillers\TagFiller;
 use App\Domains\Blog\Fillers\UserFiller;
-use App\Domains\User\UserRepository;
 use App\Models\Blog;
 use Illuminate\Support\Facades\App;
 
@@ -18,9 +15,9 @@ class BlogObserver
 {
     public function created(Blog $blog)
     {
-
-        if (App::environment('testing'))
+        if (App::environment('testing')) {
             return;
+        }
 
         // FILL NEW BLOG
 
@@ -45,7 +42,6 @@ class BlogObserver
         foreach ($fillers as $filler) {
             (new $filler($blog))->fill();
         }
-
     }
 
     public function updated(Blog $blog)
