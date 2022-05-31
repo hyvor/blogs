@@ -11,6 +11,12 @@ class ThemeRepositoryObject
     */
     public array $themeRequiredData = [];
 
+    /**
+    * @var array<array<string,mixed>>
+    */
+    public array $dd = [];
+
+
     public function themeRequiredData(
         $type, 
         $themeName
@@ -30,7 +36,27 @@ class ThemeRepositoryObject
         }
     }
     
-    public function themeFiles(){}
+    public function theme(
+        $configDef,
+        $config,
+        $lang,
+        $styles,
+        $templates,
+        $assets
+    )
+    {
+        $this->dd[] = [
+            'config.def' => $configDef,
+            'config' => $config,
+            'lang' => $lang,
+            'styles' => $styles,
+            'templates' => $templates,
+            'assets' => $assets,
+        ];
+
+        dump($this->dd);
+
+    }
 
     public function themeVersion(){}
 }

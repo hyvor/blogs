@@ -4,9 +4,10 @@ namespace App\Domains\Theme\Jobs;
 
 use Illuminate\Contracts\Queue\ShouldQueue;
 use App\Domains\Theme\Object\ThemeRepositoryObject;
-use Github\Client;
+// use Github\Client;
 use PhpZip\ZipFile;
 use App\Domains\Theme\ThemeRepository;
+use Symfony\Component\Yaml\Yaml;
 
 // part - 1
 // create a job to do the saving. - done
@@ -54,117 +55,114 @@ class ThemesJob implements ShouldQueue
     */
     public array $themeFiles = [];
 
+    /**
+    * @var array<array<string,mixed>>
+    */
     public array $configDef = [];
+    
+    /**
+    * @var array<array<string,mixed>>
+    */
     public array $config = [];
+    
+    /**
+    * @var array<array<string,mixed>>
+    */
     public array $lang = [];
+
+    /**
+    * @var array<array<string,mixed>>
+    */
     public array $styles = [];
+
+    /**
+    * @var array<array<string,mixed>>
+    */
     public array $templates = [];
+
+    /**
+    * @var array<array<string,mixed>>
+    */
     public array $assets = [];
 
     public function themes()
     {
         $repo = new ThemeRepositoryObject();
-        $client = new Client();
         $zipFile = new ZipFile();
+        
+        // $client = new Client();
+        // $format = 'zipball';
+        // $reference = 'main';
+        // $archive = $client->api('repo')->contents()->archive('hyvor', 'hyvor-blogs-themes', $format, $reference);
 
-        $format = 'zipball';
-        $reference = 'main';
+        $zipball = "https://github.com/hyvor/hyvor-blogs-themes/zipball/main";
+        $zip = file_get_contents($zipball);
 
-        $archive = $client->api('repo')->contents()->archive('hyvor', 'hyvor-blogs-themes', $format, $reference);
-        // file_put_contents('testGitHub.zip' , $archive);
-
-        // $zipball = "https://github.com/hyvor/hyvor-blogs-themes/zipball/main";
-        // $zip = file_get_contents($zipball);
-
-        $zipFile->openFromString($archive);
-
+        $zipFile->openFromString($zip);
+        
         foreach($zipFile as $entryName => $contents){
 
-            $splitRepoName = explode("hyvor-hyvor-blogs-themes-5099764/", $entryName);
-            $split = explode('/', $splitRepoName[1]);
+            $split = explode('/', $entryName);
+            $folder = $split[1]; // original or ported
 
-            // if($split[0] === 'original'){
-            //     $repo->themeRequiredData(
-            //         type: $split[0],
-            //         themeName: $split[1]
-            //     );
-            // }
+            if($folder === 'original' || $folder === 'ported'){
 
-            // if($split[0] === 'ported'){
-            //     $repo->themeRequiredData(
-            //         type: $split[0], 
-            //         themeName: $split[1]
-            //     );
-            // }
-
-            if($split[0] === 'original' || $split[0] === 'ported'){
+                $themeFolderName = $split[2]; // theme folder name ex: default
 
                 $repo->themeRequiredData(
-                    type: $split[0],
-                    themeName: $split[1]
+                    type: $folder,
+                    themeName: $themeFolderName
                 );
 
-                if($split[1] != null){
-                    $themeName = ThemeRepository::getThemeName($split[1]);
+                if($themeFolderName != null){
+                    $themeName = ThemeRepository::getThemeName($themeFolderName);
                     if($themeName){
-                        if($split[2] != null){
 
-                            // $this->themeFiles[$split[2]] = [$contents];
-                            // dump($split[2]);
-                            // $this->themeFiles = [
-                            //     $split[2]=> $contents
-                            // ];
+                        $folderOrFIleName = $split[3]; // folders or file name ex: lang, config.yaml
 
-                            // if($split[2] === 'config.def.yaml' || $split[2] === 'config.yaml'){
-                            //     $this->themeFiles = [
-                            //         $split[2] => $contents,
-                            //     ];
-                            // }
+                        if($folderOrFIleName != null){
 
-                            if($split[2] === 'config.def.yaml'){
+                            if($folderOrFIleName === 'config.def.yaml'){
                                 $this->configDef = [
-                                    $split[2]=> $contents
+                                    $folderOrFIleName=> $contents
                                 ];
                             }
 
-                            if($split[2] === 'config.yaml'){
-                                preg_match_all('#theme_version=([^\s]+)#', $contents, $matches);
-                                dump(implode(' ', $matches[1]));
-
-                                // $obj = unserialize($contents) ;
-                                // dd(gettype($contents));
-
-                                dd(explode(' ', $contents));
-
+                            if($folderOrFIleName === 'config.yaml'){
+                                $yaml = Yaml::parse($contents);
+                                ThemeRepository::createThemeVersion($yaml);
                                 $this->config = [
-                                    $split[2]=> $contents
+                                    $folderOrFIleName=> $contents
                                 ];
                             }
 
-                            if($split[2] === 'lang'){
-                                if($split[3] != null){
-                                    $this->lang[$split[3]] = [$contents];
+                            if($folderOrFIleName === 'lang'){
+                                $subFileName = $split[4]; // nested file names
+                                if($subFileName !== null){
+                                    $this->lang[$subFileName] = [$contents];
                                 }                                
                             }
 
-                            if($split[2] === 'styles'){
-                                if($split[3] != null){
-                                    $this->styles[$split[3]] = [$contents];
+                            if($folderOrFIleName === 'styles'){
+                                $subFileName = $split[4];
+                                if($subFileName !== null){
+                                    $this->styles[$subFileName] = [$contents];
                                 }                                
                             }
 
-                            if($split[2] === 'templates'){
-                                if($split[3] != null){
-                                    $this->templates[$split[3]] = [$contents];
+                            if($folderOrFIleName === 'templates'){
+                                $subFileName = $split[4];
+                                if($subFileName !== null){
+                                    $this->templates[$subFileName] = [$contents];
                                 }                                
                             }
 
-                            if($split[2] === 'assets'){
-                                if($split[3] != null){
-                                    $this->assets[$split[3]] = [$contents];
+                            if($folderOrFIleName === 'assets'){
+                                $subFileName = $split[4];
+                                if($subFileName !== null){
+                                    $this->assets[$subFileName] = [$contents];
                                 }                                
                             }
-                            
                         }
     
                     }
@@ -183,6 +181,30 @@ class ThemesJob implements ShouldQueue
             'assets' => $this->assets,
         ];
 
+
         dump($this->themeFiles);
+
+
+
+
+
+
+
+
+
+
+
+       
+        // dd(implode(" ",$this->themeFiles));
+
+        // $convertToString = $zipFile->addAll($this->themeFiles);
+
+        // dd($convertToString);
+
+        // dump($this->themeFiles);
+
+        // $repo->theme(
+        //     themeArray: $this->themeFIles,
+        // );
     }
 }

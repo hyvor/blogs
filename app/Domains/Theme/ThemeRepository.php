@@ -3,6 +3,7 @@
 namespace App\Domains\Theme;
 use App\Domains\Theme\Object\ThemeRepositoryObject;
 use App\Models\Theme;
+use App\Models\ThemeVersion;
 
 class ThemeRepository
 {
@@ -14,8 +15,15 @@ class ThemeRepository
         // ]);
     }
 
-    public static function createThemeVersion()
+    public static function createThemeVersion($yaml)
     {
+        $name = $yaml['theme_name'];
+        $id = Theme::where('name', $name)->value('id');
+        
+        // ThemeVersion::create([
+        //     'theme_id' => $id,
+        //     'version' => $yaml['theme_version'],
+        // ]);
     }
 
     public static function publishNewVersion()
