@@ -9,44 +9,6 @@ use PhpZip\ZipFile;
 use App\Domains\Theme\ThemeRepository;
 use Symfony\Component\Yaml\Yaml;
 
-// part - 1
-// create a job to do the saving. - done
-// create a controller. - done
-// create a temporary route. - done
-// create a theme repository object. - done
-// create the functions in the themeRepository. -done
-
-// part - 2
-// find the matching package to get the data from the github. - done
-// get the github repository data using a package or manually. - done
-// then get the github repo data as a zip file. - done
-// convert the zip file into an array. - done
-// then create an foreach loop as key => value pairs. - done
-
-// part - 3
-// exclude the unnecessary data from the array key in the foreach loop. ( repo name, .gitIgnore etc ) - done
-// use the array slice method to get rid of the unnecessary data. - done
-// and the filter the array data for the specific theme. - done
-// then get the theme data as an array. - done
-// and then pass the theme data to the repository object.
-
-// part - 4
-// need to save the version information
-// then need to get the version and the theme name from the database and check whether the theme exist.
-// if the theme exist then we will have to loop through the config.yaml and check whether there is any new version.
-// if the theme has a new version then we will have to re-save the new version of the theme with the version in the database. 
-
-// part - 5
-// and then check whether the theme is there in the database.
-// if theme is not there then saving the theme in the database as an zip file.
-// if the exist then we will have to get the version for the specific the from the theme_version table.
-// and then will have to to check the version of in the config.yaml from the theme repo.
-// if the themes are same there ara no changes to be done.
-// if theme versions are not same then will have to save the themes zip file in the database.
-
-// part - 6
-// saving the theme zip file part should be done in the themeRepository.php file.
-
 
 class ThemesJob implements ShouldQueue
 {
@@ -89,7 +51,7 @@ class ThemesJob implements ShouldQueue
     {
         $repo = new ThemeRepositoryObject();
         $zipFile = new ZipFile();
-        
+
         // $client = new Client();
         // $format = 'zipball';
         // $reference = 'main';
@@ -99,7 +61,8 @@ class ThemesJob implements ShouldQueue
         $zip = file_get_contents($zipball);
 
         $zipFile->openFromString($zip);
-        
+
+
         foreach($zipFile as $entryName => $contents){
 
             $split = explode('/', $entryName);
@@ -183,16 +146,6 @@ class ThemesJob implements ShouldQueue
 
 
         dump($this->themeFiles);
-
-
-
-
-
-
-
-
-
-
 
        
         // dd(implode(" ",$this->themeFiles));
