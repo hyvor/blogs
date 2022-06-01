@@ -12,20 +12,10 @@ use Illuminate\Support\Collection;
 
 class NavigationRepository
 {
+
     public static function getNavigations(Blog $blog): Collection
     {
-        $language = LanguageRepository::getPrimaryLanguage($blog);
-
-        $navigation = Navigation::where('blog_id', '=', $blog->id)
-            ->join('navigation_variants', function ($join) use ($language) {
-                $join->on('navigation_variants.navigation_id', '=', 'navigations.id');
-                $join->where('navigation_variants.language_id', '=', $language->id);
-            })
-            ->select('navigations.*')
-            ->latest()
-            ->get();
-
-        return $navigation;
+        return $blog->navigations()->get();
     }
 
     public static function createNavigation(
@@ -34,7 +24,9 @@ class NavigationRepository
         string $url,
         NavigationTypeEnum $type,
         int $sort = 0
-    ): Navigation {
+    ): Navigation
+    {
+
         $navigation = Navigation::create([
             'blog_id' => $blog->id,
             'url' => $url,
@@ -42,10 +34,7 @@ class NavigationRepository
             'sort' => $sort,
         ]);
 
-        $language = $blog
-            ->languages()
-            ->where('is_primary', true)
-            ->first();
+        $language = LanguageRepository::getPrimaryLanguage($blog);
 
         self::createNavigationVariant(
             $navigation,
@@ -57,51 +46,21 @@ class NavigationRepository
     }
 
     public static function updateNavigation(
-        int $id,
-        int $languageId,
-        ?string $name,
-        ?string $url,
-        NavigationTypeEnum $type
-    ): void {
-        // $navigation = Navigation::find($id);
-        // $navigation->name = $navigationName;
-        // $navigation->url = $navigationUrl;
-        // $navigation->type = $type->value;
-        // $navigation->save();
+        Navigation $navigation,
+        string $url
+    ) : Navigation
+    {
 
-        Navigation::find($id)
-                ->update([
-                    'url' => $url,
-                    'type' => $type,
-                ]);
+        $navigation->url = $url;
+        $navigation->save();
 
-        NavigationVariant::where('navigation_id', '=', $id)
-            ->where('language_id', '=', $languageId)
-            ->update([
-                'name' => $name,
-            ]);
+        return $navigation;
+
     }
 
-    public static function deleteNavigation(int $id, int $languageId): void
+    public static function deleteNavigation(Navigation $navigation)
     {
-        // $data = Navigation::find($id);
-        // $data->delete();
-
-        $language = Language::where('id', '=', $languageId)
-        ->value('is_primary');
-
-        if ($language == 0) {
-            NavigationVariant::where('navigation_id', '=', $id)
-                ->where('language_id', '=', $languageId)
-                ->delete();
-        } else {
-            NavigationVariant::where('navigation_id', '=', $id)
-                ->where('language_id', '=', $languageId)
-                ->delete();
-
-            Navigation::find($id)
-                ->delete();
-        }
+        $navigation->delete();
     }
 
     public static function createNavigationVariant(
@@ -148,11 +107,11 @@ class NavigationRepository
         $navigation->save();
     }
 
-    public static function getHeaderCount(Blog $blog): int
+    public static function getCount(Blog $blog, NavigationTypeEnum $type): int
     {
         return Navigation::where('blog_id', '=', $blog->id)
-            ->where('type', '=', 'header')
-           ->count();
+            ->where('type', $type)
+            ->count();
     }
 
     public static function getFooterCount(Blog $blog): int

@@ -1,5 +1,5 @@
 <?php
-
+/*
 namespace Tests\Unit\Import\Parsers;
 
 use App\Domains\Import\Parsers\WordpressParser;
@@ -147,4 +147,4 @@ it('parsers the posts', function () use ($file) {
     }
 
     $this->assertEquals('About', $title);
-});
+});*/

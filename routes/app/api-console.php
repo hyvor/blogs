@@ -144,13 +144,13 @@ Route::prefix('/api/console/v0/blog/{subdomain}')
         Route::delete('/webhook/{id}', [ConsoleWebhookController::class, 'deleteWebhook']);
 
         // navigation
-        Route::get('/navigation', [ConsoleNavigationController::class,'getNavigations']);
-        Route::post('/navigation', [ConsoleNavigationController::class,'createNavigation']);
-        Route::put('/navigation/{id}', [ConsoleNavigationController::class,'updateNavigation']);
-        Route::delete('/navigation/{id}', [ConsoleNavigationController::class,'deleteNavigation']);
-        Route::post('/navigation/variant', [ConsoleNavigationController::class, 'createNavigationVariant']);
-        Route::put('/navigation/sort/{id}', [ConsoleNavigationController::class,'updateSort']);
-        Route::put('/navigation/source/{id}', [ConsoleNavigationController::class,'updateSourceSort']);
+        Route::get('/navigations', [ConsoleNavigationController::class,'get']);
+        Route::post('/navigation', [ConsoleNavigationController::class,'create']);
+        Route::put('/navigation/{id}', [ConsoleNavigationController::class,'update']);
+        Route::delete('/navigation/{id}', [ConsoleNavigationController::class,'delete']);
+        Route::post('/navigation/{id}/variant', [ConsoleNavigationController::class, 'createVariant']);
+        Route::patch('/navigation/{id}/variant', [ConsoleNavigationController::class, 'updateVariant']);
+        Route::put('/navigation/{id}/sort', [ConsoleNavigationController::class,'updateSort']);
 
         // languages
         Route::get('/languages', [ConsoleLanguageController::class, 'get']);

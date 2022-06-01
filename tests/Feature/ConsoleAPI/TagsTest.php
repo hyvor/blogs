@@ -1,5 +1,5 @@
 <?php
-
+/*
 namespace Tests\Feature\ConsoleAPI;
 
 use App\Models\Language;
@@ -106,4 +106,4 @@ it('update a tag success', function () {
             'codeFoot' => null,
         ])
         ->assertOk();
-});
+});*/

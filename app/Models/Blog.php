@@ -116,7 +116,7 @@ class Blog extends Model
 
     public function navigations()
     {
-        return $this->hasMany(Navigation::class);
+        return $this->hasMany(Navigation::class)->orderBy('sort', 'ASC');
     }
 
     public function webhooks()

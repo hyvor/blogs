@@ -31,6 +31,12 @@ return [
     'max_redirects_per_blog' => 1000,
 
     /**
+     * 10 per header
+     * 10 per footer
+     */
+    'max_navigations_per_type_per_blog' => 10,
+
+    /**
      * This is a guess.
      * I don't think a blog will have more than 100 separate languages
      * If someone exceeds this, we'll need to change it

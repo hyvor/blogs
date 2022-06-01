@@ -9,110 +9,66 @@ use App\Domains\Navigation\NavigationRepository;
 use App\Exceptions\TrustedException;
 use App\Http\Controllers\Controller;
 use App\Models\Blog;
+use App\Models\Navigation;
 use Illuminate\Http\Request;
+use Illuminate\Validation\Rules\Enum;
 
 class ConsoleNavigationController extends Controller
 {
-    public function getNavigations(Blog $blog)
-    {
-        $getData = NavigationRepository::getNavigations($blog)
-            ->map(function ($navigation) {
-                return new NavigationObject($navigation);
-            });
 
-        return response()->json($getData);
+    public function get(Blog $blog)
+    {
+
+        $navs = NavigationRepository::getNavigations($blog)->mapInto(NavigationObject::class);
+        return response()->json($navs);
+
     }
 
-    public function createNavigation(Request $request, Blog $blog)
+    public function create(Request $request, Blog $blog)
     {
-        // dd($request->input('type'));
-        $getHeaderCount = NavigationRepository::getHeaderCount($blog);
-        $getFooterCount = NavigationRepository::getFooterCount($blog);
 
-        $headerCount = $getHeaderCount < 8;
-        $footerCount = $getFooterCount < 8;
+        $request->validate([
+            'url' => 'required|string',
+            'name' => 'required|string',
+            'type' => ['required', new Enum(NavigationTypeEnum::class)]
+        ]);
 
-        // $request->validate([
-        //     'name' => 'required|string',
-        //     'url' => 'required|string',
-        //     'type' => 'required|string',
-        // ]);
-
-        $name = $request->input('name');
         $url = $request->input('url');
+        $name = $request->input('name');
         $type = NavigationTypeEnum::from($request->input('type'));
 
-        if ($name == null) {
-            throw new TrustedException('Name should not be empty.');
+        $count = NavigationRepository::getCount($blog, $type);
+
+        if ($count >= config('limits.max_navigations_per_type_per_blog')) {
+            throw new TrustedException('Limit exceeded');
         }
 
-        if ($url == null) {
-            throw new TrustedException('url should not be empty.');
-        }
+        $navigation = NavigationRepository::createNavigation($blog, $name, $url, $type);
 
-        if ($type->value == 'header') {
-            $getSort = NavigationRepository::getHeaderSort();
-            if ($getSort == null) {
-                $sort = 1;
-            } else {
-                $sort = $getSort['sort'] + 1;
-            }
-        }
+        return response()->json(new NavigationObject($navigation));
 
-        if ($type->value == 'footer') {
-            $getSort = NavigationRepository::getFooterSort();
-            if ($getSort == null) {
-                $sort = 1;
-            } else {
-                $sort = $getSort['sort'] + 1;
-            }
-        }
-
-        if ($headerCount) {
-            $createNavigation = NavigationRepository::createNavigation($blog, $name, $url, $type, $sort);
-
-            return response()->json(new NavigationObject($createNavigation));
-        } elseif ($footerCount) {
-            $createNavigation = NavigationRepository::createNavigation($blog, $name, $url, $type, $sort);
-
-            return response()->json(new NavigationObject($createNavigation));
-        } else {
-            // return new TrustedException('You cant have more than 8 links', TrustedException::ERROR_UNPROCESSABLE);
-            abort(404);
-        }
     }
 
-    public function updateNavigation(Request $request, Blog $blog)
+    public function update(Request $request, Navigation $navigation)
     {
-        // $request->validate([
-        //     'name' => 'required|string',
-        //     'url' => 'required|string',
-        //     'type' => 'required|string',
-        // ]);
+        $request->validate([
+            'url' => 'required|string'
+        ]);
 
-        $id = $request->route('id');
-        $languageId = $request->input('languageId');
-        $name = $request->input('name');
         $url = $request->input('url');
-        $type = NavigationTypeEnum::from($request->input('type'));
 
-        $updateNavigation = NavigationRepository::updateNavigation($id, $languageId, $name, $url, $type);
+        $navigation = NavigationRepository::updateNavigation($navigation, $url);
 
-        return response()->json($updateNavigation);
+        return response()->json(new NavigationObject($navigation));
     }
 
-    public function deleteNavigation(Request $request)
+    public function delete(Navigation $navigation)
     {
-        $id = $request->route('id');
-        $languageId = $request->input('languageId');
-        $deleteNavigation = NavigationRepository::deleteNavigation($id, $languageId);
-
-        return response()->json($deleteNavigation);
+        NavigationRepository::deleteNavigation($navigation);
+        return response()->json();
     }
 
-    /**
-    * Navigation variant section.
-    */
+
     public static function createNavigationVariant(Request $request)
     {
         $id = $request->input('id');
@@ -123,9 +79,6 @@ class ConsoleNavigationController extends Controller
         return response()->json($createVariant);
     }
 
-    /**
-    * Sort navigation section.
-    */
     public function updateSort(Request $request)
     {
         $id = $request->route('id');
