@@ -15,14 +15,18 @@ class CliAPIMiddleware
         $subdomain = $request->route('subdomain');
 
         if (! $subdomain) {
-            throw new TrustedException('Subdomain should be set');
+            throw new TrustedException('The subdomain should be set');
         }
 
         $blog = BlogRepository::getBlogBySubdomain($subdomain);
 
-        /*if ($blog === null || $blog->type !== BlogTypeEnum::DEV) {
-            throw new TrustedException('Invalid Subdomain');
-        }*/
+        if (!$blog) {
+            throw new TrustedException('Invalid subdomain');
+        }
+
+        if ($blog->type !== BlogTypeEnum::DEV) {
+            throw new TrustedException('Please use a DEV blog');
+        }
 
         app()->instance(Blog::class, $blog);
 

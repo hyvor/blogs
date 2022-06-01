@@ -15,6 +15,6 @@ Route::prefix('/api/cli/{subdomain}')
     ->group(function() {
 
     Route::patch('/files', [CliAPIController::class, 'updateFiles']);
-    Route::get('/delivery', [CliAPIController::class, 'delivery']);
+    // Route::get('/delivery', [CliAPIController::class, 'delivery']);
 
 });

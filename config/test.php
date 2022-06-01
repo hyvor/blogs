@@ -18,4 +18,7 @@ return [
     // subdomain for testing (blog ID 1)
     'subdomain' => 'test',
 
+    // subdomain for dev domain
+    'subdomain_dev' => 'dev',
+
 ];

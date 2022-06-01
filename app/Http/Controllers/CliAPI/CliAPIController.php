@@ -13,6 +13,7 @@ class CliAPIController
 {
     public function updateFiles(Request $request, Blog $blog)
     {
+
         $files = (array) $request->input('files');
         $reset = (bool) $request->input('reset');
 
@@ -40,7 +41,7 @@ class CliAPIController
         return response()->json();
     }
 
-    public function delivery(Request $request, Blog $blog)
+    /*public function delivery(Request $request, Blog $blog)
     {
         $path = $request->input('path');
         $host = $request->input('host');
@@ -56,5 +57,5 @@ class CliAPIController
         }
 
         return response()->json($response);
-    }
+    }*/
 }

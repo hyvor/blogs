@@ -99,8 +99,11 @@ it('matches index with page number', function () {
 
     // add posts to make sure there are 2 pages
     Post::factory()
-        ->count($this->count)
-        ->has(PostVariant::factory()->create())
+        ->count(25)
+        ->has(PostVariant::factory()->state([
+            'language_id' => $this->blog->languages[0]->id,
+            'status' => 'published'
+        ]), 'variants')
         ->create([
             'blog_id' => config('test.blog_id'),
         ]);

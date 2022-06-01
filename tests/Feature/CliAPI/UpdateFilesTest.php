@@ -2,56 +2,77 @@
 
 namespace Tests\Feature\CliAPI;
 
+use App\Data\Enums\BlogTypeEnum;
 use App\Data\Enums\ThemeFileFolderEnum;
-use App\Domains\LocalDev\LocalDevRepository;
 use App\Domains\Theme\ThemeFilesRepository;
-use Illuminate\Foundation\Testing\RefreshDatabase;
+use App\Models\Blog;
+use App\Models\ThemeFile;
 use Illuminate\Support\Str;
-use Tests\TestCase;
 
-class UpdateFilesTest extends TestCase
-{
-    use RefreshDatabase;
+beforeEach(function() {
+    $this->blog = Blog::where('type', BlogTypeEnum::DEV)->first();
+});
 
-    public $localDev;
+it('creates files', function() {
 
-    protected function setUp(): void
-    {
-        parent::setUp();
-        $this->localDev = LocalDevRepository::createNewDev();
-    }
+    $content = Str::random();
 
-    public function test_create_files_success()
-    {
+    $this->callCliAPI('PATCH', '/files', [
+        'files' => [
+            '/templates/index.twig' => base64_encode($content),
+            'config.yaml' => 'name',
+        ],
+    ])->assertOk();
 
-        // then add a few files file
-        $content = Str::random();
-        $response = $this->callCliAPI('patch', "/dev/{$this->localDev->uuid}/files", [
-            'files' => [
-                '/templates/index.twig' => base64_encode($content),
-                'config.yaml' => 'name',
-            ],
-        ]);
+    $indexTwig = ThemeFilesRepository::getFile(
+        $this->blog,
+        'index.twig',
+        ThemeFileFolderEnum::TEMPLATES
+    );
 
-        $response->assertOk();
+    expect($indexTwig->content)->toBe($content);
 
-        $indexTwig = ThemeFilesRepository::getFile($this->localDev, 'index.twig', ThemeFileFolderEnum::TEMPLATES);
+});
 
-        $this->assertEquals($indexTwig->content, $content);
-    }
+it('updates files', function() {
 
-    // this must be run after create
-    public function test_update_files_success()
-    {
-        $response = $this->callCliAPI('patch', "/dev/{$this->localDev->uuid}/files", [
-            'files' => [
-                '/templates/index.twig' => base64_encode('New string'),
-            ],
-        ]);
+    ThemeFilesRepository::createOrUpdateFile(
+        $this->blog,
+        ThemeFileFolderEnum::TEMPLATES,
+        'index.twig',
+        'Hi'
+    );
 
-        $response->assertOk();
+    $this->callCliAPI('PATCH', "/files", [
+        'files' => [
+            '/templates/index.twig' => base64_encode('New string'),
+        ],
+    ])->assertOk();
 
-        $indexTwig = ThemeFilesRepository::getFile($this->localDev, 'index.twig', ThemeFileFolderEnum::TEMPLATES);
-        $this->assertEquals($indexTwig->content, 'New string');
-    }
-}
+    $indexTwig = ThemeFilesRepository::getFile(
+        $this->blog,
+        'index.twig',
+        ThemeFileFolderEnum::TEMPLATES
+    );
+
+    expect($indexTwig->content)->toBe('New string');
+
+});
+
+it('resets', function() {
+
+    ThemeFilesRepository::createOrUpdateFile(
+        $this->blog,
+        ThemeFileFolderEnum::TEMPLATES,
+        'index.twig',
+        'Hi'
+    );
+
+    $this->callCliAPI('PATCH', "/files", [
+        'files' => [],
+        'reset' => true
+    ])->assertOk();
+
+    expect(ThemeFile::where('blog_id', $this->blog->id)->count())->toBe(0);
+
+});
