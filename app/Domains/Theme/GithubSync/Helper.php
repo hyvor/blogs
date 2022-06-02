@@ -22,8 +22,7 @@ class Helper
                 WHERE theme_id = themes.id 
                 ORDER BY id DESC 
                 LIMIT 1
-            ) as version')
-            ->select('name')
+            ) as version, name')
             ->get();
 
         $ret = [];

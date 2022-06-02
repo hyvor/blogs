@@ -4,6 +4,7 @@ namespace App\Domains\Theme;
 
 use App\Data\Enums\BlogTypeEnum;
 use App\Data\Enums\ThemeFileFolderEnum;
+use App\Exceptions\TrustedException;
 use App\Models\Blog;
 use App\Models\ThemeFile;
 use Database\Seeders\BlogThemeFilesSeeder;
@@ -91,6 +92,33 @@ class ThemeFilesRepository
     public static function deleteAllFiles(Blog $blog)
     {
         $blog->themeFiles()->delete();
+    }
+
+    public static function copyThemeToBlog(Blog $blog, string $themeName, string $version = null)
+    {
+
+        $theme = ThemeRepository::getThemeByName($themeName);
+
+        $themeVersion = $version === null ?
+            ThemeRepository::getThemeLatestVersion($theme) :
+            ThemeRepository::getThemeVersion($theme, $version);
+
+        if (!$themeVersion) {
+            throw new TrustedException('Theme version not found');
+        }
+
+        ThemeFilesRepository::deleteAllFiles($blog);
+
+        $importer = new ThemeImporter($blog, $themeVersion->zip);
+        $importer->import();
+
+        if (!$importer->success()) {
+            throw new TrustedException('Theme importing unsuccessful');
+        }
+
+        $blog->theme_version_id = $themeVersion->id;
+        $blog->save();
+
     }
 
     private static function updateLocalDBFiles(int $blogId)

@@ -29,6 +29,15 @@ class GithubSyncService
     public function run()
     {
 
+        $this->breakIntoThemes();
+        $this->saveThemes();
+
+    }
+
+
+    public function breakIntoThemes()
+    {
+
         $zip = new ZipFile();
         $zip->openFromString($this->zip);
 
@@ -83,6 +92,11 @@ class GithubSyncService
             $this->themes[$themeName]->addFile($folder, $fileName, $content);
 
         }
+
+    }
+
+    private function saveThemes()
+    {
 
         $latestVersions = Helper::getLatestVersionsOfAllThemes();
 

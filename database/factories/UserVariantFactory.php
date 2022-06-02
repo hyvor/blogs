@@ -15,7 +15,7 @@ class UserVariantFactory extends Factory
             'user_id' => User::factory(),
             'language_id' => Language::factory(),
             'name' => $this->faker->name,
-            'bio' => $this->faker->paragraph,
+            'bio' => substr($this->faker->paragraph, 255),
             'location' => substr($this->faker->country, 30)
         ];
     }
