@@ -60,51 +60,41 @@ class NavigationRepository
 
     public static function deleteNavigation(Navigation $navigation)
     {
+        $navigation->variants->map(fn ($variant) => self::deleteNavigationVariant($variant));
         $navigation->delete();
+    }
+
+
+    public static function getNavigationVariant(Navigation $navigation, Language $language) : ?NavigationVariant
+    {
+        return NavigationVariant::where('navigation_id', $navigation->id)
+            ->where('language_id', $language->id)
+            ->first();
     }
 
     public static function createNavigationVariant(
         Navigation $navigation,
         Language $language,
         string $name
-    ) {
-        NavigationVariant::create([
+    ) : NavigationVariant
+    {
+        return NavigationVariant::create([
             'navigation_id' => $navigation->id,
             'language_id' => $language->id,
             'name' => $name,
         ]);
     }
 
-    /*
-    *
-    * This functions are used for navigation sort.
-    */
-    public static function getHeaderSort(): Navigation
+    public static function updateNavigationVariant(NavigationVariant $variant, string $name) : NavigationVariant
     {
-        return Navigation::where('type', '=', 'header')
-           ->get('sort')
-           ->last();
+        $variant->name = $name;
+        $variant->save();
+        return $variant;
     }
 
-    public static function getFooterSort(): Navigation
+    public static function deleteNavigationVariant(NavigationVariant $variant)
     {
-        return Navigation::where('type', '=', 'footer')
-           ->get('sort')
-           ->last();
-    }
-
-    public static function updateDestinationSort(int $id, $navigationSort)
-    {
-        $navigation = Navigation::find($id);
-        $navigation->sort = $navigationSort;
-        $navigation->save();
-    }
-
-    public static function updateSourceSort(int $id, $navigationSort)
-    {
-        $navigation = Navigation::find($id);
-        $navigation->sort = $navigationSort;
-        $navigation->save();
+        $variant->delete();
     }
 
     public static function getCount(Blog $blog, NavigationTypeEnum $type): int
@@ -114,10 +104,4 @@ class NavigationRepository
             ->count();
     }
 
-    public static function getFooterCount(Blog $blog): int
-    {
-        return Navigation::where('blog_id', '=', $blog->id)
-            ->where('type', '=', 'footer')
-           ->count();
-    }
 }

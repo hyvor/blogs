@@ -26,7 +26,7 @@ class NavigationObject
         $this->sort = $navigation->sort;
 
         $this->variants = $navigation->variants
-            ->map(fn ($variant) => new NavigationVariantObject($variant, $navigation))
+            ->map(fn ($variant) => new NavigationVariantObject($variant))
             ->keyBy('language_id')
             ->toArray();
     }

@@ -11,7 +11,7 @@ class NavigationVariantObject
     public int $language_id;
     public ?string $name;
 
-    public function __construct(NavigationVariant $navigationVariant, Navigation $navigation)
+    public function __construct(NavigationVariant $navigationVariant)
     {
         $language = $navigationVariant->language;
         $this->navigation_id = $navigationVariant->navigation_id;

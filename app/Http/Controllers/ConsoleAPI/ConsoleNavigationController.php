@@ -5,10 +5,13 @@ namespace App\Http\Controllers\ConsoleAPI;
 use App\Data\Enums\NavigationTypeEnum;
 use App\Data\Objects\ConsoleAPI\Navigation\NavigationObject;
 
+use App\Data\Objects\ConsoleAPI\Navigation\NavigationVariantObject;
+use App\Domains\Language\LanguageRepository;
 use App\Domains\Navigation\NavigationRepository;
 use App\Exceptions\TrustedException;
 use App\Http\Controllers\Controller;
 use App\Models\Blog;
+use App\Models\Language;
 use App\Models\Navigation;
 use Illuminate\Http\Request;
 use Illuminate\Validation\Rules\Enum;
@@ -69,24 +72,69 @@ class ConsoleNavigationController extends Controller
     }
 
 
-    public static function createNavigationVariant(Request $request)
+    public static function createVariant(Request $request, Blog $blog, Navigation $navigation)
     {
-        $id = $request->input('id');
-        $languageId = $request->input('languageId');
-        $name = $request->input('name');
-        $createVariant = NavigationRepository::createNavigationVariant($id, $languageId, $name);
 
-        return response()->json($createVariant);
+        $request->validate([
+            'language_id' => 'required|integer',
+            'name' => 'required|string'
+        ]);
+
+        $languageId = $request->input('language_id');
+        $name = $request->input('name');
+
+        $language = LanguageRepository::getLanguageById($blog, $languageId);
+
+        if (!$language) {
+            throw new TrustedException('Language not found');
+        }
+
+        $variant = NavigationRepository::createNavigationVariant($navigation, $language, $name);
+
+        return response()->json(new NavigationVariantObject($variant));
+    }
+
+    public static function updateVariant(Request $request, Navigation $navigation, Language $language)
+    {
+
+        $request->validate([
+            'name' => 'required|string'
+        ]);
+
+        $variant = NavigationRepository::getNavigationVariant($navigation, $language);
+        $name = $request->input('name');
+
+        if (!$variant) {
+            throw new TrustedException('Variant not found');
+        }
+
+        NavigationRepository::updateNavigationVariant($variant, $name);
+
+        return response()->json(new NavigationVariantObject($variant));
+
+    }
+
+    public static function deleteVariant(Navigation $navigation, Language $language)
+    {
+
+        $variant = NavigationRepository::getNavigationVariant($navigation, $language);
+        if (!$variant) {
+            throw new TrustedException('Variant not found');
+        }
+
+        NavigationRepository::deleteNavigationVariant($variant);
+
+        return response()->json();
     }
 
     public function updateSort(Request $request)
     {
-        $id = $request->route('id');
+       /* $id = $request->route('id');
         $navigationSort = $request->input('navigationSort');
 
         $updateSort = NavigationRepository::updateDestinationSort($id, $navigationSort);
 
-        return response()->json($updateSort);
+        return response()->json($updateSort);*/
     }
 
     public function updateSourceSort(Request $request)

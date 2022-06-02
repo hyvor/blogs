@@ -2,6 +2,7 @@
 
 namespace App\Http\Middleware\App\ConsoleAPI;
 
+use App\Domains\Language\LanguageRepository;
 use App\Exceptions\TrustedException;
 use App\Models\Blog;
 use App\Models\Language;
@@ -87,6 +88,29 @@ class ResourceAccessMiddleware
                     TrustedException::ERROR_FORBIDDEN
                 );
             }
+        }
+
+        /**
+         * Sets language for variant routes
+         */
+        // ex: api/console/v0/blog/{subdomain}/navigation/{id}/variant
+        $uri = $request->route()->uri();
+        if (str_ends_with($uri, '/variant')) {
+
+            $languageId = $request->input('language_id');
+
+            if (empty($languageId)) {
+                throw new TrustedException('Language ID not set');
+            }
+
+            $language = LanguageRepository::getLanguageById($this->blog, $languageId);
+
+            if (!$language) {
+                throw new TrustedException('Language not found');
+            }
+
+            app()->instance(Language::class, $language);
+
         }
 
         return $next($request);

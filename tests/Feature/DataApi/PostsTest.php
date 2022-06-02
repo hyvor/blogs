@@ -285,7 +285,11 @@ it('filters by updated_at', function () {
     $timeString = $time->toDateTimeString();
 
     $post = getAPost();
-    $post->variants->map(fn ($v) => $v->update(['updated_at' => $timeString]));
+    $post->variants->map(function ($v) use ($timeString) {
+        $v->updated_at  = $timeString;
+        $v->timestamps = false;
+        $v->save();
+    });
 
     $this->callDataApi('/posts', [
         'filter' => "updated_at='$timeString'",
