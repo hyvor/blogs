@@ -24,4 +24,26 @@ class PostContentMetaRepository
         $variant->words = $words;
         $variant->saveQuietly();
     }
+
+    /**
+     * Pre-calculate HTML so that you don't want to convert it everytime
+     *
+     * @param PostVariant $variant
+     * @return void
+     */
+    public static function updateHtmlContent(PostVariant $variant) : void
+    {
+
+        if (!$variant->content) {
+            return;
+        }
+
+        $post = $variant->post;
+        $blog = $post->blog;
+        $html = PostContentRepository::getHtml($variant->content, $blog);
+
+        $variant->content_html = $html;
+        $variant->saveQuietly();
+
+    }
 }

@@ -14,5 +14,7 @@ class PostVariantObserver
     public function updated(PostVariant $variant)
     {
         PostContentMetaRepository::updateWordCount($variant);
+        PostContentMetaRepository::updateHtmlContent($variant);
     }
+
 }

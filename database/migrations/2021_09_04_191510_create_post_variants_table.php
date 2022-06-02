@@ -25,6 +25,7 @@ return new class extends Migration
 
             $table->text('content')->nullable();
             $table->text('content_unsaved')->nullable();
+            $table->text('content_html')->nullable();
             $table->string('title')->nullable();
             $table->string('description', 350)->default('');
             $table->integer('words')->nullable();

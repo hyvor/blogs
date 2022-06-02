@@ -61,7 +61,7 @@ class PostObject
         $this->is_page = $post->is_page;
         $this->slug = $post->slug;
         $this->url = PermalinkRepository::getPostPermalink($post, $blog, $language);
-        $this->content = PostContentRepository::getHtml($variant->content, $blog);
+        $this->content = $variant->content_html ?? '';
         $this->words = $variant->words ?? 0;
         $this->title = $variant->title;
         $this->description = $variant->description;
