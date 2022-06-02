@@ -7,15 +7,17 @@ use App\Models\NavigationVariant;
 
 class NavigationVariantObject
 {
+
     public int $navigation_id;
     public int $language_id;
-    public ?string $name;
+    public string $name;
 
-    public function __construct(NavigationVariant $navigationVariant)
+    public function __construct(NavigationVariant $variant)
     {
-        $language = $navigationVariant->language;
-        $this->navigation_id = $navigationVariant->navigation_id;
+        $language = $variant->language;
+
+        $this->navigation_id = $variant->navigation_id;
         $this->language_id = $language->id;
-        $this->name = $navigationVariant->name;
+        $this->name = $variant->name;
     }
 }

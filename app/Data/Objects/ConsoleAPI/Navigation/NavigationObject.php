@@ -2,15 +2,16 @@
 
 namespace App\Data\Objects\ConsoleAPI\Navigation;
 
+use App\Data\Enums\NavigationTypeEnum;
 use App\Models\Navigation;
 
 class NavigationObject
 {
     public int $id;
     public int $created_at;
-    public ?string $url;
-    public ?string $type;
-    public ?string $sort;
+    public string $url;
+    public NavigationTypeEnum $type;
+    public int $sort;
 
     /**
     * @var array<int, NavigationVariantObject>
@@ -29,5 +30,6 @@ class NavigationObject
             ->map(fn ($variant) => new NavigationVariantObject($variant))
             ->keyBy('language_id')
             ->toArray();
+
     }
 }

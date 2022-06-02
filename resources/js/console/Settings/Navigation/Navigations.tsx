@@ -20,7 +20,7 @@ import CreatePopup from './CreateNavigation';
 import Navigation from './NavigationTable';
 
 
-export default function SettingNavigation(props) 
+export default function Navigations(props)
 {
 
     return null;

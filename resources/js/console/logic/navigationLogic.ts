@@ -1,27 +1,40 @@
-import { kea } from "kea";
+import {actions, events, kea, key, path, props, reducers} from "kea";
 import api from "../lib/api";
+import {navigationLogicType} from "./navigationLogicType";
+import {ajax} from "kea-ajax";
+import {Navigation, NavigationType, NavigationVariant} from "../types";
+
+const  navigationLogic = kea<navigationLogicType>([
+
+    props({} as {subdomain: string}),
+    key(props => props.subdomain),
+
+    path(key => ['navigation', key]),
+
+    actions({
+
+        setNavigations: (navigations: Navigation[]) => ({navigations}),
+        addNavigation: (navigation: Navigation) => ({navigation}),
+        updateNavigation: (navigation: Navigation) => ({navigation}),
+
+        addVariant: (variant: NavigationVariant) => ({variant}),
+        removeVariant: (id) => ({}),
 
 
-const  navigationLogic = kea({
-
-    key: props => props.subdomain,
-
-    path: key => ['navigation', key],
-
-    actions: {
-        getNavigationList: (navigation) => ({navigation}),
+        /*getNavigationList: (navigation) => ({navigation}),
         removeFromList: (id) => ({id}),
         addNavigation: (navigation) => ({navigation}),
         updateNavigation: (navigation) => ({navigation}),
         updateDestination: (navigation) => ({navigation}),
         updateSource: (navigation) => ({navigation}),
-        addNavigationVarian: (navigation) => ({navigation}),
-    },
+        addNavigationVarian: (navigation) => ({navigation}),*/
 
-    ajax: ({actions, props}) => ({
+    }),
 
-        load: async ({offset = 0, type}) => {
-            const navigation = await api.get(props.subdomain, '/navigation', {
+    ajax(({actions, props}) => ({
+
+        load: async ({offset = 0, type} : {offset: number, type: NavigationType}) => {
+            const navigation = await api.get<Navigation[]>(props.subdomain, '/navigations', {
                 offset,
                 limit: 10,
                 type,
@@ -87,27 +100,31 @@ const  navigationLogic = kea({
                 });
             actions.updateSource(navigation);
         },
+    })),
+
+    reducers({
+
+        navigations: [
+            [] as Navigation[],
+            {
+                setNavigations: (_, {navigations}) => navigations,
+                addNavigation: (_, {navigation}) => navigation,
+
+
+                removeFromList: (state, {id}) => state.filter(m => m.id !== id),
+                addNavigation: (state, {navigation}) => [navigation, ...state],
+                updateNavigation: (state, {navigation}) => [navigation, ...state],
+                updateDestination: (state, {navigation}) => [navigation, ...state],
+                updateSource: (state, {navigation}) => [navigation, ...state],
+            }
+        ],
+
     }),
 
-    reducers: {
-
-        navigation: [[], {
-            getNavigationList: (_, {navigation}) => navigation,
-            removeFromList: (state, {id}) => state.filter(m => m.id !== id),
-            addNavigation: (state, {navigation}) => [navigation, ...state],
-            updateNavigation: (state, {navigation}) => [navigation, ...state],
-            updateDestination: (state, {navigation}) => [navigation, ...state],
-            updateSource: (state, {navigation}) => [navigation, ...state],
-        }],
-        createNewVarian: [[], {
-            addNavigationVarian: (state, {navigation}) => [navigation, ...state],
-        }],
-    },
-
-    events: ({actions}) => ({
+    events(({actions}) => ({
         afterMount: actions.load
-    })
+    }))
 
-});
+]);
 
 export default navigationLogic;

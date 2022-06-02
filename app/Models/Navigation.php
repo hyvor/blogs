@@ -2,6 +2,7 @@
 
 namespace App\Models;
 
+use App\Data\Enums\NavigationTypeEnum;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 
@@ -9,10 +10,10 @@ class Navigation extends Model
 {
     use HasFactory;
 
-    /**
-    * Eager load with these relations
-    * because these are always wanted
-    */
+    protected $casts = [
+        'type' => NavigationTypeEnum::class
+    ];
+
     protected $with = [
         'variants',
     ];

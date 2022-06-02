@@ -257,6 +257,26 @@ export interface Route {
     is_enabled: boolean
 }
 
+// === NAVIGATION
+export interface Navigation {
+    id: number;
+    created_at: number;
+    url: string;
+    type: NavigationType,
+    sort: number;
+    variants: {
+        [key: number]: NavigationVariant
+    }
+}
+
+export type NavigationType = 'header' | 'footer';
+
+export interface NavigationVariant {
+    navigation_id: number,
+    language_id: number,
+    name: string
+}
+
 // === THEME
 
 export type ThemeFolder = 'templates' | 'assets' | 'styles' | 'lang' | null

@@ -1,6 +1,4 @@
-import { useValues } from 'kea';
 import React from 'react';
-import subdomainLogic from '../logic/subdomainLogic';
 import NavLink from '../ReusableComponents/NavLink';
 import SettingsDelete from './SettingsDelete';
 import Code from './Code';
@@ -9,7 +7,7 @@ import SettingsMigrate from './SettingsMigrate';
 import SettingsUsers from './Users/SettingsUsers';
 import SettingRedirects from './Redirects/Redirects';
 import Comments from './Comments';
-import SettingNavigation from './Navigation/SettingNavigation';
+import Navigations from './Navigation/Navigations';
 import Tags from './Tags/Tags';
 import SettingsRoutes from './Routes/Routes';
 import Languages from './Languages/Languages';
@@ -34,7 +32,7 @@ export default function Settings({type} : {type: string | undefined}) {
             Type = () => <Tags />;
             break;
         case 'navigation':
-            Type = () => <SettingNavigation />;
+            Type = () => <Navigations />;
             break;
         case 'hosting':
             Type = () => <Hosting />;
