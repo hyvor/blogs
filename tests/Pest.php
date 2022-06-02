@@ -70,3 +70,9 @@ function hyvorUser($fill = [])
 {
     return HyvorUser::dummy($fill);
 }
+
+
+function test_unit_data_path($path = '')
+{
+    return base_path('tests/Unit/__DATA__/' . $path);
+}

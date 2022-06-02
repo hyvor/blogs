@@ -1,14 +1,8 @@
 <?php
 
 use App\Domains\Post\Content\PostContentRepository;
-use App\Domains\Theme\GithubSyncService;
 use App\Models\Blog;
 use Illuminate\Support\Facades\Route;
-
-
-Route::get('/github-sync', function() {
-    GithubSyncService::fetchAndUpdate();
-});
 
 Route::get('callout', function() {
 
