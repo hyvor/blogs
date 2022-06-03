@@ -5,6 +5,7 @@ import { Plus} from 'react-bootstrap-icons';
 import Loader from '../../ReusableComponents/Loader';
 import getSubdomain from "../../logic-helpers/subdomain";
 import NavigationTable from './NavigationTable';
+import CreateUpdateNavigationPopup from "./CreateUpdateNavigationPopup";
 
 export default function Navigations() {
 
@@ -20,6 +21,7 @@ export default function Navigations() {
             onClick={() => setIsCreating(true)}
         >Create <Plus/></button>
         </div>
+
         {
             loadAjax.status === 'loading' ?
                 <Loader/> :
@@ -27,6 +29,11 @@ export default function Navigations() {
                     <NavigationTable type="header" navigations={headerNavigations} />
                     <NavigationTable type="footer" navigations={footerNavigations} />
                 </div>
+        }
+
+        {
+            isCreating &&
+            <CreateUpdateNavigationPopup onClose={() => setIsCreating(false)} />
         }
     </div>
 

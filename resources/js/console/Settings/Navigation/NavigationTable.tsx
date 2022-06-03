@@ -29,7 +29,7 @@ export default function NavigationTable({navigations, type} : NavigationTablePro
 
                         <Fragment>
                             {
-                                navigations.map(nav => <NavigationComponent navigation={nav} />)
+                                navigations.map(nav => <NavigationComponent key={nav.id} navigation={nav} />)
                             }
                         </Fragment>
 
@@ -37,7 +37,7 @@ export default function NavigationTable({navigations, type} : NavigationTablePro
 
                     :
 
-                    <NoResults text="No navigations" />
+                    <NoResults text="No navigations" padding={30} />
 
             }
 

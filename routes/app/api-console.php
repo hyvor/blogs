@@ -144,10 +144,10 @@ Route::prefix('/api/console/v0/blog/{subdomain}')
         Route::delete('/webhook/{id}', [ConsoleWebhookController::class, 'deleteWebhook']);
 
         // navigation
-        Route::get('/navigations', [ConsoleNavigationController::class,'get']);
-        Route::post('/navigation', [ConsoleNavigationController::class,'create']);
-        Route::put('/navigation/{id}', [ConsoleNavigationController::class,'update']);
-        Route::delete('/navigation/{id}', [ConsoleNavigationController::class,'delete']);
+        Route::get('/navigations', [ConsoleNavigationController::class, 'get']);
+        Route::post('/navigation', [ConsoleNavigationController::class, 'create']);
+        Route::put('/navigation/{id}', [ConsoleNavigationController::class, 'update']);
+        Route::delete('/navigation/{id}', [ConsoleNavigationController::class, 'delete']);
         Route::post('/navigation/{id}/variant', [ConsoleNavigationController::class, 'createVariant']);
         Route::patch('/navigation/{id}/variant', [ConsoleNavigationController::class, 'updateVariant']);
         Route::delete('/navigation/{id}/variant', [ConsoleNavigationController::class, 'deleteVariant']);

@@ -7,9 +7,10 @@ import Spinner from "./Spinner";
 import getSubdomain from "../logic-helpers/subdomain";
 
 type onChangeType = (languageId: number) => void;
-type variantCreatorType = (props: {languageId: number, onCreate: Function}) => void;
+type variantCreatorType = (props: {id: number, languageId: number, onCreate: Function}) => void;
 
 interface LanguageSelectorProps {
+    id?: number, // userID/tagId/navigationId
     languageId: number,
     variantsLanguageIds: Array<number>,
     onChange: onChangeType,
@@ -17,7 +18,7 @@ interface LanguageSelectorProps {
 }
 
 export default function LanguageSelector(
-    { languageId, variantsLanguageIds, onChange, variantCreator } : LanguageSelectorProps
+    { id, languageId, variantsLanguageIds, onChange, variantCreator } : LanguageSelectorProps
 ) {
 
     const { languages } = useValues(languagesLogic({subdomain: getSubdomain()}))
@@ -28,6 +29,7 @@ export default function LanguageSelector(
                 languages.map(lang =>
                     <LangTag
                         key={lang.id}
+                        id={id}
                         lang={lang}
                         isActive={languageId === lang.id}
                         onChange={onChange}
@@ -42,6 +44,7 @@ export default function LanguageSelector(
 }
 
 interface LangTagProps {
+    id?: number,
     lang: Language,
     isActive: boolean,
     onChange: onChangeType,
@@ -49,7 +52,7 @@ interface LangTagProps {
     variantsLanguageIds: number[],
 }
 
-function LangTag({lang, isActive, variantsLanguageIds, onChange, variantCreator} : LangTagProps) {
+function LangTag({id, lang, isActive, variantsLanguageIds, onChange, variantCreator} : LangTagProps) {
 
     const [isCreating, setIsCreating] = useState<boolean>(false);
 
@@ -57,6 +60,7 @@ function LangTag({lang, isActive, variantsLanguageIds, onChange, variantCreator}
         if (variantsLanguageIds.indexOf(lang.id) < 0) {
             setIsCreating(true)
             variantCreator({
+                id,
                 languageId: lang.id,
                 onCreate: () => {
                     setIsCreating(false)

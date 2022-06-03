@@ -7,6 +7,7 @@ import Input, {InputView} from "../../ReusableComponents/Input";
 import {Redirect} from "../../types";
 import Select, {SelectOption} from "../../ReusableComponents/Select";
 import {toast} from "react-toastify";
+import getSubdomain from "../../logic-helpers/subdomain";
 
 export default function CreateUpdateRedirectPopup(
     { redirect = {} as Redirect, onClose } : { redirect?: Redirect, onClose: Function }
@@ -14,8 +15,7 @@ export default function CreateUpdateRedirectPopup(
 
     const isCreate = !redirect.id;
 
-    const subdomain = subdomainLogic.values.subdomain;
-    const redirectLogicBuilt = redirectsLogic({subdomain})
+    const redirectLogicBuilt = redirectsLogic({subdomain: getSubdomain()})
     const { create, update } = useActions(redirectLogicBuilt)
     const { createAjax, updateAjax } = useValues(redirectLogicBuilt)
 
@@ -66,7 +66,7 @@ export default function CreateUpdateRedirectPopup(
                         <Select
                             options={typeOptions}
                             defaultValue={typeOptions.find(o => o.value === type)}
-                            onChange={(v: SelectOption) => setType(v.value)}
+                            onChange={(v: any) => setType(v.value)}
                         />
                     } />
                 </div>

@@ -7,23 +7,23 @@ import SettingsSave from '../../ReusableComponents/SettingsSave';
 import subdomainLogic from '../../logic/subdomainLogic';
 import blogLogic from '../../logic/blogLogic';
 import languagesLogic from '../../logic/languagesLogic';
-import GeneralLanguageSelector from './GeneralLanguageSelector';
-import {BlogVariant} from "../../types";
+import {BlogVariant, Language} from "../../types";
 import LanguageSelector from "../../ReusableComponents/LanguageSelector";
 import ImageSelector from "../../ReusableComponents/ImageSelector";
+import getSubdomain from "../../logic-helpers/subdomain";
 
 
 // Should find a way to set up the should save section in the pop-up.
 export default function SettingsGeneral() {
 
-    const subdomain = subdomainLogic.values.subdomain;
+    const subdomain = getSubdomain();
     const blogLogicBuilt = blogLogic({subdomain})
     const { blog } = useValues(blogLogicBuilt)
     const { updateBlogValue, updateBlogVariantValue, createVariant } = useActions(blogLogicBuilt)
 
     const { primaryLanguage, getLanguageById } = useValues(languagesLogic({subdomain}))
     const [currentLanguageId, setCurrentLanguageId] = useState( primaryLanguage.id );
-    const currentLanguage = getLanguageById(currentLanguageId)
+    const currentLanguage = getLanguageById(currentLanguageId) as Language
     const variant = blog.variants[currentLanguageId] || {} as BlogVariant;
 
     return <div className="settings-general">
@@ -66,7 +66,7 @@ export default function SettingsGeneral() {
             }
         />
 
-        <div className={"non-primary-language-hider" + (!currentLanguage.is_primary ? " hidden" : "")}>
+        <div className={!currentLanguage.is_primary ? "global-non-primary-language-hidden" : ""}>
 
             <DualSetting
                 title="Logo"

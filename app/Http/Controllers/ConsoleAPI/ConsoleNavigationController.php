@@ -77,7 +77,7 @@ class ConsoleNavigationController extends Controller
 
         $request->validate([
             'language_id' => 'required|integer',
-            'name' => 'required|string|nullable'
+            'name' => 'string|nullable'
         ]);
 
         $languageId = $request->input('language_id');

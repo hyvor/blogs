@@ -3,6 +3,7 @@ import api from "../lib/api";
 import {navigationLogicType} from "./navigationLogicType";
 import {ajax} from "kea-ajax";
 import {Navigation, NavigationType, NavigationVariant} from "../types";
+import merge from "deepmerge";
 
 const  navigationLogic = kea<navigationLogicType>([
 
@@ -18,9 +19,9 @@ const  navigationLogic = kea<navigationLogicType>([
         updateNavigation: (navigation: Navigation) => ({navigation}),
         removeNavigation: (id: number) => ({id}),
 
-        addVariant: (variant: NavigationVariant) => ({variant}),
+        addNavigationVariant: (variant: NavigationVariant) => ({variant}),
         removeVariant: (variant: NavigationVariant) => ({variant}),
-        updateVariant: (variant: NavigationVariant) => ({variant}),
+        updateNavigationVariant: (id: number, variant: NavigationVariant) => ({id, variant}),
 
     }),
 
@@ -32,26 +33,50 @@ const  navigationLogic = kea<navigationLogicType>([
         },
 
         remove: async ({id} : {id: number}) => {
-
+            await api.delete(props.subdomain, `/navigation/${id}`);
+            actions.removeNavigation(id)
         },
 
-        create: async ({name, url, type} : {name: string, url: string, type: NavigationType}) => {
+        create: async ({name, url, type, onCreate} : {name: string, url: string, type: NavigationType, onCreate: Function}) => {
             const navigation = await api.post<Navigation>(props.subdomain, '/navigation', {
                 name: name,
                 url: url,
                 type: type
             })
             actions.addNavigation(navigation);
+
+            onCreate();
         },
 
-        createVariant: async ({id, languageId, name} : {id: number, languageId: number, name: string}) => {
-
-            const variant = await api.post<NavigationVariant>(props.subdomain, '/navigation/variant', {
-                id,
-                languageId,
-                name,
+        update: async ({id, url} : {id:number, url: string}) => {
+            const navigation = await api.patch<Navigation>(props.subdomain, `/navigation/${id}`, {
+                url
             })
-            actions.addVariant(variant);
+            actions.updateNavigation(navigation)
+        },
+
+        createVariant: async ({id, languageId, onCreate} : {id: number, languageId: number, onCreate: Function}) => {
+
+            const variant = await api.post<NavigationVariant>(props.subdomain, `/navigation/${id}/variant`, {
+                language_id: languageId,
+            })
+            actions.addNavigationVariant(variant);
+
+            onCreate();
+
+        },
+
+        updateVariant: async (
+            {id, languageId, name} :
+            {id: number, languageId: number, name: string}
+        ) => {
+
+            const variant = await api.patch<NavigationVariant>(props.subdomain, `/navigation/${id}/variant`, {
+                language_id: languageId,
+                name
+            })
+
+            actions.updateNavigationVariant(id, variant)
 
         },
 
@@ -82,7 +107,17 @@ const  navigationLogic = kea<navigationLogicType>([
                 updateNavigation: (state, {navigation}) => state.map(
                     stateNav => stateNav.id === navigation.id ? navigation : stateNav
                 ),
-                removeNavigation: (state, {id}) => state.filter(nav => nav.id === id),
+                removeNavigation: (state, {id}) => state.filter(nav => nav.id !== id),
+
+                updateNavigationVariant: (state, {id, variant}) => {
+                    return state.map(nav => nav.id === id ?
+                        merge(nav, {
+                            variants: {
+                                [variant.language_id]: variant
+                            }
+                        }) : nav
+                    ) as Navigation[];
+                }
             }
         ],
 

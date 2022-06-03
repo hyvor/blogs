@@ -10,7 +10,7 @@ class NavigationVariantObject
 
     public int $navigation_id;
     public int $language_id;
-    public string $name;
+    public ?string $name;
 
     public function __construct(NavigationVariant $variant)
     {

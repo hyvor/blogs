@@ -75,7 +75,7 @@ class NavigationRepository
     public static function createNavigationVariant(
         Navigation $navigation,
         Language $language,
-        string $name
+        ?string $name
     ) : NavigationVariant
     {
         return NavigationVariant::create([
