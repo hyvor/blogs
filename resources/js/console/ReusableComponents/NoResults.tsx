@@ -5,8 +5,8 @@ import React from 'react';
  */
 interface NoResultsProps {
     text: string,
-    padding: number,
-    imageWidth: number
+    padding?: number,
+    imageWidth?: number
 }
 
 export default function NoResults({ text, padding = 100, imageWidth = 150 }: NoResultsProps) {

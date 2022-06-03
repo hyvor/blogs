@@ -8,11 +8,11 @@ import {PopupConfirm } from "../../ReusableComponents/Popup";
 import {Redirect} from "../../types";
 import {TableRowItem, TableRow} from "../../ReusableComponents/Table";
 import CreateUpdateRedirectPopup from "./CreateUpdateRedirectPopup";
+import getSubdomain from "../../logic-helpers/subdomain";
 
 export default function Redirect ({redirect}: {redirect: Redirect}){
 
-    const subdomain = subdomainLogic.values.subdomain;
-    const redirectLogicBuilt = redirectsLogic({subdomain})
+    const redirectLogicBuilt = redirectsLogic({subdomain: getSubdomain()})
     const { remove } = useActions(redirectLogicBuilt)
 
 

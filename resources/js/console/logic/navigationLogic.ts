@@ -1,4 +1,4 @@
-import {actions, events, kea, key, path, props, reducers} from "kea";
+import {actions, events, kea, key, path, props, reducers, selectors} from "kea";
 import api from "../lib/api";
 import {navigationLogicType} from "./navigationLogicType";
 import {ajax} from "kea-ajax";
@@ -16,90 +16,60 @@ const  navigationLogic = kea<navigationLogicType>([
         setNavigations: (navigations: Navigation[]) => ({navigations}),
         addNavigation: (navigation: Navigation) => ({navigation}),
         updateNavigation: (navigation: Navigation) => ({navigation}),
+        removeNavigation: (id: number) => ({id}),
 
         addVariant: (variant: NavigationVariant) => ({variant}),
-        removeVariant: (id) => ({}),
-
-
-        /*getNavigationList: (navigation) => ({navigation}),
-        removeFromList: (id) => ({id}),
-        addNavigation: (navigation) => ({navigation}),
-        updateNavigation: (navigation) => ({navigation}),
-        updateDestination: (navigation) => ({navigation}),
-        updateSource: (navigation) => ({navigation}),
-        addNavigationVarian: (navigation) => ({navigation}),*/
+        removeVariant: (variant: NavigationVariant) => ({variant}),
+        updateVariant: (variant: NavigationVariant) => ({variant}),
 
     }),
 
     ajax(({actions, props}) => ({
 
-        load: async ({offset = 0, type} : {offset: number, type: NavigationType}) => {
-            const navigation = await api.get<Navigation[]>(props.subdomain, '/navigations', {
-                offset,
-                limit: 10,
-                type,
-            });
-            actions.getNavigationList(navigation);
+        load: async () => {
+            const navigations = await api.get<Navigation[]>(props.subdomain, '/navigations');
+            actions.setNavigations(navigations);
         },
 
-        remove: async ({id, languageId}) => {
-            console.log(id, languageId);
-            // actions.removeFromList(id);
-            // await api.delete(props.subdomain, `/navigation/${id}`, {
-            //     languageId: languageId,
-            // });
+        remove: async ({id} : {id: number}) => {
+
         },
 
-        create: async ({name, url, type}) => {
-            console.log(name, url,type)
-            const navigation = await api.post(props.subdomain, '/navigation', {
-                    name: name,
-                    url: url,
-                    type: type 
-                })
+        create: async ({name, url, type} : {name: string, url: string, type: NavigationType}) => {
+            const navigation = await api.post<Navigation>(props.subdomain, '/navigation', {
+                name: name,
+                url: url,
+                type: type
+            })
             actions.addNavigation(navigation);
         },
 
-        createVariant: async ({navigationId, languageId, name}) => {
-            // console.log(navigationId, languageId, name)
-            const navigation = await api.post(props.subdomain, '/navigation/variant', {
-                id: navigationId,
-                languageId: languageId,
-                name: name,
+        createVariant: async ({id, languageId, name} : {id: number, languageId: number, name: string}) => {
+
+            const variant = await api.post<NavigationVariant>(props.subdomain, '/navigation/variant', {
+                id,
+                languageId,
+                name,
             })
-            actions.addNavigationVarian(navigation);
+            actions.addVariant(variant);
+
         },
 
-        updateData: async ({userId, languageId, name, url, type}) => {
-            console.log(userId, languageId, name, url, type)
-            const navigation = await api.put(props.subdomain, `/navigation/${userId}`, {
+       /* updateData: async (
+            {id, languageId, name, url, type} :
+            { id: number, languageId: }
+        ) => {
+
+            const variant = await api.put<NavigationVariant>(props.subdomain, `/navigation/${id}`, {
                     languageId: languageId,
                     name: name,
                     url: url,
-                    type: type 
+                    type: type
                 });
             actions.updateNavigation(navigation);
-        },
 
-        updateItemNumber: async ({NavigationId, destinationId}) => {
-            console.log('Navigation' + NavigationId + ' I think its working')
-            console.log('Lets see '+ destinationId + ' destination ID')
+        },*/
 
-            const navigation = await api.put(props.subdomain, `/navigation/sort/${NavigationId}`, {
-                navigationSort: destinationId,
-            });
-            actions.updateDestination(navigation);
-        },
-
-        updateSourceNav: async ({destinationId, sourceId}) => {
-            console.log(destinationId)
-            console.log(sourceId + ' source ID')
-
-            const navigation = await api.put(props.subdomain, `/navigation/source/${destinationId}`, {
-                    sort: sourceId,
-                });
-            actions.updateSource(navigation);
-        },
     })),
 
     reducers({
@@ -108,15 +78,26 @@ const  navigationLogic = kea<navigationLogicType>([
             [] as Navigation[],
             {
                 setNavigations: (_, {navigations}) => navigations,
-                addNavigation: (_, {navigation}) => navigation,
-
-
-                removeFromList: (state, {id}) => state.filter(m => m.id !== id),
-                addNavigation: (state, {navigation}) => [navigation, ...state],
-                updateNavigation: (state, {navigation}) => [navigation, ...state],
-                updateDestination: (state, {navigation}) => [navigation, ...state],
-                updateSource: (state, {navigation}) => [navigation, ...state],
+                addNavigation: (state, {navigation}) => [...state, navigation],
+                updateNavigation: (state, {navigation}) => state.map(
+                    stateNav => stateNav.id === navigation.id ? navigation : stateNav
+                ),
+                removeNavigation: (state, {id}) => state.filter(nav => nav.id === id),
             }
+        ],
+
+    }),
+
+    selectors({
+
+        headerNavigations: [
+            (s) => [s.navigations],
+            (navigations) => navigations.filter(nav => nav.type === 'header').sort((a, b) => a.sort - b.sort)
+        ],
+
+        footerNavigations: [
+            (s) => [s.navigations],
+            (navigations) => navigations.filter(nav => nav.type === 'footer').sort((a, b) => a.sort - b.sort)
         ],
 
     }),

@@ -5,15 +5,15 @@ import redirectsLogic from '../../logic/redirectsLogic';
 import Loader from '../../ReusableComponents/Loader';
 import NoResults from '../../ReusableComponents/NoResults';
 import Redirect from "./Redirect";
-import {Table, TableHead, TableHeadItem, TableRow} from "../../ReusableComponents/Table";
+import {Table, TableHead, TableHeadItem } from "../../ReusableComponents/Table";
 import TableLoadMore from "../../ReusableComponents/TableLoadMore";
 import {Plus} from "react-bootstrap-icons";
 import CreateUpdateRedirectPopup from "./CreateUpdateRedirectPopup";
+import getSubdomain from "../../logic-helpers/subdomain";
 
 export default function Redirects() {
 
-    const subdomain = subdomainLogic.values.subdomain;
-    const redirectLogicBuilt = redirectsLogic({subdomain})
+    const redirectLogicBuilt = redirectsLogic({subdomain: getSubdomain()})
     redirectLogicBuilt.mount()
     const {
         redirects,
