@@ -7,15 +7,17 @@ use App\Data\Enums\UserStatusEnum;
 
 use App\Data\Objects\ConsoleAPI\User\UserObject;
 use App\Domains\User\UserRepository;
+use App\Exceptions\TrustedException;
 use App\Http\Controllers\Controller;
 
 use App\Models\Blog;
-use Hyvor\HyvorConnecter\User;
+use Hyvor\HyvorConnecter\Userbase;
 use Illuminate\Http\Request;
+use Illuminate\Validation\Rules\Enum;
 
 class ConsoleUserController extends Controller
 {
-    public static function getUsers(Request $request, Blog $blog)
+    public static function get(Request $request, Blog $blog)
     {
         $request->validate([
             'offset' => 'integer',
@@ -29,7 +31,7 @@ class ConsoleUserController extends Controller
         return response()->json($users);
     }
 
-    public static function searchUsers(Request $request, Blog $blog)
+    public static function search(Request $request, Blog $blog)
     {
         $request->validate([
             'search' => 'required|string',
@@ -43,127 +45,60 @@ class ConsoleUserController extends Controller
         return response()->json($users);
     }
 
-    public static function createAuthor(Request $request, Blog $blog)
+    public static function create(Request $request, Blog $blog)
     {
+
+        $request->validate([
+            'username_or_email' => 'required|string',
+            'role' => ['required', new Enum(UserRoleEnum::class)],
+        ]);
+
+        $usernameOrEmail = $request->input('username_or_email');
         $role = UserRoleEnum::from($request->input('role'));
-        $status = UserStatusEnum::from($request->input('status'));
 
-        if ($request->has('slug')) {
-            $userData['slug'] = $request->input('slug');
-        }
-        if ($request->has('email')) {
-            $userData['email'] = $request->input('email');
+        if (str_contains($usernameOrEmail, '@')) {
+            $hyvorUser = Userbase::fromEmail($usernameOrEmail);
+        } else {
+            $hyvorUser = Userbase::fromUsername($usernameOrEmail);
         }
 
-        if ($request->has('pictureUrl')) {
-            $userData['pictureUrl'] = $request->input('pictureUrl');
-        }
-        if ($request->has('url')) {
-            $userData['url'] = $request->input('url');
+        if (!$hyvorUser) {
+            throw new TrustedException('Unable to find the user');
         }
 
-        if ($request->has('social_facebook')) {
-            $userData['social_facebook'] = $request->input('social_facebook');
-        }
-        if ($request->has('social_twitter')) {
-            $userData['social_twitter'] = $request->input('social_twitter');
+        if ($role === UserRoleEnum::OWNER) {
+            throw new TrustedException('Owners cannot be created. Use ownership transferring');
         }
 
-        if ($request->has('social_linkedin')) {
-            $userData['social_linkedin'] = $request->input('social_linkedin');
+        if (UserRepository::getUserByBlogIdAndHyvorUserId($blog->id, $hyvorUser->id)) {
+            throw new TrustedException('User already exists');
         }
 
-        if ($request->has('social_youtube')) {
-            $userData['social_youtube'] = $request->input('social_youtube');
-        }
+        $user = UserRepository::createUserFromHyvorUser($blog, $hyvorUser->id, $role);
 
-        if ($request->has('social_instagram')) {
-            $userData['social_instagram'] = $request->input('social_instagram');
-        }
+        return response()->json(new UserObject($user, $blog));
+    }
 
-        // Variants
-        if ($request->has('name')) {
-            $userData['name'] = $request->input('name');
-        }
+    public static function createGuest(Request $request, Blog $blog)
+    {
 
-        if ($request->has('bio')) {
-            $userData['bio'] = $request->input('bio');
-        }
+        $request->validate([
+            'name' => 'required|string'
+        ]);
 
-        if ($request->has('location')) {
-            $userData['location'] = $request->input('location');
-        }
+        $name = $request->input('name');
 
-        if ($userData['slug'] == null) {
-            $userData['slug'] = str_replace(" ", "-", $userData['name']);
-        }
+        $user = UserRepository::createGuestUser($blog, $name);
 
-        // I changed here from user_id to hyvor_user_id
-        $createUser = UserRepository::createUser($blog, $blog->hyvor_user_id, $role, $status, $userData);
+        return response()->json(new UserObject($user, $blog));
 
-        return response()->json($createUser);
     }
 
     public static function updateAuthor(Request $request, Blog $blog)
     {
-        $userId = $request->route('id');
-        $languageId = $request->input('languageId');
-        $role = UserRoleEnum::from($request->input('role'));
-        $status = UserStatusEnum::from($request->input('status'));
 
-        if ($request->has('slug')) {
-            $userData['slug'] = $request->input('slug');
-        }
-        if ($request->has('email')) {
-            $userData['email'] = $request->input('email');
-        }
-        // if ($request->has('pictureUrl')) {
-        //     $userData['pictureUrl'] = $request->input('pictureUrl');
-        // }
-        if ($request->has('url')) {
-            $userData['url'] = $request->input('url');
-        }
 
-        if ($request->has('social_facebook')) {
-            $userData['social_facebook'] = $request->input('social_facebook');
-        }
-        if ($request->has('social_twitter')) {
-            $userData['social_twitter'] = $request->input('social_twitter');
-        }
 
-        if ($request->has('social_linkedin')) {
-            $userData['social_linkedin'] = $request->input('social_linkedin');
-        }
-
-        if ($request->has('social_youtube')) {
-            $userData['social_youtube'] = $request->input('social_youtube');
-        }
-
-        if ($request->has('social_instagram')) {
-            $userData['social_instagram'] = $request->input('social_instagram');
-        }
-
-        // Variants
-        if ($request->has('name')) {
-            $userData['name'] = $request->input('name');
-        }
-
-        if ($request->has('bio')) {
-            $userData['bio'] = $request->input('bio');
-        }
-
-        if ($request->has('location')) {
-            $userData['location'] = $request->input('location');
-        }
-
-        if ($userData['slug'] == null) {
-            $userData['slug'] = str_replace(" ", "-", $userData['name']);
-        }
-
-        // I changed here from user_id to hyvor_user_id
-        $updateUser = UserRepository::updateAuthor($userId, $languageId, $blog, $blog->hyvor_user_id, $role, $status, $userData);
-
-        return response()->json($updateUser);
     }
 
     public static function deleteAuthor(Request $request)
@@ -175,13 +110,7 @@ class ConsoleUserController extends Controller
         return response()->json($deleteData);
     }
 
-
-    /*
-    *
-    * these functions are for author Variants
-    *
-    */
-    public static function createAuthorVariant(Request $request)
+    public static function createUserVariant(Request $request)
     {
         $userId = $request->input('userId');
         $languageId = $request->input('languageId');
@@ -190,15 +119,4 @@ class ConsoleUserController extends Controller
         return response()->json($createVariant);
     }
 
-    public static function updatePicture(Request $request, Blog $blog)
-    {
-        $file = $request->file('file');
-        // $request->validate([
-        //     'file' => 'required|file'
-        // ]);
-
-        $icon = UserRepository::updatePicture($blog, $file);
-
-        return response()->json($icon);
-    }
 }

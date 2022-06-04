@@ -14,7 +14,7 @@ const usersLogic = kea<usersLogicType<IDKeyedUsers>>([
 
     props({} as {subdomain: string}),
     key((props) => props.subdomain),
-    path((key: string) => [key, 'users']),
+    path((key) => ['users', key]),
 
     actions({
         addUsers: (users: Array<User>) => ({users}),

@@ -166,13 +166,15 @@ Route::prefix('/api/console/v0/blog/{subdomain}')
         Route::delete('/redirect/{id}', [ConsoleRedirectController::class, 'delete']);
 
         // users
-        Route::get('/users', [ConsoleUserController::class, 'getUsers']);
-        Route::get('/users/search', [ConsoleUserController::class, 'searchUsers']);
-        Route::post('/user', [ConsoleUserController::class, 'createAuthor']);
-        Route::patch('/user/{id}', [ConsoleUserController::class, 'updateAuthor']); 
-        Route::delete('/user/{id}', [ConsoleUserController::class, 'deleteAuthor']); 
-        Route::post('/user/variant', [ConsoleUserController::class, 'createAuthorVariant']);
-        Route::post('/user/picture', [ConsoleUserController::class, 'updatePicture']);
+        Route::get('/users', [ConsoleUserController::class, 'get']);
+        Route::get('/users/search', [ConsoleUserController::class, 'search']);
+        Route::post('/user', [ConsoleUserController::class, 'create']);
+        Route::post('/user/guest', [ConsoleUserController::class, 'createGuest']);
+        Route::patch('/user/{id}', [ConsoleUserController::class, 'update']);
+        Route::delete('/user/{id}', [ConsoleUserController::class, 'delete']);
+        Route::post('/user/{id}/variant', [ConsoleUserController::class, 'createVariant']);
+        Route::patch('/user/{id}/variant', [ConsoleUserController::class, 'updateVariant']);
+        Route::delete('/user/{id}/variant', [ConsoleUserController::class, 'updateVariant']);
 
         // route
         Route::get('/routes', [ConsoleRouteController::class, 'get']);
