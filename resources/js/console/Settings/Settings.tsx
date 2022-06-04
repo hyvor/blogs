@@ -4,7 +4,7 @@ import SettingsDelete from './SettingsDelete';
 import Code from './Code';
 import SettingsMedia from './Media/SettingsMedia';
 import SettingsMigrate from './SettingsMigrate';
-import SettingsUsers from './Users/SettingsUsers';
+import Users from './Users/Users';
 import SettingRedirects from './Redirects/Redirects';
 import Comments from './Comments';
 import Navigations from './Navigation/Navigations';
@@ -26,7 +26,7 @@ export default function Settings({type} : {type: string | undefined}) {
     var Type = () => <SettingsGeneral />;
     switch (type) {
         case 'users':
-            Type = () => <SettingsUsers />;
+            Type = () => <Users />;
             break;
         case 'tags':
             Type = () => <Tags />;

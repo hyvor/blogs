@@ -15,6 +15,8 @@ import {toast} from 'react-toastify'
 import {User, UserVariant} from "../../types";
 import subdomainLogic from "../../logic/subdomainLogic";
 import UpdateUserPopup from "./UpdateUserPopup";
+import getSubdomain from "../../logic-helpers/subdomain";
+import {TableRow, TableRowItem} from "../../ReusableComponents/Table";
 
 
 export default function User({user} : {user: User} ) {
@@ -23,33 +25,22 @@ export default function User({user} : {user: User} ) {
     const { remove , updateData } = useActions(usersLogicBuilt)
     const { /!*updateDataAjax*!/ } = useValues(usersLogicBuilt)*/
 
-    const { primaryLanguage } = useValues(languagesLogic({subdomain: subdomainLogic.values.subdomain}))
+    const { primaryLanguage } = useValues(languagesLogic({subdomain: getSubdomain()}))
 
-    const [ isUpdating, setIsUpdating ] = useState<boolean>(false);
+    const [ isUpdating, setIsUpdating ] = useState(false);
+    const [ isDeleting, setIsDeleting ] = useState(false);
 
-    return <div className="global-table-body">
-        <div className="table-body-five">
-            <div className="table-item">{ user.variants[primaryLanguage.id].name }</div>
-            <div className="table-item">{ user.slug }</div>
-            <div className="table-item">{ user.email }</div>
-            <div className="table-item">
-                <div className="global-tag-role">{ user.role }</div>
-            </div>
-            <div className="table-actions">
-                <span className="table-button" onClick={() => setIsUpdating(true)}>
-                    <PencilFill size={10} />
-                </span>
-
-                    { isUpdating ? <UpdateUserPopup
-                        user={user}
-                        onClose={() => setIsUpdating(false)}
-                    /> : null }
-
-                <a className="table-button">
-                    <Link45deg size={10} />
-                </a>
-            </div>
-        </div>
-    </div>
+    return <TableRow>
+        <TableRowItem>{ user.variants[primaryLanguage.id].name }</TableRowItem>
+        <TableRowItem>{ user.slug }</TableRowItem>
+        <TableRowItem>{ user.posts_count }</TableRowItem>
+        <TableRowItem>
+            <div className="global-tag-role">{ user.role }</div>
+        </TableRowItem>
+        <TableRowItem>
+            <button className="icon-button" onClick={() => setIsUpdating(true)}><PencilFill size={10} /></button>
+            <button className="icon-button" onClick={() => setIsDeleting(true)}><Trash size={10} /></button>
+        </TableRowItem>
+    </TableRow>
 
 }

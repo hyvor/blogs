@@ -17,8 +17,9 @@ class UserObject
     public UserStatusEnum $status;
     public UserRoleEnum $role;
     public string $slug;
-    public ?string $email;
+    public int $posts_count;
 
+    public ?string $email;
     public ?string $picture_url;
     public ?string $website_url;
 
@@ -42,9 +43,10 @@ class UserObject
         $this->hyvor_user_id = $user->hyvor_user_id;
 
         $this->status = $user->status;
-
         $this->role = $user->role;
         $this->slug = $user->slug;
+        $this->posts_count = $user->posts_count;
+
         $this->email = $user->email;
 
         $this->picture_url = $user->picture_url;

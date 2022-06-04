@@ -17,9 +17,9 @@ export default function Navigations() {
     return <div className="settings-navigations">
         <div className="title">
             Navigation <button
-            className="button small inactive"
-            onClick={() => setIsCreating(true)}
-        >Create <Plus/></button>
+                className="button small inactive"
+                onClick={() => setIsCreating(true)}
+            >Create <Plus/></button>
         </div>
 
         {

@@ -159,6 +159,7 @@ export type User = {
     status: UserStatus;
     role: UserRole;
     slug: string;
+    posts_count: number;
     email: string;
 
     picture_url: string | null;
