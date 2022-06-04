@@ -150,7 +150,7 @@ Route::prefix('/api/console/v0/blog/{subdomain}')
         Route::put('/navigation/{id}', [ConsoleNavigationController::class, 'update']);
         Route::delete('/navigation/{id}', [ConsoleNavigationController::class, 'delete']);
         Route::post('/navigation/{id}/variant', [ConsoleNavigationController::class, 'createVariant']);
-        Route::patch('/navigation/{id}/variant', [ConsoleNavigationController::class, 'updateVariant']);
+        Route::put('/navigation/{id}/variant', [ConsoleNavigationController::class, 'updateVariant']);
         Route::delete('/navigation/{id}/variant', [ConsoleNavigationController::class, 'deleteVariant']);
 
         // languages

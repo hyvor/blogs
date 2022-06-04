@@ -58,11 +58,7 @@ export default function Redirects() {
                         />
                     </Table>
                 :
-                <NoResults
-                    text="There are no redirects."
-                    padding={40}
-                    imageWidth={250}
-                />
+                <NoResults text="There are no redirects." />
             )
         }
 

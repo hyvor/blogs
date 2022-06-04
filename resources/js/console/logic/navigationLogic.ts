@@ -50,11 +50,32 @@ const  navigationLogic = kea<navigationLogicType>([
             onCreate();
         },
 
-        update: async ({id, url} : {id:number, url: string}) => {
-            const navigation = await api.patch<Navigation>(props.subdomain, `/navigation/${id}`, {
-                url
+        update: async (
+            {id, url, type, variants, onUpdate} :
+            {id:number, url: string, type: NavigationType, variants: Record<number, NavigationVariant>, onUpdate: Function}
+        ) => {
+
+            for (let langId in variants) {
+
+                const variant = (values.navigations.find(nav => nav.id === id) as Navigation).variants[langId]
+
+                if (variants[langId].name !== variant.name) {
+                    await api.put<NavigationVariant>(props.subdomain, `/navigation/${id}/variant`, {
+                        language_id: langId,
+                        name: variants[langId].name,
+                    })
+                }
+
+            }
+
+            const navigation = await api.put<Navigation>(props.subdomain, `/navigation/${id}`, {
+                url,
+                type
             })
+
             actions.updateNavigation(navigation)
+
+            onUpdate();
         },
 
         createVariant: async ({id, languageId, onCreate} : {id: number, languageId: number, onCreate: Function}) => {
@@ -65,20 +86,6 @@ const  navigationLogic = kea<navigationLogicType>([
             actions.addNavigationVariant(id, variant);
 
             onCreate(variant);
-
-        },
-
-        updateVariant: async (
-            {id, languageId, name} :
-            {id: number, languageId: number, name: string}
-        ) => {
-
-            const variant = await api.patch<NavigationVariant>(props.subdomain, `/navigation/${id}/variant`, {
-                language_id: languageId,
-                name
-            })
-
-            actions.updateNavigationVariant(id, variant)
 
         },
 

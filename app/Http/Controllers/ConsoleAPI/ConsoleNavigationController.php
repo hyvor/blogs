@@ -54,13 +54,16 @@ class ConsoleNavigationController extends Controller
 
     public function update(Request $request, Navigation $navigation)
     {
+
         $request->validate([
-            'url' => 'required|string'
+            'url' => 'required|string',
+            'type' => ['required', new Enum(NavigationTypeEnum::class)]
         ]);
 
         $url = $request->input('url');
+        $type = NavigationTypeEnum::from($request->input('type'));
 
-        $navigation = NavigationRepository::updateNavigation($navigation, $url);
+        $navigation = NavigationRepository::updateNavigation($navigation, $url, $type);
 
         return response()->json(new NavigationObject($navigation));
     }

@@ -57,7 +57,7 @@ export default function NavigationTable({navigations, type} : NavigationTablePro
 
                     :
 
-                    <NoResults text="No navigations" padding={30} />
+                    <NoResults text="No navigations" padding={30} imageWidth={150} />
 
             }
 

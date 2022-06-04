@@ -48,11 +48,13 @@ class NavigationRepository
 
     public static function updateNavigation(
         Navigation $navigation,
-        string $url
+        string $url,
+        NavigationTypeEnum $type,
     ) : Navigation
     {
 
         $navigation->url = $url;
+        $navigation->type = $type;
         $navigation->save();
 
         return $navigation;

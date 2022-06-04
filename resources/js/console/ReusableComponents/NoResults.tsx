@@ -9,7 +9,7 @@ interface NoResultsProps {
     imageWidth?: number
 }
 
-export default function NoResults({ text, padding = 100, imageWidth = 125 }: NoResultsProps) {
+export default function NoResults({ text, padding = 100, imageWidth = 200 }: NoResultsProps) {
 
     return <div className="global-no-results" style={{padding}}>
         <img className="no-results-img" style={{width: imageWidth}} src="/img/console/noresults.svg" />

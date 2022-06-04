@@ -19,8 +19,8 @@ export default function CreateUpdateNavigationPopup(
 
     const subdomain = getSubdomain()
     const navigationLogicInst = navigationLogic({subdomain})
-    const { createAjax, updateAjax, updateVariantAjax } = useValues(navigationLogicInst)
-    const { create, update, updateVariant, createVariant } = useActions(navigationLogicInst)
+    const { createAjax, updateAjax } = useValues(navigationLogicInst)
+    const { create, update, createVariant } = useActions(navigationLogicInst)
 
 
     function handleClick() {
@@ -32,26 +32,15 @@ export default function CreateUpdateNavigationPopup(
                 onCreate: onClose
             })
         } else {
-            let langId : string | number
-            for (langId in variantsState) {
-                langId = parseInt(langId)
-                if (variantsState[langId].name !== variants[langId].name) {
-                     updateVariant({
-                        id: navigation.id,
-                        languageId: langId,
-                        name: variantsState[langId].name,
-                    })
-                }
-            }
 
-            if (url !== navigation.url) {
-                update({
-                    id: navigation.id,
-                    url
-                });
-            }
+            update({
+                id: navigation.id,
+                url,
+                type,
+                variants: variantsState,
+                onUpdate: onClose
+            });
 
-            onClose();
         }
     }
 
@@ -125,9 +114,6 @@ export default function CreateUpdateNavigationPopup(
                             onChange={value => setUrl(value)}
                             placeholder="/about"
                         />
-                    </div>
-                    {
-                        isCreate &&
                         <InputView
                             title="Type"
                             content={
@@ -138,7 +124,7 @@ export default function CreateUpdateNavigationPopup(
                                 />
                             }
                         />
-                    }
+                    </div>
                 </div>
             </PopupBodyDefault>
         }
@@ -148,8 +134,7 @@ export default function CreateUpdateNavigationPopup(
                 onClick={handleClick}
                 name={isCreate ? "Create" : "Update"}
                 isLoading={
-                    createAjax.status === 'loading' || updateAjax.status === 'loading' ||
-                    updateVariantAjax.status === 'loading'
+                    createAjax.status === 'loading' || updateAjax.status === 'loading'
                 }
                 loadingName={isCreate ? "Creating" : "Updating"}
             />
