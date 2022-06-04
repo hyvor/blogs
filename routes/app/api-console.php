@@ -145,13 +145,13 @@ Route::prefix('/api/console/v0/blog/{subdomain}')
 
         // navigation
         Route::get('/navigations', [ConsoleNavigationController::class, 'get']);
+        Route::patch('/navigations/sort', [ConsoleNavigationController::class, 'updateSort']);
         Route::post('/navigation', [ConsoleNavigationController::class, 'create']);
         Route::put('/navigation/{id}', [ConsoleNavigationController::class, 'update']);
         Route::delete('/navigation/{id}', [ConsoleNavigationController::class, 'delete']);
         Route::post('/navigation/{id}/variant', [ConsoleNavigationController::class, 'createVariant']);
         Route::patch('/navigation/{id}/variant', [ConsoleNavigationController::class, 'updateVariant']);
         Route::delete('/navigation/{id}/variant', [ConsoleNavigationController::class, 'deleteVariant']);
-        Route::put('/navigation/{id}/sort', [ConsoleNavigationController::class, 'updateSort']);
 
         // languages
         Route::get('/languages', [ConsoleLanguageController::class, 'get']);

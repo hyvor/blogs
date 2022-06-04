@@ -2,7 +2,7 @@ import React, {useState} from "react";
 import {TableRow, TableRowItem} from "../../ReusableComponents/Table";
 import {Navigation} from "../../types";
 import {useLanguagesValues} from "../Languages/helpers";
-import {PencilFill, Trash} from "react-bootstrap-icons";
+import {GripHorizontal, GripVertical, PencilFill, Trash} from "react-bootstrap-icons";
 import {PopupConfirm} from "../../ReusableComponents/Popup";
 import navigationLogic from "../../logic/navigationLogic";
 import getSubdomain from "../../logic-helpers/subdomain";
@@ -27,6 +27,7 @@ export default function Navigation({ navigation } : { navigation: Navigation }) 
     }
 
     return <TableRow>
+        <TableRowItem><GripVertical /></TableRowItem>
         <TableRowItem>{ navigation.variants[primaryLanguage.id].name }</TableRowItem>
         <TableRowItem>{ navigation.url }</TableRowItem>
 

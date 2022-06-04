@@ -8,6 +8,7 @@ use App\Models\Blog;
 use App\Models\Language;
 use App\Models\Navigation;
 use App\Models\NavigationVariant;
+use App\Models\User;
 use Illuminate\Support\Collection;
 
 class NavigationRepository
@@ -102,6 +103,19 @@ class NavigationRepository
         return Navigation::where('blog_id', '=', $blog->id)
             ->where('type', $type)
             ->count();
+    }
+
+    public static function updateSort(Blog $blog, array $navIds)
+    {
+        $i = 1;
+        foreach ($navIds as $navId) {
+            Navigation::where('blog_id', $blog->id)
+                ->where('id', $navId)
+                ->update([
+                    'sort' => $i,
+                ]);
+            $i++;
+        }
     }
 
 }

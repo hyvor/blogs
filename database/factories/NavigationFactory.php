@@ -21,6 +21,7 @@ class NavigationFactory extends Factory
             'blog_id' => config('test.blog_id'),
             'url' => $this->faker->url(),
             'type' => 'footer',
+            'sort' => 0
         ];
     }
 }

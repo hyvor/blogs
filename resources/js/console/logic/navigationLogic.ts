@@ -19,13 +19,15 @@ const  navigationLogic = kea<navigationLogicType>([
         updateNavigation: (navigation: Navigation) => ({navigation}),
         removeNavigation: (id: number) => ({id}),
 
-        addNavigationVariant: (variant: NavigationVariant) => ({variant}),
-        removeVariant: (variant: NavigationVariant) => ({variant}),
+        addNavigationVariant: (id: number, variant: NavigationVariant) => ({id, variant}),
+        removeVariant: (variant: NavigationVariant) => ({variant}), // TODO
         updateNavigationVariant: (id: number, variant: NavigationVariant) => ({id, variant}),
+
+        updateSortValue: (id: number, sort: number) => ({id, sort}),
 
     }),
 
-    ajax(({actions, props}) => ({
+    ajax(({actions, values, props}) => ({
 
         load: async () => {
             const navigations = await api.get<Navigation[]>(props.subdomain, '/navigations');
@@ -60,9 +62,9 @@ const  navigationLogic = kea<navigationLogicType>([
             const variant = await api.post<NavigationVariant>(props.subdomain, `/navigation/${id}/variant`, {
                 language_id: languageId,
             })
-            actions.addNavigationVariant(variant);
+            actions.addNavigationVariant(id, variant);
 
-            onCreate();
+            onCreate(variant);
 
         },
 
@@ -80,20 +82,12 @@ const  navigationLogic = kea<navigationLogicType>([
 
         },
 
-       /* updateData: async (
-            {id, languageId, name, url, type} :
-            { id: number, languageId: }
-        ) => {
+        saveSort: async ({type} : {type: NavigationType}) => {
+            const navigations = type === 'header' ? values.headerNavigations : values.footerNavigations
 
-            const variant = await api.put<NavigationVariant>(props.subdomain, `/navigation/${id}`, {
-                    languageId: languageId,
-                    name: name,
-                    url: url,
-                    type: type
-                });
-            actions.updateNavigation(navigation);
-
-        },*/
+            const ids = navigations.sort((a, b) => (a.sort - b.sort)).map(nav => nav.id)
+            await api.patch(props.subdomain, `/navigations/sort`, {ids})
+        }
 
     })),
 
@@ -109,6 +103,16 @@ const  navigationLogic = kea<navigationLogicType>([
                 ),
                 removeNavigation: (state, {id}) => state.filter(nav => nav.id !== id),
 
+                addNavigationVariant: (state, {id, variant}) => {
+                    return state.map(nav => nav.id === id ?
+                        merge(nav, {
+                            variants: {
+                                [variant.language_id]: variant
+                            }
+                        }) : nav
+                    ) as Navigation[];
+                },
+
                 updateNavigationVariant: (state, {id, variant}) => {
                     return state.map(nav => nav.id === id ?
                         merge(nav, {
@@ -117,6 +121,10 @@ const  navigationLogic = kea<navigationLogicType>([
                             }
                         }) : nav
                     ) as Navigation[];
+                },
+
+                updateSortValue: (state, {id, sort}) => {
+                    return state.map(nav => nav.id === id ? {...nav, sort} : nav)
                 }
             }
         ],

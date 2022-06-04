@@ -5,7 +5,7 @@ import { useEffect } from 'react';
 import { router } from "kea-router";
 
 
-import {ChevronExpand, GripHorizontal, GripVertical} from 'react-bootstrap-icons';
+import {ChevronExpand, GripVertical} from 'react-bootstrap-icons';
 import numberFormatter from '../../helpers/numberFormatter';
 import onOutsideClick from '../../helpers/onOutsideClick';
 import blogsLogic from '../logic/blogsLogic';
@@ -93,6 +93,8 @@ export default function BlogsSelector() {
                      * Otherwise it doesn't when blog preview page is opened
                      */
                     forceFallback={true}
+
+                    animation={200}
                 >
                     {
                         blogs.map(({blog, user}) => {

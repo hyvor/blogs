@@ -127,23 +127,20 @@ class ConsoleNavigationController extends Controller
         return response()->json();
     }
 
-    public function updateSort(Request $request)
+    public function updateSort(Request $request, Blog $blog)
     {
-       /* $id = $request->route('id');
-        $navigationSort = $request->input('navigationSort');
 
-        $updateSort = NavigationRepository::updateDestinationSort($id, $navigationSort);
+        $request->validate([
+            'ids' => 'array',
+            'ids.*' => 'integer'
+        ]);
 
-        return response()->json($updateSort);*/
+        $ids = $request->input('ids');
+
+        NavigationRepository::updateSort($blog, $ids);
+
+        return response()->json();
     }
 
-    public function updateSourceSort(Request $request)
-    {
-        // dd('hi bro daddy');
-        $id = $request->route('id');
-        $navigationSort = $request->input('sort');
-        $updateSort = NavigationRepository::updateSourceSort($id, $navigationSort);
 
-        return response()->json($updateSort);
-    }
 }

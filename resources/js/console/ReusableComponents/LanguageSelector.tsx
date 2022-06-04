@@ -10,7 +10,7 @@ type onChangeType = (languageId: number) => void;
 type variantCreatorType = (props: {id: number, languageId: number, onCreate: Function}) => void;
 
 interface LanguageSelectorProps {
-    id?: number, // userID/tagId/navigationId
+    id: number, // userID/tagId/navigationId
     languageId: number,
     variantsLanguageIds: Array<number>,
     onChange: onChangeType,
@@ -44,7 +44,7 @@ export default function LanguageSelector(
 }
 
 interface LangTagProps {
-    id?: number,
+    id: number,
     lang: Language,
     isActive: boolean,
     onChange: onChangeType,

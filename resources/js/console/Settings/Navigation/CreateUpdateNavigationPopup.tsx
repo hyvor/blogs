@@ -77,6 +77,17 @@ export default function CreateUpdateNavigationPopup(
         setVariantsState(merge(variantsState, {[currentLanguageId]: {name: value}}));
     }
 
+    function createVariantExtended({id, languageId, onCreate}: {id: number, languageId: number, onCreate: Function}) {
+        createVariant({
+            id,
+            languageId,
+            onCreate: (variant: NavigationVariant) => {
+                setVariantsState({...variantsState, [variant.language_id]: variant});
+                onCreate();
+            }
+        })
+    }
+
     return <Popup
         header={
             <div>
@@ -88,7 +99,7 @@ export default function CreateUpdateNavigationPopup(
                         languageId={currentLanguageId}
                         variantsLanguageIds={Object.keys(variants).map(id => parseInt(id))}
                         onChange={setCurrentLanguageId}
-                        variantCreator={createVariant}
+                        variantCreator={createVariantExtended}
                     />
                 }
             </div>
