@@ -12,39 +12,40 @@ $pricingRow = '<tr>
                 <th>
                     <div class="plan-name">Pro</div>
                     <div class="plan-price">
-                        <div class="price">$30</div>
-                        <div class="price-details">
-                            <span class="period">per year</span>
-                        </div>
-                    </div>
-                    <div class="plan-price-monthly">
-                        No monthly billing
-                    </div>
-                </th>
-                <th>
-                    <div class="plan-name">Team</div>
-                    <div class="plan-price">
-                        <div class="price">$5</div>
-                        <div class="price-details">
-                            <span class="period">per month / user</span>
-                            <span class="period">billed annually</span>
-                        </div>
-                    </div>
-                    <div class="plan-price-monthly">
-                        <b>$8</b> billed monthly
-                    </div>
-                </th>
-                <th>
-                    <div class="plan-name">Enterprise</div>
-                    <div class="plan-price">
-                        <div class="price">$500</div>
+                        <div class="price">$8</div>
                         <div class="price-details">
                             <span class="period">per month</span>
                             <span class="period">billed annually</span>
                         </div>
                     </div>
                     <div class="plan-price-monthly">
-                        <b>$800</b> billed monthly
+                        <b>$10</b> billed monthly
+                    </div>
+                </th>
+                <th>
+                    <div class="plan-name">Team</div>
+                    <div class="plan-price">
+                        <div class="price">$10</div>
+                        <div class="price-details">
+                            <span class="period">per month / user</span>
+                            <span class="period">billed annually</span>
+                        </div>
+                    </div>
+                    <div class="plan-price-monthly">
+                        <b>$16</b> billed monthly
+                    </div>
+                </th>
+                <th>
+                    <div class="plan-name">Enterprise</div>
+                    <div class="plan-price">
+                        <div class="price">$1000</div>
+                        <div class="price-details">
+                            <span class="period">per month</span>
+                            <span class="period">billed annually</span>
+                        </div>
+                    </div>
+                    <div class="plan-price-monthly">
+                        <b>$1600</b> billed monthly
                     </div>
                 </th>
             </tr>';
@@ -95,12 +96,6 @@ $pricingRow = '<tr>
                 <td>Any file type</td>
             </tr>
 
-            <tr>
-                <td>Custom Domain</td>
-                <td><?= $svgCheck ?></td>
-                <td><?= $svgCheck ?></td>
-                <td><?= $svgCheck ?></td>
-            </tr>
 
             <tr>
                 <td>Code Injecting</td>
@@ -117,6 +112,12 @@ $pricingRow = '<tr>
                 <td><?= $svgCheck ?></td>
             </tr>
 
+            <tr>
+                <td>Custom Domain</td>
+                <td><?= $svgCheck ?></td>
+                <td><?= $svgCheck ?></td>
+                <td><?= $svgCheck ?></td>
+            </tr>
 
             <tr>
                 <td>Multi-Language</td>
@@ -133,17 +134,17 @@ $pricingRow = '<tr>
             </tr>
 
             <tr>
-                <td>Data API</td>
+                <td>API Access</td>
                 <td><?= $svgCancel ?></td>
                 <td><?= $svgCheck ?></td>
                 <td><?= $svgCheck ?></td>
             </tr>
 
             <tr>
-                <td>Delivery API</td>
-                <td><?= $svgCancel ?></td>
-                <td><?= $svgCheck ?></td>
-                <td><?= $svgCheck ?></td>
+                <td>Edge Caching</td>
+                <td>Subdomain only</td>
+                <td>Subdomain only</td>
+                <td>Custom Domain</td>
             </tr>
 
             <!-- <tr>
