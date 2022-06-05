@@ -2,12 +2,17 @@
 
 namespace Tests\Feature\ConsoleAPI\Posts;
 
+use App\Domains\Post\Events\PostCreatedEvent;
 use App\Domains\User\UserRepository;
 use App\Models\PostAuthor;
 use App\Models\PostVariant;
+use Illuminate\Support\Facades\Event;
 use Illuminate\Testing\Fluent\AssertableJson;
 
 it('creates a post and the primary variant', function () {
+
+    Event::fake();
+
     $post = $this
         ->callConsoleApi('POST', '/post')
         ->assertOk()
@@ -26,6 +31,8 @@ it('creates a post and the primary variant', function () {
         ->first();
 
     $this->assertNotNull($variant);
+
+    Event::assertDispatched(PostCreatedEvent::class);
 });
 
 it('creates a page', function () {

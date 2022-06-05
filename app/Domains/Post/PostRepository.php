@@ -3,6 +3,10 @@
 namespace App\Domains\Post;
 
 use App\Domains\Language\LanguageRepository;
+use App\Domains\Post\Events\PostCreatedEvent;
+use App\Domains\Post\Events\PostDeletedEvent;
+use App\Domains\Post\Events\PostUpdatedEvent;
+use App\Domains\Post\Events\PostVariantCreatedEvent;
 use App\Domains\Post\Events\PostVariantDeletedEvent;
 use App\Domains\Post\Events\PostVariantUpdatedEvent;
 use App\Exceptions\TrustedException;
@@ -241,6 +245,8 @@ class PostRepository
         // create post variant (primary language)
         self::createPostVariant($post, LanguageRepository::getPrimaryLanguage($blog));
 
+        PostCreatedEvent::dispatch($post);
+
         /**
          * Because Laravel doesn't fetch database default values for other columns
          * you have to manually fetch the record again by ID to prevent
@@ -287,14 +293,19 @@ class PostRepository
 
         $post->save();
 
+        PostUpdatedEvent::dispatch($post);
+
         return $post;
     }
 
 
     public static function deletePost(Post $post)
     {
+
         $post->variants->map(fn ($variant) => self::deletePostVariant($post, $variant->language_id));
         $post->delete();
+
+        PostDeletedEvent::dispatch($post);
     }
 
     public static function createPostVariant(Post $post, Language $language): PostVariant
@@ -303,6 +314,8 @@ class PostRepository
             'post_id' => $post->id,
             'language_id' => $language->id,
         ]);
+
+        PostVariantCreatedEvent::dispatch($variant);
 
         return PostVariant::find($variant->id);
     }

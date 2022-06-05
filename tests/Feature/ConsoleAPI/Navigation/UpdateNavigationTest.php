@@ -10,10 +10,16 @@ it('updates a navigation', function() {
     $navigation = Navigation::factory()->create(['blog_id' => blog()]);
 
     $url = 'https://example.com/or';
+    $type = 'footer';
     $this->callConsoleApi('PUT', "/navigation/$navigation->id", [
-        'url' => $url
+        'url' => $url,
+        'type' => $type,
     ])
         ->assertOk()
-        ->assertJson(fn(AssertableJson $json) => $json->where('url', $url)->etc());
+        ->assertJson(fn(AssertableJson $json) => $json
+            ->where('url', $url)
+            ->where('type', $type)
+            ->etc()
+        );
 
 });

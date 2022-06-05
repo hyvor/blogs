@@ -2,9 +2,14 @@
 
 namespace Tests\Feature\ConsoleAPI\Posts;
 
+use App\Domains\Post\Events\PostVariantCreatedEvent;
+use Illuminate\Support\Facades\Event;
 use Illuminate\Testing\Fluent\AssertableJson;
 
 it('creates a post variant', function () {
+
+    Event::fake();
+
     $language = $this->blog->languages[0];
     $language2 = $this->blog->languages[1];
     $post = $this->blog->posts()->first();
@@ -29,4 +34,6 @@ it('creates a post variant', function () {
         ->assertJson(fn (AssertableJson $json) => $json->has('status')->etc());
 
     $this->assertEquals(2, $post->variants()->count());
+
+    Event::assertDispatched(PostVariantCreatedEvent::class);
 });

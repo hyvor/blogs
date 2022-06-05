@@ -152,7 +152,7 @@ class UserRepository
     ): User {
         $hyvorUser = Userbase::fromId($hyvorUserId);
 
-        if (! $hyvorUser) {
+        if (!$hyvorUser) {
             throw new Exception('User not found');
         }
 
@@ -186,7 +186,7 @@ class UserRepository
             bio: $hyvorUser->bio
         );
 
-        return $user;
+        return $user->refresh();
     }
 
     public static function createGuestUser(
@@ -204,7 +204,7 @@ class UserRepository
 
         self::createUserVariant($user, $language, $name);
 
-        return $user;
+        return $user->refresh();
     }
 
     public static function updateUser(

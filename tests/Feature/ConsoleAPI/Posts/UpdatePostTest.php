@@ -2,9 +2,14 @@
 
 namespace Tests\Feature\ConsoleAPI\Posts;
 
+use App\Domains\Post\Events\PostUpdatedEvent;
+use Illuminate\Support\Facades\Event;
 use Illuminate\Testing\Fluent\AssertableJson;
 
 it('updates a post', function () {
+
+    Event::fake();
+
     $post = $this->blog->posts()->first();
 
     $slug = 'hello-world';
@@ -35,4 +40,6 @@ it('updates a post', function () {
                 ->where('code_foot', $codeFoot)
                 ->etc()
         );
+
+    Event::assertDispatched(PostUpdatedEvent::class);
 });

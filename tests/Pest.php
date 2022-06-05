@@ -16,6 +16,7 @@ use App\Models\Blog;
 use App\Models\BlogVariant;
 use App\Models\User;
 use Hyvor\HyvorConnecter\HyvorUser;
+use Hyvor\HyvorConnecter\Userbase;
 use Tests\TestCase;
 use Tests\UnitTestCase;
 
@@ -47,6 +48,9 @@ uses(TestCase::class)->in('Feature', 'Unit');
 uses()->beforeEach(function () {
     $this->blog = Blog::find(config('test.blog_id'));
     $this->user = User::where('hyvor_user_id', config('test.hyvor_user_id'))->first();
+
+    // reset userbase
+    Userbase::$FAKE = null;
 })->in('Feature', 'Unit');
 
 

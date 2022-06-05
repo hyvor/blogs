@@ -16,7 +16,7 @@ it('updates a variant', function() {
     ]);
 
     $name = 'ehw';
-    $this->callConsoleApi('PATCH', "/navigation/$nav->id/variant", [
+    $this->callConsoleApi('PUT', "/navigation/$nav->id/variant", [
         'language_id' => $languageId,
         'name' => $name
     ])

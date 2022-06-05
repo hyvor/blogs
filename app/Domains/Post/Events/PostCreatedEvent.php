@@ -3,7 +3,7 @@
 namespace App\Domains\Post\Events;
 
 use App\Models\Post;
-use Illuminate\Foundation\Bus\Dispatchable;
+use Illuminate\Foundation\Events\Dispatchable;
 use Illuminate\Queue\SerializesModels;
 
 class PostCreatedEvent

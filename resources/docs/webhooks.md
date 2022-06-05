@@ -12,7 +12,6 @@ Each blog can have up to 5 webhooks. Each webhook has a URL and can subscribe to
 `post.variant.created` | A post variant is created
 `post.variant.updated` | A post variant is updated
 `post.variant.deleted` | A variant is deleted
-&nbsp; | &nbsp;
 `page.{events}` | (all post events are available for pages)
 `tag.{events}` | (all post events are available for tags)
 `user.{events}` | (all post events are available for users)
