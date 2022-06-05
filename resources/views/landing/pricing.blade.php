@@ -142,9 +142,9 @@ $pricingRow = '<tr>
 
             <tr>
                 <td>Edge Caching</td>
-                <td>Subdomain only</td>
-                <td>Subdomain only</td>
-                <td>Custom Domain</td>
+                <td><?= $svgCancel ?></td>
+                <td><?= $svgCancel ?></td>
+                <td>Coming Soon</td>
             </tr>
 
             <!-- <tr>

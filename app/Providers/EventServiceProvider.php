@@ -2,9 +2,10 @@
 
 namespace App\Providers;
 
-use App\Domains\Cache\Listeners\ClearPostCacheListener;
-use App\Domains\Post\Observers\PostVariantObserver;
-use App\Models\PostVariant;
+use App\Domains\Cache\Listeners\ClearTemplateCacheSubscriber;
+use App\Domains\Post\Events\PostVariantUpdatedEvent;
+use App\Domains\Post\Listeners\PostVariantUpdateContentHtmlListener;
+use App\Domains\Post\Listeners\PostVariantUpdateWordCountListener;
 use Illuminate\Foundation\Support\Providers\EventServiceProvider as ServiceProvider;
 
 class EventServiceProvider extends ServiceProvider
@@ -16,19 +17,21 @@ class EventServiceProvider extends ServiceProvider
      */
     protected $listen = [
 
-
+        PostVariantUpdatedEvent::class => [
+            PostVariantUpdateWordCountListener::class,
+            PostVariantUpdateContentHtmlListener::class,
+        ],
 
     ];
 
     protected $subscribe = [
 
-        ClearPostCacheListener::class,
+        ClearTemplateCacheSubscriber::class,
 
     ];
 
     protected $observers = [
 
-        PostVariant::class => [PostVariantObserver::class],
 
     ];
 

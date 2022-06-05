@@ -3,13 +3,14 @@
 namespace App\Domains\Post;
 
 use App\Domains\Language\LanguageRepository;
+use App\Domains\Post\Events\PostVariantDeletedEvent;
+use App\Domains\Post\Events\PostVariantUpdatedEvent;
 use App\Exceptions\TrustedException;
 use App\Helpers\CollectionWithTotal;
 use App\Models\Blog;
 use App\Models\Language;
 use App\Models\Post;
 use App\Models\PostVariant;
-use App\Models\Tag;
 use Carbon\Carbon;
 use Hyvor\FilterQ\Facades\FilterQ;
 use Illuminate\Database\Eloquent\Collection;
@@ -284,14 +285,6 @@ class PostRepository
             $post->code_foot = $updates['code_foot'];
         }
 
-        if (array_key_exists('tag', $updates)) {
-            // $postTag->code_head = $updates['tag'];
-            $post = Tag::create([
-                'post_id' => $post->id,
-                'tag_id' => $updates['tag'],
-            ]);
-        }
-
         $post->save();
 
         return $post;
@@ -360,6 +353,8 @@ class PostRepository
 
         $variant->save();
 
+        PostVariantUpdatedEvent::dispatch($variant);
+
         return $variant;
     }
 
@@ -372,9 +367,13 @@ class PostRepository
 
     public static function deletePostVariant(Post $post, int $languageId)
     {
-        PostVariant::where('language_id', $languageId)
+        $variant = PostVariant::where('language_id', $languageId)
             ->where('post_id', $post->id)
-            ->delete();
+            ->first();
+
+        $variant->delete();
+
+        PostVariantDeletedEvent::dispatch($variant);
     }
 
 

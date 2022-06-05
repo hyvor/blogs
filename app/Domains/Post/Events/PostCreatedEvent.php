@@ -3,13 +3,12 @@
 namespace App\Domains\Post\Events;
 
 use App\Models\Post;
-use Illuminate\Foundation\Events\Dispatchable;
+use Illuminate\Foundation\Bus\Dispatchable;
 use Illuminate\Queue\SerializesModels;
 
-class PostPublishedEvent
+class PostCreatedEvent
 {
-    use SerializesModels;
-    use Dispatchable;
+    use Dispatchable, SerializesModels;
 
     public Post $post;
 
@@ -17,4 +16,5 @@ class PostPublishedEvent
     {
         $this->post = $post;
     }
+
 }

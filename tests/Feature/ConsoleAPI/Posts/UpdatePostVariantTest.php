@@ -2,9 +2,14 @@
 
 namespace Tests\Feature\ConsoleAPI\Posts;
 
+use App\Domains\Post\Events\PostVariantUpdatedEvent;
+use Illuminate\Support\Facades\Event;
 use Illuminate\Testing\Fluent\AssertableJson;
 
 it('updates post variant', function () {
+
+    Event::fake();
+
     $post = $this->blog->posts()->first();
     $variant = $post->variants[0];
     $language = $variant->language;
@@ -24,6 +29,7 @@ it('updates post variant', function () {
             'title' => $title,
             'description' => $description,
         ])
+        ->assertOk()
         ->assertJson(
             fn (AssertableJson $json) =>
             $json
@@ -34,4 +40,7 @@ it('updates post variant', function () {
                 ->where('description', $description)
                 ->etc()
         );
+
+    Event::assertDispatched(PostVariantUpdatedEvent::class);
+
 });

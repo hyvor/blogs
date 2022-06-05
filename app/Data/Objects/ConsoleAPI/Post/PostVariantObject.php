@@ -11,6 +11,7 @@ use App\Models\PostVariant;
 class PostVariantObject
 {
     public int $language_id;
+    public int $post_id;
 
     public PostStatusEnum $status;
     public string $url;
@@ -24,11 +25,14 @@ class PostVariantObject
         $language = $variant->language;
 
         $this->language_id = $language->id;
+        $this->post_id = $post->id;
+
         $this->status = $variant->status;
         $this->url = PermalinkRepository::getPostPermalink($post, $blog, $language);
         $this->content = $variant->content;
         $this->content_unsaved = $variant->content_unsaved;
         $this->title = $variant->title;
         $this->description = $variant->description;
+
     }
 }

@@ -3,11 +3,12 @@
 namespace App\Domains\Post\Events;
 
 use App\Models\Post;
+use Illuminate\Foundation\Bus\Dispatchable;
 use Illuminate\Queue\SerializesModels;
 
-class PublishedPostUpdatedEvent
+class PostDeletedEvent
 {
-    use SerializesModels;
+    use Dispatchable, SerializesModels;
 
     public Post $post;
 

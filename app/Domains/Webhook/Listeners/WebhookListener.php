@@ -2,7 +2,7 @@
 
 namespace App\Domains\Webhook\Listeners;
 
-use App\Domains\Cache\Events\CacheShouldClearEvent;
+use App\Domains\Cache\Events\CacheClearSingleEvent;
 use App\Domains\Post\Events\PostPublishedEvent;
 
 class ClearPostCacheListener
@@ -11,7 +11,7 @@ class ClearPostCacheListener
     {
     }
 
-    public function handleCacheShouldClearEvent(CacheShouldClearEvent $event)
+    public function handleCacheShouldClearEvent(CacheClearSingleEvent $event)
     {
     }
 
@@ -22,6 +22,6 @@ class ClearPostCacheListener
         $events->listen(PostPublishedEvent::class, [$this, 'handlePostPublished']);
 
         // cache
-        $events->listen(CacheShouldClearEvent::class, [$this, 'handleCacheShouldClearEvent']);
+        $events->listen(CacheClearSingleEvent::class, [$this, 'handleCacheShouldClearEvent']);
     }
 }

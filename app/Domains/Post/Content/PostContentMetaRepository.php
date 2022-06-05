@@ -9,7 +9,7 @@ use App\Models\PostVariant;
  */
 class PostContentMetaRepository
 {
-    public static function updateWordCount(PostVariant $variant): void
+    /*public static function updateWordCount(PostVariant $variant): void
     {
         if (! $variant->content) {
             return;
@@ -23,7 +23,7 @@ class PostContentMetaRepository
 
         $variant->words = $words;
         $variant->saveQuietly();
-    }
+    }*/
 
     /**
      * Pre-calculate HTML so that you don't want to convert it everytime

@@ -2,6 +2,7 @@
 
 namespace App\Domains\Cache;
 
+use App\Data\Enums\DeliveryAPITypeEnum;
 use App\Data\Objects\DeliveryAPI\DeliveryAPIResponseObject;
 use App\Models\Blog;
 use Illuminate\Support\Facades\Cache;
@@ -11,6 +12,29 @@ use Illuminate\Support\Facades\Cache;
  */
 class CacheRepository
 {
+
+    private Blog $blog;
+
+    public function blog(Blog $blog)
+    {
+        $this->blog = $blog;
+        return $this;
+    }
+
+    private function getKey(string $path) : string
+    {
+        return "blog_cache_{$this->blog->id}_$path";
+    }
+
+    public function clearTemplateCache()
+    {
+        $key = $this->getKey(self::TEMPLATE_CACHE_CLEAR_KEY);
+        Cache::put($key, now()->timestamp);
+    }
+
+
+    const TEMPLATE_CACHE_CLEAR_KEY =  'LAST_TEMPLATE_CACHE_CLEARED_AT';
+
     private static function getCacheKeyTag(Blog $blog): string
     {
         return "blog_cache_{$blog->id}";
@@ -20,7 +44,7 @@ class CacheRepository
     {
         $tag = self::getCacheKeyTag($blog);
 
-        return $tag . "_$path";
+        return "blogs_cache_" . $tag . "_$path";
     }
 
 
@@ -28,7 +52,8 @@ class CacheRepository
         Blog $blog,
         string $path,
         DeliveryAPIResponseObject $responseObject
-    ): void {
+    ): void
+    {
         if (config('app.debug') === true) {
             return;
         }
@@ -48,7 +73,24 @@ class CacheRepository
         $key = self::getCacheKey($blog, $path);
         $cache = Cache::tags($tag)->get($key);
 
-        return $cache ? unserialize($cache) : null;
+        $object = $cache ? unserialize($cache) : null;
+
+        if (
+            $object &&
+            $object->type === DeliveryAPITypeEnum::FILE &&
+            $object->is_template
+        ) {
+
+            $templateCacheClearedAt = (int) Cache::tags($tag)->get(self::TEMPLATE_CACHE_CLEAR_KEY);
+
+            if ($templateCacheClearedAt && $object->at < $templateCacheClearedAt) {
+                $object = null;
+            }
+
+        }
+
+        return $object;
+
     }
 
     public static function clear(Blog $blog, string $path)
@@ -63,4 +105,13 @@ class CacheRepository
         $tag = self::getCacheKeyTag($blog);
         Cache::tags($tag)->flush();
     }
+
+    /*public static function clearTemplateCache(Blog $blog)
+    {
+        dd("DWA");
+        $tag = self::getCacheKeyTag($blog);
+        $key = self::getCacheKey($blog, self::TEMPLATE_CACHE_CLEAR_KEY);
+        Cache::tags($tag)->put($key, now()->timestamp);
+    }*/
+
 }

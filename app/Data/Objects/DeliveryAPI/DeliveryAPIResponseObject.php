@@ -2,14 +2,17 @@
 
 namespace App\Data\Objects\DeliveryAPI;
 
+use App\Data\Enums\DeliveryAPIFileTypeEnum;
 use App\Data\Enums\DeliveryAPITypeEnum;
 use App\Data\Enums\RedirectTypeEnum;
 
 class DeliveryAPIResponseObject
 {
     public DeliveryAPITypeEnum $type;
+    public int $at;
 
     // for file
+    public DeliveryAPIFileTypeEnum $file_type;
     public string $content;
     public string $mime_type;
 
@@ -23,6 +26,7 @@ class DeliveryAPIResponseObject
     public function __construct(DeliveryAPITypeEnum $type)
     {
         $this->type = $type;
+        $this->at = now()->timestamp;
     }
 
     /**
@@ -50,7 +54,7 @@ class DeliveryAPIResponseObject
         return $obj;
     }
 
-    // for caching
+    /*// for caching
     public static function fromArray(array $arr)
     {
         $obj = new self(DeliveryAPITypeEnum::from($arr['type']));
@@ -64,5 +68,5 @@ class DeliveryAPIResponseObject
         if (isset($arr['to'])) {
             $obj->to = $arr['to'];
         }
-    }
+    }*/
 }
