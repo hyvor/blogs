@@ -1,6 +1,11 @@
 # Webhooks
 
-Each blog can have up to 5 webhooks. Each webhook has a URL and can subscribe to one or more of the following events.
+> Webhooks are only available in the trial period and the [Team plan](/pricing) and above.
+
+Webhooks are a way to get notified when an event happens on your blog.
+
+* A blog can have up to 5 webhooks. 
+* Each webhook has a URL and can subscribe to one or more of the following events.
 
 | Event                  | Dispatched                                                                                |
 |------------------------|-------------------------------------------------------------------------------------------|
@@ -14,18 +19,31 @@ Each blog can have up to 5 webhooks. Each webhook has a URL and can subscribe to
 | `post.variant.deleted` | A variant is deleted                                                                      |
 | `post.tags.changed`    | Tags assigned to a post are changed                                                       |
 | `post.authors.changed` | Authors assigned to a post are changed                                                    |
-| `page.{events}`        | (all post events are available for pages)                                                 |
+| &nbsp;                 | &nbsp;                                                                                    
+| `page.created`         | A new page is created                                                                     |
+| `page.updated`         | A page is updated                                                                         |
+| `page.deleted`         | A page is deleted                                                                         |
+| `page.variant.created` | A page variant is created                                                                 |
+| `page.variant.updated` | A page variant is updated                                                                 |
+| `page.variant.deleted` | A variant is deleted                                                                      |
 | &nbsp;                 | &nbsp;                                                                                    |
-| `tag.{events}`         | (all post events are available for tags, except `.tags.changed` and `.authors.changed`)   |
+| `tag.{events}`         | (all page events are available for tags, except `.tags.changed` and `.authors.changed`)   |
 | `user.{events}`        | (all tag events are available for users)                                                  |
+| &nbsp;                 | &nbsp;                                                                                    |
+| `navigation.changed`   | Blog [navigation](navigation) changed                                                     |
+| `routes.changed`       | Blog [routes](routes) changed                                                             |
+| `languages.changed`    | Blog [languages](languages) changed                                                       |
+| &nbsp;                 | &nbsp;                                                                                    |
+| `media.created`        | A media item is added                                                                     |
+| `media.deleted`        | A media item is deleted                                                                   |
 | &nbsp;                 | &nbsp;                                                                                    |
 | `cache.single`         | When cache of a single path should be cleared (index.css, assets, media, etc.)            |
 | `cache.templates`      | When cache of all template-generated paths should be cleared (index, posts, feeds, etc.). |
 | `cache.all`            | When all cache should be cleared                                                          |
 
-### Post Request Format
+### POST Request Body {#request}
 
-On each event, we call the URL you provided, via the HTTP POST method. The request will have a JSON body like this.
+When a subscribed event happens, we call the URL you provided, via the HTTP POST method. The request will have a JSON body like this.
 
 ```json
 {
@@ -37,7 +55,7 @@ On each event, we call the URL you provided, via the HTTP POST method. The reque
 }
 ```
 
-Contents of the data object varies depending on the event type. It will contain one or more [Data API Objects](api-data#objects).
+Contents of the data object varies depending on the event type. It will contain one or more [Console API Objects](api-console).
 
 `blog.updated` event will have a [Blog Object](api-data#blog-object).
 

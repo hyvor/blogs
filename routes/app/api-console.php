@@ -20,6 +20,7 @@ use App\Http\Controllers\ConsoleAPI\ConsoleWebhookController;
 
 use App\Http\Middleware\App\ConsoleAPI\ConsoleApiAccessMiddleware;
 use App\Http\Middleware\App\ConsoleAPI\ConsoleApiUserEndpointsAccessMiddleware;
+use App\Http\Middleware\App\ConsoleAPI\ConsoleMiscApiAccessMiddleware;
 use App\Http\Middleware\App\ConsoleAPI\PostAuthorshipMiddleware;
 use App\Http\Middleware\App\ConsoleAPI\ResourceAccessMiddleware;
 use App\Http\Middleware\App\SubdomainMiddleware;
@@ -184,6 +185,7 @@ Route::prefix('/api/console/v0/blog/{subdomain}')
 
         // theme
         Route::post('/theme', [ConsoleThemeController::class, 'uploadTheme']);
+        Route::patch('/theme', [ConsoleThemeController::class, 'changeTheme']);
         Route::get('/theme/download', [ConsoleThemeController::class, 'downloadTheme']);
         Route::get('/theme/files', [ConsoleThemeController::class, 'getAllFiles']);
         Route::put('/theme-file/{id}', [ConsoleThemeController::class, 'createOrUpdateFile']);
@@ -208,5 +210,13 @@ Route::prefix('/api/console/v0/blog/{subdomain}')
         Route::delete('/subscription', [ConsoleSubscriptionController::class, 'cancelSubscription']);
 
     });
+
+});
+
+Route::prefix('/api/console/v0/misc')->middleware([
+    ConsoleMiscApiAccessMiddleware::class
+])->group(function() {
+
+    Route::get('/themes', [ConsoleThemeController::class, 'getAllThemes']);
 
 });

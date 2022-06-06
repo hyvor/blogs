@@ -142,4 +142,21 @@
 
     }
 
+    .theme-changer {
+        .preview-themes-row {
+            font-size: 14px;
+            margin-top: 4px;
+        }
+        .list-item {
+            padding: 5px 15px;
+            border-radius: 20px;
+            cursor: pointer;
+            font-weight: normal;
+            font-size: 14px;
+            &:hover {
+                background-color: $color-hover;
+            }
+        }
+    }
+
 }

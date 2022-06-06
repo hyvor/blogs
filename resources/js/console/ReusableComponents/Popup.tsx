@@ -57,7 +57,7 @@ export function PopupFooterDoubleButton( {
     return <div className={"popup-footer-double" + (isLoading ? " loading" : "")}>
         <button className="button text-only" onClick={() => onCancel()}>{cancelName || "Cancel"}</button>
         <button className={"button " + buttonClass} onClick={() => onClick()}>
-            {isLoading ? loadingName : name}
+            {isLoading ? (loadingName || "Loading") : name}
             {
                 isLoading ?
                 <div className="footer-loader">

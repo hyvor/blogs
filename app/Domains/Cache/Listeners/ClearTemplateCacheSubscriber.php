@@ -10,6 +10,11 @@ use App\Domains\Post\Events\PostUpdatedEvent;
 use App\Domains\Post\Events\PostVariantDeletedEvent;
 use App\Domains\Post\Events\PostVariantUpdatedEvent;
 use App\Domains\Post\PostRepository;
+use App\Domains\User\Events\UserCreatedEvent;
+use App\Domains\User\Events\UserDeletedEvent;
+use App\Domains\User\Events\UserUpdatedEvent;
+use App\Domains\User\Events\UserVariantDeletedEvent;
+use App\Domains\User\Events\UserVariantUpdatedEvent;
 use App\Models\Blog;
 use Illuminate\Events\Dispatcher;
 
@@ -29,6 +34,12 @@ class ClearTemplateCacheSubscriber
         $events->listen(PostDeletedEvent::class, [static::class, 'onPostDelete']);
         $events->listen(PostVariantUpdatedEvent::class, [static::class, 'onPostVariantUpdate']);
         $events->listen(PostVariantDeletedEvent::class, [static::class, 'onPostVariantDelete']);
+
+        $events->listen(UserCreatedEvent::class, [static::class, 'onUserEvent']);
+        $events->listen(UserUpdatedEvent::class, [static::class, 'onUserEvent']);
+        $events->listen(UserDeletedEvent::class, [static::class, 'onUserEvent']);
+        $events->listen(UserVariantUpdatedEvent::class, [static::class, 'onUserVariantEvent']);
+        $events->listen(UserVariantDeletedEvent::class, [static::class, 'onUserVariantEvent']);
 
     }
 
@@ -78,6 +89,16 @@ class ClearTemplateCacheSubscriber
     public function onPostVariantDelete(PostVariantDeletedEvent $event)
     {
         $this->clear($event->variant->post->blog);
+    }
+
+    public function onUserEvent(UserCreatedEvent|UserUpdatedEvent|UserDeletedEvent $event)
+    {
+        $this->clear($event->user->blog);
+    }
+
+    public function onUserVariantEvent(UserVariantUpdatedEvent|UserVariantDeletedEvent $event)
+    {
+        $this->clear($event->variant->user->blog);
     }
 
 

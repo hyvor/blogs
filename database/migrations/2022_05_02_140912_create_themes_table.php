@@ -19,6 +19,8 @@ return new class extends Migration
             $table->string('name');
             $table->enum('type', ['original', 'ported']);
 
+            $table->integer('blogs_count')->default(0);
+
             $table->unique('name');
         });
     }

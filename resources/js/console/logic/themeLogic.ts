@@ -1,8 +1,9 @@
 import {actions, events, kea, key, listeners, path, props, reducers, selectors} from "kea";
-import api from "../lib/api";
+import api, {getMiscEndpoint} from "../lib/api";
 import {themeLogicType} from "./themeLogicType";
 import {ajax} from "kea-ajax";
-import {ThemeFile} from "../types";
+import {Theme, ThemeFile} from "../types";
+import axios from "axios";
 
 const themeLogic = kea<themeLogicType>([
 
@@ -10,6 +11,9 @@ const themeLogic = kea<themeLogicType>([
     key(props => props.subdomain),
     path(key => ['theme', key]),
     actions(({values}) => ({
+
+        setThemes: (themes: Theme[]) => ({themes}),
+
         setFiles: (files: ThemeFile[]) => ({files}),
         setFileContent: (id: number, content: string) => ({id, content}),
 
@@ -22,6 +26,19 @@ const themeLogic = kea<themeLogicType>([
     })),
 
     ajax(({actions, props}) => ({
+
+        loadThemes: async () => {
+            const res = await axios.get(getMiscEndpoint('/themes'))
+            actions.setThemes(res.data as Theme[])
+        },
+
+        changeTheme: async ({name, onChange} : {name: string, onChange: Function}) => {
+            const res = await api.patch<ThemeFile[]>(props.subdomain, `/theme`, {
+                name
+            })
+            actions.setFiles(res)
+            onChange();
+        },
 
         loadFiles: async () => {
             const files = await api.get<ThemeFile[]>(props.subdomain, '/theme/files');
@@ -40,6 +57,13 @@ const themeLogic = kea<themeLogicType>([
 
 
     reducers({
+
+        themes: [
+            [] as Theme[],
+            {
+                setThemes: (_, {themes}) => themes
+            }
+        ],
 
         files: [
             [] as ThemeFile[],

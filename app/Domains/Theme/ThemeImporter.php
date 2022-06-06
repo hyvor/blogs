@@ -8,6 +8,7 @@ use PhpZip\Exception\ZipException;
 use PhpZip\ZipFile;
 use ValueError;
 
+// imports a theme into a blog, using a zip
 class ThemeImporter
 {
     private bool $success = true;
@@ -20,8 +21,7 @@ class ThemeImporter
     private array $skipTraces = [];
 
     public function __construct(private Blog $blog, private string $zipContent)
-    {
-    }
+    {}
 
     public function import()
     {

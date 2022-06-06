@@ -1,10 +1,11 @@
 <?php
-
 namespace App\Http\Controllers\ConsoleAPI;
 
 use App\Data\Objects\ConsoleAPI\Theme\FileObject;
+use App\Data\Objects\ConsoleAPI\Theme\ThemeObject;
 use App\Domains\Theme\ThemeFilesRepository;
 use App\Domains\Theme\ThemeImporter;
+use App\Domains\Theme\ThemeRepository;
 use App\Exceptions\TrustedException;
 use App\Http\Controllers\Controller;
 use App\Models\Blog;
@@ -12,6 +13,34 @@ use Illuminate\Http\Request;
 
 class ConsoleThemeController extends Controller
 {
+
+    public function getAllThemes()
+    {
+        $all = ThemeRepository::getAllThemes();
+        return response()->json($all->mapInto(ThemeObject::class));
+    }
+
+    public function changeTheme(Request $request, Blog $blog)
+    {
+
+        $request->validate([
+            'name' => 'required'
+        ]);
+
+        $name = $request->input('name');
+
+        $theme = ThemeRepository::getThemeByName($name);
+        $latestVersion = ThemeRepository::getThemeLatestVersion($theme);
+
+        $success = ThemeFilesRepository::updateTheme($blog, $latestVersion->zip);
+
+        if (!$success) {
+            throw new TrustedException('Unable to import the theme');
+        }
+
+        return response()->json(ThemeFilesRepository::getAllFilesOfBlog($blog)->mapInto(FileObject::class));
+    }
+
     public function uploadTheme(Request $request, Blog $blog)
     {
         $request->validate([
@@ -21,12 +50,9 @@ class ConsoleThemeController extends Controller
         $zip = $request->file('zip');
         $content = $zip->getContent();
 
-        ThemeFilesRepository::deleteAllFiles($blog);
+        $success = ThemeFilesRepository::updateTheme($blog, $content);
 
-        $importer = new ThemeImporter($blog, $content);
-        $importer->import();
-
-        if (! $importer->success()) {
+        if (!$success) {
             throw new TrustedException('Unable to import the theme');
         }
 

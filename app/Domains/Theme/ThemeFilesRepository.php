@@ -94,6 +94,18 @@ class ThemeFilesRepository
         $blog->themeFiles()->delete();
     }
 
+    public static function updateTheme(Blog $blog, string $zip) : bool
+    {
+
+        self::deleteAllFiles($blog);
+
+        $importer = new ThemeImporter($blog, $zip);
+        $importer->import();
+
+        return $importer->success();
+
+    }
+
     public static function copyThemeToBlog(Blog $blog, string $themeName, string $version = null)
     {
 

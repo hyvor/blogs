@@ -274,6 +274,12 @@ export interface NavigationVariant {
 
 // === THEME
 
+export interface Theme {
+    id: number,
+    type: 'original' | 'ported',
+    name: string
+}
+
 export type ThemeFolder = 'templates' | 'assets' | 'styles' | 'lang' | null
 
 export interface ThemeFile {

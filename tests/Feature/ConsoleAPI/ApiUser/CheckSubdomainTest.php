@@ -1,6 +1,6 @@
 <?php
 
-namespace Tests\Feature\ConsoleAPI\UserApi;
+namespace Tests\Feature\ConsoleAPI\ApiUser;
 
 use App\Models\Blog;
 

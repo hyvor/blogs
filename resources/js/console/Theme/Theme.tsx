@@ -1,7 +1,6 @@
 import { useValues } from "kea";
 import React, { useState } from "react";
 import { CaretDownFill, CaretRightFill } from "react-bootstrap-icons";
-import subdomainLogic from "../logic/subdomainLogic";
 import themeLogic from "../logic/themeLogic";
 import Loader from "../ReusableComponents/Loader";
 import File from "./File";
@@ -10,6 +9,7 @@ import getSubdomain from "../logic-helpers/subdomain";
 import {ThemeFolder} from "../types";
 import Download from "./Download";
 import Upload from "./Upload";
+import Changer from "./Changer";
 
 export default function Theme() {
 
@@ -21,11 +21,7 @@ export default function Theme() {
     return <div className="posts-view theme-view">
         <div className="box box-left">
             <div className="middle-heading">
-                Theme&nbsp;&nbsp;<a 
-                    className="button small"
-                    href="/themes"
-                    target="_blank"
-                >Change</a>
+                Theme&nbsp;&nbsp;<Changer />
             </div>
 
             <div className="theme-left-wrap">

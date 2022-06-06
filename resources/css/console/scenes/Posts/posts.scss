@@ -27,7 +27,7 @@
     }
     .middle-heading {
         margin-bottom:15px;
-        div {
+        & > div {
             flex:1;
         }
     }

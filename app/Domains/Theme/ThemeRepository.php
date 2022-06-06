@@ -7,9 +7,15 @@ use App\Exceptions\TrustedException;
 use App\Models\Blog;
 use App\Models\Theme;
 use App\Models\ThemeVersion;
+use Illuminate\Database\Eloquent\Collection;
 
 class ThemeRepository
 {
+
+    public static function getAllThemes() : Collection
+    {
+        return Theme::all();
+    }
 
     public static function getThemeByName(string $name) : Theme
     {
@@ -18,7 +24,7 @@ class ThemeRepository
 
     public static function getThemeLatestVersion(Theme $theme) : ThemeVersion
     {
-        return $theme->versions()->latest()->first();
+        return $theme->versions()->latest('id')->first();
     }
 
     public static function getThemeVersion(Theme $theme, string $version) : ?ThemeVersion

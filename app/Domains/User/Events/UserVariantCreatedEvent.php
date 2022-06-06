@@ -2,7 +2,7 @@
 
 namespace App\Domains\User\Events;
 
-use App\Models\PostVariant;
+use App\Models\UserVariant;
 use Illuminate\Foundation\Events\Dispatchable;
 use Illuminate\Queue\SerializesModels;
 
@@ -11,9 +11,9 @@ class UserVariantCreatedEvent
 
     use Dispatchable, SerializesModels;
 
-    public PostVariant $variant;
+    public UserVariant $variant;
 
-    public function __construct(PostVariant $variant)
+    public function __construct(UserVariant $variant)
     {
         $this->variant = $variant;
     }

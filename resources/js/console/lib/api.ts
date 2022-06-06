@@ -10,6 +10,10 @@ export function getUserEndpoint(endpoint: string) {
     return '/api/console/v0' + endpoint;
 }
 
+export function getMiscEndpoint(endpoint: string) {
+    return '/api/console/v0/misc' + endpoint
+}
+
 export function getEndpoint(subdomain: string, endpoint: string) {
     return '/api/console/v0/blog/' + subdomain + endpoint
 }

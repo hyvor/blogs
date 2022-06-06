@@ -3,6 +3,7 @@ namespace Tests\Unit\Domains\Cache\Listeners;
 
 use App\Domains\Cache\CacheRepository;
 use App\Domains\Cache\Listeners\ClearTemplateCacheSubscriber;
+use App\Domains\Post\Events\PostDeletedEvent;
 use App\Domains\Post\Events\PostUpdatedEvent;
 use App\Domains\Post\Events\PostVariantDeletedEvent;
 use App\Domains\Post\Events\PostVariantUpdatedEvent;
@@ -98,6 +99,21 @@ it('does not clear cache when editing a post if the primary variant is not publi
 
 });
 
+it('clears cache when a post is deleted', function() {
+
+    ($this->templateMock)();
+
+    $blog = blog();
+
+    $post = Post::factory()->create(['blog_id' => $blog]);
+
+    $post->slug = 'new-slug';
+
+    $event = new PostDeletedEvent($post);
+    $listener = new ClearTemplateCacheSubscriber();
+    $listener->onPostDelete($event);
+
+});
 
 // POST VARIANTS ===
 
