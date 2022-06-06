@@ -22,7 +22,7 @@ it('creates a navigation', function() {
         ->assertJson(fn (AssertableJson $json) =>
             $json->where('url', $url)
                 ->where('type', 'footer')
-                ->where("variants.$languageId.name", $name)
+                ->where("variants.0.name", $name)
                 ->etc()
         );
 

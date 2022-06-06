@@ -17,7 +17,7 @@ class TagObject
     public ?string $featured_image_url;
 
     /**
-     * @var array<int, TagVariantObject>
+     * @var TagVariantObject[]
      */
     public array $variants;
 
@@ -34,7 +34,7 @@ class TagObject
 
         $this->variants = $tag->variants
             ->map(fn ($variant) => new TagVariantObject($variant, $tag, $blog))
-            ->keyBy('language_id')
+            ->sortBy('language_id')
             ->toArray();
     }
 }

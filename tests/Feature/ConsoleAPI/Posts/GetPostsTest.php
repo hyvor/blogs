@@ -48,7 +48,7 @@ it('filters by post status - published', function () {
         ->callConsoleApi('GET', $this->endpoint, ['status' => 'published'])
         ->assertJson(function (AssertableJson $json) {
             $json->each(function (AssertableJson $json) {
-                $json->where("variants.{$this->defaultLanguage->id}.status", 'published')
+                $json->where("variants.0.status", 'published')
                     ->etc();
             });
         });

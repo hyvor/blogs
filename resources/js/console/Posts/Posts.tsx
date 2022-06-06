@@ -74,7 +74,7 @@ export default function Posts( { postId } : { postId: number | undefined } ) {
         <div id="post-viewer" className="box box-right">
             {
                 postId && loadPostsListAjax.status === 'success' ?
-                <Post subdomain={subdomain} id={postId} /> :
+                <Post id={postId} /> :
                 <NoPost />
             }
         </div>

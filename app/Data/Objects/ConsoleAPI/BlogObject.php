@@ -54,7 +54,7 @@ class BlogObject
     public ?string $syntax_theme;
 
     /**
-     * @var array<int, BlogVariantObject>
+     * @var BlogVariantObject[]
      */
     public array $variants;
 
@@ -104,6 +104,6 @@ class BlogObject
 
         $this->variants = $blog->variants->map(function ($variant) use ($blog) {
             return new BlogVariantObject($variant, $blog);
-        })->keyBy('language_id')->toArray();
+        })->sortBy('language_id')->toArray();
     }
 }

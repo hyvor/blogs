@@ -93,9 +93,7 @@ export interface Blog {
     syntax_line_numbers: boolean,
     syntax_theme: string | null
 
-    variants: {
-        [key: number]: BlogVariant
-    }
+    variants: BlogVariant[]
 
 }
 
@@ -125,7 +123,7 @@ export type Post = {
     code_head: string | null;
     code_foot: string | null;
 
-    variants: {[key: number]: PostVariant};
+    variants: PostVariant[];
 
     tags: Tag[];
     authors: User[];
@@ -172,9 +170,7 @@ export type User = {
     social_instagram: string | null;
     social_github: string | null;
 
-    variants: {
-        [key: number]: UserVariant
-    };
+    variants: UserVariant[]
 };
 
 export type UserVariant = {
@@ -200,7 +196,7 @@ export type Tag = {
     code_head: number;
     code_foot: number;
 
-    variants: {[key: number]: TagVariant}
+    variants: TagVariant[]
 
 }
 
@@ -265,9 +261,7 @@ export interface Navigation {
     url: string;
     type: NavigationType,
     sort: number;
-    variants: {
-        [key: number]: NavigationVariant
-    }
+    variants: NavigationVariant[]
 }
 
 export type NavigationType = 'header' | 'footer';

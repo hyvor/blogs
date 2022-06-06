@@ -14,7 +14,7 @@ class NavigationObject
     public int $sort;
 
     /**
-    * @var array<int, NavigationVariantObject>
+    * @var NavigationVariantObject[]
     */
     public array $variants;
 
@@ -28,7 +28,7 @@ class NavigationObject
 
         $this->variants = $navigation->variants
             ->map(fn ($variant) => new NavigationVariantObject($variant))
-            ->keyBy('language_id')
+            ->sortBy('language_id')
             ->toArray();
 
     }

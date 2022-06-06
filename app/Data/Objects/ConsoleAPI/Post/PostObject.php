@@ -23,7 +23,7 @@ class PostObject
     public ?string $code_foot;
 
     /**
-     * @var array<int, PostVariantObject>
+     * @var PostVariantObject[]
      */
     public array $variants;
 
@@ -55,7 +55,7 @@ class PostObject
         // variants
         $this->variants = $post->variants->map(function ($variant) use ($blog, $post) {
             return new PostVariantObject($variant, $post, $blog);
-        })->keyBy('language_id')->toArray();
+        })->sortBy('language_id')->toArray();
 
         // tags
         $this->tags = $post->tags->map(function ($tag) use ($blog) {

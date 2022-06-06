@@ -19,7 +19,7 @@ export default function PostsListRow({ id , subdomain } : {id: number, subdomain
 
     const variant = post.variants[languageId];
 
-    const authorsNames = post.authors.map(author => author.variants[languageId].name).join(", ");
+    const authorsNames = post.authors.map(author => author.variants[0].name).join(", ");
 
     return <NavLink
         key={post.id} 
