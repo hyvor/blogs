@@ -18,15 +18,22 @@ class UserFiller implements FillerInterface
     public function fill()
     {
 
-        // add the OWNER
-        UserRepository::createUserFromHyvorUser(
-            $this->blog,
-            $this->blog->hyvor_user_id,
-            UserRoleEnum::OWNER,
-            UserStatusEnum::ACTIVE
-        );
+        if ($this->blog->type !== BlogTypeEnum::PREVIEW) {
 
-        if ($this->blog->type === BlogTypeEnum::DEV) {
+            // add the OWNER
+            UserRepository::createUserFromHyvorUser(
+                $this->blog,
+                $this->blog->hyvor_user_id,
+                UserRoleEnum::OWNER,
+                UserStatusEnum::ACTIVE
+            );
+
+        }
+
+        if (
+            $this->blog->type === BlogTypeEnum::DEV ||
+            $this->blog->type === BlogTypeEnum::PREVIEW
+        ) {
             $faker = Factory::create();
 
             foreach (range(1, 5) as $i) {

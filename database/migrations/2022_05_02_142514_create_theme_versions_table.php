@@ -23,6 +23,7 @@ return new class extends Migration
 
             // data
             $table->string('version');
+            $table->string('preview_subdomain')->nullable();
 
             $table->unique(['theme_id', 'version']);
         });

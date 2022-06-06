@@ -19,6 +19,7 @@ class LanguageFiller implements FillerInterface
 
     public function fill()
     {
+
         LanguageRepository::createLanguage(
             $this->blog,
             self::LANGUAGE['code'],
@@ -26,7 +27,11 @@ class LanguageFiller implements FillerInterface
             true
         );
 
-        if ($this->blog->type === BlogTypeEnum::DEV) {
+        if (
+            $this->blog->type === BlogTypeEnum::DEV ||
+            $this->blog->type === BlogTypeEnum::PREVIEW
+        ) {
+
             LanguageRepository::createLanguage(
                 $this->blog,
                 'en-GB',
@@ -38,6 +43,7 @@ class LanguageFiller implements FillerInterface
                 'fr',
                 'French'
             );
+
         }
     }
 }

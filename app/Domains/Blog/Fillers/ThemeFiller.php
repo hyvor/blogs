@@ -16,6 +16,9 @@ class ThemeFiller implements FillerInterface
     public function fill()
     {
 
+        if ($this->blog->type === BlogTypeEnum::PREVIEW)
+            return;
+
         $theme = $this->blog->type === BlogTypeEnum::DEV ? 'blank' : 'default';
         ThemeFilesRepository::copyThemeToBlog($this->blog, $theme);
 

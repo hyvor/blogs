@@ -8,7 +8,6 @@ use App\Models\Blog;
 use App\Models\Language;
 use App\Models\Navigation;
 use App\Models\NavigationVariant;
-use App\Models\User;
 use Illuminate\Support\Collection;
 
 class NavigationRepository
@@ -31,7 +30,7 @@ class NavigationRepository
         $navigation = Navigation::create([
             'blog_id' => $blog->id,
             'url' => $url,
-            'type' => $type->value,
+            'type' => $type,
             'sort' => $sort,
         ]);
 

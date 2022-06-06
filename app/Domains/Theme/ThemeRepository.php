@@ -2,12 +2,13 @@
 
 namespace App\Domains\Theme;
 
+use App\Data\Enums\BlogTypeEnum;
 use App\Data\Enums\ThemeCreationTypeEnum;
-use App\Exceptions\TrustedException;
-use App\Models\Blog;
+use App\Domains\Blog\BlogRepository;
 use App\Models\Theme;
 use App\Models\ThemeVersion;
 use Illuminate\Database\Eloquent\Collection;
+use Illuminate\Support\Str;
 
 class ThemeRepository
 {
@@ -15,6 +16,29 @@ class ThemeRepository
     public static function getAllThemes() : Collection
     {
         return Theme::all();
+    }
+
+    public static function getAllThemesWithLatestVersions() : Collection
+    {
+        $themes = Theme::selectRaw('
+            (
+                SELECT id 
+                FROM theme_versions 
+                WHERE theme_id = themes.id 
+                ORDER BY id DESC 
+                LIMIT 1
+            ) as latest_version_id, themes.*')
+            ->get();
+
+        $versionIds = $themes->map(fn ($theme) => $theme->latest_version_id);
+
+        $versions = ThemeVersion::whereIn('id', $versionIds)->get();
+
+        foreach ($themes as $theme) {
+            $theme->setRelation('versions', [$versions->firstWhere('id', $theme->latest_version_id)]);
+        }
+
+        return $themes;
     }
 
     public static function getThemeByName(string $name) : Theme
@@ -49,11 +73,28 @@ class ThemeRepository
     )
     {
 
+        $previewBlog = BlogRepository::createBlog(
+            null,
+            $theme->name,
+            self::generateThemePreviewSubdomain($theme->name, $version),
+            BlogTypeEnum::PREVIEW
+        );
+
         $theme->versions()->create([
             'version' => $version,
-            'zip' => $zip
+            'zip' => $zip,
+            'preview_subdomain' => $previewBlog->subdomain
         ]);
 
+        ThemeFilesRepository::copyThemeToBlog($previewBlog, $theme->name);
+
+    }
+
+    private static function generateThemePreviewSubdomain(string $name, string $version)
+    {
+        $version = str_replace('.', '-', $version);
+        $random = Str::random(12);
+        return "theme-$name-$version-$random";
     }
 
 }

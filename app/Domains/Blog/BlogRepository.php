@@ -18,7 +18,7 @@ use App\Models\Language;
 class BlogRepository
 {
     public static function createBlog(
-        int $userId,
+        ?int $userId,
         string $name,
         string $subdomain,
         BlogTypeEnum $type = BlogTypeEnum::DEFAULT

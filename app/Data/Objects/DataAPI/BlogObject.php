@@ -4,6 +4,7 @@ namespace App\Data\Objects\DataAPI;
 
 use App\Data\Enums\ColorModeDefaultEnum;
 use App\Data\Enums\ColorModesEnum;
+use App\Data\Enums\NavigationTypeEnum;
 use App\Data\Objects\DataAPI\Helpers\VariantsHelper;
 use App\Domains\Route\PermalinkRepository;
 use App\Models\Blog;
@@ -79,7 +80,7 @@ class BlogObject
 
         $blog->navigations->each(function ($nav) use ($language) {
             $navObject = new NavObject($nav, $language);
-            if ($nav->type === 'header') {
+            if ($nav->type === NavigationTypeEnum::HEADER) {
                 $this->nav_header[] = $navObject;
             } else {
                 $this->nav_footer[] = $navObject;

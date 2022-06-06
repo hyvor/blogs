@@ -7,13 +7,15 @@ use PhpZip\ZipFile;
 
 class Helper
 {
+
     /**
      * name => version
-     *
      * @return array<string, string>
      */
     public static function getLatestVersionsOfAllThemes() : array
     {
+
+        // TODO: Use ThemeRepository function
 
         $themes = ThemeModel::selectRaw('
             (

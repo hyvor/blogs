@@ -28,7 +28,10 @@ class TagFiller implements FillerInterface
     {
         TagRepository::createTag($this->blog, 'Welcome');
 
-        if ($this->blog->type === BlogTypeEnum::DEV) {
+        if (
+            $this->blog->type === BlogTypeEnum::DEV ||
+            $this->blog->type === BlogTypeEnum::PREVIEW
+        ) {
             $faker = Factory::create();
 
 

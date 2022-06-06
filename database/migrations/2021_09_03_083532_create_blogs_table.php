@@ -19,12 +19,12 @@ class CreateBlogsTable extends Migration
             $table->softDeletes();
 
             // connections
-            $table->bigInteger('hyvor_user_id'); // hyvor user id (owner)
+            $table->bigInteger('hyvor_user_id')->nullable(); // hyvor user id (owner)
             $table->bigInteger('theme_version_id')->nullable();
 
             // data
             $table->string('subdomain')->unique();
-            $table->enum('type', ['default', 'dev', 'temp'])->default('default');
+            $table->enum('type', ['default', 'dev', 'preview', 'temp'])->default('default');
 
             $table->enum('hosting_at', ['subdomain', 'domain', 'self'])->default('subdomain');
             $table->string('hosting_domain')->nullable()->unique(); // for domain

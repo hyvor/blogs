@@ -31,3 +31,14 @@ it('adds a few more tags for dev blogs', function () {
 
     expect(count($blog->tags))->toBe(6);
 });
+
+it('adds a few more tags for preview blogs', function () {
+    $blog = newBlog(BlogTypeEnum::PREVIEW);
+
+    (new LanguageFiller($blog))->fill();
+
+    $filler = new TagFiller($blog);
+    $filler->fill();
+
+    expect(count($blog->tags))->toBe(6);
+});

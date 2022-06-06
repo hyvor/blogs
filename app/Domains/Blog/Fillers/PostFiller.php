@@ -86,13 +86,23 @@ class PostFiller implements FillerInterface
             }
         }
 
-        if ($this->blog->type === BlogTypeEnum::DEV) {
-            $posts = Post::factory()->count(100)->create(['blog_id' => $this->blog->id]);
+        if (
+            $this->blog->type === BlogTypeEnum::DEV ||
+            $this->blog->type === BlogTypeEnum::PREVIEW
+        ) {
+
+            $posts = Post::factory()
+                ->count(50)
+                ->create(['blog_id' => $this->blog->id]);
 
             foreach ($posts as $post) {
 
-                // add variant
-                PostVariant::factory()->create(['post_id' => $post->id, 'language_id' => $language->id]);
+                $languages = $this->blog->languages;
+
+                foreach ($languages as $lang) {
+                    // add variant
+                    PostVariant::factory()->create(['post_id' => $post->id, 'language_id' => $lang->id]);
+                }
 
                 // add 1-3 post tags
                 $tagIds = $this->blog->tags->pluck('id');

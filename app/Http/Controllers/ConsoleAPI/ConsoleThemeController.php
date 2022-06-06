@@ -29,14 +29,7 @@ class ConsoleThemeController extends Controller
 
         $name = $request->input('name');
 
-        $theme = ThemeRepository::getThemeByName($name);
-        $latestVersion = ThemeRepository::getThemeLatestVersion($theme);
-
-        $success = ThemeFilesRepository::updateTheme($blog, $latestVersion->zip);
-
-        if (!$success) {
-            throw new TrustedException('Unable to import the theme');
-        }
+        ThemeFilesRepository::copyThemeToBlog($blog, $name);
 
         return response()->json(ThemeFilesRepository::getAllFilesOfBlog($blog)->mapInto(FileObject::class));
     }
@@ -50,7 +43,7 @@ class ConsoleThemeController extends Controller
         $zip = $request->file('zip');
         $content = $zip->getContent();
 
-        $success = ThemeFilesRepository::updateTheme($blog, $content);
+        $success = ThemeFilesRepository::updateThemeFromZip($blog, $content);
 
         if (!$success) {
             throw new TrustedException('Unable to import the theme');

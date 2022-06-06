@@ -57,3 +57,14 @@ it('copies the blank theme for DEV blogs', function() {
         );
 
 });
+
+it('does not do anything for preview blogs', function() {
+
+    $blog = newBlog(BlogTypeEnum::PREVIEW);
+
+    $themeFiller = new ThemeFiller($blog);
+    $themeFiller->fill();
+
+    expect(ThemeFile::where('blog_id', $blog->id)->count())->toBe(0);
+
+});

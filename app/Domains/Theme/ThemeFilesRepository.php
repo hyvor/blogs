@@ -94,7 +94,7 @@ class ThemeFilesRepository
         $blog->themeFiles()->delete();
     }
 
-    public static function updateTheme(Blog $blog, string $zip) : bool
+    public static function updateThemeFromZip(Blog $blog, string $zip) : bool
     {
 
         self::deleteAllFiles($blog);
@@ -119,13 +119,10 @@ class ThemeFilesRepository
             throw new TrustedException('Theme version not found');
         }
 
-        ThemeFilesRepository::deleteAllFiles($blog);
+        $success = self::updateThemeFromZip($blog, $themeVersion->zip);
 
-        $importer = new ThemeImporter($blog, $themeVersion->zip);
-        $importer->import();
-
-        if (!$importer->success()) {
-            throw new TrustedException('Theme importing unsuccessful');
+        if (!$success) {
+            throw new TrustedException('Unable to copy the theme');
         }
 
         $blog->theme_version_id = $themeVersion->id;

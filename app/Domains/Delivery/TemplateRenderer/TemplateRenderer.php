@@ -189,6 +189,7 @@ class TemplateRenderer
                 '_comments' => $this->pathMatcher->blog->getMeta('comments_code'),
                 '_newsletter' => $this->pathMatcher->blog->getMeta('newsletter_code'),
             ];
+
         } elseif ($routeName === 'tag') {
             $tagObject = new TagObject($this->model, $this->pathMatcher->blog, $this->pathMatcher->language);
 
