@@ -6,20 +6,20 @@ use App\Models\UserVariant;
 
 class UserVariantObject
 {
+    public int $user_id;
     public int $language_id;
     public ?string $name;
     public ?string $bio;
     public ?string $location;
 
 
-    public function __construct(UserVariant $userVariant)
+    public function __construct(UserVariant $variant)
     {
-        $language = $userVariant->language;
+        $this->user_id = $variant->user_id;
+        $this->language_id = $variant->language_id;
 
-        $this->language_id = $language->id;
-
-        $this->name = $userVariant->name;
-        $this->bio = $userVariant->bio;
-        $this->location = $userVariant->location;
+        $this->name = $variant->name;
+        $this->bio = $variant->bio;
+        $this->location = $variant->location;
     }
 }

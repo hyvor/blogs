@@ -35,6 +35,7 @@ class CreateUsersTable extends Migration
             $table->string('social_twitter')->nullable();
             $table->string('social_linkedin')->nullable();
             $table->string('social_youtube')->nullable();
+            $table->string('social_tiktok')->nullable();
             $table->string('social_instagram')->nullable();
             $table->string('social_github')->nullable();
 

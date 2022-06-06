@@ -14,6 +14,7 @@ class UserFactory extends Factory
     {
         $email = $this->faker->email();
         return [
+
             'blog_id' => Blog::factory(),
             'hyvor_user_id' => rand(),
             'role' => 'owner',
@@ -22,13 +23,17 @@ class UserFactory extends Factory
             'email' => $email,
             'website_url' => $this->faker->url(),
             'picture_url' => "https://i.pravatar.cc/150?u=$email",
+
             'social_facebook' => $this->faker->url(),
             'social_twitter' => $this->faker->url(),
             'social_linkedin' => $this->faker->url(),
             'social_youtube' => $this->faker->url(),
+            'social_tiktok' => $this->faker->url(),
             'social_instagram' => $this->faker->url(),
             'social_github' => $this->faker->url(),
+
             'posts_count' => 0
+
         ];
     }
 }

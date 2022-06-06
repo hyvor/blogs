@@ -26,7 +26,7 @@ it('searches users', function() {
         ->assertOk()
         ->assertJson(fn (AssertableJson $json) =>
             $json->count(1)
-                ->where("0.variants.$languageId.name", $name)
+                ->where("0.variants.0.name", $name)
         );
 
 });

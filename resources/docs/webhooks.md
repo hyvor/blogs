@@ -2,23 +2,26 @@
 
 Each blog can have up to 5 webhooks. Each webhook has a URL and can subscribe to one or more of the following events.
 
- Event | Dispatched
- --- | ---
-`blog.updated` | When any setting of the blog is updated
-&nbsp; | &nbsp;
-`post.created` | When a new post is created
-`post.updated` | A post is updated
-`post.deleted` | A post is deleted
-`post.variant.created` | A post variant is created
-`post.variant.updated` | A post variant is updated
-`post.variant.deleted` | A variant is deleted
-`page.{events}` | (all post events are available for pages)
-`tag.{events}` | (all post events are available for tags)
-`user.{events}` | (all post events are available for users)
-&nbsp; | &nbsp;
-`cache.single` | When cache of a single path should be cleared (index.css, assets, media, etc.)
-`cache.templates` | When cache of all template-generated paths should be cleared (index, posts, feeds, etc.).
-`cache.all` | When all cache should be cleared
+| Event                  | Dispatched                                                                                |
+|------------------------|-------------------------------------------------------------------------------------------|
+| `blog.updated`         | Any setting of the blog is updated                                                        |
+| &nbsp;                 | &nbsp;                                                                                    |
+| `post.created`         | A new post is created                                                                     |
+| `post.updated`         | A post is updated                                                                         |
+| `post.deleted`         | A post is deleted                                                                         |
+| `post.variant.created` | A post variant is created                                                                 |
+| `post.variant.updated` | A post variant is updated                                                                 |
+| `post.variant.deleted` | A variant is deleted                                                                      |
+| `post.tags.changed`    | Tags assigned to a post are changed                                                       |
+| `post.authors.changed` | Authors assigned to a post are changed                                                    |
+| `page.{events}`        | (all post events are available for pages)                                                 |
+| &nbsp;                 | &nbsp;                                                                                    |
+| `tag.{events}`         | (all post events are available for tags, except `.tags.changed` and `.authors.changed`)   |
+| `user.{events}`        | (all tag events are available for users)                                                  |
+| &nbsp;                 | &nbsp;                                                                                    |
+| `cache.single`         | When cache of a single path should be cleared (index.css, assets, media, etc.)            |
+| `cache.templates`      | When cache of all template-generated paths should be cleared (index, posts, feeds, etc.). |
+| `cache.all`            | When all cache should be cleared                                                          |
 
 ### Post Request Format
 

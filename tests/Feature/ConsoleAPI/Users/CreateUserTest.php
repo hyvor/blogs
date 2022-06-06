@@ -2,14 +2,14 @@
 
 namespace Tests\Feature\ConsoleAPI\Users;
 
+use App\Domains\User\Events\UserCreatedEvent;
 use Hyvor\HyvorConnecter\Userbase;
+use Illuminate\Support\Facades\Event;
 use Illuminate\Testing\Fluent\AssertableJson;
 
 beforeEach(function () {
 
     // picture_url is not tested here
-
-    $this->languageId = blog()->languages[0]->id;
 
     $this->username = 'Hyvor';
     $this->email = 'hyvor@hyvor.com';
@@ -34,6 +34,8 @@ beforeEach(function () {
 
 it('creates a user from username and email', function() {
 
+    Event::fake();
+
     $this->callConsoleApi('POST', '/user', [
         'username_or_email' => $this->username,
         'role' => 'admin'
@@ -43,11 +45,13 @@ it('creates a user from username and email', function() {
             $json->where('email', $this->email)
                 ->where('role', 'admin')
                 ->where('website_url', $this->websiteUrl)
-                ->where("variants.$this->languageId.name", $this->name)
-                ->where("variants.$this->languageId.bio", $this->bio)
-                ->where("variants.$this->languageId.location", $this->location)
+                ->where("variants.0.name", $this->name)
+                ->where("variants.0.bio", $this->bio)
+                ->where("variants.0.location", $this->location)
                 ->etc()
         );
+
+    Event::assertDispatched(UserCreatedEvent::class);
 
 });
 
@@ -62,9 +66,9 @@ it('creates a user from email', function() {
         $json->where('email', $this->email)
             ->where('role', 'contributor')
             ->where('website_url', $this->websiteUrl)
-            ->where("variants.$this->languageId.name", $this->name)
-            ->where("variants.$this->languageId.bio", $this->bio)
-            ->where("variants.$this->languageId.location", $this->location)
+            ->where("variants.0.name", $this->name)
+            ->where("variants.0.bio", $this->bio)
+            ->where("variants.0.location", $this->location)
             ->etc()
         );
 

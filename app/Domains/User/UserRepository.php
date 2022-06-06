@@ -1,5 +1,4 @@
 <?php
-
 namespace App\Domains\User;
 
 use App\Data\Enums\UserRoleEnum;
@@ -7,8 +6,11 @@ use App\Data\Enums\UserStatusEnum;
 use App\Domains\Language\LanguageRepository;
 use App\Domains\Media\Exceptions\UploadException;
 use App\Domains\Media\MediaRepository;
-use App\Domains\Post\PostTagAuthorRepository;
 use App\Domains\Route\PermalinkRepository;
+use App\Domains\User\Events\UserCreatedEvent;
+use App\Domains\User\Events\UserDeletedEvent;
+use App\Domains\User\Events\UserUpdatedEvent;
+use App\Domains\User\Events\UserVariantDeletedEvent;
 use App\Helpers\CollectionWithTotal;
 use App\Models\Blog;
 use App\Models\Language;
@@ -17,17 +19,8 @@ use App\Models\UserVariant;
 use Exception;
 use Hyvor\FilterQ\Facades\FilterQ;
 use Hyvor\HyvorConnecter\Userbase;
-use Illuminate\Http\UploadedFile;
 use Illuminate\Support\Collection;
 
-/**
- *
- * There are two user types:
- *  - Hyvor users
- *  - non-Hyvor users (dummy users)
- *
- * For dummy users, user_id is null
- */
 class UserRepository
 {
     /**
@@ -79,19 +72,6 @@ class UserRepository
             ->limit($limit)
             ->select('users.*')
             ->get();
-    }
-
-    public static function deleteUser(int $id)
-    {
-        PostTagAuthorRepository::deleteAllWithAuthor($id);
-
-        $user = User::find($id);
-
-        if ($user->role === UserRoleEnum::OWNER->value) {
-            throw new Exception('Owner cannot be deleted');
-        }
-
-        $user->delete();
     }
 
     public static function getAuthorsWithFilterQ(
@@ -150,6 +130,7 @@ class UserRepository
         UserRoleEnum $role,
         UserStatusEnum $status = UserStatusEnum::INVITED,
     ): User {
+
         $hyvorUser = Userbase::fromId($hyvorUserId);
 
         if (!$hyvorUser) {
@@ -186,13 +167,18 @@ class UserRepository
             bio: $hyvorUser->bio
         );
 
-        return $user->refresh();
+        $user = $user->refresh();
+
+        UserCreatedEvent::dispatch($user);
+
+        return $user;
     }
 
     public static function createGuestUser(
         Blog $blog,
         string $name,
     ): User {
+
         $user = User::create([
             'blog_id' => $blog->id,
             'role' => UserRoleEnum::CONTRIBUTOR,
@@ -204,59 +190,35 @@ class UserRepository
 
         self::createUserVariant($user, $language, $name);
 
-        return $user->refresh();
+        $user = $user->refresh();
+
+        UserCreatedEvent::dispatch($user);
+
+        return $user;
     }
 
     public static function updateUser(
-        int $userId,
-        int $languageId,
-        $blog,
-        ?int $hyvorUserId,
-        UserRoleEnum $role,
-        UserStatusEnum $status = UserStatusEnum::INVITED,
-        array $userData = [],
-    ): void {
-        User::find($userId)
-            ->update([
-                'slug' => $userData['slug'],
-                'status' => $status->value,
-                'role' => $role->value,
-                'email' => $userData['email'] ?? null,
-                'picture_id' => $userData['pictureId'] ?? null,
-                'url' => $userData['url'] ?? null,
-                'social_facebook' => $userData['social_facebook'] ?? null,
-                'social_twitter' => $userData['social_twitter'] ?? null,
-                'social_linkedin' => $userData['social_linkedin'] ?? null,
-                'social_youtube' => $userData['social_youtube'] ?? null,
-                'social_instagram' => $userData['social_instagram'] ?? null,
-            ]);
+        User $user,
+        array $updates,
+    ) : User
+    {
+        foreach ($updates as $key => $value) {
+            $user->$key = $value;
+        }
 
-        UserVariant::where([
-                'user_id' => $userId ,
-                'language_id' => $languageId,
-            ]) ->update([
-                'name' => $userData['name'] ?? null,
-                'location' => $userData['location'] ?? null,
-                'bio' => $userData['bio'] ?? null,
-            ]);
+        $user->save();
+
+        UserUpdatedEvent::dispatch($user);
+
+        return $user;
     }
 
-    public static function deleteAuthor(int $userId, int $languageId): void
+    public static function deleteUser(User $user): void
     {
-        $language = Language::where('id', '=', $languageId)
-        ->value('is_primary');
+        $user->variants->map(fn ($variant) => self::deleteUserVariant($variant));
+        $user->delete();
 
-        if ($language == 0) {
-            UserVariant::where('user_id', '=', $userId)
-                ->where('language_id', '=', $languageId)
-                ->delete();
-        } else {
-            UserVariant::where('user_id', '=', $userId)
-                ->delete();
-
-            User::find($userId)
-                ->delete();
-        }
+        UserDeletedEvent::dispatch($user);
     }
 
 
@@ -276,26 +238,15 @@ class UserRepository
         ]);
     }
 
-    public static function updatePicture($blog, UploadedFile $file): bool
+    public static function deleteUserVariant(UserVariant $variant)
     {
-        $media = MediaRepository::upload($blog->id, $file);
-        $pictureUrl = PermalinkRepository::getMediaPermalink($media, $blog);
-        // dd($pictureUrl);
-        // $pictureId = $media->id;
+        $variant->delete();
 
-        return User::find($blog->id)
-            ->update([
-                'picture_url' => $pictureUrl,
-            ]);
+        UserVariantDeletedEvent::dispatch($variant);
     }
 
-    /*
-    *
-    * Get blogs of a user
-    * returns an array of blogs with basic data
-    *
-    */
 
+    // getters
     public static function getUserById(int $id): ?User
     {
         return User::find($id);

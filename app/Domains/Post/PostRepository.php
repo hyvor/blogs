@@ -260,16 +260,7 @@ class PostRepository
     public static function updatePost(Post $post, array $updates)
     {
         if (array_key_exists('slug', $updates)) {
-            $slug = $updates['slug'];
-            if (
-                $slug === null &&
-                $post->status === 'published' || $post->status === 'scheduled'
-            ) {
-                // slug cannot be null for published|scheduled posts
-                // so don't update
-            } else {
-                $post->slug = $updates['slug'];
-            }
+            $post->slug = $updates['slug'];
         }
         // published_at
         if (array_key_exists('published_at', $updates)) {

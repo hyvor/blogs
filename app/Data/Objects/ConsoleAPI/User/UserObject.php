@@ -27,15 +27,16 @@ class UserObject
     public ?string $social_twitter;
     public ?string $social_linkedin;
     public ?string $social_youtube;
+    public ?string $social_tiktok;
     public ?string $social_instagram;
     public ?string $social_github;
 
     /**
-     * @var array<int, UserVariantObject>
+     * @var UserVariantObject[]
      */
     public array $variants;
 
-    public function __construct(User $user, Blog $blog)
+    public function __construct(User $user)
     {
         $this->id = $user->id;
         $this->created_at = $user->created_at->timestamp;
@@ -56,11 +57,10 @@ class UserObject
         $this->social_twitter = $user->social_twitter;
         $this->social_linkedin = $user->social_linkedin;
         $this->social_youtube = $user->social_youtube;
+        $this->social_tiktok = $user->social_tiktok;
         $this->social_instagram = $user->social_instagram;
         $this->social_github = $user->social_github;
 
-        $this->variants = $user->variants->map(function ($variant) use ($blog) {
-            return new UserVariantObject($variant, $blog);
-        })->keyBy('language_id')->toArray();
+        $this->variants = $user->variants->sortBy('language_id')->mapInto(UserVariantObject::class)->toArray();
     }
 }

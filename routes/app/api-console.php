@@ -174,7 +174,7 @@ Route::prefix('/api/console/v0/blog/{subdomain}')
         Route::delete('/user/{id}', [ConsoleUserController::class, 'delete']);
         Route::post('/user/{id}/variant', [ConsoleUserController::class, 'createVariant']);
         Route::patch('/user/{id}/variant', [ConsoleUserController::class, 'updateVariant']);
-        Route::delete('/user/{id}/variant', [ConsoleUserController::class, 'updateVariant']);
+        Route::delete('/user/{id}/variant', [ConsoleUserController::class, 'deleteVariant']);
 
         // route
         Route::get('/routes', [ConsoleRouteController::class, 'get']);

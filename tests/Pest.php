@@ -15,6 +15,7 @@ use App\Data\Enums\BlogTypeEnum;
 use App\Models\Blog;
 use App\Models\BlogVariant;
 use App\Models\User;
+use Faker\Factory;
 use Hyvor\HyvorConnecter\HyvorUser;
 use Hyvor\HyvorConnecter\Userbase;
 use Tests\TestCase;
@@ -73,6 +74,11 @@ function newBlog(BlogTypeEnum $type = BlogTypeEnum::DEFAULT)
 function hyvorUser($fill = [])
 {
     return HyvorUser::dummy($fill);
+}
+
+function faker()
+{
+    return Factory::create();
 }
 
 
