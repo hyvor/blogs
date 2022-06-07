@@ -12,7 +12,7 @@ class ThemesController extends Controller
     public function handle(Request $request)
     {
         $route = $request->route('name');
-        $themeName = $route ?? 'default';
+        $themeName = $route ?? 'hello';
 
         $themes = ThemeRepository::getAllThemesWithLatestVersions();
 
