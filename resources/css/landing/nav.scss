@@ -33,6 +33,9 @@ nav {
             color: #333232 !important;
             position: relative;
             padding:8px;
+            &.active {
+                border-bottom: 3px solid #886c6b;
+            }
         }
     }
 }

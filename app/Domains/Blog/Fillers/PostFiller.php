@@ -101,7 +101,11 @@ class PostFiller implements FillerInterface
 
                 foreach ($languages as $lang) {
                     // add variant
-                    PostVariant::factory()->create(['post_id' => $post->id, 'language_id' => $lang->id]);
+                    PostVariant::factory()->create([
+                        'post_id' => $post->id,
+                        'language_id' => $lang->id,
+                        'status' => 'published'
+                    ]);
                 }
 
                 // add 1-3 post tags
