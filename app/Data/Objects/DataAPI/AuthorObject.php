@@ -7,6 +7,7 @@ use App\Domains\Route\PermalinkRepository;
 use App\Models\Blog;
 use App\Models\Language;
 use App\Models\User;
+use Illuminate\Support\Str;
 
 class AuthorObject
 {
@@ -39,8 +40,7 @@ class AuthorObject
         $this->url = PermalinkRepository::getAuthorPermalink($user, $blog, $language);
         $this->name = VariantsHelper::getVariantValue('name', $variants, $language);
         $this->picture_url = $user->picture_url;
-        $this->bio = VariantsHelper::getVariantValue('name', $variants, $language);
-        ;
+        $this->bio = VariantsHelper::getVariantValue('bio', $variants, $language);
         $this->website_url = $user->website_url;
         $this->location = VariantsHelper::getVariantValue('location', $variants, $language);
 
@@ -51,7 +51,7 @@ class AuthorObject
             $user->social_youtube,
             $user->social_instagram,
             $user->social_github,
-            null
+            $user->social_tiktok
         );
 
         $this->language = new LanguageObject($language);
@@ -65,6 +65,6 @@ class AuthorObject
                 return new VariantObject($variantLanguage, $url);
             })->toArray();
 
-        $this->posts_count = $user->posts_count;
+        $this->posts_count = 35; // $user->posts_count;
     }
 }

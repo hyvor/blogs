@@ -21,8 +21,8 @@ class SocialMediaObject
         ?string $github,
         ?string $tiktok
     ) {
-        $this->facebook = $facebook;
-        $this->twitter = $twitter;
+        $this->facebook = 'https://twitter.com'; // $facebook;
+        $this->twitter = 'https://twitter.com'; // $twitter;
         $this->linkedin = $linkedin;
         $this->youtube = $youtube;
         $this->instagram = $instagram;

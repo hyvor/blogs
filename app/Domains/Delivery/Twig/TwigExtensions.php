@@ -130,8 +130,10 @@ class TwigExtensions extends AbstractExtension
         return $html;
     }
 
-    public function paginationPageUrlFilter($context, int $pageNumber)
+    public function paginationPageUrlFilter($context, ?int $pageNumber)
     {
+        $pageNumber ??= 1;
+
         $url = $context['_meta']['url'];
         $url = preg_replace('/\/page\/\d+$/', '', $url);
 
@@ -176,16 +178,14 @@ class TwigExtensions extends AbstractExtension
             return ''; // language not found?
         }
 
-        if ($route === 'index') {
-            $blog = $this->getBlogFromContext($context);
 
-            return PermalinkRepository::getBlogPermalink(
-                $blog,
-                LanguageRepository::getLanguageByCode($blog, $language['code'])
-            );
-        }
+        $blog = $this->getBlogFromContext($context);
 
-        return '';
+        return PermalinkRepository::getBlogPermalink(
+            $blog,
+            LanguageRepository::getLanguageByCode($blog, $language['code'])
+        );
+
     }
 
 

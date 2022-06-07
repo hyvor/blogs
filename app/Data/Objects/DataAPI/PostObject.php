@@ -7,6 +7,7 @@ use App\Domains\Route\PermalinkRepository;
 use App\Models\Blog;
 use App\Models\Language;
 use App\Models\Post;
+use Illuminate\Support\Str;
 
 /**
  *
@@ -66,9 +67,7 @@ class PostObject
         $this->title = $variant->title;
         $this->description = $variant->description;
         $this->featured_image_url = $post->featured_image_url;
-        // $this->featured_image_url = 'https://picsum.photos/820/360';
         $this->canonical_url = $post->canonical_url;
-
 
         // TODO: Add Tag code
         $this->code_head = $post->code_head ?? '';

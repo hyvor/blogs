@@ -35,7 +35,7 @@ class LanguageFiller implements FillerInterface
             LanguageRepository::createLanguage(
                 $this->blog,
                 'en-GB',
-                'English (United Kingdom)'
+                'English (GB)'
             );
 
             LanguageRepository::createLanguage(
