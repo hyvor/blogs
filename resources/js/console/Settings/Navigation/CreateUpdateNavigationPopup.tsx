@@ -53,7 +53,7 @@ export default function CreateUpdateNavigationPopup(
     const [currentLanguageId, setCurrentLanguageId] = useState( primaryLanguage.id );
 
     const variants = navigation.variants || [];
-    const variant: NavigationVariant = variants[currentLanguageId] || {} as NavigationVariant;
+    const variant: NavigationVariant = variants.find(v => v.language_id === currentLanguageId) || {} as NavigationVariant;
 
     const [variantsState, setVariantsState] = useState(navigation.variants);
 
@@ -63,7 +63,9 @@ export default function CreateUpdateNavigationPopup(
     const [type, setType] = useState<NavigationType>('header');
 
     function updateName(value: any) {
-        setVariantsState(merge(variantsState, {[currentLanguageId]: {name: value}}));
+        setVariantsState(variantsState.map(
+            v => v.language_id === currentLanguageId ? {...v, name: value} : v)
+        );
     }
 
     function createVariantExtended({id, languageId, onCreate}: {id: number, languageId: number, onCreate: Function}) {
@@ -71,7 +73,7 @@ export default function CreateUpdateNavigationPopup(
             id,
             languageId,
             onCreate: (variant: NavigationVariant) => {
-                setVariantsState({...variantsState, [variant.language_id]: variant});
+                setVariantsState([...variantsState, variant]);
                 onCreate();
             }
         })
@@ -86,7 +88,7 @@ export default function CreateUpdateNavigationPopup(
                     <LanguageSelector
                         id={navigation.id}
                         languageId={currentLanguageId}
-                        variantsLanguageIds={Object.keys(variants).map(id => parseInt(id))}
+                        variantsLanguageIds={variants.map(v => v.language_id)}
                         onChange={setCurrentLanguageId}
                         variantCreator={createVariantExtended}
                     />
@@ -100,7 +102,7 @@ export default function CreateUpdateNavigationPopup(
                         title="Name"
                         type="text"
                         name="name"
-                        value={isCreate ? name : variantsState[currentLanguageId].name}
+                        value={isCreate ? name : variantsState.find(v => v.language_id === currentLanguageId)?.name}
                         onChange={value => isCreate ? setName(value) : updateName(value)}
                         placeholder="About us"
                         autoFocus={true}

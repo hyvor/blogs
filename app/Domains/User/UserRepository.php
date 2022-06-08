@@ -39,6 +39,7 @@ class UserRepository
                     ->on('user_variants.user_id', '=', 'users.id')
                     ->where('user_variants.language_id', '=', $language->id);
             })
+            ->orderByRaw("users.role='owner' DESC")
             ->orderBy('users.posts_count', 'DESC')
             ->select('users.*')
             ->limit($limit)

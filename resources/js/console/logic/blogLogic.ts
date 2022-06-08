@@ -1,4 +1,4 @@
-import {actions, kea, key, listeners, path, props, reducers, selectors} from "kea";
+import {actions, kea, key, path, props, reducers, selectors} from "kea";
 import {ajax} from 'kea-ajax';
 import api from "../lib/api";
 import {Blog, BlogVariant, Language, PostCounts, Tag, User} from "../types";
@@ -114,22 +114,18 @@ const blogLogic = kea<blogLogicType>([
                     {...state, ...{[key]: value === '' ? null : value}} as Blog
                 ),
                 updateBlogVariantValue: (state, {key, value, languageId}) => {
-                    const obj = {
-                        variants: {
-                            [languageId]: {
-                                [key]: value
-                            }
-                        }
-                    }
-                    return merge(state, obj) as Blog;
+                    const copy = {...state}
+                    copy.variants = copy.variants.map(
+                        variant => variant.language_id === languageId ?
+                            {...variant, [key]: value || null} :
+                            variant
+                    );
+                    return copy;
                 },
                 addBlogVariant: (state, {variant}) => {
-                    const obj = {
-                        variants: {
-                            [variant.language_id]: variant
-                        }
-                    }
-                    return merge(state, obj) as Blog;
+                    const copy = {...state}
+                    copy.variants.push(variant);
+                    return copy;
                 },
                 discardChanges: (blog, {original, keys}) => {
                     const obj : Partial<Blog> = {}
@@ -171,7 +167,29 @@ const blogLogic = kea<blogLogicType>([
 
                 return (keys: Array<keyof BlogVariant>) => {
                     const diff = {} as Record<number, Partial<Record<keyof BlogVariant, any>>>
-                    for (let x in variantsOriginal) {
+
+                    for (let variantOriginal of variantsOriginal) {
+
+                        const newVariant = variants.find(v => v.language_id === variantOriginal.language_id)
+
+                        if (!newVariant)
+                            continue;
+
+                        let key : keyof BlogVariant;
+                        for (key in variantOriginal) {
+                            if (keys.indexOf(key) >= 0 && newVariant[key] !== variantOriginal[key]) {
+
+                                if (!diff[variantOriginal.language_id]) {
+                                    diff[variantOriginal.language_id] = {};
+                                }
+
+                                diff[variantOriginal.language_id][key] = newVariant[key];
+                            }
+                        }
+
+                    }
+
+                    /*for (let x in variantsOriginal) {
                         let y : keyof BlogVariant;
                         for (y in variantsOriginal[x]) {
                             if (keys.indexOf(y) >= 0 && variants[x][y] !== variantsOriginal[x][y]) {
@@ -181,7 +199,8 @@ const blogLogic = kea<blogLogicType>([
                                 diff[x][y] = variants[x][y]
                             }
                         }
-                    }
+                    }*/
+
                     return Object.keys(diff).length ? diff : null;
                 }
 

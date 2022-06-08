@@ -52,17 +52,22 @@ const  navigationLogic = kea<navigationLogicType>([
 
         update: async (
             {id, url, type, variants, onUpdate} :
-            {id:number, url: string, type: NavigationType, variants: Record<number, NavigationVariant>, onUpdate: Function}
+            {id: number, url: string, type: NavigationType, variants: NavigationVariant[], onUpdate: Function}
         ) => {
 
-            for (let langId in variants) {
+            for (let newVariant of variants) {
 
-                const variant = (values.navigations.find(nav => nav.id === id) as Navigation).variants[langId]
+                const variant =
+                    (values.navigations.find(nav => nav.id === id) as Navigation)
+                        .variants.find(v => v.language_id === newVariant.language_id)
 
-                if (variants[langId].name !== variant.name) {
+                if (!variant)
+                    continue;
+
+                if (newVariant.name !== variant.name) {
                     await api.put<NavigationVariant>(props.subdomain, `/navigation/${id}/variant`, {
-                        language_id: langId,
-                        name: variants[langId].name,
+                        language_id: variant.language_id,
+                        name: newVariant.name,
                     })
                 }
 
@@ -111,24 +116,20 @@ const  navigationLogic = kea<navigationLogicType>([
                 removeNavigation: (state, {id}) => state.filter(nav => nav.id !== id),
 
                 addNavigationVariant: (state, {id, variant}) => {
-                    return state.map(nav => nav.id === id ?
-                        merge(nav, {
-                            variants: {
-                                [variant.language_id]: variant
-                            }
-                        }) : nav
-                    ) as Navigation[];
+                    return state.map(nav => {
+                        if (nav.id === id) {
+                            const copy = {...nav}
+                            copy.variants.push(variant)
+                            return copy;
+                        } else {
+                            return nav;
+                        }
+                    });
                 },
 
-                updateNavigationVariant: (state, {id, variant}) => {
-                    return state.map(nav => nav.id === id ?
-                        merge(nav, {
-                            variants: {
-                                [variant.language_id]: variant
-                            }
-                        }) : nav
-                    ) as Navigation[];
-                },
+                /*updateNavigationVariant: (state, {id, variant}) => {
+
+                },*/
 
                 updateSortValue: (state, {id, sort}) => {
                     return state.map(nav => nav.id === id ? {...nav, sort} : nav)

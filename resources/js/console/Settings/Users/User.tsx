@@ -31,7 +31,7 @@ export default function User({user} : {user: User} ) {
     const [ isDeleting, setIsDeleting ] = useState(false);
 
     return <TableRow>
-        <TableRowItem>{ user.variants[primaryLanguage.id].name }</TableRowItem>
+        <TableRowItem>{ user.variants.find(v => v.language_id === primaryLanguage.id)?.name }</TableRowItem>
         <TableRowItem>{ user.slug }</TableRowItem>
         <TableRowItem>{ user.posts_count }</TableRowItem>
         <TableRowItem>

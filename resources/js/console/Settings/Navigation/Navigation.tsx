@@ -28,7 +28,7 @@ export default function Navigation({ navigation } : { navigation: Navigation }) 
 
     return <TableRow>
         <TableRowItem><GripVertical /></TableRowItem>
-        <TableRowItem>{ navigation.variants[primaryLanguage.id].name }</TableRowItem>
+        <TableRowItem>{ navigation.variants.find(n => n.language_id === primaryLanguage.id)?.name }</TableRowItem>
         <TableRowItem>{ navigation.url }</TableRowItem>
 
         <TableRowItem>

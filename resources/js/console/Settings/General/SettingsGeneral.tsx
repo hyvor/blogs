@@ -24,7 +24,7 @@ export default function SettingsGeneral() {
     const { primaryLanguage, getLanguageById } = useValues(languagesLogic({subdomain}))
     const [currentLanguageId, setCurrentLanguageId] = useState( primaryLanguage.id );
     const currentLanguage = getLanguageById(currentLanguageId) as Language
-    const variant = blog.variants[currentLanguageId] || {} as BlogVariant;
+    const variant = blog.variants.find(v => v.language_id === currentLanguageId) || {} as BlogVariant;
 
     return <div className="settings-general">
 
@@ -33,8 +33,9 @@ export default function SettingsGeneral() {
         </div>
 
         <LanguageSelector
+            id={0}
             languageId={currentLanguageId}
-            variantsLanguageIds={Object.keys(blog.variants).map(v => parseInt(v))}
+            variantsLanguageIds={blog.variants.map(v => v.language_id)}
             onChange={(languageId) => setCurrentLanguageId(languageId)}
             variantCreator={createVariant}
         />
