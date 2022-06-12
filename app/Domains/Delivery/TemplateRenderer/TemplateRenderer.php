@@ -2,6 +2,7 @@
 
 namespace App\Domains\Delivery\TemplateRenderer;
 
+use App\Data\Enums\DeliveryAPIFileTypeEnum;
 use App\Data\Enums\ThemeFileFolderEnum;
 use App\Data\Objects\DataAPI\AuthorObject;
 use App\Data\Objects\DataAPI\BlogObject;
@@ -11,11 +12,12 @@ use App\Data\Objects\DataAPI\PostObject;
 use App\Data\Objects\DataAPI\TagObject;
 use App\Data\Objects\DeliveryAPI\DeliveryAPIResponseObject;
 use App\Data\Objects\DeliveryAPI\MetaObject;
+use App\Data\Objects\DeliveryAPI\RouteObject;
 use App\Domains\Delivery\PathMatcher;
 use App\Domains\Delivery\RouteMatcher\MatchedRoute;
 use App\Domains\Delivery\Twig\TwigRenderer;
+use App\Domains\Post\Content\PostContentRepository;
 use App\Domains\Post\PostRepository;
-use App\Domains\Post\PostSearchRepository;
 use App\Domains\Route\PermalinkRepository;
 use App\Domains\Tag\TagRepository;
 use App\Domains\Theme\ThemeFilesRepository;
@@ -33,8 +35,11 @@ class TemplateRenderer
     private PathMatcher $pathMatcher;
     private MatchedRoute $matchedRoute;
     private ?string $filter;
+    private string $templateName;
 
     private Tag|User|Post|null|false $model;
+
+    private array $config = [];
 
     public function __construct(
         PathMatcher $pathMatcher,
@@ -58,12 +63,15 @@ class TemplateRenderer
         }
 
         try {
+            $this->setConfig();
             $output = $this->render();
+        } catch (Error $e) {
+            return $this->getRenderErrorResponseObject($e->getMessage());
         } catch (TemplatePageNotFoundException) {
             return null;
         }
 
-        return DeliveryAPIResponseObject::forFile($output);
+        return DeliveryAPIResponseObject::forFile(DeliveryAPIFileTypeEnum::TEMPLATE, $output);
     }
 
     private function render(): string
@@ -75,78 +83,76 @@ class TemplateRenderer
             ThemeFileFolderEnum::TEMPLATES
         );
 
-        // get vars
-        $vars = $this->getVariables();
 
         $loaderArray = [];
         foreach ($templateFiles as $file) {
             $loaderArray[$file->name] = $file->content;
         }
 
-        $fileName = $this->getFileNameToRender(array_keys($loaderArray));
+        $this->setTemplateName(array_keys($loaderArray));
 
-        try {
-            $html = TwigRenderer::renderFromFiles($loaderArray, $vars, $fileName);
-        } catch (Error $e) {
-            $html = $this->getRenderError($e->getMessage());
-        }
+        // get vars
+        $vars = $this->getVariables();
 
-        return $html;
+        return TwigRenderer::renderFromFiles($loaderArray, $vars, $this->templateName);
+
     }
 
+    /**
+     * @throws Error
+     * @throws TemplatePageNotFoundException
+     */
     private function getVariables()
     {
         $blog = $this->pathMatcher->blog;
 
         $blogObject = new BlogObject($blog, $this->pathMatcher->language);
-        $scopeVariables = $this->getRouteVariables($blogObject);
-
-
 
         $vars = [
             // HB-specific
             '___url' => config('app.url'),
 
-            // data
+            // vars for all routes
             '_blog' => $blogObject,
-            '_config' => $this->getConfig(),
-            '_route' => $this->matchedRoute->name,
+            '_config' => $this->config,
+            '_route' => new RouteObject($this->matchedRoute, $this->templateName),
             '_lang' => new LanguageObject($this->pathMatcher->language),
+
+            // placeholders
+            '_head' => $this->getHeadCode(),
+            '_foot' => $this->getFootCode(),
         ];
 
-        $vars += $scopeVariables;
+        $vars += $this->getRouteVariables();
 
-        $vars += [
-            '_head' => $this->getHeadCode($vars),
-            '_foot' => $this->getFootCode($vars),
-        ];
+        if ($this->filter !== null) {
 
-        ['posts' => $posts, 'pagination' => $pagination] = $this->getPostsAndPagination();
+            ['posts' => $posts, 'pagination' => $pagination] = $this->getPostsAndPagination();
 
-        $vars['_posts'] = $posts;
-        $vars['_pagination'] = $pagination;
+            $vars['_posts'] = $posts;
+            $vars['_pagination'] = $pagination;
+
+        }
 
         /**
-         * This is to make sure only data from objects are sent
+         * JSON encoding + decoding is to make sure only data from objects are sent
          * and the developer does not have access to PHP methods
          */
         return json_decode(json_encode($vars), true);
     }
 
-    private function getConfig()
+    private function setConfig()
     {
         $configFile = ThemeFilesRepository::getFile(
             $this->pathMatcher->blog,
             'config.yaml'
         );
 
-        if (! $configFile) {
-            return [];
-            // throw new Error('Config.yaml file not found');
-        }
+        if (!$configFile)
+            return;
 
         try {
-            return Yaml::parse($configFile->content);
+            $this->config = Yaml::parse($configFile->content);
         } catch (ParseException) {
             throw new Error('Unable to parse config.yaml');
         }
@@ -154,6 +160,7 @@ class TemplateRenderer
 
     private function getRouteVariables(): array
     {
+
         $routeName = $this->matchedRoute->name;
 
         if ($routeName === 'index') {
@@ -171,10 +178,28 @@ class TemplateRenderer
                     blog: $this->pathMatcher->blog,
                     language: $this->pathMatcher->language,
                     filter: $this->filter,
-                    limit: 30, // hard limit - who has 30 featured posts?
+                    limit: 30 // hard limit - who has 30 featured posts?
                 )->collection,
             ];
+
         } elseif ($routeName === 'post' || $routeName === 'page' || $routeName === 'preview') {
+
+            if ($routeName === 'preview') {
+
+                // set content_html to content_unsaved if it is set
+
+                $variant = $this->model->variants
+                    ->firstWhere('language_id', $this->pathMatcher->language->id);
+
+                if ($variant && $variant->content_unsaved) {
+                    $variant->content_html = PostContentRepository::getHtml(
+                        $variant->content_unsaved,
+                        $this->pathMatcher->blog
+                    );
+                }
+
+            }
+
             $postObject = new PostObject($this->model, $this->pathMatcher->blog, $this->pathMatcher->language);
 
             return [
@@ -191,6 +216,7 @@ class TemplateRenderer
             ];
 
         } elseif ($routeName === 'tag') {
+
             $tagObject = new TagObject($this->model, $this->pathMatcher->blog, $this->pathMatcher->language);
 
             return [
@@ -203,7 +229,9 @@ class TemplateRenderer
                 ),
                 '_tag' => $tagObject,
             ];
+
         } elseif ($routeName === 'author') {
+
             $authorObject = new AuthorObject($this->model, $this->pathMatcher->blog, $this->pathMatcher->language);
 
             return [
@@ -216,6 +244,7 @@ class TemplateRenderer
                 ),
                 '_author' => $authorObject,
             ];
+
         }
 
         return [];
@@ -226,32 +255,19 @@ class TemplateRenderer
      */
     private function getPostsAndPagination()
     {
+
         $pageNumber = $this->getPageNumber();
 
-        $limit = 10;
+        $limit = $this->config['POSTS_PER_PAGINATION'] ?? 10;
         $offset = ($pageNumber - 1) * 10;
 
-        if ($this->matchedRoute->name === 'search') {
-            $search = $this->matchedRoute->param('search');
-
-            $collectionWithTotal = PostSearchRepository::search(
-                blog: $this->pathMatcher->blog,
-                language: $this->pathMatcher->language,
-                search: $search,
-                limit: $limit,
-                offset: $offset,
-                isPage: false,
-                isPublished: true
-            );
-        } else {
-            $collectionWithTotal = PostRepository::getPostsWithFilterQ(
-                blog: $this->pathMatcher->blog,
-                language: $this->pathMatcher->language,
-                filter: $this->filter,
-                limit: $limit,
-                offset: $offset
-            );
-        }
+        $collectionWithTotal = PostRepository::getPostsWithFilterQ(
+            blog: $this->pathMatcher->blog,
+            language: $this->pathMatcher->language,
+            filter: $this->filter,
+            limit: $limit,
+            offset: $offset
+        );
 
         if (count($collectionWithTotal->collection) === 0 && $pageNumber > 1) {
             throw new TemplatePageNotFoundException();
@@ -278,7 +294,7 @@ class TemplateRenderer
         return 1;
     }
 
-    private function getHeadCode($vars)
+    private function getHeadCode()
     {
         return file_get_contents(resource_path('twig/_head.twig'));
     }
@@ -289,18 +305,20 @@ class TemplateRenderer
     }
 
 
-    private function getFileNameToRender(array $availableFiles)
+    private function setTemplateName(array $availableFiles)
     {
+
         $checkFiles = explode(',', $this->matchedRoute->route->template);
 
         foreach ($checkFiles as $file) {
             $file = trim($file) . '.twig';
             if (in_array($file, $availableFiles)) {
-                return $file;
+                $this->templateName = $file;
+                return;
             }
         }
 
-        return 'index.twig';
+        $this->templateName = 'index.twig';
     }
 
     /**
@@ -358,13 +376,21 @@ class TemplateRenderer
         $this->model = $model;
     }
 
-    public function getRenderError($message)
+    public function getRenderErrorResponseObject(string $message) : DeliveryAPIResponseObject
     {
-        return <<<HTML
+        $response = <<<HTML
             <div style="font-family:monospace;">
                 Twig Template Error:<br><br>
                 <div style="font-size:18px">$message</div>
             </div>
         HTML;
+
+        return DeliveryAPIResponseObject::forFile(
+            DeliveryAPIFileTypeEnum::TEMPLATE,
+            $response,
+            'text/html',
+            false,
+            500
+        );
     }
 }

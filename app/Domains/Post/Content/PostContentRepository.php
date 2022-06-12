@@ -29,6 +29,7 @@ use App\Domains\Post\Content\Nodes\OrderedList;
 use App\Domains\Post\Content\Nodes\Paragraph;
 use App\Domains\Post\Content\Nodes\Text;
 use App\Models\Blog;
+use App\Models\PostVariant;
 use Tiptap\Editor;
 
 class PostContentRepository
@@ -92,5 +93,19 @@ class PostContentRepository
     public static function getDefaultBlockTemplate(string $name)
     {
         return file_get_contents(resource_path("twig/blocks/$name.twig"));
+    }
+
+    public static function updateVariantHtml(PostVariant $variant)
+    {
+        if (!$variant->content) {
+            return;
+        }
+
+        $post = $variant->post;
+        $blog = $post->blog;
+        $html = PostContentRepository::getHtml($variant->content, $blog);
+
+        $variant->content_html = $html;
+        $variant->save();
     }
 }

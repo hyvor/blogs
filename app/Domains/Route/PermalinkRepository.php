@@ -3,6 +3,7 @@
 namespace App\Domains\Route;
 
 use App\Data\Enums\BlogHostingAtEnum;
+use App\Domains\Delivery\RouteMatcher\MatchedRoute;
 use App\Models\Blog;
 use App\Models\Language;
 use App\Models\Media;
@@ -39,18 +40,14 @@ class PermalinkRepository
     /**
      * This function checks if a post matches a route
      *
-     * @param $routeMatch
-     *  Array of matched path data from
-     *  \Symfony\Component\Routing\Matcher\UrlMatcher::match
-     * [
-     *  'year' => '2020',
-     * ]
+     * @param $params
+     * MatchedRoute->params
      */
-    public static function validatePostPermalink(Post $post, array $routeMatch)
+    public static function validatePostPermalink(Post $post, array $params)
     {
         $date = $post->published_at;
 
-        foreach ($routeMatch as $key => $value) {
+        foreach ($params as $key => $value) {
             if ($key === 'tag') {
                 $firstTag = $post->tags[0] ?? null;
                 if (! $firstTag || $firstTag->slug !== $value) {

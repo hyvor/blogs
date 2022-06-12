@@ -2,6 +2,7 @@
 
 namespace App\Domains\Delivery\Processors;
 
+use App\Data\Enums\DeliveryAPIFileTypeEnum;
 use App\Data\Enums\ThemeFileFolderEnum;
 use App\Data\Objects\DeliveryAPI\DeliveryAPIResponseObject;
 use App\Domains\Delivery\PathMatcher;
@@ -19,6 +20,7 @@ class AssetsProcessor implements RouteProcessorInterface
 
     public function __construct(PathMatcher $pathMatcher, MatchedRoute $matchedRoute)
     {
+
         $fileName = $matchedRoute->param('file_name');
         $file = ThemeFilesRepository::getFile(
             $pathMatcher->blog,
@@ -37,7 +39,12 @@ class AssetsProcessor implements RouteProcessorInterface
         $extension = pathinfo($fileName, PATHINFO_EXTENSION);
         $mimeType = MimeTypes::getMimeFromExtension($extension);
 
-        $this->responseObject = DeliveryAPIResponseObject::forFile($content, $mimeType);
+        $this->responseObject = DeliveryAPIResponseObject::forFile(
+            DeliveryAPIFileTypeEnum::ASSET,
+            $content,
+            $mimeType
+        );
+
     }
 
     public function getResponseObject(): ?DeliveryAPIResponseObject

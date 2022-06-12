@@ -10,7 +10,7 @@ use App\Models\Post;
 class PostObject
 {
     public int $id;
-    public string $preview_id; // an encrypted ID for preview
+    public string $preview_secret;
     public int $created_at;
     public int $updated_at;
     public ?int $published_at;
@@ -40,7 +40,7 @@ class PostObject
     public function __construct(Post $post, Blog $blog)
     {
         $this->id = $post->id;
-        $this->preview_id = encrypt($post->id);
+        $this->preview_id = \App\Domains\Delivery\PostPreviewSecretEncryptor::getPreviewSecret($post);
         $this->created_at = $post->created_at->timestamp;
         $this->updated_at = $post->updated_at->timestamp;
         $this->published_at = $post->published_at?->timestamp;

@@ -3,7 +3,7 @@ import {useActions, useValues} from "kea";
 import subdomainLogic from "../../logic/subdomainLogic";
 import AsyncSelect from "react-select/async";
 import api from "../../lib/api";
-import {Post, User} from "../../types";
+import {Post, User, UserVariant} from "../../types";
 import usersLogic, {IDKeyedUsers} from "../../logic/usersLogic";
 import {getPrimaryLanguage} from "../../lib/blog-helpers";
 import getSubdomain from "../../logic-helpers/subdomain";
@@ -28,12 +28,15 @@ export default function PostAuthors({ post, updatePostValue } : { post: Post, up
     for (let id in users) {
         options.push({
             value: parseInt(id),
-            label: users[id].variants[languageId].name
+            label: (users[id].variants.find(v => v.language_id === languageId) as UserVariant).name
         })
     }
 
     const defaultValue = post.authors.map(author => (
-        {value: author.id , label: author.variants[languageId].name }
+        {
+            value: author.id ,
+            label: (author.variants.find(v => v.language_id === languageId) as UserVariant).name
+        }
     ))
 
     async function loader(input: string) : Promise<Array<SelectOption>> {
@@ -46,7 +49,7 @@ export default function PostAuthors({ post, updatePostValue } : { post: Post, up
 
         return users.map(user => ({
             value: user.id,
-            label: user.variants[languageId].name
+            label: (user.variants.find(v => v.language_id === languageId) as UserVariant).name
         }))
 
     }

@@ -6,6 +6,7 @@ import dayjs from 'dayjs';
 import languagesLogic from '../logic/languagesLogic';
 import LangTag from '../ReusableComponents/LangTag';
 import { getLangTagIconByPostStatus } from './Post/PostLanguageSelector';
+import {PostVariant} from "../types";
 
 export default function PostsListRow({ id , subdomain } : {id: number, subdomain: string}) {
 
@@ -17,7 +18,7 @@ export default function PostsListRow({ id , subdomain } : {id: number, subdomain
 
     const languageId = languages[0].id
 
-    const variant = post.variants[languageId];
+    const variant = post.variants.find(v => v.language_id === languageId) as PostVariant;
 
     const authorsNames = post.authors.map(author => author.variants[0].name).join(", ");
 
@@ -46,7 +47,7 @@ export default function PostsListRow({ id , subdomain } : {id: number, subdomain
             languages.length > 1 ?
             <div className="post-languages">
                 {
-                    Object.entries(post.variants).map(([, variant]) => {
+                    post.variants.map(variant => {
                         const lang = getLanguageById(variant.language_id)
 
                         return lang ?
@@ -65,7 +66,14 @@ export default function PostsListRow({ id , subdomain } : {id: number, subdomain
             {
                 !post.is_page ?
                     post.tags.map(tag => {
-                        return <span key={tag.id} className="post-tag">{tag.variants[languageId].name}</span>
+                        return <span
+                            key={tag.id}
+                            className="post-tag"
+                        >
+                            {
+                                tag.variants.find(v => v.language_id === languageId)?.name
+                            }
+                        </span>
                     })
                 : null
             }

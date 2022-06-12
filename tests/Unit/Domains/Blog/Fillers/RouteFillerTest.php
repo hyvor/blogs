@@ -12,9 +12,14 @@ it('fills default routes', function () {
 
     $routes = $blog->routes;
 
-    expect($routes->firstWhere('name', 'post'))->toBeInstanceOf(Route::class);
+    $post = $routes->firstWhere('name', 'post');
+    expect($post)->toBeInstanceOf(Route::class);
+    expect($post->posts_filter)->toBeNull();
     expect($routes->firstWhere('name', 'page'))->toBeInstanceOf(Route::class);
-    expect($routes->firstWhere('name', 'index'))->toBeInstanceOf(Route::class);
+
+    $index = $routes->firstWhere('name', 'index');
+    expect($index)->toBeInstanceOf(Route::class);
+    expect($index->posts_filter)->not->toBeNull();
     expect($routes->firstWhere('name', 'tag'))->toBeInstanceOf(Route::class);
     expect($routes->firstWhere('name', 'author'))->toBeInstanceOf(Route::class);
 });

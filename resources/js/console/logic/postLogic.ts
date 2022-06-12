@@ -231,7 +231,8 @@ const postLogic = kea<postLogicType>([
 
         currentVariant: [
             s => [s.post, s.editorState],
-            (post, editorState) : PostVariant => post.variants[editorState.languageId]
+            (post, editorState) : PostVariant =>
+                post.variants.find(v => v.language_id === editorState.languageId) as PostVariant
         ],
 
         currentLanguage: [

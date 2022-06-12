@@ -2,6 +2,7 @@
 
 namespace App\Domains\Delivery;
 
+use App\Data\Enums\DeliveryAPIFileTypeEnum;
 use App\Data\Objects\DeliveryAPI\DeliveryAPIResponseObject;
 use App\Domains\Delivery\Processors\AssetsProcessor;
 use App\Domains\Delivery\Processors\MediaProcessor;
@@ -82,7 +83,7 @@ class PathMatcher
         $routeMatcher = new RouteMatcher($this->path);
 
         $routeMatcher->add('assets', '/assets/{file_name}');
-        $routeMatcher->add('preview', '/p/{id}/{lang}', ['lang' => null]);
+        $routeMatcher->add('preview', '/p/{id}/{lang}');
         $routeMatcher->add('styles', '/styles.css');
         $routeMatcher->add('media', '/media/{file_name}');
 
@@ -226,7 +227,11 @@ class PathMatcher
             $matchedRoute->param('suffix') === 'feed'
         ) {
             $feed = Feed::generateFeed($this->blog, $this->language, $filter);
-            $responseObject = DeliveryAPIResponseObject::forFile($feed, 'application/atom+xml');
+            $responseObject = DeliveryAPIResponseObject::forFile(
+                DeliveryAPIFileTypeEnum::TEMPLATE,
+                $feed,
+                'application/atom+xml'
+            );
             $this->setMatched($responseObject);
 
             return true;
@@ -254,12 +259,18 @@ class PathMatcher
         return $this->matched;
     }
 
+    public function setCustomLanguage(Language $language)
+    {
+        $this->language = $language;
+    }
+
     public function getResponseObject()
     {
         if ($this->matched()) {
             return $this->responseObject;
         } else {
             return DeliveryAPIResponseObject::forFile(
+                DeliveryAPIFileTypeEnum::TEMPLATE,
                 "404",
                 "text/html",
                 true,
@@ -267,4 +278,5 @@ class PathMatcher
             );
         }
     }
+
 }

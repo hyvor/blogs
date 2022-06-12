@@ -551,6 +551,8 @@ A pagination object is included in all multi-object endpoints (`/posts`, `/autho
 	"pages": 10,
 	"limit": 5,
 	"page": 1,
+    "page_prev": null,
+    "page_next": 2,
 }
 ```
 
@@ -560,6 +562,8 @@ A pagination object is included in all multi-object endpoints (`/posts`, `/autho
 | `pages` | `integer` | The number of the total pagination pages based on the limit you set. `pages = round_to_upper(total/limit)` |
 | `limit` | `integer` | Current limit |
 | `page` | `integer` | Current page |
+| `page_prev` | `integer` or `null` | Previous page number (`null` if no previous pages)
+| `page_next` | `integer` or `null` | Next page number (`null` if no more pages)
 
 ## Error Handling
 

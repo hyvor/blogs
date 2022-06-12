@@ -12,10 +12,11 @@ class MatchedRoute
     public ?Route $route;
 
     // params key=>value
-    public array $params;
+    public array $params = [];
 
     /**
      * $props from Symfony\Component\Routing\Matcher\UrlMatcher::match
+     * $route is null for special routes
      */
     public function __construct($props, ?Route $route)
     {

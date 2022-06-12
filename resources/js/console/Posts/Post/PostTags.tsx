@@ -2,7 +2,7 @@ import React from 'react';
 import {useActions, useValues} from "kea";
 import AsyncSelect from "react-select/async";
 import api from "../../lib/api";
-import {Post, Tag, User} from "../../types";
+import {Post, Tag, TagVariant, User} from "../../types";
 import {getPrimaryLanguage} from "../../lib/blog-helpers";
 import tagsLogic, {IDKeyedTags} from "../../logic/tagsLogic";
 import getSubdomain from "../../logic-helpers/subdomain";
@@ -27,12 +27,12 @@ export default function PostTags({ post, updatePostValue } : { post: Post, updat
     for (let id in tags) {
         options.push({
             value: parseInt(id),
-            label: tags[id].variants[languageId].name
+            label: (tags[id].variants.find(v => v.language_id === languageId) as TagVariant).name
         })
     }
 
     const defaultValue = post.tags.map(tag => (
-        {value: tag.id , label: tag.variants[languageId].name }
+        {value: tag.id , label: (tag.variants.find(v => v.language_id === languageId) as TagVariant).name }
     ))
 
     async function loader(input: string) : Promise<Array<SelectOption>> {
@@ -45,7 +45,7 @@ export default function PostTags({ post, updatePostValue } : { post: Post, updat
 
         return tags.map(tag => ({
             value: tag.id,
-            label: tag.variants[languageId].name
+            label: (tag.variants.find(v => v.language_id === languageId) as TagVariant).name
         }))
 
     }

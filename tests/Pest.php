@@ -1,19 +1,10 @@
 <?php
 
-/*
-|--------------------------------------------------------------------------
-| Test Case
-|--------------------------------------------------------------------------
-|
-| The closure you provide to your test functions is always bound to a specific PHPUnit test
-| case class. By default, that class is "PHPUnit\Framework\TestCase". Of course, you may
-| need to change it using the "uses()" function to bind a different classes or traits.
-|
-*/
-
 use App\Data\Enums\BlogTypeEnum;
 use App\Models\Blog;
 use App\Models\BlogVariant;
+use App\Models\Post;
+use App\Models\PostVariant;
 use App\Models\User;
 use Faker\Factory;
 use Hyvor\HyvorConnecter\HyvorUser;
@@ -22,29 +13,6 @@ use Tests\TestCase;
 use Tests\UnitTestCase;
 
 uses(TestCase::class)->in('Feature', 'Unit');
-// uses(UnitTestCase::class)->in('Unit/Unseeded');
-
-/*
-|--------------------------------------------------------------------------
-| Expectations
-|--------------------------------------------------------------------------
-|
-| When you're writing tests, you often need to check that values meet certain conditions. The
-| "expect()" function gives you access to a set of "expectations" methods that you can use
-| to assert different things. Of course, you may extend the Expectation API at any time.
-|
-*/
-
-/*
-|--------------------------------------------------------------------------
-| Functions
-|--------------------------------------------------------------------------
-|
-| While Pest is very powerful out-of-the-box, you may have some testing code specific to your
-| project that you don't want to repeat in every file. Here you can also expose helpers as
-| global functions to help you to reduce the number of lines of code in your test files.
-|
-*/
 
 uses()->beforeEach(function () {
     $this->blog = Blog::find(config('test.blog_id'));
@@ -68,6 +36,41 @@ function newBlog(BlogTypeEnum $type = BlogTypeEnum::DEFAULT)
     )->create([
         'type' => $type,
     ]);
+}
+
+function post()
+{
+    return Post::factory()->create(['blog_id' => config('test.blog_id')]);
+}
+
+function aPublishedPost()
+{
+    $post = Post::where(['is_page' => false, 'blog_id' => config('test.blog_id')])->first();
+    $post->variants->map(fn ($variant) => $variant->update(['status' => 'published']));
+    return $post;
+}
+
+function seedPublishedPosts(int $count, Blog $blog = null)
+{
+    $blog ??= blog();
+
+    return Post::factory()->count($count)
+        ->has(
+            PostVariant::factory()->state([
+                'status' => 'published',
+                'language_id' => $blog->languages[0]
+            ]),
+            'variants'
+        )->create([
+            'blog_id' => $blog
+        ]);
+}
+
+function clearPosts(Blog $blog = null)
+{
+    $blog ??= blog();
+
+    Post::where('blog_id', $blog->id)->delete();
 }
 
 

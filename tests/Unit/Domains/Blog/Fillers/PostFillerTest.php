@@ -50,6 +50,8 @@ it('adds more posts for DEV blogs', function () {
     // get latest posts because, the first few  posts are default posts and does not have variants
     $post = $blog->posts()->latest('id')->first();
     expect($post->variants()->count())->toBe(3);
+    $variant = $post->variants[0];
+    expect($variant->content_html)->not->toBeNull();
     expect($post->tags()->count())->toBeGreaterThanOrEqual(1)->toBeLessThanOrEqual(3);
     expect($post->authors()->count())->toBeGreaterThanOrEqual(1)->toBeLessThanOrEqual(3);
 

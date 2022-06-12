@@ -42,7 +42,7 @@ class TwigRenderer
     private static function getEnvironment(ArrayLoader $loader)
     {
 
-        $isLocal = App::environment('local');
+        $isLocal = App::environment('local') || App::environment('testing');
 
         $twig = new Environment($loader, [
             'cache' => false,

@@ -391,4 +391,5 @@ class PostRepository
             ->orderBy('order', 'asc')
             ->first();
     }
+
 }

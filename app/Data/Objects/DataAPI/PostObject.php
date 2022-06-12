@@ -2,6 +2,7 @@
 
 namespace App\Data\Objects\DataAPI;
 
+use App\Data\Enums\PostStatusEnum;
 use App\Domains\Post\Content\PostContentRepository;
 use App\Domains\Route\PermalinkRepository;
 use App\Models\Blog;
@@ -76,6 +77,7 @@ class PostObject
         $this->language = new LanguageObject($language);
         $this->variants = $variants
             ->where('language_id', '!=', $language->id)
+            ->where('status', PostStatusEnum::PUBLISHED)
             ->map(function ($variant) use ($post, $blog) {
                 $variantLanguage = $variant->language;
                 $url = PermalinkRepository::getPostPermalink($post, $blog, $variantLanguage);

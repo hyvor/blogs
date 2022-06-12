@@ -2,6 +2,7 @@
 
 namespace App\Domains\Delivery\Processors;
 
+use App\Data\Enums\DeliveryAPIFileTypeEnum;
 use App\Data\Enums\ThemeFileFolderEnum;
 use App\Data\Objects\DeliveryAPI\DeliveryAPIResponseObject;
 use App\Domains\Delivery\PathMatcher;
@@ -40,7 +41,11 @@ class StylesProcessor implements RouteProcessorInterface
         $autoprefixer = new Autoprefixer($css);
         $css = $autoprefixer->compile();
 
-        $this->responseObject = DeliveryAPIResponseObject::forFile($css, 'text/css');
+        $this->responseObject = DeliveryAPIResponseObject::forFile(
+            DeliveryAPIFileTypeEnum::ASSET,
+            $css,
+            'text/css'
+        );
     }
 
     public function getResponseObject(): ?DeliveryAPIResponseObject

@@ -5,6 +5,7 @@ use App\Models\Language;
 use App\Models\Post;
 use Illuminate\Database\Eloquent\Factories\Factory;
 use Illuminate\Support\Arr;
+use Tests\Unit\__Generators__\ProsemirrorContentGenerator;
 
 class PostVariantFactory extends Factory
 {
@@ -12,21 +13,7 @@ class PostVariantFactory extends Factory
     public function definition()
     {
 
-        $paragraphs = $this->faker->paragraphs(rand(2, 6));
-        $content = [
-            'type' => 'doc',
-            'content' => []
-        ];
-        foreach ($paragraphs as $para) {
-            $content['content'][] = [
-                'type' => 'paragraph',
-                'content' => [[
-                    'type' => 'text',
-                    'text' => $para
-                ]]
-            ];
-        }
-        $content = json_encode($content);
+        $content = ProsemirrorContentGenerator::getParas();
 
         return [
             'post_id' => Post::factory(),

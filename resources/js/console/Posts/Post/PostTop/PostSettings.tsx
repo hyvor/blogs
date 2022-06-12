@@ -13,7 +13,7 @@ import Loader from '../../../ReusableComponents/Loader';
 import { usePostActions, usePostValues } from '../helpers';
 import PostAuthors from "../PostAuthors";
 import PostTags from "../PostTags";
-import {Media} from "../../../types";
+import {Media, PostVariant} from "../../../types";
 import getSubdomain from "../../../logic-helpers/subdomain";
 import onOutsideClick from "../../../../helpers/onOutsideClick";
 import languagesLogic from "../../../logic/languagesLogic";
@@ -26,7 +26,7 @@ let outsideClickListenerRemover: any;
 
 export default function PostSettings({ id } : PostSettingsProps) {
 
-    const { post, editorState, currentLanguage } = usePostValues(id);
+    const { post, editorState, currentLanguage, currentVariant } = usePostValues(id);
     const {
         updatePostValue, updateCurrentPostVariantValue,
         deletePost, deleteVariant,
@@ -44,8 +44,6 @@ export default function PostSettings({ id } : PostSettingsProps) {
     const [ isFeaturedImageRemoving, setIsFeaturedImageRemoving ] = useState(false);
 
     const imageUploadInputRef = useRef<HTMLInputElement | null>(null)
-
-    const variant = post.variants[editorState.languageId];
 
     function handleDelete() {
         if (currentLanguage.is_primary) {
@@ -129,7 +127,7 @@ export default function PostSettings({ id } : PostSettingsProps) {
                             className="post-setting-publish-time"
                         >
                             {
-                                variant.status !== 'published' && variant.status !== 'scheduled' ?
+                                currentVariant.status !== 'published' && currentVariant.status !== 'scheduled' ?
                                 <div className="not-published">Not published</div> :
                                 <DatePicker
                                     selected={dayjs.unix(post.published_at as number).toDate()}
@@ -170,7 +168,7 @@ export default function PostSettings({ id } : PostSettingsProps) {
                             <textarea
                                 className="input"
                                 placeholder="Write a description..."
-                                value={variant.description || ''}
+                                value={currentVariant.description || ''}
                                 onChange={e => updateCurrentPostVariantValue('description', e.target.value)}
                                 maxLength={350}
                             />

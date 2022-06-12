@@ -4,31 +4,37 @@ namespace App\Domains\Delivery\Processors;
 
 use App\Data\Objects\DeliveryAPI\DeliveryAPIResponseObject;
 use App\Domains\Delivery\PathMatcher;
+use App\Domains\Delivery\PostPreviewSecretEncryptor;
 use App\Domains\Delivery\RouteMatcher\MatchedRoute;
 use App\Domains\Delivery\TemplateRenderer\TemplateRenderer;
+use App\Domains\Language\LanguageRepository;
 use App\Domains\Post\PostRepository;
-use Illuminate\Contracts\Encryption\DecryptException;
 
-class PreviewProcessor
+class PreviewProcessor implements RouteProcessorInterface
 {
+
     private ?DeliveryAPIResponseObject $responseObject = null;
 
-    /**
-     * TODO: Add expiring
-     */
     public function __construct(PathMatcher $pathMatcher, MatchedRoute $matchedRoute)
     {
-        try {
-            $id = decrypt($matchedRoute->param('id'));
-        } catch (DecryptException) {
+
+        $id = PostPreviewSecretEncryptor::decryptPreviewSecret($matchedRoute->param('id'));
+
+        if (!$id)
             return;
-        }
+
+        $languageCode = $matchedRoute->param('lang');
+        $language = LanguageRepository::getLanguageByCode($pathMatcher->blog, $languageCode);
+
+        if (!$language)
+            return;
+
+        $pathMatcher->setCustomLanguage($language);
 
         $post = PostRepository::getPostById($id);
 
         $blog = $pathMatcher->blog;
         $routes = $blog->routes;
-
 
         /**
          * Fake-update the route
@@ -37,9 +43,8 @@ class PreviewProcessor
         $matchedRoute->route = $route;
 
         $templateRenderer = new TemplateRenderer(
-            $blog,
+            $pathMatcher,
             $matchedRoute,
-            $post->language,
             null
         );
         $templateRenderer->setModel($post);

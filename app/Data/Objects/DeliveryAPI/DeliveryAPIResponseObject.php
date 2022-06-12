@@ -32,9 +32,10 @@ class DeliveryAPIResponseObject
     /**
      * Files content is base64 encoded
      */
-    public static function forFile(string $content, string $mimeType = 'text/html', bool $cache = true, int $status = 200)
+    public static function forFile(DeliveryAPIFileTypeEnum $type, string $content, string $mimeType = 'text/html', bool $cache = true, int $status = 200)
     {
         $obj = new self(DeliveryAPITypeEnum::FILE);
+        $obj->file_type = $type;
         $obj->content = $content;
         $obj->mime_type = $mimeType;
         $obj->cache = $cache;

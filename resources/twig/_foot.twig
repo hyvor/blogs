@@ -4,3 +4,13 @@
         FlashLoad.start()
     });
 </script>
+
+{% if _blog.code_foot %}
+    {{  _blog.code_foot | template }}
+{% endif %}
+
+{% if _post.code_foot %}
+    {{ _post.code_foot | template }}
+{% endif %}
+
+{# TODO: ADD TAGS CODE #}

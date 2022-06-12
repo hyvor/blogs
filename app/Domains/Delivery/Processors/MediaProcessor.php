@@ -2,6 +2,7 @@
 
 namespace App\Domains\Delivery\Processors;
 
+use App\Data\Enums\DeliveryAPIFileTypeEnum;
 use App\Data\Objects\DeliveryAPI\DeliveryAPIResponseObject;
 use App\Domains\Delivery\PathMatcher;
 use App\Domains\Delivery\RouteMatcher\MatchedRoute;
@@ -24,7 +25,11 @@ class MediaProcessor implements RouteProcessorInterface
         $content = MediaRepository::getContents($media);
         $mimeType = MimeTypes::getMimeFromExtension($media->extension);
 
-        $this->responseObject = DeliveryAPIResponseObject::forFile($content, $mimeType);
+        $this->responseObject = DeliveryAPIResponseObject::forFile(
+            DeliveryAPIFileTypeEnum::MEDIA,
+            $content,
+            $mimeType
+        );
     }
 
     public function getResponseObject(): ?DeliveryAPIResponseObject

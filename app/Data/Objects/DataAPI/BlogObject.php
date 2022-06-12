@@ -74,8 +74,8 @@ class BlogObject
         $this->color_modes = ColorModesEnum::from($meta->color_modes);
         $this->color_mode_default = ColorModeDefaultEnum::from($meta->color_mode_default);
 
-        $this->code_head = $blog->code_head;
-        $this->code_foot = $blog->code_foot;
+        $this->code_head = $meta->code_head;
+        $this->code_foot = $meta->code_foot;
 
         $blog->navigations->each(function ($nav) use ($language) {
             $navObject = new NavObject($nav, $language);

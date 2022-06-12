@@ -66,16 +66,17 @@ When rendering the twig templates, we send data into your template file as objec
 
 There are 4 main objects in HB: `Blog` , `Post` , `Tag` , and `Author`. These objects are explained in the [Data API](api-data) page.
 
-| Variable name | Available Routes | Description |
-| --- | --- | --- |
-| `_blog` | (all) | A Blog object, that includes all blog-level data/settings. |
-| `_config` | (all) | Theme config (`config.yaml`) as an object |
-| `_route` | (all) | Current [route](routes) name. |
-| `_posts` | (all)| An array of Post objects, filtered by the [route](routes)'s filter value |
-| `_featured_posts` | index | An array of Posts objects (all featured posts). |
-| `_post` | post and page | A Post object |
-| `_tag` | tag | A Tag object (the current tag) |
-| `_author` | author | An Author object (the current author) |
+| Variable name | Available Routes | Description                                                                                               |
+| --- | --- |-----------------------------------------------------------------------------------------------------------|
+| `_blog` | (all) | A Blog object, that includes all blog-level data/settings.                                                |
+| `_lang` | all | A Language Object for the **current** language. Should also be placed in `<html lang="{{ _lang.code }}">` |
+| `_config` | (all) | Theme config (`config.yaml`) as an object                                                                 |
+| `_route` | (all) | Current [route](routes) name.                                                                             |
+| `_posts` | (all)| An array of Post objects, filtered by the [route](routes)'s filter value                                  |
+| `_featured_posts` | index | An array of Posts objects (all featured posts).                                                           |
+| `_post` | post and page | A Post object                                                                                             |
+| `_tag` | tag | A Tag object (the current tag)                                                                            |
+| `_author` | author | An Author object (the current author)                                                                     |
 
 Each Route gets different variables. We prefix each variable with `_` so that it won't conflict with the variables you define inside the theme files (Obviously, you shouldn't prefix `_` your variables inside the Twig template)
 
@@ -90,7 +91,6 @@ You are required to put some placeholders in your theme to make a few things wor
 | `_comments` | post and page | to embed the commenting system |
 | `_comment_count` (optional) | post and page | to render the comment count of that page. For example, some themes have comment count at the top with a link to the comments section to encourage more comments. Only works when Hyvor Talk is connected. |
 | `_newsletter` | post and page | to embed the newsletter subscription form |
-| `_lang` | all | Language code of the current page. Should be placed as `<html lang="{{ _lang }}">`
 
 Sending all placeholders (except `_lang`) through the `template` filter is absolutely required to make them render as templates.
   

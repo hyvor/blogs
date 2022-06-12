@@ -16,18 +16,18 @@
     <meta property="og:url" content="{{ _meta.url }}" />
     <meta property="og:image" content="{{ _meta.featured_image }}" />
 
-    {% if scope == 'post' %}
-        <meta property="article:published_time" content="{{ post.published_at | date(c) }}" />
-        <meta property="article:modified_time" content="2022-03-05T20:07:57.000Z" />
+    {% if _route.name == 'post' %}
+        <meta property="article:published_time" content="{{ _post.published_at | date('c') }}" />
+        <meta property="article:modified_time" content="{{ _post.updated_at | date('c') }}" />
 
         {# Authors #}
-        {% for author in post.authors %}
+        {% for author in _post.authors %}
             <meta property="article:author" content="{{ author.name }}" />
         {% endfor %}
         
         {# Tags #}
-        {% for tag in post.tags %}
-            <meta property="article:tag" content="{{ tag.name }}" />
+        {% for tag in _post.tags %}
+            <meta property="article:section" content="{{ tag.name }}" />
         {% endfor %}
     {% endif %}
 
@@ -41,26 +41,26 @@
     {% if _blog.social.twitter %}
         <meta name="twitter:site" content="@{{ _blog.social.twitter|split('/')|last }}" />
     {% endif %}
-    {% if scope == 'post' and _post.author[0].social.twitter %}
-        <meta name="twitter:creator" content="@{{ _post.author[0].social.twitter|split('/')|last }}" />
+    {% if _route.name == 'post' and _post.authors[0].social.twitter %}
+        <meta name="twitter:creator" content="@{{ _post.authors[0].social.twitter|split('/')|last }}" />
     {% endif %}
 
 {% endif %}
 
 
 {# Alternative Languages for posts ========= #}
-{% if _route == 'post' %}
-    {% for variant in _post.language.variants %}
-        <link rel="alternate" href="{{ variant.post_url }}" hreflang="{{ variant.code }}" />
+{% if _post %}
+    {% for variant in _post.variants %}
+        <link rel="alternate" href="{{ variant.url }}" hreflang="{{ variant.language.code }}" />
     {% endfor %}
 {% endif %}
 
 {# Custom Code from blog, post, and tags #}
 {% if _blog.code_head %}
-    {{ include(template_from_string(_blog.code_head)) }}
+    {{  _blog.code_head | template }}
 {% endif %}
 {% if _post.code_head %}
-    {{ include(template_from_string(_post.code_head)) }}
+    {{ _post.code_head | template }}
 {% endif %}
 
 <link rel="alternate" type="application/atom+xml" title="{{ _blog.name }}" href="{{ _blog.url }}/feed" />
