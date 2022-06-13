@@ -14,16 +14,15 @@ class TagVariantObject
     public ?string $name;
     public ?string $description;
 
-
-    public function __construct(TagVariant $tagVariant, Tag $tag, Blog $blog)
+    public function __construct(TagVariant $variant, Tag $tag, Blog $blog)
     {
-        $language = $tagVariant->language;
+        $language = $variant->language;
 
         $this->language_id = $language->id;
 
         $this->url = PermalinkRepository::getTagPermalink($tag, $blog, $language);
 
-        $this->name = $tagVariant->name;
-        $this->description = $tagVariant->description;
+        $this->name = $variant->name;
+        $this->description = $variant->description;
     }
 }

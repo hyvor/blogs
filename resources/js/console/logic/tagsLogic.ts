@@ -1,25 +1,22 @@
-import { kea } from "kea";
-import api from "../lib/api";
+import {actions, kea, key, path, reducers} from "kea";
 import {Tag} from "../types";
 
-
 import type { tagsLogicType } from "./tagsLogicType";
-
 
 export interface IDKeyedTags {
     [key: number]: Tag
 }
 
-const tagsLogic = kea<tagsLogicType<IDKeyedTags>>({
+const tagsLogic = kea<tagsLogicType<IDKeyedTags>([
 
-    key: (props: {subdomain: string}) => props.subdomain,
-    path: (key: string) => [key, 'tags'],
+    key({} as {subdomain: string}),
+    path((key) => ['tags', key]),
 
-    actions: {
+    actions({
         addTags: (tags: Array<Tag>) => ({tags})
-    },
+    }),
 
-    reducers: {
+    reducers({
 
         tags: [
             {} as IDKeyedTags,
@@ -35,7 +32,7 @@ const tagsLogic = kea<tagsLogicType<IDKeyedTags>>({
             }
         ]
 
-    }
+    })
 
 })
 

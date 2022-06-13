@@ -240,7 +240,7 @@ class UserRepository
             'bio' => $bio,
         ]);
 
-        UserVariantCreatedEvent::dispatch($variant);
+        UserVariantCreatedEvent::dispatch($variant->refresh());
 
         return $variant;
     }

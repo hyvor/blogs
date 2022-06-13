@@ -120,12 +120,14 @@ Route::prefix('/api/console/v0/blog/{subdomain}')
     Route::middleware('role:owner|admin|editor')->group(function() {
 
         // tags
-        Route::get('/tags', [ConsoleTagController::class, 'getTags']);
-        Route::get('/tags/search', [ConsoleTagController::class, 'searchTags']);
-        Route::post('/tag', [ConsoleTagController::class, 'createTag']);
-        Route::put('/tag/{id}', [ConsoleTagController::class, 'updateTag']);
-        Route::delete('/tag/{id}', [ConsoleTagController::class, 'deleteTag']);
-        Route::post('/tag/variant', [ConsoleTagController::class, 'createTagVariant']);
+        Route::get('/tags', [ConsoleTagController::class, 'get']);
+        Route::get('/tags/search', [ConsoleTagController::class, 'search']);
+        Route::post('/tag', [ConsoleTagController::class, 'create']);
+        Route::patch('/tag/{id}', [ConsoleTagController::class, 'update']);
+        Route::delete('/tag/{id}', [ConsoleTagController::class, 'delete']);
+        Route::post('/tag/{id}/variant', [ConsoleTagController::class, 'createVariant']);
+        Route::patch('/tag/{id}/variant', [ConsoleTagController::class, 'updateVariant']);
+        Route::delete('/tag/{id}/variant', [ConsoleTagController::class, 'deleteVariant']);
 
         // comments
         Route::get('/comments/moderate', []);

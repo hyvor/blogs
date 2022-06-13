@@ -3,6 +3,13 @@
 namespace App\Domains\Tag;
 
 use App\Domains\Language\LanguageRepository;
+use App\Domains\Tag\Events\TagCreatedEvent;
+use App\Domains\Tag\Events\TagDeletedEvent;
+use App\Domains\Tag\Events\TagUpdatedEvent;
+use App\Domains\Tag\Events\TagVariantCreatedEvent;
+use App\Domains\Tag\Events\TagVariantDeletedEvent;
+use App\Domains\Tag\Events\TagVariantUpdatedEvent;
+use App\Domains\User\Events\UserDeletedEvent;
 use App\Helpers\CollectionWithTotal;
 use App\Models\Blog;
 use App\Models\Language;
@@ -22,7 +29,7 @@ class TagRepository
      * @param int $offset
      * @return Collection<Tag>
      */
-    public static function getTags($blog, int $limit, int $offset = 0): Collection
+    public static function getTags(Blog $blog, int $limit, int $offset = 0): Collection
     {
         $language = LanguageRepository::getPrimaryLanguage($blog);
 
@@ -40,23 +47,6 @@ class TagRepository
         return $tags;
     }
 
-    public static function getTagByBlogIdAndIdentifier(int $blogId, ?int $id, ?string $slug): ?Tag
-    {
-        $tag = Tag::where('blog_id', $blogId);
-        if ($id) {
-            $tag->where('id', $id);
-        } else {
-            $tag->where('slug', $slug);
-        }
-
-        return $tag->first();
-    }
-
-    public static function getTagByBlogIdAndSlug(int $blogId, string $slug): ?Tag
-    {
-        return self::getTagByBlogIdAndIdentifier($blogId, null, $slug);
-    }
-
     public static function getTagsWithFilterQ(
         Blog $blog,
         ?string $filter,
@@ -65,7 +55,8 @@ class TagRepository
         array $orderBys = [
             ['tags.posts_count', 'DESC'],
         ],
-    ): CollectionWithTotal {
+    ): CollectionWithTotal
+    {
         $builder = FilterQ::expression($filter)
             ->builder(Tag::class)
             ->keys(function ($keys) {
@@ -119,117 +110,89 @@ class TagRepository
             'name' => $name,
         ]);
 
+        $tag->refresh();
+
+        TagCreatedEvent::dispatch($tag);
+
         return $tag;
     }
 
-    public static function updateTag(
-        int $id,
-        int $languageId,
-        string $slug,
-        ?string $codeHead,
-        ?string $codeFoot,
-        ?string $name,
-        ?string $description
-    ): void {
-        $tag = Tag::find($id)
-        ->update([
-            'slug' => $slug,
-            'code_head' => $codeHead,
-            'code_foot' => $codeFoot,
-        ]);
+    public static function updateTag(Tag $tag, array $updates): Tag
+    {
 
-        TagVariant::where('tag_id', '=', $id)
-            ->where('language_id', '=', $languageId)
-            ->update([
-                'name' => $name,
-                'description' => $description,
-            ]);
+        foreach ($updates as $key => $value) {
+            $tag->$key = $value;
+        }
 
-        // return $tag;
+        $tag->save();
+
+        TagUpdatedEvent::dispatch($tag);
+
+        return $tag;
     }
 
-    public static function deleteTag($tagId, $languageId): void
+    public static function deleteTag(Tag $tag): void
     {
-        $language = Language::where('id', '=', $languageId)
-        ->value('is_primary');
+        $tag->variants->map(fn ($variant) => self::deleteTagVariant($variant));
+        $tag->delete();
 
-        if ($language == 0) {
-            TagVariant::where('tag_id', '=', $tagId)
-                ->where('language_id', '=', $languageId)
-                ->delete();
+        TagDeletedEvent::dispatch($tag);
+    }
+
+    public static function createTagVariant(Tag $tag, Language $language) : TagVariant
+    {
+        $variant = TagVariant::create([
+            'tag_id' => $tag->id,
+            'language_id' => $language->id
+        ]);
+
+        TagVariantCreatedEvent::dispatch($variant->refresh());
+
+        return $variant;
+    }
+
+    public static function updateTagVariant(TagVariant $variant, array $updates) : TagVariant
+    {
+        foreach ($updates as $key => $value) {
+            $variant->$key = $value;
+        }
+        $variant->save();
+
+        TagVariantUpdatedEvent::dispatch($variant);
+
+        return $variant;
+    }
+
+    public static function deleteTagVariant(TagVariant $variant)
+    {
+        $variant->delete();
+
+        TagVariantDeletedEvent::dispatch($variant);
+    }
+
+
+    public static function getTagByBlogIdAndIdentifier(int $blogId, ?int $id, ?string $slug): ?Tag
+    {
+        $tag = Tag::where('blog_id', $blogId);
+        if ($id) {
+            $tag->where('id', $id);
         } else {
-            TagVariant::where('tag_id', '=', $tagId)
-                ->where('language_id', '=', $languageId)
-                ->delete();
-
-            Tag::find($tagId)
-                ->delete();
+            $tag->where('slug', $slug);
         }
+
+        return $tag->first();
     }
 
-    /*
-    *
-    * this functions are used for the tag_variants table
-    *
-    */
-    public static function createTagVariant($tagId, $languageId)
+    public static function getTagByBlogIdAndSlug(int $blogId, string $slug): ?Tag
     {
-        $language = Language::where('id', '=', $languageId)
-        ->value('is_primary');
+        return self::getTagByBlogIdAndIdentifier($blogId, null, $slug);
+    }
 
-        if ($language == 0) {
-            $tagVariantCheck = TagVariant::where('tag_id', '=', $tagId)
-            ->where('language_id', '=', $languageId)
+    public static function getTagVariantByTagIdAndLanguageId(int $tagId, int $languageId) : ?TagVariant
+    {
+        return TagVariant::where('tag_id', $tagId)
+            ->where('language_id', $languageId)
             ->first();
-
-            if ($tagVariantCheck == null) {
-                TagVariant::create([
-                    'tag_id' => $tagId,
-                    'language_id' => $languageId,
-                ]);
-            }
-        }
     }
 
-
-    /*
-    *
-    * this function will create and save the tag
-    *
-    */
-    public static function createSaveTag($blogId, $postId, $tagId)
-    {
-        $createPostTag = PostTag::create([
-            'post_id' => $postId,
-            'tag_id' => $tagId,
-        ]);
-
-        return $createPostTag;
-    }
-
-
-    /*public static function getPostTag($postId, $tagId)
-    {
-        // dd('tests');
-        // dd('Post Id '+$postId + ' Tag Id '+$tagId);
-        // dd($postId);
-
-        // $connection = DB::table('tags')
-        //     ->select('tags.name')
-        //     ->join('post_tag', 'tags.id' ,$tagId.'', '=', 'post_tag.tag_id')
-        //     ->join('posts', 'posts.id', $postId.'', '=', 'post_tag.post_id')
-        //     ->get();
-
-        $connection = DB::table('tags')
-            ->select('tags.name')
-            ->join('post_tag', 'tags.id' ,$tagId ,'=', 'post_tag.tag_id')
-            ->join('posts', 'posts.id', $postId ,'=', 'post_tag.post_id')
-            ->get();
-        // $connection = DB::table('tags')
-        //     ->select('tags.name')
-        //     ->join('post_tag', 'tags.id', '=', 'post_tag.tag_id')
-        //     ->join('posts', 'posts.id', '=', 'post_tag.post_id')
-        //     ->get();
-        return $connection;
-    }*/
 }

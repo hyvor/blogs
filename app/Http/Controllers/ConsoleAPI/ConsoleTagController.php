@@ -3,12 +3,16 @@
 namespace App\Http\Controllers\ConsoleAPI;
 
 use App\Data\Objects\ConsoleAPI\Tag\TagObject;
+use App\Data\Objects\ConsoleAPI\Tag\TagVariantObject;
 use App\Domains\Post\PostTagRepository;
 use App\Domains\Tag\TagRepository;
 
+use App\Domains\User\UserRepository;
 use App\Exceptions\TrustedException;
 use App\Http\Controllers\Controller;
 use App\Models\Blog;
+use App\Models\Language;
+use App\Models\Tag;
 use Illuminate\Http\Request;
 use Illuminate\Support\Str;
 
@@ -19,166 +23,121 @@ class ConsoleTagController extends Controller
     * ConsoleAPI Settings->tags
     *
     */
-    public static function getTags(Request $request, Blog $blog)
+    public function get(Request $request, Blog $blog)
     {
         $request->validate([
              'limit' => 'integer',
              'offset' => 'integer',
          ]);
 
-        $limit = $request->input('limit') ?? 50;
-        $offset = $request->input('offset') ?? 0;
+        $limit = $request->input('limit', 50);
+        $offset = $request->input('offset', 0);
 
-        $getData = TagRepository::getTags($blog, $limit, $offset)
-            ->map(function ($tags) use ($blog) {
-                return new TagObject($tags, $blog);
-            });
+        $tags = TagRepository::getTags($blog, $limit, $offset)->map(fn ($tag) => new TagObject($tag, $blog));
 
-        return response()->json($getData);
+        return response()->json($tags);
     }
 
-    public static function createTag(Request $request, Blog $blog)
+    public function create(Request $request, Blog $blog)
     {
         $request->validate([
-             'name' => 'required|string',
-             'slug' => 'string',
-             'description' => 'string',
+             'name' => 'required|string'
          ]);
 
         $name = $request->input('name');
-        $slug = $request->input('slug');
-        $description = $request->input('description') ?? null;
 
-        if ($slug == null) {
-            $slug = Str::slug($name);
-        }
-
-        $currentTag = TagRepository::getTagByBlogIdAndSlug($blog->id, $slug);
-
-        if ($currentTag) {
-            throw new TrustedException('Slug already exists');
-        }
-
-        $tag = TagRepository::createTag($blog, $name, $slug, $description);
+        $tag = TagRepository::createTag($blog, $name);
 
         return response()->json(new TagObject($tag, $blog));
     }
 
-    public static function updateTag(Request $request, Blog $blog)
-    {
-        // $request->validate([
-        //     'name' => 'required|string',
-        //     'slug' => 'required|string',
-        //     'description' => 'int',
-        //     'codeHead' => 'string',
-        //     'codeFoot' => 'string',
-        // ]);
-
-        $id = $request->route('id');
-        $slug = $request->input('slug');
-        $languageId = $request->input('languageId');
-        $codeHead = $request->input('codeHead') ?? null;
-        $codeFoot = $request->input('codeFoot') ?? null;
-        $name = $request->input('name') ?? null;
-        $description = $request->input('description') ?? null;
-
-        $tag = TagRepository::updateTag($id, $languageId, $slug, $codeHead, $codeFoot, $name, $description);
-
-        return response()->json($tag);
-        // return response()->json(new TagObject($tag, $blog));
-    }
-
-    public static function deleteTag(Request $request)
-    {
-        $tagId = $request->route('tagId');
-        $languageId = $request->input('languageId');
-
-        $deleteVariant = TagRepository::deleteTag($tagId, $languageId);
-
-        return response()->json($deleteVariant);
-    }
-
-    /*
-    *
-    * *** Tag validation section ***
-    *
-    */
-    public static function createTagVariant(Request $request)
-    {
-        $tagId = $request->input('tagId');
-        $languageId = $request->input('languageId');
-        $createVariant = TagRepository::createTagVariant($tagId, $languageId);
-
-        return response()->json($createVariant);
-    }
-
-    /*
-    *
-    * *** ConsoleAPI Posts->Tags ***
-    *
-    * This function will get all the tags and display it in an order (Post_Count)
-    */
-    public static function getPostTags(Request $request, Blog $blog)
+    public function update(Request $request, Tag $tag, Blog $blog)
     {
 
-        // $postId = $request->input('postId');
+        $validates = [
+            'slug' => 'string',
+            'code_head' => 'string|nullable',
+            'code_foot' => 'string|nullable'
+        ];
 
-        $postId = 184;
-        $getData = PostTagRepository::getPostTags($blog->id, $postId);
+        $request->validate($validates);
 
-        return response()->json($getData);
+        $updatables =  array_keys($validates);
+        $updates = [];
+
+        foreach ($updatables as $updatable) {
+            if ($request->has($updatable)) {
+                $updates[$updatable] = $request->input($updatable);
+            }
+        }
+
+        $tag = TagRepository::updateTag($tag, $updates);
+
+        return response()->json(new TagObject($tag, $blog));
     }
 
-    public static function selectedPostTag(Request $request, Blog $blog)
+    public function delete(Tag $tag)
     {
-        $postId = (int) $request->route('postId');
-        $getData = PostTagRepository::selectedPostTag($blog->id, $postId);
-
-        return response()->json($getData);
+        TagRepository::deleteTag($tag);
+        return response()->json();
     }
 
-    /*
-    *
-    * This function will save the post_id and the tag_id in the post_tag table.
-    * (This function should also save the number of posts in the count table.)
-    *
-    */
-    public static function createPostTag(Request $request, Blog $blog)
+
+    public function createVariant(Blog $blog, Tag $tag, Language $language)
     {
-        dd('test');
-        $postId = $request->input('postId');
-        $tagId = $request->input('tagId');
-
-        $createTag = PostTagRepository::createSaveTag($postId, $tagId);
-
-        return response()->json($createTag);
+        $variant = TagRepository::createTagVariant($tag, $language);
+        return response()->json(new TagVariantObject($variant, $tag, $blog));
     }
 
-    /*
-    *
-    * This function will get the selected tags and display it in the react-select box.
-    *
-    */
-    public static function getPostTag(Request $request)
+    public function updateVariant(Request $request, Blog $blog, Tag $tag, Language $language)
     {
-        $postId = $request->input('postId');
 
-        // $tagId = $request->input('tagId');
-        // $postId = 184;
-        $tagId = 12;
+        $variant = TagRepository::getTagVariantByTagIdAndLanguageId($tag->id, $language->id);
 
-        $getData = PostTagRepository::getPostTag($postId, $tagId);
+        if (!$variant)
+            throw new TrustedException('Variant not found');
 
-        return response()->json($getData);
+        $validates = [
+            'name' => 'string|nullable',
+            'description' => 'string|nullable'
+        ];
+
+        $request->validate($validates);
+
+        $updatables =  array_keys($validates);
+        $updates = [];
+
+        foreach ($updatables as $updatable) {
+            if ($request->has($updatable)) {
+                $updates[$updatable] = $request->input($updatable);
+            }
+        }
+
+        $variant = TagRepository::updateTagVariant($variant, $updates);
+
+        return response()->json(new TagVariantObject($variant, $tag, $blog));
+
     }
 
-    /*
-    *
-    * This function will remove the selected tags.
-    *
-    */
-    public static function removePostTag(Request $request)
+    public function deleteVariant(Tag $tag, Language $language)
     {
-        return 'hello world';
+
+        if ($language->is_primary) {
+            throw new TrustedException(
+                'Primary language variant cannot be deleted. Delete the tag instead',
+                TrustedException::ERROR_UNPROCESSABLE
+            );
+        }
+
+        $variant = TagRepository::getTagVariantByTagIdAndLanguageId($tag->id, $language->id);
+
+        if (!$variant)
+            throw new TrustedException('Variant not found', TrustedException::ERROR_NOT_FOUND);
+
+        TagRepository::deleteTagVariant($variant);
+
+        return response()->json();
+
     }
+
 }

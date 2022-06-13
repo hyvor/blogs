@@ -21,7 +21,6 @@ class TagObject
      */
     public array $variants;
 
-
     public function __construct(Tag $tag, Blog $blog)
     {
         $this->id = $tag->id;

@@ -5,7 +5,7 @@ namespace Tests\Feature\ConsoleAPI\Users;
 use App\Domains\User\Events\UserVariantDeletedEvent;
 use Illuminate\Support\Facades\Event;
 
-it('deletes a post variant', function () {
+it('deletes a user variant', function () {
 
     Event::fake();
 
