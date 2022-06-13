@@ -5,7 +5,7 @@ import { usePostActions, usePostValues } from '../helpers';
 import dayjs from 'dayjs';
 import ActionButton from '../../../ReusableComponents/ActionButton';
 import { toast } from 'react-toastify';
-import {Post} from "../../../types";
+import {Post, PostVariant} from "../../../types";
 import onOutsideClick from "../../../../helpers/onOutsideClick";
 
 let outsideClickListenerRemover : any;
@@ -30,16 +30,19 @@ export default function Publisher({id} : {id: number}) {
     }
 
     function handlePublish() {
-        const update = {variants: {[editorState.languageId]: {}}} as Partial<Post>;
+        const update = {} as Partial<Post>;
+        const variant = {
+            language_id: editorState.languageId as number
+        } as Partial<PostVariant>;
 
-        if (update.variants) { // TS fix
-            if (publishTime) {
-                update['published_at'] = dayjs(publishTime).unix()
-                update.variants[editorState.languageId]['status'] = 'scheduled';
-            } else {
-                update.variants[editorState.languageId]['status'] = 'published';
-            }
+        if (publishTime) {
+            update['published_at'] = dayjs(publishTime).unix()
+            variant.status = 'scheduled';
+        } else {
+            variant.status = 'published';
         }
+
+        update.variants = [variant];
 
         setHasClicked(true)
         forceSavePost({update, onSave: (post) => {

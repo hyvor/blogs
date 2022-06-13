@@ -10,7 +10,9 @@ use App\Domains\Route\PermalinkRepository;
 use App\Domains\User\Events\UserCreatedEvent;
 use App\Domains\User\Events\UserDeletedEvent;
 use App\Domains\User\Events\UserUpdatedEvent;
+use App\Domains\User\Events\UserVariantCreatedEvent;
 use App\Domains\User\Events\UserVariantDeletedEvent;
+use App\Domains\User\Events\UserVariantUpdatedEvent;
 use App\Helpers\CollectionWithTotal;
 use App\Models\Blog;
 use App\Models\Language;
@@ -222,21 +224,37 @@ class UserRepository
         UserDeletedEvent::dispatch($user);
     }
 
-
     public static function createUserVariant(
         User $user,
         Language $language,
-        string $name,
+        ?string $name = null,
         ?string $location = null,
         ?string $bio = null,
-    ): void {
-        UserVariant::create([
+    ) : UserVariant
+    {
+        $variant = UserVariant::create([
             'user_id' => $user->id,
             'language_id' => $language->id,
             'name' => $name,
             'location' => $location,
             'bio' => $bio,
         ]);
+
+        UserVariantCreatedEvent::dispatch($variant);
+
+        return $variant;
+    }
+
+    public static function updateUserVariant(UserVariant $variant, array $updates) : UserVariant
+    {
+        foreach ($updates as $key => $value) {
+            $variant->$key = $value;
+        }
+        $variant->save();
+
+        UserVariantUpdatedEvent::dispatch($variant);
+
+        return $variant;
     }
 
     public static function deleteUserVariant(UserVariant $variant)
@@ -283,4 +301,12 @@ class UserRepository
     {
         return self::getUserByBlogIdAndIdentifier($blogId, null, $slug);
     }
+
+    public static function getUserVariantByUserIdAndLanguageId(int $userId, int $languageId) : ?UserVariant
+    {
+        return UserVariant::where('language_id', $languageId)
+            ->where('user_id', $userId)
+            ->first();
+    }
+
 }

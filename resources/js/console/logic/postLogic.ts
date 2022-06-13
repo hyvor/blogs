@@ -14,10 +14,10 @@ import {PostEditorState} from "../states";
 async function updatePost(post: Post, diff: Partial<Post>) {
 
     if (diff.variants) {
-        for (let languageId in diff.variants) {
+        for (let variant of diff.variants) {
             await api.patch(
                 getSubdomain(), `/post/${post.id}/variant`,
-                {...diff.variants[languageId], ...{language_id: languageId}}
+                variant
             )
         }
         delete diff.variants;
@@ -151,25 +151,22 @@ const postLogic = kea<postLogicType>([
                 set: (_, {obj}) => obj,
                 updatePostValue: (state, {key, value}) => ({...state, ...{[key]: value}} as Post),
                 updateCurrentPostVariantValue: (state, {key, value, languageId}) => {
-                    const obj = {
-                        variants: {
-                            [languageId]: {
-                                [key]: value
-                            }
-                        }
-                    }
-                    return merge(state, obj) as Post;
+                    const copy = {...state}
+                    copy.variants = copy.variants.map(
+                        variant => variant.language_id === languageId ?
+                            {...variant, [key]: value || null} :
+                            variant
+                    );
+                    return copy;
                 },
                 addVariant: (state, {variant}) => {
-                    return merge(state, {
-                        variants: {
-                            [variant.language_id]: variant
-                        }
-                    }) as Post
+                    const copy = {...state}
+                    copy.variants.push(variant);
+                    return copy;
                 },
                 removeVariant: (state, {languageId}) => {
                     const copy = {...state}
-                    delete copy.variants[languageId]
+                    copy.variants = copy.variants.filter(v => v.language_id !== languageId)
                     return copy;
                 }
             }
@@ -182,15 +179,13 @@ const postLogic = kea<postLogicType>([
                 set: (_, {obj}) => obj,
                 setOriginal: (_, {obj}) => obj,
                 addVariant: (state, {variant}) => {
-                    return merge(state, {
-                        variants: {
-                            [variant.language_id]: variant
-                        }
-                    }) as Post
+                    const copy = {...state}
+                    copy.variants.push(variant);
+                    return copy;
                 },
                 removeVariant: (state, {languageId}) => {
                     const copy = {...state}
-                    delete copy.variants[languageId]
+                    copy.variants = copy.variants.filter(v => v.language_id !== languageId)
                     return copy;
                 }
             }
@@ -198,7 +193,7 @@ const postLogic = kea<postLogicType>([
 
         editorState: [
             {
-                languageId: languagesLogic({subdomain: getSubdomain()}).values.primaryLanguage.id,
+                languageId: languagesLogic({subdomain: getSubdomain()}).values.primaryLanguage.id as number,
                 isFullscreen: false,
                 isChangingSettings: false,
                 isPublishing: false,
@@ -225,6 +220,31 @@ const postLogic = kea<postLogicType>([
             (post, postOriginal) => {
                 const d = diff(postOriginal, post) as Partial<Post>
                 if (d.preview_id) delete d.preview_id;
+
+                /**
+                 * diff() function does not return correct diffs for arrays
+                 * So, fixing is manually here
+                 */
+                if (d.variants) {
+
+                    d.variants = [];
+
+                    for (let variant of post.variants) {
+                        let variantOriginal = postOriginal.variants.find(v => v.language_id === variant.language_id)
+
+                        if (!variantOriginal)
+                            continue;
+
+                        let variantDiff = diff(variantOriginal, variant) as PostVariant
+
+                        if (Object.keys(variantDiff).length > 0) {
+                            variantDiff.language_id = variant.language_id;
+                            d.variants.push(variantDiff)
+                        }
+                    }
+
+                }
+
                 return d;
             }
         ],

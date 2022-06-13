@@ -47,7 +47,7 @@ function LanguageTag({ id, language } : { id: number, language: Language }) {
         })
     }
 
-    const variant = post.variants[language.id]
+    const variant = post.variants.find(v => v.language_id === language.id);
     let statusIcon;
     let tip;
     let onClick = handleChange;

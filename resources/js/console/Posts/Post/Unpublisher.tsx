@@ -2,7 +2,7 @@ import {PopupConfirm} from "../../ReusableComponents/Popup";
 import React from "react";
 import {usePostActions, usePostValues} from "./helpers";
 import {toast} from "react-toastify";
-import {PostVariant} from "../../types";
+import {Post} from "../../types";
 
 export default function Unpublisher({id} : {id: number}) {
 
@@ -12,7 +12,15 @@ export default function Unpublisher({id} : {id: number}) {
     const status = currentVariant.status
 
     function handleUnPublish() {
-        const update = {variants: {[editorState.languageId]: {status: 'draft'}} as Partial<PostVariant>};
+        const update = {
+            variants: [
+                {
+                    language_id: editorState.languageId,
+                    status: 'draft'
+                }
+            ]
+        } as Partial<Post>
+
         forceSavePost({
             update,
             onSave: () => {

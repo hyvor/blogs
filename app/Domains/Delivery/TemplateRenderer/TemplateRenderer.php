@@ -211,8 +211,8 @@ class TemplateRenderer
                     $postObject->canonical_url ?? $postObject->url
                 ),
                 '_post' => $postObject,
-                '_comments' => $this->pathMatcher->blog->getMeta('comments_code'),
-                '_newsletter' => $this->pathMatcher->blog->getMeta('newsletter_code'),
+                '_comments' => $this->pathMatcher->blog->getMeta('comments_code') ?? '',
+                '_newsletter' => $this->pathMatcher->blog->getMeta('newsletter_code') ?? '',
             ];
 
         } elseif ($routeName === 'tag') {

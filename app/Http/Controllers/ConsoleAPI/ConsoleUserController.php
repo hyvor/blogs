@@ -6,12 +6,13 @@ use App\Data\Enums\UserRoleEnum;
 use App\Data\Enums\UserStatusEnum;
 
 use App\Data\Objects\ConsoleAPI\User\UserObject;
-use App\Domains\User\Events\UserCreatedEvent;
+use App\Data\Objects\ConsoleAPI\User\UserVariantObject;
 use App\Domains\User\UserRepository;
 use App\Exceptions\TrustedException;
 use App\Http\Controllers\Controller;
 
 use App\Models\Blog;
+use App\Models\Language;
 use App\Models\User;
 use Hyvor\HyvorConnecter\Userbase;
 use Illuminate\Http\Request;
@@ -167,13 +168,61 @@ class ConsoleUserController extends Controller
         return response()->json();
     }
 
-    public static function createVariant(Request $request)
+    public static function createVariant(User $user, Language $language)
     {
-        $userId = $request->input('userId');
-        $languageId = $request->input('languageId');
-        $createVariant = UserRepository::createAuthorVariant($userId, $languageId);
+        $variant = UserRepository::createUserVariant($user, $language);
+        return response()->json(new UserVariantObject($variant));
+    }
 
-        return response()->json($createVariant);
+    public static function updateVariant(Request $request, User $user, Language $language)
+    {
+
+        $variant = UserRepository::getUserVariantByUserIdAndLanguageId($user->id, $language->id);
+
+        if (!$variant)
+            throw new TrustedException('Variant not found', TrustedException::ERROR_NOT_FOUND);
+
+        $validations = [
+            'name' => 'string|nullable',
+            'bio' => 'string|nullable',
+            'location' => 'string|nullable'
+        ];
+
+        $request->validate($validations);
+
+        $updatables = array_keys($validations);
+
+        $updates = [];
+        foreach ($updatables as $updatable) {
+            if ($request->has($updatable)) {
+                $updates[$updatable] = $request->input($updatable);
+            }
+        }
+
+        $variant = UserRepository::updateUserVariant($variant, $updates);
+
+        return response()->json(new UserVariantObject($variant));
+    }
+
+    public static function deleteVariant(User $user, Language $language)
+    {
+
+        if ($language->is_primary) {
+            throw new TrustedException(
+                'Primary language variant cannot be deleted. Delete the user instead',
+                TrustedException::ERROR_UNPROCESSABLE
+            );
+        }
+
+        $variant = UserRepository::getUserVariantByUserIdAndLanguageId($user->id, $language->id);
+
+        if (!$variant)
+            throw new TrustedException('Variant not found', TrustedException::ERROR_NOT_FOUND);
+
+        UserRepository::deleteUserVariant($variant);
+
+        return response()->json();
+
     }
 
 }
