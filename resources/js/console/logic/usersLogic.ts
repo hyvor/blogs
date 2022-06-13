@@ -39,18 +39,24 @@ const usersLogic = kea<usersLogicType<IDKeyedUsers>>([
         },
 
         create: async (
-            {name, email, slug, role} :
-            {name: string, email: string, slug: string, role: UserRole}
+            {usernameOrEmail, role} :
+            {usernameOrEmail: string, role: UserRole}
         ) => {
             const user = await api.post<User>(props.subdomain, '/user', {
-                name,
-                role,
-                slug,
-                email,
+                username_or_email: usernameOrEmail,
+                role
             })
             actions.addUsers([user]);
             actions.setUsersList([user.id, ...values.usersList]);
         },
+
+        createGuest: async ({name} : {name: string}) => {
+            const user = await api.post<User>(props.subdomain, '/user/guest', {
+                name
+            })
+            actions.addUsers([user]);
+            actions.setUsersList([user.id, ...values.usersList]);
+        }
 
     })),
 

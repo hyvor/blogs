@@ -7,7 +7,7 @@ export enum CalloutColors {
 }
 
 type CalloutProps = {
-    icon: ReactNode;
+    icon?: ReactNode;
     color: CalloutColors | 'blue' | 'orange' | 'red';
     title?: string;
     text: ReactNode;
@@ -16,10 +16,13 @@ type CalloutProps = {
 export default function Callout( {icon, color, title, text} : CalloutProps) {
 
     return <div className={"global-callout " + color}>
-        <div className="title">
-            <span className="icon">{icon}</span>
-            <span className="title-text">{title}</span>
-        </div>
+        {
+            (icon || title) &&
+            <div className="title">
+                <span className="icon">{icon}</span>
+                <span className="title-text">{title}</span>
+            </div>
+        }
         <div className="text">{text}</div>
     </div>;
 

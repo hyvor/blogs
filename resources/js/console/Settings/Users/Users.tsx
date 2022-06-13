@@ -17,10 +17,11 @@ export default function Users() {
     const { usersList, users, loadAjax, createAjax, loadMoreAjax } = useValues(usersLogicBuilt)
     const { load, loadMore } = useActions(usersLogicBuilt)
 
+    const [isCreating, setIsCreating] = useState(false)
+
     useEffect(() => {
         load();
     }, [])
-
 
     return <div className="settings-users">
 
@@ -52,7 +53,6 @@ export default function Users() {
                                 }
                             </Fragment>
                         </Table>
-
                     :
                     <NoResults
                         text="There are no users"
@@ -62,5 +62,8 @@ export default function Users() {
                 )
             }
         </div>
+
+        { isCreating && <CreateNewUser onClose={() => setIsCreating(false)} /> }
+
     </div> 
 }

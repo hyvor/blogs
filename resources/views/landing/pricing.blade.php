@@ -32,7 +32,7 @@ $pricingRow = '<tr>
                         </div>
                     </div>
                     <div class="plan-price-monthly">
-                        <b>$16</b> billed monthly
+                        <b>$12</b> billed monthly
                     </div>
                 </th>
                 <th>
@@ -45,7 +45,7 @@ $pricingRow = '<tr>
                         </div>
                     </div>
                     <div class="plan-price-monthly">
-                        <b>$1600</b> billed monthly
+                        <b>$1200</b> billed monthly
                     </div>
                 </th>
             </tr>';
