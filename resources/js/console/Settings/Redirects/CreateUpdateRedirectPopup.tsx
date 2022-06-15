@@ -1,4 +1,3 @@
-import subdomainLogic from "../../logic/subdomainLogic";
 import redirectsLogic from "../../logic/redirectsLogic";
 import {useActions, useValues} from "kea";
 import React, {useState} from "react";

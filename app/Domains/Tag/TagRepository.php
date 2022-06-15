@@ -3,6 +3,7 @@
 namespace App\Domains\Tag;
 
 use App\Domains\Language\LanguageRepository;
+use App\Domains\Post\PostTagAuthorRepository;
 use App\Domains\Tag\Events\TagCreatedEvent;
 use App\Domains\Tag\Events\TagDeletedEvent;
 use App\Domains\Tag\Events\TagUpdatedEvent;
@@ -133,7 +134,13 @@ class TagRepository
 
     public static function deleteTag(Tag $tag): void
     {
+        // delete variants
         $tag->variants->map(fn ($variant) => self::deleteTagVariant($variant));
+
+        // delete post-tags
+        PostTagAuthorRepository::deletePostTagsByTag($tag);
+
+        // delete tag
         $tag->delete();
 
         TagDeletedEvent::dispatch($tag);

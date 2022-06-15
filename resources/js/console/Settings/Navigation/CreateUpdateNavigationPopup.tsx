@@ -74,7 +74,7 @@ export default function CreateUpdateNavigationPopup(
             languageId,
             onCreate: (variant: NavigationVariant) => {
                 setVariantsState([...variantsState, variant]);
-                onCreate();
+                onCreate(variant);
             }
         })
     }

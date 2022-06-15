@@ -80,7 +80,7 @@ export default function Input(
 }
 
 interface InputViewProps {
-    title: string,
+    title: ReactNode,
     content: ReactNode
 }
 

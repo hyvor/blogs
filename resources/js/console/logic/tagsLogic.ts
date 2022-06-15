@@ -1,22 +1,122 @@
-import {actions, kea, key, path, reducers} from "kea";
-import {Tag} from "../types";
+import {actions, kea, key, path, props, reducers} from "kea";
+import {Tag, TagVariant} from "../types";
 
 import type { tagsLogicType } from "./tagsLogicType";
+import {ajax} from "kea-ajax";
+import api from "../lib/api";
+import {diff as getDiff} from "deep-object-diff";
 
 export interface IDKeyedTags {
     [key: number]: Tag
 }
 
-const tagsLogic = kea<tagsLogicType<IDKeyedTags>([
+const tagsLogic = kea<tagsLogicType<IDKeyedTags>>([
 
-    key({} as {subdomain: string}),
+    props({} as {subdomain: string}),
+    key((props) => props.subdomain),
     path((key) => ['tags', key]),
 
     actions({
-        addTags: (tags: Array<Tag>) => ({tags})
+        addTags: (tags: Array<Tag>) => ({tags}),
+        setTagsList: (tagIds: number[]) => ({tagIds}),
+
+        removeTag: (id: number) => ({id}),
+
+        addTagVariant: (id: number, variant: TagVariant) => ({id, variant}),
+
+        setTagsListHasMore: (hasMore: boolean) => ({hasMore})
     }),
 
+    ajax(({props, actions, values}) => ({
+
+        load: async () => {
+            const tags = await api.get<Tag[]>(props.subdomain, '/tags')
+            actions.addTags(tags)
+            actions.setTagsList(tags.map(tag => tag.id))
+            actions.setTagsListHasMore(tags.length === 50);
+        },
+
+        loadMore: async () => {
+            const tags = await api.get<Tag[]>(props.subdomain, '/tags', {
+                offset: values.tagsList.length
+            })
+            actions.addTags(tags)
+            actions.setTagsList([...values.tagsList, ...tags.map(tag => tag.id)])
+            actions.setTagsListHasMore(tags.length === 50);
+        },
+
+        create: async ({name, onCreate} : {name: string, onCreate: Function}) => {
+            const tag = await api.post<Tag>(props.subdomain, '/tag', {name})
+            actions.addTags([tag])
+            actions.setTagsList([tag.id, ...values.tagsList])
+            onCreate();
+        },
+
+        update: async ({tag, onUpdate} : {tag: Tag, onUpdate: Function}) => {
+            const tagOriginal = values.tags[tag.id]
+
+            const diff = getDiff(tagOriginal, tag) as Partial<Tag>
+
+            if (diff.variants) {
+
+                for (const variant of tag.variants) {
+
+                    const variantOriginal = tagOriginal.variants.find(t => t.language_id === variant.language_id)
+
+                    if (!variantOriginal)
+                        continue;
+
+                    const variantDiff = getDiff(variantOriginal, variant)
+
+                    await api.patch(props.subdomain, `/tag/${tag.id}/variant`, {
+                        ...variantDiff,
+                        language_id: variant.language_id
+                    })
+
+                }
+
+                delete diff.variants;
+
+            }
+
+            const newTag = await api.patch<Tag>(props.subdomain, `/tag/${tag.id}`, diff)
+
+            actions.addTags([newTag])
+
+            onUpdate();
+        },
+
+        createVariant: async ({ id, languageId, onCreate }) => {
+            const variant = await api.post<TagVariant>(props.subdomain, `/tag/${id}/variant`, {
+                language_id: languageId
+            })
+            actions.addTagVariant(id, variant)
+            onCreate(variant)
+        },
+
+        remove: async ({id} : {id: number}) => {
+            actions.removeTag(id);
+            await api.delete(props.subdomain, `/tag/${id}`);
+        },
+
+    })),
+
     reducers({
+
+        tagsList: [
+            [] as number[],
+            {
+                setTagsList: (_, {tagIds}) => tagIds,
+                removeTag: (state, {id}) => state.filter(stateId => stateId !== id)
+            }
+        ],
+
+        tagsListHasMore: [
+            false,
+            {
+                setTagsListHasMore: (_, {hasMore}) => hasMore
+            }
+        ],
 
         tags: [
             {} as IDKeyedTags,
@@ -28,152 +128,19 @@ const tagsLogic = kea<tagsLogicType<IDKeyedTags>([
                     }
 
                     return {...state, ...tagsKeyed}
-                }
+                },
+
+                addTagVariant: (state, {id, variant}) => {
+                    const copy = {...state}
+                    copy[id].variants.push(variant)
+                    return copy;
+                },
+
             }
         ]
 
     })
 
-})
+])
 
 export default tagsLogic
-
-//
-// const tagsLogic = kea({
-//
-//     key: props => props.subdomain,
-//
-//     path: key => ['tag', key],
-//
-//     actions: {
-//         setTagList: (tag) => ({tag}),
-//         setTagsListHasMore: (has) => ({has}),
-//         removeFromList: (id) => ({id}),
-//         addTag: (tag) => ({tag}),
-//         addTagVarian: (tag) => ({tag}),
-//         updateTag: (tag) => ({tag}),
-//
-//         // setVariantList: (tagVariant) => ({tagVariant}),
-//         // removeVariantList: (id) => ({id}),
-//         // updateTagVarian: (tagVariant) => ({tagVariant}),
-//     },
-//
-//     ajax: ({ values, actions, props }) => ({
-//
-//         load: async ({offset = 0, type}) => {
-//             const tag =  await api.get(props.subdomain, '/tags');
-//             actions.setTagsListHasMore(tag.length === 50);
-//             actions.setTagList(tag);
-//         },
-//
-//         loadTagsListMore: async ({offset}) => {
-//             const response = await api.get(props.subdomain, '/tags', {
-//                 offset
-//             });
-//             actions.setTagsListHasMore(response.length === 50);
-//             actions.setTagList([...values.tag, ...response])
-//         },
-//
-//         remove: async ({id, languageId}) => {
-//             // console.log(id, languageId)
-//             actions.removeFromList(id);
-//             await api.delete(props.subdomain, `/tag/${id}`, {
-//                 languageId: languageId,
-//             });
-//         },
-//
-//         create: async ({name, description, slug}) => {
-//             const tag = await api.post(props.subdomain, '/tags', {
-//                 name: name,
-//                 description: description,
-//                 slug: slug,
-//             })
-//             actions.addTag(tag);
-//         },
-//
-//         createVariant: async ({tagId, languageId}) => {
-//             console.log(tagId, languageId)
-//             const tag = await api.post(props.subdomain, '/tag/variant', {
-//                 tagId: tagId,
-//                 languageId: languageId,
-//             })
-//             actions.addTagVarian(tag);
-//         },
-//
-//         updateData: async ({tagId, name,languageId, description, slug, codeHead, codeFoot}) => {
-//             // console.log(tagId, name, description, slug, codeHead, codeFoot)
-//             const tag = await api.put(props.subdomain, `/tag/${tagId}`, {
-//                 name: name,
-//                 languageId:languageId,
-//                 description: description,
-//                 slug: slug,
-//                 codeHead: codeHead,
-//                 codeFoot: codeFoot,
-//             });
-//             actions.updateTag(tag);
-//         },
-//
-//
-//         // createVariant: async ({tagId, languageId}) => {
-//         //     console.log('kdkdkd')
-//         //     const tag = await api.post(props.subdomain, '/tagVariant', {
-//         //         tagId: tagId,
-//         //         languageId: languageId,
-//         //     })
-//         //     actions.addTagVarian(tag);
-//         // },
-//
-//         // tag variant sections
-//         // loadVariant: async ({tagId, languageId}) => {
-//         //     const tagVariant = await api.get(props.subdomain, '/tagVariant', {
-//         //         tagId: tagId,
-//         //         languageId: languageId,
-//         //     })
-//         //     actions.setVariantList(tagVariant);
-//         // },
-//
-//         // removeVariant: async ({tagId, languageId}) => {
-//         //     const tagVariant = await api.delete(props.subdomain, '/tagVariant', {
-//         //         tagId: tagId,
-//         //         languageId: languageId,
-//         //     })
-//         //     actions.removeVariantList(tagVariant);
-//         // },
-//
-//         // updateDataVariant: async ({tagId, languageId, name, description}) => {
-//         //     const tagVariant = await api.put(props.subdomain, '/tagVariant', {
-//         //         tagId: tagId,
-//         //         languageId: languageId,
-//         //         name: name,
-//         //         description: description,
-//         //     });
-//         //     actions.updateTagVarian(tagVariant);
-//         // },
-//
-//     }),
-//
-//     reducers: {
-//         tag: [[], {
-//             setTagList: (_, {tag}) => tag,
-//             removeFromList: (state, {id}) => state.filter(m => m.id !== id),
-//             addTag: (state, {tag}) => [tag, ...state],
-//             // addTagVarian: (state, {tag}) => [tag, ...state],
-//             updateTag:(state, {tag}) => state.map(
-//                 stateTag => stateTag.id === tag.id ? tag : stateTag
-//             ),
-//         }],
-//         tagListHasMore: [false, {
-//             setTagsListHasMore: (_, {has}) => has
-//         }],
-//         createNewVarian: [[], {
-//             addTagVarian: (state, {tag}) => [tag, ...state],
-//         }],
-//     },
-//
-//     events: ({actions}) => ({
-//         afterMount: actions.load
-//     })
-//
-// });
-//
-// export default tagsLogic;

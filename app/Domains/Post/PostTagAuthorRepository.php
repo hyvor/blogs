@@ -38,6 +38,11 @@ class PostTagAuthorRepository
         }
     }
 
+    public static function deletePostTagsByTag(Tag $tag)
+    {
+        PostTag::where('tag_id', $tag->id)->delete();
+    }
+
 
     /**
      * @param Post $post

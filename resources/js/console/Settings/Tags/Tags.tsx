@@ -1,58 +1,29 @@
-import React, {useState} from 'react';
-import { useActions, useValues } from 'kea';
-import subdomainLogic from '../../logic/subdomainLogic';
-import tagsLogic from '../../logic/tagsLogic';
+import React, {Fragment, useEffect, useState} from 'react';
 import Loader from '../../ReusableComponents/Loader';
-import Toast from '../../ReusableComponents/Toast';
 import NoResults from '../../ReusableComponents/NoResults';
-import CreateTag from './CreateTag';
-import TagsTable from './TagsTable';
+import {useTagsActions, useTagsValues} from "./useTags";
+import {Plus} from "react-bootstrap-icons";
+import {Table, TableHead, TableHeadItem} from "../../ReusableComponents/Table";
+import Tag from "./Tag";
+import TableLoadMore from "../../ReusableComponents/TableLoadMore";
+import CreateTagPopup from "./CreateTagPopup";
 
+export default function Tags() {
 
-//  Remaining 
-/*
-*
-* Create tag Variant in language select if a variant is not selected. ( Done -- )
-* Update tag data (according to an language if required) ( Done -- )
-* Delete tag according to an condition. ( Done -- )
-* 
-*/
+    const { tagsList, tagsListHasMore, tags, loadAjax, loadMoreAjax } = useTagsValues()
+    const { load, loadMore } = useTagsActions()
 
-export default function Tags(props)
-{
-    const subdomain = subdomainLogic.values.subdomain;
-    const tagsLogicBuilt = tagsLogic({subdomain})
-    const { tag, loadAjax, createAjax, tagListHasMore, loadTagsListMoreAjax } = useValues(tagsLogicBuilt)
-    const { loadTagsListMore, load} = useActions(tagsLogicBuilt)
+    useEffect(load, []);
 
-    function handleScroll(e) {
-        var el = e.target;
-        if (
-            loadTagsListMoreAjax.status !== 'loading' &&  
-            tagListHasMore &&
-            el.scrollTop + el.clientHeight >= el.scrollHeight
-        ) 
-        {
-            loadTagsListMore({ offset: tag.length })
-        }
-    }
+    const [isCreating, setIsCreating] = useState(false);
 
-    return <div className="settingsTag">
-        <div className="tag-title-bar">
-            <div className="tag-title">
-                Tags
-            </div>
-            <div>
-                <CreateTag/>
-                {
-                    createAjax.status === 'error' ?
-                    <Toast 
-                        x={console.log(createAjax.error)}
-                        text={createAjax.error}
-                        type="error"
-                    /> : null
-                }
-            </div>
+    return <div className="settings-tags">
+
+        <div className="title">
+            Tags <button
+            className="button small inactive"
+            onClick={() => setIsCreating(true)}
+        >Create <Plus/></button>
         </div>
 
         <div>
@@ -60,46 +31,39 @@ export default function Tags(props)
                 loadAjax.status === 'loading' ?
                     <Loader padding={40}/> 
                 :
-                    <div>
-                        {
-                            tag.length ?
-                                <div className="global-table-view">
-                                    <div className="global-table-header-six">      
-                                        <div className="table-head-item">Name</div> 
-                                        <div className="table-head-item">Slug</div>
-                                        <div className="table-head-item">Description</div>
-                                        <div className="table-head-item">Posts</div> 
-                                        <div className="table-head-item">Code</div>
-                                        <div></div>
-                                    </div>
+                (
+                    tagsList.length ?
 
-                                    <div>
-                                        {
-                                            tag.map(tag => (
-                                                <div className="global-table-body">
-                                                    <TagsTable key = {tag} tag={tag} subdomain ={subdomain}/>
-                                                </div>
-                                            ))
-                                        }
-                                        {
-                                            tagListHasMore == true ?
-                                                <div>
-                                                    <button type='button' className ="loadMore" onClick={handleScroll}>Load More</button>
-                                                </div>
-                                            : null
-                                        }
-                                    </div>
-                                
-                                </div>
-                            :
-                                <NoResults 
-                                    text="There are no tags"
-                                    padding={40}
-                                    imageWidth={250}
-                                />
-                        }
-                    </div>
+                        <Table>
+                            <TableHead>
+                                <TableHeadItem>Name</TableHeadItem>
+                                <TableHeadItem>Description</TableHeadItem>
+                                <TableHeadItem>Posts</TableHeadItem>
+                                <div />
+                            </TableHead>
+                            <Fragment>
+                                {
+                                    tagsList.map(tagId => <Tag tag={tags[tagId]} />)
+                                }
+                            </Fragment>
+                            <TableLoadMore
+                                hasMore={tagsListHasMore}
+                                isLoading={loadMoreAjax.status === 'loading'}
+                                onClick={loadMore}
+                            />
+                        </Table>
+                    :
+                    <NoResults
+                        text="No tags found"
+                    />
+                )
             }
         </div>
+
+        {
+            isCreating &&
+            <CreateTagPopup onClose={() => setIsCreating(false)} />
+        }
+
     </div> 
 }

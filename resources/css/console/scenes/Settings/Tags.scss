@@ -1,0 +1,17 @@
+.settings-tags {
+
+    .global-table-view {
+        .table-head, .table-row {
+            grid-template-columns: 2fr 3fr 1fr 60px;
+        }
+    }
+
+    .slug-row {
+        margin-top: 3px;
+    }
+
+    .show-code {
+        padding: 10px 0;
+    }
+
+}

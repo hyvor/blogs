@@ -193,8 +193,8 @@ export type Tag = {
     slug: string;
 
     posts_count: number;
-    code_head: number;
-    code_foot: number;
+    code_head: string | null;
+    code_foot: string | null;
 
     variants: TagVariant[]
 
