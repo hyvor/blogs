@@ -8,6 +8,7 @@
 vendor
 .env
 .env.backup
+.env.prod
 .phpunit.result.cache
 .php-cs-fixer.cache
 docker-compose.override.yml

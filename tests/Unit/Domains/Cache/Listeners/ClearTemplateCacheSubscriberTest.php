@@ -7,6 +7,16 @@ use App\Domains\Post\Events\PostDeletedEvent;
 use App\Domains\Post\Events\PostUpdatedEvent;
 use App\Domains\Post\Events\PostVariantDeletedEvent;
 use App\Domains\Post\Events\PostVariantUpdatedEvent;
+use App\Domains\Tag\Events\TagCreatedEvent;
+use App\Domains\Tag\Events\TagDeletedEvent;
+use App\Domains\Tag\Events\TagUpdatedEvent;
+use App\Domains\Tag\Events\TagVariantDeletedEvent;
+use App\Domains\Tag\Events\TagVariantUpdatedEvent;
+use App\Domains\User\Events\UserCreatedEvent;
+use App\Domains\User\Events\UserDeletedEvent;
+use App\Domains\User\Events\UserUpdatedEvent;
+use App\Domains\User\Events\UserVariantDeletedEvent;
+use App\Domains\User\Events\UserVariantUpdatedEvent;
 use App\Models\Post;
 use App\Models\PostVariant;
 use Illuminate\Support\Facades\Event;
@@ -17,20 +27,30 @@ it('is attached', function () {
     Event::fake();
 
     // posts
-    Event::assertListening(
-        PostVariantUpdatedEvent::class,
-        [ClearTemplateCacheSubscriber::class , 'onPostVariantUpdate']
-    );
+    Event::assertListening(PostUpdatedEvent::class, [ClearTemplateCacheSubscriber::class , 'onPostUpdate']);
+    Event::assertListening(PostDeletedEvent::class, [ClearTemplateCacheSubscriber::class , 'onPostDelete']);
 
     // post variants
-    Event::assertListening(
-        PostVariantUpdatedEvent::class,
-        [ClearTemplateCacheSubscriber::class , 'onPostVariantUpdate']
-    );
-    Event::assertListening(
-        PostVariantDeletedEvent::class,
-        [ClearTemplateCacheSubscriber::class, 'onPostVariantDelete']
-    );
+    Event::assertListening(PostVariantUpdatedEvent::class, [ClearTemplateCacheSubscriber::class , 'onPostVariantUpdate']);
+    Event::assertListening(PostVariantDeletedEvent::class, [ClearTemplateCacheSubscriber::class, 'onPostVariantDelete']);
+
+    // user
+    $userEventListener = [ClearTemplateCacheSubscriber::class , 'onUserEvent'];
+    $userVariantEventListener = [ClearTemplateCacheSubscriber::class , 'onUserVariantEvent'];
+    Event::assertListening(UserCreatedEvent::class, $userEventListener);
+    Event::assertListening(UserUpdatedEvent::class, $userEventListener);
+    Event::assertListening(UserDeletedEvent::class, $userEventListener);
+    Event::assertListening(UserVariantUpdatedEvent::class, $userVariantEventListener);
+    Event::assertListening(UserVariantDeletedEvent::class, $userVariantEventListener);
+
+    // tag
+    $tagEventListener = [ClearTemplateCacheSubscriber::class , 'onTagEvent'];
+    $tagVariantEventListener = [ClearTemplateCacheSubscriber::class , 'onTagVariantEvent'];
+    Event::assertListening(TagCreatedEvent::class, $tagEventListener);
+    Event::assertListening(TagUpdatedEvent::class, $tagEventListener);
+    Event::assertListening(TagDeletedEvent::class, $tagEventListener);
+    Event::assertListening(TagVariantUpdatedEvent::class, $tagVariantEventListener);
+    Event::assertListening(TagVariantDeletedEvent::class, $tagVariantEventListener);
 
 });
 

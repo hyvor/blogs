@@ -106,12 +106,4 @@ class CacheRepository
         Cache::tags($tag)->flush();
     }
 
-    /*public static function clearTemplateCache(Blog $blog)
-    {
-        dd("DWA");
-        $tag = self::getCacheKeyTag($blog);
-        $key = self::getCacheKey($blog, self::TEMPLATE_CACHE_CLEAR_KEY);
-        Cache::tags($tag)->put($key, now()->timestamp);
-    }*/
-
 }

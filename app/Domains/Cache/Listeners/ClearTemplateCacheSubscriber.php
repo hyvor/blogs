@@ -10,6 +10,11 @@ use App\Domains\Post\Events\PostUpdatedEvent;
 use App\Domains\Post\Events\PostVariantDeletedEvent;
 use App\Domains\Post\Events\PostVariantUpdatedEvent;
 use App\Domains\Post\PostRepository;
+use App\Domains\Tag\Events\TagCreatedEvent;
+use App\Domains\Tag\Events\TagDeletedEvent;
+use App\Domains\Tag\Events\TagUpdatedEvent;
+use App\Domains\Tag\Events\TagVariantDeletedEvent;
+use App\Domains\Tag\Events\TagVariantUpdatedEvent;
 use App\Domains\User\Events\UserCreatedEvent;
 use App\Domains\User\Events\UserDeletedEvent;
 use App\Domains\User\Events\UserUpdatedEvent;
@@ -40,6 +45,12 @@ class ClearTemplateCacheSubscriber
         $events->listen(UserDeletedEvent::class, [static::class, 'onUserEvent']);
         $events->listen(UserVariantUpdatedEvent::class, [static::class, 'onUserVariantEvent']);
         $events->listen(UserVariantDeletedEvent::class, [static::class, 'onUserVariantEvent']);
+
+        $events->listen(TagCreatedEvent::class, [static::class , 'onTagEvent']);
+        $events->listen(TagUpdatedEvent::class, [static::class , 'onTagEvent']);
+        $events->listen(TagDeletedEvent::class, [static::class , 'onTagEvent']);
+        $events->listen(TagVariantUpdatedEvent::class, [static::class , 'onTagVariantEvent']);
+        $events->listen(TagVariantDeletedEvent::class, [static::class , 'onTagVariantEvent']);
 
     }
 
@@ -101,5 +112,14 @@ class ClearTemplateCacheSubscriber
         $this->clear($event->variant->user->blog);
     }
 
+    public function onTagEvent(TagCreatedEvent|TagUpdatedEvent|TagDeletedEvent $event)
+    {
+        $this->clear($event->tag->blog);
+    }
+
+    public function onTagVariantEvent(TagVariantUpdatedEvent|TagVariantDeletedEvent $event)
+    {
+        $this->clear($event->variant->tag->blog);
+    }
 
 }

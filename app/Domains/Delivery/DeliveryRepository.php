@@ -29,7 +29,7 @@ class DeliveryRepository
         }
 
         // first, check cache
-        if ($blog->type === BlogTypeEnum::DEFAULT) {
+        if ($blog->type === BlogTypeEnum::DEFAULT && false) { // TODO: Enable cache checking
             $responseObject = CacheRepository::get($blog, $path);
             if ($responseObject instanceof DeliveryAPIResponseObject) {
                 return $responseObject;
