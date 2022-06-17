@@ -22,6 +22,7 @@ jobs:
             php-version: "8.1"
             ini-file: development
             tools: composer:v2
+            extensions: mbstring, ctype, fileinfo, openssl, PDO, bcmath, json, tokenizer, xml, intl, mysql
 
       -   name: Install dependencies
           env:
