@@ -34,6 +34,8 @@ jobs:
             REPMAN_TOKEN: ${{ secrets.REPMAN_TOKEN }}
           run: |
             npm i -g shiki
+            npm link shiki
+            
             composer config --global --auth http-basic.hyvor.repo.repman.io token ${REPMAN_TOKEN}
             composer update --ansi --no-progress --ignore-platform-req=ext-mysql
 
