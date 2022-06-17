@@ -10,9 +10,9 @@ use App\Data\Enums\SubscriptionPlanEnum;
 return [
 
     // domains
-    'domain_app' => env('DOMAIN_APP'),
-    'domain_delivery' => env('DOMAIN_DELIVERY'),
-    'domain_hyvor' => env('DOMAIN_HYVOR'),
+    'domain_app' => env('DOMAIN_APP', 'blogs.hyvor.com'),
+    'domain_delivery' => env('DOMAIN_DELIVERY', 'hyvorblogs.io'),
+    'domain_hyvor' => env('DOMAIN_HYVOR', 'hyvor.com'),
 
     'logo' => '/img/logo.png',
 

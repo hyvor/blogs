@@ -20,6 +20,7 @@
     <php>
         <server name="APP_ENV" value="testing"/>
         <server name="APP_DEBUG" value="false" />
+        <server name="APP_URL" value="https://blogs.hyvor.com" />
         <server name="BCRYPT_ROUNDS" value="4"/>
         <server name="CACHE_DRIVER" value="array"/>
         <server name="DB_CONNECTION" value="sqlite"/>
