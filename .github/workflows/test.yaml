@@ -24,7 +24,11 @@ jobs:
             tools: composer:v2
 
       -   name: Install dependencies
-          run: composer update --ansi --no-progress
+          env:
+            REPMAN_TOKEN: ${{ secrets.REPMAN_TOKEN }}
+          run: |
+            composer config --global --auth http-basic.hyvor.repo.repman.io token ${REPMAN_TOKEN}
+            composer update --ansi --no-progress
 
       -   name: Run tests
-          run: vendor/bin/pest
+          run: composer test

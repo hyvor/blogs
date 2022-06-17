@@ -21,7 +21,10 @@ jobs:
           php-version: 8.1
           extensions: mbstring, ctype, fileinfo, openssl, PDO, bcmath, json, tokenizer, xml, intl
       - name: Composer Install
+        env:
+          REPMAN_TOKEN: ${{ secrets.REPMAN_TOKEN }}
         run: |
+          composer config --global --auth http-basic.hyvor.repo.repman.io token ${REPMAN_TOKEN}
           composer install --no-dev --no-interaction --prefer-dist --optimize-autoloader
 
       - name: Create deployment artifact
