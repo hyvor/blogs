@@ -11,7 +11,7 @@ it('sets _foot in index', function() {
     $variant = $blog->variants[0];
 
     $codeFoot = 'This is code head {{ _blog.name }}';
-    $codeFootRendered = "This is code head $variant->name";
+    $codeFootRendered = htmlspecialchars("This is code head $variant->name");
 
     $blog->setMeta([
         'code_foot' => $codeFoot,

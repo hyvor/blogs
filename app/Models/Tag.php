@@ -17,6 +17,11 @@ class Tag extends Model
         'variants',
     ];
 
+    public function blog()
+    {
+        return $this->belongsTo(Blog::class);
+    }
+
     public function variants()
     {
         return $this->hasMany(TagVariant::class);
