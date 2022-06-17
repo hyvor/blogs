@@ -19,8 +19,6 @@ jobs:
           uses: actions/setup-node@v3
           with:
             node-version: 16
-          run: |
-            npm install -g shiki
 
       -   name: Setup PHP
           uses: shivammathur/setup-php@v2
@@ -35,6 +33,7 @@ jobs:
           env:
             REPMAN_TOKEN: ${{ secrets.REPMAN_TOKEN }}
           run: |
+            npm i -g shiki
             composer config --global --auth http-basic.hyvor.repo.repman.io token ${REPMAN_TOKEN}
             composer update --ansi --no-progress --ignore-platform-req=ext-mysql
 
