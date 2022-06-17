@@ -33,7 +33,6 @@
     },
     "dependencies": {
         "@joeattardi/emoji-button": "^4.6.4",
-        "@react-forked/dnd": "^14.0.2",
         "@reduxjs/toolkit": "^1.8.1",
         "codemirror": "^5.65.1",
         "dayjs": "^1.11.0",
