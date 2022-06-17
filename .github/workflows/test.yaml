@@ -1,0 +1,30 @@
+name: Test
+
+on:
+  push:
+    branches: [ master ]
+  pull_request:
+  workflow_dispatch:
+
+jobs:
+  tests:
+    name: "Tests"
+    runs-on: ubuntu-latest
+
+    steps:
+      -   name: Checkout
+          uses: actions/checkout@v2
+
+      -   name: Setup PHP
+          uses: shivammathur/setup-php@v2
+          with:
+            coverage: "none"
+            php-version: "8.1"
+            ini-file: development
+            tools: composer:v2
+
+      -   name: Install dependencies
+          run: composer update --ansi --no-progress
+
+      -   name: Run tests
+          run: vendor/bin/pest

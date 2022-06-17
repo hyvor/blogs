@@ -1,0 +1,110 @@
+name: Deploy to Production Servers
+
+on:
+  workflow_dispatch:
+
+jobs:
+  build:
+    name: "Building ${{ github.sha }}"
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v2
+
+      - name: Compile CSS and JS
+        run: |
+          npm install
+          npm run build
+
+      - name: Configure PHP 8.1
+        uses: shivammathur/setup-php@master
+        with:
+          php-version: 8.1
+          extensions: mbstring, ctype, fileinfo, openssl, PDO, bcmath, json, tokenizer, xml, intl
+      - name: Composer Install
+        run: |
+          composer install --no-dev --no-interaction --prefer-dist --optimize-autoloader
+
+      - name: Create deployment artifact
+        env:
+          GITHUB_SHA: ${{ github.sha }}
+        run: tar -czf "${GITHUB_SHA}".tar.gz --exclude=*.git --exclude=node_modules --exclude=tests --exclude=storage *
+
+      - name: Store artifact for distribution
+        uses: actions/upload-artifact@v2
+        with:
+          name: app-build
+          path: ${{ github.sha }}.tar.gz
+
+  prepare-release:
+    runs-on: ubuntu-latest
+    needs: build
+    name: "${{ matrix.server.name }}: Preparing Release"
+    strategy:
+      matrix:
+        server:
+          - name: hyvor-blogs-server
+            ip: 195.201.92.6
+    steps:
+      - uses: actions/download-artifact@v2
+        with:
+          name: app-build
+      - name: Uploading artifact
+        uses: appleboy/scp-action@master
+        with:
+          host: ${{ matrix.server.ip }}
+          username: root
+          key: ${{ secrets.PRODUCTION_KEY }}
+          source: ${{ github.sha }}.tar.gz
+          target: /var/www/artifacts
+      - name: Extract Archive and create directories
+        uses: appleboy/ssh-action@master
+        env:
+          GITHUB_SHA: ${{ github.sha }}
+        with:
+          host: ${{ matrix.server.ip }}
+          username: root
+          key: ${{ secrets.DEPLOY_SSH_KEY }}
+          envs: GITHUB_SHA
+          script: |
+            mkdir -p "/var/www/releases/${GITHUB_SHA}"
+            tar xzf /var/www/artifacts/${GITHUB_SHA}.tar.gz -C "/var/www/releases/${GITHUB_SHA}"
+
+  activate-release:
+    runs-on: ubuntu-latest
+    needs: [build, prepare-release]
+    name: "${{ matrix.server.name }}: Activate Release"
+    strategy:
+      matrix:
+        server:
+          - name: hyvor-blogs-server
+            ip: 195.201.92.6
+    steps:
+      - name: Extract Archive and create directories
+        uses: appleboy/ssh-action@master
+        env:
+          LARAVEL_ENV: ${{ secrets.LARAVEL_ENV }}
+          RELEASE_PATH: /var/www/releases/${{ github.sha }}
+        with:
+          host: ${{ matrix.server.ip }}
+          username: root
+          key: ${{ secrets.DEPLOY_SSH_KEY }}
+          envs: LARAVEL_ENV, RELEASE_PATH
+          script: |
+            rsync -a --delete $RELEASE_PATH/ /var/www/current/
+
+            mkdir -p /var/www/current/storage/{app,public,framework,logs}
+            mkdir -p /var/www/current/storage/framework/{cache,sessions,testing,views}
+            mkdir -p /var/www/current/storage/framework/cache/data
+
+            printf "%s" "$LARAVEL_ENV" > "/var/www/current/.env"
+            printf "%s" "$LARAVEL_ENV" > "/var/www/.env"
+            systemctl reload php8.1-fpm
+
+            php /var/www/current/artisan config:cache
+            php /var/www/current/artisan route:cache
+            php /var/www/current/artisan view:cache
+
+            chmod -R 777 /var/www/current/storage /var/www/current/bootstrap/cache
+
+            cd /var/www/releases && ls -t -1 | tail -n +6 | xargs rm -rf
+            cd /var/www/artifacts && ls -t -1 | tail -n +6 | xargs rm -rf
