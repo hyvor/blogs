@@ -20,7 +20,7 @@ jobs:
         uses: shivammathur/setup-php@master
         with:
           php-version: 8.1
-          extensions: mbstring, ctype, fileinfo, openssl, PDO, bcmath, json, tokenizer, xml, intl, mysql
+          extensions: mbstring, ctype, fileinfo, openssl, PDO, bcmath, json, tokenizer, xml, intl
       - name: Composer Install
         env:
           REPMAN_TOKEN: ${{ secrets.REPMAN_TOKEN }}

@@ -20,7 +20,6 @@
         "ext-xml": "*",
 
         "ext-intl": "*",
-        "ext-mysql": "*",
 
         "erusev/parsedown-extra": "^0.8.1",
         "fruitcake/laravel-cors": "^2.0",
