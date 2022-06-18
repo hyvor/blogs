@@ -12,7 +12,7 @@ jobs:
 
       - name: Compile CSS and JS
         run: |
-          npm install
+          npm install --omit=dev --force
           npm run build
 
       - name: Configure PHP 8.1
