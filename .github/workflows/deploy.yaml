@@ -12,8 +12,9 @@ jobs:
 
       - name: Compile CSS and JS
         run: |
-          npm install --omit=dev --force
-          npm run build
+          npm install --force
+          npm run kea:build
+          npm run production
 
       - name: Configure PHP 8.1
         uses: shivammathur/setup-php@master
