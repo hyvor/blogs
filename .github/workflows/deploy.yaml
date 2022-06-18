@@ -57,7 +57,7 @@ jobs:
         with:
           host: ${{ matrix.server.ip }}
           username: root
-          key: ${{ secrets.PRODUCTION_KEY }}
+          key: ${{ secrets.DEPLOY_SSH_KEY }}
           source: ${{ github.sha }}.tar.gz
           target: /var/www/artifacts
       - name: Extract Archive and create directories
