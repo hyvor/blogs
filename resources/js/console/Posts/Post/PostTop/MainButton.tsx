@@ -13,7 +13,9 @@ export default  function MainButton({id} : {id: number}) {
 
     function handleUpdateNonDraft() {
         changeEditorState('isNonDraftUpdating', true);
-        forceSavePost({
+        return;
+        // TODO:
+        /*forceSavePost({
             update: {
                 variants: {
                     [editorState.languageId]: {
@@ -30,7 +32,7 @@ export default  function MainButton({id} : {id: number}) {
                     }
                 )
             }
-        });
+        });*/
     }
 
     if (currentVariant.status === 'published' || currentVariant.status === 'scheduled') {

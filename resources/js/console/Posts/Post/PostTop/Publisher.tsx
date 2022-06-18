@@ -42,7 +42,7 @@ export default function Publisher({id} : {id: number}) {
             variant.status = 'published';
         }
 
-        update.variants = [variant];
+        update.variants = [variant as PostVariant];
 
         setHasClicked(true)
         forceSavePost({update, onSave: (post) => {

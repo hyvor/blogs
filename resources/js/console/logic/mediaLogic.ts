@@ -23,7 +23,7 @@ const mediaLogic = kea<mediaLogicType>([
          * Inside media settings
          * ==================
          */
-        load: async ({offset, type} : {offset?: number, type?: string} = {}) => {
+        load: async ({offset, type} : {offset?: number, type?: string}) => {
             const media = await api.get<Media[]>(props.subdomain, '/media', {
                 offset,
                 limit: 50,

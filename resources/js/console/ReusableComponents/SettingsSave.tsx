@@ -3,12 +3,12 @@ import { useState } from 'react';
 import useUpdateEffect from '../../helpers/hooks/useUpdateEffect';
 import { PopupConfirm } from './Popup';
 import {useActions, useValues} from "kea";
-import subdomainLogic from "../logic/subdomainLogic";
 import blogLogic from "../logic/blogLogic";
 import Loader from "./Loader";
 import {CheckCircle} from "react-bootstrap-icons";
 import {Blog, BlogVariant} from "../types";
 import {toast} from "react-toastify";
+import getSubdomain from "../logic-helpers/subdomain";
 
 export default function SettingsSave(
     { keys, variantKeys = [] } :
@@ -18,13 +18,13 @@ export default function SettingsSave(
     const [isDiscarding, setIsDiscarding] = useState(false);
     const [isUpdated, setIsUpdated] = useState(false);
     
-    const { subdomain } = useValues(subdomainLogic);
+    const subdomain = getSubdomain()
 
     const blogLogicInst = blogLogic({subdomain})
     const { updateBlogAjax, getDiff, getVariantDiff } = useValues(blogLogicInst)
     const { updateBlog, discardChanges } =  useActions(blogLogicInst)
     
-    const [status, setStatus] = useState(null);
+    const [status, setStatus] = useState<null | "loading" | "success" | "error">(null);
 
     function handleDiscard() {
         setIsDiscarding(true);

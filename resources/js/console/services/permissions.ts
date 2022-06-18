@@ -1,13 +1,12 @@
-import {Post} from "../objects/post";
-import subdomainLogic from "../logic/subdomainLogic";
 import blogsLogic from "../logic/blogsLogic";
 import {UserBlog} from "../objects/userblog"
 import {appConfig} from "../helpers";
 import {UserRole} from "../enums";
+import {Post} from "../types";
+import getSubdomain from "../logic-helpers/subdomain";
 
 function getRole() : UserRole {
-    const subdomain = subdomainLogic.values.subdomain;
-    const blog : UserBlog = blogsLogic.values.findBlogBySubdomain(subdomain)
+    const blog : UserBlog = blogsLogic.values.findBlogBySubdomain(getSubdomain())
     return blog.user.role;
 }
 
@@ -31,6 +30,8 @@ export function canEditPost(post: Post) : boolean {
     ) {
         return true;
     }
+
+    return false;
 
 }
 

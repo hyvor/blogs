@@ -3,7 +3,7 @@
  * Call the Console API via Axois
  */
 
-import axios from "axios";
+import axios, {AxiosError} from "axios";
 import {toast} from "react-toastify";
 
 export function getUserEndpoint(endpoint: string) {
@@ -24,7 +24,7 @@ const api = {
         try {
             const res = await axios.get(getEndpoint(subdomain, endpoint), {params});
             return res.data as T;
-        } catch (e) {
+        } catch (e: any) {
             toast.error(e.response.data.error)
             throw new Error(e.response.data.error)
         }
@@ -34,7 +34,7 @@ const api = {
         try {
             const res = await axios.post(getEndpoint(subdomain, endpoint), data);
             return res.data as T;
-        } catch (e) {
+        } catch (e: any) {
             toast.error(e.response.data.error)
             throw new Error(e.response.data.error)
         }
@@ -44,7 +44,7 @@ const api = {
         try {
             const res = await axios.delete(getEndpoint(subdomain, endpoint), {data});
             return res.data as T;
-        } catch (e) {
+        } catch (e: any) {
             toast.error(e.response.data.error)
             throw new Error(e.response.data.error)
         }
@@ -54,7 +54,7 @@ const api = {
         try {
             const res = await axios.patch(getEndpoint(subdomain, endpoint), data);
             return res.data as T;
-        } catch (e) {
+        } catch (e: any) {
             toast.error(e.response.data.error)
             throw new Error(e.response.data.error)
         }
@@ -64,7 +64,7 @@ const api = {
         try {
             const res = await axios.put(getEndpoint(subdomain, endpoint), data);
             return res.data as T;
-        } catch (e) {
+        } catch (e: any) {
             toast.error(e.response.data.error)
             throw new Error(e.response.data.error)
         }

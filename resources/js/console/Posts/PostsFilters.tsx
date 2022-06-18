@@ -1,3 +1,6 @@
+// @ts-nocheck
+// TODO: FIXXXXXX
+
 import React, {ReactNode, useEffect, useState} from 'react';
 import Select from '../ReusableComponents/Select';
 import {components, GroupBase, SingleValueProps} from 'react-select';
@@ -13,6 +16,7 @@ import onOutsideClick from '../../helpers/onOutsideClick';
 import ReactDatePicker from 'react-datepicker';
 import {UserBlog} from "../objects/userblog";
 import {Filters} from "../types";
+import getSubdomain from "../logic-helpers/subdomain";
 
 interface PostsFiltersProps {
     filters: Filters,
@@ -26,8 +30,8 @@ interface SelectOption {
 
 export default function PostsFilters({ filters, changeFilter } : PostsFiltersProps) {
 
-    const { subdomain } = useValues(subdomainLogic)
-    const { counts } = useValues(postsLogic({subdomain})) as { counts: PostCounts }
+    const subdomain = getSubdomain()
+    const { counts } = useValues(postsLogic({subdomain}))
     const { findBlogBySubdomain } = useValues(blogsLogic)
 
     const blog: UserBlog = findBlogBySubdomain(subdomain)

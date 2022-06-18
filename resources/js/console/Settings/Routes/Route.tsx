@@ -4,13 +4,13 @@ import {PencilFill, Trash} from "react-bootstrap-icons";
 import {PopupConfirm} from "../../ReusableComponents/Popup";
 import {Route} from "../../types";
 import routesLogic from "../../logic/routesLogic";
-import subdomainLogic from "../../logic/subdomainLogic";
 import {TableRow, TableRowItem} from "../../ReusableComponents/Table";
 import CreateUpdateRoutePopup from "./CreateUpdateRoutePopup";
+import getSubdomain from "../../logic-helpers/subdomain";
 
 export default function Route({route}: {route: Route}){
 
-    const routeLogicInst = routesLogic({subdomain: subdomainLogic.values.subdomain})
+    const routeLogicInst = routesLogic({subdomain: getSubdomain()})
     const { remove } = useActions(routeLogicInst)
 
     const [isUpdating, setIsUpdating] = useState<boolean>(false);

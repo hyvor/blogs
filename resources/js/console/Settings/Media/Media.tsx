@@ -17,20 +17,19 @@ export default function Media({ isDummy, id, uploaded_at, url, original_name, ex
     function handleDoDelete() {
         toast("File deleted", {autoClose: 1500});
 
-        remove({id});
+        remove && remove({id});
         setDeletePopupOpened(false);
     }
 
     let imageUrl = url;
     let content = null;
 
-
-    if (['jpg', 'jpeg', 'svg', 'ico', 'png', 'bmp', 'gif'].indexOf(extension) === -1) {
-        imageUrl = null;
+    if (['jpg', 'jpeg', 'svg', 'ico', 'png', 'bmp', 'gif'].indexOf(extension || '') === -1) {
+        imageUrl = undefined;
         content = <div className="extension">{ extension }</div>;
     }
     if (isDummy) {
-        imageUrl = null;
+        imageUrl = undefined;
         content = <div className="loader-wrap">
             <Loader padding={40} />
         </div>
@@ -51,7 +50,7 @@ export default function Media({ isDummy, id, uploaded_at, url, original_name, ex
                 !isDummy ?
                     <div className="media-data">
                         <div className="media-title">{original_name}</div>
-                        <div className="media-at">{ new Date(uploaded_at * 1000).toDateString() }</div>
+                        <div className="media-at">{ uploaded_at && new Date(uploaded_at * 1000).toDateString() }</div>
                     </div> : null
             }
 

@@ -3,8 +3,8 @@ import { Popup, PopupBodyDefault, PopupFooterDoubleButton, PopupHeaderDefault } 
 import {Language} from "../../types";
 import Input from "../../ReusableComponents/Input";
 import languagesLogic from "../../logic/languagesLogic";
-import subdomainLogic from "../../logic/subdomainLogic";
 import {useActions, useValues} from "kea";
+import getSubdomain from "../../logic-helpers/subdomain";
 
 interface Props {
     language?: Language,
@@ -15,7 +15,7 @@ export default function CreateUpdateLanguagePopup({ language, onCancel }: Props)
 
     const isCreate = !language
 
-    const languagesLogicInst = languagesLogic({subdomain: subdomainLogic.values.subdomain})
+    const languagesLogicInst = languagesLogic({subdomain: getSubdomain()})
     const { create, update } = useActions(languagesLogicInst)
     const { createAjax, updateAjax } = useValues(languagesLogicInst)
 
@@ -31,7 +31,7 @@ export default function CreateUpdateLanguagePopup({ language, onCancel }: Props)
     }
 
     return <Popup
-        header={<PopupHeaderDefault title={create ? "Add Language" : "Update Language"} />}
+        header={<PopupHeaderDefault title={isCreate ? "Add Language" : "Update Language"} />}
         body={<PopupBodyDefault>
             <div className="lang-add-popup-body">
                 <Input
@@ -61,8 +61,8 @@ export default function CreateUpdateLanguagePopup({ language, onCancel }: Props)
             <PopupFooterDoubleButton
                 onCancel={onCancel}
                 onClick={handleClick}
-                name={ create ? "Add" : "Update" }
-                loadingName={ create ? "Adding" : "Updating"}
+                name={ isCreate ? "Add" : "Update" }
+                loadingName={ isCreate ? "Adding" : "Updating"}
                 isLoading={ createAjax.status === 'loading' || updateAjax.status === 'loading' }
             />
         }

@@ -1,7 +1,6 @@
 import { useActions, useValues } from 'kea';
 import React  from 'react';
 import mediaLogic from '../../logic/mediaLogic';
-import subdomainLogic from '../../logic/subdomainLogic';
 import Loader from '../../ReusableComponents/Loader';
 import {toast} from 'react-toastify'
 import { Upload } from 'react-bootstrap-icons';
@@ -10,13 +9,13 @@ import NoResults from '../../ReusableComponents/NoResults';
 import { useEffect } from 'react';
 import Media from "./Media";
 import type { Media as MediaType } from '../../types'
+import getSubdomain from "../../logic-helpers/subdomain";
 
 let uploadInput: any = null;
 
 export default function SettingsMedia() {
 
-    const {subdomain} = useValues(subdomainLogic);
-    const mediaLogicBuilt = mediaLogic({subdomain})
+    const mediaLogicBuilt = mediaLogic({subdomain: getSubdomain()})
     const { media, loadAjax, uploadAjax } = useValues(mediaLogicBuilt)
     const { remove, upload, load } = useActions(mediaLogicBuilt)
 
@@ -42,13 +41,13 @@ export default function SettingsMedia() {
 
     }
 
-    useEffect(() => load(), [])
+    useEffect(() => load({}), [])
 
     return <div className="setting-media">
 
         <div className="title">
             Media <button 
-                onClick={uploadAjax.status === 'loading' ? null: handleUpload}
+                onClick={uploadAjax.status === 'loading' ? undefined: handleUpload}
                 className="button small inactive">
                     {uploadAjax.status === 'loading' ? "Uploading..." : <span>Upload <Upload /></span> }
             </button>
@@ -71,7 +70,7 @@ export default function SettingsMedia() {
                         {
                             uploadAjax.status === 'error' ?
                             <Toast
-                                text={uploadAjax.error}
+                                text={uploadAjax.error || ''}
                                 type="error"
                             /> : null
                         }

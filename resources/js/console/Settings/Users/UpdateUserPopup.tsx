@@ -2,17 +2,14 @@ import {useValues} from "kea";
 import languagesLogic from "../../logic/languagesLogic";
 import React, {useState} from "react";
 import {User, UserVariant} from "../../types";
-import subdomainLogic from "../../logic/subdomainLogic";
 import {Popup, PopupBodyDefault, PopupFooterDoubleButton, PopupHeaderDefault} from "../../ReusableComponents/Popup";
-import UserLanguageSelector from "./UserLanguageSelector";
 import Input from "../../ReusableComponents/Input";
 import LanguageSelector from "../../ReusableComponents/LanguageSelector";
+import getSubdomain from "../../logic-helpers/subdomain";
 
 export default function UpdateUserPopup({user, onClose}: {user: User, onClose: Function}) {
 
-    const subdomain = subdomainLogic.values.subdomain;
-
-    const { languages, primaryLanguage } = useValues(languagesLogic({subdomain}))
+    const { languages, primaryLanguage } = useValues(languagesLogic({subdomain: getSubdomain()}))
     const [currentLanguageId, setCurrentLanguageId] = useState( primaryLanguage.id );
 
     const [newUser, setNewUser] = useState<User>(user)
@@ -31,6 +28,7 @@ export default function UpdateUserPopup({user, onClose}: {user: User, onClose: F
             <div>
                 <PopupHeaderDefault title="Update User" />
                 <LanguageSelector
+                    id={0}
                     languageId={currentLanguageId}
                     variantsLanguageIds={Object.keys(variants).map(id => parseInt(id))}
                     onChange={setCurrentLanguageId}

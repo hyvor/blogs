@@ -11,10 +11,11 @@ import Loader from '../../ReusableComponents/Loader';
 import Language from "./Language";
 import {Table, TableHead, TableHeadItem} from "../../ReusableComponents/Table";
 import CreateUpdateLanguagePopup from "./CreateUpdateLanguagePopup";
+import getSubdomain from "../../logic-helpers/subdomain";
 
 export default function Languages() {
 
-    const { subdomain } = useValues(subdomainLogic);
+    const subdomain = getSubdomain()
     const languageLogicInst = languagesLogic({subdomain});
     const { languages, loadAjax } = useValues(languageLogicInst);
     const { remove } = useActions(languageLogicInst);

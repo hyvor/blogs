@@ -13,11 +13,11 @@ import DualSetting from '../../ReusableComponents/DualSetting';
 import {Table, TableHead, TableHeadItem} from "../../ReusableComponents/Table";
 import Route from "./Route";
 import CreateUpdateRoutePopup from "./CreateUpdateRoutePopup";
+import getSubdomain from "../../logic-helpers/subdomain";
 
 export default function Routes() {
 
-    const subdomain = subdomainLogic.values.subdomain;
-    const routeLogicBuilt = routesLogic({subdomain})
+    const routeLogicBuilt = routesLogic({subdomain: getSubdomain()})
     const { routes, loadAjax, createAjax } = useValues(routeLogicBuilt)
 
     const [isCreating, setIsCreating] = useState(false);
