@@ -36,7 +36,7 @@
 
 <link rel="stylesheet" type="text/css" href="/css/landing.css">
 
-<script src="/js/flashload.js"></script>
+<script src="/js-static/flashload.js"></script>
 <script data-flashload-skip-replacing>
     FlashLoad.start()
 </script>

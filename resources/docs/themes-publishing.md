@@ -9,21 +9,22 @@ Are you ready to publish your newly built theme to our [themes list](/themes)? T
 * Has at least these templates
   * index.twig
   * post.twig
-  * page.twig
   * tag.twig
   * author.twig
 * Supports multi-languages
 * Supports both light and dark color modes
 * Respects the blog's color mode settings
+* Pagination
 * All [placeholders](themes-templates#placeholders) are added
   * `_head`
   * `_foot`
   * `_comments`
   * `_newsletter`
 * [Internationalized](themes-internationalization)
-* `<html lang="{{ lang.code }}"` is added
+* `<html lang="{{ _lang.code }}"` is added
 * All [blocks](writing#blocks) are styled properly.
 * Configurations are added for colors, fonts, etc.
+* Mobile responsive
 
 ## Config
 

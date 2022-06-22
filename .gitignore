@@ -20,7 +20,6 @@ package-lock.json
 composer.lock
 /.idea
 /.vscode
-Caddyfile
 *LogicType.ts
 
 /cypress/screenshots/

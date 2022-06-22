@@ -3,9 +3,9 @@ return [
 
     'Intro' => [
         [null, 'Getting Started'],
-        ['themes', 'Themes'],
-        ['hosting', 'Hosting'],
         ['writing', 'Writing'],
+        ['theme', 'Theme'],
+        ['hosting', 'Hosting'],
         ['how', 'How it works'],
     ],
     'Features' => [
@@ -16,20 +16,23 @@ return [
         ['media', 'Media'],
         ['custom-domain', 'Custom Domain'],
         ['custom-code', 'Custom Code'],
-        ['edge-caching', 'Edge Caching'],
-        ['syntax-highlighting', 'Syntax Highlighting']
+        /*['edge-caching', 'Edge Caching'],*/
+        ['seo', 'SEO'],
+        ['syntax-highlighting', 'Syntax Highlighting'],
+        ['redirects', 'Redirects'],
+        ['light-dark', 'Light/Dark Modes'],
+        ['social-links', 'Social Links']
     ],
     'Services' => [
         ['comments', 'Comments'],
         ['newsletter', 'Newsletter'],
         ['analytics', 'Analytics'],
-        ['forms', 'Forms']
+        ['memberships', 'Memberships'],
+        ['forms', 'Forms'],
     ],
     'Basic Settings' => [
         ['main', 'Main Settings'],
-        ['seo', 'SEO'],
         ['navigation', 'Navigation'],
-        ['redirects', 'Redirects'],
     ],
     'Developers' => [
         ['webhooks', 'Webhooks'],
@@ -47,20 +50,21 @@ return [
     ],
     'Advanced' => [
         ['routes', 'Routes'],
-        ['self-hosting', 'Self-hosting'],
-        ['subdirectory', 'Subdirectory hosting'],
-        ['website', 'Create a website'],
-        ['import', 'Importing data'],
-        ['export', 'Exporting data'],
+        ['import', 'Import'],
+        ['export', 'Export'],
     ],
-    'Self-hosting' => [
+    'Self-serving' => [
         ['self-hosting-delivery-api', 'Using Delivery API'],
-        ['self-hosting-builds', 'Using builds']
+        ['self-hosting-reverse-proxy', 'Using Reverse Proxy'],
+        /*['self-hosting-delivery-api', 'Using Delivery API'],
+        ['self-hosting-builds', 'Using builds']*/
     ],
     'Platform & Legal' => [
         ['terms', 'Terms'],
-        ['privacy', 'Privacy Policy'],
-        ['content-policy', 'Content Policy']
+        ['policy-privacy', 'Privacy Policy'],
+        ['policy-content', 'Content Policy'],
+        ['policy-security', 'Security Policy'],
+        ['compliance-gdpr', 'GDPR Compliance']
     ],
     'Misc' => [
         ['js', 'Javascript Usage'],

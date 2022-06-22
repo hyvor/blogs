@@ -147,7 +147,7 @@ class TwigExtensions extends AbstractExtension
 
     public function languageVariantUrlFilter($context, string $languageCode): string
     {
-        $route = $context['_route'];
+        $route = $context['_route']; // TODO: FIX
 
         if (
             $route === 'post' || $route === 'page' ||

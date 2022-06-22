@@ -5,7 +5,7 @@ body.index {
         padding-top: 75px;
         padding-bottom: 30px;
 
-        background: $color-accent-light;
+        background: $color-accent-very-light;
 
         min-height:550px;
 
@@ -36,6 +36,11 @@ body.index {
             }
             .hero-svg {
                 flex: 2;
+                text-align: center;
+                img {
+                    width: 550px;
+                    max-width: 100%;
+                }
             }
         }
     }
@@ -52,29 +57,32 @@ body.index {
             box-shadow: 0 0 30px rgb(0 0 0 / 10%);
             overflow: hidden;
             border-radius: 20px;
+            width: 750px;
+            margin: auto;
         }
         .details-table {
             
             display: flex;
-            margin:auto;    
-            .title {
-                flex: 1;
-                padding: 30px;
-                background: #fff;
-                h4 {
-                    margin:0;
-                }
-                .title-description {
-                    font-size:14px;
-                    color:#777;
-                }
-            }
+            margin:auto;
             .description {
-                flex: 3;
+                flex: 4;
                 margin: 0;
                 padding: 30px;
                 letter-spacing: 0.2px;
                 line-height: 23px;
+                border-right: 1px solid $color-accent-light;
+                h4 {
+                    margin-top: 0;
+                    font-size: 20px;
+                    margin-bottom: 15px;
+                    svg {
+                        vertical-align: middle;
+                        width: 22px;
+                        height: 22px;
+                        margin-right: 4px;
+                        margin-top: -4px;
+                    }
+                }
                 p {
                     margin-top:0;
                     &.note {
@@ -91,8 +99,47 @@ body.index {
                 }
             }
 
+            .links {
+                flex: 2;
+                padding: 30px;
+                color: $color-link;
+                font-weight: 600;
+                a {
+                    display: block;
+                    margin-bottom: 7px;
+                    &:after {
+                        content: "DOCS";
+                        font-size: 8px;
+                        display: inline-block;
+                        padding: 2px 8px;
+                        background: #eee;
+                        border-radius: 20px;
+                        vertical-align: middle;
+                        margin-left: 5px;
+                    }
+                    &.themes-preview:after {
+                        color: $color-purple-dark;
+                        background: $color-purple-light;
+                        content: "PREVIEW";
+                    }
+                    &.legal:after {
+                        color: $color-red-dark;
+                        background: $color-red-light;
+                        content: "LEGAL";
+                    }
+                    &.blog:after {
+                      color: $color-orange-dark;
+                      background: $color-orange-light;
+                      content: "BLOG";
+                    }
+                    &.none:after {
+                        content: none;
+                    }
+                }
+            }
+
             &:not(:first-child) {
-                border-top:1px dashed #896c6b;
+                border-top: 1px solid $color-accent-light;
             }
         }
     }

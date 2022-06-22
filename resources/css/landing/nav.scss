@@ -33,8 +33,13 @@ nav {
             color: #333232 !important;
             position: relative;
             padding:8px;
+            display: inline-block;
+            transition: .3s transition;
             &.active {
                 border-bottom: 3px solid #886c6b;
+            }
+            &:hover {
+                transform: scale(1.035);
             }
         }
     }
