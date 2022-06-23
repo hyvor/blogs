@@ -6,6 +6,7 @@ use App\Data\Enums\UserStatusEnum;
 use App\Domains\Language\LanguageRepository;
 use App\Domains\Media\Exceptions\UploadException;
 use App\Domains\Media\MediaRepository;
+use App\Domains\Post\PostTagAuthorRepository;
 use App\Domains\Route\PermalinkRepository;
 use App\Domains\User\Events\UserCreatedEvent;
 use App\Domains\User\Events\UserDeletedEvent;
@@ -220,7 +221,13 @@ class UserRepository
 
     public static function deleteUser(User $user): void
     {
+
+        // variants
         $user->variants->map(fn ($variant) => self::deleteUserVariant($variant));
+
+        // post-authors
+        PostTagAuthorRepository::deletePostAuthorsByUser($user);
+
         $user->delete();
 
         UserDeletedEvent::dispatch($user);

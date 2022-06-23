@@ -78,4 +78,10 @@ class PostTagAuthorRepository
             'user_id' => $userId,
         ]);
     }
+
+    public static function deletePostAuthorsByUser(User $user)
+    {
+        PostAuthor::where('user_id', $user->id)->delete();
+    }
+
 }

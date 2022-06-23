@@ -1,0 +1,25 @@
+hyvorblogs.io {
+    redir https://blogs.hyvor.com
+}
+
+*.hyvorblogs.io {
+
+    root * /var/www/current/public
+    encode zstd gzip
+
+    tls {
+        dns cloudflare {$CLOUDFLARE_API_TOKEN}
+    }
+
+    php_fastcgi unix//run/php/php8.1-fpm.sock
+
+}
+
+blogs.hyvor.com, blogs-beta.hyvor.com {
+
+    root * /var/www/current/public
+    encode zstd gzip
+    file_server
+    php_fastcgi unix//run/php/php8.1-fpm.sock
+
+}
