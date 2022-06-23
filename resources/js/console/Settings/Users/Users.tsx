@@ -5,7 +5,7 @@ import usersLogic from '../../logic/usersLogic';
 import Loader from '../../ReusableComponents/Loader';
 import Toast from '../../ReusableComponents/Toast';
 import NoResults from '../../ReusableComponents/NoResults';
-import CreateNewUser from './CreateNewUser';
+import CreateNewUserPopup from './CreateNewUserPopup';
 import User from "./User";
 import getSubdomain from "../../logic-helpers/subdomain";
 import {Table, TableHead, TableHeadItem, TableRow} from "../../ReusableComponents/Table";
@@ -43,13 +43,13 @@ export default function Users() {
                             <TableHead>
                                 <TableHeadItem>Name</TableHeadItem>
                                 <TableHeadItem>Status</TableHeadItem>
-                                <TableHeadItem>Posts</TableHeadItem>
                                 <TableHeadItem>Role</TableHeadItem>
+                                <TableHeadItem>Posts</TableHeadItem>
                                 <div />
                             </TableHead>
                             <Fragment>
                                 {
-                                    usersList.map(userId => <User user={users[userId]} />)
+                                    usersList.map(userId => <User key={userId} user={users[userId]} />)
                                 }
                             </Fragment>
                         </Table>
@@ -63,7 +63,7 @@ export default function Users() {
             }
         </div>
 
-        { isCreating && <CreateNewUser onClose={() => setIsCreating(false)} /> }
+        { isCreating && <CreateNewUserPopup onClose={() => setIsCreating(false)} /> }
 
     </div> 
 }

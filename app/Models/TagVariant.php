@@ -13,7 +13,7 @@ class TagVariant extends Model
 
     public function tag()
     {
-        $this->belongsTo(Tag::class);
+        return $this->belongsTo(Tag::class);
     }
 
     public function language()

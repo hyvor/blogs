@@ -321,6 +321,10 @@ textarea.input {
         color: $color-red-dark;
         background-color: $color-red-light;
     }
+    &.orange {
+        color: $color-orange-dark;
+        background-color: $color-orange-light;
+    }
 }
 
 .global-no-results {

@@ -13,7 +13,7 @@ class UserVariant extends Model
 
     public function user()
     {
-        $this->belongTo(User::class);
+        return $this->belongsTo(User::class);
     }
 
     public function language()

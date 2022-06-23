@@ -32,7 +32,7 @@ class ConsoleApiAccessMiddleware
             // I changed here from user_id to hyvor_user_id
             $owner = UserRepository::getUserByBlogIdAndHyvorUserId($this->blog->id, $this->blog->hyvor_user_id);
 
-            app()->instance(User::class, $owner);
+            app()->instance(ConsoleApiAccessingUser::class, new ConsoleApiAccessingUser($owner));
         } else {
             $hyvorUser = Login::check();
             if (! $hyvorUser) {
@@ -45,7 +45,7 @@ class ConsoleApiAccessMiddleware
                 throw new TrustedException('You do not have access to this blog', TrustedException::ERROR_UNAUTHORIZED);
             }
 
-            app()->instance(User::class, $user);
+            app()->instance(ConsoleApiAccessingUser::class, new ConsoleApiAccessingUser($user));
         }
 
         return $next($request);

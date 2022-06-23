@@ -8,7 +8,7 @@ import Callout from "../../ReusableComponents/Callout";
 import Select from "../../ReusableComponents/Select";
 import {UserRole} from "../../enums";
 
-export default function CreateNewUser({onClose}: {onClose: Function}) {
+export default function CreateNewUserPopup({onClose}: {onClose: Function}) {
 
     const usersLogicInst = usersLogic({subdomain: getSubdomain()})
     const { createAjax } = useValues(usersLogicInst)
@@ -41,7 +41,7 @@ export default function CreateNewUser({onClose}: {onClose: Function}) {
                 return setUsernameOrEmailError('Cannot be empty');
             }
 
-            create({usernameOrEmail, role})
+            create({usernameOrEmail, role, onCreate: onClose})
 
         } else {
 
@@ -49,7 +49,7 @@ export default function CreateNewUser({onClose}: {onClose: Function}) {
                 return setGuestNameError('Cannot be empty');
             }
 
-            createGuest({name: guestName})
+            createGuest({name: guestName, onCreate: onClose})
 
         }
 

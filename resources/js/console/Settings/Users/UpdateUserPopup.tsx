@@ -12,7 +12,7 @@ export default function UpdateUserPopup({user, onClose}: {user: User, onClose: F
     const { languages, primaryLanguage } = useValues(languagesLogic({subdomain: getSubdomain()}))
     const [currentLanguageId, setCurrentLanguageId] = useState( primaryLanguage.id );
 
-    const [newUser, setNewUser] = useState<User>(user)
+    const [newUser, setNewUser] = useState(user)
 
     const variants = newUser.variants || [];
     const variant: UserVariant = variants[currentLanguageId] || {} as UserVariant;

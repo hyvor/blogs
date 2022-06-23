@@ -9,10 +9,11 @@ import {UserRole, UserStatus} from "../../enums";
 import {PopupConfirm} from "../../ReusableComponents/Popup";
 import {useUsersActions} from "../../logic-helpers/users";
 import {toast} from "react-toastify";
+import UpdateUserPopup from "./UpdateUserPopup";
 
 export default function User({user} : {user: User} ) {
 
-    const { resendInvite } = useUsersActions()
+    const { resendInvite, remove } = useUsersActions()
 
     const { primaryLanguage } = useValues(languagesLogic({subdomain: getSubdomain()}))
 
@@ -28,7 +29,9 @@ export default function User({user} : {user: User} ) {
     }
 
     function handleDelete() {
-
+        remove({id: user.id})
+        toast("User removed")
+        setIsDeleting(false)
     }
 
     const variant = user.variants.find(v => v.language_id === primaryLanguage.id);
@@ -43,24 +46,30 @@ export default function User({user} : {user: User} ) {
         <TableRowItem>
             <span className="status-tag">
                 {
-                    user.status === UserStatus.ACTIVE && <span className="global-tag green">ACTIVE</span>
+                    !user.hyvor_user_id && <span className="global-tag orange">GUEST</span>
                 }
                 {
-                    user.status === UserStatus.INVITED &&
+                    user.hyvor_user_id && user.status === UserStatus.ACTIVE && <span className="global-tag green">ACTIVE</span>
+                }
+                {
+                    user.hyvor_user_id && user.status === UserStatus.INVITED &&
                     <span>
                         <span className="global-tag blue">PENDING</span><br />
                         <a className="link resend-email" onClick={() => setIsResendingEmail(true)}>Resend Email</a>
                     </span>
                 }
                 {
-                    user.status === UserStatus.BLOCKED && <span className="global-tag">BLOCKED</span>
+                    user.hyvor_user_id && user.status === UserStatus.BLOCKED && <span className="global-tag">BLOCKED</span>
                 }
             </span>
         </TableRowItem>
-        <TableRowItem>{ user.posts_count }</TableRowItem>
         <TableRowItem>
-            <div className="global-tag-role">{ user.role }</div>
+            {
+                user.hyvor_user_id &&
+                <div className="global-tag-role">{  user.role }</div>
+            }
         </TableRowItem>
+        <TableRowItem>{ user.posts_count }</TableRowItem>
         <TableRowItem>
             <button className="icon-button" onClick={() => setIsUpdating(true)}><PencilFill size={10} /></button>
             {
@@ -77,6 +86,10 @@ export default function User({user} : {user: User} ) {
                 onClick={handleResend}
                 onCancel={() => setIsResendingEmail(false)}
             />
+        }
+
+        {
+            isUpdating && <UpdateUserPopup user={user} onClose={() => setIsUpdating(false)} />
         }
 
         {
