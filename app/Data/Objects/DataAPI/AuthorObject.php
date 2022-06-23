@@ -7,7 +7,6 @@ use App\Domains\Route\PermalinkRepository;
 use App\Models\Blog;
 use App\Models\Language;
 use App\Models\User;
-use Illuminate\Support\Str;
 
 class AuthorObject
 {

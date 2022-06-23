@@ -17,7 +17,6 @@ class UserFiller implements FillerInterface
 
     public function fill()
     {
-
         if ($this->blog->type !== BlogTypeEnum::PREVIEW) {
 
             // add the OWNER
@@ -27,7 +26,6 @@ class UserFiller implements FillerInterface
                 UserRoleEnum::OWNER,
                 UserStatusEnum::ACTIVE
             );
-
         }
 
         if (

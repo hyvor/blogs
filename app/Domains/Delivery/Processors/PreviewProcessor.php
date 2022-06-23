@@ -12,22 +12,22 @@ use App\Domains\Post\PostRepository;
 
 class PreviewProcessor implements RouteProcessorInterface
 {
-
     private ?DeliveryAPIResponseObject $responseObject = null;
 
     public function __construct(PathMatcher $pathMatcher, MatchedRoute $matchedRoute)
     {
-
         $id = PostPreviewSecretEncryptor::decryptPreviewSecret($matchedRoute->param('id'));
 
-        if (!$id)
+        if (! $id) {
             return;
+        }
 
         $languageCode = $matchedRoute->param('lang');
         $language = LanguageRepository::getLanguageByCode($pathMatcher->blog, $languageCode);
 
-        if (!$language)
+        if (! $language) {
             return;
+        }
 
         $pathMatcher->setCustomLanguage($language);
 

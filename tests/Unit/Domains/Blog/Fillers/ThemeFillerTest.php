@@ -10,16 +10,12 @@ use App\Domains\Theme\ThemeFilesRepository;
 use App\Domains\Theme\ThemeRepository;
 use App\Models\ThemeFile;
 
-beforeEach(function() {
-
+beforeEach(function () {
     $zip = file_get_contents(test_unit_data_path('Themes/github-themes.zip'));
     GithubSyncService::sync($zip);
-
 });
 
-it('copies the default theme', function() {
-
-
+it('copies the default theme', function () {
     $blog = newBlog();
 
     $themeFiller = new ThemeFiller($blog);
@@ -35,11 +31,9 @@ it('copies the default theme', function() {
                 ThemeRepository::getThemeByName('default')
             )->id
         );
-
 });
 
-it('copies the blank theme for DEV blogs', function() {
-
+it('copies the blank theme for DEV blogs', function () {
     $blog = newBlog(BlogTypeEnum::DEV);
 
     $themeFiller = new ThemeFiller($blog);
@@ -55,16 +49,13 @@ it('copies the blank theme for DEV blogs', function() {
                 ThemeRepository::getThemeByName('blank')
             )->id
         );
-
 });
 
-it('does not do anything for preview blogs', function() {
-
+it('does not do anything for preview blogs', function () {
     $blog = newBlog(BlogTypeEnum::PREVIEW);
 
     $themeFiller = new ThemeFiller($blog);
     $themeFiller->fill();
 
     expect(ThemeFile::where('blog_id', $blog->id)->count())->toBe(0);
-
 });

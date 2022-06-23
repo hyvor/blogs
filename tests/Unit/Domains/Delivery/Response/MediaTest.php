@@ -1,4 +1,5 @@
 <?php
+
 namespace Tests\Unit\Domains\Delivery\Response;
 
 use App\Data\Enums\DeliveryAPIFileTypeEnum;

@@ -8,13 +8,11 @@ use PhpZip\ZipFile;
 
 class GenerateThemesZip extends Command
 {
-
     protected $signature = 'tests:generate-themes-zip';
     protected $description = 'Generates the themes zip with blank and default themes';
 
     public function handle()
     {
-
         $zipball = "https://github.com/hyvor/hyvor-blogs-themes/zipball/main";
         $zip = file_get_contents($zipball);
 
@@ -29,7 +27,6 @@ class GenerateThemesZip extends Command
         $zipFile = new ZipFile();
 
         foreach ($themeNames as $themeName) {
-
             $files = $themes[$themeName]->files;
 
             foreach ($files as $file) {
@@ -39,9 +36,6 @@ class GenerateThemesZip extends Command
             }
 
             $zipFile->saveAsFile(base_path('tests/Unit/__DATA__/Themes/github-themes.zip'));
-
         }
-
     }
-
 }

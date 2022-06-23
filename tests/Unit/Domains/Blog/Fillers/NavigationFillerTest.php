@@ -51,8 +51,7 @@ it('fills additional for dev blogs', function () {
     expect($nav->firstWhere('url', "/tag/$tagSlug"))->not()->toBeNull();
 });
 
-it('fills additional for preview blogs', function() {
-
+it('fills additional for preview blogs', function () {
     $blog = newBlog(BlogTypeEnum::PREVIEW);
 
     $languageFiller = new LanguageFiller($blog);
@@ -76,5 +75,4 @@ it('fills additional for preview blogs', function() {
     expect($nav->firstWhere('url', '/about')->type)->toBe(NavigationTypeEnum::FOOTER);
     expect($nav->firstWhere('url', "/author/$authorSlug"))->not()->toBeNull();
     expect($nav->firstWhere('url', "/tag/$tagSlug"))->not()->toBeNull();
-
 });

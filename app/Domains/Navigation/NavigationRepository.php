@@ -12,7 +12,6 @@ use Illuminate\Support\Collection;
 
 class NavigationRepository
 {
-
     public static function getNavigations(Blog $blog): Collection
     {
         return $blog->navigations()->get();
@@ -24,9 +23,7 @@ class NavigationRepository
         string $url,
         NavigationTypeEnum $type,
         int $sort = 0
-    ): Navigation
-    {
-
+    ): Navigation {
         $navigation = Navigation::create([
             'blog_id' => $blog->id,
             'url' => $url,
@@ -49,15 +46,12 @@ class NavigationRepository
         Navigation $navigation,
         string $url,
         NavigationTypeEnum $type,
-    ) : Navigation
-    {
-
+    ): Navigation {
         $navigation->url = $url;
         $navigation->type = $type;
         $navigation->save();
 
         return $navigation;
-
     }
 
     public static function deleteNavigation(Navigation $navigation)
@@ -67,7 +61,7 @@ class NavigationRepository
     }
 
 
-    public static function getNavigationVariant(Navigation $navigation, Language $language) : ?NavigationVariant
+    public static function getNavigationVariant(Navigation $navigation, Language $language): ?NavigationVariant
     {
         return NavigationVariant::where('navigation_id', $navigation->id)
             ->where('language_id', $language->id)
@@ -78,8 +72,7 @@ class NavigationRepository
         Navigation $navigation,
         Language $language,
         ?string $name
-    ) : NavigationVariant
-    {
+    ): NavigationVariant {
         return NavigationVariant::create([
             'navigation_id' => $navigation->id,
             'language_id' => $language->id,
@@ -87,10 +80,11 @@ class NavigationRepository
         ]);
     }
 
-    public static function updateNavigationVariant(NavigationVariant $variant, string $name) : NavigationVariant
+    public static function updateNavigationVariant(NavigationVariant $variant, string $name): NavigationVariant
     {
         $variant->name = $name;
         $variant->save();
+
         return $variant;
     }
 
@@ -118,5 +112,4 @@ class NavigationRepository
             $i++;
         }
     }
-
 }

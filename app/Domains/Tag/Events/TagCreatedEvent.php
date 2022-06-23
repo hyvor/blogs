@@ -8,7 +8,8 @@ use Illuminate\Queue\SerializesModels;
 
 class TagCreatedEvent
 {
-    use Dispatchable, SerializesModels;
+    use Dispatchable;
+    use SerializesModels;
 
     public Tag $tag;
 
@@ -16,5 +17,4 @@ class TagCreatedEvent
     {
         $this->tag = $tag;
     }
-
 }

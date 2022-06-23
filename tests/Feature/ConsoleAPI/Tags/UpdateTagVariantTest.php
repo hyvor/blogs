@@ -6,8 +6,7 @@ use App\Domains\Tag\Events\TagVariantUpdatedEvent;
 use Illuminate\Support\Facades\Event;
 use Illuminate\Testing\Fluent\AssertableJson;
 
-it('updates tag variant', function() {
-
+it('updates tag variant', function () {
     Event::fake();
 
     $tag = $this->blog->tags()->first();
@@ -33,5 +32,4 @@ it('updates tag variant', function() {
         );
 
     Event::assertDispatched(TagVariantUpdatedEvent::class);
-
 });

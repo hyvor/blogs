@@ -21,7 +21,8 @@ class ThemeImporter
     private array $skipTraces = [];
 
     public function __construct(private Blog $blog, private string $zipContent)
-    {}
+    {
+    }
 
     public function import()
     {

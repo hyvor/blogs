@@ -96,7 +96,6 @@ class ResourceAccessMiddleware
         // ex: api/console/v0/blog/{subdomain}/navigation/{id}/variant
         $uri = $request->route()->uri();
         if (str_ends_with($uri, '/variant')) {
-
             $languageId = $request->input('language_id');
 
             if (empty($languageId)) {
@@ -105,12 +104,11 @@ class ResourceAccessMiddleware
 
             $language = LanguageRepository::getLanguageById($this->blog, $languageId);
 
-            if (!$language) {
+            if (! $language) {
                 throw new TrustedException('Language not found');
             }
 
             app()->instance(Language::class, $language);
-
         }
 
         return $next($request);

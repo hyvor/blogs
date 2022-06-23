@@ -1,14 +1,14 @@
 <?php
+
 namespace Tests\Unit\Domains\Post\Listeners;
 
 use App\Domains\Post\Events\PostVariantUpdatedEvent;
-use App\Domains\Post\Listeners\PostVariantChangeClearCacheListener;
 use App\Domains\Post\Listeners\PostVariantUpdateContentHtmlListener;
 use App\Domains\Post\Listeners\PostVariantUpdateWordCountListener;
 use App\Models\PostVariant;
 use Illuminate\Support\Facades\Event;
 
-it('is attached', function() {
+it('is attached', function () {
     Event::fake();
 
     Event::assertListening(
@@ -21,8 +21,7 @@ it('is attached', function() {
     );
 });
 
-it('updates content HTML', function() {
-
+it('updates content HTML', function () {
     $variant = PostVariant::factory()->create(['content_html' => null]);
 
     $event = new PostVariantUpdatedEvent($variant);
@@ -30,11 +29,9 @@ it('updates content HTML', function() {
     $listener->handle($event);
 
     expect($variant->refresh()->content_html)->toBeString();
-
 });
 
-it('updates words count', function() {
-
+it('updates words count', function () {
     $variant = PostVariant::factory()->create([
         'content' => json_encode([
             'type' => 'doc',
@@ -44,12 +41,12 @@ it('updates words count', function() {
                     'content' => [
                         [
                             'type' => 'text',
-                            'text' => 'Hello World'
-                        ]
-                    ]
-                ]
-            ]
-        ])
+                            'text' => 'Hello World',
+                        ],
+                    ],
+                ],
+            ],
+        ]),
     ]);
 
     $event = new PostVariantUpdatedEvent($variant);
@@ -57,5 +54,4 @@ it('updates words count', function() {
     $listener->handle($event);
 
     expect($variant->refresh()->words)->toBe(2);
-
 });

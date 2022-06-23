@@ -20,7 +20,6 @@ class AssetsProcessor implements RouteProcessorInterface
 
     public function __construct(PathMatcher $pathMatcher, MatchedRoute $matchedRoute)
     {
-
         $fileName = $matchedRoute->param('file_name');
         $file = ThemeFilesRepository::getFile(
             $pathMatcher->blog,
@@ -44,7 +43,6 @@ class AssetsProcessor implements RouteProcessorInterface
             $content,
             $mimeType
         );
-
     }
 
     public function getResponseObject(): ?DeliveryAPIResponseObject

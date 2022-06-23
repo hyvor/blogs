@@ -6,8 +6,7 @@ use App\Domains\Tag\Events\TagVariantCreatedEvent;
 use Illuminate\Support\Facades\Event;
 use Illuminate\Testing\Fluent\AssertableJson;
 
-it('creates a user variant', function() {
-
+it('creates a user variant', function () {
     Event::fake();
 
     $language = $this->blog->languages[0];
@@ -36,5 +35,4 @@ it('creates a user variant', function() {
     $this->assertEquals(2, $tag->variants()->count());
 
     Event::assertDispatched(TagVariantCreatedEvent::class);
-
 });

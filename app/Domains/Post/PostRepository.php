@@ -292,7 +292,6 @@ class PostRepository
 
     public static function deletePost(Post $post)
     {
-
         $post->variants->map(fn ($variant) => self::deletePostVariant($post, $variant->language_id));
         $post->delete();
 
@@ -391,5 +390,4 @@ class PostRepository
             ->orderBy('order', 'asc')
             ->first();
     }
-
 }

@@ -94,40 +94,36 @@ class ThemeFilesRepository
         $blog->themeFiles()->delete();
     }
 
-    public static function updateThemeFromZip(Blog $blog, string $zip) : bool
+    public static function updateThemeFromZip(Blog $blog, string $zip): bool
     {
-
         self::deleteAllFiles($blog);
 
         $importer = new ThemeImporter($blog, $zip);
         $importer->import();
 
         return $importer->success();
-
     }
 
     public static function copyThemeToBlog(Blog $blog, string $themeName, string $version = null)
     {
-
         $theme = ThemeRepository::getThemeByName($themeName);
 
         $themeVersion = $version === null ?
             ThemeRepository::getThemeLatestVersion($theme) :
             ThemeRepository::getThemeVersion($theme, $version);
 
-        if (!$themeVersion) {
+        if (! $themeVersion) {
             throw new TrustedException('Theme version not found');
         }
 
         $success = self::updateThemeFromZip($blog, $themeVersion->zip);
 
-        if (!$success) {
+        if (! $success) {
             throw new TrustedException('Unable to copy the theme');
         }
 
         $blog->theme_version_id = $themeVersion->id;
         $blog->save();
-
     }
 
     private static function updateLocalDBFiles(int $blogId)

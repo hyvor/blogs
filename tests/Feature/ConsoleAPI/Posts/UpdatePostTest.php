@@ -7,7 +7,6 @@ use Illuminate\Support\Facades\Event;
 use Illuminate\Testing\Fluent\AssertableJson;
 
 it('updates a post', function () {
-
     Event::fake();
 
     $post = $this->blog->posts()->first();

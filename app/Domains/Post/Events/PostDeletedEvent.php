@@ -8,7 +8,8 @@ use Illuminate\Queue\SerializesModels;
 
 class PostDeletedEvent
 {
-    use Dispatchable, SerializesModels;
+    use Dispatchable;
+    use SerializesModels;
 
     public Post $post;
 

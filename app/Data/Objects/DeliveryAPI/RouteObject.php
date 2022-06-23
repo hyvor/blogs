@@ -8,7 +8,6 @@ use Exception;
 // a combination of Model\Route and MatchedRoute
 class RouteObject
 {
-
     public string $name;
     public string $template;
     public ?string $posts_filter;
@@ -17,11 +16,10 @@ class RouteObject
 
     public function __construct(MatchedRoute $matchedRoute, string $currentTemplateName)
     {
-
         $this->name = $matchedRoute->name;
         $this->params = $matchedRoute->params;
 
-        if (!$matchedRoute->route) {
+        if (! $matchedRoute->route) {
             /**
              * RouteObject is called from the TemplateRenderer
              * Therefore,
@@ -34,7 +32,5 @@ class RouteObject
         $this->template = str_replace('.twig', '', $currentTemplateName);
         $this->posts_filter = $route->posts_filter;
         $this->content_type = $route->content_type;
-
     }
-
 }

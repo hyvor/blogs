@@ -8,21 +8,20 @@ use App\Models\User;
 use Hyvor\HyvorConnecter\Userbase;
 use Illuminate\Support\Facades\Mail;
 
-it('resends an invite', function() {
-
+it('resends an invite', function () {
     Mail::fake();
 
     $user = User::factory()->create([
         'blog_id' => blog(),
-        'status' => UserStatusEnum::INVITED
+        'status' => UserStatusEnum::INVITED,
     ]);
 
     $email = 'hyvor@hyvor.com';
     Userbase::fake([
         [
             'id' => $user->hyvor_user_id,
-            'email' => $email
-        ]
+            'email' => $email,
+        ],
     ]);
 
     $this->callConsoleApi('POST', "/user/$user->id/resend-invite")
@@ -31,16 +30,14 @@ it('resends an invite', function() {
     Mail::assertSent(InviteUserMail::class, function ($mail) use ($email) {
         return $mail->hasTo($email);
     });
-
 });
 
-it('does not send invite to active users', function() {
-
+it('does not send invite to active users', function () {
     Mail::fake();
 
     $user = User::factory()->create([
         'blog_id' => blog(),
-        'status' => UserStatusEnum::ACTIVE
+        'status' => UserStatusEnum::ACTIVE,
     ]);
 
     $this->callConsoleApi('POST', "/user/$user->id/resend-invite")
@@ -48,5 +45,4 @@ it('does not send invite to active users', function() {
 
 
     Mail::assertNothingSent();
-
 });

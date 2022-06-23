@@ -8,7 +8,8 @@ use Illuminate\Queue\SerializesModels;
 
 class UserDeletedEvent
 {
-    use Dispatchable, SerializesModels;
+    use Dispatchable;
+    use SerializesModels;
 
     public User $user;
 

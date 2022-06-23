@@ -25,4 +25,3 @@ it('matches index page', function () {
     $this->assertEquals($content, $responseObject->content);
     expect($responseObject->file_type)->toBe(DeliveryAPIFileTypeEnum::TEMPLATE);
 });
-

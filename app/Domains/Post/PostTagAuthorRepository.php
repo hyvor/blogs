@@ -83,5 +83,4 @@ class PostTagAuthorRepository
     {
         PostAuthor::where('user_id', $user->id)->delete();
     }
-
 }

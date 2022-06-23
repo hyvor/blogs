@@ -17,5 +17,4 @@ class CacheClearAllEvent
     {
         $this->blog = $blog;
     }
-
 }

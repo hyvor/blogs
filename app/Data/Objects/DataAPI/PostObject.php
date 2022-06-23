@@ -3,12 +3,10 @@
 namespace App\Data\Objects\DataAPI;
 
 use App\Data\Enums\PostStatusEnum;
-use App\Domains\Post\Content\PostContentRepository;
 use App\Domains\Route\PermalinkRepository;
 use App\Models\Blog;
 use App\Models\Language;
 use App\Models\Post;
-use Illuminate\Support\Str;
 
 /**
  *

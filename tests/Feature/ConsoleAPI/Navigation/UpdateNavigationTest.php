@@ -5,8 +5,7 @@ namespace Tests\Feature\ConsoleAPI\Navigation;
 use App\Models\Navigation;
 use Illuminate\Testing\Fluent\AssertableJson;
 
-it('updates a navigation', function() {
-
+it('updates a navigation', function () {
     $navigation = Navigation::factory()->create(['blog_id' => blog()]);
 
     $url = 'https://example.com/or';
@@ -16,10 +15,10 @@ it('updates a navigation', function() {
         'type' => $type,
     ])
         ->assertOk()
-        ->assertJson(fn(AssertableJson $json) => $json
+        ->assertJson(
+            fn (AssertableJson $json) => $json
             ->where('url', $url)
             ->where('type', $type)
             ->etc()
         );
-
 });

@@ -25,7 +25,6 @@ use Illuminate\Events\Dispatcher;
 
 class ClearTemplateCacheSubscriber
 {
-
     private function clear(Blog $blog)
     {
         $cache = app(CacheRepository::class);
@@ -34,7 +33,6 @@ class ClearTemplateCacheSubscriber
 
     public function subscribe(Dispatcher $events)
     {
-
         $events->listen(PostUpdatedEvent::class, [static::class, 'onPostUpdate']);
         $events->listen(PostDeletedEvent::class, [static::class, 'onPostDelete']);
         $events->listen(PostVariantUpdatedEvent::class, [static::class, 'onPostVariantUpdate']);
@@ -51,23 +49,21 @@ class ClearTemplateCacheSubscriber
         $events->listen(TagDeletedEvent::class, [static::class , 'onTagEvent']);
         $events->listen(TagVariantUpdatedEvent::class, [static::class , 'onTagVariantEvent']);
         $events->listen(TagVariantDeletedEvent::class, [static::class , 'onTagVariantEvent']);
-
     }
 
     public function onPostUpdate(PostUpdatedEvent $event)
     {
-
         $post = $event->post;
         $blog = $post->blog;
 
         $primaryLanguage = LanguageRepository::getPrimaryLanguage($blog);
         $primaryVariant = PostRepository::getPostVariantByPostIdAndLanguageId($post->id, $primaryLanguage->id);
 
-        if ($primaryVariant->status !== PostStatusEnum::PUBLISHED)
+        if ($primaryVariant->status !== PostStatusEnum::PUBLISHED) {
             return;
+        }
 
         $this->clear($blog);
-
     }
 
     public function onPostDelete(PostDeletedEvent $event)
@@ -77,7 +73,6 @@ class ClearTemplateCacheSubscriber
 
     public function onPostVariantUpdate(PostVariantUpdatedEvent $event)
     {
-
         $variant = $event->variant;
         $blog = $variant->post->blog;
         $variantOld = $event->variantOld;
@@ -94,7 +89,6 @@ class ClearTemplateCacheSubscriber
         ) {
             $this->clear($blog);
         }
-
     }
 
     public function onPostVariantDelete(PostVariantDeletedEvent $event)
@@ -121,5 +115,4 @@ class ClearTemplateCacheSubscriber
     {
         $this->clear($event->variant->tag->blog);
     }
-
 }

@@ -26,5 +26,4 @@ it('matches tag page', function () {
     $this->assertEquals(DeliveryAPITypeEnum::FILE, $responseObject->type);
     $this->assertEquals($content, $responseObject->content);
     expect($responseObject->file_type)->toBe(DeliveryAPIFileTypeEnum::TEMPLATE);
-
 });

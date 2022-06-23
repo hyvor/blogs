@@ -8,8 +8,8 @@ use Illuminate\Queue\SerializesModels;
 
 class PostVariantCreatedEvent
 {
-
-    use Dispatchable, SerializesModels;
+    use Dispatchable;
+    use SerializesModels;
 
     public PostVariant $variant;
 
@@ -17,5 +17,4 @@ class PostVariantCreatedEvent
     {
         $this->variant = $variant;
     }
-
 }

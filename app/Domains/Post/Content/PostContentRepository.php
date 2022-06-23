@@ -97,7 +97,7 @@ class PostContentRepository
 
     public static function updateVariantHtml(PostVariant $variant)
     {
-        if (!$variant->content) {
+        if (! $variant->content) {
             return;
         }
 

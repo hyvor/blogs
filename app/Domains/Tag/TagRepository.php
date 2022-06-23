@@ -10,11 +10,9 @@ use App\Domains\Tag\Events\TagUpdatedEvent;
 use App\Domains\Tag\Events\TagVariantCreatedEvent;
 use App\Domains\Tag\Events\TagVariantDeletedEvent;
 use App\Domains\Tag\Events\TagVariantUpdatedEvent;
-use App\Domains\User\Events\UserDeletedEvent;
 use App\Helpers\CollectionWithTotal;
 use App\Models\Blog;
 use App\Models\Language;
-use App\Models\PostTag;
 use App\Models\Tag;
 use App\Models\TagVariant;
 use Hyvor\FilterQ\Facades\FilterQ;
@@ -56,8 +54,7 @@ class TagRepository
         array $orderBys = [
             ['tags.posts_count', 'DESC'],
         ],
-    ): CollectionWithTotal
-    {
+    ): CollectionWithTotal {
         $builder = FilterQ::expression($filter)
             ->builder(Tag::class)
             ->keys(function ($keys) {
@@ -120,7 +117,6 @@ class TagRepository
 
     public static function updateTag(Tag $tag, array $updates): Tag
     {
-
         foreach ($updates as $key => $value) {
             $tag->$key = $value;
         }
@@ -146,11 +142,11 @@ class TagRepository
         TagDeletedEvent::dispatch($tag);
     }
 
-    public static function createTagVariant(Tag $tag, Language $language) : TagVariant
+    public static function createTagVariant(Tag $tag, Language $language): TagVariant
     {
         $variant = TagVariant::create([
             'tag_id' => $tag->id,
-            'language_id' => $language->id
+            'language_id' => $language->id,
         ]);
 
         TagVariantCreatedEvent::dispatch($variant->refresh());
@@ -158,7 +154,7 @@ class TagRepository
         return $variant;
     }
 
-    public static function updateTagVariant(TagVariant $variant, array $updates) : TagVariant
+    public static function updateTagVariant(TagVariant $variant, array $updates): TagVariant
     {
         foreach ($updates as $key => $value) {
             $variant->$key = $value;
@@ -195,11 +191,10 @@ class TagRepository
         return self::getTagByBlogIdAndIdentifier($blogId, null, $slug);
     }
 
-    public static function getTagVariantByTagIdAndLanguageId(int $tagId, int $languageId) : ?TagVariant
+    public static function getTagVariantByTagIdAndLanguageId(int $tagId, int $languageId): ?TagVariant
     {
         return TagVariant::where('tag_id', $tagId)
             ->where('language_id', $languageId)
             ->first();
     }
-
 }

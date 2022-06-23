@@ -7,12 +7,11 @@ use PhpZip\ZipFile;
 
 class Helper
 {
-
     /**
      * name => version
      * @return array<string, string>
      */
-    public static function getLatestVersionsOfAllThemes() : array
+    public static function getLatestVersionsOfAllThemes(): array
     {
 
         // TODO: Use ThemeRepository function
@@ -34,12 +33,10 @@ class Helper
         });
 
         return $ret;
-
     }
 
     public static function generateZip(Theme $theme)
     {
-
         $zip = new ZipFile();
 
         foreach ($theme->files as $file) {
@@ -48,7 +45,5 @@ class Helper
         }
 
         return $zip->outputAsString();
-
     }
-
 }

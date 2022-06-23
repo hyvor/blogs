@@ -5,25 +5,23 @@ namespace Tests\Feature\ConsoleAPI\Users;
 use App\Domains\User\Events\UserDeletedEvent;
 use App\Domains\User\Events\UserVariantDeletedEvent;
 use App\Models\PostAuthor;
-use App\Models\PostTag;
 use App\Models\User;
 use App\Models\UserVariant;
 use Illuminate\Support\Facades\Event;
 
-it('deletes the user and its variants', function() {
-
+it('deletes the user and its variants', function () {
     Event::fake();
 
     $user = User::factory()
         ->has(UserVariant::factory()->count(3), 'variants')
         ->create([
             'blog_id' => blog(),
-            'role' => 'admin'
+            'role' => 'admin',
         ]);
 
     PostAuthor::create([
         'post_id' => 1,
-        'user_id' => $user->id
+        'user_id' => $user->id,
     ]);
 
     // has
@@ -41,5 +39,4 @@ it('deletes the user and its variants', function() {
 
     Event::assertDispatched(UserDeletedEvent::class);
     Event::assertDispatched(UserVariantDeletedEvent::class, 3);
-
 });

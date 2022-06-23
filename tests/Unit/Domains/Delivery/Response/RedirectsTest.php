@@ -26,13 +26,11 @@ it('matches redirect', function () {
     expect($responseObject->status)->toBe(301);
 });
 
-it('does not match if the redirect is not found', function() {
-
+it('does not match if the redirect is not found', function () {
     $from = '/redirect/path';
 
     $pathMatcher = new PathMatcher($this->blog, $from);
     $responseObject = $pathMatcher->getResponseObject();
 
     expect($responseObject->status)->toBe(404);
-
 });

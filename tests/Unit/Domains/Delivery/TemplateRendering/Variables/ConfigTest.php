@@ -1,4 +1,5 @@
 <?php
+
 namespace Tests\Unit\Domains\Delivery\Rendering;
 
 use App\Data\Enums\DeliveryAPITypeEnum;
@@ -6,8 +7,7 @@ use App\Data\Enums\ThemeFileFolderEnum;
 use App\Domains\Delivery\PathMatcher;
 use App\Domains\Theme\ThemeFilesRepository;
 
-it('sets _config variable', function() {
-
+it('sets _config variable', function () {
     $name = 'Hyvor';
     $nestedValue = 'Blogs';
 
@@ -43,11 +43,9 @@ it('sets _config variable', function() {
 
     expect($responseObject->type)->toBe(DeliveryAPITypeEnum::FILE);
     expect($responseObject->content)->toBe($rendered);
-
 });
 
-it('returns 500 and error message when config.yaml is wrong', function() {
-
+it('returns 500 and error message when config.yaml is wrong', function () {
     $configYaml = '@invalid:yaml:is:here';
 
     ThemeFilesRepository::createOrUpdateFile(
@@ -63,5 +61,4 @@ it('returns 500 and error message when config.yaml is wrong', function() {
     expect($responseObject->type)->toBe(DeliveryAPITypeEnum::FILE);
     expect($responseObject->status)->toBe(500);
     expect($responseObject->content)->toContain('Unable to parse config.yam');
-
 });

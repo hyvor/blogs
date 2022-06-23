@@ -1,4 +1,5 @@
 <?php
+
 namespace Tests\Unit\Domains\Delivery\TemplateRendering\Variables;
 
 use App\Data\Enums\ThemeFileFolderEnum;
@@ -6,8 +7,7 @@ use App\Domains\Delivery\PathMatcher;
 use App\Domains\Route\RouteRepository;
 use App\Domains\Theme\ThemeFilesRepository;
 
-it('sets _route variable', function() {
-
+it('sets _route variable', function () {
     $routeName = 'test';
     $template = 'test_template';
 
@@ -42,5 +42,4 @@ it('sets _route variable', function() {
     $responseObject = $pathMatcher->getResponseObject();
 
     expect($responseObject->content)->toBe($rendered);
-
 });

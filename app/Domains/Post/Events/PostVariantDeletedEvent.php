@@ -8,8 +8,8 @@ use Illuminate\Queue\SerializesModels;
 
 class PostVariantDeletedEvent
 {
-
-    use Dispatchable, SerializesModels;
+    use Dispatchable;
+    use SerializesModels;
 
     public PostVariant $variant;
 
@@ -17,5 +17,4 @@ class PostVariantDeletedEvent
     {
         $this->variant = $variant;
     }
-
 }

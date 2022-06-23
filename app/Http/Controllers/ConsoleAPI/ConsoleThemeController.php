@@ -1,10 +1,10 @@
 <?php
+
 namespace App\Http\Controllers\ConsoleAPI;
 
 use App\Data\Objects\ConsoleAPI\Theme\FileObject;
 use App\Data\Objects\ConsoleAPI\Theme\ThemeObject;
 use App\Domains\Theme\ThemeFilesRepository;
-use App\Domains\Theme\ThemeImporter;
 use App\Domains\Theme\ThemeRepository;
 use App\Exceptions\TrustedException;
 use App\Http\Controllers\Controller;
@@ -13,18 +13,17 @@ use Illuminate\Http\Request;
 
 class ConsoleThemeController extends Controller
 {
-
     public function getAllThemes()
     {
         $all = ThemeRepository::getAllThemes();
+
         return response()->json($all->mapInto(ThemeObject::class));
     }
 
     public function changeTheme(Request $request, Blog $blog)
     {
-
         $request->validate([
-            'name' => 'required'
+            'name' => 'required',
         ]);
 
         $name = $request->input('name');
@@ -45,7 +44,7 @@ class ConsoleThemeController extends Controller
 
         $success = ThemeFilesRepository::updateThemeFromZip($blog, $content);
 
-        if (!$success) {
+        if (! $success) {
             throw new TrustedException('Unable to import the theme');
         }
 

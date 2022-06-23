@@ -7,7 +7,6 @@ use Illuminate\Http\Request;
 
 class GithubThemePingController
 {
-
     public function ping(Request $request)
     {
         /**
@@ -15,5 +14,4 @@ class GithubThemePingController
          */
         dispatch(new GithubSyncThemesJob());
     }
-
 }

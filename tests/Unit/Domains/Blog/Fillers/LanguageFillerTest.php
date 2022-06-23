@@ -26,13 +26,11 @@ it('fills two more languages for dev blogs', function () {
     expect(count($blog->languages))->toBe(3);
 });
 
-it('fills two more languages for preview blogs', function() {
-
+it('fills two more languages for preview blogs', function () {
     $blog = newBlog(BlogTypeEnum::PREVIEW);
 
     $filler = new LanguageFiller($blog);
     $filler->fill();
 
     expect(count($blog->languages))->toBe(3);
-
 });

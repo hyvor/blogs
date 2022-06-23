@@ -2,12 +2,10 @@
 
 namespace App\Data\Objects\ConsoleAPI\Navigation;
 
-use App\Models\Navigation;
 use App\Models\NavigationVariant;
 
 class NavigationVariantObject
 {
-
     public int $navigation_id;
     public int $language_id;
     public ?string $name;

@@ -6,8 +6,7 @@ use App\Domains\User\Events\UserVariantUpdatedEvent;
 use Illuminate\Support\Facades\Event;
 use Illuminate\Testing\Fluent\AssertableJson;
 
-it('updates user variant', function() {
-
+it('updates user variant', function () {
     Event::fake();
 
     $user = $this->blog->users()->first();
@@ -23,7 +22,7 @@ it('updates user variant', function() {
             'language_id' => $language->id,
             'name' => $name,
             'bio' => $bio,
-            'location' => $location
+            'location' => $location,
         ])
         ->assertOk()
         ->assertJson(
@@ -36,5 +35,4 @@ it('updates user variant', function() {
         );
 
     Event::assertDispatched(UserVariantUpdatedEvent::class);
-
 });

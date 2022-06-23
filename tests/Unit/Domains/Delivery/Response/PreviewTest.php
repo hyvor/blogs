@@ -12,20 +12,16 @@ use App\Domains\Theme\ThemeFilesRepository;
 use App\Models\Post;
 use Tests\Unit\__Generators__\ProsemirrorContentGenerator;
 
-beforeEach(function() {
-
-
+beforeEach(function () {
     ThemeFilesRepository::createOrUpdateFile(
         $this->blog,
         ThemeFileFolderEnum::TEMPLATES,
         'post.twig',
         '{{ _post.id }}{{ _lang.code }}',
     );
-
 });
 
-it('matches preview page', function() {
-
+it('matches preview page', function () {
     $post = Post::where('blog_id', $this->blog->id)->first();
 
     $language = $this->blog->languages[0];
@@ -38,11 +34,9 @@ it('matches preview page', function() {
     expect($responseObject->status)->toBe(200);
     expect($responseObject->content)->toBe($post->id . $language->code);
     expect($responseObject->file_type)->toBe(DeliveryAPIFileTypeEnum::TEMPLATE);
-
 });
 
-it('language works', function() {
-
+it('language works', function () {
     $post = Post::where('blog_id', $this->blog->id)->first();
 
     $language = $this->blog->languages[1];
@@ -54,11 +48,9 @@ it('language works', function() {
     expect($responseObject->type)->toBe(DeliveryAPITypeEnum::FILE);
     expect($responseObject->status)->toBe(200);
     expect($responseObject->content)->toBe($post->id . $language->code);
-
 });
 
-it('displays unsaved content HTML if it is there', function() {
-
+it('displays unsaved content HTML if it is there', function () {
     ThemeFilesRepository::createOrUpdateFile(
         $this->blog,
         ThemeFileFolderEnum::TEMPLATES,
@@ -80,5 +72,4 @@ it('displays unsaved content HTML if it is there', function() {
     expect($responseObject->type)->toBe(DeliveryAPITypeEnum::FILE);
     expect($responseObject->status)->toBe(200);
     expect($responseObject->content)->toBe(PostContentRepository::getHtml($content, $this->blog));
-
 });

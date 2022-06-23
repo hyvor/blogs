@@ -7,7 +7,6 @@ use App\Models\Theme;
 
 class ThemeObject
 {
-
     public int $id;
     public ThemeCreationTypeEnum $type;
     public string $name;
@@ -18,5 +17,4 @@ class ThemeObject
         $this->type = $theme->type;
         $this->name = $theme->name;
     }
-
 }

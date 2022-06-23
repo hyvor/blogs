@@ -8,7 +8,8 @@ use Illuminate\Queue\SerializesModels;
 
 class PostUpdatedEvent
 {
-    use Dispatchable, SerializesModels;
+    use Dispatchable;
+    use SerializesModels;
 
     public Post $post;
     public Post $postOld;

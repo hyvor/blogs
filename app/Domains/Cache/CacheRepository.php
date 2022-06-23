@@ -12,16 +12,16 @@ use Illuminate\Support\Facades\Cache;
  */
 class CacheRepository
 {
-
     private Blog $blog;
 
     public function blog(Blog $blog)
     {
         $this->blog = $blog;
+
         return $this;
     }
 
-    private function getKey(string $path) : string
+    private function getKey(string $path): string
     {
         return "blog_cache_{$this->blog->id}_$path";
     }
@@ -33,7 +33,7 @@ class CacheRepository
     }
 
 
-    const TEMPLATE_CACHE_CLEAR_KEY =  'LAST_TEMPLATE_CACHE_CLEARED_AT';
+    public const TEMPLATE_CACHE_CLEAR_KEY = 'LAST_TEMPLATE_CACHE_CLEARED_AT';
 
     private static function getCacheKeyTag(Blog $blog): string
     {
@@ -52,8 +52,7 @@ class CacheRepository
         Blog $blog,
         string $path,
         DeliveryAPIResponseObject $responseObject
-    ): void
-    {
+    ): void {
         if (config('app.debug') === true) {
             return;
         }
@@ -80,17 +79,14 @@ class CacheRepository
             $object->type === DeliveryAPITypeEnum::FILE &&
             $object->is_template
         ) {
-
             $templateCacheClearedAt = (int) Cache::tags($tag)->get(self::TEMPLATE_CACHE_CLEAR_KEY);
 
             if ($templateCacheClearedAt && $object->at < $templateCacheClearedAt) {
                 $object = null;
             }
-
         }
 
         return $object;
-
     }
 
     public static function clear(Blog $blog, string $path)
@@ -105,5 +101,4 @@ class CacheRepository
         $tag = self::getCacheKeyTag($blog);
         Cache::tags($tag)->flush();
     }
-
 }

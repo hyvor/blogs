@@ -8,7 +8,6 @@ use App\Models\PostVariant;
 use Illuminate\Support\Facades\Event;
 
 it('deletes the post and its variants', function () {
-
     Event::fake();
 
     $post = Post::where('blog_id', config('test.blog_id'))->first();

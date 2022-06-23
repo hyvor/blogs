@@ -7,7 +7,6 @@ use Illuminate\Support\Facades\Event;
 use Illuminate\Testing\Fluent\AssertableJson;
 
 it('creates a post variant', function () {
-
     Event::fake();
 
     $language = $this->blog->languages[0];

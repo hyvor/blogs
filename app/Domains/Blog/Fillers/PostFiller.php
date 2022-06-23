@@ -62,7 +62,6 @@ class PostFiller implements FillerInterface
         $language = $this->blog->languages[0];
 
         foreach ($this->data as $row) {
-
             $isPage = $row['type'] === 'page';
             $post = PostRepository::createPost($this->blog, $isPage);
 
@@ -85,20 +84,17 @@ class PostFiller implements FillerInterface
                 PostTag::create(['post_id' => $post->id, 'tag_id' => $this->blog->tags[0]->id]);
                 PostAuthor::create(['post_id' => $post->id, 'user_id' => $this->blog->users[0]->id]);
             }
-
         }
 
         if (
             $this->blog->type === BlogTypeEnum::DEV ||
             $this->blog->type === BlogTypeEnum::PREVIEW
         ) {
-
             $posts = Post::factory()
                 ->count(50)
                 ->create(['blog_id' => $this->blog->id]);
 
             foreach ($posts as $post) {
-
                 $languages = $this->blog->languages;
 
                 foreach ($languages as $lang) {
@@ -106,7 +102,7 @@ class PostFiller implements FillerInterface
                     $variant = PostVariant::factory()->create([
                         'post_id' => $post->id,
                         'language_id' => $lang->id,
-                        'status' => 'published'
+                        'status' => 'published',
                     ]);
                     PostContentRepository::updateVariantHtml($variant);
                 }

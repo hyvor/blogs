@@ -6,7 +6,6 @@ use App\Domains\User\Events\UserVariantDeletedEvent;
 use Illuminate\Support\Facades\Event;
 
 it('deletes a user variant', function () {
-
     Event::fake();
 
     $user = $this->blog->users()->first();
@@ -22,7 +21,6 @@ it('deletes a user variant', function () {
     expect($user->variants()->count())->toBe($variants - 1);
 
     Event::assertDispatched(UserVariantDeletedEvent::class);
-
 });
 
 

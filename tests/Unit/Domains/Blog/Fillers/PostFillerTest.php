@@ -8,7 +8,6 @@ use App\Domains\Blog\Fillers\PostFiller;
 use App\Domains\Blog\Fillers\TagFiller;
 use App\Domains\Blog\Fillers\UserFiller;
 use App\Models\Post;
-use App\Models\PostVariant;
 
 it('fills with posts', function () {
     $blog = newBlog();
@@ -54,11 +53,9 @@ it('adds more posts for DEV blogs', function () {
     expect($variant->content_html)->not->toBeNull();
     expect($post->tags()->count())->toBeGreaterThanOrEqual(1)->toBeLessThanOrEqual(3);
     expect($post->authors()->count())->toBeGreaterThanOrEqual(1)->toBeLessThanOrEqual(3);
-
 });
 
-it('adds more posts for preview blogs', function() {
-
+it('adds more posts for preview blogs', function () {
     $blog = newBlog(BlogTypeEnum::PREVIEW);
 
     (new LanguageFiller($blog))->fill();
@@ -69,5 +66,4 @@ it('adds more posts for preview blogs', function() {
     $filler->fill();
 
     expect($blog->posts()->count())->toBeGreaterThan(50);
-
 });

@@ -8,7 +8,8 @@ use Illuminate\Queue\SerializesModels;
 
 class TagDeletedEvent
 {
-    use Dispatchable, SerializesModels;
+    use Dispatchable;
+    use SerializesModels;
 
     public Tag $tag;
 

@@ -11,13 +11,11 @@ class Theme extends Model
     use HasFactory;
 
     protected $casts = [
-        'type' => ThemeCreationTypeEnum::class
+        'type' => ThemeCreationTypeEnum::class,
     ];
 
     public function versions()
     {
         return $this->hasMany(ThemeVersion::class);
     }
-
 }
-

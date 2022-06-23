@@ -23,7 +23,6 @@ class BlogRepository
         string $subdomain,
         BlogTypeEnum $type = BlogTypeEnum::DEFAULT
     ): Blog {
-
         $blog = Blog::create([
             'hyvor_user_id' => $userId,
             'subdomain' => $subdomain,

@@ -20,7 +20,7 @@ class CliAPIMiddleware
 
         $blog = BlogRepository::getBlogBySubdomain($subdomain);
 
-        if (!$blog) {
+        if (! $blog) {
             throw new TrustedException('Invalid subdomain');
         }
 

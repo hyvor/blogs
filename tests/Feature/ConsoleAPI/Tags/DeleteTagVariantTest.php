@@ -6,7 +6,6 @@ use App\Domains\Tag\Events\TagVariantDeletedEvent;
 use Illuminate\Support\Facades\Event;
 
 it('deletes a tag variant', function () {
-
     Event::fake();
 
     $tag = $this->blog->tags()->first();
@@ -22,7 +21,6 @@ it('deletes a tag variant', function () {
     expect($tag->variants()->count())->toBe($variants - 1);
 
     Event::assertDispatched(TagVariantDeletedEvent::class);
-
 });
 
 

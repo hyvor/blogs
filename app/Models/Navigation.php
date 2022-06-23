@@ -11,7 +11,7 @@ class Navigation extends Model
     use HasFactory;
 
     protected $casts = [
-        'type' => NavigationTypeEnum::class
+        'type' => NavigationTypeEnum::class,
     ];
 
     protected $with = [

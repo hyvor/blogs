@@ -10,7 +10,6 @@ use Illuminate\Support\Facades\Event;
 use Illuminate\Testing\Fluent\AssertableJson;
 
 it('creates a post and the primary variant', function () {
-
     Event::fake();
 
     $post = $this

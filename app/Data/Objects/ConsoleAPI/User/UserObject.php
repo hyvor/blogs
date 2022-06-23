@@ -4,7 +4,6 @@ namespace App\Data\Objects\ConsoleAPI\User;
 
 use App\Data\Enums\UserRoleEnum;
 use App\Data\Enums\UserStatusEnum;
-use App\Data\Objects\ConsoleAPI\Tag\TagVariantObject;
 use App\Models\Blog;
 use App\Models\User;
 

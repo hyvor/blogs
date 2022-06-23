@@ -11,17 +11,13 @@ use Illuminate\Contracts\Queue\ShouldQueue;
  */
 class GithubSyncThemesJob implements ShouldQueue
 {
-
     use Queueable;
 
     public function handle()
     {
-
         $zipBallUrl = "https://github.com/hyvor/hyvor-blogs-themes/zipball/main";
         $zip = file_get_contents($zipBallUrl);
 
         GithubSyncService::sync($zip);
-
     }
-
 }

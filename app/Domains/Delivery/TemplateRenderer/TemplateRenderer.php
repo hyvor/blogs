@@ -95,7 +95,6 @@ class TemplateRenderer
         $vars = $this->getVariables();
 
         return TwigRenderer::renderFromFiles($loaderArray, $vars, $this->templateName);
-
     }
 
     /**
@@ -126,12 +125,10 @@ class TemplateRenderer
         $vars += $this->getRouteVariables();
 
         if ($this->filter !== null) {
-
             ['posts' => $posts, 'pagination' => $pagination] = $this->getPostsAndPagination();
 
             $vars['_posts'] = $posts;
             $vars['_pagination'] = $pagination;
-
         }
 
         /**
@@ -148,8 +145,9 @@ class TemplateRenderer
             'config.yaml'
         );
 
-        if (!$configFile)
+        if (! $configFile) {
             return;
+        }
 
         try {
             $this->config = Yaml::parse($configFile->content);
@@ -160,7 +158,6 @@ class TemplateRenderer
 
     private function getRouteVariables(): array
     {
-
         $routeName = $this->matchedRoute->name;
 
         if ($routeName === 'index') {
@@ -181,9 +178,7 @@ class TemplateRenderer
                     limit: 30 // hard limit - who has 30 featured posts?
                 )->collection,
             ];
-
         } elseif ($routeName === 'post' || $routeName === 'page' || $routeName === 'preview') {
-
             if ($routeName === 'preview') {
 
                 // set content_html to content_unsaved if it is set
@@ -197,7 +192,6 @@ class TemplateRenderer
                         $this->pathMatcher->blog
                     );
                 }
-
             }
 
             $postObject = new PostObject($this->model, $this->pathMatcher->blog, $this->pathMatcher->language);
@@ -214,9 +208,7 @@ class TemplateRenderer
                 '_comments' => $this->pathMatcher->blog->getMeta('comments_code') ?? '',
                 '_newsletter' => $this->pathMatcher->blog->getMeta('newsletter_code') ?? '',
             ];
-
         } elseif ($routeName === 'tag') {
-
             $tagObject = new TagObject($this->model, $this->pathMatcher->blog, $this->pathMatcher->language);
 
             return [
@@ -229,9 +221,7 @@ class TemplateRenderer
                 ),
                 '_tag' => $tagObject,
             ];
-
         } elseif ($routeName === 'author') {
-
             $authorObject = new AuthorObject($this->model, $this->pathMatcher->blog, $this->pathMatcher->language);
 
             return [
@@ -244,7 +234,6 @@ class TemplateRenderer
                 ),
                 '_author' => $authorObject,
             ];
-
         }
 
         return [];
@@ -255,7 +244,6 @@ class TemplateRenderer
      */
     private function getPostsAndPagination()
     {
-
         $pageNumber = $this->getPageNumber();
 
         $limit = $this->config['POSTS_PER_PAGINATION'] ?? 10;
@@ -307,13 +295,13 @@ class TemplateRenderer
 
     private function setTemplateName(array $availableFiles)
     {
-
         $checkFiles = explode(',', $this->matchedRoute->route->template);
 
         foreach ($checkFiles as $file) {
             $file = trim($file) . '.twig';
             if (in_array($file, $availableFiles)) {
                 $this->templateName = $file;
+
                 return;
             }
         }
@@ -376,7 +364,7 @@ class TemplateRenderer
         $this->model = $model;
     }
 
-    public function getRenderErrorResponseObject(string $message) : DeliveryAPIResponseObject
+    public function getRenderErrorResponseObject(string $message): DeliveryAPIResponseObject
     {
         $response = <<<HTML
             <div style="font-family:monospace;">

@@ -7,7 +7,6 @@ use Illuminate\Support\Facades\Event;
 use Illuminate\Testing\Fluent\AssertableJson;
 
 it('updates post variant', function () {
-
     Event::fake();
 
     $post = $this->blog->posts()->first();
@@ -42,5 +41,4 @@ it('updates post variant', function () {
         );
 
     Event::assertDispatched(PostVariantUpdatedEvent::class);
-
 });

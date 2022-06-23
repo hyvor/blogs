@@ -13,7 +13,6 @@ class CliAPIController
 {
     public function updateFiles(Request $request, Blog $blog)
     {
-
         $files = (array) $request->input('files');
         $reset = (bool) $request->input('reset');
 

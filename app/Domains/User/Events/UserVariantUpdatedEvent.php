@@ -8,8 +8,8 @@ use Illuminate\Queue\SerializesModels;
 
 class UserVariantUpdatedEvent
 {
-
-    use Dispatchable, SerializesModels;
+    use Dispatchable;
+    use SerializesModels;
 
     public UserVariant $variant;
     public UserVariant $variantOld;
@@ -19,5 +19,4 @@ class UserVariantUpdatedEvent
         $this->variant = $variant;
         $this->variantOld = new UserVariant($variant->getOriginal());
     }
-
 }

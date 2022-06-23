@@ -7,8 +7,7 @@ use App\Domains\Delivery\PathMatcher;
 use App\Domains\Route\PermalinkRepository;
 use App\Domains\Theme\ThemeFilesRepository;
 
-it('sets _head in index', function() {
-
+it('sets _head in index', function () {
     $blog = blog();
     $variant = $blog->variants[0];
     $blogUrl = PermalinkRepository::getBlogPermalink($blog, $blog->languages[0]);
@@ -20,7 +19,7 @@ it('sets _head in index', function() {
 
     $blog->setMeta([
         'code_head' => $codeHead,
-        'social_twitter' => $twitterUrl
+        'social_twitter' => $twitterUrl,
     ]);
 
     $content = '{{ _head | template }}';
@@ -50,11 +49,9 @@ it('sets _head in index', function() {
     expect($content)->toContain("<link rel=\"canonical\" href=\"$blogUrl\" />");
     // twitter
     expect($content)->toContain('<meta name="twitter:site" content="@HyvorBlogs" />');
-
 });
 
-it('sets _head in a post page', function() {
-
+it('sets _head in a post page', function () {
     $blog = blog();
     $post = aPublishedPost();
 
@@ -112,5 +109,4 @@ it('sets _head in a post page', function() {
     expect($content)->toContain("<meta name=\"twitter:creator\" content=\"@Author\" />");
     // post code head
     expect($content)->toContain($postCodeHeadRendered);
-
 });

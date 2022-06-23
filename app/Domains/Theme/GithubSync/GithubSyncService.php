@@ -12,32 +12,30 @@ use PhpZip\ZipFile;
  */
 class GithubSyncService
 {
-
     /**
      * @var array<string, Theme>
      */
     public array $themes = [];
 
-    public static function sync(string $zip) {
+    public static function sync(string $zip)
+    {
         $syncer = new self($zip);
         $syncer->run();
     }
 
     public function __construct(private string $zip)
-    {}
+    {
+    }
 
     public function run()
     {
-
         $this->breakIntoThemes();
         $this->saveThemes();
-
     }
 
 
     public function breakIntoThemes()
     {
-
         $zip = new ZipFile();
         $zip->openFromString($this->zip);
 
@@ -47,8 +45,9 @@ class GithubSyncService
         foreach ($zip as $entry => $content) {
 
             // not interested in directories
-            if ($zip->isDirectory($entry))
+            if ($zip->isDirectory($entry)) {
                 continue;
+            }
 
             // entry = hyvor-hyvor-blogs-themes-7357d59/original/default/config.def.yaml
 
@@ -73,31 +72,30 @@ class GithubSyncService
             }
 
             // skip unnecessary folders in the repo
-            if ($type !== 'original' && $type !== 'ported')
+            if ($type !== 'original' && $type !== 'ported') {
                 continue;
+            }
 
             // only interested in theme files
-            if (!$themeName || !$fileName)
+            if (! $themeName || ! $fileName) {
                 continue;
+            }
 
             // folder to enum
             $folder = $folder !== null ? ThemeFileFolderEnum::tryFrom($folder) : null;
             $type = ThemeCreationTypeEnum::from($type);
 
             // make sure the theme is created
-            if (!array_key_exists($themeName, $this->themes)) {
+            if (! array_key_exists($themeName, $this->themes)) {
                 $this->themes[$themeName] = new Theme($themeName, $type);
             }
 
             $this->themes[$themeName]->addFile($folder, $fileName, $content);
-
         }
-
     }
 
     private function saveThemes()
     {
-
         $latestVersions = Helper::getLatestVersionsOfAllThemes();
 
         /**
@@ -108,7 +106,7 @@ class GithubSyncService
         foreach ($this->themes as $theme) {
 
             // NEW THEME
-            if (!array_key_exists($theme->name, $latestVersions)) {
+            if (! array_key_exists($theme->name, $latestVersions)) {
                 ThemeRepository::createTheme($theme->name, $theme->type);
             }
 
@@ -125,11 +123,7 @@ class GithubSyncService
                     $version,
                     $zip
                 );
-
             }
-
         }
-
     }
-
 }

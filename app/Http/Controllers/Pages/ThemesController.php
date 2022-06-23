@@ -18,8 +18,9 @@ class ThemesController extends Controller
 
         $theme = $themes->firstWhere('name', $themeName);
 
-        if (!$theme)
+        if (! $theme) {
             abort(404);
+        }
 
         $originalThemes = $themes->where('type', ThemeCreationTypeEnum::ORIGINAL);
         $portedThemes = $themes->where('type', ThemeCreationTypeEnum::PORTED);
@@ -28,7 +29,7 @@ class ThemesController extends Controller
             'route' => $route ? "/$route" : '',
             'currentTheme' => $theme,
             'originalThemes' => $originalThemes,
-            'portedThemes' => $portedThemes
+            'portedThemes' => $portedThemes,
         ]);
     }
 }

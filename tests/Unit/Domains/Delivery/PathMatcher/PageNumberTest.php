@@ -2,7 +2,6 @@
 
 namespace Tests\Unit\Domains\Delivery\Response;
 
-
 use App\Data\Enums\DeliveryAPITypeEnum;
 use App\Data\Enums\ThemeFileFolderEnum;
 use App\Domains\Delivery\PathMatcher;
@@ -19,7 +18,7 @@ it('matches index with page number', function () {
         ->count(25)
         ->has(PostVariant::factory()->state([
             'language_id' => $this->blog->languages[0]->id,
-            'status' => 'published'
+            'status' => 'published',
         ]), 'variants')
         ->create([
             'blog_id' => config('test.blog_id'),

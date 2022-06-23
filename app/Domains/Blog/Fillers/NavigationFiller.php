@@ -28,7 +28,8 @@ class NavigationFiller implements FillerInterface
     ];
 
     public function __construct(private Blog $blog)
-    {}
+    {
+    }
 
     public function fill()
     {
@@ -56,7 +57,6 @@ class NavigationFiller implements FillerInterface
                 'name' => 'Tag',
                 'url' => '/tag/' . $this->blog->tags[0]->slug,
             ];
-
         }
 
         foreach ($this->navs as $nav) {

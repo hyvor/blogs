@@ -1,12 +1,12 @@
 <?php
+
 namespace Tests\Unit\Domains\Delivery\TemplateRendering\Variables;
 
 use App\Data\Enums\ThemeFileFolderEnum;
 use App\Domains\Delivery\PathMatcher;
 use App\Domains\Theme\ThemeFilesRepository;
 
-it('sets _foot in index', function() {
-
+it('sets _foot in index', function () {
     $blog = blog();
     $variant = $blog->variants[0];
 
@@ -33,11 +33,9 @@ it('sets _foot in index', function() {
 
     expect($content)->toContain('flashload.js');
     expect($content)->toContain($codeFootRendered);
-
 });
 
-it('sets _head in a post page', function() {
-
+it('sets _head in a post page', function () {
     $blog = blog();
     $post = aPublishedPost();
 
@@ -60,5 +58,4 @@ it('sets _head in a post page', function() {
     $content = $responseObject->content;
 
     expect($content)->toContain($postCodeFootRendered);
-
 });

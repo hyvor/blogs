@@ -29,22 +29,21 @@ beforeEach(function () {
             'bio' => $this->bio,
             'location' => $this->location,
             'website_url' => $this->websiteUrl,
-        ]
+        ],
     ]);
-
 });
 
-it('creates a user from username and email', function() {
-
+it('creates a user from username and email', function () {
     Event::fake();
     Mail::fake();
 
     $this->callConsoleApi('POST', '/user', [
         'username_or_email' => $this->username,
-        'role' => 'admin'
+        'role' => 'admin',
     ])
         ->assertOk()
-        ->assertJson(fn (AssertableJson $json) =>
+        ->assertJson(
+            fn (AssertableJson $json) =>
             $json->where('email', $this->email)
                 ->where('role', 'admin')
                 ->where('website_url', $this->websiteUrl)
@@ -58,17 +57,16 @@ it('creates a user from username and email', function() {
     Mail::assertSent(InviteUserMail::class, function ($mail) {
         return $mail->hasTo($this->email);
     });
-
 });
 
-it('creates a user from email', function() {
-
+it('creates a user from email', function () {
     $this->callConsoleApi('POST', '/user', [
         'username_or_email' => $this->email,
-        'role' => 'contributor'
+        'role' => 'contributor',
     ])
         ->assertOk()
-        ->assertJson(fn (AssertableJson $json) =>
+        ->assertJson(
+            fn (AssertableJson $json) =>
         $json->where('email', $this->email)
             ->where('role', 'contributor')
             ->where('website_url', $this->websiteUrl)
@@ -77,43 +75,36 @@ it('creates a user from email', function() {
             ->where("variants.0.location", $this->location)
             ->etc()
         );
-
 });
 
-it('does not create owners', function() {
-
+it('does not create owners', function () {
     $this->callConsoleApi('POST', '/user', [
         'username_or_email' => $this->email,
-        'role' => 'owner'
+        'role' => 'owner',
     ])
         ->assertUnprocessable()
         ->assertSee('Owners cannot be created');
-
 });
 
 
-it('does not create if the user is not found', function() {
-
+it('does not create if the user is not found', function () {
     $this->callConsoleApi('POST', '/user', [
         'username_or_email' => 'not.a.user',
-        'role' => 'admin'
+        'role' => 'admin',
     ])
         ->assertUnprocessable()
         ->assertSee('Unable to find the user');
-
 });
 
-it('does not create if the user already exists', function() {
-
+it('does not create if the user already exists', function () {
     $this->callConsoleApi('POST', '/user', [
         'username_or_email' => $this->username,
-        'role' => 'admin'
+        'role' => 'admin',
     ])->assertOk();
 
     $this->callConsoleApi('POST', '/user', [
         'username_or_email' => $this->username,
-        'role' => 'admin'
+        'role' => 'admin',
     ])->assertUnprocessable()
         ->assertSee('User already exists');
-
 });

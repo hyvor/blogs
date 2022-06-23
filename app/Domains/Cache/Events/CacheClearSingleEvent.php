@@ -1,4 +1,5 @@
 <?php
+
 namespace App\Domains\Cache\Events;
 
 use App\Models\Blog;

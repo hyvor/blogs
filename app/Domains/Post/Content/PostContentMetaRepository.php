@@ -31,10 +31,9 @@ class PostContentMetaRepository
      * @param PostVariant $variant
      * @return void
      */
-    public static function updateHtmlContent(PostVariant $variant) : void
+    public static function updateHtmlContent(PostVariant $variant): void
     {
-
-        if (!$variant->content) {
+        if (! $variant->content) {
             return;
         }
 
@@ -44,6 +43,5 @@ class PostContentMetaRepository
 
         $variant->content_html = $html;
         $variant->saveQuietly();
-
     }
 }

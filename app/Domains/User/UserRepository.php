@@ -1,4 +1,5 @@
 <?php
+
 namespace App\Domains\User;
 
 use App\Data\Enums\UserRoleEnum;
@@ -88,9 +89,7 @@ class UserRepository
         array $orderBys = [
             ['users.posts_count', 'DESC'],
         ],
-    ): CollectionWithTotal
-    {
-
+    ): CollectionWithTotal {
         $builder = FilterQ::expression($filter)
             ->builder(User::class)
             ->keys(function ($keys) {
@@ -136,10 +135,9 @@ class UserRepository
         UserRoleEnum $role,
         UserStatusEnum $status = UserStatusEnum::INVITED,
     ): User {
-
         $hyvorUser = Userbase::fromId($hyvorUserId);
 
-        if (!$hyvorUser) {
+        if (! $hyvorUser) {
             throw new Exception('User not found');
         }
 
@@ -184,7 +182,6 @@ class UserRepository
         Blog $blog,
         string $name,
     ): User {
-
         $user = User::create([
             'blog_id' => $blog->id,
             'role' => UserRoleEnum::CONTRIBUTOR,
@@ -206,8 +203,7 @@ class UserRepository
     public static function updateUser(
         User $user,
         array $updates,
-    ) : User
-    {
+    ): User {
         foreach ($updates as $key => $value) {
             $user->$key = $value;
         }
@@ -239,8 +235,7 @@ class UserRepository
         ?string $name = null,
         ?string $location = null,
         ?string $bio = null,
-    ) : UserVariant
-    {
+    ): UserVariant {
         $variant = UserVariant::create([
             'user_id' => $user->id,
             'language_id' => $language->id,
@@ -254,7 +249,7 @@ class UserRepository
         return $variant;
     }
 
-    public static function updateUserVariant(UserVariant $variant, array $updates) : UserVariant
+    public static function updateUserVariant(UserVariant $variant, array $updates): UserVariant
     {
         foreach ($updates as $key => $value) {
             $variant->$key = $value;
@@ -311,7 +306,7 @@ class UserRepository
         return self::getUserByBlogIdAndIdentifier($blogId, null, $slug);
     }
 
-    public static function getUserVariantByUserIdAndLanguageId(int $userId, int $languageId) : ?UserVariant
+    public static function getUserVariantByUserIdAndLanguageId(int $userId, int $languageId): ?UserVariant
     {
         return UserVariant::where('language_id', $languageId)
             ->where('user_id', $userId)
@@ -330,5 +325,4 @@ class UserRepository
         $user->status = UserStatusEnum::ACTIVE;
         $user->save();
     }
-
 }

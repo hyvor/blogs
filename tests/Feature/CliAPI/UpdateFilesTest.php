@@ -9,12 +9,11 @@ use App\Models\Blog;
 use App\Models\ThemeFile;
 use Illuminate\Support\Str;
 
-beforeEach(function() {
+beforeEach(function () {
     $this->blog = Blog::where('type', BlogTypeEnum::DEV)->first();
 });
 
-it('creates files', function() {
-
+it('creates files', function () {
     $content = Str::random();
 
     $this->callCliAPI('PATCH', '/files', [
@@ -31,11 +30,9 @@ it('creates files', function() {
     );
 
     expect($indexTwig->content)->toBe($content);
-
 });
 
-it('updates files', function() {
-
+it('updates files', function () {
     ThemeFilesRepository::createOrUpdateFile(
         $this->blog,
         ThemeFileFolderEnum::TEMPLATES,
@@ -56,11 +53,9 @@ it('updates files', function() {
     );
 
     expect($indexTwig->content)->toBe('New string');
-
 });
 
-it('resets', function() {
-
+it('resets', function () {
     ThemeFilesRepository::createOrUpdateFile(
         $this->blog,
         ThemeFileFolderEnum::TEMPLATES,
@@ -70,9 +65,8 @@ it('resets', function() {
 
     $this->callCliAPI('PATCH', "/files", [
         'files' => [],
-        'reset' => true
+        'reset' => true,
     ])->assertOk();
 
     expect(ThemeFile::where('blog_id', $this->blog->id)->count())->toBe(0);
-
 });

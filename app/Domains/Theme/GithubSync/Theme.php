@@ -10,7 +10,6 @@ use Symfony\Component\Yaml\Yaml;
 
 class Theme
 {
-
     /**
      * @var Collection<File>
      */
@@ -28,28 +27,25 @@ class Theme
         $this->files->add(new File($folder, $name, $content));
     }
 
-    public function findFile(?ThemeFileFolderEnum $folder, string $name) : ?File
+    public function findFile(?ThemeFileFolderEnum $folder, string $name): ?File
     {
         return $this->files->where('folder', $folder)->firstWhere('name', $name);
     }
 
-    public function getVersion() : string
+    public function getVersion(): string
     {
-
         $config = $this->findFile(null, 'config.yaml');
 
-        if (!$config) {
+        if (! $config) {
             throw new Exception('Unable to find config.yaml in ' . $this->name);
         }
 
         $config = Yaml::parse($config->content);
 
-        if (!isset($config['THEME_VERSION'])) {
+        if (! isset($config['THEME_VERSION'])) {
             throw new Exception('Theme version not set in ' . $this->name);
         }
 
         return $config['THEME_VERSION'];
-
     }
-
 }

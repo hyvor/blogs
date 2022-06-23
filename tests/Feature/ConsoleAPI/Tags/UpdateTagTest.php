@@ -7,8 +7,7 @@ use App\Models\Tag;
 use Illuminate\Support\Facades\Event;
 use Illuminate\Testing\Fluent\AssertableJson;
 
-it('updates a tag', function() {
-
+it('updates a tag', function () {
     Event::fake();
 
     $tag = Tag::factory()->create([
@@ -22,10 +21,11 @@ it('updates a tag', function() {
     $this->callConsoleApi('PATCH', "/tag/$tag->id", [
         'slug' => $slug,
         'code_head' => $codeHead,
-        'code_foot' => $codeFoot
+        'code_foot' => $codeFoot,
     ])
         ->assertOk()
-        ->assertJson(fn (AssertableJson $json) =>
+        ->assertJson(
+            fn (AssertableJson $json) =>
             $json->where('slug', $slug)
                 ->where('code_head', $codeHead)
                 ->where('code_foot', $codeFoot)
@@ -33,5 +33,4 @@ it('updates a tag', function() {
         );
 
     Event::assertDispatched(TagUpdatedEvent::class);
-
 });

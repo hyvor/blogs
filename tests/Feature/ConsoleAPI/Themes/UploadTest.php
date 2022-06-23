@@ -2,7 +2,6 @@
 
 namespace Tests\Feature\ConsoleAPI\Themes;
 
-
 use Illuminate\Http\UploadedFile;
 use PhpZip\ZipFile;
 

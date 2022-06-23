@@ -2,16 +2,13 @@
 
 namespace App\Domains\Post\Listeners;
 
-
 use App\Domains\Post\Content\PostContentRepository;
 use App\Domains\Post\Events\PostVariantUpdatedEvent;
 
 class PostVariantUpdateWordCountListener
 {
-
     public function handle(PostVariantUpdatedEvent $event)
     {
-
         $variant = $event->variant;
 
         if (! $variant->content) {
@@ -26,7 +23,5 @@ class PostVariantUpdateWordCountListener
 
         $variant->words = $words;
         $variant->save();
-
     }
-
 }

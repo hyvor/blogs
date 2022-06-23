@@ -7,13 +7,12 @@ use App\Models\User;
 use Illuminate\Support\Facades\Event;
 use Illuminate\Testing\Fluent\AssertableJson;
 
-it('updates a user', function() {
-
+it('updates a user', function () {
     Event::fake();
 
     $user = User::factory()->create([
         'blog_id' => blog(),
-        'role' => 'admin'
+        'role' => 'admin',
     ]);
 
     $updates = [
@@ -31,7 +30,7 @@ it('updates a user', function() {
         'social_youtube' => faker()->url(),
         'social_tiktok' => faker()->url(),
         'social_instagram' => faker()->url(),
-        'social_github' => faker()->url()
+        'social_github' => faker()->url(),
     ];
 
     $this->callConsoleApi('PATCH', "/user/$user->id", $updates)
@@ -44,41 +43,34 @@ it('updates a user', function() {
         });
 
     Event::assertDispatched(UserUpdatedEvent::class);
-
 });
 
-it('does not update the role of the owner', function() {
-
+it('does not update the role of the owner', function () {
     $user = User::factory()->create(['role' => 'owner', 'blog_id' => blog()]);
 
     $this->callConsoleApi('PATCH', "/user/$user->id", [
-        'role' => 'admin'
+        'role' => 'admin',
     ])
         ->assertUnprocessable()
         ->assertSee('cannot update the role of the owner');
-
 });
 
-it('does not update the role to owner', function() {
-
+it('does not update the role to owner', function () {
     $user = User::factory()->create(['role' => 'admin', 'blog_id' => blog()]);
 
     $this->callConsoleApi('PATCH', "/user/$user->id", [
-        'role' => 'owner'
+        'role' => 'owner',
     ])
         ->assertUnprocessable()
         ->assertSee('cannot update the role to owner');
-
 });
 
-it('does not update the status of the owner', function() {
-
+it('does not update the status of the owner', function () {
     $user = User::factory()->create(['role' => 'owner', 'blog_id' => blog()]);
 
     $this->callConsoleApi('PATCH', "/user/$user->id", [
-        'status' => 'blocked'
+        'status' => 'blocked',
     ])
         ->assertUnprocessable()
         ->assertSee('cannot update the status of the owner');
-
 });

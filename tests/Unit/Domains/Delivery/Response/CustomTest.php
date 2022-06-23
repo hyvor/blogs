@@ -10,7 +10,6 @@ use App\Domains\Route\RouteRepository;
 use App\Domains\Theme\ThemeFilesRepository;
 
 it('matches custom route and template', function () {
-
     RouteRepository::createRoute(
         $this->blog,
         'test',

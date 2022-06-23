@@ -30,6 +30,5 @@ class NavigationObject
             ->map(fn ($variant) => new NavigationVariantObject($variant))
             ->sortBy('language_id')
             ->toArray();
-
     }
 }

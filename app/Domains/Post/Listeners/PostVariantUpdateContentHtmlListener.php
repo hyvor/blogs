@@ -7,10 +7,8 @@ use App\Domains\Post\Events\PostVariantUpdatedEvent;
 
 class PostVariantUpdateContentHtmlListener
 {
-
     public function handle(PostVariantUpdatedEvent $event)
     {
         PostContentRepository::updateVariantHtml($event->variant);
     }
-
 }

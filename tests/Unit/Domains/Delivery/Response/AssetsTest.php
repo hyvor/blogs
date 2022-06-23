@@ -28,7 +28,6 @@ it('matches assets', function () {
 });
 
 it('matches default assets', function () {
-
     $file = 'flashload.js';
 
     $pathMatcher = new PathMatcher($this->blog, "/assets/$file");
@@ -37,16 +36,13 @@ it('matches default assets', function () {
     expect($responseObject->type)->toBe(DeliveryAPITypeEnum::FILE);
     expect($responseObject->file_type)->toBe(DeliveryAPIFileTypeEnum::ASSET);
     expect($responseObject->content)->toBeString();
-
 });
 
-it('does not match if asset is not found', function() {
-
+it('does not match if asset is not found', function () {
     $file = 'missing.js';
 
     $pathMatcher = new PathMatcher($this->blog, "/assets/$file");
     $responseObject = $pathMatcher->getResponseObject();
 
     expect($responseObject->status)->toBe(404);
-
 });

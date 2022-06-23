@@ -286,7 +286,7 @@ it('filters by updated_at', function () {
 
     $post = getAPost();
     $post->variants->map(function ($v) use ($timeString) {
-        $v->updated_at  = $timeString;
+        $v->updated_at = $timeString;
         $v->timestamps = false;
         $v->save();
     });
@@ -368,7 +368,6 @@ it('filters by tag ID', function () {
     ]);
 
     $response->assertJsonPath('data.0.tags.0.id', $tag->id);
-
 });
 
 it('filters by tag slug', function () {

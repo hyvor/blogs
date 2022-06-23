@@ -50,7 +50,6 @@ class ConsoleUserController extends Controller
 
     public static function create(Request $request, Blog $blog)
     {
-
         $request->validate([
             'username_or_email' => 'required|string',
             'role' => ['required', new Enum(UserRoleEnum::class)],
@@ -65,7 +64,7 @@ class ConsoleUserController extends Controller
             $hyvorUser = Userbase::fromUsername($usernameOrEmail);
         }
 
-        if (!$hyvorUser) {
+        if (! $hyvorUser) {
             throw new TrustedException('Unable to find the user');
         }
 
@@ -86,9 +85,8 @@ class ConsoleUserController extends Controller
 
     public static function createGuest(Request $request, Blog $blog)
     {
-
         $request->validate([
-            'name' => 'required|string'
+            'name' => 'required|string',
         ]);
 
         $name = $request->input('name');
@@ -96,12 +94,10 @@ class ConsoleUserController extends Controller
         $user = UserRepository::createGuestUser($blog, $name);
 
         return response()->json(new UserObject($user, $blog));
-
     }
 
     public static function update(Request $request, User $user, Blog $blog)
     {
-
         $validators = [
             'hyvor_user_id' => 'integer|nullable',
             'role' => new Enum(UserRoleEnum::class),
@@ -161,33 +157,34 @@ class ConsoleUserController extends Controller
         $user->refresh();
 
         return response()->json(new UserObject($user, $blog));
-
     }
 
     public static function delete(User $user)
     {
         UserRepository::deleteUser($user);
+
         return response()->json();
     }
 
     public static function createVariant(Blog $blog, User $user, Language $language)
     {
         $variant = UserRepository::createUserVariant($user, $language);
+
         return response()->json(new UserVariantObject($variant, $user, $blog));
     }
 
     public static function updateVariant(Request $request, Blog $blog, User $user, Language $language)
     {
-
         $variant = UserRepository::getUserVariantByUserIdAndLanguageId($user->id, $language->id);
 
-        if (!$variant)
+        if (! $variant) {
             throw new TrustedException('Variant not found', TrustedException::ERROR_NOT_FOUND);
+        }
 
         $validations = [
             'name' => 'string|nullable',
             'bio' => 'string|nullable',
-            'location' => 'string|nullable'
+            'location' => 'string|nullable',
         ];
 
         $request->validate($validations);
@@ -208,7 +205,6 @@ class ConsoleUserController extends Controller
 
     public static function deleteVariant(User $user, Language $language)
     {
-
         if ($language->is_primary) {
             throw new TrustedException(
                 'Primary language variant cannot be deleted. Delete the user instead',
@@ -218,28 +214,27 @@ class ConsoleUserController extends Controller
 
         $variant = UserRepository::getUserVariantByUserIdAndLanguageId($user->id, $language->id);
 
-        if (!$variant)
+        if (! $variant) {
             throw new TrustedException('Variant not found', TrustedException::ERROR_NOT_FOUND);
+        }
 
         UserRepository::deleteUserVariant($variant);
 
         return response()->json();
-
     }
 
     public static function acceptInvite(Request $request)
     {
-
         $request->validate([
             'user_id' => 'required|integer',
-            'signature' => 'required|string'
+            'signature' => 'required|string',
         ]);
 
-        if (!$request->hasValidSignature()) {
+        if (! $request->hasValidSignature()) {
             return response()->view('confirmation', [
                 'type' => 'error',
                 'title' => 'Invalid Link',
-                'description' => 'Unable to accept the invitation. The link may be altered or expired. Please ask the admins of the blog to re-invite.'
+                'description' => 'Unable to accept the invitation. The link may be altered or expired. Please ask the admins of the blog to re-invite.',
             ], 422);
         }
 
@@ -250,14 +245,12 @@ class ConsoleUserController extends Controller
 
         return view('confirmation', [
             'title' => 'Invitation Accepted',
-            'description' => 'You have accepted the invitation to join the blog. You can visit the <a class="link" href="https://blogs.hyvor.com/console">Hyvor Blogs Console</a> to access all your blogs.'
+            'description' => 'You have accepted the invitation to join the blog. You can visit the <a class="link" href="https://blogs.hyvor.com/console">Hyvor Blogs Console</a> to access all your blogs.',
         ]);
-
     }
 
     public function resendInvite(User $user)
     {
-
         if ($user->status !== UserStatusEnum::INVITED) {
             throw new TrustedException('User is not invited');
         }
@@ -266,5 +259,4 @@ class ConsoleUserController extends Controller
 
         return response()->json();
     }
-
 }

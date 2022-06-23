@@ -2,14 +2,14 @@
 
 namespace App\Domains\User\Events;
 
-use App\Models\Post;
 use App\Models\User;
 use Illuminate\Foundation\Events\Dispatchable;
 use Illuminate\Queue\SerializesModels;
 
 class UserUpdatedEvent
 {
-    use Dispatchable, SerializesModels;
+    use Dispatchable;
+    use SerializesModels;
 
     public User $user;
     public User $userOld;

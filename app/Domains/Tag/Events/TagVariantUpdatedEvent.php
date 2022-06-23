@@ -8,8 +8,8 @@ use Illuminate\Queue\SerializesModels;
 
 class TagVariantUpdatedEvent
 {
-
-    use Dispatchable, SerializesModels;
+    use Dispatchable;
+    use SerializesModels;
 
     public TagVariant $variant;
     public TagVariant $variantOld;
@@ -19,5 +19,4 @@ class TagVariantUpdatedEvent
         $this->variant = $variant;
         $this->variantOld = new TagVariant($variant->getOriginal());
     }
-
 }

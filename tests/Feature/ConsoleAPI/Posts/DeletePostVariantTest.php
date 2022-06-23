@@ -6,7 +6,6 @@ use App\Domains\Post\Events\PostVariantDeletedEvent;
 use Illuminate\Support\Facades\Event;
 
 it('deletes a post variant', function () {
-
     Event::fake();
 
     $post = $this->blog->posts()->first();
@@ -22,7 +21,6 @@ it('deletes a post variant', function () {
     $this->assertEquals($variants - 1, $post->variants()->count());
 
     Event::assertDispatched(PostVariantDeletedEvent::class);
-
 });
 
 it('does not delete primary language variant', function () {

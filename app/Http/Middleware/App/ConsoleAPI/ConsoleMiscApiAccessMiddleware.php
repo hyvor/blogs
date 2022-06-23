@@ -9,10 +9,8 @@ use Illuminate\Http\Request;
 
 class ConsoleMiscApiAccessMiddleware
 {
-
     public function handle(Request $request, $next)
     {
-
         $hyvorUser = Login::check();
         if (! $hyvorUser) {
             throw new TrustedException('You are not logged in');
@@ -21,7 +19,5 @@ class ConsoleMiscApiAccessMiddleware
         app()->instance(HyvorUser::class, $hyvorUser);
 
         return $next($request);
-
     }
-
 }

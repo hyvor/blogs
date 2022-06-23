@@ -8,7 +8,8 @@ use Illuminate\Queue\SerializesModels;
 
 class PostCreatedEvent
 {
-    use Dispatchable, SerializesModels;
+    use Dispatchable;
+    use SerializesModels;
 
     public Post $post;
 
@@ -16,5 +17,4 @@ class PostCreatedEvent
     {
         $this->post = $post;
     }
-
 }

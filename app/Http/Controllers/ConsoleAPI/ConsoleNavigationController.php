@@ -18,22 +18,19 @@ use Illuminate\Validation\Rules\Enum;
 
 class ConsoleNavigationController extends Controller
 {
-
     public function get(Blog $blog)
     {
-
         $navs = NavigationRepository::getNavigations($blog)->mapInto(NavigationObject::class);
-        return response()->json($navs);
 
+        return response()->json($navs);
     }
 
     public function create(Request $request, Blog $blog)
     {
-
         $request->validate([
             'url' => 'required|string',
             'name' => 'required|string',
-            'type' => ['required', new Enum(NavigationTypeEnum::class)]
+            'type' => ['required', new Enum(NavigationTypeEnum::class)],
         ]);
 
         $url = $request->input('url');
@@ -49,15 +46,13 @@ class ConsoleNavigationController extends Controller
         $navigation = NavigationRepository::createNavigation($blog, $name, $url, $type);
 
         return response()->json(new NavigationObject($navigation));
-
     }
 
     public function update(Request $request, Navigation $navigation)
     {
-
         $request->validate([
             'url' => 'required|string',
-            'type' => ['required', new Enum(NavigationTypeEnum::class)]
+            'type' => ['required', new Enum(NavigationTypeEnum::class)],
         ]);
 
         $url = $request->input('url');
@@ -71,16 +66,16 @@ class ConsoleNavigationController extends Controller
     public function delete(Navigation $navigation)
     {
         NavigationRepository::deleteNavigation($navigation);
+
         return response()->json();
     }
 
 
     public static function createVariant(Request $request, Blog $blog, Navigation $navigation)
     {
-
         $request->validate([
             'language_id' => 'required|integer',
-            'name' => 'string|nullable'
+            'name' => 'string|nullable',
         ]);
 
         $languageId = $request->input('language_id');
@@ -88,7 +83,7 @@ class ConsoleNavigationController extends Controller
 
         $language = LanguageRepository::getLanguageById($blog, $languageId);
 
-        if (!$language) {
+        if (! $language) {
             throw new TrustedException('Language not found');
         }
 
@@ -99,29 +94,26 @@ class ConsoleNavigationController extends Controller
 
     public static function updateVariant(Request $request, Navigation $navigation, Language $language)
     {
-
         $request->validate([
-            'name' => 'required|string'
+            'name' => 'required|string',
         ]);
 
         $variant = NavigationRepository::getNavigationVariant($navigation, $language);
         $name = $request->input('name');
 
-        if (!$variant) {
+        if (! $variant) {
             throw new TrustedException('Variant not found');
         }
 
         NavigationRepository::updateNavigationVariant($variant, $name);
 
         return response()->json(new NavigationVariantObject($variant));
-
     }
 
     public static function deleteVariant(Navigation $navigation, Language $language)
     {
-
         $variant = NavigationRepository::getNavigationVariant($navigation, $language);
-        if (!$variant) {
+        if (! $variant) {
             throw new TrustedException('Variant not found');
         }
 
@@ -132,10 +124,9 @@ class ConsoleNavigationController extends Controller
 
     public function updateSort(Request $request, Blog $blog)
     {
-
         $request->validate([
             'ids' => 'array',
-            'ids.*' => 'integer'
+            'ids.*' => 'integer',
         ]);
 
         $ids = $request->input('ids');
@@ -144,6 +135,4 @@ class ConsoleNavigationController extends Controller
 
         return response()->json();
     }
-
-
 }

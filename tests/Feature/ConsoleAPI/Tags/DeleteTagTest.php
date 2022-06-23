@@ -9,19 +9,18 @@ use App\Models\Tag;
 use App\Models\TagVariant;
 use Illuminate\Support\Facades\Event;
 
-it('deletes the tag, its variants, and post tags', function() {
-
+it('deletes the tag, its variants, and post tags', function () {
     Event::fake();
 
     $tag = Tag::factory()
         ->has(TagVariant::factory()->count(3), 'variants')
         ->create([
-            'blog_id' => blog()
+            'blog_id' => blog(),
         ]);
 
     PostTag::create([
         'post_id' => 1,
-        'tag_id' => $tag->id
+        'tag_id' => $tag->id,
     ]);
 
     // has
@@ -39,5 +38,4 @@ it('deletes the tag, its variants, and post tags', function() {
 
     Event::assertDispatched(TagDeletedEvent::class);
     Event::assertDispatched(TagVariantDeletedEvent::class, 3);
-
 });

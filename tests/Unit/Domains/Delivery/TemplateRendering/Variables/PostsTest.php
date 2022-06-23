@@ -5,10 +5,8 @@ namespace Tests\Unit\Domains\Delivery\TemplateRendering\Variables;
 use App\Data\Enums\ThemeFileFolderEnum;
 use App\Domains\Delivery\PathMatcher;
 use App\Domains\Theme\ThemeFilesRepository;
-use App\Models\Post;
 
-it('does not set _posts and _pagination when posts_filter is null in the route', function() {
-
+it('does not set _posts and _pagination when posts_filter is null in the route', function () {
     $content = "
         {% if _posts is not defined %}
             posts variable not defined
@@ -32,11 +30,9 @@ it('does not set _posts and _pagination when posts_filter is null in the route',
 
     expect($responseObject->content)->toContain('posts variable not defined');
     expect($responseObject->content)->toContain('pagination variable not defined');
-
 });
 
-it('sets _posts and _pagination', function() {
-
+it('sets _posts and _pagination', function () {
     clearPosts();
     seedPublishedPosts(15);
 
@@ -53,11 +49,9 @@ it('sets _posts and _pagination', function() {
     $responseObject = $pathMatcher->getResponseObject();
 
     expect($responseObject->content)->toBe('10|1|15');
-
 });
 
-it('works with page number', function() {
-
+it('works with page number', function () {
     clearPosts();
     seedPublishedPosts(25);
 
@@ -74,11 +68,9 @@ it('works with page number', function() {
     $responseObject = $pathMatcher->getResponseObject();
 
     expect($responseObject->content)->toBe('10|2|25');
-
 });
 
-it('changes limit based on POSTS_PER_PAGINATION config', function() {
-
+it('changes limit based on POSTS_PER_PAGINATION config', function () {
     clearPosts();
     seedPublishedPosts(15);
 
@@ -102,11 +94,9 @@ it('changes limit based on POSTS_PER_PAGINATION config', function() {
     $responseObject = $pathMatcher->getResponseObject();
 
     expect($responseObject->content)->toBe('5|1|15');
-
-
 });
 
-it('returns 404 when posts are not found for the page number', function() {
+it('returns 404 when posts are not found for the page number', function () {
     clearPosts();
     seedPublishedPosts(15);
 
@@ -125,8 +115,7 @@ it('returns 404 when posts are not found for the page number', function() {
     expect($responseObject->status)->toBe(404);
 });
 
-it('does not return 404 for the first page even posts are not found', function() {
-
+it('does not return 404 for the first page even posts are not found', function () {
     clearPosts();
 
     $content = '{{ _posts | length }}';
@@ -143,5 +132,4 @@ it('does not return 404 for the first page even posts are not found', function()
 
     expect($responseObject->status)->toBe(200);
     expect($responseObject->content)->toBe('0');
-
 });

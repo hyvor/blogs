@@ -11,18 +11,17 @@ use Illuminate\Support\Facades\URL;
 
 class InviteUserMail extends Mailable
 {
-
-    use Queueable, SerializesModels;
+    use Queueable;
+    use SerializesModels;
 
     public string $link;
 
     public function __construct(
         public User $user,
         public HyvorUser $hyvorUser
-    )
-    {
+    ) {
         $this->link = URL::temporarySignedRoute('user-accept-invite', now()->addHours(24), [
-            'user_id' => $user->id
+            'user_id' => $user->id,
         ]);
     }
 
@@ -30,5 +29,4 @@ class InviteUserMail extends Mailable
     {
         return $this->view('emails.invite-user');
     }
-
 }

@@ -2,14 +2,14 @@
 
 namespace App\Domains\Tag\Events;
 
-use App\Models\Post;
 use App\Models\Tag;
 use Illuminate\Foundation\Events\Dispatchable;
 use Illuminate\Queue\SerializesModels;
 
 class TagUpdatedEvent
 {
-    use Dispatchable, SerializesModels;
+    use Dispatchable;
+    use SerializesModels;
 
     public Tag $tag;
     public Tag $tagOld;

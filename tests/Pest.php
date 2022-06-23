@@ -10,7 +10,6 @@ use Faker\Factory;
 use Hyvor\HyvorConnecter\HyvorUser;
 use Hyvor\HyvorConnecter\Userbase;
 use Tests\TestCase;
-use Tests\UnitTestCase;
 
 uses(TestCase::class)->in('Feature', 'Unit');
 
@@ -47,6 +46,7 @@ function aPublishedPost()
 {
     $post = Post::where(['is_page' => false, 'blog_id' => config('test.blog_id')])->first();
     $post->variants->map(fn ($variant) => $variant->update(['status' => 'published']));
+
     return $post;
 }
 
@@ -58,11 +58,11 @@ function seedPublishedPosts(int $count, Blog $blog = null)
         ->has(
             PostVariant::factory()->state([
                 'status' => 'published',
-                'language_id' => $blog->languages[0]
+                'language_id' => $blog->languages[0],
             ]),
             'variants'
         )->create([
-            'blog_id' => $blog
+            'blog_id' => $blog,
         ]);
 }
 

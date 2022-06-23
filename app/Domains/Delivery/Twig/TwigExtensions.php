@@ -185,7 +185,6 @@ class TwigExtensions extends AbstractExtension
             $blog,
             LanguageRepository::getLanguageByCode($blog, $language['code'])
         );
-
     }
 
 

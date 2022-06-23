@@ -18,7 +18,6 @@ class ConsoleUserBlogController extends Controller
 {
     public function createBlog(Request $request, HyvorUser $hyvorUser)
     {
-
         $request->validate([
             'name' => 'required|string',
             'subdomain' => ['required_unless:is_dev,true', new Subdomain(checkUnique: true)],

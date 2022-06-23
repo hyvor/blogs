@@ -2,7 +2,6 @@
 
 namespace Tests\Unit\Domains\Delivery\Response;
 
-
 use App\Data\Enums\DeliveryAPIFileTypeEnum;
 use App\Data\Enums\DeliveryAPITypeEnum;
 use App\Data\Enums\ThemeFileFolderEnum;
