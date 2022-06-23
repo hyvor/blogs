@@ -79,6 +79,8 @@ class ConsoleUserController extends Controller
 
         $user = UserRepository::createUserFromHyvorUser($blog, $hyvorUser->id, $role);
 
+        UserRepository::sendInviteEmail($user);
+
         return response()->json(new UserObject($user, $blog));
     }
 
@@ -158,7 +160,7 @@ class ConsoleUserController extends Controller
 
         $user->refresh();
 
-        return response()->json(new UserObject($user));
+        return response()->json(new UserObject($user, $blog));
 
     }
 
@@ -168,13 +170,13 @@ class ConsoleUserController extends Controller
         return response()->json();
     }
 
-    public static function createVariant(User $user, Language $language)
+    public static function createVariant(Blog $blog, User $user, Language $language)
     {
         $variant = UserRepository::createUserVariant($user, $language);
-        return response()->json(new UserVariantObject($variant));
+        return response()->json(new UserVariantObject($variant, $user, $blog));
     }
 
-    public static function updateVariant(Request $request, User $user, Language $language)
+    public static function updateVariant(Request $request, Blog $blog, User $user, Language $language)
     {
 
         $variant = UserRepository::getUserVariantByUserIdAndLanguageId($user->id, $language->id);
@@ -201,7 +203,7 @@ class ConsoleUserController extends Controller
 
         $variant = UserRepository::updateUserVariant($variant, $updates);
 
-        return response()->json(new UserVariantObject($variant));
+        return response()->json(new UserVariantObject($variant, $user, $blog));
     }
 
     public static function deleteVariant(User $user, Language $language)
@@ -223,6 +225,46 @@ class ConsoleUserController extends Controller
 
         return response()->json();
 
+    }
+
+    public static function acceptInvite(Request $request)
+    {
+
+        $request->validate([
+            'user_id' => 'required|integer',
+            'signature' => 'required|string'
+        ]);
+
+        if (!$request->hasValidSignature()) {
+            return response()->view('confirmation', [
+                'type' => 'error',
+                'title' => 'Invalid Link',
+                'description' => 'Unable to accept the invitation. The link may be altered or expired. Please ask the admins of the blog to re-invite.'
+            ], 422);
+        }
+
+        $userId = $request->input('user_id');
+        $user = UserRepository::getUserById($userId);
+
+        UserRepository::activateUser($user);
+
+        return view('confirmation', [
+            'title' => 'Invitation Accepted',
+            'description' => 'You have accepted the invitation to join the blog. You can visit the <a class="link" href="https://blogs.hyvor.com/console">Hyvor Blogs Console</a> to access all your blogs.'
+        ]);
+
+    }
+
+    public function resendInvite(User $user)
+    {
+
+        if ($user->status !== UserStatusEnum::INVITED) {
+            throw new TrustedException('User is not invited');
+        }
+
+        UserRepository::sendInviteEmail($user);
+
+        return response()->json();
     }
 
 }

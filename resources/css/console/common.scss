@@ -309,9 +309,17 @@ textarea.input {
     border-radius: 20px;
     margin:0 5px;
     vertical-align: middle;
+    &.green {
+        color: $color-green-dark;
+        background-color: $color-green-light;
+    }
     &.blue {
         color: $color-blue-dark;
         background:$color-blue-light;
+    }
+    &.red {
+        color: $color-red-dark;
+        background-color: $color-red-light;
     }
 }
 

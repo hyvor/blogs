@@ -42,7 +42,7 @@ export default function Users() {
                         <Table>
                             <TableHead>
                                 <TableHeadItem>Name</TableHeadItem>
-                                <TableHeadItem>Slug</TableHeadItem>
+                                <TableHeadItem>Status</TableHeadItem>
                                 <TableHeadItem>Posts</TableHeadItem>
                                 <TableHeadItem>Role</TableHeadItem>
                                 <div />

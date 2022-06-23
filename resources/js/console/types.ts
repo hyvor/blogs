@@ -176,6 +176,8 @@ export type User = {
 export type UserVariant = {
     language_id: number;
 
+    url: string;
+
     name: string | null;
     bio: string | null;
     location: string | null;

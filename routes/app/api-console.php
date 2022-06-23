@@ -178,6 +178,7 @@ Route::prefix('/api/console/v0/blog/{subdomain}')
         Route::post('/user/{id}/variant', [ConsoleUserController::class, 'createVariant']);
         Route::patch('/user/{id}/variant', [ConsoleUserController::class, 'updateVariant']);
         Route::delete('/user/{id}/variant', [ConsoleUserController::class, 'deleteVariant']);
+        Route::post('/user/{id}/resend-invite', [ConsoleUserController::class, 'resendInvite']);
 
         // route
         Route::get('/routes', [ConsoleRouteController::class, 'get']);
@@ -222,3 +223,6 @@ Route::prefix('/api/console/v0/misc')->middleware([
     Route::get('/themes', [ConsoleThemeController::class, 'getAllThemes']);
 
 });
+
+// SPECIAL
+Route::get('user-accept-invite', [ConsoleUserController::class, 'acceptInvite'])->name('user-accept-invite');

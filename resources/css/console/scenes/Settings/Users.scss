@@ -2,8 +2,19 @@
 
     .global-table-view {
         .table-head, .table-row {
-            grid-template-columns: 2fr 2fr 1fr 1fr 60px;
+            grid-template-columns: 2fr 1fr 2fr 1fr 60px;
         }
+    }
+
+    .slug-row {
+        margin-top: 3px;
+    }
+
+    .resend-email {
+        font-size: 10px;
+    }
+    .status-tag .global-tag {
+        margin: 0;
     }
 
     .user-create-popup {

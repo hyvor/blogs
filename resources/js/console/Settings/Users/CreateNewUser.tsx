@@ -99,7 +99,7 @@ export default function CreateNewUser({onClose}: {onClose: Function}) {
                                     <Select
                                         value={roleOptions.find(o => o.value === role)}
                                         options={roleOptions}
-                                        onChange={(v: any) => setRole(v)}
+                                        onChange={(v: any) => setRole(v.value)}
                                     />
                                 }
                             />

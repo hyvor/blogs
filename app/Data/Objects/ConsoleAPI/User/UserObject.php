@@ -4,6 +4,7 @@ namespace App\Data\Objects\ConsoleAPI\User;
 
 use App\Data\Enums\UserRoleEnum;
 use App\Data\Enums\UserStatusEnum;
+use App\Data\Objects\ConsoleAPI\Tag\TagVariantObject;
 use App\Models\Blog;
 use App\Models\User;
 
@@ -36,7 +37,7 @@ class UserObject
      */
     public array $variants;
 
-    public function __construct(User $user)
+    public function __construct(User $user, Blog $blog)
     {
         $this->id = $user->id;
         $this->created_at = $user->created_at->timestamp;
@@ -61,6 +62,9 @@ class UserObject
         $this->social_instagram = $user->social_instagram;
         $this->social_github = $user->social_github;
 
-        $this->variants = $user->variants->sortBy('language_id')->mapInto(UserVariantObject::class)->toArray();
+        $this->variants = $user->variants
+            ->map(fn ($variant) => new UserVariantObject($variant, $user, $blog))
+            ->sortBy('language_id')
+            ->toArray();
     }
 }

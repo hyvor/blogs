@@ -3,8 +3,10 @@
 namespace Tests\Feature\ConsoleAPI\Users;
 
 use App\Domains\User\Events\UserCreatedEvent;
+use App\Domains\User\Mail\InviteUserMail;
 use Hyvor\HyvorConnecter\Userbase;
 use Illuminate\Support\Facades\Event;
+use Illuminate\Support\Facades\Mail;
 use Illuminate\Testing\Fluent\AssertableJson;
 
 beforeEach(function () {
@@ -35,6 +37,7 @@ beforeEach(function () {
 it('creates a user from username and email', function() {
 
     Event::fake();
+    Mail::fake();
 
     $this->callConsoleApi('POST', '/user', [
         'username_or_email' => $this->username,
@@ -52,6 +55,9 @@ it('creates a user from username and email', function() {
         );
 
     Event::assertDispatched(UserCreatedEvent::class);
+    Mail::assertSent(InviteUserMail::class, function ($mail) {
+        return $mail->hasTo($this->email);
+    });
 
 });
 

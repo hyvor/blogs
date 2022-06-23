@@ -7,8 +7,10 @@ use App\Models\Blog;
 use App\Models\Media;
 use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Http\UploadedFile;
+use Illuminate\Support\Facades\File;
 use Illuminate\Support\Facades\Http;
 use Illuminate\Support\Facades\Storage;
+use Illuminate\Support\Str;
 
 /**
  *  Terms
@@ -80,9 +82,11 @@ class MediaRepository
 
         $size = (int) $response->header('content-size');
 
-        $path = Storage::put(self::getPathPrefix($blog->id), $file);
+        $extension = File::extension($url);
+        $name = self::getPathPrefix($blog->id) . '/' . Str::random() . ($extension ? ".$extension" : "");
+        Storage::put($name, $file);
 
-        $fileName = self::getFileNameFromPath($path);
+        $fileName = self::getFileNameFromPath($name);
 
         return Media::create([
             'blog_id' => $blog->id,

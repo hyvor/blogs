@@ -56,7 +56,12 @@ const usersLogic = kea<usersLogicType<IDKeyedUsers>>([
             })
             actions.addUsers([user]);
             actions.setUsersList([user.id, ...values.usersList]);
+        },
+
+        resendInvite: async ({id} : {id: number}) => {
+            await api.post(props.subdomain, `/user/${id}/resend-invite`);
         }
+
 
     })),
 

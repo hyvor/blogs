@@ -2,6 +2,9 @@
 
 use App\Domains\Post\Content\PostContentRepository;
 use App\Models\Blog;
+use App\Models\User;
+use Hyvor\HyvorConnecter\HyvorUser;
+use Hyvor\HyvorConnecter\Userbase;
 use Illuminate\Support\Facades\Route;
 
 Route::get('callout', function() {
@@ -11,5 +14,16 @@ Route::get('callout', function() {
     ", Blog::find(1));
 
     dd($json);
+
+});
+
+Route::get('email', function() {
+
+    return view('emails.invite-user', [
+        'hyvorUser' => HyvorUser::dummy(),
+        'user' => User::first(),
+        'blog' => Blog::first(),
+        'link' => ''
+    ]);
 
 });

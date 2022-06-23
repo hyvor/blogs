@@ -13,6 +13,7 @@ use App\Domains\User\Events\UserUpdatedEvent;
 use App\Domains\User\Events\UserVariantCreatedEvent;
 use App\Domains\User\Events\UserVariantDeletedEvent;
 use App\Domains\User\Events\UserVariantUpdatedEvent;
+use App\Domains\User\Mail\InviteUserMail;
 use App\Helpers\CollectionWithTotal;
 use App\Models\Blog;
 use App\Models\Language;
@@ -22,6 +23,7 @@ use Exception;
 use Hyvor\FilterQ\Facades\FilterQ;
 use Hyvor\HyvorConnecter\Userbase;
 use Illuminate\Support\Collection;
+use Illuminate\Support\Facades\Mail;
 
 class UserRepository
 {
@@ -307,6 +309,19 @@ class UserRepository
         return UserVariant::where('language_id', $languageId)
             ->where('user_id', $userId)
             ->first();
+    }
+
+    public static function sendInviteEmail(User $user)
+    {
+        $hyvorUser = Userbase::fromId($user->hyvor_user_id, true);
+
+        Mail::to($hyvorUser->email)->send(new InviteUserMail($user, $hyvorUser));
+    }
+
+    public static function activateUser(User $user)
+    {
+        $user->status = UserStatusEnum::ACTIVE;
+        $user->save();
     }
 
 }
