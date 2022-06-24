@@ -74,3 +74,17 @@ it('does not update the status of the owner', function () {
         ->assertUnprocessable()
         ->assertSee('cannot update the status of the owner');
 });
+
+
+it('returns an error when updating to an already existing slug', function() {
+
+    User::factory()->create(['slug' => 'test', 'blog_id' => blog()]);
+    $user2 = User::factory()->create(['slug' => 'test2', 'blog_id' => blog()]);
+
+    $this->callConsoleApi('PATCH', "/user/$user2->id", [
+        'slug' => 'test',
+    ])
+        ->assertUnprocessable()
+        ->assertSee('Slug already taken');
+
+});

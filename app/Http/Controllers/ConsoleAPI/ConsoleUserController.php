@@ -150,6 +150,10 @@ class ConsoleUserController extends Controller
             throw new TrustedException('You cannot update the status of the owner');
         }
 
+        if (isset($updates['slug']) && UserRepository::getUserByBlogIdAndSlug($blog->id, $updates['slug'])) {
+            throw new TrustedException('Slug already taken');
+        }
+
         if (count($updates) > 0) {
             UserRepository::updateUser($user, $updates);
         }

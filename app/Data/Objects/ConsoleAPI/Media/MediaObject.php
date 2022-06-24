@@ -11,7 +11,7 @@ class MediaObject
     public int $uploaded_at;
     public string $url;
     public string $name;
-    public string $extension;
+    public ?string $extension;
 
     public function __construct(Media $media)
     {

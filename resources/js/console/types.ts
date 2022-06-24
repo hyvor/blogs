@@ -167,6 +167,7 @@ export type User = {
     social_twitter: string | null;
     social_linkedin: string | null;
     social_youtube: string | null;
+    social_tiktok: string | null;
     social_instagram: string | null;
     social_github: string | null;
 

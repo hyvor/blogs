@@ -9,6 +9,7 @@ use App\Domains\Post\PostRepository;
 use App\Domains\Post\PostTagAuthorRepository;
 use App\Exceptions\TrustedException;
 use App\Http\Controllers\Controller;
+use App\Http\Middleware\App\ConsoleAPI\ConsoleApiAccessingUser;
 use App\Models\Blog;
 use App\Models\Post;
 use App\Models\User;
@@ -64,12 +65,12 @@ class ConsolePostController extends Controller
         return response()->json($pages);
     }
 
-    public function createPost(Request $request, Blog $blog, User $user)
+    public function createPost(Request $request, Blog $blog, ConsoleApiAccessingUser $consoleApiAccessingUser)
     {
         $isPage = (bool) $request->input('is_page');
         $post = PostRepository::createPost($blog, $isPage);
 
-        PostTagAuthorRepository::createAuthor($post->id, $user->id);
+        PostTagAuthorRepository::createAuthor($post->id, $consoleApiAccessingUser->user->id);
 
         return response()->json(new PostObject($post, $blog));
     }

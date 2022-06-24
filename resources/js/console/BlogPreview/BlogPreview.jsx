@@ -31,7 +31,7 @@ export default function BlogPreview() {
             <div className="right">
                 <span onClick={() => setType('laptop')} className={type == 'laptop' ? "active" : ""}><Laptop /></span>
                 <span onClick={() => setType('tablet')} className={type == 'tablet' ? "active" : ""}><Tablet /></span>
-                <span onClick={() => setType('phone')} className={type == 'phone' ? "active" : ""}><Phone size={14} /></span>
+                {/*<span onClick={() => setType('phone')} className={type == 'phone' ? "active" : ""}><Phone size={14} /></span>*/}
             </div>
         </div>
         <div 
@@ -48,7 +48,7 @@ export default function BlogPreview() {
                 id="preview-iframe"
                 src={ blog.blog.base_url }
                 style={{
-                    width: type === 'laptop' ? "100%" : (type === 'tablet' ? 600 : 360),
+                    width: type === 'laptop' ? "100%" : (type === 'tablet' ? 540 : 360),
                     height: type === 'laptop' ? "100%" : 740,
                     display: isLoading ? "none" : "block"
                 }}

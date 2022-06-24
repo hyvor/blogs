@@ -61,10 +61,13 @@ const postsLogic = kea<postsLogicType>([
         },
 
         createPost: async () => {
-            const response = await api.post<Post>(props.subdomain, '/post');
+            const post = await api.post<Post>(props.subdomain, '/post');
 
-            actions.setPostsList([response.id, ...values.postsList])
-            actions.navigateToPost(response.id);
+            const builtPostLogic = postLogic.build({id: post.id, data: post});
+            builtPostLogic.mount();
+
+            actions.setPostsList([post.id, ...values.postsList])
+            actions.navigateToPost(post.id);
         },
 
     })),

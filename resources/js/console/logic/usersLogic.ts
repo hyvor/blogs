@@ -1,5 +1,5 @@
 import {kea, key, path, actions, reducers, props} from 'kea';
-import {Tag, User} from "../types";
+import {Tag, User, UserVariant} from "../types";
 
 import type { usersLogicType } from "./usersLogicType";
 import {ajax} from "kea-ajax";
@@ -22,6 +22,7 @@ const usersLogic = kea<usersLogicType<IDKeyedUsers>>([
         setUsersList: (usersList: number[]) => ({usersList}),
         setUsersListHasMore: (hasMore: boolean) => ({hasMore}),
         removeUser: (id: number) => ({id}),
+        addUserVariant: (id: number, variant: UserVariant) => ({id, variant}),
     }),
 
     ajax(({props, values, actions}) => ({
@@ -62,36 +63,42 @@ const usersLogic = kea<usersLogicType<IDKeyedUsers>>([
             onCreate();
         },
 
-        update: async ({user, onUpdate} : {user: User, onUpdate: Function}) => {
+        update: async ({user, onUpdate, onError} : {user: User, onUpdate: Function, onError: Function}) => {
             const userOriginal = values.users[user.id]
 
             const diff = getDiff(userOriginal, user) as Partial<Tag>
 
-            if (diff.variants) {
+            try {
 
-                for (const variant of user.variants) {
+                if (diff.variants) {
 
-                    const variantOriginal = userOriginal.variants.find(t => t.language_id === variant.language_id)
+                    for (const variant of user.variants) {
 
-                    if (!variantOriginal)
-                        continue;
+                        const variantOriginal = userOriginal.variants.find(t => t.language_id === variant.language_id)
 
-                    const variantDiff = getDiff(variantOriginal, variant)
+                        if (!variantOriginal)
+                            continue;
 
-                    await api.patch(props.subdomain, `/user/${user.id}/variant`, {
-                        ...variantDiff,
-                        language_id: variant.language_id
-                    })
+                        const variantDiff = getDiff(variantOriginal, variant)
+
+                        await api.patch(props.subdomain, `/user/${user.id}/variant`, {
+                            ...variantDiff,
+                            language_id: variant.language_id
+                        })
+
+                    }
+
+                    delete diff.variants;
 
                 }
 
-                delete diff.variants;
+                const newUser = await api.patch<User>(props.subdomain, `/user/${user.id}`, diff)
 
+                actions.addUsers([newUser])
+
+            } catch {
+                return onError();
             }
-
-            const newUser = await api.patch<User>(props.subdomain, `/user/${user.id}`, diff)
-
-            actions.addUsers([newUser])
 
             onUpdate();
         },
@@ -103,7 +110,15 @@ const usersLogic = kea<usersLogicType<IDKeyedUsers>>([
         remove: async ({id} : {id: number}) => {
             actions.removeUser(id);
             await api.delete(props.subdomain, `/user/${id}`);
-        }
+        },
+
+        createVariant: async ({ id, languageId, onCreate } : {id: number, languageId: number, onCreate: Function}) => {
+            const variant = await api.post<UserVariant>(props.subdomain, `/user/${id}/variant`, {
+                language_id: languageId
+            })
+            actions.addUserVariant(id, variant)
+            onCreate(variant)
+        },
 
     })),
 

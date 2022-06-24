@@ -1,26 +1,64 @@
-import {useValues} from "kea";
-import languagesLogic from "../../logic/languagesLogic";
 import React, {useState} from "react";
-import {User, UserVariant} from "../../types";
+import { User, UserVariant} from "../../types";
 import {Popup, PopupBodyDefault, PopupFooterDoubleButton, PopupHeaderDefault} from "../../ReusableComponents/Popup";
-import Input from "../../ReusableComponents/Input";
+import Input, {InputView} from "../../ReusableComponents/Input";
 import LanguageSelector from "../../ReusableComponents/LanguageSelector";
-import getSubdomain from "../../logic-helpers/subdomain";
+import {useLanguagesValues} from "../Languages/helpers";
+import {useUsersActions} from "../../logic-helpers/users";
+import ImageSelector from "../../ReusableComponents/ImageSelector";
+import {CaretDownFill, CaretRightFill} from "react-bootstrap-icons";
 
 export default function UpdateUserPopup({user, onClose}: {user: User, onClose: Function}) {
 
-    const { languages, primaryLanguage } = useValues(languagesLogic({subdomain: getSubdomain()}))
-    const [currentLanguageId, setCurrentLanguageId] = useState( primaryLanguage.id );
+    const { createVariant, update } = useUsersActions()
+
+    const { primaryLanguage } = useLanguagesValues();
+    const [currentLanguageId, setCurrentLanguageId] = useState(primaryLanguage.id);
 
     const [newUser, setNewUser] = useState(user)
+    const [showSocial, setShowSocial] = useState(false);
 
     const variants = newUser.variants || [];
-    const variant: UserVariant = variants[currentLanguageId] || {} as UserVariant;
+    const variant: UserVariant = variants.find(v => v.language_id === currentLanguageId) as UserVariant;
 
     const [ isUpdating, setIsUpdating ] = useState<boolean>(false)
 
     function updateUser() {
         setIsUpdating(true);
+        update({
+            user: newUser,
+            onUpdate: onClose,
+            onError: () => setIsUpdating(false)
+        })
+    }
+
+    function createVariantExtended({id, languageId, onCreate}: {id: number, languageId: number, onCreate: Function}) {
+        createVariant({
+            id,
+            languageId,
+            onCreate: (variant: UserVariant) => {
+                const copy = {...newUser}
+                copy.variants.push(variant)
+                setNewUser(copy)
+                onCreate(variant);
+            }
+        })
+    }
+
+    function changeVariantValue<T extends keyof UserVariant>(key: T, val: UserVariant[T]) {
+        const variantCopy  = {...variant}
+        variantCopy[key] = val;
+        const copy = {...newUser}
+        copy.variants = copy.variants.map(
+            v => v.language_id === currentLanguageId ? variantCopy : v
+        );
+        setNewUser(copy)
+    }
+
+    function changeValue<T extends keyof User>(key: T, val: User[T]) {
+        const copy = {...newUser}
+        copy[key] = val;
+        setNewUser(copy)
     }
 
     return <Popup
@@ -28,222 +66,128 @@ export default function UpdateUserPopup({user, onClose}: {user: User, onClose: F
             <div>
                 <PopupHeaderDefault title="Update User" />
                 <LanguageSelector
-                    id={0}
+                    id={user.id}
                     languageId={currentLanguageId}
-                    variantsLanguageIds={Object.keys(variants).map(id => parseInt(id))}
+                    variantsLanguageIds={variants.map(v => v.language_id)}
                     onChange={setCurrentLanguageId}
-                    variantCreator={() => {}}
+                    variantCreator={createVariantExtended}
                 />
             </div>
         }
         body={
             <PopupBodyDefault>
+                <div className="user-image-view">
+                    <ImageSelector
+                        src={newUser.picture_url}
+                        onChange={url => changeValue('picture_url', url)}
+                    />
+                </div>
                 <Input
                     title="Name"
                     type="text"
                     name="name"
                     value={variant.name}
-                    onChange={value => {}}
-                    placeholder="Name"
+                    onChange={value => changeVariantValue('name', value)}
                 />
                 <Input
                     title="Slug"
                     type="text"
                     name="slug"
                     value={newUser.slug}
-                    onChange={value => {}}
-                    placeholder="Slug"
+                    onChange={value => changeValue('slug', value)}
                 />
                 <Input
                     title="Email"
                     type="text"
                     name="email"
                     value={newUser.email}
-                    onChange={value => {}}
-                    placeholder="Email"
+                    onChange={value => changeValue('email', value)}
+                />
+                <InputView
+                    title="Bio"
+                    content={
+                        <textarea
+                            className="input"
+                            value={variant.bio || ''}
+                            onChange={e => changeVariantValue('bio', e.target.value)}
+                        />
+                    }
+                />
+                <Input
+                    title="Location"
+                    type="text"
+                    name="location"
+                    value={variant.location}
+                    onChange={value => changeVariantValue('location', value)}
                 />
                 <Input
                     title="Website URL"
                     type="text"
                     name="url"
                     value={newUser.website_url}
-                    onChange={value => {}}
-                    placeholder="URL"
+                    onChange={value => changeValue('website_url', value)}
                 />
-            </PopupBodyDefault>
-
-            /*<PopupBodyDefault>
-                <div>
-                    <div className="global-avatar">
-                    <div className="avatar">
-                        <img src={user.picture_url} alt="Avatar" className="avatar-center"/>
+                <div className="show-social">
+                    <a
+                        className="link"
+                        onClick={() => setShowSocial(!showSocial)}
+                    >Social Links { showSocial ? <CaretDownFill /> : <CaretRightFill /> }</a>
+                </div>
+                {
+                    showSocial &&
+                    <div>
+                        <Input
+                            title="Facebook"
+                            type="text"
+                            name="facebook_url"
+                            value={newUser.social_facebook}
+                            onChange={value => changeValue('social_facebook', value)}
+                        />
+                        <Input
+                            title="Twitter"
+                            type="text"
+                            name="twitter_url"
+                            value={newUser.social_twitter}
+                            onChange={value => changeValue('social_twitter', value)}
+                        />
+                        <Input
+                            title="Linkedin"
+                            type="text"
+                            name="linkedin_url"
+                            value={newUser.social_linkedin}
+                            onChange={value => changeValue('social_linkedin', value)}
+                        />
+                        <Input
+                            title="Youtube"
+                            type="text"
+                            name="youtube_url"
+                            value={newUser.social_youtube}
+                            onChange={value => changeValue('social_youtube', value)}
+                        />
+                        <Input
+                            title="Tiktok"
+                            type="text"
+                            name="tiktok_url"
+                            value={newUser.social_tiktok}
+                            onChange={value => changeValue('social_tiktok', value)}
+                        />
+                        <Input
+                            title="Instagram"
+                            type="text"
+                            name="instagram_url"
+                            value={newUser.social_instagram}
+                            onChange={value => changeValue('social_instagram', value)}
+                        />
+                        <Input
+                            title="Github"
+                            type="text"
+                            name="github_url"
+                            value={newUser.social_github}
+                            onChange={value => changeValue('social_github', value)}
+                        />
                     </div>
-                    <input type="file" id="actual-btn" hidden/>
-
-                        <div className="upload-lable"
-                        onClick={uploadAjax.status === 'loading' ? null: handleUpload}>
-                    {uploadAjax.status === 'loading' ? "Uploading..." : <span> Choose File</span>}
-                        </div>
-                        </div>
-
-                        <Input
-                            title="Name"
-                            type="text"
-                            name="name"
-                            value={variantName}
-                            onChange={setVariantName}
-                            placeholder="Name"
-                        />
-                        <div className={pointerEvent}>
-                        <Input
-                            title="Slug"
-                            type="text"
-                            name="slug"
-                            value={userSlug}
-                            onChange={setSlug}
-                            placeholder="Slug"
-                        />
-                        </div>
-                        <div className={pointerEvent}>
-                        <DualSetting
-                        left={
-                        <Input
-                        title="Email"
-                        type="text"
-                        name="email"
-                        value={userEmail}
-                        onChange={setEmail}
-                        placeholder="Email"
-                        />
-                    }
-                        right={
-                        <Input
-                        title="Url"
-                        type="text"
-                        name="url"
-                        value={userUrl}
-                        onChange={setUrl}
-                        placeholder="Url"
-                        />
-                    }
-                        />
-                        </div>
-                        <div className={pointerEvent}>
-                        <DualSetting
-                        left={
-                        <div>
-                        <div className="popup-type-margin">Role</div>
-                        <SelectUserRole  options = {selectRole} onChange = {handleRole}/>
-                        </div>
-                    }
-                        right={
-                        <div>
-                        <div className="popup-type-margin">Status</div>
-                        <SelectUserRole  options = {selectStatus} onChange = {handleStatus}/>
-                        </div>
-                    }
-                        />
-                        </div>
-
-                        <DualSetting
-                        left={
-                        <Input
-                        title="Location"
-                        type="text"
-                        name="location"
-                        value={variantLocation}
-                        onChange={setVariantLocation}
-                        placeholder="Location"
-                        />
-                    }
-                        right={
-                        <div className={pointerEvent}>
-                        <Input
-                        title="Facebook"
-                        type="text"
-                        name="facebook"
-                        value={facebook}
-                        onChange={setFacebook}
-                        placeholder="Facebook"
-                        />
-                        </div>
-                    }
-                        />
-                        <div className={pointerEvent}>
-                        <DualSetting
-                        left={
-                        <Input
-                        title="Twitter"
-                        type="text"
-                        name="twitter"
-                        value={twitter}
-                        onChange={setTwitter}
-                        placeholder="Twitter"
-                        />
-                    }
-                        right={
-                        <Input
-                        title="LinkedIn"
-                        type="text"
-                        name="LinkedIn"
-                        value={linkedIn}
-                        onChange={setLinkedIn}
-                        placeholder="linkedIn"
-                        />
-                    }
-                        />
-                        <DualSetting
-                        left={
-                        <Input
-                        title="Youtube"
-                        type="text"
-                        name="youtube"
-                        value={youtube}
-                        onChange={setYoutube}
-                        placeholder="Youtube"
-                        />
-                    }
-                        right={
-                        <Input
-                        title="Instagram"
-                        type="text"
-                        name="instagram"
-                        value={instagram}
-                        onChange={setInstagram}
-                        placeholder="Instagram"
-                        />
-                    }
-                        />
-                        </div>
-
-                        <div className="popup-type-margin">Bio</div>
-                        <textarea
-                        className="input"
-                        placeholder="Write a bio..."
-                        value={variantBio}
-                        onChange={setVariantBio}
-                        maxLength={350}
-                        ></textarea>
-
-                        <div className="table-delete">
-                        <span className = 'button danger' onClick={handleDelete}>
-                        Delete
-                        </span>
-                    {
-                        deletePopupOpened ?
-                        <PopupConfirm
-                        title="Delete Permanently"
-                        text="Are you sure to delete this user permanently? You will not be able to access it anymore."
-                        name="Delete"
-                        buttonClass="danger"
-                        onClick={handleDoDelete}
-                        onCancel={handleDeleteCancel}
-                        />
-                        : null
-                    }
-                        </div>
-                        </div>
-            </PopupBodyDefault>*/
+                }
+            </PopupBodyDefault>
         }
         footer={
             <PopupFooterDoubleButton

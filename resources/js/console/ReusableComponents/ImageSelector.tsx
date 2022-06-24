@@ -54,7 +54,7 @@ export default function ImageSelector({ src, onChange } : ImageSelectorProps) {
                     </div>
                 </div> :
                 <div>
-                    <button className="button medium" onClick={handleUpload}>Upload</button>
+                    <button className="button medium upload-button" onClick={handleUpload}>Upload</button>
                 </div>
         }
     </div>
