@@ -98,7 +98,7 @@ export default function NewBlog({ type }: { type: string | undefined }) {
     }
 
     function handleBack() {
-        push('/console');
+        blogs.length ? push('/console') : (location.href = '/');
     }
 
     function handleCreate() {
@@ -115,22 +115,21 @@ export default function NewBlog({ type }: { type: string | undefined }) {
     }
 
     return <div className="new-blog-scene">
-        <Popup 
+        <Popup
+            isCenter={true}
             header={<PopupHeaderDefault title={ isDev ? "Create Dev Blog" : "Start a new blog"} />}
             body={<PopupBodyDefault>
                 <div className="onboarding-body">
 
-                    {
-                        blogs.length ?
-                        <div className="back-button">
-                            <button 
-                                className="button text-only"
-                                onClick={handleBack}
-                            >
-                                <CaretLeftFill /> <span>Back</span>
-                            </button>
-                        </div> : null
-                    }
+
+                    <div className="back-button">
+                        <button
+                            className="button text-only"
+                            onClick={handleBack}
+                        >
+                            <CaretLeftFill /> <span>Back</span>
+                        </button>
+                    </div>
 
                     {
                         isDev &&

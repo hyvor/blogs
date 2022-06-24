@@ -7,12 +7,13 @@ use Illuminate\Console\Command;
 
 class RefreshDev extends Command
 {
-    protected $signature = 'refresh:dev';
+    protected $signature = 'refresh:dev {--no-seed}';
     protected $description = 'Refresh the DB and Themes for development';
 
     public function handle()
     {
-        $this->call('migrate:fresh', ['--seed' => true]);
+        $noSeed = $this->option('no-seed');
+        $this->call('migrate:fresh', ['--seed' => !$noSeed]);
 
         $this->comment('Downloading themes');
         dispatch(new GithubSyncThemesJob());

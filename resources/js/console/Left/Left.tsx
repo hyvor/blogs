@@ -27,11 +27,13 @@ import {router} from "kea-router";
 export default function Left() {
 
     const { subdomain } = useValues(subdomainLogic);
+
+    const { findBlogBySubdomain } = useValues(blogsLogic);
+
     if (!subdomain) {
         return null;
     }
 
-    const { findBlogBySubdomain } = useValues(blogsLogic);
     const { blog, blog: { subscription: currentSubscription } }  = findBlogBySubdomain(subdomain);
 
     const trialDaysDiff =

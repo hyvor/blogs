@@ -6,10 +6,11 @@ interface PopupProps {
     header: ReactNode,
     body: ReactNode,
     footer: ReactNode,
+    isCenter?: boolean
 }
 
 export function Popup(props: PopupProps) {
-    return <div className="popup-wrap">
+    return <div className={"popup-wrap" + (props.isCenter ? " center" : "")}>
         <div className="popup box-style">
             <div className="popup-header">{props.header}</div>
             <div className="popup-body">{props.body}</div>

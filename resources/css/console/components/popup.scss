@@ -15,6 +15,12 @@
     z-index: 1000;
     overflow-y: auto;
 
+    &.center {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+    }
+
     .popup {
         width:400px;
         margin: auto;

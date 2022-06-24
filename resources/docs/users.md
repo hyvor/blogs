@@ -1,6 +1,6 @@
 # Users
 
-## Roles
+## Roles {#roles}
 
 There are 6 roles for users. Each user has access to features based on their role.
 

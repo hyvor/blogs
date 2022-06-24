@@ -50,7 +50,7 @@ export default function Publisher({id} : {id: number}) {
                 !publishTime ?
                 <div>Post Published. <a
                     className="link"
-                    href={post.variants[editorState.languageId].url}
+                    href={post.variants.find(v => v.language_id === editorState.languageId)?.url}
                     target="_blank"
                 >View</a></div> :
                 "Post scheduled"
