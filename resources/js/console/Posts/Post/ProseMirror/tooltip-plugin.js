@@ -88,7 +88,7 @@ class MarksTooltip {
                         if (focusAtEnd) {
                             const tr = selfx.view.state.tr;
                             const selection = TextSelection.create(tr.doc, selfx.view.state.selection.to);
-                            selfx.view.dispatch(tr.setSelection(selection));
+                            selfx.view.dispatch(tr.setSelection(selection).scrollIntoView());
                             selfx.view.focus();
                         }
                     }
@@ -96,13 +96,17 @@ class MarksTooltip {
                     input.addEventListener("keydown", (e) => {
                         if (e.key === 'Enter') {
                             input.value ?
-                                toggleMark(type, {href: input.value})(view.state, view.dispatch, view) :
+                                toggleMark(type, {href: input.value})(view.state, view.dispatch) :
                                 closeLinkInput();
-                            closeLinkInput(true);
                             e.preventDefault(); // otherwise makes a new paragraph
                         } else if (e.key === 'Escape') {
                             closeLinkInput();
                             e.stopPropagation();
+                        }
+                    })
+                    input.addEventListener("keyup", e => {
+                        if (e.key === "Enter") {
+                            closeLinkInput(true);
                         }
                     })
                     input.focus()

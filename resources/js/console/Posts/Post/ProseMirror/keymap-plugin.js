@@ -30,7 +30,12 @@ export default function keymapPlugins(schema) {
     bind("Shift-Enter", brCmd)
     if (mac) bind("Ctrl-Enter", brCmd)
 
-    bind("Backspace", figcaptionBackspaceHandler);
+    bind("Backspace",
+        chainCommands(
+            (state, dispatch) => convertEmptyBlocksToParagraphHandler(state, dispatch, schema),
+            figcaptionBackspaceHandler
+        )
+    );
 
     // list item
     bind("Enter", chainCommands(
@@ -185,6 +190,28 @@ function figcaptionBackspaceHandler(state, dispatch) {
 
     if (!$from.parent?.firstChild.text)
         return true;
+}
+
+function convertEmptyBlocksToParagraphHandler(state, dispatch, schema) {
+    let { $from } = state.selection
+
+    const parent = $from.parent
+
+    if (!parent)
+        return false;
+
+    const blocks = ['blockquote', 'heading', 'callout'];
+
+    if (blocks.indexOf(parent.type.name) >= 0) {
+        const text = parent.firstChild?.text;
+
+        if (text)
+            return false;
+
+        setBlockType(schema.nodes.paragraph)(state, dispatch);
+        return true;
+    }
+
 }
 
 // https://prosemirror.net/examples/codemirror/

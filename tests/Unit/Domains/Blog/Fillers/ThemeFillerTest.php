@@ -15,7 +15,7 @@ beforeEach(function () {
     GithubSyncService::sync($zip);
 });
 
-it('copies the default theme', function () {
+it('copies the hello theme', function () {
     $blog = newBlog();
 
     $themeFiller = new ThemeFiller($blog);
@@ -28,7 +28,7 @@ it('copies the default theme', function () {
     expect($blog->theme_version_id)
         ->toBe(
             ThemeRepository::getThemeLatestVersion(
-                ThemeRepository::getThemeByName('default')
+                ThemeRepository::getThemeByName('hello')
             )->id
         );
 });

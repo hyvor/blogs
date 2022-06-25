@@ -18,7 +18,7 @@ class ThemeFiller implements FillerInterface
             return;
         }
 
-        $theme = $this->blog->type === BlogTypeEnum::DEV ? 'blank' : 'default';
+        $theme = $this->blog->type === BlogTypeEnum::DEV ? 'blank' : 'hello';
         ThemeFilesRepository::copyThemeToBlog($this->blog, $theme);
     }
 }

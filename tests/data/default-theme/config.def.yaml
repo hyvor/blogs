@@ -1,7 +1,0 @@
-ga_api_key:
-  name: Google Analytics API Key
-  description: 
-  type: date
-  min:
-  max: 
-  match: //

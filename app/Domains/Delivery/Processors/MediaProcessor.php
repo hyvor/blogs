@@ -23,7 +23,7 @@ class MediaProcessor implements RouteProcessorInterface
         }
 
         $content = MediaRepository::getContents($media);
-        $mimeType = MimeTypes::getMimeFromExtension($media->extension);
+        $mimeType = $media->extension ? MimeTypes::getMimeFromExtension($media->extension) : 'image/png';
 
         $this->responseObject = DeliveryAPIResponseObject::forFile(
             DeliveryAPIFileTypeEnum::MEDIA,

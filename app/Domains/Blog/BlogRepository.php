@@ -9,6 +9,7 @@ use App\Domains\Blog\Fillers\NavigationFiller;
 use App\Domains\Blog\Fillers\PostFiller;
 use App\Domains\Blog\Fillers\RouteFiller;
 use App\Domains\Blog\Fillers\TagFiller;
+use App\Domains\Blog\Fillers\ThemeFiller;
 use App\Domains\Blog\Fillers\UserFiller;
 use App\Exceptions\TrustedException;
 use App\Models\Blog;
@@ -34,25 +35,33 @@ class BlogRepository
             'trial_ends_at' => now()->addDays(config('limits.trial_days')),
         ]);
 
-        // fill data
-        $fillers = [
-            LanguageFiller::class,
-            UserFiller::class,
-            TagFiller::class,
-            PostFiller::class,
-            RouteFiller::class,
-            NavigationFiller::class,
-        ];
+        (new LanguageFiller($blog))->fill();
 
-        foreach ($fillers as $filler) {
-            (new $filler($blog))->fill();
-        }
-
+        /**
+         * Creating the variant is important because all functions are designed assuming primary variant is there
+         * Other fillers can be risky (theme copying for example)
+         * So, first create the languages and variant
+         * THen, we are running the other fillers.
+         */
         BlogVariant::create([
             'blog_id' => $blog->id,
             'language_id' => $blog->languages[0]->id,
             'name' => $name,
         ]);
+
+        // other fillers
+        $fillers = [
+            UserFiller::class,
+            TagFiller::class,
+            PostFiller::class,
+            RouteFiller::class,
+            NavigationFiller::class,
+            ThemeFiller::class
+        ];
+
+        foreach ($fillers as $filler) {
+            (new $filler($blog))->fill();
+        }
 
         return $blog;
     }

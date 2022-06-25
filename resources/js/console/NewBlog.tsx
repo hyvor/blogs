@@ -54,7 +54,10 @@ export default function NewBlog({ type }: { type: string | undefined }) {
                     subdomain
                 }
             }
-        ).catch(() => setSubdomainError("Subdomain already taken"));
+        ).catch((e) => {
+            if (e.__CANCEL__ !== true) // aborting
+                setSubdomainError("Subdomain already taken")
+        });
 
     }
 
