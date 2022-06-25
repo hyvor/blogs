@@ -234,6 +234,14 @@ export type Media = {
 
 }
 
+export interface UnsplashImage {
+    url: string;
+    author: string;
+    authorUrl: string;
+    title: string | null;
+    alt: string | null;
+}
+
 // === REDIRECT
 
 export interface Redirect {

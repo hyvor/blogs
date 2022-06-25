@@ -1,10 +1,31 @@
 import ReactDOM from 'react-dom';
+import React from 'react';
 import ImageUploader from './ImageUploader';
 import {NodeSelection} from "prosemirror-state";
+import {Node as ProsemirrorNode, Schema} from "prosemirror-model";
+import {EditorView, NodeView} from "prosemirror-view";
+import {UnsplashImage} from "../../../../types";
 
-export default class Image {
+export type ImageUploadHandlerType = (url: string, alt?: string | null, unsplash?: UnsplashImage | null) => void;
 
-    constructor(schema, node, view, getPos) {
+type ImageNodeViewType = NodeView & {
+    handleUpload: ImageUploadHandlerType;
+}
+
+export default class Image implements ImageNodeViewType {
+
+    node: ProsemirrorNode;
+    view: EditorView;
+    getPos: () => number;
+    schema: Schema;
+
+    dom: HTMLElement;
+
+    img: HTMLImageElement | undefined;
+    altInput: HTMLInputElement | undefined;
+    rangeInput: HTMLInputElement | undefined;
+
+    constructor(schema: Schema, node: ProsemirrorNode, view: EditorView, getPos: () => number) {
         this.node = node;
         this.view = view;
         this.getPos = getPos;
@@ -21,7 +42,7 @@ export default class Image {
         this.createInside();
     }
 
-    update(node) {
+    update(node: ProsemirrorNode) {
         if (node.type.name === 'image') {
             if (this.node.attrs.src !== node.attrs.src) {
                 return false; // re-render
@@ -31,10 +52,16 @@ export default class Image {
             this.node = node;
             return true;
         }
+
+        return false;
     }
 
-    updateFromAttrs(node) {
+    updateFromAttrs(node: ProsemirrorNode) {
         const { alt, width, height } = node.attrs;
+
+        if (!this.altInput || !this.img)
+            return;
+
         this.altInput.value = alt
 
         if (width === null) {
@@ -71,10 +98,11 @@ export default class Image {
 
             altInput.oninput = function(e) {
                 _self.view.dispatch(
+                    // @ts-ignore (PM Error)
                     _self.view.state.tr.setNodeMarkup(
                         _self.getPos(),
                         null,
-                        {..._self.node.attrs, alt: e.target.value }
+                        {..._self.node.attrs, alt: (e.target as HTMLInputElement).value }
                     )
                 )
             }
@@ -82,23 +110,24 @@ export default class Image {
 
             const rangeInput = document.createElement("input")
             rangeInput.type = 'range';
-            rangeInput.min = 1
-            rangeInput.max = 100
-            rangeInput.value = 100
-            rangeInput.step = 1
+            rangeInput.min = "1"
+            rangeInput.max = "100"
+            rangeInput.value = "100"
+            rangeInput.step = "1"
 
             rangeInput.oninput = function(e) {
-                const value = parseInt(e.target.value)
+                const value = parseInt((e.target as HTMLInputElement).value)
                 let width, height
                 if (value === 100) {
                     width = null;
                     height = null;
                 } else {
-                    width = _self.img.naturalWidth * value / 100
-                    height = _self.img.naturalHeight * value / 100
+                    width = (_self.img as HTMLImageElement).naturalWidth * value / 100
+                    height = (_self.img as HTMLImageElement).naturalHeight * value / 100
                 }
                 
                 _self.view.dispatch(
+                    // @ts-ignore (PM Error)
                     _self.view.state.tr.setNodeMarkup(
                         _self.getPos(),
                         null,
@@ -117,9 +146,10 @@ export default class Image {
         }
     }
 
-    handleUpload(url, alt = null, unsplash = null) {
+    handleUpload(url: string, alt: string | null = null, unsplash: UnsplashImage | null = null) {
         const pos = this.getPos()
-        
+
+        // @ts-ignore (PM Error)
         const tr = this.view.state.tr.setNodeMarkup(
             pos,
             null,
@@ -156,7 +186,7 @@ export default class Image {
         this.view.dispatch(tr)
     }
 
-    stopEvent(e) {
+    stopEvent(e: any) {
         return e.target.isEqualNode(this.altInput) || e.target.isEqualNode(this.rangeInput)
     }
 

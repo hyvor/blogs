@@ -1,4 +1,4 @@
-import {Schema} from "prosemirror-model"
+import {Mark, MarkSpec, Node, NodeSpec, Schema} from "prosemirror-model"
 import { addListNodes } from "./list"
 
 /**
@@ -6,15 +6,13 @@ import { addListNodes } from "./list"
  * https://github.com/ProseMirror/prosemirror-schema-basic
  */
 
-const pDOM = ["p", 0], blockquoteDOM = ["blockquote", 0], hrDOM = ["hr"], brDOM = ["br"]
-
 // :: Object
 // [Specs](#model.NodeSpec) for the nodes defined in this schema.
 export const nodes = {
     // :: NodeSpec The top level document node.
     doc: {
         content: "block+"
-    },
+    } as NodeSpec,
 
     // :: NodeSpec A plain paragraph textblock. Represented in the DOM
     // as a `<p>` element.
@@ -23,8 +21,8 @@ export const nodes = {
         group: "block",
         selectable: false,
         parseDOM: [{tag: "p"}],
-        toDOM() { return pDOM }
-    },
+        toDOM() { return ['p', 0] }
+    } as NodeSpec,
 
     // :: NodeSpec A blockquote (`<blockquote>`) wrapping one or more blocks.
     blockquote: {
@@ -33,15 +31,15 @@ export const nodes = {
         defining: true,
         selectable: false,
         parseDOM: [{tag: "blockquote"}],
-        toDOM() { return blockquoteDOM }
-    },
+        toDOM() { return ["blockquote", 0] }
+    } as NodeSpec,
 
     // :: NodeSpec A horizontal rule (`<hr>`).
     horizontal_rule: {
         group: "block",
         parseDOM: [{tag: "hr"}],
-        toDOM() { return hrDOM }
-    },
+        toDOM() { return ['hr'] }
+    } as NodeSpec,
 
     // :: NodeSpec A heading textblock, with a `level` attribute that
     // should hold the number 2 to 6. Parsed and serialized as `<h1>` to
@@ -56,15 +54,15 @@ export const nodes = {
         defining: true,
         selectable: false,
         parseDOM: [
-            {tag: "h1", getAttrs(h) {return {id: h.id, level: 1}}},
-            {tag: "h2", getAttrs(h) {return {id: h.id, level: 2}}},
-            {tag: "h3", getAttrs(h) {return {id: h.id, level: 3}}},
-            {tag: "h4", getAttrs(h) {return {id: h.id, level: 4}}},
-            {tag: "h5", getAttrs(h) {return {id: h.id, level: 5}}},
-            {tag: "h6", getAttrs(h) {return {id: h.id, level: 6}}}
+            {tag: "h1", getAttrs(h: HTMLElement) {return {id: h.id, level: 1}}},
+            {tag: "h2", getAttrs(h: HTMLElement) {return {id: h.id, level: 2}}},
+            {tag: "h3", getAttrs(h: HTMLElement) {return {id: h.id, level: 3}}},
+            {tag: "h4", getAttrs(h: HTMLElement) {return {id: h.id, level: 4}}},
+            {tag: "h5", getAttrs(h: HTMLElement) {return {id: h.id, level: 5}}},
+            {tag: "h6", getAttrs(h: HTMLElement) {return {id: h.id, level: 6}}}
         ],
-        toDOM(node) { return ["h" + node.attrs.level, {id: node.attrs.id}, 0] }
-    },
+        toDOM(node: Node) { return ["h" + node.attrs.level, {id: node.attrs.id}, 0] }
+    } as NodeSpec,
 
     // :: NodeSpec A code listing. Disallows marks or non-text inline
     // nodes by default. Represented as a `<pre>` element with a
@@ -83,7 +81,7 @@ export const nodes = {
         selectable: false,
         parseDOM: [{tag: "pre", preserveWhitespace: "full"}],
         toDOM() { return ["pre", ["code", 0]] }
-    },
+    } as NodeSpec,
     
     custom_html: {
         content: "text*",
@@ -94,12 +92,12 @@ export const nodes = {
         selectable: false,
         parseDOM: [{tag: "custom", preserveWhitespace: "full"}],
         toDOM() { return ["custom", 0] }
-    },
+    } as NodeSpec,
 
     // :: NodeSpec The text node.
     text: {
         group: "inline"
-    },
+    } as NodeSpec,
 
     figure: {
         content: "(image|embed) figcaption",
@@ -114,7 +112,7 @@ export const nodes = {
         toDOM() { 
             return ["figure", 0] 
         }
-    },
+    } as NodeSpec,
     image: {
         attrs: {
             src: {default: null},
@@ -128,19 +126,19 @@ export const nodes = {
         group: "figure",
         parseDOM: [{
           tag: "img[src]", 
-          getAttrs(img) {
+          getAttrs(img: HTMLElement) {
             return {
-                src: img.src,
-                alt: img.alt,
-                width: img.width,
-                height: img.height
-            }; 
+                src: img.getAttribute("src"),
+                alt: img.getAttribute("alt"),
+                width: img.getAttribute("width"),
+                height: img.getAttribute("height")
+            };
           }
         }],
-        toDOM(node) {
+        toDOM(node: Node) {
           return ["img", {...node.attrs}]; 
         }
-    },
+    } as NodeSpec,
     embed: {
         attrs: {
             url: {default: null}
@@ -151,18 +149,18 @@ export const nodes = {
         selectable: true,
         parseDOM: [{
             tag: "x-embed[data-url]",
-            getAttrs(div) {
+            getAttrs(div: HTMLElement) {
                 return {
                     url: div.dataset.url
                 }
             }
         }],
-        toDOM(node) {
+        toDOM(node: Node) {
             return ["x-embed", {
                 "data-url": node.attrs.url
             }]
         }
-    },
+    } as NodeSpec,
 
     figcaption: {
         content: "inline*",
@@ -170,7 +168,7 @@ export const nodes = {
         selectable: false,
         parseDOM: [{tag: "figcaption"}],
         toDOM() { return ["figcaption", 0]; },
-    },
+    } as NodeSpec,
 
     callout: {
         attrs: {
@@ -184,7 +182,7 @@ export const nodes = {
         selectable: false,
         parseDOM: [{
             tag: "aside",
-            getAttrs(aside) {
+            getAttrs(aside: HTMLElement) {
                 return {
                     emoji: aside.dataset.emoji,
                     bg: aside.style.backgroundColor,
@@ -192,11 +190,11 @@ export const nodes = {
                 }
             }
         }],
-        toDOM(node) { return ["aside", {
+        toDOM(node: Node) { return ["aside", {
             'data-emoji': node.attrs.emoji,
             style: `background-color: ${node.attrs.bg}; color: ${node.attrs.fg}`
         }, 0] }
-    },
+    } as NodeSpec,
 
     bookmark: {
         attrs: {
@@ -208,18 +206,18 @@ export const nodes = {
         group: "block",
         parseDOM: [{
             tag: "bookmark[data-url]",
-            getAttrs(div) {
+            getAttrs(div: HTMLElement) {
                 return {
                     url: div.dataset.url
                 }
             }
         }],
-        toDOM(node) {
+        toDOM(node: Node) {
             return ["bookmark", {
                 "data-url": node.attrs.url
             }]
         }
-    },
+    } as NodeSpec,
 
     // :: NodeSpec A hard line break, represented in the DOM as `<br>`.
     hard_break: {
@@ -227,16 +225,9 @@ export const nodes = {
         group: "inline",
         selectable: false,
         parseDOM: [{tag: "br"}],
-        toDOM() { return brDOM }
-    }
+        toDOM() { return ['br'] }
+    } as NodeSpec
 }
-
-const emDOM = ["em", 0], 
-    strongDOM = ["strong", 0], 
-    codeDOM = ["code", 0],
-    strikeDOM = ["s", 0],
-    supDOM = ["sup", 0],
-    subDOM = ["sub", 0];
 
 // :: Object [Specs](#model.MarkSpec) for the marks in the schema.
 /**
@@ -247,13 +238,13 @@ export const marks = {
     // :: MarkSpec Code font mark. Represented as a `<code>` element.
     code: {
         parseDOM: [{tag: "code"}],
-        toDOM() { return codeDOM }
-    },
+        toDOM() { return ["code", 0] }
+    } as MarkSpec,
 
     highlight: {
         parseDOM: [{tag: "mark"}],
         toDOM() { return ["mark", 0] }
-    },
+    } as MarkSpec,
 
     // :: MarkSpec A link. Has `href` and `title` attributes. `title`
     // defaults to the empty string. Rendered and parsed as an `<a>`
@@ -263,47 +254,51 @@ export const marks = {
             href: {},
         },
         inclusive: false,
-        parseDOM: [{tag: "a[href]", getAttrs(dom) {
-            return {href: dom.getAttribute("href"), title: dom.getAttribute("title")}
+        parseDOM: [{tag: "a[href]", getAttrs(dom: HTMLElement) {
+            return {
+                href: dom.getAttribute("href")
+            }
         }}],
-        toDOM(node) { let {href, title} = node.attrs; return ["a", {href, title}, 0] }
-    },
+        toDOM(mark: Mark) { let {href} = mark.attrs; return ["a", {href}, 0] }
+    } as MarkSpec,
 
     // :: MarkSpec An emphasis mark. Rendered as an `<em>` element.
     // Has parse rules that also match `<i>` and `font-style: italic`.
     em: {
         parseDOM: [{tag: "i"}, {tag: "em"}, {style: "font-style=italic"}],
-        toDOM() { return emDOM }
-    },
+        toDOM() { return ["em", 0] }
+    } as MarkSpec,
 
     // :: MarkSpec A strong mark. Rendered as `<strong>`, parse rules
     // also match `<b>` and `font-weight: bold`.
     strong: {
-        parseDOM: [{tag: "strong"},
-                             // This works around a Google Docs misbehavior where
-                             // pasted content will be inexplicably wrapped in `<b>`
-                             // tags with a font-weight normal.
-                             {tag: "b", getAttrs: node => node.style.fontWeight != "normal" && null},
-                             {style: "font-weight", getAttrs: value => /^(bold(er)?|[5-9]\d{2,})$/.test(value) && null}],
-        toDOM() { return strongDOM }
-    },
+        parseDOM: [
+            {tag: "strong"},
+            // This works around a Google Docs misbehavior where
+            // pasted content will be inexplicably wrapped in `<b>`
+            // tags with a font-weight normal.
+            {tag: "b", getAttrs: (node: HTMLElement) => node.style.fontWeight != "normal" && null},
+            {style: "font-weight", getAttrs: (value: string) => /^(bold(er)?|[5-9]\d{2,})$/.test(value) && null}
+        ],
+        toDOM() { return ["strong", 0] }
+    } as MarkSpec,
 
 
     // `<s>` for strike
     strike: {
         parseDOM: [{tag: "s"}, {tag: "strike"}, {tag: "del"}],
-        toDOM() { return strikeDOM }
-    },
+        toDOM() { return ["s", 0] }
+    } as MarkSpec,
 
     sup: {
         parseDOM: [{tag: "sup"}],
-        toDOM() { return supDOM }
-    },
+        toDOM() { return ["sup", 0] }
+    } as MarkSpec,
 
     sub: {
         parseDOM: [{tag: "sub"}],
-        toDOM() { return subDOM }
-    },
+        toDOM() { return ["sub", 0] }
+    } as MarkSpec,
 
 
 }

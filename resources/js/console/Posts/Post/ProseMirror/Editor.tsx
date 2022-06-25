@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
-import {EditorState, NodeSelection} from "prosemirror-state"
+import {EditorState, EditorStateConfig, NodeSelection} from "prosemirror-state"
+import type {Node as ProsemirrorNode} from 'prosemirror-model'
 
 import HBSchema from './schema';
 import plugins from './plugins';
@@ -17,10 +18,11 @@ import Image from './Image/nodeview-image';
 import Bookmark from './nodeview-bookmark';
 import CustomHtml from "./nodeview-custom-html";
 import EmbedView from "./nodeview-embed";
+import {EditorView, NodeViewConstructor} from "prosemirror-view";
 
-function getState(val) {
+function getState(val: string) {
     val = val ? JSON.parse(val) : null
-    const newState = {
+    const newState: EditorStateConfig = {
         schema: HBSchema,
         plugins: plugins(HBSchema),
     }
@@ -30,34 +32,47 @@ function getState(val) {
     return () => EditorState.create(newState);
 }
 
-const nodeViews = {
-    embed(...args) {
-        return new EmbedView(HBSchema, ...args);
+interface NodeViewsType {
+    [key: string]: NodeViewConstructor
+}
+
+const nodeViews : NodeViewsType = {
+    embed(node, view, getPos) {
+        return new EmbedView(HBSchema, node, view, getPos);
     },
-    figcaption(...args) {
-        return new Figcaption(...args);
+    figcaption(node) {
+        return new Figcaption(node);
     },
-    heading(...args) {
-        return new Heading(...args);
+    heading(node, view, getPos) {
+        return new Heading(node, view, getPos);
     },
-    callout(...args) {
-        return new Callout(...args)
+    callout(node, view, getPos) {
+        return new Callout(node, view, getPos)
     },
-    code_block(...args) {
-        return new CodeBlock(...args)
+    code_block(node, view, getPos) {
+        return new CodeBlock(node, view, getPos)
     },
-    custom_html(...args) {
-        return new CustomHtml(...args)
+    custom_html(node, view, getPos) {
+        return new CustomHtml(node, view, getPos)
     },
-    image(...args) {
-        return new Image(HBSchema, ...args)
+    image(node, view, getPos) {
+        return new Image(HBSchema, node, view, getPos)
     },
-    bookmark(...args) {
-        return new Bookmark(...args)
+    bookmark(node, view, getPos) {
+        return new Bookmark(node, view, getPos)
     }
 }
 
-export default function Editor(props) {
+interface EditorProps {
+    id: number,
+    value: string,
+    currentLanguageId: number,
+    onChange: (val: string) => void,
+    editable: boolean
+}
+
+
+export default function Editor(props: EditorProps) {
 
     const [state, setState] = useState(getState(props.value));
 
@@ -65,30 +80,29 @@ export default function Editor(props) {
         setState(getState(props.value))
     }, [props.id, props.currentLanguageId]);
 
-    function handleChange(state) {
+    function handleChange(state: EditorState) {
         props.onChange(JSON.stringify(state.doc.toJSON()));
         setState(state);
     }
-
 
     return <ProseMirror 
         state={state}
         nodeViews={nodeViews}
         onChange={handleChange}
         handleClickOn={handleClickOn}
-        handleKeyDown={handleKeyDown}
+        /*handleKeyDown={handleKeyDown}*/
         editable={() => props.editable}
     />
 }
 
-function handleClickOn(view, pos, node, posBefore, e) {
+function handleClickOn(view: EditorView, pos: number, node: ProsemirrorNode, posBefore: number, e: MouseEvent) {
     // if (pos != posBefore) return false
     //return false;
 
     /**
      * Select figure when clicking on it
      */
-    if (node.type.name === "figure" && e.target.nodeName !== "INPUT") {
+    if (node.type.name === "figure" && (e.target as Node)?.nodeName !== "INPUT") {
         const resolvedPos = view.state.doc.resolve(pos)
         if (resolvedPos.parent.type.name === 'figcaption')
             return false;
@@ -102,8 +116,8 @@ function handleClickOn(view, pos, node, posBefore, e) {
 }
 
 // prevent tab-key browser navigation
-function handleKeyDown(view, e) {
+/*function handleKeyDown(view, e) {
     if (e.key === 'Tab') {
        //  e.preventDefault();
     }
-}
+}*/

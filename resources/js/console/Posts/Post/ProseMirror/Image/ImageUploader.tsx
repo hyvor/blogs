@@ -1,20 +1,22 @@
-import axios from 'axios';
-import React, { useEffect, useRef, useState } from 'react';
-import api, { getEndpoint } from '../../../../lib/api';
+import axios, {AxiosResponse} from 'axios';
+import React, {ChangeEvent, useEffect, useRef, useState} from 'react';
+import { getEndpoint } from '../../../../lib/api';
 import Loader from '../../../../ReusableComponents/Loader';
 import NoResults from '../../../../ReusableComponents/NoResults';
 import {toast} from "react-toastify";
+import {ConsoleWindow, Media, UnsplashImage} from "../../../../types";
+import {ImageUploadHandlerType} from "./nodeview-image";
 
-export default function ImageUploader({onUpload}) {
+export default function ImageUploader({onUpload} : {onUpload: ImageUploadHandlerType}) {
 
     const [search, setSearch] = useState('');
-    const [ajaxStatus, setAjaxStatus] = useState(null);
+    const [ajaxStatus, setAjaxStatus] = useState<null | 'loading' | 'success'>(null);
     const abortControllerRef = useRef(new AbortController())
-    const [images, setImages] = useState([]);
+    const [images, setImages] = useState<UnsplashImage[]>([]);
     const [isUploading, setIsUploading] = useState(false);
     const [hasMore, setHasMore] = useState(false)
     
-    const fileUploadInputRef = useRef(null);
+    const fileUploadInputRef = useRef<null | HTMLInputElement>(null);
 
     useEffect(() => {
         if (!search.trim()) return
@@ -32,8 +34,8 @@ export default function ImageUploader({onUpload}) {
     function load(page = 1) {
         abortControllerRef.current = new AbortController()
         
-        axios.get(
-            getEndpoint(window.currentSubdomain, '/media/unsplash/search'),
+        axios.get<UnsplashImage[]>(
+            getEndpoint((window as ConsoleWindow).currentSubdomain as string, '/media/unsplash/search'),
             {
                 signal: abortControllerRef.current.signal,
                 params: {
@@ -49,14 +51,16 @@ export default function ImageUploader({onUpload}) {
     }
     
     function openUploader() {
-        fileUploadInputRef.current.click()
+        fileUploadInputRef.current && fileUploadInputRef.current.click()
     }
-    function handleFileUploadChange(e) {
-        const files = e.target.files;
-        if (files.length === 0) {
+    function handleFileUploadChange(e: ChangeEvent) {
+        const files = (e.target as HTMLInputElement).files;
+        if (!files || files.length === 0) {
             toast.error('No file selected')
+            return
         } else if (files.length > 1) {
             toast.error('Select only one image');
+            return;
         }
         
         const file = files[0];
@@ -77,13 +81,13 @@ export default function ImageUploader({onUpload}) {
         uploadFile(file)
     }
     
-    function uploadFile(file) {
+    function uploadFile(file: File) {
         setIsUploading(true)
         
         var formData = new FormData();
         formData.append('file', file, file.name);
-        axios.post(
-            getEndpoint(window.currentSubdomain, '/media'),
+        axios.post<any, AxiosResponse<Media>>(
+            getEndpoint((window as ConsoleWindow).currentSubdomain as string, '/media'),
             formData
         ).then(({data}) => {
             setIsUploading(false)
@@ -151,13 +155,14 @@ export default function ImageUploader({onUpload}) {
                                                     hasMore={hasMore}
                                                     setHasMore={setHasMore}
                                                 /> :
-                                                <NoResults imageWidth={150}/>
+                                                <NoResults
+                                                    text="No images found"
+                                                    imageWidth={150}
+                                                />
                                         )
                                 ) : null
                         }
-
                     </div>
-
             }
 
         </div>
@@ -166,14 +171,22 @@ export default function ImageUploader({onUpload}) {
 }
 
 
-function Images({images, onUpload, load, hasMore, setHasMore}) {
+interface ImagesProps {
+    images: UnsplashImage[],
+    onUpload: ImageUploadHandlerType,
+    load: Function,
+    hasMore: boolean,
+    setHasMore: Function
+}
 
-    const left = [];
-    const right = [];
+function Images({images, onUpload, load, hasMore, setHasMore} : ImagesProps) {
+
+    const left : UnsplashImage[] = [];
+    const right : UnsplashImage[] = [];
 
     images.forEach((img, i) => (i % 2 === 0 ? right : left).push(img));
     
-    function handleScroll(e) {
+    function handleScroll(e: any) {
         const el = e.target;
         if (
             hasMore &&
@@ -194,17 +207,14 @@ function Images({images, onUpload, load, hasMore, setHasMore}) {
 
 }
 
-function ImageColumn({images, onUpload}) {
+function ImageColumn({images, onUpload} : {images: UnsplashImage[], onUpload: ImageUploadHandlerType}) {
     return <div className="images-column">
         {
             images.map(img => {
                 return <img
                     key={img.url}
-                    onClick={() => onUpload(img.url, img.alt, {
-                        author: img.author,
-                        authorUrl: img.authorUrl
-                    })}
-                    src={img.url} title={img.title} alt={img.alt} />
+                    onClick={() => onUpload(img.url, img.alt, img)}
+                    src={img.url} title={img.title || ''} alt={img.alt || ''}/>
             })
         }
     </div>

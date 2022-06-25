@@ -1,10 +1,26 @@
 import { EmojiButton } from '@joeattardi/emoji-button';
 import ColorPicker from "./ColorPicker";
+import React from 'react';
 import ReactDOM from 'react-dom';
+import {EditorView, NodeView} from "prosemirror-view";
+import {Node as ProsemirrorNode} from "prosemirror-model";
 
-export default class Callout {
+export default class Callout implements NodeView {
 
-    constructor(node, view, getPos) {
+    node: ProsemirrorNode;
+    view: EditorView;
+    getPos: () => number;
+
+    dom: HTMLElement;
+    contentDOM: HTMLElement;
+
+    emoji: HTMLSpanElement;
+    colorPickersWrap: HTMLDivElement;
+    colorPickerBg: HTMLSpanElement;
+    colorPickerFg: HTMLSpanElement;
+
+
+    constructor(node: ProsemirrorNode, view: EditorView, getPos: () => number) {
         this.node = node;
         this.view = view;
         this.getPos = getPos;
@@ -15,7 +31,7 @@ export default class Callout {
         this.contentDOM.className = "content-div";
 
         const emoji = document.createElement("span");
-        emoji.contentEditable = false;
+        emoji.contentEditable = "false";
         emoji.className = 'emoji-icon'
 
         this.dom.appendChild(emoji)
@@ -41,7 +57,7 @@ export default class Callout {
          */
         function blurFocus() {
             view.dom.blur();
-            window.getSelection().removeAllRanges()
+            (window as any).getSelection().removeAllRanges()
         }
         
         picker.on('emoji', selection => {
@@ -56,7 +72,7 @@ export default class Callout {
         
         // color pickers
         this.colorPickersWrap = document.createElement("div");
-        this.colorPickersWrap.contentEditable = false;
+        this.colorPickersWrap.contentEditable = "false";
         this.colorPickersWrap.className = "color-pickers-wrap";
         this.dom.appendChild(this.colorPickersWrap);
         
@@ -66,13 +82,15 @@ export default class Callout {
         this.updateFromAttrs();
     }
 
-    update(node) {
+    update(node: ProsemirrorNode) {
         
         if (node.type.name === 'callout') {
             this.node = node;
             this.updateFromAttrs()
             return true;
         }
+
+        return false;
         
     }
     
@@ -83,14 +101,14 @@ export default class Callout {
         this.dom.dataset.emoji = this.node.attrs.emoji;
     }
     
-    changeColors(bg, fg) {
+    changeColors(bg: string, fg: string) {
         this.dom.style.backgroundColor = bg;
         this.dom.style.color = fg;
         this.colorPickerBg.style.backgroundColor = bg;
         this.colorPickerFg.style.backgroundColor = fg;
     }
     
-    createColorPicker(type) {
+    createColorPicker(type: 'bg' | 'fg') {
         
         const picker = document.createElement("span");
         picker.className = 'color-picker';
@@ -126,7 +144,7 @@ export default class Callout {
             ReactDOM.render(
                 <ColorPicker
                     color={_self.node.attrs[type]}
-                    onChange={color => _self.changeAttr(type, color)}
+                    onChange={(color: string) => _self.changeAttr(type, color)}
                     onClose={() => document.body.removeChild(pickerWrap)}
                     preset={preset}
                 />,
@@ -140,9 +158,10 @@ export default class Callout {
         
     }
     
-    changeAttr(name, value) {
+    changeAttr(name: string, value: string) {
         const attrs = {...this.node.attrs, [name]: value }
         this.view.dispatch(
+            // @ts-ignore (PM Error)
             this.view.state.tr.setNodeMarkup(
                 this.getPos(),
                 undefined,

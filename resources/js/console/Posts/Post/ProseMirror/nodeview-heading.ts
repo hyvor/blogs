@@ -1,9 +1,15 @@
+import {EditorView, NodeView} from "prosemirror-view";
+import type {Node as ProsemirrorNode} from 'prosemirror-model';
 
+export default class Heading implements NodeView {
 
-export default class Heading {
+    dom: HTMLElement;
+    contentDOM: HTMLElement;
 
-    constructor(node, view, getPos) {
-        const _self = this
+    inputWrap: HTMLDivElement;
+    input: HTMLInputElement;
+
+    constructor(node: ProsemirrorNode, view: EditorView, getPos: () => number) {
 
         this.dom = document.createElement("div");
         this.dom.className = "heading-wrap";
@@ -14,9 +20,8 @@ export default class Heading {
         this.dom.appendChild(this.contentDOM);
 
         this.inputWrap = document.createElement("div");
-        this.inputWrap.contentEditable = false;
+        this.inputWrap.contentEditable = "false";
         this.dom.appendChild(this.inputWrap)
-
 
         const type = document.createElement("span");
         type.innerHTML = "h" + node.attrs.level + "#"
@@ -31,7 +36,7 @@ export default class Heading {
                 view.state.tr.setNodeMarkup(
                     getPos(),
                     null,
-                    {...node.attrs, id: e.target.value }
+                    {...node.attrs, id: (e.target as HTMLInputElement).value }
                 )
             )
         }
@@ -39,17 +44,19 @@ export default class Heading {
         this.inputWrap.appendChild(this.input);
     }
 
-    update(node) {
+    update(node: ProsemirrorNode) {
 
         if (node.type.name === 'heading') {
             this.contentDOM.id = node.attrs.id;
             this.input.value = node.attrs.id;
             return true;
         }
+
+        return false;
     }
 
-    stopEvent(e) {
-        return e.target.isEqualNode(this.input)
+    stopEvent(e: Event) {
+        return (e.target as Node).isEqualNode(this.input)
     }
 
 }
