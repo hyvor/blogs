@@ -161,7 +161,6 @@ export default class Callout implements NodeView {
     changeAttr(name: string, value: string) {
         const attrs = {...this.node.attrs, [name]: value }
         this.view.dispatch(
-            // @ts-ignore (PM Error)
             this.view.state.tr.setNodeMarkup(
                 this.getPos(),
                 undefined,

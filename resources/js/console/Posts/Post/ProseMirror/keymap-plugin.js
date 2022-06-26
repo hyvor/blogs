@@ -1,10 +1,9 @@
 
 import { keymap } from 'prosemirror-keymap'
-import { baseKeymap, chainCommands, clearAndChangeNode, exitCode, liftFigcaption, selectNodeBackward, setBlockType } from './commands'
+import { baseKeymap, chainCommands, clearAndChangeNode, setBlockType } from './commands'
 import { undo, redo } from 'prosemirror-history'
-import { splitListItem, sinkListItem, liftListItem } from "./list"
+import { splitListItem, sinkListItem, liftListItem } from "prosemirror-schema-list"
 import { NodeSelection, Selection } from 'prosemirror-state'
-import { createEmbed } from './creators'
 
 export default function keymapPlugins(schema) {
 
@@ -44,38 +43,6 @@ export default function keymapPlugins(schema) {
 
             if (selection.from !== selection.to) // something was selected
                 return;
-
-            // This is removed
-            // Slash UI is used instead
-
-            /**
-             * EMBED
-             * ===================
-             */
-            /*const parent = selection.$to.parent;
-            const text = parent.firstChild?.text;
-            if (
-                parent &&
-                parent.type.name === 'paragraph' && 
-                text &&
-                text.match(
-                    /^https:\/\/[^\s]+$/i
-                )
-            ) {
-
-                // code from promirror-command -> selectParentNode()
-                // to get the from and to of the paragraph
-                // no idea how it works 
-                let {$from, to} = state.selection, pos
-                let same = $from.sharedDepth(to)
-                pos = $from.before(same)
-                const nodeSel = NodeSelection.create(state.doc, pos);
-
-                dispatch(
-                    state.tr.replaceWith(nodeSel.from, nodeSel.to, createEmbed(schema, text))
-                )
-                return true;
-            }*/
 
             /**
              * Code
@@ -211,7 +178,8 @@ function convertEmptyBlocksToParagraphHandler(state, dispatch, schema) {
         setBlockType(schema.nodes.paragraph)(state, dispatch);
         return true;
     }
-
+    
+    return false;
 }
 
 // https://prosemirror.net/examples/codemirror/

@@ -1,5 +1,5 @@
 import {Mark, MarkSpec, Node, NodeSpec, Schema} from "prosemirror-model"
-import { addListNodes } from "./list"
+import { addListNodes } from "prosemirror-schema-list"
 
 /**
  * Copied and changed from

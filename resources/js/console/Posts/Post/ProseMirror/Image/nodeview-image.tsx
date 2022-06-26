@@ -98,7 +98,6 @@ export default class Image implements ImageNodeViewType {
 
             altInput.oninput = function(e) {
                 _self.view.dispatch(
-                    // @ts-ignore (PM Error)
                     _self.view.state.tr.setNodeMarkup(
                         _self.getPos(),
                         null,
@@ -127,7 +126,6 @@ export default class Image implements ImageNodeViewType {
                 }
                 
                 _self.view.dispatch(
-                    // @ts-ignore (PM Error)
                     _self.view.state.tr.setNodeMarkup(
                         _self.getPos(),
                         null,
@@ -149,7 +147,6 @@ export default class Image implements ImageNodeViewType {
     handleUpload(url: string, alt: string | null = null, unsplash: UnsplashImage | null = null) {
         const pos = this.getPos()
 
-        // @ts-ignore (PM Error)
         const tr = this.view.state.tr.setNodeMarkup(
             pos,
             null,

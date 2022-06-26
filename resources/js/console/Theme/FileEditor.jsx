@@ -1,5 +1,4 @@
 import React, { useEffect } from "react";
-import {Controlled as CodeMirror} from 'react-codemirror2'
 
 import { useActions, useValues } from "kea";
 import subdomainLogic from "../logic/subdomainLogic";

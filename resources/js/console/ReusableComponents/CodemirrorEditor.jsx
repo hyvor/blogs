@@ -1,5 +1,5 @@
 import React from 'react'
-import {Controlled as CodeMirror} from 'react-codemirror2'
+import {Controlled as CodeMirror} from '../../helpers/copied/react-codemirror2'
 
 export const CODEMIRROR_MODES = {
     scss: { name: 'twig', base: 'text/x-scss'},

@@ -3,9 +3,11 @@ import {NodeSelection, Plugin, TextSelection} from "prosemirror-state"
 /**
  * React icons are used to save duplicate loading
  */
+import React from 'react';
 import { renderToString } from 'react-dom/server';
 import { Bookmark, CardImage, Code, CodeSlash, Gear, Hr, Lightbulb, Link45deg, Quote, TypeH2, TypeH3, } from "react-bootstrap-icons";
 import { createImage, createQuote, createEmbed } from "./creators";
+import {EditorView} from "prosemirror-view";
 
 
 const matchable = [
@@ -135,7 +137,7 @@ class SlashPlugin {
 
     isOpen = false;
 
-    constructor(view, schema) {
+    constructor(view: EditorView, schema) {
         this.items = [];
         this.view = view;
         this.schema = schema;

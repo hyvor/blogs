@@ -4,11 +4,7 @@ import type {Node as ProsemirrorNode} from 'prosemirror-model'
 
 import HBSchema from './schema';
 import plugins from './plugins';
-
-/**
- * 
- */
-import {ProseMirror} from 'use-prosemirror';
+import { ProseMirror } from '../../../../helpers/copied/use-prosemirror';
 import useUpdateEffect from '../../../../helpers/hooks/useUpdateEffect';
 import Figcaption from './nodeview-figcaption';
 import Heading from './nodeview-heading';
@@ -18,7 +14,7 @@ import Image from './Image/nodeview-image';
 import Bookmark from './nodeview-bookmark';
 import CustomHtml from "./nodeview-custom-html";
 import EmbedView from "./nodeview-embed";
-import {EditorView, NodeViewConstructor} from "prosemirror-view";
+import type {EditorView, NodeViewConstructor} from "prosemirror-view";
 
 function getState(val: string) {
     val = val ? JSON.parse(val) : null
@@ -90,7 +86,7 @@ export default function Editor(props: EditorProps) {
         nodeViews={nodeViews}
         onChange={handleChange}
         handleClickOn={handleClickOn}
-        /*handleKeyDown={handleKeyDown}*/
+        handleKeyDown={handleKeyDown}
         editable={() => props.editable}
     />
 }
@@ -116,8 +112,8 @@ function handleClickOn(view: EditorView, pos: number, node: ProsemirrorNode, pos
 }
 
 // prevent tab-key browser navigation
-/*function handleKeyDown(view, e) {
-    if (e.key === 'Tab') {
-       //  e.preventDefault();
-    }
-}*/
+function handleKeyDown(/*view, e*/) {
+    // if (e.key === 'Tab') {
+    //    // e.preventDefault();
+    // }
+}
