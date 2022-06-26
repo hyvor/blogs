@@ -5,6 +5,7 @@ use App\Models\Blog;
 use App\Models\User;
 use Hyvor\HyvorConnecter\HyvorUser;
 use Hyvor\HyvorConnecter\Userbase;
+use Hyvor\SyntaxHighlighter\Highlighter;
 use Illuminate\Support\Facades\Route;
 
 Route::get('callout', function() {
@@ -14,6 +15,20 @@ Route::get('callout', function() {
     ", Blog::find(1));
 
     dd($json);
+
+});
+
+Route::get('code', function() {
+
+    $languages = Highlighter::highlight(
+        code: '$dog = new Dog()',
+        language: 'plain',
+        themeName: 'nord',
+        lineNumbers: true,
+        annotations: ''
+    );
+
+    dd($languages);
 
 });
 

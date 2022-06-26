@@ -2,13 +2,10 @@ const shiki = require('shiki');
 
 const allLanguages = shiki.BUNDLED_LANGUAGES
 
-function getLanguagesToLoad(languageKey) {
+function getLanguagesToLoad(language) {
 
-    const languagesToLoad = [];
+    const languagesToLoad = [language];
 
-    const language = findLanguage(languageKey)
-
-    languagesToLoad.push(language);
     addEmbeddedLanguages(language);
 
     function addEmbeddedLanguages(language) {
@@ -45,5 +42,6 @@ function findLanguage(languageKey, findIn = allLanguages) {
 }
 
 module.exports = {
-    getLanguagesToLoad
+    getLanguagesToLoad,
+    findLanguage
 }

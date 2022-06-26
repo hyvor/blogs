@@ -1,11 +1,14 @@
 const shiki = require('shiki');
-const { getLanguagesToLoad } = require('./load-languages');
+const { getLanguagesToLoad, findLanguage } = require('./load-languages');
 
 const input = JSON.parse(process.argv[2]);
 
 if (input.type === 'tokens') {
 
-    const language = input.language
+    let language = findLanguage(input.language)
+
+    if (!language)
+        language = findLanguage('html'); // set default to HTML
 
     const languagesToLoad = getLanguagesToLoad(language)
 
@@ -15,7 +18,7 @@ if (input.type === 'tokens') {
         theme: input.theme,
         langs: languagesToLoad
     }).then((highlighter) => {
-        const tokens = highlighter.codeToThemedTokens(input.code, language)
+        const tokens = highlighter.codeToThemedTokens(input.code, language.id)
 
         const endTime = performance.now()
 
