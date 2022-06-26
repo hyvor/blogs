@@ -619,7 +619,7 @@ export function chainCommands(...commands) {
 }
 
 let backspace = chainCommands(deleteSelection, undoInputRule, joinBackward, selectNodeBackward)
-let del = chainCommands(deleteSelection, joinForward, selectNodeForward)
+let del = chainCommands(deleteSelection, undoInputRule, joinForward, selectNodeForward)
 
 // :: Object
 // A basic keymap containing bindings not specific to any schema.

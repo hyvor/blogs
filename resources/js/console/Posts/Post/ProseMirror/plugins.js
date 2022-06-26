@@ -18,11 +18,8 @@ export default function plugins(schema) {
 
         placeholderPlugin('Start writing...'),
         tooltipPlugin(schema),
-        // navigatorPlugin(),
         wordCountPlugin(),
         slashPlugin(schema),
-
-        //hrPlugin(schema),
 
         // from defaults
         dropCursor(),

@@ -1,6 +1,7 @@
 
 import { keymap } from 'prosemirror-keymap'
-import { baseKeymap, chainCommands, clearAndChangeNode, setBlockType } from './commands'
+import { clearAndChangeNode, baseKeymap, chainCommands, setBlockType } from './commands'
+// import {  } from 'prosemirror-commands'
 import { undo, redo } from 'prosemirror-history'
 import { splitListItem, sinkListItem, liftListItem } from "prosemirror-schema-list"
 import { NodeSelection, Selection } from 'prosemirror-state'

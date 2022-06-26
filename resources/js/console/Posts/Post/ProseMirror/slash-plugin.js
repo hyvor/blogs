@@ -5,10 +5,8 @@ import {NodeSelection, Plugin, TextSelection} from "prosemirror-state"
  */
 import React from 'react';
 import { renderToString } from 'react-dom/server';
-import { Bookmark, CardImage, Code, CodeSlash, Gear, Hr, Lightbulb, Link45deg, Quote, TypeH2, TypeH3, } from "react-bootstrap-icons";
-import { createImage, createQuote, createEmbed } from "./creators";
-import {EditorView} from "prosemirror-view";
-
+import { Bookmark, CardImage, Code, CodeSlash, Hr, Lightbulb, Link45deg, Quote, TypeH2, TypeH3, } from "react-bootstrap-icons";
+import { createImage, createQuote } from "./creators";
 
 const matchable = [
     {
@@ -137,7 +135,7 @@ class SlashPlugin {
 
     isOpen = false;
 
-    constructor(view: EditorView, schema) {
+    constructor(view, schema) {
         this.items = [];
         this.view = view;
         this.schema = schema;

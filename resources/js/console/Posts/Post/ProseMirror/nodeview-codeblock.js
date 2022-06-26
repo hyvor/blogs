@@ -1,5 +1,5 @@
 import CodeMirror from "codemirror"
-import {chainCommands, exitCode, joinBackward, selectNodeBackward} from "./commands"
+import {exitCode, joinBackward} from "prosemirror-commands"
 import {undo, redo} from "prosemirror-history"
 import { TextSelection, Selection } from "prosemirror-state"
 import schema from './schema'

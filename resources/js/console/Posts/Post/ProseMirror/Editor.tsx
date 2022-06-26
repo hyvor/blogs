@@ -4,7 +4,7 @@ import type {Node as ProsemirrorNode} from 'prosemirror-model'
 
 import HBSchema from './schema';
 import plugins from './plugins';
-import { ProseMirror } from '../../../../helpers/copied/use-prosemirror';
+import {ProseMirror, useProseMirror} from '../../../../helpers/copied/use-prosemirror';
 import useUpdateEffect from '../../../../helpers/hooks/useUpdateEffect';
 import Figcaption from './nodeview-figcaption';
 import Heading from './nodeview-heading';
@@ -25,7 +25,7 @@ function getState(val: string) {
     if (val) {
         newState.doc = HBSchema.nodeFromJSON( val );
     }
-    return () => EditorState.create(newState);
+    return newState;
 }
 
 interface NodeViewsType {
@@ -67,13 +67,12 @@ interface EditorProps {
     editable: boolean
 }
 
-
 export default function Editor(props: EditorProps) {
 
-    const [state, setState] = useState(getState(props.value));
+    const [state, setState] = useProseMirror(getState(props.value))
 
     useUpdateEffect(() => {
-        setState(getState(props.value))
+        setState(EditorState.create(getState(props.value)))
     }, [props.id, props.currentLanguageId]);
 
     function handleChange(state: EditorState) {
@@ -81,14 +80,14 @@ export default function Editor(props: EditorProps) {
         setState(state);
     }
 
-    return <ProseMirror 
+    return <ProseMirror
         state={state}
         nodeViews={nodeViews}
         onChange={handleChange}
         handleClickOn={handleClickOn}
         handleKeyDown={handleKeyDown}
         editable={() => props.editable}
-    />
+    />;
 }
 
 function handleClickOn(view: EditorView, pos: number, node: ProsemirrorNode, posBefore: number, e: MouseEvent) {
