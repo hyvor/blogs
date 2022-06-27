@@ -128,4 +128,9 @@ class Blog extends Model
     {
         return $this->hasMany(ThemeFile::class);
     }
+
+    public function medias()
+    {
+        return $this->hasMany(Media::class);
+    }
 }

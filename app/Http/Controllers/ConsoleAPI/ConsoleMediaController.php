@@ -8,6 +8,7 @@ use App\Domains\Media\MediaRepository;
 use App\Domains\Media\UnsplashRepository;
 use App\Http\Controllers\Controller;
 use App\Models\Blog;
+use App\Models\Media;
 use Illuminate\Http\Request;
 
 class ConsoleMediaController extends Controller
@@ -41,10 +42,9 @@ class ConsoleMediaController extends Controller
         return response()->json(new MediaObject($media));
     }
 
-    public static function deleteFile(Request $request)
+    public static function deleteFile(Request $request, Media $media)
     {
-        $id = $request->route('id');
-        MediaRepository::delete($id);
+        MediaRepository::delete($media);
     }
 
     public static function searchUnsplash(Request $request)

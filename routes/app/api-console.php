@@ -1,6 +1,7 @@
 <?php
 
 use App\Http\Controllers\ConsoleAPI\ConsoleBlogController;
+use App\Http\Controllers\ConsoleAPI\ConsoleDangerController;
 use App\Http\Controllers\ConsoleAPI\ConsoleThemeController;
 use App\Http\Controllers\ConsoleAPI\ConsoleImportExportController;
 use App\Http\Controllers\ConsoleAPI\ConsoleLanguageController;
@@ -211,6 +212,13 @@ Route::prefix('/api/console/v0/blog/{subdomain}')
         Route::post('/subscription', [ConsoleSubscriptionController::class, 'createPayLink']);
         Route::patch('/subscription', [ConsoleSubscriptionController::class, 'updateSubscription']);
         Route::delete('/subscription', [ConsoleSubscriptionController::class, 'cancelSubscription']);
+
+    });
+
+    Route::middleware('role:owner')->group(function() {
+
+        Route::post('/blog/delete', [ConsoleDangerController::class, 'delete']);
+        Route::post('/blog/reset', [ConsoleDangerController::class, 'reset']);
 
     });
 

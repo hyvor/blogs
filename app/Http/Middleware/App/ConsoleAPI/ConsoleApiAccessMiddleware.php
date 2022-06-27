@@ -20,6 +20,7 @@ class ConsoleApiAccessMiddleware
     public function handle(Request $request, Closure $next)
     {
         if ($request->has('api_key')) {
+
             $apiKey = $request->input('api_key');
 
             if ($this->blog->api_key_console === null) {
@@ -33,7 +34,9 @@ class ConsoleApiAccessMiddleware
             $owner = UserRepository::getUserByBlogIdAndHyvorUserId($this->blog->id, $this->blog->hyvor_user_id);
 
             app()->instance(ConsoleApiAccessingUser::class, new ConsoleApiAccessingUser($owner));
+
         } else {
+
             $hyvorUser = Login::check();
             if (! $hyvorUser) {
                 throw new TrustedException('You are not logged in');
@@ -46,6 +49,7 @@ class ConsoleApiAccessMiddleware
             }
 
             app()->instance(ConsoleApiAccessingUser::class, new ConsoleApiAccessingUser($user));
+
         }
 
         return $next($request);

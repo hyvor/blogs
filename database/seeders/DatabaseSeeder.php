@@ -13,6 +13,8 @@ use App\Models\PostVariant;
 use App\Models\PostTag;
 use App\Models\Tag;
 use App\Models\TagVariant;
+use App\Models\Theme;
+use App\Models\ThemeVersion;
 use App\Models\User;
 use App\Models\UserVariant;
 use Faker\Factory;
@@ -181,7 +183,6 @@ class DatabaseSeeder extends Seeder
 
         PostSearchRepository::setFilterableAttributes();
         PostSearchRepository::setSearchableAttributes();
-
 
         /*$this->call([
             BlogThemeFilesSeeder::class

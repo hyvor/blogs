@@ -103,9 +103,8 @@ class MediaRepository
         return $content;
     }
 
-    public static function delete(int $id)
+    public static function delete(Media $media)
     {
-        $media = self::getOne($id);
         $path = self::getPath($media->blog_id, $media->name);
 
         if ($path) {

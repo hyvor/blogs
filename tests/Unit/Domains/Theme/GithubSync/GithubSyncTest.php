@@ -30,7 +30,7 @@ it('updates themes if the version number is new', function () {
     $theme = Theme::factory()
         ->has(ThemeVersion::factory(), 'versions')
         ->create([
-            'name' => 'default',
+            'name' => 'hello',
         ]);
 
     $zip = file_get_contents(test_unit_data_path('Themes/github-themes.zip'));
@@ -43,7 +43,7 @@ it('does not update if the version is the same', function () {
     $theme = Theme::factory()
         ->has(ThemeVersion::factory()->state(['version' => '1.0.0']), 'versions')
         ->create([
-            'name' => 'default',
+            'name' => 'hello',
         ]);
 
     $zip = file_get_contents(test_unit_data_path('Themes/github-themes.zip'));

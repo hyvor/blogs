@@ -6,7 +6,24 @@ use App\Data\Enums\BlogTypeEnum;
 use App\Data\Enums\UserRoleEnum;
 use App\Models\Blog;
 use App\Models\BlogVariant;
+use App\Models\Theme;
+use App\Models\ThemeVersion;
+use Illuminate\Database\Eloquent\Factories\Sequence;
 use Illuminate\Testing\Fluent\AssertableJson;
+
+beforeEach(function () {
+
+    // themes are needed to create a blog
+    Theme::factory()
+        ->count(2)
+        ->state(new Sequence(
+            ['name' => 'hello'],
+            ['name' => 'blank']
+        ))
+        ->has(ThemeVersion::factory(), 'versions')
+        ->create();
+
+});
 
 it('validates', function () {
     $this->callConsoleUserApi('POST', '/blog')

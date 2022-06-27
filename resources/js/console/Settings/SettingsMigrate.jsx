@@ -4,6 +4,16 @@ import Select from '../ReusableComponents/Select';
 
 export default function SettingsMigrate() {
 
+    return <div style={{
+        flex: 1,
+        display: 'flex',
+        alignItems: 'center',
+        justifyContent: 'center',
+        fontSize: 24,
+        color: "#777",
+        height: "100%"
+    }}>Coming soon!</div>
+
     const importOptions = [
         { value: 'wordpress', label: 'WordPress' },
         { value: 'blogger', label: 'Blogger' },

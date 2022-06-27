@@ -136,7 +136,7 @@ export default function PostsFilters({ filters, changeFilter } : PostsFiltersPro
             <PostsFilter name="tag" value={filters.tag} options={tagsOptions} onChange={handleChange} />
             <PostsFilter name="date" value={currentDateOption} options={dateOptions} onChange={handleDateChange} />
         </div>
-        <div className="post-search">
+        {/*<div className="post-search">
             <input
                 className="input"
                 value={search}
@@ -145,7 +145,7 @@ export default function PostsFilters({ filters, changeFilter } : PostsFiltersPro
                 onBlur={updateSearch}
                 placeholder="Search..."
             />
-        </div>
+        </div>*/}
     </div>
 
 }

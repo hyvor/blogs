@@ -137,7 +137,9 @@ class PostRepository
             ['posts.published_at', 'DESC'],
         ],
         bool $isPages = false
-    ): CollectionWithTotal {
+    ): CollectionWithTotal
+    {
+
         $builder = FilterQ::expression($filter)
             ->builder(Post::class)
             ->keys(function ($keys) {
@@ -322,6 +324,11 @@ class PostRepository
         if (array_key_exists('status', $updates)) {
             $status = $updates['status'];
             $variant->status = $status;
+
+            if ($status === 'published') {
+                $post->published_at = now();
+                $post->save();
+            }
         }
 
         // content

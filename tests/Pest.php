@@ -9,6 +9,8 @@ use App\Models\User;
 use Faker\Factory;
 use Hyvor\HyvorConnecter\HyvorUser;
 use Hyvor\HyvorConnecter\Userbase;
+use Illuminate\Support\Facades\Request;
+use Symfony\Component\HttpFoundation\Request as SymfonyRequest;
 use Tests\TestCase;
 
 uses(TestCase::class)->in('Feature', 'Unit');
@@ -88,4 +90,10 @@ function faker()
 function test_unit_data_path($path = '')
 {
     return base_path('tests/Unit/__DATA__/' . $path);
+}
+
+// https://www.youtube.com/watch?v=l3kioTuYt98
+function createRequest($method, $uri) {
+    $symfonyRequest = SymfonyRequest::create($uri, $method);
+    return Request::createFromBase($symfonyRequest);
 }

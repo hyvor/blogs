@@ -17,13 +17,14 @@ import SEO from './SEO';
 import ColorMode from "./ColorMode";
 import Highlight from "./Highlight";
 import getSubdomain from "../logic-helpers/subdomain";
+import Webhooks from "./Webhooks";
 
 export default function Settings({type} : {type: string | undefined}) {
 
     const subdomain = getSubdomain();
     const settingsPrefix = `/console/${subdomain}/settings`;
 
-    var Type = () => <SettingsGeneral />;
+    let Type = () => <SettingsGeneral />;
     switch (type) {
         case 'users':
             Type = () => <Users />;
@@ -69,6 +70,9 @@ export default function Settings({type} : {type: string | undefined}) {
             break;
         case 'highlight':
             Type = () => <Highlight />;
+            break;
+        case 'webhooks':
+            Type = () => <Webhooks />
             break;
     }
 

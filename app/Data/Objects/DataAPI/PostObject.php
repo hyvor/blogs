@@ -59,7 +59,10 @@ class PostObject
 
         $this->is_featured = $post->is_featured;
         $this->is_page = $post->is_page;
-        $this->slug = $post->slug;
+
+        // In Preview, slug can be null
+        $this->slug = $post->slug ?? '';
+
         $this->url = PermalinkRepository::getPostPermalink($post, $blog, $language);
         $this->content = $variant->content_html ?? '';
         $this->words = $variant->words ?? 0;
