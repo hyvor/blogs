@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Controllers\ConsoleAPI\ConsoleApiKeysController;
 use App\Http\Controllers\ConsoleAPI\ConsoleBlogController;
 use App\Http\Controllers\ConsoleAPI\ConsoleDangerController;
 use App\Http\Controllers\ConsoleAPI\ConsoleThemeController;
@@ -19,11 +20,11 @@ use App\Http\Controllers\ConsoleAPI\ConsoleViewController;
 use App\Http\Controllers\ConsoleAPI\ConsoleUrlDataController;
 use App\Http\Controllers\ConsoleAPI\ConsoleWebhookController;
 
-use App\Http\Middleware\App\ConsoleAPI\ConsoleApiAccessMiddleware;
-use App\Http\Middleware\App\ConsoleAPI\ConsoleApiUserEndpointsAccessMiddleware;
-use App\Http\Middleware\App\ConsoleAPI\ConsoleMiscApiAccessMiddleware;
-use App\Http\Middleware\App\ConsoleAPI\PostAuthorshipMiddleware;
-use App\Http\Middleware\App\ConsoleAPI\ResourceAccessMiddleware;
+use App\Http\Middleware\App\ConsoleApi\ConsoleApiAccessMiddleware;
+use App\Http\Middleware\App\ConsoleApi\ConsoleApiUserEndpointsAccessMiddleware;
+use App\Http\Middleware\App\ConsoleApi\ConsoleMiscApiAccessMiddleware;
+use App\Http\Middleware\App\ConsoleApi\PostAuthorshipMiddleware;
+use App\Http\Middleware\App\ConsoleApi\ResourceAccessMiddleware;
 use App\Http\Middleware\App\SubdomainMiddleware;
 use Illuminate\Support\Facades\Route;
 
@@ -146,6 +147,11 @@ Route::prefix('/api/console/v0/blog/{subdomain}')
         Route::post('/webhook', [ConsoleWebhookController::class, 'createWebhook']);
         Route::patch('/webhook/{id}', [ConsoleWebhookController::class, 'updateWebhook']);
         Route::delete('/webhook/{id}', [ConsoleWebhookController::class, 'deleteWebhook']);
+
+        // api-keys
+        Route::get('/api-keys', [ConsoleApiKeysController::class, 'getApiKeys']);
+        Route::post('/api-key', [ConsoleApiKeysController::class, 'createApiKey']);
+        Route::delete('/api-key/{id}', [ConsoleApiKeysController::class, 'deleteApiKey']);
 
         // navigation
         Route::get('/navigations', [ConsoleNavigationController::class, 'get']);

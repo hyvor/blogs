@@ -1,16 +1,15 @@
 <?php
 
-namespace App\Http\Middleware\App\ConsoleAPI;
+namespace App\Http\Middleware\App\ConsoleApi;
 
 use App\Exceptions\TrustedException;
-use Closure;
 use Hyvor\HyvorConnecter\HyvorUser;
 use Hyvor\HyvorConnecter\Login;
 use Illuminate\Http\Request;
 
-class ConsoleApiUserEndpointsAccessMiddleware
+class ConsoleMiscApiAccessMiddleware
 {
-    public function handle(Request $request, Closure $next)
+    public function handle(Request $request, $next)
     {
         $hyvorUser = Login::check();
         if (! $hyvorUser) {

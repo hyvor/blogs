@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Http\Middleware\App\ConsoleAPI;
+namespace App\Http\Middleware\App\ConsoleApi;
 
 class PostAuthorshipMiddleware
 {

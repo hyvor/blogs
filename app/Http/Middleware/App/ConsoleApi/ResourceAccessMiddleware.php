@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Http\Middleware\App\ConsoleAPI;
+namespace App\Http\Middleware\App\ConsoleApi;
 
 use App\Domains\Language\LanguageRepository;
 use App\Exceptions\TrustedException;

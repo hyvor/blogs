@@ -275,7 +275,7 @@ class UserRepository
         return User::find($id);
     }
 
-    public static function getOwnerOfBlog(Blog $blog)
+    public static function getOwnerOfBlog(Blog $blog) : User
     {
         return User::where('blog_id', $blog->id)
             ->where('role', UserRoleEnum::OWNER)

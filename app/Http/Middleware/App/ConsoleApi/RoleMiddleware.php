@@ -1,19 +1,18 @@
 <?php
 
-namespace App\Http\Middleware\App;
+namespace App\Http\Middleware\App\ConsoleApi;
 
 use App\Data\Enums\UserRoleEnum;
 use App\Exceptions\TrustedException;
-use App\Http\Middleware\App\ConsoleAPI\ConsoleApiAccessingUser;
-use App\Models\User;
 use Closure;
 use Illuminate\Http\Request;
+use function collect;
 
 class RoleMiddleware
 {
     public function __construct(ConsoleApiAccessingUser $consoleApiAccessingUser)
     {
-        $this->userRole = $consoleApiAccessingUser->user->role;
+        $this->userRole = $consoleApiAccessingUser->role;
     }
 
     public function handle(Request $request, Closure $next, $checkRoles)

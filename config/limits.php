@@ -64,6 +64,11 @@ return [
     'max_media_upload_size_kb' => 50 * 1000, // 50MB
 
     /**
+     * Who needs more than 50?
+     */
+    'max_api_keys_per_blog' => 50,
+
+    /**
      * Template-related limitations
      */
     'max_theme_zip_size_kb' => 50 * 1000, // 50MB

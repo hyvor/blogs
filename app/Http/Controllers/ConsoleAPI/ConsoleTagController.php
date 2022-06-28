@@ -17,7 +17,7 @@ class ConsoleTagController extends Controller
 {
     /*
     *
-    * ConsoleAPI Settings->tags
+    * ConsoleApi Settings->tags
     *
     */
     public function get(Request $request, Blog $blog)

@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Http\Middleware\App\ConsoleAPI;
+namespace App\Http\Middleware\App\ConsoleApi;
 
 use App\Domains\User\UserRepository;
 use App\Exceptions\TrustedException;
@@ -19,9 +19,10 @@ class ConsoleApiAccessMiddleware
 
     public function handle(Request $request, Closure $next)
     {
-        if ($request->has('api_key')) {
 
-            $apiKey = $request->input('api_key');
+        $apiKey = $request->header('X-API-KEY');
+
+        if ($apiKey) {
 
             if ($this->blog->api_key_console === null) {
                 throw new TrustedException('Console API is not enabled');
@@ -30,10 +31,16 @@ class ConsoleApiAccessMiddleware
             if ($apiKey !== $this->blog->api_key_console) {
                 throw new TrustedException('Invalid API key');
             }
-            // I changed here from user_id to hyvor_user_id
-            $owner = UserRepository::getUserByBlogIdAndHyvorUserId($this->blog->id, $this->blog->hyvor_user_id);
 
-            app()->instance(ConsoleApiAccessingUser::class, new ConsoleApiAccessingUser($owner));
+            $owner = UserRepository::getOwnerOfBlog($this->blog);
+
+            app()->instance(
+                ConsoleApiAccessingUser::class,
+                new ConsoleApiAccessingUser(
+                    $owner,
+                    $owner->role
+                )
+            );
 
         } else {
 
@@ -45,10 +52,19 @@ class ConsoleApiAccessMiddleware
             $user = UserRepository::getUserByBlogIdAndHyvorUserId($this->blog->id, $hyvorUser->id);
 
             if (! $user) {
-                throw new TrustedException('You do not have access to this blog', TrustedException::ERROR_UNAUTHORIZED);
+                throw new TrustedException(
+                    'You do not have access to this blog',
+                    TrustedException::ERROR_UNAUTHORIZED
+                );
             }
 
-            app()->instance(ConsoleApiAccessingUser::class, new ConsoleApiAccessingUser($user));
+            app()->instance(
+                ConsoleApiAccessingUser::class,
+                new ConsoleApiAccessingUser(
+                    $user,
+                    $user->role
+                )
+            );
 
         }
 

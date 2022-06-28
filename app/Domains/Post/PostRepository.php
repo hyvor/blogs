@@ -48,7 +48,7 @@ class PostRepository
     /**
      * Get posts of a blog
      * with filters, limit, and offset
-     * This is for the ConsoleAPI
+     * This is for the ConsoleApi
      */
     public static function getPosts(
         Blog $blog,

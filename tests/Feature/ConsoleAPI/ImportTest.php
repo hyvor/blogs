@@ -1,6 +1,6 @@
 <?php
 /*
-namespace Tests\Feature\ConsoleAPI;
+namespace Tests\Feature\ConsoleApi;
 
 use Faker\Factory as Faker;
 use Illuminate\Http\UploadedFile;
