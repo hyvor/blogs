@@ -22,11 +22,14 @@ class ConsoleApiKeysController
     public function createApiKey(Blog $blog, Request $request)
     {
         $request->validate([
+            'name' => 'required|string',
             'type' => ['required', new Enum(ApiKeysTypeEnum::class)]
         ]);
 
+        $name = $request->input('name');
         $type = ApiKeysTypeEnum::from($request->input('type'));
-        $apiKey = ApiKeysRepository::create($blog, $type);
+
+        $apiKey = ApiKeysRepository::create($blog, $name, $type);
 
         return response()->json(new ApiKeyObject($apiKey));
     }

@@ -21,6 +21,7 @@ return new class extends Migration
             $table->bigInteger('blog_id');
 
             // data
+            $table->string('name');
             $table->enum('type', ['console', 'delivery']);
             $table->string('api_key', 32);
         });

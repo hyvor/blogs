@@ -16,7 +16,7 @@ class ApiKeysRepository
         return ApiKey::where('blog_id', $blog->id)->get();
     }
 
-    public static function create(Blog $blog, ApiKeysTypeEnum $type) : ApiKey
+    public static function create(Blog $blog, string $name, ApiKeysTypeEnum $type) : ApiKey
     {
 
         $key = bin2hex(random_bytes(16));
@@ -24,6 +24,7 @@ class ApiKeysRepository
         return ApiKey::create([
             'blog_id' => $blog->id,
             'api_key' => $key,
+            'name' => $name,
             'type' => $type
         ]);
     }

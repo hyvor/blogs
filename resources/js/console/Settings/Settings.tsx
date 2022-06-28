@@ -18,6 +18,7 @@ import ColorMode from "./ColorMode";
 import Highlight from "./Highlight";
 import getSubdomain from "../logic-helpers/subdomain";
 import Webhooks from "./Webhooks";
+import ApiKeys from "./ApiKeys/ApiKeys";
 
 export default function Settings({type} : {type: string | undefined}) {
 
@@ -74,6 +75,9 @@ export default function Settings({type} : {type: string | undefined}) {
         case 'webhooks':
             Type = () => <Webhooks />
             break;
+        case 'api-keys':
+            Type = () => <ApiKeys />
+            break;
     }
 
     return <div className="posts-view settings-view">
@@ -85,8 +89,8 @@ export default function Settings({type} : {type: string | undefined}) {
                 <NavLink href={settingsPrefix + "/users"}>Users</NavLink>
                 <NavLink href={settingsPrefix + "/tags"}>Tags</NavLink>
 
-
                 <div />
+
                 <NavLink href={settingsPrefix + "/hosting"}>Hosting</NavLink>
                 <NavLink href={settingsPrefix + "/seo"}>SEO</NavLink>
                 <NavLink href={settingsPrefix + "/color-mode"}>Light & Dark Modes</NavLink>
@@ -95,6 +99,7 @@ export default function Settings({type} : {type: string | undefined}) {
                 <NavLink href={settingsPrefix + "/redirects"}>Redirects</NavLink>
                 <NavLink href={settingsPrefix + "/languages"}>Languages</NavLink>
                 <NavLink href={settingsPrefix + "/routes"}>Routes</NavLink>
+                <NavLink href={settingsPrefix + "/api-keys"}>API Keys</NavLink>
                 <NavLink href={settingsPrefix + "/webhooks"}>Webhooks</NavLink>
 
                 <div />

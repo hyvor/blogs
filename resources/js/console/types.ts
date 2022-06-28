@@ -283,6 +283,17 @@ export interface NavigationVariant {
     name: string
 }
 
+// API
+
+export interface ApiKey {
+    id: number,
+    name: string,
+    type: ApiKeyType,
+    api_key: string
+}
+
+export type ApiKeyType = 'console' | 'delivery';
+
 // === THEME
 
 export interface Theme {
