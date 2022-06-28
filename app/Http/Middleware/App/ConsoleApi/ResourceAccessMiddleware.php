@@ -4,6 +4,7 @@ namespace App\Http\Middleware\App\ConsoleApi;
 
 use App\Domains\Language\LanguageRepository;
 use App\Exceptions\TrustedException;
+use App\Models\ApiKey;
 use App\Models\Blog;
 use App\Models\Language;
 use App\Models\Media;
@@ -26,6 +27,7 @@ class ResourceAccessMiddleware
         'tag' => Tag::class,
         'user' => User::class,
         'route' => Route::class,
+        'api-key' => ApiKey::class
     ];
 
     public function __construct(Blog $blog)

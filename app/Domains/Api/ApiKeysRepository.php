@@ -2,7 +2,7 @@
 
 namespace App\Domains\Api;
 
-use App\Data\Enums\ApiTypeEnum;
+use App\Data\Enums\ApiKeysTypeEnum;
 use App\Data\Enums\UserRoleEnum;
 use App\Models\ApiKey;
 use App\Models\Blog;
@@ -16,12 +16,15 @@ class ApiKeysRepository
         return ApiKey::where('blog_id', $blog->id)->get();
     }
 
-    public static function create(Blog $blog, ApiTypeEnum $type, ?UserRoleEnum $role) : ApiKey
+    public static function create(Blog $blog, ApiKeysTypeEnum $type) : ApiKey
     {
+
+        $key = bin2hex(random_bytes(16));
+
         return ApiKey::create([
             'blog_id' => $blog->id,
-            'type' => $type,
-            'role' => $role
+            'api_key' => $key,
+            'type' => $type
         ]);
     }
 

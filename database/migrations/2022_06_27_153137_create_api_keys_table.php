@@ -23,7 +23,6 @@ return new class extends Migration
             // data
             $table->enum('type', ['console', 'delivery']);
             $table->string('api_key', 32);
-            $table->enum('role', ['owner', 'admin', 'editor', 'writer', 'contributor', 'finance'])->nullable();
         });
     }
 

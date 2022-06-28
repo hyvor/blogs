@@ -16,7 +16,6 @@ class ApiKeyFactory extends Factory
             'blog_id' => Blog::factory(),
             'type' => Arr::random(['console', 'delivery']),
             'api_key' => Str::random(32),
-            'role' => null
         ];
     }
 }

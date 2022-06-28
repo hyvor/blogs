@@ -17,7 +17,6 @@ it('gets API keys', function() {
                     $json->has('id')
                         ->has('type')
                         ->has('api_key')
-                        ->has('role')
                 )
         );
 

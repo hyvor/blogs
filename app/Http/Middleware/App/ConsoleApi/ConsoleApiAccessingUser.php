@@ -7,5 +7,5 @@ use App\Models\User;
 
 class ConsoleApiAccessingUser
 {
-    public function __construct(public User $user, public UserRoleEnum $role) {}
+    public function __construct(public User $user) {}
 }

@@ -12,7 +12,7 @@ class RoleMiddleware
 {
     public function __construct(ConsoleApiAccessingUser $consoleApiAccessingUser)
     {
-        $this->userRole = $consoleApiAccessingUser->role;
+        $this->userRole = $consoleApiAccessingUser->user->role;
     }
 
     public function handle(Request $request, Closure $next, $checkRoles)

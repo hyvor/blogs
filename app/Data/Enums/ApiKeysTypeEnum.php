@@ -1,10 +1,10 @@
 <?php
 namespace App\Data\Enums;
 
-enum ApiTypeEnum : string
+enum ApiKeysTypeEnum : string
 {
 
-    case DATA = 'data';
+    // case DATA = 'data';
     case CONSOLE = 'console';
     case DELIVERY = 'delivery';
 

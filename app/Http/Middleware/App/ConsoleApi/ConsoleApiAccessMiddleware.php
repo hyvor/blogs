@@ -36,10 +36,7 @@ class ConsoleApiAccessMiddleware
 
             app()->instance(
                 ConsoleApiAccessingUser::class,
-                new ConsoleApiAccessingUser(
-                    $owner,
-                    $owner->role
-                )
+                new ConsoleApiAccessingUser($owner)
             );
 
         } else {
@@ -60,10 +57,7 @@ class ConsoleApiAccessMiddleware
 
             app()->instance(
                 ConsoleApiAccessingUser::class,
-                new ConsoleApiAccessingUser(
-                    $user,
-                    $user->role
-                )
+                new ConsoleApiAccessingUser($user)
             );
 
         }
