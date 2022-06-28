@@ -2,7 +2,6 @@
 
 namespace App\Domains\Import\Parsers;
 
-use App\Domains\Import\ParserInterface;
 use App\Domains\Import\Repository;
 
 class GhostParser implements ParserInterface

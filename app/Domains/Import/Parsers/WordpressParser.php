@@ -4,7 +4,6 @@ namespace App\Domains\Import\Parsers;
 
 use App\Data\Enums\UserRoleEnum;
 use App\Data\Enums\UserStatusEnum;
-use App\Domains\Import\ParserInterface;
 use App\Domains\Import\Repository;
 use Illuminate\Support\Str;
 use Symfony\Component\DomCrawler\Crawler;
@@ -23,7 +22,7 @@ class WordpressParser implements ParserInterface
 
     public function __construct(public string $file)
     {
-        $this->file = $file;
+
     }
 
     public function parse(): Repository

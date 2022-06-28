@@ -1,6 +1,8 @@
 <?php
 
-namespace App\Domains\Import;
+namespace App\Domains\Import\Parsers;
+
+use App\Domains\Import\Repository;
 
 interface ParserInterface
 {
