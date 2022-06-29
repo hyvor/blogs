@@ -1,7 +1,7 @@
 import {actions, events, kea, key, path, props, reducers} from "kea";
 import api from "../lib/api";
 import {ajax} from "kea-ajax";
-import {routesLogicType} from "./routesLogicType";
+import type { routesLogicType } from "./routesLogicType";
 import {Route} from "../types";
 
 const routesLogic = kea<routesLogicType>([

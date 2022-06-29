@@ -1,7 +1,7 @@
 import {actions, kea, key, path, props, reducers, selectors} from "kea";
 import { ajax } from "kea-ajax";
 import api from "../lib/api";
-import {languagesLogicType} from "./languagesLogicType";
+import type { languagesLogicType } from "./languagesLogicType";
 import {Language} from "../types";
 
 const languagesLogic = kea<languagesLogicType>([
