@@ -5,6 +5,8 @@ namespace App\Domains\Import\Parsers;
 use App\Data\Enums\UserRoleEnum;
 use App\Data\Enums\UserStatusEnum;
 use App\Domains\Import\Repository;
+use App\Models\User;
+use App\Models\UserVariant;
 use Illuminate\Support\Str;
 use Symfony\Component\DomCrawler\Crawler;
 
@@ -53,16 +55,14 @@ class WordpressParser implements ParserInterface
             $this->authorsArray[] = [$authorName => $authorId];
             // dd($this->authorsArray);
 
-            $repo->author(
-                id: $authorId,
-                name: $authorName,
-                role: $role,
-                status: $status,
-                slug: $slug,
-                email: $authorEmail,
-                createdAt: $createdAt,
-                updatedAt: $updatedAt,
-            );
+            $user = new User();
+
+            $user->id = $authorId;
+
+            $userVariant = new UserVariant();
+            $userVariant->name = $name;
+
+            $repo->author($user, [$userVariant]);
         });
 
 
