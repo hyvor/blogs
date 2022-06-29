@@ -5,6 +5,7 @@ import {PopupConfirm } from "../../ReusableComponents/Popup";
 import {ApiKey } from "../../types";
 import {TableRowItem, TableRow} from "../../ReusableComponents/Table";
 import {useApiKeysActions} from "../../logic-helpers/api-keys";
+import copyTextToClipboard from "../../../helpers/copyToClipboard";
 
 export default function ApiKey ({apiKey}: {apiKey: ApiKey}) {
 
@@ -20,7 +21,10 @@ export default function ApiKey ({apiKey}: {apiKey: ApiKey}) {
     return <TableRow>
         <TableRowItem>{ apiKey.name }</TableRowItem>
         <TableRowItem>{ apiKey.type[0].toUpperCase() + apiKey.type.substr(1) } API</TableRowItem>
-        <TableRowItem><button className="button small">COPY</button></TableRowItem>
+        <TableRowItem><button
+            className="button small"
+            onClick={() => {copyTextToClipboard(apiKey.api_key); toast("Copied")}}
+        >COPY</button></TableRowItem>
 
         <TableRowItem>
             <button
