@@ -55,14 +55,25 @@ class WordpressParser implements ParserInterface
             $this->authorsArray[] = [$authorName => $authorId];
             // dd($this->authorsArray);
 
-            $user = new User();
+            $repo->author(
+                id:$authorId,
+                name:$authorName,
+                email:$authorEmail,    
+                role:$role,
+                status:$status,
+                slug:$slug,
+                createdAt:$createdAt,
+                updatedAt:$updatedAt
+            );
+
+            /*$user = new User();
 
             $user->id = $authorId;
 
             $userVariant = new UserVariant();
             $userVariant->name = $name;
 
-            $repo->author($user, [$userVariant]);
+            $repo->author($user, [$userVariant]);*/
         });
 
 
