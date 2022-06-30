@@ -1,5 +1,5 @@
 <?php
-/*
+
 namespace Tests\Unit\Import\Parsers;
 
 use App\Domains\Import\Parsers\WordpressParser;
@@ -7,7 +7,7 @@ use App\Domains\Import\Parsers\WordpressParser;
 // php artisan test  --filter 'WordPressParserTest'
 // If this test needs to work properly then we will have to add the html/body part to the filterXpath in the wordpress parser.
 
-$file = <<<XML
+/*$file = <<<XML
         <?xml version="1.0" encoding="UTF-8" ?>
         <rss>
             <channel>
@@ -79,7 +79,14 @@ $file = <<<XML
                 </item>
             </channel>
         </rss>
-XML;
+XML;*/
+
+$file = file_get_contents('wordpress.xml');
+
+echo '<pre>';
+print_r($file);die('cool');
+
+$parser = new WordpressParser($file);
 
 it('parsers the language', function () use ($file) {
     $parser = new WordpressParser($file);
@@ -147,5 +154,5 @@ it('parsers the posts', function () use ($file) {
     }
 
     $this->assertEquals('About', $title);
-});*/
+});
 

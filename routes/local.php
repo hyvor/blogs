@@ -7,6 +7,9 @@ use Hyvor\HyvorConnecter\HyvorUser;
 use Hyvor\HyvorConnecter\Userbase;
 use Hyvor\SyntaxHighlighter\Highlighter;
 use Illuminate\Support\Facades\Route;
+use App\Http\Controllers\ParserController;
+
+
 
 Route::get('callout', function() {
 
@@ -42,3 +45,7 @@ Route::get('email', function() {
     ]);
 
 });
+
+
+
+Route::get('/parser', [ParserController::class, 'index']);
