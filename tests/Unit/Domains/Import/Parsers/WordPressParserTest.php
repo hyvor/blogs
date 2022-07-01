@@ -1,5 +1,5 @@
 <?php
-/*
+
 namespace Tests\Unit\Import\Parsers;
 
 use App\Domains\Import\Parsers\WordpressParser;
@@ -7,7 +7,7 @@ use App\Domains\Import\Parsers\WordpressParser;
 // php artisan test  --filter 'WordPressParserTest'
 // If this test needs to work properly then we will have to add the html/body part to the filterXpath in the wordpress parser.
 
-$file = <<<XML
+/*$file = <<<XML
         <?xml version="1.0" encoding="UTF-8" ?>
         <rss>
             <channel>
@@ -80,9 +80,14 @@ $file = <<<XML
             </channel>
         </rss>
 XML;
+*/
 
-it('parsers the language', function () use ($file) {
+it('parsers the language', function (){
+
+    $file = file_get_contents(test_unit_data_path('Import/wordpress.xml'));
+
     $parser = new WordpressParser($file);
+    
     $repo = $parser->parse();
 
     foreach ($repo->lang as $lang) {
@@ -91,9 +96,13 @@ it('parsers the language', function () use ($file) {
     }
 
     $this->assertEquals('English', $language);
-});
 
-it('parsers the authors', function () use ($file) {
+})->group('wordpresstest');
+
+it('parsers the authors', function (){
+
+    $file = file_get_contents(test_unit_data_path('Import/wordpress.xml'));
+
     $parser = new WordpressParser($file);
     $repo = $parser->parse();
 
@@ -106,11 +115,15 @@ it('parsers the authors', function () use ($file) {
         $name = $author['name'];
     }
 
-    $this->assertEquals('Rasif', $name);
-});
+    expect($repo)->toBeObject()->dd($repo);
+
+})->group('wordpresstest');
 
 
-it('parsers the tags', function () use ($file) {
+/*it('parsers the tags', function (){
+
+    $file = file_get_contents(test_unit_data_path('Import/wordpress.xml'));
+
     $parser = new WordpressParser($file);
     $repo = $parser->parse();
 
@@ -124,10 +137,14 @@ it('parsers the tags', function () use ($file) {
         $description = $tag['description'];
     }
 
-    $this->assertEquals('alternatives', $name);
-});
+    expect($repo)->toBeObject();
 
-it('parsers the posts', function () use ($file) {
+})->group('wordpresstest');
+
+it('parsers the posts', function (){
+
+    $file = file_get_contents(test_unit_data_path('Import/wordpress.xml'));
+
     $parser = new WordpressParser($file);
     $repo = $parser->parse();
 
@@ -146,6 +163,7 @@ it('parsers the posts', function () use ($file) {
         $isFeatured = $post['isFeatured'];
     }
 
-    $this->assertEquals('About', $title);
-});*/
+    expect($repo)->toBeObject();
 
+})->group('wordpresstest');
+*/

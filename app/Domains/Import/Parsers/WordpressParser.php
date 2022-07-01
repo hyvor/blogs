@@ -32,13 +32,20 @@ class WordpressParser implements ParserInterface
         $repo = new Repository();
         $data = new Crawler($this->file);
 
-        $languageCode = $data->filterXPath('rss/channel/language')->text();
-        $language = locale_get_display_language($languageCode);
+        $language = '';
+        $languageCode = '';
+
+        if(!empty($data->filterXPath('rss/channel/language'))){
+            $languageCode = $data->filterXPath('rss/channel/language')->text();
+            $language = locale_get_display_language($languageCode);
+
+        }
 
         $repo->language(
             language: $language,
             languageCode: $languageCode,
         );
+
 
         // Authors section
         $data->filterXPath('rss/channel/wp:author')->each(function (Crawler $node, $i) use ($repo) {
@@ -66,14 +73,24 @@ class WordpressParser implements ParserInterface
                 updatedAt:$updatedAt
             );
 
-            /*$user = new User();
+            $user = new User();
 
             $user->id = $authorId;
+            //blog id will be static for testing purpose will dynamic later
+            $user->blog_id = 1;
+            $user->email = $authorEmail;
+            $user->role = $role;
+            $user->status = $status;
+            $user->slug = $slug;
+            $user->created_at = $createdAt;
+            $user->updated_at = $updatedAt;
 
-            $userVariant = new UserVariant();
+            $repo->userModels(user:$user);
+
+            /*$userVariant = new UserVariant();
             $userVariant->name = $name;
-
-            $repo->author($user, [$userVariant]);*/
+*/
+            //$repo->author($user, [$userVariant]);
         });
 
 

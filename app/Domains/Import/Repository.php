@@ -5,6 +5,7 @@ namespace App\Domains\Import;
 use App\Data\Enums\UserRoleEnum;
 use App\Data\Enums\UserStatusEnum;
 
+
 class Repository
 {
     /**
@@ -27,10 +28,17 @@ class Repository
     */
     public array $posts = [];
 
+
+    public array $users = [];
     /**
     * @var array<array<string,mixed>>
     */
     // public array $pages = [];
+
+    public function userModels(?object $user){
+        $this->users[] = $user;
+    }
+
 
     public function language(
         ?string $language,
