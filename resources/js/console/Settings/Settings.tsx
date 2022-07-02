@@ -1,6 +1,5 @@
 import React from 'react';
 import NavLink from '../ReusableComponents/NavLink';
-import SettingsDelete from './SettingsDelete';
 import Code from './Code';
 import SettingsMedia from './Media/SettingsMedia';
 import SettingsMigrate from './SettingsMigrate';
@@ -19,6 +18,7 @@ import Highlight from "./Highlight";
 import getSubdomain from "../logic-helpers/subdomain";
 import Webhooks from "./Webhooks";
 import ApiKeys from "./ApiKeys/ApiKeys";
+import Danger from "./Danger";
 
 export default function Settings({type} : {type: string | undefined}) {
 
@@ -57,8 +57,8 @@ export default function Settings({type} : {type: string | undefined}) {
         case 'migrate':
             Type = () => <SettingsMigrate />;
             break;
-        case 'delete':
-            Type = () => <SettingsDelete />;
+        case 'danger':
+            Type = () => <Danger />;
             break;
         case 'routes':
             Type = () => <SettingsRoutes />;
@@ -109,7 +109,7 @@ export default function Settings({type} : {type: string | undefined}) {
 
                 <div />
                 <NavLink href={settingsPrefix + "/migrate"}>Import & Export</NavLink>
-                <NavLink href={settingsPrefix + "/delete"}>Delete Blog</NavLink>
+                <NavLink href={settingsPrefix + "/danger"}>Danger Zone</NavLink>
             </div>
         </div>
         <div className="box box-right settings-right">

@@ -1,15 +1,15 @@
 import React from 'react';
 import DualSetting from '../ReusableComponents/DualSetting';
 
-export default function SettingsDelete() {
+export default function Danger() {
 
     return <div className="settings-delete">
 
         <div className="title">
-            Delete
+            Danger
         </div>
 
-        <DualSetting 
+        <DualSetting
             title="Reset"
             description="To completely delete all data (posts, users, tags, and media) of this blog. There is no way to restore data after resetting."
             right={
