@@ -46,14 +46,14 @@ class ConsoleLanguageController extends Controller
     public static function update(Request $request, Blog $blog, Language $language)
     {
         $request->validate([
-            'code' => 'required|string|max:12',
-            'name' => 'required|string|max:255',
+            'code' => 'string|max:12',
+            'name' => 'string|max:255',
         ]);
 
-        $code = $request->get('code');
-        $name = $request->get('name');
+        $code = $request->input('code');
+        $name = $request->input('name');
 
-        if ($code !== $language->code && LanguageRepository::getLanguageByCode($blog, $code)) {
+        if ($code && $code !== $language->code && LanguageRepository::getLanguageByCode($blog, $code)) {
             throw new TrustedException('Language code already exists');
         }
 

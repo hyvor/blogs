@@ -237,7 +237,7 @@ export type Media = {
 export interface UnsplashImage {
     url: string;
     author: string;
-    authorUrl: string;
+    author_url: string;
     title: string | null;
     alt: string | null;
 }

@@ -2,7 +2,7 @@
 
 namespace App\Rules;
 
-use App\Domains\Blog\BlogRepository;
+use App\Domains\Blog\BlogService;
 use Illuminate\Contracts\Validation\Rule;
 
 class Subdomain implements Rule
@@ -38,7 +38,7 @@ class Subdomain implements Rule
             return false;
         }
 
-        if ($this->checkUnique && BlogRepository::getBlogBySubdomain($value)) {
+        if ($this->checkUnique && BlogService::getBlogBySubdomain($value)) {
             $this->message = 'Subdomain already taken';
 
             return false;

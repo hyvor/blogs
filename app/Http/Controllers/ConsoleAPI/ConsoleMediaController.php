@@ -5,7 +5,7 @@ namespace App\Http\Controllers\ConsoleAPI;
 use App\Data\Objects\ConsoleAPI\Media\MediaObject;
 use App\Data\Objects\ConsoleAPI\Media\UnsplashImageObject;
 use App\Domains\Media\MediaRepository;
-use App\Domains\Media\UnsplashRepository;
+use App\Domains\Media\Services\UnsplashService;
 use App\Http\Controllers\Controller;
 use App\Models\Blog;
 use App\Models\Media;
@@ -42,7 +42,7 @@ class ConsoleMediaController extends Controller
         return response()->json(new MediaObject($media));
     }
 
-    public static function deleteFile(Request $request, Media $media)
+    public static function deleteFile(Media $media)
     {
         MediaRepository::delete($media);
     }
@@ -57,9 +57,8 @@ class ConsoleMediaController extends Controller
         $search = $request->input('search');
         $page = (int) $request->input('page');
 
-        $images = UnsplashRepository::search($search, $page)->map(function ($image) {
-            return new UnsplashImageObject($image);
-        });
+        $unsplash = app(UnsplashService::class);
+        $images = $unsplash->search($search, $page)->mapInto(UnsplashImageObject::class);
 
         return response()->json($images);
     }

@@ -7,6 +7,7 @@ use App\Domains\Route\RouteRepository;
 
 use App\Http\Controllers\Controller;
 use App\Models\Blog;
+use App\Models\Route;
 use Illuminate\Http\Request;
 
 class ConsoleRouteController extends Controller
@@ -39,33 +40,36 @@ class ConsoleRouteController extends Controller
         return response()->json(new RouteObject($route));
     }
 
-    public function update(Request $request, Blog $blog)
+    public function update(Request $request, Route $route)
     {
-        $request->validate([
-            'name' => 'required|string',
-            'match' => 'required|string',
-            'template' => 'required|string',
-            'posts_filter' => 'required|string|nullable',
-            'content_type' => 'required|string|nullable',
-        ]);
+        $validations = [
+            'name' => 'string',
+            'match' => 'string',
+            'template' => 'string',
+            'posts_filter' => 'string|nullable',
+            'content_type' => 'string|nullable',
+        ];
 
-        $id = $request->route('id');
-        $name = $request->input('name');
-        $match = $request->input('match');
-        $template = $request->input('template');
-        $postsFilter = $request->input('postsFilter') ?? null;
-        $contentType = $request->input('contentType') ?? null;
+        $request->validate($validations);
 
-        $route = RouteRepository::updateRoute($id, $name, $match, $template, $postsFilter, $contentType);
+        $updatables = array_keys($validations);
+        $updates = [];
 
-        return response()->json($route);
+        foreach ($updatables as $updatable) {
+            if ($request->has($updatable)) {
+                $updates[$updatable] = $request->input($updatable);
+            }
+        }
+
+        $route = RouteRepository::updateRoute($route, $updates);
+
+        return response()->json(new RouteObject($route));
     }
 
-    public function delete(Request $request)
+    public function delete(Route $route)
     {
-        $id = $request->route('id');
-        $deleteRoute = RouteRepository::deleteRoute($id);
-
-        return response()->json($deleteRoute);
+        RouteRepository::deleteRoute($route);
+        return response()->json();
     }
+
 }

@@ -1,4 +1,7 @@
 <?php
+
+use App\Domains\Import\Parsers\WordpressParser;
+
 /*
 namespace Tests\Unit\Import\Parsers;
 

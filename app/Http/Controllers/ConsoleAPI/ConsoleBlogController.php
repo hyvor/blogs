@@ -13,7 +13,7 @@ use App\Data\Objects\ConsoleAPI\BlogVariantObject;
 use App\Data\Objects\ConsoleAPI\LanguageObject;
 use App\Data\Objects\ConsoleAPI\Tag\TagObject;
 use App\Data\Objects\ConsoleAPI\User\UserObject;
-use App\Domains\Blog\BlogRepository;
+use App\Domains\Blog\BlogService;
 use App\Domains\Count\CountRepository;
 use App\Domains\Language\LanguageRepository;
 use App\Domains\Tag\TagRepository;
@@ -22,6 +22,7 @@ use App\Exceptions\TrustedException;
 use App\Http\Controllers\Controller;
 
 use App\Models\Blog;
+use App\Models\Language;
 use App\Rules\BlogDescription;
 use App\Rules\BlogHostingDomain;
 use App\Rules\BlogName;
@@ -113,7 +114,7 @@ class ConsoleBlogController extends Controller
 
         $updates = $request->all();
 
-        $blog = BlogRepository::updateBlog($blog, $updates);
+        $blog = BlogService::updateBlog($blog, $updates);
 
         return response()->json(new BlogObject($blog));
     }
@@ -127,20 +128,13 @@ class ConsoleBlogController extends Controller
      * @return JsonResponse
      * @throws TrustedException
      */
-    public static function createBlogVariant(Request $request, Blog $blog)
+    public static function createBlogVariant(Request $request, Blog $blog, Language $language)
     {
         $request->validate([
             'language_id' => 'required|integer',
         ]);
 
-        $languageId = $request->input('language_id');
-        $language = LanguageRepository::getLanguageById($blog, $languageId);
-
-        if (! $language) {
-            throw new TrustedException('Language not found');
-        }
-
-        $variant = BlogRepository::createBlogVariant($blog, $language);
+        $variant = BlogService::createBlogVariant($blog, $language);
 
         return response()->json(new BlogVariantObject($variant));
     }
@@ -153,21 +147,13 @@ class ConsoleBlogController extends Controller
      * @return JsonResponse
      * @throws TrustedException
      */
-    public static function updateBlogVariant(Request $request, Blog $blog)
+    public static function updateBlogVariant(Request $request, Blog $blog, Language $language)
     {
         $request->validate([
             'language_id' => 'required|integer',
             'name' => new BlogName(),
             'description' => new BlogDescription(),
         ]);
-
-        $languageId = $request->input('language_id');
-
-        $language = LanguageRepository::getLanguageById($blog, $languageId);
-
-        if (! $language) {
-            throw new TrustedException('Language not found');
-        }
 
         $updates = [];
         if ($request->has('name')) {
@@ -177,7 +163,7 @@ class ConsoleBlogController extends Controller
             $updates['description'] = $request->input('description');
         }
 
-        $variant = BlogRepository::updateBlogVariant($blog, $language, $updates);
+        $variant = BlogService::updateBlogVariant($blog, $language, $updates);
 
         return response()->json(new BlogVariantObject($variant));
     }

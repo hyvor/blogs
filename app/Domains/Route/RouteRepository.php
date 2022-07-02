@@ -35,7 +35,8 @@ class RouteRepository
         string $template,
         ?string $postsFilter = null,
         ?string $contentType = null,
-    ): Route {
+    ): Route
+    {
         return $blog->routes()->create([
             'name' => $name,
             'match' => $match,
@@ -45,26 +46,17 @@ class RouteRepository
         ]);
     }
 
-    public static function updateRoute(
-        int $id,
-        string $match,
-        string $template,
-        string $postsFilter = null,
-        string $contentType = null,
-    ): bool {
-        return Route::find($id)
-            ->update([
-                'match' => $match,
-                'template' => $template,
-                'posts_filter' => $postsFilter ?? null,
-                'content_type' => $contentType ?? null,
-            ]);
+    public static function updateRoute(Route $route, array $updates) : Route
+    {
+        foreach ($updates as $key => $value) {
+            $route->$key = $value;
+        }
+        $route->save();
+        return $route;
     }
 
-    public static function deleteRoute(int $id): bool
+    public static function deleteRoute(Route $route)
     {
-        $data = Route::find($id);
-
-        return $data->delete();
+        $route->delete();
     }
 }

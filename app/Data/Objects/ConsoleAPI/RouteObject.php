@@ -7,7 +7,6 @@ use App\Models\Route;
 class RouteObject
 {
     public int $id;
-    public int $created_at;
     public string $name;
     public string $match;
     public string $template;
@@ -18,7 +17,6 @@ class RouteObject
     public function __construct(Route $route)
     {
         $this->id = $route->id;
-        $this->created_at = $route->created_at->timestamp;
         $this->name = $route->name;
         $this->match = $route->match;
         $this->template = $route->template;

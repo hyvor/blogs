@@ -25,7 +25,7 @@ use App\Models\Blog;
 use App\Models\BlogVariant;
 use App\Models\Language;
 
-class BlogRepository
+class BlogService
 {
     public static function createBlog(
         ?int $userId,
@@ -176,7 +176,7 @@ class BlogRepository
         return $variant;
     }
 
-    public static function resetBlog(Blog $blog)
+    public function resetBlog(Blog $blog)
     {
         $deleters = [
             LanguageDeleter::class,
@@ -191,16 +191,16 @@ class BlogRepository
         ];
 
         foreach ($deleters as $deleter) {
-            (new $deleter($blog))->delete();
+            app($deleter, [$blog])->delete();
         }
     }
 
-    public static function deleteBlog(Blog $blog)
+    public function deleteBlog(Blog $blog)
     {
         self::resetBlog($blog); // delete all, except owner user
 
         // delete owner too
-        (new UserDeleter($blog))->withOwner()->delete();
+        app(UserDeleter::class, [$blog])->withOwner()->delete();
 
         $blog->delete();
     }

@@ -166,7 +166,7 @@ Route::prefix('/api/console/v0/blog/{subdomain}')
         // languages
         Route::get('/languages', [ConsoleLanguageController::class, 'get']);
         Route::post('/language', [ConsoleLanguageController::class, 'create']);
-        Route::put('/language/{id}', [ConsoleLanguageController::class, 'update']);
+        Route::patch('/language/{id}', [ConsoleLanguageController::class, 'update']);
         Route::delete('/language/{id}', [ConsoleLanguageController::class, 'delete']);
         
         // redirects
@@ -190,7 +190,7 @@ Route::prefix('/api/console/v0/blog/{subdomain}')
         // route
         Route::get('/routes', [ConsoleRouteController::class, 'get']);
         Route::post('/route', [ConsoleRouteController::class, 'create']);
-        Route::put('/route/{id}', [ConsoleRouteController::class, 'update']);
+        Route::patch('/route/{id}', [ConsoleRouteController::class, 'update']);
         Route::delete('/route/{id}', [ConsoleRouteController::class, 'delete']);
 
         // theme

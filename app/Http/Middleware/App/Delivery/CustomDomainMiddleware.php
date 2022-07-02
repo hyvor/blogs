@@ -2,7 +2,7 @@
 
 namespace App\Http\Middleware\App\Delivery;
 
-use App\Domains\Blog\BlogRepository;
+use App\Domains\Blog\BlogService;
 use App\Models\Blog;
 use Closure;
 
@@ -12,7 +12,7 @@ class CustomDomainMiddleware
     {
         $host = $request->getHost();
 
-        $blog = BlogRepository::getBlogByCustomDomain($host);
+        $blog = BlogService::getBlogByCustomDomain($host);
 
         if (! $blog) {
             abort(404);

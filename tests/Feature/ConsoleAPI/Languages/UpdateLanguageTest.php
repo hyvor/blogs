@@ -10,7 +10,7 @@ it('updates the language', function () {
     $code = 'si';
     $name = 'සිංහල';
 
-    $this->callConsoleApi('PUT', "/language/$language->id", [
+    $this->callConsoleApi('PATCH', "/language/$language->id", [
         'code' => $code,
         'name' => $name,
     ])
@@ -33,7 +33,7 @@ it('cannot take other languages', function () {
     $language = blog()->languages[0];
     $language2 = blog()->languages[1];
 
-    $this->callConsoleApi('PUT', "/language/$language->id", [
+    $this->callConsoleApi('PATCH', "/language/$language->id", [
         'code' => $language2->code,
         'name' => 'some name',
     ])

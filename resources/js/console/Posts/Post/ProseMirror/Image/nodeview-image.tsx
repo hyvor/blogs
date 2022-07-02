@@ -161,7 +161,7 @@ export default class Image implements ImageNodeViewType {
                 this.schema.text("Photo by "),
                 this.schema.text(unsplash.author, [
                     this.schema.marks.link.create({
-                        href: unsplash.authorUrl + utm
+                        href: unsplash.author_url + utm
                     })
                 ]),
                 this.schema.text(" on "),

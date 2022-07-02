@@ -3,7 +3,7 @@
 namespace App\Domains\Delivery\Twig;
 
 use App\Data\Enums\ThemeFileFolderEnum;
-use App\Domains\Blog\BlogRepository;
+use App\Domains\Blog\BlogService;
 use App\Domains\Language\LanguageRepository;
 use App\Domains\Route\PermalinkRepository;
 use App\Domains\Theme\ThemeFilesRepository;
@@ -250,7 +250,7 @@ class TwigExtensions extends AbstractExtension
     {
         if (! isset($this->blog)) {
             $subdomain = $context['_blog']['subdomain'];
-            $this->blog = BlogRepository::getBlogBySubdomain($subdomain);
+            $this->blog = BlogService::getBlogBySubdomain($subdomain);
         }
 
         return $this->blog;

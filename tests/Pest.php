@@ -91,6 +91,10 @@ function test_unit_data_path($path = '')
 {
     return base_path('tests/Unit/__DATA__/' . $path);
 }
+function jsonData(string $filename) {
+    $filename = trim($filename, '/');
+    return json_decode(file_get_contents(base_path('tests/Unit/__DATA__/' . $filename)), true);
+}
 
 // https://www.youtube.com/watch?v=l3kioTuYt98
 function createRequest($method, $uri) {
