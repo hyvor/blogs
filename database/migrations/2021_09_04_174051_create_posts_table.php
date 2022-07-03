@@ -19,7 +19,6 @@ class CreatePostsTable extends Migration
             // time
             $table->timestamps();
             $table->timestamp('published_at')->nullable();
-            $table->softDeletes();
 
             // connections
             $table->bigInteger('blog_id');

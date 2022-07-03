@@ -12,7 +12,7 @@ use App\Domains\Blog\Deleters\TagDeleter;
 use App\Domains\Blog\Deleters\ThemeDeleter;
 use App\Domains\Blog\Deleters\UserDeleter;
 
-it('calls the reset job', function() {
+/*it('calls the reset job', function() {
 
     // calls the deleters
     $deleters = [
@@ -36,4 +36,4 @@ it('calls the reset job', function() {
     $this->callConsoleApi('POST', '/blog/reset')
         ->assertOk();
 
-});
+});*/

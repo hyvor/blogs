@@ -2,7 +2,7 @@ import React, {Fragment} from 'react';
 import DualSetting from "../ReusableComponents/DualSetting";
 import Switch from "../ReusableComponents/Switch";
 import Select from "../ReusableComponents/Select";
-import {useBlogActions, useBlogValues} from "./useBlog";
+import {useBlogActions, useBlogValues} from "../logic-helpers/blog";
 import SettingsSave from "../ReusableComponents/SettingsSave";
 import {appConfig} from "../helpers";
 

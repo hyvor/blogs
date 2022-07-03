@@ -86,6 +86,11 @@ const blogLogic = kea<blogLogicType>([
 
         },
 
+        deleteBlog: async({onDelete} : {onDelete: Function}) => {
+            await api.delete(props.subdomain, '/blog');
+            onDelete();
+        },
+
     })),
 
     reducers({

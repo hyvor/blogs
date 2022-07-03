@@ -5,12 +5,12 @@ import React, {useState} from "react";
 import {toast} from "react-toastify";
 import {PencilFill, Trash} from "react-bootstrap-icons";
 import {PopupConfirm } from "../../ReusableComponents/Popup";
-import {Redirect} from "../../types";
+import {Redirect as RedirectType} from "../../types";
 import {TableRowItem, TableRow} from "../../ReusableComponents/Table";
 import CreateUpdateRedirectPopup from "./CreateUpdateRedirectPopup";
 import getSubdomain from "../../logic-helpers/subdomain";
 
-export default function Redirect ({redirect}: {redirect: Redirect}){
+export default function Redirect ({redirect}: {redirect: RedirectType}){
 
     const redirectLogicBuilt = redirectsLogic({subdomain: getSubdomain()})
     const { remove } = useActions(redirectLogicBuilt)

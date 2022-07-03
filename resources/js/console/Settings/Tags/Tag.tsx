@@ -1,7 +1,7 @@
 import {TableRow, TableRowItem} from "../../ReusableComponents/Table";
 import {PencilFill, Trash} from "react-bootstrap-icons";
 import React, {useState} from "react";
-import {Tag} from "../../types";
+import {Tag as TagType} from "../../types";
 import {useValues} from "kea";
 import languagesLogic from "../../logic/languagesLogic";
 import getSubdomain from "../../logic-helpers/subdomain";
@@ -10,7 +10,7 @@ import {useTagsActions} from "./useTags";
 import {toast} from "react-toastify";
 import UpdateTagPopup from "./UpdateTagPopup";
 
-export default function Tag({ tag } : {tag: Tag}) {
+export default function Tag({ tag } : {tag: TagType}) {
 
     const { primaryLanguage } = useValues(languagesLogic({subdomain: getSubdomain()}))
 

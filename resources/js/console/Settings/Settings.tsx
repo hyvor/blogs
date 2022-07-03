@@ -18,7 +18,7 @@ import Highlight from "./Highlight";
 import getSubdomain from "../logic-helpers/subdomain";
 import Webhooks from "./Webhooks";
 import ApiKeys from "./ApiKeys/ApiKeys";
-import Danger from "./Danger";
+import Danger from "./Danger/Danger";
 
 export default function Settings({type} : {type: string | undefined}) {
 

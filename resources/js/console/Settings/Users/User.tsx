@@ -2,7 +2,7 @@ import React, {useState} from 'react';
 import {useValues} from 'kea';
 import {PencilFill, Trash} from 'react-bootstrap-icons';
 import languagesLogic from '../../logic/languagesLogic';
-import {User} from "../../types";
+import {User as UserType} from "../../types";
 import getSubdomain from "../../logic-helpers/subdomain";
 import {TableRow, TableRowItem} from "../../ReusableComponents/Table";
 import {UserRole, UserStatus} from "../../enums";
@@ -11,7 +11,7 @@ import {useUsersActions} from "../../logic-helpers/users";
 import {toast} from "react-toastify";
 import UpdateUserPopup from "./UpdateUserPopup";
 
-export default function User({user} : {user: User} ) {
+export default function User({user} : {user: UserType} ) {
 
     const { resendInvite, remove } = useUsersActions()
 

@@ -30,7 +30,7 @@ it('calls the delete blog job', function() {
     // calls the deleters
     foreach ($deleters as $deleter) {
         $mock = mock($deleter)->makePartial();
-        $mock->shouldReceive('delete')->times($deleter === UserDeleter::class ? 2 : 1);
+        $mock->shouldReceive('delete')->once();
         $this->app->bind($deleter, fn() => $mock);
     }
 

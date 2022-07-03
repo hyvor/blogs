@@ -2,6 +2,7 @@
 
 import * as React from 'react';
 import * as codemirror from 'codemirror';
+import cm from 'codemirror';
 
 /**
  *
@@ -18,9 +19,9 @@ declare let require: any;
 
 const SERVER_RENDERED = (typeof navigator === 'undefined' || (typeof global !== 'undefined' && global['PREVENT_CODEMIRROR_RENDER'] === true));
 
-let cm;
+// let cm;
 if (!SERVER_RENDERED) {
-    cm = require('codemirror');
+    // cm = require('codemirror');
 }
 
 export interface IDefineModeOptions {

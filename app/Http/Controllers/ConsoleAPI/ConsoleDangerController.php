@@ -13,9 +13,4 @@ class ConsoleDangerController
         dispatch(fn () => app(BlogService::class)->deleteBlog($blog));
     }
 
-    public function reset(Blog $blog)
-    {
-        dispatch(fn () => app(BlogService::class)->resetBlog($blog));
-    }
-
 }

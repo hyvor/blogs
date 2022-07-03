@@ -34,16 +34,9 @@
 <link rel="shortcut icon" href="/favicon.ico">
 <meta name="theme-color" content="#896c6b" />
 
-<link rel="stylesheet" type="text/css" href="/css/landing.css">
+@vite('resources/css/landing/landing.scss')
 
 <script src="/js-static/flashload.js"></script>
 <script data-flashload-skip-replacing>
     FlashLoad.start()
 </script>
-
-{{-- <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/instantclick/3.1.0/instantclick.min.js"></script>
-<script>
-    window.addEventListener('load', function() {
-        InstantClick.init();
-    })
-</script> --}}

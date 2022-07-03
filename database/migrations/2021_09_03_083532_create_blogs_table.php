@@ -16,7 +16,6 @@ class CreateBlogsTable extends Migration
         Schema::create('blogs', function (Blueprint $table) {
             $table->id();
             $table->timestamps();
-            $table->softDeletes();
 
             // connections
             $table->bigInteger('hyvor_user_id')->nullable(); // hyvor user id (owner)

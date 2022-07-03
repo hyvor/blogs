@@ -1,3 +1,6 @@
+// css
+import '../../css/console/console.scss';
+
 import React from 'react';
 import { resetContext } from 'kea'
 import { routerPlugin } from 'kea-router'

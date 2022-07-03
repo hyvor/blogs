@@ -1,11 +1,11 @@
 import React, {useState} from "react";
 import {toast} from "react-toastify";
 import {Trash} from "react-bootstrap-icons";
-import {Media} from "../../types";
+import {Media as MediaType} from "../../types";
 import Loader from "../../ReusableComponents/Loader";
 import {PopupConfirm} from "../../ReusableComponents/Popup";
 
-type MediaProps = Partial<Media> & { isDummy?: boolean, remove?: Function }
+type MediaProps = Partial<MediaType> & { isDummy?: boolean, remove?: Function }
 
 export default function Media({ isDummy, id, uploaded_at, url, original_name, extension, remove } : MediaProps) {
 

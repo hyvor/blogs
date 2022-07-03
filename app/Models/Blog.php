@@ -23,7 +23,6 @@ use Laravel\Paddle\Billable;
 class Blog extends Model
 {
     use HasFactory;
-    use SoftDeletes;
     use Billable;
     use Countable;
     use Metable;

@@ -119,6 +119,10 @@ Route::prefix('/api/console/v0/blog/{subdomain}')
 
     });
 
+    /**
+     * Tags
+     * @access OWNER|ADMIN|EDITOR
+     */
     Route::middleware('role:owner|admin|editor')->group(function() {
 
         // tags
@@ -221,10 +225,14 @@ Route::prefix('/api/console/v0/blog/{subdomain}')
 
     });
 
+    /**
+     * Danger
+     * @access OWNER
+     */
     Route::middleware('role:owner')->group(function() {
 
-        Route::post('/blog/delete', [ConsoleDangerController::class, 'delete']);
-        Route::post('/blog/reset', [ConsoleDangerController::class, 'reset']);
+        Route::delete('/blog', [ConsoleDangerController::class, 'delete']);
+        // Route::post('/blog/reset', [ConsoleDangerController::class, 'reset']);
 
     });
 

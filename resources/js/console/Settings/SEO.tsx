@@ -3,7 +3,7 @@ import DualSetting from '../ReusableComponents/DualSetting';
 import Switch from '../ReusableComponents/Switch';
 import Callout, {CalloutColors} from "../ReusableComponents/Callout";
 import {ExclamationCircle} from "react-bootstrap-icons";
-import {useBlogActions, useBlogValues} from "./useBlog";
+import {useBlogActions, useBlogValues} from "../logic-helpers/blog";
 import CodemirrorEditor, {CODEMIRROR_MODES} from "../ReusableComponents/CodemirrorEditor";
 import SettingsSave from "../ReusableComponents/SettingsSave";
 import Radio from "../ReusableComponents/Radio";

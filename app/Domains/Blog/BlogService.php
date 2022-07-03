@@ -176,8 +176,9 @@ class BlogService
         return $variant;
     }
 
-    public function resetBlog(Blog $blog)
+    public function deleteBlog(Blog $blog)
     {
+
         $deleters = [
             LanguageDeleter::class,
             MediaDeleter::class,
@@ -193,14 +194,6 @@ class BlogService
         foreach ($deleters as $deleter) {
             app($deleter, [$blog])->delete();
         }
-    }
-
-    public function deleteBlog(Blog $blog)
-    {
-        self::resetBlog($blog); // delete all, except owner user
-
-        // delete owner too
-        app(UserDeleter::class, [$blog])->withOwner()->delete();
 
         $blog->delete();
     }

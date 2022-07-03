@@ -2,7 +2,7 @@ import React, { useState } from 'react';
 import DualSetting from '../ReusableComponents/DualSetting';
 import CodemirrorEditor, { CODEMIRROR_MODES } from '../ReusableComponents/CodemirrorEditor';
 import SettingsSave from '../ReusableComponents/SettingsSave';
-import {useBlogActions, useBlogValues} from "./useBlog";
+import {useBlogActions, useBlogValues} from "../logic-helpers/blog";
 
 export default function Code() {
 

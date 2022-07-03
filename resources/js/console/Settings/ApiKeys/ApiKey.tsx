@@ -2,12 +2,12 @@ import React, {useState} from "react";
 import {toast} from "react-toastify";
 import {PencilFill, Trash} from "react-bootstrap-icons";
 import {PopupConfirm } from "../../ReusableComponents/Popup";
-import {ApiKey } from "../../types";
+import {ApiKey as ApiKeyType} from "../../types";
 import {TableRowItem, TableRow} from "../../ReusableComponents/Table";
 import {useApiKeysActions} from "../../logic-helpers/api-keys";
 import copyTextToClipboard from "../../../helpers/copyToClipboard";
 
-export default function ApiKey ({apiKey}: {apiKey: ApiKey}) {
+export default function ApiKey ({apiKey}: {apiKey: ApiKeyType}) {
 
     const { remove } = useApiKeysActions()
 
