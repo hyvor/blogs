@@ -4,83 +4,69 @@ namespace Tests\Unit\Import\Parsers;
 
 use App\Domains\Import\Parsers\WordpressParser;
 
-// php artisan test  --filter 'WordPressParserTest'
-// If this test needs to work properly then we will have to add the html/body part to the filterXpath in the wordpress parser.
+it('Returns the users models', function (){
 
-/*$file = <<<XML
-        <?xml version="1.0" encoding="UTF-8" ?>
-        <rss>
-            <channel>
-                <title>Hyvor Blogs Blog</title>
-                <language>en-US</language>
-                <wp:author>
-                    <wp:author_id>hi</wp:author_id>
-                    <wp:author_login>bro</wp:author_login>
-                    <wp:author_email>tec</wp:author_email>
-                    <wp:author_display_name>poland</wp:author_display_name>
-                    <wp:author_first_name>data</wp:author_first_name>
-                    <wp:author_last_name>tora</wp:author_last_name>
-                </wp:author>
-                <wp:category>
-                    <wp:term_id>4</wp:term_id>
-                    <wp:category_nicename>alternatives</wp:category_nicename>
-                    <wp:category_parent></wp:category_parent>
-                    <wp:cat_name>Alternatives to WordPress</wp:cat_name>
-                </wp:category>
-                <item>
-                    <title><![CDATA[Hello world!]]></title>
-                    <link>https://blogs.hyvor.com/blog/?p=1</link>
-                    <pubDate>Thu, 24 Feb 2022 07:21:13 +0000</pubDate>
-                    <dc:creator><![CDATA[supun@hyvor.com]]></dc:creator>
-                    <guid isPermaLink="false">http://blogs.hyvor.com/blog/?p=1</guid>
-                    <description></description>
-                    <content:encoded>
-                        <![CDATA[<!-- wp:paragraph -->
-                        <p>Welcome to WordPress. This is your first post. Edit or delete it, then start writing!</p>
-                         <!-- /wp:paragraph -->]]>
-                    </content:encoded>
-                    <excerpt:encoded><![CDATA[]]></excerpt:encoded>
-                    <wp:post_id>1</wp:post_id>
-                    <wp:post_date><![CDATA[2022-02-24 07:21:13]]></wp:post_date>
-                    <wp:post_date_gmt><![CDATA[2022-02-24 07:21:13]]></wp:post_date_gmt>
-                    <wp:post_modified><![CDATA[2022-02-24 10:00:05]]></wp:post_modified>
-                    <wp:post_modified_gmt><![CDATA[2022-02-24 10:00:05]]></wp:post_modified_gmt>
-                    <wp:ping_status><![CDATA[open]]></wp:ping_status>
-                    <wp:post_name><![CDATA[hello-world__trashed]]></wp:post_name>
-                    <wp:post_parent>0</wp:post_parent>
-                    <wp:menu_order>0</wp:menu_order>
-                    <wp:post_type><![CDATA[post]]></wp:post_type>
-                    <wp:is_sticky>0</wp:is_sticky>
-                    <category domain="category" nicename="uncategorized"><![CDATA[Uncategorized]]></category>
-                </item>
+    $file = file_get_contents(test_unit_data_path('Import/wordpress.xml'));
 
-                <item>
-                    <title><![CDATA[About]]></title>
-                    <link>https://blogs.hyvor.com/blog/?p=1</link>
-                    <pubDate>Thu, 24 Feb 2022 07:21:13 +0000</pubDate>
-                    <dc:creator><![CDATA[supun@hyvor.com]]></dc:creator>
-                    <guid isPermaLink="false">http://blogs.hyvor.com/blog/?p=1</guid>
-                    <description></description>
-                    <content:encoded>
-                        <![CDATA[<!-- wp:paragraph -->
-                        <p>Welcome to hyvor. This is your first post. Edit or delete it, then start writing!</p>
-                         <!-- /wp:paragraph -->]]>
-                    </content:encoded>
-                    <excerpt:encoded><![CDATA[]]></excerpt:encoded>
-                    <wp:post_id>100</wp:post_id>
-                    <wp:post_date><![CDATA[2022-02-24 07:21:13]]></wp:post_date>
-                    <wp:post_date_gmt><![CDATA[2022-02-24 07:21:13]]></wp:post_date_gmt>
-                    <wp:post_modified><![CDATA[2022-02-24 10:00:05]]></wp:post_modified>
-                    <wp:post_modified_gmt><![CDATA[2022-02-24 10:00:05]]></wp:post_modified_gmt>
-                    <wp:ping_status><![CDATA[open]]></wp:ping_status>
-                    <wp:post_type><![CDATA[page]]></wp:post_type>
-                    <wp:is_sticky>0</wp:is_sticky>
-                    <category domain="category" nicename="uncategorized"><![CDATA[Uncategorized]]></category>
-                </item>
-            </channel>
-        </rss>
-XML;
-*/
+    $parser = new WordpressParser($file);
+    $repo = $parser->parse();
+
+    foreach($repo->userModels as $key=>$value){
+        
+       // expect($value->id)->toBeInt();
+        expect($value->blog_id)->toBeInt();
+        expect($value->role)->toBeObject();
+        expect($value->status)->toBeObject();
+        expect($value->slug)->toBeString();
+
+        expect($repo->userModels[$key])->toBeObject();
+    }
+
+
+})->group('modelsTest');
+
+it('Returns the tags models', function (){
+
+    $file = file_get_contents(test_unit_data_path('Import/wordpress.xml'));
+
+    $parser = new WordpressParser($file);
+    $repo = $parser->parse();
+
+    foreach($repo->tagModels as $key=>$value){
+        
+       // expect($value->id)->toBeInt();
+        expect($value->blog_id)->toBeInt();
+        expect($value->slug)->toBeString();
+        expect($value->posts_count)->toBeInt();
+        
+        expect($repo->tagModels[$key])->toBeObject();
+    }
+
+
+})->group('modelsTest');
+
+
+it('Returns the post models', function (){
+
+    $file = file_get_contents(test_unit_data_path('Import/wordpress.xml'));
+
+    $parser = new WordpressParser($file);
+    $repo = $parser->parse();
+
+    foreach($repo->postModels as $key=>$value){
+        
+       // expect($value->id)->toBeInt();
+        expect($value->blog_id)->toBeInt();
+        expect($value->slug)->toBeString();
+        expect($value->is_page)->toBeBool();
+        expect($value->is_featured)->toBeInt();
+        
+        expect($repo->postModels[$key])->toBeObject();
+    }
+
+
+})->group('modelsTest');
+
 
 it('parsers the language', function (){
 
@@ -97,7 +83,7 @@ it('parsers the language', function (){
 
     $this->assertEquals('English', $language);
 
-})->group('wordpresstest');
+})->group('parserTest');
 
 it('parsers the authors', function (){
 
@@ -106,21 +92,23 @@ it('parsers the authors', function (){
     $parser = new WordpressParser($file);
     $repo = $parser->parse();
 
-    foreach ($repo->authors as $author) {
-        $status = $author['status'];
-        $role = $author['role'];
-        $slug = $author['slug'];
-        $email = $author['email'];
-        $url = $author['url'];
-        $name = $author['name'];
+    foreach($repo->authors as $key=>$value){
+        
+        expect($value['id'])->toBeInt();
+        expect($value['name'])->toBeString();
+        expect($value['email'])->toBeString();
+        expect($value['status'])->toBeString();
+        expect($value['role'])->toBeString();
+        expect($value['slug'])->toBeString();
+        
     }
 
-    expect($repo)->toBeObject()->dd($repo);
+    expect($repo->authors)->toBeArray();
 
-})->group('wordpresstest');
+})->group('parserTest');
 
 
-/*it('parsers the tags', function (){
+it('parsers the tags', function (){
 
     $file = file_get_contents(test_unit_data_path('Import/wordpress.xml'));
 
@@ -128,18 +116,13 @@ it('parsers the authors', function (){
     $repo = $parser->parse();
 
     foreach ($repo->tags as $tag) {
-        $slug = $tag['slug'];
-        $postsCount = $tag['postsCount'];
-        $codeHead = $tag['codeHead'];
-        $codeFoot = $tag['codeFoot'];
-        $featuredImageUrl = $tag['featuredImageUrl'];
-        $name = $tag['name'];
-        $description = $tag['description'];
+        expect($tag['slug'])->toBeString();
+        expect($tag['postsCount'])->toBeInt();
     }
 
-    expect($repo)->toBeObject();
+    expect($repo->tags)->toBeArray();
 
-})->group('wordpresstest');
+})->group('parserTest');
 
 it('parsers the posts', function (){
 
@@ -149,21 +132,18 @@ it('parsers the posts', function (){
     $repo = $parser->parse();
 
     foreach ($repo->posts as $post) {
-        $slug = $post['slug'];
-        $featuredImageUrl = $post['featuredImageUrl'];
-        $canonicalUrl = $post['canonicalUrl'];
-        $codeHead = $post['codeHead'];
-        $codeFoot = $post['codeFoot'];
-        $status = $post['status'];
-        $title = $post['title'];
-        $description = $post['description'];
-        $tags = $post['tags'];
-        $authors = $post['authors'];
-        $content = $post['content'];
-        $isFeatured = $post['isFeatured'];
+        
+        expect($post['slug'])->toBeString();
+        expect($post['isPage'])->toBeBool();
+        expect($post['title'])->toBeString();
+        expect($post['description'])->toBeString();
+        expect($post['status'])->toBeString();
+        expect($post['content'])->toBeString();
     }
 
-    expect($repo)->toBeObject();
+    expect($repo->posts)->toBeArray();
 
-})->group('wordpresstest');
-*/
+})->group('parserTest');
+
+
+

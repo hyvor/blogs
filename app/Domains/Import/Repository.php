@@ -29,14 +29,26 @@ class Repository
     public array $posts = [];
 
 
-    public array $users = [];
+    public array $userModels = [];
+
+    public array $tagModels = [];
+
+    public array $postModels = [];
     /**
     * @var array<array<string,mixed>>
     */
     // public array $pages = [];
 
     public function userModels(?object $user){
-        $this->users[] = $user;
+        $this->userModels[] = $user;
+    }
+
+    public function tagModels(?object $tags){
+        $this->tagModels[] = $tags;
+    }
+
+    public function postModels(?object $post){
+        $this->postModels[] = $post;
     }
 
 

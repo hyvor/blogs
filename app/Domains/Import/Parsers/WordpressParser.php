@@ -6,6 +6,8 @@ use App\Data\Enums\UserRoleEnum;
 use App\Data\Enums\UserStatusEnum;
 use App\Domains\Import\Repository;
 use App\Models\User;
+use App\Models\Tag;
+use App\Models\Post;
 use App\Models\UserVariant;
 use Illuminate\Support\Str;
 use Symfony\Component\DomCrawler\Crawler;
@@ -49,6 +51,7 @@ class WordpressParser implements ParserInterface
 
         // Authors section
         $data->filterXPath('rss/channel/wp:author')->each(function (Crawler $node, $i) use ($repo) {
+           
             $authorId = $node->children('wp|author_id')->text('empty');
             $authorName = $node->children('wp|author_login')->text('empty');
             $authorEmail = $node->children('wp|author_email')->text('empty');
@@ -75,7 +78,7 @@ class WordpressParser implements ParserInterface
 
             $user = new User();
 
-            $user->id = $authorId;
+            //$user->id = $authorId;
             //blog id will be static for testing purpose will dynamic later
             $user->blog_id = 1;
             $user->email = $authorEmail;
@@ -107,12 +110,23 @@ class WordpressParser implements ParserInterface
             // dump($this->tagsArray);
 
             $repo->tag(
+                
                 id: $tagId,
                 name: $tagName,
                 slug: $slug,
                 createdAt: $createdAt,
                 updatedAt: $updatedAt,
             );
+
+            $tags = new Tag();
+
+            $tags->blog_id = 1;
+            $tags->slug = $slug;
+            $tags->posts_count = 0;
+            $tags->created_at = $createdAt;
+            $tags->updated_at = $updatedAt;
+
+            $repo->tagModels(tags:$tags);
         });
 
 
@@ -184,6 +198,20 @@ class WordpressParser implements ParserInterface
                 publishedAt: $publishedAt,
                 content: $postContent,
             );
+
+
+            $post = new Post();
+
+            $post->blog_id = 1;
+            $post->is_page = $isPage;
+            $post->is_featured = 0;
+            $post->slug = $slug;
+            $post->created_at = $createdAt;
+            $post->updated_at = $createdAt;
+            $post->published_at = $publishedAt;
+
+            $repo->postModels(post:$post);
+
         });
 
         // Page section
@@ -233,6 +261,18 @@ class WordpressParser implements ParserInterface
                 publishedAt: $publishedAt,
                 content: $pageContent,
             );
+
+            $post = new Post();
+
+            $post->blog_id = 1;
+            $post->is_page = $isPage;
+            $post->is_featured = 0;
+            $post->slug = $slug;
+            $post->created_at = $created_at;
+            $post->updated_at = $created_at;
+            $post->published_at = $publishedAt;
+
+            $repo->postModels(post:$post);
         });
 
         return $repo;
