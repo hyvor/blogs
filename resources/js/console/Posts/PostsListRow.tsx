@@ -7,11 +7,12 @@ import languagesLogic from '../logic/languagesLogic';
 import LangTag from '../ReusableComponents/LangTag';
 import { getLangTagIconByPostStatus } from './Post/PostLanguageSelector';
 import {PostVariant} from "../types";
+import UserPermissions from "../services/UserPermissions";
 
 export default function PostsListRow({ id , subdomain } : {id: number, subdomain: string}) {
 
     const { languages, getLanguageById } = useValues(languagesLogic({subdomain}))
-    const { post } = useValues(postLogic({id}))
+    const { post, postOriginal } = useValues(postLogic({id}))
 
     const postsLink = `/console/${subdomain}/` + (post.is_page ? 'pages' : 'posts')
     const toLink = `${postsLink}/${post.id}`
@@ -22,10 +23,12 @@ export default function PostsListRow({ id , subdomain } : {id: number, subdomain
 
     const authorsNames = post.authors.map(author => author.variants[0].name).join(", ");
 
+    const permClass = UserPermissions.canEditPost(postOriginal) ? '' : 'global-no-permissions';
+
     return <NavLink
         key={post.id} 
         href={location.pathname === toLink ? postsLink : toLink }
-        className={"posts-list-item" + ` ${variant.status}` }>
+        className={"posts-list-item" + ` ${variant.status} ${permClass}` }>
 
         <div className="post-title">{ variant.title || '(Untitled)' }</div>
         

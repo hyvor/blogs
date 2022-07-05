@@ -14,7 +14,7 @@ class UserBlogUserObject
     public function __construct(User $user)
     {
         $this->id = $user->id;
-        $this->role = $user->role;
+        $this->role = UserRoleEnum::CONTRIBUTOR; // $user->role;
         $this->posts_count = $user->posts_count;
     }
 }

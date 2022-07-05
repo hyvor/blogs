@@ -728,3 +728,10 @@ input[type=range]:focus::-ms-fill-upper {
     opacity: 0.2;
     filter: blur(0.4px);
 }
+
+// PERMISSIONS
+.global-no-permissions {
+    opacity: 0.4;
+    pointer-events: none;
+    cursor: default;
+}

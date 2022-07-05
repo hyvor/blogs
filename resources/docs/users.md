@@ -5,7 +5,7 @@
 There are 6 roles for users. Each user has access to features based on their role.
 
 | Feature | Owner | Admin | Editor | Writer | Contributor | Finance |
-| --- | --- | --- | --- | --- | --- | --- |
+| --- | --- | -- | --- | --- | --- | --- |
 | Write posts | ✔ | ✔ | ✔ | ✔ | ✔ | |
 | Publish posts | ✔ | ✔ | ✔ | ✔ |  | |
 | Publish/edit others' posts | ✔ | ✔ | ✔ |  | | |
@@ -14,8 +14,9 @@ There are 6 roles for users. Each user has access to features based on their rol
 | Create/edit tags | ✔ | ✔ | ✔ |  | | |
 | Add/remove users | ✔ | ✔ | | | | |
 | Access to billing | ✔ | ✔ | | | | ✔|
-| Change blog settings | ✔ | ✔ | | | | |
 | Edit Theme | ✔ | ✔ | | | | |
+| Change blog settings | ✔ | ✔ | | | | |
+| Delete Blog | ✔ |  | | | | |
 
 ## You will learn :
 

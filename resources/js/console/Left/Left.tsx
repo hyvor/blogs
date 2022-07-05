@@ -15,14 +15,8 @@ import {
 } from 'react-bootstrap-icons';
 import dayjs from 'dayjs';
 import {appConfig} from "../helpers";
-import {
-    canAccessBilling,
-    canAccessComments,
-    canAccessPages,
-    canAccessPosts, canAccessSettings,
-    canAccessTheme
-} from "../services/permissions";
 import {router} from "kea-router";
+import UserPermissions from "../services/UserPermissions";
 
 export default function Left() {
 
@@ -71,17 +65,17 @@ export default function Left() {
 
             <div className="left-divider"/>
 
-            <LeftLink path="/posts" icon={<Pencil />} name="Posts" permission={canAccessPosts} />
-            <LeftLink path="/pages" icon={<Files />} name="Pages" permission={canAccessPages} />
-            <LeftLink path="/comments" icon={<Chat />} name="Comments" permission={canAccessComments} />
+            <LeftLink path="/posts" icon={<Pencil />} name="Posts" permission={UserPermissions.canAccessPosts} />
+            <LeftLink path="/pages" icon={<Files />} name="Pages" permission={UserPermissions.canAccessPages} />
+            <LeftLink path="/comments" icon={<Chat />} name="Comments" permission={UserPermissions.canAccessComments} />
 
             <div className="left-divider"/>
 
 
-            <LeftLink path="/theme" icon={<Palette />} name="Theme" permission={canAccessTheme} />
+            <LeftLink path="/theme" icon={<Palette />} name="Theme" permission={UserPermissions.canAccessTheme} />
 
             <LeftLink path="/billing" icon={<Coin />} name="Billing"
-                permission={canAccessBilling}
+                permission={UserPermissions.canAccessBilling}
                 extra={
                     <span className="mark">
                         {
@@ -105,7 +99,7 @@ export default function Left() {
                 }
             />
 
-            <LeftLink path="/settings" icon={<Gear />} name="Settings" permission={canAccessSettings} />
+            <LeftLink path="/settings" icon={<Gear />} name="Settings" permission={UserPermissions.canAccessSettings} />
 
         </div>
     </div>
@@ -126,7 +120,7 @@ function LeftLink({path, icon, name, extra = null, permission} : LeftLinkProps) 
          * Just a simple check
          */
         const link = ref.current as HTMLAnchorElement
-        if (link.classList.contains('no-perm') && link.classList.contains('active')) {
+        if (link.classList.contains('global-no-permissions') && link.classList.contains('active')) {
             push('/console/' + subdomain);
         }
 
@@ -136,7 +130,7 @@ function LeftLink({path, icon, name, extra = null, permission} : LeftLinkProps) 
         ref={ref}
         href={`/console/${subdomain}${path}`}
         exact={path === '' ? 1 : 0}
-        className={!perm ? "no-perm" : ""}
+        className={!perm ? "global-no-permissions" : ""}
     >{icon}<span className="name">{name}</span>{extra}</NavLink>
 }
 

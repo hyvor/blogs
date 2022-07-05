@@ -63,11 +63,6 @@
                 color: $color-orange-dark;
             }
         }
-        &.no-perm {
-            opacity: 0.4;
-            pointer-events: none;
-            cursor: default;
-        }
     }
     .left-divider {
         height:25px;
