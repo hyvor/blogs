@@ -34,6 +34,13 @@ class Repository
     public array $tagModels = [];
 
     public array $postModels = [];
+
+    public array $userVariantModels = [];
+
+    public array $tagVariantModels = [];
+
+    public array $postVariantModels = [];
+
     /**
     * @var array<array<string,mixed>>
     */
@@ -49,6 +56,18 @@ class Repository
 
     public function postModels(?object $post){
         $this->postModels[] = $post;
+    }
+
+    public function userVariantModels(?object $userVariant){
+        $this->userVariantModels[] = $userVariant;
+    }
+
+    public function tagVariantModels(?object $tagVariant){
+        $this->tagVariantModels[] = $tagVariant;
+    }
+
+    public function postVariantModels(?object $postVariant){
+        $this->postVariantModels[] = $postVariant;
     }
 
 

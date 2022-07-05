@@ -35,9 +35,8 @@ class Importer
 
     public function import()
     {
-        // dd($this->repository);
-        // dd($this->blog);
-
+        dd($this->repository->authors);
+        
         $authorCount = count($this->repository->authors);
         $tagCount = count($this->repository->tags);
         $postCount = count($this->repository->posts);
