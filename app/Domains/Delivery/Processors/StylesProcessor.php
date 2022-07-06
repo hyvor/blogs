@@ -11,9 +11,8 @@ use App\Domains\Theme\ThemeFilesRepository;
 use Padaliyajay\PHPAutoprefixer\Autoprefixer;
 use ScssPhp\ScssPhp\Compiler;
 
-class StylesProcessor implements RouteProcessorInterface
+class StylesProcessor extends RouteProcessorAbstract
 {
-    private ?DeliveryAPIResponseObject $responseObject;
 
     public function __construct(PathMatcher $pathMatcher, MatchedRoute $matchedRoute)
     {
@@ -41,15 +40,11 @@ class StylesProcessor implements RouteProcessorInterface
         $autoprefixer = new Autoprefixer($css);
         $css = $autoprefixer->compile();
 
-        $this->responseObject = DeliveryAPIResponseObject::forFile(
+        $this->setResponseObject(DeliveryAPIResponseObject::forFile(
             DeliveryAPIFileTypeEnum::ASSET,
             $css,
             'text/css'
-        );
+        ));
     }
 
-    public function getResponseObject(): ?DeliveryAPIResponseObject
-    {
-        return $this->responseObject;
-    }
 }

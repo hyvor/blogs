@@ -10,7 +10,7 @@ use App\Domains\Delivery\RouteMatcher\MatchedRoute;
 use App\Domains\Theme\ThemeFilesRepository;
 use App\Helpers\MimeTypes;
 
-class AssetsProcessor implements RouteProcessorInterface
+class AssetsProcessor extends RouteProcessorAbstract
 {
     private ?DeliveryAPIResponseObject $responseObject = null;
 
@@ -38,15 +38,11 @@ class AssetsProcessor implements RouteProcessorInterface
         $extension = pathinfo($fileName, PATHINFO_EXTENSION);
         $mimeType = MimeTypes::getMimeFromExtension($extension);
 
-        $this->responseObject = DeliveryAPIResponseObject::forFile(
+        $this->setResponseObject(DeliveryAPIResponseObject::forFile(
             DeliveryAPIFileTypeEnum::ASSET,
             $content,
             $mimeType
-        );
+        ));
     }
 
-    public function getResponseObject(): ?DeliveryAPIResponseObject
-    {
-        return $this->responseObject;
-    }
 }

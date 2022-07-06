@@ -10,9 +10,8 @@ use App\Domains\Delivery\TemplateRenderer\TemplateRenderer;
 use App\Domains\Language\LanguageRepository;
 use App\Domains\Post\PostRepository;
 
-class PreviewProcessor implements RouteProcessorInterface
+class PreviewProcessor extends RouteProcessorAbstract
 {
-    private ?DeliveryAPIResponseObject $responseObject = null;
 
     public function __construct(PathMatcher $pathMatcher, MatchedRoute $matchedRoute)
     {
@@ -49,11 +48,7 @@ class PreviewProcessor implements RouteProcessorInterface
         );
         $templateRenderer->setModel($post);
 
-        $this->responseObject = $templateRenderer->getResponseObject();
+        $this->setResponseObject($templateRenderer->getResponseObject());
     }
 
-    public function getResponseObject(): ?DeliveryAPIResponseObject
-    {
-        return $this->responseObject;
-    }
 }

@@ -7,6 +7,10 @@ use App\Data\Objects\DeliveryAPI\DeliveryAPIResponseObject;
 use App\Domains\Delivery\Processors\AssetsProcessor;
 use App\Domains\Delivery\Processors\MediaProcessor;
 use App\Domains\Delivery\Processors\PreviewProcessor;
+use App\Domains\Delivery\Processors\Sitemap\SitemapIndexProcessor;
+use App\Domains\Delivery\Processors\Sitemap\SitemapMediaProcessor;
+use App\Domains\Delivery\Processors\Sitemap\SitemapPagesProcessor;
+use App\Domains\Delivery\Processors\Sitemap\SitemapPostsProcessor;
 use App\Domains\Delivery\Processors\StylesProcessor;
 use App\Domains\Delivery\RouteMatcher\RouteMatcher;
 use App\Domains\Delivery\TemplateRenderer\TemplateRenderer;
@@ -87,6 +91,10 @@ class PathMatcher
         $routeMatcher->add('styles', '/styles.css');
         $routeMatcher->add('media', '/media/{file_name}');
 
+        $routeMatcher->add('sitemap-index', '/sitemap.xml');
+        $routeMatcher->add('sitemap-pages', '/sitemap-pages.xml');
+        $routeMatcher->add('sitemap-posts', '/sitemap-posts-{number}.xml');
+
         $matchedRoute = $routeMatcher->match();
 
         if ($matchedRoute) {
@@ -94,7 +102,12 @@ class PathMatcher
                 'assets' => AssetsProcessor::class,
                 'preview' => PreviewProcessor::class,
                 'styles' => StylesProcessor::class,
-                'media' => MediaProcessor::class
+                'media' => MediaProcessor::class,
+
+                'sitemap-index' => SitemapIndexProcessor::class,
+                'sitemap-pages' => SitemapPagesProcessor::class,
+                'sitemap-posts' => SitemapPostsProcessor::class,
+                'sitemap-media' => SitemapMediaProcessor::class
             };
 
             $responseObject = (new $processor($this, $matchedRoute))->getResponseObject();

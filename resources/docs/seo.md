@@ -16,32 +16,22 @@ Robots.txt is a file that tells search engine crawlers what pages to access and 
 
 ## Sitemaps {#sitemaps}
 
-HB auto-generates sitemaps. The main sitemap file is at `/sitemap.xml` in the root of the blog. If you open it, you will see something like this:
+Hyvor Blogs auto-generates sitemaps. The [sitemap index](https://www.sitemaps.org/protocol.html#index) is at the `/sitemap.xml` path of your blog. You can submit this file to search engines. 
+
+The file contains something like this:
 
 ```xml
 <?xml version="1.0" encoding="UTF-8"?>
 <sitemapindex xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
-    <sitemap>
-        <loc>https://blog.hyvorblogs.io/sitemap-listing.xml</loc>
-        <lastmod>2022-02-01T00:00:00+00:00</lastmod>
-    </sitemap>
-    <sitemap>
-        <loc>https://blog.hyvorblogs.io/sitemap-1.xml</loc>
-        <lastmod>2022-02-01T00:00:00+00:00</lastmod>
-    </sitemap>
-    <sitemap>
-        <loc>https://blog.hyvorblogs.io/sitemap-2.xml</loc>
-        <lastmod>2022-02-01T00:00:00+00:00</lastmod>
-    </sitemap>
-    <sitemap>
-        <loc>https://blog.hyvorblogs.io/sitemap-media-1.xml</loc>
-        <lastmod>2022-02-01T00:00:00+00:00</lastmod>
-    </sitemap>
+    <sitemap><loc>https://blog.hyvorblogs.io/sitemap-pages.xml</loc></sitemap>
+    <sitemap><loc>https://blog.hyvorblogs.io/sitemap-posts-1.xml</loc></sitemap>
+    <sitemap><loc>https://blog.hyvorblogs.io/sitemap-posts-2.xml</loc></sitemap>
 </sitemapindex>
 ```
 
 The main sitemap links to other sitemaps of the blog.
 
-* **sitemap-listing.xml** - This file contains links to the index page, static pages, tag pages, author pages, and other custom post-listing pages.
-* **sitemap-x.xml** (Ex: `sitemap-1.xml` or `sitemap-2.xml`) - These files contains links to posts. Each file can have up to 2000 URLs.
-* **sitemap-media-x.xml** - This file contains links to media files in the blog (2000 per each sitemap).
+* **sitemap-pages.xml** - contains links to the [pages](posts-pages#pages) and homepage.
+* **sitemap-posts-x.xml** - contains links to posts. Each `-x` file can have up to 2500 URLs. First page has the oldest URLs. Within the file, we also auto generate
+  * `<image:image>` tags to link to images in the post
+  * `<xhtml:link>` elements to link to [language variants](languages) of the post

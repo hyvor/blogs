@@ -57,7 +57,7 @@ class ConsolePostController extends Controller
 
     public function getPages(Blog $blog)
     {
-        $pages = PostRepository::getPages($blog->id)
+        $pages = PostRepository::getPages($blog)
             ->map(function ($page) use ($blog) {
                 return new PostObject($page, $blog);
             });

@@ -9,9 +9,8 @@ use App\Domains\Delivery\RouteMatcher\MatchedRoute;
 use App\Domains\Media\MediaRepository;
 use App\Helpers\MimeTypes;
 
-class MediaProcessor implements RouteProcessorInterface
+class MediaProcessor extends RouteProcessorAbstract
 {
-    private ?DeliveryAPIResponseObject $responseObject = null;
 
     public function __construct(PathMatcher $pathMatcher, MatchedRoute $matchedRoute)
     {
@@ -25,15 +24,11 @@ class MediaProcessor implements RouteProcessorInterface
         $content = MediaRepository::getContents($media);
         $mimeType = $media->extension ? MimeTypes::getMimeFromExtension($media->extension) : 'image/png';
 
-        $this->responseObject = DeliveryAPIResponseObject::forFile(
+        $this->setResponseObject(DeliveryAPIResponseObject::forFile(
             DeliveryAPIFileTypeEnum::MEDIA,
             $content,
             $mimeType
-        );
+        ));
     }
 
-    public function getResponseObject(): ?DeliveryAPIResponseObject
-    {
-        return $this->responseObject;
-    }
 }
