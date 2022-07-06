@@ -86,7 +86,7 @@ class WordpressParser implements ParserInterface
                 );
 
                 $user = new User();
-                $user->id = $authorId;
+                $user->id = (int)$authorId;
                 $user->blog_id = 1;
                 $user->email = $authorEmail;
                 $user->role = $role;
@@ -98,7 +98,8 @@ class WordpressParser implements ParserInterface
                 $repo->userModels(user:$user);
 
                 $userVariant = new UserVariant();
-                $userVariant->id = $authorId;
+                $userVariant->id = (int)$authorId;
+                $userVariant->user_id = (int)$authorId;
                 $userVariant->name = $authorName;
     
                 $repo->userVariantModels(userVariant:$userVariant);
@@ -130,7 +131,7 @@ class WordpressParser implements ParserInterface
 
                 $tags = new Tag();
 
-                $tags->id = $tagId;
+                $tags->id = (int)$tagId;
                 $tags->blog_id = 1;
                 $tags->slug = $slug;
                 $tags->posts_count = 0;
@@ -141,8 +142,11 @@ class WordpressParser implements ParserInterface
 
                 $tagVariant = new TagVariant();
 
-                $tagVariant->id = $tagId;
+                $tagVariant->id = (int)$tagId;
+                $tagVariant->tag_id = (int)$tagId;    
                 $tagVariant->name = $tagName;
+                $tagVariant->created_at = $createdAt;
+                $tagVariant->updated_at = $updatedAt;
 
                 $repo->tagVariantModels(tagVariant:$tagVariant);
 
@@ -186,6 +190,7 @@ class WordpressParser implements ParserInterface
                 $slug = Str::slug($title);
                 $isPage = false;
 
+
                 foreach ($this->tagsArray as $tagData) {
                     foreach ($tagData as $tagKey => $tagValue) {
                         foreach ($tags as $tag) {
@@ -206,24 +211,43 @@ class WordpressParser implements ParserInterface
                     }
                 }
 
+
+                $jsonPost = json_encode([
+                    
+                    'type' => 'doc',
+                    'content' => [
+                        [
+                            'type' => 'custom_html',
+                            'content' => [
+                                [
+                                    'type' => 'text',
+                                    'text' => (string)$postContent,
+                                ],
+                            ],
+                        ],
+                    ],
+                ]);
+
+
+
                 $repo->post(
                     id: $postId,
                     isPage: $isPage,
                     title: $title,
                     description: $description,
-                    tags: $tagIds,
-                    authors: $authorIds,
+               //     tags: $tagIds,
+               //     authors: $authorIds,
                     status: $postStatus,
                     slug: $slug,
                     createdAt: $createdAt,
                     updatedAt: $createdAt,
                     publishedAt: $publishedAt,
-                    content: $postContent,
+                    content: $jsonPost,
                 );
 
 
                 $post = new Post();
-                $post->id = $postId;
+                $post->id = (int)$postId;
                 $post->blog_id = 1;
                 $post->is_page = $isPage;
                 $post->is_featured = 0;
@@ -233,6 +257,19 @@ class WordpressParser implements ParserInterface
                 $post->published_at = $publishedAt;
 
                 $repo->postModels(post:$post);
+
+
+
+                $postVariant = new PostVariant();
+
+                $postVariant->id = (int)$postId;
+                $postVariant->post_id = (int)$postId;
+                $postVariant->status = $postStatus;
+                $postVariant->content = $jsonPost;
+                $postVariant->title = $title;
+                $postVariant->description = $description;
+
+                $repo->postVariantModels(postVariant:$postVariant);
 
             });
 
@@ -270,18 +307,34 @@ class WordpressParser implements ParserInterface
                     }
                 }
 
+                $jsonPost = json_encode([
+                    
+                    'type' => 'doc',
+                    'content' => [
+                        [
+                            'type' => 'custom_html',
+                            'content' => [
+                                [
+                                    'type' => 'text',
+                                    'text' => (string)$pageContent,
+                                ],
+                            ],
+                        ],
+                    ],
+                ]);
+
                 $repo->post(
                     id: $postId,
                     isPage: $isPage,
                     title: $title,
                     description: $description,
-                    authors: $authorIds,
+               //     authors: $authorIds,
                     status: $pageStatus,
                     slug: $slug,
                     createdAt: $created_at,
                     updatedAt: $created_at,
                     publishedAt: $publishedAt,
-                    content: $pageContent,
+                    content: $jsonPost,
                 );
 
                 $post = new Post();
@@ -295,6 +348,18 @@ class WordpressParser implements ParserInterface
                 $post->published_at = $publishedAt;
 
                 $repo->postModels(post:$post);
+
+                $postVariant = new PostVariant();
+
+                $postVariant->id = (int)$postId;
+                $postVariant->post_id = (int)$postId;
+                $postVariant->status = $postStatus;
+                $postVariant->content = $jsonPost;
+                $postVariant->title = $title;
+                $postVariant->description = $description;
+
+                $repo->postVariantModels(postVariant:$postVariant);
+
             });
         }
 
