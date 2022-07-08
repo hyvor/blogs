@@ -81,14 +81,14 @@ class WordpressParser implements ParserInterface
                 $user->created_at = $createdAt;
                 $user->updated_at = $updatedAt;
 
-                $repo->user(user:$user);
+                $repo->user($user);
 
                 $userVariant = new UserVariant();
                 $userVariant->id = (int)$authorId;
                 $userVariant->user_id = (int)$authorId;
                 $userVariant->name = $authorName;
     
-                $repo->userVariant(userVariant:$userVariant);
+                $repo->userVariant($userVariant);
             });   
 
             return $repo;  
@@ -117,7 +117,7 @@ class WordpressParser implements ParserInterface
                 $tags->created_at = $createdAt;
                 $tags->updated_at = $updatedAt;
 
-                $repo->tag(tags:$tags);
+                $repo->tag($tags);
 
                 $tagVariant = new TagVariant();
 
@@ -127,7 +127,7 @@ class WordpressParser implements ParserInterface
                 $tagVariant->created_at = $createdAt;
                 $tagVariant->updated_at = $updatedAt;
 
-                $repo->tagVariant(tagVariant:$tagVariant);
+                $repo->tagVariant($tagVariant);
 
             });
 
@@ -220,7 +220,7 @@ class WordpressParser implements ParserInterface
                 $post->updated_at = $createdAt;
                 $post->published_at = $publishedAt;
 
-                $repo->post(post:$post);
+                $repo->post($post);
 
                 $postVariant = new PostVariant();
 
@@ -231,7 +231,7 @@ class WordpressParser implements ParserInterface
                 $postVariant->title = $title;
                 $postVariant->description = $description;
 
-                $repo->postVariant(postVariant:$postVariant);
+                $repo->postVariant($postVariant);
 
             });
 

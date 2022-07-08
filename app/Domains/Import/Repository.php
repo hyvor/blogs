@@ -4,7 +4,14 @@ namespace App\Domains\Import;
 
 use App\Data\Enums\UserRoleEnum;
 use App\Data\Enums\UserStatusEnum;
-
+use App\Models\Post;
+use App\Models\PostAuthor;
+use App\Models\PostTag;
+use App\Models\PostVariant;
+use App\Models\Tag;
+use App\Models\TagVariant;
+use App\Models\User;
+use App\Models\UserVariant;
 
 class Repository
 {
@@ -30,27 +37,27 @@ class Repository
     */
     // public array $pages = [];
 
-    public function user(?object $user){
+    public function user(User $user){
         $this->user[] = $user;
     }
 
-    public function tag(?object $tags){
+    public function tag(Tag $tags){
         $this->tag[] = $tags;
     }
 
-    public function post(?object $post){
+    public function post(Post $post){
         $this->post[] = $post;
     }
 
-    public function userVariant(?object $userVariant){
+    public function userVariant(UserVariant $userVariant){
         $this->userVariant[] = $userVariant;
     }
 
-    public function tagVariant(?object $tagVariant){
+    public function tagVariant(TagVariant $tagVariant){
         $this->tagVariant[] = $tagVariant;
     }
 
-    public function postVariant(?object $postVariant){
+    public function postVariant(PostVariant $postVariant){
         $this->postVariant[] = $postVariant;
     }
 
