@@ -42,6 +42,7 @@ class BlogObject
 
     public int $posts_count;
 
+    public bool $seo_indexing;
     public ColorModesEnum $color_modes;
     public ColorModeDefaultEnum $color_mode_default;
 
@@ -72,6 +73,7 @@ class BlogObject
             $meta->social_tiktok
         );
 
+        $this->seo_indexing = $meta->seo_indexing;
         $this->color_modes = ColorModesEnum::from($meta->color_modes);
         $this->color_mode_default = ColorModeDefaultEnum::from($meta->color_mode_default);
 

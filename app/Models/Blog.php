@@ -53,7 +53,7 @@ class Blog extends Model
         $definer->add('seo_robots_txt')->default(
             <<<TEXT
         User-agent: *
-        Sitemap: {{ _blog.url }}/sitemap.xml
+        Sitemap: {{ _blog.base_url }}/sitemap.xml
         Disallow: /p/
         TEXT
         );
