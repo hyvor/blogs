@@ -6,6 +6,8 @@ use App\Domains\Import\Parsers\WordpressParser;
 use App\Domains\Import\Importer;
 use App\Models\Blog;
 use App\Models\Import;
+use Symfony\Component\DomCrawler\Crawler;
+use App\Domains\Import\Repository;
 
 test('testing users and users varient',function(){
 
@@ -34,21 +36,23 @@ $str = <<<XML
 XML;
 
 $parser = new WordpressParser($str);
-$repo = $parser->parse(true);
+$repo = new Repository();
+$data = new Crawler($str);
+$repo = invade($parser)->parseAuthors($repo,$data);
 
-$user = $repo->userModels[0];
+$user = $repo->user[0];
 
 expect($user->id)->toBe(1);
 expect($user->blog_id)->toBe(1);
 expect($user->email)->toBe('supun@hyvor.com');
 
-$userVariant = $repo->userVariantModels[0];
+$userVariant = $repo->userVariant[0];
 
 expect($userVariant->id)->toBe(1);
 expect($userVariant->user_id)->toBe(1);
 expect($userVariant->name)->toBe('Supun kavinda');
 
-})->group('parser');
+})->group('userParser');
 
 
 test('testing tags and tags varient',function(){
@@ -76,20 +80,22 @@ $str = <<<XML
 XML;
 
 $parser = new WordpressParser($str);
-$repo = $parser->parse(false,true);
+$repo = new Repository();
+$data = new Crawler($str);
+$repo = invade($parser)->parseTags($repo,$data);
 
-$tag = $repo->tagModels[0];
+$tag = $repo->tag[0];
 
 expect($tag->id)->toBe(50);
 expect($tag->blog_id)->toBe(1);
 
-$tagVariant = $repo->tagVariantModels[0];
+$tagVariant = $repo->tagVariant[0];
 
 expect($tagVariant->id)->toBe(50);
 expect($tagVariant->tag_id)->toBe(50);
 expect($tagVariant->name)->toBe('Announcements');
 
-})->group('parser');
+})->group('tagParser');
 
 
 test('testing post and post varient',function(){
@@ -295,13 +301,17 @@ $str = <<<XML
 XML;
 
 $parser = new WordpressParser($str);
-$repo = $parser->parse(true,true,true);
+$repo = new Repository();
+$data = new Crawler($str);
 
-$post = $repo->postModels[0];
+$repo = invade($parser)->parsePosts($repo,$data);
+
+$post = $repo->post[0];
+
 expect($post->id)->toBe(273);
 expect($post->blog_id)->toBe(1);
 
-$postVariant = $repo->postVariantModels[0];
+$postVariant = $repo->postVariant[0];
 
 
 expect($postVariant->id)->toBe(273);
@@ -320,17 +330,20 @@ $postContent = 'matching string';
 
 expect($content->content[0]->content[0]->text)->toBe($postContent);
 
-})->group('parser');
+})->group('postParser');
 
 
 
 it('parsers the language', function (){
 
     $file = file_get_contents(test_unit_data_path('Import/wordpress.xml'));
-
+    
     $parser = new WordpressParser($file);
     
-    $repo = $parser->parse();
+    $repo = new Repository();
+    $data = new Crawler($file);
+
+    $repo = invade($parser)->parseLang($repo,$data);
 
     foreach ($repo->lang as $lang) {
         $language = $lang['language'];
@@ -339,7 +352,7 @@ it('parsers the language', function (){
 
     $this->assertEquals('English', $language);
 
-})->group('parserTest');
+})->group('langParser');
 
 
 test('Testing the importer', function (){

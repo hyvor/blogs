@@ -13,61 +13,45 @@ class Repository
     */
     public array $lang = [];
 
-    /**
-    * @var array<array<string,mixed>>
-    */
-    public array $authors = [];
+    public array $user = [];
 
-    /**
-    * @var array<array<string,mixed>>
-    */
-    public array $tags = [];
+    public array $tag = [];
 
-    /**
-    * @var array<array<string,mixed>>
-    */
-    public array $posts = [];
+    public array $post = [];
 
+    public array $userVariant = [];
 
-    public array $userModels = [];
+    public array $tagVariant = [];
 
-    public array $tagModels = [];
-
-    public array $postModels = [];
-
-    public array $userVariantModels = [];
-
-    public array $tagVariantModels = [];
-
-    public array $postVariantModels = [];
+    public array $postVariant = [];
 
     /**
     * @var array<array<string,mixed>>
     */
     // public array $pages = [];
 
-    public function userModels(?object $user){
-        $this->userModels[] = $user;
+    public function user(?object $user){
+        $this->user[] = $user;
     }
 
-    public function tagModels(?object $tags){
-        $this->tagModels[] = $tags;
+    public function tag(?object $tags){
+        $this->tag[] = $tags;
     }
 
-    public function postModels(?object $post){
-        $this->postModels[] = $post;
+    public function post(?object $post){
+        $this->post[] = $post;
     }
 
-    public function userVariantModels(?object $userVariant){
-        $this->userVariantModels[] = $userVariant;
+    public function userVariant(?object $userVariant){
+        $this->userVariant[] = $userVariant;
     }
 
-    public function tagVariantModels(?object $tagVariant){
-        $this->tagVariantModels[] = $tagVariant;
+    public function tagVariant(?object $tagVariant){
+        $this->tagVariant[] = $tagVariant;
     }
 
-    public function postVariantModels(?object $postVariant){
-        $this->postVariantModels[] = $postVariant;
+    public function postVariant(?object $postVariant){
+        $this->postVariant[] = $postVariant;
     }
 
 
@@ -84,121 +68,5 @@ class Repository
         return $this->lang;
     }
 
-    // Not null :- slug, name
-    public function tag(
-        int $id,
-        string $slug,
-        ?string $createdAt = null,
-        ?string $updatedAt = null,
-        ?int $postsCount = 0,
-        ?string $codeHead = null,
-        ?string $codeFoot = null,
-        ?string $featuredImageUrl = null,
-        string $name = null,
-        ?string $description = null,
-    ) {
-        $this->tags[] = [
-            'id' => $id,
-            'createdAt' => $createdAt,
-            'updatedAt' => $updatedAt,
-            'slug' => $slug,
-            'postsCount' => $postsCount,
-            'codeHead' => $codeHead,
-            'codeFoot' => $codeFoot,
-            'featuredImageUrl' => $featuredImageUrl,
-            'name' => $name,
-            'description' => $description,
-        ];
-        // dd($slug);
-        // dd($this->tags);
-        return $this->tags;
-    }
-
-    // Not null :- status, role, slug, email,
-    public function author(
-        int $id,
-        UserStatusEnum $status,
-        UserRoleEnum $role,
-        string $slug,
-        string $email,
-        ?string $createdAt = null,
-        ?string $updatedAt = null,
-        ?string $pictureUrl = null,
-        ?string $url = null,
-        ?string $socialFacebook = null,
-        ?string $socialTwitter = null,
-        ?string $socialLinkedin = null,
-        ?string $socialYoutube = null,
-        ?string $socialInstagram = null,
-        ?string $name = null,
-        ?string $bio = null,
-        ?string $location = null,
-    ) {
-        $this->authors[] = [
-            'id' => $id,
-            'createdAt' => $createdAt,
-            'updatedAt' => $updatedAt,
-            'pictureUrl' => $pictureUrl,
-            'status' => $status->value,
-            'role' => $role->value,
-            'slug' => $slug,
-            'email' => $email,
-            'url' => $url,
-            'socialFacebook' => $socialFacebook,
-            'socialTwitter' => $socialTwitter,
-            'socialLinkedin' => $socialLinkedin,
-            'socialYoutube' => $socialYoutube,
-            'socialInstagram' => $socialInstagram,
-            'name' => $name,
-            'bio' => $bio,
-            'location' => $location,
-        ];
-        // dd($this->authors);
-        // dd($slug);
-        return $this->authors;
-    }
-
-    // Not null :- status, content(NA), is_page, is_featured, slug
-    public function post(
-        int $id,
-        bool $isPage,
-        string $slug,
-        string $status, // checking whether the post is published or not
-        array $authors = null,
-        ?string $createdAt = null,
-        ?string $updatedAt = null,
-        ?string $publishedAt = null,
-        ?bool $isFeatured = false,
-        ?string $featuredImageUrl = null,
-        ?string $canonicalUrl = null,
-        ?string $codeHead = null,
-        ?string $codeFoot = null,
-        ?string $content = null,
-        ?string $title = null,
-        ?string $description = null,
-        ?array $tags = null,
-    ) {
-        $this->posts[] = [
-            'id' => $id,
-            'createdAt' => $createdAt,
-            'updatedAt' => $updatedAt,
-            'publishedAt' => $publishedAt,
-            'isPage' => $isPage,
-            'isFeatured' => $isFeatured,
-            'slug' => $slug,
-            'featuredImageUrl' => $featuredImageUrl,
-            'canonicalUrl' => $canonicalUrl,
-            'codeHead' => $codeHead,
-            'codeFoot' => $codeFoot,
-            'status' => $status,
-            'title' => $title,
-            'description' => $description,
-            'tags' => $tags,
-            'authors' => $authors,
-            'content' => $content,
-        ];
-        // dd($published_at);
-        // dd($this->posts);
-        return $this->posts;
-    }
+    
 }

@@ -34,31 +34,29 @@ class WordpressParser implements ParserInterface
 
     }
 
-    public function parse($authors=false,$tags =false,$posts =false,$lang=false): Repository
-    {
-        $repo = new Repository();
-        $data = new Crawler($this->file);
+    private function parseLang($repo,$data){
 
-        if($lang){
+        $language = '';
+        $languageCode = '';
 
-            $language = '';
-            $languageCode = '';
+        if(!empty($data->filterXPath('rss/channel/language'))){
+            $languageCode = $data->filterXPath('rss/channel/language')->text();
+            $language = locale_get_display_language($languageCode);
 
-            if(!empty($data->filterXPath('rss/channel/language'))){
-                $languageCode = $data->filterXPath('rss/channel/language')->text();
-                $language = locale_get_display_language($languageCode);
-
-            }
-
-            $repo->language(
-                language: $language,
-                languageCode: $languageCode,
-            );
         }
 
-        if($authors){
+        $repo->language(
+        
+            language: $language,
+            languageCode: $languageCode,
+        );
 
-            // Authors section
+        return $repo;
+    }
+
+    private function parseAuthors($repo,$data){
+
+         // Authors section
             $data->filterXPath('rss/channel/wp:author')->each(function (Crawler $node, $i) use ($repo) {
                
                 $authorId = (int)$node->children('wp|author_id')->text('empty');
@@ -72,19 +70,7 @@ class WordpressParser implements ParserInterface
                 $updatedAt = date("Y/m/d h:i:s");
 
                 $this->authorsArray[] = [$authorName => $authorId];
-                // dd($this->authorsArray);
-
-                $repo->author(
-                    id:$authorId,
-                    name:$authorName,
-                    email:$authorEmail,    
-                    role:$role,
-                    status:$status,
-                    slug:$slug,
-                    createdAt:$createdAt,
-                    updatedAt:$updatedAt
-                );
-
+                
                 $user = new User();
                 $user->id = (int)$authorId;
                 $user->blog_id = 1;
@@ -95,20 +81,22 @@ class WordpressParser implements ParserInterface
                 $user->created_at = $createdAt;
                 $user->updated_at = $updatedAt;
 
-                $repo->userModels(user:$user);
+                $repo->user(user:$user);
 
                 $userVariant = new UserVariant();
                 $userVariant->id = (int)$authorId;
                 $userVariant->user_id = (int)$authorId;
                 $userVariant->name = $authorName;
     
-                $repo->userVariantModels(userVariant:$userVariant);
-            });
-        }
+                $repo->userVariant(userVariant:$userVariant);
+            });   
 
-        if($tags){
+            return $repo;  
+    }
 
-            // Tags section
+    private function parseTags($repo,$data){
+
+         // Tags section
             $data->filterXPath('rss/channel/wp:category')->each(function (Crawler $node, $i) use ($repo) {
                 $tagId = $node->children('wp|term_id')->text('null');
                 $tagName = $node->children('wp|cat_name')->text('null');
@@ -120,15 +108,6 @@ class WordpressParser implements ParserInterface
                 $this->tagsArray[] = [$tagName => $tagId];
                 // dump($this->tagsArray);
 
-                $repo->tag(
-                    
-                    id: $tagId,
-                    name: $tagName,
-                    slug: $slug,
-                    createdAt: $createdAt,
-                    updatedAt: $updatedAt,
-                );
-
                 $tags = new Tag();
 
                 $tags->id = (int)$tagId;
@@ -138,7 +117,7 @@ class WordpressParser implements ParserInterface
                 $tags->created_at = $createdAt;
                 $tags->updated_at = $updatedAt;
 
-                $repo->tagModels(tags:$tags);
+                $repo->tag(tags:$tags);
 
                 $tagVariant = new TagVariant();
 
@@ -148,13 +127,15 @@ class WordpressParser implements ParserInterface
                 $tagVariant->created_at = $createdAt;
                 $tagVariant->updated_at = $updatedAt;
 
-                $repo->tagVariantModels(tagVariant:$tagVariant);
+                $repo->tagVariant(tagVariant:$tagVariant);
 
             });
 
-        }
+            return $repo;  
+    }
 
-        if($posts){
+
+    private function parsePosts($repo,$data){
 
             // Post section
             $data->filterXPath('rss/channel/item[wp:post_type="post"]')->each(function (Crawler $node, $i) use ($repo) {
@@ -228,24 +209,7 @@ class WordpressParser implements ParserInterface
                     ],
                 ]);
 
-
-
-                $repo->post(
-                    id: $postId,
-                    isPage: $isPage,
-                    title: $title,
-                    description: $description,
-               //     tags: $tagIds,
-               //     authors: $authorIds,
-                    status: $postStatus,
-                    slug: $slug,
-                    createdAt: $createdAt,
-                    updatedAt: $createdAt,
-                    publishedAt: $publishedAt,
-                    content: $jsonPost,
-                );
-
-
+                
                 $post = new Post();
                 $post->id = (int)$postId;
                 $post->blog_id = 1;
@@ -256,9 +220,7 @@ class WordpressParser implements ParserInterface
                 $post->updated_at = $createdAt;
                 $post->published_at = $publishedAt;
 
-                $repo->postModels(post:$post);
-
-
+                $repo->post(post:$post);
 
                 $postVariant = new PostVariant();
 
@@ -269,7 +231,7 @@ class WordpressParser implements ParserInterface
                 $postVariant->title = $title;
                 $postVariant->description = $description;
 
-                $repo->postVariantModels(postVariant:$postVariant);
+                $repo->postVariant(postVariant:$postVariant);
 
             });
 
@@ -323,20 +285,7 @@ class WordpressParser implements ParserInterface
                     ],
                 ]);
 
-                $repo->post(
-                    id: $postId,
-                    isPage: $isPage,
-                    title: $title,
-                    description: $description,
-               //     authors: $authorIds,
-                    status: $pageStatus,
-                    slug: $slug,
-                    createdAt: $created_at,
-                    updatedAt: $created_at,
-                    publishedAt: $publishedAt,
-                    content: $jsonPost,
-                );
-
+                
                 $post = new Post();
 
                 $post->blog_id = 1;
@@ -347,7 +296,7 @@ class WordpressParser implements ParserInterface
                 $post->updated_at = $created_at;
                 $post->published_at = $publishedAt;
 
-                $repo->postModels(post:$post);
+                $repo->post(post:$post);
 
                 $postVariant = new PostVariant();
 
@@ -358,12 +307,24 @@ class WordpressParser implements ParserInterface
                 $postVariant->title = $title;
                 $postVariant->description = $description;
 
-                $repo->postVariantModels(postVariant:$postVariant);
+                $repo->postVariant(postVariant:$postVariant);
 
             });
-        }
 
+            return $repo;
+    }
+
+    public function parse(): Repository
+    {
+        $repo = new Repository();
+        $data = new Crawler($this->file);
+
+        $this->parseLang($repo,$data);
+        $this->parseAuthors($repo,$data);
+        $this->parseTags($repo,$data);
+        $this->parsePosts($repo,$data);
 
         return $repo;
+        
     }
 }
