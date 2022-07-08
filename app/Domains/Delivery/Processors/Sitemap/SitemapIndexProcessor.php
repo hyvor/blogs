@@ -11,13 +11,10 @@ use App\Domains\Language\LanguageRepository;
 use App\Domains\Route\PermalinkRepository;
 use App\Models\Blog;
 use App\Models\Language;
-use App\Models\Media;
 use App\Models\Post;
 
 class SitemapIndexProcessor extends RouteProcessorAbstract
 {
-
-    private const ENTRIES_PER_SITEMAP = 2500;
 
     private Blog $blog;
     private Language $primaryLanguage;
@@ -83,7 +80,7 @@ class SitemapIndexProcessor extends RouteProcessorAbstract
         if ($postsCount === 0)
             return [];
 
-        $sitemapsCount = ceil($postsCount / self::ENTRIES_PER_SITEMAP);
+        $sitemapsCount = ceil($postsCount / config('limits.max_entries_per_sitemap'));
 
         $return = [];
 

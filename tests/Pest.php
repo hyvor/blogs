@@ -52,7 +52,7 @@ function aPublishedPost()
     return $post;
 }
 
-function seedPublishedPosts(int $count, Blog $blog = null)
+function seedPublishedPosts(int $count, Blog $blog = null, $isPage = false)
 {
     $blog ??= blog();
 
@@ -60,11 +60,12 @@ function seedPublishedPosts(int $count, Blog $blog = null)
         ->has(
             PostVariant::factory()->state([
                 'status' => 'published',
-                'language_id' => $blog->languages[0],
+                'language_id' => $blog->languages()->where('is_primary', true)->first()->id,
             ]),
             'variants'
         )->create([
             'blog_id' => $blog,
+            'is_page' => $isPage
         ]);
 }
 

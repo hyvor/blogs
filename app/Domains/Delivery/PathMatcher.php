@@ -93,7 +93,9 @@ class PathMatcher
 
         $routeMatcher->add('sitemap-index', '/sitemap.xml');
         $routeMatcher->add('sitemap-pages', '/sitemap-pages.xml');
-        $routeMatcher->add('sitemap-posts', '/sitemap-posts-{number}.xml');
+        $routeMatcher->add('sitemap-posts', '/sitemap-posts-{number}.xml', [], [
+            'number' => '\d+'
+        ]);
 
         $matchedRoute = $routeMatcher->match();
 
@@ -107,7 +109,6 @@ class PathMatcher
                 'sitemap-index' => SitemapIndexProcessor::class,
                 'sitemap-pages' => SitemapPagesProcessor::class,
                 'sitemap-posts' => SitemapPostsProcessor::class,
-                'sitemap-media' => SitemapMediaProcessor::class
             };
 
             $responseObject = (new $processor($this, $matchedRoute))->getResponseObject();

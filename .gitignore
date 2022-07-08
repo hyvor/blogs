@@ -3,6 +3,7 @@
 /public/storage
 /public/js
 /public/css
+/public/build
 /storage/*.key
 /--coverage-php
 vendor
