@@ -52,7 +52,7 @@ export default function Hosting() {
                         />
                         <Radio 
                             name="hosted-at"
-                            placeholder="Custom Domain (CNAME)" 
+                            placeholder="Custom Domain"
                             value="domain" 
                             onChange={handleHostedAtChange}
                             checkFor={hostedAt}

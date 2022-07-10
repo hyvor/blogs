@@ -1,6 +1,6 @@
 # SEO
 
-Hyvor Blogs handles the technical SEO for you.
+Hyvor Blogs handles technical SEO for you.
 
 * [Meta Tags](#meta)
 * [Rich Schema](#rich-schema)
@@ -57,11 +57,7 @@ Rich schema is coming soon.
 
 ## Canonical URLs {#canonical}
 
-Canonical URLs are essential to prevent duplicate pages. HB takes cares of correctly generating canonical URLs for all [routes](routes) in your blog.
-
-#### Custom Post Canonical URLs
-
-You may want to publish a post that has already been published elsewhere. In this case, you can set a custom canonical URL for the post. HB will then use this URL to generate the canonical [meta tag](#meta).
+Canonical URLs are essential to prevent duplicate pages. HB takes cares of correctly generating canonical URLs for all routes in your blog. However, you may want to publish a post that has already been published elsewhere. In this case, you can set a custom canonical URL for the post. HB will then use this URL to generate the canonical [meta tag](#meta).
 
 **Console &rarr; Post &rarr; Settings &rarr; Advanced &rarr; Canonical URL**
 
@@ -132,7 +128,7 @@ You can prevent search engines from indexing your blog or specific pages by addi
 
 | Where | How |
 | -- | --- |
-| Whole blog | Turn off **Console &rarr; Settings &rarr; SEO &rarr; Allow Indexing**. HB will then add the above code to all pages.
+| Whole blog | Turn off **Console &rarr; Settings &rarr; SEO &rarr; Allow Indexing**. HB will then add the above code to all pages. Or, add the above code to head [custom code](custom-code#blog) of the blog.
 | A post | Add the above code to the head [custom code](custom-code#post) of the post.
 | Posts of a tag | Add the above code to the head [custom code](custom-code#tag) of the tag.
 

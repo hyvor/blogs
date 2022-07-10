@@ -5,11 +5,9 @@ return [
         [null, 'Getting Started'],
         ['writing', 'Writing'],
         ['theme', 'Theme'],
-        ['hosting', 'Hosting'],
         ['how', 'How it works'],
     ],
     'Features' => [
-        ['posts-pages', 'Posts & Pages'],
         ['users', 'Users'],
         ['tags', 'Tags'],
         ['languages', 'Languages'],
@@ -21,7 +19,8 @@ return [
         ['syntax-highlighting', 'Syntax Highlighting'],
         ['redirects', 'Redirects'],
         ['light-dark', 'Light/Dark Modes'],
-        ['social-links', 'Social Links']
+        ['social-links', 'Social Links'],
+        ['navigation', 'Navigation'],
     ],
     'Services' => [
         ['comments', 'Comments'],
@@ -29,10 +28,6 @@ return [
         ['analytics', 'Analytics'],
         ['memberships', 'Memberships'],
         ['forms', 'Forms'],
-    ],
-    'Basic Settings' => [
-        ['main', 'Main Settings'],
-        ['navigation', 'Navigation'],
     ],
     'Developers' => [
         ['webhooks', 'Webhooks'],
@@ -67,7 +62,6 @@ return [
         ['compliance-gdpr', 'GDPR Compliance']
     ],
     'Misc' => [
-        ['js', 'Javascript Usage'],
         ['oss', 'Open Source'],
     ]
 
