@@ -11,6 +11,10 @@ class UserVariant extends Model
 
     public $timestamps = false;
 
+    protected $table = 'user_variants';
+
+    protected $fillable = ['user_id','name'];
+
     public function user()
     {
         return $this->belongsTo(User::class);

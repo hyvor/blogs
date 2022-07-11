@@ -13,6 +13,10 @@ class User extends Model
     use Countable;
     use HasFactory;
 
+    protected $table = 'users';
+
+    protected $fillable = ['blog_id','email','role','status','slug','created_at','updated_at'];
+
     protected $casts = [
         'status' => UserStatusEnum::class,
         'role' => UserRoleEnum::class,

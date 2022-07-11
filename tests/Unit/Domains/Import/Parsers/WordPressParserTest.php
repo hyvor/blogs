@@ -170,7 +170,7 @@ $postVariant = $repo->postVariant[0];
 
 expect($postVariant->id)->toBe(273);
 expect($postVariant->post_id)->toBe(273);
-expect($postVariant->status->value)->toBeIn(['draft','published']);
+expect($postVariant->status->value)->toBeIn(['draft','published','scheduled']);
 expect($postVariant->title)->toBe('Adding Comments to Static Sites');
 expect($postVariant->description)->toBe('Testing Desc');
 
@@ -225,6 +225,6 @@ test('Testing the importer', function (){
 
     $importer->import();
 
-})->group('importer_test');
+})->group('importer');
 
 

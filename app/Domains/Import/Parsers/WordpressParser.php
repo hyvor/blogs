@@ -162,11 +162,13 @@ class WordpressParser implements ParserInterface
 
                 if ($postStatus === 'future' || $postStatus == 'pending' || $postStatus == 'trash' || $postStatus == 'auto-draft' || $postStatus == 'inherit' || $postStatus == 'new') {
                     $postStatus = 'draft';
-                }
-
-                if ($postStatus == 'publish') {
+                
+                }else if ($postStatus == 'publish') {
+                   
                     $postStatus = 'published';
-                }
+                
+                }else
+                    $postStatus = 'draft';
 
                 $slug = Str::slug($title);
                 $isPage = false;
@@ -256,6 +258,17 @@ class WordpressParser implements ParserInterface
                     $title = substr($title, 0, config('limits.max_post_title_length'));
                 }
 
+                if ($pageStatus === 'future' || $pageStatus == 'pending' || $pageStatus == 'trash' || $pageStatus == 'auto-draft' || $pageStatus == 'inherit' || $pageStatus == 'new') {
+                    $pageStatus = 'draft';
+                
+                }else if ($pageStatus == 'publish') {
+                   
+                    $pageStatus = 'published';
+                
+                }else
+                    $pageStatus = 'draft';
+
+
                 $slug = Str::slug($title);
                 $isPage = true;
 
@@ -302,7 +315,7 @@ class WordpressParser implements ParserInterface
 
                 $postVariant->id = (int)$postId;
                 $postVariant->post_id = (int)$postId;
-                $postVariant->status = $postStatus;
+                $postVariant->status = $pageStatus;
                 $postVariant->content = $jsonPost;
                 $postVariant->title = $title;
                 $postVariant->description = $description;
