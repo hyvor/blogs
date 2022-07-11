@@ -21,7 +21,7 @@ export default function Code() {
                 title="Head Code"
                 description={
                     <div>
-                        This HTML code will be placed right before the &lt;/head&gt; tag. You can use this to add custom CSS and meta tags for the whole blog. In addition to HTML, you can also use <a className="link" href="/docs/themes-overview#twig" target="_blank">Twig</a>, and has access to <a className="link" href="/docs/themes-overview#variables" target="_blank">scope variables</a>.
+                        This HTML code will be placed right before the &lt;/head&gt; tag. You can use this to add custom CSS and meta tags for the whole blog. In addition to HTML, you can also use <a className="link" href="/docs/themes-overview#twig" target="_blank">Twig</a>, and has access to <a className="link" href="/docs/themes-overview#variables" target="_blank">route variables</a>.
                     </div>
                 }
                 right={
@@ -36,7 +36,7 @@ export default function Code() {
 
             <DualSetting 
                 title="Foot Code"
-                description="This HTML code will be placed right before the </body> tag. If you want to add custom Javascript code (ex: analytics), this is the best place to add it. You can use Twig and scope variables."
+                description="This HTML code will be placed right before the </body> tag. If you want to add custom Javascript code (ex: analytics), this is the best place to add it. You can use Twig and route variables."
                 right={
                     <CodemirrorEditor
                         mode={CODEMIRROR_MODES.twig}

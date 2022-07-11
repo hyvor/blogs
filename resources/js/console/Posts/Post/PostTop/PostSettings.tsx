@@ -254,7 +254,7 @@ export default function PostSettings({ id } : PostSettingsProps) {
                     </Setting>
 
                     <Setting 
-                        title="Header HTML Code"
+                        title="Head Code"
                         description="Summarization of the post for listing pages and search engines."
                         className="post-setting-description"
                     >
@@ -266,7 +266,7 @@ export default function PostSettings({ id } : PostSettingsProps) {
                     </Setting>
 
                     <Setting 
-                        title="Footer HTML Code"
+                        title="Foot Code"
                         description="Summarization of the post for listing pages and search engines."
                         className="post-setting-description"
                     >
