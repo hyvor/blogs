@@ -25,6 +25,6 @@ class AppServiceProvider extends ServiceProvider
     {
 
         // remove mass assignment globally
-        Model::unguard();
+            Model::unguard();
     }
 }

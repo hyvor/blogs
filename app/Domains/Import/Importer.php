@@ -59,6 +59,8 @@ class Importer
             $user->blog_id = $this->blog->id;
           
             $user = User::create($user->getAttributes());   
+            $user->save();
+            dd(User::count());
             UserCreatedEvent::dispatch($user);
           
            // dd($user->getAttributes());
@@ -72,6 +74,7 @@ class Importer
                 $userVariant->language_id = $getLanguage->id;
               
                 $userVariant  = UserVariant::create($userVariant->getAttributes());
+                $userVariant->save();
                 UserVariantCreatedEvent::dispatch($userVariant);
             }
             
