@@ -17,6 +17,7 @@ use App\Models\Tag;
 use App\Models\TagVariant;
 use App\Models\User;
 use App\Models\UserVariant;
+use Illuminate\Foundation\Testing\RefreshDatabase;
 
 
 test('testing users and users varient',function(){

@@ -34,6 +34,20 @@ class WordpressParser implements ParserInterface
 
     }
 
+    public function parse(): Repository{
+        
+        $repo = new Repository();
+        $data = new Crawler($this->file);
+
+        $this->parseLang($repo,$data);
+        $this->parseAuthors($repo,$data);
+        $this->parseTags($repo,$data);
+        $this->parsePosts($repo,$data);
+
+        return $repo;
+        
+    }
+
     private function parseLang($repo,$data){
 
         $language = '';
@@ -327,17 +341,5 @@ class WordpressParser implements ParserInterface
             return $repo;
     }
 
-    public function parse(): Repository
-    {
-        $repo = new Repository();
-        $data = new Crawler($this->file);
-
-        $this->parseLang($repo,$data);
-        $this->parseAuthors($repo,$data);
-        $this->parseTags($repo,$data);
-        $this->parsePosts($repo,$data);
-
-        return $repo;
-        
-    }
+   
 }
