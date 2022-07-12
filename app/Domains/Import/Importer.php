@@ -22,12 +22,11 @@ class Importer
     /**
     * @var array<array<string,mixed>>
     */
-    public array $tagIdArray = [];
+    public array $authorIds = [];
 
-    /**
-    * @var array<array<string,mixed>>
-    */
-    public array $authorIdArray = [];
+    public array $tagIds = [];
+
+    public array $postIds = [];
 
     public function __construct(Repository $repository, Blog $blog, Import $import)
     {
@@ -38,13 +37,8 @@ class Importer
 
     public function import()
     {
-        
-        $authorCount = count($this->repository->user);
-        $tagCount = count($this->repository->tag);
-        $postCount = count($this->repository->post);
-
         $this->importAuthors();
-        $this->importTags($postCount);
+        $this->importTags();
         $this->importPosts();    
     }
 
@@ -59,31 +53,21 @@ class Importer
             $user->blog_id = $this->blog->id;
           
             $user = User::create($user->getAttributes());   
-            $user->save();
-            dd(User::count());
-            UserCreatedEvent::dispatch($user);
-          
-           // dd($user->getAttributes());
             
             $userVariant = $this->repository->userVariant[$key];
             
-            if($userVariant->user_id == $authorId){
-             
-                unset($userVariant->id);
-                $userVariant->user_id = $user->id;
-                $userVariant->language_id = $getLanguage->id;
-              
-                $userVariant  = UserVariant::create($userVariant->getAttributes());
-                $userVariant->save();
-                UserVariantCreatedEvent::dispatch($userVariant);
-            }
+            unset($userVariant->id);
+            $userVariant->user_id = $user->id;
+            $userVariant->language_id = $getLanguage->id;
+          
+            $userVariant  = UserVariant::create($userVariant->getAttributes());
             
-            dd('cool');
+            return $this->authorIds[] = ['user_id'=>$user->id,'userVariant_id'=>$userVariant->id]; 
         }    
 
     }
 
-    public function importTags($postCount){
+    public function importTags(){
 
         $getLanguage = $this->blog->languages()->where('is_primary', true)->first();
         
@@ -92,26 +76,19 @@ class Importer
             $authorId  = $tag->id;  
             unset($tag->id);
             $tag->blog_id = $this->blog->id;
-            $tag->posts_count = $postCount;
+            $tag->posts_count = count($this->repository->post);
           
             $tag = Tag::create($tag->getAttributes());   
             
-            //dd($tag->getAttributes());
-            
             $tagVariant = $this->repository->tagVariant[$key];
             
-            if($tagVariant->tag_id == $authorId){
-             
-                unset($tagVariant->id);
-                $tagVariant->tag_id = $tag->id;
-                $tagVariant->language_id = $getLanguage->id;
-              
-                $tagVariant  = TagVariant::create($tagVariant->getAttributes());
-               
-                dd($tagVariant->getAttributes());
-            }
-            
-            dd('cool');
+            unset($tagVariant->id);
+            $tagVariant->tag_id = $tag->id;
+            $tagVariant->language_id = $getLanguage->id;
+          
+            $tagVariant  = TagVariant::create($tagVariant->getAttributes());
+
+            return $this->tagIds[] = ['tag_id'=>$tag->id,'tagVariant_id'=>$tagVariant->id];
         }    
     }
 
@@ -128,22 +105,15 @@ class Importer
            
             $post = Post::create($post->getAttributes());   
             
-            //dd($post->getAttributes());
-            
             $postVariant = $this->repository->postVariant[$key];
             
-            if($postVariant->post_id == $authorId){
-             
-                unset($postVariant->id);
-                $postVariant->post_id = $post->id;
-                $postVariant->language_id = $getLanguage->id;
+            unset($postVariant->id);
+            $postVariant->post_id = $post->id;
+            $postVariant->language_id = $getLanguage->id;
               
-                $postVariant  = PostVariant::create($postVariant->getAttributes());
+            $postVariant  = PostVariant::create($postVariant->getAttributes());
                
-               // dd($postVariant->getAttributes());
-            }
-            
-            dd('cool');
+            return $this->postIds[] = ['post_id'=>$post->id,'postVariant_id'=>$postVariant->id];
         }    
     }
     

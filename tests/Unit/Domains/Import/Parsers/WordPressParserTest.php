@@ -222,6 +222,7 @@ it('parsers the language', function (){
 test('Testing the importer', function (){
     
     // Test database connection
+
     try {
         DB::connection()->getPdo();
     } catch (\Exception $e) {
@@ -240,9 +241,37 @@ test('Testing the importer', function (){
 
     $importer = new Importer($repo,$blog,$import);
 
-    $importer->import();
+    //Authors
+
+    $userCount = User::count() + count($repo->user);
+    $userVariantCount = UserVariant::count() + count($repo->userVariant);
+
+    $importer->importAuthors();
+
+    expect(User::count())->toBe($userCount);
+    expect(UserVariant::count())->toBe($userVariantCount);    
+    
+    
+    //Tags
+
+    $tagCount = Tag::count() + count($repo->tag);
+    $tagVariantCount = TagVariant::count() + count($repo->tagVariant);
+
+    $importer->importTags();
+
+    expect(Tag::count())->toBe($tagCount);
+    expect(TagVariant::count())->toBe($tagVariantCount);   
 
     
+    //Posts
+
+    $postCount = Post::count() + count($repo->post);
+    $postVariantCount = PostVariant::count() + count($repo->postVariant);
+
+    $importer->importPosts();
+
+    expect(Post::count())->toBe($postCount);
+    expect(PostVariant::count())->toBe($postVariantCount);     
 
 })->group('importer');
 
