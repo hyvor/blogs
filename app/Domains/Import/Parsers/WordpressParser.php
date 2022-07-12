@@ -184,7 +184,7 @@ class WordpressParser implements ParserInterface
                 }else
                     $postStatus = 'draft';
 
-                $slug = Str::slug($title);
+                $slug = Str::slug($title).rand();
                 $isPage = false;
 
 
@@ -283,7 +283,7 @@ class WordpressParser implements ParserInterface
                     $pageStatus = 'draft';
 
 
-                $slug = Str::slug($title);
+                $slug = Str::slug($title).rand();
                 $isPage = true;
 
                 foreach ($this->authorsArray as $authorData) {

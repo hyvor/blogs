@@ -62,8 +62,10 @@ class Importer
           
             $userVariant  = UserVariant::create($userVariant->getAttributes());
             
-            return $this->authorIds[] = ['user_id'=>$user->id,'userVariant_id'=>$userVariant->id]; 
+            $this->authorIds[] = ['user_id'=>$user->id,'userVariant_id'=>$userVariant->id]; 
         }    
+
+        return $this->authorIds;
 
     }
 
@@ -88,8 +90,10 @@ class Importer
           
             $tagVariant  = TagVariant::create($tagVariant->getAttributes());
 
-            return $this->tagIds[] = ['tag_id'=>$tag->id,'tagVariant_id'=>$tagVariant->id];
-        }    
+            $this->tagIds[] = ['tag_id'=>$tag->id,'tagVariant_id'=>$tagVariant->id];
+        } 
+
+        return $this->tagIds;   
     }
 
 
@@ -101,6 +105,7 @@ class Importer
             
             $authorId  = $post->id;  
             unset($post->id);
+            
             $post->blog_id = $this->blog->id;
            
             $post = Post::create($post->getAttributes());   
@@ -113,8 +118,10 @@ class Importer
               
             $postVariant  = PostVariant::create($postVariant->getAttributes());
                
-            return $this->postIds[] = ['post_id'=>$post->id,'postVariant_id'=>$postVariant->id];
-        }    
+            $this->postIds[] = ['post_id'=>$post->id,'postVariant_id'=>$postVariant->id];
+        }
+
+        return $this->postIds;    
     }
     
 }
