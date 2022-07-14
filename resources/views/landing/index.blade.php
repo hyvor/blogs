@@ -25,9 +25,9 @@
                     Start Your Blog Today!
                 </h1>
                 <h2>
-                    Hyvor Blogs is a simple but powerful platform to start a blog that you own.
+                    Hyvor Blogs is a simple & powerful platform to start a fully customizable blog.
                 </h2>
-                <a data-flashload-skip href="/console?signup=1" class="button big">
+                <a data-flashload-skip-link href="/console?signup=1" class="button big">
                     Start a Blog
                 </a>
 
@@ -571,11 +571,11 @@ c30.27,0,54.64-24.37,54.64-54.64v-1419l-363.61-362.75L1258.7,336.75z"/>
                         <path d="M2 1a2 2 0 0 0-2 2v10a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V3a2 2 0 0 0-2-2H2zm13 2v2H1V3a1 1 0 0 1 1-1h12a1 1 0 0 1 1 1zM2 14a1 1 0 0 1-1-1V6h14v7a1 1 0 0 1-1 1H2z"/>
                     </svg> Powerful Console</h4>
                 <p>
-                    Hyvor Blogs provides a Console to manage multiple blogs at the same time. It also includes tools to publish and manage your posts, change your blog settings, edit the theme, add team members, and manage billing. Our Rich Text editor is easy-to-use, and supports all required text styling, image uploading, embedding, and link previews.
+                    Hyvor Blogs provides a Console to manage multiple blogs at the same time. It includes all the tools you need to publish and manage your posts. Our Rich Text editor is easy-to-use, and supports most essential features for rich blogging like text styling, image uploading, embedding, and link previews.
                 </p>
-                <div class="image-wrap">
+                {{--<div class="image-wrap">
                     <img src="/img/landing/home-console.png" />
-                </div>
+                </div>--}}
             </div>
             <div class="links">
                 <a href="/docs/writing">Writing & Publishing</a>
@@ -590,11 +590,11 @@ c30.27,0,54.64-24.37,54.64-54.64v-1419l-363.61-362.75L1258.7,336.75z"/>
                         <path d="M16 8c0 3.15-1.866 2.585-3.567 2.07C11.42 9.763 10.465 9.473 10 10c-.603.683-.475 1.819-.351 2.92C9.826 14.495 9.996 16 8 16a8 8 0 1 1 8-8zm-8 7c.611 0 .654-.171.655-.176.078-.146.124-.464.07-1.119-.014-.168-.037-.37-.061-.591-.052-.464-.112-1.005-.118-1.462-.01-.707.083-1.61.704-2.314.369-.417.845-.578 1.272-.618.404-.038.812.026 1.16.104.343.077.702.186 1.025.284l.028.008c.346.105.658.199.953.266.653.148.904.083.991.024C14.717 9.38 15 9.161 15 8a7 7 0 1 0-7 7z"/>
                     </svg> Custom Themes</h4>
                 <p>
-                    Installing any theme from our marketplace just takes a few clicks. There are free and paid themes available. If you are familiar with HTML and CSS, you can even build your own theme from scratch using the in-built file editor and our theme development guides. Because we use technologies most web developers are already familiar with, you can ask any professional web developer to build a theme for you.
+                    Installing an official theme only takes a few clicks. Any web developer with experience in HTML and CSS can build a custom theme for you. We provide a comman line tool for local theme development. You can also easily edit theme files in the Console.
                 </p>
-                <div class="image-wrap">
+               {{-- <div class="image-wrap">
                     <img src="/img/landing/home-console.png" />
-                </div>
+                </div>--}}
                 <p class="note">
                     Note: Hyvor Blogs is not a drag-and-drop website building software.
                 </p>
@@ -612,10 +612,7 @@ c30.27,0,54.64-24.37,54.64-54.64v-1419l-363.61-362.75L1258.7,336.75z"/>
                         <path d="M0 8a8 8 0 1 1 16 0A8 8 0 0 1 0 8zm7.5-6.923c-.67.204-1.335.82-1.887 1.855A7.97 7.97 0 0 0 5.145 4H7.5V1.077zM4.09 4a9.267 9.267 0 0 1 .64-1.539 6.7 6.7 0 0 1 .597-.933A7.025 7.025 0 0 0 2.255 4H4.09zm-.582 3.5c.03-.877.138-1.718.312-2.5H1.674a6.958 6.958 0 0 0-.656 2.5h2.49zM4.847 5a12.5 12.5 0 0 0-.338 2.5H7.5V5H4.847zM8.5 5v2.5h2.99a12.495 12.495 0 0 0-.337-2.5H8.5zM4.51 8.5a12.5 12.5 0 0 0 .337 2.5H7.5V8.5H4.51zm3.99 0V11h2.653c.187-.765.306-1.608.338-2.5H8.5zM5.145 12c.138.386.295.744.468 1.068.552 1.035 1.218 1.65 1.887 1.855V12H5.145zm.182 2.472a6.696 6.696 0 0 1-.597-.933A9.268 9.268 0 0 1 4.09 12H2.255a7.024 7.024 0 0 0 3.072 2.472zM3.82 11a13.652 13.652 0 0 1-.312-2.5h-2.49c.062.89.291 1.733.656 2.5H3.82zm6.853 3.472A7.024 7.024 0 0 0 13.745 12H11.91a9.27 9.27 0 0 1-.64 1.539 6.688 6.688 0 0 1-.597.933zM8.5 12v2.923c.67-.204 1.335-.82 1.887-1.855.173-.324.33-.682.468-1.068H8.5zm3.68-1h2.146c.365-.767.594-1.61.656-2.5h-2.49a13.65 13.65 0 0 1-.312 2.5zm2.802-3.5a6.959 6.959 0 0 0-.656-2.5H12.18c.174.782.282 1.623.312 2.5h2.49zM11.27 2.461c.247.464.462.98.64 1.539h1.835a7.024 7.024 0 0 0-3.072-2.472c.218.284.418.598.597.933zM10.855 4a7.966 7.966 0 0 0-.468-1.068C9.835 1.897 9.17 1.282 8.5 1.077V4h2.355z"/>
                     </svg> Host Anywhere</h4>
                 <p>  
-                When you create a blog, you get a subdomain of <b>hyvorblogs.io</b> for your blog, so that you can your friends, family, and audience can visit your blog on the internet. Optionally, you can also connect a custom domain such as <b>myblog.com</b> or <b>blog.mycompany.com</b> in a few steps (Don't worry we have guides for that).
-                </p>
-                <p class="note">
-                    Important: You have to buy a custom domain from a third-party domain name registar, which will involve seperate payments/subscriptions.
+                By default, your blog will be hosted at a subdomain of <b>hyvorblogs.io</b>. Setting up a custom domain such as <b>myblog.com</b> or <b>blog.mycompany.com</b> will only take a couple of minutes. You can also host the blog in a sub-directory like <b>mycompany.com/blog</b> (see Delivery API below).
                 </p>
             </div>
             <div class="links">
@@ -630,11 +627,13 @@ c30.27,0,54.64-24.37,54.64-54.64v-1419l-363.61-362.75L1258.7,336.75z"/>
                         <path d="M13 6.5a6.471 6.471 0 0 1-1.258 3.844c.04.03.078.062.115.098l3.85 3.85a1 1 0 0 1-1.414 1.415l-3.85-3.85a1.007 1.007 0 0 1-.1-.115h.002A6.5 6.5 0 1 1 13 6.5ZM6.5 12a5.5 5.5 0 1 0 0-11 5.5 5.5 0 0 0 0 11Z"/>
                     </svg> In-built SEO</h4>
                 <p>
-                    We take care of the technical SEO part of the blog, such as setting HTML title and meta tags, social media tags, canonical URLs, generating sitemaps, handling redirect of old URLs, etc.
+                    We take care of the technical SEO part of the blog, such as setting HTML title and meta tags, social media tags, canonical URLs, generating sitemaps and feeds, etc.
                 </p>
             </div>
             <div class="links">
                 <a href="/docs/seo">SEO</a>
+                <a href="/docs/social-links">Social Links</a>
+                <a href="/docs/redirects">Redirects</a>
             </div>
         </div>
 
@@ -644,7 +643,7 @@ c30.27,0,54.64-24.37,54.64-54.64v-1419l-363.61-362.75L1258.7,336.75z"/>
                         <path d="M5.854 4.854a.5.5 0 1 0-.708-.708l-3.5 3.5a.5.5 0 0 0 0 .708l3.5 3.5a.5.5 0 0 0 .708-.708L2.707 8l3.147-3.146zm4.292 0a.5.5 0 0 1 .708-.708l3.5 3.5a.5.5 0 0 1 0 .708l-3.5 3.5a.5.5 0 0 1-.708-.708L13.293 8l-3.147-3.146z"/>
                     </svg> Custom Code</h4>
                 <p>
-                   Want to add Analytics or other tracking code to your website? Code Injecting can be used for that. You can add custom HTML code to for the whole blog or for a single page.
+                   Want to add Analytics or other tracking code to your website? Add custom code to the whole blog, a post, or a set of related posts.
                 </p>
                 
                 <p>

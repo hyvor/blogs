@@ -120,13 +120,6 @@ $pricingRow = '<tr>
             </tr>
 
             <tr>
-                <td>Multi-Language</td>
-                <td><?= $svgCancel ?></td>
-                <td><?= $svgCheck ?></td>
-                <td><?= $svgCheck ?></td>
-            </tr>
-
-            <tr>
                 <td>Webhooks</td>
                 <td><?= $svgCancel ?></td>
                 <td><?= $svgCheck ?></td>
@@ -134,7 +127,7 @@ $pricingRow = '<tr>
             </tr>
 
             <tr>
-                <td>API Access</td>
+                <td>Console & Delivery APIs</td>
                 <td><?= $svgCancel ?></td>
                 <td><?= $svgCheck ?></td>
                 <td><?= $svgCheck ?></td>

@@ -50,8 +50,12 @@ const postLogic = kea<postLogicType>([
     actions(({values}) => ({
         set: (obj: Post) => ({obj}),
         setOriginal: (obj: Post) => ({obj}),
-        updatePostValue: (key: string, value: any) => ({key, value}),
-        updateCurrentPostVariantValue: (key: string, value: any) => ({key, value, languageId: values.editorState.languageId}),
+        updatePostValue: (key: keyof Post, value: any) => ({key, value}),
+        updateCurrentPostVariantValue: (key: string, value: any) => ({
+            key,
+            value,
+            languageId: values.editorState.languageId
+        }),
         addVariant: (variant: PostVariant) => ({variant}),
         removeVariant: (languageId: number) => ({languageId}),
         changeEditorState: (key: keyof PostEditorState, value: any) => ({key, value})

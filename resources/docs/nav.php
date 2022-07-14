@@ -49,6 +49,7 @@ return [
         ['export', 'Export'],
     ],
     'Self-serving' => [
+        ['self-hosting', 'Self-Hosting Intro'],
         ['self-hosting-delivery-api', 'Using Delivery API'],
         ['self-hosting-reverse-proxy', 'Using Reverse Proxy'],
         /*['self-hosting-delivery-api', 'Using Delivery API'],

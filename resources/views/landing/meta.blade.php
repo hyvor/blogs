@@ -39,7 +39,7 @@
 <script src="/js-static/flashload.js"></script>
 <script data-flashload-skip-replacing>
     window.addEventListener('DOMContentLoaded', function() {
-        FlashLoad.start({
+        Flashload.start({
             bar: true,
             barDelay: 100
         })

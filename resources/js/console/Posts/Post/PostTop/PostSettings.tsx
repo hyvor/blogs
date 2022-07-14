@@ -59,7 +59,7 @@ export default function PostSettings({ id } : PostSettingsProps) {
 
     function handleFeaturedImageRemove() {
         setIsFeaturedImageRemoving(false)
-        updatePostValue("featured_image", null);
+        updatePostValue("featured_image_url", null);
     }
 
     function handleUploadInputClick() {
@@ -73,7 +73,7 @@ export default function PostSettings({ id } : PostSettingsProps) {
         uploadImage({
             file,
             onUpload: (media: Media) => {
-                updatePostValue("featured_image", media.url)
+                updatePostValue("featured_image_url", media.url)
                 savePost()
             }
         })
