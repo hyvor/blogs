@@ -993,36 +993,136 @@ c30.27,0,54.64-24.37,54.64-54.64v-1419l-363.61-362.75L1258.7,336.75z"/>
 @include('landing.footer')
 
 {{-- SVG ANIMATION --}}
-<script src="/js-static/gsap.min.js"></script>
+<script src="/js-static/gsap.min.js" onload="setUpGsap()"></script>
 <script>
-    gsap.set(".main_animation_container svg", {opacity: 1})
+    function setUpGsap() {
+        gsap.set(".main_animation_container svg", {opacity: 1})
 
-    gsap.timeline()
-        .to("#man1", {duration: .75, rotation: 10, transformOrigin: "50% 50%", repeat: -1, yoyo: true, ease: "sine.inOut"})
-        .to("#m1Mouth", {duration: .75, scaleX: .8, transformOrigin: "50% 50%", repeat: -1, yoyo: true, ease: "sine.inOut"}, "<")
-        .to("#handM1L", {duration: .75, rotation: 155, transformOrigin: "50% 50%", repeat: -1, yoyo: true, ease: "sine.inOut"}, "<")
-        .to("#handM1R", {duration: .75, rotation: 20, transformOrigin: "50% 50%", repeat: -1, yoyo: true, ease: "sine.inOut"}, "<")
+        gsap.timeline()
+            .to("#man1", {
+                duration: .75,
+                rotation: 10,
+                transformOrigin: "50% 50%",
+                repeat: -1,
+                yoyo: true,
+                ease: "sine.inOut"
+            })
+            .to("#m1Mouth", {
+                duration: .75,
+                scaleX: .8,
+                transformOrigin: "50% 50%",
+                repeat: -1,
+                yoyo: true,
+                ease: "sine.inOut"
+            }, "<")
+            .to("#handM1L", {
+                duration: .75,
+                rotation: 155,
+                transformOrigin: "50% 50%",
+                repeat: -1,
+                yoyo: true,
+                ease: "sine.inOut"
+            }, "<")
+            .to("#handM1R", {
+                duration: .75,
+                rotation: 20,
+                transformOrigin: "50% 50%",
+                repeat: -1,
+                yoyo: true,
+                ease: "sine.inOut"
+            }, "<")
 
-    gsap.timeline()
-        .to("#man2", {duration: .75, x: -40, y: 9, repeat: -1, yoyo: true, ease: "sine.inOut"})
-        .to("#list", {duration: .75, scale: 1.2, transformOrigin: "50% 50%", repeat: -1, yoyo: true, ease: "sine.inOut"}, "<")
-        .to("#m2Mouth", {duration: .75, scaleX: .9, transformOrigin: "50% 50%", repeat: -1, yoyo: true, ease: "sine.inOut"}, "<")
+        gsap.timeline()
+            .to("#man2", {duration: .75, x: -40, y: 9, repeat: -1, yoyo: true, ease: "sine.inOut"})
+            .to("#list", {
+                duration: .75,
+                scale: 1.2,
+                transformOrigin: "50% 50%",
+                repeat: -1,
+                yoyo: true,
+                ease: "sine.inOut"
+            }, "<")
+            .to("#m2Mouth", {
+                duration: .75,
+                scaleX: .9,
+                transformOrigin: "50% 50%",
+                repeat: -1,
+                yoyo: true,
+                ease: "sine.inOut"
+            }, "<")
 
-    gsap.timeline()
-        .to("#handLM3", {duration: .75, rotation: -10, transformOrigin: "99% 99%", repeat: -1, yoyo: true, ease: "sine.inOut"})
-        .to("#handRM3", {duration: .75, rotation: -10, transformOrigin: "99% 99%", repeat: -1, yoyo: true, ease: "sine.inOut"}, "<")
-        .to("#m3Mouth", {duration: .75, scaleX: .8, transformOrigin: "50% 50%", repeat: -1, yoyo: true, ease: "sine.inOut"}, "<")
+        gsap.timeline()
+            .to("#handLM3", {
+                duration: .75,
+                rotation: -10,
+                transformOrigin: "99% 99%",
+                repeat: -1,
+                yoyo: true,
+                ease: "sine.inOut"
+            })
+            .to("#handRM3", {
+                duration: .75,
+                rotation: -10,
+                transformOrigin: "99% 99%",
+                repeat: -1,
+                yoyo: true,
+                ease: "sine.inOut"
+            }, "<")
+            .to("#m3Mouth", {
+                duration: .75,
+                scaleX: .8,
+                transformOrigin: "50% 50%",
+                repeat: -1,
+                yoyo: true,
+                ease: "sine.inOut"
+            }, "<")
 
-    gsap.timeline()
-        .to("#hndM4", {duration: .75, rotation: 10, transformOrigin: "5% 90%", repeat: -1, yoyo: true, ease: "sine.inOut"})
-        .to("#m4Mouth", {duration: .75, scaleX: .8, transformOrigin: "50% 50%", repeat: -1, yoyo: true, ease: "sine.inOut"}, "<")
+        gsap.timeline()
+            .to("#hndM4", {
+                duration: .75,
+                rotation: 10,
+                transformOrigin: "5% 90%",
+                repeat: -1,
+                yoyo: true,
+                ease: "sine.inOut"
+            })
+            .to("#m4Mouth", {
+                duration: .75,
+                scaleX: .8,
+                transformOrigin: "50% 50%",
+                repeat: -1,
+                yoyo: true,
+                ease: "sine.inOut"
+            }, "<")
 
-    gsap.timeline()
-        .to("#imgCr", {duration: 2, rotation: 10, transformOrigin: "10% 10%", repeat: -1, yoyo: true, ease: "sine.inOut"})
-        .to("#m5Mouth", {duration: .75, scaleX: .8, transformOrigin: "50% 50%", repeat: -1, yoyo: true, ease: "sine.inOut"}, "<")
-        .to("#handM5", {duration: .75, rotation: -20, transformOrigin: "5% 95%", repeat: -1, yoyo: true, ease: "sine.inOut"}, "<")
+        gsap.timeline()
+            .to("#imgCr", {
+                duration: 2,
+                rotation: 10,
+                transformOrigin: "10% 10%",
+                repeat: -1,
+                yoyo: true,
+                ease: "sine.inOut"
+            })
+            .to("#m5Mouth", {
+                duration: .75,
+                scaleX: .8,
+                transformOrigin: "50% 50%",
+                repeat: -1,
+                yoyo: true,
+                ease: "sine.inOut"
+            }, "<")
+            .to("#handM5", {
+                duration: .75,
+                rotation: -20,
+                transformOrigin: "5% 95%",
+                repeat: -1,
+                yoyo: true,
+                ease: "sine.inOut"
+            }, "<")
 
-    gsap.to("#trak", {duration: 2, x: 75, repeat: -1, yoyo: true, ease: "sine.inOut"})
+        gsap.to("#trak", {duration: 2, x: 75, repeat: -1, yoyo: true, ease: "sine.inOut"})
+    }
 
 </script>
 

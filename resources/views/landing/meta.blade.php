@@ -37,7 +37,7 @@
 @vite('resources/css/landing/landing.scss')
 
 <script src="/js-static/flashload.js"></script>
-<script data-flashload-skip-replacing>
+<script data-flashload-skip-script>
     window.addEventListener('DOMContentLoaded', function() {
         Flashload.start({
             bar: true,

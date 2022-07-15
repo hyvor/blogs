@@ -9,45 +9,9 @@ $svgCancel = '<svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fil
 
 $pricingRow = '<tr>
                 <th></th>
-                <th>
-                    <div class="plan-name">Pro</div>
-                    <div class="plan-price">
-                        <div class="price">$8</div>
-                        <div class="price-details">
-                            <span class="period">per month</span>
-                            <span class="period">billed annually</span>
-                        </div>
-                    </div>
-                    <div class="plan-price-monthly">
-                        <b>$10</b> billed monthly
-                    </div>
-                </th>
-                <th>
-                    <div class="plan-name">Team</div>
-                    <div class="plan-price">
-                        <div class="price">$10</div>
-                        <div class="price-details">
-                            <span class="period">per month / user</span>
-                            <span class="period">billed annually</span>
-                        </div>
-                    </div>
-                    <div class="plan-price-monthly">
-                        <b>$12</b> billed monthly
-                    </div>
-                </th>
-                <th>
-                    <div class="plan-name">Enterprise</div>
-                    <div class="plan-price">
-                        <div class="price">$1000</div>
-                        <div class="price-details">
-                            <span class="period">per month</span>
-                            <span class="period">billed annually</span>
-                        </div>
-                    </div>
-                    <div class="plan-price-monthly">
-                        <b>$1200</b> billed monthly
-                    </div>
-                </th>
+                <th>Price</th>
+                <th>Users</th>
+                <th>Storage</th>
             </tr>';
 
 ?>
@@ -76,101 +40,78 @@ $pricingRow = '<tr>
             {!! $pricingRow !!}        
 
             <tr>
-                <td>Users</td>
-                <td>2</td>
-                <td>3 to 99</td>
-                <td>Unlimited</td>
+                <td>Plan A</td>
+                <td><span class="price">$19</span>/month</td>
+                <td>1-2</td>
+                <td>40GB</td>
             </tr>
 
             <tr>
-                <td>Media Storage</td>
-                <td>10GB</td>
-                <td>20GB per user</td>
+                <td>Plan B</td>
+                <td><span class="price">$49</span>/month</td>
+                <td>2-10</td>
+                <td>250GB</td>
+            </tr>
+
+            <tr>
+                <td>Plan C</td>
+                <td><span class="price">$299</span>/month</td>
+                <td>10-100</td>
+                <td>1TB</td>
+            </tr>
+
+            <tr>
+                <td>Plan D</td>
+                <td><span class="price">$699</span>/month</td>
+                <td>100-1000</td>
                 <td>2TB</td>
             </tr>
 
             <tr>
-                <td>Media</td>
-                <td>Images</td>
-                <td>Images</td>
-                <td>Any file type</td>
+                <td>Plan E</td>
+                <td><span class="price">$1299</span>/month</td>
+                <td>1000+</td>
+                <td>5TB</td>
             </tr>
 
-
-            <tr>
-                <td>Code Injecting</td>
-                <td><?= $svgCheck ?></td>
-                <td><?= $svgCheck ?></td>
-                <td><?= $svgCheck ?></td>
-            </tr>
-
-
-            <tr>
-                <td>Custom Themes</td>
-                <td><?= $svgCheck ?></td>
-                <td><?= $svgCheck ?></td>
-                <td><?= $svgCheck ?></td>
-            </tr>
-
-            <tr>
-                <td>Custom Domain</td>
-                <td><?= $svgCheck ?></td>
-                <td><?= $svgCheck ?></td>
-                <td><?= $svgCheck ?></td>
-            </tr>
-
-            <tr>
-                <td>Webhooks</td>
-                <td><?= $svgCancel ?></td>
-                <td><?= $svgCheck ?></td>
-                <td><?= $svgCheck ?></td>
-            </tr>
-
-            <tr>
-                <td>Console & Delivery APIs</td>
-                <td><?= $svgCancel ?></td>
-                <td><?= $svgCheck ?></td>
-                <td><?= $svgCheck ?></td>
-            </tr>
-
-            <tr>
-                <td>Edge Caching</td>
-                <td><?= $svgCancel ?></td>
-                <td><?= $svgCancel ?></td>
-                <td>Coming Soon</td>
-            </tr>
-
-            <!-- <tr>
-                <td>SAML Login</td>
-                <td><?= $svgCancel ?></td>
-                <td><?= $svgCancel ?></td>
-                <td><?= $svgCancel ?></td>
-                <td><?= $svgCheck ?></td>
-            </tr>
-
-            <tr>
-                <td>Custom Console</td>
-                <td><?= $svgCancel ?></td>
-                <td><?= $svgCancel ?></td>
-                <td><?= $svgCancel ?></td>
-                <td><?= $svgCheck ?></td>
-            </tr> -->
-
-
-            {!! $pricingRow !!}  
 
         </table>
-
-        <p>
-            Each blog requires a seperate subscription.<br> The prices are shown <b>excluding</b> applicable VAT charges.
-        </p>
 
     </div>
 </div>
 
 
 <div class="wave">
-<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1440 250"><path fill="#f1e8e8" fill-opacity="1" d="M0,128L60,138.7C120,149,240,171,360,170.7C480,171,600,149,720,149.3C840,149,960,171,1080,170.7C1200,171,1320,149,1380,138.7L1440,128L1440,0L1380,0C1320,0,1200,0,1080,0C960,0,840,0,720,0C600,0,480,0,360,0C240,0,120,0,60,0L0,0Z"></path></svg></div>
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1440 250"><path fill="#fffaf8" fill-opacity="1" d="M0,128L60,138.7C120,149,240,171,360,170.7C480,171,600,149,720,149.3C840,149,960,171,1080,170.7C1200,171,1320,149,1380,138.7L1440,128L1440,0L1380,0C1320,0,1200,0,1080,0C960,0,840,0,720,0C600,0,480,0,360,0C240,0,120,0,60,0L0,0Z"></path></svg></div>
+
+<div class="faqs">
+    <div class="faq">
+        <h3>How do pricing and plans work?</h3>
+        <p>Each blog requires a separate subscription based on the number of <a class="link" href="/docs/users">users</a> and total media storage usage of that blog. There are no feature limitations - all features are included in all plans.</p>
+    </div>
+    <div class="faq">
+        <h3>How do payments work?</h3>
+        <p>
+            Payments are processed securely through our Merchant of Record, <a href="https://paddle.com" rel="nofollow" class="link">Paddle</a>, who technically works as a reseller of the product.
+        </p>
+        <ul>
+            <li><a target="_blank" href="https://www.paddle.com/help/start/intro-to-paddle/what-currencies-do-you-support" class="link" rel="nofollow">Supported Currencies</a></li>
+            <li><a target="_blank" href="https://www.paddle.com/help/start/intro-to-paddle/which-payment-methods-do-you-support" class="link" rel="nofollow">Supported Payment Methods</a></li>
+        </ul>
+    </div>
+    <div class="faq">
+        <h3>Can I cancel anytime?</h3>
+        <p>
+            Yes, absolutely. You can easily cancel your subscription from our Console - no questions asked. You can also <a href="/docs/export" class="link">export</a> your data anytime and move to another platform anytime you wish. However, we do not provide refunds. We ask you to test our platform in the 14-days trial before subscribing.
+        </p>
+    </div>
+</div>
+
+<div class="button-main">
+    <a data-flashload-skip-link href="/console?signup=1" class="button big">
+        Start a Blog
+    </a>
+</div>
 
 @include('landing.footer')
 
