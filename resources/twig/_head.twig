@@ -103,6 +103,11 @@
             if (!noSave) {
                 localStorage.setItem(lsKey, pref)
             }
+            window.dispatchEvent(new CustomEvent("hb:colorModeChanged", {
+                detail: {
+                    mode: renderMode
+                }
+            }))
         }
         window._hb.getColorModePreference = function() {
             return localStorage.getItem(lsKey) || _hb.color_mode_default; // os|light|dark

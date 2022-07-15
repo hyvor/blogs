@@ -14,7 +14,7 @@ class AssetsProcessor extends RouteProcessorAbstract
 {
     private ?DeliveryAPIResponseObject $responseObject = null;
 
-    private const DEAULT_ASSETS = [
+    private const DEFAULT_ASSETS = [
         'flashload.js',
     ];
 
@@ -29,7 +29,7 @@ class AssetsProcessor extends RouteProcessorAbstract
 
         if ($file) {
             $content = $file->content;
-        } elseif (in_array($fileName, self::DEAULT_ASSETS)) {
+        } elseif (in_array($fileName, self::DEFAULT_ASSETS)) {
             $content = file_get_contents(resource_path("assets/$fileName"));
         } else {
             return;

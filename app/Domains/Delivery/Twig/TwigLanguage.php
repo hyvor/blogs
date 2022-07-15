@@ -52,7 +52,7 @@ class TwigLanguage
 
     private function setStrings($file)
     {
-        $this->languageStrings = $this->parseYaml($file->content);
+        $this->languageStrings = $this->parseYaml($file->content) ?? [];
     }
 
     private function extendStrings($file)
