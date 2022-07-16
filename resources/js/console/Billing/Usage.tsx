@@ -3,11 +3,11 @@ import React, { useEffect, useState } from 'react';
 import subscriptionLogic from '../logic/subscriptionLogic';
 import byteFormatter from '../../helpers/byteFormatter';
 import Loader from '../ReusableComponents/Loader';
+import getSubdomain from "../logic-helpers/subdomain";
 
-export function Usage({subdomain}) {
+export function Usage() {
 
-
-    const { data, loadAjax } = useValues(subscriptionLogic({subdomain}));
+    const { data, loadAjax } = useValues(subscriptionLogic({subdomain: getSubdomain()}));
 
     return loadAjax.status === 'loading' ?
         <Loader padding={60} /> :
@@ -28,7 +28,7 @@ export function Usage({subdomain}) {
 
 }
 
-function UsageBar({name, data, bytes}) {
+function UsageBar({name, data, bytes = false} : {name: string, data: any, bytes?: boolean}) {
 
     const [width, setWidth] = useState("0%");
 

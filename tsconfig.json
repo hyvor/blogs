@@ -1,5 +1,6 @@
 {
     "compilerOptions": {
+        "baseUrl": "./",
         "noImplicitAny": true,
         "module": "CommonJS",
         "target": "es5",
@@ -11,5 +12,5 @@
         "allowSyntheticDefaultImports": true,
         "strict": true
     },
-    "include": ["resources/js"]
+    "include": ["resources/js", "cypress"]
 }
