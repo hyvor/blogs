@@ -310,3 +310,53 @@ export interface ThemeFile {
     content: string | null,
     folder: ThemeFolder
 }
+
+// === BILLING
+
+export interface SubscriptionInfo {
+
+    email: string,
+
+    card_brand: string,
+    card_last_four: string,
+    card_expiration: string,
+
+    update_url: string,
+
+    last_payment: number, // float
+    last_payment_at: number,
+
+    next_payment: number  | null, // float | null
+    next_payment_at: number | null
+
+}
+
+export interface Subscription {
+
+    status: 'active' | 'past_due' | 'paused' | 'deleted',
+    plan: 'A' | 'B' | 'C' | 'D' | 'E',
+    frequency: 'monthly' | 'yearly',
+    created_at: number,
+    ends_at: number | null,
+    is_on_grace_period: boolean
+
+}
+
+export interface Receipt {
+
+    id: number,
+    paid_at: number,
+    amount: number,
+    tax: number,
+    currency: number,
+    receipt_url: string
+
+}
+
+export interface Usage {
+
+    current: number;
+    total: number;
+    percentage: number; // float
+
+}

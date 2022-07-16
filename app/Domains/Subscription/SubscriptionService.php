@@ -4,11 +4,12 @@ namespace App\Domains\Subscription;
 
 use App\Data\Enums\SubscriptionFrequencyEnum;
 use App\Data\Enums\SubscriptionPlanEnum;
+use App\Data\Objects\App\PaddlePlan;
 use App\Exceptions\TrustedException;
 use App\Models\Blog;
 use Illuminate\Database\Eloquent\Collection;
 
-class SubscriptionRepository
+class SubscriptionService
 {
     /**
      * This is an internal name for the subscription
@@ -22,137 +23,105 @@ class SubscriptionRepository
      */
     public const SUBSCRIPTION_NAME = 'default';
 
+
     public static function createPayLink(
         Blog $blog,
         SubscriptionPlanEnum $planName,
-        SubscriptionFrequencyEnum $frequency,
-        int $quantity = 1
-    ): string {
+        SubscriptionFrequencyEnum $frequency
+    ): string
+    {
+
         if ($blog->subscribed()) {
             throw new TrustedException('This blog already has a subscription');
         }
 
-        $quantity = self::validateAndGetQuantity($planName, $frequency, $quantity);
+        $plan = self::getPlanConfigFromPlanNameAndFrequency($planName, $frequency);
+        $planId = $plan->id;
 
-        $planConfig = self::getPlanConfigFromPlanNameAndFrequency($planName, $frequency);
-        $planId = $planConfig['id'];
+        return $blog
+            ->newSubscription(self::SUBSCRIPTION_NAME, $planId)
+            ->create();
 
-        return $blog->newSubscription(self::SUBSCRIPTION_NAME, $planId)
-            ->create([
-                'quantity' => $quantity,
-            ]);
     }
 
     public static function updateSubscription(
         Blog $blog,
         SubscriptionPlanEnum $planName,
-        SubscriptionFrequencyEnum $frequency,
-        int $quantity
+        SubscriptionFrequencyEnum $frequency
     ) {
-        $quantity = self::validateAndGetQuantity($planName, $frequency, $quantity);
+
         $planConfig = self::getPlanConfigFromPlanNameAndFrequency($planName, $frequency);
-        $planId = $planConfig['id'];
+        $planId = $planConfig->id;
 
         $currentSubscription = $blog->subscription();
 
-        if (
-            $currentSubscription->paddle_plan === $planId &&
-            $currentSubscription->quantity === $quantity
-        ) {
-            throw new TrustedException('Cannot update to the same plan', TrustedException::ERROR_UNPROCESSABLE);
-        }
-
         if ($currentSubscription->paddle_plan === $planId) {
-
-            // change quantity
-            $currentSubscription->updateQuantity($quantity);
-        } else {
-
-            // change plan
-            $currentSubscription->swapAndInvoice($planId, [
-                'quantity' => $quantity,
-            ]);
+            throw new TrustedException(
+                'Cannot update to the same plan',
+                TrustedException::ERROR_UNPROCESSABLE
+            );
         }
+
+        // change plan
+        $currentSubscription->swapAndInvoice($planId);
     }
 
     public static function cancelSubscription(Blog $blog, bool $forced = false)
     {
+
+        $subscription = $blog->subscription();
+
+        if (!$subscription)
+            return;
+
+        if (!$subscription->cancelled()) {
+            $subscription->cancel();
+        }
+
         if ($forced) {
 
             /**
-             *
              * Forced cancelling is called after calling Paddle cancel API
              * which means subscription()->cancelNow() will return an error because
              * it again calls the API
              * Therefore, instead of calling cancelNow(), we only do the part that updates
              * data in our database
              *
-             *
              * This code is taken from Laravel\Paddle\Subscription::cancelAt()
              */
-            $blog->subscription()->forceFill([
+            $subscription->forceFill([
                 'ends_at' => now(),
             ])->save();
-        } else {
-            $blog->subscription()->cancel();
         }
     }
 
-
-    /**
-     * Validate and return quantity
-     */
-    private static function validateAndGetQuantity(
-        SubscriptionPlanEnum $planName,
-        SubscriptionFrequencyEnum $frequency,
-        int $quantity
-    ): int {
-        if (
-            $planName === SubscriptionPlanEnum::PRO &&
-            $frequency === SubscriptionFrequencyEnum::MONTHLY
-        ) {
-            // for PRO plan
-            throw new TrustedException(
-                "$planName plan does not support monthly billing",
-                TrustedException::ERROR_UNPROCESSABLE
-            );
-        }
-
-        if (
-            $planName === SubscriptionPlanEnum::TEAM &&
-            ($quantity < 3 || $quantity > 99)
-        ) {
-            throw new TrustedException(
-                "Team plan quantity is out of range. $quantity received",
-                TrustedException::ERROR_UNPROCESSABLE
-            );
-        }
-
-        return $planName === SubscriptionPlanEnum::TEAM ? $quantity : 1;
-    }
-
-
-    public static function getPlanConfigById(int $planId): array
+    public static function getPlanConfigById(int $planId): PaddlePlan
     {
         $plans = config('blogs.paddle_plans');
 
         foreach ($plans as $plan) {
-            if ($plan['id'] === $planId) {
+            if ($plan->id === $planId) {
                 return $plan;
             }
         }
+
+        throw new TrustedException("Unable to find a plan with plan ID $planId");
     }
 
     public static function getPlanConfigFromPlanNameAndFrequency(
         SubscriptionPlanEnum $planName,
         SubscriptionFrequencyEnum $frequency
-    ): array {
+    ): PaddlePlan {
+
+        /**
+         * @var $plans PaddlePlan[]
+         */
         $plans = config('blogs.paddle_plans');
 
         foreach ($plans as $plan) {
             if (
-                $plan['name'] === $planName &&
-                $plan['frequency'] === $frequency
+                $plan->name === $planName &&
+                $plan->frequency === $frequency
             ) {
                 return $plan;
             }

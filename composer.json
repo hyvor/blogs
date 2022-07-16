@@ -30,7 +30,7 @@
         "hyvor/laravel-json-meta": "0.0.3",
         "hyvor/php-svg-icons": "1.0.0",
         "hyvor/scssphp": "2.0.1",
-        "laravel/cashier-paddle": "^1.4",
+        "laravel/cashier-paddle": "^1.6.1",
         "laravel/framework": "^9.19.0",
         "laravel/scout": "^9.4",
         "laravel/telescope": "^4.6",

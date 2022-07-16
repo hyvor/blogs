@@ -8,7 +8,7 @@ use App\Http\Controllers\ConsoleAPI\ConsoleImportExportController;
 use App\Http\Controllers\ConsoleAPI\ConsoleLanguageController;
 use App\Http\Controllers\ConsoleAPI\ConsoleMediaController;
 use App\Http\Controllers\ConsoleAPI\ConsolePostController;
-use App\Http\Controllers\ConsoleAPI\ConsoleSubscriptionController;
+use App\Http\Controllers\ConsoleAPI\ConsoleBillingController;
 use App\Http\Controllers\ConsoleAPI\ConsoleUserBlogController;
 use App\Http\Controllers\ConsoleAPI\ConsoleUserController;
 use App\Http\Controllers\ConsoleAPI\ConsoleRedirectController;
@@ -218,10 +218,10 @@ Route::prefix('/api/console/v0/blog/{subdomain}')
     Route::middleware('role:owner|admin|finance')->group(function() {
 
         // billing
-        Route::get('/subscription', [ConsoleSubscriptionController::class, 'getData']);
-        Route::post('/subscription', [ConsoleSubscriptionController::class, 'createPayLink']);
-        Route::patch('/subscription', [ConsoleSubscriptionController::class, 'updateSubscription']);
-        Route::delete('/subscription', [ConsoleSubscriptionController::class, 'cancelSubscription']);
+        Route::get('/billing', [ConsoleBillingController::class, 'getData']);
+        Route::post('/billing/subscription', [ConsoleBillingController::class, 'createSubscription']);
+        Route::patch('/billing/subscription', [ConsoleBillingController::class, 'updateSubscription']);
+        Route::delete('/billing/subscription', [ConsoleBillingController::class, 'cancelSubscription']);
 
     });
 

@@ -4,7 +4,7 @@ namespace App\Data\Objects\ConsoleAPI\UserBlog;
 
 use App\Data\Enums\BlogTypeEnum;
 use App\Data\Enums\CountEnum;
-use App\Data\Objects\ConsoleAPI\BlogSubscription\SubscriptionObject;
+use App\Data\Objects\ConsoleAPI\Billing\SubscriptionObject;
 use App\Data\Objects\ConsoleAPI\LanguageObject;
 use App\Domains\Count\CountRepository;
 use App\Domains\Route\PermalinkRepository;

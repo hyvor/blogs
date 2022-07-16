@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Data\Objects\ConsoleAPI\BlogSubscription;
+namespace App\Data\Objects\ConsoleAPI\Billing;
 
 use App\Models\Blog;
 use Laravel\Paddle\Subscription;
@@ -26,12 +26,8 @@ class SubscriptionInfoObject
     public ?float $next_payment;
     public ?int $next_payment_at;
 
-    public function __construct(Blog|Subscription $blogOrSubscription)
+    public function __construct(Subscription $subscription)
     {
-        $subscription = $blogOrSubscription instanceof Blog ?
-            $blogOrSubscription->subscription() :
-            $blogOrSubscription;
-
 
         /**
          * !!!! Caution
