@@ -1,17 +1,15 @@
-import { useValues } from 'kea';
 import React from 'react'
-import api from '../lib/api';
-import subdomainLogic from '../logic/subdomainLogic';
 import BillingHistory from './BillingHistory';
 import CurrentSubscription from './CurrentSubscription';
 import Plans from './Plans';
 import SubscriptionHistory from './SubscriptionHistory';
 import { Usage } from './Usage';
+import getSubdomain from "../logic-helpers/subdomain";
 
 export default function Billing() {
 
-    const { subdomain } = useValues(subdomainLogic);
-    
+    const subdomain = getSubdomain();
+
     return <div className="billing-view">
         <div className="billing-column">
             <div className="box billing-section">

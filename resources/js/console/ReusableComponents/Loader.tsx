@@ -17,7 +17,7 @@ export default function Loader({size = 50, padding = 0} : {size?: number, paddin
 
 }
 
-export function FullPageLoader({text} : {text: string}) {
+export function FullPageLoader({text} : {text?: string}) {
 
     return <div className="global-full-page-loader">
         <Loader />

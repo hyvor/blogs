@@ -191,11 +191,11 @@ Response:
 ```ts
 interface Response {
     info: SubscriptionInfo,
-    subscriptions: Subscriptions[],
+    subscriptions: Subscription[],
     receipts: Receipt[],
     usage: {
-        users: UsageObject,
-        media: UsageObject
+        users: Usage,
+        media: Usage
     }
 }
 ```

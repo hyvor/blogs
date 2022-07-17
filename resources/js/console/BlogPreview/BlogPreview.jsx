@@ -1,7 +1,7 @@
 import { useValues } from 'kea';
 import React, { useState } from 'react'
 import subdomainLogic from '../logic/subdomainLogic';
-import blogsLogic from '../logic/blogsLogic'
+import userBlogsLogic from '../logic/userBlogsLogic'
 import { BoxArrowUpRight, Laptop, Phone, Tablet } from 'react-bootstrap-icons';
 import Loader from '../ReusableComponents/Loader';
 
@@ -9,7 +9,7 @@ import Loader from '../ReusableComponents/Loader';
 export default function BlogPreview() {
 
     const { subdomain } = useValues(subdomainLogic);
-    const { findBlogBySubdomain } = useValues(blogsLogic)
+    const { findBlogBySubdomain } = useValues(userBlogsLogic)
     const [type, setType] = useState('laptop');
 
     const [isLoading, setIsLoading] = useState(true);

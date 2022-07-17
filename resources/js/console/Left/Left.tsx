@@ -4,7 +4,7 @@ import BlogsSelector from './BlogsSelector';
 import {useActions, useValues} from 'kea';
 import subdomainLogic from '../logic/subdomainLogic';
 import NavLink from '../ReusableComponents/NavLink';
-import blogsLogic from '../logic/blogsLogic';
+import userBlogsLogic from '../logic/userBlogsLogic';
 import {
     Chat, Coin,
     Exclamation,
@@ -22,7 +22,7 @@ export default function Left() {
 
     const { subdomain } = useValues(subdomainLogic);
 
-    const { findBlogBySubdomain } = useValues(blogsLogic);
+    const { findBlogBySubdomain } = useValues(userBlogsLogic);
 
     if (!subdomain) {
         return null;
@@ -131,6 +131,7 @@ function LeftLink({path, icon, name, extra = null, permission} : LeftLinkProps) 
         href={`/console/${subdomain}${path}`}
         exact={path === '' ? 1 : 0}
         className={!perm ? "global-no-permissions" : ""}
+        data-attr={"main-nav-" + name.toLowerCase()}
     >{icon}<span className="name">{name}</span>{extra}</NavLink>
 }
 

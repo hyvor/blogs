@@ -1,7 +1,7 @@
 import { useValues } from 'kea'
 import Billing from './Billing/Billing'
 import BlogPreview from './BlogPreview/BlogPreview'
-import blogsLogic from './logic/blogsLogic'
+import userBlogsLogic from './logic/userBlogsLogic'
 import sceneLogic from './logic/sceneLogic'
 import Left from './Left/Left'
 import NewBlog from './NewBlog'
@@ -32,7 +32,7 @@ export const scenes = {
 
 export default function Scene() {
 
-    blogsLogic.mount()
+    userBlogsLogic.mount()
 
     const { scene, params } = useValues(sceneLogic)
 

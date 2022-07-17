@@ -1,4 +1,4 @@
-import blogsLogic from "../logic/blogsLogic";
+import userBlogsLogic from "../logic/userBlogsLogic";
 import {UserBlog} from "../objects/userblog"
 import {appConfig} from "../helpers";
 import {UserRole} from "../enums";
@@ -8,7 +8,7 @@ import getSubdomain from "../logic-helpers/subdomain";
 export default class UserPermissions {
 
     static getRole() : UserRole {
-        const blog : UserBlog = blogsLogic.values.findBlogBySubdomain(getSubdomain())
+        const blog : UserBlog = userBlogsLogic.values.findBlogBySubdomain(getSubdomain())
         return blog.user.role;
     }
 

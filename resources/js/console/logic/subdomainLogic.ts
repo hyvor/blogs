@@ -1,7 +1,7 @@
 import {actions, events, kea, listeners, path, reducers} from "kea";
 import { router } from "kea-router";
 import blogLogic from "./blogLogic";
-import blogsLogic from "./blogsLogic";
+import userBlogsLogic from "./userBlogsLogic";
 import postsLogic from "./postsLogic";
 import sceneLogic from './sceneLogic';
 
@@ -73,7 +73,7 @@ const subdomainLogic = kea<subdomainLogicType>([
 function findDefaultActiveSubdomain() {
 
     const { subdomain: subdomainOnLoad} = sceneLogic.values.params;
-    const { blogs, findBlogBySubdomain } = blogsLogic.values;
+    const { blogs, findBlogBySubdomain } = userBlogsLogic.values;
 
     if (subdomainOnLoad && findBlogBySubdomain(subdomainOnLoad)) {
         return subdomainOnLoad

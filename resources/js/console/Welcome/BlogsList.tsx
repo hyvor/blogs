@@ -1,13 +1,13 @@
 import React from 'react'
 import {useValues} from "kea";
-import blogsLogic from "../logic/blogsLogic";
+import userBlogsLogic from "../logic/userBlogsLogic";
 import {UserBlog} from '../objects/userblog';
 import NavLink from "../ReusableComponents/NavLink";
 import {BlogType} from "../enums";
 
 export default function BlogsList() {
 
-    const { blogs } = useValues(blogsLogic());
+    const { blogs } = useValues(userBlogsLogic());
 
     return <div className="blogs-list">
 

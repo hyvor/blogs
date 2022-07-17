@@ -20,5 +20,9 @@ import './commands'
 // require('./commands')
 
 before(() => {
-    cy.exec('php artisan migrate:fresh --seed');
+    // cy.exec('php artisan migrate:fresh --seed');
+})
+
+beforeEach(() => {
+    cy.visit('/console/test');
 })

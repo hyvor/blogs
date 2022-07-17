@@ -1,6 +1,6 @@
 import { useActions, useValues } from 'kea';
 import React, { useState } from 'react';
-import blogsLogic from '../logic/blogsLogic';
+import userBlogsLogic from '../logic/userBlogsLogic';
 import subscriptionLogic from '../logic/subscriptionLogic';
 import dayjs from 'dayjs';
 import Loader from '../ReusableComponents/Loader';
@@ -9,11 +9,11 @@ import { BoxArrowUpRight, Clock, CreditCard2FrontFill, ExclamationCircle } from 
 import Callout from '../ReusableComponents/Callout';
 import NoResults from '../ReusableComponents/NoResults';
 import { PopupConfirm } from '../ReusableComponents/Popup';
+import {SubscriptionInfo} from "../types";
 
-export default function CurrentSubscription({subdomain}) {
+export default function CurrentSubscription({subdomain} : {subdomain: string}) {
 
-    const { findBlogBySubdomain } = useValues(blogsLogic);
-
+    const { findBlogBySubdomain } = useValues(userBlogsLogic);
     const { blog, blog: { subscription: currentSubscription} } = findBlogBySubdomain(subdomain);
 
     const subscriptionLogicInst = subscriptionLogic({subdomain});
@@ -98,7 +98,7 @@ export default function CurrentSubscription({subdomain}) {
                             icon={<Clock />}
                             text={
                                 <div>
-                                    This blog is currently on the 30-days trial period, which gives access to all the features. The trial expires in <b>{trialDaysDiff} day{ trialDaysDiff === 1 ? "" : "s" }</b>.
+                                    This blog is currently on the 30-days trial period. The trial expires in <b>{trialDaysDiff} day{ trialDaysDiff === 1 ? "" : "s" }</b>.
                                 </div>
                             }
                             color="blue"
@@ -220,7 +220,7 @@ export default function CurrentSubscription({subdomain}) {
 
 }
 
-function InfoSection({info}) {
+function InfoSection({info} : {info: SubscriptionInfo}) {
 
     if (!info)
         return null;

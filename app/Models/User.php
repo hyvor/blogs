@@ -37,4 +37,9 @@ class User extends Model
     {
         return $this->hasOne(Media::class, 'picture_id');
     }
+
+    function countsDefinition()
+    {
+        return [];
+    }
 }

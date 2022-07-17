@@ -24,14 +24,14 @@
 //
 // -- This will overwrite an existing command --
 // Cypress.Commands.overwrite('visit', (originalFn, url, options) => { ... })
+
 //
-// declare global {
-//   namespace Cypress {
-//     interface Chainable {
-//       login(email: string, password: string): Chainable<void>
-//       drag(subject: string, options?: Partial<TypeOptions>): Chainable<Element>
-//       dismiss(subject: string, options?: Partial<TypeOptions>): Chainable<Element>
-//       visit(originalFn: CommandOriginalFn, url: string, options: Partial<VisitOptions>): Chainable<Element>
-//     }
-//   }
-// }
+declare namespace Cypress {
+    interface Chainable<Subject> {
+        clickMainNav: (name: string) => Chainable<any>
+    }
+}
+
+Cypress.Commands.add('clickMainNav', (name) => {
+    cy.get(`[data-attr="main-nav-${name}"]`).click().should('have.class', "active");
+});

@@ -2,14 +2,14 @@ import { useActions, useValues } from 'kea';
 import React, { useState } from 'react';
 import { BoxArrowUpRight } from 'react-bootstrap-icons';
 import { toast } from 'react-toastify';
-import blogsLogic from '../logic/blogsLogic';
+import userBlogsLogic from '../logic/userBlogsLogic';
 import subscriptionLogic from '../logic/subscriptionLogic';
 import { FullPageLoader } from '../ReusableComponents/Loader';
 import { PopupConfirm, PopupNotice } from '../ReusableComponents/Popup';
 
 export default function Plans({subdomain}) {
 
-    const { findBlogBySubdomain } = useValues(blogsLogic);
+    const { findBlogBySubdomain } = useValues(userBlogsLogic);
     const { blog: { subscription: currentSubscription} } = findBlogBySubdomain(subdomain);
 
     const [frequency, setFrequency] = useState
@@ -37,10 +37,10 @@ export default function Plans({subdomain}) {
                 <Plan subdomain={subdomain} frequency={frequency} type="enterprise" name="Enterprise" />
             </div>
             <div className="section-desc">
-                Prices are shown in USD, excluding VAT. <br/>
+                Prices are shown in USD, including all VAT charges <br/>
                 <div>
                     <a href="/pricing" className="link" target="_blank">
-                        <span>Pricing & Features</span>
+                        <span>Pricing</span>
                         <span className="icon"><BoxArrowUpRight /></span>
                     </a>
                 </div>
@@ -69,7 +69,7 @@ function Frequency({type, name, frequency, setFrequency}) {
 
 function Plan({name, type, teamUsers, setTeamUsers, frequency, subdomain}) {
 
-    const { findBlogBySubdomain } = useValues(blogsLogic);
+    const { findBlogBySubdomain } = useValues(userBlogsLogic);
     const { blog, blog: { subscription: currentSubscription} } = findBlogBySubdomain(subdomain);
 
     const subscriptionLogicInst = subscriptionLogic({subdomain});

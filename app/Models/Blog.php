@@ -74,6 +74,18 @@ class Blog extends Model
         $definer->add('syntax_theme')->default(null);
     }
 
+    protected function countsDefinition()
+    {
+        return [
+            'users',
+            'posts',
+            'posts_draft',
+            'posts_scheduled',
+            'posts_featured',
+            'media'
+        ];
+    }
+
     protected $with = [
         'variants',
     ];

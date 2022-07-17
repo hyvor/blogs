@@ -30,6 +30,7 @@ class CreateBlogsTable extends Migration
             $table->string('hosting_url')->nullable(); // for self
 
             $table->json('meta')->nullable();
+            $table->json('counts')->nullable();
             
             // index
             $table->index('type');

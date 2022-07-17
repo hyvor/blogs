@@ -1,22 +1,22 @@
 import axios, {AxiosResponse} from "axios";
-import {actions, kea, MakeLogicType, reducers, selectors} from "kea";
+import {actions, kea, reducers, selectors} from "kea";
 import { getUserEndpoint } from "../lib/api";
 import subdomainLogic from "./subdomainLogic";
 
 import { UserBlog } from "../objects/userblog";
 import {appConfig} from "../helpers";
 
-import type { blogsLogicType } from "./blogsLogicType";
+import type { userBlogsLogicType} from "./userBlogsLogicType";
 import {ajax} from "kea-ajax";
 
-const blogsLogic = kea<blogsLogicType>([
+const userBlogsLogic = kea<userBlogsLogicType>([
 
     actions({
         addBlog: (userBlog) => ({ userBlog }),
         setBlogs: (blogs) => ({ blogs }),
     }),
 
-    ajax(({ actions, values } : blogsLogicType) => ({
+    ajax(({ actions, values }) => ({
         createBlog: async (
             { name, subdomain, isDev} :
             {
@@ -67,4 +67,4 @@ const blogsLogic = kea<blogsLogicType>([
     })
 
 ]);
-export default blogsLogic;
+export default userBlogsLogic;

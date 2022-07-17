@@ -6,7 +6,6 @@ use App\Data\Enums\BlogHostingAtEnum;
 use App\Data\Enums\ColorModeDefaultEnum;
 use App\Data\Enums\ColorModesEnum;
 use App\Data\Enums\CommentsTypeEnum;
-use App\Data\Enums\CountEnum;
 use App\Data\Enums\SeoExternalLinksFollowEnum;
 use App\Data\Objects\ConsoleAPI\BlogObject;
 use App\Data\Objects\ConsoleAPI\BlogVariantObject;
@@ -14,7 +13,6 @@ use App\Data\Objects\ConsoleAPI\LanguageObject;
 use App\Data\Objects\ConsoleAPI\Tag\TagObject;
 use App\Data\Objects\ConsoleAPI\User\UserObject;
 use App\Domains\Blog\BlogService;
-use App\Domains\Count\CountRepository;
 use App\Domains\Language\LanguageRepository;
 use App\Domains\Tag\TagRepository;
 use App\Domains\User\UserRepository;
@@ -41,20 +39,14 @@ class ConsoleBlogController extends Controller
      */
     public function getBlogData(Blog $blog)
     {
-        $counts = CountRepository::getCounts(new Blog(), [
-            CountEnum::BLOG_POSTS,
-            CountEnum::BLOG_POSTS_DRAFT,
-            CountEnum::BLOG_POSTS_SCHEDULED,
-            CountEnum::BLOG_POSTS_FEATURED,
-        ]);
 
         return response()->json([
             'blog' => new BlogObject($blog),
             'counts' => [
-                'published' => $counts[CountEnum::BLOG_POSTS->value],
-                'draft' => $counts[CountEnum::BLOG_POSTS_DRAFT->value],
-                'scheduled' => $counts[CountEnum::BLOG_POSTS_SCHEDULED->value],
-                'featured' => $counts[CountEnum::BLOG_POSTS->value],
+                'published' => $blog->count('posts'),
+                'draft' => $blog->count('posts_draft'),
+                'scheduled' => $blog->count('posts_scheduled'),
+                'featured' => $blog->count('posts_featured'),
             ],
             'users' => UserRepository::getUsers($blog, limit: 15)->map(fn ($user) => new UserObject($user, $blog)),
             'tags' => TagRepository::getTags($blog, limit: 15)->map(fn ($tag) => new TagObject($tag, $blog)),
