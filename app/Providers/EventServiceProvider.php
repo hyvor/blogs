@@ -2,6 +2,7 @@
 
 namespace App\Providers;
 
+use App\Domains\Shared\CountSubscriber;
 use App\Domains\Cache\Listeners\ClearTemplateCacheSubscriber;
 use App\Domains\Post\Events\PostVariantUpdatedEvent;
 use App\Domains\Post\Listeners\PostVariantUpdateContentHtmlListener;
@@ -27,6 +28,7 @@ class EventServiceProvider extends ServiceProvider
     protected $subscribe = [
 
         ClearTemplateCacheSubscriber::class,
+        CountSubscriber::class
 
     ];
 

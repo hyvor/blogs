@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Domains\_Shared;
+namespace App\Domains\Shared;
 
 use App\Models\Blog;
 use Illuminate\Support\Str;

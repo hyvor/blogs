@@ -37,7 +37,7 @@ trait Countable
         });
     }*/
 
-    public function count(string $name) : int
+    public function getCount(string $name) : int
     {
         $this->validateCountName($name);
 
