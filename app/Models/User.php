@@ -40,6 +40,8 @@ class User extends Model
 
     function countsDefinition()
     {
-        return [];
+        return [
+            'posts'
+        ];
     }
 }

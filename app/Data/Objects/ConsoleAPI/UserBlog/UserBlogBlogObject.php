@@ -3,9 +3,7 @@
 namespace App\Data\Objects\ConsoleAPI\UserBlog;
 
 use App\Data\Enums\BlogTypeEnum;
-use App\Data\Enums\CountEnum;
 use App\Data\Objects\ConsoleAPI\Billing\SubscriptionObject;
-use App\Domains\Count\CountRepository;
 use App\Domains\Route\PermalinkRepository;
 use App\Models\Blog;
 
@@ -34,8 +32,8 @@ class UserBlogBlogObject
         $this->base_url = PermalinkRepository::getFullUrlFromPath($blog);
         $this->logo_url = $blog->logo_url;
 
-        $this->posts_count = $blog->count('posts');
-        $this->users_count = $blog->count('users');
+        $this->posts_count = $blog->getCount('posts');
+        $this->users_count = $blog->getCount('users');
 
         $this->is_on_trial = $blog->onTrial();
         $this->trial_ends_at = $blog->customer->trial_ends_at?->timestamp;

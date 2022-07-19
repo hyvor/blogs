@@ -2,7 +2,7 @@
 
 namespace App\Providers;
 
-use App\Domains\Shared\CountSubscriber;
+use App\Domains\Shared\Count\CountSubscriber;
 use App\Domains\Cache\Listeners\ClearTemplateCacheSubscriber;
 use App\Domains\Post\Events\PostVariantUpdatedEvent;
 use App\Domains\Post\Listeners\PostVariantUpdateContentHtmlListener;
