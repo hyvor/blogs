@@ -4,13 +4,12 @@ namespace App\Domains\Shared\Count;
 
 use App\Domains\Language\LanguageRepository;
 use App\Models\Blog;
-use App\Models\User;
 use Illuminate\Contracts\Queue\ShouldBeUnique;
 use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Foundation\Bus\Dispatchable;
 use Illuminate\Support\Facades\DB;
 
-class AuthorCountsJob implements ShouldQueue, ShouldBeUnique
+class TagCountsJob implements ShouldQueue, ShouldBeUnique
 {
 
     use Dispatchable;
@@ -23,17 +22,17 @@ class AuthorCountsJob implements ShouldQueue, ShouldBeUnique
 
         $language = LanguageRepository::getPrimaryLanguage($this->blog);
 
-        DB::statement('UPDATE users as u SET posts_count =
+        DB::statement('UPDATE tags as t SET posts_count =
             (
-                SELECT COUNT(post_author.id) 
-                FROM post_author
-                INNER JOIN post_variants on post_author.post_id = post_variants.post_id
+                SELECT COUNT(post_tag.id)
+                FROM post_tag
+                INNER JOIN post_variants on post_tag.post_id = post_variants.post_id
                 WHERE
-                      post_author.user_id = u.id AND
-                      post_variants.language_id = ? AND 
+                      post_tag.tag_id = t.id AND
+                      post_variants.language_id = ? AND
                       post_variants.status = ?
             )
-            WHERE u.blog_id = ?
+            WHERE t.blog_id = ?
         ', [$language->id, 'published', $this->blog->id]);
 
     }
@@ -42,5 +41,6 @@ class AuthorCountsJob implements ShouldQueue, ShouldBeUnique
     {
         return $this->blog->id;
     }
+
 
 }

@@ -2,14 +2,10 @@
 
 namespace App\Domains\Shared\Count;
 
-use App\Data\Enums\PostStatusEnum;
-use App\Domains\Language\LanguageRepository;
 use App\Domains\Post\Events\PostCreatedEvent;
 use App\Domains\Post\Events\PostDeletedEvent;
 use App\Domains\Post\Events\PostVariantUpdatedEvent;
 use App\Models\Blog;
-use App\Models\Post;
-use App\Models\PostVariant;
 use Illuminate\Events\Dispatcher;
 
 class CountSubscriber
@@ -25,14 +21,20 @@ class CountSubscriber
     public function onPostCreateOrDelete(PostCreatedEvent|PostDeletedEvent $event)
     {
         $blog = $event->post->blog;
-        BlogCountsJob::dispatch($blog);
+        $this->dispatch($blog);
     }
 
     public function onPostVariantUpdate(PostVariantUpdatedEvent $event)
     {
         if ($event->variant->status !== $event->variantOld->status) {
-            BlogCountsJob::dispatch($event->variant->post->blog);
+            $this->dispatch($event->variant->post->blog);
         }
+    }
+
+    private function dispatch(Blog $blog) {
+        BlogCountsJob::dispatch($blog);
+        AuthorCountsJob::dispatch($blog);
+        TagCountsJob::dispatch($blog);
     }
 
 }

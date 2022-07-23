@@ -4,21 +4,21 @@ namespace Tests\Unit\Domains\Shared\Count;
 
 use App\Domains\Blog\Fillers\LanguageFiller;
 use App\Domains\Language\LanguageRepository;
-use App\Domains\Shared\Count\AuthorCountsJob;
+use App\Domains\Shared\Count\TagCountsJob;
 use App\Models\Post;
-use App\Models\PostAuthor;
+use App\Models\PostTag;
 use App\Models\PostVariant;
-use App\Models\User;
+use App\Models\Tag;
 
-it('counts author posts for multiple users', function() {
+it('counts tag posts for multiple tag', function() {
 
     $blog = newBlog();
     (new LanguageFiller($blog))->fill();
 
     LanguageRepository::createLanguage($blog, 'fr', 'French');
 
-    $user = User::factory()->create(['blog_id' => $blog]);
-    $user1 = User::factory()->create(['blog_id' => $blog]);
+    $tag = Tag::factory()->create(['blog_id' => $blog]);
+    $tag1 = Tag::factory()->create(['blog_id' => $blog]);
 
     // drafts (shouldn't be counted)
     $drafts = Post::factory()
@@ -56,15 +56,15 @@ it('counts author posts for multiple users', function() {
 
     foreach ([$drafts, $otherLang, $published] as $posts) {
         foreach ($posts as $post) {
-            PostAuthor::create([
+            PostTag::create([
                 'post_id' => $post->id,
-                'user_id' => $user->id
+                'tag_id' => $tag->id
             ]);
         }
     }
 
     // COUNTED
-    $user1Posts = Post::factory()
+    $tag1Posts = Post::factory()
         ->count(3)
         ->has(PostVariant::factory()->state([
             'language_id' => $blog->languages[0]->id,
@@ -74,20 +74,20 @@ it('counts author posts for multiple users', function() {
             'blog_id' => $blog
         ]);
 
-    foreach ($user1Posts as $post) {
-        PostAuthor::create([
+    foreach ($tag1Posts as $post) {
+        PostTag::create([
             'post_id' => $post->id,
-            'user_id' => $user1->id
+            'tag_id' => $tag1->id
         ]);
     }
 
-    $job = new AuthorCountsJob($blog);
+    $job = new TagCountsJob($blog);
     $job->handle();
 
-    $user->refresh();
-    expect($user->posts_count)->toBe(2);
+    $tag->refresh();
+    expect($tag->posts_count)->toBe(2);
 
-    $user1->refresh();
-    expect($user1->posts_count)->toBe(3);
+    $tag1->refresh();
+    expect($tag1->posts_count)->toBe(3);
 
 });
