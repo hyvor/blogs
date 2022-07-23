@@ -10,7 +10,6 @@ use Illuminate\Database\Eloquent\Model;
 
 class User extends Model
 {
-    use Countable;
     use HasFactory;
 
     protected $casts = [
@@ -38,10 +37,4 @@ class User extends Model
         return $this->hasOne(Media::class, 'picture_id');
     }
 
-    function countsDefinition()
-    {
-        return [
-            'posts'
-        ];
-    }
 }
