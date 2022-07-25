@@ -25,6 +25,8 @@ Are you ready to publish your newly built theme to our [themes list](/themes)? T
 * All [blocks](writing#blocks) are styled properly.
 * Configurations are added for colors, fonts, etc.
 * Mobile responsive
+* Featured posts may have some unique UI in the index page (ex: a pinned/star icon)
+
 
 ## Config
 

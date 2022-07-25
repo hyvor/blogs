@@ -2,7 +2,7 @@
 
 namespace App\Console;
 
-use App\Jobs\Scheduled\Counts\BlogCountJob;
+use App\Domains\Post\Jobs\PublishScheduledPosts;
 use Illuminate\Console\Scheduling\Schedule;
 use Illuminate\Foundation\Console\Kernel as ConsoleKernel;
 
@@ -25,7 +25,7 @@ class Kernel extends ConsoleKernel
      */
     protected function schedule(Schedule $schedule)
     {
-        $schedule->job(new BlogCountJob())->daily();
+        $schedule->job(new PublishScheduledPosts)->everyFiveMinutes();
     }
 
     /**

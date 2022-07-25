@@ -43,10 +43,10 @@ class ConsoleBlogController extends Controller
         return response()->json([
             'blog' => new BlogObject($blog),
             'counts' => [
-                'published' => $blog->count('posts'),
-                'draft' => $blog->count('posts_draft'),
-                'scheduled' => $blog->count('posts_scheduled'),
-                'featured' => $blog->count('posts_featured'),
+                'published' => $blog->getCount('posts'),
+                'draft' => $blog->getCount('posts_draft'),
+                'scheduled' => $blog->getCount('posts_scheduled'),
+                'featured' => $blog->getCount('posts_featured'),
             ],
             'users' => UserRepository::getUsers($blog, limit: 15)->map(fn ($user) => new UserObject($user, $blog)),
             'tags' => TagRepository::getTags($blog, limit: 15)->map(fn ($tag) => new TagObject($tag, $blog)),

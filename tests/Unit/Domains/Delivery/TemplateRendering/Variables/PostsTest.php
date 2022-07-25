@@ -133,3 +133,28 @@ it('does not return 404 for the first page even posts are not found', function (
     expect($responseObject->status)->toBe(200);
     expect($responseObject->content)->toBe('0');
 });
+
+it('sets featured posts first in _post', function() {
+
+    clearPosts();
+
+    seedPublishedPosts(3);
+
+    $post = $this->blog->posts[2];
+    $post->update(['is_featured' => true]);
+
+    $content = '{% if _posts[0].is_featured %}featured{% endif %}';
+
+    ThemeFilesRepository::createOrUpdateFile(
+        $this->blog,
+        ThemeFileFolderEnum::TEMPLATES,
+        'index.twig',
+        $content,
+    );
+
+    $pathMatcher = new PathMatcher($this->blog, '/');
+    $responseObject = $pathMatcher->getResponseObject();
+
+    expect($responseObject->content)->toBe('featured');
+
+});

@@ -44,6 +44,13 @@ function post()
     return Post::factory()->create(['blog_id' => config('test.blog_id')]);
 }
 
+function postWithVariant($post = [], $variant = [])
+{
+    return Post::factory()
+    ->has(PostVariant::factory()->state($variant), 'variants')
+    ->create($post);
+}
+
 function aPublishedPost()
 {
     $post = Post::where(['is_page' => false, 'blog_id' => config('test.blog_id')])->first();

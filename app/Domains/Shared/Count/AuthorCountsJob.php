@@ -4,7 +4,6 @@ namespace App\Domains\Shared\Count;
 
 use App\Domains\Language\LanguageRepository;
 use App\Models\Blog;
-use App\Models\User;
 use Illuminate\Contracts\Queue\ShouldBeUnique;
 use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Foundation\Bus\Dispatchable;

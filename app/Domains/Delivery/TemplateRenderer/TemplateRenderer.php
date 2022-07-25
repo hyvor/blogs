@@ -254,7 +254,11 @@ class TemplateRenderer
             language: $this->pathMatcher->language,
             filter: $this->filter,
             limit: $limit,
-            offset: $offset
+            offset: $offset,
+            orderBys: [
+                ['posts.is_featured', 'DESC'],
+                ['posts.published_at', 'DESC']
+            ]
         );
 
         if (count($collectionWithTotal->collection) === 0 && $pageNumber > 1) {
