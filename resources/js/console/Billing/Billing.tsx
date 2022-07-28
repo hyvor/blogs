@@ -41,7 +41,7 @@ export default function Billing() {
                     Subscription History
                 </div>
                 <div className="section-content">
-                    <SubscriptionHistory subdomain={subdomain} />
+                    <SubscriptionHistory />
                 </div>
             </div>
         </div>

@@ -4,9 +4,11 @@ import subscriptionLogic from '../logic/subscriptionLogic';
 import Loader from '../ReusableComponents/Loader';
 import NoResults from '../ReusableComponents/NoResults';
 import { FriendlyDate } from '../ReusableComponents/Time';
+import getSubdomain from "../logic-helpers/subdomain";
 
-export default function SubscriptionHistory({subdomain}) {
+export default function SubscriptionHistory() {
 
+    const subdomain = getSubdomain();
     const { data, loadAjax } = useValues(subscriptionLogic({subdomain}));
 
     return <div className="billing-history subscription-history">
@@ -28,8 +30,8 @@ export default function SubscriptionHistory({subdomain}) {
                     {
                         data.subscriptions.map(subscription => {
                             
-                            let statusClass = subscription.status
-                            let statusName = subscription.status;
+                            let statusClass: string = subscription.status
+                            let statusName: string = subscription.status;
                             if (subscription.status === 'past_due') {
                                 statusClass = 'past-due'
                                 statusName = 'Past due';

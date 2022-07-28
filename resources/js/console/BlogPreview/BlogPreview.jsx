@@ -5,7 +5,6 @@ import userBlogsLogic from '../logic/userBlogsLogic'
 import { BoxArrowUpRight, Laptop, Phone, Tablet } from 'react-bootstrap-icons';
 import Loader from '../ReusableComponents/Loader';
 
-
 export default function BlogPreview() {
 
     const { subdomain } = useValues(subdomainLogic);
