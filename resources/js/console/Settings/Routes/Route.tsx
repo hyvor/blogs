@@ -2,13 +2,13 @@ import {useActions} from "kea";
 import React, {useState} from "react";
 import {PencilFill, Trash} from "react-bootstrap-icons";
 import {PopupConfirm} from "../../ReusableComponents/Popup";
-import {Route} from "../../types";
+import {Route as RouteType} from "../../types";
 import routesLogic from "../../logic/routesLogic";
 import {TableRow, TableRowItem} from "../../ReusableComponents/Table";
 import CreateUpdateRoutePopup from "./CreateUpdateRoutePopup";
 import getSubdomain from "../../logic-helpers/subdomain";
 
-export default function Route({route}: {route: Route}){
+export default function Route({route}: {route: RouteType}){
 
     const routeLogicInst = routesLogic({subdomain: getSubdomain()})
     const { remove } = useActions(routeLogicInst)

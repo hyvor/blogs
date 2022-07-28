@@ -3,8 +3,8 @@
 body.pricing {
 
     .pricing-table {
-        padding-top: 75px;
-        background: $color-accent-light;
+        padding-top: 115px;
+        background: $color-accent-very-light;
 
         p {
             font-size:14px;
@@ -20,7 +20,7 @@ body.pricing {
             font-size:14px;
         }
 
-        tr:not(:first-child):not(:last-child) {
+        tr:not(:first-child) {
             box-shadow: 0 0 30px rgb(0 0 0 / 5%);
             border-radius: 20px;
             td {
@@ -42,40 +42,39 @@ body.pricing {
         th, td {
             padding:30px;
             width:20%;
-            vertical-align: top;
+            vertical-align: middle;
         }
 
-        .plan-name {
-            font-size: 14px;
-            color: $color-text;
+        th {
+            // font-size: 20px;
+            color: #777;
+            padding: 10px 30px;
         }
-        .plan-price {
-            margin-top: 10px;
-            display: flex;
+        td:first-child {
+            // font-size: 18px;
         }
-
         .price {
-            font-size:30px;
-            line-height:30px;
+            //font-size: 19px;
+            font-weight: 600;
         }
-        .price-details {
-            display: flex;
-            flex-direction: column;
-            margin-left: 6px;
-            font-weight: normal;
-            font-size: 12px;
-            color: $color-text;
-            .period {
-                line-height:1;
-                margin-bottom:2px;
+    }
+
+    .faqs {
+        padding: 40px;
+        .faq {
+            width: 550px;
+            margin: auto;
+            max-width: 100%;
+            margin-bottom: 50px;
+            h3 {
+                font-size: 18px;
             }
         }
-        .plan-price-monthly {
-            font-size: 14px;
-            font-weight: normal;
-            color:$color-text;
-            margin-top: 4px;    
-        }
+    }
+
+    .button-main {
+        text-align: center;
+        padding-bottom: 40px;
     }
 
 }

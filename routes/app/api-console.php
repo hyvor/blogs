@@ -8,7 +8,7 @@ use App\Http\Controllers\ConsoleAPI\ConsoleImportExportController;
 use App\Http\Controllers\ConsoleAPI\ConsoleLanguageController;
 use App\Http\Controllers\ConsoleAPI\ConsoleMediaController;
 use App\Http\Controllers\ConsoleAPI\ConsolePostController;
-use App\Http\Controllers\ConsoleAPI\ConsoleSubscriptionController;
+use App\Http\Controllers\ConsoleAPI\ConsoleBillingController;
 use App\Http\Controllers\ConsoleAPI\ConsoleUserBlogController;
 use App\Http\Controllers\ConsoleAPI\ConsoleUserController;
 use App\Http\Controllers\ConsoleAPI\ConsoleRedirectController;
@@ -119,6 +119,10 @@ Route::prefix('/api/console/v0/blog/{subdomain}')
 
     });
 
+    /**
+     * Tags
+     * @access OWNER|ADMIN|EDITOR
+     */
     Route::middleware('role:owner|admin|editor')->group(function() {
 
         // tags
@@ -166,7 +170,7 @@ Route::prefix('/api/console/v0/blog/{subdomain}')
         // languages
         Route::get('/languages', [ConsoleLanguageController::class, 'get']);
         Route::post('/language', [ConsoleLanguageController::class, 'create']);
-        Route::put('/language/{id}', [ConsoleLanguageController::class, 'update']);
+        Route::patch('/language/{id}', [ConsoleLanguageController::class, 'update']);
         Route::delete('/language/{id}', [ConsoleLanguageController::class, 'delete']);
         
         // redirects
@@ -190,7 +194,7 @@ Route::prefix('/api/console/v0/blog/{subdomain}')
         // route
         Route::get('/routes', [ConsoleRouteController::class, 'get']);
         Route::post('/route', [ConsoleRouteController::class, 'create']);
-        Route::put('/route/{id}', [ConsoleRouteController::class, 'update']);
+        Route::patch('/route/{id}', [ConsoleRouteController::class, 'update']);
         Route::delete('/route/{id}', [ConsoleRouteController::class, 'delete']);
 
         // theme
@@ -214,17 +218,21 @@ Route::prefix('/api/console/v0/blog/{subdomain}')
     Route::middleware('role:owner|admin|finance')->group(function() {
 
         // billing
-        Route::get('/subscription', [ConsoleSubscriptionController::class, 'getData']);
-        Route::post('/subscription', [ConsoleSubscriptionController::class, 'createPayLink']);
-        Route::patch('/subscription', [ConsoleSubscriptionController::class, 'updateSubscription']);
-        Route::delete('/subscription', [ConsoleSubscriptionController::class, 'cancelSubscription']);
+        Route::get('/billing', [ConsoleBillingController::class, 'getData']);
+        Route::post('/billing/subscription', [ConsoleBillingController::class, 'createSubscription']);
+        Route::patch('/billing/subscription', [ConsoleBillingController::class, 'updateSubscription']);
+        Route::delete('/billing/subscription', [ConsoleBillingController::class, 'cancelSubscription']);
 
     });
 
+    /**
+     * Danger
+     * @access OWNER
+     */
     Route::middleware('role:owner')->group(function() {
 
-        Route::post('/blog/delete', [ConsoleDangerController::class, 'delete']);
-        Route::post('/blog/reset', [ConsoleDangerController::class, 'reset']);
+        Route::delete('/blog', [ConsoleDangerController::class, 'delete']);
+        // Route::post('/blog/reset', [ConsoleDangerController::class, 'reset']);
 
     });
 

@@ -2,7 +2,7 @@ import React from 'react';
 import DualSetting from '../ReusableComponents/DualSetting';
 import Input from '../ReusableComponents/Input';
 import Radio from '../ReusableComponents/Radio';
-import {useBlogActions, useBlogValues} from "./useBlog";
+import {useBlogActions, useBlogValues} from "../logic-helpers/blog";
 import SettingsSave from "../ReusableComponents/SettingsSave";
 import Callout, {CalloutColors} from "../ReusableComponents/Callout";
 import {ExclamationCircle} from "react-bootstrap-icons";
@@ -52,7 +52,7 @@ export default function Hosting() {
                         />
                         <Radio 
                             name="hosted-at"
-                            placeholder="Custom Domain (CNAME)" 
+                            placeholder="Custom Domain"
                             value="domain" 
                             onChange={handleHostedAtChange}
                             checkFor={hostedAt}

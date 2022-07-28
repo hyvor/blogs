@@ -2,7 +2,7 @@
 
 namespace App\Domains\Tag;
 
-use App\Domains\_Shared\UniqueSlugGeneratorAbstract;
+use App\Domains\Shared\UniqueSlugGeneratorAbstract;
 use App\Models\Tag;
 
 class UniqueSlugGenerator extends UniqueSlugGeneratorAbstract

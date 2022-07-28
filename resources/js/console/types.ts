@@ -13,7 +13,8 @@ import {UserBlog} from "./objects/userblog";
 
 export type ConsoleWindow = (typeof window) & {
     appConfig: appConfig,
-    currentSubdomain?: string
+    currentSubdomain?: string,
+    Paddle: any
 }
 
 export interface appConfig {
@@ -237,7 +238,7 @@ export type Media = {
 export interface UnsplashImage {
     url: string;
     author: string;
-    authorUrl: string;
+    author_url: string;
     title: string | null;
     alt: string | null;
 }
@@ -309,4 +310,60 @@ export interface ThemeFile {
     name: string,
     content: string | null,
     folder: ThemeFolder
+}
+
+// === BILLING
+
+export interface Payment {
+    amount: number,
+    currency: string,
+    at: number
+}
+
+export interface SubscriptionInfo {
+
+    email: string,
+
+    card_brand: string,
+    card_last_four: string,
+    card_expiration: string,
+
+    update_url: string,
+
+    last_payment: Payment,
+    next_payment: Payment | null,
+
+}
+
+export type SubscriptionPlan = 'A' | 'B' | 'C' | 'D' | 'E';
+export type SubscriptionFrequency = 'monthly' | 'yearly';
+
+export interface Subscription {
+
+    status: 'active' | 'past_due' | 'paused' | 'deleted',
+    plan: SubscriptionPlan,
+    frequency: SubscriptionFrequency,
+    created_at: number,
+    ends_at: number | null,
+    is_on_grace_period: boolean
+
+}
+
+export interface Receipt {
+
+    id: number,
+    paid_at: number,
+    amount: number,
+    tax: number,
+    currency: number,
+    receipt_url: string
+
+}
+
+export interface Usage {
+
+    current: number;
+    total: number;
+    percentage: number; // float
+
 }

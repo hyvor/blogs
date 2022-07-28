@@ -1,6 +1,6 @@
 import React, {useState} from "react";
 import {TableRow, TableRowItem} from "../../ReusableComponents/Table";
-import {Navigation} from "../../types";
+import {Navigation as NavigationType} from "../../types";
 import {useLanguagesValues} from "../Languages/helpers";
 import {GripHorizontal, GripVertical, PencilFill, Trash} from "react-bootstrap-icons";
 import {PopupConfirm} from "../../ReusableComponents/Popup";
@@ -10,7 +10,7 @@ import {useActions} from "kea";
 import {toast} from "react-toastify";
 import CreateUpdateNavigationPopup from "./CreateUpdateNavigationPopup";
 
-export default function Navigation({ navigation } : { navigation: Navigation }) {
+export default function Navigation({ navigation } : { navigation: NavigationType }) {
 
     const navigationLogicInst = navigationLogic({subdomain: getSubdomain()})
     const { remove } = useActions(navigationLogicInst)

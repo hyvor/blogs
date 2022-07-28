@@ -8,7 +8,6 @@ use Illuminate\Database\Eloquent\SoftDeletes;
 
 class Post extends Model
 {
-    use SoftDeletes;
     use HasFactory;
 
     /**
@@ -53,4 +52,5 @@ class Post extends Model
             ->withPivot('post_author.id')
             ->orderBy('post_author.id', 'ASC');
     }
+
 }

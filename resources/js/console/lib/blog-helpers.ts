@@ -4,13 +4,13 @@
  * blog = array item in blogsLogic (which has both blog and user)
  */
 
-import blogsLogic from "../logic/blogsLogic";
+import userBlogsLogic from "../logic/userBlogsLogic";
 import languagesLogic from "../logic/languagesLogic";
 import {Language} from "../types";
 import {BlogType} from "../enums";
 
 export function getBlogFromSubdomain(subdomain: string) {
-    return blogsLogic.values.findBlogBySubdomain(subdomain).blog;
+    return userBlogsLogic.values.findBlogBySubdomain(subdomain).blog;
 }
 
 export function getPrimaryLanguage(subdomain: string) : Language {

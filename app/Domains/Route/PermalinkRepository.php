@@ -94,6 +94,19 @@ class PermalinkRepository
         }
     }
 
+    /**
+     * Checks if the link belongs to the blog
+     *
+     * @param string $link Absolute URL
+     * @param Blog $blog
+     * @return bool
+     */
+    public static function isLinkInBlog(string $link, Blog $blog) : bool
+    {
+        $base = self::getBlogBasePathWithProtocol($blog);
+        return str_starts_with($link, $base);
+    }
+
 
     public static function getFullUrlFromPath(Blog $blog, ?string $path = null)
     {

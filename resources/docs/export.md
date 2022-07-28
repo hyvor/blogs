@@ -28,6 +28,10 @@ Hyvor Blogs exports data in JSON format with the following data structure.
 ```json
 {
     "blog": { a blog object },
+    "languages": [
+        language object,
+        ...
+    ],
     "posts": [
         post object,
         post object,
@@ -42,20 +46,16 @@ Hyvor Blogs exports data in JSON format with the following data structure.
         tag object,
         ...
     ],
+    "media": [
+        media object,
+        ...
+    ],
     "navigation": [
         navigation object
         ...
     ],
     "routes": [
         route object,
-        ...
-    ],
-    "languages": [
-        language object,
-        ...
-    ],
-    "media": [
-        media object,
         ...
     ],
     "redirects": [
@@ -65,4 +65,16 @@ Hyvor Blogs exports data in JSON format with the following data structure.
 }
 ```
 
-See [Console API Objects](api-console#objects) for the definitions of each object. The only difference is in the **Post Object**. In addition to `content` property, the Post Objects will have `content_html` and `content_markdown` properties with content converted into HTML and Markdown respectively.
+All objects are from the [Console API](api-console)
+
+* [Blog Object](api-console#blog-object)
+* [Language Object](api-console#language-object)
+* [Post Object](api-console#post-object)
+* [User Object](api-console#user-object)
+* [Media Object](api-console#media-object)
+* [Tag Object](api-console#tag-object)
+* [Navigation Object](api-console#navigation-object)
+* [Route Object](api-console#route-object)
+* [Redirect Object](api-console#redirect-object)
+
+> In the **Post Object**, in addition to the `content` property, there will be a `content_html` property with content converted into HTML in the export objects.

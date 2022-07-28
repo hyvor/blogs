@@ -113,9 +113,9 @@ class PostRepository
             ->get();
     }
 
-    public static function getPages(int $blogId)
+    public static function getPages(Blog $blog) : Collection
     {
-        return Post::where('blog_id', $blogId)
+        return Post::where('blog_id', $blog->id)
             ->where('is_page', true)
             ->get();
     }

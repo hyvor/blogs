@@ -16,7 +16,6 @@ class CreateBlogsTable extends Migration
         Schema::create('blogs', function (Blueprint $table) {
             $table->id();
             $table->timestamps();
-            $table->softDeletes();
 
             // connections
             $table->bigInteger('hyvor_user_id')->nullable(); // hyvor user id (owner)
@@ -31,6 +30,7 @@ class CreateBlogsTable extends Migration
             $table->string('hosting_url')->nullable(); // for self
 
             $table->json('meta')->nullable();
+            $table->json('counts')->nullable();
             
             // index
             $table->index('type');

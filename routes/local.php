@@ -1,5 +1,6 @@
 <?php
 
+use App\Domains\Import\Parsers\WordpressParser;
 use App\Domains\Post\Content\PostContentRepository;
 use App\Models\Blog;
 use App\Models\User;

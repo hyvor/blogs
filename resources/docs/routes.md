@@ -1,14 +1,21 @@
 # Routes
 
-You will learn:
-* Default routes of a blog
-* 
-
 Routes are used to configure how specific requests are handled. A route matches the request path and determines what output to send back to the user. For example, if the request path is `/tag/my-tag`, route determines that it should render `tag.twig` and send response back to the user.
+
+* [Default Routes](#defaults)
+* [Customizing Post/Page Permalinks](#permalinks)
+* [Customizing Other Default Routes](#customizing-other)
+* [Custom Routes](#custom)
+* [Route Conflicts](#conflicts)
+* [Suffixes & Prefixes](#suffix-prefix)
+* [Making a Website](#website)
+* [Multiple Post Collections](#collections)
+
+Route Settings: **Console &rarr; Settings &rarr; Routes**
 
 ## Default Routes {#defaults}
 
-A new blog will have these 6 default routes.
+A new blog will have these 5 default routes.
 
 Route name | Match |  Description | Template | Posts Filter
 ---|---|---|---|---|---|---|---|
@@ -17,22 +24,21 @@ Route name | Match |  Description | Template | Posts Filter
 `index` | `/` | Main index page (lists all posts) | index |
 `tag` | `/tag/{slug}` | Tag index page (lists all posts of a specific tag) | tag,index | `tag.slug = {slug}`
 `author` | `/author/{slug}` | Author index page (lists all posts of a specific author) | author,index | `author.slug = {slug}`
-`search` | `/search/{search}` | Search results page (lists all posts that matches the current search term) | search,index  | |
  
 > Posts Filter is a [FilterQ expression](https://github.com/hyvor/laravel-filterq) to filter posts. These filtered posts will be sent to the template as the `_posts` variable. It is only used in listing pages like index, tag, author. Matched params (`{slug}`) can be used in this expression.
 
-In addition to these default routes, there are some special, non-customizable routes.
+In addition to those default routes, there are some special, non-customizable routes.
 
 Match | Description
 ---|---
 `/styles.css` | The main CSS file of the blog (auto-generated from SCSS files in theme styles)
-`/assets/{file_name}` | To serve files in the theme **assets** directory
-`/media/{file_name}` | To serve uploaded media files
+`/assets/{file_name}` | To serve files in the theme assets
+`/media/{file_name}` | To serve uploaded [media](#media)
 `/p/{hash}` | To preview posts and pages
-`/robots.txt` | Robots.txt file (customizable in settings)
-`/sitemap.xml` | Blog's sitemap index file
+`/robots.txt` | [Robots.txt](seo#robots)
+`/sitemap.xml`, `/sitemap-pages.xml`, `/sitemap-posts-x.xml` | [Sitemaps](seo#sitemap)
 
-## Changing Post/Page Permalinks {#permalinks}
+## Customizing Post/Page Permalinks {#permalinks}
 
 You can change the **match** value of `post` and `page` routes to change post/page permalinks. By default, it looks like `/{slug}`. You may change it to a different structure which may have date, tag, and/or author name. Here are some examples.
 
@@ -75,13 +81,12 @@ Placeholder | Description | Example
 `{second}` | second of the minute | `00` to `59`
 `{unix}` | UNIX timestamp in seconds | `1448406000`
 
-## Customizing other default routes
+## Customizing Other Default Routes {#customizing-other}
 
 Similar to `post` and `page` routes, other default routes (`index`, `tag`, `author`, and `search`) routes are customizable to some extent. Here are some ideas:
 
 * `/author/{slug}` &#8594; `/creator/{slug}`
 * `/tag/{slug}` &#8594; `/category/{slug}`
-* `/search/{search}` &#8594; `/find/{search}`
 * `/` &#8594; `/blog`
 
 ## Custom Routes {#custom}
@@ -89,21 +94,22 @@ Similar to `post` and `page` routes, other default routes (`index`, `tag`, `auth
 In addition to the default 6 routes, you can add your own routes. Some examples use cases are:
 
 * Creating custom landing pages.
-* Creating new post collections.
+* Creating [new post collections](#collections).
 * Creating custom RSS feeds, for example, for a podcast.
 
 > Please note that you (or theme developers) can also add custom routes by adding `route-{route}.twig` files to template files. See [here](themes-overview#custom-routes) from more details.
 
 
-## Route Conflicts
+## Route Conflicts {#conflicts}
 
 Usually, route conflicts can happen when two or more routes has the **same match** value. In Hyvor Blogs, `post` and `page` routes can have the same match values. (You can see, the default values of those two routes are the same: `/{slug}`). However, other routes match cannot have duplicate match values.
 
+<!--
 ## Turning off routes
 
-You can turn off routes except the `post` and `page` routes. Turning off routes will remove those pages from your blog. You can turn them on later.
+You can turn off routes except the `post` and `page` routes. Turning off routes will remove those pages from your blog. You can turn them on later. -->
 
-## Suffixes & Prefixes
+## Suffixes & Prefixes {#suffix-prefix}
 
 These suffixes are supported:
 
@@ -113,7 +119,7 @@ These suffixes are supported:
 Matches can be prefixed with a language code. See [languages](languages) for setting up multiple languages on your blog.
 
 
-## Building a website {#website}
+## Making a website {#website}
 
 We usually call a website "a blog" when it has posts and the home page lists all of them. That is the default behavior of Hyvor Blogs. Even out of its purpose, you can use Hyvor Blogs to create a general website. For example, you can create a landing page for the homepage, and have your blog in the `/blog` subdirectory.
 

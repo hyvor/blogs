@@ -1,18 +1,11 @@
 # Writing (and Publishing)
 
-In this page, you will learn everything about writing and publishing a post in Hyvor Blogs.
+This page explains everything about publishing a post on Hyvor Blogs.
 
-* [Using the Editor](#editor)
+* [Posts & Pages](#posts-pages)
+* [Editor](#editor)
   * [Inline Styles](#inline-styles)
-      * [Links](#links)
   * [Blocks](#blocks)
-      * [Headings](#headings)
-      * [Images](#images)
-      * [Embeds](#embeds)
-      * [Link Bookmarks](#link-bookmarks)
-      * [Code Blocks](#code)
-      * [Custom HTML/Twig](#custom-html)
-      <!-- * [Custom Blocks](#custom-blocks) (Coming Soon) -->
 * Post-related Data
   * [Authors](#authors)
   * [Tags](#tags)
@@ -26,9 +19,30 @@ In this page, you will learn everything about writing and publishing a post in H
 * [Editing a published post](#editing-published)
 * [Multi-language posts](#multi-language)
 
-## Using the Editor {#editor}
+## Posts & Pages {#posts-pages}
 
-Hyvor Blogs comes with a rich text editor that supports a bunch of inline styles and blocks.
+Posts: 
+* are the main part of your blog, where you share your ideas, thoughts, and stories. 
+* appear in the index page or other collection pages
+* can be created, edited, and deleted at **Console &rarr; Posts**
+* have authors and tags
+
+Pages:
+
+* ex: contact us page, about us page
+* contain static information
+* do not appear in the index page.
+* usually is linked to in header or footer [navigations](navigation).
+* can create, edit, and delete pages at **Console &rarr; Pages**
+* do not have authors or tags
+
+Both:
+* are uniquely identified by the slug
+* by default have `/{slug}` permalink. See [this](routes#permalinks) if you want to change post/page permalinks, for example to include year and month in the URL.
+
+## Editor {#editor}
+
+Hyvor Blogs comes with a rich text editor that supports inline styles and blocks.
 
 ### Inline Styles {#inline-styles}
 
@@ -43,7 +57,7 @@ To add inline styles to text, select the text. A popup window will be opened wit
 <img src="/img/docs/writing-inline-styles.png" alt="Inline Styles Popup in the Console" width="350" />
 </p>
 
-### Links {#links}
+#### Links {#links}
 
 Adding links is similar to adding [inline styles](#inline-styles). Select the text you want to link and then click the Link icon. Next, paste the URL in the input and hit Enter.
 
@@ -57,35 +71,111 @@ To remove a link, select the text and click on the link icon again.
 <img src="/img/docs/writing-link-remove.gif" alt="Removing a link from a post" width="350" />
 </p>
 
+#### Markdown for Inline Styles {#markdown-inline-styles}
+
+You can also use Markdown shortcuts to create inline styles.
+
+| Inline Style           | Markdown Shortcut               |
+|------------------------|---------------------------------|
+| [Link](#links)             | `[Anchor](https://example.com)` |
+| **Bold**               | `**text**`                      |
+| *Italic*               | `*text*`                        |
+| *`code`*               | <code>\`text\`</code>           |
+| ~~strike~~             | `~~text~~`                      |
+| Super<sup>script</sup> | `^text^`                        |
+| Sub<sub>script</sub>   | `~text~`                        |
+
 ### Blocks {#blocks}
 
-The term "blocks" is used to refer to block-like elements you can add to posts, such as paragraphs and blockquotes. Paragraphs are the basic block. You can create a paragraph by pressing `Enter` anywhere inside the editor.
+The term "blocks" is used to refer to block-like elements you can add to posts, such as paragraphs and blockquotes. Paragraphs are the basic blocks. You can create a paragraph by pressing `Enter` anywhere inside the editor.
 
-To add other blocks, type `/` in a new line to open the blocks list. Use the mouse or up and down arrows to navigate through the list.
+To add other blocks, use the slash command: type slash (`/`) in a new line to open the blocks list. Use the mouse or up/down arrows to navigate through the list.
 
-<p id="block-adding">
-<img src="/img/docs/writing-block-add.gif" alt="Adding a block to a post" width="350" />
+<p id="slash-command">
+<img src="/img/docs/writing-block-add.gif" alt="Adding a block to a post using slash command" width="350" />
 </p>
 
 Hyvor Blogs supports the following blocks.
 
-* Paragraph (Default Block)
-* Heading (H1 to H6)
-* Unordered List
-* Ordered list
-* Blockquote - Usually for quoting something
-* Callout - To make something standout from other content
-* [Image](#images)
-* [Embed](#embeds) - To embed content from other platforms
-* [Link Bookmark](#link-bookmarks)
-* [Code Block](#code) - To add code examples
-* Divider - To divide sections in the post
-* [Custom HTML/Twig](#custom-html) - Place custom HTML/Twig inside the post
-* [Custom Block](#custom-blocks)
+* Paragraph
+* Divider
+* [Heading](#headings)
+* [Lists](#lists)
+* [Quote](#quote)
+* [Callout](#callout)
+* [Image](#image)
+* [Embed](#embed)
+* [Link Bookmark](#link-bookmark)
+* [Code Block](#code)
+* [Custom HTML/Twig](#custom-html)
+<!-- * [Custom Block](#custom-blocks) -->
 
-### Images {#images}
+#### Headings {#headings}
 
-To add images, [open the blocks list](#block-adding) (`/` in a new line), and choose **Image**. You will see a new element added to your post. It allows to you choose an image from [Unsplash](https://unsplash.com/) or upload one from your device.
+HB supports headings from `<h1>` to `<h6>`. The slash command only provides two options: Large (h2) and Medium (h3). Other headings can be added using Markdown syntax in a new line.
+
+* `#` + `space` for `h1`
+* `##` + `space` for `h2`
+* `###` + `space` for `h3`
+* ...
+
+<p>
+<img src="/img/docs/writing-headings.gif" alt="Adding Headings to Posts in Hyvor Blogs" width="350" />
+</p>
+
+> Please note that the reason to give **Large Heading** h2 is that h1 is reserved for the post title. However, you may use h1 within your posts if needed.
+
+##### Heading IDs {#heading-ids}
+
+There are two ways to add heading IDs.
+
+1. Focus the ID input at the top of the heading and type the ID there.
+
+<p>
+<img src="/img/docs/writing-heading-id-input.png" alt="Adding an ID to headings in Posts in Hyvor Blogs" width="350" />
+</p>
+
+2. Type Markdown-style heading ID (`{#heading-id}`) at the end of the heading.
+
+<p>
+<img src="/img/docs/writing-heading-id-markdown.gif" alt="Adding an ID to headings in Posts in Hyvor Blogs using Markdown Syntax" width="450" />
+</p>
+
+#### Lists {#lists}
+
+| Action                | Command |
+|-----------------------| --- |
+| Create unordered list | `* + space` or `- + space`
+| Create ordered list   | `1. + space`, `2. + space`, etc.
+| New list item | `Enter`
+| Increase indent       | `Tab`
+| Decrease indent | `Shift + Tab`
+
+<p>
+<img src="/img/docs/writing-lists.gif" alt="Creating a list in Hyvor Blogs Editor" width="450" />
+</p>
+
+#### Quote {#quote}
+
+Quote block is usually used to quote something, while it is also generally used make text stand out. You can create a Quote block via the [slash command](#slash-command) or by entering `> + space` in a new line (Markdown syntax).
+
+<p>
+<img src="/img/docs/writing-quotes.gif" alt="Creating a Quote Block in Hyvor Blogs Editor" width="450" />
+</p>
+
+You can get out of the Quote block by clicking `Enter` in a new line within the Quote block.
+
+#### Callout {#callout}
+
+Callout block is used to write text that stands out from other content in the post. You can set an emoji and background/font colors for each callout block.
+
+<p>
+<img src="/img/docs/writing-callout.gif" alt="Creating a Callout Block in Hyvor Blogs Editor" width="450" />
+</p>
+
+#### Image {#image}
+
+To add images, use [slash command](#slash-command) (`/` in a new line), and choose **Image**. You will see a new element added to your post. It allows to you choose an image from [Unsplash](https://unsplash.com/) or upload one from your device.
 
 For uploads, max file size is **50MB**. The following formats are supported.
 
@@ -97,42 +187,31 @@ For uploads, max file size is **50MB**. The following formats are supported.
 * SVG - `.svg`
 * WebP - `.webp`
 
-## Formatting {#formatting}
+> Images added via Unsplash are hosted at unsplash.com and not uploaded to [media](media) of your blog.
 
-The editor supports a number of formatting options.
+#### Embed {#embed}
 
-### Marks {#marks}
+Hyvor Blogs supports embedding content from 1900+ online platforms. We use [iframely](https://iframely.com/) under the hood to support various platforms.
 
-| Name                   | Markdown              | HTML       |
-|------------------------|-----------------------|------------|
-| [Link](#)              | `[Anchor](/link)`     | `<a>`      |
-| **Bold**               | `**text**`            | `<strong>` |
-| *Italic*               | `*text*`              | `<em>`     |
-| *`code`*               | <code>\`text\`</code> | `<code>`   |
-| ~~strike~~             | `~~text~~`            | `<s>`      |
-| Super<sup>script</sup> | `^text^`              | `<sup>`    |
-| Sub<sub>script</sub>   | `~text~`              | `<sub>`    |
+An embed can be added via the [slash command](#slash-command) (**`/` in a new line &rarr; Embed**). Then, paste the URL you would like to embed in the input box.
 
-### Nodes {#nodes}
+<p>
+<img src="/img/docs/writing-embed.gif" alt="Embedding Content from Other Platforms in Hyvor Blogs" width="450" />
+</p>
 
-| Name           | Shortcut                                     | Description                                         | HTML                                                         |
-|----------------|----------------------------------------------|-----------------------------------------------------|--------------------------------------------------------------|
-| Paragraph      | `&#9166; Enter`                              | This is the default block.                          | `<p>`                                                        |
-| Headings       | See [headings](#headings)                    | Multiple levels of headings of the post             | `<h2>` to `<h6>`                                             |
-| Blockquote     | `> ` in a new line                           | A quoted text                                       | `<blockquote>`                                               |
-| Callout        | `>! ` in a new line                          | A text that stands out from other content.          | `<aside>`                                                    |
-| Code block     | <code>\`\`\`</code> or <code>\`\`\`js</code> | A code block                                        | `<pre><code>`                                                |
-| Unordered list | `* ` in a new line                           | An unordered list. Supports nesting                 | `<ul>`                                                       |
-| Ordered list   | `1. ` in a new line                          | An ordered list. Supports nesting                   | `<ol>`                                                       |
-| Image          | See [images](#images)                        | An image with a caption                             | `<img>` inside `<figure>`. [See this](themes-overview#image) |
-| Embed          | Paste the link in a new line and click enter | Rich embeds from third-party platforms like Youtube | [See this](themes-overview#embed-rich)                       |
-| Link Bookmark  | Paste the link in a new line and click enter | Link preview like a bookmark                        | [See this](themes-overview#embed-link)                       |
+#### Link Bookmark {#link-bookmark}
+
+
+
+#### Code Block {#code-block}
+
+#### Custom HTML/Twig {#custom-html}
 
 ## Post-Related Data
 
 ### Authors {#authors}
 
-By default, the post creator is added as an author of a post. You can add more authors or even remove them (at least [Editor-level permissions](users#roles) is required).
+By default, the post creator is added as an author of a post. You can add or remove authors (at least [Editor-level permissions](users#roles) is required).
 
 **Console &rarr; Post &rarr; Settings &rarr; Authors**
 

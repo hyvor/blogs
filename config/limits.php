@@ -69,6 +69,12 @@ return [
     'max_api_keys_per_blog' => 50,
 
     /**
+     * Sitemap
+     * Used in posts
+     */
+    'max_entries_per_sitemap' => 2500,
+
+    /**
      * Template-related limitations
      */
     'max_theme_zip_size_kb' => 50 * 1000, // 50MB

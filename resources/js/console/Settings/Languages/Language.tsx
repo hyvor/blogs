@@ -1,6 +1,6 @@
 import React, {useState} from "react";
 import {PencilFill, Trash } from "react-bootstrap-icons";
-import {Language} from "../../types";
+import {Language as LanguageType} from "../../types";
 import {PopupConfirm} from "../../ReusableComponents/Popup";
 import CreateUpdateLanguagePopup from "./CreateUpdateLanguagePopup";
 import {TableRow, TableRowItem} from "../../ReusableComponents/Table";
@@ -8,7 +8,7 @@ import Input from "../../ReusableComponents/Input";
 import {toast} from "react-toastify";
 
 interface LanguageProps {
-    language: Language,
+    language: LanguageType,
     remove: Function
 }
 

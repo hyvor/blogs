@@ -3,7 +3,7 @@ import DualSetting from '../ReusableComponents/DualSetting';
 import Input from '../ReusableComponents/Input';
 import Radio from '../ReusableComponents/Radio';
 import SettingsSave from '../ReusableComponents/SettingsSave';
-import { useBlogActions, useBlogValues } from './useBlog';
+import { useBlogActions, useBlogValues } from '../logic-helpers/blog';
 import CodemirrorEditor, {CODEMIRROR_MODES} from "../ReusableComponents/CodemirrorEditor";
 
 export default function Comments() {

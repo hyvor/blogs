@@ -13,7 +13,7 @@ class MediaFactory extends Factory
 
         return [
             'blog_id' => Blog::factory(),
-            'name' => $this->faker->word,
+            'name' => $this->faker->unique()->word,
             'size' => rand(1000, 10000),
             'original_name' => $this->faker->word . '.' . $this->faker->fileExtension(),
             'extension' => $this->faker->fileExtension(),

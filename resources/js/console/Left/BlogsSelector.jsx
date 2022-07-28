@@ -8,7 +8,7 @@ import { router } from "kea-router";
 import {ChevronExpand, GripVertical} from 'react-bootstrap-icons';
 import numberFormatter from '../../helpers/numberFormatter';
 import onOutsideClick from '../../helpers/onOutsideClick';
-import blogsLogic from '../logic/blogsLogic';
+import userBlogsLogic from '../logic/userBlogsLogic';
 import subdomainLogic from '../logic/subdomainLogic';
 import { ReactSortable } from 'react-sortablejs';
 
@@ -16,8 +16,8 @@ let lastActiveSubdomain = null;
 
 export default function BlogsSelector() {
 
-    const { blogs, findBlogBySubdomain } = useValues(blogsLogic)
-    const { setBlogs, saveBlogsSort } = useActions(blogsLogic)
+    const { blogs, findBlogBySubdomain } = useValues(userBlogsLogic)
+    const { setBlogs, saveBlogsSort } = useActions(userBlogsLogic)
     const { subdomain: activeSubdomain } = useValues(subdomainLogic)
     const { setSubdomain } = useActions(subdomainLogic)
 

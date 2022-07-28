@@ -4,7 +4,7 @@ namespace App\Domains\Theme;
 
 use App\Data\Enums\BlogTypeEnum;
 use App\Data\Enums\ThemeCreationTypeEnum;
-use App\Domains\Blog\BlogRepository;
+use App\Domains\Blog\BlogService;
 use App\Models\Theme;
 use App\Models\ThemeVersion;
 use Illuminate\Database\Eloquent\Collection;
@@ -68,7 +68,7 @@ class ThemeRepository
         string $version,
         string $zip,
     ) {
-        $previewBlog = BlogRepository::createBlog(
+        $previewBlog = BlogService::createBlog(
             null,
             $theme->name,
             self::generateThemePreviewSubdomain($theme->name, $version),

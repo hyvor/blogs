@@ -49,10 +49,21 @@
 
     <script>
         // nav pos on scroll
-        window.addEventListener('scroll', function() {
+
+        function selfRemovingWindowEvent(on, func) {
+            var remover = function() {
+                window.removeEventListener(on, func);
+                window.removeEventListener('flashload:navigationStarted', remover)
+            }
+            window.addEventListener(on, func);
+            window.addEventListener('flashload:navigationStarted', remover)
+        }
+
+        function handleScroll() {
             var nav = document.getElementById("sidebar");
             nav.style.top = Math.max(65-window.scrollY, 15) + "px";
-        });
+        }
+        selfRemovingWindowEvent('scroll', handleScroll)
 
         // scroll active
         var active = document.querySelector(".nav-page.active");

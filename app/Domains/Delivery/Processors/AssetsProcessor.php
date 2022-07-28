@@ -10,11 +10,11 @@ use App\Domains\Delivery\RouteMatcher\MatchedRoute;
 use App\Domains\Theme\ThemeFilesRepository;
 use App\Helpers\MimeTypes;
 
-class AssetsProcessor implements RouteProcessorInterface
+class AssetsProcessor extends RouteProcessorAbstract
 {
     private ?DeliveryAPIResponseObject $responseObject = null;
 
-    private const DEAULT_ASSETS = [
+    private const DEFAULT_ASSETS = [
         'flashload.js',
     ];
 
@@ -29,7 +29,7 @@ class AssetsProcessor implements RouteProcessorInterface
 
         if ($file) {
             $content = $file->content;
-        } elseif (in_array($fileName, self::DEAULT_ASSETS)) {
+        } elseif (in_array($fileName, self::DEFAULT_ASSETS)) {
             $content = file_get_contents(resource_path("assets/$fileName"));
         } else {
             return;
@@ -38,15 +38,11 @@ class AssetsProcessor implements RouteProcessorInterface
         $extension = pathinfo($fileName, PATHINFO_EXTENSION);
         $mimeType = MimeTypes::getMimeFromExtension($extension);
 
-        $this->responseObject = DeliveryAPIResponseObject::forFile(
+        $this->setResponseObject(DeliveryAPIResponseObject::forFile(
             DeliveryAPIFileTypeEnum::ASSET,
             $content,
             $mimeType
-        );
+        ));
     }
 
-    public function getResponseObject(): ?DeliveryAPIResponseObject
-    {
-        return $this->responseObject;
-    }
 }

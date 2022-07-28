@@ -3,7 +3,7 @@ import {useActions, useValues} from 'kea';
 import React, {useEffect, useRef, useState} from 'react'
 import {CaretLeftFill, ExclamationCircle} from 'react-bootstrap-icons';
 import {getUserEndpoint} from './lib/api';
-import blogsLogic from './logic/blogsLogic';
+import userBlogsLogic from './logic/userBlogsLogic';
 import ActionButton from './ReusableComponents/ActionButton';
 import Input from './ReusableComponents/Input'
 import {Popup, PopupBodyDefault, PopupHeaderDefault} from './ReusableComponents/Popup'
@@ -22,8 +22,8 @@ export default function NewBlog({ type }: { type: string | undefined }) {
     const [subdomainEdited, setSubdomainEdited] = useState<boolean>(false);
 
     // TODO: Remove any after ajax type hinting
-    const { blogs, createBlogAjax } : any = useValues(blogsLogic)
-    const { createBlog } : any = useActions(blogsLogic)
+    const { blogs, createBlogAjax } : any = useValues(userBlogsLogic)
+    const { createBlog } : any = useActions(userBlogsLogic)
 
     const { push } = useActions(router);
 

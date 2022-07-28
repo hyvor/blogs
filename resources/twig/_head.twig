@@ -1,6 +1,10 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 
+{% if not _blog.seo_indexing %}
+    <meta name="robots" content="noindex">
+{% endif %}
+
 {% if _meta %}
 
     <title>{{ _meta.title }}</title>
@@ -99,6 +103,11 @@
             if (!noSave) {
                 localStorage.setItem(lsKey, pref)
             }
+            window.dispatchEvent(new CustomEvent("hb:colorModeChanged", {
+                detail: {
+                    mode: renderMode
+                }
+            }))
         }
         window._hb.getColorModePreference = function() {
             return localStorage.getItem(lsKey) || _hb.color_mode_default; // os|light|dark

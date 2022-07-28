@@ -23,7 +23,6 @@ use Laravel\Paddle\Billable;
 class Blog extends Model
 {
     use HasFactory;
-    use SoftDeletes;
     use Billable;
     use Countable;
     use Metable;
@@ -54,7 +53,7 @@ class Blog extends Model
         $definer->add('seo_robots_txt')->default(
             <<<TEXT
         User-agent: *
-        Sitemap: {{ _blog.url }}/sitemap.xml
+        Sitemap: {{ _blog.base_url }}/sitemap.xml
         Disallow: /p/
         TEXT
         );
@@ -73,6 +72,18 @@ class Blog extends Model
         $definer->add('syntax_on')->default(true);
         $definer->add('syntax_line_numbers')->default(true);
         $definer->add('syntax_theme')->default(null);
+    }
+
+    protected function countsDefinition()
+    {
+        return [
+            'users',
+            'posts',
+            'posts_draft',
+            'posts_scheduled',
+            'posts_featured',
+            'media'
+        ];
     }
 
     protected $with = [

@@ -1,6 +1,6 @@
 import { kea } from "kea";
 import api from "../lib/api";
-import blogsLogic from "./blogsLogic";
+import userBlogsLogic from "./userBlogsLogic";
 import postLogic from "./postLogic";
 
 const pagesLogic = kea({

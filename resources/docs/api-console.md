@@ -7,17 +7,20 @@ The Console API allows you to do administrative tasks of a blog. This is the sam
 ## Calling the API
 
 * API Basepath: **https&#65279;//blogs.hyvor.com/api/console/v0/blog/{subdomain}**
-* Create a Console API Key from the Console and send it as the **API-KEY** header.
+* Create a Console API Key from the Console and send it as the **X-API-KEY** header.
 * Console API endpoints use the following HTTP methods.
   * `GET` - to get data, usually an array of resources
   * `POST` - to create a resource
   * `PATCH` - to partially update a resource
   * `PUT` - to completely update an resource
   * `DELETE` - to delete a resource
+* Similarly to our [Data API](api-data), the Console API always return an object or an array of objects, in JSON format
+* Request params can be set as JSON (recommended) or as usual request params (in query or HTTP body)
+* In this documentation, objects, request params, and responses are written as <a class="link" target="_blank" rel="nofollow" href="https://www.typescriptlang.org/">Typescript</a> interfaces in order to make type declarations concise.
 
 ## Categories
 
-The Console API is huge, and is categorized by what "resource" you want to access or manage. Most categories have CRUD operations but some may have more endpoints for specific tasks. Similarly to our [Data API](api-data), the Console API always return an object or an array of objects. These objects are defined within the Category. Also, note that Console API objects are different from Data API objects.
+The Console API is huge, and is categorized by what "resource" you want to access or manage. Most categories have CRUD operations but some may have more endpoints for specific tasks.  These objects are defined within the Category. Also, note that Console API objects are different from Data API objects.
 
 Jump to each category:
 
@@ -32,7 +35,7 @@ Jump to each category:
 * [Theme Files](#theme-files)
 * [Data Import](#data-import)
 * [Data Export](#data-export)
-* [Subscription](#subscription) (Billing)
+* [Billing](#billing)
 * [Blog Settings](#blog-settings)
 * [Blog Meta Data](#blog-meta)
 * [Other Endpoints](#other)
@@ -104,3 +107,95 @@ Get a single post by ID. Returns a single post object.
 #### PATCH /post/{id} {#endpoint-post-update}
 
 Update a post by ID.
+
+### Billing {#billing}
+
+Endpoints
+
+* [`GET /billing`](#endpoint-billing-get) - Get billing information (subscriptions, receipts, and usage)
+
+Subscription create, update, and cancel endpoints cannot be access via API keys. Use our Console for those actions.
+
+#### Subscription Info Object {#subscription-info-object}
+
+```ts
+interface SubscriptionInfo {
+
+  email: string,
+  
+  card_brand: string,
+  card_last_four: string,
+  card_expiration: string,
+  
+  update_url: string,
+
+  // Last payment amount as a float
+  last_payment: number, 
+  last_payment_at: number,
+
+  // Next payment amount as float - null if subscription is cancelled
+  next_payment: number  | null,
+  next_payment_at: number | null
+
+}
+```
+
+#### Subscription Object {#subscription-object}
+
+```ts
+interface Subscription {
+    
+    status: 'active' | 'past_due' | 'paused' | 'deleted',
+    plan: 'A' | 'B' | 'C' | 'D' | 'E',
+    frequency: 'monthly' | 'yearly',
+    created_at: number,
+  
+    // UNIX timestamp if the subscription was cancelled, otherwise null
+    ends_at: number | null,
+  
+    // whether the subscription is cancelled and in the grace period
+    is_on_grace_period: boolean
+
+}
+```
+
+#### Receipt Object {#receipt-object}
+
+```ts
+interface Receipt {
+    id: number,
+    paid_at: number,
+    amount: number,
+    tax: number,
+    currency: number,
+    receipt_url: string
+}
+```
+
+### Usage Object {#usage-object}
+
+```ts
+interface Usage {
+    current: number;
+    total: number;
+    percentage: number; // float
+}
+```
+
+#### GET /billing {#endpoint-billing-get}
+
+Request Params: *None*
+
+Response:
+
+```ts
+interface Response {
+    info: SubscriptionInfo,
+    subscriptions: Subscription[],
+    receipts: Receipt[],
+    usage: {
+        users: Usage,
+        media: Usage
+    }
+}
+```

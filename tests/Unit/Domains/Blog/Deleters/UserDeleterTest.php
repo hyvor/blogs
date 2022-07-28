@@ -2,8 +2,6 @@
 
 namespace Tests\Unit\Domains\Blog\Deleters;
 
-
-use App\Data\Enums\UserRoleEnum;
 use App\Domains\Blog\Deleters\UserDeleter;
 use App\Models\User;
 use App\Models\UserVariant;
@@ -14,7 +12,7 @@ beforeEach(function () {
     UserVariant::truncate();
 });
 
-it('deletes users and variants', function() {
+it('deletes users', function() {
 
     $blog = newBlog();
 
@@ -37,40 +35,6 @@ it('deletes users and variants', function() {
     expect(UserVariant::count())->toBe(4);
 
     (new UserDeleter($blog))->delete();
-
-    expect(User::count())->toBe(1);
-    expect(UserVariant::count())->toBe(2);
-
-    $user = User::first();
-
-    expect($user->role)->toBe(UserRoleEnum::OWNER);
-    expect(count($user->variants))->toBe(2);
-
-});
-
-it('deletes with owner', function() {
-
-    $blog = newBlog();
-
-    User::factory()
-        ->count(2)
-        ->state(new Sequence(
-            ['role' => 'owner'],
-            ['role' => 'admin']
-        ))
-        ->has(
-            UserVariant::factory()
-                ->count(2)
-
-            , 'variants')
-        ->create([
-            'blog_id' => $blog
-        ]);
-
-    expect(User::count())->toBe(2);
-    expect(UserVariant::count())->toBe(4);
-
-    (new UserDeleter($blog))->withOwner()->delete();
 
     expect(User::count())->toBe(0);
     expect(UserVariant::count())->toBe(0);

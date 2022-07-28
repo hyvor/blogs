@@ -7,7 +7,7 @@ import {components, GroupBase, SingleValueProps} from 'react-select';
 import { useValues } from 'kea';
 import postsLogic from '../logic/postsLogic';
 import subdomainLogic from '../logic/subdomainLogic';
-import blogsLogic from '../logic/blogsLogic';
+import userBlogsLogic from '../logic/userBlogsLogic';
 import numberFormatter from '../../helpers/numberFormatter';
 import languagesLogic from '../logic/languagesLogic';
 import { Calendar } from 'react-bootstrap-icons';
@@ -32,7 +32,7 @@ export default function PostsFilters({ filters, changeFilter } : PostsFiltersPro
 
     const subdomain = getSubdomain()
     const { counts } = useValues(postsLogic({subdomain}))
-    const { findBlogBySubdomain } = useValues(blogsLogic)
+    const { findBlogBySubdomain } = useValues(userBlogsLogic)
 
     const blog: UserBlog = findBlogBySubdomain(subdomain)
 

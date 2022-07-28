@@ -2,8 +2,7 @@
 
 namespace App\Http\Controllers\ConsoleAPI;
 
-use App\Domains\Blog\Jobs\BlogDeleteJob;
-use App\Domains\Blog\Jobs\BlogResetJob;
+use App\Domains\Blog\BlogService;
 use App\Models\Blog;
 
 class ConsoleDangerController
@@ -11,12 +10,7 @@ class ConsoleDangerController
 
     public function delete(Blog $blog)
     {
-        BlogDeleteJob::dispatch($blog);
-    }
-
-    public function reset(Blog $blog)
-    {
-        BlogResetJob::dispatch($blog);
+        dispatch(fn () => app(BlogService::class)->deleteBlog($blog));
     }
 
 }

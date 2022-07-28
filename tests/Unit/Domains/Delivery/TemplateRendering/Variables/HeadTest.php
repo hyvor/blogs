@@ -110,3 +110,27 @@ it('sets _head in a post page', function () {
     // post code head
     expect($content)->toContain($postCodeHeadRendered);
 });
+
+
+it('adds nofollow', function() {
+
+    $blog = blog();
+    $blog->setMeta('seo_indexing', false);
+
+    $post = aPublishedPost();
+
+    $content = '{{ _head | template }}';
+    ThemeFilesRepository::createOrUpdateFile(
+        $blog,
+        ThemeFileFolderEnum::TEMPLATES,
+        'post.twig',
+        $content,
+    );
+
+    $pathMatcher = new PathMatcher($blog, "/$post->slug");
+    $responseObject = $pathMatcher->getResponseObject();
+    $content = $responseObject->content;
+
+    expect($content)->toContain('<meta name="robots" content="noindex">');
+
+});

@@ -14,6 +14,7 @@ class ApiKeyFactory extends Factory
     {
         return [
             'blog_id' => Blog::factory(),
+            'name' => $this->faker->name,
             'type' => Arr::random(['console', 'delivery']),
             'api_key' => Str::random(32),
         ];

@@ -44,6 +44,13 @@ function post()
     return Post::factory()->create(['blog_id' => config('test.blog_id')]);
 }
 
+function postWithVariant($post = [], $variant = [])
+{
+    return Post::factory()
+    ->has(PostVariant::factory()->state($variant), 'variants')
+    ->create($post);
+}
+
 function aPublishedPost()
 {
     $post = Post::where(['is_page' => false, 'blog_id' => config('test.blog_id')])->first();
@@ -52,7 +59,7 @@ function aPublishedPost()
     return $post;
 }
 
-function seedPublishedPosts(int $count, Blog $blog = null)
+function seedPublishedPosts(int $count, Blog $blog = null, $isPage = false)
 {
     $blog ??= blog();
 
@@ -60,11 +67,12 @@ function seedPublishedPosts(int $count, Blog $blog = null)
         ->has(
             PostVariant::factory()->state([
                 'status' => 'published',
-                'language_id' => $blog->languages[0],
+                'language_id' => $blog->languages()->where('is_primary', true)->first()->id,
             ]),
             'variants'
         )->create([
             'blog_id' => $blog,
+            'is_page' => $isPage
         ]);
 }
 
@@ -90,6 +98,10 @@ function faker()
 function test_unit_data_path($path = '')
 {
     return base_path('tests/Unit/__DATA__/' . $path);
+}
+function jsonData(string $filename) {
+    $filename = trim($filename, '/');
+    return json_decode(file_get_contents(base_path('tests/Unit/__DATA__/' . $filename)), true);
 }
 
 // https://www.youtube.com/watch?v=l3kioTuYt98

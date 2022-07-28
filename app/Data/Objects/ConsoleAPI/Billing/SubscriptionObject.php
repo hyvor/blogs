@@ -1,0 +1,39 @@
+<?php
+
+namespace App\Data\Objects\ConsoleAPI\Billing;
+
+use App\Data\Enums\SubscriptionFrequencyEnum;
+use App\Data\Enums\SubscriptionPlanEnum;
+use App\Domains\Subscription\SubscriptionService;
+use Laravel\Paddle\Subscription;
+
+class SubscriptionObject
+{
+    /**
+     * https://developer.paddle.com/webhook-reference/ZG9jOjI1MzUzOTk1-subscription-updated
+     * active|past_due|paused|deleted
+     */
+    public string $status;
+    public SubscriptionPlanEnum $plan;
+    public SubscriptionFrequencyEnum $frequency;
+
+    public int $created_at;
+    public ?int $ends_at;
+
+    public bool $is_on_grace_period;
+
+    public function __construct(Subscription $subscription)
+    {
+        $this->status = $subscription->paddle_status;
+
+        $planConfig = SubscriptionService::getPlanConfigById($subscription->paddle_plan);
+
+        $this->plan = $planConfig->name;
+        $this->frequency = $planConfig->frequency;
+
+        $this->created_at = $subscription->created_at->timestamp;
+        $this->ends_at = $subscription->ends_at?->timestamp;
+
+        $this->is_on_grace_period = $subscription->onGracePeriod();
+    }
+}

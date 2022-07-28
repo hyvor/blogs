@@ -2,7 +2,7 @@
 
 namespace App\Domains\User;
 
-use App\Domains\_Shared\UniqueSlugGeneratorAbstract;
+use App\Domains\Shared\UniqueSlugGeneratorAbstract;
 use App\Models\Blog;
 use App\Models\User;
 use Hyvor\HyvorConnecter\HyvorUser;

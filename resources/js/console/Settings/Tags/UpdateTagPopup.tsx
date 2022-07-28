@@ -104,7 +104,7 @@ export default function UpdateTagPopup({ tag, onClose } : { tag: Tag, onClose: F
                         showCode &&
                         <div>
                             <InputView
-                                title="Code Head"
+                                title="Head Code"
                                 content={
                                     <CodemirrorEditor
                                         value={tagState.code_head || ''}
@@ -114,7 +114,7 @@ export default function UpdateTagPopup({ tag, onClose } : { tag: Tag, onClose: F
                                 }
                             />
                             <InputView
-                                title="Code Foot"
+                                title="Foot Code"
                                 content={
                                     <CodemirrorEditor
                                         value={tagState.code_foot || ''}

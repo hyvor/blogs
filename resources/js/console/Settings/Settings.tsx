@@ -1,6 +1,5 @@
-import React from 'react';
+import React, {useEffect, useRef} from 'react';
 import NavLink from '../ReusableComponents/NavLink';
-import SettingsDelete from './SettingsDelete';
 import Code from './Code';
 import SettingsMedia from './Media/SettingsMedia';
 import SettingsMigrate from './SettingsMigrate';
@@ -19,6 +18,11 @@ import Highlight from "./Highlight";
 import getSubdomain from "../logic-helpers/subdomain";
 import Webhooks from "./Webhooks";
 import ApiKeys from "./ApiKeys/ApiKeys";
+import Danger from "./Danger/Danger";
+import {UserRole} from "../enums";
+import UserPermissions from "../services/UserPermissions";
+import {useActions} from "kea";
+import {router} from "kea-router";
 
 export default function Settings({type} : {type: string | undefined}) {
 
@@ -57,8 +61,8 @@ export default function Settings({type} : {type: string | undefined}) {
         case 'migrate':
             Type = () => <SettingsMigrate />;
             break;
-        case 'delete':
-            Type = () => <SettingsDelete />;
+        case 'danger':
+            Type = () => <Danger />;
             break;
         case 'routes':
             Type = () => <SettingsRoutes />;
@@ -85,36 +89,84 @@ export default function Settings({type} : {type: string | undefined}) {
             <div className="middle-heading">Settings</div>
             <div className="settings-nav">
 
-                <NavLink href={settingsPrefix} exact={1}>General</NavLink>
-                <NavLink href={settingsPrefix + "/users"}>Users</NavLink>
-                <NavLink href={settingsPrefix + "/tags"}>Tags</NavLink>
+                <SettingsLink path="" name="General" />
+                <SettingsLink path="/users" name="Users" />
+                <SettingsLink role={UserRole.EDITOR} path="/tags" name="Tags" />
 
                 <div />
 
-                <NavLink href={settingsPrefix + "/hosting"}>Hosting</NavLink>
-                <NavLink href={settingsPrefix + "/seo"}>SEO</NavLink>
-                <NavLink href={settingsPrefix + "/color-mode"}>Light & Dark Modes</NavLink>
-                <NavLink href={settingsPrefix + "/navigation"}>Navigation</NavLink>
-                <NavLink href={settingsPrefix + "/media"}>Media</NavLink>
-                <NavLink href={settingsPrefix + "/redirects"}>Redirects</NavLink>
-                <NavLink href={settingsPrefix + "/languages"}>Languages</NavLink>
-                <NavLink href={settingsPrefix + "/routes"}>Routes</NavLink>
-                <NavLink href={settingsPrefix + "/api-keys"}>API Keys</NavLink>
-                <NavLink href={settingsPrefix + "/webhooks"}>Webhooks</NavLink>
+                <SettingsLink path="/hosting" name="Hosting" />
+                <SettingsLink path="/seo" name="SEO" />
+                <SettingsLink path="/color-mode" name="Light & Dark Modes" />
+                <SettingsLink path="/navigation" name="Navigation" />
+                <SettingsLink path="/media" name="Media" />
+                <SettingsLink path="/redirects" name="Redirects" />
+                <SettingsLink path="/languages" name="Languages" />
+                <SettingsLink path="/routes" name="Routes" />
+                <SettingsLink path="/api-keys" name="API Keys" />
+                <SettingsLink path="/webhooks" name="Webhooks" />
 
                 <div />
-                <NavLink href={settingsPrefix + "/comments"}>Comments & Newsletter</NavLink>
-                <NavLink href={settingsPrefix + "/code"}>Custom Code</NavLink>
-                <NavLink href={settingsPrefix + "/highlight"}>Syntax Highlighting</NavLink>
+                <SettingsLink path="/comments" name="Comments & Newsletter" />
+                <SettingsLink path="/code" name="Custom Code" />
+                <SettingsLink path="/highlight" name="Syntax Highlighting" />
 
                 <div />
-                <NavLink href={settingsPrefix + "/migrate"}>Import & Export</NavLink>
-                <NavLink href={settingsPrefix + "/delete"}>Delete Blog</NavLink>
+                <SettingsLink path="/migrate" name="Import & Export" />
+                <SettingsLink role={UserRole.OWNER} path="/danger" name="Danger Zone" />
             </div>
         </div>
         <div className="box box-right settings-right">
             <Type />
         </div>
     </div>
+
+}
+
+interface SettingsLinkProps {
+    path: string,
+    role?: UserRole.OWNER | UserRole.ADMIN | UserRole.EDITOR,
+    name: string
+}
+
+function SettingsLink({ path, role = UserRole.ADMIN, name } : SettingsLinkProps) {
+
+    const subdomain = getSubdomain();
+    const settingsPrefix = `/console/${subdomain}/settings`;
+    const { push } = useActions(router);
+
+    const userRole = UserPermissions.getRole();
+    const ref = useRef<HTMLAnchorElement | null>(null);
+
+    const roles = {
+        [UserRole.EDITOR]: [UserRole.EDITOR],
+        [UserRole.ADMIN]: [UserRole.EDITOR, UserRole.ADMIN],
+        [UserRole.OWNER]: [UserRole.EDITOR, UserRole.ADMIN, UserRole.OWNER]
+    }
+
+    let cls = undefined;
+    // @ts-ignore
+    const availableRoles = roles[userRole];
+    if (!availableRoles || availableRoles.indexOf(role) < 0) {
+        cls = 'global-no-permissions'
+    }
+
+    useEffect(() => {
+        /**
+         * Redirect the user to Blog Preview when accessing unauthorized routes via the direct URL
+         * Just a simple check
+         */
+        const link = ref.current as HTMLAnchorElement
+        if (link.classList.contains('global-no-permissions') && link.classList.contains('active')) {
+            push('/console/' + subdomain);
+        }
+    }, []);
+
+    return <NavLink
+        ref={ref}
+        href={settingsPrefix + path}
+        exact={1}
+        className={cls}
+    >{ name }</NavLink>
 
 }

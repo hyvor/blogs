@@ -4,7 +4,7 @@ namespace App\Http\Controllers\ConsoleAPI;
 
 use App\Data\Enums\BlogTypeEnum;
 use App\Data\Objects\ConsoleAPI\UserBlog\UserBlogObject;
-use App\Domains\Blog\BlogRepository;
+use App\Domains\Blog\BlogService;
 use App\Domains\User\UserBlogRepository;
 use App\Domains\User\UserRepository;
 use App\Exceptions\TrustedException;
@@ -32,7 +32,7 @@ class ConsoleUserBlogController extends Controller
             $subdomain = 'dev-' . ((string) Str::uuid());
         }
 
-        $blog = BlogRepository::createBlog(
+        $blog = BlogService::createBlog(
             $hyvorUser->id,
             $name,
             $subdomain,
@@ -66,7 +66,7 @@ class ConsoleUserBlogController extends Controller
 
         $subdomain = $request->input('subdomain');
 
-        $blog = BlogRepository::getBlogBySubdomain($subdomain);
+        $blog = BlogService::getBlogBySubdomain($subdomain);
 
         if ($blog) {
             throw new TrustedException('Subdomain already taken');
