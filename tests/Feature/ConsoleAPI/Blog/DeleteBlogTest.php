@@ -34,7 +34,7 @@ it('calls the delete blog job', function() {
         $this->app->bind($deleter, fn() => $mock);
     }
 
-    $this->callConsoleApi('POST', '/blog/delete')
+    $this->callConsoleApi('DELETE', '/blog')
         ->assertOk();
 
     // deletes the blog
