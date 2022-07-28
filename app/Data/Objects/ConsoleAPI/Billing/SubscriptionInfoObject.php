@@ -17,14 +17,8 @@ class SubscriptionInfoObject
 
     public string $update_url;
 
-    public float $last_payment;
-    public int $last_payment_at;
-    /**
-     * nextPayment will return null when the billing cycle has ended
-     * (such as when a subscription has been cancelled):
-     */
-    public ?float $next_payment;
-    public ?int $next_payment_at;
+    public PaymentObject $last_payment;
+    public ?PaymentObject $next_payment;
 
     public function __construct(Subscription $subscription)
     {
@@ -44,12 +38,17 @@ class SubscriptionInfoObject
         $this->update_url = $subscription->updateUrl();
 
         $lastPayment = $subscription->lastPayment();
-        $this->last_payment = $lastPayment->amount;
-        $this->last_payment_at = $lastPayment->date()->timestamp;
-
+        $this->last_payment = new PaymentObject(
+            $lastPayment->amount,
+            $lastPayment->currency,
+            $lastPayment->date()->timestamp
+        );
 
         $nextPayment = $subscription->nextPayment();
-        $this->next_payment = $nextPayment?->amount;
-        $this->next_payment_at = $nextPayment?->date()?->timestamp;
+        $this->next_payment = $nextPayment ? new PaymentObject(
+            $nextPayment->amount,
+            $nextPayment->currency,
+            $nextPayment->date()->timestamp
+        ) : null;
     }
 }

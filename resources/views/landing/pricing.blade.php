@@ -42,35 +42,35 @@ $pricingRow = '<tr>
             <tr>
                 <td>Plan A</td>
                 <td><span class="price">$19</span>/month</td>
-                <td>1-2</td>
+                <td>2</td>
                 <td>40GB</td>
             </tr>
 
             <tr>
                 <td>Plan B</td>
                 <td><span class="price">$49</span>/month</td>
-                <td>2-10</td>
+                <td>10</td>
                 <td>250GB</td>
             </tr>
 
             <tr>
                 <td>Plan C</td>
                 <td><span class="price">$299</span>/month</td>
-                <td>10-100</td>
+                <td>100</td>
                 <td>1TB</td>
             </tr>
 
             <tr>
                 <td>Plan D</td>
                 <td><span class="price">$699</span>/month</td>
-                <td>100-1000</td>
+                <td>1000</td>
                 <td>2TB</td>
             </tr>
 
             <tr>
                 <td>Plan E</td>
                 <td><span class="price">$1299</span>/month</td>
-                <td>1000+</td>
+                <td>Unlimited</td>
                 <td>5TB</td>
             </tr>
 

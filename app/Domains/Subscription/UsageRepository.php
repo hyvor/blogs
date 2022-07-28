@@ -12,16 +12,12 @@ class UsageRepository
 {
     public static function getUsage(Blog $blog): array
     {
-        $counts = CountRepository::getCounts($blog, [
-            CountEnum::BLOG_USERS,
-            CountEnum::BLOG_MEDIA,
-        ]);
 
         $limits = self::getLimits($blog);
 
         return [
-            'users' => new UsageObject($counts[ CountEnum::BLOG_USERS->value ], $limits['users']),
-            'media' => new UsageObject($counts[ CountEnum::BLOG_MEDIA->value ], $limits['media']),
+            'users' => new UsageObject($blog->getCount('users'), $limits['users']),
+            'media' => new UsageObject($blog->getCount('media'), $limits['media']),
         ];
     }
 
@@ -61,7 +57,7 @@ class UsageRepository
             SubscriptionPlanEnum::C => 1000 * $gb,
             SubscriptionPlanEnum::D => 2000 * $gb,
             SubscriptionPlanEnum::E => 5000 * $gb,
-            default => 0
+            default => $gb
         };
 
         return [

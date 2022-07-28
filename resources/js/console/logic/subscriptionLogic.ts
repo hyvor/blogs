@@ -2,7 +2,7 @@ import {actions, events, kea, key, path, props, reducers} from "kea";
 import api from "../lib/api";
 import {subscriptionLogicType} from "./subscriptionLogicType";
 import {ajax} from "kea-ajax";
-import {Receipt, Subscription, SubscriptionInfo, Usage} from "../types";
+import {Receipt, Subscription, SubscriptionFrequency, SubscriptionInfo, SubscriptionPlan, Usage} from "../types";
 
 const subscriptionLogic = kea<subscriptionLogicType>([
 
@@ -21,22 +21,31 @@ const subscriptionLogic = kea<subscriptionLogicType>([
             actions.setData(data);
         },
 
-        createSubscription: async ({ onLoad, plan, frequency, quantity }) => {
+        createSubscription: async (
+            { onLoad, plan, frequency } :
+            { onLoad: (link: string) => void, plan: SubscriptionPlan, frequency: SubscriptionFrequency }
+        ) => {
             type Response = { link: string }
             const data = await api.post<Response>(props.subdomain, '/billing/subscription', {
-                plan, frequency, quantity
+                plan, frequency
             });
             onLoad(data.link);
         },
 
-        updateSubscription: async ({ onSuccess, plan, frequency, quantity }) => {
+        updateSubscription: async (
+            { onSuccess, plan, frequency } :
+            { onSuccess: Function, plan: SubscriptionPlan, frequency: SubscriptionFrequency }
+        ) => {
             await api.patch(props.subdomain, '/billing/subscription', {
-                plan, frequency, quantity
+                plan, frequency
             })
             onSuccess();
         },
 
-        cancelSubscription: async ({ forced, onSuccess}) => {
+        cancelSubscription: async (
+            { forced = false, onSuccess } :
+            { forced?: boolean, onSuccess: Function }
+        ) => {
             await api.delete(props.subdomain, '/billing/subscription', {forced});
             onSuccess();
         }

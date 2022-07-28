@@ -5,9 +5,11 @@ import subscriptionLogic from '../logic/subscriptionLogic';
 import Loader from '../ReusableComponents/Loader';
 import NoResults from '../ReusableComponents/NoResults';
 import { FriendlyDate } from '../ReusableComponents/Time';
+import getSubdomain from "../logic-helpers/subdomain";
 
-export default function BillingHistory({subdomain}) {
+export default function BillingHistory() {
 
+    const subdomain = getSubdomain();
     const { data, loadAjax } = useValues(subscriptionLogic({subdomain}));
 
     return <div className="billing-history">
@@ -28,8 +30,8 @@ export default function BillingHistory({subdomain}) {
                         {
                             data.receipts.map(receipt => {
                                 return <div key={receipt.id} className="receipts-row">
-                                    <div>${receipt.amount}</div>
-                                    <div>${receipt.tax}</div>
+                                    <div>{receipt.amount} {receipt.currency}</div>
+                                    <div>{receipt.tax} {receipt.currency}</div>
                                     <div><FriendlyDate time={receipt.paid_at} /></div>
                                     <div>
                                         <a 

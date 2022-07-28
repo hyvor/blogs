@@ -19,7 +19,7 @@ export type UserBlogBlog = {
 
     is_on_trial: boolean;
     trial_ends_at: number | null;
-    subscription: Subscription;
+    subscription: Subscription | null;
 
 };
 

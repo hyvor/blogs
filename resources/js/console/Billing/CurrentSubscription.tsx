@@ -20,7 +20,7 @@ export default function CurrentSubscription({subdomain} : {subdomain: string}) {
     const { data, loadAjax } = useValues(subscriptionLogicInst);
     const { cancelSubscription } = useActions(subscriptionLogicInst)
 
-    const trialDaysDiff =  dayjs.unix(blog.trial_ends_at).diff(dayjs(), 'd');
+    const trialDaysDiff = blog.trial_ends_at ? dayjs.unix(blog.trial_ends_at).diff(dayjs(), 'd') : 0;
 
     const [ downgradePopup, setDowngradePopup ] = useState(false);
     const [cancelPopup, setCancelPopup] = useState(false);
@@ -81,7 +81,7 @@ export default function CurrentSubscription({subdomain} : {subdomain: string}) {
             <div className="subscription-details">
 
                 {
-                    !blog.is_on_trial && !blog.subscribed ?
+                    !blog.is_on_trial && !blog.subscription ?
 
                     <NoResults 
                         text="This blog does not have a subscription"
@@ -92,7 +92,7 @@ export default function CurrentSubscription({subdomain} : {subdomain: string}) {
                 <div>
 
                     {
-                        blog.is_on_trial && !blog.subscribed ?
+                        blog.is_on_trial && !blog.subscription ?
                         <Callout 
                             title="30-days trial"
                             icon={<Clock />}
@@ -168,17 +168,6 @@ export default function CurrentSubscription({subdomain} : {subdomain: string}) {
                                     { currentSubscription.plan }
                                 </div>
                             </div>
-                            {
-                                currentSubscription.plan === 'team' ?
-                                <div className="details-card">
-                                    <div className="card-title">
-                                        Users
-                                    </div>
-                                    <div className="card-content">
-                                        { currentSubscription.quantity }
-                                    </div>
-                                </div> : null
-                            }
                             <div className="details-card">
                                 <div className="card-title">
                                     Plan Status
@@ -225,12 +214,12 @@ function InfoSection({info} : {info: SubscriptionInfo}) {
     if (!info)
         return null;
 
-    var paymentDaysDiffFromStartToEnd = dayjs.unix(info.next_payment_at).diff(
-        dayjs.unix(info.last_payment_at),
+    const paymentDaysDiffFromStartToEnd = info.next_payment ? dayjs.unix(info.next_payment.at).diff(
+        dayjs.unix(info.last_payment.at),
         'd'
-    );
-    var paymentDaysDiffFromTodayToEnd = dayjs.unix(info.next_payment_at).diff(dayjs(), 'd');
-    var paymentWidth = (100 - (paymentDaysDiffFromTodayToEnd / paymentDaysDiffFromStartToEnd * 100)) + "%";
+    ) : 0;
+    const paymentDaysDiffFromTodayToEnd = info.next_payment ? dayjs.unix(info.next_payment.at).diff(dayjs(), 'd') : 0;
+    const paymentWidth = (100 - (paymentDaysDiffFromTodayToEnd / paymentDaysDiffFromStartToEnd * 100)) + "%";
 
 
     return <div>
@@ -238,14 +227,14 @@ function InfoSection({info} : {info: SubscriptionInfo}) {
             <div className="payment-top">
                 <div className="payment-last">
                     <div className="payment-name">Last Payment</div>
-                    <div className="payment-amount">${ info.last_payment }
+                    <div className="payment-amount">{ info.last_payment.amount } { info.last_payment.currency }
                     </div>
                 </div>
                 <div className="payment-middle"/>
                 <div className="payment-next">
                     <div className="payment-name">Next Payment</div>
                     <div className="payment-amount">{  
-                        info.next_payment ? `$${info.next_payment }` : "-" }</div>
+                        info.next_payment ? `${info.next_payment.amount } ${info.next_payment.currency}` : "-" }</div>
                 </div>
             </div>
             <div className="payment-bar">
@@ -256,11 +245,11 @@ function InfoSection({info} : {info: SubscriptionInfo}) {
             </div>
             <div className="payment-top">
                 <div className="payment-last">
-                    <FriendlyDate time={info.last_payment_at} />
+                    <FriendlyDate time={info.last_payment.at} />
                 </div>
                 <div className="payment-middle">
                     {    
-                    info.next_payment_at ?
+                    info.next_payment ?
                         <div className="payment-left-days">
                             Next payment in {paymentDaysDiffFromTodayToEnd} days
                         </div>
@@ -270,7 +259,7 @@ function InfoSection({info} : {info: SubscriptionInfo}) {
                 <div className="payment-next">
                     {
                         info.next_payment ?
-                        <FriendlyDate time={info.next_payment_at} /> : 
+                        <FriendlyDate time={info.next_payment.at} /> :
                         "-"
                     }
                 </div>

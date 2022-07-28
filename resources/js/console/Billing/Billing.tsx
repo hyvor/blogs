@@ -1,7 +1,7 @@
 import React from 'react'
 import BillingHistory from './BillingHistory';
 import CurrentSubscription from './CurrentSubscription';
-import Plans from './Plans';
+import Plans from './Plans/Plans';
 import SubscriptionHistory from './SubscriptionHistory';
 import { Usage } from './Usage';
 import getSubdomain from "../logic-helpers/subdomain";
@@ -13,7 +13,7 @@ export default function Billing() {
     return <div className="billing-view">
         <div className="billing-column">
             <div className="box billing-section">
-                <Plans subdomain={subdomain} />
+                <Plans />
             </div>
             <div className="box billing-section">
                 <CurrentSubscription subdomain={subdomain} />
@@ -33,7 +33,7 @@ export default function Billing() {
                     Billing History
                 </div>
                 <div className="section-content">
-                    <BillingHistory subdomain={subdomain} />
+                    <BillingHistory />
                 </div>
             </div>
             <div className="box billing-section">

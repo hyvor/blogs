@@ -33,18 +33,6 @@ export enum ColorModeDefault {
     OS = 'os'
 }
 
-
-// === SUBSCRIPTION ===
-export enum SubscriptionPlan {
-    PRO = 'pro',
-    TEAM = 'team',
-    ENTERPRISE = 'enterprise'
-}
-export enum SubscriptionFrequency {
-    MONTHLY = 'monthly',
-    YEARLY = 'yearly'
-}
-
 // == USER ==
 export enum UserStatus {
     INVITED = 'invited',

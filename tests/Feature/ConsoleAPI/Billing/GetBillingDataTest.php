@@ -61,12 +61,12 @@ it('gets billing data', function() {
                     $json->has('id')
                         ->has('paid_at')
                         ->has('amount')
+                        ->has('currency')
                         ->has('tax')
                         ->has('receipt_url');
                 })
                 ->has('subscriptions', 3, function (AssertableJson $json) {
                     $json->has('status')
-                        ->has('quantity')
                         ->has('plan')
                         ->has('frequency')
                         ->has('created_at')
@@ -80,9 +80,7 @@ it('gets billing data', function() {
                         ->has('card_expiration')
                         ->has('update_url')
                         ->has('last_payment')
-                        ->has('last_payment_at')
-                        ->has('next_payment')
-                        ->has('next_payment_at');
+                        ->has('next_payment');
                 })
                 ->has('usage', function (AssertableJson $json) {
                     $json->has('users')

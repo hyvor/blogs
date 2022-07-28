@@ -13,7 +13,8 @@ import {UserBlog} from "./objects/userblog";
 
 export type ConsoleWindow = (typeof window) & {
     appConfig: appConfig,
-    currentSubdomain?: string
+    currentSubdomain?: string,
+    Paddle: any
 }
 
 export interface appConfig {
@@ -313,6 +314,12 @@ export interface ThemeFile {
 
 // === BILLING
 
+export interface Payment {
+    amount: number,
+    currency: string,
+    at: number
+}
+
 export interface SubscriptionInfo {
 
     email: string,
@@ -323,19 +330,19 @@ export interface SubscriptionInfo {
 
     update_url: string,
 
-    last_payment: number, // float
-    last_payment_at: number,
-
-    next_payment: number  | null, // float | null
-    next_payment_at: number | null
+    last_payment: Payment,
+    next_payment: Payment | null,
 
 }
+
+export type SubscriptionPlan = 'A' | 'B' | 'C' | 'D' | 'E';
+export type SubscriptionFrequency = 'monthly' | 'yearly';
 
 export interface Subscription {
 
     status: 'active' | 'past_due' | 'paused' | 'deleted',
-    plan: 'A' | 'B' | 'C' | 'D' | 'E',
-    frequency: 'monthly' | 'yearly',
+    plan: SubscriptionPlan,
+    frequency: SubscriptionFrequency,
     created_at: number,
     ends_at: number | null,
     is_on_grace_period: boolean
