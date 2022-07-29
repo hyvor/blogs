@@ -1,15 +1,13 @@
 import { useValues } from "kea";
-import React, { useState } from "react";
-import { CaretDownFill, CaretRightFill } from "react-bootstrap-icons";
+import React  from "react";
 import themeLogic from "../logic/themeLogic";
 import Loader from "../ReusableComponents/Loader";
-import File from "./File";
-import FileBrowser from "./FileBrowser";
 import getSubdomain from "../logic-helpers/subdomain";
-import {ThemeFolder} from "../types";
 import Download from "./Download";
 import Upload from "./Upload";
 import Changer from "./Changer";
+import Folder from "./Folder";
+import FileEditor from "./FileEditor";
 
 export default function Theme() {
 
@@ -47,39 +45,7 @@ export default function Theme() {
             </div>
         </div>
         <div className="box box-right theme-right">
-            <FileBrowser />
-        </div>
-    </div>
-
-}
-
-function Folder( {name} : {name: ThemeFolder} ) {
-
-    const { findFilesOfFolder } = useValues(themeLogic({subdomain: getSubdomain()}));
-
-    const [unfolded, setUnfolded] = useState(!name);
-
-    const files = findFilesOfFolder(name);
-
-    return <div className={"folder " + (name || 'root')}>
-        {
-            name ?
-            <div className="folder-name" onClick={() => setUnfolded(!unfolded)}>
-                
-                <span className="fold-icon">
-                    {
-                        unfolded ?
-                            <CaretDownFill /> :
-                            <CaretRightFill />
-                    }
-                </span>
-                <span className="name">{name}</span>
-            </div>
-        : null }
-        <div className={"folder-files" + (unfolded ? " unfolded" : "")}>
-            {
-                files.map((file) => <File key={file.id} id={file.id} name={file.name} /> )
-            }
+            <FileEditor />
         </div>
     </div>
 

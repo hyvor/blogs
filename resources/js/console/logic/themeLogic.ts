@@ -19,10 +19,8 @@ const themeLogic = kea<themeLogicType>([
 
         // file editor
         editorOpenFile: (id: number) => ({id}),
-        editorCloseFile: (id: number) => ({id, index: values.editorOpenedFilesIds.indexOf(id)}),
-        editorSetOpenedFiles: (ids: number[]) => ({ids}),
+        editorCloseFile: () => false,
         editorSaveFile: (id: number) => ({id}),
-        editorSetActiveFileId: (id: number | null) => ({id}),
     })),
 
     ajax(({actions, props}) => ({
@@ -81,45 +79,15 @@ const themeLogic = kea<themeLogicType>([
         ],
 
         // opened files (only ID)
-        editorOpenedFilesIds: [
-            [] as number[],
+        editorOpenedFileId: [
+            null as null | number,
             {
-                editorOpenFile: (state, {id}) => state.indexOf(id) === -1 ?
-                    (state.length >= 8 ? state : [...state, id]) : state,
-
-                editorCloseFile: (state, {id}) => state.filter(fileId => fileId !== id),
-
-                editorSetOpenedFiles: (_, {ids}) => ids, // set all opened files (for sorting)
+                editorOpenFile: (state, {id}) => state === id ? null : id,
+                editorCloseFile: () => null,
             }
         ],
 
-        // active editing file
-        editorActiveFileId: [
-            null as null | number,
-            {
-                editorOpenFile: (_, {id}) => id,
-                editorSetActiveFileId: (_, {id}) => id
-            }
-        ]
-
     }),
-
-    listeners(({values, actions}) => ({
-
-        editorCloseFile: ({id, index}) => {
-
-            const previousFileId = values.editorOpenedFilesIds[index - 1];
-            if (values.editorActiveFileId === id && previousFileId) {
-                actions.editorSetActiveFileId(previousFileId)
-            }
-
-            if (values.editorOpenedFilesIds.length === 0) {
-                actions.editorSetActiveFileId(null)
-            }
-
-        }
-
-    })),
 
     selectors({
         findFilesOfFolder: [

@@ -8,17 +8,24 @@ export const CODEMIRROR_MODES = {
     yaml: 'text/x-yaml'
 }
 
-export default function CodemirrorEditor({ value, onChange, mode }) {
+interface Props {
+    value: string,
+    onChange: (val: string) => any,
+    mode: typeof CODEMIRROR_MODES[keyof typeof CODEMIRROR_MODES],
+}
 
+export default function CodemirrorEditor({ value, onChange, mode } : Props) {
+
+    const tabSize = mode === CODEMIRROR_MODES.yaml ? 2 : 4;
 
     return <CodeMirror
         value={value}
         options={{
             theme: 'solarized',
             keyMap: 'sublime',
-            tabSize: 4,
+            tabSize,
             indentWithTabs: true,
-            indentUnit: 4,
+            indentUnit: tabSize,
             mode,
             lineWrapping: true,
             lineNumbers: true,
