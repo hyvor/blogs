@@ -17,8 +17,11 @@ class GithubSyncService
      */
     public array $themes = [];
 
-    public static function sync(string $zip)
+    public static function syncFromGithubZipBall()
     {
+        $zipBallUrl = "https://github.com/hyvor/hyvor-blogs-themes/zipball/main";
+        $zip = file_get_contents($zipBallUrl);
+
         $syncer = new self($zip);
         $syncer->run();
     }

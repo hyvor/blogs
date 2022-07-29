@@ -12,7 +12,7 @@ use App\Models\ThemeFile;
 
 beforeEach(function () {
     $zip = file_get_contents(test_unit_data_path('Themes/github-themes.zip'));
-    GithubSyncService::sync($zip);
+    (new GithubSyncService($zip))->run();
 });
 
 it('copies the hello theme', function () {

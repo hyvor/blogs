@@ -2,7 +2,7 @@
 
 namespace App\Console\Commands;
 
-use App\Domains\Theme\Jobs\GithubSyncThemesJob;
+use App\Domains\Theme\GithubSync\GithubSyncService;
 use Illuminate\Console\Command;
 
 class RefreshDev extends Command
@@ -16,7 +16,7 @@ class RefreshDev extends Command
         $this->call('migrate:fresh', ['--seed' => !$noSeed]);
 
         $this->comment('Downloading themes');
-        dispatch(new GithubSyncThemesJob());
+        GithubSyncService::syncFromGithubZipBall();
         $this->info('Themes downloaded');
     }
 }

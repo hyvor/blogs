@@ -76,9 +76,10 @@ class ThemeFilesRepository
         Blog $blog,
         ?ThemeFileFolderEnum $folder,
         string $name,
-        $content
-    ): void {
-        $blog->themeFiles()->updateOrCreate(
+        string $content
+    ) : ThemeFile
+    {
+        return $blog->themeFiles()->updateOrCreate(
             [
                 'folder' => $folder,
                 'name' => $name,

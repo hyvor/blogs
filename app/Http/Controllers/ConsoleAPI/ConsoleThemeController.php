@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers\ConsoleAPI;
 
+use App\Data\Enums\ThemeFileFolderEnum;
 use App\Data\Objects\ConsoleAPI\Theme\FileObject;
 use App\Data\Objects\ConsoleAPI\Theme\ThemeObject;
 use App\Domains\Theme\ThemeFilesRepository;
@@ -9,7 +10,9 @@ use App\Domains\Theme\ThemeRepository;
 use App\Exceptions\TrustedException;
 use App\Http\Controllers\Controller;
 use App\Models\Blog;
+use App\Models\ThemeFile;
 use Illuminate\Http\Request;
+use Illuminate\Validation\Rules\Enum;
 
 class ConsoleThemeController extends Controller
 {
@@ -58,6 +61,39 @@ class ConsoleThemeController extends Controller
         $filename = 'hb-theme-of-' . $blog->subdomain . '-' . date('Y-m-d') . '.zip';
 
         return $zip->outputAsSymfonyResponse($filename, 'application/zip');
+    }
+
+    public function createFile(Request $request, Blog $blog)
+    {
+        $request->validate([
+            'folder' => ['required', 'nullable', new Enum(ThemeFileFolderEnum::class)],
+            'name' => 'required|string',
+            'content' => 'string'
+        ]);
+
+        $folder = ThemeFileFolderEnum::tryFrom($request->input('folder'));
+        $name = $request->input('name');
+        $content = $request->input('content');
+
+        if (ThemeFilesRepository::getFile($blog, $name, $folder)) {
+            throw new TrustedException('File already exists');
+        }
+
+        $file = ThemeFilesRepository::createOrUpdateFile(
+            $blog,
+            $folder,
+            $name,
+            $content
+        );
+
+        return response()->json(new FileObject($file));
+    }
+
+    public function updateFile(ThemeFile $file)
+    {
+
+        
+
     }
 
     public function getAllFiles(Blog $blog)

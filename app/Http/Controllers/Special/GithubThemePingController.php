@@ -2,7 +2,7 @@
 
 namespace App\Http\Controllers\Special;
 
-use App\Domains\Theme\Jobs\GithubSyncThemesJob;
+use App\Domains\Theme\GithubSync\GithubSyncService;
 use Illuminate\Http\Request;
 
 class GithubThemePingController
@@ -12,6 +12,8 @@ class GithubThemePingController
         /**
          * TODO: Add validation
          */
-        dispatch(new GithubSyncThemesJob());
+        dispatch(function () {
+            GithubSyncService::syncFromGithubZipBall();
+        });
     }
 }

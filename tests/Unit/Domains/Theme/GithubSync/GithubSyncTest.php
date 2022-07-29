@@ -15,7 +15,7 @@ use App\Models\ThemeVersion;
 
 it('adds new themes and versions', function () {
     $zip = file_get_contents(test_unit_data_path('Themes/github-themes.zip'));
-    GithubSyncService::sync($zip);
+    (new GithubSyncService($zip))->run();
 
     expect(Theme::count())->toBeGreaterThan(0);
 
@@ -34,7 +34,7 @@ it('updates themes if the version number is new', function () {
         ]);
 
     $zip = file_get_contents(test_unit_data_path('Themes/github-themes.zip'));
-    GithubSyncService::sync($zip);
+    (new GithubSyncService($zip))->run();
 
     expect(ThemeVersion::where('theme_id', $theme->id)->count())->toBe(2);
 });
@@ -47,7 +47,7 @@ it('does not update if the version is the same', function () {
         ]);
 
     $zip = file_get_contents(test_unit_data_path('Themes/github-themes.zip'));
-    GithubSyncService::sync($zip);
+    (new GithubSyncService($zip))->run();
 
     expect(ThemeVersion::where('theme_id', $theme->id)->count())->toBe(1);
 });

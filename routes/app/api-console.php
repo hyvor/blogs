@@ -202,7 +202,8 @@ Route::prefix('/api/console/v0/blog/{subdomain}')
         Route::patch('/theme', [ConsoleThemeController::class, 'changeTheme']);
         Route::get('/theme/download', [ConsoleThemeController::class, 'downloadTheme']);
         Route::get('/theme/files', [ConsoleThemeController::class, 'getAllFiles']);
-        Route::put('/theme-file/{id}', [ConsoleThemeController::class, 'createOrUpdateFile']);
+        Route::post('/theme/file', [ConsoleThemeController::class, 'createFile']);
+        Route::put('/theme/file/{id}', [ConsoleThemeController::class, 'updateFile']);
 
         // import and export
         Route::get('/data/export', [ConsoleImportExportController::class, 'export']);
