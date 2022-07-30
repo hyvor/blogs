@@ -203,7 +203,7 @@ Route::prefix('/api/console/v0/blog/{subdomain}')
         Route::get('/theme/download', [ConsoleThemeController::class, 'downloadTheme']);
         Route::get('/theme/files', [ConsoleThemeController::class, 'getAllFiles']);
         Route::post('/theme/file', [ConsoleThemeController::class, 'createFile']);
-        Route::put('/theme/file/{id}', [ConsoleThemeController::class, 'updateFile']);
+        Route::patch('/theme/file/{id}', [ConsoleThemeController::class, 'updateFile']);
         Route::delete('/theme/file/{id}', [ConsoleThemeController::class, 'deleteFile']);
 
         // import and export

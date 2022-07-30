@@ -83,7 +83,7 @@ const themeLogic = kea<themeLogicType>([
 
 
         deleteFile: async({id} : {id: number}) => {
-            actions.setFiles
+            actions.setFiles(values.files.filter(f => f.id !== id))
             await api.delete(props.subdomain, `/theme/file/${id}`)
         }
 

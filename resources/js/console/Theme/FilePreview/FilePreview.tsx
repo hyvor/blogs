@@ -4,6 +4,8 @@ import {useThemeActions, useThemeValues} from "../use";
 import TextEditor from "./TextEditor";
 import AssetImagePreview from "./AssetImagePreview";
 import NoPreview from "./NoPreview";
+import {PencilFill, Trash} from "react-bootstrap-icons";
+import FileTopBar from "./FileTopBar";
 
 export default function FilePreview() {
 
@@ -30,11 +32,8 @@ export default function FilePreview() {
 
 
     return <div className="file-preview">
-
-        <div className="file-name">{ activeFile.name }</div>
-
+        <FileTopBar file={activeFile} />
         { body }
-
     </div>
 
 }

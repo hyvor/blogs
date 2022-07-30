@@ -6,22 +6,21 @@ import Loader from "../ReusableComponents/Loader";
 import {toast} from "react-toastify";
 import {appConfig} from "../helpers";
 import byteFormatter from "../../helpers/byteFormatter";
+import FileNameInput from "./FileNameInput";
 
 export default function NewFileCreator({ folder } : { folder: ThemeFolder }) {
 
     const [isTypingName, setIsTypingName] = useState(false);
     const [isCreating, setIsCreating] = useState(false);
-    const [fileName, setFileName] = useState('');
 
     const { createFile } = useThemeActions()
 
-    function handleCreate() {
+    function handleCreate(name: string) {
         setIsCreating(true);
         setIsTypingName(false);
-        setFileName('');
 
         createFile({
-            name: fileName,
+            name,
             folder,
             content: '',
             onCreate: () => {
@@ -80,25 +79,12 @@ export default function NewFileCreator({ folder } : { folder: ThemeFolder }) {
                             { folder === 'assets' && <span className="new" onClick={handleUploadClick}><CloudUpload /> UPLOAD</span> }
                         </Fragment>
                     }
-                    {isTypingName &&
-                        <div className="new-file-name">
-                            <input
-                                name="file-name"
-                                type="text"
-                                className="input"
-                                autoFocus={true}
-                                maxLength={255}
-                                value={fileName}
-                                onChange={e => setFileName(e.target.value)}
-                            />
-                            <div className="buttons">
-                            <span
-                                className={"check" + (fileName.trim() === '' ? ' inactive' : '')}
-                                onClick={handleCreate}
-                            ><Check/></span>
-                                <span className="close" onClick={() => setIsTypingName(false)}><X/></span>
-                            </div>
-                        </div>
+                    {
+                        isTypingName &&
+                        <FileNameInput
+                            onCreate={name => handleCreate(name)}
+                            onCancel={() => setIsTypingName(false)}
+                        />
                     }
 
 

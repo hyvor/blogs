@@ -75,36 +75,6 @@
                 cursor: pointer;
                 margin-right: 10px;
             }
-
-            .new-file-name {
-                display: flex;
-                align-items: center;
-                input {
-                    padding: 3px 10px;
-                    font-size: 12px;
-                    flex: 1;
-                    margin-right: 3px;
-                }
-                .buttons {
-                    span {
-                        cursor: pointer;
-                        display: inline-flex;
-                        align-items: center;
-                        justify-content: center;
-                        width: 22px;
-                        height: 22px;
-                        font-size: 16px;
-                        border-radius: 50%;
-                        &.inactive {
-                            pointer-events: none;
-                            opacity: 0.4;
-                        }
-                        &:hover {
-                            background-color: $color-hover;
-                        }
-                    }
-                }
-            }
         }
 
         .file {
@@ -127,12 +97,15 @@
         flex-direction: column;
         height: 100%;
 
-        .file-name {
+        .file-top-bar {
             text-align: center;
             color: $color-text-light;
             font-weight: 600;
             padding: 10px;
             border-bottom: 1px solid $color-accent-light;
+            .buttons {
+                margin-left: 6px;
+            }
         }
 
         .text-editor {
@@ -185,6 +158,38 @@
             font-size: 14px;
             &:hover {
                 background-color: $color-hover;
+            }
+        }
+    }
+
+    .file-name-input {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        input {
+            padding: 3px 10px;
+            font-size: 12px;
+            flex: 1;
+            margin-right: 3px;
+            max-width: 200px;
+        }
+        .buttons {
+            span {
+                cursor: pointer;
+                display: inline-flex;
+                align-items: center;
+                justify-content: center;
+                width: 22px;
+                height: 22px;
+                font-size: 16px;
+                border-radius: 50%;
+                &.inactive {
+                    pointer-events: none;
+                    opacity: 0.4;
+                }
+                &:hover {
+                    background-color: $color-hover;
+                }
             }
         }
     }
