@@ -68,12 +68,18 @@ class ConsoleThemeController extends Controller
         $request->validate([
             'folder' => ['required', 'nullable', new Enum(ThemeFileFolderEnum::class)],
             'name' => 'required|string',
-            'content' => 'string|nullable'
+            'content' => 'string|nullable',
+            'file' => 'file'
         ]);
 
         $folder = ThemeFileFolderEnum::tryFrom($request->input('folder'));
         $name = $request->input('name');
         $content = $request->input('content') ?? '';
+
+        if ($request->has('file')) {
+            $file = $request->file('file');
+            $content = $file->get();
+        }
 
         if (ThemeFilesRepository::getFile($blog, $name, $folder)) {
             throw new TrustedException('File already exists');

@@ -35,7 +35,7 @@ export default function NewFileCreator({ folder } : { folder: ThemeFolder }) {
     function handleUploadClick() {
         uploadRef.current?.click();
     }
-    function handleUpload(e: any) {
+    async function handleUpload(e: any) {
         const files = (e.target as HTMLInputElement).files;
         if (!files?.length) {
             return toast.error('No files selected');
@@ -46,21 +46,16 @@ export default function NewFileCreator({ folder } : { folder: ThemeFolder }) {
             return toast.error('File too large. Max size is ' + byteFormatter(maxSize));
         }
 
-        const reader = new FileReader();
-        reader.addEventListener('load', (event) => {
-            const content = (event.target?.result || '') as string;
+        setIsCreating(true);
 
-            createFile({
-                name: file.name,
-                folder,
-                content,
-                onCreate: () => {
-                    setIsCreating(false);
-                }
-            })
-        });
-        reader.readAsText(file);
-
+        createFile({
+            name: file.name,
+            folder,
+            content: file,
+            onCreate: () => {
+                setIsCreating(false);
+            }
+        })
 
     }
 

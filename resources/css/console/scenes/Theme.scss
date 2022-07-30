@@ -151,6 +151,8 @@
             justify-content: center;
             height: 100%;
             padding: 30px 50px;
+            min-width: 0;
+            overflow: hidden;
         }
 
         .no-preview {

@@ -53,13 +53,13 @@ const themeLogic = kea<themeLogicType>([
 
         createFile: async (
             {name, folder, content, onCreate} :
-            {name: string, folder: ThemeFolder, content: string, onCreate: Function}
+            {name: string, folder: ThemeFolder, content: string | Blob, onCreate: Function}
         ) => {
 
             const formData = new FormData()
-            formData.append('name', name);
+            formData.append('name', name)
             formData.append('folder', folder || '');
-            formData.append('content', content);
+            formData.append(content instanceof Blob ? 'file' : 'content', content)
 
             const file = await api.post<ThemeFile>(props.subdomain, '/theme/file', formData);
             actions.setFiles([...values.files, file]);

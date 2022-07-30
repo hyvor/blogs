@@ -4,6 +4,7 @@ namespace Tests\Feature\ConsoleAPI\Themes;
 
 use App\Data\Enums\ThemeFileFolderEnum;
 use App\Domains\Theme\ThemeFilesRepository;
+use Illuminate\Http\UploadedFile;
 use Illuminate\Testing\Fluent\AssertableJson;
 
 it('creates a file', function() {
@@ -17,6 +18,24 @@ it('creates a file', function() {
         ->assertJson(fn (AssertableJson $json) =>
             $json->where('name', 'index.twig')
                 ->where('content', 'test')
+                ->etc()
+        );
+
+});
+
+it('creates a file from blob', function() {
+
+    $file = UploadedFile::fake()->image('test.jpg');
+
+    $this->callConsoleApi('POST', '/theme/file', [
+        'folder' => 'assets',
+        'name' => 'test.jpg',
+        'file' => $file
+    ])
+        ->assertOk()
+        ->assertJson(fn (AssertableJson $json) =>
+            $json->where('name', 'test.jpg')
+                ->where('content', null)
                 ->etc()
         );
 
