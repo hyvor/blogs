@@ -25,7 +25,7 @@ export default function FilePreview() {
     } else if (activeFile.folder === 'assets' && imageExtensions.indexOf(ext) >= 0) {
         body = <AssetImagePreview file={activeFile}  />
     } else {
-        body = <NoPreview />
+        body = <NoPreview file={activeFile} />
     }
 
 

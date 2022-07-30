@@ -160,8 +160,14 @@
             display: flex;
             align-items: center;
             justify-content: center;
+            flex-direction: column;
             height: 100%;
             color: $color-text-light;
+            .open-url {
+                margin-top: 5px;
+                font-size: 14px;
+                color: $color-link;
+            }
         }
 
     }

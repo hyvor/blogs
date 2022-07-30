@@ -13,6 +13,7 @@ use App\Models\Blog;
 use App\Models\ThemeFile;
 use Illuminate\Http\Request;
 use Illuminate\Validation\Rules\Enum;
+use Illuminate\Validation\Rules\File;
 
 class ConsoleThemeController extends Controller
 {
@@ -69,7 +70,7 @@ class ConsoleThemeController extends Controller
             'folder' => ['required', 'nullable', new Enum(ThemeFileFolderEnum::class)],
             'name' => 'required|string',
             'content' => 'string|nullable',
-            'file' => 'file'
+            'file' => (new File())->max(config('limits.max_asset_file_size') / 1000)
         ]);
 
         $folder = ThemeFileFolderEnum::tryFrom($request->input('folder'));

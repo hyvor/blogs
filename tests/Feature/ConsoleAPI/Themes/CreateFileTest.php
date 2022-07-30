@@ -41,6 +41,20 @@ it('creates a file from blob', function() {
 
 });
 
+it('validates file size', function() {
+
+    $file = UploadedFile::fake()->image('test.jpg')->size(config('limits.max_asset_file_size') / 1000 + 1);
+
+    $this->callConsoleApi('POST', '/theme/file', [
+        'folder' => 'assets',
+        'name' => 'test.jpg',
+        'file' => $file
+    ])
+        ->assertUnprocessable()
+        ->assertSee('The file must not be greater than');
+
+});
+
 it('does not create a file if one already exists', function() {
 
     ThemeFilesRepository::createOrUpdateFile(
