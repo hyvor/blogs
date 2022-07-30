@@ -7,7 +7,7 @@ import { routerPlugin } from 'kea-router'
 import Scene from './Scene';
 import { ToastContainer } from 'react-toastify'
 
-import './lib/codemirror/codemirror';
+import './lib/codemirror';
 
 import 'react-toastify/dist/ReactToastify.css';
 import 'prosemirror-codemark/dist/codemark.css';

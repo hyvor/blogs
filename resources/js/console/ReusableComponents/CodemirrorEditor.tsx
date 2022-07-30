@@ -23,10 +23,10 @@ export default function CodemirrorEditor({ value, onChange, mode } : Props) {
         options={{
             theme: 'solarized',
             keyMap: 'sublime',
+            mode: CODEMIRROR_MODES[mode],
             tabSize,
             indentWithTabs: true,
             indentUnit: tabSize,
-            mode: CODEMIRROR_MODES[mode],
             lineWrapping: true,
             lineNumbers: true,
             matchBrackets: true,
