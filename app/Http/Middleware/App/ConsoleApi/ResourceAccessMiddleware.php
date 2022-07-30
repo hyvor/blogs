@@ -13,21 +13,23 @@ use App\Models\Post;
 use App\Models\Redirect;
 use App\Models\Route;
 use App\Models\Tag;
+use App\Models\ThemeFile;
 use App\Models\User;
 use Closure;
 
 class ResourceAccessMiddleware
 {
     private $models = [
-        'post' => Post::class,
-        'media' => Media::class,
-        'redirect' => Redirect::class,
-        'navigation' => Navigation::class,
-        'language' => Language::class,
-        'tag' => Tag::class,
-        'user' => User::class,
-        'route' => Route::class,
-        'api-key' => ApiKey::class
+        '/post' => Post::class,
+        '/media' => Media::class,
+        '/redirect' => Redirect::class,
+        '/navigation' => Navigation::class,
+        '/language' => Language::class,
+        '/tag' => Tag::class,
+        '/user' => User::class,
+        '/route' => Route::class,
+        '/api-key' => ApiKey::class,
+        '/theme/file' => ThemeFile::class
     ];
 
     public function __construct(Blog $blog)
@@ -56,37 +58,36 @@ class ResourceAccessMiddleware
              *
              */
 
-            // ex: api/console/v0/blog/supun/post/1
+            // ex: api/console/v0/blog/test/post/1
             $path = $request->path();
+            preg_match('~api/console/v0/blog/[^/]+(/[a-z/]+)/\d+~', $path, $matches);
 
-            // ex: [api, console, v0, blog, supun, post, 1]
-            $split = explode("/", $path);
+            // ex: /post
+            $routePrefix = $matches[1];
 
-            // ex: post (model type)
-            $modelType = $split[5];
-
-            if (! array_key_exists($modelType, $this->models)) {
-                throw new TrustedException("Unable to find the $modelType to verify blog relationship");
+            if (! array_key_exists($routePrefix, $this->models)) {
+                throw new TrustedException("Unable to find the $routePrefix to verify blog relationship");
             }
 
             // ex: Post model
-            $model = $this->models[$modelType]::find($id);
+            $modelClass = $this->models[$routePrefix];
+            $model = $modelClass::find($id);
 
             if (! $model) {
                 throw new TrustedException(
-                    "Unable to find the $modelType",
+                    "Unable to find the $routePrefix",
                     TrustedException::ERROR_NOT_FOUND
                 );
             }
 
-            app()->instance($this->models[$modelType], $model);
+            app()->instance($modelClass, $model);
 
 
             // now check if the model's blog_id
             // is currently accessed blog's ID
             if ($model->blog_id !== $this->blog->id) {
                 throw new TrustedException(
-                    "This $modelType belongs to another blog. Ensure the subdomain is correct",
+                    "This $routePrefix belongs to another blog. Ensure the subdomain is correct",
                     TrustedException::ERROR_FORBIDDEN
                 );
             }

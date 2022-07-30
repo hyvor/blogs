@@ -40,6 +40,7 @@ class ConsoleViewController extends Controller
 
             'limits' => [
                 'max_theme_zip_size_kb' => config('limits.max_theme_zip_size_kb'),
+                'max_asset_file_size' => config('limits.max_asset_file_size')
             ],
         ];
 

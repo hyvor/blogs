@@ -90,6 +90,24 @@ class ThemeFilesRepository
         );
     }
 
+    /**
+     * @param ThemeFile $file
+     * @param array{name?: string, content?: string} $updates
+     * @return void
+     */
+    public static function updateFile(ThemeFile $file, array $updates) : ThemeFile
+    {
+        if (array_key_exists('name', $updates)) $file->name = $updates['name'];
+        if (array_key_exists('content', $updates)) $file->content = $updates['content'];
+        $file->save();
+        return $file;
+    }
+
+    public static function deleteFile(ThemeFile $file)
+    {
+        $file->delete();
+    }
+
     public static function deleteAllFiles(Blog $blog)
     {
         $blog->themeFiles()->delete();

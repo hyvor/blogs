@@ -78,12 +78,7 @@ return [
      * Template-related limitations
      */
     'max_theme_zip_size_kb' => 50 * 1000, // 50MB
-    'max_template_files_per_blog' => 50,
-    'max_template_file_size' => 50 * 1000, // 50kb
-    'max_assets_per_blog' => 30,
-    'max_asset_file_size' => 1000 * 1000, // 1MB
-    'max_style_files_per_blog' => 50,
-    'max_lang_files_per_blog' => 100, // same as max languages
+    'max_asset_file_size' => 2 * 1000 * 1000, // 2MB
 
     /** 
     * String lengths

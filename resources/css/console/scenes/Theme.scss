@@ -41,6 +41,7 @@
                 padding:4px;
                 display: flex;
                 align-items: center;
+                user-select: none;
                 .fold-icon {
                     margin-right: 5px;
                     margin-top: -2px;
@@ -72,6 +73,7 @@
                 font-weight: 600;
                 color: $color-text-light;
                 cursor: pointer;
+                margin-right: 10px;
             }
 
             .new-file-name {
@@ -119,7 +121,7 @@
 
     }
 
-    .file-editor {
+    .file-preview {
         overflow: auto;
         display: flex;
         flex-direction: column;
@@ -133,15 +135,33 @@
             border-bottom: 1px solid $color-accent-light;
         }
 
-        .file-preview {
+        .text-editor {
             flex:1;
             overflow: auto;
+            .CodeMirror {
+                padding: 10px 0 60px 0;
+                border-radius: 0;
+                height: 100%;
+            }
         }
-        .CodeMirror {
-            padding: 10px 0 60px 0;
-            border-radius: 0;
+
+        .asset-image-preview {
+            display: flex;
+            align-items: center;
+            justify-content: center;
             height: 100%;
+            padding: 30px 50px;
         }
+
+        .no-preview {
+            font-size: 18px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            height: 100%;
+            color: $color-text-light;
+        }
+
     }
 
     .theme-changer {

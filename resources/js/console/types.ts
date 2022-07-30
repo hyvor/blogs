@@ -31,7 +31,8 @@ export interface appConfig {
     syntax_themes: string[],
 
     limits: {
-        max_theme_zip_size_kb: number
+        max_theme_zip_size_kb: number,
+        max_asset_file_size: number
     }
 }
 

@@ -2,9 +2,7 @@
 
 namespace App\Http\Controllers\CliAPI;
 
-use App\Data\Enums\BlogHostingAtEnum;
 use App\Data\Enums\ThemeFileFolderEnum;
-use App\Domains\Delivery\DeliveryRepository;
 use App\Domains\Theme\ThemeFilesRepository;
 use App\Models\Blog;
 use Illuminate\Http\Request;

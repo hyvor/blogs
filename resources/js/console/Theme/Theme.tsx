@@ -7,7 +7,7 @@ import Download from "./Download";
 import Upload from "./Upload";
 import Changer from "./Changer";
 import Folder from "./Folder";
-import FileEditor from "./FileEditor";
+import FilePreview from "./FilePreview/FilePreview";
 
 export default function Theme() {
 
@@ -45,7 +45,7 @@ export default function Theme() {
             </div>
         </div>
         <div className="box box-right theme-right">
-            <FileEditor />
+            <FilePreview />
         </div>
     </div>
 

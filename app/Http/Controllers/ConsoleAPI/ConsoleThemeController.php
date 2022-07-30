@@ -68,12 +68,12 @@ class ConsoleThemeController extends Controller
         $request->validate([
             'folder' => ['required', 'nullable', new Enum(ThemeFileFolderEnum::class)],
             'name' => 'required|string',
-            'content' => 'string'
+            'content' => 'string|nullable'
         ]);
 
         $folder = ThemeFileFolderEnum::tryFrom($request->input('folder'));
         $name = $request->input('name');
-        $content = $request->input('content');
+        $content = $request->input('content') ?? '';
 
         if (ThemeFilesRepository::getFile($blog, $name, $folder)) {
             throw new TrustedException('File already exists');
@@ -89,11 +89,32 @@ class ConsoleThemeController extends Controller
         return response()->json(new FileObject($file));
     }
 
-    public function updateFile(ThemeFile $file)
+    public function updateFile(Request $request, ThemeFile $file)
     {
 
-        
+        $request->validate([
+            'name' => 'string',
+            'content' => 'string|nullable'
+        ]);
 
+        $updates = [];
+
+        if ($request->has('name')) {
+            $updates['name'] = $request->input('name');
+        }
+        if ($request->has('content')) {
+            $updates['content'] = $request->input('content');
+        }
+
+        $file = ThemeFilesRepository::updateFile($file, $updates);
+
+        return response()->json(new FileObject($file));
+    }
+
+    public function deleteFile(ThemeFile $file)
+    {
+        ThemeFilesRepository::deleteFile($file);
+        return response()->json();
     }
 
     public function getAllFiles(Blog $blog)

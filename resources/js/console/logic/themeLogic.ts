@@ -2,7 +2,7 @@ import {actions, events, kea, key, listeners, path, props, reducers, selectors} 
 import api, {getMiscEndpoint} from "../lib/api";
 import {themeLogicType} from "./themeLogicType";
 import {ajax} from "kea-ajax";
-import {Theme, ThemeFile} from "../types";
+import {Theme, ThemeFile, ThemeFolder} from "../types";
 import axios from "axios";
 
 const themeLogic = kea<themeLogicType>([
@@ -11,11 +11,11 @@ const themeLogic = kea<themeLogicType>([
     key(props => props.subdomain),
     path(key => ['theme', key]),
     actions(({values}) => ({
-
         setThemes: (themes: Theme[]) => ({themes}),
 
         setFiles: (files: ThemeFile[]) => ({files}),
         setFileContent: (id: number, content: string) => ({id, content}),
+        saveFileContent: (id: number, content: string) => ({id, content}),
 
         // file editor
         editorOpenFile: (id: number) => ({id}),
@@ -23,7 +23,7 @@ const themeLogic = kea<themeLogicType>([
         editorSaveFile: (id: number) => ({id}),
     })),
 
-    ajax(({actions, props}) => ({
+    ajax(({actions, props, values}) => ({
 
         loadThemes: async () => {
             const res = await axios.get(getMiscEndpoint('/themes'))
@@ -49,6 +49,42 @@ const themeLogic = kea<themeLogicType>([
             const files = await api.post<ThemeFile[]>(props.subdomain, '/theme', formData);
             actions.setFiles(files)
             onUpload();
+        },
+
+        createFile: async (
+            {name, folder, content, onCreate} :
+            {name: string, folder: ThemeFolder, content: string, onCreate: Function}
+        ) => {
+
+            const formData = new FormData()
+            formData.append('name', name);
+            formData.append('folder', folder || '');
+            formData.append('content', content);
+
+            const file = await api.post<ThemeFile>(props.subdomain, '/theme/file', formData);
+            actions.setFiles([...values.files, file]);
+
+            onCreate();
+        },
+
+        updateFile: async({id, name, content} : {id: number, name?: string, content?: string}) => {
+
+            const data = {} as {name?: string, content?: string};
+            if (name !== undefined)
+                data.name = name
+            if (content !== undefined) {
+                data.content = content;
+            }
+
+            const file = await api.patch<ThemeFile>(props.subdomain, `/theme/file/${id}`, data)
+            actions.setFiles(values.files.map(f => f.id === file.id ? file : f))
+
+        },
+
+
+        deleteFile: async({id} : {id: number}) => {
+            actions.setFiles
+            await api.delete(props.subdomain, `/theme/file/${id}`)
         }
 
     })),

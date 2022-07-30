@@ -11,7 +11,7 @@ export const CODEMIRROR_MODES = {
 interface Props {
     value: string,
     onChange: (val: string) => any,
-    mode: typeof CODEMIRROR_MODES[keyof typeof CODEMIRROR_MODES],
+    mode: keyof typeof CODEMIRROR_MODES,
 }
 
 export default function CodemirrorEditor({ value, onChange, mode } : Props) {
@@ -26,7 +26,7 @@ export default function CodemirrorEditor({ value, onChange, mode } : Props) {
             tabSize,
             indentWithTabs: true,
             indentUnit: tabSize,
-            mode,
+            mode: CODEMIRROR_MODES[mode],
             lineWrapping: true,
             lineNumbers: true,
             matchBrackets: true,
