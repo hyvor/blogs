@@ -1,11 +1,9 @@
-import React, { useState } from 'react';
+import React, {useEffect, useRef} from 'react';
 import {EditorState, EditorStateConfig, NodeSelection} from "prosemirror-state"
 import type {Node as ProsemirrorNode} from 'prosemirror-model'
 
 import HBSchema from './schema';
 import plugins from './plugins';
-import {ProseMirror, useProseMirror} from '../../../../helpers/copied/use-prosemirror';
-import useUpdateEffect from '../../../../helpers/hooks/useUpdateEffect';
 import Figcaption from './nodeview-figcaption';
 import Heading from './nodeview-heading';
 import Callout from './Callout/nodeview-callout';
@@ -14,7 +12,7 @@ import Image from './Image/nodeview-image';
 import Bookmark from './nodeview-bookmark';
 import CustomHtml from "./nodeview-custom-html";
 import EmbedView from "./nodeview-embed";
-import type {EditorView, NodeViewConstructor} from "prosemirror-view";
+import {EditorView, NodeViewConstructor} from "prosemirror-view";
 
 function getState(val: string) {
     val = val ? JSON.parse(val) : null
@@ -64,30 +62,62 @@ interface EditorProps {
     value: string,
     currentLanguageId: number,
     onChange: (val: string) => void,
-    editable: boolean
 }
 
-export default function Editor(props: EditorProps) {
+export default function Editor({ id, currentLanguageId, value, onChange }: EditorProps) {
 
-    const [state, setState] = useProseMirror(getState(props.value))
+    const editorRef = useRef<null | HTMLDivElement>(null)
+    const mounted = useRef(false)
 
-    useUpdateEffect(() => {
-        setState(EditorState.create(getState(props.value)))
-    }, [props.id, props.currentLanguageId]);
+    function createEditor() {
 
-    function handleChange(state: EditorState) {
-        props.onChange(JSON.stringify(state.doc.toJSON()));
-        setState(state);
+        const jsonParsedValue = value ? JSON.parse(value) : null;
+
+        (editorRef.current as HTMLDivElement).innerHTML = "";
+
+
+        const view = new EditorView(editorRef.current, {
+            state: EditorState.create({
+                schema: HBSchema,
+                plugins: plugins(HBSchema),
+                doc: value ? HBSchema.nodeFromJSON( jsonParsedValue ) : undefined
+            }),
+            nodeViews,
+            handleClickOn,
+            handleKeyDown,
+            dispatchTransaction: (tr) => {
+                onChange(JSON.stringify(tr.doc.toJSON()))
+
+                const state = view.state.apply(tr)
+                view.updateState(state)
+            }
+        })
+
+        return view;
+
     }
 
-    return <ProseMirror
-        state={state}
-        nodeViews={nodeViews}
-        onChange={handleChange}
-        handleClickOn={handleClickOn}
-        handleKeyDown={handleKeyDown}
-        editable={() => props.editable}
-    />;
+    useEffect(() => {
+
+        if (mounted.current)
+            return;
+
+        mounted.current = true;
+
+        const view = createEditor()
+        return () => view.destroy();
+    }, []);
+
+    /**
+     * Re-create the editor when the post ID or current language ID changes
+     */
+    useEffect(() => {
+        const view = createEditor()
+        return () => view.destroy();
+    }, [id, currentLanguageId])
+
+    return <div ref={editorRef} />
+
 }
 
 function handleClickOn(view: EditorView, pos: number, node: ProsemirrorNode, posBefore: number, e: MouseEvent) {

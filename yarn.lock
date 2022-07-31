@@ -2481,10 +2481,10 @@
   dependencies:
     "prosemirror-model" "^1.0.0"
 
-"prosemirror-view@^1.0.0", "prosemirror-view@^1.1.0", "prosemirror-view@^1.26.2":
-  "integrity" "sha512-CGKw+GadkfSBEwRAJTHCEKJ4DlV6/3IhAdjpwGyZHUHtbP7jX4Ol4zmi7xa2c6GOabDlIJLYXJydoNYLX7lNeQ=="
-  "resolved" "https://registry.npmjs.org/prosemirror-view/-/prosemirror-view-1.26.2.tgz"
-  "version" "1.26.2"
+"prosemirror-view@^1.0.0", "prosemirror-view@^1.1.0", "prosemirror-view@^1.26.2", "prosemirror-view@^1.27.0":
+  "integrity" "sha512-yNCQW5eiPkrMgjOT5Xa/ItIvcM7JBG7ikZKaHo26hdBW5OLNnIWGZ0BV6/OiBk742teLybLVNPCpYUcW405Ckg=="
+  "resolved" "https://registry.npmjs.org/prosemirror-view/-/prosemirror-view-1.27.0.tgz"
+  "version" "1.27.0"
   dependencies:
     "prosemirror-model" "^1.16.0"
     "prosemirror-state" "^1.0.0"

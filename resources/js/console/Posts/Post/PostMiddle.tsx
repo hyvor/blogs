@@ -25,7 +25,7 @@ export default function PostMiddle({id} : {id: number}) {
             value={content || ''}
             currentLanguageId={editorState.languageId}
             onChange={(v: string) => handleContentUpdate(v)}
-            editable={currentVariant.status === 'draft' || editorState.isNonDraftEditing}
+            // editable={currentVariant.status === 'draft' || editorState.isNonDraftEditing}
         />
     </div>
 
