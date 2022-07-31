@@ -1,5 +1,5 @@
 import {Check, X} from "react-bootstrap-icons";
-import React, {useState} from "react";
+import React, {KeyboardEventHandler, useState} from "react";
 
 interface FileNameInputProps {
     name?: string,
@@ -9,7 +9,17 @@ interface FileNameInputProps {
 
 export default function FileNameInput({ name = '', onCreate, onCancel } : FileNameInputProps) {
 
-    const [editedName, setEditedName] = useState(name)
+    const [editedName, setEditedName] = useState(name || '')
+    const isEditedNameEmpty = editedName.trim() === '';
+
+    const handleKeyUp: KeyboardEventHandler<HTMLInputElement> = (e) => {
+        if (e.key === 'Enter' && !isEditedNameEmpty) {
+            onCreate(editedName)
+        }
+        if (e.key === 'Escape') {
+            onCancel();
+        }
+    }
 
     return <div className="file-name-input">
         <input
@@ -20,10 +30,11 @@ export default function FileNameInput({ name = '', onCreate, onCancel } : FileNa
             maxLength={255}
             value={editedName}
             onChange={e => setEditedName(e.target.value)}
+            onKeyUp={handleKeyUp}
         />
         <div className="buttons">
             <span
-                className={"check" + (editedName.trim() === '' ? ' inactive' : '')}
+                className={"check" + (isEditedNameEmpty ? ' inactive' : '')}
                 onClick={() => onCreate(editedName)}
             ><Check/></span>
             <span className="close" onClick={() => onCancel()}><X/></span>
