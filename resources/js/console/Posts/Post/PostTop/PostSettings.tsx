@@ -259,8 +259,8 @@ export default function PostSettings({ id } : PostSettingsProps) {
                         className="post-setting-description"
                     >
                         <CodemirrorEditor
-                            mode={CODEMIRROR_MODES.twig}
-                            value={post.code_head}
+                            extension="twig"
+                            value={post.code_head || ''}
                             onChange={(val: string) => updatePostValue('code_head', val)}
                         />
                     </Setting>
@@ -271,8 +271,8 @@ export default function PostSettings({ id } : PostSettingsProps) {
                         className="post-setting-description"
                     >
                         <CodemirrorEditor
-                            mode={CODEMIRROR_MODES.twig}
-                            value={post.code_foot}
+                            extension="twig"
+                            value={post.code_foot || ''}
                             onChange={(val: string) => updatePostValue('code_foot', val)}
                         />
                     </Setting>

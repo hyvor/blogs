@@ -1210,10 +1210,10 @@
   "resolved" "https://registry.npmjs.org/clsx/-/clsx-1.1.1.tgz"
   "version" "1.1.1"
 
-"codemirror@^5.65.1":
-  "integrity" "sha512-zNihMSMoDxK9Gqv9oEyDT8oM51rcRrQ+IEo2zyS48gJByBq5Fj8XuNEguMra+MuIOuh6lkpnLUJeL70DoTt6yw=="
-  "resolved" "https://registry.npmjs.org/codemirror/-/codemirror-5.65.6.tgz"
-  "version" "5.65.6"
+"codemirror@^5.65.7":
+  "integrity" "sha512-zb67cXzgugIQmb6tfD4G11ILjYoMfTjwcjn+cWsa4GewlI2adhR/h3kolkoCQTm1msD/1BuqVTKuO09ELsS++A=="
+  "resolved" "https://registry.npmjs.org/codemirror/-/codemirror-5.65.7.tgz"
+  "version" "5.65.7"
 
 "color-convert@^1.9.0":
   "integrity" "sha512-QfAUtd+vFdAtFQcC8CCyYt1fYWxSqAiK2cSD6zDB8N3cpsEBAvRxp9zOGg6G/SHHJYAT88/az/IuDGALsNVbGg=="

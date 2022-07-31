@@ -468,7 +468,7 @@ textarea.input {
 }
 
 // codemirror
-.react-codemirror2 {
+.global-codemirror-wrap {
     height:100%;
 }
 .CodeMirror {
@@ -482,6 +482,9 @@ textarea.input {
     }
     .CodeMirror-gutters {
         background-color: $color-input;
+    }
+    .CodeMirror-scroll {
+        overflow-x: hidden!important;
     }
 }
 

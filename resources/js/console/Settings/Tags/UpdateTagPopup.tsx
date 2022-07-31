@@ -109,7 +109,7 @@ export default function UpdateTagPopup({ tag, onClose } : { tag: Tag, onClose: F
                                     <CodemirrorEditor
                                         value={tagState.code_head || ''}
                                         onChange={(v : string) => changeValue('code_head', v)}
-                                        mode={CODEMIRROR_MODES.twig}
+                                        extension="twig"
                                     />
                                 }
                             />
@@ -119,7 +119,7 @@ export default function UpdateTagPopup({ tag, onClose } : { tag: Tag, onClose: F
                                     <CodemirrorEditor
                                         value={tagState.code_foot || ''}
                                         onChange={(v : string) => changeValue('code_foot', v)}
-                                        mode={CODEMIRROR_MODES.twig}
+                                        extension="twig"
                                     />
                                 }
                             />

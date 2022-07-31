@@ -1,5 +1,4 @@
-import React from 'react'
-import {Controlled as CodeMirror} from '../../helpers/copied/react-codemirror2'
+import React, {useEffect, useRef} from 'react'
 
 export const CODEMIRROR_MODES = {
     scss: { name: 'twig', base: 'text/x-scss'},
@@ -9,32 +8,68 @@ export const CODEMIRROR_MODES = {
 }
 
 interface Props {
+
+    /**
+     * Send an ID if the same component is used for multiple different values/files
+     * (for example in theme file editing)
+     */
+    id?: null | string | number,
     value: string,
     onChange: (val: string) => any,
-    mode: keyof typeof CODEMIRROR_MODES,
+    onSave?: (val: string) => any,
+    extension: keyof typeof CODEMIRROR_MODES,
 }
 
-export default function CodemirrorEditor({ value, onChange, mode } : Props) {
+export default function CodemirrorEditor({ id = null, value, onChange, onSave, extension } : Props) {
 
-    const tabSize = mode === CODEMIRROR_MODES.yaml ? 2 : 4;
+    const ref = useRef<null | HTMLDivElement>(null);
+    const cm = useRef<any>(null);
+    const tabSize = extension === 'yaml' ? 2 : 4;
 
-    return <CodeMirror
-        value={value}
-        options={{
+    function initCm() {
+
+        (ref.current as HTMLDivElement).innerHTML = "";
+
+        function handleSave() {
+            onSave && onSave(cm.current.doc.getValue())
+        }
+
+        cm.current = (window as any).CodeMirror(ref.current, {
+            value,
+            mode: CODEMIRROR_MODES[extension],
             theme: 'solarized',
             keyMap: 'sublime',
-            mode: CODEMIRROR_MODES[mode],
             tabSize,
             indentWithTabs: true,
             indentUnit: tabSize,
-            lineWrapping: true,
+            lineWrapping: false,
             lineNumbers: true,
             matchBrackets: true,
             matchTags: {bothTags: true},
             autoCloseBrackets: true,
             autoCloseTags: true,
-        }}
-        onBeforeChange={(_, __, value) => onChange(value)}
-    />
+            extraKeys: {
+                "Ctrl-S": handleSave,
+                "Cmd-S": handleSave
+            }
+        })
+        cm.current.on('change', function() {
+            const val = cm.current.doc.getValue()
+            onChange(val)
+        })
+
+    }
+
+    useEffect(() => {
+        if (cm.current)
+            return;
+        initCm()
+    }, []);
+
+    useEffect(() => {
+        initCm()
+    }, [id])
+
+    return <div className="global-codemirror-wrap" ref={ref} />
 
 }

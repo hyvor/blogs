@@ -76,8 +76,8 @@ export default function SEO() {
             }
             right={
                 <CodemirrorEditor
-                    mode={CODEMIRROR_MODES.twig}
-                    value={blog.seo_robots_txt}
+                    extension="twig"
+                    value={blog.seo_robots_txt || ''}
                     onChange={(val: string) => updateBlogValue('seo_robots_txt', val)}
                 />
             }

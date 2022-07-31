@@ -1,10 +1,9 @@
-import React, { useEffect } from "react";
-import CodemirrorEditor, { CODEMIRROR_MODES } from "../../ReusableComponents/CodemirrorEditor";
-import {useThemeActions, useThemeValues} from "../use";
+import React  from "react";
+import { CODEMIRROR_MODES } from "../../ReusableComponents/CodemirrorEditor";
+import { useThemeValues} from "../use";
 import TextEditor from "./TextEditor";
 import AssetImagePreview from "./AssetImagePreview";
 import NoPreview from "./NoPreview";
-import {PencilFill, Trash} from "react-bootstrap-icons";
 import FileTopBar from "./FileTopBar";
 
 export default function FilePreview() {

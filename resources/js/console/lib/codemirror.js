@@ -3,12 +3,12 @@ import CodeMirror from 'codemirror';
 window.CodeMirror = CodeMirror;
 
 // codemirror
-/*import 'codemirror/addon/display/autorefresh';
+import 'codemirror/addon/display/autorefresh';
 import 'codemirror/addon/comment/comment';
 import 'codemirror/addon/edit/matchbrackets';
 import 'codemirror/addon/edit/matchtags';
 import 'codemirror/addon/edit/closebrackets';
-import 'codemirror/addon/edit/closetag'*/
+import 'codemirror/addon/edit/closetag'
 import 'codemirror/keymap/sublime';
 import 'codemirror/lib/codemirror.css';
 import 'codemirror/theme/solarized.css';

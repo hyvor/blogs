@@ -95,8 +95,8 @@ export default function Comments() {
                         }
                         right={
                             <CodemirrorEditor
-                                mode={CODEMIRROR_MODES.twig}
-                                value={blog.comments_code}
+                                extension={'twig'}
+                                value={blog.comments_code || ''}
                                 onChange={(val: string) => updateBlogValue('comments_code', val)}
                             />
                         }
@@ -110,8 +110,8 @@ export default function Comments() {
                 description="Paste the embed code provided by a email newsletter service here (for the sign up form)."
                 right={
                     <CodemirrorEditor
-                        mode={CODEMIRROR_MODES.twig}
-                        value={blog.newsletter_code}
+                        extension='twig'
+                        value={blog.newsletter_code || ''}
                         onChange={(val: string) => updateBlogValue('newsletter_code', val)}
                     />
                 }

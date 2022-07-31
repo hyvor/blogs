@@ -26,7 +26,7 @@ export default function Code() {
                 }
                 right={
                     <CodemirrorEditor
-                        mode={'twig'}
+                        extension={'twig'}
                         value={blog.code_head || ''}
                         onChange={(v: string) => updateBlogValue('code_head', v)}
                     />
@@ -39,7 +39,7 @@ export default function Code() {
                 description="This HTML code will be placed right before the </body> tag. If you want to add custom Javascript code (ex: analytics), this is the best place to add it. You can use Twig and route variables."
                 right={
                     <CodemirrorEditor
-                        mode={'twig'}
+                        extension={'twig'}
                         value={blog.code_foot || ''}
                         onChange={(v: string) => updateBlogValue('code_foot', v)}
                     />

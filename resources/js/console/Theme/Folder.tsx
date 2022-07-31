@@ -31,10 +31,10 @@ export default function Folder( {name} : {name: ThemeFolder} ) {
                 </div>
                 : null }
         <div className={"folder-files" + (unfolded ? " unfolded" : "")}>
-            <NewFileCreator folder={name} />
             {
                 files.map((file) => <File key={file.id} id={file.id} name={file.name} /> )
             }
+            <NewFileCreator folder={name} />
         </div>
     </div>
 

@@ -15,12 +15,10 @@ const themeLogic = kea<themeLogicType>([
 
         setFiles: (files: ThemeFile[]) => ({files}),
         setFileContent: (id: number, content: string) => ({id, content}),
-        saveFileContent: (id: number, content: string) => ({id, content}),
 
         // file editor
         editorOpenFile: (id: number) => ({id}),
         editorCloseFile: () => false,
-        editorSaveFile: (id: number) => ({id}),
     })),
 
     ajax(({actions, props, values}) => ({
@@ -67,7 +65,7 @@ const themeLogic = kea<themeLogicType>([
             onCreate();
         },
 
-        updateFile: async({id, name, content} : {id: number, name?: string, content?: string}) => {
+        updateFile: async({id, name, content, onUpdate} : {id: number, name?: string, content?: string, onUpdate?: Function}) => {
 
             const data = {} as {name?: string, content?: string};
             if (name !== undefined)
@@ -79,6 +77,7 @@ const themeLogic = kea<themeLogicType>([
             const file = await api.patch<ThemeFile>(props.subdomain, `/theme/file/${id}`, data)
             actions.setFiles(values.files.map(f => f.id === file.id ? file : f))
 
+            onUpdate && onUpdate();
         },
 
 
@@ -134,7 +133,10 @@ const themeLogic = kea<themeLogicType>([
             s => [s.files],
             files => id => files.find(file => file.id === id)
         ],
-
+        getOriginalFileById: [
+            s => [s.originalFiles],
+            files => id => files.find(file => file.id === id)
+        ],
         hasFileUpdated: [
             s => [s.files, s.originalFiles],
             (files, originalFiles) => id => {
