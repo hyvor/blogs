@@ -50,11 +50,11 @@
         "twig/twig": "^2.0",
         "ueberdosis/tiptap-php": "^1.1",
         "unsplash/unsplash": "^3.2",
-        "vlucas/phpdotenv": "^5.4"
+        "vlucas/phpdotenv": "^5.4",
+        "fakerphp/faker": "^1.9.1"
     },
     "require-dev": {
         "barryvdh/laravel-debugbar": "^3.6",
-        "fakerphp/faker": "^1.9.1",
         "friendsofphp/php-cs-fixer": "^3.8",
         "laravel/sail": "^1.0.1",
         "mockery/mockery": "^1.4.2",
