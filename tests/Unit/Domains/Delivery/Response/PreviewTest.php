@@ -10,7 +10,6 @@ use App\Domains\Delivery\PostPreviewSecretEncryptor;
 use App\Domains\Post\Content\PostContentRepository;
 use App\Domains\Theme\ThemeFilesRepository;
 use App\Models\Post;
-use Tests\Unit\__Generators__\ProsemirrorContentGenerator;
 
 beforeEach(function () {
     ThemeFilesRepository::createOrUpdateFile(
@@ -61,7 +60,7 @@ it('displays unsaved content HTML if it is there', function () {
     $language = $this->blog->languages[0];
 
     $post = Post::where('blog_id', $this->blog->id)->first();
-    $content = ProsemirrorContentGenerator::getParas();
+    $content = PostContentRepository::generateRandom();
     $post->variants->firstWhere('language_id', $language->id)->update(['content_unsaved' => $content]);
 
     $id = PostPreviewSecretEncryptor::getPreviewSecret($post);

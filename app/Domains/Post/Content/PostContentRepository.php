@@ -30,6 +30,7 @@ use App\Domains\Post\Content\Nodes\Paragraph;
 use App\Domains\Post\Content\Nodes\Text;
 use App\Models\Blog;
 use App\Models\PostVariant;
+use Faker\Factory;
 use Tiptap\Editor;
 
 class PostContentRepository
@@ -107,5 +108,27 @@ class PostContentRepository
 
         $variant->content_html = $html;
         $variant->save();
+    }
+
+    public static function generateRandom() {
+
+        $faker = Factory::create();
+        $paragraphs = $faker->paragraphs(rand(2, 6));
+        $content = [
+            'type' => 'doc',
+            'content' => [],
+        ];
+        foreach ($paragraphs as $para) {
+            $content['content'][] = [
+                'type' => 'paragraph',
+                'content' => [[
+                    'type' => 'text',
+                    'text' => $para,
+                ]],
+            ];
+        }
+
+        return json_encode($content);
+
     }
 }

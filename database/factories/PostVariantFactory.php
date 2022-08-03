@@ -1,11 +1,11 @@
 <?php
 namespace Database\Factories;
 
+use App\Domains\Post\Content\PostContentRepository;
 use App\Models\Language;
 use App\Models\Post;
 use Illuminate\Database\Eloquent\Factories\Factory;
 use Illuminate\Support\Arr;
-use Tests\Unit\__Generators__\ProsemirrorContentGenerator;
 
 class PostVariantFactory extends Factory
 {
@@ -13,7 +13,7 @@ class PostVariantFactory extends Factory
     public function definition()
     {
 
-        $content = ProsemirrorContentGenerator::getParas();
+        $content = PostContentRepository::generateRandom();
 
         return [
             'post_id' => Post::factory(),

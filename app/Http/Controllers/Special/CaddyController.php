@@ -9,6 +9,10 @@ class CaddyController
 {
     public function checkDomain(Request $request)
     {
+        $request->validate([
+            'domain' => 'required|string'
+        ]);
+
         $domain = $request->input('domain');
         $blog = BlogService::getBlogByCustomDomain($domain);
 
@@ -16,6 +20,6 @@ class CaddyController
             abort(500);
         }
 
-        return response();
+        return response('OK');
     }
 }

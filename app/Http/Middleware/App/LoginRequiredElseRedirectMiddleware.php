@@ -3,9 +3,9 @@
 namespace App\Http\Middleware\App;
 
 use Closure;
+use Hyvor\HyvorConnecter\HyvorUser;
 use Hyvor\HyvorConnecter\Login;
 use Hyvor\HyvorConnecter\Redirect;
-use Hyvor\HyvorConnecter\User;
 use Illuminate\Http\Request;
 
 class LoginRequiredElseRedirectMiddleware
@@ -13,11 +13,11 @@ class LoginRequiredElseRedirectMiddleware
     public function handle(Request $request, Closure $next)
     {
         $user = Login::check();
-        if (! $user) {
-            return Redirect::to('login');
+        if (!$user) {
+            return Redirect::toLogin();
         }
 
-        app()->instance(User::class, $user);
+        app()->instance(HyvorUser::class, $user);
 
         return $next($request);
     }

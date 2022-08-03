@@ -103,6 +103,9 @@ jobs:
             printf "%s" "$LARAVEL_ENV" > "/var/www/current/.env"
             printf "%s" "$LARAVEL_ENV" > "/var/www/.env"
             systemctl reload php8.1-fpm
+            
+            rm /var/www/current/package.json
+            npm install --prefix /var/www/current shiki
 
             php /var/www/current/artisan config:cache
             php /var/www/current/artisan route:cache
