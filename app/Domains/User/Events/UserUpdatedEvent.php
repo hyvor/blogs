@@ -12,6 +12,7 @@ class UserUpdatedEvent
     use SerializesModels;
 
     public User $user;
+
     public User $userOld;
 
     public function __construct(User $user)

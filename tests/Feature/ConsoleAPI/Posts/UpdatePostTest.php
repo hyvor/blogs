@@ -29,8 +29,7 @@ it('updates a post', function () {
         ])
         ->assertOk()
         ->assertJson(
-            fn (AssertableJson $json) =>
-            $json
+            fn (AssertableJson $json) => $json
                 ->where('slug', $slug)
                 ->where('is_featured', $isFeatured)
                 ->where('canonical_url', $canonicalUrl)

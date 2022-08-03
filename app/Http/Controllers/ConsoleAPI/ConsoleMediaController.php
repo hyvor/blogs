@@ -33,7 +33,7 @@ class ConsoleMediaController extends Controller
     public static function uploadFile(Request $request, Blog $blog)
     {
         $request->validate([
-            'file' => 'required|file|max:' . config('limits.max_media_upload_size_kb'),
+            'file' => 'required|file|max:'.config('limits.max_media_upload_size_kb'),
         ]);
         $file = $request->file('file');
 

@@ -22,8 +22,8 @@ class CreateUrlDataTable extends Migration
              * If first fetched for link, and then checked for rich
              * We may assume that link only has "link" type,
              * even though "rich" is available.
-             * 
-             * So, 
+             *
+             * So,
              */
             $table->enum('result', ['ok', 'err']);
             $table->enum('fetch_type', ['link', 'embed']);
@@ -36,9 +36,8 @@ class CreateUrlDataTable extends Migration
             $table->string('thumbnail_url')->nullable();
             $table->string('icon_url')->nullable();
             $table->string('site')->nullable();
-            
-            $table->unique(['fetch_type', 'url']);
 
+            $table->unique(['fetch_type', 'url']);
         });
     }
 

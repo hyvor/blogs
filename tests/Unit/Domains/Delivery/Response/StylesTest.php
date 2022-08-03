@@ -20,7 +20,7 @@ it('matches styles.css', function () {
         $content,
     );
 
-    $pathMatcher = new PathMatcher($this->blog, "/styles.css");
+    $pathMatcher = new PathMatcher($this->blog, '/styles.css');
     $responseObject = $pathMatcher->getResponseObject();
 
     $this->assertEquals(DeliveryAPITypeEnum::FILE, $responseObject->type);

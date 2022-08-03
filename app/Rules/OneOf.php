@@ -12,7 +12,6 @@ use Illuminate\Validation\ValidationException;
  *
  * This can be used as a OR between two rules
  */
-
 class OneOf implements Rule
 {
     /**

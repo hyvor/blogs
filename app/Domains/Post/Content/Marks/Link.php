@@ -73,7 +73,7 @@ class Link extends Mark
      */
     private static function getLinkRel(bool $linksFollow)
     {
-        return 'noopener noreferrer' .
+        return 'noopener noreferrer'.
             ($linksFollow ? '' : ' nofollow');
     }
 }

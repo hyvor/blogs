@@ -40,7 +40,7 @@ it('updates files', function () {
         'Hi'
     );
 
-    $this->callCliAPI('PATCH', "/files", [
+    $this->callCliAPI('PATCH', '/files', [
         'files' => [
             '/templates/index.twig' => base64_encode('New string'),
         ],
@@ -63,7 +63,7 @@ it('resets', function () {
         'Hi'
     );
 
-    $this->callCliAPI('PATCH', "/files", [
+    $this->callCliAPI('PATCH', '/files', [
         'files' => [],
         'reset' => true,
     ])->assertOk();

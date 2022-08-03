@@ -16,13 +16,11 @@ test('json to HTML', function () {
 
     $html = PostContentRepository::getHtml($json, blog());
 
-    expect($html)->toEqual("<hr>");
+    expect($html)->toEqual('<hr>');
 });
 
-
-
 test('HTML to JSON', function () {
-    $html = "<hr/>";
+    $html = '<hr/>';
 
     $json = PostContentRepository::getJsonFromHtml($html, blog());
 

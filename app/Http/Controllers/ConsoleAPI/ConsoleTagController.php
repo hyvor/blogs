@@ -5,7 +5,6 @@ namespace App\Http\Controllers\ConsoleAPI;
 use App\Data\Objects\ConsoleAPI\Tag\TagObject;
 use App\Data\Objects\ConsoleAPI\Tag\TagVariantObject;
 use App\Domains\Tag\TagRepository;
-
 use App\Exceptions\TrustedException;
 use App\Http\Controllers\Controller;
 use App\Models\Blog;
@@ -23,9 +22,9 @@ class ConsoleTagController extends Controller
     public function get(Request $request, Blog $blog)
     {
         $request->validate([
-             'limit' => 'integer',
-             'offset' => 'integer',
-         ]);
+            'limit' => 'integer',
+            'offset' => 'integer',
+        ]);
 
         $limit = $request->input('limit', 50);
         $offset = $request->input('offset', 0);
@@ -38,8 +37,8 @@ class ConsoleTagController extends Controller
     public function create(Request $request, Blog $blog)
     {
         $request->validate([
-             'name' => 'required|string',
-         ]);
+            'name' => 'required|string',
+        ]);
 
         $name = $request->input('name');
 
@@ -78,7 +77,6 @@ class ConsoleTagController extends Controller
 
         return response()->json();
     }
-
 
     public function createVariant(Blog $blog, Tag $tag, Language $language)
     {

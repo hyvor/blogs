@@ -23,7 +23,7 @@ return new class extends Migration
 
             // data
             $table->string('name')->nullable();
-            
+
             // indexes
             $table->unique(['navigation_id', 'language_id']);
             $table->index('navigation_id');

@@ -2,15 +2,8 @@
 
 namespace Database\Seeders;
 
-use App\Models\Blog;
-use App\Models\BlogThemeFile;
 use App\Models\ThemeFile;
 use Illuminate\Database\Seeder;
-use Illuminate\Support\Facades\DB;
-use Illuminate\Support\Facades\Hash;
-use Illuminate\Support\Str;
-
-use Illuminate\Http\Client\ConnectionException;
 
 class BlogThemeFilesSeeder extends Seeder
 {
@@ -23,26 +16,25 @@ class BlogThemeFilesSeeder extends Seeder
     {
 
         /**
-         * 
          * Insert all files in tests/data/default-theme
          * to the database
-         * 
          */
-       
         $folders = ['', 'assets', 'lang', 'styles', 'templates'];
 
         foreach ($folders as $folder) {
 
             //https://stackoverflow.com/a/15774702/9059939
-            $folderPath = base_path('tests/data/default-theme/') . $folder;
+            $folderPath = base_path('tests/data/default-theme/').$folder;
 
             $files = scandir($folderPath);
-            $files = array_diff($files, array('.', '..'));
+            $files = array_diff($files, ['.', '..']);
 
             foreach ($files as $file) {
                 $filePath = "$folderPath/$file";
 
-                if (is_dir($filePath)) continue;
+                if (is_dir($filePath)) {
+                    continue;
+                }
 
                 $content = file_get_contents($filePath);
 
@@ -50,11 +42,9 @@ class BlogThemeFilesSeeder extends Seeder
                     'blog_id' => $blogId ?? 1,
                     'name' => $file,
                     'content' => $content,
-                    'folder' => $folder === '' ? null : $folder
+                    'folder' => $folder === '' ? null : $folder,
                 ]);
             }
-
         }
-
     }
 }

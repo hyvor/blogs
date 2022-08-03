@@ -25,7 +25,7 @@ return new class extends Migration
             /**
              * code is a valid HTML lang attribute value
              * https://developer.mozilla.org/en-US/docs/Web/HTML/Global_attributes/lang
-             * 
+             *
              * Max length:
              * Language subtag (3)
              * Script subtag (4)
@@ -39,7 +39,6 @@ return new class extends Migration
 
             // indexes
             $table->unique(['blog_id', 'code']);
-
         });
     }
 

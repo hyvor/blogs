@@ -10,16 +10,27 @@ use App\Models\Post;
 class PostObject
 {
     public int $id;
+
     public string $preview_secret;
+
     public int $created_at;
+
     public int $updated_at;
+
     public ?int $published_at;
+
     public bool $is_featured;
+
     public bool $is_page;
+
     public ?string $slug;
+
     public ?string $featured_image_url;
+
     public ?string $canonical_url;
+
     public ?string $code_head;
+
     public ?string $code_foot;
 
     /**

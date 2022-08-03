@@ -12,6 +12,7 @@ class UserVariantUpdatedEvent
     use SerializesModels;
 
     public UserVariant $variant;
+
     public UserVariant $variantOld;
 
     public function __construct(UserVariant $variant)

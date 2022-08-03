@@ -28,7 +28,6 @@ function getThemeFile(?ThemeFileFolderEnum $folder, string $file)
     return ThemeFilesRepository::getFile(blog(), $file, $folder);
 }
 
-
 it('works', function () {
     $this->importer->import();
 

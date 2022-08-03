@@ -7,8 +7,7 @@ use Database\Factories\SubscriptionFactory;
 use Illuminate\Testing\Fluent\AssertableJson;
 use Laravel\Paddle\Cashier;
 
-it('gets billing data', function() {
-
+it('gets billing data', function () {
     Cashier::fake()->response('subscription/users', [
         [
             'subscription_id' => 502198,
@@ -37,25 +36,24 @@ it('gets billing data', function() {
                 'currency' => 'USD',
                 'date' => '2015-11-06',
             ],
-        ]
+        ],
     ]);
 
     $blog = blog();
 
     // 3 receipts
     (ReceiptFactory::new())->count(3)->create([
-        'billable_id' => $blog->id
+        'billable_id' => $blog->id,
     ]);
 
     // 3 subscriptions
     (SubscriptionFactory::new())->count(3)->create([
-        'billable_id' => $blog->id
+        'billable_id' => $blog->id,
     ]);
 
     $this->callConsoleApi('GET', '/billing')
         ->assertOk()
         ->assertJson(function (AssertableJson $json) {
-
             $json
                 ->has('receipts', 3, function (AssertableJson $json) {
                     $json->has('id')
@@ -86,7 +84,5 @@ it('gets billing data', function() {
                     $json->has('users')
                         ->has('media');
                 });
-
         });
-
 });

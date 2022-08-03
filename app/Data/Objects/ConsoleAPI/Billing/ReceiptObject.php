@@ -7,12 +7,16 @@ use Laravel\Paddle\Receipt;
 class ReceiptObject
 {
     public int $id;
-    public int $paid_at;
-    public float $amount;
-    public float $tax;
-    public string $currency;
-    public string $receipt_url;
 
+    public int $paid_at;
+
+    public float $amount;
+
+    public float $tax;
+
+    public string $currency;
+
+    public string $receipt_url;
 
     public function __construct(Receipt $receipt)
     {

@@ -88,6 +88,6 @@ return [
             SubscriptionFrequencyEnum::YEARLY,
             12990,
         ),
-    ]
+    ],
 
 ];

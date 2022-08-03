@@ -10,17 +10,25 @@ use App\Models\Blog;
 class UserBlogBlogObject
 {
     public int $id;
+
     public string $name;
+
     public string $subdomain;
+
     public BlogTypeEnum $type;
+
     public string $base_url;
+
     public ?string $logo_url;
 
     public int $posts_count;
+
     public int $users_count;
 
     public bool $is_on_trial;
+
     public ?int $trial_ends_at;
+
     public ?SubscriptionObject $subscription = null;
 
     public function __construct(Blog $blog)

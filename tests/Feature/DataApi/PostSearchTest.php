@@ -8,19 +8,18 @@ namespace Tests\Feature\DataAPI;
  * The Collection driver does not support ->where()
  * So, only statuses are checked
  */
-
 beforeEach(function () {
     $post = blog()->posts()->where('is_page', false)->first();
     $variants = $post->variants;
 
-    $variants[0]->update(['title' => "English", 'status' => 'published']);
-    $variants[1]->update(['title' => "French", 'status' => 'published']);
+    $variants[0]->update(['title' => 'English', 'status' => 'published']);
+    $variants[1]->update(['title' => 'French', 'status' => 'published']);
 });
 
 it('searches posts', function () {
     $this
         ->callDataApi('/posts/search', [
-            'search' => "English",
+            'search' => 'English',
         ])
         ->assertOk();
 });

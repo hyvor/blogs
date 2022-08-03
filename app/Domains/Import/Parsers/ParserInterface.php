@@ -7,5 +7,6 @@ use App\Domains\Import\Repository;
 interface ParserInterface
 {
     public function __construct(string $file);
+
     public function parse(): Repository;
 }

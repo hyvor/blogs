@@ -4,7 +4,6 @@ namespace App\Http\Controllers\ConsoleAPI;
 
 use App\Data\Enums\NavigationTypeEnum;
 use App\Data\Objects\ConsoleAPI\Navigation\NavigationObject;
-
 use App\Data\Objects\ConsoleAPI\Navigation\NavigationVariantObject;
 use App\Domains\Language\LanguageRepository;
 use App\Domains\Navigation\NavigationRepository;
@@ -69,7 +68,6 @@ class ConsoleNavigationController extends Controller
 
         return response()->json();
     }
-
 
     public static function createVariant(Request $request, Blog $blog, Navigation $navigation)
     {

@@ -7,15 +7,13 @@ use Illuminate\Database\Eloquent\Factories\Factory;
 
 class ThemeFileFactory extends Factory
 {
-
     public function definition()
     {
         return [
             'blog_id' => Blog::factory(),
             'folder' => null,
-            'name' => $this->faker->word() . '.' . $this->faker->fileExtension(),
-            'content' => $this->faker->word()
+            'name' => $this->faker->word().'.'.$this->faker->fileExtension(),
+            'content' => $this->faker->word(),
         ];
     }
-
 }

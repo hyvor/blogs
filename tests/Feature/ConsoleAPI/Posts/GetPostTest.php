@@ -24,5 +24,5 @@ it('forbids getting posts of other blogs', function () {
 });
 
 it('returns 404 on missing posts', function () {
-    $this->callConsoleApi('GET', "/post/1203912903091")->assertNotFound();
+    $this->callConsoleApi('GET', '/post/1203912903091')->assertNotFound();
 });

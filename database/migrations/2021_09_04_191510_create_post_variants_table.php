@@ -35,7 +35,6 @@ return new class extends Migration
             $table->index('language_id');
             $table->index('status');
             $table->index('words');
-
         });
     }
 

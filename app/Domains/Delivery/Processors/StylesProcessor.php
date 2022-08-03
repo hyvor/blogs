@@ -13,7 +13,6 @@ use ScssPhp\ScssPhp\Compiler;
 
 class StylesProcessor extends RouteProcessorAbstract
 {
-
     public function __construct(PathMatcher $pathMatcher, MatchedRoute $matchedRoute)
     {
         $files = ThemeFilesRepository::getFilesInFolder(
@@ -46,5 +45,4 @@ class StylesProcessor extends RouteProcessorAbstract
             'text/css'
         ));
     }
-
 }

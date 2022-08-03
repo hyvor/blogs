@@ -21,7 +21,6 @@ class ConsoleImportExportController extends Controller
         return response($data)->header('Content-Type', 'text/xml');
     }
 
-
     public function import(Request $request, Blog $blog, Import $import)
     {
         // $request->validate([

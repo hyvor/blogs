@@ -62,7 +62,7 @@ class ThemeFilesRepository
     }
 
     /**
-     * @param Blog $blog
+     * @param  Blog  $blog
      * @return Collection<ThemeFile>
      */
     public static function getAllFilesOfBlog(Blog $blog): Collection
@@ -77,8 +77,7 @@ class ThemeFilesRepository
         ?ThemeFileFolderEnum $folder,
         string $name,
         string $content
-    ) : ThemeFile
-    {
+    ): ThemeFile {
         return $blog->themeFiles()->updateOrCreate(
             [
                 'folder' => $folder,
@@ -91,15 +90,20 @@ class ThemeFilesRepository
     }
 
     /**
-     * @param ThemeFile $file
-     * @param array{name?: string, content?: string} $updates
+     * @param  ThemeFile  $file
+     * @param  array{name?: string, content?: string}  $updates
      * @return void
      */
-    public static function updateFile(ThemeFile $file, array $updates) : ThemeFile
+    public static function updateFile(ThemeFile $file, array $updates): ThemeFile
     {
-        if (array_key_exists('name', $updates)) $file->name = $updates['name'];
-        if (array_key_exists('content', $updates)) $file->content = $updates['content'];
+        if (array_key_exists('name', $updates)) {
+            $file->name = $updates['name'];
+        }
+        if (array_key_exists('content', $updates)) {
+            $file->content = $updates['content'];
+        }
         $file->save();
+
         return $file;
     }
 

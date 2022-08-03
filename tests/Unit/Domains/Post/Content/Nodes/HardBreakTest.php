@@ -16,5 +16,5 @@ test('JSON to HTML', function () {
 
     $html = PostContentRepository::getHtml($json, blog());
 
-    expect($html)->toEqual("<br>");
+    expect($html)->toEqual('<br>');
 });

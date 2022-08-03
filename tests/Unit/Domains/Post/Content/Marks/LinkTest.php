@@ -27,24 +27,24 @@ beforeEach(function () {
 });
 
 test('code JSON to HTML', function () {
-    $result = PostContentRepository::getHtml($this->document,  blog());
+    $result = PostContentRepository::getHtml($this->document, blog());
     expect($result)->toEqual("<a href=\"$this->link\" target=\"_blank\" rel=\"noopener noreferrer\">$this->text</a>");
 });
 
 test('internal link', function () {
     $blog = blog();
     $blog->update([
-       'hosting_at' => 'self',
-       'hosting_url' => 'https://example.com',
-   ]);
+        'hosting_at' => 'self',
+        'hosting_url' => 'https://example.com',
+    ]);
 
-    $result = PostContentRepository::getHtml($this->document,  $blog);
+    $result = PostContentRepository::getHtml($this->document, $blog);
     expect($result)->toEqual("<a href=\"$this->link\" rel=\"noopener noreferrer\">$this->text</a>");
 });
 
 test('nofollow meta', function () {
     $blog = blog();
     $blog->setMeta('seo_external_links_follow', 'nofollow');
-    $result = PostContentRepository::getHtml($this->document,  $blog);
+    $result = PostContentRepository::getHtml($this->document, $blog);
     expect($result)->toEqual("<a href=\"$this->link\" target=\"_blank\" rel=\"noopener noreferrer nofollow\">$this->text</a>");
 });

@@ -15,8 +15,8 @@ use App\Models\Post;
 
 class SitemapIndexProcessor extends RouteProcessorAbstract
 {
-
     private Blog $blog;
+
     private Language $primaryLanguage;
 
     public function __construct(PathMatcher $pathMatcher, MatchedRoute $matchedRoute)
@@ -40,7 +40,7 @@ class SitemapIndexProcessor extends RouteProcessorAbstract
         foreach ($sitemaps as $index => $sitemap) {
             $url = "$baseUrl/$sitemap->name";
             $sitemapsXml .=
-                "<sitemap><loc>$url</loc></sitemap>" .
+                "<sitemap><loc>$url</loc></sitemap>".
                 ($index !== (count($sitemaps) - 1) ? "\n\t" : '');
         }
 
@@ -65,20 +65,19 @@ class SitemapIndexProcessor extends RouteProcessorAbstract
      */
     private function getPostSitemaps()
     {
-
-        $postsCount = (int) Post::join('post_variants', fn ($join) =>
-                $join
+        $postsCount = (int) Post::join('post_variants', fn ($join) => $join
                     ->on('post_variants.post_id', '=', 'posts.id')
                     ->where('post_variants.language_id', '=', $this->primaryLanguage->id)
-                )
+        )
             ->where('post_variants.status', 'published')
             ->where('posts.blog_id', $this->blog->id)
             ->where('posts.is_page', false)
             ->selectRaw('COUNT(posts.id) as posts_count')
             ->value('posts_count');
 
-        if ($postsCount === 0)
+        if ($postsCount === 0) {
             return [];
+        }
 
         $sitemapsCount = ceil($postsCount / config('limits.max_entries_per_sitemap'));
 
@@ -89,7 +88,5 @@ class SitemapIndexProcessor extends RouteProcessorAbstract
         }
 
         return $return;
-
     }
-
 }

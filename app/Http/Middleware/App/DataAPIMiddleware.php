@@ -31,7 +31,6 @@ class DataAPIMiddleware
         }
 
         /**
-         *
          * Todo: Change this to use Dependency Injection like SubdomainMiddleware.php
          */
         $request->attributes->set('blog', $blog);

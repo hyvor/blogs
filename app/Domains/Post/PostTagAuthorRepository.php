@@ -12,8 +12,8 @@ use App\Models\User;
 class PostTagAuthorRepository
 {
     /**
-     * @param Post $post
-     * @param array<integer> $ids
+     * @param  Post  $post
+     * @param  array<integer>  $ids
      * @return void
      */
     public static function updateTags(Post $post, array $ids)
@@ -43,10 +43,9 @@ class PostTagAuthorRepository
         PostTag::where('tag_id', $tag->id)->delete();
     }
 
-
     /**
-     * @param Post $post
-     * @param array<integer> $ids
+     * @param  Post  $post
+     * @param  array<integer>  $ids
      * @return void
      */
     public static function updateAuthors(Post $post, array $ids)

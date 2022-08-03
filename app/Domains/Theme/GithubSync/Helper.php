@@ -9,6 +9,7 @@ class Helper
 {
     /**
      * name => version
+     *
      * @return array<string, string>
      */
     public static function getLatestVersionsOfAllThemes(): array

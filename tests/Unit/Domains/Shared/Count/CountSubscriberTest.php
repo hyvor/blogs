@@ -13,21 +13,18 @@ use Illuminate\Support\Facades\Event;
 use Illuminate\Support\Facades\Queue;
 
 it('is listening', function () {
-
     Event::fake();
 
     Event::assertListening(PostCreatedEvent::class, [CountSubscriber::class, 'onPostCreateOrDelete']);
     Event::assertListening(PostDeletedEvent::class, [CountSubscriber::class, 'onPostCreateOrDelete']);
     Event::assertListening(PostVariantUpdatedEvent::class, [CountSubscriber::class, 'onPostVariantUpdate']);
-
 });
 
-it('calls update blog counts on post creating', function() {
-
+it('calls update blog counts on post creating', function () {
     Queue::fake();
 
     $post = Post::factory()->create([
-        'blog_id' => blog()
+        'blog_id' => blog(),
     ]);
 
     $event = new PostCreatedEvent($post);
@@ -35,11 +32,9 @@ it('calls update blog counts on post creating', function() {
     $listener->onPostCreateOrDelete($event);
 
     Queue::assertPushed(fn (BlogCountsJob $job) => $job->blog->id === blog()->id);
-
 });
 
-it('calls update when post variant status changes for primary variant', function() {
-
+it('calls update when post variant status changes for primary variant', function () {
     Queue::fake();
 
     $post = aPublishedPost();
@@ -54,11 +49,9 @@ it('calls update when post variant status changes for primary variant', function
     $listener->onPostVariantUpdate($event);
 
     Queue::assertPushed(fn (BlogCountsJob $job) => $job->blog->id === $blog->id);
-
 });
 
-it('does not call blog count update when other properties of variant is called', function() {
-
+it('does not call blog count update when other properties of variant is called', function () {
     Queue::fake();
 
     $post = aPublishedPost();
@@ -71,15 +64,13 @@ it('does not call blog count update when other properties of variant is called',
     $listener->onPostVariantUpdate($event);
 
     Queue::assertNothingPushed();
-
 });
 
-it('calls blog counts job on post delete', function() {
-
+it('calls blog counts job on post delete', function () {
     Queue::fake();
 
     $post = Post::factory()->create([
-        'blog_id' => blog()
+        'blog_id' => blog(),
     ]);
 
     $event = new PostDeletedEvent($post);
@@ -87,5 +78,4 @@ it('calls blog counts job on post delete', function() {
     $listener->onPostCreateOrDelete($event);
 
     Queue::assertPushed(fn (BlogCountsJob $job) => $job->blog->id === blog()->id);
-
 });

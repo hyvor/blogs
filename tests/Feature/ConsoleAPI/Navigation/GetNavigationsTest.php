@@ -18,8 +18,7 @@ it('gets navigations', function () {
         ->assertJson(function (AssertableJson $json) {
             $json->has(count($this->navs))
                 ->each(
-                    fn (AssertableJson $json) =>
-                    $json->has('id')
+                    fn (AssertableJson $json) => $json->has('id')
                         ->has('url')
                         ->has('sort')
                         ->etc()

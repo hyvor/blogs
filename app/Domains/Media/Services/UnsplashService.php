@@ -8,7 +8,6 @@ use Unsplash\Search;
 
 class UnsplashService
 {
-
     public function __construct()
     {
         HttpClient::init([
@@ -18,11 +17,11 @@ class UnsplashService
         ]);
     }
 
-    public function search(string $search, int $page = 1) : Collection
+    public function search(string $search, int $page = 1): Collection
     {
         $limit = 30;
         $response = Search::photos($search, $page, $limit);
+
         return collect($response->getResults());
     }
-
 }

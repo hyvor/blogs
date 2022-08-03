@@ -8,9 +8,13 @@ use App\Models\Redirect;
 class RedirectObject
 {
     public int $id;
+
     public int $created_at;
+
     public string $path;
+
     public string $to;
+
     public RedirectTypeEnum $type;
 
     public function __construct(Redirect $redirect)

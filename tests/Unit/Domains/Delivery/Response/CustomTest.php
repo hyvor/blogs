@@ -26,7 +26,7 @@ it('matches custom route and template', function () {
         $content,
     );
 
-    $pathMatcher = new PathMatcher($this->blog, "/test");
+    $pathMatcher = new PathMatcher($this->blog, '/test');
     $responseObject = $pathMatcher->getResponseObject();
 
     $this->assertEquals(DeliveryAPITypeEnum::FILE, $responseObject->type);

@@ -17,8 +17,7 @@ it('creates a guest user', function () {
     ])
         ->assertOk()
         ->assertJson(
-            fn (AssertableJson $json) =>
-            $json->where("variants.0.name", $name)
+            fn (AssertableJson $json) => $json->where('variants.0.name', $name)
                 ->etc()
         );
 

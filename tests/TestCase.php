@@ -20,7 +20,6 @@ abstract class TestCase extends BaseTestCase
      */
     protected $seed = true;
 
-
     protected function callDataApi(
         string $endpoint,
         $data = [],
@@ -44,17 +43,17 @@ abstract class TestCase extends BaseTestCase
 
     protected function callConsoleUserApi(string $method, string $endpoint, $data = []): TestResponse
     {
-        return $this->call($method, URL::to('/api/console/v0' . $endpoint), $data);
+        return $this->call($method, URL::to('/api/console/v0'.$endpoint), $data);
     }
 
     protected function callConsoleMiscApi(string $method, string $endpoint, $data = []): TestResponse
     {
-        return $this->call($method, URL::to('/api/console/v0/misc' . $endpoint), $data);
+        return $this->call($method, URL::to('/api/console/v0/misc'.$endpoint), $data);
     }
 
     protected function callCliAPI(string $method, string $endpoint, $data = [], $subdomain = 'dev')
     {
-        $endpoint = trim($endpoint, "/");
+        $endpoint = trim($endpoint, '/');
 
         return $this->call($method, URL::to("/api/cli/$subdomain/$endpoint"), $data);
     }

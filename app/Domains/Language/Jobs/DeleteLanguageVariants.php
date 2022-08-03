@@ -21,7 +21,6 @@ class DeleteLanguageVariants implements ShouldQueue, ShouldBeUnique
     }
 
     /**
-     *
      * Deletes all language variants after the language is deleted
      *
      * - blog
@@ -29,7 +28,6 @@ class DeleteLanguageVariants implements ShouldQueue, ShouldBeUnique
      * - tags
      * - users
      * - navigation
-     *
      */
     public function handle()
     {

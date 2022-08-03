@@ -11,9 +11,9 @@ use App\Models\UrlData;
 
 beforeEach(function () {
     $this->url = 'https://example.com';
-    $this->title = "I am title";
-    $this->description = "I am description";
-    $this->thumbnail_url = "/img.png";
+    $this->title = 'I am title';
+    $this->description = 'I am description';
+    $this->thumbnail_url = '/img.png';
     $this->icon_url = '/icon.ico';
     $this->site = 'Youtube';
 
@@ -56,7 +56,7 @@ test('JSON to HTML', function () {
 });
 
 test('custom template', function () {
-    $template = <<<TWIG
+    $template = <<<'TWIG'
         <a class="bookmark">
             {{ data.url }}
             {{ data.title }}

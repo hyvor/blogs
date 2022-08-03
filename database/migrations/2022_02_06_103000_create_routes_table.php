@@ -30,7 +30,6 @@ class CreateRoutesTable extends Migration
 
             // indexes
             $table->unique(['blog_id', 'name']);
-
         });
     }
 

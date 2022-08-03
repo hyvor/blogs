@@ -2,14 +2,13 @@
 
 namespace Database\Factories;
 
-use Illuminate\Database\Eloquent\Factories\Factory;
-use App\Models\Blog;
 use App\Models\Import;
+use Illuminate\Database\Eloquent\Factories\Factory;
 
 class ImportFactory extends Factory
 {
     protected $model = Import::class;
-    
+
     public function definition()
     {
         return [

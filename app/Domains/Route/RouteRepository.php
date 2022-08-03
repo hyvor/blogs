@@ -12,10 +12,10 @@ class RouteRepository
     {
 
         /**
-        * Even calling ->routes fetches all routes
-        * it fetches the relationship, so it prevents calling more duplicate queries from
-        * the Blog model's route relationship
-        */
+         * Even calling ->routes fetches all routes
+         * it fetches the relationship, so it prevents calling more duplicate queries from
+         * the Blog model's route relationship
+         */
         $routes = $blog->routes;
 
         return $routes->where('name', $name)->first();
@@ -35,8 +35,7 @@ class RouteRepository
         string $template,
         ?string $postsFilter = null,
         ?string $contentType = null,
-    ): Route
-    {
+    ): Route {
         return $blog->routes()->create([
             'name' => $name,
             'match' => $match,
@@ -46,12 +45,13 @@ class RouteRepository
         ]);
     }
 
-    public static function updateRoute(Route $route, array $updates) : Route
+    public static function updateRoute(Route $route, array $updates): Route
     {
         foreach ($updates as $key => $value) {
             $route->$key = $value;
         }
         $route->save();
+
         return $route;
     }
 

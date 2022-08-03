@@ -2,7 +2,6 @@
 
 namespace Database\Seeders;
 
-
 use App\Models\Redirect;
 use Illuminate\Database\Seeder;
 
@@ -15,11 +14,8 @@ use Illuminate\Database\Seeder;
  */
 class ExtraSeeder extends Seeder
 {
-
-    public function run() {
-
+    public function run()
+    {
         Redirect::factory()->count(100)->create(['blog_id' => config('test.blog_id')]);
-
     }
-
 }

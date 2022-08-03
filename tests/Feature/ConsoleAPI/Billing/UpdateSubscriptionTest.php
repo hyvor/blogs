@@ -7,8 +7,7 @@ use Illuminate\Http\Client\Request;
 use Illuminate\Support\Facades\Http;
 use Laravel\Paddle\Cashier;
 
-it('updates the subscription', function() {
-
+it('updates the subscription', function () {
     Cashier::fake()->response('subscription/users/update', []);
 
     $blog = blog();
@@ -16,12 +15,12 @@ it('updates the subscription', function() {
     (SubscriptionFactory::new())->create([
         'billable_id' => $blog->id,
         'paddle_plan' => config('blogs.paddle_plans')[0]->id,
-        'paddle_status' => 'active'
+        'paddle_status' => 'active',
     ]);
 
     $this->callConsoleApi('PATCH', '/billing/subscription', [
         'plan' => 'A',
-        'frequency' => 'yearly'
+        'frequency' => 'yearly',
     ])->assertOk();
 
     Http::assertSent(function (Request $request) use ($blog) {
@@ -31,11 +30,9 @@ it('updates the subscription', function() {
             $request['bill_immediately'] === true &&
             $request['subscription_id'] === $blog->subscription()->paddle_id;
     });
-
 });
 
-it('cannot update to the same plan', function() {
-
+it('cannot update to the same plan', function () {
     Http::fake();
 
     $blog = blog();
@@ -43,13 +40,12 @@ it('cannot update to the same plan', function() {
     (SubscriptionFactory::new())->create([
         'billable_id' => $blog->id,
         'paddle_plan' => config('blogs.paddle_plans')[0]->id,
-        'paddle_status' => 'active'
+        'paddle_status' => 'active',
     ]);
 
     $this->callConsoleApi('PATCH', '/billing/subscription', [
         'plan' => 'A',
-        'frequency' => 'monthly'
+        'frequency' => 'monthly',
     ])->assertUnprocessable()
         ->assertSee('Cannot update to the same plan');
-
 });

@@ -8,15 +8,13 @@ use Illuminate\Database\Eloquent\Factories\Factory;
 
 class BlogVariantFactory extends Factory
 {
-
-    public function definition() : array
+    public function definition(): array
     {
         return [
             'blog_id' => Blog::factory(),
             'language_id' => Language::factory(),
             'name' => $this->faker->name(),
-            'description' => $this->faker->sentence
+            'description' => $this->faker->sentence,
         ];
     }
-
 }

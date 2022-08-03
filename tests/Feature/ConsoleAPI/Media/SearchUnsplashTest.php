@@ -6,8 +6,7 @@ use App\Domains\Media\Services\UnsplashService;
 use Illuminate\Testing\Fluent\AssertableJson;
 use Mockery\MockInterface;
 
-it('searches unsplash', function() {
-
+it('searches unsplash', function () {
     $json = jsonData('Media/unsplash-search.json');
 
     $this->mock(UnsplashService::class, function (MockInterface $mock) use ($json) {
@@ -19,7 +18,7 @@ it('searches unsplash', function() {
 
     $this->callConsoleApi('GET', '/media/unsplash/search', [
         'search' => 'test',
-        'page' => 1
+        'page' => 1,
     ])
         ->assertOk()
         ->assertJson(function (AssertableJson $json) {
@@ -32,5 +31,4 @@ it('searches unsplash', function() {
                         ->etc();
                 });
         });
-
 });

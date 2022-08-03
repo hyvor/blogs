@@ -3,29 +3,26 @@
 namespace App\Domains\Api;
 
 use App\Data\Enums\ApiKeysTypeEnum;
-use App\Data\Enums\UserRoleEnum;
 use App\Models\ApiKey;
 use App\Models\Blog;
 use Illuminate\Database\Eloquent\Collection;
 
 class ApiKeysRepository
 {
-
-    public static function get(Blog $blog) : Collection
+    public static function get(Blog $blog): Collection
     {
         return ApiKey::where('blog_id', $blog->id)->get();
     }
 
-    public static function create(Blog $blog, string $name, ApiKeysTypeEnum $type) : ApiKey
+    public static function create(Blog $blog, string $name, ApiKeysTypeEnum $type): ApiKey
     {
-
         $key = bin2hex(random_bytes(16));
 
         return ApiKey::create([
             'blog_id' => $blog->id,
             'api_key' => $key,
             'name' => $name,
-            'type' => $type
+            'type' => $type,
         ]);
     }
 
@@ -33,5 +30,4 @@ class ApiKeysRepository
     {
         $apiKey->delete();
     }
-
 }

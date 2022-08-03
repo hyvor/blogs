@@ -20,7 +20,7 @@ it('sets _route variable', function () {
         'text/xml',
     );
 
-    $content = <<<TWIG
+    $content = <<<'TWIG'
     {{ _route.name }}
     {{ _route.template }}
     {{ _route.params.slug }}
@@ -36,7 +36,6 @@ it('sets _route variable', function () {
     );
 
     $rendered = "$routeName\n$template\nhi\nid=1\ntext/xml";
-
 
     $pathMatcher = new PathMatcher($this->blog, '/test/hi');
     $responseObject = $pathMatcher->getResponseObject();

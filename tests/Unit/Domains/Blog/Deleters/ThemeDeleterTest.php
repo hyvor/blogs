@@ -5,8 +5,7 @@ namespace Tests\Unit\Domains\Blog\Deleters;
 use App\Domains\Blog\Deleters\ThemeDeleter;
 use App\Models\ThemeFile;
 
-it('deletes theme files', function() {
-
+it('deletes theme files', function () {
     $blog = newBlog();
     $blog2 = newBlog();
 
@@ -17,5 +16,4 @@ it('deletes theme files', function() {
 
     expect($blog->themeFiles()->count())->toBe(0);
     expect($blog2->themeFiles()->count())->toBe(1); // has not deleted other
-
 });

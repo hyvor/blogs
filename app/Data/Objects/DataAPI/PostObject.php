@@ -9,43 +9,54 @@ use App\Models\Language;
 use App\Models\Post;
 
 /**
- *
  * Post Object in the DataAPI is in fact a Post Variant object
  * We name it as a Post Object and include all post-related data there without language distinction
  * so that theme developer does not have to write logic to find the correct version in the current language
- *
  */
-
 class PostObject
 {
     public int $id;
+
     public int $created_at;
+
     public int $updated_at;
 
     /**
      * Published_at can be null when using the Data API PostObject to render a preview post
      */
-
     public ?int $published_at;
+
     public bool $is_featured;
+
     public bool $is_page;
+
     public string $slug;
+
     public string $url;
+
     public string $content;
+
     public int $words;
+
     public ?string $title;
+
     public ?string $description;
+
     public ?string $featured_image_url;
+
     public ?string $canonical_url;
 
     public LanguageObject $language;
+
     public string $code_head;
+
     public string $code_foot;
 
     public array $variants;
-    public array $tags;
-    public array $authors;
 
+    public array $tags;
+
+    public array $authors;
 
     public function __construct(Post $post, Blog $blog, Language $language)
     {

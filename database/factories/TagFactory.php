@@ -2,13 +2,12 @@
 
 namespace Database\Factories;
 
+use App\Models\Tag;
 use Illuminate\Database\Eloquent\Factories\Factory;
 use Illuminate\Support\Str;
-use App\Models\Tag;
 
 class TagFactory extends Factory
 {
-
     protected $model = Tag::class;
 
     /**
@@ -21,7 +20,7 @@ class TagFactory extends Factory
         return [
             'blog_id' => config('test.blog_id'),
             'slug' => Str::slug(Str::random(25)),
-            'posts_count' => 0
+            'posts_count' => 0,
         ];
     }
 }

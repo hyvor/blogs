@@ -13,7 +13,6 @@ it('downloads the theme as a zip', function () {
     ThemeFilesRepository::createOrUpdateFile($blog, ThemeFileFolderEnum::TEMPLATES, 'index.twig', $content);
     ThemeFilesRepository::createOrUpdateFile($blog, null, 'config.yaml', '');
 
-
     $zip = $this->callConsoleApi('GET', '/theme/download');
 
     $zipFile = new ZipFile();

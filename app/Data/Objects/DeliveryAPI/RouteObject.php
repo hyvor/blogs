@@ -9,9 +9,13 @@ use Exception;
 class RouteObject
 {
     public string $name;
+
     public string $template;
+
     public ?string $posts_filter;
+
     public ?string $content_type;
+
     public array $params;
 
     public function __construct(MatchedRoute $matchedRoute, string $currentTemplateName)

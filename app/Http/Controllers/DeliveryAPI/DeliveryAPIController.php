@@ -19,7 +19,6 @@ class DeliveryAPIController
          *
          * Returns an output as specified [here]()
          */
-
         $response = DeliveryRepository::getResponseObject(
             $blog,
             $request->input('path', ''),

@@ -21,8 +21,6 @@ class SubdomainController extends Controller
         $path = $request->getPathInfo();
         $data = DeliveryRepository::getResponseObject($blog, $path);
 
-
-
         return DeliveryRepository::getLaravelResponse($data);
     }
 }

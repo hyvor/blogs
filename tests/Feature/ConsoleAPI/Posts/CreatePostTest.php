@@ -16,8 +16,7 @@ it('creates a post and the primary variant', function () {
         ->callConsoleApi('POST', '/post')
         ->assertOk()
         ->assertJson(
-            fn (AssertableJson $json) =>
-            $json->has('id')
+            fn (AssertableJson $json) => $json->has('id')
                 ->where('is_page', false)
                 ->etc()
         )
@@ -39,8 +38,7 @@ it('creates a page', function () {
         ->callConsoleApi('POST', '/post', ['is_page' => true])
         ->assertOk()
         ->assertJson(
-            fn (AssertableJson $json) =>
-            $json->has('id')
+            fn (AssertableJson $json) => $json->has('id')
                 ->where('is_page', true)
                 ->etc()
         );

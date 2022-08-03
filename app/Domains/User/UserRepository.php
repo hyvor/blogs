@@ -30,9 +30,9 @@ use Illuminate\Support\Facades\Mail;
 class UserRepository
 {
     /**
-     * @param Blog $blog
-     * @param int $limit
-     * @param int $offset
+     * @param  Blog  $blog
+     * @param  int  $limit
+     * @param  int  $offset
      * @return Collection<User>
      */
     public static function getUsers(Blog $blog, int $limit, int $offset = 0)
@@ -56,9 +56,9 @@ class UserRepository
     /**
      * Search users by their primary language name
      *
-     * @param Blog $blog
-     * @param string $search
-     * @param int $limit
+     * @param  Blog  $blog
+     * @param  string  $search
+     * @param  int  $limit
      * @return Collection<User>
      */
     public static function searchUsers(Blog $blog, string $search, int $limit)
@@ -70,8 +70,7 @@ class UserRepository
 
         return User::join(
             'user_variants',
-            fn ($join) =>
-                $join->on('user_variants.user_id', '=', 'users.id')
+            fn ($join) => $join->on('user_variants.user_id', '=', 'users.id')
                     ->where('user_variants.language_id', '=', $primaryLanguage->id)
         )
             ->where('users.blog_id', $blog->id)
@@ -268,14 +267,13 @@ class UserRepository
         UserVariantDeletedEvent::dispatch($variant);
     }
 
-
     // getters
     public static function getUserById(int $id): ?User
     {
         return User::find($id);
     }
 
-    public static function getOwnerOfBlog(Blog $blog) : User
+    public static function getOwnerOfBlog(Blog $blog): User
     {
         return User::where('blog_id', $blog->id)
             ->where('role', UserRoleEnum::OWNER)

@@ -8,8 +8,11 @@ use App\Models\ThemeFile;
 class FileObject
 {
     public int $id;
+
     public string $name;
+
     public ?string $content;
+
     public ?ThemeFileFolderEnum $folder;
 
     public function __construct(ThemeFile $file)

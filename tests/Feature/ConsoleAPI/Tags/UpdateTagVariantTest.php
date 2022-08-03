@@ -24,8 +24,7 @@ it('updates tag variant', function () {
         ])
         ->assertOk()
         ->assertJson(
-            fn (AssertableJson $json) =>
-                $json
+            fn (AssertableJson $json) => $json
                     ->where('name', $name)
                     ->where('description', $description)
                     ->etc()

@@ -10,7 +10,7 @@ use Illuminate\Support\Collection;
 class LanguageRepository
 {
     /**
-     * @param Blog $blog
+     * @param  Blog  $blog
      * @return Collection<Language>
      */
     public static function getAllLanguages(Blog $blog): Collection

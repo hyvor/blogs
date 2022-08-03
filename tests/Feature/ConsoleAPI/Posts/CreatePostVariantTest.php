@@ -24,7 +24,6 @@ it('creates a post variant', function () {
         ->assertOk()
         ->assertJson(fn (AssertableJson $json) => $json->has('status')->etc());
 
-
     $this
         ->callConsoleApi('POST', "/post/$post->id/variant", [
             'language_id' => $language2->id,

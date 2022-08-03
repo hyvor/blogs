@@ -65,7 +65,7 @@ class BlogService
             PostFiller::class,
             RouteFiller::class,
             NavigationFiller::class,
-            ThemeFiller::class
+            ThemeFiller::class,
         ];
 
         foreach ($fillers as $filler) {
@@ -91,8 +91,8 @@ class BlogService
     }
 
     /**
-     * @param Blog $blog
-     * @param array $updates
+     * @param  Blog  $blog
+     * @param  array  $updates
      * @return Blog
      */
     public static function updateBlog(Blog $blog, array $updates): Blog
@@ -153,9 +153,9 @@ class BlogService
     }
 
     /**
-     * @param Blog $blog
-     * @param Language $language
-     * @param array{name?: string, description?: string|null} $updates
+     * @param  Blog  $blog
+     * @param  Language  $language
+     * @param  array{name?: string, description?: string|null}  $updates
      * @return BlogVariant
      */
     public static function updateBlogVariant(Blog $blog, Language $language, array $updates)
@@ -178,7 +178,6 @@ class BlogService
 
     public function deleteBlog(Blog $blog)
     {
-
         $deleters = [
             LanguageDeleter::class,
             MediaDeleter::class,
@@ -188,7 +187,7 @@ class BlogService
             RouteDeleter::class,
             TagDeleter::class,
             ThemeDeleter::class,
-            UserDeleter::class
+            UserDeleter::class,
         ];
 
         foreach ($deleters as $deleter) {
@@ -197,5 +196,4 @@ class BlogService
 
         $blog->delete();
     }
-
 }

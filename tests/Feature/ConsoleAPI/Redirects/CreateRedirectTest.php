@@ -17,8 +17,7 @@ it('creates a redirect', function () {
     ])
         ->assertOk()
         ->assertJson(
-            fn (AssertableJson $json) =>
-            $json->where('path', $path)
+            fn (AssertableJson $json) => $json->where('path', $path)
                 ->where('to', $to)
                 ->where('type', $type)
                 ->etc()

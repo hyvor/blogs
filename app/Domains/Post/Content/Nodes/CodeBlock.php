@@ -31,8 +31,8 @@ class CodeBlock extends Node
             'language' => [
                 'parseHTML' => function ($DOMNode) {
                     return preg_replace(
-                        "/^language-/",
-                        "",
+                        '/^language-/',
+                        '',
                         $DOMNode->getAttribute('class')
                     ) ?: null;
                 },
@@ -63,7 +63,7 @@ class CodeBlock extends Node
 
         $language = $node->attrs->language ?? 'plain';
         $annotations = $node->attrs->annotations ?? '';
-        $fileName = $node->attrs->name ?? "";
+        $fileName = $node->attrs->name ?? '';
 
         $pre = [
             'style' => '',

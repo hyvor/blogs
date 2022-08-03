@@ -88,7 +88,7 @@ class PermalinkRepository
 
             return "$protocol$blog->subdomain.$deliveryDomain$port";
         } elseif ($blog->hosting_at === BlogHostingAtEnum::DOMAIN) {
-            return 'https://' . $blog->hosting_domain;
+            return 'https://'.$blog->hosting_domain;
         } elseif ($blog->hosting_at === BlogHostingAtEnum::SELF) {
             return $blog->hosting_url;
         }
@@ -97,16 +97,16 @@ class PermalinkRepository
     /**
      * Checks if the link belongs to the blog
      *
-     * @param string $link Absolute URL
-     * @param Blog $blog
+     * @param  string  $link Absolute URL
+     * @param  Blog  $blog
      * @return bool
      */
-    public static function isLinkInBlog(string $link, Blog $blog) : bool
+    public static function isLinkInBlog(string $link, Blog $blog): bool
     {
         $base = self::getBlogBasePathWithProtocol($blog);
+
         return str_starts_with($link, $base);
     }
-
 
     public static function getFullUrlFromPath(Blog $blog, ?string $path = null)
     {
@@ -118,7 +118,7 @@ class PermalinkRepository
 
         $domain = self::getBlogBasePathWithProtocol($blog);
 
-        return $domain . ($path ? '/' . $path : '');
+        return $domain.($path ? '/'.$path : '');
     }
 
     public static function getBlogPermalink(Blog $blog, Language $language): string
@@ -145,7 +145,7 @@ class PermalinkRepository
 
         // build regex for matching dates
         $keys = array_keys(self::DATE_FORMATTERS);
-        $regex = '/\{(' . implode('|', $keys). ')\}/';
+        $regex = '/\{('.implode('|', $keys).')\}/';
 
         $path = preg_replace_callback($regex, function ($matches) use ($post) {
             return $post->published_at->format(self::DATE_FORMATTERS[$matches[1]]);
@@ -165,12 +165,11 @@ class PermalinkRepository
          * Add language
          */
         if (! $language->is_primary) {
-            $path = "/{$language->code}" . $path;
+            $path = "/{$language->code}".$path;
         }
 
         return  $onlyPath ? self::getPath($path) : self::getFullUrlFromPath($blog, $path);
     }
-
 
     public static function getTagPermalink(Tag $tag, Blog $blog, Language $language, $onlyPath = false): string
     {
@@ -178,7 +177,7 @@ class PermalinkRepository
         $path = str_replace('{slug}', $tag->slug, $path);
 
         if (! $language->is_primary) {
-            $path = "/{$language->code}" . $path;
+            $path = "/{$language->code}".$path;
         }
 
         return $onlyPath ? self::getPath($path) : self::getFullUrlFromPath($blog, $path);
@@ -190,7 +189,7 @@ class PermalinkRepository
         $path = str_replace('{slug}', $author->slug, $path);
 
         if (! $language->is_primary) {
-            $path = "/{$language->code}" . $path;
+            $path = "/{$language->code}".$path;
         }
 
         return $onlyPath ? self::getPath($path) : self::getFullUrlFromPath($blog, $path);
@@ -198,14 +197,14 @@ class PermalinkRepository
 
     public static function getMediaPermalink(Media $media, Blog $blog, $onlyPath = false): string
     {
-        $path = 'media/' . $media->name;
+        $path = 'media/'.$media->name;
 
         return $onlyPath ? self::getPath($path) : self::getFullUrlFromPath($blog, $path);
     }
 
     public static function getAssetPermalink(string $assetName, Blog $blog, $onlyPath = false): string
     {
-        $path = 'assets/' . $assetName;
+        $path = 'assets/'.$assetName;
 
         return $onlyPath ? self::getPath($path) : self::getFullUrlFromPath($blog, $path);
     }
@@ -221,7 +220,7 @@ class PermalinkRepository
             // remove if have
             $path = ltrim($path, '/');
             // add again and return
-            return '/' . $path;
+            return '/'.$path;
         }
     }
 }

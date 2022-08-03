@@ -7,56 +7,47 @@ use App\Domains\Theme\ThemeFilesRepository;
 use Illuminate\Http\UploadedFile;
 use Illuminate\Testing\Fluent\AssertableJson;
 
-it('creates a file', function() {
-
+it('creates a file', function () {
     $this->callConsoleApi('POST', '/theme/file', [
         'folder' => 'templates',
         'name' => 'index.twig',
-        'content' => 'test'
+        'content' => 'test',
     ])
         ->assertOk()
-        ->assertJson(fn (AssertableJson $json) =>
-            $json->where('name', 'index.twig')
+        ->assertJson(fn (AssertableJson $json) => $json->where('name', 'index.twig')
                 ->where('content', 'test')
                 ->etc()
         );
-
 });
 
-it('creates a file from blob', function() {
-
+it('creates a file from blob', function () {
     $file = UploadedFile::fake()->image('test.jpg');
 
     $this->callConsoleApi('POST', '/theme/file', [
         'folder' => 'assets',
         'name' => 'test.jpg',
-        'file' => $file
+        'file' => $file,
     ])
         ->assertOk()
-        ->assertJson(fn (AssertableJson $json) =>
-            $json->where('name', 'test.jpg')
+        ->assertJson(fn (AssertableJson $json) => $json->where('name', 'test.jpg')
                 ->where('content', null)
                 ->etc()
         );
-
 });
 
-it('validates file size', function() {
-
+it('validates file size', function () {
     $file = UploadedFile::fake()->image('test.jpg')->size(config('limits.max_asset_file_size') / 1000 + 1);
 
     $this->callConsoleApi('POST', '/theme/file', [
         'folder' => 'assets',
         'name' => 'test.jpg',
-        'file' => $file
+        'file' => $file,
     ])
         ->assertUnprocessable()
         ->assertSee('The file must not be greater than');
-
 });
 
-it('does not create a file if one already exists', function() {
-
+it('does not create a file if one already exists', function () {
     ThemeFilesRepository::createOrUpdateFile(
         blog(),
         ThemeFileFolderEnum::TEMPLATES,
@@ -67,9 +58,8 @@ it('does not create a file if one already exists', function() {
     $this->callConsoleApi('POST', '/theme/file', [
         'folder' => 'templates',
         'name' => 'index.twig',
-        'content' => 'test'
+        'content' => 'test',
     ])
         ->assertUnprocessable()
         ->assertSee('File already exists');
-
 });

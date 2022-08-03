@@ -10,8 +10,7 @@ use App\Models\Language;
 use App\Models\PostVariant;
 use Symfony\Component\DomCrawler\Crawler;
 
-it('generates entries for homepage and its variants', function() {
-
+it('generates entries for homepage and its variants', function () {
     $blog = newBlog();
 
     // primary
@@ -33,11 +32,9 @@ it('generates entries for homepage and its variants', function() {
     expect($alts->count())->toBe(3);
     expect($alts->eq(0)->attr('hreflang'))->toBe('en');
     expect($alts->eq(0)->attr('href'))->toBe(PermalinkRepository::getFullUrlFromPath($blog));
-
 });
 
-it('generates entries for pages and its variants', function() {
-
+it('generates entries for pages and its variants', function () {
     $blog = newBlog();
 
     (new LanguageFiller($blog))->fill();
@@ -62,5 +59,4 @@ it('generates entries for pages and its variants', function() {
     // language variants
     expect($crawler->filter('default|url')->eq(2)->filter('xhtml|link')->count())->toBe(1);
     expect($crawler->filter('default|url')->eq(3)->filter('xhtml|link')->count())->toBe(2);
-
 });

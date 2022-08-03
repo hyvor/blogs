@@ -27,8 +27,6 @@ test('json to HTML', function () {
     expect($html)->toEqual("<blockquote>$content</blockquote>");
 });
 
-
-
 test('HTML to JSON', function () {
     $content = 'A blockquote';
 

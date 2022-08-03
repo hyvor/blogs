@@ -8,19 +8,17 @@ use Illuminate\Database\Seeder;
 
 class PostsSeeder extends Seeder
 {
-
     public function __construct(private int $count)
-    {}
+    {
+    }
 
-    public function run() {
-
+    public function run()
+    {
         Post::factory()
             ->count($this->count)
             ->has(PostVariant::factory()->create())
             ->create([
-                'blog_id' => config('test.blog_id')
+                'blog_id' => config('test.blog_id'),
             ]);
-
     }
-
 }

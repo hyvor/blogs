@@ -7,17 +7,14 @@ use App\Domains\Blog\Fillers\RouteFiller;
 use App\Domains\Delivery\PathMatcher;
 use Symfony\Component\DomCrawler\Crawler;
 
-it('does not work for page 0', function() {
-
+it('does not work for page 0', function () {
     $pathMatcher = new PathMatcher(blog(), '/sitemap-posts-0.xml');
     $responseObject = $pathMatcher->getResponseObject();
 
     expect($responseObject->status)->toBe(404);
-
 });
 
-it('generates posts sitemap', function() {
-
+it('generates posts sitemap', function () {
     $blog = newBlog();
     (new LanguageFiller($blog))->fill();
     (new RouteFiller($blog))->fill();
@@ -31,11 +28,9 @@ it('generates posts sitemap', function() {
 
     expect($crawler->filter('default|url')->count())->toBe(5);
     expect($crawler->filter('default|loc')->count())->toBe(5);
-
 });
 
-it('paginates', function() {
-
+it('paginates', function () {
     config(['limits.max_entries_per_sitemap' => 2]);
 
     $blog = newBlog();
@@ -50,5 +45,4 @@ it('paginates', function() {
     expect($crawler2->filter('default|url')->count())->toBe(1);
 
     expect((new PathMatcher($blog, '/sitemap-posts-3.xml'))->getResponseObject()->status)->toBe(404);
-
 });

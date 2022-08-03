@@ -40,7 +40,7 @@ class ConsoleThemeController extends Controller
     public function uploadTheme(Request $request, Blog $blog)
     {
         $request->validate([
-            'zip' => 'required|file|max:' . config('limits.max_media_upload_size_kb'),
+            'zip' => 'required|file|max:'.config('limits.max_media_upload_size_kb'),
         ]);
 
         $zip = $request->file('zip');
@@ -59,7 +59,7 @@ class ConsoleThemeController extends Controller
     {
         $zip = ThemeFilesRepository::getZip($blog);
 
-        $filename = 'hb-theme-of-' . $blog->subdomain . '-' . date('Y-m-d') . '.zip';
+        $filename = 'hb-theme-of-'.$blog->subdomain.'-'.date('Y-m-d').'.zip';
 
         return $zip->outputAsSymfonyResponse($filename, 'application/zip');
     }
@@ -70,7 +70,7 @@ class ConsoleThemeController extends Controller
             'folder' => ['required', 'nullable', new Enum(ThemeFileFolderEnum::class)],
             'name' => 'required|string',
             'content' => 'string|nullable',
-            'file' => (new File())->max(config('limits.max_asset_file_size') / 1000)
+            'file' => (new File())->max(config('limits.max_asset_file_size') / 1000),
         ]);
 
         $folder = ThemeFileFolderEnum::tryFrom($request->input('folder'));
@@ -98,10 +98,9 @@ class ConsoleThemeController extends Controller
 
     public function updateFile(Request $request, ThemeFile $file)
     {
-
         $request->validate([
             'name' => 'string',
-            'content' => 'string|nullable'
+            'content' => 'string|nullable',
         ]);
 
         $updates = [];
@@ -121,6 +120,7 @@ class ConsoleThemeController extends Controller
     public function deleteFile(ThemeFile $file)
     {
         ThemeFilesRepository::deleteFile($file);
+
         return response()->json();
     }
 

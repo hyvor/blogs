@@ -60,7 +60,6 @@ class NavigationRepository
         $navigation->delete();
     }
 
-
     public static function getNavigationVariant(Navigation $navigation, Language $language): ?NavigationVariant
     {
         return NavigationVariant::where('navigation_id', $navigation->id)

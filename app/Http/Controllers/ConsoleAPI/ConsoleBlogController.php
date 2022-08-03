@@ -18,7 +18,6 @@ use App\Domains\Tag\TagRepository;
 use App\Domains\User\UserRepository;
 use App\Exceptions\TrustedException;
 use App\Http\Controllers\Controller;
-
 use App\Models\Blog;
 use App\Models\Language;
 use App\Rules\BlogDescription;
@@ -34,12 +33,11 @@ class ConsoleBlogController extends Controller
     /**
      * Get initial data of a blog that is required to load it in the Console.
      *
-     * @param Blog $blog
+     * @param  Blog  $blog
      * @return JsonResponse
      */
     public function getBlogData(Blog $blog)
     {
-
         return response()->json([
             'blog' => new BlogObject($blog),
             'counts' => [
@@ -57,8 +55,8 @@ class ConsoleBlogController extends Controller
     /**
      * Updates a blog.
      *
-     * @param Request $request
-     * @param Blog $blog
+     * @param  Request  $request
+     * @param  Blog  $blog
      * @return JsonResponse
      */
     public static function updateBlog(Request $request, Blog $blog)
@@ -111,13 +109,13 @@ class ConsoleBlogController extends Controller
         return response()->json(new BlogObject($blog));
     }
 
-
     /**
      * Creates a blog variant.
      *
-     * @param Request $request
-     * @param Blog $blog
+     * @param  Request  $request
+     * @param  Blog  $blog
      * @return JsonResponse
+     *
      * @throws TrustedException
      */
     public static function createBlogVariant(Request $request, Blog $blog, Language $language)
@@ -134,9 +132,10 @@ class ConsoleBlogController extends Controller
     /**
      * Updates a blog variant.
      *
-     * @param Request $request
-     * @param Blog $blog
+     * @param  Request  $request
+     * @param  Blog  $blog
      * @return JsonResponse
+     *
      * @throws TrustedException
      */
     public static function updateBlogVariant(Request $request, Blog $blog, Language $language)

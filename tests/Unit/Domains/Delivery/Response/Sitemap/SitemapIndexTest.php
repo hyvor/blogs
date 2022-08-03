@@ -6,8 +6,7 @@ use App\Domains\Blog\Fillers\LanguageFiller;
 use App\Domains\Delivery\PathMatcher;
 use Symfony\Component\DomCrawler\Crawler;
 
-it('returns sitemap', function() {
-
+it('returns sitemap', function () {
     $blog = newBlog();
 
     (new LanguageFiller($blog))->fill();
@@ -22,11 +21,9 @@ it('returns sitemap', function() {
     $sitemaps = $crawler->filter('sitemap');
     expect($sitemaps->count())->toBe(1);
     expect($sitemaps->first()->innerText())->toEndWith('/sitemap-pages.xml');
-
 });
 
-it('adds posts sitemap', function() {
-
+it('adds posts sitemap', function () {
     $blog = newBlog();
 
     (new LanguageFiller($blog))->fill();
@@ -45,5 +42,4 @@ it('adds posts sitemap', function() {
     expect($sitemaps->count())->toBe(2);
     expect($sitemaps->eq(0)->innerText())->toEndWith('/sitemap-pages.xml');
     expect($sitemaps->eq(1)->innerText())->toEndWith('/sitemap-posts-1.xml');
-
 });

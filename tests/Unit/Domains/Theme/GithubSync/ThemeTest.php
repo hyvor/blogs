@@ -20,7 +20,6 @@ it('throws an error if config.yaml is not found', function () {
     $theme->getVersion();
 })->throws(Exception::class);
 
-
 it('throws an error if THEME_VERSION is not found', function () {
     $theme = new Theme('default', ThemeCreationTypeEnum::ORIGINAL);
     $theme->addFile(null, 'config.yaml', 'THEME_NAME: default');

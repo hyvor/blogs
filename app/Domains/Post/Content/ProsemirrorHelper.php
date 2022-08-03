@@ -4,11 +4,9 @@ namespace App\Domains\Post\Content;
 
 class ProsemirrorHelper
 {
-
-    public static function getArrayJson(mixed $json) : array
+    public static function getArrayJson(mixed $json): array
     {
-
-        if (is_string($json) && !empty($json)) {
+        if (is_string($json) && ! empty($json)) {
             return json_decode($json, true);
         }
 
@@ -22,23 +20,21 @@ class ProsemirrorHelper
 
         return [
             'type' => 'doc',
-            'content' => []
+            'content' => [],
         ];
     }
 
-    public static function findBlocks(mixed $json, string $blockType) : array
+    public static function findBlocks(mixed $json, string $blockType): array
     {
-
         $obj = self::getArrayJson($json);
 
         $blocks = [];
 
-        if (!isset($obj['content'])) {
+        if (! isset($obj['content'])) {
             return $blocks;
         }
 
         foreach ($obj['content'] as $child) {
-
             if (isset($child['type']) && $child['type'] === $blockType) {
                 $blocks[] = $child;
             }
@@ -46,11 +42,8 @@ class ProsemirrorHelper
             if (isset($child['content']) && is_array($child['content'])) {
                 $blocks = [...$blocks, ...self::findBlocks($child, $blockType)];
             }
-
         }
 
         return $blocks;
-
     }
-
 }

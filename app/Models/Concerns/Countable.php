@@ -9,8 +9,6 @@ use stdClass;
 
 trait Countable
 {
-
-
     /*public function counts()
     {
         return $this->morphMany(Count::class, 'countable');
@@ -37,11 +35,12 @@ trait Countable
         });
     }*/
 
-    public function getCount(string $name) : int
+    public function getCount(string $name): int
     {
         $this->validateCountName($name);
 
         $counts = $this->getCountsAsObject();
+
         return $counts->$name ?? 0;
     }
 
@@ -52,13 +51,11 @@ trait Countable
 
     public function setCounts(array $counts)
     {
-
         $fill = [];
         foreach ($counts as $key => $value) {
-
             $this->validateCountName($key);
 
-            if (!is_int($value)) {
+            if (! is_int($value)) {
                 throw new Exception('Value must be an integer');
             }
 
@@ -68,8 +65,7 @@ trait Countable
         $this->forceFill($fill)->save();
     }
 
-    abstract function countsDefinition();
-
+    abstract public function countsDefinition();
 
     /**
      * This is to make sure wrong (undefined)
@@ -77,21 +73,21 @@ trait Countable
      */
     private function validateCountName(string $name)
     {
-        if (!in_array($name, $this->countsDefinition())) {
+        if (! in_array($name, $this->countsDefinition())) {
             $class = self::class;
             throw new Exception("Count name $name is not defined in $class");
         }
     }
 
-    private function getCountsAsObject() : object
+    private function getCountsAsObject(): object
     {
         $meta = $this->counts;
 
         if (is_string($meta)) {
             return json_decode($meta) ?? new stdClass;
-        } else if (is_array($meta)) {
+        } elseif (is_array($meta)) {
             return (object) $meta;
-        } else if (is_object($meta)) {
+        } elseif (is_object($meta)) {
             return $meta;
         }
 

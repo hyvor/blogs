@@ -70,7 +70,7 @@ class DocsController extends Controller
             // themes
             $themes = Highlighter::getAllThemes();
 
-            $code = <<<JS
+            $code = <<<'JS'
             function App() {
                 const [clicks, setClicks] = useState(0);
 

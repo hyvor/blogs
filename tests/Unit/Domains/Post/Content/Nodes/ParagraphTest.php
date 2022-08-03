@@ -27,8 +27,6 @@ test('json to HTML', function () {
     expect($html)->toEqual("<p>$content</p>");
 });
 
-
-
 test('HTML to JSON', function () {
     $content = 'A paragraph';
 

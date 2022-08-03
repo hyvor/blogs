@@ -4,8 +4,7 @@ namespace Tests\Unit\Domains\Blog\Deleters;
 
 use App\Domains\Blog\Deleters\LanguageDeleter;
 
-it('deletes languages', function() {
-
+it('deletes languages', function () {
     $blog = blog();
 
     expect($blog->languages()->count())->toBe(2);
@@ -14,5 +13,4 @@ it('deletes languages', function() {
     $deleter->delete();
 
     expect($blog->languages()->count())->toBe(0);
-
 });

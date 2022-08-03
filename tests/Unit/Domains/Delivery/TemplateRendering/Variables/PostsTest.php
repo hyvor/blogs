@@ -7,14 +7,14 @@ use App\Domains\Delivery\PathMatcher;
 use App\Domains\Theme\ThemeFilesRepository;
 
 it('does not set _posts and _pagination when posts_filter is null in the route', function () {
-    $content = "
+    $content = '
         {% if _posts is not defined %}
             posts variable not defined
         {% endif %}
         {% if _pagination is not defined %}
             pagination variable not defined
         {% endif %}
-    ";
+    ';
 
     ThemeFilesRepository::createOrUpdateFile(
         $this->blog,
@@ -25,7 +25,7 @@ it('does not set _posts and _pagination when posts_filter is null in the route',
 
     $post = aPublishedPost();
 
-    $pathMatcher = new PathMatcher($this->blog, '/' . $post->slug);
+    $pathMatcher = new PathMatcher($this->blog, '/'.$post->slug);
     $responseObject = $pathMatcher->getResponseObject();
 
     expect($responseObject->content)->toContain('posts variable not defined');
@@ -134,8 +134,7 @@ it('does not return 404 for the first page even posts are not found', function (
     expect($responseObject->content)->toBe('0');
 });
 
-it('sets featured posts first in _post', function() {
-
+it('sets featured posts first in _post', function () {
     clearPosts();
 
     seedPublishedPosts(3);
@@ -156,5 +155,4 @@ it('sets featured posts first in _post', function() {
     $responseObject = $pathMatcher->getResponseObject();
 
     expect($responseObject->content)->toBe('featured');
-
 });

@@ -13,8 +13,7 @@ use App\Domains\Blog\Deleters\ThemeDeleter;
 use App\Domains\Blog\Deleters\UserDeleter;
 use App\Models\Blog;
 
-it('calls the delete blog job', function() {
-
+it('calls the delete blog job', function () {
     $deleters = [
         LanguageDeleter::class,
         MediaDeleter::class,
@@ -24,14 +23,14 @@ it('calls the delete blog job', function() {
         RouteDeleter::class,
         TagDeleter::class,
         ThemeDeleter::class,
-        UserDeleter::class
+        UserDeleter::class,
     ];
 
     // calls the deleters
     foreach ($deleters as $deleter) {
         $mock = mock($deleter)->makePartial();
         $mock->shouldReceive('delete')->once();
-        $this->app->bind($deleter, fn() => $mock);
+        $this->app->bind($deleter, fn () => $mock);
     }
 
     $this->callConsoleApi('DELETE', '/blog')
@@ -39,5 +38,4 @@ it('calls the delete blog job', function() {
 
     // deletes the blog
     expect(Blog::find(config('test.blog_id')))->toBeNull();
-
 });

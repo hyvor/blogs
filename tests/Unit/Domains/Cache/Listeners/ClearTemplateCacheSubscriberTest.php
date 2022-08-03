@@ -27,16 +27,16 @@ it('is attached', function () {
     Event::fake();
 
     // posts
-    Event::assertListening(PostUpdatedEvent::class, [ClearTemplateCacheSubscriber::class , 'onPostUpdate']);
-    Event::assertListening(PostDeletedEvent::class, [ClearTemplateCacheSubscriber::class , 'onPostDelete']);
+    Event::assertListening(PostUpdatedEvent::class, [ClearTemplateCacheSubscriber::class, 'onPostUpdate']);
+    Event::assertListening(PostDeletedEvent::class, [ClearTemplateCacheSubscriber::class, 'onPostDelete']);
 
     // post variants
-    Event::assertListening(PostVariantUpdatedEvent::class, [ClearTemplateCacheSubscriber::class , 'onPostVariantUpdate']);
+    Event::assertListening(PostVariantUpdatedEvent::class, [ClearTemplateCacheSubscriber::class, 'onPostVariantUpdate']);
     Event::assertListening(PostVariantDeletedEvent::class, [ClearTemplateCacheSubscriber::class, 'onPostVariantDelete']);
 
     // user
-    $userEventListener = [ClearTemplateCacheSubscriber::class , 'onUserEvent'];
-    $userVariantEventListener = [ClearTemplateCacheSubscriber::class , 'onUserVariantEvent'];
+    $userEventListener = [ClearTemplateCacheSubscriber::class, 'onUserEvent'];
+    $userVariantEventListener = [ClearTemplateCacheSubscriber::class, 'onUserVariantEvent'];
     Event::assertListening(UserCreatedEvent::class, $userEventListener);
     Event::assertListening(UserUpdatedEvent::class, $userEventListener);
     Event::assertListening(UserDeletedEvent::class, $userEventListener);
@@ -44,8 +44,8 @@ it('is attached', function () {
     Event::assertListening(UserVariantDeletedEvent::class, $userVariantEventListener);
 
     // tag
-    $tagEventListener = [ClearTemplateCacheSubscriber::class , 'onTagEvent'];
-    $tagVariantEventListener = [ClearTemplateCacheSubscriber::class , 'onTagVariantEvent'];
+    $tagEventListener = [ClearTemplateCacheSubscriber::class, 'onTagEvent'];
+    $tagVariantEventListener = [ClearTemplateCacheSubscriber::class, 'onTagVariantEvent'];
     Event::assertListening(TagCreatedEvent::class, $tagEventListener);
     Event::assertListening(TagUpdatedEvent::class, $tagEventListener);
     Event::assertListening(TagDeletedEvent::class, $tagEventListener);

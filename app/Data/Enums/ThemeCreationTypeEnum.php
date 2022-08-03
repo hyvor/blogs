@@ -2,7 +2,7 @@
 
 namespace App\Data\Enums;
 
-enum ThemeCreationTypeEnum : string
+enum ThemeCreationTypeEnum: string
 {
     case ORIGINAL = 'original';
     case PORTED = 'ported';

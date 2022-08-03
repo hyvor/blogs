@@ -7,7 +7,7 @@ namespace App\Data\Enums;
  *
  * Values should be unique for each model.
  */
-enum CountEnum : string
+enum CountEnum: string
 {
     case BLOG_USERS = 'blog_users';
     case BLOG_POSTS = 'blog_posts';

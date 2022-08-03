@@ -9,11 +9,14 @@ use App\Data\Enums\RedirectTypeEnum;
 class DeliveryAPIResponseObject
 {
     public DeliveryAPITypeEnum $type;
+
     public int $at;
 
     // for file
     public DeliveryAPIFileTypeEnum $file_type;
+
     public string $content;
+
     public string $mime_type;
 
     // for redirect
@@ -21,6 +24,7 @@ class DeliveryAPIResponseObject
 
     // for both
     public bool $cache;
+
     public int $status;
 
     public function __construct(DeliveryAPITypeEnum $type)
@@ -43,7 +47,6 @@ class DeliveryAPIResponseObject
 
         return $obj;
     }
-
 
     public static function forRedirect(string $to, RedirectTypeEnum $type)
     {

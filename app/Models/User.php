@@ -4,7 +4,6 @@ namespace App\Models;
 
 use App\Data\Enums\UserRoleEnum;
 use App\Data\Enums\UserStatusEnum;
-use App\Models\Concerns\Countable;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 
@@ -26,7 +25,6 @@ class User extends Model
         return $this->hasMany(UserVariant::class);
     }
 
-
     public function blog()
     {
         return $this->belongsTo(Blog::class);
@@ -36,5 +34,4 @@ class User extends Model
     {
         return $this->hasOne(Media::class, 'picture_id');
     }
-
 }

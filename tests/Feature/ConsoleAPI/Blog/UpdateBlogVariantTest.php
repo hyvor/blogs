@@ -30,8 +30,7 @@ it('updates name', function () {
     )
         ->assertOk()
         ->assertJson(
-            fn (AssertableJson $json) =>
-            $json
+            fn (AssertableJson $json) => $json
                 ->where('name', $name)
                 ->etc()
         );
@@ -50,8 +49,7 @@ it('updates description', function () {
     )
         ->assertOk()
         ->assertJson(
-            fn (AssertableJson $json) =>
-            $json
+            fn (AssertableJson $json) => $json
                 ->where('description', $description)
                 ->etc()
         );

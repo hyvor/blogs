@@ -7,8 +7,7 @@ use App\Domains\Shared\Count\BlogCountsJob;
 use App\Models\Post;
 use App\Models\PostVariant;
 
-it('updates blog post counts', function() {
-
+it('updates blog post counts', function () {
     $blog = newBlog();
     (new LanguageFiller($blog))->fill();
 
@@ -17,11 +16,11 @@ it('updates blog post counts', function() {
         ->count(2)
         ->has(PostVariant::factory()->state([
             'language_id' => $blog->languages[0]->id,
-            'status' => 'draft'
+            'status' => 'draft',
         ]), 'variants')
         ->create([
             'blog_id' => $blog,
-            'is_featured' => true
+            'is_featured' => true,
         ]);
 
     // scheduled
@@ -29,20 +28,20 @@ it('updates blog post counts', function() {
         ->count(3)
         ->has(PostVariant::factory()->state([
             'language_id' => $blog->languages[0]->id,
-            'status' => 'scheduled'
+            'status' => 'scheduled',
         ]), 'variants')
         ->create([
-            'blog_id' => $blog
+            'blog_id' => $blog,
         ]);
 
     // published
     Post::factory()
         ->has(PostVariant::factory()->state([
             'language_id' => $blog->languages[0]->id,
-            'status' => 'published'
+            'status' => 'published',
         ]), 'variants')
         ->create([
-            'blog_id' => $blog
+            'blog_id' => $blog,
         ]);
 
     BlogCountsJob::dispatch($blog);
@@ -53,5 +52,4 @@ it('updates blog post counts', function() {
     expect($blog->getCount('posts_draft'))->toBe(2);
     expect($blog->getCount('posts_scheduled'))->toBe(3);
     expect($blog->getCount('posts_featured'))->toBe(2);
-
 });

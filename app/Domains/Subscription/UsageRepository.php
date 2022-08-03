@@ -2,17 +2,14 @@
 
 namespace App\Domains\Subscription;
 
-use App\Data\Enums\CountEnum;
 use App\Data\Enums\SubscriptionPlanEnum;
 use App\Data\Objects\ConsoleAPI\Billing\UsageObject;
-use App\Domains\Count\CountRepository;
 use App\Models\Blog;
 
 class UsageRepository
 {
     public static function getUsage(Blog $blog): array
     {
-
         $limits = self::getLimits($blog);
 
         return [

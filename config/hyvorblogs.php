@@ -34,11 +34,11 @@ return [
             /**
              * Need any middleware? Add them here
              */
-            'middleware' => []
+            'middleware' => [],
         ],
-        /**
-         * You can add more blogs here ;)
-         */
-    ]
+    /**
+     * You can add more blogs here ;)
+     */
+    ],
 
 ];

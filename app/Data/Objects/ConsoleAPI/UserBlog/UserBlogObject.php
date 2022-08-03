@@ -5,16 +5,14 @@ namespace App\Data\Objects\ConsoleAPI\UserBlog;
 use App\Models\User;
 
 /**
- *
  * This is used in the console to represent a user's blog.
  * It contains user's and blog's data that is essential to render the console UI
  * User can be of any role.
- *
  */
-
 class UserBlogObject
 {
     public UserBlogBlogObject $blog;
+
     public UserBlogUserObject $user;
 
     /**

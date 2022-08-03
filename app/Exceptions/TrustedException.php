@@ -17,12 +17,11 @@ use Throwable;
  * Exceptions that does not extend TrustedException are not shown to the user.
  * They can contain sensitive information.
  */
-
 class TrustedException extends \Exception
 {
     public const ERROR_UNPROCESSABLE = 422; // This means that client-side input fails validation.
-    public const ERROR_UNAUTHORIZED = 401; // This means the user isn’t authenticated.
 
+    public const ERROR_UNAUTHORIZED = 401; // This means the user isn’t authenticated.
 
     // This means the user is authenticated,
     // but it’s not allowed to access a resource.
@@ -30,7 +29,7 @@ class TrustedException extends \Exception
 
     public const ERROR_NOT_FOUND = 404; // not found
 
-    public function __construct(string $message = "", int $code = self::ERROR_UNPROCESSABLE, ?Throwable $previous = null)
+    public function __construct(string $message = '', int $code = self::ERROR_UNPROCESSABLE, ?Throwable $previous = null)
     {
         parent::__construct($message, $code, $previous);
     }

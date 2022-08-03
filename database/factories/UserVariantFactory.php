@@ -8,16 +8,14 @@ use Illuminate\Database\Eloquent\Factories\Factory;
 
 class UserVariantFactory extends Factory
 {
-
-    public function definition() : array
+    public function definition(): array
     {
         return [
             'user_id' => User::factory(),
             'language_id' => Language::factory(),
             'name' => $this->faker->name,
             'bio' => substr($this->faker->paragraph, 255),
-            'location' => substr($this->faker->country, 30)
+            'location' => substr($this->faker->country, 30),
         ];
     }
-
 }

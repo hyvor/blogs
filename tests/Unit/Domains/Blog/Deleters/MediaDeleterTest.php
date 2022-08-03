@@ -7,8 +7,7 @@ use App\Domains\Media\MediaRepository;
 use Illuminate\Http\UploadedFile;
 use Illuminate\Support\Facades\Storage;
 
-it('deletes media', function() {
-
+it('deletes media', function () {
     Storage::fake();
 
     $blog = blog();
@@ -36,5 +35,4 @@ it('deletes media', function() {
     Storage::assertMissing($media1Path);
     Storage::assertMissing($media2Path);
     Storage::assertExists($mediaOtherBlogPath);
-
 });

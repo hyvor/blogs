@@ -4,7 +4,6 @@ namespace App\Http\Controllers\ConsoleAPI;
 
 use App\Data\Objects\ConsoleAPI\RouteObject;
 use App\Domains\Route\RouteRepository;
-
 use App\Http\Controllers\Controller;
 use App\Models\Blog;
 use App\Models\Route;
@@ -69,7 +68,7 @@ class ConsoleRouteController extends Controller
     public function delete(Route $route)
     {
         RouteRepository::deleteRoute($route);
+
         return response()->json();
     }
-
 }

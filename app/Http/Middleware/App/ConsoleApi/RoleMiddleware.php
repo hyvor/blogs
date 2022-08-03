@@ -5,8 +5,8 @@ namespace App\Http\Middleware\App\ConsoleApi;
 use App\Data\Enums\UserRoleEnum;
 use App\Exceptions\TrustedException;
 use Closure;
-use Illuminate\Http\Request;
 use function collect;
+use Illuminate\Http\Request;
 
 class RoleMiddleware
 {

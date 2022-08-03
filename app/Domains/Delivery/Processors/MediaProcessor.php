@@ -11,7 +11,6 @@ use App\Helpers\MimeTypes;
 
 class MediaProcessor extends RouteProcessorAbstract
 {
-
     public function __construct(PathMatcher $pathMatcher, MatchedRoute $matchedRoute)
     {
         $fileName = $matchedRoute->param('file_name');
@@ -30,5 +29,4 @@ class MediaProcessor extends RouteProcessorAbstract
             $mimeType
         ));
     }
-
 }

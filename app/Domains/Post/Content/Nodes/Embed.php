@@ -18,7 +18,7 @@ class Embed extends Node
             [
                 'tag' => 'x-embed[data-url]',
                 'getAttrs' => fn (DOMElement $node) => [
-                        'url' => $node->getAttribute('data-url'),
+                    'url' => $node->getAttribute('data-url'),
                 ],
             ],
         ];
@@ -43,7 +43,7 @@ class Embed extends Node
         }
 
         return [
-            'content' => $embedContent ? '<x-embed>' . $embedContent . '</x-embed>' : '',
+            'content' => $embedContent ? '<x-embed>'.$embedContent.'</x-embed>' : '',
         ];
     }
 }

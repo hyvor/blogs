@@ -44,7 +44,6 @@ class CreatePostsTable extends Migration
             $table->index(['blog_id', 'is_featured']);
             $table->index(['blog_id', 'featured_image_url']);
             $table->index(['blog_id', 'canonical_url']);
-
         });
     }
 

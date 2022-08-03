@@ -11,6 +11,7 @@ class KeysFilter
     // default is exclude nothing
     // which means include everything
     private $type = 'exclude';
+
     private $keys = [];
 
     private $data;
@@ -19,7 +20,7 @@ class KeysFilter
     {
         $this->decodeKeys($keys);
 
-        $this-> data = $this->filterObject($input);
+        $this->data = $this->filterObject($input);
     }
 
     private function filterObject($object, $start = '')
@@ -41,7 +42,7 @@ class KeysFilter
             }
 
             foreach ($object as $key => $value) {
-                $fullKey = $start ? $start . '.' . $key : $key;
+                $fullKey = $start ? $start.'.'.$key : $key;
                 if ($this->type === 'exclude') {
                     if (
                         ! in_array($fullKey, $this->keys)

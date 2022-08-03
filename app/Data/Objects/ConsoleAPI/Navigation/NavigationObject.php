@@ -8,14 +8,18 @@ use App\Models\Navigation;
 class NavigationObject
 {
     public int $id;
+
     public int $created_at;
+
     public string $url;
+
     public NavigationTypeEnum $type;
+
     public int $sort;
 
     /**
-    * @var NavigationVariantObject[]
-    */
+     * @var NavigationVariantObject[]
+     */
     public array $variants;
 
     public function __construct(Navigation $navigation)

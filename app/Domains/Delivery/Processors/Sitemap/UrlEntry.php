@@ -4,9 +4,10 @@ namespace App\Domains\Delivery\Processors\Sitemap;
 
 class UrlEntry
 {
-
     private string $loc;
+
     private array $langAlts = [];
+
     private array $images = [];
 
     public function loc(string $loc)
@@ -18,7 +19,7 @@ class UrlEntry
     {
         $this->langAlts[] = (object) [
             'code' => $languageCode,
-            'url' => $url
+            'url' => $url,
         ];
     }
 
@@ -29,7 +30,6 @@ class UrlEntry
 
     public function toXML()
     {
-
         $langAltsXML = '';
         foreach ($this->langAlts as $langAlt) {
             $langAltsXML .= <<<XML
@@ -49,9 +49,5 @@ class UrlEntry
             $imagesXML
         </url>
         XML;
-
-
-
     }
-
 }

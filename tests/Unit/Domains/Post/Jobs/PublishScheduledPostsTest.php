@@ -6,17 +6,14 @@ use App\Data\Enums\PostStatusEnum;
 use App\Domains\Post\Jobs\PublishScheduledPosts;
 use Tests\Unit\Helpers\SchedulerFake;
 
-it('is scheduled', function() {
-
+it('is scheduled', function () {
     SchedulerFake::assertJobScheduled(
         PublishScheduledPosts::class,
         fn ($caller) => $caller->everyFiveMinutes()
     );
-
 });
 
-it('publishes scheduled posts', function() {
-
+it('publishes scheduled posts', function () {
     $blog = newBlog();
 
     $draft = postWithVariant(['blog_id' => $blog], ['status' => 'draft']);
@@ -30,5 +27,4 @@ it('publishes scheduled posts', function() {
     expect($scheduledLater->variants[0]->status)->toBe(PostStatusEnum::SCHEDULED);
     expect($scheduledEarly->variants[0]->status)->toBe(PostStatusEnum::PUBLISHED);
     expect($published->variants[0]->status)->toBe(PostStatusEnum::PUBLISHED);
-
 });

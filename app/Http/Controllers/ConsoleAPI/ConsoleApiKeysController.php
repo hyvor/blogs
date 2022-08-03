@@ -1,8 +1,8 @@
 <?php
+
 namespace App\Http\Controllers\ConsoleAPI;
 
 use App\Data\Enums\ApiKeysTypeEnum;
-use App\Data\Enums\UserRoleEnum;
 use App\Data\Objects\ConsoleAPI\ApiKeyObject;
 use App\Domains\Api\ApiKeysRepository;
 use App\Models\ApiKey;
@@ -12,10 +12,10 @@ use Illuminate\Validation\Rules\Enum;
 
 class ConsoleApiKeysController
 {
-
     public function getApiKeys(Blog $blog)
     {
         $keys = ApiKeysRepository::get($blog)->mapInto(ApiKeyObject::class);
+
         return response()->json($keys);
     }
 
@@ -23,7 +23,7 @@ class ConsoleApiKeysController
     {
         $request->validate([
             'name' => 'required|string',
-            'type' => ['required', new Enum(ApiKeysTypeEnum::class)]
+            'type' => ['required', new Enum(ApiKeysTypeEnum::class)],
         ]);
 
         $name = $request->input('name');
@@ -40,5 +40,4 @@ class ConsoleApiKeysController
 
         return response()->json();
     }
-
 }

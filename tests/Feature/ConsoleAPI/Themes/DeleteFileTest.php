@@ -6,8 +6,7 @@ use App\Data\Enums\ThemeFileFolderEnum;
 use App\Domains\Theme\ThemeFilesRepository;
 use App\Models\ThemeFile;
 
-it('deletes a file', function() {
-
+it('deletes a file', function () {
     $file = ThemeFilesRepository::createOrUpdateFile(
         blog(),
         ThemeFileFolderEnum::TEMPLATES,
@@ -19,5 +18,4 @@ it('deletes a file', function() {
         ->assertOk();
 
     expect(ThemeFile::find($file->id))->toBeNull();
-
 });

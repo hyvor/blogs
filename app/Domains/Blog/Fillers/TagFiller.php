@@ -19,7 +19,6 @@ class TagFiller implements FillerInterface
 
     ];
 
-
     public function __construct(private Blog $blog)
     {
     }
@@ -33,7 +32,6 @@ class TagFiller implements FillerInterface
             $this->blog->type === BlogTypeEnum::PREVIEW
         ) {
             $faker = Factory::create();
-
 
             foreach (range(1, 5) as $i) {
                 TagRepository::createTag($this->blog, $faker->word());

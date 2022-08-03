@@ -6,8 +6,7 @@ use App\Data\Enums\ThemeFileFolderEnum;
 use App\Domains\Theme\ThemeFilesRepository;
 use Illuminate\Testing\Fluent\AssertableJson;
 
-it('updates name', function() {
-
+it('updates name', function () {
     $file = ThemeFilesRepository::createOrUpdateFile(
         blog(),
         ThemeFileFolderEnum::TEMPLATES,
@@ -16,15 +15,13 @@ it('updates name', function() {
     );
 
     $this->callConsoleApi('PUT', "/theme/file/$file->id", [
-        'name' => 'new.twig'
+        'name' => 'new.twig',
     ])
         ->assertOk()
         ->assertJson(fn (AssertableJson $json) => $json->where('name', 'new.twig')->etc());
-
 });
 
-it('updates content', function() {
-
+it('updates content', function () {
     $file = ThemeFilesRepository::createOrUpdateFile(
         blog(),
         ThemeFileFolderEnum::TEMPLATES,
@@ -33,15 +30,13 @@ it('updates content', function() {
     );
 
     $this->callConsoleApi('PUT', "/theme/file/$file->id", [
-        'content' => 'new'
+        'content' => 'new',
     ])
         ->assertOk()
         ->assertJson(fn (AssertableJson $json) => $json->where('content', 'new')->etc());
-
 });
 
-it('updates content to empty', function() {
-
+it('updates content to empty', function () {
     $file = ThemeFilesRepository::createOrUpdateFile(
         blog(),
         ThemeFileFolderEnum::TEMPLATES,
@@ -50,9 +45,8 @@ it('updates content to empty', function() {
     );
 
     $this->callConsoleApi('PUT', "/theme/file/$file->id", [
-        'content' => ''
+        'content' => '',
     ])
         ->assertOk()
         ->assertJson(fn (AssertableJson $json) => $json->where('content', null)->etc());
-
 });

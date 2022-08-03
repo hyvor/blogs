@@ -36,7 +36,6 @@ it('matches a post', function () {
     expect($responseObject->file_type)->toBe(DeliveryAPIFileTypeEnum::TEMPLATE);
 });
 
-
 it('matches a page', function () {
     $twig = '{{ _post.id }}';
 

@@ -43,13 +43,12 @@ it('creates a user from username and email', function () {
     ])
         ->assertOk()
         ->assertJson(
-            fn (AssertableJson $json) =>
-            $json->where('email', $this->email)
+            fn (AssertableJson $json) => $json->where('email', $this->email)
                 ->where('role', 'admin')
                 ->where('website_url', $this->websiteUrl)
-                ->where("variants.0.name", $this->name)
-                ->where("variants.0.bio", $this->bio)
-                ->where("variants.0.location", $this->location)
+                ->where('variants.0.name', $this->name)
+                ->where('variants.0.bio', $this->bio)
+                ->where('variants.0.location', $this->location)
                 ->etc()
         );
 
@@ -66,13 +65,12 @@ it('creates a user from email', function () {
     ])
         ->assertOk()
         ->assertJson(
-            fn (AssertableJson $json) =>
-        $json->where('email', $this->email)
+            fn (AssertableJson $json) => $json->where('email', $this->email)
             ->where('role', 'contributor')
             ->where('website_url', $this->websiteUrl)
-            ->where("variants.0.name", $this->name)
-            ->where("variants.0.bio", $this->bio)
-            ->where("variants.0.location", $this->location)
+            ->where('variants.0.name', $this->name)
+            ->where('variants.0.bio', $this->bio)
+            ->where('variants.0.location', $this->location)
             ->etc()
         );
 });
@@ -85,7 +83,6 @@ it('does not create owners', function () {
         ->assertUnprocessable()
         ->assertSee('Owners cannot be created');
 });
-
 
 it('does not create if the user is not found', function () {
     $this->callConsoleApi('POST', '/user', [

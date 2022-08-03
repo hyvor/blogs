@@ -10,7 +10,9 @@ use App\Models\Language;
 class Helper
 {
     public const DEFAULT_LIMIT = 25;
+
     public const MAX_LIMIT = 250;
+
     public const DEFAULT_PAGE = 1;
 
     public static function getLanguage(Blog $blog, ?string $code): Language

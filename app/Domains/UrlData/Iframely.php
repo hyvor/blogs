@@ -21,7 +21,7 @@ class Iframely
             'api_key' => config('services.iframely.key'),
         ]);
 
-        $requestUrl = self::ENDPOINT . '?' . $params;
+        $requestUrl = self::ENDPOINT.'?'.$params;
         $response = Http::get($requestUrl);
 
         if ($response->successful()) {

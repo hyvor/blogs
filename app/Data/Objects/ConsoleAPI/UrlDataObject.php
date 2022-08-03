@@ -8,12 +8,19 @@ use App\Models\UrlData;
 class UrlDataObject
 {
     public string $url; // final URL
+
     public string $domain;
+
     public ?string $html;
+
     public string $title;
+
     public string $description;
+
     public ?string $thumbnail_url;
+
     public ?string $icon_url;
+
     public ?string $site;
 
     public function __construct(UrlData $urlData)

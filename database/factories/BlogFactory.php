@@ -2,12 +2,10 @@
 
 namespace Database\Factories;
 
-use App\Data\Enums\BlogHostingAtEnum;
 use Illuminate\Database\Eloquent\Factories\Factory;
 
 class BlogFactory extends Factory
 {
-    
     public function definition()
     {
         return [
@@ -22,8 +20,8 @@ class BlogFactory extends Factory
                 'social_youtube' => $this->faker->url(),
                 'social_tiktok' => $this->faker->url(),
                 'social_instagram' => $this->faker->url(),
-                'social_github' => $this->faker->url()
-            ])
+                'social_github' => $this->faker->url(),
+            ]),
         ];
     }
 }

@@ -9,7 +9,7 @@ it('correctly sets the language', function () {
     $languages = $this->blog->languages;
 
     // EN
-    $pathMatcherDefaultLang = new PathMatcher($this->blog, "/");
+    $pathMatcherDefaultLang = new PathMatcher($this->blog, '/');
     $languageDefault = $pathMatcherDefaultLang->language;
 
     $this->assertEquals($languages[0]->id, $languageDefault->id);
@@ -22,7 +22,7 @@ it('correctly sets the language', function () {
     $this->assertEquals('/hello-world', $pathMatcherSecondary->path); // language code should be removed
 
     // Invalid (Should fallback to default)
-    $pathMatcherInvalid = new PathMatcher($this->blog, "/jp/hello-world");
+    $pathMatcherInvalid = new PathMatcher($this->blog, '/jp/hello-world');
     $languageInvalid = $pathMatcherInvalid->language;
 
     $this->assertEquals($languages[0]->id, $languageInvalid->id);
@@ -31,7 +31,7 @@ it('correctly sets the language', function () {
     // fr-FR
     $langWithCountry = LanguageRepository::createLanguage($this->blog, 'fr-FR', 'French (France)');
     $this->blog->refresh();
-    $pathMatcher = new PathMatcher($this->blog, "/fr-FR/hello-world");
+    $pathMatcher = new PathMatcher($this->blog, '/fr-FR/hello-world');
     $pathMatcherLanguageWithCountry = $pathMatcher->language;
 
     $this->assertEquals($langWithCountry->id, $pathMatcherLanguageWithCountry->id);

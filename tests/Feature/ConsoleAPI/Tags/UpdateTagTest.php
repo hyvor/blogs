@@ -25,8 +25,7 @@ it('updates a tag', function () {
     ])
         ->assertOk()
         ->assertJson(
-            fn (AssertableJson $json) =>
-            $json->where('slug', $slug)
+            fn (AssertableJson $json) => $json->where('slug', $slug)
                 ->where('code_head', $codeHead)
                 ->where('code_foot', $codeFoot)
                 ->etc()

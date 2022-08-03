@@ -33,7 +33,6 @@ it('adds more users for dev blogs', function () {
     expect(count($blog->users))->toBe(6);
 });
 
-
 it('adds more users for preview blogs', function () {
     $blog = newBlog(BlogTypeEnum::PREVIEW);
 

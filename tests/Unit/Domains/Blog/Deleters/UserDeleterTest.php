@@ -12,8 +12,7 @@ beforeEach(function () {
     UserVariant::truncate();
 });
 
-it('deletes users', function() {
-
+it('deletes users', function () {
     $blog = newBlog();
 
     User::factory()
@@ -24,11 +23,9 @@ it('deletes users', function() {
         ))
         ->has(
             UserVariant::factory()
-                ->count(2)
-
-            , 'variants')
+                ->count(2), 'variants')
         ->create([
-            'blog_id' => $blog
+            'blog_id' => $blog,
         ]);
 
     expect(User::count())->toBe(2);
@@ -38,25 +35,20 @@ it('deletes users', function() {
 
     expect(User::count())->toBe(0);
     expect(UserVariant::count())->toBe(0);
-
 });
 
-it('does not delete users of other blogs', function() {
-
+it('does not delete users of other blogs', function () {
     User::factory()
         ->count(2)
         ->has(
             UserVariant::factory()
-                ->count(2)
-
-            , 'variants')
+                ->count(2), 'variants')
         ->create([
-            'blog_id' => newBlog()
+            'blog_id' => newBlog(),
         ]);
 
     (new UserDeleter(newBlog()))->delete();
 
     expect(User::count())->toBe(2);
     expect(UserVariant::count())->toBe(4);
-
 });

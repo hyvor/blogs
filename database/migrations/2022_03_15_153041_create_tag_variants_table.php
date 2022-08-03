@@ -24,7 +24,7 @@ return new class extends Migration
             // data
             $table->string('name')->nullable();
             $table->string('description')->nullable();
-            
+
             // indexes
             $table->unique(['tag_id', 'language_id']);
             $table->index('tag_id');

@@ -10,8 +10,7 @@ use App\Models\PostAuthor;
 use App\Models\PostVariant;
 use App\Models\User;
 
-it('counts author posts for multiple users', function() {
-
+it('counts author posts for multiple users', function () {
     $blog = newBlog();
     (new LanguageFiller($blog))->fill();
 
@@ -25,11 +24,11 @@ it('counts author posts for multiple users', function() {
         ->count(2)
         ->has(PostVariant::factory()->state([
             'language_id' => $blog->languages[0]->id,
-            'status' => 'draft'
+            'status' => 'draft',
         ]), 'variants')
         ->create([
             'blog_id' => $blog,
-            'is_featured' => true
+            'is_featured' => true,
         ]);
 
     // other languages (shouldn't be counted)
@@ -37,10 +36,10 @@ it('counts author posts for multiple users', function() {
         ->count(2)
         ->has(PostVariant::factory()->state([
             'language_id' => $blog->languages[1]->id,
-            'status' => 'published'
+            'status' => 'published',
         ]), 'variants')
         ->create([
-            'blog_id' => $blog
+            'blog_id' => $blog,
         ]);
 
     // published (COUNTED)
@@ -48,17 +47,17 @@ it('counts author posts for multiple users', function() {
         ->count(2)
         ->has(PostVariant::factory()->state([
             'language_id' => $blog->languages[0]->id,
-            'status' => 'published'
+            'status' => 'published',
         ]), 'variants')
         ->create([
-            'blog_id' => $blog
+            'blog_id' => $blog,
         ]);
 
     foreach ([$drafts, $otherLang, $published] as $posts) {
         foreach ($posts as $post) {
             PostAuthor::create([
                 'post_id' => $post->id,
-                'user_id' => $user->id
+                'user_id' => $user->id,
             ]);
         }
     }
@@ -68,16 +67,16 @@ it('counts author posts for multiple users', function() {
         ->count(3)
         ->has(PostVariant::factory()->state([
             'language_id' => $blog->languages[0]->id,
-            'status' => 'published'
+            'status' => 'published',
         ]), 'variants')
         ->create([
-            'blog_id' => $blog
+            'blog_id' => $blog,
         ]);
 
     foreach ($user1Posts as $post) {
         PostAuthor::create([
             'post_id' => $post->id,
-            'user_id' => $user1->id
+            'user_id' => $user1->id,
         ]);
     }
 
@@ -89,5 +88,4 @@ it('counts author posts for multiple users', function() {
 
     $user1->refresh();
     expect($user1->posts_count)->toBe(3);
-
 });

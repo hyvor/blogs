@@ -9,7 +9,7 @@ use App\Models\UrlData;
 
 beforeEach(function () {
     $this->url = 'https://example.com';
-    $this->html = "<div>Hello World</div>";
+    $this->html = '<div>Hello World</div>';
 
     // add URL data first
     UrlData::create([

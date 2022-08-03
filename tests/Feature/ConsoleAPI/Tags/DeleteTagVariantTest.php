@@ -23,8 +23,6 @@ it('deletes a tag variant', function () {
     Event::assertDispatched(TagVariantDeletedEvent::class);
 });
 
-
-
 it('does not delete primary language variant', function () {
     $tag = $this->blog->users()->first();
 

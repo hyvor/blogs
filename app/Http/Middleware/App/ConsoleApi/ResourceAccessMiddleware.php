@@ -29,7 +29,7 @@ class ResourceAccessMiddleware
         '/user' => User::class,
         '/route' => Route::class,
         '/api-key' => ApiKey::class,
-        '/theme/file' => ThemeFile::class
+        '/theme/file' => ThemeFile::class,
     ];
 
     public function __construct(Blog $blog)
@@ -52,10 +52,8 @@ class ResourceAccessMiddleware
         $id = $request->route('id');
         if ($id) {
             /**
-             *
              * An ID is present in the path
              * Which means that we have to verify that the
-             *
              */
 
             // ex: api/console/v0/blog/test/post/1
@@ -81,7 +79,6 @@ class ResourceAccessMiddleware
             }
 
             app()->instance($modelClass, $model);
-
 
             // now check if the model's blog_id
             // is currently accessed blog's ID

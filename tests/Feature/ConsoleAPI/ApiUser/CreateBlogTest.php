@@ -22,7 +22,6 @@ beforeEach(function () {
         ))
         ->has(ThemeVersion::factory(), 'versions')
         ->create();
-
 });
 
 it('validates', function () {
@@ -42,12 +41,10 @@ it('creates a blog', function () {
     ])
         ->assertOk()
         ->assertJson(
-            fn (AssertableJson $json) =>
-            $json->has('blog')
+            fn (AssertableJson $json) => $json->has('blog')
                 ->has(
                     'user',
-                    fn (AssertableJson $json) =>
-                    $json->where('role', UserRoleEnum::OWNER->value)
+                    fn (AssertableJson $json) => $json->where('role', UserRoleEnum::OWNER->value)
                         ->etc()
                 )
         )->json()['blog']['id'];
@@ -66,12 +63,10 @@ it('creates a dev blog', function () {
     ])
         ->assertOk()
         ->assertJson(
-            fn (AssertableJson $json) =>
-        $json->has('blog')
+            fn (AssertableJson $json) => $json->has('blog')
             ->has(
                 'user',
-                fn (AssertableJson $json) =>
-            $json->where('role', UserRoleEnum::OWNER->value)
+                fn (AssertableJson $json) => $json->where('role', UserRoleEnum::OWNER->value)
                 ->etc()
             )
         )->json()['blog']['id'];

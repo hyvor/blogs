@@ -11,12 +11,10 @@ it('gets themes', function () {
     $this->callConsoleMiscApi('GET', '/themes')
         ->assertOk()
         ->assertJson(
-            fn (AssertableJson $json) =>
-            $json
+            fn (AssertableJson $json) => $json
                 ->count(3)
                 ->each(
-                    fn (AssertableJson $json) =>
-                    $json->has('id')
+                    fn (AssertableJson $json) => $json->has('id')
                         ->has('type')
                         ->has('name')
                 )

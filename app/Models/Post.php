@@ -4,7 +4,6 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
-use Illuminate\Database\Eloquent\SoftDeletes;
 
 class Post extends Model
 {
@@ -20,7 +19,6 @@ class Post extends Model
         'authors',
     ];
 
-
     protected $casts = [
         'published_at' => 'datetime',
         'is_page' => 'boolean',
@@ -30,7 +28,6 @@ class Post extends Model
     {
         return $this->belongsTo(Blog::class);
     }
-
 
     public function variants()
     {
@@ -52,5 +49,4 @@ class Post extends Model
             ->withPivot('post_author.id')
             ->orderBy('post_author.id', 'ASC');
     }
-
 }

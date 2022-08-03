@@ -17,7 +17,7 @@ it('sets _config variable', function () {
         value: $nestedValue
     YAML;
 
-    $content = <<<TWIG
+    $content = <<<'TWIG'
     {{ _config.name }}
     {{ _config.nested.value }}
     TWIG;

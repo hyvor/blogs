@@ -16,8 +16,7 @@ it('updates blog data', function () {
     ])
         ->assertOk()
         ->assertJson(
-            fn (AssertableJson $json) =>
-            $json->where('subdomain', $subdomain)
+            fn (AssertableJson $json) => $json->where('subdomain', $subdomain)
                 ->where('hosting_at', $hostingAt)
                 ->where('hosting_domain', $hostingDomain)
                 ->etc()
@@ -35,8 +34,7 @@ it('updates self URL and clears custom domain', function () {
     ])
         ->assertOk()
         ->assertJson(
-            fn (AssertableJson $json) =>
-            $json->where('hosting_at', 'self')
+            fn (AssertableJson $json) => $json->where('hosting_at', 'self')
                 ->where('hosting_url', $url)
                 ->where('hosting_domain', null) // <- clears custom domain
                 ->etc()
@@ -47,7 +45,6 @@ it('updates self URL and clears custom domain', function () {
  * I am bored to test everything
  * Not sure if its worthy
  */
-
 it('update metadata', function () {
     $logo = 'https://example.com/image.png';
     $cover = 'https://example.com/cover.png';
@@ -58,8 +55,7 @@ it('update metadata', function () {
     ])
         ->assertOk()
         ->assertJson(
-            fn (AssertableJson $json) =>
-            $json->where('logo_url', $logo)
+            fn (AssertableJson $json) => $json->where('logo_url', $logo)
                 ->where('cover_url', $cover)
                 ->etc()
         );

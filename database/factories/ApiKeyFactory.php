@@ -9,7 +9,6 @@ use Illuminate\Support\Str;
 
 class ApiKeyFactory extends Factory
 {
-
     public function definition()
     {
         return [

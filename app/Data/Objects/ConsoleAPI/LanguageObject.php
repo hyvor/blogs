@@ -7,8 +7,11 @@ use App\Models\Language;
 class LanguageObject
 {
     public int $id;
+
     public string $code;
+
     public string $name;
+
     public bool $is_primary;
 
     public function __construct(Language $language)

@@ -8,9 +8,13 @@ use App\Models\Media;
 class MediaObject
 {
     public int $id;
+
     public int $uploaded_at;
+
     public string $url;
+
     public string $name;
+
     public ?string $extension;
 
     public function __construct(Media $media)

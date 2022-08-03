@@ -31,8 +31,7 @@ it('limit and offset works and orders by ID desc', function () {
     $this->callConsoleApi('GET', '/media', ['limit' => 1, 'offset' => 2])
         ->assertOk()
         ->assertJson(
-            fn (AssertableJson $json) =>
-            $json->has(1)
+            fn (AssertableJson $json) => $json->has(1)
                 ->first(fn (AssertableJson $json) => $json->where('id', $media->id)->etc())
         );
 });

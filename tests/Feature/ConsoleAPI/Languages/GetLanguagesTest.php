@@ -8,10 +8,8 @@ it('gets languages', function () {
     $this->callConsoleApi('GET', '/languages')
         ->assertOk()
         ->assertJson(
-            fn (AssertableJson $json) =>
-            $json->each(
-                fn (AssertableJson $json) =>
-                $json->has('id')
+            fn (AssertableJson $json) => $json->each(
+                fn (AssertableJson $json) => $json->has('id')
                     ->has('code')
                     ->has('name')
                     ->etc()

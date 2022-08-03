@@ -13,44 +13,66 @@ use App\Models\Blog;
 class BlogObject
 {
     public int $id;
+
     public int $created_at;
+
     public string $subdomain;
+
     public BlogTypeEnum $type;
+
     public BlogHostingAtEnum $hosting_at;
+
     public ?string $hosting_domain;
+
     public ?string $hosting_url;
 
     public ?string $logo_url;
+
     public ?string $cover_url;
 
     // meta
     public ?string $social_facebook;
+
     public ?string $social_twitter;
+
     public ?string $social_linkedin;
+
     public ?string $social_youtube;
+
     public ?string $social_tiktok;
+
     public ?string $social_instagram;
+
     public ?string $social_github;
 
     public ?string $code_head;
+
     public ?string $code_foot;
 
     public bool $seo_indexing;
+
     public ?string $seo_robots_txt;
+
     public SeoExternalLinksFollowEnum $seo_external_links_follow;
 
     public CommentsTypeEnum $comments_type;
+
     public ?int $comments_ht_website_id;
+
     public ?string $comments_ht_api_key;
+
     public ?string $comments_code;
 
     public ?string $newsletter_code;
 
     public ColorModesEnum $color_modes;
+
     public ColorModeDefaultEnum $color_mode_default;
 
     public bool $syntax_on;
+
     public bool $syntax_line_numbers;
+
     public ?string $syntax_theme;
 
     /**

@@ -14,8 +14,7 @@ it('creates a language', function () {
     ])
         ->assertOk()
         ->assertJson(
-            fn (AssertableJson $json) =>
-            $json->has('id')
+            fn (AssertableJson $json) => $json->has('id')
                 ->where('code', $code)
                 ->where('name', $name)
                 ->etc()

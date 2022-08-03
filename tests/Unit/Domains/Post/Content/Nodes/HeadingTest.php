@@ -83,7 +83,7 @@ test('h7 is h2', function () {
 
     $html = PostContentRepository::getHtml($json, blog());
 
-    expect($html)->toEqual("<h2></h2>");
+    expect($html)->toEqual('<h2></h2>');
 });
 
 test('HTML to JSON', function () {

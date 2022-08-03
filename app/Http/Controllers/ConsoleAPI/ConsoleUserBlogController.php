@@ -29,7 +29,7 @@ class ConsoleUserBlogController extends Controller
         $isDev = $request->input('is_dev', false);
 
         if ($isDev) {
-            $subdomain = 'dev-' . ((string) Str::uuid());
+            $subdomain = 'dev-'.((string) Str::uuid());
         }
 
         $blog = BlogService::createBlog(

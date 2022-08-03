@@ -46,8 +46,7 @@ it('creates a variant', function () {
     )
         ->assertOk()
         ->assertJson(
-            fn (AssertableJson $json) =>
-            $json->where('language_id', $languageId)
+            fn (AssertableJson $json) => $json->where('language_id', $languageId)
                 ->has('name')
                 ->has('description')
                 ->etc()

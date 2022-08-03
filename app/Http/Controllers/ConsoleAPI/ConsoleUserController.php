@@ -4,13 +4,11 @@ namespace App\Http\Controllers\ConsoleAPI;
 
 use App\Data\Enums\UserRoleEnum;
 use App\Data\Enums\UserStatusEnum;
-
 use App\Data\Objects\ConsoleAPI\User\UserObject;
 use App\Data\Objects\ConsoleAPI\User\UserVariantObject;
 use App\Domains\User\UserRepository;
 use App\Exceptions\TrustedException;
 use App\Http\Controllers\Controller;
-
 use App\Models\Blog;
 use App\Models\Language;
 use App\Models\User;

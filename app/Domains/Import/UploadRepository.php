@@ -31,7 +31,7 @@ class UploadRepository
     {
         $split = explode('/', $path);
 
-        return $split[ count($split) - 1 ];
+        return $split[count($split) - 1];
     }
 
     private static function getImportBlogId(int $blogId)

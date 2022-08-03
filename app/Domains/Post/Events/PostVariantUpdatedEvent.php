@@ -12,6 +12,7 @@ class PostVariantUpdatedEvent
     use SerializesModels;
 
     public PostVariant $variant;
+
     public PostVariant $variantOld;
 
     public function __construct(PostVariant $variant)

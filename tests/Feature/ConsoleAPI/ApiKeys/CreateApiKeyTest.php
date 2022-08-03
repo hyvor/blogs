@@ -4,8 +4,7 @@ namespace Tests\Feature\ConsoleAPI\ApiKeys;
 
 use Illuminate\Testing\Fluent\AssertableJson;
 
-it('creates API Key', function() {
-
+it('creates API Key', function () {
     $this->callConsoleApi('POST', '/api-key', [
         'name' => 'Console API Key',
         'type' => 'console',
@@ -17,5 +16,4 @@ it('creates API Key', function() {
                 ->has('api_key')
                 ->etc();
         });
-
 });

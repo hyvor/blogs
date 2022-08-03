@@ -7,10 +7,8 @@ use App\Models\Blog;
 
 class ConsoleDangerController
 {
-
     public function delete(Blog $blog)
     {
         dispatch(fn () => app(BlogService::class)->deleteBlog($blog));
     }
-
 }

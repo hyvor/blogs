@@ -40,13 +40,13 @@ class BlogCacheClear extends Command
         } else {
             $blogs = Blog::select('id')->get();
 
-            $this->info("Clearing cache of " . count($blogs) . " blogs");
+            $this->info('Clearing cache of '.count($blogs).' blogs');
 
             foreach ($blogs as $blog) {
                 CacheRepository::clearAll($blog);
             }
 
-            $this->info("Cache cleared!");
+            $this->info('Cache cleared!');
         }
     }
 }

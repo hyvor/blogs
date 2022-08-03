@@ -53,7 +53,6 @@ class Handler extends ExceptionHandler
                 ) {
                     $code = $exception->status ?? $exception->getCode();
 
-
                     /**
                      * Laravel input validation sends 422
                      * But, in our APIs we only return 400
@@ -89,7 +88,7 @@ class Handler extends ExceptionHandler
                 // subdomains
 
                 if ($exception instanceof SubdomainNotFoundException) {
-                    return redirect('https://' . config('blogs.domain_app'));
+                    return redirect('https://'.config('blogs.domain_app'));
                 }
             }
         }

@@ -17,14 +17,14 @@ return new class extends Migration
             $table->id();
             $table->timestamps();
 
-             // connections
+            // connections
             $table->bigInteger('blog_id')->index();
 
             // data
             $table->string('name')->nullable();
             $table->enum('type', ['wordpress', 'medium', 'ghost', 'hyvor', 'blogger', 'tumblr', 'substack'])->nullable();
             $table->enum('status', ['pending', 'success', 'error'])->nullable();
-             
+
             $table->json('meta')->nullable();
         });
     }

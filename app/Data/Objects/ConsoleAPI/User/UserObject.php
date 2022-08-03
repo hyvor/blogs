@@ -10,25 +10,39 @@ use App\Models\User;
 class UserObject
 {
     public int $id;
+
     public int $created_at;
+
     public int $updated_at;
+
     public ?int $hyvor_user_id;
 
     public UserStatusEnum $status;
+
     public UserRoleEnum $role;
+
     public string $slug;
+
     public int $posts_count;
 
     public ?string $email;
+
     public ?string $picture_url;
+
     public ?string $website_url;
 
     public ?string $social_facebook;
+
     public ?string $social_twitter;
+
     public ?string $social_linkedin;
+
     public ?string $social_youtube;
+
     public ?string $social_tiktok;
+
     public ?string $social_instagram;
+
     public ?string $social_github;
 
     /**

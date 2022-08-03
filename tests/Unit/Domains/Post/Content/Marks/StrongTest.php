@@ -20,7 +20,7 @@ test('strong JSON to HTML', function () {
         ],
     ];
 
-    $result = PostContentRepository::getHtml($document,  blog());
+    $result = PostContentRepository::getHtml($document, blog());
 
     expect($result)->toEqual('<strong>Example Text</strong>');
 });

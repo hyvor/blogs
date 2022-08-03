@@ -19,14 +19,12 @@ it('updates a redirect', function () {
     ])
         ->assertOk()
         ->assertJson(
-            fn (AssertableJson $json) =>
-            $json->where('path', $path)
+            fn (AssertableJson $json) => $json->where('path', $path)
                 ->where('to', $to)
                 ->where('type', $type)
                 ->etc()
         );
 });
-
 
 it('does not create a redirect when path is taken', function () {
     $path = '/example';

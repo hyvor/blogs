@@ -13,12 +13,19 @@ use App\Models\Language;
 class BlogObject
 {
     public string $subdomain;
+
     public string $name;
+
     public ?string $description;
+
     public ?string $logo_url;
+
     public ?string $cover_url;
+
     public string $lang;
+
     public string $url;
+
     public string $base_url;
 
     public SocialMediaObject $social;
@@ -27,6 +34,7 @@ class BlogObject
      * @var NavObject[]
      */
     public array $nav_header = [];
+
     /**
      * @var NavObject[]
      */
@@ -38,12 +46,15 @@ class BlogObject
     public array $languages;
 
     public ?string $code_head;
+
     public ?string $code_foot;
 
     public int $posts_count;
 
     public bool $seo_indexing;
+
     public ColorModesEnum $color_modes;
+
     public ColorModeDefaultEnum $color_mode_default;
 
     public function __construct(Blog $blog, Language $language)

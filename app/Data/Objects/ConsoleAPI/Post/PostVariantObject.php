@@ -11,13 +11,19 @@ use App\Models\PostVariant;
 class PostVariantObject
 {
     public int $language_id;
+
     public int $post_id;
 
     public PostStatusEnum $status;
+
     public string $url;
+
     public ?string $content;
+
     public ?string $content_unsaved;
+
     public ?string $title;
+
     public ?string $description;
 
     public function __construct(PostVariant $variant, Post $post, Blog $blog)

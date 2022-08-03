@@ -1,10 +1,10 @@
 <?php
 
+use App\Http\Controllers\ConsoleAPI\ConsoleViewController;
 use App\Http\Controllers\Pages\DocsController;
 use App\Http\Controllers\Pages\ThemesController;
-use Illuminate\Support\Facades\Route;
 use App\Http\Middleware\App\LoginRequiredElseRedirectMiddleware;
-use App\Http\Controllers\ConsoleAPI\ConsoleViewController;
+use Illuminate\Support\Facades\Route;
 
 // console
 Route::middleware(LoginRequiredElseRedirectMiddleware::class)

@@ -113,13 +113,12 @@ class PostRepository
             ->get();
     }
 
-    public static function getPages(Blog $blog) : Collection
+    public static function getPages(Blog $blog): Collection
     {
         return Post::where('blog_id', $blog->id)
             ->where('is_page', true)
             ->get();
     }
-
 
     /**
      * Getting posts with FilterQ
@@ -137,9 +136,7 @@ class PostRepository
             ['posts.published_at', 'DESC'],
         ],
         bool $isPages = false
-    ): CollectionWithTotal
-    {
-
+    ): CollectionWithTotal {
         $builder = FilterQ::expression($filter)
             ->builder(Post::class)
             ->keys(function ($keys) {
@@ -291,7 +288,6 @@ class PostRepository
         return $post;
     }
 
-
     public static function deletePost(Post $post)
     {
         $post->variants->map(fn ($variant) => self::deletePostVariant($post, $variant->language_id));
@@ -386,11 +382,11 @@ class PostRepository
         PostVariantDeletedEvent::dispatch($variant);
     }
 
-
     public static function getFirstTag(Post $post)
     {
         return $post->tags[0];
     }
+
     public static function getFirstAuthor(Post $post)
     {
         return $post->tags()->withPivot('order')

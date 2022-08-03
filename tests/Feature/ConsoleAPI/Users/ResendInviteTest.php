@@ -43,6 +43,5 @@ it('does not send invite to active users', function () {
     $this->callConsoleApi('POST', "/user/$user->id/resend-invite")
         ->assertUnprocessable();
 
-
     Mail::assertNothingSent();
 });

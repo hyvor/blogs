@@ -9,11 +9,12 @@ use PhpZip\ZipFile;
 class GenerateThemesZip extends Command
 {
     protected $signature = 'tests:generate-themes-zip';
+
     protected $description = 'Generates the themes zip with blank and default themes';
 
     public function handle()
     {
-        $zipball = "https://github.com/hyvor/hyvor-blogs-themes/zipball/main";
+        $zipball = 'https://github.com/hyvor/hyvor-blogs-themes/zipball/main';
         $zip = file_get_contents($zipball);
 
         $sync = new GithubSyncService($zip);

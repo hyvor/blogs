@@ -24,8 +24,8 @@ class TagRepository
      * Get tags of a blog.
      *
      * @param $blog
-     * @param int $limit
-     * @param int $offset
+     * @param  int  $limit
+     * @param  int  $offset
      * @return Collection<Tag>
      */
     public static function getTags(Blog $blog, int $limit, int $offset = 0): Collection
@@ -172,7 +172,6 @@ class TagRepository
 
         TagVariantDeletedEvent::dispatch($variant);
     }
-
 
     public static function getTagByBlogIdAndIdentifier(int $blogId, ?int $id, ?string $slug): ?Tag
     {

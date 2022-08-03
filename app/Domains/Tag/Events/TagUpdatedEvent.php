@@ -12,6 +12,7 @@ class TagUpdatedEvent
     use SerializesModels;
 
     public Tag $tag;
+
     public Tag $tagOld;
 
     public function __construct(Tag $tag)

@@ -23,10 +23,11 @@ class UserBlogRepository
     }
 
     /**
-    * To sort the order displayed of blogs displayed in the console
-    * $arr = [blogId, blogId] in the correct sort
-    * @param int[] $arr
-    */
+     * To sort the order displayed of blogs displayed in the console
+     * $arr = [blogId, blogId] in the correct sort
+     *
+     * @param  int[]  $arr
+     */
     public static function changeBlogSorts(HyvorUser $user, array $arr): void
     {
         $i = 1;

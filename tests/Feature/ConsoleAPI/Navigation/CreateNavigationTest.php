@@ -19,10 +19,9 @@ it('creates a navigation', function () {
     ])
         ->assertOk()
         ->assertJson(
-            fn (AssertableJson $json) =>
-            $json->where('url', $url)
+            fn (AssertableJson $json) => $json->where('url', $url)
                 ->where('type', 'footer')
-                ->where("variants.0.name", $name)
+                ->where('variants.0.name', $name)
                 ->etc()
         );
 });

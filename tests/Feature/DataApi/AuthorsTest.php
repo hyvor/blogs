@@ -33,7 +33,6 @@ beforeEach(function () {
     $this->author = $authors[0];
 });
 
-
 it('fetches tags without params', function () {
     $this
         ->callDataApi('/authors')
@@ -43,8 +42,7 @@ it('fetches tags without params', function () {
                 ->has(
                     'data',
                     25,
-                    fn (AssertableJson $json) =>
-                $json->where('language.code', 'en')
+                    fn (AssertableJson $json) => $json->where('language.code', 'en')
                     ->etc()
                 )
                 ->has('pagination');
@@ -62,21 +60,18 @@ it('works with language', function () {
                 ->has(
                     'data',
                     25,
-                    fn (AssertableJson $json) =>
-                $json->where('language.code', 'fr')
+                    fn (AssertableJson $json) => $json->where('language.code', 'fr')
                     ->etc()
                 )
                 ->has('pagination');
         });
 });
 
-
 it('does not work with wrong language', function () {
     $this->callDataApi('/authors', [
         'language' => 'jp',
     ])->assertUnprocessable();
 });
-
 
 it('gives correct limit', function () {
     $this
@@ -112,7 +107,6 @@ it('gives correct page for pagination', function () {
         });
 });
 
-
 it('does not work for invalid limit', function () {
     $this->callDataApi('/authors', [
         'limit' => 0,
@@ -137,7 +131,6 @@ it('does not work for invalid sort method', function () {
     ])->assertUnprocessable();
 });
 
-
 it('sorts by posts_count DESC correctly', function () {
     $response = $this->callDataApi('/authors', [
         'sort' => 'posts_count',
@@ -149,7 +142,6 @@ it('sorts by posts_count DESC correctly', function () {
         $response['data'][1]['posts_count'] >= $response['data'][2]['posts_count']
     );
 });
-
 
 it('sorts by posts_count ASC correctly', function () {
     $response = $this->callDataApi('/authors', [
@@ -163,8 +155,6 @@ it('sorts by posts_count ASC correctly', function () {
     );
 });
 
-
-
 it('sorts by created_at DESC correctly', function () {
     $response = $this->callDataApi('/authors', [
         'sort' => 'created_at',
@@ -177,7 +167,6 @@ it('sorts by created_at DESC correctly', function () {
     );
 });
 
-
 it('sorts by created_at ASC correctly', function () {
     $response = $this->callDataApi('/authors', [
         'sort' => 'created_at ASC',
@@ -189,7 +178,6 @@ it('sorts by created_at ASC correctly', function () {
         $response['data'][1]['created_at'] <= $response['data'][2]['created_at']
     );
 });
-
 
 it('filters keys', function () {
     $response = $this->callDataApi('/authors', [
@@ -230,7 +218,7 @@ it('filters by posts_count', function () {
 
     $this
         ->callDataApi('/authors', [
-            'filter' => "posts_count>100",
+            'filter' => 'posts_count>100',
         ])
         ->assertJsonCount(3, 'data');
 });
@@ -240,7 +228,7 @@ it('filters by created_at', function () {
     $this->author->update(['created_at' => $time]);
 
     $this->callDataApi('/authors', [
-        'filter' => "created_at=tomorrow",
+        'filter' => 'created_at=tomorrow',
     ])->assertJsonPath('data.0.created_at', $time->timestamp);
 });
 

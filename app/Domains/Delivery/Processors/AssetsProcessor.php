@@ -44,5 +44,4 @@ class AssetsProcessor extends RouteProcessorAbstract
             $mimeType
         ));
     }
-
 }

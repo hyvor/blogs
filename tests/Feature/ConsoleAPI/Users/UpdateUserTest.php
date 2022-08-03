@@ -75,9 +75,7 @@ it('does not update the status of the owner', function () {
         ->assertSee('cannot update the status of the owner');
 });
 
-
-it('returns an error when updating to an already existing slug', function() {
-
+it('returns an error when updating to an already existing slug', function () {
     User::factory()->create(['slug' => 'test', 'blog_id' => blog()]);
     $user2 = User::factory()->create(['slug' => 'test2', 'blog_id' => blog()]);
 
@@ -86,5 +84,4 @@ it('returns an error when updating to an already existing slug', function() {
     ])
         ->assertUnprocessable()
         ->assertSee('Slug already taken');
-
 });

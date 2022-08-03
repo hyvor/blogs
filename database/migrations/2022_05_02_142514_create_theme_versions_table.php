@@ -30,7 +30,7 @@ return new class extends Migration
 
         // https://stackoverflow.com/a/20099781/9059939
         // upto 4GB
-        DB::statement("ALTER TABLE theme_versions ADD zip LONGBLOB NULL");
+        DB::statement('ALTER TABLE theme_versions ADD zip LONGBLOB NULL');
     }
 
     /**

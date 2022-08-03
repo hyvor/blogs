@@ -110,8 +110,8 @@ class PostContentRepository
         $variant->save();
     }
 
-    public static function generateRandom() {
-
+    public static function generateRandom()
+    {
         $faker = Factory::create();
         $paragraphs = $faker->paragraphs(rand(2, 6));
         $content = [
@@ -129,6 +129,5 @@ class PostContentRepository
         }
 
         return json_encode($content);
-
     }
 }

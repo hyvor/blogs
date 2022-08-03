@@ -18,7 +18,6 @@ use Illuminate\Support\Str;
  *  fileName = a unique name for each file within
  *  prefix = blog/$blogId (unique for each blog)
  *  path = "blog/$blogId/$fileName"
- *
  */
 class MediaRepository
 {
@@ -83,7 +82,7 @@ class MediaRepository
         $size = (int) $response->header('content-size');
 
         $extension = File::extension($url);
-        $name = self::getPathPrefix($blog->id) . '/' . Str::random() . ($extension ? ".$extension" : "");
+        $name = self::getPathPrefix($blog->id).'/'.Str::random().($extension ? ".$extension" : '');
         Storage::put($name, $file);
 
         $fileName = self::getFileNameFromPath($name);
@@ -121,13 +120,13 @@ class MediaRepository
 
     private static function getPath(int $blogId, string $filName)
     {
-        return self::getPathPrefix($blogId) . '/' . $filName;
+        return self::getPathPrefix($blogId).'/'.$filName;
     }
 
     private static function getFileNameFromPath(string $path)
     {
         $split = explode('/', $path);
 
-        return $split[ count($split) - 1 ];
+        return $split[count($split) - 1];
     }
 }

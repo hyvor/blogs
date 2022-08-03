@@ -11,15 +11,14 @@ use Illuminate\Support\Facades\DB;
 
 class AuthorCountsJob implements ShouldQueue, ShouldBeUnique
 {
-
     use Dispatchable;
 
     public function __construct(public Blog $blog)
-    {}
+    {
+    }
 
     public function handle()
     {
-
         $language = LanguageRepository::getPrimaryLanguage($this->blog);
 
         DB::statement('UPDATE users as u SET posts_count =
@@ -34,12 +33,10 @@ class AuthorCountsJob implements ShouldQueue, ShouldBeUnique
             )
             WHERE u.blog_id = ?
         ', [$language->id, 'published', $this->blog->id]);
-
     }
 
     public function uniqueId()
     {
         return $this->blog->id;
     }
-
 }

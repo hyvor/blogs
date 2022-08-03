@@ -2,7 +2,6 @@
 
 namespace App\Data\Objects\ConsoleAPI\Billing;
 
-use App\Models\Blog;
 use Laravel\Paddle\Subscription;
 
 /**
@@ -11,13 +10,17 @@ use Laravel\Paddle\Subscription;
 class SubscriptionInfoObject
 {
     public string $email;
+
     public string $card_brand;
+
     public string $card_last_four;
+
     public string $card_expiration;
 
     public string $update_url;
 
     public PaymentObject $last_payment;
+
     public ?PaymentObject $next_payment;
 
     public function __construct(Subscription $subscription)
@@ -29,7 +32,6 @@ class SubscriptionInfoObject
          * So, use this function carefully.
          * Use it only when needed
          */
-
         $this->email = $subscription->paddleEmail();
         $this->card_brand = $subscription->cardBrand();
         $this->card_last_four = $subscription->cardLastFour();

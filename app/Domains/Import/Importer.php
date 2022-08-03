@@ -17,13 +17,13 @@ use App\Models\UserVariant;
 class Importer
 {
     /**
-    * @var array<array<string,mixed>>
-    */
+     * @var array<array<string,mixed>>
+     */
     public array $tagIdArray = [];
 
     /**
-    * @var array<array<string,mixed>>
-    */
+     * @var array<array<string,mixed>>
+     */
     public array $authorIdArray = [];
 
     public function __construct(Repository $repository, Blog $blog, Import $import)

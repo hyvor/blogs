@@ -8,10 +8,8 @@ use Illuminate\Support\Facades\DB;
 
 class PublishScheduledPosts implements ShouldQueue, ShouldBeUnique
 {
-
     public function handle()
     {
-
         $time = now();
         DB::statement('
             UPDATE post_variants as pv 
@@ -22,8 +20,5 @@ class PublishScheduledPosts implements ShouldQueue, ShouldBeUnique
                 LIMIT 1
             ) <= ?
         ', ['published', 'scheduled', $time]);
-
     }
-
-
 }

@@ -26,8 +26,7 @@ it('updates user variant', function () {
         ])
         ->assertOk()
         ->assertJson(
-            fn (AssertableJson $json) =>
-                $json
+            fn (AssertableJson $json) => $json
                     ->where('name', $name)
                     ->where('bio', $bio)
                     ->where('location', $location)

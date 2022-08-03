@@ -8,7 +8,6 @@ use App\Domains\Delivery\Processors\AssetsProcessor;
 use App\Domains\Delivery\Processors\MediaProcessor;
 use App\Domains\Delivery\Processors\PreviewProcessor;
 use App\Domains\Delivery\Processors\Sitemap\SitemapIndexProcessor;
-use App\Domains\Delivery\Processors\Sitemap\SitemapMediaProcessor;
 use App\Domains\Delivery\Processors\Sitemap\SitemapPagesProcessor;
 use App\Domains\Delivery\Processors\Sitemap\SitemapPostsProcessor;
 use App\Domains\Delivery\Processors\StylesProcessor;
@@ -23,10 +22,13 @@ use Exception;
 class PathMatcher
 {
     public Blog $blog;
+
     public string $path;
+
     public Language $language;
 
     private bool $matched = false;
+
     private DeliveryAPIResponseObject $responseObject;
 
     public function __construct(Blog $blog, string $path)
@@ -94,7 +96,7 @@ class PathMatcher
         $routeMatcher->add('sitemap-index', '/sitemap.xml');
         $routeMatcher->add('sitemap-pages', '/sitemap-pages.xml');
         $routeMatcher->add('sitemap-posts', '/sitemap-posts-{number}.xml', [], [
-            'number' => '\d+'
+            'number' => '\d+',
         ]);
 
         $matchedRoute = $routeMatcher->match();
@@ -143,7 +145,7 @@ class PathMatcher
                 /**
                  * Set new path to match, removing the language part
                  */
-                $this->path = '/' . implode("/", array_slice($pathExploded, 2));
+                $this->path = '/'.implode('/', array_slice($pathExploded, 2));
             } else {
                 $lang = $defaultLang;
             }
@@ -154,7 +156,6 @@ class PathMatcher
 
         $this->language = $lang;
     }
-
 
     /**
      * Match non-post/page routes
@@ -268,6 +269,7 @@ class PathMatcher
         $this->matched = true;
         $this->responseObject = $responseObject;
     }
+
     private function matched()
     {
         return $this->matched;
@@ -285,8 +287,8 @@ class PathMatcher
         } else {
             return DeliveryAPIResponseObject::forFile(
                 DeliveryAPIFileTypeEnum::TEMPLATE,
-                "404",
-                "text/html",
+                '404',
+                'text/html',
                 true,
                 404
             );

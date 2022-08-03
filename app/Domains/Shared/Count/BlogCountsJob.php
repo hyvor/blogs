@@ -13,10 +13,11 @@ use Illuminate\Foundation\Bus\Dispatchable;
 
 class BlogCountsJob implements ShouldQueue, ShouldBeUnique
 {
-
     use Dispatchable;
 
-    public function __construct(public Blog $blog) {}
+    public function __construct(public Blog $blog)
+    {
+    }
 
     public function handle()
     {
@@ -41,7 +42,7 @@ class BlogCountsJob implements ShouldQueue, ShouldBeUnique
             'posts' => $published,
             'posts_draft' => $drafts,
             'posts_scheduled' => $scheduled,
-            'posts_featured' => $featured
+            'posts_featured' => $featured,
         ]);
     }
 
@@ -49,5 +50,4 @@ class BlogCountsJob implements ShouldQueue, ShouldBeUnique
     {
         return $this->blog->id;
     }
-
 }

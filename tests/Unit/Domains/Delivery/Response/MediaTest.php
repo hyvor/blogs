@@ -19,7 +19,6 @@ it('matches media', function () {
     $pathMatcher = new PathMatcher($this->blog, "/media/$media->name");
     $responseObject = $pathMatcher->getResponseObject();
 
-
     $this->assertEquals(DeliveryAPITypeEnum::FILE, $responseObject->type);
     $this->assertEquals(200, $responseObject->status);
     $this->assertEquals($file->getContent(), $responseObject->content);

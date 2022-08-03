@@ -7,10 +7,12 @@ use App\Models\BlogVariant;
 class BlogVariantObject
 {
     public int $id;
-    public int $language_id;
-    public ?string $name;
-    public ?string $description;
 
+    public int $language_id;
+
+    public ?string $name;
+
+    public ?string $description;
 
     public function __construct(BlogVariant $blogVariant)
     {

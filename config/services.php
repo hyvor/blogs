@@ -31,12 +31,12 @@ return [
     ],
 
     'iframely' => [
-        'key' => env('IFRAMELY_KEY')
+        'key' => env('IFRAMELY_KEY'),
     ],
 
     'unsplash' => [
         'access_key' => env('UNSPLASH_ACCESS_KEY'),
         'secret_key' => env('UNSPLASH_SECRET_KEY'),
-    ]
+    ],
 
 ];

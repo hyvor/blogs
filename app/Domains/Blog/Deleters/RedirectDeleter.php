@@ -7,12 +7,12 @@ use App\Models\Redirect;
 
 class RedirectDeleter implements DeleterInterface
 {
-
-    public function __construct(private Blog $blog) {}
+    public function __construct(private Blog $blog)
+    {
+    }
 
     public function delete()
     {
         Redirect::where('blog_id', $this->blog->id)->delete();
     }
-
 }

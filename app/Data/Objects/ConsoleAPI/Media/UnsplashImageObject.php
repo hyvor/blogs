@@ -5,9 +5,13 @@ namespace App\Data\Objects\ConsoleAPI\Media;
 class UnsplashImageObject
 {
     public string $url;
+
     public string $author;
+
     public string $author_url;
+
     public ?string $title;
+
     public ?string $alt;
 
     public function __construct($unsplashObject)

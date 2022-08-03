@@ -8,10 +8,8 @@ it('gets users', function () {
     $this->callConsoleApi('GET', '/users')
         ->assertOk()
         ->assertJson(
-            fn (AssertableJson $json) =>
-            $json->each(
-                fn (AssertableJson $json) =>
-                $json->has('id')
+            fn (AssertableJson $json) => $json->each(
+                fn (AssertableJson $json) => $json->has('id')
                     ->has('role')
                     ->has('status')
                     ->has('variants')

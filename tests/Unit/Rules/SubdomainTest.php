@@ -35,7 +35,6 @@ it('cannot start with hyphen', function () {
     expect(subdomainPasses('-test'))->toBeFalse();
 });
 
-
 it('does not check unique unless specified explicitly', function () {
     $subdomain = blog()->subdomain;
     expect(subdomainPasses($subdomain))->toBeTrue();

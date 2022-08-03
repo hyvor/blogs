@@ -10,10 +10,10 @@ use Illuminate\Contracts\Validation\Rule;
  * Starts with /
  * And, has no whitespaces
  */
-
 class RedirectPath implements Rule
 {
     private Blog $blog;
+
     private string $message;
 
     public function __construct(Blog $blog)

@@ -10,8 +10,11 @@ use App\Models\TagVariant;
 class TagVariantObject
 {
     public int $language_id;
+
     public string $url;
+
     public ?string $name;
+
     public ?string $description;
 
     public function __construct(TagVariant $variant, Tag $tag, Blog $blog)

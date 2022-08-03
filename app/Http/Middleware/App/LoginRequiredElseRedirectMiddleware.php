@@ -13,7 +13,7 @@ class LoginRequiredElseRedirectMiddleware
     public function handle(Request $request, Closure $next)
     {
         $user = Login::check();
-        if (!$user) {
+        if (! $user) {
             return Redirect::toLogin();
         }
 

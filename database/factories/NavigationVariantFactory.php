@@ -2,15 +2,13 @@
 
 namespace Database\Factories;
 
-use Illuminate\Database\Eloquent\Factories\Factory;
-use App\Models\NavigationVariant;
 use App\Models\Language;
 use App\Models\Navigation;
-
+use App\Models\NavigationVariant;
+use Illuminate\Database\Eloquent\Factories\Factory;
 
 class NavigationVariantFactory extends Factory
 {
-
     protected $model = NavigationVariant::class;
 
     /**

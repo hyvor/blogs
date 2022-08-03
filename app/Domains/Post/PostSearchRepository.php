@@ -78,7 +78,6 @@ class PostSearchRepository
         return new CollectionWithTotal($posts, $results->getNbHits());
     }
 
-
     // from https://github.com/laravel/scout/blob/9.x/src/Engines/MeiliSearchEngine.php
     private static function getSearchFilter($conditions)
     {
@@ -120,7 +119,7 @@ class PostSearchRepository
             'blog_id' => $blog->id,
             'language_id' => $postVariant->language_id,
             'is_published' => $postVariant->status === 'published',    // search only needs to know if the post is published
-                                                                // (data API vs console API search)
+            // (data API vs console API search)
             'is_page' => $post->is_page,
 
         ];
@@ -138,7 +137,6 @@ class PostSearchRepository
             self::getIndex()->updateFilterableAttributes(self::FILTERABLE_ATTRIBUTES);
         }
     }
-
 
     public static function setSearchableAttributes(): void
     {

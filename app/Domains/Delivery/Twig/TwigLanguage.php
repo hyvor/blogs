@@ -18,8 +18,8 @@ class TwigLanguage
     {
         $fallback = LanguageRepository::getFallbackLanguage($blog, $language);
 
-        $languageFileName = $language->code  . '.yaml';
-        $fallbackFileName = $fallback->code . '.yaml';
+        $languageFileName = $language->code.'.yaml';
+        $fallbackFileName = $fallback->code.'.yaml';
         $defaultFileName = 'en.yaml';
 
         /**

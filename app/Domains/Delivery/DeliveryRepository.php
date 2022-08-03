@@ -25,7 +25,7 @@ class DeliveryRepository
 
         // add leading slash if not
         if (! preg_match('/^\//', $path)) {
-            $path = '/' . $path;
+            $path = '/'.$path;
         }
 
         // first, check cache

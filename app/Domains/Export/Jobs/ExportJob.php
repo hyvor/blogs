@@ -10,6 +10,7 @@ use Illuminate\Contracts\Queue\ShouldQueue;
 class ExportJob implements ShouldQueue
 {
     protected int $blogId;
+
     protected ExporterInterface $exporter;
 
     public function __construct(int $blogId, ExportFormatEnum $format)

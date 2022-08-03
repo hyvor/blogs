@@ -50,12 +50,12 @@ class NavigationFiller implements FillerInterface
             $this->navs[] = [
                 'type' => NavigationTypeEnum::HEADER,
                 'name' => 'Author',
-                'url' => "/author/" . $this->blog->users[0]->slug,
+                'url' => '/author/'.$this->blog->users[0]->slug,
             ];
             $this->navs[] = [
                 'type' => NavigationTypeEnum::HEADER,
                 'name' => 'Tag',
-                'url' => '/tag/' . $this->blog->tags[0]->slug,
+                'url' => '/tag/'.$this->blog->tags[0]->slug,
             ];
         }
 

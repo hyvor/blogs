@@ -20,8 +20,7 @@ it('creates a route', function () {
     ])
         ->assertOk()
         ->assertJson(
-            fn (AssertableJson $json) =>
-            $json->where('name', $name)
+            fn (AssertableJson $json) => $json->where('name', $name)
                 ->where('match', $match)
                 ->where('template', $template)
                 ->where('posts_filter', $postsFilter)

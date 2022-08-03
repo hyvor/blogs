@@ -12,7 +12,6 @@ use App\Models\ThemeVersion;
  * original/default
  * original/blank
  */
-
 it('adds new themes and versions', function () {
     $zip = file_get_contents(test_unit_data_path('Themes/github-themes.zip'));
     (new GithubSyncService($zip))->run();

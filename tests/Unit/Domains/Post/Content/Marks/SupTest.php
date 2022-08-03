@@ -20,7 +20,7 @@ test('sup JSON to HTML', function () {
         ],
     ];
 
-    $result = PostContentRepository::getHtml($document,  blog());
+    $result = PostContentRepository::getHtml($document, blog());
 
     expect($result)->toEqual('<sup>Example Text</sup>');
 });

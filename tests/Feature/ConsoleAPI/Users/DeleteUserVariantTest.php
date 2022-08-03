@@ -23,8 +23,6 @@ it('deletes a user variant', function () {
     Event::assertDispatched(UserVariantDeletedEvent::class);
 });
 
-
-
 it('does not delete primary language variant', function () {
     $user = $this->blog->users()->first();
 

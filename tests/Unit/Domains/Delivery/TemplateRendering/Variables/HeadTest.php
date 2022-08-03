@@ -106,14 +106,12 @@ it('sets _head in a post page', function () {
     }
 
     // twitter
-    expect($content)->toContain("<meta name=\"twitter:creator\" content=\"@Author\" />");
+    expect($content)->toContain('<meta name="twitter:creator" content="@Author" />');
     // post code head
     expect($content)->toContain($postCodeHeadRendered);
 });
 
-
-it('adds nofollow', function() {
-
+it('adds nofollow', function () {
     $blog = blog();
     $blog->setMeta('seo_indexing', false);
 
@@ -132,5 +130,4 @@ it('adds nofollow', function() {
     $content = $responseObject->content;
 
     expect($content)->toContain('<meta name="robots" content="noindex">');
-
 });

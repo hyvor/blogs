@@ -5,11 +5,17 @@ namespace App\Data\Objects\DataAPI;
 class SocialMediaObject
 {
     public ?string $facebook;
+
     public ?string $twitter;
+
     public ?string $linkedin;
+
     public ?string $youtube;
+
     public ?string $instagram;
+
     public ?string $github;
+
     public ?string $tiktok;
 
     public function __construct(

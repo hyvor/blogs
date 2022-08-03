@@ -9,8 +9,9 @@ use App\Models\Post;
 
 class UrlPostEntry
 {
-
-    public function __construct(private Post $post) {}
+    public function __construct(private Post $post)
+    {
+    }
 
     public function toXML()
     {
@@ -18,7 +19,6 @@ class UrlPostEntry
         $blog = $this->post->blog;
 
         foreach ($this->post->variants as $variant) {
-
             $url = PermalinkRepository::getPostPermalink(
                 $this->post,
                 $blog,
@@ -34,11 +34,12 @@ class UrlPostEntry
                 foreach ($images as $image) {
                     $src = $image['attrs']['src'] ?? null;
 
-                    if (!$src)
+                    if (! $src) {
                         continue;
+                    }
 
                     // external images
-                    if (!PermalinkRepository::isLinkInBlog($src, $blog)) {
+                    if (! PermalinkRepository::isLinkInBlog($src, $blog)) {
                         continue;
                     }
 
@@ -49,10 +50,8 @@ class UrlPostEntry
             if ($variant->status === PostStatusEnum::PUBLISHED) {
                 $entry->langAlt($variant->language->code, $url);
             }
-
         }
 
         return $entry->toXML();
     }
-
 }

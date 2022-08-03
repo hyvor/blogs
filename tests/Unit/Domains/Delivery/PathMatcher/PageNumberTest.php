@@ -38,7 +38,6 @@ it('matches index with page number', function () {
     $this->assertEquals($result, $responseObject->content);
 });
 
-
 it('returns not found when pages are not found in larger collections', function () {
     ThemeFilesRepository::createOrUpdateFile(
         $this->blog,
@@ -53,7 +52,6 @@ it('returns not found when pages are not found in larger collections', function 
     $this->assertEquals(DeliveryAPITypeEnum::FILE, $responseObject->type);
     $this->assertEquals(404, $responseObject->status);
 });
-
 
 it('returns success even when pages are not found but when the page number is 1', function () {
     $twig = '{{ _pagination.total }}';

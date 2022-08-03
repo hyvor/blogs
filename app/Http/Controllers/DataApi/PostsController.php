@@ -39,7 +39,6 @@ class PostsController extends Controller
         $language = Helper::getLanguage($blog, $request->input('language'));
         $keys = $request->input('keys');
 
-
         $post = PostRepository::getPostByBlogIdAndIdentifier($blog->id, $id, $slug);
 
         if (! $post) {

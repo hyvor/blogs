@@ -26,7 +26,6 @@ class CreateMediaTable extends Migration
             $table->string('original_name'); // original filename (in user's browser)
             $table->string('extension')->nullable()->index(); // file extension
 
-
             $table->unique(['blog_id', 'name']);
         });
     }

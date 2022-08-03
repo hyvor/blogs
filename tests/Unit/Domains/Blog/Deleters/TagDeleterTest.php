@@ -11,19 +11,16 @@ beforeEach(function () {
     TagVariant::truncate();
 });
 
-it('deletes tags and variants', function() {
-
+it('deletes tags and variants', function () {
     $blog = newBlog();
 
     Tag::factory()
         ->count(2)
         ->has(
             TagVariant::factory()
-                ->count(2)
-
-            , 'variants')
+                ->count(2), 'variants')
         ->create([
-            'blog_id' => $blog
+            'blog_id' => $blog,
         ]);
 
     expect(Tag::count())->toBe(2);
@@ -33,25 +30,20 @@ it('deletes tags and variants', function() {
 
     expect(Tag::count())->toBe(0);
     expect(TagVariant::count())->toBe(0);
-
 });
 
-it('does not delete tags of other blogs', function() {
-
+it('does not delete tags of other blogs', function () {
     Tag::factory()
         ->count(2)
         ->has(
             TagVariant::factory()
-                ->count(2)
-
-            , 'variants')
+                ->count(2), 'variants')
         ->create([
-            'blog_id' => newBlog()
+            'blog_id' => newBlog(),
         ]);
 
     (new TagDeleter(newBlog()))->delete();
 
     expect(Tag::count())->toBe(2);
     expect(TagVariant::count())->toBe(4);
-
 });

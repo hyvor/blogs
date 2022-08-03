@@ -44,11 +44,11 @@ class ClearTemplateCacheSubscriber
         $events->listen(UserVariantUpdatedEvent::class, [static::class, 'onUserVariantEvent']);
         $events->listen(UserVariantDeletedEvent::class, [static::class, 'onUserVariantEvent']);
 
-        $events->listen(TagCreatedEvent::class, [static::class , 'onTagEvent']);
-        $events->listen(TagUpdatedEvent::class, [static::class , 'onTagEvent']);
-        $events->listen(TagDeletedEvent::class, [static::class , 'onTagEvent']);
-        $events->listen(TagVariantUpdatedEvent::class, [static::class , 'onTagVariantEvent']);
-        $events->listen(TagVariantDeletedEvent::class, [static::class , 'onTagVariantEvent']);
+        $events->listen(TagCreatedEvent::class, [static::class, 'onTagEvent']);
+        $events->listen(TagUpdatedEvent::class, [static::class, 'onTagEvent']);
+        $events->listen(TagDeletedEvent::class, [static::class, 'onTagEvent']);
+        $events->listen(TagVariantUpdatedEvent::class, [static::class, 'onTagVariantEvent']);
+        $events->listen(TagVariantDeletedEvent::class, [static::class, 'onTagVariantEvent']);
     }
 
     public function onPostUpdate(PostUpdatedEvent $event)
@@ -76,7 +76,6 @@ class ClearTemplateCacheSubscriber
         $variant = $event->variant;
         $blog = $variant->post->blog;
         $variantOld = $event->variantOld;
-
 
         /**
          * Clear

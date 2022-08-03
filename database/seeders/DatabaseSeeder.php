@@ -9,12 +9,10 @@ use App\Models\BlogVariant;
 use App\Models\Language;
 use App\Models\Post;
 use App\Models\PostAuthor;
-use App\Models\PostVariant;
 use App\Models\PostTag;
+use App\Models\PostVariant;
 use App\Models\Tag;
 use App\Models\TagVariant;
-use App\Models\Theme;
-use App\Models\ThemeVersion;
 use App\Models\User;
 use App\Models\UserVariant;
 use Faker\Factory;
@@ -33,7 +31,6 @@ class DatabaseSeeder extends Seeder
         $faker = Factory::create();
         $fakerFr = Factory::create('fr_FR');
 
-
         $blogs = Blog::factory()
             ->count(4)
             ->state(new Sequence(
@@ -43,18 +40,18 @@ class DatabaseSeeder extends Seeder
                 [
                     'subdomain' => 'custom',
                     'hosting_at' => 'self',
-                    'hosting_domain' => 'hyvorblogscustom.test'
+                    'hosting_domain' => 'hyvorblogscustom.test',
                 ],
                 [
                     'subdomain' => 'self',
                     'hosting_at' => 'self',
-                    'hosting_url' => 'https://blogs.hyvor.test/blog'
+                    'hosting_url' => 'https://blogs.hyvor.test/blog',
                 ],
                 [
                     'subdomain' => 'dev',
                     'type' => 'dev',
                     'hosting_at' => 'self',
-                    'hosting_url' => 'http://127.0.0.1:8885'
+                    'hosting_url' => 'http://127.0.0.1:8885',
                 ]
             ))
             ->create();
@@ -65,7 +62,6 @@ class DatabaseSeeder extends Seeder
         );*/
 
         foreach ($blogs as $blog) {
-
             $blog->createAsCustomer([
                 'trial_ends_at' => now()->addDays(config('limits.trial_days')),
             ]);
@@ -73,14 +69,14 @@ class DatabaseSeeder extends Seeder
             $english = Language::factory()->create([
                 'blog_id' => $blog,
                 'code' => 'en',
-                'name' => "English",
-                'is_primary' => true
+                'name' => 'English',
+                'is_primary' => true,
             ]);
             $french = Language::factory()->create([
                 'blog_id' => $blog,
                 'code' => 'fr',
-                'name' => "French",
-                'is_primary' => false
+                'name' => 'French',
+                'is_primary' => false,
             ]);
 
             BlogVariant::factory()
@@ -90,7 +86,7 @@ class DatabaseSeeder extends Seeder
                     ['language_id' => $french]
                 ))
                 ->create([
-                    'blog_id' => $blog
+                    'blog_id' => $blog,
                 ]);
 
             // tags
@@ -106,7 +102,7 @@ class DatabaseSeeder extends Seeder
                     'variants'
                 )
                 ->create([
-                    'blog_id' => $blog
+                    'blog_id' => $blog,
                 ]);
 
             // users
@@ -127,7 +123,7 @@ class DatabaseSeeder extends Seeder
                 ))
                 ->create([
                     'blog_id' => $blog,
-                    'status' => 'active'
+                    'status' => 'active',
                 ]);
 
             // posts
@@ -161,24 +157,22 @@ class DatabaseSeeder extends Seeder
 
             // connect posts and tags
             $posts->map(function ($post) use ($tags, $users) {
-                $tags->random(3)->map(fn($tag) => PostTag::create([
+                $tags->random(3)->map(fn ($tag) => PostTag::create([
                     'post_id' => $post->id,
-                    'tag_id' => $tag->id
+                    'tag_id' => $tag->id,
                 ]));
 
-                $users->map(fn($user) => PostAuthor::create([
+                $users->map(fn ($user) => PostAuthor::create([
                     'post_id' => $post->id,
-                    'user_id' => $user->id
+                    'user_id' => $user->id,
                 ]));
             });
-
 
             /**
              * Other fillers are mimicked inside this seeder
              * However, we'll here just use the Route filler as the code will be the same for testing
              */
             (new RouteFiller($blog))->fill();
-
         }
 
         PostSearchRepository::setFilterableAttributes();

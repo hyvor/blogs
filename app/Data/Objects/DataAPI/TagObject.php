@@ -11,11 +11,17 @@ use App\Models\Tag;
 class TagObject
 {
     public int $id;
+
     public int $created_at;
+
     public string $slug;
+
     public string $url;
+
     public string $name;
+
     public ?string $description;
+
     public int $posts_count;
 
     public LanguageObject $language;

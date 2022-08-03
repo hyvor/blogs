@@ -13,18 +13,17 @@ use Symfony\Component\DomCrawler\Crawler;
 class WordpressParser implements ParserInterface
 {
     /**
-    * @var array<array<string,mixed>>
-    */
+     * @var array<array<string,mixed>>
+     */
     public array $authorsArray = [];
 
     /**
-    * @var array<array<string,mixed>>
-    */
+     * @var array<array<string,mixed>>
+     */
     public array $tagsArray = [];
 
     public function __construct(public string $file)
     {
-
     }
 
     public function parse(): Repository
@@ -49,8 +48,8 @@ class WordpressParser implements ParserInterface
             $role = UserRoleEnum::from('editor');
             $status = UserStatusEnum::from('active');
             $slug = Str::slug($authorName.rand());
-            $createdAt = date("Y/m/d h:i:s");
-            $updatedAt = date("Y/m/d h:i:s");
+            $createdAt = date('Y/m/d h:i:s');
+            $updatedAt = date('Y/m/d h:i:s');
 
             $this->authorsArray[] = [$authorName => $authorId];
             // dd($this->authorsArray);
@@ -65,15 +64,14 @@ class WordpressParser implements ParserInterface
             $repo->author($user, [$userVariant]);
         });
 
-
         // Tags section
         $data->filterXPath('rss/channel/wp:category')->each(function (Crawler $node, $i) use ($repo) {
             $tagId = $node->children('wp|term_id')->text('null');
             $tagName = $node->children('wp|cat_name')->text('null');
             $slug = Str::slug($tagName.rand());
 
-            $createdAt = date("Y/m/d h:i:s");
-            $updatedAt = date("Y/m/d h:i:s");
+            $createdAt = date('Y/m/d h:i:s');
+            $updatedAt = date('Y/m/d h:i:s');
 
             $this->tagsArray[] = [$tagName => $tagId];
             // dump($this->tagsArray);
@@ -87,7 +85,6 @@ class WordpressParser implements ParserInterface
             );
         });
 
-
         // Post section
         $data->filterXPath('rss/channel/item[wp:post_type="post"]')->each(function (Crawler $node, $i) use ($repo) {
             $postId = $node->children('wp|post_id')->text('null');
@@ -99,7 +96,7 @@ class WordpressParser implements ParserInterface
             $postContent = $node->children('content|encoded')->text('null');
             $authors = $node->children('dc|creator')->extract(['_text']);
 
-            $publishedAt = date("Y/m/d h:i:s");
+            $publishedAt = date('Y/m/d h:i:s');
 
             if (mb_strlen($description) > config('limits.max_post_description_length')) {
                 $description = substr($description, 0, config('limits.max_post_description_length'));
@@ -169,7 +166,7 @@ class WordpressParser implements ParserInterface
             $pageContent = $node->children('content|encoded')->text('null');
             $authors = $node->children('dc|creator')->extract(['_text']);
 
-            $publishedAt = date("Y/m/d h:i:s");
+            $publishedAt = date('Y/m/d h:i:s');
 
             if (strlen($description) > config('limits.max_post_description_length')) {
                 $description = substr($description, 0, config('limits.max_post_description_length'));

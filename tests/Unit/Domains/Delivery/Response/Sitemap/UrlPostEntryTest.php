@@ -5,8 +5,7 @@ namespace Tests\Unit\Domains\Delivery\Response\Sitemap;
 use App\Domains\Delivery\Processors\Sitemap\UrlPostEntry;
 use App\Domains\Route\PermalinkRepository;
 
-it('works', function() {
-
+it('works', function () {
     $blog = blog();
     $post = aPublishedPost();
     $basePath = PermalinkRepository::getFullUrlFromPath($blog);
@@ -19,8 +18,8 @@ it('works', function() {
                 [
                     'type' => 'image',
                     'attrs' => [
-                        'src' => $basePath . '/image.png'
-                    ]
+                        'src' => $basePath.'/image.png',
+                    ],
                 ],
                 [
                     'type' => 'figure',
@@ -28,20 +27,20 @@ it('works', function() {
                         [
                             'type' => 'image',
                             'attrs' => [
-                                'src' => $basePath . '/image2.png'
-                            ]
+                                'src' => $basePath.'/image2.png',
+                            ],
                         ],
                         // external
                         [
                             'type' => 'image',
                             'attrs' => [
-                                'src' => 'https://example.com/image.png'
-                            ]
-                        ]
-                    ]
-                ]
-            ]
-        ])
+                                'src' => 'https://example.com/image.png',
+                            ],
+                        ],
+                    ],
+                ],
+            ],
+        ]),
     ]);
 
     $entry = new UrlPostEntry($post);
@@ -54,5 +53,4 @@ it('works', function() {
     expect($xml)->toContain("<image:image><image:loc>$basePath/image.png</image:loc></image:image>");
     expect($xml)->toContain("<image:image><image:loc>$basePath/image2.png</image:loc></image:image>");
     expect($xml)->not->toContain('<image:image><image:loc>https://example.com/image.png</image:loc></image:image>');
-
 });

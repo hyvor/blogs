@@ -7,7 +7,6 @@ use App\Models\ThemeFile;
 
 class ThemeDeleter implements DeleterInterface
 {
-
     public function __construct(private Blog $blog)
     {
     }
@@ -16,5 +15,4 @@ class ThemeDeleter implements DeleterInterface
     {
         ThemeFile::where('blog_id', $this->blog->id)->delete();
     }
-
 }

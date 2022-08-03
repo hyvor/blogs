@@ -32,7 +32,6 @@ class CacheRepository
         Cache::put($key, now()->timestamp);
     }
 
-
     public const TEMPLATE_CACHE_CLEAR_KEY = 'LAST_TEMPLATE_CACHE_CLEARED_AT';
 
     private static function getCacheKeyTag(Blog $blog): string
@@ -44,9 +43,8 @@ class CacheRepository
     {
         $tag = self::getCacheKeyTag($blog);
 
-        return "blogs_cache_" . $tag . "_$path";
+        return 'blogs_cache_'.$tag."_$path";
     }
-
 
     public static function set(
         Blog $blog,

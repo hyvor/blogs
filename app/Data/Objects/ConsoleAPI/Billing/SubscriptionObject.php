@@ -14,10 +14,13 @@ class SubscriptionObject
      * active|past_due|paused|deleted
      */
     public string $status;
+
     public SubscriptionPlanEnum $plan;
+
     public SubscriptionFrequencyEnum $frequency;
 
     public int $created_at;
+
     public ?int $ends_at;
 
     public bool $is_on_grace_period;

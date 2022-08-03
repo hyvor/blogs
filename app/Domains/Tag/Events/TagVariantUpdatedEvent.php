@@ -12,6 +12,7 @@ class TagVariantUpdatedEvent
     use SerializesModels;
 
     public TagVariant $variant;
+
     public TagVariant $variantOld;
 
     public function __construct(TagVariant $variant)

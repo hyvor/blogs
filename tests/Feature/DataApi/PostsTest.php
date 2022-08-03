@@ -28,7 +28,6 @@ it('fetches posts without params', function () {
         });
 });
 
-
 it('fetches pages', function () {
     $this
         ->callDataApi('/posts', [
@@ -264,7 +263,7 @@ it('filters by published_at', function () {
     $post->update(['published_at' => $time]);
 
     $this->callDataApi('/posts', [
-        'filter' => "published_at=yesterday",
+        'filter' => 'published_at=yesterday',
     ])->assertJsonPath('data.0.published_at', $time->timestamp);
 });
 
@@ -301,7 +300,7 @@ it('filters_by_is_featured', function () {
     $post->update(['is_featured' => true]);
 
     $response = $this->callDataApi('/posts', [
-        'filter' => "is_featured=true",
+        'filter' => 'is_featured=true',
     ]);
     $response
         ->assertJsonPath('data.0.slug', $post->slug)
@@ -325,14 +324,14 @@ it('filters by featured image', function () {
     $post->update(['featured_image_url' => 'some-new-url']);
 
     $response = $this->callDataApi('/posts', [
-        'filter' => "featured_image_url!=null",
+        'filter' => 'featured_image_url!=null',
     ]);
     $response->assertJsonPath('data.0.id', $post->id);
 });
 
 it('filters by canonical url', function () {
     $response = $this->callDataApi('/posts', [
-        'filter' => "canonical_url=null",
+        'filter' => 'canonical_url=null',
     ]);
     $response->assertJsonPath('data.0.canonical_url', null);
 });
@@ -344,7 +343,7 @@ it('filters by words', function () {
     $post->variants()->update(['words' => 21]);
 
     $response = $this->callDataApi('/posts', [
-        'filter' => "words>20",
+        'filter' => 'words>20',
     ]);
     $response->assertJson(function ($json) {
         $json->has('data.0', function ($json) {
@@ -407,7 +406,6 @@ it('filters by author slug', function () {
     $blog = Blog::find(config('test.blog_id'));
     $user = $blog->users[0];
     $post = getAPost();
-
 
     PostAuthor::where('post_id', $post->id)->delete();
     PostAuthor::create(['post_id' => $post->id, 'user_id' => $user->id]);

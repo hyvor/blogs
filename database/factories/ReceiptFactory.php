@@ -10,7 +10,6 @@ use Laravel\Paddle\Receipt;
 
 class ReceiptFactory extends Factory
 {
-
     protected $model = Receipt::class;
 
     public function definition()

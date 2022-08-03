@@ -33,8 +33,11 @@ use Twig\Error\Error;
 class TemplateRenderer
 {
     private PathMatcher $pathMatcher;
+
     private MatchedRoute $matchedRoute;
+
     private ?string $filter;
+
     private string $templateName;
 
     private Tag|User|Post|null|false $model;
@@ -82,7 +85,6 @@ class TemplateRenderer
             $this->pathMatcher->blog,
             ThemeFileFolderEnum::TEMPLATES
         );
-
 
         $loaderArray = [];
         foreach ($templateFiles as $file) {
@@ -257,7 +259,7 @@ class TemplateRenderer
             offset: $offset,
             orderBys: [
                 ['posts.is_featured', 'DESC'],
-                ['posts.published_at', 'DESC']
+                ['posts.published_at', 'DESC'],
             ]
         );
 
@@ -296,13 +298,12 @@ class TemplateRenderer
         return file_get_contents(resource_path('twig/_foot.twig'));
     }
 
-
     private function setTemplateName(array $availableFiles)
     {
         $checkFiles = explode(',', $this->matchedRoute->route->template);
 
         foreach ($checkFiles as $file) {
-            $file = trim($file) . '.twig';
+            $file = trim($file).'.twig';
             if (in_array($file, $availableFiles)) {
                 $this->templateName = $file;
 

@@ -1,4 +1,5 @@
 <?php
+
 namespace Database\Factories;
 
 use App\Domains\Post\Content\PostContentRepository;
@@ -9,10 +10,8 @@ use Illuminate\Support\Arr;
 
 class PostVariantFactory extends Factory
 {
-
     public function definition()
     {
-
         $content = PostContentRepository::generateRandom();
 
         return [
@@ -28,7 +27,5 @@ class PostVariantFactory extends Factory
 
             'words' => null,
         ];
-
     }
-
 }

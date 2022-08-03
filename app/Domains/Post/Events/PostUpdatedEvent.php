@@ -12,6 +12,7 @@ class PostUpdatedEvent
     use SerializesModels;
 
     public Post $post;
+
     public Post $postOld;
 
     public function __construct(Post $post)

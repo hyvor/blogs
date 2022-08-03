@@ -5,7 +5,6 @@ namespace App\Http\Controllers\ConsoleAPI;
 use App\Data\Enums\RedirectTypeEnum;
 use App\Data\Objects\ConsoleAPI\RedirectObject;
 use App\Domains\Redirect\RedirectRepository;
-
 use App\Http\Controllers\Controller;
 use App\Models\Blog;
 use App\Models\Redirect;
@@ -18,9 +17,9 @@ class ConsoleRedirectController extends Controller
     public function get(Request $request, Blog $blog)
     {
         $request->validate([
-             'limit' => 'integer',
-             'offset' => 'integer',
-         ]);
+            'limit' => 'integer',
+            'offset' => 'integer',
+        ]);
 
         $limit = $request->input('limit', 25);
         $offset = $request->input('offset', 0);

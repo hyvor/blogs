@@ -11,15 +11,14 @@ use Illuminate\Support\Facades\DB;
 
 class TagCountsJob implements ShouldQueue, ShouldBeUnique
 {
-
     use Dispatchable;
 
     public function __construct(public Blog $blog)
-    {}
+    {
+    }
 
     public function handle()
     {
-
         $language = LanguageRepository::getPrimaryLanguage($this->blog);
 
         DB::statement('UPDATE tags as t SET posts_count =
@@ -34,13 +33,10 @@ class TagCountsJob implements ShouldQueue, ShouldBeUnique
             )
             WHERE t.blog_id = ?
         ', [$language->id, 'published', $this->blog->id]);
-
     }
 
     public function uniqueId()
     {
         return $this->blog->id;
     }
-
-
 }

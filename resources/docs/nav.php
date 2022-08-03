@@ -1,5 +1,6 @@
 <?php
-return [ 
+
+return [
 
     'Intro' => [
         [null, 'Getting Started'],
@@ -41,7 +42,7 @@ return [
         ['themes-styles', 'Styling'],
         ['themes-internationalization', 'Internationalization'],
         ['themes-config', 'Configuration'],
-        ['themes-publishing', 'Publishing']
+        ['themes-publishing', 'Publishing'],
     ],
     'Advanced' => [
         ['routes', 'Routes'],
@@ -60,10 +61,10 @@ return [
         ['policy-privacy', 'Privacy Policy'],
         ['policy-content', 'Content Policy'],
         ['policy-security', 'Security Policy'],
-        ['compliance-gdpr', 'GDPR Compliance']
+        ['compliance-gdpr', 'GDPR Compliance'],
     ],
     'Misc' => [
         ['oss', 'Open Source'],
-    ]
+    ],
 
 ];

@@ -8,16 +8,14 @@ use App\Models\Media;
 
 class MediaDeleter implements DeleterInterface
 {
-
     public function __construct(private Blog $blog)
     {
     }
 
     public function delete()
     {
-
         Media::where('blog_id', $this->blog->id)
-            ->chunk(100, function($medias) {
+            ->chunk(100, function ($medias) {
 
                 /**
                  * @var $media Media
@@ -25,8 +23,6 @@ class MediaDeleter implements DeleterInterface
                 foreach ($medias as $media) {
                     MediaRepository::delete($media);
                 }
-
             });
-
     }
 }

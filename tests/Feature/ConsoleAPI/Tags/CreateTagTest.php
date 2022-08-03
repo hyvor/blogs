@@ -16,8 +16,7 @@ it('creates a tag with variant', function () {
     ])
         ->assertOk()
         ->assertJson(
-            fn (AssertableJson $json) =>
-            $json->where('variants.0.name', $name)
+            fn (AssertableJson $json) => $json->where('variants.0.name', $name)
                 ->etc()
         );
 

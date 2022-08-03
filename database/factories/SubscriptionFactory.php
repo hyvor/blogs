@@ -23,7 +23,7 @@ class SubscriptionFactory extends Factory
             'quantity' => 1,
             'trial_ends_at' => null,
             'paused_from' => null,
-            'ends_at' => null
+            'ends_at' => null,
         ];
     }
 }

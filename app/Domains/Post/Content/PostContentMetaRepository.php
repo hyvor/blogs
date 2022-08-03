@@ -28,7 +28,7 @@ class PostContentMetaRepository
     /**
      * Pre-calculate HTML so that you don't want to convert it everytime
      *
-     * @param PostVariant $variant
+     * @param  PostVariant  $variant
      * @return void
      */
     public static function updateHtmlContent(PostVariant $variant): void

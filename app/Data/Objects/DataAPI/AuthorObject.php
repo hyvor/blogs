@@ -11,15 +11,25 @@ use App\Models\User;
 class AuthorObject
 {
     public int $id;
+
     public int $created_at;
+
     public string $slug;
+
     public string $url;
+
     public string $name;
+
     public ?string $picture_url;
+
     public ?string $bio;
+
     public ?string $website_url;
+
     public ?string $location;
+
     public SocialMediaObject $social;
+
     public int $posts_count;
 
     public LanguageObject $language;

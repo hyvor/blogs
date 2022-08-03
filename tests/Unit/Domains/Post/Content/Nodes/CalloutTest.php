@@ -46,7 +46,6 @@ test('json to HTML', function () {
         ->toEqual("<aside style=\"background-color:$bg;color:$fg\"><span>{$emoji}</span><div>$content$bold</div></aside>");
 });
 
-
 test('HTML to JSON', function () {
     $emoji = '🔥';
     $bg = '#000000';

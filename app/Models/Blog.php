@@ -10,13 +10,11 @@ use Hyvor\JsonMeta\Metable;
 use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
-use Illuminate\Database\Eloquent\SoftDeletes;
 use Laravel\Paddle\Billable;
 
 /**
  * @property BlogTypeEnum type
  * @property int hyvor_user_id
- *
  * @property Collection $tags
  * @property Collection $users
  */
@@ -51,7 +49,7 @@ class Blog extends Model
 
         $definer->add('seo_indexing')->default(true);
         $definer->add('seo_robots_txt')->default(
-            <<<TEXT
+            <<<'TEXT'
         User-agent: *
         Sitemap: {{ _blog.base_url }}/sitemap.xml
         Disallow: /p/
@@ -82,7 +80,7 @@ class Blog extends Model
             'posts_draft',
             'posts_scheduled',
             'posts_featured',
-            'media'
+            'media',
         ];
     }
 

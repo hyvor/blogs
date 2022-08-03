@@ -13,6 +13,6 @@ class ApiKey extends Model
 
     protected $casts = [
         'type' => ApiKeysTypeEnum::class,
-        'role' => UserRoleEnum::class
+        'role' => UserRoleEnum::class,
     ];
 }

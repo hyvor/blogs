@@ -9,18 +9,16 @@ use Illuminate\Support\Facades\Route;
 
 Route::prefix('/api/data/v0/{subdomain}')
     ->middleware(SubdomainMiddleware::class)
-    ->group(function() {
+    ->group(function () {
+        Route::get('/post', [PostsController::class, 'post']);
+        Route::get('/posts', [PostsController::class, 'posts']);
+        Route::get('/posts/search', [PostsController::class, 'postsSearch']);
 
-    Route::get('/post', [PostsController::class, 'post']);
-    Route::get('/posts', [PostsController::class, 'posts']);
-    Route::get('/posts/search', [PostsController::class, 'postsSearch']);
+        Route::get('/tag', [TagsController::class, 'tag']);
+        Route::get('/tags', [TagsController::class, 'tags']);
 
-    Route::get('/tag', [TagsController::class, 'tag']);
-    Route::get('/tags', [TagsController::class, 'tags']);
+        Route::get('/author', [AuthorsController::class, 'author']);
+        Route::get('/authors', [AuthorsController::class, 'authors']);
 
-    Route::get('/author', [AuthorsController::class, 'author']);
-    Route::get('/authors', [AuthorsController::class, 'authors']);
-
-    Route::get('/blog', [BlogController::class, 'blog']);
-
-});
+        Route::get('/blog', [BlogController::class, 'blog']);
+    });

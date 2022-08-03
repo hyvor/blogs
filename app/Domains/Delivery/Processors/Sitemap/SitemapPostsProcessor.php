@@ -13,23 +13,23 @@ use App\Models\Post;
 
 class SitemapPostsProcessor extends RouteProcessorAbstract
 {
-
     private Blog $blog;
 
     public function __construct(PathMatcher $pathMatcher, MatchedRoute $matchedRoute)
     {
-
         $this->blog = $pathMatcher->blog;
 
         $number = (int) $matchedRoute->param('number');
 
-        if ($number < 1)
+        if ($number < 1) {
             return;
+        }
 
         $posts = $this->getPosts($number);
 
-        if ($posts->count() === 0)
+        if ($posts->count() === 0) {
             return;
+        }
 
         $postsXML = $posts->mapInto(UrlPostEntry::class)
             ->map(fn ($entry) => $entry->toXML())
@@ -53,20 +53,17 @@ class SitemapPostsProcessor extends RouteProcessorAbstract
                 'text/xml',
             )
         );
-
     }
 
     private function getPosts(int $number)
     {
-
         $primaryLanguage = LanguageRepository::getPrimaryLanguage($this->blog);
         $limit = config('limits.max_entries_per_sitemap');
 
-        return Post::join('post_variants', fn ($join) =>
-                $join
+        return Post::join('post_variants', fn ($join) => $join
                     ->on('post_variants.post_id', '=', 'posts.id')
                     ->where('post_variants.language_id', '=', $primaryLanguage->id)
-                )
+        )
             ->where('post_variants.status', 'published')
             ->where('posts.blog_id', $this->blog->id)
             ->where('posts.is_page', false)
@@ -75,7 +72,5 @@ class SitemapPostsProcessor extends RouteProcessorAbstract
             ->limit($limit)
             ->offset(($number - 1) * $limit)
             ->get();
-
     }
-
 }

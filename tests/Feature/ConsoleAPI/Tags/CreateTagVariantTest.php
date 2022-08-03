@@ -24,7 +24,6 @@ it('creates a user variant', function () {
         ->assertOk()
         ->assertJson(fn (AssertableJson $json) => $json->has('name')->etc());
 
-
     $this
         ->callConsoleApi('POST', "/tag/$tag->id/variant", [
             'language_id' => $language2->id,

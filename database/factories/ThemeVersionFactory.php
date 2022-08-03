@@ -8,13 +8,11 @@ use PhpZip\ZipFile;
 
 class ThemeVersionFactory extends Factory
 {
-
     public function definition()
     {
-
         $zip = new ZipFile();
         $themeName = $this->faker->name();
-        $themeVersion = rand() . "." . rand();
+        $themeVersion = rand().'.'.rand();
         $zip->addFromString('config.yaml', "THEME_NAME=$themeName\nTHEME_VERSION=$themeVersion");
         $zip->addFromString('templates/index.twig', '{{ _lang.code }}');
 
@@ -23,8 +21,7 @@ class ThemeVersionFactory extends Factory
         return [
             'theme_id' => Theme::factory(),
             'version' => $themeVersion,
-            'zip' => $zip
+            'zip' => $zip,
         ];
     }
-
 }

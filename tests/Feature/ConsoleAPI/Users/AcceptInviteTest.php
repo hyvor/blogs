@@ -35,7 +35,6 @@ it('does not accept invitation if the signature is wrong', function () {
         ->assertUnprocessable()
         ->assertSee('Invalid Link');
 
-
     expect($user->refresh()->status)->toBe(UserStatusEnum::INVITED);
 });
 

@@ -129,7 +129,6 @@ class ConsolePostController extends Controller
         return response()->json(new PostObject($post, $blog));
     }
 
-
     public function createPostVariant(Request $request, Blog $blog, Post $post)
     {
         $request->validate([
@@ -227,7 +226,6 @@ class ConsolePostController extends Controller
 
         return response()->json();
     }
-
 
     public function updateTags(Request $request, Blog $blog, Post $post)
     {

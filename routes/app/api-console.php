@@ -1,25 +1,23 @@
 <?php
 
 use App\Http\Controllers\ConsoleAPI\ConsoleApiKeysController;
+use App\Http\Controllers\ConsoleAPI\ConsoleBillingController;
 use App\Http\Controllers\ConsoleAPI\ConsoleBlogController;
 use App\Http\Controllers\ConsoleAPI\ConsoleDangerController;
-use App\Http\Controllers\ConsoleAPI\ConsoleThemeController;
 use App\Http\Controllers\ConsoleAPI\ConsoleImportExportController;
 use App\Http\Controllers\ConsoleAPI\ConsoleLanguageController;
 use App\Http\Controllers\ConsoleAPI\ConsoleMediaController;
+use App\Http\Controllers\ConsoleAPI\ConsoleNavigationController;
 use App\Http\Controllers\ConsoleAPI\ConsolePostController;
-use App\Http\Controllers\ConsoleAPI\ConsoleBillingController;
+use App\Http\Controllers\ConsoleAPI\ConsoleRedirectController;
+use App\Http\Controllers\ConsoleAPI\ConsoleRouteController;
+use App\Http\Controllers\ConsoleAPI\ConsoleTagController;
+use App\Http\Controllers\ConsoleAPI\ConsoleThemeController;
+use App\Http\Controllers\ConsoleAPI\ConsoleUrlDataController;
 use App\Http\Controllers\ConsoleAPI\ConsoleUserBlogController;
 use App\Http\Controllers\ConsoleAPI\ConsoleUserController;
-use App\Http\Controllers\ConsoleAPI\ConsoleRedirectController;
-use App\Http\Controllers\ConsoleAPI\ConsoleNavigationController;
-use App\Http\Controllers\ConsoleAPI\ConsoleTagController;
-use App\Http\Controllers\ConsoleAPI\ConsoleRouteController;
-
 use App\Http\Controllers\ConsoleAPI\ConsoleViewController;
-use App\Http\Controllers\ConsoleAPI\ConsoleUrlDataController;
 use App\Http\Controllers\ConsoleAPI\ConsoleWebhookController;
-
 use App\Http\Middleware\App\ConsoleApi\ConsoleApiAccessMiddleware;
 use App\Http\Middleware\App\ConsoleApi\ConsoleApiUserEndpointsAccessMiddleware;
 use App\Http\Middleware\App\ConsoleApi\ConsoleMiscApiAccessMiddleware;
@@ -38,26 +36,20 @@ Route::get('/console/{any?}', ConsoleViewController::class)
  */
 Route::prefix('/api/console/v0')
     ->middleware(ConsoleApiUserEndpointsAccessMiddleware::class)
-    ->group(function() {
+    ->group(function () {
+        Route::post('/blog', [ConsoleUserBlogController::class, 'createBlog']);
+        Route::patch('/blogs/sort', [ConsoleUserBlogController::class, 'changeSort']);
+        Route::get('/blog/check-subdomain', [ConsoleUserBlogController::class, 'checkSubdomain']);
+    });
 
-    Route::post('/blog', [ConsoleUserBlogController::class, 'createBlog']);
-    Route::patch('/blogs/sort', [ConsoleUserBlogController::class, 'changeSort']);
-    Route::get('/blog/check-subdomain', [ConsoleUserBlogController::class, 'checkSubdomain']);
-
-});
-
-/** 
- * 
+/**
  * Console API
  * ======================
- * 
+ *
  * this is the Console API
  * can be used by both us and others
  * Important! see BlogAccessMiddleware to see how to write these routes securely
  */
-
-
-
 Route::prefix('/api/console/v0/blog/{subdomain}')
     ->middleware([
         // converts {subdomain} tp Blog model
@@ -70,182 +62,169 @@ Route::prefix('/api/console/v0/blog/{subdomain}')
         // checks relationship to the blog, for resources that have {id} in route
         ResourceAccessMiddleware::class,
     ])
-    ->group(function() {
-    
-    /**
-     * Posts and media
-     * @access ALL except Finance
-     */
-    Route::middleware('role:owner|admin|editor|writer|contributor')->group(function() {
-
-        // blog
-        Route::get('/blog', [ConsoleBlogController::class, 'getBlogData']);
-        Route::patch('/blog', [ConsoleBlogController::class, 'updateBlog']);
-        Route::post('/blog/variant', [ConsoleBlogController::class, 'createBlogVariant']);
-        Route::patch('/blog/variant', [ConsoleBlogController::class, 'updateBlogVariant']);
+    ->group(function () {
 
         /**
-         * In post routes, role is checked internally on some actions
-         * such as publishing posts
-         * or editing posts or others
+         * Posts and media
          */
-        // posts (and pages)
-        Route::get('/posts', [ConsolePostController::class, 'getPosts']);
-        Route::get('/pages', [ConsolePostController::class, 'getPages']);
-        Route::post('/post', [ConsolePostController::class, 'createPost']);
+        Route::middleware('role:owner|admin|editor|writer|contributor')->group(function () {
 
-        // check author
-        Route::middleware(PostAuthorshipMiddleware::class)->group(function() {
-            Route::get('/post/{id}', [ConsolePostController::class, 'getPost']);
-            Route::patch('/post/{id}', [ConsolePostController::class, 'updatePost']);
-            Route::delete('/post/{id}', [ConsolePostController::class, 'deletePost']);
+            // blog
+            Route::get('/blog', [ConsoleBlogController::class, 'getBlogData']);
+            Route::patch('/blog', [ConsoleBlogController::class, 'updateBlog']);
+            Route::post('/blog/variant', [ConsoleBlogController::class, 'createBlogVariant']);
+            Route::patch('/blog/variant', [ConsoleBlogController::class, 'updateBlogVariant']);
 
-            Route::post('/post/{id}/variant', [ConsolePostController::class, 'createPostVariant']);
-            Route::patch('/post/{id}/variant', [ConsolePostController::class, 'updatePostVariant']);
-            Route::delete('/post/{id}/variant', [ConsolePostController::class, 'deletePostVariant']);
+            /**
+             * In post routes, role is checked internally on some actions
+             * such as publishing posts
+             * or editing posts or others
+             */
+            // posts (and pages)
+            Route::get('/posts', [ConsolePostController::class, 'getPosts']);
+            Route::get('/pages', [ConsolePostController::class, 'getPages']);
+            Route::post('/post', [ConsolePostController::class, 'createPost']);
 
-            Route::patch('/post/{id}/tags', [ConsolePostController::class, 'updateTags']);
-            Route::patch('/post/{id}/authors', [ConsolePostController::class, 'updateAuthors']);
+            // check author
+            Route::middleware(PostAuthorshipMiddleware::class)->group(function () {
+                Route::get('/post/{id}', [ConsolePostController::class, 'getPost']);
+                Route::patch('/post/{id}', [ConsolePostController::class, 'updatePost']);
+                Route::delete('/post/{id}', [ConsolePostController::class, 'deletePost']);
+
+                Route::post('/post/{id}/variant', [ConsolePostController::class, 'createPostVariant']);
+                Route::patch('/post/{id}/variant', [ConsolePostController::class, 'updatePostVariant']);
+                Route::delete('/post/{id}/variant', [ConsolePostController::class, 'deletePostVariant']);
+
+                Route::patch('/post/{id}/tags', [ConsolePostController::class, 'updateTags']);
+                Route::patch('/post/{id}/authors', [ConsolePostController::class, 'updateAuthors']);
+            });
+
+            // media CRD
+            Route::get('/media', [ConsoleMediaController::class, 'getMedia']);
+            Route::post('/media', [ConsoleMediaController::class, 'uploadFile']);
+            Route::delete('/media/{id}', [ConsoleMediaController::class, 'deleteFile']);
+            Route::get('/media/unsplash/search', [ConsoleMediaController::class, 'searchUnsplash']);
+
+            // url data
+            Route::get('/url-data', [ConsoleUrlDataController::class, 'getData']);
         });
 
-        // media CRD
-        Route::get('/media', [ConsoleMediaController::class, 'getMedia']);
-        Route::post('/media', [ConsoleMediaController::class, 'uploadFile']);
-        Route::delete('/media/{id}', [ConsoleMediaController::class, 'deleteFile']);
-        Route::get('/media/unsplash/search', [ConsoleMediaController::class, 'searchUnsplash']);
+        /**
+         * Tags
+         */
+        Route::middleware('role:owner|admin|editor')->group(function () {
 
-        // url data
-        Route::get('/url-data', [ConsoleUrlDataController::class, 'getData']);
+            // tags
+            Route::get('/tags', [ConsoleTagController::class, 'get']);
+            Route::get('/tags/search', [ConsoleTagController::class, 'search']);
+            Route::post('/tag', [ConsoleTagController::class, 'create']);
+            Route::patch('/tag/{id}', [ConsoleTagController::class, 'update']);
+            Route::delete('/tag/{id}', [ConsoleTagController::class, 'delete']);
+            Route::post('/tag/{id}/variant', [ConsoleTagController::class, 'createVariant']);
+            Route::patch('/tag/{id}/variant', [ConsoleTagController::class, 'updateVariant']);
+            Route::delete('/tag/{id}/variant', [ConsoleTagController::class, 'deleteVariant']);
 
+            // comments
+            Route::get('/comments/moderate', []);
+        });
+
+        /**
+         * Settings, users, and theme
+         */
+        Route::middleware('role:owner|admin')->group(function () {
+
+            // webhooks
+            Route::get('/webhooks', [ConsoleWebhookController::class, 'getWebhooks']);
+            Route::post('/webhook', [ConsoleWebhookController::class, 'createWebhook']);
+            Route::patch('/webhook/{id}', [ConsoleWebhookController::class, 'updateWebhook']);
+            Route::delete('/webhook/{id}', [ConsoleWebhookController::class, 'deleteWebhook']);
+
+            // api-keys
+            Route::get('/api-keys', [ConsoleApiKeysController::class, 'getApiKeys']);
+            Route::post('/api-key', [ConsoleApiKeysController::class, 'createApiKey']);
+            Route::delete('/api-key/{id}', [ConsoleApiKeysController::class, 'deleteApiKey']);
+
+            // navigation
+            Route::get('/navigations', [ConsoleNavigationController::class, 'get']);
+            Route::patch('/navigations/sort', [ConsoleNavigationController::class, 'updateSort']);
+            Route::post('/navigation', [ConsoleNavigationController::class, 'create']);
+            Route::put('/navigation/{id}', [ConsoleNavigationController::class, 'update']);
+            Route::delete('/navigation/{id}', [ConsoleNavigationController::class, 'delete']);
+            Route::post('/navigation/{id}/variant', [ConsoleNavigationController::class, 'createVariant']);
+            Route::put('/navigation/{id}/variant', [ConsoleNavigationController::class, 'updateVariant']);
+            Route::delete('/navigation/{id}/variant', [ConsoleNavigationController::class, 'deleteVariant']);
+
+            // languages
+            Route::get('/languages', [ConsoleLanguageController::class, 'get']);
+            Route::post('/language', [ConsoleLanguageController::class, 'create']);
+            Route::patch('/language/{id}', [ConsoleLanguageController::class, 'update']);
+            Route::delete('/language/{id}', [ConsoleLanguageController::class, 'delete']);
+
+            // redirects
+            Route::get('/redirects', [ConsoleRedirectController::class, 'get']);
+            Route::post('/redirect', [ConsoleRedirectController::class, 'create']);
+            Route::put('/redirect/{id}', [ConsoleRedirectController::class, 'update']);
+            Route::delete('/redirect/{id}', [ConsoleRedirectController::class, 'delete']);
+
+            // users
+            Route::get('/users', [ConsoleUserController::class, 'get']);
+            Route::get('/users/search', [ConsoleUserController::class, 'search']);
+            Route::post('/user', [ConsoleUserController::class, 'create']);
+            Route::post('/user/guest', [ConsoleUserController::class, 'createGuest']);
+            Route::patch('/user/{id}', [ConsoleUserController::class, 'update']);
+            Route::delete('/user/{id}', [ConsoleUserController::class, 'delete']);
+            Route::post('/user/{id}/variant', [ConsoleUserController::class, 'createVariant']);
+            Route::patch('/user/{id}/variant', [ConsoleUserController::class, 'updateVariant']);
+            Route::delete('/user/{id}/variant', [ConsoleUserController::class, 'deleteVariant']);
+            Route::post('/user/{id}/resend-invite', [ConsoleUserController::class, 'resendInvite']);
+
+            // route
+            Route::get('/routes', [ConsoleRouteController::class, 'get']);
+            Route::post('/route', [ConsoleRouteController::class, 'create']);
+            Route::patch('/route/{id}', [ConsoleRouteController::class, 'update']);
+            Route::delete('/route/{id}', [ConsoleRouteController::class, 'delete']);
+
+            // theme
+            Route::post('/theme', [ConsoleThemeController::class, 'uploadTheme']);
+            Route::patch('/theme', [ConsoleThemeController::class, 'changeTheme']);
+            Route::get('/theme/download', [ConsoleThemeController::class, 'downloadTheme']);
+            Route::get('/theme/files', [ConsoleThemeController::class, 'getAllFiles']);
+            Route::post('/theme/file', [ConsoleThemeController::class, 'createFile']);
+            Route::patch('/theme/file/{id}', [ConsoleThemeController::class, 'updateFile']);
+            Route::delete('/theme/file/{id}', [ConsoleThemeController::class, 'deleteFile']);
+
+            // import and export
+            Route::get('/data/export', [ConsoleImportExportController::class, 'export']);
+            Route::post('/data/import', [ConsoleImportExportController::class, 'import']);
+
+            Route::get('/build', []);
+        });
+
+        /**
+         * Billing
+         */
+        Route::middleware('role:owner|admin|finance')->group(function () {
+
+            // billing
+            Route::get('/billing', [ConsoleBillingController::class, 'getData']);
+            Route::post('/billing/subscription', [ConsoleBillingController::class, 'createSubscription']);
+            Route::patch('/billing/subscription', [ConsoleBillingController::class, 'updateSubscription']);
+            Route::delete('/billing/subscription', [ConsoleBillingController::class, 'cancelSubscription']);
+        });
+
+        /**
+         * Danger
+         */
+        Route::middleware('role:owner')->group(function () {
+            Route::delete('/blog', [ConsoleDangerController::class, 'delete']);
+            // Route::post('/blog/reset', [ConsoleDangerController::class, 'reset']);
+        });
     });
-
-    /**
-     * Tags
-     * @access OWNER|ADMIN|EDITOR
-     */
-    Route::middleware('role:owner|admin|editor')->group(function() {
-
-        // tags
-        Route::get('/tags', [ConsoleTagController::class, 'get']);
-        Route::get('/tags/search', [ConsoleTagController::class, 'search']);
-        Route::post('/tag', [ConsoleTagController::class, 'create']);
-        Route::patch('/tag/{id}', [ConsoleTagController::class, 'update']);
-        Route::delete('/tag/{id}', [ConsoleTagController::class, 'delete']);
-        Route::post('/tag/{id}/variant', [ConsoleTagController::class, 'createVariant']);
-        Route::patch('/tag/{id}/variant', [ConsoleTagController::class, 'updateVariant']);
-        Route::delete('/tag/{id}/variant', [ConsoleTagController::class, 'deleteVariant']);
-
-        // comments
-        Route::get('/comments/moderate', []);
-
-    });
-
-    /**
-     * Settings, users, and theme
-     * @access OWNER|ADMIN
-     */
-    Route::middleware('role:owner|admin')->group(function() {
-
-        // webhooks
-        Route::get('/webhooks', [ConsoleWebhookController::class, 'getWebhooks']);
-        Route::post('/webhook', [ConsoleWebhookController::class, 'createWebhook']);
-        Route::patch('/webhook/{id}', [ConsoleWebhookController::class, 'updateWebhook']);
-        Route::delete('/webhook/{id}', [ConsoleWebhookController::class, 'deleteWebhook']);
-
-        // api-keys
-        Route::get('/api-keys', [ConsoleApiKeysController::class, 'getApiKeys']);
-        Route::post('/api-key', [ConsoleApiKeysController::class, 'createApiKey']);
-        Route::delete('/api-key/{id}', [ConsoleApiKeysController::class, 'deleteApiKey']);
-
-        // navigation
-        Route::get('/navigations', [ConsoleNavigationController::class, 'get']);
-        Route::patch('/navigations/sort', [ConsoleNavigationController::class, 'updateSort']);
-        Route::post('/navigation', [ConsoleNavigationController::class, 'create']);
-        Route::put('/navigation/{id}', [ConsoleNavigationController::class, 'update']);
-        Route::delete('/navigation/{id}', [ConsoleNavigationController::class, 'delete']);
-        Route::post('/navigation/{id}/variant', [ConsoleNavigationController::class, 'createVariant']);
-        Route::put('/navigation/{id}/variant', [ConsoleNavigationController::class, 'updateVariant']);
-        Route::delete('/navigation/{id}/variant', [ConsoleNavigationController::class, 'deleteVariant']);
-
-        // languages
-        Route::get('/languages', [ConsoleLanguageController::class, 'get']);
-        Route::post('/language', [ConsoleLanguageController::class, 'create']);
-        Route::patch('/language/{id}', [ConsoleLanguageController::class, 'update']);
-        Route::delete('/language/{id}', [ConsoleLanguageController::class, 'delete']);
-        
-        // redirects
-        Route::get('/redirects', [ConsoleRedirectController::class, 'get']);
-        Route::post('/redirect', [ConsoleRedirectController::class, 'create']);
-        Route::put('/redirect/{id}', [ConsoleRedirectController::class, 'update']);
-        Route::delete('/redirect/{id}', [ConsoleRedirectController::class, 'delete']);
-
-        // users
-        Route::get('/users', [ConsoleUserController::class, 'get']);
-        Route::get('/users/search', [ConsoleUserController::class, 'search']);
-        Route::post('/user', [ConsoleUserController::class, 'create']);
-        Route::post('/user/guest', [ConsoleUserController::class, 'createGuest']);
-        Route::patch('/user/{id}', [ConsoleUserController::class, 'update']);
-        Route::delete('/user/{id}', [ConsoleUserController::class, 'delete']);
-        Route::post('/user/{id}/variant', [ConsoleUserController::class, 'createVariant']);
-        Route::patch('/user/{id}/variant', [ConsoleUserController::class, 'updateVariant']);
-        Route::delete('/user/{id}/variant', [ConsoleUserController::class, 'deleteVariant']);
-        Route::post('/user/{id}/resend-invite', [ConsoleUserController::class, 'resendInvite']);
-
-        // route
-        Route::get('/routes', [ConsoleRouteController::class, 'get']);
-        Route::post('/route', [ConsoleRouteController::class, 'create']);
-        Route::patch('/route/{id}', [ConsoleRouteController::class, 'update']);
-        Route::delete('/route/{id}', [ConsoleRouteController::class, 'delete']);
-
-        // theme
-        Route::post('/theme', [ConsoleThemeController::class, 'uploadTheme']);
-        Route::patch('/theme', [ConsoleThemeController::class, 'changeTheme']);
-        Route::get('/theme/download', [ConsoleThemeController::class, 'downloadTheme']);
-        Route::get('/theme/files', [ConsoleThemeController::class, 'getAllFiles']);
-        Route::post('/theme/file', [ConsoleThemeController::class, 'createFile']);
-        Route::patch('/theme/file/{id}', [ConsoleThemeController::class, 'updateFile']);
-        Route::delete('/theme/file/{id}', [ConsoleThemeController::class, 'deleteFile']);
-
-        // import and export
-        Route::get('/data/export', [ConsoleImportExportController::class, 'export']);
-        Route::post('/data/import', [ConsoleImportExportController::class, 'import']);
-
-        Route::get('/build', []);
-    });
-
-    /**
-     * Billing
-     * @access OWNER|ADMIN|FINANCE
-     */
-    Route::middleware('role:owner|admin|finance')->group(function() {
-
-        // billing
-        Route::get('/billing', [ConsoleBillingController::class, 'getData']);
-        Route::post('/billing/subscription', [ConsoleBillingController::class, 'createSubscription']);
-        Route::patch('/billing/subscription', [ConsoleBillingController::class, 'updateSubscription']);
-        Route::delete('/billing/subscription', [ConsoleBillingController::class, 'cancelSubscription']);
-
-    });
-
-    /**
-     * Danger
-     * @access OWNER
-     */
-    Route::middleware('role:owner')->group(function() {
-
-        Route::delete('/blog', [ConsoleDangerController::class, 'delete']);
-        // Route::post('/blog/reset', [ConsoleDangerController::class, 'reset']);
-
-    });
-
-});
 
 Route::prefix('/api/console/v0/misc')->middleware([
-    ConsoleMiscApiAccessMiddleware::class
-])->group(function() {
-
+    ConsoleMiscApiAccessMiddleware::class,
+])->group(function () {
     Route::get('/themes', [ConsoleThemeController::class, 'getAllThemes']);
-
 });
 
 // SPECIAL

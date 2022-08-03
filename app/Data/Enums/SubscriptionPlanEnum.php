@@ -2,7 +2,7 @@
 
 namespace App\Data\Enums;
 
-enum SubscriptionPlanEnum : string
+enum SubscriptionPlanEnum: string
 {
     case A = 'A';
     case B = 'B';

@@ -9,6 +9,7 @@ use App\Models\Navigation;
 class NavObject
 {
     public string $name;
+
     public string $url;
 
     public function __construct(Navigation $navigation, Language $language)

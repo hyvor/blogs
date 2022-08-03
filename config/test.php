@@ -5,7 +5,7 @@
  */
 
 return [
-    
+
     // testing hyvor user ID
     'hyvor_user_id' => 1,
 

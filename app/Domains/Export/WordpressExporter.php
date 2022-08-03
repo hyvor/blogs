@@ -60,7 +60,7 @@ class WordpressExporter implements ExporterInterface
             $tagName = self::CDATA($tag->name);
 
             $tagDescription = $tag->description ?
-                '<wp:category_description>' . self::CDATA($tag->description) . '</wp:category_description>' : '';
+                '<wp:category_description>'.self::CDATA($tag->description).'</wp:category_description>' : '';
 
             $ret .= <<<XML
 
@@ -195,7 +195,7 @@ class WordpressExporter implements ExporterInterface
             $str = utf8_encode($str);
         }
         // $str = ent2ncr(esc_html($str));
-        $str = '<![CDATA[' . str_replace(']]>', ']]]]><![CDATA[>', $str) . ']]>';
+        $str = '<![CDATA['.str_replace(']]>', ']]]]><![CDATA[>', $str).']]>';
 
         return $str;
     }

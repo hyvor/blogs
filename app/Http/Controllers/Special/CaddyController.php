@@ -10,7 +10,7 @@ class CaddyController
     public function checkDomain(Request $request)
     {
         $request->validate([
-            'domain' => 'required|string'
+            'domain' => 'required|string',
         ]);
 
         $domain = $request->input('domain');

@@ -8,28 +8,28 @@ use App\Data\Enums\UserStatusEnum;
 class Repository
 {
     /**
-    * @var array<array<string,mixed>>
-    */
+     * @var array<array<string,mixed>>
+     */
     public array $lang = [];
 
     /**
-    * @var array<array<string,mixed>>
-    */
+     * @var array<array<string,mixed>>
+     */
     public array $authors = [];
 
     /**
-    * @var array<array<string,mixed>>
-    */
+     * @var array<array<string,mixed>>
+     */
     public array $tags = [];
 
     /**
-    * @var array<array<string,mixed>>
-    */
+     * @var array<array<string,mixed>>
+     */
     public array $posts = [];
 
     /**
-    * @var array<array<string,mixed>>
-    */
+     * @var array<array<string,mixed>>
+     */
     // public array $pages = [];
 
     public function language(

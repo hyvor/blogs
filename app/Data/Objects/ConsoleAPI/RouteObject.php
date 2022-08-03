@@ -7,11 +7,17 @@ use App\Models\Route;
 class RouteObject
 {
     public int $id;
+
     public string $name;
+
     public string $match;
+
     public string $template;
+
     public ?string $posts_filter;
+
     public ?string $content_type;
+
     public bool $is_enabled;
 
     public function __construct(Route $route)

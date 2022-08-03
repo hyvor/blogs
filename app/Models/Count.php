@@ -11,7 +11,6 @@ use Illuminate\Database\Eloquent\Model;
  * It uses polymorphic one-to-many relationships
  * (https://laravel.com/docs/8.x/eloquent-relationships#one-to-many-polymorphic-relations)
  */
-
 class Count extends Model
 {
     use HasFactory;

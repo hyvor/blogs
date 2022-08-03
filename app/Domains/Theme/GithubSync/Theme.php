@@ -37,13 +37,13 @@ class Theme
         $config = $this->findFile(null, 'config.yaml');
 
         if (! $config) {
-            throw new Exception('Unable to find config.yaml in ' . $this->name);
+            throw new Exception('Unable to find config.yaml in '.$this->name);
         }
 
         $config = Yaml::parse($config->content);
 
         if (! isset($config['THEME_VERSION'])) {
-            throw new Exception('Theme version not set in ' . $this->name);
+            throw new Exception('Theme version not set in '.$this->name);
         }
 
         return $config['THEME_VERSION'];

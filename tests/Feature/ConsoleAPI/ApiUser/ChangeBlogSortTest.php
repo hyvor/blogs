@@ -9,7 +9,6 @@ it('changes blog sorts', function () {
     $hyvorUserId = config('test.hyvor_user_id');
     $blogs = Blog::where('hyvor_user_id', $hyvorUserId)->orderBy('id', 'DESC')->get();
 
-
     // now the lowest blogID has the highest sort
     $changes = [];
     foreach ($blogs as $blog) {

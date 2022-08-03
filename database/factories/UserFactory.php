@@ -8,11 +8,10 @@ use Illuminate\Support\Str;
 
 class UserFactory extends Factory
 {
-
-
     public function definition(): array
     {
         $email = $this->faker->email();
+
         return [
 
             'blog_id' => Blog::factory(),
@@ -32,7 +31,7 @@ class UserFactory extends Factory
             'social_instagram' => $this->faker->url(),
             'social_github' => $this->faker->url(),
 
-            'posts_count' => 0
+            'posts_count' => 0,
 
         ];
     }

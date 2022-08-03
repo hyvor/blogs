@@ -10,7 +10,6 @@ use Illuminate\Events\Dispatcher;
 
 class CountSubscriber
 {
-
     public function subscribe(Dispatcher $events)
     {
         $events->listen(PostCreatedEvent::class, [static::class, 'onPostCreateOrDelete']);
@@ -31,10 +30,10 @@ class CountSubscriber
         }
     }
 
-    private function dispatch(Blog $blog) {
+    private function dispatch(Blog $blog)
+    {
         BlogCountsJob::dispatch($blog);
         AuthorCountsJob::dispatch($blog);
         TagCountsJob::dispatch($blog);
     }
-
 }

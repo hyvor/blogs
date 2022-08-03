@@ -8,6 +8,7 @@ use Illuminate\Console\Command;
 class DownloadThemes extends Command
 {
     protected $signature = 'download:themes';
+
     protected $description = 'Download themes';
 
     public function handle()

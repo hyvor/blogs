@@ -20,7 +20,7 @@ test('strike JSON to HTML', function () {
         ],
     ];
 
-    $result = PostContentRepository::getHtml($document,  blog());
+    $result = PostContentRepository::getHtml($document, blog());
 
     expect($result)->toEqual('<s>Example Text</s>');
 });

@@ -9,6 +9,7 @@ class CreateThemeFilesTable extends Migration
 {
     /**
      * Run the migrations.
+     *
      * @return void
      */
     public function up()
@@ -16,7 +17,7 @@ class CreateThemeFilesTable extends Migration
         Schema::create('theme_files', function (Blueprint $table) {
             $table->id();
             $table->timestamps();
-                
+
             // connection
             $table->bigInteger('blog_id');
 
@@ -31,7 +32,7 @@ class CreateThemeFilesTable extends Migration
 
         // https://stackoverflow.com/a/20099781/9059939
         // upto 16MB
-        DB::statement("ALTER TABLE theme_files ADD content MEDIUMBLOB NULL");
+        DB::statement('ALTER TABLE theme_files ADD content MEDIUMBLOB NULL');
     }
 
     /**

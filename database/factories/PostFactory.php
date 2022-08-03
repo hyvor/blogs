@@ -4,7 +4,6 @@ namespace Database\Factories;
 
 use App\Models\Blog;
 use Illuminate\Database\Eloquent\Factories\Factory;
-use Illuminate\Support\Arr;
 use Illuminate\Support\Str;
 
 class PostFactory extends Factory
@@ -16,7 +15,6 @@ class PostFactory extends Factory
      */
     public function definition()
     {
-
         return [
             'blog_id' => Blog::factory(),
 
@@ -24,7 +22,7 @@ class PostFactory extends Factory
             'is_featured' => false,
 
             'slug' => Str::slug($this->faker->text),
-            'published_at' => $this->faker->dateTime()
+            'published_at' => $this->faker->dateTime(),
         ];
     }
 }

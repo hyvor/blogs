@@ -2,7 +2,7 @@
 
 namespace App\Data\Enums;
 
-enum ColorModeDefaultEnum : string
+enum ColorModeDefaultEnum: string
 {
     case LIGHT = 'light';
     case DARK = 'dark';

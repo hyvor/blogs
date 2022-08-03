@@ -10,8 +10,7 @@ use App\Models\PostTag;
 use App\Models\PostVariant;
 use App\Models\Tag;
 
-it('counts tag posts for multiple tag', function() {
-
+it('counts tag posts for multiple tag', function () {
     $blog = newBlog();
     (new LanguageFiller($blog))->fill();
 
@@ -25,11 +24,11 @@ it('counts tag posts for multiple tag', function() {
         ->count(2)
         ->has(PostVariant::factory()->state([
             'language_id' => $blog->languages[0]->id,
-            'status' => 'draft'
+            'status' => 'draft',
         ]), 'variants')
         ->create([
             'blog_id' => $blog,
-            'is_featured' => true
+            'is_featured' => true,
         ]);
 
     // other languages (shouldn't be counted)
@@ -37,10 +36,10 @@ it('counts tag posts for multiple tag', function() {
         ->count(2)
         ->has(PostVariant::factory()->state([
             'language_id' => $blog->languages[1]->id,
-            'status' => 'published'
+            'status' => 'published',
         ]), 'variants')
         ->create([
-            'blog_id' => $blog
+            'blog_id' => $blog,
         ]);
 
     // published (COUNTED)
@@ -48,17 +47,17 @@ it('counts tag posts for multiple tag', function() {
         ->count(2)
         ->has(PostVariant::factory()->state([
             'language_id' => $blog->languages[0]->id,
-            'status' => 'published'
+            'status' => 'published',
         ]), 'variants')
         ->create([
-            'blog_id' => $blog
+            'blog_id' => $blog,
         ]);
 
     foreach ([$drafts, $otherLang, $published] as $posts) {
         foreach ($posts as $post) {
             PostTag::create([
                 'post_id' => $post->id,
-                'tag_id' => $tag->id
+                'tag_id' => $tag->id,
             ]);
         }
     }
@@ -68,16 +67,16 @@ it('counts tag posts for multiple tag', function() {
         ->count(3)
         ->has(PostVariant::factory()->state([
             'language_id' => $blog->languages[0]->id,
-            'status' => 'published'
+            'status' => 'published',
         ]), 'variants')
         ->create([
-            'blog_id' => $blog
+            'blog_id' => $blog,
         ]);
 
     foreach ($tag1Posts as $post) {
         PostTag::create([
             'post_id' => $post->id,
-            'tag_id' => $tag1->id
+            'tag_id' => $tag1->id,
         ]);
     }
 
@@ -89,5 +88,4 @@ it('counts tag posts for multiple tag', function() {
 
     $tag1->refresh();
     expect($tag1->posts_count)->toBe(3);
-
 });

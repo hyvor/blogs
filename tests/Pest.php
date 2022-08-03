@@ -23,7 +23,6 @@ uses()->beforeEach(function () {
     Userbase::$FAKE = null;
 })->in('Feature', 'Unit');
 
-
 function blog()
 {
     return Blog::find(config('test.blog_id'));
@@ -72,7 +71,7 @@ function seedPublishedPosts(int $count, Blog $blog = null, $isPage = false)
             'variants'
         )->create([
             'blog_id' => $blog,
-            'is_page' => $isPage
+            'is_page' => $isPage,
         ]);
 }
 
@@ -82,7 +81,6 @@ function clearPosts(Blog $blog = null)
 
     Post::where('blog_id', $blog->id)->delete();
 }
-
 
 function hyvorUser($fill = [])
 {
@@ -94,18 +92,21 @@ function faker()
     return Factory::create();
 }
 
-
 function test_unit_data_path($path = '')
 {
-    return base_path('tests/Unit/__DATA__/' . $path);
+    return base_path('tests/Unit/__DATA__/'.$path);
 }
-function jsonData(string $filename) {
+function jsonData(string $filename)
+{
     $filename = trim($filename, '/');
-    return json_decode(file_get_contents(base_path('tests/Unit/__DATA__/' . $filename)), true);
+
+    return json_decode(file_get_contents(base_path('tests/Unit/__DATA__/'.$filename)), true);
 }
 
 // https://www.youtube.com/watch?v=l3kioTuYt98
-function createRequest($method, $uri) {
+function createRequest($method, $uri)
+{
     $symfonyRequest = SymfonyRequest::create($uri, $method);
+
     return Request::createFromBase($symfonyRequest);
 }

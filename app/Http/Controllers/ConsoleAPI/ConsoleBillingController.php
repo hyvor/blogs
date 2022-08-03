@@ -17,8 +17,7 @@ use Illuminate\Validation\Rules\Enum;
 
 class ConsoleBillingController extends Controller
 {
-
-    public function getData(Blog $blog) : JsonResponse
+    public function getData(Blog $blog): JsonResponse
     {
         $receipts = SubscriptionService::getReceipts($blog)->mapInto(ReceiptObject::class);
         $subscriptions = SubscriptionService::getAllSubscriptions($blog)->mapInto(SubscriptionObject::class);
@@ -33,11 +32,11 @@ class ConsoleBillingController extends Controller
         ]);
     }
 
-    public function createSubscription(Request $request, Blog $blog) : JsonResponse
+    public function createSubscription(Request $request, Blog $blog): JsonResponse
     {
         $request->validate([
             'plan' => ['required', 'string', new Enum(SubscriptionPlanEnum::class)],
-            'frequency' => ['required', 'string', new Enum(SubscriptionFrequencyEnum::class)]
+            'frequency' => ['required', 'string', new Enum(SubscriptionFrequencyEnum::class)],
         ]);
 
         $payLink = SubscriptionService::createPayLink(
@@ -51,7 +50,7 @@ class ConsoleBillingController extends Controller
         ]);
     }
 
-    public function updateSubscription(Request $request, Blog $blog) : JsonResponse
+    public function updateSubscription(Request $request, Blog $blog): JsonResponse
     {
         $request->validate([
             'plan' => ['required', 'string', new Enum(SubscriptionPlanEnum::class)],
@@ -67,7 +66,7 @@ class ConsoleBillingController extends Controller
         return response()->json();
     }
 
-    public function cancelSubscription(Request $request, Blog $blog) : JsonResponse
+    public function cancelSubscription(Request $request, Blog $blog): JsonResponse
     {
         $forced = (bool) $request->input('forced');
 

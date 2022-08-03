@@ -23,14 +23,11 @@ class SubscriptionService
      */
     public const SUBSCRIPTION_NAME = 'default';
 
-
     public static function createPayLink(
         Blog $blog,
         SubscriptionPlanEnum $planName,
         SubscriptionFrequencyEnum $frequency
-    ): string
-    {
-
+    ): string {
         if ($blog->subscribed()) {
             throw new TrustedException('This blog already has a subscription');
         }
@@ -41,7 +38,6 @@ class SubscriptionService
         return $blog
             ->newSubscription(self::SUBSCRIPTION_NAME, $planId)
             ->create();
-
     }
 
     public static function updateSubscription(
@@ -49,7 +45,6 @@ class SubscriptionService
         SubscriptionPlanEnum $planName,
         SubscriptionFrequencyEnum $frequency
     ) {
-
         $planConfig = self::getPlanConfigFromPlanNameAndFrequency($planName, $frequency);
         $planId = $planConfig->id;
 
@@ -68,13 +63,13 @@ class SubscriptionService
 
     public static function cancelSubscription(Blog $blog, bool $forced = false)
     {
-
         $subscription = $blog->subscription();
 
-        if (!$subscription)
+        if (! $subscription) {
             return;
+        }
 
-        if (!$subscription->cancelled()) {
+        if (! $subscription->cancelled()) {
             $subscription->cancel();
         }
 
@@ -129,7 +124,6 @@ class SubscriptionService
 
         throw new TrustedException('Plan not found');
     }
-
 
     public static function getReceipts(Blog $blog): Collection
     {

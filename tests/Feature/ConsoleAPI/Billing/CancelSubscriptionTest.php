@@ -7,8 +7,7 @@ use Illuminate\Http\Client\Request;
 use Illuminate\Support\Facades\Http;
 use Laravel\Paddle\Cashier;
 
-it('cancels subscription', function() {
-
+it('cancels subscription', function () {
     Cashier::fake()
         ->response('subscription/users_cancel', [])
         // required to get next payment date
@@ -19,7 +18,7 @@ it('cancels subscription', function() {
                     'currency' => 'USD',
                     'date' => now()->addDays(7)->toDateString(),
                 ],
-            ]
+            ],
         ]);
 
     $blog = blog();
@@ -27,7 +26,7 @@ it('cancels subscription', function() {
     $subscription = (SubscriptionFactory::new())->create([
         'billable_id' => $blog->id,
         'paddle_plan' => config('blogs.paddle_plans')[0]->id,
-        'paddle_status' => 'active'
+        'paddle_status' => 'active',
     ]);
 
     $this->callConsoleApi('DELETE', '/billing/subscription')->assertOk();
@@ -38,26 +37,23 @@ it('cancels subscription', function() {
     });
 
     expect($blog->subscription()->ends_at->greaterThan(now()))->toBeTrue();
-
 });
 
-it('cancels subscription forced', function() {
-
+it('cancels subscription forced', function () {
     $blog = blog();
 
     (SubscriptionFactory::new())->create([
         'billable_id' => $blog->id,
         'paddle_plan' => config('blogs.paddle_plans')[0]->id,
         'paddle_status' => 'cancelled',
-        'ends_at' => now()->addDays(7)
+        'ends_at' => now()->addDays(7),
     ]);
 
     $this->callConsoleApi('DELETE', '/billing/subscription', [
-        'forced' => true
+        'forced' => true,
     ])->assertOk();
 
     Http::assertNothingSent();
 
     expect($blog->subscription()->ends_at->lessThanOrEqualTo(now()))->toBeTrue();
-
 });

@@ -27,12 +27,11 @@ use Twig\TwigFunction;
  * And one function
  *  data - to call the Data API
  */
-
-
 class TwigExtensions extends AbstractExtension
 {
     // to prevent duplicate queries
     public $blog;
+
     public $twigLanguageHandler;
 
     public function getFilters()
@@ -53,7 +52,6 @@ class TwigExtensions extends AbstractExtension
             ]),
         ];
     }
-
 
     public function getFunctions()
     {
@@ -81,7 +79,7 @@ class TwigExtensions extends AbstractExtension
          * So, we simple use the BlogObject
          */
 
-        return $context['_blog']['base_url'] . '/assets/' . $assetName;
+        return $context['_blog']['base_url'].'/assets/'.$assetName;
     }
 
     public function assetFilter($context, $assetName)
@@ -89,7 +87,7 @@ class TwigExtensions extends AbstractExtension
         $blog = $this->getBlogFromContext($context);
         $file = ThemeFilesRepository::getFile($blog, $assetName, ThemeFileFolderEnum::ASSETS);
 
-        return $file?->content ?? "";
+        return $file?->content ?? '';
     }
 
     public function langFilter($context, $key, array $args = [])
@@ -139,7 +137,7 @@ class TwigExtensions extends AbstractExtension
 
         $url = rtrim($url, '/');
         if ($pageNumber > 1) {
-            $url .= '/page/' . $pageNumber;
+            $url .= '/page/'.$pageNumber;
         }
 
         return $url;
@@ -178,7 +176,6 @@ class TwigExtensions extends AbstractExtension
             return ''; // language not found?
         }
 
-
         $blog = $this->getBlogFromContext($context);
 
         return PermalinkRepository::getBlogPermalink(
@@ -186,7 +183,6 @@ class TwigExtensions extends AbstractExtension
             LanguageRepository::getLanguageByCode($blog, $language['code'])
         );
     }
-
 
     public function dataFunction($context, array $params = [])
     {
@@ -204,7 +200,7 @@ class TwigExtensions extends AbstractExtension
             $response = InternalAPICaller::data($blog->subdomain, $endpoint, $params);
         } catch (TrustedException $e) {
             // throw twig error
-            throw new Error("Error when calling the Data API  /$endpoint endpoint: " . $e->getMessage());
+            throw new Error("Error when calling the Data API  /$endpoint endpoint: ".$e->getMessage());
         }
 
         return $response;

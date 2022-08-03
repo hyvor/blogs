@@ -8,7 +8,9 @@ use App\Models\Theme;
 class ThemeObject
 {
     public int $id;
+
     public ThemeCreationTypeEnum $type;
+
     public string $name;
 
     public function __construct(Theme $theme)

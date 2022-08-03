@@ -29,7 +29,7 @@ class Kernel extends HttpKernel
      * @var array
      */
     protected $middlewareGroups = [
-        'web' => []
+        'web' => [],
     ];
 
     /**

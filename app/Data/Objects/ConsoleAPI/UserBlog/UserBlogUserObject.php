@@ -8,7 +8,9 @@ use App\Models\User;
 class UserBlogUserObject
 {
     public int $id;
+
     public UserRoleEnum $role;
+
     public int $posts_count;
 
     public function __construct(User $user)

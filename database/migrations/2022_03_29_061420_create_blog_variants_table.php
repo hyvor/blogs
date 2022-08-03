@@ -17,16 +17,15 @@ return new class extends Migration
             $table->id();
             // $table->timestamps();
 
-             // connections
-             $table->bigInteger('blog_id')->index(); 
-             $table->bigInteger('language_id')->index(); 
- 
-             // data
-             $table->string('name', config('limits.max_blog_name_length'))->nullable();
-             $table->string('description', config('limits.max_blog_description_length'))->nullable();
+            // connections
+            $table->bigInteger('blog_id')->index();
+            $table->bigInteger('language_id')->index();
 
-             $table->unique(['blog_id', 'language_id']);
- 
+            // data
+            $table->string('name', config('limits.max_blog_name_length'))->nullable();
+            $table->string('description', config('limits.max_blog_description_length'))->nullable();
+
+            $table->unique(['blog_id', 'language_id']);
         });
     }
 

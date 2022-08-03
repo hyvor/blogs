@@ -16,5 +16,5 @@ test('json to HTML', function () {
 
     $html = PostContentRepository::getHtml($json, blog());
 
-    expect($html)->toBe("<figure></figure>");
+    expect($html)->toBe('<figure></figure>');
 });

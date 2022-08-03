@@ -20,7 +20,7 @@ abstract class UniqueSlugGeneratorAbstract
      * It checks if the slug versions of the given strings are
      * unique, otherwise, returns a random string
      *
-     * @param string[] $checks
+     * @param  string[]  $checks
      * @return string
      */
     public function generateSlug(array $checks)
@@ -37,8 +37,8 @@ abstract class UniqueSlugGeneratorAbstract
     }
 
     /**
-     * @param Blog $blog
-     * @param string[] $checks
+     * @param  Blog  $blog
+     * @param  string[]  $checks
      */
     public static function generate(Blog $blog, array $checks)
     {

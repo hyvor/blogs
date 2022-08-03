@@ -2,7 +2,6 @@
 
 namespace App\Domains\Delivery\Processors;
 
-use App\Data\Objects\DeliveryAPI\DeliveryAPIResponseObject;
 use App\Domains\Delivery\PathMatcher;
 use App\Domains\Delivery\PostPreviewSecretEncryptor;
 use App\Domains\Delivery\RouteMatcher\MatchedRoute;
@@ -12,7 +11,6 @@ use App\Domains\Post\PostRepository;
 
 class PreviewProcessor extends RouteProcessorAbstract
 {
-
     public function __construct(PathMatcher $pathMatcher, MatchedRoute $matchedRoute)
     {
         $id = PostPreviewSecretEncryptor::decryptPreviewSecret($matchedRoute->param('id'));
@@ -50,5 +48,4 @@ class PreviewProcessor extends RouteProcessorAbstract
 
         $this->setResponseObject($templateRenderer->getResponseObject());
     }
-
 }

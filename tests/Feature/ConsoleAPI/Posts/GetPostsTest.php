@@ -48,7 +48,7 @@ it('filters by post status - published', function () {
         ->callConsoleApi('GET', $this->endpoint, ['status' => 'published'])
         ->assertJson(function (AssertableJson $json) {
             $json->each(function (AssertableJson $json) {
-                $json->where("variants.0.status", 'published')
+                $json->where('variants.0.status', 'published')
                     ->etc();
             });
         });
@@ -62,12 +62,10 @@ it('filters by featured', function () {
     $this
         ->callConsoleApi('GET', $this->endpoint, ['status' => 'featured'])
         ->assertJson(
-            fn (AssertableJson $json) =>
-            $json
+            fn (AssertableJson $json) => $json
                 ->has(1)
                 ->first(
-                    fn (AssertableJson $json) =>
-                    $json
+                    fn (AssertableJson $json) => $json
                         ->where('id', $this->post->id)
                         ->etc()
                 )
@@ -87,12 +85,10 @@ it('filters by author ID', function () {
     $this
         ->callConsoleApi('GET', $this->endpoint, ['author_id' => $this->user->id])
         ->assertJson(
-            fn (AssertableJson $json) =>
-            $json
+            fn (AssertableJson $json) => $json
                 ->has(1)
                 ->first(
-                    fn (AssertableJson $json) =>
-                    $json
+                    fn (AssertableJson $json) => $json
                         ->where('authors.0.id', $this->user->id)
                         ->etc()
                 )
@@ -113,12 +109,10 @@ it('filters by tag ID', function () {
     $this
         ->callConsoleApi('GET', $this->endpoint, ['tag_id' => $this->tag->id])
         ->assertJson(
-            fn (AssertableJson $json) =>
-        $json
+            fn (AssertableJson $json) => $json
             ->has(1)
             ->first(
-                fn (AssertableJson $json) =>
-            $json
+                fn (AssertableJson $json) => $json
                 ->where('tags.0.id', $this->tag->id)
                 ->etc()
             )
@@ -142,12 +136,10 @@ it('filters by timestamps', function () {
             'end_timestamp' => $timestamp + 1,
         ])
         ->assertJson(
-            fn (AssertableJson $json) =>
-            $json
+            fn (AssertableJson $json) => $json
                 ->has(1)
                 ->first(
-                    fn (AssertableJson $json) =>
-                    $json
+                    fn (AssertableJson $json) => $json
                         ->where('id', $this->post->id)
                         ->etc()
                 )

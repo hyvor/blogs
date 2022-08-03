@@ -18,6 +18,7 @@ use Symfony\Component\Routing\RouteCollection;
 class RouteMatcher
 {
     public RouteCollection $collection;
+
     public string $path;
 
     public $routeModels = []; // name=>route
