@@ -17,8 +17,6 @@ Homestead.json
 Homestead.yaml
 npm-debug.log
 yarn-error.log
-package-lock.json
-composer.lock
 /.idea
 /.vscode
 *LogicType.ts
