@@ -1,6 +1,6 @@
 import {actions, events, kea, key, listeners, path, props, reducers, selectors} from "kea";
 import api, {getMiscEndpoint} from "../lib/api";
-import {themeLogicType} from "./themeLogicType";
+import type { themeLogicType } from "./themeLogicType";
 import {ajax} from "kea-ajax";
 import {Theme, ThemeFile, ThemeFolder} from "../types";
 import axios from "axios";

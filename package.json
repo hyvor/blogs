@@ -30,6 +30,7 @@
         "vite": "^2.9.14"
     },
     "dependencies": {
+        "@babel/preset-env": "^7.18.10",
         "@joeattardi/emoji-button": "^4.6.4",
         "@reduxjs/toolkit": "^1.8.1",
         "codemirror": "^5.65.7",

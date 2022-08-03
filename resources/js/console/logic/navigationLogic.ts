@@ -1,6 +1,6 @@
 import {actions, events, kea, key, path, props, reducers, selectors} from "kea";
 import api from "../lib/api";
-import {navigationLogicType} from "./navigationLogicType";
+import type { navigationLogicType } from "./navigationLogicType";
 import {ajax} from "kea-ajax";
 import {Navigation, NavigationType, NavigationVariant} from "../types";
 import merge from "deepmerge";

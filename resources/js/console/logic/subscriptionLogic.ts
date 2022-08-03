@@ -1,6 +1,6 @@
 import {actions, events, kea, key, path, props, reducers} from "kea";
 import api from "../lib/api";
-import {subscriptionLogicType} from "./subscriptionLogicType";
+import type { subscriptionLogicType } from "./subscriptionLogicType";
 import {ajax} from "kea-ajax";
 import {Receipt, Subscription, SubscriptionFrequency, SubscriptionInfo, SubscriptionPlan, Usage} from "../types";
 
