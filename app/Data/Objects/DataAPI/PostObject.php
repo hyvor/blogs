@@ -33,7 +33,7 @@ class PostObject
     public string $url;
     public string $content;
     public int $words;
-    public string $title;
+    public ?string $title;
     public ?string $description;
     public ?string $featured_image_url;
     public ?string $canonical_url;
