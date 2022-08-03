@@ -58,7 +58,7 @@ class ResourceAccessMiddleware
 
             // ex: api/console/v0/blog/test/post/1
             $path = $request->path();
-            preg_match('~api/console/v0/blog/[^/]+(/[a-z/]+)/\d+~', $path, $matches);
+            preg_match('~api/console/v0/blog/[^/]+(/[a-z/-]+)/\d+~', $path, $matches);
 
             // ex: /post
             $routePrefix = $matches[1];

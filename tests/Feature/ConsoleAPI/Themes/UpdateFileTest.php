@@ -14,7 +14,7 @@ it('updates name', function () {
         'none'
     );
 
-    $this->callConsoleApi('PUT', "/theme/file/$file->id", [
+    $this->callConsoleApi('PATCH', "/theme/file/$file->id", [
         'name' => 'new.twig',
     ])
         ->assertOk()
@@ -29,7 +29,7 @@ it('updates content', function () {
         'none'
     );
 
-    $this->callConsoleApi('PUT', "/theme/file/$file->id", [
+    $this->callConsoleApi('PATCH', "/theme/file/$file->id", [
         'content' => 'new',
     ])
         ->assertOk()
@@ -44,7 +44,7 @@ it('updates content to empty', function () {
         'none'
     );
 
-    $this->callConsoleApi('PUT', "/theme/file/$file->id", [
+    $this->callConsoleApi('PATCH', "/theme/file/$file->id", [
         'content' => '',
     ])
         ->assertOk()
