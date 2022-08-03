@@ -135,7 +135,7 @@ class UserRepository
         UserRoleEnum $role,
         UserStatusEnum $status = UserStatusEnum::INVITED,
     ): User {
-        $hyvorUser = Userbase::fromId($hyvorUserId);
+        $hyvorUser = Userbase::fromId($hyvorUserId, true);
 
         if (! $hyvorUser) {
             throw new Exception('User not found');
