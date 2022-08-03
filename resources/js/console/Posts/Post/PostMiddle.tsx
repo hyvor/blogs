@@ -16,8 +16,10 @@ export default function PostMiddle({id} : {id: number}) {
         updateCurrentPostVariantValue(key, value)
     }
 
+    const isEditable = currentVariant.status === 'draft' || editorState.isNonDraftEditing;
+
     return <div
-        className="post-editor-wrap"
+        className={"post-editor-wrap" + (isEditable ? "" : " non-editable") }
         spellCheck={false}
     >
         <Editor
@@ -25,7 +27,6 @@ export default function PostMiddle({id} : {id: number}) {
             value={content || ''}
             currentLanguageId={editorState.languageId}
             onChange={(v: string) => handleContentUpdate(v)}
-            // editable={currentVariant.status === 'draft' || editorState.isNonDraftEditing}
         />
     </div>
 

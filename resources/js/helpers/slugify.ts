@@ -1,4 +1,4 @@
-export default function slugify (str) {
+export default function slugify (str: string) : string {
     str = str.replace(/^\s+|\s+$/g, ''); // trim
     str = str.toLowerCase();
   

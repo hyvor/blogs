@@ -18,7 +18,7 @@ export function useAutoSave(id: number) {
     const { savePost } = usePostActions(id)
 
     function handleAutoSave() {
-        if (!editorState.isUnpublishing && !editorState.isPublishing && !editorState.isNonDraftEditing) {
+        if (!editorState.isUnpublishing && !editorState.isPublishing && !editorState.isNonDraftUpdating) {
             savePost();
         }
     }

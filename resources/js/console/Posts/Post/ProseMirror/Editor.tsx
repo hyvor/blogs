@@ -116,7 +116,7 @@ export default function Editor({ id, currentLanguageId, value, onChange }: Edito
         return () => view.destroy();
     }, [id, currentLanguageId])
 
-    return <div ref={editorRef} />
+    return <div className="prosemirror-editor-wrap" ref={editorRef} />
 
 }
 

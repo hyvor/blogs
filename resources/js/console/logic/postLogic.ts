@@ -51,7 +51,7 @@ const postLogic = kea<postLogicType>([
         set: (obj: Post) => ({obj}),
         setOriginal: (obj: Post) => ({obj}),
         updatePostValue: (key: keyof Post, value: any) => ({key, value}),
-        updateCurrentPostVariantValue: (key: string, value: any) => ({
+        updateCurrentPostVariantValue: (key: keyof PostVariant, value: any) => ({
             key,
             value,
             languageId: values.editorState.languageId
@@ -133,7 +133,7 @@ const postLogic = kea<postLogicType>([
 
     listeners(({actions, values}) => ({
 
-        updatePostValue: ({key, value}) => {
+        updateCurrentPostVariantValue: ({key, languageId, value}) => {
 
             // auto update slug when updating title 
             // if the original value is null
@@ -141,7 +141,7 @@ const postLogic = kea<postLogicType>([
                 actions.updatePostValue("slug", slugify(value))
             }
 
-        }
+        },
 
     })),
 

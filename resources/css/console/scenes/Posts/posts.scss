@@ -261,6 +261,11 @@
         .post-editor-wrap {
             flex:1;
             overflow:auto;
+            &.non-editable {
+                .prosemirror-editor-wrap {
+                    pointer-events: none;
+                }
+            }
         }
         .post-editor-bottom {
             //background: $color-card;
