@@ -5,7 +5,8 @@
 	<div class="row content">
 		<div class="pack">
 			<div class="title">Hyvor Blogs</div>
-			<div class="item"><a href="/console" data-no-instant title="Hyvor Blogs Console">Console</a></div>
+			<div class="item"><a href="/console" data-flashload-skip-link title="Hyvor Blogs Console">Console</a></div>
+			<div class="item"><a href="/themes" title="Hyvor Blogs Themes">Themes</a></div>
 			<div class="item"><a href="/pricing" title="Hyvor Blogs Pricing and Plans">Pricing</a></div>
 			<div class="item"><a href="/docs" title="Hyvor Blogs Documentation">Docs</a></div>
 		</div>

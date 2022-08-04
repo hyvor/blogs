@@ -19,7 +19,7 @@ return [
 
     'paddle_plans' => [
 
-        new PaddlePlan(
+        /*new PaddlePlan(
             env('APP_ENV') !== 'production' ? 32097 : 0,
             SubscriptionPlanEnum::A,
             SubscriptionFrequencyEnum::MONTHLY,
@@ -87,7 +87,7 @@ return [
             SubscriptionPlanEnum::E,
             SubscriptionFrequencyEnum::YEARLY,
             12990,
-        ),
+        ),*/
     ],
 
 ];
