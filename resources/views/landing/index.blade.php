@@ -930,65 +930,11 @@ c30.27,0,54.64-24.37,54.64-54.64v-1419l-363.61-362.75L1258.7,336.75z"/>
 
 </section>
 
-<section class="faq container">
-
-    <h3>FAQ</h3>
-
-    <div class="details-table-wrap">
-
-        <div class="faq">
-            <h5>Should I choose Hyvor Blogs?</h5>
-            </div>
-            <p>
-                Our targetted audiences are personal bloggers and business blogs. If you like to create a blog that you own and that you can customize as you want, Hyvor Blogs would be a good solution.
-            </p>
-        </div>
-
-        <div class="faq">
-            <h5>Will there be a subscriber/member login feature?</h5>
-            </div>
-            <p>
-                One our main goals is to make the blog fast by making it "static". Login is a dynamic feature. We will not support any dynamic features except search. So, the answer is no. However, you can use platforms like Memberful, Memberstack or Memberspace to set up login and protected content pages for your blog. We may create direct integrations with one of these platforms in the future, but there will not be a native subscriber/member login feature.
-            </p>
-        </div>
-
-        <div class="faq">
-            <h5>Can I see usage/analytics of my blog (ex: Total Visitors)?</h5>
-            </div>
-            <p>
-                Not natively. Because of how Hyvor Blogs works, most requests never even reach our servers - only our global CDN.  And, we do not place any tracking code on your blog. Therefore, we do not have a way to track pageviews internally. However, you can easily integrate a third-party analytics system to track usage.
-            </p>
-        </div>
-
-        <div class="faq">
-            <h5>Is there a trial?</h5>
-            </div>
-            <p>
-                Yes, we provide a 30-days trial all features included. See our <a href="/pricing" class="link">Pricing</a> page for more details. You can also test Hyvor Blogs without signing up.
-            </p>
-        </div>
-        
-    </div>
-
-</section>
-
-
-<section id="spam" class="container">
-
-    <div>
-        <h3>Spam Policy</h3>
-
-        <p>
-            We do not allow blogs that are used for spamming or black hat SEO techniques. We do not also allow hosting machine-content generated. We have the right to ban such blogs. See <a target="_blank" class="link" rel="nofollow" href="/docs/terms">Terms</a> for more details.
-        </p>
-
-        <p>
-            Other than that, we allow pretty much everything. It is your duty to make sure you follow copyright and other laws.
-        </p>
-
-    </div>
-
-</section>
+<div class="button-main">
+    <a data-flashload-skip-link href="/console?signup=1" class="button big">
+        Start a Blog
+    </a>
+</div>
 
 @include('landing.footer')
 

@@ -147,23 +147,10 @@ body.index {
         }
     }
 
-    #spam {
-        > div {
-            margin: 60px auto;
-            padding: 30px;
-            background: #ffdede;
-            border-radius: 20px;
-            box-shadow: 0 0 30px rgb(0 0 0 / 10%);
-            width:500px;
-            max-width:100%;
-        }
-        h3 {
-            text-align: center;
-            margin-top: 0;
-            margin-bottom:20px;
-        }
-        p {
-            margin:20px;
-        }
+    .button-main {
+        text-align: center;
+        margin-top:40px;
+        padding-bottom: 40px;
     }
+
 }
