@@ -1,8 +1,6 @@
 import {actions, events, kea, key, listeners, path, props, reducers, selectors} from "kea";
-import slugify from "../../helpers/slugify";
 import api from "../lib/api";
 import postsLogic from "./postsLogic";
-import merge from 'deepmerge'
 import type { postLogicType } from "./postLogicType";
 import {Language, Post, PostVariant} from "../types";
 import {ajax} from "kea-ajax";
@@ -10,6 +8,7 @@ import getSubdomain from "../logic-helpers/subdomain";
 import {diff} from "deep-object-diff";
 import languagesLogic from "./languagesLogic";
 import {PostEditorState} from "../states";
+import merge from "deepmerge";
 
 async function updatePost(post: Post, diff: Partial<Post>) {
 
@@ -88,7 +87,6 @@ const postLogic = kea<postLogicType>([
             }
 
             const response = await updatePost(values.post, diff);
-            // const response = await api.patch(getSubdomain(), `/post/${props.id}`, diff)
             actions.setOriginal(response);
         },
 
@@ -97,7 +95,7 @@ const postLogic = kea<postLogicType>([
          */
         forceSavePost: async ({onSave, update} : { update: Partial<Post>, onSave: (post: Post) => void}) => {
 
-            const diff = {...values.diff, ...update};
+            const diff = mergePostWithUpdate(values.diff, update)
 
             const response = await updatePost(values.post, diff);
             actions.set(response)
@@ -137,9 +135,10 @@ const postLogic = kea<postLogicType>([
 
             // auto update slug when updating title 
             // if the original value is null
-            if (key === 'title' && values.postOriginal.slug === null) {
+            // commented to let the user select the slug
+            /*if (key === 'title' && values.postOriginal.slug === null) {
                 actions.updatePostValue("slug", slugify(value))
-            }
+            }*/
 
         },
 
@@ -280,5 +279,39 @@ const postLogic = kea<postLogicType>([
     }))
 
 ])
+
+/**
+ * Merges diff with update (for forced save) in a variant-safe manner
+ * (deepmerge does not work with the variants array)
+ */
+function mergePostWithUpdate(diff: Partial<Post>, update: Partial<Post>) : Partial<Post> {
+
+    let diffCopy = {...diff};
+    let updateCopy = {...update}
+
+    if (updateCopy.variants) {
+        diffCopy.variants = diffCopy.variants || [];
+        for (let variant of updateCopy.variants) {
+
+            if (!diffCopy.variants.find(diffV => diffV.language_id === variant.language_id)) {
+                diffCopy.variants.push(variant);
+            } else {
+
+                diffCopy.variants = diffCopy.variants.map(
+                    v => v.language_id === variant.language_id ?
+                        merge(v, variant) :
+                        v
+                );
+
+            }
+
+        }
+        delete updateCopy.variants
+    }
+
+    diffCopy = merge(diffCopy, updateCopy);
+
+    return diffCopy;
+}
 
 export default postLogic;

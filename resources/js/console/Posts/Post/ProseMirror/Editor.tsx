@@ -61,10 +61,11 @@ interface EditorProps {
     id: number,
     value: string,
     currentLanguageId: number,
+    status: string,
     onChange: (val: string) => void,
 }
 
-export default function Editor({ id, currentLanguageId, value, onChange }: EditorProps) {
+export default function Editor({ id, currentLanguageId, status, value, onChange }: EditorProps) {
 
     const editorRef = useRef<null | HTMLDivElement>(null)
     const mounted = useRef(false)
@@ -114,7 +115,7 @@ export default function Editor({ id, currentLanguageId, value, onChange }: Edito
     useEffect(() => {
         const view = createEditor()
         return () => view.destroy();
-    }, [id, currentLanguageId])
+    }, [id, currentLanguageId, status])
 
     return <div className="prosemirror-editor-wrap" ref={editorRef} />
 

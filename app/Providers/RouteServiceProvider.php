@@ -29,6 +29,7 @@ class RouteServiceProvider extends ServiceProvider
          * Make all {id} params to be integer
          */
         Route::pattern('id', '[0-9]+');
+        Route::pattern('domain', '[a-z0-9-]+');
     }
 
     /**

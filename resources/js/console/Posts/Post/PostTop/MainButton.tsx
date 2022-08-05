@@ -17,9 +17,12 @@ export default  function MainButton({id} : {id: number}) {
         const update = {} as Partial<Post>
         const variant = {
             language_id: editorState.languageId as number,
-            content: currentVariant.content_unsaved
+            content: currentVariant.content_unsaved,
+            content_unsaved: null
         } as Partial<PostVariant>;
         update.variants = [variant as PostVariant];
+
+        console.log(update)
 
         forceSavePost({
             update,
