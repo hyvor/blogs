@@ -1,0 +1,67 @@
+{
+    "url": "https://github.coms",
+    "meta": {
+        "description": "GitHub is where over 83 million developers shape the future of software, together. Contribute to the open source community, manage your Git repositories, review code like a pro, track bugs and feat...",
+        "title": "GitHub: Where the world builds software",
+        "theme-color": "#1e2327",
+        "canonical": "https://github.com/",
+        "site": "GitHub"
+    },
+    "links": {
+        "thumbnail": [
+            {
+                "href": "https://github.githubassets.com/images/modules/site/social-cards/github-social.png",
+                "type": "image/png",
+                "rel": [
+                    "twitter",
+                    "thumbnail",
+                    "ssl",
+                    "og"
+                ],
+                "media": {
+                    "width": 1200,
+                    "height": 630
+                },
+                "content_length": 489651
+            }
+        ],
+        "icon": [
+            {
+                "href": "https://github.com/fluidicon.png",
+                "rel": [
+                    "fluid-icon",
+                    "icon",
+                    "ssl"
+                ],
+                "type": "image/png"
+            },
+            {
+                "href": "https://github.githubassets.com/pinned-octocat.svg",
+                "rel": [
+                    "mask-icon",
+                    "icon",
+                    "ssl"
+                ],
+                "type": "image/svg"
+            },
+            {
+                "href": "https://github.githubassets.com/favicons/favicon.png",
+                "rel": [
+                    "alternate",
+                    "icon",
+                    "ssl"
+                ],
+                "type": "image/png"
+            },
+            {
+                "href": "https://github.githubassets.com/favicons/favicon.svg",
+                "rel": [
+                    "icon",
+                    "ssl"
+                ],
+                "type": "image/svg+xml"
+            }
+        ]
+    },
+    "rel": []
+}
