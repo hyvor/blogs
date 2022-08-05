@@ -993,7 +993,6 @@ c30.27,0,54.64-24.37,54.64-54.64v-1419l-363.61-362.75L1258.7,336.75z"/>
 @include('landing.footer')
 
 {{-- SVG ANIMATION --}}
-<script src="/js-static/gsap.min.js" onload="setUpGsap()"></script>
 <script>
     function setUpGsap() {
         gsap.set(".main_animation_container svg", {opacity: 1})
@@ -1125,6 +1124,7 @@ c30.27,0,54.64-24.37,54.64-54.64v-1419l-363.61-362.75L1258.7,336.75z"/>
     }
 
 </script>
+<script async src="/js-static/gsap.min.js" onload="setUpGsap()"></script>
 
 </body>
 </html>
