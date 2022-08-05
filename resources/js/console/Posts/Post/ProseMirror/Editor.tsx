@@ -13,6 +13,7 @@ import Bookmark from './nodeview-bookmark';
 import CustomHtml from "./nodeview-custom-html";
 import EmbedView from "./nodeview-embed";
 import {EditorView, NodeViewConstructor} from "prosemirror-view";
+import useUpdateEffect from "../../../../helpers/hooks/useUpdateEffect";
 
 function getState(val: string) {
     val = val ? JSON.parse(val) : null
@@ -112,7 +113,7 @@ export default function Editor({ id, currentLanguageId, status, value, onChange 
     /**
      * Re-create the editor when the post ID or current language ID changes
      */
-    useEffect(() => {
+    useUpdateEffect(() => {
         const view = createEditor()
         return () => view.destroy();
     }, [id, currentLanguageId, status])

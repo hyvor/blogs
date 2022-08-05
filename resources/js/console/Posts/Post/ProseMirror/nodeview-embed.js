@@ -26,13 +26,8 @@ export default class EmbedView {
             
             api.get(subdomainLogic.values.subdomain, '/url-data', {url, type: 'embed'})
                 .then(response => {
-                    if (response.result === 'ok') {
-                        this.dom.classList.remove("loading");
-                        setInnerHTMLWithScripts(this.dom, response.html);
-                    } else {
-                        toast.error("Unable to embed" +
-                            " this URL (Most likely, this platform is not supported)");
-                    }
+                    this.dom.classList.remove("loading");
+                    setInnerHTMLWithScripts(this.dom, response.html);
                 })
                 .catch(error => {
                     toast.error("Unable to embed this URL (Request Error)");
