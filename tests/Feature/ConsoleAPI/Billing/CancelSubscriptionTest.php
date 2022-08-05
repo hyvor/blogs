@@ -2,6 +2,7 @@
 
 namespace Tests\Feature\ConsoleAPI\Billing;
 
+use App\Domains\Subscription\SubscriptionService;
 use Database\Factories\SubscriptionFactory;
 use Illuminate\Http\Client\Request;
 use Illuminate\Support\Facades\Http;
@@ -25,7 +26,7 @@ it('cancels subscription', function () {
 
     $subscription = (SubscriptionFactory::new())->create([
         'billable_id' => $blog->id,
-        'paddle_plan' => config('blogs.paddle_plans')[0]->id,
+        'paddle_plan' => SubscriptionService::paddlePlans()[0]->id,
         'paddle_status' => 'active',
     ]);
 
@@ -44,7 +45,7 @@ it('cancels subscription forced', function () {
 
     (SubscriptionFactory::new())->create([
         'billable_id' => $blog->id,
-        'paddle_plan' => config('blogs.paddle_plans')[0]->id,
+        'paddle_plan' => SubscriptionService::paddlePlans()[0]->id,
         'paddle_status' => 'cancelled',
         'ends_at' => now()->addDays(7),
     ]);

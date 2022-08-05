@@ -1,6 +1,9 @@
 <?php
 
 use App\Data\Enums\BlogTypeEnum;
+use App\Data\Objects\DataAPI\BlogObject;
+use App\Domains\Blog\Fillers\LanguageFiller;
+use App\Domains\Delivery\Twig\TwigRenderer;
 use App\Models\Blog;
 use App\Models\BlogVariant;
 use App\Models\Post;
@@ -109,4 +112,24 @@ function createRequest($method, $uri)
     $symfonyRequest = SymfonyRequest::create($uri, $method);
 
     return Request::createFromBase($symfonyRequest);
+}
+
+
+function getBlogObject($updates = []): BlogObject
+{
+    $blog = newBlog();
+    (new LanguageFiller($blog))->fill();
+
+    $obj = new BlogObject($blog, $blog->languages[0]);
+    foreach ($updates as $key => $value) {
+        $obj->$key = $value;
+    }
+
+    return $obj;
+}
+
+function testTwigRendering(string $template, array $vars, string $expectation) {
+    $vars = json_decode(json_encode($vars), true);
+    $val = TwigRenderer::renderString($template, $vars);
+    expect($val)->toBe($expectation);
 }

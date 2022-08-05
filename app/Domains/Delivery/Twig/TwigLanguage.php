@@ -16,10 +16,11 @@ class TwigLanguage
 
     public function __construct(Blog $blog, Language $language)
     {
-        $fallback = LanguageRepository::getFallbackLanguage($blog, $language);
+        // TODO: Support fallback
+        // $fallback = LanguageRepository::getFallbackLanguage($blog, $language);
 
         $languageFileName = $language->code.'.yaml';
-        $fallbackFileName = $fallback->code.'.yaml';
+        // $fallbackFileName = $fallback->code.'.yaml';
         $defaultFileName = 'en.yaml';
 
         /**
@@ -27,7 +28,7 @@ class TwigLanguage
          */
         $files = ThemeFilesRepository::getMultipleFiles($blog, [
             $languageFileName,
-            $fallbackFileName,
+            // $fallbackFileName,
             $defaultFileName,
         ], ThemeFileFolderEnum::LANG)->keyBy('name');
 
@@ -40,9 +41,9 @@ class TwigLanguage
         $this->setStrings($files[$defaultFileName]);
 
         // then extend with fallback
-        if (isset($files[$fallbackFileName]) && $fallbackFileName !== $defaultFileName) {
-            $this->extendStrings($files[$fallbackFileName]);
-        }
+//        if (isset($files[$fallbackFileName]) && $fallbackFileName !== $defaultFileName) {
+//            $this->extendStrings($files[$fallbackFileName]);
+//        }
 
         // finally extend with the real language
         if (isset($files[$languageFileName]) && $languageFileName !== $defaultFileName) {

@@ -8,9 +8,10 @@ use App\Domains\Language\LanguageRepository;
 use App\Domains\Route\PermalinkRepository;
 use App\Domains\Theme\ThemeFilesRepository;
 use App\Exceptions\TrustedException;
-use App\Helpers\InternalAPICaller;
+use App\Models\Blog;
 use Hyvor\SvgIcons\Exception\SvgIconException;
 use Hyvor\SvgIcons\Icon;
+use Twig\Environment;
 use Twig\Error\Error;
 use Twig\Extension\AbstractExtension;
 use Twig\TwigFilter;
@@ -30,9 +31,8 @@ use Twig\TwigFunction;
 class TwigExtensions extends AbstractExtension
 {
     // to prevent duplicate queries
-    public $blog;
-
-    public $twigLanguageHandler;
+    public Blog $blog;
+    public TwigLanguage $twigLanguageHandler;
 
     public function getFilters()
     {
@@ -79,7 +79,7 @@ class TwigExtensions extends AbstractExtension
          * So, we simple use the BlogObject
          */
 
-        return $context['_blog']['base_url'].'/assets/'.$assetName;
+        return $context['_blog']['base_url'] . '/assets/' . $assetName;
     }
 
     public function assetFilter($context, $assetName)
@@ -120,7 +120,7 @@ class TwigExtensions extends AbstractExtension
         return $this->langFilter($context, $key, [$value]);
     }
 
-    public function templateFilter(\Twig\Environment $env, $context, $string)
+    public function templateFilter(Environment $env, $context, $string)
     {
         $template = $env->createTemplate($string);
         $html = $template->render($context);
@@ -145,7 +145,7 @@ class TwigExtensions extends AbstractExtension
 
     public function languageVariantUrlFilter($context, string $languageCode): string
     {
-        $route = $context['_route']; // TODO: FIX
+        $route = $context['_route']['name'];
 
         if (
             $route === 'post' || $route === 'page' ||
@@ -197,7 +197,7 @@ class TwigExtensions extends AbstractExtension
         unset($params['endpoint']);
 
         try {
-            $response = InternalAPICaller::data($blog->subdomain, $endpoint, $params);
+            $response = app(DataAPICaller::class)->callApi($blog->subdomain, $endpoint, $params);
         } catch (TrustedException $e) {
             // throw twig error
             throw new Error("Error when calling the Data API  /$endpoint endpoint: ".$e->getMessage());

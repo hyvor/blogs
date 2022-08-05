@@ -75,11 +75,6 @@ class BlogService
         return $blog;
     }
 
-    public static function getBlogById(int $id): ?Blog
-    {
-        return Blog::find($id);
-    }
-
     public static function getBlogBySubdomain(string $subdomain): ?Blog
     {
         return Blog::where('subdomain', $subdomain)->first();

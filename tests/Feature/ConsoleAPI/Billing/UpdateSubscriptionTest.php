@@ -2,6 +2,7 @@
 
 namespace Tests\Feature\ConsoleAPI\Billing;
 
+use App\Domains\Subscription\SubscriptionService;
 use Database\Factories\SubscriptionFactory;
 use Illuminate\Http\Client\Request;
 use Illuminate\Support\Facades\Http;
@@ -14,7 +15,7 @@ it('updates the subscription', function () {
 
     (SubscriptionFactory::new())->create([
         'billable_id' => $blog->id,
-        'paddle_plan' => config('blogs.paddle_plans')[0]->id,
+        'paddle_plan' => SubscriptionService::paddlePlans()[0]->id,
         'paddle_status' => 'active',
     ]);
 
@@ -25,7 +26,7 @@ it('updates the subscription', function () {
 
     Http::assertSent(function (Request $request) use ($blog) {
         return str_ends_with($request->url(), 'subscription/users/update') &&
-            $request['plan_id'] === config('blogs.paddle_plans')[1]->id &&
+            $request['plan_id'] === SubscriptionService::paddlePlans()[1]->id &&
             $request['prorate'] === true &&
             $request['bill_immediately'] === true &&
             $request['subscription_id'] === $blog->subscription()->paddle_id;
@@ -39,13 +40,14 @@ it('cannot update to the same plan', function () {
 
     (SubscriptionFactory::new())->create([
         'billable_id' => $blog->id,
-        'paddle_plan' => config('blogs.paddle_plans')[0]->id,
+        'paddle_plan' => SubscriptionService::paddlePlans()[0]->id,
         'paddle_status' => 'active',
     ]);
 
     $this->callConsoleApi('PATCH', '/billing/subscription', [
         'plan' => 'A',
         'frequency' => 'monthly',
-    ])->assertUnprocessable()
+    ])
+        ->assertUnprocessable()
         ->assertSee('Cannot update to the same plan');
 });

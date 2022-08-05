@@ -2,6 +2,7 @@
 
 namespace Database\Factories;
 
+use App\Domains\Subscription\SubscriptionService;
 use App\Models\Blog;
 use Illuminate\Database\Eloquent\Factories\Factory;
 use Illuminate\Support\Arr;
@@ -19,7 +20,7 @@ class SubscriptionFactory extends Factory
             'name' => 'default',
             'paddle_id' => rand(),
             'paddle_status' => Arr::random(['active', 'trialing', 'past_due', 'paused', 'deleted']),
-            'paddle_plan' => Arr::random(collect(config('blogs.paddle_plans'))->pluck('id')->toArray()),
+            'paddle_plan' => Arr::random(collect(SubscriptionService::paddlePlans())->pluck('id')->toArray()),
             'quantity' => 1,
             'trial_ends_at' => null,
             'paused_from' => null,

@@ -11,6 +11,7 @@ use Illuminate\Database\Eloquent\Collection;
 
 class SubscriptionService
 {
+
     /**
      * This is an internal name for the subscription
      * In Laravel Paddle Cashier, you can give names for each subscription
@@ -92,7 +93,7 @@ class SubscriptionService
 
     public static function getPlanConfigById(int $planId): PaddlePlan
     {
-        $plans = config('blogs.paddle_plans');
+        $plans = self::paddlePlans();
 
         foreach ($plans as $plan) {
             if ($plan->id === $planId) {
@@ -108,10 +109,7 @@ class SubscriptionService
         SubscriptionFrequencyEnum $frequency
     ): PaddlePlan {
 
-        /**
-         * @var $plans PaddlePlan[]
-         */
-        $plans = config('blogs.paddle_plans');
+        $plans = self::paddlePlans();
 
         foreach ($plans as $plan) {
             if (
@@ -133,5 +131,86 @@ class SubscriptionService
     public static function getAllSubscriptions(Blog $blog): Collection
     {
         return $blog->subscriptions()->get();
+    }
+
+    /**
+     * @return PaddlePlan[]
+     */
+    public static function paddlePlans() : array
+    {
+
+        return [
+
+            new PaddlePlan(
+                env('APP_ENV') !== 'production' ? 32097 : 0,
+                SubscriptionPlanEnum::A,
+                SubscriptionFrequencyEnum::MONTHLY,
+                19,
+            ),
+
+            new PaddlePlan(
+                env('APP_ENV') !== 'production' ? 32098 : 0,
+                SubscriptionPlanEnum::A,
+                SubscriptionFrequencyEnum::YEARLY,
+                190,
+            ),
+
+            new PaddlePlan(
+                env('APP_ENV') !== 'production' ? 32099 : 0,
+                SubscriptionPlanEnum::B,
+                SubscriptionFrequencyEnum::MONTHLY,
+                49
+            ),
+
+            new PaddlePlan(
+                env('APP_ENV') !== 'production' ? 32100 : 0,
+                SubscriptionPlanEnum::B,
+                SubscriptionFrequencyEnum::YEARLY,
+                490,
+            ),
+
+            new PaddlePlan(
+                env('APP_ENV') !== 'production' ? 32101 : 0,
+                SubscriptionPlanEnum::C,
+                SubscriptionFrequencyEnum::MONTHLY,
+                299
+            ),
+
+            new PaddlePlan(
+                env('APP_ENV') !== 'production' ? 32102 : 0,
+                SubscriptionPlanEnum::C,
+                SubscriptionFrequencyEnum::YEARLY,
+                2990,
+            ),
+
+            new PaddlePlan(
+                env('APP_ENV') !== 'production' ? 32103 : 0,
+                SubscriptionPlanEnum::D,
+                SubscriptionFrequencyEnum::MONTHLY,
+                699
+            ),
+
+            new PaddlePlan(
+                env('APP_ENV') !== 'production' ? 32104 : 0,
+                SubscriptionPlanEnum::D,
+                SubscriptionFrequencyEnum::YEARLY,
+                6990,
+            ),
+
+            new PaddlePlan(
+                env('APP_ENV') !== 'production' ? 32105 : 0,
+                SubscriptionPlanEnum::E,
+                SubscriptionFrequencyEnum::MONTHLY,
+                1299
+            ),
+
+            new PaddlePlan(
+                env('APP_ENV') !== 'production' ? 32106 : 0,
+                SubscriptionPlanEnum::E,
+                SubscriptionFrequencyEnum::YEARLY,
+                12990,
+            ),
+
+        ];
     }
 }

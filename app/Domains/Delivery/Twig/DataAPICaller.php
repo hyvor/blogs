@@ -1,13 +1,14 @@
 <?php
 
-namespace App\Helpers;
+namespace App\Domains\Delivery\Twig;
 
 use App\Exceptions\TrustedException;
 use Illuminate\Http\Request;
 
-class InternalAPICaller
+class DataAPICaller
 {
-    public static function data(string $subdomain, string $endpoint, $query = [])
+
+    public function callApi(string $subdomain, string $endpoint, $query = [])
     {
         $domain = config('blogs.domain_app');
         $endpoint = trim($endpoint, '/');
@@ -30,23 +31,4 @@ class InternalAPICaller
         }
     }
 
-    public static function delivery(string $subdomain, string $path, array $query)
-    {
-        $domain = config('blogs.domain_app');
-
-        $request = Request::create(
-            "https://$domain/api/delivery/v0/blog/$subdomain/$path",
-            'GET',
-            $query
-        );
-
-        try {
-            $response = app()->handle($request);
-            $data = $response->getContent();
-
-            return json_decode($data);
-        } catch (\Exception $e) {
-            dd($e);
-        }
-    }
 }
