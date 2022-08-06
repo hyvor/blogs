@@ -3,6 +3,8 @@
 namespace App\Domains\Cache\Listeners;
 
 use App\Data\Enums\PostStatusEnum;
+use App\Domains\Blog\Events\BlogUpdatedEvent;
+use App\Domains\Blog\Events\BlogVariantUpdatedEvent;
 use App\Domains\Cache\CacheService;
 use App\Domains\Language\LanguageRepository;
 use App\Domains\Media\Events\MediaCreatedEvent;
@@ -53,6 +55,9 @@ class ClearCacheSubscriber
 
     private function subscribeTemplateEvents(Dispatcher $events): void
     {
+        $events->listen(BlogUpdatedEvent::class, [static::class, 'onBlogUpdate']);
+        $events->listen(BlogVariantUpdatedEvent::class, [static::class, 'onBlogVariantUpdate']);
+
         $events->listen(PostUpdatedEvent::class, [static::class, 'onPostUpdate']);
         $events->listen(PostDeletedEvent::class, [static::class, 'onPostDelete']);
         $events->listen(PostVariantUpdatedEvent::class, [static::class, 'onPostVariantUpdate']);
@@ -85,6 +90,16 @@ class ClearCacheSubscriber
         
     }
 
+
+    public function onBlogUpdate(BlogUpdatedEvent $event)
+    {
+        $this->clearTemplateCache($event->blog);
+    }
+
+    public function onBlogVariantUpdate(BlogVariantUpdatedEvent $event)
+    {
+        $this->clearTemplateCache($event->variant->blog);
+    }
 
     public function onPostUpdate(PostUpdatedEvent $event)
     {

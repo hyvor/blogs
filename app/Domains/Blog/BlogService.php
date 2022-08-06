@@ -13,6 +13,8 @@ use App\Domains\Blog\Deleters\RouteDeleter;
 use App\Domains\Blog\Deleters\TagDeleter;
 use App\Domains\Blog\Deleters\ThemeDeleter;
 use App\Domains\Blog\Deleters\UserDeleter;
+use App\Domains\Blog\Events\BlogUpdatedEvent;
+use App\Domains\Blog\Events\BlogVariantUpdatedEvent;
 use App\Domains\Blog\Fillers\LanguageFiller;
 use App\Domains\Blog\Fillers\NavigationFiller;
 use App\Domains\Blog\Fillers\PostFiller;
@@ -128,6 +130,8 @@ class BlogService
             $blog->update($realUpdates);
         }
 
+        BlogUpdatedEvent::dispatch($blog);
+
         return $blog;
     }
 
@@ -167,6 +171,8 @@ class BlogService
         }
 
         $variant->save();
+
+        BlogVariantUpdatedEvent::dispatch($variant);
 
         return $variant;
     }

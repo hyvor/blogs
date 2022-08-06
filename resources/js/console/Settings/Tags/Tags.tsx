@@ -43,7 +43,7 @@ export default function Tags() {
                             </TableHead>
                             <Fragment>
                                 {
-                                    tagsList.map(tagId => <Tag tag={tags[tagId]} />)
+                                    tagsList.map(tagId => <Tag key={tagId} tag={tags[tagId]} />)
                                 }
                             </Fragment>
                             <TableLoadMore

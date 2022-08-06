@@ -1,10 +1,14 @@
 <?php
-
 namespace Tests\Feature\ConsoleAPI\Blog;
 
+use App\Domains\Blog\Events\BlogUpdatedEvent;
+use Illuminate\Support\Facades\Event;
 use Illuminate\Testing\Fluent\AssertableJson;
 
 it('updates blog data', function () {
+
+    Event::fake();
+
     $subdomain = 'new-subdomain';
     $hostingAt = 'domain';
     $hostingDomain = 'hyvor.com';
@@ -21,6 +25,8 @@ it('updates blog data', function () {
                 ->where('hosting_domain', $hostingDomain)
                 ->etc()
         );
+
+    Event::assertDispatched(BlogUpdatedEvent::class);
 });
 
 it('updates self URL and clears custom domain', function () {

@@ -2,6 +2,8 @@
 
 namespace Tests\Feature\ConsoleAPI\Blog;
 
+use App\Domains\Blog\Events\BlogVariantUpdatedEvent;
+use Illuminate\Support\Facades\Event;
 use Illuminate\Testing\Fluent\AssertableJson;
 
 beforeEach(function () {
@@ -17,7 +19,10 @@ it('validates', function () {
     )->assertUnprocessable();
 });
 
-it('updates name', function () {
+it('updates name and emits event', function () {
+
+    Event::fake();
+
     $name = 'Name';
 
     $this->callConsoleApi(
@@ -34,6 +39,8 @@ it('updates name', function () {
                 ->where('name', $name)
                 ->etc()
         );
+
+    Event::assertDispatched(BlogVariantUpdatedEvent::class);
 });
 
 it('updates description', function () {

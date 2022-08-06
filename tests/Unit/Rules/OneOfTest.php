@@ -16,7 +16,7 @@ test('validation', function () {
     expect(oneOfPasses('string', ['string']))->toBeTrue();
     expect(oneOfPasses('string', ['integer']))->toBeFalse();
     expect(oneOfPasses('string', ['string', 'integer']))->toBeTrue();
-    expect(oneOfPasses('/hello-world', ['url', new RedirectPath()]))->toBeTrue();
-    expect(oneOfPasses('https://example.com', ['url', new RedirectPath()]))->toBeTrue();
-    expect(oneOfPasses('lsefklsf', ['url', new RedirectPath()]))->toBeFalse();
+    expect(oneOfPasses('/hello-world', ['url', new RedirectPath(blog())]))->toBeTrue();
+    expect(oneOfPasses('https://example.com', ['url', new RedirectPath(blog())]))->toBeTrue();
+    expect(oneOfPasses('lsefklsf', ['url', new RedirectPath(blog())]))->toBeFalse();
 });

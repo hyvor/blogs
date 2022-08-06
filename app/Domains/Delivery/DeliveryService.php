@@ -27,11 +27,11 @@ class DeliveryService
             $path = '/'.$path;
         }
 
-        $shouldUserCache = $blog->type === BlogTypeEnum::DEFAULT && config('app.debug') !== true;
+        $shouldUserCache = true; // $blog->type === BlogTypeEnum::DEFAULT && config('app.debug') !== true;
 
         // first, check cache
         if ($shouldUserCache) {
-            $responseObject = app(CacheService::class)->blog($blog)->get($blog, $path);
+            $responseObject = app(CacheService::class)->blog($blog)->get($path);
             if ($responseObject instanceof DeliveryAPIResponseObject) {
                 return $responseObject;
             }

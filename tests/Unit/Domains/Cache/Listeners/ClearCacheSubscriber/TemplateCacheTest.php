@@ -2,6 +2,8 @@
 
 namespace Tests\Unit\Domains\Cache\Listeners;
 
+use App\Domains\Blog\Events\BlogUpdatedEvent;
+use App\Domains\Blog\Events\BlogVariantUpdatedEvent;
 use App\Domains\Cache\CacheService;
 use App\Domains\Cache\Listeners\ClearCacheSubscriber;
 use App\Domains\Post\Events\PostDeletedEvent;
@@ -29,6 +31,10 @@ use Mockery\MockInterface;
 
 it('is attached', function () {
     Event::fake();
+
+    // blog
+    Event::assertListening(BlogUpdatedEvent::class, [ClearCacheSubscriber::class, 'onBlogUpdate']);
+    Event::assertListening(BlogVariantUpdatedEvent::class, [ClearCacheSubscriber::class, 'onBlogVariantUpdate']);
 
     // posts
     Event::assertListening(PostUpdatedEvent::class, [ClearCacheSubscriber::class, 'onPostUpdate']);
@@ -72,6 +78,28 @@ beforeEach(function () {
                 ->never();
         })->makePartial();
     };
+});
+
+// BLOG ===
+
+it('clears cache when a blog is updated', function () {
+    ($this->templateMock)();
+
+    $blog = blog();
+
+    $event = new BlogUpdatedEvent($blog);
+    $listener = new ClearCacheSubscriber();
+    $listener->onBlogUpdate($event);
+});
+
+it('clears cache when a blog variant is updated', function () {
+    ($this->templateMock)();
+
+    $blog = blog();
+
+    $event = new BlogVariantUpdatedEvent($blog->variants[0]);
+    $listener = new ClearCacheSubscriber();
+    $listener->onBlogVariantUpdate($event);
 });
 
 // POST ===

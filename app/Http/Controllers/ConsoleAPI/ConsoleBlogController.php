@@ -20,9 +20,6 @@ use App\Exceptions\TrustedException;
 use App\Http\Controllers\Controller;
 use App\Models\Blog;
 use App\Models\Language;
-use App\Rules\BlogDescription;
-use App\Rules\BlogHostingDomain;
-use App\Rules\BlogName;
 use App\Rules\Subdomain;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
@@ -65,7 +62,7 @@ class ConsoleBlogController extends Controller
 
             'subdomain' => new Subdomain(checkUnique: true),
             'hosting_at' => new Enum(BlogHostingAtEnum::class),
-            'hosting_domain' => new BlogHostingDomain(),
+            'hosting_domain' => 'string|nullable',
             'hosting_url' => 'string|url|nullable',
 
             // meta
@@ -140,10 +137,13 @@ class ConsoleBlogController extends Controller
      */
     public static function updateBlogVariant(Request $request, Blog $blog, Language $language)
     {
+        $nameMax = config('limits.max_blog_name_length');
+        $descriptionMax = config('limits.max_blog_description_length');
+
         $request->validate([
             'language_id' => 'required|integer',
-            'name' => new BlogName(),
-            'description' => new BlogDescription(),
+            'name' => "string|max:$nameMax|nullable",
+            'description' => "string|max:$descriptionMax|nullable",
         ]);
 
         $updates = [];
