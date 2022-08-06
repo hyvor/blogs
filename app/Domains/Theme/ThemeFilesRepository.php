@@ -2,14 +2,13 @@
 
 namespace App\Domains\Theme;
 
-use App\Data\Enums\BlogTypeEnum;
 use App\Data\Enums\ThemeFileFolderEnum;
+use App\Domains\Theme\Events\AssetEditedEvent;
+use App\Domains\Theme\Events\StylesEditedEvent;
 use App\Exceptions\TrustedException;
 use App\Models\Blog;
 use App\Models\ThemeFile;
-use Database\Seeders\BlogThemeFilesSeeder;
 use Illuminate\Database\Eloquent\Collection;
-use Illuminate\Support\Facades\App;
 use PhpZip\ZipFile;
 
 class ThemeFilesRepository
@@ -53,9 +52,8 @@ class ThemeFilesRepository
     public static function getFilesInFolder(
         Blog $blog,
         ?ThemeFileFolderEnum $folder
-    ): Collection {
-        self::updateLocalDBFiles($blog->id);
-
+    ): Collection
+    {
         return $blog->themeFiles()
             ->where('folder', $folder)
             ->get();
@@ -67,8 +65,6 @@ class ThemeFilesRepository
      */
     public static function getAllFilesOfBlog(Blog $blog): Collection
     {
-        self::updateLocalDBFiles($blog->id);
-
         return $blog->themeFiles()->get();
     }
 
@@ -77,8 +73,9 @@ class ThemeFilesRepository
         ?ThemeFileFolderEnum $folder,
         string $name,
         string $content
-    ): ThemeFile {
-        return $blog->themeFiles()->updateOrCreate(
+    ) : ThemeFile
+    {
+        $file = $blog->themeFiles()->updateOrCreate(
             [
                 'folder' => $folder,
                 'name' => $name,
@@ -87,6 +84,15 @@ class ThemeFilesRepository
                 'content' => $content,
             ]
         );
+
+        if ($folder === ThemeFileFolderEnum::STYLES) {
+            StylesEditedEvent::dispatch($blog);
+        }
+        if ($folder === ThemeFileFolderEnum::ASSETS) {
+            AssetEditedEvent::dispatch($blog, $name);
+        }
+
+        return $file;
     }
 
     /**
@@ -149,22 +155,4 @@ class ThemeFilesRepository
         $blog->save();
     }
 
-    private static function updateLocalDBFiles(int $blogId)
-    {
-        return;
-
-        /**
-         * This is a simple way to refresh the database
-         * and run the seeder that so local file changes are updated
-         * This is ONLY FOR LOCAL TESTING
-         */
-        $blog = Blog::find($blogId);
-        if (
-            App::environment('local') &&
-            $blog->type !== BlogTypeEnum::DEV
-        ) {
-            self::deleteAllFiles($blog);
-            (new BlogThemeFilesSeeder())->run($blogId);
-        }
-    }
 }

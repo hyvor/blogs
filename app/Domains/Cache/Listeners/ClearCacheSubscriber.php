@@ -18,6 +18,8 @@ use App\Domains\Tag\Events\TagDeletedEvent;
 use App\Domains\Tag\Events\TagUpdatedEvent;
 use App\Domains\Tag\Events\TagVariantDeletedEvent;
 use App\Domains\Tag\Events\TagVariantUpdatedEvent;
+use App\Domains\Theme\Events\AssetEditedEvent;
+use App\Domains\Theme\Events\StylesEditedEvent;
 use App\Domains\User\Events\UserCreatedEvent;
 use App\Domains\User\Events\UserDeletedEvent;
 use App\Domains\User\Events\UserUpdatedEvent;
@@ -73,6 +75,9 @@ class ClearCacheSubscriber
     {
         $events->listen(MediaCreatedEvent::class, [static::class, 'onMediaEvent']);
         $events->listen(MediaDeletedEvent::class, [static::class, 'onMediaEvent']);
+
+        $events->listen(AssetEditedEvent::class, [static::class, 'onAssetEdit']);
+        $events->listen(StylesEditedEvent::class, [static::class, 'onStylesEdit']);
     }
 
     private function subscribeAllEvents(Dispatcher $event) : void
@@ -153,4 +158,16 @@ class ClearCacheSubscriber
         $path = PermalinkRepository::getMediaPermalink($media, $blog, true);
         $this->clearSingleCache($blog, $path);
     }
+
+    public function onAssetEdit(AssetEditedEvent $event)
+    {
+        $path = PermalinkRepository::getAssetPermalink($event->name, $event->blog, true);
+        $this->clearSingleCache($event->blog, $path);
+    }
+
+    public function onStylesEdit(StylesEditedEvent $event)
+    {
+        $this->clearSingleCache($event->blog, '/styles.css');
+    }
+
 }

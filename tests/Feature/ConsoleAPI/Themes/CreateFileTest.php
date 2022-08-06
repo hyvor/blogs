@@ -3,8 +3,10 @@
 namespace Tests\Feature\ConsoleAPI\Themes;
 
 use App\Data\Enums\ThemeFileFolderEnum;
+use App\Domains\Theme\Events\AssetEditedEvent;
 use App\Domains\Theme\ThemeFilesRepository;
 use Illuminate\Http\UploadedFile;
+use Illuminate\Support\Facades\Event;
 use Illuminate\Testing\Fluent\AssertableJson;
 
 it('creates a file', function () {
@@ -21,6 +23,9 @@ it('creates a file', function () {
 });
 
 it('creates a file from blob', function () {
+
+    Event::fake();
+
     $file = UploadedFile::fake()->image('test.jpg');
 
     $this->callConsoleApi('POST', '/theme/file', [
@@ -33,6 +38,10 @@ it('creates a file from blob', function () {
                 ->where('content', null)
                 ->etc()
         );
+
+    Event::assertDispatched(function (AssetEditedEvent $event) {
+        return $event->name === 'test.jpg';
+    });
 });
 
 it('validates file size', function () {
