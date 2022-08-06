@@ -27,8 +27,10 @@ class DeliveryService
             $path = '/'.$path;
         }
 
+        $shouldUserCache = $blog->type === BlogTypeEnum::DEFAULT && config('app.debug') !== true;
+
         // first, check cache
-        if ($blog->type === BlogTypeEnum::DEFAULT) {
+        if ($shouldUserCache) {
             $responseObject = app(CacheService::class)->blog($blog)->get($blog, $path);
             if ($responseObject instanceof DeliveryAPIResponseObject) {
                 return $responseObject;
@@ -38,7 +40,7 @@ class DeliveryService
         $matcher = new PathMatcher($blog, $path);
         $responseObject = $matcher->getResponseObject();
 
-        if ($blog->type === BlogTypeEnum::DEFAULT && config('app.debug') !== true) {
+        if ($shouldUserCache) {
             app(CacheService::class)->blog($blog)->set($path, $responseObject);
         }
 

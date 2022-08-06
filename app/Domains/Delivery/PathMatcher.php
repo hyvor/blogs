@@ -7,6 +7,7 @@ use App\Data\Objects\DeliveryAPI\DeliveryAPIResponseObject;
 use App\Domains\Delivery\Processors\AssetsProcessor;
 use App\Domains\Delivery\Processors\MediaProcessor;
 use App\Domains\Delivery\Processors\PreviewProcessor;
+use App\Domains\Delivery\Processors\RobotsTxtProcessor;
 use App\Domains\Delivery\Processors\Sitemap\SitemapIndexProcessor;
 use App\Domains\Delivery\Processors\Sitemap\SitemapPagesProcessor;
 use App\Domains\Delivery\Processors\Sitemap\SitemapPostsProcessor;
@@ -99,6 +100,8 @@ class PathMatcher
             'number' => '\d+',
         ]);
 
+        $routeMatcher->add('robots.txt', '/robots.txt');
+
         $matchedRoute = $routeMatcher->match();
 
         if ($matchedRoute) {
@@ -111,6 +114,8 @@ class PathMatcher
                 'sitemap-index' => SitemapIndexProcessor::class,
                 'sitemap-pages' => SitemapPagesProcessor::class,
                 'sitemap-posts' => SitemapPostsProcessor::class,
+
+                'robots.txt' => RobotsTxtProcessor::class
             };
 
             $responseObject = (new $processor($this, $matchedRoute))->getResponseObject();

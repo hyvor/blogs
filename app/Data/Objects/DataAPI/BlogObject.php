@@ -69,7 +69,6 @@ class BlogObject
 
         $this->icon_url = $blog->icon_url;
         $this->logo_url = $blog->logo_url ?? $blog->icon_url;
-        // $this->logo_url = 'http://blogs.hyvor.test:8080/img/logo.png';
         $this->cover_url = $blog->cover_url;
 
         $meta = $blog->getAllMeta();
