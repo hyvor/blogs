@@ -23,6 +23,8 @@ class CreateBlogsTable extends Migration
 
             // data
             $table->string('subdomain')->unique();
+            $table->timestamp('trial_ends_at');
+            $table->enum('billing_type', ['paddle', 'shopify'])->default('paddle');
             $table->enum('type', ['default', 'dev', 'preview', 'temp'])->default('default');
 
             $table->enum('hosting_at', ['subdomain', 'domain', 'self'])->default('subdomain');

@@ -1,0 +1,15 @@
+<?php
+
+use App\Http\Controllers\Integrations\Shopify\ShopifyController;
+use Illuminate\Support\Facades\Route;
+
+Route::prefix('shopify')->group(function() {
+
+    Route::get('/', [ShopifyController::class, 'init']);
+    Route::get('/installed', [ShopifyController::class, 'installed']);
+    Route::get('/charged', null);
+    Route::get('/proxy/{path}', [ShopifyController::class, 'proxy'])->where('path', '.*');
+
+    Route::post('/billing/create', [ShopifyController::class, 'createSubscription']);
+
+});
