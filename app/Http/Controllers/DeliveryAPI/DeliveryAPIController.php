@@ -2,7 +2,7 @@
 
 namespace App\Http\Controllers\DeliveryAPI;
 
-use App\Domains\Delivery\DeliveryRepository;
+use App\Domains\Delivery\DeliveryService;
 use App\Models\Blog;
 use Illuminate\Http\Request;
 
@@ -19,9 +19,9 @@ class DeliveryAPIController
          *
          * Returns an output as specified [here]()
          */
-        $response = DeliveryRepository::getResponseObject(
+        $response = DeliveryService::getResponseObject(
             $blog,
-            $request->input('path', ''),
+            $request->input('path') || '',
         );
 
         /**

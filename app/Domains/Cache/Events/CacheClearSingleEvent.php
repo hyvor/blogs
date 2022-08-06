@@ -4,12 +4,10 @@ namespace App\Domains\Cache\Events;
 
 use App\Models\Blog;
 use Illuminate\Foundation\Events\Dispatchable;
-use Illuminate\Queue\SerializesModels;
 
 class CacheClearSingleEvent
 {
     use Dispatchable;
-    use SerializesModels;
 
     /**
      * A path

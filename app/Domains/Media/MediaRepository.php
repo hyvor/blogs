@@ -2,6 +2,8 @@
 
 namespace App\Domains\Media;
 
+use App\Domains\Media\Events\MediaCreatedEvent;
+use App\Domains\Media\Events\MediaDeletedEvent;
 use App\Domains\Media\Exceptions\UploadException;
 use App\Models\Blog;
 use App\Models\Media;
@@ -56,13 +58,17 @@ class MediaRepository
             throw new UploadException('Error while uploading');
         }
 
-        return Media::create([
+        $media = Media::create([
             'blog_id' => $blog->id,
             'name' => $fileName,
             'size' => $file->getSize(),
             'original_name' => $file->getClientOriginalName(),
             'extension' => $file->extension(),
         ]);
+
+        MediaCreatedEvent::dispatch($media);
+
+        return $media;
     }
 
     public static function uploadFromUrl(Blog $blog, string $url): Media
@@ -87,12 +93,16 @@ class MediaRepository
 
         $fileName = self::getFileNameFromPath($name);
 
-        return Media::create([
+        $media = Media::create([
             'blog_id' => $blog->id,
             'name' => $fileName,
             'size' => $size,
             'original_name' => $fileName,
         ]);
+
+        MediaCreatedEvent::dispatch($media);
+
+        return $media;
     }
 
     public static function getContents(Media $media)
@@ -111,6 +121,8 @@ class MediaRepository
         }
 
         $media->delete();
+
+        MediaDeletedEvent::dispatch($media);
     }
 
     private static function getPathPrefix(int $blogId)

@@ -15,7 +15,7 @@ class CustomDomainMiddleware
         $blog = BlogService::getBlogByCustomDomain($host);
 
         if (! $blog) {
-            abort(404);
+            return redirect('https://blogs.hyvor.com');
         }
 
         app()->instance(Blog::class, $blog);

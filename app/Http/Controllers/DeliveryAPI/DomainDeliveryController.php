@@ -1,14 +1,15 @@
 <?php
 
-namespace App\Http\Controllers\Subdomain;
+namespace App\Http\Controllers\DeliveryAPI;
 
-use App\Domains\Delivery\DeliveryRepository;
+use App\Domains\Delivery\DeliveryService;
 use App\Http\Controllers\Controller;
 use App\Models\Blog;
 use Illuminate\Http\Request;
 
-class SubdomainController extends Controller
+class DomainDeliveryController extends Controller
 {
+
     public function handle(Request $request, Blog $blog)
     {
 
@@ -19,8 +20,9 @@ class SubdomainController extends Controller
          * And, it always has the leading /
          */
         $path = $request->getPathInfo();
-        $data = DeliveryRepository::getResponseObject($blog, $path);
+        $data = DeliveryService::getResponseObject($blog, $path);
 
-        return DeliveryRepository::getLaravelResponse($data);
+        return DeliveryService::getLaravelResponse($data);
     }
+
 }

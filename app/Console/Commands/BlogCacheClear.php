@@ -3,7 +3,7 @@
 namespace App\Console\Commands;
 
 use App\Domains\Blog\BlogService;
-use App\Domains\Cache\CacheRepository;
+use App\Domains\Cache\CacheService;
 use App\Models\Blog;
 use Illuminate\Console\Command;
 
@@ -34,7 +34,7 @@ class BlogCacheClear extends Command
 
         if ($subdomain) {
             $blog = BlogService::getBlogBySubdomain($subdomain);
-            CacheRepository::clearAll($blog);
+            CacheService::clearAll($blog);
 
             $this->info("Cleared cache of the blog $subdomain");
         } else {
@@ -43,7 +43,7 @@ class BlogCacheClear extends Command
             $this->info('Clearing cache of '.count($blogs).' blogs');
 
             foreach ($blogs as $blog) {
-                CacheRepository::clearAll($blog);
+                CacheService::clearAll($blog);
             }
 
             $this->info('Cache cleared!');

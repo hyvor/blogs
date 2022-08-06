@@ -3,13 +3,16 @@
 namespace App\Domains\Cache\Listeners;
 
 use App\Data\Enums\PostStatusEnum;
-use App\Domains\Cache\CacheRepository;
+use App\Domains\Cache\CacheService;
 use App\Domains\Language\LanguageRepository;
+use App\Domains\Media\Events\MediaCreatedEvent;
+use App\Domains\Media\Events\MediaDeletedEvent;
 use App\Domains\Post\Events\PostDeletedEvent;
 use App\Domains\Post\Events\PostUpdatedEvent;
 use App\Domains\Post\Events\PostVariantDeletedEvent;
 use App\Domains\Post\Events\PostVariantUpdatedEvent;
 use App\Domains\Post\PostRepository;
+use App\Domains\Route\PermalinkRepository;
 use App\Domains\Tag\Events\TagCreatedEvent;
 use App\Domains\Tag\Events\TagDeletedEvent;
 use App\Domains\Tag\Events\TagUpdatedEvent;
@@ -23,15 +26,30 @@ use App\Domains\User\Events\UserVariantUpdatedEvent;
 use App\Models\Blog;
 use Illuminate\Events\Dispatcher;
 
-class ClearTemplateCacheSubscriber
+class ClearCacheSubscriber
 {
-    private function clear(Blog $blog)
+
+    private function clearTemplateCache(Blog $blog): void
     {
-        $cache = app(CacheRepository::class);
+        $cache = app(CacheService::class);
         $cache->blog($blog)->clearTemplateCache();
     }
 
-    public function subscribe(Dispatcher $events)
+    private function clearSingleCache(Blog $blog, string $path) : void
+    {
+        $cache = app(CacheService::class);
+        $cache->blog($blog)->clearSingleCache($path);
+    }
+
+    public function subscribe(Dispatcher $events): void
+    {
+        $this->subscribeTemplateEvents($events);
+        $this->subscribeSingleEvents($events);
+        $this->subscribeAllEvents($events);
+    }
+
+
+    private function subscribeTemplateEvents(Dispatcher $events): void
     {
         $events->listen(PostUpdatedEvent::class, [static::class, 'onPostUpdate']);
         $events->listen(PostDeletedEvent::class, [static::class, 'onPostDelete']);
@@ -51,6 +69,18 @@ class ClearTemplateCacheSubscriber
         $events->listen(TagVariantDeletedEvent::class, [static::class, 'onTagVariantEvent']);
     }
 
+    private function subscribeSingleEvents(Dispatcher $events) : void
+    {
+        $events->listen(MediaCreatedEvent::class, [static::class, 'onMediaEvent']);
+        $events->listen(MediaDeletedEvent::class, [static::class, 'onMediaEvent']);
+    }
+
+    private function subscribeAllEvents(Dispatcher $event) : void
+    {
+        
+    }
+
+
     public function onPostUpdate(PostUpdatedEvent $event)
     {
         $post = $event->post;
@@ -63,12 +93,12 @@ class ClearTemplateCacheSubscriber
             return;
         }
 
-        $this->clear($blog);
+        $this->clearTemplateCache($blog);
     }
 
     public function onPostDelete(PostDeletedEvent $event)
     {
-        $this->clear($event->post->blog);
+        $this->clearTemplateCache($event->post->blog);
     }
 
     public function onPostVariantUpdate(PostVariantUpdatedEvent $event)
@@ -86,32 +116,41 @@ class ClearTemplateCacheSubscriber
             $variantOld->status !== $variant->status ||
             $variant->status === PostStatusEnum::PUBLISHED
         ) {
-            $this->clear($blog);
+            $this->clearTemplateCache($blog);
         }
     }
 
     public function onPostVariantDelete(PostVariantDeletedEvent $event)
     {
-        $this->clear($event->variant->post->blog);
+        $this->clearTemplateCache($event->variant->post->blog);
     }
 
     public function onUserEvent(UserCreatedEvent|UserUpdatedEvent|UserDeletedEvent $event)
     {
-        $this->clear($event->user->blog);
+        $this->clearTemplateCache($event->user->blog);
     }
 
     public function onUserVariantEvent(UserVariantUpdatedEvent|UserVariantDeletedEvent $event)
     {
-        $this->clear($event->variant->user->blog);
+        $this->clearTemplateCache($event->variant->user->blog);
     }
 
     public function onTagEvent(TagCreatedEvent|TagUpdatedEvent|TagDeletedEvent $event)
     {
-        $this->clear($event->tag->blog);
+        $this->clearTemplateCache($event->tag->blog);
     }
 
     public function onTagVariantEvent(TagVariantUpdatedEvent|TagVariantDeletedEvent $event)
     {
-        $this->clear($event->variant->tag->blog);
+        $this->clearTemplateCache($event->variant->tag->blog);
+    }
+
+    public function onMediaEvent(MediaCreatedEvent|MediaDeletedEvent $event)
+    {
+        $media = $event->media;
+        $blog = $media->blog;
+
+        $path = PermalinkRepository::getMediaPermalink($media, $blog, true);
+        $this->clearSingleCache($blog, $path);
     }
 }

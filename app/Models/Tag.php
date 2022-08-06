@@ -26,9 +26,4 @@ class Tag extends Model
     {
         return $this->hasMany(TagVariant::class);
     }
-
-    public function counts()
-    {
-        return $this->morphMany(Count::class, 'countable');
-    }
 }

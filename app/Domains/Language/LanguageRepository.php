@@ -66,8 +66,8 @@ class LanguageRepository
         return $blog->languages()->where('code', $code)->first();
     }
 
-    public static function getFallbackLanguage(Blog $blog, Language $language): Language
+    /*public static function getFallbackLanguage(Blog $blog, Language $language): Language
     {
         return self::getPrimaryLanguage($blog);
-    }
+    }*/
 }

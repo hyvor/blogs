@@ -212,7 +212,7 @@ class PermalinkRepository
     /**
      * Always return path with leading /
      */
-    private static function getPath($path)
+    private static function getPath($path): string
     {
         if (! $path) {
             return '/';

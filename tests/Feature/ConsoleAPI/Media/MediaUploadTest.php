@@ -2,10 +2,14 @@
 
 namespace Tests\Feature\ConsoleAPI\Media;
 
+use App\Domains\Media\Events\MediaCreatedEvent;
 use Illuminate\Http\UploadedFile;
+use Illuminate\Support\Facades\Event;
 use Illuminate\Testing\Fluent\AssertableJson;
 
 it('uploads', function () {
+    Event::fake();
+
     $file = UploadedFile::fake()->image('image.png')->size(100);
 
     $this->callConsoleApi('POST', '/media', [
@@ -13,6 +17,8 @@ it('uploads', function () {
     ])
         ->assertOk()
         ->assertJson(fn (AssertableJson $json) => $json->has('id')->etc());
+
+    Event::assertDispatched(MediaCreatedEvent::class);
 });
 
 it('limits file size', function () {

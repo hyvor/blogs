@@ -1,9 +1,7 @@
 <?php
 
-use App\Http\Controllers\Subdomain\SubdomainController;
+use App\Http\Controllers\DeliveryAPI\DomainDeliveryController;
 use App\Http\Middleware\App\Delivery\CustomDomainMiddleware;
-use App\Http\Middleware\App\Delivery\DeliveryCacheMiddleware;
-use App\Http\Middleware\App\SubdomainMiddleware;
 use Illuminate\Support\Facades\App;
 use Illuminate\Support\Facades\Route;
 
@@ -15,23 +13,9 @@ if (App::environment('local')) {
 Route::domain(config('blogs.domain_app'))->group(function () {
     include 'app/pages.php';
     include 'app/api-data.php';
-    include 'app/api-delivery.php';
     include 'app/api-console.php';
     include 'app/api-cli.php';
     include 'app/special.php';
 });
 
-// subdomain
-Route::domain('{subdomain}.'.config('blogs.domain_delivery'))
-    ->middleware([
-        SubdomainMiddleware::class,
-        DeliveryCacheMiddleware::class,
-    ])
-    ->get('{path}', [SubdomainController::class, 'handle'])->where('path', '.*');
-
-// custom domain
-Route::middleware([
-    CustomDomainMiddleware::class,
-    DeliveryCacheMiddleware::class,
-])
-    ->get('{any}', [SubdomainController::class, 'handle'])->where('any', '.*');
+include 'app/api-delivery.php';

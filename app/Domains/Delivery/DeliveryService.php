@@ -5,16 +5,15 @@ namespace App\Domains\Delivery;
 use App\Data\Enums\BlogTypeEnum;
 use App\Data\Enums\DeliveryAPITypeEnum;
 use App\Data\Objects\DeliveryAPI\DeliveryAPIResponseObject;
-use App\Domains\Cache\CacheRepository;
+use App\Domains\Cache\CacheService;
 use App\Models\Blog;
 
-class DeliveryRepository
+class DeliveryService
 {
     public static function getLaravelResponse(DeliveryAPIResponseObject $obj)
     {
         if ($obj->type === DeliveryAPITypeEnum::FILE) {
-            return response($obj->content, $obj->status)
-                ->header('Content-Type', $obj->mime_type);
+            return response($obj->content, $obj->status)->header('Content-Type', $obj->mime_type);
         } elseif ($obj->type === DeliveryAPITypeEnum::REDIRECT) {
             return redirect($obj->to, $obj->status);
         }
@@ -29,8 +28,8 @@ class DeliveryRepository
         }
 
         // first, check cache
-        if ($blog->type === BlogTypeEnum::DEFAULT && false) { // TODO: Enable cache checking
-            $responseObject = CacheRepository::get($blog, $path);
+        if ($blog->type === BlogTypeEnum::DEFAULT) {
+            $responseObject = app(CacheService::class)->blog($blog)->get($blog, $path);
             if ($responseObject instanceof DeliveryAPIResponseObject) {
                 return $responseObject;
             }
@@ -39,8 +38,8 @@ class DeliveryRepository
         $matcher = new PathMatcher($blog, $path);
         $responseObject = $matcher->getResponseObject();
 
-        if ($blog->type === BlogTypeEnum::DEFAULT) {
-            CacheRepository::set($blog, $path, $responseObject);
+        if ($blog->type === BlogTypeEnum::DEFAULT && config('app.debug') !== true) {
+            app(CacheService::class)->blog($blog)->set($path, $responseObject);
         }
 
         return $responseObject;

@@ -2,8 +2,8 @@
 
 namespace Tests\Unit\Domains\Cache\Listeners;
 
-use App\Domains\Cache\CacheRepository;
-use App\Domains\Cache\Listeners\ClearTemplateCacheSubscriber;
+use App\Domains\Cache\CacheService;
+use App\Domains\Cache\Listeners\ClearCacheSubscriber;
 use App\Domains\Post\Events\PostDeletedEvent;
 use App\Domains\Post\Events\PostUpdatedEvent;
 use App\Domains\Post\Events\PostVariantDeletedEvent;
@@ -20,6 +20,10 @@ use App\Domains\User\Events\UserVariantDeletedEvent;
 use App\Domains\User\Events\UserVariantUpdatedEvent;
 use App\Models\Post;
 use App\Models\PostVariant;
+use App\Models\Tag;
+use App\Models\TagVariant;
+use App\Models\User;
+use App\Models\UserVariant;
 use Illuminate\Support\Facades\Event;
 use Mockery\MockInterface;
 
@@ -27,16 +31,16 @@ it('is attached', function () {
     Event::fake();
 
     // posts
-    Event::assertListening(PostUpdatedEvent::class, [ClearTemplateCacheSubscriber::class, 'onPostUpdate']);
-    Event::assertListening(PostDeletedEvent::class, [ClearTemplateCacheSubscriber::class, 'onPostDelete']);
+    Event::assertListening(PostUpdatedEvent::class, [ClearCacheSubscriber::class, 'onPostUpdate']);
+    Event::assertListening(PostDeletedEvent::class, [ClearCacheSubscriber::class, 'onPostDelete']);
 
     // post variants
-    Event::assertListening(PostVariantUpdatedEvent::class, [ClearTemplateCacheSubscriber::class, 'onPostVariantUpdate']);
-    Event::assertListening(PostVariantDeletedEvent::class, [ClearTemplateCacheSubscriber::class, 'onPostVariantDelete']);
+    Event::assertListening(PostVariantUpdatedEvent::class, [ClearCacheSubscriber::class, 'onPostVariantUpdate']);
+    Event::assertListening(PostVariantDeletedEvent::class, [ClearCacheSubscriber::class, 'onPostVariantDelete']);
 
     // user
-    $userEventListener = [ClearTemplateCacheSubscriber::class, 'onUserEvent'];
-    $userVariantEventListener = [ClearTemplateCacheSubscriber::class, 'onUserVariantEvent'];
+    $userEventListener = [ClearCacheSubscriber::class, 'onUserEvent'];
+    $userVariantEventListener = [ClearCacheSubscriber::class, 'onUserVariantEvent'];
     Event::assertListening(UserCreatedEvent::class, $userEventListener);
     Event::assertListening(UserUpdatedEvent::class, $userEventListener);
     Event::assertListening(UserDeletedEvent::class, $userEventListener);
@@ -44,8 +48,8 @@ it('is attached', function () {
     Event::assertListening(UserVariantDeletedEvent::class, $userVariantEventListener);
 
     // tag
-    $tagEventListener = [ClearTemplateCacheSubscriber::class, 'onTagEvent'];
-    $tagVariantEventListener = [ClearTemplateCacheSubscriber::class, 'onTagVariantEvent'];
+    $tagEventListener = [ClearCacheSubscriber::class, 'onTagEvent'];
+    $tagVariantEventListener = [ClearCacheSubscriber::class, 'onTagVariantEvent'];
     Event::assertListening(TagCreatedEvent::class, $tagEventListener);
     Event::assertListening(TagUpdatedEvent::class, $tagEventListener);
     Event::assertListening(TagDeletedEvent::class, $tagEventListener);
@@ -54,16 +58,16 @@ it('is attached', function () {
 });
 
 beforeEach(function () {
-    $this->templateMock = function () {
-        $this->mock(CacheRepository::class, function ($mock) {
+    $this->templateMock = function ($times = 1) {
+        $this->mock(CacheService::class, fn (MockInterface $mock) =>
             $mock
                 ->shouldReceive('clearTemplateCache')
-                ->once();
-        })->makePartial();
+                ->times($times)
+        )->makePartial();
     };
 
     $this->templateNoMock = function () {
-        $this->mock(CacheRepository::class, function (MockInterface $mock) {
+        $this->mock(CacheService::class, function (MockInterface $mock) {
             $mock->shouldReceive('clearTemplateCache')
                 ->never();
         })->makePartial();
@@ -88,7 +92,7 @@ it('clears cache when editing a post', function () {
     $post->slug = 'new-slug';
 
     $event = new PostUpdatedEvent($post);
-    $listener = new ClearTemplateCacheSubscriber();
+    $listener = new ClearCacheSubscriber();
     $listener->onPostUpdate($event);
 });
 
@@ -108,7 +112,7 @@ it('does not clear cache when editing a post if the primary variant is not publi
     $post->slug = 'new-slug';
 
     $event = new PostUpdatedEvent($post);
-    $listener = new ClearTemplateCacheSubscriber();
+    $listener = new ClearCacheSubscriber();
     $listener->onPostUpdate($event);
 });
 
@@ -122,7 +126,7 @@ it('clears cache when a post is deleted', function () {
     $post->slug = 'new-slug';
 
     $event = new PostDeletedEvent($post);
-    $listener = new ClearTemplateCacheSubscriber();
+    $listener = new ClearCacheSubscriber();
     $listener->onPostDelete($event);
 });
 
@@ -135,7 +139,7 @@ it('clears cache on post variant status change', function () {
     $variant->status = 'published';
     $event = new PostVariantUpdatedEvent($variant);
 
-    $listener = new ClearTemplateCacheSubscriber();
+    $listener = new ClearCacheSubscriber();
     $listener->onPostVariantUpdate($event);
 });
 
@@ -146,7 +150,7 @@ it('does not clear cache when attrs changes on non-published posts', function ()
     $variant->content = 'Hey';
     $event = new PostVariantUpdatedEvent($variant);
 
-    $listener = new ClearTemplateCacheSubscriber();
+    $listener = new ClearCacheSubscriber();
     $listener->onPostVariantUpdate($event);
 });
 
@@ -157,7 +161,7 @@ it('clears cache if the post is published', function () {
     $variant->content = 'Hey';
     $event = new PostVariantUpdatedEvent($variant);
 
-    $listener = new ClearTemplateCacheSubscriber();
+    $listener = new ClearCacheSubscriber();
     $listener->onPostVariantUpdate($event);
 });
 
@@ -167,6 +171,66 @@ it('clears cache on post variant status delete', function () {
     $variant = PostVariant::factory()->create();
     $event = new PostVariantDeletedEvent($variant);
 
-    $listener = new ClearTemplateCacheSubscriber();
+    $listener = new ClearCacheSubscriber();
     $listener->onPostVariantDelete($event);
+});
+
+it('clears cache on user events', function() {
+
+    ($this->templateMock)(3);
+
+    $user = User::factory()->create();
+    $createEvent = new UserCreatedEvent($user);
+    $updateEvent = new UserUpdatedEvent($user);
+    $deleteEvent = new UserDeletedEvent($user);
+
+    $listener = new ClearCacheSubscriber();
+    $listener->onUserEvent($createEvent);
+    $listener->onUserEvent($updateEvent);
+    $listener->onUserEvent($deleteEvent);
+
+});
+
+it('clears cache on user variant events', function() {
+
+    ($this->templateMock)(2);
+
+    $variant = UserVariant::factory()->create();
+    $updateEvent = new UserVariantUpdatedEvent($variant);
+    $deleteEvent = new UserVariantDeletedEvent($variant);
+
+    $listener = new ClearCacheSubscriber();
+    $listener->onUserVariantEvent($updateEvent);
+    $listener->onUserVariantEvent($deleteEvent);
+
+});
+
+it('clears cache on tag events', function() {
+
+    ($this->templateMock)(3);
+
+    $user = Tag::factory()->create();
+    $createEvent = new TagCreatedEvent($user);
+    $updateEvent = new TagUpdatedEvent($user);
+    $deleteEvent = new TagDeletedEvent($user);
+
+    $listener = new ClearCacheSubscriber();
+    $listener->onTagEvent($createEvent);
+    $listener->onTagEvent($updateEvent);
+    $listener->onTagEvent($deleteEvent);
+
+});
+
+it('clears cache on tag variant events', function() {
+
+    ($this->templateMock)(2);
+
+    $variant = TagVariant::factory()->create();
+    $updateEvent = new TagVariantUpdatedEvent($variant);
+    $deleteEvent = new TagVariantDeletedEvent($variant);
+
+    $listener = new ClearCacheSubscriber();
+    $listener->onTagVariantEvent($updateEvent);
+    $listener->onTagVariantEvent($deleteEvent);
+
 });

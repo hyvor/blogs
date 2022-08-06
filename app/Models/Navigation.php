@@ -22,9 +22,4 @@ class Navigation extends Model
     {
         return $this->hasMany(NavigationVariant::class);
     }
-
-    public function counts()
-    {
-        return $this->morphMany(Count::class, 'countable');
-    }
 }
