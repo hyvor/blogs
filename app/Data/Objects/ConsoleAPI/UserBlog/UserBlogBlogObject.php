@@ -43,10 +43,10 @@ class UserBlogBlogObject
         $this->posts_count = $blog->getCount('posts');
         $this->users_count = $blog->getCount('users');
 
-        $this->is_on_trial = $blog->onTrial();
-        $this->trial_ends_at = $blog->customer->trial_ends_at?->timestamp;
+        $this->is_on_trial = false; // $blog->onTrial();
+        $this->trial_ends_at = null; // $blog->customer->trial_ends_at?->timestamp;
 
-        $subscription = $blog->subscription();
+        $subscription = null; // $blog->subscription();
 
         if ($subscription && $subscription->valid()) {
             $this->subscription = new SubscriptionObject($subscription);

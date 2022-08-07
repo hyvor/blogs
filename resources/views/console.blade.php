@@ -9,8 +9,6 @@
 <body>
     <div id="app"></div>
 
-    @paddleJS
-
     <script>
         var appConfig = <?php echo json_encode($config); ?>;
     </script>

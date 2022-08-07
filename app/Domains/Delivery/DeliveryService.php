@@ -10,8 +10,9 @@ use App\Models\Blog;
 
 class DeliveryService
 {
-    public static function getLaravelResponse(DeliveryAPIResponseObject $obj)
+    public static function getLaravelResponse(Blog $blog, string $path)
     {
+        $obj = self::getResponseObject($blog, $path);
         if ($obj->type === DeliveryAPITypeEnum::FILE) {
             return response($obj->content, $obj->status)->header('Content-Type', $obj->mime_type);
         } elseif ($obj->type === DeliveryAPITypeEnum::REDIRECT) {

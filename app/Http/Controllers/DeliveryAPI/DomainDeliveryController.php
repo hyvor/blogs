@@ -20,9 +20,7 @@ class DomainDeliveryController extends Controller
          * And, it always has the leading /
          */
         $path = $request->getPathInfo();
-        $data = DeliveryService::getResponseObject($blog, $path);
-
-        return DeliveryService::getLaravelResponse($data);
+        return DeliveryService::getLaravelResponse($blog, $path);
     }
 
 }

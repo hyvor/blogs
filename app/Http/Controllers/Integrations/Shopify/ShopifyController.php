@@ -6,6 +6,7 @@ use App\Data\Enums\BlogBillingTypeEnum;
 use App\Data\Enums\BlogHostingAtEnum;
 use App\Data\Enums\BlogTypeEnum;
 use App\Domains\Blog\BlogService;
+use App\Domains\Delivery\DeliveryService;
 use App\Domains\Integrations\Shopify\Rules\ShopDomainRule;
 use App\Domains\Integrations\Shopify\ShopifyService;
 use App\Exceptions\TrustedException;
@@ -121,10 +122,29 @@ class ShopifyController
 
     }
 
-    public function proxy(Request $request)
+    public function proxy(Request $request, ShopifyService $shopifyService)
     {
-        dump($request->all());
-        return response('');
+        if (!$shopifyService->hasValidProxySignature($request->all())) {
+            throw new TrustedException('Invalid signature');
+        }
+
+        $domain = $request->query('shop');
+
+        $shop = $shopifyService->getShopByDomain($domain);
+
+        if (!$shop) {
+            throw new TrustedException('Shop not found');
+        }
+
+        $blog = $shop->blog;
+
+        if (!$blog) {
+            throw new TrustedException('No blog is assigned to this shop');
+        }
+
+        $path = $request->route('path') ?? '';
+
+        return DeliveryService::getLaravelResponse($blog, $path);
     }
 
 }

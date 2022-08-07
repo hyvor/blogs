@@ -43,6 +43,29 @@ class ShopifyService
         return hash_equals($hash, $hmac);
     }
 
+    /**
+     * @source https://shopify.dev/apps/online-store/app-proxies#calculate-a-digital-signature
+     */
+    public function hasValidProxySignature(array $params) : bool
+    {
+        $signature = $params['signature'];
+
+        $data = collect($params)
+            ->sortKeys()
+            ->filter(fn ($val, $key) => $key !== 'signature')
+            ->map(function ($val, $key) {
+                $val ??= '';
+                if (is_array($val)) $val = implode(',', $val);
+                return "$key=$val";
+            })
+            ->implode('');
+
+        $hash = hash_hmac('sha256', $data, config('integrations.shopify.api_secret_key'));
+
+        return hash_equals($hash, $signature);
+
+    }
+
     public function getOAuthUrl(string $shopDomain)
     {
         $apiKey = config('integrations.shopify.api_key');

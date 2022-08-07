@@ -10,4 +10,9 @@ class ShopifyShop extends Model
     use HasFactory;
 
     protected $table = 'inter_shopify_shops';
+
+    public function blog()
+    {
+        return $this->belongsTo(Blog::class);
+    }
 }

@@ -13,7 +13,7 @@ Route::prefix('shopify')
     Route::get('/complete', [ShopifyController::class, 'complete'])->name('shopify-complete');
 
     Route::get('/charged', null);
-    Route::get('/proxy/{path}', [ShopifyController::class, 'proxy'])->where('path', '.*');
+    Route::get('/proxy/{path?}', [ShopifyController::class, 'proxy'])->where('path', '.*');
 
     Route::post('/billing/create', [ShopifyController::class, 'createSubscription']);
 

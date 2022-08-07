@@ -18,7 +18,7 @@ class UserBlogRepository
             ->where('status', 'active')
             ->orderBy('sort', 'ASC')
             ->orderBy('created_at', 'ASC')
-            ->with('blog', 'blog.subscriptions')
+            ->with('blog'/*, 'blog.subscriptions'*/)
             ->get();
     }
 
