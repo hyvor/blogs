@@ -13,18 +13,16 @@ return new class extends Migration
      */
     public function up()
     {
-        Schema::create('subscriptions', function (Blueprint $table) {
+        Schema::create('inter_shopify_shops', function (Blueprint $table) {
             $table->id();
             $table->timestamps();
 
             // connections
-            $table->bigInteger('blog_id');
+            $table->bigInteger('blog_id')->nullable();
 
             // data
-            $table->enum('status', ['active', 'past_due', 'deleted']);
-            $table->enum('plan', ['A', 'B', 'C', 'D', 'E']);
-            $table->enum('frequency', ['monthly', 'yearly']);
-            $table->timestamp('ends_at')->nullable();
+            $table->string('domain')->unique();
+            $table->string('access_token')->nullable();
         });
     }
 
@@ -35,6 +33,6 @@ return new class extends Migration
      */
     public function down()
     {
-        Schema::dropIfExists('subscriptions');
+        Schema::dropIfExists('inter_shopify_shops');
     }
 };

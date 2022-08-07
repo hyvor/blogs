@@ -2,6 +2,7 @@
 
 namespace App\Models;
 
+use App\Data\Enums\BlogBillingTypeEnum;
 use App\Data\Enums\BlogHostingAtEnum;
 use App\Data\Enums\BlogTypeEnum;
 use App\Models\Concerns\Countable;
@@ -10,7 +11,6 @@ use Hyvor\JsonMeta\Metable;
 use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
-use Laravel\Paddle\Billable;
 
 /**
  * @property BlogTypeEnum type
@@ -21,12 +21,12 @@ use Laravel\Paddle\Billable;
 class Blog extends Model
 {
     use HasFactory;
-    use Billable;
     use Countable;
     use Metable;
 
     protected $casts = [
         'type' => BlogTypeEnum::class,
+        'billing_type' => BlogBillingTypeEnum::class,
         'hosting_at' => BlogHostingAtEnum::class,
     ];
 

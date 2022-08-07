@@ -49,7 +49,8 @@ class Handler extends ExceptionHandler
                 // app domain
 
                 if (
-                    $request->is('api/*')
+                    $request->is('api/*') ||
+                    $request->is('integrations/*')
                 ) {
                     $code = $exception->status ?? $exception->getCode();
 

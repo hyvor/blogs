@@ -2,6 +2,7 @@
 
 namespace App\Domains\Blog;
 
+use App\Data\Enums\BlogBillingTypeEnum;
 use App\Data\Enums\BlogHostingAtEnum;
 use App\Data\Enums\BlogTypeEnum;
 use App\Domains\Blog\Deleters\LanguageDeleter;
@@ -29,20 +30,19 @@ use App\Models\Language;
 
 class BlogService
 {
-    public static function createBlog(
+    public function createBlog(
         ?int $userId,
         string $name,
         string $subdomain,
-        BlogTypeEnum $type = BlogTypeEnum::DEFAULT
-    ): Blog {
+        BlogTypeEnum $type = BlogTypeEnum::DEFAULT,
+        BlogBillingTypeEnum $billingType = BlogBillingTypeEnum::PADDLE
+    ): Blog
+    {
         $blog = Blog::create([
             'hyvor_user_id' => $userId,
             'subdomain' => $subdomain,
-            'type' => $type->value,
-        ]);
-
-        // start trial
-        $blog->createAsCustomer([
+            'type' => $type,
+            'billing_type' => $billingType,
             'trial_ends_at' => now()->addDays(config('limits.trial_days')),
         ]);
 
@@ -60,6 +60,17 @@ class BlogService
             'name' => $name,
         ]);
 
+        $this->callFillers($blog);
+
+        return $blog;
+    }
+
+    /**
+     * This function is separated for mocking purposes
+     * to avoid overhead in tasks
+     */
+    protected function callFillers(Blog $blog)
+    {
         // other fillers
         $fillers = [
             UserFiller::class,
@@ -73,8 +84,6 @@ class BlogService
         foreach ($fillers as $filler) {
             (new $filler($blog))->fill();
         }
-
-        return $blog;
     }
 
     public static function getBlogBySubdomain(string $subdomain): ?Blog
@@ -89,7 +98,7 @@ class BlogService
 
     /**
      * @param  Blog  $blog
-     * @param  array  $updates
+     * @param  array $updates
      * @return Blog
      */
     public static function updateBlog(Blog $blog, array $updates): Blog
