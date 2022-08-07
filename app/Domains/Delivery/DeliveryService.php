@@ -28,7 +28,7 @@ class DeliveryService
             $path = '/'.$path;
         }
 
-        $shouldUserCache = true; // $blog->type === BlogTypeEnum::DEFAULT && config('app.debug') !== true;
+        $shouldUserCache = $blog->type === BlogTypeEnum::DEFAULT && config('app.debug') !== true;
 
         // first, check cache
         if ($shouldUserCache) {

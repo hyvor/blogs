@@ -76,12 +76,18 @@
 
     {#  DONT TOUCH THIS CODE. WRITE TESTS IF POSSIBLE #}
 
+    var hbWebComponent = document.querySelector("hyvor-blog");
+
     window._hb = {
         _url: "{{ ___url }}",
         subdomain: "{{ _blog.subdomain }}",
         color_modes: "{{ _blog.color_modes }}",
-        color_mode_default: "{{ _blog.color_mode_default }}"
+        color_mode_default: "{{ _blog.color_mode_default }}",
+
+        isShadow: !!hbWebComponent,
+        doc: hbWebComponent ? hbWebComponent.shadowRoot : document
     };
+
     (function() {
 
         {# Theme Modes <https://blogs.hyvor.com/docs/themes-styles#light-dark> #}
@@ -97,7 +103,8 @@
                 a = 'mode-light';
                 r = 'mode-dark';
             }
-            var html = document.documentElement;
+            {# shadowRoot or <html> #}
+            var html = _hb.isShadow ? _hb.doc.getElementById("inside-root") : document.documentElement;
             html.classList.remove(r, 'mode-preference-light', 'mode-preference-dark', 'mode-preference-os');
             html.classList.add(a, 'mode-preference-' + pref);
             if (!noSave) {

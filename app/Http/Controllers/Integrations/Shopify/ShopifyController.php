@@ -153,7 +153,17 @@ class ShopifyController
 
         $path = $request->route('path') ?? '';
 
-        return DeliveryService::getLaravelResponse($blog, $path);
+        $response = DeliveryService::getLaravelResponse($blog, $path);
+
+        if ($response->headers->get('Content-Type') === 'text/html') {
+            $response->setContent(view('embed.embed'));
+            $response->header('Content-Type', 'application/liquid');
+        }
+
+        /*$content = $response->content();
+        $response->setContent();*/
+
+        return $response;
     }
 
 }
