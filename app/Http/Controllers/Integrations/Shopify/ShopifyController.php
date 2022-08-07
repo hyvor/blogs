@@ -128,6 +128,11 @@ class ShopifyController
 
     public function proxy(Request $request, ShopifyService $shopifyService)
     {
+        $request->validate([
+            'shop' => ['required', 'string', new ShopDomainRule],
+            'signature' => 'required|string'
+        ]);
+
         if (!$shopifyService->hasValidProxySignature($request->all())) {
             throw new TrustedException('Invalid signature');
         }
