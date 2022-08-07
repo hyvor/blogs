@@ -60,17 +60,6 @@ class BlogService
             'name' => $name,
         ]);
 
-        $this->callFillers($blog);
-
-        return $blog;
-    }
-
-    /**
-     * This function is separated for mocking purposes
-     * to avoid overhead in tasks
-     */
-    protected function callFillers(Blog $blog)
-    {
         // other fillers
         $fillers = [
             UserFiller::class,
@@ -82,8 +71,10 @@ class BlogService
         ];
 
         foreach ($fillers as $filler) {
-            (new $filler($blog))->fill();
+            app($filler, ['blog' => $blog])->fill();
         }
+
+        return $blog;
     }
 
     public static function getBlogBySubdomain(string $subdomain): ?Blog

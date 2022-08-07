@@ -6,8 +6,10 @@ use App\Data\Enums\BlogBillingTypeEnum;
 use App\Data\Enums\BlogHostingAtEnum;
 use App\Data\Enums\BlogTypeEnum;
 use App\Domains\Blog\BlogService;
+use App\Domains\Blog\Fillers\NavigationFiller;
 use App\Domains\Delivery\DeliveryService;
 use App\Domains\Integrations\Shopify\Rules\ShopDomainRule;
+use App\Domains\Integrations\Shopify\ShopifyNavigationFiller;
 use App\Domains\Integrations\Shopify\ShopifyService;
 use App\Exceptions\TrustedException;
 use Hyvor\HyvorConnecter\Login;
@@ -100,6 +102,8 @@ class ShopifyController
         if (!$hyvorUser) {
             return Redirect::toSignup("/integrations/shopify/complete?domain=$domain");
         }
+
+        app()->bind(NavigationFiller::class, ShopifyNavigationFiller::class);
 
         $blog = app(BlogService::class)->createBlog(
             $hyvorUser->id,

@@ -4,10 +4,22 @@ namespace Tests\Feature\Integrations\Shopify;
 
 use App\Data\Enums\BlogBillingTypeEnum;
 use App\Data\Enums\BlogHostingAtEnum;
-use App\Domains\Blog\BlogService;
+use App\Domains\Blog\Fillers\PostFiller;
+use App\Domains\Blog\Fillers\RouteFiller;
+use App\Domains\Blog\Fillers\TagFiller;
+use App\Domains\Blog\Fillers\ThemeFiller;
+use App\Domains\Blog\Fillers\UserFiller;
 use App\Models\Blog;
 use App\Models\ShopifyShop;
-use Mockery\MockInterface;
+use Mockery;
+
+beforeEach(function() {
+    $this->mockFiller = function(string $cls) {
+        $themeFillerMock = Mockery::mock($cls)->makePartial();
+        $themeFillerMock->shouldReceive('fill')->once();
+        $this->app->bind($cls, fn () => $themeFillerMock);
+    };
+});
 
 it('returns error when shop is not found', function() {
 
@@ -53,13 +65,13 @@ it('redirects to auth when the user is not logged in', function() {
 
 it('creates blog, sets up self hosting, sets blog_id in shopify shop, and redirects to console', function() {
 
-    // prevent calling additional fillers
-    $this->mock(BlogService::class, function (MockInterface $mock) {
-        $mock->makePartial()
-            ->shouldAllowMockingProtectedMethods()
-            ->shouldReceive('callFillers')
-            ->once();
-    });
+    // prevent calling unwanted fillers
+    // we only want the navigation filler
+    ($this->mockFiller)(UserFiller::class);
+    ($this->mockFiller)(TagFiller::class);
+    ($this->mockFiller)(PostFiller::class);
+    ($this->mockFiller)(RouteFiller::class);
+    ($this->mockFiller)(ThemeFiller::class);
 
     $domain = 'shop.myshopify.com';
     $shop = ShopifyShop::create([
@@ -79,5 +91,10 @@ it('creates blog, sets up self hosting, sets blog_id in shopify shop, and redire
 
     $shop->refresh();
     expect($shop->blog_id)->toBe($blog->id);
+
+    $navigations = $blog->navigations;
+    expect($navigations->count())->toBe(1);
+    expect($navigations[0]->url)->toBe('/');
+    expect($navigations[0]->variants[0]->name)->toBe('Shop');
 
 });
