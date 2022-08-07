@@ -34,8 +34,8 @@ class ShopifyController
         }
 
         $url = $shopify->getOAuthUrl($shopDomain);
-        return redirect($url);
 
+        return redirect($url);
     }
 
     /**

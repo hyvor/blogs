@@ -1,9 +1,12 @@
 <?php
 
 use App\Http\Controllers\Integrations\Shopify\ShopifyController;
+use Illuminate\Session\Middleware\StartSession;
 use Illuminate\Support\Facades\Route;
 
-Route::prefix('shopify')->group(function() {
+Route::prefix('shopify')
+    ->middleware(StartSession::class)
+    ->group(function() {
 
     Route::get('/', [ShopifyController::class, 'init']);
     Route::get('/installed', [ShopifyController::class, 'installed'])->name('shopify-installed');
