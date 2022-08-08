@@ -146,7 +146,8 @@ export default function Hosting() {
                     'hosting_url',
                     'hosting_domain',
                     'hosting_at',
-                    'subdomain'
+                    'subdomain',
+                    'embeddable'
                 ]
             }
         />

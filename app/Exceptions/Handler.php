@@ -50,7 +50,8 @@ class Handler extends ExceptionHandler
 
                 if (
                     $request->is('api/*') ||
-                    $request->is('integrations/*')
+                    $request->is('integrations/*') ||
+                    $request->is('embed/*')
                 ) {
                     $code = $exception->status ?? $exception->getCode();
 
