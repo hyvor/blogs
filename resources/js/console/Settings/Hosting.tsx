@@ -6,6 +6,7 @@ import {useBlogActions, useBlogValues} from "../logic-helpers/blog";
 import SettingsSave from "../ReusableComponents/SettingsSave";
 import Callout, {CalloutColors} from "../ReusableComponents/Callout";
 import {ExclamationCircle} from "react-bootstrap-icons";
+import Switch from "../ReusableComponents/Switch";
 
 export default function Hosting() {
 
@@ -123,6 +124,21 @@ export default function Hosting() {
                     }
                 /> : null
         }
+
+        <DualSetting
+            title="Embeddable"
+            description={
+                <div>Turn this option on only if you are using <a href="/docs/embedding" className="link" target="_blank">embedding</a>.</div>
+            }
+            right={
+                <div>
+                    <Switch
+                        checked={blog.embeddable}
+                        onChange={checked => updateBlogValue('embeddable', checked)}
+                    />
+                </div>
+            }
+        />
 
         <SettingsSave
             keys={
