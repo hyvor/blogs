@@ -86,15 +86,9 @@ it('creates blog, sets up self hosting, sets blog_id in shopify shop, and redire
     $blog = Blog::where('subdomain', 'shop-myshopify-com')->first();
     expect($blog)->toBeInstanceOf(Blog::class);
     expect($blog->billing_type)->toBe(BlogBillingTypeEnum::SHOPIFY);
-    expect($blog->hosting_at)->toBe(BlogHostingAtEnum::SELF);
-    expect($blog->hosting_url)->toBe("https://$domain/a/blog");
+    expect($blog->getMeta('embeddable'))->toBe(true);
 
     $shop->refresh();
     expect($shop->blog_id)->toBe($blog->id);
-
-    $navigations = $blog->navigations;
-    expect($navigations->count())->toBe(1);
-    expect($navigations[0]->url)->toBe('/');
-    expect($navigations[0]->variants[0]->name)->toBe('Shop');
 
 });

@@ -103,8 +103,6 @@ class ShopifyController
             return Redirect::toSignup("/integrations/shopify/complete?domain=$domain");
         }
 
-        app()->bind(NavigationFiller::class, ShopifyNavigationFiller::class);
-
         $blog = app(BlogService::class)->createBlog(
             $hyvorUser->id,
             $domain,
@@ -115,8 +113,7 @@ class ShopifyController
 
         // setup blog for self-hosting with shopify default configs
         BlogService::updateBlog($blog, [
-            'hosting_at' => BlogHostingAtEnum::SELF,
-            'hosting_url' => "https://$domain/a/blog"
+            'embeddable' => true,
         ]);
 
         $shop->blog_id = $blog->id;
