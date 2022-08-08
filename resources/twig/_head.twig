@@ -76,16 +76,12 @@
 
     {#  DONT TOUCH THIS CODE. WRITE TESTS IF POSSIBLE #}
 
-    var hbWebComponent = document.querySelector("hyvor-blog");
-
     window._hb = {
         _url: "{{ ___url }}",
         subdomain: "{{ _blog.subdomain }}",
         color_modes: "{{ _blog.color_modes }}",
         color_mode_default: "{{ _blog.color_mode_default }}",
-
-        isShadow: !!hbWebComponent,
-        doc: hbWebComponent ? hbWebComponent.shadowRoot : document
+        base_url: "{{ _blog.base_url }}"
     };
 
     (function() {
@@ -104,7 +100,7 @@
                 r = 'mode-dark';
             }
             {# shadowRoot or <html> #}
-            var html = _hb.isShadow ? _hb.doc.getElementById("inside-root") : document.documentElement;
+            var html = document.documentElement;
             html.classList.remove(r, 'mode-preference-light', 'mode-preference-dark', 'mode-preference-os');
             html.classList.add(a, 'mode-preference-' + pref);
             if (!noSave) {

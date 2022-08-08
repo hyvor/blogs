@@ -1,3 +1,7 @@
+<script>
+    window.EMBEDDING_URL = "{{ $embeddingUrl }}";
+</script>
+
 {{-- Script for communicating --}}
 @vite('resources/js/embed/iframe.ts')
 

@@ -18,7 +18,7 @@ The blog is rendered inside a [Web Component](https://developer.mozilla.org/en-U
 
 * Embedding is slightly slower than direct rendering because of Javascript usage.
 * Query-based URLs are not the best-looking.
-* SEO robots may interpret the dynamically created page content and meta tags differently.
+* Because meta tags are added dynamically, search engines crawling and social media previews may have issues. According to some sources (unverified) most popular search engines do understand dynamically added meta tags. But, most social platforms are not able to understand OG/Twitter tags.
 
 ## SEO
 
