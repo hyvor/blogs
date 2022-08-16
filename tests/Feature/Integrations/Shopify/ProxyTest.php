@@ -13,7 +13,7 @@ function generateShopifyProxySignature(array $data) : array {
         ->sortKeys()
         ->map(fn ($val, $key) => "$key=$val")
         ->implode('');
-    $signature = hash_hmac('sha256', $str, config('integrations.shopify.api_secret_key'));
+    $signature = hash_hmac('sha256', $str, config('services.shopify.api_secret_key'));
 
     return $data + [
         'signature' => $signature

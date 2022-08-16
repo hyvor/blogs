@@ -12,6 +12,52 @@ use DateTimeInterface;
 class SubscriptionService
 {
 
+    /**
+     * @param Blog $blog
+     * @return Subscription[]
+     */
+    public static function getAllSubscriptions(Blog $blog) : array
+    {
+
+
+
+    }
+
+    public static function getActiveBlogSubscription(Blog $blog) : ?Subscription
+    {
+        $subscription = $blog->subscriptions()->first();
+
+        if (!$subscription)
+            return null;
+
+        return self::isSubscriptionActive($subscription) ? $subscription : null;
+    }
+
+    public static function isBlogSubscribed(Blog $blog) : bool
+    {
+        $subscription = $blog->subscriptions()->first();
+
+        if (!$subscription)
+            return false;
+
+        return self::isSubscriptionActive($subscription);
+
+    }
+
+    public static function isSubscriptionActive(Subscription $subscription) : bool
+    {
+        if (
+            $subscription->status === SubscriptionStatusEnum::ACTIVE ||
+            $subscription->status === SubscriptionStatusEnum::PAST_DUE
+        )
+            return true;
+
+        return
+            $subscription->status === SubscriptionStatusEnum::DELETED &&
+            $subscription->ends_at &&
+            $subscription->ends_at->greaterThan(now());
+    }
+
     public static function createSubscription(
         Blog $blog,
         SubscriptionPlanEnum $plan,
@@ -48,6 +94,7 @@ class SubscriptionService
     public static function cancelSubscription(Subscription $subscription, DateTimeInterface $date) : Subscription
     {
         $subscription->ends_at = $date;
+        $subscription->status = SubscriptionStatusEnum::DELETED;
         $subscription->save();
 
         return $subscription;

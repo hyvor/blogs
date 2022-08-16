@@ -28,7 +28,7 @@ it('fails when nonce is wrong', function() {
         'state' => 'nonce'
     ];
     $data += [
-        'hmac' => hash_hmac('sha256', http_build_query($data), config('integrations.shopify.api_secret_key'))
+        'hmac' => hash_hmac('sha256', http_build_query($data), config('services.shopify.api_secret_key'))
     ];
 
     $this->callIntegrationEndpoint('GET', 'shopify/installed', $data)
@@ -55,7 +55,7 @@ it('gets the access token and creates a shop', function() {
         'state' => 'nonce'
     ];
     $data += [
-        'hmac' => hash_hmac('sha256', http_build_query($data), config('integrations.shopify.api_secret_key'))
+        'hmac' => hash_hmac('sha256', http_build_query($data), config('services.shopify.api_secret_key'))
     ];
 
     $this->callIntegrationEndpoint('GET', 'shopify/installed', $data)

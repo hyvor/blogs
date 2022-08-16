@@ -5,213 +5,183 @@ namespace App\Domains\Integrations\Paddle;
 use App\Data\Enums\SubscriptionFrequencyEnum;
 use App\Data\Enums\SubscriptionPlanEnum;
 use App\Data\Objects\App\PaddlePlan;
+use App\Domains\Integrations\Paddle\Passthrough\Passthrough;
 use App\Exceptions\TrustedException;
 use App\Models\Blog;
-use Illuminate\Database\Eloquent\Collection;
+use App\Models\Subscription;
+use Illuminate\Support\Collection;
+use Illuminate\Support\Facades\App;
 
 class PaddleService
 {
 
-    /**
-     * This is an internal name for the subscription
-     * In Laravel Paddle Cashier, you can give names for each subscription
-     * So that each model can have multiple subscriptions
-     *
-     * https://laravel.com/docs/8.x/cashier-paddle#creating-subscriptions
-     *
-     * But, for us, we only need one subscription type.
-     * So, always use this const when you have to send subscription name to a function
-     */
-    public const SUBSCRIPTION_NAME = 'default';
+    const META_PADDLE_SUBSCRIPTION_ID = 'paddle_subscription_id';
 
-    public static function createPayLink(
+    public function createPayLink(
         Blog $blog,
         SubscriptionPlanEnum $planName,
         SubscriptionFrequencyEnum $frequency
-    ): string {
-        if ($blog->subscribed()) {
-            throw new TrustedException('This blog already has a subscription');
-        }
+    ) : string
+    {
 
-        $plan = self::getPlanConfigFromPlanNameAndFrequency($planName, $frequency);
+        $plan = self::planConfig($planName, $frequency);
         $planId = $plan->id;
 
-        return $blog
-            ->newSubscription(self::SUBSCRIPTION_NAME, $planId)
-            ->create();
+        $data = PaddleApiCaller::call('/product/generate_pay_link', [
+            'product_id' => $planId,
+            'passthrough' => Passthrough::encode($blog)
+        ]);
+
+        return $data->url;
     }
 
-    public static function updateSubscription(
-        Blog $blog,
+    public function updateSubscription(
+        Subscription $subscription,
         SubscriptionPlanEnum $planName,
         SubscriptionFrequencyEnum $frequency
-    ) {
-        $planConfig = self::getPlanConfigFromPlanNameAndFrequency($planName, $frequency);
-        $planId = $planConfig->id;
-
-        $currentSubscription = $blog->subscription();
-
-        if ($currentSubscription->paddle_plan === $planId) {
-            throw new TrustedException(
-                'Cannot update to the same plan',
-                TrustedException::ERROR_UNPROCESSABLE
-            );
-        }
-
-        // change plan
-        $currentSubscription->swapAndInvoice($planId);
-    }
-
-    public static function cancelSubscription(Blog $blog, bool $forced = false)
+    )
     {
-        $subscription = $blog->subscription();
 
-        if (! $subscription) {
-            return;
-        }
+        $plan = self::planConfig($planName, $frequency);
+        $planId = $plan->id;
 
-        if (! $subscription->cancelled()) {
-            $subscription->cancel();
-        }
+        $subscriptionId = $this->getPaddleSubscriptionId($subscription);
 
-        if ($forced) {
+        if (!$subscriptionId)
+            throw new TrustedException('Subscription ID is not set (unlikely)');
 
-            /**
-             * Forced cancelling is called after calling Paddle cancel API
-             * which means subscription()->cancelNow() will return an error because
-             * it again calls the API
-             * Therefore, instead of calling cancelNow(), we only do the part that updates
-             * data in our database
-             *
-             * This code is taken from Laravel\Paddle\Subscription::cancelAt()
-             */
-            $subscription->forceFill([
-                'ends_at' => now(),
-            ])->save();
-        }
+        PaddleApiCaller::call('/subscription/users/update', [
+            'subscription_id' => $subscriptionId,
+            'plan_id' => $planId,
+        ]);
+
     }
 
-    public static function getPlanConfigById(int $planId): PaddlePlan
+    public function cancelSubscription(Subscription $subscription)
     {
-        $plans = self::paddlePlans();
 
-        foreach ($plans as $plan) {
-            if ($plan->id === $planId) {
-                return $plan;
-            }
-        }
+        $paddleSubscriptionId = $this->getPaddleSubscriptionId($subscription);
 
-        throw new TrustedException("Unable to find a plan with plan ID $planId");
-    }
+        if (!$paddleSubscriptionId)
+            throw new TrustedException('Subscription ID is not set (unlikely)');
 
-    public static function getPlanConfigFromPlanNameAndFrequency(
-        SubscriptionPlanEnum $planName,
-        SubscriptionFrequencyEnum $frequency
-    ): PaddlePlan {
+        PaddleApiCaller::call('/subscription/users_cancel', [
+            'subscription_id' => $paddleSubscriptionId,
+        ]);
 
-        $plans = self::paddlePlans();
-
-        foreach ($plans as $plan) {
-            if (
-                $plan->name === $planName &&
-                $plan->frequency === $frequency
-            ) {
-                return $plan;
-            }
-        }
-
-        throw new TrustedException('Plan not found');
-    }
-
-    public static function getReceipts(Blog $blog): Collection
-    {
-        return $blog->receipts()->get();
-    }
-
-    public static function getAllSubscriptions(Blog $blog): Collection
-    {
-        return $blog->subscriptions()->get();
     }
 
     /**
-     * @return PaddlePlan[]
+     * Gets the Paddle's subscription ID
+     * Saved in meta of the Subscription row
      */
-    public static function paddlePlans() : array
+    private function getPaddleSubscriptionId(Subscription $subscription) : ?int
+    {
+        return $subscription->getMeta(self::META_PADDLE_SUBSCRIPTION_ID);
+    }
+
+    public static function setPaddleSubscriptionId(Subscription $subscription, int $id)
+    {
+        $subscription->setMeta(self::META_PADDLE_SUBSCRIPTION_ID, $id);
+    }
+
+    public static function getSubscriptionFromPaddleSubscriptionId(int $id) : ?Subscription
+    {
+        return Subscription::where('meta->' . self::META_PADDLE_SUBSCRIPTION_ID, $id)->first();
+    }
+
+    public static function planConfig(SubscriptionPlanEnum $plan, SubscriptionFrequencyEnum $frequency) : PaddlePlan
+    {
+        return self::paddlePlans()
+            ->where('name', $plan)
+            ->where('frequency', $frequency)
+            ->first();
+    }
+
+    public static function planConfigFromPaddleId(int $id) : PaddlePlan
+    {
+        return self::paddlePlans()->firstWhere('id', $id);
+    }
+
+    /**
+     * @return Collection<PaddlePlan>
+     */
+    public static function paddlePlans() : Collection
     {
 
-        return [
+        return collect([
 
             new PaddlePlan(
-                env('APP_ENV') !== 'production' ? 32097 : 0,
+                !App::environment('production') ? 32097 : 0,
                 SubscriptionPlanEnum::A,
                 SubscriptionFrequencyEnum::MONTHLY,
                 19,
             ),
 
             new PaddlePlan(
-                env('APP_ENV') !== 'production' ? 32098 : 0,
+                !App::environment('production') ? 32098 : 0,
                 SubscriptionPlanEnum::A,
                 SubscriptionFrequencyEnum::YEARLY,
                 190,
             ),
 
             new PaddlePlan(
-                env('APP_ENV') !== 'production' ? 32099 : 0,
+                !App::environment('production') ? 32099 : 0,
                 SubscriptionPlanEnum::B,
                 SubscriptionFrequencyEnum::MONTHLY,
                 49
             ),
 
             new PaddlePlan(
-                env('APP_ENV') !== 'production' ? 32100 : 0,
+                !App::environment('production') ? 32100 : 0,
                 SubscriptionPlanEnum::B,
                 SubscriptionFrequencyEnum::YEARLY,
                 490,
             ),
 
             new PaddlePlan(
-                env('APP_ENV') !== 'production' ? 32101 : 0,
+                !App::environment('production') ? 32101 : 0,
                 SubscriptionPlanEnum::C,
                 SubscriptionFrequencyEnum::MONTHLY,
                 299
             ),
 
             new PaddlePlan(
-                env('APP_ENV') !== 'production' ? 32102 : 0,
+                !App::environment('production') ? 32102 : 0,
                 SubscriptionPlanEnum::C,
                 SubscriptionFrequencyEnum::YEARLY,
                 2990,
             ),
 
             new PaddlePlan(
-                env('APP_ENV') !== 'production' ? 32103 : 0,
+                !App::environment('production') ? 32103 : 0,
                 SubscriptionPlanEnum::D,
                 SubscriptionFrequencyEnum::MONTHLY,
                 699
             ),
 
             new PaddlePlan(
-                env('APP_ENV') !== 'production' ? 32104 : 0,
+                !App::environment('production') ? 32104 : 0,
                 SubscriptionPlanEnum::D,
                 SubscriptionFrequencyEnum::YEARLY,
                 6990,
             ),
 
             new PaddlePlan(
-                env('APP_ENV') !== 'production' ? 32105 : 0,
+                !App::environment('production') ? 32105 : 0,
                 SubscriptionPlanEnum::E,
                 SubscriptionFrequencyEnum::MONTHLY,
                 1299
             ),
 
             new PaddlePlan(
-                env('APP_ENV') !== 'production' ? 32106 : 0,
+                !App::environment('production') ? 32106 : 0,
                 SubscriptionPlanEnum::E,
                 SubscriptionFrequencyEnum::YEARLY,
                 12990,
             ),
 
-        ];
+        ]);
     }
 
 }

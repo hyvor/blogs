@@ -1,7 +1,7 @@
 <?php
 
 use App\Http\Controllers\ConsoleAPI\ConsoleApiKeysController;
-use App\Http\Controllers\ConsoleAPI\ConsoleBillingController;
+use App\Http\Controllers\ConsoleAPI\ConsoleBillingPaddleController;
 use App\Http\Controllers\ConsoleAPI\ConsoleBlogController;
 use App\Http\Controllers\ConsoleAPI\ConsoleDangerController;
 use App\Http\Controllers\ConsoleAPI\ConsoleImportExportController;
@@ -205,11 +205,23 @@ Route::prefix('/api/console/v0/blog/{subdomain}')
          */
         Route::middleware('role:owner|admin|finance')->group(function () {
 
-            // billing
-            Route::get('/billing', [ConsoleBillingController::class, 'getData']);
-            Route::post('/billing/subscription', [ConsoleBillingController::class, 'createSubscription']);
-            Route::patch('/billing/subscription', [ConsoleBillingController::class, 'updateSubscription']);
-            Route::delete('/billing/subscription', [ConsoleBillingController::class, 'cancelSubscription']);
+            Route::middleware('billing-type:paddle')->group(function() {
+
+                // general
+                Route::delete('/billing/subscription', []);
+
+                // paddle
+                Route::get('/billing/paddle', [ConsoleBillingPaddleController::class, 'getData']);
+                Route::post('/billing/paddle/subscription', [ConsoleBillingPaddleController::class, 'createSubscription']);
+                Route::patch('/billing/paddle/subscription', [ConsoleBillingPaddleController::class, 'updateSubscription']);
+                Route::delete('/billing/paddle/subscription', [ConsoleBillingPaddleController::class, 'cancelSubscription']);
+
+                // shopify
+
+            });
+
+
+
         });
 
         /**

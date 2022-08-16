@@ -38,7 +38,7 @@ class ShopifyService
             ->map(fn ($val, $key) => http_build_query([$key => $val]))
             ->implode('&');
 
-        $hash = hash_hmac('sha256', $data, config('integrations.shopify.api_secret_key'));
+        $hash = hash_hmac('sha256', $data, config('services.shopify.api_secret_key'));
 
         return hash_equals($hash, $hmac);
     }
@@ -60,7 +60,7 @@ class ShopifyService
             })
             ->implode('');
 
-        $hash = hash_hmac('sha256', $data, config('integrations.shopify.api_secret_key'));
+        $hash = hash_hmac('sha256', $data, config('services.shopify.api_secret_key'));
 
         return hash_equals($hash, $signature);
 
@@ -68,7 +68,7 @@ class ShopifyService
 
     public function getOAuthUrl(string $shopDomain)
     {
-        $apiKey = config('integrations.shopify.api_key');
+        $apiKey = config('services.shopify.api_key');
         $redirectUri = urlencode(URL::route('shopify-installed'));
         $nonce = self::generateNonce();
 
@@ -84,8 +84,8 @@ class ShopifyService
     {
 
         $response = Http::post("https://$domain/admin/oauth/access_token", [
-            'client_id' => config('integrations.shopify.api_key'),
-            'client_secret' => config('integrations.shopify.api_secret_key'),
+            'client_id' => config('services.shopify.api_key'),
+            'client_secret' => config('services.shopify.api_secret_key'),
             'code' => $code
         ]);
 

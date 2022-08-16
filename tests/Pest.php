@@ -139,3 +139,5 @@ function testTwigRendering(string $template, array $vars, string $expectation) {
     $val = TwigRenderer::renderString($template, $vars);
     expect($val)->toBe($expectation);
 }
+
+include_once './tests/Feature/ConsoleAPI/Billing/Paddle/Webhook/helper.php';

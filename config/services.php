@@ -39,4 +39,15 @@ return [
         'secret_key' => env('UNSPLASH_SECRET_KEY'),
     ],
 
+    'paddle' => [
+        'vendor_id' => env('PADDLE_VENDOR_ID'),
+        'vendor_auth_code' => env('PADDLE_VENDOR_AUTH_CODE'),
+        'public_key' => env('PADDLE_PUBLIC_KEY')
+    ],
+
+    'shopify' => [
+        'api_key' => env('SHOPIFY_API_KEY'),
+        'api_secret_key' => env('SHOPIFY_API_SECRET_KEY')
+    ]
+
 ];

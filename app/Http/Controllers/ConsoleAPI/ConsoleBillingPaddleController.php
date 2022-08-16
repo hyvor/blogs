@@ -7,19 +7,22 @@ use App\Data\Enums\SubscriptionPlanEnum;
 use App\Data\Objects\ConsoleAPI\Billing\ReceiptObject;
 use App\Data\Objects\ConsoleAPI\Billing\SubscriptionInfoObject;
 use App\Data\Objects\ConsoleAPI\Billing\SubscriptionObject;
+use App\Domains\Integrations\Paddle\PaddleService;
 use App\Domains\Subscription\SubscriptionService;
 use App\Domains\Subscription\UsageRepository;
+use App\Exceptions\TrustedException;
 use App\Http\Controllers\Controller;
 use App\Models\Blog;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use Illuminate\Validation\Rules\Enum;
 
-class ConsoleBillingController extends Controller
+class ConsoleBillingPaddleController extends Controller
 {
+
     public function getData(Blog $blog): JsonResponse
     {
-        $receipts = SubscriptionService::getReceipts($blog)->mapInto(ReceiptObject::class);
+        $receipts = PaddleService::getReceipts($blog)->mapInto(ReceiptObject::class);
         $subscriptions = SubscriptionService::getAllSubscriptions($blog)->mapInto(SubscriptionObject::class);
         $info = ($subscription = $blog->subscription()) ? new SubscriptionInfoObject($subscription) : null;
         $usage = UsageRepository::getUsage($blog);
@@ -39,7 +42,11 @@ class ConsoleBillingController extends Controller
             'frequency' => ['required', 'string', new Enum(SubscriptionFrequencyEnum::class)],
         ]);
 
-        $payLink = SubscriptionService::createPayLink(
+        if (SubscriptionService::isBlogSubscribed($blog)) {
+            throw new TrustedException('This blog already has a subscription');
+        }
+
+        $payLink = app(PaddleService::class)->createPayLink(
             $blog,
             SubscriptionPlanEnum::from($request->input('plan')),
             SubscriptionFrequencyEnum::from($request->input('frequency'))
@@ -57,8 +64,21 @@ class ConsoleBillingController extends Controller
             'frequency' => ['required', 'string', new Enum(SubscriptionFrequencyEnum::class)],
         ]);
 
-        SubscriptionService::updateSubscription(
-            $blog,
+        $plan = SubscriptionPlanEnum::from($request->input('plan'));
+        $frequency = SubscriptionFrequencyEnum::from($request->input('frequency'));
+
+        $subscription = SubscriptionService::getActiveBlogSubscription($blog);
+
+        if (!$subscription) {
+            throw new TrustedException('No current subscription');
+        }
+
+        if ($subscription->plan === $plan && $subscription->frequency === $frequency) {
+            throw new TrustedException('Cannot be changed to the same subscription');
+        }
+
+        app(PaddleService::class)->updateSubscription(
+            $subscription,
             SubscriptionPlanEnum::from($request->input('plan')),
             SubscriptionFrequencyEnum::from($request->input('frequency'))
         );
@@ -66,11 +86,15 @@ class ConsoleBillingController extends Controller
         return response()->json();
     }
 
-    public function cancelSubscription(Request $request, Blog $blog): JsonResponse
+    public function cancelSubscription(Blog $blog): JsonResponse
     {
-        $forced = (bool) $request->input('forced');
+        $subscription = SubscriptionService::getActiveBlogSubscription($blog);
 
-        SubscriptionService::cancelSubscription($blog, $forced);
+        if (!$subscription) {
+            throw new TrustedException('No current subscription');
+        }
+
+        app(PaddleService::class)->cancelSubscription($subscription);
 
         return response()->json();
     }

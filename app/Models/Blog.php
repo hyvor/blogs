@@ -144,4 +144,9 @@ class Blog extends Model
     {
         return $this->hasMany(Media::class);
     }
+
+    public function subscriptions()
+    {
+        return $this->hasMany(Subscription::class)->orderBy('id', 'DESC');
+    }
 }

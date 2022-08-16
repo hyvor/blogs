@@ -25,6 +25,8 @@ return new class extends Migration
             $table->enum('plan', ['A', 'B', 'C', 'D', 'E']);
             $table->enum('frequency', ['monthly', 'yearly']);
             $table->timestamp('ends_at')->nullable();
+
+            $table->json('meta')->nullable();
         });
     }
 
