@@ -13,6 +13,8 @@ use Illuminate\Database\Eloquent\Model;
 
 /**
  * @property int id
+ * @property Carbon created_at
+ * @property Carbon updated_at
  * @property SubscriptionStatusEnum status
  * @property SubscriptionPlanEnum plan
  * @property SubscriptionFrequencyEnum frequency

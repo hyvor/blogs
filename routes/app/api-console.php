@@ -1,7 +1,8 @@
 <?php
 
+use App\Http\Controllers\ConsoleAPI\Billing\ConsoleBillingController;
+use App\Http\Controllers\ConsoleAPI\Billing\ConsoleBillingPaddleController;
 use App\Http\Controllers\ConsoleAPI\ConsoleApiKeysController;
-use App\Http\Controllers\ConsoleAPI\ConsoleBillingPaddleController;
 use App\Http\Controllers\ConsoleAPI\ConsoleBlogController;
 use App\Http\Controllers\ConsoleAPI\ConsoleDangerController;
 use App\Http\Controllers\ConsoleAPI\ConsoleImportExportController;
@@ -208,6 +209,8 @@ Route::prefix('/api/console/v0/blog/{subdomain}')
             Route::middleware('billing-type:paddle')->group(function() {
 
                 // general
+                Route::get('/billing/subscriptions', [ConsoleBillingController::class, 'getSubscriptions']);
+                Route::get('/billing/usage', [ConsoleBillingController::class, 'getUsage']);
                 Route::delete('/billing/subscription', []);
 
                 // paddle

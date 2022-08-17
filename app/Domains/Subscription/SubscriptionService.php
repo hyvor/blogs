@@ -8,19 +8,18 @@ use App\Data\Enums\SubscriptionStatusEnum;
 use App\Models\Blog;
 use App\Models\Subscription;
 use DateTimeInterface;
+use Illuminate\Support\Collection;
 
 class SubscriptionService
 {
 
     /**
      * @param Blog $blog
-     * @return Subscription[]
+     * @return Collection<Subscription>
      */
-    public static function getAllSubscriptions(Blog $blog) : array
+    public static function getAllSubscriptions(Blog $blog) : Collection
     {
-
-
-
+        return $blog->subscriptions;
     }
 
     public static function getActiveBlogSubscription(Blog $blog) : ?Subscription

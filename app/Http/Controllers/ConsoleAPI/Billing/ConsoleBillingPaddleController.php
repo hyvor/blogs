@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Http\Controllers\ConsoleAPI;
+namespace App\Http\Controllers\ConsoleAPI\Billing;
 
 use App\Data\Enums\SubscriptionFrequencyEnum;
 use App\Data\Enums\SubscriptionPlanEnum;
