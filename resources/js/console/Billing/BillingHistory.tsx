@@ -1,7 +1,7 @@
 import { useValues } from 'kea';
 import React from 'react'
 import { BoxArrowUpRight } from 'react-bootstrap-icons';
-import subscriptionLogic from '../logic/subscriptionLogic';
+import paddleLogic from '../logic/billing/paddleLogic';
 import Loader from '../ReusableComponents/Loader';
 import NoResults from '../ReusableComponents/NoResults';
 import { FriendlyDate } from '../ReusableComponents/Time';
@@ -10,7 +10,7 @@ import getSubdomain from "../logic-helpers/subdomain";
 export default function BillingHistory() {
 
     const subdomain = getSubdomain();
-    const { data, loadAjax } = useValues(subscriptionLogic({subdomain}));
+    const { data, loadAjax } = useValues(paddleLogic({subdomain}));
 
     return <div className="billing-history">
         { 

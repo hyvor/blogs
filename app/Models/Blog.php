@@ -14,6 +14,7 @@ use Illuminate\Database\Eloquent\Model;
 
 /**
  * @property BlogTypeEnum type
+ * @property BlogBillingTypeEnum billing_type
  * @property int hyvor_user_id
  * @property Collection $tags
  * @property Collection $users

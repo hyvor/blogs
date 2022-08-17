@@ -1,10 +1,9 @@
 import {actions, events, kea, key, path, props, reducers} from "kea";
-import api from "../lib/api";
-import type { subscriptionLogicType } from "./subscriptionLogicType";
+import api from "../../lib/api";
 import {ajax} from "kea-ajax";
-import {Receipt, Subscription, SubscriptionFrequency, SubscriptionInfo, SubscriptionPlan, Usage} from "../types";
+import {Receipt, Subscription, SubscriptionFrequency, SubscriptionInfo, SubscriptionPlan, Usage} from "../../types";
 
-const subscriptionLogic = kea<subscriptionLogicType>([
+const paddleLogic = kea([
 
     props({} as {subdomain: string}),
     key(props => props.subdomain),
@@ -26,7 +25,7 @@ const subscriptionLogic = kea<subscriptionLogicType>([
             { onLoad: (link: string) => void, plan: SubscriptionPlan, frequency: SubscriptionFrequency }
         ) => {
             type Response = { link: string }
-            const data = await api.post<Response>(props.subdomain, '/billing/subscription', {
+            const data = await api.post<Response>(props.subdomain, '/billing/paddle/subscription', {
                 plan, frequency
             });
             onLoad(data.link);
@@ -36,17 +35,17 @@ const subscriptionLogic = kea<subscriptionLogicType>([
             { onSuccess, plan, frequency } :
             { onSuccess: Function, plan: SubscriptionPlan, frequency: SubscriptionFrequency }
         ) => {
-            await api.patch(props.subdomain, '/billing/subscription', {
+            await api.patch(props.subdomain, '/billing/paddle/subscription', {
                 plan, frequency
             })
             onSuccess();
         },
 
         cancelSubscription: async (
-            { forced = false, onSuccess } :
-            { forced?: boolean, onSuccess: Function }
+            { onSuccess } :
+            { onSuccess: Function }
         ) => {
-            await api.delete(props.subdomain, '/billing/subscription', {forced});
+            await api.delete(props.subdomain, '/billing/paddle/subscription');
             onSuccess();
         }
 
@@ -75,4 +74,4 @@ const subscriptionLogic = kea<subscriptionLogicType>([
 
 ]);
 
-export default subscriptionLogic;
+export default paddleLogic;

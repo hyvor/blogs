@@ -16,5 +16,17 @@
     @viteReactRefresh
     @vite('resources/js/console/console.tsx')
 
+    <script>
+        function setUpPaddle() {
+            @if (config('services.paddle.sandbox'))
+                Paddle.Environment.set('sandbox');
+            @endif
+            Paddle.Setup({
+                vendor: {{ config('services.paddle.vendor_id')  }}
+            });
+        }
+    </script>
+    <script async src="https://cdn.paddle.com/paddle/paddle.js" onload="setUpPaddle()"></script>
+
 </body>
 </html>

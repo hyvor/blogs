@@ -2,9 +2,9 @@ const wrap = document.getElementById("hyvor-blogs-embed-wrap");
 const iframe = document.createElement("iframe")
 
 const hbDomain = window.HYVOR_BLOGS_APP_URL;
-const subdomain = window.HYVOR_BLOGS_EMBED_SUBDOMAIN;
+const currentSubdomain = window.HYVOR_BLOGS_EMBED_SUBDOMAIN;
 
-const iframeUrl = new URL(hbDomain + "/embed/iframe/" + subdomain);
+const iframeUrl = new URL(hbDomain + "/embed/iframe/" + currentSubdomain);
 const currentUrl = new URL(location.href)
 
 iframeUrl.searchParams.append('url', currentUrl.href.replace(/\?.+/, ''))

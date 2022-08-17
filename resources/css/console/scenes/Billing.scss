@@ -69,13 +69,15 @@
                         .plan-right-button-wrap {
                             min-width: 65px;
                             text-align: center;
-                            .current-text {
-                                font-size: 10px;
-                                text-transform: uppercase;
-                                font-weight: 600;
-                                color: $color-accent;
-                            }
                         }
+                    }
+
+                    .current-text {
+                        font-size: 10px;
+                        text-transform: uppercase;
+                        font-weight: 600;
+                        color: $color-accent;
+                        margin-left: 10px;
                     }
                     .plan-name {
                         font-size: 16px;
@@ -93,30 +95,6 @@
                     }
                     .plan-button {
                         
-                    }
-
-                    .team-users-selector {
-                        margin-left: 10px;
-                        border-radius: 20px;
-                        overflow: hidden;
-                        display: inline-flex;
-                        align-items: center;
-                        user-select: none;
-                        .minus, .plus {
-                            margin-right: 4px;
-                            width:20px;
-                            height:20px;
-                            display: inline-flex;
-                            align-items: center;
-                            justify-content:center;
-                            border-radius: 50%;
-                            background: $color-accent-light;
-                            font-weight: 600;
-                            cursor: pointer;
-                        }
-                        .count {
-                            margin-right:4px;
-                        }
                     }
                 }
             }
