@@ -14,6 +14,7 @@ use App\Domains\Blog\Deleters\RouteDeleter;
 use App\Domains\Blog\Deleters\TagDeleter;
 use App\Domains\Blog\Deleters\ThemeDeleter;
 use App\Domains\Blog\Deleters\UserDeleter;
+use App\Domains\Blog\Events\BlogDeletedEvent;
 use App\Domains\Blog\Events\BlogUpdatedEvent;
 use App\Domains\Blog\Events\BlogVariantUpdatedEvent;
 use App\Domains\Blog\Fillers\LanguageFiller;
@@ -75,6 +76,11 @@ class BlogService
         }
 
         return $blog;
+    }
+
+    public static function getBlogById(int $id) : ?Blog
+    {
+        return Blog::find($id);
     }
 
     public static function getBlogBySubdomain(string $subdomain): ?Blog
@@ -196,5 +202,7 @@ class BlogService
         }
 
         $blog->delete();
+
+        BlogDeletedEvent::dispatch($blog);
     }
 }

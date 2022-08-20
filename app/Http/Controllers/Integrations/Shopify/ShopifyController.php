@@ -3,19 +3,21 @@
 namespace App\Http\Controllers\Integrations\Shopify;
 
 use App\Data\Enums\BlogBillingTypeEnum;
-use App\Data\Enums\BlogHostingAtEnum;
 use App\Data\Enums\BlogTypeEnum;
+use App\Data\Enums\SubscriptionFrequencyEnum;
+use App\Data\Enums\SubscriptionPlanEnum;
 use App\Domains\Blog\BlogService;
-use App\Domains\Blog\Fillers\NavigationFiller;
+use App\Domains\Blog\UniqueSubdomainGenerator;
 use App\Domains\Delivery\DeliveryService;
 use App\Domains\Integrations\Shopify\Rules\ShopDomainRule;
-use App\Domains\Integrations\Shopify\ShopifyNavigationFiller;
 use App\Domains\Integrations\Shopify\ShopifyService;
+use App\Domains\Subscription\SubscriptionService;
 use App\Exceptions\TrustedException;
 use Hyvor\HyvorConnecter\Login;
 use Hyvor\HyvorConnecter\Redirect;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\URL;
+use Illuminate\Validation\Rules\Enum;
 
 class ShopifyController
 {
@@ -106,7 +108,7 @@ class ShopifyController
         $blog = app(BlogService::class)->createBlog(
             $hyvorUser->id,
             $domain,
-            str_replace('.', '-', $domain),
+            UniqueSubdomainGenerator::generate([str_replace('.', '-', $domain)]),
             BlogTypeEnum::DEFAULT,
             BlogBillingTypeEnum::SHOPIFY
         );
@@ -161,6 +163,48 @@ class ShopifyController
         $response->setContent();*/
 
         return $response;
+    }
+
+    public function confirmSubscription(Request $request)
+    {
+
+        if (!$request->hasValidSignatureWhileIgnoring(['charge_id']))
+            throw new TrustedException('Invalid signature');
+
+        $request->validate([
+            'charge_id' => 'required|integer',
+            'blog_id' => 'required|int',
+            'plan' => ['required', new Enum(SubscriptionPlanEnum::class)],
+            'frequency' => ['required', new Enum(SubscriptionFrequencyEnum::class)],
+        ]);
+
+        $blogId = (int) $request->input('blog_id');
+        $blog = BlogService::getBlogById($blogId);
+
+        if (!$blog)
+            throw new TrustedException('Blog not found');
+
+        $plan = SubscriptionPlanEnum::from($request->input('plan'));
+        $frequency = SubscriptionFrequencyEnum::from($request->input('frequency'));
+
+        // cancel current subscription
+        $currentSubscription = SubscriptionService::getActiveBlogSubscription($blog);
+
+        if ($currentSubscription) {
+            SubscriptionService::cancelSubscription($currentSubscription, now());
+        }
+
+        $subscription = SubscriptionService::createSubscription(
+            $blog,
+            $plan,
+            $frequency
+        );
+
+        $chargeId = (int) $request->input('charge_id');
+        $subscription->setMeta('shopify_charge_id', $chargeId);
+
+        return redirect("/console/$blog->subdomain/billing");
+
     }
 
 }

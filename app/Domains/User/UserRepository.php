@@ -153,7 +153,7 @@ class UserRepository
             'blog_id' => $blog->id,
             'role' => $role,
             'status' => $status,
-            'slug' => UniqueSlugGenerator::forHyvorUser($blog, $hyvorUser),
+            'slug' => UniqueBlogItemSlugGenerator::forHyvorUser($blog, $hyvorUser),
             'hyvor_user_id' => $hyvorUser->id,
             'email' => $hyvorUser->email,
             'website_url' => $hyvorUser->website_url,
@@ -185,7 +185,7 @@ class UserRepository
             'blog_id' => $blog->id,
             'role' => UserRoleEnum::CONTRIBUTOR,
             'status' => UserStatusEnum::ACTIVE,
-            'slug' => UniqueSlugGenerator::forGuestUser($blog, $name),
+            'slug' => UniqueBlogItemSlugGenerator::forGuestUser($blog, $name),
         ]);
 
         $language = LanguageRepository::getPrimaryLanguage($blog);

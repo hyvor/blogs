@@ -1,8 +1,8 @@
 import React from 'react'
 import {getUserBlogBlog} from "../logic-helpers/blog";
 import Paddle from "./Paddle/Paddle";
-import BillingShopify from "./BillingShopify";
 import BillingColumn from "./Components/BillingColumn";
+import Shopify from "./Shopify/Shopify";
 
 export default function Billing() {
 
@@ -16,7 +16,7 @@ export default function Billing() {
         }
         {
             billing_type === 'shopify' &&
-            <BillingShopify />
+            <Shopify />
         }
 
         <BillingColumn>

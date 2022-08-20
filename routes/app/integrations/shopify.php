@@ -15,6 +15,7 @@ Route::prefix('shopify')
     Route::get('/charged', null);
     Route::get('/proxy/{path?}', [ShopifyController::class, 'proxy'])->where('path', '.*');
 
-    Route::post('/billing/create', [ShopifyController::class, 'createSubscription']);
+    Route::get('/billing/confirm', [ShopifyController::class, 'confirmSubscription'])
+        ->name('shopify-billing-create');
 
 });

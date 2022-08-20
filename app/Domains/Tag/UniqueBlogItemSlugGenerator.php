@@ -2,10 +2,10 @@
 
 namespace App\Domains\Tag;
 
-use App\Domains\Shared\UniqueSlugGeneratorAbstract;
+use App\Domains\Shared\UniqueBlogItemSlugGeneratorAbstract;
 use App\Models\Tag;
 
-class UniqueSlugGenerator extends UniqueSlugGeneratorAbstract
+class UniqueBlogItemSlugGenerator extends UniqueBlogItemSlugGeneratorAbstract
 {
     public function exists(string $slug): bool
     {

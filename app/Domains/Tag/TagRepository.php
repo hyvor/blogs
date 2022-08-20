@@ -97,7 +97,7 @@ class TagRepository
     {
         $tag = Tag::create([
             'blog_id' => $blog->id,
-            'slug' => UniqueSlugGenerator::generate($blog, [$name]),
+            'slug' => UniqueBlogItemSlugGenerator::generate($blog, [$name]),
         ]);
 
         $language = LanguageRepository::getPrimaryLanguage($blog);

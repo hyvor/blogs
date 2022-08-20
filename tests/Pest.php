@@ -140,4 +140,6 @@ function testTwigRendering(string $template, array $vars, string $expectation) {
     expect($val)->toBe($expectation);
 }
 
-include_once './tests/Feature/ConsoleAPI/Billing/Paddle/Webhook/helper.php';
+foreach (glob('tests/helpers/*.php') as $file) {
+    include_once $file;
+}

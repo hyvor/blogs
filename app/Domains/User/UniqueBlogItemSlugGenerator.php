@@ -2,12 +2,12 @@
 
 namespace App\Domains\User;
 
-use App\Domains\Shared\UniqueSlugGeneratorAbstract;
+use App\Domains\Shared\UniqueBlogItemSlugGeneratorAbstract;
 use App\Models\Blog;
 use App\Models\User;
 use Hyvor\HyvorConnecter\HyvorUser;
 
-class UniqueSlugGenerator extends UniqueSlugGeneratorAbstract
+class UniqueBlogItemSlugGenerator extends UniqueBlogItemSlugGeneratorAbstract
 {
     public function exists(string $slug): bool
     {

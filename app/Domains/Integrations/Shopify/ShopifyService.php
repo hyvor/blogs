@@ -3,6 +3,7 @@
 namespace App\Domains\Integrations\Shopify;
 
 use App\Exceptions\TrustedException;
+use App\Models\Blog;
 use App\Models\ShopifyShop;
 use Illuminate\Support\Facades\Http;
 use Illuminate\Support\Facades\URL;
@@ -105,9 +106,19 @@ class ShopifyService
         ]);
     }
 
-    public function getShopByDomain(string $domain) : ?ShopifyShop
+    public static function deleteShop(ShopifyShop $shop)
+    {
+        $shop->delete();
+    }
+
+    public static function getShopByDomain(string $domain) : ?ShopifyShop
     {
         return ShopifyShop::where('domain', $domain)->first();
+    }
+
+    public static function getShopByBlog(Blog $blog) : ?ShopifyShop
+    {
+        return ShopifyShop::where('blog_id', $blog->id)->first();
     }
 
 }
