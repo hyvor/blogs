@@ -40,12 +40,14 @@ return [
         ['themes-overview', 'Overview'],
         ['themes-templates', 'Templates'],
         ['themes-styles', 'Styling'],
+        ['themes-scripts', 'Scripts'],
         ['themes-internationalization', 'Internationalization'],
         ['themes-config', 'Configuration'],
         ['themes-publishing', 'Publishing'],
     ],
     'Advanced' => [
         ['routes', 'Routes'],
+        ['embedding', 'Embedding'],
         ['import', 'Import'],
         ['export', 'Export'],
     ],
@@ -62,6 +64,9 @@ return [
         ['policy-content', 'Content Policy'],
         ['policy-security', 'Security Policy'],
         ['compliance-gdpr', 'GDPR Compliance'],
+    ],
+    'Integrations' => [
+        ['shopify', 'Shopify']
     ],
     'Misc' => [
         ['oss', 'Open Source'],

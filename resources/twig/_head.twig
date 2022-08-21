@@ -80,8 +80,10 @@
         _url: "{{ ___url }}",
         subdomain: "{{ _blog.subdomain }}",
         color_modes: "{{ _blog.color_modes }}",
-        color_mode_default: "{{ _blog.color_mode_default }}"
+        color_mode_default: "{{ _blog.color_mode_default }}",
+        base_url: "{{ _blog.base_url }}"
     };
+
     (function() {
 
         {# Theme Modes <https://blogs.hyvor.com/docs/themes-styles#light-dark> #}
@@ -97,6 +99,7 @@
                 a = 'mode-light';
                 r = 'mode-dark';
             }
+            {# shadowRoot or <html> #}
             var html = document.documentElement;
             html.classList.remove(r, 'mode-preference-light', 'mode-preference-dark', 'mode-preference-os');
             html.classList.add(a, 'mode-preference-' + pref);

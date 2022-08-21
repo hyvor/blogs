@@ -28,6 +28,46 @@ To start theme development, it is essential to understand how Routes work in Hyv
 
 Before continuing, we recommend you to read our [Routes](routes) guide to fully understand how routes work.
 
+## Single CSS File
+
+There is only a single CSS file in the blog, `styles.css`.
+
+## Flashload
+
+[Flashload](https://github.com/hyvor/flashload) is added to all blogs by default. Therefore, it is important to keep Flashload in mind while designing themes. Please take a minute and read the [Flashload documentation](https://github.com/hyvor/flashload#readme) to get the idea of how it works.
+
+Why Flashload? Browser reloads are slow. They load the same CSS/JS resources multiple times making page rendering slower. Flashload starts loading other pages even before the user clicks the link. It makes navigation smoother. It simply turns the blog into a **Single Page Application (SPA)**!
+
+We previously learned that there's only one `styles.css` for a blog that contains all CSS of the blog. This `styles.css` should be loaded inside the `<head>` of the page. When the user navigates to another page, Flashload sends an AJAX request to that path and pre-fetches the HTML page. Then, it updates **only the `<body>` part**. (Remember, we already have all CSS loaded in the first request, so we don't want to load it again).
+
+The simple rule is to add shared resources of the blog to `<head>`.
+
+
+## Caching
+
+Another important behavior of HB is that we use caching EXTENSIVELY. We use a technique called **first-request-caching**.
+
+- Someone requests `/hello-world` path of a blog.
+- We don't have any cached output for this path. We fetch data from our database, combine it with the template, and generate the HTML output, and send the response back to the user. Behind the scenes, we save the generated HTML output in Fastly's Edge Cache.
+- When someone else requests the same path, the HTML output is directly sent from the nearest Fastly Edge servers. The request never even reach our servers.
+
+When using a cache, clearing cache is the most important thing. We have to make sure outdated content is not delivered when something changes. Here are the events that we clear cache for each scope.
+
+- whenever whatever data is changed in the blog
+- whenever the theme is edited
+- on January 1st
+
+And,
+
+- `/search` and `/p/{hash}` (preview pages) routes are always dynamic, never cached.
+
+> ⚠️    
+> Caching makes the blog super fast. However, it puts some limitations to theme development. You can't render dynamic data like "current date" using Twig. Due to cache, users may see an old date. If absolutely required, you have to use Javascript to render dynamic content inside user's browser. However, displaying the "publish date" of a post works fine because we clear cache whenever the post is updated. Also, displaying the current year will work, because we will make sure to clear the cache on the 1st of January.
+
+## Embedding
+
+Blogs are [embeddable](embedding). Keep that in mind when developing a theme to make sure the theme works fine when embedded. Embedding uses Web Components with Shadow DOM. So, there styles are usually safe. But, you should be careful when writing scripts. More details are in the styles and scripts sections of this documentation.
+
 ## Starting Development
 
 Let's set up your local development environment.

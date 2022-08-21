@@ -1,12 +1,12 @@
 import { useValues } from 'kea';
 import React, { useEffect, useState } from 'react';
-import subscriptionLogic from '../logic/subscriptionLogic';
+import paddleLogic from '../logic/billing/paddleLogic';
 import byteFormatter from '../../helpers/byteFormatter';
 import Loader from '../ReusableComponents/Loader';
 
 export function Usage({subdomain} : {subdomain: string}) {
 
-    const { data, loadAjax } = useValues(subscriptionLogic({subdomain}));
+    const { data, loadAjax } = useValues(paddleLogic({subdomain}));
 
     return loadAjax.status === 'loading' ?
         <Loader padding={60} /> :

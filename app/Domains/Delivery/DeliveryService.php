@@ -10,10 +10,13 @@ use App\Models\Blog;
 
 class DeliveryService
 {
-    public static function getLaravelResponse(DeliveryAPIResponseObject $obj)
+    public static function getLaravelResponse(Blog $blog, string $path)
     {
+        $obj = self::getResponseObject($blog, $path);
         if ($obj->type === DeliveryAPITypeEnum::FILE) {
-            return response($obj->content, $obj->status)->header('Content-Type', $obj->mime_type);
+            return response($obj->content, $obj->status)
+                ->header('Content-Type', $obj->mime_type)
+                ->header('Access-Control-Allow-Origin', '*');
         } elseif ($obj->type === DeliveryAPITypeEnum::REDIRECT) {
             return redirect($obj->to, $obj->status);
         }
@@ -27,7 +30,7 @@ class DeliveryService
             $path = '/'.$path;
         }
 
-        $shouldUserCache = true; // $blog->type === BlogTypeEnum::DEFAULT && config('app.debug') !== true;
+        $shouldUserCache = $blog->type === BlogTypeEnum::DEFAULT && config('app.debug') !== true;
 
         // first, check cache
         if ($shouldUserCache) {

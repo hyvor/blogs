@@ -2,6 +2,7 @@
 
 namespace Database\Factories;
 
+use Carbon\Carbon;
 use Illuminate\Database\Eloquent\Factories\Factory;
 
 class BlogFactory extends Factory
@@ -11,6 +12,7 @@ class BlogFactory extends Factory
         return [
             'hyvor_user_id' => config('test.hyvor_user_id'),
             'subdomain' => $this->faker->uuid(),
+            'trial_ends_at' => Carbon::now()->addDays(30),
             'hosting_at' => 'subdomain',
 
             'meta' => json_encode([

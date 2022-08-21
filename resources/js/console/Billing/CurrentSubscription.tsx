@@ -1,7 +1,7 @@
 import { useActions, useValues } from 'kea';
 import React, { useState } from 'react';
 import userBlogsLogic from '../logic/userBlogsLogic';
-import subscriptionLogic from '../logic/subscriptionLogic';
+import paddleLogic from '../logic/billing/paddleLogic';
 import dayjs from 'dayjs';
 import Loader from '../ReusableComponents/Loader';
 import { DayDiff, FriendlyDate } from '../ReusableComponents/Time';
@@ -10,13 +10,15 @@ import Callout from '../ReusableComponents/Callout';
 import NoResults from '../ReusableComponents/NoResults';
 import { PopupConfirm } from '../ReusableComponents/Popup';
 import {SubscriptionInfo} from "../types";
+import getSubdomain from "../logic-helpers/subdomain";
 
-export default function CurrentSubscription({subdomain} : {subdomain: string}) {
+export default function CurrentSubscription() {
 
+    const subdomain = getSubdomain()
     const { findBlogBySubdomain } = useValues(userBlogsLogic);
     const { blog, blog: { subscription: currentSubscription} } = findBlogBySubdomain(subdomain);
 
-    const subscriptionLogicInst = subscriptionLogic({subdomain});
+    const subscriptionLogicInst = paddleLogic({subdomain});
     const { data, loadAjax } = useValues(subscriptionLogicInst);
     const { cancelSubscription } = useActions(subscriptionLogicInst)
 
@@ -41,9 +43,7 @@ export default function CurrentSubscription({subdomain} : {subdomain: string}) {
     }
     function handleCancelReal() {
         setCancelPopup(false);
-        cancelSubscription({
-            onSuccess: () => location.reload()
-        });
+
     }
 
     return <div>

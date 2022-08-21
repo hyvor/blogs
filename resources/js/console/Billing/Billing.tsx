@@ -1,26 +1,27 @@
 import React from 'react'
-import BillingHistory from './BillingHistory';
-import CurrentSubscription from './CurrentSubscription';
-import Plans from './Plans/Plans';
-import SubscriptionHistory from './SubscriptionHistory';
-import { Usage } from './Usage';
-import getSubdomain from "../logic-helpers/subdomain";
+import {getUserBlogBlog} from "../logic-helpers/blog";
+import Paddle from "./Paddle/Paddle";
+import BillingColumn from "./Components/BillingColumn";
+import Shopify from "./Shopify/Shopify";
 
 export default function Billing() {
 
-    const subdomain = getSubdomain();
+    const { billing_type } = getUserBlogBlog()
 
     return <div className="billing-view">
-        <div className="billing-column">
-            <div className="box billing-section">
-                <Plans />
-            </div>
-            <div className="box billing-section">
-                <CurrentSubscription subdomain={subdomain} />
-            </div>
-        </div>
-        <div className="billing-column">
-            <div className="box billing-section">
+
+        {
+            billing_type === 'paddle' &&
+            <Paddle />
+        }
+        {
+            billing_type === 'shopify' &&
+            <Shopify />
+        }
+
+        <BillingColumn>
+
+            {/*<div className="box billing-section">
                 <div className="section-title">
                     Usage
                 </div>
@@ -43,8 +44,10 @@ export default function Billing() {
                 <div className="section-content">
                     <SubscriptionHistory />
                 </div>
-            </div>
-        </div>
+            </div>*/}
+
+        </BillingColumn>
+
     </div>
 
 }

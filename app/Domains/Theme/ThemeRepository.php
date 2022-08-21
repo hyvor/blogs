@@ -68,7 +68,7 @@ class ThemeRepository
         string $version,
         string $zip,
     ) {
-        $previewBlog = BlogService::createBlog(
+        $previewBlog = app(BlogService::class)->createBlog(
             null,
             $theme->name,
             self::generateThemePreviewSubdomain($theme->name, $version),

@@ -139,3 +139,7 @@ function testTwigRendering(string $template, array $vars, string $expectation) {
     $val = TwigRenderer::renderString($template, $vars);
     expect($val)->toBe($expectation);
 }
+
+foreach (glob('tests/helpers/*.php') as $file) {
+    include_once $file;
+}

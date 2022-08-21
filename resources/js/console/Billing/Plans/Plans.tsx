@@ -2,13 +2,20 @@ import { useValues } from 'kea';
 import React, { useState } from 'react';
 import { BoxArrowUpRight } from 'react-bootstrap-icons';
 import userBlogsLogic from '../../logic/userBlogsLogic';
-import subscriptionLogic from '../../logic/subscriptionLogic';
-import { FullPageLoader } from '../../ReusableComponents/Loader';
 import getSubdomain from "../../logic-helpers/subdomain";
 import Frequency from "./Frequency";
 import Plan from "./Plan";
+import {SubscriptionFrequency, SubscriptionPlan} from "../../types";
 
-export default function Plans() {
+interface PlansProps {
+
+    onSubscriptionCreate: (plan: SubscriptionPlan, frequency: SubscriptionFrequency) => any
+    onSubscriptionUpdate: (plan: SubscriptionPlan, frequency: SubscriptionFrequency) => any,
+    onSubscriptionCancel: () => any,
+
+}
+
+export default function Plans({onSubscriptionCreate, onSubscriptionCancel, onSubscriptionUpdate} : PlansProps) {
 
     const subdomain = getSubdomain();
 
@@ -17,9 +24,6 @@ export default function Plans() {
 
     const [frequency, setFrequency] = useState
         (currentSubscription ? currentSubscription.frequency : 'monthly'); // monthly|yearly
-
-    const subscriptionLogicInst = subscriptionLogic({subdomain});
-    const { createSubscriptionAjax, updateSubscriptionAjax, cancelSubscriptionAjax } = useValues(subscriptionLogicInst);
 
     return <div>
         <div className="section-title plans-title">
@@ -31,11 +35,18 @@ export default function Plans() {
         </div>
         <div className="section-content">
             <div className="plans">
-                <Plan frequency={frequency} type="A" />
-                <Plan frequency={frequency} type="B" />
-                <Plan frequency={frequency} type="C" />
-                <Plan frequency={frequency} type="D" />
-                <Plan frequency={frequency} type="E" />
+                {
+                    (['A', 'B', 'C', 'D', 'E'] as SubscriptionPlan[]).map(plan =>
+                        <Plan
+                            key={plan}
+                            type={plan}
+                            frequency={frequency}
+                            onCreate={onSubscriptionCreate}
+                            onUpdate={onSubscriptionUpdate}
+                            onCancel={onSubscriptionCancel}
+                        />
+                    )
+                }
             </div>
             <div className="section-desc">
                 Prices are shown in USD, including all VAT charges <br/>
@@ -47,14 +58,6 @@ export default function Plans() {
                 </div>
             </div>
         </div>
-
-        {
-            createSubscriptionAjax.status === 'loading' ||
-            updateSubscriptionAjax.status === 'loading' ||
-            cancelSubscriptionAjax.status === 'loading'
-            ?
-            <FullPageLoader /> : null
-        }
 
     </div>;
 

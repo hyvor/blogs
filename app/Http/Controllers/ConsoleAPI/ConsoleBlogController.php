@@ -66,6 +66,8 @@ class ConsoleBlogController extends Controller
             'hosting_url' => 'string|url|nullable',
 
             // meta
+            'embeddable' => 'boolean',
+
             'logo_url' => 'url|nullable',
             'cover_url' => 'url|nullable',
 

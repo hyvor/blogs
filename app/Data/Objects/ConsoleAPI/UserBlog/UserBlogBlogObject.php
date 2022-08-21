@@ -2,9 +2,11 @@
 
 namespace App\Data\Objects\ConsoleAPI\UserBlog;
 
+use App\Data\Enums\BlogBillingTypeEnum;
 use App\Data\Enums\BlogTypeEnum;
 use App\Data\Objects\ConsoleAPI\Billing\SubscriptionObject;
 use App\Domains\Route\PermalinkRepository;
+use App\Domains\Subscription\SubscriptionService;
 use App\Models\Blog;
 
 class UserBlogBlogObject
@@ -16,6 +18,8 @@ class UserBlogBlogObject
     public string $subdomain;
 
     public BlogTypeEnum $type;
+
+    public BlogBillingTypeEnum $billing_type;
 
     public string $base_url;
 
@@ -37,18 +41,19 @@ class UserBlogBlogObject
         $this->name = $blog->variants[0]->name;
         $this->subdomain = $blog->subdomain;
         $this->type = $blog->type;
+        $this->billing_type = $blog->billing_type;
         $this->base_url = PermalinkRepository::getFullUrlFromPath($blog);
         $this->logo_url = $blog->logo_url;
 
         $this->posts_count = $blog->getCount('posts');
         $this->users_count = $blog->getCount('users');
 
-        $this->is_on_trial = $blog->onTrial();
-        $this->trial_ends_at = $blog->customer->trial_ends_at?->timestamp;
+        $this->is_on_trial = false; // $blog->onTrial();
+        $this->trial_ends_at = null; // $blog->customer->trial_ends_at?->timestamp;
 
-        $subscription = $blog->subscription();
+        $subscription = SubscriptionService::getActiveBlogSubscription($blog);
 
-        if ($subscription && $subscription->valid()) {
+        if ($subscription) {
             $this->subscription = new SubscriptionObject($subscription);
         }
     }

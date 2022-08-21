@@ -49,7 +49,9 @@ class Handler extends ExceptionHandler
                 // app domain
 
                 if (
-                    $request->is('api/*')
+                    $request->is('api/*') ||
+                    $request->is('integrations/*') ||
+                    $request->is('embed/*')
                 ) {
                     $code = $exception->status ?? $exception->getCode();
 
@@ -93,6 +95,7 @@ class Handler extends ExceptionHandler
             }
         }
 
-        return parent::render($request, $exception);
+        dd($exception);
+        // return parent::render($request, $exception);
     }
 }

@@ -11,6 +11,7 @@ export type UserBlogBlog = {
     subdomain: string;
     name: string;
     type: BlogType,
+    billing_type: 'paddle' | 'shopify',
     base_url: string;
     logo_url: string | null;
 

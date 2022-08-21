@@ -108,6 +108,11 @@ class PermalinkRepository
         return str_starts_with($link, $base);
     }
 
+    public static function getBaseUrl(Blog $blog)
+    {
+        return self::getFullUrlFromPath($blog);
+    }
+
     public static function getFullUrlFromPath(Blog $blog, ?string $path = null)
     {
         if (is_null($path)) {

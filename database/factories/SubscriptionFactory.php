@@ -2,18 +2,28 @@
 
 namespace Database\Factories;
 
+use App\Data\Enums\SubscriptionFrequencyEnum;
+use App\Data\Enums\SubscriptionPlanEnum;
+use App\Data\Enums\SubscriptionStatusEnum;
 use App\Domains\Subscription\SubscriptionService;
 use App\Models\Blog;
 use Illuminate\Database\Eloquent\Factories\Factory;
 use Illuminate\Support\Arr;
-use Laravel\Paddle\Subscription;
 
 class SubscriptionFactory extends Factory
 {
-    protected $model = Subscription::class;
 
     public function definition()
     {
+
+        return [
+            'blog_id' => Blog::factory(),
+            'status' => SubscriptionStatusEnum::ACTIVE,
+            'plan' => SubscriptionPlanEnum::A,
+            'frequency' => SubscriptionFrequencyEnum::MONTHLY,
+            'ends_at' => null
+        ];
+
         return [
             'billable_id' => Blog::factory(),
             'billable_type' => Blog::class,

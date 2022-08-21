@@ -3,6 +3,7 @@
 namespace App\Providers;
 
 use App\Domains\Cache\Listeners\ClearCacheSubscriber;
+use App\Domains\Integrations\Shopify\Listeners\ShopifySubscriber;
 use App\Domains\Post\Events\PostVariantUpdatedEvent;
 use App\Domains\Post\Listeners\PostVariantUpdateContentHtmlListener;
 use App\Domains\Post\Listeners\PostVariantUpdateWordCountListener;
@@ -29,6 +30,9 @@ class EventServiceProvider extends ServiceProvider
 
         ClearCacheSubscriber::class,
         CountSubscriber::class,
+
+        // integrations
+        ShopifySubscriber::class
 
     ];
 

@@ -4,213 +4,99 @@ namespace App\Domains\Subscription;
 
 use App\Data\Enums\SubscriptionFrequencyEnum;
 use App\Data\Enums\SubscriptionPlanEnum;
-use App\Data\Objects\App\PaddlePlan;
-use App\Exceptions\TrustedException;
+use App\Data\Enums\SubscriptionStatusEnum;
 use App\Models\Blog;
-use Illuminate\Database\Eloquent\Collection;
+use App\Models\Subscription;
+use DateTimeInterface;
+use Illuminate\Support\Collection;
 
 class SubscriptionService
 {
 
     /**
-     * This is an internal name for the subscription
-     * In Laravel Paddle Cashier, you can give names for each subscription
-     * So that each model can have multiple subscriptions
-     *
-     * https://laravel.com/docs/8.x/cashier-paddle#creating-subscriptions
-     *
-     * But, for us, we only need one subscription type.
-     * So, always use this const when you have to send subscription name to a function
+     * @param Blog $blog
+     * @return Collection<Subscription>
      */
-    public const SUBSCRIPTION_NAME = 'default';
+    public static function getAllSubscriptions(Blog $blog) : Collection
+    {
+        return $blog->subscriptions;
+    }
 
-    public static function createPayLink(
+    public static function getActiveBlogSubscription(Blog $blog) : ?Subscription
+    {
+        $subscription = $blog->subscriptions()->first();
+
+        if (!$subscription)
+            return null;
+
+        return self::isSubscriptionActive($subscription) ? $subscription : null;
+    }
+
+    public static function isBlogSubscribed(Blog $blog) : bool
+    {
+        $subscription = $blog->subscriptions()->first();
+
+        if (!$subscription)
+            return false;
+
+        return self::isSubscriptionActive($subscription);
+
+    }
+
+    public static function isSubscriptionActive(Subscription $subscription) : bool
+    {
+        if (
+            $subscription->status === SubscriptionStatusEnum::ACTIVE ||
+            $subscription->status === SubscriptionStatusEnum::PAST_DUE
+        )
+            return true;
+
+        return
+            $subscription->status === SubscriptionStatusEnum::DELETED &&
+            $subscription->ends_at &&
+            $subscription->ends_at->greaterThan(now());
+    }
+
+    public static function createSubscription(
         Blog $blog,
-        SubscriptionPlanEnum $planName,
-        SubscriptionFrequencyEnum $frequency
-    ): string {
-        if ($blog->subscribed()) {
-            throw new TrustedException('This blog already has a subscription');
-        }
-
-        $plan = self::getPlanConfigFromPlanNameAndFrequency($planName, $frequency);
-        $planId = $plan->id;
-
-        return $blog
-            ->newSubscription(self::SUBSCRIPTION_NAME, $planId)
-            ->create();
-    }
-
-    public static function updateSubscription(
-        Blog $blog,
-        SubscriptionPlanEnum $planName,
-        SubscriptionFrequencyEnum $frequency
-    ) {
-        $planConfig = self::getPlanConfigFromPlanNameAndFrequency($planName, $frequency);
-        $planId = $planConfig->id;
-
-        $currentSubscription = $blog->subscription();
-
-        if ($currentSubscription->paddle_plan === $planId) {
-            throw new TrustedException(
-                'Cannot update to the same plan',
-                TrustedException::ERROR_UNPROCESSABLE
-            );
-        }
-
-        // change plan
-        $currentSubscription->swapAndInvoice($planId);
-    }
-
-    public static function cancelSubscription(Blog $blog, bool $forced = false)
+        SubscriptionPlanEnum $plan,
+        SubscriptionFrequencyEnum $frequency,
+        SubscriptionStatusEnum $status = SubscriptionStatusEnum::ACTIVE,
+        ?DateTimeInterface $endsAt = null
+    ) : Subscription
     {
-        $subscription = $blog->subscription();
 
-        if (! $subscription) {
-            return;
-        }
+        return Subscription::create([
+            'blog_id' => $blog->id,
+            'plan' => $plan,
+            'frequency' => $frequency,
+            'status' => $status,
+            'ends_at' => $endsAt
+        ]);
 
-        if (! $subscription->cancelled()) {
-            $subscription->cancel();
-        }
-
-        if ($forced) {
-
-            /**
-             * Forced cancelling is called after calling Paddle cancel API
-             * which means subscription()->cancelNow() will return an error because
-             * it again calls the API
-             * Therefore, instead of calling cancelNow(), we only do the part that updates
-             * data in our database
-             *
-             * This code is taken from Laravel\Paddle\Subscription::cancelAt()
-             */
-            $subscription->forceFill([
-                'ends_at' => now(),
-            ])->save();
-        }
-    }
-
-    public static function getPlanConfigById(int $planId): PaddlePlan
-    {
-        $plans = self::paddlePlans();
-
-        foreach ($plans as $plan) {
-            if ($plan->id === $planId) {
-                return $plan;
-            }
-        }
-
-        throw new TrustedException("Unable to find a plan with plan ID $planId");
-    }
-
-    public static function getPlanConfigFromPlanNameAndFrequency(
-        SubscriptionPlanEnum $planName,
-        SubscriptionFrequencyEnum $frequency
-    ): PaddlePlan {
-
-        $plans = self::paddlePlans();
-
-        foreach ($plans as $plan) {
-            if (
-                $plan->name === $planName &&
-                $plan->frequency === $frequency
-            ) {
-                return $plan;
-            }
-        }
-
-        throw new TrustedException('Plan not found');
-    }
-
-    public static function getReceipts(Blog $blog): Collection
-    {
-        return $blog->receipts()->get();
-    }
-
-    public static function getAllSubscriptions(Blog $blog): Collection
-    {
-        return $blog->subscriptions()->get();
     }
 
     /**
-     * @return PaddlePlan[]
+     * @param array{plan?: SubscriptionPlanEnum, frequency?: SubscriptionFrequencyEnum, status?: SubscriptionStatusEnum} $updates
      */
-    public static function paddlePlans() : array
+    public static function updateSubscription(Subscription $subscription, array $updates) : Subscription
     {
+        foreach ($updates as $key => $value) {
+            $subscription->$key = $value;
+        }
 
-        return [
+        $subscription->save();
 
-            new PaddlePlan(
-                env('APP_ENV') !== 'production' ? 32097 : 0,
-                SubscriptionPlanEnum::A,
-                SubscriptionFrequencyEnum::MONTHLY,
-                19,
-            ),
-
-            new PaddlePlan(
-                env('APP_ENV') !== 'production' ? 32098 : 0,
-                SubscriptionPlanEnum::A,
-                SubscriptionFrequencyEnum::YEARLY,
-                190,
-            ),
-
-            new PaddlePlan(
-                env('APP_ENV') !== 'production' ? 32099 : 0,
-                SubscriptionPlanEnum::B,
-                SubscriptionFrequencyEnum::MONTHLY,
-                49
-            ),
-
-            new PaddlePlan(
-                env('APP_ENV') !== 'production' ? 32100 : 0,
-                SubscriptionPlanEnum::B,
-                SubscriptionFrequencyEnum::YEARLY,
-                490,
-            ),
-
-            new PaddlePlan(
-                env('APP_ENV') !== 'production' ? 32101 : 0,
-                SubscriptionPlanEnum::C,
-                SubscriptionFrequencyEnum::MONTHLY,
-                299
-            ),
-
-            new PaddlePlan(
-                env('APP_ENV') !== 'production' ? 32102 : 0,
-                SubscriptionPlanEnum::C,
-                SubscriptionFrequencyEnum::YEARLY,
-                2990,
-            ),
-
-            new PaddlePlan(
-                env('APP_ENV') !== 'production' ? 32103 : 0,
-                SubscriptionPlanEnum::D,
-                SubscriptionFrequencyEnum::MONTHLY,
-                699
-            ),
-
-            new PaddlePlan(
-                env('APP_ENV') !== 'production' ? 32104 : 0,
-                SubscriptionPlanEnum::D,
-                SubscriptionFrequencyEnum::YEARLY,
-                6990,
-            ),
-
-            new PaddlePlan(
-                env('APP_ENV') !== 'production' ? 32105 : 0,
-                SubscriptionPlanEnum::E,
-                SubscriptionFrequencyEnum::MONTHLY,
-                1299
-            ),
-
-            new PaddlePlan(
-                env('APP_ENV') !== 'production' ? 32106 : 0,
-                SubscriptionPlanEnum::E,
-                SubscriptionFrequencyEnum::YEARLY,
-                12990,
-            ),
-
-        ];
+        return $subscription;
     }
+
+    public static function cancelSubscription(Subscription $subscription, DateTimeInterface $date) : Subscription
+    {
+        $subscription->ends_at = $date;
+        $subscription->status = SubscriptionStatusEnum::DELETED;
+        $subscription->save();
+
+        return $subscription;
+    }
+
 }

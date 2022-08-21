@@ -1,7 +1,9 @@
 <?php
 
+use App\Http\Controllers\ConsoleAPI\Billing\ConsoleBillingController;
+use App\Http\Controllers\ConsoleAPI\Billing\ConsoleBillingPaddleController;
+use App\Http\Controllers\ConsoleAPI\Billing\ConsoleBillingShopifyController;
 use App\Http\Controllers\ConsoleAPI\ConsoleApiKeysController;
-use App\Http\Controllers\ConsoleAPI\ConsoleBillingController;
 use App\Http\Controllers\ConsoleAPI\ConsoleBlogController;
 use App\Http\Controllers\ConsoleAPI\ConsoleDangerController;
 use App\Http\Controllers\ConsoleAPI\ConsoleImportExportController;
@@ -205,11 +207,32 @@ Route::prefix('/api/console/v0/blog/{subdomain}')
          */
         Route::middleware('role:owner|admin|finance')->group(function () {
 
-            // billing
-            Route::get('/billing', [ConsoleBillingController::class, 'getData']);
-            Route::post('/billing/subscription', [ConsoleBillingController::class, 'createSubscription']);
-            Route::patch('/billing/subscription', [ConsoleBillingController::class, 'updateSubscription']);
-            Route::delete('/billing/subscription', [ConsoleBillingController::class, 'cancelSubscription']);
+
+            // general
+            Route::get('/billing/subscriptions', [ConsoleBillingController::class, 'getSubscriptions']);
+            Route::get('/billing/usage', [ConsoleBillingController::class, 'getUsage']);
+            Route::delete('/billing/subscription', []);
+
+            Route::middleware('billing-type:paddle')->group(function() {
+
+                // paddle
+                Route::get('/billing/paddle', [ConsoleBillingPaddleController::class, 'getData']);
+                Route::post('/billing/paddle/subscription', [ConsoleBillingPaddleController::class, 'createSubscription']);
+                Route::patch('/billing/paddle/subscription', [ConsoleBillingPaddleController::class, 'updateSubscription']);
+                Route::delete('/billing/paddle/subscription', [ConsoleBillingPaddleController::class, 'cancelSubscription']);
+
+            });
+
+            Route::middleware('billing-type:shopify')->group(function() {
+
+                // shopify
+                Route::get('/billing/shopify', [ConsoleBillingShopifyController::class, 'getData']);
+                Route::post('/billing/shopify/subscription', [ConsoleBillingShopifyController::class, 'createSubscription']);
+                Route::delete('/billing/shopify/subscription', [ConsoleBillingShopifyController::class, 'cancelSubscription']);
+
+            });
+
+
         });
 
         /**

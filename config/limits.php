@@ -8,7 +8,7 @@ return [
     /**
      * Number of days for the trial
      */
-    'trial_days' => 14,
+    'trial_days' => 30,
 
     /**
      * This is the Pages limit (static) not posts

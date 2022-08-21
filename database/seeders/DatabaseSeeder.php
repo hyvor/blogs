@@ -62,9 +62,9 @@ class DatabaseSeeder extends Seeder
         );*/
 
         foreach ($blogs as $blog) {
-            $blog->createAsCustomer([
+            /*$blog->createAsCustomer([
                 'trial_ends_at' => now()->addDays(config('limits.trial_days')),
-            ]);
+            ]);*/
 
             $english = Language::factory()->create([
                 'blog_id' => $blog,

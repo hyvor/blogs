@@ -63,6 +63,8 @@ export interface Blog {
     hosting_domain: string | null,
     hosting_url: string | null,
 
+    embeddable: boolean,
+
     logo_url: string | null,
     cover_url: string | null,
 

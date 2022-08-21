@@ -32,7 +32,7 @@ class ConsoleUserBlogController extends Controller
             $subdomain = 'dev-'.((string) Str::uuid());
         }
 
-        $blog = BlogService::createBlog(
+        $blog = app(BlogService::class)->createBlog(
             $hyvorUser->id,
             $name,
             $subdomain,
