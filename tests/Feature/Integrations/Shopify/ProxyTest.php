@@ -59,19 +59,9 @@ it('requires a shop with an assigned blog', function() {
 
 });
 
-it('returns response object', function() {
+it('returns a response with the embed script', function() {
 
     $blog = newBlog();
-    (new LanguageFiller($blog))->fill();
-    (new RouteFiller($blog))->fill();
-
-    ThemeFilesRepository::createOrUpdateFile(
-        $blog,
-        ThemeFileFolderEnum::TEMPLATES,
-        'index.twig',
-        'testing index'
-    );
-
     $data = generateShopifyProxySignature([
         'shop' => 'shop.myshopify.com'
     ]);
@@ -84,7 +74,7 @@ it('returns response object', function() {
 
     $this->callIntegrationEndpoint('GET', '/shopify/proxy', $data)
         ->assertOk()
-        ->assertSee('testing index');
+        ->assertSee(['<script', 'src=', 'embed.js']);
 
 
 });

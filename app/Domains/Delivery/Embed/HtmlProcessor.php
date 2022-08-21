@@ -18,7 +18,8 @@ class HtmlProcessor
     public function __construct(
         private readonly Blog $blog,
         private readonly string $embeddingUrl,
-        string $html
+        string $html,
+        private readonly bool $pathStyle = false
     )
     {
         $this->dom = new DOMDocument();
@@ -85,6 +86,11 @@ class HtmlProcessor
 
                 $link->setAttribute('href', $this->embedUrlFromPath($path));
             }
+            // relative URL
+            else if (str_starts_with($href, '/')) {
+                $path = trim($href, '/');
+                $link->setAttribute('href', $this->embedUrlFromPath($path));
+            }
 
         }
 
@@ -92,7 +98,8 @@ class HtmlProcessor
 
     private function embedUrlFromPath(string $path) : string
     {
-        return $this->embeddingUrl . ($path === '' ? '' : "?p=$path");
+        $path = $this->pathStyle ? ('/' . $path) : ($path === '' ? '' : "?p=$path");
+        return $this->embeddingUrl . $path;
     }
 
     public function get(): string

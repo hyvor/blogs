@@ -15,14 +15,19 @@ class DeliveryEmbedController
     {
 
         $request->validate([
-            'subdomain' => 'required|string'
+            'subdomain' => 'required|string',
+            'path_style' => 'bool',
+            'path' => 'string'
         ]);
 
         $subdomain = $request->input('subdomain');
+        $pathStyle = $request->boolean('path_style');
+        $path = $request->input('path');
 
         $js = view('embed.embed-js', [
-            'domain' => 'https://blogs.hyvor.com',
-            'subdomain' => $subdomain
+            'subdomain' => $subdomain,
+            'pathStyle' => $pathStyle,
+            'path' => $path
         ]);
 
         return response($js)->header('Content-Type', 'application/javascript');
@@ -34,10 +39,12 @@ class DeliveryEmbedController
 
         $request->validate([
             'url' => 'required|url',
+            'path_style' => 'bool'
         ]);
 
         $subdomain = $request->route('subdomain');
-        $embeddingUrl = $request->input('url');
+        $embeddingUrl = trim($request->input('url'), '/');
+        $pathStyle = $request->boolean('path_style');
         $path = $request->input('path') ?? '';
 
         $blog = BlogService::getBlogBySubdomain($subdomain);
@@ -49,7 +56,7 @@ class DeliveryEmbedController
         $response = DeliveryService::getLaravelResponse($blog, $path);
         $content = $response->content();
 
-        $content = (new HtmlProcessor($blog, $embeddingUrl, $content))->get();
+        $content = (new HtmlProcessor($blog, $embeddingUrl, $content, $pathStyle))->get();
 
         $response->setContent($content);
 

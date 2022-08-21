@@ -65,6 +65,9 @@ return [
         ['policy-security', 'Security Policy'],
         ['compliance-gdpr', 'GDPR Compliance'],
     ],
+    'Integrations' => [
+        ['shopify', 'Shopify']
+    ],
     'Misc' => [
         ['oss', 'Open Source'],
     ],

@@ -7,8 +7,14 @@ const currentSubdomain = window.HYVOR_BLOGS_EMBED_SUBDOMAIN;
 const iframeUrl = new URL(hbDomain + "/embed/iframe/" + currentSubdomain);
 const currentUrl = new URL(location.href)
 
-iframeUrl.searchParams.append('url', currentUrl.href.replace(/\?.+/, ''))
-iframeUrl.searchParams.append('path', currentUrl.searchParams.get('p') || '');
+const path = window.HYVOR_BLOGS_PATH || currentUrl.searchParams.get('p') || '';
+iframeUrl.searchParams.append('path_style', window.HYVOR_BLOGS_PATH_STYLE ? 1 : 0);
+iframeUrl.searchParams.append('path', path);
+
+let embeddingUrl = currentUrl.href.replace(/\?.+/, '')
+if (window.HYVOR_BLOGS_PATH_STYLE)
+    embeddingUrl = embeddingUrl.replace(new RegExp(path + "$"), '');
+iframeUrl.searchParams.append('url', embeddingUrl)
 iframe.src = iframeUrl.toString();
 
 iframe.style.width = '1px';

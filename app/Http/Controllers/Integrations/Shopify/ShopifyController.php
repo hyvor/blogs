@@ -155,7 +155,11 @@ class ShopifyController
         $response = DeliveryService::getLaravelResponse($blog, $path);
 
         if ($response->headers->get('Content-Type') === 'text/html') {
-            $response->setContent(view('embed.embed'));
+            $scriptUrl = URL::to("/embed/embed.js?subdomain=$blog->subdomain&path_style=1&path=$path");
+            $response->setContent(<<<HTML
+            <div id="hyvor-blogs-embed-wrap"></div>
+            <script src="$scriptUrl"></script>
+            HTML);
             $response->header('Content-Type', 'application/liquid');
         }
 
