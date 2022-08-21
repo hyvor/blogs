@@ -13,7 +13,9 @@ it('deletes navigations and variants', function () {
         ->count(2)
         ->has(
             NavigationVariant::factory()
-                ->count(2), 'variants')
+                ->count(2),
+            'variants'
+        )
         ->create([
             'blog_id' => $blog,
         ]);
@@ -32,7 +34,9 @@ it('does not delete navigations of other blogs', function () {
         ->count(2)
         ->has(
             NavigationVariant::factory()
-                ->count(2), 'variants')
+                ->count(2),
+            'variants'
+        )
         ->create([
             'blog_id' => blog(),
         ]);

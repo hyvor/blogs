@@ -3,7 +3,6 @@
 namespace App\Domains\Integrations\Paddle;
 
 use App\Exceptions\TrustedException;
-use Exception;
 use Illuminate\Http\Request;
 
 /**
@@ -12,22 +11,19 @@ use Illuminate\Http\Request;
  */
 class VerifyWebhookSignature
 {
-
-    const SIGNATURE_KEY = 'p_signature';
+    public const SIGNATURE_KEY = 'p_signature';
 
     public static function verify(Request $request)
     {
-
         $fields = self::extractFields($request);
         $signature = $request->get(self::SIGNATURE_KEY);
 
         if (self::isInvalidSignature($fields, $signature)) {
             throw new TrustedException('Invalid webhook signature.');
         }
-
     }
 
-    private static function extractFields(Request $request) : array
+    private static function extractFields(Request $request): array
     {
         $fields = $request->except(self::SIGNATURE_KEY);
 
@@ -42,14 +38,13 @@ class VerifyWebhookSignature
         return $fields;
     }
 
-    private static function isInvalidSignature(array $fields, string $signature) : bool
+    private static function isInvalidSignature(array $fields, string $signature): bool
     {
         return openssl_verify(
-                serialize($fields),
-                base64_decode($signature),
-                openssl_get_publickey(config('services.paddle.public_key')),
-                OPENSSL_ALGO_SHA1
-            ) !== 1;
+            serialize($fields),
+            base64_decode($signature),
+            openssl_get_publickey(config('services.paddle.public_key')),
+            OPENSSL_ALGO_SHA1
+        ) !== 1;
     }
-
 }

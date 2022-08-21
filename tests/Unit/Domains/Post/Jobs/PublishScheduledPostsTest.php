@@ -21,7 +21,7 @@ it('publishes scheduled posts', function () {
     $scheduledEarly = postWithVariant(['blog_id' => $blog, 'published_at' => now()->subHour()], ['status' => 'scheduled']);
     $published = postWithVariant(['blog_id' => $blog], ['status' => 'published']);
 
-    (new PublishScheduledPosts)->handle();
+    (new PublishScheduledPosts())->handle();
 
     expect($draft->variants[0]->status)->toBe(PostStatusEnum::DRAFT);
     expect($scheduledLater->variants[0]->status)->toBe(PostStatusEnum::SCHEDULED);

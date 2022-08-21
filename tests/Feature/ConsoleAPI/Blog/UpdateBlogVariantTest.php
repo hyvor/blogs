@@ -20,7 +20,6 @@ it('validates', function () {
 });
 
 it('updates name and emits event', function () {
-
     Event::fake();
 
     $name = 'Name';

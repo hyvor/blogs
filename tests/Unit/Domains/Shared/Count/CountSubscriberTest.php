@@ -28,7 +28,7 @@ it('calls update blog counts on post creating', function () {
     ]);
 
     $event = new PostCreatedEvent($post);
-    $listener = new CountSubscriber;
+    $listener = new CountSubscriber();
     $listener->onPostCreateOrDelete($event);
 
     Queue::assertPushed(fn (BlogCountsJob $job) => $job->blog->id === blog()->id);
@@ -45,7 +45,7 @@ it('calls update when post variant status changes for primary variant', function
     $variant->status = PostStatusEnum::DRAFT;
 
     $event = new PostVariantUpdatedEvent($variant);
-    $listener = new CountSubscriber;
+    $listener = new CountSubscriber();
     $listener->onPostVariantUpdate($event);
 
     Queue::assertPushed(fn (BlogCountsJob $job) => $job->blog->id === $blog->id);
@@ -60,7 +60,7 @@ it('does not call blog count update when other properties of variant is called',
     $variant->title = 'Changed';
 
     $event = new PostVariantUpdatedEvent($variant);
-    $listener = new CountSubscriber;
+    $listener = new CountSubscriber();
     $listener->onPostVariantUpdate($event);
 
     Queue::assertNothingPushed();
@@ -74,7 +74,7 @@ it('calls blog counts job on post delete', function () {
     ]);
 
     $event = new PostDeletedEvent($post);
-    $listener = new CountSubscriber;
+    $listener = new CountSubscriber();
     $listener->onPostCreateOrDelete($event);
 
     Queue::assertPushed(fn (BlogCountsJob $job) => $job->blog->id === blog()->id);

@@ -65,7 +65,9 @@ it('is attached', function () {
 
 beforeEach(function () {
     $this->templateMock = function ($times = 1) {
-        $this->mock(CacheService::class, fn (MockInterface $mock) =>
+        $this->mock(
+            CacheService::class,
+            fn (MockInterface $mock) =>
             $mock
                 ->shouldReceive('clearTemplateCache')
                 ->times($times)
@@ -203,8 +205,7 @@ it('clears cache on post variant status delete', function () {
     $listener->onPostVariantDelete($event);
 });
 
-it('clears cache on user events', function() {
-
+it('clears cache on user events', function () {
     ($this->templateMock)(3);
 
     $user = User::factory()->create();
@@ -216,11 +217,9 @@ it('clears cache on user events', function() {
     $listener->onUserEvent($createEvent);
     $listener->onUserEvent($updateEvent);
     $listener->onUserEvent($deleteEvent);
-
 });
 
-it('clears cache on user variant events', function() {
-
+it('clears cache on user variant events', function () {
     ($this->templateMock)(2);
 
     $variant = UserVariant::factory()->create();
@@ -230,11 +229,9 @@ it('clears cache on user variant events', function() {
     $listener = new ClearCacheSubscriber();
     $listener->onUserVariantEvent($updateEvent);
     $listener->onUserVariantEvent($deleteEvent);
-
 });
 
-it('clears cache on tag events', function() {
-
+it('clears cache on tag events', function () {
     ($this->templateMock)(3);
 
     $user = Tag::factory()->create();
@@ -246,11 +243,9 @@ it('clears cache on tag events', function() {
     $listener->onTagEvent($createEvent);
     $listener->onTagEvent($updateEvent);
     $listener->onTagEvent($deleteEvent);
-
 });
 
-it('clears cache on tag variant events', function() {
-
+it('clears cache on tag variant events', function () {
     ($this->templateMock)(2);
 
     $variant = TagVariant::factory()->create();
@@ -260,5 +255,4 @@ it('clears cache on tag variant events', function() {
     $listener = new ClearCacheSubscriber();
     $listener->onTagVariantEvent($updateEvent);
     $listener->onTagVariantEvent($deleteEvent);
-
 });

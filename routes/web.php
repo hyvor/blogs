@@ -1,7 +1,5 @@
 <?php
 
-use App\Http\Controllers\DeliveryAPI\DomainDeliveryController;
-use App\Http\Middleware\App\Delivery\CustomDomainMiddleware;
 use Illuminate\Support\Facades\App;
 use Illuminate\Support\Facades\Route;
 

@@ -6,7 +6,7 @@ use App\Data\Enums\SubscriptionStatusEnum;
 use App\Domains\Subscription\SubscriptionService;
 use App\Models\Subscription;
 
-test('subscription valid', function() {
+test('subscription valid', function () {
 
     // active
     expect(SubscriptionService::isSubscriptionActive(Subscription::factory()->create([
@@ -36,5 +36,4 @@ test('subscription valid', function() {
         'status' => SubscriptionStatusEnum::DELETED,
         'ends_at' => now()->subDay()
     ])))->toBe(false);
-
 });

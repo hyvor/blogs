@@ -37,8 +37,7 @@ class BlogService
         string $subdomain,
         BlogTypeEnum $type = BlogTypeEnum::DEFAULT,
         BlogBillingTypeEnum $billingType = BlogBillingTypeEnum::PADDLE
-    ): Blog
-    {
+    ): Blog {
         $blog = Blog::create([
             'hyvor_user_id' => $userId,
             'subdomain' => $subdomain,
@@ -78,7 +77,7 @@ class BlogService
         return $blog;
     }
 
-    public static function getBlogById(int $id) : ?Blog
+    public static function getBlogById(int $id): ?Blog
     {
         return Blog::find($id);
     }

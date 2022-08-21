@@ -52,8 +52,7 @@ class ThemeFilesRepository
     public static function getFilesInFolder(
         Blog $blog,
         ?ThemeFileFolderEnum $folder
-    ): Collection
-    {
+    ): Collection {
         return $blog->themeFiles()
             ->where('folder', $folder)
             ->get();
@@ -73,8 +72,7 @@ class ThemeFilesRepository
         ?ThemeFileFolderEnum $folder,
         string $name,
         string $content
-    ) : ThemeFile
-    {
+    ): ThemeFile {
         $file = $blog->themeFiles()->updateOrCreate(
             [
                 'folder' => $folder,
@@ -154,5 +152,4 @@ class ThemeFilesRepository
         $blog->theme_version_id = $themeVersion->id;
         $blog->save();
     }
-
 }

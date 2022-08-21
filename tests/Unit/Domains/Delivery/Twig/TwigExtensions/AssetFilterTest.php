@@ -6,8 +6,7 @@ use App\Data\Enums\ThemeFileFolderEnum;
 use App\Domains\Theme\ThemeFilesRepository;
 use App\Models\Blog;
 
-it('returns the file contents', function() {
-
+it('returns the file contents', function () {
     $blogObject = getBlogObject();
 
     ThemeFilesRepository::createOrUpdateFile(
@@ -24,11 +23,9 @@ it('returns the file contents', function() {
         ],
         'test'
     );
-
 });
 
-it('returns empty string when the file is not found', function() {
-
+it('returns empty string when the file is not found', function () {
     $blogObject = getBlogObject();
 
     testTwigRendering(
@@ -38,5 +35,4 @@ it('returns empty string when the file is not found', function() {
         ],
         ''
     );
-
 });

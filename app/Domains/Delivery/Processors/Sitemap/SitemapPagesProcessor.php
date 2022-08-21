@@ -50,7 +50,9 @@ class SitemapPagesProcessor extends RouteProcessorAbstract
 
     private function pagesXML(): string
     {
-        return Post::join('post_variants', fn ($join) => $join
+        return Post::join(
+            'post_variants',
+            fn ($join) => $join
                     ->on('post_variants.post_id', '=', 'posts.id')
                     ->where('post_variants.language_id', '=', $this->languages->firstWhere('is_primary', true)->id)
         )

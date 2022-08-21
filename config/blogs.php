@@ -4,9 +4,6 @@
  * Hyvor Blogs internal configurations like logo URL
  */
 
-use App\Data\Enums\SubscriptionFrequencyEnum;
-use App\Data\Enums\SubscriptionPlanEnum;
-use App\Data\Objects\App\PaddlePlan;
 
 return [
 

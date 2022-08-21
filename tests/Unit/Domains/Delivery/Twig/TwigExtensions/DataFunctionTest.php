@@ -7,8 +7,7 @@ use App\Exceptions\TrustedException;
 use Mockery\MockInterface;
 use Twig\Error\Error;
 
-it('throws an error when endpoint is not set', function() {
-
+it('throws an error when endpoint is not set', function () {
     $blogObject = getBlogObject();
 
     testTwigRendering(
@@ -18,14 +17,14 @@ it('throws an error when endpoint is not set', function() {
         ],
         ''
     );
-
 })->throws(Error::class);
 
-it('calls the data API', function() {
-
+it('calls the data API', function () {
     $blogObject = getBlogObject();
 
-    $this->mock(DataAPICaller::class, fn (MockInterface $mock) =>
+    $this->mock(
+        DataAPICaller::class,
+        fn (MockInterface $mock) =>
         $mock
             ->shouldReceive('callApi')
             ->once()
@@ -39,14 +38,14 @@ it('calls the data API', function() {
         ],
         ''
     );
-
 });
 
-it('calls the data API with arguments', function() {
-
+it('calls the data API with arguments', function () {
     $blogObject = getBlogObject();
 
-    $this->mock(DataAPICaller::class, fn (MockInterface $mock) =>
+    $this->mock(
+        DataAPICaller::class,
+        fn (MockInterface $mock) =>
     $mock
         ->shouldReceive('callApi')
         ->once()
@@ -62,14 +61,14 @@ it('calls the data API with arguments', function() {
         ],
         ''
     );
-
 });
 
-it('throws an twig error if the data api throws a trusted exception', function() {
-
+it('throws an twig error if the data api throws a trusted exception', function () {
     $blogObject = getBlogObject();
 
-    $this->mock(DataAPICaller::class, fn (MockInterface $mock) =>
+    $this->mock(
+        DataAPICaller::class,
+        fn (MockInterface $mock) =>
     $mock
         ->shouldReceive('callApi')
         ->once()
@@ -83,5 +82,4 @@ it('throws an twig error if the data api throws a trusted exception', function()
         ],
         ''
     );
-
 })->throws(Error::class, 'OOPS');

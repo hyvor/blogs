@@ -6,8 +6,7 @@ use App\Data\Enums\ThemeFileFolderEnum;
 use App\Domains\Theme\ThemeFilesRepository;
 use Illuminate\Testing\Fluent\AssertableJson;
 
-it('calls the delivery API', function() {
-
+it('calls the delivery API', function () {
     ThemeFilesRepository::createOrUpdateFile(
         blog(),
         ThemeFileFolderEnum::TEMPLATES,
@@ -17,7 +16,8 @@ it('calls the delivery API', function() {
 
     $this->get('/api/delivery/v0/test?path=')
         ->assertOk()
-        ->assertJson(fn (AssertableJson $json) =>
+        ->assertJson(
+            fn (AssertableJson $json) =>
             $json->where('status', 200)
                 ->where('content', base64_encode('just testing'))
                 ->where('type', 'file')
@@ -26,5 +26,4 @@ it('calls the delivery API', function() {
                 ->where('cache', true)
                 ->has('at')
         );
-
 });

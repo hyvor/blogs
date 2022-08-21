@@ -16,7 +16,6 @@ use Illuminate\Support\Facades\Cache;
  */
 class CacheService
 {
-
     public const LAST_TEMPLATE_CACHE_CLEARED_AT = 'LAST_TEMPLATE_CACHE_CLEARED_AT';
     public const LAST_ALL_CACHE_CLEARED_AT = 'LAST_ALL_CACHE_CLEARED_AT';
     private Blog $blog;
@@ -25,7 +24,7 @@ class CacheService
      * This is not done in constructor because laravel mock has a problem
      * when the constructor has params
      */
-    public function blog(Blog $blog) : static
+    public function blog(Blog $blog): static
     {
         $this->blog = $blog;
         return $this;
@@ -66,18 +65,20 @@ class CacheService
         Cache::put($key, serialize($responseObject));
     }
 
-    public function get(string $path) : ?DeliveryAPIResponseObject
+    public function get(string $path): ?DeliveryAPIResponseObject
     {
         $key = $this->getKey($path);
         $cache = Cache::get($key);
 
-        if (!$cache)
+        if (!$cache) {
             return null;
+        }
 
         $object = unserialize($cache);
 
-        if (!($object instanceof DeliveryAPIResponseObject))
+        if (!($object instanceof DeliveryAPIResponseObject)) {
             return null;
+        }
 
         $objectCreatedAt = $object->at;
 
@@ -85,8 +86,9 @@ class CacheService
          * Whole blog cache is cleared
          */
         $lastCacheAllCleared = Cache::get($this->getKey(self::LAST_ALL_CACHE_CLEARED_AT)) ?? 0;
-        if ($objectCreatedAt < $lastCacheAllCleared)
+        if ($objectCreatedAt < $lastCacheAllCleared) {
             return null;
+        }
 
         if (
             $object->type === DeliveryAPITypeEnum::FILE &&
@@ -104,5 +106,4 @@ class CacheService
 
         return $object;
     }
-
 }

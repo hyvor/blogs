@@ -7,9 +7,9 @@ use Illuminate\Foundation\Events\Dispatchable;
 
 class BlogDeletedEvent
 {
-
     use Dispatchable;
 
-    public function __construct(public Blog $blog) {}
-
+    public function __construct(public Blog $blog)
+    {
+    }
 }

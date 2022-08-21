@@ -15,7 +15,7 @@ Route::domain(config('blogs.domain_app'))
 /**
  * === EMBED
  */
-Route::domain(config('blogs.domain_app'))->prefix('/embed')->group(function() {
+Route::domain(config('blogs.domain_app'))->prefix('/embed')->group(function () {
 
     // embed.js
     Route::get('/embed.js', [DeliveryEmbedController::class, 'embedJs']);
@@ -23,7 +23,6 @@ Route::domain(config('blogs.domain_app'))->prefix('/embed')->group(function() {
     // iframe
     Route::middleware(SubdomainMiddleware::class)
         ->get('/iframe/{subdomain}', [DeliveryEmbedController::class, 'iframe']);
-
 });
 
 // subdomain

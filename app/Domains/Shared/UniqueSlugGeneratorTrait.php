@@ -6,8 +6,7 @@ use Illuminate\Support\Str;
 
 trait UniqueSlugGeneratorTrait
 {
-
-    abstract public function exists(string $slug) : bool;
+    abstract public function exists(string $slug): bool;
 
     /**
      * It checks if the slug versions of the given strings are
@@ -16,7 +15,7 @@ trait UniqueSlugGeneratorTrait
      * @param  string[]  $checks
      * @return string
      */
-    public function generateSlug(array $checks) : string
+    public function generateSlug(array $checks): string
     {
         $i = 0;
         while (true) {
@@ -30,10 +29,9 @@ trait UniqueSlugGeneratorTrait
         }
     }
 
-    public static function generate(array $checks) : string
+    public static function generate(array $checks): string
     {
         $generator = new static();
         return $generator->generateSlug($checks);
     }
-
 }

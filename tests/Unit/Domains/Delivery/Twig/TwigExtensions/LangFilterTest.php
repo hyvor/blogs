@@ -7,8 +7,7 @@ use App\Domains\Blog\BlogService;
 use App\Domains\Language\LanguageRepository;
 use App\Domains\Theme\ThemeFilesRepository;
 
-test('lang', function() {
-
+test('lang', function () {
     $blogObject = getBlogObject();
     $blog = BlogService::getBlogBySubdomain($blogObject->subdomain);
 
@@ -27,11 +26,9 @@ test('lang', function() {
         ],
         'Test'
     );
-
 });
 
-test('lang with single placeholder', function() {
-
+test('lang with single placeholder', function () {
     $blogObject = getBlogObject();
     $blog = BlogService::getBlogBySubdomain($blogObject->subdomain);
 
@@ -50,11 +47,9 @@ test('lang with single placeholder', function() {
         ],
         '2 authors'
     );
-
 });
 
-test('lang with multiple placeholders', function() {
-
+test('lang with multiple placeholders', function () {
     $blogObject = getBlogObject();
     $blog = BlogService::getBlogBySubdomain($blogObject->subdomain);
 
@@ -73,11 +68,9 @@ test('lang with multiple placeholders', function() {
         ],
         'Written by hyvor today'
     );
-
 });
 
-it('fallbacks to default language', function() {
-
+it('fallbacks to default language', function () {
     $blogObject = getBlogObject();
     $blog = BlogService::getBlogBySubdomain($blogObject->subdomain);
 
@@ -110,5 +103,4 @@ it('fallbacks to default language', function() {
         ],
         'english-testfrench'
     );
-
 });

@@ -32,14 +32,13 @@ use Illuminate\Events\Dispatcher;
 
 class ClearCacheSubscriber
 {
-
     private function clearTemplateCache(Blog $blog): void
     {
         $cache = app(CacheService::class);
         $cache->blog($blog)->clearTemplateCache();
     }
 
-    private function clearSingleCache(Blog $blog, string $path) : void
+    private function clearSingleCache(Blog $blog, string $path): void
     {
         $cache = app(CacheService::class);
         $cache->blog($blog)->clearSingleCache($path);
@@ -76,7 +75,7 @@ class ClearCacheSubscriber
         $events->listen(TagVariantDeletedEvent::class, [static::class, 'onTagVariantEvent']);
     }
 
-    private function subscribeSingleEvents(Dispatcher $events) : void
+    private function subscribeSingleEvents(Dispatcher $events): void
     {
         $events->listen(MediaCreatedEvent::class, [static::class, 'onMediaEvent']);
         $events->listen(MediaDeletedEvent::class, [static::class, 'onMediaEvent']);
@@ -85,9 +84,8 @@ class ClearCacheSubscriber
         $events->listen(StylesEditedEvent::class, [static::class, 'onStylesEdit']);
     }
 
-    private function subscribeAllEvents(Dispatcher $event) : void
+    private function subscribeAllEvents(Dispatcher $event): void
     {
-        
     }
 
 
@@ -184,5 +182,4 @@ class ClearCacheSubscriber
     {
         $this->clearSingleCache($event->blog, '/styles.css');
     }
-
 }

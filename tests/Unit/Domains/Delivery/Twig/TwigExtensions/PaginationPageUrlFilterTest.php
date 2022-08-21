@@ -2,8 +2,7 @@
 
 namespace Tests\Unit\Domains\Delivery\Twig\TwigExtensions;
 
-test('pagination_page_url', function() {
-
+test('pagination_page_url', function () {
     $baseUrl = 'https://myblog.com';
     testTwigRendering(
         '{{ 1 | pagination_page_url }}',
@@ -44,5 +43,4 @@ test('pagination_page_url', function() {
         ],
         "$baseUrl/page/2"
     );
-
 });

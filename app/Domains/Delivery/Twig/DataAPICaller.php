@@ -7,7 +7,6 @@ use Illuminate\Http\Request;
 
 class DataAPICaller
 {
-
     public function callApi(string $subdomain, string $endpoint, $query = [])
     {
         $domain = config('blogs.domain_app');
@@ -30,5 +29,4 @@ class DataAPICaller
             throw new TrustedException($error);
         }
     }
-
 }

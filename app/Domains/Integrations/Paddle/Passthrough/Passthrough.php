@@ -7,7 +7,6 @@ use http\Exception\InvalidArgumentException;
 
 class Passthrough
 {
-
     public static function encode(Blog $blog)
     {
         return json_encode([
@@ -15,27 +14,26 @@ class Passthrough
         ]);
     }
 
-    public static function decode(string $passthrough) : Blog
+    public static function decode(string $passthrough): Blog
     {
-
         $json = json_decode($passthrough);
 
         if (!$json) {
-            throw new InvalidPassthroughException;
+            throw new InvalidPassthroughException();
         }
 
         $blogId = $json->blog_id ?? null;
 
-        if (!$blogId)
-            throw new InvalidPassthroughException;
+        if (!$blogId) {
+            throw new InvalidPassthroughException();
+        }
 
         $blog = Blog::find($blogId);
 
-        if (!$blog)
-            throw new InvalidArgumentException;
+        if (!$blog) {
+            throw new InvalidArgumentException();
+        }
 
         return $blog;
-
     }
-
 }

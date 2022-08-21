@@ -16,14 +16,14 @@ it('creates a file', function () {
         'content' => 'test',
     ])
         ->assertOk()
-        ->assertJson(fn (AssertableJson $json) => $json->where('name', 'index.twig')
+        ->assertJson(
+            fn (AssertableJson $json) => $json->where('name', 'index.twig')
                 ->where('content', 'test')
                 ->etc()
         );
 });
 
 it('creates a file from blob', function () {
-
     Event::fake();
 
     $file = UploadedFile::fake()->image('test.jpg');
@@ -34,7 +34,8 @@ it('creates a file from blob', function () {
         'file' => $file,
     ])
         ->assertOk()
-        ->assertJson(fn (AssertableJson $json) => $json->where('name', 'test.jpg')
+        ->assertJson(
+            fn (AssertableJson $json) => $json->where('name', 'test.jpg')
                 ->where('content', null)
                 ->etc()
         );

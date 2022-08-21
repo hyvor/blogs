@@ -2,8 +2,7 @@
 
 namespace Tests\Unit\Domains\Delivery\Twig\TwigExtensions;
 
-test('asset_url', function() {
-
+test('asset_url', function () {
     $url = 'https://myblog.com';
     $blogObject = getBlogObject([
         'base_url' => $url
@@ -16,5 +15,4 @@ test('asset_url', function() {
         ],
         "$url/assets/script.js"
     );
-
 });

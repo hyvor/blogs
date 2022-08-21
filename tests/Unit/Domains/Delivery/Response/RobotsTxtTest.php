@@ -6,8 +6,7 @@ use App\Data\Enums\DeliveryAPITypeEnum;
 use App\Domains\Delivery\PathMatcher;
 use App\Domains\Route\PermalinkRepository;
 
-it('returns robots.txt', function() {
-
+it('returns robots.txt', function () {
     $pathMatcher = new PathMatcher($this->blog, '/robots.txt');
     $responseObject = $pathMatcher->getResponseObject();
 
@@ -19,5 +18,4 @@ it('returns robots.txt', function() {
     expect($responseObject->content)->toBe("User-agent: *
 Sitemap: $blogUrl/sitemap.xml
 Disallow: /p/");
-
 });

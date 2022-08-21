@@ -3,7 +3,6 @@
 namespace Tests\Feature\Integrations\Shopify;
 
 use App\Data\Enums\BlogBillingTypeEnum;
-use App\Data\Enums\BlogHostingAtEnum;
 use App\Domains\Blog\Fillers\PostFiller;
 use App\Domains\Blog\Fillers\RouteFiller;
 use App\Domains\Blog\Fillers\TagFiller;
@@ -13,25 +12,22 @@ use App\Models\Blog;
 use App\Models\ShopifyShop;
 use Mockery;
 
-beforeEach(function() {
-    $this->mockFiller = function(string $cls) {
+beforeEach(function () {
+    $this->mockFiller = function (string $cls) {
         $themeFillerMock = Mockery::mock($cls)->makePartial();
         $themeFillerMock->shouldReceive('fill')->once();
         $this->app->bind($cls, fn () => $themeFillerMock);
     };
 });
 
-it('returns error when shop is not found', function() {
-
+it('returns error when shop is not found', function () {
     $this->callIntegrationEndpoint('GET', '/shopify/complete', [
         'domain' => 'shop.myshopify.com'
     ])->assertUnprocessable()
         ->assertSee('Shop not found');
-
 });
 
-it('returns an error when the shop is already assigned to a blog', function() {
-
+it('returns an error when the shop is already assigned to a blog', function () {
     ShopifyShop::create([
         'blog_id' => 1,
         'domain' => 'shop.myshopify.com',
@@ -43,11 +39,9 @@ it('returns an error when the shop is already assigned to a blog', function() {
     ])
         ->assertUnprocessable()
         ->assertSee('Shop already assigned to a blog');
-
 });
 
-it('redirects to auth when the user is not logged in', function() {
-
+it('redirects to auth when the user is not logged in', function () {
     config(['hyvorconnecter.dummy' => false]);
 
     ShopifyShop::create([
@@ -60,10 +54,9 @@ it('redirects to auth when the user is not logged in', function() {
     ])
         ->assertRedirectContains('/signup?redirect=')
         ->assertRedirectContains(urlencode('/integrations/shopify/complete?domain='));
-
 });
 
-it('creates blog, sets up self hosting, sets blog_id in shopify shop, and redirects to console', function() {
+it('creates blog, sets up self hosting, sets blog_id in shopify shop, and redirects to console', function () {
 
     // prevent calling unwanted fillers
     // we only want the navigation filler
@@ -90,5 +83,4 @@ it('creates blog, sets up self hosting, sets blog_id in shopify shop, and redire
 
     $shop->refresh();
     expect($shop->blog_id)->toBe($blog->id);
-
 });

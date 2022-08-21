@@ -3,7 +3,6 @@
 namespace App\Domains\Shared;
 
 use App\Models\Blog;
-use Illuminate\Support\Str;
 
 /**
  * Generates a unique slug for users and tags

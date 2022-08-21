@@ -6,8 +6,7 @@ use App\Data\Objects\DataAPI\BlogObject;
 use App\Domains\Blog\Fillers\LanguageFiller;
 use App\Domains\Language\LanguageRepository;
 
-test('language_variant_url in normal pages', function() {
-
+test('language_variant_url in normal pages', function () {
     $blog = newBlog();
     (new LanguageFiller($blog))->fill();
 
@@ -42,8 +41,7 @@ test('language_variant_url in normal pages', function() {
     );
 });
 
-test('language_variant_url in posts/tags/authors', function() {
-
+test('language_variant_url in posts/tags/authors', function () {
     $blog = newBlog();
     (new LanguageFiller($blog))->fill();
 
@@ -121,7 +119,5 @@ test('language_variant_url in posts/tags/authors', function() {
             ],
             "$blogObject->base_url/fr"
         );
-
     }
-
 });

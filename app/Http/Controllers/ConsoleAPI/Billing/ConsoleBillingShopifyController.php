@@ -14,20 +14,19 @@ use Illuminate\Validation\Rules\Enum;
 
 class ConsoleBillingShopifyController
 {
-
-    private function getShop() : ShopifyShop
+    private function getShop(): ShopifyShop
     {
         $shop = ShopifyService::getShopByBlog(app(Blog::class));
 
-        if (!$shop)
+        if (!$shop) {
             throw new TrustedException('Shop not found');
+        }
 
         return $shop;
     }
 
     public function createSubscription(Request $request)
     {
-
         $request->validate([
             'plan' => ['required', new Enum(SubscriptionPlanEnum::class)],
             'frequency' => ['required', new Enum(SubscriptionFrequencyEnum::class)],
@@ -52,5 +51,4 @@ class ConsoleBillingShopifyController
 
         return response()->json();
     }
-
 }

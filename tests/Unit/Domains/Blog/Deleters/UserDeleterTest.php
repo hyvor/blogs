@@ -23,7 +23,9 @@ it('deletes users', function () {
         ))
         ->has(
             UserVariant::factory()
-                ->count(2), 'variants')
+                ->count(2),
+            'variants'
+        )
         ->create([
             'blog_id' => $blog,
         ]);
@@ -42,7 +44,9 @@ it('does not delete users of other blogs', function () {
         ->count(2)
         ->has(
             UserVariant::factory()
-                ->count(2), 'variants')
+                ->count(2),
+            'variants'
+        )
         ->create([
             'blog_id' => newBlog(),
         ]);

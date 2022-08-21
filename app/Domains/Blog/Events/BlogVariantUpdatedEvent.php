@@ -1,4 +1,5 @@
 <?php
+
 namespace App\Domains\Blog\Events;
 
 use App\Models\BlogVariant;
@@ -8,5 +9,7 @@ class BlogVariantUpdatedEvent
 {
     use Dispatchable;
 
-    public function __construct(public BlogVariant $variant) {}
+    public function __construct(public BlogVariant $variant)
+    {
+    }
 }

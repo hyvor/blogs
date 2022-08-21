@@ -6,8 +6,7 @@ use App\Data\Enums\SubscriptionStatusEnum;
 use App\Domains\Integrations\Paddle\PaddleService;
 use App\Models\Subscription;
 
-it('cancels the subscription plan', function() {
-
+it('cancels the subscription plan', function () {
     $blog = blog();
 
     $subscription = Subscription::factory()->create([
@@ -25,5 +24,4 @@ it('cancels the subscription plan', function() {
 
     expect($subscription->status)->toBe(SubscriptionStatusEnum::DELETED);
     expect($subscription->ends_at->toDateString())->toBe('2022-08-16');
-
 });

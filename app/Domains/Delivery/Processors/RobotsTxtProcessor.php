@@ -11,10 +11,8 @@ use App\Domains\Delivery\Twig\TwigRenderer;
 
 class RobotsTxtProcessor extends RouteProcessorAbstract
 {
-
     public function __construct(PathMatcher $pathMatcher, MatchedRoute $matchedRoute)
     {
-
         $blog = $pathMatcher->blog;
         $robots = $blog->getMeta('seo_robots_txt') ?? '';
 
@@ -27,6 +25,5 @@ class RobotsTxtProcessor extends RouteProcessorAbstract
             $rendered,
             'text/plain'
         ));
-
     }
 }

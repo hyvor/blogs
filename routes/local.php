@@ -36,7 +36,7 @@ Route::get('email', function () {
     ]);
 });
 
-Route::get('embed', function() {
+Route::get('embed', function () {
     $html = '<div id="hyvor-blogs-embed-wrap"></div>';
     $js = view('embed.embed-js', [
         'domain' => 'http://blogs.hyvor.test:8080',

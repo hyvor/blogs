@@ -8,8 +8,7 @@ use App\Data\Enums\SubscriptionStatusEnum;
 use App\Domains\Subscription\SubscriptionService;
 use Illuminate\Support\Facades\Http;
 
-it('cancels subscription', function() {
-
+it('cancels subscription', function () {
     Http::fake([
         'https://test.myshopify.com/admin/api/2022-07/graphql.json' => Http::response([
             'data' => [
@@ -38,5 +37,4 @@ it('cancels subscription', function() {
     $subscription->refresh();
 
     expect($subscription->status)->toBe(SubscriptionStatusEnum::DELETED);
-
 });

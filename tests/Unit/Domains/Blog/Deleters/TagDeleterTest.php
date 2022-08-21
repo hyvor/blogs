@@ -18,7 +18,9 @@ it('deletes tags and variants', function () {
         ->count(2)
         ->has(
             TagVariant::factory()
-                ->count(2), 'variants')
+                ->count(2),
+            'variants'
+        )
         ->create([
             'blog_id' => $blog,
         ]);
@@ -37,7 +39,9 @@ it('does not delete tags of other blogs', function () {
         ->count(2)
         ->has(
             TagVariant::factory()
-                ->count(2), 'variants')
+                ->count(2),
+            'variants'
+        )
         ->create([
             'blog_id' => newBlog(),
         ]);

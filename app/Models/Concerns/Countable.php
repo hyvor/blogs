@@ -82,13 +82,13 @@ trait Countable
         $meta = $this->counts;
 
         if (is_string($meta)) {
-            return json_decode($meta) ?? new stdClass;
+            return json_decode($meta) ?? new stdClass();
         } elseif (is_array($meta)) {
             return (object) $meta;
         } elseif (is_object($meta)) {
             return $meta;
         }
 
-        return new stdClass;
+        return new stdClass();
     }
 }

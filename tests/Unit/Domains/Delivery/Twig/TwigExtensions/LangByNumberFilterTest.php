@@ -6,8 +6,7 @@ use App\Data\Enums\ThemeFileFolderEnum;
 use App\Domains\Blog\BlogService;
 use App\Domains\Theme\ThemeFilesRepository;
 
-it('works for zero', function() {
-
+it('works for zero', function () {
     $blogObject = getBlogObject();
     $blog = BlogService::getBlogBySubdomain($blogObject->subdomain);
 
@@ -26,11 +25,9 @@ it('works for zero', function() {
         ],
         'Nothing'
     );
-
 });
 
-it('works for one', function() {
-
+it('works for one', function () {
     $blogObject = getBlogObject();
     $blog = BlogService::getBlogBySubdomain($blogObject->subdomain);
 
@@ -49,12 +46,10 @@ it('works for one', function() {
         ],
         'One'
     );
-
 });
 
 
-it('works for mutli', function() {
-
+it('works for mutli', function () {
     $blogObject = getBlogObject();
     $blog = BlogService::getBlogBySubdomain($blogObject->subdomain);
 
@@ -73,5 +68,4 @@ it('works for mutli', function() {
         ],
         'Multiple'
     );
-
 });

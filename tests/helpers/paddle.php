@@ -1,6 +1,7 @@
 <?php
 
-function generatePaddleSignature(array $fields) {
+function generatePaddleSignature(array $fields)
+{
     ksort($fields);
     foreach ($fields as $k => $v) {
         if (! in_array(gettype($v), ['object', 'array'])) {
@@ -23,7 +24,8 @@ function generatePaddleSignature(array $fields) {
     return base64_encode($signature);
 }
 
-function getPaddleWebhookParams(array $fields) {
+function getPaddleWebhookParams(array $fields)
+{
     $fields['p_signature'] = generatePaddleSignature($fields);
     return $fields;
 }

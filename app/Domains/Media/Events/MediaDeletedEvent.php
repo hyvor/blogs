@@ -9,6 +9,7 @@ class MediaDeletedEvent
 {
     use Dispatchable;
 
-    public function __construct(public Media $media) {}
-
+    public function __construct(public Media $media)
+    {
+    }
 }

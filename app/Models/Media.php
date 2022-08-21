@@ -10,9 +10,8 @@ class Media extends Model
 {
     use HasFactory;
 
-    public function blog() : BelongsTo
+    public function blog(): BelongsTo
     {
         return $this->belongsTo(Blog::class);
     }
-
 }

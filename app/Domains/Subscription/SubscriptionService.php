@@ -12,44 +12,45 @@ use Illuminate\Support\Collection;
 
 class SubscriptionService
 {
-
     /**
      * @param Blog $blog
      * @return Collection<Subscription>
      */
-    public static function getAllSubscriptions(Blog $blog) : Collection
+    public static function getAllSubscriptions(Blog $blog): Collection
     {
         return $blog->subscriptions;
     }
 
-    public static function getActiveBlogSubscription(Blog $blog) : ?Subscription
+    public static function getActiveBlogSubscription(Blog $blog): ?Subscription
     {
         $subscription = $blog->subscriptions()->first();
 
-        if (!$subscription)
+        if (!$subscription) {
             return null;
+        }
 
         return self::isSubscriptionActive($subscription) ? $subscription : null;
     }
 
-    public static function isBlogSubscribed(Blog $blog) : bool
+    public static function isBlogSubscribed(Blog $blog): bool
     {
         $subscription = $blog->subscriptions()->first();
 
-        if (!$subscription)
+        if (!$subscription) {
             return false;
+        }
 
         return self::isSubscriptionActive($subscription);
-
     }
 
-    public static function isSubscriptionActive(Subscription $subscription) : bool
+    public static function isSubscriptionActive(Subscription $subscription): bool
     {
         if (
             $subscription->status === SubscriptionStatusEnum::ACTIVE ||
             $subscription->status === SubscriptionStatusEnum::PAST_DUE
-        )
+        ) {
             return true;
+        }
 
         return
             $subscription->status === SubscriptionStatusEnum::DELETED &&
@@ -63,9 +64,7 @@ class SubscriptionService
         SubscriptionFrequencyEnum $frequency,
         SubscriptionStatusEnum $status = SubscriptionStatusEnum::ACTIVE,
         ?DateTimeInterface $endsAt = null
-    ) : Subscription
-    {
-
+    ): Subscription {
         return Subscription::create([
             'blog_id' => $blog->id,
             'plan' => $plan,
@@ -73,13 +72,12 @@ class SubscriptionService
             'status' => $status,
             'ends_at' => $endsAt
         ]);
-
     }
 
     /**
      * @param array{plan?: SubscriptionPlanEnum, frequency?: SubscriptionFrequencyEnum, status?: SubscriptionStatusEnum} $updates
      */
-    public static function updateSubscription(Subscription $subscription, array $updates) : Subscription
+    public static function updateSubscription(Subscription $subscription, array $updates): Subscription
     {
         foreach ($updates as $key => $value) {
             $subscription->$key = $value;
@@ -90,7 +88,7 @@ class SubscriptionService
         return $subscription;
     }
 
-    public static function cancelSubscription(Subscription $subscription, DateTimeInterface $date) : Subscription
+    public static function cancelSubscription(Subscription $subscription, DateTimeInterface $date): Subscription
     {
         $subscription->ends_at = $date;
         $subscription->status = SubscriptionStatusEnum::DELETED;
@@ -98,5 +96,4 @@ class SubscriptionService
 
         return $subscription;
     }
-
 }

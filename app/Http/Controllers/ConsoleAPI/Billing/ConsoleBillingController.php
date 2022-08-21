@@ -9,7 +9,6 @@ use App\Models\Blog;
 
 class ConsoleBillingController
 {
-
     public function getUsage(Blog $blog)
     {
         $usage = UsageRepository::getUsage($blog);
@@ -21,5 +20,4 @@ class ConsoleBillingController
         $subscriptions = SubscriptionService::getAllSubscriptions($blog)->mapInto(SubscriptionObject::class);
         return response()->json($subscriptions);
     }
-
 }

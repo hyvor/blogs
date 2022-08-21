@@ -2,13 +2,10 @@
 
 namespace Tests\Feature\Integrations\Shopify;
 
-use App\Data\Enums\ThemeFileFolderEnum;
-use App\Domains\Blog\Fillers\LanguageFiller;
-use App\Domains\Blog\Fillers\RouteFiller;
-use App\Domains\Theme\ThemeFilesRepository;
 use App\Models\ShopifyShop;
 
-function generateShopifyProxySignature(array $data) : array {
+function generateShopifyProxySignature(array $data): array
+{
     $str = collect($data)
         ->sortKeys()
         ->map(fn ($val, $key) => "$key=$val")
@@ -20,18 +17,15 @@ function generateShopifyProxySignature(array $data) : array {
     ];
 }
 
-it('requires a valid signature', function() {
-
+it('requires a valid signature', function () {
     $this->callIntegrationEndpoint('GET', 'shopify/proxy', [
         'shop' => 'shop.myshopify.com',
         'signature' => 'wrong'
     ])->assertUnprocessable()
         ->assertSee('Invalid signature');
-
 });
 
-it('requires a valid shop', function() {
-
+it('requires a valid shop', function () {
     $data = generateShopifyProxySignature([
         'shop' => 'shop.myshopify.com'
     ]);
@@ -39,11 +33,9 @@ it('requires a valid shop', function() {
     $this->callIntegrationEndpoint('GET', 'shopify/proxy', $data)
         ->assertUnprocessable()
         ->assertSee('Shop not found');
-
 });
 
-it('requires a shop with an assigned blog', function() {
-
+it('requires a shop with an assigned blog', function () {
     $data = generateShopifyProxySignature([
         'shop' => 'shop.myshopify.com'
     ]);
@@ -56,11 +48,9 @@ it('requires a shop with an assigned blog', function() {
     $this->callIntegrationEndpoint('GET', '/shopify/proxy', $data)
         ->assertUnprocessable()
         ->assertSee('No blog is assigned to this shop');
-
 });
 
-it('returns a response with the embed script', function() {
-
+it('returns a response with the embed script', function () {
     $blog = newBlog();
     $data = generateShopifyProxySignature([
         'shop' => 'shop.myshopify.com'
@@ -75,6 +65,4 @@ it('returns a response with the embed script', function() {
     $this->callIntegrationEndpoint('GET', '/shopify/proxy', $data)
         ->assertOk()
         ->assertSee(['<script', 'src=', 'embed.js']);
-
-
 });

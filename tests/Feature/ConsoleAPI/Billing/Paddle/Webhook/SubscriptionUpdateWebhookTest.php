@@ -2,15 +2,13 @@
 
 namespace Tests\Feature\ConsoleAPI\Billing\Paddle\Webhook;
 
-
 use App\Data\Enums\SubscriptionFrequencyEnum;
 use App\Data\Enums\SubscriptionPlanEnum;
 use App\Data\Enums\SubscriptionStatusEnum;
 use App\Domains\Integrations\Paddle\PaddleService;
 use App\Models\Subscription;
 
-it('updates a subscription plan', function() {
-
+it('updates a subscription plan', function () {
     $blog = blog();
 
     $subscription = Subscription::factory()->create([
@@ -32,11 +30,9 @@ it('updates a subscription plan', function() {
     expect($subscription->status)->toBe(SubscriptionStatusEnum::ACTIVE);
     expect($subscription->plan)->toBe(SubscriptionPlanEnum::D);
     expect($subscription->frequency)->toBe(SubscriptionFrequencyEnum::YEARLY);
-
 });
 
-it('updates the status', function() {
-
+it('updates the status', function () {
     $blog = blog();
 
     $subscription = Subscription::factory()->create([
@@ -54,11 +50,9 @@ it('updates the status', function() {
     $subscription =  $blog->subscriptions[0];
 
     expect($subscription->status)->toBe(SubscriptionStatusEnum::PAST_DUE);
-
 });
 
-it('past_due to active' ,function() {
-
+it('past_due to active', function () {
     $blog = blog();
 
     $subscription = Subscription::factory()->create([
@@ -77,6 +71,4 @@ it('past_due to active' ,function() {
     $subscription =  $blog->subscriptions[0];
 
     expect($subscription->status)->toBe(SubscriptionStatusEnum::ACTIVE);
-
-
 });

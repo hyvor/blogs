@@ -16,10 +16,8 @@ use Illuminate\Support\Str;
 
 class PaddleWebhookController
 {
-
     public function handle(Request $request)
     {
-
         VerifyWebhookSignature::verify($request);
 
         $payload = $request->all();
@@ -45,7 +43,6 @@ class PaddleWebhookController
 
     private function handleSubscriptionCreated(array $payload)
     {
-
         $blog = Passthrough::decode($payload['passthrough']);
         $plan = PaddleService::planConfigFromPaddleId($payload['subscription_plan_id']);
 
@@ -56,12 +53,10 @@ class PaddleWebhookController
         );
 
         PaddleService::setPaddleSubscriptionId($subscription, $payload['subscription_id']);
-
     }
 
     private function handleSubscriptionUpdated(array $payload)
     {
-
         $paddleSubscriptionId = $payload['subscription_id'];
         $subscription = PaddleService::getSubscriptionFromPaddleSubscriptionId($paddleSubscriptionId);
 
@@ -79,7 +74,6 @@ class PaddleWebhookController
         }
 
         if (isset($payload['status'])) {
-
             $payloadStatus = $payload['status'];
             $status = match ($payloadStatus) {
                 'active' => SubscriptionStatusEnum::ACTIVE,
@@ -88,16 +82,13 @@ class PaddleWebhookController
             };
 
             $updates['status'] = $status;
-
         }
 
         SubscriptionService::updateSubscription($subscription, $updates);
-
     }
 
     private function handleSubscriptionCancelled(array $payload)
     {
-
         $paddleSubscriptionId = $payload['subscription_id'];
         $subscription = PaddleService::getSubscriptionFromPaddleSubscriptionId($paddleSubscriptionId);
 
@@ -107,7 +98,5 @@ class PaddleWebhookController
 
         $date = Carbon::createFromFormat('Y-m-d', $payload['cancellation_effective_date'], 'UTC')->endOfDay();
         SubscriptionService::cancelSubscription($subscription, $date);
-
     }
-
 }

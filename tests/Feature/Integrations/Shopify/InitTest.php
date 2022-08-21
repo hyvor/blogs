@@ -2,20 +2,16 @@
 
 namespace Tests\Feature\Integrations\Shopify;
 
-
 use Illuminate\Support\Facades\URL;
 
-it('requires a valid domain', function() {
-
+it('requires a valid domain', function () {
     $this->callIntegrationEndpoint('GET', '/shopify', [
         'shop' => 'invalid-shop'
     ])
         ->assertUnprocessable();
-
 });
 
-it('redirects to the oauth endpoint and sets nonce', function() {
-
+it('redirects to the oauth endpoint and sets nonce', function () {
     $response = $this->callIntegrationEndpoint('GET', '/shopify', [
         'shop' => 'myshop.myshopify.com'
     ])->assertRedirect();
@@ -33,5 +29,4 @@ it('redirects to the oauth endpoint and sets nonce', function() {
     expect($search['scope'])->toBeString();
     expect($search['state'])->toBeString();
     expect($search['grant_options'])->toBeArray();
-
 });

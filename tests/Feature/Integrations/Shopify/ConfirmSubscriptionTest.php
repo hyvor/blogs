@@ -9,8 +9,7 @@ use App\Domains\Integrations\Shopify\ShopifyBillingDataEncoder;
 use App\Domains\Subscription\SubscriptionService;
 use Illuminate\Support\Facades\URL;
 
-it('confirms the subscription', function() {
-
+it('confirms the subscription', function () {
     $url = URL::signedRoute('shopify-billing-create', [
         'data' => ShopifyBillingDataEncoder::encode(
             config('test.blog_id'),
@@ -30,11 +29,9 @@ it('confirms the subscription', function() {
     expect($subscription->plan)->toBe(SubscriptionPlanEnum::A);
     expect($subscription->frequency)->toBe(SubscriptionFrequencyEnum::MONTHLY);
     expect($subscription->getMeta('shopify_charge_id'))->toBe(100);
-
 });
 
-it('cancels the current subscription', function() {
-
+it('cancels the current subscription', function () {
     $blog = blog();
 
     $subscription = SubscriptionService::createSubscription(
@@ -56,6 +53,4 @@ it('cancels the current subscription', function() {
 
     $subscription->refresh();
     expect($subscription->status)->toBe(SubscriptionStatusEnum::DELETED);
-
-
 });

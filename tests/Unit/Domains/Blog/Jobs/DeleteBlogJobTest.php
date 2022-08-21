@@ -15,7 +15,6 @@ use App\Domains\Blog\Jobs\DeleteBlogJob;
 use App\Models\Blog;
 
 it('calls deleters', function () {
-
     $deleters = [
         LanguageDeleter::class,
         MediaDeleter::class,
@@ -39,5 +38,4 @@ it('calls deleters', function () {
 
     // deletes the blog
     expect(Blog::find(config('test.blog_id')))->toBeNull();
-
 });

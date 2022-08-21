@@ -1,4 +1,5 @@
 <?php
+
 namespace Tests\Feature\ConsoleAPI\Blog;
 
 use App\Domains\Blog\Events\BlogUpdatedEvent;
@@ -6,7 +7,6 @@ use Illuminate\Support\Facades\Event;
 use Illuminate\Testing\Fluent\AssertableJson;
 
 it('updates blog data', function () {
-
     Event::fake();
 
     $subdomain = 'new-subdomain';

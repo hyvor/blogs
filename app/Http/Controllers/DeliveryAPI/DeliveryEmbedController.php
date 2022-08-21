@@ -10,10 +10,8 @@ use Illuminate\Http\Request;
 
 class DeliveryEmbedController
 {
-
     public function embedJs(Request $request)
     {
-
         $request->validate([
             'subdomain' => 'required|string',
             'path_style' => 'bool',
@@ -31,12 +29,10 @@ class DeliveryEmbedController
         ]);
 
         return response($js)->header('Content-Type', 'application/javascript');
-
     }
 
     public function iframe(Request $request)
     {
-
         $request->validate([
             'url' => 'required|url',
             'path_style' => 'bool'
@@ -62,5 +58,4 @@ class DeliveryEmbedController
 
         return $response;
     }
-
 }

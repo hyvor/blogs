@@ -22,7 +22,8 @@ it('updates route', function () {
         'content_type' => $contentType,
     ])
        ->assertOk()
-       ->assertJson(fn (AssertableJson $json) => $json->where('name', $name)
+       ->assertJson(
+           fn (AssertableJson $json) => $json->where('name', $name)
                 ->where('match', $match)
                 ->where('template', $template)
                 ->where('posts_filter', $postsFilter)

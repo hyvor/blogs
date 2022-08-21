@@ -2,8 +2,7 @@
 
 namespace Tests\Unit\Domains\Delivery\Twig\TwigExtensions;
 
-test('template filter', function() {
-
+test('template filter', function () {
     $data = [
         'var1' => '{{ var2 }}',
         'var2' => 'test'
@@ -22,5 +21,4 @@ test('template filter', function() {
         $data,
         'test'
     );
-
 });

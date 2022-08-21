@@ -10,8 +10,7 @@ use App\Domains\Cache\Events\CacheClearTemplatesEvent;
 use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Facades\Event;
 
-it('clears template cache by setting timestamp and emits the event', function() {
-
+it('clears template cache by setting timestamp and emits the event', function () {
     Event::fake();
 
     $blog = blog();
@@ -26,11 +25,9 @@ it('clears template cache by setting timestamp and emits the event', function() 
     expect(Cache::get($key))->toBeInt();
 
     Event::assertDispatched(CacheClearTemplatesEvent::class);
-
 });
 
-it('clears all cache by settings timestamp and emits the event', function() {
-
+it('clears all cache by settings timestamp and emits the event', function () {
     Event::fake();
 
     $blog = blog();
@@ -45,11 +42,9 @@ it('clears all cache by settings timestamp and emits the event', function() {
     expect(Cache::get($key))->toBeInt();
 
     Event::assertDispatched(CacheClearAllEvent::class);
-
 });
 
-it('sets cache', function() {
-
+it('sets cache', function () {
     $blog = blog();
     $responseObject = DeliveryAPIResponseObject::forFile(
         DeliveryAPIFileTypeEnum::TEMPLATE,
@@ -60,11 +55,9 @@ it('sets cache', function() {
     $cache->blog($blog)->set('/test', $responseObject);
 
     expect(Cache::get("blog_cache_{$blog->id}_/test"))->not->toBeNull();
-
 });
 
-it('gets from cache', function() {
-
+it('gets from cache', function () {
     $blog = blog();
     $responseObject = DeliveryAPIResponseObject::forFile(
         DeliveryAPIFileTypeEnum::TEMPLATE,
@@ -75,11 +68,9 @@ it('gets from cache', function() {
     $cache->blog($blog)->set('/test', $responseObject);
 
     expect($cache->get('/test'))->not->toBeNull();
-
 });
 
-it('returns null when template cache is cleared', function() {
-
+it('returns null when template cache is cleared', function () {
     $blog = blog();
     $responseObject = DeliveryAPIResponseObject::forFile(
         DeliveryAPIFileTypeEnum::TEMPLATE,
@@ -92,11 +83,9 @@ it('returns null when template cache is cleared', function() {
     Cache::put("blog_cache_{$blog->id}_LAST_TEMPLATE_CACHE_CLEARED_AT", now()->addDay()->timestamp);
 
     expect($cache->get('/test'))->toBeNull();
-
 });
 
-it('returns null when whole cache is cleared', function() {
-
+it('returns null when whole cache is cleared', function () {
     $blog = blog();
     $responseObject = DeliveryAPIResponseObject::forFile(
         DeliveryAPIFileTypeEnum::TEMPLATE,
@@ -109,17 +98,16 @@ it('returns null when whole cache is cleared', function() {
     Cache::put("blog_cache_{$blog->id}_LAST_ALL_CACHE_CLEARED_AT", now()->addDay()->timestamp);
 
     expect($cache->get('/test'))->toBeNull();
-
 });
 
-it('returns null when cache is not there', function() {
+it('returns null when cache is not there', function () {
     $blog = blog();
     $cache = new CacheService();
     $cache->blog($blog);
     expect($cache->get('/test'))->toBeNull();
 });
 
-it('returns null when delivery API object is not set correctly', function() {
+it('returns null when delivery API object is not set correctly', function () {
     $blog = blog();
     Cache::put("blog_cache_{$blog->id}_/test", serialize('nothing'));
 

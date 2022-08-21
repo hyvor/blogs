@@ -5,8 +5,7 @@ namespace Tests\Feature\Integrations\Shopify;
 use App\Models\ShopifyShop;
 use Illuminate\Support\Facades\Http;
 
-it('fails when hmac is wrong', function() {
-
+it('fails when hmac is wrong', function () {
     $data = [
         'code' => 'test',
         'shop' => 'shop.myshopify.com',
@@ -17,11 +16,9 @@ it('fails when hmac is wrong', function() {
     $this->callIntegrationEndpoint('GET', 'shopify/installed', $data)
         ->assertUnprocessable()
         ->assertSee('HMAC hash is invalid');
-
 });
 
-it('fails when nonce is wrong', function() {
-
+it('fails when nonce is wrong', function () {
     $data = [
         'code' => 'test',
         'shop' => 'shop.myshopify.com',
@@ -34,11 +31,9 @@ it('fails when nonce is wrong', function() {
     $this->callIntegrationEndpoint('GET', 'shopify/installed', $data)
         ->assertUnprocessable()
         ->assertSee('Nonce is invalid');
-
 });
 
-it('gets the access token and creates a shop', function() {
-
+it('gets the access token and creates a shop', function () {
     $domain = 'shop.myshopify.com';
     Http::fake([
         "https://$domain/admin/oauth/access_token" => Http::response([
@@ -64,5 +59,4 @@ it('gets the access token and creates a shop', function() {
     $shop = ShopifyShop::where('domain', $domain)->first();
     expect($shop)->toBeInstanceOf(ShopifyShop::class);
     expect($shop->access_token)->toBe('test-access');
-
 });

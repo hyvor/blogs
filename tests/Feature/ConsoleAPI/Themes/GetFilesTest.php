@@ -16,7 +16,8 @@ it('gets files', function () {
 
     $this->callConsoleApi('GET', '/theme/files')
         ->assertOk()
-        ->assertJson(fn (AssertableJson $json) => $json->count(1)
+        ->assertJson(
+            fn (AssertableJson $json) => $json->count(1)
                 ->first(fn (AssertableJson $json) => $json->where('name', 'index.twig')->etc())
         );
 });

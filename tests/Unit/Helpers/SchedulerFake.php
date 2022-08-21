@@ -31,7 +31,6 @@ class SchedulerFake
 
 class Expression
 {
-    public string $expression = '* * * * *';
-
     use ManagesFrequencies;
+    public string $expression = '* * * * *';
 }

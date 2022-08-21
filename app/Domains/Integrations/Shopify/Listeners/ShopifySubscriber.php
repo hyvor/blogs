@@ -8,7 +8,6 @@ use Illuminate\Events\Dispatcher;
 
 class ShopifySubscriber
 {
-
     public function subscribe(Dispatcher $events)
     {
         $events->listen(BlogDeletedEvent::class, [static::class, 'onBlogDelete']);
@@ -23,9 +22,8 @@ class ShopifySubscriber
         $blog = $event->blog;
         $shop = ShopifyService::getShopByBlog($blog);
 
-        if ($shop)
+        if ($shop) {
             ShopifyService::deleteShop($shop);
-
+        }
     }
-
 }

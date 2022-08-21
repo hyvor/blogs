@@ -4,14 +4,11 @@ namespace App\Domains\Integrations\Paddle;
 
 use App\Exceptions\TrustedException;
 use Http;
-use Illuminate\Http\Client\Response;
 
 class PaddleApiCaller
 {
-
-    public static function call(string $endpoint, array $data) : object
+    public static function call(string $endpoint, array $data): object
     {
-
         $domain = config('services.paddle.sandbox') ?
             'https://sandbox-vendors.paddle.com/api/2.0' :
             'https://vendors.paddle.com/api/2.0';
@@ -33,7 +30,5 @@ class PaddleApiCaller
         }
 
         return (object) ($json['response'] ?? []);
-
     }
-
 }

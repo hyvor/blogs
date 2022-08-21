@@ -53,8 +53,7 @@ it('updates content to empty', function () {
         ->assertJson(fn (AssertableJson $json) => $json->where('content', null)->etc());
 });
 
-it('updates styles with event', function() {
-
+it('updates styles with event', function () {
     Event::fake();
 
     $file = ThemeFilesRepository::createOrUpdateFile(
@@ -69,5 +68,4 @@ it('updates styles with event', function() {
     ])->assertOk();
 
     Event::assertDispatched(StylesEditedEvent::class);
-
 });

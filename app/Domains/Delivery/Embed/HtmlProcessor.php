@@ -12,7 +12,6 @@ use DOMElement;
  */
 class HtmlProcessor
 {
-
     private DOMDocument $dom;
 
     public function __construct(
@@ -20,8 +19,7 @@ class HtmlProcessor
         private readonly string $embeddingUrl,
         string $html,
         private readonly bool $pathStyle = false
-    )
-    {
+    ) {
         $this->dom = new DOMDocument();
 
         /**
@@ -34,13 +32,13 @@ class HtmlProcessor
         $this->convertLinks();
     }
 
-    private function addIframeHelpers() : void
+    private function addIframeHelpers(): void
     {
-
         $head = $this->dom->getElementsByTagName("head")[0] ?? null;
 
-        if (!$head)
+        if (!$head) {
             return;
+        }
 
         // iframe.js, and other CSS helpers
         $iframeHelper = view('embed.iframe-helpers', [
@@ -49,7 +47,6 @@ class HtmlProcessor
         $template = $this->dom->createDocumentFragment();
         $template->appendXML($iframeHelper);
         $head->appendChild($template);
-
     }
 
     /**
@@ -58,7 +55,6 @@ class HtmlProcessor
      */
     private function convertLinks(): void
     {
-
         $baseUrl = PermalinkRepository::getBaseUrl($this->blog);
 
         $links = $this->dom->getElementsByTagName('a');
@@ -67,7 +63,6 @@ class HtmlProcessor
          * @var $link DOMElement
          */
         foreach ($links as $link) {
-
             $href = $link->getAttribute('href');
 
             // should start with the base URL
@@ -81,22 +76,21 @@ class HtmlProcessor
                 if (
                     str_starts_with($path, 'assets/') ||
                     str_starts_with($path, 'media/')
-                )
+                ) {
                     continue;
+                }
 
                 $link->setAttribute('href', $this->embedUrlFromPath($path));
             }
             // relative URL
-            else if (str_starts_with($href, '/')) {
+            elseif (str_starts_with($href, '/')) {
                 $path = trim($href, '/');
                 $link->setAttribute('href', $this->embedUrlFromPath($path));
             }
-
         }
-
     }
 
-    private function embedUrlFromPath(string $path) : string
+    private function embedUrlFromPath(string $path): string
     {
         $path = $this->pathStyle ? ('/' . $path) : ($path === '' ? '' : "?p=$path");
         return $this->embeddingUrl . $path;
@@ -106,6 +100,4 @@ class HtmlProcessor
     {
         return $this->dom->saveHTML();
     }
-
-
 }

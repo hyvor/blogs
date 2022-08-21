@@ -13,7 +13,7 @@ class ShopifyService
 {
     private const NONCE_SESSION_KEY = 'shopify_nonce';
 
-    public function generateNonce() : string
+    public function generateNonce(): string
     {
         $nonce = Str::random();
         session([self::NONCE_SESSION_KEY => $nonce]);
@@ -21,7 +21,7 @@ class ShopifyService
         return $nonce;
     }
 
-    public function hasValidNonce(string $receivedNonce) : bool
+    public function hasValidNonce(string $receivedNonce): bool
     {
         $nonce = session(self::NONCE_SESSION_KEY);
         return $nonce && $nonce === $receivedNonce;
@@ -30,7 +30,7 @@ class ShopifyService
     /**
      * @param array{string: mixed} $params
      */
-    public function hasValidHmac(array $params) : bool
+    public function hasValidHmac(array $params): bool
     {
         $hmac = $params['hmac'];
 
@@ -47,7 +47,7 @@ class ShopifyService
     /**
      * @source https://shopify.dev/apps/online-store/app-proxies#calculate-a-digital-signature
      */
-    public function hasValidProxySignature(array $params) : bool
+    public function hasValidProxySignature(array $params): bool
     {
         $signature = $params['signature'];
 
@@ -56,7 +56,9 @@ class ShopifyService
             ->filter(fn ($val, $key) => $key !== 'signature')
             ->map(function ($val, $key) {
                 $val ??= '';
-                if (is_array($val)) $val = implode(',', $val);
+                if (is_array($val)) {
+                    $val = implode(',', $val);
+                }
                 return "$key=$val";
             })
             ->implode('');
@@ -64,7 +66,6 @@ class ShopifyService
         $hash = hash_hmac('sha256', $data, config('services.shopify.api_secret_key'));
 
         return hash_equals($hash, $signature);
-
     }
 
     public function getOAuthUrl(string $shopDomain)
@@ -81,9 +82,8 @@ class ShopifyService
             "&grant_options[]=value";
     }
 
-    public function getAccessToken(string $domain, string $code) : string
+    public function getAccessToken(string $domain, string $code): string
     {
-
         $response = Http::post("https://$domain/admin/oauth/access_token", [
             'client_id' => config('services.shopify.api_key'),
             'client_secret' => config('services.shopify.api_secret_key'),
@@ -95,7 +95,6 @@ class ShopifyService
         }
 
         return $response->json()['access_token'];
-
     }
 
     public function createShop(string $domain, string $accessToken)
@@ -111,14 +110,13 @@ class ShopifyService
         $shop->delete();
     }
 
-    public static function getShopByDomain(string $domain) : ?ShopifyShop
+    public static function getShopByDomain(string $domain): ?ShopifyShop
     {
         return ShopifyShop::where('domain', $domain)->first();
     }
 
-    public static function getShopByBlog(Blog $blog) : ?ShopifyShop
+    public static function getShopByBlog(Blog $blog): ?ShopifyShop
     {
         return ShopifyShop::where('blog_id', $blog->id)->first();
     }
-
 }

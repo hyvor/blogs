@@ -1,4 +1,5 @@
 <?php
+
 namespace Tests\Feature\ConsoleAPI\Billing\Paddle\Webhook;
 
 use App\Data\Enums\SubscriptionFrequencyEnum;
@@ -7,8 +8,7 @@ use App\Data\Enums\SubscriptionStatusEnum;
 use App\Domains\Integrations\Paddle\PaddleService;
 use App\Domains\Integrations\Paddle\Passthrough\Passthrough;
 
-it('creates a subscription', function() {
-
+it('creates a subscription', function () {
     $blog = blog();
     $this->callIntegrationEndpoint('POST', '/paddle/webhook', getPaddleWebhookParams([
         'alert_name' => 'subscription_created',
@@ -25,5 +25,4 @@ it('creates a subscription', function() {
     expect($subscription->plan)->toBe(SubscriptionPlanEnum::A);
     expect($subscription->frequency)->toBe(SubscriptionFrequencyEnum::MONTHLY);
     expect($subscription->getMeta('paddle_subscription_id'))->toBe(1200);
-
 });

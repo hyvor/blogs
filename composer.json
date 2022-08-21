@@ -108,7 +108,7 @@
         "expose": "ngrok http 8080",
         "test": "vendor/bin/pest -p",
         "coverage": "vendor/bin/pest --coverate -p",
-        "fix": "vendor/bin/php-cs-fixer fix --allow-risky=yes",
+        "pint": "vendor/bin/pint",
         "minio": "minio server storage/app/minio"
     },
     "repositories": [

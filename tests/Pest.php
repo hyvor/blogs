@@ -29,7 +29,6 @@ uses()->beforeEach(function () {
     Http::fake([
         'https://iframe.ly/api/iframely*' => Http::response(jsonData('UrlData/iframely-response.json'))
     ]);
-
 })->in('Feature', 'Unit');
 
 function blog()
@@ -134,7 +133,8 @@ function getBlogObject($updates = []): BlogObject
     return $obj;
 }
 
-function testTwigRendering(string $template, array $vars, string $expectation) {
+function testTwigRendering(string $template, array $vars, string $expectation)
+{
     $vars = json_decode(json_encode($vars), true);
     $val = TwigRenderer::renderString($template, $vars);
     expect($val)->toBe($expectation);

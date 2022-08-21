@@ -7,9 +7,9 @@ use Illuminate\Foundation\Events\Dispatchable;
 
 class AssetEditedEvent
 {
-
     use Dispatchable;
 
-    public function __construct(public Blog $blog, public string $name) {}
-
+    public function __construct(public Blog $blog, public string $name)
+    {
+    }
 }

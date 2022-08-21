@@ -60,7 +60,9 @@ class SitemapPostsProcessor extends RouteProcessorAbstract
         $primaryLanguage = LanguageRepository::getPrimaryLanguage($this->blog);
         $limit = config('limits.max_entries_per_sitemap');
 
-        return Post::join('post_variants', fn ($join) => $join
+        return Post::join(
+            'post_variants',
+            fn ($join) => $join
                     ->on('post_variants.post_id', '=', 'posts.id')
                     ->where('post_variants.language_id', '=', $primaryLanguage->id)
         )

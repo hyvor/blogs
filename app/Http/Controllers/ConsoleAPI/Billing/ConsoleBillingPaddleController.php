@@ -19,7 +19,6 @@ use Illuminate\Validation\Rules\Enum;
 
 class ConsoleBillingPaddleController extends Controller
 {
-
     public function getData(Blog $blog): JsonResponse
     {
         $receipts = PaddleService::getReceipts($blog)->mapInto(ReceiptObject::class);

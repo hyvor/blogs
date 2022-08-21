@@ -21,15 +21,13 @@ use Illuminate\Validation\Rules\Enum;
 
 class ShopifyController
 {
-
     /**
      * Called when the user clicks the Add App button in the Shopify App
      */
     public function init(Request $request, ShopifyService $shopify)
     {
-
         $request->validate([
-            'shop' => ['required', 'string', new ShopDomainRule],
+            'shop' => ['required', 'string', new ShopDomainRule()],
         ]);
 
         $shopDomain = $request->input('shop');
@@ -54,16 +52,18 @@ class ShopifyController
         $request->validate([
             'code' => 'required|string',
             'hmac' => 'required|string',
-            'shop' => ['required', 'string', new ShopDomainRule],
+            'shop' => ['required', 'string', new ShopDomainRule()],
             'state' => 'required|string',
         ]);
 
-        if (!$shopify->hasValidHmac($request->all()))
+        if (!$shopify->hasValidHmac($request->all())) {
             throw new TrustedException('HMAC hash is invalid');
+        }
 
         $nonce = $request->input('state');
-        if (!$shopify->hasValidNonce($nonce))
+        if (!$shopify->hasValidNonce($nonce)) {
             throw new TrustedException('Nonce is invalid');
+        }
 
         $domain = $request->input('shop');
         $code = $request->input('code');
@@ -82,7 +82,6 @@ class ShopifyController
      */
     public function complete(Request $request, ShopifyService $shopifyService)
     {
-
         $request->validate([
             'domain' => 'required|string'
         ]);
@@ -122,13 +121,12 @@ class ShopifyController
         $shop->save();
 
         return redirect("/console/$blog->subdomain");
-
     }
 
     public function proxy(Request $request, ShopifyService $shopifyService)
     {
         $request->validate([
-            'shop' => ['required', 'string', new ShopDomainRule],
+            'shop' => ['required', 'string', new ShopDomainRule()],
             'signature' => 'required|string'
         ]);
 
@@ -171,9 +169,9 @@ class ShopifyController
 
     public function confirmSubscription(Request $request)
     {
-
-        if (!$request->hasValidSignatureWhileIgnoring(['charge_id']))
+        if (!$request->hasValidSignatureWhileIgnoring(['charge_id'])) {
             throw new TrustedException('Invalid signature');
+        }
 
         $request->validate([
             'charge_id' => 'required|integer',
@@ -185,8 +183,9 @@ class ShopifyController
         $blogId = (int) $request->input('blog_id');
         $blog = BlogService::getBlogById($blogId);
 
-        if (!$blog)
+        if (!$blog) {
             throw new TrustedException('Blog not found');
+        }
 
         $plan = SubscriptionPlanEnum::from($request->input('plan'));
         $frequency = SubscriptionFrequencyEnum::from($request->input('frequency'));
@@ -208,7 +207,5 @@ class ShopifyController
         $subscription->setMeta('shopify_charge_id', $chargeId);
 
         return redirect("/console/$blog->subdomain/billing");
-
     }
-
 }

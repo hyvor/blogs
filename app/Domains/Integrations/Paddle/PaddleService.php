@@ -14,16 +14,13 @@ use Illuminate\Support\Facades\App;
 
 class PaddleService
 {
-
-    const META_PADDLE_SUBSCRIPTION_ID = 'paddle_subscription_id';
+    public const META_PADDLE_SUBSCRIPTION_ID = 'paddle_subscription_id';
 
     public function createPayLink(
         Blog $blog,
         SubscriptionPlanEnum $planName,
         SubscriptionFrequencyEnum $frequency
-    ) : string
-    {
-
+    ): string {
         $plan = self::planConfig($planName, $frequency);
         $planId = $plan->id;
 
@@ -39,43 +36,40 @@ class PaddleService
         Subscription $subscription,
         SubscriptionPlanEnum $planName,
         SubscriptionFrequencyEnum $frequency
-    )
-    {
-
+    ) {
         $plan = self::planConfig($planName, $frequency);
         $planId = $plan->id;
 
         $subscriptionId = $this->getPaddleSubscriptionId($subscription);
 
-        if (!$subscriptionId)
+        if (!$subscriptionId) {
             throw new TrustedException('Subscription ID is not set (unlikely)');
+        }
 
         PaddleApiCaller::call('/subscription/users/update', [
             'subscription_id' => $subscriptionId,
             'plan_id' => $planId,
         ]);
-
     }
 
     public function cancelSubscription(Subscription $subscription)
     {
-
         $paddleSubscriptionId = $this->getPaddleSubscriptionId($subscription);
 
-        if (!$paddleSubscriptionId)
+        if (!$paddleSubscriptionId) {
             throw new TrustedException('Subscription ID is not set (unlikely)');
+        }
 
         PaddleApiCaller::call('/subscription/users_cancel', [
             'subscription_id' => $paddleSubscriptionId,
         ]);
-
     }
 
     /**
      * Gets the Paddle's subscription ID
      * Saved in meta of the Subscription row
      */
-    private function getPaddleSubscriptionId(Subscription $subscription) : ?int
+    private function getPaddleSubscriptionId(Subscription $subscription): ?int
     {
         return $subscription->getMeta(self::META_PADDLE_SUBSCRIPTION_ID);
     }
@@ -85,12 +79,12 @@ class PaddleService
         $subscription->setMeta(self::META_PADDLE_SUBSCRIPTION_ID, $id);
     }
 
-    public static function getSubscriptionFromPaddleSubscriptionId(int $id) : ?Subscription
+    public static function getSubscriptionFromPaddleSubscriptionId(int $id): ?Subscription
     {
         return Subscription::where('meta->' . self::META_PADDLE_SUBSCRIPTION_ID, $id)->first();
     }
 
-    public static function planConfig(SubscriptionPlanEnum $plan, SubscriptionFrequencyEnum $frequency) : PaddlePlan
+    public static function planConfig(SubscriptionPlanEnum $plan, SubscriptionFrequencyEnum $frequency): PaddlePlan
     {
         return self::paddlePlans()
             ->where('name', $plan)
@@ -98,7 +92,7 @@ class PaddleService
             ->first();
     }
 
-    public static function planConfigFromPaddleId(int $id) : PaddlePlan
+    public static function planConfigFromPaddleId(int $id): PaddlePlan
     {
         return self::paddlePlans()->firstWhere('id', $id);
     }
@@ -106,9 +100,8 @@ class PaddleService
     /**
      * @return Collection<PaddlePlan>
      */
-    public static function paddlePlans() : Collection
+    public static function paddlePlans(): Collection
     {
-
         return collect([
 
             new PaddlePlan(
@@ -173,5 +166,4 @@ class PaddleService
 
         ]);
     }
-
 }

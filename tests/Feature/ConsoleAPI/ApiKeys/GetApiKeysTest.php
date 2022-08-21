@@ -10,8 +10,10 @@ it('gets API keys', function () {
 
     $this->callConsoleApi('GET', '/api-keys')
         ->assertOk()
-        ->assertJson(fn (AssertableJson $json) => $json->count(3)
-                ->each(fn (AssertableJson $json) => $json->has('id')
+        ->assertJson(
+            fn (AssertableJson $json) => $json->count(3)
+                ->each(
+                    fn (AssertableJson $json) => $json->has('id')
                         ->has('type')
                         ->has('api_key')
                         ->has('name')

@@ -2,7 +2,7 @@
 
 namespace App\Data\Enums;
 
-enum BlogBillingTypeEnum : string
+enum BlogBillingTypeEnum: string
 {
     case PADDLE = 'paddle';
     case SHOPIFY = 'shopify';

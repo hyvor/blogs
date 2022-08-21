@@ -12,10 +12,8 @@ use Illuminate\Support\Arr;
 
 class SubscriptionFactory extends Factory
 {
-
     public function definition()
     {
-
         return [
             'blog_id' => Blog::factory(),
             'status' => SubscriptionStatusEnum::ACTIVE,

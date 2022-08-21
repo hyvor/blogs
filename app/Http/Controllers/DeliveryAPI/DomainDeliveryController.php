@@ -9,7 +9,6 @@ use Illuminate\Http\Request;
 
 class DomainDeliveryController extends Controller
 {
-
     public function handle(Request $request, Blog $blog)
     {
 
@@ -22,5 +21,4 @@ class DomainDeliveryController extends Controller
         $path = $request->getPathInfo();
         return DeliveryService::getLaravelResponse($blog, $path);
     }
-
 }

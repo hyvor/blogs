@@ -3,8 +3,7 @@
 use Illuminate\Support\Facades\Http;
 use Illuminate\Testing\Fluent\AssertableJson;
 
-it('creates a link for subscription', function() {
-
+it('creates a link for subscription', function () {
     Http::fake([
         'https://test.myshopify.com/admin/api/2022-07/graphql.json' => Http::response([
             'data' => [
@@ -16,8 +15,7 @@ it('creates a link for subscription', function() {
     ]);
 
     $blog = getShopifyEnabledBlog();
-    $this->callConsoleApi('POST','/billing/shopify/subscription', [], $blog->subdomain)
+    $this->callConsoleApi('POST', '/billing/shopify/subscription', [], $blog->subdomain)
         ->assertOk()
         ->assertJson(fn (AssertableJson $json) => $json->where('link', 'https://confirm.com'));
-
 });

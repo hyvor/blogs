@@ -65,7 +65,9 @@ class SitemapIndexProcessor extends RouteProcessorAbstract
      */
     private function getPostSitemaps()
     {
-        $postsCount = (int) Post::join('post_variants', fn ($join) => $join
+        $postsCount = (int) Post::join(
+            'post_variants',
+            fn ($join) => $join
                     ->on('post_variants.post_id', '=', 'posts.id')
                     ->where('post_variants.language_id', '=', $this->primaryLanguage->id)
         )

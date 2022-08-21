@@ -65,7 +65,7 @@ abstract class TestCase extends BaseTestCase
         return $this->call('GET', URL::to("/api/delivery/v0/$subdomain/$endpoint"), $data);
     }
 
-    protected function callIntegrationEndpoint(string $method, string $endpoint, $data = []) : TestResponse
+    protected function callIntegrationEndpoint(string $method, string $endpoint, $data = []): TestResponse
     {
         $endpoint = trim($endpoint, '/');
         return $this->call($method, config('app.url') . "/integrations/$endpoint", $data);

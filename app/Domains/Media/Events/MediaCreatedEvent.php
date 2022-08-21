@@ -9,5 +9,7 @@ class MediaCreatedEvent
 {
     use Dispatchable;
 
-    public function __construct(public Media $media) {}
+    public function __construct(public Media $media)
+    {
+    }
 }

@@ -10,19 +10,18 @@ use Illuminate\Http\Request;
 
 class BillingTypeMiddleware
 {
-
-    public function __construct(private Blog $blog) {}
+    public function __construct(private Blog $blog)
+    {
+    }
 
     public function handle(Request $request, Closure $next, $type)
     {
-
         $type = BlogBillingTypeEnum::from($type);
 
-        if ($this->blog->billing_type !== $type)
+        if ($this->blog->billing_type !== $type) {
             throw new TrustedException("Invalid billing type ($type->value)");
+        }
 
         return $next($request);
-
     }
-
 }

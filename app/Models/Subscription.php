@@ -48,7 +48,5 @@ class Subscription extends Model
         $definer->add('shopify_charge_id')
             ->type('int|null')
             ->default(null);
-
     }
-
 }
