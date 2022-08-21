@@ -11,6 +11,16 @@ it('requires a valid domain', function () {
         ->assertUnprocessable();
 });
 
+it('redirects to the console if the user is not found', function() {
+
+    $blog = getShopifyEnabledBlog();
+
+    $this->callIntegrationEndpoint('GET', '/shopify', [
+        'shop' => 'test.myshopify.com'
+    ])->assertRedirect('/console/' . $blog->subdomain);
+
+});
+
 it('redirects to the oauth endpoint and sets nonce', function () {
     $response = $this->callIntegrationEndpoint('GET', '/shopify', [
         'shop' => 'myshop.myshopify.com'

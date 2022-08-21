@@ -64,5 +64,5 @@ it('returns a response with the embed script', function () {
 
     $this->callIntegrationEndpoint('GET', '/shopify/proxy', $data)
         ->assertOk()
-        ->assertSee(['<script', 'src=', 'embed.js']);
+        ->assertSee(['<script', 'src=', 'embed.js'], false);
 });

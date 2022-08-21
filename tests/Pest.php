@@ -4,8 +4,10 @@ use App\Data\Enums\BlogTypeEnum;
 use App\Data\Objects\DataAPI\BlogObject;
 use App\Domains\Blog\Fillers\LanguageFiller;
 use App\Domains\Delivery\Twig\TwigRenderer;
+use App\Domains\Media\MediaRepository;
 use App\Models\Blog;
 use App\Models\BlogVariant;
+use App\Models\Media;
 use App\Models\Post;
 use App\Models\PostVariant;
 use App\Models\User;
@@ -14,6 +16,7 @@ use Hyvor\HyvorConnecter\HyvorUser;
 use Hyvor\HyvorConnecter\Userbase;
 use Illuminate\Support\Facades\Http;
 use Illuminate\Support\Facades\Request;
+use Mockery\MockInterface;
 use Symfony\Component\HttpFoundation\Request as SymfonyRequest;
 use Tests\TestCase;
 
@@ -25,6 +28,12 @@ uses()->beforeEach(function () {
 
     // reset userbase
     Userbase::$FAKE = null;
+
+    // disable uploading profile picture
+    $this->mock(MediaRepository::class, function(MockInterface $mock) {
+        $mock->shouldReceive('uploadFromUrl')
+            ->andReturn(Media::factory()->create());
+    });
 
     Http::fake([
         'https://iframe.ly/api/iframely*' => Http::response(jsonData('UrlData/iframely-response.json'))

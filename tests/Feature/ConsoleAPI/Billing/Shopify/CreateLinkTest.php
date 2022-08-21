@@ -15,7 +15,10 @@ it('creates a link for subscription', function () {
     ]);
 
     $blog = getShopifyEnabledBlog();
-    $this->callConsoleApi('POST', '/billing/shopify/subscription', [], $blog->subdomain)
+    $this->callConsoleApi('POST', '/billing/shopify/subscription', [
+        'plan' => 'C',
+        'frequency' => 'monthly'
+    ], $blog->subdomain)
         ->assertOk()
         ->assertJson(fn (AssertableJson $json) => $json->where('link', 'https://confirm.com'));
 });

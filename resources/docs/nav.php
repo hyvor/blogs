@@ -58,15 +58,16 @@ return [
         /*['self-hosting-delivery-api', 'Using Delivery API'],
         ['self-hosting-builds', 'Using builds']*/
     ],
-    'Platform & Legal' => [
+    'Legal' => [
         ['terms', 'Terms'],
         ['policy-privacy', 'Privacy Policy'],
         ['policy-content', 'Content Policy'],
         ['policy-security', 'Security Policy'],
         ['compliance-gdpr', 'GDPR Compliance'],
     ],
-    'Integrations' => [
-        ['shopify', 'Shopify']
+    'Platforms' => [
+        ['shopify', 'Shopify'],
+        /*['thinkific', 'Thinkific']*/
     ],
     'Misc' => [
         ['oss', 'Open Source'],

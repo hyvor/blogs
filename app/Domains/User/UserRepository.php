@@ -143,7 +143,7 @@ class UserRepository
         $pictureUrl = null;
         if ($hyvorUser->picture_url) {
             try {
-                $media = MediaRepository::uploadFromUrl($blog, $hyvorUser->picture_url);
+                $media = app(MediaRepository::class)->uploadFromUrl($blog, $hyvorUser->picture_url);
                 $pictureUrl = PermalinkRepository::getMediaPermalink($media, $blog);
             } catch (UploadException) {
             }

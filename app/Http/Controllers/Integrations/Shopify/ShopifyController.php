@@ -32,8 +32,9 @@ class ShopifyController
 
         $shopDomain = $request->input('shop');
 
-        if ($shopify->getShopByDomain($shopDomain)) {
-            throw new TrustedException('Shop already exists');
+        $shop = $shopify->getShopByDomain($shopDomain);
+        if ($shop) {
+            return redirect('/console/' . $shop->blog->subdomain);
         }
 
         $url = $shopify->getOAuthUrl($shopDomain);
@@ -149,22 +150,12 @@ class ShopifyController
         }
 
         $path = $request->route('path') ?? '';
-
-        $response = DeliveryService::getLaravelResponse($blog, $path);
-
-        if ($response->headers->get('Content-Type') === 'text/html') {
-            $scriptUrl = URL::to("/embed/embed.js?subdomain=$blog->subdomain&path_style=1&path=$path");
-            $response->setContent(<<<HTML
+        $scriptUrl = URL::to("/embed/embed.js?subdomain=$blog->subdomain&path_style=1&path=$path");
+        $html = <<<HTML
             <div id="hyvor-blogs-embed-wrap"></div>
             <script src="$scriptUrl"></script>
-            HTML);
-            $response->header('Content-Type', 'application/liquid');
-        }
-
-        /*$content = $response->content();
-        $response->setContent();*/
-
-        return $response;
+        HTML;
+        return response($html)->header('Content-Type', 'application/liquid');
     }
 
     public function confirmSubscription(Request $request)

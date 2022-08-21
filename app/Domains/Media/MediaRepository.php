@@ -71,7 +71,7 @@ class MediaRepository
         return $media;
     }
 
-    public static function uploadFromUrl(Blog $blog, string $url): Media
+    public function uploadFromUrl(Blog $blog, string $url): Media
     {
         $response = Http::get($url);
 

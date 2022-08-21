@@ -22,7 +22,7 @@ Oh, you have already bought a domain name? Awesome! We'll talk about setting up 
 
 Click **Continue** after choosing a blog name and subdomain. Your blog will be ready in a few minutes with our default theme, Forte.
 
-### 4. The Console
+### 4. Console {#console}
 
 Once your blog is ready, you will see the Console with its all functions. On the left navigation, you will see these:
 
