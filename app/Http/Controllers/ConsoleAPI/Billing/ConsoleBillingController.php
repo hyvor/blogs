@@ -9,15 +9,17 @@ use App\Models\Blog;
 
 class ConsoleBillingController
 {
-    public function getUsage(Blog $blog)
-    {
-        $usage = UsageRepository::getUsage($blog);
-        return response()->json($usage);
-    }
 
-    public function getSubscriptions(Blog $blog)
+    public function getBillingData(Blog $blog)
     {
+
+        $usage = UsageRepository::getUsage($blog);
         $subscriptions = SubscriptionService::getAllSubscriptions($blog)->mapInto(SubscriptionObject::class);
-        return response()->json($subscriptions);
+
+        return response()->json([
+            'usage' => $usage,
+            'subscriptions' => $subscriptions
+        ]);
+
     }
 }

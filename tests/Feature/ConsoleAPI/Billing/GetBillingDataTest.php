@@ -7,8 +7,34 @@ use Database\Factories\SubscriptionFactory;
 use Illuminate\Testing\Fluent\AssertableJson;
 
 it('gets billing data', function () {
-    expect(true)->toBeTrue();
-    // TODO:
+
+    $blog = blog();
+
+    // 3 subscriptions
+    (SubscriptionFactory::new())->count(3)->create([
+        'blog_id' => $blog->id,
+    ]);
+
+    $this->callConsoleApi('GET', '/billing')
+        ->assertOk()
+        ->assertJson(function (AssertableJson $json) {
+
+            $json
+                ->has('usage', function (AssertableJson $json) {
+                    $json->has('users')
+                        ->has('media');
+                })
+                ->has('subscriptions', 3, function (AssertableJson $json) {
+                    $json->has('status')
+                        ->has('plan')
+                        ->has('frequency')
+                        ->has('created_at')
+                        ->has('ends_at');
+                });
+
+        });
+
+
     /*
     Cashier::fake()->response('subscription/users', [
         [

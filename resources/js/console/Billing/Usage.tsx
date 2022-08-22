@@ -1,23 +1,25 @@
 import { useValues } from 'kea';
 import React, { useEffect, useState } from 'react';
-import paddleLogic from '../logic/billing/paddleLogic';
 import byteFormatter from '../../helpers/byteFormatter';
 import Loader from '../ReusableComponents/Loader';
+import getSubdomain from "../logic-helpers/subdomain";
+import billingLogic from "../logic/billing/billingLogic";
 
-export function Usage({subdomain} : {subdomain: string}) {
+export function Usage() {
 
-    const { data, loadAjax } = useValues(paddleLogic({subdomain}));
+    const { usage, loadAjax } = useValues(billingLogic({subdomain: getSubdomain()}));
 
+    console.log(loadAjax)
     return loadAjax.status === 'loading' ?
         <Loader padding={60} /> :
         <div className="usage">
             <UsageBar 
                 name="Users"
-                data={data.usage.users}
+                data={usage.users}
             />
             <UsageBar 
                 name="Media Storage"
-                data={data.usage.media}
+                data={usage.media}
                 bytes={true}
             />
             <div className="section-desc">

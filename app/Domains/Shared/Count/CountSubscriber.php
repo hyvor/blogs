@@ -5,6 +5,8 @@ namespace App\Domains\Shared\Count;
 use App\Domains\Post\Events\PostCreatedEvent;
 use App\Domains\Post\Events\PostDeletedEvent;
 use App\Domains\Post\Events\PostVariantUpdatedEvent;
+use App\Domains\User\Events\UserCreatedEvent;
+use App\Domains\User\Events\UserDeletedEvent;
 use App\Models\Blog;
 use Illuminate\Events\Dispatcher;
 
@@ -15,24 +17,33 @@ class CountSubscriber
         $events->listen(PostCreatedEvent::class, [static::class, 'onPostCreateOrDelete']);
         $events->listen(PostDeletedEvent::class, [static::class, 'onPostCreateOrDelete']);
         $events->listen(PostVariantUpdatedEvent::class, [static::class, 'onPostVariantUpdate']);
+
+        $events->listen(UserCreatedEvent::class, [static::class, 'onUserEvent']);
+        $events->listen(UserDeletedEvent::class, [static::class, 'onUserEvent']);
     }
 
     public function onPostCreateOrDelete(PostCreatedEvent|PostDeletedEvent $event)
     {
         $blog = $event->post->blog;
-        $this->dispatch($blog);
+        $this->dispatchPostCountJobs($blog);
     }
 
     public function onPostVariantUpdate(PostVariantUpdatedEvent $event)
     {
         if ($event->variant->status !== $event->variantOld->status) {
-            $this->dispatch($event->variant->post->blog);
+            $this->dispatchPostCountJobs($event->variant->post->blog);
         }
     }
 
-    private function dispatch(Blog $blog)
+    public function onUserEvent(UserCreatedEvent | UserDeletedEvent $event)
     {
-        BlogCountsJob::dispatch($blog);
+        $blog = $event->user->blog;
+        BlogUsersCountsJob::dispatch($blog);
+    }
+
+    private function dispatchPostCountJobs(Blog $blog)
+    {
+        BlogPostsCountsJob::dispatch($blog);
         AuthorCountsJob::dispatch($blog);
         TagCountsJob::dispatch($blog);
     }

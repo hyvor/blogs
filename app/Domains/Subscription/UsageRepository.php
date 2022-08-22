@@ -18,23 +18,10 @@ class UsageRepository
         ];
     }
 
-    public static function getUsersUsage(Blog $blog): UsageObject
+    private static function getLimits(Blog $blog): array
     {
-        return self::getUsage($blog)['posts'];
-    }
-
-    public static function getMediaUsage(Blog $blog): UsageObject
-    {
-        return self::getUsage($blog)['media'];
-    }
-
-    public static function getLimits(Blog $blog): array
-    {
-        $subscription = $blog->subscription();
-
-        $plan = $subscription && $subscription->valid() ?
-            SubscriptionService::getPlanConfigById($subscription->paddle_plan)->name :
-            null;
+        $subscription = SubscriptionService::getActiveBlogSubscription($blog);
+        $plan = $subscription?->plan;
 
         $gb = (10 ** 9);
 

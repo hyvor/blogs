@@ -207,10 +207,8 @@ Route::prefix('/api/console/v0/blog/{subdomain}')
          */
         Route::middleware('role:owner|admin|finance')->group(function () {
 
-
             // general
-            Route::get('/billing/subscriptions', [ConsoleBillingController::class, 'getSubscriptions']);
-            Route::get('/billing/usage', [ConsoleBillingController::class, 'getUsage']);
+            Route::get('/billing', [ConsoleBillingController::class, 'getBillingData']);
             Route::delete('/billing/subscription', []);
 
             Route::middleware('billing-type:paddle')->group(function () {

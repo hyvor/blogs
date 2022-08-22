@@ -3,7 +3,7 @@
 namespace Tests\Unit\Domains\Shared\Count;
 
 use App\Domains\Blog\Fillers\LanguageFiller;
-use App\Domains\Shared\Count\BlogCountsJob;
+use App\Domains\Shared\Count\BlogPostsCountsJob;
 use App\Models\Post;
 use App\Models\PostVariant;
 
@@ -44,7 +44,7 @@ it('updates blog post counts', function () {
             'blog_id' => $blog,
         ]);
 
-    BlogCountsJob::dispatch($blog);
+    BlogPostsCountsJob::dispatch($blog);
 
     $blog->refresh();
 

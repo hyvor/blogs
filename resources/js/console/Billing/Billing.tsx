@@ -3,6 +3,8 @@ import {getUserBlogBlog} from "../logic-helpers/blog";
 import Paddle from "./Paddle/Paddle";
 import BillingColumn from "./Components/BillingColumn";
 import Shopify from "./Shopify/Shopify";
+import BillingBox from "./Components/BillingBox";
+import {Usage} from "./Usage";
 
 export default function Billing() {
 
@@ -20,6 +22,10 @@ export default function Billing() {
         }
 
         <BillingColumn>
+
+            <BillingBox>
+                <Usage />
+            </BillingBox>
 
             {/*<div className="box billing-section">
                 <div className="section-title">
