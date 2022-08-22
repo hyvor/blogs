@@ -9,7 +9,6 @@ export function Usage() {
 
     const { usage, loadAjax } = useValues(billingLogic({subdomain: getSubdomain()}));
 
-    console.log(loadAjax)
     return loadAjax.status === 'loading' ?
         <Loader padding={60} /> :
         <div className="usage">
@@ -22,9 +21,9 @@ export function Usage() {
                 data={usage.media}
                 bytes={true}
             />
-            <div className="section-desc">
-                Usage data is updated every 24 hours.
-            </div>
+           {/* <div className="section-desc">
+                There may be a delay to update usage data
+            </div>*/}
         </div>
 
 }

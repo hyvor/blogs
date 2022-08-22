@@ -42,10 +42,6 @@ class PaddleService
 
         $subscriptionId = $this->getPaddleSubscriptionId($subscription);
 
-        if (!$subscriptionId) {
-            throw new TrustedException('Subscription ID is not set (unlikely)');
-        }
-
         PaddleApiCaller::call('/subscription/users/update', [
             'subscription_id' => $subscriptionId,
             'plan_id' => $planId,
@@ -56,22 +52,32 @@ class PaddleService
     {
         $paddleSubscriptionId = $this->getPaddleSubscriptionId($subscription);
 
-        if (!$paddleSubscriptionId) {
-            throw new TrustedException('Subscription ID is not set (unlikely)');
-        }
-
         PaddleApiCaller::call('/subscription/users_cancel', [
             'subscription_id' => $paddleSubscriptionId,
         ]);
+    }
+    
+    public function getPayments(Subscription $subscription)
+    {
+        $paddleSubscriptionId = $this->getPaddleSubscriptionId($subscription, true);
+
+        return collect(PaddleApiCaller::call('/subscription/payments', [
+            'subscription_id' => $paddleSubscriptionId
+        ]));
     }
 
     /**
      * Gets the Paddle's subscription ID
      * Saved in meta of the Subscription row
      */
-    private function getPaddleSubscriptionId(Subscription $subscription): ?int
+    private function getPaddleSubscriptionId(Subscription $subscription): int
     {
-        return $subscription->getMeta(self::META_PADDLE_SUBSCRIPTION_ID);
+        $id = $subscription->getMeta(self::META_PADDLE_SUBSCRIPTION_ID);
+
+        if (!$id)
+            throw new TrustedException('Subscription ID is not set (unlikely)');
+
+        return $id;
     }
 
     public static function setPaddleSubscriptionId(Subscription $subscription, int $id)

@@ -1,18 +1,16 @@
 import { useActions, useValues } from 'kea';
-import React, { useState } from 'react';
-import userBlogsLogic from '../logic/userBlogsLogic';
-import paddleLogic from '../logic/billing/paddleLogic';
+import React from 'react';
+import userBlogsLogic from '../../logic/userBlogsLogic';
+import paddleLogic from '../../logic/billing/paddleLogic';
 import dayjs from 'dayjs';
-import Loader from '../ReusableComponents/Loader';
-import { DayDiff, FriendlyDate } from '../ReusableComponents/Time';
-import { BoxArrowUpRight, Clock, CreditCard2FrontFill, ExclamationCircle } from 'react-bootstrap-icons';
-import Callout from '../ReusableComponents/Callout';
-import NoResults from '../ReusableComponents/NoResults';
-import { PopupConfirm } from '../ReusableComponents/Popup';
-import {SubscriptionInfo} from "../types";
-import getSubdomain from "../logic-helpers/subdomain";
+import Loader from '../../ReusableComponents/Loader';
+import { FriendlyDate } from '../../ReusableComponents/Time';
+import { Clock, CreditCard2FrontFill, ExclamationCircle } from 'react-bootstrap-icons';
+import Callout from '../../ReusableComponents/Callout';
+import NoResults from '../../ReusableComponents/NoResults';
+import getSubdomain from "../../logic-helpers/subdomain";
 
-export default function CurrentSubscription() {
+export default function PaddleBillingInfo() {
 
     const subdomain = getSubdomain()
     const { findBlogBySubdomain } = useValues(userBlogsLogic);
@@ -20,57 +18,10 @@ export default function CurrentSubscription() {
 
     const subscriptionLogicInst = paddleLogic({subdomain});
     const { data, loadAjax } = useValues(subscriptionLogicInst);
-    const { cancelSubscription } = useActions(subscriptionLogicInst)
 
     const trialDaysDiff = blog.trial_ends_at ? dayjs.unix(blog.trial_ends_at).diff(dayjs(), 'd') : 0;
 
-    const [ downgradePopup, setDowngradePopup ] = useState(false);
-    const [cancelPopup, setCancelPopup] = useState(false);
-
-    function handleDowngradeNow() {
-        setDowngradePopup(true);
-    }
-    function handleDowngradeNowReal() {
-        setDowngradePopup(false);
-        cancelSubscription({
-            forced: true,
-            onSuccess: () => location.reload()
-        });
-    }
-
-    function handleCancel() {
-        setCancelPopup(true);
-    }
-    function handleCancelReal() {
-        setCancelPopup(false);
-
-    }
-
     return <div>
-
-        {
-            downgradePopup ?
-            <PopupConfirm 
-                title="Downgrade Now"
-                text="Are you sure you want to force downgrade now? You will need to create a new subscription if you need to access the features again."
-                name="Downgrade"
-                onClick={handleDowngradeNowReal}
-                onCancel={() => setDowngradePopup(false)}
-                buttonClass="danger"
-            /> : null
-        }
-
-        {
-            cancelPopup ?
-            <PopupConfirm 
-                title="Cancel Subscription"
-                text="Are you sure you want to cancel the subscription? You will no longer be able to access the blog after the billing period."
-                onClick={handleCancelReal}
-                name="Cancel Subscription"
-                buttonClass="danger"
-                onCancel={() => setCancelPopup(false)}
-            /> : null
-        }
 
         <div className="section-title">
             Current Subscription

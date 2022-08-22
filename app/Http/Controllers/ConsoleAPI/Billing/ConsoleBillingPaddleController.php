@@ -4,12 +4,9 @@ namespace App\Http\Controllers\ConsoleAPI\Billing;
 
 use App\Data\Enums\SubscriptionFrequencyEnum;
 use App\Data\Enums\SubscriptionPlanEnum;
-use App\Data\Objects\ConsoleAPI\Billing\ReceiptObject;
-use App\Data\Objects\ConsoleAPI\Billing\SubscriptionInfoObject;
-use App\Data\Objects\ConsoleAPI\Billing\SubscriptionObject;
+use App\Data\Objects\ConsoleAPI\Billing\Paddle\PaddlePaymentObject;
 use App\Domains\Integrations\Paddle\PaddleService;
 use App\Domains\Subscription\SubscriptionService;
-use App\Domains\Subscription\UsageRepository;
 use App\Exceptions\TrustedException;
 use App\Http\Controllers\Controller;
 use App\Models\Blog;
@@ -19,18 +16,22 @@ use Illuminate\Validation\Rules\Enum;
 
 class ConsoleBillingPaddleController extends Controller
 {
-    public function getData(Blog $blog): JsonResponse
+    public function getData(Blog $blog, PaddleService $paddleService): JsonResponse
     {
-        $receipts = PaddleService::getReceipts($blog)->mapInto(ReceiptObject::class);
-        $subscriptions = SubscriptionService::getAllSubscriptions($blog)->mapInto(SubscriptionObject::class);
-        $info = ($subscription = $blog->subscription()) ? new SubscriptionInfoObject($subscription) : null;
-        $usage = UsageRepository::getUsage($blog);
+
+        $subscription = SubscriptionService::getActiveBlogSubscription($blog);
+
+        $info = null;
+        $payments = [];
+
+        if ($subscription) {
+            // $info = $paddleService->getInfo();
+            $payments = $paddleService->getPayments($subscription)->mapInto(PaddlePaymentObject::class);
+        }
 
         return response()->json([
             'info' => $info,
-            'receipts' => $receipts,
-            'subscriptions' => $subscriptions,
-            'usage' => $usage,
+            'payments' => $payments
         ]);
     }
 

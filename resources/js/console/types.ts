@@ -317,13 +317,39 @@ export interface ThemeFile {
 
 // === BILLING
 
-export interface Payment {
-    amount: number,
-    currency: string,
-    at: number
+export type SubscriptionPlan = 'A' | 'B' | 'C' | 'D' | 'E';
+export type SubscriptionFrequency = 'monthly' | 'yearly';
+
+export interface Subscription {
+
+    status: 'active' | 'past_due' | 'deleted',
+    plan: SubscriptionPlan,
+    frequency: SubscriptionFrequency,
+    created_at: number,
+    ends_at: number | null
+
 }
 
-export interface SubscriptionInfo {
+
+export interface Usage {
+
+    current: number;
+    total: number;
+    percentage: number; // float
+
+}
+
+export interface PaddlePayment {
+
+    id: number,
+    paid_at: number,
+    amount: number,
+    currency: number,
+    receipt_url: string
+
+}
+
+export interface PaddleSubscriptionInfo {
 
     email: string,
 
@@ -333,40 +359,13 @@ export interface SubscriptionInfo {
 
     update_url: string,
 
-    last_payment: Payment,
-    next_payment: Payment | null,
+    last_payment: PaddleSubscriptionInfoPayment,
+    next_payment: PaddleSubscriptionInfoPayment | null,
 
 }
 
-export type SubscriptionPlan = 'A' | 'B' | 'C' | 'D' | 'E';
-export type SubscriptionFrequency = 'monthly' | 'yearly';
-
-export interface Subscription {
-
-    status: 'active' | 'past_due' | 'paused' | 'deleted',
-    plan: SubscriptionPlan,
-    frequency: SubscriptionFrequency,
-    created_at: number,
-    ends_at: number | null,
-    is_on_grace_period: boolean
-
-}
-
-export interface Receipt {
-
-    id: number,
-    paid_at: number,
+export interface PaddleSubscriptionInfoPayment {
     amount: number,
-    tax: number,
-    currency: number,
-    receipt_url: string
-
-}
-
-export interface Usage {
-
-    current: number;
-    total: number;
-    percentage: number; // float
-
+    currency: string,
+    at: number
 }

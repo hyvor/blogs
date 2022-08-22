@@ -2,7 +2,7 @@ import React, {Fragment, useState} from 'react';
 import BillingColumn from "../Components/BillingColumn";
 import BillingBox from "../Components/BillingBox";
 import Plans from "../Plans/Plans";
-import CurrentSubscription from "../CurrentSubscription";
+import PaddleBillingInfo from "./PaddleBillingInfo";
 import {ConsoleWindow, SubscriptionFrequency, SubscriptionPlan} from "../../types";
 import paddleLogic from "../../logic/billing/paddleLogic";
 import {useActions, useValues} from "kea";
@@ -75,7 +75,7 @@ export default function Paddle() {
                 />
             </BillingBox>
             <BillingBox>
-                <CurrentSubscription />
+                <PaddleBillingInfo />
             </BillingBox>
         </BillingColumn>
 

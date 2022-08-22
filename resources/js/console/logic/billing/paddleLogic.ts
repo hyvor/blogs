@@ -1,7 +1,12 @@
 import {actions, events, kea, key, path, props, reducers} from "kea";
 import api from "../../lib/api";
 import {ajax} from "kea-ajax";
-import {Receipt, Subscription, SubscriptionFrequency, SubscriptionInfo, SubscriptionPlan, Usage} from "../../types";
+import {
+    PaddlePayment,
+    PaddleSubscriptionInfo,
+    SubscriptionFrequency,
+    SubscriptionPlan,
+} from "../../types";
 
 import type { paddleLogicType } from "./paddleLogicType";
 
@@ -18,7 +23,7 @@ const paddleLogic = kea<paddleLogicType>([
     ajax(({actions, props}) => ({
 
         load: async () => {
-            const data = await api.get(props.subdomain, '/billing');
+            const data = await api.get(props.subdomain, '/billing/paddle');
             actions.setData(data);
         },
 
@@ -58,16 +63,13 @@ const paddleLogic = kea<paddleLogicType>([
         data: [
             {} as
             {
-                info: SubscriptionInfo,
-                subscriptions: Subscription[],
-                receipts: Receipt[],
-                usage: {
-                    users: Usage,
-                    media: Usage
+                info: PaddleSubscriptionInfo,
+                payments: PaddlePayment[],
+            },
+            {
+                setData: (_, {data}) => data
             }
-        }, {
-            setData: (_, {data}) => data
-        }],
+        ],
     }),
 
     events(({actions}) => ({

@@ -5,6 +5,7 @@ import BillingColumn from "./Components/BillingColumn";
 import Shopify from "./Shopify/Shopify";
 import BillingBox from "./Components/BillingBox";
 import {Usage} from "./Usage";
+import SubscriptionHistory from "./SubscriptionHistory";
 
 export default function Billing() {
 
@@ -24,33 +25,18 @@ export default function Billing() {
         <BillingColumn>
 
             <BillingBox>
-                <Usage />
+                <div className="section-title">Usage</div>
+                <div className="section-content">
+                    <Usage />
+                </div>
             </BillingBox>
 
-            {/*<div className="box billing-section">
-                <div className="section-title">
-                    Usage
-                </div>
-                <div className="section-content">
-                    <Usage subdomain={subdomain} />
-                </div>
-            </div>
-            <div className="box billing-section">
-                <div className="section-title">
-                    Billing History
-                </div>
-                <div className="section-content">
-                    <BillingHistory />
-                </div>
-            </div>
-            <div className="box billing-section">
-                <div className="section-title">
-                    Subscription History
-                </div>
+            <BillingBox>
+                <div className="section-title">Subscription History</div>
                 <div className="section-content">
                     <SubscriptionHistory />
                 </div>
-            </div>*/}
+            </BillingBox>
 
         </BillingColumn>
 

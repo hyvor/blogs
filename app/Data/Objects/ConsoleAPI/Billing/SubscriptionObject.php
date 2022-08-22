@@ -25,6 +25,6 @@ class SubscriptionObject
         $this->plan = $subscription->plan;
         $this->frequency = $subscription->frequency;
         $this->created_at = $subscription->created_at->timestamp;
-        $this->ends_at = $subscription->ends_at;
+        $this->ends_at = $subscription->ends_at?->timestamp;
     }
 }

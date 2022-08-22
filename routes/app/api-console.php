@@ -209,7 +209,6 @@ Route::prefix('/api/console/v0/blog/{subdomain}')
 
             // general
             Route::get('/billing', [ConsoleBillingController::class, 'getBillingData']);
-            Route::delete('/billing/subscription', []);
 
             Route::middleware('billing-type:paddle')->group(function () {
 

@@ -1,15 +1,15 @@
 import { useValues } from 'kea';
 import React from 'react'
-import paddleLogic from '../logic/billing/paddleLogic';
 import Loader from '../ReusableComponents/Loader';
 import NoResults from '../ReusableComponents/NoResults';
 import { FriendlyDate } from '../ReusableComponents/Time';
 import getSubdomain from "../logic-helpers/subdomain";
+import billingLogic from "../logic/billing/billingLogic";
 
 export default function SubscriptionHistory() {
 
     const subdomain = getSubdomain();
-    const { data, loadAjax } = useValues(paddleLogic({subdomain}));
+    const { subscriptions, loadAjax } = useValues(billingLogic({subdomain}));
 
     return <div className="billing-history subscription-history">
     { 
@@ -17,7 +17,7 @@ export default function SubscriptionHistory() {
         <Loader padding={60} /> :
         <div className="receipts">
             {
-                data.subscriptions.length ?
+                subscriptions.length ?
                 <div className="receipts-table">
                     <div className="receipts-row header">
                         <div>Status</div>
@@ -28,7 +28,7 @@ export default function SubscriptionHistory() {
                     </div>
                     <div className="receipts-results-wrap">
                     {
-                        data.subscriptions.map(subscription => {
+                        subscriptions.map(subscription => {
                             
                             let statusClass: string = subscription.status
                             let statusName: string = subscription.status;
