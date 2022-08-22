@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "6c75428838249f504c3257d6b57d5551",
+    "content-hash": "4e8c987a095e479a2133a743a6d77a03",
     "packages": [
         {
             "name": "asm89/stack-cors",
@@ -2779,16 +2779,16 @@
         },
         {
             "name": "meilisearch/meilisearch-php",
-            "version": "v0.23.3",
+            "version": "v0.24.2",
             "source": {
                 "type": "git",
                 "url": "https://github.com/meilisearch/meilisearch-php.git",
-                "reference": "e993256ff7c5be7fe760392145830c9defab8214"
+                "reference": "7f7b350480bce4bc80efc9a613a820261a96ef8b"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/meilisearch/meilisearch-php/zipball/e993256ff7c5be7fe760392145830c9defab8214",
-                "reference": "e993256ff7c5be7fe760392145830c9defab8214",
+                "url": "https://api.github.com/repos/meilisearch/meilisearch-php/zipball/7f7b350480bce4bc80efc9a613a820261a96ef8b",
+                "reference": "7f7b350480bce4bc80efc9a613a820261a96ef8b",
                 "shasum": ""
             },
             "require": {
@@ -2840,9 +2840,9 @@
             ],
             "support": {
                 "issues": "https://github.com/meilisearch/meilisearch-php/issues",
-                "source": "https://github.com/meilisearch/meilisearch-php/tree/v0.23.3"
+                "source": "https://github.com/meilisearch/meilisearch-php/tree/v0.24.2"
             },
-            "time": "2022-06-21T15:55:00+00:00"
+            "time": "2022-08-16T15:18:17+00:00"
         },
         {
             "name": "monolog/monolog",
@@ -12097,7 +12097,8 @@
         "ext-pcre": "*",
         "ext-pdo": "*",
         "ext-tokenizer": "*",
-        "ext-xml": "*"
+        "ext-xml": "*",
+        "ext-libxml": "*"
     },
     "platform-dev": [],
     "plugin-api-version": "2.2.0"
