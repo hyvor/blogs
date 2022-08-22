@@ -3,14 +3,18 @@
 namespace Tests\Unit\Domains\Shared;
 
 use App\Data\Enums\PostStatusEnum;
+use App\Domains\Media\Events\MediaCreatedEvent;
+use App\Domains\Media\Events\MediaDeletedEvent;
 use App\Domains\Post\Events\PostCreatedEvent;
 use App\Domains\Post\Events\PostDeletedEvent;
 use App\Domains\Post\Events\PostVariantUpdatedEvent;
+use App\Domains\Shared\Count\BlogMediaCountsJob;
 use App\Domains\Shared\Count\BlogPostsCountsJob;
 use App\Domains\Shared\Count\BlogUsersCountsJob;
 use App\Domains\Shared\Count\CountSubscriber;
 use App\Domains\User\Events\UserCreatedEvent;
 use App\Domains\User\Events\UserDeletedEvent;
+use App\Models\Media;
 use App\Models\Post;
 use App\Models\User;
 use Illuminate\Support\Facades\Event;
@@ -25,6 +29,9 @@ it('is listening', function () {
 
     Event::assertListening(UserCreatedEvent::class, [CountSubscriber::class, 'onUserEvent']);
     Event::assertListening(UserDeletedEvent::class, [CountSubscriber::class, 'onUserEvent']);
+
+    Event::assertListening(MediaCreatedEvent::class, [CountSubscriber::class, 'onMediaEvent']);
+    Event::assertListening(MediaDeletedEvent::class, [CountSubscriber::class, 'onMediaEvent']);
 });
 
 it('calls update blog counts on post creating', function () {
@@ -109,5 +116,31 @@ it('calls blog users counts job on user delete', function() {
     $listener->onUserEvent($event);
 
     Queue::assertPushed(fn (BlogUsersCountsJob $job) => $job->blog->id === blog()->id);
+
+});
+
+it('calls blog media counts job on media create', function() {
+
+    Queue::fake();
+
+    $user = Media::factory()->create(['blog_id' => blog()]);
+    $event = new MediaCreatedEvent($user);
+    $listener = new CountSubscriber();
+    $listener->onMediaEvent($event);
+
+    Queue::assertPushed(fn (BlogMediaCountsJob $job) => $job->blog->id === blog()->id);
+
+});
+
+it('calls blog media counts job on media delete', function() {
+
+    Queue::fake();
+
+    $user = Media::factory()->create(['blog_id' => blog()]);
+    $event = new MediaDeletedEvent($user);
+    $listener = new CountSubscriber();
+    $listener->onMediaEvent($event);
+
+    Queue::assertPushed(fn (BlogMediaCountsJob $job) => $job->blog->id === blog()->id);
 
 });

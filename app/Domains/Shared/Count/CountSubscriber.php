@@ -2,6 +2,8 @@
 
 namespace App\Domains\Shared\Count;
 
+use App\Domains\Media\Events\MediaCreatedEvent;
+use App\Domains\Media\Events\MediaDeletedEvent;
 use App\Domains\Post\Events\PostCreatedEvent;
 use App\Domains\Post\Events\PostDeletedEvent;
 use App\Domains\Post\Events\PostVariantUpdatedEvent;
@@ -20,6 +22,9 @@ class CountSubscriber
 
         $events->listen(UserCreatedEvent::class, [static::class, 'onUserEvent']);
         $events->listen(UserDeletedEvent::class, [static::class, 'onUserEvent']);
+
+        $events->listen(MediaCreatedEvent::class, [static::class, 'onMediaEvent']);
+        $events->listen(MediaDeletedEvent::class, [static::class, 'onMediaEvent']);
     }
 
     public function onPostCreateOrDelete(PostCreatedEvent|PostDeletedEvent $event)
@@ -39,6 +44,12 @@ class CountSubscriber
     {
         $blog = $event->user->blog;
         BlogUsersCountsJob::dispatch($blog);
+    }
+
+    public function onMediaEvent(MediaCreatedEvent | MediaDeletedEvent $event)
+    {
+        $blog = $event->media->blog;
+        BlogMediaCountsJob::dispatch($blog);
     }
 
     private function dispatchPostCountJobs(Blog $blog)
