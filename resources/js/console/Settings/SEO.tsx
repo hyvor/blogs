@@ -28,7 +28,7 @@ export default function SEO() {
             description="Allow search engines to index your blog"
             right={
                 <div>
-                    <Switch 
+                    <Switch
                         checked={blog.seo_indexing}
                         onChange={checked => updateBlogValue('seo_indexing', checked)}
                     />

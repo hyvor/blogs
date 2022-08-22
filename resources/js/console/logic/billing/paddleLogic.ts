@@ -3,7 +3,9 @@ import api from "../../lib/api";
 import {ajax} from "kea-ajax";
 import {Receipt, Subscription, SubscriptionFrequency, SubscriptionInfo, SubscriptionPlan, Usage} from "../../types";
 
-const paddleLogic = kea([
+import type { paddleLogicType } from "./paddleLogicType";
+
+const paddleLogic = kea<paddleLogicType>([
 
     props({} as {subdomain: string}),
     key(props => props.subdomain),

@@ -3,6 +3,7 @@
 namespace App\Providers;
 
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Support\Facades\App;
 use Illuminate\Support\Facades\URL;
 use Illuminate\Support\ServiceProvider;
 
@@ -24,8 +25,10 @@ class AppServiceProvider extends ServiceProvider
      */
     public function boot()
     {
-        URL::forceScheme('https');
-        $this->app['request']->server->set('HTTPS', true);
+        if (App::environment('production')) {
+            URL::forceScheme('https');
+            $this->app['request']->server->set('HTTPS', true);
+        }
 
         // remove mass assignment globally
         Model::unguard();

@@ -1,8 +1,18 @@
 import React from 'react'
-import PropTypes from 'prop-types';
 import ReactSwitch from 'react-switch';
 
-export default function Switch(props) {
+interface SwitchProps {
+
+    checked: boolean,
+    onChange: (
+        checked: boolean,
+        event: React.SyntheticEvent<MouseEvent | KeyboardEvent> | MouseEvent,
+        id: string
+    ) => void
+
+}
+
+export default function Switch(props: SwitchProps) {
 
     return <ReactSwitch 
         checkedIcon={false}
@@ -16,9 +26,4 @@ export default function Switch(props) {
         activeBoxShadow="0 0 5px 1px #896c6b"
         {...props} />;
 
-}
-
-Switch.propTypes = {
-    checked: PropTypes.bool.isRequired,
-    onChange: PropTypes.func.isRequired
 }
