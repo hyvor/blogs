@@ -2,6 +2,7 @@
 
 namespace App\Domains\Post;
 
+use App\Data\Enums\PostStatusEnum;
 use App\Domains\Post\Content\PostContentRepository;
 use App\Helpers\CollectionWithTotal;
 use App\Models\Blog;
@@ -118,7 +119,7 @@ class PostSearchRepository
              */
             'blog_id' => $blog->id,
             'language_id' => $postVariant->language_id,
-            'is_published' => $postVariant->status === 'published',    // search only needs to know if the post is published
+            'is_published' => $postVariant->status === PostStatusEnum::PUBLISHED, // search only needs to know if the post is published
             // (data API vs console API search)
             'is_page' => $post->is_page,
 
