@@ -106,7 +106,7 @@ Hyvor Blogs supports the following blocks.
 * [Image](#image)
 * [Embed](#embed)
 * [Link Bookmark](#link-bookmark)
-* [Code Block](#code)
+* [Code Block](#code-block)
 * [Custom HTML/Twig](#custom-html)
 <!-- * [Custom Block](#custom-blocks) -->
 

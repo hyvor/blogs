@@ -92,6 +92,7 @@ export default function Settings({type} : {type: string | undefined}) {
                 <SettingsLink path="" name="General" />
                 <SettingsLink path="/users" name="Users" />
                 <SettingsLink role={UserRole.EDITOR} path="/tags" name="Tags" />
+                <SettingsLink path="/languages" name="Languages" />
 
                 <div />
 
@@ -101,7 +102,6 @@ export default function Settings({type} : {type: string | undefined}) {
                 <SettingsLink path="/navigation" name="Navigation" />
                 <SettingsLink path="/media" name="Media" />
                 <SettingsLink path="/redirects" name="Redirects" />
-                <SettingsLink path="/languages" name="Languages" />
                 <SettingsLink path="/routes" name="Routes" />
                 <SettingsLink path="/api-keys" name="API Keys" />
                 <SettingsLink path="/webhooks" name="Webhooks" />

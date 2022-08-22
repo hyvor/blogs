@@ -77,7 +77,7 @@
     {#  DONT TOUCH THIS CODE. WRITE TESTS IF POSSIBLE #}
 
     window._hb = {
-        _url: "{{ ___url }}",
+        __domain: "{{ __domain }}",
         subdomain: "{{ _blog.subdomain }}",
         color_modes: "{{ _blog.color_modes }}",
         color_mode_default: "{{ _blog.color_mode_default }}",
@@ -130,7 +130,7 @@
 
         {# Data API #}
         window._hb.dataApi = function(version, endpoint, params, onSuccess, onError) {
-            var url = _hb._url + "/api/data/" + version + "/" + _hb.subdomain + "/" + endpoint
+            var url = "//" + _hb.__domain + "/api/data/" + version + "/" + _hb.subdomain + "/" + endpoint
                 + (params ? ("?" + new URLSearchParams(params || {}).toString()) : "");
             var xhr = new XMLHttpRequest();
             xhr.onload = function() {

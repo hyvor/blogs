@@ -10,6 +10,8 @@ Comments Settings: **Console &rarr; Settings &rarr; Comments & Newsletter**.
 
 ## Using Hyvor Talk {#hyvor-talk}
 
+> Hyvor Talk integration is coming soon!
+
 First, you have to sign up at [Hyvor Talk](https://talk.hyvor.com/console), and get a website ID. Then, in the Hyvor Blogs comments settings, choose "Hyvor Talk" as the commenting system and paste your website ID. You should then see the Hyvor Talk comments section on your blog posts.
 
 ### Moderating

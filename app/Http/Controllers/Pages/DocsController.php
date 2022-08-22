@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers\Pages;
 
+use App\Domains\Delivery\Twig\TwigRenderer;
 use App\Http\Controllers\Controller;
 use Hyvor\SyntaxHighlighter\Highlighter;
 use Illuminate\Http\Request;
@@ -92,13 +93,22 @@ class DocsController extends Controller
             foreach ($themes as $theme) {
                 $themeTags .= "<span>$theme</span>";
 
-                $highlighted = Highlighter::highlight(
+                $highlightData = Highlighter::highlight(
                     $code,
                     'jsx',
                     $theme,
                     true,
-                    'highlight=2-3 +=10 -=11 renumber=11:10'
+                    'h=2-3 +=10 -=11 renumber=11:10'
                 );
+                $highlightData['pre']['class'] = str_replace(
+                    'language-jsx',
+                    '',
+                    $highlightData['pre']['class']
+                );
+                $highlighted = TwigRenderer::renderFile(resource_path('twig/blocks/code.twig'), [
+                    'data' => $highlightData
+                ]);
+
                 $previews .= "<div>
                     <div class=\"theme-key\">$theme</div>
                     $highlighted

@@ -25,6 +25,7 @@ use App\Domains\User\UserRepository;
 use App\Models\Post;
 use App\Models\Tag;
 use App\Models\User;
+use Illuminate\Support\Facades\URL;
 use Symfony\Component\Yaml\Exception\ParseException;
 use Symfony\Component\Yaml\Yaml;
 use Twig\Error\Error;
@@ -112,7 +113,7 @@ class TemplateRenderer
 
         $vars = [
             // HB-specific
-            '___url' => config('app.url'),
+            '__domain' => config('blogs.domain_app'),
 
             // vars for all routes
             '_blog' => $blogObject,

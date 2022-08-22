@@ -55,35 +55,30 @@ Hyvor Blogs supports {{themes_number}} VS Code themes.
 
 ## Adding Code Blocks to Your Post {#adding}
 
-There are two ways to add code blocks.
+See [Code Block](writing#code-block) in Writing.
 
 ## Annotations {#annotations}
 
-Annotations are used for highlighting and re-numbering. Let's see some examples.
+Annotations are used for highlighting, focusing, and numbering lines. You can add annotations to the code block in the Editor. Let's see some examples.
 
-| Annotation | Description |
-| --- | --- |
-| `highlight=1` | Highlights the first line
-| `highlight=1-5` | Highlights line 1 to 5
-| `highlight=1,5,6` | Highlights line 1, 5, and 6
-| `highlight=1-4,7` | Highlights 1 to 4, and then 7
-| `focus=1` | Focuses number 1 (Works exactly as highlight)
-| `+=12` | Highlights the 12th line in green (Diff add)
-| `-=20` | Highlights the 20th line in red (Diff remove)
-| `renumber=4:21` | Number of the 4th line will be changed to 21. The next line will have 22.
+| Annotation        | Description |
+|-------------------| --- |
+| `h=1`             | Highlights the first line
+| `h=1-5`           | Highlights line 1 to 5
+| `h=1,5,6`         | Highlights line 1, 5, and 6
+| `h=1-4,7`         | Highlights 1 to 4, and then 7
+| `f=1`             | Focuses number 1 (Works exactly as highlight)
+| `+=12`            | Highlights the 12th line in green (for Diff add)
+| `-=20`            | Highlights the 20th line in red (for Diff remove)
+| `renumber=4:21`   | Number of the 4th line will be changed to 21. The next line will have 22.
 | `renumber=6:null` | Number of the 6th line will be hidden
-| `highlight=1 +=12` | You can have multiple space separated annotations
-| `numbers=true` | Enable line numbers (to override global settings)
-| `numbers=false` | Disable line numbers (to override global settings)
-
-### Displaying Language, File Name, Copy/Download Buttons
-
-It is out of our scope to provide these options by default because the position and appearance of those elements greatly depends on your blog theme. Some [themes](themes) may provide such functionalities, but not guaranteed. If you want to add such functionalities, you will need to write custom CSS and Javascript to do that.
+| `h=1 +=12`        | You can have multiple space separated annotations
+| `numbers=true`    | Enable line numbers (to override global settings)
+| `numbers=false`   | Disable line numbers (to override global settings)
 
 ## Tips
 
 * Under the hood, Hyvor Blogs use [Shiki](https://github.com/shikijs/shiki) for syntax highlighting. Therefore, we can support and VSCode-supported language or theme. If you want to add any, contact us.
-* This page describes how syntax highlighting works **in your blog**. The code editor in the Console does not work in the same way. It also only supports a limited number of languages.
 * Colors for syntax comes from our side, but styles like padding, margins, space between lines, and font sizes comes from the [theme](themes) of your blog.
 
 
