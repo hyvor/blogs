@@ -25,23 +25,6 @@ export function getBlogUrl(subdomain: string, path: string) {
     return blog.base_url + path;
 }
 
-export function isBlogInTeamPlan(subdomain: string) {
-    const blog = getBlogFromSubdomain(subdomain)
-    return blog.is_on_trial ||
-        (
-            blog.subscribed && 
-            ['team', 'enterprise'].indexOf(blog.subscription.plan) >= 0
-        )
-}
-export function isBlogInProPlan(subdomain: string) {
-    const blog = getBlogFromSubdomain(subdomain)
-    return blog.is_on_trial ||
-        (
-            blog.subscribed && 
-            ['pro', 'team', 'enterprise'].indexOf(blog.subscription.plan) >= 0
-        )
-}
-
 export function isDevBlog(subdomain: string) {
     const blog = getBlogFromSubdomain(subdomain);
     return blog.type === BlogType.DEV

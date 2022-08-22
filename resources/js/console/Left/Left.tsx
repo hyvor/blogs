@@ -79,11 +79,11 @@ export default function Left() {
                 extra={
                     <span className="mark">
                         {
-                            blog.is_on_trial && !blog.subscribed ?
+                            blog.is_on_trial && !blog.subscription ?
                                 <span className="trial-days-left">{trialDaysDiff} days left</span> : null
                         }
                         {
-                            !blog.subscribed && !blog.is_on_trial ?
+                            !blog.subscription && !blog.is_on_trial ?
                                 <span className="trial-days-left red">Upgrade Required</span> : null
                         }
                         {

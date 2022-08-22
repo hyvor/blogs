@@ -50,7 +50,7 @@ export default function BlogsList() {
                                     (
                                         blog.is_on_trial ?
                                             "Trial" :
-                                            blog.subscription?.plan
+                                            blog.subscription?.plan || ""
                                     )
                             } />
                         </div>
