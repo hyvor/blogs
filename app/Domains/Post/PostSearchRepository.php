@@ -75,7 +75,7 @@ class PostSearchRepository
             $posts = collect([]);
         }
 
-        return new CollectionWithTotal($posts, $results->getNbHits());
+        return new CollectionWithTotal($posts, $results->getEstimatedTotalHits());
     }
 
     // from https://github.com/laravel/scout/blob/9.x/src/Engines/MeiliSearchEngine.php
