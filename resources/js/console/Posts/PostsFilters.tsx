@@ -46,7 +46,7 @@ export default function PostsFilters({ filters, changeFilter } : PostsFiltersPro
 
     const [authorsOptions, setAuthorsOptions] = useState<Array<SelectOption>>([
         { value: 'all', label: <FilterLabel name="All" count={blog.blog.posts_count} /> },
-        { value: 'you', label: <FilterLabel name="You" count={blog.user.posts_count} /> },
+        { value: blog.user.id, label: <FilterLabel name="You" count={blog.user.posts_count} /> },
     ])
     const [tagsOptions, setTagsOptions] = useState<Array<SelectOption>>([
         { value: 'all', label: <FilterLabel name="All" count={blog.blog.posts_count} /> },

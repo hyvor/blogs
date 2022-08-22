@@ -6,5 +6,5 @@ use Illuminate\Support\Facades\Route;
 
 Route::prefix('/special')->group(function () {
     Route::get('caddy/allowed-domain', [CaddyController::class, 'checkDomain']);
-    Route::get('themes/ping', [GithubThemePingController::class, 'ping']);
+    Route::post('themes/ping', [GithubThemePingController::class, 'ping']);
 });

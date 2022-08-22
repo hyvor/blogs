@@ -49,6 +49,13 @@ return [
     'shopify' => [
         'api_key' => env('SHOPIFY_API_KEY'),
         'api_secret_key' => env('SHOPIFY_API_SECRET_KEY')
+    ],
+
+    'github' => [
+        /**
+         * Secret of hyvor-blogs-themes repo
+         */
+        'webhook_secret_for_themes' => env('GITHUB_WEBHOOK_SECRET_FOR_THEMES')
     ]
 
 ];
