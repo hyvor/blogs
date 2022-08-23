@@ -6,6 +6,7 @@ import Shopify from "./Shopify/Shopify";
 import BillingBox from "./Components/BillingBox";
 import {Usage} from "./Usage";
 import SubscriptionHistory from "./SubscriptionHistory";
+import PaddlePaymentHistory from "./Paddle/PaddlePaymentHistory";
 
 export default function Billing() {
 
@@ -30,6 +31,16 @@ export default function Billing() {
                     <Usage />
                 </div>
             </BillingBox>
+
+            {
+                billing_type === 'paddle' &&
+                <BillingBox>
+                    <div className="section-title">Payment History</div>
+                    <div className="section-content">
+                        <PaddlePaymentHistory />
+                    </div>
+                </BillingBox>
+            }
 
             <BillingBox>
                 <div className="section-title">Subscription History</div>

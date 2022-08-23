@@ -5,6 +5,7 @@ namespace App\Http\Controllers\ConsoleAPI\Billing;
 use App\Data\Enums\SubscriptionFrequencyEnum;
 use App\Data\Enums\SubscriptionPlanEnum;
 use App\Data\Objects\ConsoleAPI\Billing\Paddle\PaddlePaymentObject;
+use App\Data\Objects\ConsoleAPI\Billing\Paddle\PaddleSubscriptionInfoObject;
 use App\Domains\Integrations\Paddle\PaddleService;
 use App\Domains\Subscription\SubscriptionService;
 use App\Exceptions\TrustedException;
@@ -25,7 +26,7 @@ class ConsoleBillingPaddleController extends Controller
         $payments = [];
 
         if ($subscription) {
-            // $info = $paddleService->getInfo();
+            $info = new PaddleSubscriptionInfoObject($paddleService->getInfo($subscription)->toArray());
             $payments = $paddleService->getPayments($subscription)->mapInto(PaddlePaymentObject::class);
         }
 

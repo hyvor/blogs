@@ -2,6 +2,9 @@ import React, {useState} from "react";
 import {PopupConfirm} from "../../ReusableComponents/Popup";
 import {SubscriptionFrequency, SubscriptionPlan} from "../../types";
 import {getUserBlogBlog} from "../../logic-helpers/blog";
+import {useActions} from "kea";
+import billingLogic from "../../logic/billing/billingLogic";
+import getSubdomain from "../../logic-helpers/subdomain";
 
 interface PlanProps {
     type: SubscriptionPlan,
@@ -15,8 +18,11 @@ export default function Plan({type, frequency, onCreate, onUpdate, onCancel} : P
 
     const { subscription: currentSubscription } = getUserBlogBlog();
 
+    const { forceCancel } = useActions(billingLogic({subdomain: getSubdomain()}))
+
     const [updateConfirm, setUpdateConfirm] = useState(false);
     const [cancelConfirm, setCancelConfirm] = useState(false);
+    const [forceCancelConfirm, setForceCancelConfirm] = useState(false);
 
     function handleButton() {
 
@@ -26,6 +32,11 @@ export default function Plan({type, frequency, onCreate, onUpdate, onCancel} : P
             onCreate(type, frequency)
         }
 
+    }
+
+    async function handleForceCancel() {
+        await forceCancel();
+        location.reload();
     }
 
     let price = {
@@ -39,7 +50,7 @@ export default function Plan({type, frequency, onCreate, onUpdate, onCancel} : P
     if (frequency === 'yearly') price *= 10;
 
     let buttonDisabled = false;
-    let isCurrent = currentSubscription?.plan === type;
+    let isCurrent = currentSubscription?.plan === type && currentSubscription?.frequency == frequency;
 
     return <div className={"plan" + (isCurrent ? " current" : "")}>
         <div className="plan-left">
@@ -55,23 +66,23 @@ export default function Plan({type, frequency, onCreate, onUpdate, onCancel} : P
                     isCurrent ?
                         <button
                             className="button small danger"
-                            onClick={() => setCancelConfirm(true)}
+                            onClick={() => {
+                                currentSubscription?.status === 'deleted' ?
+                                    setForceCancelConfirm(true) :
+                                    setCancelConfirm(true)
+                            }}
                         >Cancel</button> :
                         (
-                            (currentSubscription && currentSubscription.is_on_grace_period)
-                                ?
-                                null :
-                                <button
-                                    className={"button small inactive" + (buttonDisabled ? " disabled" : "")}
-                                    onClick={handleButton}
-                                > {currentSubscription ? "Switch" : "Upgrade"} </button>
+                            currentSubscription?.status !== 'deleted' &&
+                            <button
+                                className={"button small inactive" + (buttonDisabled ? " disabled" : "")}
+                                onClick={handleButton}
+                            > {currentSubscription ? "Switch" : "Upgrade"} </button>
                         )
 
                 }
             </div>
         </div>
-
-
 
 
         {
@@ -96,6 +107,18 @@ export default function Plan({type, frequency, onCreate, onUpdate, onCancel} : P
                     buttonClass="danger"
                     onCancel={() => setCancelConfirm(false)}
                 /> : null
+        }
+
+        {
+            forceCancelConfirm &&
+            <PopupConfirm
+                title="Force Cancel Subscription"
+                text="Are you sure you want to cancel the subscription and downgrade to the free plan? You will no longer be able to access the blog after this action."
+                onClick={handleForceCancel}
+                name="Cancel Subscription"
+                buttonClass="danger"
+                onCancel={() => setForceCancelConfirm(false)}
+            />
         }
 
     </div>

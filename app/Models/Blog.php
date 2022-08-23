@@ -6,6 +6,7 @@ use App\Data\Enums\BlogBillingTypeEnum;
 use App\Data\Enums\BlogHostingAtEnum;
 use App\Data\Enums\BlogTypeEnum;
 use App\Models\Concerns\Countable;
+use Carbon\Carbon;
 use Hyvor\JsonMeta\Definer;
 use Hyvor\JsonMeta\Metable;
 use Illuminate\Database\Eloquent\Collection;
@@ -16,8 +17,9 @@ use Illuminate\Database\Eloquent\Model;
  * @property BlogTypeEnum type
  * @property BlogBillingTypeEnum billing_type
  * @property int hyvor_user_id
- * @property Collection $tags
- * @property Collection $users
+ * @property Collection tags
+ * @property Collection users
+ * @property Carbon trial_ends_at
  */
 class Blog extends Model
 {
@@ -29,6 +31,7 @@ class Blog extends Model
         'type' => BlogTypeEnum::class,
         'billing_type' => BlogBillingTypeEnum::class,
         'hosting_at' => BlogHostingAtEnum::class,
+        'trial_ends_at' => 'datetime'
     ];
 
     // meta

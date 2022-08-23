@@ -37,7 +37,7 @@ export default function SubscriptionHistory() {
                                 statusName = 'Past due';
                             }
 
-                            return <div className="receipts-row">
+                            return <div key={subscription.id} className="receipts-row">
                                 <div> <span className={"status-tag " + statusClass}>
                                         { statusName }
                                     </span>

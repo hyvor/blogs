@@ -59,11 +59,21 @@ class PaddleService
     
     public function getPayments(Subscription $subscription)
     {
-        $paddleSubscriptionId = $this->getPaddleSubscriptionId($subscription, true);
+        $paddleSubscriptionId = $this->getPaddleSubscriptionId($subscription);
 
         return collect(PaddleApiCaller::call('/subscription/payments', [
-            'subscription_id' => $paddleSubscriptionId
+            'subscription_id' => $paddleSubscriptionId,
+            'is_paid' => 1
         ]));
+    }
+
+    public function getInfo(Subscription $subscription)
+    {
+        $paddleSubscriptionId = $this->getPaddleSubscriptionId($subscription);
+
+        return collect(PaddleApiCaller::call('/subscription/users', [
+            'subscription_id' => $paddleSubscriptionId
+        ])->{0});
     }
 
     /**

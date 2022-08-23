@@ -22,4 +22,15 @@ class ConsoleBillingController
         ]);
 
     }
+
+    public function forceCancelSubscription(Blog $blog)
+    {
+
+        $subscription = SubscriptionService::getActiveBlogSubscription($blog);
+
+        if ($subscription) {
+            SubscriptionService::cancelSubscription($subscription, now());
+        }
+
+    }
 }

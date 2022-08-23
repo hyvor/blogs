@@ -30,6 +30,10 @@ const billingLogic = kea<billingLogicType>([
             const data = await api.get<ApiResponse>(props.subdomain, '/billing');
             actions.setUsage(data.usage);
             actions.setSubscriptions(data.subscriptions);
+        },
+
+        forceCancel: async () => {
+            await api.delete(props.subdomain, '/billing/subscription');
         }
 
     })),

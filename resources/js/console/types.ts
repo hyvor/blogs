@@ -322,6 +322,7 @@ export type SubscriptionFrequency = 'monthly' | 'yearly';
 
 export interface Subscription {
 
+    id: number,
     status: 'active' | 'past_due' | 'deleted',
     plan: SubscriptionPlan,
     frequency: SubscriptionFrequency,

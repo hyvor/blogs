@@ -1,13 +1,13 @@
 import { useValues } from 'kea';
 import React from 'react'
 import { BoxArrowUpRight } from 'react-bootstrap-icons';
-import paddleLogic from '../logic/billing/paddleLogic';
-import Loader from '../ReusableComponents/Loader';
-import NoResults from '../ReusableComponents/NoResults';
-import { FriendlyDate } from '../ReusableComponents/Time';
-import getSubdomain from "../logic-helpers/subdomain";
+import paddleLogic from '../../logic/billing/paddleLogic';
+import Loader from '../../ReusableComponents/Loader';
+import NoResults from '../../ReusableComponents/NoResults';
+import { FriendlyDate } from '../../ReusableComponents/Time';
+import getSubdomain from "../../logic-helpers/subdomain";
 
-export default function BillingHistory() {
+export default function PaddlePaymentHistory() {
 
     const subdomain = getSubdomain();
     const { data, loadAjax } = useValues(paddleLogic({subdomain}));
@@ -18,25 +18,23 @@ export default function BillingHistory() {
             <Loader padding={60} /> :
             <div className="receipts">
                 {
-                    data.receipts.length ?
+                    data.payments.length ?
                     <div className="receipts-table">
                         <div className="receipts-row header">
                             <div>Amount</div>
-                            <div>Tax</div>
                             <div>Date</div>
                             <div>Receipt</div>
                         </div>
                         <div className="receipts-results-wrap">
                         {
-                            data.receipts.map(receipt => {
-                                return <div key={receipt.id} className="receipts-row">
-                                    <div>{receipt.amount} {receipt.currency}</div>
-                                    <div>{receipt.tax} {receipt.currency}</div>
-                                    <div><FriendlyDate time={receipt.paid_at} /></div>
+                            data.payments.map(payment => {
+                                return <div key={payment.id} className="receipts-row">
+                                    <div>{payment.amount} {payment.currency}</div>
+                                    <div><FriendlyDate time={payment.paid_at} /></div>
                                     <div>
                                         <a 
                                             className="link" 
-                                            href={receipt.receipt_url}
+                                            href={payment.receipt_url}
                                             target="_blank"
                                         >Receipt
                                             <span className="icon">

@@ -17,6 +17,7 @@ import dayjs from 'dayjs';
 import {appConfig} from "../helpers";
 import {router} from "kea-router";
 import UserPermissions from "../services/UserPermissions";
+import {isOnTrial} from "../lib/blog-helpers";
 
 export default function Left() {
 
@@ -31,7 +32,7 @@ export default function Left() {
     const { blog, blog: { subscription: currentSubscription } }  = findBlogBySubdomain(subdomain);
 
     const trialDaysDiff =
-        blog.is_on_trial && blog.trial_ends_at ?
+        isOnTrial(blog) && blog.trial_ends_at ?
             dayjs.unix(blog.trial_ends_at).diff(dayjs(), 'd') :
             0;
     
@@ -79,16 +80,16 @@ export default function Left() {
                 extra={
                     <span className="mark">
                         {
-                            blog.is_on_trial && !blog.subscription ?
+                            isOnTrial(blog) && !blog.subscription ?
                                 <span className="trial-days-left">{trialDaysDiff} days left</span> : null
                         }
                         {
-                            !blog.subscription && !blog.is_on_trial ?
+                            !blog.subscription && !isOnTrial(blog) ?
                                 <span className="trial-days-left red">Upgrade Required</span> : null
                         }
                         {
                             currentSubscription &&
-                            (currentSubscription.status === 'past_due' || currentSubscription.status === 'paused')
+                            currentSubscription.status === 'past_due'
                                 ?
                                 <span className="subscription-issue-icon">
                             <Exclamation />

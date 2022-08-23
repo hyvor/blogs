@@ -9,22 +9,18 @@ import { Clock, CreditCard2FrontFill, ExclamationCircle } from 'react-bootstrap-
 import Callout from '../../ReusableComponents/Callout';
 import NoResults from '../../ReusableComponents/NoResults';
 import getSubdomain from "../../logic-helpers/subdomain";
+import {PaddleSubscriptionInfo} from "../../types";
 
 export default function PaddleBillingInfo() {
 
     const subdomain = getSubdomain()
-    const { findBlogBySubdomain } = useValues(userBlogsLogic);
-    const { blog, blog: { subscription: currentSubscription} } = findBlogBySubdomain(subdomain);
-
     const subscriptionLogicInst = paddleLogic({subdomain});
     const { data, loadAjax } = useValues(subscriptionLogicInst);
-
-    const trialDaysDiff = blog.trial_ends_at ? dayjs.unix(blog.trial_ends_at).diff(dayjs(), 'd') : 0;
 
     return <div>
 
         <div className="section-title">
-            Current Subscription
+            Billing Info
         </div>
         <div className="section-content">
             
@@ -32,135 +28,26 @@ export default function PaddleBillingInfo() {
             <div className="subscription-details">
 
                 {
-                    !blog.is_on_trial && !blog.subscription ?
-
-                    <NoResults 
-                        text="This blog does not have a subscription"
-                        padding={40}
-                        imageWidth={150}
-                    /> :
-
-                <div>
-
-                    {
-                        blog.is_on_trial && !blog.subscription ?
-                        <Callout 
-                            title="30-days trial"
-                            icon={<Clock />}
-                            text={
-                                <div>
-                                    This blog is currently on the 30-days trial period. The trial expires in <b>{trialDaysDiff} day{ trialDaysDiff === 1 ? "" : "s" }</b>.
-                                </div>
-                            }
-                            color="blue"
-                        />
-                        : null
-                    }
-
-                    {
-                        currentSubscription && currentSubscription.status === 'past_due' ?
-                        <Callout 
-                            title="Payment Issues"
-                            icon={<ExclamationCircle />}
-                            text={
-                                <div>
-                                    We were unable to process your last payment. This can happen for several reasons such as expired card details or insufficient funds. Please make sure the payment method below is up-to-date, and update it necessary.
-                                </div>
-                            }
-                            color="orange"
-                        />
-                        : null
-                    }
-
-                    {
-                        currentSubscription && currentSubscription.status === 'paused' ?
-                        <Callout 
-                            title="Subscription Paused"
-                            icon={<ExclamationCircle />}
-                            text={
-                                <div>
-                                    We tried several times, but we could not charge your card. Therefore, your subscription is now paused. Please update card details below to restart the subscription and continue using Hyvor Blogs.
-                                </div>
-                            }
-                            color="orange"
-                        />
-                        : null
-                    }
-
-                    {
-                        currentSubscription && currentSubscription.status === 'deleted' ?
-                        <Callout
-                            title="Subscription Cancelled"
-                            icon={<ExclamationCircle />}
-                            text={
-                                <div>
-                                    This subscription is now cancelled. You will have access to this plan's features until <b><FriendlyDate time={currentSubscription.ends_at} /></b>. Thereafter, this blog will be downgraded.
-                                    <div style={{marginTop: 10}}>
-                                        <button 
-                                            className="button danger small"
-                                            onClick={handleDowngradeNow}
-                                        >Downgrade Now</button>
-                                    </div>
-                                </div>
-                            }
-                            color="red"
-                        />
-                        : null
-                    }
-
-                    {
-                        currentSubscription ?
-                        <div className="details-row">
-                            <div className="details-card">
-                                <div className="card-title">
-                                    Plan
-                                </div>
-                                <div className="card-content">
-                                    { currentSubscription.plan }
-                                </div>
-                            </div>
-                            <div className="details-card">
-                                <div className="card-title">
-                                    Plan Status
-                                </div>
-                                <div className="card-content">
-                                    <span className={"plan-status " + currentSubscription.status}>
-                                        { currentSubscription.status }
-                                    </span>
-                                </div>
-                            </div>
-                        </div> : 
-                        null
-                    }
-
-                    {
-                        currentSubscription ?
+                    loadAjax.status === 'loading' ?
+                        <Loader padding={60} /> :
                         (
-                            loadAjax.status === 'loading' ?
-                            <Loader padding={60} /> :
-                            <InfoSection info={data.info} />
-                        ) : null
-                    }
-
-                        {
-                            currentSubscription && currentSubscription.status !== 'deleted' ?
-                            <div className="cancel-view">
-                                <button className="button danger" onClick={handleCancel}>Cancel Subscription</button>
-                            </div>
-                            : null
-                        }
-
-                </div>
-
-
+                            data.info ?
+                                <InfoSection info={data.info} /> :
+                                <NoResults
+                                    text="This blog does not have an active subscription"
+                                    padding={40}
+                                    imageWidth={150}
+                                />
+                        )
                 }
+
             </div>
         </div>
     </div>
 
 }
 
-function InfoSection({info} : {info: SubscriptionInfo}) {
+function InfoSection({info} : {info: PaddleSubscriptionInfo}) {
 
     if (!info)
         return null;

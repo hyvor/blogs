@@ -9,6 +9,9 @@ use App\Models\Subscription;
 
 class SubscriptionObject
 {
+
+    public int $id;
+
     public SubscriptionStatusEnum $status;
 
     public SubscriptionPlanEnum $plan;
@@ -21,6 +24,7 @@ class SubscriptionObject
 
     public function __construct(Subscription $subscription)
     {
+        $this->id = $subscription->id;
         $this->status = $subscription->status;
         $this->plan = $subscription->plan;
         $this->frequency = $subscription->frequency;

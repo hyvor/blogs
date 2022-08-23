@@ -31,7 +31,7 @@ class UsageRepository
             SubscriptionPlanEnum::C => 100,
             SubscriptionPlanEnum::D => 1000,
             SubscriptionPlanEnum::E => 10000,
-            default => 10
+            default => 2
         };
 
         // bytes

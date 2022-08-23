@@ -6,8 +6,10 @@
 
 import userBlogsLogic from "../logic/userBlogsLogic";
 import languagesLogic from "../logic/languagesLogic";
-import {Language} from "../types";
+import {Language, Subscription} from "../types";
 import {BlogType} from "../enums";
+import {UserBlogBlog} from "../objects/userblog";
+import dayjs from "dayjs";
 
 export function getBlogFromSubdomain(subdomain: string) {
     return userBlogsLogic.values.findBlogBySubdomain(subdomain).blog;
@@ -23,6 +25,10 @@ export function getBlogUrl(subdomain: string, path: string) {
         path = '/' + path;
     }
     return blog.base_url + path;
+}
+
+export function isOnTrial(blog: UserBlogBlog) {
+    return blog.trial_ends_at > dayjs().unix()
 }
 
 export function isDevBlog(subdomain: string) {
