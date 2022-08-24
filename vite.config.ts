@@ -8,6 +8,9 @@ export default defineConfig({
             // console
             'resources/js/console/console.tsx',
 
+            // iframe
+            'resources/js/embed/iframe.ts',
+
             // landing
             'resources/css/landing/landing.scss'
         ]),
