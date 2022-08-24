@@ -6,6 +6,7 @@ use Database\Factories\ReceiptFactory;
 use Database\Factories\SubscriptionFactory;
 use Illuminate\Testing\Fluent\AssertableJson;
 
+// TODO: FLAKY
 it('gets billing data', function () {
 
     $blog = blog();

@@ -15,6 +15,7 @@ use App\Models\Route;
 use App\Models\Tag;
 use App\Models\ThemeFile;
 use App\Models\User;
+use App\Models\Webhook;
 use Closure;
 
 class ResourceAccessMiddleware
@@ -29,6 +30,7 @@ class ResourceAccessMiddleware
         '/user' => User::class,
         '/route' => Route::class,
         '/api-key' => ApiKey::class,
+        '/webhook' => Webhook::class,
         '/theme/file' => ThemeFile::class,
     ];
 

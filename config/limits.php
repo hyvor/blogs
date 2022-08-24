@@ -52,7 +52,7 @@ return [
 
     /**
      * Webhooks means a HTTP calls on event
-     * They are not "soft"
+     * They are not "easy"
      * So, 5 per blog is a good limit
      * Users can different events for each webhook
      */

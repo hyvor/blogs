@@ -8,6 +8,7 @@ import {
     UserStatus
 } from "./enums";
 import {UserBlog} from "./objects/userblog";
+import {WebhookEventNames} from "./Settings/Webhooks/Webhooks";
 
 // === CONSOLE
 
@@ -294,6 +295,17 @@ export interface ApiKey {
     name: string,
     type: ApiKeyType,
     api_key: string
+}
+
+// WEBHOOK
+
+export type WebhookEvent = typeof WebhookEventNames[number];
+
+export interface Webhook {
+    id: number,
+    url: string,
+    events: WebhookEvent[],
+    secret: string
 }
 
 export type ApiKeyType = 'console' | 'delivery';

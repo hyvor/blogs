@@ -1,0 +1,31 @@
+.setting-webhooks {
+
+    .global-table-view {
+        .table-head, .table-row {
+            grid-template-columns: 1fr 1fr 80px 60px;
+        }
+    }
+
+    .events-selector {
+        .count {
+            margin: 3px 0 10px;
+            font-size: 12px;
+            font-weight: 600;
+        }
+    }
+    .event {
+        user-select: none;
+        display: inline-block;
+        padding: 2px 10px;
+        background: $color-grey;
+        border-radius: 20px;
+        margin-right: 6px;
+        margin-bottom: 4px;
+        cursor: pointer;
+        &.selected {
+            background: $color-accent;
+            color: $color-text-white;
+        }
+    }
+
+}

@@ -16,7 +16,7 @@ import SEO from './SEO';
 import ColorMode from "./ColorMode";
 import Highlight from "./Highlight";
 import getSubdomain from "../logic-helpers/subdomain";
-import Webhooks from "./Webhooks";
+import Webhooks from "./Webhooks/Webhooks";
 import ApiKeys from "./ApiKeys/ApiKeys";
 import Danger from "./Danger/Danger";
 import {UserRole} from "../enums";

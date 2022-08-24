@@ -22,6 +22,7 @@ return new class () extends Migration {
             // data
             $table->string('url');
             $table->json('events'); // comma separated event names
+            $table->string('secret', 32);
         });
     }
 
