@@ -13,6 +13,11 @@ class Webhook extends Model
         'events' => 'array',
     ];
 
+    public function blog()
+    {
+        return $this->belongsTo(Blog::class);
+    }
+
     public function deliveries()
     {
         return $this->hasMany(WebhookDelivery::class);

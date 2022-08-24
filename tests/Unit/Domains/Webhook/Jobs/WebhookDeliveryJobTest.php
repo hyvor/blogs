@@ -5,6 +5,7 @@ namespace Tests\Unit\Domains\Webhook\Jobs;
 use App\Data\Enums\WebhookDeliveryStatusEnum;
 use App\Domains\Webhook\Exceptions\DeliveryFailedException;
 use App\Domains\Webhook\Jobs\WebhookDeliveryJob;
+use App\Domains\Webhook\WebhookDeliveryService;
 use App\Models\Webhook;
 use App\Models\WebhookDelivery;
 use Exception;
@@ -24,14 +25,8 @@ it('delivers a webhook', function() {
         'url' => $url,
     ]);
 
-    $job = new WebhookDeliveryJob(
-        $blog,
-        $webhook,
-        'cache.single',
-        [
-            'path' => '/test'
-        ]
-    );
+    $delivery = WebhookDeliveryService::createDelivery($webhook, 'cache.single', ['path' => '/test']);
+    $job = new WebhookDeliveryJob($delivery);
     $job->handle();
 
     Http::assertSent(function (Request $request) use ($url) {
@@ -70,14 +65,9 @@ it('handles failures', function() {
         'url' => $url,
     ]);
 
-    $job = new WebhookDeliveryJob(
-        $blog,
-        $webhook,
-        'cache.single',
-        [
-            'path' => '/test'
-        ]
-    );
+
+    $delivery = WebhookDeliveryService::createDelivery($webhook, 'cache.single', ['path' => '/test']);
+    $job = new WebhookDeliveryJob($delivery);
     try {
         $job->handle();
     } catch (DeliveryFailedException) {}
@@ -109,12 +99,9 @@ it('handles http client exceptions', function() {
         'url' => $url,
     ]);
 
-    $job = new WebhookDeliveryJob(
-        $blog,
-        $webhook,
-        'cache.single',
-        []
-    );
+
+    $delivery = WebhookDeliveryService::createDelivery($webhook, 'cache.single', []);
+    $job = new WebhookDeliveryJob($delivery);
     try {
         $job->handle();
     } catch (DeliveryFailedException) {}

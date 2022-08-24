@@ -142,12 +142,10 @@ Keep this key secure.
 
 ### Response & Retries
 
-We expect a **200 HTTP Response Code** from your server to mark the webhook as success. If we get any other response code or fail to reach your servers, we will retry to send the webhook for 5 more times after
+We expect a **200 HTTP Response Code** from your server to mark the webhook as success. If we get any other response code or fail to reach your servers, we will retry to send the webhook for 3 more times after
 
 * 1 minute
 * 5 minutes
 * 30 minutes
-* 1 hour
-* 5 hours
 
-If we fail all, we will mark that webhook as failed and will no longer send it automatically. However, you can manually trigger it from the console later.
+If all fail, we will mark that webhook as failed and will no longer send it automatically. However, you can manually trigger it from the console later.

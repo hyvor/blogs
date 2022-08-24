@@ -6,6 +6,7 @@ use App\Domains\Cache\Events\CacheClearAllEvent;
 use App\Domains\Cache\Events\CacheClearSingleEvent;
 use App\Domains\Cache\Events\CacheClearTemplatesEvent;
 use App\Domains\Webhook\Jobs\WebhookDeliveryJob;
+use App\Domains\Webhook\WebhookDeliveryService;
 use App\Domains\Webhook\WebhookService;
 use App\Models\Blog;
 use Exception;
@@ -34,7 +35,8 @@ class WebhookSubscriber
         foreach ($webhooks as $webhook) {
 
             if (in_array($eventName, $webhook->events)) {
-                WebhookDeliveryJob::dispatch($blog, $webhook, $eventName, $data);
+                $delivery = WebhookDeliveryService::createDelivery($webhook, $eventName, $data);
+                WebhookDeliveryJob::dispatch($delivery);
             }
 
         }

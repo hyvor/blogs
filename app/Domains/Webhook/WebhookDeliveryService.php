@@ -4,7 +4,6 @@ namespace App\Domains\Webhook;
 
 use App\Data\Enums\WebhookDeliveryStatusEnum;
 use App\Domains\Webhook\Exceptions\DeliveryFailedException;
-use App\Models\Blog;
 use App\Models\Webhook;
 use App\Models\WebhookDelivery;
 use Exception;
@@ -28,8 +27,11 @@ class WebhookDeliveryService
         ]);
     }
 
-    public static function deliver(Blog $blog, WebhookDelivery $delivery)
+    public static function deliver(WebhookDelivery $delivery)
     {
+
+        $webhook = $delivery->webhook;
+        $blog = $webhook->blog;
 
         $payload = [
             'subdomain' => $blog->subdomain,
@@ -38,7 +40,6 @@ class WebhookDeliveryService
             'data' => $delivery->data
         ];
 
-        $webhook = $delivery->webhook;
         $signature = hash_hmac('sha256', json_encode($payload), $webhook->secret);
 
         try {
