@@ -61,4 +61,15 @@ class ConsoleWebhookController extends Controller
     {
         WebhookService::deleteWebhook($webhook);
     }
+
+    public function getWebhookDeliveries(Webhook $webhook, Request $request)
+    {
+
+        $request->validate([
+            'page' => 'integer'
+        ]);
+
+        $page = $request->input('page', 1);
+
+    }
 }

@@ -140,6 +140,7 @@ Route::prefix('/api/console/v0/blog/{subdomain}')
             Route::post('/webhook', [ConsoleWebhookController::class, 'createWebhook']);
             Route::patch('/webhook/{id}', [ConsoleWebhookController::class, 'updateWebhook']);
             Route::delete('/webhook/{id}', [ConsoleWebhookController::class, 'deleteWebhook']);
+            Route::get('/webhook/{id}/deliveries', [ConsoleWebhookController::class, 'getWebhookDeliveries']);
 
             // api-keys
             Route::get('/api-keys', [ConsoleApiKeysController::class, 'getApiKeys']);

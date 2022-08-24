@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "cbd534478892d870a8840d27b365d818",
+    "content-hash": "4e8c987a095e479a2133a743a6d77a03",
     "packages": [
         {
             "name": "asm89/stack-cors",
@@ -1517,50 +1517,6 @@
                 "source": "https://github.com/HughbertD/oauth2-unsplash/tree/master"
             },
             "time": "2017-12-14T13:08:42+00:00"
-        },
-        {
-            "name": "hyvor/hyvor-blogs-laravel",
-            "version": "dev-main",
-            "dist": {
-                "type": "path",
-                "url": "../package-hyvor-blogs-laravel",
-                "reference": "ebd016f2ddc738ae0ba2c13f887a82041766e20b"
-            },
-            "require-dev": {
-                "orchestra/testbench": "^7.0",
-                "phpunit/phpunit": "^9.5"
-            },
-            "type": "library",
-            "extra": {
-                "laravel": {
-                    "providers": [
-                        "Hyvor\\HyvorBlogs\\HyvorBlogsServiceProvider"
-                    ]
-                }
-            },
-            "autoload": {
-                "psr-4": {
-                    "Hyvor\\HyvorBlogs\\": "src"
-                }
-            },
-            "autoload-dev": {
-                "psr-4": {
-                    "Hyvor\\HyvorBlogs\\Tests\\": "tests"
-                }
-            },
-            "license": [
-                "MIT"
-            ],
-            "authors": [
-                {
-                    "name": "Supun Kavinda",
-                    "email": "supun@hyvor.com"
-                }
-            ],
-            "description": "Laravel Package for Hyvor Blogs self-hosting",
-            "transport-options": {
-                "relative": true
-            }
         },
         {
             "name": "hyvor/laravel-filterq",
@@ -12124,9 +12080,7 @@
     ],
     "aliases": [],
     "minimum-stability": "dev",
-    "stability-flags": {
-        "hyvor/hyvor-blogs-laravel": 20
-    },
+    "stability-flags": [],
     "prefer-stable": true,
     "prefer-lowest": false,
     "platform": {
