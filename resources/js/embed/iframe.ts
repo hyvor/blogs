@@ -10,6 +10,7 @@ function sendResizeSignal() {
 }
 
 sendResizeSignal();
+setInterval(sendResizeSignal, 500);
 
 // promote meta/link tags to the parent window
 window.addEventListener('DOMContentLoaded', function() {
