@@ -51,10 +51,11 @@ return [
         ['import', 'Import'],
         ['export', 'Export'],
     ],
-    'Self-serving' => [
+    'Self-Hosting (Subdirectory)' => [
         ['self-hosting', 'Self-Hosting Intro'],
-        ['self-hosting-delivery-api', 'Using Delivery API'],
-        ['self-hosting-reverse-proxy', 'Using Reverse Proxy'],
+        ['self-hosting-web-framework', 'with Web Frameworks'],
+        ['self-hosting-edge', 'with Edge Computing'],
+        ['self-hosting-reverse-proxy', 'with Reverse Proxy'],
         /*['self-hosting-delivery-api', 'Using Delivery API'],
         ['self-hosting-builds', 'Using builds']*/
     ],
@@ -65,7 +66,8 @@ return [
         ['policy-security', 'Security Policy'],
         ['compliance-gdpr', 'GDPR Compliance'],
     ],
-    'Platforms' => [
+    'Integrations' => [
+        ['zapier', 'Zapier'],
         ['shopify', 'Shopify'],
         /*['thinkific', 'Thinkific']*/
     ],

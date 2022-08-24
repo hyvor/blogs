@@ -1,11 +1,11 @@
 # Webhooks
 
-> Webhooks are only available in the trial period and the [Team plan](/pricing) and above.
-
 Webhooks are a way to get notified when an event happens on your blog.
 
 * A blog can have up to 5 webhooks. 
 * Each webhook has a URL and can subscribe to one or more of the following events.
+
+> **Note:** Currently, only cache events are supported. They can be used for self-hosting your blog in a subdirectory. Other events will be added soon.
 
 | Event                  | Dispatched                                                                                |
 |------------------------|-------------------------------------------------------------------------------------------|
@@ -37,7 +37,7 @@ Webhooks are a way to get notified when an event happens on your blog.
 | `media.created`        | A media item is added                                                                     |
 | `media.deleted`        | A media item is deleted                                                                   |
 | &nbsp;                 | &nbsp;                                                                                    |
-| `cache.single`         | When cache of a single path should be cleared (index.css, assets, media, etc.)            |
+| `cache.single`         | When cache of a single path should be cleared (styles.css, assets, media, etc.)           |
 | `cache.templates`      | When cache of all template-generated paths should be cleared (index, posts, feeds, etc.). |
 | `cache.all`            | When all cache should be cleared                                                          |
 

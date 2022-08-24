@@ -16,6 +16,10 @@ return new class () extends Migration {
             $table->id();
             $table->timestamps();
 
+            // connections
+            $table->bigInteger('blog_id');
+
+            // data
             $table->string('url');
             $table->json('events'); // comma separated event names
         });

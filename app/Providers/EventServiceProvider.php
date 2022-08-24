@@ -8,6 +8,7 @@ use App\Domains\Post\Events\PostVariantUpdatedEvent;
 use App\Domains\Post\Listeners\PostVariantUpdateContentHtmlListener;
 use App\Domains\Post\Listeners\PostVariantUpdateWordCountListener;
 use App\Domains\Shared\Count\CountSubscriber;
+use App\Domains\Webhook\Listeners\WebhookSubscriber;
 use Illuminate\Foundation\Support\Providers\EventServiceProvider as ServiceProvider;
 
 class EventServiceProvider extends ServiceProvider
@@ -30,6 +31,7 @@ class EventServiceProvider extends ServiceProvider
 
         ClearCacheSubscriber::class,
         CountSubscriber::class,
+        WebhookSubscriber::class,
 
         // integrations
         ShopifySubscriber::class

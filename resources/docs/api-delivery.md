@@ -1,6 +1,6 @@
 # Delivery API
 
-Delivery API tells you information about how to "serve a request". This API is the backbone of [self-hosting on a subdirectory](self-hosting-delivery-api).
+Delivery API tells you information about how to "serve a request". This API is the backbone of [self-hosting on a subdirectory](self-hosting-web-framework).
 
 ## Calling the API
 
@@ -20,11 +20,11 @@ No, we are not missing the `/` between the `{subdomain}` and `{path}`. `{path}` 
 
 ## Why?
 
-So, why is there a Delivery API? Let's say you already have an app or website. You want to have to your blog on `/blog` subdirectory. There are couple of ways to set this up including using your web server as a [reverse proxy](self-hosting-delivery-api#reverse-proxy). However, messing up with server configurations is no fun. It would be much easier if you could set up the reverse proxy using the programming language we already use in our website. So, we created this JSON API to make things easier.
+So, why is there a Delivery API? Let's say you already have an app or website. You want to have to your blog on `/blog` subdirectory. There are couple of ways to set this up including using your web server as a [reverse proxy](self-hosting-web-framework#reverse-proxy). However, messing up with server configurations is no fun. It would be much easier if you could set up the reverse proxy using the programming language we already use in our website. So, we created this JSON API to make things easier.
 
 > Good to know! We use this API internally to serve your blog at ***.hyvorblogs.io**. For example, when we get a request at **myblog.hyvorblogs.io/path**, our subdomain-serving servers call the delivery API (which is in our main server) to know how to "response" to the request. Then, subdomain servers convert JSON to a real HTTP response and return it back to the user. 
 
-You can easily set up self-hosting on subdirectory of your application using the [libraries](self-hosting-delivery-api#libraries) we provide for popular web frameworks. If your programming language or framework is not supported, you can build your own mini-library using this and [webhooks](webhooks) documentations.
+You can easily set up self-hosting on subdirectory of your application using the [libraries](self-hosting-web-framework#libraries) we provide for popular web frameworks. If your programming language or framework is not supported, you can build your own mini-library using this and [webhooks](webhooks) documentations.
 
 ## Response Object {#response-object}
 
