@@ -52,7 +52,8 @@
         "twig/twig": "^2.0",
         "ueberdosis/tiptap-php": "^1.1",
         "unsplash/unsplash": "^3.2",
-        "vlucas/phpdotenv": "^5.4"
+        "vlucas/phpdotenv": "^5.4",
+        "hyvor/hyvor-blogs-laravel": "dev-main"
     },
     "require-dev": {
         "barryvdh/laravel-debugbar": "^3.6",
@@ -112,7 +113,11 @@
         "minio": "minio server storage/app/minio"
     },
     "repositories": [
-        {"type": "composer", "url": "https://hyvor.repo.repman.io"}
+        {"type": "composer", "url": "https://hyvor.repo.repman.io"},
+        {
+            "type": "path",
+            "url": "../package-hyvor-blogs-laravel"
+        }
     ],
     "extra": {
         "laravel": {

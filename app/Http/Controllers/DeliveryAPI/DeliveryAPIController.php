@@ -21,7 +21,7 @@ class DeliveryAPIController
          */
         $response = DeliveryService::getResponseObject(
             $blog,
-            $request->input('path') || '',
+            $request->input('path') ?? '',
         );
 
         /**

@@ -11,7 +11,7 @@ return [
              * The subdomain given by Hyvor Blogs
              * Sign up at https://blogs.hyvor.com/console to create a new one
              */
-            'subdomain' => 'test2',
+            'subdomain' => 'default',
 
             /**
              * Generate an API key for your blog and paste it here

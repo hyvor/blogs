@@ -45,6 +45,7 @@ class BlogService
             'billing_type' => $billingType,
             'trial_ends_at' => now()->addDays(config('limits.trial_days')),
         ]);
+        $blog->refresh(); // fetch default columns
 
         (new LanguageFiller($blog))->fill();
 
