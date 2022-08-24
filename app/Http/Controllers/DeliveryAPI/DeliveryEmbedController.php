@@ -15,7 +15,7 @@ class DeliveryEmbedController
         $request->validate([
             'subdomain' => 'required|string',
             'path_style' => 'bool',
-            'path' => 'string'
+            'path' => 'string|nullable'
         ]);
 
         $subdomain = $request->input('subdomain');
