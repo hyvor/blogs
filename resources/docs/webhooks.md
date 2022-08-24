@@ -47,8 +47,9 @@ When a subscribed event happens, we call the URL you provided, via the HTTP POST
 
 ```json
 {
-    "key": "webhook_key",
-    "time": 1645208678,
+    "subdomain": "my-subdomain",
+    "timestamp": 1645208678,
+    "event": "cache.single",
     "data": {
 
     }

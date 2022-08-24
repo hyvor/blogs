@@ -5,7 +5,10 @@ namespace App\Domains\Webhook\Listeners;
 use App\Domains\Cache\Events\CacheClearAllEvent;
 use App\Domains\Cache\Events\CacheClearSingleEvent;
 use App\Domains\Cache\Events\CacheClearTemplatesEvent;
+use App\Domains\Webhook\Jobs\WebhookDeliveryJob;
+use App\Domains\Webhook\WebhookService;
 use App\Models\Blog;
+use Exception;
 use Illuminate\Events\Dispatcher;
 
 class WebhookSubscriber
@@ -22,7 +25,19 @@ class WebhookSubscriber
 
     private function call(Blog $blog, string $eventName, array $data = [])
     {
-        // TODO:
+
+        if (!in_array($eventName, WebhookService::EVENTS)) // to be safe
+            throw new Exception('Invalid webhook event name');
+
+        $webhooks = $blog->webhooks;
+
+        foreach ($webhooks as $webhook) {
+
+            if (in_array($eventName, $webhook->events)) {
+                WebhookDeliveryJob::dispatch($blog, $webhook, $eventName, $data);
+            }
+
+        }
     }
 
     public function onCacheClearSingleEvent(CacheClearSingleEvent $event)

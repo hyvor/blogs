@@ -12,4 +12,9 @@ class Webhook extends Model
     protected $casts = [
         'events' => 'array',
     ];
+
+    public function deliveries()
+    {
+        return $this->hasMany(WebhookDelivery::class);
+    }
 }

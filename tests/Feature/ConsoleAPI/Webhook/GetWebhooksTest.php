@@ -18,7 +18,8 @@ it('gets webhooks', function() {
                 ->each(function (AssertableJson $json) {
                     $json->has('id')
                         ->has('url')
-                        ->has('events');
+                        ->has('events')
+                        ->has('secret');
                 });
         });
 
