@@ -11,7 +11,7 @@ use Symfony\Component\DomCrawler\Crawler;
 /**
  * Converts an HTML output to an embeddable output
  */
-class HtmlProcessor
+class EmbedHtmlProcessor
 {
     private DOMDocument $dom;
     private string $baseUrl;
@@ -21,7 +21,9 @@ class HtmlProcessor
         private readonly string $embeddingUrl,
         string $html,
         private readonly bool $pathStyle = false
-    ) {
+    )
+    {
+
         $this->dom = new DOMDocument();
         $this->baseUrl = PermalinkRepository::getBaseUrl($this->blog);
 
@@ -33,15 +35,14 @@ class HtmlProcessor
 
         $this->addIframeHelpers();
         $this->addOtherHeadTags();
+        $this->convertAnchors();
         $this->convertLinks();
-        $this->convertCanonicalUrl();
+        $this->convertMeta();
 
     }
 
     private function addIframeHelpers(): void
     {
-
-
 
         $head = $this->dom->getElementsByTagName("head")[0] ?? null;
 
@@ -82,7 +83,7 @@ class HtmlProcessor
      * Converts blog URLs (subdomain.hyvorblogs.io/hello-world)
      * to embed-type URL (https://embedde.here/blog?p=hello-world
      */
-    private function convertLinks(): void
+    private function convertAnchors(): void
     {
 
         $links = $this->dom->getElementsByTagName('a');
@@ -118,7 +119,7 @@ class HtmlProcessor
         }
     }
 
-    private function convertCanonicalUrl()
+    private function convertLinks()
     {
         $head = $this->dom->getElementsByTagName("head")[0] ?? null;
 
@@ -133,13 +134,48 @@ class HtmlProcessor
         foreach ($links as $link) {
             $rel = $link->getAttribute('rel');
 
-            if ($rel === 'canonical') {
+            if (in_array($rel, ['canonical', 'alternate'])) {
                 $href = $link->getAttribute('href');
-                $path = str_replace($this->baseUrl, '', $href);
 
-                $link->setAttribute('href', $this->embedUrlFromPath($path));
+                if (str_starts_with($href, $this->baseUrl)) {
+                    $path = str_replace($this->baseUrl, '', $href);
+                    $link->setAttribute('href', $this->embedUrlFromPath($path));
+                }
             }
         }
+    }
+
+    private function convertMeta()
+    {
+
+        $head = $this->dom->getElementsByTagName("head")[0] ?? null;
+
+        if (!$head)
+            return null;
+
+        $metas = $head->getElementsByTagName('meta');
+
+        /**
+         * @var $meta DOMElement
+         */
+        foreach ($metas as $meta) {
+
+            $name = $meta->getAttribute('name');
+            $name = $name ?: $meta->getAttribute('property');
+
+            if (in_array($name, ['og:url', 'twitter:url'])) {
+
+                $content = $meta->getAttribute('content');
+
+                if (str_starts_with($content, $this->baseUrl)) {
+                    $path = str_replace($this->baseUrl, '', $content);
+                    $meta->setAttribute('content', $this->embedUrlFromPath($path));
+                }
+
+            }
+
+        }
+
 
     }
 

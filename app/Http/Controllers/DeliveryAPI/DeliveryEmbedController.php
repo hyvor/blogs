@@ -4,7 +4,7 @@ namespace App\Http\Controllers\DeliveryAPI;
 
 use App\Domains\Blog\BlogService;
 use App\Domains\Delivery\DeliveryService;
-use App\Domains\Delivery\Embed\HtmlProcessor;
+use App\Domains\Delivery\Embed\EmbedHtmlProcessor;
 use App\Exceptions\TrustedException;
 use Illuminate\Http\Request;
 
@@ -52,7 +52,7 @@ class DeliveryEmbedController
         $response = DeliveryService::getLaravelResponse($blog, $path);
         $content = $response->content();
 
-        $content = (new HtmlProcessor($blog, $embeddingUrl, $content, $pathStyle))->get();
+        $content = (new EmbedHtmlProcessor($blog, $embeddingUrl, $content, $pathStyle))->get();
 
         $response->setContent($content);
 
