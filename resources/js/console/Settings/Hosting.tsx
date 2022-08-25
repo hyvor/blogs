@@ -1,4 +1,4 @@
-import React from 'react';
+import React, {Fragment} from 'react';
 import DualSetting from '../ReusableComponents/DualSetting';
 import Input from '../ReusableComponents/Input';
 import Radio from '../ReusableComponents/Radio';
@@ -7,6 +7,7 @@ import SettingsSave from "../ReusableComponents/SettingsSave";
 import Callout, {CalloutColors} from "../ReusableComponents/Callout";
 import {ExclamationCircle} from "react-bootstrap-icons";
 import Switch from "../ReusableComponents/Switch";
+import {BlogHostingAt} from "../enums";
 
 export default function Hosting() {
 
@@ -125,20 +126,48 @@ export default function Hosting() {
                 /> : null
         }
 
-        <DualSetting
-            title="Embeddable"
-            description={
-                <div>Turn this option on only if you are using <a href="/docs/embedding" className="link" target="_blank">embedding</a>.</div>
-            }
-            right={
-                <div>
-                    <Switch
-                        checked={blog.embeddable}
-                        onChange={checked => updateBlogValue('embeddable', checked)}
+        {
+
+            blog.hosting_at === BlogHostingAt.SUBDOMAIN &&
+
+            <Fragment>
+
+                <DualSetting
+                    title="Embeddable"
+                    description={
+                        <div>Turn this option on only if you are using <a href="/docs/embedding" className="link" target="_blank">embedding</a>.</div>
+                    }
+                    right={
+                        <div>
+                            <Switch
+                                checked={blog.embeddable}
+                                onChange={checked => updateBlogValue('embeddable', checked)}
+                            />
+                        </div>
+                    }
+                />
+
+                {
+                    blog.embeddable &&
+                    <DualSetting
+                        title="Embedding URL"
+                        description="Set the absolute URL where you are embedding your blog."
+                        right={
+                            <div>
+                                <Input
+                                    type="text"
+                                    name="self-hosting-url"
+                                    value={blog.embedding_url}
+                                    onChange={value => updateBlogValue('embedding_url', value)}
+                                />
+                            </div>
+                        }
                     />
-                </div>
-            }
-        />
+                }
+
+            </Fragment>
+
+        }
 
         <SettingsSave
             keys={

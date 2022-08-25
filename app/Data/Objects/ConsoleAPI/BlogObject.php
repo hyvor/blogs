@@ -33,6 +33,8 @@ class BlogObject
     // meta
     public bool $embeddable;
 
+    public ?string $embedding_url;
+
     public ?string $social_facebook;
 
     public ?string $social_twitter;
@@ -98,6 +100,7 @@ class BlogObject
         $this->cover_url = $meta->cover_url;
 
         $this->embeddable = $meta->embeddable;
+        $this->embedding_url = $meta->embedding_url;
 
         $this->social_facebook = $meta->social_facebook;
         $this->social_twitter = $meta->social_twitter;

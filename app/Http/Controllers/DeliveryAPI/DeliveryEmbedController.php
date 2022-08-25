@@ -33,6 +33,7 @@ class DeliveryEmbedController
 
     public function iframe(Request $request)
     {
+
         $request->validate([
             'url' => 'required|url',
             'path_style' => 'bool'
@@ -47,6 +48,10 @@ class DeliveryEmbedController
 
         if (!$blog->getMeta('embeddable')) {
             throw new TrustedException('Not embeddable');
+        }
+
+        if ($blog->getMeta('embedding_url') !== $embeddingUrl) {
+            throw new TrustedException('Embedding URL is invalid');
         }
 
         $response = DeliveryService::getLaravelResponse($blog, $path);
