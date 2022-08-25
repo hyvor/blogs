@@ -42,5 +42,5 @@ Route::get('embed', function () {
         'domain' => 'http://blogs.hyvor.test:8080',
         'subdomain' => 'test'
     ]);
-    return $html . $js;
+    return $html . '<script>' . $js . '</script>';
 });

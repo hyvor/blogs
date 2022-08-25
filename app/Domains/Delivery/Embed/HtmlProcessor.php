@@ -6,6 +6,7 @@ use App\Domains\Route\PermalinkRepository;
 use App\Models\Blog;
 use DOMDocument;
 use DOMElement;
+use Symfony\Component\DomCrawler\Crawler;
 
 /**
  * Converts an HTML output to an embeddable output
@@ -13,6 +14,7 @@ use DOMElement;
 class HtmlProcessor
 {
     private DOMDocument $dom;
+    private string $baseUrl;
 
     public function __construct(
         private readonly Blog $blog,
@@ -21,6 +23,7 @@ class HtmlProcessor
         private readonly bool $pathStyle = false
     ) {
         $this->dom = new DOMDocument();
+        $this->baseUrl = PermalinkRepository::getBaseUrl($this->blog);
 
         /**
          * LIBXML_HTML_NOIMPLIED | LIBXML_HTML_NODEFDTD to prevent adding unneccesary tags automatically
@@ -29,11 +32,17 @@ class HtmlProcessor
         $this->dom->loadHTML($html, LIBXML_HTML_NOIMPLIED | LIBXML_HTML_NODEFDTD | LIBXML_NOERROR);
 
         $this->addIframeHelpers();
+        $this->addOtherHeadTags();
         $this->convertLinks();
+        $this->convertCanonicalUrl();
+
     }
 
     private function addIframeHelpers(): void
     {
+
+
+
         $head = $this->dom->getElementsByTagName("head")[0] ?? null;
 
         if (!$head) {
@@ -49,13 +58,32 @@ class HtmlProcessor
         $head->appendChild($template);
     }
 
+    private function addOtherHeadTags()
+    {
+
+        $head = $this->dom->getElementsByTagName("head")[0] ?? null;
+
+        if (!$head) {
+            return;
+        }
+
+        // Google's indexifembedded
+        // https://developers.google.com/search/blog/2022/01/robots-meta-tag-indexifembedded
+        $googleIndexIfEmbeddedMeta = $this->dom->createElement('meta');
+        $googleIndexIfEmbeddedMeta->setAttribute('name', 'googlebot');
+        $googleIndexIfEmbeddedMeta->setAttribute('content', 'noindex,indexifembedded');
+
+        $head->appendChild($googleIndexIfEmbeddedMeta);
+
+
+    }
+
     /**
      * Converts blog URLs (subdomain.hyvorblogs.io/hello-world)
      * to embed-type URL (https://embedde.here/blog?p=hello-world
      */
     private function convertLinks(): void
     {
-        $baseUrl = PermalinkRepository::getBaseUrl($this->blog);
 
         $links = $this->dom->getElementsByTagName('a');
 
@@ -66,8 +94,8 @@ class HtmlProcessor
             $href = $link->getAttribute('href');
 
             // should start with the base URL
-            if (str_starts_with($href, $baseUrl)) {
-                $path = str_replace($baseUrl, '', $href);
+            if (str_starts_with($href, $this->baseUrl)) {
+                $path = str_replace($this->baseUrl, '', $href);
                 $path = trim($path, '/');
 
                 /**
@@ -90,8 +118,34 @@ class HtmlProcessor
         }
     }
 
+    private function convertCanonicalUrl()
+    {
+        $head = $this->dom->getElementsByTagName("head")[0] ?? null;
+
+        if (!$head)
+            return null;
+
+        $links = $head->getElementsByTagName('link');
+
+        /**
+         * @var $link DOMElement
+         */
+        foreach ($links as $link) {
+            $rel = $link->getAttribute('rel');
+
+            if ($rel === 'canonical') {
+                $href = $link->getAttribute('href');
+                $path = str_replace($this->baseUrl, '', $href);
+
+                $link->setAttribute('href', $this->embedUrlFromPath($path));
+            }
+        }
+
+    }
+
     private function embedUrlFromPath(string $path): string
     {
+        $path = trim($path, '/');
         $path = $this->pathStyle ? ('/' . $path) : ($path === '' ? '' : "?p=$path");
         return $this->embeddingUrl . $path;
     }

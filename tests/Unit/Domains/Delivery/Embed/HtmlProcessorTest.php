@@ -52,6 +52,24 @@ it('converts URLs to embed-type URLs in <a>s', function () {
     expect($content)->toContain("<a href=\"https://example.org/test\"></a>");
 });
 
+it('converts canonical URL', function() {
+
+    $baseUrl = PermalinkRepository::getBaseUrl(blog());
+    $html = <<<HTML
+    <html>
+    <head>
+        <link rel="canonical" href="$baseUrl/test" />
+    </head>
+    <body>
+    </body>
+    </html>
+    HTML;
+
+    $content = (new HtmlProcessor(blog(), $this->parentUrl, $html))->get();
+    expect($content)->toContain("<link rel=\"canonical\" href=\"$this->parentUrl?p=test\">");
+
+});
+
 it('converts path style', function () {
     $baseUrl = PermalinkRepository::getBaseUrl(blog());
     $html = <<<HTML
@@ -68,4 +86,17 @@ it('converts path style', function () {
 
     expect($content)->toContain("<a href=\"$this->parentUrl/test\"></a>");
     expect($content)->toContain("<a href=\"$this->parentUrl/relative\"></a>");
+});
+
+it('adds Google indexifembedded', function() {
+
+    $html = <<<HTML
+    <html>
+        <head></head>
+        <body></body>
+    </html>
+    HTML;
+    $content = (new HtmlProcessor(blog(), $this->parentUrl, $html, true))->get();
+    expect($content)->toContain('<meta name="googlebot" content="noindex,indexifembedded">');
+
 });
