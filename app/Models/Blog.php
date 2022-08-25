@@ -38,7 +38,7 @@ class Blog extends Model
     protected function metaDefinition(Definer $definer)
     {
         $definer->add('embeddable')->default(false);
-        $definer->add('embedding_url')->default(null);
+        $definer->add('embedding_domains')->default(null);
 
         $definer->add('logo_url')->default(null);
         $definer->add('cover_url')->default(null);

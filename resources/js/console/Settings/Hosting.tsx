@@ -150,15 +150,15 @@ export default function Hosting() {
                 {
                     blog.embeddable &&
                     <DualSetting
-                        title="Embedding URL"
-                        description="Set the absolute URL where you are embedding your blog."
+                        title="Embedding Domains"
+                        description="Add comma seperated domain names where you are embedding your blog. Use * to allow all."
                         right={
                             <div>
                                 <Input
                                     type="text"
                                     name="self-hosting-url"
-                                    value={blog.embedding_url}
-                                    onChange={value => updateBlogValue('embedding_url', value)}
+                                    value={blog.embedding_domains}
+                                    onChange={value => updateBlogValue('embedding_domains', value)}
                                 />
                             </div>
                         }
@@ -177,7 +177,7 @@ export default function Hosting() {
                     'hosting_at',
                     'subdomain',
                     'embeddable',
-                    'embedding_url'
+                    'embedding_domains'
                 ]
             }
         />

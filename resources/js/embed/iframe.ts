@@ -73,7 +73,8 @@ window.addEventListener('DOMContentLoaded', function() {
 
     window.parent.postMessage(JSON.stringify({
         type: "init",
-        headElems
+        headElems,
+        title: document.title
     }));
 
 });

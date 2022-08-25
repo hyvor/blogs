@@ -5,6 +5,7 @@ namespace App\Http\Controllers\DeliveryAPI;
 use App\Domains\Blog\BlogService;
 use App\Domains\Delivery\DeliveryService;
 use App\Domains\Delivery\Embed\EmbedHtmlProcessor;
+use App\Domains\Delivery\Embed\EmbedService;
 use App\Exceptions\TrustedException;
 use Illuminate\Http\Request;
 
@@ -50,8 +51,8 @@ class DeliveryEmbedController
             throw new TrustedException('Not embeddable');
         }
 
-        if ($blog->getMeta('embedding_url') !== $embeddingUrl) {
-            throw new TrustedException('Embedding URL is invalid');
+        if (!EmbedService::validateEmbeddingUrl($blog, $embeddingUrl)) {
+            throw new TrustedException('This domain is not allowed to embed this blog');
         }
 
         $response = DeliveryService::getLaravelResponse($blog, $path);
@@ -63,4 +64,5 @@ class DeliveryEmbedController
 
         return $response;
     }
+
 }

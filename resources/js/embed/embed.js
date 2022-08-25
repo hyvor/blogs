@@ -42,6 +42,7 @@ window.addEventListener("message", function(e) {
                 }
                 document.head.appendChild(el)
             }
+            document.title = json.title;
         }
 
         if (json.type === 'navigation') {

@@ -116,6 +116,11 @@ class ShopifyController
         // setup blog for self-hosting with shopify default configs
         BlogService::updateBlog($blog, [
             'embeddable' => true,
+            /**
+             * Users may have multiple domains. So, allow all for now
+             * Users can later change if needed
+             */
+            'embedding_domains' => '*'
         ]);
 
         $shop->blog_id = $blog->id;

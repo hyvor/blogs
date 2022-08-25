@@ -80,6 +80,7 @@ it('creates blog, sets up self hosting, sets blog_id in shopify shop, and redire
     expect($blog)->toBeInstanceOf(Blog::class);
     expect($blog->billing_type)->toBe(BlogBillingTypeEnum::SHOPIFY);
     expect($blog->getMeta('embeddable'))->toBe(true);
+    expect($blog->getMeta('embedding_domains'))->toBe('*');
 
     $shop->refresh();
     expect($shop->blog_id)->toBe($blog->id);
