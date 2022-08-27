@@ -43,7 +43,7 @@ Webhooks are a way to get notified when an event happens on your blog.
 
 ### POST Request Body {#request}
 
-When a subscribed event happens, we call the URL you provided, via the HTTP POST method. The request will have a JSON body like this.
+When a subscribed event happens, we call the URL you provided, via the HTTP POST method. The request will have a JSON body like this. Contents of the `data` object varies depending on the event type.
 
 ```json
 {
@@ -56,7 +56,9 @@ When a subscribed event happens, we call the URL you provided, via the HTTP POST
 }
 ```
 
-Contents of the data object varies depending on the event type. It will contain one or more [Console API Objects](api-console).
+
+<!--
+It will contain one or more [Console API Objects](api-console).
 
 `blog.updated` event will have a [Blog Object](api-data#blog-object).
 
@@ -113,16 +115,14 @@ For example, if the status changed, the `diff` object will look like the followi
     }
 }
 ```
+-->
 
-`cache` event will have an array of paths that should be cleared from cache. Note that `cache.all` will not have any data.
+`cache.single` will have the path that should be cleared from cache. `cache.templates` and `cache.all` events do not contain any data.
 
 ```json
 {
-    ...
     "data": {
-        "cache": [
-            "/media/image.png",
-        ]
+        "path": "/media/image.png"
     }
 }
 ```
@@ -138,7 +138,6 @@ if (request.post.key !== env.HB_WEBHOOK_KEY) {
 ```
 
 Keep this key secure.
-
 
 ### Response & Retries
 

@@ -30,4 +30,12 @@ class ApiKeysRepository
     {
         $apiKey->delete();
     }
+
+    public static function hasKey(Blog $blog, ApiKeysTypeEnum $type, string $key) : bool
+    {
+        return ApiKey::where('blog_id', $blog->id)
+            ->where('type', $type)
+            ->where('api_key', $key)
+            ->exists();
+    }
 }

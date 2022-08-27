@@ -25,6 +25,7 @@ it('returns HTML response', function () {
     );
 
     $blog->setMeta('embeddable', true);
+    $blog->setMeta('embedding_domains', 'example.org');
 
     $this->call('GET', '/embed/iframe/test', ['url' => 'https://example.org'])
         ->assertOk()

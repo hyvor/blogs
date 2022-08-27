@@ -12,6 +12,10 @@ class DeliveryAPIResponseObject
 
     public int $at;
 
+    public bool $cache;
+
+    public int $status;
+
     // for file
     public DeliveryAPIFileTypeEnum $file_type;
 
@@ -21,11 +25,6 @@ class DeliveryAPIResponseObject
 
     // for redirect
     public string $to;
-
-    // for both
-    public bool $cache;
-
-    public int $status;
 
     public function __construct(DeliveryAPITypeEnum $type)
     {

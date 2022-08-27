@@ -11,12 +11,15 @@ return [
              * The subdomain given by Hyvor Blogs
              * Sign up at https://blogs.hyvor.com/console to create a new one
              */
-            'subdomain' => 'default',
+            'subdomain' => 'hb-blog',
 
             /**
              * Generate an API key for your blog and paste it here
              */
             'delivery_api_key' => '',
+
+
+            'webhook_secret' => null,
 
             /**
              * Where should we host the blog?
@@ -40,5 +43,7 @@ return [
      * You can add more blogs here ;)
      */
     ],
+
+    'hb_base_url' => 'http://blogs.hyvor.test:8082',
 
 ];
