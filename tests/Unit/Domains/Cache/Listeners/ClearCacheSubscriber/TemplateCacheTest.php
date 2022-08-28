@@ -6,10 +6,14 @@ use App\Domains\Blog\Events\BlogUpdatedEvent;
 use App\Domains\Blog\Events\BlogVariantUpdatedEvent;
 use App\Domains\Cache\CacheService;
 use App\Domains\Cache\Listeners\ClearCacheSubscriber;
+use App\Domains\Language\Events\LanguageChangedEvent;
+use App\Domains\Navigation\Events\NavigationChangedEvent;
+use App\Domains\Navigation\Events\NavigationVariantChangedEvent;
 use App\Domains\Post\Events\PostDeletedEvent;
 use App\Domains\Post\Events\PostUpdatedEvent;
 use App\Domains\Post\Events\PostVariantDeletedEvent;
 use App\Domains\Post\Events\PostVariantUpdatedEvent;
+use App\Domains\Route\Events\RouteChangedEvent;
 use App\Domains\Tag\Events\TagCreatedEvent;
 use App\Domains\Tag\Events\TagDeletedEvent;
 use App\Domains\Tag\Events\TagUpdatedEvent;
@@ -20,8 +24,11 @@ use App\Domains\User\Events\UserDeletedEvent;
 use App\Domains\User\Events\UserUpdatedEvent;
 use App\Domains\User\Events\UserVariantDeletedEvent;
 use App\Domains\User\Events\UserVariantUpdatedEvent;
+use App\Models\Language;
+use App\Models\Navigation;
 use App\Models\Post;
 use App\Models\PostVariant;
+use App\Models\Route;
 use App\Models\Tag;
 use App\Models\TagVariant;
 use App\Models\User;
@@ -61,6 +68,16 @@ it('is attached', function () {
     Event::assertListening(TagDeletedEvent::class, $tagEventListener);
     Event::assertListening(TagVariantUpdatedEvent::class, $tagVariantEventListener);
     Event::assertListening(TagVariantDeletedEvent::class, $tagVariantEventListener);
+
+    // navigation
+    Event::assertListening(NavigationChangedEvent::class, [ClearCacheSubscriber::class, 'onNavigationEvent']);
+    Event::assertListening(NavigationVariantChangedEvent::class, [ClearCacheSubscriber::class, 'onNavigationVariantEvent']);
+
+    // language
+    Event::assertListening(LanguageChangedEvent::class, [ClearCacheSubscriber::class, 'onLanguageEvent']);
+
+    // route
+    Event::assertListening(RouteChangedEvent::class, [ClearCacheSubscriber::class, 'onRouteEvent']);
 });
 
 beforeEach(function () {
@@ -255,4 +272,48 @@ it('clears cache on tag variant events', function () {
     $listener = new ClearCacheSubscriber();
     $listener->onTagVariantEvent($updateEvent);
     $listener->onTagVariantEvent($deleteEvent);
+});
+
+it('clears cache on navigation event', function() {
+    ($this->templateMock)();
+
+    $navigation = Navigation::factory()->create();
+    $event = new NavigationChangedEvent($navigation);
+
+    $listener = new ClearCacheSubscriber();
+    $listener->onNavigationEvent($event);
+});
+
+it('clears cache on navigation variant event', function() {
+    ($this->templateMock)();
+
+    $navigation = Navigation::factory()->create();
+    $event = new NavigationChangedEvent($navigation);
+
+    $listener = new ClearCacheSubscriber();
+    $listener->onNavigationEvent($event);
+});
+
+it('clears cache on language event', function() {
+
+    ($this->templateMock)();
+
+    $language = Language::factory()->create();
+    $event = new LanguageChangedEvent($language);
+
+    $listener = new ClearCacheSubscriber();
+    $listener->onLanguageEvent($event);
+
+});
+
+it('clears cache on route event', function() {
+
+    ($this->templateMock)();
+
+    $route = Route::factory()->create();
+    $event = new RouteChangedEvent($route);
+
+    $listener = new ClearCacheSubscriber();
+    $listener->onRouteEvent($event);
+
 });

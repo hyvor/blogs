@@ -2,9 +2,13 @@
 
 namespace Tests\Feature\ConsoleAPI\Languages;
 
+use App\Domains\Language\Events\LanguageChangedEvent;
+use Illuminate\Support\Facades\Event;
 use Illuminate\Testing\Fluent\AssertableJson;
 
 it('updates the language', function () {
+    Event::fake();
+
     $language = blog()->languages[0];
 
     $code = 'si';
@@ -26,6 +30,8 @@ it('updates the language', function () {
 
     expect($language->code)->toBe($code);
     expect($language->name)->toBe($name);
+
+    Event::assertDispatched(LanguageChangedEvent::class);
 });
 
 it('cannot take other languages', function () {

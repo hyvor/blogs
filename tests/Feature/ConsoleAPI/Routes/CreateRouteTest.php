@@ -2,9 +2,14 @@
 
 namespace Tests\Feature\ConsoleAPI\Routes;
 
+use App\Domains\Route\Events\RouteChangedEvent;
+use Illuminate\Support\Facades\Event;
 use Illuminate\Testing\Fluent\AssertableJson;
 
 it('creates a route', function () {
+
+    Event::fake();
+
     $name = 'Hyvor';
     $match = '/hyvor';
     $template = 'index.twig';
@@ -27,4 +32,6 @@ it('creates a route', function () {
                 ->where('content_type', $contentType)
                 ->etc()
         );
+
+    Event::assertDispatched(RouteChangedEvent::class);
 });

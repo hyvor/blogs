@@ -2,10 +2,15 @@
 
 namespace Tests\Feature\ConsoleAPI\Routes;
 
+use App\Domains\Route\Events\RouteChangedEvent;
 use App\Models\Route;
+use Illuminate\Support\Facades\Event;
 use Illuminate\Testing\Fluent\AssertableJson;
 
 it('updates route', function () {
+
+    Event::fake();
+
     $route = Route::factory()->create(['blog_id' => blog()]);
 
     $name = 'new-name';
@@ -30,6 +35,8 @@ it('updates route', function () {
                 ->where('content_type', $contentType)
                 ->etc()
        );
+
+    Event::assertDispatched(RouteChangedEvent::class);
 });
 
 it('supports nullable', function () {

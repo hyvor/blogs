@@ -17,4 +17,9 @@ class Language extends Model
     {
         $this->hasOne(Language::class, 'id', 'fallback_language_id');
     }
+
+    public function blog()
+    {
+        return $this->belongsTo(Blog::class);
+    }
 }

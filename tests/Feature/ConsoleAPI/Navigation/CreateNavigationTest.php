@@ -3,10 +3,15 @@
 namespace Tests\Feature\ConsoleAPI\Navigation;
 
 use App\Domains\Language\LanguageRepository;
+use App\Domains\Navigation\Events\NavigationChangedEvent;
 use App\Models\Navigation;
+use Illuminate\Support\Facades\Event;
 use Illuminate\Testing\Fluent\AssertableJson;
 
 it('creates a navigation', function () {
+
+    Event::fake();
+
     $url = '/about';
     $name = 'About';
 
@@ -24,6 +29,8 @@ it('creates a navigation', function () {
                 ->where('variants.0.name', $name)
                 ->etc()
         );
+
+    Event::assertDispatched(NavigationChangedEvent::class);
 });
 
 it('creates header navigations', function () {

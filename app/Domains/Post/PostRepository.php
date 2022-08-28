@@ -382,15 +382,4 @@ class PostRepository
         PostVariantDeletedEvent::dispatch($variant);
     }
 
-    public static function getFirstTag(Post $post)
-    {
-        return $post->tags[0];
-    }
-
-    public static function getFirstAuthor(Post $post)
-    {
-        return $post->tags()->withPivot('order')
-            ->orderBy('order', 'asc')
-            ->first();
-    }
 }

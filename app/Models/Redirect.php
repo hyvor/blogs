@@ -13,4 +13,9 @@ class Redirect extends Model
     protected $casts = [
         'type' => RedirectTypeEnum::class,
     ];
+
+    public function blog()
+    {
+        return $this->belongsTo(Blog::class);
+    }
 }

@@ -2,9 +2,14 @@
 
 namespace Tests\Feature\ConsoleAPI\Languages;
 
+use App\Domains\Language\Events\LanguageChangedEvent;
+use Illuminate\Support\Facades\Event;
 use Illuminate\Testing\Fluent\AssertableJson;
 
 it('creates a language', function () {
+
+    Event::fake();
+
     $code = 'si';
     $name = 'සිංහල';
 
@@ -19,6 +24,8 @@ it('creates a language', function () {
                 ->where('name', $name)
                 ->etc()
         );
+
+    Event::assertDispatched(LanguageChangedEvent::class);
 });
 
 it('does not create language if the code already exists', function () {

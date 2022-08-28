@@ -3,25 +3,41 @@
 return [
 
     /**
-     * Sett up one or more blogs within your application
+     * Tutorial: <https://blogs.hyvor.com/blog/laravel>
+     *
+     * Set up one or more blogs within your application
      */
     'blogs' => [
         [
             /**
+             * @required
+             *
              * The subdomain given by Hyvor Blogs
              * Sign up at https://blogs.hyvor.com/console to create a new one
              */
             'subdomain' => 'hb-blog',
 
             /**
-             * Generate an API key for your blog and paste it here
+             * @required
+             *
+             * API Key to access the Delivery API of your blog
+             * Console -> Settings -> API Keys -> Create an API key for Delivery API
+             * Paste the key here
              */
             'delivery_api_key' => '',
 
-
+            /**
+             * Optional but recommended
+             * As per the tutorial, you should set up a webhook with all cache events at
+             * Console -> Settings -> Webhooks
+             * Then, copy the secret here for webhook validation
+             * If the secret is null, no validation is done
+             */
             'webhook_secret' => null,
 
             /**
+             * @required
+             *
              * Where should we host the blog?
              * If the value is /blog, all /blog/* routes will be reserved for the blog
              */
@@ -39,11 +55,15 @@ return [
              */
             'middleware' => [],
         ],
-    /**
-     * You can add more blogs here ;)
-     */
+        /**
+         * You can add more blogs here ;)
+         */
     ],
 
-    'hb_base_url' => 'http://blogs.hyvor.test:8082',
+    /**
+     * Hyvor Blog's Base URL to call the delivery API
+     * Only useful for package maintainers
+     */
+    'hb_base_url' => 'https://blogs.hyvor.com',
 
 ];

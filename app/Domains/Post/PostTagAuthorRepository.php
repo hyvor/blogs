@@ -2,6 +2,7 @@
 
 namespace App\Domains\Post;
 
+use App\Domains\Post\Events\PostUpdatedEvent;
 use App\Exceptions\TrustedException;
 use App\Models\Post;
 use App\Models\PostAuthor;
@@ -36,6 +37,8 @@ class PostTagAuthorRepository
                 'tag_id' => $id,
             ]);
         }
+
+        PostUpdatedEvent::dispatch($post);
     }
 
     public static function deletePostTagsByTag(Tag $tag)
@@ -68,6 +71,8 @@ class PostTagAuthorRepository
                 'user_id' => $id,
             ]);
         }
+
+        PostUpdatedEvent::dispatch($post);
     }
 
     public static function createAuthor(int $postId, int $userId)

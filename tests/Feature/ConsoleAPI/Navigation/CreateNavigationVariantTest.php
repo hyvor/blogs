@@ -2,7 +2,9 @@
 
 namespace Tests\Feature\ConsoleAPI\Navigation;
 
+use App\Domains\Navigation\Events\NavigationVariantChangedEvent;
 use App\Models\Navigation;
+use Illuminate\Support\Facades\Event;
 use Illuminate\Testing\Fluent\AssertableJson;
 
 it('requires a valid language ID', function () {
@@ -17,6 +19,8 @@ it('requires a valid language ID', function () {
 });
 
 it('creates a navigation variant', function () {
+    Event::fake();
+
     $nav = Navigation::factory()->create(['blog_id' => blog()]);
 
     $name = 'Hyvor';
@@ -26,4 +30,6 @@ it('creates a navigation variant', function () {
     ])
         ->assertOk()
         ->assertJson(fn (AssertableJson $json) => $json->where('name', $name)->etc());
+
+    Event::assertDispatched(NavigationVariantChangedEvent::class);
 });

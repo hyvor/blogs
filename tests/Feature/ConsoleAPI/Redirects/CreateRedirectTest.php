@@ -2,10 +2,14 @@
 
 namespace Tests\Feature\ConsoleAPI\Redirects;
 
+use App\Domains\Redirect\Events\RedirectChangedEvent;
 use App\Models\Redirect;
+use Illuminate\Support\Facades\Event;
 use Illuminate\Testing\Fluent\AssertableJson;
 
 it('creates a redirect', function () {
+    Event::fake();
+
     $path = '/example';
     $to = 'https://example.com';
     $type = 'permanent';
@@ -22,6 +26,8 @@ it('creates a redirect', function () {
                 ->where('type', $type)
                 ->etc()
         );
+
+    Event::assertDispatched(RedirectChangedEvent::class);
 });
 
 it('does not create a redirect when path is taken', function () {

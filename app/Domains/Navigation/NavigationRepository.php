@@ -4,6 +4,8 @@ namespace App\Domains\Navigation;
 
 use App\Data\Enums\NavigationTypeEnum;
 use App\Domains\Language\LanguageRepository;
+use App\Domains\Navigation\Events\NavigationChangedEvent;
+use App\Domains\Navigation\Events\NavigationVariantChangedEvent;
 use App\Models\Blog;
 use App\Models\Language;
 use App\Models\Navigation;
@@ -23,7 +25,9 @@ class NavigationRepository
         string $url,
         NavigationTypeEnum $type,
         int $sort = 0
-    ): Navigation {
+    ): Navigation
+    {
+
         $navigation = Navigation::create([
             'blog_id' => $blog->id,
             'url' => $url,
@@ -33,11 +37,13 @@ class NavigationRepository
 
         $language = LanguageRepository::getPrimaryLanguage($blog);
 
-        self::createNavigationVariant(
-            $navigation,
-            $language,
-            $name
-        );
+        NavigationVariant::create([
+            'navigation_id' => $navigation->id,
+            'language_id' => $language->id,
+            'name' => $name,
+        ]);
+
+        NavigationChangedEvent::dispatch($navigation);;
 
         return $navigation;
     }
@@ -46,10 +52,13 @@ class NavigationRepository
         Navigation $navigation,
         string $url,
         NavigationTypeEnum $type,
-    ): Navigation {
+    ): Navigation
+    {
         $navigation->url = $url;
         $navigation->type = $type;
         $navigation->save();
+
+        NavigationChangedEvent::dispatch($navigation);
 
         return $navigation;
     }
@@ -58,6 +67,8 @@ class NavigationRepository
     {
         $navigation->variants->map(fn ($variant) => self::deleteNavigationVariant($variant));
         $navigation->delete();
+
+        NavigationChangedEvent::dispatch($navigation);
     }
 
     public static function getNavigationVariant(Navigation $navigation, Language $language): ?NavigationVariant
@@ -71,12 +82,17 @@ class NavigationRepository
         Navigation $navigation,
         Language $language,
         ?string $name
-    ): NavigationVariant {
-        return NavigationVariant::create([
+    ): NavigationVariant
+    {
+        $variant = NavigationVariant::create([
             'navigation_id' => $navigation->id,
             'language_id' => $language->id,
             'name' => $name,
         ]);
+
+        NavigationVariantChangedEvent::dispatch($variant);
+
+        return $variant;
     }
 
     public static function updateNavigationVariant(NavigationVariant $variant, string $name): NavigationVariant
@@ -84,12 +100,15 @@ class NavigationRepository
         $variant->name = $name;
         $variant->save();
 
+        NavigationVariantChangedEvent::dispatch($variant);
+
         return $variant;
     }
 
     public static function deleteNavigationVariant(NavigationVariant $variant)
     {
         $variant->delete();
+        NavigationVariantChangedEvent::dispatch($variant);
     }
 
     public static function getCount(Blog $blog, NavigationTypeEnum $type): int

@@ -2,9 +2,11 @@
 
 namespace Tests\Feature\ConsoleAPI\Posts;
 
+use App\Domains\Post\Events\PostUpdatedEvent;
 use App\Models\Post;
 use App\Models\PostTag;
 use App\Models\Tag;
+use Illuminate\Support\Facades\Event;
 
 beforeEach(function () {
     $this->post = Post::where('blog_id', config('test.blog_id'))->first();
@@ -19,6 +21,9 @@ it('validates', function () {
 });
 
 it('changes tags', function () {
+
+    Event::fake();
+
     PostTag::where('post_id', $this->post->id)->delete();
     $tags = Tag::where('blog_id', config('test.blog_id'))->get();
 
@@ -29,6 +34,8 @@ it('changes tags', function () {
         ->assertOk();
 
     expect(PostTag::where('post_id', $this->post->id)->count())->toBe(count($tags));
+
+    Event::assertDispatched(PostUpdatedEvent::class, fn(PostUpdatedEvent $event) => $event->post->id === $this->post->id);
 });
 
 it('removes all tags', function () {

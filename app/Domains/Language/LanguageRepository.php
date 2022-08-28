@@ -2,6 +2,7 @@
 
 namespace App\Domains\Language;
 
+use App\Domains\Language\Events\LanguageChangedEvent;
 use App\Domains\Language\Jobs\DeleteLanguageVariants;
 use App\Models\Blog;
 use App\Models\Language;
@@ -26,12 +27,17 @@ class LanguageRepository
         string $code,
         string $name,
         bool $isPrimary = false
-    ): Language {
-        return $blog->languages()->create([
+    ): Language
+    {
+        $language = $blog->languages()->create([
             'code' => $code,
             'name' => $name,
             'is_primary' => $isPrimary,
         ]);
+
+        LanguageChangedEvent::dispatch($language);
+
+        return $language;
     }
 
     public static function updateLanguage(Language $language, string $code, string $name)
@@ -41,12 +47,16 @@ class LanguageRepository
 
         $language->save();
 
+        LanguageChangedEvent::dispatch($language);
+
         return $language;
     }
 
     public static function deleteLanguage(Language $language)
     {
         $language->delete();
+
+        LanguageChangedEvent::dispatch($language);
 
         dispatch(new DeleteLanguageVariants($language));
     }

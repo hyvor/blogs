@@ -22,4 +22,9 @@ class Navigation extends Model
     {
         return $this->hasMany(NavigationVariant::class);
     }
+
+    public function blog()
+    {
+        return $this->belongsTo(Blog::class);
+    }
 }

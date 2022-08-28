@@ -3,6 +3,7 @@
 namespace App\Domains\Redirect;
 
 use App\Data\Enums\RedirectTypeEnum;
+use App\Domains\Redirect\Events\RedirectChangedEvent;
 use App\Models\Blog;
 use App\Models\Redirect;
 use Illuminate\Support\Collection;
@@ -24,11 +25,15 @@ class RedirectRepository
         string $to,
         RedirectTypeEnum $type
     ): Redirect {
-        return $blog->redirects()->create([
+        $redirect = $blog->redirects()->create([
             'path' => $path,
             'to' => $to,
             'type' => $type,
         ]);
+
+        RedirectChangedEvent::dispatch($redirect);
+
+        return $redirect;
     }
 
     public static function updateRedirect(
@@ -43,12 +48,16 @@ class RedirectRepository
 
         $redirect->save();
 
+        RedirectChangedEvent::dispatch($redirect);
+
         return $redirect;
     }
 
     public static function deleteRedirect(Redirect $redirect): void
     {
         $redirect->delete();
+
+        RedirectChangedEvent::dispatch($redirect);
     }
 
     /**

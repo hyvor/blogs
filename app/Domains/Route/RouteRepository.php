@@ -2,6 +2,7 @@
 
 namespace App\Domains\Route;
 
+use App\Domains\Route\Events\RouteChangedEvent;
 use App\Models\Blog;
 use App\Models\Route;
 use Illuminate\Database\Eloquent\Collection;
@@ -35,14 +36,19 @@ class RouteRepository
         string $template,
         ?string $postsFilter = null,
         ?string $contentType = null,
-    ): Route {
-        return $blog->routes()->create([
+    ): Route
+    {
+        $route = $blog->routes()->create([
             'name' => $name,
             'match' => $match,
             'template' => $template,
             'posts_filter' => $postsFilter,
             'content_type' => $contentType,
         ]);
+
+        RouteChangedEvent::dispatch($route);
+
+        return $route;
     }
 
     public static function updateRoute(Route $route, array $updates): Route
@@ -52,11 +58,15 @@ class RouteRepository
         }
         $route->save();
 
+        RouteChangedEvent::dispatch($route);
+
         return $route;
     }
 
     public static function deleteRoute(Route $route)
     {
         $route->delete();
+
+        RouteChangedEvent::dispatch($route);
     }
 }

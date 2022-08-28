@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "cbd534478892d870a8840d27b365d818",
+    "content-hash": "2e723e8c91c6fceeabb3bd289e8a64c8",
     "packages": [
         {
             "name": "asm89/stack-cors",
@@ -1520,14 +1520,27 @@
         },
         {
             "name": "hyvor/hyvor-blogs-laravel",
-            "version": "dev-main",
+            "version": "0.0.1",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/hyvor/hyvor-blogs-laravel.git",
+                "reference": "71eaaec5bca54be4fcdeb87a014ed70653b76d94"
+            },
             "dist": {
-                "type": "path",
-                "url": "../package-hyvor-blogs-laravel",
-                "reference": "ebd016f2ddc738ae0ba2c13f887a82041766e20b"
+                "type": "zip",
+                "url": "https://api.github.com/repos/hyvor/hyvor-blogs-laravel/zipball/71eaaec5bca54be4fcdeb87a014ed70653b76d94",
+                "reference": "71eaaec5bca54be4fcdeb87a014ed70653b76d94",
+                "shasum": ""
+            },
+            "require": {
+                "guzzlehttp/guzzle": "^7.4"
             },
             "require-dev": {
+                "laravel/pint": "^1.1",
+                "nunomaduro/larastan": "^2.1",
                 "orchestra/testbench": "^7.0",
+                "pestphp/pest": "^1.21",
+                "phpstan/phpstan": "^1.8",
                 "phpunit/phpunit": "^9.5"
             },
             "type": "library",
@@ -1543,24 +1556,22 @@
                     "Hyvor\\HyvorBlogs\\": "src"
                 }
             },
-            "autoload-dev": {
-                "psr-4": {
-                    "Hyvor\\HyvorBlogs\\Tests\\": "tests"
-                }
-            },
+            "notification-url": "https://packagist.org/downloads/",
             "license": [
                 "MIT"
             ],
             "authors": [
                 {
-                    "name": "Supun Kavinda",
+                    "name": "Supun",
                     "email": "supun@hyvor.com"
                 }
             ],
-            "description": "Laravel Package for Hyvor Blogs self-hosting",
-            "transport-options": {
-                "relative": true
-            }
+            "description": "For self-hosting a Hyvor Blogs blog on a Laravel application",
+            "support": {
+                "issues": "https://github.com/hyvor/hyvor-blogs-laravel/issues",
+                "source": "https://github.com/hyvor/hyvor-blogs-laravel/tree/0.0.1"
+            },
+            "time": "2022-08-27T09:24:08+00:00"
         },
         {
             "name": "hyvor/laravel-filterq",
@@ -12124,9 +12135,7 @@
     ],
     "aliases": [],
     "minimum-stability": "dev",
-    "stability-flags": {
-        "hyvor/hyvor-blogs-laravel": 20
-    },
+    "stability-flags": [],
     "prefer-stable": true,
     "prefer-lowest": false,
     "platform": {
@@ -12138,13 +12147,13 @@
         "ext-fileinfo": "*",
         "ext-intl": "*",
         "ext-json": "*",
+        "ext-libxml": "*",
         "ext-mbstring": "*",
         "ext-openssl": "*",
         "ext-pcre": "*",
         "ext-pdo": "*",
         "ext-tokenizer": "*",
-        "ext-xml": "*",
-        "ext-libxml": "*"
+        "ext-xml": "*"
     },
     "platform-dev": [],
     "plugin-api-version": "2.2.0"

@@ -6,14 +6,19 @@ use App\Data\Enums\PostStatusEnum;
 use App\Domains\Blog\Events\BlogUpdatedEvent;
 use App\Domains\Blog\Events\BlogVariantUpdatedEvent;
 use App\Domains\Cache\CacheService;
+use App\Domains\Language\Events\LanguageChangedEvent;
 use App\Domains\Language\LanguageRepository;
 use App\Domains\Media\Events\MediaCreatedEvent;
 use App\Domains\Media\Events\MediaDeletedEvent;
+use App\Domains\Navigation\Events\NavigationChangedEvent;
+use App\Domains\Navigation\Events\NavigationVariantChangedEvent;
 use App\Domains\Post\Events\PostDeletedEvent;
 use App\Domains\Post\Events\PostUpdatedEvent;
 use App\Domains\Post\Events\PostVariantDeletedEvent;
 use App\Domains\Post\Events\PostVariantUpdatedEvent;
 use App\Domains\Post\PostRepository;
+use App\Domains\Redirect\Events\RedirectChangedEvent;
+use App\Domains\Route\Events\RouteChangedEvent;
 use App\Domains\Route\PermalinkRepository;
 use App\Domains\Tag\Events\TagCreatedEvent;
 use App\Domains\Tag\Events\TagDeletedEvent;
@@ -73,6 +78,12 @@ class ClearCacheSubscriber
         $events->listen(TagDeletedEvent::class, [static::class, 'onTagEvent']);
         $events->listen(TagVariantUpdatedEvent::class, [static::class, 'onTagVariantEvent']);
         $events->listen(TagVariantDeletedEvent::class, [static::class, 'onTagVariantEvent']);
+
+        $events->listen(NavigationChangedEvent::class, [static::class, 'onNavigationEvent']);
+        $events->listen(NavigationVariantChangedEvent::class, [static::class, 'onNavigationVariantEvent']);
+
+        $events->listen(LanguageChangedEvent::class, [static::class, 'onLanguageEvent']);
+        $events->listen(RouteChangedEvent::class, [static::class, 'onRouteEvent']);
     }
 
     private function subscribeSingleEvents(Dispatcher $events): void
@@ -82,6 +93,8 @@ class ClearCacheSubscriber
 
         $events->listen(AssetEditedEvent::class, [static::class, 'onAssetEdit']);
         $events->listen(StylesEditedEvent::class, [static::class, 'onStylesEdit']);
+
+        $events->listen(RedirectChangedEvent::class, [static::class, 'onRedirectEvent']);
     }
 
     private function subscribeAllEvents(Dispatcher $event): void
@@ -163,6 +176,25 @@ class ClearCacheSubscriber
         $this->clearTemplateCache($event->variant->tag->blog);
     }
 
+    public function onNavigationEvent(NavigationChangedEvent $event)
+    {
+        $this->clearTemplateCache($event->navigation->blog);
+    }
+    public function onNavigationVariantEvent(NavigationVariantChangedEvent $event)
+    {
+        $this->clearTemplateCache($event->variant->navigation->blog);
+    }
+
+    public function onLanguageEvent(LanguageChangedEvent $event)
+    {
+        $this->clearTemplateCache($event->language->blog);
+    }
+
+    public function onRouteEvent(RouteChangedEvent $event)
+    {
+        $this->clearTemplateCache($event->route->blog);
+    }
+
     public function onMediaEvent(MediaCreatedEvent|MediaDeletedEvent $event)
     {
         $media = $event->media;
@@ -181,5 +213,10 @@ class ClearCacheSubscriber
     public function onStylesEdit(StylesEditedEvent $event)
     {
         $this->clearSingleCache($event->blog, '/styles.css');
+    }
+
+    public function onRedirectEvent(RedirectChangedEvent $event)
+    {
+        $this->clearSingleCache($event->redirect->blog, $event->redirect->path);
     }
 }
