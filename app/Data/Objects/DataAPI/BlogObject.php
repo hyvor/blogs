@@ -67,11 +67,10 @@ class BlogObject
         $this->url = PermalinkRepository::getBlogPermalink($blog, $language);
         $this->base_url = PermalinkRepository::getFullUrlFromPath($blog, '');
 
-        $this->icon_url = $blog->icon_url;
-        $this->logo_url = $blog->logo_url ?? $blog->icon_url;
-        $this->cover_url = $blog->cover_url;
-
         $meta = $blog->getAllMeta();
+
+        $this->logo_url = $meta->logo_url;
+        $this->cover_url = $meta->cover_url;
 
         $this->social = new SocialMediaObject(
             $meta->social_facebook,

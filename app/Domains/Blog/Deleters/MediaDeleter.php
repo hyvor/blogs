@@ -5,6 +5,7 @@ namespace App\Domains\Blog\Deleters;
 use App\Domains\Media\MediaRepository;
 use App\Models\Blog;
 use App\Models\Media;
+use Illuminate\Support\Facades\Event;
 
 class MediaDeleter implements DeleterInterface
 {

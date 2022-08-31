@@ -13,6 +13,7 @@ use App\Data\Objects\DataAPI\TagObject;
 use App\Data\Objects\DeliveryAPI\DeliveryAPIResponseObject;
 use App\Data\Objects\DeliveryAPI\MetaObject;
 use App\Data\Objects\DeliveryAPI\RouteObject;
+use App\Domains\App\DomainService;
 use App\Domains\Delivery\PathMatcher;
 use App\Domains\Delivery\RouteMatcher\MatchedRoute;
 use App\Domains\Delivery\Twig\TwigRenderer;
@@ -113,7 +114,7 @@ class TemplateRenderer
 
         $vars = [
             // HB-specific
-            '__domain' => config('blogs.domain_app'),
+            '__domain' => DomainService::getAppDomainWithPort(),
 
             // vars for all routes
             '_blog' => $blogObject,

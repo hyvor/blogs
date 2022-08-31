@@ -11,9 +11,7 @@ class DeleteBlogJob implements ShouldQueue
 {
     use Dispatchable;
 
-    public function __construct(public Blog $blog)
-    {
-    }
+    public function __construct(public Blog $blog) {}
 
     public function handle()
     {

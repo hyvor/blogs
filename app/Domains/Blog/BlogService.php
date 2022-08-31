@@ -198,7 +198,7 @@ class BlogService
         ];
 
         foreach ($deleters as $deleter) {
-            app($deleter, [$blog])->delete();
+            app($deleter, ['blog' => $blog])->delete();
         }
 
         $blog->delete();

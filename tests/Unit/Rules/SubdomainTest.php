@@ -11,8 +11,13 @@ function subdomainPasses(string $value)
     return $rule->passes('subdomain', $value);
 }
 
+
 test('valid', function () {
     expect(subdomainPasses('test'))->toBeTrue();
+});
+
+it('can contain one char', function() {
+    expect(subdomainPasses('k'))->toBeTrue();
 });
 
 it('can contain hyphens', function () {

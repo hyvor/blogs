@@ -8,5 +8,7 @@ use Illuminate\Support\Facades\Queue;
 it('calls the delete blog job', function () {
     Queue::fake();
     $this->callConsoleApi('DELETE', '/blog')->assertOk();
-    Queue::assertPushed(DeleteBlogJob::class);
+    Queue::assertPushed(DeleteBlogJob::class, function (DeleteBlogJob $job) {
+        return $job->blog->subdomain === config('test.subdomain');
+    });
 });
