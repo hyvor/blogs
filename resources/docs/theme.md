@@ -1,5 +1,3 @@
 # Theme
 
-
-
-## Editing {#editing}
+This documentation is being written...

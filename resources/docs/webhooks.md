@@ -5,7 +5,7 @@ Webhooks are a way to get notified when an event happens on your blog.
 * A blog can have up to 5 webhooks. 
 * Each webhook has a URL and can subscribe to one or more of the following events.
 
-> **Note:** Currently, only cache events are supported. They can be used for self-hosting your blog in a subdirectory. Other events will be added soon.
+> **Note:** Currently, only cache events are supported. They can be used for [self-hosting](self-hosting) your blog in a subdirectory. Other events will be added soon.
 
 | Event                  | Dispatched                                                                                |
 |------------------------|-------------------------------------------------------------------------------------------|

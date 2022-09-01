@@ -67,11 +67,12 @@ return [
         ['compliance-gdpr', 'GDPR Compliance'],
     ],
     'Integrations' => [
-        ['zapier', 'Zapier'],
+        /*['zapier', 'Zapier'],*/
         ['shopify', 'Shopify'],
         /*['thinkific', 'Thinkific']*/
     ],
     'Misc' => [
+        ['support', 'Customer Support'],
         ['oss', 'Open Source'],
     ],
 

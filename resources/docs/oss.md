@@ -12,7 +12,9 @@ Hyvor Blogs is created thanks to amazing free and open-source software (FOSS). W
 * [Codemirror](https://codemirror.net/) - All code editors in the Console are built using this
 * [Day.js](https://day.js.org/) - Handles date management and displaying
 * [SCSS](https://sass-lang.com/) - Makes writing CSS easier.
-* [Webpack](https://webpack.js.org/) (and [Laravel Mix](https://laravel-mix.com/)) - Bundles JS/CSS code
+* [Vite](https://vitejs.dev/) - Front-end build tool
+* [Jest](https://jestjs.io/) - Unit testing
+* [Cypress](https://www.cypress.io/) - Feature/e2e testing
 
 ## Back-end {#backend}
 

@@ -8,6 +8,4 @@ Each tag creates a tag index page (`/tag/tag-slug`), which lists the posts of th
 
 Tags: **Console &rarr; Settings &rarr; Tags**.
 
-## Private Tags {#private}
-
-Private tags allow you to 
+> This documentation is being written...

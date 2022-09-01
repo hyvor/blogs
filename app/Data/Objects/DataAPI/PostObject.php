@@ -52,10 +52,19 @@ class PostObject
 
     public string $code_foot;
 
+    /**
+     * @var VariantObject[]
+     */
     public array $variants;
 
+    /**
+     * @var TagObject[]
+     */
     public array $tags;
 
+    /**
+     * @var AuthorObject[]
+     */
     public array $authors;
 
     public function __construct(Post $post, Blog $blog, Language $language)

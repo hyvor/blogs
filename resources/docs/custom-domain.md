@@ -1,6 +1,6 @@
 # Custom Domain
 
-We highly encourage you to set up a custom domain for your blog. It allows you to "own" your content completely without locking into a particular vendor. It will also help you create your own brand.
+We highly encourage you to set up a custom domain for your blog. It allows you to "own" your content completely without locking into us. It will also help you create your own brand.
 
 * [Choosing a domain](#choosing)
 * [Setting up DNS Records](#dns)

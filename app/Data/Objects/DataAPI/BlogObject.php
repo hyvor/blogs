@@ -22,8 +22,6 @@ class BlogObject
 
     public ?string $cover_url;
 
-    public string $lang;
-
     public string $url;
 
     public string $base_url;
@@ -97,6 +95,8 @@ class BlogObject
                 $this->nav_footer[] = $navObject;
             }
         });
+
+        $this->posts_count = $blog->getCount('posts');
 
         $this->languages = $blog->languages->mapInto(LanguageObject::class)->toArray();
     }
