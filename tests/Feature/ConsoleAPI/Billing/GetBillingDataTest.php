@@ -6,7 +6,6 @@ use Database\Factories\ReceiptFactory;
 use Database\Factories\SubscriptionFactory;
 use Illuminate\Testing\Fluent\AssertableJson;
 
-// TODO: FLAKY
 it('gets billing data', function () {
     $blog = blog();
 
@@ -24,7 +23,9 @@ it('gets billing data', function () {
                         ->has('media');
                 })
                 ->has('subscriptions', 3, function (AssertableJson $json) {
-                    $json->has('status')
+                    $json
+                        ->has('id')
+                        ->has('status')
                         ->has('plan')
                         ->has('frequency')
                         ->has('created_at')

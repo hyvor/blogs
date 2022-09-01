@@ -11,6 +11,7 @@ use App\Models\Post;
 use App\Models\PostAuthor;
 use App\Models\PostTag;
 use App\Models\PostVariant;
+use App\Models\Route;
 use App\Models\Tag;
 use App\Models\TagVariant;
 use App\Models\User;
@@ -172,7 +173,9 @@ class DatabaseSeeder extends Seeder
              * Other fillers are mimicked inside this seeder
              * However, we'll here just use the Route filler as the code will be the same for testing
              */
-            (new RouteFiller($blog))->fill();
+            foreach (RouteFiller::ROUTES as $route) {
+                $blog->routes()->create($route);
+            }
         }
 
         PostSearchRepository::setFilterableAttributes();

@@ -72,6 +72,8 @@ class ConsolePostController extends Controller
 
         PostTagAuthorRepository::createAuthor($post->id, $consoleApiAccessingUser->user->id);
 
+        $post->refresh();
+
         return response()->json(new PostObject($post, $blog));
     }
 

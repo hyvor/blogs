@@ -6,6 +6,7 @@ use App\Models\Media;
 use Illuminate\Testing\Fluent\AssertableJson;
 
 beforeEach(function () {
+    Media::truncate(); // media factory-created models are added when mocking
     Media::factory()->count(3)->create([
         'blog_id' => blog(),
     ]);
@@ -25,7 +26,6 @@ it('gets media', function () {
         });
 });
 
-// TODO: FLAKY
 it('limit and offset works and orders by ID desc', function () {
     $media = Media::orderBy('id', 'ASC')->first();
 

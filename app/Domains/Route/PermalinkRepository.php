@@ -145,7 +145,8 @@ class PermalinkRepository
         Blog $blog,
         Language $language,
         $onlyPath = false
-    ): string {
+    ): string
+    {
         $path = RouteRepository::getRoute($blog, 'post')->match;
 
         // build regex for matching dates

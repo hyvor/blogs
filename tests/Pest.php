@@ -14,6 +14,7 @@ use App\Models\User;
 use Faker\Factory;
 use Hyvor\HyvorConnecter\HyvorUser;
 use Hyvor\HyvorConnecter\Userbase;
+use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Facades\Http;
 use Illuminate\Support\Facades\Request;
 use Mockery\MockInterface;
@@ -38,6 +39,7 @@ uses()->beforeEach(function () {
     Http::fake([
         'https://iframe.ly/api/iframely*' => Http::response(jsonData('UrlData/iframely-response.json'))
     ]);
+
 })->in('Feature', 'Unit');
 
 function blog()

@@ -11,11 +11,9 @@ use Illuminate\Support\Facades\URL;
 
 it('confirms the subscription', function () {
     $url = URL::signedRoute('shopify-billing-create', [
-        'data' => ShopifyBillingDataEncoder::encode(
-            config('test.blog_id'),
-            SubscriptionPlanEnum::A,
-            SubscriptionFrequencyEnum::MONTHLY
-        )
+        'blog_id' => config('test.blog_id'),
+        'plan' => 'A',
+        'frequency' => 'monthly'
     ]);
     $url .= '&charge_id=100';
 
@@ -40,15 +38,15 @@ it('cancels the current subscription', function () {
         SubscriptionFrequencyEnum::MONTHLY
     );
 
+    $url = URL::signedRoute('shopify-billing-create', [
+        'blog_id' => config('test.blog_id'),
+        'plan' => 'A',
+        'frequency' => 'monthly'
+    ]);
+    $url .= '&charge_id=100';
+
     $this
-        ->callIntegrationEndpoint('GET', '/shopify/billing/confirm', [
-            'charge_id' => 100,
-            'data' => ShopifyBillingDataEncoder::encrypt(
-                config('test.blog_id'),
-                SubscriptionPlanEnum::A,
-                SubscriptionFrequencyEnum::MONTHLY
-            )
-        ])
+        ->call('GET', $url)
         ->assertRedirect('/console/test/billing');
 
     $subscription->refresh();
