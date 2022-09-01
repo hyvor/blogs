@@ -46,6 +46,21 @@ body.index {
                 }
             }
         }
+
+        .hero-message-wrap {
+            margin-top: 40px;
+
+            .hero-message {
+                white-space: nowrap;
+                font-size: 12px;
+                color: #3F51B5;
+                border: 1px solid #3F51B5;
+                border-radius: 5px;
+                padding: 4px 8px 4px 8px;
+                position: relative;
+                font-weight: 600;
+            }
+        }
     }
 
     .details-list {

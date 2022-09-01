@@ -24,7 +24,7 @@ export default function Paddle() {
 
     function handleCreate(plan: SubscriptionPlan, frequency: SubscriptionFrequency) {
 
-        toast("Subscriptions are not yet available. Hyvor Blogs is free until we integrate a payment service", {
+        toast("Subscriptions are not yet available. Hyvor Blogs is free until beta testing ends.", {
             autoClose: 10000
         });
         return;

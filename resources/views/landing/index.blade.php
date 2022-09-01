@@ -2,8 +2,8 @@
 <html>
 <head>
     @include('landing.meta', [
-        'title' => 'Hyvor Blogs - The simplest blogging platform',
-        'description' => 'Hyvor Blogs is the simplest blogging platform',
+        'title' => 'Hyvor Blogs - A simple and powerful blogging platform',
+        'description' => 'Hyvor Blogs is a simple and powerful blogging platform with a rich text editor, multi language support, APIs and webhooks, etc.',
         'image' => '',
         'canonical' => 'https://blogs.hyvor.com',
     ])
@@ -31,15 +31,14 @@
                     Start a Blog
                 </a>
 
-                {{-- <div class="hero-message-wrap">
+                 <div class="hero-message-wrap">
                     <a 
                         class="hero-message"
-                        href="/blog/v2"
                         target="_blank"
                     >
-                        Hyvor Talk v2 is now generally available &rsaquo;&rsaquo;
+                        Hyvor Blogs is currently in public BETA
                     </a>
-                </div> --}}
+                </div>
             </div>
 
             <div class="hero-svg">
@@ -579,7 +578,6 @@ c30.27,0,54.64-24.37,54.64-54.64v-1419l-363.61-362.75L1258.7,336.75z"/>
             </div>
             <div class="links">
                 <a href="/docs/writing">Writing & Publishing</a>
-                <a href="/docs/posts-pages">Posts & Pages</a>
             </div>
         </div>
 
@@ -713,16 +711,7 @@ c30.27,0,54.64-24.37,54.64-54.64v-1419l-363.61-362.75L1258.7,336.75z"/>
                 <h4><svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-lightning-charge" viewBox="0 0 16 16">
                         <path d="M11.251.068a.5.5 0 0 1 .227.58L9.677 6.5H13a.5.5 0 0 1 .364.843l-8 8.5a.5.5 0 0 1-.842-.49L6.323 9.5H3a.5.5 0 0 1-.364-.843l8-8.5a.5.5 0 0 1 .615-.09zM4.157 8.5H7a.5.5 0 0 1 .478.647L6.11 13.59l5.732-6.09H9a.5.5 0 0 1-.478-.647L9.89 2.41 4.157 8.5z"/>
                     </svg> Fast</h4>
-                <p>When you update your posts, we convert
-                <p>We serve your blog through our global CDN in plain HTML.</p>
-                <p>
-                    Let us explain that without technical jargon. We save "copies" of your blog in servers located in multiple location around the world (that is global CDN). When a user visits your blog, the server nearest to the user send the response. Simply, your blog is fast for anyone around the world.
-                </p>
-                <p>So, why "plain HTML"? All browsers understand HTML. Some competitors serve content in other types such as Javascript, then convert it to HTML (called rendering) in the browser. This process takes time. Plain HTML takes has the lowest processing time.</p>
-                <p>
-                    And, We use InstantClick.js under the hood to make the navigation between pages faster. It is the same technology we use in our landing pages (Try clicking the Pricing link above to see how fast it loads without reloading the browser).
-                </p>
-                <p>Altogether, these optimizations makes your blog extremely faster than competitors like WordPress.</p>
+                <p>Your whole blog lives in a cache, which makes it extremely fast. We also use <a href="https://github.com/hyvor/flashload" target="_blank">Flashload.js</a> to make navigation between pages faster. Your blog is served in plain HTML, without any Javascript rendering library, which improves loading time further.</p>
             </div>
             <div class="links">
                 <a href="/docs/how">How it works</a>
@@ -825,14 +814,14 @@ c30.27,0,54.64-24.37,54.64-54.64v-1419l-363.61-362.75L1258.7,336.75z"/>
             </div>
             <div class="links">
                 <a href="/docs/api-delivery">Delivery API</a>
-                <a href="/docs/self-hosting-delivery-api">Self-hosting</a>
+                <a href="/docs/self-hosting">Self-hosting</a>
                 <br />
                 <a href="/blog/laravel-blog" class="blog">Laravel</a>
-                <a href="/docs/symfony-blog" class="blog">Symfony</a>
-                <a href="/docs/flask-blog" class="blog">Flask</a>
+                {{--<a href="/docs/symfony-blog" class="blog">Symfony</a>
+                <a href="/docs/flask-blog" class="blog">Flask</a>--}}
                 <br />
-                <a href="/blog/self-cloudflare-edge" class="blog">Cloudflare Edge</a>
-                <a href="/docs/self-fastly-compute-edge" class="blog">Fastly Compute@Edge</a>
+                {{--<a href="/blog/self-cloudflare-edge" class="blog">Cloudflare Edge</a>
+                <a href="/docs/self-fastly-compute-edge" class="blog">Fastly Compute@Edge</a>--}}
             </div>
         </div>
 
