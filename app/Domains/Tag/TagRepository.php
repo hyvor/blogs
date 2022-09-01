@@ -15,6 +15,7 @@ use App\Models\Blog;
 use App\Models\Language;
 use App\Models\Tag;
 use App\Models\TagVariant;
+use App\Models\User;
 use Hyvor\FilterQ\Facades\FilterQ;
 use Illuminate\Database\Eloquent\Collection;
 
@@ -91,6 +92,30 @@ class TagRepository
         $total = $builder->count();
 
         return new CollectionWithTotal($tags, $total);
+    }
+
+    /**
+     * @return Collection<Tag>
+     */
+    public static function searchTags(Blog $blog, string $search, int $limit) : Collection
+    {
+
+        $search = str_replace('%', '', $search); // to make it safe
+        $search .= '%';
+
+        $primaryLanguage = LanguageRepository::getPrimaryLanguage($blog);
+
+        return Tag::join(
+            'tag_variants',
+            fn ($join) => $join->on('tag_variants.tag_id', '=', 'tags.id')
+                ->where('tag_variants.language_id', '=', $primaryLanguage->id)
+        )
+            ->where('tags.blog_id', $blog->id)
+            ->where('tag_variants.name', 'LIKE', $search)
+            ->limit($limit)
+            ->select('tags.*')
+            ->get();
+
     }
 
     public static function createTag(Blog $blog, string $name): Tag

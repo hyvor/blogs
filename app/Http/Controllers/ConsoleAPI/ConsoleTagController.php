@@ -14,11 +14,7 @@ use Illuminate\Http\Request;
 
 class ConsoleTagController extends Controller
 {
-    /*
-    *
-    * ConsoleApi Settings->tags
-    *
-    */
+
     public function get(Request $request, Blog $blog)
     {
         $request->validate([
@@ -30,6 +26,18 @@ class ConsoleTagController extends Controller
         $offset = $request->input('offset', 0);
 
         $tags = TagRepository::getTags($blog, $limit, $offset)->map(fn ($tag) => new TagObject($tag, $blog));
+
+        return response()->json($tags);
+    }
+
+    public function search(Request $request, Blog $blog)
+    {
+        $request->validate([
+            'search' => 'required|string',
+        ]);
+
+        $search = $request->input('search');
+        $tags = TagRepository::searchTags($blog, $search, limit: 10)->map(fn ($tag) => new TagObject($tag, $blog));
 
         return response()->json($tags);
     }
