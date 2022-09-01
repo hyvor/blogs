@@ -30,7 +30,6 @@ class PaddleSubscriptionInfoObject
      */
     public function __construct(array $data)
     {
-
         $this->email = $data['user_email'];
         $this->card_brand = $data['payment_information']['card_type'];
         $this->card_last_four = $data['payment_information']['last_four_digits'];

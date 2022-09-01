@@ -9,7 +9,6 @@ use Illuminate\Support\Facades\Event;
 use Illuminate\Testing\Fluent\AssertableJson;
 
 it('creates a navigation', function () {
-
     Event::fake();
 
     $url = '/about';

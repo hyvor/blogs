@@ -36,8 +36,7 @@ class RouteRepository
         string $template,
         ?string $postsFilter = null,
         ?string $contentType = null,
-    ): Route
-    {
+    ): Route {
         $route = $blog->routes()->create([
             'name' => $name,
             'match' => $match,

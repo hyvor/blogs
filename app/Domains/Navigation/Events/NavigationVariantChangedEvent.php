@@ -9,5 +9,7 @@ class NavigationVariantChangedEvent
 {
     use Dispatchable;
 
-    public function __construct(public NavigationVariant $variant) {}
+    public function __construct(public NavigationVariant $variant)
+    {
+    }
 }

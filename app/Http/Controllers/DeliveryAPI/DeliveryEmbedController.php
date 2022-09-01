@@ -34,7 +34,6 @@ class DeliveryEmbedController
 
     public function iframe(Request $request)
     {
-
         $request->validate([
             'url' => 'required|url',
             'path_style' => 'bool'
@@ -64,5 +63,4 @@ class DeliveryEmbedController
 
         return $response;
     }
-
 }

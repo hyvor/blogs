@@ -5,8 +5,7 @@ namespace Tests\Feature\ConsoleAPI\Webhook;
 use App\Models\Webhook;
 use Illuminate\Testing\Fluent\AssertableJson;
 
-it('updates a url', function() {
-
+it('updates a url', function () {
     $webhook = Webhook::factory()->create(['blog_id' => blog()]);
 
     $this->callConsoleApi('PATCH', "/webhook/$webhook->id", [
@@ -17,11 +16,9 @@ it('updates a url', function() {
             $json->where('url', 'https://hyvor.com')
                 ->etc();
         });
-
 });
 
-it('updates events', function() {
-
+it('updates events', function () {
     $webhook = Webhook::factory()->create(['blog_id' => blog()]);
 
     $this->callConsoleApi('PATCH', "/webhook/$webhook->id", [
@@ -32,11 +29,9 @@ it('updates events', function() {
             $json->where('events', ['cache.templates', 'cache.all'])
                 ->etc();
         });
-
 });
 
-it('validates events', function() {
-
+it('validates events', function () {
     $webhook = Webhook::factory()->create(['blog_id' => blog()]);
 
     $this->callConsoleApi('PATCH', "/webhook/$webhook->id", [
@@ -44,5 +39,4 @@ it('validates events', function() {
     ])
         ->assertUnprocessable()
         ->assertSee('The selected events.2 is invalid');
-
 });

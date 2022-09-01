@@ -6,7 +6,6 @@ use App\Domains\Route\PermalinkRepository;
 use App\Models\Blog;
 use DOMDocument;
 use DOMElement;
-use Symfony\Component\DomCrawler\Crawler;
 
 /**
  * Converts an HTML output to an embeddable output
@@ -21,9 +20,7 @@ class EmbedHtmlProcessor
         private readonly string $embeddingUrl,
         string $html,
         private readonly bool $pathStyle = false
-    )
-    {
-
+    ) {
         $this->dom = new DOMDocument();
         $this->baseUrl = PermalinkRepository::getBaseUrl($this->blog);
 
@@ -38,12 +35,10 @@ class EmbedHtmlProcessor
         $this->convertAnchors();
         $this->convertLinks();
         $this->convertMeta();
-
     }
 
     private function addIframeHelpers(): void
     {
-
         $head = $this->dom->getElementsByTagName("head")[0] ?? null;
 
         if (!$head) {
@@ -61,7 +56,6 @@ class EmbedHtmlProcessor
 
     private function addOtherHeadTags()
     {
-
         $head = $this->dom->getElementsByTagName("head")[0] ?? null;
 
         if (!$head) {
@@ -75,8 +69,6 @@ class EmbedHtmlProcessor
         $googleIndexIfEmbeddedMeta->setAttribute('content', 'noindex,indexifembedded');
 
         $head->appendChild($googleIndexIfEmbeddedMeta);
-
-
     }
 
     /**
@@ -85,7 +77,6 @@ class EmbedHtmlProcessor
      */
     private function convertAnchors(): void
     {
-
         $links = $this->dom->getElementsByTagName('a');
 
         /**
@@ -123,8 +114,9 @@ class EmbedHtmlProcessor
     {
         $head = $this->dom->getElementsByTagName("head")[0] ?? null;
 
-        if (!$head)
+        if (!$head) {
             return null;
+        }
 
         $links = $head->getElementsByTagName('link');
 
@@ -147,11 +139,11 @@ class EmbedHtmlProcessor
 
     private function convertMeta()
     {
-
         $head = $this->dom->getElementsByTagName("head")[0] ?? null;
 
-        if (!$head)
+        if (!$head) {
             return null;
+        }
 
         $metas = $head->getElementsByTagName('meta');
 
@@ -159,24 +151,18 @@ class EmbedHtmlProcessor
          * @var $meta DOMElement
          */
         foreach ($metas as $meta) {
-
             $name = $meta->getAttribute('name');
             $name = $name ?: $meta->getAttribute('property');
 
             if (in_array($name, ['og:url', 'twitter:url'])) {
-
                 $content = $meta->getAttribute('content');
 
                 if (str_starts_with($content, $this->baseUrl)) {
                     $path = str_replace($this->baseUrl, '', $content);
                     $meta->setAttribute('content', $this->embedUrlFromPath($path));
                 }
-
             }
-
         }
-
-
     }
 
     private function embedUrlFromPath(string $path): string

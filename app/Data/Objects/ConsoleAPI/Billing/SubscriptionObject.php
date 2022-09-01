@@ -9,7 +9,6 @@ use App\Models\Subscription;
 
 class SubscriptionObject
 {
-
     public int $id;
 
     public SubscriptionStatusEnum $status;

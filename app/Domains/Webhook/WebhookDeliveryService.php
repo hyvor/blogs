@@ -11,13 +11,11 @@ use Illuminate\Support\Facades\Http;
 
 class WebhookDeliveryService
 {
-
     public static function createDelivery(
         Webhook $webhook,
         string $eventName,
         array $data
-    )
-    {
+    ) {
         return WebhookDelivery::create([
             'url' => $webhook->url,
             'status' => WebhookDeliveryStatusEnum::PENDING,
@@ -29,7 +27,6 @@ class WebhookDeliveryService
 
     public static function deliver(WebhookDelivery $delivery)
     {
-
         $webhook = $delivery->webhook;
         $blog = $webhook->blog;
 
@@ -52,29 +49,23 @@ class WebhookDeliveryService
         $delivery->response = substr($response->body(), 0, 1024);
 
         if ($response->successful()) {
-
             $delivery->status = WebhookDeliveryStatusEnum::SUCCESS;
             $delivery->save();
-
         } else {
             self::tempFail($delivery);
         }
-
     }
 
     private static function tempFail(WebhookDelivery $delivery)
     {
         $delivery->status = WebhookDeliveryStatusEnum::RETRYING;
         $delivery->save();
-        throw new DeliveryFailedException;
+        throw new DeliveryFailedException();
     }
 
     public static function fail(WebhookDelivery $delivery)
     {
-
         $delivery->status = WebhookDeliveryStatusEnum::FAILED;
         $delivery->save();
-
     }
-
 }

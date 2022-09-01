@@ -219,7 +219,6 @@ Route::prefix('/api/console/v0/blog/{subdomain}')
                 Route::post('/billing/paddle/subscription', [ConsoleBillingPaddleController::class, 'createSubscription']);
                 Route::patch('/billing/paddle/subscription', [ConsoleBillingPaddleController::class, 'updateSubscription']);
                 Route::delete('/billing/paddle/subscription', [ConsoleBillingPaddleController::class, 'cancelSubscription']);
-
             });
 
             Route::middleware('billing-type:shopify')->group(function () {

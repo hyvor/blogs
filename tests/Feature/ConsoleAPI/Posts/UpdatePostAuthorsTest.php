@@ -21,7 +21,6 @@ it('validates', function () {
 });
 
 it('changes authors', function () {
-
     Event::fake();
 
     PostAuthor::where('post_id', $this->post->id)->delete();
@@ -35,7 +34,7 @@ it('changes authors', function () {
 
     expect(PostAuthor::where('post_id', $this->post->id)->count())->toBe(count($authors));
 
-    Event::assertDispatched(PostUpdatedEvent::class, fn(PostUpdatedEvent $event) => $event->post->id === $this->post->id);
+    Event::assertDispatched(PostUpdatedEvent::class, fn (PostUpdatedEvent $event) => $event->post->id === $this->post->id);
 });
 
 it('removes all authors', function () {

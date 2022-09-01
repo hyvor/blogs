@@ -8,5 +8,7 @@ use Illuminate\Foundation\Events\Dispatchable;
 class LanguageChangedEvent
 {
     use Dispatchable;
-    public function __construct(public Language $language) {}
+    public function __construct(public Language $language)
+    {
+    }
 }

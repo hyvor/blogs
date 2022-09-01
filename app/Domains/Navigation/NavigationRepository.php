@@ -25,9 +25,7 @@ class NavigationRepository
         string $url,
         NavigationTypeEnum $type,
         int $sort = 0
-    ): Navigation
-    {
-
+    ): Navigation {
         $navigation = Navigation::create([
             'blog_id' => $blog->id,
             'url' => $url,
@@ -43,7 +41,8 @@ class NavigationRepository
             'name' => $name,
         ]);
 
-        NavigationChangedEvent::dispatch($navigation);;
+        NavigationChangedEvent::dispatch($navigation);
+        ;
 
         return $navigation;
     }
@@ -52,8 +51,7 @@ class NavigationRepository
         Navigation $navigation,
         string $url,
         NavigationTypeEnum $type,
-    ): Navigation
-    {
+    ): Navigation {
         $navigation->url = $url;
         $navigation->type = $type;
         $navigation->save();
@@ -82,8 +80,7 @@ class NavigationRepository
         Navigation $navigation,
         Language $language,
         ?string $name
-    ): NavigationVariant
-    {
+    ): NavigationVariant {
         $variant = NavigationVariant::create([
             'navigation_id' => $navigation->id,
             'language_id' => $language->id,

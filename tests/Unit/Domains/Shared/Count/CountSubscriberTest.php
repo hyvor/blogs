@@ -94,7 +94,7 @@ it('calls blog counts job on post delete', function () {
     Queue::assertPushed(fn (BlogPostsCountsJob $job) => $job->blog->id === blog()->id);
 });
 
-it('calls blog users counts job on user create', function() {
+it('calls blog users counts job on user create', function () {
     Queue::fake();
 
     $user = User::factory()->create(['blog_id' => blog()]);
@@ -103,11 +103,10 @@ it('calls blog users counts job on user create', function() {
     $listener->onUserEvent($event);
 
     Queue::assertPushed(fn (BlogUsersCountsJob $job) => $job->blog->id === blog()->id);
-
 });
 
 
-it('calls blog users counts job on user delete', function() {
+it('calls blog users counts job on user delete', function () {
     Queue::fake();
 
     $user = User::factory()->create(['blog_id' => blog()]);
@@ -116,11 +115,9 @@ it('calls blog users counts job on user delete', function() {
     $listener->onUserEvent($event);
 
     Queue::assertPushed(fn (BlogUsersCountsJob $job) => $job->blog->id === blog()->id);
-
 });
 
-it('calls blog media counts job on media create', function() {
-
+it('calls blog media counts job on media create', function () {
     Queue::fake();
 
     $user = Media::factory()->create(['blog_id' => blog()]);
@@ -129,11 +126,9 @@ it('calls blog media counts job on media create', function() {
     $listener->onMediaEvent($event);
 
     Queue::assertPushed(fn (BlogMediaCountsJob $job) => $job->blog->id === blog()->id);
-
 });
 
-it('calls blog media counts job on media delete', function() {
-
+it('calls blog media counts job on media delete', function () {
     Queue::fake();
 
     $user = Media::factory()->create(['blog_id' => blog()]);
@@ -142,5 +137,4 @@ it('calls blog media counts job on media delete', function() {
     $listener->onMediaEvent($event);
 
     Queue::assertPushed(fn (BlogMediaCountsJob $job) => $job->blog->id === blog()->id);
-
 });

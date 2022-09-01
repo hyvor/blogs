@@ -274,7 +274,7 @@ it('clears cache on tag variant events', function () {
     $listener->onTagVariantEvent($deleteEvent);
 });
 
-it('clears cache on navigation event', function() {
+it('clears cache on navigation event', function () {
     ($this->templateMock)();
 
     $navigation = Navigation::factory()->create();
@@ -284,7 +284,7 @@ it('clears cache on navigation event', function() {
     $listener->onNavigationEvent($event);
 });
 
-it('clears cache on navigation variant event', function() {
+it('clears cache on navigation variant event', function () {
     ($this->templateMock)();
 
     $navigation = Navigation::factory()->create();
@@ -294,8 +294,7 @@ it('clears cache on navigation variant event', function() {
     $listener->onNavigationEvent($event);
 });
 
-it('clears cache on language event', function() {
-
+it('clears cache on language event', function () {
     ($this->templateMock)();
 
     $language = Language::factory()->create();
@@ -303,11 +302,9 @@ it('clears cache on language event', function() {
 
     $listener = new ClearCacheSubscriber();
     $listener->onLanguageEvent($event);
-
 });
 
-it('clears cache on route event', function() {
-
+it('clears cache on route event', function () {
     ($this->templateMock)();
 
     $route = Route::factory()->create();
@@ -315,5 +312,4 @@ it('clears cache on route event', function() {
 
     $listener = new ClearCacheSubscriber();
     $listener->onRouteEvent($event);
-
 });

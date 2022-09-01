@@ -8,14 +8,15 @@ use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Foundation\Bus\Dispatchable;
 use Throwable;
 
-class WebhookDeliveryJob  implements ShouldQueue
+class WebhookDeliveryJob implements ShouldQueue
 {
     use Dispatchable;
 
     public int $tries = 4;
 
     public function __construct(public WebhookDelivery $delivery)
-    {}
+    {
+    }
 
     public function handle()
     {
@@ -38,5 +39,4 @@ class WebhookDeliveryJob  implements ShouldQueue
     {
         WebhookDeliveryService::fail($this->delivery);
     }
-
 }

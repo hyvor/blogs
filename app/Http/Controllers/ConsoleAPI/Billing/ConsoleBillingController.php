@@ -9,10 +9,8 @@ use App\Models\Blog;
 
 class ConsoleBillingController
 {
-
     public function getBillingData(Blog $blog)
     {
-
         $usage = UsageRepository::getUsage($blog);
         $subscriptions = SubscriptionService::getAllSubscriptions($blog)->mapInto(SubscriptionObject::class);
 
@@ -20,17 +18,14 @@ class ConsoleBillingController
             'usage' => $usage,
             'subscriptions' => $subscriptions
         ]);
-
     }
 
     public function forceCancelSubscription(Blog $blog)
     {
-
         $subscription = SubscriptionService::getActiveBlogSubscription($blog);
 
         if ($subscription) {
             SubscriptionService::cancelSubscription($subscription, now());
         }
-
     }
 }

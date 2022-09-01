@@ -56,7 +56,7 @@ class PaddleService
             'subscription_id' => $paddleSubscriptionId,
         ]);
     }
-    
+
     public function getPayments(Subscription $subscription)
     {
         $paddleSubscriptionId = $this->getPaddleSubscriptionId($subscription);
@@ -84,8 +84,9 @@ class PaddleService
     {
         $id = $subscription->getMeta(self::META_PADDLE_SUBSCRIPTION_ID);
 
-        if (!$id)
+        if (!$id) {
             throw new TrustedException('Subscription ID is not set (unlikely)');
+        }
 
         return $id;
     }

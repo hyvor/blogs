@@ -19,7 +19,6 @@ class ConsoleBillingPaddleController extends Controller
 {
     public function getData(Blog $blog, PaddleService $paddleService): JsonResponse
     {
-
         $subscription = SubscriptionService::getActiveBlogSubscription($blog);
 
         $info = null;

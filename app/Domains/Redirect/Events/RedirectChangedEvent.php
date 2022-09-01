@@ -10,6 +10,6 @@ class RedirectChangedEvent
     use Dispatchable;
 
     public function __construct(public Redirect $redirect)
-    {}
-
+    {
+    }
 }

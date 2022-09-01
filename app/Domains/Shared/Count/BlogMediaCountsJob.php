@@ -10,7 +10,6 @@ use Illuminate\Foundation\Bus\Dispatchable;
 
 class BlogMediaCountsJob implements ShouldQueue, ShouldBeUnique
 {
-
     use Dispatchable;
 
     public function __construct(public Blog $blog)
@@ -27,5 +26,4 @@ class BlogMediaCountsJob implements ShouldQueue, ShouldBeUnique
     {
         return $this->blog->id;
     }
-
 }

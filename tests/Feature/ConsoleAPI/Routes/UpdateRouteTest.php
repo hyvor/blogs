@@ -8,7 +8,6 @@ use Illuminate\Support\Facades\Event;
 use Illuminate\Testing\Fluent\AssertableJson;
 
 it('updates route', function () {
-
     Event::fake();
 
     $route = Route::factory()->create(['blog_id' => blog()]);

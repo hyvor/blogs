@@ -5,8 +5,7 @@ namespace Tests\Feature\ConsoleAPI\Webhook;
 use App\Models\Webhook;
 use Illuminate\Testing\Fluent\AssertableJson;
 
-it('gets webhooks', function() {
-
+it('gets webhooks', function () {
     Webhook::factory()->count(2)->create([
         'blog_id' => blog()
     ]);
@@ -22,5 +21,4 @@ it('gets webhooks', function() {
                         ->has('secret');
                 });
         });
-
 });

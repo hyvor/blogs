@@ -1,4 +1,5 @@
 <?php
+
 namespace App\Http\Middleware\App\Delivery;
 
 use App\Data\Enums\ApiKeysTypeEnum;
@@ -10,7 +11,6 @@ use Illuminate\Http\Request;
 
 class DeliveryApiKeyMiddleware
 {
-
     public function handle(Request $request, Closure $next)
     {
         $apiKey = $request->input('api_key');
@@ -26,5 +26,4 @@ class DeliveryApiKeyMiddleware
 
         return $next($request);
     }
-
 }

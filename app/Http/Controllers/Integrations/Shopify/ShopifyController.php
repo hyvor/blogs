@@ -8,7 +8,6 @@ use App\Data\Enums\SubscriptionFrequencyEnum;
 use App\Data\Enums\SubscriptionPlanEnum;
 use App\Domains\Blog\BlogService;
 use App\Domains\Blog\UniqueSubdomainGenerator;
-use App\Domains\Delivery\DeliveryService;
 use App\Domains\Integrations\Shopify\Rules\ShopDomainRule;
 use App\Domains\Integrations\Shopify\ShopifyService;
 use App\Domains\Subscription\SubscriptionService;

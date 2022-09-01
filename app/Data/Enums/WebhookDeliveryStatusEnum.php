@@ -2,7 +2,7 @@
 
 namespace App\Data\Enums;
 
-enum WebhookDeliveryStatusEnum : string
+enum WebhookDeliveryStatusEnum: string
 {
     // hasn't started yet
     case PENDING = 'pending';

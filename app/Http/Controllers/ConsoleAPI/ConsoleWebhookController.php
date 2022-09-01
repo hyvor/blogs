@@ -64,12 +64,10 @@ class ConsoleWebhookController extends Controller
 
     public function getWebhookDeliveries(Webhook $webhook, Request $request)
     {
-
         $request->validate([
             'page' => 'integer'
         ]);
 
         $page = $request->input('page', 1);
-
     }
 }

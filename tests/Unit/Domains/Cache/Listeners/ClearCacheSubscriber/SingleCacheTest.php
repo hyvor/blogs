@@ -93,7 +93,7 @@ it('clears cache when styles updates', function () {
     $listener->onStylesEdit($event);
 });
 
-it('clears cache on redirect change', function() {
+it('clears cache on redirect change', function () {
     $redirect = Redirect::factory()->create(['blog_id' => blog(), 'path' => '/from']);
 
     $this->mock(

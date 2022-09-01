@@ -6,7 +6,6 @@ use App\Models\Webhook;
 
 class WebhookObject
 {
-
     public int $id;
 
     public string $url;
@@ -25,5 +24,4 @@ class WebhookObject
         $this->events = $webhook->events;
         $this->secret = $webhook->secret;
     }
-
 }

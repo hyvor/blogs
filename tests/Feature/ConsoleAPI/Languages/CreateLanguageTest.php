@@ -7,7 +7,6 @@ use Illuminate\Support\Facades\Event;
 use Illuminate\Testing\Fluent\AssertableJson;
 
 it('creates a language', function () {
-
     Event::fake();
 
     $code = 'si';

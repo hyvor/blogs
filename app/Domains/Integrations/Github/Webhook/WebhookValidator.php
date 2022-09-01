@@ -8,11 +8,8 @@ use Symfony\Component\HttpKernel\Exception\BadRequestHttpException;
 
 class WebhookValidator
 {
-
-
-    public static function validate(Request $request, string $secret) : bool
+    public static function validate(Request $request, string $secret): bool
     {
-
         $signature = $request->header('X-Hub-Signature-256');
 
         if (!$signature) {
@@ -32,7 +29,5 @@ class WebhookValidator
         }
 
         return true;
-
     }
-
 }

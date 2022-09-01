@@ -26,12 +26,9 @@ use App\Domains\User\UserRepository;
 use App\Models\Post;
 use App\Models\Tag;
 use App\Models\User;
-use Illuminate\Support\Facades\URL;
 use Symfony\Component\Yaml\Exception\ParseException;
 use Symfony\Component\Yaml\Yaml;
 use Twig\Error\Error;
-
-use function config;
 
 class TemplateRenderer
 {

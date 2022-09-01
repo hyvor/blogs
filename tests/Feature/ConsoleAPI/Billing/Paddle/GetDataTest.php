@@ -6,8 +6,7 @@ use App\Models\Subscription;
 use Illuminate\Support\Facades\Http;
 use Illuminate\Testing\Fluent\AssertableJson;
 
-it('gets info and receipts', function() {
-
+it('gets info and receipts', function () {
     Http::fake([
         'https://vendors.paddle.com/api/2.0/subscription/payments' => Http::response([
             'success' => true,
@@ -65,7 +64,6 @@ it('gets info and receipts', function() {
     $this->callConsoleApi('GET', '/billing/paddle')
         ->assertOk()
         ->assertJson(function (AssertableJson $json) {
-
             $json
                 ->has('info', function (AssertableJson $json) {
                     $json->where('email', 'name@example.com')
@@ -81,7 +79,5 @@ it('gets info and receipts', function() {
                         ->where('currency', 'USD')
                         ->has('receipt_url');
                 });
-
         });
-
 });

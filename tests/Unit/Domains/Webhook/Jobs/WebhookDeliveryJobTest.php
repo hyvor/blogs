@@ -12,8 +12,7 @@ use Exception;
 use Illuminate\Http\Client\Request;
 use Illuminate\Support\Facades\Http;
 
-it('delivers a webhook', function() {
-
+it('delivers a webhook', function () {
     $url = 'https://webhook.com';
     Http::fake([
         $url => Http::response('ok')
@@ -49,11 +48,9 @@ it('delivers a webhook', function() {
     expect($delivery->event)->toBe('cache.single');
     expect($delivery->data['path'])->toBe('/test');
     expect($delivery->url)->toBe($url);
-
 });
 
-it('handles failures', function() {
-
+it('handles failures', function () {
     $url = 'https://webhook.com';
     Http::fake([
         $url => Http::response('failed', 500)
@@ -70,7 +67,8 @@ it('handles failures', function() {
     $job = new WebhookDeliveryJob($delivery);
     try {
         $job->handle();
-    } catch (DeliveryFailedException) {}
+    } catch (DeliveryFailedException) {
+    }
 
     $delivery = WebhookDelivery::where('webhook_id', $webhook->id)->first();
     expect($delivery)->toBeInstanceOf(WebhookDelivery::class);
@@ -78,18 +76,17 @@ it('handles failures', function() {
     expect($delivery->http_status)->toBe(500);
     expect($delivery->status)->toBe(WebhookDeliveryStatusEnum::RETRYING);
 
-    $job->failed(new DeliveryFailedException);
+    $job->failed(new DeliveryFailedException());
 
     $delivery->refresh();
     expect($delivery->status)->toBe(WebhookDeliveryStatusEnum::FAILED);
 });
 
-it('handles http client exceptions', function() {
-
+it('handles http client exceptions', function () {
     $url = 'https://webhook.com';
     Http::fake([
         $url => function () {
-            throw new Exception;
+            throw new Exception();
         }
     ]);
 
@@ -104,12 +101,12 @@ it('handles http client exceptions', function() {
     $job = new WebhookDeliveryJob($delivery);
     try {
         $job->handle();
-    } catch (DeliveryFailedException) {}
+    } catch (DeliveryFailedException) {
+    }
 
     $delivery = WebhookDelivery::where('webhook_id', $webhook->id)->first();
     expect($delivery)->toBeInstanceOf(WebhookDelivery::class);
     expect($delivery->response)->toBeNull();
     expect($delivery->http_status)->toBeNull();
     expect($delivery->status)->toBe(WebhookDeliveryStatusEnum::RETRYING);
-
 });

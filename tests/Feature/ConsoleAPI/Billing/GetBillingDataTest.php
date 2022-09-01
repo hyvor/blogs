@@ -8,7 +8,6 @@ use Illuminate\Testing\Fluent\AssertableJson;
 
 // TODO: FLAKY
 it('gets billing data', function () {
-
     $blog = blog();
 
     // 3 subscriptions
@@ -19,7 +18,6 @@ it('gets billing data', function () {
     $this->callConsoleApi('GET', '/billing')
         ->assertOk()
         ->assertJson(function (AssertableJson $json) {
-
             $json
                 ->has('usage', function (AssertableJson $json) {
                     $json->has('users')
@@ -32,7 +30,6 @@ it('gets billing data', function () {
                         ->has('created_at')
                         ->has('ends_at');
                 });
-
         });
 
 

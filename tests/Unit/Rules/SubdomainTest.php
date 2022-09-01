@@ -16,7 +16,7 @@ test('valid', function () {
     expect(subdomainPasses('test'))->toBeTrue();
 });
 
-it('can contain one char', function() {
+it('can contain one char', function () {
     expect(subdomainPasses('k'))->toBeTrue();
 });
 

@@ -52,8 +52,7 @@ it('converts anchors to embed-type URLs in <a>s', function () {
     expect($content)->toContain("<a href=\"https://example.org/test\"></a>");
 });
 
-it('converts links in head to embed-type URLs', function() {
-
+it('converts links in head to embed-type URLs', function () {
     $baseUrl = PermalinkRepository::getBaseUrl(blog());
     $html = <<<HTML
     <html>
@@ -74,11 +73,9 @@ it('converts links in head to embed-type URLs', function() {
     // not replaced because
     expect($content)->toContain("<link rel=\"alternate\" href=\"https://another.com/test\">");
     expect($content)->toContain("<link rel=\"wrong\" href=\"$baseUrl/alt\">");
-
 });
 
-it('converts og/twitter URLs to embed-type URLs', function() {
-
+it('converts og/twitter URLs to embed-type URLs', function () {
     $baseUrl = PermalinkRepository::getBaseUrl(blog());
     $html = <<<HTML
     <html>
@@ -116,8 +113,7 @@ it('converts path style', function () {
     expect($content)->toContain("<a href=\"$this->parentUrl/relative\"></a>");
 });
 
-it('adds Google indexifembedded', function() {
-
+it('adds Google indexifembedded', function () {
     $html = <<<HTML
     <html>
         <head></head>
@@ -126,5 +122,4 @@ it('adds Google indexifembedded', function() {
     HTML;
     $content = (new EmbedHtmlProcessor(blog(), $this->parentUrl, $html, true))->get();
     expect($content)->toContain('<meta name="googlebot" content="noindex,indexifembedded">');
-
 });

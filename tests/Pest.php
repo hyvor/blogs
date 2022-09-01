@@ -30,7 +30,7 @@ uses()->beforeEach(function () {
     Userbase::$FAKE = null;
 
     // disable uploading profile picture
-    $this->mock(MediaRepository::class, function(MockInterface $mock) {
+    $this->mock(MediaRepository::class, function (MockInterface $mock) {
         $mock->shouldReceive('uploadFromUrl')
             ->andReturn(Media::factory()->create());
     });

@@ -21,7 +21,6 @@ it('validates', function () {
 });
 
 it('changes tags', function () {
-
     Event::fake();
 
     PostTag::where('post_id', $this->post->id)->delete();
@@ -35,7 +34,7 @@ it('changes tags', function () {
 
     expect(PostTag::where('post_id', $this->post->id)->count())->toBe(count($tags));
 
-    Event::assertDispatched(PostUpdatedEvent::class, fn(PostUpdatedEvent $event) => $event->post->id === $this->post->id);
+    Event::assertDispatched(PostUpdatedEvent::class, fn (PostUpdatedEvent $event) => $event->post->id === $this->post->id);
 });
 
 it('removes all tags', function () {

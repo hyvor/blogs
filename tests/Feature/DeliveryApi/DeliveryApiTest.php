@@ -8,11 +8,9 @@ use App\Domains\Api\ApiKeysRepository;
 use App\Domains\Theme\ThemeFilesRepository;
 use Illuminate\Testing\Fluent\AssertableJson;
 
-it('requires a valid  API key', function() {
-
+it('requires a valid  API key', function () {
     $this->get("/api/delivery/v0/test?path=")->assertUnprocessable()->assertSee('API Key not set');
     $this->get("/api/delivery/v0/test?api_key=invalid&path=")->assertUnprocessable()->assertSee('API Key invalid');
-
 });
 
 it('calls the delivery API', function () {

@@ -1,4 +1,5 @@
 <?php
+
 namespace App\Data\Objects\ConsoleAPI\Billing\Paddle;
 
 use Carbon\Carbon;

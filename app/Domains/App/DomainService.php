@@ -6,7 +6,6 @@ use Illuminate\Support\Facades\App;
 
 class DomainService
 {
-
     public static function getAppDomainWithPort()
     {
         $domain = config('blogs.domain_app');
@@ -14,5 +13,4 @@ class DomainService
             $domain . ':8080' :
             $domain;
     }
-
 }

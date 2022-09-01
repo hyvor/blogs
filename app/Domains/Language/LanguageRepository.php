@@ -27,8 +27,7 @@ class LanguageRepository
         string $code,
         string $name,
         bool $isPrimary = false
-    ): Language
-    {
+    ): Language {
         $language = $blog->languages()->create([
             'code' => $code,
             'name' => $name,

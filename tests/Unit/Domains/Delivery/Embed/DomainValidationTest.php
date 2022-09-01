@@ -4,8 +4,7 @@ namespace Tests\Unit\Domains\Delivery\Embed;
 
 use App\Domains\Delivery\Embed\EmbedService;
 
-it('validates test', function() {
-
+it('validates test', function () {
     $blog = blog();
 
     $blog->setMeta('embedding_domains', '*');

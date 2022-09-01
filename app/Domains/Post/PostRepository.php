@@ -381,5 +381,4 @@ class PostRepository
 
         PostVariantDeletedEvent::dispatch($variant);
     }
-
 }

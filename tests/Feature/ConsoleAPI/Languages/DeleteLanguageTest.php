@@ -9,7 +9,6 @@ use Illuminate\Support\Facades\Event;
 use Illuminate\Support\Facades\Queue;
 
 it('deletes a language', function () {
-
     Event::fake();
     Queue::fake();
 

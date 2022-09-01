@@ -6,8 +6,6 @@ use Illuminate\Database\Eloquent\Factories\Factory;
 
 class WebhookFactory extends Factory
 {
-
-
     public function definition()
     {
         return [

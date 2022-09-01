@@ -7,7 +7,6 @@ use Illuminate\Support\Facades\Event;
 use Illuminate\Testing\Fluent\AssertableJson;
 
 it('creates a route', function () {
-
     Event::fake();
 
     $name = 'Hyvor';

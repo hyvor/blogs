@@ -14,31 +14,26 @@ use Illuminate\Events\Dispatcher;
 
 class WebhookSubscriber
 {
-
     public function subscribe(Dispatcher $events)
     {
-
         $events->listen(CacheClearSingleEvent::class, [static::class, 'onCacheClearSingleEvent']);
         $events->listen(CacheClearTemplatesEvent::class, [static::class, 'onCacheClearTemplatesEvent']);
         $events->listen(CacheClearAllEvent::class, [static::class, 'onCacheClearAllEvent']);
-
     }
 
     private function call(Blog $blog, string $eventName, array $data = [])
     {
-
-        if (!in_array($eventName, WebhookService::EVENTS)) // to be safe
+        if (!in_array($eventName, WebhookService::EVENTS)) { // to be safe
             throw new Exception('Invalid webhook event name');
+        }
 
         $webhooks = $blog->webhooks;
 
         foreach ($webhooks as $webhook) {
-
             if (in_array($eventName, $webhook->events)) {
                 $delivery = WebhookDeliveryService::createDelivery($webhook, $eventName, $data);
                 WebhookDeliveryJob::dispatch($delivery);
             }
-
         }
     }
 
@@ -56,5 +51,4 @@ class WebhookSubscriber
     {
         $this->call($event->blog, 'cache.all');
     }
-
 }

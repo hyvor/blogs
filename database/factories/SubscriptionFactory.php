@@ -5,10 +5,8 @@ namespace Database\Factories;
 use App\Data\Enums\SubscriptionFrequencyEnum;
 use App\Data\Enums\SubscriptionPlanEnum;
 use App\Data\Enums\SubscriptionStatusEnum;
-use App\Domains\Subscription\SubscriptionService;
 use App\Models\Blog;
 use Illuminate\Database\Eloquent\Factories\Factory;
-use Illuminate\Support\Arr;
 
 class SubscriptionFactory extends Factory
 {
