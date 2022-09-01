@@ -25,14 +25,16 @@ class AuthorCountsJob implements ShouldQueue, ShouldBeUnique
             (
                 SELECT COUNT(post_author.id) 
                 FROM post_author
-                INNER JOIN post_variants on post_author.post_id = post_variants.post_id
+                INNER JOIN post_variants ON post_author.post_id = post_variants.post_id
+                INNER JOIN posts ON post_variants.post_id = posts.id
                 WHERE
                       post_author.user_id = u.id AND
                       post_variants.language_id = ? AND 
-                      post_variants.status = ?
+                      post_variants.status = "published" AND
+                      posts.is_page = 0
             )
             WHERE u.blog_id = ?
-        ', [$language->id, 'published', $this->blog->id]);
+        ', [$language->id, $this->blog->id]);
     }
 
     public function uniqueId()

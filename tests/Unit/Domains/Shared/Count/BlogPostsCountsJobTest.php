@@ -34,6 +34,17 @@ it('updates blog post counts', function () {
             'blog_id' => $blog,
         ]);
 
+    // pages
+    Post::factory()
+        ->has(PostVariant::factory()->state([
+            'language_id' => $blog->languages[0]->id,
+            'status' => 'published',
+        ]), 'variants')
+        ->create([
+            'blog_id' => $blog,
+            'is_page' => true
+        ]);
+
     // published
     Post::factory()
         ->has(PostVariant::factory()->state([

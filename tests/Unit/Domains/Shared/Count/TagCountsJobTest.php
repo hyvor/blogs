@@ -42,6 +42,18 @@ it('counts tag posts for multiple tag', function () {
             'blog_id' => $blog,
         ]);
 
+    // pages (shouldn't be counted)
+    $pages = Post::factory()
+        ->count(2)
+        ->has(PostVariant::factory()->state([
+            'language_id' => $blog->languages[0]->id,
+            'status' => 'published'
+        ]), 'variants')
+        ->create([
+            'blog_id' => $blog,
+            'is_page' => true
+        ]);
+
     // published (COUNTED)
     $published = Post::factory()
         ->count(2)
@@ -53,7 +65,7 @@ it('counts tag posts for multiple tag', function () {
             'blog_id' => $blog,
         ]);
 
-    foreach ([$drafts, $otherLang, $published] as $posts) {
+    foreach ([$drafts, $otherLang, $pages, $published] as $posts) {
         foreach ($posts as $post) {
             PostTag::create([
                 'post_id' => $post->id,

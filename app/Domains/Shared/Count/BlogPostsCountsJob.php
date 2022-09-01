@@ -26,6 +26,7 @@ class BlogPostsCountsJob implements ShouldQueue, ShouldBeUnique
         $statusCounts = PostVariant::where('language_id', $language->id)
             ->join('posts', 'posts.id', '=', 'post_variants.post_id')
             ->where('posts.blog_id', $this->blog->id)
+            ->where('posts.is_page', false)
             ->selectRaw('post_variants.status, COUNT(post_variants.id) as count')
             ->groupBy('post_variants.status')
             ->get();
