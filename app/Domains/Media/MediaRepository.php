@@ -47,7 +47,7 @@ class MediaRepository
             ->first();
     }
 
-    public static function upload(Blog $blog, UploadedFile $file): Media
+    public static function upload(Blog $blog, UploadedFile $file, ?int $postId = null): Media
     {
         try {
             $prefix = self::getPathPrefix($blog->id);
@@ -60,6 +60,7 @@ class MediaRepository
 
         $media = Media::create([
             'blog_id' => $blog->id,
+            'post_id' => $postId,
             'name' => $fileName,
             'size' => $file->getSize(),
             'original_name' => $file->getClientOriginalName(),

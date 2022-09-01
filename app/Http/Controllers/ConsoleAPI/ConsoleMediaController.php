@@ -34,10 +34,12 @@ class ConsoleMediaController extends Controller
     {
         $request->validate([
             'file' => 'required|file|max:'.config('limits.max_media_upload_size_kb'),
+            'post_id' => 'integer'
         ]);
         $file = $request->file('file');
+        $postId = $request->input('post_id');
 
-        $media = MediaRepository::upload($blog, $file);
+        $media = MediaRepository::upload($blog, $file, $postId);
 
         return response()->json(new MediaObject($media));
     }

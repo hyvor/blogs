@@ -9,6 +9,8 @@ class MediaObject
 {
     public int $id;
 
+    public ?int $post_id;
+
     public int $uploaded_at;
 
     public string $url;
@@ -20,6 +22,7 @@ class MediaObject
     public function __construct(Media $media)
     {
         $this->id = $media->id;
+        $this->post_id = $media->post_id;
         $this->uploaded_at = $media->created_at->timestamp;
         $this->name = $media->name;
         $this->url = PermalinkRepository::getMediaPermalink($media, $media->blog);

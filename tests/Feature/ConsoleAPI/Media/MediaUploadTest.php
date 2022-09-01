@@ -16,9 +16,23 @@ it('uploads', function () {
         'file' => $file,
     ])
         ->assertOk()
-        ->assertJson(fn (AssertableJson $json) => $json->has('id')->etc());
+        ->assertJson(fn (AssertableJson $json) => $json
+            ->has('id')
+            ->etc()
+        );
 
     Event::assertDispatched(MediaCreatedEvent::class);
+});
+
+it('uploads with post ID', function() {
+
+    $this->callConsoleApi('POST', '/media', [
+        'file' => UploadedFile::fake()->image('image.png')->size(100),
+        'post_id' => 2
+    ])
+        ->assertOk()
+        ->assertJson(fn (AssertableJson $json) => $json->where('post_id', 2)->etc());
+
 });
 
 it('limits file size', function () {
