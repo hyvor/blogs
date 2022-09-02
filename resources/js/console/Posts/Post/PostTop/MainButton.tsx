@@ -9,9 +9,16 @@ export default  function MainButton({id} : {id: number}) {
     let name, onClick: any, icon;
 
     const { currentVariant, editorState, forceSavePostAjax } = usePostValues(id)
-    const { changeEditorState, forceSavePost } = usePostActions(id)
+    const { changeEditorState, forceSavePost, savePost } = usePostActions(id)
 
     function handleUpdateNonDraft() {
+
+        if (!currentVariant.content_unsaved) {
+            changeEditorState('isNonDraftEditing', false);
+            savePost();
+            return;
+        }
+
         changeEditorState('isNonDraftUpdating', true);
 
         const update = {} as Partial<Post>
@@ -21,8 +28,6 @@ export default  function MainButton({id} : {id: number}) {
             content_unsaved: null
         } as Partial<PostVariant>;
         update.variants = [variant as PostVariant];
-
-        console.log(update)
 
         forceSavePost({
             update,

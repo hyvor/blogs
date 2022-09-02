@@ -104,6 +104,7 @@ class ConsolePostController extends Controller
             'featured_image_url' => 'string|max:255|nullable',
             'code_head' => 'string|nullable',
             'code_foot' => 'string|nullable',
+            'published_at' => 'integer'
         ]);
 
         $postUpdates = [];
@@ -114,6 +115,7 @@ class ConsolePostController extends Controller
             'featured_image_url',
             'code_head',
             'code_foot',
+            'published_at'
         ];
 
         foreach ($postUpdatables as $postUpdatable) {
