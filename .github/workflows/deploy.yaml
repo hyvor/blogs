@@ -110,6 +110,9 @@ jobs:
             php /var/www/current/artisan config:cache
             php /var/www/current/artisan route:cache
             php /var/www/current/artisan view:cache
+            
+            # restart horizon to catch code changes
+            php /var/www/current/artisan horizon:terminate
 
             chmod -R 777 /var/www/current/storage /var/www/current/bootstrap/cache
 

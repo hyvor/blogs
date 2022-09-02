@@ -26,7 +26,7 @@
         "http-interop/http-factory-guzzle": "^1.2",
         "hyvor/hyvor-blogs-laravel": "^0.0.1",
         "hyvor/laravel-filterq": "^1.0",
-        "hyvor/laravel-hyvor-connecter": "^1.1.3",
+        "hyvor/laravel-hyvor-connecter": "^1.1.4",
         "hyvor/laravel-json-meta": "0.0.3",
         "hyvor/php-svg-icons": "1.0.0",
         "hyvor/scssphp": "2.0.1",

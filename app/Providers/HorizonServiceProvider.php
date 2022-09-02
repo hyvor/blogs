@@ -2,6 +2,7 @@
 
 namespace App\Providers;
 
+use Hyvor\HyvorConnecter\Login;
 use Illuminate\Support\Facades\Gate;
 use Laravel\Horizon\Horizon;
 use Laravel\Horizon\HorizonApplicationServiceProvider;
@@ -18,7 +19,7 @@ class HorizonServiceProvider extends HorizonApplicationServiceProvider
         parent::boot();
 
         // Horizon::routeSmsNotificationsTo('15556667777');
-        // Horizon::routeMailNotificationsTo('example@example.com');
+        Horizon::routeMailNotificationsTo('supun@hyvor.com');
         // Horizon::routeSlackNotificationsTo('slack-webhook-url', '#channel');
 
         // Horizon::night();
@@ -33,10 +34,11 @@ class HorizonServiceProvider extends HorizonApplicationServiceProvider
      */
     protected function gate()
     {
-        Gate::define('viewHorizon', function ($user) {
-            return true;
+        Gate::define('viewHorizon', function () {
+            $user = Login::check();
             return in_array($user->email, [
-                //
+                'supunkavinda1125@gmail.com',
+                'supun@hyvor.com',
             ]);
         });
     }

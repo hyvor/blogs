@@ -21,7 +21,7 @@ class CreateMediaTable extends Migration
             $table->bigInteger('blog_id')->index();
 
             // data
-            $table->integer('post_id')->nullable(); // post this media is related to (uploaded from)
+            $table->bigInteger('post_id')->nullable(); // post this media is related to (uploaded from)
             $table->string('name')->nullable();  // unique name of the uploaded file
             $table->integer('size')->default(0); // in bytes
             $table->string('original_name'); // original filename (in user's browser)

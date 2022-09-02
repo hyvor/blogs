@@ -1,0 +1,1 @@
+ALTER TABLE media ADD COLUMN post_id BIGINT NULL AFTER blog_id;
