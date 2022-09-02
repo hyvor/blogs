@@ -113,6 +113,7 @@ jobs:
             
             # restart horizon to catch code changes
             php /var/www/current/artisan horizon:terminate
+            php /var/www/current/artisan horizon:publish
 
             chmod -R 777 /var/www/current/storage /var/www/current/bootstrap/cache
 
