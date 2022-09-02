@@ -40,6 +40,7 @@ export default class Image implements ImageNodeViewType {
         this.handleUpload = this.handleUpload.bind(this)
 
         this.createInside();
+        this.updateFromAttrs(node);
     }
 
     update(node: ProsemirrorNode) {
@@ -111,7 +112,7 @@ export default class Image implements ImageNodeViewType {
             rangeInput.type = 'range';
             rangeInput.min = "1"
             rangeInput.max = "100"
-            rangeInput.value = "100"
+            rangeInput.value = width ? (width / this.img.naturalWidth * 100).toString() : "100";
             rangeInput.step = "1"
 
             rangeInput.oninput = function(e) {
