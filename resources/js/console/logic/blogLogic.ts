@@ -35,7 +35,7 @@ const blogLogic = kea<blogLogicType>([
 
     ajax(({actions, values, props}) => ({
 
-        load: async () => {
+        load: async ({onLoad} : {onLoad: Function}) => {
             const data : BlogResponse = await api.get(props.subdomain, '/blog');
 
             const usersLogicInst = usersLogic.build({subdomain: props.subdomain})
@@ -51,6 +51,8 @@ const blogLogic = kea<blogLogicType>([
             languagesLogicInst.actions.setLanguages(data.languages);
 
             actions.setBlog(data.blog);
+
+            onLoad();
         },
 
         createVariant: async ({languageId, onCreate} : {languageId: number, onCreate: Function}) => {

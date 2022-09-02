@@ -30,12 +30,15 @@ const subdomainLogic = kea<subdomainLogicType>([
             // pre-load blog settings
             const blogLogicInst = blogLogic({subdomain})
             blogLogicInst.mount()
-            blogLogicInst.actions.load();
+            blogLogicInst.actions.load({
+                onLoad: () => {
+                    // pre-load posts
+                    const postsLogicInst = postsLogic({subdomain})
+                    postsLogicInst.mount();
+                    postsLogicInst.actions.loadPostsList();
+                }
+            });
 
-            // pre-load posts
-            const postsLogicInst = postsLogic({subdomain})
-            postsLogicInst.mount();
-            postsLogicInst.actions.loadPostsList();
 
             /**
              * This is set because there are some places that
