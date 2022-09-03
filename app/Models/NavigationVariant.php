@@ -13,7 +13,7 @@ class NavigationVariant extends Model
 
     public function navigation()
     {
-        $this->belongsTo(Navigation::class);
+        return $this->belongsTo(Navigation::class);
     }
 
     public function language()
