@@ -13,4 +13,9 @@ class ThemeFile extends Model
     protected $casts = [
         'folder' => ThemeFileFolderEnum::class,
     ];
+
+    public function blog()
+    {
+        return $this->belongsTo(Blog::class);
+    }
 }

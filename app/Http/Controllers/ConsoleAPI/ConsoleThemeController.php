@@ -96,7 +96,7 @@ class ConsoleThemeController extends Controller
         return response()->json(new FileObject($file));
     }
 
-    public function updateFile(Request $request, ThemeFile $file)
+    public function updateFile(Request $request, Blog $blog, ThemeFile $file)
     {
         $request->validate([
             'name' => 'string',
