@@ -4,8 +4,8 @@ namespace Tests\Unit\Import;
 
 use App\Data\Enums\UserRoleEnum;
 use App\Data\Enums\UserStatusEnum;
-use App\Domains\Import\Importer;
-use App\Domains\Import\Repository;
+use App\Stale\Import\Importer;
+use App\Stale\Import\Repository;
 use App\Models\Import;
 use App\Models\Post;
 use App\Models\PostVariant;

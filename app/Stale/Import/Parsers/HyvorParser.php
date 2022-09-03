@@ -1,10 +1,10 @@
 <?php
 
-namespace App\Domains\Import\Parsers;
+namespace App\Stale\Import\Parsers;
 
-use App\Domains\Import\Repository;
+use App\Stale\Import\Repository;
 
-class BloggerParser implements ParserInterface
+class HyvorParser implements ParserInterface
 {
     public function __construct(public string $file)
     {
@@ -13,7 +13,7 @@ class BloggerParser implements ParserInterface
 
     public function parse(): Repository
     {
-        dd('Blogger is working');
+        dd('hyvor is working');
         $repo = new Repository();
 
         return $repo;

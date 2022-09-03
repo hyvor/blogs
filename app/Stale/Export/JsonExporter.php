@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Domains\Export;
+namespace App\Stale\Export;
 
 class JsonExporter implements ExporterInterface
 {

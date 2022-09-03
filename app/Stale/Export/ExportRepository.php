@@ -1,9 +1,9 @@
 <?php
 
-namespace App\Domains\Export;
+namespace App\Stale\Export;
 
 use App\Data\Enums\ExportFormatEnum;
-use App\Domains\Export\Jobs\ExportJob;
+use App\Stale\Export\Jobs\ExportJob;
 
 /**
  * This repository is responsible for exporting content and media

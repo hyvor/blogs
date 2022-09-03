@@ -3,13 +3,13 @@
 namespace App\Http\Controllers\ConsoleAPI;
 
 use App\Data\Enums\ImportFormatEnum;
-use App\Domains\Export\WordpressExporter;
-use App\Domains\Import\Jobs\ImportJob;
-use App\Domains\Import\UploadRepository;
 use App\Http\Controllers\Controller;
 use App\Models\Blog;
 use App\Models\Import;
-use  Illuminate\Http\Request;
+use App\Stale\Export\WordpressExporter;
+use App\Stale\Import\Jobs\ImportJob;
+use App\Stale\Import\UploadRepository;
+use Illuminate\Http\Request;
 
 class ConsoleImportExportController extends Controller
 {

@@ -1,18 +1,18 @@
 <?php
 
-namespace App\Domains\Import\Jobs;
+namespace App\Stale\Import\Jobs;
 
 use App\Data\Enums\ImportFormatEnum;
-use App\Domains\Import\Importer;
-use App\Domains\Import\Parsers\BloggerParser;
-use App\Domains\Import\Parsers\GhostParser;
-use App\Domains\Import\Parsers\HyvorParser;
 use App\Domains\Import\Parsers\MediumParser;
-use App\Domains\Import\Parsers\SubstackParser;
-use App\Domains\Import\Parsers\TumblrParser;
-use App\Domains\Import\Parsers\WordpressParser;
 use App\Models\Blog;
 use App\Models\import;
+use App\Stale\Import\Importer;
+use App\Stale\Import\Parsers\BloggerParser;
+use App\Stale\Import\Parsers\GhostParser;
+use App\Stale\Import\Parsers\HyvorParser;
+use App\Stale\Import\Parsers\SubstackParser;
+use App\Stale\Import\Parsers\TumblrParser;
+use App\Stale\Import\Parsers\WordpressParser;
 use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Support\Facades\Storage;
 

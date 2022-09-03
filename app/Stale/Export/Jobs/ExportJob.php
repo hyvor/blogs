@@ -1,10 +1,11 @@
 <?php
 
-namespace App\Domains\Export\Jobs;
+namespace App\Stale\Export\Jobs;
 
 use App\Data\Enums\ExportFormatEnum;
-use App\Domains\Export\ExporterInterface;
-use App\Domains\Export\WordpressExporter;
+use App\Domains\Export\Jobs\JSONExporter;
+use App\Stale\Export\ExporterInterface;
+use App\Stale\Export\WordpressExporter;
 use Illuminate\Contracts\Queue\ShouldQueue;
 
 class ExportJob implements ShouldQueue

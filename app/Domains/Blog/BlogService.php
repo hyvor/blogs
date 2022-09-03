@@ -100,8 +100,10 @@ class BlogService
      */
     public static function updateBlog(Blog $blog, array $updates): Blog
     {
-        $metaKeys = $blog->getMetaKeys();
 
+        $blogOriginal = $blog->replicate();
+
+        $metaKeys = $blog->getMetaKeys();
         $metaUpdates = []; // metadata
         $realUpdates = []; // real columns
         $updatables = [
@@ -133,10 +135,13 @@ class BlogService
                 $realUpdates['hosting_domain'] = null;
             }
 
-            $blog->update($realUpdates);
+            foreach ($realUpdates as $key => $value) {
+                $blog->$key = $value;
+            }
+            $blog->save();
         }
 
-        BlogUpdatedEvent::dispatch($blog);
+        BlogUpdatedEvent::dispatch($blog, $blogOriginal);
 
         return $blog;
     }

@@ -106,7 +106,7 @@ it('clears cache when a blog is updated', function () {
 
     $blog = blog();
 
-    $event = new BlogUpdatedEvent($blog);
+    $event = new BlogUpdatedEvent($blog, $blog);
     $listener = new ClearCacheSubscriber();
     $listener->onBlogUpdate($event);
 });

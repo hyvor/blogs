@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Domains\Import;
+namespace App\Stale\Import;
 
 use App\Data\Enums\ImportFormatEnum;
 use App\Models\Blog;

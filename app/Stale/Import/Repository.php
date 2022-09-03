@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Domains\Import;
+namespace App\Stale\Import;
 
 use App\Data\Enums\UserRoleEnum;
 use App\Data\Enums\UserStatusEnum;

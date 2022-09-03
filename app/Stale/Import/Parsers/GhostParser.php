@@ -1,10 +1,10 @@
 <?php
 
-namespace App\Domains\Import\Parsers;
+namespace App\Stale\Import\Parsers;
 
-use App\Domains\Import\Repository;
+use App\Stale\Import\Repository;
 
-class TumblrParser implements ParserInterface
+class GhostParser implements ParserInterface
 {
     public function __construct(public string $file)
     {
@@ -13,7 +13,7 @@ class TumblrParser implements ParserInterface
 
     public function parse(): Repository
     {
-        dd('Tumblr is working');
+        dd('Ghost is working');
         $repo = new Repository();
 
         return $repo;

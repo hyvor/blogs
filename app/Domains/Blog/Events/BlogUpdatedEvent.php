@@ -9,7 +9,10 @@ class BlogUpdatedEvent
 {
     use Dispatchable;
 
-    public function __construct(public Blog $blog)
+    public function __construct(
+        public Blog $blog,
+        public Blog $blogOriginal
+    )
     {
     }
 }

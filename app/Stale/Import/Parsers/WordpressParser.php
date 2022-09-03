@@ -1,14 +1,15 @@
 <?php
 
-namespace App\Domains\Import\Parsers;
+namespace App\Stale\Import\Parsers;
 
 use App\Data\Enums\UserRoleEnum;
 use App\Data\Enums\UserStatusEnum;
-use App\Domains\Import\Repository;
 use App\Models\User;
 use App\Models\UserVariant;
+use App\Stale\Import\Repository;
 use Illuminate\Support\Str;
 use Symfony\Component\DomCrawler\Crawler;
+use function App\Domains\Import\Parsers\mb_strlen;
 
 class WordpressParser implements ParserInterface
 {

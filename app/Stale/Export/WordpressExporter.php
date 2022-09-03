@@ -1,10 +1,12 @@
 <?php
 
-namespace App\Domains\Export;
+namespace App\Stale\Export;
 
 use App\Domains\Language\LanguageRepository;
 use App\Domains\Post\PostTagAuthorRepository;
 use App\Domains\Route\PermalinkRepository;
+use function App\Domains\Export\mb_detect_encoding;
+use function App\Domains\Export\utf8_encode;
 
 /**
  * To export blog content in WordPress format

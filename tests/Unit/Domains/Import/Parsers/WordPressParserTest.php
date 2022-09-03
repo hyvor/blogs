@@ -1,11 +1,9 @@
 <?php
 
-use App\Domains\Import\Parsers\WordpressParser;
-
 /*
 namespace Tests\Unit\Import\Parsers;
 
-use App\Domains\Import\Parsers\WordpressParser;
+use App\Stale\Import\Parsers\WordpressParser;
 
 // php artisan test  --filter 'WordPressParserTest'
 // If this test needs to work properly then we will have to add the html/body part to the filterXpath in the wordpress parser.
