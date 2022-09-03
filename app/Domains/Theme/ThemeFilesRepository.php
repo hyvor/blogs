@@ -116,7 +116,8 @@ class ThemeFilesRepository
         match ($file->folder) {
             ThemeFileFolderEnum::STYLES => StylesEditedEvent::dispatch($blog),
             ThemeFileFolderEnum::ASSETS => AssetEditedEvent::dispatch($file->blog, $file->name),
-            ThemeFileFolderEnum::TEMPLATES => TemplateEditedEvent::dispatch($file)
+            ThemeFileFolderEnum::TEMPLATES => TemplateEditedEvent::dispatch($file),
+            default => null
         };
     }
 
