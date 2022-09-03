@@ -66,7 +66,8 @@ export default function PostAuthors({ post, updatePostValue } : { post: Post, up
         loadOptions={loader}
         cacheOptions
         defaultOptions={options}
-        defaultValue={defaultValue}
+        // defaultValue={defaultValue}
+        value={defaultValue}
         isMulti
         classNamePrefix="react-select"
         className="react-select react-select-normal react-select-multi"

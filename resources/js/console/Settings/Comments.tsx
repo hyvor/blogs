@@ -90,7 +90,7 @@ export default function Comments() {
                         title="Comments Embed Code"
                         description={
                             <div>
-                                Paste the embed code provided by your commenting system provider. You can use Twig <a className="link" href="/docs/themes-overview#variables" target="_blank">scope variables</a> if needed.
+                                Paste the embed code provided by your commenting system provider. You can use Twig <a className="link" href="/docs/themes-templates#variables" target="_blank">route variables</a> if needed.
                             </div>
                         }
                         right={

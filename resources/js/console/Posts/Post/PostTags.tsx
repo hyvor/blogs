@@ -60,7 +60,8 @@ export default function PostTags({ post, updatePostValue } : { post: Post, updat
         loadOptions={loader}
         cacheOptions
         defaultOptions={options}
-        defaultValue={defaultValue}
+        // defaultValue={defaultValue}
+        value={defaultValue}
         isMulti
         classNamePrefix="react-select"
         className="react-select react-select-normal react-select-multi"

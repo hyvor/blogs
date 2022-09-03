@@ -21,7 +21,7 @@ export default function Code() {
                 title="Head Code"
                 description={
                     <div>
-                        This HTML code will be placed right before the &lt;/head&gt; tag. You can use this to add custom CSS and meta tags for the whole blog. In addition to HTML, you can also use <a className="link" href="/docs/themes-overview#twig" target="_blank">Twig</a>, and has access to <a className="link" href="/docs/themes-overview#variables" target="_blank">route variables</a>.
+                        This HTML code will be placed right before the &lt;/head&gt; tag. You can use this to add custom CSS and meta tags for the whole blog. In addition to HTML, you can also use <a className="link" href="/docs/themes-templates#twig" target="_blank">Twig</a>, and has access to <a className="link" href="/docs/themes-templates#variables" target="_blank">route variables</a>.
                     </div>
                 }
                 right={
