@@ -21,6 +21,10 @@ class MediaProcessor extends RouteProcessorAbstract
         }
 
         $content = MediaRepository::getContents($media);
+
+        if (!$content)
+            return;
+
         $mimeType = $media->extension ? MimeTypes::getMimeFromExtension($media->extension) : 'image/png';
 
         $this->setResponseObject(DeliveryAPIResponseObject::forFile(
