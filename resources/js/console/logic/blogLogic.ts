@@ -103,12 +103,9 @@ const blogLogic = kea<blogLogicType>([
                 setBlog: (_, {blog}) => blog,
                 setOriginal: (_, {blog}) => blog,
                 addBlogVariant: (state, {variant}) => {
-                    const obj = {
-                        variants: {
-                            [variant.language_id]: variant
-                        }
-                    }
-                    return merge(state, obj) as Blog;
+                    const copy = {...state};
+                    copy.variants.push(variant)
+                    return copy;
                 },
             }
         ],
