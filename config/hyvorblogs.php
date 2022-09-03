@@ -64,6 +64,6 @@ return [
      * Hyvor Blog's Base URL to call the delivery API
      * Only useful for package maintainers
      */
-    'hb_base_url' => 'https://blogs.hyvor.com',
+    'hb_base_url' => 'https://blogs-beta.hyvor.com',
 
 ];
