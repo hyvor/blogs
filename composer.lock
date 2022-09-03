@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "50c1ebf33228eaf2f1b21860d709186b",
+    "content-hash": "c38c2bb8fa375a605c73f288c3e7cf98",
     "packages": [
         {
             "name": "asm89/stack-cors",
@@ -1520,16 +1520,16 @@
         },
         {
             "name": "hyvor/hyvor-blogs-laravel",
-            "version": "0.0.1",
+            "version": "0.0.2",
             "source": {
                 "type": "git",
                 "url": "https://github.com/hyvor/hyvor-blogs-laravel.git",
-                "reference": "71eaaec5bca54be4fcdeb87a014ed70653b76d94"
+                "reference": "9629656d480d98699b68c6ed81cf4e53c28fd74e"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/hyvor/hyvor-blogs-laravel/zipball/71eaaec5bca54be4fcdeb87a014ed70653b76d94",
-                "reference": "71eaaec5bca54be4fcdeb87a014ed70653b76d94",
+                "url": "https://api.github.com/repos/hyvor/hyvor-blogs-laravel/zipball/9629656d480d98699b68c6ed81cf4e53c28fd74e",
+                "reference": "9629656d480d98699b68c6ed81cf4e53c28fd74e",
                 "shasum": ""
             },
             "require": {
@@ -1569,9 +1569,9 @@
             "description": "For self-hosting a Hyvor Blogs blog on a Laravel application",
             "support": {
                 "issues": "https://github.com/hyvor/hyvor-blogs-laravel/issues",
-                "source": "https://github.com/hyvor/hyvor-blogs-laravel/tree/0.0.1"
+                "source": "https://github.com/hyvor/hyvor-blogs-laravel/tree/0.0.2"
             },
-            "time": "2022-08-27T09:24:08+00:00"
+            "time": "2022-09-03T07:34:26+00:00"
         },
         {
             "name": "hyvor/laravel-filterq",
