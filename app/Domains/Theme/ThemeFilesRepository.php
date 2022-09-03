@@ -5,6 +5,7 @@ namespace App\Domains\Theme;
 use App\Data\Enums\ThemeFileFolderEnum;
 use App\Domains\Theme\Events\AssetEditedEvent;
 use App\Domains\Theme\Events\StylesEditedEvent;
+use App\Domains\Theme\Events\TemplateEditedEvent;
 use App\Domains\Theme\GithubSync\File;
 use App\Exceptions\TrustedException;
 use App\Models\Blog;
@@ -111,12 +112,12 @@ class ThemeFilesRepository
 
     private static function fileUpdated(ThemeFile $file) : void
     {
-        if ($file->folder === ThemeFileFolderEnum::STYLES) {
-            StylesEditedEvent::dispatch($file->blog);
-        }
-        if ($file->folder === ThemeFileFolderEnum::ASSETS) {
-            AssetEditedEvent::dispatch($file->blog, $file->name);
-        }
+        $blog = $file->blog;
+        match ($file->folder) {
+            ThemeFileFolderEnum::STYLES => StylesEditedEvent::dispatch($blog),
+            ThemeFileFolderEnum::ASSETS => AssetEditedEvent::dispatch($file->blog, $file->name),
+            ThemeFileFolderEnum::TEMPLATES => TemplateEditedEvent::dispatch($file)
+        };
     }
 
     public static function deleteFile(ThemeFile $file)

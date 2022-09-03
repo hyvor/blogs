@@ -15,7 +15,7 @@ return [
              * The subdomain given by Hyvor Blogs
              * Sign up at https://blogs.hyvor.com/console to create a new one
              */
-            'subdomain' => 'hb-blog',
+            'subdomain' => 'blog',
 
             /**
              * @required
@@ -24,7 +24,7 @@ return [
              * Console -> Settings -> API Keys -> Create an API key for Delivery API
              * Paste the key here
              */
-            'delivery_api_key' => '',
+            'delivery_api_key' => 'd9a17c17290c4f1c87d67fe0ac88706f',
 
             /**
              * Optional but recommended
@@ -33,7 +33,7 @@ return [
              * Then, copy the secret here for webhook validation
              * If the secret is null, no validation is done
              */
-            'webhook_secret' => null,
+            'webhook_secret' => '936a14f08d8be7f6f94c08a4fdc590ef',
 
             /**
              * @required

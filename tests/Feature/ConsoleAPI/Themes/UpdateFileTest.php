@@ -4,6 +4,7 @@ namespace Tests\Feature\ConsoleAPI\Themes;
 
 use App\Data\Enums\ThemeFileFolderEnum;
 use App\Domains\Theme\Events\StylesEditedEvent;
+use App\Domains\Theme\Events\TemplateEditedEvent;
 use App\Domains\Theme\ThemeFilesRepository;
 use Illuminate\Support\Facades\Event;
 use Illuminate\Testing\Fluent\AssertableJson;
@@ -24,6 +25,8 @@ it('updates name', function () {
 });
 
 it('updates content', function () {
+    Event::fake();
+
     $file = ThemeFilesRepository::createOrUpdateFile(
         blog(),
         ThemeFileFolderEnum::TEMPLATES,
@@ -36,6 +39,27 @@ it('updates content', function () {
     ])
         ->assertOk()
         ->assertJson(fn (AssertableJson $json) => $json->where('content', 'new')->etc());
+
+    Event::assertDispatched(TemplateEditedEvent::class);
+});
+
+it('updates a style file', function() {
+    Event::fake();
+
+    $file = ThemeFilesRepository::createOrUpdateFile(
+        blog(),
+        ThemeFileFolderEnum::STYLES,
+        'index.scss',
+        'none'
+    );
+
+    $this->callConsoleApi('PATCH', "/theme/file/$file->id", [
+        'content' => 'new',
+    ])
+        ->assertOk()
+        ->assertJson(fn (AssertableJson $json) => $json->where('content', 'new')->etc());
+
+    Event::assertDispatched(StylesEditedEvent::class);
 });
 
 it('updates content to empty', function () {

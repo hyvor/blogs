@@ -19,6 +19,7 @@ use App\Domains\Tag\Events\TagDeletedEvent;
 use App\Domains\Tag\Events\TagUpdatedEvent;
 use App\Domains\Tag\Events\TagVariantDeletedEvent;
 use App\Domains\Tag\Events\TagVariantUpdatedEvent;
+use App\Domains\Theme\Events\TemplateEditedEvent;
 use App\Domains\User\Events\UserCreatedEvent;
 use App\Domains\User\Events\UserDeletedEvent;
 use App\Domains\User\Events\UserUpdatedEvent;
@@ -31,6 +32,7 @@ use App\Models\PostVariant;
 use App\Models\Route;
 use App\Models\Tag;
 use App\Models\TagVariant;
+use App\Models\ThemeFile;
 use App\Models\User;
 use App\Models\UserVariant;
 use Illuminate\Support\Facades\Event;
@@ -78,6 +80,9 @@ it('is attached', function () {
 
     // route
     Event::assertListening(RouteChangedEvent::class, [ClearCacheSubscriber::class, 'onRouteEvent']);
+
+    // theme files
+    Event::assertListening(TemplateEditedEvent::class, [ClearCacheSubscriber::class, 'onTemplateEditedEvent']);
 });
 
 beforeEach(function () {
@@ -312,4 +317,14 @@ it('clears cache on route event', function () {
 
     $listener = new ClearCacheSubscriber();
     $listener->onRouteEvent($event);
+});
+
+it('clears cache on template editing', function() {
+    ($this->templateMock)();
+
+    $file = ThemeFile::factory()->create();
+    $event = new TemplateEditedEvent($file);
+
+    $listener = new ClearCacheSubscriber();
+    $listener->onTemplateEditedEvent($event);
 });
