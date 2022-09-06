@@ -3,6 +3,7 @@
 namespace App\Providers;
 
 use App\Domains\Blog\Events\BlogUpdatedEvent;
+use App\Domains\Blog\Listeners\UpdateContentHtmlOfAllPostsListener;
 use App\Domains\Blog\Listeners\UpdateUrlsListener;
 use App\Domains\Cache\Listeners\ClearCacheSubscriber;
 use App\Domains\Integrations\Shopify\Listeners\ShopifySubscriber;
@@ -28,7 +29,8 @@ class EventServiceProvider extends ServiceProvider
         ],
 
         BlogUpdatedEvent::class => [
-            UpdateUrlsListener::class
+            UpdateUrlsListener::class,
+            UpdateContentHtmlOfAllPostsListener::class
         ]
 
     ];

@@ -104,7 +104,7 @@ class PostFiller implements FillerInterface
                         'language_id' => $lang->id,
                         'status' => 'published',
                     ]);
-                    PostContentRepository::updateVariantHtml($variant);
+                    (new PostContentRepository)->updateVariantHtml($variant);
                 }
 
                 // add 1-3 post tags

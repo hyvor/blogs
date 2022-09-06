@@ -9,6 +9,6 @@ class PostVariantUpdateContentHtmlListener
 {
     public function handle(PostVariantUpdatedEvent $event)
     {
-        PostContentRepository::updateVariantHtml($event->variant);
+        (new PostContentRepository)->updateVariantHtml($event->variant);
     }
 }

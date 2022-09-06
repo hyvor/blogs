@@ -37,7 +37,7 @@ class Link extends Mark
 
         $isInternal = self::isLinkInternal($blog, $href);
         $rel = self::getLinkRel(
-            $isInternal || $blog->getMeta('seo_external_links_follow') !== 'nofollow'
+            $isInternal || $blog->getMeta('seo_external_links_follow') === 'follow'
         );
 
         return [

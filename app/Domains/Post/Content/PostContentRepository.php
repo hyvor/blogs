@@ -96,9 +96,9 @@ class PostContentRepository
         return file_get_contents(resource_path("twig/blocks/$name.twig"));
     }
 
-    public static function updateVariantHtml(PostVariant $variant)
+    public function updateVariantHtml(PostVariant $variant)
     {
-        if (! $variant->content) {
+        if (!$variant->content) {
             return;
         }
 
