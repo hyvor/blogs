@@ -68,6 +68,14 @@ class ShopifyService
         return hash_equals($hash, $signature);
     }
 
+    public function hasValidWebhookSignature(string $signature, string $body)
+    {
+
+        $hash = base64_encode(hash_hmac('sha256', $body, config('services.shopify.api_secret_key'), true));
+        return hash_equals($signature, $hash);
+
+    }
+
     public function getOAuthUrl(string $shopDomain)
     {
         $apiKey = config('services.shopify.api_key');
@@ -110,7 +118,7 @@ class ShopifyService
         $shop->delete();
     }
 
-    public static function getShopByDomain(string $domain): ?ShopifyShop
+    public function getShopByDomain(string $domain): ?ShopifyShop
     {
         return ShopifyShop::where('domain', $domain)->first();
     }

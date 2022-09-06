@@ -7,6 +7,7 @@ use App\Data\Enums\BlogTypeEnum;
 use App\Data\Enums\SubscriptionFrequencyEnum;
 use App\Data\Enums\SubscriptionPlanEnum;
 use App\Domains\Blog\BlogService;
+use App\Domains\Blog\Jobs\DeleteBlogJob;
 use App\Domains\Blog\UniqueSubdomainGenerator;
 use App\Domains\Integrations\Shopify\Rules\ShopDomainRule;
 use App\Domains\Integrations\Shopify\ShopifyService;
@@ -202,5 +203,37 @@ class ShopifyController
         $subscription->setMeta('shopify_charge_id', $chargeId);
 
         return redirect("/console/$blog->subdomain/billing");
+    }
+
+    public function deleteShop(Request $request, ShopifyService $shopifyService)
+    {
+
+        $request->validate([
+            'shop_domain' => ['required', 'string', new ShopDomainRule()]
+        ]);
+
+        if (!$shopifyService->hasValidWebhookSignature(
+            $request->header('X-Shopify-Hmac-SHA256'),
+            $request->getContent()
+        )) {
+            throw new TrustedException('Invalid Signature');
+        }
+
+        $domain = $request->input('shop_domain');
+
+        $shop = $shopifyService->getShopByDomain($domain);
+
+        if (!$shop) {
+            throw new TrustedException('Shop not found');
+        }
+
+        if (!$shop->blog) {
+            throw new TrustedException('No blog assigned');
+        }
+
+        // deletes the shop via events
+        DeleteBlogJob::dispatch($shop->blog);
+
+        return response()->json();
     }
 }
