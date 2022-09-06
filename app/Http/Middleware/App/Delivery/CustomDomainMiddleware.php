@@ -11,7 +11,6 @@ class CustomDomainMiddleware
     public function handle($request, Closure $next)
     {
         $host = $request->getHost();
-
         $blog = BlogService::getBlogByCustomDomain($host);
 
         if (! $blog) {

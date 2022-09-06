@@ -33,4 +33,11 @@ Route::domain('{subdomain}.'.config('blogs.domain_delivery'))
 
 // custom domain
 Route::middleware(CustomDomainMiddleware::class)
-    ->get('{any}', [DomainDeliveryController::class, 'handle'])->where('any', '.*');
+    ->domain('{domain}')
+    ->get('{any}', [DomainDeliveryController::class, 'handle'])
+    ->where('domain',
+        '^(?!' .
+        str_replace('.', '\.', config('blogs.domain_app')) .
+        ').*$'
+    )
+    ->where('any', '.*');
