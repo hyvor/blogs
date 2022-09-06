@@ -104,7 +104,7 @@
             html.classList.remove(r, 'mode-preference-light', 'mode-preference-dark', 'mode-preference-os');
             html.classList.add(a, 'mode-preference-' + pref);
             if (!noSave) {
-                localStorage.setItem(lsKey, pref)
+                try {localStorage.setItem(lsKey, pref)} catch (e) {}
             }
             window.dispatchEvent(new CustomEvent("hb:colorModeChanged", {
                 detail: {
@@ -113,7 +113,11 @@
             }))
         }
         window._hb.getColorModePreference = function() {
-            return localStorage.getItem(lsKey) || _hb.color_mode_default; // os|light|dark
+            var ls = null;
+            try {
+                ls = localStorage.getItem(lsKey)
+            } catch (e) {}
+            return ls || _hb.color_mode_default; // os|light|dark
         }
         window._hb.getColorMode = function(pref) {
             var mode = pref || _hb.getColorModePreference();
