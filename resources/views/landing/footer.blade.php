@@ -13,8 +13,8 @@
 		<div class="pack">
 			<div class="title">Legal</div>
 			<div class="item"><a rel="nofollow" href="/docs/terms" title="Hyvor Blogs Terms of Service">Terms</a></div>
-			<div class="item"><a rel="nofollow" href="/docs/privacy" title="Hyvor Blogs's Privacy Policy">Privacy Policy</a></div>
-			<div class="item"><a rel="nofollow" href="/docs/gdpr" title="GDPR Compliance">GDPR</a></div>
+			<div class="item"><a rel="nofollow" href="/docs/policy-privacy" title="Hyvor Blogs's Privacy Policy">Privacy Policy</a></div>
+			<div class="item"><a rel="nofollow" href="/docs/compliance-gdpr" title="GDPR Compliance">GDPR</a></div>
 		</div>
 		<div class="pack">
 			<div class="title">Hyvor</div>
