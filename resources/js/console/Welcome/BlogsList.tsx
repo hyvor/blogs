@@ -4,6 +4,7 @@ import userBlogsLogic from "../logic/userBlogsLogic";
 import {UserBlog} from '../objects/userblog';
 import NavLink from "../ReusableComponents/NavLink";
 import {BlogType} from "../enums";
+import {isOnTrial} from "../lib/blog-helpers";
 
 export default function BlogsList() {
 
@@ -48,7 +49,7 @@ export default function BlogsList() {
                                 blog.type === BlogType.DEV ?
                                     "DEV" :
                                     (
-                                        blog.is_on_trial ?
+                                        isOnTrial(blog) ?
                                             "Trial" :
                                             blog.subscription?.plan || ""
                                     )
@@ -56,7 +57,7 @@ export default function BlogsList() {
                         </div>
                         <div className="data-cards" style={{marginTop: 10}}>
                             <DataCard name="Posts" value={ blog.posts_count } />
-                            <DataCard name="Users" value={ blog.posts_count } />
+                            <DataCard name="Users" value={ blog.users_count } />
                         </div>
 
                     </NavLink>

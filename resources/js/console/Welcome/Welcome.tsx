@@ -1,6 +1,5 @@
-import React, {ReactNode} from "react";
+import React from "react";
 import BlogsList from './BlogsList'
-import {BoxArrowUpRight, Envelope, Icon, Link45deg} from "react-bootstrap-icons";
 
 export default function Welcome() {
 
