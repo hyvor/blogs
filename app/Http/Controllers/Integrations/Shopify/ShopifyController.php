@@ -33,7 +33,7 @@ class ShopifyController
         $shopDomain = $request->input('shop');
 
         $shop = $shopify->getShopByDomain($shopDomain);
-        if ($shop) {
+        if ($shop && $shop->blog) {
             return redirect('/console/' . $shop->blog->subdomain);
         }
 
