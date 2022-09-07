@@ -17,8 +17,7 @@ it('requires a valid signature', function () {
         ], [], [], [
             'HTTP_X_SHOPIFY_HMAC_SHA256' => 'invalid'
         ])
-        ->assertUnprocessable()
-        ->assertSee('Invalid Signature');
+        ->assertUnauthorized();
 
 });
 

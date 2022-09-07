@@ -216,7 +216,7 @@ class ShopifyController
             $request->header('X-Shopify-Hmac-SHA256'),
             $request->getContent()
         )) {
-            throw new TrustedException('Invalid Signature');
+            abort(401);
         }
 
         $domain = $request->input('shop_domain');

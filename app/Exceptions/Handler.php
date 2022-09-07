@@ -55,15 +55,13 @@ class Handler extends ExceptionHandler
                 ) {
                     $code = $exception->status ?? $exception->getCode();
 
-                    /**
-                     * Laravel input validation sends 422
-                     * But, in our APIs we only return 400
-                     */
                     if ($code === 400) {
                         $code = 422;
                     }
 
-                    $httpCode = in_array($code, [401, 403, 404, 422, 500]) ? $code : 500;
+                    $httpCode = method_exists($exception, 'getStatusCode') ?
+                        $exception->getStatusCode() :
+                        (in_array($code, [401, 403, 404, 422, 500]) ? $code : 500);
 
                     $error =
                         $exception instanceof TrustedException ||
