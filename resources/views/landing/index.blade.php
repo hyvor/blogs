@@ -4,7 +4,7 @@
     @include('landing.meta', [
         'title' => 'Hyvor Blogs - A simple and powerful blogging platform',
         'description' => 'Hyvor Blogs is a simple and powerful blogging platform with a rich text editor, multi language support, APIs and webhooks, etc.',
-        'image' => '',
+        'image' => 'https://blogs.hyvor.com/img/banner.png',
         'canonical' => 'https://blogs.hyvor.com',
     ])
 </head>
