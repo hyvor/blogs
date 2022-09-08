@@ -107,10 +107,10 @@ class ShopifyService
 
     public function createShop(string $domain, string $accessToken)
     {
-        ShopifyShop::create([
-            'domain' => $domain,
-            'access_token' => $accessToken
-        ]);
+        ShopifyShop::updateOrCreate(
+            ['domain' => $domain],
+            ['access_token' => $accessToken]
+        );
     }
 
     public static function deleteShop(ShopifyShop $shop)
