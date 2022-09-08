@@ -5,6 +5,7 @@ body.pricing {
     .pricing-table {
         padding-top: 115px;
         background: $color-accent-very-light;
+        overflow: auto;
 
         p {
             font-size:14px;

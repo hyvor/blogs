@@ -1,6 +1,5 @@
 
 .docs-page {
-
     background-color:$color-accent-very-light;
 
     #sidebar {
@@ -55,9 +54,43 @@
         box-shadow: 0 0 30px rgba(0,0,0,0.05);
         border-radius: 20px;
         padding:30px 50px;
+        max-width: calc(100% - 330px);
     }
 
+    #docs-mobile {
+        display: none;
+        background-color: $color-hover;
+        border:none;
+        border-radius: 5px;
+        padding: 5px 10px;
+        margin-bottom: 10px;
+        cursor: pointer;
+    }
 
+    @media screen and (max-width: $tab) {
+        #content-view {
+            margin-left: auto;
+            margin-right: auto;
+            margin-top: 85px;
+            width: 720px;
+            max-width: 100%;
+        }
+        #sidebar {
+            display: none;
+            position: absolute;
+            &.open {
+                display: block;
+            }
+        }
+        #docs-mobile {
+            display: block;
+        }
+    }
+    @media screen and (max-width: $mobile) {
+        #content-view {
+            padding: 30px 30px;
+        }
+    }
 
     content {
         letter-spacing: 0.1px;

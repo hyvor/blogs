@@ -37,9 +37,13 @@
 
     </div>
 
-
     <div id="content-view">
 
+        <button id="docs-mobile" onclick="handleMobile()">
+            <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" fill="currentColor" class="bi bi-list" viewBox="0 0 16 16">
+                <path fill-rule="evenodd" d="M2.5 12a.5.5 0 0 1 .5-.5h10a.5.5 0 0 1 0 1H3a.5.5 0 0 1-.5-.5zm0-4a.5.5 0 0 1 .5-.5h10a.5.5 0 0 1 0 1H3a.5.5 0 0 1-.5-.5zm0-4a.5.5 0 0 1 .5-.5h10a.5.5 0 0 1 0 1H3a.5.5 0 0 1-.5-.5z"/>
+            </svg>
+        </button>
 
         <content>
             {!! $content !!}
@@ -48,6 +52,19 @@
     </div>
 
     <script>
+
+        // mobile
+        function handleMobile() {
+            var btn = document.getElementById("docs-mobile");
+            var sidebar = document.getElementById("sidebar");
+
+            var rect = btn.getBoundingClientRect()
+            sidebar.style.left = rect.left + "px";
+            sidebar.style.top = rect.top + 40 + "px";
+            sidebar.classList.toggle('open');
+        }
+
+
         // nav pos on scroll
 
         function selfRemovingWindowEvent(on, func) {
@@ -60,6 +77,7 @@
         }
 
         function handleScroll() {
+            if (window.innerWidth <= 992) return;
             var nav = document.getElementById("sidebar");
             nav.style.top = Math.max(65-window.scrollY, 15) + "px";
         }
