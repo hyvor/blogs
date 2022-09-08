@@ -16,12 +16,15 @@ footer {
 		max-width:100%;
 		display:flex;
 		flex-direction:row;
+		justify-content: space-evenly;
 		.pack {
-			flex:1;
 			padding:10px;
-			@media screen and (max-width:900px) {
-				flex:unset;
-				width:100%;
+		}
+		@media screen and (max-width: $tab) {
+			flex-direction: column;
+			.pack {
+				width: 100%;
+				text-align: center;
 			}
 		}
 		.title {
@@ -60,14 +63,6 @@ footer {
 		.made-in {
 			
 		}
-	}
-	.footer-bottom .sl-flag {
-		// background-image: url('/img/landing/sl-flag.png');
-		background-size: 100%;
-		display: inline-block;
-		width: 32px;
-		height: 16px;
-		vertical-align:middle;
 	}
 	.footer-bottom .made-in-text, .footer-bottom .copy-text {
 		vertical-align:middle;
