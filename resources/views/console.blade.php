@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
 <head>
     <title>Console - Hyvor Blogs</title>
     <meta name="robots" content="nofollow, noindex">
