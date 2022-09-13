@@ -74,6 +74,6 @@ class AuthorObject
                 return new VariantObject($variantLanguage, $url);
             })->toArray();
 
-        $this->posts_count = 35; // $user->posts_count;
+        $this->posts_count = $user->posts_count;
     }
 }

@@ -111,7 +111,7 @@
         "serve": "concurrently \"php artisan serve --host=blogs.hyvor.test --port=8080\" \"php artisan serve --host=test.hyvorblogs.test --port=8081\"",
         "expose": "ngrok http 8080",
         "test": "vendor/bin/pest -p",
-        "coverage": "vendor/bin/pest --coverate -p",
+        "coverage": "vendor/bin/pest --coverage -p",
         "pint": "vendor/bin/pint",
         "minio": "minio server storage/app/minio"
     },

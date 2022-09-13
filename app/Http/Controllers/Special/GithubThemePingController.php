@@ -16,6 +16,6 @@ class GithubThemePingController
             GithubSyncService::syncFromGithubZipBall();
         });
 
-        return response();
+        return response()->json();
     }
 }
