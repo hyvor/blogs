@@ -2,10 +2,13 @@
 
 namespace App\Providers;
 
+use App\Exceptions\TrustedException;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Facades\App;
 use Illuminate\Support\Facades\URL;
 use Illuminate\Support\ServiceProvider;
+use Spatie\LaravelIgnition\Facades\Flare;
+use Throwable;
 
 class AppServiceProvider extends ServiceProvider
 {
@@ -32,5 +35,10 @@ class AppServiceProvider extends ServiceProvider
 
         // remove mass assignment globally
         Model::unguard();
+
+        // flare
+        Flare::filterExceptionsUsing(
+            fn(Throwable $throwable) => !$throwable instanceof TrustedException
+        );
     }
 }
