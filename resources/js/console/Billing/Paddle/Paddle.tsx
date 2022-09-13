@@ -9,7 +9,6 @@ import {useActions, useValues} from "kea";
 import {FullPageLoader} from "../../ReusableComponents/Loader";
 import {PopupNotice} from "../../ReusableComponents/Popup";
 import getSubdomain from "../../logic-helpers/subdomain";
-import {toast} from "react-toastify";
 
 export default function Paddle() {
 
@@ -23,11 +22,6 @@ export default function Paddle() {
     const [reloadCountdown, setReloadCountdown] = useState(10);
 
     function handleCreate(plan: SubscriptionPlan, frequency: SubscriptionFrequency) {
-
-        toast("Subscriptions are not yet available. Hyvor Blogs is free until beta testing ends.", {
-            autoClose: 10000
-        });
-        return;
 
         createSubscription({
             plan,

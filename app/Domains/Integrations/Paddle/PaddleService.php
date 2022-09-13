@@ -122,61 +122,61 @@ class PaddleService
         return collect([
 
             new PaddlePlan(
-                !App::environment('production') ? 32097 : 0,
+                !App::environment('production') ? 32097 : 790127,
                 SubscriptionPlanEnum::A,
                 SubscriptionFrequencyEnum::MONTHLY,
             ),
 
             new PaddlePlan(
-                !App::environment('production') ? 32098 : 0,
+                !App::environment('production') ? 32098 : 790128,
                 SubscriptionPlanEnum::A,
                 SubscriptionFrequencyEnum::YEARLY,
             ),
 
             new PaddlePlan(
-                !App::environment('production') ? 32099 : 0,
+                !App::environment('production') ? 32099 : 790129,
                 SubscriptionPlanEnum::B,
                 SubscriptionFrequencyEnum::MONTHLY,
             ),
 
             new PaddlePlan(
-                !App::environment('production') ? 32100 : 0,
+                !App::environment('production') ? 32100 : 790130,
                 SubscriptionPlanEnum::B,
                 SubscriptionFrequencyEnum::YEARLY,
             ),
 
             new PaddlePlan(
-                !App::environment('production') ? 32101 : 0,
+                !App::environment('production') ? 32101 : 790131,
                 SubscriptionPlanEnum::C,
                 SubscriptionFrequencyEnum::MONTHLY,
             ),
 
             new PaddlePlan(
-                !App::environment('production') ? 32102 : 0,
+                !App::environment('production') ? 32102 : 790132,
                 SubscriptionPlanEnum::C,
                 SubscriptionFrequencyEnum::YEARLY,
             ),
 
             new PaddlePlan(
-                !App::environment('production') ? 32103 : 0,
+                !App::environment('production') ? 32103 : 790133,
                 SubscriptionPlanEnum::D,
                 SubscriptionFrequencyEnum::MONTHLY,
             ),
 
             new PaddlePlan(
-                !App::environment('production') ? 32104 : 0,
+                !App::environment('production') ? 32104 : 790134,
                 SubscriptionPlanEnum::D,
                 SubscriptionFrequencyEnum::YEARLY,
             ),
 
             new PaddlePlan(
-                !App::environment('production') ? 32105 : 0,
+                !App::environment('production') ? 32105 : 790135,
                 SubscriptionPlanEnum::E,
                 SubscriptionFrequencyEnum::MONTHLY,
             ),
 
             new PaddlePlan(
-                !App::environment('production') ? 32106 : 0,
+                !App::environment('production') ? 32106 : 790136,
                 SubscriptionPlanEnum::E,
                 SubscriptionFrequencyEnum::YEARLY,
             ),

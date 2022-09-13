@@ -31,14 +31,14 @@
                     Start a Blog
                 </a>
 
-                 <div class="hero-message-wrap">
+                 {{--<div class="hero-message-wrap">
                     <a 
                         class="hero-message"
                         target="_blank"
                     >
                         Hyvor Blogs is currently in public BETA
                     </a>
-                </div>
+                </div>--}}
             </div>
 
             <div class="hero-svg">
