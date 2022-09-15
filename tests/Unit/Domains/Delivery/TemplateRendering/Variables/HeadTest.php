@@ -131,3 +131,27 @@ it('adds nofollow', function () {
 
     expect($content)->toContain('<meta name="robots" content="noindex">');
 });
+
+it('adds favicon', function() {
+
+    $blog = blog();
+    $url = 'https://exmaple.com/logo.png';
+    $blog->setMeta('logo_url', $url);
+
+    $content = '{{ _head | template }}';
+
+    ThemeFilesRepository::createOrUpdateFile(
+        $blog,
+        ThemeFileFolderEnum::TEMPLATES,
+        'index.twig',
+        $content,
+    );
+
+    $pathMatcher = new PathMatcher($blog, '/');
+    $responseObject = $pathMatcher->getResponseObject();
+
+    $content = $responseObject->content;
+
+    expect($content)->toContain("<link rel=\"shortcut icon\" href=\"$url\">");
+
+});
