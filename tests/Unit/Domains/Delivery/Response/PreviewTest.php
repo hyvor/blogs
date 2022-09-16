@@ -30,6 +30,7 @@ it('matches preview page', function () {
     $responseObject = $pathMatcher->getResponseObject();
 
     expect($responseObject->type)->toBe(DeliveryAPITypeEnum::FILE);
+    expect($responseObject->cache)->toBe(false);
     expect($responseObject->status)->toBe(200);
     expect($responseObject->content)->toBe($post->id.$language->code);
     expect($responseObject->file_type)->toBe(DeliveryAPIFileTypeEnum::TEMPLATE);
@@ -45,6 +46,7 @@ it('language works', function () {
     $responseObject = $pathMatcher->getResponseObject();
 
     expect($responseObject->type)->toBe(DeliveryAPITypeEnum::FILE);
+    expect($responseObject->cache)->toBe(false);
     expect($responseObject->status)->toBe(200);
     expect($responseObject->content)->toBe($post->id.$language->code);
 });
@@ -69,6 +71,7 @@ it('displays unsaved content HTML if it is there', function () {
     $responseObject = $pathMatcher->getResponseObject();
 
     expect($responseObject->type)->toBe(DeliveryAPITypeEnum::FILE);
+    expect($responseObject->cache)->toBe(false);
     expect($responseObject->status)->toBe(200);
     expect($responseObject->content)->toBe(PostContentRepository::getHtml($content, $this->blog));
 });

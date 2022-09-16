@@ -46,6 +46,8 @@ class PreviewProcessor extends RouteProcessorAbstract
         );
         $templateRenderer->setModel($post);
 
-        $this->setResponseObject($templateRenderer->getResponseObject());
+        $responseObject = $templateRenderer->getResponseObject();
+        $responseObject->cache = false;
+        $this->setResponseObject($responseObject);
     }
 }

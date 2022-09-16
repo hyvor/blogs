@@ -22,9 +22,9 @@ return new class () extends Migration {
 
             $table->enum('status', ['published', 'draft', 'scheduled'])->default('draft');
 
-            $table->text('content')->nullable();
-            $table->text('content_unsaved')->nullable();
-            $table->text('content_html')->nullable();
+            $table->mediumText('content')->nullable();
+            $table->mediumText('content_unsaved')->nullable();
+            $table->mediumText('content_html')->nullable();
             $table->string('title')->nullable();
             $table->string('description', 350)->default('');
             $table->integer('words')->nullable();
