@@ -2,6 +2,7 @@
 
 namespace Tests\Unit\Domains\Delivery\TemplateRendering\Variables;
 
+use App\Data\Enums\BlogHostingAtEnum;
 use App\Data\Enums\ThemeFileFolderEnum;
 use App\Domains\Delivery\PathMatcher;
 use App\Domains\Theme\ThemeFilesRepository;
@@ -35,7 +36,7 @@ it('sets _foot in index', function () {
     expect($content)->toContain($codeFootRendered);
 });
 
-it('sets _head in a post page', function () {
+it('sets _foot in a post page', function () {
     $blog = blog();
     $post = aPublishedPost();
 
@@ -58,4 +59,43 @@ it('sets _head in a post page', function () {
     $content = $responseObject->content;
 
     expect($content)->toContain($postCodeFootRendered);
+});
+
+it('sets flashload basepath', function() {
+
+    $blog = blog();
+    addThemeTemplateFile('{{ _foot | template }}');
+    $pathMatcher = new PathMatcher($blog, '/');
+    $responseObject = $pathMatcher->getResponseObject();
+    expect($responseObject->content)->toContain('basePath: ""');
+
+});
+
+it('sets flashload basepath to /blog', function() {
+
+    $blog = blog();
+    $blog->hosting_at = BlogHostingAtEnum::SELF;
+    $blog->hosting_url = 'https://hyvor.com/blog';
+    $blog->save();
+
+    addThemeTemplateFile('{{ _foot | template }}');
+    $pathMatcher = new PathMatcher($blog, '/');
+    $responseObject = $pathMatcher->getResponseObject();
+    expect($responseObject->content)->toContain('basePath: "blog"');
+
+});
+
+it('sets flashload basepath to /blog/page', function() {
+
+
+    $blog = blog();
+    $blog->hosting_at = BlogHostingAtEnum::SELF;
+    $blog->hosting_url = 'https://hyvor.com/blog/page';
+    $blog->save();
+
+    addThemeTemplateFile('{{ _foot | template }}');
+    $pathMatcher = new PathMatcher($blog, '/');
+    $responseObject = $pathMatcher->getResponseObject();
+    expect($responseObject->content)->toContain('basePath: "blog/page"');
+
 });
