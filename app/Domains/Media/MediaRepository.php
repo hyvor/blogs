@@ -99,6 +99,7 @@ class MediaRepository
             'name' => $fileName,
             'size' => $size,
             'original_name' => $fileName,
+            'extension' => $extension
         ]);
 
         MediaCreatedEvent::dispatch($media);

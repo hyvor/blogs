@@ -13,4 +13,12 @@ class MimeTypes
 
         return $types[0] ?? null;
     }
+
+    public static function getMimeFromFileName(string $name) : ?string
+    {
+
+        $extension = pathinfo($name, PATHINFO_EXTENSION);
+        return self::getMimeFromExtension($extension);
+
+    }
 }

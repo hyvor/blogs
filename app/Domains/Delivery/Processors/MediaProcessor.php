@@ -25,7 +25,12 @@ class MediaProcessor extends RouteProcessorAbstract
         if (!$content)
             return;
 
-        $mimeType = $media->extension ? MimeTypes::getMimeFromExtension($media->extension) : 'image/png';
+        $mimeType = $media->extension ?
+            MimeTypes::getMimeFromExtension($media->extension) :
+            MimeTypes::getMimeFromFileName($media->name);
+
+        // https://stackoverflow.com/questions/1176022/unknown-file-type-mime
+        $mimeType ??= 'application/octet-stream';
 
         $this->setResponseObject(DeliveryAPIResponseObject::forFile(
             DeliveryAPIFileTypeEnum::MEDIA,

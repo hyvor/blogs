@@ -25,8 +25,6 @@ In language settings, each language has a **code** and a **name**.
 
 ## Multi-language Blogs
 
-> Multi-languages feature is only available in the **Team** and **Enterprise** plans.
-
 Hyvor Blogs comes with in-built support for multi-language blogs. Therefore, it is simple to set up a multi-language blog. Only thing you have to do is adding a new language in settings. Make sure you use a correct language code as explained above.
 
 ### Routes

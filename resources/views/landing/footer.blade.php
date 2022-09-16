@@ -21,10 +21,10 @@
 		<div class="pack">
 			<div class="title">Hyvor</div>
 			<div class="item"><a rel="nofollow" target="_blank" href="https://hyvor.com/about" title="About Hyvor">About</a></div>
-			<div class="item"><a rel="nofollow" target="_blank" href="https://status.hyvor.com" title="About Hyvor">System Status</a></div>
-			<div class="item"><a rel="nofollow" target="_blank" href="<?= config('hyvor.auth_url') ?>/signup" title="Sign up to Hyvor">Sign up</a></div> 
-			<div class="item"><a rel="nofollow" target="_blank" href="<?= config('hyvor.auth_url') ?>/login" title="Log in up to Hyvor">Log in</a></div> 
-			<div class="item"><a rel="nofollow" target="_blank" href="<?= config('hyvor.auth_url') ?>/account" title="Manage My Hyvor Account">My Account</a></div>
+			<div class="item"><a rel="nofollow" target="_blank" href="https://status.hyvor.com" title="Hyvor Status">System Status</a></div>
+			<div class="item"><a rel="nofollow" target="_blank" href="https://hyvor.com/signup" title="Sign up to Hyvor">Sign up</a></div>
+			<div class="item"><a rel="nofollow" target="_blank" href="https://hyvor.com/login" title="Log in up to Hyvor">Log in</a></div>
+			<div class="item"><a rel="nofollow" target="_blank" href="https://hyvor.com/account" title="Manage My Hyvor Account">My Account</a></div>
 		</div>
 	</div>
 	<div class="footer-bottom">

@@ -39,7 +39,7 @@ const languagesLogic = kea<languagesLogicType>([
             {id, code, name, onUpdate} :
             {id: number, code: string, name: string, onUpdate: Function}
         ) => {
-            const lang = await api.put<Language>(props.subdomain, `/language/${id}`, {code, name});
+            const lang = await api.patch<Language>(props.subdomain, `/language/${id}`, {code, name});
             actions.updateLanguage(lang);
             onUpdate()
         },
