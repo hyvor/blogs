@@ -33,6 +33,12 @@
         padding:10px 30px;
         overflow: auto;
 
+        .shopify-note {
+            .global-callout {
+                margin-top: 0;
+            }
+        }
+
         .folder {
             margin-bottom: 2px;
             .folder-name {

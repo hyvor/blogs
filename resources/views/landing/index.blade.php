@@ -816,7 +816,7 @@ c30.27,0,54.64-24.37,54.64-54.64v-1419l-363.61-362.75L1258.7,336.75z"/>
                 <a href="/docs/api-delivery">Delivery API</a>
                 <a href="/docs/self-hosting">Self-hosting</a>
                 <br />
-                <a href="/blog/laravel" class="blog">Laravel</a>
+                <a href="/blog/laravel" target="_blank" class="blog">Laravel</a>
                 {{--<a href="/docs/symfony-blog" class="blog">Symfony</a>
                 <a href="/docs/flask-blog" class="blog">Flask</a>--}}
                 <br />

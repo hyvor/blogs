@@ -17,3 +17,7 @@ By default, your blog URL will have the **myshop.myshopify.com/a/blog** format. 
 * Save changes and verify by visiting the new URL
 
 > Hyvor Blogs uses Shopify's [App Proxies](https://shopify.dev/apps/online-store/app-proxies) and embeds the blog into your shop. Our [embedding](embedding) guide provides more details on how it works internally and its pros and cons.
+
+### Updating the Theme {#theme}
+
+[Shopify themes](https://themes.shopify.com/) and [Hyvor Blogs themes](https://blogs.hyvor.com/themes) are completely different. When you update your theme files or change your theme from our Console, you will be editing the blog theme. This is how you change the appearance in Hyvor Blogs. This action does not change any of Shopify theme files. See [theme development](themes-overview) documentation for more information on how themes work in Hyvor Blogs.

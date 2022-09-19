@@ -33,3 +33,6 @@
 		<span class="made-in-text">From France 🇫🇷</span>
 	</div>
 </footer>
+
+
+@include('shared.chat')

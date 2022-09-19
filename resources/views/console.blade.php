@@ -28,8 +28,7 @@
     </script>
     <script async src="https://cdn.paddle.com/paddle/paddle.js" onload="setUpPaddle()"></script>
 
-    {{-- CRISP --}}
-    <script type="text/javascript">window.$crisp=[];window.CRISP_WEBSITE_ID="1cab78fb-4baf-497e-a10f-00a3b12cfcfe";(function(){d=document;s=d.createElement("script");s.src="https://client.crisp.chat/l.js";s.async=1;d.getElementsByTagName("head")[0].appendChild(s);})();</script>
+    @include('shared.chat')
 
 </body>
 </html>
