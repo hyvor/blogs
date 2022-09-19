@@ -19,14 +19,15 @@ class PaddleService
     public function createPayLink(
         Blog $blog,
         SubscriptionPlanEnum $planName,
-        SubscriptionFrequencyEnum $frequency
+        SubscriptionFrequencyEnum $frequency,
+        ?string $referral
     ): string {
         $plan = self::planConfig($planName, $frequency);
         $planId = $plan->id;
 
         $data = PaddleApiCaller::call('/product/generate_pay_link', [
             'product_id' => $planId,
-            'passthrough' => Passthrough::encode($blog)
+            'passthrough' => Passthrough::encode($blog, $referral)
         ]);
 
         return $data->url;

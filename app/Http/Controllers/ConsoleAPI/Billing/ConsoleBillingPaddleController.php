@@ -40,6 +40,7 @@ class ConsoleBillingPaddleController extends Controller
         $request->validate([
             'plan' => ['required', 'string', new Enum(SubscriptionPlanEnum::class)],
             'frequency' => ['required', 'string', new Enum(SubscriptionFrequencyEnum::class)],
+            'referral' => 'string|nullable'
         ]);
 
         if (SubscriptionService::isBlogSubscribed($blog)) {
@@ -49,7 +50,8 @@ class ConsoleBillingPaddleController extends Controller
         $payLink = app(PaddleService::class)->createPayLink(
             $blog,
             SubscriptionPlanEnum::from($request->input('plan')),
-            SubscriptionFrequencyEnum::from($request->input('frequency'))
+            SubscriptionFrequencyEnum::from($request->input('frequency')),
+            $request->input('referral')
         );
 
         return response()->json([

@@ -3,14 +3,16 @@
 namespace App\Domains\Integrations\Paddle\Passthrough;
 
 use App\Models\Blog;
-use http\Exception\InvalidArgumentException;
 
 class Passthrough
 {
-    public static function encode(Blog $blog)
+    public static function encode(Blog $blog, ?string $referral = null)
     {
         return json_encode([
-            'blog_id' => $blog->id
+            'blog_id' => $blog->id,
+            'rewardful' => [
+                'referral' => $referral
+            ]
         ]);
     }
 
@@ -31,7 +33,7 @@ class Passthrough
         $blog = Blog::find($blogId);
 
         if (!$blog) {
-            throw new InvalidArgumentException();
+            throw new InvalidPassthroughException();
         }
 
         return $blog;
