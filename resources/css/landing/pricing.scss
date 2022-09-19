@@ -60,22 +60,23 @@ body.pricing {
         }
     }
 
-    .faqs {
-        padding: 40px;
-        .faq {
-            width: 550px;
-            margin: auto;
-            max-width: 100%;
-            margin-bottom: 50px;
-            h3 {
-                font-size: 18px;
-            }
-        }
-    }
-
     .button-main {
         text-align: center;
         padding-bottom: 40px;
     }
 
+}
+
+
+.pricing .faqs, .affiliate .faqs {
+    padding: 40px;
+    .faq {
+        width: 550px;
+        margin: auto;
+        max-width: 100%;
+        margin-bottom: 50px;
+        h3 {
+            font-size: 18px;
+        }
+    }
 }

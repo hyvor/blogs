@@ -8,6 +8,7 @@
 			<div class="item"><a href="/console" data-flashload-skip-link title="Hyvor Blogs Console">Console</a></div>
 			<div class="item"><a href="/themes" title="Hyvor Blogs Themes">Themes</a></div>
 			<div class="item"><a href="/pricing" title="Hyvor Blogs Pricing and Plans">Pricing</a></div>
+			<div class="item"><a href="/affiliate" title="Hyvor Blogs Affiliate Program">Affiliate</a></div>
 			<div class="item"><a href="/docs" title="Hyvor Blogs Documentation">Docs</a></div>
 			<div class="item"><a data-flashload-skip-link href="/blog" title="Hyvor Blogs Blog">Blog</a></div>
 			<div class="item"><a href="https://community.blogs.hyvor.com/roadmap" title="Hyvor Blogs Roadmap">Roadmap</a></div>
