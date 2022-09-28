@@ -35,6 +35,13 @@ $pricingRow = '<tr>
 
     <div class="container">
 
+        <div class="discount">
+            <h2>Limited Offer!</h2>
+            Subscribe now and get a 50% lifetime discount.
+            <br>
+            Use the coupon <b>EARLY_USERS</b> at the checkout.
+        </div>
+
         <table>
 
             {!! $pricingRow !!}        

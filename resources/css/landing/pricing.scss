@@ -2,6 +2,21 @@
 
 body.pricing {
 
+    .discount {
+        width: 450px;
+        margin: auto;
+        margin-bottom: 20px;
+        max-width: 100%;
+        padding: 25px;
+        text-align: center;
+        background-color: #d3d3ff;
+        box-shadow: 0 0 10px rgb(0 0 0 / 5%);
+        border-radius: 20px;
+        h2 {
+            margin: 0 0 15px;
+        }
+    }
+
     .pricing-table {
         padding-top: 115px;
         background: $color-accent-very-light;
