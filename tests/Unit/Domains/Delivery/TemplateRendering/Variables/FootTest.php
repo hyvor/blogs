@@ -6,6 +6,7 @@ use App\Data\Enums\BlogHostingAtEnum;
 use App\Data\Enums\ThemeFileFolderEnum;
 use App\Domains\Delivery\PathMatcher;
 use App\Domains\Theme\ThemeFilesRepository;
+use App\Models\Subscription;
 
 it('sets _foot in index', function () {
     $blog = blog();
@@ -97,5 +98,25 @@ it('sets flashload basepath to /blog/page', function() {
     $pathMatcher = new PathMatcher($blog, '/');
     $responseObject = $pathMatcher->getResponseObject();
     expect($responseObject->content)->toContain('basePath: "blog/page"');
+
+});
+
+it('adds powered by for free plan blogs', function() {
+
+    $blog = blog();
+    addThemeTemplateFile('{{ _foot | template }}');
+    $pathMatcher = new PathMatcher($blog, '/');
+    $responseObject = $pathMatcher->getResponseObject();
+    expect($responseObject->content)->toContain('Powered by Hyvor Blogs');
+
+});
+
+it('does not add powered by to non-free blogs', function() {
+
+    $blog = blog();
+    Subscription::factory()->create(['blog_id' => $blog]);
+    $pathMatcher = new PathMatcher($blog, '/');
+    $responseObject = $pathMatcher->getResponseObject();
+    expect($responseObject->content)->not->toContain('Powered by Hyvor Blogs');
 
 });

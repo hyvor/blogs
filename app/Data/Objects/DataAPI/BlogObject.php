@@ -7,6 +7,7 @@ use App\Data\Enums\ColorModesEnum;
 use App\Data\Enums\NavigationTypeEnum;
 use App\Data\Objects\DataAPI\Helpers\VariantsHelper;
 use App\Domains\Route\PermalinkRepository;
+use App\Domains\Subscription\SubscriptionService;
 use App\Models\Blog;
 use App\Models\Language;
 
@@ -27,6 +28,8 @@ class BlogObject
     public string $base_url;
 
     public SocialMediaObject $social;
+
+    public bool $is_free;
 
     /**
      * @var NavObject[]
@@ -64,6 +67,8 @@ class BlogObject
         $this->description = VariantsHelper::getVariantValue('description', $variants, $language);
         $this->url = PermalinkRepository::getBlogPermalink($blog, $language);
         $this->base_url = PermalinkRepository::getFullUrlFromPath($blog, '');
+
+        $this->is_free = SubscriptionService::getActiveBlogSubscription($blog) === null;
 
         $meta = $blog->getAllMeta();
 
