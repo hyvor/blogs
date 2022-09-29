@@ -26,7 +26,7 @@ export default function Paddle() {
         createSubscription({
             plan,
             frequency,
-            referral: (window as any).Rewardful && (window.Rewardful as any).referral,
+            referral: (window as any).Rewardful && (window as any).Rewardful.referral,
             onLoad: (payLink: string) => {
                 setCheckoutLoading(true);
                 (window as ConsoleWindow).Paddle.Checkout.open({

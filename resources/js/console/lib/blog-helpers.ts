@@ -27,9 +27,9 @@ export function getBlogUrl(subdomain: string, path: string) {
     return blog.base_url + path;
 }
 
-export function isOnTrial(blog: UserBlogBlog) {
+/*export function isOnTrial(blog: UserBlogBlog) {
     return blog.trial_ends_at > dayjs().unix()
-}
+}*/
 
 export function isDevBlog(subdomain: string) {
     const blog = getBlogFromSubdomain(subdomain);

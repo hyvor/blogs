@@ -37,14 +37,21 @@ $pricingRow = '<tr>
 
         <div class="discount">
             <h2>Limited Offer!</h2>
-            Subscribe now and get a 50% lifetime discount.
+            Subscribe now and get a 50% lifetime discount on all paid plans.
             <br>
             Use the coupon <b>EARLY_USERS</b> at the checkout.
         </div>
 
         <table>
 
-            {!! $pricingRow !!}        
+            {!! $pricingRow !!}
+
+            <tr>
+                <td>Free</td>
+                <td><span class="price">Free</span></td>
+                <td>1</td>
+                <td>20GB</td>
+            </tr>
 
             <tr>
                 <td>Plan A</td>
@@ -93,8 +100,14 @@ $pricingRow = '<tr>
 
 <div class="faqs">
     <div class="faq">
-        <h3>How do pricing and plans work?</h3>
-        <p>Each blog requires a separate subscription based on the number of <a class="link" href="/docs/users">users</a> and total media storage usage of that blog. There are no feature limitations - all features are included in all plans.</p>
+        <h3>What are the limits of the free plan?</h3>
+        <p>
+            The free plan is limited to 1 user per blog. Students, indie hackers, and personal bloggers are eligible for the free plan. A "Powered by Hyvor Blogs" will be shown at the bottom of Free plan blogs. All blogging features are included in the free plan.
+        </p>
+    </div>
+    <div class="faq">
+        <h3>How do paid plans work?</h3>
+        <p>Paid plans are based on the number of <a class="link" href="/docs/users">users</a> (team members) and total media storage usage of that blog. There are no feature limitations - all features are included in all plans. Each blog requires a separate subscription.</p>
     </div>
     <div class="faq">
         <h3>How do payments work?</h3>

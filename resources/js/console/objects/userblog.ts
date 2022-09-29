@@ -18,7 +18,7 @@ export type UserBlogBlog = {
     posts_count: number;
     users_count: number;
 
-    trial_ends_at: number;
+    // trial_ends_at: number;
     subscription: Subscription | null;
 
 };

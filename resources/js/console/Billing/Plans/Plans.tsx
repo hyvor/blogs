@@ -1,6 +1,6 @@
 import { useValues } from 'kea';
 import React, { useState } from 'react';
-import {BoxArrowUpRight, Clock, ExclamationCircle} from 'react-bootstrap-icons';
+import {BoxArrowUpRight, Clock, ExclamationCircle, Lightbulb} from 'react-bootstrap-icons';
 import userBlogsLogic from '../../logic/userBlogsLogic';
 import getSubdomain from "../../logic-helpers/subdomain";
 import Frequency from "./Frequency";
@@ -9,7 +9,6 @@ import {SubscriptionFrequency, SubscriptionPlan} from "../../types";
 import Callout from "../../ReusableComponents/Callout";
 import dayjs from "dayjs";
 import {FriendlyDate} from "../../ReusableComponents/Time";
-import {isOnTrial} from "../../lib/blog-helpers";
 
 interface PlansProps {
 
@@ -29,8 +28,6 @@ export default function Plans({onSubscriptionCreate, onSubscriptionCancel, onSub
     const [frequency, setFrequency] = useState
         (currentSubscription ? currentSubscription.frequency : 'monthly'); // monthly|yearly
 
-    const trialDaysDiff = blog.trial_ends_at ? dayjs.unix(blog.trial_ends_at).diff(dayjs(), 'd') : 0;
-
     return <div>
         <div className="section-title plans-title">
             <div className="title">Plans</div>
@@ -42,13 +39,13 @@ export default function Plans({onSubscriptionCreate, onSubscriptionCancel, onSub
         <div className="section-content">
 
             {
-                isOnTrial(blog) && !blog.subscription &&
+                !blog.subscription &&
                 <Callout
-                    title="30-days trial"
-                    icon={<Clock />}
+                    title="Free Plan"
+                    icon={<Lightbulb />}
                     text={
                         <div>
-                            This blog is currently on the 30-days trial period. The trial expires in <b>{trialDaysDiff} day{ trialDaysDiff === 1 ? "" : "s" }</b>.
+                            This blog is currently on the free plan.
                         </div>
                     }
                     color="blue"

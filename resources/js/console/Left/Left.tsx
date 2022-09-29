@@ -17,7 +17,6 @@ import dayjs from 'dayjs';
 import {appConfig} from "../helpers";
 import {router} from "kea-router";
 import UserPermissions from "../services/UserPermissions";
-import {isOnTrial} from "../lib/blog-helpers";
 
 export default function Left() {
 
@@ -30,11 +29,6 @@ export default function Left() {
     }
 
     const { blog, blog: { subscription: currentSubscription } }  = findBlogBySubdomain(subdomain);
-
-    const trialDaysDiff =
-        isOnTrial(blog) && blog.trial_ends_at ?
-            dayjs.unix(blog.trial_ends_at).diff(dayjs(), 'd') :
-            0;
     
     return <div id="left">
         <div id="left-header" className="box">
@@ -79,14 +73,6 @@ export default function Left() {
                 permission={UserPermissions.canAccessBilling}
                 extra={
                     <span className="mark">
-                        {
-                            isOnTrial(blog) && !blog.subscription ?
-                                <span className="trial-days-left">{trialDaysDiff} days left</span> : null
-                        }
-                        {
-                            !blog.subscription && !isOnTrial(blog) ?
-                                <span className="trial-days-left red">Upgrade Required</span> : null
-                        }
                         {
                             currentSubscription &&
                             currentSubscription.status === 'past_due'

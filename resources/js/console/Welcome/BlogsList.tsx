@@ -4,7 +4,6 @@ import userBlogsLogic from "../logic/userBlogsLogic";
 import {UserBlog} from '../objects/userblog';
 import NavLink from "../ReusableComponents/NavLink";
 import {BlogType} from "../enums";
-import {isOnTrial} from "../lib/blog-helpers";
 
 export default function BlogsList() {
 
@@ -49,9 +48,7 @@ export default function BlogsList() {
                                 blog.type === BlogType.DEV ?
                                     "DEV" :
                                     (
-                                        isOnTrial(blog) ?
-                                            "Trial" :
-                                            blog.subscription?.plan || ""
+                                        blog.subscription?.plan || "Free"
                                     )
                             } />
                         </div>

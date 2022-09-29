@@ -29,7 +29,7 @@ class UserBlogBlogObject
 
     public int $users_count;
 
-    public int $trial_ends_at;
+    // public int $trial_ends_at;
 
     public ?SubscriptionObject $subscription = null;
 
@@ -46,7 +46,7 @@ class UserBlogBlogObject
         $this->posts_count = $blog->getCount('posts');
         $this->users_count = $blog->getCount('users');
 
-        $this->trial_ends_at = $blog->trial_ends_at->timestamp;
+        // $this->trial_ends_at = $blog->trial_ends_at->timestamp;
         $subscription = SubscriptionService::getActiveBlogSubscription($blog);
 
         if ($subscription) {
