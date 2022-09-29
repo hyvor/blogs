@@ -31,7 +31,7 @@ class UsageRepository
             SubscriptionPlanEnum::C => 100,
             SubscriptionPlanEnum::D => 1000,
             SubscriptionPlanEnum::E => 10000,
-            default => 2
+            default => 1
         };
 
         // bytes
@@ -41,7 +41,7 @@ class UsageRepository
             SubscriptionPlanEnum::C => 1000 * $gb,
             SubscriptionPlanEnum::D => 2000 * $gb,
             SubscriptionPlanEnum::E => 5000 * $gb,
-            default => $gb / 10
+            default => $gb * 10
         };
 
         return [
