@@ -47,5 +47,4 @@
 </script>
 
 @include('shared.affiliate')
-
-<script async src="https://cdn.splitbee.io/sb.js"></script>
+@include('shared.tracking')

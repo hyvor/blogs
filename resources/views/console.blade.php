@@ -31,6 +31,7 @@
     <script async src="https://cdn.paddle.com/paddle/paddle.js" onload="setUpPaddle()"></script>
 
     @include('shared.chat')
+    @include('shared.tracking')
 
 </body>
 </html>
