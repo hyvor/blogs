@@ -26,6 +26,7 @@ use App\Domains\Tag\Events\TagUpdatedEvent;
 use App\Domains\Tag\Events\TagVariantDeletedEvent;
 use App\Domains\Tag\Events\TagVariantUpdatedEvent;
 use App\Domains\Theme\Events\AssetEditedEvent;
+use App\Domains\Theme\Events\ConfigEditedEvent;
 use App\Domains\Theme\Events\StylesEditedEvent;
 use App\Domains\Theme\Events\TemplateEditedEvent;
 use App\Domains\User\Events\UserCreatedEvent;
@@ -86,6 +87,7 @@ class ClearCacheSubscriber
         $events->listen(LanguageChangedEvent::class, [static::class, 'onLanguageEvent']);
         $events->listen(RouteChangedEvent::class, [static::class, 'onRouteEvent']);
 
+        $events->listen(ConfigEditedEvent::class, [static::class, 'onConfigEditedEvent']);
         $events->listen(TemplateEditedEvent::class, [static::class, 'onTemplateEditedEvent']);
     }
 
@@ -199,6 +201,11 @@ class ClearCacheSubscriber
     }
 
     public function onTemplateEditedEvent(TemplateEditedEvent $event)
+    {
+        $this->clearTemplateCache($event->file->blog);
+    }
+
+    public function onConfigEditedEvent(ConfigEditedEvent $event)
     {
         $this->clearTemplateCache($event->file->blog);
     }

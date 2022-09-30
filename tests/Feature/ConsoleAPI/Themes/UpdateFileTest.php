@@ -3,6 +3,7 @@
 namespace Tests\Feature\ConsoleAPI\Themes;
 
 use App\Data\Enums\ThemeFileFolderEnum;
+use App\Domains\Theme\Events\ConfigEditedEvent;
 use App\Domains\Theme\Events\StylesEditedEvent;
 use App\Domains\Theme\Events\TemplateEditedEvent;
 use App\Domains\Theme\ThemeFilesRepository;
@@ -92,4 +93,23 @@ it('updates styles with event', function () {
     ])->assertOk();
 
     Event::assertDispatched(StylesEditedEvent::class);
+});
+
+it('updates config with event', function() {
+
+    Event::fake();
+
+    $file = ThemeFilesRepository::createOrUpdateFile(
+        blog(),
+        null,
+        'config.yaml',
+        'none'
+    );
+
+    $this->callConsoleApi('PATCH', "/theme/file/$file->id", [
+        'content' => '',
+    ])->assertOk();
+
+    Event::assertDispatched(ConfigEditedEvent::class);
+
 });

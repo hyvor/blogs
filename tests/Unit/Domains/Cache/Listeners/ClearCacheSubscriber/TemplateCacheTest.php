@@ -19,6 +19,7 @@ use App\Domains\Tag\Events\TagDeletedEvent;
 use App\Domains\Tag\Events\TagUpdatedEvent;
 use App\Domains\Tag\Events\TagVariantDeletedEvent;
 use App\Domains\Tag\Events\TagVariantUpdatedEvent;
+use App\Domains\Theme\Events\ConfigEditedEvent;
 use App\Domains\Theme\Events\TemplateEditedEvent;
 use App\Domains\User\Events\UserCreatedEvent;
 use App\Domains\User\Events\UserDeletedEvent;
@@ -327,4 +328,15 @@ it('clears cache on template editing', function() {
 
     $listener = new ClearCacheSubscriber();
     $listener->onTemplateEditedEvent($event);
+});
+
+it('clears cache when config is updated', function() {
+    ($this->templateMock)();
+
+    $file = ThemeFile::factory()->create(['name' => 'config.yaml']);
+    $event = new ConfigEditedEvent($file);
+
+    $listener = new ClearCacheSubscriber();
+    $listener->onConfigEditedEvent($event);
+
 });
