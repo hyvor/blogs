@@ -7,10 +7,11 @@ import NoResults from '../ReusableComponents/NoResults';
 import pagesLogic from '../logic/pagesLogic';
 import PostsListRow from './PostsListRow';
 import NoPost from './NoPost';
+import getSubdomain from "../logic-helpers/subdomain";
 
-export default function Pages( { postId } ) {
+export default function Pages( { postId } : { postId: number | null } ) {
 
-    const { subdomain } = useValues(subdomainLogic)
+    const subdomain = getSubdomain();
     const pagesLogicInst = pagesLogic({subdomain})
     const { pagesList, loadPagesListAjax } = useValues(pagesLogicInst);
     const { createPage } = useActions(pagesLogicInst)
@@ -51,8 +52,8 @@ export default function Pages( { postId } ) {
         </div>
         <div className="box box-right">
             {
-                postId ?
-                <Post subdomain={subdomain} id={postId} /> : 
+                postId && loadPagesListAjax.status === 'success' ?
+                <Post id={postId} /> :
                 <NoPost />
             }
         </div>
