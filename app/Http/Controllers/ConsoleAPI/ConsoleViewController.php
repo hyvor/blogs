@@ -16,8 +16,10 @@ class ConsoleViewController extends Controller
     {
         $hyvorUser = Login::check();
 
+
         if ($hyvorUser === null) {
-            return Redirect::toLogin();
+            $isSignup = $request->boolean('signup');
+            return $isSignup ? Redirect::toSignup() : Redirect::toLogin();
         }
 
         $blogs = UserBlogRepository::getBlogsOfUser($hyvorUser)->mapInto(UserBlogObject::class);
