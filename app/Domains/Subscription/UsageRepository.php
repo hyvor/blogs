@@ -41,7 +41,7 @@ class UsageRepository
             SubscriptionPlanEnum::C => 1000 * $gb,
             SubscriptionPlanEnum::D => 2000 * $gb,
             SubscriptionPlanEnum::E => 5000 * $gb,
-            default => $gb * 10
+            default => $gb
         };
 
         return [

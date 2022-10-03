@@ -50,7 +50,7 @@ $pricingRow = '<tr>
                 <td>Free</td>
                 <td><span class="price">Free</span></td>
                 <td>1</td>
-                <td>20GB</td>
+                <td>1GB</td>
             </tr>
 
             <tr>
