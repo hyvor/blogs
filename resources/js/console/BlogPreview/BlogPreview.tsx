@@ -1,13 +1,13 @@
 import { useValues } from 'kea';
 import React, { useState } from 'react'
-import subdomainLogic from '../logic/subdomainLogic';
 import userBlogsLogic from '../logic/userBlogsLogic'
 import { BoxArrowUpRight, Laptop, Phone, Tablet } from 'react-bootstrap-icons';
 import Loader from '../ReusableComponents/Loader';
+import getSubdomain from "../logic-helpers/subdomain";
 
 export default function BlogPreview() {
 
-    const { subdomain } = useValues(subdomainLogic);
+    const subdomain = getSubdomain();
     const { findBlogBySubdomain } = useValues(userBlogsLogic)
     const [type, setType] = useState('laptop');
 

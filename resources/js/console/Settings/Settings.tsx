@@ -1,4 +1,4 @@
-import React, {useEffect, useRef} from 'react';
+import React, {Fragment, useEffect, useRef} from 'react';
 import NavLink from '../ReusableComponents/NavLink';
 import Code from './Code';
 import SettingsMedia from './Media/SettingsMedia';
@@ -23,11 +23,14 @@ import {UserRole} from "../enums";
 import UserPermissions from "../services/UserPermissions";
 import {useActions} from "kea";
 import {router} from "kea-router";
+import {getUserBlogBlog} from "../logic-helpers/blog";
+import Shopify from "./Integrations/Shopify";
 
 export default function Settings({type} : {type: string | undefined}) {
 
     const subdomain = getSubdomain();
     const settingsPrefix = `/console/${subdomain}/settings`;
+    const blog = getUserBlogBlog();
 
     let Type = () => <SettingsGeneral />;
     switch (type) {
@@ -82,12 +85,22 @@ export default function Settings({type} : {type: string | undefined}) {
         case 'api-keys':
             Type = () => <ApiKeys />
             break;
+
+        // integrations
+        case 'shopify':
+            Type = () => <Shopify />
+            break;
     }
 
     return <div className="posts-view settings-view">
         <div className="box box-left">
             <div className="middle-heading">Settings</div>
             <div className="settings-nav">
+
+                {
+                    blog.integration === 'shopify' &&
+                    <SettingsLink path="/shopify" name="Shopify Guide" dividing={true} />
+                }
 
                 <SettingsLink path="" name="General" />
                 <SettingsLink path="/users" name="Users" />
@@ -126,10 +139,11 @@ export default function Settings({type} : {type: string | undefined}) {
 interface SettingsLinkProps {
     path: string,
     role?: UserRole.OWNER | UserRole.ADMIN | UserRole.EDITOR,
-    name: string
+    name: string,
+    dividing?: boolean
 }
 
-function SettingsLink({ path, role = UserRole.ADMIN, name } : SettingsLinkProps) {
+function SettingsLink({ path, role = UserRole.ADMIN, name, dividing = false } : SettingsLinkProps) {
 
     const subdomain = getSubdomain();
     const settingsPrefix = `/console/${subdomain}/settings`;
@@ -162,11 +176,15 @@ function SettingsLink({ path, role = UserRole.ADMIN, name } : SettingsLinkProps)
         }
     }, []);
 
-    return <NavLink
-        ref={ref}
-        href={settingsPrefix + path}
-        exact={1}
-        className={cls}
-    >{ name }</NavLink>
+    return <Fragment>
+        <NavLink
+            ref={ref}
+            href={settingsPrefix + path}
+            exact={1}
+            className={cls}
+        >{ name }</NavLink>
+
+        { dividing && <div /> }
+    </Fragment>
 
 }

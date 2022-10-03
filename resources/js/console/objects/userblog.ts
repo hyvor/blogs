@@ -12,6 +12,7 @@ export type UserBlogBlog = {
     name: string;
     type: BlogType,
     billing_type: 'paddle' | 'shopify',
+    integration: 'shopify',
     base_url: string;
     logo_url: string | null;
 

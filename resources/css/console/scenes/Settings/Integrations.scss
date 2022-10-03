@@ -1,0 +1,21 @@
+.settings-shopify {
+
+    .shopify-instructions {
+        width: 600px;
+        max-width: 100%;
+        margin: auto;
+        padding: 20px;
+        font-size: 16px;
+        .instruction {
+            margin-bottom: 25px;
+            display: flex;
+            align-items: center;
+            .inst-icon {
+                flex-shrink: 0;
+                margin-right: 15px;
+                font-size: 20px;
+            }
+        }
+    }
+
+}

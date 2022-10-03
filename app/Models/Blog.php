@@ -4,6 +4,7 @@ namespace App\Models;
 
 use App\Data\Enums\BlogBillingTypeEnum;
 use App\Data\Enums\BlogHostingAtEnum;
+use App\Data\Enums\BlogIntegrationEnum;
 use App\Data\Enums\BlogTypeEnum;
 use App\Models\Concerns\Countable;
 use Carbon\Carbon;
@@ -30,6 +31,7 @@ class Blog extends Model
     protected $casts = [
         'type' => BlogTypeEnum::class,
         'billing_type' => BlogBillingTypeEnum::class,
+        'integration' => BlogIntegrationEnum::class,
         'hosting_at' => BlogHostingAtEnum::class,
         'trial_ends_at' => 'datetime'
     ];
