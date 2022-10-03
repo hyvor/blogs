@@ -3,6 +3,7 @@
 namespace Tests\Feature\Integrations\Shopify;
 
 use App\Data\Enums\BlogBillingTypeEnum;
+use App\Data\Enums\BlogIntegrationEnum;
 use App\Domains\Blog\Fillers\PostFiller;
 use App\Domains\Blog\Fillers\RouteFiller;
 use App\Domains\Blog\Fillers\TagFiller;
@@ -79,6 +80,7 @@ it('creates blog, sets up self hosting, sets blog_id in shopify shop, and redire
     $blog = Blog::where('subdomain', 'shop-myshopify-com')->first();
     expect($blog)->toBeInstanceOf(Blog::class);
     expect($blog->billing_type)->toBe(BlogBillingTypeEnum::SHOPIFY);
+    expect($blog->integration)->toBe(BlogIntegrationEnum::SHOPIFY);
     expect($blog->getMeta('embeddable'))->toBe(true);
     expect($blog->getMeta('embedding_domains'))->toBe('*');
 

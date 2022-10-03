@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\Integrations\Shopify;
 
 use App\Data\Enums\BlogBillingTypeEnum;
+use App\Data\Enums\BlogIntegrationEnum;
 use App\Data\Enums\BlogTypeEnum;
 use App\Data\Enums\SubscriptionFrequencyEnum;
 use App\Data\Enums\SubscriptionPlanEnum;
@@ -110,7 +111,8 @@ class ShopifyController
             $domain,
             UniqueSubdomainGenerator::generate([str_replace('.', '-', $domain)]),
             BlogTypeEnum::DEFAULT,
-            BlogBillingTypeEnum::SHOPIFY
+            BlogBillingTypeEnum::SHOPIFY,
+            BlogIntegrationEnum::SHOPIFY
         );
 
         // setup blog for self-hosting with shopify default configs

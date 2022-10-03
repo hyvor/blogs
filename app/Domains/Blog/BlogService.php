@@ -4,6 +4,7 @@ namespace App\Domains\Blog;
 
 use App\Data\Enums\BlogBillingTypeEnum;
 use App\Data\Enums\BlogHostingAtEnum;
+use App\Data\Enums\BlogIntegrationEnum;
 use App\Data\Enums\BlogTypeEnum;
 use App\Domains\Blog\Deleters\LanguageDeleter;
 use App\Domains\Blog\Deleters\MediaDeleter;
@@ -36,13 +37,16 @@ class BlogService
         string $name,
         string $subdomain,
         BlogTypeEnum $type = BlogTypeEnum::DEFAULT,
-        BlogBillingTypeEnum $billingType = BlogBillingTypeEnum::PADDLE
-    ): Blog {
+        BlogBillingTypeEnum $billingType = BlogBillingTypeEnum::PADDLE,
+        BlogIntegrationEnum $integration = null
+    ): Blog
+    {
         $blog = Blog::create([
             'hyvor_user_id' => $userId,
             'subdomain' => $subdomain,
             'type' => $type,
             'billing_type' => $billingType,
+            'integration' => $integration,
             'trial_ends_at' => now()->addDays(config('limits.trial_days')),
         ]);
         $blog->refresh(); // fetch default columns
