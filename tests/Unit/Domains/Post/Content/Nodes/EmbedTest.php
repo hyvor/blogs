@@ -39,6 +39,26 @@ test('json to HTML', function () {
     expect($post)->toBe("<x-embed>$this->html</x-embed>");
 });
 
+it('handles when URL is null', function() {
+
+    $json = [
+        'type' => 'doc',
+        'content' => [
+            [
+                'type' => 'embed',
+                'attrs' => [
+                    'url' => null
+                ],
+            ],
+        ],
+    ];
+
+    $post = PostContentRepository::getHtml($json, blog());
+
+    expect($post)->toBe('');
+
+});
+
 test('HTML to JSON', function () {
     $html = "<x-embed data-url=\"$this->url\"></x-embed>";
 

@@ -31,14 +31,17 @@ class Embed extends Node
 
         try {
 
-            /**
-             * Usually, the embed URL is already resolved and saved in the database
-             * at the time the user embeds it in the editor.
-             * So, we don't have to worry about the applciation making a HTTP call
-             * It is a simple database call
-             */
-            $urlData = UrlDataRepository::fetch($url, UrlDataFetchTypeEnum::EMBED);
-            $embedContent = $urlData->html;
+            if ($url) {
+                /**
+                 * Usually, the embed URL is already resolved and saved in the database
+                 * at the time the user embeds it in the editor.
+                 * So, we don't have to worry about the applciation making a HTTP call
+                 * It is a simple database call
+                 */
+                $urlData = UrlDataRepository::fetch($url, UrlDataFetchTypeEnum::EMBED);
+                $embedContent = $urlData->html;
+            }
+
         } catch (Exception) {
         }
 
