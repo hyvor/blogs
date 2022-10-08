@@ -66,3 +66,28 @@ it('updates post published_at when post status is changed to published', functio
 
     expect($post->refresh()->published_at)->not->toBeNull();
 });
+
+it('sets the slug if it is empty when publishing the primary language post', function() {
+
+
+    $blog = blog();
+    $post = Post::factory()->create([
+        'blog_id' => $blog,
+        'published_at' => null,
+    ]);
+    PostVariant::factory()->create([
+        'post_id' => $post,
+        'language_id' => $blog->languages[0],
+        'status' => PostStatusEnum::DRAFT,
+    ]);
+
+    $this
+        ->callConsoleApi('PATCH', "/post/$post->id/variant", [
+            'language_id' => $blog->languages[0]->id,
+            'status' => 'published',
+        ])
+        ->assertOk();
+
+    expect($post->refresh()->slug)->not->toBeNull();
+
+});

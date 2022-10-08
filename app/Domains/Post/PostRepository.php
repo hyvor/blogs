@@ -18,6 +18,7 @@ use App\Models\PostVariant;
 use Carbon\Carbon;
 use Hyvor\FilterQ\Facades\FilterQ;
 use Illuminate\Database\Eloquent\Collection;
+use Illuminate\Support\Str;
 
 class PostRepository
 {
@@ -323,6 +324,16 @@ class PostRepository
 
             if ($status === 'published') {
                 $post->published_at = now();
+
+                // set post slug
+                if (
+                    $post->slug === null &&
+                    $language->is_primary &&
+                    $title = $variant->title ?? $updates['title'] ?? null
+                ) {
+                    $post->slug = Str::slug($title);
+                }
+
                 $post->save();
             }
         }
