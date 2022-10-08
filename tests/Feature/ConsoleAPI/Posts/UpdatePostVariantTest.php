@@ -74,6 +74,7 @@ it('sets the slug if it is empty when publishing the primary language post', fun
     $post = Post::factory()->create([
         'blog_id' => $blog,
         'published_at' => null,
+        'slug' => null
     ]);
     PostVariant::factory()->create([
         'post_id' => $post,
