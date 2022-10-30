@@ -46,5 +46,4 @@
     });
 </script>
 
-@include('shared.affiliate')
 @include('shared.tracking')

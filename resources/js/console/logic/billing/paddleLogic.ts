@@ -28,12 +28,12 @@ const paddleLogic = kea<paddleLogicType>([
         },
 
         createSubscription: async (
-            { onLoad, plan, frequency, referral } :
-            { onLoad: (link: string) => void, plan: SubscriptionPlan, frequency: SubscriptionFrequency, referral: string }
+            { onLoad, plan, frequency } :
+            { onLoad: (link: string) => void, plan: SubscriptionPlan, frequency: SubscriptionFrequency}
         ) => {
             type Response = { link: string }
             const data = await api.post<Response>(props.subdomain, '/billing/paddle/subscription', {
-                plan, frequency, referral
+                plan, frequency
             });
             onLoad(data.link);
         },

@@ -4,6 +4,7 @@ namespace App\Data\Objects\ConsoleAPI\Post;
 
 use App\Data\Objects\ConsoleAPI\Tag\TagObject;
 use App\Data\Objects\ConsoleAPI\User\UserObject;
+use App\Domains\Delivery\PostPreviewSecretEncryptor;
 use App\Models\Blog;
 use App\Models\Post;
 
@@ -51,7 +52,7 @@ class PostObject
     public function __construct(Post $post, Blog $blog)
     {
         $this->id = $post->id;
-        $this->preview_id = \App\Domains\Delivery\PostPreviewSecretEncryptor::getPreviewSecret($post);
+        $this->preview_id = PostPreviewSecretEncryptor::getPreviewSecret($post);
         $this->created_at = $post->created_at->timestamp;
         $this->updated_at = $post->updated_at->timestamp;
         $this->published_at = $post->published_at?->timestamp;

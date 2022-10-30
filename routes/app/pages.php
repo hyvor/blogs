@@ -14,6 +14,5 @@ Route::middleware(LoginRequiredElseRedirectMiddleware::class)
 // landing
 Route::view('/', 'landing.index');
 Route::view('/pricing', 'landing.pricing');
-Route::view('/affiliate', 'landing.affiliate');
 Route::get('/docs/{page?}', [DocsController::class, 'handle']);
 Route::get('/themes/{name?}', [ThemesController::class, 'handle']);

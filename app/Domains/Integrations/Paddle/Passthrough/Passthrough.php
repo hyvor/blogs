@@ -9,10 +9,7 @@ class Passthrough
     public static function encode(Blog $blog, ?string $referral = null)
     {
         return json_encode([
-            'blog_id' => $blog->id,
-            'rewardful' => [
-                'referral' => $referral
-            ]
+            'blog_id' => $blog->id
         ]);
     }
 
