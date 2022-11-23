@@ -10,18 +10,18 @@ return [
     ],
     'Features' => [
         ['users', 'Users'],
-        ['tags', 'Tags'],
+        // ['tags', 'Tags'],
         ['languages', 'Languages'],
-        ['media', 'Media'],
+        // ['media', 'Media'],
         ['custom-domain', 'Custom Domain'],
         ['custom-code', 'Custom Code'],
         /*['edge-caching', 'Edge Caching'],*/
         ['seo', 'SEO'],
         ['syntax-highlighting', 'Syntax Highlighting'],
         ['redirects', 'Redirects'],
-        ['light-dark', 'Light/Dark Modes'],
-        ['social-links', 'Social Links'],
-        ['navigation', 'Navigation'],
+        // ['light-dark', 'Light/Dark Modes'],
+        //['social-links', 'Social Links'],
+        // ['navigation', 'Navigation'],
     ],
     'Services' => [
         ['comments', 'Comments'],
@@ -48,13 +48,13 @@ return [
     'Advanced' => [
         ['routes', 'Routes'],
         ['embedding', 'Embedding'],
-        ['import', 'Import'],
-        ['export', 'Export'],
+        // ['import', 'Import'],
+        // ['export', 'Export'],
     ],
     'Self-Hosting (Subdirectory)' => [
         ['self-hosting', 'Self-Hosting Intro'],
         ['self-hosting-web-framework', 'with Web Frameworks'],
-        ['self-hosting-edge', 'with Edge Computing'],
+        // ['self-hosting-edge', 'with Edge Computing'],
         ['self-hosting-reverse-proxy', 'with Reverse Proxy'],
         /*['self-hosting-delivery-api', 'Using Delivery API'],
         ['self-hosting-builds', 'Using builds']*/
@@ -62,9 +62,9 @@ return [
     'Legal' => [
         ['terms', 'Terms'],
         ['policy-privacy', 'Privacy Policy'],
-        ['policy-content', 'Content Policy'],
-        ['policy-security', 'Security Policy'],
-        ['compliance-gdpr', 'GDPR Compliance'],
+        // ['policy-content', 'Content Policy'],
+        // ['policy-security', 'Security Policy'],
+        // ['compliance-gdpr', 'GDPR Compliance'],
     ],
     'Integrations' => [
         /*['zapier', 'Zapier'],*/

@@ -12,7 +12,7 @@ When your account is created, navigate to [blogs.hyvor.com/console](https://blog
 
 Now, you will see the following window to create a blog.
 
-[Add image]
+<!-- [Add image] -->
 
 **Blog Name**: This is the name you like to call your blog. It will be shown in the header of your blog. It is how your users will remember your blog.
 
@@ -26,7 +26,7 @@ Click **Continue** after choosing a blog name and subdomain. Your blog will be r
 
 Once your blog is ready, you will see the Console with its all functions. On the left navigation, you will see these:
 
-[Add image]
+<!-- [Add image] -->
 
 * **1 - Blog Selector**: This allows you to select a blog - only useful if you manage multiple blogs.
 * **2 - Blog**: Here you can preview your blog
