@@ -152,7 +152,7 @@ class TemplateRenderer
         }
 
         try {
-            $this->config = Yaml::parse($configFile->content);
+            $this->config = Yaml::parse($configFile->content) ?? [];
         } catch (ParseException) {
             throw new Error('Unable to parse config.yaml');
         }

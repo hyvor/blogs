@@ -77,6 +77,149 @@ body.index {
         }
     }
 
+    .main-features {
+
+        .feature-row {
+            display: flex;
+            width: 800px;
+            margin: auto;
+            max-width: 100%;
+        }
+
+        .feature {
+
+            flex: 1;
+            padding: 25px;
+            text-align: center;
+
+            img {
+                width: 140px;
+                height: 140px;
+            }
+
+            h4 {
+                font-size: 20px;
+                margin-top: 10px;
+                margin-bottom: 10px;
+            }
+
+            p {
+                width: 350px;
+                max-width: 100%;
+                margin: 0 auto auto;
+            }
+
+        }
+
+        @media screen and (max-width: $tab) {
+
+            .feature-row {
+                flex-direction: column;
+            }
+
+        }
+
+    }
+
+    .console-preview {
+
+        background-color: $color-accent-very-light;
+        width: 100%;
+        padding: 40px;
+
+        h2 {
+            font-size: 28px;
+            text-align: center;
+            margin-bottom: 20px;
+        }
+
+        p {
+            text-align: center;
+            width: 600px;
+            margin: auto;
+            max-width: 100%;
+            margin-bottom: 40px;
+        }
+
+        img {
+            border-radius: 10px;
+            display: block;
+            box-shadow: 0 0 10px 10px rgba(0,0,0,0.05);
+            width: 900px;
+            max-width: 100%;
+            margin: auto;
+        }
+    }
+
+    .developer-friendly {
+
+        background-color: $color-accent-very-light;
+        width: 100%;
+        padding: 40px;
+
+        h2 {
+            font-size: 28px;
+            text-align: center;
+            margin-bottom: 60px;
+        }
+
+        .developer-options {
+            display: flex;
+            flex-wrap: wrap;
+            width: 800px;
+            max-width: 100%;
+            margin: auto;
+        }
+        .developer-option {
+            width: 50%;
+            padding: 25px;
+        }
+
+        .web-frameworks {
+            width: 800px;
+            max-width: 100%;
+            margin: auto;
+            margin-top: 40px;
+            text-align: center;
+
+            h3 {
+                font-size: 20px;
+                margin-bottom: 5px;
+            }
+
+            .frameworks {
+                margin-top: 40px;
+
+                a {
+                    display: inline-flex;
+                    flex-direction: column;
+                    align-items: center;
+                    margin:0 10px;
+                }
+
+                img {
+                    width: 30px;
+                    height: 30px;
+                    margin-bottom: 10px;
+                }
+            }
+        }
+
+        @media screen and (max-width: $tab) {
+
+            .developer-options {
+                flex-direction: column;
+                align-items: center;
+            }
+
+            .developer-option {
+                width: 100%;
+            }
+
+        }
+
+    }
+
     .details-list {
         margin-bottom:120px;
         h3 {

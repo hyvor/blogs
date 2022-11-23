@@ -7,12 +7,35 @@ $svgCancel = '<svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fil
   <path d="M16 8A8 8 0 1 1 0 8a8 8 0 0 1 16 0zM5.354 4.646a.5.5 0 1 0-.708.708L7.293 8l-2.647 2.646a.5.5 0 0 0 .708.708L8 8.707l2.646 2.647a.5.5 0 0 0 .708-.708L8.707 8l2.647-2.646a.5.5 0 0 0-.708-.708L8 7.293 5.354 4.646z"/>
 </svg>';
 
-$pricingRow = '<tr>
+$svgInfo = '<svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-info-circle" viewBox="0 0 16 16">
+  <path d="M8 15A7 7 0 1 1 8 1a7 7 0 0 1 0 14zm0 1A8 8 0 1 0 8 0a8 8 0 0 0 0 16z"/>
+  <path d="m8.93 6.588-2.29.287-.082.38.45.083c.294.07.352.176.288.469l-.738 3.468c-.194.897.105 1.319.808 1.319.545 0 1.178-.252 1.465-.598l.088-.416c-.2.176-.492.246-.686.246-.275 0-.375-.193-.304-.533L8.93 6.588zM9 4.5a1 1 0 1 1-2 0 1 1 0 0 1 2 0z"/>
+</svg>';
+
+$usersInfo = <<<HTML
+<span class="info">
+    <span class="icon">$svgInfo</span>
+    <div class="info-popup">
+        Total number of users who writes for your blog (Your team members).
+    </div>
+</span>
+HTML;
+
+$storageInfo = <<<HTML
+<span class="info">
+    <span class="icon">$svgInfo</span>
+    <div class="info-popup">
+        Total size of images and other media uploaded to your blog.
+    </div>
+</span>
+HTML;
+
+$pricingRow = "<tr>
                 <th></th>
                 <th>Price</th>
-                <th>Users</th>
-                <th>Storage</th>
-            </tr>';
+                <th>Users $usersInfo</th>
+                <th>Storage $storageInfo</th>
+            </tr>";
 
 ?>
 
@@ -35,12 +58,12 @@ $pricingRow = '<tr>
 
     <div class="container">
 
-        <div class="discount">
+        {{--<div class="discount">
             <h2>Limited Offer!</h2>
             Subscribe now and get a 50% lifetime discount on all paid plans.
             <br>
             Use the coupon <b>EARLY_USERS</b> at the checkout.
-        </div>
+        </div>--}}
 
         <table>
 
@@ -102,7 +125,7 @@ $pricingRow = '<tr>
     <div class="faq">
         <h3>What are the limits of the free plan?</h3>
         <p>
-            The free plan is limited to 1 user per blog. Students, indie hackers, and personal bloggers are eligible for the free plan. A "Powered by Hyvor Blogs" will be shown at the bottom of Free plan blogs. All blogging features are included in the free plan.
+            The free plan includes all blogging features, but limited to 1 user per blog. Students, personal bloggers, and indie hackers are encouraged to use the free plan. A "Powered by Hyvor Blogs" will be shown at the bottom of free plan blogs.
         </p>
     </div>
     <div class="faq">
@@ -122,7 +145,7 @@ $pricingRow = '<tr>
     <div class="faq">
         <h3>Can I cancel anytime?</h3>
         <p>
-            Yes, absolutely. You can easily cancel your subscription from our Console - no questions asked. You can also <a href="/docs/export" class="link">export</a> your data anytime and move to another platform anytime you wish. However, we do not provide refunds. We ask you to test our platform in the 14-days trial before subscribing.
+            Yes, absolutely. You can easily cancel your subscription from our Console - no questions asked. You can also <a href="/docs/export" class="link">export</a> your data anytime and move to another platform anytime you wish. However, we do not provide refunds. We ask you to test our platform in the free plan before subscribing.
         </p>
     </div>
 </div>

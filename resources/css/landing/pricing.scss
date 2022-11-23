@@ -80,6 +80,31 @@ body.pricing {
         padding-bottom: 40px;
     }
 
+    .info {
+        position:relative;
+        cursor: pointer;
+        .info-popup {
+            opacity: 0;
+            transition: .1s opacity;
+            position: absolute;
+            left: 50%;
+            top: 100%;
+            margin-top: 5px;
+            transform: translateX(-50%);
+            width: 200px;
+            background-color: $color-box;
+            box-shadow: 0 0 15px rgba(0,0,0,0.05);
+            border-radius: 20px;
+            padding: 15px;
+            pointer-events: none;
+            z-index: 10;
+            text-align: center;
+        }
+        &:hover .info-popup {
+            opacity: 1;
+        }
+    }
+
 }
 
 
