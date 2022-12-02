@@ -3,6 +3,7 @@
 namespace App\Domains\Delivery;
 
 use App\Data\Enums\DeliveryAPIFileTypeEnum;
+use App\Data\Enums\ThemeFileFolderEnum;
 use App\Data\Objects\DeliveryAPI\DeliveryAPIResponseObject;
 use App\Domains\Delivery\Processors\AssetsProcessor;
 use App\Domains\Delivery\Processors\MediaProcessor;
@@ -13,9 +14,11 @@ use App\Domains\Delivery\Processors\Sitemap\SitemapPagesProcessor;
 use App\Domains\Delivery\Processors\Sitemap\SitemapPostsProcessor;
 use App\Domains\Delivery\Processors\StylesProcessor;
 use App\Domains\Delivery\RouteMatcher\RouteMatcher;
+use App\Domains\Delivery\TemplateRenderer\DirectTemplateRenderer;
 use App\Domains\Delivery\TemplateRenderer\TemplateRenderer;
 use App\Domains\Language\LanguageRepository;
 use App\Domains\Redirect\RedirectRepository;
+use App\Domains\Theme\ThemeFilesRepository;
 use App\Models\Blog;
 use App\Models\Language;
 use Exception;
@@ -48,6 +51,7 @@ class PathMatcher
             'setLanguage',
             'matchNonPostRoutes',
             'matchPostRoutes',
+            'matchTemplateRoutes'
         ]);
     }
 
@@ -221,6 +225,27 @@ class PathMatcher
                 return; // do not process other route
             }
         }
+    }
+
+    private function matchTemplateRoutes()
+    {
+
+        $name = 'route-' . trim($this->path, '/') . '.twig';
+        $file = ThemeFilesRepository::getFile($this->blog, $name, ThemeFileFolderEnum::TEMPLATES);
+
+        if (!$file)
+            return;
+
+        $templateRenderer = new DirectTemplateRenderer($this->blog, $this->language, $name);
+        $html = $templateRenderer->render();
+
+        $responseObject = DeliveryAPIResponseObject::forFile(
+            DeliveryAPIFileTypeEnum::TEMPLATE,
+            $html,
+        );
+
+        $this->setMatched($responseObject);
+
     }
 
     private function matchAndSetResponseObject(RouteMatcher $routeMatcher): bool

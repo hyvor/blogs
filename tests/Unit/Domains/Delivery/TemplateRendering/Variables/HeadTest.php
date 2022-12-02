@@ -87,13 +87,13 @@ it('sets _head in a post page', function () {
 
     // authors
     foreach ($post->authors as $author) {
-        $name = $author->variants[0]->name;
+        $name = htmlspecialchars($author->variants[0]->name);
         expect($content)->toContain("<meta property=\"article:author\" content=\"$name\" />");
     }
 
     // tags
     foreach ($post->tags as $tag) {
-        $name = $tag->variants[0]->name;
+        $name = htmlspecialchars($tag->variants[0]->name);
         expect($content)->toContain("<meta property=\"article:section\" content=\"$name\" />");
     }
 

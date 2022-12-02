@@ -64,10 +64,6 @@ And,
 > ⚠️    
 > Caching makes the blog super fast. However, it puts some limitations to theme development. You can't render dynamic data like "current date" using Twig. Due to cache, users may see an old date. If absolutely required, you have to use Javascript to render dynamic content inside user's browser. However, displaying the "publish date" of a post works fine because we clear cache whenever the post is updated. Also, displaying the current year will work, because we will make sure to clear the cache on the 1st of January.
 
-## Embedding
-
-Blogs are [embeddable](embedding). Keep that in mind when developing a theme to make sure the theme works fine when embedded. Embedding uses Web Components with Shadow DOM. So, there styles are usually safe. But, you should be careful when writing scripts. More details are in the styles and scripts sections of this documentation.
-
 ## Starting Development
 
 Let's set up your local development environment.

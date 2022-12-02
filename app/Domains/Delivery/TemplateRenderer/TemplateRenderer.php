@@ -23,6 +23,8 @@ use App\Domains\Route\PermalinkRepository;
 use App\Domains\Tag\TagRepository;
 use App\Domains\Theme\ThemeFilesRepository;
 use App\Domains\User\UserRepository;
+use App\Models\Blog;
+use App\Models\Language;
 use App\Models\Post;
 use App\Models\Tag;
 use App\Models\User;
@@ -32,6 +34,9 @@ use Twig\Error\Error;
 
 class TemplateRenderer
 {
+
+    use TemplateRendererTrait;
+
     private PathMatcher $pathMatcher;
 
     private MatchedRoute $matchedRoute;
@@ -41,8 +46,6 @@ class TemplateRenderer
     private string $templateName;
 
     private Tag|User|Post|null|false $model;
-
-    private array $config = [];
 
     public function __construct(
         PathMatcher $pathMatcher,
@@ -66,7 +69,7 @@ class TemplateRenderer
         }
 
         try {
-            $this->setConfig();
+            $this->setConfig($this->pathMatcher->blog);
             $output = $this->render();
         } catch (Error $e) {
             return $this->getRenderErrorResponseObject($e->getMessage());
@@ -109,19 +112,10 @@ class TemplateRenderer
 
         $blogObject = new BlogObject($blog, $this->pathMatcher->language);
 
-        $vars = [
-            // HB-specific
-            '__domain' => DomainService::getAppDomainWithPort(),
+        $vars = $this->getDefaultVariables($blog, $this->pathMatcher->language);
 
-            // vars for all routes
-            '_blog' => $blogObject,
-            '_config' => $this->config,
+        $vars += [
             '_route' => new RouteObject($this->matchedRoute, $this->templateName),
-            '_lang' => new LanguageObject($this->pathMatcher->language),
-
-            // placeholders
-            '_head' => $this->getHeadCode(),
-            '_foot' => $this->getFootCode(),
         ];
 
         $vars += $this->getRouteVariables();
@@ -138,24 +132,6 @@ class TemplateRenderer
          * and the developer does not have access to PHP methods
          */
         return json_decode(json_encode($vars), true);
-    }
-
-    private function setConfig()
-    {
-        $configFile = ThemeFilesRepository::getFile(
-            $this->pathMatcher->blog,
-            'config.yaml'
-        );
-
-        if (! $configFile) {
-            return;
-        }
-
-        try {
-            $this->config = Yaml::parse($configFile->content) ?? [];
-        } catch (ParseException) {
-            throw new Error('Unable to parse config.yaml');
-        }
     }
 
     private function getRouteVariables(): array
@@ -288,16 +264,6 @@ class TemplateRenderer
         return 1;
     }
 
-    private function getHeadCode()
-    {
-        return file_get_contents(resource_path('twig/_head.twig'));
-    }
-
-    private function getFootCode()
-    {
-        return file_get_contents(resource_path('twig/_foot.twig'));
-    }
-
     private function setTemplateName(array $availableFiles)
     {
         $checkFiles = explode(',', $this->matchedRoute->route->template);
@@ -386,4 +352,5 @@ class TemplateRenderer
             500
         );
     }
+
 }
