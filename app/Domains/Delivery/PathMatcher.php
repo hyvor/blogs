@@ -236,7 +236,7 @@ class PathMatcher
         if (!$file)
             return;
 
-        $templateRenderer = new DirectTemplateRenderer($this->blog, $this->language, $name);
+        $templateRenderer = new DirectTemplateRenderer($this->blog, $this->language, $name, $this->path);
         $html = $templateRenderer->render();
 
         $responseObject = DeliveryAPIResponseObject::forFile(
@@ -315,9 +315,24 @@ class PathMatcher
         if ($this->matched()) {
             return $this->responseObject;
         } else {
+
+            $file = ThemeFilesRepository::getFile($this->blog, '404.twig', ThemeFileFolderEnum::TEMPLATES);
+
+            if ($file) {
+                $templateRenderer = new DirectTemplateRenderer(
+                    $this->blog,
+                    $this->language,
+                    '404.twig',
+                    $this->path
+                );
+                $html = $templateRenderer->render();
+            } else {
+                $html = '404';
+            }
+
             return DeliveryAPIResponseObject::forFile(
                 DeliveryAPIFileTypeEnum::TEMPLATE,
-                '404',
+                $html,
                 'text/html',
                 true,
                 404
