@@ -5,7 +5,7 @@ use App\Domains\Theme\ThemeFilesRepository;
 use App\Models\Blog;
 use App\Models\ThemeFile;
 
-function addThemeTemplateFile(string $content, string $name = 'index.twig', Blog $blog = null) : ThemeFile {
+function addThemeTemplateFile(Blog $blog, string $content, string $name = 'index.twig') : ThemeFile {
 
     $blog ??= blog();
 

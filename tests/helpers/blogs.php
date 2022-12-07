@@ -3,9 +3,12 @@
 
 use App\Data\Enums\BlogTypeEnum;
 use App\Models\Blog;
+use App\Models\BlogVariant;
 
 function blog($attrs = []) : Blog {
-    $blog = Blog::factory()->create($attrs);
+    $blog = Blog::factory()
+        ->has(BlogVariant::factory(), 'variants')
+        ->create($attrs);
 
     return $blog;
 }

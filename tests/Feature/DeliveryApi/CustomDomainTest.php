@@ -7,17 +7,21 @@ use App\Domains\Blog\BlogService;
 use App\Domains\Theme\ThemeFilesRepository;
 
 it('works with custom domain', function () {
+
+    $blog = blog([
+        'hosting_at' => 'domain',
+        'hosting_domain' => 'hyvorblogscustom.test'
+    ]);
+    addPrimaryLanguage($blog);
+    addRoute($blog, '/');
+
     $content = '<body>{{ _blog.subdomain }}</body>';
-    ThemeFilesRepository::createOrUpdateFile(
-        BlogService::getBlogBySubdomain('custom'),
-        ThemeFileFolderEnum::TEMPLATES,
-        'index.twig',
-        $content
-    );
+    addThemeTemplateFile($blog, $content);
 
     $this->get('http://hyvorblogscustom.test')
         ->assertOk()
-        ->assertSee('<body>custom</body>', false);
+        ->assertSee("<body>$blog->subdomain</body>", false);
+
 });
 
 it('redirects to homepage if custom domain is not found', function () {
