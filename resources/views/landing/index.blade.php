@@ -772,12 +772,12 @@ c30.27,0,54.64-24.37,54.64-54.64v-1419l-363.61-362.75L1258.7,336.75z"/>
                     </span>
                 </a>
 
-               {{-- <a href="https://blogs.hyvor.com/blog/symfony" target="_blank">
+                <a href="https://blogs.hyvor.com/blog/symfony" target="_blank">
                     <img src="/img/landing/frameworks/symfony.svg" alt="Symfony Logo" />
                     <span>
                         Symfony
                     </span>
-                </a>--}}
+                </a>
 
             </div>
 

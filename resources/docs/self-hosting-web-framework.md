@@ -26,7 +26,10 @@ Currently, we have libraries for the following frameworks.
 
 * **Laravel**
   * [Github Repository](https://github.com/hyvor/hyvor-blogs-laravel)
-  * [Blog Tutorial](https://blogs.hyvor.com/blog/laravel-blog)
+  * [Blog Tutorial](https://blogs.hyvor.com/blog/laravel)
+* **Symfony**
+  * [Github Repository]( https://github.com/hyvor/hyvor-blogs-symfony)
+  * [Blog Tutorial](https://blogs.hyvor.com/blog/symfony)
 
 >  🙏 We are looking for help to cover more frameworks. If you are an experienced package developer and like to work with us, please contact us. We can make a deal :)
 
