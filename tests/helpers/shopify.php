@@ -9,7 +9,7 @@ use App\Models\ShopifyShop;
 
 function getShopifyEnabledBlog(): Blog
 {
-    $blog = newBlog();
+    $blog = blog();
     (new LanguageFiller($blog))->fill();
     (new UserFiller($blog))->fill();
     $blog->billing_type = BlogBillingTypeEnum::SHOPIFY;

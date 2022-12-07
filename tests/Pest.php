@@ -47,7 +47,7 @@ uses()->beforeEach(function () {
     return Blog::find(config('test.blog_id'));
 }*/
 
-function newBlog(BlogTypeEnum $type = BlogTypeEnum::DEFAULT)
+/*function newBlog(BlogTypeEnum $type = BlogTypeEnum::DEFAULT)
 {
     return Blog::factory()->has(
         BlogVariant::factory(),
@@ -55,9 +55,9 @@ function newBlog(BlogTypeEnum $type = BlogTypeEnum::DEFAULT)
     )->create([
         'type' => $type,
     ]);
-}
+}*/
 
-function post()
+/*function post()
 {
     return Post::factory()->create(['blog_id' => config('test.blog_id')]);
 }
@@ -104,7 +104,7 @@ function clearPosts(Blog $blog = null)
 function hyvorUser($fill = [])
 {
     return HyvorUser::dummy($fill);
-}
+}*/
 
 function faker()
 {

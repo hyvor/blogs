@@ -4,14 +4,15 @@ namespace Database\Factories;
 
 use Carbon\Carbon;
 use Illuminate\Database\Eloquent\Factories\Factory;
+use Illuminate\Support\Str;
 
 class BlogFactory extends Factory
 {
     public function definition()
     {
         return [
-            'hyvor_user_id' => config('test.hyvor_user_id'),
-            'subdomain' => $this->faker->uuid(),
+            'hyvor_user_id' => rand(),
+            'subdomain' => Str::random(20),
             'trial_ends_at' => Carbon::now()->addDays(30),
             'hosting_at' => 'subdomain',
 

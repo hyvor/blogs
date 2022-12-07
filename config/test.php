@@ -7,18 +7,18 @@
 return [
 
     // testing hyvor user ID
-    'hyvor_user_id' => 1,
+    // 'hyvor_user_id' => 1,
 
     // blog for testing
-    'blog_id' => 1,
+    // 'blog_id' => 1,
 
     // to test logical separation between blogs
-    'not_blog_id' => 2,
+    // 'not_blog_id' => 2,
 
     // subdomain for testing (blog ID 1)
-    'subdomain' => 'test',
+    // 'subdomain' => 'test',
 
     // subdomain for dev domain
-    'subdomain_dev' => 'dev',
+    // 'subdomain_dev' => 'dev',
 
 ];

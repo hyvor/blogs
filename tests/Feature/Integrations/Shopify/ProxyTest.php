@@ -51,7 +51,7 @@ it('requires a shop with an assigned blog', function () {
 });
 
 it('returns a response with the embed script', function () {
-    $blog = newBlog();
+    $blog = blog();
     $data = generateShopifyProxySignature([
         'shop' => 'shop.myshopify.com'
     ]);

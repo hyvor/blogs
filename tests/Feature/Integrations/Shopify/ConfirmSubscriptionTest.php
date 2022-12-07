@@ -10,8 +10,11 @@ use App\Domains\Subscription\SubscriptionService;
 use Illuminate\Support\Facades\URL;
 
 it('confirms the subscription', function () {
+
+    $blog = blog();
+
     $url = URL::signedRoute('shopify-billing-create', [
-        'blog_id' => config('test.blog_id'),
+        'blog_id' => $blog->id,
         'plan' => 'A',
         'frequency' => 'monthly'
     ]);
@@ -19,9 +22,9 @@ it('confirms the subscription', function () {
 
     $this
         ->call('GET', $url)
-        ->assertRedirect('/console/test/billing');
+        ->assertRedirect("/console/$blog->subdomain/billing");
 
-    $subscriptions = blog()->subscriptions;
+    $subscriptions = $blog->subscriptions;
     expect($subscriptions->count())->toBe(1);
     $subscription = $subscriptions[0];
     expect($subscription->plan)->toBe(SubscriptionPlanEnum::A);
@@ -39,7 +42,7 @@ it('cancels the current subscription', function () {
     );
 
     $url = URL::signedRoute('shopify-billing-create', [
-        'blog_id' => config('test.blog_id'),
+        'blog_id' => $blog->id,
         'plan' => 'A',
         'frequency' => 'monthly'
     ]);
@@ -47,7 +50,7 @@ it('cancels the current subscription', function () {
 
     $this
         ->call('GET', $url)
-        ->assertRedirect('/console/test/billing');
+        ->assertRedirect("/console/$blog->subdomain/billing");
 
     $subscription->refresh();
     expect($subscription->status)->toBe(SubscriptionStatusEnum::DELETED);
