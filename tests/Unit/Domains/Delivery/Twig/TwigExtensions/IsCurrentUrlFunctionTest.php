@@ -66,6 +66,25 @@ test('is_current_url with relative URL', function () {
     );
 });
 
+// #66
+test('is_current_url with external URL on homepage', function() {
+
+    $baseUrl = 'https://subdomain.myblog.com';
+    testTwigRendering(
+        "{% if (is_current_url('https://external.com/about')) %}yes{% endif %}",
+        [
+            '_blog' => [
+                'base_url' => $baseUrl
+            ],
+            '_meta' => [
+                'url' => $baseUrl
+            ]
+        ],
+        ""
+    );
+
+});
+
 test('is_current_url with wrong relative URL', function () {
     $baseUrl = 'https://myblog.com';
     testTwigRendering(

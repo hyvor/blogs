@@ -229,7 +229,7 @@ class TwigExtensions extends AbstractExtension
         // absolute URL
         if (preg_match('/^https?:\/\//', $url)) {
             // if not starting with the blog base URL, it is not the current one
-            if (! substr($url, 0, strlen($blogBaseUrl)) == $blogBaseUrl) {
+            if (substr($url, 0, strlen($blogBaseUrl)) !== $blogBaseUrl) {
                 return false;
             } else {
                 $path = substr($url, strlen($blogBaseUrl));
