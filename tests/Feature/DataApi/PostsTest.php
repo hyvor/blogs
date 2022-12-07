@@ -398,6 +398,7 @@ it('filters by author ID', function () {
         'filter' => "author.id=$user->id",
     ]);
     $response->assertJsonPath('data.0.authors.0.id', $user->id);
+
 });
 
 it('filters by author slug', function () {

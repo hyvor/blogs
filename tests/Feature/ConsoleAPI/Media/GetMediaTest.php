@@ -3,10 +3,11 @@
 namespace Tests\Feature\ConsoleAPI\Media;
 
 use App\Models\Media;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Testing\Fluent\AssertableJson;
 
 beforeEach(function () {
-    Media::truncate(); // media factory-created models are added when mocking
+    DB::statement('DELETE FROM media'); // media factory-created models are added when mocking
     Media::factory()->count(3)->create([
         'blog_id' => blog(),
     ]);

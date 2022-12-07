@@ -2,6 +2,7 @@
 
 namespace Tests;
 
+use App\Models\Blog;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Foundation\Testing\TestCase as BaseTestCase;
 use Illuminate\Support\Facades\URL;
@@ -18,7 +19,7 @@ abstract class TestCase extends BaseTestCase
      *
      * @var bool
      */
-    protected $seed = true;
+    protected $seed = false;
 
     protected function callDataApi(
         string $endpoint,
@@ -51,9 +52,13 @@ abstract class TestCase extends BaseTestCase
         return $this->call($method, URL::to('/api/console/v0/misc'.$endpoint), $data);
     }
 
-    protected function callCliAPI(string $method, string $endpoint, $data = [], $subdomain = 'dev')
+    protected function callCliAPI(string|Blog $subdomain, string $method, string $endpoint, $data = [])
     {
         $endpoint = trim($endpoint, '/');
+
+        if ($subdomain instanceof Blog) {
+            $subdomain = $subdomain->subdomain;
+        }
 
         return $this->call($method, URL::to("/api/cli/$subdomain/$endpoint"), $data);
     }

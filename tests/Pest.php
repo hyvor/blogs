@@ -42,10 +42,10 @@ uses()->beforeEach(function () {
 
 })->in('Feature', 'Unit');
 
-function blog()
+/*function blog()
 {
     return Blog::find(config('test.blog_id'));
-}
+}*/
 
 function newBlog(BlogTypeEnum $type = BlogTypeEnum::DEFAULT)
 {

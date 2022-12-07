@@ -14,9 +14,10 @@ beforeEach(function () {
 });
 
 it('creates files', function () {
+    $blog = devBlog();
     $content = Str::random();
 
-    $this->callCliAPI('PATCH', '/files', [
+    $this->callCliAPI($blog, 'PATCH', '/files', [
         'files' => [
             '/templates/index.twig' => base64_encode($content),
             'config.yaml' => 'name',
@@ -24,7 +25,7 @@ it('creates files', function () {
     ])->assertOk();
 
     $indexTwig = ThemeFilesRepository::getFile(
-        $this->blog,
+        $blog,
         'index.twig',
         ThemeFileFolderEnum::TEMPLATES
     );
@@ -33,21 +34,24 @@ it('creates files', function () {
 });
 
 it('updates files', function () {
+
+    $blog = devBlog();
+
     ThemeFilesRepository::createOrUpdateFile(
-        $this->blog,
+        $blog,
         ThemeFileFolderEnum::TEMPLATES,
         'index.twig',
         'Hi'
     );
 
-    $this->callCliAPI('PATCH', '/files', [
+    $this->callCliAPI($blog, 'PATCH', '/files', [
         'files' => [
             '/templates/index.twig' => base64_encode('New string'),
         ],
     ])->assertOk();
 
     $indexTwig = ThemeFilesRepository::getFile(
-        $this->blog,
+        $blog,
         'index.twig',
         ThemeFileFolderEnum::TEMPLATES
     );
@@ -56,17 +60,20 @@ it('updates files', function () {
 });
 
 it('resets', function () {
+
+    $blog = devBlog();
+
     ThemeFilesRepository::createOrUpdateFile(
-        $this->blog,
+        $blog,
         ThemeFileFolderEnum::TEMPLATES,
         'index.twig',
         'Hi'
     );
 
-    $this->callCliAPI('PATCH', '/files', [
+    $this->callCliAPI($blog, 'PATCH', '/files', [
         'files' => [],
         'reset' => true,
     ])->assertOk();
 
-    expect(ThemeFile::where('blog_id', $this->blog->id)->count())->toBe(0);
+    expect(ThemeFile::where('blog_id', $blog->id)->count())->toBe(0);
 });
