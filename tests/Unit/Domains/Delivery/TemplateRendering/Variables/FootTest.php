@@ -9,7 +9,7 @@ use App\Domains\Theme\ThemeFilesRepository;
 use App\Models\Subscription;
 
 it('sets _foot in index', function () {
-    $blog = blog();
+    $blog = blogWithLanguageAndRoutes();
     $variant = $blog->variants[0];
 
     $codeFoot = 'This is code head {{ _blog.name }}';
@@ -38,8 +38,8 @@ it('sets _foot in index', function () {
 });
 
 it('sets _foot in a post page', function () {
-    $blog = blog();
-    $post = aPublishedPost();
+    $blog = blogWithLanguageAndRoutes();
+    $post = addPublishedPost($blog);
 
     $postCodeFoot = 'A post code head {{ _post.id }}';
     $postCodeFootRendered = "A post code head $post->id";
@@ -64,8 +64,8 @@ it('sets _foot in a post page', function () {
 
 it('sets flashload basepath', function() {
 
-    $blog = blog();
-    addThemeTemplateFile('{{ _foot | template }}');
+    $blog = blogWithLanguageAndRoutes();
+    addThemeTemplateFile($blog, '{{ _foot | template }}');
     $pathMatcher = new PathMatcher($blog, '/');
     $responseObject = $pathMatcher->getResponseObject();
     expect($responseObject->content)->toContain('basePath: ""');
@@ -74,12 +74,12 @@ it('sets flashload basepath', function() {
 
 it('sets flashload basepath to /blog', function() {
 
-    $blog = blog();
+    $blog = blogWithLanguageAndRoutes();
     $blog->hosting_at = BlogHostingAtEnum::SELF;
     $blog->hosting_url = 'https://hyvor.com/blog';
     $blog->save();
 
-    addThemeTemplateFile('{{ _foot | template }}');
+    addThemeTemplateFile($blog, '{{ _foot | template }}');
     $pathMatcher = new PathMatcher($blog, '/');
     $responseObject = $pathMatcher->getResponseObject();
     expect($responseObject->content)->toContain('basePath: "blog"');
@@ -88,13 +88,12 @@ it('sets flashload basepath to /blog', function() {
 
 it('sets flashload basepath to /blog/page', function() {
 
-
-    $blog = blog();
+    $blog = blogWithLanguageAndRoutes();
     $blog->hosting_at = BlogHostingAtEnum::SELF;
     $blog->hosting_url = 'https://hyvor.com/blog/page';
     $blog->save();
 
-    addThemeTemplateFile('{{ _foot | template }}');
+    addThemeTemplateFile($blog, '{{ _foot | template }}');
     $pathMatcher = new PathMatcher($blog, '/');
     $responseObject = $pathMatcher->getResponseObject();
     expect($responseObject->content)->toContain('basePath: "blog/page"');
@@ -103,8 +102,8 @@ it('sets flashload basepath to /blog/page', function() {
 
 it('adds powered by for free plan blogs', function() {
 
-    $blog = blog();
-    addThemeTemplateFile('{{ _foot | template }}');
+    $blog = blogWithLanguageAndRoutes();
+    addThemeTemplateFile($blog, '{{ _foot | template }}');
     $pathMatcher = new PathMatcher($blog, '/');
     $responseObject = $pathMatcher->getResponseObject();
     expect($responseObject->content)->toContain('Powered by Hyvor Blogs');
@@ -113,7 +112,7 @@ it('adds powered by for free plan blogs', function() {
 
 it('does not add powered by to non-free blogs', function() {
 
-    $blog = blog();
+    $blog = blogWithLanguageAndRoutes();
     Subscription::factory()->create(['blog_id' => $blog]);
     $pathMatcher = new PathMatcher($blog, '/');
     $responseObject = $pathMatcher->getResponseObject();

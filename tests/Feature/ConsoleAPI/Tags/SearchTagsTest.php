@@ -2,14 +2,19 @@
 
 namespace Tests\Feature\ConsoleAPI\Tags;
 
+use App\Models\Route;
 use App\Models\Tag;
 use App\Models\TagVariant;
 use Illuminate\Testing\Fluent\AssertableJson;
 
 it('searches tags', function() {
 
+    $blog = blogWithAccess();
+    addPrimaryLanguage($blog);
+    addDefaultRoutes($blog, 'tag');
+
     $name = 'Thisisname';
-    $languageId = blog()->languages[0]->id;
+    $languageId = $blog->languages[0]->id;
 
     Tag::factory()
         ->has(
@@ -18,9 +23,9 @@ it('searches tags', function() {
                 'name' => $name,
             ]),
             'variants'
-        )->create(['blog_id' => blog()]);
+        )->create(['blog_id' => $blog]);
 
-    $this->callConsoleApi('GET', '/tags/search', [
+    consoleApi($blog, 'GET', '/tags/search', [
         'search' => 'Thisis',
     ])
         ->assertOk()

@@ -28,6 +28,7 @@ use App\Domains\User\Events\UserVariantDeletedEvent;
 use App\Domains\User\Events\UserVariantUpdatedEvent;
 use App\Models\Language;
 use App\Models\Navigation;
+use App\Models\NavigationVariant;
 use App\Models\Post;
 use App\Models\PostVariant;
 use App\Models\Route;
@@ -121,6 +122,8 @@ it('clears cache when a blog variant is updated', function () {
     ($this->templateMock)();
 
     $blog = blog();
+    addPrimaryLanguage($blog);
+    addBlogVariants($blog);
 
     $event = new BlogVariantUpdatedEvent($blog->variants[0]);
     $listener = new ClearCacheSubscriber();
@@ -133,6 +136,7 @@ it('clears cache when editing a post', function () {
     ($this->templateMock)();
 
     $blog = blog();
+    addPrimaryLanguage($blog);
     $language = $blog->languages[0];
 
     $post = Post::factory()
@@ -153,6 +157,7 @@ it('does not clear cache when editing a post if the primary variant is not publi
     ($this->templateNoMock)();
 
     $blog = blog();
+    addPrimaryLanguage($blog);
     $language = $blog->languages[0];
 
     $post = Post::factory()
@@ -257,7 +262,8 @@ it('clears cache on user variant events', function () {
 it('clears cache on tag events', function () {
     ($this->templateMock)(3);
 
-    $user = Tag::factory()->create();
+    $blog = blog();
+    $user = addTag($blog);
     $createEvent = new TagCreatedEvent($user);
     $updateEvent = new TagUpdatedEvent($user);
     $deleteEvent = new TagDeletedEvent($user);
@@ -271,7 +277,10 @@ it('clears cache on tag events', function () {
 it('clears cache on tag variant events', function () {
     ($this->templateMock)(2);
 
-    $variant = TagVariant::factory()->create();
+    $blog = blog();
+    addPrimaryLanguage($blog);
+    $tag = addTag($blog);
+    $variant = $tag->variants[0];
     $updateEvent = new TagVariantUpdatedEvent($variant);
     $deleteEvent = new TagVariantDeletedEvent($variant);
 
@@ -283,7 +292,8 @@ it('clears cache on tag variant events', function () {
 it('clears cache on navigation event', function () {
     ($this->templateMock)();
 
-    $navigation = Navigation::factory()->create();
+    $blog = blog();
+    $navigation = Navigation::factory()->create(['blog_id' => $blog]);
     $event = new NavigationChangedEvent($navigation);
 
     $listener = new ClearCacheSubscriber();
@@ -293,11 +303,14 @@ it('clears cache on navigation event', function () {
 it('clears cache on navigation variant event', function () {
     ($this->templateMock)();
 
-    $navigation = Navigation::factory()->create();
-    $event = new NavigationChangedEvent($navigation);
+    $blog = blog();
+    $language = addPrimaryLanguage($blog);
+    $navigation = Navigation::factory()->create(['blog_id' => $blog]);
+    $variant = NavigationVariant::factory()->create(['navigation_id' => $navigation, 'language_id' => $language]);
+    $event = new NavigationVariantChangedEvent($variant);
 
     $listener = new ClearCacheSubscriber();
-    $listener->onNavigationEvent($event);
+    $listener->onNavigationVariantEvent($event);
 });
 
 it('clears cache on language event', function () {

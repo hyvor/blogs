@@ -6,13 +6,8 @@ use App\Domains\Blog\Deleters\PostDeleter;
 use App\Models\Post;
 use App\Models\PostVariant;
 
-beforeEach(function () {
-    Post::truncate();
-    PostVariant::truncate();
-});
-
 it('deletes posts and variants', function () {
-    $blog = newBlog();
+    $blog = blog();
 
     Post::factory()
         ->count(2)
@@ -43,10 +38,10 @@ it('does not delete posts of other blogs', function () {
             'variants'
         )
         ->create([
-            'blog_id' => newBlog(),
+            'blog_id' => blog(),
         ]);
 
-    (new PostDeleter(newBlog()))->delete();
+    (new PostDeleter(blog()))->delete();
 
     expect(Post::count())->toBe(2);
     expect(PostVariant::count())->toBe(4);

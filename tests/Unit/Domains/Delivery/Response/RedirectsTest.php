@@ -11,14 +11,16 @@ it('matches redirect', function () {
     $from = '/redirect';
     $to = 'https://somewhere.com';
 
+    $blog = blog();
+
     RedirectRepository::createRedirect(
-        $this->blog,
+        $blog,
         $from,
         $to,
         RedirectTypeEnum::PERMANENT
     );
 
-    $pathMatcher = new PathMatcher($this->blog, $from);
+    $pathMatcher = new PathMatcher($blog, $from);
     $responseObject = $pathMatcher->getResponseObject();
 
     expect($responseObject->type)->toBe(DeliveryAPITypeEnum::REDIRECT);
@@ -29,7 +31,9 @@ it('matches redirect', function () {
 it('does not match if the redirect is not found', function () {
     $from = '/redirect/path';
 
-    $pathMatcher = new PathMatcher($this->blog, $from);
+    $blog = blogWithLanguage();
+
+    $pathMatcher = new PathMatcher($blog, $from);
     $responseObject = $pathMatcher->getResponseObject();
 
     expect($responseObject->status)->toBe(404);

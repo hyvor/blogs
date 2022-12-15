@@ -9,7 +9,8 @@ use Illuminate\Testing\Fluent\AssertableJson;
 it('updates a post', function () {
     Event::fake();
 
-    $post = $this->blog->posts()->first();
+    $blog = blogWithAccess();
+    $post = addPost($blog);
 
     $slug = 'hello-world';
     $isFeatured = true;
@@ -18,8 +19,7 @@ it('updates a post', function () {
     $codeHead = 'head code';
     $codeFoot = 'foot code';
 
-    $this
-        ->callConsoleApi('PATCH', "/post/$post->id", [
+    consoleApi($blog, 'PATCH', "/post/$post->id", [
             'slug' => $slug,
             'is_featured' => $isFeatured,
             'canonical_url' => $canonicalUrl,

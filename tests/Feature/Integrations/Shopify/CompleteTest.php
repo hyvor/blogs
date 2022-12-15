@@ -22,7 +22,7 @@ beforeEach(function () {
 });
 
 it('returns error when shop is not found', function () {
-    $this->callIntegrationEndpoint('GET', '/shopify/complete', [
+    integrationApi('GET', '/shopify/complete', [
         'domain' => 'shop.myshopify.com'
     ])->assertUnprocessable()
         ->assertSee('Shop not found');
@@ -35,7 +35,7 @@ it('returns an error when the shop is already assigned to a blog', function () {
         'access_token' => 'test'
     ]);
 
-    $this->callIntegrationEndpoint('GET', '/shopify/complete', [
+    integrationApi('GET', '/shopify/complete', [
         'domain' => 'shop.myshopify.com'
     ])
         ->assertUnprocessable()
@@ -50,7 +50,7 @@ it('redirects to auth when the user is not logged in', function () {
         'access_token' => 'test'
     ]);
 
-    $this->callIntegrationEndpoint('GET', '/shopify/complete', [
+    integrationApi('GET', '/shopify/complete', [
         'domain' => 'shop.myshopify.com'
     ])
         ->assertRedirectContains('/signup?redirect=')
@@ -73,7 +73,7 @@ it('creates blog, sets up self hosting, sets blog_id in shopify shop, and redire
         'access_token' => 'test'
     ]);
 
-    $this->callIntegrationEndpoint('GET', '/shopify/complete', [
+    integrationApi('GET', '/shopify/complete', [
         'domain' => $domain
     ])->assertRedirect('/console/shop-myshopify-com');
 

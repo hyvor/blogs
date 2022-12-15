@@ -6,7 +6,7 @@ use App\Domains\Shared\Count\BlogMediaCountsJob;
 use App\Models\Media;
 
 it('counts users', function () {
-    $blog = newBlog();
+    $blog = blog();
     Media::factory()->count(3)->create(['blog_id' => $blog, 'size' => 1000]);
 
     BlogMediaCountsJob::dispatch($blog);

@@ -6,14 +6,15 @@ use App\Domains\Blog\Fillers\NavigationFiller;
 use Illuminate\Testing\Fluent\AssertableJson;
 
 beforeEach(function () {
-    $this->blog = blog();
+    $this->blog = blogWithAccess();
+    addPrimaryLanguage($this->blog);
     (new NavigationFiller($this->blog))->fill();
 
     $this->navs = $this->blog->navigations;
 });
 
 it('gets navigations', function () {
-    $this->callConsoleApi('GET', '/navigations')
+    consoleApi($this->blog, 'GET', '/navigations')
         ->assertOk()
         ->assertJson(function (AssertableJson $json) {
             $json->has(count($this->navs))

@@ -7,13 +7,9 @@ use App\Models\User;
 use App\Models\UserVariant;
 use Illuminate\Database\Eloquent\Factories\Sequence;
 
-beforeEach(function () {
-    User::truncate();
-    UserVariant::truncate();
-});
 
 it('deletes users', function () {
-    $blog = newBlog();
+    $blog = blog();
 
     User::factory()
         ->count(2)
@@ -48,10 +44,10 @@ it('does not delete users of other blogs', function () {
             'variants'
         )
         ->create([
-            'blog_id' => newBlog(),
+            'blog_id' => blog(),
         ]);
 
-    (new UserDeleter(newBlog()))->delete();
+    (new UserDeleter(blog()))->delete();
 
     expect(User::count())->toBe(2);
     expect(UserVariant::count())->toBe(4);

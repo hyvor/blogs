@@ -13,7 +13,7 @@ it('fails when hmac is wrong', function () {
         'hmac' => 'wrong'
     ];
 
-    $this->callIntegrationEndpoint('GET', 'shopify/installed', $data)
+    integrationApi('GET', 'shopify/installed', $data)
         ->assertUnprocessable()
         ->assertSee('HMAC hash is invalid');
 });
@@ -28,7 +28,7 @@ it('fails when nonce is wrong', function () {
         'hmac' => hash_hmac('sha256', http_build_query($data), config('services.shopify.api_secret_key'))
     ];
 
-    $this->callIntegrationEndpoint('GET', 'shopify/installed', $data)
+    integrationApi('GET', 'shopify/installed', $data)
         ->assertUnprocessable()
         ->assertSee('Nonce is invalid');
 });
@@ -53,7 +53,7 @@ it('gets the access token and creates a shop', function () {
         'hmac' => hash_hmac('sha256', http_build_query($data), config('services.shopify.api_secret_key'))
     ];
 
-    $this->callIntegrationEndpoint('GET', 'shopify/installed', $data)
+    integrationApi('GET', 'shopify/installed', $data)
         ->assertRedirectContains('shopify/complete');
 
     $shop = ShopifyShop::where('domain', $domain)->first();
@@ -84,7 +84,7 @@ it('it updates the access token when re-authenticating', function() {
         'hmac' => hash_hmac('sha256', http_build_query($data), config('services.shopify.api_secret_key'))
     ];
 
-    $this->callIntegrationEndpoint('GET', 'shopify/installed', $data)
+    integrationApi('GET', 'shopify/installed', $data)
         ->assertRedirectContains('shopify/complete');
 
     $shop = ShopifyShop::where('domain', $domain)->first();

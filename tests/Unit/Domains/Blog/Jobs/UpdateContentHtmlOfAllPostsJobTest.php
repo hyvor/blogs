@@ -13,10 +13,10 @@ it('updates post variants', function() {
         $mockery->shouldReceive('updateVariantHtml')->times(3);
     });
 
-    $blog = newBlog();
+    $blog = blog();
     (new LanguageFiller($blog))->fill();
 
-    seedPublishedPosts(3, $blog);
+    addPosts($blog, 3, [], ['status' => 'published']);
 
     $job = new UpdateContentHtmlOfAllPostsJob($blog);
     $job->handle();

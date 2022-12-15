@@ -11,16 +11,18 @@ use App\Domains\Theme\ThemeFilesRepository;
 it('matches author page', function () {
     $content = 'I am an author';
 
+    $blog = blogWithLanguageAndRoutes();
+
     ThemeFilesRepository::createOrUpdateFile(
-        $this->blog,
+        $blog,
         ThemeFileFolderEnum::TEMPLATES,
         'author.twig',
         $content,
     );
 
-    $user = $this->blog->users[0];
+    $user = addUser($blog);
 
-    $pathMatcher = new PathMatcher($this->blog, "/author/$user->slug");
+    $pathMatcher = new PathMatcher($blog, "/author/$user->slug");
     $responseObject = $pathMatcher->getResponseObject();
 
     $this->assertEquals(DeliveryAPITypeEnum::FILE, $responseObject->type);

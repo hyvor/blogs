@@ -8,7 +8,8 @@ use App\Domains\Route\PermalinkRepository;
 use App\Domains\Theme\ThemeFilesRepository;
 
 it('sets _head in index', function () {
-    $blog = blog();
+
+    $blog = blogWithLanguageAndRoutes();
     $variant = $blog->variants[0];
     $blogUrl = PermalinkRepository::getBlogPermalink($blog, $blog->languages[0]);
 
@@ -52,12 +53,18 @@ it('sets _head in index', function () {
 });
 
 it('sets _head in a post page', function () {
-    $blog = blog();
-    $post = aPublishedPost();
+    $blog = blogWithLanguageAndRoutes();
+    $post = addPublishedPost($blog);
 
     $postCodeHead = 'A post code head {{ _post.id }}';
     $postCodeHeadRendered = "A post code head $post->id";
     $post->update(['code_head' => $postCodeHead]);
+
+    $user = addUser($blog);
+    addAuthorToPost($post, $user);
+
+    $tag = addTag($blog);
+    addTagToPost($post, $tag);
 
     $variant = $post->variants[0];
 
@@ -112,10 +119,10 @@ it('sets _head in a post page', function () {
 });
 
 it('adds nofollow', function () {
-    $blog = blog();
+    $blog = blogWithLanguageAndRoutes();
     $blog->setMeta('seo_indexing', false);
 
-    $post = aPublishedPost();
+    $post = addPublishedPost($blog);
 
     $content = '{{ _head | template }}';
     ThemeFilesRepository::createOrUpdateFile(
@@ -134,7 +141,7 @@ it('adds nofollow', function () {
 
 it('adds favicon', function() {
 
-    $blog = blog();
+    $blog = blogWithLanguageAndRoutes();
     $url = 'https://exmaple.com/logo.png';
     $blog->setMeta('logo_url', $url);
 

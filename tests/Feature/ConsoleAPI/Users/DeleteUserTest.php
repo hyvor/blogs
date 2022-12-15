@@ -12,10 +12,12 @@ use Illuminate\Support\Facades\Event;
 it('deletes the user and its variants', function () {
     Event::fake();
 
+    $blog = blogWithAccess();
+
     $user = User::factory()
         ->has(UserVariant::factory()->count(3), 'variants')
         ->create([
-            'blog_id' => blog(),
+            'blog_id' => $blog,
             'role' => 'admin',
         ]);
 
@@ -29,7 +31,7 @@ it('deletes the user and its variants', function () {
     expect(UserVariant::where('user_id', $user->id)->count())->toBe(3);
     expect(PostAuthor::where('user_id', $user->id)->count())->toBe(1);
 
-    $this->callConsoleApi('DELETE', "/user/$user->id")
+    consoleApi($blog, 'DELETE', "/user/$user->id")
         ->assertOk();
 
     // nope

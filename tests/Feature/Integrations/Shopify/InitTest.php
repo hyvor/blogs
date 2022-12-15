@@ -5,7 +5,7 @@ namespace Tests\Feature\Integrations\Shopify;
 use Illuminate\Support\Facades\URL;
 
 it('requires a valid domain', function () {
-    $this->callIntegrationEndpoint('GET', '/shopify', [
+    integrationApi('GET', '/shopify', [
         'shop' => 'invalid-shop'
     ])
         ->assertUnprocessable();
@@ -14,13 +14,13 @@ it('requires a valid domain', function () {
 it('redirects to the console if the user is not found', function () {
     $blog = getShopifyEnabledBlog();
 
-    $this->callIntegrationEndpoint('GET', '/shopify', [
+    integrationApi('GET', '/shopify', [
         'shop' => 'test.myshopify.com'
     ])->assertRedirect('/console/' . $blog->subdomain);
 });
 
 it('redirects to the oauth endpoint and sets nonce', function () {
-    $response = $this->callIntegrationEndpoint('GET', '/shopify', [
+    $response = integrationApi('GET', '/shopify', [
         'shop' => 'myshop.myshopify.com'
     ])->assertRedirect();
 

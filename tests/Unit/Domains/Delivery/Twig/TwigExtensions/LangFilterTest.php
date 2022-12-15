@@ -22,7 +22,7 @@ test('lang', function () {
         "{{ 'test' | lang }}",
         [
             '_blog' => $blogObject,
-            '_lang' => ['code' => 'en']
+            '_lang' => ['code' => $blog->languages[0]->code]
         ],
         'Test'
     );
@@ -43,7 +43,7 @@ test('lang with single placeholder', function () {
         "{{ 'test' | lang(2) }}",
         [
             '_blog' => $blogObject,
-            '_lang' => ['code' => 'en']
+            '_lang' => ['code' => $blog->languages[0]->code]
         ],
         '2 authors'
     );
@@ -64,7 +64,7 @@ test('lang with multiple placeholders', function () {
         "{{ 'test' | lang(name='hyvor', date='today') }}",
         [
             '_blog' => $blogObject,
-            '_lang' => ['code' => 'en']
+            '_lang' => ['code' => $blog->languages[0]->code]
         ],
         'Written by hyvor today'
     );
@@ -99,7 +99,7 @@ it('fallbacks to default language', function () {
         "{{ 'test1' | lang }}{{ 'test2' | lang }}",
         [
             '_blog' => $blogObject,
-            '_lang' => ['code' => 'fr']
+            '_lang' => ['code' => $blog->languages[1]->code]
         ],
         'english-testfrench'
     );

@@ -7,7 +7,7 @@ use App\Domains\Delivery\PathMatcher;
 use Symfony\Component\DomCrawler\Crawler;
 
 it('returns sitemap', function () {
-    $blog = newBlog();
+    $blog = blog();
 
     (new LanguageFiller($blog))->fill();
 
@@ -24,11 +24,8 @@ it('returns sitemap', function () {
 });
 
 it('adds posts sitemap', function () {
-    $blog = newBlog();
-
-    (new LanguageFiller($blog))->fill();
-
-    seedPublishedPosts(5, $blog);
+    $blog = blogWithLanguage();
+    addPosts($blog, 5, [], ['status' => 'published']);
 
     $pathMatcher = new PathMatcher($blog, '/sitemap.xml');
     $responseObject = $pathMatcher->getResponseObject();

@@ -25,17 +25,17 @@ beforeEach(function () {
 });
 
 it('validates', function () {
-    $this->callConsoleUserApi('POST', '/blog')
+    consoleUserApi('POST', '/blog')
         ->assertUnprocessable()
         ->assertSee(['name', 'required']);
 
-    $this->callConsoleUserApi('POST', '/blog', ['name' => 'test'])
+    consoleUserApi('POST', '/blog', ['name' => 'test'])
         ->assertUnprocessable()
         ->assertSee(['subdomain', 'required']);
 });
 
 it('creates a blog', function () {
-    $blogId = $this->callConsoleUserApi('POST', '/blog', [
+    $blogId = consoleUserApi('POST', '/blog', [
         'name' => 'Testing',
         'subdomain' => 'new-blog',
     ])
@@ -57,7 +57,7 @@ it('creates a blog', function () {
 });
 
 it('creates a dev blog', function () {
-    $blogId = $this->callConsoleUserApi('POST', '/blog', [
+    $blogId = consoleUserApi('POST', '/blog', [
         'name' => 'Testing',
         'is_dev' => true,
     ])
@@ -81,10 +81,9 @@ it('creates a dev blog', function () {
 });
 
 it('cant create a blog with already existing subdomain', function () {
-    $blog = Blog::first();
+    $blog = blogWithAccess();
 
-    $this
-        ->callConsoleUserApi('POST', '/blog', [
+    consoleUserApi('POST','/blog', [
             'name' => 'Testing',
             'subdomain' => $blog->subdomain,
         ])

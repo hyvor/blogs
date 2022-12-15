@@ -28,14 +28,18 @@ it('delivers a webhook', function () {
     $job = new WebhookDeliveryJob($delivery);
     $job->handle();
 
-    Http::assertSent(function (Request $request) use ($url) {
-        return
-            $request->url() === $url &&
-            $request->hasHeader('X-Signature') &&
-            $request['subdomain'] === 'test' &&
-            is_int($request['timestamp']) &&
-            $request['event'] === 'cache.single' &&
-            $request['data']['path'] === '/test';
+    Http::assertSent(function (Request $request) use ($url, $blog) {
+
+        // convert above to expect
+        expect($request->url())->toBe($url);
+        expect($request->hasHeader('X-Signature'))->toBeTrue();
+        expect($request['subdomain'])->toBe($blog->subdomain);
+        expect(is_int($request['timestamp']))->toBeTrue();
+        expect($request['event'])->toBe('cache.single');
+        expect($request['data']['path'])->toBe('/test');
+
+        return true;
+
     });
 
     // delivery record

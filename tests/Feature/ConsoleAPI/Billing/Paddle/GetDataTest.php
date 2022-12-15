@@ -58,10 +58,12 @@ it('gets info and receipts', function () {
         ])
     ]);
 
-    $subscription = Subscription::factory()->create(['blog_id' => blog()]);
+    $blog = blogWithAccess();
+
+    $subscription = Subscription::factory()->create(['blog_id' => $blog]);
     $subscription->setMeta('paddle_subscription_id', 1);
 
-    $this->callConsoleApi('GET', '/billing/paddle')
+    consoleApi($blog, 'GET', '/billing/paddle')
         ->assertOk()
         ->assertJson(function (AssertableJson $json) {
             $json

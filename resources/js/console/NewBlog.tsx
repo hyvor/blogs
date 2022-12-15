@@ -12,7 +12,7 @@ import {router} from 'kea-router'
 import Callout, {CalloutColors} from "./ReusableComponents/Callout";
 
 
-export default function NewBlog({ type }: { type: string | undefined }) {
+export default function blog({ type }: { type: string | undefined }) {
 
     const isDev : boolean = type === 'dev';
 

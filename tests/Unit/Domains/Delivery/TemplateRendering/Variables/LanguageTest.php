@@ -9,31 +9,37 @@ use App\Domains\Theme\ThemeFilesRepository;
 it('sets _lang variable', function () {
     $content = '{{ _lang.code }}';
 
+    $blog = blogWithLanguageAndRoutes();
+
     ThemeFilesRepository::createOrUpdateFile(
-        $this->blog,
+        $blog,
         ThemeFileFolderEnum::TEMPLATES,
         'index.twig',
         $content,
     );
 
-    $pathMatcher = new PathMatcher($this->blog, '/');
+    $pathMatcher = new PathMatcher($blog, '/');
     $responseObject = $pathMatcher->getResponseObject();
 
-    expect($responseObject->content)->toBe('en');
+    expect($responseObject->content)->toBe($blog->languages[0]->code);
 });
 
 it('sets _lang variable for another language', function () {
     $content = '{{ _lang.code }}';
 
+    $blog = blogWithLanguageAndRoutes();
+    $language = addLanguage($blog);
+    $blog->refresh();
     ThemeFilesRepository::createOrUpdateFile(
-        $this->blog,
+        $blog,
         ThemeFileFolderEnum::TEMPLATES,
         'index.twig',
         $content,
     );
 
-    $pathMatcher = new PathMatcher($this->blog, '/fr');
+    $pathMatcher = new PathMatcher($blog, '/' . $language->code);
     $responseObject = $pathMatcher->getResponseObject();
 
-    expect($responseObject->content)->toBe('fr');
+    expect($responseObject->content)->toBe($language->code);
+
 });

@@ -8,13 +8,15 @@ use Illuminate\Support\Facades\Event;
 it('deletes a tag variant', function () {
     Event::fake();
 
-    $tag = $this->blog->tags()->first();
+    $blog = blogWithAccess();
+    addPrimaryLanguage($blog);
+    addLanguage($blog);
+    $tag = addTag($blog);
 
     $variants = $tag->variants()->count();
 
-    $this
-        ->callConsoleApi('DELETE', "/tag/$tag->id/variant", [
-            'language_id' => $this->blog->languages[1]->id,
+    consoleApi($blog, 'DELETE', "/tag/$tag->id/variant", [
+            'language_id' => $blog->languages[1]->id,
         ])
         ->assertOk();
 
@@ -24,11 +26,13 @@ it('deletes a tag variant', function () {
 });
 
 it('does not delete primary language variant', function () {
-    $tag = $this->blog->users()->first();
 
-    $this
-        ->callConsoleApi('DELETE', "/tag/$tag->id/variant", [
-            'language_id' => $this->blog->languages[0]->id,
+    $blog = blogWithAccess();
+    addPrimaryLanguage($blog);
+    $tag = addTag($blog);
+
+    consoleApi($blog, 'DELETE', "/tag/$tag->id/variant", [
+            'language_id' => $blog->languages[0]->id,
         ])
         ->assertUnprocessable();
 });

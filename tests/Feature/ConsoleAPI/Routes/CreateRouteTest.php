@@ -9,13 +9,15 @@ use Illuminate\Testing\Fluent\AssertableJson;
 it('creates a route', function () {
     Event::fake();
 
+    $blog = blogWithAccess();
+
     $name = 'Hyvor';
     $match = '/hyvor';
     $template = 'index.twig';
     $postsFilter = 'tag.slug={slug}';
     $contentType = 'text/html';
 
-    $this->callConsoleApi('POST', '/route', [
+    consoleApi($blog, 'POST', '/route', [
         'name' => $name,
         'match' => $match,
         'template' => $template,

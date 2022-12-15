@@ -7,7 +7,8 @@ use App\Data\Enums\DeliveryAPITypeEnum;
 use App\Domains\Delivery\PathMatcher;
 
 it('matches index with feed', function () {
-    $pathMatcher = new PathMatcher($this->blog, '/feed');
+    $blog = blogWithLanguageAndRoutes();
+    $pathMatcher = new PathMatcher($blog, '/feed');
     $responseObject = $pathMatcher->getResponseObject();
 
     $this->assertEquals(DeliveryAPITypeEnum::FILE, $responseObject->type);

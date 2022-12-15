@@ -9,10 +9,12 @@ use Illuminate\Testing\Fluent\AssertableJson;
 it('creates a guest user', function () {
     Event::fake();
 
-    $languageId = blog()->languages[0]->id;
+    $blog = blogWithAccess();
+    addPrimaryLanguage($blog);
+    addDefaultRoutes($blog, 'author');
 
     $name = 'Hyvor';
-    $this->callConsoleApi('POST', '/user/guest', [
+    consoleApi($blog, 'POST', '/user/guest', [
         'name' => $name,
     ])
         ->assertOk()

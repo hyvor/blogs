@@ -6,7 +6,7 @@ use App\Domains\Blog\Fillers\RouteFiller;
 use App\Models\Route;
 
 it('fills default routes', function () {
-    $blog = newBlog();
+    $blog = blog();
 
     (new RouteFiller($blog))->fill();
 

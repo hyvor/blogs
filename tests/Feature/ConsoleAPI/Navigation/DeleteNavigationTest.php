@@ -10,11 +10,13 @@ use Illuminate\Support\Facades\Event;
 it('deletes navigation and its variants', function () {
     Event::fake();
 
+    $blog = blogWithAccess();
+
     $nav = Navigation::factory()
         ->has(NavigationVariant::factory()->count(2), 'variants')
-        ->create(['blog_id' => blog()]);
+        ->create(['blog_id' => $blog]);
 
-    $this->callConsoleApi('DELETE', "/navigation/$nav->id")
+    consoleApi($blog, 'DELETE', "/navigation/$nav->id")
         ->assertOk();
 
     expect(Navigation::find($nav->id))->toBeNull();

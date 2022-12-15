@@ -18,7 +18,7 @@ function generateShopifyProxySignature(array $data): array
 }
 
 it('requires a valid signature', function () {
-    $this->callIntegrationEndpoint('GET', 'shopify/proxy', [
+    integrationApi('GET', 'shopify/proxy', [
         'shop' => 'shop.myshopify.com',
         'signature' => 'wrong'
     ])->assertUnprocessable()
@@ -30,7 +30,7 @@ it('requires a valid shop', function () {
         'shop' => 'shop.myshopify.com'
     ]);
 
-    $this->callIntegrationEndpoint('GET', 'shopify/proxy', $data)
+    integrationApi('GET', 'shopify/proxy', $data)
         ->assertUnprocessable()
         ->assertSee('Shop not found');
 });
@@ -45,7 +45,7 @@ it('requires a shop with an assigned blog', function () {
         'access_token' => 'test'
     ]);
 
-    $this->callIntegrationEndpoint('GET', '/shopify/proxy', $data)
+    integrationApi('GET', '/shopify/proxy', $data)
         ->assertUnprocessable()
         ->assertSee('No blog is assigned to this shop');
 });
@@ -62,7 +62,7 @@ it('returns a response with the embed script', function () {
         'blog_id' => $blog->id
     ]);
 
-    $this->callIntegrationEndpoint('GET', '/shopify/proxy', $data)
+    integrationApi('GET', '/shopify/proxy', $data)
         ->assertOk()
         ->assertSee(['<script', 'src=', 'embed.js'], false);
 });

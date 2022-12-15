@@ -7,14 +7,14 @@ use Illuminate\Support\Facades\DB;
 use Illuminate\Testing\Fluent\AssertableJson;
 
 beforeEach(function () {
-    DB::statement('DELETE FROM media'); // media factory-created models are added when mocking
+    $this->blog = blogWithAccess();
     Media::factory()->count(3)->create([
-        'blog_id' => blog(),
+        'blog_id' => $this->blog,
     ]);
 });
 
 it('gets media', function () {
-    $this->callConsoleApi('GET', '/media')
+    consoleApi($this->blog, 'GET', '/media')
         ->assertOk()
         ->assertJson(function (AssertableJson $json) {
             $json->has(3)
@@ -28,9 +28,11 @@ it('gets media', function () {
 });
 
 it('limit and offset works and orders by ID desc', function () {
-    $media = Media::orderBy('id', 'ASC')->first();
+    $media = Media::orderBy('id', 'ASC')
+        ->where('blog_id', $this->blog->id)
+        ->first();
 
-    $this->callConsoleApi('GET', '/media', ['limit' => 1, 'offset' => 2])
+    consoleApi($this->blog, 'GET', '/media', ['limit' => 1, 'offset' => 2])
         ->assertOk()
         ->assertJson(
             fn (AssertableJson $json) => $json->has(1)

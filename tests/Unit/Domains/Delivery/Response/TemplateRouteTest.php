@@ -12,14 +12,16 @@ it('matches custom route and template', function () {
 
     $content = 'I am a custom template-based route';
 
+    $blog = blogWithLanguage();
+
     ThemeFilesRepository::createOrUpdateFile(
-        $this->blog,
+        $blog,
         ThemeFileFolderEnum::TEMPLATES,
         'route-test.twig',
         $content,
     );
 
-    $pathMatcher = new PathMatcher($this->blog, '/test');
+    $pathMatcher = new PathMatcher($blog, '/test');
     $responseObject = $pathMatcher->getResponseObject();
 
     $this->assertEquals(DeliveryAPITypeEnum::FILE, $responseObject->type);

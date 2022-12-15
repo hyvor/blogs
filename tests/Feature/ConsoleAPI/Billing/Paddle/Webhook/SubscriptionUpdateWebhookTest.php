@@ -16,7 +16,7 @@ it('updates a subscription plan', function () {
     ]);
     PaddleService::setPaddleSubscriptionId($subscription, 110);
 
-    $this->callIntegrationEndpoint('POST', '/paddle/webhook', getPaddleWebhookParams([
+    integrationApi('POST', '/paddle/webhook', getPaddleWebhookParams([
         'alert_name' => 'subscription_updated',
         'subscription_plan_id' => PaddleService::planConfig(
             SubscriptionPlanEnum::D,
@@ -40,7 +40,7 @@ it('updates the status', function () {
     ]);
     PaddleService::setPaddleSubscriptionId($subscription, 110);
 
-    $this->callIntegrationEndpoint('POST', '/paddle/webhook', getPaddleWebhookParams([
+    integrationApi('POST', '/paddle/webhook', getPaddleWebhookParams([
         'alert_name' => 'subscription_updated',
         'subscription_id' => 110,
         'status' => 'past_due'
@@ -61,7 +61,7 @@ it('past_due to active', function () {
     ]);
     PaddleService::setPaddleSubscriptionId($subscription, 110);
 
-    $this->callIntegrationEndpoint('POST', '/paddle/webhook', getPaddleWebhookParams([
+    integrationApi('POST', '/paddle/webhook', getPaddleWebhookParams([
         'alert_name' => 'subscription_updated',
         'subscription_id' => 110,
         'status' => 'active'

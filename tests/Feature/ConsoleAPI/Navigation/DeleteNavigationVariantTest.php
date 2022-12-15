@@ -10,14 +10,17 @@ use Illuminate\Support\Facades\Event;
 it('deletes navigation variant', function () {
     Event::fake();
 
-    $nav = Navigation::factory()->create(['blog_id' => blog()]);
-    $languageId = blog()->languages[0]->id;
+    $blog = blogWithAccess();
+    addPrimaryLanguage($blog);
+
+    $nav = Navigation::factory()->create(['blog_id' => $blog]);
+    $languageId = $blog->languages[0]->id;
     $variant = NavigationVariant::factory()->create([
         'navigation_id' => $nav,
         'language_id' => $languageId,
     ]);
 
-    $this->callConsoleApi('DELETE', "/navigation/$nav->id/variant", [
+    consoleApi($blog, 'DELETE', "/navigation/$nav->id/variant", [
         'language_id' => $languageId,
     ])
         ->assertOk();

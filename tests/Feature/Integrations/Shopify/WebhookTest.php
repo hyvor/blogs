@@ -6,8 +6,8 @@ use App\Domains\Blog\Jobs\DeleteBlogJob;
 use Illuminate\Support\Facades\Queue;
 
 it('returns ok for other endpoints', function() {
-    $this->callIntegrationEndpoint('POST', '/shopify/webhook/customer-data-request')->assertOk();
-    $this->callIntegrationEndpoint('POST', '/shopify/webhook/customer-data-erasure')->assertOk();
+    integrationApi('POST', '/shopify/webhook/customer-data-request')->assertOk();
+    integrationApi('POST', '/shopify/webhook/customer-data-erasure')->assertOk();
 });
 
 it('requires a valid signature', function () {

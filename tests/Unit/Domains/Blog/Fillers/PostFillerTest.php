@@ -10,7 +10,7 @@ use App\Domains\Blog\Fillers\UserFiller;
 use App\Models\Post;
 
 it('fills with posts', function () {
-    $blog = newBlog();
+    $blog = blog();
 
     (new LanguageFiller($blog))->fill();
     (new UserFiller($blog))->fill();
@@ -35,7 +35,7 @@ it('fills with posts', function () {
 });
 
 it('adds more posts for DEV blogs', function () {
-    $blog = newBlog(BlogTypeEnum::DEV);
+    $blog = devBlog();
 
     (new LanguageFiller($blog))->fill();
     (new UserFiller($blog))->fill();
@@ -56,7 +56,7 @@ it('adds more posts for DEV blogs', function () {
 });
 
 it('adds more posts for preview blogs', function () {
-    $blog = newBlog(BlogTypeEnum::PREVIEW);
+    $blog = previewBlog();
 
     (new LanguageFiller($blog))->fill();
     (new UserFiller($blog))->fill();

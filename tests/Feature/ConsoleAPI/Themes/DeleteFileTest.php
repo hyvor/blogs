@@ -7,14 +7,17 @@ use App\Domains\Theme\ThemeFilesRepository;
 use App\Models\ThemeFile;
 
 it('deletes a file', function () {
+
+    $blog = blogWithAccess();
+
     $file = ThemeFilesRepository::createOrUpdateFile(
-        blog(),
+        $blog,
         ThemeFileFolderEnum::TEMPLATES,
         'index.twig',
         'none'
     );
 
-    $this->callConsoleApi('DELETE', "/theme/file/$file->id")
+    consoleApi($blog, 'DELETE', "/theme/file/$file->id")
         ->assertOk();
 
     expect(ThemeFile::find($file->id))->toBeNull();

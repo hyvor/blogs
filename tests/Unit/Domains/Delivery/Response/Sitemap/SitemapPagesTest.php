@@ -11,7 +11,7 @@ use App\Models\PostVariant;
 use Symfony\Component\DomCrawler\Crawler;
 
 it('generates entries for homepage and its variants', function () {
-    $blog = newBlog();
+    $blog = blog();
 
     // primary
     (new LanguageFiller($blog))->fill();
@@ -35,15 +35,12 @@ it('generates entries for homepage and its variants', function () {
 });
 
 it('generates entries for pages and its variants', function () {
-    $blog = newBlog();
-
-    (new LanguageFiller($blog))->fill();
-    (new RouteFiller($blog))->fill();
+    $blog = blogWithLanguageAndRoutes();
 
     Language::factory()->count(2)->create(['blog_id' => $blog]);
 
-    $pages = seedPublishedPosts(3, $blog, true); // 3 pages
-    seedPublishedPosts(1, $blog); // 1 post, to make sure it is not added
+    $pages = addPosts($blog, 3, ['is_page' => true], ['status' => 'published']); // 3 pages
+    addPosts($blog, 1, ['is_page' => false], ['status' => 'published']); // 1 post, to make sure it is not added
 
     PostVariant::factory()->create(['post_id' => $pages[2]->id, 'status' => 'published']);
 

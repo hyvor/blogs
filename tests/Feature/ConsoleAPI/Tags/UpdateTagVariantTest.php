@@ -9,15 +9,17 @@ use Illuminate\Testing\Fluent\AssertableJson;
 it('updates tag variant', function () {
     Event::fake();
 
-    $tag = $this->blog->tags()->first();
+    $blog = blogWithAccess();
+    addPrimaryLanguage($blog);
+    addDefaultRoutes($blog, 'tag');
+    $tag = addTag($blog);
     $variant = $tag->variants[0];
     $language = $variant->language;
 
     $name = 'Hey';
     $description = 'I am hey';
 
-    $this
-        ->callConsoleApi('PATCH', "/tag/$tag->id/variant", [
+    consoleApi($blog, 'PATCH', "/tag/$tag->id/variant", [
             'language_id' => $language->id,
             'name' => $name,
             'description' => $description,

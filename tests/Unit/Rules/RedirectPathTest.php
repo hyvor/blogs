@@ -2,12 +2,14 @@
 
 namespace Tests\Unit\Rules;
 
+use App\Models\Blog;
 use App\Models\Redirect;
 use App\Rules\RedirectPath;
 
-function pathPasses($val)
+function pathPasses($val, Blog $blog = null)
 {
-    $rule = new RedirectPath(blog());
+    $blog ??= blog();
+    $rule = new RedirectPath($blog);
 
     return $rule->passes('path', $val);
 }
@@ -21,8 +23,10 @@ test('validation', function () {
 
 it('does not pass when path is already there', function () {
     $path = '/new';
-    Redirect::factory()->create(['blog_id' => blog(), 'path' => $path]);
+
+    $blog = blog();
+    Redirect::factory()->create(['blog_id' => $blog, 'path' => $path]);
 
     expect(pathPasses('/news'))->toBeTrue();
-    expect(pathPasses($path))->toBeFalse();
+    expect(pathPasses($path, $blog))->toBeFalse();
 });

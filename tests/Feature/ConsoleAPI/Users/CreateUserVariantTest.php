@@ -9,23 +9,23 @@ use Illuminate\Testing\Fluent\AssertableJson;
 it('creates a user variant', function () {
     Event::fake();
 
-    $language = $this->blog->languages[0];
-    $language2 = $this->blog->languages[1];
-    $user = $this->blog->users()->first();
+    $blog = blogWithAccess();
+    $language = addPrimaryLanguage($blog);
+    $language2 = addLanguage($blog);
+    $user = addUser($blog);
+    addDefaultRoutes($blog, 'author');
 
     $user->variants()->delete();
 
     $this->assertEquals(0, $user->variants()->count());
 
-    $this
-        ->callConsoleApi('POST', "/user/$user->id/variant", [
+    consoleApi($blog, 'POST', "/user/$user->id/variant", [
             'language_id' => $language->id,
         ])
         ->assertOk()
         ->assertJson(fn (AssertableJson $json) => $json->has('bio')->etc());
 
-    $this
-        ->callConsoleApi('POST', "/user/$user->id/variant", [
+    consoleApi($blog, 'POST', "/user/$user->id/variant", [
             'language_id' => $language2->id,
         ])
         ->assertOk()

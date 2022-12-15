@@ -7,13 +7,16 @@ use App\Models\ThemeFile;
 use App\Models\ThemeVersion;
 
 it('changes the theme of a blog with the latest version', function () {
+
+    $blog = blogWithAccess();
+
     $theme = Theme::factory()
         ->has(ThemeVersion::factory()->count(2), 'versions')
         ->create();
 
-    ThemeFile::factory()->create(['blog_id' => blog(), 'name' => 'hello.twig']);
+    ThemeFile::factory()->create(['blog_id' => $blog, 'name' => 'hello.twig']);
 
-    $json = $this->callConsoleApi('PATCH', '/theme', [
+    $json = consoleApi($blog, 'PATCH', '/theme', [
         'name' => $theme->name,
     ])
         ->assertOk()

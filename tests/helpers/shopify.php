@@ -9,9 +9,8 @@ use App\Models\ShopifyShop;
 
 function getShopifyEnabledBlog(): Blog
 {
-    $blog = blog();
+    $blog = blogWithAccess();
     (new LanguageFiller($blog))->fill();
-    (new UserFiller($blog))->fill();
     $blog->billing_type = BlogBillingTypeEnum::SHOPIFY;
     $blog->save();
 

@@ -5,7 +5,7 @@ namespace Tests\Unit\Domains\Delivery;
 use App\Domains\Delivery\PostPreviewSecretEncryptor;
 
 it('works', function () {
-    $post = post();
+    $post = addPost(blog());
 
     $secret = PostPreviewSecretEncryptor::getPreviewSecret($post);
     $id = PostPreviewSecretEncryptor::decryptPreviewSecret($secret);
@@ -15,7 +15,7 @@ it('works', function () {
 
 it('decrypt returns null if the timestamp is old', function () {
     $this->travel(-25)->hours();
-    $secret = PostPreviewSecretEncryptor::getPreviewSecret(post());
+    $secret = PostPreviewSecretEncryptor::getPreviewSecret(addPost(blog()));
     $this->travelBack();
     $id = PostPreviewSecretEncryptor::decryptPreviewSecret($secret);
 

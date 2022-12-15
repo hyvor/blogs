@@ -14,9 +14,11 @@ it('matches media', function () {
 
     $file = UploadedFile::fake()->image($fileName);
 
-    $media = MediaRepository::upload($this->blog, $file);
+    $blog = blogWithLanguage();
+    $media = MediaRepository::upload($blog, $file);
 
-    $pathMatcher = new PathMatcher($this->blog, "/media/$media->name");
+
+    $pathMatcher = new PathMatcher($blog, "/media/$media->name");
     $responseObject = $pathMatcher->getResponseObject();
 
     $this->assertEquals(DeliveryAPITypeEnum::FILE, $responseObject->type);
@@ -29,14 +31,15 @@ it('matches media', function () {
 it('gets mime type from the file name', function() {
 
     $url = 'https://image.com/image.svg';
+    $blog = blogWithLanguage();
 
     Http::fake([
         'https://image.com/image.svg' => Http::response('test')
     ]);
 
-    $media = (new MediaRepository)->uploadFromUrl($this->blog, $url);
+    $media = (new MediaRepository)->uploadFromUrl($blog, $url);
 
-    $pathMatcher = new PathMatcher($this->blog, "/media/$media->name");
+    $pathMatcher = new PathMatcher($blog, "/media/$media->name");
     $responseObject = $pathMatcher->getResponseObject();
 
     expect($responseObject->mime_type)->toBe('image/svg+xml');

@@ -13,14 +13,16 @@ it('matches styles.css', function () {
     $file = 'index.scss';
     $content = 'body {color: red;}';
 
+    $blog = blog();
+
     ThemeFilesRepository::createOrUpdateFile(
-        $this->blog,
+        $blog,
         ThemeFileFolderEnum::STYLES,
         $file,
         $content,
     );
 
-    $pathMatcher = new PathMatcher($this->blog, '/styles.css');
+    $pathMatcher = new PathMatcher($blog, '/styles.css');
     $responseObject = $pathMatcher->getResponseObject();
 
     $this->assertEquals(DeliveryAPITypeEnum::FILE, $responseObject->type);

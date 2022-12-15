@@ -5,7 +5,11 @@ namespace Tests\Feature\ConsoleAPI\Routes;
 use Illuminate\Testing\Fluent\AssertableJson;
 
 it('gets routes', function () {
-    $this->callConsoleApi('GET', '/routes')
+
+    $blog = blogWithAccess();
+    addDefaultRoutes($blog);
+
+    consoleApi($blog, 'GET', '/routes')
         ->assertOk()
         ->assertJson(function (AssertableJson $json) {
             $json->each(function (AssertableJson $json) {

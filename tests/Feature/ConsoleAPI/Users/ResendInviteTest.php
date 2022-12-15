@@ -11,8 +11,10 @@ use Illuminate\Support\Facades\Mail;
 it('resends an invite', function () {
     Mail::fake();
 
+    $blog = blogWithAccess();
+
     $user = User::factory()->create([
-        'blog_id' => blog(),
+        'blog_id' => $blog,
         'status' => UserStatusEnum::INVITED,
     ]);
 
@@ -24,7 +26,7 @@ it('resends an invite', function () {
         ],
     ]);
 
-    $this->callConsoleApi('POST', "/user/$user->id/resend-invite")
+    consoleApi($blog, 'POST', "/user/$user->id/resend-invite")
         ->assertOk();
 
     Mail::assertSent(InviteUserMail::class, function ($mail) use ($email) {
@@ -35,12 +37,14 @@ it('resends an invite', function () {
 it('does not send invite to active users', function () {
     Mail::fake();
 
+    $blog = blogWithAccess();
+
     $user = User::factory()->create([
-        'blog_id' => blog(),
+        'blog_id' => $blog,
         'status' => UserStatusEnum::ACTIVE,
     ]);
 
-    $this->callConsoleApi('POST', "/user/$user->id/resend-invite")
+    consoleApi($blog, 'POST', "/user/$user->id/resend-invite")
         ->assertUnprocessable();
 
     Mail::assertNothingSent();

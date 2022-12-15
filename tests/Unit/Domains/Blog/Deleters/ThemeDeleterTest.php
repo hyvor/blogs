@@ -6,8 +6,8 @@ use App\Domains\Blog\Deleters\ThemeDeleter;
 use App\Models\ThemeFile;
 
 it('deletes theme files', function () {
-    $blog = newBlog();
-    $blog2 = newBlog();
+    $blog = blog();
+    $blog2 = blog();
 
     ThemeFile::factory()->count(3)->create(['blog_id' => $blog]);
     ThemeFile::factory()->count(1)->create(['blog_id' => $blog2]);

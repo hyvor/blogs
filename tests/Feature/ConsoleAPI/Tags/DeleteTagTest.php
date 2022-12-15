@@ -12,23 +12,20 @@ use Illuminate\Support\Facades\Event;
 it('deletes the tag, its variants, and post tags', function () {
     Event::fake();
 
-    $tag = Tag::factory()
-        ->has(TagVariant::factory()->count(3), 'variants')
-        ->create([
-            'blog_id' => blog(),
-        ]);
+    $blog = blogWithAccess();
+    addPrimaryLanguage($blog);
+    addLanguage($blog);
+    addLanguage($blog);
 
-    PostTag::create([
-        'post_id' => 1,
-        'tag_id' => $tag->id,
-    ]);
+    $tag = addTag($blog);
+    addTagToPost(addPost($blog), $tag);
 
     // has
     expect(Tag::find($tag->id))->toBeInstanceOf(Tag::class);
     expect(TagVariant::where('tag_id', $tag->id)->count())->toBe(3);
     expect(PostTag::where('tag_id', $tag->id)->count())->toBe(1);
 
-    $this->callConsoleApi('DELETE', "/tag/$tag->id")
+    consoleApi($blog, 'DELETE', "/tag/$tag->id")
         ->assertOk();
 
     // nope

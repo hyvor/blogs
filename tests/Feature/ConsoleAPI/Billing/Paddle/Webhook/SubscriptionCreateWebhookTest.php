@@ -10,7 +10,7 @@ use App\Domains\Integrations\Paddle\Passthrough\Passthrough;
 
 it('creates a subscription', function () {
     $blog = blog();
-    $this->callIntegrationEndpoint('POST', '/paddle/webhook', getPaddleWebhookParams([
+    integrationApi('POST', '/paddle/webhook', getPaddleWebhookParams([
         'alert_name' => 'subscription_created',
         'passthrough' => Passthrough::encode($blog),
         'subscription_plan_id' => PaddleService::paddlePlans()[0]->id,

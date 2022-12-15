@@ -21,7 +21,7 @@ it('works for zero', function () {
         "{{ 0 | lang_by_number(zero='zero', one='one', multi='multi') }}",
         [
             '_blog' => $blogObject,
-            '_lang' => ['code' => 'en']
+            '_lang' => ['code' => $blog->languages[0]->code],
         ],
         'Nothing'
     );
@@ -42,7 +42,7 @@ it('works for one', function () {
         "{{ 1 | lang_by_number(zero='zero', one='one', multi='multi') }}",
         [
             '_blog' => $blogObject,
-            '_lang' => ['code' => 'en']
+            '_lang' => ['code' => $blog->languages[0]->code]
         ],
         'One'
     );
@@ -64,7 +64,7 @@ it('works for mutli', function () {
         "{{ 100 | lang_by_number(zero='zero', one='one', multi='multi') }}",
         [
             '_blog' => $blogObject,
-            '_lang' => ['code' => 'en']
+            '_lang' => ['code' => $blog->languages[0]->code]
         ],
         'Multiple'
     );

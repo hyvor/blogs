@@ -5,7 +5,11 @@ namespace Tests\Feature\ConsoleAPI\Blog;
 use Illuminate\Testing\Fluent\AssertableJson;
 
 it('gets blog', function () {
-    $this->callConsoleApi('GET', '/blog')
+
+    $blog = blogWithAccess();
+    addPrimaryLanguage($blog);
+
+    consoleApi($blog, 'GET', '/blog')
         ->assertOk()
         ->assertJson(function (AssertableJson $json) {
             $json->has('blog')

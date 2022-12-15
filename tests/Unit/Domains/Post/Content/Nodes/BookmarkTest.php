@@ -67,8 +67,10 @@ test('custom template', function () {
         </a>
     TWIG;
 
+    $blog = blog();
+
     ThemeFilesRepository::createOrUpdateFile(
-        blog(),
+        $blog,
         ThemeFileFolderEnum::TEMPLATES,
         'block-bookmark.twig',
         $template
@@ -86,7 +88,7 @@ test('custom template', function () {
         ],
     ];
 
-    $html = PostContentRepository::getHtml($json, blog());
+    $html = PostContentRepository::getHtml($json, $blog);
 
     expect($html)->toContain(
         $this->url,

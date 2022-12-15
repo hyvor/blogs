@@ -8,7 +8,7 @@ use App\Models\Post;
 use App\Models\PostVariant;
 
 it('updates blog post counts', function () {
-    $blog = newBlog();
+    $blog = blog();
     (new LanguageFiller($blog))->fill();
 
     // drafts & featured

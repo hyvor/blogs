@@ -12,6 +12,12 @@ use App\Domains\Theme\ThemeFilesRepository;
 use App\Models\Post;
 
 beforeEach(function () {
+
+    $this->blog = blogWithLanguageAndRoutes();
+    addLanguage($this->blog);
+    $this->blog->refresh();
+    addPublishedPost($this->blog);
+
     ThemeFilesRepository::createOrUpdateFile(
         $this->blog,
         ThemeFileFolderEnum::TEMPLATES,

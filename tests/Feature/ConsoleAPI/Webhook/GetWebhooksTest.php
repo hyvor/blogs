@@ -6,11 +6,13 @@ use App\Models\Webhook;
 use Illuminate\Testing\Fluent\AssertableJson;
 
 it('gets webhooks', function () {
+
+    $blog = blogWithAccess();
     Webhook::factory()->count(2)->create([
-        'blog_id' => blog()
+        'blog_id' => $blog
     ]);
 
-    $this->callConsoleApi('GET', '/webhooks')
+    consoleApi($blog, 'GET', '/webhooks')
         ->assertOk()
         ->assertJson(function (AssertableJson $json) {
             $json->count(2)

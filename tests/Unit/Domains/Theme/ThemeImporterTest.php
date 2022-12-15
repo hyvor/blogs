@@ -25,7 +25,7 @@ beforeEach(function () {
 
 function getThemeFile(?ThemeFileFolderEnum $folder, string $file)
 {
-    return ThemeFilesRepository::getFile(blog(), $file, $folder);
+    return ThemeFilesRepository::getFile(test()->blog, $file, $folder);
 }
 
 it('works', function () {

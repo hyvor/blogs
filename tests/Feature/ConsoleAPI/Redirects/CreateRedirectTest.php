@@ -10,11 +10,13 @@ use Illuminate\Testing\Fluent\AssertableJson;
 it('creates a redirect', function () {
     Event::fake();
 
+    $blog = blogWithAccess();
+
     $path = '/example';
     $to = 'https://example.com';
     $type = 'permanent';
 
-    $this->callConsoleApi('POST', '/redirect', [
+    consoleApi($blog, 'POST', '/redirect', [
         'path' => $path,
         'to' => $to,
         'type' => $type,
@@ -31,13 +33,16 @@ it('creates a redirect', function () {
 });
 
 it('does not create a redirect when path is taken', function () {
+
+    $blog = blogWithAccess();
+
     $path = '/example';
     $to = 'https://example.com';
     $type = 'permanent';
 
-    Redirect::factory()->create(['blog_id' => blog(), 'path' => $path]);
+    Redirect::factory()->create(['blog_id' => $blog, 'path' => $path]);
 
-    $this->callConsoleApi('POST', '/redirect', [
+    consoleApi($blog, 'POST', '/redirect', [
         'path' => $path,
         'to' => $to,
         'type' => $type,

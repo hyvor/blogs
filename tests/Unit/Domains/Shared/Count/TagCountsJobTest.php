@@ -11,7 +11,7 @@ use App\Models\PostVariant;
 use App\Models\Tag;
 
 it('counts tag posts for multiple tag', function () {
-    $blog = newBlog();
+    $blog = blog();
     (new LanguageFiller($blog))->fill();
 
     LanguageRepository::createLanguage($blog, 'fr', 'French');

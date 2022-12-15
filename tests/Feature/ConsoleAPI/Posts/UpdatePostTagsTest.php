@@ -9,11 +9,13 @@ use App\Models\Tag;
 use Illuminate\Support\Facades\Event;
 
 beforeEach(function () {
-    $this->post = Post::where('blog_id', config('test.blog_id'))->first();
+    $this->blog = blogWithAccess();
+    addPrimaryLanguage($this->blog);
+    $this->post = addPost($this->blog);
 });
 
 it('validates', function () {
-    $this->callConsoleApi('PATCH', "/post/{$this->post->id}/tags", [
+    consoleApi($this->blog, 'PATCH', "/post/{$this->post->id}/tags", [
         'ids' => ['some', 'text'],
     ])
         ->assertUnprocessable()
@@ -24,10 +26,9 @@ it('changes tags', function () {
     Event::fake();
 
     PostTag::where('post_id', $this->post->id)->delete();
-    $tags = Tag::where('blog_id', config('test.blog_id'))->get();
+    $tags = addTags($this->blog, 3);
 
-    $this
-        ->callConsoleApi('PATCH', "/post/{$this->post->id}/tags", [
+    consoleApi($this->blog, 'PATCH', "/post/{$this->post->id}/tags", [
             'ids' => $tags->map(fn ($user) => $user->id)->toArray(),
         ])
         ->assertOk();
@@ -38,8 +39,7 @@ it('changes tags', function () {
 });
 
 it('removes all tags', function () {
-    $this
-        ->callConsoleApi('PATCH', "/post/{$this->post->id}/tags", [
+    consoleApi($this->blog, 'PATCH', "/post/{$this->post->id}/tags", [
             'ids' => [],
         ])
         ->assertOk();
@@ -48,10 +48,9 @@ it('removes all tags', function () {
 });
 
 it('does not add users from other blogs', function () {
-    $user = Tag::where('blog_id', config('test.not_blog_id'))->first();
+    $user = addTag(blog());
 
-    $this
-        ->callConsoleApi('PATCH', "/post/{$this->post->id}/tags", [
+    consoleApi($this->blog, 'PATCH', "/post/{$this->post->id}/tags", [
             'ids' => [$user->id],
         ])
         ->assertUnprocessable()

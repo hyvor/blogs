@@ -10,8 +10,10 @@ use Illuminate\Testing\Fluent\AssertableJson;
 it('updates a user', function () {
     Event::fake();
 
+    $blog = blogWithAccess();
+
     $user = User::factory()->create([
-        'blog_id' => blog(),
+        'blog_id' => $blog,
         'role' => 'admin',
     ]);
 
@@ -33,7 +35,7 @@ it('updates a user', function () {
         'social_github' => faker()->url(),
     ];
 
-    $this->callConsoleApi('PATCH', "/user/$user->id", $updates)
+    consoleApi($blog, 'PATCH', "/user/$user->id", $updates)
         ->assertOk()
         ->assertJson(function (AssertableJson $json) use ($updates) {
             foreach ($updates as $key => $value) {
@@ -46,9 +48,10 @@ it('updates a user', function () {
 });
 
 it('does not update the role of the owner', function () {
-    $user = User::factory()->create(['role' => 'owner', 'blog_id' => blog()]);
+    $blog = blogWithAccess();
+    $user = User::factory()->create(['role' => 'owner', 'blog_id' => $blog]);
 
-    $this->callConsoleApi('PATCH', "/user/$user->id", [
+    consoleApi($blog, 'PATCH', "/user/$user->id", [
         'role' => 'admin',
     ])
         ->assertUnprocessable()
@@ -56,9 +59,10 @@ it('does not update the role of the owner', function () {
 });
 
 it('does not update the role to owner', function () {
-    $user = User::factory()->create(['role' => 'admin', 'blog_id' => blog()]);
+    $blog = blogWithAccess();
+    $user = User::factory()->create(['role' => 'admin', 'blog_id' => $blog]);
 
-    $this->callConsoleApi('PATCH', "/user/$user->id", [
+    consoleApi($blog, 'PATCH', "/user/$user->id", [
         'role' => 'owner',
     ])
         ->assertUnprocessable()
@@ -66,9 +70,10 @@ it('does not update the role to owner', function () {
 });
 
 it('does not update the status of the owner', function () {
-    $user = User::factory()->create(['role' => 'owner', 'blog_id' => blog()]);
+    $blog = blogWithAccess();
+    $user = User::factory()->create(['role' => 'owner', 'blog_id' => $blog]);
 
-    $this->callConsoleApi('PATCH', "/user/$user->id", [
+    consoleApi($blog, 'PATCH', "/user/$user->id", [
         'status' => 'blocked',
     ])
         ->assertUnprocessable()
@@ -76,10 +81,12 @@ it('does not update the status of the owner', function () {
 });
 
 it('returns an error when updating to an already existing slug', function () {
-    User::factory()->create(['slug' => 'test', 'blog_id' => blog()]);
-    $user2 = User::factory()->create(['slug' => 'test2', 'blog_id' => blog()]);
 
-    $this->callConsoleApi('PATCH', "/user/$user2->id", [
+    $blog = blogWithAccess();
+    User::factory()->create(['slug' => 'test', 'blog_id' => $blog]);
+    $user2 = User::factory()->create(['slug' => 'test2', 'blog_id' => $blog]);
+
+    consoleApi($blog, 'PATCH', "/user/$user2->id", [
         'slug' => 'test',
     ])
         ->assertUnprocessable()

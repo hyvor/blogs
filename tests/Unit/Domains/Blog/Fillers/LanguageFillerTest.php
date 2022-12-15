@@ -6,7 +6,7 @@ use App\Data\Enums\BlogTypeEnum;
 use App\Domains\Blog\Fillers\LanguageFiller;
 
 it('fills primary language', function () {
-    $blog = newBlog();
+    $blog = blog();
 
     $filler = new LanguageFiller($blog);
     $filler->fill();
@@ -18,7 +18,7 @@ it('fills primary language', function () {
 });
 
 it('fills two more languages for dev blogs', function () {
-    $blog = newBlog(BlogTypeEnum::DEV);
+    $blog = devBlog();
 
     $filler = new LanguageFiller($blog);
     $filler->fill();
@@ -27,7 +27,7 @@ it('fills two more languages for dev blogs', function () {
 });
 
 it('fills two more languages for preview blogs', function () {
-    $blog = newBlog(BlogTypeEnum::PREVIEW);
+    $blog = previewBlog();
 
     $filler = new LanguageFiller($blog);
     $filler->fill();

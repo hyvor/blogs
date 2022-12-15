@@ -12,8 +12,11 @@ use Illuminate\Testing\Fluent\AssertableJson;
 it('creates a post and the primary variant', function () {
     Event::fake();
 
-    $post = $this
-        ->callConsoleApi('POST', '/post')
+    $blog = blogWithAccess();
+    addPrimaryLanguage($blog);
+    addDefaultRoutes($blog);
+
+    $post = consoleApi($blog, 'POST', '/post')
         ->assertOk()
         ->assertJson(
             fn (AssertableJson $json) => $json->has('id')
@@ -22,7 +25,7 @@ it('creates a post and the primary variant', function () {
         )
         ->json();
 
-    $primaryLanguage = $this->blog->languages[0];
+    $primaryLanguage = $blog->languages[0];
 
     $variant = PostVariant::where('post_id', $post['id'])
         ->where('language_id', $primaryLanguage->id)
@@ -34,8 +37,12 @@ it('creates a post and the primary variant', function () {
 });
 
 it('creates a page', function () {
-    $this
-        ->callConsoleApi('POST', '/post', ['is_page' => true])
+
+    $blog = blogWithAccess();
+    addPrimaryLanguage($blog);
+    addDefaultRoutes($blog);
+
+    consoleApi($blog, 'POST', '/post', ['is_page' => true])
         ->assertOk()
         ->assertJson(
             fn (AssertableJson $json) => $json->has('id')
@@ -45,12 +52,16 @@ it('creates a page', function () {
 });
 
 it('adds the author', function () {
-    $post = $this
-        ->callConsoleApi('POST', '/post')
+
+    $blog = blogWithAccess();
+    addPrimaryLanguage($blog);
+    addDefaultRoutes($blog);
+
+    $post = consoleApi($blog, 'POST', '/post')
         ->assertOk()
         ->json();
 
-    $user = UserRepository::getUserByBlogIdAndHyvorUserId(config('test.blog_id'), config('test.hyvor_user_id'));
+    $user = UserRepository::getUserByBlogIdAndHyvorUserId($blog->id, 1);
 
     expect(
         PostAuthor::where('post_id', $post['id'])

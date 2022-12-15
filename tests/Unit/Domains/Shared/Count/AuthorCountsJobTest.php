@@ -11,7 +11,7 @@ use App\Models\PostVariant;
 use App\Models\User;
 
 it('counts author posts for multiple users', function () {
-    $blog = newBlog();
+    $blog = blog();
     (new LanguageFiller($blog))->fill();
 
     LanguageRepository::createLanguage($blog, 'fr', 'French');

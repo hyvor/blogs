@@ -9,12 +9,13 @@ use Illuminate\Testing\Fluent\AssertableJson;
 it('updates the language', function () {
     Event::fake();
 
-    $language = blog()->languages[0];
+    $blog = blogWithAccess();
+    $language = addPrimaryLanguage($blog);
 
     $code = 'si';
     $name = 'සිංහල';
 
-    $this->callConsoleApi('PATCH', "/language/$language->id", [
+    consoleApi($blog, 'PATCH', "/language/$language->id", [
         'code' => $code,
         'name' => $name,
     ])
@@ -35,10 +36,13 @@ it('updates the language', function () {
 });
 
 it('cannot take other languages', function () {
-    $language = blog()->languages[0];
-    $language2 = blog()->languages[1];
 
-    $this->callConsoleApi('PATCH', "/language/$language->id", [
+    $blog = blogWithAccess();
+
+    $language = addPrimaryLanguage($blog);
+    $language2 = addLanguage($blog);
+
+    consoleApi($blog, 'PATCH', "/language/$language->id", [
         'code' => $language2->code,
         'name' => 'some name',
     ])

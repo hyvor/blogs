@@ -11,6 +11,10 @@ use Illuminate\Testing\Fluent\AssertableJson;
 
 beforeEach(function () {
 
+    $this->blog = blogWithAccess();
+    addPrimaryLanguage($this->blog);
+    addDefaultRoutes($this->blog, 'author');
+
     // picture_url is not tested here
 
     $this->username = 'Hyvor';
@@ -37,7 +41,7 @@ it('creates a user from username and email', function () {
     Event::fake();
     Mail::fake();
 
-    $this->callConsoleApi('POST', '/user', [
+    consoleApi($this->blog, 'POST', '/user', [
         'username_or_email' => $this->username,
         'role' => 'admin',
     ])
@@ -59,7 +63,7 @@ it('creates a user from username and email', function () {
 });
 
 it('creates a user from email', function () {
-    $this->callConsoleApi('POST', '/user', [
+    consoleApi($this->blog, 'POST', '/user', [
         'username_or_email' => $this->email,
         'role' => 'contributor',
     ])
@@ -76,7 +80,7 @@ it('creates a user from email', function () {
 });
 
 it('does not create owners', function () {
-    $this->callConsoleApi('POST', '/user', [
+    consoleApi($this->blog, 'POST', '/user', [
         'username_or_email' => $this->email,
         'role' => 'owner',
     ])
@@ -85,7 +89,7 @@ it('does not create owners', function () {
 });
 
 it('does not create if the user is not found', function () {
-    $this->callConsoleApi('POST', '/user', [
+    consoleApi($this->blog, 'POST', '/user', [
         'username_or_email' => 'not.a.user',
         'role' => 'admin',
     ])
@@ -94,12 +98,12 @@ it('does not create if the user is not found', function () {
 });
 
 it('does not create if the user already exists', function () {
-    $this->callConsoleApi('POST', '/user', [
+    consoleApi($this->blog, 'POST', '/user', [
         'username_or_email' => $this->username,
         'role' => 'admin',
     ])->assertOk();
 
-    $this->callConsoleApi('POST', '/user', [
+    consoleApi($this->blog, 'POST', '/user', [
         'username_or_email' => $this->username,
         'role' => 'admin',
     ])->assertUnprocessable()

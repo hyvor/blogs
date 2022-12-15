@@ -9,6 +9,8 @@ use Illuminate\Testing\Fluent\AssertableJson;
 it('creates a Pay Link', function () {
     $link = 'https://example.com/paylink';
 
+    $blog = blogWithAccess();
+
     Http::fake([
         'https://vendors.paddle.com/api/2.0/product/generate_pay_link' => Http::response([
             'success' => true,
@@ -18,7 +20,7 @@ it('creates a Pay Link', function () {
         ])
     ]);
 
-    $this->callConsoleApi('POST', '/billing/paddle/subscription', [
+    consoleApi($blog, 'POST', '/billing/paddle/subscription', [
         'plan' => 'A',
         'frequency' => 'monthly'
     ])
@@ -27,9 +29,12 @@ it('creates a Pay Link', function () {
 });
 
 it('cannot create Pay Link when the blog already has', function () {
-    Subscription::factory()->create(['blog_id' => blog()]);
 
-    $this->callConsoleApi('POST', '/billing/paddle/subscription', [
+    $blog = blogWithAccess();
+
+    Subscription::factory()->create(['blog_id' => $blog]);
+
+    consoleApi($blog, 'POST', '/billing/paddle/subscription', [
         'plan' => 'A',
         'frequency' => 'monthly'
     ])->assertUnprocessable();

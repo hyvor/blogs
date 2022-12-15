@@ -10,7 +10,9 @@ use Illuminate\Support\Facades\Event;
 use Illuminate\Testing\Fluent\AssertableJson;
 
 it('creates a file', function () {
-    $this->callConsoleApi('POST', '/theme/file', [
+    $blog = blogWithAccess();
+
+    consoleApi($blog, 'POST', '/theme/file', [
         'folder' => 'templates',
         'name' => 'index.twig',
         'content' => 'test',
@@ -26,9 +28,10 @@ it('creates a file', function () {
 it('creates a file from blob', function () {
     Event::fake();
 
+    $blog = blogWithAccess();
     $file = UploadedFile::fake()->image('test.jpg');
 
-    $this->callConsoleApi('POST', '/theme/file', [
+    consoleApi($blog, 'POST', '/theme/file', [
         'folder' => 'assets',
         'name' => 'test.jpg',
         'file' => $file,
@@ -48,7 +51,9 @@ it('creates a file from blob', function () {
 it('validates file size', function () {
     $file = UploadedFile::fake()->image('test.jpg')->size(config('limits.max_asset_file_size') / 1000 + 1);
 
-    $this->callConsoleApi('POST', '/theme/file', [
+    $blog = blogWithAccess();
+
+    consoleApi($blog, 'POST', '/theme/file', [
         'folder' => 'assets',
         'name' => 'test.jpg',
         'file' => $file,
@@ -58,14 +63,17 @@ it('validates file size', function () {
 });
 
 it('does not create a file if one already exists', function () {
+
+    $blog = blogWithAccess();
+
     ThemeFilesRepository::createOrUpdateFile(
-        blog(),
+        $blog,
         ThemeFileFolderEnum::TEMPLATES,
         'index.twig',
         'none'
     );
 
-    $this->callConsoleApi('POST', '/theme/file', [
+    consoleApi($blog, 'POST', '/theme/file', [
         'folder' => 'templates',
         'name' => 'index.twig',
         'content' => 'test',

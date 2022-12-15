@@ -6,13 +6,14 @@ use App\Models\Redirect;
 use Illuminate\Testing\Fluent\AssertableJson;
 
 beforeEach(function () {
+    $this->blog = blogWithAccess();
     Redirect::factory()->count(3)->create([
-        'blog_id' => blog(),
+        'blog_id' =>$this->blog,
     ]);
 });
 
 it('get redirects', function () {
-    $this->callConsoleApi('GET', '/redirects', [
+    consoleApi($this->blog, 'GET', '/redirects', [
         'limit' => 2,
     ])
         ->assertOk()
@@ -29,7 +30,7 @@ it('get redirects', function () {
 });
 
 it('works with offset', function () {
-    $this->callConsoleApi('GET', '/redirects', [
+    consoleApi($this->blog, 'GET', '/redirects', [
         'limit' => 2,
         'offset' => 2,
     ])

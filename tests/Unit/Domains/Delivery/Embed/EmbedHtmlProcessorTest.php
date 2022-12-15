@@ -24,7 +24,9 @@ it('adds the embed script', function () {
 });
 
 it('converts anchors to embed-type URLs in <a>s', function () {
-    $baseUrl = PermalinkRepository::getBaseUrl(blog());
+
+    $blog = blog();
+    $baseUrl = PermalinkRepository::getBaseUrl($blog);
     $html = <<<HTML
     <html>
     <head></head>
@@ -41,7 +43,7 @@ it('converts anchors to embed-type URLs in <a>s', function () {
     </html>
     HTML;
 
-    $content = (new EmbedHtmlProcessor(blog(), $this->parentUrl, $html))->get();
+    $content = (new EmbedHtmlProcessor($blog, $this->parentUrl, $html))->get();
 
     expect($content)->toContain("<a href=\"$this->parentUrl?p=test\"></a>");
     expect($content)->toContain("<a href=\"$this->parentUrl\"></a>");
@@ -53,7 +55,8 @@ it('converts anchors to embed-type URLs in <a>s', function () {
 });
 
 it('converts links in head to embed-type URLs', function () {
-    $baseUrl = PermalinkRepository::getBaseUrl(blog());
+    $blog = blog();
+    $baseUrl = PermalinkRepository::getBaseUrl($blog);
     $html = <<<HTML
     <html>
     <head>
@@ -67,7 +70,7 @@ it('converts links in head to embed-type URLs', function () {
     </html>
     HTML;
 
-    $content = (new EmbedHtmlProcessor(blog(), $this->parentUrl, $html))->get();
+    $content = (new EmbedHtmlProcessor($blog, $this->parentUrl, $html))->get();
     expect($content)->toContain("<link rel=\"canonical\" href=\"$this->parentUrl?p=test\">");
     expect($content)->toContain("<link rel=\"alternate\" href=\"$this->parentUrl?p=alt\">");
     // not replaced because
@@ -76,7 +79,8 @@ it('converts links in head to embed-type URLs', function () {
 });
 
 it('converts og/twitter URLs to embed-type URLs', function () {
-    $baseUrl = PermalinkRepository::getBaseUrl(blog());
+    $blog = blog();
+    $baseUrl = PermalinkRepository::getBaseUrl($blog);
     $html = <<<HTML
     <html>
     <head>
@@ -89,14 +93,15 @@ it('converts og/twitter URLs to embed-type URLs', function () {
     </html>
     HTML;
 
-    $content = (new EmbedHtmlProcessor(blog(), $this->parentUrl, $html))->get();
+    $content = (new EmbedHtmlProcessor($blog, $this->parentUrl, $html))->get();
     expect($content)->toContain("<meta property=\"og:url\" content=\"$this->parentUrl?p=testog\">");
     expect($content)->toContain("<meta name=\"twitter:url\" content=\"$this->parentUrl?p=testtwitter\">");
     expect($content)->toContain("<meta name=\"other\" content=\"$baseUrl/other\">");
 });
 
 it('converts path style', function () {
-    $baseUrl = PermalinkRepository::getBaseUrl(blog());
+    $blog = blog();
+    $baseUrl = PermalinkRepository::getBaseUrl($blog);
     $html = <<<HTML
     <html>
     <head></head>
@@ -107,7 +112,7 @@ it('converts path style', function () {
     </html>
     HTML;
 
-    $content = (new EmbedHtmlProcessor(blog(), $this->parentUrl, $html, true))->get();
+    $content = (new EmbedHtmlProcessor($blog, $this->parentUrl, $html, true))->get();
 
     expect($content)->toContain("<a href=\"$this->parentUrl/test\"></a>");
     expect($content)->toContain("<a href=\"$this->parentUrl/relative\"></a>");

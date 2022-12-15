@@ -11,7 +11,7 @@ it('deletes media', function () {
     Storage::fake();
 
     $blog = blog();
-    $blog2 = newBlog();
+    $blog2 = blog();
 
     // upload a few
     $media1 = MediaRepository::upload($blog, UploadedFile::fake()->image('photo1.jpg'));

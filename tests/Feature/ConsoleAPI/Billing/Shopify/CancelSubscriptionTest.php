@@ -9,6 +9,7 @@ use App\Domains\Subscription\SubscriptionService;
 use Illuminate\Support\Facades\Http;
 
 it('cancels subscription', function () {
+
     Http::fake([
         'https://test.myshopify.com/admin/api/2022-07/graphql.json' => Http::response([
             'data' => [
@@ -31,7 +32,7 @@ it('cancels subscription', function () {
     );
     $subscription->setMeta('shopify_charge_id', 100);
 
-    $this->callConsoleApi('DELETE', '/billing/shopify/subscription', [], $blog->subdomain)
+    consoleApi($blog, 'DELETE', '/billing/shopify/subscription', [], $blog->subdomain)
         ->assertOk();
 
     $subscription->refresh();

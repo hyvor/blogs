@@ -14,7 +14,7 @@ it('is scheduled', function () {
 });
 
 it('publishes scheduled posts', function () {
-    $blog = newBlog();
+    $blog = blog();
 
     $draft = postWithVariant(['blog_id' => $blog], ['status' => 'draft']);
     $scheduledLater = postWithVariant(['blog_id' => $blog, 'published_at' => now()->addDays(7)], ['status' => 'scheduled']);

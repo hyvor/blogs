@@ -6,7 +6,9 @@ use App\Models\Webhook;
 use Illuminate\Testing\Fluent\AssertableJson;
 
 it('creates a webhook', function () {
-    $this->callConsoleApi('POST', '/webhook', [
+
+    $blog = blogWithAccess();
+    consoleApi($blog, 'POST', '/webhook', [
         'url' => 'https://example.com',
         'events' => ['cache.single']
     ])
@@ -22,7 +24,9 @@ it('creates a webhook', function () {
 });
 
 it('validates url', function () {
-    $this->callConsoleApi('POST', '/webhook', [
+
+    $blog = blogWithAccess();
+    consoleApi($blog, 'POST', '/webhook', [
         'url' => '/relative',
         'events' => ['cache.single']
     ])
@@ -31,7 +35,9 @@ it('validates url', function () {
 });
 
 it('validates events', function () {
-    $this->callConsoleApi('POST', '/webhook', [
+
+    $blog = blogWithAccess();
+    consoleApi($blog, 'POST', '/webhook', [
         'url' => 'https://example.com',
         'events' => ['invalid.event', 'cache.single']
     ])
@@ -40,11 +46,13 @@ it('validates events', function () {
 });
 
 it('enforces the limit', function () {
+
+    $blog = blogWithAccess();
     Webhook::factory()->count(config('limits.max_webhooks_per_blog'))->create([
-       'blog_id' => blog()
+       'blog_id' => $blog
    ]);
 
-    $this->callConsoleApi('POST', '/webhook', [
+    consoleApi($blog, 'POST', '/webhook', [
        'url' => 'https://example.com',
        'events' => ['cache.single']
    ])

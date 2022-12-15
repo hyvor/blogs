@@ -11,7 +11,11 @@ it('creates a tag with variant', function () {
 
     $name = 'Blogging';
 
-    $this->callConsoleApi('POST', '/tag', [
+    $blog = blogWithAccess();
+    addPrimaryLanguage($blog);
+    addDefaultRoutes($blog);
+
+    consoleApi($blog, 'POST', '/tag', [
         'name' => $name,
     ])
         ->assertOk()

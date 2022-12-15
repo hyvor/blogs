@@ -10,8 +10,11 @@ use App\Domains\Route\RouteRepository;
 use App\Domains\Theme\ThemeFilesRepository;
 
 it('matches custom route and template', function () {
+
+    $blog = blogWithLanguage();
+
     RouteRepository::createRoute(
-        $this->blog,
+        $blog,
         'test',
         '/test',
         'test',
@@ -20,13 +23,13 @@ it('matches custom route and template', function () {
     $content = 'I am a custom route';
 
     ThemeFilesRepository::createOrUpdateFile(
-        $this->blog,
+        $blog,
         ThemeFileFolderEnum::TEMPLATES,
         'test.twig',
         $content,
     );
 
-    $pathMatcher = new PathMatcher($this->blog, '/test');
+    $pathMatcher = new PathMatcher($blog, '/test');
     $responseObject = $pathMatcher->getResponseObject();
 
     $this->assertEquals(DeliveryAPITypeEnum::FILE, $responseObject->type);

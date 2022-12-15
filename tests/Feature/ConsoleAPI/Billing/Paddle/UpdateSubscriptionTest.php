@@ -14,13 +14,13 @@ it('updates subscription', function () {
         ])
     ]);
 
-    $blog = blog();
+    $blog = blogWithAccess();
     $subscription = Subscription::factory()->create([
         'blog_id' => $blog
     ]);
     $subscription->setMeta('paddle_subscription_id', 100);
 
-    $this->callConsoleApi('PATCH', '/billing/paddle/subscription', [
+    consoleApi($blog, 'PATCH', '/billing/paddle/subscription', [
         'frequency' => 'yearly',
         'plan' => 'C'
     ])->assertOk();
@@ -32,7 +32,8 @@ it('updates subscription', function () {
 });
 
 it('fails on no subscription', function () {
-    $this->callConsoleApi('PATCH', '/billing/paddle/subscription', [
+    $blog = blogWithAccess();
+    consoleApi($blog, 'PATCH', '/billing/paddle/subscription', [
         'frequency' => 'yearly',
         'plan' => 'C'
     ])
@@ -41,14 +42,14 @@ it('fails on no subscription', function () {
 });
 
 it('fails on same subscription', function () {
-    $blog = blog();
+    $blog = blogWithAccess();
     $subscription = Subscription::factory()->create([
         'blog_id' => $blog,
         'plan' => 'C',
         'frequency' => 'yearly'
     ]);
 
-    $this->callConsoleApi('PATCH', '/billing/paddle/subscription', [
+    consoleApi($blog, 'PATCH', '/billing/paddle/subscription', [
         'frequency' => 'yearly',
         'plan' => 'C'
     ])->assertUnprocessable()
@@ -56,12 +57,12 @@ it('fails on same subscription', function () {
 });
 
 it('fails when paddle subscription ID is not set', function () {
-    $blog = blog();
+    $blog = blogWithAccess();
     Subscription::factory()->create([
         'blog_id' => $blog
     ]);
 
-    $this->callConsoleApi('PATCH', '/billing/paddle/subscription', [
+    consoleApi($blog, 'PATCH', '/billing/paddle/subscription', [
         'frequency' => 'yearly',
         'plan' => 'C'
     ])

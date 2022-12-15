@@ -7,7 +7,7 @@ use App\Models\Navigation;
 use App\Models\NavigationVariant;
 
 it('deletes navigations and variants', function () {
-    $blog = newBlog();
+    $blog = blog();
 
     Navigation::factory()
         ->count(2)
@@ -41,7 +41,7 @@ it('does not delete navigations of other blogs', function () {
             'blog_id' => blog(),
         ]);
 
-    (new NavigationDeleter(newBlog()))->delete();
+    (new NavigationDeleter(blog()))->delete();
 
     expect(Navigation::count())->toBe(2);
     expect(NavigationVariant::count())->toBe(4);

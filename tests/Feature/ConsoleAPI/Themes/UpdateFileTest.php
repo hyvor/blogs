@@ -11,14 +11,17 @@ use Illuminate\Support\Facades\Event;
 use Illuminate\Testing\Fluent\AssertableJson;
 
 it('updates name', function () {
+
+    $blog = blogWithAccess();
+
     $file = ThemeFilesRepository::createOrUpdateFile(
-        blog(),
+        $blog,
         ThemeFileFolderEnum::TEMPLATES,
         'index.twig',
         'none'
     );
 
-    $this->callConsoleApi('PATCH', "/theme/file/$file->id", [
+    consoleApi($blog, 'PATCH', "/theme/file/$file->id", [
         'name' => 'new.twig',
     ])
         ->assertOk()
@@ -28,14 +31,17 @@ it('updates name', function () {
 it('updates content', function () {
     Event::fake();
 
+
+    $blog = blogWithAccess();
+
     $file = ThemeFilesRepository::createOrUpdateFile(
-        blog(),
+        $blog,
         ThemeFileFolderEnum::TEMPLATES,
         'index.twig',
         'none'
     );
 
-    $this->callConsoleApi('PATCH', "/theme/file/$file->id", [
+    consoleApi($blog, 'PATCH', "/theme/file/$file->id", [
         'content' => 'new',
     ])
         ->assertOk()
@@ -47,14 +53,16 @@ it('updates content', function () {
 it('updates a style file', function() {
     Event::fake();
 
+    $blog = blogWithAccess();
+
     $file = ThemeFilesRepository::createOrUpdateFile(
-        blog(),
+        $blog,
         ThemeFileFolderEnum::STYLES,
         'index.scss',
         'none'
     );
 
-    $this->callConsoleApi('PATCH', "/theme/file/$file->id", [
+    consoleApi($blog, 'PATCH', "/theme/file/$file->id", [
         'content' => 'new',
     ])
         ->assertOk()
@@ -64,14 +72,16 @@ it('updates a style file', function() {
 });
 
 it('updates content to empty', function () {
+    $blog = blogWithAccess();
+
     $file = ThemeFilesRepository::createOrUpdateFile(
-        blog(),
+        $blog,
         ThemeFileFolderEnum::TEMPLATES,
         'index.twig',
         'none'
     );
 
-    $this->callConsoleApi('PATCH', "/theme/file/$file->id", [
+    consoleApi($blog, 'PATCH', "/theme/file/$file->id", [
         'content' => '',
     ])
         ->assertOk()
@@ -81,14 +91,16 @@ it('updates content to empty', function () {
 it('updates styles with event', function () {
     Event::fake();
 
+    $blog = blogWithAccess();
+
     $file = ThemeFilesRepository::createOrUpdateFile(
-        blog(),
+        $blog,
         ThemeFileFolderEnum::STYLES,
         'index.scss',
         'none'
     );
 
-    $this->callConsoleApi('PATCH', "/theme/file/$file->id", [
+    consoleApi($blog, 'PATCH', "/theme/file/$file->id", [
         'content' => '',
     ])->assertOk();
 
@@ -99,14 +111,16 @@ it('updates config with event', function() {
 
     Event::fake();
 
+    $blog = blogWithAccess();
+
     $file = ThemeFilesRepository::createOrUpdateFile(
-        blog(),
+        $blog,
         null,
         'config.yaml',
         'none'
     );
 
-    $this->callConsoleApi('PATCH', "/theme/file/$file->id", [
+    consoleApi($blog, 'PATCH', "/theme/file/$file->id", [
         'content' => '',
     ])->assertOk();
 

@@ -10,9 +10,10 @@ use Illuminate\Testing\Fluent\AssertableJson;
 it('uploads', function () {
     Event::fake();
 
+    $blog = blogWithAccess();
     $file = UploadedFile::fake()->image('image.png')->size(100);
 
-    $this->callConsoleApi('POST', '/media', [
+    consoleApi($blog, 'POST', '/media', [
         'file' => $file,
     ])
         ->assertOk()
@@ -26,7 +27,8 @@ it('uploads', function () {
 
 it('uploads with post ID', function() {
 
-    $this->callConsoleApi('POST', '/media', [
+    $blog = blogWithAccess();
+    consoleApi($blog, 'POST', '/media', [
         'file' => UploadedFile::fake()->image('image.png')->size(100),
         'post_id' => 2
     ])
@@ -38,7 +40,8 @@ it('uploads with post ID', function() {
 it('limits file size', function () {
     $file = UploadedFile::fake()->image('image.png')->size(config('limits.max_media_upload_size_kb') + 1);
 
-    $this->callConsoleApi('POST', '/media', [
+    $blog = blogWithAccess();
+    consoleApi($blog, 'POST', '/media', [
         'file' => $file,
     ])
         ->assertUnprocessable()

@@ -14,9 +14,10 @@ it('creates a navigation', function () {
     $url = '/about';
     $name = 'About';
 
-    $languageId = LanguageRepository::getPrimaryLanguage(blog())->id;
+    $blog = blogWithAccess();
+    addPrimaryLanguage($blog);
 
-    $this->callConsoleApi('POST', '/navigation', [
+    consoleApi($blog, 'POST', '/navigation', [
         'url' => $url,
         'name' => $name,
         'type' => 'footer',
@@ -33,7 +34,10 @@ it('creates a navigation', function () {
 });
 
 it('creates header navigations', function () {
-    $this->callConsoleApi('POST', '/navigation', [
+    $blog = blogWithAccess();
+    addPrimaryLanguage($blog);
+
+    consoleApi($blog, 'POST', '/navigation', [
         'url' => 'https://something.com/some',
         'name' => 'some',
         'type' => 'header',
@@ -43,12 +47,16 @@ it('creates header navigations', function () {
 });
 
 it('does not allow to create more than the limit', function () {
+
+    $blog = blogWithAccess();
+    addPrimaryLanguage($blog);
+
     Navigation::factory()->count(config('limits.max_navigations_per_type_per_blog'))->create([
-        'blog_id' => blog(),
+        'blog_id' => $blog,
         'type' => 'footer',
     ]);
 
-    $this->callConsoleApi('POST', '/navigation', [
+    consoleApi($blog, 'POST', '/navigation', [
         'url' => 'https://something.com/some',
         'name' => 'some',
         'type' => 'footer',

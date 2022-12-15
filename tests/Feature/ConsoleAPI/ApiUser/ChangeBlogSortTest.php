@@ -7,6 +7,11 @@ use App\Models\User;
 
 it('changes blog sorts', function () {
     $hyvorUserId = config('test.hyvor_user_id');
+
+    blogWithAccess(['hyvor_user_id' => $hyvorUserId]);
+    blogWithAccess(['hyvor_user_id' => $hyvorUserId]);
+    blogWithAccess(['hyvor_user_id' => $hyvorUserId]);
+
     $blogs = Blog::where('hyvor_user_id', $hyvorUserId)->orderBy('id', 'DESC')->get();
 
     // now the lowest blogID has the highest sort
@@ -15,7 +20,7 @@ it('changes blog sorts', function () {
         $changes[] = $blog->id;
     }
 
-    $this->callConsoleUserApi('PATCH', '/blogs/sort', [
+    consoleUserApi('PATCH', '/blogs/sort', [
         'blog_ids' => $changes,
     ])->assertOk();
 

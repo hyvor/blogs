@@ -16,7 +16,8 @@ it('searches unsplash', function () {
             ->andReturn(collect($json['results']));
     });
 
-    $this->callConsoleApi('GET', '/media/unsplash/search', [
+    $blog = blogWithAccess();
+    consoleApi($blog, 'GET', '/media/unsplash/search', [
         'search' => 'test',
         'page' => 1,
     ])

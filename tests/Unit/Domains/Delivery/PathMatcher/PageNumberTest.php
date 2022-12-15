@@ -13,25 +13,30 @@ it('matches index with page number', function () {
     $twig = '{{ _pagination.page }}';
     $result = '2';
 
+    $blog = blog();
+    addPrimaryLanguage($blog);
+    addDefaultRoutes($blog);
+    addBlogVariants($blog);
+
     // add posts to make sure there are 2 pages
     Post::factory()
         ->count(25)
         ->has(PostVariant::factory()->state([
-            'language_id' => $this->blog->languages[0]->id,
+            'language_id' => $blog->languages[0]->id,
             'status' => 'published',
         ]), 'variants')
         ->create([
-            'blog_id' => config('test.blog_id'),
+            'blog_id' => $blog,
         ]);
 
     ThemeFilesRepository::createOrUpdateFile(
-        $this->blog,
+        $blog,
         ThemeFileFolderEnum::TEMPLATES,
         'index.twig',
         $twig,
     );
 
-    $pathMatcher = new PathMatcher($this->blog, '/page/2');
+    $pathMatcher = new PathMatcher($blog, '/page/2');
     $responseObject = $pathMatcher->getResponseObject();
 
     $this->assertEquals(DeliveryAPITypeEnum::FILE, $responseObject->type);
@@ -39,14 +44,20 @@ it('matches index with page number', function () {
 });
 
 it('returns not found when pages are not found in larger collections', function () {
+
+    $blog = blog();
+    addPrimaryLanguage($blog);
+    addDefaultRoutes($blog);
+    addBlogVariants($blog);
+
     ThemeFilesRepository::createOrUpdateFile(
-        $this->blog,
+        $blog,
         ThemeFileFolderEnum::TEMPLATES,
         'index.twig',
         '',
     );
 
-    $pathMatcher = new PathMatcher($this->blog, '/page/50000');
+    $pathMatcher = new PathMatcher($blog, '/page/50000');
     $responseObject = $pathMatcher->getResponseObject();
 
     $this->assertEquals(DeliveryAPITypeEnum::FILE, $responseObject->type);
@@ -57,8 +68,13 @@ it('returns success even when pages are not found but when the page number is 1'
     $twig = '{{ _pagination.total }}';
     $result = '0';
 
+    $blog = blog();
+    addPrimaryLanguage($blog);
+    addDefaultRoutes($blog);
+    addBlogVariants($blog);
+
     ThemeFilesRepository::createOrUpdateFile(
-        $this->blog,
+        $blog,
         ThemeFileFolderEnum::TEMPLATES,
         'index.twig',
         $twig,
@@ -66,7 +82,7 @@ it('returns success even when pages are not found but when the page number is 1'
 
     Post::query()->delete();
 
-    $pathMatcher = new PathMatcher($this->blog, '/');
+    $pathMatcher = new PathMatcher($blog, '/');
     $responseObject = $pathMatcher->getResponseObject();
 
     $this->assertEquals(DeliveryAPITypeEnum::FILE, $responseObject->type);

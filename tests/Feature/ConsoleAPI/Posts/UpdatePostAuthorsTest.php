@@ -9,11 +9,13 @@ use App\Models\User;
 use Illuminate\Support\Facades\Event;
 
 beforeEach(function () {
-    $this->post = Post::where('blog_id', config('test.blog_id'))->first();
+    $this->blog = blogWithAccess();
+    addPrimaryLanguage($this->blog);
+    $this->post = addPost($this->blog);
 });
 
 it('validates', function () {
-    $this->callConsoleApi('PATCH', "/post/{$this->post->id}/authors", [
+    consoleApi($this->blog, 'PATCH', "/post/{$this->post->id}/authors", [
         'ids' => ['some', 'text'],
     ])
         ->assertUnprocessable()
@@ -24,10 +26,9 @@ it('changes authors', function () {
     Event::fake();
 
     PostAuthor::where('post_id', $this->post->id)->delete();
-    $authors = User::where('blog_id', config('test.blog_id'))->get();
+    $authors = addUsers($this->blog, 3);
 
-    $this
-        ->callConsoleApi('PATCH', "/post/{$this->post->id}/authors", [
+    consoleApi($this->blog, 'PATCH', "/post/{$this->post->id}/authors", [
             'ids' => $authors->map(fn ($user) => $user->id)->toArray(),
         ])
         ->assertOk();
@@ -38,8 +39,7 @@ it('changes authors', function () {
 });
 
 it('removes all authors', function () {
-    $this
-        ->callConsoleApi('PATCH', "/post/{$this->post->id}/authors", [
+    consoleApi($this->blog, 'PATCH', "/post/{$this->post->id}/authors", [
             'ids' => [],
         ])
         ->assertOk();
@@ -48,10 +48,9 @@ it('removes all authors', function () {
 });
 
 it('does not add users from other blogs', function () {
-    $user = User::where('blog_id', config('test.not_blog_id'))->first();
+    $user = addUser(blog());
 
-    $this
-        ->callConsoleApi('PATCH', "/post/{$this->post->id}/authors", [
+    consoleApi($this->blog, 'PATCH', "/post/{$this->post->id}/authors", [
             'ids' => [$user->id],
         ])
         ->assertUnprocessable()

@@ -21,9 +21,10 @@ it('listens', function () {
 it('does not call delivery job when webhooks are not registered', function () {
     Queue::fake();
 
-    createWebhookFor('cache.templates'); // wrong event
+    $blog = blog();
+    createWebhookFor($blog, 'cache.templates'); // wrong event
 
-    $event = new CacheClearSingleEvent(blog(), '/test');
+    $event = new CacheClearSingleEvent($blog, '/test');
     $listener = new WebhookSubscriber();
     $listener->onCacheClearSingleEvent($event);
 
@@ -33,24 +34,30 @@ it('does not call delivery job when webhooks are not registered', function () {
 it('calls webhook delivery job on cache clear single event', function () {
     Queue::fake();
 
-    createWebhookFor('cache.single');
+    $blog = blog();
+    createWebhookFor($blog, 'cache.single');
 
-    $event = new CacheClearSingleEvent(blog(), '/test');
+    $event = new CacheClearSingleEvent($blog, '/test');
     $listener = new WebhookSubscriber();
     $listener->onCacheClearSingleEvent($event);
 
-    Queue::assertPushed(
-        fn (WebhookDeliveryJob $job) =>
-        $job->delivery->event === 'cache.single' && $job->delivery->data['path'] === '/test'
-    );
+    Queue::assertPushed(function (WebhookDeliveryJob $job) {
+
+        // convert above to expect
+        expect($job->delivery->event)->toBe('cache.single');
+        expect($job->delivery->data['path'])->toBe('/test');
+
+        return true;
+    });
 });
 
 it('calls webhook delivery job on cache clear templates event', function () {
     Queue::fake();
 
-    createWebhookFor('cache.templates');
+    $blog = blog();
+    createWebhookFor($blog, 'cache.templates');
 
-    $event = new CacheClearTemplatesEvent(blog());
+    $event = new CacheClearTemplatesEvent($blog);
     $listener = new WebhookSubscriber();
     $listener->onCacheClearTemplatesEvent($event);
 
@@ -60,9 +67,10 @@ it('calls webhook delivery job on cache clear templates event', function () {
 it('calls webhook delivery job on cache clear all event', function () {
     Queue::fake();
 
-    createWebhookFor('cache.all');
+    $blog = blog();
+    createWebhookFor($blog, 'cache.all');
 
-    $event = new CacheClearAllEvent(blog());
+    $event = new CacheClearAllEvent($blog);
     $listener = new WebhookSubscriber();
     $listener->onCacheClearAllEvent($event);
 

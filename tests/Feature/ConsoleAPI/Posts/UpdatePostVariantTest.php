@@ -12,7 +12,10 @@ use Illuminate\Testing\Fluent\AssertableJson;
 it('updates post variant', function () {
     Event::fake();
 
-    $post = $this->blog->posts()->first();
+    $blog = blogWithAccess();
+    addPrimaryLanguage($blog);
+    addDefaultRoutes($blog);
+    $post = addPost($blog);
     $variant = $post->variants[0];
     $language = $variant->language;
 
@@ -22,8 +25,7 @@ it('updates post variant', function () {
     $title = 'this is a title';
     $description = 'a description';
 
-    $this
-        ->callConsoleApi('PATCH', "/post/$post->id/variant", [
+    consoleApi($blog, 'PATCH', "/post/$post->id/variant", [
             'language_id' => $language->id,
             'status' => $status,
             'content' => $content,
@@ -46,7 +48,11 @@ it('updates post variant', function () {
 });
 
 it('updates post published_at when post status is changed to published', function () {
-    $blog = blog();
+
+    $blog = blogWithAccess();
+    addPrimaryLanguage($blog);
+    addDefaultRoutes($blog);
+
     $post = Post::factory()->create([
         'blog_id' => $blog,
         'published_at' => null,
@@ -57,8 +63,7 @@ it('updates post published_at when post status is changed to published', functio
         'status' => PostStatusEnum::DRAFT,
     ]);
 
-    $this
-        ->callConsoleApi('PATCH', "/post/$post->id/variant", [
+    consoleApi($blog, 'PATCH', "/post/$post->id/variant", [
             'language_id' => $blog->languages[0]->id,
             'status' => 'published',
         ])
@@ -69,8 +74,10 @@ it('updates post published_at when post status is changed to published', functio
 
 it('sets the slug if it is empty when publishing the primary language post', function() {
 
+    $blog = blogWithAccess();
+    addPrimaryLanguage($blog);
+    addDefaultRoutes($blog);
 
-    $blog = blog();
     $post = Post::factory()->create([
         'blog_id' => $blog,
         'published_at' => null,
@@ -82,8 +89,7 @@ it('sets the slug if it is empty when publishing the primary language post', fun
         'status' => PostStatusEnum::DRAFT,
     ]);
 
-    $this
-        ->callConsoleApi('PATCH', "/post/$post->id/variant", [
+    consoleApi($blog, 'PATCH', "/post/$post->id/variant", [
             'language_id' => $blog->languages[0]->id,
             'status' => 'published',
         ])

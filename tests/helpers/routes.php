@@ -4,8 +4,10 @@ use App\Domains\Blog\Fillers\RouteFiller;
 use App\Models\Blog;
 use Illuminate\Support\Str;
 
-function addDefaultRoutes(Blog $blog) {
+function addDefaultRoutes(Blog $blog, ?string $name = null) {
     foreach (RouteFiller::ROUTES as $route) {
+        if ($name !== null && $route['name'] !== $name)
+            continue;
         $blog->routes()->create($route);
     }
 }

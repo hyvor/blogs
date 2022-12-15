@@ -7,7 +7,7 @@ use App\Domains\Blog\Fillers\LanguageFiller;
 use App\Domains\Blog\Fillers\TagFiller;
 
 it('adds the welcome tag', function () {
-    $blog = newBlog();
+    $blog = blog();
 
     (new LanguageFiller($blog))->fill();
 
@@ -22,7 +22,7 @@ it('adds the welcome tag', function () {
 });
 
 it('adds a few more tags for dev blogs', function () {
-    $blog = newBlog(BlogTypeEnum::DEV);
+    $blog = devBlog();
 
     (new LanguageFiller($blog))->fill();
 
@@ -33,7 +33,7 @@ it('adds a few more tags for dev blogs', function () {
 });
 
 it('adds a few more tags for preview blogs', function () {
-    $blog = newBlog(BlogTypeEnum::PREVIEW);
+    $blog = previewBlog();
 
     (new LanguageFiller($blog))->fill();
 

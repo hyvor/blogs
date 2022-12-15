@@ -5,15 +5,20 @@ namespace Tests\Feature\ConsoleAPI\Blog;
 use Illuminate\Testing\Fluent\AssertableJson;
 
 it('validates', function () {
-    $this->callConsoleApi('POST', '/blog/variant', [
+    $blog = blogWithAccess();
+    consoleApi($blog, 'POST', '/blog/variant', [
         'language_id' => null,
     ])->assertUnprocessable();
 });
 
 it('does not create a blog variant if it already exists', function () {
-    $language = blog()->languages[0];
 
-    $this->callConsoleApi('POST', '/blog/variant', [
+    $blog = blogWithAccess();
+    $language = addPrimaryLanguage($blog);
+
+    addBlogVariants($blog, $language);
+
+    consoleApi($blog, 'POST', '/blog/variant', [
         'language_id' => $language->id,
     ])
         ->assertUnprocessable()
@@ -21,7 +26,11 @@ it('does not create a blog variant if it already exists', function () {
 });
 
 it('returns an error if the language is not found', function () {
-    $this->callConsoleApi(
+
+    $blog = blogWithAccess();
+
+    consoleApi(
+        $blog,
         'POST',
         '/blog/variant',
         [
@@ -33,20 +42,23 @@ it('returns an error if the language is not found', function () {
 });
 
 it('creates a variant', function () {
-    $languageId = blog()->languages->firstWhere('is_primary', false)->id;
 
-    blog()->variants()->where('language_id', $languageId)->delete();
+    $blog = blogWithAccess();
+    $language = addLanguage($blog);
+    addBlogVariants($blog, $language);
 
-    $this->callConsoleApi(
+    $blog->variants()->where('language_id', $language->id)->delete();
+
+    consoleApi($blog,
         'POST',
         '/blog/variant',
         [
-            'language_id' => $languageId,
+            'language_id' => $language->id,
         ]
     )
         ->assertOk()
         ->assertJson(
-            fn (AssertableJson $json) => $json->where('language_id', $languageId)
+            fn (AssertableJson $json) => $json->where('language_id', $language->id)
                 ->has('name')
                 ->has('description')
                 ->etc()

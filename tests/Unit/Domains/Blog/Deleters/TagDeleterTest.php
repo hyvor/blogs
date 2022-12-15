@@ -6,13 +6,9 @@ use App\Domains\Blog\Deleters\TagDeleter;
 use App\Models\Tag;
 use App\Models\TagVariant;
 
-beforeEach(function () {
-    Tag::truncate();
-    TagVariant::truncate();
-});
 
 it('deletes tags and variants', function () {
-    $blog = newBlog();
+    $blog = blog();
 
     Tag::factory()
         ->count(2)
@@ -43,10 +39,10 @@ it('does not delete tags of other blogs', function () {
             'variants'
         )
         ->create([
-            'blog_id' => newBlog(),
+            'blog_id' => blog(),
         ]);
 
-    (new TagDeleter(newBlog()))->delete();
+    (new TagDeleter(blog()))->delete();
 
     expect(Tag::count())->toBe(2);
     expect(TagVariant::count())->toBe(4);

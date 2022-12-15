@@ -11,8 +11,10 @@ it('sets _route variable', function () {
     $routeName = 'test';
     $template = 'test_template';
 
+    $blog = blogWithLanguageAndRoutes();
+
     RouteRepository::createRoute(
-        $this->blog,
+        $blog,
         $routeName,
         '/test/{slug}',
         $template,
@@ -28,8 +30,9 @@ it('sets _route variable', function () {
     {{ _route.content_type }}
     TWIG;
 
+
     ThemeFilesRepository::createOrUpdateFile(
-        $this->blog,
+        $blog,
         ThemeFileFolderEnum::TEMPLATES,
         'test_template.twig',
         $content,
@@ -37,7 +40,7 @@ it('sets _route variable', function () {
 
     $rendered = "$routeName\n$template\nhi\nid=1\ntext/xml";
 
-    $pathMatcher = new PathMatcher($this->blog, '/test/hi');
+    $pathMatcher = new PathMatcher($blog, '/test/hi');
     $responseObject = $pathMatcher->getResponseObject();
 
     expect($responseObject->content)->toBe($rendered);

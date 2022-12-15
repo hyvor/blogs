@@ -10,9 +10,10 @@ use Illuminate\Support\Facades\Event;
 it('deletes', function () {
     Event::fake();
 
-    $media = Media::factory()->create(['blog_id' => blog()]);
+    $blog = blogWithAccess();
+    $media = Media::factory()->create(['blog_id' => $blog]);
 
-    $this->callConsoleApi('DELETE', "/media/$media->id")
+    consoleApi($blog, 'DELETE', "/media/$media->id")
         ->assertOk();
 
     expect(Media::find($media->id))->toBeNull();
@@ -21,9 +22,11 @@ it('deletes', function () {
 });
 
 it('cannot delete other blogs media', function () {
-    $media = Media::factory()->create(['blog_id' => Blog::find(config('test.not_blog_id'))]);
 
-    $this->callConsoleApi('DELETE', "/media/$media->id")
+    $blog = blogWithAccess();
+    $media = Media::factory()->create(['blog_id' => $blog]);
+
+    consoleApi(blogWithAccess(), 'DELETE', "/media/$media->id")
         ->assertForbidden();
 
     expect(Media::find($media->id)->id)->toBeInt();

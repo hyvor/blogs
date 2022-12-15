@@ -21,37 +21,6 @@ abstract class TestCase extends BaseTestCase
      */
     protected $seed = false;
 
-    protected function callDataApi(
-        string $endpoint,
-        $data = [],
-        $subdomain = 'test'
-    ): TestResponse {
-        $endpoint = trim($endpoint, '/');
-
-        return $this->call('GET', URL::to("/api/data/v0/$subdomain/$endpoint"), $data);
-    }
-
-    protected function callConsoleApi(
-        string $method,
-        string $endpoint,
-        $data = [],
-        $subdomain = 'test'
-    ): TestResponse {
-        $endpoint = trim($endpoint, '/');
-
-        return $this->call($method, URL::to("/api/console/v0/blog/$subdomain/$endpoint"), $data);
-    }
-
-    protected function callConsoleUserApi(string $method, string $endpoint, $data = []): TestResponse
-    {
-        return $this->call($method, URL::to('/api/console/v0'.$endpoint), $data);
-    }
-
-    protected function callConsoleMiscApi(string $method, string $endpoint, $data = []): TestResponse
-    {
-        return $this->call($method, URL::to('/api/console/v0/misc'.$endpoint), $data);
-    }
-
     protected function callCliAPI(string|Blog $subdomain, string $method, string $endpoint, $data = [])
     {
         $endpoint = trim($endpoint, '/');
@@ -63,16 +32,4 @@ abstract class TestCase extends BaseTestCase
         return $this->call($method, URL::to("/api/cli/$subdomain/$endpoint"), $data);
     }
 
-    protected function callDeliveryApi(string $endpoint, $data = [], $subdomain = 'test'): TestResponse
-    {
-        $endpoint = trim($endpoint, '/');
-
-        return $this->call('GET', URL::to("/api/delivery/v0/$subdomain/$endpoint"), $data);
-    }
-
-    protected function callIntegrationEndpoint(string $method, string $endpoint, $data = []): TestResponse
-    {
-        $endpoint = trim($endpoint, '/');
-        return $this->call($method, config('app.url') . "/integrations/$endpoint", $data);
-    }
 }

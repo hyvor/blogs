@@ -8,7 +8,9 @@ use App\Domains\Theme\ThemeFilesRepository;
 
 it('should return 404', function () {
 
-    $pathMatcher = new PathMatcher($this->blog, "/not-found");
+    $blog = blogWithLanguageAndRoutes();
+
+    $pathMatcher = new PathMatcher($blog, "/not-found");
     $responseObject = $pathMatcher->getResponseObject();
 
     expect($responseObject->content)->toBe('404');
@@ -17,16 +19,18 @@ it('should return 404', function () {
 
 it('should return 404.twig rendered', function() {
 
+    $blog = blogWithLanguageAndRoutes();
+
     ThemeFilesRepository::createOrUpdateFile(
-        $this->blog,
+        $blog,
         ThemeFileFolderEnum::TEMPLATES,
         '404.twig',
-        '404 not found. {{ blog.name }}'
+        '404 not found. {{ _blog.subdomain }}'
     );
 
-    $pathMatcher = new PathMatcher($this->blog, "/not-found");
+    $pathMatcher = new PathMatcher($blog, "/not-found");
     $responseObject = $pathMatcher->getResponseObject();
 
-    expect($responseObject->content)->toBe('404 not found. ' . $this->blog->name);
+    expect($responseObject->content)->toBe('404 not found. ' . $blog->subdomain);
 
 });

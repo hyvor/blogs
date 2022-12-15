@@ -6,6 +6,8 @@ use App\Domains\Blog\Deleters\LanguageDeleter;
 
 it('deletes languages', function () {
     $blog = blog();
+    addPrimaryLanguage($blog);
+    addLanguage($blog);
 
     expect($blog->languages()->count())->toBe(2);
 

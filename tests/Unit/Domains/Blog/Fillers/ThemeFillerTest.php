@@ -16,7 +16,7 @@ beforeEach(function () {
 });
 
 it('copies the hello theme', function () {
-    $blog = newBlog();
+    $blog = blog();
 
     $themeFiller = new ThemeFiller($blog);
     $themeFiller->fill();
@@ -34,7 +34,7 @@ it('copies the hello theme', function () {
 });
 
 it('copies the blank theme for DEV blogs', function () {
-    $blog = newBlog(BlogTypeEnum::DEV);
+    $blog = devBlog();
 
     $themeFiller = new ThemeFiller($blog);
     $themeFiller->fill();
@@ -52,7 +52,7 @@ it('copies the blank theme for DEV blogs', function () {
 });
 
 it('does not do anything for preview blogs', function () {
-    $blog = newBlog(BlogTypeEnum::PREVIEW);
+    $blog = previewBlog();
 
     $themeFiller = new ThemeFiller($blog);
     $themeFiller->fill();

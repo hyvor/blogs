@@ -6,9 +6,10 @@ use App\Models\Webhook;
 use Illuminate\Testing\Fluent\AssertableJson;
 
 it('updates a url', function () {
-    $webhook = Webhook::factory()->create(['blog_id' => blog()]);
+    $blog = blogWithAccess();
+    $webhook = Webhook::factory()->create(['blog_id' => $blog]);
 
-    $this->callConsoleApi('PATCH', "/webhook/$webhook->id", [
+    consoleApi($blog, 'PATCH', "/webhook/$webhook->id", [
         'url' => 'https://hyvor.com'
     ])
         ->assertOk()
@@ -19,9 +20,10 @@ it('updates a url', function () {
 });
 
 it('updates events', function () {
-    $webhook = Webhook::factory()->create(['blog_id' => blog()]);
+    $blog = blogWithAccess();
+    $webhook = Webhook::factory()->create(['blog_id' => $blog]);
 
-    $this->callConsoleApi('PATCH', "/webhook/$webhook->id", [
+    consoleApi($blog, 'PATCH', "/webhook/$webhook->id", [
         'events' => ['cache.templates', 'cache.all']
     ])
         ->assertOk()
@@ -32,9 +34,11 @@ it('updates events', function () {
 });
 
 it('validates events', function () {
-    $webhook = Webhook::factory()->create(['blog_id' => blog()]);
 
-    $this->callConsoleApi('PATCH', "/webhook/$webhook->id", [
+    $blog = blogWithAccess();
+    $webhook = Webhook::factory()->create(['blog_id' => $blog]);
+
+    consoleApi($blog, 'PATCH', "/webhook/$webhook->id", [
         'events' => ['cache.templates', 'cache.all', 'cache.wrong']
     ])
         ->assertUnprocessable()

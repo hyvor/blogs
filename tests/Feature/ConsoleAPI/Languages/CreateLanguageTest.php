@@ -12,7 +12,9 @@ it('creates a language', function () {
     $code = 'si';
     $name = 'සිංහල';
 
-    $this->callConsoleApi('POST', '/language', [
+    $blog = blogWithAccess();
+
+    consoleApi($blog, 'POST', '/language', [
         'code' => $code,
         'name' => $name,
     ])
@@ -28,8 +30,13 @@ it('creates a language', function () {
 });
 
 it('does not create language if the code already exists', function () {
-    $this->callConsoleApi('POST', '/language', [
-        'code' => 'en',
+
+
+    $blog = blogWithAccess();
+    $language = addPrimaryLanguage($blog);
+
+    consoleApi($blog, 'POST', '/language', [
+        'code' => $language->code,
         'name' => 'English',
     ])
         ->assertUnprocessable()

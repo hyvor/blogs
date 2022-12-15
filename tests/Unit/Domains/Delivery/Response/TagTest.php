@@ -11,16 +11,18 @@ use App\Domains\Theme\ThemeFilesRepository;
 it('matches tag page', function () {
     $content = 'I am a tag';
 
+    $blog = blogWithLanguageAndRoutes();
+
     ThemeFilesRepository::createOrUpdateFile(
-        $this->blog,
+        $blog,
         ThemeFileFolderEnum::TEMPLATES,
         'tag.twig',
         $content,
     );
 
-    $tag = $this->blog->tags[0];
+    $tag = addTag($blog);
 
-    $pathMatcher = new PathMatcher($this->blog, "/tag/$tag->slug");
+    $pathMatcher = new PathMatcher($blog, "/tag/$tag->slug");
     $responseObject = $pathMatcher->getResponseObject();
 
     $this->assertEquals(DeliveryAPITypeEnum::FILE, $responseObject->type);

@@ -6,15 +6,19 @@ use App\Models\Tag;
 use Illuminate\Testing\Fluent\AssertableJson;
 
 it('fetches tags', function () {
-    $tagsCount = Tag::where('blog_id', config('test.blog_id'))->count();
-    $currentCount = floor($tagsCount / 2);
-    $this
-        ->callConsoleApi('GET', '/tags', [
-            'limit' => $currentCount,
+
+    $blog = blogWithAccess();
+    addPrimaryLanguage($blog);
+    addDefaultRoutes($blog);
+
+    addTags($blog, 4);
+
+    consoleApi($blog, 'GET', '/tags', [
+            'limit' => 2,
         ])
         ->assertOk()
-        ->assertJson(function (AssertableJson $json) use ($currentCount) {
-            $json->count($currentCount)
+        ->assertJson(function (AssertableJson $json) {
+            $json->count(2)
                 ->has('0', function (AssertableJson $json) {
                     $json->has('id')
                         ->has('slug')
@@ -24,14 +28,18 @@ it('fetches tags', function () {
 });
 
 it('fetches tags with offset', function () {
-    $tagsCount = Tag::where('blog_id', config('test.blog_id'))->count();
-    $this
-        ->callConsoleApi('GET', 'tags', [
-            'limit' => $tagsCount,
-            'offset' => $tagsCount - 1,
+
+    $blog = blogWithAccess();
+    addPrimaryLanguage($blog);
+    addDefaultRoutes($blog);
+
+    addTags($blog, 2);
+
+    consoleApi($blog, 'GET', 'tags', [
+            'limit' => 1,
+            'offset' => 1,
         ])
         ->assertOk()
-        ->assertJson(function (AssertableJson $json) {
-            $json->count(1);
-        });
+        ->assertJsonCount(1);
+
 });

@@ -10,15 +10,17 @@ use Illuminate\Testing\Fluent\AssertableJson;
 it('updates a tag', function () {
     Event::fake();
 
+    $blog = blogWithAccess();
+
     $tag = Tag::factory()->create([
-        'blog_id' => blog(),
+        'blog_id' => $blog
     ]);
 
     $slug = 'hello-world';
     $codeHead = 'var x = head';
     $codeFoot = 'var y = foot';
 
-    $this->callConsoleApi('PATCH', "/tag/$tag->id", [
+    consoleApi($blog, 'PATCH', "/tag/$tag->id", [
         'slug' => $slug,
         'code_head' => $codeHead,
         'code_foot' => $codeFoot,

@@ -9,9 +9,11 @@ use Illuminate\Support\Facades\Event;
 it('deletes a route', function () {
     Event::fake();
 
-    $route = Route::factory()->create(['blog_id' => blog()]);
+    $blog = blogWithAccess();
 
-    $this->callConsoleApi('DELETE', "/route/$route->id");
+    $route = Route::factory()->create(['blog_id' => $blog]);
+
+    consoleApi($blog, 'DELETE', "/route/$route->id");
 
     expect(Route::find($route->id))->toBeNull();
 

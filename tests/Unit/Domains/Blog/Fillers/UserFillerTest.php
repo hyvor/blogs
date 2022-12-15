@@ -8,7 +8,7 @@ use App\Domains\Blog\Fillers\LanguageFiller;
 use App\Domains\Blog\Fillers\UserFiller;
 
 it('fills the owner', function () {
-    $blog = newBlog();
+    $blog = blog();
 
     (new LanguageFiller($blog))->fill();
 
@@ -23,7 +23,7 @@ it('fills the owner', function () {
 });
 
 it('adds more users for dev blogs', function () {
-    $blog = newBlog(BlogTypeEnum::DEV);
+    $blog = devBlog();
 
     (new LanguageFiller($blog))->fill();
 
@@ -34,7 +34,7 @@ it('adds more users for dev blogs', function () {
 });
 
 it('adds more users for preview blogs', function () {
-    $blog = newBlog(BlogTypeEnum::PREVIEW);
+    $blog = previewBlog();
 
     (new LanguageFiller($blog))->fill();
 

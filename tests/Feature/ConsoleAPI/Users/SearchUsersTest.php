@@ -8,7 +8,10 @@ use Illuminate\Testing\Fluent\AssertableJson;
 
 it('searches users', function () {
     $name = 'Thisisname';
-    $languageId = blog()->languages[0]->id;
+
+    $blog = blogWithAccess();
+    $languageId = addPrimaryLanguage($blog)->id;
+    addDefaultRoutes($blog, 'author');
 
     User::factory()
         ->has(
@@ -17,9 +20,9 @@ it('searches users', function () {
                 'name' => $name,
             ]),
             'variants'
-        )->create(['blog_id' => blog()]);
+        )->create(['blog_id' => $blog]);
 
-    $this->callConsoleApi('GET', '/users/search', [
+    consoleApi($blog, 'GET', '/users/search', [
         'search' => 'Thisis',
     ])
         ->assertOk()

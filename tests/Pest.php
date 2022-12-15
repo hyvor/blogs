@@ -47,7 +47,7 @@ uses()->beforeEach(function () {
     return Blog::find(config('test.blog_id'));
 }*/
 
-/*function newBlog(BlogTypeEnum $type = BlogTypeEnum::DEFAULT)
+/*function blog(BlogTypeEnum $type = BlogTypeEnum::DEFAULT)
 {
     return Blog::factory()->has(
         BlogVariant::factory(),
@@ -128,20 +128,6 @@ function createRequest($method, $uri)
     $symfonyRequest = SymfonyRequest::create($uri, $method);
 
     return Request::createFromBase($symfonyRequest);
-}
-
-
-function getBlogObject($updates = []): BlogObject
-{
-    $blog = newBlog();
-    (new LanguageFiller($blog))->fill();
-
-    $obj = new BlogObject($blog, $blog->languages[0]);
-    foreach ($updates as $key => $value) {
-        $obj->$key = $value;
-    }
-
-    return $obj;
 }
 
 function testTwigRendering(string $template, array $vars, string $expectation)

@@ -7,10 +7,13 @@ use App\Domains\Delivery\PathMatcher;
 use App\Domains\Route\PermalinkRepository;
 
 it('returns robots.txt', function () {
-    $pathMatcher = new PathMatcher($this->blog, '/robots.txt');
+
+    $blog = blogWithLanguage();
+
+    $pathMatcher = new PathMatcher($blog, '/robots.txt');
     $responseObject = $pathMatcher->getResponseObject();
 
-    $blogUrl = PermalinkRepository::getBlogPermalink($this->blog, $this->blog->languages[0]);
+    $blogUrl = PermalinkRepository::getBlogPermalink($blog, $blog->languages[0]);
 
     expect($responseObject->type)->toBe(DeliveryAPITypeEnum::FILE);
     expect($responseObject->mime_type)->toBe('text/plain');

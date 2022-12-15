@@ -8,13 +8,15 @@ use Illuminate\Support\Facades\Event;
 it('deletes a user variant', function () {
     Event::fake();
 
-    $user = $this->blog->users()->first();
+    $blog = blogWithAccess();
+    addPrimaryLanguage($blog);
+    addLanguage($blog);
+    $user = addUser($blog);
 
     $variants = $user->variants()->count();
 
-    $this
-        ->callConsoleApi('DELETE', "/user/$user->id/variant", [
-            'language_id' => $this->blog->languages[1]->id,
+    consoleApi($blog, 'DELETE', "/user/$user->id/variant", [
+            'language_id' => $blog->languages[1]->id,
         ])
         ->assertOk();
 
@@ -24,11 +26,13 @@ it('deletes a user variant', function () {
 });
 
 it('does not delete primary language variant', function () {
-    $user = $this->blog->users()->first();
 
-    $this
-        ->callConsoleApi('DELETE', "/user/$user->id/variant", [
-            'language_id' => $this->blog->languages[0]->id,
+    $blog = blogWithAccess();
+    addPrimaryLanguage($blog);
+    $user = addUser($blog);
+
+    consoleApi($blog, 'DELETE', "/user/$user->id/variant", [
+            'language_id' => $blog->languages[0]->id,
         ])
         ->assertUnprocessable();
 });

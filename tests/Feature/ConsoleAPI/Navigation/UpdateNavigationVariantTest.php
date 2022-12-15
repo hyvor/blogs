@@ -11,15 +11,17 @@ use Illuminate\Testing\Fluent\AssertableJson;
 it('updates a variant', function () {
     Event::fake();
 
-    $nav = Navigation::factory()->create(['blog_id' => blog()]);
-    $languageId = blog()->languages[0]->id;
+    $blog = blogWithAccess();
+    addPrimaryLanguage($blog);
+    $nav = Navigation::factory()->create(['blog_id' => $blog]);
+    $languageId = $blog->languages[0]->id;
     $variant = NavigationVariant::factory()->create([
         'navigation_id' => $nav,
         'language_id' => $languageId,
     ]);
 
     $name = 'ehw';
-    $this->callConsoleApi('PUT', "/navigation/$nav->id/variant", [
+    consoleApi($blog, 'PUT', "/navigation/$nav->id/variant", [
         'language_id' => $languageId,
         'name' => $name,
     ])

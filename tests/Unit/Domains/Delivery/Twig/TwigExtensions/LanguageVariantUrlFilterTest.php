@@ -7,19 +7,14 @@ use App\Domains\Blog\Fillers\LanguageFiller;
 use App\Domains\Language\LanguageRepository;
 
 test('language_variant_url in normal pages', function () {
-    $blog = newBlog();
-    (new LanguageFiller($blog))->fill();
-
-    LanguageRepository::createLanguage(
-        $blog,
-        'fr',
-        'French'
-    );
+    $blog = blogWithLanguage();
+    addLanguage($blog);
+    $blog->refresh();
 
     $blogObject = new BlogObject($blog, $blog->languages[0]);
 
     testTwigRendering(
-        '{{ "en" | language_variant_url }}',
+        "{{ '{$blog->languages[0]->code}' | language_variant_url }}",
         [
             '_blog' => $blogObject,
             '_route' => [
@@ -30,26 +25,24 @@ test('language_variant_url in normal pages', function () {
     );
 
     testTwigRendering(
-        '{{ "fr" | language_variant_url }}',
+        "{{ '{$blog->languages[1]->code}' | language_variant_url }}",
         [
             '_blog' => $blogObject,
             '_route' => [
                 'name' => 'index'
             ]
         ],
-        "$blogObject->base_url/fr"
+        "$blogObject->base_url/{$blog->languages[1]->code}"
     );
 });
 
 test('language_variant_url in posts/tags/authors', function () {
-    $blog = newBlog();
-    (new LanguageFiller($blog))->fill();
+    $blog = blogWithLanguage();
+    addLanguage($blog);
 
-    LanguageRepository::createLanguage(
-        $blog,
-        'fr',
-        'French'
-    );
+    $blog->refresh();
+    $blog->languages[0]->update(['code' => 'en']);
+    $blog->languages[1]->update(['code' => 'fr']);
 
     $blogObject = new BlogObject($blog, $blog->languages[0]);
 

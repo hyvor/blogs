@@ -10,7 +10,7 @@ use App\Domains\Blog\Fillers\TagFiller;
 use App\Domains\Blog\Fillers\UserFiller;
 
 it('fills with navigations', function () {
-    $blog = newBlog();
+    $blog = blog();
 
     $languageFiller = new LanguageFiller($blog);
     $languageFiller->fill();
@@ -26,7 +26,7 @@ it('fills with navigations', function () {
 });
 
 it('fills additional for dev blogs', function () {
-    $blog = newBlog(BlogTypeEnum::DEV);
+    $blog = devBlog();
 
     $languageFiller = new LanguageFiller($blog);
     $languageFiller->fill();
@@ -52,7 +52,7 @@ it('fills additional for dev blogs', function () {
 });
 
 it('fills additional for preview blogs', function () {
-    $blog = newBlog(BlogTypeEnum::PREVIEW);
+    $blog = previewBlog();
 
     $languageFiller = new LanguageFiller($blog);
     $languageFiller->fill();

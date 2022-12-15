@@ -9,10 +9,11 @@ use Illuminate\Support\Facades\Event;
 it('deletes', function () {
     Event::fake();
 
-    $redirect = Redirect::factory()->create(['blog_id' => blog()]);
+    $blog = blogWithAccess();
 
-    $this
-        ->callConsoleApi('DELETE', "/redirect/$redirect->id")
+    $redirect = Redirect::factory()->create(['blog_id' => $blog]);
+
+    consoleApi($blog, 'DELETE', "/redirect/$redirect->id")
         ->assertOk();
 
     expect(Redirect::find($redirect->id))->toBeNull();

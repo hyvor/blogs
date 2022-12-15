@@ -23,7 +23,9 @@ it('uploads a theme', function () {
         true
     );
 
-    $files = $this->callConsoleApi('POST', '/theme', [
+    $blog = blogWithAccess();
+
+    $files = consoleApi($blog, 'POST', '/theme', [
         'zip' => $zip,
     ])
         ->assertOk()

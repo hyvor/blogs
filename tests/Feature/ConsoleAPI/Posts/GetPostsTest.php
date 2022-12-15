@@ -10,16 +10,20 @@ use App\Models\PostTag;
 use Illuminate\Testing\Fluent\AssertableJson;
 
 beforeEach(function () {
+
+    $this->blog = blogWithAccess();
+    addDefaultRoutes($this->blog);
+
     $this->endpoint = '/posts';
-    $this->defaultLanguage = $this->blog->languages[0];
-    $this->post = Post::where('blog_id', $this->blog->id)
-        ->where('is_page', false)
-        ->first();
+    $this->defaultLanguage = addPrimaryLanguage($this->blog);
+
 });
 
 it('gets posts', function () {
-    $this
-        ->callConsoleApi('GET', $this->endpoint)
+
+    addPublishedPost($this->blog);
+
+    consoleApi($this->blog,'GET', $this->endpoint)
         ->assertJson(function (AssertableJson $json) {
             $json
                 ->each(function (AssertableJson $json) {
@@ -30,22 +34,26 @@ it('gets posts', function () {
 });
 
 it('validates', function () {
-    $this->callConsoleApi('GET', $this->endpoint, ['status' => 'published'])->assertOk();
-    $this->callConsoleApi('GET', $this->endpoint, ['status' => 'draft'])->assertOk();
-    $this->callConsoleApi('GET', $this->endpoint, ['status' => 'scheduled'])->assertOk();
-    $this->callConsoleApi('GET', $this->endpoint, ['status' => 'featured'])->assertOk();
-    $this->callConsoleApi('GET', $this->endpoint, ['status' => 'something else'])->assertUnprocessable();
 
-    $this->callConsoleApi('GET', $this->endpoint, ['author_id' => 1])->assertOk();
-    $this->callConsoleApi('GET', $this->endpoint, ['author_id' => 'a string'])->assertUnprocessable();
+    consoleApi($this->blog, 'GET', $this->endpoint, ['status' => 'published'])->assertOk();
+    consoleApi($this->blog, 'GET', $this->endpoint, ['status' => 'draft'])->assertOk();
+    consoleApi($this->blog, 'GET', $this->endpoint, ['status' => 'scheduled'])->assertOk();
+    consoleApi($this->blog, 'GET', $this->endpoint, ['status' => 'featured'])->assertOk();
+    consoleApi($this->blog, 'GET', $this->endpoint, ['status' => 'something else'])->assertUnprocessable();
 
-    $this->callConsoleApi('GET', $this->endpoint, ['tag_id' => 1])->assertOk();
-    $this->callConsoleApi('GET', $this->endpoint, ['tag_id' => 'a string'])->assertUnprocessable();
+    consoleApi($this->blog, 'GET', $this->endpoint, ['author_id' => 1])->assertOk();
+    consoleApi($this->blog, 'GET', $this->endpoint, ['author_id' => 'a string'])->assertUnprocessable();
+
+    consoleApi($this->blog, 'GET', $this->endpoint, ['tag_id' => 1])->assertOk();
+    consoleApi($this->blog, 'GET', $this->endpoint, ['tag_id' => 'a string'])->assertUnprocessable();
 });
 
 it('filters by post status - published', function () {
-    $this
-        ->callConsoleApi('GET', $this->endpoint, ['status' => 'published'])
+
+    addPosts($this->blog, 2, [], ['status' => 'published']);
+
+    consoleApi($this->blog, 'GET', $this->endpoint, ['status' => 'published'])
+        ->assertJsonCount(2)
         ->assertJson(function (AssertableJson $json) {
             $json->each(function (AssertableJson $json) {
                 $json->where('variants.0.status', 'published')
@@ -56,64 +64,59 @@ it('filters by post status - published', function () {
 
 it('filters by featured', function () {
 
-    // feature a post
-    $this->post->update(['is_featured' => true]);
 
-    $this
-        ->callConsoleApi('GET', $this->endpoint, ['status' => 'featured'])
+    $posts = addPosts($this->blog, 2, [], ['status' => 'published']);
+    $posts[0]->is_featured = true;
+    $posts[0]->save();
+
+    consoleApi($this->blog, 'GET', $this->endpoint, ['status' => 'featured'])
         ->assertJson(
             fn (AssertableJson $json) => $json
                 ->has(1)
                 ->first(
                     fn (AssertableJson $json) => $json
-                        ->where('id', $this->post->id)
+                        ->where('id', $posts[0]->id)
                         ->etc()
                 )
         );
+
+
 });
 
 it('filters by author ID', function () {
 
-    // delete all post author assigns
-    PostAuthor::query()->delete();
+    $post = addPost($this->blog);
+    $user = addUser($this->blog);
 
-    PostAuthor::create([
-        'post_id' => $this->post->id,
-        'user_id' => $this->user->id,
-    ]);
+    addAuthorToPost($post, $user);
 
-    $this
-        ->callConsoleApi('GET', $this->endpoint, ['author_id' => $this->user->id])
+    consoleApi($this->blog, 'GET', $this->endpoint, ['author_id' => $user->id])
         ->assertJson(
             fn (AssertableJson $json) => $json
                 ->has(1)
                 ->first(
                     fn (AssertableJson $json) => $json
-                        ->where('authors.0.id', $this->user->id)
+                        ->where('authors.0.id', $user->id)
                         ->etc()
                 )
         );
+
 });
 
 it('filters by tag ID', function () {
-    $this->tag = $this->blog->tags()->first();
 
-    // delete all post author assigns
-    PostTag::query()->delete();
+    $post = addPost($this->blog);
+    $tag = addTag($this->blog);
 
-    PostTag::create([
-        'post_id' => $this->post->id,
-        'tag_id' => $this->tag->id,
-    ]);
+    addTagToPost($post, $tag);
 
-    $this
-        ->callConsoleApi('GET', $this->endpoint, ['tag_id' => $this->tag->id])
+    consoleApi($this->blog, 'GET', $this->endpoint, ['tag_id' => $tag->id])
         ->assertJson(
             fn (AssertableJson $json) => $json
             ->has(1)
             ->first(
                 fn (AssertableJson $json) => $json
-                ->where('tags.0.id', $this->tag->id)
+                ->where('tags.0.id', $tag->id)
                 ->etc()
             )
         );
@@ -121,17 +124,15 @@ it('filters by tag ID', function () {
 
 it('filters by timestamps', function () {
 
-    // change all posts' published at days
-    Post::query()->update(['published_at' => now()->subDays(10)]);
-
     $date = now();
 
-    $this->post->update(['published_at' => $date]);
+    addPosts($this->blog, 2, ['published_at' => now()->subDays(10)], ['status' => 'published']);
+    $post = addPublishedPost($this->blog, ['published_at' => $date]);
+
 
     $timestamp = $date->timestamp;
 
-    $this
-        ->callConsoleApi('GET', $this->endpoint, [
+    consoleApi($this->blog, 'GET', $this->endpoint, [
             'start_timestamp' => $timestamp - 1,
             'end_timestamp' => $timestamp + 1,
         ])
@@ -140,7 +141,7 @@ it('filters by timestamps', function () {
                 ->has(1)
                 ->first(
                     fn (AssertableJson $json) => $json
-                        ->where('id', $this->post->id)
+                        ->where('id', $post->id)
                         ->etc()
                 )
         );

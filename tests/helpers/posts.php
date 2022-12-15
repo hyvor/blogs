@@ -37,6 +37,20 @@ function addPost(Blog $blog, $state = [], $variantState = []) : Post {
     return addPosts($blog, 1, $state, $variantState)->first();
 }
 
+function addPublishedPosts(Blog $blog, int $count, $state = [], $variantState = [])
+{
+    return addPosts($blog, $count, $state, array_merge([
+        'status' => 'published'
+    ], $variantState));
+}
+
 function addPublishedPost(Blog $blog, $state = [], $variantState = []) : Post {
     return addPost($blog, $state, array_merge(['status' => 'published'], $variantState));
+}
+
+function postWithVariant($post = [], $variant = [])
+{
+    return Post::factory()
+        ->has(PostVariant::factory()->state($variant), 'variants')
+        ->create($post);
 }

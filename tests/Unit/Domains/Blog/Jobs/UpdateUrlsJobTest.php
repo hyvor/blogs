@@ -71,7 +71,7 @@ it('updates URLs in content and content_unsaved', function() {
             'variants'
         )
         ->create([
-            'blog_id' => newBlog()
+            'blog_id' => blog()
         ]);
 
     $user = User::factory()->create([

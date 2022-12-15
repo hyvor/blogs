@@ -7,14 +7,17 @@ use App\Domains\Theme\ThemeFilesRepository;
 use Illuminate\Testing\Fluent\AssertableJson;
 
 it('gets files', function () {
+
+    $blog = blogWithAccess();
+
     ThemeFilesRepository::createOrUpdateFile(
-        blog(),
+        $blog,
         ThemeFileFolderEnum::TEMPLATES,
         'index.twig',
         'none'
     );
 
-    $this->callConsoleApi('GET', '/theme/files')
+    consoleApi($blog, 'GET', '/theme/files')
         ->assertOk()
         ->assertJson(
             fn (AssertableJson $json) => $json->count(1)

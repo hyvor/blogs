@@ -37,22 +37,24 @@ it('is listening', function () {
 it('calls update blog counts on post creating', function () {
     Queue::fake();
 
+    $blog = blog();
     $post = Post::factory()->create([
-        'blog_id' => blog(),
+        'blog_id' => $blog,
     ]);
 
     $event = new PostCreatedEvent($post);
     $listener = new CountSubscriber();
     $listener->onPostCreateOrDelete($event);
 
-    Queue::assertPushed(fn (BlogPostsCountsJob $job) => $job->blog->id === blog()->id);
+    Queue::assertPushed(fn (BlogPostsCountsJob $job) => $job->blog->id === $blog->id);
 });
 
 it('calls update when post variant status changes for primary variant', function () {
     Queue::fake();
 
-    $post = aPublishedPost();
     $blog = blog();
+    addPrimaryLanguage($blog);
+    $post = addPublishedPost($blog);
 
     $variant = $post->variants[0];
 
@@ -68,7 +70,9 @@ it('calls update when post variant status changes for primary variant', function
 it('does not call blog count update when other properties of variant is called', function () {
     Queue::fake();
 
-    $post = aPublishedPost();
+    $blog = blog();
+    addPrimaryLanguage($blog);
+    $post = addPublishedPost($blog);
     $variant = $post->variants[0];
 
     $variant->title = 'Changed';
@@ -83,58 +87,66 @@ it('does not call blog count update when other properties of variant is called',
 it('calls blog counts job on post delete', function () {
     Queue::fake();
 
+    $blog = blog();
     $post = Post::factory()->create([
-        'blog_id' => blog(),
+        'blog_id' => $blog
     ]);
 
     $event = new PostDeletedEvent($post);
     $listener = new CountSubscriber();
     $listener->onPostCreateOrDelete($event);
 
-    Queue::assertPushed(fn (BlogPostsCountsJob $job) => $job->blog->id === blog()->id);
+    Queue::assertPushed(fn (BlogPostsCountsJob $job) => $job->blog->id === $blog->id);
 });
 
 it('calls blog users counts job on user create', function () {
     Queue::fake();
 
-    $user = User::factory()->create(['blog_id' => blog()]);
+    $blog = blog();
+
+    $user = User::factory()->create(['blog_id' => $blog]);
     $event = new UserCreatedEvent($user);
     $listener = new CountSubscriber();
     $listener->onUserEvent($event);
 
-    Queue::assertPushed(fn (BlogUsersCountsJob $job) => $job->blog->id === blog()->id);
+    Queue::assertPushed(fn (BlogUsersCountsJob $job) => $job->blog->id === $blog->id);
 });
 
 
 it('calls blog users counts job on user delete', function () {
     Queue::fake();
 
-    $user = User::factory()->create(['blog_id' => blog()]);
+    $blog = blog();
+    $user = User::factory()->create(['blog_id' => $blog]);
     $event = new UserDeletedEvent($user);
     $listener = new CountSubscriber();
     $listener->onUserEvent($event);
 
-    Queue::assertPushed(fn (BlogUsersCountsJob $job) => $job->blog->id === blog()->id);
+    Queue::assertPushed(fn (BlogUsersCountsJob $job) => $job->blog->id === $blog->id);
 });
 
 it('calls blog media counts job on media create', function () {
     Queue::fake();
 
-    $user = Media::factory()->create(['blog_id' => blog()]);
+    $blog = blog();
+
+    $user = Media::factory()->create(['blog_id' => $blog]);
     $event = new MediaCreatedEvent($user);
     $listener = new CountSubscriber();
     $listener->onMediaEvent($event);
 
-    Queue::assertPushed(fn (BlogMediaCountsJob $job) => $job->blog->id === blog()->id);
+    Queue::assertPushed(fn (BlogMediaCountsJob $job) => $job->blog->id === $blog->id);
 });
 
 it('calls blog media counts job on media delete', function () {
     Queue::fake();
 
-    $user = Media::factory()->create(['blog_id' => blog()]);
+    $blog = blog();
+
+    $user = Media::factory()->create(['blog_id' => $blog]);
     $event = new MediaDeletedEvent($user);
     $listener = new CountSubscriber();
     $listener->onMediaEvent($event);
 
-    Queue::assertPushed(fn (BlogMediaCountsJob $job) => $job->blog->id === blog()->id);
+    Queue::assertPushed(fn (BlogMediaCountsJob $job) => $job->blog->id === $blog->id);
 });

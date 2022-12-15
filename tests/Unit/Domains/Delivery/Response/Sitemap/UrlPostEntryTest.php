@@ -6,8 +6,10 @@ use App\Domains\Delivery\Processors\Sitemap\UrlPostEntry;
 use App\Domains\Route\PermalinkRepository;
 
 it('works', function () {
-    $blog = blog();
-    $post = aPublishedPost();
+    $blog = blogWithLanguageAndRoutes();
+    addLanguage($blog);
+    $blog->refresh();
+    $post = addPublishedPost($blog);
     $basePath = PermalinkRepository::getFullUrlFromPath($blog);
     $slug = $post->slug;
 
@@ -47,8 +49,8 @@ it('works', function () {
     $xml = $entry->toXML();
 
     expect($xml)->toContain("<loc>$basePath/$slug</loc>");
-    expect($xml)->toContain("<xhtml:link rel=\"alternate\" hreflang=\"en\" href=\"$basePath/$slug\" />");
-    expect($xml)->toContain("<xhtml:link rel=\"alternate\" hreflang=\"fr\" href=\"$basePath/fr/$slug\" />");
+    expect($xml)->toContain("<xhtml:link rel=\"alternate\" hreflang=\"{$blog->languages[0]->code}\" href=\"$basePath/$slug\" />");
+    expect($xml)->toContain("<xhtml:link rel=\"alternate\" hreflang=\"{$blog->languages[1]->code}\" href=\"$basePath/{$blog->languages[1]->code}/$slug\" />");
 
     expect($xml)->toContain("<image:image><image:loc>$basePath/image.png</image:loc></image:image>");
     expect($xml)->toContain("<image:image><image:loc>$basePath/image2.png</image:loc></image:image>");

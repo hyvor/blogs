@@ -8,9 +8,11 @@ use Illuminate\Support\Facades\Event;
 use Illuminate\Testing\Fluent\AssertableJson;
 
 it('requires a valid language ID', function () {
-    $nav = Navigation::factory()->create(['blog_id' => blog()]);
 
-    $this->callConsoleApi('POST', "/navigation/$nav->id/variant", [
+    $blog = blogWithAccess();
+    $nav = Navigation::factory()->create(['blog_id' => $blog]);
+
+    consoleApi($blog, 'POST', "/navigation/$nav->id/variant", [
         'name' => 'Hi',
         'language_id' => 100,
     ])
@@ -21,12 +23,14 @@ it('requires a valid language ID', function () {
 it('creates a navigation variant', function () {
     Event::fake();
 
-    $nav = Navigation::factory()->create(['blog_id' => blog()]);
+    $blog = blogWithAccess();
+    addPrimaryLanguage($blog);
+    $nav = Navigation::factory()->create(['blog_id' => $blog]);
 
     $name = 'Hyvor';
-    $this->callConsoleApi('POST', "/navigation/$nav->id/variant", [
+    consoleApi($blog, 'POST', "/navigation/$nav->id/variant", [
         'name' => $name,
-        'language_id' => blog()->languages[0]->id,
+        'language_id' => $blog->languages[0]->id,
     ])
         ->assertOk()
         ->assertJson(fn (AssertableJson $json) => $json->where('name', $name)->etc());

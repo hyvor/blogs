@@ -10,7 +10,8 @@ use Illuminate\Testing\Fluent\AssertableJson;
 it('updates route', function () {
     Event::fake();
 
-    $route = Route::factory()->create(['blog_id' => blog()]);
+    $blog = blogWithAccess();
+    $route = Route::factory()->create(['blog_id' => $blog]);
 
     $name = 'new-name';
     $match = '/new-match';
@@ -18,7 +19,7 @@ it('updates route', function () {
     $postsFilter = 'slug = {slug}';
     $contentType = 'text/svg';
 
-    $this->callConsoleApi('PATCH', "/route/$route->id", [
+    consoleApi($blog, 'PATCH', "/route/$route->id", [
         'name' => $name,
         'match' => $match,
         'template' => $template,
@@ -39,13 +40,15 @@ it('updates route', function () {
 });
 
 it('supports nullable', function () {
+
+    $blog = blogWithAccess();
     $route = Route::factory()->create([
-        'blog_id' => blog(),
+        'blog_id' => $blog,
         'posts_filter' => 'test',
         'content_type' => 'text/html',
     ]);
 
-    $this->callConsoleApi('PATCH', "/route/$route->id", [
+    consoleApi($blog, 'PATCH', "/route/$route->id", [
         'posts_filter' => null,
         'content_type' => null,
     ])

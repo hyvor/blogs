@@ -6,9 +6,11 @@ use App\Models\ApiKey;
 use Illuminate\Testing\Fluent\AssertableJson;
 
 it('gets API keys', function () {
-    ApiKey::factory()->count(3)->create(['blog_id' => blog()]);
 
-    $this->callConsoleApi('GET', '/api-keys')
+    $blog = blogWithAccess();
+    ApiKey::factory()->count(3)->create(['blog_id' => $blog]);
+
+    consoleApi($blog, 'GET', '/api-keys')
         ->assertOk()
         ->assertJson(
             fn (AssertableJson $json) => $json->count(3)

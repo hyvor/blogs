@@ -13,14 +13,13 @@ it('calls cancel endpoint', function () {
         ])
     ]);
 
-    $blog = blog();
+    $blog = blogWithAccess();
     $subscription = Subscription::factory()->create([
         'blog_id' => $blog
     ]);
     $subscription->setMeta('paddle_subscription_id', 140);
 
-    $this
-        ->callConsoleApi('DELETE', '/billing/paddle/subscription')
+    consoleApi($blog, 'DELETE', '/billing/paddle/subscription')
         ->assertOk();
 
     Http::assertSent(function (Request $request) {

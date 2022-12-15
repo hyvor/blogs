@@ -7,13 +7,13 @@ use App\Domains\Theme\ThemeFilesRepository;
 use PhpZip\ZipFile;
 
 it('downloads the theme as a zip', function () {
-    $blog = blog();
+    $blog = blogWithAccess();
     $content = 'Hi';
 
     ThemeFilesRepository::createOrUpdateFile($blog, ThemeFileFolderEnum::TEMPLATES, 'index.twig', $content);
     ThemeFilesRepository::createOrUpdateFile($blog, null, 'config.yaml', '');
 
-    $zip = $this->callConsoleApi('GET', '/theme/download');
+    $zip = consoleApi($blog, 'GET', '/theme/download');
 
     $zipFile = new ZipFile();
     $zipFile->openFromString($zip->streamedContent());

@@ -9,15 +9,17 @@ use App\Domains\Theme\ThemeFilesRepository;
 it('sets _blog variable', function () {
     $content = '{{ _blog.subdomain }}';
 
+    $blog = blogWithLanguageAndRoutes();
+
     ThemeFilesRepository::createOrUpdateFile(
-        $this->blog,
+        $blog,
         ThemeFileFolderEnum::TEMPLATES,
         'index.twig',
         $content,
     );
 
-    $pathMatcher = new PathMatcher($this->blog, '/');
+    $pathMatcher = new PathMatcher($blog, '/');
     $responseObject = $pathMatcher->getResponseObject();
 
-    expect($responseObject->content)->toBe('test');
+    expect($responseObject->content)->toBe($blog->subdomain);
 });

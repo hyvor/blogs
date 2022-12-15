@@ -6,13 +6,10 @@ use App\Domains\Blog\Events\BlogVariantUpdatedEvent;
 use Illuminate\Support\Facades\Event;
 use Illuminate\Testing\Fluent\AssertableJson;
 
-beforeEach(function () {
-    $this->language = blog()->languages[0];
-});
-
 it('validates', function () {
-    $this->callConsoleApi('PATCH', '/blog/variant')->assertUnprocessable();
-    $this->callConsoleApi(
+    $blog = blogWithAccess();
+    consoleApi($blog, 'PATCH', '/blog/variant')->assertUnprocessable();
+    consoleApi($blog,
         'PATCH',
         '/blog/variant',
         ['language_id' => 2, 'name' => false]
@@ -24,11 +21,15 @@ it('updates name and emits event', function () {
 
     $name = 'Name';
 
-    $this->callConsoleApi(
+    $blog = blogWithAccess();
+    $language = addPrimaryLanguage($blog);
+    addBlogVariants($blog, $language);
+
+    consoleApi($blog,
         'PATCH',
         '/blog/variant',
         [
-            'language_id' => $this->language->id,
+            'language_id' => $language->id,
             'name' => $name,
         ]
     )
@@ -45,11 +46,15 @@ it('updates name and emits event', function () {
 it('updates description', function () {
     $description = 'Hello world';
 
-    $this->callConsoleApi(
+    $blog = blogWithAccess();
+    $language = addPrimaryLanguage($blog);
+    addBlogVariants($blog, $language);
+
+    consoleApi($blog,
         'PATCH',
         '/blog/variant',
         [
-            'language_id' => $this->language->id,
+            'language_id' => $language->id,
             'description' => $description,
         ]
     )

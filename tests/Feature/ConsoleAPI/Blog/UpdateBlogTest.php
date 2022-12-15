@@ -13,7 +13,9 @@ it('updates blog data', function () {
     $hostingAt = 'domain';
     $hostingDomain = 'hyvor.com';
 
-    $this->callConsoleApi('PATCH', '/blog', [
+    $blog = blogWithAccess();
+
+    consoleApi($blog, 'PATCH', '/blog', [
         'subdomain' => $subdomain,
         'hosting_at' => $hostingAt,
         'hosting_domain' => $hostingDomain,
@@ -30,11 +32,12 @@ it('updates blog data', function () {
 });
 
 it('updates self URL and clears custom domain', function () {
-    blog()->update(['hosting_domain' => 'hyvor.com']);
+    $blog = blogWithAccess();
+    $blog->update(['hosting_domain' => 'hyvor.com']);
 
     $url = 'https://hyvor.com/blog';
 
-    $this->callConsoleApi('PATCH', '/blog', [
+    consoleApi($blog, 'PATCH', '/blog', [
         'hosting_at' => 'self',
         'hosting_url' => $url,
     ])
@@ -55,7 +58,9 @@ it('update metadata', function () {
     $logo = 'https://example.com/image.png';
     $cover = 'https://example.com/cover.png';
 
-    $this->callConsoleApi('PATCH', '/blog', [
+    $blog = blogWithAccess();
+
+    consoleApi($blog, 'PATCH', '/blog', [
         'logo_url' => $logo,
         'cover_url' => $cover,
     ])
@@ -68,7 +73,8 @@ it('update metadata', function () {
 });
 
 it('validates URLs', function () {
-    $this->callConsoleApi('PATCH', '/blog', [
+    $blog = blogWithAccess();
+    consoleApi($blog, 'PATCH', '/blog', [
         'logo_url' => 'hello',
     ])
         ->assertUnprocessable()

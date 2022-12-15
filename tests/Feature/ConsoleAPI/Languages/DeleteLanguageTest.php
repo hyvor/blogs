@@ -12,9 +12,11 @@ it('deletes a language', function () {
     Event::fake();
     Queue::fake();
 
-    $language = Language::factory()->create(['code' => 'si', 'blog_id' => blog()]);
+    $blog = blogWithAccess();
 
-    $this->callConsoleApi('DELETE', "/language/$language->id")
+    $language = Language::factory()->create(['code' => 'si', 'blog_id' => $blog]);
+
+    consoleApi($blog, 'DELETE', "/language/$language->id")
         ->assertOk();
 
     Queue::assertPushed(DeleteLanguageVariants::class);
@@ -22,9 +24,10 @@ it('deletes a language', function () {
 });
 
 it('does not delete the primary language', function () {
-    $language = blog()->languages[0];
+    $blog = blogWithAccess();
+    $language = addPrimaryLanguage($blog);
 
-    $this->callConsoleApi('DELETE', "/language/$language->id")
+    consoleApi($blog, 'DELETE', "/language/$language->id")
         ->assertUnprocessable()
         ->assertSee(['Primary', 'cannot']);
 });

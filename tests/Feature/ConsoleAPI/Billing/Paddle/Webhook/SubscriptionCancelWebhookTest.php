@@ -14,7 +14,7 @@ it('cancels the subscription plan', function () {
     ]);
     PaddleService::setPaddleSubscriptionId($subscription, 110);
 
-    $this->callIntegrationEndpoint('POST', '/paddle/webhook', getPaddleWebhookParams([
+    integrationApi('POST', '/paddle/webhook', getPaddleWebhookParams([
         'alert_name' => 'subscription_cancelled',
         'subscription_id' => 110,
         'cancellation_effective_date' => '2022-08-16'

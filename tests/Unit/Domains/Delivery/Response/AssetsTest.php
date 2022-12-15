@@ -12,14 +12,16 @@ it('matches assets', function () {
     $file = 'script.js';
     $content = 'var x = null';
 
+    $blog = blog();
+
     ThemeFilesRepository::createOrUpdateFile(
-        $this->blog,
+        $blog,
         ThemeFileFolderEnum::ASSETS,
         $file,
         $content,
     );
 
-    $pathMatcher = new PathMatcher($this->blog, "/assets/$file");
+    $pathMatcher = new PathMatcher($blog, "/assets/$file");
     $responseObject = $pathMatcher->getResponseObject();
 
     $this->assertEquals(DeliveryAPITypeEnum::FILE, $responseObject->type);
@@ -29,8 +31,9 @@ it('matches assets', function () {
 
 it('matches default assets', function () {
     $file = 'flashload.js';
+    $blog = blog();
 
-    $pathMatcher = new PathMatcher($this->blog, "/assets/$file");
+    $pathMatcher = new PathMatcher($blog, "/assets/$file");
     $responseObject = $pathMatcher->getResponseObject();
 
     expect($responseObject->type)->toBe(DeliveryAPITypeEnum::FILE);
@@ -41,7 +44,9 @@ it('matches default assets', function () {
 it('does not match if asset is not found', function () {
     $file = 'missing.js';
 
-    $pathMatcher = new PathMatcher($this->blog, "/assets/$file");
+    $blog = blogWithLanguage();
+
+    $pathMatcher = new PathMatcher($blog, "/assets/$file");
     $responseObject = $pathMatcher->getResponseObject();
 
     expect($responseObject->status)->toBe(404);

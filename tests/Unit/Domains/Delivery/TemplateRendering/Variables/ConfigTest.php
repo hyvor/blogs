@@ -24,21 +24,23 @@ it('sets _config variable', function () {
 
     $rendered = "$name\n$nestedValue";
 
+    $blog = blogWithLanguageAndRoutes();
+
     ThemeFilesRepository::createOrUpdateFile(
-        $this->blog,
+        $blog,
         null,
         'config.yaml',
         $configYaml,
     );
 
     ThemeFilesRepository::createOrUpdateFile(
-        $this->blog,
+        $blog,
         ThemeFileFolderEnum::TEMPLATES,
         'index.twig',
         $content,
     );
 
-    $pathMatcher = new PathMatcher($this->blog, '/');
+    $pathMatcher = new PathMatcher($blog, '/');
     $responseObject = $pathMatcher->getResponseObject();
 
     expect($responseObject->type)->toBe(DeliveryAPITypeEnum::FILE);
@@ -48,14 +50,16 @@ it('sets _config variable', function () {
 it('returns 500 and error message when config.yaml is wrong', function () {
     $configYaml = '@invalid:yaml:is:here';
 
+    $blog = blogWithLanguageAndRoutes();
+
     ThemeFilesRepository::createOrUpdateFile(
-        $this->blog,
+        $blog,
         null,
         'config.yaml',
         $configYaml,
     );
 
-    $pathMatcher = new PathMatcher($this->blog, '/');
+    $pathMatcher = new PathMatcher($blog, '/');
     $responseObject = $pathMatcher->getResponseObject();
 
     expect($responseObject->type)->toBe(DeliveryAPITypeEnum::FILE);

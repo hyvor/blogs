@@ -7,14 +7,14 @@ use Database\Factories\SubscriptionFactory;
 use Illuminate\Testing\Fluent\AssertableJson;
 
 it('gets billing data', function () {
-    $blog = blog();
+    $blog = blogWithAccess();
 
     // 3 subscriptions
     (SubscriptionFactory::new())->count(3)->create([
         'blog_id' => $blog->id,
     ]);
 
-    $this->callConsoleApi('GET', '/billing')
+    consoleApi($blog, 'GET', '/billing')
         ->assertOk()
         ->assertJson(function (AssertableJson $json) {
             $json

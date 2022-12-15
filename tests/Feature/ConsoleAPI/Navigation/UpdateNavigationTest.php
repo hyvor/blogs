@@ -10,11 +10,12 @@ use Illuminate\Testing\Fluent\AssertableJson;
 it('updates a navigation', function () {
     Event::fake();
 
-    $navigation = Navigation::factory()->create(['blog_id' => blog()]);
+    $blog = blogWithAccess();
+    $navigation = Navigation::factory()->create(['blog_id' => $blog]);
 
     $url = 'https://example.com/or';
     $type = 'footer';
-    $this->callConsoleApi('PUT', "/navigation/$navigation->id", [
+    consoleApi($blog, 'PUT', "/navigation/$navigation->id", [
         'url' => $url,
         'type' => $type,
     ])

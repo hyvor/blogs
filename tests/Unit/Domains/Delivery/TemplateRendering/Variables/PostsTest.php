@@ -16,16 +16,18 @@ it('does not set _posts and _pagination when posts_filter is null in the route',
         {% endif %}
     ';
 
+    $blog = blogWithLanguageAndRoutes();
+
     ThemeFilesRepository::createOrUpdateFile(
-        $this->blog,
+        $blog,
         ThemeFileFolderEnum::TEMPLATES,
         'post.twig',
         $content,
     );
 
-    $post = aPublishedPost();
+    $post = addPublishedPost($blog);
 
-    $pathMatcher = new PathMatcher($this->blog, '/'.$post->slug);
+    $pathMatcher = new PathMatcher($blog, '/'.$post->slug);
     $responseObject = $pathMatcher->getResponseObject();
 
     expect($responseObject->content)->toContain('posts variable not defined');
@@ -33,101 +35,105 @@ it('does not set _posts and _pagination when posts_filter is null in the route',
 });
 
 it('sets _posts and _pagination', function () {
-    clearPosts();
-    seedPublishedPosts(15);
 
     $content = '{{ _posts | length }}|{{ _pagination.page }}|{{ _pagination.total }}';
 
+    $blog = blogWithLanguageAndRoutes();
+    addPosts($blog, 15, [], ['status' => 'published']);
+
     ThemeFilesRepository::createOrUpdateFile(
-        $this->blog,
+        $blog,
         ThemeFileFolderEnum::TEMPLATES,
         'index.twig',
         $content,
     );
 
-    $pathMatcher = new PathMatcher($this->blog, '/');
+    $pathMatcher = new PathMatcher($blog, '/');
     $responseObject = $pathMatcher->getResponseObject();
 
     expect($responseObject->content)->toBe('10|1|15');
 });
 
 it('works with page number', function () {
-    clearPosts();
-    seedPublishedPosts(25);
 
     $content = '{{ _posts | length }}|{{ _pagination.page }}|{{ _pagination.total }}';
 
+    $blog = blogWithLanguageAndRoutes();
+    addPosts($blog, 15, [], ['status' => 'published']);
+
     ThemeFilesRepository::createOrUpdateFile(
-        $this->blog,
+        $blog,
         ThemeFileFolderEnum::TEMPLATES,
         'index.twig',
         $content,
     );
 
-    $pathMatcher = new PathMatcher($this->blog, '/page/2');
+    $pathMatcher = new PathMatcher($blog, '/page/2');
     $responseObject = $pathMatcher->getResponseObject();
 
-    expect($responseObject->content)->toBe('10|2|25');
+    expect($responseObject->content)->toBe('5|2|15');
 });
 
 it('changes limit based on POSTS_PER_PAGINATION config', function () {
-    clearPosts();
-    seedPublishedPosts(15);
 
     $content = '{{ _posts | length }}|{{ _pagination.page }}|{{ _pagination.total }}';
 
+    $blog = blogWithLanguageAndRoutes();
+    addPosts($blog, 15, [], ['status' => 'published']);
+
     ThemeFilesRepository::createOrUpdateFile(
-        $this->blog,
+        $blog,
         ThemeFileFolderEnum::TEMPLATES,
         'index.twig',
         $content,
     );
 
     ThemeFilesRepository::createOrUpdateFile(
-        $this->blog,
+        $blog,
         null,
         'config.yaml',
         'POSTS_PER_PAGINATION: 5',
     );
 
-    $pathMatcher = new PathMatcher($this->blog, '/');
+    $pathMatcher = new PathMatcher($blog, '/');
     $responseObject = $pathMatcher->getResponseObject();
 
     expect($responseObject->content)->toBe('5|1|15');
 });
 
 it('returns 404 when posts are not found for the page number', function () {
-    clearPosts();
-    seedPublishedPosts(15);
-
     $content = '{{ _posts | length }}';
 
+    $blog = blogWithLanguageAndRoutes();
+    addPosts($blog, 15, [], ['status' => 'published']);
+
     ThemeFilesRepository::createOrUpdateFile(
-        $this->blog,
+        $blog,
         ThemeFileFolderEnum::TEMPLATES,
         'index.twig',
         $content,
     );
 
-    $pathMatcher = new PathMatcher($this->blog, '/page/3');
+    $pathMatcher = new PathMatcher($blog, '/page/3');
     $responseObject = $pathMatcher->getResponseObject();
 
     expect($responseObject->status)->toBe(404);
 });
 
 it('does not return 404 for the first page even posts are not found', function () {
-    clearPosts();
 
     $content = '{{ _posts | length }}';
 
+    $blog = blogWithLanguageAndRoutes();
+
     ThemeFilesRepository::createOrUpdateFile(
-        $this->blog,
+        $blog,
         ThemeFileFolderEnum::TEMPLATES,
         'index.twig',
         $content,
     );
 
-    $pathMatcher = new PathMatcher($this->blog, '/');
+    $pathMatcher = new PathMatcher($blog, '/');
     $responseObject = $pathMatcher->getResponseObject();
 
     expect($responseObject->status)->toBe(200);
@@ -135,23 +141,23 @@ it('does not return 404 for the first page even posts are not found', function (
 });
 
 it('sets featured posts first in _post', function () {
-    clearPosts();
 
-    seedPublishedPosts(3);
+    $blog = blogWithLanguageAndRoutes();
+    addPosts($blog, 3, [], ['status' => 'published']);
 
-    $post = $this->blog->posts[2];
+    $post = $blog->posts[2];
     $post->update(['is_featured' => true]);
 
     $content = '{% if _posts[0].is_featured %}featured{% endif %}';
 
     ThemeFilesRepository::createOrUpdateFile(
-        $this->blog,
+        $blog,
         ThemeFileFolderEnum::TEMPLATES,
         'index.twig',
         $content,
     );
 
-    $pathMatcher = new PathMatcher($this->blog, '/');
+    $pathMatcher = new PathMatcher($blog, '/');
     $responseObject = $pathMatcher->getResponseObject();
 
     expect($responseObject->content)->toBe('featured');
