@@ -6,18 +6,18 @@ use App\Http\Controllers\DataApi\PostsController;
 use App\Models\Blog;
 
 it('returns the correct language', function () {
-    $blog = Blog::find(config('test.blog_id'));
+    $blog = blog();
 
-    $en = $blog->languages[0];
-    $fr = $blog->languages[1];
+    $en = addPrimaryLanguage($blog);
+    $fr = addLanguage($blog);
 
-    $this->assertEquals($en, Helper::getLanguage($blog, 'en'));
-    $this->assertEquals($en, Helper::getLanguage($blog, null));
-    $this->assertEquals($fr, Helper::getLanguage($blog, 'fr'));
+    expect(Helper::getLanguage($blog, $en->code)->code)->toBe($en->code);
+    expect(Helper::getLanguage($blog, $fr->code)->code)->toBe($fr->code);
+    expect(Helper::getLanguage($blog, null)->code)->toBe($en->code);
 });
 
 it('throws an error if language is not found', function () {
-    $blog = Blog::find(config('test.blog_id'));
+    $blog = blog();
 
     $this->expectException(TrustedException::class);
 

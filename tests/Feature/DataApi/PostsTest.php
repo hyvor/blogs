@@ -12,25 +12,36 @@ use Illuminate\Support\Facades\DB;
 use Illuminate\Testing\Fluent\AssertableJson;
 
 beforeEach(function () {
-    // published all posts
-    DB::statement('UPDATE post_variants SET status = "published"');
+
+    $blog = blog();
+
+    $this->primaryLanguage = addPrimaryLanguage($blog);
+    $this->secondaryLanguage = addLanguage($blog);
+
+    addDefaultRoutes($blog);
+
+    $this->posts = addPosts($blog, 4, [], ['status' => 'published']);
+    $this->pages = addPosts($blog, 3, ['is_page' => true], ['status' => 'published']);
+
+    $this->blog = $blog;
+
 });
 
 it('fetches posts without params', function () {
-    $this
-        ->callDataApi('/posts')
+    dataApi($this->blog, '/posts')
         ->assertOk()
         ->assertJson(function (AssertableJson $json) {
             $json
+                ->count('data', 4)
                 ->has('data')
-                ->has('data.0', fn (AssertableJson $json) => $json->where('language.code', 'en')->etc())
+                ->has('data.0', fn (AssertableJson $json) =>
+                    $json->where('language.code', $this->primaryLanguage->code)->etc())
                 ->has('pagination');
         });
 });
 
 it('fetches pages', function () {
-    $this
-        ->callDataApi('/posts', [
+    dataApi($this->blog, '/posts', [
             'limit' => 2,
             'pages' => true,
         ])
@@ -43,27 +54,26 @@ it('fetches pages', function () {
 });
 
 it('works with language', function () {
-    $this
-        ->callDataApi('/posts', [
-            'language' => 'fr',
+    dataApi($this->blog, '/posts', [
+            'language' => $this->secondaryLanguage->code,
         ])
         ->assertOk()
         ->assertJson(function (AssertableJson $json) {
             $json->has('data')
-                ->has('data.0', fn (AssertableJson $json) => $json->where('language.code', 'fr')->etc())
+                ->has('data.0', fn (AssertableJson $json) =>
+                    $json->where('language.code', $this->secondaryLanguage->code)->etc())
                 ->has('pagination');
         });
 });
 
 it('does not work with wrong language', function () {
-    $this->callDataApi('/posts', [
+    dataApi($this->blog, '/posts', [
         'language' => 'jp',
     ])->assertUnprocessable();
 });
 
 it('gives correct limit', function () {
-    $this
-        ->callDataApi('/posts', [
+    dataApi($this->blog, '/posts', [
             'limit' => 3,
         ])
         ->assertOk()
@@ -74,34 +84,17 @@ it('gives correct limit', function () {
 });
 
 it('gives correct page for pagination', function () {
-    $blog = Blog::find(config('test.blog_id'));
-    $blog->posts->map(fn ($post) => $post->variants()->delete());
-    $blog->posts()->delete();
-    Post::where('blog_id', config('test.blog_id'))->delete();
 
-    // now add 3
-    $posts = Post::factory()->count(3)
-        ->has(
-            PostVariant::factory()
-            ->count(1)
-            ->state([
-                'language_id' => $blog->languages[0],
-                'status' => 'published',
-            ]),
-            'variants'
-        )
-        ->create(['blog_id' => $blog]);
-
-    $response = $this->callDataApi('/posts', [
+    $response = dataApi($this->blog, '/posts', [
         'limit' => 2,
         'page' => 2,
         'sort' => 'id ASC',
-    ], $blog->subdomain);
+    ]);
 
     $response->assertOk()
-        ->assertJson(function (AssertableJson $json) use ($posts) {
-            $json->has('data.0', function (AssertableJson $json) use ($posts) {
-                $json->where('id', $posts[2]->id)
+        ->assertJson(function (AssertableJson $json) {
+            $json->has('data.0', function (AssertableJson $json) {
+                $json->where('id', $this->posts[2]->id)
                     ->etc();
             })
                 ->etc();
@@ -109,31 +102,31 @@ it('gives correct page for pagination', function () {
 });
 
 it('does not work for invalid limit', function () {
-    $this->callDataApi('/posts', [
+    dataApi($this->blog, '/posts', [
         'limit' => 0,
     ])->assertUnprocessable();
 });
 
 it('does not work for invalid page', function () {
-    $this->callDataApi('/posts', [
+    dataApi($this->blog, '/posts', [
         'page' => -1,
     ])->assertUnprocessable();
 });
 
 it('does not work for invalid sort', function () {
-    $this->callDataApi('/posts', [
+    dataApi($this->blog, '/posts', [
         'sort' => 'something_invalid',
     ])->assertUnprocessable();
 });
 
 it('does not work for invalid sort method', function () {
-    $this->callDataApi('/posts', [
+    dataApi($this->blog, '/posts', [
         'sort' => 'published_at SOME',
     ])->assertUnprocessable();
 });
 
 it('sorts by published_at DESC correctly', function () {
-    $response = $this->callDataApi('/posts', [
+    $response = dataApi($this->blog, '/posts', [
         'sort' => 'published_at',
         'limit' => 3,
     ])->json();
@@ -145,7 +138,7 @@ it('sorts by published_at DESC correctly', function () {
 });
 
 it('sorts by published_at ASC correctly', function () {
-    $response = $this->callDataApi('/posts', [
+    $response = dataApi($this->blog, '/posts', [
         'sort' => 'published_at ASC',
         'limit' => 3,
     ])->json();
@@ -157,7 +150,7 @@ it('sorts by published_at ASC correctly', function () {
 });
 
 it('sorts by created_at DESC correctly', function () {
-    $response = $this->callDataApi('/posts', [
+    $response = dataApi($this->blog, '/posts', [
         'sort' => 'created_at',
         'limit' => 3,
     ])->json();
@@ -169,7 +162,7 @@ it('sorts by created_at DESC correctly', function () {
 });
 
 it('sorts by updated_at ASC correctly', function () {
-    $response = $this->callDataApi('/posts', [
+    $response = dataApi($this->blog, '/posts', [
         'sort' => 'updated_at ASC',
         'limit' => 3,
     ])->json();
@@ -181,7 +174,7 @@ it('sorts by updated_at ASC correctly', function () {
 });
 
 it('sorts by id DESC correctly', function () {
-    $response = $this->callDataApi('/posts', [
+    $response = dataApi($this->blog, '/posts', [
         'sort' => 'id',
         'limit' => 3,
     ])->json();
@@ -194,12 +187,11 @@ it('sorts by id DESC correctly', function () {
 
 it('sorts by is_featured DESC correctly', function () {
 
-    // Posts added in the Seeder are not featured
-    $post = getAPost();
+    $post = $this->posts->random();
     $post->is_featured = true;
     $post->save();
 
-    $response = $this->callDataApi('/posts', [
+    $response = dataApi($this->blog, '/posts', [
         'sort' => 'is_featured DESC',
         'limit' => 3,
     ])->json();
@@ -208,7 +200,7 @@ it('sorts by is_featured DESC correctly', function () {
 });
 
 it('sorts by title DESC correctly', function () {
-    $response = $this->callDataApi('/posts', [
+    $response = dataApi($this->blog, '/posts', [
         'sort' => 'title DESC',
         'limit' => 3,
     ])->json();
@@ -220,7 +212,7 @@ it('sorts by title DESC correctly', function () {
 });
 
 it('sorts by words DESC correctly', function () {
-    $response = $this->callDataApi('/posts', [
+    $response = dataApi($this->blog, '/posts', [
         'sort' => 'words DESC',
         'limit' => 3,
     ])->json();
@@ -232,7 +224,7 @@ it('sorts by words DESC correctly', function () {
 });
 
 it('correctly filters by defined keys', function () {
-    $response = $this->callDataApi('/posts', [
+    $response = dataApi($this->blog, '/posts', [
         'keys' => 'id',
         'limit' => 3,
     ]);
@@ -246,10 +238,9 @@ it('correctly filters by defined keys', function () {
 });
 
 it('filters posts by id', function () {
-    $post = getAPost();
+    $post = $this->posts->random();
 
-    $this
-        ->callDataApi('/posts', [
+    dataApi($this->blog, '/posts', [
             'filter' => "id=$post->id",
         ])
         ->assertJsonPath('data.0.id', $post->id)
@@ -259,10 +250,10 @@ it('filters posts by id', function () {
 it('filters by published_at', function () {
     $time = new Carbon('yesterday');
 
-    $post = getAPost();
+    $post = $this->posts->random();
     $post->update(['published_at' => $time]);
 
-    $this->callDataApi('/posts', [
+    dataApi($this->blog, '/posts', [
         'filter' => 'published_at=yesterday',
     ])->assertJsonPath('data.0.published_at', $time->timestamp);
 });
@@ -271,10 +262,10 @@ it('filters by created_at', function () {
     $time = new Carbon('-7 days');
     $timeString = $time->toDateTimeString();
 
-    $post = getAPost();
+    $post = $this->posts->random();
     $post->update(['created_at' => $time]);
 
-    $this->callDataApi('/posts', [
+    dataApi($this->blog, '/posts', [
         'filter' => "created_at='$timeString'",
     ])->assertJsonPath('data.0.created_at', $time->timestamp);
 });
@@ -283,23 +274,23 @@ it('filters by updated_at', function () {
     $time = new Carbon('-14 days');
     $timeString = $time->toDateTimeString();
 
-    $post = getAPost();
+    $post = $this->posts->random();
     $post->variants->map(function ($v) use ($timeString) {
         $v->updated_at = $timeString;
         $v->timestamps = false;
         $v->save();
     });
 
-    $this->callDataApi('/posts', [
+    dataApi($this->blog, '/posts', [
         'filter' => "updated_at='$timeString'",
     ])->assertJsonPath('data.0.updated_at', $time->timestamp);
 });
 
 it('filters_by_is_featured', function () {
-    $post = getAPost();
+    $post = $this->posts->random();
     $post->update(['is_featured' => true]);
 
-    $response = $this->callDataApi('/posts', [
+    $response = dataApi($this->blog, '/posts', [
         'filter' => 'is_featured=true',
     ]);
     $response
@@ -308,10 +299,10 @@ it('filters_by_is_featured', function () {
 });
 
 it('filters by slug', function () {
-    $post = getAPost();
+    $post = $this->posts->random();
     $post->update(['slug' => 'some-new-slug']);
 
-    $response = $this->callDataApi('/posts', [
+    $response = dataApi($this->blog, '/posts', [
         'filter' => "slug=$post->slug",
     ]);
     $response
@@ -320,17 +311,17 @@ it('filters by slug', function () {
 });
 
 it('filters by featured image', function () {
-    $post = getAPost();
+    $post = $this->posts->random();
     $post->update(['featured_image_url' => 'some-new-url']);
 
-    $response = $this->callDataApi('/posts', [
+    $response = dataApi($this->blog, '/posts', [
         'filter' => 'featured_image_url!=null',
     ]);
     $response->assertJsonPath('data.0.id', $post->id);
 });
 
 it('filters by canonical url', function () {
-    $response = $this->callDataApi('/posts', [
+    $response = dataApi($this->blog, '/posts', [
         'filter' => 'canonical_url=null',
     ]);
     $response->assertJsonPath('data.0.canonical_url', null);
@@ -339,10 +330,10 @@ it('filters by canonical url', function () {
 it('filters by words', function () {
 
     // make sure there's at least one post with 20+ words
-    $post = getAPost();
+    $post = $this->posts->random();
     $post->variants()->update(['words' => 21]);
 
-    $response = $this->callDataApi('/posts', [
+    $response = dataApi($this->blog, '/posts', [
         'filter' => 'words>20',
     ]);
     $response->assertJson(function ($json) {
@@ -355,14 +346,11 @@ it('filters by words', function () {
 
 it('filters by tag ID', function () {
 
-    // ensure tag
-    $blog = Blog::find(config('test.blog_id'));
-    $tag = $blog->tags[0];
-    $post = getAPost();
-    PostTag::where('post_id', $post->id)->delete();
-    PostTag::updateOrCreate(['post_id' => $post->id, 'tag_id' => $tag->id]);
+    $tag = addTag($this->blog);
+    $post = $this->posts->random();
+    addTagToPost($post, $tag);
 
-    $response = $this->callDataApi('/posts', [
+    $response = dataApi($this->blog, '/posts', [
         'filter' => "tag.id=$tag->id",
     ]);
 
@@ -371,14 +359,11 @@ it('filters by tag ID', function () {
 
 it('filters by tag slug', function () {
 
-    // ensure tag
-    $blog = Blog::find(config('test.blog_id'));
-    $tag = $blog->tags[0];
-    $post = getAPost();
-    PostTag::where('post_id', $post->id)->delete();
-    PostTag::create(['post_id' => $post->id, 'tag_id' => $tag->id]);
+    $tag = addTag($this->blog);
+    $post = $this->posts->random();
+    addTagToPost($post, $tag);
 
-    $response = $this->callDataApi('/posts', [
+    $response = dataApi($this->blog, '/posts', [
         'filter' => "tag.slug='$tag->slug'",
     ]);
     $response->assertJsonPath('data.0.tags.0.slug', $tag->slug);
@@ -386,15 +371,11 @@ it('filters by tag slug', function () {
 
 it('filters by author ID', function () {
 
-    // ensure author
-    $blog = Blog::find(config('test.blog_id'));
-    $user = $blog->users[0];
-    $post = getAPost();
+    $post = $this->posts->random();
+    $user = addUser($this->blog);
+    addAuthorToPost($post, $user);
 
-    PostAuthor::where('post_id', $post->id)->delete();
-    PostAuthor::create(['post_id' => $post->id, 'user_id' => $user->id]);
-
-    $response = $this->callDataApi('/posts', [
+    $response = dataApi($this->blog, '/posts', [
         'filter' => "author.id=$user->id",
     ]);
     $response->assertJsonPath('data.0.authors.0.id', $user->id);
@@ -403,26 +384,12 @@ it('filters by author ID', function () {
 
 it('filters by author slug', function () {
 
-    // ensure author
-    $blog = Blog::find(config('test.blog_id'));
-    $user = $blog->users[0];
-    $post = getAPost();
+    $post = $this->posts->random();
+    $user = addUser($this->blog);
+    addAuthorToPost($post, $user);
 
-    PostAuthor::where('post_id', $post->id)->delete();
-    PostAuthor::create(['post_id' => $post->id, 'user_id' => $user->id]);
-
-    $response = $this->callDataApi('/posts', [
+    $response = dataApi($this->blog, '/posts', [
         'filter' => "author.slug='$user->slug'",
     ]);
     $response->assertJsonPath('data.0.authors.0.slug', $user->slug);
 });
-
-// helper
-function getAPost()
-{
-    $post = Post::where('blog_id', config('test.blog_id'))->where('is_page', false)->first();
-    // make sure to publish the variants
-    $post->variants->map(fn ($v) => $v->update(['status' => 'published']));
-
-    return $post;
-}

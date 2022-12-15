@@ -6,8 +6,6 @@ use App\Data\Objects\DataAPI\AuthorObject;
 use App\Models\Blog;
 use App\Models\Language;
 use App\Models\User;
-use App\Models\UserVariant;
-use Illuminate\Database\Eloquent\Factories\Sequence;
 use Illuminate\Testing\Fluent\AssertableJson;
 
 function getAuthorObjectArray(User $user, Blog $blog, Language $language)
@@ -16,30 +14,26 @@ function getAuthorObjectArray(User $user, Blog $blog, Language $language)
 }
 
 beforeEach(function () {
-    $user = User::factory()
-        ->has(
-            UserVariant::factory()
-                ->count(2)
-                ->state(new Sequence(
-                    ['language_id' => $this->blog->languages[0]],
-                    ['language_id' => $this->blog->languages[1]]
-                )),
-            'variants'
-        )->create([
-            'blog_id' => $this->blog,
-            'hyvor_user_id' => rand(100, 200),
-            'posts_count' => 2,
-        ]);
 
-    $this->author = User::find($user->id);
+    $this->blog = blog();
+    $this->lang1 = addPrimaryLanguage($this->blog);
+    $this->lang2 = addLanguage($this->blog);
 
-    $this->authorEn = getAuthorObjectArray($user, $this->blog, $this->blog->languages[0]);
-    $this->authorFr = getAuthorObjectArray($user, $this->blog, $this->blog->languages[1]);
+    addDefaultRoutes($this->blog);
+
+    $this->author = addUsers(
+        $this->blog,
+        1,
+        fn() => ['posts_count' => 2]
+    )[0];
+
+    $this->authorEn = getAuthorObjectArray($this->author, $this->blog, $this->lang1);
+    $this->authorFr = getAuthorObjectArray($this->author, $this->blog, $this->lang2);
+
 });
 
 it('fetches an author by id', function () {
-    $this
-        ->callDataApi('/author', [
+    dataApi($this->blog, '/author', [
             'id' => $this->author->id,
         ])
         ->assertOk()
@@ -47,8 +41,7 @@ it('fetches an author by id', function () {
 });
 
 it('fetches a author by slug', function () {
-    $this
-        ->callDataApi('/author', [
+    dataApi($this->blog, '/author', [
             'slug' => $this->author->slug,
         ])
         ->assertOk()
@@ -57,32 +50,28 @@ it('fetches a author by slug', function () {
 it('does not fetch user when posts count is zero', function () {
     $this->author->update(['posts_count' => 0]);
 
-    $this
-        ->callDataApi('/author', [
+    dataApi($this->blog, '/author', [
             'id' => $this->author->id,
         ])
         ->assertUnprocessable();
 });
 
 it('requires validates ID', function () {
-    $this
-        ->callDataApi('/author', [
+    dataApi($this->blog, '/author', [
             'id' => 'oh, hi!',
         ])
         ->assertUnprocessable();
 });
 
 it('requires validates slug', function () {
-    $this
-        ->callDataApi('/author', [
+    dataApi($this->blog,'/author', [
             'slug' => true,
         ])
         ->assertUnprocessable();
 });
 
 it('fetches tag by id and language', function () {
-    $this
-        ->callDataApi('/author', [
+    dataApi($this->blog, '/author', [
             'id' => $this->author->id,
             'language' => $this->blog->languages[1]->code,
         ])
@@ -91,8 +80,7 @@ it('fetches tag by id and language', function () {
 });
 
 it('requires a valid language (type)', function () {
-    $this
-        ->callDataApi('/author', [
+    dataApi($this->blog, '/author', [
             'id' => $this->author->id,
             'language' => true,
         ])
@@ -100,16 +88,14 @@ it('requires a valid language (type)', function () {
 });
 
 it('returns 404 if tag is not found', function () {
-    $this
-        ->callDataApi('/author', [
+    dataApi($this->blog, '/author', [
             'id' => $this->author->id + 1,
         ])
         ->assertNotFound();
 });
 
 it('filters keys', function () {
-    $this
-        ->callDataApi('/author', [
+    dataApi($this->blog, '/author', [
             'id' => $this->author->id,
             'keys' => 'id',
         ])

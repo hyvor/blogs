@@ -12,7 +12,7 @@ class LanguageFactory extends Factory
     {
         return [
             'blog_id' => Blog::factory(),
-            'code' => Str::random(2),
+            'code' => Str::random(3),
             'name' => $this->faker->word,
             'is_primary' => false,
         ];

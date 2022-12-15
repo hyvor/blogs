@@ -13,7 +13,7 @@ it('does not render blogs if embeddable is not set', function () {
 
 it('returns HTML response', function () {
     $blog = blog();
-    addPrimaryLanguage($blog);
+    addBlogVariants($blog, addPrimaryLanguage($blog));
     addRoute($blog, '/');
 
     addThemeTemplateFile($blog, <<<HTML

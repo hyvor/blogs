@@ -18,7 +18,7 @@ it('requires a valid  API key', function () {
 it('calls the delivery API', function () {
 
     $blog = blog();
-    addPrimaryLanguage($blog);
+    addBlogVariants($blog, addPrimaryLanguage($blog));
     addRoute($blog, '/');
     addThemeTemplateFile($blog, 'just testing');
 

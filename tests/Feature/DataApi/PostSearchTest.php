@@ -9,23 +9,25 @@ namespace Tests\Feature\DataAPI;
  * So, only statuses are checked
  */
 beforeEach(function () {
-    $post = blog()->posts()->where('is_page', false)->first();
-    $variants = $post->variants;
 
+    $this->blog = blog();
+    addPrimaryLanguage($this->blog);
+
+    $post = addPost($this->blog);
+    $variants = $post->variants;
     $variants[0]->update(['title' => 'English', 'status' => 'published']);
-    $variants[1]->update(['title' => 'French', 'status' => 'published']);
+
 });
 
 it('searches posts', function () {
-    $this
-        ->callDataApi('/posts/search', [
+    dataApi($this->blog, '/posts/search', [
             'search' => 'English',
         ])
         ->assertOk();
-});
+})->skip();
 
 it('does not work without search query', function () {
-    $this
-        ->callDataApi('/posts/search')
-        ->assertUnprocessable();
-});
+
+    dataApi('/posts/search')->assertUnprocessable();
+
+})->skip();

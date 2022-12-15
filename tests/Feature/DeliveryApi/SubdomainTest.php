@@ -9,7 +9,7 @@ use App\Models\Redirect;
 it('works with subdomain', function () {
 
     $blog = blog();
-    addPrimaryLanguage($blog);
+    addBlogVariants($blog, addPrimaryLanguage($blog));
     addRoute($blog, '/');
 
     $content = '<body>Testing</body>';

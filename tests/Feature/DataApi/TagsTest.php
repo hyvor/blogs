@@ -10,25 +10,14 @@ use Illuminate\Database\Eloquent\Factories\Sequence;
 use Illuminate\Testing\Fluent\AssertableJson;
 
 beforeEach(function () {
-    $blog = Blog::find(config('test.blog_id'));
+    $blog = blog();
 
-    $english = $blog->languages[0];
-    $french = $blog->languages[1];
+    addDefaultRoutes($blog);
 
-    $tags = Tag::factory()
-        ->count(50)
-        ->has(
-            TagVariant::factory()
-                ->count(2)
-                ->state(new Sequence(
-                    ['language_id' => $english],
-                    ['language_id' => $french]
-                )),
-            'variants'
-        )
-        ->create([
-            'blog_id' => $blog,
-        ]);
+    addPrimaryLanguage($blog);
+    addLanguage($blog);
+
+    $tags = addTags($blog, 4);
 
     $this->blog = $blog;
     $this->tags = $tags;
@@ -36,15 +25,14 @@ beforeEach(function () {
 });
 
 it('fetches tags without params', function () {
-    $this
-        ->callDataApi('/tags')
+    dataApi($this->blog, '/tags')
         ->assertOk()
         ->assertJson(function (AssertableJson $json) {
             $json
                 ->has(
                     'data',
-                    25,
-                    fn (AssertableJson $json) => $json->where('language.code', 'en')
+                    4,
+                    fn (AssertableJson $json) => $json->where('language.code', $this->blog->languages[0]->code)
                     ->etc()
                 )
                 ->has('pagination');
@@ -52,17 +40,16 @@ it('fetches tags without params', function () {
 });
 
 it('works with language', function () {
-    $this
-        ->callDataApi('/tags', [
-            'language' => 'fr',
+    dataApi($this->blog, '/tags', [
+            'language' => $this->blog->languages[1]->code,
         ])
         ->assertOk()
         ->assertJson(function (AssertableJson $json) {
             $json
                 ->has(
                     'data',
-                    25,
-                    fn (AssertableJson $json) => $json->where('language.code', 'fr')
+                    4,
+                    fn (AssertableJson $json) => $json->where('language.code', $this->blog->languages[1]->code)
                         ->etc()
                 )
                 ->has('pagination');
@@ -70,14 +57,13 @@ it('works with language', function () {
 });
 
 it('does not work with wrong language', function () {
-    $this->callDataApi('/tags', [
+    dataApi($this->blog, '/tags', [
         'language' => 'jp',
     ])->assertUnprocessable();
 });
 
 it('gives correct limit', function () {
-    $this
-        ->callDataApi('/tags', [
+    dataApi($this->blog, '/tags', [
             'limit' => 3,
         ])
         ->assertOk()
@@ -96,8 +82,7 @@ it('gives correct page for pagination', function () {
     $tags[0]->update(['posts_count' => 101]);
     $tags[1]->update(['posts_count' => 100]);
 
-    $this
-        ->callDataApi('/tags', [
+    dataApi($this->blog, '/tags', [
             'limit' => 1,
             'page' => 2,
         ])
@@ -110,31 +95,31 @@ it('gives correct page for pagination', function () {
 });
 
 it('does not work for invalid limit', function () {
-    $this->callDataApi('/tags', [
+    dataApi($this->blog, '/tags', [
         'limit' => 0,
     ])->assertUnprocessable();
 });
 
 it('does not work for invalid page', function () {
-    $this->callDataApi('/tags', [
+    dataApi($this->blog, '/tags', [
         'page' => -1,
     ])->assertUnprocessable();
 });
 
 it('does not work for invalid sort', function () {
-    $this->callDataApi('/tags', [
+    dataApi($this->blog, '/tags', [
         'sort' => 'something_invalid',
     ])->assertUnprocessable();
 });
 
 it('does not work for invalid sort method', function () {
-    $this->callDataApi('/tags', [
+    dataApi($this->blog, '/tags', [
         'sort' => 'published_at SOME',
     ])->assertUnprocessable();
 });
 
 it('sorts by posts_count DESC correctly', function () {
-    $response = $this->callDataApi('/tags', [
+    $response = dataApi($this->blog, '/tags', [
         'sort' => 'posts_count',
         'limit' => 3,
     ])->json();
@@ -146,7 +131,7 @@ it('sorts by posts_count DESC correctly', function () {
 });
 
 it('sorts by posts_count ASC correctly', function () {
-    $response = $this->callDataApi('/tags', [
+    $response = dataApi($this->blog, '/tags', [
         'sort' => 'posts_count ASC',
         'limit' => 3,
     ])->json();
@@ -158,7 +143,7 @@ it('sorts by posts_count ASC correctly', function () {
 });
 
 it('sorts by created_at DESC correctly', function () {
-    $response = $this->callDataApi('/tags', [
+    $response = dataApi($this->blog, '/tags', [
         'sort' => 'created_at',
         'limit' => 3,
     ])->json();
@@ -170,7 +155,7 @@ it('sorts by created_at DESC correctly', function () {
 });
 
 it('sorts by created_at ASC correctly', function () {
-    $response = $this->callDataApi('/tags', [
+    $response = dataApi($this->blog, '/tags', [
         'sort' => 'created_at ASC',
         'limit' => 3,
     ])->json();
@@ -182,7 +167,7 @@ it('sorts by created_at ASC correctly', function () {
 });
 
 it('filters keys', function () {
-    $response = $this->callDataApi('/tags', [
+    $response = dataApi($this->blog, '/tags', [
         'keys' => 'id',
         'limit' => 3,
     ]);
@@ -196,8 +181,7 @@ it('filters keys', function () {
 });
 
 it('filters by id', function () {
-    $this
-        ->callDataApi('/tags', [
+    dataApi($this->blog, '/tags', [
             'filter' => "id={$this->tag->id}",
         ])
         ->assertJsonPath('data.0.id', $this->tag->id)
@@ -205,8 +189,7 @@ it('filters by id', function () {
 });
 
 it('filters by slug', function () {
-    $this
-        ->callDataApi('/tags', [
+    dataApi($this->blog, '/tags', [
             'filter' => "slug='{$this->tag->slug}'",
         ])
         ->assertJsonPath('data.0.slug', $this->tag->slug)
@@ -218,8 +201,7 @@ it('filters by posts_count', function () {
         $tag->update(['posts_count' => rand(101, 200)]);
     });
 
-    $this
-        ->callDataApi('/tags', [
+    dataApi($this->blog, '/tags', [
             'filter' => 'posts_count>100',
         ])
         ->assertJsonCount(3, 'data');
@@ -229,7 +211,7 @@ it('filters by created_at', function () {
     $time = new Carbon('tomorrow');
     $this->tag->update(['created_at' => $time]);
 
-    $this->callDataApi('/tags', [
+    dataApi($this->blog, '/tags', [
         'filter' => 'created_at=tomorrow',
     ])->assertJsonPath('data.0.created_at', $time->timestamp);
 });
@@ -237,6 +219,6 @@ it('filters by created_at', function () {
 it('sends total correctly', function () {
     $count = Tag::where('blog_id', $this->blog->id)->count();
 
-    $this->callDataApi('/tags')
+    dataApi($this->blog, '/tags')
         ->assertJsonPath('pagination.total', $count);
 });

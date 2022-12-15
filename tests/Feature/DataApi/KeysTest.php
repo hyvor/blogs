@@ -7,8 +7,16 @@ use App\Http\Controllers\DataApi\KeysFilter;
 use App\Models\Post;
 
 beforeEach(function () {
-    $post = Post::first();
-    $this->obj = new PostObject($post, $post->blog, $post->blog->languages[0]);
+    $blog = blog();
+    addDefaultRoutes($blog);
+    $language = addPrimaryLanguage($blog);
+
+    $post = addPublishedPost($blog);
+
+    $tag = addTag($blog);
+    addTagToPost($post, $tag);
+
+    $this->obj = new PostObject($post, $blog, $language);
 });
 
 function j(array|object $obj): array

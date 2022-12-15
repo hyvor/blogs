@@ -12,7 +12,7 @@ it('works with custom domain', function () {
         'hosting_at' => 'domain',
         'hosting_domain' => 'hyvorblogscustom.test'
     ]);
-    addPrimaryLanguage($blog);
+    addBlogVariants($blog, addPrimaryLanguage($blog));
     addRoute($blog, '/');
 
     $content = '<body>{{ _blog.subdomain }}</body>';

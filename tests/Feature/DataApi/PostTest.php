@@ -16,24 +16,14 @@ function getPostObject(Post $post, Blog $blog, Language $language)
 }
 
 beforeEach(function () {
-    $this->blog = Blog::find(config('test.blog_id'));
+    $this->blog = blog();
 
-    $post = Post::factory()
-        ->has(
-            PostVariant::factory()
-                ->count(2)
-                ->state(new Sequence(
-                    ['language_id' => $this->blog->languages[0]],
-                    ['language_id' => $this->blog->languages[1]],
-                ))
-                ->state(function () {
-                    return ['status' => 'published'];
-                }),
-            'variants'
-        )
-        ->create([
-            'blog_id' => $this->blog,
-        ]);
+    addDefaultRoutes($this->blog);
+
+    addPrimaryLanguage($this->blog);
+    addLanguage($this->blog);
+
+    $post = addPublishedPost($this->blog);
 
     // re-fetch with relationships
     $this->post = Post::find($post->id);
@@ -43,8 +33,7 @@ beforeEach(function () {
 });
 
 it('works with post id', function () {
-    $this
-        ->callDataApi('/post', [
+    dataApi($this->blog, '/post', [
             'id' => $this->post->id,
         ])
         ->assertOk()
@@ -52,16 +41,14 @@ it('works with post id', function () {
 });
 
 it('requires an integer id', function () {
-    $this
-        ->callDataApi('/post', [
+    dataApi($this->blog, '/post', [
             'id' => 'something',
         ])
         ->assertUnprocessable();
 });
 
 it('works with post slug', function () {
-    $this
-        ->callDataApi('/post', [
+    dataApi($this->blog, '/post', [
             'slug' => $this->post->slug,
         ])
         ->assertOk()
@@ -69,8 +56,7 @@ it('works with post slug', function () {
 });
 
 it('works with id and lang', function () {
-    $this
-        ->callDataApi('/post', [
+    dataApi($this->blog, '/post', [
             'id' => $this->post->id,
             'language' => $this->blog->languages[1]->code,
         ])
@@ -79,16 +65,14 @@ it('works with id and lang', function () {
 });
 
 it('does not work with invalid language', function () {
-    $this
-        ->callDataApi('/post', [
+    dataApi($this->blog, '/post', [
             'id' => $this->post->id,
             'language' => 'jp',
         ])->assertUnprocessable();
 });
 
 it('returns 404 for missing posts', function () {
-    $this
-        ->callDataApi('/post', [
+    dataApi($this->blog, '/post', [
             'id' => $this->post->id + 1,
         ])
         ->assertNotFound();
@@ -101,8 +85,7 @@ it('returns 404 for missing variant', function () {
         ->where('language_id', $this->blog->languages[1]->id)
         ->delete();
 
-    $this
-        ->callDataApi('/post', [
+    dataApi($this->blog, '/post', [
             'id' => $this->post->id,
             'language' => $this->blog->languages[1]->code,
         ])
@@ -114,24 +97,21 @@ it('do not return unpublished posts', function () {
         ->where('language_id', $this->blog->languages[0]->id)
         ->update(['status' => 'draft']);
 
-    $this
-        ->callDataApi('/post', [
+    dataApi($this->blog, '/post', [
             'id' => $this->post->id,
         ])
         ->assertUnprocessable();
 });
 
 it('do not return posts when blog id is wrong', function () {
-    $this
-        ->callDataApi('/post', [
+    dataApi('not', '/post', [
             'id' => $this->post->id,
-        ], Blog::find(2)->subdomain)
+        ])
         ->assertNotFound();
 });
 
 it('filters keys', function () {
-    $this
-        ->callDataApi('/post', [
+    dataApi($this->blog, '/post', [
             'id' => $this->post->id,
             'keys' => 'id,slug',
         ])

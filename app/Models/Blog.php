@@ -124,7 +124,7 @@ class Blog extends Model
 
     public function languages()
     {
-        return $this->hasMany(Language::class);
+        return $this->hasMany(Language::class)->orderBy('id', 'ASC');
     }
 
     public function redirects()

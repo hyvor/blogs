@@ -5,25 +5,30 @@ namespace Tests\Feature\DataApi;
 use Illuminate\Testing\Fluent\AssertableJson;
 
 it('fetches blog', function () {
-    $this->callDataApi('/blog')
+
+    $blog = blog();
+    addBlogVariants($blog, addPrimaryLanguage($blog));
+
+    dataApi($blog, '/blog')
         ->assertOk()
         ->assertJson(function (AssertableJson $json) {
             $json->has('subdomain')
                ->has('name')
                ->etc();
         });
+
 });
 
 it('does not fetch invalid blogs', function () {
-    $this->callDataApi('/blog', [], 'tesing_other')
-        ->assertNotFound();
+    dataApi('testing-other', '/blog')->assertNotFound();
 });
 
 it('fetches blog with correct language', function () {
-    $variant = $this->blog->variants[1];
 
-    $this
-        ->callDataApi('/blog', [
+    $blog = blog();
+    $variant = addBlogVariants($blog, addPrimaryLanguage($blog))[0];
+
+    dataApi($blog, '/blog', [
             'language' => $variant->language->code,
         ])
         ->assertOk()
@@ -31,11 +36,15 @@ it('fetches blog with correct language', function () {
             $json->where('name', $variant->name)
                 ->etc();
         });
+
 });
 
 it('filters key', function () {
-    $this
-        ->callDataApi('/blog', [
+
+    $blog = blog();
+    addBlogVariants($blog, addPrimaryLanguage($blog));
+
+    dataApi($blog, '/blog', [
             'keys' => 'subdomain',
         ])
         ->assertOk()
@@ -43,4 +52,5 @@ it('filters key', function () {
             $json->has('subdomain')
                 ->missing('name');
         });
+
 });
