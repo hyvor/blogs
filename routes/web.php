@@ -7,6 +7,8 @@ if (App::environment('local')) {
     include 'local.php';
 }
 
+include 'blog.php';
+
 // main app
 Route::domain(config('blogs.domain_app'))->group(function () {
     include 'app/pages.php';

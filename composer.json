@@ -24,7 +24,6 @@
         "fruitcake/laravel-cors": "^2.0",
         "guzzlehttp/guzzle": "^7.0.1",
         "http-interop/http-factory-guzzle": "^1.2",
-        "hyvor/hyvor-blogs-laravel": "^0.0.2",
         "hyvor/laravel-filterq": "^1.0",
         "hyvor/laravel-hyvor-connecter": "^1.1.4",
         "hyvor/laravel-json-meta": "0.0.3",

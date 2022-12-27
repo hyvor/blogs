@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "c38c2bb8fa375a605c73f288c3e7cf98",
+    "content-hash": "51a9b74cb5bbfeaad24bced833c5a39f",
     "packages": [
         {
             "name": "asm89/stack-cors",
@@ -1517,61 +1517,6 @@
                 "source": "https://github.com/HughbertD/oauth2-unsplash/tree/master"
             },
             "time": "2017-12-14T13:08:42+00:00"
-        },
-        {
-            "name": "hyvor/hyvor-blogs-laravel",
-            "version": "0.0.2",
-            "source": {
-                "type": "git",
-                "url": "https://github.com/hyvor/hyvor-blogs-laravel.git",
-                "reference": "9629656d480d98699b68c6ed81cf4e53c28fd74e"
-            },
-            "dist": {
-                "type": "zip",
-                "url": "https://api.github.com/repos/hyvor/hyvor-blogs-laravel/zipball/9629656d480d98699b68c6ed81cf4e53c28fd74e",
-                "reference": "9629656d480d98699b68c6ed81cf4e53c28fd74e",
-                "shasum": ""
-            },
-            "require": {
-                "guzzlehttp/guzzle": "^7.4"
-            },
-            "require-dev": {
-                "laravel/pint": "^1.1",
-                "nunomaduro/larastan": "^2.1",
-                "orchestra/testbench": "^7.0",
-                "pestphp/pest": "^1.21",
-                "phpstan/phpstan": "^1.8",
-                "phpunit/phpunit": "^9.5"
-            },
-            "type": "library",
-            "extra": {
-                "laravel": {
-                    "providers": [
-                        "Hyvor\\HyvorBlogs\\HyvorBlogsServiceProvider"
-                    ]
-                }
-            },
-            "autoload": {
-                "psr-4": {
-                    "Hyvor\\HyvorBlogs\\": "src"
-                }
-            },
-            "notification-url": "https://packagist.org/downloads/",
-            "license": [
-                "MIT"
-            ],
-            "authors": [
-                {
-                    "name": "Supun",
-                    "email": "supun@hyvor.com"
-                }
-            ],
-            "description": "For self-hosting a Hyvor Blogs blog on a Laravel application",
-            "support": {
-                "issues": "https://github.com/hyvor/hyvor-blogs-laravel/issues",
-                "source": "https://github.com/hyvor/hyvor-blogs-laravel/tree/0.0.2"
-            },
-            "time": "2022-09-03T07:34:26+00:00"
         },
         {
             "name": "hyvor/laravel-filterq",
