@@ -5,6 +5,7 @@ use App\Data\Objects\DataAPI\BlogObject;
 use App\Domains\Blog\Fillers\LanguageFiller;
 use App\Domains\Delivery\Twig\TwigRenderer;
 use App\Domains\Media\MediaRepository;
+use App\Domains\Post\PostSearchRepository;
 use App\Models\Blog;
 use App\Models\BlogVariant;
 use App\Models\Media;
@@ -15,6 +16,7 @@ use Faker\Factory;
 use Hyvor\HyvorConnecter\HyvorUser;
 use Hyvor\HyvorConnecter\Userbase;
 use Illuminate\Support\Facades\Cache;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Http;
 use Illuminate\Support\Facades\Request;
 use Mockery\MockInterface;
@@ -24,6 +26,7 @@ use Tests\TestCase;
 uses(TestCase::class)->in('Feature', 'Unit');
 
 uses()->beforeEach(function () {
+
     $this->blog = Blog::find(config('test.blog_id'));
     $this->user = User::where('hyvor_user_id', config('test.hyvor_user_id'))->first();
 
@@ -40,71 +43,10 @@ uses()->beforeEach(function () {
         'https://iframe.ly/api/iframely*' => Http::response(jsonData('UrlData/iframely-response.json'))
     ]);
 
+    PostSearchRepository::setFilterableAttributes();
+    PostSearchRepository::setSearchableAttributes();
+
 })->in('Feature', 'Unit');
-
-/*function blog()
-{
-    return Blog::find(config('test.blog_id'));
-}*/
-
-/*function blog(BlogTypeEnum $type = BlogTypeEnum::DEFAULT)
-{
-    return Blog::factory()->has(
-        BlogVariant::factory(),
-        'variants'
-    )->create([
-        'type' => $type,
-    ]);
-}*/
-
-/*function post()
-{
-    return Post::factory()->create(['blog_id' => config('test.blog_id')]);
-}
-
-function postWithVariant($post = [], $variant = [])
-{
-    return Post::factory()
-    ->has(PostVariant::factory()->state($variant), 'variants')
-    ->create($post);
-}
-
-function aPublishedPost()
-{
-    $post = Post::where(['is_page' => false, 'blog_id' => config('test.blog_id')])->first();
-    $post->variants->map(fn ($variant) => $variant->update(['status' => 'published']));
-
-    return $post;
-}
-
-function seedPublishedPosts(int $count, Blog $blog = null, $isPage = false)
-{
-    $blog ??= blog();
-
-    return Post::factory()->count($count)
-        ->has(
-            PostVariant::factory()->state([
-                'status' => 'published',
-                'language_id' => $blog->languages()->where('is_primary', true)->first()->id,
-            ]),
-            'variants'
-        )->create([
-            'blog_id' => $blog,
-            'is_page' => $isPage,
-        ]);
-}
-
-function clearPosts(Blog $blog = null)
-{
-    $blog ??= blog();
-
-    Post::where('blog_id', $blog->id)->delete();
-}
-
-function hyvorUser($fill = [])
-{
-    return HyvorUser::dummy($fill);
-}*/
 
 function faker()
 {

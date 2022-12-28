@@ -12,6 +12,7 @@ beforeEach(function () {
 
     $this->blog = blog();
     addPrimaryLanguage($this->blog);
+    addDefaultRoutes($this->blog);
 
     $post = addPost($this->blog);
     $variants = $post->variants;
@@ -24,10 +25,10 @@ it('searches posts', function () {
             'search' => 'English',
         ])
         ->assertOk();
-})->skip();
+});
 
 it('does not work without search query', function () {
 
-    dataApi('/posts/search')->assertUnprocessable();
+    dataApi($this->blog, '/posts/search')->assertUnprocessable();
 
-})->skip();
+});

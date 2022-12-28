@@ -7,11 +7,12 @@ use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Foundation\Testing\TestCase as BaseTestCase;
 use Illuminate\Support\Facades\URL;
 use Illuminate\Testing\TestResponse;
+use Plannr\Laravel\FastRefreshDatabase\Traits\FastRefreshDatabase;
 
 abstract class TestCase extends BaseTestCase
 {
     use CreatesApplication;
-    use RefreshDatabase;
+    use FastRefreshDatabase;
 
     /**
      * Indicates whether the default seeder should run before each test.

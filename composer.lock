@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "51a9b74cb5bbfeaad24bced833c5a39f",
+    "content-hash": "10c1b0fddb95c7e5172bbc7715e1ef08",
     "packages": [
         {
             "name": "asm89/stack-cors",
@@ -11195,6 +11195,53 @@
                 }
             ],
             "time": "2022-06-19T12:14:25+00:00"
+        },
+        {
+            "name": "plannr/laravel-fast-refresh-database",
+            "version": "v0.0.3",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/PlannrCrm/laravel-fast-refresh-database.git",
+                "reference": "2d415d9f548bb17a39ae980840a0875337c74d75"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/PlannrCrm/laravel-fast-refresh-database/zipball/2d415d9f548bb17a39ae980840a0875337c74d75",
+                "reference": "2d415d9f548bb17a39ae980840a0875337c74d75",
+                "shasum": ""
+            },
+            "require": {
+                "php": "^8.1",
+                "symfony/process": "^5.0|^6.0"
+            },
+            "require-dev": {
+                "friendsofphp/php-cs-fixer": "^3.13",
+                "orchestra/testbench": "^7.17",
+                "pestphp/pest": "^1.22",
+                "symfony/var-dumper": "^6.2"
+            },
+            "type": "library",
+            "autoload": {
+                "psr-4": {
+                    "Plannr\\Laravel\\FastRefreshDatabase\\": "src/"
+                }
+            },
+            "notification-url": "https://packagist.org/downloads/",
+            "license": [
+                "MIT"
+            ],
+            "authors": [
+                {
+                    "name": "Sam Carré",
+                    "email": "29132017+Sammyjo20@users.noreply.github.com"
+                }
+            ],
+            "description": "Refresh your database faster than you've ever seen before 🚀",
+            "support": {
+                "issues": "https://github.com/PlannrCrm/laravel-fast-refresh-database/issues",
+                "source": "https://github.com/PlannrCrm/laravel-fast-refresh-database/tree/v0.0.3"
+            },
+            "time": "2022-12-23T13:24:11+00:00"
         },
         {
             "name": "psr/cache",
