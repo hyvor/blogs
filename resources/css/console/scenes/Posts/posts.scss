@@ -286,11 +286,17 @@
                 text-align: right;
             }
 
-            .saving {
+            .saver {
                 color: $color-text-light;
                 font-size: 12px;
                 margin-right: 10px;
             }
+
+            .not-saved {
+                position: relative;
+                cursor: pointer;
+            }
+
             .help {
                 margin-left:10px;
             }
