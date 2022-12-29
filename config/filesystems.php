@@ -44,13 +44,13 @@ return [
 
         's3' => [
             'driver' => 's3',
-            'key' => env('S3_ACCESS_KEY_ID'),
-            'secret' => env('S3_SECRET_ACCESS_KEY'),
+            'key' => env('S3_ACCESS_KEY_ID', 'minioadmin'),
+            'secret' => env('S3_SECRET_ACCESS_KEY', 'minioadmin'),
             'region' => env('S3_DEFAULT_REGION', 'us-west-2'),
-            'bucket' => env('S3_BUCKET'),
+            'bucket' => env('S3_BUCKET', 'blogs'),
             'url' => env('S3_URL'),
-            'endpoint' => env('S3_ENDPOINT'),
-            'use_path_style_endpoint' => env('S3_USE_PATH_STYLE_ENDPOINT', false),
+            'endpoint' => env('S3_ENDPOINT', 'http://127.0.0.1:9002'),
+            'use_path_style_endpoint' => env('S3_USE_PATH_STYLE_ENDPOINT', true),
         ],
 
     ],

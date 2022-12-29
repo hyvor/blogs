@@ -72,8 +72,9 @@ class MediaRepository
         return $media;
     }
 
-    public function uploadFromUrl(Blog $blog, string $url): Media
+    public function uploadFromUrl(Blog $blog, string $url, ?int $postId = null): Media
     {
+
         $response = Http::get($url);
 
         if (! $response->successful()) {
@@ -81,6 +82,11 @@ class MediaRepository
         }
 
         $file = $response->body();
+
+        // throw an exception if the file size is larger than 50MB
+        if (strlen($file) > config('limits.max_media_upload_size_kb') * 1024) {
+            throw new UploadException('File size is too large');
+        }
 
         if (! $file) {
             throw new UploadException();
@@ -96,6 +102,7 @@ class MediaRepository
 
         $media = Media::create([
             'blog_id' => $blog->id,
+            'post_id' => $postId,
             'name' => $fileName,
             'size' => $size,
             'original_name' => $fileName,

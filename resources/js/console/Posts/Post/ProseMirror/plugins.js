@@ -9,6 +9,7 @@ import tooltipPlugin from "./tooltip-plugin";
 import wordCountPlugin from "./wordcount-plugin";
 import slashPlugin from "./slash-plugin";
 import codemark from 'prosemirror-codemark';
+import pasteImagesPlugin from "./paste-images-plugin";
 
 export default function plugins(schema) {
 
@@ -26,6 +27,8 @@ export default function plugins(schema) {
         gapCursor(),
 
         history(),
+
+        pasteImagesPlugin(),
 
         // https://github.com/curvenote/prosemirror-codemark
         ...codemark({ markType: schema.marks.code })

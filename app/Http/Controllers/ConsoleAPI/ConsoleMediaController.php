@@ -9,6 +9,7 @@ use App\Domains\Media\Services\UnsplashService;
 use App\Http\Controllers\Controller;
 use App\Models\Blog;
 use App\Models\Media;
+use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 
 class ConsoleMediaController extends Controller
@@ -42,6 +43,23 @@ class ConsoleMediaController extends Controller
         $media = MediaRepository::upload($blog, $file, $postId);
 
         return response()->json(new MediaObject($media));
+    }
+
+    public function uploadFileFromUrl(Request $request, Blog $blog) : JsonResponse
+    {
+
+        $request->validate([
+            'url' => 'required|url',
+            'post_id' => 'integer|nullable'
+        ]);
+
+        $url = $request->string('url');
+        $postId = $request->has('post_id') ? $request->integer('post_id') : null;
+
+        $media = (new MediaRepository)->uploadFromUrl($blog, $url, $postId);
+
+        return response()->json(new MediaObject($media));
+
     }
 
     public static function deleteFile(Media $media)

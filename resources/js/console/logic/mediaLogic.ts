@@ -49,9 +49,19 @@ const mediaLogic = kea<mediaLogicType>([
         uploadImage: async ({file, onUpload}) => {
             var formData = new FormData();
             formData.append('file', file, file.name);
-            const media = await api.post(props.subdomain, '/media', formData);
+            const media = await api.post<Media>(props.subdomain, '/media', formData);
             onUpload(media);
-        }
+        },
+
+        uploadImageFromUrl: async ({url, postId = null, onUpload}) => {
+
+            const media = await api.post<Media>(props.subdomain, '/media/from-url', {
+                url,
+                post_id: postId
+            });
+
+            onUpload(media);
+        },
 
     })),
 

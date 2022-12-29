@@ -27,6 +27,17 @@
             }
         }
 
+        .blog-preview-view {
+
+            border-radius: 0;
+            box-shadow: none;
+
+            .navi .right {
+                display: none;
+            }
+
+        }
+
         .billing-view {
 
         }
