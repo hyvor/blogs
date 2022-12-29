@@ -9,7 +9,7 @@ export default function pasteImagesPlugin() {
 
     return new Plugin({
         props: {
-            transformPasted: (slice, view) => {
+            handlePaste: (view, e, slice) => {
 
                 const content = slice.content;
 
@@ -25,7 +25,6 @@ export default function pasteImagesPlugin() {
                     uploadAndReplaceImages(images, view);
                 }, 100);
 
-                return slice;
             }
         }
     });
