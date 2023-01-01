@@ -4,6 +4,7 @@ import userBlogsLogic from '../logic/userBlogsLogic'
 import { BoxArrowUpRight, Laptop, Phone, Tablet } from 'react-bootstrap-icons';
 import Loader from '../ReusableComponents/Loader';
 import getSubdomain from "../logic-helpers/subdomain";
+import BlogLink from "./BlogLink";
 
 export default function BlogPreview() {
 
@@ -22,10 +23,9 @@ export default function BlogPreview() {
     return <div className="box blog-preview-view">
         <div className="navi">
             <div className="left">
-                <a 
-                    href={ blog.blog.base_url }
-                    target="_blank"
-                >{ blog.blog.base_url.replace(/^https?:\/\//, '') } &nbsp;<BoxArrowUpRight /></a>
+                <BlogLink>
+                    { blog.blog.base_url.replace(/^https?:\/\//, '') } &nbsp;<BoxArrowUpRight />
+                </BlogLink>
             </div>
             <div className="right">
                 <span onClick={() => setType('laptop')} className={type == 'laptop' ? "active" : ""}><Laptop /></span>

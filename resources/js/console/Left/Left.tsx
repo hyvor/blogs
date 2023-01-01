@@ -6,6 +6,7 @@ import subdomainLogic from '../logic/subdomainLogic';
 import NavLink from '../ReusableComponents/NavLink';
 import userBlogsLogic from '../logic/userBlogsLogic';
 import {
+    BoxArrowUpRight,
     Chat, Coin,
     Exclamation,
     Files, Gear,
@@ -17,6 +18,7 @@ import dayjs from 'dayjs';
 import {appConfig} from "../helpers";
 import {router} from "kea-router";
 import UserPermissions from "../services/UserPermissions";
+import BlogLink from "../BlogPreview/BlogLink";
 
 export default function Left() {
 
@@ -56,7 +58,16 @@ export default function Left() {
         <div id="left-nav" className="box">
             <BlogsSelector />
 
-            <LeftLink path="" icon={<House />} name="Blog" />
+            <LeftLink
+                path=""
+                icon={<House />}
+                name="Blog"
+                extra={
+                    <span className="mark">
+                        <BlogLink><BoxArrowUpRight /></BlogLink>
+                    </span>
+                }
+            />
 
             <div className="left-divider"/>
 
@@ -117,7 +128,7 @@ function LeftLink({path, icon, name, extra = null, permission} : LeftLinkProps) 
         ref={ref}
         href={`/console/${subdomain}${path}`}
         exact={path === '' ? 1 : 0}
-        className={!perm ? "global-no-permissions" : ""}
+        className={"nav-link" + (!perm ? "global-no-permissions" : "")}
         data-attr={"main-nav-" + name.toLowerCase()}
     >{icon}<span className="name">{name}</span>{extra}</NavLink>
 }

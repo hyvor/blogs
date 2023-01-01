@@ -16,11 +16,13 @@
 }
 #left-nav {
     padding: 15px 0 30px;
-    a {
+
+    .nav-link {
         display: flex;
         padding: 12px 29px;
         cursor: pointer;
         border-left:3px solid transparent;
+        position: relative;
         &:hover {
             background-color: $color-hover;
         }
@@ -38,6 +40,7 @@
         .name {
             flex:1;
         }
+
         .mark {
             .trial-days-left {
                 display:inline-block;
@@ -60,6 +63,30 @@
                 border-radius: 50%;
                 background-color: $color-orange-light;
                 color: $color-orange-dark;
+            }
+            
+            .blog-link {
+                position: absolute;
+                top: 9px;
+                right: 30px;
+                display: inline-flex;
+                align-items:center;
+                justify-content: center;
+                width:24px;
+                height:24px;
+                border-radius: 50%;
+                &:hover {
+                    background-color: $color-accent-light;
+                    box-shadow: 0 0 4px rgba(0,0,0,0.05);
+                }
+                svg {
+                    margin: 0;
+                    width: 12px;
+                    height: 12px;
+                }
+                .popup-wrap {
+                    cursor: initial;
+                }
             }
         }
     }

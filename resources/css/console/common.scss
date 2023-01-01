@@ -1,6 +1,6 @@
 @import '../colors.scss';
 
-a.link {
+a.link, span.link {
     font-weight: 600;
     color: $color-accent;
     cursor: pointer;

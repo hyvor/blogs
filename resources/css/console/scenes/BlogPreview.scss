@@ -15,6 +15,9 @@
             flex: 1;
             font-size: 14px;
             font-weight: 600;
+            .blog-link {
+                cursor: pointer;
+            }
         }
         .right {
             span {
