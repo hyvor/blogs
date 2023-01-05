@@ -39,7 +39,7 @@ class UserBlogBlogObject
     public function __construct(Blog $blog)
     {
         $this->id = $blog->id;
-        $this->name = $blog->variants[0]->name;
+        $this->name = $blog->variants[0]->name ?? 'Unnamed';
         $this->subdomain = $blog->subdomain;
         $this->type = $blog->type;
         $this->billing_type = $blog->billing_type;

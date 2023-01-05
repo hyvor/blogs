@@ -15,7 +15,7 @@ class BlogObject
 {
     public string $subdomain;
 
-    public string $name;
+    public ?string $name;
 
     public ?string $description;
 
