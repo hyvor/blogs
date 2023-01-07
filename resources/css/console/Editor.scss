@@ -7,6 +7,49 @@ $prosemirror-selected-outline: 3px solid #299af3;
 
     font-weight: 400;
 
+    .pm-link-tooltip {
+        position:absolute;
+        background: #fff;
+        box-shadow: 0 0 20px 8px rgba(136, 108, 107, 0.11);
+        border-radius: 20px;
+        padding: 5px 10px;
+        margin-bottom: 10px;
+        z-index: 100;
+
+        a {
+            color: $color-link;
+            font-weight: 600;
+            font-size: 12px;
+            margin-left: 4px;
+            margin-right: 6px;
+            padding-right: 10px;
+            border-right: 1px solid $color-accent-light;
+        }
+
+        svg {width: 12px}
+
+        button {
+            cursor: pointer;
+            background: none;
+            border: none;
+            padding: 0 3px;
+            margin: 0;
+        }
+
+        input {
+            border: none;
+            &:focus {
+                outline: none;
+            }
+        }
+
+        .edit-closer {
+            padding: 1px 3px;
+            cursor: pointer;
+        }
+
+    }
+
     .pm-tooltip {
         position:absolute;
         background: #fff;
@@ -574,7 +617,7 @@ $prosemirror-selected-outline: 3px solid #299af3;
 
     a {
         text-decoration: underline;
-        color: #3f51b5;
+        color: $color-link;
     }
 
     img {

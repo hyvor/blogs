@@ -10,6 +10,7 @@ import wordCountPlugin from "./wordcount-plugin";
 import slashPlugin from "./slash-plugin";
 import codemark from 'prosemirror-codemark';
 import pasteImagesPlugin from "./paste-images-plugin";
+import linkPlugin from "./link-plugin";
 
 export default function plugins(schema) {
 
@@ -29,6 +30,7 @@ export default function plugins(schema) {
         history(),
 
         pasteImagesPlugin(),
+        linkPlugin(),
 
         // https://github.com/curvenote/prosemirror-codemark
         ...codemark({ markType: schema.marks.code })
