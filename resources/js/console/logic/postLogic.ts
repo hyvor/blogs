@@ -222,7 +222,9 @@ const postLogic = kea<postLogicType>([
             s => [s.post, s.postOriginal],
             (post, postOriginal) => {
                 const d = diff(postOriginal, post) as Partial<Post>
+
                 if (d.preview_id) delete d.preview_id;
+                if (d.updated_at) delete d.updated_at;
 
                 /**
                  * diff() function does not return correct diffs for arrays
@@ -238,12 +240,18 @@ const postLogic = kea<postLogicType>([
                         if (!variantOriginal)
                             continue;
 
-                        let variantDiff = diff(variantOriginal, variant) as PostVariant
+                        let variantDiff = diff(variantOriginal, variant) as Partial<PostVariant>
+
+                        if (variantDiff.url) delete variantDiff.url;
 
                         if (Object.keys(variantDiff).length > 0) {
                             variantDiff.language_id = variant.language_id;
-                            d.variants.push(variantDiff)
+                            d.variants.push(<PostVariant>variantDiff)
                         }
+                    }
+
+                    if (d.variants.length === 0) {
+                        delete d.variants;
                     }
 
                 }
