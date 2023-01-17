@@ -26,10 +26,13 @@ Are you ready to publish your newly built theme to our [themes list](/themes)? T
 * If the blog has a logo (`_blog.logo_url`), the logo should be shown in the header linking the logo to the blog homepage.
 * [Internationalized](themes-internationalization)
 * `<html lang="{{ _lang.code }}"` is added
-* All [blocks](writing#blocks) are styled properly.
+
 * Configurations are added for colors, fonts, etc.
 * Mobile responsive
 * Featured posts may have some unique UI in the index page (ex: a pinned/star icon)
+* Content Styles:
+  * All [blocks](writing#blocks) are styled properly. You can test this with the "Content Style" post in your DEV blog.
+  * Code blocks (`<pre><code>`) should have `tab-size: 4`
 
 
 ## Config
