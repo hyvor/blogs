@@ -49,7 +49,7 @@ return [
         ['routes', 'Routes'],
         ['embedding', 'Embedding'],
         // ['import', 'Import'],
-        // ['export', 'Export'],
+        ['export', 'Export'],
     ],
     'Self-Hosting (Subdirectory)' => [
         ['self-hosting', 'Self-Hosting Intro'],
