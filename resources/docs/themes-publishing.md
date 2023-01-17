@@ -12,6 +12,7 @@ Are you ready to publish your newly built theme to our [themes list](/themes)? T
   * tag.twig
   * author.twig
 * Supports multi-languages
+* All posts should have links to translated versions of them (if available). Ex: "This post is also available in..." or "Translations: ..."
 * Supports both light and dark color modes
 * Respects the blog's color mode settings
 * Pagination
@@ -20,6 +21,9 @@ Are you ready to publish your newly built theme to our [themes list](/themes)? T
   * `_foot`
   * `_comments`
   * `_newsletter`
+* `_comments` should only be added to posts, not pages.
+* `_comments` and `_newsletter` blocks should not be displayed if the value of each is empty.
+* If the blog has a logo (`_blog.logo_url`), the logo should be shown in the header linking the logo to the blog homepage.
 * [Internationalized](themes-internationalization)
 * `<html lang="{{ _lang.code }}"` is added
 * All [blocks](writing#blocks) are styled properly.
@@ -36,6 +40,8 @@ As explained in the [configurations](themes-config) page, the following configur
 THEME_NAME: my-theme
 THEME_VERSION: 1.0.0
 ```
+
+
 
 ## Versioning
 
