@@ -237,6 +237,9 @@ class Highlighter
         if ($this->annotations->hasError()) {
             $preClasses[] = 'has-annotation-error';
         }
+        if ($this->lineNumbers) {
+            $preClasses[] = 'has-line-numbers';
+        }
 
         $preClasses = implode(' ', $preClasses);
 
