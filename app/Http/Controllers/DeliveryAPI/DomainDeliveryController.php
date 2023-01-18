@@ -12,6 +12,10 @@ class DomainDeliveryController extends Controller
     public function handle(Request $request, Blog $blog)
     {
 
+        if ($blog->is_blocked) {
+            return redirect('https://blogs.hyvor.com');
+        }
+
         /**
          * We cannot use $request->path() because laravel has logic to remove trailing slash
          * We have to exactly know if there's a trailing slash or not

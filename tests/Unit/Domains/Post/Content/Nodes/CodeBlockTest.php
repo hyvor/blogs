@@ -33,7 +33,7 @@ test('json to HTML', function () {
 
     // <pre>
     $pre = $dom->firstChild;
-    $this->assertEquals('language-php', $pre->attributes->getNamedItem('class')->value);
+    $this->assertEquals('language-php has-line-numbers', $pre->attributes->getNamedItem('class')->value);
 
     // <code>
     $code = $pre->firstChild;
