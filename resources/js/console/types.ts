@@ -57,7 +57,9 @@ export interface BlogVariant {
 export interface Blog {
 
     id: number,
-    updated_at: number,
+    created_at: number,
+
+    is_blocked: boolean,
     subdomain: string,
     type: BlogType,
     hosting_at: BlogHostingAt,

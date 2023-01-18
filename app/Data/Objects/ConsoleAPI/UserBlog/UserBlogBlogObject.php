@@ -14,6 +14,8 @@ class UserBlogBlogObject
 {
     public int $id;
 
+    public bool $is_blocked;
+
     public string $name;
 
     public string $subdomain;
@@ -39,6 +41,7 @@ class UserBlogBlogObject
     public function __construct(Blog $blog)
     {
         $this->id = $blog->id;
+        $this->is_blocked = $blog->is_blocked;
         $this->name = $blog->variants[0]->name ?? 'Unnamed';
         $this->subdomain = $blog->subdomain;
         $this->type = $blog->type;

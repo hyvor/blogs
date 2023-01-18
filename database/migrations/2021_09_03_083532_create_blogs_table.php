@@ -17,6 +17,8 @@ class CreateBlogsTable extends Migration
             $table->id();
             $table->timestamps();
 
+            $table->boolean('is_blocked')->default(false);
+
             // connections
             $table->bigInteger('hyvor_user_id')->nullable(); // hyvor user id (owner)
             $table->bigInteger('theme_version_id')->nullable();
