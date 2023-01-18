@@ -20,6 +20,10 @@ jobs:
           with:
             node-version: 16
 
+      - name: Set up services
+        run: |
+          docker-compose up -d
+
       -   name: Setup PHP
           uses: shivammathur/setup-php@v2
           with:
@@ -37,10 +41,6 @@ jobs:
             npm run build
             composer config --global --auth http-basic.hyvor.repo.repman.io token ${REPMAN_TOKEN}
             composer install --ansi --no-progress
-
-      -  name: Set up services
-         run: |
-            docker-compose up -d
 
       -   name: Run tests
           run: composer test
