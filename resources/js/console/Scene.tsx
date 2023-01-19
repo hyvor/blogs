@@ -15,7 +15,7 @@ import blogLogic from "./logic/blogLogic"
 import Loader from "./ReusableComponents/Loader"
 import subdomainLogic from "./logic/subdomainLogic"
 import Comments from "./Comment/Comments"
-import {router} from "kea-router";
+import BlogBlocked from "./Views/BlogBlocked";
 
 export const scenes = {
     error404: () => <div>404</div>,
@@ -40,12 +40,12 @@ export default function Scene() {
 
     return <div>
         <Left />
-        <Middle><SceneComponent {...params} /></Middle>
+        <Middle scene={scene}><SceneComponent {...params} /></Middle>
     </div>
 
 }
 
-function Middle({ children } : {children: ReactNode}) {
+function Middle({ children, scene } : {children: ReactNode, scene: string}) {
 
     // load blog data
 
@@ -55,14 +55,22 @@ function Middle({ children } : {children: ReactNode}) {
         return <div id="middle">{ children }</div>
     }
 
-    const { loadAjax } = useValues(blogLogic({subdomain}))
+    const { loadAjax, blog } = useValues(blogLogic({subdomain}))
 
-    return <div id="middle">{
-        loadAjax.status === 'loading' ?
-        <div className="posts-not-ready box">
-            <Loader size={40} />
-        </div> :
-        children
-    }</div>
+    return <div id="middle">
+        {
+            loadAjax.status === 'loading' ?
+                <div className="posts-not-ready box">
+                    <Loader size={40} />
+                </div>
+            : (
+                blog.is_blocked &&
+                scene !== 'settings' &&
+                scene !== 'billing' ?
+                    <BlogBlocked /> :
+                    children
+                )
+        }
+    </div>
 
 }

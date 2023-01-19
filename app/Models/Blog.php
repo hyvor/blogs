@@ -29,6 +29,7 @@ class Blog extends Model
     use Metable;
 
     protected $casts = [
+        'is_blocked' => 'bool',
         'type' => BlogTypeEnum::class,
         'billing_type' => BlogBillingTypeEnum::class,
         'integration' => BlogIntegrationEnum::class,

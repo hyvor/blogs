@@ -28,3 +28,10 @@ it('works with redirect', function () {
     $this->get("http://$blog->subdomain.hyvorblogs.io$redirect->path")
         ->assertRedirect($redirect->to);
 });
+
+it('redirects to homepage if the blog is blocked', function () {
+
+    $blog = blog(['is_blocked' => true]);
+    $this->get("http://$blog->subdomain.hyvorblogs.io/any")->assertRedirect('https://blogs.hyvor.com');
+
+});

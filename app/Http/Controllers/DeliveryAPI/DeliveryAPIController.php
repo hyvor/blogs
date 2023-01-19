@@ -10,6 +10,7 @@ class DeliveryAPIController
 {
     public function handle(Request $request, Blog $blog)
     {
+
         /**
          * Delivery API says "how to serve a path"
          *

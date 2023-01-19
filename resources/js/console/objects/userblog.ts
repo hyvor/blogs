@@ -8,6 +8,7 @@ export type UserBlog = {
 
 export type UserBlogBlog = {
     id: number;
+    is_blocked: boolean,
     subdomain: string;
     name: string;
     type: BlogType,

@@ -13,7 +13,7 @@ class CustomDomainMiddleware
         $host = $request->getHost();
         $blog = BlogService::getBlogByCustomDomain($host);
 
-        if (! $blog) {
+        if (!$blog) {
             return redirect('https://blogs.hyvor.com');
         }
 

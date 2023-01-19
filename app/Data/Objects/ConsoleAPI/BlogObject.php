@@ -15,6 +15,7 @@ class BlogObject
     public int $id;
 
     public int $created_at;
+    public bool $is_blocked;
 
     public string $subdomain;
 
@@ -88,6 +89,7 @@ class BlogObject
     {
         $this->id = $blog->id;
         $this->created_at = $blog->created_at->timestamp;
+        $this->is_blocked = $blog->is_blocked;
 
         $this->subdomain = $blog->subdomain;
         $this->hosting_at = $blog->hosting_at;

@@ -28,3 +28,15 @@ it('redirects to homepage if custom domain is not found', function () {
     $this->get('http://someunkowndomain.test')
         ->assertRedirect('https://blogs.hyvor.com');
 });
+
+it('redirects to homepage if the blog is blocked', function() {
+
+    blog([
+        'is_blocked' => true,
+        'hosting_at' => 'domain',
+        'hosting_domain' => 'hyvorblogscustom.test'
+    ]);
+
+    $this->get('http://hyvorblogscustom.test')->assertRedirect('https://blogs.hyvor.com');
+
+});
