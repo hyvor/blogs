@@ -6,6 +6,7 @@ use App\Data\Objects\ConsoleAPI\Post\PostObject;
 use App\Data\Objects\ConsoleAPI\Post\PostVariantObject;
 use App\Domains\Language\LanguageRepository;
 use App\Domains\Post\PostRepository;
+use App\Domains\Post\PostSearchRepository;
 use App\Domains\Post\PostTagAuthorRepository;
 use App\Exceptions\TrustedException;
 use App\Http\Controllers\Controller;
@@ -25,7 +26,33 @@ class ConsolePostController extends Controller
             'tag_id' => 'integer',
             'start_timestamp' => 'integer',
             'end_timestamp' => 'integer',
+            'search' => 'string|nullable',
+            'limit' => 'integer|max:100',
+            'offset' => 'integer',
         ]);
+
+        $limit = $request->integer('limit', 50);
+        $offset = $request->integer('offset');
+
+        $search = (string) $request->string('search');
+
+        if ($search) {
+
+            $primaryLanguage = LanguageRepository::getPrimaryLanguage($blog);
+            $posts = PostSearchRepository::search(
+                $blog,
+                $primaryLanguage,
+                $search,
+                $limit,
+                $offset,
+                false,
+            )
+                ->collection
+                ->map(fn (Post $post) => new PostObject($post, $blog));
+
+            return response()->json($posts);
+
+        }
 
         $status = $request->input('status');
         $authorId = $request->input('author_id');
@@ -34,9 +61,6 @@ class ConsolePostController extends Controller
         $startTimestamp = $request->input('start_timestamp');
         $endTimestamp = $request->input('end_timestamp');
         $search = $request->input('search');
-
-        $limit = $request->input('limit', 50);
-        $offset = $request->input('offset', 0);
 
         $posts = PostRepository::getPosts(
             $blog,

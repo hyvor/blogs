@@ -146,6 +146,13 @@ class PostSearchRepository
         }
     }
 
+    public static function resetIndex() : void
+    {
+        self::getIndex()->delete();
+        self::setFilterableAttributes();
+        self::setSearchableAttributes();
+    }
+
     private static function getIndex()
     {
         $client = new Client(config('scout.meilisearch.host'), config('scout.meilisearch.key'));

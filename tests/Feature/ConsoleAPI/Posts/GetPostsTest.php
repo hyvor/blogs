@@ -146,3 +146,14 @@ it('filters by timestamps', function () {
                 )
         );
 });
+
+it('searches posts', function() {
+
+    $posts = addPosts($this->blog, 2, [], ['title' => 'Henry VIII']);
+
+    consoleApi($this->blog, 'GET', $this->endpoint, ['search' => 'henry'])
+        ->assertJsonCount(2)
+        ->assertJsonPath('0.id', $posts[0]->id)
+        ->assertJsonPath('1.id', $posts[1]->id);
+
+});

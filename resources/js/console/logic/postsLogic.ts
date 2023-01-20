@@ -127,6 +127,6 @@ function getPostParamsFromFilters(filters: Filters) {
         tag_id: filters.tag === 'all' ? null : filters.tag,
         start_timestamp: filters.startDate ? dayjs(filters.startDate).unix() : null,
         end_timestamp: filters.endDate ? dayjs(filters.endDate).unix() : null,
-        search: null
+        search: filters.search
     } as any
 }

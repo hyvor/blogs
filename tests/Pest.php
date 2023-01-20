@@ -43,8 +43,7 @@ uses()->beforeEach(function () {
         'https://iframe.ly/api/iframely*' => Http::response(jsonData('UrlData/iframely-response.json'))
     ]);
 
-    PostSearchRepository::setFilterableAttributes();
-    PostSearchRepository::setSearchableAttributes();
+    PostSearchRepository::resetIndex();
 
 })->in('Feature', 'Unit');
 

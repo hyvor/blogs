@@ -24,7 +24,8 @@ it('searches posts', function () {
     dataApi($this->blog, '/posts/search', [
             'search' => 'English',
         ])
-        ->assertOk();
+        ->assertOk()
+        ->assertJsonCount(1, 'data');
 });
 
 it('does not work without search query', function () {
