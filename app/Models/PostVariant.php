@@ -33,7 +33,7 @@ class PostVariant extends Model
 
     public function searchableAs()
     {
-        return PostSearchRepository::SEARCH_INDEX_NAME;
+        return PostSearchRepository::getIndexName();
     }
 
     public function toSearchableArray()

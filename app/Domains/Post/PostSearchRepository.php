@@ -2,6 +2,7 @@
 
 namespace App\Domains\Post;
 
+use App;
 use App\Data\Enums\PostStatusEnum;
 use App\Domains\Post\Content\PostContentRepository;
 use App\Helpers\CollectionWithTotal;
@@ -13,7 +14,6 @@ use MeiliSearch\Client;
 
 class PostSearchRepository
 {
-    public const SEARCH_INDEX_NAME = 'posts';
 
     private const FILTERABLE_ATTRIBUTES = [
         'blog_id',
@@ -157,7 +157,12 @@ class PostSearchRepository
     {
         $client = new Client(config('scout.meilisearch.host'), config('scout.meilisearch.key'));
 
-        return $client->index(self::SEARCH_INDEX_NAME);
+        return $client->index(self::getIndexName());
+    }
+
+    public static function getIndexName()
+    {
+        return App::environment('testing') ? 'posts_testing' : 'posts';
     }
 
     private static function isMeilisearch()

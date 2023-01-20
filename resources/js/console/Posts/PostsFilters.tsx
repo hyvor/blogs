@@ -1,17 +1,13 @@
 import React, {ReactNode, useEffect, useState} from 'react';
 import Select from '../ReusableComponents/Select';
-import {components, GroupBase, SingleValueProps} from 'react-select';
+import {components} from 'react-select';
 import { useValues } from 'kea';
 import postsLogic from '../logic/postsLogic';
-import subdomainLogic from '../logic/subdomainLogic';
 import userBlogsLogic from '../logic/userBlogsLogic';
 import numberFormatter from '../../helpers/numberFormatter';
-import languagesLogic from '../logic/languagesLogic';
 import { Calendar } from 'react-bootstrap-icons';
 import dayjs from 'dayjs';
-import onOutsideClick from '../../helpers/onOutsideClick';
 import ReactDatePicker from 'react-datepicker';
-import {UserBlog} from "../objects/userblog";
 import {Filters, Tag, User} from "../types";
 import getSubdomain from "../logic-helpers/subdomain";
 import usersLogic from "../logic/usersLogic";
@@ -124,14 +120,28 @@ export default function PostsFilters({ filters, changeFilter } : PostsFiltersPro
             endDate: end
         });
     }
-    function updateSearch(e: any) {
-        if (filters.search !== e.target.value)
-            changeFilter('search', e.target.value)
-    }
+
+
+    const searchTimeout = React.useRef<null | ReturnType<typeof setTimeout>>(null);
 
     // search is only updated when blur or enterClick
     const [search, setSearch] = useState(filters.search);
 
+    function updateSearchValue(s: string) {
+        setSearch(s);
+
+        if (searchTimeout.current) {
+            clearTimeout(searchTimeout.current);
+        }
+
+        searchTimeout.current = setTimeout(() => {
+            updateSearch(s);
+        }, 200);
+    }
+    function updateSearch(s: string) {
+        if (filters.search !== s)
+            changeFilter('search', s)
+    }
 
     return <div className="posts-filtering">
         <div className="post-filters">
@@ -144,9 +154,9 @@ export default function PostsFilters({ filters, changeFilter } : PostsFiltersPro
             <input
                 className="input"
                 value={search}
-                onChange={(e) => setSearch(e.target.value)}
-                onKeyDown={(e) => e.key === 'Enter' && updateSearch(e)}
-                onBlur={updateSearch}
+                onChange={e => updateSearchValue(e.target.value)}
+                onKeyDown={e => e.key === 'Enter' && updateSearch((e.target as HTMLInputElement).value)}
+                onBlur={e => updateSearch(e.target.value)}
                 placeholder="Search..."
             />
         </div>
