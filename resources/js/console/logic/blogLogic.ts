@@ -9,6 +9,7 @@ import languagesLogic from "./languagesLogic";
 import type { blogLogicType } from "./blogLogicType";
 import merge from "deepmerge";
 import getSubdomain from "../logic-helpers/subdomain";
+import postsLogic from "./postsLogic";
 
 interface BlogResponse {
     blog: Blog,
@@ -49,6 +50,10 @@ const blogLogic = kea<blogLogicType>([
             const languagesLogicInst = languagesLogic.build({subdomain: props.subdomain})
             languagesLogicInst.mount();
             languagesLogicInst.actions.setLanguages(data.languages);
+
+            const postsLogicInst = postsLogic.build({subdomain: props.subdomain})
+            postsLogicInst.mount();
+            postsLogicInst.actions.setCounts(data.counts);
 
             actions.setBlog(data.blog);
 

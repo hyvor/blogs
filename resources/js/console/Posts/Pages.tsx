@@ -9,7 +9,7 @@ import PostsListRow from './PostsListRow';
 import NoPost from './NoPost';
 import getSubdomain from "../logic-helpers/subdomain";
 
-export default function Pages( { postId } : { postId: number | null } ) {
+export default function Pages( { postId } : { postId: number | undefined } ) {
 
     const subdomain = getSubdomain();
     const pagesLogicInst = pagesLogic({subdomain})
