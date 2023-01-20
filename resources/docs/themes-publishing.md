@@ -4,7 +4,7 @@ Are you ready to publish your newly built theme to our [themes list](/themes)? T
 
 > All themes in our themes list are free. If you wish to create a paid theme, you have to sell it outside our platform, and users can upload the ZIP from the Console to install it.
 
-## Checklist
+## Checklist {#checklist}
 
 * Has at least these templates
   * index.twig
@@ -33,17 +33,60 @@ Are you ready to publish your newly built theme to our [themes list](/themes)? T
 * Content Styles:
   * All [blocks](writing#blocks) are styled properly. You can test this with the "Content Style" post in your DEV blog.
   * Code blocks (`<pre><code>`) should have `tab-size: 4`
+* All assets (JS, fonts, etc.) should be added in the `assets` folder. Do not load assets from external sources like Google Fonts.
+* Should support the blog's social media links
+  * Facebook
+  * Twitter
+  * Linkedin
+  * Youtube
+  * TikTok
+  * Instagram
+  * Github
 
-
-## Config
+## Config {#config}
 
 As explained in the [configurations](themes-config) page, the following configurations are required when publishing your theme.
 
-```plain
+```yaml
 THEME_NAME: my-theme
 THEME_VERSION: 1.0.0
 ```
 
+The following configurations are recommended for all published themes.
+
+```yaml
+colors:
+  light:
+    # ... colors for the light theme
+  dark:
+    # ... colors for the dark theme
+
+# if only one font
+font:
+  size: 16px
+  line_height: 1
+  family: 'Inter, sans-serif'
+  
+# if multiple fonts
+fonts:
+  body:
+    size: 16px
+    family: 'Inter, sans-serif'
+  heading:
+    size: 24px
+    family: 'Nunito, sans-serif'
+
+settings:
+  loop: # features in the index page (list of posts)
+    authors: true
+    tags: true
+    featured_image: true
+  post: # features in the post page
+    authors: true
+    tags: true
+    featured_image: true
+  feed: true # a link to RSS feed (if available)
+```
 
 
 ## Versioning
