@@ -51,3 +51,8 @@ it('checks for unique', function () {
     $passes = $rule->passes('subdomain', $subdomain);
     expect($passes)->toBeFalse();
 });
+
+# bug
+it('passes with 2 letters', function() {
+    expect(subdomainPasses('ab'))->toBeTrue();
+});
