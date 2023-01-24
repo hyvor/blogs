@@ -62,7 +62,7 @@ function inlineRules(marks) {
         markInputRule(/(?:^|[^_])(?:_)([^_]+)(?:_)$/, marks.em, {}, /^[^_]/),
 
         // links
-        markInputRule(/(?:\[([^\]]+)\])(\([^\)]+\))$/, marks.link, function(match) {
+        markInputRule(/(?:\[([^\]]+)\])(?:\(([^\)]+)\))$/, marks.link, function(match) {
             return {href: match[2]}
         }),
 
