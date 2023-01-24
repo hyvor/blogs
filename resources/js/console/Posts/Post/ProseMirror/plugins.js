@@ -11,6 +11,7 @@ import slashPlugin from "./slash-plugin";
 import codemark from 'prosemirror-codemark';
 import pasteImagesPlugin from "./paste-images-plugin";
 import linkPlugin from "./link-plugin";
+import slashTipPlugin from "./plugin-slash-tip";
 
 export default function plugins(schema) {
 
@@ -22,6 +23,7 @@ export default function plugins(schema) {
         tooltipPlugin(schema),
         wordCountPlugin(),
         slashPlugin(schema),
+        slashTipPlugin(),
 
         // from defaults
         dropCursor(),

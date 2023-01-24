@@ -111,6 +111,12 @@ $prosemirror-selected-outline: 3px solid #299af3;
         }
     }
 
+    .pm-slash-tip {
+        position: absolute;
+        line-height: 30px;
+        color: $color-text-light;
+    }
+
     .pm-slash-view {
         position: absolute;
         width: 325px;
