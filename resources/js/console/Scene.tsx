@@ -65,8 +65,14 @@ function Middle({ children, scene } : {children: ReactNode, scene: string}) {
                 </div>
             : (
                 blog.is_blocked &&
-                scene !== 'settings' &&
-                scene !== 'billing' ?
+                    (
+                        scene === 'comments' ||
+                        scene === 'blogPreview' ||
+                        scene === 'posts' ||
+                        scene === 'pages' ||
+                        scene === 'comments' ||
+                        scene === 'theme'
+                    ) ?
                     <BlogBlocked /> :
                     children
                 )
