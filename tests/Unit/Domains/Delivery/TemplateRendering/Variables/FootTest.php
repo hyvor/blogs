@@ -86,6 +86,16 @@ it('sets flashload basepath to /blog', function() {
 
 });
 
+it('disables flashload', function() {
+    $blog = blogWithLanguageAndRoutes();
+    $blog->setMeta('flashload', false);
+
+    addThemeTemplateFile($blog, '{{ _foot | template }}');
+    $pathMatcher = new PathMatcher($blog, '/');
+    $responseObject = $pathMatcher->getResponseObject();
+    expect($responseObject->content)->not()->toContain('flashload.js');
+});
+
 it('sets flashload basepath to /blog/page', function() {
 
     $blog = blogWithLanguageAndRoutes();
