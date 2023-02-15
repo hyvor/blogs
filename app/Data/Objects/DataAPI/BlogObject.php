@@ -54,6 +54,8 @@ class BlogObject
 
     public bool $seo_indexing;
 
+    public bool $flashload;
+
     public ColorModesEnum $color_modes;
 
     public ColorModeDefaultEnum $color_mode_default;
@@ -86,6 +88,7 @@ class BlogObject
         );
 
         $this->seo_indexing = $meta->seo_indexing;
+        $this->flashload = (bool) $meta->flashload;
         $this->color_modes = ColorModesEnum::from($meta->color_modes);
         $this->color_mode_default = ColorModeDefaultEnum::from($meta->color_mode_default);
 

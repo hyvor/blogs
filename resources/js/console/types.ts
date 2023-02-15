@@ -101,6 +101,7 @@ export interface Blog {
     syntax_line_numbers: boolean,
     syntax_theme: string | null
 
+    flashload: boolean,
     variants: BlogVariant[]
 
 }

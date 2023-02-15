@@ -80,6 +80,8 @@ class Blog extends Model
         $definer->add('syntax_on')->default(true);
         $definer->add('syntax_line_numbers')->default(true);
         $definer->add('syntax_theme')->default(null);
+
+        $definer->add('flashload')->default(true);
     }
 
     protected function countsDefinition()

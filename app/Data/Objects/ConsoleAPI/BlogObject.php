@@ -80,6 +80,8 @@ class BlogObject
 
     public ?string $syntax_theme;
 
+    public bool $flashload;
+
     /**
      * @var BlogVariantObject[]
      */
@@ -132,6 +134,8 @@ class BlogObject
         $this->syntax_on = (bool) $meta->syntax_on;
         $this->syntax_line_numbers = (bool) $meta->syntax_line_numbers;
         $this->syntax_theme = $meta->syntax_theme;
+
+        $this->flashload = (bool) $meta->flashload;
 
         $this->variants = $blog->variants->map(function ($variant) use ($blog) {
             return new BlogVariantObject($variant, $blog);

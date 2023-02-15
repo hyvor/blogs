@@ -3,6 +3,8 @@ import DualSetting from '../ReusableComponents/DualSetting';
 import CodemirrorEditor, { CODEMIRROR_MODES } from '../ReusableComponents/CodemirrorEditor';
 import SettingsSave from '../ReusableComponents/SettingsSave';
 import {useBlogActions, useBlogValues} from "../logic-helpers/blog";
+import Input from "../ReusableComponents/Input";
+import Switch from "../ReusableComponents/Switch";
 
 export default function Code() {
 
@@ -47,12 +49,32 @@ export default function Code() {
                 column={true}
             />
 
+            <DualSetting
+                title="Flashload"
+                description={
+                    <div>
+                        <a
+                            href="https://github.com/hyvor/flashload"
+                            target="_blank"
+                            className="link"
+                        >Flashload</a> makes navigation between pages faster by injecting a Javascript code. You may want to disable this if you are using other Javascript-heavy features.
+                    </div>
+                }
+                right={
+                    <Switch
+                        checked={blog.flashload}
+                        onChange={checked => updateBlogValue('flashload', checked)}
+                    />
+                }
+            />
+
         </div>
 
         <SettingsSave keys={
             [
                 'code_head',
-                'code_foot'
+                'code_foot',
+                'flashload'
             ]
         } />
 
