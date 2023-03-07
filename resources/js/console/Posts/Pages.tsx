@@ -21,34 +21,39 @@ export default function Pages({ postId }: { postId: number | undefined }) {
     }
 
     return <div className="posts-view">
-        <div className="box box-left box-content">
-            <div className="middle-heading">
-                <div>
-                    Pages
-                </div>
-                <button
-                    className="button small"
-                    onClick={handleNew}
-                >+ New</button>
-            </div>
-            <div className="posts-list">
-                {
-                    loadPagesListAjax.status === 'loading' ?
-                        <div className="posts-loading"><Loader /></div> :
-
-                        <div className="posts-loaded-wrap">
-                            {
-                                pagesList.length ?
-                                    pagesList.map(id => <PostsListRow key={id} id={id} subdomain={subdomain} />) :
-                                    <NoResults
-                                        text="No pages found"
-                                        padding={60}
-                                        imageWidth={150}
-                                    />
-                            }
+        {
+            postId && loadPagesListAjax.status === 'success' ?
+                <Post id={postId} subdomain={subdomain} type="page" />
+                :
+                <div className="box box-left box-content">
+                    <div className="middle-heading">
+                        <div>
+                            Pages
                         </div>
-                }
-            </div>
-        </div>
+                        <button
+                            className="button small"
+                            onClick={handleNew}
+                        >+ New</button>
+                    </div>
+                    <div className="posts-list box-content">
+                        {
+                            loadPagesListAjax.status === 'loading' ?
+                                <div className="posts-loading"><Loader /></div> :
+
+                                <div className="posts-loaded-wrap">
+                                    {
+                                        pagesList.length ?
+                                            pagesList.map(id => <PostsListRow key={id} id={id} subdomain={subdomain} />) :
+                                            <NoResults
+                                                text="No pages found"
+                                                padding={60}
+                                                imageWidth={150}
+                                            />
+                                    }
+                                </div>
+                        }
+                    </div>
+                </div>}
+
     </div>
 }
