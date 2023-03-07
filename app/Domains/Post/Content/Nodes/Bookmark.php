@@ -12,6 +12,7 @@ use App\Domains\Theme\ThemeFilesRepository;
 use App\Domains\UrlData\UrlDataRepository;
 use App\Models\Blog;
 use DOMElement;
+use Exception;
 use Tiptap\Core\Node;
 
 class Bookmark extends Node
@@ -44,8 +45,14 @@ class Bookmark extends Node
             return $empty;
         }
 
-        $urlData = UrlDataRepository::fetch($url, UrlDataFetchTypeEnum::LINK);
-        if ($urlData->result === ResultEnum::ERR) {
+        try {
+
+            $urlData = UrlDataRepository::fetch($url, UrlDataFetchTypeEnum::LINK);
+            if ($urlData->result === ResultEnum::ERR) {
+                return $empty;
+            }
+
+        } catch (Exception) {
             return $empty;
         }
 

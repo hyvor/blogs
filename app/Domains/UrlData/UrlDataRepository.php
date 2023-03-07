@@ -61,6 +61,7 @@ class UrlDataRepository
                 'result' => ResultEnum::ERR,
                 'fetch_type' => $fetchType,
                 'url' => $url,
+                'final_url' => $url
             ]);
 
             throw new TrustedException('Unable to fetch data');
