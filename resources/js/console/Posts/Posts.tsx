@@ -40,7 +40,7 @@ export default function Posts({ postId }: { postId: number | undefined }) {
 
     return <div className="posts-view">
         {
-            postId && loadPostsListAjax.status !== 'loading' ? <Post id={postId} /> :
+            postId && loadPostsListAjax.status !== 'loading' ? <Post id={postId} subdomain={subdomain} /> :
                 <div id="posts-selector" className="box box-left box-content">
                     <div className="middle-heading">
                         <div>
