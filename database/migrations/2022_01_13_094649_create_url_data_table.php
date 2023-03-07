@@ -29,7 +29,7 @@ class CreateUrlDataTable extends Migration
             $table->enum('fetch_type', ['link', 'embed']);
 
             $table->string('url');
-            $table->string('final_url');
+            $table->string('final_url')->nullable();
             $table->text('html')->nullable(); // embed html, if available
             $table->string('title')->nullable();
             $table->string('description')->nullable();
