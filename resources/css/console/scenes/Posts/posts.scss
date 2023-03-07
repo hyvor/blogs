@@ -164,7 +164,8 @@
     }
 
     .posts-list-item {
-        display: block;
+        display: grid;
+        grid-template-columns: repeat(3, 1fr);
         padding: 25px 30px;
         border-left: 3px solid transparent;
         position: relative;

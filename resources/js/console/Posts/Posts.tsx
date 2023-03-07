@@ -6,9 +6,7 @@ import Loader from '../ReusableComponents/Loader';
 import PostsFilters from './PostsFilters';
 import NoResults from '../ReusableComponents/NoResults';
 import PostsListRow from './PostsListRow';
-import NoPost from "./NoPost";
 import { useSubdomain } from "../logic-helpers/subdomain";
-import { usePostActions } from "./Post/helpers";
 
 export default function Posts({ postId }: { postId: number | undefined }) {
 
