@@ -1,7 +1,7 @@
 import React from 'react';
 import Loader from '../../ReusableComponents/Loader';
 import Tooltip from '../../ReusableComponents/Tooltip';
-import { usePostValues } from "./helpers";
+import { usePostValues, usePostActions } from "./helpers";
 import useSave from './useSave'
 import PostTop from "./PostTop/PostTop";
 import PostBottom from "./PostBottom";
@@ -13,6 +13,7 @@ export default function Post({ id, subdomain }: { id: number, subdomain: string 
 
     const { loadPostAjax, editorState } = usePostValues(id);
     const postsLogicInst = postsLogic({ subdomain });
+    const { savePost } = usePostActions(id)
 
     useSave(id);
 
@@ -22,10 +23,15 @@ export default function Post({ id, subdomain }: { id: number, subdomain: string 
         </div>;
     }
 
+    const saveAndNavigateToPosts = () => {
+        savePost();
+        postsLogicInst.actions.navigateToPosts();
+    }
+
     return <div className={"post-editor fullscreen"}>
 
         <div className="pos-rel">
-            <button className="button back-button" onClick={() => postsLogicInst.actions.navigateToPosts()} >
+            <button className="button back-button" onClick={() => saveAndNavigateToPosts()} >
                 Back
             </button>
             <PostTop id={id} />
