@@ -8,11 +8,13 @@ import PostBottom from "./PostBottom";
 import PostMiddle from "./PostMiddle";
 import Unpublisher from "./Unpublisher";
 import postsLogic from "../../logic/postsLogic";
+import pagesLogic from "../../logic/pagesLogic";
 
-export default function Post({ id, subdomain }: { id: number, subdomain: string }) {
+export default function Post({ id, subdomain, type }: { id: number, subdomain: string, type: string }) {
 
     const { loadPostAjax, editorState } = usePostValues(id);
     const postsLogicInst = postsLogic({ subdomain });
+    const pagesLogicInst = pagesLogic({ subdomain });
     const { savePost } = usePostActions(id)
 
     useSave(id);
@@ -23,15 +25,18 @@ export default function Post({ id, subdomain }: { id: number, subdomain: string 
         </div>;
     }
 
-    const saveAndNavigateToPosts = () => {
+    const saveAndNavigateToList = () => {
         savePost();
-        postsLogicInst.actions.navigateToPosts();
+        if (type === 'post')
+            postsLogicInst.actions.navigateToPosts();
+        else
+            pagesLogicInst.actions.navigateToPages();
     }
 
     return <div className={"post-editor fullscreen"}>
 
         <div className="pos-rel">
-            <button className="button back-button" onClick={() => saveAndNavigateToPosts()} >
+            <button className="button back-button" onClick={() => saveAndNavigateToList()} >
                 Back
             </button>
             <PostTop id={id} />

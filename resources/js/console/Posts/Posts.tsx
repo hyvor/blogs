@@ -36,9 +36,12 @@ export default function Posts({ postId }: { postId: number | undefined }) {
         createPost();
     }
 
+    /*
+    * If a postId is defined, display the Post view in fullscreen mode or the Posts List view 
+    */
     return <div className="posts-view">
         {
-            postId && loadPostsListAjax.status !== 'loading' ? <Post id={postId} subdomain={subdomain} /> :
+            postId && loadPostsListAjax.status !== 'loading' ? <Post id={postId} subdomain={subdomain} type="post" /> :
                 <div id="posts-selector" className="box box-left box-content">
                     <div className="middle-heading">
                         <div>

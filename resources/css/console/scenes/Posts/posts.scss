@@ -173,6 +173,7 @@
         &:not(:last-child):after {
             content: "";
             position: absolute;
+            justify-self: center;
             width: 85%;
             background: $color-accent-light;
             bottom: 0;
