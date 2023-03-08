@@ -8,6 +8,7 @@ import LangTag from '../ReusableComponents/LangTag';
 import { getLangTagIconByPostStatus } from './Post/PostLanguageSelector';
 import { PostVariant } from "../types";
 import UserPermissions from "../services/UserPermissions";
+import { appConfig } from "../helpers";
 
 export default function PostsListRow({ id, subdomain }: { id: number, subdomain: string }) {
 
@@ -22,6 +23,8 @@ export default function PostsListRow({ id, subdomain }: { id: number, subdomain:
     const variant = post.variants.find(v => v.language_id === languageId) as PostVariant;
 
     const authorsNames = post.authors.map(author => author.variants[0].name).join(", ");
+
+    const authorsImages = post.authors.map(author => author.picture_url);
 
     const permClass = UserPermissions.canEditPost(postOriginal) ? '' : 'global-no-permissions';
 
@@ -59,7 +62,15 @@ export default function PostsListRow({ id, subdomain }: { id: number, subdomain:
         {
             !post.is_page ?
                 <div className="post-author">
+                    {authorsImages.map((pictureUrl) =>
+                        <img
+                            src={appConfig().hyvorUser.picture_url}
+                            className="round-image-40 post-author-image "
+                            alt="Profile Picture"
+                        />
+                    )}
                     {authorsNames}
+
                 </div> :
                 null
         }
