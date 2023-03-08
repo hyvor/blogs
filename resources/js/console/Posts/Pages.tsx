@@ -41,6 +41,10 @@ export default function Pages({ postId }: { postId: number | undefined }) {
                                 <div className="posts-loading"><Loader /></div> :
 
                                 <div className="posts-loaded-wrap">
+                                    <div className='page-list-header'>
+                                        <p>Page</p>
+                                        <p>Status</p>
+                                    </div>
                                     {
                                         pagesList.length ?
                                             pagesList.map(id => <PostsListRow key={id} id={id} subdomain={subdomain} />) :

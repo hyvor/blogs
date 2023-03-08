@@ -48,7 +48,7 @@ export default function Posts({ postId }: { postId: number | undefined }) {
                             Posts
                         </div>
                         <button
-                            className="button small"
+                            className="button small new-post-button"
                             onClick={handleNew}
                         >+ New</button>
                     </div>
