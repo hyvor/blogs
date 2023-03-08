@@ -36,8 +36,8 @@ export default function Post({ id, subdomain, type }: { id: number, subdomain: s
     return <div className={"post-editor fullscreen"}>
 
         <div className="pos-rel">
-            <button className="button back-button" onClick={() => saveAndNavigateToList()} >
-                Back
+            <button className="icon-button back-button" onClick={() => saveAndNavigateToList()} >
+                X
             </button>
             <PostTop id={id} />
             <PostMiddle id={id} />

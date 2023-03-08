@@ -54,15 +54,12 @@ export default function PostsListRow({ id, subdomain }: { id: number, subdomain:
                             })
                         }
                     </div> : null}
-            <div className="post-status-wrap">
-                <span className={`global-post-status ${variant.status}`}>{variant.status}</span>
-            </div>
         </div>
 
         {
             !post.is_page ?
                 <div className="post-author">
-                    by {authorsNames}
+                    {authorsNames}
                 </div> :
                 null
         }
@@ -85,6 +82,9 @@ export default function PostsListRow({ id, subdomain }: { id: number, subdomain:
                         : null
                 }
             </div>
+        </div>
+        <div className="post-status-wrap">
+            <span className={`global-post-status ${variant.status}`}>{variant.status}</span>
         </div>
 
 

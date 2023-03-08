@@ -1,14 +1,14 @@
-import {BoxArrowUpRight, Fullscreen, GearFill} from "react-bootstrap-icons";
-import {getBlogUrl} from "../../../lib/blog-helpers";
-import React, {useEffect} from "react";
-import {usePostActions, usePostValues} from "../helpers";
+import { BoxArrowUpRight, Fullscreen, GearFill } from "react-bootstrap-icons";
+import { getBlogUrl } from "../../../lib/blog-helpers";
+import React, { useEffect } from "react";
+import { usePostActions, usePostValues } from "../helpers";
 import getSubdomain from "../../../logic-helpers/subdomain";
 import UnpublishButton from "./UnpublishButton";
 import MainButton from "./MainButton";
 import Publisher from "./Publisher";
 import PostSettings from "./PostSettings";
 
-export default function SettingsRow({id}: {id: number}) {
+export default function SettingsRow({ id }: { id: number }) {
 
     const { post, editorState, currentLanguage } = usePostValues(id);
     const { changeEditorState } = usePostActions(id)
@@ -46,13 +46,7 @@ export default function SettingsRow({id}: {id: number}) {
                         <span>View</span><BoxArrowUpRight />
                     </button>
                 </a>
-                <button
-                    className={"button small" + (!editorState.isFullscreen ? " secondary" : " inactive")}
-                    onClick={() => changeEditorState('isFullscreen', !editorState.isFullscreen)}
-                    data-tip="Toggle Fullscreen"
-                >
-                    <Fullscreen />
-                </button>
+
             </div>
 
             <div className="publish-buttons">

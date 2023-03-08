@@ -41,13 +41,16 @@
         }
     }
     .back-button {
-        margin-left: 15px;
+        margin-right: 15px;
         margin-top: 15px;
+        position: absolute;
+        top: 0;
+        right: 0;
+        z-index: 1;
     }
 
     .posts-filtering {
         padding: 15px 25px;
-        border-bottom: 1px solid $color-accent-light;
         border-top: 1px solid $color-accent-light;
         font-size: 12px;
 
@@ -162,10 +165,17 @@
             }
         }
     }
-
+    .post-list-header {
+        display: grid;
+        grid-template-columns: repeat(4, 1fr);
+        padding-left: 30px;
+        border-bottom: 1px solid $color-accent-light;
+        
+    }
     .posts-list-item {
         display: grid;
-        grid-template-columns: repeat(3, 1fr);
+        align-items: center;
+        grid-template-columns: repeat(4, 1fr);
         padding: 25px 30px;
         border-left: 3px solid transparent;
         position: relative;

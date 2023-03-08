@@ -58,6 +58,12 @@ export default function Posts({ postId }: { postId: number | undefined }) {
                             loadPostsListAjax.status === 'loading' ?
                                 <div className="posts-loading"><Loader /></div> :
                                 <div className="posts-loaded-wrap">
+                                    <div className='post-list-header'>
+                                        <p>Post</p>
+                                        <p>Authors</p>
+                                        <p>Tags</p>
+                                        <p>Status</p>
+                                    </div>
                                     {
                                         postsList.length ?
                                             postsList.map((id: number) => <PostsListRow
