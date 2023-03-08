@@ -8,7 +8,6 @@ import LangTag from '../ReusableComponents/LangTag';
 import { getLangTagIconByPostStatus } from './Post/PostLanguageSelector';
 import { PostVariant } from "../types";
 import UserPermissions from "../services/UserPermissions";
-import { appConfig } from "../helpers";
 
 export default function PostsListRow({ id, subdomain }: { id: number, subdomain: string }) {
 
@@ -41,23 +40,24 @@ export default function PostsListRow({ id, subdomain }: { id: number, subdomain:
                     {dayjs.unix(post.published_at || post.created_at).format('MMM D, YYYY')}
                 </div>
             </div>
-            {
-                languages.length > 1 ?
-                    <div className="post-languages">
-                        {
-                            post.variants.map(variant => {
-                                const lang = getLanguageById(variant.language_id)
 
-                                return lang ?
-                                    <LangTag
-                                        key={lang.id}
-                                        code={lang.code}
-                                        icon={getLangTagIconByPostStatus(variant.status)}
-                                    /> : null
-                            })
-                        }
-                    </div> : null}
         </div>
+        {
+            languages.length > 1 ?
+                <div className="post-languages">
+                    {
+                        post.variants.map(variant => {
+                            const lang = getLanguageById(variant.language_id)
+
+                            return lang ?
+                                <LangTag
+                                    key={lang.id}
+                                    code={lang.code}
+                                    icon={getLangTagIconByPostStatus(variant.status)}
+                                /> : null
+                        })
+                    }
+                </div> : null}
 
         {
             !post.is_page ?

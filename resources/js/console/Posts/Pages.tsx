@@ -46,6 +46,7 @@ export default function Pages({ postId }: { postId: number | undefined }) {
                                         <TableHead>
                                             <div className='page-list-header'>
                                                 <div>Page</div>
+                                                <div>Languages</div>
                                                 <div>Status</div>
                                             </div>
                                         </TableHead>

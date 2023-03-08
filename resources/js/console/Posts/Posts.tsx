@@ -8,10 +8,15 @@ import NoResults from '../ReusableComponents/NoResults';
 import PostsListRow from './PostsListRow';
 import { useSubdomain } from "../logic-helpers/subdomain";
 import { TableHead, TableHeadItem, Table } from '../ReusableComponents/Table';
+import languagesLogic from '../logic/languagesLogic';
 
 export default function Posts({ postId }: { postId: number | undefined }) {
 
     const subdomain = useSubdomain()
+
+    const { languages, getLanguageById } = useValues(languagesLogic({ subdomain }));
+    const headerColumns = languages.length > 1 ? 5 : 4;
+
     const postLogicSubdomain = postsLogic({ subdomain })
     const {
         postsList, loadPostsListAjax, postsListHasMore, loadPostsListMoreAjax,
@@ -63,7 +68,8 @@ export default function Posts({ postId }: { postId: number | undefined }) {
                                         <TableHead>
                                             <div className='post-list-header'>
                                                 <div>Post</div>
-                                                <div>Auhtors</div>
+                                                {languages.length > 1 && <div>Language</div>}
+                                                <div>Authors</div>
                                                 <div>Tags</div>
                                                 <div>Status</div>
                                             </div>
