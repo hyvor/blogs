@@ -64,7 +64,7 @@ export default function PostsListRow({ id, subdomain }: { id: number, subdomain:
                 <div className="post-author">
                     {authorsImages.map((pictureUrl) =>
                         <img
-                            src={appConfig().hyvorUser.picture_url}
+                            src={pictureUrl}
                             className="round-image-40 post-author-image "
                             alt="Profile Picture"
                         />

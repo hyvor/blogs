@@ -56,7 +56,6 @@
 
         .post-filters {
             display: flex;
-
             .filter-label {
                 display: flex;
 
@@ -84,12 +83,27 @@
             &:not(:last-child) {
                 margin-right: 3px;
             }
-
+            .posts-filter-row {
+                display: flex;
+                flex-direction: row;
+                align-items: center;
+                height: 30px;
+            }
             .posts-filter-name {
-                margin-bottom: 2px;
-                text-align: center;
-                text-transform: uppercase;
-                font-size: 8px;
+                font-weight: 600;
+                font-size: 0.8rem;
+                margin-right: 3px;
+                text-transform: capitalize;
+            }
+            .posts-filter-value {
+                margin-left: 5px;
+                margin-right: 5px;
+                white-space: nowrap;
+                max-width: 100px;
+                overflow: hidden;
+                text-overflow: ellipsis;
+                display: inline-block;
+                vertical-align: top;
             }
 
             .posts-filter-select-wrap {
@@ -98,7 +112,10 @@
                 align-items: center;
 
                 .react-select {
-                    width: 250px;
+                    display: inline-block;
+                    margin-right: 5px;
+                    position: relative;
+                  
                     flex: 1;
                     .select-name {
                         font-weight: 600;
@@ -129,14 +146,13 @@
                 .react-select__control {
                     height: initial;
                     min-height: initial;
+                 
                 }
             }
         }
 
         .post-search {
-            margin-top: 6px;
             font-size: 12px;
-
             input {
                 padding: 7px 15px;
                 line-height: 14px;
@@ -175,14 +191,12 @@
     .page-list-header {
         display: grid;
         grid-template-columns: repeat(2, 1fr);
-        padding-left: 30px;
-        border-bottom: 1px solid $color-accent-light;
+        padding-left: 20px;
     }
     .post-list-header {
         display: grid;
         grid-template-columns: repeat(4, 1fr);
-        padding-left: 30px;
-        border-bottom: 1px solid $color-accent-light;
+        padding-left: 20px;
     }
     .posts-list-item {
         display: grid;
@@ -298,13 +312,14 @@
             }
 
             .status {
-                padding-bottom: 16px;
-                color: $color-text-light;
-                font-weight: 600;
-                text-transform: uppercase;
-                margin-left: 8px;
-                font-size: 12px;
-                padding-top: 15px;
+                font-size: 11px;
+            background: $color-input;
+            padding: 2px 7px;
+            border-radius: 20px;
+            font-weight: 600;
+            margin-right: 3px;
+            margin-bottom: 3px;
+            display: inline-block;
             }
         }
 
@@ -479,11 +494,15 @@
 }
 
 .global-post-status {
-    font-weight: 600;
-    font-size: 8px;
     text-transform: uppercase;
-    padding: 1px 7px;
+    font-size: 11px;
+    background: $color-input;
+    padding: 2px 7px;
     border-radius: 20px;
+    font-weight: 600;
+    margin-right: 3px;
+    margin-bottom: 3px;
+    display: inline-block;
 
     &.scheduled {
         background: $color-blue-light;

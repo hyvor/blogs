@@ -8,6 +8,7 @@ import pagesLogic from '../logic/pagesLogic';
 import PostsListRow from './PostsListRow';
 import NoPost from './NoPost';
 import getSubdomain from "../logic-helpers/subdomain";
+import { Table, TableHead } from '../ReusableComponents/Table';
 
 export default function Pages({ postId }: { postId: number | undefined }) {
 
@@ -31,7 +32,7 @@ export default function Pages({ postId }: { postId: number | undefined }) {
                             Pages
                         </div>
                         <button
-                            className="button small"
+                            className="button small new-post-button"
                             onClick={handleNew}
                         >+ New</button>
                     </div>
@@ -41,10 +42,14 @@ export default function Pages({ postId }: { postId: number | undefined }) {
                                 <div className="posts-loading"><Loader /></div> :
 
                                 <div className="posts-loaded-wrap">
-                                    <div className='page-list-header'>
-                                        <p>Page</p>
-                                        <p>Status</p>
-                                    </div>
+                                    <Table>
+                                        <TableHead>
+                                            <div className='page-list-header'>
+                                                <div>Page</div>
+                                                <div>Status</div>
+                                            </div>
+                                        </TableHead>
+                                    </Table>
                                     {
                                         pagesList.length ?
                                             pagesList.map(id => <PostsListRow key={id} id={id} subdomain={subdomain} />) :

@@ -7,6 +7,7 @@ import PostsFilters from './PostsFilters';
 import NoResults from '../ReusableComponents/NoResults';
 import PostsListRow from './PostsListRow';
 import { useSubdomain } from "../logic-helpers/subdomain";
+import { TableHead, TableHeadItem, Table } from '../ReusableComponents/Table';
 
 export default function Posts({ postId }: { postId: number | undefined }) {
 
@@ -58,12 +59,16 @@ export default function Posts({ postId }: { postId: number | undefined }) {
                             loadPostsListAjax.status === 'loading' ?
                                 <div className="posts-loading"><Loader /></div> :
                                 <div className="posts-loaded-wrap">
-                                    <div className='post-list-header'>
-                                        <p>Post</p>
-                                        <p>Authors</p>
-                                        <p>Tags</p>
-                                        <p>Status</p>
-                                    </div>
+                                    <Table>
+                                        <TableHead>
+                                            <div className='post-list-header'>
+                                                <div>Post</div>
+                                                <div>Auhtors</div>
+                                                <div>Tags</div>
+                                                <div>Status</div>
+                                            </div>
+                                        </TableHead>
+                                    </Table>
                                     {
                                         postsList.length ?
                                             postsList.map((id: number) => <PostsListRow

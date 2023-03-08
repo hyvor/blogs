@@ -149,17 +149,18 @@ export default function PostsFilters({ filters, changeFilter }: PostsFiltersProp
             <PostsFilter name="author" value={filters.author} options={authorsOptions} onChange={handleChange} />
             <PostsFilter name="tag" value={filters.tag} options={tagsOptions} onChange={handleChange} />
             <PostsFilter name="date" value={currentDateOption} options={dateOptions} onChange={handleDateChange} />
+            <div className="post-search">
+                <input
+                    className="input"
+                    value={search}
+                    onChange={e => updateSearchValue(e.target.value)}
+                    onKeyDown={e => e.key === 'Enter' && updateSearch((e.target as HTMLInputElement).value)}
+                    onBlur={e => updateSearch(e.target.value)}
+                    placeholder="Search..."
+                />
+            </div>
         </div>
-        <div className="post-search">
-            <input
-                className="input"
-                value={search}
-                onChange={e => updateSearchValue(e.target.value)}
-                onKeyDown={e => e.key === 'Enter' && updateSearch((e.target as HTMLInputElement).value)}
-                onBlur={e => updateSearch(e.target.value)}
-                placeholder="Search..."
-            />
-        </div>
+
     </div>
 
 }
@@ -187,21 +188,23 @@ interface PostsFilterProps {
 function PostsFilter({ name, value, options, onChange }: PostsFilterProps) {
 
     const SingleValue = (p: any) => {
-        const name = p.data.label.props ? p.data.label.props.name : p.data.label;
+        const value = p.data.label.props ? p.data.label.props.name : p.data.label;
         return <components.SingleValue {...p}>
-            {name}
+            <div className='posts-filter-row'>
+                <div className='posts-filter-name'>{name}</div>
+                <div className='posts-filter-value'>{value}</div>
+            </div>
         </components.SingleValue>
     };
 
     const valueCalculated = options.find(i => i.value === value) || options[0];
 
     return <div className="posts-filter">
-        <div className="posts-filter-name">{name}</div>
         <div className="posts-filter-select-wrap">
 
             <Select
                 value={valueCalculated}
-                type="small"
+                type="post-filters-selector"
                 options={options}
                 onChange={v => onChange(name, v as SelectOption)}
 
