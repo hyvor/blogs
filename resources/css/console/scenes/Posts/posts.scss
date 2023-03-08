@@ -50,7 +50,7 @@
     }
 
     .posts-filtering {
-        padding: 15px 25px;
+        padding: 15px 18px;
         border-top: 1px solid $color-accent-light;
         font-size: 12px;
 
@@ -187,6 +187,9 @@
                 transform: translateY(0)
             }
         }
+    }
+    .post-headers {
+        padding-left: 15px;
     }
     .page-list-header {
         display: grid;
