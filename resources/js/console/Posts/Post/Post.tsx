@@ -37,7 +37,7 @@ export default function Post({ id, subdomain, type }: { id: number, subdomain: s
 
         <div className="pos-rel">
             <button className="icon-button back-button" onClick={() => saveAndNavigateToList()} >
-                X
+                &times;
             </button>
             <PostTop id={id} />
             <PostMiddle id={id} />

@@ -37,8 +37,7 @@
     }
 
     .middle-heading {
-        margin-bottom: 15px;
-      
+        margin-bottom: 0!important;
     }
     .back-button {
         margin-right: 15px;
@@ -47,11 +46,13 @@
         top: 0;
         right: 0;
         z-index: 1;
+        font-weight: 600;
     }
 
     .posts-filtering {
-        padding: 15px 18px;
-        border-top: 1px solid $color-accent-light;
+        padding: 15px 25px;
+        border-bottom: 1px solid $color-accent-light;
+        margin-bottom: 15px;
         font-size: 12px;
 
         .post-filters {
@@ -174,9 +175,10 @@
     }
 
     .posts-loaded-wrap {
-        animation: posts-loaded-wrap .3s;
+        // animation: posts-loaded-wrap .3s;
+        padding: 0 15px;
 
-        @keyframes posts-loaded-wrap {
+        /*@keyframes posts-loaded-wrap {
             0% {
                 opacity: 0;
                 transform: translateY(10px)
@@ -186,10 +188,9 @@
                 opacity: 1;
                 transform: translateY(0)
             }
-        }
+        }*/
     }
     .post-headers {
-        padding-left: 15px;
     }
     .page-list-header {
         display: grid;
@@ -204,17 +205,19 @@
     .posts-list-item {
         display: grid;
         align-items: center;
-        grid-template-columns: repeat(5, 1fr);
-        padding: 25px 30px;
+        grid-template-columns: 1fr 1fr 1fr 1fr 150px;
+        padding: 20px;
         border-left: 3px solid transparent;
         position: relative;
+        border-radius: 20px;
 
         &:not(:last-child):after {
+            // border-bottom: 1px solid $color-accent-very-light;
             content: "";
             position: absolute;
             justify-self: center;
-            width: 85%;
-            background: $color-accent-light;
+            width: 95%;
+            background: $color-accent-very-light;
             bottom: 0;
             height: 1px;
         }
@@ -231,11 +234,14 @@
         .post-author,
         .post-date {
             display: flex;
-            font-size: 12px;
-            color: $color-text-light;
             margin-top: 1px;
             align-items: center;
         }
+        .post-date {
+            color: $color-text-light;
+            font-size: 12px;
+        }
+
         .post-author-image {
             width: 25px;
             height: 25px;
@@ -265,6 +271,10 @@
             display: flex;
         }
 
+        .post-status-wrap {
+            text-align: right;
+        }
+
         .post-tags {
             flex: 1;
         }
@@ -272,7 +282,7 @@
         .post-tag {
             font-size: 11px;
             background: $color-input;
-            padding: 2px 7px;
+            padding: 3px 9px;
             border-radius: 20px;
             font-weight: 600;
             margin-right: 3px;
@@ -500,7 +510,7 @@
     text-transform: uppercase;
     font-size: 11px;
     background: $color-input;
-    padding: 2px 7px;
+    padding: 3px 9px;
     border-radius: 20px;
     font-weight: 600;
     margin-right: 3px;

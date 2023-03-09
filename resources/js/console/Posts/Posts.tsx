@@ -15,7 +15,6 @@ export default function Posts({ postId }: { postId: number | undefined }) {
     const subdomain = useSubdomain()
 
     const { languages, getLanguageById } = useValues(languagesLogic({ subdomain }));
-    const headerColumns = languages.length > 1 ? 5 : 4;
 
     const postLogicSubdomain = postsLogic({ subdomain })
     const {
@@ -64,17 +63,6 @@ export default function Posts({ postId }: { postId: number | undefined }) {
                             loadPostsListAjax.status === 'loading' ?
                                 <div className="posts-loading"><Loader /></div> :
                                 <div className="posts-loaded-wrap post-headers">
-                                    <Table>
-                                        <TableHead>
-                                            <div className='post-list-header'>
-                                                <div>Post</div>
-                                                {languages.length > 1 && <div>Language</div>}
-                                                <div>Authors</div>
-                                                <div>Tags</div>
-                                                <div>Status</div>
-                                            </div>
-                                        </TableHead>
-                                    </Table>
                                     {
                                         postsList.length ?
                                             postsList.map((id: number) => <PostsListRow

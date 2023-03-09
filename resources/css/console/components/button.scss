@@ -13,6 +13,7 @@
     padding: 8px 20px;
     display:inline-block;
     border:1px solid transparent;
+    transition: .2s box-shadow;
 
     &.big {
         padding: 10px 30px;
@@ -36,6 +37,10 @@
         background: $color-accent-light;
         color: $color-text;
         border-color: $color-accent-light;
+    }
+
+    &:hover {
+        box-shadow: 0 0 0px 2px $color-accent-light;
     }
 
     &.secondary {
