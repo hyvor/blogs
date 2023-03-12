@@ -10,7 +10,7 @@ import PostSettings from "./PostSettings";
 
 export default function SettingsRow({ id }: { id: number }) {
 
-    const { post, editorState, currentLanguage } = usePostValues(id);
+    const { post, editorState, currentLanguage, currentVariant } = usePostValues(id);
     const { changeEditorState } = usePostActions(id)
 
     function checkFullscreenClose(e: KeyboardEvent) {
@@ -32,7 +32,7 @@ export default function SettingsRow({ id }: { id: number }) {
         <div className="post-editor-settings-buttons">
             <div className="left">
                 <button
-                    className={"button small" + (!editorState.isChangingSettings ? " secondary" : " inactive")}
+                    className={"button small" + (!editorState.isChangingSettings ? " grey" : " primary")}
                     onClick={() => changeEditorState('isChangingSettings', true)}
                 >
                     <span>Settings</span><GearFill />
@@ -42,7 +42,7 @@ export default function SettingsRow({ id }: { id: number }) {
                     href={getBlogUrl(getSubdomain(), '/p/' + post.preview_id + "/" + currentLanguage.code)}
                     target="_blank"
                 >
-                    <button className="button small secondary view" >
+                    <button className="button small grey view" >
                         <span>View</span><BoxArrowUpRight />
                     </button>
                 </a>
@@ -50,6 +50,7 @@ export default function SettingsRow({ id }: { id: number }) {
             </div>
 
             <div className="publish-buttons">
+                <span className={`global-post-status ${currentVariant.status} large`}>{currentVariant.status}</span>
                 <UnpublishButton id={id} />
                 <MainButton id={id} />
 

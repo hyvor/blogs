@@ -81,6 +81,10 @@
     &.green {
         background-color: $color-green;
     }
+    &.grey {
+        background-color: $color-text-light;
+        color: $color-text;
+    }
 }
 
 .icon-button {
