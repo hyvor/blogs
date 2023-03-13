@@ -25,7 +25,6 @@ export default function PostMiddle({ id }: { id: number }) {
         spellCheck={false}
     >
         <div className="post-editor-headers">
-            <PostLanguageSelector id={id} />
             <TitleRow id={id} />
         </div>
 

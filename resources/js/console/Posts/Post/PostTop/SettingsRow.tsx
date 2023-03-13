@@ -7,6 +7,7 @@ import UnpublishButton from "./UnpublishButton";
 import MainButton from "./MainButton";
 import Publisher from "./Publisher";
 import PostSettings from "./PostSettings";
+import PostLanguageSelector from "../PostLanguageSelector";
 
 export default function SettingsRow({ id }: { id: number }) {
 
@@ -57,6 +58,7 @@ export default function SettingsRow({ id }: { id: number }) {
                 <Publisher id={id} />
             </div>
         </div>
+        <PostLanguageSelector id={id} />
 
         <PostSettings id={id} />
 
