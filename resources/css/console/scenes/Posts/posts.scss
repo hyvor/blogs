@@ -377,7 +377,7 @@
             flex: 1;
             overflow: visible;
             background-color: #fff;
-            width: 50%;
+         
             align-self: center;
             justify-content: start;
             align-items: center;
@@ -465,6 +465,7 @@
             width: 700px;
             align-self: center;
             padding: 15px 25px;
+            border-bottom: 1px solid $color-accent-light;
         }
 
         .post-editor-title {
