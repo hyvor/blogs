@@ -14,7 +14,7 @@ export default function UnpublishButton({ id }: { id: number }) {
     }
 
     return name ? <button
-        className="button small grey unpublish-button"
+        className="button small light unpublish-button"
         onClick={() => changeEditorState('isUnpublishing', true)}
     >
         {name}

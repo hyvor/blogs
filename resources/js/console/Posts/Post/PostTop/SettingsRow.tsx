@@ -32,7 +32,7 @@ export default function SettingsRow({ id }: { id: number }) {
         <div className="post-editor-settings-buttons">
             <div className="left">
                 <button
-                    className={"button small" + (!editorState.isChangingSettings ? " grey" : " primary")}
+                    className={"button small" + (!editorState.isChangingSettings ? " light" : " primary")}
                     onClick={() => changeEditorState('isChangingSettings', true)}
                 >
                     <span>Settings</span><GearFill />
@@ -42,7 +42,7 @@ export default function SettingsRow({ id }: { id: number }) {
                     href={getBlogUrl(getSubdomain(), '/p/' + post.preview_id + "/" + currentLanguage.code)}
                     target="_blank"
                 >
-                    <button className="button small grey view" >
+                    <button className="button small light view" >
                         <span>View</span><BoxArrowUpRight />
                     </button>
                 </a>
