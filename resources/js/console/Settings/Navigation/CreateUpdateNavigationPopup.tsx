@@ -1,24 +1,24 @@
-import React, {useState} from 'react';
-import {Navigation, NavigationType, NavigationVariant, UserVariant} from "../../types";
+import React, { useState } from 'react';
+import { Navigation, NavigationType, NavigationVariant, UserVariant } from "../../types";
 import navigationLogic from "../../logic/navigationLogic";
 import getSubdomain from "../../logic-helpers/subdomain";
-import {useActions, useValues} from "kea";
-import {Popup, PopupBodyDefault, PopupFooterDoubleButton, PopupHeaderDefault} from "../../ReusableComponents/Popup";
-import Input, {InputView} from "../../ReusableComponents/Input";
-import Select, {SelectOption} from "../../ReusableComponents/Select";
+import { useActions, useValues } from "kea";
+import { Popup, PopupBodyDefault, PopupFooterDoubleButton, PopupHeaderDefault } from "../../ReusableComponents/Popup";
+import Input, { InputView } from "../../ReusableComponents/Input";
+import Select, { SelectOption } from "../../ReusableComponents/Select";
 import LanguageSelector from "../../ReusableComponents/LanguageSelector";
 import languagesLogic from "../../logic/languagesLogic";
 import merge from "deepmerge";
 
 export default function CreateUpdateNavigationPopup(
-    { navigation = {} as Navigation, onClose } :
-    { navigation?: Navigation, onClose: Function }
+    { navigation = {} as Navigation, onClose }:
+        { navigation?: Navigation, onClose: Function }
 ) {
 
     const isCreate = !navigation.id;
 
     const subdomain = getSubdomain()
-    const navigationLogicInst = navigationLogic({subdomain})
+    const navigationLogicInst = navigationLogic({ subdomain })
     const { createAjax, updateAjax } = useValues(navigationLogicInst)
     const { create, update, createVariant } = useActions(navigationLogicInst)
 
@@ -44,13 +44,13 @@ export default function CreateUpdateNavigationPopup(
         }
     }
 
-    const typeOptions : SelectOption[] = [
+    const typeOptions: SelectOption[] = [
         { label: 'Header', value: 'header' },
-        { label: 'Footer', value: 'footer'}
+        { label: 'Footer', value: 'footer' }
     ];
 
-    const { primaryLanguage } = useValues(languagesLogic({subdomain}))
-    const [currentLanguageId, setCurrentLanguageId] = useState( primaryLanguage.id );
+    const { primaryLanguage } = useValues(languagesLogic({ subdomain }))
+    const [currentLanguageId, setCurrentLanguageId] = useState(primaryLanguage.id);
 
     const variants = navigation.variants || [];
     const variant: NavigationVariant = variants.find(v => v.language_id === currentLanguageId) || {} as NavigationVariant;
@@ -60,15 +60,15 @@ export default function CreateUpdateNavigationPopup(
     const [name, setName] = useState(variant.name || '');
     const [url, setUrl] = useState(navigation.url || '');
 
-    const [type, setType] = useState<NavigationType>('header');
+    const [type, setType] = useState<NavigationType>(navigation.type);
 
     function updateName(value: any) {
         setVariantsState(variantsState.map(
-            v => v.language_id === currentLanguageId ? {...v, name: value} : v)
+            v => v.language_id === currentLanguageId ? { ...v, name: value } : v)
         );
     }
 
-    function createVariantExtended({id, languageId, onCreate}: {id: number, languageId: number, onCreate: Function}) {
+    function createVariantExtended({ id, languageId, onCreate }: { id: number, languageId: number, onCreate: Function }) {
         createVariant({
             id,
             languageId,
