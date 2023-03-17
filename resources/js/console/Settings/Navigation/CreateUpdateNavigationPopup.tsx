@@ -60,7 +60,7 @@ export default function CreateUpdateNavigationPopup(
     const [name, setName] = useState(variant.name || '');
     const [url, setUrl] = useState(navigation.url || '');
 
-    const [type, setType] = useState<NavigationType>(navigation.type);
+    const [type, setType] = useState<NavigationType>(navigation.type || 'header');
 
     function updateName(value: any) {
         setVariantsState(variantsState.map(
