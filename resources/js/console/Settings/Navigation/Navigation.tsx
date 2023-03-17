@@ -1,35 +1,35 @@
-import React, {useState} from "react";
-import {TableRow, TableRowItem} from "../../ReusableComponents/Table";
-import {Navigation as NavigationType} from "../../types";
-import {useLanguagesValues} from "../Languages/helpers";
-import {GripHorizontal, GripVertical, PencilFill, Trash} from "react-bootstrap-icons";
-import {PopupConfirm} from "../../ReusableComponents/Popup";
+import React, { useState } from "react";
+import { TableRow, TableRowItem } from "../../ReusableComponents/Table";
+import { Navigation as NavigationType } from "../../types";
+import { useLanguagesValues } from "../Languages/helpers";
+import { GripHorizontal, GripVertical, PencilFill, Trash } from "react-bootstrap-icons";
+import { PopupConfirm } from "../../ReusableComponents/Popup";
 import navigationLogic from "../../logic/navigationLogic";
 import getSubdomain from "../../logic-helpers/subdomain";
-import {useActions} from "kea";
-import {toast} from "react-toastify";
+import { useActions } from "kea";
+import { toast } from "react-toastify";
 import CreateUpdateNavigationPopup from "./CreateUpdateNavigationPopup";
 
-export default function Navigation({ navigation } : { navigation: NavigationType }) {
+export default function Navigation({ navigation }: { navigation: NavigationType }) {
 
-    const navigationLogicInst = navigationLogic({subdomain: getSubdomain()})
+    const navigationLogicInst = navigationLogic({ subdomain: getSubdomain() })
     const { remove } = useActions(navigationLogicInst)
 
     const { primaryLanguage } = useLanguagesValues();
 
-    const [ isUpdating, setIsUpdating ] = useState(false)
-    const [ isDeleting, setIsDeleting ] = useState(false)
+    const [isUpdating, setIsUpdating] = useState(false)
+    const [isDeleting, setIsDeleting] = useState(false)
 
     function handleDelete() {
-        remove({id: navigation.id})
+        remove({ id: navigation.id })
         toast.success("Navigation deleted");
         setIsDeleting(false);
     }
 
     return <TableRow>
         <TableRowItem><GripVertical /></TableRowItem>
-        <TableRowItem>{ navigation.variants.find(n => n.language_id === primaryLanguage.id)?.name }</TableRowItem>
-        <TableRowItem>{ navigation.url }</TableRowItem>
+        <TableRowItem>{navigation.variants.find(n => n.language_id === primaryLanguage.id)?.name}</TableRowItem>
+        <TableRowItem>{navigation.url}</TableRowItem>
 
         <TableRowItem>
             <button className="icon-button" onClick={() => setIsUpdating(true)}><PencilFill size={10} /></button>
