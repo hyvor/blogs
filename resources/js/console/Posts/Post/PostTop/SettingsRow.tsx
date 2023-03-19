@@ -1,16 +1,17 @@
-import {BoxArrowUpRight, Fullscreen, GearFill} from "react-bootstrap-icons";
-import {getBlogUrl} from "../../../lib/blog-helpers";
-import React, {useEffect} from "react";
-import {usePostActions, usePostValues} from "../helpers";
+import { BoxArrowUpRight, Fullscreen, GearFill } from "react-bootstrap-icons";
+import { getBlogUrl } from "../../../lib/blog-helpers";
+import React, { useEffect } from "react";
+import { usePostActions, usePostValues } from "../helpers";
 import getSubdomain from "../../../logic-helpers/subdomain";
 import UnpublishButton from "./UnpublishButton";
 import MainButton from "./MainButton";
 import Publisher from "./Publisher";
 import PostSettings from "./PostSettings";
+import PostLanguageSelector from "../PostLanguageSelector";
 
-export default function SettingsRow({id}: {id: number}) {
+export default function SettingsRow({ id }: { id: number }) {
 
-    const { post, editorState, currentLanguage } = usePostValues(id);
+    const { post, editorState, currentLanguage, currentVariant } = usePostValues(id);
     const { changeEditorState } = usePostActions(id)
 
     function checkFullscreenClose(e: KeyboardEvent) {
@@ -32,7 +33,7 @@ export default function SettingsRow({id}: {id: number}) {
         <div className="post-editor-settings-buttons">
             <div className="left">
                 <button
-                    className={"button small" + (!editorState.isChangingSettings ? " secondary" : " inactive")}
+                    className={"button small" + (!editorState.isChangingSettings ? " light" : " primary")}
                     onClick={() => changeEditorState('isChangingSettings', true)}
                 >
                     <span>Settings</span><GearFill />
@@ -42,26 +43,22 @@ export default function SettingsRow({id}: {id: number}) {
                     href={getBlogUrl(getSubdomain(), '/p/' + post.preview_id + "/" + currentLanguage.code)}
                     target="_blank"
                 >
-                    <button className="button small secondary view" >
+                    <button className="button small light view" >
                         <span>View</span><BoxArrowUpRight />
                     </button>
                 </a>
-                <button
-                    className={"button small" + (!editorState.isFullscreen ? " secondary" : " inactive")}
-                    onClick={() => changeEditorState('isFullscreen', !editorState.isFullscreen)}
-                    data-tip="Toggle Fullscreen"
-                >
-                    <Fullscreen />
-                </button>
+
             </div>
 
             <div className="publish-buttons">
+                <span className={`global-post-status ${currentVariant.status} large`}>{currentVariant.status}</span>
                 <UnpublishButton id={id} />
                 <MainButton id={id} />
 
                 <Publisher id={id} />
             </div>
         </div>
+        <PostLanguageSelector id={id} />
 
         <PostSettings id={id} />
 

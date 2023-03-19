@@ -1,7 +1,7 @@
 import React from "react";
-import {usePostActions, usePostValues} from "../helpers";
+import { usePostActions, usePostValues } from "../helpers";
 
-export default function UnpublishButton({id} : {id: number}) {
+export default function UnpublishButton({ id }: { id: number }) {
 
     const { currentVariant } = usePostValues(id);
     const { changeEditorState } = usePostActions(id)
@@ -14,7 +14,7 @@ export default function UnpublishButton({id} : {id: number}) {
     }
 
     return name ? <button
-        className="button small secondary unpublish-button"
+        className="button small light unpublish-button"
         onClick={() => changeEditorState('isUnpublishing', true)}
     >
         {name}
