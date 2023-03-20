@@ -26,7 +26,7 @@ class UsageRepository
         $gb = (10 ** 9);
 
         $users = match ($plan) {
-            SubscriptionPlanEnum::A => 2,
+            SubscriptionPlanEnum::A => 3,
             SubscriptionPlanEnum::B => 10,
             SubscriptionPlanEnum::C => 100,
             SubscriptionPlanEnum::D => 1000,

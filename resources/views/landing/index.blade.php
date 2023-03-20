@@ -2,8 +2,8 @@
 <html>
 <head>
     @include('landing.meta', [
-        'title' => 'Hyvor Blogs - A simple and powerful blogging platform',
-        'description' => 'Hyvor Blogs is a simple and powerful blogging platform with a rich text editor, multi language support, APIs and webhooks, etc.',
+        'title' => 'Hyvor Blogs - Multi-language blogging platform',
+        'description' => 'Hyvor Blogs is a simple and powerful multi-language blogging platform with customizable themes, in-built SEO, and API support.',
         'image' => 'https://blogs.hyvor.com/img/banner.png',
         'canonical' => 'https://blogs.hyvor.com',
     ])
@@ -25,7 +25,7 @@
                     Start Your Blog Today!
                 </h1>
                 <h2>
-                    Hyvor Blogs is a simple & powerful platform to start a fully customizable blog.
+                    Hyvor Blogs is a simple & powerful platform to start a fully-customizable multi-language blog.
                 </h2>
                 <a data-flashload-skip-link href="/console?signup=1" class="button big">
                     Start a Blog For Free

@@ -79,7 +79,7 @@ $pricingRow = "<tr>
             <tr>
                 <td>Plan A</td>
                 <td><span class="price">$19</span>/month</td>
-                <td>2</td>
+                <td>3</td>
                 <td>40GB</td>
             </tr>
 
