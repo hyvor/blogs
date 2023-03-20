@@ -240,6 +240,11 @@
             margin-top: 1px;
             align-items: center;
         }
+
+        .post-author:not(:first-child) {
+            margin-top: 6px;
+        }
+
         .post-date {
             color: $color-text-light;
             font-size: 12px;

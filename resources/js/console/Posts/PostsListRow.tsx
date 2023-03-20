@@ -61,18 +61,23 @@ export default function PostsListRow({ id, subdomain }: { id: number, subdomain:
 
         {
             !post.is_page ?
-                <div className="post-author">
-                    {authorsImages.map((pictureUrl) =>
-                        <img
-                            src={pictureUrl}
-                            className="round-image-40 post-author-image "
-                            alt="Profile Picture"
-                        />
-                    )}
-                    {authorsNames}
-
-                </div> :
-                null
+                <div className="post-authors">
+                    {
+                        post.authors.map(author => {
+                            return <div className="post-author">
+                                <img
+                                    src={author.picture_url || undefined}
+                                    className="round-image-40 post-author-image "
+                                    alt="Profile Picture"
+                                />
+                                <span className="post-author-name">
+                                        {author.variants[0].name}
+                                    </span>
+                            </div>
+                        })
+                    }
+                </div>
+                : null
         }
 
         <div className="post-tags-wrap">
