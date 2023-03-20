@@ -56,6 +56,11 @@ return [
          * Secret of hyvor-blogs-themes repo
          */
         'webhook_secret_for_themes' => env('GITHUB_WEBHOOK_SECRET_FOR_THEMES')
-    ]
+    ],
+
+    'email_octopus' => [
+        'api_key' => env('EMAIL_OCTOPUS_API_KEY'),
+        'list_id' => "7b95c9e8-9e4f-11ed-b3ed-47583ae33f24"
+    ],
 
 ];

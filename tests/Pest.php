@@ -27,6 +27,7 @@ uses(TestCase::class)->in('Feature', 'Unit');
 
 uses()->beforeEach(function () {
 
+
     $this->blog = Blog::find(config('test.blog_id'));
     $this->user = User::where('hyvor_user_id', config('test.hyvor_user_id'))->first();
 
@@ -36,14 +37,16 @@ uses()->beforeEach(function () {
     // disable uploading profile picture
     $this->mock(MediaRepository::class, function (MockInterface $mock) {
         $mock->shouldReceive('uploadFromUrl')
-            ->andReturn(Media::factory()->create());
+            ->andReturn(Media::factory()->create(['blog_id' => 0]));
     });
+
 
     Http::fake([
         'https://iframe.ly/api/iframely*' => Http::response(jsonData('UrlData/iframely-response.json'))
     ]);
 
     PostSearchRepository::resetIndex();
+
 
 })->in('Feature', 'Unit');
 
