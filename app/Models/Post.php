@@ -49,4 +49,5 @@ class Post extends Model
             ->withPivot('post_author.id')
             ->orderBy('post_author.id', 'ASC');
     }
+
 }
