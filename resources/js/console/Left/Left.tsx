@@ -10,7 +10,7 @@ import {
     Chat, Coin,
     Exclamation,
     Files, Gear,
-    House,
+    House, Megaphone,
     Palette,
     Pencil,
 } from 'react-bootstrap-icons';
@@ -31,6 +31,15 @@ export default function Left() {
     }
 
     const { blog, blog: { subscription: currentSubscription } } = findBlogBySubdomain(subdomain);
+
+    useEffect(() => {
+        (window as any).FeaturebaseWidget.init({
+            organization: "hyvorblogs",
+            initialPage: "MainView",
+            // placement: "left",
+            fullScreen: true
+        })
+    }, []);
 
     return <div id="left">
         <div id="left-header" className="box">
@@ -100,6 +109,18 @@ export default function Left() {
             <LeftLink path="/settings" icon={<Gear />} name="Settings" permission={UserPermissions.canAccessSettings} />
 
         </div>
+
+        <div id="left-bottom">
+            <div className="changes-item box" onClick={() => {
+                window.postMessage({
+                    target: 'FeaturebaseWidget',
+                    data: { action: 'toggleWidget' },
+                })
+            }}>
+                <Megaphone /> Changes & Feedback <span id="fb-update-badge"></span>
+            </div>
+        </div>
+
     </div>
 }
 
