@@ -214,6 +214,10 @@
         position: relative;
         border-radius: 20px;
 
+        & > div {
+            padding-right: 8px;
+        }
+
         &:not(:last-child):after {
             // border-bottom: 1px solid $color-accent-very-light;
             content: "";

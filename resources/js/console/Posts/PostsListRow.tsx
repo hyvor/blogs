@@ -42,22 +42,21 @@ export default function PostsListRow({ id, subdomain }: { id: number, subdomain:
             </div>
 
         </div>
-        {
-            languages.length > 1 ?
-                <div className="post-languages">
-                    {
-                        post.variants.map(variant => {
-                            const lang = getLanguageById(variant.language_id)
 
-                            return lang ?
-                                <LangTag
-                                    key={lang.id}
-                                    code={lang.code}
-                                    icon={getLangTagIconByPostStatus(variant.status)}
-                                /> : null
-                        })
-                    }
-                </div> : null}
+        <div className="post-languages">
+            {
+                post.variants.map(variant => {
+                    const lang = getLanguageById(variant.language_id)
+
+                    return lang ?
+                        <LangTag
+                            key={lang.id}
+                            code={lang.code}
+                            icon={getLangTagIconByPostStatus(variant.status)}
+                        /> : null
+                })
+            }
+        </div>
 
         {
             !post.is_page ?
