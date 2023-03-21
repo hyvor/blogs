@@ -16,14 +16,20 @@
         .posts-view {
             display: block;
             #posts-selector {
-                display:none;
-                position: fixed;
+                position: relative;
                 top: 0;
                 left: 0;
                 z-index: 1;
                 width: 100%;
                 height: 100%;
                 border-radius: 0;
+            }
+            .post-filters {
+                display: flex;
+                flex-direction: column;
+            }
+            .posts-filter {
+                margin-bottom: 5px;
             }
         }
 
