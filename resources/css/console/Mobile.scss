@@ -55,6 +55,17 @@
         }
     }
 
+    #left-bottom {
+        position: fixed;
+        .changes-item {
+            padding: 15px 15px;
+            position: fixed;
+            bottom: 0;
+            left: 50%;
+            transform: translateX(-50%); /* to center horizontally */
+        }
+    }
+
     .CodeMirror {
         .CodeMirror-scroll {
             overflow-x: visible!important;
