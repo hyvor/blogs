@@ -31,6 +31,9 @@
             .posts-filter {
                 margin-bottom: 5px;
             }
+            .posts-list-item{
+                grid-template-columns: repeat(2, 1fr) 150px;
+            }
         }
 
         .blog-preview-view {
