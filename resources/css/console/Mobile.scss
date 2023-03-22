@@ -26,7 +26,10 @@
             }
             .post-filters {
                 display: flex;
-                flex-direction: column;
+                flex-direction: row;
+                flex-wrap: wrap;
+                align-items: center;
+                justify-content: center;
             }
             .posts-filter {
                 margin-bottom: 5px;
