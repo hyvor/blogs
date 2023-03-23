@@ -49,7 +49,12 @@
                 display: flex;
                 flex-direction: column;
                 border-bottom:1px solid $color-accent-light;
-                margin-bottom: 25px!important;
+                padding: 10px;
+                align-items: start;
+            }
+            .post-authors {
+                margin-top: 5px;
+                margin-bottom: 5px;
             }
             .box-left {
                 margin: 0 auto;
