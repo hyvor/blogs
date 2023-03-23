@@ -49,7 +49,6 @@ function SettingsSelect({ name, value, options, setPannel }: SettingsSelectProps
             </div>
         </components.SingleValue>
     };
-    console.log('Value: ', value)
 
     const valueCalculated = options.find(i => i.value === value) || options[0];
 
@@ -67,11 +66,25 @@ export default function Settings({ type }: { type: string | undefined }) {
     const subdomain = getSubdomain();
     const blog = getUserBlogBlog();
     const [pannel, setPannel] = useState(type || 'general');
-    console.log('Pannel: ', pannel);
     const pannelOption = [
         { value: 'general', label: 'General' },
         { value: 'users', label: 'Users' },
+        { value: 'tags', label: 'Tags' },
+        { value: 'languages', label: 'Languages' },
+        { value: 'hosting', label: 'Hosting' },
+        { value: 'seo', label: 'SEO' },
+        { value: 'color-mode', label: 'Light & Dark Modes' },
         { value: 'navigation', label: 'Navigation' },
+        { value: 'media', label: 'Media' },
+        { value: 'redirects', label: 'Redirects' },
+        { value: 'routes', label: 'Routes' },
+        { value: 'api-keys', label: 'API Keys' },
+        { value: 'webhooks', label: 'Webhooks' },
+        { value: 'comments', label: 'Comments & Newsletter' },
+        { value: 'code', label: 'Custom Code' },
+        { value: 'highlight', label: 'Syntax Highlighting' },
+        { value: 'migrate', label: 'Import & Export' },
+        { value: 'danger', label: 'Danger Zone' },
     ]
 
     let Type = () => <SettingsGeneral />;
