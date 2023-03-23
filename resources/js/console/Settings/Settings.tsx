@@ -1,4 +1,4 @@
-import React, {Fragment, useEffect, useRef} from 'react';
+import React, { Fragment, ReactNode, useEffect, useRef, useState } from 'react';
 import NavLink from '../ReusableComponents/NavLink';
 import Code from './Code';
 import SettingsMedia from './Media/SettingsMedia';
@@ -19,21 +19,63 @@ import getSubdomain from "../logic-helpers/subdomain";
 import Webhooks from "./Webhooks/Webhooks";
 import ApiKeys from "./ApiKeys/ApiKeys";
 import Danger from "./Danger/Danger";
-import {UserRole} from "../enums";
+import { UserRole } from "../enums";
 import UserPermissions from "../services/UserPermissions";
-import {useActions} from "kea";
-import {router} from "kea-router";
-import {getUserBlogBlog} from "../logic-helpers/blog";
+import { useActions } from "kea";
+import { router } from "kea-router";
+import { getUserBlogBlog } from "../logic-helpers/blog";
 import Shopify from "./Integrations/Shopify";
+import Select from '../ReusableComponents/Select';
+import { components } from 'react-select';
 
-export default function Settings({type} : {type: string | undefined}) {
+
+interface SettingsSelectProps {
+    name: string,
+    value: string | number | null,
+    options: {
+        value: string | number;
+        label: string | ReactNode
+    }[],
+    setPannel: Function,
+}
+
+function SettingsSelect({ name, value, options, setPannel }: SettingsSelectProps) {
+    const SingleValue = (p: any) => {
+        const value = p.data.label.props ? p.data.label.props.name : p.data.label;
+        return <components.SingleValue {...p}>
+            <div className='posts-filter-row'>
+                <div className='posts-filter-name'>{name}</div>
+                <div className='posts-filter-value'>{value}</div>
+            </div>
+        </components.SingleValue>
+    };
+    console.log('Value: ', value)
+
+    const valueCalculated = options.find(i => i.value === value) || options[0];
+
+    return <Select
+        value={valueCalculated}
+        type="post-filters-selector"
+        options={options}
+        onChange={v => setPannel(v.value)}
+        components={{ SingleValue }}
+    />
+}
+
+export default function Settings({ type }: { type: string | undefined }) {
 
     const subdomain = getSubdomain();
-    const settingsPrefix = `/console/${subdomain}/settings`;
     const blog = getUserBlogBlog();
+    const [pannel, setPannel] = useState(type || 'general');
+    console.log('Pannel: ', pannel);
+    const pannelOption = [
+        { value: 'general', label: 'General' },
+        { value: 'users', label: 'Users' },
+        { value: 'navigation', label: 'Navigation' },
+    ]
 
     let Type = () => <SettingsGeneral />;
-    switch (type) {
+    switch (pannel) {
         case 'users':
             Type = () => <Users />;
             break;
@@ -94,7 +136,12 @@ export default function Settings({type} : {type: string | undefined}) {
 
     return <div className="posts-view settings-view">
         <div className="box box-left">
-            <div className="middle-heading">Settings</div>
+
+            <div className="middle-heading">
+                Settings
+                <SettingsSelect name="" value={pannel} options={pannelOption} setPannel={setPannel} />
+            </div>
+
             <div className="settings-nav">
 
                 {
@@ -143,7 +190,7 @@ interface SettingsLinkProps {
     dividing?: boolean
 }
 
-function SettingsLink({ path, role = UserRole.ADMIN, name, dividing = false } : SettingsLinkProps) {
+function SettingsLink({ path, role = UserRole.ADMIN, name, dividing = false }: SettingsLinkProps) {
 
     const subdomain = getSubdomain();
     const settingsPrefix = `/console/${subdomain}/settings`;
@@ -182,9 +229,9 @@ function SettingsLink({ path, role = UserRole.ADMIN, name, dividing = false } : 
             href={settingsPrefix + path}
             exact={1}
             className={cls}
-        >{ name }</NavLink>
+        >{name}</NavLink>
 
-        { dividing && <div /> }
+        {dividing && <div />}
     </Fragment>
 
 }

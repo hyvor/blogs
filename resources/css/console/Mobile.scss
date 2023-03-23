@@ -6,8 +6,10 @@
         height: initial;
         padding-bottom: 70px;
     }
+    
 
     #middle {
+        overflow-x: hidden;
         position:relative;
         margin-top:140px;
         left: initial;
@@ -29,10 +31,14 @@
                 flex-direction: row;
                 flex-wrap: wrap;
                 align-items: center;
-                justify-content: center;
+                justify-content: space-between;
+                
             }
             .posts-filter {
                 margin-bottom: 5px;
+            }
+            .post-search {
+                width: 100%;
             }
             .posts-list-item{
                 grid-template-columns: repeat(2, 1fr) 150px;
@@ -55,6 +61,12 @@
 
         .billing-view {
 
+        }
+
+        .settings-view {
+            .settings-nav {
+                display: none;
+            }
         }
     }
 
