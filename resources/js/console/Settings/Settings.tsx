@@ -54,7 +54,6 @@ function SettingsSelect({ name, value, options, setPannel }: SettingsSelectProps
 
     return <Select
         value={valueCalculated}
-        type="post-filters-selector"
         options={options}
         onChange={v => setPannel(v.value)}
         components={{ SingleValue }}
@@ -62,8 +61,6 @@ function SettingsSelect({ name, value, options, setPannel }: SettingsSelectProps
 }
 
 export default function Settings({ type }: { type: string | undefined }) {
-
-    const subdomain = getSubdomain();
     const blog = getUserBlogBlog();
     const [pannel, setPannel] = useState(type || 'general');
     const pannelOption = [
@@ -152,7 +149,6 @@ export default function Settings({ type }: { type: string | undefined }) {
 
             <div className="middle-heading">
                 Settings
-                <SettingsSelect name="" value={pannel} options={pannelOption} setPannel={setPannel} />
             </div>
 
             <div className="settings-nav">
@@ -190,6 +186,11 @@ export default function Settings({ type }: { type: string | undefined }) {
             </div>
         </div>
         <div className="box box-right settings-right">
+            <div className='settings-selector'>
+                <h2>Settings</h2>
+                <SettingsSelect name="" value={pannel} options={pannelOption} setPannel={setPannel} />
+            </div>
+
             <Type />
         </div>
     </div>

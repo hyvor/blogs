@@ -52,6 +52,10 @@
         }
     }
 
+    // Selector only available in mobile view
+    .settings-selector {
+        display: none;
+    }
 
     .CodeMirror {
         height: 200px;
