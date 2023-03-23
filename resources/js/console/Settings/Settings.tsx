@@ -187,7 +187,7 @@ export default function Settings({ type }: { type: string | undefined }) {
         </div>
         <div className="box box-right settings-right">
             <div className='settings-selector'>
-                <h2>Settings</h2>
+                <div className='title'>Settings</div>
                 <SettingsSelect name="" value={pannel} options={pannelOption} setPannel={setPannel} />
             </div>
 

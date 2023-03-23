@@ -35,6 +35,10 @@
                 
             }
             .posts-filter {
+                width: 50%;
+                margin: 0
+            }
+            .posts-filter-select-wrap {
                 margin-bottom: 5px;
             }
             .post-search {
@@ -42,6 +46,10 @@
             }
             .posts-list-item{
                 grid-template-columns: repeat(2, 1fr) 150px;
+                display: flex;
+                flex-direction: column;
+                border-bottom:1px solid $color-accent-light;
+                margin-bottom: 25px!important;
             }
             .box-left {
                 margin: 0 auto;
@@ -71,13 +79,20 @@
                 display: none;
             }
             .settings-selector {
+                font-size: 20px;
+                font-weight: 600;
                 display: flex;
                 flex-direction: column;
                 align-items: center;
                 justify-content: center;
                 border-bottom:1px solid $color-accent-light;
                 margin-bottom: 25px!important;
-                padding-bottom: 5px;
+                padding-bottom: 20px;
+            }
+            .settings-right {
+                padding: 20px 20px 90px;
+                overflow:auto;
+        
             }        
         }
     }
