@@ -27,6 +27,11 @@
         max-height: 100%;
         flex: 1;
     }
+    .blog-list-heading {
+        display: flex;
+        flex-direction: row;
+        justify-content: space-between;
+    }
     .blogs-list-title {
         font-size: 18px;
         font-weight: 600;

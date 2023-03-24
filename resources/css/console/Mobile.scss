@@ -110,7 +110,24 @@
                 overflow:auto;
         
             }        
-        }            
+        }
+
+        .welcome-view {
+            .content-wrap {
+                display: flex;
+                flex-direction: column;
+            }
+            .blogs-list {
+                width: 100%;
+            }
+            .blogs-list-list {
+                width: 100%;
+            }
+            .blog-card {
+                width: 100%;
+            }
+            
+        }
     
     }
 

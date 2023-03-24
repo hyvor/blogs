@@ -36,10 +36,10 @@ type LinkProps = {
     href: string;
 };
 
-function Link( { name, href } : LinkProps ) {
+function Link({ name, href }: LinkProps) {
 
-    return <a href={ href } target="_blank">
-        { name }
+    return <a href={href} target="_blank">
+        {name}
     </a>;
 
 }
