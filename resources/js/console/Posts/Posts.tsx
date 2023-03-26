@@ -61,7 +61,7 @@ export default function Posts({ postId }: { postId: number | undefined }) {
                     <div className="posts-list" onScroll={handleScroll}>
                         {
                             loadPostsListAjax.status === 'loading' ?
-                                <div className="posts-loading"><Loader /></div> :
+                                <div className="posts-loading"><Loader padding={100} /></div> :
                                 <div className="posts-loaded-wrap post-headers">
                                     {
                                         postsList.length ?

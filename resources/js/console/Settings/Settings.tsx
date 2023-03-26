@@ -55,7 +55,7 @@ function SettingsSelect({ name, value, options, setPannel }: SettingsSelectProps
     return <Select
         value={valueCalculated}
         options={options}
-        onChange={v => setPannel(v.value)}
+        onChange={(v: any) => setPannel(v.value)}
         components={{ SingleValue }}
     />
 }
