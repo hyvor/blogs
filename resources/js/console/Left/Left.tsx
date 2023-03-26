@@ -1,6 +1,5 @@
 import React, { FC, ReactNode, useEffect, useRef } from 'react';
 import BlogsSelector from './BlogsSelector';
-
 import { useActions, useValues } from 'kea';
 import subdomainLogic from '../logic/subdomainLogic';
 import NavLink from '../ReusableComponents/NavLink';
@@ -24,12 +23,17 @@ export default function Left() {
 
     const { subdomain } = useValues(subdomainLogic);
 
-    const { findBlogBySubdomain } = useValues(userBlogsLogic);
-
     if (!subdomain) {
         return null;
     }
 
+    return <LeftInner subdomain={subdomain} />
+
+}
+
+function LeftInner({subdomain} : {subdomain: string}) {
+
+    const { findBlogBySubdomain } = useValues(userBlogsLogic);
     const { blog, blog: { subscription: currentSubscription } } = findBlogBySubdomain(subdomain);
 
     useEffect(() => {
@@ -90,12 +94,12 @@ export default function Left() {
             <LeftLink path="/theme" icon={<Palette />} name="Theme" permission={UserPermissions.canAccessTheme} />
 
             <LeftLink path="/billing" icon={<Coin />} name="Billing"
-                permission={UserPermissions.canAccessBilling}
-                extra={
-                    <span className="mark">
+                      permission={UserPermissions.canAccessBilling}
+                      extra={
+                          <span className="mark">
                         {
                             currentSubscription &&
-                                currentSubscription.status === 'past_due'
+                            currentSubscription.status === 'past_due'
                                 ?
                                 <span className="subscription-issue-icon">
                                     <Exclamation />
@@ -103,7 +107,7 @@ export default function Left() {
                                 : null
                         }
                     </span>
-                }
+                      }
             />
 
             <LeftLink path="/settings" icon={<Gear />} name="Settings" permission={UserPermissions.canAccessSettings} />
@@ -122,6 +126,7 @@ export default function Left() {
         </div>
 
     </div>
+
 }
 
 function LeftLink({ path, icon, name, extra = null, permission }: LeftLinkProps) {
