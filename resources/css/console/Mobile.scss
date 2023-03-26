@@ -34,6 +34,12 @@
                 justify-content: space-between;
                 
             }
+            .post-editor-wrap {
+                width: 100%
+            }
+            .post-editor-headers {
+                width: 100%;
+            }
             .posts-filter {
                 width: 50%;
                 margin: 0
@@ -156,6 +162,11 @@
         .CodeMirror-scroll {
             overflow-x: visible!important;
         }
+    }
+
+    .ProseMirror {
+        overflow-x: visible!important;
+        width: auto;
     }
 
 }
