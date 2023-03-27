@@ -1,15 +1,16 @@
 import ReactDOM from 'react-dom';
 import React from 'react';
 import ImageUploader from './ImageUploader';
-import {NodeSelection} from "prosemirror-state";
-import {Node as ProsemirrorNode, Schema} from "prosemirror-model";
-import {EditorView, NodeView} from "prosemirror-view";
-import {UnsplashImage} from "../../../../types";
+import { NodeSelection } from "prosemirror-state";
+import { Node as ProsemirrorNode, Schema } from "prosemirror-model";
+import { EditorView, NodeView } from "prosemirror-view";
+import { UnsplashImage } from "../../../../types";
 
 export type ImageUploadHandlerType = (url: string, alt?: string | null, unsplash?: UnsplashImage | null) => void;
 
 type ImageNodeViewType = NodeView & {
     handleUpload: ImageUploadHandlerType;
+    handleUrl: (url: string) => void;
 }
 
 export default class Image implements ImageNodeViewType {
@@ -48,7 +49,7 @@ export default class Image implements ImageNodeViewType {
             if (this.node.attrs.src !== node.attrs.src) {
                 return false; // re-render
             }
-            
+
             this.updateFromAttrs(node)
             this.node = node;
             return true;
@@ -90,19 +91,19 @@ export default class Image implements ImageNodeViewType {
             img.src = src;
             this.dom.appendChild(img)
             this.img = img;
-            
+
             const altInput = document.createElement("input")
             altInput.className = "input alt-input"
             altInput.placeholder = "ALT Text..."
             this.dom.appendChild(altInput)
             altInput.value = alt
 
-            altInput.oninput = function(e) {
+            altInput.oninput = function (e) {
                 _self.view.dispatch(
                     _self.view.state.tr.setNodeMarkup(
                         _self.getPos(),
                         null,
-                        {..._self.node.attrs, alt: (e.target as HTMLInputElement).value }
+                        { ..._self.node.attrs, alt: (e.target as HTMLInputElement).value }
                     )
                 )
             }
@@ -115,7 +116,7 @@ export default class Image implements ImageNodeViewType {
             rangeInput.value = width ? (width / this.img.naturalWidth * 100).toString() : "100";
             rangeInput.step = "1"
 
-            rangeInput.oninput = function(e) {
+            rangeInput.oninput = function (e) {
                 const value = parseInt((e.target as HTMLInputElement).value)
                 let width, height
                 if (value === 100) {
@@ -125,12 +126,12 @@ export default class Image implements ImageNodeViewType {
                     width = (_self.img as HTMLImageElement).naturalWidth * value / 100
                     height = (_self.img as HTMLImageElement).naturalHeight * value / 100
                 }
-                
+
                 _self.view.dispatch(
                     _self.view.state.tr.setNodeMarkup(
                         _self.getPos(),
                         null,
-                        {..._self.node.attrs, width, height }
+                        { ..._self.node.attrs, width, height }
                     )
                 )
             }
@@ -141,7 +142,7 @@ export default class Image implements ImageNodeViewType {
 
         } else {
             // render image selector
-            ReactDOM.render(<ImageUploader onUpload={this.handleUpload} />, this.dom);
+            ReactDOM.render(<ImageUploader onUpload={this.handleUpload} onUrlLoad={this.handleUrl} />, this.dom);
         }
     }
 
@@ -151,13 +152,13 @@ export default class Image implements ImageNodeViewType {
         const tr = this.view.state.tr.setNodeMarkup(
             pos,
             null,
-            {...this.node.attrs, ...{src: url, alt}}
+            { ...this.node.attrs, ...{ src: url, alt } }
         )
         if (unsplash) {
             const nodeSel = NodeSelection.create(this.view.state.doc, pos + 1)
-            
+
             const utm = "?utm_source=hyvor_blogs&utm_medium=referral"
-            
+
             const newNode = this.schema.nodes.figcaption.create({}, [
                 this.schema.text("Photo by "),
                 this.schema.text(unsplash.author, [
@@ -172,7 +173,7 @@ export default class Image implements ImageNodeViewType {
                     })
                 ])
             ]);
-            
+
             tr.replaceWith(
                 nodeSel.from,
                 nodeSel.to,
@@ -182,6 +183,18 @@ export default class Image implements ImageNodeViewType {
 
 
         this.view.dispatch(tr)
+    }
+
+    handleUrl(url: string | null) {
+        if (url && url.length > 0) {
+            this.view.dispatch(
+                this.view.state.tr.setNodeMarkup(
+                    this.getPos(),
+                    null,
+                    { ...this.node.attrs, src: url }
+                )
+            )
+        }
     }
 
     stopEvent(e: any) {

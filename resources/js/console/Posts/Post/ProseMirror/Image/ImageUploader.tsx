@@ -7,7 +7,7 @@ import { toast } from "react-toastify";
 import { ConsoleWindow, Media, UnsplashImage } from "../../../../types";
 import { ImageUploadHandlerType } from "./nodeview-image";
 
-export default function ImageUploader({ onUpload }: { onUpload: ImageUploadHandlerType }) {
+export default function ImageUploader({ onUpload, onUrlLoad }: { onUpload: ImageUploadHandlerType, onUrlLoad: (url: string) => void }) {
 
     const [search, setSearch] = useState('');
     const [ajaxStatus, setAjaxStatus] = useState<null | 'loading' | 'success'>(null);
@@ -15,21 +15,28 @@ export default function ImageUploader({ onUpload }: { onUpload: ImageUploadHandl
     const [images, setImages] = useState<UnsplashImage[]>([]);
     const [isUploading, setIsUploading] = useState(false);
     const [hasMore, setHasMore] = useState(false)
+    const [imageUrl, setImageUrl] = useState('');
 
     const fileUploadInputRef = useRef<null | HTMLInputElement>(null);
 
     useEffect(() => {
-        if (!search.trim()) return
+        if (!search.trim() || !imageUrl.trim()) return
 
         // abort old request
         abortControllerRef.current && abortControllerRef.current.abort();
 
         setAjaxStatus('loading')
         setImages([]);
+        if (search.trim()) {
+            load();
+            return;
+        }
+        if (imageUrl.trim()) {
+            onUrlLoad(imageUrl)
+        }
 
-        load();
 
-    }, [search]);
+    }, [search, imageUrl]);
 
     function load(page = 1) {
         abortControllerRef.current = new AbortController()
@@ -99,6 +106,8 @@ export default function ImageUploader({ onUpload }: { onUpload: ImageUploadHandl
 
     }
 
+
+
     return <div className={"image-uploader" + (search.trim() ? " searching" : "")}>
         <div className="uploader-content">
 
@@ -125,10 +134,11 @@ export default function ImageUploader({ onUpload }: { onUpload: ImageUploadHandl
                         <div className='url-search'>
                             <div className="or">OR</div>
                             <input
-                                type="text"
                                 className="input"
                                 placeholder="Import from URL"
-
+                                value={imageUrl}
+                                onChange={e => setImageUrl(e.target.value)}
+                                onPaste={(e) => setImageUrl(e.clipboardData.getData('text'))}
                                 onFocus={e => {
                                     e.preventDefault()
                                 }}
