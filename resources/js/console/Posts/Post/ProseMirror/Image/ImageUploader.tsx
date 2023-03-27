@@ -1,13 +1,13 @@
-import axios, {AxiosResponse} from 'axios';
-import React, {ChangeEvent, useEffect, useRef, useState} from 'react';
+import axios, { AxiosResponse } from 'axios';
+import React, { ChangeEvent, useEffect, useRef, useState } from 'react';
 import { getEndpoint } from '../../../../lib/api';
 import Loader from '../../../../ReusableComponents/Loader';
 import NoResults from '../../../../ReusableComponents/NoResults';
-import {toast} from "react-toastify";
-import {ConsoleWindow, Media, UnsplashImage} from "../../../../types";
-import {ImageUploadHandlerType} from "./nodeview-image";
+import { toast } from "react-toastify";
+import { ConsoleWindow, Media, UnsplashImage } from "../../../../types";
+import { ImageUploadHandlerType } from "./nodeview-image";
 
-export default function ImageUploader({onUpload} : {onUpload: ImageUploadHandlerType}) {
+export default function ImageUploader({ onUpload }: { onUpload: ImageUploadHandlerType }) {
 
     const [search, setSearch] = useState('');
     const [ajaxStatus, setAjaxStatus] = useState<null | 'loading' | 'success'>(null);
@@ -15,7 +15,7 @@ export default function ImageUploader({onUpload} : {onUpload: ImageUploadHandler
     const [images, setImages] = useState<UnsplashImage[]>([]);
     const [isUploading, setIsUploading] = useState(false);
     const [hasMore, setHasMore] = useState(false)
-    
+
     const fileUploadInputRef = useRef<null | HTMLInputElement>(null);
 
     useEffect(() => {
@@ -33,7 +33,7 @@ export default function ImageUploader({onUpload} : {onUpload: ImageUploadHandler
 
     function load(page = 1) {
         abortControllerRef.current = new AbortController()
-        
+
         axios.get<UnsplashImage[]>(
             getEndpoint((window as ConsoleWindow).currentSubdomain as string, '/media/unsplash/search'),
             {
@@ -43,13 +43,13 @@ export default function ImageUploader({onUpload} : {onUpload: ImageUploadHandler
                     page
                 }
             }
-        ).then(({data: newImages}) => {
+        ).then(({ data: newImages }) => {
             setAjaxStatus('success')
             setImages(page === 1 ? newImages : [...images, ...newImages])
             setHasMore(newImages.length === 30)
-        }).catch(() => {})
+        }).catch(() => { })
     }
-    
+
     function openUploader() {
         fileUploadInputRef.current && fileUploadInputRef.current.click()
     }
@@ -62,12 +62,12 @@ export default function ImageUploader({onUpload} : {onUpload: ImageUploadHandler
             toast.error('Select only one image');
             return;
         }
-        
+
         const file = files[0];
         if (file.size > 50 * 1000 * 1000) {
             toast.error("Max size is 50MB");
         }
-    
+
         // https://developer.mozilla.org/en-US/docs/Web/Media/Formats/Image_types#common_image_file_types
         const validTypes = [
             'image/gif', 'image/jpeg', 'image/png',
@@ -77,34 +77,34 @@ export default function ImageUploader({onUpload} : {onUpload: ImageUploadHandler
         if (!validTypes.includes(file.type)) {
             toast.error('Only PNG, JPEG, GIF, APNG, WEBP, AVIF, and SVG images are allowed');
         }
-        
+
         uploadFile(file)
     }
-    
+
     function uploadFile(file: File) {
         setIsUploading(true)
-        
+
         var formData = new FormData();
         formData.append('file', file, file.name);
         axios.post<any, AxiosResponse<Media>>(
             getEndpoint((window as ConsoleWindow).currentSubdomain as string, '/media'),
             formData
-        ).then(({data}) => {
+        ).then(({ data }) => {
             setIsUploading(false)
             onUpload(data.url)
         }).catch(() => {
             setIsUploading(false)
             toast.error("Uploading failed");
         })
-        
+
     }
 
-    return <div className={"image-uploader" + ( search.trim() ? " searching" : "")}>
+    return <div className={"image-uploader" + (search.trim() ? " searching" : "")}>
         <div className="uploader-content">
 
             {
                 isUploading ?
-                    <Loader padding={60}/>
+                    <Loader padding={60} />
                     :
                     <div>
                         <div className="search">
@@ -114,6 +114,21 @@ export default function ImageUploader({onUpload} : {onUpload: ImageUploadHandler
                                 placeholder="Search on Unsplash"
                                 value={search}
                                 onChange={e => setSearch(e.target.value)}
+                                onFocus={e => {
+                                    e.preventDefault()
+                                }}
+
+                                // otherwise call Backspace events in Prosemirror
+                                onKeyDown={e => e.stopPropagation()}
+                            />
+                        </div>
+                        <div className='url-search'>
+                            <div className="or">OR</div>
+                            <input
+                                type="text"
+                                className="input"
+                                placeholder="Import from URL"
+
                                 onFocus={e => {
                                     e.preventDefault()
                                 }}
@@ -134,18 +149,19 @@ export default function ImageUploader({onUpload} : {onUpload: ImageUploadHandler
                                 <input
                                     type="file"
                                     accept="image/*"
-                                    style={{display: "none"}}
+                                    style={{ display: "none" }}
                                     ref={fileUploadInputRef}
                                     onChange={handleFileUploadChange}
                                 />
                             </div>
                         </div>
 
+
                         {
                             search.trim() ?
                                 (
                                     ajaxStatus === 'loading' ?
-                                        <Loader padding={60}/> :
+                                        <Loader padding={60} /> :
                                         (
                                             ajaxStatus === 'success' && images.length ?
                                                 <Images
@@ -179,13 +195,13 @@ interface ImagesProps {
     setHasMore: Function
 }
 
-function Images({images, onUpload, load, hasMore, setHasMore} : ImagesProps) {
+function Images({ images, onUpload, load, hasMore, setHasMore }: ImagesProps) {
 
-    const left : UnsplashImage[] = [];
-    const right : UnsplashImage[] = [];
+    const left: UnsplashImage[] = [];
+    const right: UnsplashImage[] = [];
 
     images.forEach((img, i) => (i % 2 === 0 ? right : left).push(img));
-    
+
     function handleScroll(e: any) {
         const el = e.target;
         if (
@@ -193,11 +209,11 @@ function Images({images, onUpload, load, hasMore, setHasMore} : ImagesProps) {
             el.scrollTop + el.clientHeight >= el.scrollHeight
         ) {
             setHasMore(false)
-            load( (images.length / 30) + 1)
+            load((images.length / 30) + 1)
         }
     }
 
-    return <div 
+    return <div
         className="search-results"
         onScroll={handleScroll}
     >
@@ -207,14 +223,14 @@ function Images({images, onUpload, load, hasMore, setHasMore} : ImagesProps) {
 
 }
 
-function ImageColumn({images, onUpload} : {images: UnsplashImage[], onUpload: ImageUploadHandlerType}) {
+function ImageColumn({ images, onUpload }: { images: UnsplashImage[], onUpload: ImageUploadHandlerType }) {
     return <div className="images-column">
         {
             images.map(img => {
                 return <img
                     key={img.url}
                     onClick={() => onUpload(img.url, img.alt, img)}
-                    src={img.url} title={img.title || ''} alt={img.alt || ''}/>
+                    src={img.url} title={img.title || ''} alt={img.alt || ''} />
             })
         }
     </div>
