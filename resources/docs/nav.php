@@ -3,10 +3,9 @@
 return [
 
     'Intro' => [
-        [null, 'Getting Started'],
+        [null, 'Introduction'],
         ['writing', 'Writing'],
         ['theme', 'Theme'],
-        ['how', 'How it works'],
     ],
     'Features' => [
         ['users', 'Users'],

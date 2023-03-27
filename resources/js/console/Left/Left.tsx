@@ -37,7 +37,7 @@ function LeftInner({subdomain} : {subdomain: string}) {
     const { blog, blog: { subscription: currentSubscription } } = findBlogBySubdomain(subdomain);
 
     useEffect(() => {
-        (window as any).FeaturebaseWidget.init({
+        (window as any).FeaturebaseWidget && (window as any).FeaturebaseWidget.init({
             organization: "hyvorblogs",
             initialPage: "MainView",
             // placement: "left",

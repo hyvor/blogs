@@ -46,7 +46,7 @@ Hyvor Blogs comes with a rich text editor that supports inline styles and blocks
 
 ### Inline Styles {#inline-styles}
 
-To add inline styles to text, select the text. A popup window will be opened with the available options. Click on the inline style you want to add. The following inline styles are supported.
+To add inline styles to text, select the text. A popup will be shown with the available options. Click on the inline style you want to add. The following inline styles are supported.
 
 * Bold
 * Italic
