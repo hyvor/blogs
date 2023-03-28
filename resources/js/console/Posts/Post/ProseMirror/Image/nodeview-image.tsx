@@ -198,12 +198,15 @@ export default class Image implements ImageNodeViewType {
 
         const nodeSel = NodeSelection.create(this.view.state.doc, pos + 1)
 
-        const newNode = this.schema.nodes.image.create({
-            src: url,
-            alt,
-            width,
-            height
-        });
+        const captionNode = this.schema.nodes.figcaption.create({}, [
+            this.schema.text("Enter a caption..."),
+        ]);
+
+        tr.replaceWith(
+            nodeSel.from,
+            nodeSel.to,
+            captionNode
+        )
 
         //tr.replaceWith(nodeSel.from, nodeSel.to, newNode);
         this.view.dispatch(tr);
