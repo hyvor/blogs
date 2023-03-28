@@ -111,7 +111,7 @@ export default function ImageUploader({ onUpload, onUrlLoad }: { onUpload: Image
 
     return <div className={"image-uploader" + (search.trim() ? " searching" : "")}>
         <div className="uploader-content">
-
+            {imageUrl.trim().length > 0 && <button className='button small' onClick={() => onUrlLoad(imageUrl)}>Confirm</button>}
             {
                 isUploading ?
                     <Loader padding={60} />
