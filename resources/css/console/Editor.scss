@@ -619,6 +619,11 @@ $prosemirror-selected-outline: 3px solid #299af3;
                     max-height: initial;
                 }
             }
+            .image-preview {
+                display: flex;
+                flex-direction: column;
+               
+            }
         }
     }
 

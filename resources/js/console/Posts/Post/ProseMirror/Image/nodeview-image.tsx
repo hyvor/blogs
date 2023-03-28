@@ -186,6 +186,7 @@ export default class Image implements ImageNodeViewType {
         this.view.dispatch(tr)
     }
 
+    // Idea: Put the preview in imageUploader
     handleUrl(url: string | null) {
         if (!url) return;
         const pos = this.getPos();

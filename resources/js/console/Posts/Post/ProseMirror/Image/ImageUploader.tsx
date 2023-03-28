@@ -32,7 +32,7 @@ export default function ImageUploader({ onUpload, onUrlLoad }: { onUpload: Image
             return;
         }
         if (imageUrl.trim().length > 0) {
-            onUrlLoad(imageUrl);
+            //onUrlLoad(imageUrl);
             return;
         }
 
@@ -188,6 +188,15 @@ export default function ImageUploader({ onUpload, onUrlLoad }: { onUpload: Image
                                                 />
                                         )
                                 ) : null
+                        }
+                        {
+                            imageUrl.trim() ? (
+                                <div className='image-preview'>
+                                    Preview:
+                                    <img src={imageUrl}></img>
+                                </div>
+
+                            ) : null
                         }
                     </div>
             }
