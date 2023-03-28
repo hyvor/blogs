@@ -20,18 +20,19 @@ export default function ImageUploader({ onUpload, onUrlLoad }: { onUpload: Image
     const fileUploadInputRef = useRef<null | HTMLInputElement>(null);
 
     useEffect(() => {
-        if (!search.trim() || !imageUrl.trim()) return
+        if (!search.trim() && !imageUrl.trim()) return
 
         // abort old request
         abortControllerRef.current && abortControllerRef.current.abort();
 
         setAjaxStatus('loading')
         setImages([]);
-        if (search.trim()) {
+        if (search.trim().length > 0) {
             load();
             return;
         }
-        if (imageUrl.trim()) {
+        if (imageUrl.trim().length > 0) {
+            console.log('url', imageUrl);
             onUrlLoad(imageUrl)
         }
 

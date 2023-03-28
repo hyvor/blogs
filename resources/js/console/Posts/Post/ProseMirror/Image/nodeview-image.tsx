@@ -39,6 +39,7 @@ export default class Image implements ImageNodeViewType {
 
         this.createInside = this.createInside.bind(this)
         this.handleUpload = this.handleUpload.bind(this)
+        this.handleUrl = this.handleUrl.bind(this)
 
         this.createInside();
         this.updateFromAttrs(node);
@@ -186,15 +187,22 @@ export default class Image implements ImageNodeViewType {
     }
 
     handleUrl(url: string | null) {
-        if (url && url.length > 0) {
-            this.view.dispatch(
-                this.view.state.tr.setNodeMarkup(
-                    this.getPos(),
-                    null,
-                    { ...this.node.attrs, src: url }
-                )
-            )
-        }
+        if (!url) return;
+        console.log('this:', this);
+        const pos = this.getPos();
+        const { alt, width, height } = this.node.attrs;
+        const nodeSel = NodeSelection.create(this.view.state.doc, pos + 1)
+
+        const newNode = this.schema.nodes.image.create({
+            src: url,
+            alt,
+            width,
+            height
+        });
+        console.log('NewNode:', newNode)
+
+        const tr = this.view.state.tr.replaceWith(nodeSel.from, nodeSel.to, newNode);
+        this.view.dispatch(tr);
     }
 
     stopEvent(e: any) {
