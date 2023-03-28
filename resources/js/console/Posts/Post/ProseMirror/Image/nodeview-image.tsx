@@ -188,9 +188,14 @@ export default class Image implements ImageNodeViewType {
 
     handleUrl(url: string | null) {
         if (!url) return;
-        console.log('this:', this);
         const pos = this.getPos();
         const { alt, width, height } = this.node.attrs;
+        const tr = this.view.state.tr.setNodeMarkup(
+            pos,
+            null,
+            { ...this.node.attrs, ...{ src: url, alt } }
+        )
+
         const nodeSel = NodeSelection.create(this.view.state.doc, pos + 1)
 
         const newNode = this.schema.nodes.image.create({
@@ -199,9 +204,8 @@ export default class Image implements ImageNodeViewType {
             width,
             height
         });
-        console.log('NewNode:', newNode)
 
-        const tr = this.view.state.tr.replaceWith(nodeSel.from, nodeSel.to, newNode);
+        //tr.replaceWith(nodeSel.from, nodeSel.to, newNode);
         this.view.dispatch(tr);
     }
 

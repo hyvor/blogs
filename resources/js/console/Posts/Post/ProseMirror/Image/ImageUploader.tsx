@@ -32,8 +32,8 @@ export default function ImageUploader({ onUpload, onUrlLoad }: { onUpload: Image
             return;
         }
         if (imageUrl.trim().length > 0) {
-            console.log('url', imageUrl);
-            onUrlLoad(imageUrl)
+            onUrlLoad(imageUrl);
+            return;
         }
 
 
