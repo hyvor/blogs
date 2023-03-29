@@ -111,12 +111,18 @@ export default function ImageUploader({ onUpload, onUrlLoad }: { onUpload: Image
 
     return <div className={"image-uploader" + (search.trim() ? " searching" : "")}>
         <div className="uploader-content">
-            {imageUrl.trim().length > 0 && <button className='button small' onClick={() => onUrlLoad(imageUrl)}>Confirm</button>}
+            {imageUrl.trim().length > 0 &&
+                <div>
+                    <button className='button small' onClick={() => onUrlLoad(imageUrl)}>Confirm </button>
+                    <button className='button small' onClick={() => setImageUrl('')}>Change</button>
+                </div>
+            }
             {
                 isUploading ?
                     <Loader padding={60} />
                     :
-                    <div>
+                    // If no preview image is selected
+                    imageUrl.trim().length == 0 && <div>
                         <div className="search">
                             <input
                                 type="text"
@@ -189,20 +195,21 @@ export default function ImageUploader({ onUpload, onUrlLoad }: { onUpload: Image
                                         )
                                 ) : null
                         }
-                        {
-                            imageUrl.trim() ? (
-                                <div className='image-preview'>
-                                    Preview:
-                                    <img src={imageUrl}></img>
-                                </div>
 
-                            ) : null
-                        }
                     </div>
-            }
 
+            }
+            {
+                imageUrl.trim() ? (
+                    <div className='image-preview'>
+                        Preview:
+                        <img src={imageUrl}></img>
+                    </div>
+
+                ) : null
+            }
         </div>
-    </div>
+    </div >
 
 }
 
