@@ -622,7 +622,8 @@ $prosemirror-selected-outline: 3px solid #299af3;
             .image-preview {
                 display: flex;
                 flex-direction: column;
-               
+                justify-content: center;
+                align-items: center;
             }
         }
     }

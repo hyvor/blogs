@@ -16,6 +16,8 @@ export default function ImageUploader({ onUpload, onUrlLoad }: { onUpload: Image
     const [isUploading, setIsUploading] = useState(false);
     const [hasMore, setHasMore] = useState(false)
     const [imageUrl, setImageUrl] = useState('');
+    const [isValidImageUrl, setIsValidImageUrl] = useState(true);
+    const [isImageLoading, setIsImageLoading] = useState(false);
 
     const fileUploadInputRef = useRef<null | HTMLInputElement>(null);
 
@@ -107,16 +109,13 @@ export default function ImageUploader({ onUpload, onUrlLoad }: { onUpload: Image
 
     }
 
-
+    function handleUrlInputChange(input: string) {
+        setImageUrl(input)
+        setIsValidImageUrl(true);
+    }
 
     return <div className={"image-uploader" + (search.trim() ? " searching" : "")}>
         <div className="uploader-content">
-            {imageUrl.trim().length > 0 &&
-                <div>
-                    <button className='button small' onClick={() => onUrlLoad(imageUrl)}>Confirm </button>
-                    <button className='button small' onClick={() => setImageUrl('')}>Change</button>
-                </div>
-            }
             {
                 isUploading ?
                     <Loader padding={60} />
@@ -144,8 +143,8 @@ export default function ImageUploader({ onUpload, onUrlLoad }: { onUpload: Image
                                 className="input"
                                 placeholder="Import from URL"
                                 value={imageUrl}
-                                onChange={e => setImageUrl(e.target.value)}
-                                onPaste={(e) => setImageUrl(e.clipboardData.getData('text'))}
+                                onChange={e => handleUrlInputChange(e.target.value)}
+                                onPaste={(e) => handleUrlInputChange(e.clipboardData.getData('text'))}
                                 onFocus={e => {
                                     e.preventDefault()
                                 }}
@@ -200,11 +199,38 @@ export default function ImageUploader({ onUpload, onUrlLoad }: { onUpload: Image
 
             }
             {
+                // If preview image is selected
                 imageUrl.trim() ? (
-                    <div className='image-preview'>
-                        Preview:
-                        <img src={imageUrl}></img>
-                    </div>
+                    isImageLoading ? <Loader /> :
+                        <div className='image-preview'>
+                            <h3>Preview:</h3>
+                            <div>
+                                <button className='button small' onClick={() => onUrlLoad(imageUrl)}>Confirm </button>
+                                <button className='button small' onClick={() => handleUrlInputChange('')}>Change</button>
+                            </div>
+                            <input
+                                className="input"
+                                placeholder="Import from URL"
+                                value={imageUrl}
+                                onChange={e => handleUrlInputChange(e.target.value)}
+                                onPaste={(e) => handleUrlInputChange(e.clipboardData.getData('text'))}
+                                onFocus={e => {
+                                    e.preventDefault()
+                                }}
+
+                                // otherwise call Backspace events in Prosemirror
+                                onKeyDown={e => e.stopPropagation()}
+                            />
+                            {isValidImageUrl ?
+                                <img src={imageUrl}
+                                    onLoadStart={() => setIsImageLoading(true)}
+                                    onLoad={() => {
+                                        setIsImageLoading(false);
+                                        setIsValidImageUrl(true);
+                                    }}
+                                    onError={() => setIsValidImageUrl(false)}></img>
+                                : <p>Invalid image URL</p>}
+                        </div>
 
                 ) : null
             }
