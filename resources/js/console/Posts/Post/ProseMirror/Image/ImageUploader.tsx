@@ -204,8 +204,8 @@ export default function ImageUploader({ onUpload, onUrlLoad }: { onUpload: Image
                     isImageLoading ? <Loader /> :
                         <div className='image-preview'>
                             <h3>Preview:</h3>
-                            <div>
-                                <button className='button small' onClick={() => onUrlLoad(imageUrl)}>Confirm </button>
+                            <div className='action-area'>
+                                <button className='button small confirm-button' onClick={() => onUrlLoad(imageUrl)}>Confirm </button>
                                 <button className='button small' onClick={() => handleUrlInputChange('')}>Change</button>
                             </div>
                             <input
