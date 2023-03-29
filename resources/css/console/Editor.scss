@@ -625,6 +625,16 @@ $prosemirror-selected-outline: 3px solid #299af3;
                 justify-content: center;
                 align-items: center;
             }
+            .confirm-button {
+                margin-right: 15px;
+            }
+            .action-area {
+                margin-top: 5px;
+                margin-bottom: 5px;
+            }
+            img {
+                margin-bottom: 20px;
+            }
         }
     }
 
