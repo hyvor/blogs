@@ -16,6 +16,8 @@ import Loader from "./ReusableComponents/Loader"
 import subdomainLogic from "./logic/subdomainLogic"
 import Comments from "./Comment/Comments"
 import BlogBlocked from "./Views/BlogBlocked";
+import {hasTrialEndedAndNotActivated} from "./lib/blog-helpers";
+import BlogTrialEnded from "./Views/BlogTrialEnded";
 
 export const scenes = {
     error404: () => <div>404</div>,
@@ -57,24 +59,38 @@ function Middle({ children, scene } : {children: ReactNode, scene: string}) {
 
     const { loadAjax, blog } = useValues(blogLogic({subdomain}))
 
+    function isBlogSceneBlocked() {
+        return blog.is_blocked &&
+            (
+                scene === 'comments' ||
+                scene === 'blogPreview' ||
+                scene === 'posts' ||
+                scene === 'pages' ||
+                scene === 'comments' ||
+                scene === 'theme'
+            );
+    }
+
+    function isBlogTrialEndedAndNotActivated() {
+        return hasTrialEndedAndNotActivated(blog.subdomain) && scene !== 'billing';
+    }
+
     return <div id="middle">
         {
             loadAjax.status === 'loading' ?
                 <div className="posts-not-ready box">
                     <Loader size={40} />
                 </div>
-            : (
-                blog.is_blocked &&
-                    (
-                        scene === 'comments' ||
-                        scene === 'blogPreview' ||
-                        scene === 'posts' ||
-                        scene === 'pages' ||
-                        scene === 'comments' ||
-                        scene === 'theme'
-                    ) ?
-                    <BlogBlocked /> :
-                    children
+            :
+
+                (
+                     isBlogSceneBlocked() ?
+                        <BlogBlocked /> :
+                         (
+                             isBlogTrialEndedAndNotActivated() ?
+                                 <BlogTrialEnded /> :
+                                 children
+                         )
                 )
         }
     </div>

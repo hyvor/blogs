@@ -134,7 +134,7 @@ $pricingRow = "<tr>
     <div class="faq">
         <h3>What is the one-time payment?</h3>
         <p>
-            We charge $5 one-time fee to activate your blog. This helps us keep spam out of our system. We also provide a 7-day trial period to test the product before you pay.
+            We charge $5 one-time fee to activate your blog after the 7-days free trial. This helps us keep spam out of our system. We can waive this fee for students and low-income individuals. Please contact us via live chat.
         </p>
     </div>
     <div class="faq">
@@ -145,6 +145,12 @@ $pricingRow = "<tr>
         <h3>How do payments work?</h3>
         <p>
             Payments are processed securely through our Merchant of Record, <a href="https://paddle.com" rel="nofollow" class="link">Paddle</a>, who technically works as a reseller of the product. We support cards and Paypal in multiple currencies.
+        </p>
+    </div>
+    <div class="faq">
+        <h3>Do you offer discounts?</h3>
+        <p>
+            If you pay annually, you can get 2-months off on all subscription plans. In addition, we provide a 20% discount for non-profit organizations and early-stage startups. Contact us via live chat for a coupon.
         </p>
     </div>
     <div class="faq">

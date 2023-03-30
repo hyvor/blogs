@@ -71,10 +71,10 @@ export default function Activate() {
                         type === 'active' && "This blog is activated."
                     }
                     {
-                        type === 'expired' && "Trial has ended. Activate the starter plan or upgrade to a subscription plan to continue using the blog."
+                        type === 'expired' && "Trial has ended. Activate the starter plan (one-time fee) or upgrade to a subscription plan to continue using the blog."
                     }
                     {
-                        type === 'trial' && "Trial ends in " + trialDays + " days. Activate the starter plan or upgrade to a subscription plan to continue using the blog."
+                        type === 'trial' && "Trial ends in " + trialDays + " days. Activate the starter plan (one-time fee) or upgrade to a subscription plan to continue using the blog."
                     }
                     {
                         (type === 'trial' || type === 'expired') &&
@@ -84,7 +84,7 @@ export default function Activate() {
                     }
                 </div>
             }
-            color="blue"
+            color={type === 'expired' ? 'orange' : "blue"}
         />
 
         {
