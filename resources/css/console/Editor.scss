@@ -639,11 +639,14 @@ $prosemirror-selected-outline: 3px solid #299af3;
             .confirm-button {
                 margin-right: 15px;
             }
+            .cancel-button {
+                background-color: white;
+                color: black;
+            }
             .action-area {
                 align-self: self-end;
             }
             .image-confirm {
-                width: 100% !important;
                 margin-bottom: 10px;
             }
             img {

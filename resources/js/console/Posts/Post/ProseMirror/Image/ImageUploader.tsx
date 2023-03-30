@@ -226,7 +226,7 @@ export default function ImageUploader({ onUpload, onUrlLoad }: { onUpload: Image
                                 : <p>Invalid image URL</p>}
                             <div className='action-area'>
                                 <button className='button small confirm-button' onClick={() => onUrlLoad(imageUrl)}>Confirm </button>
-                                <button className='button small' onClick={() => handleUrlInputChange('')}>Change</button>
+                                <button className='button small cancel-button' onClick={() => handleUrlInputChange('')}>Cancel</button>
                             </div>
                         </div>
                 ) : null
