@@ -5,9 +5,9 @@ import Loader from '../../../../ReusableComponents/Loader';
 import NoResults from '../../../../ReusableComponents/NoResults';
 import { toast } from "react-toastify";
 import { ConsoleWindow, Media, UnsplashImage } from "../../../../types";
-import { ImageUploadHandlerType } from "./nodeview-image";
+import Image, { ImageUploadHandlerType } from "./nodeview-image";
 
-export default function ImageUploader({ onUpload, onUrlLoad }: { onUpload: ImageUploadHandlerType, onUrlLoad: (url: string) => void }) {
+export default function ImageUploader({ onUpload, onUrlLoad }: { onUpload: ImageUploadHandlerType, onUrlLoad: (url: string) => void },) {
 
     const [search, setSearch] = useState('');
     const [ajaxStatus, setAjaxStatus] = useState<null | 'loading' | 'success'>(null);

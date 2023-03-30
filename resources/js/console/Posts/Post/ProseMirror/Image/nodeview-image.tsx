@@ -7,7 +7,6 @@ import { EditorView, NodeView } from "prosemirror-view";
 import { UnsplashImage } from "../../../../types";
 
 export type ImageUploadHandlerType = (url: string, alt?: string | null, unsplash?: UnsplashImage | null) => void;
-
 type ImageNodeViewType = NodeView & {
     handleUpload: ImageUploadHandlerType;
     handleUrl: (url: string) => void;
@@ -98,7 +97,25 @@ export default class Image implements ImageNodeViewType {
             const changeButton = document.createElement("button");
             changeButton.className = "button small change-image";
             changeButton.innerText = "Change Image";
-            changeButton.onclick = () => { ReactDOM.render(<ImageUploader onUpload={this.handleUpload} onUrlLoad={this.handleUrl} />, this.dom); };
+            changeButton.onclick = () => {
+                img.remove();
+                const container = document.createElement("div");
+                const uploader = <ImageUploader
+                    onUpload={this.handleUpload}
+                    onUrlLoad={this.handleUrl}
+                />;
+                ReactDOM.render(uploader, container);
+                const cancelButton = document.createElement("button");
+                cancelButton.className = "button small cancel-image";
+                cancelButton.innerText = "Cancel";
+                cancelButton.onclick = () => {
+                    container.remove();
+                    cancelButton.remove();
+                    this.dom.appendChild(img);
+                };
+                _self.dom.appendChild(container);
+                _self.dom.appendChild(cancelButton);
+            };
             this.dom.appendChild(changeButton);
 
             const altInput = document.createElement("input")
