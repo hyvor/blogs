@@ -548,6 +548,7 @@ $prosemirror-selected-outline: 3px solid #299af3;
 
     .image-wrap {
         position:relative;
+
         
         .alt-input {
             position: absolute;
@@ -581,13 +582,18 @@ $prosemirror-selected-outline: 3px solid #299af3;
         .image-uploader {
             font-size: 14px;
             height: 400px;
-            background-color: $color-card;
+          
+          
             text-align: center;
             position: relative;
             .or {
                 margin: 10px 0;
             }
             .uploader-content {
+                display: flex;
+                flex-direction: column;
+                justify-content: space-between;
+                height: 100%;
                 position:absolute;
                 top:50%;
                 left:0;
@@ -633,11 +639,12 @@ $prosemirror-selected-outline: 3px solid #299af3;
             .image-preview {
                 display: flex;
                 flex-direction: column;
-                justify-content: center;
+                justify-content: space-between;
                 align-items: center;
+                height: 100%;
             }
             .confirm-button {
-                margin-right: 15px;
+                margin-left: 15px;
             }
             .cancel-button {
                 background-color: white;
