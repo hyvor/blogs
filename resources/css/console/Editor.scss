@@ -590,10 +590,7 @@ $prosemirror-selected-outline: 3px solid #299af3;
                 margin: 10px 0;
             }
             .uploader-content {
-                display: flex;
-                flex-direction: column;
-                justify-content: space-between;
-                height: 100%;
+           
                 position:absolute;
                 top:50%;
                 left:0;
