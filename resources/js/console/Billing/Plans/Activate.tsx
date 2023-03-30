@@ -6,7 +6,9 @@ import dayjs from "dayjs";
 import {ConsoleWindow} from "../../types";
 import getSubdomain from "../../logic-helpers/subdomain";
 import paddleLogic from "../../logic/billing/paddleLogic";
-import {useActions} from "kea";
+import {useActions, useValues} from "kea";
+import {FullPageLoader} from "../../ReusableComponents/Loader";
+import {PopupNotice} from "../../ReusableComponents/Popup";
 
 export default function Activate() {
 
@@ -17,6 +19,7 @@ export default function Activate() {
     const subdomain = getSubdomain();
     const paddleLogicInst = paddleLogic({subdomain});
     const { createActivation } = useActions(paddleLogicInst);
+    const { createActivationAjax } = useValues(paddleLogicInst)
 
     const type = blog.is_activated ? 'active' : (
         hasTrialEnded ? 'expired' : 'trial'
@@ -28,20 +31,24 @@ export default function Activate() {
     if (type === 'trial')
         title = 'Trial';
 
-    const [checkoutLoading, setCheckoutLoading] = useState(false);
+    const [checkoutSuccess, setCheckoutSuccess] = useState(false);
+    const [reloadCountdown, setReloadCountdown] = useState(10);
 
     function handleActivate() {
 
         createActivation({
             onLoad: (payLink: string) => {
-                setCheckoutLoading(true);
                 (window as ConsoleWindow).Paddle.Checkout.open({
                     override: payLink,
                     loadCallback: () => {
-                        setCheckoutLoading(false);
+
                     },
                     successCallback: () => {
-
+                        setCheckoutSuccess(true);
+                        setReloadCountdown(10);
+                        setInterval(() => {
+                            setReloadCountdown(reloadCountdown => Math.max(0, reloadCountdown - 1));
+                        }, 1000);
                     }
                 });
             }
@@ -79,6 +86,20 @@ export default function Activate() {
             }
             color="blue"
         />
+
+        {
+            createActivationAjax.status === 'loading' && <FullPageLoader />
+        }
+
+        {
+            checkoutSuccess && <PopupNotice
+                title="Payment successful"
+                text={<div>Your payment was successful. It will take a few moments for changes to appear in the console. Please reload the page {reloadCountdown !== 0 ? `in ${reloadCountdown} seconds` : "now" }.</div>}
+                name={reloadCountdown !== 0 ? `Reload in ${reloadCountdown} seconds` : "Reload"}
+                buttonClass={reloadCountdown !== 0 ? "disabled inactive" : ""}
+                onClick={() => location.reload()}
+            />
+        }
 
     </div>
 
