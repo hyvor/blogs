@@ -13,6 +13,7 @@ class BlogFactory extends Factory
         return [
             'hyvor_user_id' => rand(),
             'subdomain' => Str::random(20),
+            'is_activated' => false,
             'trial_ends_at' => Carbon::now()->addDays(30),
             'hosting_at' => 'subdomain',
 

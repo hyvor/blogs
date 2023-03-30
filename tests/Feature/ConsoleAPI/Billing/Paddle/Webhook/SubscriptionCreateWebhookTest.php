@@ -8,8 +8,9 @@ use App\Data\Enums\SubscriptionStatusEnum;
 use App\Domains\Integrations\Paddle\PaddleService;
 use App\Domains\Integrations\Paddle\Passthrough\Passthrough;
 
-it('creates a subscription', function () {
+it('creates a subscription and activates the blog', function () {
     $blog = blog();
+
     integrationApi('POST', '/paddle/webhook', getPaddleWebhookParams([
         'alert_name' => 'subscription_created',
         'passthrough' => Passthrough::encode($blog),
@@ -25,4 +26,7 @@ it('creates a subscription', function () {
     expect($subscription->plan)->toBe(SubscriptionPlanEnum::A);
     expect($subscription->frequency)->toBe(SubscriptionFrequencyEnum::MONTHLY);
     expect($subscription->getMeta('paddle_subscription_id'))->toBe(1200);
+
+    $blog->refresh();
+    expect($blog->is_activated)->toBeTrue();
 });
