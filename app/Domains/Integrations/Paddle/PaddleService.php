@@ -18,7 +18,7 @@ class PaddleService
 
     public function createActivationPayLink(Blog $blog) {
         $data = PaddleApiCaller::call('/product/generate_pay_link', [
-            'product_id' => 48210,
+            'product_id' => config('services.paddle.activation_plan_id'),
             'passthrough' => Passthrough::encode($blog),
             'quantity_variable' => 0,
         ]);
