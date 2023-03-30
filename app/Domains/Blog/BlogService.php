@@ -166,6 +166,13 @@ class BlogService
         ]);
     }
 
+    public static function activateBlog(Blog $blog) : void
+    {
+        $blog->update([
+            'is_activated' => true
+        ]);
+    }
+
     /**
      * @param  Blog  $blog
      * @param  Language  $language
