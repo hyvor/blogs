@@ -48,7 +48,7 @@ export default function BlogsList() {
                                 blog.type === BlogType.DEV ?
                                     "DEV" :
                                     (
-                                        blog.subscription?.plan || "Free"
+                                        blog.subscription?.plan || "Starter"
                                     )
                             } />
                         </div>

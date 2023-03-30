@@ -86,7 +86,6 @@ function LeftInner({subdomain} : {subdomain: string}) {
 
             <LeftLink path="/posts" icon={<Pencil />} name="Posts" permission={UserPermissions.canAccessPosts} />
             <LeftLink path="/pages" icon={<Files />} name="Pages" permission={UserPermissions.canAccessPages} />
-            <LeftLink path="/comments" icon={<Chat />} name="Comments" permission={UserPermissions.canAccessComments} />
 
             <div className="left-divider" />
 

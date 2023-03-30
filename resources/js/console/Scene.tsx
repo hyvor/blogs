@@ -14,7 +14,6 @@ import React, {ReactNode} from 'react'
 import blogLogic from "./logic/blogLogic"
 import Loader from "./ReusableComponents/Loader"
 import subdomainLogic from "./logic/subdomainLogic"
-import Comments from "./Comment/Comments"
 import BlogBlocked from "./Views/BlogBlocked";
 import {hasTrialEndedAndNotActivated} from "./lib/blog-helpers";
 import BlogTrialEnded from "./Views/BlogTrialEnded";
@@ -24,7 +23,6 @@ export const scenes = {
     blogPreview: () => <BlogPreview />,
     posts: ({ postId } : { postId?: number }) => <Posts postId={postId} />,
     pages: ({ postId } : { postId?: number }) => <Pages postId={postId} />,
-    comments: () => <Comments />,
     settings: ({type} : {type?: string}) => <Settings type={type} />,
     theme: ({type} : {type?: string }) => <Theme />,
     billing: () => <Billing />,
@@ -62,11 +60,9 @@ function Middle({ children, scene } : {children: ReactNode, scene: string}) {
     function isBlogSceneBlocked() {
         return blog.is_blocked &&
             (
-                scene === 'comments' ||
                 scene === 'blogPreview' ||
                 scene === 'posts' ||
                 scene === 'pages' ||
-                scene === 'comments' ||
                 scene === 'theme'
             );
     }
