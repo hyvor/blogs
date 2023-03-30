@@ -17,6 +17,7 @@ class CreateBlogsTable extends Migration
             $table->id();
             $table->timestamps();
 
+            $table->boolean('is_activated')->default(false);
             $table->boolean('is_blocked')->default(false);
 
             // connections

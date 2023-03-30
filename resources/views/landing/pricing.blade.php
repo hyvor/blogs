@@ -70,23 +70,32 @@ $pricingRow = "<tr>
             {!! $pricingRow !!}
 
             <tr>
-                <td>Free</td>
-                <td><span class="price">Free</span></td>
-                <td>1</td>
+                <td>Starter</td>
+                <td>
+                    <span class="price">$5</span> one-time
+
+                    <span class="info">
+                        <span class="icon"><?= $svgInfo ?></span>
+                        <div class="info-popup">
+                            This is a one-time activation fee after a 7-days free trial.
+                        </div>
+                    </span>
+                </td>
+                <td>2</td>
                 <td>1GB</td>
             </tr>
 
             <tr>
                 <td>Plan A</td>
                 <td><span class="price">$19</span>/month</td>
-                <td>3</td>
+                <td>5</td>
                 <td>40GB</td>
             </tr>
 
             <tr>
                 <td>Plan B</td>
                 <td><span class="price">$49</span>/month</td>
-                <td>10</td>
+                <td>15</td>
                 <td>250GB</td>
             </tr>
 
@@ -123,29 +132,31 @@ $pricingRow = "<tr>
 
 <div class="faqs">
     <div class="faq">
-        <h3>What are the limits of the free plan?</h3>
+        <h3>What is the one-time payment?</h3>
         <p>
-            The free plan includes all blogging features, but limited to 1 user per blog. Students, personal bloggers, and indie hackers are encouraged to use the free plan. A "Powered by Hyvor Blogs" will be shown at the bottom of free plan blogs.
+            We charge $5 one-time fee to activate your blog after the 7-days free trial. This helps us keep spam out of our system. We can waive this fee for students and low-income individuals. Please contact us via live chat.
         </p>
     </div>
     <div class="faq">
-        <h3>How do paid plans work?</h3>
-        <p>Paid plans are based on the number of <a class="link" href="/docs/users">users</a> (team members) and total media storage usage of that blog. There are no feature limitations - all features are included in all plans. Each blog requires a separate subscription.</p>
+        <h3>How do plans work?</h3>
+        <p>Plans are based on the number of <a class="link" href="/docs/users">users</a> (team members) and total media storage usage of that blog. There are no feature limitations - all features are included in all plans. Each blog requires a separate subscription.</p>
     </div>
     <div class="faq">
         <h3>How do payments work?</h3>
         <p>
-            Payments are processed securely through our Merchant of Record, <a href="https://paddle.com" rel="nofollow" class="link">Paddle</a>, who technically works as a reseller of the product.
+            Payments are processed securely through our Merchant of Record, <a href="https://paddle.com" rel="nofollow" class="link">Paddle</a>, who technically works as a reseller of the product. We support cards and Paypal in multiple currencies.
         </p>
-        <ul>
-            <li><a target="_blank" href="https://www.paddle.com/help/start/intro-to-paddle/what-currencies-do-you-support" class="link" rel="nofollow">Supported Currencies</a></li>
-            <li><a target="_blank" href="https://www.paddle.com/help/start/intro-to-paddle/which-payment-methods-do-you-support" class="link" rel="nofollow">Supported Payment Methods</a></li>
-        </ul>
+    </div>
+    <div class="faq">
+        <h3>Do you offer discounts?</h3>
+        <p>
+            If you pay annually, you can get 2-months off on all subscription plans. In addition, we provide a 20% discount for non-profit organizations and early-stage startups. Contact us via live chat for a coupon.
+        </p>
     </div>
     <div class="faq">
         <h3>Can I cancel anytime?</h3>
         <p>
-            Yes, absolutely. You can easily cancel your subscription from our Console - no questions asked. You can also <a href="/docs/export" class="link">export</a> your data anytime and move to another platform anytime you wish. However, we do not provide refunds. We ask you to test our platform in the free plan before subscribing.
+            Yes, absolutely. You can easily cancel your subscription from our Console - no questions asked. You can also <a href="/docs/export" class="link">export</a> your data anytime and move to another platform anytime you wish.
         </p>
     </div>
 </div>

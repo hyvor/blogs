@@ -166,6 +166,18 @@ class BlogService
         ]);
     }
 
+    public static function activateBlog(Blog $blog) : void
+    {
+        $blog->update([
+            'is_activated' => true
+        ]);
+    }
+
+    public static function isBlogTriaExpiredAndNotActivated(Blog $blog) : bool
+    {
+        return !$blog->is_activated && $blog->trial_ends_at->isPast();
+    }
+
     /**
      * @param  Blog  $blog
      * @param  Language  $language

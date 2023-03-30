@@ -30,6 +30,7 @@ class Blog extends Model
 
     protected $casts = [
         'is_blocked' => 'bool',
+        'is_activated' => 'bool',
         'type' => BlogTypeEnum::class,
         'billing_type' => BlogBillingTypeEnum::class,
         'integration' => BlogIntegrationEnum::class,

@@ -28,7 +28,7 @@
                     Hyvor Blogs is a simple & powerful platform to start a fully-customizable multi-language blog.
                 </h2>
                 <a data-flashload-skip-link href="/console?signup=1" class="button big">
-                    Start a Blog For Free
+                    Start a Blog Now
                 </a>
 
                  {{--<div class="hero-message-wrap">
@@ -832,7 +832,7 @@ c30.27,0,54.64-24.37,54.64-54.64v-1419l-363.61-362.75L1258.7,336.75z"/>
 
 <div class="button-main">
     <a data-flashload-skip-link href="/console?signup=1" class="button big">
-        Start Your Blog For Free
+        Start Your Blog Now
     </a>
 </div>
 

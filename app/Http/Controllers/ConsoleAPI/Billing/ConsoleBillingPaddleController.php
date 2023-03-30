@@ -35,6 +35,21 @@ class ConsoleBillingPaddleController extends Controller
         ]);
     }
 
+    public function createActivation(Request $request, Blog $blog) : JsonResponse
+    {
+
+        if ($blog->is_activated) {
+            throw new TrustedException('This blog is already activated');
+        }
+
+        $paylink = app(PaddleService::class)->createActivationPayLink($blog);
+
+        return response()->json([
+            'link' => $paylink
+        ]);
+
+    }
+
     public function createSubscription(Request $request, Blog $blog): JsonResponse
     {
         $request->validate([

@@ -9,6 +9,7 @@ import {SubscriptionFrequency, SubscriptionPlan} from "../../types";
 import Callout from "../../ReusableComponents/Callout";
 import dayjs from "dayjs";
 import {FriendlyDate} from "../../ReusableComponents/Time";
+import Activate from "./Activate";
 
 interface PlansProps {
 
@@ -40,16 +41,7 @@ export default function Plans({onSubscriptionCreate, onSubscriptionCancel, onSub
 
             {
                 !blog.subscription &&
-                <Callout
-                    title="Free Plan"
-                    icon={<Lightbulb />}
-                    text={
-                        <div>
-                            This blog is currently on the free plan.
-                        </div>
-                    }
-                    color="blue"
-                />
+                <Activate />
             }
 
             {

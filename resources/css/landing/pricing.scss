@@ -88,8 +88,8 @@ body.pricing {
             transition: .1s opacity;
             position: absolute;
             left: 50%;
-            top: 100%;
-            margin-top: 5px;
+            bottom: 100%;
+            margin-bottom: 5px;
             transform: translateX(-50%);
             width: 200px;
             background-color: $color-box;

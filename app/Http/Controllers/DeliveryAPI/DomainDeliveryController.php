@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers\DeliveryAPI;
 
+use App\Domains\Blog\BlogService;
 use App\Domains\Delivery\DeliveryService;
 use App\Http\Controllers\Controller;
 use App\Models\Blog;
@@ -13,6 +14,10 @@ class DomainDeliveryController extends Controller
     {
 
         if ($blog->is_blocked) {
+            return redirect('https://blogs.hyvor.com');
+        }
+
+        if (BlogService::isBlogTriaExpiredAndNotActivated($blog)) {
             return redirect('https://blogs.hyvor.com');
         }
 
