@@ -559,6 +559,12 @@ $prosemirror-selected-outline: 3px solid #299af3;
             font-size: 12px;
         }
 
+        .change-image {
+            position: absolute;
+            top: 10px;
+            left: 10px;
+        }
+
         input[type="range"] {
             position: absolute;
             top: 25px;

@@ -27,6 +27,7 @@ export default class Image implements ImageNodeViewType {
     rangeInput: HTMLInputElement | undefined;
 
     constructor(schema: Schema, node: ProsemirrorNode, view: EditorView, getPos: () => number) {
+
         this.node = node;
         this.view = view;
         this.getPos = getPos;
@@ -86,12 +87,19 @@ export default class Image implements ImageNodeViewType {
         const { src, alt, width, height } = this.node.attrs;
 
         const _self = this;
-        if (src) {
+        let showImageUploader = false;
+        if (src && !showImageUploader) {
             // render image
             const img = document.createElement("img");
             img.src = src;
             this.dom.appendChild(img)
             this.img = img;
+
+            const changeButton = document.createElement("button");
+            changeButton.className = "button small change-image";
+            changeButton.innerText = "Change Image";
+            changeButton.onclick = () => { ReactDOM.render(<ImageUploader onUpload={this.handleUpload} onUrlLoad={this.handleUrl} />, this.dom); };
+            this.dom.appendChild(changeButton);
 
             const altInput = document.createElement("input")
             altInput.className = "input alt-input"
