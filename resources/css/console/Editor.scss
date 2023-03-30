@@ -582,15 +582,17 @@ $prosemirror-selected-outline: 3px solid #299af3;
         .image-uploader {
             font-size: 14px;
             height: 400px;
-          
-          
+            background-color: $color-card;          
             text-align: center;
             position: relative;
+            display: flex;
+    align-items: center;
+    justify-content: center;
             .or {
                 margin: 10px 0;
             }
             .uploader-content {
-           
+                height: 100%;    
                 position:absolute;
                 top:50%;
                 left:0;
@@ -644,7 +646,7 @@ $prosemirror-selected-outline: 3px solid #299af3;
                 margin-left: 15px;
             }
             .cancel-button {
-                background-color: white;
+                background-color: $color-card; 
                 color: black;
             }
             .action-area {
