@@ -77,7 +77,7 @@ $pricingRow = "<tr>
                     <span class="info">
                         <span class="icon"><?= $svgInfo ?></span>
                         <div class="info-popup">
-                            This is one-time activation fee mainly to prevent spam.
+                            This is a one-time activation fee after a 7-days free trial.
                         </div>
                     </span>
                 </td>
@@ -95,7 +95,7 @@ $pricingRow = "<tr>
             <tr>
                 <td>Plan B</td>
                 <td><span class="price">$49</span>/month</td>
-                <td>20</td>
+                <td>15</td>
                 <td>250GB</td>
             </tr>
 

@@ -41,6 +41,21 @@ class PaddleWebhookController
         return '';
     }
 
+    private function handlePaymentSucceeded(array $payload)
+    {
+
+        $productId = intval($payload['product_id']);
+
+        if ($productId !== config('services.paddle.activation_plan_id'))
+            return;
+
+        $blog = Passthrough::decode($payload['passthrough']);
+        $blog->update([
+            'is_activated' => true
+        ]);
+
+    }
+
     private function handleSubscriptionCreated(array $payload)
     {
         $blog = Passthrough::decode($payload['passthrough']);
