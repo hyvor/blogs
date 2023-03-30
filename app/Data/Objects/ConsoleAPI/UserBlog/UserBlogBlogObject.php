@@ -16,6 +16,9 @@ class UserBlogBlogObject
 
     public bool $is_blocked;
 
+    public bool $is_activated;
+    public int $trial_ends_at;
+
     public string $name;
 
     public string $subdomain;
@@ -42,6 +45,8 @@ class UserBlogBlogObject
     {
         $this->id = $blog->id;
         $this->is_blocked = $blog->is_blocked;
+        $this->is_activated = $blog->is_activated;
+        $this->trial_ends_at = $blog->trial_ends_at->getTimestamp();
         $this->name = $blog->variants[0]->name ?? 'Unnamed';
         $this->subdomain = $blog->subdomain;
         $this->type = $blog->type;
@@ -53,7 +58,6 @@ class UserBlogBlogObject
         $this->posts_count = $blog->getCount('posts');
         $this->users_count = $blog->getCount('users');
 
-        // $this->trial_ends_at = $blog->trial_ends_at->timestamp;
         $subscription = SubscriptionService::getActiveBlogSubscription($blog);
 
         if ($subscription) {
