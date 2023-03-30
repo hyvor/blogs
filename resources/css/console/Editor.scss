@@ -640,11 +640,14 @@ $prosemirror-selected-outline: 3px solid #299af3;
                 margin-right: 15px;
             }
             .action-area {
-                margin-top: 5px;
-                margin-bottom: 5px;
+                align-self: self-end;
+            }
+            .image-confirm {
+                width: 100% !important;
+                margin-bottom: 10px;
             }
             img {
-                margin-bottom: 20px;
+                margin-bottom: 10px;
             }
         }
     }

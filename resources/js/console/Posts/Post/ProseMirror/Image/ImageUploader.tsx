@@ -34,7 +34,6 @@ export default function ImageUploader({ onUpload, onUrlLoad }: { onUpload: Image
             return;
         }
         if (imageUrl.trim().length > 0) {
-            //onUrlLoad(imageUrl);
             return;
         }
 
@@ -114,7 +113,7 @@ export default function ImageUploader({ onUpload, onUrlLoad }: { onUpload: Image
         setIsValidImageUrl(true);
     }
 
-    return <div className={"image-uploader" + (search.trim() ? " searching" : "")}>
+    return <div className={"image-uploader" + (search.trim() || imageUrl.trim() ? " searching" : "")}>
         <div className="uploader-content">
             {
                 isUploading ?
@@ -201,15 +200,10 @@ export default function ImageUploader({ onUpload, onUrlLoad }: { onUpload: Image
             {
                 // If preview image is selected
                 imageUrl.trim() ? (
-                    isImageLoading ? <Loader /> :
+                    isImageLoading ? <Loader padding={60} /> :
                         <div className='image-preview'>
-                            <h3>Preview:</h3>
-                            <div className='action-area'>
-                                <button className='button small confirm-button' onClick={() => onUrlLoad(imageUrl)}>Confirm </button>
-                                <button className='button small' onClick={() => handleUrlInputChange('')}>Change</button>
-                            </div>
                             <input
-                                className="input"
+                                className="input image-confirm"
                                 placeholder="Import from URL"
                                 value={imageUrl}
                                 onChange={e => handleUrlInputChange(e.target.value)}
@@ -230,8 +224,11 @@ export default function ImageUploader({ onUpload, onUrlLoad }: { onUpload: Image
                                     }}
                                     onError={() => setIsValidImageUrl(false)}></img>
                                 : <p>Invalid image URL</p>}
+                            <div className='action-area'>
+                                <button className='button small confirm-button' onClick={() => onUrlLoad(imageUrl)}>Confirm </button>
+                                <button className='button small' onClick={() => handleUrlInputChange('')}>Change</button>
+                            </div>
                         </div>
-
                 ) : null
             }
         </div>
