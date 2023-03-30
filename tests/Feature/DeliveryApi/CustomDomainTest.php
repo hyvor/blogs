@@ -40,3 +40,16 @@ it('redirects to homepage if the blog is blocked', function() {
     $this->get('http://hyvorblogscustom.test')->assertRedirect('https://blogs.hyvor.com');
 
 });
+
+
+it('redirects to homepage if the blog trial is ended', function() {
+
+    blog([
+        'trial_ends_at' => now()->subDay(),
+        'hosting_at' => 'domain',
+        'hosting_domain' => 'hyvorblogscustom.test'
+    ]);
+
+    $this->get('http://hyvorblogscustom.test')->assertRedirect('https://blogs.hyvor.com');
+
+});
