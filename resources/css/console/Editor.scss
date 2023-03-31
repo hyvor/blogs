@@ -596,9 +596,9 @@ $prosemirror-selected-outline: 3px solid #299af3;
             .uploader-content {
                 height: 100%;
                 position:absolute;
-                top:50%;
+                top:25%;
                 left:0;
-                transform: translateY(-50%);
+                transform: translateY(-25%);
                 width:100%;
                 transition: .3s all;
                 padding:15px;
@@ -620,6 +620,11 @@ $prosemirror-selected-outline: 3px solid #299af3;
                 }
                 input {
                     width:100%;
+                }
+            }
+            &.url-finding {
+                .uploader-content {
+                    margin-top: 0
                 }
             }
             .search-results {

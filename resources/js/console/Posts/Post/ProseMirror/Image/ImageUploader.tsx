@@ -116,7 +116,7 @@ export default function ImageUploader({ onUpload, onUrlLoad }: { onUpload: Image
         setIsValidImageUrl(true);
     }
 
-    return <div className={"image-uploader" + (search.trim() || imageUrl.trim() ? " searching" : "")}>
+    return <div className={"image-uploader" + (search.trim() ? " searching" : imageUrl.trim() ? " url-finding" : "")}>
         <div className="uploader-content">
             {
                 isUploading ?
