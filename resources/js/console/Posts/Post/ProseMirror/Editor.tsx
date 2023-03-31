@@ -1,6 +1,6 @@
-import React, {useEffect, useRef} from 'react';
-import {EditorState, EditorStateConfig, NodeSelection} from "prosemirror-state"
-import type {Node as ProsemirrorNode} from 'prosemirror-model'
+import React, { useEffect, useRef } from 'react';
+import { EditorState, EditorStateConfig, NodeSelection } from "prosemirror-state"
+import type { Node as ProsemirrorNode } from 'prosemirror-model'
 
 import HBSchema from './schema';
 import plugins from './plugins';
@@ -12,7 +12,7 @@ import Image from './Image/nodeview-image';
 import Bookmark from './nodeview-bookmark';
 import CustomHtml from "./nodeview-custom-html";
 import EmbedView from "./nodeview-embed";
-import {EditorView, NodeViewConstructor} from "prosemirror-view";
+import { EditorView, NodeViewConstructor } from "prosemirror-view";
 import useUpdateEffect from "../../../../helpers/hooks/useUpdateEffect";
 
 function getState(val: string) {
@@ -22,7 +22,7 @@ function getState(val: string) {
         plugins: plugins(HBSchema),
     }
     if (val) {
-        newState.doc = HBSchema.nodeFromJSON( val );
+        newState.doc = HBSchema.nodeFromJSON(val);
     }
     return newState;
 }
@@ -31,7 +31,7 @@ interface NodeViewsType {
     [key: string]: NodeViewConstructor
 }
 
-const nodeViews : NodeViewsType = {
+const nodeViews: NodeViewsType = {
     embed(node, view, getPos) {
         return new EmbedView(HBSchema, node, view, getPos);
     },
@@ -82,7 +82,7 @@ export default function Editor({ id, currentLanguageId, status, value, onChange 
             state: EditorState.create({
                 schema: HBSchema,
                 plugins: plugins(HBSchema),
-                doc: value ? HBSchema.nodeFromJSON( jsonParsedValue ) : undefined
+                doc: value ? HBSchema.nodeFromJSON(jsonParsedValue) : undefined
             }),
             nodeViews,
             handleClickOn,

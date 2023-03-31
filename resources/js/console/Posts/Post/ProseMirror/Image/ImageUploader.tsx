@@ -19,6 +19,9 @@ export default function ImageUploader({ onUpload, onUrlLoad }: { onUpload: Image
     const [isValidImageUrl, setIsValidImageUrl] = useState(true);
     const [isImageLoading, setIsImageLoading] = useState(false);
 
+    const unsplashInput = useRef(null);
+    const urlInput = useRef(null);
+
     const fileUploadInputRef = useRef<null | HTMLInputElement>(null);
 
     useEffect(() => {
@@ -128,12 +131,10 @@ export default function ImageUploader({ onUpload, onUrlLoad }: { onUpload: Image
                                 placeholder="Search on Unsplash"
                                 value={search}
                                 onChange={e => setSearch(e.target.value)}
-                                onFocus={e => {
-                                    e.preventDefault()
-                                }}
-
                                 // otherwise call Backspace events in Prosemirror
                                 onKeyDown={e => e.stopPropagation()}
+                                ref={unsplashInput}
+                                onClick={() => unsplashInput.current.focus()}
                             />
                         </div>
                         <div className='url-search'>
@@ -144,12 +145,8 @@ export default function ImageUploader({ onUpload, onUrlLoad }: { onUpload: Image
                                 value={imageUrl}
                                 onChange={e => handleUrlInputChange(e.target.value)}
                                 onPaste={(e) => handleUrlInputChange(e.clipboardData.getData('text'))}
-                                onFocus={e => {
-                                    e.preventDefault()
-                                }}
-
-                                // otherwise call Backspace events in Prosemirror
-                                onKeyDown={e => e.stopPropagation()}
+                                ref={urlInput}
+                                onClick={() => urlInput.current.focus()}
                             />
                         </div>
                         <div className="non-search">
@@ -208,10 +205,6 @@ export default function ImageUploader({ onUpload, onUrlLoad }: { onUpload: Image
                                 value={imageUrl}
                                 onChange={e => handleUrlInputChange(e.target.value)}
                                 onPaste={(e) => handleUrlInputChange(e.clipboardData.getData('text'))}
-                                onFocus={e => {
-                                    e.preventDefault()
-                                }}
-
                                 // otherwise call Backspace events in Prosemirror
                                 onKeyDown={e => e.stopPropagation()}
                             />
