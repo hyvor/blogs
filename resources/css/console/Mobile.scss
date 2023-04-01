@@ -4,10 +4,12 @@
         overflow: auto;
         width: initial;
         height: initial;
-        padding-bottom:30px;
+        padding-bottom: 70px;
     }
+    
 
     #middle {
+        overflow-x: hidden;
         position:relative;
         margin-top:140px;
         left: initial;
@@ -16,8 +18,7 @@
         .posts-view {
             display: block;
             #posts-selector {
-                display:none;
-                position: fixed;
+                position: relative;
                 top: 0;
                 left: 0;
                 z-index: 1;
@@ -25,7 +26,65 @@
                 height: 100%;
                 border-radius: 0;
             }
+            .post-filters {
+                display: flex;
+                flex-direction: row;
+                flex-wrap: wrap;
+                align-items: center;
+                justify-content: space-between;
+                
+            }
+            .post-editor-wrap {
+                width: 100%
+            }
+            .post-editor-headers {
+                width: 100%;
+            }
+            .posts-filter {
+                width: 50%;
+                margin: 0
+            }
+            .posts-filter-select-wrap {
+                margin-bottom: 5px;
+            }
+            .post-search {
+                width: 100%;
+            }
+            .posts-list-item{
+                grid-template-columns: repeat(2, 1fr) 150px;
+                display: flex;
+                flex-direction: column;
+                border-bottom:1px solid $color-accent-light;
+                padding: 10px;
+                align-items: start;
+            }
+            .post-authors {
+                margin-top: 5px;
+                margin-bottom: 5px;
+            }
+            .box-left {
+                margin: 0 auto;
+            }
+            .back-button {
+                position: relative;
+                align-self: flex-end;
+            }
         }
+
+        .theme-view {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            .box {
+                width: 100%;
+                margin-bottom: 15px;
+            }
+            .navigation-button {
+                display: block;
+                width: 100px;
+                margin-bottom: 15px;
+            }          
+          }
 
         .blog-preview-view {
 
@@ -41,7 +100,73 @@
         .billing-view {
 
         }
+
+        .settings-view {
+            .settings-nav {
+                display: none;
+            }
+            .middle-heading {
+                display: none;
+            }
+            .settings-selector {
+                font-size: 20px;
+                font-weight: 600;
+                display: flex;
+                flex-direction: column;
+                align-items: center;
+                justify-content: center;
+                border-bottom:1px solid $color-accent-light;
+                margin-bottom: 25px!important;
+                padding-bottom: 20px;
+            }
+            .settings-right {
+                padding: 20px 20px 90px;
+                overflow:auto;
+        
+            }        
+        }
+
+        .welcome-view {
+            .content-wrap {
+                display: flex;
+                flex-direction: column;
+            }
+            .blogs-list {
+                width: 100%;
+            }
+            .blogs-list-list {
+                width: 100%;
+            }
+            .blog-card {
+                width: 100%;
+            }
+            
+        }
+    
     }
 
+    #left-bottom {
+        margin-top: 60px;
+        position: fixed;
+        .changes-item {
+            display: none;
+            padding: 15px 15px;
+            position: fixed;
+            bottom: 0;
+            left: 50%;
+            transform: translateX(-50%); /* to center horizontally */
+        }
+    }
+
+    .CodeMirror {
+        .CodeMirror-scroll {
+            overflow-x: visible!important;
+        }
+    }
+
+    .ProseMirror {
+        overflow-x: visible!important;
+        width: auto;
+    }
 
 }
