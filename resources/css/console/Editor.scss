@@ -245,6 +245,7 @@ $prosemirror-selected-outline: 3px solid #299af3;
 
     > *:first-child {
         margin-top:0;
+        padding: 10px;
     }
 
     padding:25px 30px;
@@ -548,7 +549,7 @@ $prosemirror-selected-outline: 3px solid #299af3;
 
     .image-wrap {
         position:relative;
-        
+
         .alt-input {
             position: absolute;
             top: 10px;
@@ -557,6 +558,19 @@ $prosemirror-selected-outline: 3px solid #299af3;
             padding: 4px 10px;
             border: 1px solid #aaa;
             font-size: 12px;
+        }
+
+        .change-image {
+            position: absolute;
+            top: 10px;
+            left: 10px;
+        }
+        .cancel-image {
+            position: absolute;
+            top: 10px;
+            left: 10px;
+            background-color: $color-card; ;
+            color: black;
         }
 
         input[type="range"] {
@@ -570,17 +584,21 @@ $prosemirror-selected-outline: 3px solid #299af3;
         .image-uploader {
             font-size: 14px;
             height: 400px;
-            background-color: $color-card;
+            background-color: $color-card;          
             text-align: center;
             position: relative;
+            display: flex;
+            align-items: center;
+            justify-content: center;
             .or {
                 margin: 10px 0;
             }
             .uploader-content {
+                height: 100%;
                 position:absolute;
-                top:50%;
+                top:25%;
                 left:0;
-                transform: translateY(-50%);
+                transform: translateY(-25%);
                 width:100%;
                 transition: .3s all;
                 padding:15px;
@@ -588,17 +606,25 @@ $prosemirror-selected-outline: 3px solid #299af3;
                     width: 250px;
                     transition: .3s width;
                 }
+                margin-top: 100px;
+            
             }
             &.searching {
                 .uploader-content {
                     top:0;
                     transform:none;
+                    margin-top: 0px;
                 }
                 .non-search {
                     display:none;
                 }
                 input {
                     width:100%;
+                }
+            }
+            &.url-finding {
+                .uploader-content {
+                    margin-top: 0
                 }
             }
             .search-results {
@@ -614,10 +640,33 @@ $prosemirror-selected-outline: 3px solid #299af3;
                 }
                 img {
                     width:100%;
-                    margin-bottom:15px;
+                    margin-bottom:5px;
                     cursor: pointer;
                     max-height: initial;
                 }
+            }
+            .image-preview {
+                display: flex;
+                flex-direction: column;
+                justify-content: space-between;
+                align-items: center;
+                height: 100%;
+            }
+            .confirm-button {
+                margin-left: 15px;
+            }
+            .cancel-button {
+                background-color: $color-card; 
+                color: black;
+            }
+            .action-area {
+                align-self: self-end;
+            }
+            .image-confirm {
+                margin-bottom: 10px;
+            }
+            img {
+                margin-bottom: 10px;
             }
         }
     }
