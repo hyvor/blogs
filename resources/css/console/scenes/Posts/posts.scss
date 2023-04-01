@@ -396,6 +396,10 @@
             border-radius: 20px;
             box-shadow: 0 0 30px rgb(0 0 0 / 5%);
 
+            .prosemirror-editor-wrap {
+                width: 100%;
+            }
+
             &.non-editable {
                 .prosemirror-editor-wrap {
                     pointer-events: none;
