@@ -385,7 +385,7 @@ $prosemirror-selected-outline: 3px solid #299af3;
             padding: 7px;
             font-size: 14px;
             text-align: center;
-
+            margin-top: 22px;
             &.empty:before {
                 content: "Enter caption...";
                 color: #aaa;
@@ -606,6 +606,7 @@ $prosemirror-selected-outline: 3px solid #299af3;
                     transition: .3s width;
                 }
                 margin-top: 100px;
+              
             
             }
             &.searching {
