@@ -380,6 +380,7 @@ $prosemirror-selected-outline: 3px solid #299af3;
 
         &:hover {
             outline: $prosemirror-hover-outline;
+            padding-bottom: 20px;
         }
 
         figcaption {
@@ -661,7 +662,7 @@ $prosemirror-selected-outline: 3px solid #299af3;
                 color: black;
             }
             .action-area {
-               
+               position: relative;
                 align-self: self-end;
             }
             .image-confirm {
