@@ -215,6 +215,7 @@ $prosemirror-selected-outline: 3px solid #299af3;
 
   .ProseMirror-selectednode {
     outline: $prosemirror-selected-outline!important;
+    padding-bottom: 20px;
   }
   img.ProseMirror-separator {
     display: inline !important;
@@ -660,6 +661,7 @@ $prosemirror-selected-outline: 3px solid #299af3;
                 color: black;
             }
             .action-area {
+               
                 align-self: self-end;
             }
             .image-confirm {
