@@ -2,40 +2,42 @@ import React from 'react'
 import { useState } from 'react';
 import useUpdateEffect from '../../helpers/hooks/useUpdateEffect';
 import { PopupConfirm } from './Popup';
-import {useActions, useValues} from "kea";
+import { useActions, useValues } from "kea";
 import blogLogic from "../logic/blogLogic";
 import Loader from "./Loader";
-import {CheckCircle} from "react-bootstrap-icons";
-import {Blog, BlogVariant} from "../types";
-import {toast} from "react-toastify";
+import { CheckCircle } from "react-bootstrap-icons";
+import { Blog, BlogVariant } from "../types";
+import { toast } from "react-toastify";
 import getSubdomain from "../logic-helpers/subdomain";
+import { useBlogActions, useBlogValues } from "../logic-helpers/blog";
 
 export default function SettingsSave(
-    { keys, variantKeys = [] } :
-    { keys: Array<keyof Blog>, variantKeys?: Array<keyof BlogVariant> }
+    { keys, variantKeys = [], blogSubDomain, }:
+        { keys: Array<keyof Blog>, variantKeys?: Array<keyof BlogVariant>, blogSubDomain: string },
 ) {
 
     const [isDiscarding, setIsDiscarding] = useState(false);
     const [isUpdated, setIsUpdated] = useState(false);
-    
+
     const subdomain = getSubdomain()
 
-    const blogLogicInst = blogLogic({subdomain})
+    const blogLogicInst = blogLogic({ subdomain })
     const { updateBlogAjax, getDiff, getVariantDiff } = useValues(blogLogicInst)
-    const { updateBlog, discardChanges } =  useActions(blogLogicInst)
-    
+    const { updateBlog, discardChanges } = useActions(blogLogicInst)
+    const { blog } = useBlogValues()
+    const { updateBlogValue } = useBlogActions()
+
     const [status, setStatus] = useState<null | "loading" | "success" | "error">(null);
 
     function handleDiscard() {
         setIsDiscarding(true);
     }
-    
-    const should = getDiff(keys) || getVariantDiff(variantKeys)
+    const should = getDiff(keys) || getVariantDiff(variantKeys) || blogSubDomain !== blog.subdomain;
 
     useUpdateEffect(() => {
         setIsUpdated(true);
     }, [should])
-    
+
     useUpdateEffect(() => {
         setStatus(updateBlogAjax.status)
         if (updateBlogAjax.status === 'success') {
@@ -47,9 +49,11 @@ export default function SettingsSave(
             toast.error(updateBlogAjax.error)
         }
     }, [updateBlogAjax.status])
-    
+
     function handleSave() {
-        updateBlog({keys, variantKeys})
+        updateBlogValue('subdomain', blogSubDomain);
+        updateBlog({ keys, variantKeys })
+        window.location.reload();
     }
     function handleDiscardConfirm() {
         discardChanges(keys)
@@ -58,15 +62,15 @@ export default function SettingsSave(
 
     return <div>
 
-        <div className={"settings-save " + 
-            (should || status === 'success' ? "open" : 
+        <div className={"settings-save " +
+            (should || status === 'success' ? "open" :
                 (isUpdated ? "close" : "start"))}
         >
             {
                 status === 'loading' ?
                     <div>
                         <Loader size={35} />
-                    </div> : 
+                    </div> :
                     status === 'success' ?
                         <CheckCircle size={25} />
                         : <div>
@@ -84,16 +88,16 @@ export default function SettingsSave(
 
         {
             isDiscarding ?
-            <PopupConfirm 
-                title="Discard Changes"
-                text="Are you sure you want to discard current changes?"
-                name="Discard"
-                onClick={handleDiscardConfirm}
-                onCancel={() => setIsDiscarding(false)}
-                buttonClass="danger"
-            /> : null
+                <PopupConfirm
+                    title="Discard Changes"
+                    text="Are you sure you want to discard current changes?"
+                    name="Discard"
+                    onClick={handleDiscardConfirm}
+                    onCancel={() => setIsDiscarding(false)}
+                    buttonClass="danger"
+                /> : null
         }
-        
+
     </div>
 
 }
