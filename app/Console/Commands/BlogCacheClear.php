@@ -23,30 +23,37 @@ class BlogCacheClear extends Command
      */
     protected $description = 'Clear cache of a blog or all';
 
-    /**
-     * Execute the console command.
-     *
-     * @return int
-     */
-    public function handle()
+    public function handle() : void
     {
-        $subdomain = $this->argument('subdomain');
+        $subdomain = strval($this->argument('subdomain'));
+
+        $cacheService = new CacheService();
 
         if ($subdomain) {
+
             $blog = BlogService::getBlogBySubdomain($subdomain);
-            CacheService::clearAll($blog);
+
+            if (!$blog) {
+                $this->error('Blog not found');
+                return;
+            }
+
+            $cacheService->blog($blog)->clearAllCache();
 
             $this->info("Cleared cache of the blog $subdomain");
+
         } else {
+
             $blogs = Blog::select('id')->get();
 
             $this->info('Clearing cache of '.count($blogs).' blogs');
 
             foreach ($blogs as $blog) {
-                CacheService::clearAll($blog);
+                $cacheService->blog($blog)->clearAllCache();
             }
 
             $this->info('Cache cleared!');
         }
+
     }
 }

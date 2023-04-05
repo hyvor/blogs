@@ -5,10 +5,11 @@ namespace App\Http\Middleware\App\Delivery;
 use App\Domains\Blog\BlogService;
 use App\Models\Blog;
 use Closure;
+use Illuminate\Http\Request;
 
 class CustomDomainMiddleware
 {
-    public function handle($request, Closure $next)
+    public function handle(Request $request, Closure $next) : mixed
     {
         $host = $request->getHost();
         $blog = BlogService::getBlogByCustomDomain($host);

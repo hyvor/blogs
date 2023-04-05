@@ -13,11 +13,11 @@ class SubscribeAllToEmailOctopus extends Command
 
     protected $description = 'Subscribe all users to Email Octopus';
 
-    public function handle()
+    public function handle() : void
     {
         $this->info('Subscribing all users to Email Octopus');
 
-        $listId = config('services.email_octopus.list_id');
+        $listId = strval(config('services.email_octopus.list_id'));
 
         $users = Blog::selectRaw('DISTINCT hyvor_user_id')
             ->whereNotNull('email')

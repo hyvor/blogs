@@ -1,4 +1,4 @@
-<?php
+<?php declare(strict_types=1);
 
 namespace App\Models\Concerns;
 
@@ -42,12 +42,15 @@ trait Countable
         return $counts->$name ?? 0;
     }
 
-    public function setCount(string $name, int $value)
+    public function setCount(string $name, int $value) : void
     {
         $this->setCounts([$name => $value]);
     }
 
-    public function setCounts(array $counts)
+    /**
+     * @param array<string, mixed> $counts
+     */
+    public function setCounts(array $counts) : void
     {
         $fill = [];
         foreach ($counts as $key => $value) {
@@ -69,7 +72,7 @@ trait Countable
      * This is to make sure wrong (undefined)
      * count names are not used in the code
      */
-    private function validateCountName(string $name)
+    private function validateCountName(string $name) : void
     {
         if (! in_array($name, $this->countsDefinition())) {
             $class = self::class;

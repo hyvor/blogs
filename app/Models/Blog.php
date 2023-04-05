@@ -1,4 +1,4 @@
-<?php
+<?php declare(strict_types=1);
 
 namespace App\Models;
 
@@ -13,15 +13,9 @@ use Hyvor\JsonMeta\Metable;
 use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Relations\HasMany;
 
-/**
- * @property BlogTypeEnum type
- * @property BlogBillingTypeEnum billing_type
- * @property int hyvor_user_id
- * @property Collection tags
- * @property Collection users
- * @property Carbon trial_ends_at
- */
+
 class Blog extends Model
 {
     use HasFactory;
@@ -39,7 +33,7 @@ class Blog extends Model
     ];
 
     // meta
-    protected function metaDefinition(Definer $definer)
+    protected function metaDefinition(Definer $definer) : void
     {
         $definer->add('embeddable')->default(false);
         $definer->add('embedding_domains')->default(null);
@@ -85,6 +79,9 @@ class Blog extends Model
         $definer->add('flashload')->default(true);
     }
 
+    /**
+     * @return string[]
+     */
     protected function countsDefinition()
     {
         return [
@@ -97,67 +94,105 @@ class Blog extends Model
         ];
     }
 
+    /** @var array<mixed> */
     protected $with = [
         'variants',
     ];
 
+    /**
+     * @return HasMany<BlogVariant>
+     */
     public function variants()
     {
         return $this->hasMany(BlogVariant::class);
     }
 
+    /**
+     * @return HasMany<Post>
+     */
     public function posts()
     {
         return $this->hasMany(Post::class);
     }
 
+    /**
+     * @return HasMany<User>
+     */
     public function users()
     {
         return $this->hasMany(User::class);
     }
 
+    /**
+     * @return HasMany<Tag>
+     */
     public function tags()
     {
         return $this->hasMany(Tag::class);
     }
 
+    /**
+     * @return HasMany<Route>
+     */
     public function routes()
     {
         return $this->hasMany(Route::class);
     }
 
+    /**
+     * @return HasMany<Language>
+     */
     public function languages()
     {
         return $this->hasMany(Language::class)->orderBy('id', 'ASC');
     }
 
+    /**
+     * @return HasMany<Redirect>
+     */
     public function redirects()
     {
         return $this->hasMany(Redirect::class);
     }
 
+    /**
+     * @return HasMany<Navigation>
+     */
     public function navigations()
     {
         return $this->hasMany(Navigation::class)->orderBy('sort', 'ASC');
     }
 
+    /**
+     * @return HasMany<Webhook>
+     */
     public function webhooks()
     {
         return $this->hasMany(Webhook::class);
     }
 
+    /**
+     * @return HasMany<ThemeFile>
+     */
     public function themeFiles()
     {
         return $this->hasMany(ThemeFile::class);
     }
 
+    /**
+     * @return HasMany<Media>
+     */
     public function medias()
     {
         return $this->hasMany(Media::class);
     }
 
+    /**
+     * @return HasMany<Subscription>
+     */
     public function subscriptions()
     {
         return $this->hasMany(Subscription::class)->orderBy('id', 'DESC');
     }
+
 }

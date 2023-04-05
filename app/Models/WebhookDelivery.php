@@ -1,10 +1,11 @@
-<?php
+<?php declare(strict_types=1);
 
 namespace App\Models;
 
 use App\Data\Enums\WebhookDeliveryStatusEnum;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Relations\BelongsTo;
 
 class WebhookDelivery extends Model
 {
@@ -15,6 +16,9 @@ class WebhookDelivery extends Model
         'status' => WebhookDeliveryStatusEnum::class
     ];
 
+    /**
+     * @return BelongsTo<Webhook, self>
+     */
     public function webhook()
     {
         return $this->belongsTo(Webhook::class);

@@ -1,4 +1,4 @@
-<?php
+<?php declare(strict_types=1);
 
 namespace App\Providers;
 
@@ -16,11 +16,7 @@ use Illuminate\Foundation\Support\Providers\EventServiceProvider as ServiceProvi
 
 class EventServiceProvider extends ServiceProvider
 {
-    /**
-     * The event listener mappings for the application.
-     *
-     * @var array
-     */
+
     protected $listen = [
 
         PostVariantUpdatedEvent::class => [
@@ -35,6 +31,9 @@ class EventServiceProvider extends ServiceProvider
 
     ];
 
+    /**
+     * @var string[]
+     */
     protected $subscribe = [
 
         ClearCacheSubscriber::class,
@@ -46,9 +45,9 @@ class EventServiceProvider extends ServiceProvider
 
     ];
 
-    protected $observers = [
+    /*protected $observers = [
 
-    ];
+    ];*/
 
     /**
      * Register any events for your application.

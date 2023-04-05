@@ -1,8 +1,9 @@
-<?php
+<?php declare(strict_types=1);
 
 namespace App\Rules;
 
 use App\Domains\Blog\BlogService;
+use App\Models\Blog;
 use Illuminate\Contracts\Validation\Rule;
 
 class Subdomain implements Rule
@@ -39,7 +40,10 @@ class Subdomain implements Rule
             return false;
         }
 
-        if ($this->checkUnique && BlogService::getBlogBySubdomain($value)) {
+        if (
+            $this->checkUnique &&
+            BlogService::getBlogBySubdomain($value) instanceof Blog
+        ) {
             $this->message = 'Subdomain already taken';
 
             return false;

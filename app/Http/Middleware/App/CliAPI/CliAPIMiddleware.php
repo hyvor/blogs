@@ -6,21 +6,23 @@ use App\Data\Enums\BlogTypeEnum;
 use App\Domains\Blog\BlogService;
 use App\Exceptions\TrustedException;
 use App\Models\Blog;
+use Closure;
 use Illuminate\Http\Request;
 
 class CliAPIMiddleware
 {
-    public function handle(Request $request, $next)
-    {
-        $subdomain = $request->route('subdomain');
 
-        if (! $subdomain) {
+    public function handle(Request $request, Closure $next) : mixed
+    {
+        $subdomain = strval($request->route('subdomain'));
+
+        if (!$subdomain) {
             throw new TrustedException('The subdomain should be set');
         }
 
         $blog = BlogService::getBlogBySubdomain($subdomain);
 
-        if (! $blog) {
+        if (!$blog) {
             throw new TrustedException('Invalid subdomain');
         }
 

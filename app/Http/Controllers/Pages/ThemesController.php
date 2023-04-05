@@ -1,4 +1,4 @@
-<?php
+<?php declare(strict_types=1);
 
 namespace App\Http\Controllers\Pages;
 
@@ -6,12 +6,13 @@ use App\Data\Enums\ThemeCreationTypeEnum;
 use App\Domains\Theme\ThemeRepository;
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
+use Illuminate\View\View;
 
 class ThemesController extends Controller
 {
-    public function handle(Request $request)
+    public function handle(Request $request) : View
     {
-        $route = $request->route('name');
+        $route = strval($request->route('name'));
         $themeName = $route ?? 'hello';
 
         $themes = ThemeRepository::getAllThemesWithLatestVersions();

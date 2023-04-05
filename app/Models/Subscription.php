@@ -11,15 +11,7 @@ use Hyvor\JsonMeta\Metable;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 
-/**
- * @property int id
- * @property Carbon created_at
- * @property Carbon updated_at
- * @property SubscriptionStatusEnum status
- * @property SubscriptionPlanEnum plan
- * @property SubscriptionFrequencyEnum frequency
- * @property ?Carbon $ends_at
- */
+
 class Subscription extends Model
 {
     use HasFactory;
@@ -32,7 +24,7 @@ class Subscription extends Model
         'ends_at' => 'datetime'
     ];
 
-    public function metaDefinition(Definer $definer)
+    public function metaDefinition(Definer $definer) : void
     {
 
         /**

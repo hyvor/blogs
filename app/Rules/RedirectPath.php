@@ -1,4 +1,4 @@
-<?php
+<?php declare(strict_types=1);
 
 namespace App\Rules;
 
@@ -44,7 +44,7 @@ class RedirectPath implements Rule
         return true;
     }
 
-    public function message()
+    public function message() : string
     {
         return $this->message;
     }

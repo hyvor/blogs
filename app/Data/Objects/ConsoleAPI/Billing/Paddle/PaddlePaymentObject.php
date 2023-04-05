@@ -1,4 +1,5 @@
 <?php
+declare(strict_types=1);
 
 namespace App\Data\Objects\ConsoleAPI\Billing\Paddle;
 
@@ -16,7 +17,7 @@ class PaddlePaymentObject
 
     public string $receipt_url;
 
-    public function __construct($payment)
+    public function __construct(object $payment)
     {
         $payment = (object) $payment;
 

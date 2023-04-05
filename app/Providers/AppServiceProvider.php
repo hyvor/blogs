@@ -1,4 +1,4 @@
-<?php
+<?php declare(strict_types=1);
 
 namespace App\Providers;
 
@@ -30,7 +30,7 @@ class AppServiceProvider extends ServiceProvider
     {
         if (App::environment('production')) {
             URL::forceScheme('https');
-            $this->app['request']->server->set('HTTPS', true);
+            // $this->app['request']->server->set('HTTPS', true);
         }
 
         // remove mass assignment globally

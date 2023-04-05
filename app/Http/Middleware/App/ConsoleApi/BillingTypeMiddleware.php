@@ -1,4 +1,4 @@
-<?php
+<?php declare(strict_types=1);
 
 namespace App\Http\Middleware\App\ConsoleApi;
 
@@ -14,7 +14,7 @@ class BillingTypeMiddleware
     {
     }
 
-    public function handle(Request $request, Closure $next, $type)
+    public function handle(Request $request, Closure $next, string $type) : mixed
     {
         $type = BlogBillingTypeEnum::from($type);
 

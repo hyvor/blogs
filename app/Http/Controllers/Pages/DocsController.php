@@ -1,4 +1,4 @@
-<?php
+<?php declare(strict_types=1);
 
 namespace App\Http\Controllers\Pages;
 
@@ -8,10 +8,11 @@ use Hyvor\SyntaxHighlighter\Highlighter;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Cache;
 use ParsedownExtra;
+use View;
 
 class DocsController extends Controller
 {
-    public function handle(Request $request)
+    public function handle(Request $request) : View
     {
         $page = $request->route('page') ?? 'index';
         $content = $this->getContentFromName($page);
@@ -36,7 +37,7 @@ class DocsController extends Controller
         ]);
     }
 
-    private function getContentFromName($name)
+    private function getContentFromName($name) : ?string
     {
         $name = $name ? $name : 'index';
         $file = resource_path("docs/$name.md");

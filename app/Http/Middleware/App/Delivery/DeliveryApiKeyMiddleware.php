@@ -11,9 +11,9 @@ use Illuminate\Http\Request;
 
 class DeliveryApiKeyMiddleware
 {
-    public function handle(Request $request, Closure $next)
+    public function handle(Request $request, Closure $next) : mixed
     {
-        $apiKey = $request->input('api_key');
+        $apiKey = strval($request->input('api_key'));
 
         if (!$apiKey) {
             throw new TrustedException('API Key not set');
