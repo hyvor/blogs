@@ -379,13 +379,14 @@ $prosemirror-selected-outline: 3px solid #299af3;
 
         &:hover {
             outline: $prosemirror-hover-outline;
+      
         }
 
         figcaption {
             padding: 7px;
             font-size: 14px;
             text-align: center;
-
+            margin-top: 22px;
             &.empty:before {
                 content: "Enter caption...";
                 color: #aaa;
@@ -595,6 +596,7 @@ $prosemirror-selected-outline: 3px solid #299af3;
             .uploader-content {
                 height: 100%;
                 position:absolute;
+                max-height: 360px;
                 top:25%;
                 left:0;
                 transform: translateY(-25%);
@@ -606,6 +608,7 @@ $prosemirror-selected-outline: 3px solid #299af3;
                     transition: .3s width;
                 }
                 margin-top: 100px;
+              
             
             }
             &.searching {
@@ -650,6 +653,8 @@ $prosemirror-selected-outline: 3px solid #299af3;
                 justify-content: space-between;
                 align-items: center;
                 height: 100%;
+                background-color: $color-card;
+                padding-bottom: 10px;
             }
             .confirm-button {
                 margin-left: 15px;
@@ -659,6 +664,7 @@ $prosemirror-selected-outline: 3px solid #299af3;
                 color: black;
             }
             .action-area {
+               position: relative;
                 align-self: self-end;
             }
             .image-confirm {
