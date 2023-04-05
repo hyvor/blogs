@@ -155,34 +155,34 @@ export default function Settings({ type }: { type: string | undefined }) {
 
                 {
                     blog.integration === 'shopify' &&
-                    <SettingsLink path="/shopify" name="Shopify Guide" dividing={true} />
+                    <SettingsLink path="/shopify" name="Shopify Guide" dividing={true} setPannel={setPannel} />
                 }
 
-                <SettingsLink path="" name="General" />
-                <SettingsLink path="/users" name="Users" />
-                <SettingsLink role={UserRole.EDITOR} path="/tags" name="Tags" />
-                <SettingsLink path="/languages" name="Languages" />
+                <SettingsLink path="" name="General" setPannel={setPannel} />
+                <SettingsLink path="/users" name="Users" setPannel={setPannel} />
+                <SettingsLink role={UserRole.EDITOR} path="/tags" name="Tags" setPannel={setPannel} />
+                <SettingsLink path="/languages" name="Languages" setPannel={setPannel} />
 
                 <div />
 
-                <SettingsLink path="/hosting" name="Hosting" />
-                <SettingsLink path="/seo" name="SEO" />
-                <SettingsLink path="/color-mode" name="Light & Dark Modes" />
-                <SettingsLink path="/navigation" name="Navigation" />
-                <SettingsLink path="/media" name="Media" />
-                <SettingsLink path="/redirects" name="Redirects" />
-                <SettingsLink path="/routes" name="Routes" />
-                <SettingsLink path="/api-keys" name="API Keys" />
-                <SettingsLink path="/webhooks" name="Webhooks" />
+                <SettingsLink path="/hosting" name="Hosting" setPannel={setPannel} />
+                <SettingsLink path="/seo" name="SEO" setPannel={setPannel} />
+                <SettingsLink path="/color-mode" name="Light & Dark Modes" setPannel={setPannel} />
+                <SettingsLink path="/navigation" name="Navigation" setPannel={setPannel} />
+                <SettingsLink path="/media" name="Media" setPannel={setPannel} />
+                <SettingsLink path="/redirects" name="Redirects" setPannel={setPannel} />
+                <SettingsLink path="/routes" name="Routes" setPannel={setPannel} />
+                <SettingsLink path="/api-keys" name="API Keys" setPannel={setPannel} />
+                <SettingsLink path="/webhooks" name="Webhooks" setPannel={setPannel} />
 
                 <div />
-                <SettingsLink path="/comments" name="Comments & Newsletter" />
-                <SettingsLink path="/code" name="Custom Code" />
-                <SettingsLink path="/highlight" name="Syntax Highlighting" />
+                <SettingsLink path="/comments" name="Comments & Newsletter" setPannel={setPannel} />
+                <SettingsLink path="/code" name="Custom Code" setPannel={setPannel} />
+                <SettingsLink path="/highlight" name="Syntax Highlighting" setPannel={setPannel} />
 
                 <div />
-                <SettingsLink path="/migrate" name="Import & Export" />
-                <SettingsLink role={UserRole.OWNER} path="/danger" name="Danger Zone" />
+                <SettingsLink path="/migrate" name="Import & Export" setPannel={setPannel} />
+                <SettingsLink role={UserRole.OWNER} path="/danger" name="Danger Zone" setPannel={setPannel} />
             </div>
         </div>
         <div className="box box-right settings-right">
@@ -201,10 +201,11 @@ interface SettingsLinkProps {
     path: string,
     role?: UserRole.OWNER | UserRole.ADMIN | UserRole.EDITOR,
     name: string,
-    dividing?: boolean
+    dividing?: boolean,
+    setPannel: Function
 }
 
-function SettingsLink({ path, role = UserRole.ADMIN, name, dividing = false }: SettingsLinkProps) {
+function SettingsLink({ path, role = UserRole.ADMIN, name, dividing = false, setPannel }: SettingsLinkProps) {
 
     const subdomain = getSubdomain();
     const settingsPrefix = `/console/${subdomain}/settings`;
@@ -243,9 +244,10 @@ function SettingsLink({ path, role = UserRole.ADMIN, name, dividing = false }: S
             href={settingsPrefix + path}
             exact={1}
             className={cls}
-        >{name}</NavLink>
+            onClick={() => setPannel(name.toLocaleLowerCase())}
+        > {name}</NavLink>
 
         {dividing && <div />}
-    </Fragment>
+    </Fragment >
 
 }
