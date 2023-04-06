@@ -116,10 +116,10 @@ export default class CodeBlock {
         }
 
         return CodeMirror.normalizeKeyMap({
-            Up: () => this.maybeEscape("line", -1),
-            Left: () => this.maybeEscape("char", -1),
-            Down: handleExit,
-            Right: () => this.maybeEscape("char", 1),
+            Up: () => this.maybeEscape("line", -1, this.view),
+            Left: () => this.maybeEscape("char", -1, this.view),
+            Down: () => this.maybeEscape("line", 1, this.view),
+            Right: () => this.maybeEscape("char", 1, this.view),
             "Ctrl-Enter": handleExit,
             "Shift-Enter": handleExit,
             [`${mod}-Z`]: () => undo(view.state, view.dispatch),
@@ -136,8 +136,13 @@ export default class CodeBlock {
         });
     }
 
-    maybeEscape(unit, dir) {
+    maybeEscape(unit, dir, view) {
         let pos = this.cm.getCursor();
+        // When down is pressed on the last line, exit the code block
+        if (unit === "line" && dir === 1 && pos.line === this.cm.lastLine()) {
+            if (exitCode(view.state, view.dispatch)) view.focus();
+            return;
+        }
         if (
             this.cm.somethingSelected() ||
             pos.line != (dir < 0 ? this.cm.firstLine() : this.cm.lastLine()) ||

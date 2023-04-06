@@ -13,8 +13,6 @@ import dayjs from "dayjs";
 import {getUserBlogBlog} from "../logic-helpers/blog";
 
 export function getBlogFromSubdomain(subdomain: string) {
-    console.log('subdomain:', subdomain)
-    console.log('find:', userBlogsLogic.values.findBlogBySubdomain(subdomain))
     return userBlogsLogic.values.findBlogBySubdomain(subdomain).blog;
 }
 
