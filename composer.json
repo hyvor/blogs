@@ -21,6 +21,7 @@
         "ext-xml": "*",
         "erusev/parsedown-extra": "^0.8.1",
         "fakerphp/faker": "^1.9.1",
+        "filament/filament": "^2.0",
         "fruitcake/laravel-cors": "^2.0",
         "guzzlehttp/guzzle": "^7.0.1",
         "http-interop/http-factory-guzzle": "^1.2",
