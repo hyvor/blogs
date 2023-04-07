@@ -20,7 +20,7 @@ class RedirectObject
     public function __construct(Redirect $redirect)
     {
         $this->id = $redirect->id;
-        $this->created_at = $redirect->created_at->timestamp;
+        $this->created_at = $redirect->created_at->getTimestamp();
         $this->path = $redirect->path;
         $this->to = $redirect->to;
         $this->type = $redirect->type;

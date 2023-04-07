@@ -3,6 +3,7 @@
 namespace App\Data\Objects\ConsoleAPI\Media;
 
 use App\Domains\Route\PermalinkRepository;
+use App\Exceptions\SafetyException;
 use App\Models\Media;
 
 class MediaObject
@@ -17,16 +18,26 @@ class MediaObject
 
     public string $name;
 
+    public string $original_name;
+
     public ?string $extension;
 
     public function __construct(Media $media)
     {
+
+        $blog = $media->blog;
+
+        if (!$blog) {
+            throw new SafetyException('Media should be related to a blog');
+        }
+
         $this->id = $media->id;
         $this->post_id = $media->post_id;
-        $this->uploaded_at = $media->created_at->timestamp;
-        $this->name = $media->name;
-        $this->url = PermalinkRepository::getMediaPermalink($media, $media->blog);
+        $this->uploaded_at = $media->created_at->getTimestamp();
+        $this->name = $media->name ?? '';
+        $this->url = PermalinkRepository::getMediaPermalink($media, $blog);
         $this->original_name = $media->original_name;
         $this->extension = $media->extension;
+
     }
 }

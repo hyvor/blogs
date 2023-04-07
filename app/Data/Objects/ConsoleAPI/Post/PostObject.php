@@ -12,7 +12,7 @@ class PostObject
 {
     public int $id;
 
-    public string $preview_secret;
+    public string $preview_id;
 
     public int $created_at;
 
@@ -53,9 +53,9 @@ class PostObject
     {
         $this->id = $post->id;
         $this->preview_id = PostPreviewSecretEncryptor::getPreviewSecret($post);
-        $this->created_at = $post->created_at->timestamp;
-        $this->updated_at = $post->updated_at->timestamp;
-        $this->published_at = $post->published_at?->timestamp;
+        $this->created_at = $post->created_at->getTimestamp();
+        $this->updated_at = $post->updated_at->getTimestamp();
+        $this->published_at = $post->published_at?->getTimestamp();
         $this->slug = $post->slug;
         $this->is_page = (bool) $post->is_page;
         $this->is_featured = (bool) $post->is_featured;
@@ -64,18 +64,25 @@ class PostObject
         $this->code_head = $post->code_head;
         $this->code_foot = $post->code_foot;
 
-        // variants
-        $this->variants = $post->variants->map(function ($variant) use ($blog, $post) {
+        /** @var PostVariantObject[] $variants */
+        $variants = $post->variants->map(function ($variant) use ($blog, $post) {
             return new PostVariantObject($variant, $post, $blog);
         })->sortBy('language_id')->toArray();
 
-        // tags
-        $this->tags = $post->tags->map(function ($tag) use ($blog) {
+
+        /** @var TagObject[] $tags */
+        $tags = $post->tags->map(function ($tag) use ($blog) {
             return new TagObject($tag, $blog);
         })->toArray();
 
-        $this->authors = $post->authors->map(function ($author) use ($blog) {
+        /** @var UserObject[] $authors */
+        $authors = $post->authors->map(function ($author) use ($blog) {
             return new UserObject($author, $blog);
         })->toArray();
+
+
+        $this->variants = $variants;
+        $this->tags = $tags;
+        $this->authors = $authors;
     }
 }

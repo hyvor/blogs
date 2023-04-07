@@ -53,7 +53,9 @@ class UserBlogBlogObject
         $this->billing_type = $blog->billing_type;
         $this->integration = $blog->integration;
         $this->base_url = PermalinkRepository::getFullUrlFromPath($blog);
-        $this->logo_url = $blog->logo_url;
+
+        $logoUrl = $blog->getMeta('logo_url');
+        $this->logo_url = $logoUrl ? strval($logoUrl) : null;
 
         $this->posts_count = $blog->getCount('posts');
         $this->users_count = $blog->getCount('users');

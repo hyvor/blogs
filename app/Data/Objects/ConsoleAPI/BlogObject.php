@@ -1,4 +1,4 @@
-<?php
+<?php declare(strict_types=1);
 
 namespace App\Data\Objects\ConsoleAPI;
 
@@ -90,7 +90,7 @@ class BlogObject
     public function __construct(Blog $blog)
     {
         $this->id = $blog->id;
-        $this->created_at = $blog->created_at->timestamp;
+        $this->created_at = $blog->created_at->getTimestamp();
         $this->is_blocked = $blog->is_blocked;
 
         $this->subdomain = $blog->subdomain;
@@ -138,7 +138,7 @@ class BlogObject
         $this->flashload = (bool) $meta->flashload;
 
         $this->variants = $blog->variants->map(function ($variant) use ($blog) {
-            return new BlogVariantObject($variant, $blog);
+            return new BlogVariantObject($variant);
         })->sortBy('language_id')->toArray();
     }
 }

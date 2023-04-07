@@ -1,9 +1,10 @@
-<?php
+<?php declare(strict_types=1);
 
 namespace App\Data\Objects\DataAPI;
 
 use App\Data\Objects\DataAPI\Helpers\VariantsHelper;
 use App\Domains\Route\PermalinkRepository;
+use App\Exceptions\SafetyException;
 use App\Models\Blog;
 use App\Models\Language;
 use App\Models\User;
@@ -44,10 +45,10 @@ class AuthorObject
         $variants = $user->variants;
 
         $this->id = $user->id;
-        $this->created_at = $user->created_at->timestamp;
+        $this->created_at = $user->created_at->getTimestamp();
         $this->slug = $user->slug;
         $this->url = PermalinkRepository::getAuthorPermalink($user, $blog, $language);
-        $this->name = VariantsHelper::getVariantValue('name', $variants, $language);
+        $this->name = VariantsHelper::getVariantValue('name', $variants, $language) ?? '';
         $this->picture_url = $user->picture_url;
         $this->bio = VariantsHelper::getVariantValue('bio', $variants, $language);
         $this->website_url = $user->website_url;
@@ -65,14 +66,22 @@ class AuthorObject
 
         $this->language = new LanguageObject($language);
 
-        $this->variants = $variants
+        /** @var VariantObject[] $variants */
+        $variants = $variants
             ->where('language_id', '!=', $language->id)
             ->map(function ($variant) use ($user, $blog) {
                 $variantLanguage = $variant->language;
+
+                if (!$variantLanguage) {
+                    throw new SafetyException('AuthorObject: Variant language not found');
+                }
+
                 $url = PermalinkRepository::getAuthorPermalink($user, $blog, $variantLanguage);
 
                 return new VariantObject($variantLanguage, $url);
             })->toArray();
+
+        $this->variants = $variants;
 
         $this->posts_count = $user->posts_count;
     }
