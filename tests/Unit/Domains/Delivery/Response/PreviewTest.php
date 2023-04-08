@@ -81,3 +81,18 @@ it('displays unsaved content HTML if it is there', function () {
     expect($responseObject->status)->toBe(200);
     expect($responseObject->content)->toBe(PostContentRepository::getHtml($content, $this->blog));
 });
+
+it('does not match if the timestamp is expired', function() {
+
+    $post = Post::where('blog_id', $this->blog->id)->first();
+
+    $language = $this->blog->languages[0];
+    $id = PostPreviewSecretEncryptor::getPreviewSecret($post, now()->subDays(8));
+
+    $pathMatcher = new PathMatcher($this->blog, "/p/$id/$language->code");
+    $responseObject = $pathMatcher->getResponseObject();
+
+    expect($responseObject->type)->toBe(DeliveryAPITypeEnum::FILE);
+    expect($responseObject->status)->toBe(404);
+
+});
