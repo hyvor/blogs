@@ -1,4 +1,4 @@
-<?php
+<?php declare(strict_types=1);
 
 namespace App\Data\Objects\DataAPI;
 
@@ -19,7 +19,7 @@ class PaginationObject
     public function __construct(int $limit, int $page, int $total)
     {
         $this->total = $total;
-        $this->pages = ceil($total / $limit);
+        $this->pages = max((int) ceil($total / $limit), 1);
         $this->limit = $limit;
         $this->page = $page;
 
