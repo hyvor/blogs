@@ -6,16 +6,18 @@ Are you ready to publish your newly built theme to our [themes list](/themes)? T
 
 ## Checklist {#checklist}
 
+All the following requirements should be met in order to publish a theme to our official themes list.
+
 * Has at least these templates
   * index.twig
   * post.twig
   * tag.twig
   * author.twig
-* Supports multi-languages
-* All posts should have links to translated versions of them (if available). Ex: "This post is also available in..." or "Translations: ..."
+* Supports multi-languages (has a language switcher)
 * Supports both light and dark color modes
 * Respects the blog's color mode settings
 * Pagination
+* All posts should have links to translated versions of them (if available). Ex: "This post is also available in..." or "Translations: ..."
 * All [placeholders](themes-templates#placeholders) are added
   * `_head`
   * `_foot`
@@ -26,7 +28,6 @@ Are you ready to publish your newly built theme to our [themes list](/themes)? T
 * If the blog has a logo (`_blog.logo_url`), the logo should be shown in the header linking the logo to the blog homepage.
 * [Internationalized](themes-internationalization)
 * `<html lang="{{ _lang.code }}"` is added
-
 * Configurations are added for colors, fonts, etc.
 * Mobile responsive
 * Featured posts may have some unique UI in the index page (ex: a pinned/star icon)
@@ -34,7 +35,7 @@ Are you ready to publish your newly built theme to our [themes list](/themes)? T
   * All [blocks](writing#blocks) are styled properly. You can test this with the "Content Style" post in your DEV blog.
   * Code blocks (`<pre><code>`) should have `tab-size: 4`
 * All assets (JS, fonts, etc.) should be added in the `assets` folder. Do not load assets from external sources like Google Fonts.
-* Should support the blog's social media links
+* Should support the blog's social media links (shows an icon or link to the social media profile if the link is available)
   * Facebook
   * Twitter
   * Linkedin
@@ -85,12 +86,17 @@ settings:
     authors: true
     tags: true
     featured_image: true
+    toc: true # table of contents
   feed: true # a link to RSS feed (if available)
 ```
 
 
-## Versioning
+## Versioning {#versioning}
 
-Versioning is important. Use [semantic versioning](https://semver.org/).
+The first version of the theme should be `1.0.0`. After that you can increment the version number according to the changes you make. For a patch (ex: bug fix), you can use `1.0.1`, `1.0.2`, etc. For a minor change, you can use `1.1.0`, `1.2.0`, etc. Unlike other software, themes do not have significant changes breaking changes. Therefore, we do not think you will ever need a major version change.
 
-Once everything is completed, send us a pull request to the . When the PR is merged, the themes list will automatically
+## Change Log {#changelog}
+
+Add a `CHANGELOG.md` file to your theme folder and add the changes for each version. See [keepachangelog.com](https://keepachangelog.com/en/1.1.0/) to learn how to write a changelog.
+
+Once everything is completed, send us a pull request to [hyvor-blogs-themes](https://github.com/hyvor/hyvor-blogs-themes) repository. When the PR is merged, the themes list will automatically update with your new theme.
