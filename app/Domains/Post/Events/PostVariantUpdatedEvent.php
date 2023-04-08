@@ -1,4 +1,4 @@
-<?php
+<?php declare(strict_types=1);
 
 namespace App\Domains\Post\Events;
 
@@ -9,15 +9,10 @@ use Illuminate\Queue\SerializesModels;
 class PostVariantUpdatedEvent
 {
     use Dispatchable;
-    use SerializesModels;
 
-    public PostVariant $variant;
-
-    public PostVariant $variantOld;
-
-    public function __construct(PostVariant $variant)
-    {
-        $this->variant = $variant;
-        $this->variantOld = new PostVariant($variant->getOriginal());
-    }
+    public function __construct(
+        public PostVariant $variant,
+        public PostVariant $variantOld
+    )
+    {}
 }

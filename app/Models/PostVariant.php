@@ -7,6 +7,7 @@ use App\Domains\Post\PostSearchRepository;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use Illuminate\Database\Eloquent\Relations\HasMany;
 use Laravel\Scout\Searchable;
 
 class PostVariant extends Model
@@ -39,6 +40,14 @@ class PostVariant extends Model
     public function language()
     {
         return $this->belongsTo(Language::class);
+    }
+
+    /**
+     * @return HasMany<PostVariantHistory>
+     */
+    public function history()
+    {
+        return $this->hasMany(PostVariantHistory::class);
     }
 
     public function searchableAs() : string

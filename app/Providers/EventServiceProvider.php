@@ -10,6 +10,7 @@ use App\Domains\Integrations\Shopify\Listeners\ShopifySubscriber;
 use App\Domains\Post\Events\PostVariantUpdatedEvent;
 use App\Domains\Post\Listeners\PostVariantUpdateContentHtmlListener;
 use App\Domains\Post\Listeners\PostVariantUpdateWordCountListener;
+use App\Domains\PostHistory\Listeners\PostHistoryVariantUpdateListener;
 use App\Domains\Shared\Count\CountSubscriber;
 use App\Domains\Webhook\Listeners\WebhookSubscriber;
 use Illuminate\Foundation\Support\Providers\EventServiceProvider as ServiceProvider;
@@ -22,6 +23,7 @@ class EventServiceProvider extends ServiceProvider
         PostVariantUpdatedEvent::class => [
             PostVariantUpdateWordCountListener::class,
             PostVariantUpdateContentHtmlListener::class,
+            PostHistoryVariantUpdateListener::class,
         ],
 
         BlogUpdatedEvent::class => [

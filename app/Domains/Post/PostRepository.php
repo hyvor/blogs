@@ -47,9 +47,7 @@ class PostRepository
     }
 
     /**
-     * Get posts of a blog
-     * with filters, limit, and offset
-     * This is for the ConsoleApi
+     * @return Collection<int, Post>
      */
     public static function getPosts(
         Blog $blog,
@@ -114,6 +112,10 @@ class PostRepository
             ->get();
     }
 
+    /**
+     * @param Blog $blog
+     * @return Collection<int, Post>
+     */
     public static function getPages(Blog $blog): Collection
     {
         return Post::where('blog_id', $blog->id)
@@ -311,6 +313,7 @@ class PostRepository
 
     public static function updatePostVariant(Post $post, Language $language, array $updates)
     {
+
         $variant = self::getPostVariantByPostIdAndLanguageId($post->id, $language->id);
 
         if (! $variant) {
@@ -368,9 +371,9 @@ class PostRepository
             $variant->description = mb_substr($updates['description'], 0, 350);
         }
 
+        $original = new PostVariant((array) $variant->getOriginal());
         $variant->save();
-
-        PostVariantUpdatedEvent::dispatch($variant);
+        PostVariantUpdatedEvent::dispatch($variant, $original);
 
         return $variant;
     }

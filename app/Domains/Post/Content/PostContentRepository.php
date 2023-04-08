@@ -130,4 +130,24 @@ class PostContentRepository
 
         return json_encode($content);
     }
+
+    public static function generateParagraph(string $text = null) : string
+    {
+
+        $content = [
+            'type' => 'doc',
+            'content' => [],
+        ];
+        $content['content'][] = [
+            'type' => 'paragraph',
+            'content' => [[
+                'type' => 'text',
+                'text' => $text ?? Factory::create()->paragraph,
+            ]],
+        ];
+
+        return strval(json_encode($content));
+
+    }
+
 }

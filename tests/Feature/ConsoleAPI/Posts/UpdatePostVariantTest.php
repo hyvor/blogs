@@ -1,8 +1,9 @@
-<?php
+<?php declare(strict_types=1);
 
 namespace Tests\Feature\ConsoleAPI\Posts;
 
 use App\Data\Enums\PostStatusEnum;
+use App\Domains\Post\Content\PostContentRepository;
 use App\Domains\Post\Events\PostVariantUpdatedEvent;
 use App\Models\Post;
 use App\Models\PostVariant;
@@ -96,5 +97,32 @@ it('sets the slug if it is empty when publishing the primary language post', fun
         ->assertOk();
 
     expect($post->refresh()->slug)->not->toBeNull();
+
+});
+
+it('creates a history if post content has changed', function() {
+
+    $blog = blogWithAccessLanguageAndRoutes();
+
+    $post = Post::factory()->create([
+        'blog_id' => $blog,
+        'published_at' => null,
+        'slug' => null
+    ]);
+    $variant = PostVariant::factory()->create([
+        'post_id' => $post,
+        'language_id' => $blog->languages[0],
+        'status' => PostStatusEnum::DRAFT,
+    ]);
+
+    $para = PostContentRepository::generateParagraph('Test content');
+
+    consoleApi($blog, 'PATCH', "/post/$post->id/variant", [
+        'language_id' => $blog->languages[0]->id,
+        'content' => $para
+    ])
+        ->assertOk();
+
+    expect($variant->history()->first()->content)->toBe($para);
 
 });

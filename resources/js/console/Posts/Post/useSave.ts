@@ -16,7 +16,7 @@ export default function useSave(id: number) {
     useEffect(() => {
 
         // auto save
-        const autoSaveInterval = setInterval(handleAutoSave, 10000);
+        const autoSaveInterval = setInterval(handleAutoSave, 15000);
 
         function checkSave(e: KeyboardEvent) {
             if (e.key === 's' && (e.ctrlKey || e.metaKey)) { // ctrl + s

@@ -1,4 +1,4 @@
-<?php
+<?php declare(strict_types=1);
 
 namespace App\Domains\Post;
 
@@ -10,6 +10,7 @@ use App\Models\Blog;
 use App\Models\Language;
 use App\Models\Post;
 use App\Models\PostVariant;
+use Illuminate\Support\Collection;
 use MeiliSearch\Client;
 
 class PostSearchRepository
@@ -34,6 +35,7 @@ class PostSearchRepository
 
     /**
      * Better to use named arguments when using this function
+     * @return CollectionWithTotal<Post>
      */
     public static function search(
         Blog $blog,
@@ -64,6 +66,7 @@ class PostSearchRepository
             'attributesToRetrieve' => ['post_id'],
         ]);
 
+        /** @var array<array{post_id: int}> $hits */
         $hits = $results->getHits();
 
         if (count($hits) > 0) {
@@ -73,7 +76,8 @@ class PostSearchRepository
                 ->orderByRaw("FIELD(id, $postIdsForField)")
                 ->get();
         } else {
-            $posts = collect([]);
+            /** @var Collection<int, Post> $posts */
+            $posts = collect();
         }
 
         return new CollectionWithTotal($posts, $results->getEstimatedTotalHits());

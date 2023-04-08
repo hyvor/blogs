@@ -7,8 +7,8 @@ use App\Http\Controllers\Controller;
 use Hyvor\SyntaxHighlighter\Highlighter;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Cache;
+use Illuminate\View\View;
 use ParsedownExtra;
-use View;
 
 class DocsController extends Controller
 {
@@ -137,9 +137,9 @@ class DocsController extends Controller
             }
 
             $markdown = str_replace('{{language_tags}}', $languageTags, $markdown);
-            $markdown = str_replace('{{language_number}}', $languagesCount, $markdown);
+            $markdown = str_replace('{{language_number}}', (string) $languagesCount, $markdown);
             $markdown = str_replace('{{theme_tags}}', $themeTags, $markdown);
-            $markdown = str_replace('{{themes_number}}', $themesCount, $markdown);
+            $markdown = str_replace('{{themes_number}}', (string) $themesCount, $markdown);
             $markdown = str_replace('{{theme_previews}}', $previews, $markdown);
         }
 
