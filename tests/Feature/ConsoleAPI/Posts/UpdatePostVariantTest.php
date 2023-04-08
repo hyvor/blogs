@@ -100,6 +100,33 @@ it('sets the slug if it is empty when publishing the primary language post', fun
 
 });
 
+// bug#89
+it('updates slug when title is empty', function() {
+
+    $blog = blogWithAccessLanguageAndRoutes();
+
+    $post = Post::factory()->create([
+        'blog_id' => $blog,
+        'published_at' => null,
+        'slug' => null
+    ]);
+    PostVariant::factory()->create([
+        'post_id' => $post,
+        'language_id' => $blog->languages[0],
+        'status' => PostStatusEnum::DRAFT,
+        'title' => null,
+    ]);
+
+    consoleApi($blog, 'PATCH', "/post/$post->id/variant", [
+        'language_id' => $blog->languages[0]->id,
+        'status' => 'published'
+    ])
+        ->assertOk();
+
+    expect($post->refresh()->slug)->not->toBeNull();
+
+});
+
 it('creates a history if post content has changed', function() {
 
     $blog = blogWithAccessLanguageAndRoutes();

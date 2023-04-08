@@ -331,10 +331,10 @@ class PostRepository
                 // set post slug
                 if (
                     $post->slug === null &&
-                    $language->is_primary &&
-                    $title = $variant->title ?? $updates['title'] ?? null
+                    $language->is_primary
                 ) {
-                    $post->slug = Str::slug($title);
+                    $title = $variant->title ?? $updates['title'] ?? null;
+                    $post->slug = $title ? Str::slug($title) : Str::random();
                 }
 
                 $post->save();
