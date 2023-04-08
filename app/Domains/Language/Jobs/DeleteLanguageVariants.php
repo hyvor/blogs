@@ -1,4 +1,4 @@
-<?php
+<?php declare(strict_types=1);
 
 namespace App\Domains\Language\Jobs;
 
@@ -29,9 +29,10 @@ class DeleteLanguageVariants implements ShouldQueue, ShouldBeUnique
      * - users
      * - navigation
      */
-    public function handle()
+    public function handle() : void
     {
         $languageId = $this->language->id;
+
 
         BlogVariant::where('language_id', $languageId)->delete();
         PostVariant::where('language_id', $languageId)->delete();
@@ -39,4 +40,10 @@ class DeleteLanguageVariants implements ShouldQueue, ShouldBeUnique
         UserVariant::where('language_id', $languageId)->delete();
         NavigationVariant::where('language_id', $languageId)->delete();
     }
+
+    public function uniqueId()
+    {
+        return $this->language->id;
+    }
+
 }

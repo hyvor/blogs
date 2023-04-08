@@ -19,7 +19,7 @@ return new class extends Migration
             $table->timestamp('updated_at')->useCurrent();
 
             $table->bigInteger('post_variant_id');
-            $table->string('content');
+            $table->mediumText('content');
 
         });
     }

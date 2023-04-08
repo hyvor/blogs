@@ -195,7 +195,7 @@ it('clears cache on post variant status change', function () {
 
     $variant = PostVariant::factory()->create();
     $variant->status = 'published';
-    $event = new PostVariantUpdatedEvent($variant);
+    $event = new PostVariantUpdatedEvent($variant, $variant);
 
     $listener = new ClearCacheSubscriber();
     $listener->onPostVariantUpdate($event);
@@ -206,7 +206,7 @@ it('does not clear cache when attrs changes on non-published posts', function ()
 
     $variant = PostVariant::factory()->create(['status' => 'draft']);
     $variant->content = 'Hey';
-    $event = new PostVariantUpdatedEvent($variant);
+    $event = new PostVariantUpdatedEvent($variant, $variant);
 
     $listener = new ClearCacheSubscriber();
     $listener->onPostVariantUpdate($event);
@@ -217,7 +217,7 @@ it('clears cache if the post is published', function () {
 
     $variant = PostVariant::factory()->create(['status' => 'published']);
     $variant->content = 'Hey';
-    $event = new PostVariantUpdatedEvent($variant);
+    $event = new PostVariantUpdatedEvent($variant, $variant);
 
     $listener = new ClearCacheSubscriber();
     $listener->onPostVariantUpdate($event);

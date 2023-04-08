@@ -17,7 +17,7 @@ class PaddlePaymentObject
 
     public string $receipt_url;
 
-    public function __construct(object $payment)
+    public function __construct($payment)
     {
         $payment = (object) $payment;
 
