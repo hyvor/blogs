@@ -45,3 +45,16 @@ it('redirects to homepage if the blog trial is ended', function() {
     $this->get("http://$blog->subdomain.hyvorblogs.io/any")->assertRedirect('https://blogs.hyvor.com');
 
 });
+
+it('redirects to other domain if not hosted on subdomain', function() {
+
+    $blog = blog([
+        'hosting_at' => 'domain',
+        'hosting_domain' => 'hyvorblogs.com'
+    ]);
+
+    $this
+        ->get("http://$blog->subdomain.hyvorblogs.io/any")
+        ->assertRedirect("https://hyvorblogs.com/any");
+
+});
