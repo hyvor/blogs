@@ -153,6 +153,14 @@ class ConsolePostController extends Controller
         }
 
         if (count($postUpdates) > 0) {
+
+            if (array_key_exists('slug', $postUpdates)) {
+                $bySlugPost = PostRepository::getPostByBlogIdAndSlug($blog->id, strval($postUpdates['slug']));
+                if ($bySlugPost && $bySlugPost->id !== $post->id) {
+                    throw new TrustedException('Slug has already been taken');
+                }
+            }
+
             PostRepository::updatePost($post, $postUpdates);
         }
 
