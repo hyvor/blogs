@@ -2,6 +2,7 @@
 
 namespace Database\Factories;
 
+use App\Data\Enums\BlogTypeEnum;
 use Carbon\Carbon;
 use Illuminate\Database\Eloquent\Factories\Factory;
 use Illuminate\Support\Str;
@@ -11,6 +12,7 @@ class BlogFactory extends Factory
     public function definition()
     {
         return [
+            'type' => BlogTypeEnum::DEFAULT,
             'hyvor_user_id' => rand(),
             'subdomain' => Str::random(20),
             'is_activated' => false,

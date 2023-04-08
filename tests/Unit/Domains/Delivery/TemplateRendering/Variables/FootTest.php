@@ -1,4 +1,4 @@
-<?php
+<?php declare(strict_types=1);
 
 namespace Tests\Unit\Domains\Delivery\TemplateRendering\Variables;
 
@@ -123,7 +123,18 @@ it('adds powered by for free plan blogs', function() {
 it('does not add powered by to non-free blogs', function() {
 
     $blog = blogWithLanguageAndRoutes();
+    addThemeTemplateFile($blog, '{{ _foot | template }}');
     Subscription::factory()->create(['blog_id' => $blog]);
+    $pathMatcher = new PathMatcher($blog, '/');
+    $responseObject = $pathMatcher->getResponseObject();
+    expect($responseObject->content)->not->toContain('Powered by Hyvor Blogs');
+
+});
+
+it('does not add powered by to dev and preview blogs', function() {
+
+    $blog = blogWithLanguageAndRoutes(['type' => 'dev']);
+    addThemeTemplateFile($blog, '{{ _foot | template }}');
     $pathMatcher = new PathMatcher($blog, '/');
     $responseObject = $pathMatcher->getResponseObject();
     expect($responseObject->content)->not->toContain('Powered by Hyvor Blogs');

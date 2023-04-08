@@ -24,7 +24,7 @@
 
 {# TODO: ADD TAGS CODE #}
 
-{% if _blog.is_free %}
+{% if _blog.is_free and _blog.type == "default" %}
     <div style="text-align: center;font-size:14px;font-weight:600;padding:15px;"><a style="text-decoration:none;margin-right:4px;color:inherit;display:inline-block" target="_blank" href="https://blogs.hyvor.com?source=powered">Powered by Hyvor Blogs
     <svg style="vertical-align:middle" xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 132.292 132.292"><g stroke-width="7.158" stroke="#000" fill-rule="evenodd"><rect width="77.87" height="123.577" x="26.535" y="5.026" ry="38.935" transform="rotate(359.418)" fill="#f1e8e8"/><path d="M105.079 65.75l.232 22.852c.219 21.569-16.969 39.11-38.538 39.329s-39.11-16.969-39.329-38.538l-.232-22.852z" fill="#896c6b"/></g><path d="M59.3 31.89c0-2.555-3.289-4.625-7.346-4.625s-7.346 2.071-7.346 4.625m43.076 0c0-2.555-3.289-4.625-7.346-4.625s-7.346 2.071-7.346 4.625m.271 15.859c0 2.555-3.289 4.625-7.346 4.625s-7.346-2.071-7.346-4.625" stroke="#000" paint-order="stroke fill markers" fill="none" stroke-linecap="round" stroke-linejoin="round" stroke-width="6.65"/></svg></a></div>
 {% endif %}
