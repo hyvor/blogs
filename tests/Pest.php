@@ -77,7 +77,7 @@ function createRequest($method, $uri)
 function testTwigRendering(string $template, array $vars, string $expectation)
 {
     $vars = json_decode(json_encode($vars), true);
-    $val = TwigRenderer::renderString($template, $vars);
+    $val = trim(TwigRenderer::renderString($template, $vars));
     expect($val)->toBe($expectation);
 }
 

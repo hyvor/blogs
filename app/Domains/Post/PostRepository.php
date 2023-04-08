@@ -16,7 +16,7 @@ use App\Models\Language;
 use App\Models\Post;
 use App\Models\PostVariant;
 use Carbon\Carbon;
-use Hyvor\FilterQ\Facades\FilterQ;
+use Hyvor\FilterQ\FilterQ;
 use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Support\Str;
 
@@ -140,7 +140,8 @@ class PostRepository
         ],
         bool $isPages = false
     ): CollectionWithTotal {
-        $builder = FilterQ::expression($filter)
+
+        $builder = (new FilterQ)->expression($filter)
             ->builder(Post::class)
             ->keys(function ($keys) {
                 $keys->add('id')
