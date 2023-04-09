@@ -270,7 +270,7 @@ class TemplateRenderer
 
     private function getPageNumber(): int
     {
-        $suffix = $this->matchedRoute->param('suffix');
+        $suffix = strval($this->matchedRoute->param('suffix'));
 
         if (preg_match('/^page\/(\d+)$/', $suffix, $matches)) {
             $number = (int) $matches[1];
