@@ -1,4 +1,4 @@
-<?php
+<?php declare(strict_types=1);
 
 namespace App\Domains\Integrations\EmailOctopus;
 
@@ -12,6 +12,7 @@ class EmailOctopusSyncJob
     public function handle() : void
     {
 
+        /** @var array<int> $userIds */
         $userIds = Blog::selectRaw('DISTINCT hyvor_user_id')
             ->whereNotNull('hyvor_user_id')
             ->whereRaw(
@@ -21,11 +22,10 @@ class EmailOctopusSyncJob
                     WHERE nss.hyvor_user_id = blogs.hyvor_user_id
                 ) = 0'
             )
-            ->get()
             ->pluck('hyvor_user_id')
             ->toArray();
 
-        $users = Userbase::fromIds($userIds);
+        $users = Userbase::fromIds($userIds, true);
 
         foreach ($users as $user) {
 
