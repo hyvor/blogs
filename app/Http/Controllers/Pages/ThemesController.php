@@ -12,7 +12,8 @@ class ThemesController extends Controller
 {
     public function handle(Request $request) : View
     {
-        $route = strval($request->route('name'));
+        /** @var ?string $route */
+        $route = $request->route('name');
         $themeName = $route ?? 'hello';
 
         $themes = ThemeRepository::getAllThemesWithLatestVersions();

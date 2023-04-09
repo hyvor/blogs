@@ -155,6 +155,33 @@ it('creates a history if post content has changed', function() {
 
 });
 
+it('does not update if the content is the same', function() {
+
+    $blog = blogWithAccessLanguageAndRoutes();
+    $para = PostContentRepository::generateParagraph('Test content');
+
+    $post = Post::factory()->create([
+        'blog_id' => $blog,
+        'published_at' => null,
+        'slug' => null
+    ]);
+    $variant = PostVariant::factory()->create([
+        'post_id' => $post,
+        'language_id' => $blog->languages[0],
+        'status' => PostStatusEnum::DRAFT,
+        'content' => $para
+    ]);
+
+    consoleApi($blog, 'PATCH', "/post/$post->id/variant", [
+        'language_id' => $blog->languages[0]->id,
+        'content' => $para
+    ])
+        ->assertOk();
+
+    expect($variant->history()->count())->toBe(0);
+
+});
+
 
 it('deletes old histories', function() {
 
