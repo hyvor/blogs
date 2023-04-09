@@ -1,4 +1,4 @@
-<?php
+<?php declare(strict_types=1);
 
 namespace App\Domains\Delivery\TemplateRenderer;
 
@@ -23,11 +23,13 @@ use App\Domains\Route\PermalinkRepository;
 use App\Domains\Tag\TagRepository;
 use App\Domains\Theme\ThemeFilesRepository;
 use App\Domains\User\UserRepository;
+use App\Exceptions\SafetyException;
 use App\Models\Blog;
 use App\Models\Language;
 use App\Models\Post;
 use App\Models\Tag;
 use App\Models\User;
+use Illuminate\Support\Collection;
 use Symfony\Component\Yaml\Exception\ParseException;
 use Symfony\Component\Yaml\Yaml;
 use Twig\Error\Error;
@@ -105,8 +107,9 @@ class TemplateRenderer
     /**
      * @throws Error
      * @throws TemplatePageNotFoundException
+     * @return array<mixed>
      */
-    private function getVariables()
+    private function getVariables() : array
     {
         $blog = $this->pathMatcher->blog;
 
@@ -130,10 +133,16 @@ class TemplateRenderer
         /**
          * JSON encoding + decoding is to make sure only data from objects are sent
          * and the developer does not have access to PHP methods
+         * @var array<mixed> $variables
          */
-        return json_decode(json_encode($vars), true);
+        $variables = json_decode((string) json_encode($vars), true);
+
+        return $variables;
     }
 
+    /**
+     * @return array<string, mixed>
+     */
     private function getRouteVariables(): array
     {
         $routeName = $this->matchedRoute->name;
@@ -156,7 +165,14 @@ class TemplateRenderer
                     limit: 30 // hard limit - who has 30 featured posts?
                 )->collection,
             ];
-        } elseif ($routeName === 'post' || $routeName === 'page' || $routeName === 'preview') {
+        } elseif (
+            (
+                $routeName === 'post' ||
+                $routeName === 'page' ||
+                $routeName === 'preview'
+            ) &&
+            $this->model instanceof Post
+        ) {
             if ($routeName === 'preview') {
 
                 // set content_html to content_unsaved if it is set
@@ -186,7 +202,7 @@ class TemplateRenderer
                 '_comments' => $this->pathMatcher->blog->getMeta('comments_code') ?? '',
                 '_newsletter' => $this->pathMatcher->blog->getMeta('newsletter_code') ?? '',
             ];
-        } elseif ($routeName === 'tag') {
+        } elseif ($routeName === 'tag' && $this->model instanceof Tag) {
             $tagObject = new TagObject($this->model, $this->pathMatcher->blog, $this->pathMatcher->language);
 
             return [
@@ -199,7 +215,7 @@ class TemplateRenderer
                 ),
                 '_tag' => $tagObject,
             ];
-        } elseif ($routeName === 'author') {
+        } elseif ($routeName === 'author' && $this->model instanceof User) {
             $authorObject = new AuthorObject($this->model, $this->pathMatcher->blog, $this->pathMatcher->language);
 
             return [
@@ -219,8 +235,9 @@ class TemplateRenderer
 
     /**
      * @throws TemplatePageNotFoundException
+     * @return array{posts: Collection<int, PostObject>, pagination: PaginationObject}
      */
-    private function getPostsAndPagination()
+    private function getPostsAndPagination() : array
     {
         $pageNumber = $this->getPageNumber();
 
@@ -264,9 +281,12 @@ class TemplateRenderer
         return 1;
     }
 
-    private function setTemplateName(array $availableFiles)
+    /**
+     * @param string[] $availableFiles
+     */
+    private function setTemplateName(array $availableFiles) : void
     {
-        $checkFiles = explode(',', $this->matchedRoute->route->template);
+        $checkFiles = explode(',', $this->matchedRoute->route->template ?? '');
 
         foreach ($checkFiles as $file) {
             $file = trim($file).'.twig';
@@ -330,7 +350,7 @@ class TemplateRenderer
     }
 
     // preview repository sets model before getting response object
-    public function setModel($model)
+    public function setModel(Post $model) : void
     {
         $this->model = $model;
     }

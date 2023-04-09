@@ -128,6 +128,9 @@ class PostRepository
      * This is for the Data API
      *
      * ALWAYS USE NAMED ARGUMENT WHEN USING THIS FUNCTION
+     *
+     * @param array<array<string>> $orderBys
+     * @return CollectionWithTotal<Post>
      */
     public static function getPostsWithFilterQ(
         Blog $blog,
