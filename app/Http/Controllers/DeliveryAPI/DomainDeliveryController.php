@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers\DeliveryAPI;
 
+use App\Data\Enums\BlogTypeEnum;
 use App\Domains\Blog\BlogService;
 use App\Domains\Delivery\DeliveryService;
 use App\Http\Controllers\Controller;
@@ -17,7 +18,7 @@ class DomainDeliveryController extends Controller
             return redirect('https://blogs.hyvor.com');
         }
 
-        if (BlogService::isBlogTriaExpiredAndNotActivated($blog)) {
+        if (BlogService::isBlogTriaExpiredAndNotActivated($blog) && $blog->type === BlogTypeEnum::DEFAULT) {
             return redirect('https://blogs.hyvor.com');
         }
 
