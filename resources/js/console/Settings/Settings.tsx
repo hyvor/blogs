@@ -169,7 +169,7 @@ export default function Settings({ type }: { type: string | undefined }) {
 
                 <SettingsLink path="/hosting" name="Hosting" setPannel={setPannel} />
                 <SettingsLink path="/seo" name="SEO" setPannel={setPannel} />
-                <SettingsLink path="/color-mode" name="Light & Dark Modes" setPannel={setPannel} />
+                <SettingsLink path="/color-mode" name="Light & Dark Modes" pannelName={'color-mode'} setPannel={setPannel} />
                 <SettingsLink path="/navigation" name="Navigation" setPannel={setPannel} />
                 <SettingsLink path="/media" name="Media" setPannel={setPannel} />
                 <SettingsLink path="/redirects" name="Redirects" setPannel={setPannel} />
