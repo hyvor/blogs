@@ -5,7 +5,6 @@ namespace App\Http\Controllers\ConsoleAPI;
 use App\Data\Enums\BlogHostingAtEnum;
 use App\Data\Enums\ColorModeDefaultEnum;
 use App\Data\Enums\ColorModesEnum;
-use App\Data\Enums\CommentsTypeEnum;
 use App\Data\Enums\SeoExternalLinksFollowEnum;
 use App\Data\Objects\ConsoleAPI\BlogObject;
 use App\Data\Objects\ConsoleAPI\BlogVariantObject;
@@ -87,9 +86,6 @@ class ConsoleBlogController extends Controller
             'seo_robots_txt' => 'string|nullable',
             'seo_external_links_follow' => new Enum(SeoExternalLinksFollowEnum::class),
 
-            'comments_type' => new Enum(CommentsTypeEnum::class),
-            'comments_ht_website_id' => 'integer|nullable',
-            'comments_ht_api_key' => 'string|nullable',
             'comments_code' => 'string|nullable',
             'newsletter_code' => 'string|nullable',
 

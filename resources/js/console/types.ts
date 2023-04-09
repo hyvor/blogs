@@ -86,12 +86,7 @@ export interface Blog {
     seo_indexing: boolean,
     seo_robots_txt: string | null,
     seo_external_links_follow: SeoExternalLinksFollow,
-
-    comments_type: CommentsType,
-    comments_ht_website_id: number | null,
-    comments_ht_api_key: string | null,
     comments_code: string | null,
-
     newsletter_code: string | null,
 
     color_modes: ColorModes,

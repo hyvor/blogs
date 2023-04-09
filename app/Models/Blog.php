@@ -62,11 +62,8 @@ class Blog extends Model
         );
         $definer->add('seo_external_links_follow')->default('follow');
 
-        $definer->add('comments_type')->default('ht');
-        $definer->add('comments_ht_website_id')->default(null);
-        $definer->add('comments_ht_api_key')->default(null);
-        $definer->add('comments_code')->default(null);
 
+        $definer->add('comments_code')->default(null);
         $definer->add('newsletter_code')->default(null);
 
         $definer->add('color_modes')->default('both');

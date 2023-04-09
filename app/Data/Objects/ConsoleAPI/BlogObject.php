@@ -6,7 +6,6 @@ use App\Data\Enums\BlogHostingAtEnum;
 use App\Data\Enums\BlogTypeEnum;
 use App\Data\Enums\ColorModeDefaultEnum;
 use App\Data\Enums\ColorModesEnum;
-use App\Data\Enums\CommentsTypeEnum;
 use App\Data\Enums\SeoExternalLinksFollowEnum;
 use App\Models\Blog;
 
@@ -60,12 +59,6 @@ class BlogObject
 
     public SeoExternalLinksFollowEnum $seo_external_links_follow;
 
-    public CommentsTypeEnum $comments_type;
-
-    public ?int $comments_ht_website_id;
-
-    public ?string $comments_ht_api_key;
-
     public ?string $comments_code;
 
     public ?string $newsletter_code;
@@ -117,11 +110,7 @@ class BlogObject
         $this->code_head = $meta->code_head;
         $this->code_foot = $meta->code_foot;
 
-        $this->comments_type = CommentsTypeEnum::from($meta->comments_type);
-        $this->comments_ht_website_id = $meta->comments_ht_website_id;
-        $this->comments_ht_api_key = $meta->comments_ht_api_key;
         $this->comments_code = $meta->comments_code;
-
         $this->newsletter_code = $meta->newsletter_code;
 
         $this->seo_indexing = (bool) $meta->seo_indexing;
