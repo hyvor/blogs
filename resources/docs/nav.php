@@ -3,10 +3,9 @@
 return [
 
     'Intro' => [
-        [null, 'Getting Started'],
+        [null, 'Introduction'],
         ['writing', 'Writing'],
         ['theme', 'Theme'],
-        ['how', 'How it works'],
     ],
     'Features' => [
         ['users', 'Users'],
@@ -66,11 +65,11 @@ return [
         // ['policy-security', 'Security Policy'],
         // ['compliance-gdpr', 'GDPR Compliance'],
     ],
-    'Integrations' => [
-        /*['zapier', 'Zapier'],*/
-        ['shopify', 'Shopify'],
-        /*['thinkific', 'Thinkific']*/
-    ],
+//    'Integrations' => [
+//        /*['zapier', 'Zapier'],*/
+//        ['shopify', 'Shopify'],
+//        /*['thinkific', 'Thinkific']*/
+//    ],
     'Misc' => [
         ['support', 'Customer Support'],
         ['oss', 'Open Source'],

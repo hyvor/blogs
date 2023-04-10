@@ -1,9 +1,10 @@
 # Export
 
-You can export data and media from the console anytime.
+You own your data, and we make make sure you can access them any time you need. You can export both data and media from the console.
 
-To export: **Console &rarr; Settings &rarr; Import & Export**
+To export: **Console &rarr; Settings &rarr; Export**
 
+<!--
 ## Content Export Formats {#formats}
 
 We support exporting data in two formats:
@@ -17,13 +18,14 @@ If you plan to leave Hyvor Blogs and use another platform, it is preferable to u
 
 You can set up automatic monthly exports to Google Drive, Dropbox or a S3-compatible storage. A new zip file (`hyvor-blogs-{blog_name}-YYYY-mm.zip`) will be created in the storage folder you provide on the 1st of each month. The zip file will contain these:
 
-* `data.json` - Data in the [Hyvor Blogs format](#export-format)
+* `content.json` - Content export in the Hyvor Blogs format
 * `media` - A folder that contains all media files of your blog.
 
+-->
 
-## Hyvor Blogs Export Format {#export-format}
+## Export Data Structure {#export-structure}
 
-Data is exported in JSON format with the following data structure.
+Hyvor Blogs exports data in JSON format with the following data structure.
 
 ```json
 {

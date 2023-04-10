@@ -9,12 +9,14 @@ use App\Models\Import;
 use App\Stale\Export\WordpressExporter;
 use App\Stale\Import\Jobs\ImportJob;
 use App\Stale\Import\UploadRepository;
+use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 
 class ConsoleImportExportController extends Controller
 {
-    public function export(Blog $blog)
+    public function export(Blog $blog) : JsonResponse
     {
+
         $exporter = new WordpressExporter($blog->id);
         $data = $exporter->getFile();
 
