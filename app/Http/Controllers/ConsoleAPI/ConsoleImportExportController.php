@@ -17,6 +17,8 @@ class ConsoleImportExportController extends Controller
     public function export(Blog $blog) : JsonResponse
     {
 
+
+
         $exporter = new WordpressExporter($blog->id);
         $data = $exporter->getFile();
 

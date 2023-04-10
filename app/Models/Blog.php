@@ -28,6 +28,7 @@ class Blog extends Model
     use Countable;
     use Metable;
 
+
     protected $casts = [
         'type' => BlogTypeEnum::class,
         'billing_type' => BlogBillingTypeEnum::class,
