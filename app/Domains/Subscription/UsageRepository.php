@@ -26,12 +26,12 @@ class UsageRepository
         $gb = (10 ** 9);
 
         $users = match ($plan) {
-            SubscriptionPlanEnum::A => 2,
-            SubscriptionPlanEnum::B => 10,
+            SubscriptionPlanEnum::A => 5,
+            SubscriptionPlanEnum::B => 15,
             SubscriptionPlanEnum::C => 100,
             SubscriptionPlanEnum::D => 1000,
             SubscriptionPlanEnum::E => 10000,
-            default => 1
+            default => 2
         };
 
         // bytes

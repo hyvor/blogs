@@ -4,7 +4,7 @@ import api from "../lib/api";
 import postLogic from "./postLogic";
 
 import type { postsLogicType } from "./postsLogicType";
-import {Filters, Post} from "../types";
+import {Filters, Post, PostCounts} from "../types";
 import {actionToUrl} from "kea-router";
 import {ajax} from "kea-ajax";
 
@@ -20,7 +20,7 @@ const postsLogic = kea<postsLogicType>([
         setPostsList: (list) => ({list}),
         setPostsListHasMore: (has) => ({has}),
 
-        setCounts: (counts) => ({counts}),
+        setCounts: (counts: PostCounts) => ({counts}),
 
         navigateToPost: (id) => ({id}),
         navigateToPosts: () => false
@@ -78,9 +78,7 @@ const postsLogic = kea<postsLogicType>([
 
     reducers(({props}) => ({
 
-        // object returned by /counts
-        // { all: count, status: {[statuses+featured]: count}, authors/tags: [{id,name,count}],  }
-        counts: [null, {
+        counts: [null as null | PostCounts, {
             setCounts: (_, {counts}) => counts
         }],
 
@@ -129,6 +127,6 @@ function getPostParamsFromFilters(filters: Filters) {
         tag_id: filters.tag === 'all' ? null : filters.tag,
         start_timestamp: filters.startDate ? dayjs(filters.startDate).unix() : null,
         end_timestamp: filters.endDate ? dayjs(filters.endDate).unix() : null,
-        search: null
+        search: filters.search
     } as any
 }

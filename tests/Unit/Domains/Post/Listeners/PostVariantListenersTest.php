@@ -24,7 +24,7 @@ it('is attached', function () {
 it('updates content HTML', function () {
     $variant = PostVariant::factory()->create(['content_html' => null]);
 
-    $event = new PostVariantUpdatedEvent($variant);
+    $event = new PostVariantUpdatedEvent($variant, $variant);
     $listener = new PostVariantUpdateContentHtmlListener();
     $listener->handle($event);
 
@@ -49,7 +49,7 @@ it('updates words count', function () {
         ]),
     ]);
 
-    $event = new PostVariantUpdatedEvent($variant);
+    $event = new PostVariantUpdatedEvent($variant, $variant);
     $listener = new PostVariantUpdateWordCountListener();
     $listener->handle($event);
 

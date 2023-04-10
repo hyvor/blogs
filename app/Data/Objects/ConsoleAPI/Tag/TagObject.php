@@ -31,16 +31,19 @@ class TagObject
     public function __construct(Tag $tag, Blog $blog)
     {
         $this->id = $tag->id;
-        $this->created_at = $tag->created_at->timestamp;
-        $this->updated_at = $tag->updated_at->timestamp;
+        $this->created_at = $tag->created_at->getTimestamp();
+        $this->updated_at = $tag->updated_at->getTimestamp();
         $this->slug = $tag->slug;
         $this->posts_count = $tag->posts_count;
         $this->code_head = $tag->code_head;
         $this->code_foot = $tag->code_foot;
 
-        $this->variants = $tag->variants
+        /** @var TagVariantObject[] $variants */
+        $variants = $tag->variants
             ->map(fn ($variant) => new TagVariantObject($variant, $tag, $blog))
             ->sortBy('language_id')
             ->toArray();
+
+         $this->variants = $variants;
     }
 }

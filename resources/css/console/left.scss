@@ -201,6 +201,18 @@
     }
 }
 
+#left-bottom {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    justify-content: flex-end;
+    padding: 15px 0;
+    .changes-item {
+        padding: 15px 0;
+        text-align: center;
+        cursor: pointer;
+    }
+}
 
 #left {
     position:absolute;
@@ -208,6 +220,9 @@
     top:15px;
     width:250px;
     padding-bottom:15px;
+    display: flex;
+    flex-direction: column;
+    height: 100%;
 
     @media screen and (max-width: $breakpoint) {
 

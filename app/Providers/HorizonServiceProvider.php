@@ -1,4 +1,4 @@
-<?php
+<?php declare(strict_types=1);
 
 namespace App\Providers;
 
@@ -39,7 +39,7 @@ class HorizonServiceProvider extends HorizonApplicationServiceProvider
             return $user && in_array($user->email, [
                 'supunkavinda1125@gmail.com',
                 'supun@hyvor.com',
-            ]);
+            ], true);
         });
     }
 }

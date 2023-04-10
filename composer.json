@@ -21,6 +21,7 @@
         "ext-xml": "*",
         "erusev/parsedown-extra": "^0.8.1",
         "fakerphp/faker": "^1.9.1",
+        "filament/filament": "^2.0",
         "fruitcake/laravel-cors": "^2.0",
         "guzzlehttp/guzzle": "^7.0.1",
         "http-interop/http-factory-guzzle": "^1.2",
@@ -64,11 +65,13 @@
         "laravel/sail": "^1.0.1",
         "mockery/mockery": "^1.4.2",
         "nunomaduro/collision": "^6.0",
+        "nunomaduro/larastan": "^2.0",
         "pestphp/pest": "^1.21",
         "pestphp/pest-plugin-laravel": "^1.2",
         "pestphp/pest-plugin-mock": "^1.0",
         "pestphp/pest-plugin-parallel": "^1.0",
         "phpstan/phpstan": "^1.5",
+        "phpstan/phpstan-strict-rules": "^1.5",
         "phpunit/phpunit": "^9.3.3",
         "plannr/laravel-fast-refresh-database": "^0.0.3"
     },
@@ -128,7 +131,8 @@
         "preferred-install": "dist",
         "sort-packages": true,
         "allow-plugins": {
-            "pestphp/pest-plugin": true
+            "pestphp/pest-plugin": true,
+            "php-http/discovery": true
         }
     },
     "minimum-stability": "dev",

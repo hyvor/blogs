@@ -142,7 +142,7 @@ Use the `data` function to fetch data from our [Data API](api-data).
 
 <!-- Render UI -->
 <div id="recent-posts">
-    {% for post in recent_posts %}
+    {% for post in recent_posts.data %}
         {% include '_recent-post-card.twig' with post  %}  
     {% endfor %}
 </div>

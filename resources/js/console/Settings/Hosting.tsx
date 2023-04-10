@@ -1,18 +1,20 @@
-import React, {Fragment} from 'react';
+import React, { Fragment, useState } from 'react';
 import DualSetting from '../ReusableComponents/DualSetting';
 import Input from '../ReusableComponents/Input';
 import Radio from '../ReusableComponents/Radio';
-import {useBlogActions, useBlogValues} from "../logic-helpers/blog";
+import { useBlogActions, useBlogValues } from "../logic-helpers/blog";
 import SettingsSave from "../ReusableComponents/SettingsSave";
-import Callout, {CalloutColors} from "../ReusableComponents/Callout";
-import {ExclamationCircle} from "react-bootstrap-icons";
+import Callout, { CalloutColors } from "../ReusableComponents/Callout";
+import { ExclamationCircle } from "react-bootstrap-icons";
 import Switch from "../ReusableComponents/Switch";
-import {BlogHostingAt} from "../enums";
+import { BlogHostingAt } from "../enums";
 
 export default function Hosting() {
 
     const { blog, blogOriginal } = useBlogValues()
     const { updateBlogValue } = useBlogActions()
+
+    const [blogSubdomain, setBlogSubdomain] = useState(blog.subdomain);
 
     function handleHostedAtChange(value: string) {
         updateBlogValue('hosting_at', value)
@@ -33,35 +35,35 @@ export default function Hosting() {
                 <Input
                     type="text"
                     name="subdomain"
-                    value={blog.subdomain}
-                    onChange={value => updateBlogValue('subdomain', value)}
+                    value={blogSubdomain}
+                    onChange={value => setBlogSubdomain(value)}
                 />
             }
         />
 
-        <DualSetting 
+        <DualSetting
             title="Hosting on/at"
             description="Where do you like to host your blog?"
             right={
                 <div>
                     <div>
-                        <Radio 
+                        <Radio
                             name="hosted-at"
-                            placeholder="Subdomain" 
-                            value="subdomain" 
-                            onChange={handleHostedAtChange}
-                            checkFor={hostedAt}
-                        />
-                        <Radio 
-                            name="hosted-at"
-                            placeholder="Custom Domain"
-                            value="domain" 
+                            placeholder="Subdomain"
+                            value="subdomain"
                             onChange={handleHostedAtChange}
                             checkFor={hostedAt}
                         />
                         <Radio
                             name="hosted-at"
-                            placeholder="Self-hosting" 
+                            placeholder="Custom Domain"
+                            value="domain"
+                            onChange={handleHostedAtChange}
+                            checkFor={hostedAt}
+                        />
+                        <Radio
+                            name="hosted-at"
+                            placeholder="Self-hosting"
                             value="self"
                             onChange={handleHostedAtChange}
                             checkFor={hostedAt}
@@ -77,18 +79,18 @@ export default function Hosting() {
         {
             hostedAt === 'domain' ?
 
-            <DualSetting 
-                title="Custom Domain"
-                description="Custom domain "
-                right={
-                    <Input
-                        type="text"
-                        name="custom-domain"
-                        value={blog.hosting_domain}
-                        onChange={value => updateBlogValue('hosting_domain', value)}
-                    />
-                }
-            /> : null
+                <DualSetting
+                    title="Custom Domain"
+                    description="Custom domain "
+                    right={
+                        <Input
+                            type="text"
+                            name="custom-domain"
+                            value={blog.hosting_domain}
+                            onChange={value => updateBlogValue('hosting_domain', value)}
+                        />
+                    }
+                /> : null
 
         }
 
@@ -96,26 +98,26 @@ export default function Hosting() {
 
             hostedAt === 'self' ?
 
-            <DualSetting 
-                title="Self-hosting URL"
-                description="Set the absolute URL where you are self-hosting your blog."
-                right={
-                    <Input 
-                        type="text"
-                        name="self-hosting-url"
-                        value={blog.hosting_url}
-                        onChange={value => updateBlogValue('hosting_url', value)}
-                    />
-                }
-            /> : null
+                <DualSetting
+                    title="Self-hosting URL"
+                    description="Set the absolute URL where you are self-hosting your blog."
+                    right={
+                        <Input
+                            type="text"
+                            name="self-hosting-url"
+                            value={blog.hosting_url}
+                            onChange={value => updateBlogValue('hosting_url', value)}
+                        />
+                    }
+                /> : null
 
         }
 
         {
             blogOriginal.subdomain !== blog.subdomain ||
-            blogOriginal.hosting_at !== blog.hosting_at ||
-            blogOriginal.hosting_domain !== blog.hosting_domain ||
-            blogOriginal.hosting_url !== blog.hosting_url ?
+                blogOriginal.hosting_at !== blog.hosting_at ||
+                blogOriginal.hosting_domain !== blog.hosting_domain ||
+                blogOriginal.hosting_url !== blog.hosting_url ?
                 <Callout
                     icon={<ExclamationCircle />}
                     color={CalloutColors.ORANGE}
@@ -180,6 +182,7 @@ export default function Hosting() {
                     'embedding_domains'
                 ]
             }
+            blogSubdomain={blogSubdomain}
         />
 
     </div>

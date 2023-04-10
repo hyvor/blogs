@@ -1,9 +1,9 @@
 import React from 'react'
-import {useValues} from "kea";
+import { useValues } from "kea";
 import userBlogsLogic from "../logic/userBlogsLogic";
-import {UserBlog} from '../objects/userblog';
+import { UserBlog } from '../objects/userblog';
 import NavLink from "../ReusableComponents/NavLink";
-import {BlogType} from "../enums";
+import { BlogType } from "../enums";
 
 export default function BlogsList() {
 
@@ -11,10 +11,18 @@ export default function BlogsList() {
 
     return <div className="blogs-list">
 
-        <div className="blogs-list-title">Your Blogs</div>
+
+        <div className='blog-list-heading'>
+            <div className="blogs-list-title">Your Blogs</div>
+            <div className="blog-create">
+                <NavLink href="/console/new" className="button medium">
+                    Create New Blog
+                </NavLink>
+            </div>
+        </div>
         <div className="blogs-list-list">
             {
-                blogs.map(({ blog, user } : UserBlog) => {
+                blogs.map(({ blog, user }: UserBlog) => {
 
                     return <NavLink
                         key={blog.id}
@@ -26,35 +34,35 @@ export default function BlogsList() {
                             <div className="icon">
                                 {
                                     blog.logo_url ?
-                                    <img src={blog.logo_url} alt="Blog Logo" /> :
-                                    <span className="icon-placeholder" />
+                                        <img src={blog.logo_url} alt="Blog Logo" /> :
+                                        <span className="icon-placeholder" />
                                 }
                             </div>
                             <div className="name-url">
                                 <div className="name">
-                                    { blog.name }
+                                    {blog.name}
                                     {
                                         blog.type === BlogType.DEV ?
-                                        <span className="global-tag blue">DEV</span> : null
+                                            <span className="global-tag blue">DEV</span> : null
                                     }
                                 </div>
-                                <div className="url" title={blog.subdomain}>{ blog.subdomain }</div>
+                                <div className="url" title={blog.subdomain}>{blog.subdomain}</div>
                             </div>
                         </div>
 
                         <div className="data-cards">
-                            <DataCard name="Role" value={ blog.type === BlogType.DEV ? "DEV" : user.role } />
+                            <DataCard name="Role" value={blog.type === BlogType.DEV ? "DEV" : user.role} />
                             <DataCard name="Plan" value={
                                 blog.type === BlogType.DEV ?
                                     "DEV" :
                                     (
-                                        blog.subscription?.plan || "Free"
+                                        blog.subscription?.plan || "Starter"
                                     )
                             } />
                         </div>
-                        <div className="data-cards" style={{marginTop: 10}}>
-                            <DataCard name="Posts" value={ blog.posts_count } />
-                            <DataCard name="Users" value={ blog.users_count } />
+                        <div className="data-cards" style={{ marginTop: 10 }}>
+                            <DataCard name="Posts" value={blog.posts_count} />
+                            <DataCard name="Users" value={blog.users_count} />
                         </div>
 
                     </NavLink>
@@ -62,21 +70,15 @@ export default function BlogsList() {
             }
         </div>
 
-        <div className="blog-create">
-            <NavLink href="/console/new" className="button medium">
-                Create New Blog
-            </NavLink>
-        </div>
-
     </div>
 
 }
 
-function DataCard({ name, value } : { name: string, value: number | string }) {
+function DataCard({ name, value }: { name: string, value: number | string }) {
 
     return <div className="data-card">
-        <div className="card-name">{ name }</div>
-        <div className="card-value">{ value }</div>
+        <div className="card-name">{name}</div>
+        <div className="card-value">{value}</div>
     </div>
 
 }

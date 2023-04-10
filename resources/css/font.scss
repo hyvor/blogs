@@ -1,4 +1,4 @@
-@import url('https://fonts.googleapis.com/css2?family=Mulish:wght@400;500;700&display=swap');
+@import url('https://fonts.bunny.net/css?family=mulish:500,700');
 
 $font-primary: Mulish, Avenir, Inter, Helvetica, Arial, sans-serif;
 $font-content: Mulish, Avenir, Inter, Helvetica, Arial, sans-serif;
@@ -7,4 +7,9 @@ body {
     font-family: $font-primary;
     font-size: 14px;
     font-weight: 500;
+    font-synthesis: none;
+    text-rendering: optimizeLegibility;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+    -webkit-text-size-adjust: 100%;
 }

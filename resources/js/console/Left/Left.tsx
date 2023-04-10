@@ -1,7 +1,6 @@
-import React, {FC, ReactNode, useEffect, useRef} from 'react';
+import React, { FC, ReactNode, useEffect, useRef } from 'react';
 import BlogsSelector from './BlogsSelector';
-
-import {useActions, useValues} from 'kea';
+import { useActions, useValues } from 'kea';
 import subdomainLogic from '../logic/subdomainLogic';
 import NavLink from '../ReusableComponents/NavLink';
 import userBlogsLogic from '../logic/userBlogsLogic';
@@ -10,13 +9,13 @@ import {
     Chat, Coin,
     Exclamation,
     Files, Gear,
-    House,
+    House, Megaphone,
     Palette,
     Pencil,
 } from 'react-bootstrap-icons';
 import dayjs from 'dayjs';
-import {appConfig} from "../helpers";
-import {router} from "kea-router";
+import { appConfig } from "../helpers";
+import { router } from "kea-router";
 import UserPermissions from "../services/UserPermissions";
 import BlogLink from "../BlogPreview/BlogLink";
 
@@ -24,14 +23,28 @@ export default function Left() {
 
     const { subdomain } = useValues(subdomainLogic);
 
-    const { findBlogBySubdomain } = useValues(userBlogsLogic);
-
     if (!subdomain) {
         return null;
     }
 
-    const { blog, blog: { subscription: currentSubscription } }  = findBlogBySubdomain(subdomain);
-    
+    return <LeftInner subdomain={subdomain} />
+
+}
+
+function LeftInner({subdomain} : {subdomain: string}) {
+
+    const { findBlogBySubdomain } = useValues(userBlogsLogic);
+    const { blog, blog: { subscription: currentSubscription } } = findBlogBySubdomain(subdomain);
+
+    useEffect(() => {
+        (window as any).FeaturebaseWidget && (window as any).FeaturebaseWidget.init({
+            organization: "hyvorblogs",
+            initialPage: "MainView",
+            // placement: "left",
+            fullScreen: true
+        })
+    }, []);
+
     return <div id="left">
         <div id="left-header" className="box">
             <NavLink href={"/console"} className="console-link" exact={1}>
@@ -41,7 +54,7 @@ export default function Left() {
                     alt="Hyvor Talk Logo"
                 />
             </NavLink>
-             <div className="left-header-pp">
+            <div className="left-header-pp">
                 <a
                     href={`https://${appConfig().domains.hyvor}/account`}
                     target="_blank">
@@ -69,41 +82,53 @@ export default function Left() {
                 }
             />
 
-            <div className="left-divider"/>
+            <div className="left-divider" />
 
             <LeftLink path="/posts" icon={<Pencil />} name="Posts" permission={UserPermissions.canAccessPosts} />
             <LeftLink path="/pages" icon={<Files />} name="Pages" permission={UserPermissions.canAccessPages} />
-            <LeftLink path="/comments" icon={<Chat />} name="Comments" permission={UserPermissions.canAccessComments} />
 
-            <div className="left-divider"/>
+            <div className="left-divider" />
 
 
             <LeftLink path="/theme" icon={<Palette />} name="Theme" permission={UserPermissions.canAccessTheme} />
 
             <LeftLink path="/billing" icon={<Coin />} name="Billing"
-                permission={UserPermissions.canAccessBilling}
-                extra={
-                    <span className="mark">
+                      permission={UserPermissions.canAccessBilling}
+                      extra={
+                          <span className="mark">
                         {
                             currentSubscription &&
                             currentSubscription.status === 'past_due'
                                 ?
                                 <span className="subscription-issue-icon">
-                            <Exclamation />
-                        </span>
+                                    <Exclamation />
+                                </span>
                                 : null
                         }
-                </span>
-                }
+                    </span>
+                      }
             />
 
             <LeftLink path="/settings" icon={<Gear />} name="Settings" permission={UserPermissions.canAccessSettings} />
 
         </div>
+
+        <div id="left-bottom">
+            <div className="changes-item box" onClick={() => {
+                window.postMessage({
+                    target: 'FeaturebaseWidget',
+                    data: { action: 'toggleWidget' },
+                })
+            }}>
+                <Megaphone /> Changes & Feedback <span id="fb-update-badge"></span>
+            </div>
+        </div>
+
     </div>
+
 }
 
-function LeftLink({path, icon, name, extra = null, permission} : LeftLinkProps) {
+function LeftLink({ path, icon, name, extra = null, permission }: LeftLinkProps) {
 
     const { subdomain } = useValues(subdomainLogic);
     const { push } = useActions(router);

@@ -43,7 +43,8 @@ return [
         'vendor_id' => env('PADDLE_VENDOR_ID'),
         'vendor_auth_code' => env('PADDLE_VENDOR_AUTH_CODE'),
         'public_key' => env('PADDLE_PUBLIC_KEY'),
-        'sandbox' => env('PADDLE_SANDBOX', false)
+        'sandbox' => env('PADDLE_SANDBOX', false),
+        'activation_plan_id' => env('APP_ENV') === 'local' ? 48223 : 821945,
     ],
 
     'shopify' => [
@@ -56,6 +57,11 @@ return [
          * Secret of hyvor-blogs-themes repo
          */
         'webhook_secret_for_themes' => env('GITHUB_WEBHOOK_SECRET_FOR_THEMES')
-    ]
+    ],
+
+    'email_octopus' => [
+        'api_key' => env('EMAIL_OCTOPUS_API_KEY'),
+        'list_id' => "7b95c9e8-9e4f-11ed-b3ed-47583ae33f24"
+    ],
 
 ];

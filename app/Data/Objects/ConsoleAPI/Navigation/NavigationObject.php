@@ -1,4 +1,4 @@
-<?php
+<?php declare(strict_types=1);
 
 namespace App\Data\Objects\ConsoleAPI\Navigation;
 
@@ -25,14 +25,18 @@ class NavigationObject
     public function __construct(Navigation $navigation)
     {
         $this->id = $navigation->id;
-        $this->created_at = $navigation->created_at->timestamp;
+        $this->created_at = $navigation->created_at->getTimestamp();
         $this->url = $navigation->url;
         $this->type = $navigation->type;
         $this->sort = $navigation->sort;
 
-        $this->variants = $navigation->variants
+        /** @var NavigationVariantObject[] $variants */
+        $variants = $navigation->variants
             ->map(fn ($variant) => new NavigationVariantObject($variant))
             ->sortBy('language_id')
             ->toArray();
+
+        $this->variants= $variants;
+
     }
 }

@@ -19,7 +19,7 @@ class FileObject
     {
         $this->id = $file->id;
         $this->name = $file->name;
-        $this->content = mb_check_encoding($file->content, 'UTF-8') ? $file->content : null;
+        $this->content = mb_check_encoding($file->content, 'UTF-8') ? $file->content : null; // @phpstan-ignore-line
         $this->folder = $file->folder;
     }
 }

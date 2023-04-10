@@ -52,6 +52,9 @@ class ThemeFilesRepository
             ->get();
     }
 
+    /**
+     * @return Collection<int, ThemeFile>
+     */
     public static function getFilesInFolder(
         Blog $blog,
         ?ThemeFileFolderEnum $folder

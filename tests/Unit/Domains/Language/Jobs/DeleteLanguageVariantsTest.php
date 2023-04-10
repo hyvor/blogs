@@ -6,6 +6,7 @@ use App\Domains\Language\Jobs\DeleteLanguageVariants;
 use App\Models\BlogVariant;
 use App\Models\Language;
 use App\Models\NavigationVariant;
+use App\Models\Post;
 use App\Models\PostVariant;
 use App\Models\TagVariant;
 use App\Models\UserVariant;
@@ -17,6 +18,7 @@ it('deletes all variants', function () {
     $id = rand(1000, 2000);
 
     BlogVariant::factory()->create(['blog_id' => $blog, 'language_id' => $language]);
+    Post::factory()->create(['id' => $id]);
     PostVariant::factory()->create(['post_id' => $id, 'language_id' => $language]);
     UserVariant::factory()->create(['user_id' => $id, 'language_id' => $language]);
     TagVariant::factory()->create(['tag_id' => $id, 'language_id' => $language]);

@@ -1,4 +1,4 @@
-<?php
+<?php declare(strict_types=1);
 
 namespace App\Http\Controllers\Pages;
 
@@ -6,11 +6,13 @@ use App\Domains\Delivery\Twig\TwigRenderer;
 use App\Http\Controllers\Controller;
 use Hyvor\SyntaxHighlighter\Highlighter;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Cache;
+use Illuminate\View\View;
 use ParsedownExtra;
 
 class DocsController extends Controller
 {
-    public function handle(Request $request)
+    public function handle(Request $request) : View
     {
         $page = $request->route('page') ?? 'index';
         $content = $this->getContentFromName($page);
@@ -35,7 +37,7 @@ class DocsController extends Controller
         ]);
     }
 
-    private function getContentFromName($name)
+    private function getContentFromName($name) : ?string
     {
         $name = $name ? $name : 'index';
         $file = resource_path("docs/$name.md");
@@ -51,72 +53,93 @@ class DocsController extends Controller
     {
         if ($page === 'syntax-highlighting') {
 
-            // replace languages
-            $languages = Highlighter::getAllLanguages();
+            if (Cache::get('docs_syntax_highlighting')) {
+                [
+                    'languageTags' => $languageTags,
+                    'languagesCount' => $languagesCount,
+                    'themeTags' => $themeTags,
+                    'themesCount' => $themesCount,
+                    'previews' => $previews,
+                ] = Cache::get('docs_syntax_highlighting');
+            } else {
 
-            $languageTags = '';
-            foreach ($languages as $language) {
-                $names = [$language->id];
+                // replace languages
+                $languages = Highlighter::getAllLanguages();
+                $languagesCount = count($languages);
 
-                if (isset($language->aliases)) {
-                    $names = array_merge($names, $language->aliases);
+                $languageTags = '';
+                foreach ($languages as $language) {
+                    $names = [$language->id];
+
+                    if (isset($language->aliases)) {
+                        $names = array_merge($names, $language->aliases);
+                    }
+                    $names = implode(', ', $names);
+                    $languageTags .= "<span>$names</span>";
                 }
-                $names = implode(', ', $names);
-                $languageTags .= "<span>$names</span>";
+
+                // themes
+                $themes = Highlighter::getAllThemes();
+                $themesCount = count($themes);
+
+                $code = <<<'JS'
+                function App() {
+                    const [clicks, setClicks] = useState(0);
+        
+                    function handleClick() {
+                        setClicks(clicks + 1);
+                    }
+        
+                    return <div onClick={handleClick}>
+                        { /* Print clicks */ }
+                        Clicks: {  }
+                        Clicks: { clicks }
+                    </div>
+                }
+                JS;
+
+                $themeTags = '';
+                $previews = '';
+
+                foreach ($themes as $theme) {
+                    $themeTags .= "<span>$theme</span>";
+
+                    $highlightData = Highlighter::highlight(
+                        $code,
+                        'jsx',
+                        $theme,
+                        true,
+                        'h=2-3 +=10 -=11 renumber=11:10'
+                    );
+                    $highlightData['pre']['class'] = str_replace(
+                        'language-jsx',
+                        '',
+                        $highlightData['pre']['class']
+                    );
+                    $highlighted = TwigRenderer::renderFile(resource_path('twig/blocks/code.twig'), [
+                        'data' => $highlightData
+                    ]);
+
+                    $previews .= "<div>
+                        <div class=\"theme-key\">$theme</div>
+                        $highlighted
+                    </div>";
+                }
+
+                Cache::put('docs_syntax_highlighting', [
+                    'languageTags' => $languageTags,
+                    'languagesCount' => $languagesCount,
+                    'themeTags' => $themeTags,
+                    'themesCount' => $themesCount,
+                    'previews' => $previews,
+                ]);
+
             }
 
             $markdown = str_replace('{{language_tags}}', $languageTags, $markdown);
-            $markdown = str_replace('{{language_number}}', count($languages), $markdown);
-
-            // themes
-            $themes = Highlighter::getAllThemes();
-
-            $code = <<<'JS'
-            function App() {
-                const [clicks, setClicks] = useState(0);
-
-                function handleClick() {
-                    setClicks(clicks + 1);
-                }
-
-                return <div onClick={handleClick}>
-                    { /* Print clicks */ }
-                    Clicks: {  }
-                    Clicks: { clicks }
-                </div>
-            }
-            JS;
-
-            $themeTags = '';
-            $previews = '';
-
-            foreach ($themes as $theme) {
-                $themeTags .= "<span>$theme</span>";
-
-                $highlightData = Highlighter::highlight(
-                    $code,
-                    'jsx',
-                    $theme,
-                    true,
-                    'h=2-3 +=10 -=11 renumber=11:10'
-                );
-                $highlightData['pre']['class'] = str_replace(
-                    'language-jsx',
-                    '',
-                    $highlightData['pre']['class']
-                );
-                $highlighted = TwigRenderer::renderFile(resource_path('twig/blocks/code.twig'), [
-                    'data' => $highlightData
-                ]);
-
-                $previews .= "<div>
-                    <div class=\"theme-key\">$theme</div>
-                    $highlighted
-                </div>";
-            }
-
+            $markdown = str_replace('{{language_number}}', (string) $languagesCount, $markdown);
             $markdown = str_replace('{{theme_tags}}', $themeTags, $markdown);
-            $markdown = str_replace('{{themes_number}}', count($themes), $markdown);
+            $markdown = str_replace('{{themes_number}}', (string) $themesCount, $markdown);
             $markdown = str_replace('{{theme_previews}}', $previews, $markdown);
         }
 

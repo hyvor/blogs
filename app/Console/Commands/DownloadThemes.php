@@ -11,7 +11,7 @@ class DownloadThemes extends Command
 
     protected $description = 'Download themes';
 
-    public function handle()
+    public function handle() : void
     {
         $this->comment('Downloading themes');
         GithubSyncService::syncFromGithubZipBall();

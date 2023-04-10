@@ -11,7 +11,7 @@ class RefreshDev extends Command
 
     protected $description = 'Refresh the DB and Themes for development';
 
-    public function handle()
+    public function handle() : void
     {
         $noSeed = $this->option('no-seed');
         $this->call('migrate:fresh', ['--seed' => ! $noSeed]);

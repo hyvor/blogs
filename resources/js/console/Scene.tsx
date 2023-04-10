@@ -14,15 +14,15 @@ import React, {ReactNode} from 'react'
 import blogLogic from "./logic/blogLogic"
 import Loader from "./ReusableComponents/Loader"
 import subdomainLogic from "./logic/subdomainLogic"
-import Comments from "./Comment/Comments"
-import {router} from "kea-router";
+import BlogBlocked from "./Views/BlogBlocked";
+import {hasTrialEndedAndNotActivated} from "./lib/blog-helpers";
+import BlogTrialEnded from "./Views/BlogTrialEnded";
 
 export const scenes = {
     error404: () => <div>404</div>,
     blogPreview: () => <BlogPreview />,
     posts: ({ postId } : { postId?: number }) => <Posts postId={postId} />,
     pages: ({ postId } : { postId?: number }) => <Pages postId={postId} />,
-    comments: () => <Comments />,
     settings: ({type} : {type?: string}) => <Settings type={type} />,
     theme: ({type} : {type?: string }) => <Theme />,
     billing: () => <Billing />,
@@ -40,12 +40,12 @@ export default function Scene() {
 
     return <div>
         <Left />
-        <Middle><SceneComponent {...params} /></Middle>
+        <Middle scene={scene}><SceneComponent {...params} /></Middle>
     </div>
 
 }
 
-function Middle({ children } : {children: ReactNode}) {
+function Middle({ children, scene } : {children: ReactNode, scene: string}) {
 
     // load blog data
 
@@ -55,14 +55,43 @@ function Middle({ children } : {children: ReactNode}) {
         return <div id="middle">{ children }</div>
     }
 
-    const { loadAjax } = useValues(blogLogic({subdomain}))
+    const { loadAjax, blog } = useValues(blogLogic({subdomain}))
 
-    return <div id="middle">{
-        loadAjax.status === 'loading' ?
-        <div className="posts-not-ready box">
-            <Loader size={40} />
-        </div> :
-        children
-    }</div>
+    function isBlogSceneBlocked() {
+        return blog.is_blocked &&
+            (
+                scene === 'blogPreview' ||
+                scene === 'posts' ||
+                scene === 'pages' ||
+                scene === 'theme'
+            );
+    }
+
+    function isBlogTrialEndedAndNotActivated() {
+        return hasTrialEndedAndNotActivated(blog.subdomain) &&
+            scene !== 'billing' &&
+            scene !== 'welcome' &&
+            scene !== 'new';
+    }
+
+    return <div id="middle">
+        {
+            loadAjax.status === 'loading' ?
+                <div className="posts-not-ready box">
+                    <Loader size={40} />
+                </div>
+            :
+
+                (
+                     isBlogSceneBlocked() ?
+                        <BlogBlocked /> :
+                         (
+                             isBlogTrialEndedAndNotActivated() ?
+                                 <BlogTrialEnded /> :
+                                 children
+                         )
+                )
+        }
+    </div>
 
 }

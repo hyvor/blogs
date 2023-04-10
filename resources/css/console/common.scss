@@ -19,10 +19,10 @@ a.link, span.link {
     border:none;
     background:$color-input;
     font-family: inherit;
-    transition:.3s box-shadow;
+    transition: .2s box-shadow;
     &:focus {
         outline: 0;
-        box-shadow: 0 0 2px 0px $color-accent;
+        box-shadow: 0 0 0px 2px $color-accent-light;
     }
 }
 .input {
@@ -94,9 +94,13 @@ textarea.input {
         border-radius: 20px;
         background: $color-input;
         border:none;
-        transition:.3s box-shadow;
+        transition:.2s box-shadow;
         height: 34px;
         min-height: 34px;
+        cursor: pointer;
+        &:hover {
+            box-shadow: 0 0 0px 2px $color-accent-light;
+        }
     }
     .react-select__control--is-focused {
         box-shadow: 0 0 2px 0px $color-accent;

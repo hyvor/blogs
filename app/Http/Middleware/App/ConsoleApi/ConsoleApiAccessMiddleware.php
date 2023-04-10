@@ -1,4 +1,4 @@
-<?php
+<?php declare(strict_types=1);
 
 namespace App\Http\Middleware\App\ConsoleApi;
 
@@ -11,17 +11,23 @@ use Illuminate\Http\Request;
 
 class ConsoleApiAccessMiddleware
 {
+
+    private Blog $blog;
+
     public function __construct(Blog $blog)
     {
         $this->blog = $blog;
     }
 
-    public function handle(Request $request, Closure $next)
+    public function handle(Request $request, Closure $next) : mixed
     {
         $apiKey = $request->header('X-API-KEY');
 
         if ($apiKey) {
-            if ($this->blog->api_key_console === null) {
+
+            die;
+            // TODO
+            /*if ($this->blog->api_key_console === null) {
                 throw new TrustedException('Console API is not enabled');
             }
 
@@ -34,7 +40,8 @@ class ConsoleApiAccessMiddleware
             app()->instance(
                 ConsoleApiAccessingUser::class,
                 new ConsoleApiAccessingUser($owner)
-            );
+            );*/
+
         } else {
             $hyvorUser = Login::check();
             if (! $hyvorUser) {

@@ -2,6 +2,8 @@
 
 namespace Tests\Feature\DataAPI;
 
+use Tests\MeilisearchInefficient;
+
 /**
  * Testing search is not easy
  * Seeding meilisearch is asynchronous
@@ -21,10 +23,14 @@ beforeEach(function () {
 });
 
 it('searches posts', function () {
+
+    MeilisearchInefficient::waitForAllTasks();
+
     dataApi($this->blog, '/posts/search', [
             'search' => 'English',
         ])
-        ->assertOk();
+        ->assertOk()
+        ->assertJsonCount(1, 'data');
 });
 
 it('does not work without search query', function () {

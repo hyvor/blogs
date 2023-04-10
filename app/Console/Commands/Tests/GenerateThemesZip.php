@@ -12,10 +12,15 @@ class GenerateThemesZip extends Command
 
     protected $description = 'Generates the themes zip with blank and default themes';
 
-    public function handle()
+    public function handle() : void
     {
         $zipball = 'https://github.com/hyvor/hyvor-blogs-themes/zipball/main';
         $zip = file_get_contents($zipball);
+
+        if (!$zip) {
+            $this->error('Could not download the zipball');
+            return;
+        }
 
         $sync = new GithubSyncService($zip);
         $sync->breakIntoThemes();

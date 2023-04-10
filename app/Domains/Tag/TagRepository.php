@@ -15,8 +15,7 @@ use App\Models\Blog;
 use App\Models\Language;
 use App\Models\Tag;
 use App\Models\TagVariant;
-use App\Models\User;
-use Hyvor\FilterQ\Facades\FilterQ;
+use Hyvor\FilterQ\FilterQ;
 use Illuminate\Database\Eloquent\Collection;
 
 class TagRepository
@@ -56,7 +55,7 @@ class TagRepository
             ['tags.posts_count', 'DESC'],
         ],
     ): CollectionWithTotal {
-        $builder = FilterQ::expression($filter)
+        $builder = (new FilterQ)->expression($filter)
             ->builder(Tag::class)
             ->keys(function ($keys) {
                 $keys->add('id')

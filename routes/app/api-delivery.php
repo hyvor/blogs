@@ -5,6 +5,7 @@ use App\Http\Controllers\DeliveryAPI\DeliveryEmbedController;
 use App\Http\Controllers\DeliveryAPI\DomainDeliveryController;
 use App\Http\Middleware\App\Delivery\CustomDomainMiddleware;
 use App\Http\Middleware\App\Delivery\DeliveryApiKeyMiddleware;
+use App\Http\Middleware\App\Delivery\RedirectIfNotOnSubdomainMiddleware;
 use App\Http\Middleware\App\SubdomainMiddleware;
 use Illuminate\Support\Facades\Route;
 
@@ -28,7 +29,10 @@ Route::domain(config('blogs.domain_app'))->prefix('/embed')->group(function () {
 
 // subdomain
 Route::domain('{subdomain}.'.config('blogs.domain_delivery'))
-    ->middleware(SubdomainMiddleware::class)
+    ->middleware([
+        SubdomainMiddleware::class,
+        RedirectIfNotOnSubdomainMiddleware::class,
+    ])
     ->get('{path}', [DomainDeliveryController::class, 'handle'])->where('path', '.*');
 
 // custom domain
@@ -37,7 +41,7 @@ Route::middleware(CustomDomainMiddleware::class)
     ->get('{any}', [DomainDeliveryController::class, 'handle'])
     ->where('domain',
         '^(?!' .
-        str_replace('.', '\.', config('blogs.domain_app')) .
+        str_replace('.', '\.', strval(config('blogs.domain_app'))) .
         ').*$'
     )
     ->where('any', '.*');

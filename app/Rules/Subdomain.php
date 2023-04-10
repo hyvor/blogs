@@ -1,8 +1,9 @@
-<?php
+<?php declare(strict_types=1);
 
 namespace App\Rules;
 
 use App\Domains\Blog\BlogService;
+use App\Models\Blog;
 use Illuminate\Contracts\Validation\Rule;
 
 class Subdomain implements Rule
@@ -33,13 +34,16 @@ class Subdomain implements Rule
          * Can contain a-z 0-9 and hyphen
          * However, hyphen is not allowed in the start and the end
          */
-        if (! preg_match('/^[a-z0-9]([a-z0-9-]+[a-z0-9])?$/i', $value)) {
+        if (! preg_match('/^[a-z0-9]([a-z0-9-]*[a-z0-9])?$/i', $value)) {
             $this->message = 'The subdomain is invalid. It should only contain a-z, 0-9, and hyphens. I should not start or end with a hyphen.';
 
             return false;
         }
 
-        if ($this->checkUnique && BlogService::getBlogBySubdomain($value)) {
+        if (
+            $this->checkUnique &&
+            BlogService::getBlogBySubdomain($value) instanceof Blog
+        ) {
             $this->message = 'Subdomain already taken';
 
             return false;

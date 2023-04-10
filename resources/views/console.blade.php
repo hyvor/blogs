@@ -27,6 +27,7 @@
         }
     </script>
     <script async src="https://cdn.paddle.com/paddle/paddle.js" onload="setUpPaddle()"></script>
+    <script src="https://do.featurebase.app/js/widget.js"></script>
 
     @include('shared.chat')
     @include('shared.tracking')

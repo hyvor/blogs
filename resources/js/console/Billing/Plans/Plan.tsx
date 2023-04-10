@@ -101,7 +101,7 @@ export default function Plan({type, frequency, onCreate, onUpdate, onCancel} : P
             cancelConfirm ?
                 <PopupConfirm
                     title="Cancel Subscription"
-                    text="Are you sure you want to cancel the subscription? You will no longer be able to access the blog after the billing period."
+                    text="Are you sure you want to cancel the subscription?"
                     onClick={onCancel}
                     name="Cancel Subscription"
                     buttonClass="danger"
@@ -113,7 +113,7 @@ export default function Plan({type, frequency, onCreate, onUpdate, onCancel} : P
             forceCancelConfirm &&
             <PopupConfirm
                 title="Force Cancel Subscription"
-                text="Are you sure you want to cancel the subscription and downgrade to the free plan? You will no longer be able to access the blog after this action."
+                text="Are you sure you want to cancel the subscription and downgrade to the starter plan?"
                 onClick={handleForceCancel}
                 name="Cancel Subscription"
                 buttonClass="danger"

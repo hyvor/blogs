@@ -1,4 +1,4 @@
-<?php
+<?php declare(strict_types=1);
 
 namespace App\Data\Objects\ConsoleAPI;
 
@@ -6,7 +6,6 @@ use App\Data\Enums\BlogHostingAtEnum;
 use App\Data\Enums\BlogTypeEnum;
 use App\Data\Enums\ColorModeDefaultEnum;
 use App\Data\Enums\ColorModesEnum;
-use App\Data\Enums\CommentsTypeEnum;
 use App\Data\Enums\SeoExternalLinksFollowEnum;
 use App\Models\Blog;
 
@@ -15,6 +14,7 @@ class BlogObject
     public int $id;
 
     public int $created_at;
+    public bool $is_blocked;
 
     public string $subdomain;
 
@@ -59,12 +59,6 @@ class BlogObject
 
     public SeoExternalLinksFollowEnum $seo_external_links_follow;
 
-    public CommentsTypeEnum $comments_type;
-
-    public ?int $comments_ht_website_id;
-
-    public ?string $comments_ht_api_key;
-
     public ?string $comments_code;
 
     public ?string $newsletter_code;
@@ -79,6 +73,8 @@ class BlogObject
 
     public ?string $syntax_theme;
 
+    public bool $flashload;
+
     /**
      * @var BlogVariantObject[]
      */
@@ -87,7 +83,8 @@ class BlogObject
     public function __construct(Blog $blog)
     {
         $this->id = $blog->id;
-        $this->created_at = $blog->created_at->timestamp;
+        $this->created_at = $blog->created_at->getTimestamp();
+        $this->is_blocked = $blog->is_blocked;
 
         $this->subdomain = $blog->subdomain;
         $this->hosting_at = $blog->hosting_at;
@@ -113,11 +110,7 @@ class BlogObject
         $this->code_head = $meta->code_head;
         $this->code_foot = $meta->code_foot;
 
-        $this->comments_type = CommentsTypeEnum::from($meta->comments_type);
-        $this->comments_ht_website_id = $meta->comments_ht_website_id;
-        $this->comments_ht_api_key = $meta->comments_ht_api_key;
         $this->comments_code = $meta->comments_code;
-
         $this->newsletter_code = $meta->newsletter_code;
 
         $this->seo_indexing = (bool) $meta->seo_indexing;
@@ -131,8 +124,10 @@ class BlogObject
         $this->syntax_line_numbers = (bool) $meta->syntax_line_numbers;
         $this->syntax_theme = $meta->syntax_theme;
 
+        $this->flashload = (bool) $meta->flashload;
+
         $this->variants = $blog->variants->map(function ($variant) use ($blog) {
-            return new BlogVariantObject($variant, $blog);
+            return new BlogVariantObject($variant);
         })->sortBy('language_id')->toArray();
     }
 }

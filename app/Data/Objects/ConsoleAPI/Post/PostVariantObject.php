@@ -1,9 +1,10 @@
-<?php
+<?php declare(strict_types=1);
 
 namespace App\Data\Objects\ConsoleAPI\Post;
 
 use App\Data\Enums\PostStatusEnum;
 use App\Domains\Route\PermalinkRepository;
+use App\Exceptions\SafetyException;
 use App\Models\Blog;
 use App\Models\Post;
 use App\Models\PostVariant;
@@ -29,6 +30,10 @@ class PostVariantObject
     public function __construct(PostVariant $variant, Post $post, Blog $blog)
     {
         $language = $variant->language;
+
+        if (!$language) {
+            throw new SafetyException('PostVariantObject: Language not found');
+        }
 
         $this->language_id = $language->id;
         $this->post_id = $post->id;

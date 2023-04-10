@@ -22,7 +22,7 @@ it('clears template cache by setting timestamp and emits the event', function ()
     $cache = new CacheService();
     $cache->blog($blog)->clearTemplateCache();
 
-    expect(Cache::get($key))->toBeInt();
+    expect(Cache::get($key))->not->toBeNull();
 
     Event::assertDispatched(CacheClearTemplatesEvent::class);
 });
@@ -39,7 +39,7 @@ it('clears all cache by settings timestamp and emits the event', function () {
     $cache = new CacheService();
     $cache->blog($blog)->clearAllCache();
 
-    expect(Cache::get($key))->toBeInt();
+    expect(Cache::get($key))->not->toBeNull();
 
     Event::assertDispatched(CacheClearAllEvent::class);
 });

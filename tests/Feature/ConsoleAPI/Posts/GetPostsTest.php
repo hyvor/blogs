@@ -1,4 +1,4 @@
-<?php
+<?php declare(strict_types=1);
 
 namespace Tests\Feature\ConsoleAPI\Posts;
 
@@ -8,6 +8,7 @@ use App\Models\Post;
 use App\Models\PostAuthor;
 use App\Models\PostTag;
 use Illuminate\Testing\Fluent\AssertableJson;
+use Tests\MeilisearchInefficient;
 
 beforeEach(function () {
 
@@ -145,4 +146,17 @@ it('filters by timestamps', function () {
                         ->etc()
                 )
         );
+});
+
+it('searches posts', function() {
+
+    $posts = addPosts($this->blog, 2, [], ['title' => 'Henry VIII']);
+
+    MeilisearchInefficient::waitForAllTasks();
+
+    consoleApi($this->blog, 'GET', $this->endpoint, ['search' => 'henry'])
+        ->assertJsonCount(2)
+        ->assertJsonPath('0.id', $posts[0]->id)
+        ->assertJsonPath('1.id', $posts[1]->id);
+
 });

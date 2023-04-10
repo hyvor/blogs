@@ -1,3 +1,4 @@
+<!--
 # How HB works
 
 > This is a technical overview of how Hyvor Blogs work for those who are interested. You do not need to know this to use the platform.

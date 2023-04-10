@@ -2,6 +2,7 @@
 
 namespace App\Data\Objects\DataAPI;
 
+use App\Data\Enums\BlogTypeEnum;
 use App\Data\Enums\ColorModeDefaultEnum;
 use App\Data\Enums\ColorModesEnum;
 use App\Data\Enums\NavigationTypeEnum;
@@ -13,6 +14,9 @@ use App\Models\Language;
 
 class BlogObject
 {
+
+    public BlogTypeEnum $type;
+
     public string $subdomain;
 
     public ?string $name;
@@ -54,6 +58,8 @@ class BlogObject
 
     public bool $seo_indexing;
 
+    public bool $flashload;
+
     public ColorModesEnum $color_modes;
 
     public ColorModeDefaultEnum $color_mode_default;
@@ -61,6 +67,8 @@ class BlogObject
     public function __construct(Blog $blog, Language $language)
     {
         $variants = $blog->variants;
+
+        $this->type = $blog->type;
 
         $this->subdomain = $blog->subdomain;
         $this->name = VariantsHelper::getVariantValue('name', $variants, $language);
@@ -86,6 +94,7 @@ class BlogObject
         );
 
         $this->seo_indexing = $meta->seo_indexing;
+        $this->flashload = (bool) $meta->flashload;
         $this->color_modes = ColorModesEnum::from($meta->color_modes);
         $this->color_mode_default = ColorModeDefaultEnum::from($meta->color_mode_default);
 

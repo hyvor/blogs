@@ -1,4 +1,4 @@
-<?php
+<?php declare(strict_types=1);
 
 namespace App\Models;
 
@@ -13,7 +13,7 @@ class Import extends Model
     use Metable;
 
     // meta
-    protected function metaDefinition(Definer $definer)
+    protected function metaDefinition(Definer $definer) : void
     {
         $definer->add('authors_count')->type('int|null')->default(null);
         $definer->add('tags_count')->type('int|null')->default(null);

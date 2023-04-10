@@ -8,7 +8,10 @@ use App\Models\Redirect;
 
 it('works with subdomain', function () {
 
-    $blog = blog();
+    $blog = blog([
+        'is_activated' => true,
+        'trial_ends_at' => now()->subDay()
+    ]);
     addBlogVariants($blog, addPrimaryLanguage($blog));
     addRoute($blog, '/');
 
@@ -27,4 +30,31 @@ it('works with redirect', function () {
 
     $this->get("http://$blog->subdomain.hyvorblogs.io$redirect->path")
         ->assertRedirect($redirect->to);
+});
+
+it('redirects to homepage if the blog is blocked', function () {
+
+    $blog = blog(['is_blocked' => true]);
+    $this->get("http://$blog->subdomain.hyvorblogs.io/any")->assertRedirect('https://blogs.hyvor.com');
+
+});
+
+it('redirects to homepage if the blog trial is ended', function() {
+
+    $blog = blog(['trial_ends_at' => now()->subDay()]);
+    $this->get("http://$blog->subdomain.hyvorblogs.io/any")->assertRedirect('https://blogs.hyvor.com');
+
+});
+
+it('redirects to other domain if not hosted on subdomain', function() {
+
+    $blog = blog([
+        'hosting_at' => 'domain',
+        'hosting_domain' => 'hyvorblogs.com'
+    ]);
+
+    $this
+        ->get("http://$blog->subdomain.hyvorblogs.io/any")
+        ->assertRedirect("https://hyvorblogs.com/any");
+
 });

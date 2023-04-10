@@ -3,6 +3,7 @@
 namespace App\Data\Objects\ConsoleAPI;
 
 use App\Models\BlogVariant;
+use App\Models\Language;
 
 class BlogVariantObject
 {
@@ -16,6 +17,7 @@ class BlogVariantObject
 
     public function __construct(BlogVariant $blogVariant)
     {
+        /** @var Language $language */
         $language = $blogVariant->language;
 
         $this->language_id = $language->id;

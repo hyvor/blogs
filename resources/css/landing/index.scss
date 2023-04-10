@@ -335,8 +335,62 @@ body.index {
 
     .button-main {
         text-align: center;
-        margin-top:40px;
+        margin-top:100px;
         padding-bottom: 40px;
+    }
+
+    .testimonials {
+        margin: auto;
+        width: 500px;
+        max-width: 100%;
+
+        .quote {
+            position: relative;
+            margin: 30px 0;
+            background: #fff;
+            box-shadow: 0 0 20px rgba(0,0,0,0.06);
+            border-radius: 20px;
+            padding: 30px;
+
+            .beaver {
+                position: absolute;
+                right: 40px;
+                bottom: 100%;
+                width: 100px;
+                height: 100px;
+                transform: translateY(50px) rotate(-25deg);
+                z-index: -1;
+            }
+
+        }
+
+        .person {
+            display: flex;
+            align-items: center;
+            img {
+                width: 50px;
+                height: 50px;
+                border-radius: 50%;
+                margin-right: 10px;
+            }
+            .name-description {
+                display: flex;
+                flex-direction: column;
+            }
+            .name {
+                font-size: 18px;
+                font-weight: 600;
+            }
+            .description {
+                color: $color-text-light;
+            }
+        }
+
+        .text {
+            margin-top: 15px;
+            line-height: 22px;
+        }
+
     }
 
 }

@@ -83,3 +83,25 @@ it('throws an twig error if the data api throws a trusted exception', function (
         ''
     );
 })->throws(Error::class, 'OOPS');
+
+// bug#113
+it('works when called two times with joins', function() {
+
+    $blog = blogWithLanguageAndRoutes();
+    $blogObject = getBlogObject([], $blog);
+
+    $tag = addTag($blog);
+
+    testTwigRendering(
+        <<<TWIG
+            {% set posts1 = data(endpoint="posts", filter="tag.slug=$tag->slug") %}
+            {% set posts2 = data(endpoint="posts", filter="tag.slug=$tag->slug") %}
+            {{ posts1.data|length }} {{ posts2.data|length }}
+        TWIG,
+        [
+            '_blog' => $blogObject
+        ],
+        '0 0'
+    );
+
+});

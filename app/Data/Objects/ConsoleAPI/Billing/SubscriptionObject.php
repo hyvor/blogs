@@ -1,4 +1,4 @@
-<?php
+<?php declare(strict_types=1);
 
 namespace App\Data\Objects\ConsoleAPI\Billing;
 
@@ -27,7 +27,7 @@ class SubscriptionObject
         $this->status = $subscription->status;
         $this->plan = $subscription->plan;
         $this->frequency = $subscription->frequency;
-        $this->created_at = $subscription->created_at->timestamp;
-        $this->ends_at = $subscription->ends_at?->timestamp;
+        $this->created_at = $subscription->created_at->getTimestamp();
+        $this->ends_at = $subscription->ends_at?->getTimestamp();
     }
 }

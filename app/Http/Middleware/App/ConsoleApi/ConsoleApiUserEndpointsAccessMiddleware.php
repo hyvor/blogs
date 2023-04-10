@@ -1,4 +1,4 @@
-<?php
+<?php declare(strict_types=1);
 
 namespace App\Http\Middleware\App\ConsoleApi;
 
@@ -10,7 +10,7 @@ use Illuminate\Http\Request;
 
 class ConsoleApiUserEndpointsAccessMiddleware
 {
-    public function handle(Request $request, Closure $next)
+    public function handle(Request $request, Closure $next) : mixed
     {
         $hyvorUser = Login::check();
         if (! $hyvorUser) {

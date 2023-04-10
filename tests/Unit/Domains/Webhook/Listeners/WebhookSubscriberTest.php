@@ -13,9 +13,9 @@ use Illuminate\Support\Facades\Queue;
 it('listens', function () {
     Event::fake();
 
-    Event::listen(CacheClearSingleEvent::class, [WebhookSubscriber::class, 'onCacheClearSingleEvent']);
-    Event::listen(CacheClearTemplatesEvent::class, [WebhookSubscriber::class, 'onCacheClearTemplatesEvent']);
-    Event::listen(CacheClearAllEvent::class, [WebhookSubscriber::class, 'onCacheClearAllEvent']);
+    Event::assertListening(CacheClearSingleEvent::class, [WebhookSubscriber::class, 'onCacheClearSingleEvent']);
+    Event::assertListening(CacheClearTemplatesEvent::class, [WebhookSubscriber::class, 'onCacheClearTemplatesEvent']);
+    Event::assertListening(CacheClearAllEvent::class, [WebhookSubscriber::class, 'onCacheClearAllEvent']);
 });
 
 it('does not call delivery job when webhooks are not registered', function () {

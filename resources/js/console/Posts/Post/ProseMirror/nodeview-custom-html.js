@@ -125,13 +125,15 @@ export default class CustomHtml {
             [`Shift-${mod}-Z`]: () => redo(view.state, view.dispatch),
             [`${mod}-Y`]: () => redo(view.state, view.dispatch),
             Backspace: () => {
-                if (this.cm.getValue() === '') {
-                    joinBackward(view.state, view.dispatch, view)
+                if (this.cm.getCursor().ch === 0 && this.cm.getValue() === "") {
+                    let pos = this.getPos();
+                    let tr = view.state.tr.delete(pos, pos + this.node.nodeSize);
+                    view.dispatch(tr);
                     view.focus();
-                } else {
-                    return CodeMirror.Pass
+                    return;
                 }
-            }
+                return CodeMirror.Pass;
+              }
         })
     }
 

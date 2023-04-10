@@ -4,41 +4,99 @@ Are you ready to publish your newly built theme to our [themes list](/themes)? T
 
 > All themes in our themes list are free. If you wish to create a paid theme, you have to sell it outside our platform, and users can upload the ZIP from the Console to install it.
 
-## Checklist
+## Checklist {#checklist}
+
+All the following requirements should be met in order to publish a theme to our official themes list.
 
 * Has at least these templates
   * index.twig
   * post.twig
   * tag.twig
   * author.twig
-* Supports multi-languages
+* Supports multi-languages (has a language switcher)
 * Supports both light and dark color modes
 * Respects the blog's color mode settings
 * Pagination
+* All posts should have links to translated versions of them (if available). Ex: "This post is also available in..." or "Translations: ..."
 * All [placeholders](themes-templates#placeholders) are added
   * `_head`
   * `_foot`
   * `_comments`
   * `_newsletter`
+* `_comments` should only be added to posts, not pages.
+* `_comments` and `_newsletter` blocks should not be displayed if the value of each is empty.
+* If the blog has a logo (`_blog.logo_url`), the logo should be shown in the header linking the logo to the blog homepage.
 * [Internationalized](themes-internationalization)
 * `<html lang="{{ _lang.code }}"` is added
-* All [blocks](writing#blocks) are styled properly.
 * Configurations are added for colors, fonts, etc.
 * Mobile responsive
 * Featured posts may have some unique UI in the index page (ex: a pinned/star icon)
+* Content Styles:
+  * All [blocks](writing#blocks) are styled properly. You can test this with the "Content Style" post in your DEV blog.
+  * Code blocks (`<pre><code>`) should have `tab-size: 4`
+* All assets (JS, fonts, etc.) should be added in the `assets` folder. Do not load assets from external sources like Google Fonts.
+* Should support the blog's social media links (shows an icon or link to the social media profile if the link is available)
+  * Facebook
+  * Twitter
+  * Linkedin
+  * Youtube
+  * TikTok
+  * Instagram
+  * Github
 
-
-## Config
+## Config {#config}
 
 As explained in the [configurations](themes-config) page, the following configurations are required when publishing your theme.
 
-```plain
+```yaml
 THEME_NAME: my-theme
 THEME_VERSION: 1.0.0
 ```
 
-## Versioning
+The following configurations are recommended for all published themes.
 
-Versioning is important. Use [semantic versioning](https://semver.org/).
+```yaml
+colors:
+  light:
+    # ... colors for the light theme
+  dark:
+    # ... colors for the dark theme
 
-Once everything is completed, send us a pull request to the . When the PR is merged, the themes list will automatically
+# if only one font
+font:
+  size: 16px
+  line_height: 1
+  family: 'Inter, sans-serif'
+  
+# if multiple fonts
+fonts:
+  body:
+    size: 16px
+    family: 'Inter, sans-serif'
+  heading:
+    size: 24px
+    family: 'Nunito, sans-serif'
+
+settings:
+  loop: # features in the index page (list of posts)
+    authors: true
+    tags: true
+    featured_image: true
+  post: # features in the post page
+    authors: true
+    tags: true
+    featured_image: true
+    toc: true # table of contents
+  feed: true # a link to RSS feed (if available)
+```
+
+
+## Versioning {#versioning}
+
+The first version of the theme should be `1.0.0`. After that you can increment the version number according to the changes you make. For a patch (ex: bug fix), you can use `1.0.1`, `1.0.2`, etc. For a minor change, you can use `1.1.0`, `1.2.0`, etc. Unlike other software, themes do not have significant changes breaking changes. Therefore, we do not think you will ever need a major version change.
+
+## Change Log {#changelog}
+
+Add a `CHANGELOG.md` file to your theme folder and add the changes for each version. See [keepachangelog.com](https://keepachangelog.com/en/1.1.0/) to learn how to write a changelog.
+
+Once everything is completed, send us a pull request to [hyvor-blogs-themes](https://github.com/hyvor/hyvor-blogs-themes) repository. When the PR is merged, the themes list will automatically update with your new theme.

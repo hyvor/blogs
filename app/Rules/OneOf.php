@@ -1,7 +1,8 @@
-<?php
+<?php declare(strict_types=1);
 
 namespace App\Rules;
 
+use Exception;
 use Illuminate\Contracts\Validation\Rule;
 use Illuminate\Support\Facades\Validator;
 use Illuminate\Validation\ValidationException;
@@ -15,12 +16,12 @@ use Illuminate\Validation\ValidationException;
 class OneOf implements Rule
 {
     /**
-     * @var Rule[]
+     * @var array<Rule|string>
      */
     private array $rules;
 
     /**
-     * @var Rule[]
+     * @var array<Rule|string>
      */
     private array $failedRules;
 
@@ -34,13 +35,11 @@ class OneOf implements Rule
         foreach ($this->rules as $rule) {
             try {
                 Validator::validate([$attribute => $value], [$attribute => $rule]);
-
                 return true;
-            } catch (ValidationException) {
+            } catch (Exception) {
                 $this->failedRules[] = $rule;
             }
         }
-
         return false;
     }
 
@@ -51,6 +50,8 @@ class OneOf implements Rule
      */
     public function message()
     {
-        return $this->failedRules[0]->message();
+        return $this->failedRules[0] instanceof Rule ?
+            strval($this->failedRules[0]->message()) :
+            'The :attribute is invalid.';
     }
 }

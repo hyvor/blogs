@@ -18,6 +18,7 @@ export default function Welcome() {
                 </div>
                 <div className="links-title">Support</div>
                 <div className="links-list">
+                    <Link name="Join our Discord" href="https://discord.com/invite/2WRJxQB" />
                     <Link name="Community" href="https://community.blogs.hyvor.com" />
                     <Link
                         name="blogs.support@hyvor.com"
@@ -35,10 +36,10 @@ type LinkProps = {
     href: string;
 };
 
-function Link( { name, href } : LinkProps ) {
+function Link({ name, href }: LinkProps) {
 
-    return <a href={ href } target="_blank">
-        { name }
+    return <a href={href} target="_blank">
+        {name}
     </a>;
 
 }

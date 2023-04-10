@@ -29,6 +29,14 @@ function blogWithAccess($attrs = []) {
     return $blog;
 }
 
+function blogWithAccessLanguageAndRoutes($attrs = []) {
+    $blog = blogWithAccess($attrs);
+    addPrimaryLanguage($blog);
+    addBlogVariants($blog);
+    addDefaultRoutes($blog);
+    return $blog;
+}
+
 function blogWithLanguage($attrs = []) {
     $blog = blog($attrs);
     addPrimaryLanguage($blog);

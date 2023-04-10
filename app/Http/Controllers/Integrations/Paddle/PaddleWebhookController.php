@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\Integrations\Paddle;
 
 use App\Data\Enums\SubscriptionStatusEnum;
+use App\Domains\Blog\BlogService;
 use App\Domains\Integrations\Paddle\PaddleService;
 use App\Domains\Integrations\Paddle\Passthrough\InvalidPassthroughException;
 use App\Domains\Integrations\Paddle\Passthrough\Passthrough;
@@ -41,6 +42,19 @@ class PaddleWebhookController
         return '';
     }
 
+    private function handlePaymentSucceeded(array $payload)
+    {
+
+        $productId = intval($payload['product_id']);
+
+        if ($productId !== config('services.paddle.activation_plan_id'))
+            return;
+
+        $blog = Passthrough::decode($payload['passthrough']);
+        BlogService::activateBlog($blog);
+
+    }
+
     private function handleSubscriptionCreated(array $payload)
     {
         $blog = Passthrough::decode($payload['passthrough']);
@@ -53,6 +67,7 @@ class PaddleWebhookController
         );
 
         PaddleService::setPaddleSubscriptionId($subscription, $payload['subscription_id']);
+        BlogService::activateBlog($blog);
     }
 
     private function handleSubscriptionUpdated(array $payload)

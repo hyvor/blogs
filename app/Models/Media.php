@@ -1,4 +1,4 @@
-<?php
+<?php declare(strict_types=1);
 
 namespace App\Models;
 
@@ -10,8 +10,12 @@ class Media extends Model
 {
     use HasFactory;
 
-    public function blog(): BelongsTo
+    /**
+     * @return BelongsTo<Blog, self>
+     */
+    public function blog()
     {
         return $this->belongsTo(Blog::class);
     }
+
 }

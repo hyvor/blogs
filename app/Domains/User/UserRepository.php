@@ -22,7 +22,7 @@ use App\Models\Language;
 use App\Models\User;
 use App\Models\UserVariant;
 use Exception;
-use Hyvor\FilterQ\Facades\FilterQ;
+use Hyvor\FilterQ\FilterQ;
 use Hyvor\HyvorConnecter\Userbase;
 use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\Mail;
@@ -89,7 +89,7 @@ class UserRepository
             ['users.posts_count', 'DESC'],
         ],
     ): CollectionWithTotal {
-        $builder = FilterQ::expression($filter)
+        $builder = (new FilterQ)->expression($filter)
             ->builder(User::class)
             ->keys(function ($keys) {
                 $keys->add('id')

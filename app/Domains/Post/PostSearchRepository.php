@@ -1,7 +1,8 @@
-<?php
+<?php declare(strict_types=1);
 
 namespace App\Domains\Post;
 
+use App;
 use App\Data\Enums\PostStatusEnum;
 use App\Domains\Post\Content\PostContentRepository;
 use App\Helpers\CollectionWithTotal;
@@ -9,11 +10,11 @@ use App\Models\Blog;
 use App\Models\Language;
 use App\Models\Post;
 use App\Models\PostVariant;
+use Illuminate\Support\Collection;
 use MeiliSearch\Client;
 
 class PostSearchRepository
 {
-    public const SEARCH_INDEX_NAME = 'posts';
 
     private const FILTERABLE_ATTRIBUTES = [
         'blog_id',
@@ -34,6 +35,7 @@ class PostSearchRepository
 
     /**
      * Better to use named arguments when using this function
+     * @return CollectionWithTotal<Post>
      */
     public static function search(
         Blog $blog,
@@ -64,6 +66,7 @@ class PostSearchRepository
             'attributesToRetrieve' => ['post_id'],
         ]);
 
+        /** @var array<array{post_id: int}> $hits */
         $hits = $results->getHits();
 
         if (count($hits) > 0) {
@@ -73,7 +76,8 @@ class PostSearchRepository
                 ->orderByRaw("FIELD(id, $postIdsForField)")
                 ->get();
         } else {
-            $posts = collect([]);
+            /** @var Collection<int, Post> $posts */
+            $posts = collect();
         }
 
         return new CollectionWithTotal($posts, $results->getEstimatedTotalHits());
@@ -146,11 +150,23 @@ class PostSearchRepository
         }
     }
 
+    public static function resetIndex() : void
+    {
+        self::getIndex()->delete();
+        self::setFilterableAttributes();
+        self::setSearchableAttributes();
+    }
+
     private static function getIndex()
     {
         $client = new Client(config('scout.meilisearch.host'), config('scout.meilisearch.key'));
 
-        return $client->index(self::SEARCH_INDEX_NAME);
+        return $client->index(self::getIndexName());
+    }
+
+    public static function getIndexName()
+    {
+        return App::environment('testing') ? 'posts_testing' : 'posts';
     }
 
     private static function isMeilisearch()

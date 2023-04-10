@@ -10,7 +10,7 @@ use Illuminate\Http\Request;
 
 class LoginRequiredElseRedirectMiddleware
 {
-    public function handle(Request $request, Closure $next)
+    public function handle(Request $request, Closure $next) : mixed
     {
         $user = Login::check();
         if (! $user) {

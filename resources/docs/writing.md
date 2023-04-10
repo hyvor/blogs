@@ -16,6 +16,7 @@ This page explains everything about publishing a post on Hyvor Blogs.
   * [Scheduling](#scheduling)
   * [Unpublishing](#unpublishing)
   * [Deleting](#deleting)
+* [Auto-saving & Post History](#auto-saving)
 * [Editing a published post](#editing-published)
 * [Multi-language posts](#multi-language)
 
@@ -46,7 +47,7 @@ Hyvor Blogs comes with a rich text editor that supports inline styles and blocks
 
 ### Inline Styles {#inline-styles}
 
-To add inline styles to text, select the text. A popup window will be opened with the available options. Click on the inline style you want to add. The following inline styles are supported.
+To add inline styles to text, select the text. A popup will be shown with the available options. Click on the inline style you want to add. The following inline styles are supported.
 
 * Bold
 * Italic
@@ -270,6 +271,10 @@ You can also permanently delete a post. Note that there is no way to restore a p
 <p>
 <img src="/img/docs/writing-deleting.gif" alt="Publishing a post in Hyvor Blogs" width="550" />
 </p>
+
+## Auto-saving and Post History {#auto-saving}
+
+If you are editing a draft, Hyvor Blogs will automatically save your post every 15 seconds if any post data (content or metadata) has been edited. You can also manually save your post by pressing **Ctrl + S**. If the content is edited, a post history will be created. You can refer back to this history if you want to revert to a previous version of your post. A single post can have up to 25 post histories.
 
 ## Editing a published post {#editing-published}
 

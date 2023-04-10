@@ -2,8 +2,8 @@
 <html>
 <head>
     @include('landing.meta', [
-        'title' => 'Hyvor Blogs - A simple and powerful blogging platform',
-        'description' => 'Hyvor Blogs is a simple and powerful blogging platform with a rich text editor, multi language support, APIs and webhooks, etc.',
+        'title' => 'Hyvor Blogs - Multi-language blogging platform',
+        'description' => 'Hyvor Blogs is a simple and powerful multi-language blogging platform with customizable themes, in-built SEO, and API support.',
         'image' => 'https://blogs.hyvor.com/img/banner.png',
         'canonical' => 'https://blogs.hyvor.com',
     ])
@@ -25,10 +25,10 @@
                     Start Your Blog Today!
                 </h1>
                 <h2>
-                    Hyvor Blogs is a simple & powerful platform to start a fully customizable blog.
+                    Hyvor Blogs is a simple & powerful platform to start a fully-customizable multi-language blog.
                 </h2>
                 <a data-flashload-skip-link href="/console?signup=1" class="button big">
-                    Start a Blog For Free
+                    Start a Blog Now
                 </a>
 
                  {{--<div class="hero-message-wrap">
@@ -789,9 +789,50 @@ c30.27,0,54.64-24.37,54.64-54.64v-1419l-363.61-362.75L1258.7,336.75z"/>
 
 <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1440 320"><path fill="#fffaf8" fill-opacity="1" d="M0,160L48,149.3C96,139,192,117,288,128C384,139,480,181,576,202.7C672,224,768,224,864,218.7C960,213,1056,203,1152,170.7C1248,139,1344,85,1392,58.7L1440,32L1440,0L1392,0C1344,0,1248,0,1152,0C1056,0,960,0,864,0C768,0,672,0,576,0C480,0,384,0,288,0C192,0,96,0,48,0L0,0Z"></path></svg>
 
+<div class="testimonials">
+
+    <div class="quote-icon"><svg xmlns="http://www.w3.org/2000/svg" width="50" height="50" fill="currentColor" class="bi bi-quote" viewBox="0 0 16 16">
+            <path d="M12 12a1 1 0 0 0 1-1V8.558a1 1 0 0 0-1-1h-1.388c0-.351.021-.703.062-1.054.062-.372.166-.703.31-.992.145-.29.331-.517.559-.683.227-.186.516-.279.868-.279V3c-.579 0-1.085.124-1.52.372a3.322 3.322 0 0 0-1.085.992 4.92 4.92 0 0 0-.62 1.458A7.712 7.712 0 0 0 9 7.558V11a1 1 0 0 0 1 1h2Zm-6 0a1 1 0 0 0 1-1V8.558a1 1 0 0 0-1-1H4.612c0-.351.021-.703.062-1.054.062-.372.166-.703.31-.992.145-.29.331-.517.559-.683.227-.186.516-.279.868-.279V3c-.579 0-1.085.124-1.52.372a3.322 3.322 0 0 0-1.085.992 4.92 4.92 0 0 0-.62 1.458A7.712 7.712 0 0 0 3 7.558V11a1 1 0 0 0 1 1h2Z"/>
+        </svg></div>
+
+    <div class="quote">
+
+        <div class="beaver">
+            <img src="/img/landing/beaver.svg" />
+        </div>
+
+        <div class="person">
+            <img
+                src="/img/landing/testimonial-1.png"
+                alt="Testimonial User Image"
+            />
+            <div class="name-description">
+
+                <div class="name">
+                    Finn Pedersen
+                </div>
+
+                <div class="description">
+                    On his blog
+                </div>
+
+            </div>
+        </div>
+
+        <div class="text">
+
+            If you just want to start creating content and need an easy-to-use tool, I recommend Hyvor Blogs. You have your first pages and blog posts in minutes. And it supports multiple languages. Most tools and websites presume that you write in English, but not Hyvor. 👍
+
+        </div>
+
+    </div>
+
+</div>
+
+
 <div class="button-main">
     <a data-flashload-skip-link href="/console?signup=1" class="button big">
-        Start a Blog For Free
+        Start Your Blog Now
     </a>
 </div>
 

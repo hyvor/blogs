@@ -1,8 +1,9 @@
-<?php
+<?php declare(strict_types=1);
 
 namespace App\Domains\Delivery;
 
 use App\Models\Post;
+use DateTimeInterface;
 use Illuminate\Contracts\Encryption\DecryptException;
 
 use function decrypt;
@@ -11,10 +12,9 @@ use function now;
 
 class PostPreviewSecretEncryptor
 {
-    public static function getPreviewSecret(Post $post)
+    public static function getPreviewSecret(Post $post, DateTimeInterface $time = null) : string
     {
-        $timestamp = now()->timestamp;
-
+        $timestamp = ($time ?? now())->getTimestamp();
         return encrypt("$post->id.$timestamp");
     }
 
@@ -35,7 +35,7 @@ class PostPreviewSecretEncryptor
             return null;
         }
 
-        $min = now()->subDay()->timestamp;
+        $min = now()->subDays(7)->timestamp;
         if ($timestamp < $min) {
             return null;
         }

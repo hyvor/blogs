@@ -41,3 +41,20 @@ it('updates a post', function () {
 
     Event::assertDispatched(PostUpdatedEvent::class);
 });
+
+it('checks for duplicates when updating slug', function() {
+
+    $blog = blogWithAccessLanguageAndRoutes();
+    $post = addPost($blog, [
+        'slug' => 'hello-world'
+    ]);
+
+    $post2 = addPost($blog);
+
+    consoleApi($blog, 'PATCH', "/post/$post2->id", [
+            'slug' => 'hello-world',
+    ])
+        ->assertStatus(422)
+        ->assertSee('Slug has already been taken');
+
+});

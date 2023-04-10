@@ -9,6 +9,21 @@ footer {
     padding: 20px 0;
 	padding-top:0;
 	background-color:$color-accent-very-light;
+
+	.social {
+		text-align: center;
+		margin-top: 15px;
+		a:not(:last-child) {
+			margin-right: 8px;
+		}
+		.twitter {
+			color: #26a7de;
+		}
+		.discord {
+			color: #7289DA;
+		}
+	}
+
 	.content {
 		padding:35px 20px;
 		margin:auto;

@@ -27,6 +27,7 @@ uses(TestCase::class)->in('Feature', 'Unit');
 
 uses()->beforeEach(function () {
 
+
     $this->blog = Blog::find(config('test.blog_id'));
     $this->user = User::where('hyvor_user_id', config('test.hyvor_user_id'))->first();
 
@@ -36,15 +37,16 @@ uses()->beforeEach(function () {
     // disable uploading profile picture
     $this->mock(MediaRepository::class, function (MockInterface $mock) {
         $mock->shouldReceive('uploadFromUrl')
-            ->andReturn(Media::factory()->create());
+            ->andReturn(Media::factory()->create(['blog_id' => 0]));
     });
+
 
     Http::fake([
         'https://iframe.ly/api/iframely*' => Http::response(jsonData('UrlData/iframely-response.json'))
     ]);
 
-    PostSearchRepository::setFilterableAttributes();
-    PostSearchRepository::setSearchableAttributes();
+    PostSearchRepository::resetIndex();
+
 
 })->in('Feature', 'Unit');
 
@@ -75,7 +77,7 @@ function createRequest($method, $uri)
 function testTwigRendering(string $template, array $vars, string $expectation)
 {
     $vars = json_decode(json_encode($vars), true);
-    $val = TwigRenderer::renderString($template, $vars);
+    $val = trim(TwigRenderer::renderString($template, $vars));
     expect($val)->toBe($expectation);
 }
 

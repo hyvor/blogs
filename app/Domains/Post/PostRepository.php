@@ -16,7 +16,7 @@ use App\Models\Language;
 use App\Models\Post;
 use App\Models\PostVariant;
 use Carbon\Carbon;
-use Hyvor\FilterQ\Facades\FilterQ;
+use Hyvor\FilterQ\FilterQ;
 use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Support\Str;
 
@@ -47,9 +47,7 @@ class PostRepository
     }
 
     /**
-     * Get posts of a blog
-     * with filters, limit, and offset
-     * This is for the ConsoleApi
+     * @return Collection<int, Post>
      */
     public static function getPosts(
         Blog $blog,
@@ -114,6 +112,10 @@ class PostRepository
             ->get();
     }
 
+    /**
+     * @param Blog $blog
+     * @return Collection<int, Post>
+     */
     public static function getPages(Blog $blog): Collection
     {
         return Post::where('blog_id', $blog->id)
@@ -126,6 +128,9 @@ class PostRepository
      * This is for the Data API
      *
      * ALWAYS USE NAMED ARGUMENT WHEN USING THIS FUNCTION
+     *
+     * @param array<array<string>> $orderBys
+     * @return CollectionWithTotal<Post>
      */
     public static function getPostsWithFilterQ(
         Blog $blog,
@@ -138,7 +143,8 @@ class PostRepository
         ],
         bool $isPages = false
     ): CollectionWithTotal {
-        $builder = FilterQ::expression($filter)
+
+        $builder = (new FilterQ)->expression($filter)
             ->builder(Post::class)
             ->keys(function ($keys) {
                 $keys->add('id')
@@ -311,6 +317,7 @@ class PostRepository
 
     public static function updatePostVariant(Post $post, Language $language, array $updates)
     {
+
         $variant = self::getPostVariantByPostIdAndLanguageId($post->id, $language->id);
 
         if (! $variant) {
@@ -328,10 +335,10 @@ class PostRepository
                 // set post slug
                 if (
                     $post->slug === null &&
-                    $language->is_primary &&
-                    $title = $variant->title ?? $updates['title'] ?? null
+                    $language->is_primary
                 ) {
-                    $post->slug = Str::slug($title);
+                    $title = $variant->title ?? $updates['title'] ?? null;
+                    $post->slug = $title ? Str::slug($title) : Str::random();
                 }
 
                 $post->save();
@@ -368,9 +375,9 @@ class PostRepository
             $variant->description = mb_substr($updates['description'], 0, 350);
         }
 
+        $original = new PostVariant((array) $variant->getOriginal());
         $variant->save();
-
-        PostVariantUpdatedEvent::dispatch($variant);
+        PostVariantUpdatedEvent::dispatch($variant, $original);
 
         return $variant;
     }

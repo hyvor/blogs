@@ -18,7 +18,7 @@ export default function PaddlePaymentHistory() {
             <Loader padding={60} /> :
             <div className="receipts">
                 {
-                    data.payments.length ?
+                    data.payments && data.payments.length ?
                     <div className="receipts-table">
                         <div className="receipts-row header">
                             <div>Amount</div>

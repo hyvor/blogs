@@ -192,6 +192,13 @@ class Highlighter
                 $code .= $this->getDiffMarkSpan($shouldDiffAdd, $shouldDiffRemove);
             }
 
+            $code .= '<span>';
+
+            // to prevent empty lines from being collapsed
+            if (count($line) === 0) {
+                $code .= '<wbr />';
+            }
+
             foreach ($line as $token) {
                 $tokenColor = $token->color ?? $foregroundColor;
                 $tokenContent = htmlspecialchars($token->content);
@@ -207,7 +214,7 @@ class Highlighter
                 $code .= "<span style=\"$styles\">$tokenContent</span>";
             }
 
-            $code .= '</div>';
+            $code .= '</span></div>';
 
             $lineNumber++;
         }
@@ -236,6 +243,9 @@ class Highlighter
         }
         if ($this->annotations->hasError()) {
             $preClasses[] = 'has-annotation-error';
+        }
+        if ($this->lineNumbers) {
+            $preClasses[] = 'has-line-numbers';
         }
 
         $preClasses = implode(' ', $preClasses);

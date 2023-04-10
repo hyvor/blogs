@@ -14,7 +14,7 @@ it('works', function () {
 });
 
 it('decrypt returns null if the timestamp is old', function () {
-    $this->travel(-25)->hours();
+    $this->travel(-10)->days();
     $secret = PostPreviewSecretEncryptor::getPreviewSecret(addPost(blog()));
     $this->travelBack();
     $id = PostPreviewSecretEncryptor::decryptPreviewSecret($secret);

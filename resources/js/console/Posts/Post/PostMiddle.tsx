@@ -1,8 +1,10 @@
 import Editor from "./ProseMirror/Editor";
 import React from "react";
-import {usePostActions, usePostValues} from "./helpers";
+import { usePostActions, usePostValues } from "./helpers";
+import PostLanguageSelector from "./PostLanguageSelector";
+import TitleRow from "./PostTop/TitleRow";
 
-export default function PostMiddle({id} : {id: number}) {
+export default function PostMiddle({ id }: { id: number }) {
 
     const { currentVariant, editorState } = usePostValues(id)
     const { updateCurrentPostVariantValue } = usePostActions(id)
@@ -19,9 +21,13 @@ export default function PostMiddle({id} : {id: number}) {
     const isEditable = currentVariant.status === 'draft' || editorState.isNonDraftEditing;
 
     return <div
-        className={"post-editor-wrap" + (isEditable ? "" : " non-editable") }
+        className={"post-editor-wrap" + (isEditable ? "" : " non-editable")}
         spellCheck={false}
     >
+        <div className="post-editor-headers">
+            <TitleRow id={id} />
+        </div>
+
         <Editor
             id={id}
             value={content || ''}

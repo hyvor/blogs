@@ -1,16 +1,21 @@
 import React from 'react';
 import Loader from '../../ReusableComponents/Loader';
 import Tooltip from '../../ReusableComponents/Tooltip';
-import {usePostValues} from "./helpers";
+import { usePostValues, usePostActions } from "./helpers";
 import useSave from './useSave'
 import PostTop from "./PostTop/PostTop";
 import PostBottom from "./PostBottom";
 import PostMiddle from "./PostMiddle";
 import Unpublisher from "./Unpublisher";
+import postsLogic from "../../logic/postsLogic";
+import pagesLogic from "../../logic/pagesLogic";
 
-export default function Post( { id }: { id: number }) {
+export default function Post({ id, subdomain, type }: { id: number, subdomain: string, type: string }) {
 
-    const { loadPostAjax, editorState } = usePostValues(id)
+    const { loadPostAjax, editorState } = usePostValues(id);
+    const postsLogicInst = postsLogic({ subdomain });
+    const pagesLogicInst = pagesLogic({ subdomain });
+    const { savePost } = usePostActions(id)
 
     useSave(id);
 
@@ -20,10 +25,20 @@ export default function Post( { id }: { id: number }) {
         </div>;
     }
 
-    return <div className={"post-editor" + (editorState.isFullscreen ? " fullscreen" : "") }>
+    const saveAndNavigateToList = () => {
+        savePost();
+        if (type === 'post')
+            postsLogicInst.actions.navigateToPosts();
+        else
+            pagesLogicInst.actions.navigateToPages();
+    }
 
-        <div className="pos-rel"> {/* this element is required to make the tooltip work correctly */}
+    return <div className={"post-editor fullscreen"}>
 
+        <div className="pos-rel">
+            <button className="icon-button back-button" onClick={() => saveAndNavigateToList()} >
+                &times;
+            </button>
             <PostTop id={id} />
             <PostMiddle id={id} />
             <PostBottom id={id} />
@@ -35,6 +50,6 @@ export default function Post( { id }: { id: number }) {
 
         </div>
 
-    </div>
+    </div >
 
 }

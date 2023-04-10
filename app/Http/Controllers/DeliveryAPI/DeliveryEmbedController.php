@@ -50,6 +50,10 @@ class DeliveryEmbedController
             throw new TrustedException('Not embeddable');
         }
 
+        if ($blog->is_blocked) {
+            throw new TrustedException('Blog is blocked');
+        }
+
         if (!EmbedService::validateEmbeddingUrl($blog, $embeddingUrl)) {
             throw new TrustedException('This domain is not allowed to embed this blog');
         }

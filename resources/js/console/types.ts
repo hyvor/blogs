@@ -57,7 +57,9 @@ export interface BlogVariant {
 export interface Blog {
 
     id: number,
-    updated_at: number,
+    created_at: number,
+
+    is_blocked: boolean,
     subdomain: string,
     type: BlogType,
     hosting_at: BlogHostingAt,
@@ -84,12 +86,7 @@ export interface Blog {
     seo_indexing: boolean,
     seo_robots_txt: string | null,
     seo_external_links_follow: SeoExternalLinksFollow,
-
-    comments_type: CommentsType,
-    comments_ht_website_id: number | null,
-    comments_ht_api_key: string | null,
     comments_code: string | null,
-
     newsletter_code: string | null,
 
     color_modes: ColorModes,
@@ -99,6 +96,7 @@ export interface Blog {
     syntax_line_numbers: boolean,
     syntax_theme: string | null
 
+    flashload: boolean,
     variants: BlogVariant[]
 
 }

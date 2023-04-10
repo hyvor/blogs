@@ -1,4 +1,4 @@
-<?php
+<?php declare(strict_types=1);
 
 namespace App\Data\Objects\ConsoleAPI\User;
 
@@ -53,8 +53,8 @@ class UserObject
     public function __construct(User $user, Blog $blog)
     {
         $this->id = $user->id;
-        $this->created_at = $user->created_at->timestamp;
-        $this->updated_at = $user->updated_at->timestamp;
+        $this->created_at = $user->created_at->getTimestamp();
+        $this->updated_at = $user->updated_at->getTimestamp();
         $this->hyvor_user_id = $user->hyvor_user_id;
 
         $this->status = $user->status;
@@ -75,9 +75,12 @@ class UserObject
         $this->social_instagram = $user->social_instagram;
         $this->social_github = $user->social_github;
 
-        $this->variants = $user->variants
+        /** @var UserVariantObject[] $variants */
+        $variants = $user->variants
             ->map(fn ($variant) => new UserVariantObject($variant, $user, $blog))
             ->sortBy('language_id')
             ->toArray();
+
+        $this->variants = $variants;
     }
 }

@@ -1,4 +1,4 @@
-<?php
+<?php declare(strict_types=1);
 
 namespace App\Http\Middleware\App\ConsoleApi;
 
@@ -17,9 +17,16 @@ use App\Models\ThemeFile;
 use App\Models\User;
 use App\Models\Webhook;
 use Closure;
+use Illuminate\Http\Request;
 
 class ResourceAccessMiddleware
 {
+
+    private Blog $blog;
+
+    /**
+     * @var array<string, class-string>
+     */
     private $models = [
         '/post' => Post::class,
         '/media' => Media::class,
@@ -39,7 +46,7 @@ class ResourceAccessMiddleware
         $this->blog = $blog;
     }
 
-    public function handle($request, Closure $next)
+    public function handle(Request $request, Closure $next) : mixed
     {
 
         /**
@@ -96,17 +103,18 @@ class ResourceAccessMiddleware
          * Sets language for variant routes
          */
         // ex: api/console/v0/blog/{subdomain}/navigation/{id}/variant
-        $uri = $request->route()->uri();
-        if (str_ends_with($uri, '/variant')) {
-            $languageId = $request->input('language_id');
+        $uri = strval($request->route()?->uri());
 
-            if (empty($languageId)) {
+        if (str_ends_with($uri, '/variant')) {
+            $languageId = intval($request->input('language_id'));
+
+            if (!$languageId) {
                 throw new TrustedException('Language ID not set');
             }
 
             $language = LanguageRepository::getLanguageById($this->blog, $languageId);
 
-            if (! $language) {
+            if (!$language) {
                 throw new TrustedException('Language not found');
             }
 

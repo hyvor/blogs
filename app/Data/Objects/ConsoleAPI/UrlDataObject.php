@@ -25,8 +25,11 @@ class UrlDataObject
 
     public function __construct(UrlData $urlData)
     {
-        $this->url = $urlData->final_url;
-        $this->domain = parse_url($this->url, PHP_URL_HOST);
+        $this->url = $urlData->final_url ?? '';
+
+        $domain = parse_url($this->url, PHP_URL_HOST);
+        $this->domain = $domain ? $domain : '';
+
         $this->html = $urlData->html;
         $this->title = $urlData->title ?? '';
         $this->description = $urlData->description ?? '';

@@ -16,6 +16,7 @@ use App\Domains\User\Events\UserCreatedEvent;
 use App\Domains\User\Events\UserDeletedEvent;
 use App\Models\Media;
 use App\Models\Post;
+use App\Models\PostVariant;
 use App\Models\User;
 use Illuminate\Support\Facades\Event;
 use Illuminate\Support\Facades\Queue;
@@ -60,7 +61,7 @@ it('calls update when post variant status changes for primary variant', function
 
     $variant->status = PostStatusEnum::DRAFT;
 
-    $event = new PostVariantUpdatedEvent($variant);
+    $event = new PostVariantUpdatedEvent($variant, new PostVariant($variant->getOriginal()));
     $listener = new CountSubscriber();
     $listener->onPostVariantUpdate($event);
 
@@ -77,7 +78,7 @@ it('does not call blog count update when other properties of variant is called',
 
     $variant->title = 'Changed';
 
-    $event = new PostVariantUpdatedEvent($variant);
+    $event = new PostVariantUpdatedEvent($variant, new PostVariant($variant->getOriginal()));
     $listener = new CountSubscriber();
     $listener->onPostVariantUpdate($event);
 
