@@ -84,6 +84,8 @@ export default function Settings({ type }: { type: string | undefined }) {
         { value: 'danger', label: 'Danger Zone' },
     ]
 
+    console.log('Pannel', pannel);
+
     let Type = () => <SettingsGeneral />;
     switch (pannel) {
         case 'users':
@@ -167,22 +169,22 @@ export default function Settings({ type }: { type: string | undefined }) {
 
                 <SettingsLink path="/hosting" name="Hosting" setPannel={setPannel} />
                 <SettingsLink path="/seo" name="SEO" setPannel={setPannel} />
-                <SettingsLink path="/color-mode" name="Light & Dark Modes" setPannel={setPannel} />
+                <SettingsLink path="/color-mode" name="Light & Dark Modes" pannelName={'color-mode'} setPannel={setPannel} />
                 <SettingsLink path="/navigation" name="Navigation" setPannel={setPannel} />
                 <SettingsLink path="/media" name="Media" setPannel={setPannel} />
                 <SettingsLink path="/redirects" name="Redirects" setPannel={setPannel} />
                 <SettingsLink path="/routes" name="Routes" setPannel={setPannel} />
-                <SettingsLink path="/api-keys" name="API Keys" setPannel={setPannel} />
+                <SettingsLink path="/api-keys" name="API Keys" setPannel={setPannel} pannelName={'api-keys'} />
                 <SettingsLink path="/webhooks" name="Webhooks" setPannel={setPannel} />
 
                 <div />
-                <SettingsLink path="/comments" name="Comments & Newsletter" setPannel={setPannel} />
-                <SettingsLink path="/code" name="Custom Code" setPannel={setPannel} />
-                <SettingsLink path="/highlight" name="Syntax Highlighting" setPannel={setPannel} />
+                <SettingsLink path="/comments" name="Comments & Newsletter" pannelName={'comments'} setPannel={setPannel} />
+                <SettingsLink path="/code" name="Custom Code" pannelName={'code'} setPannel={setPannel} />
+                <SettingsLink path="/highlight" name="Syntax Highlighting" pannelName={'highlight'} setPannel={setPannel} />
 
                 <div />
-                <SettingsLink path="/migrate" name="Import & Export" setPannel={setPannel} />
-                <SettingsLink role={UserRole.OWNER} path="/danger" name="Danger Zone" setPannel={setPannel} />
+                <SettingsLink path="/migrate" name="Import & Export" pannelName={'migrate'} setPannel={setPannel} />
+                <SettingsLink role={UserRole.OWNER} path="/danger" pannelName={'danger'} name="Danger Zone" setPannel={setPannel} />
             </div>
         </div>
         <div className="box box-right settings-right">
@@ -202,10 +204,11 @@ interface SettingsLinkProps {
     role?: UserRole.OWNER | UserRole.ADMIN | UserRole.EDITOR,
     name: string,
     dividing?: boolean,
+    pannelName?: string,
     setPannel: Function
 }
 
-function SettingsLink({ path, role = UserRole.ADMIN, name, dividing = false, setPannel }: SettingsLinkProps) {
+function SettingsLink({ path, role = UserRole.ADMIN, name, dividing = false, setPannel, pannelName }: SettingsLinkProps) {
 
     const subdomain = getSubdomain();
     const settingsPrefix = `/console/${subdomain}/settings`;
@@ -244,7 +247,12 @@ function SettingsLink({ path, role = UserRole.ADMIN, name, dividing = false, set
             href={settingsPrefix + path}
             exact={1}
             className={cls}
-            onClick={() => setPannel(name.toLocaleLowerCase())}
+            onClick={() => {
+                if (pannelName)
+                    setPannel(pannelName);
+                else
+                    setPannel(name.toLocaleLowerCase())
+            }}
         > {name}</NavLink>
 
         {dividing && <div />}
