@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "62f4977eaa29a8b356533083020178bf",
+    "content-hash": "3f26a90cb7383e97dfd316006d9c812f",
     "packages": [
         {
             "name": "akaunting/laravel-money",
@@ -2364,6 +2364,50 @@
                 "source": "https://github.com/hyvor/laravel-json-meta/tree/0.0.3"
             },
             "time": "2022-04-24T08:35:42+00:00"
+        },
+        {
+            "name": "hyvor/php-json-exporter",
+            "version": "0.0.2",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/hyvor/php-json-exporter.git",
+                "reference": "bb7b7ad891798009996e31d2d922e7abc3b4f5c3"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/hyvor/php-json-exporter/zipball/bb7b7ad891798009996e31d2d922e7abc3b4f5c3",
+                "reference": "bb7b7ad891798009996e31d2d922e7abc3b4f5c3",
+                "shasum": ""
+            },
+            "require": {
+                "php": "^8.1"
+            },
+            "require-dev": {
+                "pestphp/pest": "^1.22",
+                "phpstan/phpstan": "^1.8"
+            },
+            "type": "library",
+            "autoload": {
+                "psr-4": {
+                    "Hyvor\\JsonExporter\\": "src/"
+                }
+            },
+            "notification-url": "https://packagist.org/downloads/",
+            "license": [
+                "MIT"
+            ],
+            "authors": [
+                {
+                    "name": "Supun",
+                    "email": "supun@hyvor.com"
+                }
+            ],
+            "description": "Export large datasets to a JSON file without memory exhaustion",
+            "support": {
+                "issues": "https://github.com/hyvor/php-json-exporter/issues",
+                "source": "https://github.com/hyvor/php-json-exporter/tree/0.0.2"
+            },
+            "time": "2023-01-14T23:04:51+00:00"
         },
         {
             "name": "hyvor/php-svg-icons",

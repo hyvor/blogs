@@ -198,7 +198,7 @@ Route::prefix('/api/console/v0/blog/{subdomain}')
             Route::delete('/theme/file/{id}', [ConsoleThemeController::class, 'deleteFile']);
 
             // import and export
-            Route::get('/data/export', [ConsoleImportExportController::class, 'export']);
+            Route::post('/data/export', [ConsoleImportExportController::class, 'export']);
             Route::post('/data/import', [ConsoleImportExportController::class, 'import']);
 
             Route::get('/build', []);

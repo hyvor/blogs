@@ -1,6 +1,6 @@
 # Export
 
-You own your data, and we make make sure you can access them any time you need. You can export both data and media from the console.
+You own your data, and we make sure you can access them any time you need. You can export both data and media from the console.
 
 To export: **Console &rarr; Settings &rarr; Export**
 

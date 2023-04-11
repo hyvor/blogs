@@ -19,6 +19,7 @@ return new class extends Migration
             $table->enum('format', ['hyvor_blogs', 'wordpress'])->default('hyvor_blogs');
             $table->enum('status', ['pending', 'completed', 'failed'])->default('pending');
             $table->string('url')->nullable();
+            $table->string('error')->nullable();
 
         });
     }

@@ -42,7 +42,7 @@ class ConsoleMediaController extends Controller
 
         $media = MediaRepository::upload($blog, $file, $postId);
 
-        return response()->json(new MediaObject($media));
+        return response()->json(new MediaObject($media, $blog));
     }
 
     public function uploadFileFromUrl(Request $request, Blog $blog) : JsonResponse
@@ -58,7 +58,7 @@ class ConsoleMediaController extends Controller
 
         $media = (new MediaRepository)->uploadFromUrl($blog, $url, $postId);
 
-        return response()->json(new MediaObject($media));
+        return response()->json(new MediaObject($media, $blog));
 
     }
 

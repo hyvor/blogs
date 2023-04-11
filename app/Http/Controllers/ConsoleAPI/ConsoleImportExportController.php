@@ -1,31 +1,22 @@
-<?php
+<?php declare(strict_types=1);
 
 namespace App\Http\Controllers\ConsoleAPI;
 
-use App\Data\Enums\ImportFormatEnum;
+use App\Data\Enums\ExportFormatEnum;
+use App\Domains\Export\ExportJob;
 use App\Http\Controllers\Controller;
 use App\Models\Blog;
-use App\Models\Import;
-use App\Stale\Export\WordpressExporter;
-use App\Stale\Import\Jobs\ImportJob;
-use App\Stale\Import\UploadRepository;
 use Illuminate\Http\JsonResponse;
-use Illuminate\Http\Request;
 
 class ConsoleImportExportController extends Controller
 {
     public function export(Blog $blog) : JsonResponse
     {
-
-
-
-        $exporter = new WordpressExporter($blog->id);
-        $data = $exporter->getFile();
-
-        return response($data)->header('Content-Type', 'text/xml');
+        dispatch(new ExportJob($blog, ExportFormatEnum::HYVOR_BLOGS));
+        return response()->json();
     }
 
-    public function import(Request $request, Blog $blog, Import $import)
+    /*public function import(Request $request, Blog $blog, Import $import)
     {
         // $request->validate([
         //     'platform' => 'required|string',
@@ -39,5 +30,5 @@ class ConsoleImportExportController extends Controller
         dispatch(new ImportJob($platform, $blog, $import));
 
         // return response()->json($import);
-    }
+    }*/
 }
