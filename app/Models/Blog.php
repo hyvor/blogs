@@ -193,4 +193,12 @@ class Blog extends Model
         return $this->hasMany(Subscription::class)->orderBy('id', 'DESC');
     }
 
+    /**
+     * @return HasMany<Export>
+     */
+    public function exports()
+    {
+        return $this->hasMany(Export::class);
+    }
+
 }
