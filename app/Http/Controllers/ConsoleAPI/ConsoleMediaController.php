@@ -1,4 +1,4 @@
-<?php
+<?php declare(strict_types=1);
 
 namespace App\Http\Controllers\ConsoleAPI;
 
@@ -14,7 +14,8 @@ use Illuminate\Http\Request;
 
 class ConsoleMediaController extends Controller
 {
-    public static function getMedia(Request $request, Blog $blog)
+
+    public static function getMedia(Request $request, Blog $blog) : JsonResponse
     {
         $request->validate([
             'limit' => 'integer',
@@ -22,11 +23,12 @@ class ConsoleMediaController extends Controller
             'extension' => 'string',
         ]);
 
-        $limit = $request->input('limit', 50);
-        $offset = $request->input('offset', 0);
-        $extension = $request->input('extension');
+        $limit = $request->integer('limit', 50);
+        $offset = $request->integer('offset', 0);
+        $extension = (string) $request->string('extension');
 
-        $media = MediaRepository::get($blog, $limit, $offset, $extension)->mapInto(MediaObject::class);
+        $media = MediaRepository::get($blog, $limit, $offset, $extension)
+            ->map(fn ($media) => new MediaObject($media, $blog));
 
         return response()->json($media);
     }
