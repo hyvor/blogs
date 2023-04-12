@@ -742,3 +742,65 @@ input[type=range]:focus::-ms-fill-upper {
     pointer-events: none;
     cursor: default;
 }
+
+
+.global-job-status-badge {
+    display: inline-block;
+    padding: 2px 9px;
+    margin-right: 3px;
+    background: $color-input;
+    font-weight: 600;
+    font-size: 11px;
+    text-transform: uppercase;
+    border-radius: 20px;
+    cursor:pointer;
+
+    &.pending {
+        background: $color-blue-light;
+        color: $color-blue-dark;
+    }
+
+    &.completed {
+        background: $color-green-light;
+        color: $color-green-dark;
+    }
+
+    &.failed {
+        background: $color-red-light;
+        color: $color-red-dark;
+    }
+
+}
+
+.global-info-tooltip {
+
+    margin: 0 4px;
+    position: relative;
+    
+    .tooltip-icon {
+        cursor: pointer;
+    }
+
+    .tooltip-content {
+        display: none;
+        position: absolute;
+        left: 50%;
+        transform: translateX(-50%);
+        bottom: 100%;
+        z-index: 1;
+        background-color: $color-box;
+        color: $color-text;
+        padding: 5px 12px;
+        border-radius: 20px;
+        box-shadow: 0 0 10px 0 rgba(0,0,0,0.05);
+        margin-bottom: 3px;
+        width: 125px;
+        font-size: 13px;
+        text-align: center;
+    }
+
+    &:hover .tooltip-content {
+        display: block;
+    }
+
+}

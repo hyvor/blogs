@@ -18,16 +18,14 @@ class Exporter
     public function __construct(
         Blog $blog,
         ExportFormatEnum $format,
+        Export $export = null
     )
     {
 
         $this->blog = $blog;
         $this->format = $format;
 
-        $this->export = Export::create([
-            'format' => $format,
-            'blog_id' => $blog->id,
-        ]);
+        $this->export = $export ?? ExportService::createExport($blog, $format);
 
     }
 

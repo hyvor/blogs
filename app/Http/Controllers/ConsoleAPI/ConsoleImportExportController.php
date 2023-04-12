@@ -4,8 +4,10 @@ namespace App\Http\Controllers\ConsoleAPI;
 
 use App\Data\Enums\ExportFormatEnum;
 use App\Data\Objects\ConsoleAPI\ExportObject;
+use App\Domains\Blog\BlogService;
 use App\Domains\Export\ExportJob;
 use App\Domains\Export\ExportService;
+use App\Exceptions\TrustedException;
 use App\Http\Controllers\Controller;
 use App\Models\Blog;
 use Illuminate\Http\JsonResponse;
@@ -21,8 +23,20 @@ class ConsoleImportExportController extends Controller
 
     public function export(Blog $blog) : JsonResponse
     {
-        dispatch(new ExportJob($blog, ExportFormatEnum::HYVOR_BLOGS));
-        return response()->json();
+
+        if (ExportService::hasPendingExports($blog)) {
+            throw new TrustedException('There is already a pending export for this blog. Please wait until it is finished.');
+        }
+
+        $export = ExportService::createExport($blog, ExportFormatEnum::HYVOR_BLOGS);
+
+        dispatch(new ExportJob(
+            $blog,
+            ExportFormatEnum::HYVOR_BLOGS,
+            $export
+        ));
+
+        return response()->json(new ExportObject($export));
     }
 
     /*public function import(Request $request, Blog $blog, Import $import)

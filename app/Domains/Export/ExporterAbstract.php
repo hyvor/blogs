@@ -2,7 +2,7 @@
 
 namespace App\Domains\Export;
 
-use App\Domain\Export\Exceptions\ExportException;
+use App\Domains\Export\Exceptions\ExportException;
 use App\Models\Blog;
 
 abstract class ExporterAbstract
@@ -14,15 +14,7 @@ abstract class ExporterAbstract
 
     protected function getTemporaryFilePath(string $extension) : string
     {
-        $file = tmpfile();
-
-        if (!$file)
-            throw new ExportException('Could not create temporary file.');
-
-        $meta = stream_get_meta_data($file);
-        $path = $meta['uri'];
-        fclose($file);
-        return $path . '.' . $extension;
+        return sys_get_temp_dir() . '/' . uniqid() . '.' . $extension;
     }
 
     /**

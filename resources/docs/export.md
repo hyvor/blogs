@@ -79,4 +79,4 @@ All objects are from the [Console API](api-console)
 * [Route Object](api-console#route-object)
 * [Redirect Object](api-console#redirect-object)
 
-> In the **Post Object**, in addition to the `content` property, there will be a `content_html` property with content converted into HTML in the export objects.
+> In `variants` of the **Post Object**, there will be an additional `content_html` property with content converted into HTML in the export objects.

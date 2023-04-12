@@ -56,6 +56,7 @@ it('exports in Hyvor Blogs format', function() {
     expect($data['posts'])->toHaveCount(10);
     expect($data['posts'][0]['id'])->toBe($posts[0]->id);
     expect($data['posts'][0]['variants'][0]['title'])->toBe($posts[0]->variants[0]->title);
+    expect($data['posts'][0]['variants'][0]['content_html'])->toBe($posts[0]->variants[0]->content_html);
 
     expect($data['users'])->toHaveCount(6); // seeded + access
     expect($data['users'][1]['id'])->toBe($users[0]->id);

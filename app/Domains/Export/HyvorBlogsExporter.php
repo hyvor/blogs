@@ -58,7 +58,7 @@ class HyvorBlogsExporter extends ExporterAbstract
         $postsWriter = $this->file->collection('posts');
         $this->blog->posts()->chunk(1000, function($posts) use ($postsWriter) {
             /** @var PostObject[] $objects */
-            $objects = $posts->map(fn ($post) => new PostObject($post, $this->blog))->toArray();
+            $objects = $posts->map(fn ($post) => new PostObject($post, $this->blog, setHtml: true))->toArray();
             $postsWriter->addItems($objects);
         });
     }

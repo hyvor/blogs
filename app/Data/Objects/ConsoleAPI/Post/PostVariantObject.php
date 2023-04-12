@@ -27,7 +27,18 @@ class PostVariantObject
 
     public ?string $description;
 
-    public function __construct(PostVariant $variant, Post $post, Blog $blog)
+
+    // only for exporting
+    public ?string $content_html;
+
+
+    public function __construct(
+        PostVariant $variant,
+        Post $post,
+        Blog $blog,
+
+        bool $setHtml = false
+    )
     {
         $language = $variant->language;
 
@@ -44,5 +55,10 @@ class PostVariantObject
         $this->content_unsaved = $variant->content_unsaved;
         $this->title = $variant->title;
         $this->description = $variant->description;
+
+        if ($setHtml) {
+            $this->content_html = $variant->content_html;
+        }
     }
+
 }

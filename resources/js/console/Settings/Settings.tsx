@@ -27,6 +27,7 @@ import { getUserBlogBlog } from "../logic-helpers/blog";
 import Shopify from "./Integrations/Shopify";
 import Select from '../ReusableComponents/Select';
 import { components } from 'react-select';
+import Export from "./Export/Export";
 
 
 interface SettingsSelectProps {
@@ -115,8 +116,8 @@ export default function Settings({ type }: { type: string | undefined }) {
         case 'comments':
             Type = () => <Comments />
             break;
-        case 'migrate':
-            Type = () => <SettingsMigrate />;
+        case 'export':
+            Type = () => <Export />;
             break;
         case 'danger':
             Type = () => <Danger />;
@@ -183,7 +184,7 @@ export default function Settings({ type }: { type: string | undefined }) {
                 <SettingsLink path="/highlight" name="Syntax Highlighting" pannelName={'highlight'} setPannel={setPannel} />
 
                 <div />
-                <SettingsLink path="/migrate" name="Import & Export" pannelName={'migrate'} setPannel={setPannel} />
+                <SettingsLink path="/export" name="Export" pannelName={'export'} setPannel={setPannel} />
                 <SettingsLink role={UserRole.OWNER} path="/danger" pannelName={'danger'} name="Danger Zone" setPannel={setPannel} />
             </div>
         </div>
