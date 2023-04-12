@@ -9,7 +9,7 @@ export default  function MainButton({id} : {id: number}) {
     let name, onClick: any, icon;
 
     const { currentVariant, editorState, forceSavePostAjax } = usePostValues(id)
-    const { changeEditorState, forceSavePost, savePost } = usePostActions(id)
+    const { changeEditorState, forceSavePost, savePost, dicardChanges } = usePostActions(id)
 
     useEffect(() => {
         // Make the editor editable when the post is loaded
@@ -54,16 +54,29 @@ export default  function MainButton({id} : {id: number}) {
     }
 
     if (currentVariant.status === 'published' || currentVariant.status === 'scheduled') {
-        return <ActionButton
-            className="small main-button"
-            status={!editorState.isNonDraftUpdating ? "stale" : (forceSavePostAjax.status || 'stale')}
-            staleName="Update"
-            loadingName="Updating"
-            successName="Updated"
-            errorName="Try again"
-            staleOnClick={handleUpdateNonDraft}
-            errorOnClick={handleUpdateNonDraft}
-        />
+        return <div className="d-flex flex-row">
+                <ActionButton
+                className="small main-button"
+                status={!editorState.isNonDraftUpdating ? "stale" : (forceSavePostAjax.status || 'stale')}
+                staleName="Save changes"
+                loadingName="Updating"
+                successName="Updated"
+                errorName="Try again"
+                staleOnClick={handleUpdateNonDraft}
+                errorOnClick={handleUpdateNonDraft}
+            />
+              <ActionButton
+                className="small main-button"
+                status={!editorState.isNonDraftUpdating ? "stale" : (forceSavePostAjax.status || 'stale')}
+                staleName="Discard changes"
+                loadingName="Discarding"
+                successName="Discarded"
+                errorName="Try again"
+                staleOnClick={dicardChanges}
+                errorOnClick={dicardChanges}
+                />
+        </div>
+       
     } else {
         name = "Publish";
         onClick = () => changeEditorState('isPublishing', true);

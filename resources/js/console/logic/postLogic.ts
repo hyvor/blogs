@@ -89,6 +89,12 @@ const postLogic = kea<postLogicType>([
             const response = await updatePost(values.post, diff);
             actions.setOriginal(response);
         },
+        /**
+         * Used for discarding changes
+         */
+        dicardChanges: () => {
+            actions.set(values.postOriginal);
+        },
 
         /**
          * Used for forced saving/publishing/unpublishing (usually on button click)
