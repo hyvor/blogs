@@ -159,4 +159,4 @@ it('searches posts', function() {
         ->assertJsonPath('0.id', $posts[0]->id)
         ->assertJsonPath('1.id', $posts[1]->id);
 
-})->only();
+});
