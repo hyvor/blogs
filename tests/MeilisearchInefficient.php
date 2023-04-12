@@ -22,8 +22,9 @@ class MeilisearchInefficient
                 ->count()
             > 0
         ) {
+            sleep(1);
             // 250ms
-            usleep(250000);
+            //usleep(150000);
         }
     }
 }

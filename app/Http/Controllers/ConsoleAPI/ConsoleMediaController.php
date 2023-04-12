@@ -55,7 +55,7 @@ class ConsoleMediaController extends Controller
             'post_id' => 'integer|nullable'
         ]);
 
-        $url = $request->string('url');
+        $url = (string) $request->string('url');
         $postId = $request->has('post_id') ? $request->integer('post_id') : null;
 
         $media = (new MediaRepository)->uploadFromUrl($blog, $url, $postId);
