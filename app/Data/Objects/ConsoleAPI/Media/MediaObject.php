@@ -4,6 +4,7 @@ namespace App\Data\Objects\ConsoleAPI\Media;
 
 use App\Domains\Route\PermalinkRepository;
 use App\Exceptions\SafetyException;
+use App\Models\Blog;
 use App\Models\Media;
 
 class MediaObject
@@ -22,14 +23,8 @@ class MediaObject
 
     public ?string $extension;
 
-    public function __construct(Media $media)
+    public function __construct(Media $media, Blog $blog)
     {
-
-        $blog = $media->blog;
-
-        if (!$blog) {
-            throw new SafetyException('Media should be related to a blog');
-        }
 
         $this->id = $media->id;
         $this->post_id = $media->post_id;

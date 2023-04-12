@@ -48,7 +48,7 @@ return [
         ['routes', 'Routes'],
         ['embedding', 'Embedding'],
         // ['import', 'Import'],
-        // ['export', 'Export'],
+        ['export', 'Export'],
     ],
     'Self-Hosting (Subdirectory)' => [
         ['self-hosting', 'Self-Hosting Intro'],
@@ -65,11 +65,11 @@ return [
         // ['policy-security', 'Security Policy'],
         // ['compliance-gdpr', 'GDPR Compliance'],
     ],
-    'Integrations' => [
-        /*['zapier', 'Zapier'],*/
-        ['shopify', 'Shopify'],
-        /*['thinkific', 'Thinkific']*/
-    ],
+//    'Integrations' => [
+//        /*['zapier', 'Zapier'],*/
+//        ['shopify', 'Shopify'],
+//        /*['thinkific', 'Thinkific']*/
+//    ],
     'Misc' => [
         ['support', 'Customer Support'],
         ['oss', 'Open Source'],

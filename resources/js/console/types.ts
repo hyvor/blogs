@@ -381,3 +381,16 @@ export interface PaddleSubscriptionInfoPayment {
     currency: string,
     at: number
 }
+
+
+export type JobStatus = 'pending' | 'completed' | 'failed';
+
+
+export interface Export {
+    id: number,
+    created_at: number,
+    format: 'hyvor_blogs' | 'wordpress',
+    status: JobStatus,
+    url: string | null
+    error: string | null
+}

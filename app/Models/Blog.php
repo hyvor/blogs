@@ -22,6 +22,7 @@ class Blog extends Model
     use Countable;
     use Metable;
 
+
     protected $casts = [
         'is_blocked' => 'bool',
         'is_activated' => 'bool',
@@ -190,6 +191,14 @@ class Blog extends Model
     public function subscriptions()
     {
         return $this->hasMany(Subscription::class)->orderBy('id', 'DESC');
+    }
+
+    /**
+     * @return HasMany<Export>
+     */
+    public function exports()
+    {
+        return $this->hasMany(Export::class);
     }
 
 }

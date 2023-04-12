@@ -1,9 +1,9 @@
-<?php
+<?php declare(strict_types=1);
 
 namespace App\Data\Enums;
 
-enum ExportFormatEnum
+enum ExportFormatEnum : string
 {
-    case WORDPRESS;
-    case JSON;
+    case HYVOR_BLOGS = 'hyvor_blogs';
+    case WORDPRESS = 'wordpress';
 }

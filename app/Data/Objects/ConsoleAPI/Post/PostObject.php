@@ -49,7 +49,11 @@ class PostObject
      */
     public array $authors;
 
-    public function __construct(Post $post, Blog $blog)
+    public function __construct(
+        Post $post,
+        Blog $blog,
+        bool $setHtml = false
+    )
     {
         $this->id = $post->id;
         $this->preview_id = PostPreviewSecretEncryptor::getPreviewSecret($post);
@@ -65,8 +69,8 @@ class PostObject
         $this->code_foot = $post->code_foot;
 
         /** @var PostVariantObject[] $variants */
-        $variants = $post->variants->map(function ($variant) use ($blog, $post) {
-            return new PostVariantObject($variant, $post, $blog);
+        $variants = $post->variants->map(function ($variant) use ($blog, $post, $setHtml) {
+            return new PostVariantObject($variant, $post, $blog, $setHtml);
         })->sortBy('language_id')->toArray();
 
 
