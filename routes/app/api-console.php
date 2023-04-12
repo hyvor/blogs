@@ -127,8 +127,6 @@ Route::prefix('/api/console/v0/blog/{subdomain}')
             Route::patch('/tag/{id}/variant', [ConsoleTagController::class, 'updateVariant']);
             Route::delete('/tag/{id}/variant', [ConsoleTagController::class, 'deleteVariant']);
 
-            // comments
-            Route::get('/comments/moderate', []);
         });
 
         /**
