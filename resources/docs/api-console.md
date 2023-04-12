@@ -1,8 +1,6 @@
 # Console API
 
-> The Console API is not yet ready for public access. This documentation is WIP...
-
-The Console API allows you to do administrative tasks of a blog. This is the same API we use internally in the Console. You can use it to automate some tasks or even build a completely new mini-console by yourself.
+Console API allows you to do administrative tasks of a blog. This is the same API we use internally in the Console. You can use it to automate some tasks or even build a completely new mini-console by yourself.
 
 ## Calling the API
 
@@ -24,6 +22,7 @@ The Console API is huge, and is categorized by what "resource" you want to acces
 
 Jump to each category:
 
+* [Blog](#blog)
 * [Posts & Pages](#posts)
 * [Tags](#tags)
 * [Users](#users)
@@ -36,13 +35,67 @@ Jump to each category:
 * [Data Import](#data-import)
 * [Data Export](#data-export)
 * [Billing](#billing)
-* [Blog Settings](#blog-settings)
-* [Blog Meta Data](#blog-meta)
-* [Other Endpoints](#other)
+* [Misc](#misc)
+
+### Blog {#blog}
+
+Endpoints:
+
+* [`GET /blog`](#get-blog) - Get blog data
+* [`PATCH /blog`](#update-blog) - Update blog data
+* [`POST /blog/variant`](#create-blog-variant) - Create a blog variant
+* [`PATCH /blog/variant`](#update-blog-variant) - Update a blog variant
+
+Objects:
+
+* [Blog](#blog-object)
+* [BlogVariant](#blog-variant-object)
+
+#### Get blog data {#get-blog}
+
+`GET /blog`
+
+```ts
+type Request = {}
+type Response = Blog
+```
+
+#### Update blog data {#update-blog}
+
+`PATCH /blog`
+
+```ts
+type Request = Partial<Blog> // except id and variants
+type Response = Blog
+```
+
+#### Create a blog variant {#create-blog-variant}
+
+`POST /blog/variant`
+
+```ts
+type Request = {
+    language_id: number
+}
+type Response = BlogVariant
+```
+
+#### Update a blog variant {#update-blog-variant}
+
+`PATCH /blog/variant`
+
+```ts
+type Request = {
+    language_id: number,
+    name?: string,
+    description?: string
+}
+type Response = BlogVariant
+```
 
 ### Posts & Pages {#posts}
 
-Endpoints
+Endpoints:
 
 * [`GET /posts`](#endpoint-posts-get) - Get posts
 * [`GET /pages`](#endpoint-pages-get) - Get pages
@@ -53,6 +106,69 @@ Endpoints
 * [`POST /post/{id}/variant`](#endpoint-post-variant-create) - Create a post language variant
 * [`DELETE /post/{id}/variant`](#endpoint-post-variant-delete) - Delete a post language variant
 
+Objects:
+
+
+
+## Objects
+
+### Blog Object {#blog-object}
+
+```ts
+interface Blog {
+    id: number,
+    created_at: number,
+    is_blocked: boolean,
+    subdomain: string,
+    type: 'default' | 'dev',
+    hosting_at: 'subdomain' | 'domain' | 'self',
+    hosting_domain: string | null,
+    hosting_url: string | null,
+
+    embeddable: boolean,
+    embedding_domains: string | null,
+
+    logo_url: string | null,
+    cover_url: string | null,
+
+    social_facebook: string | null,
+    social_twitter: string | null,
+    social_linkedin: string | null,
+    social_youtube: string | null,
+    social_tiktok: string | null,
+    social_instagram: string | null,
+    social_github: string | null,
+
+    code_head: string | null,
+    code_foot: string | null,
+
+    seo_indexing: boolean,
+    seo_robots_txt: string | null,
+    seo_external_links_follow: 'follow' | 'nofollow',
+    comments_code: string | null,
+    newsletter_code: string | null,
+
+    color_modes: 'light' | 'dark' | 'both',
+    color_mode_default: 'light' | 'dark' | 'os',
+
+    syntax_on: boolean,
+    syntax_line_numbers: boolean,
+    syntax_theme: string | null
+
+    flashload: boolean,
+    variants: BlogVariant[]
+}
+```
+
+### Blog Variant Object {#blog-variant-object}
+
+```ts
+interface BlogVariant {
+  language_id: number,
+  name: string | null,
+  description: string | null,
+}
+```
 
 <!--
 #### Post Object {#post-object}
@@ -201,3 +317,5 @@ interface Response {
     }
 }
 ```
+
+-->

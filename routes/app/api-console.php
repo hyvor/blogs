@@ -1,4 +1,4 @@
-<?php
+<?php declare(strict_types=1);
 
 use App\Http\Controllers\ConsoleAPI\Billing\ConsoleBillingController;
 use App\Http\Controllers\ConsoleAPI\Billing\ConsoleBillingPaddleController;
