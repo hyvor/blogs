@@ -1,6 +1,6 @@
 import {CaretDownFill, PencilFill} from "react-bootstrap-icons";
 import ActionButton from "../../../ReusableComponents/ActionButton";
-import React, {useState} from "react";
+import React, {useEffect, useState} from "react";
 import {usePostActions, usePostValues} from "../helpers";
 import {toast} from "react-toastify";
 import {Post, PostVariant} from "../../../types";
@@ -10,6 +10,12 @@ export default  function MainButton({id} : {id: number}) {
 
     const { currentVariant, editorState, forceSavePostAjax } = usePostValues(id)
     const { changeEditorState, forceSavePost, savePost } = usePostActions(id)
+
+
+    useEffect(() => {
+        // Make the editor editable when the post is loaded
+        changeEditorState('isNonDraftEditing', true);
+    }, []);
 
     function handleUpdateNonDraft() {
 
@@ -49,22 +55,16 @@ export default  function MainButton({id} : {id: number}) {
     }
 
     if (currentVariant.status === 'published' || currentVariant.status === 'scheduled') {
-        if (!editorState.isNonDraftEditing) {
-            name = "Edit";
-            icon = <PencilFill />
-            onClick = () => changeEditorState('isNonDraftEditing', true);
-        } else {
-            return <ActionButton
-                className="small main-button"
-                status={!editorState.isNonDraftUpdating ? "stale" : (forceSavePostAjax.status || 'stale')}
-                staleName="Update"
-                loadingName="Updating"
-                successName="Updated"
-                errorName="Try again"
-                staleOnClick={handleUpdateNonDraft}
-                errorOnClick={handleUpdateNonDraft}
-            />
-        }
+        return <ActionButton
+            className="small main-button"
+            status={!editorState.isNonDraftUpdating ? "stale" : (forceSavePostAjax.status || 'stale')}
+            staleName="Update"
+            loadingName="Updating"
+            successName="Updated"
+            errorName="Try again"
+            staleOnClick={handleUpdateNonDraft}
+            errorOnClick={handleUpdateNonDraft}
+        />
     } else {
         name = "Publish";
         onClick = () => changeEditorState('isPublishing', true);

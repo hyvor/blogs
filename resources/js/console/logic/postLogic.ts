@@ -93,8 +93,7 @@ const postLogic = kea<postLogicType>([
          * Used for discarding changes
          */
         dicardChanges: () => {
-            // Reset the post before the changes
-            actions.set(values.postOriginal);
+            console.log('diffs:', values.diff);
         },
 
         /**
