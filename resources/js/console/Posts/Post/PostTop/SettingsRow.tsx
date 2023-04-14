@@ -8,6 +8,7 @@ import MainButton from "./MainButton";
 import Publisher from "./Publisher";
 import PostSettings from "./PostSettings";
 import PostLanguageSelector from "../PostLanguageSelector";
+import DiscardingButton from "./DiscardingButton";
 
 export default function SettingsRow({ id }: { id: number }) {
 
@@ -53,6 +54,7 @@ export default function SettingsRow({ id }: { id: number }) {
             <div className="publish-buttons">
                 <span className={`global-post-status ${currentVariant.status} large`}>{currentVariant.status}</span>
                 <UnpublishButton id={id} />
+                <DiscardingButton id={id} />
                 <MainButton id={id} />
 
                 <Publisher id={id} />

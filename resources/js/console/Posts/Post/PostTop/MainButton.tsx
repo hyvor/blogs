@@ -9,7 +9,7 @@ export default  function MainButton({id} : {id: number}) {
     let name, onClick: any, icon;
 
     const { currentVariant, editorState, forceSavePostAjax } = usePostValues(id)
-    const { changeEditorState, forceSavePost, savePost, dicardChanges } = usePostActions(id)
+    const { changeEditorState, forceSavePost, savePost } = usePostActions(id)
 
     useEffect(() => {
         // Make the editor editable when the post is loaded
@@ -19,12 +19,10 @@ export default  function MainButton({id} : {id: number}) {
     function handleUpdateNonDraft() {
 
         if (!currentVariant.content_unsaved) {
-            changeEditorState('isNonDraftEditing', false);
             savePost();
             return;
         }
 
-        changeEditorState('isNonDraftUpdating', true);
 
         const update = {} as Partial<Post>
         const variant = {
@@ -37,8 +35,7 @@ export default  function MainButton({id} : {id: number}) {
         forceSavePost({
             update,
             onSave: (p: Post) => {
-                changeEditorState('isNonDraftUpdating', false)
-                changeEditorState('isNonDraftEditing', false)
+                
                 toast.success(
                     <div>Post Updated. <a
                         className="link"
@@ -54,8 +51,7 @@ export default  function MainButton({id} : {id: number}) {
     }
 
     if (currentVariant.status === 'published' || currentVariant.status === 'scheduled') {
-        return <div className="d-flex flex-row">
-                <ActionButton
+        return  <ActionButton
                 className="small main-button"
                 status={!editorState.isNonDraftUpdating ? "stale" : (forceSavePostAjax.status || 'stale')}
                 staleName="Save changes"
@@ -65,17 +61,6 @@ export default  function MainButton({id} : {id: number}) {
                 staleOnClick={handleUpdateNonDraft}
                 errorOnClick={handleUpdateNonDraft}
             />
-              <ActionButton
-                className="small main-button"
-                status={!editorState.isNonDraftUpdating ? "stale" : (forceSavePostAjax.status || 'stale')}
-                staleName="Discard changes"
-                loadingName="Discarding"
-                successName="Discarded"
-                errorName="Try again"
-                staleOnClick={dicardChanges}
-                errorOnClick={dicardChanges}
-                />
-        </div>
        
     } else {
         name = "Publish";

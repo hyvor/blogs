@@ -93,6 +93,7 @@ const postLogic = kea<postLogicType>([
          * Used for discarding changes
          */
         dicardChanges: () => {
+            // Reset the post before the changes
             actions.set(values.postOriginal);
         },
 
@@ -209,6 +210,7 @@ const postLogic = kea<postLogicType>([
                 isUnpublishing: false,
                 // just editing the post
                 isNonDraftEditing: false,
+                isDiscarding: false,
                 // updater opened
                 isNonDraftUpdating: false,
             } as PostEditorState,
