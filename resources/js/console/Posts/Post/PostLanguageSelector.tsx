@@ -1,25 +1,42 @@
 import React, {useState} from 'react'
-import { Check, Clock, Dot, Plus } from 'react-bootstrap-icons';
+import {Check, Clock, Dot, Magic, Plus} from 'react-bootstrap-icons';
 import languagesLogic from "../../logic/languagesLogic";
 import {useValues} from "kea";
 import getSubdomain from "../../logic-helpers/subdomain";
 import {usePostActions, usePostValues} from "./helpers";
 import {Language, Post, PostStatus} from "../../types";
 import Spinner from "../../ReusableComponents/Spinner";
+import AutoTranslate from "./AutoTranslate";
 
 export default function PostLanguageSelector({ id }: { id: number }) {
 
     const { languages } = useValues(languagesLogic({subdomain: getSubdomain()}))
+    const { editorState } = usePostValues(id)
 
-    return <div className="post-languages">
+    const currentLanguage = languages.find(l => l.id === editorState.languageId)
+    const [isAutoTranslating, setIsAutoTranslating] = useState(false);
+
+    return <div className="post-languages-wrap">
+        <div className="post-languages">
+            {
+                languages.map(lang =>
+                    <LanguageTag
+                        key={lang.id}
+                        id={id}
+                        language={lang}
+                    />
+                )
+            }
+        </div>
+
         {
-            languages.map(lang =>
-                <LanguageTag
-                    key={lang.id}
-                    id={id}
-                    language={lang}
-                />
-            )
+            !currentLanguage?.is_primary &&
+            <div>
+                <button className="button light small" onClick={() => setIsAutoTranslating(true)}>
+                    Auto-Translate <Magic />
+                </button>
+                { isAutoTranslating && <AutoTranslate id={id} onCancel={() => setIsAutoTranslating(false)} /> }
+            </div>
         }
     </div>
 
