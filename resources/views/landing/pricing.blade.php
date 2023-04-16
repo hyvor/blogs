@@ -30,11 +30,22 @@ $storageInfo = <<<HTML
 </span>
 HTML;
 
+$autoTranslateInfo = <<<HTML
+<span class="info">
+    <span class="icon">$svgInfo</span>
+    <div class="info-popup">
+        Maximum number of characters that can be auto-translated per month via DeepL.
+    </div>
+</span>
+HTML;
+
+
 $pricingRow = "<tr>
                 <th></th>
                 <th>Price</th>
                 <th>Users $usersInfo</th>
                 <th>Storage $storageInfo</th>
+                <th>Auto-translate $autoTranslateInfo</th>
             </tr>";
 
 ?>
@@ -83,6 +94,7 @@ $pricingRow = "<tr>
                 </td>
                 <td>2</td>
                 <td>1GB</td>
+                <td><?= $svgCancel ?></td>
             </tr>
 
             <tr>
@@ -90,6 +102,7 @@ $pricingRow = "<tr>
                 <td><span class="price">$19</span>/month</td>
                 <td>5</td>
                 <td>40GB</td>
+                <td>100,000 chars/m</td>
             </tr>
 
             <tr>
@@ -97,6 +110,7 @@ $pricingRow = "<tr>
                 <td><span class="price">$49</span>/month</td>
                 <td>15</td>
                 <td>250GB</td>
+                <td>300,000 chars/m</td>
             </tr>
 
             <tr>
@@ -104,6 +118,7 @@ $pricingRow = "<tr>
                 <td><span class="price">$299</span>/month</td>
                 <td>100</td>
                 <td>1TB</td>
+                <td>1,000,000 chars/m</td>
             </tr>
 
             <tr>
@@ -111,6 +126,7 @@ $pricingRow = "<tr>
                 <td><span class="price">$699</span>/month</td>
                 <td>1000</td>
                 <td>2TB</td>
+                <td>5,000,000 chars/m</td>
             </tr>
 
             <tr>
@@ -118,6 +134,7 @@ $pricingRow = "<tr>
                 <td><span class="price">$1299</span>/month</td>
                 <td>Unlimited</td>
                 <td>5TB</td>
+                <td>10,000,000 chars/m</td>
             </tr>
 
 
