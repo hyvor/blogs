@@ -19,8 +19,8 @@ return new class extends Migration
 
             $table->bigInteger('blog_id')->unsigned();
 
-            $table->string('source_lang');
-            $table->string('target_lang');
+            $table->string('source_lang', 10);
+            $table->string('target_lang', 10);
             $table->integer('chars');
 
             $table->index('blog_id');
