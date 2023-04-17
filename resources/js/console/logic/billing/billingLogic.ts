@@ -50,7 +50,8 @@ const billingLogic = kea<billingLogicType>([
         usage: [
             {} as {
                 users: Usage,
-                media: Usage
+                media: Usage,
+                auto_translate: Usage,
             },
             {
                 setUsage: (_, {usage}) => usage
