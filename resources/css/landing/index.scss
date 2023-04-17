@@ -147,6 +147,7 @@ body.index {
             box-shadow: 0 0 10px 10px rgba(0,0,0,0.05);
             width: 900px;
             max-width: 100%;
+            height: auto;
             margin: auto;
         }
     }
@@ -382,7 +383,7 @@ body.index {
                 font-weight: 600;
             }
             .description {
-                color: $color-text-light;
+                color: #555;
             }
         }
 

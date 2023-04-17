@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
 <head>
     @include('landing.meta', [
         'title' => 'Hyvor Blogs - Multi-language blogging platform',
@@ -565,7 +565,7 @@ c30.27,0,54.64-24.37,54.64-54.64v-1419l-363.61-362.75L1258.7,336.75z"/>
 
         <div class="feature">
 
-            <img src="/img/landing/custom-themes.svg" />
+            <img src="/img/landing/custom-themes.svg" alt="Custom Themes" />
 
             <h4>Custom Themes</h4>
 
@@ -577,7 +577,7 @@ c30.27,0,54.64-24.37,54.64-54.64v-1419l-363.61-362.75L1258.7,336.75z"/>
 
         <div class="feature">
 
-            <img src="/img/landing/host-anywhere.svg" />
+            <img src="/img/landing/host-anywhere.svg" alt="Host Anywhere"  />
 
             <h4>Host Anywhere</h4>
 
@@ -593,7 +593,7 @@ c30.27,0,54.64-24.37,54.64-54.64v-1419l-363.61-362.75L1258.7,336.75z"/>
 
         <div class="feature">
 
-            <img src="/img/landing/multi-language.svg" />
+            <img src="/img/landing/multi-language.svg" alt="Multi-Language" />
 
             <h4>Multi Language</h4>
 
@@ -605,7 +605,10 @@ c30.27,0,54.64-24.37,54.64-54.64v-1419l-363.61-362.75L1258.7,336.75z"/>
 
         <div class="feature">
 
-            <img src="/img/landing/seo.svg" />
+            <img
+                src="/img/landing/seo.svg"
+                alt="In-built SEO"
+            />
 
             <h4>In-built SEO</h4>
 
@@ -632,7 +635,12 @@ c30.27,0,54.64-24.37,54.64-54.64v-1419l-363.61-362.75L1258.7,336.75z"/>
             Hyvor Blogs Console has everything you need to manage your blog easily. It is simple and initiative. The rich text editor is fun to work with. You can easily add images, embeds, code blocks, and more.
         </p>
 
-        <img src="/img/landing/console.png" alt="Hyvor Blogs Console" />
+        <img
+            src="/img/landing/console.png"
+            alt="Hyvor Blogs Console"
+            width="900"
+            height="534.23"
+        />
 
 
     </div>
@@ -649,7 +657,7 @@ c30.27,0,54.64-24.37,54.64-54.64v-1419l-363.61-362.75L1258.7,336.75z"/>
 
         <div class="feature">
 
-            <img src="/img/landing/team.svg" />
+            <img src="/img/landing/team.svg" alt="Blogging for Teams" />
 
             <h4>For Teams</h4>
 
@@ -661,7 +669,7 @@ c30.27,0,54.64-24.37,54.64-54.64v-1419l-363.61-362.75L1258.7,336.75z"/>
 
         <div class="feature">
 
-            <img src="/img/landing/fast.svg" />
+            <img src="/img/landing/fast.svg" alt="Fast Blogging Platform" />
 
             <h4>Super Fast</h4>
 
@@ -677,7 +685,7 @@ c30.27,0,54.64-24.37,54.64-54.64v-1419l-363.61-362.75L1258.7,336.75z"/>
 
         <div class="feature">
 
-            <img src="/img/landing/data.svg" />
+            <img src="/img/landing/data.svg" alt="Data Ownership" />
 
             <h4>Data Ownership</h4>
 
@@ -689,7 +697,7 @@ c30.27,0,54.64-24.37,54.64-54.64v-1419l-363.61-362.75L1258.7,336.75z"/>
 
         <div class="feature">
 
-            <img src="/img/landing/control.svg" />
+            <img src="/img/landing/control.svg" alt="Control your blog" />
 
             <h4>Complete Control</h4>
 
@@ -798,7 +806,7 @@ c30.27,0,54.64-24.37,54.64-54.64v-1419l-363.61-362.75L1258.7,336.75z"/>
     <div class="quote">
 
         <div class="beaver">
-            <img src="/img/landing/beaver.svg" />
+            <img src="/img/landing/beaver.svg" alt="Beaver" width="100" height="100" />
         </div>
 
         <div class="person">
