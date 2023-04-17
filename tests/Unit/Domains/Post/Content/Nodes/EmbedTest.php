@@ -36,7 +36,7 @@ test('json to HTML', function () {
 
     $post = PostContentRepository::getHtml($json, blog());
 
-    expect($post)->toBe("<x-embed>$this->html</x-embed>");
+    expect($post)->toBe("<x-embed data-url=\"$this->url\">$this->html</x-embed>");
 });
 
 it('handles when URL is null', function() {

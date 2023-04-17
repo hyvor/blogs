@@ -23,7 +23,7 @@ class Bookmark extends Node
     {
         return [
             [
-                'tag' => 'x-bookmark',
+                'tag' => 'a[class="bookmark"]',
                 'getAttrs' => fn (DOMElement $node) => [
                     'url' => $node->getAttribute('data-url'),
                 ],

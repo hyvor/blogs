@@ -55,6 +55,28 @@ test('JSON to HTML', function () {
     $this->assertStringNotContainsString($this->site, $html);
 });
 
+test('html to json', function() {
+
+    $html = <<<HTML
+    <a class="bookmark" data-url="https://talk.hyvor.com"></a>
+    HTML;
+
+    $json = PostContentRepository::getJsonFromHtml($html, blog());
+
+    expect($json)->toBe(json_encode([
+        'type' => 'doc',
+        'content' => [
+            [
+                'type' => 'bookmark',
+                'attrs' => [
+                    'url' => 'https://talk.hyvor.com',
+                ],
+            ],
+        ],
+    ]));
+
+});
+
 test('custom template', function () {
     $template = <<<'TWIG'
         <a class="bookmark">

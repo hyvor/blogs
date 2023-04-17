@@ -45,8 +45,10 @@ class Embed extends Node
         } catch (Exception) {
         }
 
+        $safeUrl = htmlspecialchars($url, ENT_QUOTES, 'UTF-8');
+
         return [
-            'content' => $embedContent ? '<x-embed>'.$embedContent.'</x-embed>' : '',
+            'content' => $embedContent ? "<x-embed data-url=\"$safeUrl\">" . $embedContent . '</x-embed>' : '',
         ];
     }
 }
