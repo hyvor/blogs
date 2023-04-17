@@ -3,7 +3,7 @@
 <head>
     @include('landing.meta', [
         'title' => 'Hyvor Blogs - Multi-language blogging platform',
-        'description' => 'Hyvor Blogs is a simple and powerful multi-language blogging platform with customizable themes, in-built SEO, and API support.',
+        'description' => 'Hyvor Blogs is a simple and powerful multi-language blogging platform with customizable themes, custom domains, in-built SEO, APIs, and more features. Start your blog today!',
         'image' => 'https://blogs.hyvor.com/img/banner.png',
         'canonical' => 'https://blogs.hyvor.com',
     ])
@@ -22,10 +22,10 @@
 
             <div class="hero-title">
                 <h1>
-                    Start Your Blog Today!
+                    Multi-language blogging platform
                 </h1>
                 <h2>
-                    Hyvor Blogs is a simple & powerful platform to start a fully-customizable multi-language blog.
+                    Start a fully-customizable, multi-language blog with Hyvor Blogs, the blogging platform built to make blogging easy.
                 </h2>
                 <a data-flashload-skip-link href="/console?signup=1" class="button big">
                     Start a Blog Now
@@ -570,7 +570,7 @@ c30.27,0,54.64-24.37,54.64-54.64v-1419l-363.61-362.75L1258.7,336.75z"/>
             <h4>Custom Themes</h4>
 
             <p>
-                Choose from pre-built themes or create your own theme from scratch.
+                Choose from pre-built blog themes or create your own theme from scratch.
             </p>
 
         </div>
@@ -666,7 +666,7 @@ c30.27,0,54.64-24.37,54.64-54.64v-1419l-363.61-362.75L1258.7,336.75z"/>
             <h4>Super Fast</h4>
 
             <p>
-                Blogs are super-fast due to the use of static pre-rendering and caching. No Javascript bloat.
+                Blogs are super-fast due to the use of pre-rendering and caching. No Javascript bloat.
             </p>
 
         </div>
