@@ -6,9 +6,10 @@ use App\Domains\Integrations\DeepL\DeepLPostTranslator;
 use App\Domains\Integrations\DeepL\DeepLService;
 use App\Domains\Integrations\DeepL\Enums\DeepLSourceLangEnum;
 use App\Domains\Integrations\DeepL\Enums\DeepLTargetLangEnum;
-use App\Domains\Post\Content\PostContentRepository;
+use App\Domains\Integrations\DeepL\Exceptions\DeepLApiException;
+use App\Domains\Integrations\DeepL\Exceptions\DeepLHtmlProcessingException;
+use App\Exceptions\TrustedException;
 use App\Models\Blog;
-use App\Models\Post;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use Illuminate\Validation\Rules\Enum;
@@ -33,11 +34,17 @@ class ConsoleAiController
 
         $translator = new DeepLPostTranslator($blog, $content, $title, $sourceLang, $targetLang);
 
-        [
-            'title' => $translatedTitle,
-            'content' => $translatedContent,
-            'chars' => $chars
-        ] = $translator->translate();
+        try {
+            [
+                'title' => $translatedTitle,
+                'content' => $translatedContent,
+                'chars' => $chars
+            ] = $translator->translate();
+        } catch (DeepLHtmlProcessingException | DeepLApiException $e) {
+            throw new TrustedException($e->getMessage());
+        }
+
+        DeepLService::addAutoTranslationRecord($blog, $sourceLang, $targetLang, $chars);
 
         return response()->json([
             'title' => $translatedTitle,

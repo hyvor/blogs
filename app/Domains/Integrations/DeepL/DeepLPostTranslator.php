@@ -4,6 +4,7 @@ namespace App\Domains\Integrations\DeepL;
 
 use App\Domains\Integrations\DeepL\Enums\DeepLSourceLangEnum;
 use App\Domains\Integrations\DeepL\Enums\DeepLTargetLangEnum;
+use App\Domains\Integrations\DeepL\Exceptions\DeepLApiException;
 use App\Domains\Integrations\DeepL\Exceptions\DeepLHtmlProcessingException;
 use App\Domains\Post\Content\PostContentRepository;
 use App\Models\Blog;
@@ -26,6 +27,8 @@ class DeepLPostTranslator
 
     /**
      * @return array{title: string, content: string, chars: int}
+     * @throws DeepLHtmlProcessingException
+     * @throws DeepLApiException
      */
     public function translate() : array
     {
@@ -46,7 +49,7 @@ class DeepLPostTranslator
         }, $html);
 
         if (!$html) {
-            throw new DeepLHtmlProcessingException('Unable to replace code blocks');
+            throw new DeepLHtmlProcessingException('Unable to replace code blocks'); // @codeCoverageIgnore
         }
 
         $chars = strlen(strip_tags($html));
@@ -62,7 +65,7 @@ class DeepLPostTranslator
         }, $translatedHtml);
 
         if (!$translatedHtml) {
-            throw new DeepLHtmlProcessingException('Unable to replace code blocks back');
+            throw new DeepLHtmlProcessingException('Unable to replace code blocks back'); // @codeCoverageIgnore
         }
 
         $content = PostContentRepository::getJsonFromHtml($translatedHtml, $this->blog);

@@ -5,6 +5,8 @@ namespace App\Domains\Integrations\DeepL;
 use App\Domains\Integrations\DeepL\Enums\DeepLSourceLangEnum;
 use App\Domains\Integrations\DeepL\Enums\DeepLTargetLangEnum;
 use App\Domains\Integrations\DeepL\Exceptions\DeepLApiException;
+use App\Models\AutoTranslation;
+use App\Models\Blog;
 use Illuminate\Support\Facades\Http;
 
 class DeepLService
@@ -13,6 +15,7 @@ class DeepLService
     /**
      * @param string[] $texts
      * @return string[]
+     * @throws DeepLApiException
      */
     public static function translate(
         array $texts,
@@ -21,7 +24,7 @@ class DeepLService
     ) : array
     {
 
-        $url = 'https://api-free.deepl.com/v2/translate';
+        $url = 'https://api.deepl.com/v2/translate';
         $params = [
             'text' => $texts,
             'source_lang' => $sourceLang->value,
@@ -51,6 +54,24 @@ class DeepLService
         }
 
         return $translatedTexts;
+    }
+
+
+    public static function addAutoTranslationRecord(
+        Blog $blog,
+        DeepLSourceLangEnum $sourceLang,
+        DeepLTargetLangEnum $targetLang,
+        int $chars
+    ) : AutoTranslation
+    {
+
+        return AutoTranslation::create([
+            'blog_id' => $blog->id,
+            'source_lang' => $sourceLang->value,
+            'target_lang' => $targetLang->value,
+            'chars' => $chars,
+        ]);
+
     }
 
 }
