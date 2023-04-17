@@ -33,6 +33,7 @@ export default function PostMiddle({ id }: { id: number }) {
             value={content || ''}
             currentLanguageId={editorState.languageId}
             status={currentVariant.status}
+            version={editorState.version}
             onChange={(v: string) => handleContentUpdate(v)}
         />
     </div>

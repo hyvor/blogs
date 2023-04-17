@@ -77,9 +77,10 @@ interface PopupConfirmProps {
     onClick: Function,
     onCancel: Function,
     isLoading?: boolean,
+    loadingName?: ReactNode
 }
 
-export function PopupConfirm( { title, text, name, buttonClass, onClick, onCancel, isLoading = false } : PopupConfirmProps ) {
+export function PopupConfirm( { title, text, name, buttonClass, onClick, onCancel, isLoading = false, loadingName } : PopupConfirmProps ) {
     return <Popup 
         header={<PopupHeaderDefault title={title} />}
         body={
@@ -92,6 +93,7 @@ export function PopupConfirm( { title, text, name, buttonClass, onClick, onCance
                 onCancel={onCancel}
                 buttonClass={buttonClass}
                 isLoading={isLoading}
+                loadingName={loadingName}
             />
         }
     />

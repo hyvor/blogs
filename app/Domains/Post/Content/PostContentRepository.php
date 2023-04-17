@@ -1,4 +1,4 @@
-<?php
+<?php declare(strict_types=1);
 
 namespace App\Domains\Post\Content;
 
@@ -33,24 +33,38 @@ use App\Models\PostVariant;
 use Faker\Factory;
 use Tiptap\Editor;
 
+/**
+ * @phpstan-type EditorOptions array{code_block_is_plain?: bool}
+ */
 class PostContentRepository
 {
-    public static function getHtml(array|string $json, Blog $blog)
+
+    /**
+     * @param array<mixed>|string $json
+     * @param EditorOptions $options
+     */
+    public static function getHtml(array|string $json, Blog $blog, array $options = []) : string
     {
-        return self::getEditor($blog)->setContent($json)->getHTML();
+        return self::getEditor($blog, $options)->setContent($json)->getHTML();
     }
 
-    public static function getText(array|string $json, Blog $blog)
+    /**
+     * @param array<mixed>|string $json
+     */
+    public static function getText(array|string $json, Blog $blog) : string
     {
         return self::getEditor($blog)->setContent($json)->getText();
     }
 
-    public static function getJsonFromHtml(string $html, Blog $blog)
+    public static function getJsonFromHtml(string $html, Blog $blog) : string
     {
         return self::getEditor($blog)->setContent($html)->getJSON();
     }
 
-    private static function getEditor(Blog $blog): Editor
+    /**
+     * @param EditorOptions $options
+     */
+    private static function getEditor(Blog $blog, array $options = []): Editor
     {
         return new Editor([
             'extensions' => [
@@ -64,7 +78,10 @@ class PostContentRepository
                 new Blockquote(),
                 new HorizontalRule(),
                 new Heading(),
-                new CodeBlock(['blog' => $blog]),
+                new CodeBlock([
+                    'blog' => $blog,
+                    'is_plain' => $options['code_block_is_plain'] ?? false
+                ]),
                 new CustomHtml(),
                 new Figure(),
                 new Figcaption(),

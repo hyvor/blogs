@@ -64,9 +64,10 @@ interface EditorProps {
     currentLanguageId: number,
     status: string,
     onChange: (val: string) => void,
+    version: number,
 }
 
-export default function Editor({ id, currentLanguageId, status, value, onChange }: EditorProps) {
+export default function Editor({ id, currentLanguageId, status, value, onChange, version }: EditorProps) {
 
     const editorRef = useRef<null | HTMLDivElement>(null)
     const mounted = useRef(false)
@@ -116,7 +117,7 @@ export default function Editor({ id, currentLanguageId, status, value, onChange 
     useUpdateEffect(() => {
         const view = createEditor()
         return () => view.destroy();
-    }, [id, currentLanguageId, status])
+    }, [id, currentLanguageId, status, version])
 
     return <div className="prosemirror-editor-wrap" ref={editorRef} />
 

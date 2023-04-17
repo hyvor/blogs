@@ -15,6 +15,8 @@ test('json to HTML', function () {
                 'type' => 'code_block',
                 'attrs' => [
                     'language' => 'php',
+                    'annotations' => 'h=1',
+                    'name' => 'file.js'
                 ],
                 'content' => [
                     [
@@ -33,11 +35,45 @@ test('json to HTML', function () {
 
     // <pre>
     $pre = $dom->firstChild;
-    $this->assertEquals('language-php has-line-numbers', $pre->attributes->getNamedItem('class')->value);
+
+    expect($pre->attributes->getNamedItem('class')->value)->toBe('language-php has-highlight has-line-numbers');
+    expect($pre->attributes->getNamedItem('data-annotations')->value)->toBe('h=1');
+    expect($pre->attributes->getNamedItem('data-name')->value)->toBe('file.js');
+    expect($pre->attributes->getNamedItem('data-language')->value)->toBe('php');
 
     // <code>
     $code = $pre->firstChild;
     expect($code->nodeName)->toBe('code');
+});
+
+test('json to HTML with is_plain', function() {
+
+    $code = '$x = null';
+
+    $json = json_encode([
+        'type' => 'doc',
+        'content' => [
+            [
+                'type' => 'code_block',
+                'attrs' => [
+                    'language' => 'php',
+                ],
+                'content' => [
+                    [
+                        'type' => 'text',
+                        'text' => $code,
+                    ],
+                ],
+            ],
+        ],
+    ]);
+
+    $html = PostContentRepository::getHtml($json, blog(), [
+        'code_block_is_plain' => true
+    ]);
+
+    expect($html)->toContain('<code>$x = null</code>');
+
 });
 
 test('HTML to JSON', function () {
@@ -45,7 +81,7 @@ test('HTML to JSON', function () {
     $content = '$x = null';
     $annotations = 'h=1';
 
-    $html = "<pre class=\"language-php\" data-name=\"$name\" data-annotations=\"$annotations\">$content</pre>";
+    $html = "<pre class=\"language-php\" data-language=\"php\" data-name=\"$name\" data-annotations=\"$annotations\">$content</pre>";
 
     $json = PostContentRepository::getJsonFromHtml($html, blog());
 

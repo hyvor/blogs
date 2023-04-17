@@ -21,6 +21,11 @@ export function Usage() {
                 data={usage.media}
                 bytes={true}
             />
+            <UsageBar
+                name="Auto-Translate Characters (this month)"
+                data={usage.auto_translate}
+                zero={true}
+            />
            {/* <div className="section-desc">
                 There may be a delay to update usage data
             </div>*/}
@@ -28,7 +33,7 @@ export function Usage() {
 
 }
 
-function UsageBar({name, data, bytes = false} : {name: string, data: any, bytes?: boolean}) {
+function UsageBar({name, data, bytes = false, zero = false} : {name: string, data: any, bytes?: boolean, zero?: boolean}) {
 
     const [width, setWidth] = useState("0%");
 
@@ -54,7 +59,7 @@ function UsageBar({name, data, bytes = false} : {name: string, data: any, bytes?
             </div>
             <div className="usage-number">
                 <span className="usage-now">{current}</span>
-                <span className="usage-full">/ {total === 0 ? "∞" : total}</span>
+                <span className="usage-full">/ {total === 0 && !zero ? "∞" : total}</span>
             </div>
         </div>
         <div className="usage-bar-bar">

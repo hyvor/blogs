@@ -29,14 +29,7 @@ class CodeBlock extends Node
     {
         return [
             'language' => [
-                'parseHTML' => function ($DOMNode) {
-                    return preg_replace(
-                        '/^language-/',
-                        '',
-                        $DOMNode->getAttribute('class')
-                    ) ?: null;
-                },
-                'rendered' => false,
+                'parseHTML' => fn ($node) => $node->getAttribute('data-language')
             ],
             'name' => [
                 'parseHTML' => fn ($node) => $node->getAttribute('data-name'),
@@ -54,6 +47,7 @@ class CodeBlock extends Node
          * @var Blog $blog
          */
         $blog = $this->options['blog'];
+        $isPlain = $this->options['is_plain'] ?? false;
 
         $syntaxOn = $blog->getMeta('syntax_on');
         $lineNumbers = $blog->getMeta('syntax_line_numbers');
@@ -72,7 +66,7 @@ class CodeBlock extends Node
             'onmouseleave' => '',
         ];
 
-        if ($syntaxOn) {
+        if (!$isPlain && $syntaxOn) {
             [
                 'pre' => $pre,
                 'code' => $code
@@ -85,7 +79,7 @@ class CodeBlock extends Node
             );
         }
 
-        $template = ThemeFilesRepository::getFile(
+        $template = $isPlain ? null : ThemeFilesRepository::getFile(
             $blog,
             'block-code.twig',
             ThemeFileFolderEnum::TEMPLATES
@@ -103,6 +97,7 @@ class CodeBlock extends Node
                 'name' => $fileName,
                 'theme' => $themeName,
                 'line_numbers' => $lineNumbers,
+                'annotations' => $annotations,
             ],
         ]);
 
