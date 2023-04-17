@@ -21,12 +21,13 @@ class DeepLPostTranslator
         private Blog $blog,
         private string $content,
         private string $title,
+        private string $description,
         private DeepLSourceLangEnum $sourceLang,
         private DeepLTargetLangEnum $targetLang
     ) {}
 
     /**
-     * @return array{title: string, content: string, chars: int}
+     * @return array{title: string, description: string, content: string, chars: int}
      * @throws DeepLHtmlProcessingException
      * @throws DeepLApiException
      */
@@ -52,12 +53,13 @@ class DeepLPostTranslator
             throw new DeepLHtmlProcessingException('Unable to replace code blocks'); // @codeCoverageIgnore
         }
 
-        $chars = strlen(strip_tags($html)) + strlen($this->title);
+        $chars = strlen(strip_tags($html)) + strlen($this->title) + strlen($this->description);
 
         [
             $translatedTitle,
-            $translatedHtml
-        ] = DeepLService::translate([$this->title, $html], $this->sourceLang, $this->targetLang);
+            $translatedDescription,
+            $translatedHtml,
+        ] = DeepLService::translate([$this->title, $this->description, $html], $this->sourceLang, $this->targetLang);
 
         // replace code blocks
         $translatedHtml = preg_replace_callback('/<pre(.*?)><code>(.*?)<\/code><\/pre>/s', function($matches) {
@@ -72,6 +74,7 @@ class DeepLPostTranslator
 
         return [
             'title' => $translatedTitle,
+            'description' => $translatedDescription,
             'content' => $content,
             'chars' => $chars,
         ];

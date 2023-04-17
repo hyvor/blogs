@@ -38,14 +38,16 @@ export default function AutoTranslate({id, onCancel}: { id: number, onCancel: Fu
 
         setIsTranslating(true);
 
-        api.post<{title: string, content: string}>(subdomain, `/ai/translate`, {
+        api.post<{title: string, description: string, content: string}>(subdomain, `/ai/translate`, {
             title: post.variants[0].title,
+            description: post.variants[0].description,
             content: post.variants[0].content,
             source_lang: sourceLanguage,
             target_lang: targetLanguage
         }).then(data => {
 
             updateCurrentPostVariantValue('title', data.title);
+            updateCurrentPostVariantValue('description', data.description);
             updateCurrentPostVariantValue('content', data.content);
             updateCurrentPostVariantValue('content_unsaved', data.content);
 
@@ -94,7 +96,10 @@ export default function AutoTranslate({id, onCancel}: { id: number, onCancel: Fu
                                         return <span
                                             className={"global-lang-tag" + (variantLanguageId === l.id ? " active" : "")}
                                             key={l.id}
-                                            onClick={() => setVariantLanguageId(l.id)}
+                                            onClick={() => {
+                                                setVariantLanguageId(l.id)
+                                                setSourceLanguage(findMatchingLanguage(l.code, SOURCE_LANGUAGES))
+                                            }}
                                         >{l.code}</span>
                                     })
                                 }

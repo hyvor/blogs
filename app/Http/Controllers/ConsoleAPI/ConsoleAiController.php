@@ -22,21 +22,31 @@ class ConsoleAiController
 
         $request->validate([
             'title' => 'string|nullable',
+            'description' => 'string|nullable',
             'content' => 'required|string', // JSON string to translate
             'source_lang' => ['required', new Enum(DeepLSourceLangEnum::class)],
             'target_lang' => ['required', new Enum(DeepLTargetLangEnum::class)],
         ]);
 
         $title = (string) $request->string('title');
+        $description = (string) $request->string('description');
         $content = (string) $request->string('content');
         $sourceLang = DeepLSourceLangEnum::from((string) $request->string('source_lang'));
         $targetLang = DeepLTargetLangEnum::from((string) $request->string('target_lang'));
 
-        $translator = new DeepLPostTranslator($blog, $content, $title, $sourceLang, $targetLang);
+        $translator = new DeepLPostTranslator(
+            $blog,
+            $content,
+            $title,
+            $description,
+            $sourceLang,
+            $targetLang
+        );
 
         try {
             [
                 'title' => $translatedTitle,
+                'description' => $translatedDescription,
                 'content' => $translatedContent,
                 'chars' => $chars
             ] = $translator->translate();
@@ -48,6 +58,7 @@ class ConsoleAiController
 
         return response()->json([
             'title' => $translatedTitle,
+            'description' => $translatedDescription,
             'content' => $translatedContent,
         ]);
 
