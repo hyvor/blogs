@@ -2,9 +2,11 @@
 
 namespace App\Domains\Integrations\DeepL;
 
+use App\Data\Enums\SubscriptionPlanEnum;
 use App\Domains\Integrations\DeepL\Enums\DeepLSourceLangEnum;
 use App\Domains\Integrations\DeepL\Enums\DeepLTargetLangEnum;
 use App\Domains\Integrations\DeepL\Exceptions\DeepLApiException;
+use App\Domains\Subscription\SubscriptionService;
 use App\Models\AutoTranslation;
 use App\Models\Blog;
 use Illuminate\Support\Facades\Http;
@@ -79,6 +81,27 @@ class DeepLService
         return intval(AutoTranslation::where('blog_id', $blog->id)
             ->where('created_at', '>=', now()->startOfMonth())
             ->sum('chars'));
+    }
+
+    public static function getMaxCharsPerMonth(?SubscriptionPlanEnum $plan) : int
+    {
+        return match ($plan) {
+            SubscriptionPlanEnum::A => 100000,
+            SubscriptionPlanEnum::B => 300000,
+            SubscriptionPlanEnum::C => 1000000,
+            SubscriptionPlanEnum::D => 5000000,
+            SubscriptionPlanEnum::E => 10000000,
+            default => 0
+        };
+    }
+
+    public static function hasReachedLimit(Blog $blog) : bool
+    {
+        $plan = SubscriptionService::getActiveBlogSubscription($blog)?->plan;
+        $maxChars = self::getMaxCharsPerMonth($plan);
+        $usage = self::getThisMonthUsage($blog);
+
+        return $usage >= $maxChars;
     }
 
 }

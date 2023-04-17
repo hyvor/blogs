@@ -21,6 +21,7 @@ it('translates', function() {
     ]);
 
     $blog = blogWithAccess();
+    createSubscription($blog);
 
     consoleApi($blog, 'post', '/ai/translate', [
         'source_lang' => 'EN',
@@ -56,6 +57,7 @@ it('translates with code block', function() {
     ]);
 
     $blog = blogWithAccess();
+    createSubscription($blog);
 
     $codeBlock = [
         'type' => 'code_block',
@@ -98,6 +100,7 @@ it('throws API error', function() {
     ]);
 
     $blog = blogWithAccess();
+    createSubscription($blog);
 
     consoleApi($blog, 'post', '/ai/translate', [
         'source_lang' => 'EN',
@@ -107,5 +110,28 @@ it('throws API error', function() {
     ])
         ->assertUnprocessable()
         ->assertSee('DeepL API error: status code 500');
+
+});
+
+it('throws an error when limits reached', function() {
+
+    $blog = blogWithAccess();
+    createSubscription($blog);
+
+    AutoTranslation::create([
+        'blog_id' => $blog->id,
+        'source_lang' => DeepLSourceLangEnum::EN,
+        'target_lang' => DeepLTargetLangEnum::FR,
+        'chars' => 100000000,
+    ]);
+
+    consoleApi($blog, 'post', '/ai/translate', [
+        'source_lang' => 'EN',
+        'target_lang' => 'FR',
+        'content' => PostContentRepository::generateParagraph('Testing this system'),
+        'title' => 'Hello World'
+    ])
+        ->assertUnprocessable()
+        ->assertSee('This blog has reached the limit of auto-translations for this month');
 
 });

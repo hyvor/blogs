@@ -28,6 +28,10 @@ class ConsoleAiController
             'target_lang' => ['required', new Enum(DeepLTargetLangEnum::class)],
         ]);
 
+        if (DeeplService::hasReachedLimit($blog)) {
+            throw new TrustedException('This blog has reached the limit of auto-translations for this month. Please upgrade your subscription plan.');
+        }
+
         $title = (string) $request->string('title');
         $description = (string) $request->string('description');
         $content = (string) $request->string('content');

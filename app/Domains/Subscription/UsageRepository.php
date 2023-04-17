@@ -55,14 +55,7 @@ class UsageRepository
             default => $gb
         };
 
-        $autoTranslateChars = match ($plan) {
-            SubscriptionPlanEnum::A => 100000,
-            SubscriptionPlanEnum::B => 300000,
-            SubscriptionPlanEnum::C => 1000000,
-            SubscriptionPlanEnum::D => 5000000,
-            SubscriptionPlanEnum::E => 10000000,
-            default => 0
-        };
+        $autoTranslateChars = DeepLService::getMaxCharsPerMonth($plan);
 
         return [
             'users' => $users,
