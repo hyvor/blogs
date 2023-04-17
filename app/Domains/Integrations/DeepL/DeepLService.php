@@ -74,4 +74,11 @@ class DeepLService
 
     }
 
+    public static function getThisMonthUsage(Blog $blog) : int
+    {
+        return intval(AutoTranslation::where('blog_id', $blog->id)
+            ->where('created_at', '>=', now()->startOfMonth())
+            ->sum('chars'));
+    }
+
 }

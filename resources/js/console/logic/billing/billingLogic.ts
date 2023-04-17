@@ -8,7 +8,8 @@ import api from "../../lib/api";
 interface ApiResponse {
     usage: {
         users: Usage,
-        media: Usage
+        media: Usage,
+        auto_translate: Usage,
     },
     subscriptions: Subscription[]
 }

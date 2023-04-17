@@ -52,7 +52,7 @@ class DeepLPostTranslator
             throw new DeepLHtmlProcessingException('Unable to replace code blocks'); // @codeCoverageIgnore
         }
 
-        $chars = strlen(strip_tags($html));
+        $chars = strlen(strip_tags($html)) + strlen($this->title);
 
         [
             $translatedTitle,

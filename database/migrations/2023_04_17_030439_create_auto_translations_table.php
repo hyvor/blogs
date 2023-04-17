@@ -24,6 +24,7 @@ return new class extends Migration
             $table->integer('chars');
 
             $table->index('blog_id');
+            $table->index(['blog_id', 'created_at']);
         });
     }
 

@@ -2,7 +2,10 @@
 
 namespace Tests\Feature\ConsoleAPI\Ai;
 
+use App\Domains\Integrations\DeepL\Enums\DeepLSourceLangEnum;
+use App\Domains\Integrations\DeepL\Enums\DeepLTargetLangEnum;
 use App\Domains\Post\Content\PostContentRepository;
+use App\Models\AutoTranslation;
 use Illuminate\Support\Facades\Http;
 
 it('translates', function() {
@@ -27,6 +30,13 @@ it('translates', function() {
         ->assertOk()
         ->assertJsonPath('title', 'Bonjour le monde')
         ->assertJsonPath('content', PostContentRepository::generateParagraph('tester ce système'));
+
+    $autoTranslation = AutoTranslation::where('blog_id', $blog->id)->first();
+
+    expect($autoTranslation->source_lang)->toBe(DeepLSourceLangEnum::EN);
+    expect($autoTranslation->target_lang)->toBe(DeepLTargetLangEnum::FR);
+    expect($autoTranslation->chars)->toBe(30); // html without tags + title length
+
 
 });
 
