@@ -33,6 +33,11 @@ export function hasTrialEndedAndNotActivated(subdomain: string) {
     return blog.type !== 'dev' && !blog.is_activated && blog.trial_ends_at < dayjs().unix()
 }
 
+export function hasSubscription(subdomain: string) {
+    const blog = getBlogFromSubdomain(subdomain)
+    return blog.subscription !== null;
+}
+
 /*export function isOnTrial(blog: UserBlogBlog) {
     return blog.trial_ends_at > dayjs().unix()
 }*/
