@@ -4,7 +4,7 @@ import {usePostActions, usePostValues} from "./helpers";
 
 export default function PostBottom({id} : {id:number}) {
 
-    const { savePostAjax, diff  } = usePostValues(id)
+    const { savePostAjax, diff, currentVariant  } = usePostValues(id)
     const { savePost } = usePostActions(id)
 
     const hasChanges = Object.keys(diff).length > 0
@@ -13,6 +13,10 @@ export default function PostBottom({id} : {id:number}) {
         className="post-editor-bottom"
     >
         <div className="post-editor-bottom-content">
+        {
+                currentVariant.status === 'published' && currentVariant.content !== currentVariant.content_unsaved ?
+                <div className="left text-edit">You are editing a published post</div> : <div></div>
+            }
             <div className="right">
 
                 <span className="saver">
@@ -36,6 +40,7 @@ export default function PostBottom({id} : {id:number}) {
                     <InfoCircle />
                 </a>
             </div>
+
         </div>
     </div>
 

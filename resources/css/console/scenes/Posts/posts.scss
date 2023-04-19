@@ -417,6 +417,9 @@
             align-items: center;
 
             .post-editor-bottom-content {
+                display: flex;
+                flex-direction: row;
+                justify-content: space-between;
                 width: 700px;
                 max-width: 100%;
                 padding: 0 30px;
@@ -428,6 +431,12 @@
 
             .right {
                 text-align: right;
+            }
+            .left {
+                text-align: left;
+            }
+            .text-edit {
+                color: $color-red-dark
             }
 
             .saver {
