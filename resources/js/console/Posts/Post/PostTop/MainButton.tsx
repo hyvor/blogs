@@ -39,7 +39,6 @@ export default  function MainButton({id} : {id: number}) {
             update,
             onSave: (p: Post) => {
                 changeEditorState('isNonDraftUpdating', false)
-                changeEditorState('isNonDraftEditing', false)
                 toast.success(
                     <div>Post Updated. <a
                         className="link"

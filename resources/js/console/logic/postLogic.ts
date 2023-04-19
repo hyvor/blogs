@@ -9,6 +9,7 @@ import {diff} from "deep-object-diff";
 import languagesLogic from "./languagesLogic";
 import {PostEditorState} from "../states";
 import merge from "deepmerge";
+import { usePostValues } from "../Posts/Post/helpers";
 
 async function updatePost(post: Post, diff: Partial<Post>) {
 
@@ -93,7 +94,14 @@ const postLogic = kea<postLogicType>([
          * Used for discarding changes
          */
         dicardChanges: () => {
-            console.log('diffs:', values.diff);
+            // Get content of the published post
+            const publishedPost = values.postOriginal.variants[0];
+            console.log('Published:', publishedPost);
+            actions.updateCurrentPostVariantValue("title", publishedPost.title);
+            actions.updateCurrentPostVariantValue("content_unsaved", publishedPost.content);
+            // Print current Post value
+            console.log('Current:', values.post.variants[0]);
+            //window.location.reload();
         },
 
         /**
