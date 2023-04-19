@@ -14,6 +14,8 @@ export default function Discarder({id} : {id: number}) {
     function handleDiscardChanges() {
         changeEditorState('isDiscarding', false);
         dicardChanges();
+        // Reload page for discarding changes
+        window.location.reload();
     }
 
     return editorState.isDiscarding ?
