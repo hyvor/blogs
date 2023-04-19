@@ -13,7 +13,9 @@ use App\Http\Controllers\Controller;
 use App\Http\Middleware\App\ConsoleApi\ConsoleApiAccessingUser;
 use App\Models\Blog;
 use App\Models\Post;
+use App\Models\PostVariant;
 use App\Models\User;
+use Illuminate\Database\Eloquent\Factories\Sequence;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 

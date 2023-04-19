@@ -106,6 +106,7 @@ class PostRepository
             // to prevent selecting post_variants data
             ->select('posts.*')
             ->orderByRaw("CASE post_variants.status WHEN 'draft' THEN 1 ELSE 2 END") // drafts first
+            ->orderBy('posts.published_at', 'desc')
             ->orderBy('posts.created_at', 'desc')
             ->limit($limit)
             ->offset($offset)
