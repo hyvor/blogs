@@ -1,5 +1,5 @@
 import { useValues } from "kea";
-import React, { useState } from "react";
+import React, {Fragment, useState} from "react";
 import themeLogic from "../logic/themeLogic";
 import Loader from "../ReusableComponents/Loader";
 import getSubdomain from "../logic-helpers/subdomain";
@@ -25,7 +25,7 @@ export default function Theme() {
         <button className="button small navigation-button" onClick={() => setDisplayNavigation(!displayNavigation)}>Files</button>
         <div className="box box-left">
             {
-                displayNavigation && <div><div className="middle-heading">
+                displayNavigation && <Fragment><div className="middle-heading">
                     <div className="theme-selector">
                         Theme&nbsp;&nbsp;<Changer />
                     </div>
@@ -71,7 +71,7 @@ export default function Theme() {
                             <Download />
                         </div>
                     </div>
-                </div>
+                </Fragment>
             }
 
 

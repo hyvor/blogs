@@ -10,7 +10,7 @@ Throughout this documentation, you may have seen that we try to make your blog a
 
 #### Step 2: The Magical Delivery API
 
-[Delivery API](api-delivery) is an original idea of ours. It takes a path in your blog and returns a JSON response describing how to "serve" it. For example, if you provide the `/` path, the Delivery API will tell you that is the index page and what content to show, with what content type. So, you get the idea now? When you get a request to your website's `/blog/{path}`, you can call our Delivery API and create an HTTP response using the JSON data of the Delivery API and send it back to the user. Calling the Delivery API everytime is slow and bad for your blog's speed. So, we cache the response after the first time. So, if the user requests the `/` path again, the response will be sent from the cache, which is super-fast!
+While there's no magic, [Delivery API](api-delivery) is an original idea of ours. It takes a path in your blog and returns a JSON response describing how to "serve" it. For example, if you provide the `/` path, the Delivery API will tell you that is the index page and what content to show, with what content type. So, you get the idea now? When you get a request to your website's `/blog/{path}`, you can call our Delivery API and create an HTTP response using the JSON data of the Delivery API and send it back to the user. Calling the Delivery API everytime is slow and bad for your blog's speed. So, we cache the response after the first time. So, if the user requests the `/` path again, the response will be sent from the cache, which is super-fast!
 
 But, when you update a post or edits the theme, how do we clear the cache?
 

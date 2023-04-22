@@ -20,7 +20,7 @@ Type | Description | Examples
 **Main** | These template files are rendered directly. | `index.twig` `post.twig`
 **Partial** | These templates are not rendered directly but included in main template files. They start with an underscore (`_`) | `_footer.twig`
 **Route** | These templates are used to define custom routes for a blog. The file name starts with `route-`. See [custom routes](#custom-routes) below | `route-authors.twig`
-**Component** | These templates are used to define new HTML structures for complex components like link previews. See [Embed: Link](#embed-link). | `component-rich-link.twig`
+**Component** | These templates are used to define new HTML structures for complex components like link previews. See [Embed: Link](themes-styles#embed-link). | `component-rich-link.twig`
 
 
 ## Route Variables {#variables}
