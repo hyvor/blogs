@@ -46,6 +46,7 @@ return [
     ],
     'Advanced' => [
         ['routes', 'Routes'],
+        ['embedding', 'Embedding'],
         // ['import', 'Import'],
         ['export', 'Export'],
     ],
