@@ -1,4 +1,4 @@
-<?php
+<?php declare(strict_types=1);
 
 namespace App\Domains\Delivery\Processors\Sitemap;
 
@@ -6,16 +6,22 @@ class UrlEntry
 {
     private string $loc;
 
+    /**
+     * @var array<object{code: string, url: string}>
+     */
     private array $langAlts = [];
 
+    /**
+     * @var array<string>
+     */
     private array $images = [];
 
-    public function loc(string $loc)
+    public function loc(string $loc) : void
     {
         $this->loc = $loc;
     }
 
-    public function langAlt(string $languageCode, string $url)
+    public function langAlt(string $languageCode, string $url) : void
     {
         $this->langAlts[] = (object) [
             'code' => $languageCode,
@@ -23,22 +29,24 @@ class UrlEntry
         ];
     }
 
-    public function image(string $url)
+    public function image(string $url) : void
     {
         $this->images[] = $url;
     }
 
-    public function toXML()
+    public function toXML() : string
     {
         $langAltsXML = '';
         foreach ($this->langAlts as $langAlt) {
+            $url = htmlspecialchars($langAlt->url);
             $langAltsXML .= <<<XML
-            <xhtml:link rel="alternate" hreflang="$langAlt->code" href="$langAlt->url" />\n
+            <xhtml:link rel="alternate" hreflang="$langAlt->code" href="$url" />\n
             XML;
         }
 
         $imagesXML = '';
         foreach ($this->images as $image) {
+            $image = htmlspecialchars($image);
             $imagesXML .= "<image:image><image:loc>$image</image:loc></image:image>\n";
         }
 
