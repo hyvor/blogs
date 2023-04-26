@@ -96,6 +96,7 @@ const postLogic = kea<postLogicType>([
         dicardChanges: () => {
             // Get content of the published post
             const publishedPost = values.postOriginal.variants[0];
+            actions.updateCurrentPostVariantValue('content', publishedPost.content);
             actions.updateCurrentPostVariantValue("content_unsaved", publishedPost.content);
             actions.savePost();
         },
