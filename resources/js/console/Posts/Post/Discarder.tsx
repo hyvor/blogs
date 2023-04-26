@@ -7,15 +7,14 @@ import {Post} from "../../types";
 export default function Discarder({id} : {id: number}) {
 
     const { editorState, currentVariant } = usePostValues(id)
-    const { changeEditorState, dicardChanges } = usePostActions(id)
+    const { changeEditorState, dicardChanges, loadPost } = usePostActions(id)
 
     const status = currentVariant.status
 
     function handleDiscardChanges() {
         changeEditorState('isDiscarding', false);
         dicardChanges();
-        // Reload page for discarding changes
-        window.location.reload();
+        loadPost();
     }
 
     return editorState.isDiscarding ?
