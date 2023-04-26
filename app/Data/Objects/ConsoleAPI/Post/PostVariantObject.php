@@ -15,6 +15,8 @@ class PostVariantObject
 
     public int $post_id;
 
+    public ?string $slug;
+
     public PostStatusEnum $status;
 
     public string $url;
@@ -49,6 +51,7 @@ class PostVariantObject
         $this->language_id = $language->id;
         $this->post_id = $post->id;
 
+        $this->slug = $variant->slug;
         $this->status = $variant->status;
         $this->url = PermalinkRepository::getPostPermalink($post, $blog, $language);
         $this->content = $variant->content;

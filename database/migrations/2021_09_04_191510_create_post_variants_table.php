@@ -20,6 +20,8 @@ return new class () extends Migration {
             $table->bigInteger('post_id');
             $table->bigInteger('language_id');
 
+            $table->string('slug')->nullable();
+
             $table->enum('status', ['published', 'draft', 'scheduled'])->default('draft');
 
             $table->mediumText('content')->nullable();
@@ -30,6 +32,8 @@ return new class () extends Migration {
             $table->integer('words')->nullable();
 
             $table->unique(['post_id', 'language_id']);
+            $table->unique(['language_id', 'slug']);
+
             $table->index('post_id');
             $table->index('language_id');
             $table->index('status');

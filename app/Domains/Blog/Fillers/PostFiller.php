@@ -1,10 +1,12 @@
-<?php
+<?php declare(strict_types=1);
 
 namespace App\Domains\Blog\Fillers;
 
 use App\Data\Enums\BlogTypeEnum;
+use App\Data\Enums\PostStatusEnum;
 use App\Domains\Post\Content\PostContentRepository;
 use App\Domains\Post\PostRepository;
+use App\Exceptions\SafetyException;
 use App\Models\Blog;
 use App\Models\Post;
 use App\Models\PostAuthor;
@@ -13,6 +15,10 @@ use App\Models\PostVariant;
 
 class PostFiller implements FillerInterface
 {
+
+    /**
+     * @var array<array<string, string>>
+     */
     private array $data = [
 
         // posts
@@ -57,32 +63,41 @@ class PostFiller implements FillerInterface
     {
     }
 
-    public function fill()
+    public function fill() : void
     {
         $language = $this->blog->languages[0];
+
+        if (!$language) {
+            throw new SafetyException;
+        }
 
         foreach ($this->data as $row) {
             $isPage = $row['type'] === 'page';
             $post = PostRepository::createPost($this->blog, $isPage);
 
-            $content = file_get_contents(resource_path("posts/{$row['file']}"));
+            $content = strval(file_get_contents(resource_path("posts/{$row['file']}")));
             $content = PostContentRepository::getJsonFromHtml($content, $this->blog);
 
             PostRepository::updatePost($post, [
-                'slug' => $row['slug'],
-                'published_at' => now()->timestamp,
+                'published_at' => now()->getTimestamp(),
             ]);
 
             PostRepository::updatePostVariant($post, $language, [
-                'status' => 'published',
+                'slug' => $row['slug'],
+                'status' => PostStatusEnum::PUBLISHED,
                 'content' => $content,
                 'title' => $row['title'],
                 'description' => $row['description'] ?? '',
             ]);
 
             if (! $isPage) {
-                PostTag::create(['post_id' => $post->id, 'tag_id' => $this->blog->tags[0]->id]);
-                PostAuthor::create(['post_id' => $post->id, 'user_id' => $this->blog->users[0]->id]);
+
+                if ($this->blog->tags[0])
+                    PostTag::create(['post_id' => $post->id, 'tag_id' => $this->blog->tags[0]->id]);
+
+                if ($this->blog->users[0])
+                    PostAuthor::create(['post_id' => $post->id, 'user_id' => $this->blog->users[0]->id]);
+
             }
         }
 

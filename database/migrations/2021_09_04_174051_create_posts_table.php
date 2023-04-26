@@ -29,13 +29,13 @@ class CreatePostsTable extends Migration
             $table->boolean('is_featured')->default(false);
 
             // data
-            $table->string('slug')->nullable();
+            // $table->string('slug')->nullable();
             $table->string('featured_image_url')->nullable();
             $table->string('canonical_url')->nullable();
             $table->text('code_head')->nullable();
             $table->text('code_foot')->nullable();
 
-            $table->unique(['blog_id', 'slug']);
+            //$table->unique(['blog_id', 'slug']);
 
             $table->index('blog_id');
             $table->index(['blog_id', 'created_at']);

@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers\ConsoleAPI;
 
+use App\Data\Enums\PostStatusEnum;
 use App\Data\Objects\ConsoleAPI\Post\PostObject;
 use App\Data\Objects\ConsoleAPI\Post\PostVariantObject;
 use App\Domains\Language\LanguageRepository;
@@ -128,7 +129,7 @@ class ConsolePostController extends Controller
     public function updatePost(Request $request, Blog $blog, Post $post) : JsonResponse
     {
         $request->validate([
-            'slug' => 'string|max:255|nullable',
+           // 'slug' => 'string|max:255|nullable',
             'is_featured' => 'boolean',
             'canonical_url' => 'string|max:255|nullable',
             'featured_image_url' => 'string|max:255|nullable',
@@ -139,7 +140,7 @@ class ConsolePostController extends Controller
 
         $postUpdates = [];
         $postUpdatables = [
-            'slug',
+           // 'slug',
             'is_featured',
             'canonical_url',
             'featured_image_url',
@@ -156,12 +157,12 @@ class ConsolePostController extends Controller
 
         if (count($postUpdates) > 0) {
 
-            if (array_key_exists('slug', $postUpdates)) {
+            /*if (array_key_exists('slug', $postUpdates)) {
                 $bySlugPost = PostRepository::getPostByBlogIdAndSlug($blog->id, strval($postUpdates['slug']));
                 if ($bySlugPost && $bySlugPost->id !== $post->id) {
                     throw new TrustedException('Slug has already been taken');
                 }
-            }
+            }*/
 
             PostRepository::updatePost($post, $postUpdates);
         }
@@ -201,6 +202,7 @@ class ConsolePostController extends Controller
     {
         $request->validate([
             'language_id' => 'required|integer',
+            'slug' => 'string|max:255|nullable',
             'status' => 'string|in:draft,published,scheduled',
             'content' => 'string|nullable',
             'content_unsaved' => 'string|nullable',
@@ -211,33 +213,54 @@ class ConsolePostController extends Controller
         $languageId = $request->integer('language_id');
         $language = LanguageRepository::getLanguageById($blog, $languageId);
 
-        if (! $language) {
+        if (!$language) {
             throw new TrustedException('Language not found', TrustedException::ERROR_UNPROCESSABLE);
         }
 
         $variant = PostRepository::getPostVariantByPostIdAndLanguageId($post->id, $languageId);
 
-        if (! $variant) {
+        if (!$variant) {
             throw new TrustedException('Variant not found', TrustedException::ERROR_NOT_FOUND);
         }
 
-        $variantUpdateables = [
-            'status',
-            'content',
-            'content_unsaved',
-            'title',
-            'description',
-        ];
-
         $variantUpdates = [];
 
-        foreach ($variantUpdateables as $updateable) {
-            if ($request->has($updateable)) {
-                $variantUpdates[$updateable] = $request->input($updateable);
-            }
-        }
+        if ($request->has('slug'))
+            $variantUpdates['slug'] = (string)$request->string('slug');
+
+        if ($request->has('status'))
+            $variantUpdates['status'] = PostStatusEnum::from((string)$request->string('status'));
+
+        if ($request->has('content'))
+            $variantUpdates['content'] = $request->input('content') !== null ?
+                (string) $request->string('content') :
+                null;
+
+        if ($request->has('content_unsaved'))
+            $variantUpdates['content_unsaved'] = $request->input('content_unsaved') !== null ?
+                (string) $request->string('content_unsaved') :
+                null;
+
+        if ($request->has('title'))
+            $variantUpdates['title'] = $request->input('title') !== null ?
+                (string) $request->string('title') :
+                null;
+
+        if ($request->has('description'))
+            $variantUpdates['description'] = $request->input('description') !== null ?
+                (string) $request->string('description') :
+                null;
 
         if (count($variantUpdates) > 0) {
+
+            if (array_key_exists('slug', $variantUpdates)) {
+                $bySlugPost = PostRepository::getPostByLanguageAndSlug($language, strval($variantUpdates['slug']));
+
+                if ($bySlugPost && $bySlugPost->id !== $post->id) {
+                    throw new TrustedException('Slug has already been taken');
+                }
+            }
+
             PostRepository::updatePostVariant($post, $language, $variantUpdates);
         }
 
