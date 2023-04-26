@@ -28,25 +28,6 @@ class PostRepository
         return Post::find($postId);
     }
 
-    public static function getPostByBlogIdAndIdentifier(int $blogId, ?int $id, ?string $slug): ?Post
-    {
-        $post = Post::where('blog_id', $blogId);
-        if ($id) {
-            $post->where('id', $id);
-        } else {
-            $post->where('slug', $slug);
-        }
-
-        return $post->first();
-    }
-
-    public static function getPostByBlogIdAndSlug(int $blogId, string $slug): ?Post
-    {
-        return Post::where('blog_id', $blogId)
-            ->where('slug', $slug)
-            ->first();
-    }
-
     public static function getPostByLanguageAndSlug(Language $language, string $slug): ?Post
     {
         $variant = PostVariant::where('language_id', $language->id)
@@ -183,7 +164,7 @@ class PostRepository
                     ->operators('=,!=');
 
                 $keys->add('slug')
-                    ->column('posts.slug')
+                    ->column('post_variants.slug')
                     ->valueType('string|int')
                     ->operators('=,!=');
 

@@ -294,19 +294,19 @@ it('filters_by_is_featured', function () {
         'filter' => 'is_featured=true',
     ]);
     $response
-        ->assertJsonPath('data.0.slug', $post->slug)
+        ->assertJsonPath('data.0.slug', $post->variants[0]->slug)
         ->assertJsonCount(1, 'data');
 });
 
 it('filters by slug', function () {
     $post = $this->posts->random();
-    $post->update(['slug' => 'some-new-slug']);
+    $post->variants[0]->update(['slug' => 'some-new-slug']);
 
     $response = dataApi($this->blog, '/posts', [
-        'filter' => "slug=$post->slug",
+        'filter' => "slug=some-new-slug",
     ]);
     $response
-        ->assertJsonPath('data.0.slug', $post->slug)
+        ->assertJsonPath('data.0.slug', $post->variants[0]->slug)
         ->assertJsonCount(1, 'data');
 });
 

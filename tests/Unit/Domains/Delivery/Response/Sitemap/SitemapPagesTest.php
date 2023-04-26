@@ -51,7 +51,7 @@ it('generates entries for pages and its variants', function () {
     $crawler = new Crawler($doc);
 
     expect($crawler->filter('default|loc')->count())->toBe(4); // index + pages
-    expect($crawler->filter('default|loc')->eq(1)->innerText())->toContain($pages[0]->slug);
+    expect($crawler->filter('default|loc')->eq(1)->innerText())->toContain($pages[0]->variants[0]->slug);
 
     // language variants
     expect($crawler->filter('default|url')->eq(2)->filter('xhtml|link')->count())->toBe(1);

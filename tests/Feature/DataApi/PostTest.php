@@ -49,7 +49,7 @@ it('requires an integer id', function () {
 
 it('works with post slug', function () {
     dataApi($this->blog, '/post', [
-            'slug' => $this->post->slug,
+            'slug' => $this->post->variants[0]->slug,
         ])
         ->assertOk()
         ->assertExactJson($this->postObject);

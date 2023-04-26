@@ -1,4 +1,4 @@
-<?php
+<?php declare(strict_types=1);
 
 namespace App\Http\Controllers\DataApi;
 
@@ -10,6 +10,7 @@ use App\Domains\Post\PostSearchRepository;
 use App\Exceptions\TrustedException;
 use App\Http\Controllers\Controller;
 use App\Models\Blog;
+use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 
 class PostsController extends Controller
@@ -25,7 +26,7 @@ class PostsController extends Controller
         'words' => 'post_variants.words',
     ];
 
-    public function post(Request $request, Blog $blog)
+    public function post(Request $request, Blog $blog) : JsonResponse
     {
         $request->validate([
             'id' => 'int|required_without:slug',
@@ -34,14 +35,22 @@ class PostsController extends Controller
             'keys' => 'string',
         ]);
 
-        $id = $request->input('id');
-        $slug = $request->input('slug');
-        $language = Helper::getLanguage($blog, $request->input('language'));
-        $keys = $request->input('keys');
+        $id = $request->has('id') ? $request->integer('id') : null;
+        $slug = $request->has('slug') ? (string) $request->string('slug') : null;
+        $language = Helper::getLanguage(
+            $blog,
+            $request->has('language') ? (string) $request->string('language') : null
+        );
+        $keys = $request->has('keys') ? (string) $request->string('keys') : null;
 
-        $post = PostRepository::getPostByBlogIdAndIdentifier($blog->id, $id, $slug);
+        $post = null;
+        if ($id) {
+            $post = PostRepository::getPostById($id);
+        } elseif ($slug) {
+            $post = PostRepository::getPostByLanguageAndSlug($language, $slug);
+        }
 
-        if (! $post) {
+        if (!$post) {
             throw new TrustedException('Post not found', TrustedException::ERROR_NOT_FOUND);
         }
 

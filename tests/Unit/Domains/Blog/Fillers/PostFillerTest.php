@@ -22,11 +22,11 @@ it('fills with posts', function () {
     $posts = $blog->posts;
     expect(count($posts))->toBe(5);
 
-    expect($posts->firstWhere('slug', 'welcome'))->toBeInstanceOf(Post::class);
-    expect($posts->firstWhere('slug', 'content-style'))->toBeInstanceOf(Post::class);
-    expect($posts->firstWhere('slug', 'about'))->toBeInstanceOf(Post::class);
-    expect($posts->firstWhere('slug', 'privacy'))->toBeInstanceOf(Post::class);
-    expect($posts->firstWhere('slug', 'contact'))->toBeInstanceOf(Post::class);
+    expect($posts->firstWhere(fn($p) => $p->variants[0]['slug'] === 'welcome'))->toBeInstanceOf(Post::class);
+    expect($posts->firstWhere(fn($p) => $p->variants[0]['slug'] === 'content-style'))->toBeInstanceOf(Post::class);
+    expect($posts->firstWhere(fn($p) => $p->variants[0]['slug'] === 'about'))->toBeInstanceOf(Post::class);
+    expect($posts->firstWhere(fn($p) => $p->variants[0]['slug'] === 'privacy'))->toBeInstanceOf(Post::class);
+    expect($posts->firstWhere(fn($p) => $p->variants[0]['slug'] === 'contact'))->toBeInstanceOf(Post::class);
 
     $post1 = $posts[0];
 

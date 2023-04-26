@@ -22,6 +22,7 @@ class Post extends Model
     protected $casts = [
         'published_at' => 'datetime',
         'is_page' => 'boolean',
+        'is_featured' => 'boolean',
     ];
 
     /**
