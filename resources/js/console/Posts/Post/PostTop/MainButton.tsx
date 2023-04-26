@@ -10,6 +10,7 @@ export default  function MainButton({id} : {id: number}) {
 
     const { currentVariant, editorState, forceSavePostAjax } = usePostValues(id)
     const { changeEditorState, forceSavePost, savePost } = usePostActions(id)
+    const hasChanged = currentVariant.content_unsaved !== currentVariant.content;
 
 
     useEffect(() => {
@@ -53,8 +54,8 @@ export default  function MainButton({id} : {id: number}) {
         });
     }
 
-    if (currentVariant.status === 'published' || currentVariant.status === 'scheduled') {
-        return <ActionButton
+    if ((currentVariant.status === 'published' || currentVariant.status === 'scheduled')) {
+        return hasChanged ? <ActionButton
             className="small main-button"
             status={!editorState.isNonDraftUpdating ? "stale" : (forceSavePostAjax.status || 'stale')}
             staleName="Update"
@@ -63,7 +64,7 @@ export default  function MainButton({id} : {id: number}) {
             errorName="Try again"
             staleOnClick={handleUpdateNonDraft}
             errorOnClick={handleUpdateNonDraft}
-        />
+        /> : null;
     } else {
         name = "Publish";
         onClick = () => changeEditorState('isPublishing', true);
