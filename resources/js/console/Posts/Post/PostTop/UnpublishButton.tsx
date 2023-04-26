@@ -4,12 +4,13 @@ import { usePostActions, usePostValues } from "../helpers";
 export default function UnpublishButton({ id }: { id: number }) {
 
     const { currentVariant } = usePostValues(id);
-    const { changeEditorState } = usePostActions(id)
+    const { changeEditorState } = usePostActions(id);
+    const hasChanged = currentVariant.content_unsaved !== currentVariant.content;
 
     let name;
-    if (currentVariant.status === 'published') {
+    if (currentVariant.status === 'published' && !hasChanged) {
         name = "Unpublish";
-    } else if (currentVariant.status === 'scheduled') {
+    } else if (currentVariant.status === 'scheduled' && !hasChanged) {
         name = "Unschedule";
     }
 
