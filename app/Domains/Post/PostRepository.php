@@ -346,7 +346,7 @@ class PostRepository
             $status = $updates['status'];
             $variant->status = $status;
 
-            if ($status === PostStatusEnum::PUBLISHED) {
+            if ($status === PostStatusEnum::PUBLISHED && !$post->published_at) {
                 $post->published_at = now();
 
                 // a slug is required if the post is published

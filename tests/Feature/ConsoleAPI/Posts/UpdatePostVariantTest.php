@@ -77,6 +77,34 @@ it('updates post published_at when post status is changed to published', functio
     expect($post->refresh()->published_at)->not->toBeNull();
 });
 
+
+// bug#134
+it('does not update published_at if it is already set', function() {
+
+    $blog = blogWithAccessLanguageAndRoutes();
+
+    $publishedAt = now()->subDay();
+
+    $post = Post::factory()->create([
+        'blog_id' => $blog,
+        'published_at' => $publishedAt,
+    ]);
+    PostVariant::factory()->create([
+        'post_id' => $post,
+        'language_id' => $blog->languages[0],
+        'status' => PostStatusEnum::DRAFT,
+    ]);
+
+    consoleApi($blog, 'PATCH', "/post/$post->id/variant", [
+        'language_id' => $blog->languages[0]->id,
+        'status' => 'published',
+    ])
+        ->assertOk();
+
+    expect($post->refresh()->published_at->getTimestamp())->toBe($publishedAt->getTimestamp());
+
+});
+
 it('sets the slug if it is empty when publishing the primary language post', function() {
 
     $blog = blogWithAccess();
