@@ -173,7 +173,7 @@ some_key:
 
 After defining configurations, you can use them in your templates. You can access configurations via the `_config` route variable. 
 
-Example: Configurable CSS variables (Taken from our [default theme](https://github.com/hyvor/hyvor-blogs-themes/tree/main/original/default)).
+Example: Configurable CSS variables.
 
 `config.yaml`:
 

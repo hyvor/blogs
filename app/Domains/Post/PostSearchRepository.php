@@ -116,7 +116,7 @@ class PostSearchRepository
             'title' => $postVariant->title,
             'description' => $postVariant->description,
             'content' => $post->content ? PostContentRepository::getText($postVariant->content, $blog) : '',
-            'slug' => $post->slug,
+            'slug' => $postVariant->slug,
 
             /**
              * Reference and filtering

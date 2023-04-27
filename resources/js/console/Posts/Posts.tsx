@@ -27,11 +27,12 @@ export default function Posts({ postId }: { postId: number | undefined }) {
     } = useActions(postLogicSubdomain)
 
     function handleScroll(e: React.UIEvent<HTMLDivElement>) {
-        var el = e.currentTarget;
+        const el = e.currentTarget;
+
         if (
             loadPostsListMoreAjax.status !== 'loading' &&
             postsListHasMore &&
-            el.scrollTop + el.clientHeight >= el.scrollHeight
+            el.scrollTop + el.clientHeight >= el.scrollHeight - 30
         ) {
             loadPostsListMore({ offset: postsList.length })
         }

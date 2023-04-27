@@ -83,7 +83,7 @@ it('sets _head in a post page', function () {
     // add twitter URL to first author
     $post->authors[0]->update(['social_twitter' => 'https://twitter.com/Author']);
 
-    $pathMatcher = new PathMatcher($blog, "/$post->slug");
+    $pathMatcher = new PathMatcher($blog, "/{$post->variants[0]->slug}");
     $responseObject = $pathMatcher->getResponseObject();
 
     $content = $responseObject->content;
@@ -132,7 +132,7 @@ it('adds nofollow', function () {
         $content,
     );
 
-    $pathMatcher = new PathMatcher($blog, "/$post->slug");
+    $pathMatcher = new PathMatcher($blog, "/{$post->variants[0]->slug}");
     $responseObject = $pathMatcher->getResponseObject();
     $content = $responseObject->content;
 

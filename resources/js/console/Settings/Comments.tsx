@@ -18,7 +18,7 @@ export default function Comments() {
         <div>
 
             <DualSetting 
-                title="Commenting System"
+                title="Comments Embed Code"
                 description={
                     <div>
                         Paste the embed code from your commenting system here. If you like a privacy-first, easy-to-use commenting system, try <a href="https://talk.hyvor.com" className="link" target="_blank">Hyvor Talk</a>. You can use Twig <a className="link" href="/docs/themes-templates#variables" target="_blank">route variables</a> if needed.

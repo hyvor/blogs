@@ -1,8 +1,9 @@
-<?php
+<?php declare(strict_types=1);
 
 use App\Http\Controllers\ConsoleAPI\Billing\ConsoleBillingController;
 use App\Http\Controllers\ConsoleAPI\Billing\ConsoleBillingPaddleController;
 use App\Http\Controllers\ConsoleAPI\Billing\ConsoleBillingShopifyController;
+use App\Http\Controllers\ConsoleAPI\ConsoleAiController;
 use App\Http\Controllers\ConsoleAPI\ConsoleApiKeysController;
 use App\Http\Controllers\ConsoleAPI\ConsoleBlogController;
 use App\Http\Controllers\ConsoleAPI\ConsoleDangerController;
@@ -110,6 +111,9 @@ Route::prefix('/api/console/v0/blog/{subdomain}')
 
             // url data
             Route::get('/url-data', [ConsoleUrlDataController::class, 'getData']);
+
+            Route::post('/ai/translate', [ConsoleAiController::class, 'translate']);
+
         });
 
         /**
@@ -127,8 +131,6 @@ Route::prefix('/api/console/v0/blog/{subdomain}')
             Route::patch('/tag/{id}/variant', [ConsoleTagController::class, 'updateVariant']);
             Route::delete('/tag/{id}/variant', [ConsoleTagController::class, 'deleteVariant']);
 
-            // comments
-            Route::get('/comments/moderate', []);
         });
 
         /**
@@ -198,7 +200,8 @@ Route::prefix('/api/console/v0/blog/{subdomain}')
             Route::delete('/theme/file/{id}', [ConsoleThemeController::class, 'deleteFile']);
 
             // import and export
-            Route::get('/data/export', [ConsoleImportExportController::class, 'export']);
+            Route::get('/data/exports', [ConsoleImportExportController::class, 'getExports']);
+            Route::post('/data/export', [ConsoleImportExportController::class, 'export']);
             Route::post('/data/import', [ConsoleImportExportController::class, 'import']);
 
             Route::get('/build', []);

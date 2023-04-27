@@ -9,6 +9,8 @@ class UrlDataObject
 {
     public string $url; // final URL
 
+    public string $original_url;
+
     public string $domain;
 
     public ?string $html;
@@ -26,6 +28,7 @@ class UrlDataObject
     public function __construct(UrlData $urlData)
     {
         $this->url = $urlData->final_url ?? '';
+        $this->original_url = $urlData->url;
 
         $domain = parse_url($this->url, PHP_URL_HOST);
         $this->domain = $domain ? $domain : '';

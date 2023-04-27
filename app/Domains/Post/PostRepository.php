@@ -2,6 +2,7 @@
 
 namespace App\Domains\Post;
 
+use App\Data\Enums\PostStatusEnum;
 use App\Domains\Language\LanguageRepository;
 use App\Domains\Post\Events\PostCreatedEvent;
 use App\Domains\Post\Events\PostDeletedEvent;
@@ -27,23 +28,16 @@ class PostRepository
         return Post::find($postId);
     }
 
-    public static function getPostByBlogIdAndIdentifier(int $blogId, ?int $id, ?string $slug): ?Post
+    public static function getPostByLanguageAndSlug(Language $language, string $slug): ?Post
     {
-        $post = Post::where('blog_id', $blogId);
-        if ($id) {
-            $post->where('id', $id);
-        } else {
-            $post->where('slug', $slug);
-        }
-
-        return $post->first();
-    }
-
-    public static function getPostByBlogIdAndSlug(int $blogId, string $slug): ?Post
-    {
-        return Post::where('blog_id', $blogId)
+        $variant = PostVariant::where('language_id', $language->id)
             ->where('slug', $slug)
             ->first();
+
+        if (!$variant)
+            return null;
+
+        return $variant->post;
     }
 
     /**
@@ -106,6 +100,7 @@ class PostRepository
             // to prevent selecting post_variants data
             ->select('posts.*')
             ->orderByRaw("CASE post_variants.status WHEN 'draft' THEN 1 ELSE 2 END") // drafts first
+            ->orderBy('posts.published_at', 'desc')
             ->orderBy('posts.created_at', 'desc')
             ->limit($limit)
             ->offset($offset)
@@ -169,7 +164,7 @@ class PostRepository
                     ->operators('=,!=');
 
                 $keys->add('slug')
-                    ->column('posts.slug')
+                    ->column('post_variants.slug')
                     ->valueType('string|int')
                     ->operators('=,!=');
 
@@ -263,11 +258,19 @@ class PostRepository
         return Post::find($post->id);
     }
 
-    public static function updatePost(Post $post, array $updates)
+    /**
+     * @param array{
+     *     published_at?: int,
+     *     is_featured?: bool,
+     *     featured_image_url?: ?string,
+     *     canonical_url?: ?string,
+     *     code_head?: ?string,
+     *     code_foot?: ?string,
+     * }  $updates
+     */
+    public static function updatePost(Post $post, array $updates) : Post
     {
-        if (array_key_exists('slug', $updates)) {
-            $post->slug = $updates['slug'];
-        }
+
         // published_at
         if (array_key_exists('published_at', $updates)) {
             $post->published_at = Carbon::createFromTimestamp($updates['published_at']);
@@ -315,7 +318,17 @@ class PostRepository
         return PostVariant::find($variant->id);
     }
 
-    public static function updatePostVariant(Post $post, Language $language, array $updates)
+    /**
+     * @param array{
+     *     slug?: string|null,
+     *     status?: PostStatusEnum,
+     *     content?: string | null,
+     *     content_unsaved?: string | null,
+     *     title?: string | null,
+     *     description?: string | null
+     * } $updates
+     */
+    public static function updatePostVariant(Post $post, Language $language, array $updates) : PostVariant
     {
 
         $variant = self::getPostVariantByPostIdAndLanguageId($post->id, $language->id);
@@ -324,21 +337,22 @@ class PostRepository
             throw new TrustedException('Variant not found', TrustedException::ERROR_UNPROCESSABLE);
         }
 
+        if (array_key_exists('slug', $updates)) {
+            $variant->slug = $updates['slug'];
+        }
+
         // status
         if (array_key_exists('status', $updates)) {
             $status = $updates['status'];
             $variant->status = $status;
 
-            if ($status === 'published') {
+            if ($status === PostStatusEnum::PUBLISHED && !$post->published_at) {
                 $post->published_at = now();
 
-                // set post slug
-                if (
-                    $post->slug === null &&
-                    $language->is_primary
-                ) {
+                // a slug is required if the post is published
+                if ($variant->slug === null) {
                     $title = $variant->title ?? $updates['title'] ?? null;
-                    $post->slug = $title ? Str::slug($title) : Str::random();
+                    $variant->slug = $title ? Str::slug($title) : Str::random();
                 }
 
                 $post->save();
@@ -367,12 +381,12 @@ class PostRepository
 
         // title
         if (array_key_exists('title', $updates)) {
-            $variant->title = mb_substr($updates['title'], 0, 255);
+            $variant->title = mb_substr($updates['title'] ?? '', 0, 255);
         }
 
         // description
         if (array_key_exists('description', $updates)) {
-            $variant->description = mb_substr($updates['description'], 0, 350);
+            $variant->description = mb_substr($updates['description'] ?? '', 0, 350);
         }
 
         $original = new PostVariant((array) $variant->getOriginal());

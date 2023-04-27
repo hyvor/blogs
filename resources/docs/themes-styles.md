@@ -25,7 +25,7 @@ In the future, we have some plans to introduce font selection to [theme config](
 
 ## Advanced Nodes {#advanced-nodes}
 
-"[Using the editor](editor)" page describes all supported nodes. We try to use the most basic HTML elements to represent each node. However, there are some advanced components that require some attention when writing styles.
+[Writing](writing) page describes all supported nodes. We try to use the most basic HTML elements to represent each node. However, there are some advanced components that require some attention when writing styles.
 
 #### Image {#image}
 

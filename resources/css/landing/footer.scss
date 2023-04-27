@@ -13,8 +13,12 @@ footer {
 	.social {
 		text-align: center;
 		margin-top: 15px;
+		a {
+			display: inline-block;
+			padding: 3px;
+		}
 		a:not(:last-child) {
-			margin-right: 8px;
+			/*margin-right: 4px;*/
 		}
 		.twitter {
 			color: #26a7de;
@@ -47,6 +51,7 @@ footer {
 			text-transform:uppercase;
 			padding-bottom:10px;
 			font-size:14px!important;
+			padding-left: 3px;
 		}
 		.item {
 			font-size:14px;
@@ -65,6 +70,11 @@ footer {
 					top: 0;
 					color: #97f9f0;
 				}
+			}
+
+			a {
+				display: inline-block;
+				padding: 3px;
 			}
 			
 		}

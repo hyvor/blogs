@@ -4,11 +4,13 @@ import type { billingLogicType } from "./billingLogicType";
 import {Subscription, Usage} from "../../types";
 import {ajax} from "kea-ajax";
 import api from "../../lib/api";
+import {actionToUrl} from "kea-router";
 
 interface ApiResponse {
     usage: {
         users: Usage,
-        media: Usage
+        media: Usage,
+        auto_translate: Usage,
     },
     subscriptions: Subscription[]
 }
@@ -21,8 +23,14 @@ const billingLogic = kea<billingLogicType>([
 
     actions({
         setUsage: (usage: {users: Usage, media: Usage}) => ({usage}),
-        setSubscriptions: (subscriptions: Subscription[]) => ({subscriptions})
+        setSubscriptions: (subscriptions: Subscription[]) => ({subscriptions}),
+
+        navigateToBilling: () => false,
     }),
+
+    actionToUrl(({ props }) => ({
+        navigateToBilling: ({id}) => `/console/${props.subdomain}/billing`,
+    })),
 
     ajax(({actions, props}) => ({
 
@@ -42,7 +50,8 @@ const billingLogic = kea<billingLogicType>([
         usage: [
             {} as {
                 users: Usage,
-                media: Usage
+                media: Usage,
+                auto_translate: Usage,
             },
             {
                 setUsage: (_, {usage}) => usage

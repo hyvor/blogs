@@ -53,7 +53,7 @@ export default function Input(
     return (
         <div className={"input-view" + (error ? " error" : "") }>
             <div className="input-top">
-                <div className="input-title">{title}</div>
+                <label className="input-title" htmlFor={"input-" + name}>{title}</label>
                 {error ? <div className="input-error">{error}</div> : null }
                 {!error && success ? <div className="input-success">{success}</div> : null }
             </div>

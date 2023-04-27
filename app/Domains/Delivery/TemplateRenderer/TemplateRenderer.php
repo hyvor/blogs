@@ -318,8 +318,9 @@ class TemplateRenderer
 
             return $model !== null ? $model : false;
         } elseif ($this->matchedRoute->name === 'post' || $this->matchedRoute->name === 'page') {
-            $post = PostRepository::getPostByBlogIdAndSlug(
-                $this->pathMatcher->blog->id,
+
+            $post = PostRepository::getPostByLanguageAndSlug(
+                $this->pathMatcher->language,
                 $slug
             );
 

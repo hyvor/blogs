@@ -13,6 +13,7 @@ import 'react-toastify/dist/ReactToastify.css';
 import 'prosemirror-codemark/dist/codemark.css';
 import {createRoot} from "react-dom/client";
 import { ajaxPlugin } from 'kea-ajax'
+import dayjs from "dayjs";
 
 resetContext({
     plugins: [
@@ -20,6 +21,10 @@ resetContext({
         ajaxPlugin()
     ]
 });
+
+import relativeTime from 'dayjs/plugin/relativeTime'
+
+dayjs.extend(relativeTime);
 
 function App() {
     

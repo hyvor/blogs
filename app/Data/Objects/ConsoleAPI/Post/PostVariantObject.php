@@ -15,6 +15,8 @@ class PostVariantObject
 
     public int $post_id;
 
+    public ?string $slug;
+
     public PostStatusEnum $status;
 
     public string $url;
@@ -27,7 +29,18 @@ class PostVariantObject
 
     public ?string $description;
 
-    public function __construct(PostVariant $variant, Post $post, Blog $blog)
+
+    // only for exporting
+    public ?string $content_html;
+
+
+    public function __construct(
+        PostVariant $variant,
+        Post $post,
+        Blog $blog,
+
+        bool $setHtml = false
+    )
     {
         $language = $variant->language;
 
@@ -38,11 +51,17 @@ class PostVariantObject
         $this->language_id = $language->id;
         $this->post_id = $post->id;
 
+        $this->slug = $variant->slug;
         $this->status = $variant->status;
         $this->url = PermalinkRepository::getPostPermalink($post, $blog, $language);
         $this->content = $variant->content;
         $this->content_unsaved = $variant->content_unsaved;
         $this->title = $variant->title;
         $this->description = $variant->description;
+
+        if ($setHtml) {
+            $this->content_html = $variant->content_html;
+        }
     }
+
 }

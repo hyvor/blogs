@@ -64,4 +64,9 @@ return [
         'list_id' => "7b95c9e8-9e4f-11ed-b3ed-47583ae33f24"
     ],
 
+    'deepl' => [
+        'api_key' => env('DEEPL_API_KEY'),
+
+    ]
+
 ];

@@ -24,7 +24,7 @@ class PostObject
 
     public bool $is_page;
 
-    public ?string $slug;
+    // public ?string $slug;
 
     public ?string $featured_image_url;
 
@@ -49,14 +49,17 @@ class PostObject
      */
     public array $authors;
 
-    public function __construct(Post $post, Blog $blog)
+    public function __construct(
+        Post $post,
+        Blog $blog,
+        bool $setHtml = false
+    )
     {
         $this->id = $post->id;
         $this->preview_id = PostPreviewSecretEncryptor::getPreviewSecret($post);
         $this->created_at = $post->created_at->getTimestamp();
         $this->updated_at = $post->updated_at->getTimestamp();
         $this->published_at = $post->published_at?->getTimestamp();
-        $this->slug = $post->slug;
         $this->is_page = (bool) $post->is_page;
         $this->is_featured = (bool) $post->is_featured;
         $this->featured_image_url = $post->featured_image_url;
@@ -65,8 +68,8 @@ class PostObject
         $this->code_foot = $post->code_foot;
 
         /** @var PostVariantObject[] $variants */
-        $variants = $post->variants->map(function ($variant) use ($blog, $post) {
-            return new PostVariantObject($variant, $post, $blog);
+        $variants = $post->variants->map(function ($variant) use ($blog, $post, $setHtml) {
+            return new PostVariantObject($variant, $post, $blog, $setHtml);
         })->sortBy('language_id')->toArray();
 
 

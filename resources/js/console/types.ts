@@ -120,7 +120,7 @@ export type Post = {
     is_featured: boolean;
     is_page: boolean;
 
-    slug: string;
+    // slug: string;
 
     featured_image_url: string | null;
     canonical_url: string | null;
@@ -139,7 +139,7 @@ export type PostStatus = 'draft' | 'published' | 'scheduled'
 export type PostVariant = {
 
     language_id: number;
-
+    slug: string | null,
     status: PostStatus,
     url: string,
 
@@ -380,4 +380,17 @@ export interface PaddleSubscriptionInfoPayment {
     amount: number,
     currency: string,
     at: number
+}
+
+
+export type JobStatus = 'pending' | 'completed' | 'failed';
+
+
+export interface Export {
+    id: number,
+    created_at: number,
+    format: 'hyvor_blogs' | 'wordpress',
+    status: JobStatus,
+    url: string | null
+    error: string | null
 }

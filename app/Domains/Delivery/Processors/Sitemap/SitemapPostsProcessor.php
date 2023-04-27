@@ -1,4 +1,4 @@
-<?php
+<?php declare(strict_types=1);
 
 namespace App\Domains\Delivery\Processors\Sitemap;
 
@@ -10,6 +10,7 @@ use App\Domains\Delivery\RouteMatcher\MatchedRoute;
 use App\Domains\Language\LanguageRepository;
 use App\Models\Blog;
 use App\Models\Post;
+use Illuminate\Database\Eloquent\Collection;
 
 class SitemapPostsProcessor extends RouteProcessorAbstract
 {
@@ -55,10 +56,13 @@ class SitemapPostsProcessor extends RouteProcessorAbstract
         );
     }
 
-    private function getPosts(int $number)
+    /**
+     * @return Collection<int, Post>
+     */
+    private function getPosts(int $number) : Collection
     {
         $primaryLanguage = LanguageRepository::getPrimaryLanguage($this->blog);
-        $limit = config('limits.max_entries_per_sitemap');
+        $limit = intval(config('limits.max_entries_per_sitemap'));
 
         return Post::join(
             'post_variants',

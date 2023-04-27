@@ -1,22 +1,26 @@
 # Console API
 
-> The Console API is not yet ready for public access. This documentation is WIP...
+> This documentation is still in progress.
 
-The Console API allows you to do administrative tasks of a blog. This is the same API we use internally in the Console. You can use it to automate some tasks or even build a completely new mini-console by yourself.
+Console API allows you to do administrative tasks of a blog. This is the same API we use internally in the Console. You can use it to automate some tasks or even build a completely new mini-console by yourself.
 
 ## Calling the API
 
 * API Basepath: **https&#65279;//blogs.hyvor.com/api/console/v0/blog/{subdomain}**
 * Create a Console API Key from the Console and send it as the **X-API-KEY** header.
 * Console API endpoints use the following HTTP methods.
-  * `GET` - to get data, usually an array of resources
-  * `POST` - to create a resource
-  * `PATCH` - to partially update a resource
-  * `PUT` - to completely update an resource
-  * `DELETE` - to delete a resource
+    * `GET` - to get data, usually an array of resources
+    * `POST` - to create a resource
+    * `PATCH` - to partially update a resource
+    * `PUT` - to completely update an resource
+    * `DELETE` - to delete a resource
 * Similarly to our [Data API](api-data), the Console API always return an object or an array of objects, in JSON format
 * Request params can be set as JSON (recommended) or as usual request params (in query or HTTP body)
 * In this documentation, objects, request params, and responses are written as <a class="link" target="_blank" rel="nofollow" href="https://www.typescriptlang.org/">Typescript</a> interfaces in order to make type declarations concise.
+
+## Authenticating User {#authenticating-user}
+
+[To be written]
 
 ## Categories
 
@@ -24,6 +28,7 @@ The Console API is huge, and is categorized by what "resource" you want to acces
 
 Jump to each category:
 
+* [Blog](#blog)
 * [Posts & Pages](#posts)
 * [Tags](#tags)
 * [Users](#users)
@@ -33,171 +38,575 @@ Jump to each category:
 * [Redirects](#redirects)
 * [Webhooks](#webhooks)
 * [Theme Files](#theme-files)
-* [Data Import](#data-import)
-* [Data Export](#data-export)
+* [Export](#data-export)
 * [Billing](#billing)
-* [Blog Settings](#blog-settings)
-* [Blog Meta Data](#blog-meta)
-* [Other Endpoints](#other)
+* [Misc](#misc)
+
+### Blog {#blog}
+
+Endpoints:
+
+* [`GET /blog`](#get-blog) - Get blog data
+* [`PATCH /blog`](#update-blog) - Update blog data
+* [`POST /blog/variant`](#create-blog-variant) - Create a blog variant
+* [`PATCH /blog/variant`](#update-blog-variant) - Update a blog variant
+
+Objects:
+
+* [Blog](#blog-object)
+* [BlogVariant](#blog-variant-object)
+
+#### Get blog data {#get-blog}
+
+`GET /blog`
+
+```ts
+type Request = {}
+type Response = Blog
+```
+
+#### Update blog data {#update-blog}
+
+`PATCH /blog`
+
+```ts
+type Request = Partial<Blog> // except id and variants
+type Response = Blog
+```
+
+#### Create a blog variant {#create-blog-variant}
+
+`POST /blog/variant`
+
+```ts
+type Request = {
+    language_id: number
+}
+type Response = BlogVariant
+```
+
+#### Update a blog variant {#update-blog-variant}
+
+`PATCH /blog/variant`
+
+```ts
+type Request = {
+    language_id: number,
+    name?: string,
+    description?: string
+}
+type Response = BlogVariant
+```
 
 ### Posts & Pages {#posts}
 
-Endpoints
+Endpoints:
 
-* [`GET /posts`](#endpoint-posts-get) - Get posts
-* [`GET /pages`](#endpoint-pages-get) - Get pages
-* [`POST /post`](#endpoint-post-create) - Create a post/page
-* [`GET /post/{id}`](#endpoint-post-get) - Get a post/page
-* [`PATCH /post/{id}`](#endpoint-post-update) - Update a post/page
-* [`DELETE /post/{id}`](#endpoint-post-delete) - Delete a post/page
-* [`POST /post/{id}/variant`](#endpoint-post-variant-create) - Create a post language variant
-* [`DELETE /post/{id}/variant`](#endpoint-post-variant-delete) - Delete a post language variant
+* [`GET /posts`](#get-posts) - Get posts
+* [`GET /pages`](#get-pages) - Get pages
+* [`POST /post`](#create-post) - Create a post/page
+* [`GET /post/{id}`](#get-post) - Get a post/page
+* [`PATCH /post/{id}`](#update-post) - Update a post/page
+* [`DELETE /post/{id}`](#delete-post) - Delete a post/page
+* [`POST /post/{id}/variant`](#create-post-variant) - Create a post variant
+* [`PATCH /post/{id}/variant`](#update-post-variant) - Update a post variant
+* [`DELETE /post/{id}/variant`](#delete-post-variant) - Delete a post variant
+* [`PATCH /post/{id}/tags`](#update-post-tags) - Update post tags
+* [`PATCH /post/{id}/authors`](#update-post-authors) - Update post authors
 
+Objects:
 
-<!--
-#### Post Object {#post-object}
+* [Post](#post-object)
+* [PostVariant](#post-variant-object)
 
-```json
-{
-    "id": 2000,
-    "preview_id": "...",
-    "created_at": 1639655890,
-    "updated_at": 1639655890,
-    "published_at": null,
-    "status": "draft",
-    "is_featured": false,
-    "is_page": false,
-    "slug": "hello-world",
-    "content": "{}",
-    "content_unsaved": "{}",
-    "title": "Hello World",
-    "description": "Just saying hello to the world",
-    "url": "https://myblog.hyvorblogs.io/hello-world",
-    "featured_image": "https://myblog.hyvorblogs.io/media/image.png",
-    "canonical_url": null,
-    "words": 500,
-    "code_head": null,
-    "code_foot": null,
-    "tags": [ Tag Objects ],
-    "authors": [ User Objects ]
+#### Get posts {#get-posts}
+
+Get posts with filtering. The filter parameters are similar to the ones in the Console.
+
+`GET /posts`
+
+```ts
+type Request = {
+    status?: 'featured' | 'published' | 'draft' | 'scheduled',
+    author_id?: number,
+    tag_id?: number,
+    start_timestamp?: number, // unix timestamp
+    end_timestamp?: number, // unix timestamp
+    search?: string,
+    limit?: number, // default 50, max 100
+    offset?: number,
+}
+type Response = Post[]
+```
+
+#### Get pages {#get-pages}
+
+`GET /pages`
+
+```ts
+type Request = {}
+type Response = Post[]
+```
+
+#### Create a post {#create-post}
+
+Create an empty draft post. A post variant will be created from the primary language of the blog.
+
+`POST /post`
+
+```ts
+type Request = {
+    is_page?: boolean, // default to false
+}
+type Response = Post
+```
+
+#### Get a post/page {#get-post}
+
+`GET /post/{id}`
+
+```ts
+type Request = {}
+type Response = Post
+```
+
+#### Update a post/page {#update-post}
+
+`PATCH /post/{id}`
+
+```ts
+type Request = {
+    is_featured?: boolean,
+    featured_image_url?: string | null,
+    canonical_url?: string | null,
+    code_head?: string | null,
+    code_foot?: string | null,
+    published_at?: number | null, // unix timestamp
+}
+type Response = Post
+```
+
+#### Delete a post/page {#delete-post}
+
+`DELETE /post/{id}`
+
+```ts
+type Request = {}
+type Response = {}
+```
+
+#### Create a post variant {#create-post-variant}
+
+`POST /post/{id}/variant`
+
+```ts
+type Request = {
+    language_id: number
+}
+type Response = PostVariant
+```
+
+#### Update a post variant {#update-post-variant}
+
+`PATCH /post/{id}/variant`
+
+```ts
+type Request = {
+    language_id: number,
+    slug?: string, // max 255 chars
+    status?: 'draft' | 'published' | 'scheduled',
+    content?: string | null,
+    content_unsaved?: string | null,
+    title?: string | null, // max 255 chars
+    description?: string | null, // max 255 chars
+}
+type Response = PostVariant
+```
+
+#### Delete a post variant {#delete-post-variant}
+
+`DELETE /post/{id}/variant`
+
+```ts
+type Request = {
+    language_id: number
+}
+type Response = {}
+```
+
+#### Update post tags {#update-post-tags}
+
+`PATCH /post/{id}/tags`
+
+```ts
+type Request = {
+    ids: number[] // tag IDs
+}
+type Response = {}
+```
+
+#### Update post authors {#update-post-authors}
+
+`PATCH /post/{id}/authors`
+
+```ts
+type Request = {
+    ids: number[] // author (user) IDs
+}
+type Response = {}
+```
+
+### Tags {#tags}
+
+Endpoints:
+
+* [`GET /tags`](#get-tags) - Get tags
+* [`GET /tags/search`](#search-tags) - Search tags
+* [`POST /tag`](#create-tag) - Create a tag
+* [`PATCH /tag/{id}`](#update-tag) - Update a tag
+* [`DELETE /tag/{id}`](#delete-tag) - Delete a tag
+* [`POST /tag/{id}/variant`](#create-tag-variant) - Create a tag variant
+* [`PATCH /tag/{id}/variant`](#update-tag-variant) - Update a tag variant
+* [`DELETE /tag/{id}/variant`](#delete-tag-variant) - Delete a tag variant
+
+Objects:
+
+* [Tag](#tag-object)
+* [TagVariant](#tag-variant-object)
+
+#### Get tags {#get-tags}
+
+`GET /tags`
+
+```ts
+type Request = {
+    limit?: number, // default 50, max 100
+    offset?: number,
+}
+type Response = Tag[]
+```
+
+#### Search tags {#search-tags}
+
+Searches for tags by name (primary language).
+
+`GET /tags/search`
+
+```ts
+type Request = {
+    search: string,
+}
+type Response = Tag[]
+```
+
+#### Create a tag {#create-tag}
+
+`POST /tag`
+
+```ts
+type Request = {
+    name: string, // name for the primary language variant
+}
+type Response = Tag
+```
+
+#### Update a tag {#update-tag}
+
+`PATCH /tag/{id}`
+
+```ts
+type Request = {
+    slug?: string,
+    code_head?: string | null,
+    code_foot?: string | null,
+}
+type Response = Tag
+```
+
+#### Delete a tag {#delete-tag}
+
+`DELETE /tag/{id}`
+
+```ts
+type Request = {}
+type Response = {}
+```
+
+#### Create a tag variant {#create-tag-variant}
+
+`POST /tag/{id}/variant`
+
+```ts
+type Request = {
+    language_id: number,
 }
 ```
 
-#### GET /posts {#endpoint-posts}
+#### Update a tag variant {#update-tag-variant}
 
-This endpoint returns posts of the blog. You can use request params to filter results. 
-
-Request Params:
-
-
-| Name | Type | Description | Accepted Values
----|---|---|---|
-`status` | `string` | Status of the post to filter | `all`, `published`, `draft`, `scheduled`, `featured` |
-`author_id` | `null` or `integer` | Author ID to filter | |
-`tag_id` | `null` or `integer` | Tag ID to filter | |
-`language_id` | `null` or `integer` | Language ID to filter | |
-`start_at` | `null` or `integer` | Start timestamp for filtering | UNIX Timestamp
-`end_at` | `null` or `integer` | End timestamp for filtering | UNIX Timestamp
-`search` | `null` or `string` | For searching | |
-
-Response: An array of [Post Objects](#post-object)
-
-#### GET /post/{id} {#endpoint-post}
-
-Get a single post by ID. Returns a single post object.
-
-#### PATCH /post/{id} {#endpoint-post-update}
-
-Update a post by ID.
-
-### Billing {#billing}
-
-Endpoints
-
-* [`GET /billing`](#endpoint-billing-get) - Get billing information (subscriptions, receipts, and usage)
-
-Subscription create, update, and cancel endpoints cannot be access via API keys. Use our Console for those actions.
-
-#### Subscription Info Object {#subscription-info-object}
+`PATCH /tag/{id}/variant`
 
 ```ts
-interface SubscriptionInfo {
-
-  email: string,
-  
-  card_brand: string,
-  card_last_four: string,
-  card_expiration: string,
-  
-  update_url: string,
-
-  // Last payment amount as a float
-  last_payment: number, 
-  last_payment_at: number,
-
-  // Next payment amount as float - null if subscription is cancelled
-  next_payment: number  | null,
-  next_payment_at: number | null
-
+type Request = {
+    language_id: number,
+    name?: string,
+    description?: string | null,
 }
 ```
 
-#### Subscription Object {#subscription-object}
+#### Delete a tag variant {#delete-tag-variant}
+
+`DELETE /tag/{id}/variant`
 
 ```ts
-interface Subscription {
-    
-    status: 'active' | 'past_due' | 'paused' | 'deleted',
-    plan: 'A' | 'B' | 'C' | 'D' | 'E',
-    frequency: 'monthly' | 'yearly',
-    created_at: number,
-  
-    // UNIX timestamp if the subscription was cancelled, otherwise null
-    ends_at: number | null,
-  
-    // whether the subscription is cancelled and in the grace period
-    is_on_grace_period: boolean
-
+type Request = {
+    language_id: number,
 }
 ```
 
-#### Receipt Object {#receipt-object}
+
+## Objects {#objects}
+
+### Blog Object {#blog-object}
 
 ```ts
-interface Receipt {
+interface Blog {
     id: number,
-    paid_at: number,
-    amount: number,
-    tax: number,
-    currency: number,
-    receipt_url: string
+    created_at: number,
+    is_blocked: boolean,
+    subdomain: string,
+    type: 'default' | 'dev',
+    hosting_at: 'subdomain' | 'domain' | 'self',
+    hosting_domain: string | null,
+    hosting_url: string | null,
+
+    embeddable: boolean,
+    embedding_domains: string | null,
+
+    logo_url: string | null,
+    cover_url: string | null,
+
+    social_facebook: string | null,
+    social_twitter: string | null,
+    social_linkedin: string | null,
+    social_youtube: string | null,
+    social_tiktok: string | null,
+    social_instagram: string | null,
+    social_github: string | null,
+
+    code_head: string | null,
+    code_foot: string | null,
+
+    seo_indexing: boolean,
+    seo_robots_txt: string | null,
+    seo_external_links_follow: 'follow' | 'nofollow',
+    comments_code: string | null,
+    newsletter_code: string | null,
+
+    color_modes: 'light' | 'dark' | 'both',
+    color_mode_default: 'light' | 'dark' | 'os',
+
+    syntax_on: boolean,
+    syntax_line_numbers: boolean,
+    syntax_theme: string | null
+
+    flashload: boolean,
+    variants: BlogVariant[]
 }
 ```
 
-### Usage Object {#usage-object}
+### Blog Variant Object {#blog-variant-object}
 
 ```ts
-interface Usage {
-    current: number;
-    total: number;
-    percentage: number; // float
+interface BlogVariant {
+    language_id: number,
+    name: string | null,
+    description: string | null,
 }
 ```
 
-#### GET /billing {#endpoint-billing-get}
 
-Request Params: *None*
-
-Response:
+### Post Object {#post-object}
 
 ```ts
-interface Response {
-    info: SubscriptionInfo,
-    subscriptions: Subscription[],
-    receipts: Receipt[],
-    usage: {
-        users: Usage,
-        media: Usage
-    }
+interface Post {
+    id: number,
+    preview_id: string,
+    created_at: number,
+    updated_at: number,
+    published_at: number | null,
+
+    is_featured: boolean,
+    is_page: boolean,
+
+    featured_image_url: string | null,
+    canonical_url: string | null,
+    code_head: string | null,
+    code_foot: string | null,
+
+    variants: PostVariant[],
+
+    tags: Tag[],
+    authors: User[]
+}
+```
+
+### Post Variant Object {#post-variant-object}
+
+```ts
+interface PostVariant {
+    language_id: number,
+  
+    slug: string | null,
+    status: 'draft' | 'published' | 'scheduled',
+    url: string,
+
+    content: string | null,
+    content_unsaved: string | null,
+    title: string | null,
+    description: string | null,
+}
+```
+
+### Tag Object {#tag-object}
+
+```ts
+interface Tag {
+    id: number,
+    created_at: number,
+    updated_at: number,
+    slug: string,
+    posts_count: number,
+    code_head: string | null,
+    code_foot: string | null,
+
+    variants: TagVariant[]
+}
+```
+
+### Tag Variant Object {#tag-variant-object}
+
+```ts
+interface TagVariant {
+    language_id: number,
+    url: string | null,
+    name: string | null,
+    description: string | null,
+}
+```
+
+### User Object {#user-object}
+
+```ts
+interface User {
+    id: number,
+    created_at: number,
+    updated_at: number,
+
+    hyvor_user_id: number | null,
+
+    status: 'invited' | 'active' | 'blocked',
+    role: 'owner' | 'admin' | 'editor' | 'writer' | 'contributor' | 'finance',
+    slug: string,
+    posts_count: number,
+    email: string,
+
+    picture_url: string | null,
+    website_url: string | null,
+
+    social_facebook: string | null,
+    social_twitter: string | null,
+    social_linkedin: string | null,
+    social_youtube: string | null,
+    social_tiktok: string | null,
+    social_instagram: string | null,
+    social_github: string | null,
+
+    variants: UserVariant[]
+}
+```
+
+### User Variant Object {#user-variant-object}
+
+```ts
+interface UserVariant {
+    language_id: number,
+    url: string,
+    name: string | null,
+    bio: string | null,
+    location: string | null,
+}
+```
+
+### Media Object {#media-object}
+
+```ts
+interface Media {
+    id: number,
+    uploaded_at: number,
+    name: string,
+    url: string,
+    original_name: string,
+    extension: string
+}
+```
+
+### Navigation Object {#navigation-object}
+
+```ts
+interface Navigation {
+    id: number;
+    created_at: number;
+    url: string;
+    type: NavigationType,
+    sort: number;
+    variants: NavigationVariant[]
+}
+```
+
+### Navigation Variant Object {#navigation-variant-object}
+
+```ts
+interface NavigationVariant {
+    language_id: number,
+    name: string | null
+}
+```
+
+### Language Object {#language-object}
+
+```ts
+interface Language {
+    id: number,
+    code: string,
+    name: string,
+    is_primary: boolean
+}
+```
+
+### Redirect Object {#redirect-object}
+
+```ts
+interface Redirect {
+    id: number,
+    created_at: number,
+    path: string,
+    to: string,
+    type: 'temporary' | 'permanent'
+}
+```
+
+### Route Object {#route-object}
+
+```ts
+interface Route {
+    id: number,
+    created_at: number,
+    name: string,
+    match: string,
+    template: string,
+    posts_filter: string | null,
+    content_type: string | null,
+    is_enabled: boolean
 }
 ```

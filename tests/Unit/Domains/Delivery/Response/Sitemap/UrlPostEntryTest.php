@@ -1,4 +1,4 @@
-<?php
+<?php declare(strict_types=1);
 
 namespace Tests\Unit\Domains\Delivery\Response\Sitemap;
 
@@ -11,7 +11,9 @@ it('works', function () {
     $blog->refresh();
     $post = addPublishedPost($blog);
     $basePath = PermalinkRepository::getFullUrlFromPath($blog);
-    $slug = $post->slug;
+
+    $slug = $post->variants[0]->slug;
+    $translatedSlug = $post->variants[1]->slug;
 
     $post->variants[0]->update([
         'content' => json_encode([
@@ -36,7 +38,7 @@ it('works', function () {
                         [
                             'type' => 'image',
                             'attrs' => [
-                                'src' => 'https://example.com/image.png',
+                                'src' => 'https://example.com/image.png?n&m',
                             ],
                         ],
                     ],
@@ -50,9 +52,9 @@ it('works', function () {
 
     expect($xml)->toContain("<loc>$basePath/$slug</loc>");
     expect($xml)->toContain("<xhtml:link rel=\"alternate\" hreflang=\"{$blog->languages[0]->code}\" href=\"$basePath/$slug\" />");
-    expect($xml)->toContain("<xhtml:link rel=\"alternate\" hreflang=\"{$blog->languages[1]->code}\" href=\"$basePath/{$blog->languages[1]->code}/$slug\" />");
+    expect($xml)->toContain("<xhtml:link rel=\"alternate\" hreflang=\"{$blog->languages[1]->code}\" href=\"$basePath/{$blog->languages[1]->code}/$translatedSlug\" />");
 
     expect($xml)->toContain("<image:image><image:loc>$basePath/image.png</image:loc></image:image>");
     expect($xml)->toContain("<image:image><image:loc>$basePath/image2.png</image:loc></image:image>");
-    expect($xml)->not->toContain('<image:image><image:loc>https://example.com/image.png</image:loc></image:image>');
+    expect($xml)->not->toContain('<image:image><image:loc>https://example.com/image.png?n&amp;m</image:loc></image:image>');
 });

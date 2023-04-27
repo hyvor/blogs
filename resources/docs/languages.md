@@ -21,7 +21,7 @@ In language settings, each language has a **code** and a **name**.
   * `fr`
   * `fr-FR`
 
-* **Name**: The language name is text to explain the language code. We recommend you to write it in the native alphabet. Some [themes](themes) may use the name to show a message like "This post is translated into Español, 简体中文, and Nederlands".
+* **Name**: The language name is text to explain the language code. We recommend you to write it in the native alphabet. Some [themes](theme) may use the name to show a message like "This post is translated into Español, 简体中文, and Nederlands".
 
 ## Multi-language Blogs
 

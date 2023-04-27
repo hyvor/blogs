@@ -146,7 +146,7 @@ it('clears cache when editing a post', function () {
         ]), 'variants')
         ->create(['blog_id' => $blog]);
 
-    $post->slug = 'new-slug';
+    $post->code_head = 'new-code';
 
     $event = new PostUpdatedEvent($post);
     $listener = new ClearCacheSubscriber();
@@ -167,7 +167,7 @@ it('does not clear cache when editing a post if the primary variant is not publi
         ]), 'variants')
         ->create(['blog_id' => $blog]);
 
-    $post->slug = 'new-slug';
+    $post->code_head = 'new-code';
 
     $event = new PostUpdatedEvent($post);
     $listener = new ClearCacheSubscriber();
@@ -181,7 +181,7 @@ it('clears cache when a post is deleted', function () {
 
     $post = Post::factory()->create(['blog_id' => $blog]);
 
-    $post->slug = 'new-slug';
+    $post->code_head = 'new-code';
 
     $event = new PostDeletedEvent($post);
     $listener = new ClearCacheSubscriber();

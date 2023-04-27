@@ -21,6 +21,7 @@ it('updates post variant', function () {
     $variant = $post->variants[0];
     $language = $variant->language;
 
+    $slug = 'hello-world';
     $status = 'scheduled';
     $content = 'this is content';
     $contentUnsaved = 'this is unsaved content';
@@ -29,6 +30,7 @@ it('updates post variant', function () {
 
     consoleApi($blog, 'PATCH', "/post/$post->id/variant", [
             'language_id' => $language->id,
+            'slug' => $slug,
             'status' => $status,
             'content' => $content,
             'content_unsaved' => $contentUnsaved,
@@ -38,6 +40,7 @@ it('updates post variant', function () {
         ->assertOk()
         ->assertJson(
             fn (AssertableJson $json) => $json
+                ->where('slug', $slug)
                 ->where('status', $status)
                 ->where('content', $content)
                 ->where('content_unsaved', $contentUnsaved)
@@ -74,6 +77,34 @@ it('updates post published_at when post status is changed to published', functio
     expect($post->refresh()->published_at)->not->toBeNull();
 });
 
+
+// bug#134
+it('does not update published_at if it is already set', function() {
+
+    $blog = blogWithAccessLanguageAndRoutes();
+
+    $publishedAt = now()->subDay();
+
+    $post = Post::factory()->create([
+        'blog_id' => $blog,
+        'published_at' => $publishedAt,
+    ]);
+    PostVariant::factory()->create([
+        'post_id' => $post,
+        'language_id' => $blog->languages[0],
+        'status' => PostStatusEnum::DRAFT,
+    ]);
+
+    consoleApi($blog, 'PATCH', "/post/$post->id/variant", [
+        'language_id' => $blog->languages[0]->id,
+        'status' => 'published',
+    ])
+        ->assertOk();
+
+    expect($post->refresh()->published_at->getTimestamp())->toBe($publishedAt->getTimestamp());
+
+});
+
 it('sets the slug if it is empty when publishing the primary language post', function() {
 
     $blog = blogWithAccess();
@@ -83,9 +114,8 @@ it('sets the slug if it is empty when publishing the primary language post', fun
     $post = Post::factory()->create([
         'blog_id' => $blog,
         'published_at' => null,
-        'slug' => null
     ]);
-    PostVariant::factory()->create([
+    $variant = PostVariant::factory()->create([
         'post_id' => $post,
         'language_id' => $blog->languages[0],
         'status' => PostStatusEnum::DRAFT,
@@ -97,7 +127,7 @@ it('sets the slug if it is empty when publishing the primary language post', fun
         ])
         ->assertOk();
 
-    expect($post->refresh()->slug)->not->toBeNull();
+    expect($variant->refresh()->slug)->not->toBeNull();
 
 });
 
@@ -109,9 +139,9 @@ it('updates slug when title is empty', function() {
     $post = Post::factory()->create([
         'blog_id' => $blog,
         'published_at' => null,
-        'slug' => null
+        // 'slug' => null
     ]);
-    PostVariant::factory()->create([
+    $variant = PostVariant::factory()->create([
         'post_id' => $post,
         'language_id' => $blog->languages[0],
         'status' => PostStatusEnum::DRAFT,
@@ -124,7 +154,7 @@ it('updates slug when title is empty', function() {
     ])
         ->assertOk();
 
-    expect($post->refresh()->slug)->not->toBeNull();
+    expect($variant->refresh()->slug)->not->toBeNull();
 
 });
 
@@ -135,7 +165,6 @@ it('creates a history if post content has changed', function() {
     $post = Post::factory()->create([
         'blog_id' => $blog,
         'published_at' => null,
-        'slug' => null
     ]);
     $variant = PostVariant::factory()->create([
         'post_id' => $post,
@@ -163,7 +192,6 @@ it('does not update if the content is the same', function() {
     $post = Post::factory()->create([
         'blog_id' => $blog,
         'published_at' => null,
-        'slug' => null
     ]);
     $variant = PostVariant::factory()->create([
         'post_id' => $post,
@@ -190,7 +218,6 @@ it('deletes old histories', function() {
     $post = Post::factory()->create([
         'blog_id' => $blog,
         'published_at' => null,
-        'slug' => null
     ]);
     $variant = PostVariant::factory()->create([
         'post_id' => $post,
@@ -215,5 +242,27 @@ it('deletes old histories', function() {
     expect($variant->history()->orderBy('id', 'desc')->first()->content)->toBe($para);
 
     expect(PostVariantHistory::count())->toBe(25);
+
+});
+
+it('checks for duplicates when updating slug', function() {
+
+    $blog = blogWithAccessLanguageAndRoutes();
+    $language1 = addLanguage($blog);
+    $post = addPost($blog, [], [
+        'language_id' => $language1->id,
+        'slug' => 'hello-world'
+    ]);
+
+    $post2 = addPost($blog, [], [
+        'language_id' => $language1->id,
+    ]);
+
+    consoleApi($blog, 'PATCH', "/post/$post2->id/variant", [
+        'language_id' => $language1->id,
+        'slug' => 'hello-world',
+    ])
+        ->assertStatus(422)
+        ->assertSee('Slug has already been taken');
 
 });

@@ -33,7 +33,7 @@ Match | Description
 ---|---
 `/styles.css` | The main CSS file of the blog (auto-generated from SCSS files in theme styles)
 `/assets/{file_name}` | To serve files in the theme assets
-`/media/{file_name}` | To serve uploaded [media](#media)
+`/media/{file_name}` | To serve uploaded media
 `/p/{hash}` | To preview posts and pages
 `/robots.txt` | [Robots.txt](seo#robots)
 `/sitemap.xml`, `/sitemap-pages.xml`, `/sitemap-posts-x.xml` | [Sitemaps](seo#sitemap)
@@ -97,7 +97,7 @@ In addition to the default 6 routes, you can add your own routes. Some examples 
 * Creating [new post collections](#collections).
 * Creating custom RSS feeds, for example, for a podcast.
 
-> Please note that you (or theme developers) can also add custom routes by adding `route-{route}.twig` files to template files. See [here](themes-overview#custom-routes) from more details.
+> Please note that you (or theme developers) can also add custom routes by adding `route-{route}.twig` files to template files. See [here](themes-templates#custom-routes) from more details.
 
 
 ## Route Conflicts {#conflicts}
@@ -123,8 +123,6 @@ Matches can be prefixed with a language code. See [languages](languages) for set
 
 We usually call a website "a blog" when it has posts and the home page lists all of them. That is the default behavior of Hyvor Blogs. Even out of its purpose, you can use Hyvor Blogs to create a general website. For example, you can create a landing page for the homepage, and have your blog in the `/blog` subdirectory.
 
-See our [build a website](/blog/website-with-hyvor-blogs) tutorial on our blog.
-
 ## Multiple Post Collections {#collections}
 
 By default, your blog has one post collection, and all posts will be listed the index page. What if you want to have to separate collections, for example, blog posts and podcast episodes in the blog? You can use routes and [tags](tags) to achieve this.
@@ -134,5 +132,3 @@ By default, your blog has one post collection, and all posts will be listed the 
 * We add two new routes with a new template:
   * `/blog` -> to list blog posts (using the filter `tag.slug != podcast`)
   * `/podcast` -> to list podcast episodes (using the filter `tag.slug = podcast`)
-
-See [multi-collection blog](/blog/multi-collection-blog) tutorial on our blog.

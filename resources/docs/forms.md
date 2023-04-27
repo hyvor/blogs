@@ -7,7 +7,7 @@ You may want to collect data from your visitors. Embedding a forms service is th
 * First, signup for a [forms services](#forms). They allow you to create custom forms as you like.
 * Then, add the form embed code to your blog:
   * To add a form to a post or page, use [custom HTML/Twig blocks](writing#custom-html).
-  * To add a form to a specific place in the blog, you will need to [edit the theme](themes#edit).
+  * To add a form to a specific place in the blog, you will need to [edit the theme](theme#editing).
 
 ## Forms Services {#forms}
 

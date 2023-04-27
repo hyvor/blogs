@@ -4,7 +4,7 @@ Adding memberships (login, signup, subscriptions, etc.) is an easy way to allow 
 
 ## Membership Platforms
 
-* [MemberStack](https://memberstack.com)
+* [MemberStack](https://memberstack.com) - [Integration Tutorial](https://hyvor.com/blog/add-memberstack)
 * [MemberSpace](https://www.memberspace.com/)
 
 > Note that integrating these platforms, in most cases, requires you to write Javascript code. If you just want to connect with your users, embedding a [newsletters](newsletter) signup form would be a better and easy option.

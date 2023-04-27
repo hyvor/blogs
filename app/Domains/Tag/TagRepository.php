@@ -1,4 +1,4 @@
-<?php
+<?php declare(strict_types=1);
 
 namespace App\Domains\Tag;
 
@@ -16,23 +16,20 @@ use App\Models\Language;
 use App\Models\Tag;
 use App\Models\TagVariant;
 use Hyvor\FilterQ\FilterQ;
+use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Collection;
 
 class TagRepository
 {
     /**
-     * Get tags of a blog.
-     *
-     * @param $blog
-     * @param  int  $limit
-     * @param  int  $offset
-     * @return Collection<Tag>
+     * Get tags of a blog
+     * @return Collection<int, Tag>
      */
     public static function getTags(Blog $blog, int $limit, int $offset = 0): Collection
     {
         $language = LanguageRepository::getPrimaryLanguage($blog);
 
-        $tags = Tag::where('blog_id', '=', $blog->id)
+        return Tag::where('blog_id', '=', $blog->id)
             ->join('tag_variants', function ($join) use ($language) {
                 $join->on('tag_variants.tag_id', '=', 'tags.id');
                 $join->where('tag_variants.language_id', '=', $language->id);
@@ -42,10 +39,12 @@ class TagRepository
             ->offset($offset)
             ->latest()
             ->get();
-
-        return $tags;
     }
 
+    /**
+     * @param array<string[]> $orderBys
+     * @return CollectionWithTotal<Tag>
+     */
     public static function getTagsWithFilterQ(
         Blog $blog,
         ?string $filter,
@@ -54,7 +53,10 @@ class TagRepository
         array $orderBys = [
             ['tags.posts_count', 'DESC'],
         ],
-    ): CollectionWithTotal {
+    ): CollectionWithTotal
+    {
+
+        /** @var Builder<Tag> $builder */
         $builder = (new FilterQ)->expression($filter)
             ->builder(Tag::class)
             ->keys(function ($keys) {
@@ -94,7 +96,7 @@ class TagRepository
     }
 
     /**
-     * @return Collection<Tag>
+     * @return Collection<int, Tag>
      */
     public static function searchTags(Blog $blog, string $search, int $limit) : Collection
     {
@@ -139,6 +141,9 @@ class TagRepository
         return $tag;
     }
 
+    /**
+     * @param array<string, mixed> $updates
+     */
     public static function updateTag(Tag $tag, array $updates): Tag
     {
         foreach ($updates as $key => $value) {
@@ -178,6 +183,9 @@ class TagRepository
         return $variant;
     }
 
+    /**
+     * @param array<string, mixed> $updates
+     */
     public static function updateTagVariant(TagVariant $variant, array $updates): TagVariant
     {
         foreach ($updates as $key => $value) {
@@ -190,7 +198,7 @@ class TagRepository
         return $variant;
     }
 
-    public static function deleteTagVariant(TagVariant $variant)
+    public static function deleteTagVariant(TagVariant $variant) : void
     {
         $variant->delete();
 

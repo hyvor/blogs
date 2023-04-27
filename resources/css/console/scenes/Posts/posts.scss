@@ -351,12 +351,16 @@
             }
         }
 
-        .post-languages {
+        .post-languages-wrap {
             margin-top: 10px;
+            display: flex;
+        }
 
+        .post-languages {
+            flex: 1;
             .lang-tag {
                 display: inline-block;
-                padding: 1px 9px;
+                padding: 5px 10px;
                 margin-right: 3px;
                 background: $color-input;
                 font-weight: 600;

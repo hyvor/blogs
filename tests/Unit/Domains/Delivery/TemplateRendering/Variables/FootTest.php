@@ -54,7 +54,7 @@ it('sets _foot in a post page', function () {
         $content,
     );
 
-    $pathMatcher = new PathMatcher($blog, "/$post->slug");
+    $pathMatcher = new PathMatcher($blog, "/{$post->variants[0]->slug}");
     $responseObject = $pathMatcher->getResponseObject();
 
     $content = $responseObject->content;
@@ -116,7 +116,7 @@ it('adds powered by for free plan blogs', function() {
     addThemeTemplateFile($blog, '{{ _foot | template }}');
     $pathMatcher = new PathMatcher($blog, '/');
     $responseObject = $pathMatcher->getResponseObject();
-    expect($responseObject->content)->toContain('Powered by Hyvor Blogs');
+    expect($responseObject->content)->toContain('Hyvor Blogs');
 
 });
 
@@ -127,7 +127,7 @@ it('does not add powered by to non-free blogs', function() {
     Subscription::factory()->create(['blog_id' => $blog]);
     $pathMatcher = new PathMatcher($blog, '/');
     $responseObject = $pathMatcher->getResponseObject();
-    expect($responseObject->content)->not->toContain('Powered by Hyvor Blogs');
+    expect($responseObject->content)->not->toContain('Hyvor Blogs');
 
 });
 
@@ -137,6 +137,6 @@ it('does not add powered by to dev and preview blogs', function() {
     addThemeTemplateFile($blog, '{{ _foot | template }}');
     $pathMatcher = new PathMatcher($blog, '/');
     $responseObject = $pathMatcher->getResponseObject();
-    expect($responseObject->content)->not->toContain('Powered by Hyvor Blogs');
+    expect($responseObject->content)->not->toContain('Hyvor Blogs');
 
 });

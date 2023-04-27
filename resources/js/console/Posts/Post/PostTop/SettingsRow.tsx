@@ -1,4 +1,4 @@
-import { BoxArrowUpRight, Fullscreen, GearFill } from "react-bootstrap-icons";
+import { BoxArrowUpRight, GearFill } from "react-bootstrap-icons";
 import { getBlogUrl } from "../../../lib/blog-helpers";
 import React, { useEffect } from "react";
 import { usePostActions, usePostValues } from "../helpers";

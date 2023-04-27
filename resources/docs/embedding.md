@@ -30,6 +30,6 @@ The blog is rendered inside an [iframe](https://developer.mozilla.org/en-US/docs
 
 ## SEO
 
-Iframes have been historically discouraged when it comes to SEO. However, recently search engines have improved to index content inside iframes. In fact, Google [recently announced](https://developers.google.com/search/blog/2022/01/robots-meta-tag-indexifembedded) a new robots tag `indexifembedded` specially for iframe-embedded content, which we add to your blog's iframe.
+Iframes have been historically discouraged when it comes to SEO. However, recently search engines have improved to index content inside iframes. In fact, Google [recently announced](https://developers.google.com/search/blog/2022/01/robots-meta-tag-indexifembedded) a new robots tag `indexifembedded` specially for iframe-embedded content, which we add to your blog's iframe. Yet, most other search engines may not index your pages correctly.
 
 We are working on doing a first party research on the capabilities of search engines to index content inside iframes. If you have any concerns, we can use a [custom domain](custom-domain) for hosting your blog instead of embedding.

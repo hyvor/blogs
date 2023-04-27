@@ -5,6 +5,8 @@ namespace App\Domains\Delivery\Processors\Sitemap;
 use App\Data\Enums\PostStatusEnum;
 use App\Domains\Post\Content\ProsemirrorHelper;
 use App\Domains\Route\PermalinkRepository;
+use App\Exceptions\SafetyException;
+use App\Models\Blog;
 use App\Models\Post;
 
 class UrlPostEntry
@@ -13,12 +15,17 @@ class UrlPostEntry
     {
     }
 
-    public function toXML()
+    public function toXML() : string
     {
         $entry = new UrlEntry();
+        /** @var Blog $blog */
         $blog = $this->post->blog;
 
         foreach ($this->post->variants as $variant) {
+
+            if (!$variant->language)
+                continue;
+
             $url = PermalinkRepository::getPostPermalink(
                 $this->post,
                 $blog,

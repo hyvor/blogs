@@ -1,4 +1,4 @@
-<?php
+<?php declare(strict_types=1);
 
 namespace App\Domains\Theme;
 
@@ -24,7 +24,7 @@ class ThemeFilesRepository
 
         foreach ($files as $file) {
             $entryName = $file->folder === null ? $file->name : "{$file->folder->value}/$file->name";
-            $zip->addFromString($entryName, $file->content);
+            $zip->addFromString($entryName, $file->content ?? '');
         }
 
         return $zip;
@@ -41,14 +41,19 @@ class ThemeFilesRepository
             ->first();
     }
 
+    /**
+     * @param string[] $fileNames
+     * @return Collection<int, ThemeFile>
+     */
     public static function getMultipleFiles(
         Blog $blog,
         array $fileNames,
         ?ThemeFileFolderEnum $folder = null
-    ): Collection {
+    ): Collection
+    {
         return $blog->themeFiles()
             ->whereIn('name', $fileNames)
-            ->where('folder', $folder->value)
+            ->where('folder', $folder?->value)
             ->get();
     }
 
@@ -66,7 +71,7 @@ class ThemeFilesRepository
 
     /**
      * @param  Blog  $blog
-     * @return Collection<ThemeFile>
+     * @return Collection<int, ThemeFile>
      */
     public static function getAllFilesOfBlog(Blog $blog): Collection
     {
@@ -116,22 +121,24 @@ class ThemeFilesRepository
 
     private static function fileUpdated(ThemeFile $file) : void
     {
+        /** @var Blog $blog */
         $blog = $file->blog;
+
         match ($file->folder) {
             ThemeFileFolderEnum::STYLES => StylesEditedEvent::dispatch($blog),
-            ThemeFileFolderEnum::ASSETS => AssetEditedEvent::dispatch($file->blog, $file->name),
+            ThemeFileFolderEnum::ASSETS => AssetEditedEvent::dispatch($blog, $file->name),
             ThemeFileFolderEnum::TEMPLATES => TemplateEditedEvent::dispatch($file),
             null => $file->name === 'config.yaml' ? ConfigEditedEvent::dispatch($file) : null,
             default => null
         };
     }
 
-    public static function deleteFile(ThemeFile $file)
+    public static function deleteFile(ThemeFile $file) : void
     {
         $file->delete();
     }
 
-    public static function deleteAllFiles(Blog $blog)
+    public static function deleteAllFiles(Blog $blog) : void
     {
         $blog->themeFiles()->delete();
     }
@@ -146,9 +153,12 @@ class ThemeFilesRepository
         return $importer->success();
     }
 
-    public static function copyThemeToBlog(Blog $blog, string $themeName, string $version = null)
+    public static function copyThemeToBlog(Blog $blog, string $themeName, string $version = null) : void
     {
         $theme = ThemeRepository::getThemeByName($themeName);
+
+        if (!$theme)
+            return;
 
         $themeVersion = $version === null ?
             ThemeRepository::getThemeLatestVersion($theme) :

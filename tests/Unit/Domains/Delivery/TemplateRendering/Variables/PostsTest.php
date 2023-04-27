@@ -27,7 +27,7 @@ it('does not set _posts and _pagination when posts_filter is null in the route',
 
     $post = addPublishedPost($blog);
 
-    $pathMatcher = new PathMatcher($blog, '/'.$post->slug);
+    $pathMatcher = new PathMatcher($blog, '/'.$post->variants[0]->slug);
     $responseObject = $pathMatcher->getResponseObject();
 
     expect($responseObject->content)->toContain('posts variable not defined');

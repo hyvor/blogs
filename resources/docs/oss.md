@@ -13,15 +13,14 @@ Hyvor Blogs is created thanks to amazing free and open-source software (FOSS). W
 * [Day.js](https://day.js.org/) - Handles date management and displaying
 * [SCSS](https://sass-lang.com/) - Makes writing CSS easier.
 * [Vite](https://vitejs.dev/) - Front-end build tool
-* [Jest](https://jestjs.io/) - Unit testing
-* [Cypress](https://www.cypress.io/) - Feature/e2e testing
+* [Playwright](https://playwright.dev/) - E2E testing
 
 ## Back-end {#backend}
 
-* [PHP](https://php.net) - Our loving programming language
+* [PHP](https://php.net) - Back-end programming language
 * [Laravel](https://laravel.com/) - The PHP framework that makes our life easier
 * [PHPUnit](https://phpunit.de/) and [Pest](https://pestphp.com/) - To test everything in PHP
-* [PHPStan](https://phpstan.org/) - PHP Static Analysis
+* [PHPStan](https://phpstan.org/) - to make sure our code is bug-free
 * [Shiki.js](https://github.com/shikijs/shiki) - Syntax Highlighting
 * [Twig](https://twig.symfony.com/) - Templating language for blogs
 * [MYSQL](https://www.mysql.com/) - The relational database that we trust to keep all data safe
@@ -33,7 +32,7 @@ Hyvor Blogs is created thanks to amazing free and open-source software (FOSS). W
 
 Feel free to check out our open source projects that we developed along with Hyvor Blogs.
 
-* [Flashload.js](https://github.com/hyvor/flashload) - Makes browser navigation faster
+* [Flashload.js](https://github.com/hyvor/flashload) - Makes navigation between pages faster by preloading content on mouse hover.
 * [Kea Ajax Plugin](https://github.com/hyvor/kea-ajax) - AJAX requests made easy in Kea.js
 * [Laravel FilterQ](https://github.com/hyvor/laravel-filterq) - Advanced filtering for Laravel APIs. Powers our [Data API](api-data) filtering.
 * [PHP SVG Icons](https://github.com/hyvor/php-svg-icons) - A collection of SVG icons, ready to use in PHP. Powers the `icon`  [Twig Helper](themes-templates#twig-helpers).

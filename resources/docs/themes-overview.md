@@ -1,4 +1,4 @@
-# Theme Development Overview
+# Theme Development
 
 Hyvor Blogs themes are fully customizable. If you have some experience with HTML, CSS, and Javascript, you can easily build your own theme from scratch. This page is an overview to help you get started. All official themes are in the [hyvor-blogs-themes](https://github.com/hyvor/hyvor-blogs-themes) repository. Feel free to review the source code of the other themes.
 

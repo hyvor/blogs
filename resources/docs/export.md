@@ -1,13 +1,10 @@
 # Export
 
-Exporting is coming soon.
+You own your data, and we make sure you can access them any time you need. You can export both data and media from the console.
+
+To export: **Console &rarr; Settings &rarr; Export**
 
 <!--
-
-You own your data, and it is our responsibility to make sure you can access them any time you need. You can export both data and media from the console.
-
-To export: **Console &rarr; Settings &rarr; Import & Export**
-
 ## Content Export Formats {#formats}
 
 We support exporting data in two formats:
@@ -24,6 +21,7 @@ You can set up automatic monthly exports to Google Drive, Dropbox or a S3-compat
 * `content.json` - Content export in the Hyvor Blogs format
 * `media` - A folder that contains all media files of your blog.
 
+-->
 
 ## Export Data Structure {#export-structure}
 
@@ -81,4 +79,4 @@ All objects are from the [Console API](api-console)
 * [Route Object](api-console#route-object)
 * [Redirect Object](api-console#redirect-object)
 
-> In the **Post Object**, in addition to the `content` property, there will be a `content_html` property with content converted into HTML in the export objects.
+> In `variants` of the **Post Object**, there will be an additional `content_html` property with content converted into HTML.
