@@ -20,30 +20,30 @@ jobs:
                 with:
                     node-version: 16
 
-            - name: Set up services
+            -   name: Set up services
                 run: |
                     docker-compose up -d
 
-            -     name: Setup PHP
-                    uses: shivammathur/setup-php@v2
-                    with:
-                        coverage: "none"
-                        php-version: "8.1"
-                        ini-file: development
-                        tools: composer:v2
-                        extensions: mbstring, ctype, fileinfo, openssl, PDO, bcmath, json, tokenizer, xml, intl
+            -   name: Setup PHP
+                uses: shivammathur/setup-php@v2
+                with:
+                    coverage: "none"
+                    php-version: "8.1"
+                    ini-file: development
+                    tools: composer:v2
+                    extensions: mbstring, ctype, fileinfo, openssl, PDO, bcmath, json, tokenizer, xml, intl
 
-            -     name: Install dependencies
-                    env:
-                        REPMAN_TOKEN: ${{ secrets.REPMAN_TOKEN }}
-                    run: |
-                        npm install --force
-                        npm run build
-                        composer config --global --auth http-basic.hyvor.repo.repman.io token ${REPMAN_TOKEN}
-                        composer install --ansi --no-progress
+            -   name: Install dependencies
+                env:
+                    REPMAN_TOKEN: ${{ secrets.REPMAN_TOKEN }}
+                run: |
+                    npm install --force
+                    npm run build
+                    composer config --global --auth http-basic.hyvor.repo.repman.io token ${REPMAN_TOKEN}
+                    composer install --ansi --no-progress
 
-            -     name: Run tests
-                    run: composer test
+            -   name: Run tests
+                run: composer test
 
     e2e:
         name: "E2E Tests"
