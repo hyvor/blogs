@@ -3,6 +3,7 @@
 use Illuminate\Support\Facades\App;
 use Illuminate\Support\Facades\Route;
 
+include 'testing.php';
 if (App::environment('local')) {
     include 'local.php';
 }

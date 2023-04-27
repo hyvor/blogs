@@ -186,7 +186,7 @@ export default function blog({ type }: { type: string | undefined }) {
                 <div className="popup-footer-single">
                     <ActionButton
                         status={!isCreating ?  "stale" : createBlogAjax.status} 
-                        staleName="Create"
+                        staleName="Create Blog"
                         loadingName="Creating"
                         successName="Created"
                         errorName="Try again"

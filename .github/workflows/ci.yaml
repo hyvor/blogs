@@ -1,46 +1,104 @@
 name: Test
 
 on:
-  push:
-    branches: [ master ]
-  pull_request:
-  workflow_dispatch:
+    push:
+        branches: [ master ]
+    pull_request:
+    workflow_dispatch:
 
 jobs:
-  tests:
-    name: "Tests"
-    runs-on: ubuntu-latest
+    tests:
+        name: "Tests"
+        runs-on: ubuntu-latest
 
-    steps:
-      -   name: Checkout
-          uses: actions/checkout@v3
+        steps:
+            -   name: Checkout
+                uses: actions/checkout@v3
 
-      -   name: Setup Node
-          uses: actions/setup-node@v3
-          with:
-            node-version: 16
+            -   name: Setup Node
+                uses: actions/setup-node@v3
+                with:
+                    node-version: 16
 
-      - name: Set up services
-        run: |
-          docker-compose up -d
+            -   name: Set up services
+                run: |
+                    docker-compose up -d
 
-      -   name: Setup PHP
-          uses: shivammathur/setup-php@v2
-          with:
-            coverage: "none"
-            php-version: "8.1"
-            ini-file: development
-            tools: composer:v2
-            extensions: mbstring, ctype, fileinfo, openssl, PDO, bcmath, json, tokenizer, xml, intl
+            -   name: Setup PHP
+                uses: shivammathur/setup-php@v2
+                with:
+                    coverage: "none"
+                    php-version: "8.1"
+                    ini-file: development
+                    tools: composer:v2
+                    extensions: mbstring, ctype, fileinfo, openssl, PDO, bcmath, json, tokenizer, xml, intl
 
-      -   name: Install dependencies
-          env:
-            REPMAN_TOKEN: ${{ secrets.REPMAN_TOKEN }}
-          run: |
-            npm install --force
-            npm run build
-            composer config --global --auth http-basic.hyvor.repo.repman.io token ${REPMAN_TOKEN}
-            composer install --ansi --no-progress
+            -   name: Install dependencies
+                env:
+                    REPMAN_TOKEN: ${{ secrets.REPMAN_TOKEN }}
+                run: |
+                    npm install --force
+                    npm run build
+                    composer config --global --auth http-basic.hyvor.repo.repman.io token ${REPMAN_TOKEN}
+                    composer install --ansi --no-progress
 
-      -   name: Run tests
-          run: composer test
+            -   name: Run tests
+                run: composer test
+
+    e2e:
+        name: "E2E Tests"
+        runs-on: ubuntu-latest
+
+        steps:
+            -   name: Checkout
+                uses: actions/checkout@v3
+
+            -   name: Set up services
+                run: |
+                    docker-compose up -d
+
+            -   name: Setup Node
+                uses: actions/setup-node@v3
+                with:
+                    node-version: 16
+
+            -   name: Cache dependencies
+                uses: actions/cache@v3
+                with:
+                    path: ~/.npm
+                    key: npm-${{ hashFiles('package-lock.json') }}
+                    restore-keys: npm-
+
+            -   name: Setup PHP
+                uses: shivammathur/setup-php@v2
+                with:
+                    coverage: "none"
+                    php-version: "8.1"
+                    ini-file: development
+                    tools: composer:v2
+                    extensions: mbstring, ctype, fileinfo, openssl, PDO, bcmath, json, tokenizer, xml, intl
+
+            -   name: Install dependencies
+                env:
+                    REPMAN_TOKEN: ${{ secrets.REPMAN_TOKEN }}
+                run: |
+                    composer config --global --auth http-basic.hyvor.repo.repman.io token ${REPMAN_TOKEN}
+                    composer install
+                    npm ci --ignore-scripts
+                    npm run build
+
+            -   name: Run PHP Server
+                env:
+                    APP_ENV: testing
+                run: |
+                    php artisan config:cache
+                    php artisan serve --port=8080 &
+
+            -   name: Run Migrations
+                run: |
+                    php artisan migrate
+
+            -   name: Run e2e tests
+                run: |
+                    npx playwright install --with-deps
+                    npx playwright test
