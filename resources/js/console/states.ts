@@ -7,6 +7,7 @@ export interface PostEditorState {
     isChangingSettings: boolean,
     isPublishing: boolean,
     isUnpublishing: boolean,
+    isDiscarding: boolean,
     isNonDraftEditing: boolean,
     isNonDraftUpdating: boolean,
 

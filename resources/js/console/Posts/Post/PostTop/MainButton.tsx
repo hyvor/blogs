@@ -1,6 +1,6 @@
 import {CaretDownFill, PencilFill} from "react-bootstrap-icons";
 import ActionButton from "../../../ReusableComponents/ActionButton";
-import React, {useState} from "react";
+import React, {useEffect, useState} from "react";
 import {usePostActions, usePostValues} from "../helpers";
 import {toast} from "react-toastify";
 import {Post, PostVariant} from "../../../types";
@@ -8,8 +8,15 @@ import {Post, PostVariant} from "../../../types";
 export default  function MainButton({id} : {id: number}) {
     let name, onClick: any, icon;
 
-    const { currentVariant, editorState, forceSavePostAjax } = usePostValues(id)
+    const { currentVariant, editorState, forceSavePostAjax, diff } = usePostValues(id)
     const { changeEditorState, forceSavePost, savePost } = usePostActions(id)
+    const hasChanged = currentVariant.content_unsaved !== currentVariant.content && currentVariant.content_unsaved !== null;
+
+
+    useEffect(() => {
+        // Make the editor editable when the post is loaded
+        changeEditorState('isNonDraftEditing', true);
+    }, []);
 
     function handleUpdateNonDraft() {
 
@@ -33,7 +40,6 @@ export default  function MainButton({id} : {id: number}) {
             update,
             onSave: (p: Post) => {
                 changeEditorState('isNonDraftUpdating', false)
-                changeEditorState('isNonDraftEditing', false)
                 toast.success(
                     <div>Post Updated. <a
                         className="link"
@@ -48,23 +54,17 @@ export default  function MainButton({id} : {id: number}) {
         });
     }
 
-    if (currentVariant.status === 'published' || currentVariant.status === 'scheduled') {
-        if (!editorState.isNonDraftEditing) {
-            name = "Edit";
-            icon = <PencilFill />
-            onClick = () => changeEditorState('isNonDraftEditing', true);
-        } else {
-            return <ActionButton
-                className="small main-button"
-                status={!editorState.isNonDraftUpdating ? "stale" : (forceSavePostAjax.status || 'stale')}
-                staleName="Update"
-                loadingName="Updating"
-                successName="Updated"
-                errorName="Try again"
-                staleOnClick={handleUpdateNonDraft}
-                errorOnClick={handleUpdateNonDraft}
-            />
-        }
+    if ((currentVariant.status === 'published' || currentVariant.status === 'scheduled')) {
+        return hasChanged ? <ActionButton
+            className="small main-button"
+            status={!editorState.isNonDraftUpdating ? "stale" : (forceSavePostAjax.status || 'stale')}
+            staleName="Save changes"
+            loadingName="Saving..."
+            successName="Saved"
+            errorName="Try again"
+            staleOnClick={handleUpdateNonDraft}
+            errorOnClick={handleUpdateNonDraft}
+        /> : null;
     } else {
         name = "Publish";
         onClick = () => changeEditorState('isPublishing', true);

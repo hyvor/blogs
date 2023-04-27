@@ -9,6 +9,7 @@ import {diff} from "deep-object-diff";
 import languagesLogic from "./languagesLogic";
 import {PostEditorState} from "../states";
 import merge from "deepmerge";
+import { usePostValues } from "../Posts/Post/helpers";
 
 async function updatePost(post: Post, diff: Partial<Post>) {
 
@@ -89,7 +90,6 @@ const postLogic = kea<postLogicType>([
             const response = await updatePost(values.post, diff);
             actions.setOriginal(response);
         },
-
         /**
          * Used for forced saving/publishing/unpublishing (usually on button click)
          */
@@ -203,6 +203,7 @@ const postLogic = kea<postLogicType>([
                 isUnpublishing: false,
                 // just editing the post
                 isNonDraftEditing: false,
+                isDiscarding: false,
                 // updater opened
                 isNonDraftUpdating: false,
                 version: 1,

@@ -9,6 +9,7 @@ import PostMiddle from "./PostMiddle";
 import Unpublisher from "./Unpublisher";
 import postsLogic from "../../logic/postsLogic";
 import pagesLogic from "../../logic/pagesLogic";
+import Discarder from './Discarder';
 
 export default function Post({ id, subdomain, type }: { id: number, subdomain: string, type: string }) {
 
@@ -45,6 +46,7 @@ export default function Post({ id, subdomain, type }: { id: number, subdomain: s
 
 
             <Unpublisher id={id} />
+            <Discarder id={id} />
 
             <Tooltip place="bottom" />
 
