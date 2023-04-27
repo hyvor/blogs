@@ -7,12 +7,11 @@ import {Post} from "../../types";
 export default function Discarder({id} : {id: number}) {
 
     const { editorState, currentVariant } = usePostValues(id)
-    const { changeEditorState, discardChanges, loadPost } = usePostActions(id)
-
-    const status = currentVariant.status
+    const { changeEditorState, savePost, updateCurrentPostVariantValue } = usePostActions(id)
 
     function handleDiscardChanges() {
-        discardChanges();
+        updateCurrentPostVariantValue("content_unsaved", null);
+        savePost();
         changeEditorState('isDiscarding', false);
         changeEditorState('version', editorState.version + 1);
     }
@@ -20,7 +19,7 @@ export default function Discarder({id} : {id: number}) {
     return editorState.isDiscarding ?
         <PopupConfirm
             title={"Discard Changes"}
-            text={"Are you sure to discard changes ? All changes will be lost."}
+            text={"Are you sure to discard changes? All changes will be lost. The post will be reset to the published version."}
             name={"Discard Changes"}
             onClick={handleDiscardChanges}
             onCancel={() => changeEditorState('isDiscarding', false)}

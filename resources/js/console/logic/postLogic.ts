@@ -91,14 +91,6 @@ const postLogic = kea<postLogicType>([
             actions.setOriginal(response);
         },
         /**
-         * Used for discarding changes
-         */
-        discardChanges: () => {
-            actions.updateCurrentPostVariantValue("content_unsaved", null);
-            actions.savePost();
-        },
-
-        /**
          * Used for forced saving/publishing/unpublishing (usually on button click)
          */
         forceSavePost: async ({onSave, update} : { update: Partial<Post>, onSave: (post: Post) => void}) => {
