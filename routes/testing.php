@@ -4,7 +4,7 @@ use App\Http\Controllers\Testing\TestingController;
 use Illuminate\Support\Facades\App as App;
 use Illuminate\Support\Facades\Route as Route;
 
-if (App::environment('local')) {
+if (App::environment('local', 'testing')) {
 
     Route::prefix('_testing')->group(function() {
         Route::post('truncate', [TestingController::class, 'truncate']);
