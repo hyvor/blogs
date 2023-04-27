@@ -62,6 +62,13 @@ jobs:
                 with:
                     node-version: 16
 
+            -   name: Cache dependencies
+                uses: actions/cache@v3
+                with:
+                    path: ~/.npm
+                    key: npm-${{ hashFiles('package-lock.json') }}
+                    restore-keys: npm-
+
             -   name: Setup PHP
                 uses: shivammathur/setup-php@v2
                 with:
@@ -77,7 +84,7 @@ jobs:
                 run: |
                     composer config --global --auth http-basic.hyvor.repo.repman.io token ${REPMAN_TOKEN}
                     composer install
-                    npm ci
+                    npm ci --ignore-scripts
                     npm run build
 
             -   name: Run PHP Server
