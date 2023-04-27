@@ -7,13 +7,13 @@ import {Post} from "../../types";
 export default function Discarder({id} : {id: number}) {
 
     const { editorState, currentVariant } = usePostValues(id)
-    const { changeEditorState, dicardChanges, loadPost } = usePostActions(id)
+    const { changeEditorState, discardChanges, loadPost } = usePostActions(id)
 
     const status = currentVariant.status
 
     function handleDiscardChanges() {
+        discardChanges();
         changeEditorState('isDiscarding', false);
-        dicardChanges();
         loadPost();
     }
 

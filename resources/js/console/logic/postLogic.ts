@@ -93,11 +93,8 @@ const postLogic = kea<postLogicType>([
         /**
          * Used for discarding changes
          */
-        dicardChanges: () => {
-            // Get content of the published post
-            const publishedPost = values.postOriginal.variants[0];
-            actions.updateCurrentPostVariantValue('content', publishedPost.content);
-            actions.updateCurrentPostVariantValue("content_unsaved", publishedPost.content);
+        discardChanges: () => {
+            actions.updateCurrentPostVariantValue("content_unsaved", null);
             actions.savePost();
         },
 

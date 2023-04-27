@@ -8,9 +8,9 @@ import {Post, PostVariant} from "../../../types";
 export default  function MainButton({id} : {id: number}) {
     let name, onClick: any, icon;
 
-    const { currentVariant, editorState, forceSavePostAjax } = usePostValues(id)
+    const { currentVariant, editorState, forceSavePostAjax, diff } = usePostValues(id)
     const { changeEditorState, forceSavePost, savePost } = usePostActions(id)
-    const hasChanged = currentVariant.content_unsaved !== currentVariant.content;
+    const hasChanged = diff.variants && currentVariant.content_unsaved !== currentVariant.content;
 
 
     useEffect(() => {

@@ -3,9 +3,9 @@ import { usePostActions, usePostValues } from "../helpers";
 
 export default function DiscardingButton({ id }: { id: number }) {
 
-    const { currentVariant } = usePostValues(id);
-    const { changeEditorState } = usePostActions(id)
-    const hasChanged = currentVariant.content_unsaved !== currentVariant.content;
+    const { currentVariant, diff } = usePostValues(id);
+    const { changeEditorState } = usePostActions(id);
+    const hasChanged = diff.variants && currentVariant.content_unsaved !== currentVariant.content;
     
     let name;
     if (currentVariant.status === 'published' && hasChanged)
