@@ -33,9 +33,11 @@ Let's say you there are two languages `en` (default) and `fr` in your blog. Now,
 
 ### Writing Translated Posts
 
-When you have multiple languages set up on your blog, you will see a **Language** option in settings of each post, which set to your default language. You may change this to another language to add translated posts. When you do this, the **slug** field will change to **Original Post** with a dropdown to select the original post. 
+In the post editor, you will see an option to create multiple language variants of a post.
 
-Let's say, you have a `hello-world` post written in English. To add its translated version, create a new post as usual and change language to French in post settings. The new post's slug will now be `fr/hello-world`. You cannot change the slug of the translated posts.
+![Switching Between Variants](/img/docs/language-post-variants.png)
+
+Think of each variant as a separate post. Each post can have a different slug. For example, if you have a post with slug `hello-world` in English, you can have a post with slug `bonjour-monde` in French. The French post will be shown at `/fr/bonjour-monde`.
 
 ### Technical SEO
 
@@ -57,5 +59,5 @@ In addition, HB will add `hreflang` alternate tags. For example, if you have thr
 For posts, we will add these alternate tags **only if** we can find its translated posts.
 
 
-## Translating the Theme {#translate-theme}
+<!-- ## Translating the Theme {#translate-theme} -->
 
