@@ -10,7 +10,7 @@ export default  function MainButton({id} : {id: number}) {
 
     const { currentVariant, editorState, forceSavePostAjax, diff } = usePostValues(id)
     const { changeEditorState, forceSavePost, savePost } = usePostActions(id)
-    const hasChanged = diff.variants && currentVariant.content_unsaved !== currentVariant.content;
+    const hasChanged = currentVariant.content_unsaved !== currentVariant.content;
 
 
     useEffect(() => {
