@@ -1,4 +1,4 @@
-<?php
+<?php declare(strict_types=1);
 
 namespace App\Domains\Theme;
 
@@ -12,13 +12,20 @@ use Illuminate\Support\Str;
 
 class ThemeRepository
 {
+    /**
+     * @return Collection<int, Theme>
+     */
     public static function getAllThemes(): Collection
     {
         return Theme::all();
     }
 
+    /**
+     * @return Collection<int, Theme>
+     */
     public static function getAllThemesWithLatestVersions(): Collection
     {
+
         $themes = Theme::selectRaw('
             (
                 SELECT id 
@@ -29,23 +36,23 @@ class ThemeRepository
             ) as latest_version_id, themes.*')
             ->get();
 
-        $versionIds = $themes->map(fn ($theme) => $theme->latest_version_id);
+        $versionIds = $themes->map(fn ($theme) => $theme->latest_version_id); // @phpstan-ignore-line
 
         $versions = ThemeVersion::whereIn('id', $versionIds)->get();
 
         foreach ($themes as $theme) {
-            $theme->setRelation('versions', [$versions->firstWhere('id', $theme->latest_version_id)]);
+            $theme->setRelation('versions', [$versions->firstWhere('id', $theme->latest_version_id)]); // @phpstan-ignore-line
         }
 
         return $themes;
     }
 
-    public static function getThemeByName(string $name): Theme
+    public static function getThemeByName(string $name): ?Theme
     {
         return Theme::where('name', $name)->first();
     }
 
-    public static function getThemeLatestVersion(Theme $theme): ThemeVersion
+    public static function getThemeLatestVersion(Theme $theme): ?ThemeVersion
     {
         return $theme->versions()->latest('id')->first();
     }
@@ -67,7 +74,8 @@ class ThemeRepository
         Theme $theme,
         string $version,
         string $zip,
-    ) {
+    ) : void
+    {
         $previewBlog = app(BlogService::class)->createBlog(
             null,
             $theme->name,
@@ -84,7 +92,7 @@ class ThemeRepository
         ThemeFilesRepository::copyThemeToBlog($previewBlog, $theme->name);
     }
 
-    private static function generateThemePreviewSubdomain(string $name, string $version)
+    private static function generateThemePreviewSubdomain(string $name, string $version) : string
     {
         $version = str_replace('.', '-', $version);
         $random = Str::random(12);

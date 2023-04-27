@@ -27,3 +27,6 @@ cypress/videos/
 
 # temp files
 .DS_Store
+/test-results/
+/playwright-report/
+/playwright/.cache/
