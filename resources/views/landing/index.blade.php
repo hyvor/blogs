@@ -3,7 +3,7 @@
 <head>
     @include('landing.meta', [
         'title' => 'Hyvor Blogs - Multi-language blogging platform',
-        'description' => 'Hyvor Blogs is a simple and powerful multi-language blogging platform with customizable themes, custom domains, in-built SEO, APIs, and more features. Start your blog today!',
+        'description' => 'Hyvor Blogs is a multi-language blogging platform to start a fully customizable blog. No technical knowledge required. Start building your audience now.',
         'image' => 'https://blogs.hyvor.com/img/banner.png',
         'canonical' => 'https://blogs.hyvor.com',
     ])
