@@ -94,4 +94,4 @@ jobs:
             -   name: Run e2e tests
                 run: |
                     npx playwright install --with-deps
-                    cd embed && npx playwright test
+                    npx playwright test
