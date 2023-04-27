@@ -14,6 +14,12 @@ export default function Discarder({id} : {id: number}) {
         savePost();
         changeEditorState('isDiscarding', false);
         changeEditorState('version', editorState.version + 1);
+        toast.success(
+            <div>Successfully discarded.</div>,
+            {
+                autoClose: 5000
+            }
+        )
     }
 
     return editorState.isDiscarding ?
