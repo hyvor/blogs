@@ -14,7 +14,7 @@ export default function Discarder({id} : {id: number}) {
     function handleDiscardChanges() {
         discardChanges();
         changeEditorState('isDiscarding', false);
-        loadPost();
+        changeEditorState('version', editorState.version + 1);
     }
 
     return editorState.isDiscarding ?
