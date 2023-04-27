@@ -1,5 +1,5 @@
-const shiki = require('shiki');
-const { getLanguagesToLoad, findLanguage } = require('./load-languages');
+import shiki from 'shiki';
+import { getLanguagesToLoad, findLanguage } from './load-languages.js';
 
 const input = JSON.parse(process.argv[2]);
 

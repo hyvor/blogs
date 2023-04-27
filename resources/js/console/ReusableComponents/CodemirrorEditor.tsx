@@ -26,6 +26,16 @@ export default function CodemirrorEditor({ id = null, value, onChange, onSave, e
     const cm = useRef<any>(null);
     const tabSize = extension === 'yaml' ? 2 : 4;
 
+    function handleTab(cm: any) {
+        console.log(cm)
+        if (cm.somethingSelected()) {
+          cm.indentSelection("add");
+        } else {
+          cm.replaceSelection(cm.getOption("indentWithTabs")? "\t":
+            Array(cm.getOption("indentUnit") + 1).join(" "), "end", "+input");
+        }
+    }
+
     function initCm() {
 
         (ref.current as HTMLDivElement).innerHTML = "";
@@ -40,7 +50,7 @@ export default function CodemirrorEditor({ id = null, value, onChange, onSave, e
             theme: 'solarized',
             keyMap: 'sublime',
             tabSize,
-            indentWithTabs: true,
+            indentWithTabs: false,
             indentUnit: tabSize,
             lineWrapping: false,
             lineNumbers: true,
@@ -50,7 +60,8 @@ export default function CodemirrorEditor({ id = null, value, onChange, onSave, e
             autoCloseTags: true,
             extraKeys: {
                 "Ctrl-S": handleSave,
-                "Cmd-S": handleSave
+                "Cmd-S": handleSave,
+                "Tab": handleTab
             }
         })
         cm.current.on('change', function() {

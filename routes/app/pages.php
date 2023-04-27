@@ -16,3 +16,4 @@ Route::view('/', 'landing.index');
 Route::view('/pricing', 'landing.pricing');
 Route::get('/docs/{page?}', [DocsController::class, 'handle']);
 Route::get('/themes/{name?}', [ThemesController::class, 'handle']);
+Route::view('/config', 'config');

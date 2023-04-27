@@ -1,5 +1,6 @@
 {
   "private": true,
+  "type": "module",
   "scripts": {
     "dev": "vite",
     "build": "vite build",
@@ -16,6 +17,7 @@
     "@babel/preset-typescript": "^7.18.6",
     "@playwright/test": "^1.32.3",
     "@types/jest": "^28.1.6",
+    "@types/js-yaml": "^4.0.5",
     "@types/react": "^18.0.5",
     "@types/react-color": "^3.0.6",
     "@types/react-datepicker": "^4.4.1",
@@ -35,7 +37,7 @@
     "sass-loader": "^12.6.0",
     "ts-loader": "^9.2.9",
     "typescript": "^4.6.4",
-    "vite": "^3.0.4"
+    "vite": "^4.0.0"
   },
   "dependencies": {
     "@joeattardi/emoji-button": "^4.6.4",
@@ -44,6 +46,7 @@
     "dayjs": "^1.11.0",
     "deep-object-diff": "^1.1.7",
     "deepmerge": "^4.2.2",
+    "js-yaml": "^4.1.0",
     "kea": "^3.0.1",
     "kea-ajax": "^1.0.2",
     "kea-router": "^3.0.0",
