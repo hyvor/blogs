@@ -20,7 +20,7 @@ Console API allows you to do administrative tasks of a blog. This is the same AP
 
 ## Authenticating User {#authenticating-user}
 
-(TODO)
+[To be written]
 
 ## Categories
 
@@ -176,7 +176,6 @@ type Response = Post
 
 ```ts
 type Request = {
-    slug?: string, // max 255 chars
     is_featured?: boolean,
     featured_image_url?: string | null,
     canonical_url?: string | null,
@@ -214,6 +213,7 @@ type Response = PostVariant
 ```ts
 type Request = {
     language_id: number,
+    slug?: string, // max 255 chars
     status?: 'draft' | 'published' | 'scheduled',
     content?: string | null,
     content_unsaved?: string | null,
@@ -439,8 +439,6 @@ interface Post {
     is_featured: boolean,
     is_page: boolean,
 
-    slug: string,
-
     featured_image_url: string | null,
     canonical_url: string | null,
     code_head: string | null,
@@ -458,7 +456,8 @@ interface Post {
 ```ts
 interface PostVariant {
     language_id: number,
-
+  
+    slug: string | null,
     status: 'draft' | 'published' | 'scheduled',
     url: string,
 

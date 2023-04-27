@@ -54,7 +54,7 @@ it('sets _foot in a post page', function () {
         $content,
     );
 
-    $pathMatcher = new PathMatcher($blog, "/$post->slug");
+    $pathMatcher = new PathMatcher($blog, "/{$post->variants[0]->slug}");
     $responseObject = $pathMatcher->getResponseObject();
 
     $content = $responseObject->content;

@@ -157,7 +157,8 @@ class PermalinkRepository
             return $post->published_at->format(self::DATE_FORMATTERS[$matches[1]]);
         }, $path);
 
-        $path = str_replace('{slug}', $post->slug, $path);
+        $variant = $post->variants->firstWhere('language_id', $language->id);
+        $path = str_replace('{slug}', $variant?->slug ?? '', $path);
 
         if (str_contains($path, '{tag}')) {
             $path = str_replace('{tag}', $post->tags[0]?->slug ?? '', $path);

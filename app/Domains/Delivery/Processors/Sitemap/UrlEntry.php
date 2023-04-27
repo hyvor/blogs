@@ -50,9 +50,11 @@ class UrlEntry
             $imagesXML .= "<image:image><image:loc>$image</image:loc></image:image>\n";
         }
 
+        $loc = htmlspecialchars($this->loc);
+
         return <<<XML
         <url>
-            <loc>$this->loc</loc>
+            <loc>$loc</loc>
             $langAltsXML
             $imagesXML
         </url>

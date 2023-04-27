@@ -1,17 +1,20 @@
-<?php
+<?php declare(strict_types=1);
 
 namespace Database\Factories;
 
 use App\Models\Blog;
+use App\Models\Post;
 use Illuminate\Database\Eloquent\Factories\Factory;
-use Illuminate\Support\Str;
 
+/**
+ * @extends Factory<Post>
+ */
 class PostFactory extends Factory
 {
     /**
      * Define the model's default state.
      *
-     * @return array
+     * @return array<mixed>
      */
     public function definition()
     {
@@ -21,7 +24,7 @@ class PostFactory extends Factory
             'is_page' => false,
             'is_featured' => false,
 
-            'slug' => Str::slug($this->faker->text),
+            // 'slug' => Str::slug($this->faker->text),
             'published_at' => $this->faker->dateTime(),
         ];
     }

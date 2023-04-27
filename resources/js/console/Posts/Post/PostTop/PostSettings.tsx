@@ -116,8 +116,8 @@ export default function PostSettings({ id } : PostSettingsProps) {
                         >
                             <input
                                 className="input"
-                                value={post.slug || ''}
-                                onChange={(e) => updatePostValue("slug", e.target.value)}
+                                value={currentVariant.slug || ''}
+                                onChange={(e) => updateCurrentPostVariantValue("slug", e.target.value)}
                                 maxLength={250}
                             />
                         </Setting>

@@ -1,4 +1,4 @@
-<?php
+<?php declare(strict_types=1);
 
 namespace App\Data\Objects\DataAPI;
 
@@ -73,21 +73,20 @@ class PostObject
         $variant = $variants->firstWhere('language_id', $language->id);
 
         $this->id = $post->id;
-        $this->created_at = $post->created_at->timestamp;
-        $this->updated_at = $variant->updated_at->timestamp;
-        $this->published_at = $post->published_at?->timestamp;
+        $this->created_at = $post->created_at->getTimestamp();
+        $this->updated_at = $variant->updated_at->getTimestamp();
+        $this->published_at = $post->published_at?->getTimestamp();
 
         $this->is_featured = $post->is_featured;
         $this->is_page = $post->is_page;
 
-        // In Preview, slug can be null
-        $this->slug = $post->slug ?? '';
+        $this->slug = $variant->slug ?? '';
 
         $this->url = PermalinkRepository::getPostPermalink($post, $blog, $language);
         $this->content = $variant->content_html ?? '';
         $this->words = $variant->words ?? 0;
-        $this->title = $variant->title;
-        $this->description = $variant->description;
+        $this->title = $variant->title ?? null;
+        $this->description = $variant->description ?? null;
         $this->featured_image_url = $post->featured_image_url;
         $this->canonical_url = $post->canonical_url;
 

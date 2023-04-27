@@ -27,7 +27,7 @@ it('matches a post', function () {
         ->where('posts.is_page', false)
         ->where('posts.blog_id', $blog->id)
         ->where('post_variants.language_id', $blog->languages[0]->id)
-        ->select('posts.slug', 'posts.id')
+        ->select(['post_variants..slug', 'posts.id'])
         ->first();
 
     $pathMatcher = new PathMatcher($blog, "/$variant->slug");
@@ -57,7 +57,7 @@ it('matches a page', function () {
         ->where('posts.is_page', true)
         ->where('posts.blog_id', $blog->id)
         ->where('post_variants.language_id', $blog->languages[0]->id)
-        ->select('posts.slug', 'posts.id')
+        ->select(['post_variants.slug', 'posts.id'])
         ->first();
 
     $pathMatcher = new PathMatcher($blog, "/$variant->slug");
@@ -89,7 +89,7 @@ it('matches a post with language', function () {
         ->where('posts.is_page', false)
         ->where('posts.blog_id', $blog->id)
         ->where('post_variants.language_id', $blog->languages[1]->id)
-        ->select('posts.slug', 'posts.id')
+        ->select('post_variants.slug', 'posts.id')
         ->first();
 
     $pathMatcher = new PathMatcher($blog, "/{$blog->languages[1]->code}/$variant->slug");
