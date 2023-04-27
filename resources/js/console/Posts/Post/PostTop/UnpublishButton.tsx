@@ -5,7 +5,7 @@ export default function UnpublishButton({ id }: { id: number }) {
 
     const { currentVariant } = usePostValues(id);
     const { changeEditorState } = usePostActions(id);
-    const hasChanged = currentVariant.content_unsaved !== currentVariant.content;
+    const hasChanged = currentVariant.content_unsaved !== currentVariant.content && currentVariant.content_unsaved !== null;
 
     let name;
     if (currentVariant.status === 'published' && !hasChanged) {

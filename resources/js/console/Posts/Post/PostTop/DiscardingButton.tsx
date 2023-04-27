@@ -5,7 +5,7 @@ export default function DiscardingButton({ id }: { id: number }) {
 
     const { currentVariant, diff } = usePostValues(id);
     const { changeEditorState } = usePostActions(id);
-    const hasChanged = currentVariant.content_unsaved !== currentVariant.content;
+    const hasChanged = currentVariant.content_unsaved !== currentVariant.content && currentVariant.content_unsaved !== null;
     
     let name;
     if (currentVariant.status === 'published' && hasChanged)
