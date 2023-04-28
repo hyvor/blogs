@@ -30,6 +30,9 @@
         &.react-datepicker__navigation--next {
             right:10px;
         }
+        .react-datepicker__navigation-icon::before {
+            border-width: 3px 3px 0 0 !important;
+        }
     }
     .react-datepicker__current-month {
         margin-bottom:10px;
