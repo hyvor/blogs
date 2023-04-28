@@ -241,7 +241,7 @@ class TemplateRenderer
     {
         $pageNumber = $this->getPageNumber();
 
-        $limit = $this->config['POSTS_PER_PAGINATION'] ?? 10;
+        $limit = intval($this->config['POSTS_PER_PAGINATION'] ?? 10);
         $offset = ($pageNumber - 1) * $limit;
 
         $collectionWithTotal = PostRepository::getPostsWithFilterQ(

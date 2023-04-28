@@ -83,8 +83,8 @@ class PostsController extends Controller
         ]);
 
         $language = Helper::getLanguage($blog, $request->input('language'));
-        $limit = Helper::getLimit($request->input('limit'));
-        $page = Helper::getPage($request->input('page'));
+        $limit = Helper::getLimit($request->integer('limit'));
+        $page = Helper::getPage($request->integer('page'));
         $offset = Helper::getOffset($page, $limit);
         $filter = $request->input('filter');
         $keys = $request->input('keys');

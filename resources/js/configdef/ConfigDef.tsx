@@ -82,9 +82,11 @@ export default function ConfigDef({ configYaml, configDefYaml, onConfigChange } 
     configDef = {...configDef, ...{
         THEME_NAME: {
             $name: 'Theme Name',
+            $type: 'none'
         },
         THEME_VERSION: {
             $name: 'Theme Version',
+            $type: 'none'
         },
         POSTS_PER_PAGINATION: {
             $name: 'Posts per Pagination',
@@ -122,6 +124,8 @@ function ObjectConfig({ config, configDef, onChange, parentKeys = [] } : ObjectC
 
                 const allParentKeys = [...parentKeys, key];
 
+                const hasChildren = typeof value === 'object' && value !== null;
+
                 return <div key={allParentKeys.join('.')}>
 
 
@@ -131,7 +135,7 @@ function ObjectConfig({ config, configDef, onChange, parentKeys = [] } : ObjectC
                         right={
                             <div>
                                 {
-                                    typeof value === 'object' && value !== null ?
+                                    hasChildren ?
                                         <ObjectConfig
                                             config={value}
                                             configDef={def}
@@ -150,6 +154,7 @@ function ObjectConfig({ config, configDef, onChange, parentKeys = [] } : ObjectC
                         props={{
                             "data-testid": "config-" + allParentKeys.join('.')
                         }}
+                        subsection={hasChildren === true}
                     ></DualSetting>
 
                 </div>
@@ -166,7 +171,9 @@ function ConfigInput({value, def, onChange} : {value: any, def: any, onChange: (
 
     const type = getValidType(def?.$type || 'text');
 
-    if (type === 'text') {
+    if (type === 'none') {
+        return value;
+    } else if (type === 'text') {
 
         return <Input
             type="text"
@@ -245,6 +252,7 @@ function ConfigInput({value, def, onChange} : {value: any, def: any, onChange: (
 function getValidType(type: any) {
 
     const types = [
+        'none',
         'text',
         'textarea',
         'number',

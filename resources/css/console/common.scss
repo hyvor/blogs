@@ -352,7 +352,6 @@ textarea.input {
         flex: 1;
         margin-right: 20px;
         min-width: 0;
-        max-width: 150px;
         word-wrap: break-word;
     } 
     .dual-title {
@@ -372,6 +371,17 @@ textarea.input {
         flex-direction: column;
         .dual-left {
             margin-bottom: 20px;
+        }
+    }
+    &.subsection {
+        flex-direction: column;
+        > .dual-left {
+            margin-bottom: 20px;
+        }
+        > .dual-right {
+            padding-left:25px;
+            margin-left: 25px;
+            border-left: 1px solid $color-accent-light;
         }
     }
 }

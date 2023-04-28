@@ -150,10 +150,6 @@ export default function Settings({ type }: { type: string | undefined }) {
     return <div className="posts-view settings-view">
         <div className="box box-left">
 
-            <div className="middle-heading">
-                Settings
-            </div>
-
             <div className="settings-nav">
 
                 {

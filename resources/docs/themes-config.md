@@ -100,6 +100,7 @@ These are the supported types for theme configurations:
 
 | `$type` | Description                                                                                  |
 | --- |----------------------------------------------------------------------------------------------|
+| none | No input. This is useful for configurations that are not editable by the blogger.            |
 | text | Single-line text input. This is the default, if `$type` is not defined |
 | textarea | Multi-line text input.                                                         |
 | number | Select a number                                                      |
