@@ -99,7 +99,7 @@ function ObjectConfig({ config, configDef, onChange, parentKeys = [] } : ObjectC
 
                 const allParentKeys = [...parentKeys, key];
 
-                return <div key={allParentKeys.join(',')}>
+                return <div key={allParentKeys.join('.')}>
 
 
                     <DualSetting
@@ -124,6 +124,9 @@ function ObjectConfig({ config, configDef, onChange, parentKeys = [] } : ObjectC
                                 }
                             </div>
                         }
+                        props={{
+                            "data-testid": "config-" + allParentKeys.join('.')
+                        }}
                     ></DualSetting>
 
                 </div>

@@ -19,6 +19,7 @@ export function ColorPicker({ color, onChange, onClose, preset = [] } : ColorPic
 
         <span 
             className='color-picker-preview'
+            data-testid="color-picker-preview"
             style={{backgroundColor: color}}
             onClick={() => setIsOpen(true)}
         ></span>

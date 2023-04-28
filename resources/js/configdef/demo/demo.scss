@@ -30,6 +30,10 @@
         padding: 10px;
     }
 
+    .user-interface-wrap {
+        overflow: auto;
+    }
+
     .CodeMirror {
         background-color: transparent!important;
         min-height: 100%;

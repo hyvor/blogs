@@ -45,7 +45,7 @@ function App() {
                         onChange={value => setConfigDef(value)}
                         extension="yaml"
                         props={{
-                            'data-testid': 'configdef-editor'
+                            'data-testid': 'config-def-editor'
                         }}
                     />
                 </div>
@@ -56,7 +56,7 @@ function App() {
             <div className="column-title">
                 User Interface
             </div>
-            <div className="column-content">
+            <div className="column-content user-interface-wrap">
                 <div className="box">
                     <ConfigDef
                         configYaml={config}

@@ -11,7 +11,7 @@ interface RadioProps {
 
 export default function Radio(props: RadioProps) {
     
-    return <div className="global-radio-wrap">
+    return <div className="global-radio-wrap" data-testid="radio">
         <label className="radio-container">
             {props.placeholder ?  <span className="placeholder">{props.placeholder}</span> : null}
             <input
