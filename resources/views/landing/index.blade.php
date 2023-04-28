@@ -3,7 +3,7 @@
 <head>
     @include('landing.meta', [
         'title' => 'Hyvor Blogs - Multi-language blogging platform',
-        'description' => 'Hyvor Blogs is a simple and powerful multi-language blogging platform with customizable themes, custom domains, in-built SEO, APIs, and more features. Start your blog today!',
+        'description' => 'Hyvor Blogs is a multi-language blogging platform to start a fully customizable blog. No technical knowledge required. Start building your audience now.',
         'image' => 'https://blogs.hyvor.com/img/banner.png',
         'canonical' => 'https://blogs.hyvor.com',
     ])
@@ -773,14 +773,14 @@ c30.27,0,54.64-24.37,54.64-54.64v-1419l-363.61-362.75L1258.7,336.75z"/>
 
             <div class="frameworks">
 
-                <a href="https://blogs.hyvor.com/blog/laravel" target="_blank">
+                <a href="https://hyvor.com/blog/laravel" target="_blank">
                     <img src="/img/landing/frameworks/laravel.svg" alt="Laravel Logo" />
                     <span>
                         Laravel
                     </span>
                 </a>
 
-                <a href="https://blogs.hyvor.com/blog/symfony" target="_blank">
+                <a href="https://hyvor.com/blog/symfony" target="_blank">
                     <img src="/img/landing/frameworks/symfony.svg" alt="Symfony Logo" />
                     <span>
                         Symfony

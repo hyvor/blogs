@@ -346,8 +346,12 @@ class PostRepository
             $status = $updates['status'];
             $variant->status = $status;
 
-            if ($status === PostStatusEnum::PUBLISHED && !$post->published_at) {
-                $post->published_at = now();
+            if ($status === PostStatusEnum::PUBLISHED) {
+
+                if ($post->published_at === null) {
+                    $post->published_at = now();
+                    $post->save();
+                }
 
                 // a slug is required if the post is published
                 if ($variant->slug === null) {
@@ -355,7 +359,6 @@ class PostRepository
                     $variant->slug = $title ? Str::slug($title) : Str::random();
                 }
 
-                $post->save();
             }
         }
 

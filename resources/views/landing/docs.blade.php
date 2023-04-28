@@ -6,7 +6,7 @@
     @include('landing.meta', [
         'title' => $title,
         'image' => '',
-        'canonical' => "https://blogs.hyvor.com/docs/$pageName",
+        'canonical' => "https://blogs.hyvor.com/docs" . ($pageName === 'index' ?  '' : '/' . $pageName),
     ])
 </head>
 <body class="docs-page {{$pageName}}">

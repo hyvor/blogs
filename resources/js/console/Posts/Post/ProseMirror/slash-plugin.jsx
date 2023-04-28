@@ -168,7 +168,7 @@ class SlashPlugin {
         this.slashView = document.createElement("div");
         this.slashView.className = "pm-slash-view";
         view.dom.parentNode.appendChild(this.slashView);
-
+        view.dom.parentNode.parentNode.parentNode.addEventListener('scroll', () => this.update(view, null));
         this.handleKeyDown = this.handleKeyDown.bind(this);
     }
 
@@ -305,12 +305,20 @@ class SlashPlugin {
         // The box in which the slash view is positioned, to use as base
         const wrapPos = this.slashView.offsetParent.getBoundingClientRect();
         const viewPos = view.dom.getBoundingClientRect();
+        const spaceBelow = wrapPos.bottom - posTop;
 
-        this.slashView.style.top = posTop - wrapPos.top + "px";
+        if (this.slashView.offsetHeight > spaceBelow) {
+            this.slashView.style.bottom = spaceBelow + "px";
+            this.slashView.style.top = "auto";
+            this.slashView.classList.add("top");
+            this.slashView.classList.remove("bottom");
+        } else {
+            this.slashView.style.top = posTop - wrapPos.top + "px";
+            this.slashView.classList.add("bottom");
+            this.slashView.classList.remove("top");
+        }
+    
         this.slashView.style.left = viewPos.left - wrapPos.left + "px";
-
-        this.slashView.classList.add("bottom");
-        this.slashView.classList.remove("top");
     }
 
     addEvents() {
