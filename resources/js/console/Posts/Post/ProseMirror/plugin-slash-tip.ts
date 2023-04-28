@@ -19,7 +19,8 @@ class SlashTipPlugin implements PluginView {
         view.dom
             .parentElement!
             .parentElement!
-            .addEventListener('scroll', () => this.hide());
+            .parentElement!
+            .addEventListener('scroll', () => this.update(view, view.state));
         this.hide();
     }
 
