@@ -117,9 +117,9 @@ some_key:
     $title: When to use caching
     $type: radio
     $options: 
-         all: For All Posts and Pages
-         posts: Only Posts
-	       pages: Only Pages
+        all: For All Posts and Pages
+        posts: Only Posts
+        pages: Only Pages
 ```
 
 <!-- #### Select {#select}

@@ -28,7 +28,8 @@ All the following requirements should be met in order to publish a theme to our 
 * If the blog has a logo (`_blog.logo_url`), the logo should be shown in the header linking the logo to the blog homepage.
 * [Internationalized](themes-internationalization)
 * `<html lang="{{ _lang.code }}"` is added
-* Configurations are added for colors, fonts, etc.
+* Configurations are added for colors, fonts, etc. See [Config](#config) section.
+* Configuration definitions (`config.def.yaml`) are added. See [Configuration -> Config Definitions](themes-config#config-def) page. Use the <a href="/config" target="_blank">config tool</a> to validate `config.def.yaml`.
 * Mobile responsive
 * Featured posts may have some unique UI in the index page (ex: a pinned/star icon)
 * Content Styles:

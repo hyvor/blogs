@@ -70,6 +70,23 @@ export default function ConfigDef({ configYaml, configDefYaml, onConfigChange } 
         onConfigChange && onConfigChange(yaml.dump(newState));
     }
 
+    configDef = configDef || {};
+
+    // add default values
+    configDef = {...configDef, ...{
+        THEME_NAME: {
+            $name: 'Theme Name',
+        },
+        THEME_VERSION: {
+            $name: 'Theme Version',
+        },
+        POSTS_PER_PAGINATIONS: {
+            $name: 'Posts per Pagination',
+            $description: 'Number of posts to show per page on index pages',
+            $type: 'number',
+        }
+    }}
+
     return <ObjectConfig 
         config={configState as object} 
         configDef={configDef || {} as object}
