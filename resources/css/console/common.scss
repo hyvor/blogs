@@ -542,6 +542,14 @@ textarea.input {
         }
     }
 }
+.color-picker-preview {
+    width: 25px;
+    height: 25px;
+    border-radius: 50%;
+    display: inline-block;
+    cursor: pointer;
+    border: 1px solid #ddd;
+}
 
 .global-avatar {
     .avatar{

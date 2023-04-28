@@ -16,4 +16,4 @@ Visit other pages in this documentation to learn more. These will help you get s
 * [Custom Domain](/docs/custom-domain) - Host your blog on your own domain (blog.domain.com)
 * [Sub-directory Hosting](/docs/self-hosting) - Host your blog on a subdirectory (domain.com/blog)
 
-If you have any feedback or questions, feel free to [contact us](support).
+If you have any feedback or questions, feel free to [contact us](/docs/support).

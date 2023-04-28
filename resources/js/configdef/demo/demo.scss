@@ -9,6 +9,9 @@
         margin: 0 10px;
         flex-shrink: 0;
     }
+    .column:last-child {
+        flex: 2;
+    }
 
     .column-title {
         font-size: 16px;

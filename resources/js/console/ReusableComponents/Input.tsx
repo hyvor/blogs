@@ -14,6 +14,10 @@ interface InputProps {
     onBlur?: FocusEventHandler<HTMLInputElement>,
     onFocus?: FocusEventHandler<HTMLInputElement>,
     maxLength?: number,
+    minLength?: number,
+    min?: number,
+    max?: number,
+    required?: boolean,
     readOnly?: boolean,
 
     bottom?: React.ReactNode,
@@ -39,6 +43,10 @@ export default function Input(
         onBlur,
         onFocus,
         maxLength,
+        minLength,
+        min,
+        max,
+        required,
         readOnly,
 
         // other
@@ -69,6 +77,10 @@ export default function Input(
                 onBlur={onBlur}
                 onFocus={onFocus}
                 maxLength={maxLength}
+                minLength={minLength}
+                min={min}
+                max={max}
+                required={required}
                 readOnly={readOnly}
                 id={"input-" + name}
                 className="input"

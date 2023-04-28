@@ -55,6 +55,7 @@ function App() {
                     <ConfigDef
                         configYaml={config}
                         configDefYaml={configDef}
+                        /* onConfigChange={yaml => console.log(yaml)} */
                     />
                 </div>
             </div>
