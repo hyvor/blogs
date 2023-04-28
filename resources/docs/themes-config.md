@@ -31,9 +31,8 @@ Theme configurations (colors, fonts, etc.) should be written in `english_lower_s
 While you can use multi-nested YAML configs, we recommend to use only upto one nested level.
 
 ```yaml
-THEME_NAME: default
+THEME_NAME: hello
 THEME_VERSION: 1.0.0
-DEMO_URL: demo.hyvorblogs.io
 POSTS_PER_PAGINATION: 15
 
 dark_theme: Yes
@@ -43,7 +42,7 @@ image_service:
     api_version: 2
 ```
 
-In this example, the first 4 lines are HB-aware configurations. Others are theme configurations. You can add as many theme configurations as you need.
+In this example, the first 3 lines are HB-aware configurations. Others are theme configurations. You can add as many theme configurations as you need.
 
 ### config.def.yaml {#config-def-yaml}
 

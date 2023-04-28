@@ -2,6 +2,16 @@ import { test } from "@playwright/test";
 
 const CONFIG_YAML = `
 THEME_NAME: hello
+
+colors:
+    accent: "#000"
+
+fonts:
+    family: "Mulish"
+    size: 16
+
+settings:
+    loop: true
 `
 
 

@@ -18,9 +18,11 @@ interface Props {
     onChange: (val: string) => any,
     onSave?: (val: string) => any,
     extension: keyof typeof CODEMIRROR_MODES,
+
+    props?: object
 }
 
-export default function CodemirrorEditor({ id = null, value, onChange, onSave, extension } : Props) {
+export default function CodemirrorEditor({ id = null, value, onChange, onSave, extension, props = {} } : Props) {
 
     const ref = useRef<null | HTMLDivElement>(null);
     const cm = useRef<any>(null);
@@ -81,6 +83,6 @@ export default function CodemirrorEditor({ id = null, value, onChange, onSave, e
         initCm()
     }, [id])
 
-    return <div className="global-codemirror-wrap" ref={ref} />
+    return <div {...props} className="global-codemirror-wrap" ref={ref} />
 
 }

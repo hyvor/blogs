@@ -26,6 +26,9 @@ function App() {
                         value={config}
                         onChange={value => setConfig(value)}
                         extension="yaml"
+                        props={{
+                            'data-testid': 'config-editor'
+                        }}
                     />
                 </div>
             </div>
@@ -41,6 +44,9 @@ function App() {
                         value={configDef}
                         onChange={value => setConfigDef(value)}
                         extension="yaml"
+                        props={{
+                            'data-testid': 'configdef-editor'
+                        }}
                     />
                 </div>
             </div>
