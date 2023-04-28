@@ -351,6 +351,9 @@ textarea.input {
     .dual-left {
         flex: 1;
         margin-right: 20px;
+        min-width: 0;
+        max-width: 150px;
+        word-wrap: break-word;
     } 
     .dual-title {
         font-weight: 600;
@@ -363,6 +366,7 @@ textarea.input {
     .dual-right {
         flex:2;
         flex-shrink: 0;
+        min-width: 0;
     }
     &.column {
         flex-direction: column;

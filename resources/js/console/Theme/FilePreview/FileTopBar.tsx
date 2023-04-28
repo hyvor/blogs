@@ -5,9 +5,15 @@ import {PopupConfirm} from "../../ReusableComponents/Popup";
 import {useThemeActions} from "../use";
 import {toast} from "react-toastify";
 import FileNameInput from "../FileNameInput";
+import Switch from "../../ReusableComponents/Switch";
 
+interface Props {
+    file: ThemeFile,
+    configYaml: boolean,
+    setConfigYaml: (configYaml: boolean) => void
+}
 
-export default function FileTopBar({file} : {file: ThemeFile}) {
+export default function FileTopBar({file, configYaml, setConfigYaml} : Props) {
 
     const { updateFile, deleteFile, editorCloseFile } = useThemeActions()
 
@@ -56,6 +62,17 @@ export default function FileTopBar({file} : {file: ThemeFile}) {
                 onClick={handleDelete}
                 onCancel={() => setIsDeleting(false)}
             />
+        }
+
+        {
+            file.folder === null && file.name === 'config.yaml' &&
+            <div className="config-yaml-switch">
+                <span className="switch-title">YAML</span>
+                <Switch
+                    checked={configYaml}
+                    onChange={checked => setConfigYaml(checked)}
+                />
+            </div> 
         }
 
     </div>

@@ -6,6 +6,7 @@ import Input from '../console/ReusableComponents/Input';
 import Radio from '../console/ReusableComponents/Radio';
 import Switch from '../console/ReusableComponents/Switch';
 import { ColorPicker } from '../console/ReusableComponents/ColorPicker';
+import deepmerge from 'deepmerge';
 
 interface ConfigDefProps {
     configYaml: string,
@@ -13,21 +14,26 @@ interface ConfigDefProps {
     onConfigChange?: (configYaml: string) => void
 }
 
-function getNewConfigState(configState: object, parentKeys: string[], key: string, value: any) {
-    
-    const newConfigState = { ...configState };
-    let current : any = newConfigState;
 
+function createUpdatingObject(parentKeys: string[], key: string, value: any) {
 
-    for (let i = 0; i < parentKeys.length; i++) {
+    let updatingObject : any = {};
 
-        const parentKey = parentKeys[i];
-        current = current[parentKey];
+    if (parentKeys.length === 0) {
+        updatingObject[key] = value;
+    } else {
+        updatingObject = {
+            [parentKeys[0]]: createUpdatingObject(parentKeys.slice(1), key, value)
+        }
     }
 
-    current[key] = value;
+    return updatingObject;
 
-    return newConfigState;
+}
+
+function getNewConfigState(configState: object, parentKeys: string[], key: string, value: any) : object {
+    const updatingObject = createUpdatingObject(parentKeys, key, value);
+    return deepmerge(configState, updatingObject);
 }
 
 export default function ConfigDef({ configYaml, configDefYaml, onConfigChange } : ConfigDefProps) {
@@ -80,7 +86,7 @@ export default function ConfigDef({ configYaml, configDefYaml, onConfigChange } 
         THEME_VERSION: {
             $name: 'Theme Version',
         },
-        POSTS_PER_PAGINATIONS: {
+        POSTS_PER_PAGINATION: {
             $name: 'Posts per Pagination',
             $description: 'Number of posts to show per page on index pages',
             $type: 'number',
@@ -130,7 +136,7 @@ function ObjectConfig({ config, configDef, onChange, parentKeys = [] } : ObjectC
                                             config={value}
                                             configDef={def}
                                             parentKeys={allParentKeys}
-                                            onChange={(_, key, value) => onChange(allParentKeys, key, value)}
+                                            onChange={onChange}
                                         />
                                     : 
                                     <ConfigInput 
