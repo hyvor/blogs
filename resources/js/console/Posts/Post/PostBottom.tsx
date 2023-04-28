@@ -7,7 +7,7 @@ export default function PostBottom({id} : {id:number}) {
     const { savePostAjax, diff, currentVariant  } = usePostValues(id)
     const { savePost } = usePostActions(id)
 
-    const hasChanges = Object.keys(diff).length > 0 || currentVariant.content_unsaved !== currentVariant.content && currentVariant.content_unsaved !== null;
+    const hasChanges = Object.keys(diff).length > 0;
 
     return <div
         className="post-editor-bottom"
