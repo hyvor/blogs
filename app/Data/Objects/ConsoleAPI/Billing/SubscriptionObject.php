@@ -5,6 +5,7 @@ namespace App\Data\Objects\ConsoleAPI\Billing;
 use App\Data\Enums\SubscriptionFrequencyEnum;
 use App\Data\Enums\SubscriptionPlanEnum;
 use App\Data\Enums\SubscriptionStatusEnum;
+use App\Domains\Integrations\Paddle\PaddleService;
 use App\Models\Subscription;
 
 class SubscriptionObject
@@ -20,6 +21,7 @@ class SubscriptionObject
     public int $created_at;
 
     public ?int $ends_at;
+    public ?int $paddle_subscription_id;
 
     public function __construct(Subscription $subscription)
     {
@@ -29,5 +31,7 @@ class SubscriptionObject
         $this->frequency = $subscription->frequency;
         $this->created_at = $subscription->created_at->getTimestamp();
         $this->ends_at = $subscription->ends_at?->getTimestamp();
+
+        $this->paddle_subscription_id = (new PaddleService())->getPaddleSubscriptionId($subscription);
     }
 }

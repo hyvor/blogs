@@ -53,6 +53,10 @@ export default function Plan({type, frequency, onCreate, onUpdate, onCancel} : P
     let buttonDisabled = false;
     let isCurrent = currentSubscription?.plan === type && currentSubscription?.frequency == frequency;
 
+
+    const isCurrentSubscriptionCreatedWithoutPaddle = currentSubscription && 
+        currentSubscription.paddle_subscription_id === null;
+
     return <div className={"plan" + (isCurrent ? " current" : "")}>
         <div className="plan-left">
             <span className="plan-name">{type}</span>
@@ -75,6 +79,7 @@ export default function Plan({type, frequency, onCreate, onUpdate, onCancel} : P
                         >Cancel</button> :
                         (
                             currentSubscription?.status !== 'deleted' &&
+                            !isCurrentSubscriptionCreatedWithoutPaddle &&
                             <button
                                 className={"button small inactive" + (buttonDisabled ? " disabled" : "")}
                                 onClick={handleButton}

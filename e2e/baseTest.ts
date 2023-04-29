@@ -39,6 +39,12 @@ class TestingApi {
         });
     }
 
+    async query(q: string) {
+        return await this.call('query', {
+            query: q
+        });
+    }
+
 }
 
 class Factory {
@@ -90,6 +96,11 @@ class Factory {
 
     async user(attrs = {}) {
         return await this.testingApi.callFactory('User', attrs);
+    }
+
+
+    async subscription(attrs = {}) {
+        return await this.testingApi.callFactory('Subscription', attrs);
     }
     
 }

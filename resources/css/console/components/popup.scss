@@ -38,6 +38,9 @@
         button {
             position: relative;
         }
+        button:first-child {
+            margin-right: 6px;
+        }
         .footer-loader {
             position: absolute;
             left: 100%;

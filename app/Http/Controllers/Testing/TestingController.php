@@ -36,4 +36,13 @@ class TestingController extends Controller
 
     }
 
+    public function query(Request $request) : JsonResponse
+    {
+
+        $query = (string) $request->string('query');
+        $results = DB::statement($query);
+        return response()->json($results);
+
+    }
+
 }

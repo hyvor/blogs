@@ -70,9 +70,23 @@ export default function Plans({onSubscriptionCreate, onSubscriptionCancel, onSub
             }
 
             {
+                currentSubscription && !currentSubscription.paddle_subscription_id &&
+                <Callout
+                    title="Manually Upgraded"
+                    text={
+                        <div>
+                            Your blog was manually upgraded to the current plan by our team. You will not be charged for this plan. If you wish to change your plan, please cancel the plan and upgrade to the desired plan (you will be charged).
+                        </div>
+                    }
+                    color="blue"
+                    icon={<Lightbulb />}
+                />
+            }
+
+            {
                 currentSubscription && currentSubscription.status === 'past_due' &&
                 <Callout
-                    title="Payment Issues"
+                    title="Payment Past Due"
                     icon={<ExclamationCircle />}
                     text={
                         <div>
@@ -86,7 +100,7 @@ export default function Plans({onSubscriptionCreate, onSubscriptionCancel, onSub
             {
                 currentSubscription && currentSubscription.status === 'deleted' &&
                 <Callout
-                    title="Subscription Cancelled"
+                    title="Subscription Canceled"
                     icon={<ExclamationCircle />}
                     text={
                         <div>

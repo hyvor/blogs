@@ -338,7 +338,8 @@ export interface Subscription {
     plan: SubscriptionPlan,
     frequency: SubscriptionFrequency,
     created_at: number,
-    ends_at: number | null
+    ends_at: number | null,
+    paddle_subscription_id: number | null
 
 }
 
