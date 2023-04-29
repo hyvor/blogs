@@ -15,7 +15,6 @@ class BlogFactory extends Factory
             'type' => BlogTypeEnum::DEFAULT,
             'hyvor_user_id' => rand(),
             'subdomain' => Str::random(20),
-            'is_activated' => false,
             'trial_ends_at' => Carbon::now()->addDays(7),
             'hosting_at' => 'subdomain',
 

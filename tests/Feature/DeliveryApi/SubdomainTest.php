@@ -8,10 +8,7 @@ use App\Models\Redirect;
 
 it('works with subdomain', function () {
 
-    $blog = blog([
-        'is_activated' => true,
-        'trial_ends_at' => now()->subDay()
-    ]);
+    $blog = blog();
     addBlogVariants($blog, addPrimaryLanguage($blog));
     addRoute($blog, '/');
 

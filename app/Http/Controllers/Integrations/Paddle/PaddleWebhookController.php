@@ -1,4 +1,4 @@
-<?php
+<?php declare(strict_types=1);
 
 namespace App\Http\Controllers\Integrations\Paddle;
 
@@ -17,7 +17,7 @@ use Illuminate\Support\Str;
 
 class PaddleWebhookController
 {
-    public function handle(Request $request)
+    public function handle(Request $request) : string
     {
         VerifyWebhookSignature::verify($request);
 
@@ -42,20 +42,10 @@ class PaddleWebhookController
         return '';
     }
 
-    private function handlePaymentSucceeded(array $payload)
-    {
-
-        $productId = intval($payload['product_id']);
-
-        if ($productId !== config('services.paddle.activation_plan_id'))
-            return;
-
-        $blog = Passthrough::decode($payload['passthrough']);
-        BlogService::activateBlog($blog);
-
-    }
-
-    private function handleSubscriptionCreated(array $payload)
+    /**
+     * @param array{passthrough: string, subscription_plan_id: int, subscription_id: int} $payload
+     */
+    private function handleSubscriptionCreated(array $payload) : void
     {
         $blog = Passthrough::decode($payload['passthrough']);
         $plan = PaddleService::planConfigFromPaddleId($payload['subscription_plan_id']);
@@ -67,10 +57,12 @@ class PaddleWebhookController
         );
 
         PaddleService::setPaddleSubscriptionId($subscription, $payload['subscription_id']);
-        BlogService::activateBlog($blog);
     }
 
-    private function handleSubscriptionUpdated(array $payload)
+    /**
+     * @param array{subscription_plan_id?: int, status?: string, subscription_id: int} $payload
+     */
+    private function handleSubscriptionUpdated(array $payload) : void
     {
         $paddleSubscriptionId = $payload['subscription_id'];
         $subscription = PaddleService::getSubscriptionFromPaddleSubscriptionId($paddleSubscriptionId);
@@ -102,7 +94,10 @@ class PaddleWebhookController
         SubscriptionService::updateSubscription($subscription, $updates);
     }
 
-    private function handleSubscriptionCancelled(array $payload)
+    /**
+     * @param array{subscription_id: int, cancellation_effective_date: string} $payload
+     */
+    private function handleSubscriptionCancelled(array $payload) : void
     {
         $paddleSubscriptionId = $payload['subscription_id'];
         $subscription = PaddleService::getSubscriptionFromPaddleSubscriptionId($paddleSubscriptionId);

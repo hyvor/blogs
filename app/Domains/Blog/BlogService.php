@@ -1,4 +1,4 @@
-<?php
+<?php declare(strict_types=1);
 
 namespace App\Domains\Blog;
 
@@ -99,7 +99,7 @@ class BlogService
 
     /**
      * @param  Blog  $blog
-     * @param  array $updates
+     * @param  array<string, mixed> $updates
      * @return Blog
      */
     public static function updateBlog(Blog $blog, array $updates): Blog
@@ -164,18 +164,6 @@ class BlogService
             'blog_id' => $blog->id,
             'language_id' => $language->id,
         ]);
-    }
-
-    public static function activateBlog(Blog $blog) : void
-    {
-        $blog->update([
-            'is_activated' => true
-        ]);
-    }
-
-    public static function isBlogTriaExpiredAndNotActivated(Blog $blog) : bool
-    {
-        return !$blog->is_activated && $blog->trial_ends_at->isPast();
     }
 
     /**
