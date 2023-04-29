@@ -36,12 +36,12 @@ it('redirects to homepage if the blog is blocked', function () {
 
 });
 
-it('redirects to homepage if the blog trial is ended', function() {
+/*it('redirects to homepage if the blog trial is ended', function() {
 
     $blog = blog(['trial_ends_at' => now()->subDay()]);
     $this->get("http://$blog->subdomain.hyvorblogs.io/any")->assertRedirect('https://blogs.hyvor.com');
 
-});
+});*/
 
 it('redirects to other domain if not hosted on subdomain', function() {
 

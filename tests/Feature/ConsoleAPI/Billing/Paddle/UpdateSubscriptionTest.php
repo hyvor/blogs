@@ -22,7 +22,7 @@ it('updates subscription', function () {
 
     consoleApi($blog, 'PATCH', '/billing/paddle/subscription', [
         'frequency' => 'yearly',
-        'plan' => 'C'
+        'plan' => 'team'
     ])->assertOk();
 
     Http::assertSent(function (Request $request) {
@@ -45,13 +45,13 @@ it('fails on same subscription', function () {
     $blog = blogWithAccess();
     $subscription = Subscription::factory()->create([
         'blog_id' => $blog,
-        'plan' => 'C',
+        'plan' => 'team',
         'frequency' => 'yearly'
     ]);
 
     consoleApi($blog, 'PATCH', '/billing/paddle/subscription', [
         'frequency' => 'yearly',
-        'plan' => 'C'
+        'plan' => 'team'
     ])->assertUnprocessable()
         ->assertSee('Cannot be changed to the same subscription');
 });
@@ -64,7 +64,7 @@ it('fails when paddle subscription ID is not set', function () {
 
     consoleApi($blog, 'PATCH', '/billing/paddle/subscription', [
         'frequency' => 'yearly',
-        'plan' => 'C'
+        'plan' => 'team'
     ])
         ->assertUnprocessable()
         ->assertSee('Subscription ID is not set');

@@ -19,7 +19,7 @@ it('updates a subscription plan', function () {
     integrationApi('POST', '/paddle/webhook', getPaddleWebhookParams([
         'alert_name' => 'subscription_updated',
         'subscription_plan_id' => PaddleService::planConfig(
-            SubscriptionPlanEnum::D,
+            SubscriptionPlanEnum::BUSINESS,
             SubscriptionFrequencyEnum::YEARLY
         )->id,
         'subscription_id' => 110
@@ -28,7 +28,7 @@ it('updates a subscription plan', function () {
     $subscription =  $blog->subscriptions[0];
 
     expect($subscription->status)->toBe(SubscriptionStatusEnum::ACTIVE);
-    expect($subscription->plan)->toBe(SubscriptionPlanEnum::D);
+    expect($subscription->plan)->toBe(SubscriptionPlanEnum::BUSINESS);
     expect($subscription->frequency)->toBe(SubscriptionFrequencyEnum::YEARLY);
 });
 

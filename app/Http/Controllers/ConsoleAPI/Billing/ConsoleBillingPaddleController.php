@@ -79,7 +79,15 @@ class ConsoleBillingPaddleController extends Controller
             throw new TrustedException('Cannot be changed to the same subscription');
         }
 
-        app(PaddleService::class)->updateSubscription(
+        $paddleService = app(PaddleService::class);
+
+        $subscriptionId = $paddleService->getPaddleSubscriptionId($subscription);
+
+        if (!$subscriptionId) {
+            throw new TrustedException('Subscription ID is not set');
+        }
+
+        $paddleService->updateSubscription(
             $subscription,
             $plan,
             $frequency

@@ -22,7 +22,7 @@ it('creates a Pay Link', function () {
     ]);
 
     consoleApi($blog, 'POST', '/billing/paddle/subscription', [
-        'plan' => 'A',
+        'plan' => 'starter',
         'frequency' => 'monthly'
     ])
         ->assertOk()
