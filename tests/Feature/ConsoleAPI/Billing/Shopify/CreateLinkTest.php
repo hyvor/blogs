@@ -16,7 +16,7 @@ it('creates a link for subscription', function () {
 
     $blog = getShopifyEnabledBlog();
     consoleApi( $blog, 'POST', '/billing/shopify/subscription', [
-        'plan' => 'C',
+        'plan' => 'starter',
         'frequency' => 'monthly'
     ])
         ->assertOk()

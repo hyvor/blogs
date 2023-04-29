@@ -63,6 +63,9 @@
                 border-radius: 50%;
                 background-color: $color-orange-light;
                 color: $color-orange-dark;
+                svg {
+                    margin-right: initial;
+                }
             }
             
             .blog-link {

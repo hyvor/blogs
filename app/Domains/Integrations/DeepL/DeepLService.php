@@ -86,11 +86,11 @@ class DeepLService
     public static function getMaxCharsPerMonth(?SubscriptionPlanEnum $plan) : int
     {
         return match ($plan) {
-            SubscriptionPlanEnum::A => 100000,
-            SubscriptionPlanEnum::B => 300000,
-            SubscriptionPlanEnum::C => 1000000,
-            SubscriptionPlanEnum::D => 5000000,
-            SubscriptionPlanEnum::E => 10000000,
+            SubscriptionPlanEnum::GROWTH => 100000,
+            SubscriptionPlanEnum::PREMIUM => 300000,
+            SubscriptionPlanEnum::TEAM => 1000000,
+            SubscriptionPlanEnum::BUSINESS => 5000000,
+            SubscriptionPlanEnum::ENTERPRISE => 10000000,
             default => 0
         };
     }

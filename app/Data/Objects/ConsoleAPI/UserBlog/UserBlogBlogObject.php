@@ -1,4 +1,4 @@
-<?php
+<?php declare(strict_types=1);
 
 namespace App\Data\Objects\ConsoleAPI\UserBlog;
 
@@ -16,7 +16,6 @@ class UserBlogBlogObject
 
     public bool $is_blocked;
 
-    public bool $is_activated;
     public int $trial_ends_at;
 
     public string $name;
@@ -45,7 +44,6 @@ class UserBlogBlogObject
     {
         $this->id = $blog->id;
         $this->is_blocked = $blog->is_blocked;
-        $this->is_activated = $blog->is_activated;
         $this->trial_ends_at = $blog->trial_ends_at->getTimestamp();
         $this->name = $blog->variants[0]->name ?? 'Unnamed';
         $this->subdomain = $blog->subdomain;

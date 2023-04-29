@@ -8,7 +8,7 @@ use App\Models\Subscription;
 
 function createSubscription(
     Blog $blog,
-    SubscriptionPlanEnum $plan = SubscriptionPlanEnum::A,
+    SubscriptionPlanEnum $plan = SubscriptionPlanEnum::STARTER,
     SubscriptionStatusEnum $status = SubscriptionStatusEnum::ACTIVE,
     SubscriptionFrequencyEnum $frequency = SubscriptionFrequencyEnum::MONTHLY,
 ) {

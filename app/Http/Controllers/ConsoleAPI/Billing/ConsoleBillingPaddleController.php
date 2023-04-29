@@ -1,4 +1,4 @@
-<?php
+<?php declare(strict_types=1);
 
 namespace App\Http\Controllers\ConsoleAPI\Billing;
 
@@ -35,21 +35,6 @@ class ConsoleBillingPaddleController extends Controller
         ]);
     }
 
-    public function createActivation(Request $request, Blog $blog) : JsonResponse
-    {
-
-        if ($blog->is_activated) {
-            throw new TrustedException('This blog is already activated');
-        }
-
-        $paylink = app(PaddleService::class)->createActivationPayLink($blog);
-
-        return response()->json([
-            'link' => $paylink
-        ]);
-
-    }
-
     public function createSubscription(Request $request, Blog $blog): JsonResponse
     {
         $request->validate([
@@ -64,9 +49,9 @@ class ConsoleBillingPaddleController extends Controller
 
         $payLink = app(PaddleService::class)->createPayLink(
             $blog,
-            SubscriptionPlanEnum::from($request->input('plan')),
-            SubscriptionFrequencyEnum::from($request->input('frequency')),
-            $request->input('referral')
+            SubscriptionPlanEnum::from((string) $request->string('plan')),
+            SubscriptionFrequencyEnum::from((string) $request->string('frequency')),
+            null
         );
 
         return response()->json([
@@ -81,8 +66,8 @@ class ConsoleBillingPaddleController extends Controller
             'frequency' => ['required', 'string', new Enum(SubscriptionFrequencyEnum::class)],
         ]);
 
-        $plan = SubscriptionPlanEnum::from($request->input('plan'));
-        $frequency = SubscriptionFrequencyEnum::from($request->input('frequency'));
+        $plan = SubscriptionPlanEnum::from((string) $request->string('plan'));
+        $frequency = SubscriptionFrequencyEnum::from((string) $request->string('frequency'));
 
         $subscription = SubscriptionService::getActiveBlogSubscription($blog);
 
@@ -94,10 +79,18 @@ class ConsoleBillingPaddleController extends Controller
             throw new TrustedException('Cannot be changed to the same subscription');
         }
 
-        app(PaddleService::class)->updateSubscription(
+        $paddleService = app(PaddleService::class);
+
+        $subscriptionId = $paddleService->getPaddleSubscriptionId($subscription);
+
+        if (!$subscriptionId) {
+            throw new TrustedException('Subscription ID is not set');
+        }
+
+        $paddleService->updateSubscription(
             $subscription,
-            SubscriptionPlanEnum::from($request->input('plan')),
-            SubscriptionFrequencyEnum::from($request->input('frequency'))
+            $plan,
+            $frequency
         );
 
         return response()->json();
@@ -111,7 +104,14 @@ class ConsoleBillingPaddleController extends Controller
             throw new TrustedException('No current subscription');
         }
 
-        app(PaddleService::class)->cancelSubscription($subscription);
+        $paddleService = app(PaddleService::class);
+
+        if ($paddleService->getPaddleSubscriptionId($subscription) === null) {
+            SubscriptionService::cancelSubscription($subscription, now());
+        } else {
+            $paddleService->cancelSubscription($subscription);
+        }
+
 
         return response()->json();
     }

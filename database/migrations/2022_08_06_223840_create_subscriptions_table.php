@@ -23,7 +23,7 @@ return new class () extends Migration {
 
             // data
             $table->enum('status', ['active', 'past_due', 'deleted']);
-            $table->enum('plan', ['A', 'B', 'C', 'D', 'E']);
+            $table->enum('plan', ['starter', 'growth', 'premium', 'team', 'business', 'enterprise']);
             $table->enum('frequency', ['monthly', 'yearly']);
             $table->timestamp('ends_at')->nullable();
 

@@ -2,6 +2,7 @@
 
 namespace Tests\Feature\ConsoleAPI\Ai;
 
+use App\Data\Enums\SubscriptionPlanEnum;
 use App\Domains\Integrations\DeepL\Enums\DeepLSourceLangEnum;
 use App\Domains\Integrations\DeepL\Enums\DeepLTargetLangEnum;
 use App\Domains\Post\Content\PostContentRepository;
@@ -21,7 +22,7 @@ it('translates', function() {
     ]);
 
     $blog = blogWithAccess();
-    createSubscription($blog);
+    createSubscription($blog, SubscriptionPlanEnum::GROWTH);
 
     consoleApi($blog, 'post', '/ai/translate', [
         'source_lang' => 'EN',
@@ -57,7 +58,7 @@ it('translates with code block', function() {
     ]);
 
     $blog = blogWithAccess();
-    createSubscription($blog);
+    createSubscription($blog, SubscriptionPlanEnum::GROWTH);
 
     $codeBlock = [
         'type' => 'code_block',
@@ -100,7 +101,7 @@ it('throws API error', function() {
     ]);
 
     $blog = blogWithAccess();
-    createSubscription($blog);
+    createSubscription($blog, SubscriptionPlanEnum::GROWTH);
 
     consoleApi($blog, 'post', '/ai/translate', [
         'source_lang' => 'EN',
@@ -116,7 +117,7 @@ it('throws API error', function() {
 it('throws an error when limits reached', function() {
 
     $blog = blogWithAccess();
-    createSubscription($blog);
+    createSubscription($blog, SubscriptionPlanEnum::GROWTH);
 
     AutoTranslation::create([
         'blog_id' => $blog->id,

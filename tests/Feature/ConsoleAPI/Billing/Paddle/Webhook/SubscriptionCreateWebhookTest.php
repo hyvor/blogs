@@ -23,10 +23,7 @@ it('creates a subscription and activates the blog', function () {
     $subscription =  $blog->subscriptions[0];
 
     expect($subscription->status)->toBe(SubscriptionStatusEnum::ACTIVE);
-    expect($subscription->plan)->toBe(SubscriptionPlanEnum::A);
+    expect($subscription->plan)->toBe(SubscriptionPlanEnum::STARTER);
     expect($subscription->frequency)->toBe(SubscriptionFrequencyEnum::MONTHLY);
     expect($subscription->getMeta('paddle_subscription_id'))->toBe(1200);
-
-    $blog->refresh();
-    expect($blog->is_activated)->toBeTrue();
 });

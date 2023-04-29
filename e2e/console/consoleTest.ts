@@ -12,6 +12,8 @@ const consoleTest = baseTest.extend<{console: Console}>({
     }
 });
 
+type NavType = 'billing' | 'posts';
+
 class Console {
 
     private page : Page;
@@ -24,8 +26,13 @@ class Console {
         await this.page.goto('/console');
     }
 
-    async nav() {
-        // todo
+    async visitAndNav(nav: NavType) {
+        await this.visit();
+        await this.nav(nav);
+    }
+
+    async nav(nav: NavType) {
+        await this.page.getByTestId('main-nav-' + nav).click();
     }
 
 }

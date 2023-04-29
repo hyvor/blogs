@@ -35,7 +35,6 @@ class BlogResource extends Resource
                 Tables\Columns\TextColumn::make('id')->searchable()->sortable(),
                 Tables\Columns\TextColumn::make('subdomain')->searchable(),
                 Tables\Columns\TextColumn::make('hyvor_user_id'),
-                Tables\Columns\ToggleColumn::make('is_activated'),
                 Tables\Columns\TextColumn::make('created_at'),
                 Tables\Columns\TextColumn::make('updated_at')->sortable(),
                 Tables\Columns\TextColumn::make('hosting_at'),
@@ -44,10 +43,10 @@ class BlogResource extends Resource
                 Tables\Columns\TextColumn::make('type'),
                 Tables\Columns\ToggleColumn::make('is_blocked'),
             ])
-            ->filters([
+            /*->filters([
                 Filter::make('activated')
                     ->query(fn (Builder $query, $value) => $query->where('is_activated', $value)),
-            ])
+            ])*/
             ->actions([
                // Tables\Actions\EditAction::make(),
             ])

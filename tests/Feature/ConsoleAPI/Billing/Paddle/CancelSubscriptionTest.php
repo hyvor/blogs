@@ -2,6 +2,7 @@
 
 namespace Tests\Feature\ConsoleAPI\Billing\Paddle;
 
+use App\Data\Enums\SubscriptionStatusEnum;
 use App\Models\Subscription;
 use Illuminate\Http\Client\Request;
 use Illuminate\Support\Facades\Http;
@@ -25,4 +26,20 @@ it('calls cancel endpoint', function () {
     Http::assertSent(function (Request $request) {
         return $request['subscription_id'] === 140;
     });
+});
+
+it('cancels direcrtly if paddle ID is not set', function() {
+
+    $blog = blogWithAccess();
+    $subscription = Subscription::factory()->create([
+        'blog_id' => $blog
+    ]);
+
+    consoleApi($blog, 'DELETE', '/billing/paddle/subscription')
+        ->assertOk();
+
+    expect($subscription->fresh()->status)->toBe(SubscriptionStatusEnum::DELETED);
+
+    Http::assertNothingSent();
+
 });

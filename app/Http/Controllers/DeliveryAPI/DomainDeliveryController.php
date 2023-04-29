@@ -11,14 +11,10 @@ use Illuminate\Http\Request;
 
 class DomainDeliveryController extends Controller
 {
-    public function handle(Request $request, Blog $blog)
+    public function handle(Request $request, Blog $blog) : mixed
     {
 
         if ($blog->is_blocked) {
-            return redirect('https://blogs.hyvor.com');
-        }
-
-        if (BlogService::isBlogTriaExpiredAndNotActivated($blog) && $blog->type === BlogTypeEnum::DEFAULT) {
             return redirect('https://blogs.hyvor.com');
         }
 

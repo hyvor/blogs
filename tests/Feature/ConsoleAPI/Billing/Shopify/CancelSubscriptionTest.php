@@ -27,7 +27,7 @@ it('cancels subscription', function () {
 
     $subscription = SubscriptionService::createSubscription(
         $blog,
-        SubscriptionPlanEnum::A,
+        SubscriptionPlanEnum::GROWTH,
         SubscriptionFrequencyEnum::MONTHLY
     );
     $subscription->setMeta('shopify_charge_id', 100);

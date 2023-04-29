@@ -32,27 +32,27 @@ class UsageRepository
     private static function getLimits(Blog $blog): array
     {
         $subscription = SubscriptionService::getActiveBlogSubscription($blog);
-        $plan = $subscription?->plan;
+        $plan = $subscription?->plan ?? SubscriptionPlanEnum::STARTER;
 
         $gb = (10 ** 9);
 
         $users = match ($plan) {
-            SubscriptionPlanEnum::A => 5,
-            SubscriptionPlanEnum::B => 15,
-            SubscriptionPlanEnum::C => 100,
-            SubscriptionPlanEnum::D => 1000,
-            SubscriptionPlanEnum::E => 10000,
-            default => 2
+            SubscriptionPlanEnum::STARTER => 2,
+            SubscriptionPlanEnum::GROWTH => 5,
+            SubscriptionPlanEnum::PREMIUM => 15,
+            SubscriptionPlanEnum::TEAM => 100,
+            SubscriptionPlanEnum::BUSINESS => 1000,
+            SubscriptionPlanEnum::ENTERPRISE => 10000,
         };
 
         // bytes
         $media = match ($plan) {
-            SubscriptionPlanEnum::A => 40 * $gb,
-            SubscriptionPlanEnum::B => 250 * $gb,
-            SubscriptionPlanEnum::C => 1000 * $gb,
-            SubscriptionPlanEnum::D => 2000 * $gb,
-            SubscriptionPlanEnum::E => 5000 * $gb,
-            default => $gb
+            SubscriptionPlanEnum::STARTER => $gb,
+            SubscriptionPlanEnum::GROWTH => 40 * $gb,
+            SubscriptionPlanEnum::PREMIUM => 250 * $gb,
+            SubscriptionPlanEnum::TEAM => 1000 * $gb,
+            SubscriptionPlanEnum::BUSINESS => 2000 * $gb,
+            SubscriptionPlanEnum::ENTERPRISE => 5000 * $gb,
         };
 
         $autoTranslateChars = DeepLService::getMaxCharsPerMonth($plan);

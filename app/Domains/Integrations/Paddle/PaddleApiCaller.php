@@ -7,6 +7,10 @@ use Http;
 
 class PaddleApiCaller
 {
+
+    /**
+     * @param array<mixed> $data
+     */
     public static function call(string $endpoint, array $data): object
     {
         $domain = config('services.paddle.sandbox') ?
@@ -25,7 +29,7 @@ class PaddleApiCaller
 
         $json = $response->json();
 
-        if (!$json['success']) {
+        if (!is_array($json) || !$json['success']) {
             throw new TrustedException("Calling Paddle endpoint $endpoint failed (PADDLE ERROR)");
         }
 

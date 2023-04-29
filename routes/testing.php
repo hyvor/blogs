@@ -9,6 +9,7 @@ if (App::environment('local', 'testing')) {
     Route::prefix('_testing')->group(function() {
         Route::post('truncate', [TestingController::class, 'truncate']);
         Route::post('factory', [TestingController::class, 'factory']);
+        Route::post('query', [TestingController::class, 'query']);
     });
 
 }

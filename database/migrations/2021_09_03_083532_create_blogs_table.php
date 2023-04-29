@@ -19,7 +19,6 @@ class CreateBlogsTable extends Migration
             $table->timestamp('created_at')->useCurrent();
             $table->timestamp('updated_at')->nullable();
 
-            $table->boolean('is_activated')->default(false);
             $table->boolean('is_blocked')->default(false);
 
             // connections

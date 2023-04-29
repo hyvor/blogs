@@ -1,4 +1,4 @@
-<?php
+<?php declare(strict_types=1);
 
 namespace App\Domains\Integrations\Paddle;
 
@@ -6,7 +6,7 @@ use App\Data\Enums\SubscriptionFrequencyEnum;
 use App\Data\Enums\SubscriptionPlanEnum;
 use App\Data\Objects\App\PaddlePlan;
 use App\Domains\Integrations\Paddle\Passthrough\Passthrough;
-use App\Exceptions\TrustedException;
+use App\Exceptions\SafetyException;
 use App\Models\Blog;
 use App\Models\Subscription;
 use Illuminate\Support\Collection;
@@ -16,25 +16,19 @@ class PaddleService
 {
     public const META_PADDLE_SUBSCRIPTION_ID = 'paddle_subscription_id';
 
-    public function createActivationPayLink(Blog $blog) {
-        $data = PaddleApiCaller::call('/product/generate_pay_link', [
-            'product_id' => config('services.paddle.activation_plan_id'),
-            'passthrough' => Passthrough::encode($blog),
-            'quantity_variable' => 0,
-        ]);
-
-        return $data->url;
-    }
-
     public function createPayLink(
         Blog $blog,
         SubscriptionPlanEnum $planName,
         SubscriptionFrequencyEnum $frequency,
         ?string $referral
-    ): string {
+    ) : string
+    {
         $plan = self::planConfig($planName, $frequency);
         $planId = $plan->id;
 
+        /**
+         * @var object{url: string} $data
+         */
         $data = PaddleApiCaller::call('/product/generate_pay_link', [
             'product_id' => $planId,
             'passthrough' => Passthrough::encode($blog, $referral)
@@ -68,41 +62,58 @@ class PaddleService
         ]);
     }
 
-    public function getPayments(Subscription $subscription)
+    /**
+     * @return Collection<int, mixed>
+     */
+    public function getPayments(Subscription $subscription) : Collection
     {
         $paddleSubscriptionId = $this->getPaddleSubscriptionId($subscription);
 
-        return collect(PaddleApiCaller::call('/subscription/payments', [
+        if (!$paddleSubscriptionId)
+            return collect();
+
+        /** @var array<mixed> $data */
+        $data = PaddleApiCaller::call('/subscription/payments', [
             'subscription_id' => $paddleSubscriptionId,
             'is_paid' => 1
-        ]));
+        ]);
+
+        return collect($data);
     }
 
-    public function getInfo(Subscription $subscription)
+    /**
+     * @return Collection<int, mixed>
+     */
+    public function getInfo(Subscription $subscription) : Collection
     {
         $paddleSubscriptionId = $this->getPaddleSubscriptionId($subscription);
 
-        return collect(PaddleApiCaller::call('/subscription/users', [
+        if (!$paddleSubscriptionId)
+            return collect();
+
+        /** @var array<mixed> $data */
+        $data = PaddleApiCaller::call('/subscription/users', [
             'subscription_id' => $paddleSubscriptionId
-        ])->{0});
+        ])->{0};
+
+        return collect($data);
     }
 
     /**
      * Gets the Paddle's subscription ID
      * Saved in meta of the Subscription row
      */
-    private function getPaddleSubscriptionId(Subscription $subscription): int
+    public function getPaddleSubscriptionId(Subscription $subscription): ?int
     {
         $id = $subscription->getMeta(self::META_PADDLE_SUBSCRIPTION_ID);
 
-        if (!$id) {
-            throw new TrustedException('Subscription ID is not set (unlikely)');
-        }
+        if (!$id)
+            return null;
 
-        return $id;
+        return intval($id);
     }
 
-    public static function setPaddleSubscriptionId(Subscription $subscription, int $id)
+    public static function setPaddleSubscriptionId(Subscription $subscription, int $id) : void
     {
         $subscription->setMeta(self::META_PADDLE_SUBSCRIPTION_ID, $id);
     }
@@ -114,81 +125,104 @@ class PaddleService
 
     public static function planConfig(SubscriptionPlanEnum $plan, SubscriptionFrequencyEnum $frequency): PaddlePlan
     {
-        return self::paddlePlans()
+        $plan = self::paddlePlans()
             ->where('name', $plan)
             ->where('frequency', $frequency)
             ->first();
+
+        if (!$plan)
+            throw new SafetyException('Paddle plan not found');
+
+        return $plan;
     }
 
     public static function planConfigFromPaddleId(int $id): PaddlePlan
     {
-        return self::paddlePlans()->firstWhere('id', $id);
+        $plan = self::paddlePlans()->firstWhere('id', $id);
+
+        if (!$plan)
+            throw new SafetyException('Paddle plan not found');
+
+        return $plan;
     }
 
     /**
-     * @return Collection<PaddlePlan>
+     * @return Collection<int, PaddlePlan>
      */
     public static function paddlePlans(): Collection
     {
         return collect([
 
             new PaddlePlan(
+                !App::environment('production') ? 50367 : 790127,
+                SubscriptionPlanEnum::STARTER,
+                SubscriptionFrequencyEnum::MONTHLY,
+            ),
+
+            new PaddlePlan(
+                !App::environment('production') ? 50368 : 790127,
+                SubscriptionPlanEnum::STARTER,
+                SubscriptionFrequencyEnum::YEARLY,
+            ),
+
+
+            new PaddlePlan(
                 !App::environment('production') ? 32097 : 790127,
-                SubscriptionPlanEnum::A,
+                SubscriptionPlanEnum::GROWTH,
                 SubscriptionFrequencyEnum::MONTHLY,
             ),
 
             new PaddlePlan(
                 !App::environment('production') ? 32098 : 790128,
-                SubscriptionPlanEnum::A,
+                SubscriptionPlanEnum::GROWTH,
                 SubscriptionFrequencyEnum::YEARLY,
             ),
 
             new PaddlePlan(
                 !App::environment('production') ? 32099 : 790129,
-                SubscriptionPlanEnum::B,
+                SubscriptionPlanEnum::PREMIUM,
                 SubscriptionFrequencyEnum::MONTHLY,
             ),
 
             new PaddlePlan(
                 !App::environment('production') ? 32100 : 790130,
-                SubscriptionPlanEnum::B,
+                SubscriptionPlanEnum::PREMIUM,
                 SubscriptionFrequencyEnum::YEARLY,
             ),
 
             new PaddlePlan(
                 !App::environment('production') ? 32101 : 790131,
-                SubscriptionPlanEnum::C,
+                SubscriptionPlanEnum::TEAM,
                 SubscriptionFrequencyEnum::MONTHLY,
             ),
 
             new PaddlePlan(
                 !App::environment('production') ? 32102 : 790132,
-                SubscriptionPlanEnum::C,
+                SubscriptionPlanEnum::TEAM,
                 SubscriptionFrequencyEnum::YEARLY,
             ),
 
             new PaddlePlan(
                 !App::environment('production') ? 32103 : 790133,
-                SubscriptionPlanEnum::D,
+                SubscriptionPlanEnum::BUSINESS,
                 SubscriptionFrequencyEnum::MONTHLY,
             ),
 
             new PaddlePlan(
                 !App::environment('production') ? 32104 : 790134,
-                SubscriptionPlanEnum::D,
+                SubscriptionPlanEnum::BUSINESS,
                 SubscriptionFrequencyEnum::YEARLY,
             ),
 
             new PaddlePlan(
                 !App::environment('production') ? 32105 : 790135,
-                SubscriptionPlanEnum::E,
+                SubscriptionPlanEnum::ENTERPRISE,
                 SubscriptionFrequencyEnum::MONTHLY,
             ),
 
             new PaddlePlan(
                 !App::environment('production') ? 32106 : 790136,
-                SubscriptionPlanEnum::E,
+                SubscriptionPlanEnum::ENTERPRISE,
                 SubscriptionFrequencyEnum::YEARLY,
             ),
 
