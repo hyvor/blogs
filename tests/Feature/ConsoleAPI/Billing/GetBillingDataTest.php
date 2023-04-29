@@ -38,6 +38,7 @@ it('gets billing data', function () {
                         ->has('plan')
                         ->has('frequency')
                         ->has('created_at')
+                        ->has('paddle_subscription_id')
                         ->has('ends_at');
                 });
         })

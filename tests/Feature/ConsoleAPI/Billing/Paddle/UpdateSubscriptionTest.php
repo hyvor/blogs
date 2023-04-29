@@ -35,7 +35,7 @@ it('fails on no subscription', function () {
     $blog = blogWithAccess();
     consoleApi($blog, 'PATCH', '/billing/paddle/subscription', [
         'frequency' => 'yearly',
-        'plan' => 'C'
+        'plan' => 'growth'
     ])
         ->assertUnprocessable()
         ->assertSee('No current subscription');
