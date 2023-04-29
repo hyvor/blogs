@@ -328,7 +328,7 @@ export interface ThemeFile {
 
 // === BILLING
 
-export type SubscriptionPlan = 'A' | 'B' | 'C' | 'D' | 'E';
+export type SubscriptionPlan = 'starter' | 'growth' | 'premium' | 'team' | 'business' | 'enterprise';
 export type SubscriptionFrequency = 'monthly' | 'yearly';
 
 export interface Subscription {

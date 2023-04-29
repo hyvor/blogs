@@ -82,23 +82,14 @@ $pricingRow = "<tr>
 
             <tr>
                 <td>Starter</td>
-                <td>
-                    <span class="price">$5</span> one-time
-
-                    <span class="info">
-                        <span class="icon"><?= $svgInfo ?></span>
-                        <div class="info-popup">
-                            This is a one-time activation fee after a 7-days free trial.
-                        </div>
-                    </span>
-                </td>
+                <td><span class="price">$9</span>/month</td>
                 <td>2</td>
                 <td>1GB</td>
                 <td><?= $svgCancel ?></td>
             </tr>
 
             <tr>
-                <td>Plan A</td>
+                <td>Growth</td>
                 <td><span class="price">$19</span>/month</td>
                 <td>5</td>
                 <td>40GB</td>
@@ -106,7 +97,7 @@ $pricingRow = "<tr>
             </tr>
 
             <tr>
-                <td>Plan B</td>
+                <td>Premium</td>
                 <td><span class="price">$49</span>/month</td>
                 <td>15</td>
                 <td>250GB</td>
@@ -114,7 +105,7 @@ $pricingRow = "<tr>
             </tr>
 
             <tr>
-                <td>Plan C</td>
+                <td>Team</td>
                 <td><span class="price">$299</span>/month</td>
                 <td>100</td>
                 <td>1TB</td>
@@ -122,7 +113,7 @@ $pricingRow = "<tr>
             </tr>
 
             <tr>
-                <td>Plan D</td>
+                <td>Business</td>
                 <td><span class="price">$699</span>/month</td>
                 <td>1000</td>
                 <td>2TB</td>
@@ -130,7 +121,7 @@ $pricingRow = "<tr>
             </tr>
 
             <tr>
-                <td>Plan E</td>
+                <td>Enterprise</td>
                 <td><span class="price">$1299</span>/month</td>
                 <td>Unlimited</td>
                 <td>5TB</td>
@@ -149,25 +140,27 @@ $pricingRow = "<tr>
 
 <div class="faqs">
     <div class="faq">
-        <h3>What is the one-time payment?</h3>
-        <p>
-            We charge $5 one-time fee to activate your blog after the 7-days free trial. This helps us keep spam out of our system. We can waive this fee for students and low-income individuals. Please contact us via live chat.
-        </p>
+        <h3>Do you offer a trial?</h3>
+        <p>Yes, we offer a 7-day trial with all the features included. No credit card required to activate the trial.</p>
     </div>
     <div class="faq">
         <h3>How do plans work?</h3>
-        <p>Plans are based on the number of <a class="link" href="/docs/users">users</a> (team members) and total media storage usage of that blog. There are no feature limitations - all features are included in all plans. Each blog requires a separate subscription.</p>
+        <p>Plans are based on the number of <a class="link" href="/docs/users">users</a> (team members) and total media storage usage of that blog. Auto-translation feature has plan-based limits. All other features are included in all plans. Each blog requires a separate subscription.</p>
+    </div>
+    <div class="faq">
+        <h3>Do I have to pay for themes?</h3>
+        <p>No, all <a class="link" href="/themes">official themes</a> are free and open-source. You can easily install a theme on your blog from the Console.</p>
+    </div>
+    <div class="faq">
+        <h3>Do you offer discounts?</h3>
+        <p>
+            You get 2-months off if you pay annually. In addition, we provide a 20% discount for non-profit organizations and early-stage startups. Contact us via live chat to get the coupon.
+        </p>
     </div>
     <div class="faq">
         <h3>How do payments work?</h3>
         <p>
             Payments are processed securely through our Merchant of Record, <a href="https://paddle.com" rel="nofollow" class="link">Paddle</a>, who technically works as a reseller of the product. We support cards and Paypal in multiple currencies.
-        </p>
-    </div>
-    <div class="faq">
-        <h3>Do you offer discounts?</h3>
-        <p>
-            If you pay annually, you can get 2-months off on all subscription plans. In addition, we provide a 20% discount for non-profit organizations and early-stage startups. Contact us via live chat for a coupon.
         </p>
     </div>
     <div class="faq">

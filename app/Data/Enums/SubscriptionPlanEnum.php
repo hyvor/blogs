@@ -1,12 +1,13 @@
-<?php
+<?php declare(strict_types=1);
 
 namespace App\Data\Enums;
 
 enum SubscriptionPlanEnum: string
 {
-    case A = 'A';
-    case B = 'B';
-    case C = 'C';
-    case D = 'D';
-    case E = 'E';
+    case STARTER = 'starter';
+    case GROWTH = 'growth';
+    case PREMIUM = 'premium';
+    case TEAM = 'team';
+    case BUSINESS = 'business';
+    case ENTERPRISE = 'enterprise';
 }

@@ -44,7 +44,6 @@ return [
         'vendor_auth_code' => env('PADDLE_VENDOR_AUTH_CODE'),
         'public_key' => env('PADDLE_PUBLIC_KEY'),
         'sandbox' => env('PADDLE_SANDBOX', false),
-        'activation_plan_id' => env('APP_ENV') === 'local' ? 48223 : 821945,
     ],
 
     'shopify' => [

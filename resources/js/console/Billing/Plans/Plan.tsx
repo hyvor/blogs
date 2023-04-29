@@ -40,11 +40,12 @@ export default function Plan({type, frequency, onCreate, onUpdate, onCancel} : P
     }
 
     let price = {
-        A: 19,
-        B: 49,
-        C: 299,
-        D: 699,
-        E: 1299
+        starter: 9,
+        growth: 19,
+        premium: 49,
+        team: 299,
+        business: 699,
+        enterprise: 1299
     }[type];
 
     if (frequency === 'yearly') price *= 10;
@@ -54,7 +55,7 @@ export default function Plan({type, frequency, onCreate, onUpdate, onCancel} : P
 
     return <div className={"plan" + (isCurrent ? " current" : "")}>
         <div className="plan-left">
-            <span className="plan-name">Plan {type}</span>
+            <span className="plan-name">{type}</span>
             { isCurrent && <span className="current-text">Current</span>}
         </div>
         <div className="plan-right">

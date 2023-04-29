@@ -46,8 +46,10 @@ class Factory {
     constructor(private testingApi: TestingApi) {}
 
     // blog + variant + user + language + routes
-    async blogFull() {
-        const blog = await this.blog();
+    async blogFull({
+        blogAttrs = {},
+    } = {}) {
+        const blog = await this.blog(blogAttrs);
         const user = await this.user({
             blog_id: blog.id,
             hyvor_user_id: 1,
@@ -74,8 +76,8 @@ class Factory {
         }
     }
 
-    async blog() {
-        return await this.testingApi.callFactory('Blog', {hyvor_user_id: 1});
+    async blog(attrs = {}) {
+        return await this.testingApi.callFactory('Blog', {hyvor_user_id: 1, ...attrs});
     }
 
     async blogVariant(attrs = {}) {

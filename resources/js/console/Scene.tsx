@@ -15,7 +15,7 @@ import blogLogic from "./logic/blogLogic"
 import Loader from "./ReusableComponents/Loader"
 import subdomainLogic from "./logic/subdomainLogic"
 import BlogBlocked from "./Views/BlogBlocked";
-import {hasTrialEndedAndNotActivated} from "./lib/blog-helpers";
+import {hasTrialEndedAndNotSubscribed} from "./lib/blog-helpers";
 import BlogTrialEnded from "./Views/BlogTrialEnded";
 
 export const scenes = {
@@ -68,7 +68,7 @@ function Middle({ children, scene } : {children: ReactNode, scene: string}) {
     }
 
     function isBlogTrialEndedAndNotActivated() {
-        return hasTrialEndedAndNotActivated(blog.subdomain) &&
+        return hasTrialEndedAndNotSubscribed(blog.subdomain) &&
             scene !== 'billing' &&
             scene !== 'welcome' &&
             scene !== 'new';

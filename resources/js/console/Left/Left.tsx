@@ -18,6 +18,7 @@ import { appConfig } from "../helpers";
 import { router } from "kea-router";
 import UserPermissions from "../services/UserPermissions";
 import BlogLink from "../BlogPreview/BlogLink";
+import { hasTrialEndedAndNotSubscribed } from '../lib/blog-helpers';
 
 export default function Left() {
 
@@ -97,10 +98,13 @@ function LeftInner({subdomain} : {subdomain: string}) {
                       extra={
                           <span className="mark">
                         {
-                            currentSubscription &&
-                            currentSubscription.status === 'past_due'
+                            (currentSubscription && currentSubscription.status === 'past_due') ||
+                            hasTrialEndedAndNotSubscribed(subdomain)
                                 ?
-                                <span className="subscription-issue-icon">
+                                <span 
+                                    className="subscription-issue-icon"
+                                    data-testid="nav-subscription-issue-icon"
+                                >
                                     <Exclamation />
                                 </span>
                                 : null
@@ -154,7 +158,7 @@ function LeftLink({ path, icon, name, extra = null, permission }: LeftLinkProps)
         href={`/console/${subdomain}${path}`}
         exact={path === '' ? 1 : 0}
         className={"nav-link" + (!perm ? "global-no-permissions" : "")}
-        data-attr={"main-nav-" + name.toLowerCase()}
+        data-testid={"main-nav-" + name.toLowerCase()}
     >{icon}<span className="name">{name}</span>{extra}</NavLink>
 }
 

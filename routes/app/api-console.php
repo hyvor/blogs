@@ -220,7 +220,6 @@ Route::prefix('/api/console/v0/blog/{subdomain}')
 
                 // paddle
                 Route::get('/billing/paddle', [ConsoleBillingPaddleController::class, 'getData']);
-                Route::post('/billing/paddle/activation', [ConsoleBillingPaddleController::class, 'createActivation']);
                 Route::post('/billing/paddle/subscription', [ConsoleBillingPaddleController::class, 'createSubscription']);
                 Route::patch('/billing/paddle/subscription', [ConsoleBillingPaddleController::class, 'updateSubscription']);
                 Route::delete('/billing/paddle/subscription', [ConsoleBillingPaddleController::class, 'cancelSubscription']);

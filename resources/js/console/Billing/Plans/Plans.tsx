@@ -9,7 +9,6 @@ import {SubscriptionFrequency, SubscriptionPlan} from "../../types";
 import Callout from "../../ReusableComponents/Callout";
 import dayjs from "dayjs";
 import {FriendlyDate} from "../../ReusableComponents/Time";
-import Activate from "./Activate";
 
 interface PlansProps {
 
@@ -26,6 +25,9 @@ export default function Plans({onSubscriptionCreate, onSubscriptionCancel, onSub
     const { findBlogBySubdomain } = useValues(userBlogsLogic);
     const { blog, blog: { subscription: currentSubscription} } = findBlogBySubdomain(subdomain);
 
+    const trialDays = dayjs.unix(blog.trial_ends_at).diff(dayjs(), 'day');
+    const hasTrialEnded = trialDays <= 0;
+
     const [frequency, setFrequency] = useState
         (currentSubscription ? currentSubscription.frequency : 'monthly'); // monthly|yearly
 
@@ -40,8 +42,31 @@ export default function Plans({onSubscriptionCreate, onSubscriptionCancel, onSub
         <div className="section-content">
 
             {
-                !blog.subscription &&
-                <Activate />
+                !blog.subscription && !hasTrialEnded &&
+                <Callout
+                    title="Trial"
+                    icon={<Clock />}
+                    text={
+                        <div>
+                            Trial ends in <b>{trialDays} day{trialDays !== 1 ? "s" : ""}</b>. Upgrade now to continue using your blog.
+                        </div>
+                    }
+                    color="blue"
+                />
+            }
+
+            {
+                !blog.subscription && hasTrialEnded &&
+                <Callout
+                    title="Trial Ended"
+                    icon={<ExclamationCircle />}
+                    text={
+                        <div>
+                            Your trial has ended. Upgrade now to continue using your blog.
+                        </div>
+                    }
+                    color="orange"
+                />
             }
 
             {
@@ -80,7 +105,16 @@ export default function Plans({onSubscriptionCreate, onSubscriptionCancel, onSub
 
             <div className="plans">
                 {
-                    (['A', 'B', 'C', 'D', 'E'] as SubscriptionPlan[]).map(plan =>
+                    (
+                        [
+                            'starter',
+                            'growth',
+                            'premium',
+                            'team',
+                            'business',
+                            'enterprise'
+                        ] as SubscriptionPlan[]
+                    ).map(plan =>
                         <Plan
                             key={plan}
                             type={plan}

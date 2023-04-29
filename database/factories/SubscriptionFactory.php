@@ -15,7 +15,7 @@ class SubscriptionFactory extends Factory
         return [
             'blog_id' => Blog::factory(),
             'status' => SubscriptionStatusEnum::ACTIVE,
-            'plan' => SubscriptionPlanEnum::A,
+            'plan' => SubscriptionPlanEnum::STARTER,
             'frequency' => SubscriptionFrequencyEnum::MONTHLY,
             'ends_at' => null
         ];
