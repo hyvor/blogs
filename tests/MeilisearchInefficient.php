@@ -23,7 +23,7 @@ class MeilisearchInefficient
             > 0
         ) {
             // 250ms
-            usleep(150000);
+            usleep(250000);
         }
     }
 }

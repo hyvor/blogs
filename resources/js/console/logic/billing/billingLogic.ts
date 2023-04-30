@@ -22,7 +22,7 @@ const billingLogic = kea<billingLogicType>([
     path(key => ['billing', key]),
 
     actions({
-        setUsage: (usage: {users: Usage, media: Usage}) => ({usage}),
+        setUsage: (usage: {users: Usage, media: Usage, auto_translate: Usage}) => ({usage}),
         setSubscriptions: (subscriptions: Subscription[]) => ({subscriptions}),
 
         navigateToBilling: () => false,

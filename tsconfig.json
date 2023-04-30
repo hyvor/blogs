@@ -10,7 +10,8 @@
         "moduleResolution": "node",
         "esModuleInterop": true,
         "allowSyntheticDefaultImports": true,
-        "strict": true
+        "strict": true,
+        "skipLibCheck": true
     },
     "include": ["resources/js", "cypress"]
 }
