@@ -58,9 +58,9 @@ export default  function MainButton({id} : {id: number}) {
         return hasChanged ? <ActionButton
             className="small main-button"
             status={!editorState.isNonDraftUpdating ? "stale" : (forceSavePostAjax.status || 'stale')}
-            staleName="Save changes"
-            loadingName="Saving..."
-            successName="Saved"
+            staleName="Publish changes"
+            loadingName="Publishing..."
+            successName="Published"
             errorName="Try again"
             staleOnClick={handleUpdateNonDraft}
             errorOnClick={handleUpdateNonDraft}

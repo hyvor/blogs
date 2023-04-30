@@ -154,13 +154,13 @@ class PaddleService
         return collect([
 
             new PaddlePlan(
-                !App::environment('production') ? 50367 : 790127,
+                !App::environment('production') ? 50367 : 827248,
                 SubscriptionPlanEnum::STARTER,
                 SubscriptionFrequencyEnum::MONTHLY,
             ),
 
             new PaddlePlan(
-                !App::environment('production') ? 50368 : 790127,
+                !App::environment('production') ? 50368 : 827249,
                 SubscriptionPlanEnum::STARTER,
                 SubscriptionFrequencyEnum::YEARLY,
             ),
