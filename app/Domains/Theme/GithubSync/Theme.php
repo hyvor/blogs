@@ -1,4 +1,4 @@
-<?php
+<?php declare(strict_types=1);
 
 namespace App\Domains\Theme\GithubSync;
 
@@ -11,7 +11,7 @@ use Symfony\Component\Yaml\Yaml;
 class Theme
 {
     /**
-     * @var Collection<File>
+     * @var Collection<int, File>
      */
     public Collection $files;
 
@@ -22,7 +22,7 @@ class Theme
         $this->files = collect([]);
     }
 
-    public function addFile(?ThemeFileFolderEnum $folder, string $name, string $content)
+    public function addFile(?ThemeFileFolderEnum $folder, string $name, string $content) : void
     {
         $this->files->add(new File($folder, $name, $content));
     }
@@ -42,10 +42,10 @@ class Theme
 
         $config = Yaml::parse($config->content);
 
-        if (! isset($config['THEME_VERSION'])) {
+        if (!is_array($config) || !isset($config['THEME_VERSION'])) {
             throw new Exception('Theme version not set in '.$this->name);
         }
 
-        return $config['THEME_VERSION'];
+        return strval($config['THEME_VERSION']);
     }
 }

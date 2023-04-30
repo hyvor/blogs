@@ -1,4 +1,4 @@
-<?php
+<?php declare(strict_types=1);
 
 namespace App\Domains\Theme\GithubSync;
 
@@ -30,13 +30,13 @@ class Helper
         $ret = [];
 
         $themes->each(function ($theme) use (&$ret) {
-            $ret[$theme->name] = $theme->version;
+            $ret[$theme->name] = $theme->version; // @phpstan-ignore-line
         });
 
         return $ret;
     }
 
-    public static function generateZip(Theme $theme)
+    public static function generateZip(Theme $theme) : string
     {
         $zip = new ZipFile();
 

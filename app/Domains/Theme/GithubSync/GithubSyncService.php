@@ -1,10 +1,11 @@
-<?php
+<?php declare(strict_types=1);
 
 namespace App\Domains\Theme\GithubSync;
 
 use App\Data\Enums\ThemeCreationTypeEnum;
 use App\Data\Enums\ThemeFileFolderEnum;
 use App\Domains\Theme\ThemeRepository;
+use Exception;
 use PhpZip\ZipFile;
 
 /**
@@ -17,10 +18,14 @@ class GithubSyncService
      */
     public array $themes = [];
 
-    public static function syncFromGithubZipBall()
+    public static function syncFromGithubZipBall() : void
     {
         $zipBallUrl = 'https://github.com/hyvor/hyvor-blogs-themes/zipball/main';
         $zip = file_get_contents($zipBallUrl);
+
+        if (!$zip) {
+            throw new \Exception('Could not download the zipball');
+        }
 
         $syncer = new self($zip);
         $syncer->run();
@@ -30,13 +35,13 @@ class GithubSyncService
     {
     }
 
-    public function run()
+    public function run() : void
     {
         $this->breakIntoThemes();
         $this->saveThemes();
     }
 
-    public function breakIntoThemes()
+    public function breakIntoThemes() : void
     {
         $zip = new ZipFile();
         $zip->openFromString($this->zip);
@@ -46,6 +51,9 @@ class GithubSyncService
          */
         foreach ($zip as $entry => $content) {
 
+            if (!$entry)
+                continue;
+
             // not interested in directories
             if ($zip->isDirectory($entry)) {
                 continue;
@@ -54,7 +62,7 @@ class GithubSyncService
             // entry = hyvor-hyvor-blogs-themes-7357d59/original/default/config.def.yaml
 
             // replace the prefix
-            $entry = preg_replace('/^[^\/]+\//', '', $entry);
+            $entry = strval(preg_replace('/^[^\/]+\//', '', $entry));
 
             preg_match(
                 '/(?P<type>[^\/]+)(\/(?P<theme_name>[^\/]+))?(\/(?P<folder>[^\/]+))?(\/(?P<file_name>[^\/]+))?/',
@@ -92,11 +100,11 @@ class GithubSyncService
                 $this->themes[$themeName] = new Theme($themeName, $type);
             }
 
-            $this->themes[$themeName]->addFile($folder, $fileName, $content);
+            $this->themes[$themeName]->addFile($folder, $fileName, strval($content));
         }
     }
 
-    private function saveThemes()
+    private function saveThemes() : void
     {
         $latestVersions = Helper::getLatestVersionsOfAllThemes();
 
@@ -117,6 +125,10 @@ class GithubSyncService
 
             if ($version !== $latestVersion) {
                 $themeModel = ThemeRepository::getThemeByName($theme->name);
+
+                if (!$themeModel) {
+                    throw new Exception('Theme not found: ' . $theme->name);
+                }
 
                 $zip = Helper::generateZip($theme);
 

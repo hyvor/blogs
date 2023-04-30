@@ -52,10 +52,7 @@ return [
     ],
 
     'github' => [
-        /**
-         * Secret of hyvor-blogs-themes repo
-         */
-        'webhook_secret_for_themes' => env('GITHUB_WEBHOOK_SECRET_FOR_THEMES')
+        'themes_publish_key' => env('GITHUB_THEMES_PUBLISH_KEY'),
     ],
 
     'email_octopus' => [
