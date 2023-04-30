@@ -1,4 +1,4 @@
-<?php
+<?php declare(strict_types=1);
 
 namespace App\Http\Controllers\DataApi;
 
@@ -10,20 +10,23 @@ class KeysFilter
 {
     // default is exclude nothing
     // which means include everything
-    private $type = 'exclude';
+    private string $type = 'exclude';
 
-    private $keys = [];
+    /**
+     * @var array<string>
+     */
+    private array $keys = [];
 
-    private $data;
+    private mixed $data;
 
-    public function __construct(array|object $input, ?string $keys)
+    public function __construct(mixed $input, ?string $keys)
     {
         $this->decodeKeys($keys);
 
         $this->data = $this->filterObject($input);
     }
 
-    private function filterObject($object, $start = '')
+    private function filterObject(mixed $object, string $start = '') : mixed
     {
         $ret = [];
 
@@ -41,8 +44,8 @@ class KeysFilter
                 return $object;
             }
 
-            foreach ($object as $key => $value) {
-                $fullKey = $start ? $start.'.'.$key : $key;
+            foreach ((array) $object as $key => $value) {
+                $fullKey = strval($start ? $start.'.'.$key : $key);
                 if ($this->type === 'exclude') {
                     if (
                         ! in_array($fullKey, $this->keys)
@@ -60,7 +63,7 @@ class KeysFilter
         return $ret;
     }
 
-    private function isKeyIncluded($key)
+    private function isKeyIncluded(string $key) : bool
     {
         foreach ($this->keys as $checkKey) {
             // if the keys matches
@@ -85,9 +88,11 @@ class KeysFilter
                 return true;
             }
         }
+
+        return false;
     }
 
-    private function decodeKeys(?string $keys)
+    private function decodeKeys(?string $keys) : void
     {
         if (is_null($keys)) {
             return;
@@ -117,12 +122,12 @@ class KeysFilter
         $this->keys = array_map('trim', explode(',', $keys));
     }
 
-    public function getData(): array
+    public function getData(): mixed
     {
         return $this->data;
     }
 
-    public static function filter(object $input, ?string $keys): array
+    public static function filter(object $input, ?string $keys): mixed
     {
         return (new self($input, $keys))->getData();
     }

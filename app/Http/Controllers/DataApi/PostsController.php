@@ -70,7 +70,7 @@ class PostsController extends Controller
         );
     }
 
-    public function posts(Request $request, Blog $blog)
+    public function posts(Request $request, Blog $blog) : JsonResponse
     {
         $request->validate([
             'language' => 'string',
@@ -82,14 +82,17 @@ class PostsController extends Controller
             'pages' => 'boolean',
         ]);
 
-        $language = Helper::getLanguage($blog, $request->input('language'));
-        $limit = Helper::getLimit($request->input('limit'));
-        $page = Helper::getPage($request->input('page'));
+        $language = Helper::getLanguage(
+            $blog,
+            $request->has('language') ? (string) $request->string('language') : null
+        );
+        $limit = Helper::getLimit($request->has('limit') ? $request->integer('limit') : null);
+        $page = Helper::getPage($request->has('page') ? $request->integer('page') : null);
         $offset = Helper::getOffset($page, $limit);
-        $filter = $request->input('filter');
-        $keys = $request->input('keys');
-        $sort = $request->input('sort');
-        $pages = (bool) $request->input('pages');
+        $filter = $request->has('filter') ? (string) $request->string('filter') : null;
+        $keys = $request->has('keys') ? (string) $request->string('keys') : null;
+        $sort = $request->has('sort') ? (string) $request->string('sort') : null;
+        $pages = $request->boolean('pages');
 
         $orderBys = Helper::getSort(
             $sort,
@@ -118,7 +121,7 @@ class PostsController extends Controller
         ]);
     }
 
-    public function postsSearch(Request $request, Blog $blog)
+    public function postsSearch(Request $request, Blog $blog) : JsonResponse
     {
         $request->validate([
             'search' => 'string|required',
@@ -128,13 +131,16 @@ class PostsController extends Controller
             'keys' => 'string',
         ]);
 
-        $search = $request->input('search');
-        $language = Helper::getLanguage($blog, $request->input('language'));
+        $search = (string) $request->string('search');
 
-        $limit = Helper::getLimit($request->input('limit'));
-        $page = Helper::getPage($request->input('page'));
+        $language = Helper::getLanguage(
+            $blog,
+            $request->has('language') ? (string) $request->string('language') : null
+        );
+        $limit = Helper::getLimit($request->has('limit') ? $request->integer('limit') : null);
+        $page = Helper::getPage($request->has('page') ? $request->integer('page') : null);
         $offset = Helper::getOffset($page, $limit);
-        $keys = $request->input('keys');
+        $keys = $request->has('keys') ? (string) $request->string('keys') : null;
 
         $searchData = PostSearchRepository::search(
             blog: $blog,

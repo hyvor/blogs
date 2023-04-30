@@ -1,4 +1,4 @@
-<?php
+<?php declare(strict_types=1);
 
 namespace App\Http\Controllers\DataApi;
 
@@ -8,6 +8,7 @@ use App\Domains\User\UserRepository;
 use App\Exceptions\TrustedException;
 use App\Http\Controllers\Controller;
 use App\Models\Blog;
+use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 
 class AuthorsController extends Controller
@@ -17,7 +18,7 @@ class AuthorsController extends Controller
         'created_at' => 'users.created_at',
     ];
 
-    public function author(Request $request, Blog $blog)
+    public function author(Request $request, Blog $blog) : JsonResponse
     {
         $request->validate([
             'id' => 'int|required_without:slug',
@@ -26,10 +27,13 @@ class AuthorsController extends Controller
             'keys' => 'string',
         ]);
 
-        $id = $request->input('id');
-        $slug = $request->input('slug');
-        $language = Helper::getLanguage($blog, $request->input('language'));
-        $keys = $request->input('keys');
+        $id = $request->has('id') ? $request->integer('id') : null;
+        $slug = $request->has('slug') ? (string) $request->str('slug') : null;
+        $language = Helper::getLanguage(
+            $blog,
+            $request->has('language') ? (string) $request->string('language') : null
+        );
+        $keys = $request->has('keys') ? (string) $request->string('keys') : null;
 
         $author = UserRepository::getUserByBlogIdAndIdentifier($blog->id, $id, $slug);
 
@@ -48,7 +52,7 @@ class AuthorsController extends Controller
         );
     }
 
-    public function authors(Request $request, Blog $blog)
+    public function authors(Request $request, Blog $blog) : JsonResponse
     {
         $request->validate([
             'language' => 'string',
@@ -59,13 +63,17 @@ class AuthorsController extends Controller
             'keys' => 'string',
         ]);
 
-        $language = Helper::getLanguage($blog, $request->input('language'));
-        $limit = Helper::getLimit($request->input('limit'));
-        $page = Helper::getPage($request->input('page'));
+        $language = Helper::getLanguage(
+            $blog,
+            $request->has('language') ? (string) $request->string('language') : null
+        );
+        $limit = Helper::getLimit($request->has('limit') ? $request->integer('limit') : null);
+        $page = Helper::getPage($request->has('page') ? $request->integer('page') : null);
         $offset = Helper::getOffset($page, $limit);
-        $filter = $request->input('filter');
-        $keys = $request->input('keys');
-        $orderBys = Helper::getSort($request->input('sort'), self::ALLOWED_SORTS);
+        $filter = $request->has('filter') ? (string) $request->string('filter') : null;
+        $keys = $request->has('keys') ? (string) $request->string('keys') : null;
+        $sort = $request->has('sort') ? (string) $request->string('sort') : null;;
+        $orderBys = Helper::getSort($sort, self::ALLOWED_SORTS);
 
         $data = UserRepository::getAuthorsWithFilterQ(
             blog: $blog,

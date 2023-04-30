@@ -1,4 +1,4 @@
-<?php
+<?php declare(strict_types=1);
 
 namespace App\Http\Controllers\DataApi;
 
@@ -33,7 +33,8 @@ class Helper
     /**
      * Returns an array of order bys
      *
-     * @param $allowed array{string, string}
+     * @param array<mixed> $allowed
+     * @return array<mixed>
      */
     public static function getSort(?string $sort, array $allowed): array
     {
@@ -50,7 +51,7 @@ class Helper
         foreach ($orderBys as $one) {
             $one = trim($one);
             $split = preg_split('/\s+/', $one);
-            $orderBy = $split[0];
+            $orderBy = $split[0] ?? '';
             $orderMethod = strtoupper($split[1] ?? 'desc');
 
             if (! array_key_exists($orderBy, $allowed)) {
@@ -62,7 +63,6 @@ class Helper
                     "Sort method $orderMethod not supported",
                     TrustedException::ERROR_UNPROCESSABLE
                 );
-                $orderMethod = 'DESC';
             }
 
             $ret[] = [$allowed[$orderBy], $orderMethod];

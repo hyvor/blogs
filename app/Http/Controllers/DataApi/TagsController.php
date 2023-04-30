@@ -1,4 +1,4 @@
-<?php
+<?php declare(strict_types=1);
 
 namespace App\Http\Controllers\DataApi;
 
@@ -8,6 +8,7 @@ use App\Domains\Tag\TagRepository;
 use App\Exceptions\TrustedException;
 use App\Http\Controllers\Controller;
 use App\Models\Blog;
+use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 
 class TagsController extends Controller
@@ -17,7 +18,7 @@ class TagsController extends Controller
         'created_at' => 'tags.created_at',
     ];
 
-    public function tag(Request $request, Blog $blog)
+    public function tag(Request $request, Blog $blog) : JsonResponse
     {
         $request->validate([
             'id' => 'int|required_without:slug',
@@ -26,14 +27,17 @@ class TagsController extends Controller
             'keys' => 'string',
         ]);
 
-        $id = $request->input('id');
-        $slug = $request->input('slug');
-        $language = Helper::getLanguage($blog, $request->input('language'));
-        $keys = $request->input('keys');
+        $id = $request->has('id') ? $request->integer('id') : null;
+        $slug = $request->has('slug') ? (string) $request->str('slug') : null;
+        $language = Helper::getLanguage(
+            $blog,
+            $request->has('language') ? (string) $request->string('language') : null
+        );
+        $keys = $request->has('keys') ? (string) $request->string('keys') : null;
 
         $tag = TagRepository::getTagByBlogIdAndIdentifier($blog->id, $id, $slug);
 
-        if (! $tag) {
+        if (!$tag) {
             throw new TrustedException('Tag not found', TrustedException::ERROR_NOT_FOUND);
         }
 
@@ -42,7 +46,7 @@ class TagsController extends Controller
         );
     }
 
-    public function tags(Request $request, Blog $blog)
+    public function tags(Request $request, Blog $blog) : JsonResponse
     {
         $request->validate([
             'language' => 'string',
@@ -53,13 +57,17 @@ class TagsController extends Controller
             'keys' => 'string',
         ]);
 
-        $language = Helper::getLanguage($blog, $request->input('language'));
-        $limit = Helper::getLimit($request->input('limit'));
-        $page = Helper::getPage($request->input('page'));
+        $language = Helper::getLanguage(
+            $blog,
+            $request->has('language') ? (string) $request->string('language') : null
+        );
+        $limit = Helper::getLimit($request->has('limit') ? $request->integer('limit') : null);
+        $page = Helper::getPage($request->has('page') ? $request->integer('page') : null);
         $offset = Helper::getOffset($page, $limit);
-        $filter = $request->input('filter');
-        $keys = $request->input('keys');
-        $orderBys = Helper::getSort($request->input('sort'), self::ALLOWED_SORTS);
+        $filter = $request->has('filter') ? (string) $request->string('filter') : null;
+        $keys = $request->has('keys') ? (string) $request->string('keys') : null;
+        $sort = $request->has('sort') ? (string) $request->string('sort') : null;;
+        $orderBys = Helper::getSort($sort, self::ALLOWED_SORTS);
 
         $data = TagRepository::getTagsWithFilterQ(
             blog: $blog,

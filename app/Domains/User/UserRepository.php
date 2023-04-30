@@ -80,6 +80,10 @@ class UserRepository
             ->get();
     }
 
+    /**
+     * @param array<mixed> $orderBys
+     * @return CollectionWithTotal<User>
+     */
     public static function getAuthorsWithFilterQ(
         Blog $blog,
         ?string $filter,
