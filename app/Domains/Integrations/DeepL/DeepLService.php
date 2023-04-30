@@ -83,22 +83,26 @@ class DeepLService
             ->sum('chars'));
     }
 
-    public static function getMaxCharsPerMonth(?SubscriptionPlanEnum $plan) : int
+    public static function getMaxCharsPerMonth(Blog $blog, ?SubscriptionPlanEnum $plan) : int
     {
+
+        if ($plan === null && $blog->trial_ends_at->isFuture())
+            return 10000;
+
         return match ($plan) {
             SubscriptionPlanEnum::GROWTH => 100000,
             SubscriptionPlanEnum::PREMIUM => 300000,
             SubscriptionPlanEnum::TEAM => 1000000,
             SubscriptionPlanEnum::BUSINESS => 5000000,
             SubscriptionPlanEnum::ENTERPRISE => 10000000,
-            default => 0
+            default => 0,
         };
     }
 
     public static function hasReachedLimit(Blog $blog) : bool
     {
         $plan = SubscriptionService::getActiveBlogSubscription($blog)?->plan;
-        $maxChars = self::getMaxCharsPerMonth($plan);
+        $maxChars = self::getMaxCharsPerMonth($blog, $plan);
         $usage = self::getThisMonthUsage($blog);
 
         return $usage >= $maxChars;

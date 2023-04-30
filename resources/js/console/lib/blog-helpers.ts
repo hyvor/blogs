@@ -36,6 +36,16 @@ export function hasSubscription(subdomain: string) {
     return blog.subscription !== null;
 }
 
+export function isInTrial(subdomain: string) {
+    const blog = getBlogFromSubdomain(subdomain)
+    return blog.trial_ends_at > dayjs().unix();
+}
+
+export function getSubscription(subdomain: string) {
+    const blog = getBlogFromSubdomain(subdomain)
+    return blog.subscription;
+}
+
 /*export function isOnTrial(blog: UserBlogBlog) {
     return blog.trial_ends_at > dayjs().unix()
 }*/

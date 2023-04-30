@@ -6,7 +6,7 @@ import {PopupConfirm} from "../../ReusableComponents/Popup";
 import React, {useState} from "react";
 import DualSetting from "../../ReusableComponents/DualSetting";
 import api from "../../lib/api";
-import {hasSubscription} from "../../lib/blog-helpers";
+import {getSubscription, hasSubscription, isInTrial} from "../../lib/blog-helpers";
 import billingLogic from "../../logic/billing/billingLogic";
 import Select from "../../ReusableComponents/Select";
 import {Language} from "../../types";
@@ -63,7 +63,10 @@ export default function AutoTranslate({id, onCancel}: { id: number, onCancel: Fu
 
     }
 
-    const isBlogSubscribed = hasSubscription(subdomain);
+    const blogSubscription = getSubscription(subdomain);
+    const isBlogSubscribed = isInTrial(subdomain) || (blogSubscription && blogSubscription.plan !== 'starter');
+
+    console.log(isInTrial(subdomain), blogSubscription);
 
     const sourceLangOptions = Object.keys(SOURCE_LANGUAGES).map(key => {
         return {
@@ -138,7 +141,7 @@ export default function AutoTranslate({id, onCancel}: { id: number, onCancel: Fu
                     />
                 </div> :
                 <div>
-                    Auto-translation is a premium feature available in all paid subscription plans. Upgrade now to easily translate your posts into multiple languages. See <a className="link" href="/pricing" target="_blank">pricing</a> for more details.
+                    Auto-translation is a premium feature available in the <b>Growth</b> and higher plans. Upgrade now to easily translate your posts into multiple languages. See <a className="link" href="/pricing" target="_blank">pricing</a> for more details.
                 </div>
         }
         name={isBlogSubscribed ? "Auto-Translate" : "Upgrade Now"}
