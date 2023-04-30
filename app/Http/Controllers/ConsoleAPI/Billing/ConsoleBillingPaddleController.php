@@ -24,7 +24,7 @@ class ConsoleBillingPaddleController extends Controller
         $info = null;
         $payments = [];
 
-        if ($subscription) {
+        if ($subscription && $paddleService->getPaddleSubscriptionId($subscription)) {
             $info = new PaddleSubscriptionInfoObject($paddleService->getInfo($subscription)->toArray());
             $payments = $paddleService->getPayments($subscription)->mapInto(PaddlePaymentObject::class);
         }

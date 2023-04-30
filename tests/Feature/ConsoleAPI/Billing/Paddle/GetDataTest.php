@@ -83,3 +83,16 @@ it('gets info and receipts', function () {
                 });
         });
 });
+
+
+it('returns empty when paddle ID is not set', function() {
+
+    $blog = blogWithAccess();
+    Subscription::factory()->create(['blog_id' => $blog]);
+
+    consoleApi($blog, 'GET', '/billing/paddle')
+        ->assertOk()
+        ->assertJsonPath('info', null)
+        ->assertJsonPath('payments', []);
+
+});
