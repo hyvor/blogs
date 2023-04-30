@@ -1,5 +1,4 @@
-import React, {MouseEventHandler, ReactNode} from 'react'
-import PropTypes from 'prop-types'
+import React, {ReactNode} from 'react'
 import Loader from './Loader'
 
 interface PopupProps {
