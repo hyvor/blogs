@@ -27,7 +27,7 @@ services:
       - redis:/data
 
   meilisearch:
-    image: getmeili/meilisearch:v0.30
+    image: getmeili/meilisearch:v1.0
     restart: unless-stopped
     ports:
       - '7700:7700'
