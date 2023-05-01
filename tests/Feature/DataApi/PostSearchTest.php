@@ -31,7 +31,7 @@ it('searches posts', function () {
         ])
         ->assertOk()
         ->assertJsonCount(1, 'data');
-})->only();
+});
 
 it('does not work without search query', function () {
 
