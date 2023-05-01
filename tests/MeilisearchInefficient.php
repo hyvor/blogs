@@ -23,6 +23,12 @@ class MeilisearchInefficient
                 ->count()
             > 0
         ) {
+
+            dump(collect($client->getTasks()->toArray()['results']));
+            dump(collect($client->getTasks()->toArray()['results'])
+                ->filter(fn($task) => $task['status'] === 'enqueued' || $task['status'] === 'processing')
+                ->count());
+
             // 250ms
             usleep(250000);
         }
