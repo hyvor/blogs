@@ -39,7 +39,7 @@
         "laravel/tinker": "^2.7",
         "league/flysystem-aws-s3-v3": "^3.0",
         "masterminds/html5": "^2.7",
-        "meilisearch/meilisearch-php": "^0.24.0",
+        "meilisearch/meilisearch-php": "^1.0",
         "nelexa/zip": "^4.0",
         "padaliyajay/php-autoprefixer": "^1.3",
         "predis/predis": "^1.1",
