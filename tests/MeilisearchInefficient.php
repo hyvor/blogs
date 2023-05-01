@@ -16,13 +16,19 @@ class MeilisearchInefficient
             strval(config('scout.meilisearch.host')),
             strval(config('scout.meilisearch.key'))
         );
-        dump($client->getTasks()->toArray()['results']);
+
         while (
             collect($client->getTasks()->toArray()['results'])
                 ->filter(fn($task) => $task['status'] === 'enqueued' || $task['status'] === 'processing')
                 ->count()
             > 0
         ) {
+
+            dump($client->getTasks()->toArray()['results']);
+            dump(collect($client->getTasks()->toArray()['results'])
+                ->filter(fn($task) => $task['status'] === 'enqueued' || $task['status'] === 'processing')
+                ->count());
+
             // 250ms
             usleep(250000);
         }
