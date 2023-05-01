@@ -21,8 +21,6 @@ it('uploads from url', function() {
         ->assertOk()
         ->json();
 
-    dump($blog->subdomain);
-
     expect($media['id'])->toBeGreaterThan(0)
         ->and($media['url'])->toStartWith($blogUrl . '/media');
 

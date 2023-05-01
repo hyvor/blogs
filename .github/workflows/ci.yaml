@@ -43,7 +43,7 @@ jobs:
                     composer install --ansi --no-progress
 
             -   name: Run tests
-                run: composer test
+                run: vendor/bin/pest
 
     e2e:
         name: "E2E Tests"
