@@ -27,28 +27,11 @@ services:
       - redis:/data
 
   meilisearch:
-    image: getmeili/meilisearch:v1.0
+    image: getmeili/meilisearch:v1.1.1
     restart: unless-stopped
     ports:
       - '7700:7700'
-    volumes:
-      - meilisearch:/meili_data
-
-  minio:
-    image: minio/minio:latest
-    ports:
-      - '9002:9000'
-      - '9001:9001'
-    volumes:
-      - minio:/data
-    environment:
-      MINIO_ROOT_USER: minioadmin
-      MINIO_ROOT_PASSWORD: minioadmin
-    entrypoint: sh
-    command: -c 'mkdir -p /data/blogs && minio server --console-address ":9001" /data'
 
 volumes:
   mysql:
   redis:
-  meilisearch:
-  minio:
