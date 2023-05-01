@@ -18,7 +18,7 @@ use MeiliSearch\Search\SearchResult;
 class PostSearchRepository
 {
 
-    private const FILTERABLE_ATTRIBUTES = [
+    public const FILTERABLE_ATTRIBUTES = [
         'blog_id',
         'language_id',
         'is_published',
@@ -28,7 +28,7 @@ class PostSearchRepository
     /**
      * These are ordered by relevancy
      */
-    private const SEARCHABLE_ATTRIBUTES = [
+    public const SEARCHABLE_ATTRIBUTES = [
         'title',
         'description',
         'content',

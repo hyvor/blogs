@@ -1,4 +1,7 @@
-<?php
+<?php declare(strict_types=1);
+
+use App\Domains\Post\PostSearchRepository;
+use App\Models\PostVariant;
 
 return [
 
@@ -133,6 +136,12 @@ return [
     'meilisearch' => [
         'host' => env('MEILISEARCH_HOST', 'http://localhost:7700'),
         'key' => env('MEILISEARCH_KEY', null),
+        'index-settings' => [
+            PostVariant::class => [
+                'filterableAttributes'=> PostSearchRepository::FILTERABLE_ATTRIBUTES,
+                'sortableAttributes' => PostSearchRepository::SEARCHABLE_ATTRIBUTES,
+            ],
+        ],
     ],
 
 ];
