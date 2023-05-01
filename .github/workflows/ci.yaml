@@ -37,7 +37,7 @@ jobs:
                 env:
                     REPMAN_TOKEN: ${{ secrets.REPMAN_TOKEN }}
                 run: |
-                    npm install --force
+                    npm ci --ignore-scripts
                     npm run build
                     composer config --global --auth http-basic.hyvor.repo.repman.io token ${REPMAN_TOKEN}
                     composer install --ansi --no-progress

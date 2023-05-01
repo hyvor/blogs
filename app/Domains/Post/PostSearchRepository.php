@@ -12,6 +12,8 @@ use App\Models\Post;
 use App\Models\PostVariant;
 use Illuminate\Support\Collection;
 use MeiliSearch\Client;
+use MeiliSearch\Endpoints\Indexes;
+use MeiliSearch\Search\SearchResult;
 
 class PostSearchRepository
 {
@@ -59,6 +61,9 @@ class PostSearchRepository
 
         $filter = self::getSearchFilter($conditions);
 
+        /**
+         * @var SearchResult $results
+         */
         $results = $index->search($search, [
             'limit' => $limit,
             'offset' => $offset,
@@ -83,8 +88,12 @@ class PostSearchRepository
         return new CollectionWithTotal($posts, $results->getEstimatedTotalHits());
     }
 
-    // from https://github.com/laravel/scout/blob/9.x/src/Engines/MeiliSearchEngine.php
-    private static function getSearchFilter($conditions)
+    /**
+     * from https://github.com/laravel/scout/blob/9.x/src/Engines/MeiliSearchEngine.php
+     *
+     * @param array<string, mixed> $conditions
+     */
+    private static function getSearchFilter($conditions) : string
     {
         $filters = collect($conditions)->map(function ($value, $key) {
             if (is_bool($value)) {
@@ -93,15 +102,21 @@ class PostSearchRepository
 
             return is_numeric($value)
                             ? sprintf('%s=%s', $key, $value)
-                            : sprintf('%s="%s"', $key, $value);
+                            : sprintf('%s="%s"', $key, $value); // @phpstan-ignore-line
         });
 
         return $filters->values()->implode(' AND ');
     }
 
+    /**
+     * @return array<string, mixed>
+     */
     public static function getSearchDocument(PostVariant $postVariant): array
     {
+
+        /** @var Post $post */
         $post = $postVariant->post;
+        /** @var Blog $blog */
         $blog = $post->blog;
 
         return [
@@ -115,7 +130,7 @@ class PostSearchRepository
              */
             'title' => $postVariant->title,
             'description' => $postVariant->description,
-            'content' => $post->content ? PostContentRepository::getText($postVariant->content, $blog) : '',
+            'content' => $postVariant->content ? PostContentRepository::getText($postVariant->content, $blog) : '',
             'slug' => $postVariant->slug,
 
             /**
@@ -152,24 +167,31 @@ class PostSearchRepository
 
     public static function resetIndex() : void
     {
-        self::getIndex()->delete();
+        self::getClient()->getIndex(self::getIndexName())->delete();
+        self::getClient()->createIndex(self::getIndexName());
         self::setFilterableAttributes();
         self::setSearchableAttributes();
     }
 
-    private static function getIndex()
+    private static function getClient() : Client
     {
-        $client = new Client(config('scout.meilisearch.host'), config('scout.meilisearch.key'));
+        $host = strval(config('scout.meilisearch.host'));
+        $key = strval(config('scout.meilisearch.key'));
+        return new Client($host, $key);
+    }
 
+    private static function getIndex() : Indexes
+    {
+        $client = self::getClient();
         return $client->index(self::getIndexName());
     }
 
-    public static function getIndexName()
+    public static function getIndexName() : string
     {
         return App::environment('testing') ? 'posts_testing' : 'posts';
     }
 
-    private static function isMeilisearch()
+    private static function isMeilisearch() : bool
     {
         return config('scout.driver') === 'meilisearch';
     }
