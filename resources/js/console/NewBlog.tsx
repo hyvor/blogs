@@ -10,6 +10,8 @@ import {Popup, PopupBodyDefault, PopupHeaderDefault} from './ReusableComponents/
 import Toast from './ReusableComponents/Toast';
 import {router} from 'kea-router'
 import Callout, {CalloutColors} from "./ReusableComponents/Callout";
+import tracking from './services/tracking';
+import { UserBlog } from './objects/userblog';
 
 
 export default function blog({ type }: { type: string | undefined }) {
@@ -114,7 +116,9 @@ export default function blog({ type }: { type: string | undefined }) {
         }
 
         setIsCreating(true);
-        createBlog({name, subdomain, isDev});
+        createBlog({name, subdomain, isDev, onCreate: (userBlog: UserBlog) => {
+            tracking.trackBlogCreate(userBlog);
+        }});
     }
 
     return <div className="new-blog-scene">

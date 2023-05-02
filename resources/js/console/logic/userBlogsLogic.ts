@@ -18,11 +18,12 @@ const userBlogsLogic = kea<userBlogsLogicType>([
 
     ajax(({ actions, values }) => ({
         createBlog: async (
-            { name, subdomain, isDev} :
+            { name, subdomain, isDev, onCreate} :
             {
                 name: string,
                 subdomain: string,
-                isDev?: boolean
+                isDev?: boolean,
+                onCreate?: (userBlog: UserBlog) => void
             }
         ) => {
 
@@ -38,6 +39,8 @@ const userBlogsLogic = kea<userBlogsLogicType>([
             const userBlog = res.data;
             actions.addBlog(userBlog);
             subdomainLogic.actions.setSubdomain(userBlog.blog.subdomain, null, true);
+
+            onCreate && onCreate(userBlog);
 
         },
         saveBlogsSort: async () => {

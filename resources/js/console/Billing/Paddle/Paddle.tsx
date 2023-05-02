@@ -10,6 +10,7 @@ import {FullPageLoader} from "../../ReusableComponents/Loader";
 import {PopupNotice} from "../../ReusableComponents/Popup";
 import getSubdomain from "../../logic-helpers/subdomain";
 import { getPriceFromPlan } from '../Plans/Plan';
+import tracking from '../../services/tracking';
 
 export default function Paddle() {
 
@@ -21,25 +22,6 @@ export default function Paddle() {
     const [checkoutLoading, setCheckoutLoading] = useState(false);
     const [checkoutSuccess, setCheckoutSuccess] = useState<false | 'update' | 'create'>(false);
     const [reloadCountdown, setReloadCountdown] = useState(10);
-
-    function reportSubscriptionCreated(plan: SubscriptionPlan, frequency: SubscriptionFrequency) {
-
-        const w = window as any;
-
-        const price = getPriceFromPlan(plan);
-
-        if (w.uet_report_conversion) {
-            w.uet_report_conversion(price.toString());
-        }
-
-        if (w.splitbee) {
-            w.splitbee.track("Subscription Created", {
-                plan,
-                frequency
-            })
-        }
-
-    }
 
     function handleCreate(plan: SubscriptionPlan, frequency: SubscriptionFrequency) {
 
@@ -60,8 +42,7 @@ export default function Paddle() {
                             setReloadCountdown(reloadCountdown => Math.max(0, reloadCountdown - 1));
                         }, 1000);
 
-                        reportSubscriptionCreated(plan, frequency);
-
+                        tracking.trackSubscriptionCreate(plan, frequency);
                     }
                 });
             }
