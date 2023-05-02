@@ -10,9 +10,8 @@ It is cool to know some metrics about how much traffic your blog gets. You can e
 
 ## Analytics Services {#services}
 
-* [Google Analytics](https://analytics.google.com/analytics/web/)
+* [Google Analytics](https://analytics.google.com/analytics/web/) ([Blog Tutorial](https://hyvor.com/blog/add-google-analytics-to-your-blog))
 * [Cloudflare Analytics](https://www.cloudflare.com/analytics)
-* [Splitbee](https://splitbee.io/)
 * [Matomo](https://matomo.org/)
 * [Fathom](https://usefathom.com)
 * [Plausible Analytics](https://plausible.io)

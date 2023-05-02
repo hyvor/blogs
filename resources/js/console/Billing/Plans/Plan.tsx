@@ -14,6 +14,17 @@ interface PlanProps {
     onCancel: () => any,
 }
 
+export function getPriceFromPlan(type: SubscriptionPlan) {
+    return {
+        starter: 9,
+        growth: 19,
+        premium: 49,
+        team: 299,
+        business: 699,
+        enterprise: 1299
+    }[type];
+}
+
 export default function Plan({type, frequency, onCreate, onUpdate, onCancel} : PlanProps) {
 
     const { subscription: currentSubscription } = getUserBlogBlog();
@@ -39,14 +50,7 @@ export default function Plan({type, frequency, onCreate, onUpdate, onCancel} : P
         location.reload();
     }
 
-    let price = {
-        starter: 9,
-        growth: 19,
-        premium: 49,
-        team: 299,
-        business: 699,
-        enterprise: 1299
-    }[type];
+    let price = getPriceFromPlan(type);
 
     if (frequency === 'yearly') price *= 10;
 

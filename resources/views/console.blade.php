@@ -5,6 +5,7 @@
     <meta name="robots" content="nofollow, noindex">
 
     <meta name="viewport" content="width=device-width, initial-scale=1">
+    @include('shared.tracking')
 </head>
 <body>
     <div id="app"></div>
@@ -30,7 +31,6 @@
     <script src="https://do.featurebase.app/js/widget.js"></script>
 
     @include('shared.chat')
-    @include('shared.tracking')
 
 </body>
 </html>
