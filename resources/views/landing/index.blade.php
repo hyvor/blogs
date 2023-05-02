@@ -839,9 +839,21 @@ c30.27,0,54.64-24.37,54.64-54.64v-1419l-363.61-362.75L1258.7,336.75z"/>
 
 
 <div class="button-main">
+
+    <p class="convinced">
+        Try Hyvor Blogs risk-free with our 7-day free trial - no credit card required! See for yourself why Hyvor Blogs is the best blogging platform for you.
+    </p>
+
     <a data-flashload-skip-link href="/console?signup=1" class="button big">
         Start Your Blog Now
     </a>
+
+   {{--  <div class="start-details">
+        <span>7-days free trial</span> &bull;
+        <span>No card required</span> &bull;
+        <span>Cancel anytime</span>
+    </div> --}}
+
 </div>
 
 @include('landing.footer')

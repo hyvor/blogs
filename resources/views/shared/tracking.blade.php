@@ -1,4 +1,4 @@
-@if (!\Illuminate\Support\Facades\App::environment('local'))
+@if (!\Illuminate\Support\Facades\App::environment('local', 'testing'))
     <script async src="https://cdn.splitbee.io/sb.js"></script>
 
     {{-- BING --}}
