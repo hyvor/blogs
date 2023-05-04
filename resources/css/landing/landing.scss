@@ -14,6 +14,7 @@ $tab: 992px;
 @import './pricing.scss';
 @import './docs.scss';
 @import './themes.scss';
+@import './for.scss';
 
 a.link {
     font-weight: 600;
@@ -24,6 +25,38 @@ a.link {
 
 #flashload-bar {
     background: $color-accent;
+}
+
+.signup-button {
+    margin: 40px 0;
+    text-align: center;
+
+    .offer {
+        display: flex;
+        justify-content: center;
+        margin-top: 20px;
+
+        div {
+            margin: 0 10px;
+            svg {
+                color: $color-accent;
+                vertical-align: middle;
+                margin-right: 3px;
+            }
+            span {
+                vertical-align: middle;
+            }
+        }
+    }
+
+    @media screen and (max-width: $tab) {
+        .offer {
+            flex-direction: column;
+            div {
+                margin: 10px 0;
+            }
+        }
+    }
 }
 
 // some copies from bootstrap

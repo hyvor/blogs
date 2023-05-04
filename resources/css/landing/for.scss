@@ -1,0 +1,98 @@
+
+
+.for {
+
+
+    .for-header {
+        background-color: $color-accent-very-light;
+        padding-top: 115px;
+        padding-bottom: 10px;
+
+        h1 {
+            font-size: 30px;
+            font-weight: 800;
+            margin-bottom: 15px;
+            text-align: center;
+        }
+        h2 {
+            font-size: 16px;
+            letter-spacing: 0.3px;
+            font-weight: normal;
+            width: 500px;
+            max-width: 100%;
+            margin: auto;
+            text-align: center;
+        }
+
+    }
+
+
+    .for-why {
+
+        margin-top: 40px;
+        text-align: center;
+
+        .why-title {
+            width: 550px;
+            max-width: 100%;
+            margin: auto;
+
+            h3 {
+                font-size: 20px;
+            }
+        }
+
+        .features {
+            display: flex;
+            flex-wrap: wrap;
+            width: 615px;
+            max-width: 100%;
+            margin:120px auto;
+            align-items: flex-start;
+        }
+
+        .feature-card {
+            flex: calc(50% - 15px);
+            padding: 25px;
+            background-color: #fff;
+            box-shadow: 0 0 20px rgba(0,0,0,0.05);
+            border-radius: 20px;
+            margin-bottom: 15px;
+            img {
+                width: 100px;
+                height: 100px;
+            }
+
+            h4 {
+                margin-top: 10px;
+                margin-bottom: 5px;
+                font-size: 18px;
+            }
+
+            p {
+                font-size: 14px;
+                color: #444;
+            }
+
+            &:nth-child(odd) {
+                margin-right: 15px;
+                margin-top: -50px;
+            }
+        }
+
+        @media screen and (max-width: $tab) {
+            .features {
+                flex-direction: column;
+                align-items: center;   
+            }          
+            .feature-card {
+                margin-right: 0!important;
+                margin-top: 0!important;
+                margin-bottom: 20px;
+            }   
+        }
+
+    }
+
+
+}

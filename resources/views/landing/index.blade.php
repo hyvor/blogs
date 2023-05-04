@@ -620,6 +620,23 @@ c30.27,0,54.64-24.37,54.64-54.64v-1419l-363.61-362.75L1258.7,336.75z"/>
 
     </div>
 
+
+    <div class="feature-row">
+
+        <div class="feature">
+
+            <img src="/img/landing/ai.svg" alt="Artificial Intelligence" />
+
+            <h4>Enriched with AI</h4>
+
+            <p>
+                Translate your posts to more than 30 languages with a single click using DeepL AI.
+            </p>
+
+        </div>
+
+    </div>
+
 </section>
 
 <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1440 320"><path fill="#fffaf8" fill-opacity="1" d="M0,288L48,272C96,256,192,224,288,197.3C384,171,480,149,576,165.3C672,181,768,235,864,250.7C960,267,1056,245,1152,250.7C1248,256,1344,288,1392,304L1440,320L1440,320L1392,320C1344,320,1248,320,1152,320C1056,320,960,320,864,320C768,320,672,320,576,320C480,320,384,320,288,320C192,320,96,320,48,320L0,320Z"></path></svg>

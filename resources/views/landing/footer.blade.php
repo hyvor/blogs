@@ -31,20 +31,20 @@
 		</div>
 		<div class="pack">
 			<div class="title">Legal</div>
-			<div class="item"><a rel="nofollow" href="/docs/terms" title="Hyvor Blogs Terms of Service">Terms</a></div>
-			<div class="item"><a rel="nofollow" href="/docs/policy-privacy" title="Hyvor Blogs's Privacy Policy">Privacy Policy</a></div>
+			<div class="item"><a href="/docs/terms" title="Hyvor Blogs Terms of Service">Terms</a></div>
+			<div class="item"><a href="/docs/policy-privacy" title="Hyvor Blogs's Privacy Policy">Privacy Policy</a></div>
 		</div>
 		<div class="pack">
 			<div class="title">Hyvor</div>
-			<div class="item"><a rel="nofollow" target="_blank" href="https://hyvor.com/about" title="About Hyvor">About</a></div>
-			<div class="item"><a rel="nofollow" target="_blank" href="https://status.hyvor.com" title="Hyvor Status">System Status</a></div>
-			<div class="item"><a rel="nofollow" target="_blank" href="https://hyvor.com/signup" title="Sign up to Hyvor">Sign up</a></div>
-			<div class="item"><a rel="nofollow" target="_blank" href="https://hyvor.com/login" title="Log in up to Hyvor">Log in</a></div>
-			<div class="item"><a rel="nofollow" target="_blank" href="https://hyvor.com/account" title="Manage My Hyvor Account">My Account</a></div>
+			<div class="item"><a target="_blank" href="https://hyvor.com/about" title="About Hyvor">About</a></div>
+			<div class="item"><a target="_blank" href="https://status.hyvor.com" title="Hyvor Status">System Status</a></div>
+			<div class="item"><a target="_blank" href="https://hyvor.com/signup" title="Sign up to Hyvor">Sign up</a></div>
+			<div class="item"><a target="_blank" href="https://hyvor.com/login" title="Log in up to Hyvor">Log in</a></div>
+			<div class="item"><a target="_blank" href="https://hyvor.com/account" title="Manage My Hyvor Account">My Account</a></div>
 		</div>
 	</div>
 	<div class="footer-bottom">
-		<a rel="nofollow" href="https://hyvor.com" target="_blank" class="copy-text">HYVOR &copy; <?php echo date('Y'); ?></a>
+		<a href="https://hyvor.com" target="_blank" class="copy-text">HYVOR &copy; <?php echo date('Y'); ?></a>
 		&middot;
 		<span class="made-in-text">From France 🇫🇷</span>
 	</div>
