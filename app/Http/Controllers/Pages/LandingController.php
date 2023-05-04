@@ -78,8 +78,9 @@ class LandingController
             $slugs[] = '/themes/' . $theme->name;
         }
 
+        $appUrl = strval(config('app.url') ?? 'https://blogs.hyvor.com');
 
-        $urls = array_map(fn ($slug) => strval(config('app.url')) . $slug, $slugs);
+        $urls = array_map(fn ($slug) => $appUrl . $slug, $slugs);
         $str = implode("\n", $urls);
 
         return response($str, 200)
