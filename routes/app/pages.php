@@ -17,5 +17,5 @@ Route::view('/', 'landing.index');
 Route::view('/pricing', 'landing.pricing');
 Route::get('/docs/{page?}', [DocsController::class, 'handle']);
 Route::get('/for/{type}', [LandingController::class, 'for']);
-Route::get('sitemap.xml', [LandingController::class, 'sitemap']);
+Route::get('sitemap.txt', [LandingController::class, 'sitemap']);
 Route::get('/themes/{name?}', [ThemesController::class, 'handle']);
