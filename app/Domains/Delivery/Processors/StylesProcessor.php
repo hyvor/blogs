@@ -33,11 +33,16 @@ class StylesProcessor extends RouteProcessorAbstract
          */
         $css = $scssCompiler->compileFile('index.scss')->getCss();
 
+
+        // Note: Autoprefixer caused a bug that --fontSize is changed to --fontsize
+        // Therefore, removed it
+        // Also, don't see a point using it
+
         /**
          * Step 2: Auto-prefix
          */
-        $autoprefixer = new Autoprefixer($css);
-        $css = $autoprefixer->compile();
+        /*$autoprefixer = new Autoprefixer($css);
+        $css = $autoprefixer->compile();*/
 
         $this->setResponseObject(DeliveryAPIResponseObject::forFile(
             DeliveryAPIFileTypeEnum::ASSET,
