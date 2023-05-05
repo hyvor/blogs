@@ -4,14 +4,14 @@ Hi 👋,
 
 [Hyvor Blogs](https://blogs.hyvor.com) is a multi-language blogging platform to start a blog easily. In addition to robust multi-language support, it has fully-customizable themes, custom domain/sub-directory hosting, in-built SEO, and many other features to make blogging easier.
 
-To start a blog, visit the Hyvor Blogs Console ([blogs.hyvor.com/console](https://blogs.hyvor.com/console)). The Console is where you will be managing all of your blogs. You can access the Console using your HYVOR account. Each account can have multiple blogs.
+Visit the [Hyvor Blogs Console](https://blogs.hyvor.com/console) to create a new blog. The Console is where you will be managing all of your blogs. You can access the Console using your HYVOR account. Each account can have multiple blogs.
 
-Visit other pages in this documentation to learn more. These will help you get started.
+Visit other pages in this documentation to learn more. These will help you get started:
 
 * [Writing](/docs/writing) - Write and publish your first post
-* [Users](/docs/users) - Invite your team members
-* [Languages](/docs/languages) - Enable multiple languages
 * [Theme](/docs/theme) - Change your blog theme
+* [Languages](/docs/languages) - Enable multiple languages
+* [Users](/docs/users) - Invite your team members
 * [Theme Development](/docs/themes-overview) - Develop a custom theme
 * [Custom Domain](/docs/custom-domain) - Host your blog on your own domain (blog.domain.com)
 * [Sub-directory Hosting](/docs/self-hosting) - Host your blog on a subdirectory (domain.com/blog)

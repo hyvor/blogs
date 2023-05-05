@@ -6,19 +6,16 @@ This page explains everything about publishing a post on Hyvor Blogs.
 * [Editor](#editor)
   * [Inline Styles](#inline-styles)
   * [Blocks](#blocks)
-* Post-related Data
-  * [Authors](#authors)
-  * [Tags](#tags)
-  * [Metadata](#meta)
-  * [Custom Code](#custom-code)
-* Post Status
+* [Post Metadata](#metadata) (Authors, Tags, Custom Code)
+* [Post Status](#status)
   * [Publishing](#publishing)
   * [Scheduling](#scheduling)
   * [Unpublishing](#unpublishing)
   * [Deleting](#deleting)
-* [Auto-saving & Post History](#auto-saving)
-* [Editing a published post](#editing-published)
-* [Multi-language posts](#multi-language)
+* [Other Guides](#other-guides)
+  * [Auto-saving & Post History](#auto-saving)
+  * [Editing a published post](#editing-published)
+  * [Multi-language posts](#multi-language)
 
 ## Posts & Pages {#posts-pages}
 
@@ -124,7 +121,7 @@ HB supports headings from `<h1>` to `<h6>`. The slash command only provides two 
 <img src="/img/docs/writing-headings.gif" alt="Adding Headings to Posts in Hyvor Blogs" width="350" />
 </p>
 
-> Please note that the reason to give **Large Heading** h2 is that h1 is reserved for the post title. However, you may use h1 within your posts if needed.
+> Please note that the reason to give **Large Heading** uses `<h2>` is that `<h1>` is reserved for the post title in your theme. However, you may use h1 within your posts if needed.
 
 ##### Heading IDs {#heading-ids}
 
@@ -176,7 +173,13 @@ Callout block is used to write text that stands out from other content in the po
 
 #### Image {#image}
 
-To add images, use [slash command](#slash-command) (`/` in a new line), and choose **Image**. You will see a new element added to your post. It allows to you choose an image from [Unsplash](https://unsplash.com/) or upload one from your device.
+To add images, use [slash command](#slash-command) (`/` in a new line), and choose **Image**. You can add an image in one of the following ways:
+
+- Upload from your device
+- Upload from a URL
+- Choose from [Unsplash](https://unsplash.com/)
+
+![Adding an image to a post in Hyvor Blogs](/img/docs/writing-image-upload.gif)
 
 For uploads, max file size is **50MB**. The following formats are supported.
 
@@ -188,13 +191,17 @@ For uploads, max file size is **50MB**. The following formats are supported.
 * SVG - `.svg`
 * WebP - `.webp`
 
-> Images added via Unsplash are hosted at unsplash.com and not uploaded to [media](media) of your blog.
+> Image uploaded from device or a URL are automatically added to your [media](media) ensuring their availability without depending on an external service. However, images added via Unsplash are hosted at unsplash.com and not uploaded to blog media.
+
+The image node also allows you to:
+
+- Add a caption
+- Add ALT text
+- Scale the image
 
 #### Embed {#embed}
 
-Hyvor Blogs supports embedding content from 1900+ online platforms. We use [iframely](https://iframely.com/) under the hood to support various platforms.
-
-An embed can be added via the [slash command](#slash-command) (**`/` in a new line &rarr; Embed**). Then, paste the URL you would like to embed in the input box.
+Hyvor Blogs supports embedding content from 1900+ online platforms. We use [iframely](https://iframely.com/) under the hood to support various platforms. You can add an embed using the [slash command](#slash-command) (**`/` in a new line &rarr; Embed**). Then, paste the URL you would like to embed in the input box.
 
 <p>
 <img src="/img/docs/writing-embed.gif" alt="Embedding Content from Other Platforms in Hyvor Blogs" width="450" />
@@ -202,61 +209,90 @@ An embed can be added via the [slash command](#slash-command) (**`/` in a new li
 
 #### Link Bookmark {#link-bookmark}
 
+You can use Link Bookmark block to add a rich link previews to your posts. To insert a link bookmark, type **`/` in a new line &rarr; Link Bookmark**. Then, paste the URL you would like to embed in the input box and press Enter. Hyvor Blogs will generate a rich preview of the link using OG tags and other metadata.
 
+![Adding a Link Bookmark to a post in Hyvor Blogs](/img/docs/writing-bookmark.gif)
+
+> The URL you enter should be publicly accessible to generate a preview. For example, you cannot generate link bookmarks for private social media posts.
 
 #### Code Block {#code-block}
 
+You can add code blocks in two ways:
+
+- **`/` in a new line &rarr; Code Block**
+- Type <code>\`\`\`lang</code> or <code>\`\`\`js</code> (with language code) in a new line and press `Enter`.
+
+![Adding a Code Block to a post in Hyvor Blogs](/img/docs/writing-code-block.png)
+
+See [Syntax Highlighting](syntax-highlighting) to learn more about supported languages, supported themes, and using annotations.
+
 #### Custom HTML/Twig {#custom-html}
 
-## Post-Related Data
+The Custom HTML/Twig block allows you to add custom HTML or Twig code to your posts. You can use this to add custom elements to your posts. For example, you can add a custom form, a custom widget, etc. You can use Twig [variables](themes-templates#variables) in the code.
 
-### Authors {#authors}
+## Post Metadata {#metadata}
 
-By default, the post creator is added as an author of a post. You can add or remove authors (at least [Editor-level permissions](users#roles) is required).
+Click the Settings button in the editor to open the post settings.
 
-**Console &rarr; Post &rarr; Settings &rarr; Authors**
+<p>
+<img src="/img/docs/writing-metadata.png" alt="Post Settings (Metadata) in Hyvor Blogs" width="450" />
+</p>
 
-### Tags {#tags}
+You can configure the following settings for a post:
 
-You can assign one or more tags to a post. See [tags](tags) for more details about configuring tags on your blog.
+* **Slug** - A unique URL-friendly identifier for the post. If you don't set a slug, Hyvor Blogs will automatically generate one based on the post title when publishing the post.
+* **Publish Time** - The publish time will be added automatically when publishing the post. However, you can set a custom publish time for a post.
+* **Authors** - You can add [users](users) in your blog as authors of a post. By default, the post creator is added as an author of a post. Users with [editor-level permissions](users#roles) can add or remove authors of a post. One post can have multiple authors.
+* **Tags** - You can assign one or more [tags](tags) to a post.
+* **Description** - A short description of the post. This will be used as the meta description of the post for search engines and social media.
+* **Featured Image** - The featured image of the post. This will be used as the meta image of the post for search engines and social media.
 
-**Console &rarr; Post &rarr; Settings &rarr; Tags**
+In advanced settings, you can add the following:
 
+<p>
+<img src="/img/docs/writing-metadata-advanced.png" alt="Post Advanced Settings (Metadata) in Hyvor Blogs" width="450" />
+</p>
 
-### Metadata {#metadata}
+* **Canonical URL** - If you have published the same post on a different location, you can add the canonical URL of the post here.
+* **Code Head** - Custom code to add right before the `</head>` tag of the post.
+* **Code Foot** - Custom code to add right before the `</body>` tag of the post.
 
-### Custom Code {#custom-code}
+> See [custom code](custom-code) documentation for more information on different ways of adding custom code to your blog.
 
-You can add custom code at **Console &rarr; Post &rarr; Settings &rarr; Advanced** for a specific post. See our [custom code](custom-code) guide for more information on different ways of adding custom code.
+## Post Status {#status}
 
-## Post Status
+A post can have one of the following statuses:
+
+- **Draft** - Not visible to the public. Only [users](users) of your blog can see the post in the Console.
+- **Scheduled** - Not visible to the public. It will be published automatically at the specified time.
+- **Published** - Visible to the public.
 
 ### Publishing {#publishing}
 
 Once you have finished writing your post, you can publish it. Once published, the post will appear publicly on your blog.
 
 
-**Console &rarr; Post &rarr; Publish**
+**Post &rarr; Publish**
 
 <p>
-<img src="/img/docs/writing-publishing.gif" alt="Publishing a post in Hyvor Blogs" width="350" />
+<img src="/img/docs/writing-publishing.gif" alt="Publishing a post in Hyvor Blogs" width="550" />
 </p>
 
 ### Scheduling {#scheduling}
 
 You can also schedule the post at a specific date and time. Hyvor Blogs will automatically publish your post at the specified time.
 
-**Console &rarr; Post &rarr; Publish &rarr; Publish Later &rarr; Schedule**
+**Post &rarr; Publish &rarr; Publish Later &rarr; Schedule**
 
 <p>
-<img src="/img/docs/writing-scheduling.gif" alt="Publishing a post in Hyvor Blogs" width="350" />
+<img src="/img/docs/writing-scheduling.gif" alt="Publishing a post in Hyvor Blogs" width="550" />
 </p>
 
 ### Unpublishing {#unpublishing}
 
 You can unpublish a published post. The post's status will be change to **Draft**. Therefore, it will no longer appear on the blog. You can re-publish it later.
 
-**Console &rarr; Post &rarr; Unpublish**
+**Post &rarr; Unpublish**
 
 <p>
 <img src="/img/docs/writing-unpublishing.gif" alt="Publishing a post in Hyvor Blogs" width="550" />
@@ -266,20 +302,37 @@ You can unpublish a published post. The post's status will be change to **Draft*
 
 You can also permanently delete a post. Note that there is no way to restore a post after deleting. Consider Unpublishing if just want to hide the post from your blog.
 
-**Console &rarr; Post &rarr; Settings  &rarr; Delete Post**
+**Post &rarr; Settings  &rarr; Delete Post**
 
 <p>
-<img src="/img/docs/writing-deleting.gif" alt="Publishing a post in Hyvor Blogs" width="550" />
+<img src="/img/docs/writing-deleting.gif" alt="Publishing a post in Hyvor Blogs" width="600" />
 </p>
 
-## Auto-saving and Post History {#auto-saving}
+## Other Guides {#other-guides}
 
-If you are editing a draft, Hyvor Blogs will automatically save your post every 15 seconds if any post data (content or metadata) has been edited. You can also manually save your post by pressing **Ctrl + S**. If the content is edited, a post history will be created. You can refer back to this history if you want to revert to a previous version of your post. A single post can have up to 25 post histories.
+### Auto-saving and Post History {#auto-saving}
 
-## Editing a published post {#editing-published}
+If you are editing a draft, Hyvor Blogs will automatically save your post every 15 seconds if any post data (content or metadata) has been edited. You can also manually save your post by pressing **Ctrl + S**. Check the bottom right corner of the editor to see the status of the auto-saving.
 
+![Writing Auto-Saving](/img/docs/writing-autosaving.gif)
 
+If the content is edited, a post history will be created. You can refer back to this history if you want to revert to a previous version of your post. A single post can have up to 25 post histories.
 
-## Multi-Language Posts {#multi-language}
+### Editing a published post {#editing-published}
 
-Hyvor Blogs support multi-language posts. See [languages](languages) guide for more details.
+You can make changes to a published post content at any time. However, the changes will not be visible to the public until you publish the changes.
+
+![Editing a published post in Hyvor Blogs](/img/docs/writing-editing-published.png)
+
+1. **Publish Changes** - Publish the changes to the post. The post will be updated immediately.
+2. **Discard Changes** - Discard the changes and revert to the published version of the post.
+3. **You are editing a published post** - This message will be shown if you are editing a published post.
+4. This message can be one of these:
+   - **Unsaved Changes\*** - The changes you have made to the post are not saved yet. Press **Ctrl + S** to save the changes. Or, it will be saved automatically in 15 seconds.
+   - **Saved** - All changes are saved 
+
+> Note that metadata changes will be saved immediately and will be visible to the public.
+
+### Multi-Language Posts {#multi-language}
+
+If you have set up multiple languages for your blog, you will see the language codes at the top of the post editor. Click on a language code to switch to that language variant of the post. Each variant should be published separately. See our [languages](languages) guide, which explains everything you need to know about publishing multi-language posts.
