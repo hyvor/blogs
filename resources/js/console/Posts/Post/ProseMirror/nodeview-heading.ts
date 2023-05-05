@@ -9,7 +9,7 @@ export default class Heading implements NodeView {
     inputWrap: HTMLDivElement;
     input: HTMLInputElement;
 
-    constructor(node: ProsemirrorNode, view: EditorView, getPos: () => number) {
+    constructor(node: ProsemirrorNode, view: EditorView, getPos: () => number | undefined) {
 
         this.dom = document.createElement("div");
         this.dom.className = "heading-wrap";
@@ -32,9 +32,14 @@ export default class Heading implements NodeView {
         this.input.value = id;
 
         this.input.oninput = function(e) {
+            const pos = getPos();
+
+            if (pos === undefined)
+                return;
+
             view.dispatch(
                 view.state.tr.setNodeMarkup(
-                    getPos(),
+                    pos,
                     null,
                     {...node.attrs, id: (e.target as HTMLInputElement).value }
                 )

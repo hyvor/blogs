@@ -11,6 +11,7 @@
   },
   "devDependencies": {
     "@playwright/test": "^1.32.3",
+    "@types/js-yaml": "^4.0.5",
     "@types/react": "^18.0.5",
     "@types/react-color": "^3.0.6",
     "@types/react-datepicker": "^4.4.1",

@@ -9,7 +9,7 @@ export default class Callout implements NodeView {
 
     node: ProsemirrorNode;
     view: EditorView;
-    getPos: () => number;
+    getPos: () => number | undefined;
 
     dom: HTMLElement;
     contentDOM: HTMLElement;
@@ -20,7 +20,7 @@ export default class Callout implements NodeView {
     colorPickerFg: HTMLSpanElement;
 
 
-    constructor(node: ProsemirrorNode, view: EditorView, getPos: () => number) {
+    constructor(node: ProsemirrorNode, view: EditorView, getPos: () => number | undefined) {
         this.node = node;
         this.view = view;
         this.getPos = getPos;
@@ -160,9 +160,14 @@ export default class Callout implements NodeView {
     
     changeAttr(name: string, value: string) {
         const attrs = {...this.node.attrs, [name]: value }
+        const pos = this.getPos();
+
+        if (pos === undefined)
+            return;
+
         this.view.dispatch(
             this.view.state.tr.setNodeMarkup(
-                this.getPos(),
+                pos,
                 undefined,
                 attrs
             )

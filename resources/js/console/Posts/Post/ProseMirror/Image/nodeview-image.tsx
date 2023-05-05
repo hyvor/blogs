@@ -16,7 +16,7 @@ export default class Image implements ImageNodeViewType {
 
     node: ProsemirrorNode;
     view: EditorView;
-    getPos: () => number;
+    getPos: () => number | undefined;
     schema: Schema;
 
     dom: HTMLElement;
@@ -25,7 +25,7 @@ export default class Image implements ImageNodeViewType {
     altInput: HTMLInputElement | undefined;
     rangeInput: HTMLInputElement | undefined;
 
-    constructor(schema: Schema, node: ProsemirrorNode, view: EditorView, getPos: () => number) {
+    constructor(schema: Schema, node: ProsemirrorNode, view: EditorView, getPos: () => number | undefined) {
 
         this.node = node;
         this.view = view;
@@ -125,9 +125,12 @@ export default class Image implements ImageNodeViewType {
             altInput.value = alt
 
             altInput.oninput = function (e) {
+                const pos = _self.getPos()
+                if (pos === undefined)
+                    return;
                 _self.view.dispatch(
                     _self.view.state.tr.setNodeMarkup(
-                        _self.getPos(),
+                        pos,
                         null,
                         { ..._self.node.attrs, alt: (e.target as HTMLInputElement).value }
                     )
@@ -153,9 +156,14 @@ export default class Image implements ImageNodeViewType {
                     height = (_self.img as HTMLImageElement).naturalHeight * value / 100
                 }
 
+                const pos = _self.getPos()
+
+                if (pos === undefined)
+                    return;
+
                 _self.view.dispatch(
                     _self.view.state.tr.setNodeMarkup(
-                        _self.getPos(),
+                        pos,
                         null,
                         { ..._self.node.attrs, width, height }
                     )
@@ -174,6 +182,9 @@ export default class Image implements ImageNodeViewType {
 
     handleUpload(url: string, alt: string | null = null, unsplash: UnsplashImage | null = null) {
         const pos = this.getPos()
+
+        if (pos === undefined)
+            return;
 
         const tr = this.view.state.tr.setNodeMarkup(
             pos,
@@ -215,6 +226,10 @@ export default class Image implements ImageNodeViewType {
     handleUrl(url: string | null) {
         if (!url) return;
         const pos = this.getPos();
+
+        if (pos === undefined)
+            return;
+
         const { alt, width, height } = this.node.attrs;
         const tr = this.view.state.tr.setNodeMarkup(
             pos,
