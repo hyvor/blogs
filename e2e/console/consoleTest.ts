@@ -1,7 +1,7 @@
 import { Page } from "@playwright/test";
-import baseTest from "../baseTest";
+import baseTest from "../baseTest.ts";
 
-const consoleTest = baseTest.extend<{console: Console}>({
+export const consoleTest = baseTest.extend<{console: Console}>({
     console: async ({page, testingApi}, use) => {
 
         await testingApi.truncate();
@@ -18,7 +18,7 @@ class Console {
 
     private page : Page;
 
-    constructor(page) {
+    constructor(page: Page) {
         this.page = page;
     }
 
@@ -36,5 +36,3 @@ class Console {
     }
 
 }
-
-export default consoleTest;

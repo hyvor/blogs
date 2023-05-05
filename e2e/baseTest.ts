@@ -1,5 +1,5 @@
 import { APIRequestContext, Request, test } from "@playwright/test";
-import playwrightConfig from "../playwright.config";
+import playwrightConfig from "../playwright.config.ts";
 
 const baseTest = test.extend<{testingApi: TestingApi}>({
     testingApi: async ({request}, use) => {

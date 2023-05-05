@@ -1,5 +1,5 @@
 import { expect, test } from "@playwright/test";
-import consoleTest from "./consoleTest";
+import {consoleTest} from "./consoleTest.ts";
 
 test.describe(() => {
 
