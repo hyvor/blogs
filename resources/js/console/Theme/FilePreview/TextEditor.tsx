@@ -3,15 +3,12 @@ import React, {useCallback, useEffect, useState} from "react";
 import {ThemeFile} from "../../types";
 import {useThemeActions, useThemeValues} from "../use";
 import {CheckCircle} from "react-bootstrap-icons";
+import FileSaver from "./FileSaver";
 
 
 export default function TextEditor({ file, ext } : {file: ThemeFile, ext: keyof typeof CODEMIRROR_MODES}) {
 
-    const { getOriginalFileById } = useThemeValues()
     const { updateFile, setFileContent } = useThemeActions()
-
-    const originalFile = getOriginalFileById(file.id) as ThemeFile
-    const changed = originalFile.content !== file.content;
 
     const [ isSaving, setIsSaving ] = useState(false)
 
@@ -37,11 +34,7 @@ export default function TextEditor({ file, ext } : {file: ThemeFile, ext: keyof 
 
     return <div className="text-editor">
 
-        <div className="save-button-wrap">
-            { !changed && !isSaving && <span className="saved"><span>Saved</span>&nbsp;<CheckCircle /></span> }
-            { changed && !isSaving && <span className="button medium" onClick={() => handleSave(file.content || '')}>SAVE</span> }
-            { isSaving && <span className="saving">Saving...</span> }
-        </div>
+        <FileSaver file={file} isSaving={isSaving} />
 
         <CodemirrorEditor
             id={file.id}

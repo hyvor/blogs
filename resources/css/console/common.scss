@@ -347,26 +347,41 @@ textarea.input {
 .global-dual-setting { 
     display: flex;
     padding: 18px 0;
-    border-top: 1px solid $color-accent-light;
+    border-bottom: 1px solid $color-accent-very-light;
     .dual-left {
         flex: 1;
         margin-right: 20px;
+        min-width: 0;
+        word-wrap: break-word;
     } 
     .dual-title {
-        font-size:18px;
         font-weight: 600;
         margin-bottom: 6px
     }
     .dual-description {
+        font-size: 12px;
         color: $color-text-light;
     }
     .dual-right {
-        flex:1;
+        flex:2;
+        flex-shrink: 0;
+        min-width: 0;
     }
     &.column {
         flex-direction: column;
         .dual-left {
             margin-bottom: 20px;
+        }
+    }
+    &.subsection {
+        flex-direction: column;
+        > .dual-left {
+            margin-bottom: 20px;
+        }
+        > .dual-right {
+            padding-left:25px;
+            margin-left: 25px;
+            border-left: 1px solid $color-accent-light;
         }
     }
 }
@@ -541,6 +556,14 @@ textarea.input {
             box-shadow: none!important;
         }
     }
+}
+.color-picker-preview {
+    width: 25px;
+    height: 25px;
+    border-radius: 50%;
+    display: inline-block;
+    cursor: pointer;
+    border: 1px solid #ddd;
 }
 
 .global-avatar {

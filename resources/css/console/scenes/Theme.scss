@@ -12,6 +12,8 @@
     .theme-left-wrap {
         flex:1;
         overflow: auto;
+        display: flex;
+        flex-direction: column;
     }
 
     .theme-left-bottom {
@@ -34,6 +36,7 @@
 
         padding:10px 30px;
         overflow: auto;
+        flex: 1;
 
         .shopify-note {
             .global-callout {
@@ -111,29 +114,48 @@
             font-weight: 600;
             padding: 10px;
             border-bottom: 1px solid $color-accent-light;
+            position: relative;
             .buttons {
                 margin-left: 6px;
             }
+
+            .config-yaml-switch {
+                position: absolute;
+                right: 10px;
+                top: 50%;
+                transform: translateY(-50%);
+                display: flex;
+                align-items: center;
+                .switch-title {
+                    margin-right: 5px;
+                }
+            }
+        }
+
+        .config-def-wrap {
+            padding: 20px 35px;
+            overflow: auto;
         }
 
         .text-editor {
             flex:1;
             overflow: auto;
             position: relative;
-            .save-button-wrap {
-                position: absolute;
-                bottom: 15px;
-                left:50%;
-                transform: translateX(-50%);
-                z-index: 1;
-                span {
-                    vertical-align: middle;
-                }
-            }
             .CodeMirror {
                 padding: 10px 0 60px 0;
                 border-radius: 0;
                 height: 100%;
+            }
+        }
+
+        .save-button-wrap {
+            position: absolute;
+            bottom: 15px;
+            left:50%;
+            transform: translateX(-50%);
+            z-index: 1;
+            span {
+                vertical-align: middle;
             }
         }
 

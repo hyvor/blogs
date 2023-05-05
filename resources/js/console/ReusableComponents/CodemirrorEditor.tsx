@@ -18,13 +18,25 @@ interface Props {
     onChange: (val: string) => any,
     onSave?: (val: string) => any,
     extension: keyof typeof CODEMIRROR_MODES,
+
+    props?: object
 }
 
-export default function CodemirrorEditor({ id = null, value, onChange, onSave, extension } : Props) {
+export default function CodemirrorEditor({ id = null, value, onChange, onSave, extension, props = {} } : Props) {
 
     const ref = useRef<null | HTMLDivElement>(null);
     const cm = useRef<any>(null);
     const tabSize = extension === 'yaml' ? 2 : 4;
+
+    function handleTab(cm: any) {
+        console.log(cm)
+        if (cm.somethingSelected()) {
+          cm.indentSelection("add");
+        } else {
+          cm.replaceSelection(cm.getOption("indentWithTabs")? "\t":
+            Array(cm.getOption("indentUnit") + 1).join(" "), "end", "+input");
+        }
+    }
 
     function initCm() {
 
@@ -40,7 +52,7 @@ export default function CodemirrorEditor({ id = null, value, onChange, onSave, e
             theme: 'solarized',
             keyMap: 'sublime',
             tabSize,
-            indentWithTabs: true,
+            indentWithTabs: false,
             indentUnit: tabSize,
             lineWrapping: false,
             lineNumbers: true,
@@ -50,7 +62,8 @@ export default function CodemirrorEditor({ id = null, value, onChange, onSave, e
             autoCloseTags: true,
             extraKeys: {
                 "Ctrl-S": handleSave,
-                "Cmd-S": handleSave
+                "Cmd-S": handleSave,
+                "Tab": handleTab
             }
         })
         cm.current.on('change', function() {
@@ -70,6 +83,6 @@ export default function CodemirrorEditor({ id = null, value, onChange, onSave, e
         initCm()
     }, [id])
 
-    return <div className="global-codemirror-wrap" ref={ref} />
+    return <div {...props} className="global-codemirror-wrap" ref={ref} />
 
 }

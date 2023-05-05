@@ -39,6 +39,12 @@ const themeLogic = kea<themeLogicType>([
         loadFiles: async () => {
             const files = await api.get<ThemeFile[]>(props.subdomain, '/theme/files');
             actions.setFiles(files);
+
+            const configFile = values.getFileByFolderAndName(null, 'config.yaml');
+
+            if (configFile) {
+                actions.editorOpenFile(configFile.id);
+            }
         },
 
         uploadTheme: async({zip, onUpload} : {zip: File, onUpload: Function}) => {
@@ -136,6 +142,10 @@ const themeLogic = kea<themeLogicType>([
         getOriginalFileById: [
             s => [s.originalFiles],
             files => id => files.find(file => file.id === id)
+        ],
+        getFileByFolderAndName: [
+            s => [s.files],
+            files => (folder: ThemeFolder, name: string) => files.find(file => file.folder === folder && file.name === name)
         ],
         hasFileUpdated: [
             s => [s.files, s.originalFiles],

@@ -1,0 +1,48 @@
+.demo-view {
+    display: flex;
+    height: 100vh;
+
+    .column {
+        flex: 2;
+        display: flex;
+        flex-direction: column;
+        margin: 0 10px;
+        flex-shrink: 0;
+        min-width: 0;
+    }
+    .column:nth-child(3) {
+        flex: 3;
+    }
+
+    .column-title {
+        font-size: 16px;
+        font-weight: 600;
+        padding: 10px;
+        text-align: center;
+    }
+
+    .column-content {
+        flex: 1;
+    }
+
+    .box {
+        height: 100%;
+        overflow: auto;
+        padding: 10px;
+    }
+
+    .user-interface-wrap {
+        overflow: auto;
+        .box {
+            padding: 30px;
+        }
+    }
+
+    .CodeMirror {
+        background-color: transparent!important;
+        min-height: 100%;
+        .CodeMirror-gutters {
+            background-color: transparent!important;
+        }
+    }
+}

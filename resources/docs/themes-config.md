@@ -31,9 +31,8 @@ Theme configurations (colors, fonts, etc.) should be written in `english_lower_s
 While you can use multi-nested YAML configs, we recommend to use only up to one or two nested level.
 
 ```yaml
-THEME_NAME: default
+THEME_NAME: hello
 THEME_VERSION: 1.0.0
-DEMO_URL: demo.hyvorblogs.io
 POSTS_PER_PAGINATION: 15
 
 dark_theme: Yes
@@ -43,7 +42,7 @@ image_service:
     api_version: 2
 ```
 
-In this example, the first 4 lines are HB-aware configurations. Others are theme configurations. You can add as many theme configurations as you need.
+In this example, the first 3 lines are HB-aware configurations. Others are theme configurations. You can add as many theme configurations as you need.
 
 ### Config Definitions {#config-def}
 
@@ -101,6 +100,7 @@ These are the supported types for theme configurations:
 
 | `$type` | Description                                                                                  |
 | --- |----------------------------------------------------------------------------------------------|
+| none | No input. This is useful for configurations that are not editable by the blogger.            |
 | text | Single-line text input. This is the default, if `$type` is not defined |
 | textarea | Multi-line text input.                                                         |
 | number | Select a number                                                      |
@@ -118,9 +118,9 @@ some_key:
     $title: When to use caching
     $type: radio
     $options: 
-         all: For All Posts and Pages
-         posts: Only Posts
-	       pages: Only Pages
+        all: For All Posts and Pages
+        posts: Only Posts
+        pages: Only Pages
 ```
 
 <!-- #### Select {#select}

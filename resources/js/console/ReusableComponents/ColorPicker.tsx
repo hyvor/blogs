@@ -1,3 +1,6 @@
+
+
+
 import React, {useState} from 'react'
 import { SketchPicker } from 'react-color';
 
@@ -8,8 +11,34 @@ interface ColorPickerProps {
     preset: string[]
 }
 
+export function ColorPicker({ color, onChange, onClose, preset = [] } : ColorPickerProps) {
 
-export default function ColorPicker({ color, onChange, onClose, preset = [] } : ColorPickerProps) {
+    const [isOpen, setIsOpen] = useState(false);
+
+    return <div className="color-picker">
+
+        <span 
+            className='color-picker-preview'
+            data-testid="color-picker-preview"
+            style={{backgroundColor: color}}
+            onClick={() => setIsOpen(true)}
+        ></span>
+        
+        {
+            isOpen ? <ColorPickerPopup
+                color={color}
+                onChange={onChange}
+                onClose={() => setIsOpen(false)}
+                preset={preset}
+            /> : null
+        }
+
+    </div>
+
+}
+
+
+export function ColorPickerPopup({ color, onChange, onClose, preset = [] } : ColorPickerProps) {
     
     const [c, setC] = useState(color);
     

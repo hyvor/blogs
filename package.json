@@ -1,5 +1,6 @@
 {
   "private": true,
+  "type": "module",
   "scripts": {
     "dev": "vite",
     "build": "vite build",
@@ -29,6 +30,7 @@
     "dayjs": "^1.11.0",
     "deep-object-diff": "^1.1.7",
     "deepmerge": "^4.2.2",
+    "js-yaml": "^4.1.0",
     "kea": "^3.0.1",
     "kea-ajax": "^1.0.2",
     "kea-router": "^3.0.0",
