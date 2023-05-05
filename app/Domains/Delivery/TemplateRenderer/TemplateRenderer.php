@@ -3,6 +3,7 @@
 namespace App\Domains\Delivery\TemplateRenderer;
 
 use App\Data\Enums\DeliveryAPIFileTypeEnum;
+use App\Data\Enums\PostStatusEnum;
 use App\Data\Enums\ThemeFileFolderEnum;
 use App\Data\Objects\DataAPI\AuthorObject;
 use App\Data\Objects\DataAPI\BlogObject;
@@ -338,6 +339,12 @@ class TemplateRenderer
                 // post permalink should be valid
                 $validPermalink = PermalinkRepository::validatePostPermalink($post, $this->matchedRoute->params);
                 if (! $validPermalink) {
+                    return false;
+                }
+
+                $variant = $post->variants->firstWhere('language_id', $this->pathMatcher->language->id);
+
+                if ($variant->status !== PostStatusEnum::PUBLISHED) {
                     return false;
                 }
 

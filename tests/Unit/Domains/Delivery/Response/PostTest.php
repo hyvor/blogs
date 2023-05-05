@@ -27,7 +27,7 @@ it('matches a post', function () {
         ->where('posts.is_page', false)
         ->where('posts.blog_id', $blog->id)
         ->where('post_variants.language_id', $blog->languages[0]->id)
-        ->select(['post_variants..slug', 'posts.id'])
+        ->select(['post_variants.slug', 'posts.id'])
         ->first();
 
     $pathMatcher = new PathMatcher($blog, "/$variant->slug");
@@ -99,4 +99,27 @@ it('matches a post with language', function () {
     $this->assertEquals(200, $responseObject->status);
     $this->assertEquals("{$variant->id}{$blog->languages[1]->id}", $responseObject->content);
     expect($responseObject->file_type)->toBe(DeliveryAPIFileTypeEnum::TEMPLATE);
+});
+
+
+it('does not match non-published posts', function() {
+
+    $twig = '{{ _post.id }}';
+
+    $blog = blogWithLanguageAndRoutes();
+    $post = addPost($blog, [], ['status' => 'draft', 'language_id' => $blog->languages[0]->id]);
+    $variant = $post->variants[0];
+
+    ThemeFilesRepository::createOrUpdateFile(
+        $blog,
+        ThemeFileFolderEnum::TEMPLATES,
+        'post.twig',
+        $twig,
+    );
+
+    $pathMatcher = new PathMatcher($blog, "/$variant->slug");
+    $responseObject = $pathMatcher->getResponseObject();
+
+    expect($responseObject->status)->toBe(404);
+
 });
