@@ -20,6 +20,8 @@ class GithubThemeController
 
         GithubSyncJob::dispatch();
 
-        return response()->json();
+        return response()->json([
+            'status' => 'ok'
+        ]);
     }
 }
