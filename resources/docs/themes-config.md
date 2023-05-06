@@ -48,7 +48,7 @@ In this example, the first 3 lines are HB-aware configurations. Others are theme
 
 `config.def.yaml` "describes" your **theme configurations**. This helps the blogger to understand what each configuration does. It also helps to render the `config.yaml` file in **Console &rarr; Theme** as a UI instead of a file.
 
-> Test your config definitions at [blogs.hyvor.com/config](https://blogs.hyvor.com/config)
+> Test your config definitions at <a href="https://blogs.hyvor.com/config" target="_blank">blogs.hyvor.com/config</a>.
 
 This is an example `config.def.yaml` file that explains the configurations of the previous example.
 

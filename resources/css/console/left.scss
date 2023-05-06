@@ -124,7 +124,7 @@
             transition:.125s transform, .125s opacity;
             left:100%;
             top:-15px;
-            z-index: 1;
+            z-index: 1000;
             padding:25px 0 15px 0;
             
             &.active {
