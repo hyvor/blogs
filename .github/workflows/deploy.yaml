@@ -105,7 +105,8 @@ jobs:
             systemctl reload php8.1-fpm
             
             rm /var/www/current/package.json
-            npm install --prefix /var/www/current shiki
+            mv /var/www/current/package.server.json /var/www/current/package.json
+            npm install --prefix /var/www/current
 
             php /var/www/current/artisan config:cache
             php /var/www/current/artisan route:cache
