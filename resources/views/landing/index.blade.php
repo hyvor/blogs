@@ -613,7 +613,7 @@ c30.27,0,54.64-24.37,54.64-54.64v-1419l-363.61-362.75L1258.7,336.75z"/>
             <h4>In-built SEO</h4>
 
             <p>
-                Don't worry about technical SEO. Meta tags, sitemaps, robots.txt, are in-built.
+                Don't worry about technical SEO. Meta tags, sitemaps, and robots.txt are in-built.
             </p>
 
         </div>
@@ -719,7 +719,7 @@ c30.27,0,54.64-24.37,54.64-54.64v-1419l-363.61-362.75L1258.7,336.75z"/>
             <h4>Complete Control</h4>
 
             <p>
-                We do not inject ads, trackers, affiliate links, paywalls to your blog. It's your blog - You decide!
+                We do not inject ads, trackers, affiliate links, or paywalls into your blog. It's your blog - You decide!
             </p>
 
         </div>
