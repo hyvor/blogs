@@ -126,10 +126,10 @@ SUBDOMAIN=dev-xxxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxx
 hyvor-blogs-cli
 ```
 
-* Open [127.0.0.1:8855](http://127.0.0.1:8855) in your browser to view the theme.
+* Open your blog (dev-xxx.hyvorblogs.io) in your browser to view the theme.
 
-> **How it works**: The `hyvor-blogs-cli` command runs two processes under the hood: (1) a http server that works similar to a reverse proxy using our [delivery API](api-delivery), and (2) a process that watches your local file changes and syncs it with our production environment. So, whenever you add, edit, or delete a file within your theme folder, it will be synced with the theme files in your DEV blog.
-> 
+> **How it works**: The `hyvor-blogs-cli` command runs a process that watches your local file changes and syncs it with our production environment. So, whenever you add, edit, or delete a file within your theme folder, it will be synced with the theme files in your DEV blog.
+>
 > **Security Notice 1**: Because all files in your theme directory are synced with our production system, never add any confidential files there.
 > 
 > **Security Notice 2**: Do not share your DEV subdomain publicly. It will allow other users to change theme files in your DEV blog. If you are using GIT for versioning, make sure to add `.env` to `.gitignore`.
