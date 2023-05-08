@@ -31,6 +31,10 @@
                     Start a Blog Now
                 </a>
 
+                <div style="margin-top: 25px;">
+                <a href="https://www.producthunt.com/posts/hyvor-blogs?utm_source=badge-featured&utm_medium=badge&utm_souce=badge-hyvor&#0045;blogs" target="_blank"><img src="https://api.producthunt.com/widgets/embed-image/v1/featured.svg?post_id=393229&theme=light" alt="Hyvor&#0032;Blogs - Multi&#0045;language&#0032;Blogging&#0032;Platform | Product Hunt" style="width: 200px; height:45px;" width="200" height="45" /></a>
+                </div>
+
                  {{--<div class="hero-message-wrap">
                     <a 
                         class="hero-message"

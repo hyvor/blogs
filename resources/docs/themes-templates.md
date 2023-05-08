@@ -75,7 +75,7 @@ We provide a few custom Twig functions and filters to make writing templates eas
 
 - `data` - a function to call the Data API. See [Fetching data](#fetch-data) below.
     ```twig
-    {% set posts = data(endpoint="posts", filter="author.slug=user") }
+    {% set posts = data(endpoint="posts", filter="author.slug=user") %}
     ```
   
 - `icon` - a function to get an icon.
