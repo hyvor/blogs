@@ -1,5 +1,6 @@
-import { expect, test } from "@playwright/test";
+import { chromium, expect, test } from "@playwright/test";
 import {consoleTest} from "./consoleTest.ts";
+import { BrowserChrome } from "react-bootstrap-icons";
 
 test.describe(() => {
 
@@ -36,6 +37,63 @@ test.describe(() => {
         await page.getByText('Try Again').click();
         await expect(page.getByText('My First Blog').nth(0)).toBeVisible();
 
+    });
+
+    consoleTest('Blog switching', async ({ console, page, testingApi }) => {
+        /* Create the first blog */
+        await chromium.launch();
+        await console.visit();
+        await expect(page).toHaveTitle('Console - Hyvor Blogs');
+        await expect(page.getByText('Start a new blog')).toBeVisible();
+    
+        await page.getByLabel('Blog Name').fill('My First Blog');
+        await expect(page.getByLabel('Subdomain')).toHaveValue('my-first-blog');
+    
+        await page.getByText('Create Blog').click();
+        await expect(page.getByText('My First Blog').nth(0)).toBeVisible({timeout: 30000});
+
+        /* Create the second blog */
+        await page.locator('div').filter({ hasText: /^My First Blog$/ }).first().click();
+        await page.getByRole('button', { name: 'Create a blog' }).click();
+
+        await page.getByLabel('Blog Name').fill('My Second Blog');
+        await expect(page.getByLabel('Subdomain')).toHaveValue('my-second-blog');
+        await page.getByText('Create Blog').click();
+        await expect(page.getByText('My Second Blog').nth(0)).toBeVisible({timeout: 30000});
+
+        /* Switch to the first blog */
+        await page.locator('div').filter({ hasText: /^My Second Blog$/ }).first().click();
+        await page.locator('.blog').first().click();
+        await expect(page.getByText('My First Blog').nth(0)).toBeVisible();
+
+        /* Drag blog test */
+        await page.locator('div').filter({ hasText: /^My First Blog$/ }).first().click();
+        const sourceElement = await page.locator('.sort-icon-wrap').first();
+        const targetElement = await page.locator('div:nth-child(2) > .sort-icon-wrap');
+
+
+        if (sourceElement && targetElement) {
+            const srcBound = await sourceElement.boundingBox();
+
+            const targetBound = await targetElement.boundingBox();
+            if (srcBound && targetBound) {
+               await page.mouse.move(srcBound.x + srcBound.width / 2, srcBound.y + srcBound.height / 2, { steps: 5 });
+               await page.waitForTimeout(2000);
+               await page.mouse.down();
+               await page.waitForTimeout(2000);
+               await page.mouse.move(targetBound.x + targetBound.width / 2, targetBound.y + targetBound.height / 2), { steps: 5 };
+               await page.waitForTimeout(2000);
+               await page.mouse.up();
+               await page.waitForTimeout(2000);
+            }
+            else {
+                throw new Error('Source or target element is not visible');
+            }
+        }
+        else {
+            throw new Error('Source or target element is not visible');
+        }
+        
     });
 
 })
