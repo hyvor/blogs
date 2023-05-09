@@ -21,6 +21,6 @@ To change the theme of your blog,
 
 You can also edit the theme files of your blog to customize it. To edit theme files, go to the **Theme** section in the [Hyvor Blogs Console](https://blogs.hyvor.com/console). You will see all the theme files listed. Click on a file to edit it.
 
-![Editing Themes](/img/docs/theme-edit.png)
+![Editing Themes](/img/docs/theme-edit.jpeg)
 
 `config.yaml` has all theme configurations such as fonts, colors, and other settings. All template files are in the `templates` directory.
