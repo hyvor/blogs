@@ -209,6 +209,18 @@ class PermalinkRepository
         return $onlyPath ? self::getPath($path) : self::getFullUrlFromPath($blog, $path);
     }
 
+    public static function getMediaNameFromPermalink(Blog $blog, string $permalink): ?string
+    {
+        $path = str_replace(self::getFullUrlFromPath($blog), '', $permalink);
+        $path = trim($path, '/');
+        $split = explode('/', $path);
+
+        if (!isset($split[0]) || $split[0] !== 'media')
+            return null;
+
+        return $split[1] ?? null;
+    }
+
     public static function getAssetPermalink(string $assetName, Blog $blog, $onlyPath = false): string
     {
         $path = 'assets/'.$assetName;

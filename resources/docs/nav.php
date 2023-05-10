@@ -11,7 +11,7 @@ return [
         ['users', 'Users'],
         // ['tags', 'Tags'],
         ['languages', 'Languages'],
-        // ['media', 'Media'],
+        ['media', 'Media'],
         ['custom-domain', 'Custom Domain'],
         ['custom-code', 'Custom Code'],
         /*['edge-caching', 'Edge Caching'],*/
