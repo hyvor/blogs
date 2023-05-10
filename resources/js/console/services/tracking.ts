@@ -8,6 +8,7 @@ class Tracking {
     trackBlogCreate(userBlog: UserBlog) {
         this.bingTrack('blog-created', 0);
         this.splitbeeTrack("Blog Created", {subdomain: userBlog.blog.subdomain})
+        this.trackAffiliate(userBlog.blog.subdomain)
     }
 
     trackSubscriptionCreate(plan: SubscriptionPlan, frequency: SubscriptionFrequency) {
@@ -30,6 +31,10 @@ class Tracking {
         if (w.uetq) {
             w.uetq.push('event', event, {revenue_value: price, currency: 'USD'});
         }
+    }
+
+    private trackAffiliate(subdomain: string) {
+        if ((window as any).tolt) (window as any).tolt.signup(subdomain);
     }
 
 }
