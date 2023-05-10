@@ -14,8 +14,8 @@ it('creates a subscription and activates the blog', function () {
     integrationApi('POST', '/paddle/webhook', getPaddleWebhookParams([
         'alert_name' => 'subscription_created',
         'passthrough' => Passthrough::encode($blog),
-        'subscription_plan_id' => PaddleService::paddlePlans()[0]->id,
-        'subscription_id' => 1200
+        'subscription_plan_id' => (string) PaddleService::paddlePlans()[0]->id,
+        'subscription_id' => (string) 1200
     ]))->assertOk();
 
     expect($blog->subscriptions()->count())->toBe(1);

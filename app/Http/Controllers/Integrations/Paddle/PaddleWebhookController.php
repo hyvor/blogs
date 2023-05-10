@@ -43,12 +43,12 @@ class PaddleWebhookController
     }
 
     /**
-     * @param array{passthrough: string, subscription_plan_id: int, subscription_id: int} $payload
+     * @param array{passthrough: string, subscription_plan_id: string, subscription_id: string} $payload
      */
     private function handleSubscriptionCreated(array $payload) : void
     {
         $blog = Passthrough::decode($payload['passthrough']);
-        $plan = PaddleService::planConfigFromPaddleId($payload['subscription_plan_id']);
+        $plan = PaddleService::planConfigFromPaddleId((int) $payload['subscription_plan_id']);
 
         $subscription = SubscriptionService::createSubscription(
             $blog,
@@ -56,15 +56,15 @@ class PaddleWebhookController
             $plan->frequency
         );
 
-        PaddleService::setPaddleSubscriptionId($subscription, $payload['subscription_id']);
+        PaddleService::setPaddleSubscriptionId($subscription, (int) $payload['subscription_id']);
     }
 
     /**
-     * @param array{subscription_plan_id?: int, status?: string, subscription_id: int} $payload
+     * @param array{subscription_plan_id?: string, status?: string, subscription_id: string} $payload
      */
     private function handleSubscriptionUpdated(array $payload) : void
     {
-        $paddleSubscriptionId = $payload['subscription_id'];
+        $paddleSubscriptionId = (int) $payload['subscription_id'];
         $subscription = PaddleService::getSubscriptionFromPaddleSubscriptionId($paddleSubscriptionId);
 
         if (!$subscription) {
@@ -74,7 +74,7 @@ class PaddleWebhookController
         $updates = [];
 
         if (isset($payload['subscription_plan_id'])) {
-            $plan = PaddleService::planConfigFromPaddleId($payload['subscription_plan_id']);
+            $plan = PaddleService::planConfigFromPaddleId((int) $payload['subscription_plan_id']);
 
             $updates['plan'] = $plan->name;
             $updates['frequency'] = $plan->frequency;
