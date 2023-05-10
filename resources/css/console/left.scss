@@ -227,6 +227,17 @@
     flex-direction: column;
     height: 100%;
 
+   .dark-mode-row {
+    display: flex;
+    flex-direction: row;
+    align-items: start;
+    justify-content: center;
+
+    .dark-mode-switch {
+        margin-left: 10px
+    }
+   }
+
     @media screen and (max-width: $breakpoint) {
 
         left: 0;

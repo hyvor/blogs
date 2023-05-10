@@ -1,4 +1,4 @@
-import React, { FC, ReactNode, useEffect, useRef } from 'react';
+import React, { FC, ReactNode, useEffect, useRef, useState } from 'react';
 import BlogsSelector from './BlogsSelector';
 import { useActions, useValues } from 'kea';
 import subdomainLogic from '../logic/subdomainLogic';
@@ -19,6 +19,8 @@ import { router } from "kea-router";
 import UserPermissions from "../services/UserPermissions";
 import BlogLink from "../BlogPreview/BlogLink";
 import { hasTrialEndedAndNotSubscribed } from '../lib/blog-helpers';
+import ReactSwitch from 'react-switch';
+import Switch from '../ReusableComponents/Switch';
 
 export default function Left() {
 
@@ -45,6 +47,13 @@ function LeftInner({subdomain} : {subdomain: string}) {
             fullScreen: true
         })
     }, []);
+
+    const [isDark, setIsDark] = useState(true);
+
+    const handleDarkMode = (val: boolean | ((prevState: boolean) => boolean)) => {
+        setIsDark(val)
+    }
+    
 
     return <div id="left">
         <div id="left-header" className="box">
@@ -117,7 +126,17 @@ function LeftInner({subdomain} : {subdomain: string}) {
 
         </div>
 
+
         <div id="left-bottom">
+        <div className='dark-mode-row'> 
+            Dark mode 
+            <div className='dark-mode-switch'>
+                <Switch 
+                    checked={isDark}
+                    onChange={handleDarkMode}
+                />
+            </div>
+        </div>
             <div className="changes-item box" onClick={() => {
                 window.postMessage({
                     target: 'FeaturebaseWidget',
