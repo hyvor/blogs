@@ -85,7 +85,7 @@ class PostContentRepository
                 new CustomHtml(),
                 new Figure(),
                 new Figcaption(),
-                new Image(),
+                new Image(['blog' => $blog]),
                 new Embed(),
                 new Callout(['blog' => $blog]),
                 new HardBreak(),

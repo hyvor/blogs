@@ -10,14 +10,23 @@ use App\Domains\Media\MediaRepository;
 use App\Helpers\MimeTypes;
 use Intervention\Image\Facades\Image;
 
+/**
+ * @phpstan-type ContentAndMimeType array{content: string, mimeType: string}
+ */
 class MediaProcessor extends RouteProcessorAbstract
 {
     public function __construct(PathMatcher $pathMatcher, MatchedRoute $matchedRoute)
     {
         $fileName = $matchedRoute->param('file_name');
+
+        /**
+         * Supports additional parameters like: resizing images
+         */
+        $additional = $matchedRoute->param('additional');
+
         $media = MediaRepository::getByBlogIdAndName($pathMatcher->blog->id, $fileName);
 
-        if (! $media) {
+        if (!$media) {
             return;
         }
 
@@ -33,7 +42,25 @@ class MediaProcessor extends RouteProcessorAbstract
         // https://stackoverflow.com/questions/1176022/unknown-file-type-mime
         $mimeType ??= 'application/octet-stream';
 
-        [$content, $mimeType] = $this->convertImage($content, $mimeType);
+        // JPG and PNG -> WebP
+        [
+            'content' => $content,
+            'mimeType' => $mimeType
+        ] = $this->convertImage($content, $mimeType);
+
+        if ($additional) {
+            $addedAdditional = $this->addAdditional(
+                $content,
+                $mimeType,
+                $additional
+            );
+
+            if (!$addedAdditional)
+                return;
+
+            $content = $addedAdditional['content'];
+            $mimeType = $addedAdditional['mimeType'];
+        }
 
         $this->setResponseObject(DeliveryAPIResponseObject::forFile(
             DeliveryAPIFileTypeEnum::MEDIA,
@@ -42,8 +69,37 @@ class MediaProcessor extends RouteProcessorAbstract
         ));
     }
 
+
     /**
-     * @return array<string>
+     * @return ContentAndMimeType|null
+     */
+    private function addAdditional(string $content, string $mimeType, string $additional) : ?array
+    {
+
+        if (
+            $mimeType === 'image/webp' &&
+            preg_match('/^(\d+)w$/', $additional, $matches)
+        ) {
+
+            $width = (int) $matches[1];
+
+            $image = Image::make($content)->widen($width, function ($constraint) {
+                $constraint->upsize();
+            })->encode('webp', 100);
+
+            return [
+                'content' => (string) $image,
+                'mimeType' => $mimeType,
+            ];
+
+        }
+
+        return null;
+
+    }
+
+    /**
+     * @return ContentAndMimeType
      */
     private function convertImage(string $content, string $mimeType) : array
     {
@@ -57,8 +113,8 @@ class MediaProcessor extends RouteProcessorAbstract
         }
 
         return [
-            $content,
-            $mimeType
+            'content' => $content,
+            'mimeType' => $mimeType
         ];
 
     }
