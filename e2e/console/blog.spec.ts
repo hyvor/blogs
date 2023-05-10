@@ -41,7 +41,6 @@ test.describe(() => {
 
     consoleTest('Blog switching', async ({ console, page, testingApi }) => {
         /* Create the first blog */
-        await chromium.launch();
         await console.visit();
         await expect(page).toHaveTitle('Console - Hyvor Blogs');
         await expect(page.getByText('Start a new blog')).toBeVisible();
@@ -65,9 +64,31 @@ test.describe(() => {
         await page.locator('div').filter({ hasText: /^My Second Blog$/ }).first().click();
         await page.locator('.blog').first().click();
         await expect(page.getByText('My First Blog').nth(0)).toBeVisible();
+        
+    });
+    consoleTest('Blog Drag and dropping', async ({ console, page, testingApi }) => {
+         /* Create the first blog */
+         await console.visit();
+         await expect(page).toHaveTitle('Console - Hyvor Blogs');
+         await expect(page.getByText('Start a new blog')).toBeVisible();
+     
+         await page.getByLabel('Blog Name').fill('My First Blog');
+         await expect(page.getByLabel('Subdomain')).toHaveValue('my-first-blog');
+     
+         await page.getByText('Create Blog').click();
+         await expect(page.getByText('My First Blog').nth(0)).toBeVisible({timeout: 30000});
+ 
+         /* Create the second blog */
+         await page.locator('div').filter({ hasText: /^My First Blog$/ }).first().click();
+         await page.getByRole('button', { name: 'Create a blog' }).click();
+ 
+         await page.getByLabel('Blog Name').fill('My Second Blog');
+         await expect(page.getByLabel('Subdomain')).toHaveValue('my-second-blog');
+         await page.getByText('Create Blog').click();
+         await expect(page.getByText('My Second Blog').nth(0)).toBeVisible({timeout: 30000});
 
-        /* Drag blog test */
-        await page.locator('div').filter({ hasText: /^My First Blog$/ }).first().click();
+           /* Drag blog test */
+        await page.locator('div').filter({ hasText: /^My Second Blog$/ }).first().click();
         const sourceElement = await page.locator('.blog').first();
         const targetElement = await page.locator('.blog-list > div > div:nth-child(2)');
 
@@ -78,17 +99,18 @@ test.describe(() => {
             const targetBound = await targetElement.boundingBox();
             if (srcBound && targetBound) {
                 await page.waitForTimeout(1000); 
-                await sourceElement.dragTo(targetElement, {
+                await sourceElement.dragTo(sourceElement, {
                     force: true,
                     sourcePosition: {
                         x: srcBound.width / 2,
-                        y: srcBound.height
+                        y: 0
                     },
                     targetPosition: {
-                        x: targetBound.width / 2,
-                        y: targetBound.height / 2 + 10,
+                        x: 0,
+                        y: 50,
                     },
                     timeout: 30000,
+                    trial: true
                 })
             }
             else {
@@ -98,7 +120,7 @@ test.describe(() => {
         else {
             throw new Error('Source or target element is not visible');
         }
-        
     });
+
 
 })
