@@ -68,8 +68,8 @@ test.describe(() => {
 
         /* Drag blog test */
         await page.locator('div').filter({ hasText: /^My First Blog$/ }).first().click();
-        const sourceElement = await page.locator('.sort-icon-wrap').first();
-        const targetElement = await page.locator('div:nth-child(2) > .sort-icon-wrap');
+        const sourceElement = await page.locator('.blog').first();
+        const targetElement = await page.locator('.blog-list > div > div:nth-child(2)');
 
 
         if (sourceElement && targetElement) {
@@ -77,14 +77,19 @@ test.describe(() => {
 
             const targetBound = await targetElement.boundingBox();
             if (srcBound && targetBound) {
-               await page.mouse.move(srcBound.x + srcBound.width / 2, srcBound.y + srcBound.height / 2, { steps: 5 });
-               await page.waitForTimeout(2000);
-               await page.mouse.down();
-               await page.waitForTimeout(2000);
-               await page.mouse.move(targetBound.x + targetBound.width / 2, targetBound.y + targetBound.height / 2), { steps: 5 };
-               await page.waitForTimeout(2000);
-               await page.mouse.up();
-               await page.waitForTimeout(2000);
+                await page.waitForTimeout(1000); 
+                await sourceElement.dragTo(targetElement, {
+                    force: true,
+                    sourcePosition: {
+                        x: srcBound.width / 2,
+                        y: srcBound.height
+                    },
+                    targetPosition: {
+                        x: targetBound.width / 2,
+                        y: targetBound.height / 2 + 10,
+                    },
+                    timeout: 30000,
+                })
             }
             else {
                 throw new Error('Source or target element is not visible');
