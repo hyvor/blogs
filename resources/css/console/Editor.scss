@@ -296,8 +296,8 @@ $prosemirror-selected-outline: 3px solid #299af3;
     }
 
     :not(pre) > code {
-        background: rgba(135,131,120,0.15);
-        color: #EB5757;
+        background: $color-editor-background;
+        color: $color-editor-red;
         border-radius: 3px;
         font-size: 85%;
         padding: 0.2em 0.4em;
@@ -362,7 +362,7 @@ $prosemirror-selected-outline: 3px solid #299af3;
             border-radius: 50%;
             margin-right: 5px;
             cursor: pointer;
-            border: 1px solid #aaa;
+            border: 1px solid $color-color-picker-border;
             position:relative;
             .color-picker-view {
                 position: absolute;
@@ -389,7 +389,7 @@ $prosemirror-selected-outline: 3px solid #299af3;
             margin-top: 22px;
             &.empty:before {
                 content: "Enter caption...";
-                color: #aaa;
+                color: $color-color-picker-border;
                 position: absolute;
                 left: 50%;
                 transform: translateX(-50%);
@@ -420,7 +420,7 @@ $prosemirror-selected-outline: 3px solid #299af3;
             // border-radius: 20px;
             padding: 8px;
             width: 100%;
-            border:1px solid #eee;
+            border:1px solid $color-editor-border;
         }
         &.url-input, &.loading {
             & + figcaption {
@@ -508,7 +508,7 @@ $prosemirror-selected-outline: 3px solid #299af3;
             padding: 10px;
             background: $color-input;
             border-radius: 20px 20px 0 0;
-            border-bottom: 1px solid #dddddd;
+            border-bottom: 1px solid $color-editor-border-bottom;
         }
         .code-toolbar-labels {
             display: flex;
@@ -527,7 +527,7 @@ $prosemirror-selected-outline: 3px solid #299af3;
                 padding: 5px 10px;
                 font-size: 12px;
                 margin-top: 5px;
-                background: #fff;
+                background: $color-white;
             }
         }
         
@@ -540,7 +540,7 @@ $prosemirror-selected-outline: 3px solid #299af3;
         .topbar {
             background: $color-input;
             border-radius: 20px 20px 0 0;
-            border-bottom: 1px solid #dddddd;
+            border-bottom: 1px solid $color-editor-border-bottom;
             font-size:12px;
             padding: 10px 15px;
         }
@@ -556,7 +556,7 @@ $prosemirror-selected-outline: 3px solid #299af3;
             right: 10px;
             width: 200px;
             padding: 4px 10px;
-            border: 1px solid #aaa;
+            border: 1px solid $color-color-picker-border;
             font-size: 12px;
         }
 
@@ -570,7 +570,7 @@ $prosemirror-selected-outline: 3px solid #299af3;
             top: 10px;
             left: 10px;
             background-color: $color-card; ;
-            color: black;
+            color: $color-black;
         }
 
         input[type="range"] {
@@ -661,7 +661,7 @@ $prosemirror-selected-outline: 3px solid #299af3;
             }
             .cancel-button {
                 background-color: $color-card; 
-                color: black;
+                color: $color-black;
             }
             .action-area {
                position: relative;
@@ -689,7 +689,7 @@ $prosemirror-selected-outline: 3px solid #299af3;
 
     mark {
         padding: 0.2em 0.4em;
-        background-color: #fcf8e3;
+        background-color: $color-editor-background;
     }
 
 }

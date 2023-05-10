@@ -13,7 +13,7 @@
         padding: 30px 0;
         z-index: 1;
         background-color: $color-box;
-        box-shadow: 0 0 30px rgba(0,0,0,0.05);
+        box-shadow: 0 0 30px $color-box-shadow;
         border-radius: 20px;
 
         .nav-section {
@@ -51,7 +51,7 @@
         width: 800px;
         position: relative;
         background-color: $color-box;
-        box-shadow: 0 0 30px rgba(0,0,0,0.05);
+        box-shadow: 0 0 30px $color-box-shadow;
         border-radius: 20px;
         padding:30px 50px;
         max-width: calc(100% - 330px);
@@ -179,7 +179,7 @@
             border-radius: 5px;
             margin: 40px auto;
             display: block;
-            box-shadow:0 0 20px 0px rgba(0,0,0,0.2);
+            box-shadow:0 0 20px 0px $color-box-shadow3;
         }
 
         figcaption {
@@ -258,7 +258,7 @@
             border-left: 5px solid $color-accent;
             margin: 30px 0;
             &.danger {
-                border-left-color:#f44336;
+                border-left-color:$color-doc;
             }
             p {
                 margin:1rem 0!important;
@@ -269,8 +269,8 @@
             font-size: 85%;
             padding: 0.2em 0.4em;
             display: inline-block;
-            background-color: #f4f4f4;
-            color: #EB5757;
+            background-color: $color-doc-code-background;
+            color: $color-doc-code;
             font-family: Consolas, monospace;
             border-radius: 4px;
             line-height: normal;
@@ -320,7 +320,7 @@ pre[class*=language-].line-numbers{position:relative;padding-left:3.8em;counter-
     // custom
     &.syntax-highlighting {
         .language-tags {
-            background: #fafafa;
+            background: $color-doc-code-background;
             border-radius: 20px;
             padding: 20px;
             div {
@@ -332,7 +332,7 @@ pre[class*=language-].line-numbers{position:relative;padding-left:3.8em;counter-
                 padding: 2px 8px;
                 margin-right: 4px;
                 margin-bottom: 4px;
-                background: #eaeaea;
+                background: $color-doc-synthax;
                 border-radius: 20px;
                 font-size: 12px;
             }

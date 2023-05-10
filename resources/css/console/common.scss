@@ -34,10 +34,10 @@ textarea.input {
 }
 
 .text-normal {
-    color: #000;
+    color: $color-black;
 }
 .text-light {
-    color:#666;
+    color:$color-text-light;
 }
 
 .box, .box-style {
@@ -67,14 +67,14 @@ textarea.input {
     }
     .input-error {
         font-size: 12px;
-        color: #d64541;
+        color: $color-input-error;
     }
     .input-success {
         font-size:12px;
-        color: #3d9a51;
+        color: $color-input-success;
     }
     &.error input {
-        background: #ffe1e0;
+        background: $color-input-background;
     }
     .input-bottom {
         margin-top:5px;
@@ -244,12 +244,12 @@ textarea.input {
         display: block;
         width: 25%;
         height: 25%;
-        background-color: #fff;
+        background-color: $color-white;
         border-radius: 100%;
         animation: global-spinner-dot-before 2.0s infinite ease-in-out both; 
     }
     &.dark .global-spinner-dot:before {
-        background-color: #000;
+        background-color: $color-black;
     }
 
     .global-spinner-dot:nth-child(1) { animation-delay: -1.1s; }
@@ -289,7 +289,7 @@ textarea.input {
     left: 0;
     width: 100%;
     height: 100%;
-    background: rgba(255,255,255,0.4);
+    background: $color-black-transparent;
     z-index: 100000;
     display: flex;
     align-items: center;

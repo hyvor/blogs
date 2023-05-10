@@ -54,8 +54,8 @@
         .feature-card {
             flex: calc(50% - 15px);
             padding: 25px;
-            background-color: #fff;
-            box-shadow: 0 0 20px rgba(0,0,0,0.05);
+            background-color: $color-white;
+            box-shadow: 0 0 20px $color-box-shadow;
             border-radius: 20px;
             margin-bottom: 15px;
             img {
@@ -71,7 +71,7 @@
 
             p {
                 font-size: 14px;
-                color: #444;
+                color: $color-text-medium;
             }
 
             &:nth-child(odd) {

@@ -37,7 +37,7 @@
             }
         }
         &:hover input ~ .checkmark {
-            background-color: #ddd;
+            background-color: $color-radio-background;
         }
         input:checked ~ .checkmark {
             background-color: $color-accent;

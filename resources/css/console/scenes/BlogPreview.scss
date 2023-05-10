@@ -32,7 +32,7 @@
                 transition:.3s background-color, .3s color;
                 &.active {
                     background-color:$color-accent;
-                    color:#fff;
+                    color:$color-white;
                 }
             }
         }

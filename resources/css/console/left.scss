@@ -80,7 +80,7 @@
                 border-radius: 50%;
                 &:hover {
                     background-color: $color-accent-light;
-                    box-shadow: 0 0 4px rgba(0,0,0,0.05);
+                    box-shadow: 0 0 4px $color-box-shadow;
                 }
                 svg {
                     margin: 0;
@@ -165,7 +165,7 @@
                     background-color: $color-accent-active;
                     border-left: 3px solid $color-accent;
 
-                    .global-tag-role {background-color:#fff}
+                    .global-tag-role {background-color:$color-white}
                 }
                 &.sortable-chosen, &.sortable-ghost {
                     cursor: grabbing!important;

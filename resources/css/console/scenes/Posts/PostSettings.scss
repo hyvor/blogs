@@ -31,7 +31,7 @@
             &.active {
                 font-weight: 600;
                 background: $color-accent;
-                color: #fff;
+                color: $color-white;
             }
         }
     }
@@ -42,7 +42,7 @@
 
     .post-editor-settings-view {
         background: $color-box;
-        box-shadow: 0 0 40px 20px rgb(0 0 0 / 6%);
+        box-shadow: 0 0 40px 20px $color-box-shadow;
         margin-right: 60px;
         min-height: 200px;
         border-radius: 20px;
@@ -106,7 +106,7 @@
                 display: inline-flex;
                 align-items: center;
                 justify-content: center;
-                color: #fff;
+                color: $color-white;
                 opacity: 0;
                 transition:.3s opacity;
             }

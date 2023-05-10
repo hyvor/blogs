@@ -66,6 +66,18 @@ export default function BlogsSelector() {
         sortableRef.current.classList.remove("dragging");
     }
 
+    const [mousePos, setMousePos] = useState({});
+    useEffect(() => {
+        function handleMouseMove(e) {
+            setMousePos({x: e.clientX, y: e.clientY});
+            console.log('Mouse move', e.clientX, e.clientY);
+        }
+        window.addEventListener("mousemove", handleMouseMove);
+        return () => {
+            window.removeEventListener("mousemove", handleMouseMove);
+        }
+    });
+
     return <div className="blog-selector">
         <div className="value" onClick={isListOpen ? null : openList}>
             <div className="name">{ activeBlog.blog.name }</div>
@@ -94,7 +106,7 @@ export default function BlogsSelector() {
                      */
                     forceFallback={true}
 
-                    animation={200}
+                    animation={0}
                 >
                     {
                         blogs.map(({blog, user}) => {

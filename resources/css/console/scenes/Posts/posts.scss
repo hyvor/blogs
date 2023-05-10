@@ -392,13 +392,13 @@
             flex-direction: column;
             flex: 1;
             overflow: visible;
-            background-color: #fff;
+            background-color: $color-white;
          
             align-self: center;
             justify-content: start;
             align-items: center;
             border-radius: 20px;
-            box-shadow: 0 0 30px rgb(0 0 0 / 5%);
+            box-shadow: 0 0 30px $color-box-shadow;
 
             .prosemirror-editor-wrap {
                 width: 100%;

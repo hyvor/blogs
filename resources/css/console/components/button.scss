@@ -3,7 +3,7 @@
 // for both console and landing pages
 .button {
     background: $color-accent;
-    color: #fff;
+    color: $color-white;
     border-radius: 20px;
     border: none;
     font-weight: 600;
@@ -47,7 +47,7 @@
         background: none;
         color: $color-text-medium;
         border: 1px solid $color-grey;
-        box-shadow: 0 1px 2px 0 rgba(0,0,0,0.05);
+        box-shadow: 0 1px 2px 0 $color-box-shadow;
         transition:.1s color, .1s border-color;
         &:hover {
             color: $color-text;
@@ -100,6 +100,6 @@
     border: 0;
     transition: .3s box-shadow;
     &:hover {
-        box-shadow: 0 0 10px rgba(0,0,0,0.1);
+        box-shadow: 0 0 10px $color-box-shadow2;
     }
 }

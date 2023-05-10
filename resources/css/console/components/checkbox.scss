@@ -41,7 +41,7 @@ label.global-checkbox {
         transform: rotate(45deg);
     }
     &:hover span {
-        background-color: #ccc;
+        background-color: $color-check-box;
     }
     
     /**** Here's the trick ***/
