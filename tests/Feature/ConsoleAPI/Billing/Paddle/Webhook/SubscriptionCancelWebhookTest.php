@@ -16,7 +16,7 @@ it('cancels the subscription plan', function () {
 
     integrationApi('POST', '/paddle/webhook', getPaddleWebhookParams([
         'alert_name' => 'subscription_cancelled',
-        'subscription_id' => 110,
+        'subscription_id' => "110",
         'cancellation_effective_date' => '2022-08-16'
     ]))->assertOk();
 

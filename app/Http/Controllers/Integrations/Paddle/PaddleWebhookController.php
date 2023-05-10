@@ -95,11 +95,11 @@ class PaddleWebhookController
     }
 
     /**
-     * @param array{subscription_id: int, cancellation_effective_date: string} $payload
+     * @param array{subscription_id: string, cancellation_effective_date: string} $payload
      */
     private function handleSubscriptionCancelled(array $payload) : void
     {
-        $paddleSubscriptionId = $payload['subscription_id'];
+        $paddleSubscriptionId = (int) $payload['subscription_id'];
         $subscription = PaddleService::getSubscriptionFromPaddleSubscriptionId($paddleSubscriptionId);
 
         if (!$subscription) {
