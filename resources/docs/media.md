@@ -12,7 +12,7 @@
 
 [WebP](https://en.wikipedia.org/wiki/WebP) images are 25-34% smaller than JPEG/PNG images of the same quality. It is recommended nowadays to use WebP in websites whenever possible as all modern browsers [support WebP images](https://caniuse.com/webp). You can upload JPEG and PNG as usual in your posts. Hyvor Blogs will serve them in WebP format to your users via `/media` of your blog. You don't have to do anything.
 
-> Note that the extension in the URL not change (ex: `/media/image.jpg` or `/media/image.png`), but the image will be served as WebP with correct headers. You can verify this by checking your page in [PageSpeed Insights](https://pagespeed.web.dev/).
+> Note that the extension in the URL will not change (ex: `/media/image.jpg` or `/media/image.png`), but the image will be served as WebP with correct HTTP headers. You can verify this by checking your page in [PageSpeed Insights](https://pagespeed.web.dev/).
 
 ### Responsive Images
 
@@ -24,9 +24,7 @@ Images (PNG, JPEG, WebP only) uploaded to `/media` can be automatically resized 
 * `/media/image.jpg/100w` - Resized to maximum width 100px
 * `/media/image.jpg/750w` - Resized to maximum width 750px
 
-We use this resizing feature and [srcset](https://developer.mozilla.org/en-US/docs/Learn/HTML/Multimedia_and_embedding/Responsive_images) (supported by all modern browsers) to make images in your posts responsive. For example, if you upload a 1000px image to a post, a smaller version of that image will be served to users with smaller screens.
-
-These are the sizes we use:
+We use this resizing feature and [srcset](https://developer.mozilla.org/en-US/docs/Learn/HTML/Multimedia_and_embedding/Responsive_images) (supported by all modern browsers) to make images in your posts responsive. These are the sizes we use:
 
 * 500w
 * 750w
