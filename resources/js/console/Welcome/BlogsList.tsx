@@ -20,9 +20,9 @@ export default function BlogsList() {
 
 
         <div className='blog-list-heading'>
-            <div className="blogs-list-title">Your Blogs</div>
-            <div className="blog-create">
-                <NavLink href="/console/new" className="button medium">
+            <div className="blogs-list-title">
+                Your Blogs
+            <NavLink href="/console/new" className="button medium blog-create">
                     Create New Blog
                 </NavLink>
             </div>
