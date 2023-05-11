@@ -13,6 +13,25 @@
 @import './Integrations.scss';
 @import './Export.scss';
 
+:root {
+    --color-hover: #{$color-hover};
+    --color-input: #{$color-input};
+    --colot-acent-active: #{color-accent-active};
+    --color-gradient: #{$color-white};
+    --color-discard-button: #{$color-white};
+    --color-text-discard-button: #{$color-black};
+  }
+  
+[data-theme="dark"] {
+    --color-hover: #{$color-hover-dark};
+    --color-input: #{$color-input-dark};
+    --colot-acent-active: #{color-accent-active-dark};
+    --color-gradient: #{$color-black};
+    --color-discard-button: #{$color-accent-active-dark};
+    --color-text-discard-button: #{$color-white};
+}
+
+
 .settings-view {
 
     .middle-heading {
@@ -32,10 +51,10 @@
             cursor: pointer;
             border-left: 3px solid transparent;
             &:hover {
-                background-color: $color-hover;
+                background-color: var(--color-hover);
             }
             &.active {
-                background: $color-accent-active;
+                background: var(--color-acent-active);
                 border-color: $color-accent;
             }
         }
@@ -74,10 +93,15 @@
     right: 15px;
     text-align: center;
     padding: 40px 20px 20px;
-    background: linear-gradient(0deg, #fff, transparent);
+    background: linear-gradient(0deg, var(--color-gradient), transparent);
     pointer-events: none;
     &.start {
         opacity: 0;
+    }
+    .discard-button {
+        background-color: var(--color-discard-button);
+        color: var(--color-text-discard-button);
+        margin-right: 15px;
     }
     &.open {
         animation: .5s save-in ease-in-out both;

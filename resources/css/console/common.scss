@@ -320,7 +320,7 @@ textarea.input {
     text-transform: uppercase;
     padding: 1px 7px;
     display: inline-block;
-    background: #f0e7e8;
+    background: var(--color-accent-active);
     border-radius: 20px;
 }
 
@@ -458,7 +458,7 @@ textarea.input {
     display: inline-block;
     padding: 1px 9px;
     margin-right: 3px;
-    background: $color-input;
+    background: var(--color-input);
     font-weight: 600;
     font-size: 12px;
     border-radius: 20px;
@@ -654,7 +654,7 @@ textarea.input {
         display: inline-block;
         padding: 1px 9px;
         margin-right: 3px;
-        background: $color-input;
+        background: var(--color-input);
         font-weight: 600;
         font-size: 12px;
         border-radius: 20px;
@@ -665,7 +665,7 @@ textarea.input {
         }
         
         &.active {
-            background: $color-accent-light;
+            background: var(--color-accent-light);
         }
     }
 }

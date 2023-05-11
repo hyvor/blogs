@@ -1,5 +1,14 @@
 @import '../../colors.scss';
 
+:root {
+    --color-text: #{$color-text};
+  }
+  
+[data-theme="dark"] {
+    --color-text: #{$color-text};
+}
+
+
 .billing-view {
     height:100%;
     display: flex;
@@ -34,6 +43,7 @@
                     background: $color-accent-light;
                     border-radius: 20px;
                     padding:2px 0;
+                    color: var(--color-text);
                     span {
                         border-radius: 20px;
                         padding: 2px 6px;
@@ -62,10 +72,12 @@
                         flex:1;
                         align-items: center;
                         display: flex;
+                        color: var(--color-text);
                     }
                     .plan-right {
                         display: flex;
                         align-items: center;
+                        color: var(--color-text);
                         .plan-right-button-wrap {
                             min-width: 65px;
                             text-align: center;

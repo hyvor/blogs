@@ -1,3 +1,15 @@
+@import '../../../colors.scss';
+
+:root {
+    --color-hover: #{$color-hover};
+    --color-input: #{$color-input};
+  }
+  
+[data-theme="dark"] {
+    --color-hover: #{$color-hover-dark};
+    --color-input: #{$color-input-dark};
+}
+
 .posts-not-ready {
     display: flex;
     width: 100%;
@@ -263,7 +275,7 @@
         }
 
         &:hover {
-            background: $color-hover;
+            background: var(--color-hover);
         }
 
         &.active {
@@ -295,7 +307,7 @@
 
         .post-tag {
             font-size: 11px;
-            background: $color-input;
+            background: var(--color-input);
             padding: 3px 9px;
             border-radius: 20px;
             font-weight: 600;

@@ -1,3 +1,13 @@
+@import '../../colors.scss';
+
+:root {
+    --color-text: #{$color-text};
+  }
+  
+[data-theme="dark"] {
+    --color-text: #{$color-text};
+}
+
 .global-table-view {
 
     .table-head {
@@ -7,6 +17,7 @@
         font-weight: 600;
         background: $color-card;
         margin-bottom: 15px;
+        color: var(--color-text);
     }
 
     .table-row {

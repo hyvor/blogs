@@ -114,7 +114,7 @@ export default function BlogsSelector() {
                                         </div>
                                     </div>
                                     <div className="blog-row">
-                                        <div className="row-left">{blog.subdomain}.hyvorblogs.io</div>
+                                        <div className="row-left text-subdomain">{blog.subdomain}.hyvorblogs.io</div>
                                         <div className="row-right">
                                             { numberFormatter(blog.posts_count)} Posts &middot;&nbsp;
                                             { numberFormatter(blog.users_count) } Users</div>
@@ -129,7 +129,7 @@ export default function BlogsSelector() {
                 </ReactSortable>
             </div>
             <div className="create-button-view">
-                <button className="button medium secondary" onClick={handleCreateBlog}>Create a blog</button>
+                <button className="button medium secondary blog-creation-button" onClick={handleCreateBlog}>Create a blog</button>
             </div>
         </div>
     </div>

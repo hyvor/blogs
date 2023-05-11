@@ -3,11 +3,15 @@
 :root {
     --color-hover: #{$color-hover};
     --color-acent-active: #{$color-accent-active};
+    --color-text-light: #{$color-text-light};
+    --color-tag-active: #{$color-white};
   }
   
 [data-theme="dark"] {
     --color-hover: #{$color-hover-dark};
     --color-acent-active: #{$color-accent-active-dark};
+    --color-text-light: #{$color-text-light-dark};
+    --color-tag-active: #{$color-black};
 }
 
 
@@ -171,13 +175,13 @@
                 display:flex;
                 align-items: center;
                 &:hover {
-                    background-color: $color-hover;
+                    background-color: var(--color-hover);
                 }
                 &.active {
-                    background-color: $color-accent-active;
+                    background-color: var(--color-acent-active);
                     border-left: 3px solid $color-accent;
 
-                    .global-tag-role {background-color:$color-white}
+                    .global-tag-role {background-color:var(--color-tag-active);}
                 }
                 &.sortable-chosen, &.sortable-ghost {
                     cursor: grabbing!important;
@@ -185,6 +189,9 @@
                 }
                 .blog-row-wrap {
                     flex:1;
+                }
+                .text-subdomain {
+                    color: var(--color-text-light);
                 }
                 .sort-icon-wrap {
                     margin-left: 10px;
@@ -230,6 +237,7 @@
 }
 
 #left {
+
     position:absolute;
     left:15px;
     top:15px;
@@ -249,6 +257,10 @@
         margin-left: 10px
     }
    }
+
+   .blog-creation-button {
+        color: var(--color-text-light);
+    }
 
     @media screen and (max-width: $breakpoint) {
 

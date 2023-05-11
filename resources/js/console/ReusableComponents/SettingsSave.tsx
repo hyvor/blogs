@@ -78,7 +78,7 @@ export default function SettingsSave(
                         : <div>
                             <button
                                 onClick={handleDiscard}
-                                className="button text-only"
+                                className="button text-only discard-button"
                             >Discard</button>
                             <button
                                 className="button"
