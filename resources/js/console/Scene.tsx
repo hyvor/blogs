@@ -38,7 +38,7 @@ export default function Scene() {
 
     const SceneComponent = scenes[scene as keyof typeof scenes] || scenes.error404
 
-    return <div>
+    return <div className='dark'>
         <Left />
         <Middle scene={scene}><SceneComponent {...params} /></Middle>
     </div>

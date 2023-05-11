@@ -27,9 +27,19 @@ $breakpoint: 1200px;
 
 @import './scenes/Settings/settings.scss';
 
+:root {
+    --body-background: #{$color-accent-very-light};
+    --text-color: #{$color-black};
+  }
+  
+[data-theme="dark"] {
+    --body-background: #{$color-accent-very-light-dark};
+    --text-color: #{$color-text-dark};
+}
+
 body {
-    background-color: $color-accent-very-light;
-    color: $color-text;
+    background-color: var(--body-background);
+    color: var(--text-color);
     overflow: hidden;
 }
 

@@ -51,7 +51,8 @@ function LeftInner({subdomain} : {subdomain: string}) {
     const [isDark, setIsDark] = useState(true);
 
     const handleDarkMode = (val: boolean | ((prevState: boolean) => boolean)) => {
-        setIsDark(val)
+        document.querySelector('body')?.setAttribute('data-theme', val ? 'dark' : 'light');
+        setIsDark(val);
     }
     
 

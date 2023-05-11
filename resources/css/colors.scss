@@ -1,3 +1,6 @@
+/*
+* Light colors
+*/
 $color-accent: #896c6b;
 $color-accent-mid:  #e3cecd;
 $color-accent-light: #f1e8e8;
@@ -36,7 +39,7 @@ $color-blue-light: #dae5ff;
 
 $color-purple-dark: #91598f;
 $color-purple-light: #ece0ec;
-
+ 
 $color-black: #000;
 $color-white: #fff;
 $color-black-transparent: rgba(0,0,0,0.4);
@@ -82,3 +85,96 @@ $color-index-border:#3F51B5;
 $color-nav: #333232;
 
 $color-pricing-background: #d3d3ff;
+
+$body-background-light: #fff;
+$body-background-dark: #000;
+
+/*
+* Dark colors
+*/
+$color-accent-dark: #5a4544;
+$color-accent-mid-dark: #c1aaa9;
+$color-accent-light-dark: #d9d1d0;
+$color-accent-very-light-dark: #f4f2f1;
+$color-accent-active-dark: #f0eceb;
+$color-box-dark: #111;
+$color-card-dark: #2c2c2c;
+
+$color-input-dark: #222;
+
+$color-grey-dark: #333;
+$color-hover-dark: #2c2c2c;
+$color-link-dark: #7ad4ff;
+
+$color-text-dark: #fff;
+$color-text-medium-dark: #ccc;
+$color-text-light-dark: #999;
+$color-text-white-dark: #000;
+$color-text-light-grey-dark: #111;
+
+$color-green-light-dark: #81a581;
+$color-green-dark-dark: #194719;
+
+$color-red-dark-dark: #691d1d;
+$color-red-dark: #b94646;
+$color-red-light-dark: #f5cccc;
+
+$color-orange-dark-dark: #5a3a03;
+$color-orange-dark: #e9ac1d;
+$color-orange-light-dark: #e2d2a5;
+
+$color-blue-dark-dark: #182c4f;
+$color-blue-dark: #355d9a;
+$color-blue-light-dark: #c1d3ff;
+
+$color-purple-dark-dark: #643d64;
+$color-purple-light-dark: #f1dbf1;
+
+$color-black-dark: #fff;
+$color-white-dark: #000;
+$color-black-transparent-dark: rgba(255,255,255,0.4);
+
+$color-text-light-dark: #999;
+
+$color-input-error-dark: #ff4b48;
+$color-input-success-dark: #49b54a;
+$color-input-background-dark: #190000;
+
+$color-editor-red-dark: #ff2a2a;
+$color-editor-background-dark: rgba(135,131,120,0.15);
+
+$color-color-picker-border-dark: #777;
+$color-editor-border-dark: #333;
+$color-editor-border-bottom-dark: #444;
+$color-editor-background-dark: #201c1c;
+$color-box-shadow-dark: rgba(0,0,0,0.2);
+$color-box-shadow2-dark: rgba(0,0,0,0.3);
+$color-box-shadow3-dark: rgba(0,0,0,0.4);
+
+$color-check-box-dark: #666;
+
+$color-date-picker-background-dark: #161a1d;
+
+$color-radio-background-dark: #222;
+
+$color-billing-background-dark: #574343;
+
+$color-doc-red-dark: #ff2a2a;
+$color-doc-code-background-dark: #1c1c1c;
+$color-doc-code-dark: #ff2a2a;
+$color-doc-synthax-dark: #222;
+
+$color-footer-twitter-dark: #1a91da;
+$color-footer-discord-dark: #4f5f7a;
+$color-footer-item-dark: #ccc;
+$color-footer-link-wrap-dark: #1a2a29;
+
+$color-index-msg-dark: #7378d9;
+$color-index-border-dark: #7378d9;
+
+$color-nav-dark: #000;
+
+$color-pricing-background-dark: #555;
+
+$body-background-light: #fff;
+$body-background-dark: #000;
