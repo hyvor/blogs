@@ -1,3 +1,13 @@
+@import '../../colors.scss';
+
+:root {
+    --color-blog-card-shadow: #{$blog-card-shadow-color};
+  }
+  
+[data-theme="dark"] {
+    --color-blog-card-shadow: #{$blog-card-shadow-color-dark};
+}
+
 
 .welcome-view {
 
@@ -53,7 +63,7 @@
         margin: 0 5px 20px 5px;
         border-radius: 20px;
         padding: 20px;
-        box-shadow: 0 0 10px rgb(0 0 0 / 5%);
+        box-shadow: 0 0 10px var(--color-blog-card-shadow);
         width: calc(33.3% - 10px);
 
         &.dev {

@@ -1,8 +1,26 @@
 @import '../colors.scss';
 
+:root {
+    --color-accent: #{$color-accent};
+    --box-color: #{$color-box};
+    --color-input: #{$color-input};
+    --color-accent-light: #{$color-accent-light};
+    --color-hover: #{$color-hover};
+    --color-accent-active: #{$color-accent-active};
+  }
+  
+[data-theme="dark"] {
+    --color-accent: #{$color-accent-dark};
+    --box-color: #{$color-box-dark};
+    --color-input: #{$color-input-dark};
+    --color-accent-light: #{$color-accent-light-dark};
+    --color-hover: #{$color-hover-dark};
+    --color-accent-active: #{$color-accent-active-dark};
+}
+
 a.link, span.link {
     font-weight: 600;
-    color: $color-accent;
+    color: var(--color-accent);
     cursor: pointer;
     text-decoration: underline;
     & > .icon {
@@ -41,7 +59,7 @@ textarea.input {
 }
 
 .box, .box-style {
-    background-color: $color-box;
+    background-color: var(--box-color);
     box-shadow: 0 0 30px rgb(0 0 0 / 5%);
     border-radius: 20px;
 }
@@ -92,14 +110,14 @@ textarea.input {
         display:flex;
         min-height: initial;
         border-radius: 20px;
-        background: $color-input;
+        background: var(--color-input);
         border:none;
         transition:.2s box-shadow;
         height: 34px;
         min-height: 34px;
         cursor: pointer;
         &:hover {
-            box-shadow: 0 0 0px 2px $color-accent-light;
+            box-shadow: 0 0 0px 2px var(--color-accent-light);
         }
     }
     .react-select__control--is-focused {
@@ -114,6 +132,7 @@ textarea.input {
     }
     .react-select__menu-list {
         padding: 10px;
+        background-color: var(--color-hover);
     }
     .react-select__option {
         transition:.05s background;
@@ -123,13 +142,13 @@ textarea.input {
         border-radius: 20px;
     }
     .react-select__option--is-focused {
-        background: $color-hover;
+        background: var(--color-hover);
         &:active {
-            background: $color-hover;
+            background: var(--color-hover);
         }
     }
     .react-select__option--is-selected {
-        background: $color-accent-active;
+        background: var(--color-accent-active);
         color: $color-text;
         &:active {
             background: $color-accent-light;

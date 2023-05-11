@@ -1,3 +1,15 @@
+@import '../colors.scss';
+
+:root {
+    --color-hover: #{$color-hover};
+    --color-acent-active: #{$color-accent-active};
+  }
+  
+[data-theme="dark"] {
+    --color-hover: #{$color-hover-dark};
+    --color-acent-active: #{$color-accent-active-dark};
+}
+
 
 #left-header {
     display: flex;
@@ -24,10 +36,10 @@
         border-left:3px solid transparent;
         position: relative;
         &:hover {
-            background-color: $color-hover;
+            background-color: var(--color-hover);
         }
         &.active {
-            background: $color-accent-active;
+            background: var(--color-acent-active);
             border-color: $color-accent;
         }
 
