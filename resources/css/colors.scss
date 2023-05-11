@@ -82,3 +82,12 @@ $color-index-border:#3F51B5;
 $color-nav: #333232;
 
 $color-pricing-background: #d3d3ff;
+
+$theme: (
+    "light": (
+        color-accent-very-light: #fffaf8
+    )
+    "dark": (
+        color-accent-very-light: #140701
+    )
+);
