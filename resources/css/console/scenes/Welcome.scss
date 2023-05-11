@@ -29,8 +29,10 @@
     }
     .blog-list-heading {
         display: flex;
-        flex-direction: row;
-        justify-content: space-between;
+        flex-direction: column;
+        justify-content: start;
+        align-items: start;
+        
     }
     .blogs-list-title {
         font-size: 18px;
