@@ -58,6 +58,11 @@ export default function keymapPlugins(schema) {
                 // something was selected
                 return;
 
+            // If the cursor is in a list item, return false
+            const { path } = selection.$to;
+            if (path.some(item => item?.type?.name === "list_item"))
+                return false;
+
             /**
              * Code
              * ================
