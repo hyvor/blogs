@@ -1,4 +1,22 @@
+@import '../../../colors.scss';
 
+:root {
+    --color-accent: #{$color-accent};
+    --box-color: #{$color-box};
+    --color-input: #{$color-input};
+    --color-accent-light: #{$color-accent-light};
+    --color-hover: #{$color-hover};
+    --color-accent-active: #{$color-accent-active};
+  }
+  
+[data-theme="dark"] {
+    --color-accent: #{$color-accent-dark};
+    --box-color: #{$color-box-dark};
+    --color-input: #{$color-input-dark};
+    --color-accent-light: #{$color-accent-light-dark};
+    --color-hover: #{$color-hover-dark};
+    --color-accent-active: #{$color-accent-active-dark};
+}
 
 .settings-view-wrap {
     position:absolute;
@@ -41,7 +59,7 @@
 
 
     .post-editor-settings-view {
-        background: $color-box;
+        background: var(--box-color);
         box-shadow: 0 0 40px 20px $color-box-shadow;
         margin-right: 60px;
         min-height: 200px;

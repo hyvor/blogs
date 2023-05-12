@@ -3,6 +3,17 @@
 $prosemirror-hover-outline: 2px solid #8cf;
 $prosemirror-selected-outline: 3px solid #299af3;
 
+:root {
+    --color-box: #{$color-box};
+    --color-hover: #{$color-hover};
+    --color-accent-active: #{$color-accent-active};
+  }
+  
+[data-theme="dark"] {
+    --color-box: #{$color-box-dark};
+    --color-hover: #{$color-hover-dark};
+}
+
 .post-editor {
 
     font-weight: 400;
@@ -69,7 +80,7 @@ $prosemirror-selected-outline: 3px solid #299af3;
             border-radius:50%;
             margin-right:2px;
             &:hover {
-                background-color: $color-hover;
+                background-color: var(--color-hover);
             }
             &.active {
                 background-color: $color-accent-light;
@@ -127,7 +138,7 @@ $prosemirror-selected-outline: 3px solid #299af3;
         opacity:0;
         pointer-events: none;
         margin-left:30px; // to fix editor padding
-        background: $color-box;
+        background: var(--color-box);
         box-shadow: 0 0 15px 2px rgba(0,0,0,0.15);
         border-radius: 20px;
         z-index: 1;
@@ -144,7 +155,7 @@ $prosemirror-selected-outline: 3px solid #299af3;
             position: relative;
             display: flex;
             &.active {
-                background-color: $color-accent-light;
+                background-color: var(--color-accent-active);
             }
             &:not(:last-child):after {
                 content: "";

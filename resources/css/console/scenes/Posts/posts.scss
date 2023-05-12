@@ -3,11 +3,19 @@
 :root {
     --color-hover: #{$color-hover};
     --color-input: #{$color-input};
+    --color-background: #{$color-accent-very-light};
+    --color-wrap-background: #{$color-white};
+    --color-title: #{$color-black};
+    --color-accent-light: #{$color-accent-light};
   }
   
 [data-theme="dark"] {
     --color-hover: #{$color-hover-dark};
     --color-input: #{$color-input-dark};
+    --color-background: #{$color-box-dark};
+    --color-wrap-background: #{$color-card-dark};
+    --color-title: #{$color-text-white};
+    --color-accent-light: #{$color-accent-light-dark};
 }
 
 .posts-not-ready {
@@ -374,7 +382,7 @@
                 display: inline-block;
                 padding: 5px 10px;
                 margin-right: 3px;
-                background: $color-input;
+                background: var(--color-input);
                 font-weight: 600;
                 font-size: 12px;
                 border-radius: 20px;
@@ -385,7 +393,7 @@
                 }
 
                 &.active {
-                    background: $color-accent-light;
+                    background: var(--color-accent-light);
                 }
             }
         }
@@ -393,6 +401,7 @@
         .post-editor-title-row {
             display: flex;
             position: relative;
+           
         }
 
         .title-textarea-wrap {
@@ -404,7 +413,7 @@
             flex-direction: column;
             flex: 1;
             overflow: visible;
-            background-color: $color-white;
+            background-color: var(--color-wrap-background);
          
             align-self: center;
             justify-content: start;
@@ -485,7 +494,7 @@
             left: 0;
             width: 100%;
             height: 100%;
-            background: $color-accent-very-light;
+            background: var(--color-background);
             z-index: 10;
             overflow: auto;
 
@@ -511,6 +520,7 @@
 
         .post-editor-title {
             font-family: $font-content;
+            color: var(--color-title);
             padding-top: 10px;
             padding-bottom: 10px;
             font-size: 25px;
