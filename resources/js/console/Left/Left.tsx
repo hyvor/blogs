@@ -48,9 +48,17 @@ function LeftInner({subdomain} : {subdomain: string}) {
         })
     }, []);
 
-    const [isDark, setIsDark] = useState(true);
+    const [isDark, setIsDark] = useState(false);
+
+    useEffect(() => {
+        const storedPreference = localStorage.getItem('prefersDarkMode');
+        document.querySelector('body')?.setAttribute('data-theme', storedPreference == 'true' ? 'dark' : 'light');
+        setIsDark(storedPreference === 'true');
+        
+      }, []);
 
     const handleDarkMode = (val: boolean | ((prevState: boolean) => boolean)) => {
+        localStorage.setItem('prefersDarkMode', val ? 'true' : 'false');
         document.querySelector('body')?.setAttribute('data-theme', val ? 'dark' : 'light');
         setIsDark(val);
     }
