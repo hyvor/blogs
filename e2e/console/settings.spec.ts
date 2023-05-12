@@ -16,4 +16,16 @@ test.describe('settings', () => {
         await expect(page.locator('#input-name')).toHaveValue('MyAwesome Blog');
     });
 
+    consoleTest('Users: adding blog user', async ({testingApi, console, page}) => {
+        await testingApi.factory.blogFull();
+        await console.visitAndNav('settings');
+        await page.getByRole('link', { name: 'Users' }).click();
+        await page.getByRole('button', { name: 'Add' }).click();
+        await page.getByText('Guest User').click();
+        await page.getByLabel('Name').click();
+        await page.getByLabel('Name').fill('test');
+        await page.getByRole('button', { name: 'Create', exact: true }).click();
+        await expect(page.getByText('testtestGUEST0')).toBeVisible();
+    });
+
 });
