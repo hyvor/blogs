@@ -28,4 +28,16 @@ test.describe('settings', () => {
         await expect(page.getByText('testtestGUEST0')).toBeVisible();
     });
 
+    consoleTest('Adding language', async ({testingApi, console, page}) => {
+        await testingApi.factory.blogFull();
+        await console.visitAndNav('settings');
+        await page.getByRole('link', { name: 'Languages' }).click();
+        await page.getByRole('button', { name: 'New' }).click();
+        await page.getByPlaceholder('English').fill('french');
+        await page.getByPlaceholder('English').press('Tab');
+        await page.getByPlaceholder('en', { exact: true }).fill('fr');
+        await page.getByRole('button', { name: 'Add' }).click();
+        await expect(page.getByText('french')).toBeVisible();
+    });
+
 });
