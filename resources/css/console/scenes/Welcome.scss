@@ -3,7 +3,7 @@
 :root {
     --color-blog-card-shadow: #{$blog-card-shadow-color};
   }
-  
+
 [data-theme="dark"] {
     --color-blog-card-shadow: #{$blog-card-shadow-color-dark};
 }
@@ -42,7 +42,7 @@
         flex-direction: column;
         justify-content: start;
         align-items: start;
-        
+
     }
     .blogs-list-title {
         font-size: 18px;
@@ -122,7 +122,7 @@
     }
 
     .blog-create {
-        padding: 10px;
+        margin-left: 15px;
         text-align: center;
     }
 

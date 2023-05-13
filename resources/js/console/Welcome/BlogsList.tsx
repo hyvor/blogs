@@ -1,5 +1,7 @@
 import React, { useRef } from 'react'
 import { useActions, useValues } from "kea";
+import React from 'react'
+import { useActions, useValues } from "kea";
 import userBlogsLogic from "../logic/userBlogsLogic";
 import { UserBlog } from '../objects/userblog';
 import NavLink from "../ReusableComponents/NavLink";
@@ -9,7 +11,7 @@ import subdomainLogic from '../logic/subdomainLogic';
 export default function BlogsList() {
 
     const { blogs } = useValues(userBlogsLogic());
-    const { setSubdomain } = useActions(subdomainLogic);
+    const { setSubdomain } = useActions(subdomainLogic)
 
     function handleBlogChange(subdomain: string) {
         setSubdomain(subdomain, null, true);
@@ -19,9 +21,9 @@ export default function BlogsList() {
 
 
         <div className='blog-list-heading'>
-            <div className="blogs-list-title">Your Blogs</div>
-            <div className="blog-create">
-                <NavLink href="/console/new" className="button medium">
+            <div className="blogs-list-title">
+                Your Blogs
+            <NavLink href="/console/new" className="button medium blog-create">
                     Create New Blog
                 </NavLink>
             </div>
@@ -33,7 +35,7 @@ export default function BlogsList() {
                     return <NavLink
                         key={blog.id}
                         href={"/console/" + blog.subdomain}
-                        onClick={() => {handleBlogChange(blog.subdomain)}}
+                        onClick={() => handleBlogChange(blog.subdomain)}
                         className={"blog-card" + (blog.type === BlogType.DEV ? " dev" : "")}
                     >
 
