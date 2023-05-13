@@ -18,7 +18,10 @@ export default class CodeBlock {
         this.dom.className = "code-wrap";
 
         this.createToolbar();
+        
         this.updateFromAttrs();
+
+        // Append the message after the code-editor
 
         const codemirrorWrap = document.createElement("div");
         this.dom.appendChild(codemirrorWrap);
@@ -40,6 +43,20 @@ export default class CodeBlock {
             autoCloseTags: true,
             extraKeys: this.codeMirrorKeymap(),
         });
+
+        const message = document.createElement("div");
+        message.className = "code-toolbar-quit-message";
+        message.innerHTML = "<p>SHIFT + Enter to exit</p>";
+        message.style.opacity = 10;
+        this.cm.getWrapperElement().appendChild(message);
+
+        this.cm.on("focus", () => {
+            message.style.opacity = 1;
+          });
+
+        this.cm.on("blur", () => {
+            message.style.opacity = 0;  
+          });
 
         //this.createLanguageSelector();
 
@@ -199,6 +216,7 @@ export default class CodeBlock {
     stopEvent() {
         return true;
     }
+
 
     createToolbar() {
         const _self = this;

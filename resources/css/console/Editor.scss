@@ -176,6 +176,14 @@ $prosemirror-selected-outline: 3px solid #299af3;
             }
         }
     }
+    .code-toolbar-quit-message {
+        position: absolute;
+        bottom: 0;
+        right: 0;
+        font-size: 10px;
+        padding-right: 10px;
+        color: $color-text-light;
+    }
 }
     
 
