@@ -1,7 +1,5 @@
 import React, { useRef } from 'react'
 import { useActions, useValues } from "kea";
-import React from 'react'
-import { useActions, useValues } from "kea";
 import userBlogsLogic from "../logic/userBlogsLogic";
 import { UserBlog } from '../objects/userblog';
 import NavLink from "../ReusableComponents/NavLink";
