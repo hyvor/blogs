@@ -11,7 +11,7 @@ export interface IDKeyedUsers {
     [key: number]: User
 }
 
-const usersLogic = kea<usersLogicType<IDKeyedUsers>>([
+const usersLogic = kea<usersLogicType>([
 
     props({} as {subdomain: string}),
     key((props) => props.subdomain),

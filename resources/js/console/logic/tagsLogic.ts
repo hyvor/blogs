@@ -10,7 +10,7 @@ export interface IDKeyedTags {
     [key: number]: Tag
 }
 
-const tagsLogic = kea<tagsLogicType<IDKeyedTags>>([
+const tagsLogic = kea<tagsLogicType>([
 
     props({} as {subdomain: string}),
     key((props) => props.subdomain),
