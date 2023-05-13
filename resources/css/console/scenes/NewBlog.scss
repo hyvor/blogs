@@ -1,10 +1,26 @@
+@import '../../colors.scss';
+
+:root {
+    --color-accent-very-light: #{$color-accent-very-light};
+    --text-color: #{$color-black};
+  }
+  
+[data-theme="dark"] {
+    --color-accent-very-light: #{$color-accent-very-light-dark};
+    --text-color: #{$color-white};
+}
+
 .new-blog-scene {
 
     .popup-wrap {
-        background-color: $color-accent-very-light !important;
+        background-color: var(--color-accent-very-light) !important;
         .popup {
             position:relative;
         }
+    }
+
+    .box-style {
+        color: var(--text-color);
     }
 
     .back-button {
@@ -22,6 +38,10 @@
         .subdomain-rules {
             font-size:12px;
         }
+    }
+
+    button {
+        color: var(--text-color)!important;
     }
 
 }
