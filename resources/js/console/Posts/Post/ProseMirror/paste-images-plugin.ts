@@ -19,7 +19,7 @@ export default function pasteImagesPlugin() {
                 content.descendants((node) => {
                     if (node.type.name === 'image') {
                         // Do not upload images that are already hosted on the blog
-                        const blogUrl = getBlogUrl(getSubdomain(), '') + 'media';
+                        const blogUrl = getBlogUrl(getSubdomain(), 'media');
                         if (node.attrs.src.startsWith(blogUrl))
                             return;
 
