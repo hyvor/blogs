@@ -49,7 +49,7 @@ export default class CustomHtml {
         const message = document.createElement("div");
         message.className = "code-toolbar-quit-message";
         message.innerHTML = "<p>SHIFT + Enter to exit</p>";
-        message.style.opacity = 10;
+        message.style.opacity = 0;
         this.cm.getWrapperElement().appendChild(message);
 
         this.cm.on("focus", () => {
