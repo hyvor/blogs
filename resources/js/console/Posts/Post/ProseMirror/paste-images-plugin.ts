@@ -4,6 +4,7 @@ import {Plugin} from "prosemirror-state";
 import mediaLogic from "../../../logic/mediaLogic";
 import getSubdomain from "../../../logic-helpers/subdomain";
 import {Media} from "../../../types";
+import { getBlogUrl } from "../../../lib/blog-helpers";
 
 export default function pasteImagesPlugin() {
 
@@ -17,10 +18,14 @@ export default function pasteImagesPlugin() {
 
                 content.descendants((node) => {
                     if (node.type.name === 'image') {
+                        // Do not upload images that are already hosted on the blog
+                        const blogUrl = getBlogUrl(getSubdomain(), 'media');
+                        if (node.attrs.src.startsWith(blogUrl))
+                            return;
+
                         images.push(node.attrs.src);
                     }
                 });
-
                 setTimeout(() => {
                     uploadAndReplaceImages(images, view);
                 }, 100);
