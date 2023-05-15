@@ -7,7 +7,7 @@
     --color-accent-light: #{$color-accent-light};
     --color-hover: #{$color-hover};
     --color-accent-active: #{$color-accent-active};
-    --color-text: #{$color-text-white};
+    --color-text-input: #{$color-text-white};
   }
   
 [data-theme="dark"] {
@@ -17,7 +17,7 @@
     --color-accent-light: #{$color-accent-light-dark};
     --color-hover: #{$color-hover-dark};
     --color-accent-active: #{$color-accent-active-dark};
-    --color-text: #{$color-text-white-dark};
+    --color-text-input: #{$color-text-white-dark};
 }
 
 a.link, span.link {
@@ -48,7 +48,7 @@ a.link, span.link {
 .input {
     @include mixin-input;
     background-color: var(--color-input);
-    color: var(--color-text);
+    color: var(--color-text-input);
 }
 textarea.input {
     resize:vertical;
