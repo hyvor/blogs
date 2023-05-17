@@ -4,16 +4,35 @@ import {consoleTest} from "./consoleTest.ts";
 
 test.describe('settings', () => {
 
-    consoleTest('General: blog renaming', async ({testingApi, console, page}) => {
+    consoleTest('General', async ({testingApi, console, page}) => {
         await testingApi.factory.blogFull();
         await console.visitAndNav('settings');
 
         await expect(page.getByText('General Settings')).toBeVisible();
 
-        await page.locator('#input-name').click();
         await page.locator('#input-name').fill('MyAwesome Blog');
+
+        await page.locator('#input-description').fill('MyAwesomeDescription');
+
+        await page.locator('#input-blog-facebook').fill('facebook');
+        await page.locator('#input-blog-twitter').fill('twitter');
+        await page.locator('#input-blog-linkedin').fill('linkedin');
+        await page.locator('#input-blog-youtube').fill('youtube');
+        await page.locator('#input-blog-tiktok').fill('tiktok');
+        await page.locator('#input-blog-instagram').fill('instagram');
+        await page.locator('#input-github').fill('github');
+
         await page.getByRole('button', { name: 'SAVE' }).click();
+
         await expect(page.locator('#input-name')).toHaveValue('MyAwesome Blog');
+        await expect(page.locator('#input-description')).toHaveValue('MyAwesomeDescription');
+        await expect(page.locator('#input-blog-facebook')).toHaveValue('facebook');
+        await expect(page.locator('#input-blog-twitter')).toHaveValue('twitter');
+        await expect(page.locator('#input-blog-linkedin')).toHaveValue('linkedin');
+        await expect(page.locator('#input-blog-youtube')).toHaveValue('youtube');
+        await expect(page.locator('#input-blog-tiktok')).toHaveValue('tiktok');
+        await expect(page.locator('#input-blog-instagram')).toHaveValue('instagram');
+        await expect(page.locator('#input-github')).toHaveValue('github');
     });
 
     consoleTest('Users: adding blog user', async ({testingApi, console, page}) => {
