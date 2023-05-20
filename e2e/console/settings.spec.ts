@@ -33,6 +33,7 @@ test.describe('settings', () => {
         await page.locator('#input-name').fill('EnglishBlog');
         await page.locator('#input-description').fill('EnglishDescription');
         await page.getByRole('button', { name: 'SAVE' }).click();
+        await page.reload();
 
         // Test main language
         await expect(page.locator('#input-name')).toHaveValue('MyAwesome Blog');
