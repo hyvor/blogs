@@ -30,6 +30,7 @@ All the following requirements should be met in order to publish a theme to our 
 * `<html lang="{{ _lang.code }}"` is added
 * Configurations are added for colors, fonts, etc. See [Config](#config) section.
 * Configuration definitions (`config.def.yaml`) are added. See [Configuration -> Config Definitions](themes-config#config-def) page. Use the <a href="/config" target="_blank">config tool</a> to validate `config.def.yaml`.
+* YAML files should use 2 spaces per indentation (not tabs, not 4 spaces).
 * Mobile responsive
 * Featured posts may have some unique UI in the index page (ex: a pinned/star icon)
 * Content Styles:
