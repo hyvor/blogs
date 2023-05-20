@@ -23,6 +23,7 @@ test.describe('settings', () => {
         await page.locator('#input-github').fill('github');
 
         await page.getByRole('button', { name: 'SAVE' }).click();
+        await page.reload();
 
         await expect(page.locator('#input-name')).toHaveValue('MyAwesome Blog');
         await expect(page.locator('#input-description')).toHaveValue('MyAwesomeDescription');
