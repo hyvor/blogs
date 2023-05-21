@@ -162,7 +162,7 @@ class TemplateRenderer
                 '_featured_posts' => PostRepository::getPostsWithFilterQ(
                     blog: $this->pathMatcher->blog,
                     language: $this->pathMatcher->language,
-                    filter: $this->filter,
+                    filter: 'is_featured=true',
                     limit: 30 // hard limit - who has 30 featured posts?
                 )->collection,
             ];
