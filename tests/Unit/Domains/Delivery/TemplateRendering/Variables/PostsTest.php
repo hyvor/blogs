@@ -172,7 +172,7 @@ it('sets featured posts', function() {
     $post = $blog->posts[2];
     $post->update(['is_featured' => true]);
 
-    $content = '{{ _featured_posts[0].id }}';
+    $content = '{{ _featured_posts[0].title }}';
 
     ThemeFilesRepository::createOrUpdateFile(
         $blog,
@@ -184,6 +184,6 @@ it('sets featured posts', function() {
     $pathMatcher = new PathMatcher($blog, '/');
     $responseObject = $pathMatcher->getResponseObject();
 
-    expect($responseObject->content)->toBe((string) $post->id);
+    expect($responseObject->content)->toBe($post->variants[0]->title);
 
 });

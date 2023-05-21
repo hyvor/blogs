@@ -164,7 +164,11 @@ class TemplateRenderer
                     language: $this->pathMatcher->language,
                     filter: 'is_featured=true',
                     limit: 30 // hard limit - who has 30 featured posts?
-                )->collection,
+                )
+                    ->collection
+                    ->map(
+                        fn ($post) => new PostObject($post, $this->pathMatcher->blog, $this->pathMatcher->language)
+                    )
             ];
         } elseif (
             (
