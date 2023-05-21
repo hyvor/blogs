@@ -20,12 +20,13 @@ export default class CustomHtml {
         this.dom.className = 'code-wrap';
         
         const topbar = document.createElement("div");
-        topbar.className = 'topbar'
+        topbar.className = 'topbar';
         topbar.innerHTML = 'Custom HTML/Twig';
         this.dom.appendChild(topbar);
 
         const codemirrorWrap = document.createElement("div");
-        this.dom.appendChild(codemirrorWrap)
+        this.dom.appendChild(codemirrorWrap);
+        
 
         // Create a CodeMirror instance
         this.cm = new CodeMirror(codemirrorWrap, {
@@ -43,7 +44,21 @@ export default class CustomHtml {
             autoCloseBrackets: true,
             autoCloseTags: true,
             extraKeys: this.codeMirrorKeymap(),
-        })
+        });
+
+        const message = document.createElement("div");
+        message.className = "code-toolbar-quit-message";
+        message.innerHTML = "<p>SHIFT + Enter to exit</p>";
+        message.style.opacity = 0;
+        this.cm.getWrapperElement().appendChild(message);
+
+        this.cm.on("focus", () => {
+            message.style.opacity = 1;
+          });
+
+        this.cm.on("blur", () => {
+            message.style.opacity = 0;  
+          });
 
         //this.createLanguageSelector();
 
