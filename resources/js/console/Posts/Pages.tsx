@@ -9,6 +9,7 @@ import PostsListRow from './PostsListRow';
 import NoPost from './NoPost';
 import getSubdomain from "../logic-helpers/subdomain";
 import { Table, TableHead } from '../ReusableComponents/Table';
+import ActionButton from '../ReusableComponents/ActionButton';
 
 export default function Pages({ postId }: { postId: number | undefined }) {
 
@@ -17,8 +18,13 @@ export default function Pages({ postId }: { postId: number | undefined }) {
     const { pagesList, loadPagesListAjax } = useValues(pagesLogicInst);
     const { createPage } = useActions(pagesLogicInst)
 
+    const [newPageClick, setNewPageClick] = React.useState(false);
+
     function handleNew() {
+        setNewPageClick(true);
         createPage();
+        // Handle loading time
+        setTimeout(() => setNewPageClick(false), 2000);
     }
 
     return <div className="posts-view">
@@ -31,10 +37,15 @@ export default function Pages({ postId }: { postId: number | undefined }) {
                         <div>
                             Pages
                         </div>
-                        <button
-                            className="button small new-post-button"
-                            onClick={handleNew}
-                        >+ New</button>
+                        <ActionButton 
+                            className="medium new-post-button"
+                            status={newPageClick ? 'loading' : 'stale'}
+                            staleName="+ New"
+                            loadingName="Creating" 
+                            successName="Created"
+                            errorName="Try again"
+                            staleOnClick={handleNew}
+                        /> 
                     </div>
                     <div className="posts-list box-content">
                         {
