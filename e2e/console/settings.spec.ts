@@ -2,7 +2,7 @@ import { expect, test } from "@playwright/test";
 import {consoleTest} from "./consoleTest.ts";
 
 
-test.describe('settings', () => {
+test.describe('Settings', () => {
 
     consoleTest('General', async ({testingApi, console, page}) => {
 
@@ -52,28 +52,39 @@ test.describe('settings', () => {
         await expect(page.locator('#input-description')).toHaveValue('EnglishDescription');
     });
 
-    consoleTest('Users: adding blog user', async ({testingApi, console, page}) => {
-        await testingApi.factory.blogFull();
-        await console.visitAndNav('settings');
-        await page.getByRole('link', { name: 'Users' }).click();
-        await page.getByRole('button', { name: 'Add' }).click();
-        await page.getByText('Guest User').click();
-        await page.getByLabel('Name').click();
-        await page.getByLabel('Name').fill('test');
-        await page.getByRole('button', { name: 'Create', exact: true }).click();
-        await expect(page.getByText('testtestGUEST0')).toBeVisible();
-    });
+    test.describe('Languages', () => {
+        consoleTest.beforeEach(async ({testingApi, console, page}) => {
+            const blog = await testingApi.factory.blogFull();
+            await testingApi.factory.language({blog_id: blog.blog.id, name: 'English', code: 'en', is_primary: false});
+            await console.visitAndNav('settings');
+            await page.getByRole('link', { name: 'Languages' }).click();
+          });
+          
+        consoleTest('Adding language', async ({testingApi, console, page}) => {
+            await page.getByRole('button', { name: 'New' }).click();
+            await page.getByPlaceholder('English').fill('french');
+            await page.getByPlaceholder('English').press('Tab');
+            await page.getByPlaceholder('en', { exact: true }).fill('fr');
+            await page.getByRole('button', { name: 'Add' }).click();
+            await expect(page.getByText('french')).toBeVisible();
+        });
 
-    consoleTest('Adding language', async ({testingApi, console, page}) => {
-        await testingApi.factory.blogFull();
-        await console.visitAndNav('settings');
-        await page.getByRole('link', { name: 'Languages' }).click();
-        await page.getByRole('button', { name: 'New' }).click();
-        await page.getByPlaceholder('English').fill('french');
-        await page.getByPlaceholder('English').press('Tab');
-        await page.getByPlaceholder('en', { exact: true }).fill('fr');
-        await page.getByRole('button', { name: 'Add' }).click();
-        await expect(page.getByText('french')).toBeVisible();
-    });
+        consoleTest('Editing language', async ({testingApi, console, page}) => {
+            await page.getByRole('button').nth(3).click();
+            await page.getByPlaceholder('English').fill('French');
+            await page.getByPlaceholder('en', { exact: true }).click();
+            await page.getByPlaceholder('en', { exact: true }).fill('fr');
+            await page.getByRole('button', { name: 'Update' }).click();
+            await expect(page.getByText('french')).toBeVisible();
+        });
+
+        consoleTest('Deleting language', async ({testingApi, console, page}) => {await page.getByRole('button').nth(4).click();
+            await page.getByPlaceholder('Type language code').click();
+            await page.getByPlaceholder('Type language code').fill('en');
+            await page.getByRole('button', { name: 'Delete' }).click();
+            await expect(page.getByText('English')).not.toBeVisible();
+        });
+    })
+
 
 });
