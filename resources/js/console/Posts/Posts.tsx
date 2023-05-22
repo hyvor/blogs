@@ -43,9 +43,7 @@ export default function Posts({ postId }: { postId: number | undefined }) {
 
     function handleNew() {
         setNewPostClick(true);
-        createPost();
-        // Handle loading time
-        setTimeout(() => setNewPostClick(false), 2000);
+        createPost(setNewPostClick);
     }
 
 

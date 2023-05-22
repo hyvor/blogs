@@ -22,9 +22,7 @@ export default function Pages({ postId }: { postId: number | undefined }) {
 
     function handleNew() {
         setNewPageClick(true);
-        createPage();
-        // Handle loading time
-        setTimeout(() => setNewPageClick(false), 2000);
+        createPage(setNewPageClick);
     }
 
     return <div className="posts-view">
