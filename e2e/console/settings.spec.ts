@@ -143,7 +143,11 @@ test.describe('Settings', () => {
           });
 
           consoleTest('Allow indexing switch', async ({testingApi, console, page}) => {
-            
+            await page.getByTestId('switch').locator('div').nth(2).click();
+            await page.getByRole('button', { name: 'SAVE' }).click();
+            await page.reload();
+
+            await expect(page.getByText('Search engines won\'t index your blog!')).toBeVisible();
         });
     });
 
