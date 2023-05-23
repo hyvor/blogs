@@ -134,5 +134,17 @@ test.describe('Settings', () => {
         });
     });
 
+    test.describe('SEO', () => {
+
+        consoleTest.beforeEach(async ({testingApi, console, page}) => {
+            await testingApi.factory.blogFull();
+            await console.visitAndNav('settings');
+            await page.getByRole('link', { name: 'SEO' }).click();
+          });
+
+          consoleTest('Allow indexing switch', async ({testingApi, console, page}) => {
+            
+        });
+    });
 
 });
