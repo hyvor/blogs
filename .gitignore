@@ -21,6 +21,7 @@ yarn-error.log
 /.vscode
 *LogicType.ts
 migrationChecksum.txt
+ignore
 
 /cypress/screenshots/
 cypress/videos/
