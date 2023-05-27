@@ -169,4 +169,31 @@ test.describe('Settings', () => {
 
     });
 
+    test.describe('Comments & Newsletter', () => {
+
+        consoleTest.beforeEach(async ({testingApi, console, page}) => {
+            await testingApi.factory.blogFull();
+            await console.visitAndNav('settings');
+            await page.getByRole('link', { name: 'Comments & Newsletter' }).click();
+          });
+
+        consoleTest('Comments Embed Code', async ({testingApi, console, page}) => {
+            await page.locator('.CodeMirror-lines').first().click();
+            await page.getByRole('textbox').first().fill('Test code');
+            await page.getByRole('button', { name: 'SAVE' }).click();
+            await page.reload();
+
+            await expect(page.getByText('Test code')).toBeVisible();
+        });
+
+        consoleTest('Newsletter Singup Form Code', async ({testingApi, console, page}) => {
+            await page.locator('pre').nth(3).click();
+            await page.getByRole('textbox').nth(1).fill('Test code2');
+            await page.getByRole('button', { name: 'SAVE' }).click();
+            await page.reload();
+
+            await expect(page.getByText('Test code2')).toBeVisible();
+        });
+    });
+
 });
