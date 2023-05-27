@@ -169,6 +169,75 @@ test.describe('Settings', () => {
 
     });
 
+    test.describe('Navigation', () => {
+
+        consoleTest.beforeEach(async ({testingApi, console, page}) => {
+            await testingApi.factory.blogFull();
+            await console.visitAndNav('settings');
+            await page.getByRole('link', { name: 'Navigation' }).click();
+          });
+
+        consoleTest('Add Header Navigation', async ({testingApi, console, page}) => {
+            await page.getByRole('button', { name: 'Create', exact: true }).click();
+            await page.getByPlaceholder('About us').fill('Header');
+            await page.getByPlaceholder('/about').click();
+            await page.getByPlaceholder('/about').fill('/google.fr');
+            await page.getByRole('button', { name: 'Create' }).nth(2).click();
+
+            await expect(page.getByText('Header/google.fr')).toBeVisible();
+        });
+
+        consoleTest('Add Footer Navigation', async ({testingApi, console, page}) => {
+            await page.getByRole('button', { name: 'Create', exact: true }).click();
+            await page.getByPlaceholder('About us').fill('Footer');
+            await page.getByPlaceholder('/about').click();
+            await page.getByPlaceholder('/about').fill('/google.fr');
+            await page.locator('.input-view > .react-select > .react-select__control > .react-select__value-container > .react-select__input-container').click();
+            await page.getByText('Footer', { exact: true }).click();
+            await page.getByRole('button', { name: 'Create' }).nth(2).click();
+
+            await expect(page.getByText('Footer/google.fr')).toBeVisible();
+        });
+
+        consoleTest('Edit Navigation (from Footer to Header)', async ({testingApi, console, page}) => {
+            await page.getByRole('button', { name: 'Create', exact: true }).click();
+            await page.getByPlaceholder('About us').fill('Footer');
+            await page.getByPlaceholder('/about').click();
+            await page.getByPlaceholder('/about').fill('/google.fr');
+            await page.locator('.input-view > .react-select > .react-select__control > .react-select__value-container > .react-select__input-container').click();
+            await page.getByText('Footer', { exact: true }).click();
+            await page.getByRole('button', { name: 'Create' }).nth(2).click();
+            // Wait few time for the creation
+            await page.waitForTimeout(1000);
+
+            await page.getByRole('button').nth(2).click();
+            await page.getByPlaceholder('About us').click();
+            await page.getByPlaceholder('About us').fill('Header');
+            await page.locator('.input-view > .react-select > .react-select__control > .react-select__value-container > .react-select__input-container').click();
+            await page.getByText('Header', { exact: true }).click();
+            await page.getByRole('button', { name: 'Update' }).click();
+
+            await expect(page.getByText('Header/google.fr')).toBeVisible();
+        });
+
+        consoleTest('Delete Navigation', async ({testingApi, console, page}) => {
+            await page.getByRole('button', { name: 'Create', exact: true }).click();
+            await page.getByPlaceholder('About us').fill('Footer');
+            await page.getByPlaceholder('/about').click();
+            await page.getByPlaceholder('/about').fill('/google.fr');
+            await page.locator('.input-view > .react-select > .react-select__control > .react-select__value-container > .react-select__input-container').click();
+            await page.getByText('Footer', { exact: true }).click();
+            await page.getByRole('button', { name: 'Create' }).nth(2).click();
+            // Wait few time for the creation
+            await page.waitForTimeout(1000);
+
+            await page.getByRole('button').nth(3).click();
+            await page.getByRole('button', { name: 'Delete' }).click();
+
+            await expect(page.getByText('Footer/google.fr')).not.toBeVisible();
+        });
+    });
+
     test.describe('Comments & Newsletter', () => {
 
         consoleTest.beforeEach(async ({testingApi, console, page}) => {
