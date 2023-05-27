@@ -298,6 +298,54 @@ test.describe('Settings', () => {
         });
     });
 
+    test.describe('Redirects', () => {
+
+        consoleTest.beforeEach(async ({testingApi, console, page}) => {
+            await testingApi.factory.blogFull();
+            await console.visitAndNav('settings');
+            await page.getByRole('link', { name: 'Redirects' }).click();
+          });
+
+        consoleTest('Add Redirect', async ({testingApi, console, page}) => {
+            await page.getByRole('button', { name: 'Create', exact: true }).click();
+            await page.getByPlaceholder('/welcome').fill('/welcome');
+            await page.getByPlaceholder('https://hyvor.com').fill('https://www.google.com/');
+            await page.getByRole('button', { name: 'Create' }).nth(2).click();
+
+            await expect(page.getByText('/welcome')).toBeVisible();
+        });
+
+        consoleTest('Edit Redirect', async ({testingApi, console, page}) => {
+            await page.getByRole('button', { name: 'Create', exact: true }).click();
+            await page.getByPlaceholder('/welcome').fill('/welcome');
+            await page.getByPlaceholder('https://hyvor.com').fill('https://www.google.com/');
+            await page.getByRole('button', { name: 'Create' }).nth(2).click();
+            // Wait few time for the creation
+            await page.waitForTimeout(1000);
+
+            await page.getByRole('button').nth(2).click();
+            await page.getByPlaceholder('/welcome').fill('/youtube');
+            await page.getByPlaceholder('https://hyvor.com').fill('https://www.youtube.com/');
+            await page.getByRole('button', { name: 'Create' }).nth(2).click();
+
+            await expect(page.getByText('/youtube')).toBeVisible();
+        });
+
+        consoleTest('Delete Redirect', async ({testingApi, console, page}) => {
+            await page.getByRole('button', { name: 'Create', exact: true }).click();
+            await page.getByPlaceholder('/welcome').fill('/welcome');
+            await page.getByPlaceholder('https://hyvor.com').fill('https://www.google.com/');
+            await page.getByRole('button', { name: 'Create' }).nth(2).click();
+            // Wait few time for the creation
+            await page.waitForTimeout(1000);
+
+            await page.getByRole('button').nth(3).click();
+            await page.getByRole('button', { name: 'Delete' }).click();
+
+            await expect(page.getByText('/welcome')).not.toBeVisible();
+        });
+    });
+
     test.describe('Comments & Newsletter', () => {
 
         consoleTest.beforeEach(async ({testingApi, console, page}) => {
