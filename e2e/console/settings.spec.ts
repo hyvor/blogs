@@ -1,5 +1,6 @@
 import { expect, test } from "@playwright/test";
 import {consoleTest} from "./consoleTest.ts";
+import path from 'path';
 
 
 test.describe('Settings', () => {
@@ -276,6 +277,24 @@ test.describe('Settings', () => {
             await page.getByRole('button', { name: 'Delete' }).click();
 
             await expect(page.getByText('Footer/google.fr')).not.toBeVisible();
+        });
+    });
+
+    test.describe('Media', () => {
+
+        consoleTest.beforeEach(async ({testingApi, console, page}) => {
+            await testingApi.factory.blogFull();
+            await console.visitAndNav('settings');
+            await page.getByRole('link', { name: 'Media' }).click();
+          });
+
+        consoleTest('Upload File', async ({testingApi, console, page}) => {
+            await page.getByRole('button', { name: 'Upload', exact: true }).click();
+            const cwd = process.cwd();
+            await page.locator('input[type=file]').first().setInputFiles(cwd +'/e2e/baseTest.ts');
+            await page.getByRole('button', { name: 'Upload' }).click();
+
+            await expect(page.getByText('baseTest.ts')).toBeVisible();
         });
     });
 
