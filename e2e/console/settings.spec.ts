@@ -142,13 +142,31 @@ test.describe('Settings', () => {
             await page.getByRole('link', { name: 'SEO' }).click();
           });
 
-          consoleTest('Allow indexing switch', async ({testingApi, console, page}) => {
+        consoleTest('Allow indexing switch', async ({testingApi, console, page}) => {
             await page.getByTestId('switch').locator('div').nth(2).click();
             await page.getByRole('button', { name: 'SAVE' }).click();
             await page.reload();
 
             await expect(page.getByText('Search engines won\'t index your blog!')).toBeVisible();
         });
+
+        consoleTest('External links type radio', async ({testingApi, console, page}) => {
+            await page.locator('label').filter({ hasText: 'Nofollow' }).locator('span').nth(1).click();
+            await page.getByRole('button', { name: 'SAVE' }).click();
+            await page.reload();
+
+            await expect(page.locator('label').filter({ hasText: 'Nofollow' }).locator('span').nth(1)).toBeChecked();
+        });
+
+        consoleTest('Robot.txt custom', async ({testingApi, console, page}) => {
+            await page.locator('pre').filter({ hasText: 'Disallow: /p/' }).click();
+            await page.getByRole('textbox').fill('test');
+            await page.getByRole('button', { name: 'SAVE' }).click();
+            await page.reload();
+
+            await expect(page.locator('pre').filter({ hasText: 'Disallow: /p/' })).toHaveText('Disallow: /p/test');
+        });
+
     });
 
 });
