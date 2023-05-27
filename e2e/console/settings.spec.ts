@@ -169,6 +169,47 @@ test.describe('Settings', () => {
 
     });
 
+    test.describe('Light & Dark Modes', () => {
+
+        consoleTest.beforeEach(async ({testingApi, console, page}) => {
+            await testingApi.factory.blogFull();
+            await console.visitAndNav('settings');
+            await page.getByRole('link', { name: 'Light & Dark modes' }).click();
+          });
+
+        consoleTest('Light color radio', async ({testingApi, console, page}) => {
+            await page.locator('div:nth-child(2) > .radio-container > .checkmark').first().click();
+            await page.getByRole('button', { name: 'SAVE' }).click();
+            await page.reload();
+
+            await expect(page.locator('div:nth-child(2) > .radio-container > .checkmark')).toBeChecked();
+        });
+
+        consoleTest('Dark color radio', async ({testingApi, console, page}) => {
+            await page.locator('label').filter({ hasText: 'Dark' }).locator('span').nth(1).click();
+            await page.getByRole('button', { name: 'SAVE' }).click();
+            await page.reload();
+
+            await expect(page.locator('label').filter({ hasText: 'Dark' }).locator('span').nth(1)).toBeChecked();
+        });
+
+        consoleTest('Default color mode light radio', async ({testingApi, console, page}) => {
+            await page.locator('div:nth-child(3) > .dual-right > div > div:nth-child(2) > .radio-container > .checkmark').click();
+            await page.getByRole('button', { name: 'SAVE' }).click();
+            await page.reload();
+
+            await expect(page.locator('div:nth-child(3) > .dual-right > div > div:nth-child(2) > .radio-container > .checkmark')).toBeChecked();
+        });
+
+        consoleTest('Default color mode dark radio', async ({testingApi, console, page}) => {
+            await page.locator('div:nth-child(3) > .dual-right > div > div:nth-child(3) > .radio-container > .checkmark').click();
+            await page.getByRole('button', { name: 'SAVE' }).click();
+            await page.reload();
+
+            await expect(page.locator('div:nth-child(3) > .dual-right > div > div:nth-child(3) > .radio-container > .checkmark')).toBeChecked();
+        });
+    });
+
     test.describe('Navigation', () => {
 
         consoleTest.beforeEach(async ({testingApi, console, page}) => {
