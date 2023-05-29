@@ -346,6 +346,60 @@ test.describe('Settings', () => {
         });
     });
 
+    test.describe('Routes', () => {
+        consoleTest.beforeEach(async ({testingApi, console, page}) => {
+            await testingApi.factory.blogFull();
+            await console.visitAndNav('settings');
+            await page.getByRole('link', { name: 'Routes' }).click();
+          });
+
+          consoleTest('Add Route', async ({testingApi, console, page}) => {
+            await page.getByRole('button', { name: 'Create', exact: true }).click();
+            await page.getByPlaceholder('New Route').fill('TestRoute');
+            await page.getByPlaceholder('/path').fill('/path');
+            await page.getByPlaceholder('template').fill('template');
+            await page.getByPlaceholder('A FilterQ expression...').fill('exp');
+            await page.getByPlaceholder('text/html').fill('text/html');
+            await page.getByRole('button', { name: 'Create' }).nth(2).click();
+
+            // TODO: create issue that the create modal does not close
+            await expect(page.getByText('TestRoute')).toBeVisible();
+          });
+
+          consoleTest('Modify Route', async ({testingApi, console, page}) => {
+            await page.getByRole('button', { name: 'Create', exact: true }).click();
+            await page.getByPlaceholder('New Route').fill('TestRoute');
+            await page.getByPlaceholder('/path').fill('/path');
+            await page.getByPlaceholder('template').fill('template');
+            await page.getByPlaceholder('A FilterQ expression...').fill('exp');
+            await page.getByPlaceholder('text/html').fill('text/html');
+            await page.getByRole('button', { name: 'Create' }).nth(2).click();
+            await page.reload();
+
+            await page.getByRole('button').nth(2).click();
+            await page.getByPlaceholder('/path').fill('/newPath');
+            await page.getByRole('button', { name: 'Update' }).click();
+
+            await expect(page.getByText('/newPath')).toBeVisible();
+          });
+
+            consoleTest('Delete Route', async ({testingApi, console, page}) => {
+                await page.getByRole('button', { name: 'Create', exact: true }).click();
+                await page.getByPlaceholder('New Route').fill('TestRoute');
+                await page.getByPlaceholder('/path').fill('/path');
+                await page.getByPlaceholder('template').fill('template');
+                await page.getByPlaceholder('A FilterQ expression...').fill('exp');
+                await page.getByPlaceholder('text/html').fill('text/html');
+                await page.getByRole('button', { name: 'Create' }).nth(2).click();
+                await page.reload();
+
+                await page.getByRole('button').nth(3).click();
+                await page.getByRole('button', { name: 'Delete' }).click();
+
+                await expect(page.getByText('TestRoute')).not.toBeVisible();
+            });
+    });
+
     test.describe('Comments & Newsletter', () => {
 
         consoleTest.beforeEach(async ({testingApi, console, page}) => {
