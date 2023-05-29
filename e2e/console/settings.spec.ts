@@ -383,21 +383,64 @@ test.describe('Settings', () => {
             await expect(page.getByText('/newPath')).toBeVisible();
           });
 
-            consoleTest('Delete Route', async ({testingApi, console, page}) => {
-                await page.getByRole('button', { name: 'Create', exact: true }).click();
-                await page.getByPlaceholder('New Route').fill('TestRoute');
-                await page.getByPlaceholder('/path').fill('/path');
-                await page.getByPlaceholder('template').fill('template');
-                await page.getByPlaceholder('A FilterQ expression...').fill('exp');
-                await page.getByPlaceholder('text/html').fill('text/html');
-                await page.getByRole('button', { name: 'Create' }).nth(2).click();
-                await page.reload();
+        consoleTest('Delete Route', async ({testingApi, console, page}) => {
+            await page.getByRole('button', { name: 'Create', exact: true }).click();
+            await page.getByPlaceholder('New Route').fill('TestRoute');
+            await page.getByPlaceholder('/path').fill('/path');
+            await page.getByPlaceholder('template').fill('template');
+            await page.getByPlaceholder('A FilterQ expression...').fill('exp');
+            await page.getByPlaceholder('text/html').fill('text/html');
+            await page.getByRole('button', { name: 'Create' }).nth(2).click();
+            await page.reload();
 
-                await page.getByRole('button').nth(3).click();
-                await page.getByRole('button', { name: 'Delete' }).click();
+            await page.getByRole('button').nth(3).click();
+            await page.getByRole('button', { name: 'Delete' }).click();
 
-                await expect(page.getByText('TestRoute')).not.toBeVisible();
-            });
+            await expect(page.getByText('TestRoute')).not.toBeVisible();
+        });
+    });
+
+    test.describe('API Keys', () => {
+
+        consoleTest.beforeEach(async ({testingApi, console, page}) => {
+            await testingApi.factory.blogFull();
+            await console.visitAndNav('settings');
+            await page.getByRole('link', { name: 'API Keys' }).click();
+          });
+
+        consoleTest('Add API Key', async ({testingApi, console, page}) => {
+            await page.getByRole('button', { name: 'Create', exact: true }).click();
+            await page.getByPlaceholder('My API Key').fill('TestApi');
+            await page.getByRole('button', { name: 'Create' }).nth(2).click();
+            await page.reload();
+
+            await expect(page.getByText('TestApi')).toBeVisible();
+        });
+
+        consoleTest('Copy API Key', async ({testingApi, console, page}) => {
+            await page.getByRole('button', { name: 'Create', exact: true }).click();
+            await page.getByPlaceholder('My API Key').fill('TestApi');
+            await page.getByRole('button', { name: 'Create' }).nth(2).click();
+            await page.reload();
+
+            await page.getByRole('button').nth(2).click();
+
+            // Check that the clipboard contains the API key and that the lenght is > 0
+            const clipboardText = await page.evaluate(() => navigator.clipboard.readText());
+            await expect(clipboardText.length).toBeGreaterThan(0);
+        });
+
+        consoleTest('Delete API Key', async ({testingApi, console, page}) => {
+            await page.getByRole('button', { name: 'Create', exact: true }).click();
+            await page.getByPlaceholder('My API Key').fill('TestApi');
+            await page.getByRole('button', { name: 'Create' }).nth(2).click();
+            await page.reload();
+
+            await page.getByRole('button').nth(3).click();
+            await page.getByRole('button', { name: 'Delete' }).click();
+
+            await expect(page.getByText('TestApi')).not.toBeVisible();
+        });
     });
 
     test.describe('Comments & Newsletter', () => {
