@@ -425,7 +425,6 @@ test.describe('Settings', () => {
 
             await page.getByRole('button').nth(2).click();
 
-            // Check that the clipboard contains the API key and that the lenght is > 0
             const clipboardText = await page.evaluate(() => navigator.clipboard.readText());
             await expect(clipboardText.length).toBeGreaterThan(0);
         });
@@ -440,6 +439,73 @@ test.describe('Settings', () => {
             await page.getByRole('button', { name: 'Delete' }).click();
 
             await expect(page.getByText('TestApi')).not.toBeVisible();
+        });
+    });
+
+    test.describe('Webhooks', () => {
+
+        consoleTest.beforeEach(async ({testingApi, console, page}) => {
+            await testingApi.factory.blogFull();
+            await console.visitAndNav('settings');
+            await page.getByRole('link', { name: 'Webhooks' }).click();
+          });
+
+        consoleTest('Add Webhook', async ({testingApi, console, page}) => {
+            await page.getByRole('button', { name: 'Create', exact: true }).click();
+            await page.getByPlaceholder('Webhook URL').click({
+              modifiers: ['Control']
+            });
+            await page.getByPlaceholder('Webhook URL').fill('https://www.google.com/');
+            await page.getByText('cache.single').click();
+            await page.getByText('cache.templates').click();
+            await page.getByText('cache.all').click();
+            await page.getByRole('button', { name: 'Create' }).nth(2).click();
+            await page.reload();
+
+            await expect(page.getByText('https://www.google.com/')).toBeVisible();
+
+            await page.getByRole('button').nth(2).click();
+
+            const clipboardText = await page.evaluate(() => navigator.clipboard.readText());
+            await expect(clipboardText.length).toBeGreaterThan(0);
+        });
+
+        consoleTest('Edit Webhook', async ({testingApi, console, page}) => {
+            await page.getByRole('button', { name: 'Create', exact: true }).click();
+            await page.getByPlaceholder('Webhook URL').click({
+              modifiers: ['Control']
+            });
+            await page.getByPlaceholder('Webhook URL').fill('https://www.google.com/');
+            await page.getByText('cache.single').click();
+            await page.getByText('cache.templates').click();
+            await page.getByText('cache.all').click();
+            await page.getByRole('button', { name: 'Create' }).nth(2).click();
+            await page.reload();
+
+            await page.getByRole('button').nth(3).click();
+            await page.getByPlaceholder('Webhook URL').fill('https://www.youtube.com/');
+
+            await page.getByRole('button', { name: 'Update' }).click();
+
+            await expect(page.getByText('https://www.youtube.com/')).toBeVisible();
+        });
+
+        consoleTest('Delete Webhook', async ({testingApi, console, page}) => {
+            await page.getByRole('button', { name: 'Create', exact: true }).click();
+            await page.getByPlaceholder('Webhook URL').click({
+              modifiers: ['Control']
+            });
+            await page.getByPlaceholder('Webhook URL').fill('https://www.google.com/');
+            await page.getByText('cache.single').click();
+            await page.getByText('cache.templates').click();
+            await page.getByText('cache.all').click();
+            await page.getByRole('button', { name: 'Create' }).nth(2).click();
+            await page.reload();
+
+            await page.getByRole('button').nth(4).click();
+            await page.getByRole('button', { name: 'Delete' }).click();
+
+            await expect(page.getByText('https://www.google.com/')).not.toBeVisible();
         });
     });
 
