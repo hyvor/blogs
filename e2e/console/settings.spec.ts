@@ -565,6 +565,8 @@ test.describe('Settings', () => {
             await page.getByRole('button', { name: 'SAVE' }).click();
             await page.reload();
             
+            // TODO: test the flashload is disabled
+            await expect(page.getByTestId('switch').locator('div').nth(1)).not.toBeChecked();
         });
         
     });
