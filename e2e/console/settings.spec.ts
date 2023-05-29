@@ -426,7 +426,7 @@ test.describe('Settings', () => {
             await page.getByRole('button').nth(2).click();
 
             const clipboardText = await page.evaluate(() => navigator.clipboard.readText());
-            await expect(clipboardText.length).toBeGreaterThan(0);
+            expect(clipboardText.length).toBeGreaterThan(0);
         });
 
         consoleTest('Delete API Key', async ({testingApi, console, page}) => {
@@ -467,7 +467,7 @@ test.describe('Settings', () => {
             await page.getByRole('button').nth(2).click();
 
             const clipboardText = await page.evaluate(() => navigator.clipboard.readText());
-            await expect(clipboardText.length).toBeGreaterThan(0);
+            expect(clipboardText.length).toBeGreaterThan(0);
         });
 
         consoleTest('Edit Webhook', async ({testingApi, console, page}) => {
@@ -534,6 +534,39 @@ test.describe('Settings', () => {
 
             await expect(page.getByText('Test code2')).toBeVisible();
         });
+    });
+
+    test.describe('Custom Code', () => {
+        
+        consoleTest.beforeEach(async ({testingApi, console, page}) => {
+            await testingApi.factory.blogFull();
+            await console.visitAndNav('settings');
+            await page.getByRole('link', { name: 'Custom Code' }).click();
+          });
+
+          consoleTest('Add head code', async ({testingApi, console, page}) => {
+            await page.getByRole('textbox').first().fill('Head code');
+            await page.getByRole('button', { name: 'SAVE' }).click();
+            await page.reload();
+
+            await expect(page.getByText('Head code')).toBeVisible();
+        });
+
+        consoleTest('Add footer code', async ({testingApi, console, page}) => {
+            await page.getByRole('textbox').nth(1).fill('Footer code');
+            await page.getByRole('button', { name: 'SAVE' }).click();
+            await page.reload();
+
+            await expect(page.getByText('Footer code')).toBeVisible();
+        });
+
+        consoleTest('Disable flashload', async ({testingApi, console, page}) => {
+            await page.getByTestId('switch').locator('div').nth(2).click();
+            await page.getByRole('button', { name: 'SAVE' }).click();
+            await page.reload();
+            
+        });
+        
     });
 
 });
