@@ -85,7 +85,26 @@ test.describe('Settings', () => {
             await page.getByRole('button', { name: 'Delete' }).click();
             await expect(page.getByText('English')).not.toBeVisible();
         });
-    })
+    });
+
+    test.describe('Tags', () => {
+
+        consoleTest.beforeEach(async ({testingApi, console, page}) => {
+            const blog = await testingApi.factory.blogFull();
+            await testingApi.factory.routes({blog_id: blog.blog.id, name: 'tag'});
+            await console.visitAndNav('settings');
+            await page.getByRole('link', { name: 'Tags' }).click();
+          });
+
+          consoleTest('Add tag', async ({testingApi, console, page}) => {
+            await page.getByRole('button', { name: 'Create', exact: true }).click();
+            await page.getByPlaceholder('Blogging').fill('TestTag');
+            await page.getByRole('button', { name: 'Create' }).nth(2).click();
+
+            await expect(page.locator('#middle').getByText('TestTag', { exact: true })).toBeVisible();
+        });
+
+    });
 
     test.describe('Hosting', () => {
 

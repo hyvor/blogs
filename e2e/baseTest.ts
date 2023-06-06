@@ -102,6 +102,10 @@ class Factory {
     async subscription(attrs = {}) {
         return await this.testingApi.callFactory('Subscription', attrs);
     }
+
+    async routes(attrs = {}) {
+        return await this.testingApi.callFactory('Route', attrs);
+    }
     
 }
 
