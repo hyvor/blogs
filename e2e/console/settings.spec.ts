@@ -545,11 +545,11 @@ test.describe('Settings', () => {
           });
 
           consoleTest('Add head code', async ({testingApi, console, page}) => {
-            await page.getByRole('textbox').first().fill('Head code');
+            await page.getByRole('textbox').first().fill('Header code');
             await page.getByRole('button', { name: 'SAVE' }).click();
             await page.reload();
 
-            await expect(page.getByText('Head code')).toBeVisible();
+            await expect(page.getByText('Header code')).toBeVisible();
         });
 
         consoleTest('Add footer code', async ({testingApi, console, page}) => {
@@ -571,4 +571,77 @@ test.describe('Settings', () => {
         
     });
 
+    test.describe('Syntax Highlighting', () => {
+        
+        consoleTest.beforeEach(async ({testingApi, console, page}) => {
+            await testingApi.factory.blogFull();
+            await console.visitAndNav('settings');
+            await page.getByRole('link', { name: 'Syntax Highlighting' }).click();
+          });
+
+          consoleTest('Disable Syntax Highlighting', async ({testingApi, console, page}) => {
+            await page.locator('.react-switch-handle').first().click();
+            await page.getByRole('button', { name: 'SAVE' }).click();
+            await page.reload();
+
+            // TODO: find a way to test the react switch
+            await expect(page.locator('.react-switch-handle').first()).not.toBeChecked();
+        });
+
+        consoleTest('Changing theme', async ({testingApi, console, page}) => {
+            await page.locator('#middle svg').nth(1).click();
+            await page.getByText('monokai', { exact: true }).click();
+            await page.getByRole('button', { name: 'SAVE' }).click();
+            await page.reload();
+
+            await expect(page.locator('div').filter({ hasText: /^monokai$/ }).nth(2)).toBeVisible();
+        });
+
+        consoleTest('Deactivate line number', async ({testingApi, console, page}) => {
+            await page.locator('div:nth-child(4) > .dual-right > span > div > .react-switch-handle').click();
+            await page.getByRole('button', { name: 'SAVE' }).click();
+            await page.reload();
+
+            // TODO: find a way to test the react switch
+            await expect(page.locator('div:nth-child(4) > .dual-right > span > div > .react-switch-handle')).not.toBeChecked();
+        });
+        
+    });
+
+    test.describe('Export', () => {
+        
+        consoleTest.beforeEach(async ({testingApi, console, page}) => {
+            await testingApi.factory.blogFull();
+            await console.visitAndNav('settings');
+            await page.getByRole('link', { name: 'Export' }).click();
+          });
+
+          consoleTest('Export data', async ({testingApi, console, page}) => {
+            await page.getByRole('button', { name: 'Export Now' }).click();
+            await page.getByRole('button', { name: 'Export Now' }).nth(1).click();
+
+            await expect(page.getByText('Hyvor Blogs JSON').first()).toBeVisible();
+        });
+        
+    });
+
+
+    test.describe('Danger', () => {
+        
+        consoleTest.beforeEach(async ({testingApi, console, page}) => {
+            await testingApi.factory.blogFull({blogAttrs: {subdomain: 'test'}});
+            await console.visitAndNav('settings');
+            await page.getByRole('link', { name: 'Danger' }).click();
+          });
+
+          consoleTest('Delete blog', async ({testingApi, console, page}) => {
+           await page.getByRole('button', { name: 'Delete Blog' }).click();
+           await page.getByPlaceholder('test').fill('test');
+           await page.getByRole('button', { name: 'Delete', exact: true }).click();
+           await page.getByRole('button', { name: 'OK' }).click(); 
+
+           await expect(page.getByRole('heading', { name: 'Multi-language blogging platform' })).toBeVisible();
+        });
+        
+    });
 });
