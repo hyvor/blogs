@@ -94,14 +94,44 @@ test.describe('Settings', () => {
             await testingApi.factory.routes({blog_id: blog.blog.id, name: 'tag'});
             await console.visitAndNav('settings');
             await page.getByRole('link', { name: 'Tags' }).click();
-          });
+        });
 
-          consoleTest('Add tag', async ({testingApi, console, page}) => {
+        consoleTest('Add tag', async ({testingApi, console, page}) => {
+        await page.getByRole('button', { name: 'Create', exact: true }).click();
+        await page.getByPlaceholder('Blogging').fill('TestTag');
+        await page.getByRole('button', { name: 'Create' }).nth(2).click();
+        
+
+        await expect(page.locator('#middle').getByText('TestTag', { exact: true })).toBeVisible();
+    });
+
+        consoleTest('Tag modification', async ({testingApi, console, page}) => {
+            // Create a tag
             await page.getByRole('button', { name: 'Create', exact: true }).click();
             await page.getByPlaceholder('Blogging').fill('TestTag');
             await page.getByRole('button', { name: 'Create' }).nth(2).click();
+            await page.waitForTimeout(1000);
 
-            await expect(page.locator('#middle').getByText('TestTag', { exact: true })).toBeVisible();
+            await page.getByRole('button').nth(2).click();
+            await page.getByLabel('Name').fill('TestTagModified');
+            await page.getByRole('button', { name: 'Update' }).click();
+            await page.reload();
+
+
+            await expect(page.locator('#middle').getByText('TestTagModified', { exact: true })).toBeVisible();
+        });
+
+        consoleTest('Tag deletion', async ({testingApi, console, page}) => {
+            // Create a tag
+            await page.getByRole('button', { name: 'Create', exact: true }).click();
+            await page.getByPlaceholder('Blogging').fill('TestTag');
+            await page.getByRole('button', { name: 'Create' }).nth(2).click();
+            await page.waitForTimeout(1000);
+
+            await page.getByRole('button').nth(3).click();
+            await page.getByRole('button', { name: 'Delete' }).click();
+
+            await expect(page.locator('#middle').getByText('TestTag', { exact: true })).not.toBeVisible();
         });
 
     });
