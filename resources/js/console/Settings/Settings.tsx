@@ -28,6 +28,7 @@ import Shopify from "./Integrations/Shopify";
 import Select from '../ReusableComponents/Select';
 import { components } from 'react-select';
 import Export from "./Export/Export";
+import Import from "./Import/Import";
 
 
 interface SettingsSelectProps {
@@ -116,6 +117,9 @@ export default function Settings({ type }: { type: string | undefined }) {
         case 'comments':
             Type = () => <Comments />
             break;
+        case 'import':
+            Type = () => <Import />
+            break;
         case 'export':
             Type = () => <Export />;
             break;
@@ -180,6 +184,8 @@ export default function Settings({ type }: { type: string | undefined }) {
                 <SettingsLink path="/highlight" name="Syntax Highlighting" pannelName={'highlight'} setPannel={setPannel} />
 
                 <div />
+
+                <SettingsLink path="/import" name="Import" pannelName={'import'} setPannel={setPannel} />
                 <SettingsLink path="/export" name="Export" pannelName={'export'} setPannel={setPannel} />
                 <SettingsLink role={UserRole.OWNER} path="/danger" pannelName={'danger'} name="Danger Zone" setPannel={setPannel} />
             </div>

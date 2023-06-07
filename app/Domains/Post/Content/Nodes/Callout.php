@@ -57,8 +57,11 @@ class Callout extends Node
             'content' => $content,
         ], $this->options['blog']);
 
+        $bg = $node->attrs->bg ?? '#f1f1ef';
+        $fg = $node->attrs->fg ?? '#000000';
+
         return [
-            'content' => "<aside style=\"background-color:{$node->attrs->bg};color:{$node->attrs->fg}\"><span>{$node->attrs->emoji}</span><div>$inside</div></aside>",
+            'content' => "<aside style=\"background-color:$bg;color:$fg\"><span>{$node->attrs->emoji}</span><div>$inside</div></aside>",
         ];
     }
 }

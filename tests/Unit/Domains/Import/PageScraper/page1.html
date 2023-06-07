@@ -1,0 +1,274 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+    <title>How to make Terraform waiting for cloud-init to finish on EC2 without SSH</title>
+    <meta name="description" content="Terraform is a powerful tool, but it doesn't have a way to wait for EC2 instances to be ready, instead of just created. We will see how to use AWS SSM to do just that.">
+    <meta name="author" content="Riccardo Padovani">
+    <link rel="canonical" href="https://rpadovani.com/terraform-cloudinit">
+
+    <meta itemprop="name" content="How to make Terraform waiting for cloud-init to finish on EC2 without SSH">
+    <meta itemprop="description" content="Terraform is a powerful tool, but it doesn't have a way to wait for EC2 instances to be ready, instead of just created. We will see how to use AWS SSM to do just that.">
+    <meta itemprop="image" content="https://img.rpadovani.com/posts/terraform_logo.png">
+    <meta name="publish_date" property="og:publish_date" content="2021-08-19 18:30:00 +0000">
+
+    <meta property="og:url" content="https://rpadovani.com/terraform-cloudinit">
+    <meta property="og:type" content="website">
+    <meta property="og:title" content="How to make Terraform waiting for cloud-init to finish on EC2 without SSH">
+    <meta property="og:description" content="Terraform is a powerful tool, but it doesn't have a way to wait for EC2 instances to be ready, instead of just created. We will see how to use AWS SSM to do just that.">
+    <meta property="og:image" content="https://img.rpadovani.com/posts/terraform_logo.png">
+
+    <meta name="twitter:card" content="summary_large_image">
+    <meta name="twitter:title" content="How to make Terraform waiting for cloud-init to finish on EC2 without SSH">
+    <meta name="twitter:description" content="Terraform is a powerful tool, but it doesn't have a way to wait for EC2 instances to be ready, instead of just created. We will see how to use AWS SSM to do just that.">
+    <meta name="twitter:image" content="https://img.rpadovani.com/posts/terraform_logo.png">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no, user-scalable=yes">
+    <link rel="stylesheet" type="text/css" href="/assets/css/main.css">
+    <link rel="stylesheet" type="text/css" href="/assets/css/rapido.css">
+
+    <style>
+        /* cyrillic-ext */
+        @font-face {
+            font-family: 'Ubuntu Mono';
+            font-style: normal;
+            font-weight: 400;
+            src: local('Ubuntu Mono'), local('UbuntuMono-Regular'), url(https://rpadovani.com/assets/css/fonts/ViZhet7Ak-LRXZMXzuAfkTTOQ_MqJVwkKsUn0wKzc2I.woff2) format('woff2');
+            unicode-range: U+0460-052F, U+20B4, U+2DE0-2DFF, U+A640-A69F;
+        }
+        /* cyrillic */
+        @font-face {
+            font-family: 'Ubuntu Mono';
+            font-style: normal;
+            font-weight: 400;
+            src: local('Ubuntu Mono'), local('UbuntuMono-Regular'), url(https://rpadovani.com/assets/css/fonts/ViZhet7Ak-LRXZMXzuAfkTUj_cnvWIuuBMVgbX098Mw.woff2) format('woff2');
+            unicode-range: U+0400-045F, U+0490-0491, U+04B0-04B1, U+2116;
+        }
+        /* greek-ext */
+        @font-face {
+            font-family: 'Ubuntu Mono';
+            font-style: normal;
+            font-weight: 400;
+            src: local('Ubuntu Mono'), local('UbuntuMono-Regular'), url(https://rpadovani.com/assets/css/fonts/ViZhet7Ak-LRXZMXzuAfkUbcKLIaa1LC45dFaAfauRA.woff2) format('woff2');
+            unicode-range: U+1F00-1FFF;
+        }
+        /* greek */
+        @font-face {
+            font-family: 'Ubuntu Mono';
+            font-style: normal;
+            font-weight: 400;
+            src: local('Ubuntu Mono'), local('UbuntuMono-Regular'), url(https://rpadovani.com/assets/css/fonts/ViZhet7Ak-LRXZMXzuAfkWo_sUJ8uO4YLWRInS22T3Y.woff2) format('woff2');
+            unicode-range: U+0370-03FF;
+        }
+        /* latin-ext */
+        @font-face {
+            font-family: 'Ubuntu Mono';
+            font-style: normal;
+            font-weight: 400;
+            src: local('Ubuntu Mono'), local('UbuntuMono-Regular'), url(https://rpadovani.com/assets/css/fonts/ViZhet7Ak-LRXZMXzuAfkSYE0-AqJ3nfInTTiDXDjU4.woff2) format('woff2');
+            unicode-range: U+0100-024F, U+1E00-1EFF, U+20A0-20AB, U+20AD-20CF, U+2C60-2C7F, U+A720-A7FF;
+        }
+        /* latin */
+        @font-face {
+            font-family: 'Ubuntu Mono';
+            font-style: normal;
+            font-weight: 400;
+            src: local('Ubuntu Mono'), local('UbuntuMono-Regular'), url(https://rpadovani.com/assets/css/fonts/ViZhet7Ak-LRXZMXzuAfkY4P5ICox8Kq3LLUNMylGO4.woff2) format('woff2');
+            unicode-range: U+0000-00FF, U+0131, U+0152-0153, U+02C6, U+02DA, U+02DC, U+2000-206F, U+2074, U+20AC, U+2212, U+2215, U+E0FF, U+EFFD, U+F000;
+        }
+    </style>
+</head>
+<body class="theme-base-01">
+<header class="main-header">
+    <div class="wc-container">
+        <ul>
+            <li>
+                <a href="https://rpadovani.com/">Home</a><span>/</span>
+            </li>
+            <li>
+                <a href="https://rpadovani.com/about">About</a><span>/</span>
+            </li>
+            <li>
+                <a href="https://rpadovani.com/blog">Archive</a><span>/</span>
+            </li>
+        </ul>
+    </div>
+</header>
+<article class="rapido">
+    <header>
+        <h1>How to make Terraform waiting for cloud-init to finish on EC2 without SSH</h1>
+        <p><p><a href="https://www.terraform.io/">Terraform</a> is a powerful tool. However, it has some limitations: since it uses AWS APIs, it doesn’t have a native way to check if an EC2 instance has completed to run <a href="https://cloud-init.io/"><em>cloud-init</em></a> before marking it as ready. A possible workaround is asking Terraform to SSH on the instance, and wait until it is able to perform a connection before marking the instance as ready.</p>
+        </p>
+        <address><img src="https://cv.rpadovani.com/assets/avatar.jpg" alt="Author's picture" />Aug
+            19, 2021 | Riccardo Padovani | <a href="/cdn-cgi/l/email-protection#50223933333122343f10222031343f26313e397e333f3d"><span class="__cf_email__" data-cfemail="b4c6ddd7d7d5c6d0dbf4c6c4d5d0dbc2d5dadd9ad7dbd9">[email&#160;protected]</span></a>
+        </address>
+    </header>
+    <section>
+        <p>
+        <figure>
+            <img src="https://img.rpadovani.com/posts/terraform_logo.png" alt="cover" />
+            <figcaption>
+                <p><span>Terraform logo, courtesy of HashiCorp.</span></p>
+            </figcaption>
+        </figure>
+        <p>I find using SSH in Terraform quite problematic: you need to distribute a private SSH key to anybody that will launch the Terraform script, including your CI/CD system. This is a no-go for me: it adds the complexity to manage SSH keys, including their rotation. There is a huge <a href="https://github.com/hashicorp/terraform/issues/4668">issue</a> on the Terraform repo on GitHub about this functionality, and the most voted solution is indeed connecting via SSH to run a check:</p>
+        <div class="language-terraform highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">provisioner</span> <span class="s2">"remote-exec"</span> <span class="p">{</span>
+  <span class="nx">inline</span> <span class="p">=</span> <span class="p">[</span>
+    <span class="s2">"cloud-init status --wait"</span>
+  <span class="p">]</span>
+<span class="p">}</span>
+</code></pre></div></div>
+        <h1 id="aws-systems-manager-run-command">AWS Systems Manager Run Command</h1>
+        <p>The idea of using <code class="language-plaintext highlighter-rouge">cloud-init status --wait</code> is indeed quite good. The only problem is <strong>how</strong> do we ask Terraform to run such command. Luckily for us, AWS has a service, <a href="https://docs.aws.amazon.com/systems-manager/latest/userguide/execute-remote-commands.html">AWS SSM Run Command</a> that allow us to run commands on an EC2 instance through AWS APIs! In this way, our CI/CD system needs only an appropriate <a href="https://aws.amazon.com/iam/">IAM role</a>, and a way to invoke AWS APIs. I use the <a href="https://aws.amazon.com/cli/">AWS CLI</a> in the examples below, but you can adapt them to any language you prefer.</p>
+        <h2 id="prerequisites">Prerequisites</h2>
+        <p><small>If you don’t know AWS SSM yet, go and take a look to their <a href="https://docs.aws.amazon.com/systems-manager/latest/userguide/what-is-systems-manager.html">introductory guide.</a></small>
+            There are some prerequisites to use AWS SSM Run Command: we need to have AWS SSM Agent installed on our instance. It is preinstalled on <em>Amazon Linux 2</em> and <em>Ubuntu 16.04</em>, <em>18.04</em>, and <em>20.04</em>. For any other OS, we need to install it manually: it is supported on <a href="https://docs.aws.amazon.com/systems-manager/latest/userguide/sysman-install-ssm-agent.html">Linux</a>, <a href="https://docs.aws.amazon.com/systems-manager/latest/userguide/install-ssm-agent-macos.html">macOS</a>, and <a href="https://docs.aws.amazon.com/systems-manager/latest/userguide/sysman-install-ssm-win.html">Windows</a>.</p>
+        <p>The user or the role that executes the Terraform code needs to be able to create, update, and read AWS SSM Documents, and run SSM commands. A possible policy could be look like this:</p>
+        <div class="language-json highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="p">{</span><span class="w">
+  </span><span class="nl">"Version"</span><span class="p">:</span><span class="w"> </span><span class="s2">"2012-10-17"</span><span class="p">,</span><span class="w">
+  </span><span class="nl">"Statement"</span><span class="p">:</span><span class="w"> </span><span class="p">[</span><span class="w">
+    </span><span class="p">{</span><span class="w">
+      </span><span class="nl">"Sid"</span><span class="p">:</span><span class="w"> </span><span class="s2">"Stmt1629387563127"</span><span class="p">,</span><span class="w">
+      </span><span class="nl">"Action"</span><span class="p">:</span><span class="w"> </span><span class="p">[</span><span class="w">
+        </span><span class="s2">"ssm:CreateDocument"</span><span class="p">,</span><span class="w">
+        </span><span class="s2">"ssm:DeleteDocument"</span><span class="p">,</span><span class="w">
+        </span><span class="s2">"ssm:DescribeDocument"</span><span class="p">,</span><span class="w">
+        </span><span class="s2">"ssm:DescribeDocumentParameters"</span><span class="p">,</span><span class="w">
+        </span><span class="s2">"ssm:DescribeDocumentPermission"</span><span class="p">,</span><span class="w">
+        </span><span class="s2">"ssm:GetDocument"</span><span class="p">,</span><span class="w">
+        </span><span class="s2">"ssm:ListDocuments"</span><span class="p">,</span><span class="w">
+        </span><span class="s2">"ssm:SendCommand"</span><span class="p">,</span><span class="w">
+        </span><span class="s2">"ssm:UpdateDocument"</span><span class="p">,</span><span class="w">
+        </span><span class="s2">"ssm:UpdateDocumentDefaultVersion"</span><span class="p">,</span><span class="w">
+        </span><span class="s2">"ssm:UpdateDocumentMetadata"</span><span class="w">
+      </span><span class="p">],</span><span class="w">
+      </span><span class="nl">"Effect"</span><span class="p">:</span><span class="w"> </span><span class="s2">"Allow"</span><span class="p">,</span><span class="w">
+      </span><span class="nl">"Resource"</span><span class="p">:</span><span class="w"> </span><span class="s2">"*"</span><span class="w">
+    </span><span class="p">}</span><span class="w">
+  </span><span class="p">]</span><span class="w">
+</span><span class="p">}</span><span class="w">
+</span></code></pre></div></div>
+        <p>If we already know the name of the documents, or the instances where we want to run the commands, it is better to lock down the policy specifying the resources, accordingly to the <a href="https://en.wikipedia.org/wiki/Principle_of_least_privilege">principle of least privilege</a>.</p>
+        <p>Last but not least, we need to have the AWS CLI installed on the system that will execute Terraform.</p>
+        <h2 id="the-terraform-code">The Terraform code</h2>
+        <p>After having set up the prerequisites as above, we need two different Terraform resources. The first will create the AWS SSM Document with the command we want to execute on the instance. The second one will execute such command while provisioning the EC2 instance.</p>
+        <p>The AWS SSM Document code will look like this:</p>
+        <div class="language-terraform highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">resource</span> <span class="s2">"aws_ssm_document"</span> <span class="s2">"cloud_init_wait"</span> <span class="p">{</span>
+  <span class="nx">name</span> <span class="p">=</span> <span class="s2">"cloud-init-wait"</span>
+  <span class="nx">document_type</span> <span class="p">=</span> <span class="s2">"Command"</span>
+  <span class="nx">document_format</span> <span class="p">=</span> <span class="s2">"YAML"</span>
+  <span class="nx">content</span> <span class="p">=</span> <span class="o">&lt;&lt;-</span><span class="no">DOC</span><span class="sh">
+    schemaVersion: '2.2'
+    description: Wait for cloud init to finish
+    mainSteps:
+    - action: aws:runShellScript
+      name: StopOnLinux
+      precondition:
+        StringEquals:
+        - platformType
+        - Linux
+      inputs:
+        runCommand:
+        - cloud-init status --wait
+</span><span class="no">    DOC
+</span><span class="p">}</span>
+</code></pre></div></div>
+        <p>We can refer such document from within our EC2 instance resource, with a local provisioner:</p>
+        <div class="language-terraform highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">resource</span> <span class="s2">"aws_instance"</span> <span class="s2">"example"</span> <span class="p">{</span>
+  <span class="nx">ami</span>           <span class="p">=</span> <span class="s2">"my-ami"</span>
+  <span class="nx">instance_type</span> <span class="p">=</span> <span class="s2">"t3.micro"</span>
+
+  <span class="k">provisioner</span> <span class="s2">"local-exec"</span> <span class="p">{</span>
+    <span class="nx">interpreter</span> <span class="p">=</span> <span class="p">[</span><span class="s2">"/bin/bash"</span><span class="p">,</span> <span class="s2">"-c"</span><span class="p">]</span>
+
+    <span class="nx">command</span> <span class="p">=</span> <span class="o">&lt;&lt;-</span><span class="no">EOF</span><span class="sh">
+    set -Ee -o pipefail
+    export AWS_DEFAULT_REGION=${data.aws_region.current.name}
+
+    command_id=$(aws ssm send-command --document-name ${aws_ssm_document.cloud_init_wait.arn} --instance-ids ${self.id} --output text --query "Command.CommandId")
+    if ! aws ssm wait command-executed --command-id $command_id --instance-id ${self.id}; then
+      echo "Failed to start services on instance ${self.id}!";
+      echo "stdout:";
+      aws ssm get-command-invocation --command-id $command_id --instance-id ${self.id} --query StandardOutputContent;
+      echo "stderr:";
+      aws ssm get-command-invocation --command-id $command_id --instance-id ${self.id} --query StandardErrorContent;
+      exit 1;
+    fi;
+    echo "Services started successfully on the new instance with id ${self.id}!"
+</span><span class="no">
+    EOF
+</span>  <span class="p">}</span>
+<span class="p">}</span>
+</code></pre></div></div>
+        <p>From now on, Terraform will wait for cloud-init to complete before marking the instance ready.</p>
+        <h1 id="conclusion">Conclusion</h1>
+        <p>AWS Session Manager, AWS Run Commands, and the others tools in the AWS Systems Manager family are quite powerful, and in my experience they are not widely use. I find them extremely useful: for example, they also allows connecting via <a href="https://docs.aws.amazon.com/systems-manager/latest/userguide/session-manager-getting-started-enable-ssh-connections.html">SSH to the instances</a> without having any port open, included the 22! Basically, they allow managing and running commands inside instances only through AWS APIs, with a lot of benefits, as <a href="https://docs.aws.amazon.com/systems-manager/latest/userguide/session-manager.html">they explain</a>:</p>
+        <blockquote>
+            <p>Session Manager provides secure and auditable instance management without the need to open inbound ports, maintain bastion hosts, or manage SSH keys. Session Manager also allows you to comply with corporate policies that require controlled access to instances, strict security practices, and fully auditable logs with instance access details, while still providing end users with simple one-click cross-platform access to your managed instances.</p>
+        </blockquote>
+        <p>DO you have any questions, feedback, critics, request for support? Leave a comment below, or drop me an email at <a href="/cdn-cgi/l/email-protection#e89a818b8b899a8c87a89a98898c879e898681c68b8785"><span class="__cf_email__" data-cfemail="ccbea5afafadbea8a38cbebcada8a3baada2a5e2afa3a1">[email&#160;protected]</span></a>.</p>
+        <p>Ciao,<br/>
+            R.</p>
+        </p>
+    </section>
+    <div id="hyvor-talk-view">Uh-oh, there should be a comment box here! Please double-check your browser is not blocking <a href="/add-comments">my comment system!</a></div>
+    <footer>
+        <section>
+            <h1>Updates and Corrections</h1>
+            <p>
+                If you see mistakes or want to suggest changes, please <a href="https://gitlab.com/rpadovani/rpadovani.com/issues" target="_blank">open an issue on GitLab.</a>
+            </p>
+        </section>
+        <section>
+            <h1>Previous posts</h1>
+            <p>
+            <ul>
+                <li>
+                    <span>10 Mar 2023 &raquo;</span>
+                    <a href="https://rpadovani.com/no-heroes">No heroes needed</a>
+                </li>
+                <li>
+                    <span>23 Nov 2022 &raquo;</span>
+                    <a href="https://rpadovani.com/cka-exam">How to prepare for the Certified Kubernetes Administrator (CKA) exam</a>
+                </li>
+                <li>
+                    <span>27 Oct 2022 &raquo;</span>
+                    <a href="https://rpadovani.com/kubernetes-deployments">Why K8s deployments need `matchLabels` keyword</a>
+                </li>
+            </ul>
+            </p>
+        </section>
+    </footer>
+    <script data-cfasync="false" src="/cdn-cgi/scripts/5c5dd728/cloudflare-static/email-decode.min.js"></script><script type="text/javascript">
+    var HYVOR_TALK_WEBSITE = 4900;
+    var HYVOR_TALK_CONFIG = {
+        url: false,
+        id: '/terraform-cloudinit'
+    };
+</script>
+    <script async type="text/javascript" src="//talk.hyvor.com/web-api/embed.js"></script>
+</article>
+<footer class="main-footer">
+    <div class="wc-container">
+        <div class="column one">
+            <h6>Few more links</h6>
+            <ul class="menu">
+                <li><a href="https://rpadovani.com/about">About</a></li>
+                <li><a href="https://rpadovani.com/blog">Archive</a></li>
+                <li><a href="https://rpadovani.com/donations">Donations</a></li>
+                <li><a href="https://rpadovani.com/privacy">Privacy</a></li>
+                <li><a href="https://rpadovani.com/feed.xml">Feed RSS</a></li>
+            </ul>
+        </div>
+        <div class="column two">
+            <h6>License</h6>
+            <p>
+                Everything you find here is licensed under
+                <a href="https://creativecommons.org/licenses/by/4.0/" target="_blank">
+                    Creative Commons Attribution 4.0 International License.</a>
+            </p>
+        </div>
+    </div>
+</footer>
+</body>
+</html>

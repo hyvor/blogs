@@ -11,8 +11,8 @@ interface ActionsButtonProps {
     status: 'stale' | 'loading' | 'success' | 'error',
     staleName: string,
     loadingName: string,
-    successName: string,
-    errorName: string,
+    successName?: string,
+    errorName?: string,
     staleOnClick?: MouseEventHandler,
     successOnClick?: MouseEventHandler,
     errorOnClick? :MouseEventHandler

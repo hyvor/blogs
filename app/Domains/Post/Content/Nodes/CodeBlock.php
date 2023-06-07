@@ -53,7 +53,10 @@ class CodeBlock extends Node
         $lineNumbers = $blog->getMeta('syntax_line_numbers');
         $themeName = $blog->getMeta('syntax_theme') ?? 'nord';
 
-        $code = $node->content[0]->text ?? '';
+        $code = '';
+        foreach ($node->content as $textNode) {
+            $code .= $textNode->text ?? '';
+        }
 
         $language = $node->attrs->language ?? 'plain';
         $annotations = $node->attrs->annotations ?? '';

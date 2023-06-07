@@ -7,7 +7,7 @@ use App\Http\Controllers\ConsoleAPI\ConsoleAiController;
 use App\Http\Controllers\ConsoleAPI\ConsoleApiKeysController;
 use App\Http\Controllers\ConsoleAPI\ConsoleBlogController;
 use App\Http\Controllers\ConsoleAPI\ConsoleDangerController;
-use App\Http\Controllers\ConsoleAPI\ConsoleImportExportController;
+use App\Http\Controllers\ConsoleAPI\ConsoleExportController;
 use App\Http\Controllers\ConsoleAPI\ConsoleLanguageController;
 use App\Http\Controllers\ConsoleAPI\ConsoleMediaController;
 use App\Http\Controllers\ConsoleAPI\ConsoleNavigationController;
@@ -21,6 +21,7 @@ use App\Http\Controllers\ConsoleAPI\ConsoleUserBlogController;
 use App\Http\Controllers\ConsoleAPI\ConsoleUserController;
 use App\Http\Controllers\ConsoleAPI\ConsoleViewController;
 use App\Http\Controllers\ConsoleAPI\ConsoleWebhookController;
+use App\Http\Controllers\ConsoleAPI\Import\ConsoleImportSitemapController;
 use App\Http\Controllers\ConsoleAPI\Temporary\AppSumoController;
 use App\Http\Middleware\App\ConsoleApi\ConsoleApiAccessMiddleware;
 use App\Http\Middleware\App\ConsoleApi\ConsoleApiUserEndpointsAccessMiddleware;
@@ -201,9 +202,12 @@ Route::prefix('/api/console/v0/blog/{subdomain}')
             Route::delete('/theme/file/{id}', [ConsoleThemeController::class, 'deleteFile']);
 
             // import and export
-            Route::get('/data/exports', [ConsoleImportExportController::class, 'getExports']);
-            Route::post('/data/export', [ConsoleImportExportController::class, 'export']);
-            Route::post('/data/import', [ConsoleImportExportController::class, 'import']);
+            Route::get('/data/exports', [ConsoleExportController::class, 'getExports']);
+            Route::post('/data/export', [ConsoleExportController::class, 'export']);
+
+            Route::post('/data/import/sitemap/test', [ConsoleImportSitemapController::class, 'test']);
+
+            Route::post('/data/import', [ConsoleExportController::class, 'import']);
 
             Route::get('/build', []);
         });
