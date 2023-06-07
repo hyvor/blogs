@@ -91,7 +91,7 @@ test.describe('Settings', () => {
 
         consoleTest.beforeEach(async ({testingApi, console, page}) => {
             const blog = await testingApi.factory.blogFull();
-            await testingApi.factory.routes({blog_id: blog.blog.id, name: 'user'});
+            await testingApi.factory.routes({blog_id: blog.blog.id, name: 'author'});
             await console.visitAndNav('settings');
             await page.getByRole('link', { name: 'Users' }).click();
         });
@@ -100,10 +100,43 @@ test.describe('Settings', () => {
             await page.getByRole('button', { name: 'Add' }).click();
             await page.getByText('Guest User').click();
             await page.getByLabel('Name').click();
-            await page.getByLabel('Name').fill('test');
+            await page.getByLabel('Name').fill('TestUser');
             await page.getByRole('button', { name: 'Create', exact: true }).click();
 
-            await expect(page.locator('#middle').getByText('test', { exact: true })).toBeVisible();
+            await expect(page.locator('#middle').getByText('TestUser', { exact: true }).first()).toBeVisible();
+        });
+
+        consoleTest('Editing user', async ({testingApi, console, page}) => {
+            // Adding a user
+            await page.getByRole('button', { name: 'Add' }).click();
+            await page.getByText('Guest User').click();
+            await page.getByLabel('Name').click();
+            await page.getByLabel('Name').fill('TestUser');
+            await page.getByRole('button', { name: 'Create', exact: true }).click();
+            // Wait for the user to be added
+            await page.waitForTimeout(1000);
+
+            await page.getByRole('button').nth(2).click();
+            await page.getByLabel('Name').fill('TestUserEdited');
+            await page.getByRole('button', { name: 'Update' }).click();
+
+            await expect(page.locator('#middle').getByText('TestUserEdited', { exact: true }).first()).toBeVisible();
+        });
+
+        consoleTest('Deleting user', async ({testingApi, console, page}) => {
+            // Adding a user
+            await page.getByRole('button', { name: 'Add' }).click();
+            await page.getByText('Guest User').click();
+            await page.getByLabel('Name').click();
+            await page.getByLabel('Name').fill('TestUser');
+            await page.getByRole('button', { name: 'Create', exact: true }).click();
+            // Wait for the user to be added
+            await page.waitForTimeout(1000);
+
+            await page.getByRole('button').nth(3).click();
+            await page.getByRole('button', { name: 'Remove' }).click();
+
+            await expect(page.locator('#middle').getByText('TestUser', { exact: true }).first()).not.toBeVisible();
         });
 
     });
