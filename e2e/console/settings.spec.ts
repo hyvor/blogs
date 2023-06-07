@@ -91,12 +91,19 @@ test.describe('Settings', () => {
 
         consoleTest.beforeEach(async ({testingApi, console, page}) => {
             const blog = await testingApi.factory.blogFull();
+            await testingApi.factory.routes({blog_id: blog.blog.id, name: 'user'});
             await console.visitAndNav('settings');
             await page.getByRole('link', { name: 'Users' }).click();
         });
 
         consoleTest('Adding user', async ({testingApi, console, page}) => {
-            // TODO: test the user
+            await page.getByRole('button', { name: 'Add' }).click();
+            await page.getByText('Guest User').click();
+            await page.getByLabel('Name').click();
+            await page.getByLabel('Name').fill('test');
+            await page.getByRole('button', { name: 'Create', exact: true }).click();
+
+            await expect(page.locator('#middle').getByText('test', { exact: true })).toBeVisible();
         });
 
     });
