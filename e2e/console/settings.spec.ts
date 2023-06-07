@@ -87,6 +87,20 @@ test.describe('Settings', () => {
         });
     });
 
+    test.describe('Users', () => {
+
+        consoleTest.beforeEach(async ({testingApi, console, page}) => {
+            const blog = await testingApi.factory.blogFull();
+            await console.visitAndNav('settings');
+            await page.getByRole('link', { name: 'Users' }).click();
+        });
+
+        consoleTest('Adding user', async ({testingApi, console, page}) => {
+            // TODO: test the user
+        });
+
+    });
+
     test.describe('Tags', () => {
 
         consoleTest.beforeEach(async ({testingApi, console, page}) => {
@@ -613,9 +627,8 @@ test.describe('Settings', () => {
             await page.getByTestId('switch').locator('div').nth(2).click();
             await page.getByRole('button', { name: 'SAVE' }).click();
             await page.reload();
-            
-            // TODO: test the flashload is disabled
-            await expect(page.getByTestId('switch').locator('div').nth(1)).not.toBeChecked();
+        
+            await expect(page.getByTestId('switch')).toHaveAttribute('class', 'unchecked');
         });
         
     });
@@ -633,8 +646,7 @@ test.describe('Settings', () => {
             await page.getByRole('button', { name: 'SAVE' }).click();
             await page.reload();
 
-            // TODO: find a way to test the react switch
-            await expect(page.locator('.react-switch-handle').first()).not.toBeChecked();
+            await expect(page.getByTestId('switch')).toHaveAttribute('class', 'unchecked');
         });
 
         consoleTest('Changing theme', async ({testingApi, console, page}) => {
@@ -651,8 +663,7 @@ test.describe('Settings', () => {
             await page.getByRole('button', { name: 'SAVE' }).click();
             await page.reload();
 
-            // TODO: find a way to test the react switch
-            await expect(page.locator('div:nth-child(4) > .dual-right > span > div > .react-switch-handle')).not.toBeChecked();
+            await expect(page.getByTestId('switch').nth(1)).toHaveAttribute('class', 'unchecked');
         });
         
     });

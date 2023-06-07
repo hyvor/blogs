@@ -14,7 +14,7 @@ interface SwitchProps {
 
 export default function Switch(props: SwitchProps) {
 
-    return <span data-testid="switch">
+    return <span data-testid="switch" className={props.checked ? 'checked' : 'unchecked'}>
         <ReactSwitch 
             checkedIcon={false}
             uncheckedIcon={false}
