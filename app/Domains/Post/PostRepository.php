@@ -17,6 +17,7 @@ use App\Models\Language;
 use App\Models\Post;
 use App\Models\PostVariant;
 use Carbon\Carbon;
+use DateTimeInterface;
 use Hyvor\FilterQ\FilterQ;
 use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Support\Str;
@@ -234,14 +235,21 @@ class PostRepository
         return new CollectionWithTotal($posts, $total);
     }
 
-    public static function createPost(Blog $blog, bool $isPage)
+    /**
+     * @param array{
+     *     published_at?: DateTimeInterface,
+     *     featured_image_url?: ?string,
+     *     is_page?: bool,
+     *     is_featured?: bool,
+     * } $attrs
+     */
+    public static function createPost(Blog $blog, array $attrs = []) : Post
     {
 
         // create post
-        $post = Post::create([
-            'blog_id' => $blog->id,
-            'is_page' => $isPage,
-        ]);
+        $post = Post::create(array_merge([
+            'blog_id' => $blog->id
+        ], $attrs));
 
         // create post variant (primary language)
         self::createPostVariant($post, LanguageRepository::getPrimaryLanguage($blog));
@@ -315,7 +323,10 @@ class PostRepository
 
         PostVariantCreatedEvent::dispatch($variant);
 
-        return PostVariant::find($variant->id);
+        /** @var PostVariant $variant */
+        $variant = PostVariant::find($variant->id);
+
+        return $variant;
     }
 
     /**

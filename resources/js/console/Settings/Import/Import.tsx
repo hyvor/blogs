@@ -38,7 +38,7 @@ export default function Import() {
     const [testData, setTestData] = useState<null | SitemapTestResponse>(null);
 
     const logic = importLogic({subdomain: getSubdomain()});
-    const { sitemapTest } = useActions(logic);
+    const { sitemapTest, sitemapImport } = useActions(logic);
 
 
 
@@ -277,6 +277,24 @@ export default function Import() {
                 </div>
             }
         />
+
+        <button onClick={() => {
+            sitemapImport({
+                input: {
+                    sitemap_url: sitemapUrl,
+                    css: {
+                        title: titleSelector,
+                        description: descriptionSelector,
+                        content: contentSelector,
+                        content_exclude: contentExcludeSelector,
+                        published_date: publishedDateSelector
+                    },
+                    slug_exclude: slugExclude
+                }
+            })
+        }}>
+            Import
+        </button>
 
     </div>
 

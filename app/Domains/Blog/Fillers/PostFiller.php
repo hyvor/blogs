@@ -73,7 +73,9 @@ class PostFiller implements FillerInterface
 
         foreach ($this->data as $row) {
             $isPage = $row['type'] === 'page';
-            $post = PostRepository::createPost($this->blog, $isPage);
+            $post = PostRepository::createPost($this->blog, [
+                'is_page' => $isPage
+            ]);
 
             $content = strval(file_get_contents(resource_path("posts/{$row['file']}")));
             $content = PostContentRepository::getJsonFromHtml($content, $this->blog);

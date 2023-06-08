@@ -9,7 +9,9 @@ use App\Domains\Import\Importer\ParserException;
 use App\Domains\Import\Sitemap\PageScraper\PageScraper;
 use App\Domains\Import\Sitemap\PageScraper\PageScraperOptions;
 use App\Models\Blog;
+use Illuminate\Http\Client\Response;
 use Illuminate\Support\Facades\Http;
+use Symfony\Component\DomCrawler\Crawler;
 
 class SitemapParser extends ParserAbstract
 {
@@ -17,7 +19,7 @@ class SitemapParser extends ParserAbstract
     public function __construct(
         private Blog $blog,
         private readonly string $sitemapUrl,
-        private PageScraperOptions $pageScraperOptions
+        private readonly PageScraperOptions $pageScraperOptions
     ) {}
 
     public function parse() : void
@@ -29,15 +31,9 @@ class SitemapParser extends ParserAbstract
             throw new ParserException('Cannot fetch sitemap');
         }
 
-        $sitemap = $sitemap->body();
-
-        $urls = explode("\n", $sitemap);
+        $urls = $this->getUrls($sitemap);
 
         foreach ($urls as $url) {
-            $url = trim($url);
-            if (empty($url)) {
-                continue;
-            }
 
             $scrapper = new PageScraper(
                 $this->blog,
@@ -59,6 +55,44 @@ class SitemapParser extends ParserAbstract
                 ]
             ));
         }
+
+    }
+
+    /**
+     * @return array<string>
+     */
+    private function getUrls(Response $response) : array
+    {
+
+        $isXml = str_contains($response->header('Content-Type'), 'xml');
+        $sitemap = $response->body();
+
+
+        if ($isXml) {
+
+            $urls = collect([]);
+
+            $crawler = new Crawler($sitemap);
+            $crawler
+                ->filter('url loc')
+                ->each(function ($node) use (&$urls) {
+                    $urls->add($node->text());
+                });
+
+        } else {
+
+            $urls = collect(explode("\n", $sitemap))
+                ->map(fn($url) => trim($url))
+                ->filter(fn($url) => !empty($url));
+
+        }
+
+        /** @var string[] $ret */
+        $ret = $urls
+            ->filter(fn($url) => filter_var($url, FILTER_VALIDATE_URL) !== false)
+            ->toArray();
+
+        return $ret;
 
     }
 

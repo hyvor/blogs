@@ -178,7 +178,11 @@ class PageScraper
 
         $crawler = new Crawler($body);
 
-        $content = $crawler->filter($this->options->contentSelector)->first()->html();
+        $filtered = $crawler->filter($this->options->contentSelector);
+
+        $content = $filtered->count() > 0 ?
+            $filtered->first()->html() :
+            '';
         $content = '<?xml version="1.0" encoding="UTF-8" ?>' . "\n" . $content;
 
         $content = $this->filterOutExcluded($content);

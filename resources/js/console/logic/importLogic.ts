@@ -17,6 +17,10 @@ export interface SitemapTestInput {
     }
 }
 
+export type SitemapImportInput = Omit<SitemapTestInput, 'url'> & {
+    sitemap_url: string
+}
+
 export interface SitemapTestResponse {
     url: string,
     data: {
@@ -64,6 +68,14 @@ export const importLogic = kea<importLogicType>([
             }
 
         },
+
+        sitemapImport: async ({ input } : { input: SitemapImportInput }) => {
+            await api.post(
+                props.subdomain,
+                '/data/import/sitemap/import',
+                input
+            );
+        }
 
     })),
 

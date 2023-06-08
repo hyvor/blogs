@@ -206,6 +206,7 @@ Route::prefix('/api/console/v0/blog/{subdomain}')
             Route::post('/data/export', [ConsoleExportController::class, 'export']);
 
             Route::post('/data/import/sitemap/test', [ConsoleImportSitemapController::class, 'test']);
+            Route::post('/data/import/sitemap/import', [ConsoleImportSitemapController::class, 'import']);
 
             Route::post('/data/import', [ConsoleExportController::class, 'import']);
 
