@@ -15,7 +15,8 @@ class Importer
     public function __construct(
         private readonly Blog $blog,
         private readonly Import $import,
-        private readonly ParserAbstract $parser
+        private readonly ParserAbstract $parser,
+        private readonly bool $importImages,
     ) {}
 
     public function import() : void

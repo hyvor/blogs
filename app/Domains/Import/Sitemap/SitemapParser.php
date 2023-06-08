@@ -74,7 +74,7 @@ class SitemapParser extends ParserAbstract
 
             $crawler = new Crawler($sitemap);
             $crawler
-                ->filter('url loc')
+                ->filter('default|url default|loc')
                 ->each(function ($node) use (&$urls) {
                     $urls->add($node->text());
                 });

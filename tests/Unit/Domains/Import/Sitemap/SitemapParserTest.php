@@ -47,20 +47,27 @@ it('parses sitemaps', function() {
 
 it('parses XML sitemaps', function() {
 
+    $xml = <<<XML
+        <urlset 
+            xmlns="http://www.sitemaps.org/schemas/sitemap/0.9"
+            xmlns:image="http://www.google.com/schemas/sitemap-image/1.1"
+            xmlns:xhtml="http://www.w3.org/1999/xhtml" 
+        >
+            <url>
+                <loc>https://example.com/page1</loc>
+            </url>
+            <url>
+                <loc>https://example.com/page2</loc>
+            </url>
+            <url>
+                <loc>invalido url</loc>
+            </url>
+        </urlset>
+    XML;
+    $xml = '<?xml version="1.0" encoding="UTF-8"?>' . "\n" . $xml;
+
     Http::fake([
-        'https://example.com/sitemap.txt' => Http::response(<<<XML
-            <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
-                <url>
-                    <loc>https://example.com/page1</loc>
-                </url>
-                <url>
-                    <loc>https://example.com/page2</loc>
-                </url>
-                <url>
-                    <loc>invalido url</loc>
-                </url>
-            </urlset>
-        XML, 200, [
+        'https://example.com/sitemap.txt' => Http::response($xml, 200, [
             'Content-Type' => 'application/xml'
         ]),
 

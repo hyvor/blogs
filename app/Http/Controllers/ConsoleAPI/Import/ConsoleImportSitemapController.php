@@ -88,10 +88,12 @@ class ConsoleImportSitemapController
     {
 
         $request->validate([
-            'sitemap_url' => 'required|string'
+            'sitemap_url' => 'required|string',
+            'import_images' => 'bool'
         ]);
 
         $sitemapUrl = (string) $request->string('sitemap_url');
+        $importImages = $request->boolean('import_images');
         $options = $this->getPageScraperOptions($request);
 
         $importer = new Importer(
@@ -101,7 +103,8 @@ class ConsoleImportSitemapController
                 $blog,
                 $sitemapUrl,
                 $options
-            )
+            ),
+            $importImages
         );
         $importer->import();
 
