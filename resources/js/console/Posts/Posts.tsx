@@ -41,9 +41,13 @@ export default function Posts({ postId }: { postId: number | undefined }) {
         }
     }
 
+    const onLoad = () => {
+        setNewPostClick(false);
+    }
+
     function handleNew() {
         setNewPostClick(true);
-        createPost(setNewPostClick);
+        createPost({onLoad: onLoad});
     }
 
 

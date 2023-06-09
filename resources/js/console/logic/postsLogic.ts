@@ -60,7 +60,7 @@ const postsLogic = kea<postsLogicType>([
             actions.setPostsList([...values.postsList, ...response.map(val => val.id)])
         },
 
-        createPost: async (setPostLoading) => {
+        createPost: async ({onLoad} : {onLoad: ()=> void}) => {
             const post = await api.post<Post>(props.subdomain, '/post');
 
             const builtPostLogic = postLogic.build({id: post.id, data: post});
@@ -68,7 +68,7 @@ const postsLogic = kea<postsLogicType>([
 
             actions.setPostsList([post.id, ...values.postsList])
             actions.navigateToPost(post.id);
-            setPostLoading(false);
+            onLoad();
         },
 
     })),

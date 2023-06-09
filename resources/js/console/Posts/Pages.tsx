@@ -20,9 +20,13 @@ export default function Pages({ postId }: { postId: number | undefined }) {
 
     const [newPageClick, setNewPageClick] = React.useState(false);
 
+    const onLoad = () => {
+        setNewPageClick(false);
+    }
+
     function handleNew() {
         setNewPageClick(true);
-        createPage(setNewPageClick);
+        createPage({onLoad: onLoad});
     }
 
     return <div className="posts-view">
