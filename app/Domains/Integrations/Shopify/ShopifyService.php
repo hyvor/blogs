@@ -1,10 +1,11 @@
-<?php
+<?php declare(strict_types=1);
 
 namespace App\Domains\Integrations\Shopify;
 
 use App\Exceptions\TrustedException;
 use App\Models\Blog;
 use App\Models\ShopifyShop;
+use Illuminate\Http\Client\Response;
 use Illuminate\Support\Facades\Http;
 use Illuminate\Support\Facades\URL;
 use Str;
@@ -28,28 +29,33 @@ class ShopifyService
     }
 
     /**
-     * @param array{string: mixed} $params
+     * @param array<string, mixed> $params
      */
     public function hasValidHmac(array $params): bool
     {
-        $hmac = $params['hmac'];
+        $hmac = strval($params['hmac']);
 
         $data = collect($params)
             ->filter(fn ($val, $key) => $key !== 'hmac')
             ->map(fn ($val, $key) => http_build_query([$key => $val]))
             ->implode('&');
 
-        $hash = hash_hmac('sha256', $data, config('services.shopify.api_secret_key'));
+        $hash = hash_hmac(
+            'sha256',
+            $data,
+            strval(config('services.shopify.api_secret_key'))
+        );
 
         return hash_equals($hash, $hmac);
     }
 
     /**
      * @source https://shopify.dev/apps/online-store/app-proxies#calculate-a-digital-signature
+     * @param array<string, null|string|array<string>> $params
      */
     public function hasValidProxySignature(array $params): bool
     {
-        $signature = $params['signature'];
+        $signature = strval($params['signature']);
 
         $data = collect($params)
             ->sortKeys()
@@ -63,22 +69,33 @@ class ShopifyService
             })
             ->implode('');
 
-        $hash = hash_hmac('sha256', $data, config('services.shopify.api_secret_key'));
+        $hash = hash_hmac(
+            'sha256',
+            $data,
+            strval(config('services.shopify.api_secret_key'))
+        );
 
         return hash_equals($hash, $signature);
     }
 
-    public function hasValidWebhookSignature(string $signature, string $body)
+    public function hasValidWebhookSignature(string $signature, string $body) : bool
     {
 
-        $hash = base64_encode(hash_hmac('sha256', $body, config('services.shopify.api_secret_key'), true));
+        $hash = base64_encode(
+            hash_hmac(
+                'sha256',
+                $body,
+                strval(config('services.shopify.api_secret_key')),
+                true
+            )
+        );
         return hash_equals($signature, $hash);
 
     }
 
-    public function getOAuthUrl(string $shopDomain)
+    public function getOAuthUrl(string $shopDomain) : string
     {
-        $apiKey = config('services.shopify.api_key');
+        $apiKey = strval(config('services.shopify.api_key'));
         $redirectUri = urlencode(URL::route('shopify-installed'));
         $nonce = self::generateNonce();
 
@@ -102,18 +119,21 @@ class ShopifyService
             throw new TrustedException('Could not get access token (HTTP Failure)');
         }
 
-        return $response->json()['access_token'];
+        /** @var string $accessToken */
+        $accessToken = $response->json()['access_token']; // @phpstan-ignore-line
+
+        return $accessToken;
     }
 
-    public function createShop(string $domain, string $accessToken)
+    public function createShop(string $domain, string $accessToken) : ShopifyShop
     {
-        ShopifyShop::updateOrCreate(
+        return ShopifyShop::updateOrCreate(
             ['domain' => $domain],
             ['access_token' => $accessToken]
         );
     }
 
-    public static function deleteShop(ShopifyShop $shop)
+    public static function deleteShop(ShopifyShop $shop) : void
     {
         $shop->delete();
     }
@@ -127,4 +147,55 @@ class ShopifyService
     {
         return ShopifyShop::where('blog_id', $blog->id)->first();
     }
+
+
+    public static function callApi(ShopifyShop $shop, string $query) : Response
+    {
+
+        return Http::withHeaders([
+            'X-Shopify-Access-Token' => $shop->access_token,
+        ])
+            ->withBody($query, 'application/graphql')
+            ->post("https://$shop->domain/admin/api/2022-07/graphql.json");
+
+    }
+
+    /**
+     * @return array{name: string, url: string}
+     */
+    public function getShopData(ShopifyShop $shop) : array
+    {
+
+        $default = 'https://' . $shop->domain;
+
+        $query = <<<GRAPHQL
+        query {
+            shop {
+                name
+                primaryDomain {
+                    url
+                }
+            }
+        }
+        GRAPHQL;
+
+        $response = self::callApi($shop, $query);
+
+        $name = $shop->domain;
+        $url = 'https://' . $shop->domain;
+
+        if ($response->successful()) {
+            /** @var string $name */
+            $name = $response->json()['data']['shop']['name']; // @phpstan-ignore-line
+            /** @var string $url */
+            $url = $response->json()['data']['shop']['primaryDomain']['url'] ?? $default; // @phpstan-ignore-line
+        }
+
+        return [
+            'name' => $name,
+            'url' => $url
+        ];
+
+    }
+
 }
