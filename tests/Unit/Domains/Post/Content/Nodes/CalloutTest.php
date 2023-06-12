@@ -31,7 +31,7 @@ test('json to HTML', function () {
                         'text' => $bold,
                         'marks' => [
                             [
-                                'type' => 'bold',
+                                'type' => 'strong',
                             ],
                         ],
                     ],
@@ -43,7 +43,7 @@ test('json to HTML', function () {
     $html = PostContentRepository::getHtml($json, blog());
 
     expect($html)
-        ->toEqual("<aside style=\"background-color:$bg;color:$fg\"><span>{$emoji}</span><div>$content$bold</div></aside>");
+        ->toEqual("<aside style=\"background-color:$bg;color:$fg\"><span>{$emoji}</span><div>$content<strong>$bold</strong></div></aside>");
 });
 
 test('HTML to JSON', function () {

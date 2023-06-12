@@ -31,6 +31,7 @@
         "hyvor/laravel-json-meta": "0.0.3",
         "hyvor/php-json-exporter": "^0.0.3",
         "hyvor/php-svg-icons": "1.0.0",
+        "hyvor/phrosemirror": "^0.0.3",
         "hyvor/scssphp": "2.0.2",
         "intervention/image": "^2.7",
         "laravel/framework": "^9.22.1",

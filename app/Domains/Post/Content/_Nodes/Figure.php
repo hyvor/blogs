@@ -1,24 +1,24 @@
 <?php
 
-namespace App\Domains\Post\Content\Nodes;
+namespace App\Domains\Post\Content\_Nodes;
 
 use Tiptap\Core\Node;
 
-class Figcaption extends Node
+class Figure extends Node
 {
-    public static $name = 'figcaption';
+    public static $name = 'figure';
 
     public function parseHTML()
     {
         return [
             [
-                'tag' => 'figcaption',
+                'tag' => 'figure',
             ],
         ];
     }
 
     public function renderHTML($node)
     {
-        return ['figcaption', 0];
+        return ['figure', 0];
     }
 }

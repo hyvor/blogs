@@ -14,23 +14,17 @@ use App\Domains\Post\Content\Nodes\Blockquote;
 use App\Domains\Post\Content\Nodes\Bookmark;
 use App\Domains\Post\Content\Nodes\BulletList;
 use App\Domains\Post\Content\Nodes\Callout;
-use App\Domains\Post\Content\Nodes\CodeBlock;
-use App\Domains\Post\Content\Nodes\CustomHtml;
 use App\Domains\Post\Content\Nodes\Doc;
-use App\Domains\Post\Content\Nodes\Embed;
-use App\Domains\Post\Content\Nodes\Figcaption;
-use App\Domains\Post\Content\Nodes\Figure;
-use App\Domains\Post\Content\Nodes\HardBreak;
-use App\Domains\Post\Content\Nodes\Heading;
-use App\Domains\Post\Content\Nodes\HorizontalRule;
-use App\Domains\Post\Content\Nodes\Image;
 use App\Domains\Post\Content\Nodes\ListItem;
-use App\Domains\Post\Content\Nodes\OrderedList;
 use App\Domains\Post\Content\Nodes\Paragraph;
 use App\Domains\Post\Content\Nodes\Text;
 use App\Models\Blog;
 use App\Models\PostVariant;
 use Faker\Factory;
+use Hyvor\Phrosemirror\Converters\HtmlParser\HtmlParser;
+use Hyvor\Phrosemirror\Document\Document;
+use Hyvor\Phrosemirror\Document\Node;
+use Hyvor\Phrosemirror\Types\Schema;
 use Tiptap\Editor;
 
 /**
@@ -45,7 +39,7 @@ class PostContentRepository
      */
     public static function getHtml(array|string $json, Blog $blog, array $options = []) : string
     {
-        return self::getEditor($blog, $options)->setContent($json)->getHTML();
+        return Document::fromJson(self::getSchema($blog), $json)->toHtml();
     }
 
     /**
@@ -58,7 +52,41 @@ class PostContentRepository
 
     public static function getJsonFromHtml(string $html, Blog $blog) : string
     {
-        return self::getEditor($blog)->setContent($html)->getJSON();
+        return self::getDocumentFromHtml($html, $blog)->toJson();
+    }
+
+    public static function getDocumentFromHtml(string $html, Blog $blog) : Node
+    {
+        $parser = HtmlParser::fromSchema(self::getSchema($blog));
+        return $parser->parse($html);
+    }
+
+    private static function getSchema(Blog $blog) : Schema
+    {
+
+        return new Schema(
+            [
+                new Doc,
+                new Text,
+                new Blockquote,
+                new Bookmark($blog),
+                new BulletList,
+                new Callout,
+                new ListItem,
+                new Paragraph,
+            ],
+            [
+                new Code,
+                new Em,
+                new Highlight,
+                new Link($blog),
+                new Strike,
+                new Strong,
+                new Sub,
+                new Sup,
+            ]
+        );
+
     }
 
     /**
@@ -108,9 +136,11 @@ class PostContentRepository
         ]);
     }
 
-    public static function getDefaultBlockTemplate(string $name)
+    public static function getDefaultBlockTemplate(string $name) : string
     {
-        return file_get_contents(resource_path("twig/blocks/$name.twig"));
+        return strval(
+            file_get_contents(resource_path("twig/blocks/$name.twig"))
+        );
     }
 
     public function updateVariantHtml(PostVariant $variant)

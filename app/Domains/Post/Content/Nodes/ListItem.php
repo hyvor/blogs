@@ -2,45 +2,25 @@
 
 namespace App\Domains\Post\Content\Nodes;
 
-use Tiptap\Core\Node;
-use Tiptap\Utils\HTML;
+use Hyvor\Phrosemirror\Converters\HtmlParser\ParserRule;
+use Hyvor\Phrosemirror\Document\Node;
+use Hyvor\Phrosemirror\Types\NodeType;
 
-class ListItem extends Node
+class ListItem extends NodeType
 {
-    public static $name = 'list_item';
 
-    public function addOptions()
+    public string $name = 'list_item';
+
+    public function toHtml(Node $node, string $children): string
+    {
+        return "<li>$children</li>";
+    }
+
+    public function fromHtml(): array
     {
         return [
-            'HTMLAttributes' => [],
+            new ParserRule(tag: 'li')
         ];
     }
 
-    public function parseHTML()
-    {
-        return [
-            [
-                'tag' => 'li',
-            ],
-        ];
-    }
-
-    public function renderHTML($node, $HTMLAttributes = [])
-    {
-        return ['li', HTML::mergeAttributes($this->options['HTMLAttributes'], $HTMLAttributes), 0];
-    }
-
-    public static function wrapper($DOMNode)
-    {
-        if (
-            $DOMNode->childNodes->length === 1
-            && $DOMNode->childNodes[0]->nodeName == 'p'
-        ) {
-            return null;
-        }
-
-        return [
-            'type' => 'paragraph',
-        ];
-    }
 }

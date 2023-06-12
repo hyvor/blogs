@@ -1,64 +1,36 @@
-<?php
+<?php declare(strict_types=1);
 
 namespace App\Domains\Post\Content\Nodes;
 
 use App\Domains\Post\Content\PostContentRepository;
-use Tiptap\Core\Node;
-use Tiptap\Utils\InlineStyle;
+use App\Models\Blog;
+use Hyvor\Phrosemirror\Converters\HtmlParser\ParserRule;
+use Hyvor\Phrosemirror\Document\Node;
+use Hyvor\Phrosemirror\Types\NodeType;
 
-class Callout extends Node
+class Callout extends NodeType
 {
-    public static $name = 'callout';
 
-    public function parseHTML()
+    public string $name = 'callout';
+
+    public function __construct() {}
+
+    public function toHtml(Node $node, string $children): string
+    {
+
+        $bg = strval($node->attr('bg'));
+        $fg = strval($node->attr('fg'));
+        $emoji = strval($node->attr('emoji'));
+
+        return "<aside style=\"background-color:$bg;color:$fg\"><span>$emoji</span><div>$children</div></aside>";
+
+    }
+
+    public function fromHtml(): array
     {
         return [
-            [
-                'tag' => 'aside',
-                'getAttrs' => function ($DOMNode) {
-                },
-            ],
+            new ParserRule(tag: 'aside')
         ];
     }
 
-    public function addAttributes()
-    {
-        return [
-            'emoji' => [
-                'parseHTML' => fn ($DOMNode) => $DOMNode->getAttribute('data-emoji'),
-                'rendered' => false,
-            ],
-            'bg' => [
-                'parseHTML' => fn ($DOMNode) => InlineStyle::getAttribute($DOMNode, 'background-color'),
-                'rendered' => false,
-            ],
-            'fg' => [
-                'parseHTML' => fn ($DOMNode) => InlineStyle::getAttribute($DOMNode, 'color'),
-                'rendered' => false,
-            ],
-        ];
-    }
-
-    public function renderHTML($node)
-    {
-        $content = $node->content ?? [];
-
-        /**
-         * Render inside content
-         *
-         * Based on my tests, there's currently no way to set
-         * innerHTML of a non-content element (<span> in this case)
-         * using the array syntax.
-         *
-         * So, I had to use "content" method. When using that, we have to separately calculate the inside contents.
-         */
-        $inside = PostContentRepository::getHtml([
-            'type' => 'doc',
-            'content' => $content,
-        ], $this->options['blog']);
-
-        return [
-            'content' => "<aside style=\"background-color:{$node->attrs->bg};color:{$node->attrs->fg}\"><span>{$node->attrs->emoji}</span><div>$inside</div></aside>",
-        ];
-    }
 }

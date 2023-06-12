@@ -1,24 +1,24 @@
 <?php
 
-namespace App\Domains\Post\Content\Nodes;
+namespace App\Domains\Post\Content\_Nodes;
 
 use Tiptap\Core\Node;
 
-class Figure extends Node
+class HorizontalRule extends Node
 {
-    public static $name = 'figure';
+    public static $name = 'horizontal_rule';
 
     public function parseHTML()
     {
         return [
             [
-                'tag' => 'figure',
+                'tag' => 'hr',
             ],
         ];
     }
 
     public function renderHTML($node)
     {
-        return ['figure', 0];
+        return ['hr'];
     }
 }

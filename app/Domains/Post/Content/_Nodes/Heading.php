@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Domains\Post\Content\Nodes;
+namespace App\Domains\Post\Content\_Nodes;
 
 use DOMElement;
 use Tiptap\Core\Node;

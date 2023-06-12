@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "94780f3c6d57c3f435821fc7070c9675",
+    "content-hash": "7dc4707d71f38448c127a436e3d2874e",
     "packages": [
         {
             "name": "akaunting/laravel-money",
@@ -2793,6 +2793,52 @@
                 "source": "https://github.com/hyvor/php-svg-icons/tree/1.0.0"
             },
             "time": "2022-05-28T20:03:31+00:00"
+        },
+        {
+            "name": "hyvor/phrosemirror",
+            "version": "0.0.3",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/hyvor/phrosemirror.git",
+                "reference": "b6591c91c5a6fac94c17bf3225a4821d37f7a172"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/hyvor/phrosemirror/zipball/b6591c91c5a6fac94c17bf3225a4821d37f7a172",
+                "reference": "b6591c91c5a6fac94c17bf3225a4821d37f7a172",
+                "shasum": ""
+            },
+            "require": {
+                "ext-dom": "*",
+                "ext-libxml": "*",
+                "php": "^8.1"
+            },
+            "require-dev": {
+                "pestphp/pest": "^1.22",
+                "phpstan/phpstan": "^1.8"
+            },
+            "type": "library",
+            "autoload": {
+                "psr-4": {
+                    "Hyvor\\Phrosemirror\\": "src/"
+                }
+            },
+            "notification-url": "https://packagist.org/downloads/",
+            "license": [
+                "MIT"
+            ],
+            "authors": [
+                {
+                    "name": "Supun",
+                    "email": "supun@hyvor.com"
+                }
+            ],
+            "description": "Prosemirror in PHP",
+            "support": {
+                "issues": "https://github.com/hyvor/phrosemirror/issues",
+                "source": "https://github.com/hyvor/phrosemirror/tree/0.0.3"
+            },
+            "time": "2023-01-04T23:50:57+00:00"
         },
         {
             "name": "hyvor/scssphp",

@@ -1,24 +1,24 @@
 <?php
 
-namespace App\Domains\Post\Content\Nodes;
+namespace App\Domains\Post\Content\_Nodes;
 
 use Tiptap\Core\Node;
 
-class HardBreak extends Node
+class Blockquote extends Node
 {
-    public static $name = 'hard_break';
+    public static $name = 'blockquote';
 
     public function parseHTML()
     {
         return [
             [
-                'tag' => 'br',
+                'tag' => 'blockquote',
             ],
         ];
     }
 
     public function renderHTML($node, $HTMLAttributes = [])
     {
-        return ['br'];
+        return ['blockquote', 0];
     }
 }

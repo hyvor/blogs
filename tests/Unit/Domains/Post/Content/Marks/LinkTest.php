@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Domains\Post\Content\Marks;
+namespace App\Domains\Post\Content\_Marks;
 
 use App\Domains\Post\Content\PostContentRepository;
 
@@ -47,4 +47,28 @@ test('nofollow meta', function () {
     $blog->setMeta('seo_external_links_follow', 'nofollow');
     $result = PostContentRepository::getHtml($this->document, $blog);
     expect($result)->toEqual("<a href=\"$this->link\" target=\"_blank\" rel=\"noopener noreferrer nofollow\">$this->text</a>");
+});
+
+test('from HTML', function() {
+    $html = '<a href="https://exmaple.com">Example Text</a>';
+
+    $result = PostContentRepository::getDocumentFromHtml($html, blog());
+
+    expect($result->toArray())->toEqual([
+        'type' => 'doc',
+        'content' => [
+            [
+                'type' => 'text',
+                'text' => 'Example Text',
+                'marks' => [
+                    [
+                        'type' => 'link',
+                        'attrs' => [
+                            'href' => 'https://exmaple.com'
+                        ]
+                    ],
+                ],
+            ],
+        ],
+    ]);
 });

@@ -1,0 +1,26 @@
+<?php
+
+namespace App\Domains\Post\Content\_Nodes;
+
+use Tiptap\Core\Node;
+
+class Paragraph extends Node
+{
+    public static $name = 'paragraph';
+
+    public static $priority = 1000;
+
+    public function parseHTML()
+    {
+        return [
+            [
+                'tag' => 'p',
+            ],
+        ];
+    }
+
+    public function renderHTML($node)
+    {
+        return ['p', 0];
+    }
+}

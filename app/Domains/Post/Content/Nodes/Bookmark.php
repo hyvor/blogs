@@ -1,4 +1,4 @@
-<?php
+<?php declare(strict_types=1);
 
 namespace App\Domains\Post\Content\Nodes;
 
@@ -13,47 +13,37 @@ use App\Domains\UrlData\UrlDataRepository;
 use App\Models\Blog;
 use DOMElement;
 use Exception;
-use Tiptap\Core\Node;
+use Hyvor\Phrosemirror\Converters\HtmlParser\ParserRule;
+use Hyvor\Phrosemirror\Document\Node;
+use Hyvor\Phrosemirror\Types\NodeType;
 
-class Bookmark extends Node
+class Bookmark extends NodeType
 {
-    public static $name = 'bookmark';
 
-    public function parseHTML()
+    public string $name = 'bookmark';
+    
+    public string $attrs = BookmarkAttrs::class;
+
+    public function __construct(public Blog $blog) {}
+
+    public function toHtml(Node $node, string $children): string
     {
-        return [
-            [
-                'tag' => 'a[class="bookmark"]',
-                'getAttrs' => fn (DOMElement $node) => [
-                    'url' => $node->getAttribute('data-url'),
-                ],
-            ],
-        ];
-    }
 
-    public function renderHTML($node)
-    {
-        /**
-         * @var Blog $blog
-         */
-        $blog = $this->options['blog'];
+        $blog = $this->blog;
 
-        $url = $node->attrs?->url;
-        $empty = ['content' => ''];
+        $url = $node->attr('url');
 
-        if (! $url) {
-            return $empty;
+        if (!$url) {
+            return '';
         }
 
         try {
-
             $urlData = UrlDataRepository::fetch($url, UrlDataFetchTypeEnum::LINK);
             if ($urlData->result === ResultEnum::ERR) {
-                return $empty;
+                return '';
             }
-
         } catch (Exception) {
-            return $empty;
+            return '';
         }
 
         $template = ThemeFilesRepository::getFile(
@@ -62,16 +52,36 @@ class Bookmark extends Node
             ThemeFileFolderEnum::TEMPLATES
         )?->content;
 
-        if (! $template) {
+        if (!$template) {
             $template = PostContentRepository::getDefaultBlockTemplate('bookmark');
         }
 
-        $content = TwigRenderer::renderString($template, [
+        return TwigRenderer::renderString($template, [
             'data' => new UrlDataObject($urlData),
         ]);
 
+    }
+
+    public function fromHtml(): array
+    {
         return [
-            'content' => $content,
+            new ParserRule(
+                tag: 'a',
+                getAttrs: function (DOMElement $node) {
+                    if ($node->getAttribute('class') !== 'bookmark') {
+                        return false;
+                    }
+
+                    if (!$node->getAttribute('data-url')) {
+                        return false;
+                    }
+
+                    return BookmarkAttrs::fromArray([
+                        'url' => $node->getAttribute('data-url'),
+                    ]);
+                },
+            )
         ];
     }
+
 }

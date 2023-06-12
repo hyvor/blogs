@@ -1,39 +1,27 @@
-<?php
+<?php declare(strict_types=1);
 
 namespace App\Domains\Post\Content\Marks;
 
-use Tiptap\Core\Mark;
-use Tiptap\Utils\InlineStyle;
+use Hyvor\Phrosemirror\Converters\HtmlParser\ParserRule;
+use Hyvor\Phrosemirror\Document\Mark;
+use Hyvor\Phrosemirror\Types\MarkType;
 
-class Strong extends Mark
+class Strong extends MarkType
 {
-    public static $name = 'strong';
 
-    public function parseHTML()
+    public string $name = 'strong';
+
+    public function toHtml(Mark $mark, string $children): string
+    {
+        return "<strong>$children</strong>";
+    }
+
+    public function fromHtml(): array
     {
         return [
-            [
-                'tag' => 'strong',
-            ],
-            [
-                'tag' => 'b',
-                'getAttrs' => function ($DOMNode) {
-                    return ! InlineStyle::hasAttribute($DOMNode, [
-                        'font-weight' => 'normal',
-                    ]) ? null : false;
-                },
-            ],
-            [
-                'style' => 'font-weight',
-                'getAttrs' => function ($value) {
-                    return (bool) preg_match('/^(bold(er)?|[5-9]\d{2,})$/', $value) ? null : false;
-                },
-            ],
+            new ParserRule(tag: 'strong'),
+            new ParserRule(tag: 'b'),
         ];
     }
 
-    public function renderHTML($mark)
-    {
-        return ['strong', 0];
-    }
 }
