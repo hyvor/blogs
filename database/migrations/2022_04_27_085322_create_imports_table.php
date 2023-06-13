@@ -25,6 +25,9 @@ return new class () extends Migration {
             $table->enum('status', ['pending', 'success', 'error'])->nullable();
 
             $table->json('meta')->nullable();
+
+            $table->json('parser_logs')->nullable();
+            $table->json('importer_logs')->nullable();
         });
     }
 
