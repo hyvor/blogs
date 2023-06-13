@@ -15,6 +15,8 @@ import EmbedView from "./nodeview-embed";
 import { EditorView, NodeViewConstructor } from "prosemirror-view";
 import useUpdateEffect from "../../../../helpers/hooks/useUpdateEffect";
 import Table from './nodeview-table';
+import { tableEditing, columnResizing, goToNextCell } from 'prosemirror-tables';
+import { keymap } from 'prosemirror-keymap';
 
 function getState(val: string) {
     val = val ? JSON.parse(val) : null
@@ -58,7 +60,6 @@ const nodeViews: NodeViewsType = {
         return new Bookmark(node, view, getPos)
     },
     table(node, view, getPos) {
-        console.log('Table Node');
         return new Table(node, view, getPos);
     }
 }
@@ -87,7 +88,19 @@ export default function Editor({ id, currentLanguageId, status, value, onChange,
         const view = new EditorView(editorRef.current, {
             state: EditorState.create({
                 schema: HBSchema,
-                plugins: plugins(HBSchema),
+                plugins: [
+                    ...plugins(HBSchema),
+                   /* columnResizing(),
+                    tableEditing(),
+                    keymap({
+                        Tab: goToNextCell(1),
+                        'Shift-Tab': goToNextCell(-1),
+                        'arrowleft': goToNextCell(-1),
+                        'arrowright': goToNextCell(1),
+                        'arrowup': goToNextCell(-1),
+                        'arrowdown': goToNextCell(1),
+                    }),*/
+                ],
                 doc: value ? HBSchema.nodeFromJSON(jsonParsedValue) : undefined
             }),
             nodeViews,
@@ -98,8 +111,8 @@ export default function Editor({ id, currentLanguageId, status, value, onChange,
 
                 const state = view.state.apply(tr)
                 view.updateState(state)
-            }
-        })
+            },
+        });
 
         return view;
 

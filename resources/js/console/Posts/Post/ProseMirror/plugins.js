@@ -12,12 +12,14 @@ import codemark from 'prosemirror-codemark';
 import pasteImagesPlugin from "./paste-images-plugin";
 import linkPlugin from "./link-plugin";
 import slashTipPlugin from "./plugin-slash-tip";
+import { columnResizing, tableEditing, goToNextCell } from 'prosemirror-tables';
+import { keymap } from 'prosemirror-keymap';
 
 export default function plugins(schema) {
 
     return [
         inputRulesPlugin(schema),
-        ...keymapPlugins(schema),
+        //...keymapPlugins(schema),
 
         placeholderPlugin('Start writing...'),
         tooltipPlugin(schema),
@@ -35,7 +37,7 @@ export default function plugins(schema) {
         linkPlugin(),
 
         // https://github.com/curvenote/prosemirror-codemark
-        ...codemark({ markType: schema.marks.code })
+        ...codemark({ markType: schema.marks.code }),
     ]
 
 }
