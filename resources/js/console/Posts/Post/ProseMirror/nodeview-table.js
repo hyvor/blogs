@@ -1,5 +1,22 @@
 import { NodeSelection, TextSelection } from "prosemirror-state";
 import schema from "./schema";
+import {
+    addRow,
+    addColumnAfter,
+    addColumnBefore,
+    deleteColumn,
+    addRowAfter,
+    addRowBefore,
+    deleteRow,
+    mergeCells,
+    splitCell,
+    setCellAttr,
+    toggleHeaderRow,
+    toggleHeaderColumn,
+    toggleHeaderCell,
+    goToNextCell,
+    deleteTable,
+  } from "prosemirror-tables";
 
 export default class Table {
   
@@ -9,10 +26,10 @@ export default class Table {
         this.getPos = getPos;
 
         this.dom = document.createElement("table")
-        this.renderNode(node);
+        this.renderNode(node, getPos);
     }
 
-    renderNode(node) {
+    renderNode(node, pos) {
         this.dom.innerHTML = "";
 
         const table = document.createElement("table");
@@ -36,7 +53,7 @@ export default class Table {
             for (let j = 0; j < 2; j++) {
                 const td = document.createElement("td");
                 td.setAttribute("contenteditable", true);
-                td.innerHTML = "<p></p>";
+                td.innerHTML = "<p> </p>";
                 tr.appendChild(td);
             }
 
@@ -48,6 +65,15 @@ export default class Table {
         this.dom.appendChild(table);
 
         this.dom.addEventListener("click", this.selectNode);
+
+        // Add a button to create a new row
+        const button = document.createElement("button");
+        button.innerHTML = "Add row";
+        const transaction = this.view.state.tr;
+        button.addEventListener("click", () => {
+            this.view.dispatch(addRowAfter(transaction.replaceSelectionWith(schema.nodes.table.createAndFill(), false).scrollIntoView()));
+        });
+        this.dom.appendChild(button);
     }
 
 }

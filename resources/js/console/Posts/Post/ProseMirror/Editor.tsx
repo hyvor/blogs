@@ -88,7 +88,7 @@ export default function Editor({ id, currentLanguageId, status, value, onChange,
             schema: HBSchema,
             plugins: [
                 ...plugins(HBSchema),
-               /* columnResizing(),
+                columnResizing(),
                 tableEditing(),
                 keymap({
                     Tab: goToNextCell(1),
@@ -97,7 +97,7 @@ export default function Editor({ id, currentLanguageId, status, value, onChange,
                     'arrowright': goToNextCell(1),
                     'arrowup': goToNextCell(-1),
                     'arrowdown': goToNextCell(1),
-                }),*/
+                }),
             ],
             doc: value ? HBSchema.nodeFromJSON(jsonParsedValue) : undefined
         });
