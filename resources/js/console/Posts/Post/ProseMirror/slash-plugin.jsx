@@ -16,6 +16,7 @@ import {
     Quote,
     TypeH2,
     TypeH3,
+    Table
 } from "react-bootstrap-icons";
 import { createImage, createQuote } from "./creators";
 
@@ -107,6 +108,13 @@ const matchable = [
         icon: <CodeSlash />,
         keywords: ["html", "twig", "code", "custom"],
         node: "custom_html",
+    },
+    {
+        name: "Table",
+        description: "Add a table",
+        icon: <Table />,
+        keywords: ["table", "spreadsheet"],
+        node: "table",
     },
     /*{
         name: "Custom Node",

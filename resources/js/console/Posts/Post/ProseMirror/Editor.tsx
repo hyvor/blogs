@@ -14,6 +14,7 @@ import CustomHtml from "./nodeview-custom-html";
 import EmbedView from "./nodeview-embed";
 import { EditorView, NodeViewConstructor } from "prosemirror-view";
 import useUpdateEffect from "../../../../helpers/hooks/useUpdateEffect";
+import Table from './nodeview-table';
 
 function getState(val: string) {
     val = val ? JSON.parse(val) : null
@@ -55,6 +56,10 @@ const nodeViews: NodeViewsType = {
     },
     bookmark(node, view, getPos) {
         return new Bookmark(node, view, getPos)
+    },
+    table(node, view, getPos) {
+        console.log('Table Node');
+        return new Table(node, view, getPos);
     }
 }
 

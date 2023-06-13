@@ -1,5 +1,6 @@
 import {Mark, MarkSpec, Node, NodeSpec, Schema} from "prosemirror-model"
 import { addListNodes } from "prosemirror-schema-list"
+import { tableNodes } from "prosemirror-tables"
 
 /**
  * Copied and changed from
@@ -226,7 +227,24 @@ export const nodes = {
         selectable: false,
         parseDOM: [{tag: "br"}],
         toDOM() { return ['br'] }
-    } as NodeSpec
+    } as NodeSpec,
+
+    table: tableNodes({
+        tableGroup: "block",
+        cellContent: "block+",
+        cellAttributes: {
+            background: {
+                default: null,
+                getFromDOM(dom: HTMLElement) {
+                    return dom.style.backgroundColor || null
+                },
+                setDOMAttr(value, attrs) {
+                    if (value)
+                      attrs.style = (attrs.style || '') + `background-color: ${value};`;
+                  },
+            }
+        }
+    }) as NodeSpec
 }
 
 // :: Object [Specs](#model.MarkSpec) for the marks in the schema.
@@ -299,8 +317,6 @@ export const marks = {
         parseDOM: [{tag: "sub"}],
         toDOM() { return ["sub", 0] }
     } as MarkSpec,
-
-
 }
 
 // :: Schema
@@ -313,6 +329,7 @@ export const marks = {
 // `spec.nodes` and `spec.marks` [properties](#model.Schema.spec).
 
 
+console.log("schema", nodes, marks);
 const schemaWithoutList = new Schema({nodes, marks})
 
 export default new Schema({
