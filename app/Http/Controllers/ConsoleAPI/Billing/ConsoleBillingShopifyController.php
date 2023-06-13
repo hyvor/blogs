@@ -9,6 +9,7 @@ use App\Domains\Integrations\Shopify\ShopifyService;
 use App\Exceptions\TrustedException;
 use App\Models\Blog;
 use App\Models\ShopifyShop;
+use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use Illuminate\Validation\Rules\Enum;
 
@@ -25,7 +26,7 @@ class ConsoleBillingShopifyController
         return $shop;
     }
 
-    public function createSubscription(Request $request)
+    public function createSubscription(Request $request) : JsonResponse
     {
         $request->validate([
             'plan' => ['required', new Enum(SubscriptionPlanEnum::class)],
@@ -35,8 +36,8 @@ class ConsoleBillingShopifyController
         $shop = $this->getShop();
         $link = ShopifyBillingService::createPayLink(
             $shop,
-            SubscriptionPlanEnum::from($request->input('plan')),
-            SubscriptionFrequencyEnum::from($request->input('frequency'))
+            SubscriptionPlanEnum::from((string) $request->string('plan')),
+            SubscriptionFrequencyEnum::from((string) $request->string('frequency'))
         );
 
         return response()->json([
@@ -44,7 +45,7 @@ class ConsoleBillingShopifyController
         ]);
     }
 
-    public function cancelSubscription()
+    public function cancelSubscription() : JsonResponse
     {
         $shop = $this->getShop();
         ShopifyBillingService::cancelSubscription($shop);

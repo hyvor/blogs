@@ -46,6 +46,15 @@ export function getSubscription(subdomain: string) {
     return blog.subscription;
 }
 
+export function isBlogManuallyUpgraded(subdomain: string) {
+    const blog  = getBlogFromSubdomain(subdomain)
+
+    return blog.subscription &&
+        blog.subscription.paddle_subscription_id === null &&
+        blog.subscription.shopify_subscription_id === null;
+
+}
+
 /*export function isOnTrial(blog: UserBlogBlog) {
     return blog.trial_ends_at > dayjs().unix()
 }*/

@@ -11,11 +11,10 @@ export default function BlogLink({ children } : { children: ReactNode }) {
     const { findBlogBySubdomain } = useValues(userBlogsLogic);
     const { blog } = findBlogBySubdomain(subdomain);
 
-    const [isPopupShown, setIsPopupShown] = useState(false);
+    // const [isPopupShown, setIsPopupShown] = useState(false);
+    // const isShopify = blog.integration === 'shopify';
 
-    const isShopify = blog.integration === 'shopify';
-
-    function handleClick(e: MouseEvent<HTMLAnchorElement>) {
+    /*function handleClick(e: MouseEvent<HTMLAnchorElement>) {
 
         e.preventDefault();
         e.stopPropagation()
@@ -25,16 +24,17 @@ export default function BlogLink({ children } : { children: ReactNode }) {
         } else {
             window.open(blog.base_url, '_blank');
         }
-    }
+    }*/
 
     return <span className="blog-link">
-        <span
-            onClick={handleClick}
+        <a
+            href={blog.base_url}
+            target="_blank"
         >
             {children}
-        </span>
+        </a>
 
-        {
+        {/*{
             isPopupShown &&
             <PopupNotice
                 title="Shopify Integartion"
@@ -49,7 +49,7 @@ export default function BlogLink({ children } : { children: ReactNode }) {
                 name="Close"
                 onClick={() => setIsPopupShown(false)}
             />
-        }
+        }*/}
 
     </span>
 

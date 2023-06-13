@@ -10,6 +10,7 @@ import Callout from "../../ReusableComponents/Callout";
 import dayjs from "dayjs";
 import {FriendlyDate} from "../../ReusableComponents/Time";
 import AppSumo from "./AppSumo";
+import {isBlogManuallyUpgraded} from "../../lib/blog-helpers";
 
 interface PlansProps {
 
@@ -73,7 +74,7 @@ export default function Plans({onSubscriptionCreate, onSubscriptionCancel, onSub
             }
 
             {
-                currentSubscription && !currentSubscription.paddle_subscription_id &&
+                isBlogManuallyUpgraded(subdomain) &&
                 <Callout
                     title="Manually Upgraded"
                     text={
