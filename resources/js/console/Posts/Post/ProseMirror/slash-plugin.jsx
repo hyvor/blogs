@@ -258,6 +258,7 @@ class SlashPlugin {
             nameWrap.appendChild(description);
 
             item.onclick = function () {
+
                 let node = m.node;
                 let createdNode;
                 if (typeof node === "function") {
@@ -266,6 +267,7 @@ class SlashPlugin {
                     createdNode = _self.schema.nodes[node].create(
                         m.attrs || {}
                     );
+                    console.log(createdNode);
                 }
 
                 let { $from, to } = view.state.selection,

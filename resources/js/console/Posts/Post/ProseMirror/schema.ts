@@ -228,8 +228,7 @@ export const nodes = {
         parseDOM: [{tag: "br"}],
         toDOM() { return ['br'] }
     } as NodeSpec,
-
-    table: tableNodes({
+     ...tableNodes({
         tableGroup: "block",
         cellContent: "block+",
         cellAttributes: {
@@ -329,8 +328,7 @@ export const marks = {
 // `spec.nodes` and `spec.marks` [properties](#model.Schema.spec).
 
 
-console.log("schema", nodes, marks);
-const schemaWithoutList = new Schema({nodes, marks})
+const schemaWithoutList = new Schema({nodes, marks});
 
 export default new Schema({
     nodes: addListNodes(schemaWithoutList.spec.nodes, "block+", "block"),
