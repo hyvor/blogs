@@ -4,7 +4,7 @@ namespace App\Domains\Post;
 
 use App;
 use App\Data\Enums\PostStatusEnum;
-use App\Domains\Post\Content\PostContentRepository;
+use App\Domains\Post\Content\PostContentService;
 use App\Helpers\CollectionWithTotal;
 use App\Models\Blog;
 use App\Models\Language;
@@ -130,7 +130,7 @@ class PostSearchRepository
              */
             'title' => $postVariant->title,
             'description' => $postVariant->description,
-            'content' => $postVariant->content ? PostContentRepository::getText($postVariant->content, $blog) : '',
+            'content' => $postVariant->content ? PostContentService::getText($postVariant->content, $blog) : '',
             'slug' => $postVariant->slug,
 
             /**

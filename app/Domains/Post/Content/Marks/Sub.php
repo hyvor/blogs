@@ -2,23 +2,25 @@
 
 namespace App\Domains\Post\Content\Marks;
 
-use Tiptap\Core\Mark;
+use Hyvor\Phrosemirror\Converters\HtmlParser\ParserRule;
+use Hyvor\Phrosemirror\Document\Mark;
+use Hyvor\Phrosemirror\Types\MarkType;
 
-class Sub extends Mark
+class Sub extends MarkType
 {
-    public static $name = 'sub';
 
-    public function parseHTML()
+    public string $name = 'sub';
+
+    public function toHtml(Mark $mark, string $children): string
+    {
+        return "<sub>$children</sub>";
+    }
+
+    public function fromHtml(): array
     {
         return [
-            [
-                'tag' => 'sub',
-            ],
+            new ParserRule(tag: 'sub')
         ];
     }
 
-    public function renderHTML($mark)
-    {
-        return ['sub', 0];
-    }
 }

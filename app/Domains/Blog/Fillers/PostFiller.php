@@ -4,7 +4,7 @@ namespace App\Domains\Blog\Fillers;
 
 use App\Data\Enums\BlogTypeEnum;
 use App\Data\Enums\PostStatusEnum;
-use App\Domains\Post\Content\PostContentRepository;
+use App\Domains\Post\Content\PostContentService;
 use App\Domains\Post\PostRepository;
 use App\Exceptions\SafetyException;
 use App\Models\Blog;
@@ -76,7 +76,7 @@ class PostFiller implements FillerInterface
             $post = PostRepository::createPost($this->blog, $isPage);
 
             $content = strval(file_get_contents(resource_path("posts/{$row['file']}")));
-            $content = PostContentRepository::getJsonFromHtml($content, $this->blog);
+            $content = PostContentService::getJsonFromHtml($content, $this->blog);
 
             PostRepository::updatePost($post, [
                 'published_at' => now()->getTimestamp(),
@@ -119,7 +119,7 @@ class PostFiller implements FillerInterface
                         'language_id' => $lang->id,
                         'status' => 'published',
                     ]);
-                    (new PostContentRepository)->updateVariantHtml($variant);
+                    PostRepository::updateVariantHtml($variant);
                 }
 
                 // add 1-3 post tags

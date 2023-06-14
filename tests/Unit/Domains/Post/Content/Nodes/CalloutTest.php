@@ -2,7 +2,7 @@
 
 namespace Tests\Unit\PostContent\Nodes;
 
-use App\Domains\Post\Content\PostContentRepository;
+use App\Domains\Post\Content\PostContentService;
 
 test('json to HTML', function () {
     $emoji = '🔥';
@@ -31,7 +31,7 @@ test('json to HTML', function () {
                         'text' => $bold,
                         'marks' => [
                             [
-                                'type' => 'bold',
+                                'type' => 'strong',
                             ],
                         ],
                     ],
@@ -40,10 +40,10 @@ test('json to HTML', function () {
         ],
     ]);
 
-    $html = PostContentRepository::getHtml($json, blog());
+    $html = PostContentService::getHtml($json, blog());
 
     expect($html)
-        ->toEqual("<aside style=\"background-color:$bg;color:$fg\"><span>{$emoji}</span><div>$content$bold</div></aside>");
+        ->toEqual("<aside style=\"background-color:$bg;color:$fg\"><span>{$emoji}</span><div>$content<strong>$bold</strong></div></aside>");
 });
 
 test('HTML to JSON', function () {
@@ -52,9 +52,9 @@ test('HTML to JSON', function () {
     $fg = '#ffffff';
     $content = 'Some content';
 
-    $html = "<aside style=\"background-color:$bg;color:$fg\" data-emoji=\"$emoji\">$content</aside>";
+    $html = "<aside style=\"background-color:$bg;color:$fg\"><span>$emoji</span><div>$content</div></aside>";
 
-    $json = PostContentRepository::getJsonFromHtml($html, blog());
+    $json = PostContentService::getJsonFromHtml($html, blog());
 
     expect($json)
         ->toEqual(json_encode([
@@ -76,4 +76,43 @@ test('HTML to JSON', function () {
                 ],
             ],
         ]));
+});
+
+
+it('works when no div is inside', function() {
+
+    $html = "<aside>Some <b>content</b></aside>";
+
+    $json = PostContentService::getJsonFromHtml($html, blog());
+
+    expect($json)
+        ->toEqual(json_encode([
+            'type' => 'doc',
+            'content' => [
+                [
+                    'type' => 'callout',
+                    'attrs' => [
+                        'emoji' => null,
+                        'bg' => null,
+                        'fg' => null,
+                    ],
+                    'content' => [
+                        [
+                            'type' => 'text',
+                            'text' => 'Some ',
+                        ],
+                        [
+                            'type' => 'text',
+                            'text' => 'content',
+                            'marks' => [
+                                [
+                                    'type' => 'strong',
+                                ],
+                            ],
+                        ]
+                    ],
+                ],
+            ],
+        ]));
+
 });

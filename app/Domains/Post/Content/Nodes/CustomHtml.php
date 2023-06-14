@@ -1,33 +1,18 @@
-<?php
+<?php declare(strict_types=1);
 
 namespace App\Domains\Post\Content\Nodes;
 
-use Tiptap\Core\Node;
+use Hyvor\Phrosemirror\Types\NodeType;
 
-/**
- * Custom HTML is added inside a <p> make sure margin
- */
-class CustomHtml extends Node
+class CustomHtml extends NodeType
 {
-    public static $name = 'custom_html';
 
-    public static $marks = '';
+    public string $name = 'custom_html';
 
-    public function parseHTML()
+    public function toHtml($node, $children): string
     {
-        return [
-            [
-                'tag' => 'custom',
-            ],
-        ];
+        $code = $node->allText();
+        return "<p>$code</p>";
     }
 
-    public function renderHTML($node)
-    {
-        $code = $node->content[0]->text ?? '';
-
-        return [
-            'content' => "<p>$code</p>",
-        ];
-    }
 }

@@ -5,7 +5,7 @@ namespace Tests\Unit\PostContent\Nodes;
 use App\Data\Enums\ResultEnum;
 use App\Data\Enums\ThemeFileFolderEnum;
 use App\Data\Enums\UrlDataFetchTypeEnum;
-use App\Domains\Post\Content\PostContentRepository;
+use App\Domains\Post\Content\PostContentService;
 use App\Domains\Theme\ThemeFilesRepository;
 use App\Models\UrlData;
 
@@ -44,7 +44,7 @@ test('JSON to HTML', function () {
         ],
     ]);
 
-    $html = PostContentRepository::getHtml($json, blog());
+    $html = PostContentService::getHtml($json, blog());
 
     expect($html)->toContain(
         $this->url,
@@ -61,7 +61,7 @@ test('html to json', function() {
     <a class="bookmark" data-url="https://talk.hyvor.com"></a>
     HTML;
 
-    $json = PostContentRepository::getJsonFromHtml($html, blog());
+    $json = PostContentService::getJsonFromHtml($html, blog());
 
     expect($json)->toBe(json_encode([
         'type' => 'doc',
@@ -110,7 +110,7 @@ test('custom template', function () {
         ],
     ];
 
-    $html = PostContentRepository::getHtml($json, $blog);
+    $html = PostContentService::getHtml($json, $blog);
 
     expect($html)->toContain(
         $this->url,
