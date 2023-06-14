@@ -69,11 +69,25 @@ export default class Table {
         // Add a button to create a new row
         const button = document.createElement("button");
         button.innerHTML = "Add row";
-        const transaction = this.view.state.tr;
-        button.addEventListener("click", () => {
-            this.view.dispatch(addRowAfter(transaction.replaceSelectionWith(schema.nodes.table.createAndFill(), false).scrollIntoView()));
-        });
+        button.addEventListener("click", this.addRowButtonClick);
         this.dom.appendChild(button);
     }
+
+    addRowButtonClick = () => {
+        const table = this.dom.querySelector("table");
+        const tbody = table.querySelector("tbody");
+        const rows = tbody.querySelectorAll("tr");
+        const newRow = document.createElement("tr");
+        newRow.setAttribute("contenteditable", true);
+      
+        for (let i = 0; i < rows[0].children.length; i++) {
+          const td = document.createElement("td");
+          td.setAttribute("contenteditable", true);
+          td.innerHTML = "<p> </p>";
+          newRow.appendChild(td);
+        }
+      
+        tbody.appendChild(newRow);
+      }
 
 }

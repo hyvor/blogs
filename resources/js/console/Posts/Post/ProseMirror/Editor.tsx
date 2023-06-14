@@ -86,19 +86,7 @@ export default function Editor({ id, currentLanguageId, status, value, onChange,
 
         let state = EditorState.create({
             schema: HBSchema,
-            plugins: [
-                ...plugins(HBSchema),
-                columnResizing(),
-                tableEditing(),
-                keymap({
-                    Tab: goToNextCell(1),
-                    'Shift-Tab': goToNextCell(-1),
-                    'arrowleft': goToNextCell(-1),
-                    'arrowright': goToNextCell(1),
-                    'arrowup': goToNextCell(-1),
-                    'arrowdown': goToNextCell(1),
-                }),
-            ],
+            plugins: plugins(HBSchema),
             doc: value ? HBSchema.nodeFromJSON(jsonParsedValue) : undefined
         });
         const fix = fixTables(state);

@@ -19,7 +19,7 @@ export default function plugins(schema) {
 
     return [
         inputRulesPlugin(schema),
-        //...keymapPlugins(schema),
+        ...keymapPlugins(schema),
 
         placeholderPlugin('Start writing...'),
         tooltipPlugin(schema),
@@ -38,6 +38,8 @@ export default function plugins(schema) {
 
         // https://github.com/curvenote/prosemirror-codemark
         ...codemark({ markType: schema.marks.code }),
+        columnResizing(),
+        tableEditing(),
     ]
 
 }
