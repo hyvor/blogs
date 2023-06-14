@@ -1,5 +1,6 @@
 import { NodeSelection, TextSelection } from "prosemirror-state";
 import schema from "./schema";
+import { Trash } from 'react-bootstrap-icons';
 
 export default class Table {
   
@@ -16,9 +17,20 @@ export default class Table {
     }
 
     renderNode(node, pos) {
+        const div = document.createElement("div");
+        div.setAttribute("class", "table-wrapper");
         this.dom.innerHTML = "";
+    
+        // TODO: show delete button only when node is focused
+       // TODO: show delete button only when node is focused
+        const deleteTableButton = document.createElement("button");
+        deleteTableButton.setAttribute("class", "icon-button delete-table-button hidden"); // Add the "hidden" class initially
+        deleteTableButton.innerHTML = "X";        
+        deleteTableButton.addEventListener("click", this.deleteTable);
+        div.appendChild(deleteTableButton);
 
         const table = document.createElement("table");
+        table.setAttribute("class", "not-focused");
         table.setAttribute("contenteditable", true);
         const tbody = document.createElement("tbody");
 
@@ -47,8 +59,9 @@ export default class Table {
         }
 
         table.appendChild(tbody);
+        div.appendChild(table);
 
-        this.dom.appendChild(table);
+        this.dom.appendChild(div);
 
         this.dom.addEventListener("click", this.selectNode);
 
@@ -61,11 +74,6 @@ export default class Table {
         deleteRowButton.innerHTML = "Delete row";
         deleteRowButton.addEventListener("click", this.deleteRowButtonClick);
         this.dom.appendChild(deleteRowButton);
-
-        const deleteTableButton = document.createElement("button");
-        deleteTableButton.innerHTML = "Delete table";
-        deleteTableButton.addEventListener("click", this.deleteTable);
-        this.dom.appendChild(deleteTableButton);
 
         const addColumnButton = document.createElement("button");
         addColumnButton.innerHTML = "Add column";
@@ -96,6 +104,21 @@ export default class Table {
         deleteRowHeader.innerHTML = "Delete row header";
         deleteRowHeader.addEventListener("click", this.deleteRowHeaderButtonClick);
         this.dom.appendChild(deleteRowHeader);
+
+        
+        table.addEventListener("focus", () => {
+            deleteTableButton.classList.remove("hidden");
+            table.classList.remove("not-focused");
+            table.classList.add("focused");
+          });
+          
+          table.addEventListener("blur", async () => {
+            // Add little delay to allow button to be clicked
+            await new Promise((resolve) => setTimeout(resolve, 200));
+            deleteTableButton.classList.add("hidden");
+            table.classList.add("not-focused");
+            table.classList.remove("focused");
+          });
     }
 
     addRowButtonClick = () => {
