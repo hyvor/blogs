@@ -1,4 +1,4 @@
-<?php
+<?php declare(strict_types=1);
 
 namespace App\Domains\Delivery;
 
@@ -10,7 +10,7 @@ use App\Models\Blog;
 
 class DeliveryService
 {
-    public static function getLaravelResponse(Blog $blog, string $path)
+    public static function getLaravelResponse(Blog $blog, string $path) : mixed
     {
         $obj = self::getResponseObject($blog, $path);
         if ($obj->type === DeliveryAPITypeEnum::FILE) {

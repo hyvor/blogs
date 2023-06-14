@@ -2,6 +2,7 @@
 
 namespace Tests\Feature\Integrations\Shopify;
 
+use App\Domains\Theme\ThemeFilesRepository;
 use App\Models\ShopifyShop;
 
 function generateShopifyProxySignature(array $data): array
@@ -50,8 +51,8 @@ it('requires a shop with an assigned blog', function () {
         ->assertSee('No blog is assigned to this shop');
 });
 
-it('returns a response with the embed script', function () {
-    $blog = blog();
+it('returns a response', function () {
+    $blog = blogWithLanguageAndRoutes();
     $data = generateShopifyProxySignature([
         'shop' => 'shop.myshopify.com'
     ]);
@@ -62,7 +63,9 @@ it('returns a response with the embed script', function () {
         'blog_id' => $blog->id
     ]);
 
+    addThemeTemplateFile($blog, 'Hi there!');
+
     integrationApi('GET', '/shopify/proxy', $data)
         ->assertOk()
-        ->assertSee(['<script', 'src=', 'embed.js'], false);
+        ->assertSee('Hi there!');
 });

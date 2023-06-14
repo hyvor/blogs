@@ -1,4 +1,4 @@
-<?php
+<?php declare(strict_types=1);
 
 namespace App\Domains\Integrations\Shopify;
 
@@ -8,22 +8,12 @@ use App\Domains\Subscription\PlansService;
 use App\Domains\Subscription\SubscriptionService;
 use App\Exceptions\TrustedException;
 use App\Models\ShopifyShop;
-use Illuminate\Http\Client\Response;
+use App\Models\Subscription;
 use Illuminate\Support\Facades\App;
-use Illuminate\Support\Facades\Http;
 use Illuminate\Support\Facades\URL;
 
 class ShopifyBillingService
 {
-    private static function callApi(ShopifyShop $shop, string $query): Response
-    {
-        return Http::withHeaders([
-            'X-Shopify-Access-Token' => $shop->access_token,
-        ])
-            ->withBody($query, 'application/graphql')
-            ->post("https://$shop->domain/admin/api/2022-07/graphql.json");
-    }
-
     public static function createPayLink(
         ShopifyShop $shop,
         SubscriptionPlanEnum $plan,
@@ -62,7 +52,7 @@ class ShopifyBillingService
         }
         QUERY;
 
-        $response = self::callApi($shop, $query);
+        $response = ShopifyService::callApi($shop, $query);
 
         if (!$response->successful()) {
             throw new TrustedException('Failed to create shopify PayLink');
@@ -75,6 +65,16 @@ class ShopifyBillingService
         }
 
         return $url;
+    }
+
+    public static function getShopifySubscriptionId(Subscription $subscription) : ?string
+    {
+        $chargeId = $subscription->getMeta('shopify_charge_id');
+
+        if (!$chargeId)
+            return null;
+
+        return strval($chargeId);
     }
 
     public static function cancelSubscription(ShopifyShop $shop)
@@ -105,7 +105,7 @@ class ShopifyBillingService
         }
         GQL;
 
-        $response = self::callApi($shop, $query);
+        $response = ShopifyService::callApi($shop, $query);
 
         if (!$response->successful()) {
             throw new TrustedException('Failed to cancel the subscription (HTTP ERROR)');

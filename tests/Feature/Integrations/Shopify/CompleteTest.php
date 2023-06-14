@@ -3,6 +3,7 @@
 namespace Tests\Feature\Integrations\Shopify;
 
 use App\Data\Enums\BlogBillingTypeEnum;
+use App\Data\Enums\BlogHostingAtEnum;
 use App\Data\Enums\BlogIntegrationEnum;
 use App\Domains\Blog\Fillers\PostFiller;
 use App\Domains\Blog\Fillers\RouteFiller;
@@ -11,6 +12,7 @@ use App\Domains\Blog\Fillers\ThemeFiller;
 use App\Domains\Blog\Fillers\UserFiller;
 use App\Models\Blog;
 use App\Models\ShopifyShop;
+use Illuminate\Support\Facades\Http;
 use Mockery;
 
 beforeEach(function () {
@@ -67,6 +69,19 @@ it('creates blog, sets up self hosting, sets blog_id in shopify shop, and redire
     ($this->mockFiller)(RouteFiller::class);
     ($this->mockFiller)(ThemeFiller::class);
 
+    Http::fake([
+        'https://shop.myshopify.com/admin/api/2022-07/graphql.json' => Http::response([
+            'data' => [
+                'shop' => [
+                    'name' => 'My Shop',
+                    'primaryDomain' => [
+                        'url' => 'https://shop.myshopify.com'
+                    ]
+                ]
+            ]
+        ])
+    ]);
+
     $domain = 'shop.myshopify.com';
     $shop = ShopifyShop::create([
         'domain' => $domain,
@@ -75,14 +90,20 @@ it('creates blog, sets up self hosting, sets blog_id in shopify shop, and redire
 
     integrationApi('GET', '/shopify/complete', [
         'domain' => $domain
-    ])->assertRedirect('/console/shop-myshopify-com');
+    ])->assertRedirect('/console/my-shop');
 
-    $blog = Blog::where('subdomain', 'shop-myshopify-com')->first();
+    $blog = Blog::where('subdomain', 'my-shop')->first();
     expect($blog)->toBeInstanceOf(Blog::class);
     expect($blog->billing_type)->toBe(BlogBillingTypeEnum::SHOPIFY);
     expect($blog->integration)->toBe(BlogIntegrationEnum::SHOPIFY);
-    expect($blog->getMeta('embeddable'))->toBe(true);
-    expect($blog->getMeta('embedding_domains'))->toBe('*');
+    expect($blog->hosting_at)->toBe(BlogHostingAtEnum::SELF);
+    expect($blog->hosting_url)->toBe('https://shop.myshopify.com/a/blog');
+
+    $variant = $blog->variants()->first();
+    expect($variant->name)->toBe('My Shop');
+
+    // expect($blog->getMeta('embeddable'))->toBe(true);
+    // expect($blog->getMeta('embedding_domains'))->toBe('*');
 
     $shop->refresh();
     expect($shop->blog_id)->toBe($blog->id);

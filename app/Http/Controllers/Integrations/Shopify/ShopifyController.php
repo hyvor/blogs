@@ -1,4 +1,4 @@
-<?php
+<?php declare(strict_types=1);
 
 namespace App\Http\Controllers\Integrations\Shopify;
 
@@ -10,6 +10,7 @@ use App\Data\Enums\SubscriptionPlanEnum;
 use App\Domains\Blog\BlogService;
 use App\Domains\Blog\Jobs\DeleteBlogJob;
 use App\Domains\Blog\UniqueSubdomainGenerator;
+use App\Domains\Delivery\DeliveryService;
 use App\Domains\Integrations\Shopify\Rules\ShopDomainRule;
 use App\Domains\Integrations\Shopify\ShopifyService;
 use App\Domains\Subscription\SubscriptionService;
@@ -25,13 +26,13 @@ class ShopifyController
     /**
      * Called when the user clicks the Add App button in the Shopify App
      */
-    public function init(Request $request, ShopifyService $shopify)
+    public function init(Request $request, ShopifyService $shopify) : mixed
     {
         $request->validate([
             'shop' => ['required', 'string', new ShopDomainRule()],
         ]);
 
-        $shopDomain = $request->input('shop');
+        $shopDomain = (string) $request->string('shop');
 
         $shop = $shopify->getShopByDomain($shopDomain);
         if ($shop && $shop->blog) {
@@ -82,13 +83,13 @@ class ShopifyController
      * Here we check the Hyvor login and then create the blog
      * And updates the blog to self-hosting (for Shopify Proxy)
      */
-    public function complete(Request $request, ShopifyService $shopifyService)
+    public function complete(Request $request, ShopifyService $shopifyService) : mixed
     {
         $request->validate([
             'domain' => 'required|string'
         ]);
 
-        $domain = $request->input('domain');
+        $domain = (string) $request->string('domain');
 
         $shop = $shopifyService->getShopByDomain($domain);
 
@@ -106,10 +107,12 @@ class ShopifyController
             return Redirect::toSignup("/integrations/shopify/complete?domain=$domain");
         }
 
+        ['name' => $shopName, 'url' => $shopUrl] = $shopifyService->getShopData($shop);
+
         $blog = app(BlogService::class)->createBlog(
             $hyvorUser->id,
-            $domain,
-            UniqueSubdomainGenerator::generate([str_replace('.', '-', $domain)]),
+            $shopName,
+            UniqueSubdomainGenerator::generate([$shopName]),
             BlogTypeEnum::DEFAULT,
             BlogBillingTypeEnum::SHOPIFY,
             BlogIntegrationEnum::SHOPIFY
@@ -117,12 +120,8 @@ class ShopifyController
 
         // setup blog for self-hosting with shopify default configs
         BlogService::updateBlog($blog, [
-            'embeddable' => true,
-            /**
-             * Users may have multiple domains. So, allow all for now
-             * Users can later change if needed
-             */
-            'embedding_domains' => '*'
+            'hosting_at' => 'self',
+            'hosting_url' => $shopUrl . '/a/blog'
         ]);
 
         $shop->blog_id = $blog->id;
@@ -131,8 +130,9 @@ class ShopifyController
         return redirect("/console/$blog->subdomain");
     }
 
-    public function proxy(Request $request, ShopifyService $shopifyService)
+    public function proxy(Request $request, ShopifyService $shopifyService) : mixed
     {
+
         $request->validate([
             'shop' => ['required', 'string', new ShopDomainRule()],
             'signature' => 'required|string'
@@ -142,7 +142,7 @@ class ShopifyController
             throw new TrustedException('Invalid signature');
         }
 
-        $domain = $request->query('shop');
+        $domain = (string) $request->string('shop');
 
         $shop = $shopifyService->getShopByDomain($domain);
 
@@ -156,13 +156,9 @@ class ShopifyController
             throw new TrustedException('No blog is assigned to this shop');
         }
 
-        $path = $request->route('path') ?? '';
-        $scriptUrl = URL::to("/embed/embed.js?subdomain=$blog->subdomain&path_style=1&path=$path");
-        $html = <<<HTML
-            <div id="hyvor-blogs-embed-wrap"></div>
-            <script src="$scriptUrl"></script>
-        HTML;
-        return response($html)->header('Content-Type', 'application/liquid');
+        $path = strval($request->route('path') ?? '');
+        return DeliveryService::getLaravelResponse($blog, $path);
+
     }
 
     public function confirmSubscription(Request $request)

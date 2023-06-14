@@ -1,7 +1,10 @@
 <?php
 
 use App\Domains\Post\Content\PostContentService;
+use App\Domains\Integrations\Shopify\ShopifyService;
+use App\Domains\Post\Content\PostContentRepository;
 use App\Models\Blog;
+use App\Models\ShopifyShop;
 use App\Models\User;
 use Hyvor\HyvorConnecter\HyvorUser;
 use Hyvor\SyntaxHighlighter\Highlighter;
@@ -43,4 +46,12 @@ Route::get('embed', function () {
         'subdomain' => 'test'
     ]);
     return $html . '<script>' . $js . '</script>';
+});
+
+
+Route::get('shopify', function() {
+
+    $service = new ShopifyService();
+    dd($service->getShopUrl(ShopifyShop::first()));
+
 });

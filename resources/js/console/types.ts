@@ -339,7 +339,9 @@ export interface Subscription {
     frequency: SubscriptionFrequency,
     created_at: number,
     ends_at: number | null,
-    paddle_subscription_id: number | null
+
+    paddle_subscription_id: number | null,
+    shopify_subscription_id: string | null,
 
 }
 
