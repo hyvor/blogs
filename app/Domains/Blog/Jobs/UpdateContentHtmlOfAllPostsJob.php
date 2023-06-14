@@ -16,7 +16,7 @@ class UpdateContentHtmlOfAllPostsJob implements ShouldQueue
 
     public function __construct(public Blog $blog) {}
 
-    public function handle()
+    public function handle() : void
     {
 
         PostVariant::join('posts', 'posts.id', '=', 'post_variants.post_id')
@@ -28,6 +28,7 @@ class UpdateContentHtmlOfAllPostsJob implements ShouldQueue
             ->chunk(100, function($variants) {
 
                 foreach ($variants as $variant) {
+
                     PostRepository::updateVariantHtml($variant);
                 }
 
