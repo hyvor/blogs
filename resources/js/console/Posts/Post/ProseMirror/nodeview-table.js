@@ -7,7 +7,9 @@ export default class Table {
         this.node = node;
         this.view = view;
         this.getPos = getPos;
-        this.columnHeader = true; // Table create with headers
+        this.columnHeader = true; // Table create with column by default headers
+        this.rowHeader = false; // Table create without row headers by default
+
 
         this.dom = document.createElement("table")
         this.renderNode(node, getPos);
@@ -84,6 +86,16 @@ export default class Table {
         deleteColumnHeader.innerHTML = "Delete column header";
         deleteColumnHeader.addEventListener("click", this.deleteColumnHeaderButtonClick);
         this.dom.appendChild(deleteColumnHeader);
+
+        const addRowHeader = document.createElement("button");
+        addRowHeader.innerHTML = "Add row header";
+        addRowHeader.addEventListener("click", this.addRowHeaderButtonClick);
+        this.dom.appendChild(addRowHeader);
+
+        const deleteRowHeader = document.createElement("button");
+        deleteRowHeader.innerHTML = "Delete row header";
+        deleteRowHeader.addEventListener("click", this.deleteRowHeaderButtonClick);
+        this.dom.appendChild(deleteRowHeader);
     }
 
     addRowButtonClick = () => {
@@ -183,6 +195,35 @@ export default class Table {
         const headerRow = rows[0];
         this.columnHeader = false;
         headerRow.remove();
+    }
+
+    addRowHeaderButtonClick = () => {
+        // Add header only when it doesn't exist
+        if (this.rowHeader)
+            return;
+        const table = this.dom.querySelector("table");
+        const tbody = table.querySelector("tbody");
+        const rows = tbody.querySelectorAll("tr");
+        for (let i = 0; i < rows.length; i++) {
+            const th = document.createElement("th");
+            th.setAttribute("contenteditable", true);
+            th.innerHTML = `Header ${i + 1}`;
+            rows[i].insertBefore(th, rows[i].children[0]);
+        }
+        this.rowHeader = true;
+    }
+
+    deleteRowHeaderButtonClick = () => {
+        // Delete header only when it exists
+        if (!this.rowHeader)
+            return;
+        const table = this.dom.querySelector("table");
+        const tbody = table.querySelector("tbody");
+        const rows = tbody.querySelectorAll("tr");
+        for (let i = 0; i < rows.length; i++) {
+            rows[i].children[0].remove();
+        }
+        this.rowHeader = false;
     }
 
     deleteTable = () => {
