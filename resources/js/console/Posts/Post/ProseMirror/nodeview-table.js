@@ -7,7 +7,7 @@ export default class Table {
         this.node = node;
         this.view = view;
         this.getPos = getPos;
-        this.header = true; // Table create with headers
+        this.columnHeader = true; // Table create with headers
 
         this.dom = document.createElement("table")
         this.renderNode(node, getPos);
@@ -75,10 +75,15 @@ export default class Table {
         deleteColumnButton.addEventListener("click", this.deleteColumnButtonClick);
         this.dom.appendChild(deleteColumnButton);
 
-        const deleteHeaderButton = document.createElement("button");
-        deleteHeaderButton.innerHTML = "Delete header";
-        deleteHeaderButton.addEventListener("click", this.deleteHeaderButtonClick);
-        this.dom.appendChild(deleteHeaderButton);
+        const addColumnHeader = document.createElement("button");
+        addColumnHeader.innerHTML = "Add column header";
+        addColumnHeader.addEventListener("click", this.addColumnHeaderButtonClick);
+        this.dom.appendChild(addColumnHeader);
+
+        const deleteColumnHeader = document.createElement("button");
+        deleteColumnHeader.innerHTML = "Delete column header";
+        deleteColumnHeader.addEventListener("click", this.deleteColumnHeaderButtonClick);
+        this.dom.appendChild(deleteColumnHeader);
     }
 
     addRowButtonClick = () => {
@@ -148,15 +153,35 @@ export default class Table {
         }
     }
 
-    deleteHeaderButtonClick = () => {
+    addColumnHeaderButtonClick = () => {
+        // Add header only when it doesn't exist
+        if (this.columnHeader)
+            return;
+        const table = this.dom.querySelector("table");
+        const tbody = table.querySelector("tbody");
+        const rows = tbody.querySelectorAll("tr");
+        const firstRow = rows[0];
+        const newRow = document.createElement("tr");
+        newRow.setAttribute("contenteditable", true);
+        for (let i = 0; i < firstRow.children.length; i++) {
+            const th = document.createElement("th");
+            th.setAttribute("contenteditable", true);
+            th.innerHTML = `Header ${i + 1}`;
+            newRow.appendChild(th);
+        }
+        tbody.insertBefore(newRow, firstRow);
+        this.columnHeader = true;
+    }
+
+    deleteColumnHeaderButtonClick = () => {
         // Delete header only when it exists
-        if (!this.header)
+        if (!this.columnHeader)
             return;
         const table = this.dom.querySelector("table");
         const tbody = table.querySelector("tbody");
         const rows = tbody.querySelectorAll("tr");
         const headerRow = rows[0];
-        this.header = false;
+        this.columnHeader = false;
         headerRow.remove();
     }
 
