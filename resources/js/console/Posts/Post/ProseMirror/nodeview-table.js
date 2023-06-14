@@ -17,12 +17,11 @@ export default class Table {
     }
 
     renderNode(node, pos) {
+        // Global div for the table and buttons
         const div = document.createElement("div");
         div.setAttribute("class", "table-wrapper");
         this.dom.innerHTML = "";
     
-        // TODO: show delete button only when node is focused
-       // TODO: show delete button only when node is focused
         const deleteTableButton = document.createElement("button");
         deleteTableButton.setAttribute("class", "icon-button delete-table-button hidden"); // Add the "hidden" class initially
         deleteTableButton.innerHTML = "X";        
@@ -60,22 +59,29 @@ export default class Table {
 
         table.appendChild(tbody);
         div.appendChild(table);
-
         this.dom.appendChild(div);
 
         this.dom.addEventListener("click", this.selectNode);
 
+        // Div for rows buttons
+        const rowsButtonsDiv = document.createElement("div");
+        rowsButtonsDiv.setAttribute("class", "rows-buttons hidden");
+
         const addRowButton = document.createElement("button");
-        addRowButton.innerHTML = "Add row";
+        addRowButton.setAttribute("class", "icon-button add-row-button");
+        addRowButton.innerHTML = "+";
         addRowButton.addEventListener("click", this.addRowButtonClick);
-        this.dom.appendChild(addRowButton);
+        rowsButtonsDiv.appendChild(addRowButton);
 
         const deleteRowButton = document.createElement("button");
-        deleteRowButton.innerHTML = "Delete row";
+        deleteRowButton.innerHTML = "-";
+        deleteRowButton.setAttribute("class", "icon-button delete-row-button");
         deleteRowButton.addEventListener("click", this.deleteRowButtonClick);
-        this.dom.appendChild(deleteRowButton);
+        rowsButtonsDiv.appendChild(deleteRowButton);
 
-        const addColumnButton = document.createElement("button");
+        div.appendChild(rowsButtonsDiv);
+
+        /*const addColumnButton = document.createElement("button");
         addColumnButton.innerHTML = "Add column";
         addColumnButton.addEventListener("click", this.addColumnButtonClick);
         this.dom.appendChild(addColumnButton);
@@ -103,11 +109,12 @@ export default class Table {
         const deleteRowHeader = document.createElement("button");
         deleteRowHeader.innerHTML = "Delete row header";
         deleteRowHeader.addEventListener("click", this.deleteRowHeaderButtonClick);
-        this.dom.appendChild(deleteRowHeader);
+        this.dom.appendChild(deleteRowHeader);*/
 
         
         table.addEventListener("focus", () => {
             deleteTableButton.classList.remove("hidden");
+            rowsButtonsDiv.classList.remove("hidden");
             table.classList.remove("not-focused");
             table.classList.add("focused");
           });
@@ -116,6 +123,7 @@ export default class Table {
             // Add little delay to allow button to be clicked
             await new Promise((resolve) => setTimeout(resolve, 200));
             deleteTableButton.classList.add("hidden");
+            rowsButtonsDiv.classList.add("hidden");
             table.classList.add("not-focused");
             table.classList.remove("focused");
           });
@@ -136,6 +144,7 @@ export default class Table {
         }
       
         tbody.appendChild(newRow);
+        newRow.click();
       }
 
     deleteRowButtonClick = () => {

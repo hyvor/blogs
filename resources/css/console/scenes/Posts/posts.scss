@@ -70,9 +70,17 @@
             margin-top: 25px;
         }
         .hidden {
-            display: none;
+            display: none!important;
           }
+        .rows-buttons {
+            border-radius: 20px;
+            display: flex;
+            justify-content: space-around;
+            width: 100%;
+            background-color: $color-accent-light;
+        }
     }
+
 
     .posts-filtering {
         padding: 15px 25px;
