@@ -1,6 +1,6 @@
 <?php
 
-use App\Domains\Post\Content\PostContentRepository;
+use App\Domains\Post\Content\PostContentService;
 use App\Models\Blog;
 use App\Models\User;
 use Hyvor\HyvorConnecter\HyvorUser;
@@ -8,7 +8,7 @@ use Hyvor\SyntaxHighlighter\Highlighter;
 use Illuminate\Support\Facades\Route;
 
 Route::get('callout', function () {
-    $json = PostContentRepository::getJsonFromHtml('
+    $json = PostContentService::getJsonFromHtml('
         <aside data-emoji="💡" style="background-color: #ffd969" data-fg="#000">The only real valuable thing is intuition.</aside>
     ', Blog::find(1));
 

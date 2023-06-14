@@ -5,9 +5,9 @@ namespace Tests\Feature\ConsoleAPI\Ai;
 use App\Data\Enums\SubscriptionPlanEnum;
 use App\Domains\Integrations\DeepL\Enums\DeepLSourceLangEnum;
 use App\Domains\Integrations\DeepL\Enums\DeepLTargetLangEnum;
-use App\Domains\Post\Content\PostContentRepository;
 use App\Models\AutoTranslation;
 use Illuminate\Support\Facades\Http;
+use Tests\Helper\Generator\PostContentGenerator;
 
 it('translates', function() {
 
@@ -27,14 +27,14 @@ it('translates', function() {
     consoleApi($blog, 'post', '/ai/translate', [
         'source_lang' => 'EN',
         'target_lang' => 'FR',
-        'content' => PostContentRepository::generateParagraph('Testing this system'),
+        'content' => PostContentGenerator::generateParagraph('Testing this system'),
         'title' => 'Hello World',
         'description' => 'Welcome to HYVOR'
     ])
         ->assertOk()
         ->assertJsonPath('title', 'Bonjour le monde')
         ->assertJsonPath('description', 'Bienvenue sur HYVOR')
-        ->assertJsonPath('content', PostContentRepository::generateParagraph('tester ce système'));
+        ->assertJsonPath('content', PostContentGenerator::generateParagraph('tester ce système'));
 
     $autoTranslation = AutoTranslation::where('blog_id', $blog->id)->first();
 
@@ -106,7 +106,7 @@ it('throws API error', function() {
     consoleApi($blog, 'post', '/ai/translate', [
         'source_lang' => 'EN',
         'target_lang' => 'FR',
-        'content' => PostContentRepository::generateParagraph('Testing this system'),
+        'content' => PostContentGenerator::generateParagraph('Testing this system'),
         'title' => 'Hello World'
     ])
         ->assertUnprocessable()
@@ -129,7 +129,7 @@ it('throws an error when limits reached', function() {
     consoleApi($blog, 'post', '/ai/translate', [
         'source_lang' => 'EN',
         'target_lang' => 'FR',
-        'content' => PostContentRepository::generateParagraph('Testing this system'),
+        'content' => PostContentGenerator::generateParagraph('Testing this system'),
         'title' => 'Hello World'
     ])
         ->assertUnprocessable()

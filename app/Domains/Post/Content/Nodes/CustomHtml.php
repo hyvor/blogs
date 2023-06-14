@@ -1,0 +1,18 @@
+<?php declare(strict_types=1);
+
+namespace App\Domains\Post\Content\Nodes;
+
+use Hyvor\Phrosemirror\Types\NodeType;
+
+class CustomHtml extends NodeType
+{
+
+    public string $name = 'custom_html';
+
+    public function toHtml($node, $children): string
+    {
+        $code = $node->allText();
+        return "<p>$code</p>";
+    }
+
+}

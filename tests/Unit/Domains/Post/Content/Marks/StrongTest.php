@@ -2,7 +2,7 @@
 
 namespace App\Domains\Post\Content\_Marks;
 
-use App\Domains\Post\Content\PostContentRepository;
+use App\Domains\Post\Content\PostContentService;
 
 test('strong JSON to HTML', function () {
     $document = [
@@ -20,7 +20,7 @@ test('strong JSON to HTML', function () {
         ],
     ];
 
-    $result = PostContentRepository::getHtml($document, blog());
+    $result = PostContentService::getHtml($document, blog());
 
     expect($result)->toEqual('<strong>Example Text</strong>');
 });
@@ -29,7 +29,7 @@ test('from HTML b', function() {
 
     $html = '<b>Example Text</b>';
 
-    $result = PostContentRepository::getDocumentFromHtml($html, blog());
+    $result = PostContentService::getDocumentFromHtml($html, blog());
 
     expect($result->toArray())->toEqual([
         'type' => 'doc',
@@ -52,7 +52,7 @@ test('from HTML strong', function() {
 
     $html = '<strong>Example Text</strong>';
 
-    $result = PostContentRepository::getDocumentFromHtml($html, blog());
+    $result = PostContentService::getDocumentFromHtml($html, blog());
 
     expect($result->toArray())->toEqual([
         'type' => 'doc',

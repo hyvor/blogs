@@ -2,7 +2,8 @@
 
 namespace App\Domains\Blog\Jobs;
 
-use App\Domains\Post\Content\PostContentRepository;
+use App\Domains\Post\Content\PostContentService;
+use App\Domains\Post\PostRepository;
 use App\Models\Blog;
 use App\Models\PostVariant;
 use Illuminate\Contracts\Queue\ShouldQueue;
@@ -27,7 +28,7 @@ class UpdateContentHtmlOfAllPostsJob implements ShouldQueue
             ->chunk(100, function($variants) {
 
                 foreach ($variants as $variant) {
-                    app(PostContentRepository::class)->updateVariantHtml($variant);
+                    PostRepository::updateVariantHtml($variant);
                 }
 
             });

@@ -18,7 +18,7 @@ use App\Domains\App\DomainService;
 use App\Domains\Delivery\PathMatcher;
 use App\Domains\Delivery\RouteMatcher\MatchedRoute;
 use App\Domains\Delivery\Twig\TwigRenderer;
-use App\Domains\Post\Content\PostContentRepository;
+use App\Domains\Post\Content\PostContentService;
 use App\Domains\Post\PostRepository;
 use App\Domains\Route\PermalinkRepository;
 use App\Domains\Tag\TagRepository;
@@ -186,7 +186,7 @@ class TemplateRenderer
                     ->firstWhere('language_id', $this->pathMatcher->language->id);
 
                 if ($variant && $variant->content_unsaved) {
-                    $variant->content_html = PostContentRepository::getHtml(
+                    $variant->content_html = PostContentService::getHtml(
                         $variant->content_unsaved,
                         $this->pathMatcher->blog
                     );

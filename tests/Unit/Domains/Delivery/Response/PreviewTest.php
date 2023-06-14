@@ -7,9 +7,10 @@ use App\Data\Enums\DeliveryAPITypeEnum;
 use App\Data\Enums\ThemeFileFolderEnum;
 use App\Domains\Delivery\PathMatcher;
 use App\Domains\Delivery\PostPreviewSecretEncryptor;
-use App\Domains\Post\Content\PostContentRepository;
+use App\Domains\Post\Content\PostContentService;
 use App\Domains\Theme\ThemeFilesRepository;
 use App\Models\Post;
+use Tests\Helper\Generator\PostContentGenerator;
 
 beforeEach(function () {
 
@@ -68,7 +69,7 @@ it('displays unsaved content HTML if it is there', function () {
     $language = $this->blog->languages[0];
 
     $post = Post::where('blog_id', $this->blog->id)->first();
-    $content = PostContentRepository::generateRandom();
+    $content = PostContentGenerator::generateRandom();
     $post->variants->firstWhere('language_id', $language->id)->update(['content_unsaved' => $content]);
 
     $id = PostPreviewSecretEncryptor::getPreviewSecret($post);
@@ -79,7 +80,7 @@ it('displays unsaved content HTML if it is there', function () {
     expect($responseObject->type)->toBe(DeliveryAPITypeEnum::FILE);
     expect($responseObject->cache)->toBe(false);
     expect($responseObject->status)->toBe(200);
-    expect($responseObject->content)->toBe(PostContentRepository::getHtml($content, $this->blog));
+    expect($responseObject->content)->toBe(PostContentService::getHtml($content, $this->blog));
 });
 
 it('does not match if the timestamp is expired', function() {

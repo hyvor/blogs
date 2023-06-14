@@ -2,7 +2,7 @@
 
 namespace App\Domains\Post\Content\_Marks;
 
-use App\Domains\Post\Content\PostContentRepository;
+use App\Domains\Post\Content\PostContentService;
 
 beforeEach(function () {
     $this->link = 'https://example.com/page';
@@ -27,7 +27,7 @@ beforeEach(function () {
 });
 
 test('code JSON to HTML', function () {
-    $result = PostContentRepository::getHtml($this->document, blog());
+    $result = PostContentService::getHtml($this->document, blog());
     expect($result)->toEqual("<a href=\"$this->link\" target=\"_blank\" rel=\"noopener noreferrer\">$this->text</a>");
 });
 
@@ -38,21 +38,21 @@ test('internal link', function () {
         'hosting_url' => 'https://example.com',
     ]);
 
-    $result = PostContentRepository::getHtml($this->document, $blog);
+    $result = PostContentService::getHtml($this->document, $blog);
     expect($result)->toEqual("<a href=\"$this->link\" rel=\"noopener noreferrer\">$this->text</a>");
 });
 
 test('nofollow meta', function () {
     $blog = blog();
     $blog->setMeta('seo_external_links_follow', 'nofollow');
-    $result = PostContentRepository::getHtml($this->document, $blog);
+    $result = PostContentService::getHtml($this->document, $blog);
     expect($result)->toEqual("<a href=\"$this->link\" target=\"_blank\" rel=\"noopener noreferrer nofollow\">$this->text</a>");
 });
 
 test('from HTML', function() {
     $html = '<a href="https://exmaple.com">Example Text</a>';
 
-    $result = PostContentRepository::getDocumentFromHtml($html, blog());
+    $result = PostContentService::getDocumentFromHtml($html, blog());
 
     expect($result->toArray())->toEqual([
         'type' => 'doc',

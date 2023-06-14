@@ -2,7 +2,7 @@
 
 namespace App\Domains\Post\Content\_Marks;
 
-use App\Domains\Post\Content\PostContentRepository;
+use App\Domains\Post\Content\PostContentService;
 
 test('code JSON to HTML', function () {
     $document = [
@@ -20,7 +20,7 @@ test('code JSON to HTML', function () {
         ],
     ];
 
-    $result = PostContentRepository::getHtml($document, blog());
+    $result = PostContentService::getHtml($document, blog());
 
     expect($result)->toEqual('<code>Example Text</code>');
 });
@@ -29,7 +29,7 @@ test('from HTML', function() {
 
     $html = '<code>Example Text</code>';
 
-    $result = PostContentRepository::getDocumentFromHtml($html, blog());
+    $result = PostContentService::getDocumentFromHtml($html, blog());
 
     expect($result->toArray())->toEqual([
         'type' => 'doc',

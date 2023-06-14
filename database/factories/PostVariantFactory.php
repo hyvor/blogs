@@ -2,18 +2,18 @@
 
 namespace Database\Factories;
 
-use App\Domains\Post\Content\PostContentRepository;
 use App\Models\Language;
 use App\Models\Post;
 use Illuminate\Database\Eloquent\Factories\Factory;
 use Illuminate\Support\Arr;
 use Illuminate\Support\Str;
+use Tests\Helper\Generator\PostContentGenerator;
 
 class PostVariantFactory extends Factory
 {
     public function definition()
     {
-        $content = PostContentRepository::generateRandom();
+        $content = PostContentGenerator::generateRandom();
 
         return [
             'post_id' => Post::factory(),

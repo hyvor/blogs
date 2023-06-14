@@ -1,9 +1,10 @@
-<?php
+<?php declare(strict_types=1);
 
 namespace App\Domains\Post;
 
 use App\Data\Enums\PostStatusEnum;
 use App\Domains\Language\LanguageRepository;
+use App\Domains\Post\Content\PostContentService;
 use App\Domains\Post\Events\PostCreatedEvent;
 use App\Domains\Post\Events\PostDeletedEvent;
 use App\Domains\Post\Events\PostUpdatedEvent;
@@ -82,8 +83,8 @@ class PostRepository
                             COALESCE(posts.published_at, posts.created_at) < ?
                         ',
                         [
-                            Carbon::createFromTimestamp($startTimestamp)->toDateTimeString(),
-                            Carbon::createFromTimestamp($endTimestamp)->toDateTimeString(),
+                            Carbon::createFromTimestamp((int) $startTimestamp)->toDateTimeString(),
+                            Carbon::createFromTimestamp((int) $endTimestamp)->toDateTimeString(),
                         ]
                     );
             })
@@ -234,7 +235,7 @@ class PostRepository
         return new CollectionWithTotal($posts, $total);
     }
 
-    public static function createPost(Blog $blog, bool $isPage)
+    public static function createPost(Blog $blog, bool $isPage) : Post
     {
 
         // create post
@@ -255,7 +256,10 @@ class PostRepository
          *
          * #ref https://github.com/laravel/framework/issues/21449
          */
-        return Post::find($post->id);
+        /** @var Post $post */
+        $post = Post::find($post->id);
+
+        return $post;
     }
 
     /**
@@ -298,7 +302,7 @@ class PostRepository
         return $post;
     }
 
-    public static function deletePost(Post $post)
+    public static function deletePost(Post $post) : void
     {
         $post->variants->map(fn ($variant) => self::deletePostVariant($post, $variant->language_id));
         $post->delete();
@@ -315,7 +319,10 @@ class PostRepository
 
         PostVariantCreatedEvent::dispatch($variant);
 
-        return PostVariant::find($variant->id);
+        /** @var PostVariant $variant */
+        $variant = PostVariant::find($variant->id);
+
+        return $variant;
     }
 
     /**
@@ -406,14 +413,34 @@ class PostRepository
             ->first();
     }
 
-    public static function deletePostVariant(Post $post, int $languageId)
+    public static function deletePostVariant(Post $post, int $languageId) : void
     {
         $variant = PostVariant::where('language_id', $languageId)
             ->where('post_id', $post->id)
             ->first();
 
-        $variant->delete();
+        if (!$variant)
+            return;
 
+        $variant->delete();
         PostVariantDeletedEvent::dispatch($variant);
+    }
+
+    public static function updateVariantHtml(PostVariant $variant): void
+    {
+        if (!$variant->content) {
+            return;
+        }
+
+        $post = $variant->post;
+        if (!$post) return;
+
+        $blog = $post->blog;
+        if (!$blog) return;
+
+        $html = PostContentService::getHtml($variant->content, $blog);
+
+        $variant->content_html = $html;
+        $variant->save();
     }
 }

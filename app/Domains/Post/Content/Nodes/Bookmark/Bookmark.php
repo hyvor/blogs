@@ -1,13 +1,13 @@
 <?php declare(strict_types=1);
 
-namespace App\Domains\Post\Content\Nodes;
+namespace App\Domains\Post\Content\Nodes\Bookmark;
 
 use App\Data\Enums\ResultEnum;
 use App\Data\Enums\ThemeFileFolderEnum;
 use App\Data\Enums\UrlDataFetchTypeEnum;
 use App\Data\Objects\ConsoleAPI\UrlDataObject;
 use App\Domains\Delivery\Twig\TwigRenderer;
-use App\Domains\Post\Content\PostContentRepository;
+use App\Domains\Post\Content\PostContentService;
 use App\Domains\Theme\ThemeFilesRepository;
 use App\Domains\UrlData\UrlDataRepository;
 use App\Models\Blog;
@@ -53,7 +53,7 @@ class Bookmark extends NodeType
         )?->content;
 
         if (!$template) {
-            $template = PostContentRepository::getDefaultBlockTemplate('bookmark');
+            $template = PostContentService::getDefaultBlockTemplate('bookmark');
         }
 
         return TwigRenderer::renderString($template, [
