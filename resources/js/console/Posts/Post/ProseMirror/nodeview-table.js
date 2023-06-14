@@ -1,22 +1,5 @@
 import { NodeSelection, TextSelection } from "prosemirror-state";
 import schema from "./schema";
-import {
-    addRow,
-    addColumnAfter,
-    addColumnBefore,
-    deleteColumn,
-    addRowAfter,
-    addRowBefore,
-    deleteRow,
-    mergeCells,
-    splitCell,
-    setCellAttr,
-    toggleHeaderRow,
-    toggleHeaderColumn,
-    toggleHeaderCell,
-    goToNextCell,
-    deleteTable,
-  } from "prosemirror-tables";
 
 export default class Table {
   
@@ -66,11 +49,30 @@ export default class Table {
 
         this.dom.addEventListener("click", this.selectNode);
 
-        // Add a button to create a new row
-        const button = document.createElement("button");
-        button.innerHTML = "Add row";
-        button.addEventListener("click", this.addRowButtonClick);
-        this.dom.appendChild(button);
+        const addRowButton = document.createElement("button");
+        addRowButton.innerHTML = "Add row";
+        addRowButton.addEventListener("click", this.addRowButtonClick);
+        this.dom.appendChild(addRowButton);
+
+        const deleteRowButton = document.createElement("button");
+        deleteRowButton.innerHTML = "Delete row";
+        deleteRowButton.addEventListener("click", this.deleteRowButtonClick);
+        this.dom.appendChild(deleteRowButton);
+
+        const deleteTableButton = document.createElement("button");
+        deleteTableButton.innerHTML = "Delete table";
+        deleteTableButton.addEventListener("click", this.deleteTable);
+        this.dom.appendChild(deleteTableButton);
+
+        const addColumnButton = document.createElement("button");
+        addColumnButton.innerHTML = "Add column";
+        addColumnButton.addEventListener("click", this.addColumnButtonClick);
+        this.dom.appendChild(addColumnButton);
+
+        const deleteColumnButton = document.createElement("button");
+        deleteColumnButton.innerHTML = "Delete column";
+        deleteColumnButton.addEventListener("click", this.deleteColumnButtonClick);
+        this.dom.appendChild(deleteColumnButton);
     }
 
     addRowButtonClick = () => {
@@ -89,5 +91,48 @@ export default class Table {
       
         tbody.appendChild(newRow);
       }
+
+    deleteRowButtonClick = () => {
+        // When it remains only one row, delete the table
+        if (this.dom.querySelector("tbody").querySelectorAll("tr").length === 2) {
+            this.deleteTable();
+            return;
+        }
+        const table = this.dom.querySelector("table");
+        const tbody = table.querySelector("tbody");
+        const rows = tbody.querySelectorAll("tr");
+        const lastRow = rows[rows.length - 1];
+        lastRow.remove();
+    }
+
+    deleteTable = () => {
+        const { state, dispatch } = this.view;
+        const tr = state.tr;
+        dispatch(tr.delete(this.getPos(), this.getPos() + 1));
+    }
+
+    addColumnButtonClick = () => {
+        const table = this.dom.querySelector("table");
+        const tbody = table.querySelector("tbody");
+        const rows = tbody.querySelectorAll("tr");
+      
+        for (let i = 0; i < rows.length; i++) {
+          const td = document.createElement("td");
+          td.setAttribute("contenteditable", true);
+          td.innerHTML = "<p> </p>";
+          rows[i].appendChild(td);
+        }
+    }
+
+    deleteColumnButtonClick = () => {
+        const table = this.dom.querySelector("table");
+        const tbody = table.querySelector("tbody");
+        const rows = tbody.querySelectorAll("tr");
+      
+        for (let i = 0; i < rows.length; i++) {
+          const lastCell = rows[i].querySelectorAll("td")[rows[i].querySelectorAll("td").length - 1];
+          lastCell.remove();
+        }
+    }
 
 }
