@@ -7,6 +7,7 @@ export default class Table {
         this.node = node;
         this.view = view;
         this.getPos = getPos;
+        this.header = true; // Table create with headers
 
         this.dom = document.createElement("table")
         this.renderNode(node, getPos);
@@ -73,6 +74,11 @@ export default class Table {
         deleteColumnButton.innerHTML = "Delete column";
         deleteColumnButton.addEventListener("click", this.deleteColumnButtonClick);
         this.dom.appendChild(deleteColumnButton);
+
+        const deleteHeaderButton = document.createElement("button");
+        deleteHeaderButton.innerHTML = "Delete header";
+        deleteHeaderButton.addEventListener("click", this.deleteHeaderButtonClick);
+        this.dom.appendChild(deleteHeaderButton);
     }
 
     addRowButtonClick = () => {
@@ -105,34 +111,58 @@ export default class Table {
         lastRow.remove();
     }
 
+    addColumnButtonClick = () => {
+        const table = this.dom.querySelector("table");
+        const tbody = table.querySelector("tbody");
+        const rows = tbody.querySelectorAll("tr");
+        const headerRow = rows[0];
+        const newHeaderCell = document.createElement("th");
+        newHeaderCell.setAttribute("contenteditable", true);
+        newHeaderCell.innerHTML = `Header ${headerRow.children.length + 1}`;
+        headerRow.appendChild(newHeaderCell);
+
+        for (let i = 1; i < rows.length; i++) {
+            const td = document.createElement("td");
+            td.setAttribute("contenteditable", true);
+            td.innerHTML = "<p> </p>";
+            rows[i].appendChild(td);
+        }
+    }
+
+    deleteColumnButtonClick = () => {
+        // When it remains only one column, delete the table
+        if (this.dom.querySelector("table").querySelector("tbody").querySelector("tr").children.length === 1) {
+            this.deleteTable();
+            return;
+        }
+        const table = this.dom.querySelector("table");
+        const tbody = table.querySelector("tbody");
+        const rows = tbody.querySelectorAll("tr");
+        const headerRow = rows[0];
+        const lastHeaderCell = headerRow.children[headerRow.children.length - 1];
+        lastHeaderCell.remove();
+
+        for (let i = 1; i < rows.length; i++) {
+            const lastCell = rows[i].children[rows[i].children.length - 1];
+            lastCell.remove();
+        }
+    }
+
+    deleteHeaderButtonClick = () => {
+        // Delete header only when it exists
+        if (!this.header)
+            return;
+        const table = this.dom.querySelector("table");
+        const tbody = table.querySelector("tbody");
+        const rows = tbody.querySelectorAll("tr");
+        const headerRow = rows[0];
+        this.header = false;
+        headerRow.remove();
+    }
+
     deleteTable = () => {
         const { state, dispatch } = this.view;
         const tr = state.tr;
         dispatch(tr.delete(this.getPos(), this.getPos() + 1));
     }
-
-    addColumnButtonClick = () => {
-        const table = this.dom.querySelector("table");
-        const tbody = table.querySelector("tbody");
-        const rows = tbody.querySelectorAll("tr");
-      
-        for (let i = 0; i < rows.length; i++) {
-          const td = document.createElement("td");
-          td.setAttribute("contenteditable", true);
-          td.innerHTML = "<p> </p>";
-          rows[i].appendChild(td);
-        }
-    }
-
-    deleteColumnButtonClick = () => {
-        const table = this.dom.querySelector("table");
-        const tbody = table.querySelector("tbody");
-        const rows = tbody.querySelectorAll("tr");
-      
-        for (let i = 0; i < rows.length; i++) {
-          const lastCell = rows[i].querySelectorAll("td")[rows[i].querySelectorAll("td").length - 1];
-          lastCell.remove();
-        }
-    }
-
 }
