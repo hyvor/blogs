@@ -1,19 +1,19 @@
-<?php
+<?php declare(strict_types=1);
 
 namespace App\Domains\Post\Content\Nodes;
 
-use Tiptap\Core\Node;
+use Hyvor\Phrosemirror\Converters\HtmlParser\ParserRule;
+use Hyvor\Phrosemirror\Types\NodeType;
 
-class Text extends Node
+class Text extends NodeType
 {
-    public static $name = 'text';
+    public string $name = 'text';
 
-    public function parseHTML()
+    public function fromHtml(): array
     {
         return [
-            [
-                'tag' => '#text',
-            ],
+            new ParserRule(tag: '#text')
         ];
     }
+
 }

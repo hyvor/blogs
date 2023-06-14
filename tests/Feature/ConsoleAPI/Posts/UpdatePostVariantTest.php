@@ -3,13 +3,13 @@
 namespace Tests\Feature\ConsoleAPI\Posts;
 
 use App\Data\Enums\PostStatusEnum;
-use App\Domains\Post\Content\PostContentRepository;
 use App\Domains\Post\Events\PostVariantUpdatedEvent;
 use App\Models\Post;
 use App\Models\PostVariant;
 use App\Models\PostVariantHistory;
 use Illuminate\Support\Facades\Event;
 use Illuminate\Testing\Fluent\AssertableJson;
+use Tests\Helper\Generator\PostContentGenerator;
 
 it('updates post variant', function () {
     Event::fake();
@@ -172,7 +172,7 @@ it('creates a history if post content has changed', function() {
         'status' => PostStatusEnum::DRAFT,
     ]);
 
-    $para = PostContentRepository::generateParagraph('Test content');
+    $para = PostContentGenerator::generateParagraph('Test content');
 
     consoleApi($blog, 'PATCH', "/post/$post->id/variant", [
         'language_id' => $blog->languages[0]->id,
@@ -187,7 +187,7 @@ it('creates a history if post content has changed', function() {
 it('does not update if the content is the same', function() {
 
     $blog = blogWithAccessLanguageAndRoutes();
-    $para = PostContentRepository::generateParagraph('Test content');
+    $para = PostContentGenerator::generateParagraph('Test content');
 
     $post = Post::factory()->create([
         'blog_id' => $blog,
@@ -231,7 +231,7 @@ it('deletes old histories', function() {
             'post_variant_id' => $variant->id
         ]);
 
-    $para = PostContentRepository::generateParagraph('Test content');
+    $para = PostContentGenerator::generateParagraph('Test content');
 
     consoleApi($blog, 'PATCH', "/post/$post->id/variant", [
         'language_id' => $blog->languages[0]->id,

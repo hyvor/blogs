@@ -2,7 +2,7 @@
 
 namespace Tests\Unit\PostContent\Nodes;
 
-use App\Domains\Post\Content\PostContentRepository;
+use App\Domains\Post\Content\PostContentService;
 
 test('json to HTML', function () {
     $content = 'I am a list item';
@@ -46,7 +46,7 @@ test('json to HTML', function () {
         ],
     ];
 
-    $html = PostContentRepository::getHtml($json, blog());
+    $html = PostContentService::getHtml($json, blog());
 
     expect($html)->toEqual("<ul><li><p>$content</p></li><li><p>$content</p></li></ul>");
 });
@@ -56,7 +56,7 @@ test('HTML to JSON', function () {
 
     $html = "<ul><li><p>$content</p></li></ul>";
 
-    $json = PostContentRepository::getJsonFromHtml($html, blog());
+    $json = PostContentService::getJsonFromHtml($html, blog());
 
     expect($json)
         ->toEqual(json_encode([

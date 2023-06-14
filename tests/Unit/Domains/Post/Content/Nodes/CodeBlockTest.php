@@ -2,7 +2,8 @@
 
 namespace Tests\Unit\PostContent\Nodes;
 
-use App\Domains\Post\Content\PostContentRepository;
+use App\Domains\Post\Content\PostContentOptions;
+use App\Domains\Post\Content\PostContentService;
 use DOMDocument;
 
 test('json to HTML', function () {
@@ -28,7 +29,7 @@ test('json to HTML', function () {
         ],
     ]);
 
-    $html = PostContentRepository::getHtml($json, blog());
+    $html = PostContentService::getHtml($json, blog());
 
     $dom = new DOMDocument();
     $dom->loadXML($html);
@@ -68,9 +69,9 @@ test('json to HTML with is_plain', function() {
         ],
     ]);
 
-    $html = PostContentRepository::getHtml($json, blog(), [
-        'code_block_is_plain' => true
-    ]);
+    $html = PostContentService::getHtml($json, blog(), new PostContentOptions(
+        isCodeBlockPlain: true
+    ));
 
     expect($html)->toContain('<code>$x = null</code>');
 
@@ -83,7 +84,7 @@ test('HTML to JSON', function () {
 
     $html = "<pre class=\"language-php\" data-language=\"php\" data-name=\"$name\" data-annotations=\"$annotations\">$content</pre>";
 
-    $json = PostContentRepository::getJsonFromHtml($html, blog());
+    $json = PostContentService::getJsonFromHtml($html, blog());
 
     expect($json)
         ->toEqual(json_encode([

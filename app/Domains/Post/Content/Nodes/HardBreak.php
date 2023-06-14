@@ -2,23 +2,25 @@
 
 namespace App\Domains\Post\Content\Nodes;
 
-use Tiptap\Core\Node;
+use Hyvor\Phrosemirror\Converters\HtmlParser\ParserRule;
+use Hyvor\Phrosemirror\Document\Node;
+use Hyvor\Phrosemirror\Types\NodeType;
 
-class HardBreak extends Node
+class HardBreak extends NodeType
 {
-    public static $name = 'hard_break';
 
-    public function parseHTML()
+    public string $name = 'hard_break';
+
+    public function fromHtml(): array
     {
         return [
-            [
-                'tag' => 'br',
-            ],
+            new ParserRule(tag: 'br')
         ];
     }
 
-    public function renderHTML($node, $HTMLAttributes = [])
+    public function toHtml(Node $node, string $children): string
     {
-        return ['br'];
+        return "<br>";
     }
+
 }

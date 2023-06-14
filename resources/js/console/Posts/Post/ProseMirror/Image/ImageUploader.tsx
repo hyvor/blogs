@@ -123,7 +123,7 @@ export default function ImageUploader({ onUpload, onUrlLoad }: { onUpload: Image
                     <Loader padding={60} />
                     :
                     // If no preview image is selected
-                    imageUrl.trim().length == 0 && <div>
+                    imageUrl.trim().length === 0 && <div>
                         <div className="search">
                             <input
                                 type="text"
@@ -137,7 +137,7 @@ export default function ImageUploader({ onUpload, onUrlLoad }: { onUpload: Image
                                 onClick={() => unsplashInput.current?.focus()}
                             />
                         </div>
-                        <div className='url-search'>
+                        {search.trim().length === 0 && <div className='url-search'>
                             <div className="or">OR</div>
                             <input
                                 className="input"
@@ -148,7 +148,7 @@ export default function ImageUploader({ onUpload, onUrlLoad }: { onUpload: Image
                                 ref={urlInput}
                                 onClick={() => urlInput.current?.focus()}
                             />
-                        </div>
+                        </div>}
                         <div className="non-search">
                             <div className="or">OR</div>
                             <div className="upload">
