@@ -92,7 +92,6 @@ export default function keymapPlugins(schema) {
     );
 
     const tabWrapper = () => {
-        console.log('tabWrapper');
         // If in table view, do nothing
         const selection = state.selection;
 
@@ -101,7 +100,6 @@ export default function keymapPlugins(schema) {
             return;
 
         const parent = selection.$to.parent;
-        console.log(parent);
         if (parent && parent.type.name === "table") return false;
 
         sinkListItem(schema.nodes.list_item);

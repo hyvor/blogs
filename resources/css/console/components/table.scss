@@ -32,11 +32,15 @@
     width: 150px;
 }
 
+
 .ProseMirror th,
 .ProseMirror td {
     width: 150px;
     border: 1px solid #ddd;
     padding: 3px 5px;
+    p {
+        margin-top: 0;
+    }
 }
 
 .ProseMirror .tableWrapper {
