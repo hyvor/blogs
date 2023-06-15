@@ -2,28 +2,46 @@
 
 namespace App\Domains\Import\Importer;
 
+use App\Data\Enums\JobStatusEnum;
+use App\Domains\Import\ImportException;
 use App\Models\Blog;
 use App\Models\Import;
+use Illuminate\Contracts\Queue\ShouldQueue;
+use Throwable;
 
-class ImportJob
+class ImportJob implements ShouldQueue
 {
 
     public function __construct(
-        private readonly Blog $blog,
-        private readonly Import $import,
-        private readonly ParserAbstract $parser,
-        private readonly bool $importImages,
+        public readonly Blog $blog,
+        public readonly Import $import,
+        public readonly ParserAbstract $parser,
+        public readonly bool $importImages,
     ) {}
 
-    public function handle()
+    public function handle() : void
     {
         $importer = new Importer(
             $this->blog,
-            $this->import,
             $this->parser,
             $this->importImages
         );
         $importer->import();
+
+        $this->import->update([
+            'status' => JobStatusEnum::COMPLETED,
+            'posts_count' => $importer->postsCount
+        ]);
+    }
+
+    public function failed(Throwable $e) : void
+    {
+        $this->import->update([
+            'status' => JobStatusEnum::FAILED,
+            'error_message' => $e instanceof ImportException ?
+                $e->getMessage() :
+                'Unknown error'
+        ]);
     }
 
 }

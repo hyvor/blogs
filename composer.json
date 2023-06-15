@@ -17,6 +17,7 @@
         "ext-openssl": "*",
         "ext-pcre": "*",
         "ext-pdo": "*",
+        "ext-simplexml": "*",
         "ext-tokenizer": "*",
         "ext-xml": "*",
         "doctrine/dbal": "^3.6",
@@ -31,7 +32,7 @@
         "hyvor/laravel-json-meta": "0.0.3",
         "hyvor/php-json-exporter": "^0.0.3",
         "hyvor/php-svg-icons": "1.0.0",
-        "hyvor/phrosemirror": "^0.0.5",
+        "hyvor/phrosemirror": "^0.0.6",
         "hyvor/scssphp": "2.0.2",
         "intervention/image": "^2.7",
         "laravel/framework": "^9.22.1",
@@ -60,8 +61,7 @@
         "twig/twig": "^2.0",
         "ueberdosis/tiptap-php": "^1.1",
         "unsplash/unsplash": "^3.2",
-        "vlucas/phpdotenv": "^5.4",
-        "ext-simplexml": "*"
+        "vlucas/phpdotenv": "^5.4"
     },
     "require-dev": {
         "barryvdh/laravel-debugbar": "^3.6",

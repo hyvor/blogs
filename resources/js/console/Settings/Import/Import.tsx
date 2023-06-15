@@ -18,6 +18,7 @@ import {
 } from "../../ReusableComponents/Popup";
 
 import './Import.scss';
+import ImportHistory from "./ImportHistory";
 
 export default function Import() {
 
@@ -47,6 +48,13 @@ export default function Import() {
         <div className="title">
             Import
         </div>
+
+        <DualSetting
+            title="Import History"
+            right={
+                <ImportHistory />
+            }
+        />
 
         <DualSetting
             title="Import From"

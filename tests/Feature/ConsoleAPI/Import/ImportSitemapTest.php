@@ -2,8 +2,12 @@
 
 namespace Tests\Feature\ConsoleAPI\Import;
 
+use App\Data\Enums\ImportTypeEnum;
+use App\Data\Enums\JobStatusEnum;
+use App\Domains\Import\Importer\ImportJob;
 use Carbon\Carbon;
 use Illuminate\Support\Facades\Http;
+use Illuminate\Support\Facades\Queue;
 
 it('test works', function() {
 
@@ -51,7 +55,7 @@ HTML)
 
 });
 
-it('handles errors', function() {
+it('test handles errors', function() {
 
     Http::fake(['https://example.com/blog/post' => Http::response([], 404)]);
 
@@ -62,5 +66,29 @@ it('handles errors', function() {
     ])
         ->assertUnprocessable()
         ->assertSee('cannot_fetch');
+
+});
+
+it('imports sitemap calls the job', function() {
+
+    Queue::fake();
+
+    $blog = blogWithAccess();
+
+    consoleApi($blog, 'POST', '/data/import/sitemap/import', [
+        'sitemap_url' => 'https://example.com/sitemap.xml',
+        'css' => ['content' => 'article',]
+    ])
+        ->assertOk();
+
+    Queue::assertPushed(ImportJob::class, function (ImportJob $job) {
+
+        expect($job->import->type)->toBe(ImportTypeEnum::SITEMAP);
+        expect($job->import->name)->toBe('https://example.com/sitemap.xml');
+        expect($job->import->status)->toBe(JobStatusEnum::PENDING);
+        expect($job->importImages)->toBeFalse();
+
+        return true;
+    });
 
 });

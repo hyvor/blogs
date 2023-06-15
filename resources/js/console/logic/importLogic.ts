@@ -1,7 +1,8 @@
-import {kea, key, path, props} from "kea";
+import {actions, kea, key, path, props, reducers} from "kea";
 import {ajax} from "kea-ajax";
 import api from "../lib/api";
 import type { importLogicType } from "./importLogicType";
+import {Export, Import} from "../types";
 
 export type SitemapDataSelectType = 'meta_tag' | 'css_selector';
 
@@ -47,7 +48,16 @@ export const importLogic = kea<importLogicType>([
     key((props) => props.subdomain),
     path((key) => ['import', key]),
 
+    actions(({values}) => ({
+        setImports: (imports: Import[]) => ({imports}),
+    })),
+
     ajax(({actions, values, props}) => ({
+
+        getImports: async () => {
+            const data = await api.get<Import[]>(props.subdomain, '/data/imports');
+            actions.setImports(data);
+        },
 
         sitemapTest: async ({ input, onLoad, onError } : {
             input: SitemapTestInput,
@@ -78,5 +88,16 @@ export const importLogic = kea<importLogicType>([
         }
 
     })),
+
+    reducers({
+
+        imports: [
+            [] as Import[],
+            {
+                setImports: (_, {imports}) => imports,
+            }
+        ]
+
+    })
 
 ]);

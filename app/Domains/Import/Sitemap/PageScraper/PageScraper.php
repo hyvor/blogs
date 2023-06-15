@@ -5,7 +5,7 @@ namespace App\Domains\Import\Sitemap\PageScraper;
 use App\Domains\Import\Sitemap\PageScraper\Enums\PageScrapeErrorEnum;
 use App\Domains\Import\Sitemap\PageScraper\Enums\SelectTypeEnum;
 use App\Domains\Import\Sitemap\PageScraper\Exceptions\PageScrapperException;
-use App\Domains\Post\Content\PostContentRepository;
+use App\Domains\Post\Content\PostContentService;
 use App\Models\Blog;
 use Carbon\Carbon;
 use Carbon\Exceptions\InvalidFormatException;
@@ -189,7 +189,7 @@ class PageScraper
         $content = $this->fixCodeBlocks($content);
         $content = $this->convertIframesToEmbed($content);
 
-        $this->content = PostContentRepository::getJsonFromHtml($content, $this->blog);
+        $this->content = PostContentService::getJsonFromHtml($content, $this->blog);
 
     }
 

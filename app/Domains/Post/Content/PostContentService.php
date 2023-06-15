@@ -65,6 +65,14 @@ class PostContentService
         return $parser->parse($html);
     }
 
+    /**
+     * @param array<mixed>|string $json
+     */
+    public static function getDocumentFromJson(array|string $json, Blog $blog) : Node
+    {
+        return Document::fromJson(self::getSchema($blog), $json);
+    }
+
     private static function getSchema(Blog $blog, PostContentOptions $options = null) : Schema
     {
 

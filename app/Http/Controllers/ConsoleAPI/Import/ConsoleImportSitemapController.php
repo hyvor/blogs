@@ -2,17 +2,17 @@
 
 namespace App\Http\Controllers\ConsoleAPI\Import;
 
-use App\Domains\Import\Importer\Importer;
+use App\Data\Enums\ImportTypeEnum;
+use App\Domains\Import\Importer\ImportJob;
+use App\Domains\Import\ImportService;
 use App\Domains\Import\Sitemap\PageScraper\PageScraper;
 use App\Domains\Import\Sitemap\PageScraper\PageScraperOptions;
 use App\Domains\Import\Sitemap\SitemapParser;
-use App\Domains\Post\Content\PostContentRepository;
+use App\Domains\Post\Content\PostContentService;
 use App\Exceptions\TrustedException;
 use App\Models\Blog;
-use App\Models\Import;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
-use function PHPStan\dumpType;
 
 class ConsoleImportSitemapController
 {
@@ -68,7 +68,7 @@ class ConsoleImportSitemapController
                 'title' => $scrapper->title,
                 'description' => $scrapper->description,
                 'content' => $scrapper->content,
-                'content_html' => PostContentRepository::getHtml($scrapper->content, $blog),
+                'content_html' => PostContentService::getHtml($scrapper->content, $blog),
                 'published_at' => $scrapper->publishedAt->getTimestamp(),
                 'featured_image_url' => $scrapper->featuredImageUrl,
                 'slug' => $scrapper->slug
@@ -96,17 +96,20 @@ class ConsoleImportSitemapController
         $importImages = $request->boolean('import_images');
         $options = $this->getPageScraperOptions($request);
 
-        $importer = new Importer(
+        dispatch(new ImportJob(
             $blog,
-            new Import,
+            ImportService::createImport(
+                $blog,
+                ImportTypeEnum::SITEMAP,
+                $sitemapUrl
+            ),
             new SitemapParser(
                 $blog,
                 $sitemapUrl,
                 $options
             ),
             $importImages
-        );
-        $importer->import();
+        ));
 
         return response()->json();
 

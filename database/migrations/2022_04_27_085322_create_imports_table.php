@@ -20,14 +20,14 @@ return new class () extends Migration {
             $table->bigInteger('blog_id')->index();
 
             // data
-            $table->string('name')->nullable();
-            $table->enum('type', ['sitemap', 'wordpress'])->nullable();
-            $table->enum('status', ['pending', 'success', 'error'])->nullable();
+            $table->string('name');
+            $table->enum('type', ['sitemap', 'wordpress']);
+            $table->enum('status', ['pending', 'completed', 'failed'])->default('pending');
 
-            $table->json('meta')->nullable();
-
-            $table->json('parser_logs')->nullable();
-            $table->json('importer_logs')->nullable();
+            $table->integer('posts_count')->default(0);
+            $table->integer('pages_count')->default(0);
+            $table->integer('tags_count')->default(0);
+            $table->integer('users_count')->default(0);
         });
     }
 

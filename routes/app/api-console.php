@@ -21,6 +21,7 @@ use App\Http\Controllers\ConsoleAPI\ConsoleUserBlogController;
 use App\Http\Controllers\ConsoleAPI\ConsoleUserController;
 use App\Http\Controllers\ConsoleAPI\ConsoleViewController;
 use App\Http\Controllers\ConsoleAPI\ConsoleWebhookController;
+use App\Http\Controllers\ConsoleAPI\Import\ConsoleImportController;
 use App\Http\Controllers\ConsoleAPI\Import\ConsoleImportSitemapController;
 use App\Http\Controllers\ConsoleAPI\Temporary\AppSumoController;
 use App\Http\Middleware\App\ConsoleApi\ConsoleApiAccessMiddleware;
@@ -205,10 +206,9 @@ Route::prefix('/api/console/v0/blog/{subdomain}')
             Route::get('/data/exports', [ConsoleExportController::class, 'getExports']);
             Route::post('/data/export', [ConsoleExportController::class, 'export']);
 
+            Route::get('/data/imports', [ConsoleImportController::class, 'getImports']);
             Route::post('/data/import/sitemap/test', [ConsoleImportSitemapController::class, 'test']);
             Route::post('/data/import/sitemap/import', [ConsoleImportSitemapController::class, 'import']);
-
-            Route::post('/data/import', [ConsoleExportController::class, 'import']);
 
             Route::get('/build', []);
         });
