@@ -23,11 +23,15 @@ class EmailOctopusSyncAppsumoJob
 
         foreach ($users as $user) {
 
-            EmailOctopusService::subscribeUser(
-                $user->email,
-                $user->name,
-                '380d01ee-0c6a-11ee-98c4-5bf990ef2b10'
-            );
+            try {
+                EmailOctopusService::subscribeUser(
+                    $user->email,
+                    $user->name,
+                    '380d01ee-0c6a-11ee-98c4-5bf990ef2b10'
+                );
+            } catch (\Exception $e) {
+                // do nothing
+            }
 
         }
 
