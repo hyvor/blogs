@@ -79,7 +79,8 @@ it('imports sitemap calls the job', function() {
         'sitemap_url' => 'https://example.com/sitemap.xml',
         'css' => ['content' => 'article',]
     ])
-        ->assertOk();
+        ->assertOk()
+        ->assertJsonPath('status', 'pending');
 
     Queue::assertPushed(ImportJob::class, function (ImportJob $job) {
 

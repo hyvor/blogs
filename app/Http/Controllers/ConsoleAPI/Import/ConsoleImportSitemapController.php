@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\ConsoleAPI\Import;
 
 use App\Data\Enums\ImportTypeEnum;
+use App\Data\Objects\ConsoleAPI\Import\ImportObject;
 use App\Domains\Import\Importer\ImportJob;
 use App\Domains\Import\ImportService;
 use App\Domains\Import\Sitemap\PageScraper\PageScraper;
@@ -96,13 +97,15 @@ class ConsoleImportSitemapController
         $importImages = $request->boolean('import_images');
         $options = $this->getPageScraperOptions($request);
 
+        $import = ImportService::createImport(
+            $blog,
+            ImportTypeEnum::SITEMAP,
+            $sitemapUrl
+        );
+
         dispatch(new ImportJob(
             $blog,
-            ImportService::createImport(
-                $blog,
-                ImportTypeEnum::SITEMAP,
-                $sitemapUrl
-            ),
+            $import,
             new SitemapParser(
                 $blog,
                 $sitemapUrl,
@@ -111,7 +114,7 @@ class ConsoleImportSitemapController
             $importImages
         ));
 
-        return response()->json();
+        return response()->json(new ImportObject($import));
 
     }
 

@@ -6,7 +6,7 @@ import Switch from "../../ReusableComponents/Switch";
 import ActionButton from "../../ReusableComponents/ActionButton";
 import {importLogic, SitemapTestInput, SitemapTestResponse} from "../../logic/importLogic";
 import getSubdomain from "../../logic-helpers/subdomain";
-import {useActions} from "kea";
+import {useActions, useValues} from "kea";
 import {toast} from "react-toastify";
 import dayjs from "dayjs";
 import {
@@ -40,7 +40,27 @@ export default function Import() {
 
     const logic = importLogic({subdomain: getSubdomain()});
     const { sitemapTest, sitemapImport } = useActions(logic);
+    const { sitemapImportAjax }  = useValues(logic);
 
+    function handleImportButtonClick() {
+        sitemapImport({
+            input: {
+                sitemap_url: sitemapUrl,
+                css: {
+                    title: titleSelector,
+                    description: descriptionSelector,
+                    content: contentSelector,
+                    content_exclude: contentExcludeSelector,
+                    published_date: publishedDateSelector
+                },
+                slug_exclude: slugExclude
+            },
+            onLoad: (i) => {
+                toast.success('Import started');
+                window.scrollTo(0, 0);
+            }
+        })
+    }
 
 
     return <div className="settings-import">
@@ -286,23 +306,21 @@ export default function Import() {
             }
         />
 
-        <button onClick={() => {
-            sitemapImport({
-                input: {
-                    sitemap_url: sitemapUrl,
-                    css: {
-                        title: titleSelector,
-                        description: descriptionSelector,
-                        content: contentSelector,
-                        content_exclude: contentExcludeSelector,
-                        published_date: publishedDateSelector
-                    },
-                    slug_exclude: slugExclude
-                }
-            })
-        }}>
-            Import
-        </button>
+        <div className="import-button">
+
+            <p>
+                Are you ready for the import?
+            </p>
+
+            <ActionButton
+                status={sitemapImportAjax.status === 'loading' ? "loading" : "stale"}
+                staleName="Import Now"
+                loadingName="Importing"
+                staleOnClick={handleImportButtonClick}
+            />
+        </div>
+
+
 
     </div>
 

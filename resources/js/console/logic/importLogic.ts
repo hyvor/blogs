@@ -50,6 +50,7 @@ export const importLogic = kea<importLogicType>([
 
     actions(({values}) => ({
         setImports: (imports: Import[]) => ({imports}),
+        addImport: (i: Import) => ({i}),
     })),
 
     ajax(({actions, values, props}) => ({
@@ -79,12 +80,13 @@ export const importLogic = kea<importLogicType>([
 
         },
 
-        sitemapImport: async ({ input } : { input: SitemapImportInput }) => {
-            await api.post(
+        sitemapImport: async ({ input, onLoad } : { input: SitemapImportInput, onLoad: (i: Import) => void }) => {
+            const i = await api.post<Import>(
                 props.subdomain,
                 '/data/import/sitemap/import',
                 input
             );
+            actions.addImport(i);
         }
 
     })),
@@ -95,6 +97,7 @@ export const importLogic = kea<importLogicType>([
             [] as Import[],
             {
                 setImports: (_, {imports}) => imports,
+                addImport: (state, {i}) => [...state, i]
             }
         ]
 

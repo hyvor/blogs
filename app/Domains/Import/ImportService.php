@@ -27,12 +27,14 @@ class ImportService
     ) : Import
     {
 
-        return Import::create([
+        $import = Import::create([
             'blog_id' => $blog->id,
             'status' => JobStatusEnum::PENDING,
             'name' => $name,
             'type' => $type,
         ]);
+        
+        return $import->refresh();
 
     }
 
