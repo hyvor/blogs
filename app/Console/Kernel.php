@@ -2,6 +2,7 @@
 
 namespace App\Console;
 
+use App\Domains\Integrations\EmailOctopus\EmailOctopusSyncAppsumoJob;
 use App\Domains\Integrations\EmailOctopus\EmailOctopusSyncJob;
 use App\Domains\Post\Jobs\PublishScheduledPosts;
 use Illuminate\Console\Scheduling\Schedule;
@@ -21,6 +22,7 @@ class Kernel extends ConsoleKernel
 
         // marketing
         $schedule->job(EmailOctopusSyncJob::class)->daily();
+        $schedule->job(EmailOctopusSyncAppsumoJob::class)->hourly();
     }
 
     protected function commands()
