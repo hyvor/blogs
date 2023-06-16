@@ -3,6 +3,7 @@
 use App\Domains\Post\Content\PostContentService;
 use App\Domains\Integrations\Shopify\ShopifyService;
 use App\Domains\Post\Content\PostContentRepository;
+use App\Domains\User\UserRepository;
 use App\Models\Blog;
 use App\Models\ShopifyShop;
 use App\Models\User;
@@ -53,5 +54,13 @@ Route::get('shopify', function() {
 
     $service = new ShopifyService();
     dd($service->getShopUrl(ShopifyShop::first()));
+
+});
+
+
+Route::get('user-email', function() {
+
+    $user = User::whereNotNull('hyvor_user_id')->first();
+    UserRepository::sendInviteEmail($user);
 
 });
