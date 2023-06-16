@@ -61,8 +61,12 @@
     }
 
     .table-wrapper {
-        display: flex;
-        flex-direction: column;
+        display: grid;
+        grid-template-columns: 20fr 1fr;
+        .table-column {
+            display: flex;
+            flex-direction: column;
+        }
         .focused {
             margin-top: 0px;
         }
@@ -73,10 +77,21 @@
             display: none!important;
           }
         .rows-buttons {
+            margin-top: 3px;
             border-radius: 20px;
             display: flex;
             justify-content: space-around;
+            align-items: center;
             width: 100%;
+            background-color: $color-accent-light;
+        }
+        .columns-buttons {
+            margin-left: 3px;
+            border-radius: 20px;
+            display: flex;
+            flex-direction: column;
+            justify-content: space-around;
+            align-items: center;
             background-color: $color-accent-light;
         }
     }
