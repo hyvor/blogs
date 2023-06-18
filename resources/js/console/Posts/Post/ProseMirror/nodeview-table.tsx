@@ -5,7 +5,8 @@ import React, { useState } from 'react';
 import ReactDOM from 'react-dom';
 import { EditorView, NodeView } from "prosemirror-view";
 import {Node as ProsemirrorNode} from "prosemirror-model";
-import Tooltip from "../../../ReusableComponents/Tooltip";
+import Tooltip from "react-tooltip"
+import ReactTooltip from "react-tooltip";
 
 
 export default class Table implements NodeView{
@@ -46,13 +47,15 @@ export default class Table implements NodeView{
             this.deleteColumnHeaderButtonClick();
             setColumnHeader(false);
         }
-        return <button
-                className="icon-button column-header-button"
-                onClick={columnHeader ? deleteColumnHeader : addColumnHeader}>
-            {columnHeader ? <Calendar2Minus /> : <Calendar2Plus />}
-            {// TODO: add tooltip
-            }
-        </button>
+        return <>
+                <button
+                    data-tip={columnHeader ? "Remove column header" : "Add column header"}
+                    className="icon-button column-header-button"
+                    onClick={columnHeader ? deleteColumnHeader : addColumnHeader}>
+                    {columnHeader ? <Calendar2Minus /> : <Calendar2Plus />}
+                </button>
+                <ReactTooltip place="bottom" type="light" effect="solid"/>
+            </>
     }
 
     RowHeaderButton = () => {
@@ -66,11 +69,15 @@ export default class Table implements NodeView{
             this.deleteRowHeaderButtonClick();
             setRowHeader(false);
         }
-        return <button
-                className="icon-button row-header-button"
-                onClick={rowHeader ? deleteRowHeader : addRowHeader}>
-            {rowHeader ? <Calendar2Minus /> : <Calendar2Plus />}
-            </button>
+        return  <>
+                    <button
+                        data-tip={rowHeader ? "Remove row header" : "Add row header"}
+                        className="icon-button row-header-button"
+                        onClick={rowHeader ? deleteRowHeader : addRowHeader}>
+                        {rowHeader ? <Calendar2Minus /> : <Calendar2Plus />}
+                    </button>
+                    <ReactTooltip place="bottom" type="light" effect="solid"/>
+            </>
     }
 
     DeleteTableButton = () => {
