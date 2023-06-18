@@ -87,7 +87,7 @@ export default class Table implements NodeView{
             <Trash />
         </button>
     }
-
+    tip
     renderNode(node: ProsemirrorNode, pos: { (): number | undefined; (): number | undefined; }) {
 
         // Global div for the table and buttons
@@ -116,15 +116,15 @@ export default class Table implements NodeView{
 
         const table = document.createElement("table");
         table.setAttribute("class", "not-focused");
-        table.setAttribute("contentEditable", 'true');
+        table.contentEditable = 'true';
         const tbody = document.createElement("tbody");
 
         const headerRow = document.createElement("tr");
-        headerRow.setAttribute("contentEditable", 'true');
+        headerRow.contentEditable = 'true';
 
         for (let i = 0; i < 2; i++) {
             const th = document.createElement("th");
-            th.setAttribute("contentEditable", 'true');
+            th.contentEditable = 'true';
             th.innerHTML = `Header ${i + 1}`;
             headerRow.appendChild(th);
         }
@@ -135,7 +135,7 @@ export default class Table implements NodeView{
             tr.setAttribute("contentEditable", 'true');
             for (let j = 0; j < 2; j++) {
                 const td = document.createElement("td");
-                td.setAttribute("contentEditable", 'true');
+                td.contentEditable = 'true';
                 td.innerHTML = "<p> </p>";
                 tr.appendChild(td);
             }
