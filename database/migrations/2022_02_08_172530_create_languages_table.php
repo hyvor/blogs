@@ -35,6 +35,7 @@ return new class () extends Migration {
             $table->string('code', 12); // en|en-US|etc...
             $table->string('name');
             $table->boolean('is_primary')->default(false);
+            $table->enum('direction', ['ltr', 'rtl'])->default('ltr');
 
             // indexes
             $table->unique(['blog_id', 'code']);

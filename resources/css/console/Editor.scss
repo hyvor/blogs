@@ -334,7 +334,10 @@ $prosemirror-selected-outline: 3px solid #299af3;
 
     blockquote, aside {
         margin-top: 30px;
-        border-left: 4px solid #000000;
+        border-width: 0;
+        border-color: #000000;
+        border-style: solid;
+        border-left-width: 4px;
         padding: 10px 15px;
         & > *:first-child {
             margin-top:0;
@@ -701,4 +704,12 @@ $prosemirror-selected-outline: 3px solid #299af3;
         background-color: #fcf8e3;
     }
 
+}
+
+
+.post-editor-wrap[dir="rtl"] .ProseMirror {
+    blockquote, aside {
+        border-left-width: 0;
+        border-right-width: 4px;
+    }
 }

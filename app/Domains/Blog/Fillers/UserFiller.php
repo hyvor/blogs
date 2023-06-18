@@ -1,4 +1,4 @@
-<?php
+<?php declare(strict_types=1);
 
 namespace App\Domains\Blog\Fillers;
 
@@ -15,7 +15,7 @@ class UserFiller implements FillerInterface
     {
     }
 
-    public function fill()
+    public function fill() : void
     {
         if ($this->blog->type !== BlogTypeEnum::PREVIEW) {
 

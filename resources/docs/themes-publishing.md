@@ -27,7 +27,10 @@ All the following requirements should be met in order to publish a theme to our 
 * `_comments` and `_newsletter` blocks should not be displayed if the value of each is empty.
 * If the blog has a logo (`_blog.logo_url`), the logo should be shown in the header linking the logo to the blog homepage.
 * [Internationalized](themes-internationalization)
-* `<html lang="{{ _lang.code }}"` is added
+* `<html lang="{{ _lang.code }}" dir="{{ _lang.direction }}">` is added
+* RTL support
+  * `dir="{{ _lang.direction }}"` is added to the `<html>` tag
+  * Use `margin-inline-start` and `margin-inline-end` instead of `margin-left` and `margin-right`
 * Configurations are added for colors, fonts, etc. See [Config](#config) section.
 * Configuration definitions (`config.def.yaml`) are added. See [Configuration -> Config Definitions](themes-config#config-def) page. Use the <a href="/config" target="_blank">config tool</a> to validate `config.def.yaml`.
 * YAML files should use 2 spaces per indentation (not tabs, not 4 spaces).
