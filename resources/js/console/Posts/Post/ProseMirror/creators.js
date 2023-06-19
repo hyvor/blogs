@@ -20,45 +20,29 @@ export function createQuote(schema) {
 }
 
 export function createTable(schema) {
-    // Create a simple table with paragraph cells and a header row
+    const rows = [];
+    for (let i = 0; i < 3; i++) {
+        const cells = [];
+        for (let j = 0; j < 3; j++) {
+            cells.push(
+                schema.nodes.table_cell.create(
+                    {},
+                    [
+                        schema.nodes.paragraph.create()
+                    ]
+                )
+            )
+        }
+        rows.push(
+            schema.nodes.table_row.create(
+                {},
+                cells
+            )
+        )
+    }
+
     return schema.nodes.table.create(
         {},
-        [
-            schema.nodes.table_row.create(
-                {},
-                [
-                    schema.nodes.table_cell.create(
-                        {},
-                        [
-                            schema.nodes.paragraph.create()
-                        ]
-                    ),
-                    schema.nodes.table_cell.create(
-                        {},
-                        [
-                            schema.nodes.paragraph.create()
-                        ]
-                    )
-                ]
-            ),
-            schema.nodes.table_row.create(
-                {},
-                [
-                    schema.nodes.table_cell.create(
-                        {},
-                        [
-                            schema.nodes.paragraph.create()
-                        ]
-                    ),
-
-                    schema.nodes.table_cell.create(
-                        {},
-                        [
-                            schema.nodes.paragraph.create()
-                        ]
-                    )
-                ]
-            )
-        ]
+        [...rows]
     )
 }
