@@ -18,7 +18,7 @@ import {
     TypeH3,
     Table
 } from "react-bootstrap-icons";
-import { createImage, createQuote } from "./creators";
+import { createImage, createQuote, createTable } from "./creators";
 
 const matchable = [
     {
@@ -114,7 +114,8 @@ const matchable = [
         description: "Add a table",
         icon: <Table />,
         keywords: ["table", "spreadsheet"],
-        node: "table",
+        node: createTable,
+        selectNode: true,
     },
     /*{
         name: "Custom Node",

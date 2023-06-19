@@ -60,7 +60,7 @@ const nodeViews: NodeViewsType = {
         return new Bookmark(node, view, getPos)
     },
     table(node, view, getPos) {
-        return new Table(node, view, getPos);
+        return new Table(HBSchema, node, view, getPos);
     }
 }
 

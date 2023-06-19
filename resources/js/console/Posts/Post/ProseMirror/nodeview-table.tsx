@@ -27,8 +27,10 @@ export default class Table implements NodeView{
         
         this.dom = document.createElement("aside")
 
-        this.contentDOM = document.createElement("div")
+        this.contentDOM = document.createElement("table")
         this.contentDOM.className = "table-div";
-
+        const id = node.attrs.id || "";
+        this.contentDOM.id = id
+        this.dom.appendChild(this.contentDOM);
     }
 }
