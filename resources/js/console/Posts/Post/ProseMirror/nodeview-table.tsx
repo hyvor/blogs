@@ -87,7 +87,7 @@ export default class Table implements NodeView{
             <Trash />
         </button>
     }
-    tip
+    
     renderNode(node: ProsemirrorNode, pos: { (): number | undefined; (): number | undefined; }) {
 
         // Global div for the table and buttons
