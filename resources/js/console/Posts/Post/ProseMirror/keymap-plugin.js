@@ -13,6 +13,23 @@ import {
     liftListItem,
 } from "prosemirror-schema-list";
 import { NodeSelection, Selection } from "prosemirror-state";
+import {
+    addColumnAfter,
+    addColumnBefore,
+    deleteColumn,
+    addRowAfter,
+    addRowBefore,
+    deleteRow,
+    mergeCells,
+    splitCell,
+    setCellAttr,
+    toggleHeaderRow,
+    toggleHeaderColumn,
+    toggleHeaderCell,
+    goToNextCell,
+    deleteTable,
+  } from "prosemirror-tables";
+
 
 export default function keymapPlugins(schema) {
     var extendedKeymap = {};
@@ -57,7 +74,7 @@ export default function keymapPlugins(schema) {
         chainCommands(
             (state, dispatch) =>
                 convertEmptyBlocksToParagraphHandler(state, dispatch, schema),
-            figcaptionBackspaceHandler
+            figcaptionBackspaceHandler,
         )
     );
 
@@ -99,7 +116,7 @@ export default function keymapPlugins(schema) {
             }
         },
         splitListItem(schema.nodes.list_item),
-        figcaptionEnterHandler
+        figcaptionEnterHandler,
     );
 
     // list item

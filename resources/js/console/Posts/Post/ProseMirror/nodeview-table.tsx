@@ -1,12 +1,8 @@
-import { NodeSelection, TextSelection } from "prosemirror-state";
-import schema from "./schema";
-import { Calendar2Minus, Calendar2Plus, Trash  } from 'react-bootstrap-icons';
-import React, { useState } from 'react';
-import ReactDOM from 'react-dom';
 import { EditorView, NodeView } from "prosemirror-view";
 import {Node as ProsemirrorNode, Schema} from "prosemirror-model";
-import Tooltip from "react-tooltip"
-import ReactTooltip from "react-tooltip";
+import { Trash } from "react-bootstrap-icons";
+import ReactDOM from "react-dom";
+
 
 
 export default class Table implements NodeView{
@@ -25,12 +21,29 @@ export default class Table implements NodeView{
         this.getPos = getPos;
         this.schema = schema;
         
-        this.dom = document.createElement("aside")
+        this.dom = document.createElement("div");
+        this.dom.className = "table-wrapper";
 
-        this.contentDOM = document.createElement("table")
+        this.createInside = this.createInside.bind(this);
+        this.createInside();
+
+        this.contentDOM = document.createElement("table");
         this.contentDOM.className = "table-div";
         const id = node.attrs.id || "";
         this.contentDOM.id = id
         this.dom.appendChild(this.contentDOM);
     }
+
+    createInside() {
+        const _self = this;
+        const deleteButton = document.createElement("button");
+        deleteButton.className = "icon-button delete-table-button";
+        ReactDOM.render(<Trash />, deleteButton);
+        deleteButton.onclick = function () {
+            _self.view.dispatch(_self.view.state.tr.delete(_self.getPos()!, _self.getPos()! + _self.node.nodeSize));
+        };
+        this.dom.appendChild(deleteButton);
+    }
+
+
 }

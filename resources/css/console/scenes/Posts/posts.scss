@@ -50,52 +50,11 @@
         background-color: $color-accent-light;
     }
     .table-wrapper {
-        display: grid;
-        grid-template-columns: 20fr 1fr;
-        .table-settings {
-            display: flex;
-            flex-direction: row;
-            align-self: flex-end;
-        }
-        .table-column {
-            display: flex;
-            flex-direction: column;
-        }
-        .focused {
-            margin-top: 0px;
-        }
-        .not-focused {
-            margin-top: 25px;
-        }
-        .hidden {
-            display: none!important;
-          }
-        .row-header-button {
-            background-color: $color-accent-light;
-        }
-        .column-header-button {
-            background-color: $color-accent-light;
-        }
+        display: flex;
+        flex-direction: column;
+        align-items: end;
         .delete-table-button {
             background-color: $color-red-light
-        }
-        .rows-buttons {
-            margin-top: 3px;
-            border-radius: 20px;
-            display: flex;
-            justify-content: space-around;
-            align-items: center;
-            width: 100%;
-            background-color: $color-accent-light;
-        }
-        .columns-buttons {
-            margin-left: 3px;
-            border-radius: 20px;
-            display: flex;
-            flex-direction: column;
-            justify-content: space-around;
-            align-items: center;
-            background-color: $color-accent-light;
         }
     }
 
