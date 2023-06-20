@@ -32,6 +32,17 @@ export default function keymapPlugins(schema) {
     // hard break
     const br = schema.nodes.hard_break,
         brCmd = function (state, dispatch) {
+            const { $from } = state.selection;
+            const grandParent = $from.node(-1);
+            // Insert an empty new paragraph after the table
+            if (grandParent.type.name === 'table_cell') {
+                const tr = state.tr.insert(
+                    $from.after(-1),
+                    schema.nodes.paragraph.create()
+                );
+                dispatch(tr.setSelection(Selection.near(tr.doc.resolve($from.after(-1)))));
+                return true;
+            }
             dispatch(
                 state.tr.replaceSelectionWith(br.create()).scrollIntoView()
             );
@@ -91,24 +102,10 @@ export default function keymapPlugins(schema) {
         figcaptionEnterHandler
     );
 
-    const tabWrapper = () => {
-        // If in table view, do nothing
-        const selection = state.selection;
-
-        if (selection.from !== selection.to)
-            // something was selected
-            return;
-
-        const parent = selection.$to.parent;
-        if (parent && parent.type.name === "table") return false;
-
-        sinkListItem(schema.nodes.list_item);
-    }
-
     // list item
     bind("Enter", enterAndArrowDown);
 
-    bind("Tab", tabWrapper);
+    bind("Tab", sinkListItem(schema.nodes.list_item));
     bind("Shift-Tab", liftListItem(schema.nodes.list_item));
 
     bind("ArrowDown", enterAndArrowDown);
@@ -185,8 +182,6 @@ function figcaptionEnterHandler(state, dispatch) {
 function figcaptionBackspaceHandler(state, dispatch) {
     const { $from } = state.selection;
 
-    if ($from.parent.type.name === "table") return false;
-
     if ($from.parent.type.name !== "figcaption") return false;
 
     if (!$from.parent?.firstChild.text) return true;
@@ -194,8 +189,6 @@ function figcaptionBackspaceHandler(state, dispatch) {
 
 function convertEmptyBlocksToParagraphHandler(state, dispatch, schema) {
     let { $from } = state.selection;
-
-    if ($from.parent.type.name === "table") return false;
 
     const parent = $from.parent;
 
