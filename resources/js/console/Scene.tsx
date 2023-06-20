@@ -68,7 +68,7 @@ function Middle({ children, scene } : {children: ReactNode, scene: string}) {
     }
 
     function isBlogTrialEndedAndNotActivated() {
-        return hasTrialEndedAndNotSubscribed(blog.subdomain) &&
+        return blog.subdomain && hasTrialEndedAndNotSubscribed(blog.subdomain) &&
             scene !== 'billing' &&
             scene !== 'welcome' &&
             scene !== 'new';

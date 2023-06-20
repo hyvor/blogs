@@ -223,6 +223,8 @@ export type Language = {
     code: string;
     name: string;
     is_primary: boolean;
+
+    direction: 'ltr' | 'rtl'
 }
 
 // === MEDIA

@@ -1,5 +1,6 @@
 import {EditorState, Plugin, PluginView} from 'prosemirror-state';
 import {EditorView} from "prosemirror-view";
+import {isEditorRtl} from "./rtl";
 
 export default function slashTipPlugin() {
     return new Plugin({
@@ -56,6 +57,14 @@ class SlashTipPlugin implements PluginView {
         const viewPos = view.dom.getBoundingClientRect()
 
         this.element.style.top = (posTop - wrapPos.top) + "px";
+
+        const isRtl = isEditorRtl();
+
+        if (isRtl) {
+            this.element.style.left = (viewPos.left + 25) + "px";
+            return;
+        }
+
         this.element.style.right = (viewPos.left - wrapPos.left) + "px";
 
     }

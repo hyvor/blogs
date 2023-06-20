@@ -23,10 +23,38 @@ it('creates a language', function () {
             fn (AssertableJson $json) => $json->has('id')
                 ->where('code', $code)
                 ->where('name', $name)
+                ->where('direction' , 'ltr')
                 ->etc()
         );
 
     Event::assertDispatched(LanguageChangedEvent::class);
+});
+
+it('creates a RTL language', function() {
+
+    Event::fake();
+
+    $code = 'ar';
+    $name = 'Arabic';
+
+    $blog = blogWithAccess();
+
+    consoleApi($blog, 'POST', '/language', [
+        'code' => $code,
+        'name' => $name,
+        'direction' => 'rtl'
+    ])
+        ->assertOk()
+        ->assertJson(
+            fn (AssertableJson $json) => $json->has('id')
+                ->where('code', $code)
+                ->where('name', $name)
+                ->where('direction' , 'rtl')
+                ->etc()
+        );
+
+    Event::assertDispatched(LanguageChangedEvent::class);
+
 });
 
 it('does not create language if the code already exists', function () {

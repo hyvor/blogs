@@ -1,7 +1,8 @@
-<?php
+<?php declare(strict_types=1);
 
 namespace App\Data\Objects\DataAPI;
 
+use App\Data\Enums\LanguageDirectionEnum;
 use App\Models\Language;
 
 class LanguageObject
@@ -14,11 +15,14 @@ class LanguageObject
 
     public bool $is_primary;
 
+    public LanguageDirectionEnum $direction;
+
     public function __construct(Language $language)
     {
         $this->id = $language->id;
         $this->code = $language->code;
         $this->name = $language->name;
         $this->is_primary = $language->is_primary;
+        $this->direction = $language->direction;
     }
 }
