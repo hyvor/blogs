@@ -110,7 +110,8 @@ All published themes should support RTL (right-to-left) languages. Follow these 
 | `border-right`  | `border-inline-end`     |
 
 * Make sure absolute/fixed positioned elements are positioned correctly in RTL mode
-* Make sure to add a RTL language to your DEV blog and test RTL support
+* `<pre><code>` blocks should have `direction: ltr` CSS
+* Make sure to add an RTL language to your DEV blog and test RTL support
 
 ## Versioning {#versioning}
 

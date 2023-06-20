@@ -8,7 +8,6 @@ use App\Models\PostVariant;
 use Illuminate\Database\Eloquent\Factories\Factory;
 use Illuminate\Support\Arr;
 use Illuminate\Support\Str;
-use Tests\Helper\Generator\PostContentGenerator;
 
 /**
  * @extends Factory<PostVariant>
@@ -20,7 +19,7 @@ class PostVariantFactory extends Factory
 
     public function definition()
     {
-        $content = PostContentGenerator::generateRandom();
+        $content = $this->generateRandom();
 
         return [
             'post_id' => Post::factory(),
@@ -38,4 +37,27 @@ class PostVariantFactory extends Factory
             'words' => null,
         ];
     }
+
+    private function generateRandom() : string
+    {
+
+        $paragraphs = (array) $this->faker->paragraphs(rand(2, 6));
+        $content = [
+            'type' => 'doc',
+            'content' => [],
+        ];
+        foreach ($paragraphs as $para) {
+            $content['content'][] = [
+                'type' => 'paragraph',
+                'content' => [[
+                    'type' => 'text',
+                    'text' => $para,
+                ]],
+            ];
+        }
+
+        return strval(json_encode($content));
+
+    }
+
 }
