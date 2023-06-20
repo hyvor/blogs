@@ -31,6 +31,8 @@ All the following requirements should be met in order to publish a theme to our 
 * RTL support
   * `dir="{{ _lang.direction }}"` is added to the `<html>` tag
   * Use `margin-inline-start` and `margin-inline-end` instead of `margin-left` and `margin-right`
+  * Make sure absolute/fixed positioned elements are positioned correctly in RTL mode
+  * Make sure to add a RTL language to your DEV blog and test RTL support
 * Configurations are added for colors, fonts, etc. See [Config](#config) section.
 * Configuration definitions (`config.def.yaml`) are added. See [Configuration -> Config Definitions](themes-config#config-def) page. Use the <a href="/config" target="_blank">config tool</a> to validate `config.def.yaml`.
 * YAML files should use 2 spaces per indentation (not tabs, not 4 spaces).
