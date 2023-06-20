@@ -39,7 +39,8 @@ class KeysFilter
                 is_string($object) ||
                 is_int($object) ||
                 is_null($object) ||
-                is_bool($object)
+                is_bool($object) ||
+                (is_object($object) && enum_exists($object::class))
             ) {
                 return $object;
             }
