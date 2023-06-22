@@ -103,7 +103,7 @@ export default function HyvorTalk() {
                                     </div>
                                     <a
                                         className="button small"
-                                        href={`https://talk.hyvor.com/consolev3/${data.website_id}/comments`}
+                                        href={`https://talk.hyvor.com/consolev3/${data.data.website_id}/comments`}
                                         target="_blank"
                                     >Go to Hyvor Talk Console</a>
                                     <button
@@ -132,7 +132,7 @@ export default function HyvorTalk() {
                         right={
                             <div>
                                 <div className="connection-status">
-                                    Add the following code to <NavLink href={`/console/${subdomain}/settings/comments`} className="global-jump-link"><strong>Settings &rarr; Comments & Newsletter &rarr; Comments Embed Code</strong></NavLink> by copying and pasting or clicking the button below. You may customize the code if you want.
+                                    Update <NavLink href={`/console/${subdomain}/settings/comments`} className="global-jump-link"><strong>Settings &rarr; Comments & Newsletter &rarr; Comments Embed Code</strong></NavLink> by clicking the button below. You may customize the code if you want.
                                 </div>
                                 <pre><code>{embedCode}</code></pre>
                                 <button className="button small" onClick={handleAddingCode}>Update "Comments Embed Code"</button>

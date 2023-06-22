@@ -9,7 +9,7 @@ interface HyvorTalkIntegration {
     website_id: number,
 }
 
-type HyvorTalkIntegrationData = {
+export type HyvorTalkIntegrationData = {
     connected: false
 } | {
     connected: true,
@@ -33,7 +33,7 @@ const hyvorTalkLogic = kea<hyvorTalkLogicType>([
 
 
         createIntegration: async ({onSuccess} : {onSuccess: Function}) => {
-            const data = await api.post<HyvorTalkIntegrationData>(props.subdomain, '/integrations/hyvor-talk');
+            const data = await api.post<HyvorTalkIntegration>(props.subdomain, '/integrations/hyvor-talk');
             actions.setData({
                 connected: true,
                 data

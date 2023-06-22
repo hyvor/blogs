@@ -11,7 +11,7 @@ it('gets hyvor talk integration null', function() {
     consoleApi($blog, 'get', '/integrations/hyvor-talk')
         ->assertOk()
         ->assertJson([
-            'website_id' => null
+            'connected' => false
         ]);
 
 });
@@ -27,8 +27,7 @@ it('gets hyvor talk integration with website ID', function() {
 
     consoleApi($blog, 'get', '/integrations/hyvor-talk')
         ->assertOk()
-        ->assertJson([
-            'website_id' => 23
-        ]);
+        ->assertJsonPath('connected', true)
+        ->assertJsonPath('data.website_id', 23);
 
 });

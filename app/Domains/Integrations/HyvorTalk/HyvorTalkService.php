@@ -61,4 +61,15 @@ class HyvorTalkService
         $website->delete();
     }
 
+    /**
+     * @param string[] $domains
+     */
+    public static function updateDomains(HyvorTalkWebsite $website, array $domains) : void
+    {
+        self::callApi('set-domains', [
+            'website_id' => $website->website_id,
+            'domains' => $domains,
+        ]);
+    }
+
 }
