@@ -39,7 +39,15 @@ const hyvorTalkLogic = kea<hyvorTalkLogicType>([
                 data
             });
             onSuccess();
-        }
+        },
+
+        deleteIntegration: async ({onSuccess} : {onSuccess: Function}) => {
+            await api.delete(props.subdomain, '/integrations/hyvor-talk');
+            actions.setData({
+                connected: false
+            });
+            onSuccess();
+        },
 
     })),
 

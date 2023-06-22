@@ -47,4 +47,17 @@ class IntegrationHyvorTalkController
 
     }
 
+    public function deleteIntegration(Blog $blog) : JsonResponse
+    {
+        $hyvorTalkWebsite = HyvorTalkService::getHyvorTalkWebsite($blog);
+
+        if (!$hyvorTalkWebsite) {
+            throw new TrustedException('Hyvor Talk integration does not exist');
+        }
+
+        HyvorTalkService::deleteHyvorTalkWebsite($hyvorTalkWebsite);
+
+        return response()->json();
+    }
+
 }

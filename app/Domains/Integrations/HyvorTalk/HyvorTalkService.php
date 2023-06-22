@@ -56,4 +56,9 @@ class HyvorTalkService
 
     }
 
+    public static function deleteHyvorTalkWebsite(HyvorTalkWebsite $website) : void
+    {
+        $website->delete();
+    }
+
 }

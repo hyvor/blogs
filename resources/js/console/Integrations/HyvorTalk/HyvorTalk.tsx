@@ -17,13 +17,14 @@ export default function HyvorTalk() {
     const isOwner = UserPermissions.isOwner();
 
     const logic = hyvorTalkLogic({subdomain});
-    const { loadAjax, data } = useValues(logic);
-    const { createIntegration } = useActions(logic);
+    const { loadAjax, deleteIntegrationAjax, data } = useValues(logic);
+    const { createIntegration, deleteIntegration } = useActions(logic);
 
     const { updateBlogSave } = useActions(blogLogic({subdomain}));
 
     const [isConnecting, setIsConnecting] = useState(false);
     const [isConnectConfirming, setIsConnectConfirming] = useState(false);
+    const [isDisconnecting, setIsDisconnecting] = useState(false);
 
     const embedCode = data.connected ?
 `<script async src="https://talk.hyvor.com/embed/embed.js" type="module"></script>
@@ -107,6 +108,7 @@ export default function HyvorTalk() {
                                     >Go to Hyvor Talk Console</a>
                                     <button
                                         className="button small danger disconnect-button"
+                                        onClick={() => setIsDisconnecting(true)}
                                     >Disconnect</button>
                                 </> :
                                 <>
@@ -173,6 +175,34 @@ export default function HyvorTalk() {
                 }}
                 onCancel={() => setIsConnecting(false)}
                 isLoading={isConnectConfirming}
+            />
+        }
+
+        {
+            isDisconnecting &&
+            <PopupConfirm
+                title="Disconnect Hyvor Talk"
+                text={
+                    <div>
+                        <Callout
+                            color={CalloutColors.RED}
+                            title="Caution"
+                            text="You cannot connect this blog to the same website ID again."
+                        />
+                        Are you sure you want to disconnect this blog from Hyvor Talk? This will not delete your Hyvor Talk Website ID. You will have to delete it manually from the Hyvor Talk Console.
+                    </div>
+                }
+                name="Disconnect"
+                onClick={() => {
+                    deleteIntegration({
+                        onSuccess: () => {
+                            setIsDisconnecting(false);
+                        }
+                    });
+                }}
+                onCancel={() => setIsDisconnecting(false)}
+                isLoading={deleteIntegrationAjax.status === 'loading'}
+                buttonClass="danger"
             />
         }
 
