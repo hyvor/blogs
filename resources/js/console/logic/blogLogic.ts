@@ -72,6 +72,13 @@ const blogLogic = kea<blogLogicType>([
             await api.patch(getSubdomain(), `/blog/variant`, {...data, ...{language_id: languageId}})
         },
 
+        updateBlogSave: async ({data, onUpdate}) => {
+            const blog = await api.patch<Blog>(getSubdomain(), `/blog`, data);
+            actions.setOriginal(blog);
+            actions.setBlog(blog);
+            onUpdate && onUpdate(blog);
+        },
+
         updateBlog: async ({keys, variantKeys, onUpdate}) => {
 
             // update variants

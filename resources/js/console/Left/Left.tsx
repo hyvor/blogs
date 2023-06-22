@@ -11,7 +11,7 @@ import {
     Files, Gear,
     House, Megaphone,
     Palette,
-    Pencil,
+    Pencil, Plugin,
 } from 'react-bootstrap-icons';
 import dayjs from 'dayjs';
 import { appConfig } from "../helpers";
@@ -111,6 +111,17 @@ function LeftInner({subdomain} : {subdomain: string}) {
                         }
                     </span>
                       }
+            />
+
+
+            <LeftLink
+                path="/integrations"
+                icon={<Plugin />}
+                name="Integrations"
+                permission={UserPermissions.canAccessSettings}
+                extra={
+                    <span className="global-tag blue">NEW</span>
+                }
             />
 
             <LeftLink path="/settings" icon={<Gear />} name="Settings" permission={UserPermissions.canAccessSettings} />

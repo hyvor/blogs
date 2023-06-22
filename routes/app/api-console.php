@@ -21,6 +21,7 @@ use App\Http\Controllers\ConsoleAPI\ConsoleUserBlogController;
 use App\Http\Controllers\ConsoleAPI\ConsoleUserController;
 use App\Http\Controllers\ConsoleAPI\ConsoleViewController;
 use App\Http\Controllers\ConsoleAPI\ConsoleWebhookController;
+use App\Http\Controllers\ConsoleAPI\Integrations\IntegrationHyvorTalkController;
 use App\Http\Controllers\ConsoleAPI\Temporary\AppSumoController;
 use App\Http\Middleware\App\ConsoleApi\ConsoleApiAccessMiddleware;
 use App\Http\Middleware\App\ConsoleApi\ConsoleApiUserEndpointsAccessMiddleware;
@@ -233,6 +234,19 @@ Route::prefix('/api/console/v0/blog/{subdomain}')
                 Route::post('/billing/shopify/subscription', [ConsoleBillingShopifyController::class, 'createSubscription']);
                 Route::delete('/billing/shopify/subscription', [ConsoleBillingShopifyController::class, 'cancelSubscription']);
             });
+        });
+
+        /**
+         * Integrations
+         */
+        Route::middleware('role:owner|admin')
+            ->prefix('integrations')
+            ->group(function() {
+
+            Route::get('/hyvor-talk', [IntegrationHyvorTalkController::class, 'getIntegration']);
+            Route::post('/hyvor-talk', [IntegrationHyvorTalkController::class, 'createIntegration']);
+            Route::delete('/hyvor-talk', [IntegrationHyvorTalkController::class, 'deleteIntegration']);
+
         });
 
         /**

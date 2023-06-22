@@ -17,6 +17,7 @@ import subdomainLogic from "./logic/subdomainLogic"
 import BlogBlocked from "./Views/BlogBlocked";
 import {hasTrialEndedAndNotSubscribed} from "./lib/blog-helpers";
 import BlogTrialEnded from "./Views/BlogTrialEnded";
+import Integrations from "./Integrations/Integrations";
 
 export const scenes = {
     error404: () => <div>404</div>,
@@ -24,6 +25,7 @@ export const scenes = {
     posts: ({ postId } : { postId?: number }) => <Posts postId={postId} />,
     pages: ({ postId } : { postId?: number }) => <Pages postId={postId} />,
     settings: ({type} : {type?: string}) => <Settings type={type} />,
+    integrations: ({type} : {type?: string}) => <Integrations type={type} />,
     theme: ({type} : {type?: string }) => <Theme />,
     billing: () => <Billing />,
     new: ({type} : {type? : string}) => <NewBlog type={type} />,
