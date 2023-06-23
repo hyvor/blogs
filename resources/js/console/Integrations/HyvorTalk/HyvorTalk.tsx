@@ -31,6 +31,7 @@ export default function HyvorTalk() {
 <hyvor-talk-comments 
     website-id="${data.data.website_id}" 
     page-id="{{ _post.id }}"
+    page-url="{{ _post.url }}"
 ></hyvor-talk-comments>` : '';
 
     function handleAddingCode() {
