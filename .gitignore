@@ -5,6 +5,7 @@
 /public/css
 /public/build
 /storage/*.key
+/storage/debugbar
 /--coverage-php
 vendor
 .env
