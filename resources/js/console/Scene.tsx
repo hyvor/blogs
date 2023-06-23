@@ -73,7 +73,8 @@ function Middle({ children, scene } : {children: ReactNode, scene: string}) {
         return blog.subdomain && hasTrialEndedAndNotSubscribed(blog.subdomain) &&
             scene !== 'billing' &&
             scene !== 'welcome' &&
-            scene !== 'new';
+            scene !== 'new' &&
+            scene !== 'settings';
     }
 
     return <div id="middle">
