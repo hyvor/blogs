@@ -32,8 +32,6 @@ use App\Models\NavigationVariant;
 use App\Models\Post;
 use App\Models\PostVariant;
 use App\Models\Route;
-use App\Models\Tag;
-use App\Models\TagVariant;
 use App\Models\ThemeFile;
 use App\Models\User;
 use App\Models\UserVariant;

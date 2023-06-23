@@ -23,6 +23,7 @@
         cursor: pointer;
         border-left:3px solid transparent;
         position: relative;
+        align-items: center;
         &:hover {
             background-color: $color-hover;
         }

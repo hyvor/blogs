@@ -1,0 +1,35 @@
+
+
+.integrations-view {
+    .integration-nav-link {
+        img {
+            width: 20px;
+            height: 20px;
+            margin-right: 8px;
+            vertical-align: middle;
+        }
+    }
+
+    .integration {
+        &.hyvor-talk {
+
+            .connection-status {
+                margin-bottom: 10px;
+            }
+
+            pre code {
+                background-color: #f1f1f1;
+                display: block;
+                padding: 15px 20px;
+                border-radius: 20px;
+                overflow: auto;
+            }
+
+            .disconnect-button {
+                margin-left: 6px;
+            }
+
+        }
+    }
+
+}
