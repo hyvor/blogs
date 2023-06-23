@@ -11,10 +11,11 @@ it('sets _head in index', function () {
 
     $blog = blogWithLanguageAndRoutes();
     $variant = $blog->variants[0];
+    $variantName = htmlspecialchars($variant->name);
     $blogUrl = PermalinkRepository::getBlogPermalink($blog, $blog->languages[0]);
 
     $codeHead = 'This is code head {{ _blog.name }}';
-    $codeHeadRendered = "This is code head $variant->name";
+    $codeHeadRendered = "This is code head $variantName";
 
     $twitterUrl = 'https://twitter.com/HyvorBlogs';
 
@@ -43,9 +44,10 @@ it('sets _head in index', function () {
     // code_head
     expect($content)->toContain($codeHeadRendered);
     // title
-    expect($content)->toContain("<title>$variant->name</title>");
+    expect($content)->toContain("<title>$variantName</title>");
     // description
-    expect($content)->toContain("<meta name=\"description\" content=\"$variant->description\" />");
+    $variantDescription = htmlspecialchars($variant->description);
+    expect($content)->toContain("<meta name=\"description\" content=\"$variantDescription\" />");
     // canonical
     expect($content)->toContain("<link rel=\"canonical\" href=\"$blogUrl\" />");
     // twitter
