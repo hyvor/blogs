@@ -1,4 +1,4 @@
-<?php
+<?php declare(strict_types=1);
 
 namespace Tests\Unit\Domains\Delivery\Response;
 
@@ -31,4 +31,26 @@ it('matches styles.css', function () {
     $this->assertEquals(MimeTypes::getMimeFromExtension('css'), $responseObject->mime_type);
 
     expect($responseObject->file_type)->toBe(DeliveryAPIFileTypeEnum::ASSET);
+});
+
+it('shows an error when scss is wrong', function() {
+
+    $file = 'index.scss';
+    $content = '{';
+
+    $blog = blog();
+
+    ThemeFilesRepository::createOrUpdateFile(
+        $blog,
+        ThemeFileFolderEnum::STYLES,
+        $file,
+        $content,
+    );
+
+    $pathMatcher = new PathMatcher($blog, '/styles.css');
+    $responseObject = $pathMatcher->getResponseObject();
+
+    expect($responseObject->status)->toBe(500);
+    expect($responseObject->content)->toContain('SCSS Error');
+
 });
