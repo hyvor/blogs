@@ -13,22 +13,6 @@ import {
     liftListItem,
 } from "prosemirror-schema-list";
 import { NodeSelection, Selection } from "prosemirror-state";
-import {
-    addColumnAfter,
-    addColumnBefore,
-    deleteColumn,
-    addRowAfter,
-    addRowBefore,
-    deleteRow,
-    mergeCells,
-    splitCell,
-    setCellAttr,
-    toggleHeaderRow,
-    toggleHeaderColumn,
-    toggleHeaderCell,
-    goToNextCell,
-    deleteTable,
-  } from "prosemirror-tables";
 
 
 export default function keymapPlugins(schema) {

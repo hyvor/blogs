@@ -2,6 +2,7 @@ import { EditorView, NodeView } from "prosemirror-view";
 import {Node as ProsemirrorNode, Schema} from "prosemirror-model";
 import { Trash } from "react-bootstrap-icons";
 import ReactDOM from "react-dom";
+import React from "react";
 
 
 
@@ -43,6 +44,21 @@ export default class Table implements NodeView{
             _self.view.dispatch(_self.view.state.tr.delete(_self.getPos()!, _self.getPos()! + _self.node.nodeSize));
         };
         this.dom.appendChild(deleteButton);
+
+        const addRowButton = document.createElement("button");
+        addRowButton.className = "icon-button add-row-button";
+        addRowButton.innerText = "Add Row";
+        addRowButton.onclick = function () {
+            const { tr } = _self.view.state;
+            const pos = _self.getPos()! + 1;
+            const row = _self.schema.nodes.table_row.createAndFill();
+            if (row) {
+                tr.insert(pos, row);
+                _self.view.dispatch(tr);
+            }
+        };
+        //this.dom.appendChild(addRowButton);
+        
     }
 
 
