@@ -64,7 +64,7 @@ function SettingsSelect({ name, value, options, setPannel }: SettingsSelectProps
 export default function Settings({ type }: { type: string | undefined }) {
     const blog = getUserBlogBlog();
     const [pannel, setPannel] = useState(type || 'general');
-    const pannelOption = [
+    let pannelOption = [
         { value: 'general', label: 'General' },
         { value: 'users', label: 'Users' },
         { value: 'tags', label: 'Tags' },
@@ -85,7 +85,9 @@ export default function Settings({ type }: { type: string | undefined }) {
         { value: 'danger', label: 'Danger Zone' },
     ]
 
-    console.log('Pannel', pannel);
+    if (blog.integration === 'shopify') {
+        pannelOption = [{ value: 'shopify', label: 'Shopify Guide' }, ...pannelOption];
+    }
 
     let Type = () => <SettingsGeneral />;
     switch (pannel) {
@@ -154,7 +156,13 @@ export default function Settings({ type }: { type: string | undefined }) {
 
                 {
                     blog.integration === 'shopify' &&
-                    <SettingsLink path="/shopify" name="Shopify Guide" dividing={true} setPannel={setPannel} />
+                    <SettingsLink
+                        path="/shopify"
+                        name="Shopify Guide"
+                        dividing={true}
+                        setPannel={setPannel}
+                        pannelName="shopify"
+                    />
                 }
 
                 <SettingsLink path="" name="General" setPannel={setPannel} />

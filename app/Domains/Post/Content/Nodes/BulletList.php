@@ -1,32 +1,26 @@
-<?php
+<?php declare(strict_types=1);
 
 namespace App\Domains\Post\Content\Nodes;
 
-use Tiptap\Core\Node;
-use Tiptap\Utils\HTML;
+use Hyvor\Phrosemirror\Converters\HtmlParser\ParserRule;
+use Hyvor\Phrosemirror\Document\Node;
+use Hyvor\Phrosemirror\Types\NodeType;
 
-class BulletList extends Node
+class BulletList extends NodeType
 {
-    public static $name = 'bullet_list';
 
-    public function addOptions()
+    public string $name = 'bullet_list';
+
+    public function toHtml(Node $node, string $children): string
+    {
+        return "<ul>$children</ul>";
+    }
+
+    public function fromHtml(): array
     {
         return [
-            'HTMLAttributes' => [],
+            new ParserRule(tag: 'ul')
         ];
     }
 
-    public function parseHTML()
-    {
-        return [
-            [
-                'tag' => 'ul',
-            ],
-        ];
-    }
-
-    public function renderHTML($node, $HTMLAttributes = [])
-    {
-        return ['ul', HTML::mergeAttributes($this->options['HTMLAttributes'], $HTMLAttributes), 0];
-    }
 }

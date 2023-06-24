@@ -1,4 +1,4 @@
-<?php
+<?php declare(strict_types=1);
 
 namespace App\Domains\Blog\Fillers;
 
@@ -8,5 +8,5 @@ interface FillerInterface
 {
     public function __construct(Blog $blog);
 
-    public function fill();
+    public function fill() : void;
 }

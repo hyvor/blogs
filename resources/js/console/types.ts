@@ -223,6 +223,8 @@ export type Language = {
     code: string;
     name: string;
     is_primary: boolean;
+
+    direction: 'ltr' | 'rtl'
 }
 
 // === MEDIA
@@ -339,7 +341,9 @@ export interface Subscription {
     frequency: SubscriptionFrequency,
     created_at: number,
     ends_at: number | null,
-    paddle_subscription_id: number | null
+
+    paddle_subscription_id: number | null,
+    shopify_subscription_id: string | null,
 
 }
 

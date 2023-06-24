@@ -4,7 +4,7 @@ namespace Tests\Unit\PostContent\Nodes;
 
 use App\Data\Enums\ResultEnum;
 use App\Data\Enums\UrlDataFetchTypeEnum;
-use App\Domains\Post\Content\PostContentRepository;
+use App\Domains\Post\Content\PostContentService;
 use App\Models\UrlData;
 
 beforeEach(function () {
@@ -34,7 +34,7 @@ test('json to HTML', function () {
         ],
     ];
 
-    $post = PostContentRepository::getHtml($json, blog());
+    $post = PostContentService::getHtml($json, blog());
 
     expect($post)->toBe("<x-embed data-url=\"$this->url\">$this->html</x-embed>");
 });
@@ -53,7 +53,7 @@ it('handles when URL is null', function() {
         ],
     ];
 
-    $post = PostContentRepository::getHtml($json, blog());
+    $post = PostContentService::getHtml($json, blog());
 
     expect($post)->toBe('');
 
@@ -62,7 +62,7 @@ it('handles when URL is null', function() {
 test('HTML to JSON', function () {
     $html = "<x-embed data-url=\"$this->url\"></x-embed>";
 
-    $json = PostContentRepository::getJsonFromHtml($html, blog());
+    $json = PostContentService::getJsonFromHtml($html, blog());
 
     expect($json)->toBe(json_encode([
         'type' => 'doc',

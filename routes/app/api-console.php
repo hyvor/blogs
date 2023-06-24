@@ -21,6 +21,8 @@ use App\Http\Controllers\ConsoleAPI\ConsoleUserBlogController;
 use App\Http\Controllers\ConsoleAPI\ConsoleUserController;
 use App\Http\Controllers\ConsoleAPI\ConsoleViewController;
 use App\Http\Controllers\ConsoleAPI\ConsoleWebhookController;
+use App\Http\Controllers\ConsoleAPI\Integrations\IntegrationHyvorTalkController;
+use App\Http\Controllers\ConsoleAPI\Temporary\AppSumoController;
 use App\Http\Middleware\App\ConsoleApi\ConsoleApiAccessMiddleware;
 use App\Http\Middleware\App\ConsoleApi\ConsoleApiUserEndpointsAccessMiddleware;
 use App\Http\Middleware\App\ConsoleApi\ConsoleMiscApiAccessMiddleware;
@@ -235,12 +237,29 @@ Route::prefix('/api/console/v0/blog/{subdomain}')
         });
 
         /**
+         * Integrations
+         */
+        Route::middleware('role:owner|admin')
+            ->prefix('integrations')
+            ->group(function() {
+
+            Route::get('/hyvor-talk', [IntegrationHyvorTalkController::class, 'getIntegration']);
+            Route::post('/hyvor-talk', [IntegrationHyvorTalkController::class, 'createIntegration']);
+            Route::delete('/hyvor-talk', [IntegrationHyvorTalkController::class, 'deleteIntegration']);
+
+        });
+
+        /**
          * Danger
          */
         Route::middleware('role:owner')->group(function () {
             Route::delete('/blog', [ConsoleDangerController::class, 'delete']);
             // Route::post('/blog/reset', [ConsoleDangerController::class, 'reset']);
         });
+
+        Route::get('/appsumo/codes', [AppSumoController::class, 'getCodes']);
+        Route::post('/appsumo/redeem', [AppSumoController::class, 'redeem']);
+
     });
 
 Route::prefix('/api/console/v0/misc')->middleware([

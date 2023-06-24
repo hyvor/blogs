@@ -10,6 +10,7 @@ use App\Models\Media;
 use App\Models\Post;
 use App\Models\Tag;
 use App\Models\User;
+use Exception;
 
 /**
  * Manages permalinks of a post/page
@@ -108,9 +109,21 @@ class PermalinkRepository
         return str_starts_with($link, $base);
     }
 
-    public static function getBaseUrl(Blog $blog)
+    public static function getBaseUrl(Blog $blog) : string
     {
         return self::getFullUrlFromPath($blog);
+    }
+
+    public static function getBlogDomain(Blog $blog) : string
+    {
+        $url = self::getBaseUrl($blog);
+        $domain = parse_url($url, PHP_URL_HOST);
+
+        if (!is_string($domain)) {
+            throw new Exception('Invalid blog domain');
+        }
+
+        return $domain;
     }
 
     public static function getFullUrlFromPath(Blog $blog, ?string $path = null)
@@ -207,6 +220,18 @@ class PermalinkRepository
         $path = 'media/'.$media->name;
 
         return $onlyPath ? self::getPath($path) : self::getFullUrlFromPath($blog, $path);
+    }
+
+    public static function getMediaNameFromPermalink(Blog $blog, string $permalink): ?string
+    {
+        $path = str_replace(self::getFullUrlFromPath($blog), '', $permalink);
+        $path = trim($path, '/');
+        $split = explode('/', $path);
+
+        if (!isset($split[0]) || $split[0] !== 'media')
+            return null;
+
+        return $split[1] ?? null;
     }
 
     public static function getAssetPermalink(string $assetName, Blog $blog, $onlyPath = false): string

@@ -62,7 +62,11 @@ return [
 
     'deepl' => [
         'api_key' => env('DEEPL_API_KEY'),
+    ],
 
+    'hyvor_talk' => [
+        'url' => env('HYVOR_TALK_URL', 'https://talk.hyvor.com'),
+        'api_key' => env('HYVOR_TALK_API_KEY'),
     ]
 
 ];

@@ -27,19 +27,19 @@ const languagesLogic = kea<languagesLogicType>([
         },
 
         create: async (
-            {code, name, onCreate} :
-            {code: string, name: string, onCreate: Function}
+            {code, name, direction, onCreate} :
+            {code: string, name: string, direction: string, onCreate: Function}
         ) => {
-            const lang = await api.post<Language>(props.subdomain, '/language', {code, name});
+            const lang = await api.post<Language>(props.subdomain, '/language', {code, name, direction});
             actions.addLanguage(lang);
             onCreate();
         },
 
         update: async (
-            {id, code, name, onUpdate} :
-            {id: number, code: string, name: string, onUpdate: Function}
+            {id, code, name, direction, onUpdate} :
+            {id: number, code: string, direction: string, name: string, onUpdate: Function}
         ) => {
-            const lang = await api.patch<Language>(props.subdomain, `/language/${id}`, {code, name});
+            const lang = await api.patch<Language>(props.subdomain, `/language/${id}`, {code, name, direction});
             actions.updateLanguage(lang);
             onUpdate()
         },

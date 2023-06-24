@@ -2,12 +2,16 @@
 
 namespace App\Domains\Post\Jobs;
 
+use Illuminate\Bus\Queueable;
 use Illuminate\Contracts\Queue\ShouldBeUnique;
 use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Support\Facades\DB;
 
 class PublishScheduledPosts implements ShouldQueue, ShouldBeUnique
 {
+
+    use Queueable;
+
     public function handle()
     {
         $time = now();

@@ -2,7 +2,7 @@
 
 namespace App\Domains\Post\Listeners;
 
-use App\Domains\Post\Content\PostContentRepository;
+use App\Domains\Post\Content\PostContentService;
 use App\Domains\Post\Events\PostVariantUpdatedEvent;
 
 class PostVariantUpdateWordCountListener
@@ -17,7 +17,7 @@ class PostVariantUpdateWordCountListener
 
         $post = $variant->post;
         $blog = $post->blog;
-        $text = PostContentRepository::getText($variant->content, $blog);
+        $text = PostContentService::getText($variant->content, $blog);
 
         $words = str_word_count($text);
 

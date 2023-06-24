@@ -1,24 +1,25 @@
-<?php
+<?php declare(strict_types=1);
 
 namespace App\Domains\Post\Content\Nodes;
 
-use Tiptap\Core\Node;
+use Hyvor\Phrosemirror\Converters\HtmlParser\ParserRule;
+use Hyvor\Phrosemirror\Types\NodeType;
 
-class HorizontalRule extends Node
+class HorizontalRule extends NodeType
 {
-    public static $name = 'horizontal_rule';
 
-    public function parseHTML()
+    public string $name = 'horizontal_rule';
+
+    public function toHtml($node, $children): string
+    {
+        return '<hr>';
+    }
+
+    public function fromHtml(): array
     {
         return [
-            [
-                'tag' => 'hr',
-            ],
+            new ParserRule(tag: 'hr'),
         ];
     }
 
-    public function renderHTML($node)
-    {
-        return ['hr'];
-    }
 }

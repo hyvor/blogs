@@ -1,4 +1,4 @@
-<?php
+<?php declare(strict_types=1);
 
 namespace App\Domains\Blog\Fillers;
 
@@ -9,7 +9,10 @@ use App\Models\Blog;
 
 class NavigationFiller implements FillerInterface
 {
-    private $navs = [
+    /**
+     * @var array<array{type: NavigationTypeEnum, name: string, url: string}>
+     */
+    private array $navs = [
         [
             'type' => NavigationTypeEnum::HEADER,
             'name' => 'About',
@@ -31,7 +34,7 @@ class NavigationFiller implements FillerInterface
     {
     }
 
-    public function fill()
+    public function fill() : void
     {
         if (
             $this->blog->type === BlogTypeEnum::DEV ||
@@ -47,16 +50,25 @@ class NavigationFiller implements FillerInterface
                 'name' => 'Content Style',
                 'url' => '/content-style',
             ];
-            $this->navs[] = [
-                'type' => NavigationTypeEnum::HEADER,
-                'name' => 'Author',
-                'url' => '/author/'.$this->blog->users[0]->slug,
-            ];
-            $this->navs[] = [
-                'type' => NavigationTypeEnum::HEADER,
-                'name' => 'Tag',
-                'url' => '/tag/'.$this->blog->tags[0]->slug,
-            ];
+
+            $user = $this->blog->users[0];
+
+            if ($user) {
+                $this->navs[] = [
+                    'type' => NavigationTypeEnum::HEADER,
+                    'name' => 'Author',
+                    'url' => '/author/' . $user->slug,
+                ];
+            }
+
+            $tag = $this->blog->tags[0];
+            if ($tag) {
+                $this->navs[] = [
+                    'type' => NavigationTypeEnum::HEADER,
+                    'name' => 'Tag',
+                    'url' => '/tag/' . $tag->slug,
+                ];
+            }
         }
 
         foreach ($this->navs as $nav) {

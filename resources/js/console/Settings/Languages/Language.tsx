@@ -39,6 +39,7 @@ export default function Language({language, remove} : LanguageProps) {
             }
         </TableRowItem>
         <TableRowItem>{language.code}</TableRowItem>
+        <TableRowItem>{language.direction.toUpperCase()}</TableRowItem>
 
         <TableRowItem>
             <button className="icon-button" onClick={() => setIsUpdating(true)}><PencilFill size={10} /></button>

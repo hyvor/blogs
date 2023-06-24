@@ -176,6 +176,14 @@ $prosemirror-selected-outline: 3px solid #299af3;
             }
         }
     }
+    .code-toolbar-quit-message {
+        position: absolute;
+        bottom: 0;
+        right: 0;
+        font-size: 10px;
+        padding-right: 10px;
+        color: $color-text-light;
+    }
 }
     
 
@@ -326,7 +334,10 @@ $prosemirror-selected-outline: 3px solid #299af3;
 
     blockquote, aside {
         margin-top: 30px;
-        border-left: 4px solid #000000;
+        border-width: 0;
+        border-color: #000000;
+        border-style: solid;
+        border-left-width: 4px;
         padding: 10px 15px;
         & > *:first-child {
             margin-top:0;
@@ -535,6 +546,7 @@ $prosemirror-selected-outline: 3px solid #299af3;
             font-size:14px;
             height: initial;
             padding:5px  0;
+            padding-bottom: 15px;
             border-radius: 0 0 20px 20px;
         }
         .topbar {
@@ -692,4 +704,12 @@ $prosemirror-selected-outline: 3px solid #299af3;
         background-color: #fcf8e3;
     }
 
+}
+
+
+.post-editor-wrap[dir="rtl"] .ProseMirror {
+    blockquote, aside {
+        border-left-width: 0;
+        border-right-width: 4px;
+    }
 }

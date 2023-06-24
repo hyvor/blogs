@@ -123,7 +123,7 @@ export default function Hosting() {
                     color={CalloutColors.ORANGE}
                     title="Be careful when changing the URL!"
                     text={
-                        <div>Changing the hosting URL/Domain can break old URLs, create duplicate pages, and affect SEO. Consult our <a className="link" href="/docs/hosting" target="_blank">documentation</a> for tips on correctly setting up redirects to minimize the risks.</div>
+                        <div>Changing the hosting URL/Domain can break old URLs, create duplicate pages, and affect SEO. Consult our <a className="link" href="/docs/custom-domain" target="_blank">documentation</a> for tips on correctly setting up redirects to minimize the risks.</div>
                     }
                 /> : null
         }

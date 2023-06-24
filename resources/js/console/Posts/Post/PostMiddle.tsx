@@ -3,11 +3,16 @@ import React from "react";
 import { usePostActions, usePostValues } from "./helpers";
 import PostLanguageSelector from "./PostLanguageSelector";
 import TitleRow from "./PostTop/TitleRow";
+import {useLanguagesValues} from "../../Settings/Languages/helpers";
 
 export default function PostMiddle({ id }: { id: number }) {
 
     const { currentVariant, editorState } = usePostValues(id)
     const { updateCurrentPostVariantValue } = usePostActions(id)
+
+    const { getLanguageById } = useLanguagesValues();
+    const language = getLanguageById(editorState.languageId);
+    const isRtl = language ? language.direction === 'rtl' : false;
 
     const isNonDraft = currentVariant.status !== 'draft';
 
@@ -23,6 +28,11 @@ export default function PostMiddle({ id }: { id: number }) {
     return <div
         className={"post-editor-wrap" + (isEditable ? "" : " non-editable")}
         spellCheck={false}
+        dir={isRtl ? 'rtl' : 'ltr'}
+        style={isRtl ? {
+            direction: 'rtl',
+            textAlign: 'right'
+        } : undefined}
     >
         <div className="post-editor-headers">
             <TitleRow id={id} />

@@ -12,6 +12,10 @@ export default class UserPermissions {
         return blog.user.role;
     }
 
+    static isOwner() : boolean {
+        return UserPermissions.getRole() === UserRole.OWNER;
+    }
+
     static canCreatePost() : boolean {
         const role = UserPermissions.getRole();
         return role !== UserRole.FINANCE;

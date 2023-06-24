@@ -11,7 +11,7 @@ return [
         ['users', 'Users'],
         // ['tags', 'Tags'],
         ['languages', 'Languages'],
-        // ['media', 'Media'],
+        ['media', 'Media'],
         ['custom-domain', 'Custom Domain'],
         ['custom-code', 'Custom Code'],
         /*['edge-caching', 'Edge Caching'],*/
@@ -65,11 +65,11 @@ return [
         // ['policy-security', 'Security Policy'],
         // ['compliance-gdpr', 'GDPR Compliance'],
     ],
-//    'Integrations' => [
-//        /*['zapier', 'Zapier'],*/
-//        ['shopify', 'Shopify'],
-//        /*['thinkific', 'Thinkific']*/
-//    ],
+    'Integrations' => [
+        /*['zapier', 'Zapier'],*/
+        ['shopify', 'Shopify'],
+        /*['thinkific', 'Thinkific']*/
+    ],
     'Misc' => [
         ['support', 'Customer Support'],
         ['oss', 'Open Source'],

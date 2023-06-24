@@ -18,6 +18,7 @@ import {
     TypeH3,
 } from "react-bootstrap-icons";
 import { createImage, createQuote } from "./creators";
+import {isEditorRtl} from "./rtl";
 
 const matchable = [
     {
@@ -317,8 +318,15 @@ class SlashPlugin {
             this.slashView.classList.add("bottom");
             this.slashView.classList.remove("top");
         }
-    
-        this.slashView.style.left = viewPos.left - wrapPos.left + "px";
+
+        const isRtl = isEditorRtl();
+
+        if (isRtl) {
+            this.slashView.style.left = "auto";
+            this.slashView.style.right = (wrapPos.right - viewPos.right + 25) + "px";
+        } else {
+            this.slashView.style.left = viewPos.left - wrapPos.left + "px";
+        }
     }
 
     addEvents() {
@@ -330,6 +338,7 @@ class SlashPlugin {
     }
 
     handleKeyDown(event) {
+        if (!this.isOpen) return;
         if (event.key === "ArrowDown") {
             event.preventDefault();
             this.activateNext();

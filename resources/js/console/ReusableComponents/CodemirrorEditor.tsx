@@ -29,7 +29,6 @@ export default function CodemirrorEditor({ id = null, value, onChange, onSave, e
     const tabSize = extension === 'yaml' ? 2 : 4;
 
     function handleTab(cm: any) {
-        console.log(cm)
         if (cm.somethingSelected()) {
           cm.indentSelection("add");
         } else {

@@ -1,4 +1,4 @@
-<?php
+<?php declare(strict_types=1);
 
 namespace App\Domains\Blog\Fillers;
 
@@ -47,7 +47,7 @@ class RouteFiller implements FillerInterface
     {
     }
 
-    public function fill()
+    public function fill() : void
     {
         foreach (self::ROUTES as $route) {
             RouteRepository::createRoute(

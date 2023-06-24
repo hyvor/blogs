@@ -18,11 +18,11 @@ it('updates a subscription plan', function () {
 
     integrationApi('POST', '/paddle/webhook', getPaddleWebhookParams([
         'alert_name' => 'subscription_updated',
-        'subscription_plan_id' => PaddleService::planConfig(
+        'subscription_plan_id' => (string) PaddleService::planConfig(
             SubscriptionPlanEnum::BUSINESS,
             SubscriptionFrequencyEnum::YEARLY
         )->id,
-        'subscription_id' => 110
+        'subscription_id' => (string) 110
     ]))->assertOk();
 
     $subscription =  $blog->subscriptions[0];
@@ -42,7 +42,7 @@ it('updates the status', function () {
 
     integrationApi('POST', '/paddle/webhook', getPaddleWebhookParams([
         'alert_name' => 'subscription_updated',
-        'subscription_id' => 110,
+        'subscription_id' => "110",
         'status' => 'past_due'
     ]))->assertOk();
 
@@ -63,7 +63,7 @@ it('past_due to active', function () {
 
     integrationApi('POST', '/paddle/webhook', getPaddleWebhookParams([
         'alert_name' => 'subscription_updated',
-        'subscription_id' => 110,
+        'subscription_id' => "110",
         'status' => 'active'
     ]))->assertOk();
 

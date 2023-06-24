@@ -232,7 +232,7 @@ class ConsoleUserController extends Controller
             'signature' => 'required|string',
         ]);
 
-        if (! $request->hasValidSignature()) {
+        if (!$request->hasValidSignature(false)) {
             return response()->view('confirmation', [
                 'type' => 'error',
                 'title' => 'Invalid Link',

@@ -96,7 +96,9 @@ class PathMatcher
         $routeMatcher->add('assets', '/assets/{file_name}');
         $routeMatcher->add('preview', '/p/{id}/{lang}');
         $routeMatcher->add('styles', '/styles.css');
-        $routeMatcher->add('media', '/media/{file_name}');
+        $routeMatcher->add('media', '/media/{file_name}/{additional}', [
+            'additional' => null
+        ]);
 
         $routeMatcher->add('sitemap-index', '/sitemap.xml');
         $routeMatcher->add('sitemap-pages', '/sitemap-pages.xml');

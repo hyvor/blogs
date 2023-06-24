@@ -13,9 +13,9 @@ it('accepts invite', function () {
         'status' => UserStatusEnum::INVITED,
     ]);
 
-    $url = URL::temporarySignedRoute('user-accept-invite', now()->addHours(24), [
+    $url = config('app.url') . URL::temporarySignedRoute('user-accept-invite', now()->addHours(24), [
         'user_id' => $user->id,
-    ]);
+    ], false);
 
     $this->call('GET', $url)
         ->assertOk()
@@ -45,9 +45,9 @@ it('does not accept invitation if the link is expired', function () {
         'status' => UserStatusEnum::INVITED,
     ]);
 
-    $url = URL::temporarySignedRoute('user-accept-invite', now()->subHour(), [
+    $url = config('app.url') . URL::temporarySignedRoute('user-accept-invite', now()->subHour(), [
         'user_id' => $user->id,
-    ]);
+    ], false);
 
     $this->call('GET', $url)
         ->assertUnprocessable()

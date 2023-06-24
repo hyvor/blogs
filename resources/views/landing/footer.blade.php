@@ -28,6 +28,7 @@
 			<div class="item"><a href="/docs" title="Hyvor Blogs Documentation">Docs</a></div>
 			<div class="item"><a data-flashload-skip-link href="https://hyvor.com/blog" title="Blog of HYVOR">Blog</a></div>
 			<div class="item"><a href="https://community.blogs.hyvor.com/roadmap" title="Hyvor Blogs Roadmap">Roadmap</a></div>
+			<div class="item"><a href="/affiliate" target="_blank" rel="nofollow">Affiliate program</a></div>
 		</div>
 		<div class="pack">
 			<div class="title">Legal</div>
