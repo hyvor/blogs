@@ -16,6 +16,7 @@ class DeliveryService
         if ($obj->type === DeliveryAPITypeEnum::FILE) {
             return response($obj->content, $obj->status)
                 ->header('Content-Type', $obj->mime_type)
+                ->header('Cache-Control', $obj->cache_control->value)
                 ->header('Access-Control-Allow-Origin', '*');
         } elseif ($obj->type === DeliveryAPITypeEnum::REDIRECT) {
             return redirect($obj->to, $obj->status);

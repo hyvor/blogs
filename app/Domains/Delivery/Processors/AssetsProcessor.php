@@ -2,6 +2,7 @@
 
 namespace App\Domains\Delivery\Processors;
 
+use App\Data\Enums\DeliveryAPICacheControlHeaderEnum;
 use App\Data\Enums\DeliveryAPIFileTypeEnum;
 use App\Data\Enums\ThemeFileFolderEnum;
 use App\Data\Objects\DeliveryAPI\DeliveryAPIResponseObject;
@@ -35,13 +36,17 @@ class AssetsProcessor extends RouteProcessorAbstract
             return;
         }
 
+        if (!is_string($content))
+            return;
+
         $extension = pathinfo($fileName, PATHINFO_EXTENSION);
         $mimeType = MimeTypes::getMimeFromExtension($extension);
 
         $this->setResponseObject(DeliveryAPIResponseObject::forFile(
             DeliveryAPIFileTypeEnum::ASSET,
             $content,
-            $mimeType
+            $mimeType ?? 'application/octet-stream',
+            browserCache: DeliveryAPICacheControlHeaderEnum::CACHE_ONE_WEEK
         ));
     }
 }

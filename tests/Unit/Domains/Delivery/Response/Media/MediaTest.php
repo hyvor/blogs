@@ -2,13 +2,13 @@
 
 namespace Tests\Unit\Domains\Delivery\Response;
 
+use App\Data\Enums\DeliveryAPICacheControlHeaderEnum;
 use App\Data\Enums\DeliveryAPIFileTypeEnum;
 use App\Data\Enums\DeliveryAPITypeEnum;
 use App\Domains\Delivery\PathMatcher;
 use App\Domains\Media\MediaRepository;
 use Illuminate\Http\UploadedFile;
 use Illuminate\Support\Facades\Http;
-use Intervention\Image\Facades\Image;
 
 it('matches media', function () {
     $fileName = 'test.svg';
@@ -27,6 +27,7 @@ it('matches media', function () {
     $this->assertEquals($file->getContent(), $responseObject->content);
     $this->assertEquals('image/svg+xml', $responseObject->mime_type);
     expect($responseObject->file_type)->toBe(DeliveryAPIFileTypeEnum::MEDIA);
+    expect($responseObject->cache_control)->toBe(DeliveryAPICacheControlHeaderEnum::CACHE_ONE_YEAR);
 });
 
 it('gets mime type from the file name', function() {

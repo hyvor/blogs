@@ -27,7 +27,8 @@ A success response of the Delivery API is always an object of one of the followi
     "status": 200,
     "file_type": "template",
     "content": "SGVsbG8gV29ybGQ=",
-    "mime_type": "text/html"
+    "mime_type": "text/html",
+    "cache_control": "no-cache, private"
 }
 ```
 
@@ -49,7 +50,7 @@ Common:
 | --- |-----------| --- |
 | `type` | `string`  | `file` or `redirect`
 | `at` | `integer` | UNIX timestamp when the object was created
-| `cache` | `boolean` | Whether the response object should be cached. `false` for post preview [routes](routes).
+| `cache` | `boolean` | Whether the response object should be cached in proxy/intermediary servers. `false` for post preview [routes](routes).
 | `status` | `integer` | HTTP Status. Can be `200`, `301`, or `302`, or `404`
 
 File:
@@ -59,6 +60,7 @@ File:
 | `file_type` | `string` | `template`, `asset`, or `media`
 | `content` | `string`  | Base-64 encoded content of the file
 | `mime_type` | `string`  | HTTP Mime Type of the file (For Content-Type header)
+| `cache_control` | `string`  | HTTP Cache-Control header value
 
 Redirect:
 
