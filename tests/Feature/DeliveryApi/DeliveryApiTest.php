@@ -34,6 +34,7 @@ it('calls the delivery API', function () {
                 ->where('file_type', 'template')
                 ->where('mime_type', 'text/html')
                 ->where('cache', true)
+                ->where('cache_control', 'no-cache, private')
                 ->has('at')
         );
 });
