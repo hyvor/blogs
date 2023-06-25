@@ -8,8 +8,6 @@
         'image' => '',
         'canonical' => "https://blogs.hyvor.com/docs" . ($pageName === 'index' ?  '' : '/' . $pageName),
     ])
-
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/tocbot/4.18.2/tocbot.css">
 </head>
 <body class="docs-page {{$pageName}}">
 

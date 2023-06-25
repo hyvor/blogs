@@ -3,6 +3,10 @@
     overflow: hidden;
 
     #sidebar {
+        position: fixed;
+        margin-top: 65px;
+        left: 15px;
+        bottom: 15px;
         width: 200px;
         display: flex;
         flex-direction: column;
@@ -24,6 +28,7 @@
     }
 
     #content-view {
+        margin-top: 65px;
         margin-left: 235px;
         width: initial;
         height: calc(100% - 80px);
