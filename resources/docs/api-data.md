@@ -26,7 +26,7 @@ The Data API returns the **public data** of the blog.
 - `/tags`
 - `/authors`
 
-## Response Format {#response}
+## Response {#response}
 
 For single-object endpoints, the response is an object. For example, `/post` endpoint returns a `Post` object (See below for object definitions).
 
@@ -49,7 +49,7 @@ For multi-object endpoints, the response looks like this:
 ```
 
 
-## Request Query Parameters {#query-params}
+## Request {#request}
 
 #### Single-Object endpoints {#single-object}
 
@@ -84,8 +84,6 @@ The `/posts/search` endpoint has a required `search` param in addition to the ab
 | Param | Description                     | Type      | Default               |
 | --- |---------------------------------|-----------|-----------------------|
 | `search` | Value to search                 | `string`  |             |
-
-## Query Parameters Descriptions {#query-params-desc}
 
 ### `language` param {#language}
 
@@ -129,7 +127,7 @@ A condition consists of three parts:
 - `operator`
 - `value`
 
-### Operators
+#### Operators
 
 - `=` - equals
 - `!=` - not equal
@@ -138,7 +136,7 @@ A condition consists of three parts:
 - `>=` - greater than or equals
 - `<=` - less than or equals
 
-### Values
+#### Values
 
 - `null`
 - bool: `true` or `false`
@@ -146,7 +144,7 @@ A condition consists of three parts:
     - Strings without quotes should match `[a-zA-Z_][a-zA-Z0-9_-]+` and cannot be `true`, `false`, or `null`.
 - numbers: `250`, `-250`, `2.5`
 
-### Logical Operators
+#### Logical Operators
 
 You can use Logical Operators to combine multiple conditions.
 
@@ -572,7 +570,7 @@ A pagination object is included in all multi-object endpoints (`/posts`, `/autho
 }
 ```
 
-## Error Handling
+## Error Handling {#error-handling}
 
 In case of an error, the HTTP status code will be a non-200 status code. 
 
@@ -596,7 +594,7 @@ These HTTP codes are possible:
 
 5xx errors means something is wrong on our side. Check our [status page](https://blogs.hyvor.com) for any downtimes. If the issue persists, [contact us](support).
 
-## Pages
+## Pages {#pages}
 
 We do not have separate endpoints to fetch [Pages](writing#posts-pages).
 
