@@ -1,3 +1,12 @@
+:root {
+    --color-hover: #{$color-hover};
+  }
+  
+[data-theme="dark"] {
+    --color-hover: #{$color-hover-dark};
+}
+
+
 .theme-view {
     .navigation-button {
         display: none;
@@ -93,10 +102,10 @@
             cursor: pointer;
             border-radius: 20px;
             &:hover {
-                background-color: $color-hover;
+                background-color: var(--color-hover);
             }
             &.active {
-                background-color: $color-accent-active;
+                background-color: var(--color-hover);
             }
         }
 

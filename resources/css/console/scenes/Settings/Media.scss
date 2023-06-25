@@ -1,4 +1,13 @@
 
+:root {
+    --color-acent-light: #{$color-accent-light};
+  }
+  
+[data-theme="dark"] {
+    --color-acent-light: #{$color-accent-light-dark};
+}
+
+
 .setting-media {
     .title {
         button {
@@ -17,7 +26,7 @@
             display: block;
             cursor: pointer;
             overflow: hidden;
-            background: $color-accent-light;
+            background: var(--color-acent-light);
             border-radius:20px;
             margin-left:10px;
             transition: .1s box-shadow;

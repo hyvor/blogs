@@ -8,6 +8,7 @@
     --color-hover: #{$color-hover};
     --color-accent-active: #{$color-accent-active};
     --color-text-input: #{$color-text-white};
+    --color-placeholder: #{$color-grey};
   }
   
 [data-theme="dark"] {
@@ -18,6 +19,7 @@
     --color-hover: #{$color-hover-dark};
     --color-accent-active: #{$color-accent-active-dark};
     --color-text-input: #{$color-white};
+    --color-placeholder: #{$color-grey-dark};
 }
 
 a.link, span.link {
@@ -78,6 +80,9 @@ textarea.input {
 
 
 .input-view {
+    ::placeholder {
+        color: var(--color-placeholder);
+    }
     margin-bottom:15px;
     .input-top {
         display:flex;

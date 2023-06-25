@@ -1,4 +1,12 @@
-
+:root {
+    --color-box-shadow: #{$color-box-shadow};
+    --color-text-light: #{$color-black};
+  }
+  
+[data-theme="dark"] {
+    --color-box-shadow: #{$color-box-shadow-dark};
+    --color-text-light: #{$color-text-light-dark};
+}
 
 // for both console and landing pages
 .button {
@@ -57,7 +65,7 @@
 
     &.text-only {
         background-color:transparent;
-        color: $color-text;
+        color: var(--color-text-light);
     }
 
     &.disabled {

@@ -1,18 +1,28 @@
 
+:root {
+    --color-box-shadow: #{$color-box-shadow};
+    --color-text-light: #{$color-black};
+  }
+  
+[data-theme="dark"] {
+    --color-box-shadow: #{$color-box-shadow-dark};
+    --color-text-light: #{$color-text-light-dark};
+}
+
 
 
 .popup-wrap {
     all: revert;
     font-size: 14px;
     font-weight: initial;
-    color: $color-text;
+    color: color(var(--color-text-light));
     position:fixed;
     left:0;
     top:0;
     right: 0;
     bottom: 0;
     padding: 45px;
-    background:$color-box-shadow;
+    background: var(--color-box-shadow);
     z-index: 1000;
     overflow-y: auto;
 

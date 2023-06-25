@@ -1,11 +1,15 @@
 @import '../../colors.scss';
 
 :root {
-    --color-text: #{$color-text};
+    --color-hover: #{$color-hover};
+    --color-card: #{$color-card};
+    --color-text-light: #{$color-text-light};
   }
   
 [data-theme="dark"] {
-    --color-text: #{$color-text};
+    --color-hover: #{$color-hover-dark};
+    --color-card: #{$color-card-dark};
+    --color-text-light: #{$color-text-light-dark};
 }
 
 .global-table-view {
@@ -15,9 +19,11 @@
         padding: 10px 15px;
         border-radius: 20px;
         font-weight: 600;
-        background: $color-card;
+        background: var(--color-card);
         margin-bottom: 15px;
-        color: var(--color-text);
+        .table-head-item {
+            color: var(--color-text-light);
+        }
     }
 
     .table-row {
@@ -26,7 +32,7 @@
         border-radius: 20px;
         align-items: center;
         &:hover {
-            background-color: $color-card;
+            background-color: var(--color-hover);
         }
     }
 

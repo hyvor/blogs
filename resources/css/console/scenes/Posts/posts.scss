@@ -7,6 +7,7 @@
     --color-wrap-background: #{$color-white};
     --color-title: #{$color-black};
     --color-accent-light: #{$color-accent-light};
+    --color-text-light: #{$color-text-light};
   }
   
 [data-theme="dark"] {
@@ -16,6 +17,7 @@
     --color-wrap-background: #{$color-card-dark};
     --color-title: #{$color-text-white};
     --color-accent-light: #{$color-accent-light-dark};
+    --color-text-light: #{$color-text-light-dark};
 }
 
 .posts-not-ready {
@@ -272,7 +274,7 @@
         }
 
         .post-date {
-            color: $color-text-light;
+            color: var(--color-text-light);
             font-size: 12px;
         }
 

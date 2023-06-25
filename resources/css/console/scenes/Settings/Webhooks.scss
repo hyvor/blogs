@@ -1,3 +1,11 @@
+:root {
+    --color-hover: #{$color-hover};
+  }
+  
+[data-theme="dark"] {
+    --color-hover: #{$color-hover-dark};
+}
+
 .setting-webhooks {
 
     .global-table-view {
@@ -17,7 +25,7 @@
         user-select: none;
         display: inline-block;
         padding: 2px 10px;
-        background: $color-grey;
+        background: var(--color-hover);
         border-radius: 20px;
         margin-right: 6px;
         margin-bottom: 4px;
