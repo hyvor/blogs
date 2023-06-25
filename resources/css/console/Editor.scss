@@ -7,11 +7,19 @@ $prosemirror-selected-outline: 3px solid #299af3;
     --color-box: #{$color-box};
     --color-hover: #{$color-hover};
     --color-accent-active: #{$color-accent-active};
+    --color-card: #{$color-card};
+    --color-input: #{$color-input};
+    --color-background: #{$color-white};
+    --color-foreground: #{$color-black};
   }
   
 [data-theme="dark"] {
     --color-box: #{$color-box-dark};
     --color-hover: #{$color-hover-dark};
+    --color-card: #{$color-card-dark};
+    --color-input: #{$color-input-dark};
+    --color-background: #{$color-black};
+    --color-foreground: #{$color-white};
 }
 
 .post-editor {
@@ -63,7 +71,7 @@ $prosemirror-selected-outline: 3px solid #299af3;
 
     .pm-tooltip {
         position:absolute;
-        background: #fff;
+        background: var(--color-background);
         box-shadow: 0 0 20px 8px rgba(136, 108, 107, 0.11);
         border-radius: 20px;
         padding: 5px 10px;
@@ -517,7 +525,7 @@ $prosemirror-selected-outline: 3px solid #299af3;
         .code-toolbar {
             white-space: normal;
             padding: 10px;
-            background: $color-input;
+            background: var(--color-input);
             border-radius: 20px 20px 0 0;
             border-bottom: 1px solid $color-editor-border-bottom;
         }
@@ -547,6 +555,11 @@ $prosemirror-selected-outline: 3px solid #299af3;
             height: initial;
             padding:5px  0;
             border-radius: 0 0 20px 20px;
+            background-color: var(--color-background) !important;
+            color: var(--color-foreground) !important;
+        }
+        .CodeMirror-linenumber{
+            background-color: var(--color-background) !important;
         }
         .topbar {
             background: $color-input;
@@ -595,7 +608,7 @@ $prosemirror-selected-outline: 3px solid #299af3;
         .image-uploader {
             font-size: 14px;
             height: 400px;
-            background-color: $color-card;          
+            background-color: var(--color-card);          
             text-align: center;
             position: relative;
             display: flex;
