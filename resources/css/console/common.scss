@@ -508,6 +508,11 @@ textarea.input {
 }
 
 // emoji-picker
+
+.emoji-picker__wrapper {
+    z-index: 9999;
+}
+
 .emoji-picker.light {
     font-family: inherit!important;
     font-size: inherit;

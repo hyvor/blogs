@@ -31,7 +31,7 @@ export default class Callout implements NodeView {
         this.contentDOM.className = "content-div";
 
         const emoji = document.createElement("span");
-        emoji.contentEditable = "false";
+        emoji.contentEditable = "true";
         emoji.className = 'emoji-icon'
 
         this.dom.appendChild(emoji)
@@ -41,7 +41,7 @@ export default class Callout implements NodeView {
         
         let lastSelection = null;
         emoji.onclick = function(e) {
-            picker.togglePicker(emoji)
+            picker.togglePicker(emoji);
             lastSelection = view.state.selection;
         }
         emoji.onmousedown = function(e) {
