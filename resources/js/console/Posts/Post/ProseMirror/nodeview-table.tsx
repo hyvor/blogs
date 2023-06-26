@@ -82,6 +82,11 @@ export default class Table implements NodeView{
         deleteRowButton.innerText = "-";
         deleteRowButton.onclick = function () {
             deleteRow(_self.view.state, _self.view.dispatch);
+            // If it remains the only row, delete the table
+            const table = _self.view.state.doc.nodeAt(_self.getPos()!);
+            if (table && table.childCount === 1) {
+                deleteTable(_self.view.state, _self.view.dispatch);
+            }   
         }
         this.bottomSettings.appendChild(deleteRowButton);
     }
