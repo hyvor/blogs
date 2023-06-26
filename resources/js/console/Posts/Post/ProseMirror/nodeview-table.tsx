@@ -32,7 +32,9 @@ export default class Table implements NodeView{
     dom: HTMLElement;
     contentDOM: HTMLElement;
 
+    middle: HTMLElement;
     bottomSettings: HTMLElement;
+    sideSettings: HTMLElement;
 
     constructor(schema: Schema, node: ProsemirrorNode, view: EditorView, getPos: () => number | undefined) {
         this.node = node;
@@ -46,14 +48,22 @@ export default class Table implements NodeView{
         this.bottomSettings = document.createElement("div");
         this.bottomSettings.className = "table-bottom-settings";
 
+        this.sideSettings = document.createElement("div");
+        this.sideSettings.className = "table-side-settings";
+
         this.createInside = this.createInside.bind(this);
         this.createInside();
+
+        this.middle = document.createElement("div");
+        this.middle.className = "table-middle";
+        this.dom.appendChild(this.middle);
 
         this.contentDOM = document.createElement("table");
         this.contentDOM.className = "table-div";
         const id = node.attrs.id || "";
         this.contentDOM.id = id;
-        this.dom.appendChild(this.contentDOM);
+        this.middle.appendChild(this.contentDOM);
+        this.middle.appendChild(this.sideSettings);
 
         this.dom.appendChild(this.bottomSettings);
     }
@@ -89,6 +99,28 @@ export default class Table implements NodeView{
             }   
         }
         this.bottomSettings.appendChild(deleteRowButton);
+
+        const addColumnButton = document.createElement("button");
+        addColumnButton.className = "add-column-button";
+        addColumnButton.innerText = "+";
+        addColumnButton.onclick = function () {
+            addColumnAfter(_self.view.state, _self.view.dispatch);
+        };
+        this.sideSettings.appendChild(addColumnButton);
+
+        const deleteColumnButton = document.createElement("button");
+        deleteColumnButton.className = "delete-column-button";
+        deleteColumnButton.innerText = "-";
+        deleteColumnButton.onclick = function () {
+            deleteColumn(_self.view.state, _self.view.dispatch);
+            // If it remains the only column, delete the table
+            const table = _self.view.state.doc.nodeAt(_self.getPos()!);
+            if (table && table.firstChild && table.firstChild.childCount === 1) {
+                deleteTable(_self.view.state, _self.view.dispatch);
+            }
+        };
+        this.sideSettings.appendChild(deleteColumnButton);
+        
     }
 
 
