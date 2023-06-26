@@ -31,7 +31,7 @@ export default class Callout implements NodeView {
         this.contentDOM.className = "content-div";
 
         const emoji = document.createElement("span");
-        emoji.contentEditable = "true";
+        emoji.contentEditable = "false";
         emoji.className = 'emoji-icon'
 
         this.dom.appendChild(emoji)
