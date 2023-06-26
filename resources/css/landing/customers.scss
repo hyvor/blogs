@@ -1,0 +1,61 @@
+
+
+body.customers {
+
+    h1 {
+        text-align: center;
+        margin-bottom: 10px;
+    }
+
+    p {
+        width: 400px;
+        max-width: 100%;
+        margin: 10px auto 50px auto;
+        font-size: 20px;
+        color: $color-text-light;
+        text-align: center;
+        line-height: 24px;
+    }
+
+    .customer-screenshots-wrap {
+        padding-top: 85px;
+        background-color: $color-accent-very-light;
+    }
+
+    .customers-inner {
+        max-width: 100%;
+        width: 100%;
+        margin: 0 auto;
+        padding: 0 20px;
+        display: flex;
+        flex-wrap: wrap;
+        justify-content: flex-start;
+    }
+
+    .customer {
+        width: calc(50% - 25px);
+        margin-bottom: 25px;
+
+        img {
+            border-radius: 20px;
+            box-shadow: 0 0 20px 10px rgba(0,0,0,0.05);
+            aspect-ratio: 16 / 9;
+            transition: .2s ease-in-out;
+            &:hover {
+                box-shadow: 0 0 30px 10px rgba(0,0,0,0.1);
+            }
+        }
+
+        &:nth-child(odd) {
+            margin-right: 25px;
+        }
+
+        .name {
+            padding: 10px;
+            text-align: center;
+            color: $color-accent;
+            font-weight: 600;
+        }
+    }
+
+}
