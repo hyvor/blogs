@@ -56,6 +56,18 @@
             align-self: flex-end;
             background-color: $color-red-light;
         }
+        .add-header-row-button {
+            background-color: $color-accent-mid;
+            margin-right: 5px;
+        }
+        .add-header-column-button {
+            background-color: $color-accent-mid;
+        }
+        .table-top-settings {
+            display: flex;
+            justify-content: end;
+            margin-bottom: 5px;
+        }
         .table-middle {
             display: flex;
             flex-direction: row;

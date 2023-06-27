@@ -34,6 +34,7 @@ export default class Table implements NodeView{
 
     middle: HTMLElement;
     bottomSettings: HTMLElement;
+    topSettings: HTMLElement;
     sideSettings: HTMLElement;
 
     constructor(schema: Schema, node: ProsemirrorNode, view: EditorView, getPos: () => number | undefined) {
@@ -48,8 +49,13 @@ export default class Table implements NodeView{
         this.bottomSettings = document.createElement("div");
         this.bottomSettings.className = "table-bottom-settings";
 
+        this.topSettings = document.createElement("div");
+        this.topSettings.className = "table-top-settings";
+
         this.sideSettings = document.createElement("div");
         this.sideSettings.className = "table-side-settings";
+
+        this.dom.appendChild(this.topSettings);
 
         this.createInside = this.createInside.bind(this);
         this.createInside();
@@ -70,13 +76,30 @@ export default class Table implements NodeView{
 
     createInside() {
         const _self = this;
+
+        const toggleRowHeader = document.createElement("button");
+        toggleRowHeader.className = "button add-header-row-button";
+        toggleRowHeader.innerText = "Toggle Row Header";
+        toggleRowHeader.onclick = function () {
+            toggleHeaderRow(_self.view.state, _self.view.dispatch);
+        };
+        this.topSettings.appendChild(toggleRowHeader);
+
+        const toggleColumnHeader = document.createElement("button");
+        toggleColumnHeader.className = "button add-header-column-button";
+        toggleColumnHeader.innerText = "Toggle Column Header";
+        toggleColumnHeader.onclick = function () {
+            toggleHeaderColumn(_self.view.state, _self.view.dispatch);
+        };
+        this.topSettings.appendChild(toggleColumnHeader);
+
         const deleteButton = document.createElement("button");
         deleteButton.className = "icon-button delete-table-button";
         ReactDOM.render(<Trash />, deleteButton);
         deleteButton.onclick = function () {
             deleteTable(_self.view.state, _self.view.dispatch);
         };
-        this.dom.appendChild(deleteButton);
+        this.topSettings.appendChild(deleteButton);
 
         const addRowButton = document.createElement("button");
         addRowButton.className = "add-row-button";
