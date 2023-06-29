@@ -10,6 +10,7 @@ class Figcaption extends NodeType
 {
 
     public string $name = 'figcaption';
+    public ?string $content = 'inline*';
 
     public function fromHtml(): array
     {

@@ -19,6 +19,9 @@ class CodeBlock extends NodeType
     public string $name = 'code_block';
     public string $attrs = CodeBlockAttrs::class;
 
+    public ?string $content = 'text*';
+    public string $group = 'block';
+
     public function __construct(
         private Blog $blog,
         private bool $isPlain = false,

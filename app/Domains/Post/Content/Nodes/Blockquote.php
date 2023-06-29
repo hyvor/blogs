@@ -10,6 +10,8 @@ class Blockquote extends NodeType
 {
 
     public string $name = 'blockquote';
+    public ?string $content = 'block+';
+    public string $group = 'block';
 
     public function toHtml(Node $node, string $children): string
     {

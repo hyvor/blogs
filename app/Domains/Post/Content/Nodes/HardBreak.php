@@ -10,6 +10,8 @@ class HardBreak extends NodeType
 {
 
     public string $name = 'hard_break';
+    public string $group = 'inline';
+    public bool $inline = true;
 
     public function fromHtml(): array
     {
