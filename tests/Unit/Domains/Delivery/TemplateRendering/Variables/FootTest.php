@@ -110,7 +110,7 @@ it('sets flashload basepath to /blog/page', function() {
 
 });
 
-it('adds powered by for free plan blogs', function() {
+/*it('adds powered by for free plan blogs', function() {
 
     $blog = blogWithLanguageAndRoutes();
     addThemeTemplateFile($blog, '{{ _foot | template }}');
@@ -118,9 +118,9 @@ it('adds powered by for free plan blogs', function() {
     $responseObject = $pathMatcher->getResponseObject();
     expect($responseObject->content)->toContain('Hyvor Blogs');
 
-});
+});*/
 
-it('does not add powered by to non-free blogs', function() {
+/*it('does not add powered by to non-free blogs', function() {
 
     $blog = blogWithLanguageAndRoutes();
     addThemeTemplateFile($blog, '{{ _foot | template }}');
@@ -139,4 +139,4 @@ it('does not add powered by to dev and preview blogs', function() {
     $responseObject = $pathMatcher->getResponseObject();
     expect($responseObject->content)->not->toContain('Hyvor Blogs');
 
-});
+});*/

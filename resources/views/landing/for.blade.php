@@ -22,7 +22,7 @@
         </h1>
 
         <h2>
-            Hyvor Blogs is a multi-language blogging platform with all the features needed for <b>{{ $name }}</b>.
+            Hyvor Blogs is an all-in-one blogging platform for <b>{{ $name }}</b> to start a blog easily.
         </h2>
 
 
@@ -147,6 +147,10 @@
 
             </div>
 
+        </div>
+
+        <div class="reviews-wrap">
+            @include('landing.inc.reviews')
         </div>
 
 

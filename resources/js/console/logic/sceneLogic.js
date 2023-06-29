@@ -9,6 +9,7 @@ const routes = {
     '/console/:subdomain': 'blogPreview',
     '/console/:subdomain/billing': 'billing',
     '/console/:subdomain/settings(/:type)': 'settings',
+    '/console/:subdomain/integrations(/:type)': 'integrations',
     '/console/:subdomain/theme(/:type)': 'theme'
 };
 

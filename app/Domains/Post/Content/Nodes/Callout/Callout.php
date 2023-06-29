@@ -14,6 +14,8 @@ class Callout extends NodeType
 
     public string $name = 'callout';
     public string $attrs = CalloutAttrs::class;
+    public ?string $content = 'inline*';
+    public string $group = 'block';
 
     public function __construct() {}
 

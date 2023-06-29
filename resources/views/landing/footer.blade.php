@@ -31,6 +31,12 @@
 			<div class="item"><a href="/affiliate" target="_blank" rel="nofollow">Affiliate program</a></div>
 		</div>
 		<div class="pack">
+			<div class="title">Use Cases</div>
+			<div class="item"><a href="/customers" title="Hyvor Blogs Customers">Our Customers</a></div>
+			<div class="item"><a href="/for/developers" title="Hyvor Blogs for Developers">For Developers</a></div>
+			<div class="item"><a href="/for/startups" title="Hyvor Blogs for Startups">For Startups</a></div>
+		</div>
+		<div class="pack">
 			<div class="title">Legal</div>
 			<div class="item"><a href="/docs/terms" title="Hyvor Blogs Terms of Service">Terms</a></div>
 			<div class="item"><a href="/docs/policy-privacy" title="Hyvor Blogs's Privacy Policy">Privacy Policy</a></div>

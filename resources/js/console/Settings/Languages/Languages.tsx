@@ -37,6 +37,7 @@ export default function Languages() {
                     <TableHead>
                         <TableHeadItem>Name</TableHeadItem>
                         <TableHeadItem>Code</TableHeadItem>
+                        <TableHeadItem>Direction</TableHeadItem>
                         <div />
                     </TableHead>
 

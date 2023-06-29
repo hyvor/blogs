@@ -14,6 +14,8 @@ class Heading extends NodeType
 
     public string $name = 'heading';
     public string $attrs = HeadingAttrs::class;
+    public ?string $content = 'inline*';
+    public string $group = 'block';
 
     public function toHtml(Node $node, string $children): string
     {

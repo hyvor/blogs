@@ -90,8 +90,6 @@ export default function Settings({ type }: { type: string | undefined }) {
         pannelOption = [{ value: 'shopify', label: 'Shopify Guide' }, ...pannelOption];
     }
 
-    console.log('Pannel', pannel);
-
     let Type = () => <SettingsGeneral />;
     switch (pannel) {
         case 'users':

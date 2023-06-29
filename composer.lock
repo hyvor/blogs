@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "ce0cf2ea8c7016af6022edd1b0fb69a2",
+    "content-hash": "cd117f083c91d4ad3cda9fe4dd4e0471",
     "packages": [
         {
             "name": "akaunting/laravel-money",
@@ -2796,16 +2796,16 @@
         },
         {
             "name": "hyvor/phrosemirror",
-            "version": "0.0.6",
+            "version": "1.0.0-beta",
             "source": {
                 "type": "git",
                 "url": "https://github.com/hyvor/phrosemirror.git",
-                "reference": "eb4b4cfb789fe92b0962d01f16ee1bd8d5af0206"
+                "reference": "2260a51ccc64e140d20665675e145050fc920017"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/hyvor/phrosemirror/zipball/eb4b4cfb789fe92b0962d01f16ee1bd8d5af0206",
-                "reference": "eb4b4cfb789fe92b0962d01f16ee1bd8d5af0206",
+                "url": "https://api.github.com/repos/hyvor/phrosemirror/zipball/2260a51ccc64e140d20665675e145050fc920017",
+                "reference": "2260a51ccc64e140d20665675e145050fc920017",
                 "shasum": ""
             },
             "require": {
@@ -2836,9 +2836,9 @@
             "description": "Prosemirror in PHP",
             "support": {
                 "issues": "https://github.com/hyvor/phrosemirror/issues",
-                "source": "https://github.com/hyvor/phrosemirror/tree/0.0.6"
+                "source": "https://github.com/hyvor/phrosemirror/tree/1.0.0-beta"
             },
-            "time": "2023-06-14T08:51:09+00:00"
+            "time": "2023-06-29T11:38:55+00:00"
         },
         {
             "name": "hyvor/scssphp",
@@ -14339,7 +14339,6 @@
         "ext-openssl": "*",
         "ext-pcre": "*",
         "ext-pdo": "*",
-        "ext-simplexml": "*",
         "ext-tokenizer": "*",
         "ext-xml": "*"
     },

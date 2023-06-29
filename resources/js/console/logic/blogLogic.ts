@@ -72,7 +72,14 @@ const blogLogic = kea<blogLogicType>([
             await api.patch(getSubdomain(), `/blog/variant`, {...data, ...{language_id: languageId}})
         },
 
-        updateBlog: async ({keys, variantKeys}) => {
+        updateBlogSave: async ({data, onUpdate}) => {
+            const blog = await api.patch<Blog>(getSubdomain(), `/blog`, data);
+            actions.setOriginal(blog);
+            actions.setBlog(blog);
+            onUpdate && onUpdate(blog);
+        },
+
+        updateBlog: async ({keys, variantKeys, onUpdate}) => {
 
             // update variants
             if (variantKeys) {
@@ -91,6 +98,7 @@ const blogLogic = kea<blogLogicType>([
                 actions.setOriginal(blog);
             }
 
+            onUpdate && onUpdate();
         },
 
         deleteBlog: async({onDelete} : {onDelete: Function}) => {

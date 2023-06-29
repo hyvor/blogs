@@ -52,10 +52,20 @@ export default function SettingsSave(
     }, [updateBlogAjax.status])
 
     function handleSave() {
-        updateBlog({ keys, variantKeys })
-        updateBlogValue('subdomain', blogSubdomain);
-        window.location.reload();
 
+        const hasSubdomainChanged = blogSubdomain && blogSubdomain !== blog.subdomain
+        if (hasSubdomainChanged) {
+            updateBlogValue('subdomain', blogSubdomain);
+        }
+        updateBlog({
+            keys,
+            variantKeys,
+            onUpdate: () => {
+                if (hasSubdomainChanged) {
+                    window.location.replace('/console/' + blogSubdomain + '/settings/hosting');
+                }
+            }
+        })
     }
     function handleDiscardConfirm() {
         discardChanges(keys)

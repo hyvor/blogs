@@ -2,6 +2,7 @@
 
 namespace App\Models;
 
+use App\Data\Enums\LanguageDirectionEnum;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
@@ -12,6 +13,7 @@ class Language extends Model
 
     protected $casts = [
         'is_primary' => 'boolean',
+        'direction' => LanguageDirectionEnum::class,
     ];
 
     /*public function fallback()

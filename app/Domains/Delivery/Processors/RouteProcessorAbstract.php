@@ -12,7 +12,7 @@ abstract class RouteProcessorAbstract
 
     abstract public function __construct(PathMatcher $pathMatcher, MatchedRoute $matchedRoute);
 
-    protected function setResponseObject(DeliveryAPIResponseObject $responseObject)
+    protected function setResponseObject(DeliveryAPIResponseObject $responseObject) : void
     {
         $this->responseObject = $responseObject;
     }

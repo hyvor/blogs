@@ -2,6 +2,7 @@
 
 namespace App\Domains\Delivery\Processors;
 
+use App\Data\Enums\DeliveryAPICacheControlHeaderEnum;
 use App\Data\Enums\DeliveryAPIFileTypeEnum;
 use App\Data\Objects\DeliveryAPI\DeliveryAPIResponseObject;
 use App\Domains\Delivery\PathMatcher;
@@ -65,7 +66,8 @@ class MediaProcessor extends RouteProcessorAbstract
         $this->setResponseObject(DeliveryAPIResponseObject::forFile(
             DeliveryAPIFileTypeEnum::MEDIA,
             $content,
-            $mimeType
+            $mimeType,
+            browserCache: DeliveryAPICacheControlHeaderEnum::CACHE_ONE_YEAR
         ));
     }
 

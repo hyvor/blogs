@@ -2,15 +2,14 @@
 <html lang="en">
 <head>
     @include('landing.meta', [
-        'title' => 'Hyvor Blogs - Multi-language blogging platform',
-        'description' => 'Hyvor Blogs is a multi-language blogging platform to start a fully customizable blog. No technical knowledge required. Start building your audience now.',
+        'title' => 'Hyvor Blogs - All-in-one blogging platform',
+        'description' => 'Hyvor Blogs is an all-in-one blogging platform to start a fully customizable blog. No technical knowledge required. Start building your audience now.',
         'image' => 'https://blogs.hyvor.com/img/banner.png',
         'canonical' => 'https://blogs.hyvor.com',
     ])
 </head>
 
 <body class="index">
-
 
 @include('landing.nav')
 
@@ -22,10 +21,10 @@
 
             <div class="hero-title">
                 <h1>
-                    Multi-language blogging platform
+                    All-in-one blogging platform
                 </h1>
                 <h2>
-                    Start a fully-customizable, multi-language blog with Hyvor Blogs, the blogging platform built to make blogging easy.
+                    Start a fully-customizable, multi-language blog with the blogging platform designed to make blogging effortless.
                 </h2>
                 <a data-flashload-skip-link href="/console?signup=1" class="button big">
                     Start a Blog Now
@@ -557,6 +556,9 @@ c30.27,0,54.64-24.37,54.64-54.64v-1419l-363.61-362.75L1258.7,336.75z"/>
 
         </div>
     </div>
+
+    @include('landing.inc.reviews')
+
 </section>
 
 <div class="wave">
@@ -602,7 +604,7 @@ c30.27,0,54.64-24.37,54.64-54.64v-1419l-363.61-362.75L1258.7,336.75z"/>
             <h4>Multi Language</h4>
 
             <p>
-                Posts, author names, tags, metadata, ...everything is easily translatable.
+                Posts, author names, tags, metadata, ...everything is easily translatable. RTL support too!
             </p>
 
         </div>
@@ -1012,6 +1014,7 @@ c30.27,0,54.64-24.37,54.64-54.64v-1419l-363.61-362.75L1258.7,336.75z"/>
 
 </script>
 <script async src="/js-static/gsap.min.js" onload="setUpGsap()"></script>
+
 
 </body>
 </html>

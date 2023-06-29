@@ -8,6 +8,8 @@ class CustomHtml extends NodeType
 {
 
     public string $name = 'custom_html';
+    public ?string $content = 'text*';
+    public string $group = 'block';
 
     public function toHtml($node, $children): string
     {

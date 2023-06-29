@@ -3,9 +3,12 @@
 namespace App\Providers;
 
 use App\Domains\Blog\Events\BlogUpdatedEvent;
+use App\Domains\Blog\Events\BlogUrlChangedEvent;
+use App\Domains\Blog\Listeners\CheckBlogUrlChangedListener;
 use App\Domains\Blog\Listeners\UpdateContentHtmlOfAllPostsListener;
 use App\Domains\Blog\Listeners\UpdateUrlsListener;
 use App\Domains\Cache\Listeners\ClearCacheSubscriber;
+use App\Domains\Integrations\HyvorTalk\HyvorTalkSubscriber;
 use App\Domains\Integrations\Shopify\Listeners\ShopifySubscriber;
 use App\Domains\Post\Events\PostVariantUpdatedEvent;
 use App\Domains\Post\Listeners\PostVariantUpdateContentHtmlListener;
@@ -27,9 +30,13 @@ class EventServiceProvider extends ServiceProvider
         ],
 
         BlogUpdatedEvent::class => [
-            UpdateUrlsListener::class,
+            CheckBlogUrlChangedListener::class,
             UpdateContentHtmlOfAllPostsListener::class
-        ]
+        ],
+
+        BlogUrlChangedEvent::class => [
+            UpdateUrlsListener::class,
+        ],
 
     ];
 
@@ -43,7 +50,8 @@ class EventServiceProvider extends ServiceProvider
         WebhookSubscriber::class,
 
         // integrations
-        ShopifySubscriber::class
+        ShopifySubscriber::class,
+        HyvorTalkSubscriber::class,
 
     ];
 
