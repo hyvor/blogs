@@ -97,6 +97,7 @@
         }
         .table-left-settings {
             display: flex;
+            align-items: flex-start;
             flex-direction: column;
         }
         .table-right-side-settings {
