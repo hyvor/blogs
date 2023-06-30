@@ -3,6 +3,7 @@
 namespace Tests\Unit\Domains\Import\Sitemap;
 
 use App\Domains\Import\Sitemap\PageScraper\PageScraper;
+use App\Domains\Import\Sitemap\PageScraper\PageScraperOptions;
 use Illuminate\Support\Facades\Http;
 
 it('scrapes title description and content', function() {
@@ -16,9 +17,7 @@ it('scrapes title description and content', function() {
                         So the <i>description</i>
                     </p>
                     <article>
-                        <p>
-                            Hello World
-                        </p>
+                        <p>Hello World</p>
                     </article>
                 </body>
             </html>
@@ -28,9 +27,11 @@ it('scrapes title description and content', function() {
     $scraper = new PageScraper(
         blog(),
         url: 'https://example.com/page',
-        titleSelector: 'h1',
-        descriptionSelector: 'p.description',
-        contentSelector: 'article'
+        options: new PageScraperOptions(
+            titleSelector: 'h1',
+            descriptionSelector: 'p.description',
+            contentSelector: 'article'
+        )
     );
     $scraper->scrape();
 
@@ -54,11 +55,8 @@ it('scrapes excludes elements from content', function() {
 
     Http::fake([
         'https://example.com/page' => Http::response(<<<HTML
-           
             <article>
-                <p>
-                    Hello World
-                </p>
+                <p>Hello World</p>
                 <blockquote>
                     This is an ad
                 </blockquote>
@@ -69,10 +67,12 @@ it('scrapes excludes elements from content', function() {
     $scraper = new PageScraper(
         blog(),
         url: 'https://example.com/page',
-        titleSelector: 'h1',
-        descriptionSelector: 'p.description',
-        contentSelector: 'article',
-        contentExcludeSelector: 'blockquote'
+        options: new PageScraperOptions(
+            titleSelector: 'h1',
+            descriptionSelector: 'p.description',
+            contentSelector: 'article',
+            contentExcludeSelector: 'blockquote'
+        )
     );
     $scraper->scrape();
 
@@ -104,10 +104,12 @@ it('converts elements within codeblocks to text', function() {
     $scraper = new PageScraper(
         blog(),
         url: 'https://example.com/page',
-        titleSelector: 'h1',
-        descriptionSelector: 'p.description',
-        contentSelector: 'article',
-        contentExcludeSelector: 'blockquote'
+        options: new PageScraperOptions(
+            titleSelector: 'h1',
+            descriptionSelector: 'p.description',
+            contentSelector: 'article',
+            contentExcludeSelector: 'blockquote'
+        )
     );
     $scraper->scrape();
 
@@ -127,5 +129,42 @@ it('converts elements within codeblocks to text', function() {
             ]
         ]
     ]));
+
+});
+
+it('converts iframes to embeds', function() {
+
+    Http::fake([
+        'https://example.com/page' => Http::response(<<<HTML
+            <article>
+                <iframe src="https://www.youtube.com/embed/1234"></iframe>
+            </article>
+        HTML)
+    ]);
+
+    $scraper = new PageScraper(
+        blog(),
+        url: 'https://example.com/page',
+        options: new PageScraperOptions(contentSelector: 'article')
+    );
+    $scraper->scrape();
+
+    expect($scraper->content)->toBe(json_encode([
+        'type' => 'doc',
+        'content' => [
+            [
+                'type' => 'figure',
+                'content' => [
+                    [
+                        'type' => 'embed',
+                        'attrs' => [
+                            'url' => 'https://www.youtube.com/embed/1234',
+                        ]
+                    ]
+                ]
+            ]
+        ]
+    ]));
+
 
 });

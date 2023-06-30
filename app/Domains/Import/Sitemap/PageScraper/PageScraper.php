@@ -57,7 +57,7 @@ class PageScraper
             $this->setDescription($body);
             $this->setContent($body);
             $this->setFeaturedImageUrl($body);
-            $this->setSlug($body);
+            $this->setSlug();
 
         } catch (PageScrapperException $e) {
             $this->setError($e->error);
@@ -137,7 +137,7 @@ class PageScraper
         $this->featuredImageUrl = $this->getAttributeOfSelector($body, 'meta[property="og:image"]', 'content');;
     }
 
-    private function setSlug(string $body) : void
+    private function setSlug() : void
     {
         $slug = parse_url($this->url, PHP_URL_PATH);
 
@@ -182,7 +182,12 @@ class PageScraper
 
         $content = $filtered->count() > 0 ?
             $filtered->first()->html() :
-            '';
+            null;
+
+        if (!$content || trim($content) === "") {
+            throw new PageScrapperException(PageScrapeErrorEnum::CANNOT_GET_CONTENT);
+        }
+
         $content = '<?xml version="1.0" encoding="UTF-8" ?>' . "\n" . $content;
 
         $content = $this->filterOutExcluded($content);

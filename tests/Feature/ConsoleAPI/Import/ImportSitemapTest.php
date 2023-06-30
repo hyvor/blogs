@@ -55,7 +55,7 @@ HTML)
 
 });
 
-it('test handles errors', function() {
+it('test handles http errors', function() {
 
     Http::fake(['https://example.com/blog/post' => Http::response([], 404)]);
 
@@ -66,6 +66,20 @@ it('test handles errors', function() {
     ])
         ->assertUnprocessable()
         ->assertSee('cannot_fetch');
+
+});
+
+it('handles content errors', function() {
+
+    Http::fake(['https://example.com/blog/post' => Http::response('<html></html>')]);
+
+    $blog = blogWithAccess();
+    consoleApi($blog, 'POST', '/data/import/sitemap/test', [
+        'url' => 'https://example.com/blog/post',
+        'css' => ['content' => 'article',]
+    ])
+        ->assertUnprocessable()
+        ->assertSee('cannot_get_content');
 
 });
 

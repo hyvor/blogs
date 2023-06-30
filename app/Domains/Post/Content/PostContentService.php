@@ -29,7 +29,7 @@ use App\Domains\Post\Content\Nodes\OrderedList;
 use App\Domains\Post\Content\Nodes\Paragraph;
 use App\Domains\Post\Content\Nodes\Text;
 use App\Models\Blog;
-use App\Models\PostVariant;
+use Hyvor\Phrosemirror\Content\Sanitizer;
 use Hyvor\Phrosemirror\Converters\HtmlParser\HtmlParser;
 use Hyvor\Phrosemirror\Document\Document;
 use Hyvor\Phrosemirror\Document\Node;
@@ -61,8 +61,9 @@ class PostContentService
 
     public static function getDocumentFromHtml(string $html, Blog $blog) : Node
     {
-        $parser = HtmlParser::fromSchema(self::getSchema($blog));
-        return $parser->parse($html);
+        $schema = self::getSchema($blog);
+        $parser = HtmlParser::fromSchema($schema);
+        return $parser->parse($html, sanitize: true);
     }
 
     /**
@@ -82,6 +83,7 @@ class PostContentService
             [
                 new Doc,
                 new Text,
+                new Paragraph,
                 new Blockquote,
                 new Bookmark($blog),
                 new BulletList,
@@ -90,7 +92,6 @@ class PostContentService
                 new CustomHtml,
                 new Embed,
                 new ListItem,
-                new Paragraph,
                 new Figcaption,
                 new Figure,
                 new HardBreak,

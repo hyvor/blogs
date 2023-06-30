@@ -9,6 +9,7 @@ use App\Domains\Theme\ThemeFilesRepository;
 use App\Models\Blog;
 use DOMDocument;
 use Hyvor\Phrosemirror\Converters\HtmlParser\ParserRule;
+use Hyvor\Phrosemirror\Converters\HtmlParser\Whitespace;
 use Hyvor\Phrosemirror\Document\Node;
 use Hyvor\Phrosemirror\Types\NodeType;
 use Hyvor\SyntaxHighlighter\Highlighter;
@@ -103,8 +104,14 @@ class CodeBlock extends NodeType
                 getChildren: function ($node) {
                     /** @var DOMDocument $document */
                     $document = $node->ownerDocument;
-                    return $document->createTextNode($node->textContent);
-                }
+
+                    $text = $node->textContent ?? '';
+                    $text = trim($text);
+                    $text = $text ?: ' '; // prevents codemirror error when empty
+
+                    return $document->createTextNode($text);
+                },
+                whitespace: Whitespace::PRESERVE
             )
         ];
 

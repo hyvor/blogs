@@ -45,9 +45,9 @@ class Callout extends NodeType
                     $emoji = $span->count() ? $span->first()->text() : null;
 
                     return CalloutAttrs::fromArray([
-                        'bg' => $bg,
-                        'fg' => $fg,
-                        'emoji' => $emoji
+                        'bg' => $bg ?? '#f1f1ef',
+                        'fg' => $fg ?? '#000000',
+                        'emoji' => $emoji ?? '💡',
                     ]);
 
                 },
