@@ -68,6 +68,14 @@ To exclude multiple elements, separate them using a comma:
 .ad, .newsletter-signup
 ```
 
-### Image {#images}
+### Importing Images {#images}
 
-In most cases, you are importing your blog to completely migrate to Hyvor Blogs. Therefore, we try to import all images in blog posts into your local [blog media](media). This ensures the availability of images even the original server becomes unavailable. The image should be less than 50MB to be imported.
+If you are completley migrating to Hyvor Blogs, it is possible that images will no longer will be available in the original server. Therefore, we recommend you to import images to Hyvor Blogs. To do this, make sure to keep the **Import Images** on. Then, we will import featured images and all images in the post content into your local [blog media](media). The image should be less than 50MB to be imported.
+
+### Test & Import {#testing}
+
+Before importing, add one URL from your blog to test the importer. We will extract data from that URL and show you the results. If the results are not correct, you can change the CSS selectors and test again.
+
+![Import Test Results](/img/docs/impor-test-results.png)
+
+When you are happy with the results, you can import the entire blog from your sitemap. It should take a few minutes to import. If you have any issues, please [contact us](support).
