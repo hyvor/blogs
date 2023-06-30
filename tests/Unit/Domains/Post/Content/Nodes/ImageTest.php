@@ -149,14 +149,19 @@ test('html to json', function() {
         'type' => 'doc',
         'content' => [
             [
-                'type' => 'image',
-                'attrs' => [
-                    'src' => $src,
-                    'alt' => null,
-                    'width' => null,
-                    'height' => null,
-                ],
-            ],
+                'type' => 'figure',
+                'content' => [
+                    [
+                        'type' => 'image',
+                        'attrs' => [
+                            'src' => $src,
+                            'alt' => null,
+                            'width' => null,
+                            'height' => null,
+                        ],
+                    ],
+                ]
+            ]
         ],
     ]));
 
@@ -177,14 +182,19 @@ test('html to json with all attributes', function() {
         'type' => 'doc',
         'content' => [
             [
-                'type' => 'image',
-                'attrs' => [
-                    'src' => $src,
-                    'alt' => $alt,
-                    'width' => (string) $width,
-                    'height' => (string) $height,
-                ],
-            ],
+                'type' => 'figure',
+                'content' => [
+                    [
+                        'type' => 'image',
+                        'attrs' => [
+                            'src' => $src,
+                            'alt' => $alt,
+                            'width' => (string) $width,
+                            'height' => (string) $height,
+                        ],
+                    ],
+                ]
+            ]
         ],
     ]));
 

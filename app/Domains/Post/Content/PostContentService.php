@@ -54,16 +54,20 @@ class PostContentService
         return Document::fromJson(self::getSchema($blog), $json)->toText();
     }
 
-    public static function getJsonFromHtml(string $html, Blog $blog) : string
+    public static function getJsonFromHtml(string $html, Blog $blog, bool $sanitize = true) : string
     {
-        return self::getDocumentFromHtml($html, $blog)->toJson();
+        return self::getDocumentFromHtml($html, $blog, $sanitize)->toJson();
     }
 
-    public static function getDocumentFromHtml(string $html, Blog $blog) : Node
+    public static function getDocumentFromHtml(
+        string $html,
+        Blog $blog,
+        bool $sanitize = true
+    ) : Node
     {
         $schema = self::getSchema($blog);
         $parser = HtmlParser::fromSchema($schema);
-        return $parser->parse($html, sanitize: true);
+        return $parser->parse($html, sanitize: $sanitize);
     }
 
     /**

@@ -30,7 +30,7 @@ test('from HTML', function() {
 
     $html = '<sup>Example Text</sup>';
 
-    $result = PostContentService::getDocumentFromHtml($html, blog());
+    $result = PostContentService::getDocumentFromHtml($html, blog(), false);
 
     expect($result->toArray())->toEqual([
         'type' => 'doc',

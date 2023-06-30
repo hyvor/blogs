@@ -2,6 +2,7 @@
 
 namespace App\Domains\Post\Content\_Marks;
 
+use App\Domains\Post\Content\FromHtmlOptions;
 use App\Domains\Post\Content\PostContentService;
 
 beforeEach(function () {
@@ -52,7 +53,7 @@ test('nofollow meta', function () {
 test('from HTML', function() {
     $html = '<a href="https://exmaple.com">Example Text</a>';
 
-    $result = PostContentService::getDocumentFromHtml($html, blog());
+    $result = PostContentService::getDocumentFromHtml($html, blog(), false);
 
     expect($result->toArray())->toEqual([
         'type' => 'doc',

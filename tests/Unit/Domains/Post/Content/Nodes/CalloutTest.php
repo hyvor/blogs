@@ -2,6 +2,7 @@
 
 namespace Tests\Unit\PostContent\Nodes;
 
+use App\Domains\Post\Content\Nodes\Callout\Callout;
 use App\Domains\Post\Content\PostContentService;
 
 test('json to HTML', function () {
@@ -92,9 +93,9 @@ it('works when no div is inside', function() {
                 [
                     'type' => 'callout',
                     'attrs' => [
-                        'emoji' => null,
-                        'bg' => null,
-                        'fg' => null,
+                        'emoji' => Callout::DEFAULT_EMOJI,
+                        'bg' => Callout::DEFAULT_BG,
+                        'fg' => Callout::DEFAULT_FG,
                     ],
                     'content' => [
                         [

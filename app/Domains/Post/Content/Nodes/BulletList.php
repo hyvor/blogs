@@ -11,6 +11,9 @@ class BulletList extends NodeType
 
     public string $name = 'bullet_list';
 
+    public string $group = 'block';
+    public ?string $content = 'list_item*';
+
     public function toHtml(Node $node, string $children): string
     {
         return "<ul>$children</ul>";

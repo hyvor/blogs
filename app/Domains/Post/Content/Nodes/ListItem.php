@@ -10,6 +10,7 @@ class ListItem extends NodeType
 {
 
     public string $name = 'list_item';
+    public ?string $content = 'block*';
 
     public function toHtml(Node $node, string $children): string
     {

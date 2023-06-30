@@ -22,7 +22,7 @@ test('json to HTML', function () {
 test('html to json', function() {
     $html = '<figure>Hello</figure>';
 
-    $json = PostContentService::getJsonFromHtml($html, blog());
+    $json = PostContentService::getJsonFromHtml($html, blog(), false);
 
     expect($json)->toBe(json_encode([
         'type' => 'doc',

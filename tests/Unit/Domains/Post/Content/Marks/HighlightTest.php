@@ -37,14 +37,19 @@ test('from HTML', function() {
         'type' => 'doc',
         'content' => [
             [
-                'type' => 'text',
-                'text' => 'Example Text',
-                'marks' => [
+                'type' => 'paragraph',
+                'content' => [
                     [
-                        'type' => 'highlight',
+                        'type' => 'text',
+                        'text' => 'Example Text',
+                        'marks' => [
+                            [
+                                'type' => 'highlight',
+                            ],
+                        ],
                     ],
-                ],
-            ],
+                ]
+            ]
         ],
     ]);
 

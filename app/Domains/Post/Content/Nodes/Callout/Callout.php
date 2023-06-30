@@ -17,6 +17,10 @@ class Callout extends NodeType
     public ?string $content = 'inline*';
     public string $group = 'block';
 
+    public const DEFAULT_EMOJI = '💡';
+    public const DEFAULT_BG = '#f1f1ef';
+    public const DEFAULT_FG = '#000000';
+
     public function __construct() {}
 
     public function toHtml(Node $node, string $children): string
@@ -45,9 +49,9 @@ class Callout extends NodeType
                     $emoji = $span->count() ? $span->first()->text() : null;
 
                     return CalloutAttrs::fromArray([
-                        'bg' => $bg ?? '#f1f1ef',
-                        'fg' => $fg ?? '#000000',
-                        'emoji' => $emoji ?? '💡',
+                        'bg' => $bg ?? self::DEFAULT_BG,
+                        'fg' => $fg ?? self::DEFAULT_FG,
+                        'emoji' => $emoji ?? self::DEFAULT_EMOJI,
                     ]);
 
                 },

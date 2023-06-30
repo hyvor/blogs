@@ -68,11 +68,16 @@ test('HTML to JSON', function () {
         'type' => 'doc',
         'content' => [
             [
-                'type' => 'embed',
-                'attrs' => [
-                    'url' => $this->url,
-                ],
-            ],
+                'type' => 'figure',
+                'content' => [
+                    [
+                        'type' => 'embed',
+                        'attrs' => [
+                            'url' => $this->url,
+                        ],
+                    ],
+                ]
+            ]
         ],
     ]));
 });
