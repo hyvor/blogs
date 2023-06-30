@@ -100,7 +100,12 @@ class ConsoleImportSitemapController
         $import = ImportService::createImport(
             $blog,
             ImportTypeEnum::SITEMAP,
-            $sitemapUrl
+            $sitemapUrl,
+            [
+                'sitemap_url' => $sitemapUrl,
+                'import_images' => $importImages,
+                'scraper_options' => $options->toArray()
+            ]
         );
 
         dispatch(new ImportJob(

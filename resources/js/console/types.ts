@@ -407,6 +407,8 @@ export interface Import {
     name: string | null,
     type: 'sitemap' | 'wordpress',
     status: JobStatus,
+    options: object,
+    error: string | null,
     imported_counts: {
         posts: number,
         pages: number

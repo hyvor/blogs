@@ -20,10 +20,14 @@ class ImportService
     }
 
 
+    /**
+     * @param array<mixed> $options
+     */
     public static function createImport(
         Blog $blog,
         ImportTypeEnum $type,
         string $name,
+        array $options,
     ) : Import
     {
 
@@ -32,6 +36,7 @@ class ImportService
             'status' => JobStatusEnum::PENDING,
             'name' => $name,
             'type' => $type,
+            'options' => $options,
         ]);
         
         return $import->refresh();

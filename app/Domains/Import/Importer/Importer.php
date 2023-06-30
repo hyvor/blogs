@@ -40,11 +40,15 @@ class Importer
         foreach ($this->parser->posts as $importingPost)
         {
 
+            $featuredImageUrl = $importingPost->featuredImageUrl ?
+                $this->tryToUploadImage($importingPost->featuredImageUrl) :
+                null;
+
             $post = PostRepository::createPost(
                 $this->blog,
                 [
                     'published_at' => $importingPost->publishedAt,
-                    'featured_image_url' => $importingPost->featuredImageUrl,
+                    'featured_image_url' => $featuredImageUrl,
                     'is_page' => $importingPost->isPage,
                     'is_featured' => $importingPost->isFeatured
                 ]
@@ -92,22 +96,7 @@ class Importer
                 $src = strval($node->attr('src'));
 
                 if ($src && str_starts_with($src, 'http')) {
-
-                    $media = app(MediaRepository::class);
-
-                    try {
-                        $image = $media->uploadFromUrl($this->blog, $src);
-                    } catch (UploadException) {
-                        $image = null;
-                    }
-
-                    if ($image) {
-                        $node->attrs->set('src', PermalinkRepository::getMediaPermalink(
-                            $image,
-                            $this->blog
-                        ));
-                    }
-
+                    $node->attrs->set('src', $this->tryToUploadImage($src));
                 }
 
             }
@@ -116,6 +105,26 @@ class Importer
 
         return $document->toJson();
 
+    }
+
+    private function tryToUploadImage(string $url) : string
+    {
+        if (!$this->importImages)
+            return $url;
+
+        $media = app(MediaRepository::class);
+        try {
+            $image = $media->uploadFromUrl($this->blog, $url);
+        } catch (UploadException) {
+            $image = null;
+        }
+        if ($image) {
+            return PermalinkRepository::getMediaPermalink(
+                $image,
+                $this->blog
+            );
+        }
+        return $url;
     }
 
 }

@@ -103,6 +103,9 @@ it('imports sitemap calls the job', function() {
         expect($job->import->status)->toBe(JobStatusEnum::PENDING);
         expect($job->importImages)->toBeFalse();
 
+        expect($job->import->options['import_images'])->toBeFalse();
+        expect($job->import->options['scraper_options']['contentSelector'])->toBe('article');
+
         return true;
     });
 

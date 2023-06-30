@@ -36,7 +36,7 @@ export function PopupFooterSingleButton(
     {buttonClass?: string, onClick: Function, name: ReactNode}
 ) {
     return <div className="popup-footer-single">
-        <button className={"button " + props.buttonClass} onClick={() => props.onClick()}>{props.name}</button>
+        <button className={"button " + props.buttonClass} onClick={e => props.onClick(e)}>{props.name}</button>
     </div>
 }
 

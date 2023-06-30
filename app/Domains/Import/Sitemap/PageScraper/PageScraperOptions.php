@@ -14,4 +14,19 @@ class PageScraperOptions
         public readonly ?string $slugExclude = null,
     ) {}
 
+    /**
+     * @return array<string, string|null>
+     */
+    public function toArray() : array
+    {
+        return [
+            'contentSelector' => $this->contentSelector,
+            'titleSelector' => $this->titleSelector,
+            'descriptionSelector' => $this->descriptionSelector,
+            'contentExcludeSelector' => $this->contentExcludeSelector,
+            'publishedAtSelector' => $this->publishedAtSelector,
+            'slugExclude' => $this->slugExclude,
+        ];
+    }
+
 }

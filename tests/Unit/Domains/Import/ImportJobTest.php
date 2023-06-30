@@ -15,7 +15,7 @@ it('imports posts and uploads images', function() {
 
     $this->mock(MediaRepository::class, function ($mock) {
         $mock->shouldReceive('uploadFromUrl')
-            ->once()
+            ->twice()
             ->andReturn(new Media([
                 'name' => 'default.png'
             ]));
@@ -92,7 +92,7 @@ it('imports posts and uploads images', function() {
     $post = $blog->posts()->first();
 
     expect($post->published_at->toDateTimeString())->toBe($publishTime->toDateTimeString());
-    expect($post->featured_image_url)->toBe('https://example.com/image.jpg');
+    expect($post->featured_image_url)->toBe($blog->url() . '/media/default.png');
     expect($post->is_page)->toBe(false);
     expect($post->is_featured)->toBe(true);
 

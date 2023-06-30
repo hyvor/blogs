@@ -15,6 +15,13 @@ class ImportObject
     public ImportTypeEnum $type;
     public JobStatusEnum $status;
 
+    /**
+     * @var array<mixed>
+     */
+    public array $options;
+
+    public ?string $error;
+
     public ImportedCountsObject $imported_counts;
 
     public function __construct(Import $import)
@@ -25,6 +32,9 @@ class ImportObject
         $this->name = $import->name;
         $this->type = $import->type;
         $this->status = $import->status;
+
+        $this->options = $import->options ?? [];
+        $this->error = $import->error;
 
         $this->imported_counts = new ImportedCountsObject(
             posts: $import->posts_count,

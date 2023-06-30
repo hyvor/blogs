@@ -15,6 +15,7 @@ class Import extends Model
 
     protected $casts = [
         'type' => ImportTypeEnum::class,
-        'status' => JobStatusEnum::class
+        'status' => JobStatusEnum::class,
+        'options' => 'array'
     ];
 }

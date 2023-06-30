@@ -4,7 +4,7 @@ import Radio from "../../ReusableComponents/Radio";
 import Input from "../../ReusableComponents/Input";
 import Switch from "../../ReusableComponents/Switch";
 import ActionButton from "../../ReusableComponents/ActionButton";
-import {importLogic, SitemapTestInput, SitemapTestResponse} from "../../logic/importLogic";
+import {importLogic, SitemapTestResponse} from "../../logic/importLogic";
 import getSubdomain from "../../logic-helpers/subdomain";
 import {useActions, useValues} from "kea";
 import {toast} from "react-toastify";
@@ -13,8 +13,7 @@ import {
     Popup,
     PopupBodyDefault,
     PopupFooterSingleButton,
-    PopupHeaderDefault,
-    PopupNotice
+    PopupHeaderDefault
 } from "../../ReusableComponents/Popup";
 
 import './Import.scss';
@@ -53,7 +52,8 @@ export default function Import() {
                     content_exclude: contentExcludeSelector,
                     published_date: publishedDateSelector
                 },
-                slug_exclude: slugExclude
+                slug_exclude: slugExclude,
+                import_images: importMedia
             },
             onLoad: (i) => {
                 toast.success('Import started');
@@ -74,6 +74,7 @@ export default function Import() {
             right={
                 <ImportHistory />
             }
+            column={true}
         />
 
         <DualSetting

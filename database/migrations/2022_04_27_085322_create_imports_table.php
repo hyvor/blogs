@@ -24,6 +24,8 @@ return new class () extends Migration {
             $table->enum('type', ['sitemap', 'wordpress']);
             $table->enum('status', ['pending', 'completed', 'failed'])->default('pending');
 
+            $table->string('error')->nullable();
+            $table->json('options')->nullable();
             $table->integer('posts_count')->default(0);
             $table->integer('pages_count')->default(0);
             $table->integer('tags_count')->default(0);

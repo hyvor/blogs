@@ -2,7 +2,7 @@ import {actions, kea, key, path, props, reducers} from "kea";
 import {ajax} from "kea-ajax";
 import api from "../lib/api";
 import type { importLogicType } from "./importLogicType";
-import {Export, Import} from "../types";
+import {Import} from "../types";
 
 export type SitemapDataSelectType = 'meta_tag' | 'css_selector';
 
@@ -19,7 +19,8 @@ export interface SitemapTestInput {
 }
 
 export type SitemapImportInput = Omit<SitemapTestInput, 'url'> & {
-    sitemap_url: string
+    sitemap_url: string,
+    import_images: boolean,
 }
 
 export interface SitemapTestResponse {
@@ -87,6 +88,7 @@ export const importLogic = kea<importLogicType>([
                 input
             );
             actions.addImport(i);
+            onLoad(i);
         }
 
     })),

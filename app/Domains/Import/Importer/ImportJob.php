@@ -12,6 +12,8 @@ use Throwable;
 class ImportJob implements ShouldQueue
 {
 
+    public int $timeout = 0;
+
     public function __construct(
         public readonly Blog $blog,
         public readonly Import $import,
@@ -38,7 +40,7 @@ class ImportJob implements ShouldQueue
     {
         $this->import->update([
             'status' => JobStatusEnum::FAILED,
-            'error_message' => $e instanceof ImportException ?
+            'error' => $e instanceof ImportException ?
                 $e->getMessage() :
                 'Unknown error'
         ]);
