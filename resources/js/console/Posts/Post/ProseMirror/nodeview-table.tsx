@@ -2,7 +2,7 @@ import { EditorView, NodeView } from "prosemirror-view";
 import {Node as ProsemirrorNode, Schema} from "prosemirror-model";
 import { Trash } from "react-bootstrap-icons";
 import ReactDOM from "react-dom";
-import React from "react";
+import React, { StrictMode } from "react";
 import {
     addColumnAfter,
     addColumnBefore,
@@ -19,6 +19,8 @@ import {
     goToNextCell,
     deleteTable,
   } from "prosemirror-tables";
+import { NodeSelection } from "prosemirror-state";
+import { createRoot } from "react-dom/client";
 
 
 
@@ -33,9 +35,10 @@ export default class Table implements NodeView{
     contentDOM: HTMLElement;
 
     middle: HTMLElement;
-    bottomSettings: HTMLElement;
     topSettings: HTMLElement;
-    sideSettings: HTMLElement;
+    bottomSettings: HTMLElement;
+    leftSideSettings: HTMLElement;
+    rightSideSettings: HTMLElement;
 
     constructor(schema: Schema, node: ProsemirrorNode, view: EditorView, getPos: () => number | undefined) {
         this.node = node;
@@ -52,10 +55,13 @@ export default class Table implements NodeView{
         this.topSettings = document.createElement("div");
         this.topSettings.className = "table-top-settings";
 
-        this.sideSettings = document.createElement("div");
-        this.sideSettings.className = "table-side-settings";
+        this.rightSideSettings = document.createElement("div");
+        this.rightSideSettings.className = "table-right-side-settings";
 
         this.dom.appendChild(this.topSettings);
+
+        this.leftSideSettings = document.createElement("div");
+        this.leftSideSettings.className = "table-left-side-settings";
 
         this.createInside = this.createInside.bind(this);
         this.createInside();
@@ -68,11 +74,35 @@ export default class Table implements NodeView{
         this.contentDOM.className = "table-div";
         const id = node.attrs.id || "";
         this.contentDOM.id = id;
+        this.middle.appendChild(this.leftSideSettings);
         this.middle.appendChild(this.contentDOM);
-        this.middle.appendChild(this.sideSettings);
+        this.middle.appendChild(this.rightSideSettings);
 
         this.dom.appendChild(this.bottomSettings);
+        this.createMenuItems();
+
+        this.view.dom.addEventListener('focus', this.handleFocusChange);
+        this.view.dom.addEventListener('blur', this.handleFocusChange);
+        this.view.dom.addEventListener('keydown', this.handleKeyDown);
+        this.view.dom.addEventListener('click', this.handleClick);
+        
     }
+
+    handleFocusChange = () => {
+        this.createMenuItems();
+      };
+      
+      handleSelectionChange = () => {
+        this.createMenuItems();
+      };
+      
+      handleKeyDown = () => {
+        this.createMenuItems();
+      };
+      
+      handleClick = () => {
+        this.createMenuItems();
+      };
 
     createInside() {
         const _self = this;
@@ -94,7 +124,9 @@ export default class Table implements NodeView{
         this.topSettings.appendChild(toggleColumnHeader);
 
         const deleteButton = document.createElement("button");
+        deleteButton.setAttribute("id", "delete-table-button");
         deleteButton.className = "icon-button delete-table-button";
+
         ReactDOM.render(<Trash />, deleteButton);
         deleteButton.onclick = function () {
             deleteTable(_self.view.state, _self.view.dispatch);
@@ -106,6 +138,8 @@ export default class Table implements NodeView{
         addRowButton.innerText = "+";
         addRowButton.onclick = function () {
             addRowAfter(_self.view.state, _self.view.dispatch);
+            _self.createMenuItems();
+
         };
         this.bottomSettings.appendChild(addRowButton);
         
@@ -115,6 +149,7 @@ export default class Table implements NodeView{
         deleteRowButton.innerText = "-";
         deleteRowButton.onclick = function () {
             deleteRow(_self.view.state, _self.view.dispatch);
+            _self.createMenuItems();
             // If it remains the only row, delete the table
             const table = _self.view.state.doc.nodeAt(_self.getPos()!);
             if (table && table.childCount === 1) {
@@ -129,7 +164,7 @@ export default class Table implements NodeView{
         addColumnButton.onclick = function () {
             addColumnAfter(_self.view.state, _self.view.dispatch);
         };
-        this.sideSettings.appendChild(addColumnButton);
+        this.rightSideSettings.appendChild(addColumnButton);
 
         const deleteColumnButton = document.createElement("button");
         deleteColumnButton.className = "delete-column-button";
@@ -142,9 +177,52 @@ export default class Table implements NodeView{
                 deleteTable(_self.view.state, _self.view.dispatch);
             }
         };
-        this.sideSettings.appendChild(deleteColumnButton);
-        
+        this.rightSideSettings.appendChild(deleteColumnButton);
     }
 
+    isRowFocused(row: ProsemirrorNode) {
+        const selection = this.view.state.selection;
+        const grandParent = selection.$from.node(-2);
+        return grandParent === row;
+    }
 
+    createMenuItems() {
+        const _self = this;
+        const table = this.node;
+        const rows = table.content.childCount;
+      
+        // Remove existing menu items
+        this.leftSideSettings.innerHTML = '';
+      
+        // Get the current selected row (if any)
+        const selection = this.view.state.selection;
+        const selectedRow = selection.$from.node(selection.$from.depth - 2); 
+      
+        // Create a button for each row
+        for (let rowIdx = 0; rowIdx < rows; rowIdx++) {
+          const row = table.content.child(rowIdx);
+          const isFocused = this.isRowFocused(row);
+      
+          const rowButton = document.createElement('button');
+          rowButton.className = 'row-button';
+          rowButton.innerText = `...`;
+          rowButton.style.display = isFocused ? 'block' : 'none';
+            
+          const tableHeight = this.view.dom.offsetHeight;
+          // Position the row button next to the selected row
+          if (selectedRow && row === selectedRow) {
+            rowButton.style.position = 'absolute';
+            rowButton.style.left = '5px'; // Adjust the positioning as needed
+            rowButton.style.top = `${rowIdx * tableHeight / 4 + tableHeight / 4}px`; // Adjust the positioning as needed
+          }
+      
+          rowButton.onclick = function () {
+            console.log(`Clicked on row ${rowIdx + 1}`);
+          };
+      
+          this.leftSideSettings.appendChild(rowButton);
+        }
+      }
+      
+    
 }
