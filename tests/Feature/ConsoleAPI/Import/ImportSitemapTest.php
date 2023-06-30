@@ -5,6 +5,7 @@ namespace Tests\Feature\ConsoleAPI\Import;
 use App\Data\Enums\ImportTypeEnum;
 use App\Data\Enums\JobStatusEnum;
 use App\Domains\Import\Importer\ImportJob;
+use App\Domains\Import\ImportService;
 use Carbon\Carbon;
 use Illuminate\Support\Facades\Http;
 use Illuminate\Support\Facades\Queue;
@@ -109,4 +110,17 @@ it('imports sitemap calls the job', function() {
         return true;
     });
 
+});
+
+it('does not import when a pending import is there', function() {
+    $blog = blogWithAccess();
+
+    ImportService::createImport($blog, ImportTypeEnum::SITEMAP, '');
+
+    consoleApi($blog, 'POST', '/data/import/sitemap/import', [
+        'sitemap_url' => 'https://example.com/sitemap.xml',
+        'css' => ['content' => 'article']
+    ])
+        ->assertUnprocessable()
+        ->assertSee('There is already an import in progress for this blog');
 });

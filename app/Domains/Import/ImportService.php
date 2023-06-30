@@ -27,7 +27,7 @@ class ImportService
         Blog $blog,
         ImportTypeEnum $type,
         string $name,
-        array $options,
+        array $options = [],
     ) : Import
     {
 
@@ -41,6 +41,13 @@ class ImportService
         
         return $import->refresh();
 
+    }
+
+    public static function hasPendingImports(Blog $blog) : bool
+    {
+        return Import::where('blog_id', $blog->id)
+            ->where('status', JobStatusEnum::PENDING)
+            ->exists();
     }
 
 }

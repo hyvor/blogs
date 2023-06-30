@@ -97,6 +97,9 @@ class ConsoleImportSitemapController
         $importImages = $request->boolean('import_images');
         $options = $this->getPageScraperOptions($request);
 
+        if (ImportService::hasPendingImports($blog))
+            throw new TrustedException('There is already an import in progress for this blog.');
+
         $import = ImportService::createImport(
             $blog,
             ImportTypeEnum::SITEMAP,
