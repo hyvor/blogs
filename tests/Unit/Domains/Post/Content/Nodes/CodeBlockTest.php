@@ -79,7 +79,8 @@ test('json to HTML with is_plain', function() {
 
 test('HTML to JSON', function () {
     $name = 'app.php';
-    $content = '$x = null';
+    $content = "x = null
+y = null";
     $annotations = 'h=1';
 
     $html = "<pre class=\"language-php\" data-language=\"php\" data-name=\"$name\" data-annotations=\"$annotations\">$content</pre>";
@@ -106,4 +107,36 @@ test('HTML to JSON', function () {
                 ],
             ],
         ]));
+});
+
+it('removes ending spaces', function() {
+
+    $html = "<pre>
+<code>matchLabels:
+    app: nginx-different
+</code>
+</pre>";
+
+    $json = PostContentService::getJsonFromHtml($html, blog());
+
+    expect($json)->toBe(json_encode([
+            'type' => 'doc',
+            'content' => [
+                [
+                    'type' => 'code_block',
+                    'attrs' => [
+                        'language' => '',
+                        'name' => '',
+                        'annotations' => '',
+                    ],
+                    'content' => [
+                        [
+                            'type' => 'text',
+                            'text' => "matchLabels:\n    app: nginx-different",
+                        ],
+                    ],
+                ],
+            ],
+        ]));
+
 });

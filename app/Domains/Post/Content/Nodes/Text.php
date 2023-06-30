@@ -8,6 +8,8 @@ use Hyvor\Phrosemirror\Types\NodeType;
 class Text extends NodeType
 {
     public string $name = 'text';
+    public string $group = 'inline';
+    public bool $inline = true;
 
     public function fromHtml(): array
     {

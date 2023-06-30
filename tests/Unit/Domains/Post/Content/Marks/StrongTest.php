@@ -29,7 +29,7 @@ test('from HTML b', function() {
 
     $html = '<b>Example Text</b>';
 
-    $result = PostContentService::getDocumentFromHtml($html, blog());
+    $result = PostContentService::getDocumentFromHtml($html, blog(), false);
 
     expect($result->toArray())->toEqual([
         'type' => 'doc',
@@ -52,7 +52,7 @@ test('from HTML strong', function() {
 
     $html = '<strong>Example Text</strong>';
 
-    $result = PostContentService::getDocumentFromHtml($html, blog());
+    $result = PostContentService::getDocumentFromHtml($html, blog(), false);
 
     expect($result->toArray())->toEqual([
         'type' => 'doc',

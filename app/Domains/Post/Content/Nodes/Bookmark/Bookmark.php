@@ -23,6 +23,7 @@ class Bookmark extends NodeType
     public string $name = 'bookmark';
     
     public string $attrs = BookmarkAttrs::class;
+    public string $group = 'block';
 
     public function __construct(public Blog $blog) {}
 

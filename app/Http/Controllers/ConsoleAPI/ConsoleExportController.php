@@ -12,7 +12,7 @@ use App\Http\Controllers\Controller;
 use App\Models\Blog;
 use Illuminate\Http\JsonResponse;
 
-class ConsoleImportExportController extends Controller
+class ConsoleExportController extends Controller
 {
 
     public function getExports(Blog $blog) : JsonResponse

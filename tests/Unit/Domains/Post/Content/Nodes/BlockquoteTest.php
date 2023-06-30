@@ -42,9 +42,14 @@ test('HTML to JSON', function () {
                     'type' => 'blockquote',
                     'content' => [
                         [
-                            'type' => 'text',
-                            'text' => $content,
-                        ],
+                            'type' => 'paragraph',
+                            'content' => [
+                                [
+                                    'type' => 'text',
+                                    'text' => $content,
+                                ],
+                            ]
+                        ]
                     ],
                 ],
             ],

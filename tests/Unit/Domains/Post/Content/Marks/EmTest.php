@@ -35,14 +35,19 @@ test('em HTML to JSON', function() {
         'type' => 'doc',
         'content' => [
             [
-                'type' => 'text',
-                'text' => 'Example Text',
-                'marks' => [
+                'type' => 'paragraph',
+                'content' => [
                     [
-                        'type' => 'em',
+                        'type' => 'text',
+                        'text' => 'Example Text',
+                        'marks' => [
+                            [
+                                'type' => 'em',
+                            ],
+                        ],
                     ],
-                ],
-            ],
+                ]
+            ]
         ],
     ]);
 
@@ -58,14 +63,19 @@ test('from HTML from i tag', function() {
         'type' => 'doc',
         'content' => [
             [
-                'type' => 'text',
-                'text' => 'Example Text',
-                'marks' => [
+                'type' => 'paragraph',
+                'content' => [
                     [
-                        'type' => 'em',
+                        'type' => 'text',
+                        'text' => 'Example Text',
+                        'marks' => [
+                            [
+                                'type' => 'em',
+                            ],
+                        ],
                     ],
-                ],
-            ],
+                ]
+            ]
         ],
     ]);
 

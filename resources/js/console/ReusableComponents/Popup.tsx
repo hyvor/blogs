@@ -5,11 +5,16 @@ interface PopupProps {
     header: ReactNode,
     body: ReactNode,
     footer: ReactNode,
-    isCenter?: boolean
+    isCenter?: boolean,
+
+    className?: string
 }
 
 export function Popup(props: PopupProps) {
-    return <div className={"popup-wrap" + (props.isCenter ? " center" : "")}>
+    return <div className={"popup-wrap" +
+        (props.isCenter ? " center" : "") +
+        (props.className ? " " + props.className : "")
+    }>
         <div className="popup box-style">
             <div className="popup-header">{props.header}</div>
             <div className="popup-body">{props.body}</div>
@@ -31,7 +36,7 @@ export function PopupFooterSingleButton(
     {buttonClass?: string, onClick: Function, name: ReactNode}
 ) {
     return <div className="popup-footer-single">
-        <button className={"button " + props.buttonClass} onClick={() => props.onClick()}>{props.name}</button>
+        <button className={"button " + props.buttonClass} onClick={e => props.onClick(e)}>{props.name}</button>
     </div>
 }
 

@@ -22,7 +22,7 @@ test('json to HTML', function () {
 
 test('html to json', function() {
 
-    $html = '<figcaption>Hello</figcaption>';
+    $html = '<figure><img src="https://image.com" /><figcaption>Hello</figcaption></figure>';
 
     $json = PostContentService::getJsonFromHtml($html, blog());
 
@@ -30,14 +30,28 @@ test('html to json', function() {
         'type' => 'doc',
         'content' => [
             [
-                'type' => 'figcaption',
+                'type' => 'figure',
                 'content' => [
                     [
-                        'type' => 'text',
-                        'text' => 'Hello',
+                        'type' => 'image',
+                        'attrs' => [
+                            'src' => 'https://image.com',
+                            'alt' => null,
+                            'width' => null,
+                            'height' => null,
+                        ],
+                    ],
+                    [
+                        'type' => 'figcaption',
+                        'content' => [
+                            [
+                                'type' => 'text',
+                                'text' => 'Hello',
+                            ],
+                        ]
                     ],
                 ]
-            ],
+            ]
         ],
     ]));
 

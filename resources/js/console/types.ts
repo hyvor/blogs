@@ -399,3 +399,21 @@ export interface Export {
     url: string | null
     error: string | null
 }
+
+export interface Import {
+
+    id: number,
+    created_at: number,
+    name: string | null,
+    type: 'sitemap' | 'wordpress',
+    status: JobStatus,
+    options: object,
+    error: string | null,
+    imported_counts: {
+        posts: number,
+        pages: number
+        tags: number,
+        users: number
+    }
+
+}

@@ -10,6 +10,8 @@ class Figure extends NodeType
 {
 
     public string $name = 'figure';
+    public ?string $content = '(image|embed) figcaption?';
+    public string $group = 'block';
 
     public function fromHtml(): array
     {

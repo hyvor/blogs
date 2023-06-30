@@ -50,6 +50,9 @@ return [
         // ['import', 'Import'],
         ['export', 'Export'],
     ],
+    'Importing' => [
+        ['import-sitemap', 'From Sitemap'],
+    ],
     'Self-Hosting (Subdirectory)' => [
         ['self-hosting', 'Self-Hosting Intro'],
         ['self-hosting-web-framework', 'with Web Frameworks'],

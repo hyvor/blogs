@@ -6,6 +6,7 @@ use App\Data\Enums\BlogBillingTypeEnum;
 use App\Data\Enums\BlogHostingAtEnum;
 use App\Data\Enums\BlogIntegrationEnum;
 use App\Data\Enums\BlogTypeEnum;
+use App\Domains\Route\PermalinkRepository;
 use App\Models\Concerns\Countable;
 use Carbon\Carbon;
 use Hyvor\JsonMeta\Definer;
@@ -198,6 +199,11 @@ class Blog extends Model
     public function exports()
     {
         return $this->hasMany(Export::class);
+    }
+
+    public function url() : string
+    {
+        return PermalinkRepository::getBaseUrl($this);
     }
 
 }

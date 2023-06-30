@@ -29,7 +29,7 @@ use App\Domains\Post\Content\Nodes\OrderedList;
 use App\Domains\Post\Content\Nodes\Paragraph;
 use App\Domains\Post\Content\Nodes\Text;
 use App\Models\Blog;
-use App\Models\PostVariant;
+use Hyvor\Phrosemirror\Content\Sanitizer;
 use Hyvor\Phrosemirror\Converters\HtmlParser\HtmlParser;
 use Hyvor\Phrosemirror\Document\Document;
 use Hyvor\Phrosemirror\Document\Node;
@@ -54,15 +54,28 @@ class PostContentService
         return Document::fromJson(self::getSchema($blog), $json)->toText();
     }
 
-    public static function getJsonFromHtml(string $html, Blog $blog) : string
+    public static function getJsonFromHtml(string $html, Blog $blog, bool $sanitize = true) : string
     {
-        return self::getDocumentFromHtml($html, $blog)->toJson();
+        return self::getDocumentFromHtml($html, $blog, $sanitize)->toJson();
     }
 
-    public static function getDocumentFromHtml(string $html, Blog $blog) : Node
+    public static function getDocumentFromHtml(
+        string $html,
+        Blog $blog,
+        bool $sanitize = true
+    ) : Node
     {
-        $parser = HtmlParser::fromSchema(self::getSchema($blog));
-        return $parser->parse($html);
+        $schema = self::getSchema($blog);
+        $parser = HtmlParser::fromSchema($schema);
+        return $parser->parse($html, sanitize: $sanitize);
+    }
+
+    /**
+     * @param array<mixed>|string $json
+     */
+    public static function getDocumentFromJson(array|string $json, Blog $blog) : Node
+    {
+        return Document::fromJson(self::getSchema($blog), $json);
     }
 
     private static function getSchema(Blog $blog, PostContentOptions $options = null) : Schema
@@ -74,6 +87,7 @@ class PostContentService
             [
                 new Doc,
                 new Text,
+                new Paragraph,
                 new Blockquote,
                 new Bookmark($blog),
                 new BulletList,
@@ -82,7 +96,6 @@ class PostContentService
                 new CustomHtml,
                 new Embed,
                 new ListItem,
-                new Paragraph,
                 new Figcaption,
                 new Figure,
                 new HardBreak,

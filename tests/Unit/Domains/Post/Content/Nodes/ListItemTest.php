@@ -39,23 +39,24 @@ test('HTML to JSON', function () {
             'type' => 'doc',
             'content' => [
                 [
-                    'type' => 'list_item',
+                    'type' => 'bullet_list',
                     'content' => [
                         [
-                            'type' => 'text',
-                            'text' => $content,
-                        ],
-                        /*[
-                            'type' => 'paragraph',
+                            'type' => 'list_item',
                             'content' => [
                                 [
-                                    'type' => 'text',
-                                    'text' => $content,
+                                    'type' => 'paragraph',
+                                    'content' => [
+                                        [
+                                            'type' => 'text',
+                                            'text' => $content,
+                                        ],
+                                    ],
                                 ],
                             ],
-                        ],*/
-                    ],
-                ],
+                        ],
+                    ]
+                ]
             ],
         ]));
 });

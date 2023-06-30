@@ -10,6 +10,8 @@ class Paragraph extends NodeType
 {
 
     public string $name = 'paragraph';
+    public ?string $content = 'inline*';
+    public string $group = 'block';
 
     public function toHtml(Node $node, string $children): string
     {
