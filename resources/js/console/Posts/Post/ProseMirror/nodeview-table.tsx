@@ -81,7 +81,12 @@ export default class Table implements NodeView{
 
         this.dom.appendChild(this.bottomSettings);
         this.createMenuItems();
-    
+
+        this.view.dom.addEventListener('focus', this.handleFocusChange);
+        this.view.dom.addEventListener('blur', this.handleFocusChange);
+        this.view.dom.addEventListener('keydown', this.handleKeyDown);
+        this.view.dom.addEventListener('click', this.handleClick);
+        
     }
 
     handleFocusChange = () => {
@@ -199,12 +204,28 @@ export default class Table implements NodeView{
           const row = table.content.child(rowIdx);
           const isFocused = this.isRowFocused(row);
       
-          const uploader = <TableMenu
-                   isFocused={isFocused}
-                   selectedRow={selectedRow}
-                />;
-                ReactDOM.render(uploader, this.leftSideSettings);
+          const rowButton = document.createElement('button');
+          rowButton.className = 'row-button';
+          rowButton.innerText = `...`;
+          rowButton.style.display = isFocused ? 'block' : 'none';
             
+          const tableHeight = this.view.dom.offsetHeight;
+          // Position the row button next to the selected row
+          if (selectedRow && row === selectedRow) {
+            rowButton.style.position = 'absolute';
+            rowButton.style.left = '5px'; // Adjust the positioning as needed
+            rowButton.style.top = `${rowIdx * tableHeight / 4 + tableHeight / 4}px`; // Adjust the positioning as needed
+          }
+      
+          rowButton.onclick = function () {
+            console.log(`Clicked on row ${rowIdx + 1}`);
+            ReactDOM.render(<TableMenu
+            isFocused={true}
+            selectedRow={selectedRow}
+               />, _self.leftSideSettings);
+          };
+      
+          this.leftSideSettings.appendChild(rowButton);
         }
       }
       
