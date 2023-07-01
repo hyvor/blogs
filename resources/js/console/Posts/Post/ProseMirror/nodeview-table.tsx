@@ -42,6 +42,7 @@ export default class Table implements NodeView{
     rightSideSettings: HTMLElement;
 
     constructor(schema: Schema, node: ProsemirrorNode, view: EditorView, getPos: () => number | undefined) {
+      console.log('Table constructor');
         this.node = node;
         this.view = view;
         this.getPos = getPos;
@@ -80,30 +81,8 @@ export default class Table implements NodeView{
         this.middle.appendChild(this.rightSideSettings);
 
         this.dom.appendChild(this.bottomSettings);
-        this.createMenuItems();
-
-        this.view.dom.addEventListener('focus', this.handleFocusChange);
-        this.view.dom.addEventListener('blur', this.handleFocusChange);
-        this.view.dom.addEventListener('keydown', this.handleKeyDown);
-        this.view.dom.addEventListener('click', this.handleClick);
-        
+        this.createMenuItems();     
     }
-
-    handleFocusChange = () => {
-        this.createMenuItems();
-      };
-      
-      handleSelectionChange = () => {
-        this.createMenuItems();
-      };
-      
-      handleKeyDown = () => {
-        this.createMenuItems();
-      };
-      
-      handleClick = () => {
-        this.createMenuItems();
-      };
 
     createInside() {
         const _self = this;
@@ -188,46 +167,20 @@ export default class Table implements NodeView{
     }
 
     createMenuItems() {
+      // Idea: render everything in React 
         const _self = this;
         const table = this.node;
         const rows = table.content.childCount;
       
-        // Remove existing menu items
-        this.leftSideSettings.innerHTML = '';
-      
-        // Get the current selected row (if any)
-        const selection = this.view.state.selection;
-        const selectedRow = selection.$from.node(selection.$from.depth - 2); 
-      
         // Create a button for each row
         for (let rowIdx = 0; rowIdx < rows; rowIdx++) {
-          const row = table.content.child(rowIdx);
-          const isFocused = this.isRowFocused(row);
-      
-          const rowButton = document.createElement('button');
-          rowButton.className = 'row-button';
-          rowButton.innerText = `...`;
-          rowButton.style.display = isFocused ? 'block' : 'none';
-            
-          const tableHeight = this.view.dom.offsetHeight;
-          // Position the row button next to the selected row
-          if (selectedRow && row === selectedRow) {
-            rowButton.style.position = 'absolute';
-            rowButton.style.left = '5px'; // Adjust the positioning as needed
-            rowButton.style.top = `${rowIdx * tableHeight / 4 + tableHeight / 4}px`; // Adjust the positioning as needed
-          }
-      
-          rowButton.onclick = function () {
-            console.log(`Clicked on row ${rowIdx + 1}`);
-            ReactDOM.render(<TableMenu
-            isFocused={true}
-            selectedRow={selectedRow}
-               />, _self.leftSideSettings);
-          };
-      
-          this.leftSideSettings.appendChild(rowButton);
+          console.log('here');
+          const tableMenuWrapper = document.createElement("div");
+          _self.leftSideSettings.appendChild(tableMenuWrapper);
+          ReactDOM.render(
+            <TableMenu 
+            row={table.content.child(rowIdx)}
+            />, tableMenuWrapper);
         }
       }
-      
-    
 }

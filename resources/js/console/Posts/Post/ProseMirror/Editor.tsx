@@ -61,7 +61,9 @@ const nodeViews: NodeViewsType = {
     },
     table(node, view, getPos) {
         return new Table(HBSchema, node, view, getPos);
-    }
+    },
+    /*table_row(node, view, getPos) {
+    }*/
 }
 
 interface EditorProps {
