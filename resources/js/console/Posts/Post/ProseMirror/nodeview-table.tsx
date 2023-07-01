@@ -42,7 +42,7 @@ export default class Table implements NodeView{
     rightSideSettings: HTMLElement;
 
     constructor(schema: Schema, node: ProsemirrorNode, view: EditorView, getPos: () => number | undefined) {
-      console.log('Table constructor');
+        console.log('Table constructor');
         this.node = node;
         this.view = view;
         this.getPos = getPos;
@@ -164,6 +164,11 @@ export default class Table implements NodeView{
         const selection = this.view.state.selection;
         const grandParent = selection.$from.node(-2);
         return grandParent === row;
+    }
+
+    update(node: ProsemirrorNode) {
+        console.log('Table update');
+        return true;
     }
 
     createMenuItems() {
