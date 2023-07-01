@@ -3,23 +3,24 @@ import React from "react";
 import { useState } from "react";
 
 export default function TableMenu({ row }: { row: ProsemirrorNode }) {
-    console.log('Render');
     const [showMenu, setShowMenu] = useState(false);
+    console.log('showMenu', showMenu);
 
-    const toggleMenu = () => {
+    const toggleMenu = (event: React.MouseEvent<HTMLButtonElement, MouseEvent>) => {
         setShowMenu(!showMenu);
+        event.stopPropagation();
         return false;
     }
 
    return !showMenu 
             ? <button
-                onClick={() => setShowMenu(true)}>
+                onClick={(event) => toggleMenu(event)}>
                     ...
               </button>
         :
             <div className="table-menu-options">
                 <button
-                    onClick={toggleMenu}>
+                    onClick={(event) => toggleMenu(event)}>
                     Close
                 </button>
             </div>
