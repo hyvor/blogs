@@ -49,6 +49,32 @@
         font-weight: 600;
         background-color: $color-accent-light;
     }
+
+    .table-menu {
+        position: relative;
+        display: inline-block;
+        z-index: 100; /* Increase the value */
+      }
+      .toggle-table-menu-button {
+        position: absolute;
+        z-index: -1;
+        background-color: $color-accent-light;
+    }
+      
+      .table-menu-options {
+        position: absolute;
+        top: 100%;
+        left: 0;
+        background-color: #f1f1f1;
+        padding: 8px;
+        border-radius: 4px;
+        box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+        z-index: 200; /* Increase the value */
+      }
+      
+      .table-menu-options button {
+        margin-right: 8px;
+      }
     
     .table-wrapper {
         .add-row-menu {

@@ -52,9 +52,11 @@ export default class Table implements NodeView{
         this.dom.className = "table-wrapper";
 
         this.bottomSettings = document.createElement("div");
+        this.bottomSettings.setAttribute("contenteditable", "false");
         this.bottomSettings.className = "table-bottom-settings";
 
         this.topSettings = document.createElement("div");
+        this.topSettings.setAttribute("contenteditable", "false");
         this.topSettings.className = "table-top-settings";
 
         this.rightSideSettings = document.createElement("div");
@@ -63,6 +65,7 @@ export default class Table implements NodeView{
         this.dom.appendChild(this.topSettings);
 
         this.leftSideSettings = document.createElement("div");
+        this.leftSideSettings.setAttribute("contenteditable", "false");
         this.leftSideSettings.className = "table-left-side-settings";
 
         this.createInside = this.createInside.bind(this);
@@ -159,15 +162,17 @@ export default class Table implements NodeView{
         };
         this.rightSideSettings.appendChild(deleteColumnButton);
     }
-
-    isRowFocused(row: ProsemirrorNode) {
-        const selection = this.view.state.selection;
-        const grandParent = selection.$from.node(-2);
-        return grandParent === row;
-    }
-
+    
     update(node: ProsemirrorNode) {
-        console.log('Table update');
+        if (node.type.name === 'table') {
+            this.node = node;
+            return true;
+        }
+
+        return false;
+        
+    }
+    ignoreMutation(mutation: MutationRecord) {
         return true;
     }
 
@@ -181,9 +186,11 @@ export default class Table implements NodeView{
         for (let rowIdx = 0; rowIdx < rows; rowIdx++) {
           const tableMenuWrapper = document.createElement("div");
           _self.leftSideSettings.appendChild(tableMenuWrapper);
-          ReactDOM.render(
+            ReactDOM.render(
             <TableMenu 
             row={table.content.child(rowIdx)}
+            editorState={_self.view.state}
+            transaction={_self.view.dispatch}
             />, tableMenuWrapper);
         }
       }
