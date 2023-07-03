@@ -53,11 +53,10 @@
     .table-menu {
         position: relative;
         display: inline-block;
-        z-index: 100; /* Increase the value */
+        z-index: 100;
       }
       .toggle-table-menu-button {
-        position: absolute;
-        margin-top: 20px;
+
         align-self: center;
         justify-self: center;
         z-index: -1;
@@ -72,7 +71,7 @@
         padding: 8px;
         border-radius: 4px;
         box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
-        z-index: 200; /* Increase the value */
+        z-index: 200;
       }
       
       .table-menu-options button {
@@ -125,9 +124,9 @@
             display: flex;
             flex-direction: row;
         }
-        .table-left-settings {
+        .table-left-side-settings {
             display: flex;
-            align-items: flex-start;
+            justify-content: space-around;
             flex-direction: column;
         }
         .table-right-side-settings {
