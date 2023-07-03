@@ -111,6 +111,11 @@ export default class Table implements NodeView{
         this.createMenuItems();
     };
 
+    deleteRowWrapper = () => {
+        deleteRow(this.view.state, this.view.dispatch);
+        this.createMenuItems();
+    };
+
     clearContentWrapper = () => {
         this.createMenuItems();
     }
@@ -230,6 +235,7 @@ export default class Table implements NodeView{
                 addRowBeforeWrapper={_self.addRowBeforeWrapper}
                 addRowAfterWrapper={_self.addRowAfterWrapper}
                 makeRowHeaderWrapper={_self.makeRowHeaderWrapper}
+                deleteRowWrapper={_self.deleteRowWrapper}
                 clearContentWrapper={_self.clearContentWrapper}
             />, tableMenuWrapper);
         }

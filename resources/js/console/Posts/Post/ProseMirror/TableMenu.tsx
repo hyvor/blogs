@@ -2,11 +2,11 @@ import { Node as ProsemirrorNode, Schema } from "prosemirror-model";
 import { EditorState, Transaction } from "prosemirror-state";
 import React from "react";
 import { useState } from "react";
-import { ArrowDown, ArrowUp, CardHeading } from "react-bootstrap-icons";
+import { ArrowDown, ArrowUp, CardHeading, Trash } from "react-bootstrap-icons";
 
-export default function TableMenu({ rowIdx, rowFocused, addRowBeforeWrapper, addRowAfterWrapper, makeRowHeaderWrapper, clearContentWrapper }: 
+export default function TableMenu({ rowIdx, rowFocused, addRowBeforeWrapper, addRowAfterWrapper, makeRowHeaderWrapper, clearContentWrapper, deleteRowWrapper }: 
     { rowIdx: number, rowFocused: boolean,addRowBeforeWrapper: () => void, addRowAfterWrapper: () => void, 
-        makeRowHeaderWrapper: () => void ,clearContentWrapper: () => void}) {
+        makeRowHeaderWrapper: () => void ,clearContentWrapper: () => void, deleteRowWrapper: () => void}) {
   const [showMenu, setShowMenu] = useState(false);
 
   console.log(showMenu);
@@ -42,7 +42,11 @@ export default function TableMenu({ rowIdx, rowFocused, addRowBeforeWrapper, add
           </button>
           <button className="action-button" onClick={addRowAfterWrapper}>
             <ArrowDown className="table-menu-icon"/>
-            Insert Bellow
+            Insert Below
+          </button>
+          <button className="action-button" onClick={deleteRowWrapper}>
+            <Trash className="table-menu-icon"/>
+            Delete row
           </button>
           <button className="action-button" onClick={clearContentWrapper}>
             Clear content
