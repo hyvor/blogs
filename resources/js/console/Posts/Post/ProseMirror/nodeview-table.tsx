@@ -121,8 +121,7 @@ export default class Table implements NodeView{
         addRowButton.innerText = "+";
         addRowButton.onclick = function () {
             addRowAfter(_self.view.state, _self.view.dispatch);
-            //_self.createMenuItems();
-
+            _self.createMenuItems();
         };
         this.bottomSettings.appendChild(addRowButton);
         
@@ -132,7 +131,7 @@ export default class Table implements NodeView{
         deleteRowButton.innerText = "-";
         deleteRowButton.onclick = function () {
             deleteRow(_self.view.state, _self.view.dispatch);
-            //_self.createMenuItems();
+            _self.createMenuItems();
             // If it remains the only row, delete the table
             const table = _self.view.state.doc.nodeAt(_self.getPos()!);
             if (table && table.childCount === 1) {
@@ -181,6 +180,11 @@ export default class Table implements NodeView{
         const _self = this;
         const table = this.node;
         const rows = table.content.childCount;
+
+        // Clear the left side settings
+        while (this.leftSideSettings.firstChild) {
+            this.leftSideSettings.removeChild(this.leftSideSettings.firstChild);
+        }
       
 
         for (let rowIdx = 0; rowIdx < rows; rowIdx++) {

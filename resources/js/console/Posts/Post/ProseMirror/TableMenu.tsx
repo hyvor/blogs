@@ -35,7 +35,7 @@ export default function TableMenu({ row, editorState, transaction }: { row: Pros
   const addRowAbove = () => {
     console.log('Editor state', editorState);
     console.log('Transaction', transaction);
-    addRowBefore(editorState, transaction);
+    addRowAfter(editorState, transaction);
   };
 
   return (
