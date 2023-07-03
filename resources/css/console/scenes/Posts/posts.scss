@@ -54,24 +54,46 @@
         position: relative;
         display: inline-block;
         z-index: 100;
-      }
-      .toggle-table-menu-button {
 
+        .action-button {
+            background-color: $color-box;
+            border: none;
+            cursor: pointer;
+        }
+        .action-button:hover {
+            background-color: $color-accent-very-light;
+        }
+        .table-menu-icon {
+            margin-right: 10px;
+        }
+      }
+
+      .toggle-table-menu-button {
+        position: relative;
         align-self: center;
         justify-self: center;
-        z-index: -1;
+        z-index: 0;
         background-color: $color-accent-light;
     }
-      
-      .table-menu-options {
+
+    .table-menu-options {
         position: absolute;
-        top: 100%;
-        left: 0;
-        background-color: #f1f1f1;
-        padding: 8px;
-        border-radius: 4px;
-        box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
-        z-index: 200;
+        top: calc(100% + 8px);
+        left: 50%;
+        transform: translateX(-50%);
+        background-color: #fff;
+        padding: 12px;
+        border-radius: 8px;
+        box-shadow: 0 2px 8px rgba(0, 0, 0, 0.15);
+        z-index: 999;
+        display: flex;
+        flex-direction: column;
+        width: 200px;
+      }
+
+      .close-table-menu {
+        background-color: $color-red-light;
+        align-self: flex-end;
       }
       
       .table-menu-options button {
@@ -128,6 +150,7 @@
             display: flex;
             justify-content: space-around;
             flex-direction: column;
+            z-index: 0;
         }
         .table-right-side-settings {
             display: flex;

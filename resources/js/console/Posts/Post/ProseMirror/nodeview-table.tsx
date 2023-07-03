@@ -86,17 +86,32 @@ export default class Table implements NodeView{
         this.createMenuItems();   
         
         this.addRowBeforeWrapper = this.addRowBeforeWrapper.bind(this);
-        this.view.dom.addEventListener('focus', this.handleChange);
-        this.view.dom.addEventListener('blur', this.handleChange);
+        this.addRowAfterWrapper = this.addRowAfterWrapper.bind(this);
+        this.clearContentWrapper = this.clearContentWrapper.bind(this);
+
         this.view.dom.addEventListener('click', this.handleChange);
     }
 
-        handleChange = () => {
-                this.createMenuItems();
-            };
+    handleChange = () => {
+        this.createMenuItems();
+    };
         
     addRowBeforeWrapper = () => {
         addRowBefore(this.view.state, this.view.dispatch);
+        this.createMenuItems();
+    }
+
+    addRowAfterWrapper = () => {
+        addRowAfter(this.view.state, this.view.dispatch);
+        this.createMenuItems();
+    };
+
+    makeRowHeaderWrapper = () => {
+        toggleHeaderRow(this.view.state, this.view.dispatch);
+        this.createMenuItems();
+    };
+
+    clearContentWrapper = () => {
         this.createMenuItems();
     }
 
@@ -213,6 +228,9 @@ export default class Table implements NodeView{
                 rowIdx={rowIdx}
                 rowFocused={_self.isRowFocused(table.content.child(rowIdx))}
                 addRowBeforeWrapper={_self.addRowBeforeWrapper}
+                addRowAfterWrapper={_self.addRowAfterWrapper}
+                makeRowHeaderWrapper={_self.makeRowHeaderWrapper}
+                clearContentWrapper={_self.clearContentWrapper}
             />, tableMenuWrapper);
         }
       }
