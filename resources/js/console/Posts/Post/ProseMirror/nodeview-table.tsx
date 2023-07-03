@@ -42,7 +42,6 @@ export default class Table implements NodeView{
     rightSideSettings: HTMLElement;
 
     constructor(schema: Schema, node: ProsemirrorNode, view: EditorView, getPos: () => number | undefined) {
-        console.log('Table constructor');
         this.node = node;
         this.view = view;
         this.getPos = getPos;
@@ -87,8 +86,15 @@ export default class Table implements NodeView{
         this.createMenuItems();   
         
         this.addRowBeforeWrapper = this.addRowBeforeWrapper.bind(this);
+        this.view.dom.addEventListener('focus', this.handleChange);
+        this.view.dom.addEventListener('blur', this.handleChange);
+        this.view.dom.addEventListener('click', this.handleChange);
     }
 
+        handleChange = () => {
+                this.createMenuItems();
+            };
+        
     addRowBeforeWrapper = () => {
         addRowBefore(this.view.state, this.view.dispatch);
         this.createMenuItems();
@@ -178,8 +184,15 @@ export default class Table implements NodeView{
         return false;
         
     }
+
     ignoreMutation(mutation: MutationRecord) {
         return true;
+    }
+
+    isRowFocused(row: ProsemirrorNode) {
+        const selection = this.view.state.selection;
+        const grandParent = selection.$from.node(-2);
+        return grandParent === row;
     }
 
     createMenuItems() {
@@ -192,14 +205,14 @@ export default class Table implements NodeView{
             this.leftSideSettings.removeChild(this.leftSideSettings.firstChild);
         }
       
-
         for (let rowIdx = 0; rowIdx < rows; rowIdx++) {
           const tableMenuWrapper = document.createElement("div");
           _self.leftSideSettings.appendChild(tableMenuWrapper);
             ReactDOM.render(
             <TableMenu 
-            row={table.content.child(rowIdx)}
-            addRowBeforeWrapper={_self.addRowBeforeWrapper}
+                rowIdx={rowIdx}
+                rowFocused={_self.isRowFocused(table.content.child(rowIdx))}
+                addRowBeforeWrapper={_self.addRowBeforeWrapper}
             />, tableMenuWrapper);
         }
       }

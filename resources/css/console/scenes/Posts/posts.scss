@@ -57,6 +57,9 @@
       }
       .toggle-table-menu-button {
         position: absolute;
+        margin-top: 20px;
+        align-self: center;
+        justify-self: center;
         z-index: -1;
         background-color: $color-accent-light;
     }
