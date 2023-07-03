@@ -19,7 +19,7 @@ import {
   deleteTable,
 } from "prosemirror-tables";
 
-export default function TableMenu({ row, editorState, transaction }: { row: ProsemirrorNode, editorState: EditorState, transaction: (tr: Transaction) => void }) {
+export default function TableMenu({ row, addRowBeforeWrapper }: { row: ProsemirrorNode, addRowBeforeWrapper: () => void }) {
   const [showMenu, setShowMenu] = useState(false);
 
   const toggleMenu = (event: React.MouseEvent<HTMLButtonElement, MouseEvent>) => {
@@ -32,18 +32,12 @@ export default function TableMenu({ row, editorState, transaction }: { row: Pros
     setShowMenu(false);
   };
 
-  const addRowAbove = () => {
-    console.log('Editor state', editorState);
-    console.log('Transaction', transaction);
-    addRowAfter(editorState, transaction);
-  };
-
   return (
     <div className="table-menu">
       <button className="icon-button toggle-table-menu-button" onClick={toggleMenu}>...</button>
       {showMenu && (
         <div className="table-menu-options">
-          <button onClick={addRowAbove}>Add row above</button>
+          <button onClick={addRowBeforeWrapper}>Add row above</button>
           <button onClick={handleClose}>Close</button>
         </div>
       )}

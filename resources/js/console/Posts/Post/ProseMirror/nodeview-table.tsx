@@ -84,7 +84,14 @@ export default class Table implements NodeView{
         this.middle.appendChild(this.rightSideSettings);
 
         this.dom.appendChild(this.bottomSettings);
-        this.createMenuItems();     
+        this.createMenuItems();   
+        
+        this.addRowBeforeWrapper = this.addRowBeforeWrapper.bind(this);
+    }
+
+    addRowBeforeWrapper = () => {
+        addRowBefore(this.view.state, this.view.dispatch);
+        this.createMenuItems();
     }
 
     createInside() {
@@ -176,7 +183,6 @@ export default class Table implements NodeView{
     }
 
     createMenuItems() {
-      // Idea: render everything in React 
         const _self = this;
         const table = this.node;
         const rows = table.content.childCount;
@@ -193,8 +199,7 @@ export default class Table implements NodeView{
             ReactDOM.render(
             <TableMenu 
             row={table.content.child(rowIdx)}
-            editorState={_self.view.state}
-            transaction={_self.view.dispatch}
+            addRowBeforeWrapper={_self.addRowBeforeWrapper}
             />, tableMenuWrapper);
         }
       }
