@@ -343,14 +343,8 @@ class PostRepository
      *     description?: string | null
      * } $updates
      */
-    public static function updatePostVariant(Post $post, Language $language, array $updates) : PostVariant
+    public static function updatePostVariant(PostVariant $variant, array $updates) : PostVariant
     {
-
-        $variant = self::getPostVariantByPostIdAndLanguageId($post->id, $language->id);
-
-        if (! $variant) {
-            throw new TrustedException('Variant not found', TrustedException::ERROR_UNPROCESSABLE);
-        }
 
         if (array_key_exists('slug', $updates)) {
             $variant->slug = $updates['slug'];
@@ -363,7 +357,9 @@ class PostRepository
 
             if ($status === PostStatusEnum::PUBLISHED) {
 
-                if ($post->published_at === null) {
+                $post = $variant->post;
+
+                if ($post && $post->published_at === null) {
                     $post->published_at = now();
                     $post->save();
                 }

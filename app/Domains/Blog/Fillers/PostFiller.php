@@ -84,13 +84,17 @@ class PostFiller implements FillerInterface
                 'published_at' => now()->getTimestamp(),
             ]);
 
-            PostRepository::updatePostVariant($post, $language, [
-                'slug' => $row['slug'],
-                'status' => PostStatusEnum::PUBLISHED,
-                'content' => $content,
-                'title' => $row['title'],
-                'description' => $row['description'] ?? '',
-            ]);
+            $variant = PostRepository::getPostVariantByPostIdAndLanguageId($post->id, $language->id);
+
+            if ($variant) {
+                PostRepository::updatePostVariant($variant, [
+                    'slug' => $row['slug'],
+                    'status' => PostStatusEnum::PUBLISHED,
+                    'content' => $content,
+                    'title' => $row['title'],
+                    'description' => $row['description'] ?? '',
+                ]);
+            }
 
             if (! $isPage) {
 

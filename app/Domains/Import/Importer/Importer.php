@@ -58,17 +58,21 @@ class Importer
 
                 $content = $this->importImagesOfContent($importingVariant->content);
 
-                PostRepository::updatePostVariant(
-                    $post,
-                    $primaryLanguage,
-                    [
-                        'slug' => $importingVariant->slug,
-                        'title' => $importingVariant->title,
-                        'description' => $importingVariant->description,
-                        'content' => $content,
-                        'status' => $importingVariant->status
-                    ]
+                $variant = PostRepository::getPostVariantByPostIdAndLanguageId(
+                    $post->id,
+                    $primaryLanguage->id
                 );
+
+                if (!$variant)
+                    continue;
+
+                PostRepository::updatePostVariant($variant, [
+                    'slug' => $importingVariant->slug,
+                    'title' => $importingVariant->title,
+                    'description' => $importingVariant->description,
+                    'content' => $content,
+                    'status' => $importingVariant->status
+                ]);
 
             }
 

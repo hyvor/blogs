@@ -263,7 +263,7 @@ class ConsolePostController extends Controller
                 }
             }
 
-            PostRepository::updatePostVariant($post, $language, $variantUpdates);
+            PostRepository::updatePostVariant($variant, $variantUpdates);
         }
 
         $variant->refresh();
