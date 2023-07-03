@@ -307,8 +307,9 @@ class SlashPlugin {
         const wrapPos = this.slashView.offsetParent.getBoundingClientRect();
         const viewPos = view.dom.getBoundingClientRect();
         const spaceBelow = wrapPos.bottom - posTop;
+        const spaceAbove = posTop - wrapPos.top;
 
-        if (this.slashView.offsetHeight > spaceBelow) {
+        if (spaceAbove > spaceBelow) {
             this.slashView.style.bottom = spaceBelow + "px";
             this.slashView.style.top = "auto";
             this.slashView.classList.add("top");
