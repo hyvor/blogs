@@ -7,9 +7,8 @@ import { ArrowDown, ArrowUp, CardHeading, Trash } from "react-bootstrap-icons";
 export default function TableMenu({ rowIdx, rowFocused, addRowBeforeWrapper, addRowAfterWrapper, makeRowHeaderWrapper, clearContentWrapper, deleteRowWrapper }: 
     { rowIdx: number, rowFocused: boolean,addRowBeforeWrapper: () => void, addRowAfterWrapper: () => void, 
         makeRowHeaderWrapper: () => void ,clearContentWrapper: () => void, deleteRowWrapper: () => void}) {
+          
   const [showMenu, setShowMenu] = useState(false);
-
-  console.log(showMenu);
 
   const toggleMenu = (event: React.MouseEvent<HTMLButtonElement, MouseEvent>) => {
     setShowMenu(!showMenu);

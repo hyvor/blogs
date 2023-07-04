@@ -37,6 +37,7 @@ export default class Table implements NodeView{
 
     middle: HTMLElement;
     topSettings: HTMLElement;
+    columnSettings: HTMLElement;
     bottomSettings: HTMLElement;
     leftSideSettings: HTMLElement;
     rightSideSettings: HTMLElement;
@@ -57,6 +58,11 @@ export default class Table implements NodeView{
         this.topSettings = document.createElement("div");
         this.topSettings.setAttribute("contenteditable", "false");
         this.topSettings.className = "table-top-settings";
+
+        this.columnSettings = document.createElement("div");
+        this.columnSettings.setAttribute("contenteditable", "false");
+        this.columnSettings.className = "table-column-settings";
+        this.topSettings.appendChild(this.columnSettings);
 
         this.rightSideSettings = document.createElement("div");
         this.rightSideSettings.className = "table-right-side-settings";
@@ -122,22 +128,6 @@ export default class Table implements NodeView{
 
     createInside() {
         const _self = this;
-
-        const toggleRowHeader = document.createElement("button");
-        toggleRowHeader.className = "button add-header-row-button";
-        toggleRowHeader.innerText = "Toggle Row Header";
-        toggleRowHeader.onclick = function () {
-            toggleHeaderRow(_self.view.state, _self.view.dispatch);
-        };
-        this.topSettings.appendChild(toggleRowHeader);
-
-        const toggleColumnHeader = document.createElement("button");
-        toggleColumnHeader.className = "button add-header-column-button";
-        toggleColumnHeader.innerText = "Toggle Column Header";
-        toggleColumnHeader.onclick = function () {
-            toggleHeaderColumn(_self.view.state, _self.view.dispatch);
-        };
-        this.topSettings.appendChild(toggleColumnHeader);
 
         const deleteButton = document.createElement("button");
         deleteButton.setAttribute("id", "delete-table-button");
@@ -215,6 +205,9 @@ export default class Table implements NodeView{
         return grandParent === row;
     }
 
+    isColumnFocused(column: ProsemirrorNode, columnIdx: number) {
+    }
+
     createMenuItems() {
         const _self = this;
         const table = this.node;
@@ -224,7 +217,13 @@ export default class Table implements NodeView{
         while (this.leftSideSettings.firstChild) {
             this.leftSideSettings.removeChild(this.leftSideSettings.firstChild);
         }
-      
+
+        // Clear the top settings
+        while (this.columnSettings.firstChild) {
+            this.columnSettings.removeChild(this.columnSettings.firstChild);
+        }
+
+        // Create row menu items
         for (let rowIdx = 0; rowIdx < rows; rowIdx++) {
           const tableMenuWrapper = document.createElement("div");
           _self.leftSideSettings.appendChild(tableMenuWrapper);
@@ -238,6 +237,22 @@ export default class Table implements NodeView{
                 deleteRowWrapper={_self.deleteRowWrapper}
                 clearContentWrapper={_self.clearContentWrapper}
             />, tableMenuWrapper);
+        }
+
+        // Create column menu items
+        for (let colIdx = 0; colIdx < table.firstChild!.childCount; colIdx++) {
+            const tableMenuWrapper = document.createElement("div");
+            _self.columnSettings.appendChild(tableMenuWrapper);
+            ReactDOM.render(
+                <TableMenu 
+                    rowIdx={colIdx}
+                    rowFocused={_self.isColumnFocused(table.firstChild!.child(colIdx), colIdx)}
+                    addRowBeforeWrapper={_self.addRowBeforeWrapper}
+                    addRowAfterWrapper={_self.addRowAfterWrapper}
+                    makeRowHeaderWrapper={_self.makeRowHeaderWrapper}
+                    deleteRowWrapper={_self.deleteRowWrapper}
+                    clearContentWrapper={_self.clearContentWrapper}
+                />, tableMenuWrapper);
         }
       }
 }
