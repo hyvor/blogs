@@ -8,11 +8,12 @@ Are you ready to publish your newly built theme to our [themes list](/themes)? T
 
 All the following requirements should be met in order to publish a theme to our official themes list.
 
-* Has at least these templates
+* These files should be added:
   * index.twig
   * post.twig
   * tag.twig
   * author.twig
+  * 404.twig
 * Supports multi-languages (has a language switcher)
 * Supports both light and dark color modes
 * Respects the blog's color mode settings
