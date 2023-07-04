@@ -4,9 +4,9 @@ import React from "react";
 import { useState } from "react";
 import { ArrowDown, ArrowLeft, ArrowRight, ArrowUp, CardHeading, Trash } from "react-bootstrap-icons";
 
-export default function TableMenu({ colunmMenu, rowFocused, addRowBeforeWrapper: addBefore, addRowAfterWrapper: addAfter, makeRowHeaderWrapper: makeHeader, clearContentWrapper, deleteRowWrapper }: 
-    { colunmMenu: boolean, rowFocused: boolean,addRowBeforeWrapper: () => void, addRowAfterWrapper: () => void, 
-        makeRowHeaderWrapper: () => void ,clearContentWrapper: () => void, deleteRowWrapper: () => void}) {
+export default function TableMenu({ colunmMenu, focused, addBefore, addAfter, makeHeader, clearContent, deleteWrapper }: 
+    { colunmMenu: boolean, focused: boolean,addBefore: () => void, addAfter: () => void, 
+        makeHeader: () => void ,clearContent: () => void, deleteWrapper: () => void}) {
 
   const [showMenu, setShowMenu] = useState(false);
 
@@ -24,7 +24,7 @@ export default function TableMenu({ colunmMenu, rowFocused, addRowBeforeWrapper:
     <div className="table-menu">
       <button className="icon-button toggle-table-menu-button" 
       onClick={toggleMenu}
-      disabled={!rowFocused}
+      disabled={!focused}
       >
         ...
       </button>
@@ -43,11 +43,11 @@ export default function TableMenu({ colunmMenu, rowFocused, addRowBeforeWrapper:
             {colunmMenu ? <ArrowRight className="table-menu-icon"/> : <ArrowDown className="table-menu-icon"/>}
             {colunmMenu ? 'Insert After' : 'Insert Below'}
           </button>
-          <button className="action-button" onClick={deleteRowWrapper}>
+          <button className="action-button" onClick={deleteWrapper}>
             <Trash className="table-menu-icon"/>
             {colunmMenu ? 'Delete column' : 'Delete row'}
           </button>
-          <button className="action-button" onClick={clearContentWrapper}>
+          <button className="action-button" onClick={clearContent}>
             Clear content
           </button>
         </div>

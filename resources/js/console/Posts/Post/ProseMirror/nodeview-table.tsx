@@ -112,13 +112,33 @@ export default class Table implements NodeView{
         this.createMenuItems();
     };
 
+    addColumnBeforeWrapper = () => {
+        addColumnBefore(this.view.state, this.view.dispatch);
+        this.createMenuItems();
+    };
+
+    addColumnAfterWrapper = () => {
+        addColumnAfter(this.view.state, this.view.dispatch);
+        this.createMenuItems();
+    };
+
     makeRowHeaderWrapper = () => {
         toggleHeaderRow(this.view.state, this.view.dispatch);
         this.createMenuItems();
     };
 
+    makeColumnHeaderWrapper = () => {
+        toggleHeaderColumn(this.view.state, this.view.dispatch);
+        this.createMenuItems();
+    };
+
     deleteRowWrapper = () => {
         deleteRow(this.view.state, this.view.dispatch);
+        this.createMenuItems();
+    };
+
+    deleteColumnWrapper = () => {
+        deleteColumn(this.view.state, this.view.dispatch);
         this.createMenuItems();
     };
 
@@ -244,13 +264,12 @@ export default class Table implements NodeView{
             ReactDOM.render(
             <TableMenu 
                 colunmMenu={false}
-                rowIdx={rowIdx}
-                rowFocused={_self.isRowFocused(table.content.child(rowIdx))}
-                addRowBeforeWrapper={_self.addRowBeforeWrapper}
-                addRowAfterWrapper={_self.addRowAfterWrapper}
-                makeRowHeaderWrapper={_self.makeRowHeaderWrapper}
-                deleteRowWrapper={_self.deleteRowWrapper}
-                clearContentWrapper={_self.clearContentWrapper}
+                focused={_self.isRowFocused(table.child(rowIdx))}
+                addBefore={_self.addRowBeforeWrapper}
+                addAfter={_self.addRowAfterWrapper}
+                makeHeader={_self.makeRowHeaderWrapper}
+                clearContent={_self.clearContentWrapper}
+                deleteWrapper={_self.deleteRowWrapper}
             />, tableMenuWrapper);
         }
 
@@ -261,13 +280,12 @@ export default class Table implements NodeView{
             ReactDOM.render(
                 <TableMenu 
                     colunmMenu={true}
-                    rowIdx={colIdx}
-                    rowFocused={_self.isColumnFocused(colIdx)}
-                    addRowBeforeWrapper={_self.addRowBeforeWrapper}
-                    addRowAfterWrapper={_self.addRowAfterWrapper}
-                    makeRowHeaderWrapper={_self.makeRowHeaderWrapper}
-                    deleteRowWrapper={_self.deleteRowWrapper}
-                    clearContentWrapper={_self.clearContentWrapper}
+                    focused={_self.isColumnFocused(colIdx)}
+                    addBefore={_self.addColumnBeforeWrapper}
+                    addAfter={_self.addColumnAfterWrapper}
+                    makeHeader={_self.makeColumnHeaderWrapper}
+                    clearContent={_self.clearContentWrapper}
+                    deleteWrapper={_self.deleteColumnWrapper}
                 />, tableMenuWrapper);
         }
       }
