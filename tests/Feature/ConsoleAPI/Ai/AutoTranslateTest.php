@@ -16,6 +16,7 @@ it('translates', function() {
             'translations' => [
                 ['text' => 'Bonjour le monde'],
                 ['text' => 'Bienvenue sur HYVOR'],
+                ['text' => 'bienvenue a'],
                 ['text' => '<p>tester ce système</p>']
             ]
         ]),
@@ -29,11 +30,13 @@ it('translates', function() {
         'target_lang' => 'FR',
         'content' => PostContentGenerator::generateParagraph('Testing this system'),
         'title' => 'Hello World',
-        'description' => 'Welcome to HYVOR'
+        'description' => 'Welcome to HYVOR',
+        'slug' => 'welcome'
     ])
         ->assertOk()
         ->assertJsonPath('title', 'Bonjour le monde')
         ->assertJsonPath('description', 'Bienvenue sur HYVOR')
+        ->assertJsonPath('slug', 'bienvenue-a')
         ->assertJsonPath('content', PostContentGenerator::generateParagraph('tester ce système'));
 
     $autoTranslation = AutoTranslation::where('blog_id', $blog->id)->first();
@@ -50,6 +53,7 @@ it('translates with code block', function() {
     Http::fake([
         'https://api.deepl.com/v2/translate' => Http::response([
             'translations' => [
+                ['text' => ''],
                 ['text' => ''],
                 ['text' => ''],
                 ['text' => '<p>Bonjour</p><pre data-language="php" data-annotations="h=1" data-name="index.php"><code>0</code></pre>']
@@ -100,6 +104,7 @@ it('translates with code block with HTML', function() {
     Http::fake([
         'https://api.deepl.com/v2/translate' => Http::response([
             'translations' => [
+                ['text' => ''],
                 ['text' => ''],
                 ['text' => ''],
                 ['text' => '<pre data-language="php" data-annotations="h=1" data-name="index.php"><code>&lt;html&gt;&lt;/html&gt;</code></pre>']

@@ -23,12 +23,13 @@ class DeepLPostTranslator
         private string $content,
         private string $title,
         private string $description,
+        private string $slug,
         private DeepLSourceLangEnum $sourceLang,
         private DeepLTargetLangEnum $targetLang
     ) {}
 
     /**
-     * @return array{title: string, description: string, content: string, chars: int}
+     * @return array{title: string, description: string, content: string, slug: string, chars: int}
      * @throws DeepLHtmlProcessingException
      * @throws DeepLApiException
      */
@@ -63,8 +64,14 @@ class DeepLPostTranslator
         [
             $translatedTitle,
             $translatedDescription,
+            $translatedSlug,
             $translatedHtml,
-        ] = DeepLService::translate([$this->title, $this->description, $html], $this->sourceLang, $this->targetLang);
+        ] = DeepLService::translate([
+            $this->title,
+            $this->description,
+            $this->slug,
+            $html
+        ], $this->sourceLang, $this->targetLang);
 
         // replace code blocks
         $translatedHtml = preg_replace_callback('/<pre(.*?)><code>(.*?)<\/code><\/pre>/s', function($matches) {
@@ -80,6 +87,7 @@ class DeepLPostTranslator
         return [
             'title' => $translatedTitle,
             'description' => $translatedDescription,
+            'slug' => $translatedSlug,
             'content' => $content,
             'chars' => $chars,
         ];

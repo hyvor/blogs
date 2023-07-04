@@ -3,6 +3,7 @@
 namespace Tests\Feature\ConsoleAPI\Posts;
 
 use App\Data\Enums\PostStatusEnum;
+use App\Domains\Language\LanguageRepository;
 use App\Domains\Post\Events\PostVariantUpdatedEvent;
 use App\Models\Post;
 use App\Models\PostVariant;
@@ -264,5 +265,26 @@ it('checks for duplicates when updating slug', function() {
     ])
         ->assertStatus(422)
         ->assertSee('Slug has already been taken');
+
+});
+
+it('updates to null', function() {
+
+    $blog = blogWithAccessLanguageAndRoutes();
+    $language1 = LanguageRepository::getPrimaryLanguage($blog);
+    $post = addPost($blog, [], [
+        'language_id' => $language1->id,
+        'title' => 'Title',
+        'description' => 'test'
+    ]);
+
+    consoleApi($blog, 'PATCH', "/post/$post->id/variant", [
+        'language_id' => $language1->id,
+        'title' => null,
+        'description' => null,
+    ])
+        ->assertOk()
+        ->assertJsonPath('title', null)
+        ->assertJsonPath('description', null);
 
 });

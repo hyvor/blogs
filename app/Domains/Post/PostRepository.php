@@ -395,12 +395,14 @@ class PostRepository
 
         // title
         if (array_key_exists('title', $updates)) {
-            $variant->title = mb_substr($updates['title'] ?? '', 0, 255);
+            $variant->title = $updates['title'] ? mb_substr($updates['title'] ?? '', 0, 255) : null;
         }
 
         // description
         if (array_key_exists('description', $updates)) {
-            $variant->description = mb_substr($updates['description'] ?? '', 0, 350);
+            $variant->description = $updates['description'] ?
+                mb_substr($updates['description'], 0, 350) :
+                null;
         }
 
         $original = new PostVariant((array) $variant->getOriginal());
