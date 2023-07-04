@@ -1,4 +1,4 @@
-<?php
+<?php declare(strict_types=1);
 
 namespace App\Domains\Delivery;
 
@@ -19,6 +19,7 @@ use App\Domains\Delivery\TemplateRenderer\TemplateRenderer;
 use App\Domains\Language\LanguageRepository;
 use App\Domains\Redirect\RedirectRepository;
 use App\Domains\Theme\ThemeFilesRepository;
+use App\Exceptions\SafetyException;
 use App\Models\Blog;
 use App\Models\Language;
 use Exception;
@@ -55,8 +56,11 @@ class PathMatcher
         ]);
     }
 
-    // calls functions with match check after each
-    private function callFuncs(array $funcs)
+    /**
+     * calls functions with match check after each
+     * @param string[] $funcs
+     */
+    private function callFuncs(array $funcs) : void
     {
         foreach ($funcs as $func) {
             $this->{$func}();
@@ -69,7 +73,7 @@ class PathMatcher
     /**
      * Matches for redirects
      */
-    private function matchRedirect()
+    private function matchRedirect() : void
     {
         $redirect = RedirectRepository::findRedirectForPath($this->blog, $this->path);
 
@@ -89,7 +93,7 @@ class PathMatcher
      * If there's no match, nothing happens
      * The PathMatcher moves to the next step
      */
-    private function matchDefaultRoutes()
+    private function matchDefaultRoutes() : void
     {
         $routeMatcher = new RouteMatcher($this->path);
 
@@ -121,7 +125,9 @@ class PathMatcher
                 'sitemap-pages' => SitemapPagesProcessor::class,
                 'sitemap-posts' => SitemapPostsProcessor::class,
 
-                'robots.txt' => RobotsTxtProcessor::class
+                'robots.txt' => RobotsTxtProcessor::class,
+
+                default => throw new SafetyException('Route name not found'),
             };
 
             $responseObject = (new $processor($this, $matchedRoute))->getResponseObject();
@@ -135,7 +141,7 @@ class PathMatcher
     /**
      * Set the language based on the path prefix
      */
-    private function setLanguage()
+    private function setLanguage() : void
     {
 
         // Get fr from /fr/hello-world
@@ -165,13 +171,16 @@ class PathMatcher
             $lang = LanguageRepository::getPrimaryLanguage($this->blog);
         }
 
+        if (!$lang)
+            throw new SafetyException('Language not found');
+
         $this->language = $lang;
     }
 
     /**
      * Match non-post/page routes
      */
-    private function matchNonPostRoutes()
+    private function matchNonPostRoutes() : void
     {
         $nonPostRoutes = $this->blog->routes->filter(function ($route) {
             return $route->name !== 'post' && $route->name !== 'page';
@@ -210,7 +219,7 @@ class PathMatcher
      * Post and page routes can conflict
      * Therefore match both explicitly
      */
-    private function matchPostRoutes()
+    private function matchPostRoutes() : void
     {
         $postRoutes = $this->blog->routes->filter(function ($route) {
             return $route->name === 'post' || $route->name === 'page';
@@ -229,7 +238,7 @@ class PathMatcher
         }
     }
 
-    private function matchTemplateRoutes()
+    private function matchTemplateRoutes() : void
     {
 
         $name = 'route-' . trim($this->path, '/') . '.twig';
@@ -257,6 +266,9 @@ class PathMatcher
         if (! $matchedRoute) {
             return false;
         }
+
+        if (!$matchedRoute->route)
+            return false;
 
         $filter = $matchedRoute->route->posts_filter === null ?
             null :
@@ -296,23 +308,23 @@ class PathMatcher
         return false;
     }
 
-    private function setMatched(DeliveryAPIResponseObject $responseObject)
+    private function setMatched(DeliveryAPIResponseObject $responseObject) : void
     {
         $this->matched = true;
         $this->responseObject = $responseObject;
     }
 
-    private function matched()
+    private function matched() : bool
     {
         return $this->matched;
     }
 
-    public function setCustomLanguage(Language $language)
+    public function setCustomLanguage(Language $language) : void
     {
         $this->language = $language;
     }
 
-    public function getResponseObject()
+    public function getResponseObject() : DeliveryAPIResponseObject
     {
         if ($this->matched()) {
             return $this->responseObject;
