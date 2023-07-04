@@ -6,10 +6,10 @@ import NavLink from '../ReusableComponents/NavLink';
 import userBlogsLogic from '../logic/userBlogsLogic';
 import {
     BoxArrowUpRight,
-    Chat, Coin,
+    Chat, Coin, Discord,
     Exclamation,
     Files, Gear,
-    House, Megaphone,
+    House, InfoCircleFill, Megaphone,
     Palette,
     Pencil, Plugin,
 } from 'react-bootstrap-icons';
@@ -129,14 +129,28 @@ function LeftInner({subdomain} : {subdomain: string}) {
         </div>
 
         <div id="left-bottom">
-            <div className="changes-item box" onClick={() => {
-                window.postMessage({
-                    target: 'FeaturebaseWidget',
-                    data: { action: 'toggleWidget' },
-                })
-            }}>
-                <Megaphone /> Changes & Feedback <span id="fb-update-badge"></span>
-            </div>
+
+            <a className="bottom-item" href="https://discord.gg/2WRJxQB" target="_blank">
+                <span className="icon discord"><Discord /></span>Join our Discord
+            </a>
+
+            <a className="bottom-item" href="/docs" target="_blank">
+                <span className="icon"><InfoCircleFill /></span>Docs
+            </a>
+
+
+            <a
+                className="bottom-item"
+                onClick={() => {
+                    window.postMessage({
+                        target: 'FeaturebaseWidget',
+                        data: { action: 'toggleWidget' },
+                    })
+                }}
+            >
+                <span className="icon"><Megaphone /></span>Changelog <span id="fb-update-badge"></span>
+            </a>
+
         </div>
 
     </div>
