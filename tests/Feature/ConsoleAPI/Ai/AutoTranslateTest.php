@@ -94,6 +94,54 @@ it('translates with code block', function() {
 
 });
 
+// #190
+it('translates with code block with HTML', function() {
+
+    Http::fake([
+        'https://api.deepl.com/v2/translate' => Http::response([
+            'translations' => [
+                ['text' => ''],
+                ['text' => ''],
+                ['text' => '<pre data-language="php" data-annotations="h=1" data-name="index.php"><code>&lt;html&gt;&lt;/html&gt;</code></pre>']
+            ]
+        ]),
+    ]);
+
+    $blog = blogWithAccess();
+    createSubscription($blog, SubscriptionPlanEnum::GROWTH);
+
+    $codeBlock = [
+        'type' => 'code_block',
+        'attrs' => [
+            'language' => 'php',
+            'name' => 'index.php',
+            'annotations' => 'h=1',
+        ],
+        'content' => [['type' => 'text', 'text' => '<html></html>']]
+    ];
+
+    consoleApi($blog, 'post', '/ai/translate', [
+        'source_lang' => 'EN',
+        'target_lang' => 'FR',
+        'content' => json_encode([
+            'type' => 'doc',
+            'content' => [
+                $codeBlock
+            ]
+        ]),
+        'title' => ''
+    ])
+        ->assertOk()
+        ->assertJsonPath('title', '')
+        ->assertJsonPath('content', json_encode([
+            'type' => 'doc',
+            'content' => [
+                $codeBlock
+            ]
+        ]));
+
+});
+
 it('throws API error', function() {
 
     Http::fake([

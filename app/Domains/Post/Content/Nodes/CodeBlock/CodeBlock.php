@@ -40,6 +40,10 @@ class CodeBlock extends NodeType
 
         $code = $node->allText();
 
+        if ($isPlain) {
+            $code = htmlspecialchars($code, ENT_QUOTES, 'UTF-8');
+        }
+
         $language = strval($node->attr('language') ?? 'plain');
         $annotations = strval($node->attr('annotations') ?? '');
         $fileName = $node->attr('name') ?? '';
