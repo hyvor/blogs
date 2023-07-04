@@ -29,6 +29,7 @@ class BlogObject
     public ?string $logo_url;
 
     public ?string $cover_url;
+    public ?string $icon_url;
 
     // meta
     public bool $embeddable;
@@ -95,6 +96,7 @@ class BlogObject
 
         $this->logo_url = $meta->logo_url;
         $this->cover_url = $meta->cover_url;
+        $this->icon_url = $meta->icon_url;
 
         $this->embeddable = $meta->embeddable;
         $this->embedding_domains = $meta->embedding_domains;

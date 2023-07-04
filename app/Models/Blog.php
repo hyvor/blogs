@@ -41,6 +41,7 @@ class Blog extends Model
 
         $definer->add('logo_url')->default(null);
         $definer->add('cover_url')->default(null);
+        $definer->add('icon_url')->default(null);
 
         $definer->add('social_facebook')->default(null);
         $definer->add('social_twitter')->default(null);

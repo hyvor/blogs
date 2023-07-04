@@ -71,6 +71,7 @@ export interface Blog {
 
     logo_url: string | null,
     cover_url: string | null,
+    icon_url: string | null,
 
     social_facebook: string | null,
     social_twitter: string | null,

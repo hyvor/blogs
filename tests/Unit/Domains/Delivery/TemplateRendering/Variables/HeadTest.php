@@ -142,6 +142,28 @@ it('adds nofollow', function () {
 });
 
 it('adds favicon', function() {
+    $blog = blogWithLanguageAndRoutes();
+    $url = 'https://exmaple.com/icon.png';
+    $blog->setMeta('icon_url', $url);
+
+    $content = '{{ _head | template }}';
+
+    ThemeFilesRepository::createOrUpdateFile(
+        $blog,
+        ThemeFileFolderEnum::TEMPLATES,
+        'index.twig',
+        $content,
+    );
+
+    $pathMatcher = new PathMatcher($blog, '/');
+    $responseObject = $pathMatcher->getResponseObject();
+
+    $content = $responseObject->content;
+
+    expect($content)->toContain("<link rel=\"shortcut icon\" href=\"$url\" />");
+});
+
+it('adds favicon from logo when icon is not set', function() {
 
     $blog = blogWithLanguageAndRoutes();
     $url = 'https://exmaple.com/logo.png';
@@ -161,6 +183,6 @@ it('adds favicon', function() {
 
     $content = $responseObject->content;
 
-    expect($content)->toContain("<link rel=\"shortcut icon\" href=\"$url\">");
+    expect($content)->toContain("<link rel=\"shortcut icon\" href=\"$url\" />");
 
 });
