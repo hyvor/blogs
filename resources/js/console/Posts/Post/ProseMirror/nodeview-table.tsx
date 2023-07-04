@@ -122,7 +122,7 @@ export default class Table implements NodeView{
         this.createMenuItems();
     };
 
-    clearContentWrapper = () => {
+    clearContentWrapper = (roxIdx: number) => {
         this.createMenuItems();
     }
 
@@ -205,7 +205,16 @@ export default class Table implements NodeView{
         return grandParent === row;
     }
 
-    isColumnFocused(column: ProsemirrorNode, columnIdx: number) {
+    isColumnFocused(columnIndex: number) {
+        const selection = this.view.state.selection;
+        const tableCell = selection.$from.node(-1);
+        const tableRow = selection.$from.node(-2);
+        for (let i = 0; i < tableRow.childCount; i++) {
+            if (tableRow.child(i) === tableCell && i === columnIndex) {
+                return true;
+            }
+        }
+        return false;
     }
 
     createMenuItems() {
@@ -246,7 +255,7 @@ export default class Table implements NodeView{
             ReactDOM.render(
                 <TableMenu 
                     rowIdx={colIdx}
-                    rowFocused={_self.isColumnFocused(table.firstChild!.child(colIdx), colIdx)}
+                    rowFocused={_self.isColumnFocused(colIdx)}
                     addRowBeforeWrapper={_self.addRowBeforeWrapper}
                     addRowAfterWrapper={_self.addRowAfterWrapper}
                     makeRowHeaderWrapper={_self.makeRowHeaderWrapper}

@@ -7,7 +7,7 @@ import { ArrowDown, ArrowUp, CardHeading, Trash } from "react-bootstrap-icons";
 export default function TableMenu({ rowIdx, rowFocused, addRowBeforeWrapper, addRowAfterWrapper, makeRowHeaderWrapper, clearContentWrapper, deleteRowWrapper }: 
     { rowIdx: number, rowFocused: boolean,addRowBeforeWrapper: () => void, addRowAfterWrapper: () => void, 
         makeRowHeaderWrapper: () => void ,clearContentWrapper: () => void, deleteRowWrapper: () => void}) {
-          
+
   const [showMenu, setShowMenu] = useState(false);
 
   const toggleMenu = (event: React.MouseEvent<HTMLButtonElement, MouseEvent>) => {
@@ -30,7 +30,7 @@ export default function TableMenu({ rowIdx, rowFocused, addRowBeforeWrapper, add
       </button>
       {showMenu && (
         <div className="table-menu-options">
-          <button onClick={handleClose} className="icon-button close-table-menu">X</button>
+          <button onClick={handleClose} className="icon-button close-table-menu">x</button>
           <button className="action-button" onClick={makeRowHeaderWrapper}>
             <CardHeading className="table-menu-icon"/>
             Header Row
