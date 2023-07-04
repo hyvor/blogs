@@ -18,7 +18,11 @@ class RedirectIfNotOnSubdomainMiddleware
 
         if ($blog->hosting_at !== BlogHostingAtEnum::SUBDOMAIN) {
             $path = $request->path();
-            return redirect()->to(PermalinkRepository::getBaseUrl($blog) . '/' . $path);
+            $path = ltrim($path, '/');
+            return redirect()->to(
+                PermalinkRepository::getBaseUrl($blog) .
+                ($path ? '/' . $path : '')
+            );
         }
 
         return $next($request);

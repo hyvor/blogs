@@ -55,3 +55,17 @@ it('redirects to other domain if not hosted on subdomain', function() {
         ->assertRedirect("https://hyvorblogs.com/any");
 
 });
+
+// bug #197
+it('redirects to homepage correctly', function() {
+
+    $blog = blog([
+        'hosting_at' => 'domain',
+        'hosting_domain' => 'hyvorblogs.com'
+    ]);
+
+    $this
+        ->get("http://$blog->subdomain.hyvorblogs.io")
+        ->assertRedirect("https://hyvorblogs.com");
+
+});
