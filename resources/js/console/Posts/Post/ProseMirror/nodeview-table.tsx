@@ -208,7 +208,12 @@ export default class Table implements NodeView{
     isColumnFocused(columnIndex: number) {
         const selection = this.view.state.selection;
         const tableCell = selection.$from.node(-1);
-        const tableRow = selection.$from.node(-2);
+        let tableRow = selection.$from.node(-2);
+        let parentIndex = -3;
+        if (tableRow.type.name !== 'table_row') {
+            tableRow = selection.$from.node(parentIndex);
+            parentIndex--;
+        }
         for (let i = 0; i < tableRow.childCount; i++) {
             if (tableRow.child(i) === tableCell && i === columnIndex) {
                 return true;
@@ -238,6 +243,7 @@ export default class Table implements NodeView{
           _self.leftSideSettings.appendChild(tableMenuWrapper);
             ReactDOM.render(
             <TableMenu 
+                colunmMenu={false}
                 rowIdx={rowIdx}
                 rowFocused={_self.isRowFocused(table.content.child(rowIdx))}
                 addRowBeforeWrapper={_self.addRowBeforeWrapper}
@@ -254,6 +260,7 @@ export default class Table implements NodeView{
             _self.columnSettings.appendChild(tableMenuWrapper);
             ReactDOM.render(
                 <TableMenu 
+                    colunmMenu={true}
                     rowIdx={colIdx}
                     rowFocused={_self.isColumnFocused(colIdx)}
                     addRowBeforeWrapper={_self.addRowBeforeWrapper}
