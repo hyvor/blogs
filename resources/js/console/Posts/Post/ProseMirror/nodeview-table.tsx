@@ -93,7 +93,14 @@ export default class Table implements NodeView{
         
         this.addRowBeforeWrapper = this.addRowBeforeWrapper.bind(this);
         this.addRowAfterWrapper = this.addRowAfterWrapper.bind(this);
-        this.clearContentWrapper = this.clearContentWrapper.bind(this);
+        this.addColumnBeforeWrapper = this.addColumnBeforeWrapper.bind(this);
+        this.addColumnAfterWrapper = this.addColumnAfterWrapper.bind(this);
+        this.makeRowHeaderWrapper = this.makeRowHeaderWrapper.bind(this);
+        this.makeColumnHeaderWrapper = this.makeColumnHeaderWrapper.bind(this);
+        this.deleteRowWrapper = this.deleteRowWrapper.bind(this);
+        this.deleteColumnWrapper = this.deleteColumnWrapper.bind(this);
+        this.clearRowContentWrapper = this.clearRowContentWrapper.bind(this);
+        this.clearColumnContentWrapper = this.clearColumnContentWrapper.bind(this);
 
         this.view.dom.addEventListener('click', this.handleChange);
     }
@@ -142,7 +149,21 @@ export default class Table implements NodeView{
         this.createMenuItems();
     };
 
-    clearContentWrapper = (roxIdx: number) => {
+    clearRowContentWrapper = () => {
+        const selection = this.view.state.selection;
+        const row = selection.$from.node(-2);
+        const rowPos = selection.$from.before(-1);
+        const tr = this.view.state.tr;
+        row.forEach((cell, offset) => {
+            const cellContent = cell.content;
+            const cellPos = rowPos + offset + 1;
+            tr.insertText("", cellPos, cellPos + cellContent.size);
+        });
+        this.view.dispatch(tr);
+        this.createMenuItems();
+    }
+
+    clearColumnContentWrapper = (colIdx: number) => {
         this.createMenuItems();
     }
 
@@ -268,7 +289,7 @@ export default class Table implements NodeView{
                 addBefore={_self.addRowBeforeWrapper}
                 addAfter={_self.addRowAfterWrapper}
                 makeHeader={_self.makeRowHeaderWrapper}
-                clearContent={_self.clearContentWrapper}
+                clearContent={() => _self.clearRowContentWrapper(rowIdx)}
                 deleteWrapper={_self.deleteRowWrapper}
             />, tableMenuWrapper);
         }
@@ -284,7 +305,7 @@ export default class Table implements NodeView{
                     addBefore={_self.addColumnBeforeWrapper}
                     addAfter={_self.addColumnAfterWrapper}
                     makeHeader={_self.makeColumnHeaderWrapper}
-                    clearContent={_self.clearContentWrapper}
+                    clearContent={() => _self.clearColumnContentWrapper(colIdx)}
                     deleteWrapper={_self.deleteColumnWrapper}
                 />, tableMenuWrapper);
         }

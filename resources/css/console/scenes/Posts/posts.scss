@@ -149,8 +149,10 @@
 
         .table-column-settings {
             display: flex;
+            width: 100%;
             align-self: start;
             flex-direction: row;
+            justify-content: space-around;
         }
 
         .table-middle {

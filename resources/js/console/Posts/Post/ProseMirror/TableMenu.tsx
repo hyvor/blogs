@@ -5,7 +5,7 @@ import { useState } from "react";
 import { ArrowDown, ArrowLeft, ArrowRight, ArrowUp, CardHeading, Trash } from "react-bootstrap-icons";
 
 export default function TableMenu({ colunmMenu, focused, addBefore, addAfter, makeHeader, clearContent, deleteWrapper }: 
-    { colunmMenu: boolean, focused: boolean,addBefore: () => void, addAfter: () => void, 
+    { colunmMenu: boolean, focused: boolean, addBefore: () => void, addAfter: () => void, 
         makeHeader: () => void ,clearContent: () => void, deleteWrapper: () => void}) {
 
   const [showMenu, setShowMenu] = useState(false);
