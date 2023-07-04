@@ -5,6 +5,9 @@ namespace Tests\Feature\DeliveryApi;
 use App\Data\Enums\ApiKeysTypeEnum;
 use App\Data\Enums\ThemeFileFolderEnum;
 use App\Domains\Api\ApiKeysRepository;
+use App\Domains\Cache\CacheService;
+use App\Domains\Delivery\PostPreviewSecretEncryptor;
+use App\Domains\Language\LanguageRepository;
 use App\Domains\Theme\ThemeFilesRepository;
 use Illuminate\Testing\Fluent\AssertableJson;
 
@@ -37,4 +40,32 @@ it('calls the delivery API', function () {
                 ->where('cache_control', 'no-cache, private')
                 ->has('at')
         );
+});
+
+it('does not cache preview', function() {
+
+    $blog = blogWithLanguageAndRoutes();
+    $language = LanguageRepository::getPrimaryLanguage($blog);
+    $post = addPublishedPost($blog);
+    $id = PostPreviewSecretEncryptor::getPreviewSecret($post);
+
+    ThemeFilesRepository::createOrUpdateFile(
+        $blog,
+        ThemeFileFolderEnum::TEMPLATES,
+        'post.twig',
+        '{{ _post.id }}{{ _lang.code }}',
+    );
+
+    $key = ApiKeysRepository::create($blog, 'test', ApiKeysTypeEnum::DELIVERY);
+    $path = "/p/$id/$language->code";
+
+    $this->get("/api/delivery/v0/$blog->subdomain?api_key=$key->api_key&path=$path")
+        ->assertOk()
+        ->assertJsonPath('type', 'file')
+        ->assertJsonPath('cache', false)
+        ->assertJsonPath('content', base64_encode($post->id.$language->code));
+
+    $cache = (new CacheService())->blog($blog)->get($path);
+    expect($cache)->toBeNull();
+
 });

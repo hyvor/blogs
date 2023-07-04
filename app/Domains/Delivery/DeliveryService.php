@@ -44,7 +44,7 @@ class DeliveryService
         $matcher = new PathMatcher($blog, $path);
         $responseObject = $matcher->getResponseObject();
 
-        if ($shouldUserCache) {
+        if ($shouldUserCache && $responseObject->cache) {
             app(CacheService::class)->blog($blog)->set($path, $responseObject);
         }
 
