@@ -1,10 +1,10 @@
-<?php
+<?php declare(strict_types=1);
 
 namespace Tests\Unit\PostContent\Nodes;
 
 use App\Domains\Post\Content\PostContentService;
 
-test('json to HTML', function () {
+test('json to HTML with ID', function () {
     foreach (range(1, 6) as $i) {
         $content = "I am a h$i";
         $id = 'custom-id';
@@ -30,8 +30,51 @@ test('json to HTML', function () {
 
         $html = PostContentService::getHtml($json, blog());
 
-        expect($html)->toEqual("<h$i id=\"$id\">$content</h$i>");
+        expect($html)->toEqual("<h$i id=\"$id\"><a href=\"#$id\">$content</a></h$i>");
     }
+});
+
+it('does not add anchor when there is a link inside', function() {
+
+    foreach (range(1, 6) as $i) {
+        $content = "I am a h$i";
+        $id = 'custom-id';
+
+        $json = json_encode([
+            'type' => 'doc',
+            'content' => [
+                [
+                    'type' => 'heading',
+                    'attrs' => [
+                        'level' => $i,
+                        'id' => $id,
+                    ],
+                    'content' => [
+                        [
+                            'type' => 'text',
+                            'text' => $content,
+                            'marks' => [
+                                [
+                                    'type' => 'link',
+                                    'attrs' => [
+                                        'href' => 'https://example.com',
+                                    ]
+                                ]
+                            ]
+                        ],
+                    ],
+                ],
+            ],
+        ]);
+
+        $html = PostContentService::getHtml($json, blog());
+
+        expect($html)
+            ->toEqual(
+                "<h$i id=\"$id\"><a href=\"https://example.com\" target=\"_blank\" rel=\"noopener noreferrer\">$content</a></h$i>"
+            );
+    }
+
 });
 
 test('json to HTML without ID', function () {

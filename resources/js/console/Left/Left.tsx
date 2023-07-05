@@ -6,10 +6,10 @@ import NavLink from '../ReusableComponents/NavLink';
 import userBlogsLogic from '../logic/userBlogsLogic';
 import {
     BoxArrowUpRight,
-    Chat, Coin, Discord,
+    Coin, Discord,
     Exclamation,
     Files, Gear,
-    House, InfoCircleFill, Megaphone,
+    House, InfoCircle, Megaphone,
     Palette,
     Pencil, Plugin,
 } from 'react-bootstrap-icons';
@@ -135,7 +135,7 @@ function LeftInner({subdomain} : {subdomain: string}) {
             </a>
 
             <a className="bottom-item" href="/docs" target="_blank">
-                <span className="icon"><InfoCircleFill /></span>Docs
+                <span className="icon"><InfoCircle /></span>Docs
             </a>
 
 

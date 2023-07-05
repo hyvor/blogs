@@ -25,9 +25,14 @@ class Heading extends NodeType
 
         /** @var ?string $id */
         $id = $node->attr('id');
-        $id = $id ? " id=\"$id\"" : null;
+        $idAttr = $id ? " id=\"$id\"" : null;
 
-        return "<h$level$id>$children</h$level>";
+        // add anchor link if there is no link inside
+        if ($id && !preg_match('/<a\b[^>]*>.*<\/a>/', $children)) {
+            $children = "<a href=\"#$id\">$children</a>";
+        }
+
+        return "<h$level$idAttr>$children</h$level>";
 
     }
 
