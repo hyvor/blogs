@@ -160,8 +160,36 @@ export default class Table implements NodeView{
         this.createMenuItems();
     }
 
-    clearColumnContentWrapper = (colIdx: number) => {
+    clearColumnContentWrapper = () => {
         const selection = this.view.state.selection;
+        const tableCell = selection.$from.node(-1);
+        let tableRow = selection.$from.node(-2);
+        const table = selection.$from.node(-3);
+        let parentIndex = -2;
+        const tr = this.view.state.tr;
+        if (tableRow.type.name !== 'table_row') {
+            parentIndex--;
+            tableRow = selection.$from.node(parentIndex);
+        }
+        let currentColumn = 0;
+        // Get the column of the selected cell
+        for (let i = 0; i < tableRow.childCount; i++) {
+            if (tableRow.child(i) === tableCell) {
+                currentColumn = i;
+                break;
+            }
+        }
+        console.log(currentColumn);
+        for (let i = 0; i < table.childCount; i++) {
+            for (let j = 0; j < tableRow.childCount; j++) {
+                const cell = table.child(i).child(j);
+                if (j === currentColumn) {
+                    const cellPos = selection.$from.before(parentIndex) + tableRow.nodeSize + cell.nodeSize * i;
+                    tr.replaceWith(cellPos, cellPos + cell.nodeSize, this.schema.nodes.table_cell.createAndFill()!);
+                }
+            }
+        }
+        this.view.dispatch(tr);
         this.createMenuItems();
     }
 
@@ -314,7 +342,7 @@ export default class Table implements NodeView{
                     addBefore={_self.addColumnBeforeWrapper}
                     addAfter={_self.addColumnAfterWrapper}
                     makeHeader={_self.makeColumnHeaderWrapper}
-                    clearContent={() => _self.clearColumnContentWrapper(colIdx)}
+                    clearContent={_self.clearColumnContentWrapper}
                     deleteWrapper={_self.deleteColumnWrapper}
                 />, tableMenuWrapper);
         }
