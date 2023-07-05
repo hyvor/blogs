@@ -69,16 +69,21 @@
       }
 
       .toggle-table-menu-button {
+        height: 20px;
+        width: 40px;
+        justify-content: center;
+        align-items: center;
+        display: flex;
         border-radius: 5px;
         padding-left: 10px;
         padding-right: 10px;
-        border: none;
-        position: relative;
-        align-self: center;
-        justify-self: center;
         z-index: 0;
         cursor: pointer;
-        background-color: $color-grey;
+        background-color: $color-white;
+        border: solid 1px $color-grey;
+    }
+    .toggle-table-menu-button:hover {
+        background-color: $color-grey
     }
 
     .table-menu-options {

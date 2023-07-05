@@ -103,6 +103,7 @@ export default class Table implements NodeView{
         this.clearColumnContentWrapper = this.clearColumnContentWrapper.bind(this);
 
         this.view.dom.addEventListener('click', this.handleChange);
+        this.view.dom.addEventListener('keyup', this.handleChange);
     }
 
     handleChange = () => {
@@ -300,7 +301,7 @@ export default class Table implements NodeView{
                 addBefore={_self.addRowBeforeWrapper}
                 addAfter={_self.addRowAfterWrapper}
                 makeHeader={_self.makeRowHeaderWrapper}
-                clearContent={() => _self.clearRowContentWrapper(rowIdx)}
+                clearContent={_self.clearRowContentWrapper}
                 deleteWrapper={_self.deleteRowWrapper}
             />, tableMenuWrapper);
         }
