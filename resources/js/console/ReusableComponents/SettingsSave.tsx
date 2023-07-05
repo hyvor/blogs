@@ -81,7 +81,7 @@ export default function SettingsSave(
             {
                 status === 'loading' ?
                     <div>
-                        <Loader size={35} />
+                        <Loader />
                     </div> :
                     status === 'success' ?
                         <CheckCircle size={25} />

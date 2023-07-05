@@ -66,7 +66,7 @@ export function PopupFooterDoubleButton( {
             {
                 isLoading ?
                 <div className="footer-loader">
-                    <Loader size={20} />
+                    <Loader size="mini" />
                 </div> : null
             }
         </button>

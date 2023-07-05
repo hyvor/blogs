@@ -81,7 +81,7 @@ function Middle({ children, scene } : {children: ReactNode, scene: string}) {
         {
             loadAjax.status === 'loading' ?
                 <div className="posts-not-ready box">
-                    <Loader size={40} />
+                    <Loader />
                 </div>
             :
 

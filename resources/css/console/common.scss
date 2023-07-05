@@ -196,32 +196,31 @@ textarea.input {
 
 
 .global-loader {
-    text-align: center;
-    svg {
-        animation: lds-heart 1.2s infinite cubic-bezier(0.215, 0.61, 0.355, 1);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    .spinner {
+        width: 26px;
+        height: 26px;
+        border: 3px solid $color-accent;
+        border-bottom-color: transparent!important;
+        border-radius: 50%;
+        display: inline-block;
+        box-sizing: border-box;
+        animation: rotation 1s linear infinite;
+
+        @keyframes rotation {
+            0% {
+                transform: rotate(0deg);
+            }
+            100% {
+                transform: rotate(360deg);
+            }
+        }
     }
-    @keyframes lds-heart {
-        0% {
-          transform: scale(0.95);
-          opacity: 0.5;
-        }
-        5% {
-          transform: scale(1.1);
-        }
-        39% {
-          transform: scale(0.85);
-        }
-        45% {
-          transform: scale(1);
-        }
-        60% {
-          transform: scale(0.95);
-        }
-        100% {
-          transform: scale(0.9);
-          opacity: 0.9;
-        }
-      }
+    &.mini .spinner {
+        border-width: 2px;
+    }
 }
 
 .global-spinner {
