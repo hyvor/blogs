@@ -20,9 +20,9 @@ export default function TableMenu({ colunmMenu, focused, addBefore, addAfter, ma
   };
 
 
-  return (
+  return !focused ? (<div></div>) : (
     <div className="table-menu">
-      <button className="icon-button toggle-table-menu-button" 
+      <button className="toggle-table-menu-button" 
       onClick={toggleMenu}
       disabled={!focused}
       >

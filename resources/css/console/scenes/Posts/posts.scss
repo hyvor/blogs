@@ -69,11 +69,16 @@
       }
 
       .toggle-table-menu-button {
+        border-radius: 5px;
+        padding-left: 10px;
+        padding-right: 10px;
+        border: none;
         position: relative;
         align-self: center;
         justify-self: center;
         z-index: 0;
-        background-color: $color-accent-light;
+        cursor: pointer;
+        background-color: $color-grey;
     }
 
     .table-menu-options {
@@ -88,7 +93,7 @@
         z-index: 999;
         display: flex;
         flex-direction: column;
-        width: 200px;
+        width: 220px;
       }
 
       .close-table-menu {
@@ -144,7 +149,6 @@
             display: flex;
             flex-direction: row;
             justify-content: space-between;
-            margin-bottom: 5px;
         }
 
         .table-column-settings {
