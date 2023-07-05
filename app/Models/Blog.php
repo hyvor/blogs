@@ -75,6 +75,8 @@ class Blog extends Model
         $definer->add('syntax_line_numbers')->default(true);
         $definer->add('syntax_theme')->default(null);
 
+        $definer->add('heading_anchors')->default(true);
+
         $definer->add('flashload')->default(true);
     }
 

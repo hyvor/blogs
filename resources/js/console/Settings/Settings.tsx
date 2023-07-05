@@ -14,7 +14,7 @@ import SettingsGeneral from './General/SettingsGeneral';
 import Hosting from './Hosting';
 import SEO from './SEO';
 import ColorMode from "./ColorMode";
-import Highlight from "./Highlight";
+import PostContentSettings from "./PostContentSettings";
 import getSubdomain from "../logic-helpers/subdomain";
 import Webhooks from "./Webhooks/Webhooks";
 import ApiKeys from "./ApiKeys/ApiKeys";
@@ -137,8 +137,8 @@ export default function Settings({ type }: { type: string | undefined }) {
         case 'color-mode':
             Type = () => <ColorMode />;
             break;
-        case 'highlight':
-            Type = () => <Highlight />;
+        case 'post-content':
+            Type = () => <PostContentSettings />;
             break;
         case 'webhooks':
             Type = () => <Webhooks />
@@ -179,17 +179,17 @@ export default function Settings({ type }: { type: string | undefined }) {
                 <SettingsLink path="/hosting" name="Hosting" setPannel={setPannel} />
                 <SettingsLink path="/seo" name="SEO" setPannel={setPannel} />
                 <SettingsLink path="/color-mode" name="Light & Dark Modes" pannelName={'color-mode'} setPannel={setPannel} />
+                <SettingsLink path="/post-content" name="Post Content" pannelName={'post-content'} setPannel={setPannel} />
                 <SettingsLink path="/navigation" name="Navigation" setPannel={setPannel} />
                 <SettingsLink path="/media" name="Media" setPannel={setPannel} />
                 <SettingsLink path="/redirects" name="Redirects" setPannel={setPannel} />
                 <SettingsLink path="/routes" name="Routes" setPannel={setPannel} />
-                <SettingsLink path="/api-keys" name="API Keys" setPannel={setPannel} pannelName={'api-keys'} />
-                <SettingsLink path="/webhooks" name="Webhooks" setPannel={setPannel} />
 
                 <div />
                 <SettingsLink path="/comments" name="Comments & Newsletter" pannelName={'comments'} setPannel={setPannel} />
                 <SettingsLink path="/code" name="Custom Code" pannelName={'code'} setPannel={setPannel} />
-                <SettingsLink path="/highlight" name="Syntax Highlighting" pannelName={'highlight'} setPannel={setPannel} />
+                <SettingsLink path="/api-keys" name="API Keys" setPannel={setPannel} pannelName={'api-keys'} />
+                <SettingsLink path="/webhooks" name="Webhooks" setPannel={setPannel} />
 
                 <div />
 

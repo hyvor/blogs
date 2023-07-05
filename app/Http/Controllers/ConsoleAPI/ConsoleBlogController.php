@@ -96,6 +96,7 @@ class ConsoleBlogController extends Controller
             'syntax_on' => 'boolean',
             'syntax_line_numbers' => 'boolean',
             'syntax_theme' => 'string|nullable',
+            'heading_anchors' => 'boolean',
         ];
         $request->validate($validate);
 

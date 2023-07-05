@@ -99,7 +99,7 @@ class PostContentService
                 new Figcaption,
                 new Figure,
                 new HardBreak,
-                new Heading,
+                new Heading($blog),
                 new HorizontalRule,
                 new Image($blog),
                 new OrderedList,

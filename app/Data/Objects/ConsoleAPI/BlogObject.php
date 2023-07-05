@@ -74,6 +74,8 @@ class BlogObject
 
     public ?string $syntax_theme;
 
+    public bool $heading_anchors;
+
     public bool $flashload;
 
     /**
@@ -125,6 +127,8 @@ class BlogObject
         $this->syntax_on = (bool) $meta->syntax_on;
         $this->syntax_line_numbers = (bool) $meta->syntax_line_numbers;
         $this->syntax_theme = $meta->syntax_theme;
+
+        $this->heading_anchors = (bool) $meta->heading_anchors;
 
         $this->flashload = (bool) $meta->flashload;
 

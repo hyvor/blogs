@@ -2,6 +2,7 @@
 
 namespace App\Domains\Post\Content\Nodes\Heading;
 
+use App\Models\Blog;
 use DOMElement;
 use Hyvor\Phrosemirror\Converters\HtmlParser\ParserRule;
 use Hyvor\Phrosemirror\Document\Node;
@@ -17,6 +18,8 @@ class Heading extends NodeType
     public ?string $content = 'inline*';
     public string $group = 'block';
 
+    public function __construct(private Blog $blog) {}
+
     public function toHtml(Node $node, string $children): string
     {
 
@@ -28,7 +31,11 @@ class Heading extends NodeType
         $idAttr = $id ? " id=\"$id\"" : null;
 
         // add anchor link if there is no link inside
-        if ($id && !preg_match('/<a\b[^>]*>.*<\/a>/', $children)) {
+        if (
+            $id &&
+            !preg_match('/<a\b[^>]*>.*<\/a>/', $children) &&
+            $this->blog->getMeta('heading_anchors')
+        ) {
             $children = "<a href=\"#$id\">$children</a>";
         }
 

@@ -95,7 +95,8 @@ export interface Blog {
 
     syntax_on: boolean,
     syntax_line_numbers: boolean,
-    syntax_theme: string | null
+    syntax_theme: string | null,
+    heading_anchors: boolean,
 
     flashload: boolean,
     variants: BlogVariant[]

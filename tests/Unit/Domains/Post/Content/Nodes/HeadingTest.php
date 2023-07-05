@@ -77,6 +77,41 @@ it('does not add anchor when there is a link inside', function() {
 
 });
 
+it('does not add anchors when heading anchors is false', function() {
+
+    $blog = blog();
+    $blog->setMeta('heading_anchors', false);
+
+    foreach (range(1, 6) as $i) {
+        $content = "I am a h$i";
+        $id = 'custom-id';
+
+        $json = json_encode([
+            'type' => 'doc',
+            'content' => [
+                [
+                    'type' => 'heading',
+                    'attrs' => [
+                        'level' => $i,
+                        'id' => $id,
+                    ],
+                    'content' => [
+                        [
+                            'type' => 'text',
+                            'text' => $content,
+                        ],
+                    ],
+                ],
+            ],
+        ]);
+
+        $html = PostContentService::getHtml($json, $blog);
+
+        expect($html)->toEqual("<h$i id=\"$id\">$content</h$i>");
+    }
+
+});
+
 test('json to HTML without ID', function () {
     foreach (range(1, 6) as $i) {
         $content = "I am a h$i";
