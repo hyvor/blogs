@@ -190,10 +190,21 @@ export default class Table implements NodeView{
         this.bottomSettings.appendChild(addRowButton);
         
 
-        const deleteRowButton = document.createElement("button");
+        /*const deleteRowButton = document.createElement("button");
         deleteRowButton.className = "delete-row-button";
         deleteRowButton.innerText = "-";
         deleteRowButton.onclick = function () {
+            const selection = _self.view.state.selection;
+            const row = selection.$from.node(-2);
+            for (let i = 0; i < row.childCount; i++) {
+                const cell = row.child(i);
+                // -2 for the offsetting the size
+                if (cell.content.size - 2 > 0) {
+                    deleteRowButton.setAttribute("disabled", "true");
+                    return;
+                }
+                //deleteRowButton.setAttribute("disabled", "false");
+            }
             deleteRow(_self.view.state, _self.view.dispatch);
             _self.createMenuItems();
             // If it remains the only row, delete the table
@@ -202,7 +213,7 @@ export default class Table implements NodeView{
                 deleteTable(_self.view.state, _self.view.dispatch);
             }   
         }
-        this.bottomSettings.appendChild(deleteRowButton);
+        this.bottomSettings.appendChild(deleteRowButton);*/
 
         const addColumnButton = document.createElement("button");
         addColumnButton.className = "add-column-button";
@@ -212,7 +223,7 @@ export default class Table implements NodeView{
         };
         this.rightSideSettings.appendChild(addColumnButton);
 
-        const deleteColumnButton = document.createElement("button");
+        /*const deleteColumnButton = document.createElement("button");
         deleteColumnButton.className = "delete-column-button";
         deleteColumnButton.innerText = "-";
         deleteColumnButton.onclick = function () {
@@ -223,7 +234,7 @@ export default class Table implements NodeView{
                 deleteTable(_self.view.state, _self.view.dispatch);
             }
         };
-        this.rightSideSettings.appendChild(deleteColumnButton);
+        this.rightSideSettings.appendChild(deleteColumnButton);*/
     }
     
     update(node: ProsemirrorNode) {
