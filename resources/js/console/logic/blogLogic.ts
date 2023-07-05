@@ -19,6 +19,13 @@ interface BlogResponse {
     languages: Array<Language>
 }
 
+export type ClearCacheData = {
+    type: 'all' | 'template'
+}  | {
+    type: 'paths',
+    paths: string[]
+}
+
 const blogLogic = kea<blogLogicType>([
 
     props({} as {subdomain: string}),
@@ -99,6 +106,11 @@ const blogLogic = kea<blogLogicType>([
             }
 
             onUpdate && onUpdate();
+        },
+
+        clearBlogCache: async ({onClear, data} : {onClear: Function, data: ClearCacheData}) => {
+            await api.delete(props.subdomain, '/blog/cache', data);
+            onClear();
         },
 
         deleteBlog: async({onDelete} : {onDelete: Function}) => {

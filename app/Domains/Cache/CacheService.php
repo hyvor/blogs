@@ -43,6 +43,16 @@ class CacheService
         CacheClearTemplatesEvent::dispatch($this->blog);
     }
 
+    /**
+     * @param string[] $paths
+     */
+    public function clearPathsCache(array $paths) : void
+    {
+        foreach ($paths as $path) {
+            $this->clearSingleCache($path);
+        }
+    }
+
     public function clearSingleCache(string $path) : void
     {
         $key = $this->getKey($path);

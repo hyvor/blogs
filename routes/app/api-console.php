@@ -260,6 +260,7 @@ Route::prefix('/api/console/v0/blog/{subdomain}')
         Route::middleware('role:owner')->group(function () {
             Route::delete('/blog', [ConsoleDangerController::class, 'delete']);
             // Route::post('/blog/reset', [ConsoleDangerController::class, 'reset']);
+            Route::delete('/blog/cache', [ConsoleDangerController::class, 'deleteCache']);
         });
 
         Route::get('/appsumo/codes', [AppSumoController::class, 'getCodes']);
