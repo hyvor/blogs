@@ -153,18 +153,15 @@ export default class Table implements NodeView{
     clearRowContentWrapper = () => {
         const selection = this.view.state.selection;
         const row = selection.$from.node(-2);
-        const rowPos = selection.$from.before(-1);
+        const rowPos = selection.$from.before(-2);
         const tr = this.view.state.tr;
-        row.forEach((cell, offset) => {
-            const cellContent = cell.content;
-            const cellPos = rowPos + offset + 1;
-            tr.insertText("", cellPos, cellPos + cellContent.size);
-        });
+        tr.replaceWith(rowPos, rowPos + row.nodeSize, this.schema.nodes.table_row.createAndFill()!);
         this.view.dispatch(tr);
         this.createMenuItems();
     }
 
     clearColumnContentWrapper = (colIdx: number) => {
+        const selection = this.view.state.selection;
         this.createMenuItems();
     }
 
