@@ -179,12 +179,12 @@ export default class Table implements NodeView{
                 break;
             }
         }
-        console.log(currentColumn);
         for (let i = 0; i < table.childCount; i++) {
             for (let j = 0; j < tableRow.childCount; j++) {
                 const cell = table.child(i).child(j);
                 if (j === currentColumn) {
-                    const cellPos = selection.$from.before(parentIndex) + tableRow.nodeSize + cell.nodeSize * i;
+                    console.log(parentIndex);
+                    const cellPos = selection.$from.before(parentIndex) + tableRow.nodeSize * i + cell.nodeSize * j;
                     tr.replaceWith(cellPos, cellPos + cell.nodeSize, this.schema.nodes.table_cell.createAndFill()!);
                 }
             }
