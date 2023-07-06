@@ -162,6 +162,8 @@ export default class Table implements NodeView{
 
     clearColumnContentWrapper = () => {
         const selection = this.view.state.selection;
+        const pos = selection.$from.pos;
+        console.log('pos', pos);
         const tableCell = selection.$from.node(-1);
         let tableRow = selection.$from.node(-2);
         const table = selection.$from.node(-3);
@@ -184,7 +186,8 @@ export default class Table implements NodeView{
                 const cell = table.child(i).child(j);
                 if (j === currentColumn) {
                     console.log(parentIndex);
-                    const cellPos = selection.$from.before(parentIndex) + tableRow.nodeSize * i + cell.nodeSize * j;
+                    const cellPos = selection.$from.before(parentIndex - 1) + tableRow.nodeSize * i + cell.nodeSize * j;
+                    console.log('cellPos', cellPos);
                     tr.replaceWith(cellPos, cellPos + cell.nodeSize, this.schema.nodes.table_cell.createAndFill()!);
                 }
             }

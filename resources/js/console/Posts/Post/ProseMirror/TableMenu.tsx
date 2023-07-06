@@ -2,7 +2,7 @@ import { Node as ProsemirrorNode, Schema } from "prosemirror-model";
 import { EditorState, Transaction } from "prosemirror-state";
 import React from "react";
 import { useState } from "react";
-import { ArrowDown, ArrowLeft, ArrowRight, ArrowUp, CardHeading, Trash } from "react-bootstrap-icons";
+import { ArrowDown, ArrowLeft, ArrowRight, ArrowUp, Backspace, CardHeading, Trash } from "react-bootstrap-icons";
 
 export default function TableMenu({ colunmMenu, focused, addBefore, addAfter, makeHeader, clearContent, deleteWrapper }: 
     { colunmMenu: boolean, focused: boolean, addBefore: () => void, addAfter: () => void, 
@@ -48,6 +48,7 @@ export default function TableMenu({ colunmMenu, focused, addBefore, addAfter, ma
             {colunmMenu ? 'Delete column' : 'Delete row'}
           </button>
           <button className="action-button" onClick={clearContent}>
+            <Backspace className="table-menu-icon"/>
             Clear content
           </button>
         </div>
