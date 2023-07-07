@@ -94,3 +94,11 @@ it('does now show an error when trial is ended but there is a subscription', fun
         ->assertSee($content, false);
 
 });
+
+it('does not show trial error for non-default blogs', function() {
+
+    $blog = blog(['trial_ends_at' => now()->subDay(), 'type' => 'dev']);
+    $this->get("http://$blog->subdomain.hyvorblogs.io/any")
+        ->assertDontSee('trial has ended');
+
+});
