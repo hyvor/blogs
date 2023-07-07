@@ -28,7 +28,7 @@
 
 .ProseMirror table {
     border-collapse: collapse;
-    
+    width: 100%;
     max-width: 100%;
     table-layout: fixed;
   }
@@ -41,7 +41,6 @@
     right: 0;
     top: 0;
     bottom: 0;
-    background: rgba(200, 200, 255, 0.4);
     pointer-events: none;
   }
 
