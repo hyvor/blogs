@@ -14,6 +14,10 @@ $blogs = [
         'url' => 'blog.didgii.com'
     ],
     [
+        'image' => 'deflekt_ik0u1p.webp',
+        'url' => 'deflekt.ai/blog'
+    ],
+    [
         'image' => 'cyberhirn-blog_ff1go6.webp',
         'url' => 'cyberhirn.de'
     ],
