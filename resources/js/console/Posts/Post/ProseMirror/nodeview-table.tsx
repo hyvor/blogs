@@ -1,7 +1,7 @@
 import { EditorView, NodeView } from "prosemirror-view";
 import {Node as ProsemirrorNode, Schema} from "prosemirror-model";
 import { Trash } from "react-bootstrap-icons";
-import ReactDOM from "react-dom";
+import ReactDOM from "react-dom/client";
 import React, { StrictMode } from "react";
 import {
     addColumnAfter,
@@ -163,7 +163,6 @@ export default class Table implements NodeView{
     clearColumnContentWrapper = () => {
         const selection = this.view.state.selection;
         const pos = selection.$from.pos;
-        console.log('CURRENT POS: ', pos);
         const tableCell = selection.$from.node(-1);
         let tableRow = selection.$from.node(-2);
         const table = selection.$from.node(-3);
@@ -190,9 +189,7 @@ export default class Table implements NodeView{
                 const cellSize = cell.nodeSize;
                 if (j === currentColumn) {
                     const currentCellPos = offset + i * 2;
-                    console.log('computed cell pos:', currentCellPos);
                     const nodeAtPost = this.view.state.doc.nodeAt(currentCellPos);
-                    console.log('nodeAtPost', nodeAtPost);
                     tr.replaceWith(currentCellPos, currentCellPos + cell.nodeSize, this.schema.nodes.table_cell.createAndFill()!);
                 }
                 offset += cellSize;
@@ -209,7 +206,9 @@ export default class Table implements NodeView{
         deleteButton.setAttribute("id", "delete-table-button");
         deleteButton.className = "icon-button delete-table-button";
 
-        ReactDOM.render(<Trash />, deleteButton);
+        let root = ReactDOM.createRoot(deleteButton);
+        root.render(<Trash />);
+
         deleteButton.onclick = function () {
             deleteTable(_self.view.state, _self.view.dispatch);
         };
@@ -328,32 +327,30 @@ export default class Table implements NodeView{
         for (let rowIdx = 0; rowIdx < rows; rowIdx++) {
           const tableMenuWrapper = document.createElement("div");
           _self.leftSideSettings.appendChild(tableMenuWrapper);
-            ReactDOM.render(
-            <TableMenu 
-                colunmMenu={false}
-                focused={_self.isRowFocused(table.child(rowIdx))}
-                addBefore={_self.addRowBeforeWrapper}
-                addAfter={_self.addRowAfterWrapper}
-                makeHeader={_self.makeRowHeaderWrapper}
-                clearContent={_self.clearRowContentWrapper}
-                deleteWrapper={_self.deleteRowWrapper}
-            />, tableMenuWrapper);
+          let root = ReactDOM.createRoot(tableMenuWrapper);
+          root.render(<TableMenu 
+            colunmMenu={false}
+            focused={_self.isRowFocused(table.child(rowIdx))}
+            addBefore={_self.addRowBeforeWrapper}
+            addAfter={_self.addRowAfterWrapper}
+            makeHeader={_self.makeRowHeaderWrapper}
+            clearContent={_self.clearRowContentWrapper}
+            deleteWrapper={_self.deleteRowWrapper}/>,)
         }
 
         // Create column menu items
         for (let colIdx = 0; colIdx < table.firstChild!.childCount; colIdx++) {
             const tableMenuWrapper = document.createElement("div");
             _self.columnSettings.appendChild(tableMenuWrapper);
-            ReactDOM.render(
-                <TableMenu 
-                    colunmMenu={true}
-                    focused={_self.isColumnFocused(colIdx)}
-                    addBefore={_self.addColumnBeforeWrapper}
-                    addAfter={_self.addColumnAfterWrapper}
-                    makeHeader={_self.makeColumnHeaderWrapper}
-                    clearContent={_self.clearColumnContentWrapper}
-                    deleteWrapper={_self.deleteColumnWrapper}
-                />, tableMenuWrapper);
+            let root = ReactDOM.createRoot(tableMenuWrapper);
+            root.render(<TableMenu 
+                colunmMenu={true}
+                focused={_self.isColumnFocused(colIdx)}
+                addBefore={_self.addColumnBeforeWrapper}
+                addAfter={_self.addColumnAfterWrapper}
+                makeHeader={_self.makeColumnHeaderWrapper}
+                clearContent={_self.clearColumnContentWrapper}
+                deleteWrapper={_self.deleteColumnWrapper}/>)
         }
       }
 }
