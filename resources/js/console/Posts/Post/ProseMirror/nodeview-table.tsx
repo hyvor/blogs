@@ -163,10 +163,11 @@ export default class Table implements NodeView{
     clearColumnContentWrapper = () => {
         const selection = this.view.state.selection;
         const pos = selection.$from.pos;
-        console.log('pos', pos);
+        console.log('Curent pos: ', pos);
         const tableCell = selection.$from.node(-1);
         let tableRow = selection.$from.node(-2);
         const table = selection.$from.node(-3);
+        const tablePos = selection.$from.before(-3);
         let parentIndex = -2;
         const tr = this.view.state.tr;
         if (tableRow.type.name !== 'table_row') {
@@ -181,17 +182,48 @@ export default class Table implements NodeView{
                 break;
             }
         }
+
+        let offset = tablePos;
         for (let i = 0; i < table.childCount; i++) {
             for (let j = 0; j < tableRow.childCount; j++) {
                 const cell = table.child(i).child(j);
+                const cellSize = cell.nodeSize;
                 if (j === currentColumn) {
-                    console.log(parentIndex);
-                    const cellPos = selection.$from.before(parentIndex - 1) + tableRow.nodeSize * i + cell.nodeSize * j;
-                    console.log('cellPos', cellPos);
+                    console.log('current-cell', cell);
+                    const currentCellPos = offset + i * 2 ;
+                    console.log('currentCellPos', currentCellPos);
+                    const nodeAtPost = this.view.state.doc.nodeAt(currentCellPos);
+                    console.log('nodeAtPost', nodeAtPost);
+                    tr.replaceWith(currentCellPos, currentCellPos + cell.nodeSize, this.schema.nodes.table_cell.createAndFill()!);
+                }
+                offset += cellSize;
+            }
+        }
+
+
+       /* for (let i = 0; i < table.childCount; i++) {
+            for (let j = 0; j < tableRow.childCount; j++) {
+                const cell = table.child(i).child(j);
+                if (j === currentColumn) {
+                    const cellPos = tablePos + 2 * i + cell.nodeSize * j;
+                    const cellAtPos = this.view.state.doc.nodeAt(cellPos);
+                    console.log('cellAtPos', cellAtPos);
                     tr.replaceWith(cellPos, cellPos + cell.nodeSize, this.schema.nodes.table_cell.createAndFill()!);
                 }
             }
-        }
+        }*/
+
+        /*for (let i = 0; i < table.childCount; i++) {
+            for (let j = 0; j < tableRow.childCount; j++) {
+                const cell = table.child(i).child(j);
+                if (j === currentColumn) {
+                    const cellPos = selection.$from.before(parentIndex) + tableRow.nodeSize + cell.nodeSize * i;
+                    const cellAtPost = this.view.state.doc.nodeAt(cellPos);
+                    console.log('cellAtPost', cellAtPost);
+                    tr.replaceWith(cellPos, cellPos + cell.nodeSize, this.schema.nodes.table_cell.createAndFill()!);
+                }
+            }
+        }*/
         this.view.dispatch(tr);
         this.createMenuItems();
     }
