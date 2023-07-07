@@ -22,7 +22,6 @@ class Kernel extends ConsoleKernel
 
         // marketing
         $schedule->job(EmailOctopusSyncJob::class)->daily();
-        $schedule->job(EmailOctopusSyncAppsumoJob::class)->hourly();
     }
 
     protected function commands()
