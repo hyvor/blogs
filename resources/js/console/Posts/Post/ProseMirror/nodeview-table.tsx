@@ -291,10 +291,16 @@ export default class Table implements NodeView{
         return grandParent === row;
     }
 
+    stopEvent() {
+        return false;
+    }
+
     isColumnFocused(columnIndex: number) {
         const selection = this.view.state.selection;
         const tableCell = selection.$from.node(-1);
         let tableRow = selection.$from.node(-2);
+        if (tableRow == null)
+            return false;
         let parentIndex = -3;
         if (tableRow.type.name !== 'table_row') {
             tableRow = selection.$from.node(parentIndex);

@@ -38,7 +38,7 @@ export default function plugins(schema) {
 
         // https://github.com/curvenote/prosemirror-codemark
         ...codemark({ markType: schema.marks.code }),
-        columnResizing(),
+        columnResizing({ cellMinWidth: 50 }),
         tableEditing(),
     ]
 
