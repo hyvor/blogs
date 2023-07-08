@@ -1,5 +1,6 @@
 <?php
 
+use App\Events\TestEvent;
 use Illuminate\Support\Facades\App;
 use Illuminate\Support\Facades\Route;
 
@@ -19,5 +20,12 @@ Route::domain(config('blogs.domain_app'))->group(function () {
     include 'app/special.php';
     include 'app/integrations/integrations.php';
 });
+
+Route::get('/fire', function () {
+    TestEvent::dispatch();
+
+    return 'Event has been sent!';
+});
+
 
 include 'app/api-delivery.php';
