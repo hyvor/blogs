@@ -15,6 +15,8 @@ import {createRoot} from "react-dom/client";
 import { ajaxPlugin } from 'kea-ajax'
 import dayjs from "dayjs";
 import Echo from 'laravel-echo';
+import Pusher from 'pusher-js';
+
 
 
 resetContext({
@@ -37,18 +39,20 @@ function App() {
 
 }
 
+window.Pusher = Pusher;
 
 const echo = new Echo({
-  broadcaster: 'pusher',
-  key: process.env.VITE_PUSHER_APP_KEY,
-  wsHost: process.env.VITE_PUSHER_HOST,
-  wsPort: process.env.VITE_PUSHER_PORT,
-  wssPort: process.env.VITE_PUSHER_PORT,
-  forceTLS: false,
-  encrypted: true,
-  disableStats: true,
-  enabledTransports: ['ws', 'wss'],
-});
+    broadcaster: 'pusher',
+    key: 'app-key',//process.env.VITE_PUSHER_APP_KEY,
+    wsHost: 'localhost',//process.env.VITE_PUSHER_HOST,
+    wsPort: '6001',//process.env.VITE_PUSHER_PORT,
+    wssPort: '6001',//process.env.VITE_PUSHER_PORT,
+    forceTLS: false,
+    encrypted: true,
+    disableStats: true,
+    enabledTransports: ['ws', 'wss'],
+    cluster: 'eu',
+  });
 
 echo.channel("testNotif").listen("TestEvent", (e: any) => {
     console.log(e);

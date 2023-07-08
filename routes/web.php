@@ -22,7 +22,7 @@ Route::domain(config('blogs.domain_app'))->group(function () {
 });
 
 Route::get('/fire', function () {
-    TestEvent::dispatch();
+    TestEvent::dispatch('Hello World!');
 
     return 'Event has been sent!';
 });
