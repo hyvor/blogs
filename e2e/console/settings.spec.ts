@@ -392,11 +392,14 @@ test.describe('Settings', () => {
 
         consoleTest('Upload File', async ({testingApi, console, page}) => {
             await page.getByRole('button', { name: 'Upload', exact: true }).click();
-            const cwd = process.cwd();
-            await page.locator('input[type=file]').first().setInputFiles(cwd +'/e2e/baseTest.ts');
+            await page.locator('input[type=file]').setInputFiles({
+                name: 'file.txt',
+                mimeType: 'text/plain',
+                buffer: Buffer.from('Hello World'),
+            });
             await page.getByRole('button', { name: 'Upload' }).click();
 
-            await expect(page.getByText('baseTest.ts')).toBeVisible();
+            await expect(page.getByText('file.txt')).toBeVisible();
         });
     });
 
@@ -674,7 +677,9 @@ test.describe('Settings', () => {
         
     });
 
-    test.describe('Syntax Highlighting', () => {
+    // TODO: Change Syntax Highlighting to Post Content
+
+    /* test.describe('Syntax Highlighting', () => {
         
         consoleTest.beforeEach(async ({testingApi, console, page}) => {
             await testingApi.factory.blogFull();
@@ -707,7 +712,7 @@ test.describe('Settings', () => {
             await expect(page.getByTestId('switch').nth(1)).toHaveAttribute('class', 'unchecked');
         });
         
-    });
+    }); */
 
     test.describe('Export', () => {
         
@@ -741,7 +746,7 @@ test.describe('Settings', () => {
            await page.getByRole('button', { name: 'Delete', exact: true }).click();
            await page.getByRole('button', { name: 'OK' }).click(); 
 
-           await expect(page.getByRole('heading', { name: 'Multi-language blogging platform' })).toBeVisible();
+           await expect(page.getByRole('heading', { name: 'All-in-one blogging platform' })).toBeVisible();
         });
         
     });

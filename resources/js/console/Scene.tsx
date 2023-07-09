@@ -1,4 +1,4 @@
-import { useValues } from 'kea'
+import { useActions, useValues } from 'kea'
 import Billing from './Billing/Billing'
 import BlogPreview from './BlogPreview/BlogPreview'
 import userBlogsLogic from './logic/userBlogsLogic'
@@ -18,6 +18,7 @@ import BlogBlocked from "./Views/BlogBlocked";
 import {hasTrialEndedAndNotSubscribed} from "./lib/blog-helpers";
 import BlogTrialEnded from "./Views/BlogTrialEnded";
 import Integrations from "./Integrations/Integrations";
+import { router } from 'kea-router'
 
 export const scenes = {
     error404: () => <div>404</div>,
@@ -37,8 +38,14 @@ export default function Scene() {
     userBlogsLogic.mount()
 
     const { scene, params } = useValues(sceneLogic)
+    const { push } = useActions(router);
 
     const SceneComponent = scenes[scene as keyof typeof scenes] || scenes.error404
+
+    if (params.subdomain && !userBlogsLogic.values.findBlogBySubdomain(params.subdomain)) {
+        push('/console');
+        return <div></div>;
+    }
 
     return <div>
         <Left />

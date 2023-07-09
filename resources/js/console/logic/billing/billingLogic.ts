@@ -40,8 +40,9 @@ const billingLogic = kea<billingLogicType>([
             actions.setSubscriptions(data.subscriptions);
         },
 
-        forceCancel: async () => {
+        forceCancel: async ({onCancel} : {onCancel :Function}) => {
             await api.delete(props.subdomain, '/billing/subscription');
+            onCancel();
         }
 
     })),

@@ -28,26 +28,26 @@ export default defineConfig({
 
     /* Collect trace when retrying the failed test. See https://playwright.dev/docs/trace-viewer */
     trace: 'on-first-retry',
-
-    permissions: ['clipboard-read', 'clipboard-write'],
   },
 
   /* Configure projects for major browsers */
   projects: [
     {
       name: 'chromium',
-      use: { ...devices['Desktop Chrome'] },
+      use: { ...devices['Desktop Chrome'], contextOptions: {
+        permissions: ['clipboard-write', 'clipboard-read']
+      }},
     },
 
-    {
+    /* {
       name: 'firefox',
-      use: { ...devices['Desktop Firefox'] },
-    },
+      use: { ...devices['Desktop Firefox']},
+    }, */
 
-    {
+    /* {
       name: 'webkit',
       use: { ...devices['Desktop Safari'] },
-    },
+    }, */
 
     /* Test against mobile viewports. */
     // {

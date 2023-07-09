@@ -22,8 +22,8 @@ class Console {
         this.page = page;
     }
 
-    async visit() {
-        await this.page.goto('/console');
+    async visit(path : string = '') {
+        await this.page.goto('/console' + path);
     }
 
     async visitAndNav(nav: NavType) {

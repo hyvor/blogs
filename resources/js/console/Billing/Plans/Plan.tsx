@@ -48,8 +48,9 @@ export default function Plan({type, frequency, onCreate, onUpdate, onCancel} : P
     }
 
     async function handleForceCancel() {
-        await forceCancel();
-        location.reload();
+        forceCancel({
+            onCancel: () => location.reload()
+        });
     }
 
     let price = getPriceFromPlan(type);
