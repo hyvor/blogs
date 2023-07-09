@@ -84,7 +84,7 @@ export default function SettingsSave(
                         <Loader size={35} />
                     </div> :
                     status === 'success' ?
-                        <CheckCircle size={25} />
+                        <span data-testid="settings-saved-icon"><CheckCircle size={25} /></span>
                         : <div>
                             <button
                                 onClick={handleDiscard}

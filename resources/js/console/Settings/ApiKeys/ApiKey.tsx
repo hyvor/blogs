@@ -23,7 +23,10 @@ export default function ApiKey ({apiKey}: {apiKey: ApiKeyType}) {
         <TableRowItem>{ apiKey.type[0].toUpperCase() + apiKey.type.substr(1) } API</TableRowItem>
         <TableRowItem><button
             className="button small"
-            onClick={() => {copyTextToClipboard(apiKey.api_key); toast("Copied")}}
+            onClick={async () => {
+                await copyTextToClipboard(apiKey.api_key); 
+                toast("Copied");
+            }}
         >COPY</button></TableRowItem>
 
         <TableRowItem>

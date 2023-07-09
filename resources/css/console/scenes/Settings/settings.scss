@@ -96,6 +96,11 @@
     @keyframes save-out {
         100% {opacity:0;transform:scale(0)}
     }
+    
+    @media screen and (max-width: $breakpoint) {
+        left: 0;
+        right: 0;
+    }
 
 }
 

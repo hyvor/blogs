@@ -1,7 +1,5 @@
 import { expect, test } from "@playwright/test";
 import {consoleTest} from "./consoleTest.ts";
-import path from 'path';
-
 
 test.describe('Settings', () => {
 
@@ -18,34 +16,35 @@ test.describe('Settings', () => {
         // Fill main language
         await page.locator('#input-name').fill('MyAwesome Blog');
         await page.locator('#input-description').fill('MyAwesomeDescription');
-        await page.locator('#input-blog-facebook').fill('facebook');
-        await page.locator('#input-blog-twitter').fill('twitter');
-        await page.locator('#input-blog-linkedin').fill('linkedin');
-        await page.locator('#input-blog-youtube').fill('youtube');
-        await page.locator('#input-blog-tiktok').fill('tiktok');
-        await page.locator('#input-blog-instagram').fill('instagram');
-        await page.locator('#input-github').fill('github');
+        await page.locator('#input-blog-facebook').fill('https://facebook.com');
+        await page.locator('#input-blog-twitter').fill('https://twitter.com');
+        await page.locator('#input-blog-linkedin').fill('https://linkedin.com');
+        await page.locator('#input-blog-youtube').fill('https://youtube.com');
+        await page.locator('#input-blog-tiktok').fill('https://tiktok.com');
+        await page.locator('#input-blog-instagram').fill('https://instagram.com');
+        await page.locator('#input-github').fill('https://github.com');
         await page.getByRole('button', { name: 'SAVE' }).click();
-        await page.reload();
+        await expect(page.getByTestId('settings-saved-icon')).toBeVisible();
 
         // Fill secondary language
         await page.locator('span').filter({ hasText: 'en' }).first().click();
-        await page.waitForTimeout(2000);
+        await expect(page.locator('.global-non-primary-language-hidden')).toBeVisible();
         await page.locator('#input-name').fill('EnglishBlog');
         await page.locator('#input-description').fill('EnglishDescription');
         await page.getByRole('button', { name: 'SAVE' }).click();
+        await expect(page.getByTestId('settings-saved-icon')).toBeVisible();
         await page.reload();
 
         // Test main language
         await expect(page.locator('#input-name')).toHaveValue('MyAwesome Blog');
         await expect(page.locator('#input-description')).toHaveValue('MyAwesomeDescription');
-        await expect(page.locator('#input-blog-facebook')).toHaveValue('facebook');
-        await expect(page.locator('#input-blog-twitter')).toHaveValue('twitter');
-        await expect(page.locator('#input-blog-linkedin')).toHaveValue('linkedin');
-        await expect(page.locator('#input-blog-youtube')).toHaveValue('youtube');
-        await expect(page.locator('#input-blog-tiktok')).toHaveValue('tiktok');
-        await expect(page.locator('#input-blog-instagram')).toHaveValue('instagram');
-        await expect(page.locator('#input-github')).toHaveValue('github');
+        await expect(page.locator('#input-blog-facebook')).toHaveValue('https://facebook.com');
+        await expect(page.locator('#input-blog-twitter')).toHaveValue('https://twitter.com');
+        await expect(page.locator('#input-blog-linkedin')).toHaveValue('https://linkedin.com');
+        await expect(page.locator('#input-blog-youtube')).toHaveValue('https://youtube.com');
+        await expect(page.locator('#input-blog-tiktok')).toHaveValue('https://tiktok.com');
+        await expect(page.locator('#input-blog-instagram')).toHaveValue('https://instagram.com');
+        await expect(page.locator('#input-github')).toHaveValue('https://github.com');
 
         // Test secondary language
         await page.locator('span').filter({ hasText: 'en' }).first().click();
@@ -199,20 +198,20 @@ test.describe('Settings', () => {
           });
 
         consoleTest('Subdomain modification', async ({testingApi, console, page}) => {
-            await page.getByLabel('', { exact: true }).fill('subdomain');
+            await page.getByLabel('', { exact: true }).fill('this-is-new-subdomain');
             await page.getByRole('button', { name: 'SAVE' }).click();
-            await page.reload();
-            await expect(page.getByText('subdomain')).toBeVisible(); 
+            await expect(page.getByText('this-is-new-subdomain')).toBeVisible(); 
+            await expect(page.url()).toContain('/console/this-is-new-subdomain/settings/hosting');
         });
 
         consoleTest('Custom domain', async ({testingApi, console, page}) => {
             await page.locator('label').filter({ hasText: 'Custom Domain' }).locator('span').nth(1).click();
-            await page.locator('#input-custom-domain').fill('https://www.google.com/');
+            await page.locator('#input-custom-domain').fill('www.mycompany.com');
             await page.getByRole('button', { name: 'SAVE' }).click();
             await page.reload();
             await expect(page.locator('label').filter({ hasText: 'Subdomain' }).locator('span').nth(1)).not.toBeChecked();
             await expect(page.locator('label').filter({ hasText: 'Custom Domain' }).locator('span').nth(1)).toBeChecked();
-            await expect(page.locator('#input-custom-domain')).toHaveValue('https://www.google.com/');
+            await expect(page.locator('#input-custom-domain')).toHaveValue('www.mycompany.com');
         });
 
         consoleTest('Self-hosting', async ({testingApi, console, page}) => {
@@ -527,6 +526,8 @@ test.describe('Settings', () => {
             await page.reload();
 
             await page.getByRole('button').nth(2).click();
+
+            await expect(page.getByText('Copied')).toBeVisible();
 
             const clipboardText = await page.evaluate(() => navigator.clipboard.readText());
             expect(clipboardText.length).toBeGreaterThan(0);

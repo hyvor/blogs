@@ -37,13 +37,13 @@ const routesLogic = kea<routesLogicType>([
         },
 
         update: async ({id, match, template, posts_filter, content_type} : Partial<Route>) => {
-            const route = await api.put<Route>(props.subdomain, `/route/${id}`, {
+            const route = await api.patch<Route>(props.subdomain, `/route/${id}`, {
                 match,
                 template,
                 posts_filter,
                 content_type,
             });
-            actions.addRoute(route);
+            actions.updateRoute(route);
         },
 
 

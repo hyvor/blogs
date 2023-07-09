@@ -68,8 +68,17 @@ const blogLogic = kea<blogLogicType>([
             onCreate(variant);
         },
 
-        updateVariant: async ({data, languageId}) => {
-            await api.patch(getSubdomain(), `/blog/variant`, {...data, ...{language_id: languageId}})
+        updateVariant: async ({data, languageId} : {data: Partial<BlogVariant>, languageId: number}) => {
+            const variant = await api.patch<BlogVariant>(
+                getSubdomain(),
+                `/blog/variant`,
+                {...data, ...{language_id: languageId}}
+            );
+            const b = {...values.blogOriginal};
+            b.variants = b.variants.map(
+                v => v.language_id === languageId ? variant : v
+            );
+            actions.setOriginal(b);
         },
 
         updateBlogSave: async ({data, onUpdate}) => {
@@ -87,7 +96,10 @@ const blogLogic = kea<blogLogicType>([
 
                 for (let languageId in variantDiff) {
                     const data = variantDiff[languageId as unknown as keyof typeof variantDiff]
-                    await actions.updateVariant({data, languageId})
+                    await actions.updateVariant({
+                        data,
+                        languageId: Number(languageId)
+                    })
                 }
             }
 
