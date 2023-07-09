@@ -12,7 +12,7 @@ export const consoleTest = baseTest.extend<{console: Console}>({
     }
 });
 
-type NavType = 'billing' | 'posts';
+type NavType = 'billing' | 'posts' | 'settings';
 
 class Console {
 

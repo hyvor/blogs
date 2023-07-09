@@ -1,3 +1,7 @@
+<?php
+use Illuminate\Support\Facades\App;
+?>
+
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -28,7 +32,10 @@
         }
     </script>
     <script async src="https://cdn.paddle.com/paddle/paddle.js" onload="setUpPaddle()"></script>
-    <script src="https://do.featurebase.app/js/widget.js"></script>
+
+    @if (App::environment('production'))
+        <script src="https://do.featurebase.app/js/widget.js"></script>
+    @endif
 
     @include('shared.chat')
 
