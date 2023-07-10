@@ -104,6 +104,18 @@ export default class Table implements NodeView{
 
         this.view.dom.addEventListener('click', this.handleChange);
         this.view.dom.addEventListener('keyup', this.handleChange);
+
+        // Focus the fisrt row when constructed
+        console.log(this.middle);
+        const firstRow = document.querySelectorAll("tr")[0];
+        console.log(firstRow);
+        if (firstRow) {
+            const firstCell = firstRow.querySelector("td");
+            console.log(firstCell);
+            if (firstCell) {
+                firstCell.focus();
+            }
+        }
     }
 
     handleChange = () => {
