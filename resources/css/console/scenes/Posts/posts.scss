@@ -51,7 +51,7 @@
     }
 
     .table-menu {
-        position: relative;
+        position: absolute;
         display: inline-block;
         z-index: 100;
 
@@ -82,11 +82,11 @@
         padding-right: 10px;
         z-index: 0;
         cursor: pointer;
-        background-color: $color-white;
+        background-color: rgba(255, 255, 255, 0.05);
         border: solid 1px $color-grey;
     }
     .toggle-table-menu-button:hover {
-        background-color: $color-grey
+        background-color: $color-white
     }
 
     .table-menu-options {
@@ -175,9 +175,11 @@
 
         .table-left-side-settings {
             display: flex;
+            position: absolute;
+            left: 12px;
             justify-content: space-around;
             flex-direction: column;
-            z-index: 0;
+            z-index: 10;
         }
 
         .table-right-side-settings {

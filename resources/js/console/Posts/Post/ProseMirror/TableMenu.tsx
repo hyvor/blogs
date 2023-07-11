@@ -4,9 +4,9 @@ import React from "react";
 import { useState } from "react";
 import { ArrowDown, ArrowLeft, ArrowRight, ArrowUp, Backspace, CardHeading, Trash } from "react-bootstrap-icons";
 
-export default function TableMenu({ colunmMenu, focused, addBefore, addAfter, makeHeader, clearContent, deleteWrapper }: 
+export default function TableMenu({ colunmMenu, focused, addBefore, addAfter, makeHeader, clearContent, deleteWrapper, cssOffset }: 
     { colunmMenu: boolean, focused: boolean, addBefore: () => void, addAfter: () => void, 
-        makeHeader: () => void ,clearContent: () => void, deleteWrapper: () => void}) {
+        makeHeader: () => void ,clearContent: () => void, deleteWrapper: () => void, cssOffset: number}) {
 
   const [showMenu, setShowMenu] = useState(false);
 
@@ -19,9 +19,11 @@ export default function TableMenu({ colunmMenu, focused, addBefore, addAfter, ma
     setShowMenu(false);
   };
 
+  const customStyle = !colunmMenu ? {top: cssOffset + 'px'} : {};
+
 
   return !focused ? (<div></div>) : (
-    <div className="table-menu">
+    <div className={'table-menu'} style={customStyle}>
       <button className="toggle-table-menu-button" 
       onClick={toggleMenu}
       disabled={!focused}

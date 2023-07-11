@@ -163,7 +163,6 @@ export default class Table implements NodeView{
 
     clearColumnContentWrapper = () => {
         const selection = this.view.state.selection;
-        const pos = selection.$from.pos;
         const tableCell = selection.$from.node(-1);
         let tableRow = selection.$from.node(-2);
         const table = selection.$from.node(-3);
@@ -296,6 +295,7 @@ export default class Table implements NodeView{
           const tableMenuWrapper = document.createElement("div");
           _self.leftSideSettings.appendChild(tableMenuWrapper);
           let root = ReactDOM.createRoot(tableMenuWrapper);
+          const cssOffset = rowIdx * 37 + 8;
           root.render(<TableMenu 
             colunmMenu={false}
             focused={_self.isRowFocused(table.child(rowIdx))}
@@ -303,7 +303,8 @@ export default class Table implements NodeView{
             addAfter={_self.addRowAfterWrapper}
             makeHeader={_self.makeRowHeaderWrapper}
             clearContent={_self.clearRowContentWrapper}
-            deleteWrapper={_self.deleteRowWrapper}/>,)
+            deleteWrapper={_self.deleteRowWrapper}
+            cssOffset={cssOffset}/>)
         }
 
         // Create column menu items
@@ -311,6 +312,7 @@ export default class Table implements NodeView{
             const tableMenuWrapper = document.createElement("div");
             _self.columnSettings.appendChild(tableMenuWrapper);
             let root = ReactDOM.createRoot(tableMenuWrapper);
+            const cssOffset = colIdx * 20 + 10;
             root.render(<TableMenu 
                 colunmMenu={true}
                 focused={_self.isColumnFocused(colIdx)}
@@ -318,7 +320,8 @@ export default class Table implements NodeView{
                 addAfter={_self.addColumnAfterWrapper}
                 makeHeader={_self.makeColumnHeaderWrapper}
                 clearContent={_self.clearColumnContentWrapper}
-                deleteWrapper={_self.deleteColumnWrapper}/>)
+                deleteWrapper={_self.deleteColumnWrapper}
+                cssOffset={cssOffset}/>)
         }
       }
 }
