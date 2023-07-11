@@ -115,7 +115,7 @@ const matchable = [
         icon: <Table />,
         keywords: ["table", "spreadsheet"],
         node: createTable,
-        selectNode: true,
+        focusCell: true,
     },
     /*{
         name: "Custom Node",
@@ -284,11 +284,14 @@ class SlashPlugin {
                 );
 
                 const tr2 = view.state.tr;
+                console.log('pos', pos);
 
                 view.dispatch(
                     tr2
                         .setSelection(
-                            m.selectNode
+                            m.focusCell 
+                            ? TextSelection.create(tr2.doc, pos + 2) 
+                            :   m.selectNode
                                 ? NodeSelection.create(tr.doc, pos)
                                 : TextSelection.create(tr.doc, pos + 1)
                         )
