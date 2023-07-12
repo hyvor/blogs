@@ -144,6 +144,16 @@
             background-color: $color-red-light;
             position: absolute;
             right: 30px;
+            top: 18px;
+        }
+
+        .merge-cell-button {
+            justify-self: flex-end;
+            align-self: flex-end;
+            background-color: $color-accent-light;
+            position: absolute;
+            right: 60px;
+            top: 18px;
         }
 
         .add-header-row-button {

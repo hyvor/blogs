@@ -1,6 +1,6 @@
 import { EditorView, NodeView } from "prosemirror-view";
 import {Node as ProsemirrorNode, Schema} from "prosemirror-model";
-import { Trash } from "react-bootstrap-icons";
+import { ArrowsCollapse, Trash } from "react-bootstrap-icons";
 import ReactDOM from "react-dom/client";
 import React, { StrictMode } from "react";
 import {
@@ -203,11 +203,21 @@ export default class Table implements NodeView{
     createInside() {
         const _self = this;
 
+        const mergeCellButton = document.createElement("button");
+        mergeCellButton.className = "icon-button merge-cell-button";
+        mergeCellButton.onclick = function () {
+            mergeCells(_self.view.state, _self.view.dispatch);
+            _self.createMenuItems();
+        };
+        let root = ReactDOM.createRoot(mergeCellButton);
+        root.render(<ArrowsCollapse />);
+        this.topSettings.appendChild(mergeCellButton);
+
         const deleteButton = document.createElement("button");
         deleteButton.setAttribute("id", "delete-table-button");
         deleteButton.className = "icon-button delete-table-button";
 
-        let root = ReactDOM.createRoot(deleteButton);
+        root = ReactDOM.createRoot(deleteButton);
         root.render(<Trash />);
 
         deleteButton.onclick = function () {
