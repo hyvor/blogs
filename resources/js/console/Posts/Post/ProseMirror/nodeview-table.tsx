@@ -62,7 +62,6 @@ export default class Table implements NodeView{
         this.columnSettings = document.createElement("div");
         this.columnSettings.setAttribute("contenteditable", "false");
         this.columnSettings.className = "table-column-settings";
-        this.topSettings.appendChild(this.columnSettings);
 
         this.rightSideSettings = document.createElement("div");
         this.rightSideSettings.className = "table-right-side-settings";
@@ -79,6 +78,8 @@ export default class Table implements NodeView{
         this.middle = document.createElement("div");
         this.middle.className = "table-middle";
         this.dom.appendChild(this.middle);
+
+        this.middle.appendChild(this.columnSettings);
 
         this.contentDOM = document.createElement("table");
         this.contentDOM.className = "table-div";
@@ -316,15 +317,18 @@ export default class Table implements NodeView{
 
         // Create column menu items
         let colSSOffset = 0;
-        const cellInfo = _self.contentDOM.getElementsByTagName("td");
-        let cellWidth = 0;
-        if (cellInfo.item(0))
-            cellWidth = cellInfo.item(0)!.clientWidth;
-        console.log(cellWidth);
+        const rowInfo = rowsInfo.item(0);
         for (let colIdx = 0; colIdx < table.firstChild!.childCount; colIdx++) {
             const tableMenuWrapper = document.createElement("div");
             _self.columnSettings.appendChild(tableMenuWrapper);
             let root = ReactDOM.createRoot(tableMenuWrapper);
+            let cellWidth = 0
+            if (rowInfo)
+            {
+                const cell = rowInfo.children.item(colIdx);
+                if (cell)
+                    cellWidth = cell.clientWidth;
+            }
             colSSOffset += cellWidth / 2 - 20;
             root.render(<TableMenu 
                 colunmMenu={true}

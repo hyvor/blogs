@@ -168,12 +168,13 @@
             width: 100%;
             align-self: start;
             flex-direction: row;
+            //overflow: auto;
         }
 
         .table-middle {
             display: flex;
             flex-direction: row;
-            overflow: auto;
+            //overflow: auto;
         }
 
         .table-left-side-settings {
