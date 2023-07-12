@@ -22,11 +22,19 @@
 }
 
 .ProseMirror table {
-    border-collapse: collapse;
     margin: 0;
     width: 100%;
+    border: 1px solid black;
+    border-collapse: collapse;
+    max-width: 100%;
+    table-layout: fixed;
   }
 
+
+.resize-cursor {
+    cursor: ew-resize;
+    cursor: col-resize;
+}
 
 .ProseMirror tr {
     height: 20px;
@@ -42,6 +50,9 @@
     p {
         margin-top: 0;
     }
+    vertical-align: top;
+    box-sizing: border-box;
+    position: relative;
 }
 
 .ProseMirror .tableWrapper {
@@ -57,3 +68,15 @@
     text-align: center;
     padding: 15px;
 }
+
+.ProseMirror table .selectedCell:after {
+    z-index: 2;
+    position: absolute;
+    content: "";
+    left: 0;
+    right: 0;
+    top: 0;
+    bottom: 0;
+    background: rgba(200, 200, 255, 0.4);
+    pointer-events: none;
+  }
