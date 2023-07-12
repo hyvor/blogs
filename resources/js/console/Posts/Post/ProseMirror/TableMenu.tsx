@@ -19,7 +19,7 @@ export default function TableMenu({ colunmMenu, focused, addBefore, addAfter, ma
     setShowMenu(false);
   };
 
-  const customStyle = !colunmMenu ? {top: cssOffset + 'px'} : {};
+  const customStyle = !colunmMenu ? {top: cssOffset + 'px'} : {left: cssOffset + 'px'};
 
 
   return !focused ? (<div></div>) : (

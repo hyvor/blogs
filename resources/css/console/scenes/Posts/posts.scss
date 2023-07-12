@@ -142,6 +142,8 @@
             justify-self: flex-end;
             align-self: flex-end;
             background-color: $color-red-light;
+            position: absolute;
+            right: 30px;
         }
 
         .add-header-row-button {
@@ -154,17 +156,18 @@
         }
 
         .table-top-settings {
+            margin-top: 20px;
             display: flex;
             flex-direction: row;
-            justify-content: space-between;
         }
 
         .table-column-settings {
+            position: absolute;
+            top: 35px;
             display: flex;
             width: 100%;
             align-self: start;
             flex-direction: row;
-            justify-content: space-around;
         }
 
         .table-middle {

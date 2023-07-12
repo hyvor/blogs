@@ -290,21 +290,27 @@ export default class Table implements NodeView{
             this.columnSettings.removeChild(this.columnSettings.firstChild);
         }
 
+        const rowsInfo = _self.contentDOM.getElementsByTagName("tr");
+        let rowCSSOffset = 0;
+
         // Create row menu items
         for (let rowIdx = 0; rowIdx < rows; rowIdx++) {
-          const tableMenuWrapper = document.createElement("div");
-          _self.leftSideSettings.appendChild(tableMenuWrapper);
-          let root = ReactDOM.createRoot(tableMenuWrapper);
-          const cssOffset = rowIdx * 37 + 8;
-          root.render(<TableMenu 
-            colunmMenu={false}
-            focused={_self.isRowFocused(table.child(rowIdx))}
-            addBefore={_self.addRowBeforeWrapper}
-            addAfter={_self.addRowAfterWrapper}
-            makeHeader={_self.makeRowHeaderWrapper}
-            clearContent={_self.clearRowContentWrapper}
-            deleteWrapper={_self.deleteRowWrapper}
-            cssOffset={cssOffset}/>)
+            const tableMenuWrapper = document.createElement("div");
+            _self.leftSideSettings.appendChild(tableMenuWrapper);
+            let root = ReactDOM.createRoot(tableMenuWrapper);
+            if (rowsInfo.item(rowIdx))
+                rowCSSOffset += rowsInfo.item(rowIdx)!.clientHeight / 2 - 10;
+            root.render(<TableMenu 
+                colunmMenu={false}
+                focused={_self.isRowFocused(table.child(rowIdx))}
+                addBefore={_self.addRowBeforeWrapper}
+                addAfter={_self.addRowAfterWrapper}
+                makeHeader={_self.makeRowHeaderWrapper}
+                clearContent={_self.clearRowContentWrapper}
+                deleteWrapper={_self.deleteRowWrapper}
+                cssOffset={rowCSSOffset}/>)
+            if (rowsInfo.item(rowIdx))
+                rowCSSOffset += rowsInfo[rowIdx].clientHeight / 2 + 10;
         }
 
         // Create column menu items
@@ -312,7 +318,7 @@ export default class Table implements NodeView{
             const tableMenuWrapper = document.createElement("div");
             _self.columnSettings.appendChild(tableMenuWrapper);
             let root = ReactDOM.createRoot(tableMenuWrapper);
-            const cssOffset = colIdx * 20 + 10;
+            const cssOffset = colIdx * 200  + 80;
             root.render(<TableMenu 
                 colunmMenu={true}
                 focused={_self.isColumnFocused(colIdx)}
