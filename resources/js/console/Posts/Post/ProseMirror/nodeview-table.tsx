@@ -260,13 +260,15 @@ export default class Table implements NodeView{
         const selection = this.view.state.selection;
         const tableCell = selection.$from.node(-1);
         let tableRow = selection.$from.node(-2);
-        if (tableRow == null)
+        if (!tableRow)
             return false;
         let parentIndex = -3;
         if (tableRow.type.name !== 'table_row') {
             tableRow = selection.$from.node(parentIndex);
             parentIndex--;
         }
+        if (!tableRow)
+            return false;
         for (let i = 0; i < tableRow.childCount; i++) {
             if (tableRow.child(i) === tableCell && i === columnIndex) {
                 return true;
@@ -290,10 +292,9 @@ export default class Table implements NodeView{
             this.columnSettings.removeChild(this.columnSettings.firstChild);
         }
 
+        // Create row menu items
         const rowsInfo = _self.contentDOM.getElementsByTagName("tr");
         let rowCSSOffset = 0;
-
-        // Create row menu items
         for (let rowIdx = 0; rowIdx < rows; rowIdx++) {
             const tableMenuWrapper = document.createElement("div");
             _self.leftSideSettings.appendChild(tableMenuWrapper);
@@ -314,11 +315,17 @@ export default class Table implements NodeView{
         }
 
         // Create column menu items
+        let colSSOffset = 0;
+        const cellInfo = _self.contentDOM.getElementsByTagName("td");
+        let cellWidth = 0;
+        if (cellInfo.item(0))
+            cellWidth = cellInfo.item(0)!.clientWidth;
+        console.log(cellWidth);
         for (let colIdx = 0; colIdx < table.firstChild!.childCount; colIdx++) {
             const tableMenuWrapper = document.createElement("div");
             _self.columnSettings.appendChild(tableMenuWrapper);
             let root = ReactDOM.createRoot(tableMenuWrapper);
-            const cssOffset = colIdx * 200  + 80;
+            colSSOffset += cellWidth / 2 - 20;
             root.render(<TableMenu 
                 colunmMenu={true}
                 focused={_self.isColumnFocused(colIdx)}
@@ -327,7 +334,8 @@ export default class Table implements NodeView{
                 makeHeader={_self.makeColumnHeaderWrapper}
                 clearContent={_self.clearColumnContentWrapper}
                 deleteWrapper={_self.deleteColumnWrapper}
-                cssOffset={cssOffset}/>)
+                cssOffset={colSSOffset}/>)
+            colSSOffset += cellWidth / 2 + 20;
         }
       }
 }
