@@ -248,9 +248,7 @@ export default class Table implements NodeView{
             this.node = node;
             return true;
         }
-
         return false;
-        
     }
 
     ignoreMutation(mutation: MutationRecord) {

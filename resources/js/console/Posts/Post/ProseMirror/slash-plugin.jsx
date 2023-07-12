@@ -284,7 +284,6 @@ class SlashPlugin {
                 );
 
                 const tr2 = view.state.tr;
-                console.log('pos', pos);
 
                 view.dispatch(
                     tr2
