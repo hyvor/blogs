@@ -28,17 +28,10 @@
     border-collapse: collapse;
   }
 
-
-.resize-cursor {
-    cursor: ew-resize;
-    cursor: col-resize;
-}
-
 .ProseMirror tr {
     height: 20px;
     width: 150px;
 }
-
 
 .ProseMirror th,
 .ProseMirror td {
@@ -77,4 +70,5 @@
     bottom: 0;
     background: rgba(200, 200, 255, 0.4);
     pointer-events: none;
+    cursor: default;
   }
