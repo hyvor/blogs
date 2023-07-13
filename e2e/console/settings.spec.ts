@@ -677,14 +677,12 @@ test.describe('Settings', () => {
         
     });
 
-    // TODO: Change Syntax Highlighting to Post Content
-
-    /* test.describe('Syntax Highlighting', () => {
+    test.describe('Post Content', () => {
         
         consoleTest.beforeEach(async ({testingApi, console, page}) => {
             await testingApi.factory.blogFull();
             await console.visitAndNav('settings');
-            await page.getByRole('link', { name: 'Syntax Highlighting' }).click();
+            await page.getByRole('link', { name: 'Post Content' }).click();
           });
 
           consoleTest('Disable Syntax Highlighting', async ({testingApi, console, page}) => {
@@ -692,7 +690,7 @@ test.describe('Settings', () => {
             await page.getByRole('button', { name: 'SAVE' }).click();
             await page.reload();
 
-            await expect(page.getByTestId('switch')).toHaveAttribute('class', 'unchecked');
+            await expect(page.getByTestId('switch').first()).toHaveAttribute('class', 'unchecked');
         });
 
         consoleTest('Changing theme', async ({testingApi, console, page}) => {
@@ -705,14 +703,22 @@ test.describe('Settings', () => {
         });
 
         consoleTest('Deactivate line number', async ({testingApi, console, page}) => {
-            await page.locator('div:nth-child(4) > .dual-right > span > div > .react-switch-handle').click();
+            await page.locator('div:nth-child(3) > .dual-right > .checked > div').first().click();
             await page.getByRole('button', { name: 'SAVE' }).click();
             await page.reload();
 
             await expect(page.getByTestId('switch').nth(1)).toHaveAttribute('class', 'unchecked');
         });
+
+        consoleTest('Deactivate Heading Anchors', async ({testingApi, console, page}) => {
+            await page.locator('.settings-highlight > div:nth-child(3) > .dual-right > .checked > div > .react-switch-handle').click();
+            await page.getByRole('button', { name: 'SAVE' }).click();
+            await page.reload();
+
+            await expect(page.getByTestId('switch').nth(2)).toHaveAttribute('class', 'unchecked');
+        });
         
-    }); */
+    });
 
     test.describe('Export', () => {
         
