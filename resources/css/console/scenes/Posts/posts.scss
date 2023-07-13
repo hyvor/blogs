@@ -172,8 +172,7 @@
         }
 
         .table-column-settings {
-            position: absolute;
-            top: 35px;
+            position: relative;
             display: flex;
             width: 100%;
             align-self: start;
@@ -184,7 +183,7 @@
         .table-middle {
             display: flex;
             flex-direction: row;
-            //overflow: auto;
+            overflow: auto;
         }
 
         .table-left-side-settings {

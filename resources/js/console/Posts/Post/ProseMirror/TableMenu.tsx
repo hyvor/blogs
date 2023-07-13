@@ -20,7 +20,8 @@ export default function TableMenu({ colunmMenu, focused, addBefore, addAfter, ma
   };
 
   const customStyle = !colunmMenu ? {top: cssOffset + 'px'} : {left: cssOffset + 'px'};
-
+  if (colunmMenu)
+    customStyle['bottom'] = '-10px';
 
   return !focused ? (<div></div>) : (
     <div className={'table-menu'} style={customStyle}>
