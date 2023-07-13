@@ -174,10 +174,9 @@
         .table-column-settings {
             position: relative;
             display: flex;
-            width: 100%;
             align-self: start;
             flex-direction: row;
-            //overflow: auto;
+            overflow: visible;
         }
 
         .table-middle {

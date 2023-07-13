@@ -301,15 +301,6 @@ export default class Table implements NodeView{
             this.columnSettings.removeChild(this.columnSettings.firstChild);
         }
 
-        /*
-        const cells = this.contentDOM.getElementsByTagName("td");
-        console.log(cells);
-        for (let i = 0; i < cells.length; i++) {
-            cells.item(i)!.addEventListener("mouseover", () => {
-                this.createMenuItems();
-            });
-        }*/
-
         // Create row menu items
         const rowsInfo = _self.contentDOM.getElementsByTagName("tr");
         let rowCSSOffset = 0;
