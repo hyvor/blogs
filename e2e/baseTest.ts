@@ -74,11 +74,12 @@ class Factory {
             language_id: language.id,
         });
 
+
         return {
             blog,
             user,
             language,
-            variant
+            variant,
         }
     }
 
@@ -105,6 +106,10 @@ class Factory {
 
     async routes(attrs = {}) {
         return await this.testingApi.callFactory('Route', attrs);
+    }
+
+    async post(attrs = {}) {
+        return await this.testingApi.callFactory('Post', attrs);
     }
     
 }
