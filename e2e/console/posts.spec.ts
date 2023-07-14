@@ -4,7 +4,7 @@ import {consoleTest} from "./consoleTest.ts";
 test.describe('Paragraph', () => {
 
     consoleTest.beforeEach(async ({testingApi, console, page}) => {
-        const blog = await testingApi.factory.blogFull({routes: true});
+        await testingApi.factory.blogFull({routes: true});
         await console.visitAndNav('posts');
         await page.getByRole('button', { name: '+ New' }).click();
     });
@@ -21,10 +21,7 @@ test.describe('Paragraph', () => {
 test.describe('Heading', () => {
 
     consoleTest.beforeEach(async ({testingApi, console, page}) => {
-        await console.visit('');
-        await page.getByLabel('Blog Name').click();
-        await page.getByLabel('Blog Name').fill('testblog');
-        await page.getByRole('button', { name: 'Create Blog' }).click();
+        await testingApi.factory.blogFull({routes: true});
         await console.visitAndNav('posts');
         await page.getByRole('button', { name: '+ New' }).click();
     });
@@ -42,7 +39,7 @@ test.describe('Heading', () => {
 test.describe('Image', () => {
 
     consoleTest.beforeEach(async ({testingApi, console, page}) => {
-        const blog = await testingApi.factory.blogFull({routes: true});
+        await testingApi.factory.blogFull({routes: true});
         await console.visitAndNav('posts');
         await page.getByRole('button', { name: '+ New' }).click();
     });

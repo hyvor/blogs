@@ -76,7 +76,7 @@ class Factory {
         });
 
         if (routes)
-            await this.defaultRoutes({});
+            await this.defaultRoutes({blog_id: blog.id});
 
         return {
             blog,
@@ -112,11 +112,11 @@ class Factory {
     }
 
     async defaultRoutes(attrs = {}) {
-        await this.routes({name: 'post', match: '/{slug}', template: 'post'});
-        await this.routes({name: 'page', match: '/{slug}', template: 'page'});
-        await this.routes({name: 'index', match: '/', template: 'index', posts_filter: ''});
-        await this.routes({name: 'tag', match: '/tag/{slug}', template: 'tag,index', posts_filter: 'tag.slug={slug}'});
-        await this.routes({name: 'author', match: '/author/{slug}', template: 'author,index', posts_filter: 'author.slug={slug}'});
+        await this.routes({ ...attrs, name: 'post', match: '/{slug}', template: 'post'});
+        await this.routes({ ...attrs, name: 'page', match: '/{slug}', template: 'page'});
+        await this.routes({ ...attrs, name: 'index', match: '/', template: 'index', posts_filter: ''});
+        await this.routes({ ...attrs, name: 'tag', match: '/tag/{slug}', template: 'tag,index', posts_filter: 'tag.slug={slug}'});
+        await this.routes({ ...attrs, name: 'author', match: '/author/{slug}', template: 'author,index', posts_filter: 'author.slug={slug}'});
     }
     
 }

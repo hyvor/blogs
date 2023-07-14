@@ -28,14 +28,14 @@ export default function PostAuthors({ post, updatePostValue } : { post: Post, up
     for (let id in users) {
         options.push({
             value: parseInt(id),
-            label: (users[id].variants.find(v => v.language_id === languageId) as UserVariant).name
+            label: users[id].variants.find(v => v.language_id === languageId)?.name || ''
         })
     }
 
     const defaultValue = post.authors.map(author => (
         {
             value: author.id ,
-            label: (author.variants.find(v => v.language_id === languageId) as UserVariant).name
+            label: author.variants.find(v => v.language_id === languageId)?.name || ''
         }
     ))
 
@@ -49,7 +49,7 @@ export default function PostAuthors({ post, updatePostValue } : { post: Post, up
 
         return users.map(user => ({
             value: user.id,
-            label: (user.variants.find(v => v.language_id === languageId) as UserVariant).name
+            label: user.variants.find(v => v.language_id === languageId)?.name || ''
         }))
 
     }
