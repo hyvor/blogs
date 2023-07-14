@@ -54,6 +54,7 @@ class Factory {
     // blog + variant + user + language + routes
     async blogFull({
         blogAttrs = {},
+        routes = false,
     } = {}) {
         const blog = await this.blog(blogAttrs);
         const user = await this.user({
@@ -74,6 +75,8 @@ class Factory {
             language_id: language.id,
         });
 
+        if (routes)
+            await this.defaultRoutes({});
 
         return {
             blog,
@@ -108,8 +111,12 @@ class Factory {
         return await this.testingApi.callFactory('Route', attrs);
     }
 
-    async post(attrs = {}) {
-        return await this.testingApi.callFactory('Post', attrs);
+    async defaultRoutes(attrs = {}) {
+        await this.routes({name: 'post', match: '/{slug}', template: 'post'});
+        await this.routes({name: 'page', match: '/{slug}', template: 'page'});
+        await this.routes({name: 'index', match: '/', template: 'index', posts_filter: ''});
+        await this.routes({name: 'tag', match: '/tag/{slug}', template: 'tag,index', posts_filter: 'tag.slug={slug}'});
+        await this.routes({name: 'author', match: '/author/{slug}', template: 'author,index', posts_filter: 'author.slug={slug}'});
     }
     
 }

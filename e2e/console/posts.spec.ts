@@ -4,10 +4,7 @@ import {consoleTest} from "./consoleTest.ts";
 test.describe('Paragraph', () => {
 
     consoleTest.beforeEach(async ({testingApi, console, page}) => {
-        await console.visit('');
-        await page.getByLabel('Blog Name').click();
-        await page.getByLabel('Blog Name').fill('testblog');
-        await page.getByRole('button', { name: 'Create Blog' }).click();
+        const blog = await testingApi.factory.blogFull({routes: true});
         await console.visitAndNav('posts');
         await page.getByRole('button', { name: '+ New' }).click();
     });
@@ -45,10 +42,7 @@ test.describe('Heading', () => {
 test.describe('Image', () => {
 
     consoleTest.beforeEach(async ({testingApi, console, page}) => {
-        await console.visit('');
-        await page.getByLabel('Blog Name').click();
-        await page.getByLabel('Blog Name').fill('testblog');
-        await page.getByRole('button', { name: 'Create Blog' }).click();
+        const blog = await testingApi.factory.blogFull({routes: true});
         await console.visitAndNav('posts');
         await page.getByRole('button', { name: '+ New' }).click();
     });
@@ -62,4 +56,38 @@ test.describe('Image', () => {
         await expect(page.getByRole('figure', { name: 'Enter a caption...' }).getByRole('img')).toHaveAttribute('src', 'https://hyvor.com/img/logo.png');
     });
 
+    consoleTest('Change image', async ({testingApi, console, page}) => {
+        await page.locator('.ProseMirror').fill('/');   
+        await page.locator('div').filter({ hasText: /^ImageAdd an image$/ }).first().click();
+        await page.getByPlaceholder('Import from URL').fill('https://hyvor.com/img/logo.png');
+        await page.getByRole('button', { name: 'Confirm' }).click();
+        await page.getByRole('button', { name: 'Change Image' }).click();
+        await page.getByPlaceholder('Import from URL').fill('https://hyvor.com/img/services/talk.png');
+        await page.getByRole('button', { name: 'Confirm' }).click();
+
+        await expect(page.getByRole('figure', { name: 'Enter a caption...' }).getByRole('img')).toHaveAttribute('src', 'https://hyvor.com/img/services/talk.png');
+    });
+
+    consoleTest('Modify image caption', async ({testingApi, console, page}) => {
+        await page.locator('.ProseMirror').fill('/');   
+        await page.locator('div').filter({ hasText: /^ImageAdd an image$/ }).first().click();
+        await page.getByPlaceholder('Import from URL').fill('https://hyvor.com/img/logo.png');
+        await page.getByRole('button', { name: 'Confirm' }).click();
+        await page.getByText('Enter a caption...').click();
+        await page.locator('div').filter({ hasText: /^Change ImageEnter a caption\.\.\.$/ }).fill('New caption');
+
+        await expect(page.getByRole('figure', { name: 'New caption' })).toBeVisible();
+    });
+
+    consoleTest('Deleting image', async ({testingApi, console, page}) => {
+        await page.locator('.ProseMirror').fill('/');   
+        await page.locator('div').filter({ hasText: /^ImageAdd an image$/ }).first().click();
+        await page.getByPlaceholder('Import from URL').fill('https://hyvor.com/img/logo.png');
+        await page.getByRole('button', { name: 'Confirm' }).click();
+
+        await page.getByRole('figure', { name: 'Enter a caption...' }).getByRole('img').click();
+        await page.keyboard.press('Backspace');
+
+        await expect(page.locator('.ProseMirror').first()).not.toContainText('Enter a caption...');
+    });
 });
