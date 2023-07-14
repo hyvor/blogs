@@ -58,6 +58,8 @@ test.describe('Image', () => {
         await expect(page.getByRole('figure', { name: 'Enter a caption...' }).getByRole('img')).toHaveAttribute('src', 'https://hyvor.com/img/logo.png');
     });
 
+    /*TODO: Add an image from a file*/
+
     consoleTest('Change image', async ({testingApi, console, page}) => {
         await page.locator('.ProseMirror').fill('/');   
         await page.locator('div').filter({ hasText: /^ImageAdd an image$/ }).first().click();
@@ -91,5 +93,24 @@ test.describe('Image', () => {
         await page.keyboard.press('Backspace');
 
         await expect(page.locator('.ProseMirror').first()).not.toContainText('Enter a caption...');
+    });
+});
+
+test.describe('Quote', () => {
+
+    consoleTest.beforeEach(async ({testingApi, console, page}) => {
+        const {blog, language} = await testingApi.factory.blogFull({routes: true});
+        await testingApi.factory.post({blog_id: blog.id, language_id: language.id, title: 'Test Post'});
+        await console.visitAndNav('posts');
+        await page.getByRole('link', { name: 'Test Post' }).click();
+        await page.locator('.ProseMirror').fill(''); 
+    });
+
+    consoleTest('Adding quote', async ({testingApi, console, page}) => {
+        await page.locator('.ProseMirror').fill('/');
+        await page.locator('div').filter({ hasText: /^QuoteCapture a quote$/ }).first().click();
+        await page.locator('.ProseMirror').fill('This is a quote');
+
+        await expect(page.locator('.ProseMirror blockquote').first()).toContainText('This is a quote');
     });
 });
