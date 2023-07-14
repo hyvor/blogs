@@ -4,13 +4,14 @@ import {consoleTest} from "./consoleTest.ts";
 test.describe('Paragraph', () => {
 
     consoleTest.beforeEach(async ({testingApi, console, page}) => {
-        await testingApi.factory.blogFull({routes: true});
+        const {blog, language} = await testingApi.factory.blogFull({routes: true});
+        await testingApi.factory.post({blog_id: blog.id, language_id: language.id, title: 'Test Post'});
         await console.visitAndNav('posts');
-        await page.getByRole('button', { name: '+ New' }).click();
+        await page.getByRole('link', { name: 'Test Post' }).click();
+        await page.locator('.ProseMirror').fill(''); 
     });
 
     consoleTest('Writing pargraph', async ({testingApi, console, page}) => {
-        await page.getByRole('paragraph').click();
         await page.locator('.ProseMirror').fill('Paragraph test');    
         
         await expect(page.locator('.ProseMirror p').first()).toContainText('Paragraph test');
@@ -21,9 +22,11 @@ test.describe('Paragraph', () => {
 test.describe('Heading', () => {
 
     consoleTest.beforeEach(async ({testingApi, console, page}) => {
-        await testingApi.factory.blogFull({routes: true});
+        const {blog, language} = await testingApi.factory.blogFull({routes: true});
+        await testingApi.factory.post({blog_id: blog.id, language_id: language.id, title: 'Test Post'});
         await console.visitAndNav('posts');
-        await page.getByRole('button', { name: '+ New' }).click();
+        await page.getByRole('link', { name: 'Test Post' }).click();
+        await page.locator('.ProseMirror').fill(''); 
     });
 
     consoleTest('Writing heading', async ({testingApi, console, page}) => {
@@ -39,9 +42,11 @@ test.describe('Heading', () => {
 test.describe('Image', () => {
 
     consoleTest.beforeEach(async ({testingApi, console, page}) => {
-        await testingApi.factory.blogFull({routes: true});
+        const {blog, language} = await testingApi.factory.blogFull({routes: true});
+        await testingApi.factory.post({blog_id: blog.id, language_id: language.id, title: 'Test Post'});
         await console.visitAndNav('posts');
-        await page.getByRole('button', { name: '+ New' }).click();
+        await page.getByRole('link', { name: 'Test Post' }).click();
+        await page.locator('.ProseMirror').fill(''); 
     });
 
     consoleTest('Adding image from URL', async ({testingApi, console, page}) => {
