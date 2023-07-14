@@ -20,3 +20,46 @@ test.describe('Paragraph', () => {
     });
 
 });
+
+test.describe('Heading', () => {
+
+    consoleTest.beforeEach(async ({testingApi, console, page}) => {
+        await console.visit('');
+        await page.getByLabel('Blog Name').click();
+        await page.getByLabel('Blog Name').fill('testblog');
+        await page.getByRole('button', { name: 'Create Blog' }).click();
+        await console.visitAndNav('posts');
+        await page.getByRole('button', { name: '+ New' }).click();
+    });
+
+    consoleTest('Writing heading', async ({testingApi, console, page}) => {
+        await page.locator('.ProseMirror').fill('/');    
+        await page.locator('div').filter({ hasText: /^Heading - LargeTo divide main sections of the post$/ }).first().click();
+        await page.locator('div').filter({ hasText: /^h2#$/ }).first().fill('Heading test\nh2#');
+
+        await expect(page.getByRole('heading', { name: 'Heading test' })).toBeVisible();
+    });
+
+});
+
+test.describe('Image', () => {
+
+    consoleTest.beforeEach(async ({testingApi, console, page}) => {
+        await console.visit('');
+        await page.getByLabel('Blog Name').click();
+        await page.getByLabel('Blog Name').fill('testblog');
+        await page.getByRole('button', { name: 'Create Blog' }).click();
+        await console.visitAndNav('posts');
+        await page.getByRole('button', { name: '+ New' }).click();
+    });
+
+    consoleTest('Adding image from URL', async ({testingApi, console, page}) => {
+        await page.locator('.ProseMirror').fill('/');   
+        await page.locator('div').filter({ hasText: /^ImageAdd an image$/ }).first().click();
+        await page.getByPlaceholder('Import from URL').fill('https://hyvor.com/img/logo.png');
+        await page.getByRole('button', { name: 'Confirm' }).click();
+
+        await expect(page.getByRole('figure', { name: 'Enter a caption...' }).getByRole('img')).toHaveAttribute('src', 'https://hyvor.com/img/logo.png');
+    });
+
+});
