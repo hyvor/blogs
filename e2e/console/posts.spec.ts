@@ -125,3 +125,47 @@ test.describe('Quote', () => {
         await expect(page.locator('.ProseMirror').first()).not.toContainText('This is a quote');
     });
 });
+
+test.describe('Callout', () => {
+
+    consoleTest.beforeEach(async ({testingApi, console, page}) => {
+        const {blog, language} = await testingApi.factory.blogFull({routes: true});
+        await testingApi.factory.post({blog_id: blog.id, language_id: language.id, title: 'Test Post'});
+        await console.visitAndNav('posts');
+        await page.getByRole('link', { name: 'Test Post' }).click();
+        await page.locator('.ProseMirror').fill(''); 
+    });
+
+    consoleTest('Adding callout', async ({testingApi, console, page}) => {
+        await page.locator('.ProseMirror').fill('/');
+        await page.locator('div').filter({ hasText: /^CalloutWrite something standing out$/ }).first().click();
+        await page.locator('div').filter({ hasText: /^💡$/ }).fill('This is a callout');
+
+        await expect(page.getByText('This is a callout')).toBeVisible();
+    });
+
+    consoleTest('Changing callout background color', async ({testingApi, console, page}) => {
+        await page.locator('.ProseMirror').fill('/');
+        await page.locator('div').filter({ hasText: /^CalloutWrite something standing out$/ }).first().click();
+        await page.locator('div').filter({ hasText: /^💡$/ }).fill('This is a callout');
+
+        await page.getByRole('complementary').locator('span').nth(1).click();
+        await page.getByTitle('#eedfda').click();
+        await page.locator('.color-picker-view > div').first().click();
+
+       await expect(page.locator('aside').filter({ hasText: /^💡This is a callout$/ })).toHaveAttribute('style', 'background-color: rgb(238, 223, 218); color: rgb(0, 0, 0);');
+    });
+
+    consoleTest('Changing callout text color', async ({testingApi, console, page}) => {
+        await page.locator('.ProseMirror').fill('/');
+        await page.locator('div').filter({ hasText: /^CalloutWrite something standing out$/ }).first().click();
+        await page.locator('div').filter({ hasText: /^💡$/ }).fill('This is a callout');
+
+        await page.getByRole('complementary').locator('div').nth(1).click();
+        await page.getByTitle('#fff').click();
+        await page.locator('.color-picker-view > div').first().click();
+
+       await expect(page.locator('aside').filter({ hasText: /^💡This is a callout$/ })).toHaveAttribute('style', 'background-color: rgb(241, 241, 239); color: rgb(255, 255, 255);');
+    });
+
+});
