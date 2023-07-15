@@ -113,4 +113,15 @@ test.describe('Quote', () => {
 
         await expect(page.locator('.ProseMirror blockquote').first()).toContainText('This is a quote');
     });
+
+    consoleTest('Deleting quote', async ({testingApi, console, page}) => {
+        await page.locator('.ProseMirror').fill('/');
+        await page.locator('div').filter({ hasText: /^QuoteCapture a quote$/ }).first().click();
+        await page.locator('.ProseMirror').fill('This is a quote');
+        await page.getByText('This is a quote').click();
+        await page.locator('div').filter({ hasText: /^This is a quote$/ }).fill('');
+        await page.keyboard.press('Backspace');
+
+        await expect(page.locator('.ProseMirror').first()).not.toContainText('This is a quote');
+    });
 });
