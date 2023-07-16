@@ -182,12 +182,33 @@ test.describe('Code block', () => {
     consoleTest('Adding a code block', async ({testingApi, console, page}) => {
         await page.locator('.ProseMirror').fill('/');
         await page.locator('div').filter({ hasText: /^Code BlockA block of code$/ }).first().click();
-        await page.locator('.code-toolbar-inputs > input').first().fill('p');
-        await page.locator('.code-toolbar-inputs > input').first().click();
         await page.locator('.code-toolbar-inputs > input').first().fill('python');
         await page.locator('#middle pre').nth(1).click();
         await page.locator('textarea').nth(2).fill('def function:');
-        
+
+        await expect(page.locator('.code-toolbar-inputs > input').first()).toHaveValue('python');
         await expect(page.locator('span').filter({  hasText: /^def function:$/ })).toBeVisible();
+    });
+
+    consoleTest('Editing a code block', async ({testingApi, console, page}) => {
+        await page.locator('.ProseMirror').fill('/');
+        await page.locator('div').filter({ hasText: /^Code BlockA block of code$/ }).first().click();
+        await page.locator('.code-toolbar-inputs > input').first().fill('python');
+        await page.locator('#middle pre').nth(1).click();
+        await page.locator('textarea').nth(2).fill('def function:');
+        await page.locator('textarea').nth(2).fill('def foo:');
+        
+        await expect(page.locator('.code-toolbar-inputs > input').first()).toHaveValue('python');
+        await expect(page.locator('span').filter({  hasText: /^def foo:$/ })).toBeVisible();
+    });
+
+    consoleTest('Deleting a code block', async ({testingApi, console, page}) => {
+        await page.locator('.ProseMirror').fill('/');
+        await page.locator('div').filter({ hasText: /^Code BlockA block of code$/ }).first().click();
+        await page.locator('.code-toolbar-inputs > input').first().fill('python');
+        await page.locator('textarea').nth(2).fill('');
+        await page.keyboard.press('Backspace');
+
+        await expect(page.locator('.ProseMirror').first()).not.toContainText('def function:');
     });
 });
