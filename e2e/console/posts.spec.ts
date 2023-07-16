@@ -16,7 +16,6 @@ test.describe('Paragraph', () => {
         
         await expect(page.locator('.ProseMirror p').first()).toContainText('Paragraph test');
     });
-
 });
 
 test.describe('Heading', () => {
@@ -168,4 +167,27 @@ test.describe('Callout', () => {
        await expect(page.locator('aside').filter({ hasText: /^💡This is a callout$/ })).toHaveAttribute('style', 'background-color: rgb(241, 241, 239); color: rgb(255, 255, 255);');
     });
 
+});
+
+test.describe('Code block', () => {
+
+    consoleTest.beforeEach(async ({testingApi, console, page}) => {
+        const {blog, language} = await testingApi.factory.blogFull({routes: true});
+        await testingApi.factory.post({blog_id: blog.id, language_id: language.id, title: 'Test Post'});
+        await console.visitAndNav('posts');
+        await page.getByRole('link', { name: 'Test Post' }).click();
+        await page.locator('.ProseMirror').fill(''); 
+    });
+
+    consoleTest('Adding a code block', async ({testingApi, console, page}) => {
+        await page.locator('.ProseMirror').fill('/');
+        await page.locator('div').filter({ hasText: /^Code BlockA block of code$/ }).first().click();
+        await page.locator('.code-toolbar-inputs > input').first().fill('p');
+        await page.locator('.code-toolbar-inputs > input').first().click();
+        await page.locator('.code-toolbar-inputs > input').first().fill('python');
+        await page.locator('#middle pre').nth(1).click();
+        await page.locator('textarea').nth(2).fill('def function:');
+        
+        await expect(page.locator('span').filter({  hasText: /^def function:$/ })).toBeVisible();
+    });
 });
