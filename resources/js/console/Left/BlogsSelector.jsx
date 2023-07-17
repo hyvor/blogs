@@ -39,6 +39,7 @@ export default function BlogsSelector() {
     }, [activeSubdomain]);
 
     useEffect(() => {
+        // TODO: Only subscribe to current blog
         for (let blog of blogs) {
             const blogId = blog.blog.id;
 

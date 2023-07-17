@@ -113,6 +113,6 @@ class PostObject
             return new AuthorObject($author, $blog, $language);
         })->toArray();
 
-        $this->editing_user = $post->editing_user;
+        $this->editing_user = $post->editing_user? new UserObject($post->editing_user, $blog) : null;
     }
 }

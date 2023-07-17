@@ -302,6 +302,9 @@ class PostRepository
         if (array_key_exists('code_foot', $updates)) {
             $post->code_foot = $updates['code_foot'];
         }
+        if (array_key_exists('editing_user_id', $updates)) {
+            $post->editing_user_id = $updates['editing_user_id'];
+        }
 
         $post->save();
 

@@ -134,7 +134,7 @@ export type Post = {
     tags: Tag[];
     authors: User[];
 
-    editing_user_id: number | null;
+    editing_user: User | null;
 
 };
 
