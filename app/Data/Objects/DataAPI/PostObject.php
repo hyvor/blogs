@@ -50,7 +50,7 @@ class PostObject
 
     public string $code_foot;
 
-    public ?UserObject $currently_editing_user;
+    public ?UserObject $editing_user;
 
     /**
      * @var VariantObject[]
@@ -113,6 +113,6 @@ class PostObject
             return new AuthorObject($author, $blog, $language);
         })->toArray();
 
-        $this->currently_editing_user = $post->currently_editing_user;
+        $this->editing_user = $post->editing_user;
     }
 }
