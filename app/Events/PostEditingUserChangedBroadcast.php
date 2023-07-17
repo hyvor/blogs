@@ -32,6 +32,6 @@ class PostEditingUserChangedBroadcast implements ShouldBroadcast
      */
     public function broadcastOn()
     {
-        return new Channel('blog'.$this->blogId);
+        return new Channel("blog.{$this->blogId}");
     }
 }

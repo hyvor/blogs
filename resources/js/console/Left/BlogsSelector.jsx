@@ -3,6 +3,8 @@ import React, { useState } from 'react'
 import { useRef } from 'react';
 import { useEffect } from 'react';
 import { router } from "kea-router";
+import Echo from 'laravel-echo';
+import Pusher from 'pusher-js';
 
 
 import {ChevronExpand, GripVertical} from 'react-bootstrap-icons';
@@ -35,6 +37,33 @@ export default function BlogsSelector() {
     useEffect(() => {
         lastActiveSubdomain = activeSubdomain;
     }, [activeSubdomain]);
+
+    useEffect(() => {
+        for (let blog of blogs) {
+            const blogId = blog.blog.id;
+
+            window.Pusher = Pusher;
+
+            const echo = new Echo({
+                broadcaster: 'pusher',
+                key: 'app-key',//process.env.VITE_PUSHER_APP_KEY,
+                wsHost: 'localhost',//process.env.VITE_PUSHER_HOST,
+                wsPort: '6001',//process.env.VITE_PUSHER_PORT,
+                wssPort: '6001',//process.env.VITE_PUSHER_PORT,
+                forceTLS: false,
+                encrypted: true,
+                disableStats: true,
+                enabledTransports: ['ws', 'wss'],
+                cluster: 'eu',
+            });
+
+            echo.channel(`blog.${blogId}`)
+            .listen('PostEditingUserChangedBroadcast', (e) => {
+                console.log(e);
+            });
+            console.log('Subscribed to blog ' + blogId + ' channel');
+        }
+    }, [blogs]);
 
     let closerRef = useRef(null);
     function openList() {

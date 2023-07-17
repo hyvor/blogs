@@ -134,6 +134,8 @@ export type Post = {
     tags: Tag[];
     authors: User[];
 
+    editing_user_id: number | null;
+
 };
 
 export type PostStatus = 'draft' | 'published' | 'scheduled'

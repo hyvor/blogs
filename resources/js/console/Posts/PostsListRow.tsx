@@ -6,13 +6,17 @@ import dayjs from 'dayjs';
 import languagesLogic from '../logic/languagesLogic';
 import LangTag from '../ReusableComponents/LangTag';
 import { getLangTagIconByPostStatus } from './Post/PostLanguageSelector';
-import { PostVariant } from "../types";
+import { Post, PostVariant } from "../types";
 import UserPermissions from "../services/UserPermissions";
+import usersLogic from '../logic/usersLogic';
+import { usePostActions } from './Post/helpers';
 
 export default function PostsListRow({ id, subdomain }: { id: number, subdomain: string }) {
 
-    const { languages, getLanguageById } = useValues(languagesLogic({ subdomain }))
-    const { post, postOriginal } = useValues(postLogic({ id }))
+    const { languages, getLanguageById } = useValues(languagesLogic({ subdomain }));
+    const { post, postOriginal } = useValues(postLogic({ id }));
+    const { forceSavePost } = usePostActions(id)
+    const { users } = useValues(usersLogic({ subdomain }));
 
     const postsLink = `/console/${subdomain}/` + (post.is_page ? 'pages' : 'posts')
     const toLink = `${postsLink}/${post.id}`
@@ -27,9 +31,21 @@ export default function PostsListRow({ id, subdomain }: { id: number, subdomain:
 
     const permClass = UserPermissions.canEditPost(postOriginal) ? '' : 'global-no-permissions';
 
+    const updatePostEditorId = () => {
+        const update = {
+            editing_user_id: Object.values(users)[0].id
+        } as Partial<Post>
+
+        forceSavePost({
+            update,
+            onSave: () => {console.log('Post ' + post.id + ' under editing');}
+        });
+    }
+
     return <NavLink
         key={post.id}
         href={location.pathname === toLink ? postsLink : toLink}
+        onClick={updatePostEditorId}
         className={"posts-list-item" + ` ${variant.status} ${permClass}`}>
 
         <div>

@@ -1,6 +1,6 @@
 <?php
 
-use App\Events\TestEvent;
+use App\Events\PostEditingUserChangedBroadcast;
 use Illuminate\Support\Facades\App;
 use Illuminate\Support\Facades\Route;
 
@@ -21,11 +21,11 @@ Route::domain(config('blogs.domain_app'))->group(function () {
     include 'app/integrations/integrations.php';
 });
 
-Route::get('/fire', function () {
-    TestEvent::dispatch('Hello World!');
+/*Route::get('/fire', function () {
+    PostEditingUserChangedBroadcast::dispatch(11);
 
     return 'Event has been sent!';
-});
+});*/
 
 
 include 'app/api-delivery.php';
