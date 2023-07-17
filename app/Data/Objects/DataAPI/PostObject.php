@@ -3,6 +3,7 @@
 namespace App\Data\Objects\DataAPI;
 
 use App\Data\Enums\PostStatusEnum;
+use App\Data\Objects\ConsoleAPI\User\UserObject;
 use App\Domains\Route\PermalinkRepository;
 use App\Models\Blog;
 use App\Models\Language;
@@ -48,6 +49,8 @@ class PostObject
     public string $code_head;
 
     public string $code_foot;
+
+    public ?UserObject $currently_editing_user;
 
     /**
      * @var VariantObject[]
@@ -109,5 +112,7 @@ class PostObject
         $this->authors = $post->authors->map(function ($author) use ($blog, $language) {
             return new AuthorObject($author, $blog, $language);
         })->toArray();
+
+        $this->currently_editing_user = $post->currently_editing_user;
     }
 }

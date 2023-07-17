@@ -7,6 +7,7 @@ use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 use Illuminate\Database\Eloquent\Relations\HasMany;
+use Illuminate\Database\Eloquent\Relations\HasOne;
 
 class Post extends Model
 {
@@ -17,6 +18,7 @@ class Post extends Model
         'variants',
         'tags',
         'authors',
+        'editingUser',
     ];
 
     protected $casts = [
@@ -61,6 +63,15 @@ class Post extends Model
             ->belongsToMany(User::class, 'post_author')
             ->withPivot('post_author.id')
             ->orderBy('post_author.id', 'ASC');
+    }
+
+    /**
+     * @return belongsTo<User>
+     */
+    public function editingUser()
+    {
+        return $this
+            ->belongsTo(User::class, 'editing_user_id');
     }
 
 }

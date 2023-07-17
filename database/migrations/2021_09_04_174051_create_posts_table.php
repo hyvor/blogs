@@ -23,6 +23,7 @@ class CreatePostsTable extends Migration
 
             // connections
             $table->bigInteger('blog_id');
+            $table->bigInteger('editing_user_id')->nullable();
 
             // status
             $table->boolean('is_page')->default(false);
