@@ -14,6 +14,8 @@ import { Lock } from 'react-bootstrap-icons';
 import Echo from 'laravel-echo';
 import Pusher from 'pusher-js';
 import userBlogsLogic from '../logic/userBlogsLogic';
+import Toast from '../ReusableComponents/Toast';
+import { toast } from 'react-toastify';
 
 export default function PostsListRow({ id, subdomain }: { id: number, subdomain: string }) {
 
@@ -64,7 +66,7 @@ export default function PostsListRow({ id, subdomain }: { id: number, subdomain:
                 if (e.user == null)
                     setPostLock(false);
                 else
-                    setPostLock(true);
+                    setPostLock(e.user.id !== Object.values(users)[0]!.id);
             }
         });
         
@@ -84,7 +86,12 @@ export default function PostsListRow({ id, subdomain }: { id: number, subdomain:
     const handlePostLinkClick = (e: any) => {
         if (postLock) {
             e.preventDefault();
-            alert('This post is under editing by another user.');
+            toast.warning(
+                <div>This post is under editing</div>,
+                {
+                    autoClose: 5000
+                }
+            )
         }
         else {
             updatePostEditorId();
