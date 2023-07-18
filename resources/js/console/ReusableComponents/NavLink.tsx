@@ -21,6 +21,11 @@ const NavLink = React.forwardRef((props: any = {}, ref) => {
         {...props}
         ref={ref}
         onClick={(event) => {
+            if (props.disabled) {
+                event.preventDefault();
+                props.onClick && props.onClick(event);
+                return;
+            }
             if (!props.target) {
                 event.preventDefault()
                 router.actions.push(props.href) // router is mounted automatically, so this is safe to call

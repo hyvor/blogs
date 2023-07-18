@@ -64,7 +64,7 @@ export default function PostsListRow({ id, subdomain }: { id: number, subdomain:
                 if (e.user == null)
                     setPostLock(false);
                 else
-                    setPostLock(e.user.id !== Object.values(users)[0]!.id);
+                    setPostLock(true);
             }
         });
         
@@ -81,10 +81,21 @@ export default function PostsListRow({ id, subdomain }: { id: number, subdomain:
         });
     }
 
+    const handlePostLinkClick = (e: any) => {
+        if (postLock) {
+            e.preventDefault();
+            alert('This post is under editing by another user.');
+        }
+        else {
+            updatePostEditorId();
+        }
+    };
+
     return <NavLink
         key={post.id}
         href={location.pathname === toLink ? postsLink : toLink}
-        onClick={updatePostEditorId}
+        onClick={handlePostLinkClick}
+        disabled={postLock}
         className={"posts-list-item" + ` ${variant.status} ${permClass}`}>
 
         <div>
