@@ -16,6 +16,8 @@ import Pusher from 'pusher-js';
 import userBlogsLogic from '../logic/userBlogsLogic';
 import Toast from '../ReusableComponents/Toast';
 import { toast } from 'react-toastify';
+import Tooltip from '../ReusableComponents/Tooltip';
+import ReactTooltip from 'react-tooltip';
 
 export default function PostsListRow({ id, subdomain }: { id: number, subdomain: string }) {
 
@@ -108,8 +110,15 @@ export default function PostsListRow({ id, subdomain }: { id: number, subdomain:
         <div>
             <div className="post-title">
                 {variant.title || '(Untitled)'}
-                {postLock ? <Lock /> : null}
+                <div data-tip data-for="registerTip">
+                    {postLock ? <Lock /> : null}
+                </div>
             </div>
+            {postLock && post.editing_user ?
+                <Tooltip id="registerTip" place="bottom">
+                    {`Post under modification by: ${post.editing_user.variants[0].name}`} 
+                </Tooltip> : null
+            }
 
             <div className="post-data">
                 <div className="post-date">
