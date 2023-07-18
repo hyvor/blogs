@@ -14,15 +14,19 @@ class PostEditingUserChangedBroadcast implements ShouldBroadcast
     use Dispatchable, InteractsWithSockets, SerializesModels;
 
     public $blogId;
+    public $user;
+    public $postId;
 
     /**
      * Create a new event instance.
      *
      * @return void
      */
-    public function __construct($blogId)
+    public function __construct($blogId, $user, $postId)
     {
         $this->blogId = $blogId;
+        $this->user = $user;
+        $this->postId = $postId;
     }
 
     /**
@@ -33,5 +37,18 @@ class PostEditingUserChangedBroadcast implements ShouldBroadcast
     public function broadcastOn()
     {
         return new Channel("blog.{$this->blogId}");
+    }
+
+    /**
+     * Get the data to broadcast.
+     *
+     * @return array<string, mixed>
+     */
+    public function broadcastWith()
+    {
+        return [
+            'user' => $this->user,
+            'postId' => $this->postId,
+        ];
     }
 }

@@ -16,6 +16,7 @@ use App\Domains\Post\Listeners\PostVariantUpdateWordCountListener;
 use App\Domains\PostHistory\Listeners\PostHistoryVariantUpdateListener;
 use App\Domains\Shared\Count\CountSubscriber;
 use App\Domains\Webhook\Listeners\WebhookSubscriber;
+use App\Domains\Post\Broadcast\PostEditingUserChangedSubscriber;
 use Illuminate\Foundation\Support\Providers\EventServiceProvider as ServiceProvider;
 
 class EventServiceProvider extends ServiceProvider
@@ -52,7 +53,8 @@ class EventServiceProvider extends ServiceProvider
         // integrations
         ShopifySubscriber::class,
         HyvorTalkSubscriber::class,
-
+        
+        PostEditingUserChangedSubscriber::class,
     ];
 
     /*protected $observers = [
