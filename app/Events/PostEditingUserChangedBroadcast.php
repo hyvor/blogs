@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Domains\Post\Broadcast;
+namespace App\Events;
 
 use App\Data\Objects\ConsoleAPI\User\UserObject;
 use Illuminate\Broadcasting\Channel;

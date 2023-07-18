@@ -2,7 +2,7 @@
  
 namespace App\Domains\Post\Broadcast;
  
-use App\Domains\Post\Broadcast\PostEditingUserChangedBroadcast;
+use App\Events\PostEditingUserChangedBroadcast;
 use App\Domains\Post\Events\PostUpdatedEvent;
 use Illuminate\Events\Dispatcher;
  

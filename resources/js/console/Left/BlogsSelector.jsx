@@ -58,8 +58,7 @@ export default function BlogsSelector() {
                 cluster: 'eu',
             });
 
-            echo.channel(`blog.${blogId}`)
-            .listen('PostEditingUserChangedBroadcast', (e) => {
+            echo.channel(`blog.11`).listen('PostEditingUserChangedBroadcast', (e) => {
                 console.log('MESSAGE:', e);
             });
             console.log('Subscribed to blog ' + blogId + ' channel');

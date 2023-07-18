@@ -1,6 +1,6 @@
 <?php
 
-use App\Events\PostEditingUserChangedBroadcast;
+use App\Events\TestEventBroadcast;
 use Illuminate\Support\Facades\App;
 use Illuminate\Support\Facades\Route;
 
@@ -22,7 +22,7 @@ Route::domain(config('blogs.domain_app'))->group(function () {
 });
 
 /*Route::get('/fire', function () {
-    PostEditingUserChangedBroadcast::dispatch(11);
+    TestEventBroadcast::dispatch('Hello World');
 
     return 'Event has been sent!';
 });*/
