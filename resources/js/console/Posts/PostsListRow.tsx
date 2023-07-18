@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useEffect } from 'react';
 import NavLink from '../ReusableComponents/NavLink';
 import postLogic from '../logic/postLogic';
 import { useValues } from 'kea';
@@ -42,6 +42,25 @@ export default function PostsListRow({ id, subdomain }: { id: number, subdomain:
         });
         console.log(post);
     }
+
+    const resetPostEditorId = () => {
+        const update = {
+            editing_user_id: null
+        } as Partial<Post>
+
+        forceSavePost({
+            update,
+            onSave: () => {console.log('Post ' + post.id + ' no longer editing');}
+        });
+        console.log(post);
+    }
+
+    // Reset editing_user_id when the user no is no longer editing the post
+    useEffect(() => {
+        if (post.editing_user && post.editing_user.id === Object.values(users)[0].id) {
+            resetPostEditorId();
+        }
+    }, []);
 
     return <NavLink
         key={post.id}

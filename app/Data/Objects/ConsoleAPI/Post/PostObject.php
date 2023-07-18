@@ -68,7 +68,7 @@ class PostObject
         $this->canonical_url = $post->canonical_url;
         $this->code_head = $post->code_head;
         $this->code_foot = $post->code_foot;
-        $this->editing_user = $post->editing_user? new UserObject($post->editing_user, $blog) : null;
+        $this->editing_user = $post->editingUser ? new UserObject($post->editingUser, $blog) : null;
 
         /** @var PostVariantObject[] $variants */
         $variants = $post->variants->map(function ($variant) use ($blog, $post, $setHtml) {

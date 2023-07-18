@@ -78,7 +78,6 @@ class ConsolePostController extends Controller
             $limit,
             $offset
         )->map(function ($post) use ($blog) {
-            dd($post);
             return new PostObject($post, $blog);
         });
 
