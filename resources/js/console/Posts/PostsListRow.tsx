@@ -10,6 +10,7 @@ import { Post, PostVariant } from "../types";
 import UserPermissions from "../services/UserPermissions";
 import usersLogic from '../logic/usersLogic';
 import { usePostActions } from './Post/helpers';
+import { Lock } from 'react-bootstrap-icons';
 
 export default function PostsListRow({ id, subdomain }: { id: number, subdomain: string }) {
 
@@ -43,25 +44,6 @@ export default function PostsListRow({ id, subdomain }: { id: number, subdomain:
         console.log(post);
     }
 
-    const resetPostEditorId = () => {
-        const update = {
-            editing_user_id: null
-        } as Partial<Post>
-
-        forceSavePost({
-            update,
-            onSave: () => {console.log('Post ' + post.id + ' no longer editing');}
-        });
-        console.log(post);
-    }
-
-    // Reset editing_user_id when the user no is no longer editing the post
-    useEffect(() => {
-        if (post.editing_user && post.editing_user.id === Object.values(users)[0].id) {
-            resetPostEditorId();
-        }
-    }, []);
-
     return <NavLink
         key={post.id}
         href={location.pathname === toLink ? postsLink : toLink}
@@ -69,7 +51,10 @@ export default function PostsListRow({ id, subdomain }: { id: number, subdomain:
         className={"posts-list-item" + ` ${variant.status} ${permClass}`}>
 
         <div>
-            <div className="post-title">{variant.title || '(Untitled)'}</div>
+            <div className="post-title">
+                {variant.title || '(Untitled)'}
+                {post.editing_user ? <Lock /> : null}
+            </div>
 
             <div className="post-data">
                 <div className="post-date">

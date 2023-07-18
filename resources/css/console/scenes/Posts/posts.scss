@@ -234,6 +234,9 @@
             width: 300px;
             font-weight: 600;
             word-break: break-all;
+            display: flex;
+            flex-direction: row;
+            align-items: center;
         }
 
         .post-data {

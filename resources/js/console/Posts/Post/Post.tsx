@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useEffect } from 'react';
 import Loader from '../../ReusableComponents/Loader';
 import Tooltip from '../../ReusableComponents/Tooltip';
 import { usePostValues, usePostActions } from "./helpers";
@@ -10,13 +10,16 @@ import Unpublisher from "./Unpublisher";
 import postsLogic from "../../logic/postsLogic";
 import pagesLogic from "../../logic/pagesLogic";
 import Discarder from './Discarder';
+import postLogic from '../../logic/postLogic';
+import { useValues } from 'kea';
 
 export default function Post({ id, subdomain, type }: { id: number, subdomain: string, type: string }) {
 
     const { loadPostAjax, editorState } = usePostValues(id);
     const postsLogicInst = postsLogic({ subdomain });
     const pagesLogicInst = pagesLogic({ subdomain });
-    const { savePost } = usePostActions(id)
+    const { savePost, forceSavePost } = usePostActions(id);
+    const { post } = useValues(postLogic({ id }));
 
     useSave(id);
 
@@ -26,13 +29,33 @@ export default function Post({ id, subdomain, type }: { id: number, subdomain: s
         </div>;
     }
 
+    const resetPostEditorId = () => {
+        const update = {
+            editing_user_id: null
+        } as Partial<typeof Post>
+
+        forceSavePost({
+            update,
+            onSave: () => {console.log('Post ' + post.id + ' no longer editing');}
+        });
+        console.log(post);
+    }
+
     const saveAndNavigateToList = () => {
         savePost();
-        if (type === 'post')
+        if (type === 'post') {
+            resetPostEditorId();
             postsLogicInst.actions.navigateToPosts();
+        }
         else
             pagesLogicInst.actions.navigateToPages();
     }
+
+    useEffect(() => {
+        window.onpopstate = () => {
+            resetPostEditorId();
+        };
+    });
 
     return <div className={"post-editor fullscreen"}>
 
@@ -55,3 +78,4 @@ export default function Post({ id, subdomain, type }: { id: number, subdomain: s
     </div >
 
 }
+
