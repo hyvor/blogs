@@ -2,8 +2,8 @@
  
 namespace App\Domains\Post\Broadcast;
  
+use App\Domains\Post\Broadcast\PostEditingUserChangedBroadcast;
 use App\Domains\Post\Events\PostUpdatedEvent;
-use App\Events\PostEditingUserChangedBroadcast;
 use Illuminate\Events\Dispatcher;
  
 class PostEditingUserChangedSubscriber
@@ -11,8 +11,9 @@ class PostEditingUserChangedSubscriber
  
     public static function onPostUpdate(PostUpdatedEvent $event): void
     {
+        PostEditingUserChangedBroadcast::dispatch($event->post);
         if ($event->post->editing_user_id != $event->postOld->editing_user_id) {
-            PostEditingUserChangedBroadcast::dispatch($event->post->blog_id, $event->post->id, $event->post->editingUser);
+            PostEditingUserChangedBroadcast::dispatch($event->post);
         }
     }
 

@@ -60,7 +60,7 @@ export default function BlogsSelector() {
 
             echo.channel(`blog.${blogId}`)
             .listen('PostEditingUserChangedBroadcast', (e) => {
-                console.log(e);
+                console.log('MESSAGE:', e);
             });
             console.log('Subscribed to blog ' + blogId + ' channel');
         }

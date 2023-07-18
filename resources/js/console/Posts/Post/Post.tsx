@@ -38,7 +38,6 @@ export default function Post({ id, subdomain, type }: { id: number, subdomain: s
             update,
             onSave: () => {console.log('Post ' + post.id + ' no longer editing');}
         });
-        console.log(post);
     }
 
     const saveAndNavigateToList = () => {

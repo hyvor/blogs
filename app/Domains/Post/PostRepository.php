@@ -307,7 +307,7 @@ class PostRepository
         }
 
         $post->save();
-
+        
         PostUpdatedEvent::dispatch($post);
 
         return $post;

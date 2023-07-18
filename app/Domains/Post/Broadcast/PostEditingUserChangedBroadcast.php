@@ -1,7 +1,8 @@
 <?php
 
-namespace App\Events;
+namespace App\Domains\Post\Broadcast;
 
+use App\Data\Objects\ConsoleAPI\User\UserObject;
 use Illuminate\Broadcasting\Channel;
 use Illuminate\Broadcasting\InteractsWithSockets;
 
@@ -13,20 +14,16 @@ class PostEditingUserChangedBroadcast implements ShouldBroadcast
 {
     use Dispatchable, InteractsWithSockets, SerializesModels;
 
-    public $blogId;
-    public $user;
-    public $postId;
+    public $post;
 
     /**
      * Create a new event instance.
      *
      * @return void
      */
-    public function __construct($blogId, $user, $postId)
+    public function __construct($post)
     {
-        $this->blogId = $blogId;
-        $this->user = $user;
-        $this->postId = $postId;
+        $this->post = $post;
     }
 
     /**
@@ -36,7 +33,7 @@ class PostEditingUserChangedBroadcast implements ShouldBroadcast
      */
     public function broadcastOn()
     {
-        return new Channel("blog.{$this->blogId}");
+        return new Channel("blog.{$this->post->blog_id}");
     }
 
     /**
@@ -47,8 +44,8 @@ class PostEditingUserChangedBroadcast implements ShouldBroadcast
     public function broadcastWith()
     {
         return [
-            'user' => $this->user,
-            'postId' => $this->postId,
+            'user' => $this->post->editingUser ? new UserObject($this->post->editingUser, $this->post->blog) : null,
+            'postId' => $this->post->id,
         ];
     }
 }

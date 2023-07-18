@@ -41,7 +41,6 @@ export default function PostsListRow({ id, subdomain }: { id: number, subdomain:
             update,
             onSave: () => {console.log('Post ' + post.id + ' under editing');}
         });
-        console.log(post);
     }
 
     return <NavLink
