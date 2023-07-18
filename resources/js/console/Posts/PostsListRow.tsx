@@ -1,4 +1,4 @@
-import React, { useEffect } from 'react';
+import React, { useEffect, useState } from 'react';
 import NavLink from '../ReusableComponents/NavLink';
 import postLogic from '../logic/postLogic';
 import { useValues } from 'kea';
@@ -11,6 +11,9 @@ import UserPermissions from "../services/UserPermissions";
 import usersLogic from '../logic/usersLogic';
 import { usePostActions } from './Post/helpers';
 import { Lock } from 'react-bootstrap-icons';
+import Echo from 'laravel-echo';
+import Pusher from 'pusher-js';
+import userBlogsLogic from '../logic/userBlogsLogic';
 
 export default function PostsListRow({ id, subdomain }: { id: number, subdomain: string }) {
 
@@ -18,6 +21,9 @@ export default function PostsListRow({ id, subdomain }: { id: number, subdomain:
     const { post, postOriginal } = useValues(postLogic({ id }));
     const { forceSavePost } = usePostActions(id)
     const { users } = useValues(usersLogic({ subdomain }));
+    const { findBlogBySubdomain } = useValues(userBlogsLogic);
+
+    let activeBlog = findBlogBySubdomain(subdomain);
 
     const postsLink = `/console/${subdomain}/` + (post.is_page ? 'pages' : 'posts')
     const toLink = `${postsLink}/${post.id}`
@@ -31,6 +37,38 @@ export default function PostsListRow({ id, subdomain }: { id: number, subdomain:
     const authorsImages = post.authors.map(author => author.picture_url);
 
     const permClass = UserPermissions.canEditPost(postOriginal) ? '' : 'global-no-permissions';
+
+    const [postLock, setPostLock] = useState(post.editing_user ? post.editing_user.id !== Object.values(users)[0]!.id : false);
+
+    // Dyanmic post lock
+    useEffect(() => {
+        const blogId = activeBlog.blog.id;
+
+        window.Pusher = Pusher;
+
+        const echo = new Echo({
+            broadcaster: 'pusher',
+            key: 'app-key',//process.env.VITE_PUSHER_APP_KEY,
+            wsHost: 'localhost',//process.env.VITE_PUSHER_HOST,
+            wsPort: '6001',//process.env.VITE_PUSHER_PORT,
+            wssPort: '6001',//process.env.VITE_PUSHER_PORT,
+            forceTLS: false,
+            encrypted: true,
+            disableStats: true,
+            enabledTransports: ['ws', 'wss'],
+            cluster: 'eu',
+        });
+
+        echo.channel(`blog.${blogId}`).listen('PostEditingUserChangedBroadcast', (e: any) => {
+            if (e.postId === post.id) {
+                if (e.user == null)
+                    setPostLock(false);
+                else
+                    setPostLock(e.user.id !== Object.values(users)[0]!.id);
+            }
+        });
+        
+    }, [activeBlog]);
 
     const updatePostEditorId = () => {
         const update = {
@@ -52,7 +90,7 @@ export default function PostsListRow({ id, subdomain }: { id: number, subdomain:
         <div>
             <div className="post-title">
                 {variant.title || '(Untitled)'}
-                {post.editing_user ? <Lock /> : null}
+                {postLock ? <Lock /> : null}
             </div>
 
             <div className="post-data">
