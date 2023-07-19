@@ -1,6 +1,6 @@
 import { EditorView, NodeView } from "prosemirror-view";
 import {Node as ProsemirrorNode, Schema} from "prosemirror-model";
-import { ArrowsCollapse, Trash } from "react-bootstrap-icons";
+import { ArrowsCollapse, ArrowsExpand, Trash } from "react-bootstrap-icons";
 import ReactDOM from "react-dom/client";
 import React, { StrictMode } from "react";
 import {
@@ -210,8 +210,18 @@ export default class Table implements NodeView{
             _self.createMenuItems();
         };
         let root = ReactDOM.createRoot(mergeCellButton);
-        root.render(<ArrowsCollapse />);
+        root.render(<ArrowsExpand />);
         this.topSettings.appendChild(mergeCellButton);
+
+        const splitCellButton = document.createElement("button");
+        splitCellButton.className = "icon-button split-cell-button";
+        splitCellButton.onclick = function () {
+            splitCell(_self.view.state, _self.view.dispatch);
+            _self.createMenuItems();
+        };
+        root = ReactDOM.createRoot(splitCellButton);
+        root.render(<ArrowsCollapse />);
+        this.topSettings.appendChild(splitCellButton);
 
         const deleteButton = document.createElement("button");
         deleteButton.setAttribute("id", "delete-table-button");

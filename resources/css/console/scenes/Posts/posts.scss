@@ -156,6 +156,15 @@
             top: 18px;
         }
 
+        .split-cell-button {
+            justify-self: flex-end;
+            align-self: flex-end;
+            background-color: $color-accent-light;
+            position: absolute;
+            right: 90px;
+            top: 18px;
+        }
+
         .add-header-row-button {
             background-color: $color-accent-mid;
             margin-right: 5px;
