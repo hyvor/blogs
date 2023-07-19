@@ -239,7 +239,29 @@ export default class Table implements NodeView{
         addRowButton.className = "add-row-button";
         addRowButton.innerText = "+";
         addRowButton.onclick = function () {
+            // Focus the last row of the table before adding a new one
+            const selection = _self.view.state.selection;
+            const table = selection.$from.node(-3);
+            const tablePos = selection.$from.before(-3);
+            const lastRow = table.child(table.childCount - 1);
+            const lastRowPos = tablePos + table.nodeSize - lastRow.nodeSize;
+            let tr = _self.view.state.tr;
+            tr.setSelection(
+                NodeSelection.create(
+                    _self.view.state.doc,
+                    lastRowPos
+                )
+            );
+            _self.view.dispatch(tr);
             addRowAfter(_self.view.state, _self.view.dispatch);
+            tr = _self.view.state.tr;
+            tr.setSelection(
+                NodeSelection.create(
+                    _self.view.state.doc,
+                    tablePos + table.nodeSize
+                )
+            );
+            _self.view.dispatch(tr);
             _self.createMenuItems();
         };
         this.bottomSettings.appendChild(addRowButton);
