@@ -189,9 +189,11 @@
         }
 
         .table-middle {
+            height: 100%;
             display: flex;
             flex-direction: row;
-            overflow: auto;
+            overflow-y: hidden;
+            overflow-x: visible;
         }
 
         .table-left-side-settings {

@@ -1,6 +1,6 @@
 import { Node as ProsemirrorNode, Schema } from "prosemirror-model";
 import { EditorState, Transaction } from "prosemirror-state";
-import React from "react";
+import React, { useEffect, useRef } from "react";
 import { useState } from "react";
 import { ArrowDown, ArrowLeft, ArrowRight, ArrowUp, Backspace, CardHeading, Trash } from "react-bootstrap-icons";
 
@@ -9,22 +9,33 @@ export default function TableMenu({ colunmMenu, focused, addBefore, addAfter, ma
         makeHeader: () => void ,clearContent: () => void, deleteWrapper: () => void, cssOffset: number}) {
 
   const [showMenu, setShowMenu] = useState(false);
+  const menuRef = useRef<HTMLDivElement>(null);
 
   const toggleMenu = (event: React.MouseEvent<HTMLButtonElement, MouseEvent>) => {
     setShowMenu(!showMenu);
     event.stopPropagation();
   };
 
-  const handleClose = () => {
-    setShowMenu(false);
-  };
+  useEffect(() => {
+    const handleClickOutside = (event: MouseEvent) => {
+      if (menuRef.current && !menuRef.current.contains(event.target as Node)) {
+        setShowMenu(false);
+      }
+    };
+
+    window.addEventListener("click", handleClickOutside);
+
+    return () => {
+      window.removeEventListener("click", handleClickOutside);
+    };
+  }, []);
 
   const customStyle = !colunmMenu ? {top: cssOffset + 'px'} : {left: cssOffset + 'px'};
   if (colunmMenu)
     customStyle['bottom'] = '-10px';
 
   return !focused ? (<div></div>) : (
-    <div className={'table-menu'} style={customStyle}>
+    <div className={'table-menu'} style={customStyle} ref={menuRef}>
       <button className="toggle-table-menu-button" 
       onClick={toggleMenu}
       disabled={!focused}
@@ -33,7 +44,6 @@ export default function TableMenu({ colunmMenu, focused, addBefore, addAfter, ma
       </button>
       {showMenu && (
         <div className="table-menu-options">
-          <button onClick={handleClose} className="icon-button close-table-menu">x</button>
           <button className="action-button" onClick={makeHeader}>
             <CardHeading className="table-menu-icon"/>
             {colunmMenu ? 'Header Column' : 'Header Row'}
