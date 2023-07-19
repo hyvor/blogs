@@ -19,7 +19,7 @@ import {
     goToNextCell,
     deleteTable,
   } from "prosemirror-tables";
-import { NodeSelection } from "prosemirror-state";
+import { NodeSelection, TextSelection } from "prosemirror-state";
 import { createRoot } from "react-dom/client";
 import TableMenu from "./TableMenu";
 
@@ -256,7 +256,7 @@ export default class Table implements NodeView{
             addRowAfter(_self.view.state, _self.view.dispatch);
             tr = _self.view.state.tr;
             tr.setSelection(
-                NodeSelection.create(
+                TextSelection.create(
                     _self.view.state.doc,
                     tablePos + table.nodeSize
                 )
@@ -270,7 +270,6 @@ export default class Table implements NodeView{
         addColumnButton.className = "add-column-button";
         addColumnButton.innerText = "+";
         addColumnButton.onclick = function () {
-           
             const selection = _self.view.state.selection;
             const table = selection.$from.node(-3);
             const tablePos = selection.$from.before(-3);
