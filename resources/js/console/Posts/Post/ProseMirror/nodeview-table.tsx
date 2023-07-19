@@ -22,6 +22,7 @@ import {
 import { NodeSelection, TextSelection } from "prosemirror-state";
 import { createRoot } from "react-dom/client";
 import TableMenu from "./TableMenu";
+import Tooltip from "../../../ReusableComponents/Tooltip";
 
 
 
@@ -210,7 +211,12 @@ export default class Table implements NodeView{
             _self.createMenuItems();
         };
         let root = ReactDOM.createRoot(mergeCellButton);
-        root.render(<ArrowsExpand />);
+        root.render(
+            <div>
+                <ArrowsCollapse data-tip data-for="merge-tooltip"/>
+                <Tooltip id="merge-tooltip" place="bottom">Merge cells</Tooltip>
+            </div>
+        );
         this.topSettings.appendChild(mergeCellButton);
 
         const splitCellButton = document.createElement("button");
@@ -220,7 +226,12 @@ export default class Table implements NodeView{
             _self.createMenuItems();
         };
         root = ReactDOM.createRoot(splitCellButton);
-        root.render(<ArrowsCollapse />);
+        root.render(
+            <div>
+                <ArrowsExpand data-tip data-for="split-tooltip"/>
+                <Tooltip id="split-tooltip" place="bottom">Split cells</Tooltip>
+            </div>
+        );
         this.topSettings.appendChild(splitCellButton);
 
         const deleteButton = document.createElement("button");
