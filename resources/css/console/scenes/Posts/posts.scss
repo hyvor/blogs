@@ -53,13 +53,14 @@
     .table-menu {
         position: absolute;
         display: inline-block;
-        z-index: 100;
+        z-index: 999;
 
         .action-button {
             display: flex;
             flex-direction: row;
             background-color: $color-box;
             border: none;
+            border-radius: 50px;
             width: 100%;
             cursor: pointer;
         }
@@ -91,26 +92,25 @@
 
     .table-menu-options {
         position: absolute;
-        top: calc(100% + 8px);
-        left: calc(100% + 100px);
+        top: calc(100%);
+        left: calc(100% + 50px);
         transform: translateX(-50%);
         background-color: #fff;
         padding: 12px;
-        border-radius: 8px;
+        border-radius: 15px;
+        border-bottom: 1px solid $color-accent-light;
         box-shadow: 0 2px 8px rgba(0, 0, 0, 0.15);
         z-index: 999;
         display: flex;
         flex-direction: column;
-        width: 200px;
-      }
-
-      .close-table-menu {
-        background-color: $color-red-light;
-        align-self: flex-end;
+        width: 170px;
+        font-size: 14px;
+        font-weight: 600;
       }
       
       .table-menu-options button {
-        margin-right: 8px;
+        align-self: center;
+        margin-bottom: 3px;
       }
     
     .table-wrapper {
