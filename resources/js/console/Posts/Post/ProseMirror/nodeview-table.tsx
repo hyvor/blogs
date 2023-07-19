@@ -270,7 +270,28 @@ export default class Table implements NodeView{
         addColumnButton.className = "add-column-button";
         addColumnButton.innerText = "+";
         addColumnButton.onclick = function () {
+           
+            const selection = _self.view.state.selection;
+            const table = selection.$from.node(-3);
+            const tablePos = selection.$from.before(-3);
+            let tr = _self.view.state.tr;
+            tr.setSelection(
+                NodeSelection.create(
+                    _self.view.state.doc,
+                    tablePos
+                )
+            );
+            _self.view.dispatch(tr);
             addColumnAfter(_self.view.state, _self.view.dispatch);
+            tr = _self.view.state.tr;
+            tr.setSelection(
+                NodeSelection.create(
+                    _self.view.state.doc,
+                    tablePos + table.nodeSize + 1
+                )
+            );
+            _self.view.dispatch(tr);
+            _self.createMenuItems();
         };
         this.rightSideSettings.appendChild(addColumnButton);
     }
