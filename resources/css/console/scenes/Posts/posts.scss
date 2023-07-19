@@ -91,10 +91,7 @@
     }
 
     .table-menu-options {
-        position: absolute;
-        top: calc(100%);
-        left: calc(100% + 50px);
-        transform: translateX(-50%);
+        position: fixed;
         background-color: #fff;
         padding: 12px;
         border-radius: 15px;
@@ -190,10 +187,10 @@
 
         .table-middle {
             height: 100%;
+            width: 100%;
             display: flex;
             flex-direction: row;
-            overflow-y: hidden;
-            overflow-x: visible;
+            overflow-x: auto;
         }
 
         .table-left-side-settings {

@@ -4,9 +4,9 @@ import React, { useEffect, useRef } from "react";
 import { useState } from "react";
 import { ArrowDown, ArrowLeft, ArrowRight, ArrowUp, Backspace, CardHeading, Trash } from "react-bootstrap-icons";
 
-export default function TableMenu({ colunmMenu, focused, addBefore, addAfter, makeHeader, clearContent, deleteWrapper, cssOffset }: 
+export default function TableMenu({ colunmMenu, focused, addBefore, addAfter, makeHeader, clearContent, deleteWrapper, cssOffset, columnIdx }: 
     { colunmMenu: boolean, focused: boolean, addBefore: () => void, addAfter: () => void, 
-        makeHeader: () => void ,clearContent: () => void, deleteWrapper: () => void, cssOffset: number}) {
+        makeHeader: () => void ,clearContent: () => void, deleteWrapper: () => void, cssOffset: number, columnIdx: number}) {
 
   const [showMenu, setShowMenu] = useState(false);
   const menuRef = useRef<HTMLDivElement>(null);
@@ -33,6 +33,8 @@ export default function TableMenu({ colunmMenu, focused, addBefore, addAfter, ma
   const customStyle = !colunmMenu ? {top: cssOffset + 'px'} : {left: cssOffset + 'px'};
   if (colunmMenu)
     customStyle['bottom'] = '-10px';
+  
+  const menuOffset = colunmMenu && columnIdx > 3 ? 300 : 0;
 
   return !focused ? (<div></div>) : (
     <div className={'table-menu'} style={customStyle} ref={menuRef}>
@@ -43,7 +45,7 @@ export default function TableMenu({ colunmMenu, focused, addBefore, addAfter, ma
         ...
       </button>
       {showMenu && (
-        <div className="table-menu-options">
+        <div className="table-menu-options" style={{transform: `translateX(-${menuOffset}px)`}}>
           <button className="action-button" onClick={makeHeader}>
             <CardHeading className="table-menu-icon"/>
             {colunmMenu ? 'Header Column' : 'Header Row'}

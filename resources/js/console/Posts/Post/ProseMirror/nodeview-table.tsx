@@ -350,7 +350,8 @@ export default class Table implements NodeView{
                 makeHeader={_self.makeRowHeaderWrapper}
                 clearContent={_self.clearRowContentWrapper}
                 deleteWrapper={_self.deleteRowWrapper}
-                cssOffset={rowCSSOffset}/>)
+                cssOffset={rowCSSOffset}
+                columnIdx={0}/>)
             if (rowsInfo.item(rowIdx))
                 rowCSSOffset += rowsInfo[rowIdx].clientHeight / 2 + 10;
         }
@@ -378,7 +379,8 @@ export default class Table implements NodeView{
                 makeHeader={_self.makeColumnHeaderWrapper}
                 clearContent={_self.clearColumnContentWrapper}
                 deleteWrapper={_self.deleteColumnWrapper}
-                cssOffset={colSSOffset}/>)
+                cssOffset={colSSOffset}
+                columnIdx={colIdx}/>)
             colSSOffset += cellWidth / 2 + 20;
         }
       }
