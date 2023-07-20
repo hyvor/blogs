@@ -1,4 +1,4 @@
-<?php
+<?php declare(strict_types=1);
 
 namespace App\Domains\Redirect;
 
@@ -10,7 +10,10 @@ use Illuminate\Support\Collection;
 
 class RedirectRepository
 {
-    public static function getRedirects(Blog $blog, ?int $limit, int $offset = 0): Collection
+    /**
+     * @return Collection<int, Redirect>
+     */
+    public static function getRedirects(Blog $blog, int $limit, int $offset = 0): Collection
     {
         return $blog->redirects()
             ->limit($limit)
@@ -36,20 +39,13 @@ class RedirectRepository
         return $redirect;
     }
 
-    public static function updateRedirect(
-        Redirect $redirect,
-        string $path,
-        string $to,
-        RedirectTypeEnum $type
-    ): Redirect {
-        $redirect->path = $path;
-        $redirect->to = $to;
-        $redirect->type = $type;
-
-        $redirect->save();
-
+    /**
+     * @param array{path?: string, to?: string, type?: RedirectTypeEnum} $updates
+     */
+    public static function updateRedirect(Redirect $redirect, array $updates) : Redirect
+    {
+        $redirect->update($updates);
         RedirectChangedEvent::dispatch($redirect);
-
         return $redirect;
     }
 
@@ -68,5 +64,12 @@ class RedirectRepository
         return $blog->redirects()
             ->where('path', $path)
             ->first();
+    }
+
+    public static function hasRedirectForPath(Blog $blog, string $path): bool
+    {
+        return $blog->redirects()
+            ->where('path', $path)
+            ->exists();
     }
 }
