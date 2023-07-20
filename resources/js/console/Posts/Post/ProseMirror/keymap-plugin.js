@@ -70,8 +70,8 @@ export default function keymapPlugins(schema) {
                 const tablePos = selection.$from.before(-3);
                 const nextNode = selection.$to;
                 const nextNodeExpctedPos = tablePos + table.nodeSize;
-                console.log(nextNode.pos, nextNodeExpctedPos);
-                if (nextNode.pos + tableCell.nodeSize >= nextNodeExpctedPos)
+                const nodeAtPos = state.doc.nodeAt(nextNodeExpctedPos);
+                if (nextNode.pos + tableCell.nodeSize >= nextNodeExpctedPos && nodeAtPos == null)
                 {
                     const { $from } = state.selection;
                     const tr = state.tr.insert(
