@@ -212,3 +212,42 @@ test.describe('Code block', () => {
         await expect(page.locator('.ProseMirror').first()).not.toContainText('def function:');
     });
 });
+
+test.describe('Custom HTML', () => {
+
+    consoleTest.beforeEach(async ({testingApi, console, page}) => {
+        const {blog, language} = await testingApi.factory.blogFull({routes: true});
+        await testingApi.factory.post({blog_id: blog.id, language_id: language.id, title: 'Test Post'});
+        await console.visitAndNav('posts');
+        await page.getByRole('link', { name: 'Test Post' }).click();
+        await page.locator('.ProseMirror').fill(''); 
+    });
+
+    consoleTest('Adding a custom HTML block', async ({testingApi, console, page}) => {
+        await page.locator('.ProseMirror').fill('/');
+        await page.locator('div').filter({ hasText: /^Custom HTML\/TwigAdd custom HTML \(or Twig\)$/ }).first().click();
+        await page.getByRole('textbox').nth(4).fill('<div>');
+
+        await expect(page.locator('pre').filter({  hasText: /^<div>$/ })).toBeVisible();
+    });
+
+    consoleTest('Editing a custom HTML block', async ({testingApi, console, page}) => {
+        await page.locator('.ProseMirror').fill('/');
+        await page.locator('div').filter({ hasText: /^Custom HTML\/TwigAdd custom HTML \(or Twig\)$/ }).first().click();
+        await page.getByRole('textbox').nth(4).fill('<div>');
+        await page.getByRole('textbox').nth(4).fill('<span>');
+
+        await expect(page.locator('pre').filter({  hasText: /^<span>$/ })).toBeVisible();
+    });
+
+    consoleTest('Deleting a custom HTML block', async ({testingApi, console, page}) => {
+        await page.locator('.ProseMirror').fill('/');
+        await page.locator('div').filter({ hasText: /^Custom HTML\/TwigAdd custom HTML \(or Twig\)$/ }).first().click();
+        
+        await page.getByRole('textbox').nth(4).fill('');
+        await page.keyboard.press('Backspace');
+
+        await expect(page.locator('.ProseMirror').first()).not.toContainText('<div>');
+    });
+
+});
