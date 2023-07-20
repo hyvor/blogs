@@ -262,7 +262,6 @@ export default class Table implements NodeView{
             // Focus the last row of the table before adding a new one
             const selection = _self.view.state.selection;
             let table = selection.$from.node(-3);
-
             if (!table || table.type.name == 'doc') {
                 addRowAfter(_self.view.state, _self.view.dispatch);
                 return;
@@ -282,8 +281,7 @@ export default class Table implements NodeView{
                 )
             );
             _self.view.dispatch(tr);
-            addRowAfter(_self.view.state, _self.view.dispatch);
-           
+            addRowAfter(_self.view.state, _self.view.dispatch);            
             _self.createMenuItems();
         };
         this.bottomSettings.appendChild(addRowButton);
@@ -294,6 +292,15 @@ export default class Table implements NodeView{
         addColumnButton.onclick = function () {
             const selection = _self.view.state.selection;
             let table = selection.$from.node(-3);
+            if (!table || table.type.name == 'doc') {
+                addColumnAfter(_self.view.state, _self.view.dispatch);
+                return;
+            }
+            let tableIdx = -3;
+            if (table && table.type && table.type.name !== 'table') {
+                table = selection.$from.node(tableIdx);
+                tableIdx--;
+            }
             let tablePos = selection.$from.before(-3);
             let tr = _self.view.state.tr;
             tr.setSelection(
@@ -304,22 +311,8 @@ export default class Table implements NodeView{
             );
             _self.view.dispatch(tr);
             addColumnAfter(_self.view.state, _self.view.dispatch);
-            tr = _self.view.state.tr;
-            table = selection.$from.node(-3);
-            tablePos = selection.$from.before(-3);
-            let firstCellOfNewColumnPos = tablePos;
-            for (let colIdx = 0; colIdx < table.firstChild!.childCount - 1; colIdx++) {
-                const cell = table.firstChild!.child(colIdx);
-                firstCellOfNewColumnPos += cell.nodeSize;
-            }
-         
-            tr.setSelection(
-                NodeSelection.create(
-                    _self.view.state.doc.nodeAt(firstCellOfNewColumnPos)!,
-                    firstCellOfNewColumnPos
-                )
-            ).scrollIntoView();
-            _self.view.dispatch(tr);
+            const scrollableDiv = document.getElementsByClassName('table-middle').item(0) as HTMLDivElement;
+            scrollableDiv.scrollLeft = scrollableDiv.scrollWidth - scrollableDiv.clientWidth;
             _self.createMenuItems();
         };
         this.rightSideSettings.appendChild(addColumnButton);
