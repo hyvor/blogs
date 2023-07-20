@@ -205,6 +205,7 @@
         .table-right-side-settings {
             display: flex;
             flex-direction: column;
+            width: 20px;
             .add-column-button {
                 height: 100%;
                 background-color: $color-white;
@@ -218,6 +219,7 @@
         .table-bottom-settings {
             display: flex;
             flex-direction: row;
+            width: calc(100% - 20px);
             .add-row-button {
                 background-color: $color-white;
                 width: 100%;
