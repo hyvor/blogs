@@ -402,7 +402,6 @@ export default class Table implements NodeView{
         for (let colIdx = 0; colIdx < table.firstChild!.childCount; colIdx++) {
             const tableMenuWrapper = document.createElement("div");
             _self.columnSettings.appendChild(tableMenuWrapper);
-            console.log(this.middle.scrollLeft);
             let root = ReactDOM.createRoot(tableMenuWrapper);
             let cellWidth = 0
             if (rowInfo)

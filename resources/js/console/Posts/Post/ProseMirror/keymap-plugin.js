@@ -35,15 +35,6 @@ export default function keymapPlugins(schema) {
         brCmd = function (state, dispatch) {
             const { $from } = state.selection;
             const grandParent = $from.node(-1);
-            // Insert an empty new paragraph after the table
-            if (grandParent.type.name === 'table_cell') {
-                const tr = state.tr.insert(
-                    $from.after(-1),
-                    schema.nodes.paragraph.create()
-                );
-                dispatch(tr.setSelection(Selection.near(tr.doc.resolve($from.after(-1)))));
-                return true;
-            }
             dispatch(
                 state.tr.replaceSelectionWith(br.create()).scrollIntoView()
             );
@@ -72,6 +63,24 @@ export default function keymapPlugins(schema) {
 
             // If the cursor is in a list item, return false
             const { path } = selection.$to;
+            if (path.some(item => item?.type?.name === "table_cell")) {
+                // Get the next node
+                const tableCell = selection.$from.node(-1);
+                const table = selection.$from.node(-3);
+                const tablePos = selection.$from.before(-3);
+                const nextNode = selection.$to;
+                const nextNodeExpctedPos = tablePos + table.nodeSize;
+                console.log(nextNode.pos, nextNodeExpctedPos);
+                if (nextNode.pos + tableCell.nodeSize >= nextNodeExpctedPos)
+                {
+                    const { $from } = state.selection;
+                    const tr = state.tr.insert(
+                        $from.after(-1),
+                        schema.nodes.paragraph.create()
+                    );
+                    dispatch(tr.setSelection(Selection.near(tr.doc.resolve($from.after(-1)))));
+                }
+            }
             if (path.some(item => item?.type?.name === "list_item"))
                 return false;
 
