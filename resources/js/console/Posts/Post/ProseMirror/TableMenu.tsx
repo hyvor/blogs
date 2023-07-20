@@ -41,8 +41,11 @@ export default function TableMenu({ colunmMenu, focused, addBefore, addAfter, ma
       <button className="toggle-table-menu-button" 
       onClick={toggleMenu}
       disabled={!focused}
+      style={{width: colunmMenu ? "30px" : "20px", height: colunmMenu ? "15px" : "30px", flexDirection: colunmMenu ? "row" : "column"}}
       >
-        ...
+        <span className="table-menu-dot"/>
+        <span className="table-menu-dot"/>
+        <span className="table-menu-dot"/>
       </button>
       {showMenu && (
         <div className="table-menu-options" style={{transform: `translateX(-${menuOffset}px)`}}>

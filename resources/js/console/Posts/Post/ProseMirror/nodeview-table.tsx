@@ -66,6 +66,7 @@ export default class Table implements NodeView{
 
         this.rightSideSettings = document.createElement("div");
         this.rightSideSettings.className = "table-right-side-settings";
+        this.rightSideSettings.setAttribute("contenteditable", "false");
 
         this.dom.appendChild(this.topSettings);
 
@@ -377,8 +378,8 @@ export default class Table implements NodeView{
             _self.leftSideSettings.appendChild(tableMenuWrapper);
             let root = ReactDOM.createRoot(tableMenuWrapper);
             if (rowsInfo.item(rowIdx))
-                rowCSSOffset += rowsInfo.item(rowIdx)!.clientHeight / 2 - 10;
-            root.render(<TableMenu 
+                rowCSSOffset += rowsInfo.item(rowIdx)!.clientHeight / 2 - 15;
+            root.render(<TableMenu
                 colunmMenu={false}
                 focused={_self.isRowFocused(table.child(rowIdx))}
                 addBefore={_self.addRowBeforeWrapper}
@@ -389,7 +390,7 @@ export default class Table implements NodeView{
                 cssOffset={rowCSSOffset}
                 columnIdx={0}/>)
             if (rowsInfo.item(rowIdx))
-                rowCSSOffset += rowsInfo[rowIdx].clientHeight / 2 + 10;
+                rowCSSOffset += rowsInfo[rowIdx].clientHeight / 2 + 15;
         }
 
         // Create column menu items
