@@ -111,6 +111,7 @@
       }
     
     .table-wrapper {
+        margin-top: 10px;
         .add-row-menu {
             position: absolute;
             display: none;
@@ -172,7 +173,9 @@
         }
 
         .table-top-settings {
-            margin-top: 20px;
+            position: absolute;
+            top: -12px;
+            right: 20px;
             display: flex;
             flex-direction: row;
         }
