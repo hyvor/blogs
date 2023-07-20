@@ -431,7 +431,7 @@ test.describe('Settings', () => {
             await page.getByRole('button').nth(2).click();
             await page.getByPlaceholder('/welcome').fill('/youtube');
             await page.getByPlaceholder('https://hyvor.com').fill('https://www.youtube.com/');
-            await page.getByRole('button', { name: 'Create' }).nth(2).click();
+            await page.getByRole('button', { name: 'Update' }).click();
 
             await expect(page.getByText('/youtube')).toBeVisible();
         });

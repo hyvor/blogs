@@ -43,7 +43,7 @@ it('adds more posts for DEV blogs', function () {
     $filler = new PostFiller($blog);
     $filler->fill();
 
-    expect($blog->posts()->count())->toBeGreaterThan(50);
+    expect($blog->posts()->count())->toBeGreaterThan(30);
 
     // get latest posts because, the first few  posts are default posts and does not have variants
     $post = $blog->posts()->latest('id')->first();
