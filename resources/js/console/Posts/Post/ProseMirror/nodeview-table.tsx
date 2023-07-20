@@ -262,7 +262,8 @@ export default class Table implements NodeView{
             // Focus the last row of the table before adding a new one
             const selection = _self.view.state.selection;
             let table = selection.$from.node(-3);
-            if (!table) {
+
+            if (!table || table.type.name == 'doc') {
                 addRowAfter(_self.view.state, _self.view.dispatch);
                 return;
             }
@@ -272,7 +273,7 @@ export default class Table implements NodeView{
                 tableIdx--;
             }
             const lastRow = selection.$from.node(tableIdx + 1);
-            const lastRowPos = selection.$from.before(-tableIdx); + table.nodeSize - lastRow.nodeSize;
+            const lastRowPos = selection.$from.before(tableIdx) + table.nodeSize - lastRow.nodeSize;
             let tr = _self.view.state.tr;
             tr.setSelection(
                 NodeSelection.create(
