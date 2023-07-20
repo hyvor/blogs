@@ -27,17 +27,16 @@
 <div class="middle">
     <h1>{{$title}}</h1>
 
-    @if (isset($imageUrl) && false)
+    @if (isset($imageUrl))
         <img src="{{ $imageUrl }}" width="300" />
     @endif
     <div style="padding:30px">
         <p>
             {!! $text !!}
         </p>
-        <a href="{{ $buttonUrl }}" class="button">{{$buttonText}}</a>
+        <a href="{{ $buttonUrl }}" class="button" data-flashload-skip-link>{{$buttonText}}</a>
     </div>
 </div>
-
 
 </body>
 </html>
