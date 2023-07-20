@@ -19,7 +19,7 @@ import {
     goToNextCell,
     deleteTable,
   } from "prosemirror-tables";
-import { NodeSelection, TextSelection } from "prosemirror-state";
+import { EditorState, NodeSelection, TextSelection } from "prosemirror-state";
 import { createRoot } from "react-dom/client";
 import TableMenu from "./TableMenu";
 import Tooltip from "../../../ReusableComponents/Tooltip";
@@ -261,10 +261,18 @@ export default class Table implements NodeView{
         addRowButton.onclick = function () {
             // Focus the last row of the table before adding a new one
             const selection = _self.view.state.selection;
-            const table = selection.$from.node(-3);
-            const tablePos = selection.$from.before(-3);
-            const lastRow = table.child(table.childCount - 1);
-            const lastRowPos = tablePos + table.nodeSize - lastRow.nodeSize;
+            let table = selection.$from.node(-3);
+            if (!table) {
+                addRowAfter(_self.view.state, _self.view.dispatch);
+                return;
+            }
+            let tableIdx = -3;
+            if (table && table.type && table.type.name !== 'table') {
+                table = selection.$from.node(tableIdx);
+                tableIdx--;
+            }
+            const lastRow = selection.$from.node(tableIdx + 1);
+            const lastRowPos = selection.$from.before(-tableIdx); + table.nodeSize - lastRow.nodeSize;
             let tr = _self.view.state.tr;
             tr.setSelection(
                 NodeSelection.create(
@@ -274,14 +282,7 @@ export default class Table implements NodeView{
             );
             _self.view.dispatch(tr);
             addRowAfter(_self.view.state, _self.view.dispatch);
-            tr = _self.view.state.tr;
-            tr.setSelection(
-                TextSelection.create(
-                    _self.view.state.doc,
-                    tablePos + table.nodeSize
-                )
-            );
-            _self.view.dispatch(tr);
+           
             _self.createMenuItems();
         };
         this.bottomSettings.appendChild(addRowButton);
@@ -291,8 +292,8 @@ export default class Table implements NodeView{
         addColumnButton.innerText = "+";
         addColumnButton.onclick = function () {
             const selection = _self.view.state.selection;
-            const table = selection.$from.node(-3);
-            const tablePos = selection.$from.before(-3);
+            let table = selection.$from.node(-3);
+            let tablePos = selection.$from.before(-3);
             let tr = _self.view.state.tr;
             tr.setSelection(
                 NodeSelection.create(
@@ -303,12 +304,20 @@ export default class Table implements NodeView{
             _self.view.dispatch(tr);
             addColumnAfter(_self.view.state, _self.view.dispatch);
             tr = _self.view.state.tr;
+            table = selection.$from.node(-3);
+            tablePos = selection.$from.before(-3);
+            let firstCellOfNewColumnPos = tablePos;
+            for (let colIdx = 0; colIdx < table.firstChild!.childCount - 1; colIdx++) {
+                const cell = table.firstChild!.child(colIdx);
+                firstCellOfNewColumnPos += cell.nodeSize;
+            }
+         
             tr.setSelection(
                 NodeSelection.create(
-                    _self.view.state.doc,
-                    tablePos + table.nodeSize + 1
+                    _self.view.state.doc.nodeAt(firstCellOfNewColumnPos)!,
+                    firstCellOfNewColumnPos
                 )
-            );
+            ).scrollIntoView();
             _self.view.dispatch(tr);
             _self.createMenuItems();
         };
