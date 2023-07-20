@@ -1,4 +1,4 @@
-<?php
+<?php declare(strict_types=1);
 
 namespace App\Domains\Blog\Jobs;
 
@@ -21,7 +21,7 @@ class UpdateUrlsJob implements ShouldQueue
         public string $newUrl
     ) {}
 
-    public function handle()
+    public function handle() : void
     {
         $this->updateBlogUrls();
         $this->updatePostsMetaUrls();
@@ -36,14 +36,20 @@ class UpdateUrlsJob implements ShouldQueue
 
         return str_starts_with($url, $this->oldUrl);
     }
-    private function replaceOldWithNewUrl(string $url)
+    private function replaceOldWithNewUrl(string $url) : string
     {
         return str_replace($this->oldUrl, $this->newUrl, $url);
     }
 
-    private function updateBlogUrls()
+    private function updateBlogUrls() : void
     {
 
+        /** @var object{
+         *     logo_url: string,
+         *     cover_url: string,
+         *     icon_url: string,
+         * } $meta
+         */
         $meta = $this->blog->getAllMeta();
         $metaUpdate = [];
 
@@ -53,6 +59,9 @@ class UpdateUrlsJob implements ShouldQueue
         if ($this->hasOldUrl($meta->cover_url)) {
             $metaUpdate['cover_url'] = $this->replaceOldWithNewUrl($meta->cover_url);
         }
+        if ($this->hasOldUrl($meta->icon_url)) {
+            $metaUpdate['icon_url'] = $this->replaceOldWithNewUrl($meta->icon_url);
+        }
 
         if (count($metaUpdate)) {
             $this->blog->setMeta($metaUpdate);
@@ -60,7 +69,7 @@ class UpdateUrlsJob implements ShouldQueue
 
     }
 
-    private function updatePostsMetaUrls()
+    private function updatePostsMetaUrls() : void
     {
 
         Post::where('blog_id', $this->blog->id)->chunk(100, function ($posts) {
@@ -70,7 +79,7 @@ class UpdateUrlsJob implements ShouldQueue
              */
             foreach ($posts as $post) {
 
-                if ($this->hasOldUrl($post->featured_image_url)) {
+                if ($post->featured_image_url && $this->hasOldUrl($post->featured_image_url)) {
                     $post->featured_image_url = $this->replaceOldWithNewUrl($post->featured_image_url);
                     $post->save();
                 }
@@ -80,7 +89,7 @@ class UpdateUrlsJob implements ShouldQueue
 
     }
 
-    private function updatePostsContentUrls()
+    private function updatePostsContentUrls() : void
     {
 
         PostVariant::join('posts', 'posts.id', '=', 'post_variants.post_id')
@@ -94,15 +103,15 @@ class UpdateUrlsJob implements ShouldQueue
                 foreach ($variants as $variant) {
 
                     if ($variant->content) {
-                        $variant->content = json_encode(
+                        $variant->content = strval(json_encode(
                             ProsemirrorHelper::updateUrls($variant->content, $this->oldUrl, $this->newUrl)
-                        );
+                        ));
                     }
 
                     if ($variant->content_unsaved) {
-                        $variant->content_unsaved = json_encode(
+                        $variant->content_unsaved = strval(json_encode(
                             ProsemirrorHelper::updateUrls($variant->content_unsaved, $this->oldUrl, $this->newUrl)
-                        );
+                        ));
                     }
 
                     $variant->save();
@@ -112,7 +121,7 @@ class UpdateUrlsJob implements ShouldQueue
 
     }
 
-    private function updateAuthorsUrls()
+    private function updateAuthorsUrls() : void
     {
 
         User::where('blog_id', $this->blog->id)->chunk(100, function ($users) {
@@ -122,7 +131,7 @@ class UpdateUrlsJob implements ShouldQueue
              */
             foreach ($users as $user) {
 
-                if ($this->hasOldUrl($user->picture_url)) {
+                if ($user->picture_url && $this->hasOldUrl($user->picture_url)) {
                     $user->picture_url = $this->replaceOldWithNewUrl($user->picture_url);
                     $user->save();
                 }

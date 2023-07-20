@@ -16,7 +16,8 @@ it('updates URLs in content and content_unsaved', function() {
 
     $blog->setMeta([
         'logo_url' => $oldUrl . '/media/logo.png',
-        'cover_url' => $oldUrl . '/media/cover.png'
+        'cover_url' => $oldUrl . '/media/cover.png',
+        'icon_url' => $oldUrl . '/media/icon.png',
     ]);
 
     $post = Post::factory()
@@ -88,6 +89,7 @@ it('updates URLs in content and content_unsaved', function() {
     $blog->refresh();
     expect($blog->getMeta('cover_url'))->toBe($newUrl . '/media/cover.png');
     expect($blog->getMeta('logo_url'))->toBe($newUrl . '/media/logo.png');
+    expect($blog->getMeta('icon_url'))->toBe($newUrl . '/media/icon.png');
 
 
     $post->refresh();
