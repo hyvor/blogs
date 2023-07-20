@@ -213,7 +213,7 @@ export default class Table implements NodeView{
         let root = ReactDOM.createRoot(mergeCellButton);
         root.render(
             <div>
-                <ArrowsCollapse data-tip data-for="merge-tooltip"/>
+                <ArrowsCollapse data-tip data-for="merge-tooltip" className="table-icon"/>
                 <Tooltip id="merge-tooltip" place="bottom">Merge cells</Tooltip>
             </div>
         );
@@ -228,7 +228,7 @@ export default class Table implements NodeView{
         root = ReactDOM.createRoot(splitCellButton);
         root.render(
             <div>
-                <ArrowsExpand data-tip data-for="split-tooltip"/>
+                <ArrowsExpand data-tip data-for="split-tooltip" className="table-icon"/>
                 <Tooltip id="split-tooltip" place="bottom">Split cells</Tooltip>
             </div>
         );
@@ -239,7 +239,12 @@ export default class Table implements NodeView{
         deleteButton.className = "icon-button delete-table-button";
 
         root = ReactDOM.createRoot(deleteButton);
-        root.render(<Trash />);
+        root.render(
+            <div>
+                <Trash data-tip data-for="trash-tooltip" className="table-icon"/>
+                <Tooltip id="trash-tooltip" place="bottom">Delete table</Tooltip>
+            </div>
+        );
 
         deleteButton.onclick = function () {
             deleteTable(_self.view.state, _self.view.dispatch);
