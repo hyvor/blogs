@@ -187,7 +187,6 @@
             display: flex;
             align-self: start;
             flex-direction: row;
-            overflow: visible;
         }
 
         .table-middle {
@@ -196,6 +195,7 @@
             display: flex;
             flex-direction: row;
             overflow-x: auto;
+            white-space: nowrap;
         }
 
         .table-left-side-settings {

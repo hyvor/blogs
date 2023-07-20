@@ -79,9 +79,9 @@ export default class Table implements NodeView{
 
         this.middle = document.createElement("div");
         this.middle.className = "table-middle";
+        this.dom.appendChild(this.columnSettings);
         this.dom.appendChild(this.middle);
-
-        this.middle.appendChild(this.columnSettings);
+        
 
         this.contentDOM = document.createElement("table");
         this.contentDOM.className = "table-div";
@@ -108,6 +108,9 @@ export default class Table implements NodeView{
 
         this.view.dom.addEventListener('click', this.handleChange);
         this.view.dom.addEventListener('keyup', this.handleChange);
+
+        this.middle.addEventListener('scroll', () => {this.columnSettings.setAttribute("style", `display: none;`)});
+        this.middle.addEventListener('click', () => {this.columnSettings.setAttribute("style", `display: flex;`)});
     }
 
     handleChange = () => {
@@ -399,6 +402,7 @@ export default class Table implements NodeView{
         for (let colIdx = 0; colIdx < table.firstChild!.childCount; colIdx++) {
             const tableMenuWrapper = document.createElement("div");
             _self.columnSettings.appendChild(tableMenuWrapper);
+            console.log(this.middle.scrollLeft);
             let root = ReactDOM.createRoot(tableMenuWrapper);
             let cellWidth = 0
             if (rowInfo)
@@ -407,7 +411,7 @@ export default class Table implements NodeView{
                 if (cell)
                     cellWidth = cell.clientWidth;
             }
-            colSSOffset += cellWidth / 2 - 20;
+            colSSOffset += cellWidth / 2 - 15;
             root.render(<TableMenu 
                 colunmMenu={true}
                 focused={_self.isColumnFocused(colIdx)}
@@ -416,9 +420,9 @@ export default class Table implements NodeView{
                 makeHeader={_self.makeColumnHeaderWrapper}
                 clearContent={_self.clearColumnContentWrapper}
                 deleteWrapper={_self.deleteColumnWrapper}
-                cssOffset={colSSOffset}
+                cssOffset={colSSOffset - this.middle.scrollLeft}
                 columnIdx={colIdx}/>)
-            colSSOffset += cellWidth / 2 + 20;
+            colSSOffset += cellWidth / 2 + 15;
         }
       }
 }
