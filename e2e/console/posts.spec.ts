@@ -42,10 +42,18 @@ test.describe('Heading', () => {
         await page.locator('.ProseMirror').fill(''); 
     });
 
-    consoleTest('Writing heading', async ({testingApi, console, page}) => {
+    consoleTest('Writing heading 2', async ({testingApi, console, page}) => {
         await page.locator('.ProseMirror').fill('/');    
         await page.locator('div').filter({ hasText: /^Heading - LargeTo divide main sections of the post$/ }).first().click();
         await page.locator('div').filter({ hasText: /^h2#$/ }).first().fill('Heading test\nh2#');
+
+        await expect(page.getByRole('heading', { name: 'Heading test' })).toBeVisible();
+    });
+
+    consoleTest('Writing heading 3', async ({testingApi, console, page}) => {
+        await page.locator('.ProseMirror').fill('/');    
+        await page.locator('div').filter({ hasText: /^Heading - MediumTo divide small sections of the post$/ }).first().first().click();
+        await page.locator('div').filter({ hasText: /^h3#$/ }).first().fill('Heading test\nh3#');
 
         await expect(page.getByRole('heading', { name: 'Heading test' })).toBeVisible();
     });
