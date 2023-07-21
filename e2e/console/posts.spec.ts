@@ -249,5 +249,73 @@ test.describe('Custom HTML', () => {
 
         await expect(page.locator('.ProseMirror').first()).not.toContainText('<div>');
     });
+});
+
+test.describe('Lists', () => {
+
+    consoleTest.beforeEach(async ({testingApi, console, page}) => {
+        const {blog, language} = await testingApi.factory.blogFull({routes: true});
+        await testingApi.factory.post({blog_id: blog.id, language_id: language.id, title: 'Test Post'});
+        await console.visitAndNav('posts');
+        await page.getByRole('link', { name: 'Test Post' }).click();
+        await page.locator('.ProseMirror').fill(''); 
+    });
+
+    consoleTest('Adding bullet list nodes', async ({testingApi, console, page}) => {
+        await page.getByRole('paragraph').click();
+        await page.locator('.ProseMirror').fill('-');
+        await page.keyboard.press('Space');
+        await page.locator('.ProseMirror').fill('Bullet 1');
+        await page.keyboard.press('Enter');
+        await page.getByRole('paragraph').nth(1).fill('Bullet 2');
+
+        await expect(page.locator('.ProseMirror ul').first()).toBeVisible();
+        await expect(page.locator('.ProseMirror li').first()).toContainText('Bullet 1');
+        await expect(page.locator('.ProseMirror li').nth(1)).toContainText('Bullet 2');
+    });
+
+    consoleTest('Adding ordered list nodes', async ({testingApi, console, page}) => {
+        await page.getByRole('paragraph').click();
+        await page.locator('.ProseMirror').fill('1.');
+        await page.keyboard.press('Space');
+        await page.locator('.ProseMirror').fill('Item 1');
+        await page.keyboard.press('Enter');
+        await page.getByRole('paragraph').nth(1).fill('Item 2');
+
+        await expect(page.locator('.ProseMirror ol').first()).toBeVisible();
+        await expect(page.locator('.ProseMirror li').first()).toContainText('Item 1');
+        await expect(page.locator('.ProseMirror li').nth(1)).toContainText('Item 2');
+    });
+
+    consoleTest('Editing bullet list nodes', async ({testingApi, console, page}) => {
+        await page.getByRole('paragraph').click();
+        await page.locator('.ProseMirror').fill('-');
+        await page.keyboard.press('Space');
+        await page.locator('.ProseMirror').fill('Bullet 1');
+        await page.keyboard.press('Enter');
+        await page.getByRole('paragraph').nth(1).fill('Bullet 2');
+        await page.getByRole('paragraph').nth(1).fill('Bullet 2.5');
+
+        await expect(page.locator('.ProseMirror ul').first()).toBeVisible();
+        await expect(page.locator('.ProseMirror li').first()).toContainText('Bullet 1');
+        await expect(page.locator('.ProseMirror li').nth(1)).toContainText('Bullet 2.5');
+    });
+
+    consoleTest('Delete bullet list nodes', async ({testingApi, console, page}) => {
+        await page.getByRole('paragraph').click();
+        await page.locator('.ProseMirror').fill('-');
+        await page.keyboard.press('Space');
+        await page.locator('.ProseMirror').fill('Bullet 1');
+        await page.keyboard.press('Enter');
+        await page.getByRole('paragraph').nth(1).fill('Bullet 2');
+        await page.getByRole('paragraph').nth(1).fill('');
+        await page.keyboard.press('Backspace');
+        await page.keyboard.press('Backspace');
+        await page.getByRole('paragraph').first().fill('');
+        await page.keyboard.press('Backspace');
+
+        await expect(page.locator('.ProseMirror').first()).not.toContainText('Bullet 1');
+        await expect(page.locator('.ProseMirror').first()).not.toContainText('Bullet 2');
+    });
 
 });
