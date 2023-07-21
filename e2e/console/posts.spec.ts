@@ -16,6 +16,20 @@ test.describe('Paragraph', () => {
         
         await expect(page.locator('.ProseMirror p').first()).toContainText('Paragraph test');
     });
+
+    consoleTest('Editing pargraph', async ({testingApi, console, page}) => {
+        await page.locator('.ProseMirror').fill('Paragraph test');    
+        await page.locator('.ProseMirror').fill('Paragraph edited');
+        
+        await expect(page.locator('.ProseMirror p').first()).toContainText('Paragraph edited');
+    });
+
+    consoleTest('Deleting pargraph', async ({testingApi, console, page}) => {
+        await page.locator('.ProseMirror').fill('Paragraph test');
+        await page.locator('.ProseMirror').fill('');
+        
+        await expect(page.locator('.ProseMirror').first()).not.toContainText('Paragraph test');
+    });
 });
 
 test.describe('Heading', () => {
@@ -507,5 +521,24 @@ test.describe('Highlighting (Bold, italic, code, ...)', () => {
 
         await expect(page.locator('.ProseMirror a').first()).not.toBeVisible();
     });
+});
 
+test.describe('Bookmark', () => {
+
+    consoleTest.beforeEach(async ({testingApi, console, page}) => {
+        const {blog, language} = await testingApi.factory.blogFull({routes: true});
+        await testingApi.factory.post({blog_id: blog.id, language_id: language.id, title: 'Test Post'});
+        await console.visitAndNav('posts');
+        await page.getByRole('link', { name: 'Test Post' }).click();
+        await page.locator('.ProseMirror').fill(''); 
+    });
+
+    consoleTest('Adding a bookmark', async ({testingApi, console, page}) => {
+        await page.locator('.ProseMirror').fill('/');
+        await page.locator('div').filter({ hasText: /^Link BookmarkLink preview as a bookmark$/ }).first().click();
+        await page.getByPlaceholder('Paste URL here to generate a bookmark').fill('https://google.com');
+        await page.keyboard.press('Enter');
+
+        await expect(page.getByText('Loading bookmark...')).toBeVisible();
+    });
 });
