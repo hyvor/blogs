@@ -320,7 +320,6 @@ test.describe('Lists', () => {
 
 });
 
-//TODO: check new divider behavior
 test.describe('Divider', () => {
     
     consoleTest.beforeEach(async ({testingApi, console, page}) => {
@@ -336,7 +335,8 @@ test.describe('Divider', () => {
         await page.locator('.ProseMirror').fill('Before divider');
         await page.locator('.ProseMirror').press('Enter');
         await page.getByRole('paragraph').nth(1).fill('/');
-        await page.locator('div').filter({ hasText: /^DividerDivide sections with a horizontal line$/ }).first().click()
+        await page.locator('div').filter({ hasText: /^DividerDivide sections with a horizontal line$/ }).first().click();
+        await page.keyboard.press('Enter');
         await page.getByRole('paragraph').nth(1).fill('After divider');
 
         await expect(page.getByText('Before divider')).toBeVisible();
@@ -349,7 +349,8 @@ test.describe('Divider', () => {
         await page.locator('.ProseMirror').fill('Before divider');
         await page.locator('.ProseMirror').press('Enter');
         await page.getByRole('paragraph').nth(1).fill('/');
-        await page.locator('div').filter({ hasText: /^DividerDivide sections with a horizontal line$/ }).first().click()
+        await page.locator('div').filter({ hasText: /^DividerDivide sections with a horizontal line$/ }).first().click();
+        await page.keyboard.press('Enter');
         await page.getByRole('paragraph').nth(1).fill('After divider');
         await page.getByRole('paragraph').nth(1).fill('');
         await page.keyboard.press('Backspace');
