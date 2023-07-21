@@ -361,3 +361,151 @@ test.describe('Divider', () => {
     });
 
 });
+
+test.describe('Highlighting (Bold, italic, code, ...)', () => {
+
+    consoleTest.beforeEach(async ({testingApi, console, page}) => {
+        const {blog, language} = await testingApi.factory.blogFull({routes: true});
+        await testingApi.factory.post({blog_id: blog.id, language_id: language.id, title: 'Test Post'});
+        await console.visitAndNav('posts');
+        await page.getByRole('link', { name: 'Test Post' }).click();
+        await page.locator('.ProseMirror').fill(''); 
+    });
+
+    consoleTest('Turning text to bold', async ({testingApi, console, page}) => {
+        await page.locator('.ProseMirror').click();
+        await page.locator('.ProseMirror').fill('Bold');
+        // Select the text
+        await page.keyboard.down('Shift');
+        await page.locator('.ProseMirror').press('ArrowLeft');
+        await page.locator('.ProseMirror').press('ArrowLeft');
+        await page.locator('.ProseMirror').press('ArrowLeft');
+        await page.locator('.ProseMirror').press('ArrowLeft');
+        await page.locator('.pm-tooltip > span:nth-child(2)').first().click();
+        await page.locator('.ProseMirror').click();
+
+        await expect(page.locator('.ProseMirror strong').first()).toContainText('Bold');
+    });
+
+    consoleTest('Turning text to itatlic', async ({testingApi, console, page}) => {
+        await page.locator('.ProseMirror').click();
+        await page.locator('.ProseMirror').fill('Italic');
+        // Select the text
+        await page.keyboard.down('Shift');
+        await page.locator('.ProseMirror').press('ArrowLeft');
+        await page.locator('.ProseMirror').press('ArrowLeft');
+        await page.locator('.ProseMirror').press('ArrowLeft');
+        await page.locator('.ProseMirror').press('ArrowLeft');
+        await page.locator('.ProseMirror').press('ArrowLeft');
+        await page.locator('.ProseMirror').press('ArrowLeft');
+        await page.locator('.pm-tooltip > span:nth-child(3)').first().click();
+        await page.locator('.ProseMirror').click();
+
+        await expect(page.locator('.ProseMirror em').first()).toContainText('Italic');
+    });
+
+    consoleTest('Turning text to bold and itatlic', async ({testingApi, console, page}) => {
+        await page.locator('.ProseMirror').click();
+        await page.locator('.ProseMirror').fill('Boldlic');
+        // Select the text
+        await page.keyboard.down('Shift');
+        await page.locator('.ProseMirror').press('ArrowLeft');
+        await page.locator('.ProseMirror').press('ArrowLeft');
+        await page.locator('.ProseMirror').press('ArrowLeft');
+        await page.locator('.ProseMirror').press('ArrowLeft');
+        await page.locator('.ProseMirror').press('ArrowLeft');
+        await page.locator('.ProseMirror').press('ArrowLeft');
+        await page.locator('.ProseMirror').press('ArrowLeft');
+        await page.locator('.pm-tooltip > span:nth-child(2)').first().click();
+        await page.locator('.pm-tooltip > span:nth-child(3)').first().click();
+        await page.locator('.ProseMirror').click();
+
+        await expect(page.locator('.ProseMirror em').first()).toContainText('Boldlic');
+        await expect(page.locator('.ProseMirror strong').first()).toContainText('Boldlic');
+    });
+
+    consoleTest('Turning text to code', async ({testingApi, console, page}) => {
+        await page.locator('.ProseMirror').click();
+        await page.locator('.ProseMirror').fill('Code');
+        // Select the text
+        await page.keyboard.down('Shift');
+        await page.locator('.ProseMirror').press('ArrowLeft');
+        await page.locator('.ProseMirror').press('ArrowLeft');
+        await page.locator('.ProseMirror').press('ArrowLeft');
+        await page.locator('.ProseMirror').press('ArrowLeft');
+        await page.locator('.pm-tooltip > span:nth-child(4)').first().click();
+        await page.locator('.ProseMirror').click();
+
+        await expect(page.locator('.ProseMirror code').first()).toContainText('Code');
+    });
+
+    consoleTest('Add overline on text', async ({testingApi, console, page}) => {
+        await page.locator('.ProseMirror').click();
+        await page.locator('.ProseMirror').fill('Over');
+        // Select the text
+        await page.keyboard.down('Shift');
+        await page.locator('.ProseMirror').press('ArrowLeft');
+        await page.locator('.ProseMirror').press('ArrowLeft');
+        await page.locator('.ProseMirror').press('ArrowLeft');
+        await page.locator('.ProseMirror').press('ArrowLeft');
+        await page.locator('.pm-tooltip > span:nth-child(5)').first().click();
+        await page.locator('.ProseMirror').click();
+
+        await expect(page.locator('.ProseMirror s').first()).toContainText('Over');
+    });
+
+    consoleTest('Turn text into link', async ({testingApi, console, page}) => {
+        await page.locator('.ProseMirror').click();
+        await page.locator('.ProseMirror').fill('Over');
+        // Select the text
+        await page.keyboard.down('Shift');
+        await page.locator('.ProseMirror').press('ArrowLeft');
+        await page.locator('.ProseMirror').press('ArrowLeft');
+        await page.locator('.ProseMirror').press('ArrowLeft');
+        await page.locator('.ProseMirror').press('ArrowLeft');
+        await page.locator('.pm-tooltip > span:nth-child(1)').first().click();
+        await page.getByPlaceholder('Enter a link...').fill('google.fr');
+        await page.keyboard.press('Enter');
+
+        await expect(page.locator('.ProseMirror a').first()).toHaveAttribute('href', 'google.fr');
+    });
+
+    consoleTest('Turn text into link and modify it', async ({testingApi, console, page}) => {
+        await page.locator('.ProseMirror').click();
+        await page.locator('.ProseMirror').fill('Over');
+        // Select the text
+        await page.keyboard.down('Shift');
+        await page.locator('.ProseMirror').press('ArrowLeft');
+        await page.locator('.ProseMirror').press('ArrowLeft');
+        await page.locator('.ProseMirror').press('ArrowLeft');
+        await page.locator('.ProseMirror').press('ArrowLeft');
+        await page.locator('.pm-tooltip > span:nth-child(1)').first().click();
+        await page.getByPlaceholder('Enter a link...').fill('google.fr');
+        await page.keyboard.press('Enter');
+        await page.locator('.ProseMirror a').first().click();
+        await page.locator('.pm-link-tooltip > div > button').first().click();
+        await page.locator('input').nth(8).fill('google.com');
+        await page.keyboard.press('Enter');
+
+        await expect(page.locator('.ProseMirror a').first()).toHaveAttribute('href', 'google.com');
+    });
+
+    consoleTest('Turn text into link and remove the link', async ({testingApi, console, page}) => {
+        await page.locator('.ProseMirror').click();
+        await page.locator('.ProseMirror').fill('Over');
+        // Select the text
+        await page.keyboard.down('Shift');
+        await page.locator('.ProseMirror').press('ArrowLeft');
+        await page.locator('.ProseMirror').press('ArrowLeft');
+        await page.locator('.ProseMirror').press('ArrowLeft');
+        await page.locator('.ProseMirror').press('ArrowLeft');
+        await page.locator('.pm-tooltip > span:nth-child(1)').first().click();
+        await page.getByPlaceholder('Enter a link...').fill('google.fr');
+        await page.keyboard.press('Enter');
+        await page.locator('.ProseMirror a').first().click();
+        await page.locator('.pm-link-tooltip > div > button').nth(1).click();
+
+        await expect(page.locator('.ProseMirror a').first()).not.toBeVisible();
+    });
+
+});
