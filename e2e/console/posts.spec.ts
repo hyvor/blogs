@@ -320,6 +320,7 @@ test.describe('Lists', () => {
 
 });
 
+//TODO: check new divider behavior
 test.describe('Divider', () => {
     
     consoleTest.beforeEach(async ({testingApi, console, page}) => {
