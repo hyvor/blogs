@@ -65,7 +65,7 @@ export default class EmbedView {
                         this.view.state.tr.replaceWith(
                             nodeSel.from,
                             nodeSel.to,
-                            createEmbed(this.schema, input.value)
+                            this.view.state.schema.nodes.embed.create({url: input.value})
                         )
                     )
                 }
@@ -96,6 +96,13 @@ export default class EmbedView {
             schema.nodes.paragraph
         )
         const selection = TextSelection.create(tr.doc, pos + 1);
+        // Delete the node
+
+        const nodeSel = NodeSelection.create(this.view.state.doc, this.getPos());
+        this.view.dispatch(
+            this.view.state.tr.removeMark(nodeSel.from, nodeSel.to,)
+        );
+
         this.view.dispatch(
             tr.setSelection(selection)
                 .scrollIntoView()

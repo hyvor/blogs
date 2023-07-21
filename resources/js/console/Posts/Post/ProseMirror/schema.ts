@@ -144,7 +144,7 @@ export const nodes = {
             url: {default: null}
         },
         // content: "text*",
-        //group: "figure block",
+        //group: "block",
         // atom: true,
         selectable: true,
         parseDOM: [{

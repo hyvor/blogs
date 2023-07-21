@@ -17,7 +17,7 @@ import {
     TypeH2,
     TypeH3,
 } from "react-bootstrap-icons";
-import { createImage, createQuote } from "./creators";
+import { createEmbed, createImage, createQuote } from "./creators";
 import {isEditorRtl} from "./rtl";
 
 const matchable = [
@@ -63,7 +63,7 @@ const matchable = [
             "maps",
             "codepen",
         ],
-        node: "embed",
+        node: createEmbed,
     },
     {
         name: "Code Block",
