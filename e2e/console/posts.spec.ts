@@ -319,3 +319,45 @@ test.describe('Lists', () => {
     });
 
 });
+
+test.describe('Divider', () => {
+    
+    consoleTest.beforeEach(async ({testingApi, console, page}) => {
+        const {blog, language} = await testingApi.factory.blogFull({routes: true});
+        await testingApi.factory.post({blog_id: blog.id, language_id: language.id, title: 'Test Post'});
+        await console.visitAndNav('posts');
+        await page.getByRole('link', { name: 'Test Post' }).click();
+        await page.locator('.ProseMirror').fill(''); 
+    });
+
+    consoleTest('Adding divider between paragraphs', async ({testingApi, console, page}) => {
+        await page.locator('.ProseMirror').click();
+        await page.locator('.ProseMirror').fill('Before divider');
+        await page.locator('.ProseMirror').press('Enter');
+        await page.getByRole('paragraph').nth(1).fill('/');
+        await page.locator('div').filter({ hasText: /^DividerDivide sections with a horizontal line$/ }).first().click()
+        await page.locator('.ProseMirror').press('Enter');
+        await page.getByRole('paragraph').nth(1).fill('After divider');
+
+        await expect(page.getByText('Before divider')).toBeVisible();
+        await expect(page.locator('.ProseMirror hr').first()).toBeVisible();
+        await expect(page.getByText('After divider')).toBeVisible();
+    });
+
+    consoleTest('Deleting divider between paragraphs', async ({testingApi, console, page}) => {
+        await page.locator('.ProseMirror').click();
+        await page.locator('.ProseMirror').fill('Before divider');
+        await page.locator('.ProseMirror').press('Enter');
+        await page.getByRole('paragraph').nth(1).fill('/');
+        await page.locator('div').filter({ hasText: /^DividerDivide sections with a horizontal line$/ }).first().click()
+        await page.locator('.ProseMirror').press('Enter');
+        await page.getByRole('paragraph').nth(1).fill('After divider');
+        await page.getByRole('paragraph').nth(1).fill('');
+        await page.keyboard.press('Backspace');
+        await page.keyboard.press('Backspace');
+
+        await expect(page.getByText('Before divider')).toBeVisible();
+        await expect(page.locator('.ProseMirror hr').first()).not.toBeVisible();
+    });
+
+});
