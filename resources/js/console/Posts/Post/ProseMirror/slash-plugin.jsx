@@ -64,6 +64,7 @@ const matchable = [
             "codepen",
         ],
         node: createEmbed,
+        focusInput: true
     },
     {
         name: "Code Block",
@@ -278,6 +279,7 @@ class SlashPlugin {
                 view.dispatch(
                     tr2
                         .setSelection(
+                            m.focusInput ? NodeSelection.create(tr2.doc, pos + 1) :
                             m.selectNode
                                 ? NodeSelection.create(tr.doc, pos)
                                 : TextSelection.create(tr.doc, pos + 1)
