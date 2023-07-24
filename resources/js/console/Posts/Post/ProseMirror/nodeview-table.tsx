@@ -314,6 +314,15 @@ export default class Table implements NodeView{
             const scrollableDiv = document.getElementsByClassName('table-middle').item(0) as HTMLDivElement;
             scrollableDiv.scrollLeft = scrollableDiv.scrollWidth - scrollableDiv.clientWidth;
             _self.createMenuItems();
+            console.log(selection);
+            tr = _self.view.state.tr;
+            tr.setSelection(
+                TextSelection.create(
+                    _self.view.state.doc,
+                    tablePos + table.nodeSize - 1
+                )
+            );
+            _self.view.dispatch(tr);
         };
         this.rightSideSettings.appendChild(addColumnButton);
     }

@@ -53,7 +53,6 @@
     .table-menu {
         position: absolute;
         display: inline-block;
-        z-index: 999;
 
         .action-button {
             display: flex;
@@ -176,6 +175,7 @@
             justify-content: flex-end;
             padding-right: 20px;
             padding-bottom: 2px;
+            z-index: 999;
         }
 
         .table-column-settings {
