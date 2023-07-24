@@ -90,18 +90,12 @@ export default class EmbedView {
     }
 
     removeInput() {
-        const pos = this.getPos()
+        const pos = this.getPos();
         const tr = this.view.state.tr.setNodeMarkup(
             pos,
             schema.nodes.paragraph
         )
         const selection = TextSelection.create(tr.doc, pos + 1);
-        // Delete the node
-
-        const nodeSel = NodeSelection.create(this.view.state.doc, this.getPos());
-        this.view.dispatch(
-            this.view.state.tr.removeMark(nodeSel.from, nodeSel.to,)
-        );
 
         this.view.dispatch(
             tr.setSelection(selection)
