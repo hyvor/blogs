@@ -413,7 +413,7 @@ export default class Table implements NodeView{
                 if (cell)
                     cellWidth = cell.clientWidth;
             }
-            colSSOffset += cellWidth / 2 - 15;
+            colSSOffset += cellWidth / 2 - 17.5;
             root.render(<TableMenu 
                 colunmMenu={true}
                 focused={_self.isColumnFocused(colIdx)}
@@ -424,7 +424,7 @@ export default class Table implements NodeView{
                 deleteWrapper={_self.deleteColumnWrapper}
                 cssOffset={colSSOffset - this.middle.scrollLeft}
                 columnIdx={colIdx}/>)
-            colSSOffset += cellWidth / 2 + 15;
+            colSSOffset += cellWidth / 2 + 17.5;
         }
       }
 }
