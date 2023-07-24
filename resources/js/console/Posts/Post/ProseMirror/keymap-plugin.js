@@ -53,7 +53,7 @@ export default function keymapPlugins(schema) {
         )
     );
 
-    const enterHandler = chainCommands((state, dispatch) =>  {
+    const commonEnterHandler = (state, dispatch) => {
         const selection = state.selection;
 
         if (selection.from !== selection.to)
@@ -88,6 +88,10 @@ export default function keymapPlugins(schema) {
 
             return true;
         }
+    };
+
+    const enterHandler = chainCommands((state, dispatch) =>  {
+        commonEnterHandler(state, dispatch);
     }, splitListItem(schema.nodes.list_item), figcaptionEnterHandler);
 
     const arrowDownHandler = chainCommands(
@@ -118,32 +122,7 @@ export default function keymapPlugins(schema) {
                     dispatch(tr.setSelection(Selection.near(tr.doc.resolve($from.after(-1)))));
                 }
             }
-            if (path.some(item => item?.type?.name === "list_item"))
-                return false;
-
-            /**
-             * Code
-             * ================
-             */
-
-            const parent = selection.$to.parent;
-            const text = parent.firstChild?.text;
-            let codeMatch;
-            if (
-                (codeMatch =
-                    parent &&
-                    parent.type.name === "paragraph" &&
-                    text &&
-                    text.match(/^```([a-zA-Z0-9+#.]*)$/))
-            ) {
-                clearAndChangeNode(
-                    schema.nodes.code_block.create({
-                        language: codeMatch[1],
-                    })
-                )(state, dispatch);
-
-                return true;
-            }
+          commonEnterHandler(state, dispatch);
         },
         splitListItem(schema.nodes.list_item),
         figcaptionEnterHandler,
