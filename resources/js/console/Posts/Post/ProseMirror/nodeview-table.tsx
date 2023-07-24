@@ -365,6 +365,7 @@ export default class Table implements NodeView{
         const _self = this;
         const table = this.node;
         const rows = table.content.childCount;
+        const selection = this.view.state.selection;
 
         // Clear the left side settings
         while (this.leftSideSettings.firstChild) {
@@ -394,7 +395,8 @@ export default class Table implements NodeView{
                 clearContent={_self.clearRowContentWrapper}
                 deleteWrapper={_self.deleteRowWrapper}
                 cssOffset={rowCSSOffset}
-                columnIdx={0}/>)
+                columnIdx={0}
+                view={_self.view}/>)
             if (rowsInfo.item(rowIdx))
                 rowCSSOffset += rowsInfo[rowIdx].clientHeight / 2 + 15;
         }
@@ -423,7 +425,8 @@ export default class Table implements NodeView{
                 clearContent={_self.clearColumnContentWrapper}
                 deleteWrapper={_self.deleteColumnWrapper}
                 cssOffset={colSSOffset - this.middle.scrollLeft}
-                columnIdx={colIdx}/>)
+                columnIdx={colIdx}
+                view={_self.view}/>)
             colSSOffset += cellWidth / 2 + 17.5;
         }
       }

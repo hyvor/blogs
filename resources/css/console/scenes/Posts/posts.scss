@@ -63,9 +63,10 @@
             border-radius: 50px;
             width: 100%;
             cursor: pointer;
+            padding: 5px
         }
         .action-button:hover {
-            background-color: $color-accent-light;
+            background-color: $color-accent-active;
         }
         .table-menu-icon {
             margin-right: 10px;

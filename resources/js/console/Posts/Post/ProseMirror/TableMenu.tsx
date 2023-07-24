@@ -4,9 +4,9 @@ import React, { useEffect, useRef } from "react";
 import { useState } from "react";
 import { ArrowDown, ArrowLeft, ArrowRight, ArrowUp, Backspace, CardHeading, Trash } from "react-bootstrap-icons";
 
-export default function TableMenu({ colunmMenu, focused, addBefore, addAfter, makeHeader, clearContent, deleteWrapper, cssOffset, columnIdx }: 
+export default function TableMenu({ colunmMenu, focused, addBefore, addAfter, makeHeader, clearContent, deleteWrapper, cssOffset, columnIdx, view }: 
     { colunmMenu: boolean, focused: boolean, addBefore: () => void, addAfter: () => void, 
-        makeHeader: () => void ,clearContent: () => void, deleteWrapper: () => void, cssOffset: number, columnIdx: number}) {
+        makeHeader: () => void ,clearContent: () => void, deleteWrapper: () => void, cssOffset: number, columnIdx: number, view: any}) {
 
   const [showMenu, setShowMenu] = useState(false);
   const menuRef = useRef<HTMLDivElement>(null);
@@ -15,7 +15,6 @@ export default function TableMenu({ colunmMenu, focused, addBefore, addAfter, ma
     setShowMenu(!showMenu);
     event.stopPropagation();
   };
-
 
   useEffect(() => {
     const handleClickOutside = (event: MouseEvent) => {
