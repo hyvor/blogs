@@ -32,11 +32,10 @@ export default function TableMenu({ colunmMenu, focused, addBefore, addAfter, ma
 
   const customStyle = !colunmMenu ? {top: cssOffset + 'px'} : {left: cssOffset + 'px'};
   if (colunmMenu)
-    customStyle['bottom'] = '-2px';
+    customStyle['bottom'] = '-27px';
   else
     customStyle['left'] = '20px';
   
-  const menuOffset = colunmMenu && columnIdx > 3 ? 300 : 0;
 
   return !focused ? (<div></div>) : (
     <div className={'table-menu'} style={customStyle} ref={menuRef}>
@@ -50,7 +49,7 @@ export default function TableMenu({ colunmMenu, focused, addBefore, addAfter, ma
         <span className="table-menu-dot"/>
       </button>
       {showMenu && (
-        <div className="table-menu-options" style={{transform: `translateX(-${menuOffset}px)`}}>
+        <div className="table-menu-options">
           <button className="action-button" onClick={makeHeader}>
             <CardHeading className="table-menu-icon"/>
             {colunmMenu ? 'Header Column' : 'Header Row'}

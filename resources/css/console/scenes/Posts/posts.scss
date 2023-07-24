@@ -169,13 +169,16 @@
         }
 
         .table-top-settings {
+            float: right;
+            align-self: flex-end;
             position: relative;
             display: flex;
             flex-direction: row;
             justify-content: flex-end;
             padding-right: 20px;
             padding-bottom: 2px;
-            z-index: 999;
+            width: fit-content;
+            z-index: 1;
         }
 
         .table-column-settings {
