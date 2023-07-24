@@ -33,7 +33,7 @@ export default function TableMenu({ colunmMenu, focused, addBefore, addAfter, ma
 
   const customStyle = !colunmMenu ? {top: cssOffset + 'px'} : {left: cssOffset + 'px'};
   if (colunmMenu)
-    customStyle['bottom'] = '-10px';
+    customStyle['bottom'] = '-2px';
   
   const menuOffset = colunmMenu && columnIdx > 3 ? 300 : 0;
 
