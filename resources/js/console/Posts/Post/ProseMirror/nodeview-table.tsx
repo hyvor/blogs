@@ -105,6 +105,7 @@ export default class Table implements NodeView{
         this.deleteColumnWrapper = this.deleteColumnWrapper.bind(this);
         this.clearRowContentWrapper = this.clearRowContentWrapper.bind(this);
         this.clearColumnContentWrapper = this.clearColumnContentWrapper.bind(this);
+        this.focusTable = this.focusTable.bind(this);
 
         this.view.dom.addEventListener('click', this.handleChange);
         this.view.dom.addEventListener('keyup', this.handleChange);
@@ -120,41 +121,49 @@ export default class Table implements NodeView{
     addRowBeforeWrapper = () => {
         addRowBefore(this.view.state, this.view.dispatch);
         this.createMenuItems();
+        this.focusTable();
     }
 
     addRowAfterWrapper = () => {
         addRowAfter(this.view.state, this.view.dispatch);
         this.createMenuItems();
+        this.focusTable();
     };
 
     addColumnBeforeWrapper = () => {
         addColumnBefore(this.view.state, this.view.dispatch);
         this.createMenuItems();
+        this.focusTable();
     };
 
     addColumnAfterWrapper = () => {
         addColumnAfter(this.view.state, this.view.dispatch);
         this.createMenuItems();
+        this.focusTable();
     };
 
     makeRowHeaderWrapper = () => {
         toggleHeaderRow(this.view.state, this.view.dispatch);
         this.createMenuItems();
+        this.focusTable();
     };
 
     makeColumnHeaderWrapper = () => {
         toggleHeaderColumn(this.view.state, this.view.dispatch);
         this.createMenuItems();
+        this.focusTable();
     };
 
     deleteRowWrapper = () => {
         deleteRow(this.view.state, this.view.dispatch);
         this.createMenuItems();
+        this.focusTable();
     };
 
     deleteColumnWrapper = () => {
         deleteColumn(this.view.state, this.view.dispatch);
         this.createMenuItems();
+        this.focusTable();
     };
 
     clearRowContentWrapper = () => {
@@ -165,6 +174,7 @@ export default class Table implements NodeView{
         tr.replaceWith(rowPos, rowPos + row.nodeSize, this.schema.nodes.table_row.createAndFill()!);
         this.view.dispatch(tr);
         this.createMenuItems();
+        this.focusTable();
     }
 
     clearColumnContentWrapper = () => {
@@ -203,7 +213,21 @@ export default class Table implements NodeView{
         }
         this.view.dispatch(tr);
         this.createMenuItems();
+        this.focusTable();
     }
+
+    // Focus back the table
+    focusTable() {
+        let { $from, to } = this.view.state.selection,
+                    pos;
+        let same = $from.sharedDepth(to);
+        pos = $from.before(same);
+        console.log(pos);
+        this.view.dispatch(
+            this.view.state.tr.setSelection(
+                NodeSelection.create(this.view.state.doc, pos)
+        ));
+    };
 
     createInside() {
         const _self = this;
@@ -294,6 +318,7 @@ export default class Table implements NodeView{
             let table = selection.$from.node(-3);
             if (!table || table.type.name == 'doc') {
                 addColumnAfter(_self.view.state, _self.view.dispatch);
+                _self.focusTable();
                 return;
             }
             let tableIdx = -3;
@@ -323,6 +348,7 @@ export default class Table implements NodeView{
                 )
             );
             _self.view.dispatch(tr);
+            _self.focusTable();
         };
         this.rightSideSettings.appendChild(addColumnButton);
     }
@@ -403,9 +429,7 @@ export default class Table implements NodeView{
                 makeHeader={_self.makeRowHeaderWrapper}
                 clearContent={_self.clearRowContentWrapper}
                 deleteWrapper={_self.deleteRowWrapper}
-                cssOffset={rowCSSOffset}
-                columnIdx={0}
-                view={_self.view}/>)
+                cssOffset={rowCSSOffset}/>)
             if (rowsInfo.item(rowIdx))
                 rowCSSOffset += rowsInfo[rowIdx].clientHeight / 2 + 15;
         }
@@ -433,9 +457,7 @@ export default class Table implements NodeView{
                 makeHeader={_self.makeColumnHeaderWrapper}
                 clearContent={_self.clearColumnContentWrapper}
                 deleteWrapper={_self.deleteColumnWrapper}
-                cssOffset={colSSOffset - this.middle.scrollLeft}
-                columnIdx={colIdx}
-                view={_self.view}/>)
+                cssOffset={colSSOffset - this.middle.scrollLeft}/>)
             colSSOffset += cellWidth / 2 + 17.5;
         }
       }
