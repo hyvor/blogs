@@ -111,7 +111,7 @@
       }
     
     .table-wrapper {
-        margin-top: 10px;
+        margin: 10px;
         .add-row-menu {
             position: absolute;
             display: none;
@@ -144,25 +144,19 @@
         .delete-table-button {
             justify-self: flex-end;
             align-self: flex-end;
-            position: absolute;
-            right: 30px;
-            top: 18px;
+            position: relative;
         }
 
         .merge-cell-button {
             justify-self: flex-end;
             align-self: flex-end;
-            position: absolute;
-            right: 60px;
-            top: 18px;
+            position: relative;
         }
 
         .split-cell-button {
             justify-self: flex-end;
             align-self: flex-end;
-            position: absolute;
-            right: 90px;
-            top: 18px;
+            position: relative;
         }
 
         .add-header-row-button {
@@ -175,11 +169,12 @@
         }
 
         .table-top-settings {
-            position: absolute;
-            top: -12px;
-            right: 20px;
+            position: relative;
             display: flex;
             flex-direction: row;
+            justify-content: flex-end;
+            padding-right: 20px;
+            padding-bottom: 2px;
         }
 
         .table-column-settings {
