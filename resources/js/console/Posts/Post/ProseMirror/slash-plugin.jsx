@@ -268,7 +268,6 @@ class SlashPlugin {
                     createdNode = _self.schema.nodes[node].create(
                         m.attrs || {}
                     );
-                    console.log(createdNode);
                 }
 
                 let { $from, to } = view.state.selection,
