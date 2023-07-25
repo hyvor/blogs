@@ -547,6 +547,21 @@ test.describe('Bookmark', () => {
         await page.getByPlaceholder('Paste URL here to generate a bookmark').fill('https://google.com');
         await page.keyboard.press('Enter');
 
-        await expect(page.getByText('Loading bookmark...')).toBeVisible();
+        await expect(page.locator('#middle').getByText('Search the world\'s information, including webpages, images, videos and more. Goo')).toBeVisible();
     });
+
+    consoleTest('Deleting a bookmark', async ({testingApi, console, page}) => {
+        await page.locator('.ProseMirror').fill('/');
+        await page.locator('div').filter({ hasText: /^Link BookmarkLink preview as a bookmark$/ }).first().click();
+        await page.getByPlaceholder('Paste URL here to generate a bookmark').fill('https://google.com');
+        await page.keyboard.press('Enter');
+        await page.getByText('Google Search the world\'s information, including webpages, images, videos and mo').click();
+        await page.keyboard.press('Backspace');
+
+        await expect(page.locator('#middle').getByText('Search the world\'s information, including webpages, images, videos and more. Goo')).not.toBeVisible();
+    });
+});
+
+test.describe('Embed', () => {
+
 });
