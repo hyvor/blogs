@@ -95,13 +95,23 @@ export default class EmbedView {
             pos,
             schema.nodes.paragraph
         )
-        const selection = TextSelection.create(tr.doc, pos + 1);
 
+        const selection = TextSelection.create(tr.doc, pos + 1);
         this.view.dispatch(
             tr.setSelection(selection)
                 .scrollIntoView()
         )
         this.view.focus();
+
+        const nodeBefore = tr.doc.nodeAt(pos - 1);
+        // Delete the before node
+        if (nodeBefore && nodeBefore.type.name === "figure") {
+            console.log(nodeBefore);
+            let tr2 = this.view.state.tr;
+            tr2.deleteRange(pos - 1, pos);
+            this.view.dispatch(tr2);
+        }
+
     }
 
 
