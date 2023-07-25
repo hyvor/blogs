@@ -50,6 +50,194 @@
         background-color: $color-accent-light;
     }
 
+    .table-menu {
+        position: absolute;
+        display: inline-block;
+
+        .action-button {
+            display: flex;
+            flex-direction: row;
+            background-color: $color-box;
+            border: none;
+            border-radius: 50px;
+            width: 100%;
+            cursor: pointer;
+            padding: 5px
+        }
+        .action-button:hover {
+            background-color: $color-accent-active;
+        }
+        .table-menu-icon {
+            margin-right: 10px;
+        }
+        .table-menu-dot {
+            width: 3px;
+            height: 3px;
+            border-radius: 100%;
+            background-color: rgb(0 0 0 / 50%);
+        }
+      }
+
+      .toggle-table-menu-button {
+        justify-content: space-around;
+        align-items: center;
+        display: flex;
+        border-radius: 5px;
+        cursor: pointer;
+        background-color: rgba(255, 255, 255, 0.7);
+        border: solid 1px $color-grey;
+    }
+    .toggle-table-menu-button:hover {
+        background-color: $color-grey;
+    }
+
+    .table-menu-options {
+        position: fixed;
+        background-color: #fff;
+        padding: 12px;
+        border-radius: 15px;
+        border-bottom: 1px solid $color-accent-light;
+        box-shadow: 0 2px 8px rgba(0, 0, 0, 0.15);
+        display: flex;
+        flex-direction: column;
+        width: 170px;
+        font-size: 14px;
+        font-weight: 600;
+        z-index: 1;
+      }
+      
+      .table-menu-options button {
+        align-self: center;
+        margin-bottom: 3px;
+      }
+    
+    .table-wrapper {
+        margin: 20px;
+        .add-row-menu {
+            position: absolute;
+            display: none;
+            z-index: 1;
+            background-color: #fff;
+            box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.1);
+            border-radius: 4px;
+            padding: 8px;
+          }
+          
+          .add-row-menu button {
+            display: block;
+            width: 100%;
+            padding: 8px 12px;
+            border: none;
+            background-color: transparent;
+            text-align: left;
+            cursor: pointer;
+          }
+          
+          .add-row-menu button:hover {
+            background-color: #f5f5f5;
+          }
+
+        .table-icon {
+            height: 15px;
+            width: 15px;
+        } 
+
+        .delete-table-button {
+            justify-self: flex-end;
+            align-self: flex-end;
+            position: relative;
+        }
+
+        .merge-cell-button {
+            justify-self: flex-end;
+            align-self: flex-end;
+            position: relative;
+        }
+
+        .split-cell-button {
+            justify-self: flex-end;
+            align-self: flex-end;
+            position: relative;
+        }
+
+        .add-header-row-button {
+            background-color: $color-accent-mid;
+            margin-right: 5px;
+        }
+
+        .add-header-column-button {
+            background-color: $color-accent-mid;
+        }
+
+        .table-top-settings {
+            float: right;
+            align-self: flex-end;
+            position: relative;
+            display: flex;
+            flex-direction: row;
+            justify-content: flex-end;
+            padding-right: 20px;
+            padding-bottom: 2px;
+            width: fit-content;
+            z-index: 1;
+        }
+
+        .table-column-settings {
+            position: relative;
+            display: flex;
+            align-self: start;
+            flex-direction: row;
+        }
+
+        .table-middle {
+            height: 100%;
+            width: 100%;
+            display: flex;
+            flex-direction: row;
+            overflow-x: auto;
+            white-space: nowrap;
+        }
+
+        .table-left-side-settings {
+            display: flex;
+            position: absolute;
+            left: 12px;
+            justify-content: space-around;
+            flex-direction: column;
+            z-index: 10;
+        }
+
+        .table-right-side-settings {
+            display: flex;
+            flex-direction: column;
+            width: 20px;
+            .add-column-button {
+                height: 100%;
+                background-color: $color-white;
+                border: none;
+                cursor: pointer;
+            }
+            .add-column-button:hover {
+                background-color: $color-grey;
+            }
+        }
+        .table-bottom-settings {
+            display: flex;
+            flex-direction: row;
+            width: calc(100% - 20px);
+            .add-row-button {
+                background-color: $color-white;
+                width: 100%;
+                border: none;
+                cursor: pointer;
+            }
+            .add-row-button:hover {
+                background-color: $color-grey;
+            }
+        }
+    }
+
+
     .posts-filtering {
         padding: 15px 25px;
         border-bottom: 1px solid $color-accent-light;

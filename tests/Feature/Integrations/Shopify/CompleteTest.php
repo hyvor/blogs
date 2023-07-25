@@ -5,7 +5,7 @@ namespace Tests\Feature\Integrations\Shopify;
 use App\Data\Enums\BlogBillingTypeEnum;
 use App\Data\Enums\BlogHostingAtEnum;
 use App\Data\Enums\BlogIntegrationEnum;
-use App\Domains\Blog\Fillers\PostFiller;
+use App\Domains\Blog\Fillers\PostFiller\PostFiller;
 use App\Domains\Blog\Fillers\RouteFiller;
 use App\Domains\Blog\Fillers\TagFiller;
 use App\Domains\Blog\Fillers\ThemeFiller;

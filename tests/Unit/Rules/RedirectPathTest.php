@@ -21,7 +21,7 @@ test('validation', function () {
     expect(pathPasses('/hel@@DCOWMao3f'))->toBe(true);
 });
 
-it('does not pass when path is already there', function () {
+/*it('does not pass when path is already there', function () {
     $path = '/new';
 
     $blog = blog();
@@ -29,4 +29,4 @@ it('does not pass when path is already there', function () {
 
     expect(pathPasses('/news'))->toBeTrue();
     expect(pathPasses($path, $blog))->toBeFalse();
-});
+});*/

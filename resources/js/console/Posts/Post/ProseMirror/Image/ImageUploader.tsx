@@ -7,7 +7,14 @@ import { toast } from "react-toastify";
 import { ConsoleWindow, Media, UnsplashImage } from "../../../../types";
 import Image, { ImageUploadHandlerType } from "./nodeview-image";
 
-export default function ImageUploader({ onUpload, onUrlLoad }: { onUpload: ImageUploadHandlerType, onUrlLoad: (url: string) => void },) {
+export default function ImageUploader(
+    { onUpload, onUrlLoad, onInputFocus }:
+    {
+        onUpload: ImageUploadHandlerType,
+        onUrlLoad: (url: string) => void,
+        onInputFocus: () => void
+    },
+) {
 
     const [search, setSearch] = useState('');
     const [ajaxStatus, setAjaxStatus] = useState<null | 'loading' | 'success'>(null);
@@ -135,6 +142,7 @@ export default function ImageUploader({ onUpload, onUrlLoad }: { onUpload: Image
                                 onKeyDown={e => e.stopPropagation()}
                                 ref={unsplashInput}
                                 onClick={() => unsplashInput.current?.focus()}
+                                onFocus={() => onInputFocus()}
                             />
                         </div>
                         {search.trim().length === 0 && <div className='url-search'>
@@ -147,6 +155,7 @@ export default function ImageUploader({ onUpload, onUrlLoad }: { onUpload: Image
                                 onPaste={(e) => handleUrlInputChange(e.clipboardData.getData('text'))}
                                 ref={urlInput}
                                 onClick={() => urlInput.current?.focus()}
+                                onFocus={() => onInputFocus()}
                             />
                         </div>}
                         <div className="non-search">

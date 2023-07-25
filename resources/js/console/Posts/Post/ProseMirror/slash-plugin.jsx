@@ -16,8 +16,10 @@ import {
     Quote,
     TypeH2,
     TypeH3,
+    Table
 } from "react-bootstrap-icons";
-import { createEmbed, createImage, createQuote } from "./creators";
+
+import { createEmbed, createImage, createQuote, createTable } from "./creators";
 import {isEditorRtl} from "./rtl";
 
 const matchable = [
@@ -63,8 +65,7 @@ const matchable = [
             "maps",
             "codepen",
         ],
-        node: createEmbed,
-        focusInput: true
+        node: "embed",
     },
     {
         name: "Code Block",
@@ -109,6 +110,14 @@ const matchable = [
         icon: <CodeSlash />,
         keywords: ["html", "twig", "code", "custom"],
         node: "custom_html",
+    },
+    {
+        name: "Table",
+        description: "Add a table",
+        icon: <Table />,
+        keywords: ["table", "spreadsheet"],
+        node: createTable,
+        focusCell: true,
     },
     /*{
         name: "Custom Node",
@@ -252,6 +261,7 @@ class SlashPlugin {
             nameWrap.appendChild(description);
 
             item.onclick = function () {
+
                 let node = m.node;
                 let createdNode;
                 if (typeof node === "function") {
@@ -280,7 +290,9 @@ class SlashPlugin {
                     tr2
                         .setSelection(
                             m.focusInput ? NodeSelection.create(tr2.doc, pos + 1) :
-                            m.selectNode
+                            m.focusCell
+                            ? TextSelection.create(tr2.doc, pos + 2)
+                            :   m.selectNode
                                 ? NodeSelection.create(tr.doc, pos)
                                 : TextSelection.create(tr.doc, pos + 1)
                         )

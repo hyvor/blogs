@@ -18,3 +18,31 @@ export function createQuote(schema) {
         schema.nodes.paragraph.create()
     ])
 }
+
+export function createTable(schema) {
+    const rows = [];
+    for (let i = 0; i < 3; i++) {
+        const cells = [];
+        for (let j = 0; j < 3; j++) {
+            cells.push(
+                schema.nodes.table_cell.create(
+                    {},
+                    [
+                        schema.nodes.paragraph.create()
+                    ]
+                )
+            )
+        }
+        rows.push(
+            schema.nodes.table_row.create(
+                {},
+                cells
+            )
+        )
+    }
+
+    return schema.nodes.table.create(
+        {},
+        [...rows]
+    )
+}

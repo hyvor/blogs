@@ -14,6 +14,9 @@ import CustomHtml from "./nodeview-custom-html";
 import EmbedView from "./nodeview-embed";
 import { EditorView, NodeViewConstructor } from "prosemirror-view";
 import useUpdateEffect from "../../../../helpers/hooks/useUpdateEffect";
+import Table from './nodeview-table';
+import { tableEditing, columnResizing, goToNextCell, fixTables } from 'prosemirror-tables';
+import { keymap } from 'prosemirror-keymap';
 
 function getState(val: string) {
     val = val ? JSON.parse(val) : null
@@ -55,7 +58,12 @@ const nodeViews: NodeViewsType = {
     },
     bookmark(node, view, getPos) {
         return new Bookmark(node, view, getPos)
-    }
+    },
+    table(node, view, getPos) {
+        return new Table(HBSchema, node, view, getPos);
+    },
+    /*table_row(node, view, getPos) {
+    }*/
 }
 
 interface EditorProps {
@@ -78,13 +86,18 @@ export default function Editor({ id, currentLanguageId, status, value, onChange,
 
         (editorRef.current as HTMLDivElement).innerHTML = "";
 
+        let state = EditorState.create({
+            schema: HBSchema,
+            plugins: plugins(HBSchema),
+            doc: value ? HBSchema.nodeFromJSON(jsonParsedValue) : undefined
+        });
+        const fix = fixTables(state);
+        if (fix) 
+            state = state.apply(fix.setMeta('addToHistory', false));
+
 
         const view = new EditorView(editorRef.current, {
-            state: EditorState.create({
-                schema: HBSchema,
-                plugins: plugins(HBSchema),
-                doc: value ? HBSchema.nodeFromJSON(jsonParsedValue) : undefined
-            }),
+            state: state,
             nodeViews,
             handleClickOn,
             handleKeyDown,
@@ -93,8 +106,8 @@ export default function Editor({ id, currentLanguageId, status, value, onChange,
 
                 const state = view.state.apply(tr)
                 view.updateState(state)
-            }
-        })
+            },
+        });
 
         return view;
 

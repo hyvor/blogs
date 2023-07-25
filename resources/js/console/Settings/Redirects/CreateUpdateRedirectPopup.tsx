@@ -75,7 +75,7 @@ export default function CreateUpdateRedirectPopup(
             <PopupFooterDoubleButton
                 onCancel={onClose}
                 onClick={handleClick}
-                name='Create'
+                name={isCreate ? 'Create' : "Update"}
                 isLoading={createAjax.status === 'loading' || updateAjax.status === 'loading'}
                 loadingName={isCreate ? "Creating" : "Updating"}
             />

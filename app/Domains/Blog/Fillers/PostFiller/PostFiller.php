@@ -1,9 +1,10 @@
 <?php declare(strict_types=1);
 
-namespace App\Domains\Blog\Fillers;
+namespace App\Domains\Blog\Fillers\PostFiller;
 
 use App\Data\Enums\BlogTypeEnum;
 use App\Data\Enums\PostStatusEnum;
+use App\Domains\Blog\Fillers\FillerInterface;
 use App\Domains\Post\Content\PostContentService;
 use App\Domains\Post\PostRepository;
 use App\Exceptions\SafetyException;
@@ -74,15 +75,13 @@ class PostFiller implements FillerInterface
         foreach ($this->data as $row) {
             $isPage = $row['type'] === 'page';
             $post = PostRepository::createPost($this->blog, [
-                'is_page' => $isPage
+                'is_page' => $isPage,
+                'published_at' => now(),
+                'featured_image_url' => RandomImageUrlGenerator::getFeaturedImageUrl()
             ]);
 
             $content = strval(file_get_contents(resource_path("posts/{$row['file']}")));
             $content = PostContentService::getJsonFromHtml($content, $this->blog);
-
-            PostRepository::updatePost($post, [
-                'published_at' => now()->getTimestamp(),
-            ]);
 
             $variant = PostRepository::getPostVariantByPostIdAndLanguageId($post->id, $language->id);
 
@@ -112,8 +111,15 @@ class PostFiller implements FillerInterface
             $this->blog->type === BlogTypeEnum::PREVIEW
         ) {
             $posts = Post::factory()
-                ->count(50)
-                ->create(['blog_id' => $this->blog->id]);
+                ->count(30)
+                ->state(function() {
+                    return [
+                        'featured_image_url' => RandomImageUrlGenerator::getFeaturedImageUrl(),
+                    ];
+                })
+                ->create([
+                    'blog_id' => $this->blog->id,
+                ]);
 
             foreach ($posts as $post) {
                 $languages = $this->blog->languages;

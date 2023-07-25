@@ -47,7 +47,7 @@ it('creates a user from username and email', function () {
     ])
         ->assertOk()
         ->assertJson(
-            fn (AssertableJson $json) => $json->where('email', $this->email)
+            fn (AssertableJson $json) => $json->where('email', 'hyv***@hyv***')
                 ->where('role', 'admin')
                 ->where('website_url', $this->websiteUrl)
                 ->where('variants.0.name', $this->name)
@@ -69,7 +69,7 @@ it('creates a user from email', function () {
     ])
         ->assertOk()
         ->assertJson(
-            fn (AssertableJson $json) => $json->where('email', $this->email)
+            fn (AssertableJson $json) => $json->where('email', 'hyv***@hyv***')
             ->where('role', 'contributor')
             ->where('website_url', $this->websiteUrl)
             ->where('variants.0.name', $this->name)
