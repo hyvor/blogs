@@ -449,7 +449,6 @@ test.describe('Highlighting (Bold, italic, code, ...)', () => {
     consoleTest('Turning text to code', async ({testingApi, console, page}) => {
         await page.locator('.ProseMirror').click();
         await page.locator('.ProseMirror').fill('Code');
-        // Select the text
         await page.keyboard.down('Shift');
         await page.locator('.ProseMirror').press('ArrowLeft');
         await page.locator('.ProseMirror').press('ArrowLeft');
@@ -464,7 +463,6 @@ test.describe('Highlighting (Bold, italic, code, ...)', () => {
     consoleTest('Add overline on text', async ({testingApi, console, page}) => {
         await page.locator('.ProseMirror').click();
         await page.locator('.ProseMirror').fill('Over');
-        // Select the text
         await page.keyboard.down('Shift');
         await page.locator('.ProseMirror').press('ArrowLeft');
         await page.locator('.ProseMirror').press('ArrowLeft');
@@ -479,7 +477,6 @@ test.describe('Highlighting (Bold, italic, code, ...)', () => {
     consoleTest('Turn text into link', async ({testingApi, console, page}) => {
         await page.locator('.ProseMirror').click();
         await page.locator('.ProseMirror').fill('Over');
-        // Select the text
         await page.keyboard.down('Shift');
         await page.locator('.ProseMirror').press('ArrowLeft');
         await page.locator('.ProseMirror').press('ArrowLeft');
@@ -495,7 +492,6 @@ test.describe('Highlighting (Bold, italic, code, ...)', () => {
     consoleTest('Turn text into link and modify it', async ({testingApi, console, page}) => {
         await page.locator('.ProseMirror').click();
         await page.locator('.ProseMirror').fill('Over');
-        // Select the text
         await page.keyboard.down('Shift');
         await page.locator('.ProseMirror').press('ArrowLeft');
         await page.locator('.ProseMirror').press('ArrowLeft');
@@ -515,7 +511,6 @@ test.describe('Highlighting (Bold, italic, code, ...)', () => {
     consoleTest('Turn text into link and remove the link', async ({testingApi, console, page}) => {
         await page.locator('.ProseMirror').click();
         await page.locator('.ProseMirror').fill('Over');
-        // Select the text
         await page.keyboard.down('Shift');
         await page.locator('.ProseMirror').press('ArrowLeft');
         await page.locator('.ProseMirror').press('ArrowLeft');
@@ -564,4 +559,39 @@ test.describe('Bookmark', () => {
 
 test.describe('Embed', () => {
 
+    consoleTest.beforeEach(async ({testingApi, console, page}) => {
+        const {blog, language} = await testingApi.factory.blogFull({routes: true});
+        await testingApi.factory.post({blog_id: blog.id, language_id: language.id, title: 'Test Post'});
+        await console.visitAndNav('posts');
+        await page.getByRole('link', { name: 'Test Post' }).click();
+        await page.locator('.ProseMirror').fill(''); 
+    });
+
+    consoleTest('Adding a embed', async ({testingApi, console, page}) => {
+        await page.locator('.ProseMirror').fill('/');
+        await page.locator('div').filter({ hasText: /^EmbedEmbed content from 1500\+ platforms$/ }).first().click();
+        await page.getByPlaceholder('Paste URL to embed (Youtube, Twitter, and 1000+ platforms supported)').fill('https://www.youtube.com/watch?v=bK6ldnjE3Y0');
+        await page.getByPlaceholder('Paste URL to embed (Youtube, Twitter, and 1000+ platforms supported)').press('Enter');
+
+        await expect(page.locator('iframe').first()).toHaveAttribute('src', 'https://www.youtube.com/embed/bK6ldnjE3Y0?rel=0');
+    });
+
+    consoleTest('Delete a embed', async ({testingApi, console, page}) => {
+        await page.locator('.ProseMirror').fill('/');
+        await page.locator('div').filter({ hasText: /^EmbedEmbed content from 1500\+ platforms$/ }).first().click();
+        await page.getByPlaceholder('Paste URL to embed (Youtube, Twitter, and 1000+ platforms supported)').fill('https://www.youtube.com/watch?v=bK6ldnjE3Y0');
+        await page.getByPlaceholder('Paste URL to embed (Youtube, Twitter, and 1000+ platforms supported)').press('Enter');
+        await page.locator('figcaption').click();
+        await page.keyboard.press('Backspace');
+
+        await expect(page.locator('iframe').first()).not.toBeVisible();
+    });
+
+    consoleTest('Delete an empty embed', async ({testingApi, console, page}) => {
+        await page.locator('.ProseMirror').fill('/');
+        await page.locator('div').filter({ hasText: /^EmbedEmbed content from 1500\+ platforms$/ }).first().click();
+        await page.keyboard.press('Backspace');
+
+        await expect(page.locator('iframe').first()).not.toBeVisible();
+    });
 });
