@@ -796,6 +796,13 @@ c30.27,0,54.64-24.37,54.64-54.64v-1419l-363.61-362.75L1258.7,336.75z"/>
 
             <div class="frameworks">
 
+                <a href="https://hyvor.com/blog/nextjs-blog" target="_blank">
+                    <img src="/img/landing/frameworks/next.svg" alt="Next.js Logo" />
+                    <span>
+                        Next.js
+                    </span>
+                </a>
+
                 <a href="https://hyvor.com/blog/laravel-blog" target="_blank">
                     <img src="/img/landing/frameworks/laravel.svg" alt="Laravel Logo" />
                     <span>
