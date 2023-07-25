@@ -5,9 +5,9 @@ namespace Tests\Feature\ConsoleAPI\Ai;
 use App\Data\Enums\SubscriptionPlanEnum;
 use App\Domains\Integrations\DeepL\Enums\DeepLSourceLangEnum;
 use App\Domains\Integrations\DeepL\Enums\DeepLTargetLangEnum;
-use App\Domains\Post\Content\PostContentRepository;
 use App\Models\AutoTranslation;
 use Illuminate\Support\Facades\Http;
+use Tests\Helper\Generator\PostContentGenerator;
 
 it('translates', function() {
 
@@ -16,6 +16,7 @@ it('translates', function() {
             'translations' => [
                 ['text' => 'Bonjour le monde'],
                 ['text' => 'Bienvenue sur HYVOR'],
+                ['text' => 'bienvenue a'],
                 ['text' => '<p>tester ce système</p>']
             ]
         ]),
@@ -27,14 +28,16 @@ it('translates', function() {
     consoleApi($blog, 'post', '/ai/translate', [
         'source_lang' => 'EN',
         'target_lang' => 'FR',
-        'content' => PostContentRepository::generateParagraph('Testing this system'),
+        'content' => PostContentGenerator::generateParagraph('Testing this system'),
         'title' => 'Hello World',
-        'description' => 'Welcome to HYVOR'
+        'description' => 'Welcome to HYVOR',
+        'slug' => 'welcome'
     ])
         ->assertOk()
         ->assertJsonPath('title', 'Bonjour le monde')
         ->assertJsonPath('description', 'Bienvenue sur HYVOR')
-        ->assertJsonPath('content', PostContentRepository::generateParagraph('tester ce système'));
+        ->assertJsonPath('slug', 'bienvenue-a')
+        ->assertJsonPath('content', PostContentGenerator::generateParagraph('tester ce système'));
 
     $autoTranslation = AutoTranslation::where('blog_id', $blog->id)->first();
 
@@ -50,6 +53,7 @@ it('translates with code block', function() {
     Http::fake([
         'https://api.deepl.com/v2/translate' => Http::response([
             'translations' => [
+                ['text' => ''],
                 ['text' => ''],
                 ['text' => ''],
                 ['text' => '<p>Bonjour</p><pre data-language="php" data-annotations="h=1" data-name="index.php"><code>0</code></pre>']
@@ -94,6 +98,55 @@ it('translates with code block', function() {
 
 });
 
+// #190
+it('translates with code block with HTML', function() {
+
+    Http::fake([
+        'https://api.deepl.com/v2/translate' => Http::response([
+            'translations' => [
+                ['text' => ''],
+                ['text' => ''],
+                ['text' => ''],
+                ['text' => '<pre data-language="php" data-annotations="h=1" data-name="index.php"><code>&lt;html&gt;&lt;/html&gt;</code></pre>']
+            ]
+        ]),
+    ]);
+
+    $blog = blogWithAccess();
+    createSubscription($blog, SubscriptionPlanEnum::GROWTH);
+
+    $codeBlock = [
+        'type' => 'code_block',
+        'attrs' => [
+            'language' => 'php',
+            'name' => 'index.php',
+            'annotations' => 'h=1',
+        ],
+        'content' => [['type' => 'text', 'text' => '<html></html>']]
+    ];
+
+    consoleApi($blog, 'post', '/ai/translate', [
+        'source_lang' => 'EN',
+        'target_lang' => 'FR',
+        'content' => json_encode([
+            'type' => 'doc',
+            'content' => [
+                $codeBlock
+            ]
+        ]),
+        'title' => ''
+    ])
+        ->assertOk()
+        ->assertJsonPath('title', '')
+        ->assertJsonPath('content', json_encode([
+            'type' => 'doc',
+            'content' => [
+                $codeBlock
+            ]
+        ]));
+
+});
+
 it('throws API error', function() {
 
     Http::fake([
@@ -106,7 +159,7 @@ it('throws API error', function() {
     consoleApi($blog, 'post', '/ai/translate', [
         'source_lang' => 'EN',
         'target_lang' => 'FR',
-        'content' => PostContentRepository::generateParagraph('Testing this system'),
+        'content' => PostContentGenerator::generateParagraph('Testing this system'),
         'title' => 'Hello World'
     ])
         ->assertUnprocessable()
@@ -129,7 +182,7 @@ it('throws an error when limits reached', function() {
     consoleApi($blog, 'post', '/ai/translate', [
         'source_lang' => 'EN',
         'target_lang' => 'FR',
-        'content' => PostContentRepository::generateParagraph('Testing this system'),
+        'content' => PostContentGenerator::generateParagraph('Testing this system'),
         'title' => 'Hello World'
     ])
         ->assertUnprocessable()

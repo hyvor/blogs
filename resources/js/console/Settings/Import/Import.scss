@@ -1,0 +1,78 @@
+
+
+.settings-import {
+
+    .test-results-popup {
+        .popup {
+            width: 800px;
+        }
+        .popup-body-default {
+            padding: 0 35px;
+        }
+
+        .test-content {
+            a {
+                color: #1d85d2;
+                font-weight: 600;
+            }
+            pre {
+                overflow: auto;
+            }
+            blockquote {
+                border-left: 3px solid #000;
+                padding-left: 20px;
+            }
+        }
+        img {
+            height: auto;
+        }
+    }
+    .import-button {
+        margin-top: 40px;
+        padding-top: 25px;
+        border-top: 1px solid #eee;
+        text-align: center;
+    }
+
+    .import-history {
+        .global-table-view {
+            .table-head, .table-row {
+                grid-template-columns: 3fr 1fr 1fr 1fr 1fr;
+            }
+        }
+        .import-row {
+            cursor: pointer;
+            .import-name {
+                word-break: break-all;
+            }
+            .import-type {
+                text-transform: capitalize;
+            }
+        }
+        .popup-wrap {
+            .popup {
+                width: 800px;
+                cursor: initial;
+            }
+            .imported-counts {
+                div {
+                    margin-bottom: 10px;
+                }
+                span:first-child {
+                    display: inline-block;
+                    width: 100px;
+                    margin-right: 5px;
+                    font-weight: 600;
+                }
+                span:last-child {
+                }
+            }
+            pre {
+                background-color: #fafafa;
+                padding: 15px;
+                border-radius: 20px;
+            }
+        }
+    }
+
+}

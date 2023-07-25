@@ -1,5 +1,5 @@
 import {useActions, useValues} from "kea";
-import getSubdomain from "./subdomain";
+import getSubdomain, {useSubdomain} from "./subdomain";
 import blogLogic from "../logic/blogLogic";
 import userBlogsLogic from "../logic/userBlogsLogic";
 
@@ -12,6 +12,11 @@ export function useBlogValues() {
 }
 export function useBlogActions() {
     return useActions(getBlogLogic());
+}
+
+export function useUserBlog() {
+    const subdomain = useSubdomain();
+    return userBlogsLogic().values.findBlogBySubdomain(subdomain);
 }
 
 export function getUserBlog() {

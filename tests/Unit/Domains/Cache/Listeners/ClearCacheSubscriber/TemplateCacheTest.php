@@ -2,6 +2,7 @@
 
 namespace Tests\Unit\Domains\Cache\Listeners;
 
+use App\Data\Enums\ThemeFileFolderEnum;
 use App\Domains\Blog\Events\BlogUpdatedEvent;
 use App\Domains\Blog\Events\BlogVariantUpdatedEvent;
 use App\Domains\Cache\CacheService;
@@ -20,6 +21,7 @@ use App\Domains\Tag\Events\TagUpdatedEvent;
 use App\Domains\Tag\Events\TagVariantDeletedEvent;
 use App\Domains\Tag\Events\TagVariantUpdatedEvent;
 use App\Domains\Theme\Events\ConfigEditedEvent;
+use App\Domains\Theme\Events\LangEditedEvent;
 use App\Domains\Theme\Events\TemplateEditedEvent;
 use App\Domains\User\Events\UserCreatedEvent;
 use App\Domains\User\Events\UserDeletedEvent;
@@ -32,8 +34,6 @@ use App\Models\NavigationVariant;
 use App\Models\Post;
 use App\Models\PostVariant;
 use App\Models\Route;
-use App\Models\Tag;
-use App\Models\TagVariant;
 use App\Models\ThemeFile;
 use App\Models\User;
 use App\Models\UserVariant;
@@ -84,7 +84,9 @@ it('is attached', function () {
     Event::assertListening(RouteChangedEvent::class, [ClearCacheSubscriber::class, 'onRouteEvent']);
 
     // theme files
-    Event::assertListening(TemplateEditedEvent::class, [ClearCacheSubscriber::class, 'onTemplateEditedEvent']);
+    Event::assertListening(TemplateEditedEvent::class, [ClearCacheSubscriber::class, 'onFileEditedEvent']);
+    Event::assertListening(ConfigEditedEvent::class, [ClearCacheSubscriber::class, 'onFileEditedEvent']);
+    Event::assertListening(LangEditedEvent::class, [ClearCacheSubscriber::class, 'onFileEditedEvent']);
 });
 
 beforeEach(function () {
@@ -340,7 +342,7 @@ it('clears cache on template editing', function() {
     $event = new TemplateEditedEvent($file);
 
     $listener = new ClearCacheSubscriber();
-    $listener->onTemplateEditedEvent($event);
+    $listener->onFileEditedEvent($event);
 });
 
 it('clears cache when config is updated', function() {
@@ -350,6 +352,21 @@ it('clears cache when config is updated', function() {
     $event = new ConfigEditedEvent($file);
 
     $listener = new ClearCacheSubscriber();
-    $listener->onConfigEditedEvent($event);
+    $listener->onFileEditedEvent($event);
+
+});
+
+it('clears cache when a language file is updated', function() {
+
+    ($this->templateMock)();
+
+    $file = ThemeFile::factory()->create([
+        'name' => 'en.yaml',
+        'folder' => ThemeFileFolderEnum::LANG
+    ]);
+    $event = new ConfigEditedEvent($file);
+
+    $listener = new ClearCacheSubscriber();
+    $listener->onFileEditedEvent($event);
 
 });

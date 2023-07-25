@@ -21,10 +21,7 @@ class PostObject
 
     public int $updated_at;
 
-    /**
-     * Published_at can be null when using the Data API PostObject to render a preview post
-     */
-    public ?int $published_at;
+    public int $published_at;
 
     public bool $is_featured;
 
@@ -75,7 +72,7 @@ class PostObject
         $this->id = $post->id;
         $this->created_at = $post->created_at->getTimestamp();
         $this->updated_at = $variant->updated_at->getTimestamp();
-        $this->published_at = $post->published_at?->getTimestamp();
+        $this->published_at = ($post->published_at ?? now())->getTimestamp();
 
         $this->is_featured = $post->is_featured;
         $this->is_page = $post->is_page;

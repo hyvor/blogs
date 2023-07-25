@@ -8,11 +8,12 @@ Are you ready to publish your newly built theme to our [themes list](/themes)? T
 
 All the following requirements should be met in order to publish a theme to our official themes list.
 
-* Has at least these templates
+* These files should be added:
   * index.twig
   * post.twig
   * tag.twig
   * author.twig
+  * 404.twig
 * Supports multi-languages (has a language switcher)
 * Supports both light and dark color modes
 * Respects the blog's color mode settings
@@ -27,7 +28,8 @@ All the following requirements should be met in order to publish a theme to our 
 * `_comments` and `_newsletter` blocks should not be displayed if the value of each is empty.
 * If the blog has a logo (`_blog.logo_url`), the logo should be shown in the header linking the logo to the blog homepage.
 * [Internationalized](themes-internationalization)
-* `<html lang="{{ _lang.code }}"` is added
+* `<html lang="{{ _lang.code }}" dir="{{ _lang.direction }}">` is added
+* Supports RTL languages. See [RTL Support](#rtl) below.
 * Configurations are added for colors, fonts, etc. See [Config](#config) section.
 * Configuration definitions (`config.def.yaml`) are added. See [Configuration -> Config Definitions](themes-config#config-def) page. Use the <a href="/config" target="_blank">config tool</a> to validate `config.def.yaml`.
 * YAML files should use 2 spaces per indentation (not tabs, not 4 spaces).
@@ -92,6 +94,25 @@ settings:
   feed: true # a link to RSS feed (if available)
 ```
 
+## RTL Support {#rtl}
+
+All published themes should support RTL (right-to-left) languages. Follow these tips to make sure your theme supports RTL.
+
+* Add `dir="{{ _lang.direction }}"` to the `<html>` tag
+* Use direction-aware CSS properties when adding horizontal padding, margin, and left/right borders.
+
+| Do not use      | Use this |
+|-----------------|-------------------------|
+| `padding-left`  | `padding-inline-start`  |
+| `padding-right` | `padding-inline-end`    |
+| `margin-left`   | `margin-inline-start`   |
+| `margin-right`  | `margin-inline-end`     |
+| `border-left`   | `border-inline-start`   |
+| `border-right`  | `border-inline-end`     |
+
+* Make sure absolute/fixed positioned elements are positioned correctly in RTL mode
+* `<pre><code>` blocks should have `direction: ltr` CSS
+* Make sure to add an RTL language to your DEV blog and test RTL support
 
 ## Versioning {#versioning}
 

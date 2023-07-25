@@ -2,6 +2,7 @@ import {
     smartQuotes, emDash, ellipsis, 
     textblockTypeInputRule, wrappingInputRule, 
     inputRules, InputRule } from 'prosemirror-inputrules';
+import {findWrapping, canJoin} from "prosemirror-transform"
 
 function markInputRule(regexp, markType, getAttrs, skipStart) {
     return new InputRule(regexp, (state, match, start, end) => {
@@ -83,6 +84,31 @@ function inlineRules(marks) {
 
 }
 
+function wrappingInputRuleFiltered(
+    regexp,
+    nodeType,
+    getAttrs,
+    joinPredicate,
+    filters
+  ) {
+    return new InputRule(regexp, (state, match, start, end) => {
+        const currentNode = state.selection.$from.node();
+        if (currentNode.type && filters.includes(currentNode.type.name)) {
+            return false;
+        }
+        let attrs = getAttrs instanceof Function ? getAttrs(match) : getAttrs
+        let tr = state.tr.delete(start, end)
+        let $start = tr.doc.resolve(start), range = $start.blockRange(), wrapping = range && findWrapping(range, nodeType, attrs)
+        if (!wrapping) return null
+        tr.wrap(range, wrapping)
+        let before = tr.doc.resolve(start - 1).nodeBefore
+        if (before && before.type == nodeType && canJoin(tr.doc, start - 1) &&
+            (!joinPredicate || joinPredicate(match, before)))
+            tr.join(start - 1)
+        return tr
+        });
+  }
+
 function headingRule(nodeType) {
     return textblockTypeInputRule(
             new RegExp("^(#{1,6})\\s$"),
@@ -97,7 +123,7 @@ function blockQuoteRule(nodeType) {
 }
 
 function orderedListRule(nodeType) {
-    return wrappingInputRule(
+    return wrappingInputRuleFiltered(
         /^(\d+)\.\s$/, nodeType, 
         function (match) { 
             return ({
@@ -106,7 +132,8 @@ function orderedListRule(nodeType) {
         },
         function (match, node) { 
             return node.childCount + node.attrs.order == +match[1]; 
-        }
+        },
+        ['heading']
     )
 }
 
@@ -126,5 +153,5 @@ function hrRule(nodeType) {
 }
 
 function bulletListRule(nodeType) {
-    return wrappingInputRule(/^\s*([-+*])\s$/, nodeType)
+    return wrappingInputRuleFiltered(/^\s*([-+*])\s$/, nodeType, null, null, ['heading'])
 }

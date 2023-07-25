@@ -1,24 +1,27 @@
-<?php
+<?php declare(strict_types=1);
 
 namespace App\Domains\Post\Content\Nodes;
 
-use Tiptap\Core\Node;
+use Hyvor\Phrosemirror\Converters\HtmlParser\ParserRule;
+use Hyvor\Phrosemirror\Document\Node;
+use Hyvor\Phrosemirror\Types\NodeType;
 
-class Figcaption extends Node
+class Figcaption extends NodeType
 {
-    public static $name = 'figcaption';
 
-    public function parseHTML()
+    public string $name = 'figcaption';
+    public ?string $content = 'inline*';
+
+    public function fromHtml(): array
     {
         return [
-            [
-                'tag' => 'figcaption',
-            ],
+            new ParserRule(tag: 'figcaption')
         ];
     }
 
-    public function renderHTML($node)
+    public function toHtml(Node $node, string $children): string
     {
-        return ['figcaption', 0];
+        return "<figcaption>$children</figcaption>";
     }
+
 }

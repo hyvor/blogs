@@ -1,5 +1,8 @@
 <?xml version="1.0" encoding="utf-8"?>
-<feed xmlns="http://www.w3.org/2005/Atom">
+<feed
+    xmlns="http://www.w3.org/2005/Atom"
+    xmlns:media="http://search.yahoo.com/mrss/"
+>
 
     <id>{{ _blog.url }}/</id>
     <title>{{ _blog.name }}</title>
@@ -38,7 +41,11 @@
                 <source>
                     <id>{{ post.canonical_url }}</id>
                 </source>
-            {% endif %}     
+            {% endif %}
+
+            {% if post.featured_image_url %}
+                <media:thumbnail url="{{ post.featured_image_url }}" />
+            {% endif %}
 
         </entry>
     {% endfor %}

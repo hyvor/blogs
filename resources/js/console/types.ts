@@ -71,6 +71,7 @@ export interface Blog {
 
     logo_url: string | null,
     cover_url: string | null,
+    icon_url: string | null,
 
     social_facebook: string | null,
     social_twitter: string | null,
@@ -94,7 +95,8 @@ export interface Blog {
 
     syntax_on: boolean,
     syntax_line_numbers: boolean,
-    syntax_theme: string | null
+    syntax_theme: string | null,
+    heading_anchors: boolean,
 
     flashload: boolean,
     variants: BlogVariant[]
@@ -223,6 +225,8 @@ export type Language = {
     code: string;
     name: string;
     is_primary: boolean;
+
+    direction: 'ltr' | 'rtl'
 }
 
 // === MEDIA
@@ -339,7 +343,9 @@ export interface Subscription {
     frequency: SubscriptionFrequency,
     created_at: number,
     ends_at: number | null,
-    paddle_subscription_id: number | null
+
+    paddle_subscription_id: number | null,
+    shopify_subscription_id: string | null,
 
 }
 
@@ -394,4 +400,22 @@ export interface Export {
     status: JobStatus,
     url: string | null
     error: string | null
+}
+
+export interface Import {
+
+    id: number,
+    created_at: number,
+    name: string | null,
+    type: 'sitemap' | 'wordpress',
+    status: JobStatus,
+    options: object,
+    error: string | null,
+    imported_counts: {
+        posts: number,
+        pages: number
+        tags: number,
+        users: number
+    }
+
 }

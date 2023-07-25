@@ -2,6 +2,7 @@
 
 namespace App\Console;
 
+use App\Domains\Integrations\EmailOctopus\EmailOctopusSyncAppsumoJob;
 use App\Domains\Integrations\EmailOctopus\EmailOctopusSyncJob;
 use App\Domains\Post\Jobs\PublishScheduledPosts;
 use Illuminate\Console\Scheduling\Schedule;

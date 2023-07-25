@@ -196,32 +196,31 @@ textarea.input {
 
 
 .global-loader {
-    text-align: center;
-    svg {
-        animation: lds-heart 1.2s infinite cubic-bezier(0.215, 0.61, 0.355, 1);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    .spinner {
+        width: 26px;
+        height: 26px;
+        border: 3px solid $color-accent;
+        border-bottom-color: transparent!important;
+        border-radius: 50%;
+        display: inline-block;
+        box-sizing: border-box;
+        animation: rotation 1s linear infinite;
+
+        @keyframes rotation {
+            0% {
+                transform: rotate(0deg);
+            }
+            100% {
+                transform: rotate(360deg);
+            }
+        }
     }
-    @keyframes lds-heart {
-        0% {
-          transform: scale(0.95);
-          opacity: 0.5;
-        }
-        5% {
-          transform: scale(1.1);
-        }
-        39% {
-          transform: scale(0.85);
-        }
-        45% {
-          transform: scale(1);
-        }
-        60% {
-          transform: scale(0.95);
-        }
-        100% {
-          transform: scale(0.9);
-          opacity: 0.9;
-        }
-      }
+    &.mini .spinner {
+        border-width: 2px;
+    }
 }
 
 .global-spinner {
@@ -407,12 +406,12 @@ textarea.input {
     margin: 15px 0;
 
     .text {
-        margin-top:4px;
     }
     .title {
         font-size: 16px;
         font-weight: 600;
         display:flex;
+        margin-bottom:4px;
         .icon {
             margin-right:6px;
             display: inline-flex;
@@ -508,6 +507,11 @@ textarea.input {
 }
 
 // emoji-picker
+
+.emoji-picker__wrapper {
+    z-index: 9999;
+}
+
 .emoji-picker.light {
     font-family: inherit!important;
     font-size: inherit;
@@ -826,4 +830,16 @@ input[type=range]:focus::-ms-fill-upper {
         display: block;
     }
 
+}
+
+.global-jump-link {
+    cursor: pointer;
+    color: $color-blue-dark;
+    font-weight: 600;
+    font-size: 13px;
+    margin-left: 5px;
+    display:inline-block;
+    background-color: $color-blue-light;
+    padding: 2px 5px;
+    border-radius: 5px;
 }

@@ -14,7 +14,6 @@ import {
 } from "prosemirror-schema-list";
 import { NodeSelection, Selection } from "prosemirror-state";
 
-
 export default function keymapPlugins(schema) {
     var extendedKeymap = {};
     function bind(key, func) {
@@ -33,8 +32,6 @@ export default function keymapPlugins(schema) {
     // hard break
     const br = schema.nodes.hard_break,
         brCmd = function (state, dispatch) {
-            const { $from } = state.selection;
-            const grandParent = $from.node(-1);
             dispatch(
                 state.tr.replaceSelectionWith(br.create()).scrollIntoView()
             );
@@ -53,7 +50,7 @@ export default function keymapPlugins(schema) {
         )
     );
 
-    const commonEnterHandler = (state, dispatch) => {
+    const commonEnterAndArrowDown = (state, dispatch) => {
         const selection = state.selection;
 
         if (selection.from !== selection.to)
@@ -90,11 +87,15 @@ export default function keymapPlugins(schema) {
         }
     };
 
-    const enterHandler = chainCommands((state, dispatch) =>  {
-        commonEnterHandler(state, dispatch);
-    }, splitListItem(schema.nodes.list_item), figcaptionEnterHandler);
+    const enterBehavior = chainCommands(
+        (state, dispatch) => {
+           commonEnterAndArrowDown(state, dispatch);
+        },
+        splitListItem(schema.nodes.list_item),
+        figcaptionEnterHandler,
+    );
 
-    const arrowDownHandler = chainCommands(
+    const downArrowBehavior = chainCommands(
         (state, dispatch) => {
             const selection = state.selection;
 
@@ -122,19 +123,18 @@ export default function keymapPlugins(schema) {
                     dispatch(tr.setSelection(Selection.near(tr.doc.resolve($from.after(-1)))));
                 }
             }
-          commonEnterHandler(state, dispatch);
+           commonEnterAndArrowDown(state, dispatch);
         },
-        splitListItem(schema.nodes.list_item),
-        figcaptionEnterHandler,
+        figcaptionEnterHandler
     );
 
     // list item
-    bind("Enter", enterHandler);
+    bind("Enter", enterBehavior);
 
     bind("Tab", sinkListItem(schema.nodes.list_item));
     bind("Shift-Tab", liftListItem(schema.nodes.list_item));
 
-    bind("ArrowDown", arrowDownHandler);
+    bind("ArrowDown", downArrowBehavior);
 
     bind("}", (state, dispatch) => {
         /**
@@ -207,7 +207,6 @@ function figcaptionEnterHandler(state, dispatch) {
 
 function figcaptionBackspaceHandler(state, dispatch) {
     const { $from } = state.selection;
-
     if ($from.parent.type.name !== "figcaption") return false;
 
     if (!$from.parent?.firstChild.text) return true;

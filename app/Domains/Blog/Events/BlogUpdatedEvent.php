@@ -1,4 +1,4 @@
-<?php
+<?php declare(strict_types=1);
 
 namespace App\Domains\Blog\Events;
 
@@ -13,6 +13,6 @@ class BlogUpdatedEvent
         public Blog $blog,
         public Blog $blogOriginal
     )
-    {
-    }
+    {}
+
 }

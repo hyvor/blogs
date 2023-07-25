@@ -1,4 +1,4 @@
-<?php
+<?php declare(strict_types=1);
 
 namespace App\Domains\Delivery\Processors;
 
@@ -8,12 +8,13 @@ use App\Data\Objects\DeliveryAPI\DeliveryAPIResponseObject;
 use App\Domains\Delivery\PathMatcher;
 use App\Domains\Delivery\RouteMatcher\MatchedRoute;
 use App\Domains\Theme\ThemeFilesRepository;
-use Padaliyajay\PHPAutoprefixer\Autoprefixer;
+use App\Exceptions\SafetyException;
 use ScssPhp\ScssPhp\Compiler;
+use ScssPhp\ScssPhp\Exception\SassException;
 
 class StylesProcessor extends RouteProcessorAbstract
 {
-    public function __construct(PathMatcher $pathMatcher, MatchedRoute $matchedRoute)
+    public function __construct(PathMatcher $pathMatcher, MatchedRoute $_) // @phpstan-ignore-line
     {
         $files = ThemeFilesRepository::getFilesInFolder(
             $pathMatcher->blog,
@@ -31,8 +32,27 @@ class StylesProcessor extends RouteProcessorAbstract
         /**
          * Step 1: SCSS -> CSS
          */
-        $css = $scssCompiler->compileFile('index.scss')->getCss();
+        try {
 
+            $compiled = $scssCompiler->compileFile('index.scss');
+
+            if ($compiled === null) {
+                throw new SafetyException('SCSS compilation failed');
+            }
+
+            $css = $compiled->getCss();
+
+        } catch (SassException|SafetyException $e) {
+            $this->setResponseObject(
+                DeliveryAPIResponseObject::forFile(
+                    DeliveryAPIFileTypeEnum::ASSET,
+                    'SCSS Error: ' . $e->getMessage(),
+                    'text/plain',
+                    status: 500
+                )
+            );
+            return;
+        }
 
         // Note: Autoprefixer caused a bug that --fontSize is changed to --fontsize
         // Therefore, removed it

@@ -10,6 +10,7 @@ use App\Models\Media;
 use App\Models\Post;
 use App\Models\Tag;
 use App\Models\User;
+use Exception;
 
 /**
  * Manages permalinks of a post/page
@@ -108,9 +109,21 @@ class PermalinkRepository
         return str_starts_with($link, $base);
     }
 
-    public static function getBaseUrl(Blog $blog)
+    public static function getBaseUrl(Blog $blog) : string
     {
         return self::getFullUrlFromPath($blog);
+    }
+
+    public static function getBlogDomain(Blog $blog) : string
+    {
+        $url = self::getBaseUrl($blog);
+        $domain = parse_url($url, PHP_URL_HOST);
+
+        if (!is_string($domain)) {
+            throw new Exception('Invalid blog domain');
+        }
+
+        return $domain;
     }
 
     public static function getFullUrlFromPath(Blog $blog, ?string $path = null)

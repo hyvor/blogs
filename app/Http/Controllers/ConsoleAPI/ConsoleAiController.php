@@ -12,6 +12,7 @@ use App\Exceptions\TrustedException;
 use App\Models\Blog;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
+use Illuminate\Support\Str;
 use Illuminate\Validation\Rules\Enum;
 
 class ConsoleAiController
@@ -21,6 +22,7 @@ class ConsoleAiController
     {
 
         $request->validate([
+            'slug' => 'string|nullable',
             'title' => 'string|nullable',
             'description' => 'string|nullable',
             'content' => 'required|string', // JSON string to translate
@@ -32,6 +34,7 @@ class ConsoleAiController
             throw new TrustedException('This blog has reached the limit of auto-translations for this month. Please upgrade your subscription plan.');
         }
 
+        $slug = (string) $request->string('slug');
         $title = (string) $request->string('title');
         $description = (string) $request->string('description');
         $content = (string) $request->string('content');
@@ -43,6 +46,7 @@ class ConsoleAiController
             $content,
             $title,
             $description,
+            $slug,
             $sourceLang,
             $targetLang
         );
@@ -51,6 +55,7 @@ class ConsoleAiController
             [
                 'title' => $translatedTitle,
                 'description' => $translatedDescription,
+                'slug' => $translatedSlug,
                 'content' => $translatedContent,
                 'chars' => $chars
             ] = $translator->translate();
@@ -63,6 +68,7 @@ class ConsoleAiController
         return response()->json([
             'title' => $translatedTitle,
             'description' => $translatedDescription,
+            'slug' => Str::slug($translatedSlug),
             'content' => $translatedContent,
         ]);
 

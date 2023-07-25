@@ -39,7 +39,7 @@ const pagesLogic = kea<pagesLogicType>([
             actions.setPagesList(pages.map(val => val.id))
         },
 
-        createPage: async () => {
+        createPage: async ({onLoad} : {onLoad: ()=> void}) => {
             const response = await api.post<Post>(props.subdomain, '/post', {
                 is_page: true
             });
@@ -49,6 +49,7 @@ const pagesLogic = kea<pagesLogicType>([
 
             actions.setPagesList([response.id, ...values.pagesList])
             actions.navigateToPage(response.id);
+            onLoad();
         },
 
     })),

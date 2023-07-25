@@ -1,24 +1,26 @@
-<?php
+<?php declare(strict_types=1);
 
 namespace App\Domains\Post\Content\Marks;
 
-use Tiptap\Core\Mark;
+use Hyvor\Phrosemirror\Converters\HtmlParser\ParserRule;
+use Hyvor\Phrosemirror\Document\Mark;
+use Hyvor\Phrosemirror\Types\MarkType;
 
-class Sup extends Mark
+class Sup extends MarkType
 {
-    public static $name = 'sup';
 
-    public function parseHTML()
+    public string $name = 'sup';
+
+    public function toHtml(Mark $mark, string $children): string
+    {
+        return "<sup>$children</sup>";
+    }
+
+    public function fromHtml(): array
     {
         return [
-            [
-                'tag' => 'sup',
-            ],
+            new ParserRule(tag: 'sup')
         ];
     }
 
-    public function renderHTML($mark)
-    {
-        return ['sup', 0];
-    }
 }

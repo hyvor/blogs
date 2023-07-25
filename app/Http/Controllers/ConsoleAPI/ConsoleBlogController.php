@@ -69,6 +69,7 @@ class ConsoleBlogController extends Controller
             'embedding_domains' => 'string|nullable',
 
             'logo_url' => 'url|nullable',
+            'icon_url' => 'url|nullable',
             'cover_url' => 'url|nullable',
 
             'social_facebook' => 'url|nullable',
@@ -95,6 +96,7 @@ class ConsoleBlogController extends Controller
             'syntax_on' => 'boolean',
             'syntax_line_numbers' => 'boolean',
             'syntax_theme' => 'string|nullable',
+            'heading_anchors' => 'boolean',
         ];
         $request->validate($validate);
 

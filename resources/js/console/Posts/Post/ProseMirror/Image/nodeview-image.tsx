@@ -1,7 +1,7 @@
 import ReactDOM from 'react-dom';
 import React from 'react';
 import ImageUploader from './ImageUploader';
-import { NodeSelection } from "prosemirror-state";
+import {NodeSelection, TextSelection} from "prosemirror-state";
 import { Node as ProsemirrorNode, Schema } from "prosemirror-model";
 import { EditorView, NodeView } from "prosemirror-view";
 import { UnsplashImage } from "../../../../types";
@@ -40,6 +40,7 @@ export default class Image implements ImageNodeViewType {
         this.createInside = this.createInside.bind(this)
         this.handleUpload = this.handleUpload.bind(this)
         this.handleUrl = this.handleUrl.bind(this)
+        this.handleInputFocus = this.handleInputFocus.bind(this)
 
         this.createInside();
         this.updateFromAttrs(node);
@@ -103,6 +104,7 @@ export default class Image implements ImageNodeViewType {
                 const uploader = <ImageUploader
                     onUpload={this.handleUpload}
                     onUrlLoad={this.handleUrl}
+                    onInputFocus={this.handleInputFocus}
                 />;
                 ReactDOM.render(uploader, container);
                 const cancelButton = document.createElement("button");
@@ -176,8 +178,21 @@ export default class Image implements ImageNodeViewType {
 
         } else {
             // render image selector
-            ReactDOM.render(<ImageUploader onUpload={this.handleUpload} onUrlLoad={this.handleUrl} />, this.dom);
+            ReactDOM.render(<ImageUploader
+                onUpload={this.handleUpload}
+                onUrlLoad={this.handleUrl}
+                onInputFocus={this.handleInputFocus}
+            />, this.dom);
         }
+    }
+
+    handleInputFocus() {
+        // unfocus prosemirror
+        const { state, dispatch } = this.view;
+        dispatch(
+            state.tr.setSelection(
+                TextSelection.create(state.doc, 0))
+        );
     }
 
     handleUpload(url: string, alt: string | null = null, unsplash: UnsplashImage | null = null) {

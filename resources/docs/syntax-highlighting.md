@@ -1,8 +1,5 @@
 # Syntax Highlighting
 
-
-<!-- Syntax Highlighting: **Console &rarr; Settings &rarr; Languages** -->
-
 Hyvor Blogs has a powerful syntax highlighter with the following features:
 
 * Line numbering
@@ -10,7 +7,7 @@ Hyvor Blogs has a powerful syntax highlighter with the following features:
 * Diff (+ and -)
 * Line focusing
 
-Most importantly, syntax highlighting is done at the time of rendering posts in our back-end. Therefore, it does not require any additional Javascript or CSS.
+Most importantly, syntax highlighting is done at the time of rendering posts in our back-end. Therefore, it does not require any additional Javascript or CSS. To change syntax highlighting settings, go to **Console &rarr; Settings &rarr; Post Content**.
 
 ## Languages {#languages}
 

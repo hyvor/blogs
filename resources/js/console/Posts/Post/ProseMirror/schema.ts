@@ -124,7 +124,7 @@ export const nodes = {
         inline: false,
         draggable: false,
         selectable: false,
-        group: "figure",
+        //group: "figure",
         parseDOM: [{
           tag: "img[src]", 
           getAttrs(img: HTMLElement) {
@@ -145,7 +145,7 @@ export const nodes = {
             url: {default: null}
         },
         // content: "text*",
-        group: "figure block",
+        //group: "figure block",
         // atom: true,
         selectable: true,
         parseDOM: [{
@@ -165,7 +165,7 @@ export const nodes = {
 
     figcaption: {
         content: "inline*",
-        group: "figure",
+        //group: "figure",
         selectable: false,
         parseDOM: [{tag: "figcaption"}],
         toDOM() { return ["figcaption", 0]; },
@@ -332,4 +332,4 @@ const schemaWithoutList = new Schema({nodes, marks});
 export default new Schema({
     nodes: addListNodes(schemaWithoutList.spec.nodes, "block+", "block"),
     marks: schemaWithoutList.spec.marks
-})
+});

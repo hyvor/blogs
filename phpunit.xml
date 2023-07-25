@@ -41,5 +41,6 @@
         <server name="FILESYSTEM_DRIVER" value="local" />
         <server name="HYVOR_DUMMY" value="true"/>
         <server name="PADDLE_SANDBOX" value="false" />
+        <server name="HYVOR_TALK_URL" value="https://talk.hyvor.com" />
     </php>
 </phpunit>

@@ -41,7 +41,7 @@ export default class Callout implements NodeView {
         
         let lastSelection = null;
         emoji.onclick = function(e) {
-            picker.togglePicker(emoji)
+            picker.togglePicker(emoji);
             lastSelection = view.state.selection;
         }
         emoji.onmousedown = function(e) {

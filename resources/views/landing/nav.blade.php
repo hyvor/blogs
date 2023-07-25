@@ -8,6 +8,7 @@
 
 		<div class="navbar-content">
 			<div class="navbar-nav">
+				<a class="nav-item nav-link{{ request()->is('customers') ? " active" : ""  }}" href="/customers">Customers</a>
 				<a class="nav-item nav-link{{ request()->is('themes*') ? " active" : ""  }}" href="/themes">Themes</a>
 				<a class="nav-item nav-link{{ request()->is('docs*') ? " active" : ""  }}" href="/docs">Docs</a>
 				<a class="nav-item nav-link{{ request()->is('pricing') ? " active" : ""  }}" href="/pricing">Pricing</a>

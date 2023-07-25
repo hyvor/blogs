@@ -1,24 +1,28 @@
-<?php
+<?php declare(strict_types=1);
 
 namespace App\Domains\Post\Content\Nodes;
 
-use Tiptap\Core\Node;
+use Hyvor\Phrosemirror\Converters\HtmlParser\ParserRule;
+use Hyvor\Phrosemirror\Document\Node;
+use Hyvor\Phrosemirror\Types\NodeType;
 
-class Figure extends Node
+class Figure extends NodeType
 {
-    public static $name = 'figure';
 
-    public function parseHTML()
+    public string $name = 'figure';
+    public ?string $content = '(image|embed) figcaption?';
+    public string $group = 'block';
+
+    public function fromHtml(): array
     {
         return [
-            [
-                'tag' => 'figure',
-            ],
+            new ParserRule(tag: 'figure')
         ];
     }
 
-    public function renderHTML($node)
+    public function toHtml(Node $node, string $children): string
     {
-        return ['figure', 0];
+        return "<figure>$children</figure>";
     }
+
 }

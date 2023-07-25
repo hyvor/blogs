@@ -7,6 +7,7 @@ class Tracking {
 
     trackBlogCreate(userBlog: UserBlog) {
         this.bingTrack('blog-created', 0);
+        this.googleTrack('blog-created', 0);
         this.splitbeeTrack("Blog Created", {subdomain: userBlog.blog.subdomain})
         this.trackAffiliate(userBlog.blog.subdomain)
     }
@@ -15,6 +16,7 @@ class Tracking {
         const price = getPriceFromPlan(plan);
 
         this.bingTrack('subscription-created', price);
+        this.googleTrack('subscription-created', price);
         this.splitbeeTrack("Subscription Created", {plan, frequency, price})
 
     }
@@ -31,6 +33,25 @@ class Tracking {
         if (w.uetq) {
             w.uetq.push('event', event, {revenue_value: price, currency: 'USD'});
         }
+    }
+
+    private googleTrack(event: 'blog-created' | 'subscription-created', price: number) {
+
+        if (!(window as any).gtag) return;
+
+        if (event === 'blog-created') {
+            (window as any).gtag('event', 'conversion', {
+                'send_to': 'AW-10985628367/FEj0CI3YhrMYEM_FrfYo',
+            });
+        } else {
+            (window as any).gtag('event', 'conversion', {
+                'send_to': 'AW-10985628367/tsl6CIjZhrMYEM_FrfYo',
+                'value': price,
+                'currency': 'USD',
+                'transaction_id': '',
+            });
+        }
+
     }
 
     private trackAffiliate(subdomain: string) {

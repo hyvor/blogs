@@ -2,6 +2,7 @@
 
 namespace Tests\Feature\ConsoleAPI\Languages;
 
+use App\Data\Enums\LanguageDirectionEnum;
 use App\Domains\Language\Events\LanguageChangedEvent;
 use Illuminate\Support\Facades\Event;
 use Illuminate\Testing\Fluent\AssertableJson;
@@ -35,7 +36,41 @@ it('updates the language', function () {
     Event::assertDispatched(LanguageChangedEvent::class);
 });
 
-it('cannot take other languages', function () {
+it('updates RTL', function() {
+    Event::fake();
+
+    $blog = blogWithAccess();
+    $language = addPrimaryLanguage($blog);
+
+    $code = 'ar';
+    $name = 'Arabic';
+
+    consoleApi($blog, 'PATCH', "/language/$language->id", [
+        'code' => $code,
+        'name' => $name,
+        'direction' => 'rtl'
+    ])
+        ->assertOk()
+        ->assertJson(
+            fn (AssertableJson $json) => $json->has('id')
+                ->where('code', $code)
+                ->where('name', $name)
+                ->where('direction' , 'rtl')
+                ->etc()
+        );
+
+    $language->refresh();
+
+    expect($language->code)->toBe($code);
+    expect($language->name)->toBe($name);
+    expect($language->direction)->toBe(LanguageDirectionEnum::RTL);
+
+    Event::assertDispatched(LanguageChangedEvent::class);
+
+
+});
+
+it('cannot take other language codes', function () {
 
     $blog = blogWithAccess();
 

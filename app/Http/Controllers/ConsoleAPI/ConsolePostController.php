@@ -97,7 +97,9 @@ class ConsolePostController extends Controller
     public function createPost(Request $request, Blog $blog, ConsoleApiAccessingUser $consoleApiAccessingUser) : JsonResponse
     {
         $isPage = (bool) $request->input('is_page');
-        $post = PostRepository::createPost($blog, $isPage);
+        $post = PostRepository::createPost($blog, [
+            'is_page' => $isPage
+        ]);
 
         PostTagAuthorRepository::createAuthor($post->id, $consoleApiAccessingUser->user->id);
 
@@ -261,7 +263,7 @@ class ConsolePostController extends Controller
                 }
             }
 
-            PostRepository::updatePostVariant($post, $language, $variantUpdates);
+            PostRepository::updatePostVariant($variant, $variantUpdates);
         }
 
         $variant->refresh();

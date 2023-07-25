@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "94780f3c6d57c3f435821fc7070c9675",
+    "content-hash": "751dfed13f119451b51c2f04b1e3295d",
     "packages": [
         {
             "name": "akaunting/laravel-money",
@@ -2795,6 +2795,53 @@
             "time": "2022-05-28T20:03:31+00:00"
         },
         {
+            "name": "hyvor/phrosemirror",
+            "version": "1.0.0-alpha-4",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/hyvor/phrosemirror.git",
+                "reference": "6cbb21d33263a4c632712cc5297979fa4fdf9f07"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/hyvor/phrosemirror/zipball/6cbb21d33263a4c632712cc5297979fa4fdf9f07",
+                "reference": "6cbb21d33263a4c632712cc5297979fa4fdf9f07",
+                "shasum": ""
+            },
+            "require": {
+                "ext-dom": "*",
+                "ext-libxml": "*",
+                "myclabs/deep-copy": "^1.11",
+                "php": "^8.1"
+            },
+            "require-dev": {
+                "pestphp/pest": "^1.22",
+                "phpstan/phpstan": "^1.8"
+            },
+            "type": "library",
+            "autoload": {
+                "psr-4": {
+                    "Hyvor\\Phrosemirror\\": "src/"
+                }
+            },
+            "notification-url": "https://packagist.org/downloads/",
+            "license": [
+                "MIT"
+            ],
+            "authors": [
+                {
+                    "name": "Supun",
+                    "email": "supun@hyvor.com"
+                }
+            ],
+            "description": "Prosemirror in PHP",
+            "support": {
+                "issues": "https://github.com/hyvor/phrosemirror/issues",
+                "source": "https://github.com/hyvor/phrosemirror/tree/1.0.0-alpha-4"
+            },
+            "time": "2023-06-30T07:14:42+00:00"
+        },
+        {
             "name": "hyvor/scssphp",
             "version": "2.0.2",
             "source": {
@@ -4589,6 +4636,65 @@
                 "source": "https://github.com/jmespath/jmespath.php/tree/2.6.1"
             },
             "time": "2021-06-14T00:11:39+00:00"
+        },
+        {
+            "name": "myclabs/deep-copy",
+            "version": "1.11.0",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/myclabs/DeepCopy.git",
+                "reference": "14daed4296fae74d9e3201d2c4925d1acb7aa614"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/myclabs/DeepCopy/zipball/14daed4296fae74d9e3201d2c4925d1acb7aa614",
+                "reference": "14daed4296fae74d9e3201d2c4925d1acb7aa614",
+                "shasum": ""
+            },
+            "require": {
+                "php": "^7.1 || ^8.0"
+            },
+            "conflict": {
+                "doctrine/collections": "<1.6.8",
+                "doctrine/common": "<2.13.3 || >=3,<3.2.2"
+            },
+            "require-dev": {
+                "doctrine/collections": "^1.6.8",
+                "doctrine/common": "^2.13.3 || ^3.2.2",
+                "phpunit/phpunit": "^7.5.20 || ^8.5.23 || ^9.5.13"
+            },
+            "type": "library",
+            "autoload": {
+                "files": [
+                    "src/DeepCopy/deep_copy.php"
+                ],
+                "psr-4": {
+                    "DeepCopy\\": "src/DeepCopy/"
+                }
+            },
+            "notification-url": "https://packagist.org/downloads/",
+            "license": [
+                "MIT"
+            ],
+            "description": "Create deep copies (clones) of your objects",
+            "keywords": [
+                "clone",
+                "copy",
+                "duplicate",
+                "object",
+                "object graph"
+            ],
+            "support": {
+                "issues": "https://github.com/myclabs/DeepCopy/issues",
+                "source": "https://github.com/myclabs/DeepCopy/tree/1.11.0"
+            },
+            "funding": [
+                {
+                    "url": "https://tidelift.com/funding/github/packagist/myclabs/deep-copy",
+                    "type": "tidelift"
+                }
+            ],
+            "time": "2022-03-03T13:19:32+00:00"
         },
         {
             "name": "nelexa/zip",
@@ -11616,65 +11722,6 @@
                 "source": "https://github.com/mockery/mockery/tree/1.5.1"
             },
             "time": "2022-09-07T15:32:08+00:00"
-        },
-        {
-            "name": "myclabs/deep-copy",
-            "version": "1.11.0",
-            "source": {
-                "type": "git",
-                "url": "https://github.com/myclabs/DeepCopy.git",
-                "reference": "14daed4296fae74d9e3201d2c4925d1acb7aa614"
-            },
-            "dist": {
-                "type": "zip",
-                "url": "https://api.github.com/repos/myclabs/DeepCopy/zipball/14daed4296fae74d9e3201d2c4925d1acb7aa614",
-                "reference": "14daed4296fae74d9e3201d2c4925d1acb7aa614",
-                "shasum": ""
-            },
-            "require": {
-                "php": "^7.1 || ^8.0"
-            },
-            "conflict": {
-                "doctrine/collections": "<1.6.8",
-                "doctrine/common": "<2.13.3 || >=3,<3.2.2"
-            },
-            "require-dev": {
-                "doctrine/collections": "^1.6.8",
-                "doctrine/common": "^2.13.3 || ^3.2.2",
-                "phpunit/phpunit": "^7.5.20 || ^8.5.23 || ^9.5.13"
-            },
-            "type": "library",
-            "autoload": {
-                "files": [
-                    "src/DeepCopy/deep_copy.php"
-                ],
-                "psr-4": {
-                    "DeepCopy\\": "src/DeepCopy/"
-                }
-            },
-            "notification-url": "https://packagist.org/downloads/",
-            "license": [
-                "MIT"
-            ],
-            "description": "Create deep copies (clones) of your objects",
-            "keywords": [
-                "clone",
-                "copy",
-                "duplicate",
-                "object",
-                "object graph"
-            ],
-            "support": {
-                "issues": "https://github.com/myclabs/DeepCopy/issues",
-                "source": "https://github.com/myclabs/DeepCopy/tree/1.11.0"
-            },
-            "funding": [
-                {
-                    "url": "https://tidelift.com/funding/github/packagist/myclabs/deep-copy",
-                    "type": "tidelift"
-                }
-            ],
-            "time": "2022-03-03T13:19:32+00:00"
         },
         {
             "name": "nunomaduro/collision",

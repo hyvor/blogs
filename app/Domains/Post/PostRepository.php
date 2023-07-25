@@ -1,9 +1,10 @@
-<?php
+<?php declare(strict_types=1);
 
 namespace App\Domains\Post;
 
 use App\Data\Enums\PostStatusEnum;
 use App\Domains\Language\LanguageRepository;
+use App\Domains\Post\Content\PostContentService;
 use App\Domains\Post\Events\PostCreatedEvent;
 use App\Domains\Post\Events\PostDeletedEvent;
 use App\Domains\Post\Events\PostUpdatedEvent;
@@ -17,6 +18,7 @@ use App\Models\Language;
 use App\Models\Post;
 use App\Models\PostVariant;
 use Carbon\Carbon;
+use DateTimeInterface;
 use Hyvor\FilterQ\FilterQ;
 use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Support\Str;
@@ -82,8 +84,8 @@ class PostRepository
                             COALESCE(posts.published_at, posts.created_at) < ?
                         ',
                         [
-                            Carbon::createFromTimestamp($startTimestamp)->toDateTimeString(),
-                            Carbon::createFromTimestamp($endTimestamp)->toDateTimeString(),
+                            Carbon::createFromTimestamp((int) $startTimestamp)->toDateTimeString(),
+                            Carbon::createFromTimestamp((int) $endTimestamp)->toDateTimeString(),
                         ]
                     );
             })
@@ -234,14 +236,21 @@ class PostRepository
         return new CollectionWithTotal($posts, $total);
     }
 
-    public static function createPost(Blog $blog, bool $isPage)
+    /**
+     * @param array{
+     *     published_at?: DateTimeInterface,
+     *     featured_image_url?: ?string,
+     *     is_page?: bool,
+     *     is_featured?: bool,
+     * } $attrs
+     */
+    public static function createPost(Blog $blog, array $attrs = []) : Post
     {
 
         // create post
-        $post = Post::create([
-            'blog_id' => $blog->id,
-            'is_page' => $isPage,
-        ]);
+        $post = Post::create(array_merge([
+            'blog_id' => $blog->id
+        ], $attrs));
 
         // create post variant (primary language)
         self::createPostVariant($post, LanguageRepository::getPrimaryLanguage($blog));
@@ -255,7 +264,10 @@ class PostRepository
          *
          * #ref https://github.com/laravel/framework/issues/21449
          */
-        return Post::find($post->id);
+        /** @var Post $post */
+        $post = Post::find($post->id);
+
+        return $post;
     }
 
     /**
@@ -298,7 +310,7 @@ class PostRepository
         return $post;
     }
 
-    public static function deletePost(Post $post)
+    public static function deletePost(Post $post) : void
     {
         $post->variants->map(fn ($variant) => self::deletePostVariant($post, $variant->language_id));
         $post->delete();
@@ -315,7 +327,10 @@ class PostRepository
 
         PostVariantCreatedEvent::dispatch($variant);
 
-        return PostVariant::find($variant->id);
+        /** @var PostVariant $variant */
+        $variant = PostVariant::find($variant->id);
+
+        return $variant;
     }
 
     /**
@@ -328,14 +343,8 @@ class PostRepository
      *     description?: string | null
      * } $updates
      */
-    public static function updatePostVariant(Post $post, Language $language, array $updates) : PostVariant
+    public static function updatePostVariant(PostVariant $variant, array $updates) : PostVariant
     {
-
-        $variant = self::getPostVariantByPostIdAndLanguageId($post->id, $language->id);
-
-        if (! $variant) {
-            throw new TrustedException('Variant not found', TrustedException::ERROR_UNPROCESSABLE);
-        }
 
         if (array_key_exists('slug', $updates)) {
             $variant->slug = $updates['slug'];
@@ -348,7 +357,9 @@ class PostRepository
 
             if ($status === PostStatusEnum::PUBLISHED) {
 
-                if ($post->published_at === null) {
+                $post = $variant->post;
+
+                if ($post && $post->published_at === null) {
                     $post->published_at = now();
                     $post->save();
                 }
@@ -384,12 +395,14 @@ class PostRepository
 
         // title
         if (array_key_exists('title', $updates)) {
-            $variant->title = mb_substr($updates['title'] ?? '', 0, 255);
+            $variant->title = $updates['title'] ? mb_substr($updates['title'] ?? '', 0, 255) : null;
         }
 
         // description
         if (array_key_exists('description', $updates)) {
-            $variant->description = mb_substr($updates['description'] ?? '', 0, 350);
+            $variant->description = $updates['description'] ?
+                mb_substr($updates['description'], 0, 350) :
+                null;
         }
 
         $original = new PostVariant((array) $variant->getOriginal());
@@ -406,14 +419,34 @@ class PostRepository
             ->first();
     }
 
-    public static function deletePostVariant(Post $post, int $languageId)
+    public static function deletePostVariant(Post $post, int $languageId) : void
     {
         $variant = PostVariant::where('language_id', $languageId)
             ->where('post_id', $post->id)
             ->first();
 
-        $variant->delete();
+        if (!$variant)
+            return;
 
+        $variant->delete();
         PostVariantDeletedEvent::dispatch($variant);
+    }
+
+    public static function updateVariantHtml(PostVariant $variant): void
+    {
+        if (!$variant->content) {
+            return;
+        }
+
+        $post = $variant->post;
+        if (!$post) return;
+
+        $blog = $post->blog;
+        if (!$blog) return;
+
+        $html = PostContentService::getHtml($variant->content, $blog);
+
+        $variant->content_html = $html;
+        $variant->save();
     }
 }

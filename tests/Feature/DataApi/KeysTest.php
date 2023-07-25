@@ -2,6 +2,7 @@
 
 namespace Tests\Feature\DataAPI;
 
+use App\Data\Enums\LanguageDirectionEnum;
 use App\Data\Objects\DataAPI\PostObject;
 use App\Http\Controllers\DataApi\KeysFilter;
 use App\Models\Post;
@@ -85,4 +86,15 @@ it('filters keys with nested exclude', function () {
 
     $this->assertArrayNotHasKey('id', $tag);
     $this->assertArrayHasKey('slug', $tag);
+});
+
+#bug
+it('works with enums', function() {
+
+    $arr = j(KeysFilter::filter(new class {
+        public LanguageDirectionEnum $dir = LanguageDirectionEnum::LTR;
+    }, ''));
+
+    expect($arr['dir'])->toBe('ltr');
+
 });

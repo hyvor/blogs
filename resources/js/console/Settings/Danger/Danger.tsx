@@ -2,17 +2,27 @@ import React, {useState} from 'react';
 import DualSetting from '../../ReusableComponents/DualSetting';
 import DeleteBlogPopup from "./DeleteBlogPopup";
 import {PopupConfirm, PopupNotice} from "../../ReusableComponents/Popup";
+import ClearCachePopup from "./ClearCachePopup";
 
 export default function Danger() {
 
+    const [isCacheClearing, setIsCacheClearing] = useState(false);
     const [ isDeleting, setIsDeleting ] = useState(false);
     const [ hasDeleted, setHasDeleted ] = useState(false)
 
-    return <div className="settings-delete">
+    return <div className="settings-danger">
 
         <div className="title">
             Danger
         </div>
+
+        <DualSetting
+            title="Clear Cache"
+            description="To clear the cache of your blog. This will not delete any data."
+            right={
+                <button className="button medium" onClick={() => setIsCacheClearing(true)}>Clear Cache</button>
+            }
+        />
 
         <DualSetting 
             title="Delete Blog"
@@ -24,6 +34,10 @@ export default function Danger() {
                 >Delete Blog</button>
             }
         />
+
+        {
+            isCacheClearing && <ClearCachePopup onClose={() => setIsCacheClearing(false)} />
+        }
 
         { isDeleting && <DeleteBlogPopup
             onClose={() => setIsDeleting(false)}

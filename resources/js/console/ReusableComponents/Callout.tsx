@@ -19,7 +19,7 @@ export default function Callout( {icon, color, title, text} : CalloutProps) {
         {
             (icon || title) &&
             <div className="title">
-                <span className="icon">{icon}</span>
+                { icon && <span className="icon">{icon}</span> }
                 <span className="title-text">{title}</span>
             </div>
         }

@@ -24,8 +24,8 @@ class ConsoleRouteController extends Controller
             'name' => 'required|string',
             'match' => 'required|string',
             'template' => 'required|string',
-            'posts_filter' => 'required|string|nullable',
-            'content_type' => 'required|string|nullable',
+            'posts_filter' => 'string|nullable',
+            'content_type' => 'string|nullable',
         ]);
 
         $name = $request->input('name');

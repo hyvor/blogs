@@ -2,6 +2,7 @@
 
 namespace Database\Factories;
 
+use App\Models\Blog;
 use App\Models\Import;
 use Illuminate\Database\Eloquent\Factories\Factory;
 
@@ -12,10 +13,10 @@ class ImportFactory extends Factory
     public function definition()
     {
         return [
-            'blog_id' => '1',
-            'name' => 'C3Ci8A59yWteysDryR9PmzIYb9YqM64LOkBC1P4Y.xml',
-            'type' => 'wordpress',
-            'status' => 'success',
+            'blog_id' => Blog::factory(),
+            'name' => 'test.xml',
+            'type' => 'sitemap',
+            'status' => 'pending',
         ];
     }
 }

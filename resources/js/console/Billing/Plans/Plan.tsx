@@ -5,6 +5,7 @@ import {getUserBlogBlog} from "../../logic-helpers/blog";
 import {useActions} from "kea";
 import billingLogic from "../../logic/billing/billingLogic";
 import getSubdomain from "../../logic-helpers/subdomain";
+import {isBlogManuallyUpgraded} from "../../lib/blog-helpers";
 
 interface PlanProps {
     type: SubscriptionPlan,
@@ -27,6 +28,7 @@ export function getPriceFromPlan(type: SubscriptionPlan) {
 
 export default function Plan({type, frequency, onCreate, onUpdate, onCancel} : PlanProps) {
 
+    const subdomain = getSubdomain();
     const { subscription: currentSubscription } = getUserBlogBlog();
 
     const { forceCancel } = useActions(billingLogic({subdomain: getSubdomain()}))
@@ -46,8 +48,9 @@ export default function Plan({type, frequency, onCreate, onUpdate, onCancel} : P
     }
 
     async function handleForceCancel() {
-        await forceCancel();
-        location.reload();
+        forceCancel({
+            onCancel: () => location.reload()
+        });
     }
 
     let price = getPriceFromPlan(type);
@@ -57,9 +60,7 @@ export default function Plan({type, frequency, onCreate, onUpdate, onCancel} : P
     let buttonDisabled = false;
     let isCurrent = currentSubscription?.plan === type && currentSubscription?.frequency == frequency;
 
-
-    const isCurrentSubscriptionCreatedWithoutPaddle = currentSubscription && 
-        currentSubscription.paddle_subscription_id === null;
+    const isCurrentSubscriptionCreatedWithoutPaddle = isBlogManuallyUpgraded(subdomain);
 
     return <div className={"plan" + (isCurrent ? " current" : "")}>
         <div className="plan-left">
@@ -123,7 +124,7 @@ export default function Plan({type, frequency, onCreate, onUpdate, onCancel} : P
             forceCancelConfirm &&
             <PopupConfirm
                 title="Force Cancel Subscription"
-                text="Are you sure you want to cancel the subscription and downgrade to the starter plan?"
+                text="Are you sure you want to force cancel the subscription now?"
                 onClick={handleForceCancel}
                 name="Cancel Subscription"
                 buttonClass="danger"

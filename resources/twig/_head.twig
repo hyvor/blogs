@@ -11,8 +11,10 @@
     <meta name="description" content="{{ _meta.description }}" />
     <link rel="canonical" href="{{ _meta.canonical_url }}" />
 
-    {% if (_blog.logo_url) %}
-        <link rel="shortcut icon" href="{{ _blog.logo_url }}">
+    {% if (_blog.icon_url) %}
+        <link rel="shortcut icon" href="{{ _blog.icon_url }}" />
+    {% elseif (_blog.logo_url) %}
+        <link rel="shortcut icon" href="{{ _blog.logo_url }}" />
     {% endif %}
 
     {# OG Tags ========== #}

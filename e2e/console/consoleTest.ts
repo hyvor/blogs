@@ -12,7 +12,7 @@ export const consoleTest = baseTest.extend<{console: Console}>({
     }
 });
 
-type NavType = 'billing' | 'posts';
+type NavType = 'billing' | 'posts' | 'settings';
 
 class Console {
 
@@ -22,8 +22,8 @@ class Console {
         this.page = page;
     }
 
-    async visit() {
-        await this.page.goto('/console');
+    async visit(path : string = '') {
+        await this.page.goto('/console' + path);
     }
 
     async visitAndNav(nav: NavType) {

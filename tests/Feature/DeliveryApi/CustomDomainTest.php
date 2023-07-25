@@ -5,6 +5,7 @@ namespace Tests\Feature\DeliveryApi;
 use App\Data\Enums\ThemeFileFolderEnum;
 use App\Domains\Blog\BlogService;
 use App\Domains\Theme\ThemeFilesRepository;
+use App\Models\Subscription;
 
 it('works with custom domain', function () {
 
@@ -42,15 +43,32 @@ it('redirects to homepage if the blog is blocked', function() {
 });
 
 
-/*it('redirects to homepage if the blog trial is ended', function() {
+it('shows error when trial has ended', function() {
 
     $blog = blog([
         'trial_ends_at' => now()->subDay(),
         'hosting_at' => 'domain',
         'hosting_domain' => 'hyvorblogscustom.test'
     ]);
-    addPrimaryLanguage($blog);
+    $this->get("http://hyvorblogscustom.test")
+        ->assertSee('trial has ended');
 
-    $this->get('http://hyvorblogscustom.test')->assertRedirect('https://blogs.hyvor.com');
+});
 
-});*/
+it('does now show an error when trial is ended but there is a subscription', function() {
+
+    $blog = blogWithAccessLanguageAndRoutes([
+        'trial_ends_at' => now()->subDay(),
+        'hosting_at' => 'domain',
+        'hosting_domain' => 'hyvorblogscustom.test'
+    ]);
+    Subscription::factory()->create(['blog_id' => $blog]);
+
+    $content = '<body>Testing</body>';
+    addThemeTemplateFile($blog, $content);
+
+    $this->get("http://hyvorblogscustom.test")
+        ->assertOk()
+        ->assertSee($content, false);
+
+});

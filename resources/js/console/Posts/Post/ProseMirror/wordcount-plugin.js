@@ -9,8 +9,7 @@ export default function wordCountPlugin() {
 
 // https://stackoverflow.com/a/18679657/9059939
 function countWords(str) {
-    var matches = str.match(/[\w\d\’\'-]+/gi);
-    return matches ? matches.length : 0;
+    return str.trim().split(/\s+/).length;
 }
 
 class WordCountPlugin {

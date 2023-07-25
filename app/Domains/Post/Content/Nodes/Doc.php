@@ -1,12 +1,11 @@
-<?php
+<?php declare(strict_types=1);
 
 namespace App\Domains\Post\Content\Nodes;
 
-use Tiptap\Core\Node;
+use Hyvor\Phrosemirror\Types\NodeType;
 
-class Doc extends Node
+class Doc extends NodeType
 {
-    public static $name = 'doc';
-
-    public static $topNode = true;
+    public string $name = 'doc';
+    public ?string $content = 'block+';
 }

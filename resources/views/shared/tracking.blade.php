@@ -9,4 +9,16 @@
     <script async src="https://cdn.tolt.io/tolt.js" data-tolt="3509c076-d24f-4cb2-b3ec-3ec0b54d186b"></script>
     {{-- AFFILIATE END --}}
 
+    {{-- GOOGLE --}}
+    <!-- Google tag (gtag.js) -->
+    <script async src="https://www.googletagmanager.com/gtag/js?id=AW-10985628367"></script>
+    <script>
+        window.dataLayer = window.dataLayer || [];
+        function gtag(){dataLayer.push(arguments);}
+        gtag('js', new Date());
+
+        gtag('config', 'AW-10985628367');
+    </script>
+    {{-- GOOGLE END --}}
+
 @endif

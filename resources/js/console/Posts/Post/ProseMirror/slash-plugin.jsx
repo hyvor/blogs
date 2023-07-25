@@ -19,6 +19,8 @@ import {
     Table
 } from "react-bootstrap-icons";
 import { createImage, createQuote, createTable } from "./creators";
+import { createImage, createQuote } from "./creators";
+import {isEditorRtl} from "./rtl";
 
 const matchable = [
     {
@@ -287,8 +289,8 @@ class SlashPlugin {
                 view.dispatch(
                     tr2
                         .setSelection(
-                            m.focusCell 
-                            ? TextSelection.create(tr2.doc, pos + 2) 
+                            m.focusCell
+                            ? TextSelection.create(tr2.doc, pos + 2)
                             :   m.selectNode
                                 ? NodeSelection.create(tr.doc, pos)
                                 : TextSelection.create(tr.doc, pos + 1)
@@ -318,8 +320,9 @@ class SlashPlugin {
         const wrapPos = this.slashView.offsetParent.getBoundingClientRect();
         const viewPos = view.dom.getBoundingClientRect();
         const spaceBelow = wrapPos.bottom - posTop;
+        const spaceAbove = posTop - wrapPos.top;
 
-        if (this.slashView.offsetHeight > spaceBelow) {
+        if (spaceAbove > spaceBelow) {
             this.slashView.style.bottom = spaceBelow + "px";
             this.slashView.style.top = "auto";
             this.slashView.classList.add("top");
@@ -329,8 +332,15 @@ class SlashPlugin {
             this.slashView.classList.add("bottom");
             this.slashView.classList.remove("top");
         }
-    
-        this.slashView.style.left = viewPos.left - wrapPos.left + "px";
+
+        const isRtl = isEditorRtl();
+
+        if (isRtl) {
+            this.slashView.style.left = "auto";
+            this.slashView.style.right = (wrapPos.right - viewPos.right + 25) + "px";
+        } else {
+            this.slashView.style.left = viewPos.left - wrapPos.left + "px";
+        }
     }
 
     addEvents() {
@@ -342,6 +352,7 @@ class SlashPlugin {
     }
 
     handleKeyDown(event) {
+        if (!this.isOpen) return;
         if (event.key === "ArrowDown") {
             event.preventDefault();
             this.activateNext();

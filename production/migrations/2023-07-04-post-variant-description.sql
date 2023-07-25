@@ -1,0 +1,2 @@
+# status = DONE
+ALTER TABLE post_variants MODIFY description VARCHAR(350) NULL;

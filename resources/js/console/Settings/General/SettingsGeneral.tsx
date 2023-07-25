@@ -83,6 +83,17 @@ export default function SettingsGeneral() {
             />
 
             <DualSetting
+                title="Icon"
+                description="Blog favicon. If not set, the logo will be used."
+                right={
+                    <ImageSelector
+                        src={blog.icon_url}
+                        onChange={(url) => updateBlogValue('icon_url', url)}
+                    />
+                }
+            />
+
+            <DualSetting
                 title="Cover Image"
                 description="A cover image for the blog. Some themes may not display this."
                 right={
@@ -202,6 +213,7 @@ export default function SettingsGeneral() {
                     'social_github',
 
                     'logo_url',
+                    'icon_url',
                     'cover_url'
                 ]}
             variantKeys={

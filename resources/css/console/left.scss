@@ -23,6 +23,7 @@
         cursor: pointer;
         border-left:3px solid transparent;
         position: relative;
+        align-items: center;
         &:hover {
             background-color: $color-hover;
         }
@@ -214,6 +215,36 @@
         padding: 15px 0;
         text-align: center;
         cursor: pointer;
+    }
+    .bottom-item {
+        display: block;
+        padding: 8px 29px;
+        border-radius: 20px;
+        cursor: pointer;
+        color: $color-text-light;
+        &:hover {
+            background-color: $color-accent-light;
+        }
+        .icon {
+            margin-right: 8px;
+        }
+    }
+
+    #fb-update-badge {
+        display: inline-block;
+        padding: 2px 6px;
+        border-radius: 20px;
+        font-size: 9px;
+        font-weight: 600;
+        background-color: $color-blue-light;
+        color: $color-blue-dark;
+        &:empty {
+            display: none;
+        }
+    }
+
+    @media screen and (max-width: $breakpoint) {
+        display: none;
     }
 }
 

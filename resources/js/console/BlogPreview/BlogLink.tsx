@@ -11,46 +11,17 @@ export default function BlogLink({ children } : { children: ReactNode }) {
     const { findBlogBySubdomain } = useValues(userBlogsLogic);
     const { blog } = findBlogBySubdomain(subdomain);
 
-    const [isPopupShown, setIsPopupShown] = useState(false);
-
-    const isShopify = blog.integration === 'shopify';
+    // const [isPopupShown, setIsPopupShown] = useState(false);
+    // const isShopify = blog.integration === 'shopify';
 
     function handleClick(e: MouseEvent<HTMLAnchorElement>) {
-
         e.preventDefault();
         e.stopPropagation()
-
-        if (isShopify) {
-            setIsPopupShown(!isPopupShown);
-        } else {
-            window.open(blog.base_url, '_blank');
-        }
+        window.open(blog.base_url, '_blank');
     }
 
-    return <span className="blog-link">
-        <span
-            onClick={handleClick}
-        >
-            {children}
-        </span>
-
-        {
-            isPopupShown &&
-            <PopupNotice
-                title="Shopify Integartion"
-                text={
-                    <div>
-                        This blog is integrated with a Shopify store. Visit <b>Store URL + /a/blog</b> to view your blog. <span
-                            className="link"
-                            onClick={() => window.open("/docs/shopify", '_blank')}
-                        >Learn more</span>.
-                    </div>
-                }
-                name="Close"
-                onClick={() => setIsPopupShown(false)}
-            />
-        }
-
+    return <span className="blog-link" onClick={handleClick}>
+        {children}
     </span>
 
 }

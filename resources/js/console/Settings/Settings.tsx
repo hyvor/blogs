@@ -14,7 +14,7 @@ import SettingsGeneral from './General/SettingsGeneral';
 import Hosting from './Hosting';
 import SEO from './SEO';
 import ColorMode from "./ColorMode";
-import Highlight from "./Highlight";
+import PostContentSettings from "./PostContentSettings";
 import getSubdomain from "../logic-helpers/subdomain";
 import Webhooks from "./Webhooks/Webhooks";
 import ApiKeys from "./ApiKeys/ApiKeys";
@@ -28,6 +28,7 @@ import Shopify from "./Integrations/Shopify";
 import Select from '../ReusableComponents/Select';
 import { components } from 'react-select';
 import Export from "./Export/Export";
+import Import from "./Import/Import";
 
 
 interface SettingsSelectProps {
@@ -64,7 +65,7 @@ function SettingsSelect({ name, value, options, setPannel }: SettingsSelectProps
 export default function Settings({ type }: { type: string | undefined }) {
     const blog = getUserBlogBlog();
     const [pannel, setPannel] = useState(type || 'general');
-    const pannelOption = [
+    let pannelOption = [
         { value: 'general', label: 'General' },
         { value: 'users', label: 'Users' },
         { value: 'tags', label: 'Tags' },
@@ -85,7 +86,9 @@ export default function Settings({ type }: { type: string | undefined }) {
         { value: 'danger', label: 'Danger Zone' },
     ]
 
-    console.log('Pannel', pannel);
+    if (blog.integration === 'shopify') {
+        pannelOption = [{ value: 'shopify', label: 'Shopify Guide' }, ...pannelOption];
+    }
 
     let Type = () => <SettingsGeneral />;
     switch (pannel) {
@@ -116,6 +119,9 @@ export default function Settings({ type }: { type: string | undefined }) {
         case 'comments':
             Type = () => <Comments />
             break;
+        case 'import':
+            Type = () => <Import />
+            break;
         case 'export':
             Type = () => <Export />;
             break;
@@ -131,8 +137,8 @@ export default function Settings({ type }: { type: string | undefined }) {
         case 'color-mode':
             Type = () => <ColorMode />;
             break;
-        case 'highlight':
-            Type = () => <Highlight />;
+        case 'post-content':
+            Type = () => <PostContentSettings />;
             break;
         case 'webhooks':
             Type = () => <Webhooks />
@@ -154,7 +160,13 @@ export default function Settings({ type }: { type: string | undefined }) {
 
                 {
                     blog.integration === 'shopify' &&
-                    <SettingsLink path="/shopify" name="Shopify Guide" dividing={true} setPannel={setPannel} />
+                    <SettingsLink
+                        path="/shopify"
+                        name="Shopify Guide"
+                        dividing={true}
+                        setPannel={setPannel}
+                        pannelName="shopify"
+                    />
                 }
 
                 <SettingsLink path="" name="General" setPannel={setPannel} />
@@ -167,19 +179,21 @@ export default function Settings({ type }: { type: string | undefined }) {
                 <SettingsLink path="/hosting" name="Hosting" setPannel={setPannel} />
                 <SettingsLink path="/seo" name="SEO" setPannel={setPannel} />
                 <SettingsLink path="/color-mode" name="Light & Dark Modes" pannelName={'color-mode'} setPannel={setPannel} />
+                <SettingsLink path="/post-content" name="Post Content" pannelName={'post-content'} setPannel={setPannel} />
                 <SettingsLink path="/navigation" name="Navigation" setPannel={setPannel} />
                 <SettingsLink path="/media" name="Media" setPannel={setPannel} />
                 <SettingsLink path="/redirects" name="Redirects" setPannel={setPannel} />
                 <SettingsLink path="/routes" name="Routes" setPannel={setPannel} />
-                <SettingsLink path="/api-keys" name="API Keys" setPannel={setPannel} pannelName={'api-keys'} />
-                <SettingsLink path="/webhooks" name="Webhooks" setPannel={setPannel} />
 
                 <div />
                 <SettingsLink path="/comments" name="Comments & Newsletter" pannelName={'comments'} setPannel={setPannel} />
                 <SettingsLink path="/code" name="Custom Code" pannelName={'code'} setPannel={setPannel} />
-                <SettingsLink path="/highlight" name="Syntax Highlighting" pannelName={'highlight'} setPannel={setPannel} />
+                <SettingsLink path="/api-keys" name="API Keys" setPannel={setPannel} pannelName={'api-keys'} />
+                <SettingsLink path="/webhooks" name="Webhooks" setPannel={setPannel} />
 
                 <div />
+
+                <SettingsLink path="/import" name="Import" pannelName={'import'} setPannel={setPannel} />
                 <SettingsLink path="/export" name="Export" pannelName={'export'} setPannel={setPannel} />
                 <SettingsLink role={UserRole.OWNER} path="/danger" pannelName={'danger'} name="Danger Zone" setPannel={setPannel} />
             </div>

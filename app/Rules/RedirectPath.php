@@ -35,11 +35,11 @@ class RedirectPath implements Rule
             return false;
         }
 
-        if ($this->blog->redirects()->where('path', $value)->exists()) {
+        /*if ($this->blog->redirects()->where('path', $value)->exists()) {
             $this->message = 'A redirect already exists for the path';
 
             return false;
-        }
+        }*/
 
         return true;
     }

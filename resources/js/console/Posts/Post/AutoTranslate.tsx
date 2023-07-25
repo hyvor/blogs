@@ -15,7 +15,7 @@ export default function AutoTranslate({id, onCancel}: { id: number, onCancel: Fu
 
     const subdomain = getSubdomain();
     const { languages } = useValues(languagesLogic({subdomain}))
-    const { editorState, post } = usePostValues(id)
+    const { editorState, post, currentVariant } = usePostValues(id)
     const { updateCurrentPostVariantValue, changeEditorState, savePost } = usePostActions(id);
     const { navigateToBilling } = useActions(billingLogic({subdomain}));
 
@@ -38,9 +38,10 @@ export default function AutoTranslate({id, onCancel}: { id: number, onCancel: Fu
 
         setIsTranslating(true);
 
-        api.post<{title: string, description: string, content: string}>(subdomain, `/ai/translate`, {
+        api.post<{title: string, description: string, slug: string, content: string}>(subdomain, `/ai/translate`, {
             title: post.variants[0].title,
             description: post.variants[0].description,
+            slug: post.variants[0].slug,
             content: post.variants[0].content,
             source_lang: sourceLanguage,
             target_lang: targetLanguage
@@ -48,8 +49,13 @@ export default function AutoTranslate({id, onCancel}: { id: number, onCancel: Fu
 
             updateCurrentPostVariantValue('title', data.title);
             updateCurrentPostVariantValue('description', data.description);
-            updateCurrentPostVariantValue('content', data.content);
-            updateCurrentPostVariantValue('content_unsaved', data.content);
+
+            // only update if the slug is not set
+            if (currentVariant.slug === null)
+                updateCurrentPostVariantValue('slug', data.slug);
+
+            const contentKey = currentVariant.status === 'draft' ? 'content' : 'content_unsaved';
+            updateCurrentPostVariantValue(contentKey, data.content);
 
             changeEditorState('version', editorState.version + 1);
 

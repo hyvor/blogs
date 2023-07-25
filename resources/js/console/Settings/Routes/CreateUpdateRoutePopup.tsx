@@ -39,6 +39,7 @@ export default function CreateUpdateRoutePopup({ route, onClose } : {route?: Rou
                 content_type: contentType
             })
         }
+        onClose();
     }
 
     return <Popup

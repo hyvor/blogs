@@ -11,14 +11,15 @@ use App\Domains\Blog\Jobs\UpdateContentHtmlOfAllPostsJob;
 class UpdateContentHtmlOfAllPostsListener
 {
 
-    public function handle(BlogUpdatedEvent $event)
+    public function handle(BlogUpdatedEvent $event) : void
     {
 
         $keys = [
             'seo_external_links_follow',
             'syntax_on',
             'syntax_line_numbers',
-            'syntax_theme'
+            'syntax_theme',
+            'heading_anchors'
         ];
 
         foreach ($keys as $key) {

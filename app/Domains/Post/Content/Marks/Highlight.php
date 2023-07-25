@@ -2,23 +2,25 @@
 
 namespace App\Domains\Post\Content\Marks;
 
-use Tiptap\Core\Mark as TiptapMark;
+use Hyvor\Phrosemirror\Converters\HtmlParser\ParserRule;
+use Hyvor\Phrosemirror\Document\Mark;
+use Hyvor\Phrosemirror\Types\MarkType;
 
-class Highlight extends TiptapMark
+class Highlight extends MarkType
 {
-    public static $name = 'highlight';
 
-    public function parseHTML()
+    public string $name = 'highlight';
+
+    public function toHtml(Mark $mark, string $children): string
+    {
+        return "<mark>$children</mark>";
+    }
+
+    public function fromHtml(): array
     {
         return [
-            [
-                'tag' => 'mark',
-            ],
+            new ParserRule(tag: 'mark')
         ];
     }
 
-    public function renderHTML($mark)
-    {
-        return ['mark', 0];
-    }
 }

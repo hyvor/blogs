@@ -69,7 +69,7 @@ export default function NewFileCreator({ folder } : { folder: ThemeFolder }) {
 
         {
             isCreating ?
-                <Loader size={10}/> :
+                <Loader size="mini" /> :
                 <Fragment>
 
                     {

@@ -2,41 +2,28 @@
 
 namespace App\Domains\Post\Content\Nodes;
 
-use Tiptap\Core\Node;
-use Tiptap\Utils\HTML;
+use Hyvor\Phrosemirror\Converters\HtmlParser\ParserRule;
+use Hyvor\Phrosemirror\Document\Node;
+use Hyvor\Phrosemirror\Types\NodeType;
 
-class OrderedList extends Node
+class OrderedList extends NodeType
 {
-    public static $name = 'ordered_list';
 
-    public function addOptions()
+    public string $name = 'ordered_list';
+
+    public string $group = 'block';
+    public ?string $content = 'list_item*';
+
+    public function toHtml(Node $node, string $children): string
+    {
+        return "<ol>$children</ol>";
+    }
+
+    public function fromHtml(): array
     {
         return [
-            'HTMLAttributes' => [],
+            new ParserRule(tag: 'ol')
         ];
     }
 
-    public function parseHTML()
-    {
-        return [
-            [
-                'tag' => 'ol',
-            ],
-        ];
-    }
-
-    public function addAttributes()
-    {
-        return [
-            'order' => [
-                'parseHTML' => fn ($DOMNode) => (int) $DOMNode->getAttribute('start') ?: null,
-                'renderHTML' => fn ($attributes) => ($attributes->order ?? null) ? ['start' => $attributes->order] : null,
-            ],
-        ];
-    }
-
-    public function renderHTML($node, $HTMLAttributes = [])
-    {
-        return ['ol', HTML::mergeAttributes($this->options['HTMLAttributes'], $HTMLAttributes), 0];
-    }
 }

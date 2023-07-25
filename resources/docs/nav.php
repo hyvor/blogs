@@ -50,6 +50,9 @@ return [
         // ['import', 'Import'],
         ['export', 'Export'],
     ],
+    'Importing' => [
+        ['import-sitemap', 'From Sitemap'],
+    ],
     'Self-Hosting (Subdirectory)' => [
         ['self-hosting', 'Self-Hosting Intro'],
         ['self-hosting-web-framework', 'with Web Frameworks'],
@@ -65,11 +68,11 @@ return [
         // ['policy-security', 'Security Policy'],
         // ['compliance-gdpr', 'GDPR Compliance'],
     ],
-//    'Integrations' => [
-//        /*['zapier', 'Zapier'],*/
-//        ['shopify', 'Shopify'],
-//        /*['thinkific', 'Thinkific']*/
-//    ],
+    'Integrations' => [
+        /*['zapier', 'Zapier'],*/
+        ['shopify', 'Shopify'],
+        /*['thinkific', 'Thinkific']*/
+    ],
     'Misc' => [
         ['support', 'Customer Support'],
         ['oss', 'Open Source'],

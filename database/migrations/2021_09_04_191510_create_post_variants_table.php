@@ -28,7 +28,7 @@ return new class () extends Migration {
             $table->mediumText('content_unsaved')->nullable();
             $table->mediumText('content_html')->nullable();
             $table->string('title')->nullable();
-            $table->string('description', 350)->default('');
+            $table->string('description', 350)->nullable();
             $table->integer('words')->nullable();
 
             $table->unique(['post_id', 'language_id']);

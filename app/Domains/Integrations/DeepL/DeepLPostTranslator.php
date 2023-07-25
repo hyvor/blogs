@@ -6,7 +6,8 @@ use App\Domains\Integrations\DeepL\Enums\DeepLSourceLangEnum;
 use App\Domains\Integrations\DeepL\Enums\DeepLTargetLangEnum;
 use App\Domains\Integrations\DeepL\Exceptions\DeepLApiException;
 use App\Domains\Integrations\DeepL\Exceptions\DeepLHtmlProcessingException;
-use App\Domains\Post\Content\PostContentRepository;
+use App\Domains\Post\Content\PostContentOptions;
+use App\Domains\Post\Content\PostContentService;
 use App\Models\Blog;
 
 class DeepLPostTranslator
@@ -22,21 +23,26 @@ class DeepLPostTranslator
         private string $content,
         private string $title,
         private string $description,
+        private string $slug,
         private DeepLSourceLangEnum $sourceLang,
         private DeepLTargetLangEnum $targetLang
     ) {}
 
     /**
-     * @return array{title: string, description: string, content: string, chars: int}
+     * @return array{title: string, description: string, content: string, slug: string, chars: int}
      * @throws DeepLHtmlProcessingException
      * @throws DeepLApiException
      */
     public function translate() : array
     {
 
-        $html = PostContentRepository::getHtml($this->content, $this->blog, [
-            'code_block_is_plain' => true,
-        ]);
+        $html = PostContentService::getHtml(
+            $this->content,
+            $this->blog,
+            new PostContentOptions(
+                isCodeBlockPlain: true
+            )
+        );
 
         /**
          * DeepL doesn't preserve whitespaces in code blocks
@@ -58,8 +64,14 @@ class DeepLPostTranslator
         [
             $translatedTitle,
             $translatedDescription,
+            $translatedSlug,
             $translatedHtml,
-        ] = DeepLService::translate([$this->title, $this->description, $html], $this->sourceLang, $this->targetLang);
+        ] = DeepLService::translate([
+            $this->title,
+            $this->description,
+            $this->slug,
+            $html
+        ], $this->sourceLang, $this->targetLang);
 
         // replace code blocks
         $translatedHtml = preg_replace_callback('/<pre(.*?)><code>(.*?)<\/code><\/pre>/s', function($matches) {
@@ -70,11 +82,12 @@ class DeepLPostTranslator
             throw new DeepLHtmlProcessingException('Unable to replace code blocks back'); // @codeCoverageIgnore
         }
 
-        $content = PostContentRepository::getJsonFromHtml($translatedHtml, $this->blog);
+        $content = PostContentService::getJsonFromHtml($translatedHtml, $this->blog);
 
         return [
             'title' => $translatedTitle,
             'description' => $translatedDescription,
+            'slug' => $translatedSlug,
             'content' => $content,
             'chars' => $chars,
         ];

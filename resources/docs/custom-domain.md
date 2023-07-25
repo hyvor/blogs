@@ -32,3 +32,8 @@ Once you have set up DNS, you have to update your blog settings.
 * Type the full domain name (`myblog.com` or `blog.mywebsite.com`) in the custom domain field, and save. Do not add `https://` or anything else than the domain name.
 
 That should be all! Visit the custom domain and see if everything is working correctly. HB will auto generate a SSL certificate for your domain.
+
+## Troubleshooting
+
+* If your blog with custom domain is loading infinitely, please make sure you do not have any other `A` or `AAAA` records with the same hostname as your custom domain.
+* If you are using Cloudflare, make sure to disable Cloudflare proxy for your custom domain. You can do this by clicking the orange cloud icon in the DNS settings of Cloudflare.

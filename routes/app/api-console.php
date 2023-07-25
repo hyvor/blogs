@@ -7,7 +7,7 @@ use App\Http\Controllers\ConsoleAPI\ConsoleAiController;
 use App\Http\Controllers\ConsoleAPI\ConsoleApiKeysController;
 use App\Http\Controllers\ConsoleAPI\ConsoleBlogController;
 use App\Http\Controllers\ConsoleAPI\ConsoleDangerController;
-use App\Http\Controllers\ConsoleAPI\ConsoleImportExportController;
+use App\Http\Controllers\ConsoleAPI\ConsoleExportController;
 use App\Http\Controllers\ConsoleAPI\ConsoleLanguageController;
 use App\Http\Controllers\ConsoleAPI\ConsoleMediaController;
 use App\Http\Controllers\ConsoleAPI\ConsoleNavigationController;
@@ -21,6 +21,9 @@ use App\Http\Controllers\ConsoleAPI\ConsoleUserBlogController;
 use App\Http\Controllers\ConsoleAPI\ConsoleUserController;
 use App\Http\Controllers\ConsoleAPI\ConsoleViewController;
 use App\Http\Controllers\ConsoleAPI\ConsoleWebhookController;
+use App\Http\Controllers\ConsoleAPI\Import\ConsoleImportController;
+use App\Http\Controllers\ConsoleAPI\Import\ConsoleImportSitemapController;
+use App\Http\Controllers\ConsoleAPI\Integrations\IntegrationHyvorTalkController;
 use App\Http\Controllers\ConsoleAPI\Temporary\AppSumoController;
 use App\Http\Middleware\App\ConsoleApi\ConsoleApiAccessMiddleware;
 use App\Http\Middleware\App\ConsoleApi\ConsoleApiUserEndpointsAccessMiddleware;
@@ -201,9 +204,12 @@ Route::prefix('/api/console/v0/blog/{subdomain}')
             Route::delete('/theme/file/{id}', [ConsoleThemeController::class, 'deleteFile']);
 
             // import and export
-            Route::get('/data/exports', [ConsoleImportExportController::class, 'getExports']);
-            Route::post('/data/export', [ConsoleImportExportController::class, 'export']);
-            Route::post('/data/import', [ConsoleImportExportController::class, 'import']);
+            Route::get('/data/exports', [ConsoleExportController::class, 'getExports']);
+            Route::post('/data/export', [ConsoleExportController::class, 'export']);
+
+            Route::get('/data/imports', [ConsoleImportController::class, 'getImports']);
+            Route::post('/data/import/sitemap/test', [ConsoleImportSitemapController::class, 'test']);
+            Route::post('/data/import/sitemap/import', [ConsoleImportSitemapController::class, 'import']);
 
             Route::get('/build', []);
         });
@@ -236,11 +242,25 @@ Route::prefix('/api/console/v0/blog/{subdomain}')
         });
 
         /**
+         * Integrations
+         */
+        Route::middleware('role:owner|admin')
+            ->prefix('integrations')
+            ->group(function() {
+
+            Route::get('/hyvor-talk', [IntegrationHyvorTalkController::class, 'getIntegration']);
+            Route::post('/hyvor-talk', [IntegrationHyvorTalkController::class, 'createIntegration']);
+            Route::delete('/hyvor-talk', [IntegrationHyvorTalkController::class, 'deleteIntegration']);
+
+        });
+
+        /**
          * Danger
          */
         Route::middleware('role:owner')->group(function () {
             Route::delete('/blog', [ConsoleDangerController::class, 'delete']);
             // Route::post('/blog/reset', [ConsoleDangerController::class, 'reset']);
+            Route::delete('/blog/cache', [ConsoleDangerController::class, 'deleteCache']);
         });
 
         Route::get('/appsumo/codes', [AppSumoController::class, 'getCodes']);
