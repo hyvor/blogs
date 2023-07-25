@@ -90,7 +90,7 @@ export default class EmbedView {
     }
 
     removeInput() {
-        const pos = this.getPos();
+        let pos = this.getPos();
         const tr = this.view.state.tr.setNodeMarkup(
             pos,
             schema.nodes.paragraph
@@ -102,16 +102,21 @@ export default class EmbedView {
                 .scrollIntoView()
         )
         this.view.focus();
-
         const nodeBefore = tr.doc.nodeAt(pos - 1);
-        // Delete the before node
+        const nodeAfter = tr.doc.nodeAt(pos + nodeBefore.nodeSize + 1);
+
         if (nodeBefore && nodeBefore.type.name === "figure") {
-            console.log(nodeBefore);
             let tr2 = this.view.state.tr;
-            tr2.deleteRange(pos - 1, pos);
+            tr2.deleteRange(pos - 1, pos + nodeBefore.nodeSize - 1);
             this.view.dispatch(tr2);
         }
 
+        if (nodeAfter && nodeAfter.type.name === "figure") {
+            let tr3 = this.view.state.tr;
+            tr3.deleteRange(pos, pos + nodeAfter.nodeSize - 1);
+            this.view.dispatch(tr3);
+        }
+       
     }
 
 
