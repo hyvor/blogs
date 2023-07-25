@@ -19,7 +19,6 @@ import {
     Table
 } from "react-bootstrap-icons";
 import { createImage, createQuote, createTable } from "./creators";
-import { createImage, createQuote } from "./creators";
 import {isEditorRtl} from "./rtl";
 
 const matchable = [
