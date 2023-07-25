@@ -595,3 +595,26 @@ test.describe('Embed', () => {
         await expect(page.locator('iframe').first()).not.toBeVisible();
     });
 });
+
+test.describe('Table', () => {
+
+    consoleTest.beforeEach(async ({testingApi, console, page}) => {
+        const {blog, language} = await testingApi.factory.blogFull({routes: true});
+        await testingApi.factory.post({blog_id: blog.id, language_id: language.id, title: 'Test Post'});
+        await console.visitAndNav('posts');
+        await page.getByRole('link', { name: 'Test Post' }).click();
+        await page.locator('.ProseMirror').fill(''); 
+    });
+
+    consoleTest('Create and a fill a table', async ({testingApi, console, page}) => {
+        await page.locator('.ProseMirror').fill('/');
+        await page.locator('div').filter({ hasText: /^TableAdd a table$/ }).first().click();
+        await page.locator('p').first().click();
+        await page.locator('p').first().fill('cell1');
+        await page.locator('tr:nth-child(2) > td > p').first().fill('cell2');
+
+        await expect(page.locator('table').first()).toBeVisible();
+        await expect(page.locator('td').first()).toContainText('cell1');
+        await expect(page.locator('td').nth(3)).toContainText('cell2');
+    });
+});
