@@ -65,7 +65,8 @@ const matchable = [
             "maps",
             "codepen",
         ],
-        node: "embed",
+        node: createEmbed,
+        focusInput: true,
     },
     {
         name: "Code Block",
