@@ -617,4 +617,43 @@ test.describe('Table', () => {
         await expect(page.locator('td').first()).toContainText('cell1');
         await expect(page.locator('td').nth(3)).toContainText('cell2');
     });
+
+    consoleTest('Create and add a row', async ({testingApi, console, page}) => {
+        await page.locator('.ProseMirror').fill('/');
+        await page.locator('div').filter({ hasText: /^TableAdd a table$/ }).first().click();
+        await page.locator('p').first().click();
+        await page.locator('p').first().fill('cell1');
+        await page.locator('tr:nth-child(2) > td > p').first().fill('cell2');
+        await page.getByRole('button', { name: '+' }).nth(1).click();
+
+        await expect(page.locator('table').first()).toBeVisible();
+        await expect(page.locator('td').first()).toContainText('cell1');
+        await expect(page.locator('td').nth(3)).toContainText('cell2');
+        await expect(page.locator('td').nth(9)).toContainText('');
+    });
+
+    consoleTest('Create and add a column', async ({testingApi, console, page}) => {
+        await page.locator('.ProseMirror').fill('/');
+        await page.locator('div').filter({ hasText: /^TableAdd a table$/ }).first().click();
+        await page.locator('p').first().click();
+        await page.locator('p').first().fill('cell1');
+        await page.locator('tr:nth-child(2) > td > p').first().fill('cell2');
+        await page.locator('div').filter({ hasText: /^cell1cell2\+$/ }).getByRole('button', { name: '+' }).click();
+
+        await expect(page.locator('table').first()).toBeVisible();
+        await expect(page.locator('td').first()).toContainText('cell1');
+        await expect(page.locator('td').nth(4)).toContainText('cell2');
+        await expect(page.locator('td').nth(3)).toContainText('');
+    });
+
+    consoleTest('Create and delete table', async ({testingApi, console, page}) => {
+        await page.locator('.ProseMirror').fill('/');
+        await page.locator('div').filter({ hasText: /^TableAdd a table$/ }).first().click();
+        await page.locator('p').first().click();
+        await page.locator('p').first().fill('cell1');
+        await page.locator('tr:nth-child(2) > td > p').first().fill('cell2');
+        await page.locator('#delete-table-button').click();
+
+        await expect(page.locator('table').first()).not.toBeVisible();
+    });
 });
