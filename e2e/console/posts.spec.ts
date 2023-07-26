@@ -718,6 +718,122 @@ test.describe('Table', () => {
         await expect(page.locator('td').nth(6)).toContainText('cell2');
     });
 
+    consoleTest('Create and delete local row', async ({testingApi, console, page}) => {
+        await page.locator('.ProseMirror').fill('/');
+        await page.locator('div').filter({ hasText: /^TableAdd a table$/ }).first().click();
+        await page.locator('p').first().click();
+        await page.locator('p').first().fill('cell1');
+        await page.locator('td').nth(3).fill('cell2');
+        await page.getByText('cell1').click();
+        await page.locator('div').filter({ hasText: /^cell1cell2\+$/ }).getByRole('button').first().click();
+        await page.getByRole('button', { name: 'Insert Below' }).click();
+        await page.locator('tr:nth-child(2) > td > p').first().click();
+        await page.locator('td').nth(3).fill('cell1.5');
+        await page.getByText('cell1.5', { exact: true }).click();
+        await page.locator('div').filter({ hasText: /^cell1cell1\.5cell2\+$/ }).getByRole('button').first().click();
+        await page.getByRole('button', { name: 'Delete row' }).click();
+
+        await expect(page.locator('table').first()).toBeVisible();
+        await expect(page.locator('td').first()).toContainText('cell1');
+        await expect(page.locator('td').nth(3)).not.toContainText('cell1.5');
+        await expect(page.locator('td').nth(3)).toContainText('cell2');
+    });
+
+    consoleTest('Create and delete local column', async ({testingApi, console, page}) => {
+        await page.locator('.ProseMirror').fill('/');
+        await page.locator('div').filter({ hasText: /^TableAdd a table$/ }).first().click();
+        await page.locator('p').first().click();
+        await page.locator('p').first().fill('cell1');
+        await page.locator('td').nth(1).fill('cell2');
+        await page.getByText('cell1').click();
+        await page.locator('.toggle-table-menu-button').first().click();
+        await page.getByRole('button', { name: 'Insert After' }).click();
+        await page.getByRole('row', { name: 'cell1 cell2' }).getByRole('paragraph').nth(1).click();
+        await page.locator('td').nth(1).fill('cell1.5');
+        await page.getByRole('cell', { name: 'cell1.5' }).click();
+        await page.locator('.toggle-table-menu-button').first().click();
+        await page.getByRole('button', { name: 'Delete column' }).click();
+
+        await expect(page.locator('table').first()).toBeVisible();
+        await expect(page.locator('td').first()).toContainText('cell1');
+        await expect(page.locator('td').nth(1)).not.toContainText('cell1.5');
+        await expect(page.locator('td').nth(1)).toContainText('cell2');
+    });
+
+    consoleTest('Create and clear row', async ({testingApi, console, page}) => {
+        await page.locator('.ProseMirror').fill('/');
+        await page.locator('div').filter({ hasText: /^TableAdd a table$/ }).first().click();
+        await page.locator('p').first().click();
+        await page.locator('p').first().fill('cell1');
+        await page.locator('td').nth(1).fill('cell2');
+        await page.locator('td').nth(2).fill('cell3');
+        await page.getByText('cell1').click();
+        await page.locator('div').filter({ hasText: /^cell1cell2cell3\+$/ }).getByRole('button').first().click();
+        await page.getByRole('button', { name: 'Clear content' }).click();
+
+        await expect(page.locator('table').first()).toBeVisible();
+        await expect(page.locator('td').first()).not.toContainText('cell1');
+        await expect(page.locator('td').nth(1)).not.toContainText('cell2');
+        await expect(page.locator('td').nth(2)).not.toContainText('cell3');
+    });
+
+    consoleTest('Create and clear column', async ({testingApi, console, page}) => {
+        await page.locator('.ProseMirror').fill('/');
+        await page.locator('div').filter({ hasText: /^TableAdd a table$/ }).first().click();
+        await page.locator('p').first().click();
+        await page.locator('p').first().fill('cell1');
+        await page.locator('td').nth(3).fill('cell2');
+        await page.locator('td').nth(6).fill('cell3');
+        await page.getByText('cell1').click();
+        await page.locator('.toggle-table-menu-button').first().click();
+        await page.getByRole('button', { name: 'Clear content' }).click();
+
+        await expect(page.locator('table').first()).toBeVisible();
+        await expect(page.locator('td').first()).not.toContainText('cell1');
+        await expect(page.locator('td').nth(3)).not.toContainText('cell2');
+        await expect(page.locator('td').nth(6)).not.toContainText('cell3');
+    });
+
+    consoleTest('Create and merge cells', async ({testingApi, console, page}) => {
+        await page.locator('.ProseMirror').fill('/');
+        await page.locator('div').filter({ hasText: /^TableAdd a table$/ }).first().click();
+        await page.locator('p').first().click();
+        await page.locator('p').first().fill('cell1');
+        await page.locator('td').nth(1).fill('cell2');
+        await page.locator('td').nth(2).fill('cell3');
+        await page.getByRole('cell', { name: 'cell1' }).click();
+        await page.keyboard.down('Shift');
+        await page.locator('.ProseMirror').press('ArrowRight');
+        await page.locator('.ProseMirror').press('ArrowRight');
+        await page.keyboard.up('Shift');
+        await page.locator('.merge-cell-button').first().click();
+
+        await expect(page.locator('table').first()).toBeVisible();
+        await expect(page.locator('td').first()).not.toContainText('cell1\ncell2\ncell3');
+    });
+
+    consoleTest('Create and merge and split cells', async ({testingApi, console, page}) => {
+        await page.locator('.ProseMirror').fill('/');
+        await page.locator('div').filter({ hasText: /^TableAdd a table$/ }).first().click();
+        await page.locator('p').first().click();
+        await page.locator('p').first().fill('cell1');
+        await page.locator('td').nth(1).fill('cell2');
+        await page.locator('td').nth(2).fill('cell3');
+        await page.getByRole('cell', { name: 'cell1' }).click();
+        await page.keyboard.down('Shift');
+        await page.locator('.ProseMirror').press('ArrowRight');
+        await page.locator('.ProseMirror').press('ArrowRight');
+        await page.keyboard.up('Shift');
+        await page.locator('.merge-cell-button').first().click();
+        await page.getByText('cell3', { exact: true }).click();
+        await page.getByRole('button').filter({ hasText: 'Split cells' }).click();
+
+        await expect(page.locator('table').first()).toBeVisible();
+        await expect(page.locator('td').first()).not.toContainText('cell1\ncell2\ncell3');
+        await expect(page.locator('td').nth(1)).toContainText('');
+        await expect(page.locator('td').nth(2)).toContainText('');
+    });
+
     consoleTest('Create and delete table', async ({testingApi, console, page}) => {
         await page.locator('.ProseMirror').fill('/');
         await page.locator('div').filter({ hasText: /^TableAdd a table$/ }).first().click();
