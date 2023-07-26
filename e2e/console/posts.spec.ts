@@ -810,6 +810,9 @@ test.describe('Table', () => {
 
         await expect(page.locator('table').first()).toBeVisible();
         await expect(page.locator('td').first()).not.toContainText('cell1\ncell2\ncell3');
+        await expect(page.locator('td').nth(1)).not.toContainText('cell2');
+        await expect(page.locator('td').nth(3)).not.toContainText('cell2');
+        await expect(page.locator('td').nth(6)).not.toContainText('cell3');
     });
 
     consoleTest('Create and merge and split cells', async ({testingApi, console, page}) => {
