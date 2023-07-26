@@ -322,7 +322,7 @@
         justify-content: center;
     }
 
-    .post-editor {
+    /* .post-editor {
         position: relative;
         height: 100%;
 
@@ -479,7 +479,7 @@
 
             .pos-rel {
                 display: flex;
-                height: calc(100% - 40px); /* subtract the height of the bottom bar from the content container height */
+                height: calc(100% - 40px); // subtract the height of the bottom bar from the content container height
             }
 
             .post-editor-bottom {
@@ -550,7 +550,7 @@
                 }
             }
         }
-    }
+    } */
 
     @import 'PostSettings.scss';
     @import 'PostPublisher.scss';
@@ -589,3 +589,4 @@
 }
 
 @import 'NoPost.scss';
+@import 'NewPostView.scss';

@@ -4,12 +4,31 @@ import { usePostActions, usePostValues } from "../helpers";
 import PostLanguageSelector from "../PostLanguageSelector";
 import TitleRow from "../PostTop/TitleRow";
 import {useLanguagesValues} from "../../../Settings/Languages/helpers";
+import { BoxArrowUpRight } from "react-bootstrap-icons";
 
 export default function PostLeft({id} : {id: number}) {
 
     return <div className="post-left">
 
         <div className="post-left-header">
+
+            <div className="left-header-left">
+                <PostLanguageSelector id={id} />
+            </div>
+
+            <div className="left-header-right" style={{textAlign: "right"}}>
+
+                <button className="button medium light view" style={{marginRight: 8}}>
+                    <span>Preview</span>&nbsp;<BoxArrowUpRight />
+                </button>
+                
+                <button className="button medium">Publish</button>
+
+            </div>
+
+        </div>
+
+        <div className="post-left-title">
             <TitleRow id={id} />
         </div>
 

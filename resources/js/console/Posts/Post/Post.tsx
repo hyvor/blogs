@@ -10,6 +10,8 @@ import Unpublisher from "./Unpublisher";
 import postsLogic from "../../logic/postsLogic";
 import pagesLogic from "../../logic/pagesLogic";
 import Discarder from './Discarder';
+import PostLeft from './New/PostLeft';
+import PostRight from './New/PostRight';
 
 export default function Post({ id, subdomain, type }: { id: number, subdomain: string, type: string }) {
 
@@ -33,6 +35,15 @@ export default function Post({ id, subdomain, type }: { id: number, subdomain: s
         else
             pagesLogicInst.actions.navigateToPages();
     }
+
+    return <div className="new-post-view">
+
+        <div className="post-inner">
+            <PostLeft id={id} />
+            <PostRight id={id} />
+        </div>
+
+    </div>
 
     return <div className={"post-editor fullscreen"}>
 
