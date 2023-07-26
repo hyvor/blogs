@@ -198,18 +198,19 @@ export default class Table implements NodeView{
             }
         }
 
-        let offset = tablePos;
+        let offset = tablePos + 2;
         for (let i = 0; i < table.childCount; i++) {
             for (let j = 0; j < tableRow.childCount; j++) {
                 const cell = table.child(i).child(j);
                 const cellSize = cell.nodeSize;
                 if (j === currentColumn) {
-                    const currentCellPos = offset + i * 2;
-                    const nodeAtPost = this.view.state.doc.nodeAt(currentCellPos);
+                    const currentCellPos = offset;
                     tr.replaceWith(currentCellPos, currentCellPos + cell.nodeSize, this.schema.nodes.table_cell.createAndFill()!);
-                }
-                offset += cellSize;
+                    offset += 4; // Size of an empty table cell
+                } else
+                    offset += cellSize;
             }
+            offset += 2;
         }
         this.view.dispatch(tr);
         this.createMenuItems();
