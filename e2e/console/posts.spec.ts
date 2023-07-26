@@ -646,6 +646,78 @@ test.describe('Table', () => {
         await expect(page.locator('td').nth(3)).toContainText('');
     });
 
+    consoleTest('Create and add a column before', async ({testingApi, console, page}) => {
+        await page.locator('.ProseMirror').fill('/');
+        await page.locator('div').filter({ hasText: /^TableAdd a table$/ }).first().click();
+        await page.locator('p').first().click();
+        await page.locator('p').first().fill('cell1');
+        await page.locator('td').nth(1).fill('cell2');
+        await page.getByText('cell2').click();
+        await page.locator('.toggle-table-menu-button').first().click();
+        await page.getByRole('button', { name: 'Insert Before' }).click();
+        await page.getByRole('row', { name: 'cell1 cell2' }).getByRole('paragraph').nth(1).click();
+        await page.locator('td').nth(1).fill('cell1.5');
+
+        await expect(page.locator('table').first()).toBeVisible();
+        await expect(page.locator('td').first()).toContainText('cell1');
+        await expect(page.locator('td').nth(1)).toContainText('cell1.5');
+        await expect(page.locator('td').nth(2)).toContainText('cell2');
+    });
+
+    consoleTest('Create and add a column after', async ({testingApi, console, page}) => {
+        await page.locator('.ProseMirror').fill('/');
+        await page.locator('div').filter({ hasText: /^TableAdd a table$/ }).first().click();
+        await page.locator('p').first().click();
+        await page.locator('p').first().fill('cell1');
+        await page.locator('td').nth(1).fill('cell2');
+        await page.getByText('cell1').click();
+        await page.locator('.toggle-table-menu-button').first().click();
+        await page.getByRole('button', { name: 'Insert After' }).click();
+        await page.getByRole('row', { name: 'cell1 cell2' }).getByRole('paragraph').nth(1).click();
+        await page.locator('td').nth(1).fill('cell1.5');
+
+        await expect(page.locator('table').first()).toBeVisible();
+        await expect(page.locator('td').first()).toContainText('cell1');
+        await expect(page.locator('td').nth(1)).toContainText('cell1.5');
+        await expect(page.locator('td').nth(2)).toContainText('cell2');
+    });
+
+    consoleTest('Create and add a row above', async ({testingApi, console, page}) => {
+        await page.locator('.ProseMirror').fill('/');
+        await page.locator('div').filter({ hasText: /^TableAdd a table$/ }).first().click();
+        await page.locator('p').first().click();
+        await page.locator('p').first().fill('cell1');
+        await page.locator('td').nth(3).fill('cell2');
+        await page.getByText('cell2').click();
+        await page.locator('div').filter({ hasText: /^cell1cell2\+$/ }).getByRole('button').first().click();
+        await page.getByRole('button', { name: 'Insert Above' }).click();
+        await page.locator('tr:nth-child(2) > td > p').first().click();
+        await page.locator('td').nth(3).fill('cell1.5');
+
+        await expect(page.locator('table').first()).toBeVisible();
+        await expect(page.locator('td').first()).toContainText('cell1');
+        await expect(page.locator('td').nth(3)).toContainText('cell1.5');
+        await expect(page.locator('td').nth(6)).toContainText('cell2');
+    });
+
+    consoleTest('Create and add a row below', async ({testingApi, console, page}) => {
+        await page.locator('.ProseMirror').fill('/');
+        await page.locator('div').filter({ hasText: /^TableAdd a table$/ }).first().click();
+        await page.locator('p').first().click();
+        await page.locator('p').first().fill('cell1');
+        await page.locator('td').nth(3).fill('cell2');
+        await page.getByText('cell1').click();
+        await page.locator('div').filter({ hasText: /^cell1cell2\+$/ }).getByRole('button').first().click();
+        await page.getByRole('button', { name: 'Insert Below' }).click();
+        await page.locator('tr:nth-child(2) > td > p').first().click();
+        await page.locator('td').nth(3).fill('cell1.5');
+
+        await expect(page.locator('table').first()).toBeVisible();
+        await expect(page.locator('td').first()).toContainText('cell1');
+        await expect(page.locator('td').nth(3)).toContainText('cell1.5');
+        await expect(page.locator('td').nth(6)).toContainText('cell2');
+    });
+
     consoleTest('Create and delete table', async ({testingApi, console, page}) => {
         await page.locator('.ProseMirror').fill('/');
         await page.locator('div').filter({ hasText: /^TableAdd a table$/ }).first().click();
