@@ -384,6 +384,18 @@ export default class Table implements NodeView{
     }
 
     isColumnFocused(columnIndex: number) {
+        const table = this.node;
+        const rows = table.content.childCount;
+        let focus = false;
+        for (let rowIdx = 0; rowIdx < rows; rowIdx++) {
+            if (this.isRowFocused(table.child(rowIdx))) {
+                focus = true;
+                break;
+            }
+        }
+        if (!focus)
+            return false;
+
         const selection = this.view.state.selection;
         const tableCell = selection.$from.node(-1);
         let tableRow = selection.$from.node(-2);
