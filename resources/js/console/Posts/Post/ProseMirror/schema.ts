@@ -243,7 +243,7 @@ export const nodes = {
                   },
             }
         }
-    }) as NodeSpec
+    })
 }
 
 // :: Object [Specs](#model.MarkSpec) for the marks in the schema.
@@ -327,6 +327,7 @@ export const marks = {
 // To reuse elements from this schema, extend or read from its
 // `spec.nodes` and `spec.marks` [properties](#model.Schema.spec).
 
+console.log(nodes);
 const schemaWithoutList = new Schema({nodes, marks});
 
 export default new Schema({

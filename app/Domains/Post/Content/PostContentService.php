@@ -14,10 +14,10 @@ use App\Domains\Post\Content\Nodes\Blockquote;
 use App\Domains\Post\Content\Nodes\Bookmark\Bookmark;
 use App\Domains\Post\Content\Nodes\BulletList;
 use App\Domains\Post\Content\Nodes\Callout\Callout;
-use App\Domains\Post\Content\Nodes\CustomHtml;
 use App\Domains\Post\Content\Nodes\CodeBlock\CodeBlock;
-use App\Domains\Post\Content\Nodes\Embed\Embed;
+use App\Domains\Post\Content\Nodes\CustomHtml;
 use App\Domains\Post\Content\Nodes\Doc;
+use App\Domains\Post\Content\Nodes\Embed\Embed;
 use App\Domains\Post\Content\Nodes\Figcaption;
 use App\Domains\Post\Content\Nodes\Figure;
 use App\Domains\Post\Content\Nodes\HardBreak;
@@ -27,9 +27,12 @@ use App\Domains\Post\Content\Nodes\Image\Image;
 use App\Domains\Post\Content\Nodes\ListItem;
 use App\Domains\Post\Content\Nodes\OrderedList;
 use App\Domains\Post\Content\Nodes\Paragraph;
+use App\Domains\Post\Content\Nodes\Table\Table;
+use App\Domains\Post\Content\Nodes\Table\TableCell\TableCell;
+use App\Domains\Post\Content\Nodes\Table\TableCell\TableHeader;
+use App\Domains\Post\Content\Nodes\Table\TableRow;
 use App\Domains\Post\Content\Nodes\Text;
 use App\Models\Blog;
-use Hyvor\Phrosemirror\Content\Sanitizer;
 use Hyvor\Phrosemirror\Converters\HtmlParser\HtmlParser;
 use Hyvor\Phrosemirror\Document\Document;
 use Hyvor\Phrosemirror\Document\Node;
@@ -103,6 +106,10 @@ class PostContentService
                 new HorizontalRule,
                 new Image($blog),
                 new OrderedList,
+                new Table(),
+                new TableRow(),
+                new TableCell(),
+                new TableHeader(),
             ],
             [
                 new Code,
