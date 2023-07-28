@@ -96,7 +96,12 @@ Words can be like X-rays, if you use them properly—they’ll go through anythi
 
 <h2>Code Block</h2>
 
-<pre class="language-php" data-annotations="h=5-11 +=16" data-name="filterq.php">
+<pre
+    class="language-php"
+    data-annotations="h=5-11 +=16"
+    data-name="filterq.php"
+    data-language="php"
+>
 use Hyvor\FilterQ\Facades\FilterQ;
 
 $query = FilterQ::expression('id=100|slug=hello')
@@ -117,11 +122,78 @@ $posts = $query
 
 <h2>Bookmark</h2>
 
-<x-bookmark data-url="https://github.com"></x-bookmark>
+<a class="bookmark" data-url="https://github.com"></a>
 
 <h2>Embed</h2>
 
 <figure>
-    <x-embed data-url="https://www.youtube.com/watch?v=dQw4w9WgXcQ"></x-embed>
+    <x-embed data-url="https://www.youtube.com/watch?v=libKVRa01L8"></x-embed>
     <figcaption>Rick Astley - Never Gonna Give You Up</figcaption>
 </figure>
+
+<h2>Table</h2>
+
+<p>
+    Tables can be used to show data in a tabular format. Below is an example table with 3 columns.
+</p>
+
+<table>
+    <tr>
+        <th>Column 1</th>
+        <th>Column 2</th>
+        <th>Column 3</th>
+    </tr>
+    <tr>
+        <td>Row 1, Column 1</td>
+        <td>Row 1, Column 2</td>
+        <td>Row 1, Column 3</td>
+    </tr>
+    <tr>
+        <td>Row 2, Column 1</td>
+        <td>Row 2, Column 2</td>
+        <td>Row 2, Column 3</td>
+    </tr>
+</table>
+
+<p>
+    This is a table with 10 columns to make sure that it is responsive.
+</p>
+
+<table>
+    <tr>
+        <th>Column 1</th>
+        <th>Column 2</th>
+        <th>Column 3</th>
+        <th>Column 4</th>
+        <th>Column 5</th>
+        <th>Column 6</th>
+        <th>Column 7</th>
+        <th>Column 8</th>
+        <th>Column 9</th>
+        <th>Column 10</th>
+    </tr>
+    <tr>
+        <td>Row 1, Column 1</td>
+        <td>Row 1, Column 2</td>
+        <td>Row 1, Column 3</td>
+        <td>Row 1, Column 4</td>
+        <td>Row 1, Column 5</td>
+        <td>Row 1, Column 6</td>
+        <td>Row 1, Column 7</td>
+        <td>Row 1, Column 8</td>
+        <td>Row 1, Column 9</td>
+        <td>Row 1, Column 10</td>
+    </tr>
+    <tr>
+        <td>Row 2, Column 1</td>
+        <td>Row 2, Column 2</td>
+        <td>Row 2, Column 3</td>
+        <td>Row 2, Column 4</td>
+        <td>Row 2, Column 5</td>
+        <td>Row 2, Column 6</td>
+        <td>Row 2, Column 7</td>
+        <td>Row 2, Column 8</td>
+        <td>Row 2, Column 9</td>
+        <td>Row 2, Column 10</td>
+    </tr>
+</table>
