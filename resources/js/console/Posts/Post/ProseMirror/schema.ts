@@ -228,21 +228,11 @@ export const nodes = {
         parseDOM: [{tag: "br"}],
         toDOM() { return ['br'] }
     } as NodeSpec,
+
      ...tableNodes({
         tableGroup: "block",
         cellContent: "block+",
-        cellAttributes: {
-            background: {
-                default: null,
-                getFromDOM(dom: HTMLElement) {
-                    return dom.style.backgroundColor || null
-                },
-                setDOMAttr(value, attrs) {
-                    if (value)
-                      attrs.style = (attrs.style || '') + `background-color: ${value};`;
-                  },
-            }
-        }
+        cellAttributes: {}
     })
 }
 

@@ -2,7 +2,7 @@ import { EditorView, NodeView } from "prosemirror-view";
 import {Node as ProsemirrorNode, Schema} from "prosemirror-model";
 import { ArrowsCollapse, ArrowsExpand, Trash } from "react-bootstrap-icons";
 import ReactDOM from "react-dom/client";
-import React, { StrictMode } from "react";
+import React from "react";
 import {
     addColumnAfter,
     addColumnBefore,
@@ -17,8 +17,8 @@ import {
     toggleHeaderColumn,
     toggleHeaderCell,
     goToNextCell,
-    deleteTable,
-  } from "prosemirror-tables";
+    deleteTable, updateColumnsOnResize,
+} from "prosemirror-tables";
 import { EditorState, NodeSelection, TextSelection } from "prosemirror-state";
 import { createRoot } from "react-dom/client";
 import TableMenu from "./TableMenu";
@@ -35,6 +35,11 @@ export default class Table implements NodeView{
 
     dom: HTMLElement;
     contentDOM: HTMLElement;
+
+    table: HTMLTableElement;
+    colgroup: HTMLTableColElement;
+
+    private minColWidth = 20;
 
     middle: HTMLElement;
     topSettings: HTMLElement;
@@ -81,15 +86,18 @@ export default class Table implements NodeView{
         this.middle.className = "table-middle";
         this.dom.appendChild(this.columnSettings);
         this.dom.appendChild(this.middle);
-        
 
-        this.contentDOM = document.createElement("table");
-        this.contentDOM.className = "table-div";
+        this.table = document.createElement("table");
+        this.colgroup = document.createElement("colgroup");
+        this.contentDOM = document.createElement("tbody");
 
-        const id = node.attrs.id || "";
-        this.contentDOM.id = id;
+        this.table.appendChild(this.colgroup);
+        this.table.appendChild(this.contentDOM);
+
+        updateColumnsOnResize(node, this.colgroup, this.table, this.minColWidth);
+
         this.middle.appendChild(this.leftSideSettings);
-        this.middle.appendChild(this.contentDOM);
+        this.middle.appendChild(this.table);
         this.middle.appendChild(this.rightSideSettings);
 
         this.dom.appendChild(this.bottomSettings);
@@ -355,6 +363,7 @@ export default class Table implements NodeView{
     update(node: ProsemirrorNode) {
         if (node.type.name === 'table') {
             this.node = node;
+            updateColumnsOnResize(node, this.colgroup, this.table, this.minColWidth);
             return true;
         }
         return false;

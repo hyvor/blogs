@@ -30,7 +30,7 @@ export default function TableMenu({ colunmMenu, focused, addBefore, addAfter, ma
     };
   }, []);
 
-  const customStyle = !colunmMenu ? {top: cssOffset + 'px'} : {left: cssOffset + 'px'};
+  const customStyle : any = !colunmMenu ? {top: cssOffset + 'px'} : {left: cssOffset + 'px'};
   if (colunmMenu)
     customStyle['bottom'] = '-27px';
   else
@@ -38,11 +38,19 @@ export default function TableMenu({ colunmMenu, focused, addBefore, addAfter, ma
   
 
   return !focused ? (<div></div>) : (
-    <div className={'table-menu'} style={customStyle} ref={menuRef}>
+    <div
+        className={'table-menu' + (colunmMenu ? ' table-menu-column' : '')}
+        style={customStyle}
+        ref={menuRef}
+    >
       <button className="toggle-table-menu-button" 
       onClick={toggleMenu}
       disabled={!focused}
-      style={{width: colunmMenu ? "35px" : "20px", height: colunmMenu ? "20px" : "30px", flexDirection: colunmMenu ? "row" : "column"}}
+      style={{
+          transform: colunmMenu ? 'initial' : 'rotate(90deg)',
+          marginTop: colunmMenu ? 0 : 6,
+          marginBottom: colunmMenu ? -19 : 0,
+      }}
       >
         <span className="table-menu-dot"/>
         <span className="table-menu-dot"/>
