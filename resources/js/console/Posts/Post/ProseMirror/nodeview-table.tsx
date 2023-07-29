@@ -227,14 +227,14 @@ export default class Table implements NodeView{
 
     // Focus back the table
     focusTable() {
-        let { $from, to } = this.view.state.selection,
+        /*let { $from, to } = this.view.state.selection,
                     pos;
         let same = $from.sharedDepth(to);
         pos = $from.before(same);
         this.view.dispatch(
             this.view.state.tr.setSelection(
                 NodeSelection.create(this.view.state.doc, pos)
-        ));
+        ));*/
     };
 
     createInside() {
@@ -306,14 +306,17 @@ export default class Table implements NodeView{
             for (let i = 0; i < _self.node.childCount - 1; i++) {
                 firstCellLastRow += _self.node.child(i).nodeSize;
             }
-            tr2.setSelection(
-                NodeSelection.create(
-                    _self.view.state.doc,
-                    firstCellLastRow + 3
-                )
-            );
-            _self.view.dispatch(tr2);
-            _self.createMenuItems();
+            const nodeAt= _self.view.state.doc.nodeAt(firstCellLastRow + 2);
+            console.log(nodeAt);
+            _self.view.dispatch(
+                tr2.setSelection(
+                    TextSelection.create(
+                        _self.view.state.doc,
+                        firstCellLastRow + 2
+                    )
+            ));
+           _self.view.dispatch(tr2);
+           _self.createMenuItems();
         };
         this.bottomSettings.appendChild(addRowButton);
 
@@ -341,7 +344,7 @@ export default class Table implements NodeView{
 
             let tr2 = _self.view.state.tr;
             tr2.setSelection(
-                NodeSelection.create(
+                TextSelection.create(
                     _self.view.state.doc,
                     firstCellLastColumn - 1
                 )
