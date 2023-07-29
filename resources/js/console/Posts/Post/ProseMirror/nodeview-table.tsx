@@ -291,29 +291,28 @@ export default class Table implements NodeView{
         addRowButton.className = "add-row-button";
         addRowButton.innerText = "+";
         addRowButton.onclick = function () {
-            // Focus the last row of the table before adding a new one
-            const selection = _self.view.state.selection;
-            let table = selection.$from.node(-3);
-            if (!table || table.type.name == 'doc') {
-                addRowAfter(_self.view.state, _self.view.dispatch);
-                return;
-            }
-            let tableIdx = -3;
-            if (table && table.type && table.type.name !== 'table') {
-                table = selection.$from.node(tableIdx);
-                tableIdx--;
-            }
-            const lastRow = selection.$from.node(tableIdx + 1);
-            const lastRowPos = selection.$from.before(tableIdx) + table.nodeSize - lastRow.nodeSize;
+            const currentPos = _self.getPos()!;
             let tr = _self.view.state.tr;
             tr.setSelection(
                 NodeSelection.create(
                     _self.view.state.doc,
-                    lastRowPos
+                    currentPos
                 )
             );
             _self.view.dispatch(tr);
-            addRowAfter(_self.view.state, _self.view.dispatch);            
+            addRowAfter(_self.view.state, _self.view.dispatch);
+            let tr2 = _self.view.state.tr;
+            let firstCellLastRow = currentPos;
+            for (let i = 0; i < _self.node.childCount - 1; i++) {
+                firstCellLastRow += _self.node.child(i).nodeSize;
+            }
+            tr2.setSelection(
+                NodeSelection.create(
+                    _self.view.state.doc,
+                    firstCellLastRow + 3
+                )
+            );
+            _self.view.dispatch(tr2);
             _self.createMenuItems();
         };
         this.bottomSettings.appendChild(addRowButton);
@@ -322,40 +321,33 @@ export default class Table implements NodeView{
         addColumnButton.className = "add-column-button";
         addColumnButton.innerText = "+";
         addColumnButton.onclick = function () {
-            const selection = _self.view.state.selection;
-            let table = selection.$from.node(-3);
-            if (!table || table.type.name == 'doc') {
-                addColumnAfter(_self.view.state, _self.view.dispatch);
-                _self.focusTable();
-                return;
-            }
-            let tableIdx = -3;
-            if (table && table.type && table.type.name !== 'table') {
-                table = selection.$from.node(tableIdx);
-                tableIdx--;
-            }
-            let tablePos = selection.$from.before(-3);
             let tr = _self.view.state.tr;
+            const currentPos = _self.getPos()!;
             tr.setSelection(
                 NodeSelection.create(
                     _self.view.state.doc,
-                    tablePos
+                    currentPos
                 )
             );
             _self.view.dispatch(tr);
             addColumnAfter(_self.view.state, _self.view.dispatch);
             const scrollableDiv = document.getElementsByClassName('table-middle').item(0) as HTMLDivElement;
             scrollableDiv.scrollLeft = scrollableDiv.scrollWidth - scrollableDiv.clientWidth;
-            _self.createMenuItems();
-            tr = _self.view.state.tr;
-            tr.setSelection(
-                TextSelection.create(
+            let firstCellLastColumn = currentPos;
+            const firstRow = _self.node.child(0);
+            for (let i = 0; i < firstRow.childCount; i++) {
+                firstCellLastColumn += firstRow.child(i).nodeSize;
+            }
+
+            let tr2 = _self.view.state.tr;
+            tr2.setSelection(
+                NodeSelection.create(
                     _self.view.state.doc,
-                    tablePos + table.nodeSize - 1
+                    firstCellLastColumn - 1
                 )
             );
-            _self.view.dispatch(tr);
-            _self.focusTable();
+            _self.view.dispatch(tr2);
+            _self.createMenuItems();
         };
         this.rightSideSettings.appendChild(addColumnButton);
     }
