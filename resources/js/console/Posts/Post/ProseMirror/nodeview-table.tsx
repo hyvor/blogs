@@ -227,14 +227,15 @@ export default class Table implements NodeView{
 
     // Focus back the table
     focusTable() {
-        /*let { $from, to } = this.view.state.selection,
+        let { $from, to } = this.view.state.selection,
                     pos;
         let same = $from.sharedDepth(to);
         pos = $from.before(same);
         this.view.dispatch(
             this.view.state.tr.setSelection(
-                NodeSelection.create(this.view.state.doc, pos)
-        ));*/
+                TextSelection.create(this.view.state.doc, pos)
+        ));
+        this.view.focus();
     };
 
     createInside() {
