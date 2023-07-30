@@ -54,6 +54,7 @@ class Factory {
     // blog + variant + user + language + routes
     async blogFull({
         blogAttrs = {},
+        routes = false,
     } = {}) {
         const blog = await this.blog(blogAttrs);
         const user = await this.user({
@@ -74,11 +75,14 @@ class Factory {
             language_id: language.id,
         });
 
+        if (routes)
+            await this.defaultRoutes({blog_id: blog.id});
+
         return {
             blog,
             user,
             language,
-            variant
+            variant,
         }
     }
 
@@ -105,6 +109,23 @@ class Factory {
 
     async routes(attrs = {}) {
         return await this.testingApi.callFactory('Route', attrs);
+    }
+
+    async post(attrs = {blog_id : 1, language_id: 1, title: 'Test Post'}) {
+        const post =  await this.testingApi.callFactory('Post', {blog_id: attrs.blog_id});
+        const variant = await this.testingApi.callFactory('PostVariant', {post_id: post.id, language_id: attrs.language_id, title: attrs.title});
+        return {
+            post,
+            variant
+        }
+    }
+
+    async defaultRoutes(attrs = {}) {
+        await this.routes({ ...attrs, name: 'post', match: '/{slug}', template: 'post'});
+        await this.routes({ ...attrs, name: 'page', match: '/{slug}', template: 'page'});
+        await this.routes({ ...attrs, name: 'index', match: '/', template: 'index', posts_filter: ''});
+        await this.routes({ ...attrs, name: 'tag', match: '/tag/{slug}', template: 'tag,index', posts_filter: 'tag.slug={slug}'});
+        await this.routes({ ...attrs, name: 'author', match: '/author/{slug}', template: 'author,index', posts_filter: 'author.slug={slug}'});
     }
     
 }

@@ -1,5 +1,6 @@
 import {Mark, MarkSpec, Node, NodeSpec, Schema} from "prosemirror-model"
 import { addListNodes } from "prosemirror-schema-list"
+import { tableNodes } from "prosemirror-tables"
 
 /**
  * Copied and changed from
@@ -144,7 +145,7 @@ export const nodes = {
             url: {default: null}
         },
         // content: "text*",
-        //group: "figure block",
+        //group: "block",
         // atom: true,
         selectable: true,
         parseDOM: [{
@@ -226,7 +227,13 @@ export const nodes = {
         selectable: false,
         parseDOM: [{tag: "br"}],
         toDOM() { return ['br'] }
-    } as NodeSpec
+    } as NodeSpec,
+
+     ...tableNodes({
+        tableGroup: "block",
+        cellContent: "block+",
+        cellAttributes: {}
+    })
 }
 
 // :: Object [Specs](#model.MarkSpec) for the marks in the schema.
@@ -299,8 +306,6 @@ export const marks = {
         parseDOM: [{tag: "sub"}],
         toDOM() { return ["sub", 0] }
     } as MarkSpec,
-
-
 }
 
 // :: Schema
@@ -312,8 +317,8 @@ export const marks = {
 // To reuse elements from this schema, extend or read from its
 // `spec.nodes` and `spec.marks` [properties](#model.Schema.spec).
 
-
-const schemaWithoutList = new Schema({nodes, marks})
+console.log(nodes);
+const schemaWithoutList = new Schema({nodes, marks});
 
 export default new Schema({
     nodes: addListNodes(schemaWithoutList.spec.nodes, "block+", "block"),

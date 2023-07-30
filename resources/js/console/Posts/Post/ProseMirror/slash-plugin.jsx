@@ -16,8 +16,10 @@ import {
     Quote,
     TypeH2,
     TypeH3,
+    Table
 } from "react-bootstrap-icons";
-import { createImage, createQuote } from "./creators";
+
+import { createEmbed, createImage, createQuote, createTable } from "./creators";
 import {isEditorRtl} from "./rtl";
 
 const matchable = [
@@ -63,7 +65,8 @@ const matchable = [
             "maps",
             "codepen",
         ],
-        node: "embed",
+        node: createEmbed,
+        focusInput: true,
     },
     {
         name: "Code Block",
@@ -100,7 +103,7 @@ const matchable = [
         icon: <Hr />,
         keywords: ["hr", "divider", "horizontal", "line"],
         node: "horizontal_rule",
-        selectNode: true,
+        selectNode: false,
     },
     {
         name: "Custom HTML/Twig",
@@ -108,6 +111,14 @@ const matchable = [
         icon: <CodeSlash />,
         keywords: ["html", "twig", "code", "custom"],
         node: "custom_html",
+    },
+    {
+        name: "Table",
+        description: "Add a table",
+        icon: <Table />,
+        keywords: ["table", "spreadsheet"],
+        node: createTable,
+        focusCell: true,
     },
     /*{
         name: "Custom Node",
@@ -251,6 +262,7 @@ class SlashPlugin {
             nameWrap.appendChild(description);
 
             item.onclick = function () {
+
                 let node = m.node;
                 let createdNode;
                 if (typeof node === "function") {
@@ -278,7 +290,10 @@ class SlashPlugin {
                 view.dispatch(
                     tr2
                         .setSelection(
-                            m.selectNode
+                            m.focusInput ? NodeSelection.create(tr2.doc, pos + 1) :
+                            m.focusCell
+                            ? TextSelection.create(tr2.doc, pos + 2)
+                            :   m.selectNode
                                 ? NodeSelection.create(tr.doc, pos)
                                 : TextSelection.create(tr.doc, pos + 1)
                         )

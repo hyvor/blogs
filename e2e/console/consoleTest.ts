@@ -35,4 +35,7 @@ class Console {
         await this.page.getByTestId('main-nav-' + nav).click();
     }
 
+    async newPost() {
+        
+    }
 }
