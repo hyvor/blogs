@@ -307,16 +307,16 @@ export default class Table implements NodeView{
                 firstCellLastRow += _self.node.child(i).nodeSize;
             }
             const nodeAt= _self.view.state.doc.nodeAt(firstCellLastRow + 2);
-            console.log(nodeAt);
             _self.view.dispatch(
                 tr2.setSelection(
                     TextSelection.create(
                         _self.view.state.doc,
-                        firstCellLastRow + 2
+                        firstCellLastRow + 2,
                     )
-            ));
-           _self.view.dispatch(tr2);
-           _self.createMenuItems();
+            ).scrollIntoView());
+            _self.view.dispatch(tr2);
+            _self.createMenuItems();
+            _self.view.focus();
         };
         this.bottomSettings.appendChild(addRowButton);
 
@@ -351,6 +351,7 @@ export default class Table implements NodeView{
             );
             _self.view.dispatch(tr2);
             _self.createMenuItems();
+            _self.view.focus();
         };
         this.rightSideSettings.appendChild(addColumnButton);
     }
