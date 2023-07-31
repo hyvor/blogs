@@ -54,6 +54,7 @@ class Factory {
     // blog + variant + user + language + routes
     async blogFull({
         blogAttrs = {},
+        languageAttrs = {},
         routes = false,
     } = {}) {
         const blog = await this.blog(blogAttrs);
@@ -67,6 +68,7 @@ class Factory {
         const language = await this.language({
             blog_id: blog.id,
             is_primary: true,
+            ...languageAttrs
         });
 
 
@@ -111,13 +113,23 @@ class Factory {
         return await this.testingApi.callFactory('Route', attrs);
     }
 
-    async post(attrs = {blog_id : 1, language_id: 1, title: 'Test Post'}) {
-        const post =  await this.testingApi.callFactory('Post', {blog_id: attrs.blog_id});
-        const variant = await this.testingApi.callFactory('PostVariant', {post_id: post.id, language_id: attrs.language_id, title: attrs.title});
+    async post({
+        attrs = {},
+        variantAttrs = {},
+    } = {}) {
+        const post =  await this.testingApi.callFactory('Post', attrs);
+        const variant = await this.postVariant({
+            post_id: post.id,
+            ...variantAttrs
+        });
         return {
             post,
             variant
         }
+    }
+
+    async postVariant(attrs = {}) {
+        return await this.testingApi.callFactory('PostVariant', attrs);
     }
 
     async defaultRoutes(attrs = {}) {

@@ -5,8 +5,12 @@ import PostLanguageSelector from "../PostLanguageSelector";
 import TitleRow from "../PostTop/TitleRow";
 import {useLanguagesValues} from "../../../Settings/Languages/helpers";
 import { BoxArrowUpRight } from "react-bootstrap-icons";
+import { getBlogUrl } from "../../../lib/blog-helpers";
+import getSubdomain from "../../../logic-helpers/subdomain";
 
 export default function PostLeft({id} : {id: number}) {
+
+    const { post, currentLanguage } = usePostValues(id);
 
     return <div className="post-left">
 
@@ -18,9 +22,15 @@ export default function PostLeft({id} : {id: number}) {
 
             <div className="left-header-right" style={{textAlign: "right"}}>
 
-                <button className="button medium light view" style={{marginRight: 8}}>
-                    <span>Preview</span>&nbsp;<BoxArrowUpRight />
-                </button>
+                <a
+                    href={getBlogUrl(getSubdomain(), '/p/' + post.preview_id + "/" + currentLanguage.code)}
+                    target="_blank"
+                    data-testid="preview-button"
+                >
+                    <button className="button medium light view" style={{marginRight: 8}}>
+                        <span>Preview</span>&nbsp;<BoxArrowUpRight />
+                    </button>
+                </a>
                 
                 <button className="button medium">Publish</button>
 

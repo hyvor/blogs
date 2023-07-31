@@ -88,6 +88,7 @@ function LanguageTag({ id, language } : { id: number, language: Language }) {
         className={"lang-tag" + (editorState.languageId === language.id ? " active" : "")}
         data-tip={tip}
         onClick={onClick}
+        data-testid={"lang-tag-" + language.code}
     >
         <span className="code">{language.code}</span>
         <span className="status-icon">

@@ -41,6 +41,8 @@ export default function Post({ id, subdomain, type }: { id: number, subdomain: s
         <div className="post-inner">
             <PostLeft id={id} />
             <PostRight id={id} />
+
+            <Tooltip place="bottom" />
         </div>
 
     </div>
