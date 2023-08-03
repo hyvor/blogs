@@ -56,6 +56,18 @@ export default function Post({ id, subdomain, type }: { id: number, subdomain: s
         };
     });
 
+    useEffect(() => {
+        const resetPostEditorIdOnClose = () => {
+            resetPostEditorId();
+        };
+    
+        window.addEventListener('beforeunload', resetPostEditorIdOnClose);
+    
+        return () => {
+            window.removeEventListener('beforeunload', resetPostEditorIdOnClose);
+        };
+    }, []);
+
     return <div className={"post-editor fullscreen"}>
 
         <div className="pos-rel">
