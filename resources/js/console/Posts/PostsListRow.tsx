@@ -44,6 +44,8 @@ export default function PostsListRow({ id, subdomain }: { id: number, subdomain:
 
     const [postLock, setPostLock] = useState(post.editing_user ? post.editing_user.id !== Object.values(users)[0]!.id : false);
 
+    const [postEditor, setPostEditor] = useState(post.editing_user);
+
     // Dyanmic post lock
     useEffect(() => {
         const blogId = activeBlog.blog.id;
@@ -67,8 +69,10 @@ export default function PostsListRow({ id, subdomain }: { id: number, subdomain:
             if (e.postId === post.id) {
                 if (e.user == null)
                     setPostLock(false);
-                else
+                else {
                     setPostLock(e.user.id !== Object.values(users)[0]!.id);
+                    setPostEditor(e.user);
+                }
             }
         });
         
@@ -88,8 +92,9 @@ export default function PostsListRow({ id, subdomain }: { id: number, subdomain:
     const handlePostLinkClick = (e: any) => {
         if (postLock) {
             e.preventDefault();
+            const postEditorName = postEditor?.variants[0] ? postEditor?.variants[0].name : 'User';
             toast.warning(
-                <div>This post is under editing</div>,
+                <div>{`This post is under editing by ${postEditorName}`}</div>,
                 {
                     autoClose: 5000
                 }
