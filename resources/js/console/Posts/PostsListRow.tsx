@@ -20,6 +20,7 @@ import Tooltip from '../ReusableComponents/Tooltip';
 import ReactTooltip from 'react-tooltip';
 import DualSetting from '../ReusableComponents/DualSetting';
 import { PopupConfirm } from '../ReusableComponents/Popup';
+import { useNavigate } from "react-router-dom";
 
 export default function PostsListRow({ id, subdomain }: { id: number, subdomain: string }) {
 
@@ -82,19 +83,32 @@ export default function PostsListRow({ id, subdomain }: { id: number, subdomain:
         
     }, [activeBlog]);
 
-    const PostEditingPopup = () => <PopupConfirm 
-                                        title={'This post is under editing'}
-                                        text={'This post is being edited by ' + postEditor?.variants[0].name + '. Do you want to force editing?'} 
-                                        name={'Force editing'} 
-                                        onClick={() => console.log('test')}
-                                        onCancel={() =>setShowLockPopup(false)}/>
-
     const handlePostLinkClick = (e: any) => {
         if (postLock && !showLockPopup) {
             e.preventDefault();
             setShowLockPopup(true);
         } 
     };
+
+    const forceEditPost = () => {
+        const update = {
+            editing_user_id: Object.values(users)[0].id
+        } as Partial<Post>
+
+        forceSavePost({
+            update,
+            onSave: () => {console.log('Post ' + post.id + ' under editing');}
+        });
+        window.location = location.pathname === toLink ? postsLink : toLink;
+    }
+
+
+    const PostEditingPopup = () => <PopupConfirm 
+                                        title={'This post is under editing'}
+                                        text={'This post is being edited by ' + postEditor?.variants[0].name + '. Do you want to force editing ?'} 
+                                        name={'Force editing'} 
+                                        onClick={() => forceEditPost()}
+                                        onCancel={() =>setShowLockPopup(false)}/>
 
     return <NavLink
         key={post.id}
@@ -103,7 +117,7 @@ export default function PostsListRow({ id, subdomain }: { id: number, subdomain:
         disabled={postLock}
         className={"posts-list-item" + ` ${variant.status} ${permClass}`}>
 
-        {showLockPopup ? <PostEditingPopup /> : null}
+        {showLockPopup && <PostEditingPopup />}
 
         <div>
             <div className="post-title">
