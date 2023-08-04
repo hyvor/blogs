@@ -18,6 +18,8 @@ import Toast from '../ReusableComponents/Toast';
 import { toast } from 'react-toastify';
 import Tooltip from '../ReusableComponents/Tooltip';
 import ReactTooltip from 'react-tooltip';
+import DualSetting from '../ReusableComponents/DualSetting';
+import { PopupConfirm } from '../ReusableComponents/Popup';
 
 export default function PostsListRow({ id, subdomain }: { id: number, subdomain: string }) {
 
@@ -45,6 +47,8 @@ export default function PostsListRow({ id, subdomain }: { id: number, subdomain:
     const [postLock, setPostLock] = useState(post.editing_user ? post.editing_user.id !== Object.values(users)[0]!.id : false);
 
     const [postEditor, setPostEditor] = useState(post.editing_user);
+
+    const [showLockPopup, setShowLockPopup] = useState(false);
 
     // Dyanmic post lock
     useEffect(() => {
@@ -78,19 +82,19 @@ export default function PostsListRow({ id, subdomain }: { id: number, subdomain:
         
     }, [activeBlog]);
 
+    const PostEditingPopup = () => <PopupConfirm 
+                                        title={'This post is under editing'}
+                                        text={'This post is being edited by ' + postEditor?.variants[0].name + '. Do you want to force editing?'} 
+                                        name={'Force editing'} 
+                                        onClick={() => console.log('test')}
+                                        onCancel={() =>setShowLockPopup(false)}/>
+
     const handlePostLinkClick = (e: any) => {
-        if (postLock) {
+        if (postLock && !showLockPopup) {
             e.preventDefault();
-            const postEditorName = postEditor?.variants[0] ? postEditor?.variants[0].name : 'User';
-            toast.warning(
-                <div>{`This post is under editing by ${postEditorName}`}</div>,
-                {
-                    autoClose: 5000
-                }
-            )
-        }
+            setShowLockPopup(true);
+        } 
     };
-    console.log(postEditor);
 
     return <NavLink
         key={post.id}
@@ -98,6 +102,8 @@ export default function PostsListRow({ id, subdomain }: { id: number, subdomain:
         onClick={handlePostLinkClick}
         disabled={postLock}
         className={"posts-list-item" + ` ${variant.status} ${permClass}`}>
+
+        {showLockPopup ? <PostEditingPopup /> : null}
 
         <div>
             <div className="post-title">
