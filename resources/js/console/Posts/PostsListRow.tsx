@@ -70,24 +70,13 @@ export default function PostsListRow({ id, subdomain }: { id: number, subdomain:
                 if (e.user == null)
                     setPostLock(false);
                 else {
-                    setPostLock(e.user.id !== Object.values(users)[0]!.id);
+                    setPostLock(e.user.id == Object.values(users)[0]!.id);
                     setPostEditor(e.user);
                 }
             }
         });
         
     }, [activeBlog]);
-
-    const updatePostEditorId = () => {
-        const update = {
-            editing_user_id: Object.values(users)[0].id
-        } as Partial<Post>
-
-        forceSavePost({
-            update,
-            onSave: () => {console.log('Post ' + post.id + ' under editing');}
-        });
-    }
 
     const handlePostLinkClick = (e: any) => {
         if (postLock) {
@@ -100,10 +89,8 @@ export default function PostsListRow({ id, subdomain }: { id: number, subdomain:
                 }
             )
         }
-        else {
-            updatePostEditorId();
-        }
     };
+    console.log(postEditor);
 
     return <NavLink
         key={post.id}
@@ -115,15 +102,14 @@ export default function PostsListRow({ id, subdomain }: { id: number, subdomain:
         <div>
             <div className="post-title">
                 {variant.title || '(Untitled)'}
-                <div data-tip data-for="registerTip">
-                    {postLock ? <Lock /> : null}
-                </div>
+                    {postLock ? 
+                        <div className='post-lock'>
+                            <img className='editor-image' src={postEditor?.picture_url ?? ''}></img>
+                            {`${postEditor?.variants[0].name}` ?? 'User'}&nbsp;
+                            <div className='post-editing-text'> is editing</div>
+                        </div>
+                    : null}
             </div>
-            {postLock && post.editing_user ?
-                <Tooltip id="registerTip" place="bottom">
-                    {`Post under modification by: ${post.editing_user.variants[0].name}`} 
-                </Tooltip> : null
-            }
 
             <div className="post-data">
                 <div className="post-date">

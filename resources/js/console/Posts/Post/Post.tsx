@@ -12,6 +12,8 @@ import pagesLogic from "../../logic/pagesLogic";
 import Discarder from './Discarder';
 import postLogic from '../../logic/postLogic';
 import { useValues } from 'kea';
+import usersLogic from '../../logic/usersLogic';
+import { Post as PostType } from "../../types";
 
 export default function Post({ id, subdomain, type }: { id: number, subdomain: string, type: string }) {
 
@@ -20,8 +22,20 @@ export default function Post({ id, subdomain, type }: { id: number, subdomain: s
     const pagesLogicInst = pagesLogic({ subdomain });
     const { savePost, forceSavePost } = usePostActions(id);
     const { post } = useValues(postLogic({ id }));
+    const { users } = useValues(usersLogic({ subdomain }));
 
     useSave(id);
+
+    const updatePostEditorId = () => {
+        const update = {
+            editing_user_id: Object.values(users)[0].id
+        } as Partial<PostType>
+
+        forceSavePost({
+            update,
+            onSave: () => {console.log('Post ' + post.id + ' under editing');}
+        });
+    }
 
     if (loadPostAjax.status === 'loading') {
         return <div className="post-loading">
@@ -57,6 +71,9 @@ export default function Post({ id, subdomain, type }: { id: number, subdomain: s
     });
 
     useEffect(() => {
+        // Put the post under editing when the page is loaded
+        updatePostEditorId();
+
         const resetPostEditorIdOnClose = () => {
             resetPostEditorId();
         };

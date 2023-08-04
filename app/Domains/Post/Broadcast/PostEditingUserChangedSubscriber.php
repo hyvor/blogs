@@ -12,7 +12,7 @@ class PostEditingUserChangedSubscriber
     public static function onPostUpdate(PostUpdatedEvent $event): void
     {
         PostEditingUserChangedBroadcast::dispatch($event->post);
-        if ($event->post->editing_user_id != $event->postOld->editing_user_id) {
+        if ($event->post->editing_user_id == $event->postOld->editing_user_id) {
             PostEditingUserChangedBroadcast::dispatch($event->post);
         }
     }
