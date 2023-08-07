@@ -168,3 +168,78 @@ it('converts iframes to embeds', function() {
 
 
 });
+
+it('converts p img to just img', function() {
+
+    Http::fake([
+        'https://example.com/page' => Http::response(<<<HTML
+            <article>
+                <p>
+                    <img src="https://example.com/image.jpg" />
+                </p>
+            </article>
+        HTML)
+    ]);
+
+    $scraper = new PageScraper(
+        blog(),
+        url: 'https://example.com/page',
+        options: new PageScraperOptions(contentSelector: 'article')
+    );
+    $scraper->scrape();
+
+    expect($scraper->content)->toBe(json_encode([
+        'type' => 'doc',
+        'content' => [
+            [
+                'type' => 'figure',
+                'content' => [
+                    [
+                        'type' => 'image',
+                        'attrs' => [
+                            'src' => 'https://example.com/image.jpg',
+                            'alt' => null,
+                            'width' => null,
+                            'height' => null,
+                        ]
+                    ]
+                ]
+            ]
+        ]
+    ]));
+
+});
+
+it('does not convert when p img has other elements', function() {
+
+    Http::fake([
+        'https://example.com/page' => Http::response(<<<HTML
+            <article>
+                <p>Hello World<img src="https://example.com/image.jpg" /></p>
+            </article>
+        HTML)
+    ]);
+
+    $scraper = new PageScraper(
+        blog(),
+        url: 'https://example.com/page',
+        options: new PageScraperOptions(contentSelector: 'article')
+    );
+    $scraper->scrape();
+
+    expect($scraper->content)->toBe(json_encode([
+        'type' => 'doc',
+        'content' => [
+            [
+                'type' => 'paragraph',
+                'content' => [
+                    [
+                        'type' => 'text',
+                        'text' => 'Hello World'
+                    ]
+                ]
+            ]
+        ]
+    ]));
+
+});

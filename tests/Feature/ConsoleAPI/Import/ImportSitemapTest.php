@@ -6,6 +6,7 @@ use App\Data\Enums\ImportTypeEnum;
 use App\Data\Enums\JobStatusEnum;
 use App\Domains\Import\Importer\ImportJob;
 use App\Domains\Import\ImportService;
+use App\Models\Import;
 use Carbon\Carbon;
 use Illuminate\Support\Facades\Http;
 use Illuminate\Support\Facades\Queue;
@@ -124,3 +125,22 @@ it('does not import when a pending import is there', function() {
         ->assertUnprocessable()
         ->assertSee('There is already an import in progress for this blog');
 });
+
+/*it('test import', function() {
+
+    $blog = blogWithAccessLanguageAndRoutes();
+
+    $json = consoleApi($blog, 'POST', '/data/import/sitemap/import', [
+        'sitemap_url' => 'https://pastebin.com/raw/jccAYy9s',
+        'css' => [
+            'content' => '.import-content',
+        ],
+        'import_images' => true,
+    ])->json();
+
+    $import = Import::find($json['id']);
+
+    $posts = $blog->posts;
+    dd($posts[0]->toArray());
+
+});*/

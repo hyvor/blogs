@@ -8,6 +8,7 @@ use App\Domains\Media\Exceptions\UploadException;
 use App\Models\Blog;
 use App\Models\Media;
 use Illuminate\Database\Eloquent\Collection;
+use Illuminate\Http\Client\ConnectionException;
 use Illuminate\Http\UploadedFile;
 use Illuminate\Support\Facades\File;
 use Illuminate\Support\Facades\Http;
@@ -79,7 +80,11 @@ class MediaRepository
     public function uploadFromUrl(Blog $blog, string $url, ?int $postId = null): Media
     {
 
-        $response = Http::get($url);
+        try {
+            $response = Http::timeout(10)->get($url);
+        } catch (ConnectionException) {
+            throw new UploadException('Error while fetching image file');
+        }
 
         if (! $response->successful()) {
             throw new UploadException();
