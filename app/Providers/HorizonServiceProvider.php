@@ -37,7 +37,7 @@ class HorizonServiceProvider extends HorizonApplicationServiceProvider
         Gate::define('viewHorizon', function ($user = null) {
             $user = Login::check();
             return $user && in_array($user->email, [
-                'supunkavinda1125@gmail.com',
+                'hi@supun.io',
                 'supun@hyvor.com',
             ], true);
         });
