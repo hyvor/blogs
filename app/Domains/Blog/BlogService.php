@@ -39,11 +39,13 @@ class BlogService
         string $subdomain,
         BlogTypeEnum $type = BlogTypeEnum::DEFAULT,
         BlogBillingTypeEnum $billingType = BlogBillingTypeEnum::PADDLE,
-        BlogIntegrationEnum $integration = null
+        BlogIntegrationEnum $integration = null,
+        ?string $ip = null
     ): Blog
     {
         $blog = Blog::create([
             'hyvor_user_id' => $userId,
+            'ip' => $ip,
             'subdomain' => $subdomain,
             'type' => $type,
             'billing_type' => $billingType,

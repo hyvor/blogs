@@ -22,6 +22,9 @@ class Kernel extends ConsoleKernel
 
         // marketing
         $schedule->job(EmailOctopusSyncJob::class)->daily();
+
+        // other
+        $schedule->command('cloudflare:reload')->daily(); // https://github.com/monicahq/laravel-cloudflare
     }
 
     protected function commands()
