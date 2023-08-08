@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useEffect, useState } from "react";
 import Editor from "../ProseMirror/Editor";
 import { usePostActions, usePostValues } from "../helpers";
 import PostLanguageSelector from "../PostLanguageSelector";
@@ -8,7 +8,7 @@ import { BoxArrowUpRight } from "react-bootstrap-icons";
 import { getBlogUrl } from "../../../lib/blog-helpers";
 import getSubdomain from "../../../logic-helpers/subdomain";
 
-export default function PostLeft({id} : {id: number}) {
+export default function PostLeft({id, postViewRef} : {id: number, postViewRef: React.RefObject<HTMLDivElement>}) {
 
     const { post, currentLanguage } = usePostValues(id);
 
@@ -38,13 +38,16 @@ export default function PostLeft({id} : {id: number}) {
 
         </div>
 
-        <div className="post-left-title">
-            <TitleRow id={id} />
+        <div className="post-left-body">
+            <div className="post-left-title">
+                <TitleRow id={id} />
+            </div>
+
+            <div className="post-left-editor">
+                <PostEditor id={id} />
+            </div>
         </div>
 
-        <div className="post-left-editor">
-            <PostEditor id={id} />
-        </div>
 
     </div>
 

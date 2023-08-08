@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useRef } from 'react';
 import Loader from '../../ReusableComponents/Loader';
 import Tooltip from '../../ReusableComponents/Tooltip';
 import { usePostValues, usePostActions } from "./helpers";
@@ -12,6 +12,7 @@ import pagesLogic from "../../logic/pagesLogic";
 import Discarder from './Discarder';
 import PostLeft from './New/PostLeft';
 import PostRight from './New/PostRight';
+import { CaretLeft, CaretLeftFill } from 'react-bootstrap-icons';
 
 export default function Post({ id, subdomain, type }: { id: number, subdomain: string, type: string }) {
 
@@ -19,6 +20,8 @@ export default function Post({ id, subdomain, type }: { id: number, subdomain: s
     const postsLogicInst = postsLogic({ subdomain });
     const pagesLogicInst = pagesLogic({ subdomain });
     const { savePost } = usePostActions(id)
+
+    const postViewRef = useRef<HTMLDivElement>(null);
 
     useSave(id);
 
@@ -36,14 +39,16 @@ export default function Post({ id, subdomain, type }: { id: number, subdomain: s
             pagesLogicInst.actions.navigateToPages();
     }
 
-    return <div className="new-post-view">
+    return <div className="new-post-view" ref={postViewRef}>
 
         <div className="post-inner">
-            <PostLeft id={id} />
+            <PostLeft id={id} postViewRef={postViewRef} />
             <PostRight id={id} />
-
-            <Tooltip place="bottom" />
         </div>
+
+        <button className="icon-button back-button" onClick={() => saveAndNavigateToList()} >
+            <CaretLeftFill />
+        </button>
 
     </div>
 

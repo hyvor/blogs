@@ -9,6 +9,20 @@
     overflow: auto;
     padding: 20px 0;
 
+    .back-button {
+        margin-left: 15px;
+        margin-top: 15px;
+        position: fixed;
+        top: 0;
+        left: 0;
+        z-index: 1;
+        font-weight: 600;
+        background-color: $color-accent-light;
+        font-size: 15px;
+        width: 35px;
+        height: 35px;
+    }
+
     .post-inner {
         width: 1200px;
         margin: auto;
@@ -18,11 +32,61 @@
 
     .post-left {
         width: 700px;
-        border-radius: 20px;
-        box-shadow: 0 0 30px rgb(0 0 0 / 5%);
-        background-color: #fff;
         min-height: calc(100vh - 40px);
         position: relative;
+
+        .post-left-header {
+            padding: 15px 25px;
+            display: flex;
+            border-radius: 20px;
+            box-shadow: 0 0 30px rgb(0 0 0 / 5%);
+            background-color: #fff;
+
+            position: sticky;
+            top: -20px;
+            z-index: 10;
+
+            &.fixed {
+                position: fixed;
+                top: 0;
+                z-index: 10;
+            }
+
+            .left-header-left {
+                flex: 1;
+            }
+
+            .post-languages-wrap {
+                .post-languages {
+                    flex: 1;
+                    .lang-tag {
+                        display: inline-block;
+                        padding: 5px 10px;
+                        margin-right: 3px;
+                        background: $color-input;
+                        font-weight: 600;
+                        font-size: 12px;
+                        border-radius: 20px;
+                        cursor: pointer;
+        
+                        .status-icon {
+                            margin-left: 5px;
+                        }
+        
+                        &.active {
+                            background: $color-accent-light;
+                        }
+                    }
+                }
+            }
+        }
+
+        .post-left-body {
+            margin-top: 15px;
+            border-radius: 20px;
+            box-shadow: 0 0 30px rgb(0 0 0 / 5%);
+            background-color: #fff;
+        }
 
         .post-left-title {
             padding: 15px 25px;
@@ -40,39 +104,6 @@
                 display: block;
                 width: 100%;
                 background: none;
-            }
-        }
-
-        .post-left-header {
-            padding: 15px 25px 0;
-            display: flex;
-
-            .left-header-left {
-                flex: 1;
-            }
-        }
-
-        .post-languages-wrap {
-            .post-languages {
-                flex: 1;
-                .lang-tag {
-                    display: inline-block;
-                    padding: 5px 10px;
-                    margin-right: 3px;
-                    background: $color-input;
-                    font-weight: 600;
-                    font-size: 12px;
-                    border-radius: 20px;
-                    cursor: pointer;
-    
-                    .status-icon {
-                        margin-left: 5px;
-                    }
-    
-                    &.active {
-                        background: $color-accent-light;
-                    }
-                }
             }
         }
 
