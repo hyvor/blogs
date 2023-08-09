@@ -29,12 +29,7 @@ export default function PostRight({id} : {id: number}) {
             <ToolbarButton icon={<Magic />} text="AI" />
         </div>
 
-        <div className="toolbar-content">
-
-            {section === 'Settings' && <Settings id={id} />}
-
-
-        </div>
+        {section === 'Settings' && <Settings id={id} />}
 
     </div>
 

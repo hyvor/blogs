@@ -51,11 +51,13 @@ const postLogic = kea<postLogicType>([
         set: (obj: Post) => ({obj}),
         setOriginal: (obj: Post) => ({obj}),
         updatePostValue: (key: keyof Post, value: any) => ({key, value}),
+        updatePost: (update: Partial<Post>) => ({update}),
         updateCurrentPostVariantValue: (key: keyof PostVariant, value: any) => ({
             key,
             value,
             languageId: values.editorState.languageId
         }),
+        updateCurrentPostVariant: (update: Partial<PostVariant> & {language_id: number}) => ({update}),
         addVariant: (variant: PostVariant) => ({variant}),
         removeVariant: (languageId: number) => ({languageId}),
         changeEditorState: (key: keyof PostEditorState, value: any) => ({key, value})
@@ -153,11 +155,21 @@ const postLogic = kea<postLogicType>([
             {
                 set: (_, {obj}) => obj,
                 updatePostValue: (state, {key, value}) => ({...state, ...{[key]: value}} as Post),
+                updatePost: (state, {update}) => ({...state, ...update} as Post),
                 updateCurrentPostVariantValue: (state, {key, value, languageId}) => {
                     const copy = {...state}
                     copy.variants = copy.variants.map(
                         variant => variant.language_id === languageId ?
                             {...variant, [key]: value || null} :
+                            variant
+                    );
+                    return copy;
+                },
+                updateCurrentPostVariant: (state, {update}) => {
+                    const copy = {...state}
+                    copy.variants = copy.variants.map(
+                        variant => variant.language_id === update.language_id ?
+                            {...variant, ...update} :
                             variant
                     );
                     return copy;

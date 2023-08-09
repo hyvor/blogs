@@ -112,7 +112,7 @@
     .post-right {
         flex: 1;
         margin-left: 15px;
-        max-height: calc(100vh - 40px);
+        height: calc(100vh - 40px);
         border-radius: 20px;
         box-shadow: 0 0 30px rgba(0,0,0,0.05);
         background-color: #fff;
@@ -120,6 +120,7 @@
         flex-direction: column;
         position: sticky;
         top: 0px;
+        z-index: 10;
 
         .toolbar {
             display: flex;
@@ -164,6 +165,10 @@
             padding: 20px 25px;
             overflow: auto;
             flex: 1;
+        }
+
+        .toolbar-footer {
+            border-top: 1px solid $color-accent-light;
         }
 
 
@@ -235,6 +240,26 @@
 
                 &.code .CodeMirror {
                     height: 200px;
+                }
+            }
+        }
+
+        .post-settings-save {
+            padding: 15px 25px;
+
+            .changed {
+                text-align: center;
+                color: $color-text-light;
+                text-transform: capitalize;
+                margin-bottom: 10px;
+                .changed-title {
+                    font-weight: 600;
+                }
+            }
+            .save-discard {
+                text-align: center;
+                button:first-child {
+                    margin-right: 5px;
                 }
             }
         }
