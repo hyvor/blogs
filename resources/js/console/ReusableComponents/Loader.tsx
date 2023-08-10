@@ -1,7 +1,18 @@
 import React from "react";
 
+interface LoaderProps {
+    size?: 'default' | 'small' | 'mini',
+    color?: string, 
+    padding?: number,
+    inline?: boolean
+}
 
-export default function Loader({size = 'default', padding = 0} : {size?: 'default' | 'small' | 'mini', padding?: number}) {
+export default function Loader({
+    size = 'default', 
+    color = 'default',
+    padding = 0,
+    inline = false
+} : LoaderProps) {
 
     const sizePx = {
         'mini': 14,
@@ -10,10 +21,16 @@ export default function Loader({size = 'default', padding = 0} : {size?: 'defaul
     }[size];
 
     return <div
-        className={`global-loader ${size}`}
+        className={`global-loader ${size}${inline ? ' inline' : ''}`}
         style={{ padding }}
     >
-        <span className="spinner" style={{width: sizePx, height: sizePx}}></span>
+        <span 
+            className="spinner" 
+            style={{
+                width: sizePx, 
+                height: sizePx,
+                borderColor: color ? color : undefined
+            }}></span>
     </div>;
 
 }

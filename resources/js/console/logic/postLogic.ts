@@ -11,7 +11,7 @@ import {PostEditorState} from "../states";
 import merge from "deepmerge";
 import { usePostValues } from "../Posts/Post/helpers";
 
-async function updatePost(post: Post, diff: Partial<Post>) {
+export async function updatePost(post: Post, diff: Partial<Post>) {
 
     if (diff.variants) {
         for (let variant of diff.variants) {
@@ -102,6 +102,12 @@ const postLogic = kea<postLogicType>([
             const response = await updatePost(values.post, diff);
             actions.set(response)
 
+            typeof onSave === 'function' && onSave(response);
+        },
+
+        savePostDiff: async({diff, onSave} : {diff: Partial<Post>, onSave: Function}) => {
+            const response = await updatePost(values.post, diff);
+            actions.set(response)
             typeof onSave === 'function' && onSave(response);
         },
 

@@ -11,6 +11,7 @@ interface Props {
 
     /**
      * Send an ID if the same component is used for multiple different values/files
+     * This refreshes the component when the ID changes
      * (for example in theme file editing)
      */
     id?: null | string | number,

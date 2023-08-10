@@ -261,6 +261,11 @@
                 button:first-child {
                     margin-right: 5px;
                 }
+                button {
+                    .global-loader {
+                        margin-left: 5px;
+                    }
+                }
             }
         }
 

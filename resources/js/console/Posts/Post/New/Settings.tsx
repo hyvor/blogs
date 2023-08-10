@@ -1,4 +1,4 @@
-import React, { Fragment, ReactNode, useState } from "react";
+import React, { Fragment, ReactNode, useEffect, useState } from "react";
 import { usePostActions, usePostValues } from "../helpers";
 import PostAuthors from "../PostAuthors";
 import PostTags from "../PostTags";
@@ -10,6 +10,7 @@ import CodemirrorEditor from "../../../ReusableComponents/CodemirrorEditor";
 import Button from "../../../ReusableComponents/Button";
 import { Post, PostVariant } from "../../../types";
 import { PopupConfirm } from "../../../ReusableComponents/Popup";
+import Loader from "../../../ReusableComponents/Loader";
 
 
 const settingToReadable = {
@@ -32,14 +33,17 @@ export default function Settings({id}: {id: number}) {
     const {
         updatePostValue, updateCurrentPostVariantValue,
         updatePost, updateCurrentPostVariant,
+        savePostDiff,
         deletePost, deleteVariant,
-        savePost,
         changeEditorState
     } = usePostActions(id);
 
 
     const [settingsType, setSettingsType] = useState<'basic' | 'advanced'>('basic');
     const [isDiscarding, setIsDiscarding] = useState(false);
+    const [isSaving, setIsSaving] = useState(false);
+
+    const [codemirrorUpdateId, setCodemirrorUpdateId] = useState(0);
 
     const diffKeys = [
         'authors', 
@@ -78,13 +82,52 @@ export default function Settings({id}: {id: number}) {
         updateCurrentPostVariant({...variantUpdate, language_id: currentLanguage.id});
 
         setIsDiscarding(false);
+        setCodemirrorUpdateId(codemirrorUpdateId + 1);
     }
+
+    function handleSave() {
+        setIsSaving(true);
+
+        const postDiff = {} as Partial<Post>;
+
+        changedKeys.forEach(key => (postDiff as any)[key] = diff[key]);
+
+        if (changedVariantKeys.length > 0) {
+            const variant = {} as Partial<PostVariant>;
+            variant.language_id = currentLanguage.id;
+            changedVariantKeys.forEach(key => (variant as any)[key] = diffVariant![key]);
+            postDiff.variants = [variant as PostVariant];
+        }
+
+        savePostDiff({
+            diff: postDiff,
+            onSave: () => {
+                setIsSaving(false);
+            }
+        });
+    }
+
+    useEffect(() => {
+
+        function handleClose(event: BeforeUnloadEvent) {
+            if (changedAllKeys.length > 0) {
+                event.preventDefault();
+                event.returnValue = '';
+            }
+        }
+
+        window.addEventListener('beforeunload', handleClose);
+        return () => {
+            window.removeEventListener('beforeunload', handleClose);
+        }
+
+    }, []);
 
     return <Fragment>
 
         <div className="toolbar-content">
 
-            <div className="post-settings-wrap">
+            <div className="post-settings-wrap" data-testid="post-settings">
 
                 <div className="setting-select">
                     <button 
@@ -107,6 +150,7 @@ export default function Settings({id}: {id: number}) {
                                 value={currentVariant.slug || ''}
                                 onChange={(e) => updateCurrentPostVariantValue("slug", e.target.value)}
                                 maxLength={250}
+                                data-testid="slug-input"
                             />
                         </Setting>
 
@@ -121,6 +165,7 @@ export default function Settings({id}: {id: number}) {
                                 value={currentVariant.description || ''}
                                 onChange={e => updateCurrentPostVariantValue('description', e.target.value)}
                                 maxLength={350}
+                                data-testid="description-input"
                             />
                         </Setting>
 
@@ -154,12 +199,14 @@ export default function Settings({id}: {id: number}) {
                             {
                                 currentVariant.status !== 'published' && currentVariant.status !== 'scheduled' ?
                                 <div className="not-published">Not published</div> :
-                                <ReactDatePicker
-                                    selected={dayjs.unix(post.published_at as number).toDate()}
-                                    onChange={(date: Date) => updatePostValue("published_at", dayjs(date).unix())}
-                                    showTimeInput
-                                    dateFormat="yyyy-MM-dd h:mm aa"
-                                />
+                                <div data-testid="publish-time-input-wrap">
+                                    <ReactDatePicker
+                                        selected={dayjs.unix(post.published_at as number).toDate()}
+                                        onChange={(date: Date) => updatePostValue("published_at", dayjs(date).unix())}
+                                        showTimeInput
+                                        dateFormat="yyyy-MM-dd h:mm aa"
+                                    />
+                                </div>
                             }
                         </Setting>
 
@@ -171,6 +218,7 @@ export default function Settings({id}: {id: number}) {
                             <Checkbox
                                 checked={post.is_featured}
                                 onChange={(featured: boolean) => updatePostValue('is_featured', featured)}
+                                testId="featured-checkbox"
                             />
                         </Setting>
 
@@ -197,6 +245,7 @@ export default function Settings({id}: {id: number}) {
                                     value={post.canonical_url || ''}
                                     onChange={e => updatePostValue('canonical_url', e.target.value)}
                                     maxLength={250}
+                                    data-testid="canonical-url-input"
                                 />
                             </Setting>
 
@@ -209,6 +258,10 @@ export default function Settings({id}: {id: number}) {
                                     extension="twig"
                                     value={post.code_head || ''}
                                     onChange={(val: string) => updatePostValue('code_head', val)}
+                                    props={{
+                                        "data-testid": "code-head-input"
+                                    }}
+                                    id={codemirrorUpdateId}
                                 />
                             </Setting>
 
@@ -221,6 +274,10 @@ export default function Settings({id}: {id: number}) {
                                     extension="twig"
                                     value={post.code_foot || ''}
                                     onChange={(val: string) => updatePostValue('code_foot', val)}
+                                    props={{
+                                        "data-testid": "code-foot-input"
+                                    }}
+                                    id={codemirrorUpdateId}
                                 />
                             </Setting>
 
@@ -258,8 +315,9 @@ export default function Settings({id}: {id: number}) {
                         Discard
                     </Button>
 
-                    <Button onClick={() => {}}>
+                    <Button onClick={handleSave}>
                         Save Settings
+                        { isSaving && <Loader size="mini" inline={true} color="#fff" /> }
                     </Button>
 
                 </div>
@@ -271,13 +329,16 @@ export default function Settings({id}: {id: number}) {
         {
             isDiscarding &&
 
-            <PopupConfirm
-                title="Discard Changes?"
-                text="Are you sure you want to discard your changes?"
-                name="Discard"
-                onClick={handleDiscardChanges}
-                onCancel={() => setIsDiscarding(false)}
-            />
+            <div data-testid="discard-popup">
+                <PopupConfirm
+                    title="Discard Changes?"
+                    text="Are you sure you want to discard your changes?"
+                    name="Discard"
+                    buttonClass="danger"
+                    onClick={handleDiscardChanges}
+                    onCancel={() => setIsDiscarding(false)}
+                />
+            </div>
         }
 
     </Fragment>
