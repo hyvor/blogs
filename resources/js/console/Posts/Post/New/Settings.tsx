@@ -179,6 +179,7 @@ export default function Settings({id}: {id: number}) {
 
                         <Setting 
                             title="Tags"
+                            className="has-top-padding"
                         >
                             <PostTags post={post} updatePostValue={updatePostValue} />
                         </Setting>

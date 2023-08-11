@@ -1,21 +1,13 @@
 import React, { useEffect, useRef, useState } from 'react';
-import {useActions, useValues} from "kea";
 import api from "../../../lib/api";
-import {Post, User, UserVariant} from "../../../types";
-import usersLogic, {IDKeyedUsers} from "../../../logic/usersLogic";
+import {Post, User} from "../../../types";
 import {getPrimaryLanguage} from "../../../lib/blog-helpers";
 import getSubdomain from "../../../logic-helpers/subdomain";
-import {OnChangeValue} from "react-select";
 import ProfilePicture from '../../../ReusableComponents/ProfilePicture';
 import { OutsideClick } from '../../../ReusableComponents/OutsideClick';
 import Loader from '../../../ReusableComponents/Loader';
 
-interface SelectOption {
-    value: number;
-    label: string | null;
-}
-
-type UpdatePostValueType<T extends keyof Post = keyof Post> = (key: T, value: Post[T]) => void;
+export type UpdatePostValueType<T extends keyof Post = keyof Post> = (key: T, value: Post[T]) => void;
 
 export default function PostAuthors({ post, updatePostValue } : { post: Post, updatePostValue: UpdatePostValueType }) {
 
@@ -38,7 +30,7 @@ export default function PostAuthors({ post, updatePostValue } : { post: Post, up
 
                             const variant = author.variants.find(v => v.language_id === languageId);
 
-                            return <span className="post-author">
+                            return <span className="post-author" key={author.id}>
                                 <ProfilePicture user={author} size={16} /> 
                                 <span className="name">
                                     { variant?.name || 'Anonymous' }

@@ -11,7 +11,7 @@ export default function CreateTagPopup({ onClose } : { onClose: Function }) {
     const [name, setName] = useState('');
 
     function handleClick() {
-        create({name, onCreate: onClose})
+        create({name, onCreate: () => onClose()})
     }
 
     return <Popup

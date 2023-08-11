@@ -45,11 +45,11 @@ const tagsLogic = kea<tagsLogicType>([
             actions.setTagsListHasMore(tags.length === 50);
         },
 
-        create: async ({name, onCreate} : {name: string, onCreate: Function}) => {
+        create: async ({name, onCreate} : {name: string, onCreate: (tag: Tag) => void}) => {
             const tag = await api.post<Tag>(props.subdomain, '/tag', {name})
             actions.addTags([tag])
             actions.setTagsList([tag.id, ...values.tagsList])
-            onCreate();
+            onCreate(tag);
         },
 
         update: async ({tag, onUpdate} : {tag: Tag, onUpdate: Function}) => {
