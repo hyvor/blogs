@@ -1,7 +1,7 @@
 import React, { Fragment, ReactNode, useEffect, useState } from "react";
 import { usePostActions, usePostValues } from "../helpers";
-import PostAuthors from "../PostAuthors";
-import PostTags from "../PostTags";
+import PostAuthors from "./PostAuthors";
+import PostTags from "./PostTags";
 import ReactDatePicker from "react-datepicker";
 import dayjs from "dayjs";
 import Checkbox from "../../../ReusableComponents/Checkbox";
@@ -172,6 +172,7 @@ export default function Settings({id}: {id: number}) {
                         <Setting 
                             title="Authors"
                             description="The unique part of the URL to identify this post"
+                            className="has-top-padding"
                         >
                             <PostAuthors post={post} updatePostValue={updatePostValue} />
                         </Setting>

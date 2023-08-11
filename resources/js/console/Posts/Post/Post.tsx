@@ -23,7 +23,7 @@ export default function Post({ id, subdomain, type }: { id: number, subdomain: s
 
     const postViewRef = useRef<HTMLDivElement>(null);
 
-    useSave(id);
+    // useSave(id);
 
     if (loadPostAjax.status === 'loading') {
         return <div className="post-loading">

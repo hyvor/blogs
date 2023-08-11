@@ -135,3 +135,204 @@
     }
 
 } */
+
+.post-settings-wrap {
+
+    .setting-select {
+        text-align: center;
+        //border-bottom: 1px solid $color-accent-light;
+        padding-bottom: 20px;
+        button {
+            all: unset;
+            cursor: pointer;
+            display: inline-block;
+            padding: 4px 10px;
+            font-size: 12px;
+            border-radius: 20px;
+            transition: .1s background, .1s color;
+            &.active {
+                font-weight: 600;
+                background: $color-accent;
+                color: #fff;
+            }
+        }
+    }
+
+    .post-setting {
+        display: flex;
+        .post-setting-left {
+            flex: 1;
+            padding-top: 10px;
+        }
+        .post-setting-title {
+            font-weight: 600;
+        }
+        .post-setting-content {
+            flex: 3;
+        }
+        &:not(:last-child) {
+            margin-bottom: 20px;
+        }
+
+
+        // other
+        .description-input {
+            min-height: 100px;
+        }
+        .featured-image {
+            height:150px;      
+            background: $color-input;
+            border-radius: 20px;
+            .no-image {
+                cursor: pointer;
+                color: $color-text-light;
+                width: 100%;
+                height: 100%;
+                display: flex;
+                align-items: center;
+                justify-content: center;
+            }
+        }
+        &.publish-time .not-published {
+            margin-top: 10px;
+            color: $color-text-light;
+        }
+
+        &.has-top-padding .post-setting-content  {
+            padding-top: 10px;
+        }
+
+        &.code .CodeMirror {
+            height: 200px;
+        }
+    }
+
+    .post-authors {
+
+        display: flex;
+
+        .left {
+            flex: 1;
+        }
+
+        .post-author {
+            padding: 4px 8px;
+            background-color: $color-input;
+            border-radius: 20px;
+            display: inline-flex;
+            align-items: center;
+            margin-right: 5px;
+            margin-bottom: 5px;
+            vertical-align: middle;
+            .name {
+                vertical-align: middle;
+                margin-left: 5px;
+            }
+            .remove {
+                display: inline-flex;
+                align-items: center;
+                justify-content: center;
+                width: 16px;
+                height: 16px;
+                margin-left: 5px;
+                cursor: pointer;
+                border-radius: 50%;
+                font-weight: 600;
+                &:hover {
+                    background-color: $color-red;
+                    color: $color-white;
+                }
+            }
+        }
+        .no-authors {
+            color: $color-text-light;
+        }
+
+        .author-adder {
+            vertical-align: top;
+            position: relative;
+            .plus {
+                display: inline-flex;
+                width: 25px;
+                height: 25px;
+                background-color: $color-input;
+                border-radius: 50%;
+                align-items: center;
+                justify-content: center;
+                cursor: pointer;
+                font-weight: 600;
+                &:hover {
+                    background-color: $color-grey;
+                }
+            }
+
+            .adder-popup {
+                position: absolute;
+                top: 100%;
+                right: 0;
+                margin-top: 5px;
+                width: 300px;
+                background-color: $box-color;
+                border-radius: $box-radius;
+                box-shadow: $box-shadow;
+                z-index: 10;
+                padding: 15px;
+                .no-users {
+                    padding: 40px;
+                    color: $color-text-light;
+                    text-align: center;
+                }
+                .users {
+                    margin-top: 5px;
+                }
+                .user {
+                    padding: 6px 14px;
+                    display: flex;
+                    align-items: center;
+                    border-radius: 20px;
+                    cursor: pointer;
+                    white-space: nowrap;
+                    overflow: hidden;
+                    text-overflow: ellipsis;
+                    font-size: .95rem;
+                    .name {
+                        margin-left: 5px;
+                    }
+                    &:hover {
+                        background-color: $color-hover;
+                    }
+                    &.already-author {
+                        opacity: 0.3;
+                        pointer-events: none;
+                    }
+                }
+            }
+        }
+    }
+    
+}
+
+.post-settings-save {
+    padding: 15px 25px;
+
+    .changed {
+        text-align: center;
+        color: $color-text-light;
+        text-transform: capitalize;
+        margin-bottom: 10px;
+        .changed-title {
+            font-weight: 600;
+        }
+    }
+    .save-discard {
+        text-align: center;
+        button:first-child {
+            margin-right: 5px;
+        }
+        button {
+            .global-loader {
+                margin-left: 5px;
+            }
+        }
+    }
+}

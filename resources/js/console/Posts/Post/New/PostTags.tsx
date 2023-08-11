@@ -1,11 +1,11 @@
 import React from 'react';
 import {useActions, useValues} from "kea";
 import AsyncSelect from "react-select/async";
-import api from "../../lib/api";
-import {Post, Tag, TagVariant, User} from "../../types";
-import {getPrimaryLanguage} from "../../lib/blog-helpers";
-import tagsLogic, {IDKeyedTags} from "../../logic/tagsLogic";
-import getSubdomain from "../../logic-helpers/subdomain";
+import api from "../../../lib/api";
+import {Post, Tag, TagVariant, User} from "../../../types";
+import {getPrimaryLanguage} from "../../../lib/blog-helpers";
+import tagsLogic, {IDKeyedTags} from "../../../logic/tagsLogic";
+import getSubdomain from "../../../logic-helpers/subdomain";
 import {OnChangeValue} from "react-select";
 
 interface SelectOption {

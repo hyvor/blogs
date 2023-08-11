@@ -1,7 +1,5 @@
-import React, { useState } from 'react';
+import React, { useEffect, useRef, useState } from 'react';
 import {useActions, useValues} from "kea";
-import subdomainLogic from "../../../logic/subdomainLogic";
-import AsyncSelect from "react-select/async";
 import api from "../../../lib/api";
 import {Post, User, UserVariant} from "../../../types";
 import usersLogic, {IDKeyedUsers} from "../../../logic/usersLogic";
@@ -9,59 +7,21 @@ import {getPrimaryLanguage} from "../../../lib/blog-helpers";
 import getSubdomain from "../../../logic-helpers/subdomain";
 import {OnChangeValue} from "react-select";
 import ProfilePicture from '../../../ReusableComponents/ProfilePicture';
+import { OutsideClick } from '../../../ReusableComponents/OutsideClick';
+import Loader from '../../../ReusableComponents/Loader';
 
 interface SelectOption {
     value: number;
     label: string | null;
 }
 
-export default function PostAuthors({ post, updatePostValue } : { post: Post, updatePostValue: Function }) {
+type UpdatePostValueType<T extends keyof Post = keyof Post> = (key: T, value: Post[T]) => void;
+
+export default function PostAuthors({ post, updatePostValue } : { post: Post, updatePostValue: UpdatePostValueType }) {
 
     const subdomain = getSubdomain()
-
-    const usersLogicInst = usersLogic({subdomain});
-    const { users } = useValues(usersLogicInst) as { users: IDKeyedUsers }
-    const { addUsers } = useActions(usersLogicInst)
+    const [isAdding, setIsAdding] = useState(false);
     const languageId = getPrimaryLanguage(subdomain).id
-
-    const options: Array<SelectOption> = [];
-
-    for (let id in users) {
-        options.push({
-            value: parseInt(id),
-            label: users[id].variants.find(v => v.language_id === languageId)?.name || ''
-        })
-    }
-
-    const defaultValue = post.authors.map(author => (
-        {
-            value: author.id ,
-            label: author.variants.find(v => v.language_id === languageId)?.name || ''
-        }
-    ))
-
-    async function loader(input: string) : Promise<Array<SelectOption>> {
-
-        const users : Array<User> = await api.get(subdomain, '/users/search', {
-            search: input
-        });
-
-        addUsers(users)
-
-        return users.map(user => ({
-            value: user.id,
-            label: user.variants.find(v => v.language_id === languageId)?.name || ''
-        }))
-
-    }
-
-    function handleChange(options: OnChangeValue<SelectOption, true>) {
-
-        const authors : Array<User> = [];
-        options.forEach(({value}) => authors.push(users[value]))
-        updatePostValue('authors', authors);
-
-    }
 
     function handleRemove(id: number) {
         const authors = post.authors.filter(author => author.id !== id);
@@ -70,84 +30,147 @@ export default function PostAuthors({ post, updatePostValue } : { post: Post, up
 
     return <div className="post-authors">
 
-        {
-            post.authors.map(author => {
+        <div className="left">
 
-                const variant = author.variants.find(v => v.language_id === languageId);
+                {
+                    post.authors.length ?
+                    post.authors.map(author => {
 
-                return <span className="post-author">
-                    <ProfilePicture user={author} size={16} /> 
-                    <span className="name">
-                        { variant?.name || 'Anonymous' }
-                    </span>
-                    <span className="remove" onClick={() => handleRemove(author.id)}>
-                        &times;
-                    </span>
-                </span>
+                            const variant = author.variants.find(v => v.language_id === languageId);
 
-            })
-        }
-
-        <Adder post={post} />
-
-    </div>
-
-    /* return <AsyncSelect
-        loadOptions={loader}
-        cacheOptions
-        defaultOptions={options}
-        // defaultValue={defaultValue}
-        value={defaultValue}
-        isMulti
-        classNamePrefix="react-select"
-        className="react-select react-select-normal react-select-multi"
-        onChange={handleChange}
-    /> */
-
-}
-
-function Adder({post} : { post: Post}) {
-
-    const subdomain = getSubdomain()
-
-    const usersLogicInst = usersLogic({subdomain});
-    const { users } = useValues(usersLogicInst) as { users: IDKeyedUsers }
-    const { addUsers } = useActions(usersLogicInst)
-    const languageId = getPrimaryLanguage(subdomain).id
-
-    const [isAdding, setIsAdding] = useState(false);
-
-    return <span className="author-adder">
-        <span className="plus" onClick={() => setIsAdding(!isAdding)}>+</span>
-
-        {
-            isAdding && <div className="adder">
-
-                <div className="search-wrap">
-                    <input type="text" placeholder="Search..." />
-                </div>
-
-                <div className="users">
-
-                    {
-                        Object.values(users).map((user: User) => {
-
-                            const variant = user.variants.find(v => v.language_id === languageId);
-
-                            return <span className="user">
-                                <ProfilePicture user={user} size={16} /> 
+                            return <span className="post-author">
+                                <ProfilePicture user={author} size={16} /> 
                                 <span className="name">
                                     { variant?.name || 'Anonymous' }
                                 </span>
+                                <span className="remove" onClick={() => handleRemove(author.id)}>
+                                    &times;
+                                </span>
                             </span>
 
-                        })
-                    }
+                        }) :
+                        <span className="no-authors">No Authors</span>
+                }
 
-                </div>
+        </div>
+
+        <div className="right">
+
+            <span className="author-adder">
+                <span className="plus" onClick={e => {
+                    e.stopPropagation();
+                    setIsAdding(!isAdding)
+                }}>+</span>
+                { isAdding &&
+                    <Adder post={post} updatePostValue={updatePostValue} onClose={() => setIsAdding(false)} />
+                }
+            </span>
+
+        </div>
+
+    </div>
+
+}
+
+function Adder({post, updatePostValue, onClose} : { post: Post, updatePostValue: UpdatePostValueType, onClose: Function}) {
+
+    const subdomain = getSubdomain()
+
+    const [isLoading, setIsLoading] = useState(true);
+    const [users, setUsers] = useState<User[]>([]);
+    const [searchedUsers, setSearchedUsers] = useState<User[]>([]);
+    const [search, setSearch] = useState('');
+
+    const searchTimeout = useRef<null | ReturnType<typeof setTimeout>>(null);
+
+    const languageId = getPrimaryLanguage(subdomain).id
+
+    const availableUsers = Object.values(search.trim() !== '' ? searchedUsers : users);
+
+    function handleAdd(user: User) {
+        if (!post.authors.find(author => author.id === user.id))
+            updatePostValue('authors', [...post.authors, user]);
+        onClose();
+    }
+
+    useEffect(() => {
+        api.get<User[]>(subdomain, '/users').then(users => {
+            setUsers(users);
+            setIsLoading(false);
+        });
+    }, []);
+
+    function handleSearchChange(val: string) {  
+        
+        setSearch(val);
+        setIsLoading(true);
+
+        if (val.trim() === '') {
+            setSearchedUsers([]);
+            setIsLoading(false);
+            return;
+        }
+
+        if (searchTimeout.current)
+            clearTimeout(searchTimeout.current);
+
+        searchTimeout.current = setTimeout(() => {
+
+            api.get<User[]>(subdomain, '/users/search', {
+                search: val
+            }).then(users => {
+                setSearchedUsers(users);
+                setIsLoading(false);
+            });
+
+        }, 250);
+    }
+
+    return <OutsideClick onClick={onClose}>
+        <div className="adder-popup g-box">
+
+            <div className="search-wrap">
+                <input 
+                    type="text"
+                    placeholder="Search..."
+                    className="input medium"
+                    autoFocus={true} 
+                    value={search}
+                    onChange={e => handleSearchChange(e.target.value)}
+                />
+            </div>
+
+            <div className="users">
+
+                {
+
+                    isLoading ?
+                        <Loader padding={40} size="small" /> :
+                        availableUsers.length ?
+                            availableUsers.map((user: User) => {
+
+                                const variant = user.variants.find(v => v.language_id === languageId);
+                                const alreadyAuthor = post.authors.find(author => author.id === user.id);
+
+                                return <div 
+                                    className={"user" + (alreadyAuthor ? ' already-author' : '')}
+                                    key={user.id}
+                                    onClick={() => handleAdd(user)}
+                                >
+                                    <ProfilePicture user={user} size={16} /> 
+                                    <span className="name">
+                                        { variant?.name || 'Anonymous' }
+                                    </span>
+                                </div>
+
+                            }) :
+                            <div className="no-users">No users</div>
+
+                }
 
             </div>
-        }
-    </span>
+
+        </div>
+    </OutsideClick>
 
 }

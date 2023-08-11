@@ -27,6 +27,9 @@ a.link, span.link {
 }
 .input {
     @include mixin-input;
+    &.medium {
+        padding: 6px 14px;
+    }
 }
 textarea.input {
     resize:vertical;
@@ -574,33 +577,27 @@ textarea.input {
     border: 1px solid #ddd;
 }
 
-.global-avatar {
-    .avatar{
-        margin-top: 20px;
+.global-profile-picture {
+    display: inline-flex;
+    border-radius: 50%;
+    background-color: $color-accent-light;
+    overflow: hidden;
+    vertical-align: middle;
+    align-items: center;
+    justify-content: center;
+    img {
         width: 100%;
-        display: flex;
-        justify-content: center;
-    
-        .avatar-center{
-            width: 75px;
-            height: 75px;
-            border-radius: 50%;
-            cursor: pointer;
-        }
+        height: 100%;
+        object-fit: cover;
     }
-
-    .upload-lable {
-        width: 100%;
-        display: flex;
+    .initials {
+        display: inline-flex;
+        align-items: center;
         justify-content: center;
-        // background-color: $color-accent-very-light;
-        color: white;
-        padding: 5px;
-        font-family: sans-serif;
-        border-radius: 20px;
-        cursor: pointer;
-        font-size: 12px;
-        color: black;
+        width: 100%;
+        height: 100%;
+        font-size: 10px;
+        font-weight: 600;
     }
 }
 

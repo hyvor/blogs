@@ -11,8 +11,8 @@ import DatePicker from 'react-datepicker';
 import Loader from '../../../ReusableComponents/Loader';
 
 import { usePostActions, usePostValues } from '../helpers';
-import PostAuthors from "../PostAuthors";
-import PostTags from "../PostTags";
+import PostAuthors from "../New/PostAuthors";
+import PostTags from "../New/PostTags";
 import {Media, PostVariant} from "../../../types";
 import getSubdomain from "../../../logic-helpers/subdomain";
 import onOutsideClick from "../../../../helpers/onOutsideClick";
