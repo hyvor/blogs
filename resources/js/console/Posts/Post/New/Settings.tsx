@@ -11,6 +11,9 @@ import Button from "../../../ReusableComponents/Button";
 import { Post, PostVariant } from "../../../types";
 import { PopupConfirm } from "../../../ReusableComponents/Popup";
 import Loader from "../../../ReusableComponents/Loader";
+import { toast } from "react-toastify";
+import languagesLogic from "../../../logic/languagesLogic";
+import getSubdomain from "../../../logic-helpers/subdomain";
 
 
 const settingToReadable = {
@@ -42,6 +45,7 @@ export default function Settings({id}: {id: number}) {
     const [settingsType, setSettingsType] = useState<'basic' | 'advanced'>('basic');
     const [isDiscarding, setIsDiscarding] = useState(false);
     const [isSaving, setIsSaving] = useState(false);
+    const [isDeleting, setIsDeleting] = useState(false);
 
     const [codemirrorUpdateId, setCodemirrorUpdateId] = useState(0);
 
@@ -105,6 +109,18 @@ export default function Settings({id}: {id: number}) {
                 setIsSaving(false);
             }
         });
+    }
+
+    function handleDelete() {
+        if (currentLanguage.is_primary) {
+            toast("Post deleted");
+            deletePost()
+        } else {
+            toast(currentLanguage.name + " variant deleted");
+            changeEditorState('languageId', languagesLogic({subdomain: getSubdomain()}).values.primaryLanguage.id)
+            setIsDeleting(false)
+            deleteVariant({languageId: currentLanguage.id})
+        }
     }
 
     useEffect(() => {
@@ -230,7 +246,7 @@ export default function Settings({id}: {id: number}) {
                         >
                             <button 
                                 className="button small danger"
-                                //onClick={() => setIsDeleting(true)}
+                                onClick={() => setIsDeleting(true)}
                             >Delete <Trash /></button>
                         </Setting>
 
@@ -339,6 +355,24 @@ export default function Settings({id}: {id: number}) {
                     buttonClass="danger"
                     onClick={handleDiscardChanges}
                     onCancel={() => setIsDiscarding(false)}
+                />
+            </div>
+        }
+
+        {
+            isDeleting &&
+
+            <div data-testid="delete-popup">
+                <PopupConfirm 
+                    title="Delete Post"
+                    text={currentLanguage.is_primary ?
+                        <div>Are you sure to <b>permanently delete</b> this post?</div> :
+                        <div>Are you sure to <b>permanently delete</b> the {currentLanguage.name} variant of this post?</div>
+                    }
+                    onClick={handleDelete}
+                    onCancel={() => setIsDeleting(false)}
+                    name="Delete"
+                    buttonClass="danger"
                 />
             </div>
         }
