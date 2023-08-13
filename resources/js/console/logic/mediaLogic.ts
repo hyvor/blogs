@@ -2,7 +2,7 @@ import {actions, kea, key, path, props, reducers} from "kea";
 import api from "../lib/api";
 import type { mediaLogicType } from "./mediaLogicType";
 import {ajax} from "kea-ajax";
-import {Media} from "../types";
+import {Media, UnsplashImage} from "../types";
 
 const mediaLogic = kea<mediaLogicType>([
 
@@ -46,11 +46,18 @@ const mediaLogic = kea<mediaLogicType>([
          * Outside media settings (common)
          * ===============
          */
-        uploadImage: async ({file, onUpload}) => {
+        uploadImage: async (
+            {file, onUpload, onError} : 
+            {file: File, onUpload: (media: Media) => void, onError: Function}
+        ) => {
             var formData = new FormData();
             formData.append('file', file, file.name);
-            const media = await api.post<Media>(props.subdomain, '/media', formData);
-            onUpload(media);
+            try {
+                const media = await api.post<Media>(props.subdomain, '/media', formData);
+                onUpload(media);
+            } catch (e) {
+                onError(e);
+            }
         },
 
         uploadImageFromUrl: async ({url, postId = null, onUpload}) => {
@@ -61,6 +68,20 @@ const mediaLogic = kea<mediaLogicType>([
             });
 
             onUpload(media);
+        },
+
+        searchUnsplash: async (
+            {query, page = 1, onLoad} : 
+            {query: string, page?:number, onLoad: (results: UnsplashImage[]) => void}
+        ) => {
+
+            const results = await api.get<UnsplashImage[]>(props.subdomain, '/media/unsplash/search', {
+                search: query,
+                page
+            });
+
+            onLoad(results);
+
         },
 
     })),

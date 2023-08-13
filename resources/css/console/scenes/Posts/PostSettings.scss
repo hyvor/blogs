@@ -183,7 +183,7 @@
             height:150px;      
             background: $color-input;
             border-radius: 20px;
-            .no-image {
+            .placeholder-wrap, .no-image {
                 cursor: pointer;
                 color: $color-text-light;
                 width: 100%;

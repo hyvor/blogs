@@ -16,16 +16,117 @@
         background: $box-color;
         border-radius: $box-radius;
         box-shadow: $box-shadow;
-        padding: 20px;
         width: 900px;
         max-width: 100%;
         height: calc(100vh - 150px);
+        display: flex;
+        flex-direction: column;
     }
 
     .image-toolbar {
+        padding: 20px;
+        border-bottom: 1px solid $color-accent-light;
         button {
             &:not(:first-child) {
                 margin-left: 10px;
+            }
+        }
+    }
+
+    .inner-tabs {
+        padding: 20px;
+        flex: 1;
+        display: flex;
+        min-height: 0;
+
+        .tab-upload {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            height: 100%;
+            flex: 1;
+            .upload-area {
+                cursor: pointer;
+                background-color: $color-input;
+                width: 100%;
+                height: 100%;
+                border-radius: 20px;
+                display: flex;
+                align-items: center;
+                justify-content: center;
+                color: $color-text-light;
+            }
+        }
+        .tab-unsplash {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            .search-wrap {
+                display: flex;
+                align-items: center;
+                margin-bottom: 15px;
+                input {
+                    flex: 1;
+                    padding: 7px 14px;
+                }
+                button {
+                    margin-left: 8px;
+                    flex-shrink: 0;
+                }
+            }
+            .unsplash-display {
+                overflow: auto;
+                flex: 1;
+                .display-cols {
+                    display: flex;
+                }
+                .display-col {
+                    flex: 1;
+                    padding: 0 5px;
+                    &:first-child {
+                        padding-left: 0;
+                    }
+                    &:last-child {
+                        padding-right: 0;
+                    }
+                    .unsplash-image-wrap {
+                        margin-bottom: 10px;
+                        cursor: pointer;
+                        img {
+                            width: 100%;
+                            border-radius: 5px;
+                        }
+                    }
+                }
+                .has-more {
+                    padding: 20px;
+                    text-align: center;
+                }
+            }
+        }
+    }
+
+    .selected-image {
+        flex: 1;
+        padding: 20px;
+        min-height: 0;
+        display: flex;
+        flex-direction: column;
+
+        .image-preview {
+            text-align: center;
+            max-height: calc(100% - 60px);
+            flex: 1;
+            img {
+                max-width: 100%;
+                max-height: 100%;
+            }
+        }
+        .confirm-wrap {
+            text-align: center;
+            margin-top: 20px;
+            button:first-child {
+                margin-right: 5px;
             }
         }
     }

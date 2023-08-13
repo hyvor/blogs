@@ -14,7 +14,7 @@ import Loader from "../../../ReusableComponents/Loader";
 import { toast } from "react-toastify";
 import languagesLogic from "../../../logic/languagesLogic";
 import getSubdomain from "../../../logic-helpers/subdomain";
-
+import ImageUploader from "../../../ReusableComponents/ImageUploader/ImageUploader";
 
 const settingToReadable = {
     authors: 'Authors',
@@ -205,8 +205,17 @@ export default function Settings({id}: {id: number}) {
                             title="Cover Image"
                             className="post-setting-featured-image"
                         >
-                            <div className="featured-image">
-                                <div className="no-image">Upload a file</div>
+                            <div className="featured-image global-input-shadow">
+                                <ImageUploader
+                                    placeholder={
+                                        post.featured_image_url ?
+                                        <img src={post.featured_image_url} /> :
+                                        <div className="no-image">Upload a file</div>
+                                    }
+                                    onSelect={data => {
+                                        updatePostValue("featured_image_url", data.url);
+                                    }}
+                                />
                             </div>
                         </Setting>
 

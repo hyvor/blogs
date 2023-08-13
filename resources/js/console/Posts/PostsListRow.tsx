@@ -21,10 +21,6 @@ export default function PostsListRow({ id, subdomain }: { id: number, subdomain:
 
     const variant = post.variants.find(v => v.language_id === languageId) as PostVariant;
 
-    const authorsNames = post.authors.map(author => author.variants[0].name).join(", ");
-
-    const authorsImages = post.authors.map(author => author.picture_url);
-
     const permClass = UserPermissions.canEditPost(postOriginal) ? '' : 'global-no-permissions';
 
     return <NavLink
@@ -70,7 +66,7 @@ export default function PostsListRow({ id, subdomain }: { id: number, subdomain:
                                     alt="Profile Picture"
                                 />
                                 <span className="post-author-name">
-                                        {author.variants[0].name}
+                                        {author.variants[0]?.name}
                                     </span>
                             </div>
                         })
