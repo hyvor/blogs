@@ -1,12 +1,13 @@
 import React, { ReactNode, useEffect, useState } from 'react';
 import { OutsideClick } from '../OutsideClick';
 import Button from '../Button';
-import { UnsplashImage } from '../../types';
+import { Media, UnsplashImage } from '../../types';
 import { toast } from 'react-toastify';
 import getSubdomain from '../../logic-helpers/subdomain';
 import { useActions } from 'kea';
 import mediaLogic from '../../logic/mediaLogic';
 import Loader from '../Loader';
+import { CardImage, CloudUpload } from 'react-bootstrap-icons';
 
 type TabType = 'upload' | 'media' | 'unsplash';
 
@@ -65,15 +66,24 @@ function UploaderPopup(props : ImageUploaderProps & {onClose: () => void}) {
                         <Button 
                             onClick={() => setSelectedTab('upload')} 
                             type={getButtonType('upload')}
-                        >Upload</Button>
+                        >
+                            <CloudUpload />
+                            Upload
+                        </Button>
                         <Button 
                             onClick={() => setSelectedTab('media')} 
                             type={getButtonType('media')}
-                        >Blog Media</Button>
+                        >
+                            <CardImage />
+                            Blog Media
+                        </Button>
                         <Button 
                             onClick={() => setSelectedTab('unsplash')} 
                             type={getButtonType('unsplash')}
-                        >Unsplash</Button>
+                        >
+                            <svg role="img" width="1em" height="1m" fill="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><title/><path d="M7.5 6.75V0h9v6.75h-9zm9 3.75H24V24H0V10.5h7.5v6.75h9V10.5z"/></svg>
+                            Unsplash
+                        </Button>
 
                     </div>
 
@@ -111,7 +121,7 @@ function UploaderPopup(props : ImageUploaderProps & {onClose: () => void}) {
                     <div className="inner-tabs">
 
                         {selectedTab === 'upload' && <TabUpload onSelect={handleSelect} />}
-                        {selectedTab === 'media' && <TabMedia />}
+                        {selectedTab === 'media' && <TabMedia onSelect={handleSelect} />}
                         {selectedTab === 'unsplash' && <TabUnsplash onSelect={handleSelect} />}
 
                     </div>
@@ -277,8 +287,130 @@ function TabUpload({onSelect} : {onSelect: OnSelect}) {
     </div>
 }
 
-function TabMedia() {
-    return <div>Media</div>
+function TabMedia({onSelect} : {onSelect: OnSelect}) {
+
+    const [images, setImages] = useState<Media[]>([]);
+    const { loadImages } = useActions(mediaLogic({subdomain: getSubdomain()}));
+    const [isLoading, setIsLoading] = useState(false);
+    const [isLoadingMore, setIsLoadingMore] = useState(false);
+    const [hasMore, setHasMore] = useState(true);
+    const [search, setSearch] = useState('');
+
+    const limit = 30;
+
+    function handleKeyUp(e: React.KeyboardEvent<HTMLInputElement>) {
+        if (e.key === 'Enter') {
+            performLoad();
+        }
+    }
+
+    function performLoad(more: boolean = false) {
+        more ? setIsLoadingMore(true) : setIsLoading(true);
+        loadImages({
+            offset: more ? images.length : 0,
+            limit,
+            search: search.trim() === '' ? null : search.trim(),
+            onLoad: newImages => {
+                setIsLoading(false);
+                setIsLoadingMore(false);
+                setImages(more ? [...images, ...newImages] : newImages);
+                setHasMore(newImages.length === limit);
+            }
+        });
+    }
+
+    function handleLoadMore(e: React.MouseEvent<HTMLButtonElement, MouseEvent>) {
+        e.stopPropagation();
+        if (!hasMore) return;
+        setIsLoadingMore(true);
+        performLoad(true);
+    }
+
+    useEffect(() => {
+        setIsLoading(true);
+        performLoad();
+    }, []);
+
+    return <div className="tab-media">
+
+        <div className="search-wrap">
+            <input
+                value={search}
+                onChange={e => setSearch(e.target.value)}
+                onKeyUp={handleKeyUp}
+                placeholder="Search images"
+                autoFocus={true}
+                autoComplete="off"
+                className="input"
+            />
+            <Button type="primary" size="medium" onClick={() => performLoad()}>
+                Search &#9166;
+            </Button>
+        </div>
+
+        {
+
+            isLoading ?
+
+            <Loader padding={40} /> :
+
+            <div className="media-display">
+
+                <div className="display-inner">
+
+                    {
+                        images.map(image => <div 
+                            className="media-item" 
+                            key={image.id}
+                            onClick={e => {
+                                e.stopPropagation();
+                                onSelect({
+                                    url: image.url,
+                                    from: 'media'
+                                });
+                            }}
+                        >
+                            <div className="media-inner">
+                                <div className="image-wrap" style={{
+                                    backgroundImage: `url(${image.url})`
+                                }}></div>
+                                <div className="media-data">
+                                    <div className="media-title">{image.original_name}</div>
+                                    <div className="media-at">{ 
+                                        image.uploaded_at && 
+                                        new Date(image.uploaded_at * 1000).toDateString() 
+                                    }</div>
+                                </div>
+                            </div>
+                        </div>)
+                    }
+
+                </div>
+
+
+
+                {           
+                    hasMore &&
+                    <div className="has-more">
+                        {
+                            isLoadingMore ?
+                            <Loader padding={20} /> :
+                            <Button 
+                                type="light" 
+                                size="medium"
+                                onClick={handleLoadMore}
+                            >Load More</Button>
+                        }
+                    </div>
+                }
+
+
+
+            </div>
+
+        }
+
+    </div>
 }
 
 function TabUnsplash({onSelect} : {onSelect: OnSelect}) {
@@ -315,7 +447,6 @@ function TabUnsplash({onSelect} : {onSelect: OnSelect}) {
         e.stopPropagation();
         if (!hasMore) return;
         setIsLoadingMore(true);
-        console.log(images.length / 30);
         performSearch((images.length / 30) + 1);
     }
 

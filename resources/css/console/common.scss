@@ -25,11 +25,16 @@ a.link, span.link {
         box-shadow: 0 0 0px 2px $color-accent-light;
     }
 }
-.global-input-shadow {
+
+@mixin input-shadow {
     transition: .2s box-shadow;
     &:hover, &:focus {
         box-shadow: 0 0 0px 2px $color-accent-light;
     }
+}
+
+.global-input-shadow {
+    @include input-shadow;
 }
 .input {
     @include mixin-input;

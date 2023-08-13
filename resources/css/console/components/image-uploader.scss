@@ -30,6 +30,9 @@
             &:not(:first-child) {
                 margin-left: 10px;
             }
+            svg {
+                margin-right: 4px;
+            }
         }
     }
 
@@ -57,6 +60,70 @@
                 color: $color-text-light;
             }
         }
+
+        .tab-media {
+            display: flex;
+            flex: 1;
+            flex-direction: column;
+            .global-loader {
+                width: 100%;
+            }
+            .search-wrap {
+                display: flex;
+                align-items: center;
+                margin-bottom: 15px;
+                input {
+                    flex: 1;
+                    padding: 7px 14px;
+                }
+                button {
+                    margin-left: 8px;
+                    flex-shrink: 0;
+                }
+            }
+            .media-display {
+                overflow: auto;
+                flex: 1;
+                .display-inner {
+                    display: flex;
+                    flex-wrap: wrap;
+                }
+                .media-item {
+                    width: 25%;
+                    padding: 10px;
+                    display: flex;
+                    flex-direction: column;
+                    .image-wrap {
+                        padding-bottom: 100%;
+                        background-position: center;
+                        background-size: cover;
+                    }
+                    .media-data {
+                        padding: 8px 15px;
+                        font-size: 12px;
+                        text-align: center;
+                        .media-title {
+                            font-weight: 600;
+                        }
+                        .media-at {
+                            font-size: 10px;
+                        }
+                    }
+                    .media-inner {
+                        background-color: $color-input;
+                        border-radius: 20px;
+                        overflow: hidden;
+                        @include input-shadow;
+                        cursor: pointer;
+                    }
+                }
+                .has-more {
+                    padding: 20px;
+                    text-align: center;
+                }
+            }
+        }
+
         .tab-unsplash {
             flex: 1;
             display: flex;

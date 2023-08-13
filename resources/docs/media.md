@@ -10,13 +10,13 @@
 
 The following image formats are supported:
 
-* JPEG
-* PNG
-* GIF
-* SVG
-* WebP
-* APNG
-* AVIF
+* PNG - `.png`
+* JPEG - `.jpg`, `.jpeg`, `.jfif`, `.pjpeg`, `.pjp`
+* GIF - `.gif`
+* APNG - `.apng`
+* AVIF - `.avif`
+* SVG - `.svg`
+* WebP - `.webp`
 
 ### WebP Format {#webp}
 

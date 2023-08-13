@@ -31,6 +31,25 @@ const mediaLogic = kea<mediaLogicType>([
             });
             actions.setMediaList(media);
         },
+
+        loadImages: async(
+            {limit = 50, offset = 0, search = null, onLoad} : 
+            {
+                limit?: number,
+                offset?: number, 
+                search?: string | null,
+                onLoad: (media: Media[]) => void
+            }
+        ) => {
+            const media = await api.get<Media[]>(props.subdomain, '/media', {
+                offset,
+                limit,
+                type: 'image',
+                search
+            });
+            onLoad(media);
+        },
+
         remove: async ({id}) => {
             actions.removeFromList(id);
             await api.delete(props.subdomain, `/media/${id}`);
