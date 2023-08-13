@@ -217,6 +217,19 @@ export default function Settings({id}: {id: number}) {
                                     }}
                                 />
                             </div>
+
+                            {
+                                post.featured_image_url &&
+                                <div className="remove-featured-image">
+                                    <Button 
+                                        type="light" 
+                                        size="mini"
+                                        onClick={() => updatePostValue("featured_image_url", null)}
+                                    >
+                                        <Trash /><span>Reset Cover</span>
+                                    </Button>
+                                </div>
+                            }
                         </Setting>
 
                         <Setting 

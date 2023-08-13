@@ -193,6 +193,14 @@
                 justify-content: center;
             }
         }
+        .remove-featured-image {
+            margin-top: 10px;
+            text-align: right;
+            span {
+                vertical-align: middle;
+                margin-left: 3px;
+            }
+        }
         &.publish-time .not-published {
             margin-top: 10px;
             color: $color-text-light;

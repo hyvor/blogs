@@ -3,7 +3,7 @@ import React, { MouseEventHandler, ReactNode } from "react";
 interface ButtonProps {
     children: ReactNode,
     onClick?: MouseEventHandler<HTMLButtonElement>,
-    size?: 'big' | 'small' | 'tiny' | 'medium',
+    size?: 'big' | 'small' | 'mini' | 'tiny' | 'medium',
     type?: 'primary' | 'inactive' | 'text-only' | 'secondary' | 'danger' | 'light' | 'orange' | 'green' | 'gray'
 }
 
