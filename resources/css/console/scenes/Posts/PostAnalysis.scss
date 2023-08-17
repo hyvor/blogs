@@ -92,6 +92,10 @@
                 &.red {
                     background-color: #e13a3a;
                 }
+                &.ignore {
+                    background-color: #ccc;
+                    color: #000;
+                }
             }
             .single-test {
                 display: flex;

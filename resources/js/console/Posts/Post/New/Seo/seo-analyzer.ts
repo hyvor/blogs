@@ -35,6 +35,9 @@ export class SeoAnalyzer {
             new KeywordDensityTest(this.input),
             new SlugLengthTest(this.input),
             new ExternalLinksTest(this.input),
+            new InternalLinksTest(this.input),
+            new ImagesCountTest(this.input),
+            new ImageAltTest(this.input)
         ] as Test[];
 
         let totalScore = 0;
@@ -45,7 +48,8 @@ export class SeoAnalyzer {
         for (let test of tests) {
             const result = test.run();
 
-            totalScore += result.score;
+            if (!result.ignore)
+                totalScore += result.score;
 
             totalTests++;
             results.push(result);
@@ -407,7 +411,10 @@ export class SlugLengthTest extends Test {
         const slug = this.input.slug.toLowerCase().trim();
         const slugMessage = `Slug is ${slug.length} characters long`;
 
-        if (slug.length < 35) {
+        if (slug.length === 0) {
+            result.ignore = true;
+            result.message = 'Slug length test ignored because slug is empty';
+        } else if (slug.length < 35) {
             result.score = 100;
             result.message = slugMessage;
         } else if (slug.length < 50) {
@@ -436,6 +443,101 @@ export class ExternalLinksTest extends Test {
         }
 
         return result;
+    }
+
+}
+
+export class InternalLinksTest extends Test {
+
+    public run() {
+
+        const result = this.defaultResult('No external links found');
+        const internalLinksCount = this.links()
+            .filter(link => 
+                link.type === 'internal-blog' ||
+                link.type === 'internal-domain' ||
+                link.type === 'internal-root-domain'                
+            )
+            .length;
+
+        if (internalLinksCount > 0) {
+            result.score = 100;
+            result.message = `${internalLinksCount} internal link${internalLinksCount === 1 ? '' : 's'} found`;
+        }
+
+        return result;
+    }
+
+}
+
+export class ImagesCountTest extends Test {
+
+    public run() {
+        
+        const result = this.defaultResult('No images found');
+        const doc = this.contentNode();
+        
+        let imagesCount = 0;
+
+        doc.descendants(node => {
+            if (node.type.name === 'image' && node.attrs.src) {
+                imagesCount++;
+            }
+        });
+
+        if (imagesCount >= 4) {
+            result.score = 100;
+        } else if (imagesCount === 3) {
+            result.score = 90;
+        } else if (imagesCount === 2) {
+            result.score = 80;
+        } else if (imagesCount === 1) {
+            result.score = 70;
+        }
+
+        result.message = `${imagesCount} image${imagesCount === 1 ? '' : 's'} found`;
+
+        return result;
+
+    }
+
+}
+
+export class ImageAltTest extends Test {
+
+    public run() {
+
+        const result = this.defaultResult();
+        const doc = this.contentNode();
+        
+        let imagesMissingAltsCount = 0;
+        let imagesCount = 0;
+
+        doc.descendants(node => {
+            if (node.type.name === 'image' && node.attrs.src) {
+                imagesCount++;
+                if (!node.attrs.alt)
+                    imagesMissingAltsCount++;
+            }
+        });
+
+        if (imagesCount === 0) {
+
+            result.ignore = true;
+            result.message = 'Image alt test ignored because no images found';
+
+        } else {
+
+            result.message = imagesMissingAltsCount === 0 ?
+                'All images have alt attributes' :
+                `${imagesMissingAltsCount} image${imagesMissingAltsCount === 1 ? '' : 's'} missing alt attributes`;
+
+            result.score = imagesMissingAltsCount === 0 ? 100 : 0;
+
+        }
+
+        return result;
+
     }
 
 }

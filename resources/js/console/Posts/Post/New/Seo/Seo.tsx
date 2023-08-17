@@ -149,18 +149,20 @@ function SeoAnalysis({id}: {id: number}) {
 
 }
 
-function ScoreTag({score}: {score: number}) {
+function ScoreTag({score, ignore = false}: {score: number, ignore: boolean}) {
 
     const color = score < 50 ? 'red' : score < 80 ? 'orange' : 'green';
 
-    return <span className={"score-tag " + color}>{score}</span>
+    return <span 
+        className={"score-tag " + (ignore ? 'ignore' : color)}
+    >{ignore ? "?" : score}</span>
 }
 
 function SingleTest({result}: {result: TestResult}) {
 
     return <div className="single-test">
         <div className="score-tag-wrap">
-            <ScoreTag score={result.score} />
+            <ScoreTag score={result.score} ignore={result.ignore} />
         </div>
         <div className="score-message">
             {result.message}
