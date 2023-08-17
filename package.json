@@ -23,7 +23,8 @@
     "laravel-vite-plugin": "^0.5.4",
     "sass": "^1.49.8",
     "typescript": "^4.6.4",
-    "vite": "^3.0.4"
+    "vite": "^3.0.4",
+    "vitest": "^0.34.1"
   },
   "dependencies": {
     "@joeattardi/emoji-button": "^4.6.4",

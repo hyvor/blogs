@@ -5,7 +5,7 @@ import PostTags from "./PostTags";
 import ReactDatePicker from "react-datepicker";
 import dayjs from "dayjs";
 import Checkbox from "../../../ReusableComponents/Checkbox";
-import { Trash } from "react-bootstrap-icons";
+import { ArrowClockwise, Trash } from "react-bootstrap-icons";
 import CodemirrorEditor from "../../../ReusableComponents/CodemirrorEditor";
 import Button from "../../../ReusableComponents/Button";
 import { Post, PostVariant } from "../../../types";
@@ -40,7 +40,6 @@ export default function Settings({id}: {id: number}) {
         deletePost, deleteVariant,
         changeEditorState
     } = usePostActions(id);
-
 
     const [settingsType, setSettingsType] = useState<'basic' | 'advanced'>('basic');
     const [isDiscarding, setIsDiscarding] = useState(false);
@@ -79,8 +78,6 @@ export default function Settings({id}: {id: number}) {
             key => 
             (variantUpdate as any)[key] = postOriginal.variants.find(v => v.language_id === currentLanguage.id)![key]
         );
-
-        console.log(postUpdate, variantUpdate);
 
         updatePost(postUpdate);
         updateCurrentPostVariant({...variantUpdate, language_id: currentLanguage.id});
@@ -226,7 +223,7 @@ export default function Settings({id}: {id: number}) {
                                         size="mini"
                                         onClick={() => updatePostValue("featured_image_url", null)}
                                     >
-                                        <Trash /><span>Reset Cover</span>
+                                        <ArrowClockwise /><span>Reset Cover</span>
                                     </Button>
                                 </div>
                             }

@@ -1,12 +1,13 @@
 import React, { ReactNode } from "react";
-import { BoxArrowUpRight, Gear, Magic, SearchHeart } from "react-bootstrap-icons";
+import { BoxArrowUpRight, Gear, Link, Link45deg, Magic, SearchHeart } from "react-bootstrap-icons";
 import Settings from "./Settings";
+import Seo from "./Seo/Seo";
 
 export default function PostRight({id} : {id: number}) {
 
-    type SectionType = 'Settings' | 'SEO' | 'AI';
+    type SectionType = 'Settings' | 'SEO' | 'Links' | 'AI';
 
-    const [section, setSection] = React.useState<SectionType>('Settings');
+    const [section, setSection] = React.useState<SectionType>('SEO');
 
     const ToolbarButton = ({icon, text} : {icon: ReactNode, text: SectionType}) => {
 
@@ -26,10 +27,12 @@ export default function PostRight({id} : {id: number}) {
         <div className="toolbar">
             <ToolbarButton icon={<Gear />} text="Settings" />
             <ToolbarButton icon={<SearchHeart />} text="SEO" />
+            <ToolbarButton icon={<Link45deg />} text="Links" />
             <ToolbarButton icon={<Magic />} text="AI" />
         </div>
 
         {section === 'Settings' && <Settings id={id} />}
+        {section === 'SEO' && <Seo id={id} />}
 
     </div>
 

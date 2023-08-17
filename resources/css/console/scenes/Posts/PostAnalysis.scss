@@ -1,0 +1,119 @@
+.post-analysis {
+
+    .seo-analysis {
+
+        .seo-top {
+            display: flex;
+        }
+
+        .keywords {
+            flex: 1;
+            margin-left: 15px;
+            .keyword-title {
+                margin-bottom: 5px;
+                color: $color-text-light;
+                font-size: 12px;
+            }
+            .keyword-input {
+                margin-bottom: 15px;
+            }
+            input {
+                font-size: 13px;
+            }
+        }
+
+        .score-wrap {
+            flex: 1;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin-bottom: 20px;
+            .score {
+                width: 200px;
+                height: 120px;
+                position: relative;
+                overflow: hidden;
+                display: flex;
+                align-items: flex-end;
+                justify-content: center;
+                .score-bar {
+                    position: absolute;
+                    width: 100%;
+                    height: 200%;
+                    border-radius: 50%;
+                    top: 0;
+                    svg {
+                        //transform: rotate(180deg);
+                    }
+                    circle {
+                        fill: none;
+                        stroke-width:25px;
+                    }
+                    .placeholder circle {
+                        stroke: #eee;
+                    }
+                    .score-circle {
+                        position: absolute;
+                        top: 0;
+                    }
+                }
+                .score-value {
+                    margin-bottom: 5px;
+                    text-align: center;
+                }
+                .score-name {
+                    color: $color-text-light;
+                }
+                .score-number {
+                    font-size: 25px;
+                    font-weight: 600;
+                }
+            }
+        }
+
+        .results {
+            padding: 15px;
+            .score-tag {
+                display: inline-block;
+                text-align: center;
+                padding: 2px 6px;
+                border-radius: 20px;
+                font-size: 11px;
+                font-weight: 600;
+                color: #fff;
+                width: 34px;
+                &.green {
+                    background-color: #429e46;
+                }
+                &.orange {
+                    background-color: #ffb93a;
+                    color: #000;
+                }
+                &.red {
+                    background-color: #e13a3a;
+                }
+            }
+            .single-test {
+                display: flex;
+                padding: 5px 0;
+                .score-tag-wrap {
+                    text-align: right;
+                    flex-shrink: 0;
+                }
+                .score-message {
+                    margin-left: 8px;
+                }
+            }
+            .multi-test {
+                .multi-test-inner {
+                    margin-left: 20px;
+                    padding-left: 20px;
+                    border-left: 1px solid $color-accent-light;
+                    margin-top: 10px;
+                }
+            }
+        }
+
+    }
+
+}
