@@ -61,6 +61,7 @@
     "react-toastify": "^8.2.0",
     "react-tooltip": "^4.2.21",
     "shiki": "^0.14.2",
-    "sortablejs": "^1.15.0"
+    "sortablejs": "^1.15.0",
+    "tldts": "^6.0.14"
   }
 }

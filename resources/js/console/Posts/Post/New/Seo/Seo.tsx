@@ -1,6 +1,9 @@
 import React, { useState } from 'react';
 import { usePostValues } from '../../helpers';
 import { SeoAnalyzer, TestResult } from './seo-analyzer';
+import { useValues } from 'kea';
+import userBlogsLogic from '../../../../logic/userBlogsLogic';
+import getSubdomain from '../../../../logic-helpers/subdomain';
 
 export default function Seo({id}: {id: number}) {
 
@@ -32,19 +35,23 @@ export default function Seo({id}: {id: number}) {
 
 function SeoAnalysis({id}: {id: number}) {
 
+    const { findBlogBySubdomain } = useValues(userBlogsLogic());
     const { post, postOriginal, currentLanguage, currentVariant, diff } = usePostValues(id);
 
+    const userBlog = findBlogBySubdomain(getSubdomain())
+    const blogUrl = userBlog.blog.base_url;
+
     const [primaryKeyword, setPrimaryKeyword] = useState('blogging');
-    const [secondaryKeywords, setSecondaryKeywords] = useState<string[]>(['']);
+    const [secondaryKeywords, setSecondaryKeywords] = useState<string[]>([]);
 
     const analyzer = new SeoAnalyzer({
-        primaryKeyword: primaryKeyword,
-        secondaryKeywords: [],
+        primaryKeyword,
+        secondaryKeywords,
         title: currentVariant.title || '',
         slug: currentVariant.slug || '',
         description: currentVariant.description || '',
         content: currentVariant.content_unsaved || currentVariant.content,
-        blogUrl: '',
+        blogUrl,
     });
     const results = analyzer.analyze();
 
@@ -134,7 +141,7 @@ function SeoAnalysis({id}: {id: number}) {
 
         <div className="results">
             {
-                results.tests.map(test => <SingleTest result={test} />)
+                results.tests.map(test => <SingleTest key={test.name} result={test} />)
             }
         </div>
 

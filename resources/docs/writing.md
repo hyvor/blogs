@@ -403,7 +403,7 @@ These are the tests that Hyvor Blogs will run on your post:
   At least one external link should be present in the post.
 * **Internal links**
 
-  At least one internal link should be present in the post. Links to any subdomain of your main domain will be considered as internal links.
+  At least one internal link should be present in the post. Links to any subdomain of your main domain will be considered as internal links. See [link types](#link-types) for more information. `internal-blog`, `internal-domain`, and `internal-root-domain` links are considered as internal links.
 * **Images**
   * 50% - 1 image
   * 70% - 2 images
@@ -413,3 +413,23 @@ These are the tests that Hyvor Blogs will run on your post:
 * **All images have alt attributes**
   
   All images should have alt attributes.
+
+
+### Link Analysis {#link-analysis}
+
+
+
+#### Link Types {#link-types}
+
+Hyvor Blogs categorizes links into the following types.
+
+| Link Type | Description |
+| --- | --- |
+| `internal-blog` | Links to other posts/pages in your blog |
+| `internal-domain` | Links to the same domain as your blog, but not to your blog |
+| `internal-root-domain` | Links to any domain of the root domain, but not to your blog's domain. |
+| `external` | Links to other domains |
+| `mail` | Mailto links (starts with `mailto:`) |
+| `tel` | Tel links (starts with `tel:`) |
+| `anchor` | Links to anchors in the same page (starts with `#`) |
+| `other` | Other links (`ftp:`, `data:`, javascript, etc.) |

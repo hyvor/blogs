@@ -37,7 +37,6 @@ export default function useSave(id: number) {
         }
 
         function checkSavePopstate(event: PopStateEvent) {
-            console.log(event)
             event.preventDefault()
         }
 

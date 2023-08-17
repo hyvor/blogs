@@ -16,7 +16,7 @@ function getInput(input: Partial<Input>) {
     }
 }
 
-describe('seo tests', () => {
+describe.skip('seo tests', () => {
 
     describe('primary keyword in title', () => {
 

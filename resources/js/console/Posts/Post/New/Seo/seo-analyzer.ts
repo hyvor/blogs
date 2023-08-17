@@ -1,5 +1,6 @@
 import { Mark, Node } from "prosemirror-model";
-import schema from "../../ProseMirror/schema";
+import { getDocFromContent } from "../../ProseMirror/helpers";
+import { Link, getLinksMarksFromContent } from "../Links/links";
 
 export interface Input {
     primaryKeyword: string,
@@ -33,6 +34,7 @@ export class SeoAnalyzer {
             new AllKeywordsInImgAltTest(this.input),
             new KeywordDensityTest(this.input),
             new SlugLengthTest(this.input),
+            new ExternalLinksTest(this.input),
         ] as Test[];
 
         let totalScore = 0;
@@ -60,6 +62,7 @@ export class SeoAnalyzer {
 }
 
 export interface TestResult {
+    name: string,
     score: number, // 0 - 100
     message: string,
     ignore: boolean,
@@ -74,6 +77,7 @@ class Test {
 
     protected defaultResult(message: string = '') : TestResult {
         return {
+            name: this.constructor.name,
             score: 0,
             ignore: false,
             message: message,
@@ -81,11 +85,7 @@ class Test {
     }
 
     protected contentNode() : Node {
-        const json = this.input.content ?
-            JSON.parse(this.input.content) :
-            null;
-
-        return json ? Node.fromJSON(schema, json) : schema.nodes.doc.createAndFill()!;
+        return getDocFromContent(this.input.content);
     }
     protected contentText() : string {
         const doc = this.contentNode();
@@ -102,36 +102,8 @@ class Test {
         return text;
     }
 
-    protected links(type: null | 'internal' | 'external') : Mark[] {
-        const doc = this.contentNode();
-        let links : Mark[] = [];
-
-        doc.descendants(node => {
-
-            const marks = node.marks;
-            if (marks.length === 0) return;
-
-            node.marks.forEach(mark => {
-
-                if (mark.type.name !== 'link') return;
-
-                const href = mark.attrs.href;
-                const isInternal = href.startsWith(this.input.blogUrl);
-                const isExternal = href.startsWith('http');
-
-                if (type === 'internal' && isInternal) {
-                    links.push(mark);
-                } else if (type === 'external' && isExternal) {
-                    links.push(mark);
-                } else if (type === null) {
-                    links.push(mark);
-                }
-
-            });
-
-        });
-
-        return links;
+    protected links() : Link[] {
+        return getLinksMarksFromContent(this.input.content, this.input.blogUrl);
     }
 
     protected allKeywords() : string[] {
@@ -139,7 +111,6 @@ class Test {
     }
 
     protected keywordInString(keyword: string, str: string) : boolean {
-        console.log(str);
         return new RegExp(`\\b${keyword}\\b`, 'i').test(str);
     }
 
@@ -456,16 +427,15 @@ export class ExternalLinksTest extends Test {
 
     public run() {
 
-        const result = this.defaultResult();
-        const content = this.contentNode();
+        const result = this.defaultResult('No external links found');
+        const externalLinksCount = this.links().filter(link => link.type === 'external').length;
 
-        const externalLinks : Node[] = [];
-
-        content.descendants(node => {
-            if (node.type.name === 'link' && node.attrs.href.startsWith('http'))
-                externalLinks.push(node);
+        if (externalLinksCount > 0) {
+            result.score = 100;
+            result.message = `${externalLinksCount} external link${externalLinksCount === 1 ? '' : 's'} found`;
         }
-        
+
+        return result;
     }
 
 }
