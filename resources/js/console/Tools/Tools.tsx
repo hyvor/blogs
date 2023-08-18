@@ -1,0 +1,49 @@
+import React, { Fragment, ReactNode, useEffect, useRef, useState } from 'react';
+
+import SettingsGeneral from '../Settings/General/SettingsGeneral';
+import Import from './Import/Import';
+import { getUserBlogBlog } from '../logic-helpers/blog';
+import SettingsLink from '../ReusableComponents/SettingsLink';
+import SettingsSelect from '../ReusableComponents/SettingsSelect';
+import Export from './Export/Export';
+
+
+export default function Tools({ type }: { type: string | undefined }) {
+    console.log(type)
+    const [pannel, setPannel] = useState(type || 'import');
+    let pannelOption = [
+        { value: 'import', label: 'Import' },
+        { value: 'export', label: 'Export' },
+    ]
+
+    let Type = () => <SettingsGeneral />;
+    switch (pannel) {
+        case 'import':
+            Type = () => <Import />;
+            break;
+        case 'export':
+            Type = () => <Export />;
+            break;
+        default:
+            Type = () => <Import />;
+    }
+
+    return <div className="posts-view settings-view">
+        <div className="box box-left">
+
+            <div className="settings-nav">
+                <SettingsLink path="" name="Import" pannelName={'import'} setPannel={setPannel} toolsPrefix={true} />
+                <SettingsLink path="/export" name="Export" pannelName={'export'} setPannel={setPannel} toolsPrefix={true} />
+            </div>
+        </div>
+        <div className="box box-right settings-right">
+            <div className='settings-selector'>
+                <div className='title'>Settings</div>
+                <SettingsSelect name="" value={pannel} options={pannelOption} setPannel={setPannel} />
+            </div>
+
+            <Type />
+        </div>
+    </div>
+
+}
