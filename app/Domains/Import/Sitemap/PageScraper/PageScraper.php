@@ -9,8 +9,10 @@ use App\Domains\Post\Content\PostContentService;
 use App\Models\Blog;
 use Carbon\Carbon;
 use Carbon\Exceptions\InvalidFormatException;
+use Closure;
 use DOMDocument;
 use DOMElement;
+use DOMText;
 use Illuminate\Support\Facades\Http;
 use Symfony\Component\DomCrawler\Crawler;
 
@@ -193,6 +195,7 @@ class PageScraper
         $content = $this->filterOutExcluded($content);
         $content = $this->fixCodeBlocks($content);
         $content = $this->convertIframesToEmbed($content);
+        $content = $this->convertPImgToImg($content);
 
         $this->content = PostContentService::getJsonFromHtml($content, $this->blog);
 
@@ -284,6 +287,64 @@ class PageScraper
 
         return $html ?: $content;
 
+    }
+
+    // <p><img></p> => <img>
+    private function convertPImgToImg(string $content) : string
+    {
+
+        return $this->filterAndRun($content, 'p > img', function (Crawler $crawler, DOMDocument $doc) {
+
+            foreach ($crawler as $node) {
+
+                if (!$node instanceof DOMElement)
+                    continue;
+
+                if (!$node->parentNode)
+                    continue;
+
+                if (!$node->parentNode->parentNode)
+                    continue;
+
+
+                $count = 0;
+                foreach ($node->parentNode->childNodes as $child) {
+                    // count if not text node with only whitespaces
+                    if (!$child instanceof DOMText || trim($child->textContent) !== '') {
+                        $count++;
+                    }
+                }
+
+                if ($count !== 1)
+                    continue;
+
+                $node->parentNode->parentNode->replaceChild($node, $node->parentNode);
+
+            }
+
+        });
+
+    }
+
+    /**
+     * @param callable(Crawler, DOMDocument) : void $callback
+     */
+    private function filterAndRun(string $content, string $filter, callable $callback) : string
+    {
+
+        $doc = new DOMDocument;
+        $doc->loadHTML($content);
+
+        $crawler = new Crawler();
+        $crawler->addDocument($doc);
+
+        $crawler
+            ->filter($filter)
+            ->each(fn (Crawler $crawler) => $callback($crawler, $doc));
+
+        $html = $doc->saveHTML();
+
+        return $html ?: $content;
     }
 
     private function setError(PageScrapeErrorEnum $error) : void

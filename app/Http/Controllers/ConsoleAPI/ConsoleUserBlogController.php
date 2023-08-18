@@ -27,6 +27,7 @@ class ConsoleUserBlogController extends Controller
         $name = $request->input('name');
         $subdomain = $request->input('subdomain');
         $isDev = $request->input('is_dev', false);
+        $ip = $request->ip();
 
         if ($isDev) {
             $subdomain = 'dev-'.((string) Str::uuid());
@@ -36,7 +37,8 @@ class ConsoleUserBlogController extends Controller
             $hyvorUser->id,
             $name,
             $subdomain,
-            $isDev ? BlogTypeEnum::DEV : BlogTypeEnum::DEFAULT
+            $isDev ? BlogTypeEnum::DEV : BlogTypeEnum::DEFAULT,
+            ip: $ip
         );
 
         $user = UserRepository::getOwnerOfBlog($blog);

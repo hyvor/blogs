@@ -13,6 +13,7 @@ use App\Domains\Route\PermalinkRepository;
 use App\Domains\User\UserRepository;
 use App\Models\Blog;
 use Hyvor\Phrosemirror\Document\Node;
+use Illuminate\Support\Facades\Log;
 
 class Importer
 {
@@ -27,6 +28,7 @@ class Importer
 
     public function import() : void
     {
+        // echo('Parsing started' . "\n");
         $this->parser->parse();
         $this->importPosts();
     }
@@ -37,8 +39,12 @@ class Importer
         $primaryLanguage = LanguageRepository::getPrimaryLanguage($this->blog);
         $owner = UserRepository::getOwnerOfBlog($this->blog);
 
+        // echo('Importing posts' . "\n");
+
         foreach ($this->parser->posts as $importingPost)
         {
+
+            // echo('Importing post (' . ($this->postsCount + 1) . ')' . $importingPost->variants[0]->slug . "\n");
 
             $featuredImageUrl = $importingPost->featuredImageUrl ?
                 $this->tryToUploadImage($importingPost->featuredImageUrl) :
