@@ -1,9 +1,6 @@
 import React, { useEffect, useRef, useState } from 'react';
 import { usePostActions, usePostValues } from '../../helpers';
-import { SeoAnalyzer, TestResult } from './seo-analyzer';
-import { key, useValues } from 'kea';
-import userBlogsLogic from '../../../../logic/userBlogsLogic';
-import getSubdomain from '../../../../logic-helpers/subdomain';
+import { Output, TestResult } from './seo-analyzer';
 import { Check, X } from 'react-bootstrap-icons';
 import { toast } from 'react-toastify';
 
@@ -20,26 +17,12 @@ export default function Seo({id}: {id: number}) {
 
 function SeoAnalysis({id}: {id: number}) {
 
-    const { findBlogBySubdomain } = useValues(userBlogsLogic());
-    const { currentVariant } = usePostValues(id);
-    const { saveCurrentVariantDiff }  = usePostActions(id);
-
-    const userBlog = findBlogBySubdomain(getSubdomain())
-    const blogUrl = userBlog.blog.base_url;
-
-    const [primaryKeyword, setPrimaryKeyword] = useState<string | null>(currentVariant.seo_primary_keyword);
-    const [secondaryKeywords, setSecondaryKeywords] = useState<string[]>(currentVariant.seo_secondary_keywords);
-
-    const analyzer = new SeoAnalyzer({
-        primaryKeyword,
-        secondaryKeywords,
-        title: currentVariant.title || '',
-        slug: currentVariant.slug || '',
-        description: currentVariant.description || '',
-        content: currentVariant.content_unsaved || currentVariant.content,
-        blogUrl,
-    });
-    const results = analyzer.analyze();
+    const { currentVariant, currentVariantSeoResults } = usePostValues(id);
+    const { saveCurrentVariantDiff, updateCurrentPostVariantValue }  = usePostActions(id);
+   
+    const primaryKeyword = currentVariant.seo_primary_keyword;
+    const secondaryKeywords = currentVariant.seo_secondary_keywords;
+    const results : Output = currentVariantSeoResults;
 
     const svg = (widthPerc: number, gradient: boolean = false) => {
         const radius = 65;
@@ -69,7 +52,7 @@ function SeoAnalysis({id}: {id: number}) {
     }
 
     function updateSecondaryKeywords(secondaryKeywords: string[]) {
-        setSecondaryKeywords(secondaryKeywords);
+        updateCurrentPostVariantValue('seo_secondary_keywords', secondaryKeywords);
         saveCurrentVariantDiff({
             diff: {
                 seo_secondary_keywords: secondaryKeywords
@@ -77,7 +60,7 @@ function SeoAnalysis({id}: {id: number}) {
         });
     }
     function updatePrimaryKeyword(primaryKeyword: string|null) {
-        setPrimaryKeyword(primaryKeyword);
+        updateCurrentPostVariantValue('seo_primary_keyword', primaryKeyword);
         saveCurrentVariantDiff({
             diff: {
                 seo_primary_keyword: primaryKeyword,
@@ -373,12 +356,12 @@ function KeywordDisplay(
 
 }
 
-function ScoreTag({score, ignore = false}: {score: number, ignore: boolean}) {
+export function SeoScoreTag({score, ignore = false}: {score: number, ignore?: boolean}) {
 
     const color = score < 50 ? 'red' : score < 80 ? 'orange' : 'green';
 
     return <span 
-        className={"score-tag " + (ignore ? 'ignore' : color)}
+        className={"global-seo-score-tag " + (ignore ? 'ignore' : color)}
     >{ignore ? "?" : score}</span>
 }
 
@@ -386,7 +369,7 @@ function SingleTest({result}: {result: TestResult}) {
 
     return <div className="single-test">
         <div className="score-tag-wrap">
-            <ScoreTag score={result.score} ignore={result.ignore} />
+            <SeoScoreTag score={result.score} ignore={result.ignore} />
         </div>
         <div className="score-message">
             {result.message}

@@ -12,7 +12,7 @@ export interface Input {
     blogUrl: string,
 }
 
-interface Output {
+export interface Output {
     average: number,
     tests: TestResult[],
 }

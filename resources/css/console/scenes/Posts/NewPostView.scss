@@ -158,6 +158,14 @@
                 &:not(:last-child) {
                     border-right: 1px solid $color-accent-light;
                 }
+
+
+                position: relative;
+                .seo-score {
+                    position: absolute;
+                    top: 5px;
+                    right: 5px;
+                }
             }
         }
 

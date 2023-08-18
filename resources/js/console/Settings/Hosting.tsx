@@ -69,9 +69,9 @@ export default function Hosting() {
                             checkFor={hostedAt}
                         />
                     </div>
-                    <p className="global-description">
+                    {/* <p className="global-description">
                         Your blog will be hosted at <b>test.hyvorblogs.io</b>.
-                    </p>
+                    </p> */}
                 </div>
             }
         />

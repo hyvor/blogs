@@ -1,22 +1,25 @@
 import React, { ReactNode } from "react";
 import { BoxArrowUpRight, Gear, Link, Link45deg, Magic, SearchHeart } from "react-bootstrap-icons";
 import Settings from "./Settings";
-import Seo from "./Seo/Seo";
+import Seo, { SeoScoreTag } from "./Seo/Seo";
+import { usePostValues } from "../helpers";
 
 export default function PostRight({id} : {id: number}) {
 
     type SectionType = 'Settings' | 'SEO' | 'Links' | 'AI';
 
+    const { currentVariantSeoResults } = usePostValues(id);
+ 
     const [section, setSection] = React.useState<SectionType>('SEO');
 
-    const ToolbarButton = ({icon, text} : {icon: ReactNode, text: SectionType}) => {
+    const ToolbarButton = ({icon, text, children} : {icon: ReactNode, text: SectionType, children?: ReactNode}) => {
 
         return <button
             className={section === text ? 'active' : ''}
             onClick={() => setSection(text)}
         >
             <span className="icon">{icon}</span>
-            <span className="text">{text}</span>
+            <span className="text">{children || text}</span>
         </button>
 
     }
@@ -26,7 +29,13 @@ export default function PostRight({id} : {id: number}) {
 
         <div className="toolbar">
             <ToolbarButton icon={<Gear />} text="Settings" />
-            <ToolbarButton icon={<SearchHeart />} text="SEO" />
+            <ToolbarButton icon={<SearchHeart />} text="SEO">
+                SEO {
+                    <span className="seo-score">
+                        <SeoScoreTag score={Math.round(currentVariantSeoResults.average)} />
+                    </span>
+                }
+            </ToolbarButton>
             <ToolbarButton icon={<Link45deg />} text="Links" />
             <ToolbarButton icon={<Magic />} text="AI" />
         </div>

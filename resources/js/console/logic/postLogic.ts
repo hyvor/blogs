@@ -9,6 +9,8 @@ import {diff} from "deep-object-diff";
 import languagesLogic from "./languagesLogic";
 import {PostEditorState} from "../states";
 import merge from "deepmerge";
+import userBlogsLogic from "./userBlogsLogic";
+import { SeoAnalyzer } from "../Posts/Post/New/Seo/seo-analyzer";
 
 export async function updatePost(post: Post, diff: Partial<Post>) {
 
@@ -318,6 +320,24 @@ const postLogic = kea<postLogicType>([
         currentLanguage: [
             s => [s.editorState, languagesLogic({subdomain: getSubdomain()}).selectors.getLanguageById],
             (editorState, getLang) : Language => getLang(editorState.languageId) as Language
+        ],
+
+        currentVariantSeoResults: [
+            s => [s.currentVariant],
+            (currentVariant) => {
+                const userBlog = userBlogsLogic().values.findBlogBySubdomain(getSubdomain());
+                const blogUrl = userBlog.blog.base_url;
+                const analyzer = new SeoAnalyzer({
+                    primaryKeyword: currentVariant.seo_primary_keyword,
+                    secondaryKeywords: currentVariant.seo_secondary_keywords,
+                    title: currentVariant.title || '',
+                    slug: currentVariant.slug || '',
+                    description: currentVariant.description || '',
+                    content: currentVariant.content_unsaved || currentVariant.content,
+                    blogUrl,
+                });
+                return analyzer.analyze();
+            }
         ]
 
     }),
