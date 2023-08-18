@@ -27,40 +27,8 @@ import { getUserBlogBlog } from "../logic-helpers/blog";
 import Shopify from "./Integrations/Shopify";
 import Select from '../ReusableComponents/Select';
 import { components } from 'react-select';
-import Export from "./Export/Export";
-import Import from "./Import/Import";
-
-
-interface SettingsSelectProps {
-    name: string,
-    value: string | number | null,
-    options: {
-        value: string | number;
-        label: string | ReactNode
-    }[],
-    setPannel: Function,
-}
-
-function SettingsSelect({ name, value, options, setPannel }: SettingsSelectProps) {
-    const SingleValue = (p: any) => {
-        const value = p.data.label.props ? p.data.label.props.name : p.data.label;
-        return <components.SingleValue {...p}>
-            <div className='posts-filter-row'>
-                <div className='posts-filter-name'>{name}</div>
-                <div className='posts-filter-value'>{value}</div>
-            </div>
-        </components.SingleValue>
-    };
-
-    const valueCalculated = options.find(i => i.value === value) || options[0];
-
-    return <Select
-        value={valueCalculated}
-        options={options}
-        onChange={(v: any) => setPannel(v.value)}
-        components={{ SingleValue }}
-    />
-}
+import SettingsLink from '../ReusableComponents/SettingsLink';
+import SettingsSelect from '../ReusableComponents/SettingsSelect';
 
 export default function Settings({ type }: { type: string | undefined }) {
     const blog = getUserBlogBlog();
@@ -118,12 +86,6 @@ export default function Settings({ type }: { type: string | undefined }) {
             break;
         case 'comments':
             Type = () => <Comments />
-            break;
-        case 'import':
-            Type = () => <Import />
-            break;
-        case 'export':
-            Type = () => <Export />;
             break;
         case 'danger':
             Type = () => <Danger />;
@@ -193,8 +155,6 @@ export default function Settings({ type }: { type: string | undefined }) {
 
                 <div />
 
-                <SettingsLink path="/import" name="Import" pannelName={'import'} setPannel={setPannel} />
-                <SettingsLink path="/export" name="Export" pannelName={'export'} setPannel={setPannel} />
                 <SettingsLink role={UserRole.OWNER} path="/danger" pannelName={'danger'} name="Danger Zone" setPannel={setPannel} />
             </div>
         </div>
@@ -207,66 +167,5 @@ export default function Settings({ type }: { type: string | undefined }) {
             <Type />
         </div>
     </div>
-
-}
-
-interface SettingsLinkProps {
-    path: string,
-    role?: UserRole.OWNER | UserRole.ADMIN | UserRole.EDITOR,
-    name: string,
-    dividing?: boolean,
-    pannelName?: string,
-    setPannel: Function
-}
-
-function SettingsLink({ path, role = UserRole.ADMIN, name, dividing = false, setPannel, pannelName }: SettingsLinkProps) {
-
-    const subdomain = getSubdomain();
-    const settingsPrefix = `/console/${subdomain}/settings`;
-    const { push } = useActions(router);
-
-    const userRole = UserPermissions.getRole();
-    const ref = useRef<HTMLAnchorElement | null>(null);
-
-    const roles = {
-        [UserRole.EDITOR]: [UserRole.EDITOR],
-        [UserRole.ADMIN]: [UserRole.EDITOR, UserRole.ADMIN],
-        [UserRole.OWNER]: [UserRole.EDITOR, UserRole.ADMIN, UserRole.OWNER]
-    }
-
-    let cls = undefined;
-    // @ts-ignore
-    const availableRoles = roles[userRole];
-    if (!availableRoles || availableRoles.indexOf(role) < 0) {
-        cls = 'global-no-permissions'
-    }
-
-    useEffect(() => {
-        /**
-         * Redirect the user to Blog Preview when accessing unauthorized routes via the direct URL
-         * Just a simple check
-         */
-        const link = ref.current as HTMLAnchorElement
-        if (link.classList.contains('global-no-permissions') && link.classList.contains('active')) {
-            push('/console/' + subdomain);
-        }
-    }, []);
-
-    return <Fragment>
-        <NavLink
-            ref={ref}
-            href={settingsPrefix + path}
-            exact={1}
-            className={cls}
-            onClick={() => {
-                if (pannelName)
-                    setPannel(pannelName);
-                else
-                    setPannel(name.toLocaleLowerCase())
-            }}
-        > {name}</NavLink>
-
-        {dividing && <div />}
-    </Fragment >
 
 }
