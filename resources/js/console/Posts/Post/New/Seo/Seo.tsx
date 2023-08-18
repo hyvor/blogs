@@ -357,7 +357,7 @@ function KeywordDisplay(
 }
 
 export function SeoScoreTag({score, ignore = false}: {score: number, ignore?: boolean}) {
-
+    score = Math.round(score);
     const color = score < 50 ? 'red' : score < 80 ? 'orange' : 'green';
 
     return <span 

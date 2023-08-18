@@ -37,7 +37,6 @@
 
         .post-left-header {
             padding: 15px 25px;
-            display: flex;
             border-radius: 20px;
             box-shadow: 0 0 30px rgb(0 0 0 / 5%);
             background-color: #fff;
@@ -46,10 +45,34 @@
             top: -20px;
             z-index: 10;
 
-            &.fixed {
-                position: fixed;
-                top: 0;
-                z-index: 10;
+            .left-header-row {
+                display: flex;
+                align-items: center;
+                &:first-child {
+                    margin-bottom: 5px;
+                }
+            }
+
+            .additional-data {
+                .saver {
+                    margin-left: 3px;
+                    color: $color-text-light;
+                    font-size: 12px;
+                    margin-right: 8px;
+                    font-weight: 600;
+                    .not-saved {
+                        position: relative;
+                        cursor: pointer;
+                    }
+                }
+                .words-count {
+                    margin-right: 8px;
+                    font-size: 12px;
+                    font-weight: 600;
+                }
+                .help {
+                    margin-right: 3px;
+                }
             }
 
             .left-header-left {

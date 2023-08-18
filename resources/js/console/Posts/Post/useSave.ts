@@ -47,15 +47,11 @@ export default function useSave(id: number) {
         // save on popstate change (internal navigation)
         window.addEventListener('popstate', checkSavePopstate);
 
-        // save on outsideClick
-        // const removeOutsideEvent = onOutsideClick(viewRef.current, handleAutoSave, false, false, false);
-
         return () => {
             clearInterval(autoSaveInterval)
             window.removeEventListener('keydown', checkSave);
             window.removeEventListener('beforeunload', checkSaveUnload);
             window.removeEventListener('popstate', checkSavePopstate);
-            // removeOutsideEvent(false);
         }
 
     }, [id, diff])

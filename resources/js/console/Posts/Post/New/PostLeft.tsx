@@ -4,35 +4,77 @@ import { usePostActions, usePostValues } from "../helpers";
 import PostLanguageSelector from "../PostLanguageSelector";
 import TitleRow from "../PostTop/TitleRow";
 import {useLanguagesValues} from "../../../Settings/Languages/helpers";
-import { BoxArrowUpRight } from "react-bootstrap-icons";
+import { BoxArrowUpRight, InfoCircle } from "react-bootstrap-icons";
 import { getBlogUrl } from "../../../lib/blog-helpers";
 import getSubdomain from "../../../logic-helpers/subdomain";
 
 export default function PostLeft({id, postViewRef} : {id: number, postViewRef: React.RefObject<HTMLDivElement>}) {
 
-    const { post, currentLanguage } = usePostValues(id);
+    const { post, currentLanguage, currentVariant } = usePostValues(id);
 
     return <div className="post-left">
 
         <div className="post-left-header">
 
-            <div className="left-header-left">
-                <PostLanguageSelector id={id} />
+            <div className="left-header-row">
+
+                <div className="left-header-left">
+                    <PostLanguageSelector id={id} />
+                </div>
+
+                <div className="left-header-right" style={{textAlign: "right"}}>
+
+                    <span 
+                        className={`global-post-status ${currentVariant.status} large`}
+                    >{currentVariant.status}</span>
+
+                    <a
+                        href={getBlogUrl(getSubdomain(), '/p/' + post.preview_id + "/" + currentLanguage.code)}
+                        target="_blank"
+                        data-testid="preview-button"
+                    >
+                        <button className="button medium light view" style={{marginRight: 8}}>
+                            <span>Preview</span>&nbsp;<BoxArrowUpRight />
+                        </button>
+                    </a>
+                    
+                    <button className="button medium">Publish</button>
+
+                </div>
+
             </div>
 
-            <div className="left-header-right" style={{textAlign: "right"}}>
+            <div className="left-header-row additional-data">
 
-                <a
-                    href={getBlogUrl(getSubdomain(), '/p/' + post.preview_id + "/" + currentLanguage.code)}
-                    target="_blank"
-                    data-testid="preview-button"
-                >
-                    <button className="button medium light view" style={{marginRight: 8}}>
-                        <span>Preview</span>&nbsp;<BoxArrowUpRight />
-                    </button>
-                </a>
-                
-                <button className="button medium">Publish</button>
+                <div className="left-header-left">
+                    <span className="saver">
+
+                        {
+                            /* savePostAjax.status === 'loading' ?
+                                "Saving..." :
+
+                                (
+                                    hasChanges ?
+                                        <span className="not-saved" onClick={savePost}>Unsaved changes *</span> :
+                                        <span className="saved">Saved</span>
+                                ) */
+
+                        }
+
+                        <span className="saved">Saved</span>
+
+                    </span>
+                </div>
+
+                <div className="left-header-right" style={{textAlign: "right"}}>
+                    
+                    <span className="words-count" id="pm-word-count"/>
+
+                    <a target="_blank" href="/docs/writing" className="help">
+                        <InfoCircle />
+                    </a>
+
+                </div>
 
             </div>
 
