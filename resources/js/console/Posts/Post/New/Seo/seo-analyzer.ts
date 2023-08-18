@@ -503,7 +503,7 @@ export class InternalLinksTest extends Test {
 
     public run() {
 
-        const result = this.defaultResult('No external links found');
+        const result = this.defaultResult('No internal links found');
         const internalLinksCount = this.links()
             .filter(link => 
                 link.type === 'internal-blog' ||

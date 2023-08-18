@@ -1,5 +1,5 @@
 import React, { useEffect, useRef, useState } from 'react';
-import { usePostValues } from '../../helpers';
+import { usePostActions, usePostValues } from '../../helpers';
 import { SeoAnalyzer, TestResult } from './seo-analyzer';
 import { key, useValues } from 'kea';
 import userBlogsLogic from '../../../../logic/userBlogsLogic';
@@ -21,13 +21,14 @@ export default function Seo({id}: {id: number}) {
 function SeoAnalysis({id}: {id: number}) {
 
     const { findBlogBySubdomain } = useValues(userBlogsLogic());
-    const { post, postOriginal, currentLanguage, currentVariant, diff } = usePostValues(id);
+    const { currentVariant } = usePostValues(id);
+    const { saveCurrentVariantDiff }  = usePostActions(id);
 
     const userBlog = findBlogBySubdomain(getSubdomain())
     const blogUrl = userBlog.blog.base_url;
 
-    const [primaryKeyword, setPrimaryKeyword] = useState<string | null>(null);
-    const [secondaryKeywords, setSecondaryKeywords] = useState<string[]>([]);
+    const [primaryKeyword, setPrimaryKeyword] = useState<string | null>(currentVariant.seo_primary_keyword);
+    const [secondaryKeywords, setSecondaryKeywords] = useState<string[]>(currentVariant.seo_secondary_keywords);
 
     const analyzer = new SeoAnalyzer({
         primaryKeyword,
@@ -67,6 +68,23 @@ function SeoAnalysis({id}: {id: number}) {
         </svg>;
     }
 
+    function updateSecondaryKeywords(secondaryKeywords: string[]) {
+        setSecondaryKeywords(secondaryKeywords);
+        saveCurrentVariantDiff({
+            diff: {
+                seo_secondary_keywords: secondaryKeywords
+            }
+        });
+    }
+    function updatePrimaryKeyword(primaryKeyword: string|null) {
+        setPrimaryKeyword(primaryKeyword);
+        saveCurrentVariantDiff({
+            diff: {
+                seo_primary_keyword: primaryKeyword,
+            }
+        });
+    }
+
     function handleAddSecondaryKeyword(keyword: string) {
 
         if (keyword.toLowerCase() === primaryKeyword?.toLowerCase()) {
@@ -90,7 +108,7 @@ function SeoAnalysis({id}: {id: number}) {
             return false;
         }
 
-        setSecondaryKeywords([...secondaryKeywords, keyword])
+        updateSecondaryKeywords([...secondaryKeywords, keyword])
 
         return true;
     }
@@ -118,7 +136,7 @@ function SeoAnalysis({id}: {id: number}) {
 
         const newKeywords = [...secondaryKeywords];
         newKeywords[newKeywords.indexOf(oldKeyword)] = newKeyword;
-        setSecondaryKeywords(newKeywords);
+        updateSecondaryKeywords(newKeywords);
 
         return true;
 
@@ -137,7 +155,7 @@ function SeoAnalysis({id}: {id: number}) {
             return false;
         }
 
-        setPrimaryKeyword(keyword);
+        updatePrimaryKeyword(keyword);
 
         return true;
     }
@@ -155,7 +173,7 @@ function SeoAnalysis({id}: {id: number}) {
             return false;
         }
 
-        setPrimaryKeyword(keyword);
+        updatePrimaryKeyword(keyword);
 
         return true;
     
@@ -193,7 +211,7 @@ function SeoAnalysis({id}: {id: number}) {
                         <KeywordDisplay 
                             keyword={primaryKeyword}
                             onUpdate={handlePrimaryKeywordUpdate}
-                            onRemove={() => setPrimaryKeyword(null)}
+                            onRemove={() => updatePrimaryKeyword(null)}
                         />
                     }
                 </div>
@@ -212,7 +230,7 @@ function SeoAnalysis({id}: {id: number}) {
                                 onRemove={() => {
                                     const newKeywords = [...secondaryKeywords];
                                     newKeywords.splice(i, 1);
-                                    setSecondaryKeywords(newKeywords);
+                                    updateSecondaryKeywords(newKeywords);
                                 }
                             } />
                         })

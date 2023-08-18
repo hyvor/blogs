@@ -9,7 +9,6 @@ import {diff} from "deep-object-diff";
 import languagesLogic from "./languagesLogic";
 import {PostEditorState} from "../states";
 import merge from "deepmerge";
-import { usePostValues } from "../Posts/Post/helpers";
 
 export async function updatePost(post: Post, diff: Partial<Post>) {
 
@@ -50,6 +49,7 @@ const postLogic = kea<postLogicType>([
     actions(({values}) => ({
         set: (obj: Post) => ({obj}),
         setOriginal: (obj: Post) => ({obj}),
+        setVariant: (variant: PostVariant) => ({variant}),
         updatePostValue: (key: keyof Post, value: any) => ({key, value}),
         updatePost: (update: Partial<Post>) => ({update}),
         updateCurrentPostVariantValue: (key: keyof PostVariant, value: any) => ({
@@ -80,7 +80,7 @@ const postLogic = kea<postLogicType>([
         },
 
         /**
-         * Used for auto saving
+         * @deprecated use savePostDiff instead
          */
         savePost: async () => {
             const diff = values.diff
@@ -92,8 +92,9 @@ const postLogic = kea<postLogicType>([
             const response = await updatePost(values.post, diff);
             actions.setOriginal(response);
         },
+        
         /**
-         * Used for forced saving/publishing/unpublishing (usually on button click)
+         * @deprecated use savePostDiff instead
          */
         forceSavePost: async ({onSave, update} : { update: Partial<Post>, onSave: (post: Post) => void}) => {
 
@@ -108,6 +109,16 @@ const postLogic = kea<postLogicType>([
         savePostDiff: async({diff, onSave} : {diff: Partial<Post>, onSave: Function}) => {
             const response = await updatePost(values.post, diff);
             actions.set(response)
+            typeof onSave === 'function' && onSave(response);
+        },
+
+        saveCurrentVariantDiff: async({diff, onSave}: {diff: Partial<PostVariant>, onSave?: Function}) => {
+            const currentVariant = values.currentVariant;
+            const response = await api.patch<PostVariant>(getSubdomain(), `/post/${values.post.id}/variant`, {
+                language_id: currentVariant.language_id,
+                ...diff
+            });
+            actions.setVariant(response);
             typeof onSave === 'function' && onSave(response);
         },
 
@@ -160,6 +171,15 @@ const postLogic = kea<postLogicType>([
             {} as Post,
             {
                 set: (_, {obj}) => obj,
+                setVariant: (state, {variant}) => {
+                    const copy = {...state}
+                    copy.variants = copy.variants.map(
+                        v => v.language_id === variant.language_id ?
+                            variant :
+                            v
+                    );
+                    return copy;
+                },
                 updatePostValue: (state, {key, value}) => ({...state, ...{[key]: value}} as Post),
                 updatePost: (state, {update}) => ({...state, ...update} as Post),
                 updateCurrentPostVariantValue: (state, {key, value, languageId}) => {
@@ -198,6 +218,15 @@ const postLogic = kea<postLogicType>([
             {} as Post,
             {
                 set: (_, {obj}) => obj,
+                setVariant: (state, {variant}) => {
+                    const copy = {...state}
+                    copy.variants = copy.variants.map(
+                        v => v.language_id === variant.language_id ?
+                            variant :
+                            v
+                    );
+                    return copy;
+                },
                 setOriginal: (_, {obj}) => obj,
                 addVariant: (state, {variant}) => {
                     const copy = {...state}

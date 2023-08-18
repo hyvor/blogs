@@ -59,7 +59,7 @@ export default function PostsListRow({ id, subdomain }: { id: number, subdomain:
                 <div className="post-authors">
                     {
                         post.authors.map(author => {
-                            return <div className="post-author">
+                            return <div className="post-author" key={author.id}>
                                 <img
                                     src={author.picture_url || undefined}
                                     className="round-image-40 post-author-image "

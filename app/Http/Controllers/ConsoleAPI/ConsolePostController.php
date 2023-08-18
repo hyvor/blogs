@@ -210,6 +210,10 @@ class ConsolePostController extends Controller
             'content_unsaved' => 'string|nullable',
             'title' => 'string|max:255|nullable',
             'description' => 'string|max:255|nullable',
+
+            'seo_primary_keyword' => 'string|max:255|nullable',
+            'seo_secondary_keywords' => 'array',
+            'seo_secondary_keywords.*' => 'string',
         ]);
 
         $languageId = $request->integer('language_id');
@@ -252,6 +256,18 @@ class ConsolePostController extends Controller
             $variantUpdates['description'] = $request->input('description') !== null ?
                 (string) $request->string('description') :
                 null;
+
+        if ($request->has('seo_primary_keyword')) {
+            $variantUpdates['seo_primary_keyword'] = $request->input('seo_primary_keyword') !== null ?
+                (string) $request->string('seo_primary_keyword') :
+                null;
+        }
+
+        if ($request->has('seo_secondary_keywords')) {
+            /** @var string[] $secondaryKeywords */
+            $secondaryKeywords =  (array) $request->input('seo_secondary_keywords');
+            $variantUpdates['seo_secondary_keywords'] = $secondaryKeywords;
+        }
 
         if (count($variantUpdates) > 0) {
 

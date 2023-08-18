@@ -29,6 +29,9 @@ class PostVariantObject
 
     public ?string $description;
 
+    public ?string $seo_primary_keyword;
+    /** @var string[] */
+    public array $seo_secondary_keywords;
 
     // only for exporting
     public ?string $content_html;
@@ -58,6 +61,9 @@ class PostVariantObject
         $this->content_unsaved = $variant->content_unsaved;
         $this->title = $variant->title;
         $this->description = $variant->description;
+
+        $this->seo_primary_keyword = $variant->seo_primary_keyword;
+        $this->seo_secondary_keywords = $variant->seo_secondary_keywords ?? [];
 
         if ($setHtml) {
             $this->content_html = $variant->content_html;

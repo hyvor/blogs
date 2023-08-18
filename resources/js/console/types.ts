@@ -150,6 +150,9 @@ export type PostVariant = {
     title: string | null;
     description: string | null;
 
+    seo_primary_keyword: string | null,
+    seo_secondary_keywords: string[]
+
 };
 
 // == USER
