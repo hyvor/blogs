@@ -3,7 +3,7 @@ import { getDocFromContent } from "../../ProseMirror/helpers";
 import { Link, getLinksMarksFromContent } from "../Links/links";
 
 export interface Input {
-    primaryKeyword: string,
+    primaryKeyword: string | null,
     secondaryKeywords: string[],
     title: string,
     description: string,
@@ -110,8 +110,12 @@ class Test {
         return getLinksMarksFromContent(this.input.content, this.input.blogUrl);
     }
 
-    protected allKeywords() : string[] {
-        return [this.input.primaryKeyword, ...this.input.secondaryKeywords];
+    protected allKeywords() : string[]|null {
+        const keywords = [
+            ...(this.input.primaryKeyword ? [this.input.primaryKeyword] : []), 
+            ...this.input.secondaryKeywords
+        ];
+        return keywords.length ? keywords : null;
     }
 
     protected keywordInString(keyword: string, str: string) : boolean {
@@ -124,6 +128,12 @@ export class PrimaryKeywordInTitleTest extends Test {
 
     public run() {
         let result = this.defaultResult('Primary keyword not found in title');
+
+        if (!this.input.primaryKeyword) {
+            result.ignore = true;
+            result.message = 'Ignored primary keyword in title test. Add primary keyword';
+            return result;
+        }
 
         const title = this.input.title.toLowerCase().trim();
         const primaryKeyword = this.input.primaryKeyword.toLowerCase();
@@ -155,6 +165,12 @@ export class PrimaryKeywordInDescriptionTest extends Test {
 
         let result = this.defaultResult('Primary keyword not found in the description');
 
+        if (!this.input.primaryKeyword) {
+            result.ignore = true;
+            result.message = 'Ignored primary keyword in description test. Add primary keyword';   
+            return result;
+        }
+
         const description = this.input.description.toLowerCase().trim();
 
         if (description.includes(this.input.primaryKeyword.toLowerCase())) {
@@ -173,6 +189,12 @@ export class PrimaryKeywordInSlugTest extends Test {
     public run() {
 
         let result = this.defaultResult('Primary keyword not found in the slug');
+
+        if (!this.input.primaryKeyword) {
+            result.ignore = true;
+            result.message = 'Ignored primary keyword in slug test. Add primary keyword';
+            return result;
+        }
 
         const slug = this.input.slug.toLowerCase().trim();
         const primaryKeyword = this.input.primaryKeyword.toLowerCase();
@@ -208,6 +230,12 @@ export class PrimaryKeywordInBeginningOfContentTest extends Test {
 
         let result = this.defaultResult('Primary keyword not found in the beginning of the content');
 
+        if (!this.input.primaryKeyword) {
+            result.ignore = true;
+            result.message = 'Ignored primary keyword in beginning test. Add primary keyword';
+            return result;
+        }
+
         const content = this.contentText().toLowerCase().trim();
         const primaryKeyword = this.input.primaryKeyword.toLowerCase();
         const words = content.split(/\s+/);
@@ -236,6 +264,12 @@ export class AllKeywordsInContentTest extends Test {
         const content = this.contentText().toLowerCase().trim();
         const missingKeywords = [];
 
+        if (!keywords) {
+            result.ignore = true;
+            result.message = 'Ignored keywords in content test. Add keywords';
+            return result;
+        }
+
         for (let keyword of keywords) {
             if (!this.keywordInString(keyword, content)) {
                 missingKeywords.push(keyword);
@@ -257,10 +291,10 @@ export class ContentLengthTest extends Test {
 
     public run() {
         const content = this.contentText().toLowerCase().trim();
-        const words = content.split(/\s+/);
+        const words = content === "" ? [] : content.split(/\s+/);
         const wordsCount = words.length;
 
-        let result = this.defaultResult(`Content is ${wordsCount} words long. Consider using at least 400 words.`);
+        let result = this.defaultResult(`Content is ${wordsCount} word${wordsCount === 1 ? '' : 's'} long. Consider using at least 400 words.`);
 
         if (wordsCount >= 400) {
             result.message = `Content is ${wordsCount} words long`;
@@ -278,6 +312,12 @@ export class AllKeywordsInSubHeadingsTest extends Test {
     public run() {
         const result = this.defaultResult('No keywords found in subheadings');
         const keywords = this.allKeywords();
+
+        if (!keywords) {
+            result.ignore = true;
+            result.message = 'Ignored keywords in subheadings test. Add keywords';
+            return result;
+        }
 
         const content = this.contentNode();
         const subHeadings : Node[] = [];
@@ -319,6 +359,12 @@ export class AllKeywordsInImgAltTest extends Test {
 
         const result = this.defaultResult('No keywords found in image alt attributes');
         const keywords = this.allKeywords();
+
+        if (!keywords) {
+            result.ignore = true;
+            result.message = 'Ignored keywords in img alt test. Add keywords';
+            return result;
+        }
 
         const content = this.contentNode();
         const images : Node[] = [];
@@ -364,6 +410,12 @@ export class KeywordDensityTest extends Test {
 
         const content = this.contentText().toLowerCase().trim();
         const keywords = this.allKeywords();
+
+        if (!keywords) {
+            result.ignore = true;
+            result.message = 'Ignored keywords density test. Add keywords';
+            return result;
+        }
 
         const words = content.split(/\s+/);
         const wordsCount = words.length;

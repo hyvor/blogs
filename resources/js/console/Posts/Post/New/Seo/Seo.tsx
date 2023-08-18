@@ -1,33 +1,18 @@
-import React, { useState } from 'react';
+import React, { useEffect, useRef, useState } from 'react';
 import { usePostValues } from '../../helpers';
 import { SeoAnalyzer, TestResult } from './seo-analyzer';
-import { useValues } from 'kea';
+import { key, useValues } from 'kea';
 import userBlogsLogic from '../../../../logic/userBlogsLogic';
 import getSubdomain from '../../../../logic-helpers/subdomain';
+import { Check, X } from 'react-bootstrap-icons';
+import { toast } from 'react-toastify';
 
 export default function Seo({id}: {id: number}) {
 
-    const [settingsType, setSettingsType] = useState<'seo' | 'links'>('seo');
-
     return <div className="toolbar-content">
-
         <div className="post-settings-wrap post-analysis" data-testid="post-seo">
-
-            {/* <div className="setting-select">
-                <button 
-                    onClick={() => setSettingsType('seo')} 
-                    className={settingsType === 'seo' ? 'active' : ''}
-                >SEO</button>
-                <button 
-                    onClick={() => setSettingsType('links')} 
-                    className={settingsType === 'links' ? 'active' : ''}
-                >Links</button>
-            </div> */}
-
-            {settingsType === 'seo' && <SeoAnalysis id={id} />}
-
+            <SeoAnalysis id={id} />
         </div>
-
     </div>
 
 }
@@ -41,7 +26,7 @@ function SeoAnalysis({id}: {id: number}) {
     const userBlog = findBlogBySubdomain(getSubdomain())
     const blogUrl = userBlog.blog.base_url;
 
-    const [primaryKeyword, setPrimaryKeyword] = useState('blogging');
+    const [primaryKeyword, setPrimaryKeyword] = useState<string | null>(null);
     const [secondaryKeywords, setSecondaryKeywords] = useState<string[]>([]);
 
     const analyzer = new SeoAnalyzer({
@@ -82,6 +67,100 @@ function SeoAnalysis({id}: {id: number}) {
         </svg>;
     }
 
+    function handleAddSecondaryKeyword(keyword: string) {
+
+        if (keyword.toLowerCase() === primaryKeyword?.toLowerCase()) {
+            toast.error("Keyword already added as primary keyword");
+            return false;
+        }
+
+        if (secondaryKeywords.length >= 10) {
+            toast.error("Maximum 10 keywords allowed");
+            return false;
+        }
+
+        let isDuplicate = false;
+        secondaryKeywords.forEach(secondaryKeyword => {
+            if (secondaryKeyword.toLowerCase() === keyword.toLowerCase()) {
+                toast.error("Keyword already added");
+                isDuplicate = true;
+            }
+        })
+        if (isDuplicate) {
+            return false;
+        }
+
+        setSecondaryKeywords([...secondaryKeywords, keyword])
+
+        return true;
+    }
+
+    function handleUpdateSecondaryKeyword(oldKeyword: string, newKeyword: string) {
+
+        if (newKeyword.toLowerCase() === primaryKeyword?.toLowerCase()) {
+            toast.error("Keyword already added as primary keyword");
+            return false;
+        }
+
+        let isDuplicate = false;
+        secondaryKeywords.forEach(secondaryKeyword => {
+            if (secondaryKeyword === oldKeyword) {
+                return;
+            }
+            if (secondaryKeyword.toLowerCase() === newKeyword.toLowerCase()) {
+                toast.error("Keyword already added");
+                isDuplicate = true;
+            }
+        })
+        if (isDuplicate) {
+            return false;
+        }
+
+        const newKeywords = [...secondaryKeywords];
+        newKeywords[newKeywords.indexOf(oldKeyword)] = newKeyword;
+        setSecondaryKeywords(newKeywords);
+
+        return true;
+
+    }
+
+    function handleAddPrimaryKeyword(keyword: string) {
+
+        let isDuplicate = false;
+        secondaryKeywords.forEach(secondaryKeyword => {
+            if (secondaryKeyword.toLowerCase() === keyword.toLowerCase()) {
+                toast.error("Keyword already added");
+                isDuplicate = true;
+            }
+        })
+        if (isDuplicate) {
+            return false;
+        }
+
+        setPrimaryKeyword(keyword);
+
+        return true;
+    }
+
+    function handlePrimaryKeywordUpdate(keyword: string) {
+
+        let isDuplicate = false;
+        secondaryKeywords.forEach(secondaryKeyword => {
+            if (secondaryKeyword.toLowerCase() === keyword.toLowerCase()) {
+                toast.error("Keyword already added");
+                isDuplicate = true;
+            }
+        })
+        if (isDuplicate) {
+            return false;
+        }
+
+        setPrimaryKeyword(keyword);
+
+        return true;
+    
+    }
+
     return <div className="seo-analysis">
 
         <div className="seo-top">
@@ -105,34 +184,45 @@ function SeoAnalysis({id}: {id: number}) {
 
                 <div className="keyword-input">
                     <div className="keyword-title">Primary Keyword</div>
-                    <input
-                        type="text"
-                        className="input medium"
-                        value={primaryKeyword}
-                        onChange={e => setPrimaryKeyword(e.target.value)}
-                    />
+
+                    {
+                        primaryKeyword === null ?
+                        <KeywordAdder 
+                            onAdd={handleAddPrimaryKeyword}
+                        /> :
+                        <KeywordDisplay 
+                            keyword={primaryKeyword}
+                            onUpdate={handlePrimaryKeywordUpdate}
+                            onRemove={() => setPrimaryKeyword(null)}
+                        />
+                    }
                 </div>
 
                 <div className="keyword-input">
                     <div className="keyword-title">Secondary Keywords</div>
+                    
                     {
                         secondaryKeywords.map((keyword, i) => {
-
-                            function setKeyword(keyword: string) {
-                                const newKeywords = [...secondaryKeywords];
-                                newKeywords[i] = keyword;
-                                setSecondaryKeywords(newKeywords);
-                            }
-
-                            return <input
-                                type="text"
-                                className="input medium"
-                                value={secondaryKeywords[i]}
-                                onChange={e => setKeyword(e.target.value)}
-                            />
+                            return <KeywordDisplay 
+                                key={keyword}
+                                keyword={keyword}
+                                onUpdate={newKeyword => {
+                                    return handleUpdateSecondaryKeyword(keyword, newKeyword);
+                                }}
+                                onRemove={() => {
+                                    const newKeywords = [...secondaryKeywords];
+                                    newKeywords.splice(i, 1);
+                                    setSecondaryKeywords(newKeywords);
+                                }
+                            } />
                         })
                     }
-                    
+
+                    <div className="secondary-keyword-adder-wrap">
+                        <KeywordAdder 
+                            onAdd={handleAddSecondaryKeyword}
+                        />
+                    </div>
                 </div>
 
             </div>
@@ -146,6 +236,122 @@ function SeoAnalysis({id}: {id: number}) {
         </div>
 
     </div>
+
+}
+
+function KeywordAdder(
+    { onAdd, startKeyword, onClose } :
+    {
+        startKeyword?: string,
+        onAdd: (keyword: string) => boolean,
+        onClose?: () => void
+    }
+) {
+    
+    const [isAdding, setIsAdding] = useState(startKeyword ? true : false);
+    
+    const [keyword, setKeyword] = useState(startKeyword || '');
+    const keywordRef = useRef<string>(keyword);
+
+    function handleConfirm() {
+        const currentKeyword = keywordRef.current.trim(); 
+        if (currentKeyword === '') {
+            toast.error("Keyword can't be empty");
+            return;
+        }
+
+        const success = onAdd(currentKeyword);
+
+        if (success) {
+            setIsAdding(false);
+            setKeyword('');
+        }
+    }
+
+    function handleClose() {
+        setIsAdding(false);
+        setKeyword('');
+        onClose?.();
+    }
+
+    useEffect(() => {
+
+        function handleKeyDown(e: KeyboardEvent) {
+            if (e.key === 'Enter') {
+                handleConfirm();
+            }
+            if (e.key === 'Escape') {
+                handleClose();
+            }
+        }
+
+        if (isAdding) {
+            document.addEventListener('keydown', handleKeyDown);
+        } else {
+            document.removeEventListener('keydown', handleKeyDown);
+        }
+
+        return () => {
+            document.removeEventListener('keydown', handleKeyDown);
+        }
+
+    }, [isAdding]);
+
+    useEffect(() => {
+        keywordRef.current = keyword;
+    }, [keyword])
+
+    return <div className="keyword-adder">
+        {
+            isAdding ?
+                <div className="adding">
+                    <input 
+                        type="text" 
+                        className="input medium" 
+                        autoFocus={true}
+                        value={keyword}
+                        onChange={e => setKeyword(e.target.value)}
+                    />
+                    <div className="confirm-buttons">
+                        <a onClick={handleConfirm} className={keyword.trim() === '' ? 'inactive' : ''}><Check /></a>
+                        <a onClick={handleClose}><X /></a>
+                    </div>
+                </div> :
+                <button
+                    className="add-button button mini light" 
+                    onClick={() => setIsAdding(true)}
+                >+ Add</button>
+        }
+    </div>   
+
+}
+
+function KeywordDisplay(
+    {keyword, onUpdate, onRemove}: 
+    {
+        keyword: string, 
+        onUpdate: (keyword: string) => boolean,
+        onRemove: () => void
+    }) {
+
+    const [isEditing, setIsEditing] = useState(false);
+
+    return isEditing ? 
+        <KeywordAdder
+            startKeyword={keyword}
+            onAdd={keyword => {
+                const success = onUpdate(keyword);
+                if (success) {
+                    setIsEditing(false);
+                }
+                return success;
+            }}
+            onClose={() => setIsEditing(false)}
+        /> :
+        <div className="keyword-display">
+            <span className="keyword" onClick={() => setIsEditing(true)}>{keyword}</span>
+            <a className="remove-button" onClick={onRemove}><X /></a>
+        </div>
 
 }
 

@@ -6,6 +6,60 @@
             display: flex;
         }
 
+        .keyword-adder {
+            margin-bottom: 5px;
+            .adding {
+                display: flex;
+                input {
+                    padding: 5px 10px;
+                    font-size: 12px;
+                    flex: 1;
+                    margin-right: 3px;
+                }
+            }
+        }
+
+        .keyword-display {
+            display: flex;
+            align-items: center;
+            margin-bottom: 5px;
+            .keyword {
+                display: inline-block;
+                padding: 4px 10px;
+                border-radius: 20px;
+                font-size: 12px;
+                background-color: $color-accent-light;
+                cursor: pointer;
+                transition: .3s ease;
+                &:hover {
+                    box-shadow: 0 0 0 1px $color-accent-light;
+                }
+            }
+            a {
+                margin-left: 3px;
+            }
+        }
+
+        .keyword-adder, .keyword-display {
+            a {
+                cursor: pointer;
+                display: inline-flex;
+                align-items: center;
+                justify-content: center;
+                width: 22px;
+                height: 22px;
+                font-size: 16px;
+                border-radius: 50%;
+                &.inactive {
+                    pointer-events: none;
+                    opacity: 0.4;
+                }
+                &:hover {
+                    background-color: $color-card;
+                }
+            }
+        }
+
         .keywords {
             flex: 1;
             margin-left: 15px;
@@ -16,6 +70,9 @@
             }
             .keyword-input {
                 margin-bottom: 15px;
+                .secondary-keyword-adder-wrap {
+                    margin-top: 5px;
+                }
             }
             input {
                 font-size: 13px;
@@ -25,7 +82,6 @@
         .score-wrap {
             flex: 1;
             display: flex;
-            align-items: center;
             justify-content: center;
             margin-bottom: 20px;
             .score {
