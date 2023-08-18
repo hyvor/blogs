@@ -26,6 +26,7 @@ export const scenes = {
     posts: ({ postId } : { postId?: number }) => <Posts postId={postId} />,
     pages: ({ postId } : { postId?: number }) => <Pages postId={postId} />,
     settings: ({type} : {type?: string}) => <Settings type={type} />,
+    tools: ({type} : {type?: string}) => <Settings type={type} />,
     integrations: ({type} : {type?: string}) => <Integrations type={type} />,
     theme: ({type} : {type?: string }) => <Theme />,
     billing: () => <Billing />,
