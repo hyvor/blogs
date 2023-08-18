@@ -1,4 +1,4 @@
-import { BoxArrowUpRight, GearFill } from "react-bootstrap-icons";
+/* import { BoxArrowUpRight, GearFill } from "react-bootstrap-icons";
 import { getBlogUrl } from "../../../lib/blog-helpers";
 import React, { useEffect } from "react";
 import { usePostActions, usePostValues } from "../helpers";
@@ -66,4 +66,4 @@ export default function SettingsRow({ id }: { id: number }) {
 
     </div>
 
-}
+} */

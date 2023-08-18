@@ -1,4 +1,4 @@
-import { useActions, useValues } from 'kea';
+/* import { useActions, useValues } from 'kea';
 import React, {useState, useRef, ReactNode, useEffect} from 'react';
 import { Trash } from 'react-bootstrap-icons';
 import CodemirrorEditor, { CODEMIRROR_MODES } from '../../../ReusableComponents/CodemirrorEditor';
@@ -334,4 +334,4 @@ const Setting: React.FC<SettingProps> = ({ title, description, className, childr
         </div>
     </div>
 
-);
+); */

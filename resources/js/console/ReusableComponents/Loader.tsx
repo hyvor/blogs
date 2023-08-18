@@ -1,7 +1,7 @@
 import React from "react";
 
 interface LoaderProps {
-    size?: 'default' | 'small' | 'mini',
+    size?: 'default' | 'small' | 'mini' | 'extra-mini',
     color?: string, 
     padding?: number,
     inline?: boolean
@@ -15,6 +15,7 @@ export default function Loader({
 } : LoaderProps) {
 
     const sizePx = {
+        'extra-mini': 12,
         'mini': 14,
         'small': 20,
         'default': 26

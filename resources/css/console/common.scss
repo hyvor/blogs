@@ -238,6 +238,9 @@ button {
     &.mini .spinner {
         border-width: 2px;
     }
+    &.extra-mini .spinner {
+        border-width: 2px;
+    }
     &.inline {
         display: inline-flex;
         vertical-align: middle;

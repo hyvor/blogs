@@ -4,12 +4,16 @@
 export interface PostEditorState {
     languageId: number,
     isFullscreen: boolean,
-    // isChangingSettings: boolean,
     isPublishing: boolean,
     isUnpublishing: boolean,
     isDiscarding: boolean,
     isNonDraftEditing: boolean,
     isNonDraftUpdating: boolean,
+
+    /**
+     * Saving the post (title and content of the current variant) in useSave.ts
+     */
+    isSaving: boolean,
 
     /**
      * Used to force a re-render of the editor when the post is updated.

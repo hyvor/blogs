@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React from "react";
 import Editor from "../ProseMirror/Editor";
 import { usePostActions, usePostValues } from "../helpers";
 import PostLanguageSelector from "../PostLanguageSelector";
@@ -7,10 +7,22 @@ import {useLanguagesValues} from "../../../Settings/Languages/helpers";
 import { BoxArrowUpRight, InfoCircle } from "react-bootstrap-icons";
 import { getBlogUrl } from "../../../lib/blog-helpers";
 import getSubdomain from "../../../logic-helpers/subdomain";
+import Loader from "../../../ReusableComponents/Loader";
 
 export default function PostLeft({id, postViewRef} : {id: number, postViewRef: React.RefObject<HTMLDivElement>}) {
 
-    const { post, currentLanguage, currentVariant } = usePostValues(id);
+    const { 
+        post, 
+        currentLanguage, 
+        currentVariant,
+        currentVariantOriginal, 
+        editorState 
+    } = usePostValues(id);
+
+    const hasTitleOrContentChanged = 
+        currentVariantOriginal.title !== currentVariant.title ||
+        currentVariantOriginal.content !== currentVariant.content ||
+        currentVariantOriginal.content_unsaved !== currentVariant.content_unsaved;
 
     return <div className="post-left">
 
@@ -50,18 +62,20 @@ export default function PostLeft({id, postViewRef} : {id: number, postViewRef: R
                     <span className="saver">
 
                         {
-                            /* savePostAjax.status === 'loading' ?
-                                "Saving..." :
+                            editorState.isSaving ?
+                                <span>
+                                    <Loader size="extra-mini" inline={true} />
+                                    <span className="saving-name">Saving</span>
+                                </span>
+                                :
 
                                 (
-                                    hasChanges ?
-                                        <span className="not-saved" onClick={savePost}>Unsaved changes *</span> :
+                                    hasTitleOrContentChanged ?
+                                        <span className="not-saved">Unsaved changes *</span> :
                                         <span className="saved">Saved</span>
-                                ) */
+                                )
 
                         }
-
-                        <span className="saved">Saved</span>
 
                     </span>
                 </div>

@@ -1,29 +1,23 @@
 import React, { useRef } from 'react';
 import Loader from '../../ReusableComponents/Loader';
-import Tooltip from '../../ReusableComponents/Tooltip';
 import { usePostValues, usePostActions } from "./helpers";
 import useSave from './useSave'
-import PostTop from "./PostTop/PostTop";
-import PostBottom from "./PostBottom";
-import PostMiddle from "./PostMiddle";
-import Unpublisher from "./Unpublisher";
 import postsLogic from "../../logic/postsLogic";
 import pagesLogic from "../../logic/pagesLogic";
-import Discarder from './Discarder';
 import PostLeft from './New/PostLeft';
 import PostRight from './New/PostRight';
-import { CaretLeft, CaretLeftFill } from 'react-bootstrap-icons';
+import { CaretLeftFill } from 'react-bootstrap-icons';
 
 export default function Post({ id, subdomain, type }: { id: number, subdomain: string, type: string }) {
 
-    const { loadPostAjax, editorState } = usePostValues(id);
+    const { loadPostAjax } = usePostValues(id);
     const postsLogicInst = postsLogic({ subdomain });
     const pagesLogicInst = pagesLogic({ subdomain });
     const { savePost } = usePostActions(id)
 
     const postViewRef = useRef<HTMLDivElement>(null);
 
-    // useSave(id);
+    useSave(id);
 
     if (loadPostAjax.status === 'loading') {
         return <div className="post-loading">
@@ -52,7 +46,7 @@ export default function Post({ id, subdomain, type }: { id: number, subdomain: s
 
     </div>
 
-    return <div className={"post-editor fullscreen"}>
+    /* return <div className={"post-editor fullscreen"}>
 
         <div className="pos-rel">
             <button className="icon-button back-button" onClick={() => saveAndNavigateToList()} >
@@ -70,6 +64,6 @@ export default function Post({ id, subdomain, type }: { id: number, subdomain: s
 
         </div>
 
-    </div >
+    </div > */
 
 }

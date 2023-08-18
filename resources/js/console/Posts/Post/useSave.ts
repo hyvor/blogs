@@ -1,15 +1,43 @@
 import {usePostActions, usePostValues} from "./helpers";
 import {useEffect} from "react";
 
-
 export default function useSave(id: number) {
 
-    const { currentVariant, diff, editorState } = usePostValues(id);
-    const { savePost } = usePostActions(id)
+    const { currentVariant, currentVariantDiff, editorState } = usePostValues(id);
+    const { saveCurrentVariantDiff, changeEditorState } = usePostActions(id)
 
     function handleAutoSave() {
         if (!editorState.isUnpublishing && !editorState.isPublishing && !editorState.isNonDraftUpdating) {
-            savePost();
+
+            const diff = {} as {
+                content?: string,
+                content_unsaved?: string,
+                title?: string,
+            }
+
+            if (currentVariantDiff.title) {
+                diff['title'] = currentVariantDiff.title;
+            }
+            if (currentVariantDiff.content) {
+                diff['content'] = currentVariantDiff.content;
+            }
+            if (currentVariantDiff.content_unsaved) {
+                diff['content_unsaved'] = currentVariantDiff.content_unsaved;
+            }
+
+            if (Object.keys(diff).length > 0) {
+                
+                changeEditorState('isSaving', true);
+
+                saveCurrentVariantDiff({
+                    diff,
+                    onSave: () => {
+                        changeEditorState('isSaving', false);
+                    }
+                })
+
+            }
+
         }
     }
 
@@ -28,9 +56,12 @@ export default function useSave(id: number) {
         function checkSaveUnload(event: BeforeUnloadEvent) {
             if (
                 (currentVariant.status === 'published' || currentVariant.status === 'scheduled') &&
-                Object.keys(diff).length > 0
+                (
+                    currentVariantDiff.title ||
+                    currentVariantDiff.content_unsaved
+                )
             ) {
-                event.returnValue = 'Are you sure to close this tab?';
+                event.returnValue = 'Are you sure to close this tab? You have unsaved changes.';
             } else {
                 handleAutoSave();
             }
@@ -38,6 +69,7 @@ export default function useSave(id: number) {
 
         function checkSavePopstate(event: PopStateEvent) {
             event.preventDefault()
+            handleAutoSave();
         }
 
         // save on CTRL + S
@@ -54,6 +86,6 @@ export default function useSave(id: number) {
             window.removeEventListener('popstate', checkSavePopstate);
         }
 
-    }, [id, diff])
+    }, [id, currentVariantDiff, currentVariant, editorState])
 
 }

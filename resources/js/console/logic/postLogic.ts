@@ -247,12 +247,14 @@ const postLogic = kea<postLogicType>([
             {
                 languageId: languagesLogic({subdomain: getSubdomain()}).values.primaryLanguage.id as number,
                 isFullscreen: false,
-                isChangingSettings: false,
                 isPublishing: false,
                 isUnpublishing: false,
                 // just editing the post
                 isNonDraftEditing: false,
                 isDiscarding: false,
+                
+                isSaving: false,
+                
                 // updater opened
                 isNonDraftUpdating: false,
                 version: 1,
@@ -315,6 +317,25 @@ const postLogic = kea<postLogicType>([
             s => [s.post, s.editorState],
             (post, editorState) : PostVariant =>
                 post.variants.find(v => v.language_id === editorState.languageId) as PostVariant
+        ],
+
+        currentVariantDiff: [
+            s => [s.currentVariant, s.postOriginal],
+            (currentVariant, postOriginal) : Partial<PostVariant> => {
+                const variantOriginal = postOriginal.variants
+                    .find(v => v.language_id === currentVariant.language_id) as PostVariant;
+                const d = diff(variantOriginal, currentVariant) as Partial<PostVariant>
+                if (d.url) delete d.url;
+                return d;
+            }
+        ],
+
+        currentVariantOriginal: [
+            s => [s.currentVariant, s.postOriginal],
+            (currentVariant, postOriginal) : PostVariant => {
+                return postOriginal.variants
+                    .find(v => v.language_id === currentVariant.language_id) as PostVariant;
+            }
         ],
 
         currentLanguage: [
