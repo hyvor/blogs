@@ -356,13 +356,16 @@ function KeywordDisplay(
 
 }
 
-export function SeoScoreTag({score, ignore = false}: {score: number, ignore?: boolean}) {
+export function SeoScoreTag(
+    {score, ignore = false, percentage = false}: 
+    {score: number, ignore?: boolean, percentage?: boolean}
+) {
     score = Math.round(score);
     const color = score < 50 ? 'red' : score < 80 ? 'orange' : 'green';
 
     return <span 
         className={"global-seo-score-tag " + (ignore ? 'ignore' : color)}
-    >{ignore ? "?" : score}</span>
+    >{ignore ? "?" : score}{percentage && "%"}</span>
 }
 
 function SingleTest({result}: {result: TestResult}) {

@@ -9,7 +9,9 @@ export default function UnpublishButton({id} : {id: number}) {
 
     const { currentVariant } = usePostValues(id);
     const { saveCurrentVariantDiff } = usePostActions(id);
+
     const [isUnpublishing, setIsUnpublishing] = useState(false);
+    const [hasUnpublishingStarted, setHasUnpublishingStarted] = useState(false);
 
     const status = currentVariant.status;
 
@@ -18,16 +20,20 @@ export default function UnpublishButton({id} : {id: number}) {
     }
 
     function handleUnpublish() {
+
+        setHasUnpublishingStarted(true);
+
         saveCurrentVariantDiff({
             diff: {
                 status: 'draft',
             },
             onSave: () => {
                 toast("Post unpublished");
+                setIsUnpublishing(false);
+                setHasUnpublishingStarted(false);
             }
         });
 
-        setIsUnpublishing(false);
     }
 
     return <Fragment>
@@ -48,6 +54,8 @@ export default function UnpublishButton({id} : {id: number}) {
                 name={( status === 'published' ? 'Unpublish' : 'Unschedule' )}
                 onClick={handleUnpublish}
                 onCancel={() => setIsUnpublishing(false)}
+                isLoading={hasUnpublishingStarted}
+                loadingName="Unpublishing"
             />
         }
 

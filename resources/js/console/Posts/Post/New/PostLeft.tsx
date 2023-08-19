@@ -36,7 +36,7 @@ export default function PostLeft({id, postViewRef} : {id: number, postViewRef: R
                     <PostLanguageSelector id={id} />
                 </div>
 
-                <div className="left-header-right" style={{textAlign: "right"}}>
+                <div className="left-header-right">
 
                     <span 
                         className={`global-post-status ${currentVariant.status} large`}

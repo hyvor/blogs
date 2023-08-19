@@ -1,13 +1,14 @@
 import React, { Fragment, useState } from "react";
 import { usePostActions, usePostValues } from "../../helpers";
-import { CheckCircleFill, ExclamationCircle, ExclamationTriangle, ExclamationTriangleFill, SendFill } from "react-bootstrap-icons";
-import { Popup, PopupBodyDefault, PopupFooterDoubleButton, PopupHeaderDefault } from "../../../../ReusableComponents/Popup";
+import { ExclamationTriangleFill, SendFill } from "react-bootstrap-icons";
+import { Popup } from "../../../../ReusableComponents/Popup";
 import { bringLeftHeaderToFront } from "../z-index";
 import Radio from "../../../../ReusableComponents/Radio";
 import ReactDatePicker from "react-datepicker";
 import ActionButton from "../../../../ReusableComponents/ActionButton";
 import { Post, PostVariant } from "../../../../types";
 import dayjs from "dayjs";
+import { toast } from "react-toastify";
 
 
 export default function PublishButton({id} : {id: number}) {
@@ -42,14 +43,18 @@ export default function PublishButton({id} : {id: number}) {
 function PublisherPopup({id, onClose} : {id: number, onClose: () => void}) {
 
     const [publishTime, setPublishTime] = useState<Date | null>(null)
-    const { currentVariant, diff } = usePostValues(id);
+    const { currentVariant, diff, savePostDiffAjax } = usePostValues(id);
     const { savePostDiff } = usePostActions(id);
+
+    const [isPublishing, setIsPublishing] = useState(false);
 
     function handlePublishTimeChange(setTime: boolean) {
         setPublishTime(setTime ? new Date() : null);
     }
 
     function handlePublish() {
+
+        setIsPublishing(true);
         
         const newDiff = {...diff}
         const variant = {...currentVariant};
@@ -64,7 +69,19 @@ function PublisherPopup({id, onClose} : {id: number, onClose: () => void}) {
         newDiff.variants = [variant as PostVariant];
 
         savePostDiff({diff: newDiff, onSave: () => {
+            setIsPublishing(false);
             onClose();
+
+            toast.success(
+                !publishTime ?
+                <div>Post Published. <a
+                    className="link"
+                    href={currentVariant.url}
+                    target="_blank"
+                >View</a></div> :
+                "Post scheduled"
+            , {autoClose: 5000});
+
         }});
 
     }
@@ -125,7 +142,7 @@ function PublisherPopup({id, onClose} : {id: number, onClose: () => void}) {
                             !publishTime ?
                             <ActionButton
                                 className="medium"
-                                status="stale"
+                                status={isPublishing ? 'loading' : 'stale'}
                                 staleName="Publish"
                                 loadingName="Publishing" 
                                 successName="Published"
@@ -135,7 +152,7 @@ function PublisherPopup({id, onClose} : {id: number, onClose: () => void}) {
                             /> :
                             <ActionButton
                                 className="medium"
-                                status="stale"
+                                status={isPublishing ? 'loading' : 'stale'}
                                 staleName="Schedule"
                                 loadingName="Scheduling" 
                                 successName="Scheduled"

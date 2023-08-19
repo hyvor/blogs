@@ -32,7 +32,10 @@ export default function PostRight({id} : {id: number}) {
             <ToolbarButton icon={<SearchHeart />} text="SEO">
                 SEO {
                     <span className="seo-score">
-                        <SeoScoreTag score={Math.round(currentVariantSeoResults.average)} />
+                        <SeoScoreTag 
+                            score={Math.round(currentVariantSeoResults.average)}
+                            percentage={true}
+                        />
                     </span>
                 }
             </ToolbarButton>
