@@ -7,6 +7,7 @@ import { UnsplashImage } from "../../../../types";
 import mediaLogic from '../../../../logic/mediaLogic';
 import getSubdomain from '../../../../logic-helpers/subdomain';
 import { OnSelectProps } from '../../../../ReusableComponents/ImageUploader/ImageUploader';
+import { blurEditor } from '../helpers';
 
 
 export function selectImageGlobal() : Promise<OnSelectProps> {

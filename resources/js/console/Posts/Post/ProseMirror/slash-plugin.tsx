@@ -388,6 +388,7 @@ class SlashPlugin {
 
     handleKeyDown(event: KeyboardEvent) {
         if (!this.isOpen) return;
+        if (event.target instanceof HTMLInputElement) return;
         if (event.key === "ArrowDown") {
             event.preventDefault();
             this.activateNext();

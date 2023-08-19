@@ -1,4 +1,4 @@
-import axios, { AxiosResponse } from 'axios';
+/* import axios, { AxiosResponse } from 'axios';
 import React, { ChangeEvent, useEffect, useRef, useState } from 'react';
 import { getEndpoint } from '../../../../lib/api';
 import Loader from '../../../../ReusableComponents/Loader';
@@ -287,4 +287,4 @@ function ImageColumn({ images, onUpload }: { images: UnsplashImage[], onUpload: 
             })
         }
     </div>
-}
+} */

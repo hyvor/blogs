@@ -15,6 +15,8 @@ import { toast } from "react-toastify";
 import languagesLogic from "../../../logic/languagesLogic";
 import getSubdomain from "../../../logic-helpers/subdomain";
 import ImageUploader from "../../../ReusableComponents/ImageUploader/ImageUploader";
+import { setGlobalImageUploader } from "../../../logic/mediaLogic";
+import { bringRightToFront } from "./z-index";
 
 const settingToReadable = {
     authors: 'Authors',
@@ -22,7 +24,7 @@ const settingToReadable = {
     canonical_url: 'Canonical URL',
     code_head: 'Code Head',
     code_foot: 'Code Foot',
-    published_at: 'Published At',
+    published_at: 'Publish Time',
     is_featured: 'Featured',
     featured_image_url: 'Cover Image',
     description: 'Description',
@@ -202,17 +204,25 @@ export default function Settings({id}: {id: number}) {
                             title="Cover Image"
                             className="post-setting-featured-image"
                         >
-                            <div className="featured-image global-input-shadow">
-                                <ImageUploader
-                                    placeholder={
+                            <div 
+                                className="featured-image global-input-shadow"
+                                onClick={e => {
+                                    e.stopPropagation();
+                                    bringRightToFront();
+                                    setGlobalImageUploader({
+                                        onSelect: data => {
+                                            updatePostValue("featured_image_url", data.url);
+                                        }
+                                    })
+                                }}
+                            >
+                                <div className="placeholder-wrap">
+                                    {
                                         post.featured_image_url ?
-                                        <img src={post.featured_image_url} /> :
-                                        <div className="no-image">Upload a file</div>
+                                            <img src={post.featured_image_url} /> :
+                                            <div className="no-image">Upload a file</div>
                                     }
-                                    onSelect={data => {
-                                        updatePostValue("featured_image_url", data.url);
-                                    }}
-                                />
+                                </div>
                             </div>
 
                             {

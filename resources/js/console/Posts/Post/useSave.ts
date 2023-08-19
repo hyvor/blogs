@@ -3,42 +3,40 @@ import {useEffect} from "react";
 
 export default function useSave(id: number) {
 
-    const { currentVariant, currentVariantDiff, editorState } = usePostValues(id);
+    const { currentVariant, currentVariantDiff } = usePostValues(id);
     const { saveCurrentVariantDiff, changeEditorState } = usePostActions(id)
 
     function handleAutoSave() {
-        if (!editorState.isUnpublishing && !editorState.isPublishing && !editorState.isNonDraftUpdating) {
 
-            const diff = {} as {
-                content?: string,
-                content_unsaved?: string,
-                title?: string,
-            }
+        const diff = {} as {
+            content?: string,
+            content_unsaved?: string,
+            title?: string,
+        }
 
-            if (currentVariantDiff.title) {
-                diff['title'] = currentVariantDiff.title;
-            }
-            if (currentVariantDiff.content) {
-                diff['content'] = currentVariantDiff.content;
-            }
-            if (currentVariantDiff.content_unsaved) {
-                diff['content_unsaved'] = currentVariantDiff.content_unsaved;
-            }
+        if (currentVariantDiff.title) {
+            diff['title'] = currentVariantDiff.title;
+        }
+        if (currentVariantDiff.content) {
+            diff['content'] = currentVariantDiff.content;
+        }
+        if (currentVariantDiff.content_unsaved) {
+            diff['content_unsaved'] = currentVariantDiff.content_unsaved;
+        }
 
-            if (Object.keys(diff).length > 0) {
-                
-                changeEditorState('isSaving', true);
+        if (Object.keys(diff).length > 0) {
+            
+            changeEditorState('isSaving', true);
 
-                saveCurrentVariantDiff({
-                    diff,
-                    onSave: () => {
-                        changeEditorState('isSaving', false);
-                    }
-                })
-
-            }
+            saveCurrentVariantDiff({
+                diff,
+                onSave: () => {
+                    changeEditorState('isSaving', false);
+                }
+            })
 
         }
+
     }
 
     useEffect(() => {
@@ -86,6 +84,6 @@ export default function useSave(id: number) {
             window.removeEventListener('popstate', checkSavePopstate);
         }
 
-    }, [id, currentVariantDiff, currentVariant, editorState])
+    }, [id, currentVariantDiff, currentVariant])
 
 }

@@ -247,10 +247,10 @@ const postLogic = kea<postLogicType>([
             {
                 languageId: languagesLogic({subdomain: getSubdomain()}).values.primaryLanguage.id as number,
                 isFullscreen: false,
-                isPublishing: false,
-                isUnpublishing: false,
+                // isPublishing: false,
+                // isUnpublishing: false,
                 // just editing the post
-                isNonDraftEditing: false,
+                // isNonDraftEditing: false,
                 isDiscarding: false,
                 
                 isSaving: false,

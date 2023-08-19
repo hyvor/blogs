@@ -1,12 +1,12 @@
 import React, { Fragment, useState } from "react";
-import { usePostActions, usePostValues } from "../helpers";
+import { usePostActions, usePostValues } from "../../helpers";
 import { CheckCircleFill, ExclamationCircle, ExclamationTriangle, ExclamationTriangleFill, SendFill } from "react-bootstrap-icons";
-import { Popup, PopupBodyDefault, PopupFooterDoubleButton, PopupHeaderDefault } from "../../../ReusableComponents/Popup";
-import { bringLeftHeaderToFront } from "./z-index";
-import Radio from "../../../ReusableComponents/Radio";
+import { Popup, PopupBodyDefault, PopupFooterDoubleButton, PopupHeaderDefault } from "../../../../ReusableComponents/Popup";
+import { bringLeftHeaderToFront } from "../z-index";
+import Radio from "../../../../ReusableComponents/Radio";
 import ReactDatePicker from "react-datepicker";
-import ActionButton from "../../../ReusableComponents/ActionButton";
-import { Post, PostVariant } from "../../../types";
+import ActionButton from "../../../../ReusableComponents/ActionButton";
+import { Post, PostVariant } from "../../../../types";
 import dayjs from "dayjs";
 
 
@@ -42,7 +42,7 @@ export default function PublishButton({id} : {id: number}) {
 function PublisherPopup({id, onClose} : {id: number, onClose: () => void}) {
 
     const [publishTime, setPublishTime] = useState<Date | null>(null)
-    const { currentVariant } = usePostValues(id);
+    const { currentVariant, diff } = usePostValues(id);
     const { savePostDiff } = usePostActions(id);
 
     function handlePublishTimeChange(setTime: boolean) {
@@ -51,19 +51,19 @@ function PublisherPopup({id, onClose} : {id: number, onClose: () => void}) {
 
     function handlePublish() {
         
-        const diff = {} as Partial<Post>;
+        const newDiff = {...diff}
         const variant = {...currentVariant};
 
         if (publishTime) {
-            diff['published_at'] = dayjs(publishTime).unix()
+            newDiff['published_at'] = dayjs(publishTime).unix()
             variant.status = 'scheduled';
         } else {
             variant.status = 'published';
         }
 
-        diff.variants = [variant as PostVariant];
+        newDiff.variants = [variant as PostVariant];
 
-        savePostDiff({diff, onSave: () => {
+        savePostDiff({diff: newDiff, onSave: () => {
             onClose();
         }});
 

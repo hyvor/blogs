@@ -4,10 +4,10 @@
 export interface PostEditorState {
     languageId: number,
     isFullscreen: boolean,
-    isPublishing: boolean,
-    isUnpublishing: boolean,
+    //isPublishing: boolean,
+    //isUnpublishing: boolean,
     isDiscarding: boolean,
-    isNonDraftEditing: boolean,
+    // isNonDraftEditing: boolean,
     isNonDraftUpdating: boolean,
 
     /**

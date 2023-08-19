@@ -8,6 +8,8 @@ import { BoxArrowUpRight, InfoCircle } from "react-bootstrap-icons";
 import { getBlogUrl } from "../../../lib/blog-helpers";
 import getSubdomain from "../../../logic-helpers/subdomain";
 import Loader from "../../../ReusableComponents/Loader";
+import PublishButton from "./Publish/PublishButton";
+import UnpublishButton from "./Publish/UnpublishButton";
 
 export default function PostLeft({id, postViewRef} : {id: number, postViewRef: React.RefObject<HTMLDivElement>}) {
 
@@ -50,7 +52,8 @@ export default function PostLeft({id, postViewRef} : {id: number, postViewRef: R
                         </button>
                     </a>
                     
-                    <button className="button medium">Publish</button>
+                    <UnpublishButton id={id} />
+                    <PublishButton id={id} />
 
                 </div>
 
@@ -80,7 +83,7 @@ export default function PostLeft({id, postViewRef} : {id: number, postViewRef: R
                     </span>
                 </div>
 
-                <div className="left-header-right" style={{textAlign: "right"}}>
+                <div className="left-header-right">
                     
                     <span className="words-count" id="pm-word-count"/>
 
@@ -127,8 +130,6 @@ function PostEditor({id} : {id: number}) {
         const key = isNonDraft ? 'content_unsaved' : 'content'
         updateCurrentPostVariantValue(key, value)
     }
-
-    const isEditable = currentVariant.status === 'draft' || editorState.isNonDraftEditing;
 
     return <Editor
         id={id}

@@ -4,10 +4,17 @@ import type { mediaLogicType } from "./mediaLogicType";
 import {ajax} from "kea-ajax";
 import {Media, UnsplashImage} from "../types";
 import { OnSelect } from "../ReusableComponents/ImageUploader/ImageUploader";
+import getSubdomain from "../logic-helpers/subdomain";
 
 export interface GlobalImageUploaderConfig {
     onSelect: OnSelect,
     onClose?: () => void,
+}
+
+export function setGlobalImageUploader(config: GlobalImageUploaderConfig | null) {
+    const logic = mediaLogic({subdomain: getSubdomain()});
+    logic.mount();
+    logic.actions.setGlobalImageUploader(config);
 }
 
 const mediaLogic = kea<mediaLogicType>([
