@@ -3,6 +3,12 @@ import api from "../lib/api";
 import type { mediaLogicType } from "./mediaLogicType";
 import {ajax} from "kea-ajax";
 import {Media, UnsplashImage} from "../types";
+import { OnSelect } from "../ReusableComponents/ImageUploader/ImageUploader";
+
+export interface GlobalImageUploaderConfig {
+    onSelect: OnSelect,
+    onClose?: () => void,
+}
 
 const mediaLogic = kea<mediaLogicType>([
 
@@ -15,6 +21,8 @@ const mediaLogic = kea<mediaLogicType>([
         setMediaList: (media: Media[]) => ({media}),
         removeFromList: (id: number) => ({id}),
         addMedia: (media: Media) => ({media}),
+
+        setGlobalImageUploader: (config: GlobalImageUploaderConfig | null) => ({config}),
     }),
 
     ajax(({actions, props}) => ({
@@ -113,6 +121,13 @@ const mediaLogic = kea<mediaLogicType>([
                 setMediaList: (_, {media}) => media,
                 removeFromList: (state, {id}) => state.filter(m => m.id !== id),
                 addMedia: (state, {media}) => [media, ...state]
+            }
+        ],
+
+        globalImageUploader: [
+            null as null | GlobalImageUploaderConfig,
+            {
+                setGlobalImageUploader: (_, {config}) => config
             }
         ]
 

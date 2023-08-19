@@ -23,6 +23,7 @@ resetContext({
 });
 
 import relativeTime from 'dayjs/plugin/relativeTime'
+import { GlobalImageUploader } from './ReusableComponents/ImageUploader/ImageUploader';
 
 dayjs.extend(relativeTime);
 
@@ -30,7 +31,9 @@ function App() {
     
     return <div>
         <Scene />
+
         <ToastContainer />
+        <GlobalImageUploader />
     </div>
 
 }

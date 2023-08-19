@@ -1,4 +1,4 @@
-import { NodeSelection, Plugin, TextSelection } from "prosemirror-state";
+import { EditorState, NodeSelection, Plugin, TextSelection } from "prosemirror-state";
 
 /**
  * React icons are used to save duplicate loading
@@ -21,6 +21,14 @@ import {
 
 import { createEmbed, createImage, createQuote, createTable } from "./creators";
 import {isEditorRtl} from "./rtl";
+import { EditorView } from "prosemirror-view";
+import { Schema } from "prosemirror-model";
+import { selectImageGlobal } from "./Image/nodeview-image";
+
+async function selectImage(schema: Schema) {
+    const props = await selectImageGlobal();
+    return createImage(schema, props.url);
+}
 
 const matchable = [
     {
@@ -44,8 +52,8 @@ const matchable = [
         description: "Add an image",
         icon: <CardImage />,
         keywords: ["image", "picture", "upload"],
-        node: createImage,
-        selectNode: true,
+        node: selectImage,
+        skipNodeCreation: true,
     },
     {
         name: "Embed",
@@ -127,10 +135,23 @@ const matchable = [
         keywords: ['custom'],
         node: 'custom_node'
     },*/
-];
+] as MatchableConfig[];
+
+interface MatchableConfig {
+    name: string,
+    description: string,
+    icon: JSX.Element,
+    keywords: string[],
+    node: string | ((schema: Schema) => Promise<any>),
+    attrs?: any,
+    skipNodeCreation?: boolean,
+    focusInput?: boolean,
+    focusCell?: boolean,
+    selectNode?: boolean,
+}
 
 // finds matches by best guess
-function findMatches(match) {
+function findMatches(match: string) : MatchableConfig[] {
     const matchWords = match
         .toLowerCase()
         .split(/\W+/)
@@ -146,7 +167,7 @@ function findMatches(match) {
                 y++
             ) {
                 if (match === "" || keywords[x].indexOf(matchWords[y]) > -1) {
-                    const item = { ...matchable[i] };
+                    const item = { ...matchable[i], score: 0 };
                     item.score = x + y;
                     if (
                         matched.filter((x) => x.name === item.name).length === 0
@@ -161,7 +182,7 @@ function findMatches(match) {
     return matched.sort((a, b) => a.score - b.score);
 }
 
-export default function slashPlugin(schema) {
+export default function slashPlugin(schema: Schema) {
     return new Plugin({
         view(editorView) {
             return new SlashPlugin(editorView, schema);
@@ -172,19 +193,26 @@ export default function slashPlugin(schema) {
 class SlashPlugin {
     isOpen = false;
 
-    constructor(view, schema) {
+    private items: any[];
+    private view: EditorView;
+    private schema: Schema;
+
+    private slashView: HTMLDivElement;
+
+
+    constructor(view: EditorView, schema: Schema) {
         this.items = [];
         this.view = view;
         this.schema = schema;
 
         this.slashView = document.createElement("div");
         this.slashView.className = "pm-slash-view";
-        view.dom.parentNode.appendChild(this.slashView);
-        view.dom.parentNode.parentNode.parentNode.addEventListener('scroll', () => this.update(view, null));
+        view.dom.parentNode?.appendChild(this.slashView);
+        //view.dom.parentNode?.parentNode?.parentNode?.addEventListener('scroll', () => this.update(view, null));
         this.handleKeyDown = this.handleKeyDown.bind(this);
     }
 
-    update(view, lastState) {
+    update(view: EditorView, lastState: EditorState) {
         let { selection } = view.state;
 
         if (lastState && lastState.doc.eq(view.state.doc)) {
@@ -232,7 +260,7 @@ class SlashPlugin {
         this.addEvents();
     }
 
-    show(view, matches) {
+    show(view: EditorView, matches: MatchableConfig[]) {
         this.slashView.innerHTML = "";
 
         var _self = this;
@@ -242,7 +270,7 @@ class SlashPlugin {
             item.className = "match-item";
 
             var icon = document.createElement("div");
-            icon.innerHTML = m.icon ? renderToString(m.icon) : null;
+            icon.innerHTML = m.icon ? renderToString(m.icon) : '';
             icon.className = "item-icon";
 
             var nameWrap = document.createElement("div");
@@ -261,12 +289,17 @@ class SlashPlugin {
             nameWrap.appendChild(name);
             nameWrap.appendChild(description);
 
-            item.onclick = function () {
+            item.onclick = async function () {
 
                 let node = m.node;
                 let createdNode;
                 if (typeof node === "function") {
-                    createdNode = node(_self.schema);
+                    try {
+                        createdNode = await node(_self.schema);
+                    } catch (_) {
+                        view.focus();
+                        return;
+                    }
                 } else {
                     createdNode = _self.schema.nodes[node].create(
                         m.attrs || {}
@@ -319,7 +352,7 @@ class SlashPlugin {
         const posTop = view.coordsAtPos(view.state.selection.from).top;
 
         // The box in which the slash view is positioned, to use as base
-        const wrapPos = this.slashView.offsetParent.getBoundingClientRect();
+        const wrapPos = this.slashView.offsetParent!.getBoundingClientRect();
         const viewPos = view.dom.getBoundingClientRect();
         const spaceBelow = wrapPos.bottom - posTop;
         const spaceAbove = posTop - wrapPos.top;
@@ -353,7 +386,7 @@ class SlashPlugin {
         window.removeEventListener("keydown", this.handleKeyDown, true);
     }
 
-    handleKeyDown(event) {
+    handleKeyDown(event: KeyboardEvent) {
         if (!this.isOpen) return;
         if (event.key === "ArrowDown") {
             event.preventDefault();
@@ -370,10 +403,10 @@ class SlashPlugin {
         }
     }
 
-    getItems() {
+    getItems() : NodeListOf<HTMLElement> {
         return this.slashView.querySelectorAll(".match-item");
     }
-    getActiveItem() {
+    getActiveItem() : HTMLElement | null {
         return this.slashView.querySelector(".match-item.active");
     }
 
@@ -382,7 +415,7 @@ class SlashPlugin {
         this.activateItem(items[0]);
     }
 
-    activateItem(item, scroll) {
+    activateItem(item: HTMLElement, scroll: boolean = false) {
         const items = this.getItems();
         items.forEach((i) => i.classList.remove("active"));
         item.classList.add("active");
@@ -392,7 +425,7 @@ class SlashPlugin {
     activateNext() {
         const active = this.getActiveItem();
         if (active && active.nextSibling) {
-            this.activateItem(active.nextSibling, true);
+            this.activateItem(active.nextSibling as HTMLElement, true);
         } else {
             this.activateItem(this.getItems()[0], true);
         }
@@ -400,7 +433,7 @@ class SlashPlugin {
     activatePrevious() {
         const active = this.getActiveItem();
         if (active && active.previousSibling) {
-            this.activateItem(active.previousSibling, true);
+            this.activateItem(active.previousSibling as HTMLElement, true);
         } else {
             const items = this.getItems();
             this.activateItem(items[items.length - 1], true);

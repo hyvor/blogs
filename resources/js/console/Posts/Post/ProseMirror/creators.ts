@@ -1,25 +1,26 @@
+import { Schema } from "prosemirror-model";
 
-export function createEmbed(schema, url) {
+export function createEmbed(schema: Schema, url: string) {
     return schema.nodes.figure.create({}, [
         schema.nodes.embed.create({ url }),
         schema.nodes.figcaption.create()
     ])
 }
 
-export function createImage(schema, url) {
+export function createImage(schema: Schema, url: string) {
     return schema.nodes.figure.create({}, [
-        schema.nodes.image.create({ url }),
+        schema.nodes.image.create({ src: url }),
         schema.nodes.figcaption.create()
     ]);
 }
 
-export function createQuote(schema) {
+export function createQuote(schema: Schema) {
     return schema.nodes.blockquote.create({}, [
         schema.nodes.paragraph.create()
     ])
 }
 
-export function createTable(schema) {
+export function createTable(schema: Schema) {
     const rows = [];
     for (let i = 0; i < 3; i++) {
         const cells = [];

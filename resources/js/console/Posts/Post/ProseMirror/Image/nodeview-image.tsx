@@ -1,18 +1,34 @@
 import ReactDOM from 'react-dom';
 import React from 'react';
-import ImageUploader from './ImageUploader';
 import {NodeSelection, TextSelection} from "prosemirror-state";
-import { Node as ProsemirrorNode, Schema } from "prosemirror-model";
+import { Node, Node as ProsemirrorNode, Schema } from "prosemirror-model";
 import { EditorView, NodeView } from "prosemirror-view";
 import { UnsplashImage } from "../../../../types";
+import mediaLogic from '../../../../logic/mediaLogic';
+import getSubdomain from '../../../../logic-helpers/subdomain';
+import { OnSelectProps } from '../../../../ReusableComponents/ImageUploader/ImageUploader';
 
-export type ImageUploadHandlerType = (url: string, alt?: string | null, unsplash?: UnsplashImage | null) => void;
-type ImageNodeViewType = NodeView & {
-    handleUpload: ImageUploadHandlerType;
-    handleUrl: (url: string) => void;
+
+export function selectImageGlobal() : Promise<OnSelectProps> {
+
+    return new Promise((resolve, reject) => {
+
+        const logic = mediaLogic({subdomain: getSubdomain()});
+        logic.mount();
+        logic.actions.setGlobalImageUploader({
+            onSelect: props => {
+                resolve(props);
+            },
+            onClose: () => {
+                reject();
+            }
+        });
+
+    })
+
 }
 
-export default class Image implements ImageNodeViewType {
+export default class Image {
 
     node: ProsemirrorNode;
     view: EditorView;
@@ -38,8 +54,7 @@ export default class Image implements ImageNodeViewType {
         this.dom = wrap;
 
         this.createInside = this.createInside.bind(this)
-        this.handleUpload = this.handleUpload.bind(this)
-        this.handleUrl = this.handleUrl.bind(this)
+        this.handleChange = this.handleChange.bind(this)
         this.handleInputFocus = this.handleInputFocus.bind(this)
 
         this.createInside();
@@ -87,103 +102,91 @@ export default class Image implements ImageNodeViewType {
         const { src, alt, width, height } = this.node.attrs;
 
         const _self = this;
-        let showImageUploader = false;
-        if (src && !showImageUploader) {
-            // render image
-            const img = document.createElement("img");
-            img.src = src;
-            this.dom.appendChild(img)
-            this.img = img;
 
-            const changeButton = document.createElement("button");
-            changeButton.className = "button small change-image";
-            changeButton.innerText = "Change Image";
-            changeButton.onclick = () => {
-                img.remove();
-                const container = document.createElement("div");
-                const uploader = <ImageUploader
-                    onUpload={this.handleUpload}
-                    onUrlLoad={this.handleUrl}
-                    onInputFocus={this.handleInputFocus}
-                />;
-                ReactDOM.render(uploader, container);
-                const cancelButton = document.createElement("button");
-                cancelButton.className = "button small cancel-image";
-                cancelButton.innerText = "Cancel";
-                cancelButton.onclick = () => {
-                    container.remove();
-                    cancelButton.remove();
-                    this.dom.appendChild(img);
-                };
-                _self.dom.appendChild(container);
-                _self.dom.appendChild(cancelButton);
-            };
-            this.dom.appendChild(changeButton);
+        // render image
+        const img = document.createElement("img");
+        img.src = src;
+        this.dom.appendChild(img)
+        this.img = img;
 
-            const altInput = document.createElement("input")
-            altInput.className = "input alt-input"
-            altInput.placeholder = "ALT Text..."
-            this.dom.appendChild(altInput)
-            altInput.value = alt
+        const changeButton = document.createElement("button");
+        changeButton.className = "button mini change-image";
+        changeButton.innerText = "Change";
+        changeButton.onclick = async (e) => {
 
-            altInput.oninput = function (e) {
-                const pos = _self.getPos()
-                if (pos === undefined)
-                    return;
-                _self.view.dispatch(
-                    _self.view.state.tr.setNodeMarkup(
-                        pos,
-                        null,
-                        { ..._self.node.attrs, alt: (e.target as HTMLInputElement).value }
-                    )
-                )
-            }
-            this.altInput = altInput
+            e.stopPropagation();
 
-            const rangeInput = document.createElement("input")
-            rangeInput.type = 'range';
-            rangeInput.min = "1"
-            rangeInput.max = "100"
-            rangeInput.value = width ? (width / this.img.naturalWidth * 100).toString() : "100";
-            rangeInput.step = "1"
-
-            rangeInput.oninput = function (e) {
-                const value = parseInt((e.target as HTMLInputElement).value)
-                let width, height
-                if (value === 100) {
-                    width = null;
-                    height = null;
-                } else {
-                    width = (_self.img as HTMLImageElement).naturalWidth * value / 100
-                    height = (_self.img as HTMLImageElement).naturalHeight * value / 100
-                }
-
-                const pos = _self.getPos()
-
-                if (pos === undefined)
-                    return;
-
-                _self.view.dispatch(
-                    _self.view.state.tr.setNodeMarkup(
-                        pos,
-                        null,
-                        { ..._self.node.attrs, width, height }
-                    )
-                )
+            let uploadedImage;
+            try {
+                uploadedImage = await selectImageGlobal();
+            } catch (e) {
+                return;
             }
 
-            this.rangeInput = rangeInput
+            this.handleChange(
+                uploadedImage.url, 
+                uploadedImage.unsplash?.alt,
+                uploadedImage.unsplash
+            );
 
-            this.dom.appendChild(rangeInput)
+        };
+        this.dom.appendChild(changeButton);
 
-        } else {
-            // render image selector
-            ReactDOM.render(<ImageUploader
-                onUpload={this.handleUpload}
-                onUrlLoad={this.handleUrl}
-                onInputFocus={this.handleInputFocus}
-            />, this.dom);
+        const altInput = document.createElement("input")
+        altInput.className = "input alt-input"
+        altInput.placeholder = "ALT Text..."
+        this.dom.appendChild(altInput)
+        altInput.value = alt
+
+        altInput.oninput = function (e) {
+            const pos = _self.getPos()
+            if (pos === undefined)
+                return;
+            _self.view.dispatch(
+                _self.view.state.tr.setNodeMarkup(
+                    pos,
+                    null,
+                    { ..._self.node.attrs, alt: (e.target as HTMLInputElement).value }
+                )
+            )
         }
+        this.altInput = altInput
+
+        const rangeInput = document.createElement("input")
+        rangeInput.type = 'range';
+        rangeInput.min = "1"
+        rangeInput.max = "100"
+        rangeInput.value = width ? (width / this.img.naturalWidth * 100).toString() : "100";
+        rangeInput.step = "1"
+
+        rangeInput.oninput = function (e) {
+            const value = parseInt((e.target as HTMLInputElement).value)
+            let width, height
+            if (value === 100) {
+                width = null;
+                height = null;
+            } else {
+                width = (_self.img as HTMLImageElement).naturalWidth * value / 100
+                height = (_self.img as HTMLImageElement).naturalHeight * value / 100
+            }
+
+            const pos = _self.getPos()
+
+            if (pos === undefined)
+                return;
+
+            _self.view.dispatch(
+                _self.view.state.tr.setNodeMarkup(
+                    pos,
+                    null,
+                    { ..._self.node.attrs, width, height }
+                )
+            )
+        }
+
+        this.rangeInput = rangeInput
+        this.dom.appendChild(rangeInput)
+
     }
 
     handleInputFocus() {
@@ -195,7 +198,7 @@ export default class Image implements ImageNodeViewType {
         );
     }
 
-    handleUpload(url: string, alt: string | null = null, unsplash: UnsplashImage | null = null) {
+    handleChange(url: string, alt: string | null = null, unsplash: UnsplashImage | null = null) {
         const pos = this.getPos()
 
         if (pos === undefined)
@@ -235,37 +238,6 @@ export default class Image implements ImageNodeViewType {
 
 
         this.view.dispatch(tr)
-    }
-
-    // Idea: Put the preview in imageUploader
-    handleUrl(url: string | null) {
-        if (!url) return;
-        const pos = this.getPos();
-
-        if (pos === undefined)
-            return;
-
-        const { alt, width, height } = this.node.attrs;
-        const tr = this.view.state.tr.setNodeMarkup(
-            pos,
-            null,
-            { ...this.node.attrs, ...{ src: url, alt } }
-        )
-
-        const nodeSel = NodeSelection.create(this.view.state.doc, pos + 1)
-
-        const captionNode = this.schema.nodes.figcaption.create({}, [
-            this.schema.text("Enter a caption..."),
-        ]);
-
-        tr.replaceWith(
-            nodeSel.from,
-            nodeSel.to,
-            captionNode
-        )
-
-        //tr.replaceWith(nodeSel.from, nodeSel.to, newNode);
-        this.view.dispatch(tr);
     }
 
     stopEvent(e: any) {

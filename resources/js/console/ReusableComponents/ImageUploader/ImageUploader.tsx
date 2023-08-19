@@ -4,24 +4,48 @@ import Button from '../Button';
 import { Media, UnsplashImage } from '../../types';
 import { toast } from 'react-toastify';
 import getSubdomain from '../../logic-helpers/subdomain';
-import { useActions } from 'kea';
+import { useActions, useValues } from 'kea';
 import mediaLogic from '../../logic/mediaLogic';
 import Loader from '../Loader';
 import { CardImage, CloudUpload } from 'react-bootstrap-icons';
 
 type TabType = 'upload' | 'media' | 'unsplash';
 
-type OnSelectProps = {
+export type OnSelectProps = {
     url: string,
     from: TabType,
     unsplash?: UnsplashImage,
 };
 
-type OnSelect = (props: OnSelectProps) => void;
+export type OnSelect = (props: OnSelectProps) => void;
 
 interface ImageUploaderProps {
     placeholder?: ReactNode,
-    onSelect: OnSelect
+    onSelect: OnSelect,
+    onClose?: () => void,
+}
+
+
+// to open the image uploader globally
+export function GlobalImageUploader() {
+
+    const logic  = mediaLogic({subdomain: getSubdomain()});
+    const { globalImageUploader } = useValues(logic);
+    const { setGlobalImageUploader } = useActions(logic);
+
+    if (!globalImageUploader) return null;
+
+    return <UploaderPopup 
+        onSelect={props => {
+            globalImageUploader.onSelect(props);
+            setGlobalImageUploader(null);
+        }}
+        onClose={() => {
+            globalImageUploader.onClose?.();
+            setGlobalImageUploader(null)
+        }}
+    />
+
 }
 
 export default function ImageUploader(props : ImageUploaderProps) {
@@ -53,6 +77,20 @@ function UploaderPopup(props : ImageUploaderProps & {onClose: () => void}) {
         setSelectedImage(props);
     }
 
+    /* useEffect(() => {
+        function handleKeyUp(e: KeyboardEvent) {
+            if (e.key === 'Escape') {
+                props.onClose();
+            }
+        }
+
+        window.addEventListener('keyup', handleKeyUp);
+
+        return () => {
+            window.removeEventListener('keyup', handleKeyUp);
+        }
+    }, []); */
+
     return <div className="global-image-uploader">
 
         <OutsideClick onClick={props.onClose}>
@@ -81,7 +119,7 @@ function UploaderPopup(props : ImageUploaderProps & {onClose: () => void}) {
                             onClick={() => setSelectedTab('unsplash')} 
                             type={getButtonType('unsplash')}
                         >
-                            <svg role="img" width="1em" height="1m" fill="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><title/><path d="M7.5 6.75V0h9v6.75h-9zm9 3.75H24V24H0V10.5h7.5v6.75h9V10.5z"/></svg>
+                            <svg role="img" width="1em" height="1em" fill="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><title/><path d="M7.5 6.75V0h9v6.75h-9zm9 3.75H24V24H0V10.5h7.5v6.75h9V10.5z"/></svg>
                             Unsplash
                         </Button>
 
@@ -484,7 +522,7 @@ function TabUnsplash({onSelect} : {onSelect: OnSelect}) {
 
                     {
                         [0,1].map(x => {
-                            return <div className="display-col">
+                            return <div className="display-col" key={x}>
                                 {
                                     images.map((img, i) => {
 
