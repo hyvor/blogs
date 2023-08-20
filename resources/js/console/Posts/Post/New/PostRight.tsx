@@ -3,6 +3,7 @@ import { BoxArrowUpRight, Gear, Link, Link45deg, Magic, SearchHeart } from "reac
 import Settings from "./Settings";
 import Seo, { SeoScoreTag } from "./Seo/Seo";
 import { usePostValues } from "../helpers";
+import Ai from "./Ai/Ai";
 
 export default function PostRight({id} : {id: number}) {
 
@@ -10,7 +11,7 @@ export default function PostRight({id} : {id: number}) {
 
     const { currentVariantSeoResults } = usePostValues(id);
  
-    const [section, setSection] = React.useState<SectionType>('SEO');
+    const [section, setSection] = React.useState<SectionType>('Settings');
 
     const ToolbarButton = ({icon, text, children} : {icon: ReactNode, text: SectionType, children?: ReactNode}) => {
 
@@ -45,6 +46,7 @@ export default function PostRight({id} : {id: number}) {
 
         {section === 'Settings' && <Settings id={id} />}
         {section === 'SEO' && <Seo id={id} />}
+        {section === 'AI' && <Ai id={id} />}
 
     </div>
 

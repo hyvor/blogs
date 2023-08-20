@@ -7,7 +7,7 @@ import { toast } from 'react-toastify';
 export default function Seo({id}: {id: number}) {
 
     return <div className="toolbar-content">
-        <div className="post-settings-wrap post-analysis" data-testid="post-seo">
+        <div className="post-settings-wrap" data-testid="post-seo">
             <SeoAnalysis id={id} />
         </div>
     </div>
