@@ -11,6 +11,7 @@ import {PostEditorState} from "../states";
 import merge from "deepmerge";
 import userBlogsLogic from "./userBlogsLogic";
 import { SeoAnalyzer } from "../Posts/Post/New/Seo/seo-analyzer";
+import { calculateLinkAnalysis, getLinksFromContent } from "../Posts/Post/New/Links/links";
 
 export async function updatePost(post: Post, diff: Partial<Post>) {
 
@@ -360,6 +361,11 @@ const postLogic = kea<postLogicType>([
                 });
                 return analyzer.analyze();
             }
+        ],
+
+        currentVariantLinkAnalysis: [
+            s => [s.currentVariant],
+            (currentVariant) => calculateLinkAnalysis(currentVariant)
         ]
 
     }),

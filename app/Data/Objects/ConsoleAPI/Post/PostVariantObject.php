@@ -33,6 +33,9 @@ class PostVariantObject
     /** @var string[] */
     public array $seo_secondary_keywords;
 
+    /** @var array<string, number> */
+    public array $link_analysis;
+
     // only for exporting
     public ?string $content_html;
 
@@ -64,6 +67,8 @@ class PostVariantObject
 
         $this->seo_primary_keyword = $variant->seo_primary_keyword;
         $this->seo_secondary_keywords = $variant->seo_secondary_keywords ?? [];
+
+        $this->link_analysis = $variant->link_analysis ?? [];
 
         if ($setHtml) {
             $this->content_html = $variant->content_html;

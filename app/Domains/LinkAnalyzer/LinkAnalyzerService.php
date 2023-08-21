@@ -4,12 +4,85 @@ namespace App\Domains\LinkAnalyzer;
 
 // checks if the given links are broken or not
 use App\Exceptions\SafetyException;
+use App\Models\Blog;
+use App\Models\LinkAnalyzerLink;
+use Exception;
+use GuzzleHttp\Psr7\Utils;
 use Illuminate\Http\Client\Pool;
 use Illuminate\Http\Client\Response;
+use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\Http;
 
 class LinkAnalyzerService
 {
+
+    const IGNORE_CODE = -2;
+
+    /**
+     * @param string[] $urls
+     * @return array<string, int>
+     */
+    public static function getFromDb(
+        Blog $blog,
+        array $urls,
+        int $validForDays = 7
+    ) : array
+    {
+
+        $validStart = now()->subDays($validForDays);
+
+        $fromDb = LinkAnalyzerLink::where('blog_id', $blog->id)
+            ->whereIn('url', $urls)
+            ->get();
+
+        $results = [];
+
+        foreach ($fromDb as $link) {
+            if ($link->last_checked_at < $validStart && !$link->ignore) {
+                continue;
+            }
+
+            $results[$link->url] = $link->ignore ?
+                self::IGNORE_CODE :
+                $link->status_code;
+        }
+
+        return $results;
+    }
+
+
+    /**
+     * @param Blog $blog
+     * @param array<string, integer> $results
+     * @return array<string, integer>
+     */
+    public static function saveToDb(Blog $blog, array $results) : array
+    {
+
+        $now = now();
+
+        foreach ($results as $url => $statusCode) {
+
+            $link = LinkAnalyzerLink::updateOrCreate(
+                [
+                    'blog_id' => $blog->id,
+                    'url' => $url,
+                ],
+                [
+                    'last_checked_at' => $now,
+                    'status_code' => $statusCode,
+                ]
+            );
+
+            if ($link->ignore) {
+                $results[$url] = self::IGNORE_CODE;
+            }
+
+        }
+
+        return $results;
+
+    }
 
     /**
      * @param string[] $urls
@@ -42,8 +115,16 @@ class LinkAnalyzerService
             foreach ($urls as $url) {
                 $pool
                     ->as($url)
+                    ->withOptions([
+                        'allow_redirects' => false,
+                        'on_headers' => function () {
+                            // throw an exception to prevent request from downloading the body
+                            // we only need the headers
+                            throw new Exception();
+                        }
+                    ])
                     ->timeout(5) // I guess 5 seconds is enough for HEAD
-                    ->head($url);
+                    ->get($url);
             }
         });
 
@@ -64,6 +145,19 @@ class LinkAnalyzerService
 
         return $results;
 
+    }
+
+    public static function getLink(Blog $blog, string $url) : ?LinkAnalyzerLink
+    {
+        return LinkAnalyzerLink::where('blog_id', $blog->id)
+            ->where('url', $url)
+            ->first();
+    }
+
+    public static function ignoreLink(LinkAnalyzerLink $link, bool $status) : void
+    {
+        $link->ignore = $status;
+        $link->save();
     }
 
 }

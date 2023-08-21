@@ -151,8 +151,9 @@ export type PostVariant = {
     description: string | null;
 
     seo_primary_keyword: string | null,
-    seo_secondary_keywords: string[]
+    seo_secondary_keywords: string[],
 
+    link_analysis: Record<string, number>,
 };
 
 // == USER

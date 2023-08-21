@@ -51,3 +51,11 @@ it('on failing', function() {
     ]);
 
 });
+
+it('test', function() {
+
+    $results = LinkAnalyzerService::analyze([
+        'https://www.grammarly.com'
+    ]);
+
+});

@@ -9,6 +9,7 @@ use App\Http\Controllers\ConsoleAPI\ConsoleBlogController;
 use App\Http\Controllers\ConsoleAPI\ConsoleDangerController;
 use App\Http\Controllers\ConsoleAPI\ConsoleExportController;
 use App\Http\Controllers\ConsoleAPI\ConsoleLanguageController;
+use App\Http\Controllers\ConsoleAPI\ConsoleLinkAnalysisController;
 use App\Http\Controllers\ConsoleAPI\ConsoleMediaController;
 use App\Http\Controllers\ConsoleAPI\ConsoleNavigationController;
 use App\Http\Controllers\ConsoleAPI\ConsolePostController;
@@ -117,6 +118,11 @@ Route::prefix('/api/console/v0/blog/{subdomain}')
             Route::get('/url-data', [ConsoleUrlDataController::class, 'getData']);
 
             Route::post('/ai/translate', [ConsoleAiController::class, 'translate']);
+
+            Route::post('/link-analysis/variant', [ConsoleLinkAnalysisController::class, 'checkPostVariantLinks']);
+            Route::patch('link-analysis/ignore-link', [ConsoleLinkAnalysisController::class, 'ignoreLink']);
+            Route::get('/link-analysis/status', [ConsoleLinkAnalysisController::class, 'getStatus']);
+            Route::get('/link-analysis/links', [ConsoleLinkAnalysisController::class, 'getLinks']);
 
         });
 

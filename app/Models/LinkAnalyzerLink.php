@@ -10,4 +10,9 @@ class LinkAnalyzerLink extends Model
     use HasFactory;
 
     const UPDATED_AT = null;
+
+    protected $casts = [
+        'status_code' => 'integer',
+        'ignore' => 'boolean'
+    ];
 }

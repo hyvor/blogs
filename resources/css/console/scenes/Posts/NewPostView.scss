@@ -151,6 +151,7 @@
         position: sticky;
         top: 0px;
         z-index: 10;
+        min-width: 0;
 
         .toolbar {
             display: flex;
@@ -195,6 +196,13 @@
                     position: absolute;
                     top: 5px;
                     right: 5px;
+                }
+                .link-tag {
+                    display: inline-flex;
+                    align-items: center;
+                    svg {
+                        margin-left: 3px;
+                    }
                 }
             }
         }

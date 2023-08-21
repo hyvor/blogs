@@ -96,7 +96,7 @@
     width: 24px;
     height: 24px;
     border-radius: 50%;
-    background-color: $color-card;
+    background-color: #f1f1f1;
     cursor: pointer;
     align-items: center;
     justify-content: center;
@@ -105,5 +105,9 @@
     transition: .3s box-shadow;
     &:hover {
         box-shadow: 0 0 10px rgba(0,0,0,0.1);
+    }
+    &.active {
+        background-color: $color-accent;
+        color: #fff;
     }
 }

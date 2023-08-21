@@ -8,6 +8,55 @@
         justify-content: center;
     }
 
+    .header {
+        .title {
+            margin-bottom: 10px;
+            display: flex;
+            .title-left {
+                flex: 1;
+                font-size: 16px;
+                font-weight: 600;
+            }
+        }
+        .summary {
+            & > span {
+                flex: 1;
+                display: inline-flex;
+                align-items: center;
+                padding: 5px 10px;
+                border-radius: 20px;
+                font-size: 12px;
+                margin-right: 5px;
+                .number {
+                    font-weight: 600;
+                    margin-right: 3px;
+                }
+                svg {
+                    margin-left: 4px;
+                }
+            }
+        }
+    }
+
+    .summary > span, .link-status-tag {
+        &.ok {
+            background-color: $color-green-light;
+            color: $color-green-dark;
+        }
+        &.redirect {
+            background-color: $color-orange-light;
+            color: $color-orange-dark;
+        }
+        &.broken, &.error {
+            background-color: $color-red-light;
+            color: $color-red-dark;
+        }
+        &.ignored {
+            background-color: #eee;
+            color: #000;
+        }
+    }
+
     .links {
         .link-wrap {
             display: flex;
@@ -17,6 +66,9 @@
 
             .link-name {
                 flex: 1;
+                min-width: 0;
+                word-wrap: break-word;
+                margin-right: 5px;
                 .link-url {
                     font-size: 13px;
                     a {
@@ -45,8 +97,6 @@
                 border-radius: 20px;
                 font-weight: 600;
                 text-transform: uppercase;
-                background-color: $color-green-light;
-                color: $color-green-dark;
                 .status {
                     font-size: 10px;
                     margin-right: 3px;
@@ -60,6 +110,10 @@
 
             .link-buttons {
                 margin-left: 10px;
+                .disabled {
+                    opacity: 0.3;
+                    pointer-events: none;
+                }
             }
 
         }

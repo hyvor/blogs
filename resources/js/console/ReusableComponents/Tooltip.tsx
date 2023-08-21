@@ -2,10 +2,11 @@ import React from "react";
 import { ReactNode } from "react";
 
 export default function Tooltip(
-    { children, tooltip } : 
+    { children, tooltip, className = '' } : 
     { 
         children: ReactNode,
-        tooltip: ReactNode
+        tooltip: ReactNode,
+        className?: string
     }
 ) {
 
@@ -33,7 +34,7 @@ export default function Tooltip(
 
 
     return <span 
-        className="global-tooltip"
+        className={`global-tooltip ${className}`}
         onMouseEnter={handleMouseEnter}
         ref={wrapRef}
     >
