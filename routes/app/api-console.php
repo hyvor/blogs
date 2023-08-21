@@ -121,7 +121,7 @@ Route::prefix('/api/console/v0/blog/{subdomain}')
 
             Route::post('/link-analysis/variant', [ConsoleLinkAnalysisController::class, 'checkPostVariantLinks']);
             Route::patch('link-analysis/ignore-link', [ConsoleLinkAnalysisController::class, 'ignoreLink']);
-            Route::get('/link-analysis/status', [ConsoleLinkAnalysisController::class, 'getStatus']);
+            Route::get('/link-analysis/stats', [ConsoleLinkAnalysisController::class, 'getStats']);
             Route::get('/link-analysis/links', [ConsoleLinkAnalysisController::class, 'getLinks']);
 
         });

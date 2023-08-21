@@ -84,4 +84,15 @@ class ConsoleLinkAnalysisController
         ]);
     }
 
+    public function getStats(Blog $blog) : JsonResponse
+    {
+
+        $counts = LinkAnalyzerService::getCountsByStatus($blog);
+
+        return response()->json([
+            'counts' => $counts
+        ]);
+
+    }
+
 }

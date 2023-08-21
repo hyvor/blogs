@@ -19,7 +19,7 @@ return new class extends Migration
             $table->timestamp('last_checked_at');
 
             $table->integer('blog_id');
-            $table->string('url', 2048);
+            $table->string('url');
             $table->smallInteger('status_code');
             $table->boolean('ignore')->default(false);
 
