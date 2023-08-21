@@ -1,4 +1,4 @@
-<?php
+<?php declare(strict_types=1);
 
 use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
@@ -15,7 +15,12 @@ return new class extends Migration
     {
         Schema::create('link_analyzer_links', function (Blueprint $table) {
             $table->id();
-            $table->timestamps();
+            $table->timestamp('created_at')->nullable();
+            $table->timestamp('last_checked_at')->nullable();
+
+            $table->string('url')->unique();
+            $table->string('status_code')->nullable();
+            $table->boolean('ignore')->default(false);
         });
     }
 

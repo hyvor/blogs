@@ -12,11 +12,13 @@ type LinkType =
     'other'; // anything else
 
 export interface Link {
+    index: number,
     type: LinkType,
-    href: string
+    href: string,
+    anchor: string | null
 }
 
-export function getLinksMarksFromContent(content: string | null, blogUrl: string) {
+export function getLinksFromContent(content: string | null, blogUrl: string) : Link[] {
 
     const doc = getDocFromContent(content);
     const links: Link[] = [];
@@ -26,7 +28,7 @@ export function getLinksMarksFromContent(content: string | null, blogUrl: string
         const marks = node.marks;
         if (marks.length === 0) return;
 
-        node.marks.forEach(mark => {
+        node.marks.forEach((mark, i) => {
 
             if (mark.type.name !== 'link') return;
             const href = mark.attrs.href;
@@ -36,8 +38,10 @@ export function getLinksMarksFromContent(content: string | null, blogUrl: string
             if (!type) return;
 
             links.push({
+                index: i,
                 type,
-                href
+                href: getFullUrl(href, blogUrl).toString(),
+                anchor: node.textContent ? node.textContent : null
             });
 
         });
@@ -55,7 +59,7 @@ export function getLinkType(href: string, blogUrl: string) : LinkType {
     if (href.startsWith('#')) return 'anchor';
 
     const baseUrl = blogUrl.endsWith('/') ? blogUrl : blogUrl + '/';
-    const hrefFullUrl = (new URL(href, baseUrl));
+    const hrefFullUrl = getFullUrl(href, blogUrl);
 
     if (hrefFullUrl.toString().startsWith(baseUrl)) return 'internal-blog';
     if (hrefFullUrl.protocol !== 'https:' && hrefFullUrl.protocol !== 'http:') return 'other';
@@ -71,4 +75,9 @@ export function getLinkType(href: string, blogUrl: string) : LinkType {
         return 'external';
     }
 
+}
+
+export function getFullUrl(href: string, blogUrl: string) : URL {
+    const baseUrl = blogUrl.endsWith('/') ? blogUrl : blogUrl + '/';
+    return new URL(href, baseUrl);
 }

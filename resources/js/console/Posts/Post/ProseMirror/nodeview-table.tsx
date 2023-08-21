@@ -250,7 +250,8 @@ export default class Table implements NodeView{
         root.render(
             <div>
                 <ArrowsCollapse data-tip data-for="merge-tooltip" className="table-icon"/>
-                <Tooltip id="merge-tooltip" place="bottom">Merge cells</Tooltip>
+                {/* TODO: Tooltip is removed */}
+                {/* <Tooltip id="merge-tooltip" place="bottom">Merge cells</Tooltip> */}
             </div>
         );
         this.topSettings.appendChild(mergeCellButton);
@@ -265,7 +266,7 @@ export default class Table implements NodeView{
         root.render(
             <div>
                 <ArrowsExpand data-tip data-for="split-tooltip" className="table-icon"/>
-                <Tooltip id="split-tooltip" place="bottom">Split cells</Tooltip>
+                {/* <Tooltip id="split-tooltip" place="bottom">Split cells</Tooltip> */}
             </div>
         );
         this.topSettings.appendChild(splitCellButton);
@@ -278,7 +279,7 @@ export default class Table implements NodeView{
         root.render(
             <div>
                 <Trash data-tip data-for="trash-tooltip" className="table-icon"/>
-                <Tooltip id="trash-tooltip" place="bottom">Delete table</Tooltip>
+                {/* <Tooltip id="trash-tooltip" place="bottom">Delete table</Tooltip> */}
             </div>
         );
 

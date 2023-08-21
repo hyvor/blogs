@@ -1,0 +1,68 @@
+
+.links-analysis {
+
+    .no-results-wrap {
+        display: flex;
+        align-items: center;
+        height: 100%;
+        justify-content: center;
+    }
+
+    .links {
+        .link-wrap {
+            display: flex;
+            padding: 10px 0;
+            align-items: center;
+            border-bottom: 1px solid $color-accent-very-light;
+
+            .link-name {
+                flex: 1;
+                .link-url {
+                    font-size: 13px;
+                    a {
+                        color: $color-link;
+                        text-decoration: underline;
+                    }
+                }
+                .link-type-wrap {
+                    margin-top: 3px;
+                }
+                .link-type {
+                    background-color: #eee;
+                    display: inline-block;
+                    padding: 3px 10px;
+                    border-radius: 20px;
+                    font-size: 9px;
+                    font-weight: 600;
+                    text-transform: uppercase;
+                }
+            }
+
+            .link-status-tag {
+                display: inline-flex;
+                align-items: center;
+                padding: 3px 10px;
+                border-radius: 20px;
+                font-weight: 600;
+                text-transform: uppercase;
+                background-color: $color-green-light;
+                color: $color-green-dark;
+                .status {
+                    font-size: 10px;
+                    margin-right: 3px;
+                }
+                .icon {
+                    font-size: 10px;
+                    display: inline-flex;
+                    align-items: center;
+                }
+            }
+
+            .link-buttons {
+                margin-left: 10px;
+            }
+
+        }
+    }
+
+}

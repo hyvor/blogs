@@ -34,6 +34,8 @@ return new class () extends Migration {
             $table->string('seo_primary_keyword')->nullable();
             $table->json('seo_secondary_keywords')->nullable();
 
+            $table->json('link_analysis')->nullable();
+
             $table->unique(['post_id', 'language_id']);
             $table->unique(['language_id', 'slug']);
 

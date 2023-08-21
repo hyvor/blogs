@@ -352,6 +352,10 @@ button {
         color: $color-orange-dark;
         background-color: $color-orange-light;
     }
+    &.grey {
+        color: #000;
+        background-color: #eee;
+    }
 }
 
 .global-no-results {
@@ -860,4 +864,38 @@ input[type=range]:focus::-ms-fill-upper {
     background-color: $color-blue-light;
     padding: 2px 5px;
     border-radius: 5px;
+}
+
+.global-tooltip {
+    position: relative;
+    cursor: pointer;
+
+    .tooltip {
+        position: fixed;
+        z-index: 10;
+        background-color: #000;
+        color: #fff;
+        padding: 6px 15px;
+        border-radius: 20px;
+        box-shadow: 0 0 10px 0 rgba(0,0,0,0.05);
+        display: none;
+        font-size: 13px;
+        font-weight: 600;
+        max-width: 200px;
+        text-align: center;
+        &:after {
+            content: "";
+            position: absolute;
+            top: 100%;
+            left: 50%;
+            margin-left: -5px;
+            border-width: 5px;
+            border-style: solid;
+            border-color: #000 transparent transparent transparent;
+        }
+    }
+
+    &:hover .tooltip {
+        display: block;
+    }
 }

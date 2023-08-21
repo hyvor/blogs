@@ -60,8 +60,6 @@ export default function Post({ id, subdomain, type }: { id: number, subdomain: s
             <Unpublisher id={id} />
             <Discarder id={id} />
 
-            <Tooltip place="bottom" />
-
         </div>
 
     </div > */

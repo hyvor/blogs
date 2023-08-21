@@ -1,6 +1,6 @@
 import { Mark, Node } from "prosemirror-model";
 import { getDocFromContent } from "../../ProseMirror/helpers";
-import { Link, getLinksMarksFromContent } from "../Links/links";
+import { Link, getLinksFromContent } from "../Links/links";
 
 export interface Input {
     primaryKeyword: string | null,
@@ -107,7 +107,7 @@ class Test {
     }
 
     protected links() : Link[] {
-        return getLinksMarksFromContent(this.input.content, this.input.blogUrl);
+        return getLinksFromContent(this.input.content, this.input.blogUrl);
     }
 
     protected allKeywords() : string[]|null {

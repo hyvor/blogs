@@ -4,6 +4,7 @@ import Settings from "./Settings";
 import Seo, { SeoScoreTag } from "./Seo/Seo";
 import { usePostValues } from "../helpers";
 import Ai from "./Ai/Ai";
+import LinksComponent from "./Links/LinksComponent";
 
 export default function PostRight({id} : {id: number}) {
 
@@ -46,6 +47,7 @@ export default function PostRight({id} : {id: number}) {
 
         {section === 'Settings' && <Settings id={id} />}
         {section === 'SEO' && <Seo id={id} />}
+        {section === 'Links' && <LinksComponent id={id} />}
         {section === 'AI' && <Ai id={id} />}
 
     </div>

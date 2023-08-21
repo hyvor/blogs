@@ -12,7 +12,6 @@ import {Export as ExportType} from "../../types";
 import dayjs from "dayjs";
 import {DayDiff} from "../../ReusableComponents/Time";
 import JobStatusBadge from "../../ReusableComponents/JobStatusBadge";
-import Tooltip from "../../ReusableComponents/Tooltip";
 import InfoTooltip from "../../ReusableComponents/InfoTooltip";
 
 
