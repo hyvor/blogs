@@ -8,6 +8,7 @@ import { useActions, useValues } from 'kea';
 import mediaLogic from '../../logic/mediaLogic';
 import Loader from '../Loader';
 import { CardImage, CloudUpload } from 'react-bootstrap-icons';
+import NoResults from '../NoResults';
 
 type TabType = 'upload' | 'media' | 'unsplash';
 
@@ -77,7 +78,7 @@ function UploaderPopup(props : ImageUploaderProps & {onClose: () => void}) {
         setSelectedImage(props);
     }
 
-    /* useEffect(() => {
+    useEffect(() => {
         function handleKeyUp(e: KeyboardEvent) {
             if (e.key === 'Escape') {
                 props.onClose();
@@ -89,7 +90,7 @@ function UploaderPopup(props : ImageUploaderProps & {onClose: () => void}) {
         return () => {
             window.removeEventListener('keyup', handleKeyUp);
         }
-    }, []); */
+    }, []);
 
     return <div className="global-image-uploader">
 
@@ -397,6 +398,7 @@ function TabMedia({onSelect} : {onSelect: OnSelect}) {
                 <div className="display-inner">
 
                     {
+                        images.length ?
                         images.map(image => <div 
                             className="media-item" 
                             key={image.id}
@@ -420,7 +422,12 @@ function TabMedia({onSelect} : {onSelect: OnSelect}) {
                                     }</div>
                                 </div>
                             </div>
-                        </div>)
+                        </div>) :
+                        <NoResults 
+                            text="No images found in blog media."
+                            imageWidth={140}
+                            padding={40}
+                        />
                     }
 
                 </div>
@@ -461,6 +468,8 @@ function TabUnsplash({onSelect} : {onSelect: OnSelect}) {
     const [isLoading, setIsLoading] = useState(false);
     const [isLoadingMore, setIsLoadingMore] = useState(false);
 
+    const [hasLoaded, setHasLoaded] = useState(false);
+
     function performSearch(page: number | undefined = 1) {
         if (search.trim() === '') {
             return toast.error('Enter a search term');
@@ -477,6 +486,8 @@ function TabUnsplash({onSelect} : {onSelect: OnSelect}) {
 
                 setIsLoading(false);
                 setIsLoadingMore(false);
+
+                setHasLoaded(true);
             }
         })
     }
@@ -521,6 +532,7 @@ function TabUnsplash({onSelect} : {onSelect: OnSelect}) {
                 <div className="display-cols">
 
                     {
+                        images.length ?
                         [0,1].map(x => {
                             return <div className="display-col" key={x}>
                                 {
@@ -546,7 +558,15 @@ function TabUnsplash({onSelect} : {onSelect: OnSelect}) {
                                     })
                                 }
                             </div>
-                        })
+                        }) : 
+                        (
+                            hasLoaded &&
+                            <NoResults
+                                text="No images found for your search."
+                                imageWidth={140}
+                                padding={40}
+                            />
+                        )
                     }
 
                 </div>
