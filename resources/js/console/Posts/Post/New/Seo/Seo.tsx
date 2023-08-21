@@ -42,9 +42,9 @@ function SeoAnalysis({id}: {id: number}) {
                 gradient &&
                 <defs>
                     <linearGradient id="score-gradient">
-                        <stop offset="0%" stopColor="#e13a3a" />
-                        <stop offset="25%" stopColor="#ffb93a" />
-                        <stop offset="100%" stopColor="#429e46" />
+                        <stop offset="0%" stopColor="#db7474" />
+                        <stop offset="25%" stopColor="#f1c40f" />
+                        <stop offset="100%" stopColor="#5d995d" />
                     </linearGradient>
                 </defs>
             }
