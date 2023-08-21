@@ -94,7 +94,6 @@ function PublisherPopup({id, onClose} : {id: number, onClose: () => void}) {
 
     return <div className="post-publisher">
         <Popup 
-            isCenter={true}
             body={
                 <div className="post-publisher-inner">
                     <div className="publisher-title">
@@ -184,7 +183,7 @@ function Validation({validation} : {validation: {slug: boolean, title: boolean, 
                     return null;
                 }
 
-                return <div className="publisher-validation-item">
+                return <div className="publisher-validation-item" key={key}>
                     <div className="publisher-validation-item-icon">
                         <ExclamationTriangleFill />
                     </div>

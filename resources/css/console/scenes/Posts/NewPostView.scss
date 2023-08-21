@@ -54,6 +54,36 @@
                 .unpublish-button {
                     margin-right: 8px;
                 }
+
+                .preview-button-link {
+                    position: relative;
+                    display: inline-block;
+                    .preview-type-popup {
+                        position: absolute;
+                        top: 100%;
+                        left: 50%;
+                        transform: translateX(-50%);
+                        margin-top: 5px;
+                        padding: 15px;
+                        background: $box-color;
+                        box-shadow: $box-shadow-popup;
+                        border-radius: $box-radius;
+                        width: 180px;
+                        display: flex;
+                        flex-direction: column;
+                        button {
+                            display: inline-flex;
+                            .name {
+                                flex: 1;
+                            }
+                            &.published {
+                                margin-top: 8px;
+                                background-color: $color-green-light;
+                                color: $color-green-dark;
+                            }
+                        }
+                    }
+                }
             }
 
             .additional-data {

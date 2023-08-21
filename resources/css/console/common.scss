@@ -883,15 +883,28 @@ input[type=range]:focus::-ms-fill-upper {
         font-weight: 600;
         max-width: 200px;
         text-align: center;
+
         &:after {
             content: "";
             position: absolute;
-            top: 100%;
+            border-width: 5px;
             left: 50%;
             margin-left: -5px;
-            border-width: 5px;
             border-style: solid;
-            border-color: #000 transparent transparent transparent;
+        }
+
+        &.top {
+            &:after {
+                top: 100%;
+                border-color: #000 transparent transparent transparent;
+            }
+        }
+
+        &.bottom {
+            &:after {
+                bottom: 100%;
+                border-color: transparent transparent #000 transparent;
+            }
         }
     }
 
