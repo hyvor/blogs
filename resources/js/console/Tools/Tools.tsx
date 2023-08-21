@@ -6,6 +6,7 @@ import { getUserBlogBlog } from '../logic-helpers/blog';
 import SettingsLink from '../ReusableComponents/SettingsLink';
 import SettingsSelect from '../ReusableComponents/SettingsSelect';
 import Export from './Export/Export';
+import LinkAnalysisTool from './LinkAnalysis/LinkAnalysisTool';
 import { Download, Plus, PlusCircle } from 'react-bootstrap-icons';
 
 
@@ -24,6 +25,9 @@ export default function Tools({ type }: { type: string | undefined }) {
         case 'export':
             Type = () => <Export />;
             break;
+        case 'link-analysis':
+            Type = () => <LinkAnalysisTool />
+            break;
         default:
             Type = () => <Import />;
     }
@@ -34,6 +38,17 @@ export default function Tools({ type }: { type: string | undefined }) {
             <div className="settings-nav">
                 <SettingsLink path="" name="Import" pannelName={'import'} setPannel={setPannel} toolsPrefix={true} icon={<PlusCircle />}/>
                 <SettingsLink path="/export" name="Export" pannelName={'export'} setPannel={setPannel} toolsPrefix={true} icon={<Download />}/>
+
+                <div />
+
+                <SettingsLink
+                    path="/link-analysis"
+                    name="Link Analysis"
+                    pannelName="link-analysis"
+                    setPannel={setPannel}
+                    toolsPrefix={true}
+                />
+
             </div>
         </div>
         <div className="box box-right settings-right">
