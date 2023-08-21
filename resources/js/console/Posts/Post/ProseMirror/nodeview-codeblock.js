@@ -3,8 +3,6 @@ import { exitCode, joinBackward } from "prosemirror-commands";
 import { undo, redo } from "prosemirror-history";
 import { TextSelection, Selection } from "prosemirror-state";
 import schema from "./schema";
-import { ArrowsFullscreen } from "react-bootstrap-icons";
-import ReactDOM from "react-dom/client";
 
 // https://prosemirror.net/examples/codemirror/
 
@@ -238,18 +236,6 @@ export default class CodeBlock {
             <div>File Name</div>
         `;
         labels.className = "code-toolbar-labels";
-
-        const fullScreenButton = document.createElement("button");
-        fullScreenButton.className = "icon-button code-toolbar-fullscreen";
-        const root = ReactDOM.createRoot(fullScreenButton);
-        root.render(
-           <ArrowsFullscreen />
-        );
-        fullScreenButton.onclick = () => {
-           // Open code modal
-        };
-        toolbar.appendChild(fullScreenButton);
-
         toolbar.appendChild(labels);
 
         const inputs = document.createElement("div");
