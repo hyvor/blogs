@@ -1,6 +1,6 @@
 import React from "react";
 import { usePostValues } from "../../helpers";
-import { getLinksFromContent } from "./links";
+import { focusLinkInEditor, getLinksFromContent } from "./links";
 import { useUserBlog } from "../../../../logic-helpers/blog";
 import { ArrowClockwise, CheckCircleFill, Eye, EyeFill, X, XCircle } from "react-bootstrap-icons";
 import Tooltip from "../../../../ReusableComponents/Tooltip";
@@ -8,7 +8,7 @@ import Tooltip from "../../../../ReusableComponents/Tooltip";
 export default function LinksComponent({id} : {id: number}) {
 
     const { blog: {base_url: baseUrl} } = useUserBlog();
-    const { currentVariant } = usePostValues(id);
+    const { currentVariant, editorState } = usePostValues(id);
     const content = currentVariant.content_unsaved || currentVariant.content;
 
     const links = getLinksFromContent(content, baseUrl);
@@ -61,7 +61,10 @@ export default function LinksComponent({id} : {id: number}) {
                         <div className="link-buttons">
 
                             <Tooltip tooltip="Show in Editor">
-                                <button className="icon-button">
+                                <button 
+                                    className="icon-button"
+                                    onClick={() => focusLinkInEditor(link, editorState.editorView!)}
+                                >
                                     <EyeFill />
                                 </button>
                             </Tooltip>

@@ -33,7 +33,7 @@ export default function Post({ id, subdomain, type }: { id: number, subdomain: s
             pagesLogicInst.actions.navigateToPages();
     }
 
-    return <div className="new-post-view" ref={postViewRef}>
+    return <div className="new-post-view" id="post-view" ref={postViewRef}>
 
         <div className="post-inner">
             <PostLeft id={id} postViewRef={postViewRef} />

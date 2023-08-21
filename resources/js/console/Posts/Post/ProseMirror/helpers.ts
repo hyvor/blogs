@@ -16,3 +16,21 @@ export function blurEditor(view: EditorView) {
         window?.getSelection()?.removeAllRanges()
     });
 }
+
+export function positionSelectionInMiddleOfScreen(view: EditorView) {
+
+    const { from, to } = view.state.selection;
+    const start = view.coordsAtPos(from);
+    const end = view.coordsAtPos(to);
+
+    // fixed position element
+    const postView = document.querySelector('#post-view');
+    if (!postView) return;
+
+    const postViewScrollTop = postView.scrollTop;
+
+    // scroll to the middle of the selection
+    const middle = (start.top + end.bottom) / 2;
+    postView.scrollTop = postViewScrollTop + middle - (postView.clientHeight / 2);
+
+}

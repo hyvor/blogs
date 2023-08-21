@@ -1,5 +1,8 @@
-import { getDocFromContent } from "../../ProseMirror/helpers";
+import { EditorView } from "prosemirror-view";
+import { getDocFromContent, positionSelectionInMiddleOfScreen } from "../../ProseMirror/helpers";
 import {parse} from "tldts";
+import { TextSelection } from "prosemirror-state";
+import { ResolvedPos } from "prosemirror-model";
 
 type LinkType = 
     'internal-blog' | // inside the blog
@@ -15,7 +18,9 @@ export interface Link {
     index: number,
     type: LinkType,
     href: string,
-    anchor: string | null
+    anchor: string | null,
+
+    pos: number,
 }
 
 export function getLinksFromContent(content: string | null, blogUrl: string) : Link[] {
@@ -23,7 +28,7 @@ export function getLinksFromContent(content: string | null, blogUrl: string) : L
     const doc = getDocFromContent(content);
     const links: Link[] = [];
 
-    doc.descendants(node => {
+    doc.descendants((node, pos) => {
 
         const marks = node.marks;
         if (marks.length === 0) return;
@@ -38,10 +43,15 @@ export function getLinksFromContent(content: string | null, blogUrl: string) : L
             if (!type) return;
 
             links.push({
-                index: i,
+                index: links.length,
                 type,
-                href: getFullUrl(href, blogUrl).toString(),
-                anchor: node.textContent ? node.textContent : null
+                href: 
+                    href.match(/^https?:\/\//) ? 
+                        href : // absolute url
+                        getFullUrl(href, blogUrl).toString(),
+                anchor: node.textContent ? node.textContent : null,
+
+                pos,
             });
 
         });
@@ -74,6 +84,25 @@ export function getLinkType(href: string, blogUrl: string) : LinkType {
     } else {
         return 'external';
     }
+
+}
+
+export function focusLinkInEditor(link: Link, editorView: EditorView) {
+
+    const doc = editorView.state.doc;
+    const pos = link.pos;
+
+    const resolvedPos = doc.resolve(pos);
+    const selection = TextSelection.create(doc, pos, pos + resolvedPos.nodeAfter!.nodeSize);
+
+    editorView.dispatch(
+        editorView.state.tr
+            .setSelection(selection)
+            .scrollIntoView()
+    );
+    editorView.focus();
+
+    positionSelectionInMiddleOfScreen(editorView);
 
 }
 

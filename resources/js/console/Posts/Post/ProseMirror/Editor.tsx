@@ -17,6 +17,7 @@ import useUpdateEffect from "../../../../helpers/hooks/useUpdateEffect";
 import Table from './nodeview-table';
 import { tableEditing, columnResizing, goToNextCell, fixTables } from 'prosemirror-tables';
 import { keymap } from 'prosemirror-keymap';
+import { usePostActions } from '../helpers';
 
 function getState(val: string) {
     val = val ? JSON.parse(val) : null
@@ -77,6 +78,8 @@ interface EditorProps {
 
 export default function Editor({ id, currentLanguageId, status, value, onChange, version }: EditorProps) {
 
+    const { changeEditorState } = usePostActions(id);
+
     const editorRef = useRef<null | HTMLDivElement>(null)
     const mounted = useRef(false)
 
@@ -119,8 +122,10 @@ export default function Editor({ id, currentLanguageId, status, value, onChange,
             return;
 
         mounted.current = true;
-
         const view = createEditor()
+
+        changeEditorState('editorView', view);
+
         return () => view.destroy();
     }, []);
 

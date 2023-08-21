@@ -1,3 +1,4 @@
+import { EditorView } from "prosemirror-view";
 
 
 
@@ -20,4 +21,6 @@ export interface PostEditorState {
      * Ex: when automatically changing the content
      */
     version: number,
+
+    editorView: EditorView | null,
 }
