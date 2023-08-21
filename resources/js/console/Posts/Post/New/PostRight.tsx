@@ -38,8 +38,8 @@ export default function PostRight({id} : {id: number}) {
             return <Loader inline={true} size="mini" />
         }
 
-        if (counts.error > 0) {
-            return <span className="global-seo-score-tag link-tag red">{counts.error} <XCircleFill /></span>
+        if (counts.broken > 0) {
+            return <span className="global-seo-score-tag link-tag red">{counts.broken} <XCircleFill /></span>
         }
 
         if (counts.redirect > 0) {

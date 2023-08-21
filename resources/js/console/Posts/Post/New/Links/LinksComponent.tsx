@@ -72,17 +72,17 @@ export default function LinksComponent(
                     </span>
                 }
 
-                { 
-                    redirectCount > 0 &&
-                    <span className="redirect">
-                        <span className="number">{redirectCount}</span> Redirect <ExclamationCircleFill />
-                    </span>
-                }
-
                 {
                     brokenCount > 0 &&
                     <span className="broken">
                         <span className="number">{brokenCount}</span> Broken <XCircleFill />
+                    </span>
+                }
+
+                { 
+                    redirectCount > 0 &&
+                    <span className="redirect">
+                        <span className="number">{redirectCount}</span> Redirect <ExclamationCircleFill />
                     </span>
                 }
 
