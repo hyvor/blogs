@@ -10,7 +10,6 @@ import { Download, Plus, PlusCircle } from 'react-bootstrap-icons';
 
 
 export default function Tools({ type }: { type: string | undefined }) {
-    console.log(type)
     const [pannel, setPannel] = useState(type || 'import');
     let pannelOption = [
         { value: 'import', label: 'Import' },
@@ -39,7 +38,7 @@ export default function Tools({ type }: { type: string | undefined }) {
         </div>
         <div className="box box-right settings-right">
             <div className='settings-selector'>
-                <div className='title'>Settings</div>
+                <div className='title'>Tools</div>
                 <SettingsSelect name="" value={pannel} options={pannelOption} setPannel={setPannel} />
             </div>
 
