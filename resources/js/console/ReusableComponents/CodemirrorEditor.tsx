@@ -1,4 +1,5 @@
-import React, {useEffect, useRef} from 'react'
+import React, {useEffect, useRef, useState} from 'react'
+import { Popup, PopupHeaderDefault, PopupFooterSingleButton, PopupBodyDefault } from './Popup';
 
 export const CODEMIRROR_MODES = {
     scss: { name: 'twig', base: 'text/x-scss'},
@@ -28,6 +29,11 @@ export default function CodemirrorEditor({ id = null, value, onChange, onSave, e
     const cm = useRef<any>(null);
     const tabSize = extension === 'yaml' ? 2 : 4;
 
+    const fullScreenRef = useRef<null | HTMLDivElement>(null);
+    const fullScreencm = useRef<any>(null);
+
+    const [showCodeFullScreen, setShowCodeFullScreen] = useState(false);
+
     function handleTab(cm: any) {
         if (cm.somethingSelected()) {
           cm.indentSelection("add");
@@ -38,6 +44,7 @@ export default function CodemirrorEditor({ id = null, value, onChange, onSave, e
     }
 
     function initCm() {
+        console.log('Init cm');
 
         (ref.current as HTMLDivElement).innerHTML = "";
 
@@ -79,9 +86,42 @@ export default function CodemirrorEditor({ id = null, value, onChange, onSave, e
     }, []);
 
     useEffect(() => {
+        if (!showCodeFullScreen)
+            return;
         initCm()
-    }, [id])
+    }, [id, showCodeFullScreen])
 
-    return <div {...props} className="global-codemirror-wrap" ref={ref} />
+    const CodeFullScreen = () => {
+        console.log('Render full screen');
+        return <div>
+                TEEEEEEEST
+                <div {...props} className="global-codemirror-wrap" ref={ref}/>
+            </div>
+        /*<Popup 
+            header={
+                <PopupHeaderDefault title={
+                    <div>
+                        Code Editor
+                    </div>
+                } />
+                }
+                body={
+                    <PopupBodyDefault>
+                        <div {...props} className="global-codemirror-wrap" ref={ref}/>
+                    </PopupBodyDefault>
+                } 
+                footer={
+                    <PopupFooterSingleButton
+                        name="Close"
+                        onClick={() => setShowCodeFullScreen(false)}
+                    />
+                } />*/
+    }
+    console.log('Ref:', ref);
+    console.log('Cm:', cm)
+    return <div>
+            {showCodeFullScreen && <CodeFullScreen />}
+             <div {...props} className="global-codemirror-wrap" ref={ref}/>
+        </div>
 
 }
