@@ -4,8 +4,7 @@ import {consoleTest} from "../consoleTest.ts";
 test.describe('Paragraph', () => {
 
     consoleTest.beforeEach(async ({testingApi, console, page}) => {
-        const {blog, language} = await testingApi.factory.blogFull({routes: true});
-        await testingApi.factory.post({blog_id: blog.id, language_id: language.id, title: 'Test Post'});
+        await testingApi.factory.testPost();
         await console.visitAndNav('posts');
         await page.getByRole('link', { name: 'Test Post' }).click();
         await page.locator('.ProseMirror').fill(''); 
@@ -35,8 +34,7 @@ test.describe('Paragraph', () => {
 test.describe('Heading', () => {
 
     consoleTest.beforeEach(async ({testingApi, console, page}) => {
-        const {blog, language} = await testingApi.factory.blogFull({routes: true});
-        await testingApi.factory.post({blog_id: blog.id, language_id: language.id, title: 'Test Post'});
+        await testingApi.factory.testPost();
         await console.visitAndNav('posts');
         await page.getByRole('link', { name: 'Test Post' }).click();
         await page.locator('.ProseMirror').fill(''); 
@@ -63,8 +61,7 @@ test.describe('Heading', () => {
 test.describe('Image', () => {
 
     consoleTest.beforeEach(async ({testingApi, console, page}) => {
-        const {blog, language} = await testingApi.factory.blogFull({routes: true});
-        await testingApi.factory.post({blog_id: blog.id, language_id: language.id, title: 'Test Post'});
+        await testingApi.factory.testPost();
         await console.visitAndNav('posts');
         await page.getByRole('link', { name: 'Test Post' }).click();
         await page.locator('.ProseMirror').fill(''); 
@@ -120,8 +117,7 @@ test.describe('Image', () => {
 test.describe('Quote', () => {
 
     consoleTest.beforeEach(async ({testingApi, console, page}) => {
-        const {blog, language} = await testingApi.factory.blogFull({routes: true});
-        await testingApi.factory.post({blog_id: blog.id, language_id: language.id, title: 'Test Post'});
+        await testingApi.factory.testPost();
         await console.visitAndNav('posts');
         await page.getByRole('link', { name: 'Test Post' }).click();
         await page.locator('.ProseMirror').fill(''); 
@@ -150,8 +146,7 @@ test.describe('Quote', () => {
 test.describe('Callout', () => {
 
     consoleTest.beforeEach(async ({testingApi, console, page}) => {
-        const {blog, language} = await testingApi.factory.blogFull({routes: true});
-        await testingApi.factory.post({blog_id: blog.id, language_id: language.id, title: 'Test Post'});
+        await testingApi.factory.testPost();
         await console.visitAndNav('posts');
         await page.getByRole('link', { name: 'Test Post' }).click();
         await page.locator('.ProseMirror').fill(''); 
@@ -194,8 +189,7 @@ test.describe('Callout', () => {
 test.describe('Code block', () => {
 
     consoleTest.beforeEach(async ({testingApi, console, page}) => {
-        const {blog, language} = await testingApi.factory.blogFull({routes: true});
-        await testingApi.factory.post({blog_id: blog.id, language_id: language.id, title: 'Test Post'});
+        await testingApi.factory.testPost();
         await console.visitAndNav('posts');
         await page.getByRole('link', { name: 'Test Post' }).click();
         await page.locator('.ProseMirror').fill(''); 
@@ -238,8 +232,7 @@ test.describe('Code block', () => {
 test.describe('Custom HTML', () => {
 
     consoleTest.beforeEach(async ({testingApi, console, page}) => {
-        const {blog, language} = await testingApi.factory.blogFull({routes: true});
-        await testingApi.factory.post({blog_id: blog.id, language_id: language.id, title: 'Test Post'});
+        await testingApi.factory.testPost();
         await console.visitAndNav('posts');
         await page.getByRole('link', { name: 'Test Post' }).click();
         await page.locator('.ProseMirror').fill(''); 
@@ -276,8 +269,7 @@ test.describe('Custom HTML', () => {
 test.describe('Lists', () => {
 
     consoleTest.beforeEach(async ({testingApi, console, page}) => {
-        const {blog, language} = await testingApi.factory.blogFull({routes: true});
-        await testingApi.factory.post({blog_id: blog.id, language_id: language.id, title: 'Test Post'});
+        await testingApi.factory.testPost();
         await console.visitAndNav('posts');
         await page.getByRole('link', { name: 'Test Post' }).click();
         await page.locator('.ProseMirror').fill(''); 
@@ -345,8 +337,7 @@ test.describe('Lists', () => {
 test.describe('Divider', () => {
     
     consoleTest.beforeEach(async ({testingApi, console, page}) => {
-        const {blog, language} = await testingApi.factory.blogFull({routes: true});
-        await testingApi.factory.post({blog_id: blog.id, language_id: language.id, title: 'Test Post'});
+        await testingApi.factory.testPost();
         await console.visitAndNav('posts');
         await page.getByRole('link', { name: 'Test Post' }).click();
         await page.locator('.ProseMirror').fill(''); 
@@ -387,8 +378,7 @@ test.describe('Divider', () => {
 test.describe('Highlighting (Bold, italic, code, ...)', () => {
 
     consoleTest.beforeEach(async ({testingApi, console, page}) => {
-        const {blog, language} = await testingApi.factory.blogFull({routes: true});
-        await testingApi.factory.post({blog_id: blog.id, language_id: language.id, title: 'Test Post'});
+        await testingApi.factory.testPost();
         await console.visitAndNav('posts');
         await page.getByRole('link', { name: 'Test Post' }).click();
         await page.locator('.ProseMirror').fill(''); 
@@ -529,8 +519,7 @@ test.describe('Highlighting (Bold, italic, code, ...)', () => {
 test.describe('Bookmark', () => {
 
     consoleTest.beforeEach(async ({testingApi, console, page}) => {
-        const {blog, language} = await testingApi.factory.blogFull({routes: true});
-        await testingApi.factory.post({blog_id: blog.id, language_id: language.id, title: 'Test Post'});
+        await testingApi.factory.testPost();
         await console.visitAndNav('posts');
         await page.getByRole('link', { name: 'Test Post' }).click();
         await page.locator('.ProseMirror').fill(''); 
@@ -560,8 +549,7 @@ test.describe('Bookmark', () => {
 test.describe('Embed', () => {
 
     consoleTest.beforeEach(async ({testingApi, console, page}) => {
-        const {blog, language} = await testingApi.factory.blogFull({routes: true});
-        await testingApi.factory.post({blog_id: blog.id, language_id: language.id, title: 'Test Post'});
+        await testingApi.factory.testPost();
         await console.visitAndNav('posts');
         await page.getByRole('link', { name: 'Test Post' }).click();
         await page.locator('.ProseMirror').fill(''); 
@@ -599,8 +587,7 @@ test.describe('Embed', () => {
 test.describe('Table', () => {
 
     consoleTest.beforeEach(async ({testingApi, console, page}) => {
-        const {blog, language} = await testingApi.factory.blogFull({routes: true});
-        await testingApi.factory.post({blog_id: blog.id, language_id: language.id, title: 'Test Post'});
+        await testingApi.factory.testPost();
         await console.visitAndNav('posts');
         await page.getByRole('link', { name: 'Test Post' }).click();
         await page.locator('.ProseMirror').fill(''); 
