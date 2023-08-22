@@ -4,7 +4,6 @@ import { PopupConfirm } from "../../../../ReusableComponents/Popup";
 import { toast } from "react-toastify";
 import { bringLeftHeaderToFront } from "../z-index";
 
-
 export default function UnpublishButton({id} : {id: number}) {
 
     const { currentVariant } = usePostValues(id);
@@ -28,7 +27,7 @@ export default function UnpublishButton({id} : {id: number}) {
                 status: 'draft',
             },
             onSave: () => {
-                toast("Post unpublished");
+                toast("Post " + ( status === 'published' ? 'unpublished' : 'unscheduled' ) + " successfully.");
                 setIsUnpublishing(false);
                 setHasUnpublishingStarted(false);
             }

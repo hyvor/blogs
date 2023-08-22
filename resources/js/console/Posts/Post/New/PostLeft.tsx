@@ -1,4 +1,4 @@
-import React, { useEffect } from "react";
+import React, { useEffect, useState } from "react";
 import Editor from "../ProseMirror/Editor";
 import { usePostActions, usePostValues } from "../helpers";
 import PostLanguageSelector from "../PostLanguageSelector";
@@ -10,6 +10,7 @@ import getSubdomain from "../../../logic-helpers/subdomain";
 import Loader from "../../../ReusableComponents/Loader";
 import PublishButton from "./Publish/PublishButton";
 import UnpublishButton from "./Publish/UnpublishButton";
+import { OutsideClick } from "../../../ReusableComponents/OutsideClick";
 
 export default function PostLeft({id, postViewRef} : {id: number, postViewRef: React.RefObject<HTMLDivElement>}) {
 
@@ -25,6 +26,11 @@ export default function PostLeft({id, postViewRef} : {id: number, postViewRef: R
         currentVariantOriginal.title !== currentVariant.title ||
         currentVariantOriginal.content !== currentVariant.content ||
         currentVariantOriginal.content_unsaved !== currentVariant.content_unsaved;
+
+
+    const { getLanguageById } = useLanguagesValues();
+    const language = getLanguageById(editorState.languageId);
+    const isRtl = language ? language.direction === 'rtl' : false;
 
     return <div className="post-left">
 
@@ -42,16 +48,8 @@ export default function PostLeft({id, postViewRef} : {id: number, postViewRef: R
                         className={`global-post-status ${currentVariant.status} large`}
                     >{currentVariant.status}</span>
 
-                    <a
-                        href={getBlogUrl(getSubdomain(), '/p/' + post.preview_id + "/" + currentLanguage.code)}
-                        target="_blank"
-                        data-testid="preview-button"
-                    >
-                        <button className="button medium light view" style={{marginRight: 8}}>
-                            <span>Preview</span>&nbsp;<BoxArrowUpRight />
-                        </button>
-                    </a>
                     
+                    <PreviewButton id={id} />
                     <UnpublishButton id={id} />
                     <PublishButton id={id} />
 
@@ -97,13 +95,25 @@ export default function PostLeft({id, postViewRef} : {id: number, postViewRef: R
 
         </div>
 
-        <div className="post-left-body">
-            <div className="post-left-title">
-                <TitleRow id={id} />
-            </div>
+        <div 
+            className="post-left-body"
+        >
+            <div
+                className="post-editor-wrap"
+                spellCheck={false}
+                dir={isRtl ? 'rtl' : 'ltr'}
+                style={isRtl ? {
+                    direction: 'rtl',
+                    textAlign: 'right'
+                } : undefined}
+            >
+                <div className="post-left-title">
+                    <TitleRow id={id} />
+                </div>
 
-            <div className="post-left-editor">
-                <PostEditor id={id} />
+                <div className="post-left-editor">
+                    <PostEditor id={id} />
+                </div>
             </div>
         </div>
 
@@ -112,15 +122,77 @@ export default function PostLeft({id, postViewRef} : {id: number, postViewRef: R
 
 }
 
+function PreviewButton({id} : {id: number}) {
+
+    const { post, currentLanguage, currentVariant } = usePostValues(id);
+
+    const [isPopupOpen, setPopupOpen] = useState(false);
+
+    const previewUrl = getBlogUrl(getSubdomain(), '/p/' + post.preview_id + "/" + currentLanguage.code)
+
+    function handleNewTabOpen(url: string) {
+        window.open(url, '_blank')
+    }
+
+    return <a
+        href={
+            currentVariant.status === 'published' ?
+                undefined :
+                previewUrl
+            }
+        onClick={(e) => {
+            e.stopPropagation();
+            if (currentVariant.status === 'published') {
+                setPopupOpen(!isPopupOpen)
+            }
+        }}
+        target="_blank"
+        data-testid="preview-button-link"
+        className="preview-button-link"
+    >
+        <button className="button medium light view" style={{marginRight: 8}}>
+            <span>
+                {
+                    currentVariant.status === 'published' ?
+                        'View' :
+                        'Preview'
+                }    
+            </span>&nbsp;<BoxArrowUpRight />
+        </button>
+
+        {
+            isPopupOpen &&
+            <OutsideClick onClick={() => setPopupOpen(false)}>
+                <div 
+                    className="preview-type-popup"
+                    onClick={(e) => e.stopPropagation()}
+                >
+                    <button
+                        className="button medium light"
+                        onClick={() => handleNewTabOpen(previewUrl)}
+                    >
+                        <span className="name">Preview</span>
+                        <BoxArrowUpRight />
+                    </button>
+                    <button
+                        className="button medium light published"
+                        onClick={() => handleNewTabOpen(currentVariant.url)}
+                    >
+                        <span className="name">Published Post</span>
+                        <BoxArrowUpRight />
+                    </button>
+                </div>
+            </OutsideClick>
+        }
+    </a>
+
+}
+
 
 function PostEditor({id} : {id: number}) {
 
     const { currentVariant, editorState } = usePostValues(id)
     const { updateCurrentPostVariantValue } = usePostActions(id)
-
-    const { getLanguageById } = useLanguagesValues();
-    const language = getLanguageById(editorState.languageId);
-    const isRtl = language ? language.direction === 'rtl' : false;
 
     const isNonDraft = currentVariant.status !== 'draft';
 

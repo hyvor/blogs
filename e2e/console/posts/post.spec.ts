@@ -10,41 +10,105 @@ consoleTest('Create post', async ({testingApi, console, page}) => {
     await expect(page.getByPlaceholder('Title...')).toBeVisible();
 });
 
-consoleTest('Create language variant', async({testingApi, console, page}) => {
-    const {blog, language} = await testingApi.factory.blogFull({
-        routes: true,
-        languageAttrs: {code: 'en', name: 'English'}
-    });
-    await testingApi.factory.language({blog_id: blog.id, code: 'fr', name: 'French'});
+test.describe('multi language', () => {
+
+    consoleTest('Create language variant', async({testingApi, console, page}) => {
+        const {blog, language} = await testingApi.factory.blogFull({
+            routes: true,
+            languageAttrs: {code: 'en', name: 'English'}
+        });
+        await testingApi.factory.language({blog_id: blog.id, code: 'fr', name: 'French'});
+        
+        await testingApi.factory.post({
+            attrs: {
+                blog_id: blog.id,
+            },
+            variantAttrs: {
+                language_id: language.id,
+                title: 'Test Post',
+                status: 'draft'
+            }
+        });
     
-    await testingApi.factory.post({
-        attrs: {
-            blog_id: blog.id,
-        },
-        variantAttrs: {
-            language_id: language.id,
-            title: 'Test Post',
-            status: 'draft'
-        }
+        await console.visitAndNav('posts');
+        await page.getByRole('link', { name: 'Test Post' }).click();
+    
+        const enTag = await page.getByTestId('lang-tag-en');
+        const frTag = await page.getByTestId('lang-tag-fr');
+    
+        await expect(enTag).toHaveClass(/\bactive\b/);
+        await enTag.hover();
+        await expect(page.getByText('English - Draft')).toBeVisible();
+       
+        await frTag.click();
+    
+        await expect(frTag).toHaveClass(/\bactive\b/);
+        await frTag.hover();
+        await expect(page.getByText('French - Draft')).toBeVisible();
+    
     });
 
-    await console.visitAndNav('posts');
-    await page.getByRole('link', { name: 'Test Post' }).click();
+    consoleTest('RTL', async({testingApi, console, page}) => {
 
-    const enTag = await page.getByTestId('lang-tag-en');
-    const frTag = await page.getByTestId('lang-tag-fr');
+        const {blog, language} = await testingApi.factory.blogFull({
+            routes: true,
+            languageAttrs: {code: 'ar', name: 'Arabic', direction: 'rtl'}
+        });
+    
+        await testingApi.factory.post({
+            attrs: {blog_id: blog.id},
+            variantAttrs: {language_id: language.id, status: 'draft', title: 'Test Post'}
+        });
+    
+        await console.visitAndNav('posts');
+        await page.getByRole('link', { name: 'Test Post' }).click();
+    
+        const arTag = await page.getByTestId('lang-tag-ar');
+        await expect(arTag).toHaveClass(/\bactive\b/);
+        await arTag.hover();
+        await expect(page.getByText('Arabic - Draft')).toBeVisible();
 
-    await expect(enTag).toHaveClass(/\bactive\b/);
-    await enTag.hover();
-    await expect(page.getByText('English - Draft')).toBeVisible();
-   
-    await frTag.click();
+        const postEditorWrap = await page.locator('.post-editor-wrap');
+        await expect(await postEditorWrap.getAttribute('dir')).toBe('rtl');
 
-    await expect(frTag).toHaveClass(/\bactive\b/);
-    await frTag.hover();
-    await expect(page.getByText('French - Draft')).toBeVisible();
+    });
 
 });
+
+
+test.describe('Preview', () => {
+
+    consoleTest('Preview non published', async ({testingApi, console, page}) => {
+
+        await testingApi.factory.testPost();
+
+        await console.visitAndNav('posts');
+        await page.getByRole('link', { name: 'Test Post' }).click();
+        const previewButton = await page.getByTestId('preview-button-link');
+        const href = await previewButton.getAttribute('href');
+
+        await expect(href).toContain('/p/');
+
+    });
+
+    consoleTest('preview published', async ({testingApi, console, page}) => {
+
+        await testingApi.factory.testPost({postVariantAttrs: {status: 'published'}});
+        await console.visitAndNav('posts');
+        await page.getByRole('link', { name: 'Test Post' }).click();
+
+        const previewButton = await page.getByTestId('preview-button-link');
+        const href = await previewButton.getAttribute('href');
+
+        await expect(href).toBeNull();
+        await previewButton.click();
+
+        await expect(page.getByText('Published Post')).toBeVisible();
+
+    });
+
+});
+
 
 consoleTest('Publish post', async ({testingApi, console, page}) => {
 

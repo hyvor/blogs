@@ -2,11 +2,12 @@ import React from "react";
 import { ReactNode } from "react";
 
 export default function Tooltip(
-    { children, tooltip, className = '' } : 
+    { children, tooltip, className = '', position = 'top' } : 
     { 
         children: ReactNode,
         tooltip: ReactNode,
-        className?: string
+        className?: string,
+        position: 'top' | 'bottom'
     }
 ) {
 
@@ -24,7 +25,7 @@ export default function Tooltip(
             const top = wrapRect.top - tooltipRect.height - 10;
             const left = wrapRect.left + wrapRect.width/2 - tooltipRect.width/2;
 
-            tooltipRef.current!.style.top = top + 'px';
+            tooltipRef.current!.style.top = position === 'top' ? top + 'px' : (wrapRect.bottom + 10) + 'px';
             tooltipRef.current!.style.left = left + 'px';
 
         }
@@ -42,7 +43,7 @@ export default function Tooltip(
 
         {
             tooltip !== null &&
-            <div className="tooltip" ref={tooltipRef}>
+            <div className={`tooltip ${position}`} ref={tooltipRef}>
                 {tooltip}
             </div>
         }

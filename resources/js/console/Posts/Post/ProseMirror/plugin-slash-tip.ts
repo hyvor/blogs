@@ -62,7 +62,7 @@ class SlashTipPlugin implements PluginView {
         const isRtl = isEditorRtl();
 
         if (isRtl) {
-            this.element.style.left = (viewPos.left + 25) + "px";
+            this.element.style.left = 25 + "px";
             return;
         }
 

@@ -88,6 +88,9 @@
                 .display-inner {
                     display: flex;
                     flex-wrap: wrap;
+                    .global-no-results {
+                        flex: 1;
+                    }
                 }
                 .media-item {
                     width: 25%;
@@ -147,6 +150,10 @@
                 flex: 1;
                 .display-cols {
                     display: flex;
+
+                    .global-no-results {
+                        flex: 1;
+                    }
                 }
                 .display-col {
                     flex: 1;

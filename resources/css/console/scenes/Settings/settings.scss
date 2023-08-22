@@ -47,7 +47,7 @@
     }
 
     .settings-right {
-        padding: 30px 50px 90px;
+        padding: 25px 45px;
         overflow:auto;
 
         & > div > .title {
@@ -55,6 +55,21 @@
             font-weight: 600;
             text-align: center;
             margin-bottom:15px;
+        }
+
+        .settings-title-row {
+            text-align: center;
+            .settings-title {
+                font-size: 20px;
+                font-weight: 600;
+                margin-bottom:5px;
+            }
+            .settings-description {
+                font-size: 14px;
+                color: $color-text-light;
+                width: 350px;
+                margin: 0 auto;
+            }
         }
     }
 

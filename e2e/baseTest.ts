@@ -132,6 +132,39 @@ class Factory {
         return await this.testingApi.callFactory('PostVariant', attrs);
     }
 
+    async testPost({
+        postAttrs = {},
+        postVariantAttrs = {},
+    } = {}) {
+        const {blog, language} = await this.blogFull({routes: true});
+        const post = await this.post({
+            attrs: {
+                blog_id: blog.id,
+                ...postAttrs
+            },
+            variantAttrs: {
+                language_id: language.id,
+                title: 'Test Post',
+                status: 'draft',
+                ...postVariantAttrs
+            }
+        });
+        return {
+            blog,
+            language,
+            post
+        }
+    }
+
+    async themeFile(attrs = {}) {
+        return await this.testingApi.callFactory('ThemeFile', {
+            folder: 'templates',
+            name: 'index.twig',
+            content: '',
+            ...attrs
+        });
+    }
+
     async defaultRoutes(attrs = {}) {
         await this.routes({ ...attrs, name: 'post', match: '/{slug}', template: 'post'});
         await this.routes({ ...attrs, name: 'page', match: '/{slug}', template: 'page'});

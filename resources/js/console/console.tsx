@@ -32,8 +32,8 @@ function App() {
     return <div>
         <Scene />
 
-        <ToastContainer />
         <GlobalImageUploader />
+        <ToastContainer />
     </div>
 
 }

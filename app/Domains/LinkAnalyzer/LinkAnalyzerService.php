@@ -7,10 +7,8 @@ use App\Exceptions\SafetyException;
 use App\Models\Blog;
 use App\Models\LinkAnalyzerLink;
 use Exception;
-use GuzzleHttp\Psr7\Utils;
 use Illuminate\Http\Client\Pool;
 use Illuminate\Http\Client\Response;
-use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\Http;
 
 class LinkAnalyzerService
@@ -158,6 +156,39 @@ class LinkAnalyzerService
     {
         $link->ignore = $status;
         $link->save();
+    }
+
+    /**
+     * @param Blog $blog
+     * @return array{ok: integer, redirect: integer, broken: integer, ignored: integer}
+     */
+    public static function getCountsByStatus(Blog $blog) : array
+    {
+
+        $counts = LinkAnalyzerLink::where('blog_id', $blog->id)
+            ->selectRaw('
+                SUM(IF(`ignore` = 0 AND status_code >= 200 AND status_code < 300, 1, 0)) AS ok,
+                SUM(IF(`ignore` = 0 AND status_code >= 300 AND status_code < 400, 1, 0)) AS redirect,
+                SUM(IF(`ignore` = 0 AND status_code >= 400, 1, 0)) AS broken,
+                SUM(IF(`ignore` = 1, 1, 0)) AS ignored
+            ')
+            ->first();
+
+        if (!$counts) {
+            throw new SafetyException();
+        }
+
+        /**
+         * @var array{ok: integer, redirect: integer, broken: integer, ignored: integer} $counts
+         */
+        $counts = $counts->toArray();
+
+        return [
+            'ok' => (int) $counts['ok'],
+            'redirect' => (int) $counts['redirect'],
+            'broken' => (int) $counts['broken'],
+            'ignored' => (int) $counts['ignored'],
+        ];
     }
 
 }
