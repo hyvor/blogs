@@ -67,6 +67,16 @@ body {
     padding: 15px;
 }
 
+.settings-icon-row {
+   display: flex;
+   flex-direction: row;
+   align-items: center;
+}
+
+.settings-icon {
+    margin-right: 10px;
+}
+
 /* .setting-users {
     .users-view {
         .users {

@@ -6,6 +6,7 @@ import { getUserBlogBlog } from '../logic-helpers/blog';
 import SettingsLink from '../ReusableComponents/SettingsLink';
 import SettingsSelect from '../ReusableComponents/SettingsSelect';
 import Export from './Export/Export';
+import { Download, Plus, PlusCircle } from 'react-bootstrap-icons';
 
 
 export default function Tools({ type }: { type: string | undefined }) {
@@ -32,8 +33,8 @@ export default function Tools({ type }: { type: string | undefined }) {
         <div className="box box-left">
 
             <div className="settings-nav">
-                <SettingsLink path="" name="Import" pannelName={'import'} setPannel={setPannel} toolsPrefix={true} />
-                <SettingsLink path="/export" name="Export" pannelName={'export'} setPannel={setPannel} toolsPrefix={true} />
+                <SettingsLink path="" name="Import" pannelName={'import'} setPannel={setPannel} toolsPrefix={true} icon={<PlusCircle />}/>
+                <SettingsLink path="/export" name="Export" pannelName={'export'} setPannel={setPannel} toolsPrefix={true} icon={<Download />}/>
             </div>
         </div>
         <div className="box box-right settings-right">

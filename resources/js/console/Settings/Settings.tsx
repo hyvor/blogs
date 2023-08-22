@@ -29,6 +29,7 @@ import Select from '../ReusableComponents/Select';
 import { components } from 'react-select';
 import SettingsLink from '../ReusableComponents/SettingsLink';
 import SettingsSelect from '../ReusableComponents/SettingsSelect';
+import { ArrowBarRight, ArrowBarUp, CardText, ChatText, CodeSlash, CursorText, Database, Exclamation, ExclamationTriangle, FileEarmarkPlay, Globe, Key, Lightbulb, List, Lock, People, PeopleFill, Router, SearchHeart, Send, Tag } from 'react-bootstrap-icons';
 
 export default function Settings({ type }: { type: string | undefined }) {
     const blog = getUserBlogBlog();
@@ -131,31 +132,31 @@ export default function Settings({ type }: { type: string | undefined }) {
                     />
                 }
 
-                <SettingsLink path="" name="General" setPannel={setPannel} />
-                <SettingsLink path="/users" name="Users" setPannel={setPannel} />
-                <SettingsLink role={UserRole.EDITOR} path="/tags" name="Tags" setPannel={setPannel} />
-                <SettingsLink path="/languages" name="Languages" setPannel={setPannel} />
+                <SettingsLink path="" name="General" setPannel={setPannel} icon={<List />}/>
+                <SettingsLink path="/users" name="Users" setPannel={setPannel} icon={<People />}/>
+                <SettingsLink role={UserRole.EDITOR} path="/tags" name="Tags" setPannel={setPannel} icon={<Tag />}/>
+                <SettingsLink path="/languages" name="Languages" setPannel={setPannel} icon={<Globe />}/>
 
                 <div />
 
-                <SettingsLink path="/hosting" name="Hosting" setPannel={setPannel} />
-                <SettingsLink path="/seo" name="SEO" setPannel={setPannel} />
-                <SettingsLink path="/color-mode" name="Light & Dark Modes" pannelName={'color-mode'} setPannel={setPannel} />
-                <SettingsLink path="/post-content" name="Post Content" pannelName={'post-content'} setPannel={setPannel} />
-                <SettingsLink path="/navigation" name="Navigation" setPannel={setPannel} />
-                <SettingsLink path="/media" name="Media" setPannel={setPannel} />
-                <SettingsLink path="/redirects" name="Redirects" setPannel={setPannel} />
-                <SettingsLink path="/routes" name="Routes" setPannel={setPannel} />
+                <SettingsLink path="/hosting" name="Hosting" setPannel={setPannel} icon={<Database />}/>
+                <SettingsLink path="/seo" name="SEO" setPannel={setPannel} icon={<SearchHeart />}/>
+                <SettingsLink path="/color-mode" name="Light & Dark Modes" pannelName={'color-mode'} setPannel={setPannel} icon={<Lightbulb />}/>
+                <SettingsLink path="/post-content" name="Post Content" pannelName={'post-content'} setPannel={setPannel} icon={<CursorText />}/>
+                <SettingsLink path="/navigation" name="Navigation" setPannel={setPannel} icon={<ArrowBarRight />}/>
+                <SettingsLink path="/media" name="Media" setPannel={setPannel} icon={<FileEarmarkPlay />}/>
+                <SettingsLink path="/redirects" name="Redirects" setPannel={setPannel} icon={<ArrowBarUp />}/>
+                <SettingsLink path="/routes" name="Routes" setPannel={setPannel} icon={<Router />}/>
 
                 <div />
-                <SettingsLink path="/comments" name="Comments & Newsletter" pannelName={'comments'} setPannel={setPannel} />
-                <SettingsLink path="/code" name="Custom Code" pannelName={'code'} setPannel={setPannel} />
-                <SettingsLink path="/api-keys" name="API Keys" setPannel={setPannel} pannelName={'api-keys'} />
-                <SettingsLink path="/webhooks" name="Webhooks" setPannel={setPannel} />
+                <SettingsLink path="/comments" name="Comments & Newsletter" pannelName={'comments'} setPannel={setPannel} icon={<ChatText />}/>
+                <SettingsLink path="/code" name="Custom Code" pannelName={'code'} setPannel={setPannel} icon={<CodeSlash />}/>
+                <SettingsLink path="/api-keys" name="API Keys" setPannel={setPannel} pannelName={'api-keys'} icon={<Key />}/>
+                <SettingsLink path="/webhooks" name="Webhooks" setPannel={setPannel} icon={<Send />}/>
 
                 <div />
 
-                <SettingsLink role={UserRole.OWNER} path="/danger" pannelName={'danger'} name="Danger Zone" setPannel={setPannel} />
+                <SettingsLink role={UserRole.OWNER} path="/danger" pannelName={'danger'} name="Danger Zone" setPannel={setPannel} icon={<ExclamationTriangle />}/>
             </div>
         </div>
         <div className="box box-right settings-right">
