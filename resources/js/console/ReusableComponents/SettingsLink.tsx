@@ -6,6 +6,7 @@ import getSubdomain from "../logic-helpers/subdomain";
 import UserPermissions from "../services/UserPermissions";
 import NavLink from "./NavLink";
 import React from "react";
+import { Power } from "react-bootstrap-icons";
 
 interface SettingsLinkProps {
     path: string,
@@ -14,10 +15,11 @@ interface SettingsLinkProps {
     dividing?: boolean,
     pannelName?: string,
     toolsPrefix?: boolean,
-    setPannel: Function
+    setPannel: Function,
+    icon?: any
 }
 
-function SettingsLink({ path, role = UserRole.ADMIN, name, dividing = false, setPannel, pannelName, toolsPrefix = false }: SettingsLinkProps) {
+function SettingsLink({ path, role = UserRole.ADMIN, name, dividing = false, setPannel, pannelName, toolsPrefix = false, icon = <Power /> }: SettingsLinkProps) {
 
     const subdomain = getSubdomain();
     const settingsPrefix = `/console/${subdomain}/${toolsPrefix ? 'tools' : 'settings'}`;
@@ -62,7 +64,11 @@ function SettingsLink({ path, role = UserRole.ADMIN, name, dividing = false, set
                 else
                     setPannel(name.toLocaleLowerCase())
             }}
-        > {name}</NavLink>
+        >    <div className="settings-icon-row">
+                <span className="settings-icon">{icon}</span>
+                 {name}
+            </div>
+        </NavLink>
 
         {dividing && <div />}
     </Fragment >
