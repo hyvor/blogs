@@ -29,7 +29,7 @@ import Select from '../ReusableComponents/Select';
 import { components } from 'react-select';
 import SettingsLink from '../ReusableComponents/SettingsLink';
 import SettingsSelect from '../ReusableComponents/SettingsSelect';
-import { ArrowBarRight, ArrowBarUp, CardText, ChatText, CodeSlash, CursorText, Database, Exclamation, ExclamationTriangle, FileEarmarkPlay, Key, Lightbulb, List, Lock, People, PeopleFill, Router, SearchHeart, Send, Tag } from 'react-bootstrap-icons';
+import { ArrowBarRight, ArrowBarUp, CardText, ChatText, CodeSlash, CursorText, Database, Exclamation, ExclamationTriangle, FileEarmarkPlay, Globe, Key, Lightbulb, List, Lock, People, PeopleFill, Router, SearchHeart, Send, Tag } from 'react-bootstrap-icons';
 
 export default function Settings({ type }: { type: string | undefined }) {
     const blog = getUserBlogBlog();
@@ -135,7 +135,7 @@ export default function Settings({ type }: { type: string | undefined }) {
                 <SettingsLink path="" name="General" setPannel={setPannel} icon={<List />}/>
                 <SettingsLink path="/users" name="Users" setPannel={setPannel} icon={<People />}/>
                 <SettingsLink role={UserRole.EDITOR} path="/tags" name="Tags" setPannel={setPannel} icon={<Tag />}/>
-                <SettingsLink path="/languages" name="Languages" setPannel={setPannel} icon={<CardText />}/>
+                <SettingsLink path="/languages" name="Languages" setPannel={setPannel} icon={<Globe />}/>
 
                 <div />
 
