@@ -6,7 +6,7 @@ import getSubdomain from "../logic-helpers/subdomain";
 import UserPermissions from "../services/UserPermissions";
 import NavLink from "./NavLink";
 import React from "react";
-import { Power } from "react-bootstrap-icons";
+import { List } from "react-bootstrap-icons";
 
 interface SettingsLinkProps {
     path: string,
@@ -19,7 +19,7 @@ interface SettingsLinkProps {
     icon?: any
 }
 
-function SettingsLink({ path, role = UserRole.ADMIN, name, dividing = false, setPannel, pannelName, toolsPrefix = false, icon = <Power /> }: SettingsLinkProps) {
+function SettingsLink({ path, role = UserRole.ADMIN, name, dividing = false, setPannel, pannelName, toolsPrefix = false, icon = <List /> }: SettingsLinkProps) {
 
     const subdomain = getSubdomain();
     const settingsPrefix = `/console/${subdomain}/${toolsPrefix ? 'tools' : 'settings'}`;
