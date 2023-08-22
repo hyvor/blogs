@@ -3,7 +3,7 @@ import { OutsideClick } from '../OutsideClick';
 import Button from '../Button';
 import { Media, UnsplashImage } from '../../types';
 import { toast } from 'react-toastify';
-import getSubdomain from '../../logic-helpers/subdomain';
+import getSubdomain, { useSubdomain } from '../../logic-helpers/subdomain';
 import { useActions, useValues } from 'kea';
 import mediaLogic from '../../logic/mediaLogic';
 import Loader from '../Loader';
@@ -29,8 +29,14 @@ interface ImageUploaderProps {
 
 // to open the image uploader globally
 export function GlobalImageUploader() {
+    const subdomain = useSubdomain();
+    return subdomain ?
+        <GlobalImageUploaderInner subdomain={subdomain} /> :
+        null;
+}
 
-    const logic  = mediaLogic({subdomain: getSubdomain()});
+function GlobalImageUploaderInner({subdomain} : {subdomain: string}) {
+    const logic  = mediaLogic({subdomain});
     const { globalImageUploader } = useValues(logic);
     const { setGlobalImageUploader } = useActions(logic);
 
@@ -46,7 +52,6 @@ export function GlobalImageUploader() {
             setGlobalImageUploader(null)
         }}
     />
-
 }
 
 export default function ImageUploader(props : ImageUploaderProps) {
