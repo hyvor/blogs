@@ -119,9 +119,11 @@ Route::prefix('/api/console/v0/blog/{subdomain}')
 
             Route::post('/ai/translate', [ConsoleAiController::class, 'translate']);
 
+            // link analysis
             Route::post('/link-analysis/variant', [ConsoleLinkAnalysisController::class, 'checkPostVariantLinks']);
             Route::patch('link-analysis/ignore-link', [ConsoleLinkAnalysisController::class, 'ignoreLink']);
             Route::get('/link-analysis/stats', [ConsoleLinkAnalysisController::class, 'getStats']);
+            Route::get('/link-analysis/analyses', [ConsoleLinkAnalysisController::class, 'getAnalyses']);
             Route::get('/link-analysis/links', [ConsoleLinkAnalysisController::class, 'getLinks']);
 
         });

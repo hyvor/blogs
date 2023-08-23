@@ -423,3 +423,16 @@ export interface Import {
     }
 
 }
+
+export interface LinkAnalysisLink {
+    id: number,
+    url: string,
+    status_code: number,
+    status_type: 'ok' | 'redirect' | 'broken' | 'ignored',
+    ignored: boolean,
+
+    post_id: number,
+    post_variant_id: number,
+    post_variant_language_id: number,
+    post_variant_title: string | null,
+}

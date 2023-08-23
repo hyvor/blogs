@@ -912,3 +912,27 @@ input[type=range]:focus::-ms-fill-upper {
         display: block;
     }
 }
+
+.global-tabs {
+    
+    display: flex;
+
+    .tab {
+        padding: 10px 15px;
+        border-bottom: 3px solid #f1f1f1;
+        cursor: pointer;
+        font-weight: 600;
+        .tab-icon {
+            margin-right: 5px;
+            font-size: 14px;
+        }
+        &.active {
+            border-bottom-color: $color-accent;
+            color: $color-accent;
+        }
+        &:hover:not(.active) {
+            border-bottom-color: $color-accent-light;
+        }
+    }
+
+}

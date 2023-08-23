@@ -140,30 +140,6 @@ function LinkComponent(
     const statusType = getStatusType(status);
     const isHttp = isHttpLink(link);
 
-    let statusDisplay = "";
-    let tooltip = "";
-
-    if (statusType === "ok") {
-        statusDisplay = "OK";
-        tooltip = link.type === 'anchor' ?
-            'Heading ID found' :
-            "OK - HTTP status " + status;
-    } else if (statusType === "redirect") {
-        statusDisplay = "Redirect";
-        tooltip = "Redirect status " + status;
-    } else if (statusType === "broken") {
-        statusDisplay = "Broken";
-        tooltip = link.type === 'anchor' ? 
-            'Heading ID not found' :
-            "HTTP status " + status;
-    } else if (statusType === 'ignored') {
-        statusDisplay = "Ignored";
-        tooltip = "Link Ignored";
-    } else if (statusType === 'error') {
-        statusDisplay = "Error";
-        tooltip = "Error (on our side)";
-    }
-
     function handleReload() {
         setIsReloading(true);
         linkAnalysisProps.reloadLink(link, _ => {
@@ -203,40 +179,10 @@ function LinkComponent(
 
         </div>
 
-        {/* <div className="link-type-wrap">
-        </div> */}
-
         <div className="link-status">
             {
                 statusType !== 'loading' && !isReloading ?
-                <Tooltip tooltip={tooltip}>
-                    <span className={`link-status-tag ${statusType}`}>
-                        <span className="status">{statusDisplay}</span>
-                        <span className="icon">
-
-                            {
-                                statusType === "ok" &&
-                                <CheckCircleFill />
-                            }
-
-                            {
-                                statusType === "redirect" &&
-                                <ExclamationCircleFill />
-                            }
-
-                            {
-                                statusType === "broken" &&
-                                <XCircleFill />
-                            }
-
-                            {
-                                statusType === "ignored" &&
-                                <EyeSlashFill />
-                            }
-
-                        </span>
-                    </span>
-                </Tooltip> :
+                <LinkStatusTag status={status} isAnchor={link.type === 'anchor'} /> :
                 <Loader inline={true} size="mini" />
             }
         </div>
@@ -274,5 +220,68 @@ function LinkComponent(
         </div>
 
     </div>
+
+}
+
+
+export function LinkStatusTag(
+    {status, isAnchor = false, showTooltip = true} : 
+    {status: number, isAnchor?: boolean, showTooltip?: boolean}) 
+{
+
+    const statusType = getStatusType(status);
+    let statusDisplay = "";
+    let tooltip = "";
+
+    if (statusType === "ok") {
+        statusDisplay = "OK";
+        tooltip = isAnchor ?
+            'Heading ID found' :
+            "OK - HTTP status " + status;
+    } else if (statusType === "redirect") {
+        statusDisplay = "Redirect";
+        tooltip = "Redirect status " + status;
+    } else if (statusType === "broken") {
+        statusDisplay = "Broken";
+        tooltip = isAnchor ? 
+            'Heading ID not found' :
+            "HTTP status " + status;
+    } else if (statusType === 'ignored') {
+        statusDisplay = "Ignored";
+        tooltip = "Link Ignored";
+    } else if (statusType === 'error') {
+        statusDisplay = "Error";
+        tooltip = "Error (on our side)";
+    }
+
+
+    return <Tooltip tooltip={showTooltip ? tooltip : null}>
+        <span className={`global-link-status-tag ${statusType}`}>
+            <span className="status">{statusDisplay}</span>
+            <span className="icon">
+
+                {
+                    statusType === "ok" &&
+                    <CheckCircleFill />
+                }
+
+                {
+                    statusType === "redirect" &&
+                    <ExclamationCircleFill />
+                }
+
+                {
+                    statusType === "broken" &&
+                    <XCircleFill />
+                }
+
+                {
+                    statusType === "ignored" &&
+                    <EyeSlashFill />
+                }
+
+            </span>
+        </span>
+    </Tooltip>
 
 }

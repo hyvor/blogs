@@ -6,7 +6,9 @@ namespace App\Domains\LinkAnalyzer;
 use App\Exceptions\SafetyException;
 use App\Models\Blog;
 use App\Models\LinkAnalyzerLink;
+use App\Models\PostVariant;
 use Exception;
+use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Http\Client\Pool;
 use Illuminate\Http\Client\Response;
 use Illuminate\Support\Facades\Http;
@@ -54,19 +56,30 @@ class LinkAnalyzerService
      * @param array<string, integer> $results
      * @return array<string, integer>
      */
-    public static function saveToDb(Blog $blog, array $results) : array
+    public static function saveToDb(
+        Blog $blog,
+        PostVariant $postVariant,
+        array $results,
+        bool $clear = false
+    ) : array
     {
 
         $now = now();
+
+        if ($clear) {
+            LinkAnalyzerLink::where('post_variant_id', $postVariant->id)
+                ->delete();
+        }
 
         foreach ($results as $url => $statusCode) {
 
             $link = LinkAnalyzerLink::updateOrCreate(
                 [
-                    'blog_id' => $blog->id,
+                    'post_variant_id' => $postVariant->id,
                     'url' => $url,
                 ],
                 [
+                    'blog_id' => $blog->id,
                     'last_checked_at' => $now,
                     'status_code' => $statusCode,
                 ]
@@ -169,7 +182,7 @@ class LinkAnalyzerService
             ->selectRaw('
                 SUM(IF(`ignore` = 0 AND status_code >= 200 AND status_code < 300, 1, 0)) AS ok,
                 SUM(IF(`ignore` = 0 AND status_code >= 300 AND status_code < 400, 1, 0)) AS redirect,
-                SUM(IF(`ignore` = 0 AND status_code >= 400, 1, 0)) AS broken,
+                SUM(IF(`ignore` = 0 AND (status_code >= 400 OR status_code < 200), 1, 0)) AS broken,
                 SUM(IF(`ignore` = 1, 1, 0)) AS ignored
             ')
             ->first();
@@ -189,6 +202,62 @@ class LinkAnalyzerService
             'broken' => (int) $counts['broken'],
             'ignored' => (int) $counts['ignored'],
         ];
+    }
+
+    /**
+     * @return Collection<int, LinkAnalyzerLink>
+     */
+    public static function getLinksOfBlog(
+        Blog $blog,
+        ?LinkStatusTypeEnum $type = null,
+        int $limit,
+        int $offset
+    ) : Collection
+    {
+
+        return LinkAnalyzerLink::where('blog_id', $blog->id)
+            ->with('postVariant')
+            ->selectRaw('
+                *,
+                IF(`ignore` = 0 AND status_code >= 200 AND status_code < 300, 1, 0) AS ok,
+                IF(`ignore` = 0 AND status_code >= 300 AND status_code < 400, 1, 0) AS redirect,
+                IF(`ignore` = 0 AND (status_code >= 400 OR status_code < 200), 1, 0) AS broken,
+                IF(`ignore` = 1, 1, 0) AS ignored
+            ')
+            ->when($type, function($query) use ($type) {
+                switch ($type) {
+                    case LinkStatusTypeEnum::OK:
+                        $query
+                            ->where('ignore', false)
+                            ->where('status_code', '>=', 200)
+                            ->where('status_code', '<', 300);
+                        break;
+                    case LinkStatusTypeEnum::REDIRECT:
+                        $query
+                            ->where('ignore', false)
+                            ->where('status_code', '>=', 300)
+                            ->where('status_code', '<', 400);
+                        break;
+                    case LinkStatusTypeEnum::BROKEN:
+                        $query
+                            ->where('ignore', false)
+                            ->where(function ($q) {
+                                $q->where('status_code', '<', 200)
+                                    ->orWhere('status_code', '>=', 400);
+                            });
+                        break;
+                    case LinkStatusTypeEnum::IGNORED:
+                        $query->where('ignore', true);
+                        break;
+                }
+            })
+            ->orderBy('broken', 'desc')
+            ->orderBy('redirect', 'desc')
+            ->orderBy('last_checked_at', 'desc')
+            ->limit($limit)
+            ->offset($offset)
+            ->get();
+
     }
 
 }

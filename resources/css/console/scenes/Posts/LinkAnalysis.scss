@@ -38,25 +38,6 @@
         }
     }
 
-    .summary > span, .link-status-tag {
-        &.ok {
-            background-color: $color-green-light;
-            color: $color-green-dark;
-        }
-        &.redirect {
-            background-color: $color-orange-light;
-            color: $color-orange-dark;
-        }
-        &.broken, &.error {
-            background-color: $color-red-light;
-            color: $color-red-dark;
-        }
-        &.ignored {
-            background-color: #eee;
-            color: #000;
-        }
-    }
-
     .links {
         .link-wrap {
             display: flex;
@@ -90,24 +71,6 @@
                 }
             }
 
-            .link-status-tag {
-                display: inline-flex;
-                align-items: center;
-                padding: 3px 10px;
-                border-radius: 20px;
-                font-weight: 600;
-                text-transform: uppercase;
-                .status {
-                    font-size: 10px;
-                    margin-right: 3px;
-                }
-                .icon {
-                    font-size: 10px;
-                    display: inline-flex;
-                    align-items: center;
-                }
-            }
-
             .link-buttons {
                 margin-left: 10px;
                 .disabled {
@@ -119,4 +82,41 @@
         }
     }
 
+}
+
+.global-link-status-tag {
+    display: inline-flex;
+    align-items: center;
+    padding: 3px 10px;
+    border-radius: 20px;
+    font-weight: 600;
+    text-transform: uppercase;
+    .status {
+        font-size: 10px;
+        margin-right: 3px;
+    }
+    .icon {
+        font-size: 10px;
+        display: inline-flex;
+        align-items: center;
+    }
+}
+
+.links-analysis .summary > span, .global-link-status-tag {
+    &.ok {
+        background-color: $color-green-light;
+        color: $color-green-dark;
+    }
+    &.redirect {
+        background-color: $color-orange-light;
+        color: $color-orange-dark;
+    }
+    &.broken, &.error {
+        background-color: $color-red-light;
+        color: $color-red-dark;
+    }
+    &.ignored {
+        background-color: #eee;
+        color: #000;
+    }
 }

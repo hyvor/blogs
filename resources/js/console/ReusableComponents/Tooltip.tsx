@@ -7,7 +7,7 @@ export default function Tooltip(
         children: ReactNode,
         tooltip: ReactNode,
         className?: string,
-        position: 'top' | 'bottom'
+        position?: 'top' | 'bottom'
     }
 ) {
 

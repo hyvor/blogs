@@ -2,12 +2,15 @@
 
 namespace App\Http\Controllers\ConsoleAPI;
 
+use App\Data\Objects\ConsoleAPI\LinkAnalysis\LinkObject;
 use App\Domains\LinkAnalyzer\LinkAnalyzerService;
+use App\Domains\LinkAnalyzer\LinkStatusTypeEnum;
 use App\Domains\Post\PostRepository;
 use App\Exceptions\TrustedException;
 use App\Models\Blog;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
+use Illuminate\Validation\Rules\Enum;
 
 class ConsoleLinkAnalysisController
 {
@@ -46,7 +49,7 @@ class ConsoleLinkAnalysisController
         $urls = array_diff($urls, array_keys($fromDb));
 
         $fromHttp = LinkAnalyzerService::analyze($urls);
-        $fromHttp = LinkAnalyzerService::saveToDb($blog, $fromHttp);
+        $fromHttp = LinkAnalyzerService::saveToDb($blog, $variant, $fromHttp);
 
         $results = array_merge($fromDb, $fromHttp);
 
@@ -92,6 +95,30 @@ class ConsoleLinkAnalysisController
         return response()->json([
             'counts' => $counts
         ]);
+
+    }
+
+    public function getLinks(Request $request, Blog $blog) : JsonResponse
+    {
+
+        $request->validate([
+            'type' => [new Enum(LinkStatusTypeEnum::class), 'nullable'],
+            'limit' => 'integer',
+            'offset' => 'integer',
+        ]);
+
+        $type = LinkStatusTypeEnum::tryFrom((string) $request->string('type'));
+        $limit = $request->integer('limit', 50);
+        $offset = $request->integer('offset');
+
+        $links = LinkAnalyzerService::getLinksOfBlog(
+            $blog,
+            $type,
+            $limit,
+            $offset
+        )->mapInto(LinkObject::class);
+
+        return response()->json($links);
 
     }
 

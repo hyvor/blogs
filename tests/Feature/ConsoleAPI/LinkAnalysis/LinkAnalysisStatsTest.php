@@ -8,6 +8,8 @@ it('returns counts', function() {
 
     $blog = blogWithAccess();
 
+
+    LinkAnalyzerLink::factory()->count(1)->create(['blog_id' => $blog, 'status_code' => 102]);
     LinkAnalyzerLink::factory()->count(3)->create(['blog_id' => $blog, 'status_code' => 200]);
     LinkAnalyzerLink::factory()->count(2)->create(['blog_id' => $blog, 'status_code' => 404]);
     LinkAnalyzerLink::factory()->count(1)->create(['blog_id' => $blog, 'status_code' => 500]);
@@ -24,7 +26,7 @@ it('returns counts', function() {
         ->assertOk()
         ->assertJsonPath('counts.ok', 3)
         ->assertJsonPath('counts.redirect', 6)
-        ->assertJsonPath('counts.broken', 3)
+        ->assertJsonPath('counts.broken', 4)
         ->assertJsonPath('counts.ignored', 4);
 
 });
