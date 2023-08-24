@@ -34,7 +34,7 @@ function SettingsLink({ path, role = UserRole.ADMIN, name, dividing = false, set
         [UserRole.OWNER]: [UserRole.EDITOR, UserRole.ADMIN, UserRole.OWNER]
     }
 
-    let cls = undefined;
+    let cls = "nav-link";
     // @ts-ignore
     const availableRoles = roles[userRole];
     if (!availableRoles || availableRoles.indexOf(role) < 0) {
@@ -66,7 +66,7 @@ function SettingsLink({ path, role = UserRole.ADMIN, name, dividing = false, set
             }}
         >    <div className="settings-icon-row">
                 <span className="settings-icon">{icon}</span>
-                 {name}
+                 <span className="name">{name}</span>
             </div>
         </NavLink>
 
