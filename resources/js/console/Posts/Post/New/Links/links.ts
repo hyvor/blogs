@@ -2,7 +2,7 @@ import { EditorView } from "prosemirror-view";
 import { getDocFromContent, positionSelectionInMiddleOfScreen } from "../../ProseMirror/helpers";
 import { TextSelection } from "prosemirror-state";
 import { usePostActions, usePostValues } from "../../helpers";
-import { PostVariant } from "../../../../types";
+import { LinkAnalysisLink, PostVariant } from "../../../../types";
 import { getUserBlogBlog, useUserBlog } from "../../../../logic-helpers/blog";
 import { useEffect, useRef } from "react";
 import api from "../../../../lib/api";
@@ -231,6 +231,14 @@ export function useUpdateLinkAnalysis(id: number) {
 
     const lastLoadedLinksRef = useRef<string>('');
 
+    function getResultObjectFromLinks(links: LinkAnalysisLink[]) {
+        const obj : Record<string, number> = {}
+        links.forEach(link => {
+            obj[link.url] = link.ignored ? LINK_STATUS.IGNORED : link.status_code;
+        })
+        return obj;
+    }
+
     useEffect(() => {
 
         const loadingLinks : string[] = [];
@@ -248,7 +256,7 @@ export function useUpdateLinkAnalysis(id: number) {
             .then(res => {
                 updateCurrentPostVariantValue('link_analysis', {
                     ...currentVariantLinkAnalysis,
-                    ...res,
+                    ...getResultObjectFromLinks(res),
                 })
             })
             .catch(() => {
@@ -274,7 +282,7 @@ export function useUpdateLinkAnalysis(id: number) {
                 // true
             ).then(res => {
 
-                const status = res[link.href];
+                const status = res.find(l => l.url === link.href)?.status_code || LINK_STATUS.ERROR;
 
                 updateCurrentPostVariantValue('link_analysis', {
                     ...currentVariantLinkAnalysis,
@@ -303,7 +311,7 @@ export function useUpdateLinkAnalysis(id: number) {
             ).then(res => {  
                 updateCurrentPostVariantValue('link_analysis', {
                     ...currentVariantLinkAnalysis,
-                    ...res,
+                    ...getResultObjectFromLinks(res),
                 })
             })
             .finally(() => {
@@ -337,7 +345,7 @@ export function useUpdateLinkAnalysis(id: number) {
 
 }
 
-function callLinkAnalysisApi(
+export function callLinkAnalysisApi(
     postVariantId: number, 
     urls: string[],
     // force: boolean = false
@@ -345,7 +353,7 @@ function callLinkAnalysisApi(
 
     const subdomain = getSubdomain();
 
-    return api.post<Record<string, number>>(subdomain, '/link-analysis/check-urls', {
+    return api.post<LinkAnalysisLink[]>(subdomain, '/link-analysis/check-urls', {
         post_variant_id: postVariantId,
         urls,
         // force: force ? 1 : 0,
@@ -353,7 +361,7 @@ function callLinkAnalysisApi(
 
 }
 
-function callIgnoreLink(postVariantId: number, url: string, status: boolean) {
+export function callIgnoreLink(postVariantId: number, url: string, status: boolean) {
 
     const subdomain = getSubdomain();
     return api.patch<{status: number}>(subdomain, '/link-analysis/ignore-link', {

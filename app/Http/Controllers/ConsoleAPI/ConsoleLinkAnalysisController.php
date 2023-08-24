@@ -47,7 +47,7 @@ class ConsoleLinkAnalysisController
         // $results = array_merge($fromDb, $fromHttp);
         PostVariantLinkService::updatePostVariantCache($postVariant, $results, true);
 
-        return response()->json($results);
+        return response()->json($links->mapInto(LinkObject::class));
     }
 
     public function ignoreLink(Request $request, Blog $blog, PostVariant $postVariant) : JsonResponse
