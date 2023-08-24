@@ -441,6 +441,11 @@ class PostRepository
             ->first();
     }
 
+    public static function getPostVariantById(int $id): ?PostVariant
+    {
+        return PostVariant::find($id);
+    }
+
     public static function deletePostVariant(Post $post, int $languageId) : void
     {
         $variant = PostVariant::where('language_id', $languageId)

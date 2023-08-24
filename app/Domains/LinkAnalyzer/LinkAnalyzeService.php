@@ -6,7 +6,6 @@ namespace App\Domains\LinkAnalyzer;
 use App\Exceptions\SafetyException;
 use App\Models\Blog;
 use App\Models\LinkAnalyzerLink;
-use App\Models\PostVariant;
 use Exception;
 use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Http\Client\Pool;
@@ -18,90 +17,6 @@ class LinkAnalyzeService
 
     const IGNORE_CODE = -2;
 
-    /**
-     * @param string[] $urls
-     * @return array<string, int>
-     */
-    public static function getFromDb(
-        Blog $blog,
-        array $urls,
-        int $validForDays = 7
-    ) : array
-    {
-
-        $validStart = now()->subDays($validForDays);
-
-        $fromDb = LinkAnalyzerLink::where('blog_id', $blog->id)
-            ->whereIn('url', $urls)
-            ->get();
-
-        $results = [];
-
-        foreach ($fromDb as $link) {
-            if ($link->last_checked_at < $validStart && !$link->ignore) {
-                continue;
-            }
-
-            $results[$link->url] = $link->ignore ?
-                self::IGNORE_CODE :
-                $link->status_code;
-        }
-
-        return $results;
-    }
-
-
-    /**
-     * @deprecated
-     * @param Blog $blog
-     * @param array<string, integer> $results
-     * @return array<string, integer>
-     */
-    public static function saveToDb(
-        Blog $blog,
-        PostVariant $postVariant,
-        array $results,
-        bool $clear = false
-    ) : array
-    {
-
-        $now = now();
-
-        $ignoredLinks = [];
-
-        if ($clear) {
-            $ignoredLinks = LinkAnalyzerLink::where('post_variant_id', $postVariant->id)
-                ->where('ignore', true)
-                ->pluck('url')
-                ->toArray();
-
-            LinkAnalyzerLink::where('post_variant_id', $postVariant->id)
-                ->delete();
-        }
-
-        foreach ($results as $url => $statusCode) {
-
-            $link = LinkAnalyzerLink::updateOrCreate(
-                [
-                    'post_variant_id' => $postVariant->id,
-                    'url' => $url,
-                ],
-                [
-                    'blog_id' => $blog->id,
-                    'last_checked_at' => $now,
-                    'status_code' => $statusCode,
-                ]
-            );
-
-            if ($link->ignore) {
-                $results[$url] = self::IGNORE_CODE;
-            }
-
-        }
-
-        return $results;
-
-    }
 
     /**
      * @param string[] $urls
@@ -166,17 +81,20 @@ class LinkAnalyzeService
 
     }
 
-    public static function getLink(Blog $blog, string $url) : ?LinkAnalyzerLink
-    {
-        return LinkAnalyzerLink::where('blog_id', $blog->id)
-            ->where('url', $url)
-            ->first();
-    }
 
-    public static function ignoreLink(LinkAnalyzerLink $link, bool $status) : void
+    /**
+     * @param Collection<int, LinkAnalyzerLink> $links
+     * @return array<string, int>
+     */
+    public static function getResultsFromLinks(Collection $links) : array
     {
-        $link->ignore = $status;
-        $link->save();
+        $results = [];
+
+        foreach ($links as $link) {
+            $results[$link->url] = $link->ignore ? self::IGNORE_CODE : $link->status_code;
+        }
+
+        return $results;
     }
 
     /**

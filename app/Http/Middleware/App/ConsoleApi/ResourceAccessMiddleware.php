@@ -3,6 +3,7 @@
 namespace App\Http\Middleware\App\ConsoleApi;
 
 use App\Domains\Language\LanguageRepository;
+use App\Domains\Post\PostRepository;
 use App\Exceptions\TrustedException;
 use App\Models\ApiKey;
 use App\Models\Blog;
@@ -10,6 +11,7 @@ use App\Models\Language;
 use App\Models\Media;
 use App\Models\Navigation;
 use App\Models\Post;
+use App\Models\PostVariant;
 use App\Models\Redirect;
 use App\Models\Route;
 use App\Models\Tag;
@@ -119,6 +121,27 @@ class ResourceAccessMiddleware
             }
 
             app()->instance(Language::class, $language);
+        }
+
+        if ($request->has('post_variant_id')) {
+            $postVariantId = $request->integer('post_variant_id');
+            if (!$postVariantId) {
+                throw new TrustedException('Post variant ID not set');
+            }
+
+            $postVariant = PostRepository::getPostVariantById($postVariantId);
+
+            if (!$postVariant) {
+                throw new TrustedException('Post variant not found');
+            }
+
+            $blogId = $postVariant->post?->blog_id;
+
+            if (!$blogId || $blogId !== $this->blog->id) {
+                throw new TrustedException('Post variant does not belong to this blog');
+            }
+
+            app()->instance(PostVariant::class, $postVariant);
         }
 
         return $next($request);

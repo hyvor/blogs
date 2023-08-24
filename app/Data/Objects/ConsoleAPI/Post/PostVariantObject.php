@@ -11,6 +11,8 @@ use App\Models\PostVariant;
 
 class PostVariantObject
 {
+    public int $id;
+
     public int $language_id;
 
     public int $post_id;
@@ -54,6 +56,7 @@ class PostVariantObject
             throw new SafetyException('PostVariantObject: Language not found');
         }
 
+        $this->id = $variant->id;
         $this->language_id = $language->id;
         $this->post_id = $post->id;
 

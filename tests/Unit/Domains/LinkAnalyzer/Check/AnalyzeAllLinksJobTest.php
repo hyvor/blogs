@@ -33,6 +33,7 @@ it('job works', function() {
     expect($check->blog_id)->toBe($blog->id);
     expect($check->posts_count)->toBe(1);
     expect($check->post_variants_count)->toBe(1);
+    expect($check->links_total_count)->toBe(2);
     expect($check->links_ok_count)->toBe(1);
     expect($check->links_broken_count)->toBe(0);
     expect($check->links_redirect_count)->toBe(1);

@@ -5,9 +5,22 @@ namespace App\Domains\LinkAnalyzer\Check;
 use App\Data\Enums\JobStatusEnum;
 use App\Models\Blog;
 use App\Models\LinkAnalyzerCheck;
+use Illuminate\Database\Eloquent\Collection;
 
 class LinkAnalyzerCheckService
 {
+
+    /**
+     * @return Collection<int, LinkAnalyzerCheck>
+     */
+    public static function getChecks(Blog $blog, int $limit, int $offfset) : Collection
+    {
+        return LinkAnalyzerCheck::where('blog_id', $blog->id)
+            ->orderBy('id', 'desc')
+            ->limit($limit)
+            ->offset($offfset)
+            ->get();
+    }
 
     public static function getLastCheck(Blog $blog) : ?LinkAnalyzerCheck
     {
@@ -26,9 +39,11 @@ class LinkAnalyzerCheckService
             throw new LinkAnalyzerCheckException('Link analyzer check is already pending for this blog');
         }
 
-        return LinkAnalyzerCheck::create([
+        $check = LinkAnalyzerCheck::create([
             'blog_id' => $blog->id,
         ]);
+
+        return $check->refresh();
     }
 
     public static function completeCheck(LinkAnalyzerCheck $check, FullBlogAnalyzer $analyze) : void

@@ -23,14 +23,14 @@ return new class extends Migration
             $table->enum('status', ['pending', 'completed', 'failed'])->default('pending');
             $table->string('error')->nullable();
 
-            $table->integer('posts_count')->nullable();
-            $table->integer('post_variants_count')->nullable();
+            $table->integer('posts_count')->default(0);
+            $table->integer('post_variants_count')->default(0);
 
-            $table->integer('links_total_count')->nullable();
-            $table->integer('links_ok_count')->nullable();
-            $table->integer('links_broken_count')->nullable();
-            $table->integer('links_redirect_count')->nullable();
-            $table->integer('links_ignored_count')->nullable();
+            $table->integer('links_total_count')->default(0);
+            $table->integer('links_ok_count')->default(0);
+            $table->integer('links_broken_count')->default(0);
+            $table->integer('links_redirect_count')->default(0);
+            $table->integer('links_ignored_count')->default(0);
         });
     }
 
