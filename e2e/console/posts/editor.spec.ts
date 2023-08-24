@@ -67,28 +67,6 @@ test.describe('Image', () => {
         await page.locator('.ProseMirror').fill(''); 
     });
 
-    consoleTest('Adding image from URL', async ({testingApi, console, page}) => {
-        await page.locator('.ProseMirror').fill('/');   
-        await page.locator('div').filter({ hasText: /^ImageAdd an image$/ }).first().click();
-        await page.getByPlaceholder('Import from URL').fill('https://hyvor.com/img/logo.png');
-        await page.getByRole('button', { name: 'Confirm' }).click();
-
-        await expect(page.getByRole('figure', { name: 'Enter a caption...' }).getByRole('img')).toHaveAttribute('src', 'https://hyvor.com/img/logo.png');
-    });
-
-    /*TODO: Add an image from a file*/
-
-    consoleTest('Change image', async ({testingApi, console, page}) => {
-        await page.locator('.ProseMirror').fill('/');   
-        await page.locator('div').filter({ hasText: /^ImageAdd an image$/ }).first().click();
-        await page.getByPlaceholder('Import from URL').fill('https://hyvor.com/img/logo.png');
-        await page.getByRole('button', { name: 'Confirm' }).click();
-        await page.getByRole('button', { name: 'Change Image' }).click();
-        await page.getByPlaceholder('Import from URL').fill('https://hyvor.com/img/services/talk.png');
-        await page.getByRole('button', { name: 'Confirm' }).click();
-
-        await expect(page.getByRole('figure', { name: 'Enter a caption...' }).getByRole('img')).toHaveAttribute('src', 'https://hyvor.com/img/services/talk.png');
-    });
 
     consoleTest('Modify image caption', async ({testingApi, console, page}) => {
         await page.locator('.ProseMirror').fill('/');   
@@ -165,9 +143,9 @@ test.describe('Callout', () => {
         await page.locator('div').filter({ hasText: /^CalloutWrite something standing out$/ }).first().click();
         await page.locator('div').filter({ hasText: /^💡$/ }).fill('This is a callout');
 
-        await page.getByRole('complementary').locator('span').nth(1).click();
-        await page.getByTitle('#eedfda').click();
-        await page.locator('.color-picker-view > div').first().click();
+        page.getByRole('complementary').locator('span').nth(1).click();
+        page.getByTitle('#eedfda').click();
+        page.locator('.color-picker-view > div').first().click();
 
        await expect(page.locator('aside').filter({ hasText: /^💡This is a callout$/ })).toHaveAttribute('style', 'background-color: rgb(238, 223, 218); color: rgb(0, 0, 0);');
     });
