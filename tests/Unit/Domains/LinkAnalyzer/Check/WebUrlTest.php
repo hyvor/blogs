@@ -2,7 +2,7 @@
 
 namespace Tests\Unit\Domains\LinkAnalyzer;
 
-use App\Domains\LinkAnalyzer\AnalyzeAllLinks;
+use App\Domains\LinkAnalyzer\Check\FullBlogAnalyzer;
 use App\Domains\Post\Content\Marks\Link;
 use App\Domains\Post\Content\Marks\LinkAttrs;
 use Hyvor\Phrosemirror\Document\Mark;
@@ -18,7 +18,7 @@ it('detects web URL', function($url, $expected) {
         ])
     );
 
-    expect(AnalyzeAllLinks::getWebUrlFromLinkMark($mark, $baseUrl))->toBe($expected);
+    expect(FullBlogAnalyzer::getWebUrlFromLinkMark($mark, $baseUrl))->toBe($expected);
 
 })->with([
     ['http://example.com', 'http://example.com'],

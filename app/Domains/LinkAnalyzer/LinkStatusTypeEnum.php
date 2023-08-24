@@ -13,7 +13,7 @@ enum LinkStatusTypeEnum : string
     public static function fromStatus(int $status) : self
     {
 
-        if ($status === LinkAnalyzerService::IGNORE_CODE) {
+        if ($status === LinkAnalyzeService::IGNORE_CODE) {
             return self::IGNORED;
         } else if ($status >= 200 && $status < 300) {
             return self::OK;

@@ -1,8 +1,11 @@
 <?php declare(strict_types=1);
 
-namespace App\Domains\LinkAnalyzer;
+namespace App\Domains\LinkAnalyzer\Check;
 
 use App\Data\Enums\PostStatusEnum;
+use App\Domains\LinkAnalyzer\PostVariantLinkService;
+use App\Domains\LinkAnalyzer\LinkAnalyzeService;
+use App\Domains\LinkAnalyzer\LinkStatusTypeEnum;
 use App\Domains\Post\Content\Marks\Link;
 use App\Domains\Post\Content\PostContentService;
 use App\Domains\Route\PermalinkRepository;
@@ -11,7 +14,7 @@ use App\Models\Post;
 use App\Models\PostVariant;
 use Hyvor\Phrosemirror\Document\Mark;
 
-class AnalyzeAllLinks
+class FullBlogAnalyzer
 {
 
     public int $postsCount = 0;
@@ -81,26 +84,34 @@ class AnalyzeAllLinks
         $urls = array_slice($urls, 0, 100);
 
         $this->linksCount += count($urls);
-        $results = LinkAnalyzerService::analyze($urls);
-        LinkAnalyzerService::saveToDb(
+        $results = LinkAnalyzeService::analyze($urls);
+
+        /** @var string[] $ignoredLinksUrls */
+        $ignoredLinksUrls = PostVariantLinkService::getIgnoredLinks($variant)
+            ->pluck('url')
+            ->toArray();
+
+        $links = PostVariantLinkService::updateLinksFromResults(
             $this->blog,
             $variant,
             $results,
-            true
+            true,
+            $ignoredLinksUrls
         );
 
-        foreach ($results as $url => $status) {
-            $statusType = LinkStatusTypeEnum::fromStatus($status);
+        foreach ($links as $link) {
+            $statusType = LinkStatusTypeEnum::fromStatus($link->status_code);
 
-            if ($statusType === LinkStatusTypeEnum::OK) {
+            if ($link->ignore) {
+                $this->linksIgnoredCount++;
+            } else if ($statusType === LinkStatusTypeEnum::OK) {
                 $this->linksOkCount++;
             } else if ($statusType === LinkStatusTypeEnum::BROKEN) {
                 $this->linksBrokenCount++;
             } else if ($statusType === LinkStatusTypeEnum::REDIRECT) {
                 $this->linksRedirectCount++;
-            } else if ($statusType === LinkStatusTypeEnum::IGNORED) {
-                $this->linksIgnoredCount++;
             }
+
         }
 
     }

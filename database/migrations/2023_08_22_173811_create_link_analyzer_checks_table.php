@@ -18,6 +18,11 @@ return new class extends Migration
             $table->timestamp('created_at')->useCurrent();
             $table->timestamp('updated_at')->nullable();
 
+            $table->bigInteger('blog_id');
+
+            $table->enum('status', ['pending', 'completed', 'failed'])->default('pending');
+            $table->string('error')->nullable();
+
             $table->integer('posts_count')->nullable();
             $table->integer('post_variants_count')->nullable();
 

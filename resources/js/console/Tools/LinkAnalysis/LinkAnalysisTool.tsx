@@ -87,7 +87,7 @@ function OverviewTab({stats, setTab} : {stats: null | Stats, setTab: Function}) 
 
 
             <div className="stats-note">
-                Stats are based on the currently analyzed posts. Some posts may not be analyzed yet, until a full-blog analysis is done.
+                Stats are based on the currently analyzed posts. Some posts may not be analyzed until a full-blog analysis is done.
             </div>
 
 
@@ -134,7 +134,7 @@ function OverviewTab({stats, setTab} : {stats: null | Stats, setTab: Function}) 
 
             <div className="show-links">
                 <Button onClick={() => setTab('links')}>
-                    Show Links
+                    See Links
                 </Button>
             </div>
 
@@ -148,7 +148,7 @@ function OverviewTab({stats, setTab} : {stats: null | Stats, setTab: Function}) 
 
 
             <div className="stats-note">
-                Analyses checks all links in your blog every 2 weeks.
+                A full-blog analysis is done every 2 weeks automatically. You can also start a full-blog analysis manually.
             </div>
 
             <div className="analyses-results">

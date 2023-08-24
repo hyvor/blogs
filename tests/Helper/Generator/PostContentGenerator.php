@@ -47,4 +47,37 @@ class PostContentGenerator
 
     }
 
+    /**
+     * @param array<string> $links
+     * @return string
+     */
+    public static function generateWithLinks(array $links) : string
+    {
+
+        $content = [
+            'type' => 'doc',
+            'content' => [],
+        ];
+        foreach ($links as $link) {
+            $content['content'][] = [
+                'type' => 'paragraph',
+                'content' => [[
+                    'type' => 'text',
+                    'text' => Factory::create()->word,
+                    'marks' => [
+                        [
+                            'type' => 'link',
+                            'attrs' => [
+                                'href' => $link,
+                            ],
+                        ]
+                    ]
+                ]],
+            ];
+        }
+
+        return strval(json_encode($content));
+
+    }
+
 }

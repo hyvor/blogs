@@ -13,7 +13,7 @@ use Illuminate\Http\Client\Pool;
 use Illuminate\Http\Client\Response;
 use Illuminate\Support\Facades\Http;
 
-class LinkAnalyzerService
+class LinkAnalyzeService
 {
 
     const IGNORE_CODE = -2;
@@ -52,6 +52,7 @@ class LinkAnalyzerService
 
 
     /**
+     * @deprecated
      * @param Blog $blog
      * @param array<string, integer> $results
      * @return array<string, integer>
@@ -66,7 +67,14 @@ class LinkAnalyzerService
 
         $now = now();
 
+        $ignoredLinks = [];
+
         if ($clear) {
+            $ignoredLinks = LinkAnalyzerLink::where('post_variant_id', $postVariant->id)
+                ->where('ignore', true)
+                ->pluck('url')
+                ->toArray();
+
             LinkAnalyzerLink::where('post_variant_id', $postVariant->id)
                 ->delete();
         }

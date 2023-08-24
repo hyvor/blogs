@@ -3,7 +3,7 @@
 namespace App\Http\Controllers\ConsoleAPI;
 
 use App\Data\Objects\ConsoleAPI\LinkAnalysis\LinkObject;
-use App\Domains\LinkAnalyzer\LinkAnalyzerService;
+use App\Domains\LinkAnalyzer\LinkAnalyzeService;
 use App\Domains\LinkAnalyzer\LinkStatusTypeEnum;
 use App\Domains\Post\PostRepository;
 use App\Exceptions\TrustedException;
@@ -45,11 +45,11 @@ class ConsoleLinkAnalysisController
         $urls = $request->input('urls');
         $urls = array_slice($urls, 0, 100);
 
-        $fromDb = $force ? [] : LinkAnalyzerService::getFromDb($blog, $urls);
+        $fromDb = $force ? [] : LinkAnalyzeService::getFromDb($blog, $urls);
         $urls = array_diff($urls, array_keys($fromDb));
 
-        $fromHttp = LinkAnalyzerService::analyze($urls);
-        $fromHttp = LinkAnalyzerService::saveToDb($blog, $variant, $fromHttp);
+        $fromHttp = LinkAnalyzeService::analyze($urls);
+        $fromHttp = LinkAnalyzeService::saveToDb($blog, $variant, $fromHttp);
 
         $results = array_merge($fromDb, $fromHttp);
 
@@ -75,22 +75,22 @@ class ConsoleLinkAnalysisController
 
         $url = (string) $request->string('url');
         $status = $request->boolean('status');
-        $link = LinkAnalyzerService::getLink($blog, $url);
+        $link = LinkAnalyzeService::getLink($blog, $url);
 
         if (!$link)
             throw new TrustedException('Link not found');
 
-        LinkAnalyzerService::ignoreLink($link, $status);
+        LinkAnalyzeService::ignoreLink($link, $status);
 
         return response()->json([
-            'status' => $link->ignore ? LinkAnalyzerService::IGNORE_CODE : $link->status_code
+            'status' => $link->ignore ? LinkAnalyzeService::IGNORE_CODE : $link->status_code
         ]);
     }
 
     public function getStats(Blog $blog) : JsonResponse
     {
 
-        $counts = LinkAnalyzerService::getCountsByStatus($blog);
+        $counts = LinkAnalyzeService::getCountsByStatus($blog);
 
         return response()->json([
             'counts' => $counts
@@ -111,7 +111,7 @@ class ConsoleLinkAnalysisController
         $limit = $request->integer('limit', 50);
         $offset = $request->integer('offset');
 
-        $links = LinkAnalyzerService::getLinksOfBlog(
+        $links = LinkAnalyzeService::getLinksOfBlog(
             $blog,
             $type,
             $limit,

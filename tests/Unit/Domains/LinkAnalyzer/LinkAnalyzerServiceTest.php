@@ -2,7 +2,7 @@
 
 namespace Tests\Unit\Domains\LinkAnalyzer;
 
-use App\Domains\LinkAnalyzer\LinkAnalyzerService;
+use App\Domains\LinkAnalyzer\LinkAnalyzeService;
 use GuzzleHttp\Exception\ConnectException;
 use GuzzleHttp\Promise\RejectedPromise;
 use Illuminate\Support\Facades\Http;
@@ -23,7 +23,7 @@ it('analyzes urls', function() {
         'https://blogs.hyvor.com' => Http::response(null, 500),
     ]);
 
-    $results = LinkAnalyzerService::analyze($urls);
+    $results = LinkAnalyzeService::analyze($urls);
 
     expect($results)->toBe([
         'https://hyvor.com' => 200,
@@ -42,20 +42,12 @@ it('on failing', function() {
         )
     ]);
 
-    $results = LinkAnalyzerService::analyze([
+    $results = LinkAnalyzeService::analyze([
         'https://hyvor.com'
     ]);
 
     expect($results)->toBe([
         'https://hyvor.com' => 500,
-    ]);
-
-});
-
-it('test', function() {
-
-    $results = LinkAnalyzerService::analyze([
-        'https://www.grammarly.com'
     ]);
 
 });
