@@ -68,9 +68,12 @@ class ConsoleLinkAnalysisController
 
         PostVariantLinkService::ignoreLink($link, $status);
 
-        return response()->json([
-            'status' => $link->ignore ? LinkAnalyzeService::IGNORE_CODE : $link->status_code
-        ]);
+        $newCode = $status ? LinkAnalyzeService::IGNORE_CODE : $link->status_code;
+        PostVariantLinkService::updatePostVariantCache($postVariant, [
+            $url => $newCode
+        ], true);
+
+        return response()->json();
     }
 
     public function getStats(Blog $blog) : JsonResponse
@@ -136,7 +139,7 @@ class ConsoleLinkAnalysisController
         }
 
         if ($lastCheck && $lastCheck->created_at->diffInHours() < 24) {
-            throw new TrustedException('A check has already run in the last 24 hours');
+            throw new TrustedException('A check was already run in the last 24 hours');
         }
 
         $job = new AnalyzeAllLinksJob($blog);

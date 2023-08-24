@@ -244,7 +244,7 @@ export function useUpdateLinkAnalysis(id: number) {
         if (lastLoadedLinksRef.current === loadingLinks.join(',')) return;
         if (loadingLinks.length === 0) return;
 
-        callLinkAnalysisApi(id, currentVariant.language_id, loadingLinks)
+        callLinkAnalysisApi(currentVariant.id, loadingLinks)
             .then(res => {
                 updateCurrentPostVariantValue('link_analysis', {
                     ...currentVariantLinkAnalysis,
@@ -269,10 +269,9 @@ export function useUpdateLinkAnalysis(id: number) {
         reloadLink: (link: Link, onReload: (status: number) => void) => {
 
             callLinkAnalysisApi(
-                id, 
-                currentVariant.language_id, 
+                currentVariant.id, 
                 [link.href], 
-                true
+                // true
             ).then(res => {
 
                 const status = res[link.href];
@@ -298,10 +297,9 @@ export function useUpdateLinkAnalysis(id: number) {
                 .map(link => link.href)
 
             callLinkAnalysisApi(
-                id,
-                currentVariant.language_id,
+                currentVariant.id,
                 allLinks,
-                true,
+                // true,
             ).then(res => {  
                 updateCurrentPostVariantValue('link_analysis', {
                     ...currentVariantLinkAnalysis,
@@ -316,7 +314,7 @@ export function useUpdateLinkAnalysis(id: number) {
 
         ignoreLink: (link: Link, status: boolean = true) => {
             
-            return callIgnoreLink(link.href, status)
+            return callIgnoreLink(currentVariant.id, link.href, status)
                 .then(data => {
                     updateCurrentPostVariantValue('link_analysis', {
                         ...currentVariantLinkAnalysis,
@@ -340,27 +338,26 @@ export function useUpdateLinkAnalysis(id: number) {
 }
 
 function callLinkAnalysisApi(
-    postId: number, 
-    languageId: number, 
+    postVariantId: number, 
     urls: string[],
-    force: boolean = false
+    // force: boolean = false
 ) {
 
     const subdomain = getSubdomain();
 
-    return api.post<Record<string, number>>(subdomain, '/link-analysis/variant', {
-        post_id: postId,
-        language_id: languageId,
+    return api.post<Record<string, number>>(subdomain, '/link-analysis/check-urls', {
+        post_variant_id: postVariantId,
         urls,
-        force: force ? 1 : 0,
+        // force: force ? 1 : 0,
     });
 
 }
 
-function callIgnoreLink(url: string, status: boolean) {
+function callIgnoreLink(postVariantId: number, url: string, status: boolean) {
 
     const subdomain = getSubdomain();
     return api.patch<{status: number}>(subdomain, '/link-analysis/ignore-link', {
+        post_variant_id: postVariantId,
         url,
         status: status ? 1 : 0,
     });

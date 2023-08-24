@@ -80,7 +80,7 @@ class Blog extends Model
         $definer->add('flashload')->default(true);
 
         $definer->add('link_analysis_enabled')->default(true);
-        $definer->add('link_analysis_email_report')->default(true);
+        $definer->add('link_analysis_email_report')->default('broken');
 
     }
 
@@ -211,6 +211,12 @@ class Blog extends Model
     public function url() : string
     {
         return PermalinkRepository::getBaseUrl($this);
+    }
+
+    public function urlWithoutProtocol() : string
+    {
+        $url = $this->url();
+        return strval(preg_replace('/^https?:\/\//', '', $url));
     }
 
     public function isInTrial() : bool

@@ -2,7 +2,10 @@
 
 namespace App\Domains\LinkAnalyzer\Check;
 
+use App\Data\Enums\LinkAnalysisEmailReportEnum;
 use App\Domains\App\Queue\AppQueues;
+use App\Domains\LinkAnalyzer\Mail\LinkAnalyzeReportMail;
+use App\Domains\User\UserRepository;
 use App\Models\Blog;
 use App\Models\LinkAnalyzerCheck;
 use Illuminate\Bus\Queueable;
@@ -10,6 +13,7 @@ use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Foundation\Bus\Dispatchable;
 use Illuminate\Queue\InteractsWithQueue;
 use Illuminate\Queue\SerializesModels;
+use Illuminate\Support\Facades\Mail;
 use Throwable;
 
 class AnalyzeAllLinksJob implements ShouldQueue
@@ -34,6 +38,24 @@ class AnalyzeAllLinksJob implements ShouldQueue
         $analyze->analyze();
         LinkAnalyzerCheckService::completeCheck($this->check, $analyze);
 
+        if ($analyze->linksCount === 0)
+            return;
+
+        $emailOption = LinkAnalysisEmailReportEnum::from(
+            strval($this->blog->getMeta('link_analysis_email_report'))
+        );
+
+        if ($emailOption === LinkAnalysisEmailReportEnum::NEVER)
+            return;
+
+        if ($emailOption === LinkAnalysisEmailReportEnum::BROKEN && $analyze->linksBrokenCount === 0)
+            return;
+
+        $email = UserRepository::getOwnerEmailAddress($this->blog);
+        if (!$email)
+            return;
+
+        Mail::to($email)->send(new LinkAnalyzeReportMail($this->blog, $analyze));
     }
 
     public function failed(Throwable $exception) : void

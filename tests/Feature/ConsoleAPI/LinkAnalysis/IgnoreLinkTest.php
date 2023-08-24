@@ -27,4 +27,8 @@ it('ignores link', function($current) {
     $link->refresh();
     expect($link->ignore)->toBe(!$current);
 
+    expect($postVariant->refresh()->link_analysis)->toBe([
+        $url => $current ? $link->status_code : -2
+    ]);
+
 })->with([true, false]);

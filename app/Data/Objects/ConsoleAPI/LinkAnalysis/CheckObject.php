@@ -17,6 +17,9 @@ class CheckObject
     public int $posts_count;
     public int $post_variants_count;
 
+    public int $pages_count;
+    public int $page_variants_count;
+
     public int $links_total_count;
     public int $links_ok_count;
     public int $links_broken_count;
@@ -34,6 +37,8 @@ class CheckObject
 
         $this->posts_count = $check->posts_count;
         $this->post_variants_count = $check->post_variants_count;
+        $this->pages_count = $check->pages_count;
+        $this->page_variants_count = $check->page_variants_count;
 
         $this->links_total_count = $check->links_total_count;
         $this->links_ok_count = $check->links_ok_count;

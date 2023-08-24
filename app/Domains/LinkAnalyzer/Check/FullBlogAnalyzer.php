@@ -18,7 +18,9 @@ class FullBlogAnalyzer
 {
 
     public int $postsCount = 0;
+    public int $pagesCount = 0;
     public int $postVariantsCount = 0;
+    public int $pageVariantsCount = 0;
 
     public int $linksCount = 0;
     public int $linksOkCount = 0;
@@ -38,6 +40,7 @@ class FullBlogAnalyzer
     {
 
         Post::where('blog_id', $this->blog->id)
+            ->orderBy('id')
             ->chunk(1000, function ($posts) {
                 foreach ($posts as $post) {
                     $this->analyzePost($post);
@@ -49,23 +52,31 @@ class FullBlogAnalyzer
 
     private function analyzePost(Post $post) : void
     {
-        $this->postsCount++;
+        if ($post->is_page) {
+            $this->pagesCount++;
+        } else {
+            $this->postsCount++;
+        }
         foreach ($post->variants as $variant) {
-            $this->analyzeVariant($variant);
+            $this->analyzeVariant($post, $variant);
         }
     }
 
-    private function analyzeVariant(PostVariant $variant) : void
+    private function analyzeVariant(Post $post, PostVariant $variant) : void
     {
         if ($variant->status !== PostStatusEnum::PUBLISHED) {
             return;
         }
 
-        $this->postVariantsCount++;
-
         $content = $variant->content;
         if (!$content) {
             return;
+        }
+
+        if ($post->is_page) {
+            $this->pageVariantsCount++;
+        } else {
+            $this->postVariantsCount++;
         }
 
         $doc = PostContentService::getDocumentFromJson($content, $this->blog);
@@ -83,7 +94,6 @@ class FullBlogAnalyzer
         // who has more than 100 links in a post?
         $urls = array_slice($urls, 0, 100);
 
-        $this->linksCount += count($urls);
         $results = LinkAnalyzeService::analyze($urls);
 
         /** @var string[] $ignoredLinksUrls */
@@ -98,6 +108,7 @@ class FullBlogAnalyzer
             true,
             $ignoredLinksUrls
         );
+        $this->linksCount += $links->count();
 
         foreach ($links as $link) {
             $statusType = LinkStatusTypeEnum::fromStatus($link->status_code);
@@ -113,6 +124,11 @@ class FullBlogAnalyzer
             }
 
         }
+
+        PostVariantLinkService::updatePostVariantCache(
+            $variant,
+            LinkAnalyzeService::getResultsFromLinks($links)
+        );
 
     }
 

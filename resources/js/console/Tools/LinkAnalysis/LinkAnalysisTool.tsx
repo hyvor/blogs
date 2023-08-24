@@ -1,9 +1,9 @@
 import React, { Fragment, ReactNode, useEffect, useState } from 'react';
 import Tabs from '../../ReusableComponents/Tabs';
-import { CardChecklist, CheckCircleFill, ExclamationCircleFill, EyeSlashFill, Gear, Link, Link45deg, XCircleFill } from 'react-bootstrap-icons';
+import { CardChecklist, Gear, Link45deg } from 'react-bootstrap-icons';
 import { Table, TableHead, TableHeadItem, TableRow, TableRowItem } from '../../ReusableComponents/Table';
 import api from '../../lib/api';
-import { LinkAnalysisLink } from '../../types';
+import { LinkAnalysisCheck, LinkAnalysisLink } from '../../types';
 import getSubdomain from '../../logic-helpers/subdomain';
 import Loader from '../../ReusableComponents/Loader';
 import NoResults from '../../ReusableComponents/NoResults';
@@ -12,6 +12,12 @@ import Button from '../../ReusableComponents/Button';
 import { useLanguagesValues } from '../../Settings/Languages/helpers';
 import TableLoadMore from '../../ReusableComponents/TableLoadMore';
 import JobStatusBadge from "../../ReusableComponents/JobStatusBadge";
+import DualSetting from "../../ReusableComponents/DualSetting";
+import Switch from "../../ReusableComponents/Switch";
+import dayjs from "dayjs";
+import { useBlogActions, useBlogValues } from "../../logic-helpers/blog";
+import SettingsSave from "../../ReusableComponents/SettingsSave";
+import Radio from "../../ReusableComponents/Radio";
 
 interface Stats {
     counts: {
@@ -51,6 +57,7 @@ export default function LinkAnalysisTool() {
         <div className='tab-content'>
             { tab === 'overview' && <OverviewTab stats={stats} setTab={setTab} /> }
             { tab === 'links' && <LinksTab stats={stats} /> }
+            { tab === 'settings' && <SettingsTab /> }
         </div>
 
     </div>
@@ -59,7 +66,20 @@ export default function LinkAnalysisTool() {
 
 function OverviewTab({stats, setTab} : {stats: null | Stats, setTab: Function}) {
 
-    const [analyses, setAnalyses] = useState<LinkAnalysisLink[]>([]);
+    const [analyses, setAnalyses] = useState<LinkAnalysisCheck[]>([]);
+    const [isLoading, setIsLoading] = useState(true);
+
+    const [isStartingNew, setIsStartingNew] = useState(false);
+
+    useEffect(() => {
+
+        api.get<LinkAnalysisCheck[]>(getSubdomain(), '/link-analysis/checks')
+            .then(res => {
+                setIsLoading(false);
+                setAnalyses(res)
+            })
+
+    }, []);
 
     function Stat({name, value, icon, id} : {name: ReactNode, icon: ReactNode, value: number, id:string}) {
 
@@ -77,17 +97,42 @@ function OverviewTab({stats, setTab} : {stats: null | Stats, setTab: Function}) 
 
     }
 
+    function handleStartNewAnalysis() {
+        setIsStartingNew(true);
+
+        api.post<LinkAnalysisCheck>(getSubdomain(), '/link-analysis/check')
+            .then(res => {
+                setAnalyses([res, ...analyses]);
+            })
+            .finally(() => [
+                setIsStartingNew(false)
+            ])
+    }
+
     return <div className="analyses-tab">
 
         <div className='stats'>
 
-            <div className="stats-title">
-                Stats
-            </div>
+            <div className="stats-top">
+
+                <div className="stats-top-left">
+                    <div className="stats-title">
+                        Stats
+                    </div>
 
 
-            <div className="stats-note">
-                Stats are based on the currently analyzed posts. Some posts may not be analyzed until a full-blog analysis is done.
+                    <div className="stats-note">
+                        Stats are based on the currently analyzed posts. Some posts may not be analyzed until a full-blog analysis is done.
+                    </div>
+                </div>
+
+                <div className="stats-top-right">
+                    <Button onClick={() => setTab('links')} size="small">
+                        See Links
+                    </Button>
+                </div>
+
+
             </div>
 
 
@@ -132,90 +177,116 @@ function OverviewTab({stats, setTab} : {stats: null | Stats, setTab: Function}) 
 
             }
 
-            <div className="show-links">
-                <Button onClick={() => setTab('links')}>
-                    See Links
-                </Button>
-            </div>
-
         </div>
 
         <div className='stats analyses'>
 
-            <div className="stats-title">
-                Analyses
-            </div>
+            <div className="stats-top">
 
+                <div className="stats-top-left">
 
-            <div className="stats-note">
-                A full-blog analysis is done every 2 weeks automatically. You can also start a full-blog analysis manually.
+                    <div className="stats-title">
+                        Analyses
+                    </div>
+
+                    <div className="stats-note">
+                        A full-blog analysis is done every 2 weeks automatically. You can also start one manually.
+                    </div>
+
+                </div>
+
+                <div className="stats-top-right">
+
+                    <Button 
+                        size="small" 
+                        onClick={handleStartNewAnalysis}
+                        loading={isStartingNew}
+                    >
+                        Start New Analysis
+                    </Button>
+
+                </div>
+
             </div>
 
             <div className="analyses-results">
 
-                <Table columns='1fr 1fr 1fr 1fr 1fr 1fr 1fr'>
+                {
 
-                    <TableHead>
-                        <TableHeadItem>Date</TableHeadItem>
-                        <TableHeadItem>Status</TableHeadItem>
-                        <TableHeadItem>No. Posts</TableHeadItem>
-                        <TableHeadItem>
-                            <LinkStatusTag status={200} showTooltip={false} />
-                        </TableHeadItem>
-                        <TableHeadItem>
-                            <LinkStatusTag status={404} showTooltip={false} />
-                        </TableHeadItem>
-                        <TableHeadItem>
-                            <LinkStatusTag status={301} showTooltip={false} />
-                        </TableHeadItem>
-                        <TableHeadItem>
-                            <LinkStatusTag status={-2} showTooltip={false} />
-                        </TableHeadItem>
-                    </TableHead>
+                    isLoading ?
+                    <Loader padding={40} /> :
 
-                    <Fragment>
+                    analyses.length === 0 ?
 
-                        {
-                            [{id: 10}].map(analysis => {
-                                return <TableRow key={analysis.id}>
+                    <NoResults text="No analyses" imageWidth={150} /> :
+                    <Table columns='2fr 2fr 3fr 2fr 2fr 2fr 2fr'>
 
-                                    <TableRowItem>
-                                        Today
-                                    </TableRowItem>
+                        <TableHead>
+                            <TableHeadItem>Date</TableHeadItem>
+                            <TableHeadItem>Status</TableHeadItem>
+                            <TableHeadItem>No. Posts</TableHeadItem>
+                            <TableHeadItem>
+                                <LinkStatusTag status={200} showTooltip={false} />
+                            </TableHeadItem>
+                            <TableHeadItem>
+                                <LinkStatusTag status={404} showTooltip={false} />
+                            </TableHeadItem>
+                            <TableHeadItem>
+                                <LinkStatusTag status={301} showTooltip={false} />
+                            </TableHeadItem>
+                            <TableHeadItem>
+                                <LinkStatusTag status={-2} showTooltip={false} />
+                            </TableHeadItem>
+                        </TableHead>
 
-                                    <TableRowItem>
-                                        <JobStatusBadge status="completed" />
-                                    </TableRowItem>
+                        <Fragment>
 
-                                    <TableRowItem>
-                                        <div>100 posts</div>
-                                        <div>200 variants</div>
-                                    </TableRowItem>
+                            {
+                                analyses.map(analysis => {
+                                    return <TableRow key={analysis.id}>
 
-                                    <TableRowItem>
-                                        20
-                                    </TableRowItem> 
+                                        <TableRowItem>
+                                            <time
+                                                dateTime={dayjs.unix(analysis.created_at).toISOString()}
+                                            >
+                                                { dayjs.unix(analysis.created_at).format('YYYY-MM-DD') }
+                                            </time>
+                                        </TableRowItem>
 
-                                    <TableRowItem>
-                                        15
-                                    </TableRowItem> 
+                                        <TableRowItem>
+                                            <JobStatusBadge status={analysis.status} />
+                                        </TableRowItem>
 
-                                    <TableRowItem>
-                                        56
-                                    </TableRowItem> 
+                                        <TableRowItem>
+                                            <div>{analysis.posts_count} posts ({analysis.post_variants_count} variants)</div>
+                                            <div>{analysis.pages_count} pages ({analysis.page_variants_count} variants)</div>
+                                        </TableRowItem>
 
-                                    <TableRowItem>
-                                        38
-                                    </TableRowItem> 
+                                        <TableRowItem>
+                                            { analysis.links_ok_count }
+                                        </TableRowItem> 
 
+                                        <TableRowItem>
+                                            { analysis.links_broken_count }
+                                        </TableRowItem> 
 
-                                </TableRow>
-                            })
-                        }
+                                        <TableRowItem>
+                                            { analysis.links_redirect_count }
+                                        </TableRowItem> 
 
-                    </Fragment>
+                                        <TableRowItem>
+                                            { analysis.links_ignored_count }
+                                        </TableRowItem> 
 
-                </Table>
+                                    </TableRow>
+                                })
+                            }
+
+                        </Fragment>
+
+                    </Table>
+
+                }
 
             </div>
 
@@ -390,6 +461,71 @@ function LinksTab({stats} : {stats: null | Stats}) {
             </div>
 
         }
+
+    </div>
+
+}
+
+function SettingsTab() {
+
+    const { blog } = useBlogValues(); 
+    const { updateBlogValue } = useBlogActions();
+
+    function handleColorModeChange(value: string) {
+        updateBlogValue("link_analysis_email_report", value);
+    }
+
+    return <div>
+
+        <DualSetting 
+            title="Automated Link Analysis"
+            description="Run a full-blog link analysis every 2 weeks automatically."
+            right={
+                <div>
+                    <Switch 
+                        checked={blog.link_analysis_enabled}
+                        onChange={checked => updateBlogValue('link_analysis_enabled', checked)}
+                    />
+                </div>
+            }
+        />
+
+        <DualSetting 
+            title="Send email reports"
+            description="Send an email report after a full-blog analysis."
+            right={
+                <div>
+                    <Radio
+                        name="email-report"
+                        placeholder="Never"
+                        value="never"
+                        onChange={handleColorModeChange}
+                        checkFor={blog.link_analysis_email_report}
+                    />
+                    <Radio
+                        name="email-report"
+                        placeholder="When Broken Links Found"
+                        value="broken"
+                        onChange={handleColorModeChange}
+                        checkFor={blog.link_analysis_email_report}
+                    />
+                    <Radio
+                        name="email-report"
+                        placeholder="Always"
+                        value="always"
+                        onChange={handleColorModeChange}
+                        checkFor={blog.link_analysis_email_report}
+                    />
+                </div>
+            }
+        />
+
+        <SettingsSave 
+            keys={[
+                'link_analysis_enabled',
+                'link_analysis_email_report'
+            ]}
+        />
 
     </div>
 

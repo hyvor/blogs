@@ -45,9 +45,13 @@
 
     .analyses-tab {
         .stats {
-            display: flex;
-            align-items: flex-start;
-            flex-direction: column;
+            .stats-top {
+                display: flex;
+            }
+            .stats-top-left {
+                flex: 1;
+            }
+
             .stats-title {
                 font-size: 20px;
                 font-weight: 600;
@@ -60,6 +64,7 @@
             }
             .stats-row {
                 display: flex;
+                justify-content: space-around
             }
             .stat {
                 padding: 15px 25px;
@@ -75,9 +80,6 @@
                 font-size: 12px;
                 margin-bottom: 10px;
                 max-width: 500px;
-            }
-            .show-links {
-                margin-top: 10px;
             }
         }
         .analyses {

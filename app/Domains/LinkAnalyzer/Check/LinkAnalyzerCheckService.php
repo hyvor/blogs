@@ -52,6 +52,8 @@ class LinkAnalyzerCheckService
             'status' => JobStatusEnum::COMPLETED,
             'posts_count' => $analyze->postsCount,
             'post_variants_count' => $analyze->postVariantsCount,
+            'pages_count' => $analyze->pagesCount,
+            'page_variants_count' => $analyze->pageVariantsCount,
             'links_total_count' => $analyze->linksCount,
             'links_ok_count' => $analyze->linksOkCount,
             'links_broken_count' => $analyze->linksBrokenCount,

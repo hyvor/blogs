@@ -5,6 +5,7 @@ namespace App\Http\Controllers\ConsoleAPI;
 use App\Data\Enums\BlogHostingAtEnum;
 use App\Data\Enums\ColorModeDefaultEnum;
 use App\Data\Enums\ColorModesEnum;
+use App\Data\Enums\LinkAnalysisEmailReportEnum;
 use App\Data\Enums\SeoExternalLinksFollowEnum;
 use App\Data\Objects\ConsoleAPI\BlogObject;
 use App\Data\Objects\ConsoleAPI\BlogVariantObject;
@@ -97,6 +98,9 @@ class ConsoleBlogController extends Controller
             'syntax_line_numbers' => 'boolean',
             'syntax_theme' => 'string|nullable',
             'heading_anchors' => 'boolean',
+
+            'link_analysis_enabled' => 'boolean',
+            'link_analysis_email_report' => new Enum(LinkAnalysisEmailReportEnum::class)
         ];
         $request->validate($validate);
 

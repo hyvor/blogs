@@ -80,6 +80,12 @@ it('analyzes a blog', function() {
     expect($post2Link2->url)->toBe('https://broken.com/1');
     expect($post2Link2->status_code)->toBe(404);
 
+    // updates variant cachee
+    $linkAnalysisCache = $post1->variants[0]->link_analysis;
+    expect($linkAnalysisCache['https://hyvor.com/about'])->toBe(200);
+    expect($linkAnalysisCache['https://example.com/1'])->toBe(301);
+    expect($linkAnalysisCache["https://{$blog->subdomain}.hyvorblogs.io/about"])->toBe(200);
+
 });
 
 it('it clears old links but keeps ignored links as ignored', function() {
@@ -124,5 +130,10 @@ it('it clears old links but keeps ignored links as ignored', function() {
     expect($links[1]->url)->toBe('https://example.com/1');
     expect($links[1]->ignore)->toBe(false);
     expect($links[1]->status_code)->toBe(301);
+
+    $variant = $post->variants[0]->refresh();
+    $linkAnalysisCache = $variant->link_analysis;
+    expect($linkAnalysisCache['https://hyvor.com/about'])->toBe(-2);
+    expect($linkAnalysisCache['https://example.com/1'])->toBe(301);
 
 });

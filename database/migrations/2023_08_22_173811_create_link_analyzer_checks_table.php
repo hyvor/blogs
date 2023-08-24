@@ -26,6 +26,9 @@ return new class extends Migration
             $table->integer('posts_count')->default(0);
             $table->integer('post_variants_count')->default(0);
 
+            $table->integer('pages_count')->default(0);
+            $table->integer('page_variants_count')->default(0);
+
             $table->integer('links_total_count')->default(0);
             $table->integer('links_ok_count')->default(0);
             $table->integer('links_broken_count')->default(0);

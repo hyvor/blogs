@@ -31,7 +31,7 @@ it('does not allow running more than one check per day', function() {
 
     consoleApi($blog,  'POST','/link-analysis/check')
         ->assertUnprocessable()
-        ->assertSee('A check has already run in the last 24 hours');
+        ->assertSee('A check was already run in the last 24 hours');
 
 });
 
