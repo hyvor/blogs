@@ -17,6 +17,165 @@ body.pricing {
         }
     }
 
+    .pricing-table-new {
+        background: $color-accent-very-light;
+        padding: 100px;
+
+        h1 {
+            font-size: 26px;
+            margin-bottom: 8px;
+            text-align: center;
+        }
+
+        h2 {
+            margin-top: 8px;
+            color: $color-text-light;
+            font-size: 14px;
+            font-weight: normal;
+            text-align: center;
+            margin-bottom: 40px;
+        }
+
+        .pricing-table-top {
+            padding: 15px 0;
+            position: sticky;
+            top: 0;
+            background-color: $color-accent-very-light;
+            z-index: 10;
+            .container {
+                display: flex;
+            }
+
+            .more-plans-wrap {
+                margin-bottom: 15px;
+                .more-plans-left {
+                    flex: 1;
+                }
+                .more-plans-right {
+                    display: flex;
+                    flex: 3;
+                    .l {
+                        flex: 1;
+                    }
+                    button.hidden {
+                        display: none;
+                    }
+                }
+            }
+
+            .feature-names {
+                flex: 1;
+            }
+            .plan {
+                flex: 1;
+                margin-left: 10px;
+                .plan-details {
+                    padding: 15px 25px;
+                    background-color: #fff;
+                    border-radius: 20px;
+                    box-shadow: $box-shadow;
+                    .plan-name {
+                        font-weight: 600;
+                    }
+                    .plan-price {
+                        margin-top: 4px;
+                        .price {
+                            font-weight: 600;
+                            font-size: 24px;
+                        }
+                        .freq {
+                            color: $color-text-light;
+                        }
+                    }
+                }
+                &.hidden {
+                    display: none;
+                }
+            }
+        }
+
+        .pricing-table-features {
+
+            .feature-title {
+                font-weight: 600;
+                margin-top: 30px;
+                margin-bottom: 10px;
+                font-size: 1.1rem;
+            }
+
+            .feature {
+                display: flex;
+                padding: 13px 0;
+                .feature-name {
+                    flex: 1;
+                }
+                .feature-value {
+                    flex: 1;
+                    > div {
+                        padding: 0 25px;
+                    }
+                    &.hidden {
+                        display: none;
+                    }
+                }
+            }
+            
+        }
+
+        .info-tooltip {
+            margin-left: 2px;
+            position: relative;
+            cursor: help;
+            svg {
+                width: 14px;
+                height: 14px;
+            }
+            .tooltip {
+                position: absolute;
+                left: 100%;
+                top: 50%;
+                margin-left: 10px;
+                transform: translateY(-50%);
+                width: 400px;
+                background-color: #000;
+                color: #fff;
+                border-radius: 20px;
+                padding: 10px 15px;
+                pointer-events: none;
+                z-index: 100;
+                text-align: center;
+                opacity: 0;
+                transition: .1s opacity;
+                &::before {
+                    content: '';
+                    position: absolute;
+                    top: 50%;
+                    right: 100%;
+                    transform: translateY(-50%);
+                    width: 0;
+                    height: 0;
+                    margin-right: -1px;
+                    border-right: 5px solid #000;
+                    border-left: 5px solid transparent;
+                    border-top: 5px solid transparent;
+                    border-bottom: 5px solid transparent;
+                }
+
+                img {
+                    display: block;
+                    margin: 20px auto;
+                    border-radius: 2px;
+                    max-height: 450px;
+                }
+            }
+            &:hover .tooltip {
+                opacity: 1;
+            }
+        }
+        
+
+    }
+
     .pricing-table {
         padding-top: 115px;
         background: $color-accent-very-light;
