@@ -1,26 +1,29 @@
 import React, { ReactNode } from "react";
-import { BoxArrowUpRight, ExclamationCircleFill, Gear, Link, Link45deg, Magic, SearchHeart, XCircleFill } from "react-bootstrap-icons";
+import { ExclamationCircleFill, Gear, Link45deg, Magic, SearchHeart, XCircleFill } from "react-bootstrap-icons";
 import Settings from "./Settings";
 import Seo, { SeoScoreTag } from "./Seo/Seo";
-import { usePostValues } from "../helpers";
+import { usePostActions, usePostValues } from "../helpers";
 import Ai from "./Ai/Ai";
 import LinksComponent from "./Links/LinksComponent";
 import { useUpdateLinkAnalysis } from "./Links/links";
 import Loader from "../../../ReusableComponents/Loader";
+import { PostSettingsSection } from "../../../states";
 
 export default function PostRight({id} : {id: number}) {
 
     type SectionType = 'Settings' | 'SEO' | 'Links' | 'AI';
 
-    const { currentVariantSeoResults, currentVariantLinkAnalysis } = usePostValues(id);
- 
-    const [section, setSection] = React.useState<SectionType>('Settings');
+    const { currentVariantSeoResults, editorState } = usePostValues(id);
+    const { changeEditorState } = usePostActions(id);
 
-    const ToolbarButton = ({icon, text, children} : {icon: ReactNode, text: SectionType, children?: ReactNode}) => {
+    const ToolbarButton = (
+        {icon, text, children, name} : 
+        {icon: ReactNode, text: SectionType, children?: ReactNode, name: PostSettingsSection}
+    ) => {
 
         return <button
-            className={section === text ? 'active' : ''}
-            onClick={() => setSection(text)}
+            className={editorState.settingsSection === name ? 'active' : ''}
+            onClick={() => changeEditorState('settingsSection', name)}
         >
             <span className="icon">{icon}</span>
             <span className="text">{children || text}</span>
@@ -54,8 +57,8 @@ export default function PostRight({id} : {id: number}) {
 
 
         <div className="toolbar">
-            <ToolbarButton icon={<Gear />} text="Settings" />
-            <ToolbarButton icon={<SearchHeart />} text="SEO">
+            <ToolbarButton icon={<Gear />} text="Settings" name="settings" />
+            <ToolbarButton icon={<SearchHeart />} text="SEO" name="seo">
                 SEO {
                     <span className="seo-score">
                         <SeoScoreTag 
@@ -65,18 +68,18 @@ export default function PostRight({id} : {id: number}) {
                     </span>
                 }
             </ToolbarButton>
-            <ToolbarButton icon={<Link45deg />} text="Links">
+            <ToolbarButton icon={<Link45deg />} text="Links" name="links">
                 Links <span className="seo-score">
                     <LinksTag />
                 </span>
             </ToolbarButton>
-            <ToolbarButton icon={<Magic />} text="AI" />
+            <ToolbarButton icon={<Magic />} text="AI" name="ai" />
         </div>
 
-        {section === 'Settings' && <Settings id={id} />}
-        {section === 'SEO' && <Seo id={id} />}
-        {section === 'Links' && <LinksComponent id={id} linkAnalysisProps={linkAnalysisProps} />}
-        {section === 'AI' && <Ai id={id} />}
+        {editorState.settingsSection === 'settings' && <Settings id={id} />}
+        {editorState.settingsSection === 'seo' && <Seo id={id} />}
+        {editorState.settingsSection === 'links' && <LinksComponent id={id} linkAnalysisProps={linkAnalysisProps} />}
+        {editorState.settingsSection === 'ai' && <Ai id={id} />}
 
     </div>
 

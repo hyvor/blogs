@@ -1,32 +1,50 @@
-import React from 'react';
-import { SendFill } from 'react-bootstrap-icons';
+import React, { useRef, useState } from 'react';
+import { Magic } from 'react-bootstrap-icons';
 import TextareaAutosize from "react-textarea-autosize";
 import Prompts from './Prompts';
 
 export default function Ai({id} : {id: number}) {
 
-    return <div className="ai-chat">
+    const inputRef = useRef<HTMLTextAreaElement>(null);
+    const [prompt, setPrompt] = useState('');
 
-        <Prompts />
+    function handleSelect(prompt: string) {
+        inputRef.current?.focus();
+        setPrompt(prompt);
+    }
+
+    return <div className="ai-chat">
 
         <div className="chat-display">
             Your Chat
         </div>
         <div className="chat-box">
-            <div className="textbox-wrap">
-                <TextareaAutosize
-                    placeholder="Type your prompt here..."
-                    className="input"
-                    autoFocus={true}
-                    rows={1}
-                />
-            </div>
-            <div className="send-wrap">
-                <button 
-                    className="button medium"
-                >
-                    Send <SendFill />
-                </button>
+
+            <Prompts
+                id={id}
+                onSelect={handleSelect}
+            />
+
+            <div className="inner">
+                <div className="textbox-wrap">
+                    <TextareaAutosize
+                        ref={inputRef}
+                        placeholder="Type your prompt here..."
+                        className="input"
+                        autoFocus={true}
+                        rows={1}
+                        value={prompt}
+                        onChange={e => setPrompt(e.target.value)}
+                        maxLength={1500}
+                    />
+                </div>
+                <div className="send-wrap">
+                    <button 
+                        className="button medium"
+                    >
+                        Generate <Magic />
+                    </button>
+                </div>
             </div>
         </div>
         <div className="disclaimer">

@@ -1,6 +1,6 @@
 import { EditorView } from "prosemirror-view";
 
-
+export type PostSettingsSection = 'settings' | 'seo' | 'links' | 'ai';
 
 export interface PostEditorState {
     languageId: number,
@@ -23,4 +23,6 @@ export interface PostEditorState {
     version: number,
 
     editorView: EditorView | null,
+
+    settingsSection: PostSettingsSection
 }

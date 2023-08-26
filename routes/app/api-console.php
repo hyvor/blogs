@@ -8,6 +8,7 @@ use App\Http\Controllers\ConsoleAPI\ConsoleApiKeysController;
 use App\Http\Controllers\ConsoleAPI\ConsoleBlogController;
 use App\Http\Controllers\ConsoleAPI\ConsoleDangerController;
 use App\Http\Controllers\ConsoleAPI\ConsoleExportController;
+use App\Http\Controllers\ConsoleAPI\ConsoleGptController;
 use App\Http\Controllers\ConsoleAPI\ConsoleLanguageController;
 use App\Http\Controllers\ConsoleAPI\ConsoleLinkAnalysisController;
 use App\Http\Controllers\ConsoleAPI\ConsoleMediaController;
@@ -127,6 +128,12 @@ Route::prefix('/api/console/v0/blog/{subdomain}')
             Route::get('/link-analysis/links', [ConsoleLinkAnalysisController::class, 'getLinks']);
             Route::get('/link-analysis/checks', [ConsoleLinkAnalysisController::class, 'getChecks']);
             Route::post('/link-analysis/check', [ConsoleLinkAnalysisController::class, 'startCheck']);
+
+
+            // GPT
+            Route::post('/gpt/prompt', [ConsoleGptController::class, 'newPrompt']);
+            Route::get('/gpt/history', [ConsoleGptController::class, 'getPostChatHistory']);
+            
 
         });
 

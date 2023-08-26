@@ -11,11 +11,24 @@
     }
 
     .chat-prompts {
-        padding: 15px 25px;
-        border-bottom: 1px solid $color-accent-light;
-        .title {
-            font-weight: 600;
-            font-size: 1.2rem;
+        margin-bottom: 10px;
+        .all-prompts {
+            .title {
+                font-weight: 600;
+                font-size: 1.2rem;
+                margin-bottom: 8px;
+            }
+            .prompt-buttons {
+                button {
+                    margin-right: 6px;
+                    margin-bottom: 6px;
+                }
+            }
+            .tip {
+                margin-top: 5px;
+                margin-bottom: 5px;
+                font-size: 12px;
+            }
         }
     }
 
@@ -26,22 +39,24 @@
 
     .chat-box {
         padding: 20px 25px 15px;
-        display: flex;
-        align-items: center;
         border-top: 1px solid $color-accent-light;
-        .textbox-wrap {
-            flex: 1;
-            margin-right: 6px;
+        .inner {
             display: flex;
             align-items: center;
-            textarea {
-                min-height: initial;
-                max-height: 250px;
-                resize: none;
+            .textbox-wrap {
+                flex: 1;
+                margin-right: 6px;
+                display: flex;
+                align-items: center;
+                textarea {
+                    min-height: initial;
+                    max-height: 250px;
+                    resize: none;
+                }
             }
-        }
-        button {
-            padding: 8px 16px;
+            button {
+                padding: 8px 16px;
+            }
         }
     }
 

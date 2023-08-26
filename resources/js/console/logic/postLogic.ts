@@ -259,7 +259,10 @@ const postLogic = kea<postLogicType>([
                 // updater opened
                 isNonDraftUpdating: false,
                 version: 1,
-                editorView: null
+                editorView: null,
+
+                settingsSection: 'settings'
+
             } as PostEditorState,
             {
                 changeEditorState: (state, {key, value}) => (
