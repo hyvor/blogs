@@ -44,6 +44,7 @@
         "meilisearch/meilisearch-php": "^1.0",
         "monicahq/laravel-cloudflare": "^3.5",
         "nelexa/zip": "^4.0",
+        "openai-php/laravel": "^0.6.3",
         "padaliyajay/php-autoprefixer": "^1.3",
         "predis/predis": "^1.1",
         "scrivo/highlight.php": "v9.18.1.9",
