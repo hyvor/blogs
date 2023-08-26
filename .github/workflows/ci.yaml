@@ -92,6 +92,7 @@ jobs:
                     APP_ENV: testing
                     APP_DEBUG: true
                 run: |
+                    php artisan key:generate
                     php artisan config:cache
                     php artisan serve --port=8080 &
 
