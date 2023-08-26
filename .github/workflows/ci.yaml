@@ -90,6 +90,7 @@ jobs:
             -   name: Run PHP Server
                 env:
                     APP_ENV: testing
+                    APP_DEBUG: true
                 run: |
                     php artisan config:cache
                     php artisan serve --port=8080 &
