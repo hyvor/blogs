@@ -7,6 +7,8 @@ test.describe('Paragraph', () => {
         await testingApi.factory.testPost();
         await console.visitAndNav('posts');
         await expect(page.getByText('DRAFT')).toBeVisible();
+        // wait 5s
+        await page.waitForTimeout(500);
         await page.getByRole('link', { name: 'Test Post' }).click();
         await page.locator('.ProseMirror').fill(''); 
     });
