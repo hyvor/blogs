@@ -6,7 +6,8 @@ test.describe('Paragraph', () => {
     consoleTest.beforeEach(async ({testingApi, console, page}) => {
         await testingApi.factory.testPost();
         await console.visitAndNav('posts');
-        await page.getByRole('link', { name: 'Test Post' }).click();
+        await page.getByText('Test Post').click();
+        //await page.getByRole('link', { name: 'Test Post' }).click();
         await page.locator('.ProseMirror').fill(''); 
     });
 
