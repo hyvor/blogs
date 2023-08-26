@@ -91,8 +91,8 @@ jobs:
                 env:
                     APP_ENV: testing
                     APP_DEBUG: true
+                    APP_KEY: "base64:XOpWztMz2EsJT/TF7QzscDfgUUCO3a+A6c9oP37l4UI="
                 run: |
-                    php artisan key:generate
                     php artisan config:cache
                     php artisan serve --port=8080 &
 
