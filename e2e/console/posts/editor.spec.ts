@@ -484,6 +484,8 @@ test.describe('Bookmark', () => {
         await page.locator('div').filter({ hasText: /^Link BookmarkLink preview as a bookmark$/ }).first().click();
         await page.getByPlaceholder('Paste URL here to generate a bookmark').fill('https://google.com');
         await page.keyboard.press('Enter');
+        // wait for the preview to be generated
+        await page.waitForTimeout(1000);
 
         await expect(page.locator('#middle').getByText('Search the world\'s information, including webpages, images, videos and more. Goo')).toBeVisible();
     });
@@ -495,6 +497,8 @@ test.describe('Bookmark', () => {
         await page.keyboard.press('Enter');
         await page.getByText('Google Search the world\'s information, including webpages, images, videos and mo').click();
         await page.keyboard.press('Backspace');
+        // wait for the preview to be generated
+        await page.waitForTimeout(1000);
 
         await expect(page.locator('#middle').getByText('Search the world\'s information, including webpages, images, videos and more. Goo')).not.toBeVisible();
     });
@@ -770,7 +774,7 @@ test.describe('Table', () => {
         await page.keyboard.up('Shift');
         await page.locator('.merge-cell-button').first().click();
         await page.getByText('cell3', { exact: true }).click();
-        await page.getByRole('button').filter({ hasText: 'Split cells' }).click();
+        await page.locator('button:nth-child(2)').first().click();
 
         await expect(page.locator('table').first()).toBeVisible();
         await expect(page.locator('td').first()).not.toContainText('cell1\ncell2\ncell3');
