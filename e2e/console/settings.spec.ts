@@ -694,7 +694,7 @@ test.describe('Settings', () => {
         });
 
         consoleTest('Changing theme', async ({testingApi, console, page}) => {
-            await page.locator('.dual-right > .react-select > .react-select__control > .react-select__indicators > .react-select__indicator > .css-tj5bde-Svg').click();
+            await page.locator('div').filter({ hasText: /^nord$/ }).nth(2).click();
             await page.getByText('monokai', { exact: true }).click();
             await page.getByRole('button', { name: 'SAVE' }).click();
             await page.reload();
