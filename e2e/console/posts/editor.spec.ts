@@ -446,7 +446,7 @@ test.describe('Highlighting (Bold, italic, code, ...)', () => {
         await page.keyboard.press('Enter');
         await page.locator('.ProseMirror a').first().click();
         await page.locator('.pm-link-tooltip > div > button').first().click();
-        await page.locator('input').nth(8).fill('google.com');
+        await page.getByTestId('posts').locator('input[type="text"]').fill('google.com');
         await page.keyboard.press('Enter');
 
         await expect(page.locator('.ProseMirror a').first()).toHaveAttribute('href', 'google.com');
