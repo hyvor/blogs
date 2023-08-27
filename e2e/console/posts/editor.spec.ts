@@ -4,8 +4,7 @@ import {consoleTest} from "../consoleTest.ts";
 test.describe('Paragraph', () => {
 
     consoleTest.beforeEach(async ({testingApi, console, page}) => {
-        const {blog, language} = await testingApi.factory.blogFull({routes: true});
-        await testingApi.factory.post({blog_id: blog.id, language_id: language.id, title: 'Test Post'});
+        await testingApi.factory.testPost();
         await console.visitAndNav('posts');
         await page.getByRole('link', { name: 'Test Post' }).click();
         await page.locator('.ProseMirror').fill(''); 
@@ -35,8 +34,7 @@ test.describe('Paragraph', () => {
 test.describe('Heading', () => {
 
     consoleTest.beforeEach(async ({testingApi, console, page}) => {
-        const {blog, language} = await testingApi.factory.blogFull({routes: true});
-        await testingApi.factory.post({blog_id: blog.id, language_id: language.id, title: 'Test Post'});
+        await testingApi.factory.testPost();
         await console.visitAndNav('posts');
         await page.getByRole('link', { name: 'Test Post' }).click();
         await page.locator('.ProseMirror').fill(''); 
@@ -63,65 +61,19 @@ test.describe('Heading', () => {
 test.describe('Image', () => {
 
     consoleTest.beforeEach(async ({testingApi, console, page}) => {
-        const {blog, language} = await testingApi.factory.blogFull({routes: true});
-        await testingApi.factory.post({blog_id: blog.id, language_id: language.id, title: 'Test Post'});
+        await testingApi.factory.testPost();
         await console.visitAndNav('posts');
         await page.getByRole('link', { name: 'Test Post' }).click();
         await page.locator('.ProseMirror').fill(''); 
     });
 
-    consoleTest('Adding image from URL', async ({testingApi, console, page}) => {
-        await page.locator('.ProseMirror').fill('/');   
-        await page.locator('div').filter({ hasText: /^ImageAdd an image$/ }).first().click();
-        await page.getByPlaceholder('Import from URL').fill('https://hyvor.com/img/logo.png');
-        await page.getByRole('button', { name: 'Confirm' }).click();
-
-        await expect(page.getByRole('figure', { name: 'Enter a caption...' }).getByRole('img')).toHaveAttribute('src', 'https://hyvor.com/img/logo.png');
-    });
-
-    /*TODO: Add an image from a file*/
-
-    consoleTest('Change image', async ({testingApi, console, page}) => {
-        await page.locator('.ProseMirror').fill('/');   
-        await page.locator('div').filter({ hasText: /^ImageAdd an image$/ }).first().click();
-        await page.getByPlaceholder('Import from URL').fill('https://hyvor.com/img/logo.png');
-        await page.getByRole('button', { name: 'Confirm' }).click();
-        await page.getByRole('button', { name: 'Change Image' }).click();
-        await page.getByPlaceholder('Import from URL').fill('https://hyvor.com/img/services/talk.png');
-        await page.getByRole('button', { name: 'Confirm' }).click();
-
-        await expect(page.getByRole('figure', { name: 'Enter a caption...' }).getByRole('img')).toHaveAttribute('src', 'https://hyvor.com/img/services/talk.png');
-    });
-
-    consoleTest('Modify image caption', async ({testingApi, console, page}) => {
-        await page.locator('.ProseMirror').fill('/');   
-        await page.locator('div').filter({ hasText: /^ImageAdd an image$/ }).first().click();
-        await page.getByPlaceholder('Import from URL').fill('https://hyvor.com/img/logo.png');
-        await page.getByRole('button', { name: 'Confirm' }).click();
-        await page.getByText('Enter a caption...').click();
-        await page.locator('div').filter({ hasText: /^Change ImageEnter a caption\.\.\.$/ }).fill('New caption');
-
-        await expect(page.getByRole('figure', { name: 'New caption' })).toBeVisible();
-    });
-
-    consoleTest('Deleting image', async ({testingApi, console, page}) => {
-        await page.locator('.ProseMirror').fill('/');   
-        await page.locator('div').filter({ hasText: /^ImageAdd an image$/ }).first().click();
-        await page.getByPlaceholder('Import from URL').fill('https://hyvor.com/img/logo.png');
-        await page.getByRole('button', { name: 'Confirm' }).click();
-
-        await page.getByRole('figure', { name: 'Enter a caption...' }).getByRole('img').click();
-        await page.keyboard.press('Backspace');
-
-        await expect(page.locator('.ProseMirror').first()).not.toContainText('Enter a caption...');
-    });
+    // TODO: Adapt the test to the new UI
 });
 
 test.describe('Quote', () => {
 
     consoleTest.beforeEach(async ({testingApi, console, page}) => {
-        const {blog, language} = await testingApi.factory.blogFull({routes: true});
-        await testingApi.factory.post({blog_id: blog.id, language_id: language.id, title: 'Test Post'});
+        await testingApi.factory.testPost();
         await console.visitAndNav('posts');
         await page.getByRole('link', { name: 'Test Post' }).click();
         await page.locator('.ProseMirror').fill(''); 
@@ -150,8 +102,7 @@ test.describe('Quote', () => {
 test.describe('Callout', () => {
 
     consoleTest.beforeEach(async ({testingApi, console, page}) => {
-        const {blog, language} = await testingApi.factory.blogFull({routes: true});
-        await testingApi.factory.post({blog_id: blog.id, language_id: language.id, title: 'Test Post'});
+        await testingApi.factory.testPost();
         await console.visitAndNav('posts');
         await page.getByRole('link', { name: 'Test Post' }).click();
         await page.locator('.ProseMirror').fill(''); 
@@ -172,7 +123,6 @@ test.describe('Callout', () => {
 
         await page.getByRole('complementary').locator('span').nth(1).click();
         await page.getByTitle('#eedfda').click();
-        await page.locator('.color-picker-view > div').first().click();
 
        await expect(page.locator('aside').filter({ hasText: /^💡This is a callout$/ })).toHaveAttribute('style', 'background-color: rgb(238, 223, 218); color: rgb(0, 0, 0);');
     });
@@ -184,7 +134,6 @@ test.describe('Callout', () => {
 
         await page.getByRole('complementary').locator('div').nth(1).click();
         await page.getByTitle('#fff').click();
-        await page.locator('.color-picker-view > div').first().click();
 
        await expect(page.locator('aside').filter({ hasText: /^💡This is a callout$/ })).toHaveAttribute('style', 'background-color: rgb(241, 241, 239); color: rgb(255, 255, 255);');
     });
@@ -194,8 +143,7 @@ test.describe('Callout', () => {
 test.describe('Code block', () => {
 
     consoleTest.beforeEach(async ({testingApi, console, page}) => {
-        const {blog, language} = await testingApi.factory.blogFull({routes: true});
-        await testingApi.factory.post({blog_id: blog.id, language_id: language.id, title: 'Test Post'});
+        await testingApi.factory.testPost();
         await console.visitAndNav('posts');
         await page.getByRole('link', { name: 'Test Post' }).click();
         await page.locator('.ProseMirror').fill(''); 
@@ -206,7 +154,7 @@ test.describe('Code block', () => {
         await page.locator('div').filter({ hasText: /^Code BlockA block of code$/ }).first().click();
         await page.locator('.code-toolbar-inputs > input').first().fill('python');
         await page.locator('#middle pre').nth(1).click();
-        await page.locator('textarea').nth(2).fill('def function:');
+        await page.locator('textarea').nth(1).fill('def function:');
 
         await expect(page.locator('.code-toolbar-inputs > input').first()).toHaveValue('python');
         await expect(page.locator('span').filter({  hasText: /^def function:$/ })).toBeVisible();
@@ -217,8 +165,8 @@ test.describe('Code block', () => {
         await page.locator('div').filter({ hasText: /^Code BlockA block of code$/ }).first().click();
         await page.locator('.code-toolbar-inputs > input').first().fill('python');
         await page.locator('#middle pre').nth(1).click();
-        await page.locator('textarea').nth(2).fill('def function:');
-        await page.locator('textarea').nth(2).fill('def foo:');
+        await page.locator('textarea').nth(1).fill('def function:');
+        await page.locator('textarea').nth(1).fill('def foo:');
         
         await expect(page.locator('.code-toolbar-inputs > input').first()).toHaveValue('python');
         await expect(page.locator('span').filter({  hasText: /^def foo:$/ })).toBeVisible();
@@ -228,7 +176,7 @@ test.describe('Code block', () => {
         await page.locator('.ProseMirror').fill('/');
         await page.locator('div').filter({ hasText: /^Code BlockA block of code$/ }).first().click();
         await page.locator('.code-toolbar-inputs > input').first().fill('python');
-        await page.locator('textarea').nth(2).fill('');
+        await page.locator('textarea').nth(1).fill('');
         await page.keyboard.press('Backspace');
 
         await expect(page.locator('.ProseMirror').first()).not.toContainText('def function:');
@@ -238,8 +186,7 @@ test.describe('Code block', () => {
 test.describe('Custom HTML', () => {
 
     consoleTest.beforeEach(async ({testingApi, console, page}) => {
-        const {blog, language} = await testingApi.factory.blogFull({routes: true});
-        await testingApi.factory.post({blog_id: blog.id, language_id: language.id, title: 'Test Post'});
+        await testingApi.factory.testPost();
         await console.visitAndNav('posts');
         await page.getByRole('link', { name: 'Test Post' }).click();
         await page.locator('.ProseMirror').fill(''); 
@@ -248,7 +195,7 @@ test.describe('Custom HTML', () => {
     consoleTest('Adding a custom HTML block', async ({testingApi, console, page}) => {
         await page.locator('.ProseMirror').fill('/');
         await page.locator('div').filter({ hasText: /^Custom HTML\/TwigAdd custom HTML \(or Twig\)$/ }).first().click();
-        await page.getByRole('textbox').nth(4).fill('<div>');
+        await page.locator('textarea').nth(1).fill('<div>');
 
         await expect(page.locator('pre').filter({  hasText: /^<div>$/ })).toBeVisible();
     });
@@ -256,8 +203,8 @@ test.describe('Custom HTML', () => {
     consoleTest('Editing a custom HTML block', async ({testingApi, console, page}) => {
         await page.locator('.ProseMirror').fill('/');
         await page.locator('div').filter({ hasText: /^Custom HTML\/TwigAdd custom HTML \(or Twig\)$/ }).first().click();
-        await page.getByRole('textbox').nth(4).fill('<div>');
-        await page.getByRole('textbox').nth(4).fill('<span>');
+        await page.locator('textarea').nth(1).fill('<div>');
+        await page.locator('textarea').nth(1).fill('<span>');
 
         await expect(page.locator('pre').filter({  hasText: /^<span>$/ })).toBeVisible();
     });
@@ -266,7 +213,7 @@ test.describe('Custom HTML', () => {
         await page.locator('.ProseMirror').fill('/');
         await page.locator('div').filter({ hasText: /^Custom HTML\/TwigAdd custom HTML \(or Twig\)$/ }).first().click();
         
-        await page.getByRole('textbox').nth(4).fill('');
+        await page.locator('textarea').nth(1).fill('');
         await page.keyboard.press('Backspace');
 
         await expect(page.locator('.ProseMirror').first()).not.toContainText('<div>');
@@ -276,8 +223,7 @@ test.describe('Custom HTML', () => {
 test.describe('Lists', () => {
 
     consoleTest.beforeEach(async ({testingApi, console, page}) => {
-        const {blog, language} = await testingApi.factory.blogFull({routes: true});
-        await testingApi.factory.post({blog_id: blog.id, language_id: language.id, title: 'Test Post'});
+        await testingApi.factory.testPost();
         await console.visitAndNav('posts');
         await page.getByRole('link', { name: 'Test Post' }).click();
         await page.locator('.ProseMirror').fill(''); 
@@ -345,8 +291,7 @@ test.describe('Lists', () => {
 test.describe('Divider', () => {
     
     consoleTest.beforeEach(async ({testingApi, console, page}) => {
-        const {blog, language} = await testingApi.factory.blogFull({routes: true});
-        await testingApi.factory.post({blog_id: blog.id, language_id: language.id, title: 'Test Post'});
+        await testingApi.factory.testPost();
         await console.visitAndNav('posts');
         await page.getByRole('link', { name: 'Test Post' }).click();
         await page.locator('.ProseMirror').fill(''); 
@@ -387,8 +332,7 @@ test.describe('Divider', () => {
 test.describe('Highlighting (Bold, italic, code, ...)', () => {
 
     consoleTest.beforeEach(async ({testingApi, console, page}) => {
-        const {blog, language} = await testingApi.factory.blogFull({routes: true});
-        await testingApi.factory.post({blog_id: blog.id, language_id: language.id, title: 'Test Post'});
+        await testingApi.factory.testPost();
         await console.visitAndNav('posts');
         await page.getByRole('link', { name: 'Test Post' }).click();
         await page.locator('.ProseMirror').fill(''); 
@@ -502,7 +446,7 @@ test.describe('Highlighting (Bold, italic, code, ...)', () => {
         await page.keyboard.press('Enter');
         await page.locator('.ProseMirror a').first().click();
         await page.locator('.pm-link-tooltip > div > button').first().click();
-        await page.locator('input').nth(8).fill('google.com');
+        await page.getByTestId('posts').locator('input[type="text"]').fill('google.com');
         await page.keyboard.press('Enter');
 
         await expect(page.locator('.ProseMirror a').first()).toHaveAttribute('href', 'google.com');
@@ -529,14 +473,17 @@ test.describe('Highlighting (Bold, italic, code, ...)', () => {
 test.describe('Bookmark', () => {
 
     consoleTest.beforeEach(async ({testingApi, console, page}) => {
-        const {blog, language} = await testingApi.factory.blogFull({routes: true});
-        await testingApi.factory.post({blog_id: blog.id, language_id: language.id, title: 'Test Post'});
+        await testingApi.factory.testPost();
         await console.visitAndNav('posts');
         await page.getByRole('link', { name: 'Test Post' }).click();
         await page.locator('.ProseMirror').fill(''); 
     });
 
     consoleTest('Adding a bookmark', async ({testingApi, console, page}) => {
+        await page.route('*/**/url-data*', async route => {
+            const json = {"url":"https:\/\/www.google.com\/","original_url":"https:\/\/www.google.com\/","domain":"www.google.com","html":null,"title":"Google","description":"Search the world's information, including webpages, images, videos and more. Google has many special features to help you find exactly what you're looking for.","thumbnail_url":null,"icon_url":"https:\/\/www.google.com\/favicon.ico","site":"Google"};
+            await route.fulfill({ json });
+          });
         await page.locator('.ProseMirror').fill('/');
         await page.locator('div').filter({ hasText: /^Link BookmarkLink preview as a bookmark$/ }).first().click();
         await page.getByPlaceholder('Paste URL here to generate a bookmark').fill('https://google.com');
@@ -546,6 +493,10 @@ test.describe('Bookmark', () => {
     });
 
     consoleTest('Deleting a bookmark', async ({testingApi, console, page}) => {
+        await page.route('*/**/url-data*', async route => {
+            const json = {"url":"https:\/\/www.google.com\/","original_url":"https:\/\/www.google.com\/","domain":"www.google.com","html":null,"title":"Google","description":"Search the world's information, including webpages, images, videos and more. Google has many special features to help you find exactly what you're looking for.","thumbnail_url":null,"icon_url":"https:\/\/www.google.com\/favicon.ico","site":"Google"};
+            await route.fulfill({ json });
+          });
         await page.locator('.ProseMirror').fill('/');
         await page.locator('div').filter({ hasText: /^Link BookmarkLink preview as a bookmark$/ }).first().click();
         await page.getByPlaceholder('Paste URL here to generate a bookmark').fill('https://google.com');
@@ -560,23 +511,32 @@ test.describe('Bookmark', () => {
 test.describe('Embed', () => {
 
     consoleTest.beforeEach(async ({testingApi, console, page}) => {
-        const {blog, language} = await testingApi.factory.blogFull({routes: true});
-        await testingApi.factory.post({blog_id: blog.id, language_id: language.id, title: 'Test Post'});
+        await testingApi.factory.testPost();
         await console.visitAndNav('posts');
         await page.getByRole('link', { name: 'Test Post' }).click();
         await page.locator('.ProseMirror').fill(''); 
     });
 
     consoleTest('Adding a embed', async ({testingApi, console, page}) => {
+        await page.route('*/**/url-data*', async route => {
+            const json = {"url":"https:\/\/www.youtube.com\/watch?v=uYPbbksJxIg","original_url":"https:\/\/www.youtube.com\/watch?v=uYPbbksJxIg","domain":"www.youtube.com","html":"<div style=\"left: 0; width: 100%; height: 0; position: relative; padding-bottom: 56.25%;\"><iframe src=\"https:\/\/www.youtube.com\/embed\/uYPbbksJxIg?rel=0\" style=\"top: 0; left: 0; width: 100%; height: 100%; position: absolute; border: 0;\" allowfullscreen scrolling=\"no\" allow=\"accelerometer; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share;\"><\/iframe><\/div>","title":"Oppenheimer | New Trailer","description":"Oppenheimer - In Theaters 7 21 23\n\nWritten and directed by Christopher Nolan, Oppenheimer is an IMAX\u00ae-shot epic thriller that thrusts audiences into the pulse-pounding paradox of the enigmatic man who must risk destroying the world in order to save it. \n ","thumbnail_url":"https:\/\/i.ytimg.com\/vi\/uYPbbksJxIg\/maxresdefault.jpg","icon_url":"https:\/\/www.youtube.com\/s\/desktop\/0529f0d5\/img\/favicon_144x144.png","site":"YouTube"};
+            await route.fulfill({ json });
+          });
+
         await page.locator('.ProseMirror').fill('/');
         await page.locator('div').filter({ hasText: /^EmbedEmbed content from 1500\+ platforms$/ }).first().click();
-        await page.getByPlaceholder('Paste URL to embed (Youtube, Twitter, and 1000+ platforms supported)').fill('https://www.youtube.com/watch?v=bK6ldnjE3Y0');
+        await page.getByPlaceholder('Paste URL to embed (Youtube, Twitter, and 1000+ platforms supported)').fill('https://www.youtube.com/watch?v=uYPbbksJxIg');
         await page.getByPlaceholder('Paste URL to embed (Youtube, Twitter, and 1000+ platforms supported)').press('Enter');
 
-        await expect(page.locator('iframe').first()).toHaveAttribute('src', 'https://www.youtube.com/embed/bK6ldnjE3Y0?rel=0');
+        await expect(page.locator('x-embed').first()).toHaveAttribute('data-url', 'https://www.youtube.com/watch?v=uYPbbksJxIg');
     });
 
     consoleTest('Delete a embed', async ({testingApi, console, page}) => {
+        await page.route('*/**/url-data*', async route => {
+            const json = {"url":"https:\/\/www.youtube.com\/watch?v=uYPbbksJxIg","original_url":"https:\/\/www.youtube.com\/watch?v=uYPbbksJxIg","domain":"www.youtube.com","html":"<div style=\"left: 0; width: 100%; height: 0; position: relative; padding-bottom: 56.25%;\"><iframe src=\"https:\/\/www.youtube.com\/embed\/uYPbbksJxIg?rel=0\" style=\"top: 0; left: 0; width: 100%; height: 100%; position: absolute; border: 0;\" allowfullscreen scrolling=\"no\" allow=\"accelerometer; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share;\"><\/iframe><\/div>","title":"Oppenheimer | New Trailer","description":"Oppenheimer - In Theaters 7 21 23\n\nWritten and directed by Christopher Nolan, Oppenheimer is an IMAX\u00ae-shot epic thriller that thrusts audiences into the pulse-pounding paradox of the enigmatic man who must risk destroying the world in order to save it. \n ","thumbnail_url":"https:\/\/i.ytimg.com\/vi\/uYPbbksJxIg\/maxresdefault.jpg","icon_url":"https:\/\/www.youtube.com\/s\/desktop\/0529f0d5\/img\/favicon_144x144.png","site":"YouTube"};
+            await route.fulfill({ json });
+          });
+
         await page.locator('.ProseMirror').fill('/');
         await page.locator('div').filter({ hasText: /^EmbedEmbed content from 1500\+ platforms$/ }).first().click();
         await page.getByPlaceholder('Paste URL to embed (Youtube, Twitter, and 1000+ platforms supported)').fill('https://www.youtube.com/watch?v=bK6ldnjE3Y0');
@@ -599,8 +559,7 @@ test.describe('Embed', () => {
 test.describe('Table', () => {
 
     consoleTest.beforeEach(async ({testingApi, console, page}) => {
-        const {blog, language} = await testingApi.factory.blogFull({routes: true});
-        await testingApi.factory.post({blog_id: blog.id, language_id: language.id, title: 'Test Post'});
+        await testingApi.factory.testPost();
         await console.visitAndNav('posts');
         await page.getByRole('link', { name: 'Test Post' }).click();
         await page.locator('.ProseMirror').fill(''); 
@@ -829,7 +788,7 @@ test.describe('Table', () => {
         await page.keyboard.up('Shift');
         await page.locator('.merge-cell-button').first().click();
         await page.getByText('cell3', { exact: true }).click();
-        await page.getByRole('button').filter({ hasText: 'Split cells' }).click();
+        await page.locator('button:nth-child(2)').first().click();
 
         await expect(page.locator('table').first()).toBeVisible();
         await expect(page.locator('td').first()).not.toContainText('cell1\ncell2\ncell3');

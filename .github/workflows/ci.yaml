@@ -90,6 +90,8 @@ jobs:
             -   name: Run PHP Server
                 env:
                     APP_ENV: testing
+                    APP_DEBUG: true
+                    APP_KEY: "base64:XOpWztMz2EsJT/TF7QzscDfgUUCO3a+A6c9oP37l4UI="
                 run: |
                     php artisan config:cache
                     php artisan serve --port=8080 &
@@ -102,6 +104,12 @@ jobs:
                 run: |
                     npx playwright install --with-deps
                     npx playwright test
+            -   uses: actions/upload-artifact@v3
+                if: always()
+                with:
+                    name: playwright-report
+                    path: playwright-report/
+                    retention-days: 30
 
     ts:
         name: TypeScript Validation
