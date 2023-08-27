@@ -480,25 +480,29 @@ test.describe('Bookmark', () => {
     });
 
     consoleTest('Adding a bookmark', async ({testingApi, console, page}) => {
+        await page.route('*/**/url-data*', async route => {
+            const json = {"url":"https:\/\/www.google.com\/","original_url":"https:\/\/www.google.com\/","domain":"www.google.com","html":null,"title":"Google","description":"Search the world's information, including webpages, images, videos and more. Google has many special features to help you find exactly what you're looking for.","thumbnail_url":null,"icon_url":"https:\/\/www.google.com\/favicon.ico","site":"Google"};
+            await route.fulfill({ json });
+          });
         await page.locator('.ProseMirror').fill('/');
         await page.locator('div').filter({ hasText: /^Link BookmarkLink preview as a bookmark$/ }).first().click();
         await page.getByPlaceholder('Paste URL here to generate a bookmark').fill('https://google.com');
         await page.keyboard.press('Enter');
-        // wait for the preview to be generated
-        await page.waitForTimeout(1000);
 
         await expect(page.locator('#middle').getByText('Search the world\'s information, including webpages, images, videos and more. Goo')).toBeVisible();
     });
 
     consoleTest('Deleting a bookmark', async ({testingApi, console, page}) => {
+        await page.route('*/**/url-data*', async route => {
+            const json = {"url":"https:\/\/www.google.com\/","original_url":"https:\/\/www.google.com\/","domain":"www.google.com","html":null,"title":"Google","description":"Search the world's information, including webpages, images, videos and more. Google has many special features to help you find exactly what you're looking for.","thumbnail_url":null,"icon_url":"https:\/\/www.google.com\/favicon.ico","site":"Google"};
+            await route.fulfill({ json });
+          });
         await page.locator('.ProseMirror').fill('/');
         await page.locator('div').filter({ hasText: /^Link BookmarkLink preview as a bookmark$/ }).first().click();
         await page.getByPlaceholder('Paste URL here to generate a bookmark').fill('https://google.com');
         await page.keyboard.press('Enter');
         await page.getByText('Google Search the world\'s information, including webpages, images, videos and mo').click();
         await page.keyboard.press('Backspace');
-        // wait for the preview to be generated
-        await page.waitForTimeout(1000);
 
         await expect(page.locator('#middle').getByText('Search the world\'s information, including webpages, images, videos and more. Goo')).not.toBeVisible();
     });
@@ -514,15 +518,25 @@ test.describe('Embed', () => {
     });
 
     consoleTest('Adding a embed', async ({testingApi, console, page}) => {
+        await page.route('*/**/url-data*', async route => {
+            const json = {"url":"https:\/\/www.youtube.com\/watch?v=uYPbbksJxIg","original_url":"https:\/\/www.youtube.com\/watch?v=uYPbbksJxIg","domain":"www.youtube.com","html":"<div style=\"left: 0; width: 100%; height: 0; position: relative; padding-bottom: 56.25%;\"><iframe src=\"https:\/\/www.youtube.com\/embed\/uYPbbksJxIg?rel=0\" style=\"top: 0; left: 0; width: 100%; height: 100%; position: absolute; border: 0;\" allowfullscreen scrolling=\"no\" allow=\"accelerometer; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share;\"><\/iframe><\/div>","title":"Oppenheimer | New Trailer","description":"Oppenheimer - In Theaters 7 21 23\n\nWritten and directed by Christopher Nolan, Oppenheimer is an IMAX\u00ae-shot epic thriller that thrusts audiences into the pulse-pounding paradox of the enigmatic man who must risk destroying the world in order to save it. \n ","thumbnail_url":"https:\/\/i.ytimg.com\/vi\/uYPbbksJxIg\/maxresdefault.jpg","icon_url":"https:\/\/www.youtube.com\/s\/desktop\/0529f0d5\/img\/favicon_144x144.png","site":"YouTube"};
+            await route.fulfill({ json });
+          });
+
         await page.locator('.ProseMirror').fill('/');
         await page.locator('div').filter({ hasText: /^EmbedEmbed content from 1500\+ platforms$/ }).first().click();
-        await page.getByPlaceholder('Paste URL to embed (Youtube, Twitter, and 1000+ platforms supported)').fill('https://www.youtube.com/watch?v=bK6ldnjE3Y0');
+        await page.getByPlaceholder('Paste URL to embed (Youtube, Twitter, and 1000+ platforms supported)').fill('https://www.youtube.com/watch?v=uYPbbksJxIg');
         await page.getByPlaceholder('Paste URL to embed (Youtube, Twitter, and 1000+ platforms supported)').press('Enter');
 
-        await expect(page.locator('iframe').first()).toHaveAttribute('src', 'https://www.youtube.com/embed/bK6ldnjE3Y0?rel=0');
+        await expect(page.locator('x-embed').first()).toHaveAttribute('data-url', 'https://www.youtube.com/watch?v=uYPbbksJxIg');
     });
 
     consoleTest('Delete a embed', async ({testingApi, console, page}) => {
+        await page.route('*/**/url-data*', async route => {
+            const json = {"url":"https:\/\/www.youtube.com\/watch?v=uYPbbksJxIg","original_url":"https:\/\/www.youtube.com\/watch?v=uYPbbksJxIg","domain":"www.youtube.com","html":"<div style=\"left: 0; width: 100%; height: 0; position: relative; padding-bottom: 56.25%;\"><iframe src=\"https:\/\/www.youtube.com\/embed\/uYPbbksJxIg?rel=0\" style=\"top: 0; left: 0; width: 100%; height: 100%; position: absolute; border: 0;\" allowfullscreen scrolling=\"no\" allow=\"accelerometer; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share;\"><\/iframe><\/div>","title":"Oppenheimer | New Trailer","description":"Oppenheimer - In Theaters 7 21 23\n\nWritten and directed by Christopher Nolan, Oppenheimer is an IMAX\u00ae-shot epic thriller that thrusts audiences into the pulse-pounding paradox of the enigmatic man who must risk destroying the world in order to save it. \n ","thumbnail_url":"https:\/\/i.ytimg.com\/vi\/uYPbbksJxIg\/maxresdefault.jpg","icon_url":"https:\/\/www.youtube.com\/s\/desktop\/0529f0d5\/img\/favicon_144x144.png","site":"YouTube"};
+            await route.fulfill({ json });
+          });
+
         await page.locator('.ProseMirror').fill('/');
         await page.locator('div').filter({ hasText: /^EmbedEmbed content from 1500\+ platforms$/ }).first().click();
         await page.getByPlaceholder('Paste URL to embed (Youtube, Twitter, and 1000+ platforms supported)').fill('https://www.youtube.com/watch?v=bK6ldnjE3Y0');
