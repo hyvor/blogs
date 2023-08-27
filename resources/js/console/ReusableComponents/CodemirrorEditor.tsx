@@ -23,14 +23,51 @@ interface Props {
     props?: object
 }
 
+interface FullScreenProps {
+    id?: null | string | number,
+    initCm: (ref: any, cm: any) => any,
+    setShowCodeFullScreen: (val: boolean) => any
+
+    props?: object
+}
+
+const CodeMirrorEditorFullScreen = ({ id = null, initCm, setShowCodeFullScreen, props }: FullScreenProps) => {
+    const codeFullScreenRef = useRef<null | HTMLDivElement>(null);
+    const codeFullScreenCm = useRef<any>(null);
+
+    useEffect(() => {
+        initCm(codeFullScreenRef, codeFullScreenCm)
+    }, []);
+
+    return <div className='code-fullscreen'>
+                <Popup
+                    header={
+                        <PopupHeaderDefault title={
+                            <div>
+                                Code Editor
+                            </div>
+                        } />
+                    }
+                    body={
+                        <PopupBodyDefault>
+                            <div {...props} className="global-codemirror-wrap" ref={codeFullScreenRef}/>
+                        </PopupBodyDefault>
+                    } 
+                    footer={
+                        <PopupFooterSingleButton
+                            name="Close"
+                            onClick={() => setShowCodeFullScreen(false)}
+                        />
+                    } 
+                />
+            </div>
+}
+
 export default function CodemirrorEditor({ id = null, value, onChange, onSave, extension, props = {} } : Props) {
 
-    const ref = useRef<null | HTMLDivElement>(null);
-    const cm = useRef<any>(null);
+    const codeRef = useRef<null | HTMLDivElement>(null);
+    const codeCm = useRef<any>(null);
     const tabSize = extension === 'yaml' ? 2 : 4;
-
-    const fullScreenRef = useRef<null | HTMLDivElement>(null);
-    const fullScreencm = useRef<any>(null);
 
     const [showCodeFullScreen, setShowCodeFullScreen] = useState(false);
 
@@ -43,8 +80,7 @@ export default function CodemirrorEditor({ id = null, value, onChange, onSave, e
         }
     }
 
-    function initCm() {
-        console.log('Init cm');
+    function initCm(ref: any, cm: any) {
 
         (ref.current as HTMLDivElement).innerHTML = "";
 
@@ -73,55 +109,31 @@ export default function CodemirrorEditor({ id = null, value, onChange, onSave, e
             }
         })
         cm.current.on('change', function() {
-            const val = cm.current.doc.getValue()
-            onChange(val)
+            const val = cm.current.doc.getValue();
+            onChange(val);
         })
 
     }
 
     useEffect(() => {
-        if (cm.current)
+        if (codeCm.current)
             return;
-        initCm()
+        initCm(codeRef, codeCm)
     }, []);
 
     useEffect(() => {
-        if (!showCodeFullScreen)
-            return;
-        initCm()
+        initCm(codeRef, codeCm);
     }, [id, showCodeFullScreen])
 
-    const CodeFullScreen = () => {
-        console.log('Render full screen');
-        return <div>
-                TEEEEEEEST
-                <div {...props} className="global-codemirror-wrap" ref={ref}/>
-            </div>
-        /*<Popup 
-            header={
-                <PopupHeaderDefault title={
-                    <div>
-                        Code Editor
-                    </div>
-                } />
-                }
-                body={
-                    <PopupBodyDefault>
-                        <div {...props} className="global-codemirror-wrap" ref={ref}/>
-                    </PopupBodyDefault>
-                } 
-                footer={
-                    <PopupFooterSingleButton
-                        name="Close"
-                        onClick={() => setShowCodeFullScreen(false)}
-                    />
-                } />*/
-    }
-    console.log('Ref:', ref);
-    console.log('Cm:', cm)
     return <div>
-            {showCodeFullScreen && <CodeFullScreen />}
-             <div {...props} className="global-codemirror-wrap" ref={ref}/>
+            {showCodeFullScreen && 
+                <CodeMirrorEditorFullScreen 
+                    id={id}
+                    initCm={initCm}
+                    setShowCodeFullScreen={setShowCodeFullScreen}
+                    props={props}/>
+            }              
+            <div {...props} className="global-codemirror-wrap" ref={codeRef} onClick={() => setShowCodeFullScreen(true)}/>
         </div>
 
 }
