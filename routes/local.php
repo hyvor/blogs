@@ -64,3 +64,8 @@ Route::get('user-email', function() {
     UserRepository::sendInviteEmail($user);
 
 });
+
+Route::get('broken', function() {
+    sleep(4);
+    return 'hello';
+});

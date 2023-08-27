@@ -1,4 +1,4 @@
-import { useActions, useValues } from 'kea';
+/* import { useActions, useValues } from 'kea';
 import React, {useState, useRef, ReactNode, useEffect} from 'react';
 import { Trash } from 'react-bootstrap-icons';
 import CodemirrorEditor, { CODEMIRROR_MODES } from '../../../ReusableComponents/CodemirrorEditor';
@@ -11,8 +11,8 @@ import DatePicker from 'react-datepicker';
 import Loader from '../../../ReusableComponents/Loader';
 
 import { usePostActions, usePostValues } from '../helpers';
-import PostAuthors from "../PostAuthors";
-import PostTags from "../PostTags";
+import PostAuthors from "../New/PostAuthors";
+import PostTags from "../New/PostTags";
 import {Media, PostVariant} from "../../../types";
 import getSubdomain from "../../../logic-helpers/subdomain";
 import onOutsideClick from "../../../../helpers/onOutsideClick";
@@ -334,4 +334,4 @@ const Setting: React.FC<SettingProps> = ({ title, description, className, childr
         </div>
     </div>
 
-);
+); */

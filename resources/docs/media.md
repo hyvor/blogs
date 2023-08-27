@@ -8,6 +8,16 @@
 
 "One image can be worth a thousand words". Images are a great way to improve your blog posts and make them more appealing and informative to your users. However, images can also be a source of performance issues if not used properly. Hyvor Blogs automatically optimizes images for you when possible.
 
+The following image formats are supported:
+
+* PNG - `.png`
+* JPEG - `.jpg`, `.jpeg`, `.jfif`, `.pjpeg`, `.pjp`
+* GIF - `.gif`
+* APNG - `.apng`
+* AVIF - `.avif`
+* SVG - `.svg`
+* WebP - `.webp`
+
 ### WebP Format {#webp}
 
 [WebP](https://en.wikipedia.org/wiki/WebP) images are 25-34% smaller than JPEG/PNG images of the same quality. It is recommended nowadays to use WebP in websites whenever possible as all modern browsers [support WebP images](https://caniuse.com/webp). You can upload JPEG and PNG as usual in your posts. Hyvor Blogs will serve them in WebP format to your users via `/media` of your blog. You don't have to do anything.

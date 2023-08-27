@@ -25,8 +25,9 @@ class WordCountPlugin {
     }
 
     updateCount(view) {
-        document.getElementById("pm-word-count").innerHTML = 
-        countWords(view.state.doc.textContent) + " Words";
+        const wordCount = document.getElementById("pm-word-count");
+        if (wordCount)
+            wordCount.innerHTML = countWords(view.state.doc.textContent) + " Words";
     }
 
 }

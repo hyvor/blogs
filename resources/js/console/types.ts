@@ -150,6 +150,10 @@ export type PostVariant = {
     title: string | null;
     description: string | null;
 
+    seo_primary_keyword: string | null,
+    seo_secondary_keywords: string[],
+
+    link_analysis: Record<string, number>,
 };
 
 // == USER
@@ -418,4 +422,17 @@ export interface Import {
         users: number
     }
 
+}
+
+export interface LinkAnalysisLink {
+    id: number,
+    url: string,
+    status_code: number,
+    status_type: 'ok' | 'redirect' | 'broken' | 'ignored',
+    ignored: boolean,
+
+    post_id: number,
+    post_variant_id: number,
+    post_variant_language_id: number,
+    post_variant_title: string | null,
 }

@@ -1,0 +1,90 @@
+.tools-link-analysis {
+
+    .tab-content {
+        padding: 20px 0;
+    }
+
+    .links-tab {
+        .link-url-wrap {
+            word-wrap: break-word;
+        }
+        .edit-post-wrap {
+            margin-top: 4px;
+        }
+        .global-lang-tag {
+            margin-left: 3px;
+        }
+
+        .link-tag-wrap {
+
+        }
+        .edit-button {
+            text-decoration: underline;
+            color: $color-accent;
+            font-weight: 600;
+            cursor: pointer;
+        }
+
+        .type-selector {
+            margin-bottom: 10px;
+            text-align: right;
+            button {
+                &:not(:last-child) {
+                    margin-right: 5px;
+                }
+            }
+            .filter-count {
+                font-size: 10px;
+            }
+            span {
+                vertical-align: middle;
+            }
+        }
+
+    }
+
+    .analyses-tab {
+        .stats {
+            display: flex;
+            align-items: flex-start;
+            flex-direction: column;
+            .stats-title {
+                font-size: 20px;
+                font-weight: 600;
+                margin-bottom: 4px;
+            }
+            .stats-inner {
+                background-color: #f5f5f5;
+                border-radius: 20px;
+                padding: 10px;
+            }
+            .stats-row {
+                display: flex;
+            }
+            .stat {
+                padding: 15px 25px;
+                text-align: center;
+                .stat-count {
+                    font-size: 25px;
+                    font-weight: 600;
+                    margin-bottom: 5px;
+                }
+            }
+            .stats-note {
+                color: $color-text-light;
+                font-size: 12px;
+                margin-bottom: 10px;
+                max-width: 500px;
+            }
+            .show-links {
+                margin-top: 10px;
+            }
+        }
+        .analyses {
+            margin-top: 25px;
+            display: block;
+        }
+    }
+
+
+}

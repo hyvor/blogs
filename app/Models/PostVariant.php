@@ -17,6 +17,8 @@ class PostVariant extends Model
 
     protected $casts = [
         'status' => PostStatusEnum::class,
+        'seo_secondary_keywords' => 'array',
+        'link_analysis' => 'array',
     ];
 
     /**

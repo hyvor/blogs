@@ -1,11 +1,17 @@
 import React, {ReactNode} from "react";
 
 interface ChildrenProps {
-    children: ReactNode
+    children: ReactNode,
+    columns?: string
 }
 
-export function Table({ children } : ChildrenProps) {
-    return <div className="global-table-view">{ children }</div>
+export function Table({ children, columns } : ChildrenProps) {
+    return <div 
+        className="global-table-view"
+        style={{
+            '--table-columns': columns
+        } as React.CSSProperties}
+    >{ children }</div>
 }
 
 export function TableHead({ children }: ChildrenProps) {

@@ -13,6 +13,7 @@ $breakpoint: 1200px;
 @import './components/checkbox.scss';
 @import './components/datepicker.scss';
 @import './components/image-selector.scss';
+@import './components/image-uploader.scss';
 
 @import './Editor.scss';
 
@@ -26,6 +27,7 @@ $breakpoint: 1200px;
 @import './scenes/Views.scss';
 
 @import './scenes/Settings/settings.scss';
+@import './scenes/Tools/tools.scss';
 
 body {
     background-color: $color-accent-very-light;
@@ -64,6 +66,16 @@ body {
     bottom: 0;
     overflow: auto;
     padding: 15px;
+}
+
+.settings-icon-row {
+   display: flex;
+   flex-direction: row;
+   align-items: center;
+}
+
+.settings-icon {
+    margin-right: 8px;
 }
 
 /* .setting-users {

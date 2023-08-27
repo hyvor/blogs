@@ -46,7 +46,7 @@ export default function keymapPlugins(schema) {
         chainCommands(
             (state, dispatch) =>
                 convertEmptyBlocksToParagraphHandler(state, dispatch, schema),
-            figcaptionBackspaceHandler
+            figcaptionBackspaceHandler,
         )
     );
 
@@ -92,11 +92,37 @@ export default function keymapPlugins(schema) {
            commonEnterAndArrowDown(state, dispatch);
         },
         splitListItem(schema.nodes.list_item),
-        figcaptionEnterHandler
+        figcaptionEnterHandler,
     );
 
     const downArrowBehavior = chainCommands(
         (state, dispatch) => {
+            const selection = state.selection;
+
+            if (selection.from !== selection.to)
+                // something was selected
+                return;
+
+            // If the cursor is in a list item, return false
+            const { path } = selection.$to;
+            if (path.some(item => item?.type?.name === "table_cell")) {
+                // Get the next node
+                const tableCell = selection.$from.node(-1);
+                const table = selection.$from.node(-3);
+                const tablePos = selection.$from.before(-3);
+                const nextNode = selection.$to;
+                const nextNodeExpctedPos = tablePos + table.nodeSize;
+                const nodeAtPos = state.doc.nodeAt(nextNodeExpctedPos);
+                if (nextNode.pos + tableCell.nodeSize >= nextNodeExpctedPos && nodeAtPos == null)
+                {
+                    const { $from } = state.selection;
+                    const tr = state.tr.insert(
+                        $from.after(-1),
+                        schema.nodes.paragraph.create()
+                    );
+                    dispatch(tr.setSelection(Selection.near(tr.doc.resolve($from.after(-1)))));
+                }
+            }
            commonEnterAndArrowDown(state, dispatch);
         },
         figcaptionEnterHandler

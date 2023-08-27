@@ -18,5 +18,8 @@ export default defineConfig({
             'resources/css/landing/landing.scss'
         ]),
         react()
-    ]
+    ],
+    test: {
+        include: ['resources/js/**/*.test.ts']
+    }
 });

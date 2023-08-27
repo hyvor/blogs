@@ -58,10 +58,26 @@ class SubscriptionService
             $subscription->ends_at->greaterThan(now());
     }
 
+    public static function hasAtLeast(Blog $blog, SubscriptionPlanEnum $atLeastPlan): bool
+    {
+        $subscription = $blog->subscriptions()->first();
+
+        if (!$subscription) {
+            return false;
+        }
+
+        $allValues = SubscriptionPlanEnum::cases();
+
+        $currentIndex = array_search($subscription->plan, $allValues);
+        $atLeastIndex = array_search($atLeastPlan, $allValues);
+
+        return $currentIndex >= $atLeastIndex;
+    }
+
     public static function createSubscription(
         Blog $blog,
         SubscriptionPlanEnum $plan,
-        SubscriptionFrequencyEnum $frequency,
+        SubscriptionFrequencyEnum $frequency = SubscriptionFrequencyEnum::MONTHLY,
         SubscriptionStatusEnum $status = SubscriptionStatusEnum::ACTIVE,
         ?DateTimeInterface $endsAt = null
     ): Subscription {

@@ -3,7 +3,7 @@
 $prosemirror-hover-outline: 2px solid #8cf;
 $prosemirror-selected-outline: 3px solid #299af3;
 
-.post-editor {
+.post-left-editor {
 
     font-weight: 400;
 
@@ -116,6 +116,7 @@ $prosemirror-selected-outline: 3px solid #299af3;
         line-height: 30px;
         color: $color-text-light;
         padding-right: 30px;
+        margin-top: -5px;
     }
 
     .pm-slash-view {
@@ -257,7 +258,7 @@ $prosemirror-selected-outline: 3px solid #299af3;
 
     padding:25px 30px;
     position: relative;
-    min-height:200px;
+    min-height:620px;
     margin:auto;
     width:700px;
     max-width: 100%;
@@ -702,6 +703,67 @@ $prosemirror-selected-outline: 3px solid #299af3;
     mark {
         padding: 0.2em 0.4em;
         background-color: #fcf8e3;
+    }
+
+    table {
+        margin: 0;
+        width: 100%;
+        border: 1px solid black;
+        border-collapse: collapse;
+        max-width: 100%;
+        table-layout: fixed;
+    }
+
+    tr {
+        height: 20px;
+        width: 150px;
+    }
+
+    th,
+    td {
+        width: 150px;
+        height: 40px;
+        border: 1px solid #ddd;
+        padding: 7px 15px;
+        p {
+            margin-top: 0;
+        }
+        vertical-align: top;
+        box-sizing: border-box;
+        position: relative;
+    }
+
+    .tableWrapper {
+        margin: 1em 0;
+    }
+
+    th {
+        font-weight: bold;
+        text-align: left;
+    }
+
+    table .selectedCell:after {
+        z-index: 2;
+        position: absolute;
+        content: "";
+        left: 0;
+        right: 0;
+        top: 0;
+        bottom: 0;
+        background: rgba(200, 200, 255, 0.4);
+        pointer-events: none;
+        cursor: default;
+    }
+
+    table .column-resize-handle {
+        position: absolute;
+        right: -2px;
+        top: 0;
+        bottom: -2px;
+        width: 4px;
+        background-color: #adf;
+        pointer-events: none;
+        cursor: col-resize;
     }
 
 }

@@ -340,7 +340,10 @@ class PostRepository
      *     content?: string | null,
      *     content_unsaved?: string | null,
      *     title?: string | null,
-     *     description?: string | null
+     *     description?: string | null,
+     *     seo_primary_keyword?: string | null,
+     *     seo_secondary_keywords?: string[],
+     *     link_analysis?: array<string, number>
      * } $updates
      */
     public static function updatePostVariant(PostVariant $variant, array $updates) : PostVariant
@@ -403,6 +406,25 @@ class PostRepository
             $variant->description = $updates['description'] ?
                 mb_substr($updates['description'], 0, 350) :
                 null;
+        }
+
+        // seo primary keyword
+        if (array_key_exists('seo_primary_keyword', $updates)) {
+            $variant->seo_primary_keyword = $updates['seo_primary_keyword'] ?
+                mb_substr($updates['seo_primary_keyword'], 0, 255) :
+                null;
+        }
+
+        // seo secondary keywords
+        if (array_key_exists('seo_secondary_keywords', $updates)) {
+            $variant->seo_secondary_keywords = $updates['seo_secondary_keywords'] ?
+                array_slice($updates['seo_secondary_keywords'], 0, 10) :
+                [];
+        }
+
+        // link analysis
+        if (array_key_exists('link_analysis', $updates)) {
+            $variant->link_analysis = $updates['link_analysis'];
         }
 
         $original = new PostVariant((array) $variant->getOriginal());
