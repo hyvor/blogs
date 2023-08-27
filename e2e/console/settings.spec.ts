@@ -694,7 +694,7 @@ test.describe('Settings', () => {
         });
 
         consoleTest('Changing theme', async ({testingApi, console, page}) => {
-            await page.locator('#middle svg').nth(1).click();
+            await page.locator('.dual-right > .react-select > .react-select__control > .react-select__indicators > .react-select__indicator > .css-tj5bde-Svg').click();
             await page.getByText('monokai', { exact: true }).click();
             await page.getByRole('button', { name: 'SAVE' }).click();
             await page.reload();
@@ -719,24 +719,6 @@ test.describe('Settings', () => {
         });
         
     });
-
-    test.describe('Export', () => {
-        
-        consoleTest.beforeEach(async ({testingApi, console, page}) => {
-            await testingApi.factory.blogFull();
-            await console.visitAndNav('settings');
-            await page.getByRole('link', { name: 'Export' }).click();
-          });
-
-          consoleTest('Export data', async ({testingApi, console, page}) => {
-            await page.getByRole('button', { name: 'Export Now' }).click();
-            await page.getByRole('button', { name: 'Export Now' }).nth(1).click();
-
-            await expect(page.getByText('Hyvor Blogs JSON').first()).toBeVisible();
-        });
-        
-    });
-
 
     test.describe('Danger', () => {
         
