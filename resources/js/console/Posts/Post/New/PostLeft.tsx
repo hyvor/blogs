@@ -27,6 +27,10 @@ export default function PostLeft({id, postViewRef} : {id: number, postViewRef: R
         currentVariantOriginal.content !== currentVariant.content ||
         currentVariantOriginal.content_unsaved !== currentVariant.content_unsaved;
 
+    const hasContentChanged = currentVariant.content_unsaved !== currentVariant.content && currentVariant.content_unsaved !== null;
+    
+    const { changeEditorState } = usePostActions(id);
+
 
     const { getLanguageById } = useLanguagesValues();
     const language = getLanguageById(editorState.languageId);
@@ -71,13 +75,35 @@ export default function PostLeft({id, postViewRef} : {id: number, postViewRef: R
                                 :
 
                                 (
-                                    hasTitleOrContentChanged ?
-                                        <span className="not-saved">Unsaved changes *</span> :
-                                        <span className="saved">Saved</span>
-                                )
+                                    <div className="saver-information">
+                                        {
+                                                 
+                                                 hasTitleOrContentChanged ?
+                                                 <span className="not-saved">Unsaved changes *</span> :
+                                                 <span className="saved">Saved</span>
+                                        }
+                                        {
+                                                           
+
+                                            currentVariant.status === 'published' && hasContentChanged ?
+                                                <div className="published-edit text-edit">
+                                                    <span>Editing a published post.</span>
+                                                    <div className="discard-changes" onClick={() => changeEditorState('isDiscarding', true)}>
+                                                        Discard changes
+                                                    </div>
+                                                </div> 
+                                            : <div></div>
+                                        }
+                                    </div>
+                                    
+
+                                        
+                                )    
 
                         }
 
+                    {
+                    }
                     </span>
                 </div>
 
