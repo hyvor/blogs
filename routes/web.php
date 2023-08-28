@@ -8,7 +8,6 @@ if (App::environment('local')) {
     include 'local.php';
 }
 
-include 'blog.php';
 
 // main app
 Route::domain(config('blogs.domain_app'))->group(function () {
@@ -18,6 +17,7 @@ Route::domain(config('blogs.domain_app'))->group(function () {
     include 'app/api-cli.php';
     include 'app/special.php';
     include 'app/integrations/integrations.php';
+    include 'blog.php';
 });
 
 include 'app/api-delivery.php';
