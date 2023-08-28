@@ -7,11 +7,24 @@ import {Post} from "../../types";
 export default function Discarder({id} : {id: number}) {
 
     const { editorState, currentVariant } = usePostValues(id)
-    const { changeEditorState, savePost, updateCurrentPostVariantValue } = usePostActions(id)
+    const { changeEditorState, saveCurrentVariantDiff, updateCurrentPostVariantValue } = usePostActions(id)
 
     function handleDiscardChanges() {
+
         updateCurrentPostVariantValue("content_unsaved", null);
-        savePost();
+
+        changeEditorState('isSaving', true);
+        saveCurrentVariantDiff({
+            diff: {
+                content: currentVariant.content,
+                content_unsaved: null,
+                title: currentVariant.title
+            },
+            onSave: () => {
+                changeEditorState('isSaving', false);
+            }
+        })
+
         changeEditorState('isDiscarding', false);
         changeEditorState('version', editorState.version + 1);
         toast.success(

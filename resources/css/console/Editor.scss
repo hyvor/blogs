@@ -5,6 +5,15 @@ $prosemirror-selected-outline: 3px solid #299af3;
 
 .post-left-editor {
 
+    position: relative;
+
+    .auto-translate-wrap {
+        position: absolute;
+        top: -14px;
+        right: 30px;
+        z-index: 10;
+    }
+
     font-weight: 400;
 
     .pm-link-tooltip {
