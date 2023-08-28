@@ -1,5 +1,6 @@
 import React, {useEffect, useRef, useState} from 'react'
 import { Popup, PopupHeaderDefault, PopupFooterSingleButton, PopupBodyDefault } from './Popup';
+import { X } from 'react-bootstrap-icons';
 
 export const CODEMIRROR_MODES = {
     scss: { name: 'twig', base: 'text/x-scss'},
@@ -40,26 +41,23 @@ const CodeMirrorEditorFullScreen = ({ id = null, initCm, setShowCodeFullScreen, 
         initCm(codeFullScreenRef, codeFullScreenCm)
     }, []);
 
+
     return <div className='code-fullscreen'>
                 <Popup
                     header={
                         <PopupHeaderDefault title={
-                            <div>
+                            <div className='code-fullscreen-header'>
                                 Code Editor
+                                <X className='icon-button fullscreen-exit-button' onClick={() => setShowCodeFullScreen(false)}/>
                             </div>
                         } />
                     }
                     body={
-                        <PopupBodyDefault>
+                        <div className='code-wrapper'>
                             <div {...props} className="global-codemirror-wrap" ref={codeFullScreenRef}/>
-                        </PopupBodyDefault>
+                        </div>
                     } 
-                    footer={
-                        <PopupFooterSingleButton
-                            name="Close"
-                            onClick={() => setShowCodeFullScreen(false)}
-                        />
-                    } 
+                   
                 />
             </div>
 }

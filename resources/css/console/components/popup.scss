@@ -73,5 +73,20 @@
         width: 75%;
         height: 100%;
     }
+    .CodeMirror {
+        min-height: 500px;
+        height: 75% !important;
+    }
+
+    .code-fullscreen-header {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+    }
+    .fullscreen-exit-button {
+        position: relative;
+        margin-right: 0px;
+        margin-left: auto;
+    }
 
 }
