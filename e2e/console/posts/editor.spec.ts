@@ -938,4 +938,38 @@ test.describe('Links', () => {
         await expect(page.getByText('https://www.google.fr/external')).not.toBeVisible();
     });
 
+    consoleTest('Ignrore a link', async ({testingApi, console, page}) => {
+        await page.locator('.ProseMirror').click();
+        await page.locator('.ProseMirror').fill('Over');
+        await page.keyboard.down('Shift');
+        await page.locator('.ProseMirror').press('ArrowLeft');
+        await page.locator('.ProseMirror').press('ArrowLeft');
+        await page.locator('.ProseMirror').press('ArrowLeft');
+        await page.locator('.ProseMirror').press('ArrowLeft');
+        await page.locator('.pm-tooltip > span:nth-child(1)').first().click();
+        await page.getByPlaceholder('Enter a link...').fill('https://www.google.fr/');
+        await page.keyboard.press('Enter');
+
+        await page.getByRole('button', { name: 'Links' }).click();
+        await page.locator('span').filter({ hasText: 'Ignore this link' }).getByRole('button').click();
+    });
+});
+
+test.describe('AI', () => {
+
+    consoleTest.beforeEach(async ({testingApi, console, page}) => {
+        await testingApi.factory.testPost();
+        await console.visitAndNav('posts');
+        await page.getByRole('link', { name: 'Test Post' }).click();
+        await page.locator('.ProseMirror').fill(''); 
+    });
+
+    consoleTest('Open AI pannel', async ({testingApi, console, page}) => {
+        await page.getByRole('button', { name: 'AI' }).click();
+
+        await expect(page.getByText('No chat history on this post yet.')).toBeVisible();
+    });
+
+    // TODO: Add AI tests when the section will be implemented
+
 });
