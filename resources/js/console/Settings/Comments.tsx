@@ -29,6 +29,8 @@ export default function Comments() {
                         extension={'twig'}
                         value={blog.comments_code || ''}
                         onChange={(val: string) => updateBlogValue('comments_code', val)}
+                        allowFullScreen={true}
+                        fileName='Comments Embed Code'
                     />
                 }
                 column={true}
@@ -42,6 +44,8 @@ export default function Comments() {
                         extension='twig'
                         value={blog.newsletter_code || ''}
                         onChange={(val: string) => updateBlogValue('newsletter_code', val)}
+                        allowFullScreen={true}
+                        fileName='Newsletter Signup Form Code'
                     />
                 }
                 column={true}

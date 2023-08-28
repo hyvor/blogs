@@ -309,6 +309,8 @@ export default function Settings({id}: {id: number}) {
                                         "data-testid": "code-head-input"
                                     }}
                                     id={codemirrorUpdateId}
+                                    allowFullScreen={true}
+                                    fileName="Head Code"
                                 />
                             </Setting>
 
@@ -325,6 +327,8 @@ export default function Settings({id}: {id: number}) {
                                         "data-testid": "code-foot-input"
                                     }}
                                     id={codemirrorUpdateId}
+                                    allowFullScreen={true}
+                                    fileName="Foot Code"
                                 />
                             </Setting>
 
