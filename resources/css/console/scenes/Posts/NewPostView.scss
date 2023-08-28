@@ -102,6 +102,15 @@
                     display: flex;
                     flex-direction: row;
                 }
+                .published-edit {
+                    display: flex;
+                    flex-direction: row;
+                }
+                .discard-changes {
+                    margin-left: 3px;
+                    text-decoration: underline;
+                    cursor: pointer;
+                }
                 .text-edit {
                     color: $color-red-dark;
                     margin-left: 10px;
