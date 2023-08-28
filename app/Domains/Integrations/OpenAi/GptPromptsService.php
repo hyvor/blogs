@@ -57,7 +57,8 @@ class GptPromptsService
 
     public static function getThisMonthUsage(Blog $blog) : int
     {
-        return intval(GptPrompt::where('blog_id', $blog->id)
+        return intval(GptPrompt::withTrashed()
+            ->where('blog_id', $blog->id)
             ->where('created_at', '>=', now()->startOfMonth())
             ->sum('tokens_total'));
     }
