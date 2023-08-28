@@ -72,6 +72,10 @@ body {
    display: flex;
    flex-direction: row;
    align-items: center;
+   .extra {
+        flex: 1;
+        text-align: right;
+   }
 }
 
 .settings-icon {

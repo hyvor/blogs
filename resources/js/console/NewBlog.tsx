@@ -162,6 +162,7 @@ export default function blog({ type }: { type: string | undefined }) {
                         error={nameError}
                         onChange={handleNameChange}
                         maxLength={50}
+                        autoFocus={true}
                     />
 
                     {

@@ -121,7 +121,15 @@ function LeftInner({subdomain} : {subdomain: string}) {
                 permission={UserPermissions.canAccessSettings}
             />
 
-            <LeftLink path="/tools" icon={<Tools />} name="Tools" permission={UserPermissions.canAccessSettings} />
+            <LeftLink 
+                path="/tools" 
+                icon={<Tools />} 
+                name="Tools" 
+                permission={UserPermissions.canAccessSettings}
+                extra={
+                    <span className="global-tag blue">NEW</span>
+                }
+            />
 
             <LeftLink path="/settings" icon={<Gear />} name="Settings" permission={UserPermissions.canAccessSettings} />
 

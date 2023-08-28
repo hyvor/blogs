@@ -68,21 +68,24 @@ function PublisherPopup({id, onClose} : {id: number, onClose: () => void}) {
 
         newDiff.variants = [variant as PostVariant];
 
-        savePostDiff({diff: newDiff, onSave: () => {
-            setIsPublishing(false);
-            onClose();
+        savePostDiff({
+            diff: newDiff, 
+            onSave: () => {
+                setIsPublishing(false);
+                onClose();
 
-            toast.success(
-                !publishTime ?
-                <div>Post Published. <a
-                    className="link"
-                    href={currentVariant.url}
-                    target="_blank"
-                >View</a></div> :
-                "Post scheduled"
-            , {autoClose: 5000});
+                toast.success(
+                    !publishTime ?
+                    <div>Post Published. <a
+                        className="link"
+                        href={currentVariant.url}
+                        target="_blank"
+                    >View</a></div> :
+                    "Post scheduled"
+                , {autoClose: 5000});
 
-        }});
+            }
+        });
 
     }
 

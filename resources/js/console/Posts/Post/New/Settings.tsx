@@ -14,7 +14,6 @@ import Loader from "../../../ReusableComponents/Loader";
 import { toast } from "react-toastify";
 import languagesLogic from "../../../logic/languagesLogic";
 import getSubdomain from "../../../logic-helpers/subdomain";
-import ImageUploader from "../../../ReusableComponents/ImageUploader/ImageUploader";
 import { setGlobalImageUploader } from "../../../logic/mediaLogic";
 import { bringRightToFront } from "./z-index";
 import InfoTooltip from "../../../ReusableComponents/InfoTooltip";
@@ -107,7 +106,8 @@ export default function Settings({id}: {id: number}) {
             diff: postDiff,
             onSave: () => {
                 setIsSaving(false);
-            }
+            },
+            updateState: false
         });
     }
 

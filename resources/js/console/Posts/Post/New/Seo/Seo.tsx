@@ -68,7 +68,8 @@ function SeoAnalysis({id}: {id: number}) {
         saveCurrentVariantDiff({
             diff: {
                 seo_secondary_keywords: secondaryKeywords
-            }
+            },
+            updateState: false
         });
     }
     function updatePrimaryKeyword(primaryKeyword: string|null) {
@@ -76,7 +77,8 @@ function SeoAnalysis({id}: {id: number}) {
         saveCurrentVariantDiff({
             diff: {
                 seo_primary_keyword: primaryKeyword,
-            }
+            },
+            updateState: false
         });
     }
 

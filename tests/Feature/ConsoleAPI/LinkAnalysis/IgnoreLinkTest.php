@@ -22,7 +22,8 @@ it('ignores link', function($current) {
         'post_variant_id' => $postVariant->id,
         'url' => $url,
         'status' => !$current
-    ])->assertOk();
+    ])
+        ->assertOk();
 
     $link->refresh();
     expect($link->ignore)->toBe(!$current);

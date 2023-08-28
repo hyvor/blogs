@@ -1,6 +1,6 @@
 import { useActions } from "kea";
 import { router } from "kea-router";
-import { useRef, useEffect, Fragment } from "react";
+import { useRef, useEffect, Fragment, ReactNode } from "react";
 import { UserRole } from "../enums";
 import getSubdomain from "../logic-helpers/subdomain";
 import UserPermissions from "../services/UserPermissions";
@@ -16,10 +16,11 @@ interface SettingsLinkProps {
     pannelName?: string,
     toolsPrefix?: boolean,
     setPannel: Function,
-    icon?: any
+    icon?: any,
+    extra?: ReactNode
 }
 
-function SettingsLink({ path, role = UserRole.ADMIN, name, dividing = false, setPannel, pannelName, toolsPrefix = false, icon = <List /> }: SettingsLinkProps) {
+function SettingsLink({ path, role = UserRole.ADMIN, name, dividing = false, setPannel, pannelName, toolsPrefix = false, icon = <List />, extra }: SettingsLinkProps) {
 
     const subdomain = getSubdomain();
     const settingsPrefix = `/console/${subdomain}/${toolsPrefix ? 'tools' : 'settings'}`;
@@ -67,6 +68,10 @@ function SettingsLink({ path, role = UserRole.ADMIN, name, dividing = false, set
         >    <div className="settings-icon-row">
                 <span className="settings-icon">{icon}</span>
                  <span className="name">{name}</span>
+
+                 {
+                    extra && <span className="extra">{extra}</span>
+                 }
             </div>
         </NavLink>
 

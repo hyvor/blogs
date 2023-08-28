@@ -62,6 +62,9 @@ export default function Tools({ type }: { type: string | undefined }) {
                     setPannel={setPannel}
                     toolsPrefix={true}
                     icon={<Link45deg />}
+                    extra={
+                        <span className="global-tag blue">NEW</span>
+                    }
                 />
 
             </div>
