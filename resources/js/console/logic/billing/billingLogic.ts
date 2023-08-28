@@ -6,12 +6,15 @@ import {ajax} from "kea-ajax";
 import api from "../../lib/api";
 import {actionToUrl} from "kea-router";
 
+interface UsageTypes {
+    users: Usage,
+    media: Usage,
+    auto_translate: Usage,
+    gpt: Usage
+}
+
 interface ApiResponse {
-    usage: {
-        users: Usage,
-        media: Usage,
-        auto_translate: Usage,
-    },
+    usage: UsageTypes,
     subscriptions: Subscription[]
 }
 
@@ -49,11 +52,7 @@ const billingLogic = kea<billingLogicType>([
 
     reducers({
         usage: [
-            {} as {
-                users: Usage,
-                media: Usage,
-                auto_translate: Usage,
-            },
+            {} as UsageTypes,
             {
                 setUsage: (_, {usage}) => usage
             }

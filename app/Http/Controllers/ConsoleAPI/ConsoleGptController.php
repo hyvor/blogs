@@ -35,6 +35,10 @@ class ConsoleGptController
             'prompt' => 'required|string|max:1000'
         ]);
 
+        if (GptPromptsService::hasLimitsExceeded($blog)) {
+            throw new TrustedException('Monthly limit exceeded');
+        }
+
         $post = $this->getPost($request);
 
         $prompt = GptPromptsService::createPrompt(

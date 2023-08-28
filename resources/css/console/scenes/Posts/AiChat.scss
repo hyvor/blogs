@@ -82,6 +82,9 @@
                     &.message-input {
                         line-height: 28px;
                     }
+                    .error {
+                        color: $color-text-light;
+                    }
                 }
                 .message-html {
                     line-height: 28px;

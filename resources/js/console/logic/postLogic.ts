@@ -52,7 +52,7 @@ const postLogic = kea<postLogicType>([
     actions(({values}) => ({
         set: (obj: Post) => ({obj}),
         setOriginal: (obj: Post) => ({obj}),
-        setVariant: (variant: PostVariant) => ({variant}),
+        setVariantOriginal: (variant: PostVariant) => ({variant}),
         updatePostValue: (key: keyof Post, value: any) => ({key, value}),
         updatePost: (update: Partial<Post>) => ({update}),
         updateCurrentPostVariantValue: (key: keyof PostVariant, value: any) => ({
@@ -111,7 +111,7 @@ const postLogic = kea<postLogicType>([
 
         savePostDiff: async({diff, onSave} : {diff: Partial<Post>, onSave: Function}) => {
             const response = await updatePost(values.post, diff);
-            actions.set(response)
+            actions.setOriginal(response)
             typeof onSave === 'function' && onSave(response);
         },
 
@@ -121,7 +121,7 @@ const postLogic = kea<postLogicType>([
                 language_id: currentVariant.language_id,
                 ...diff
             });
-            actions.setVariant(response);
+            actions.setVariantOriginal(response);
             typeof onSave === 'function' && onSave(response);
         },
 
@@ -174,7 +174,7 @@ const postLogic = kea<postLogicType>([
             {} as Post,
             {
                 set: (_, {obj}) => obj,
-                setVariant: (state, {variant}) => {
+                /* Original: (state, {variant}) => {
                     const copy = {...state}
                     copy.variants = copy.variants.map(
                         v => v.language_id === variant.language_id ?
@@ -182,7 +182,7 @@ const postLogic = kea<postLogicType>([
                             v
                     );
                     return copy;
-                },
+                }, */
                 updatePostValue: (state, {key, value}) => ({...state, ...{[key]: value}} as Post),
                 updatePost: (state, {update}) => ({...state, ...update} as Post),
                 updateCurrentPostVariantValue: (state, {key, value, languageId}) => {
@@ -221,7 +221,7 @@ const postLogic = kea<postLogicType>([
             {} as Post,
             {
                 set: (_, {obj}) => obj,
-                setVariant: (state, {variant}) => {
+                setVariantOriginal: (state, {variant}) => {
                     const copy = {...state}
                     copy.variants = copy.variants.map(
                         v => v.language_id === variant.language_id ?

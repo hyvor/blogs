@@ -2,6 +2,9 @@
 
 namespace App\Domains\Integrations\OpenAi;
 
+use App\Data\Enums\SubscriptionPlanEnum;
+use App\Domains\Subscription\SubscriptionService;
+use App\Models\AutoTranslation;
 use App\Models\Blog;
 use App\Models\GptPrompt;
 use App\Models\Post;
@@ -50,6 +53,39 @@ class GptPromptsService
     {
         GptPrompt::where('post_id', $post->id)
             ->delete();
+    }
+
+    public static function getThisMonthUsage(Blog $blog) : int
+    {
+        return intval(GptPrompt::where('blog_id', $blog->id)
+            ->where('created_at', '>=', now()->startOfMonth())
+            ->sum('tokens_total'));
+    }
+
+    public static function getMaxMonthlyGptTokens(Blog $blog, ?SubscriptionPlanEnum $plan) : int
+    {
+        if ($plan === null && $blog->trial_ends_at->isFuture())
+            return 1000;
+
+        return match ($plan) {
+            SubscriptionPlanEnum::GROWTH => 100000,
+            SubscriptionPlanEnum::PREMIUM => 1000000,
+            SubscriptionPlanEnum::TEAM => 3000000,
+            SubscriptionPlanEnum::BUSINESS => 15000000,
+            SubscriptionPlanEnum::ENTERPRISE => 30000000,
+            default => 0,
+        };
+    }
+
+    public static function hasLimitsExceeded(Blog $blog) : bool
+    {
+        $subscription = SubscriptionService::getActiveBlogSubscription($blog);
+        $plan = $subscription?->plan;
+
+        $usage = self::getThisMonthUsage($blog);
+        $maxUsage = self::getMaxMonthlyGptTokens($blog, $plan);
+
+        return $usage >= $maxUsage;
     }
 
 }

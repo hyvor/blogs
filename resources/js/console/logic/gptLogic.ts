@@ -35,13 +35,19 @@ const gptLogic = kea<gptLogicType>([
 
             actions.setPendingPrompt(prompt);
 
-            const res = await api.post<GptPrompt>(getSubdomain(), '/gpt/prompt', {
-                post_id: props.id,
-                prompt
-            })
+            try {
 
-            actions.setPrompts([...values.prompts, res]);
-            actions.unsetPendingPrompt();
+                const res = await api.post<GptPrompt>(getSubdomain(), '/gpt/prompt', {
+                    post_id: props.id,
+                    prompt
+                })
+
+                actions.setPrompts([...values.prompts, res]);
+                actions.unsetPendingPrompt();
+
+            } catch (e) {
+                actions.setPendingPromptError('Error creating prompt');
+            }
 
         },
 

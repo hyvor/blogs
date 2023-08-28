@@ -26,6 +26,11 @@ export function Usage() {
                 data={usage.auto_translate}
                 zero={true}
             />
+            <UsageBar
+                name="GPT Tokens (this month)"
+                data={usage.gpt}
+                zero={true}
+            />
            {/* <div className="section-desc">
                 There may be a delay to update usage data
             </div>*/}

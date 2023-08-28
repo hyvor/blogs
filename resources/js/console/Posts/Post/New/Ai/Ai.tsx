@@ -101,6 +101,7 @@ export default function Ai({id} : {id: number}) {
                                 id={id}
                                 prompt={pendingPrompt.prompt}
                                 response={null}
+                                hasError={Boolean(pendingPrompt.error)}
                             />
                         }
                     </div>
@@ -162,9 +163,10 @@ interface PromptResponseProps {
     id: number,
     prompt: string,
     response: string | null,
+    hasError?: boolean
 }
 
-function PromptResponse({id, prompt, response} : PromptResponseProps) {
+function PromptResponse({id, prompt, response, hasError = false} : PromptResponseProps) {
 
     const { blog } = useBlogValues();
     const { editorState } = usePostValues(id);
@@ -214,7 +216,13 @@ function PromptResponse({id, prompt, response} : PromptResponseProps) {
             <div className="message">
                 {
                     response === null ?
-                        <Loader inline={true} size="small" /> :
+                        (
+                            hasError ?
+                                <div className="error">
+                                    Something went wrong. Please try again.
+                                </div> :
+                                <Loader inline={true} size="small" />
+                        ) :
                         <div>
                             <div
                                 className="message-html"
