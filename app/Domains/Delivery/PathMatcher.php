@@ -20,6 +20,7 @@ use App\Domains\Language\LanguageRepository;
 use App\Domains\Redirect\RedirectRepository;
 use App\Domains\Theme\ThemeFilesRepository;
 use App\Exceptions\SafetyException;
+use App\Helpers\MimeTypes;
 use App\Models\Blog;
 use App\Models\Language;
 use Exception;
@@ -241,7 +242,8 @@ class PathMatcher
     private function matchTemplateRoutes() : void
     {
 
-        $name = 'route-' . trim($this->path, '/') . '.twig';
+        $path = trim($this->path, '/');
+        $name = 'route-' . $path . '.twig';
         $file = ThemeFilesRepository::getFile($this->blog, $name, ThemeFileFolderEnum::TEMPLATES);
 
         if (!$file)
@@ -250,9 +252,12 @@ class PathMatcher
         $templateRenderer = new DirectTemplateRenderer($this->blog, $this->language, $name, $this->path);
         $html = $templateRenderer->render();
 
+        $mimeType = MimeTypes::getMimeFromFileName($path);
+
         $responseObject = DeliveryAPIResponseObject::forFile(
             DeliveryAPIFileTypeEnum::TEMPLATE,
             $html,
+            $mimeType ?? 'text/html',
         );
 
         $this->setMatched($responseObject);
