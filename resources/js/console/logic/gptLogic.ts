@@ -1,5 +1,5 @@
 import { actions, kea, key, path, props, reducers } from "kea";
-import { gptLogicType } from "./gptLogicType";
+import type { gptLogicType } from "./gptLogicType";
 import { GptPrompt } from "../types";
 import { ajax } from "kea-ajax";
 import api from "../lib/api";
