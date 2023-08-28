@@ -35,6 +35,8 @@ export default function TableMenu({ colunmMenu, focused, addBefore, addAfter, ma
     customStyle['bottom'] = '-27px';
   else
     customStyle['left'] = '20px';
+
+  const dotStyle =  {marginLeft: '1px', marginRight: '1px'};
   
 
   return !focused ? (<div></div>) : (
@@ -52,9 +54,9 @@ export default function TableMenu({ colunmMenu, focused, addBefore, addAfter, ma
           marginBottom: colunmMenu ? -19 : 0,
       }}
       >
-        <span className="table-menu-dot"/>
-        <span className="table-menu-dot"/>
-        <span className="table-menu-dot"/>
+        <span className="table-menu-dot" style={dotStyle}/>
+        <span className="table-menu-dot" style={dotStyle}/>
+        <span className="table-menu-dot" style={dotStyle}/>
       </button>
       {showMenu && (
         <div className="table-menu-options">
