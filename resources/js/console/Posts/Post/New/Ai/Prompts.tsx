@@ -1,6 +1,5 @@
-import React, { useState } from "react";
+import React from "react";
 import Button from "../../../../ReusableComponents/Button";
-import { CaretLeft } from "react-bootstrap-icons";
 import { usePostActions, usePostValues } from "../../helpers";
 import Tooltip from "../../../../ReusableComponents/Tooltip";
 
@@ -34,13 +33,13 @@ const prompts : Prompt[]  = [
     {
         name: 'Blog Outline',
         description: 'Generate an outline for a blog post',
-        prompt: (options) => addKeywordPrompt(`Write a blog outline on ${options.title}`, options)
+        prompt: (options) => addKeywordPrompt(`Write a blog outline on ${options.title}.`, options)
     },
 
     {
         name: 'Blog Post',
         description: 'Generate a blog post',
-        prompt: (options) => addKeywordPrompt(`Write a blog post about ${options.title}`, options)
+        prompt: (options) => addKeywordPrompt(`Write a blog post about ${options.title}.`, options)
     },
 
     {
@@ -63,13 +62,13 @@ const prompts : Prompt[]  = [
     {
         name: 'SEO Brief',
         description: 'Generate an SEO content brief',
-        prompt: (options) => addKeywordPrompt(`Write an SEO content brief for ${options.title}`, options)
+        prompt: (options) => addKeywordPrompt(`Write an SEO content brief for ${options.title}.`, options)
     },
 
     {
         name: 'SEO Keyword Ideas',
         description: 'Generate a list of SEO keyword ideas',
-        prompt: (options) => `Write a list of SEO keyword ideas for ${options.title}`,
+        prompt: (options) => `Write a list of SEO keyword ideas for ${options.title}.`,
         tip: false
     }
     
@@ -78,12 +77,6 @@ const prompts : Prompt[]  = [
 
 
 export default function Prompts({ onSelect, id } : { id: number, onSelect: (prompt: string) => void }) {
-
-    const [selectedPromptName, setSelectedPromptName] = useState<string | null>(null);
-
-    const selectedPrompt = selectedPromptName ? 
-        prompts.find(prompt => prompt.name === selectedPromptName) : 
-        null;
 
     const { currentVariant } = usePostValues(id);
     const { changeEditorState } = usePostActions(id);
@@ -134,71 +127,5 @@ export default function Prompts({ onSelect, id } : { id: number, onSelect: (prom
         </div>
 
     </div>
-
-}
-
-function Prompt(
-    {id, prompt, onSelect, onBack} : 
-    {id: number, prompt: Prompt, onSelect: (prompt: string) => void, onBack: Function}
-) {
-
-    const { currentVariant } = usePostValues(id);
-    const { changeEditorState } = usePostActions(id);
-
-
-    const options = {
-        title: currentVariant?.title || '[title]',
-        primaryKeyword: currentVariant?.seo_primary_keyword || null,
-        secondaryKeywords: currentVariant?.seo_secondary_keywords || null,
-    }
-
-    const p = prompt.prompt(options);
-
-    return <div className="single-prompt">
-
-        <div className="back">
-            <Button type="light" size="small" onClick={() => onBack()}>
-                <CaretLeft /> Back to Prompts
-            </Button>
-        </div>
-
-        <div className="title">
-            { prompt.name }
-        </div>
-
-        <div className="description">
-            { prompt.description }
-        </div>
-
-        <div className="prompt-display">
-            <div className="prompt">
-                <div>
-                    <b>Prompt</b>:
-                </div>
-                { p }
-            </div>
-        </div>
-
-
-        {
-            !currentVariant?.seo_primary_keyword && prompt.tip === undefined &&
-            <div className="tip">
-                <b>💡 Tip</b>: <a 
-                    className="link"
-                    onClick={() => changeEditorState('settingsSection', 'seo')}
-                >Add SEO keywords</a> to improve the prompt.
-            </div>
-        }
-
-        <div className="select">
-            <Button 
-                onClick={() => {
-                    onSelect(p)
-                    onBack();
-                }}
-            >Use Prompt</Button>
-        </div>
-
-    </div>;
 
 }

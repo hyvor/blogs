@@ -7,9 +7,14 @@ import pagesLogic from "../../logic/pagesLogic";
 import PostLeft from './New/PostLeft';
 import PostRight from './New/PostRight';
 import { CaretLeftFill } from 'react-bootstrap-icons';
+import { useMountedLogic } from "kea";
+import gptLogic from "../../logic/gptLogic";
 import Discarder from './Discarder';
 
 export default function Post({ id, subdomain, type }: { id: number, subdomain: string, type: string }) {
+
+    // mount logic
+    useMountedLogic(gptLogic({id}))
 
     const { loadPostAjax } = usePostValues(id);
     const postsLogicInst = postsLogic({ subdomain });
@@ -47,23 +52,5 @@ export default function Post({ id, subdomain, type }: { id: number, subdomain: s
         </button>
 
     </div>
-
-    /* return <div className={"post-editor fullscreen"}>
-
-        <div className="pos-rel">
-            <button className="icon-button back-button" onClick={() => saveAndNavigateToList()} >
-                &times;
-            </button>
-            <PostTop id={id} />
-            <PostMiddle id={id} />
-            <PostBottom id={id} />
-
-
-            <Unpublisher id={id} />
-            <Discarder id={id} />
-
-        </div>
-
-    </div > */
 
 }

@@ -459,3 +459,12 @@ export interface LinkAnalysisCheck {
     links_redirect_count: number,
     links_ignored_count: number,
 }
+
+export interface GptPrompt {
+    id: number,
+    created_at: number,
+    post_id: number,
+
+    prompt: string,
+    gpt_response: string,
+}

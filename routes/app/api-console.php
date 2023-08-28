@@ -132,8 +132,8 @@ Route::prefix('/api/console/v0/blog/{subdomain}')
 
             // GPT
             Route::post('/gpt/prompt', [ConsoleGptController::class, 'newPrompt']);
-            Route::get('/gpt/history', [ConsoleGptController::class, 'getPostChatHistory']);
-            
+            Route::get('/gpt/post-history', [ConsoleGptController::class, 'getPostChatHistory']);
+            Route::delete('/gpt/post-history', [ConsoleGptController::class, 'deletePostChatHistory']);
 
         });
 

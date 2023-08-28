@@ -1,6 +1,7 @@
-import { Node } from "prosemirror-model";
+import { DOMParser, Node } from "prosemirror-model";
 import schema from "./schema";
 import { EditorView } from "prosemirror-view";
+import { TextSelection } from "prosemirror-state";
 
 
 export function getDocFromContent(content: string | null): Node {
@@ -32,5 +33,24 @@ export function positionSelectionInMiddleOfScreen(view: EditorView) {
     // scroll to the middle of the selection
     const middle = (start.top + end.bottom) / 2;
     postView.scrollTop = postViewScrollTop + middle - (postView.clientHeight / 2);
+
+}
+
+export function appendHtml(view: EditorView, html: string) {
+
+    const div = document.createElement('div');
+    div.innerHTML = html;
+    const node = DOMParser.fromSchema(schema).parse(div);
+
+    const tr = view.state.tr;
+    
+    tr
+        .insert(view.state.selection.from, node)
+        .setSelection(
+            new TextSelection(tr.doc.resolve(view.state.selection.from + node.nodeSize - 1))
+        )
+
+    view.dispatch(tr);
+    view.focus();
 
 }
