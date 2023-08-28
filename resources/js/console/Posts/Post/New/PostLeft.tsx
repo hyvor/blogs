@@ -2,7 +2,7 @@ import React, { useEffect, useState } from "react";
 import Editor from "../ProseMirror/Editor";
 import { usePostActions, usePostValues } from "../helpers";
 import PostLanguageSelector from "../PostLanguageSelector";
-import TitleRow from "../PostTop/TitleRow";
+import TitleRow from "./TitleRow";
 import {useLanguagesValues} from "../../../Settings/Languages/helpers";
 import { BoxArrowUpRight, InfoCircle } from "react-bootstrap-icons";
 import { getBlogUrl } from "../../../lib/blog-helpers";
