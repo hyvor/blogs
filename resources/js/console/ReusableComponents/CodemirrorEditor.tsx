@@ -50,7 +50,9 @@ const CodeMirrorEditorFullScreen = ({ id = null, initCm, setShowCodeFullScreen, 
     }
 
     useEffect(() => {
-        initCm(codeFullScreenRef, codeFullScreenCm)
+        initCm(codeFullScreenRef, codeFullScreenCm);
+        // Focus the editor
+        codeFullScreenCm.current.focus();
     }, []);
 
     return <div className='code-fullscreen'>
