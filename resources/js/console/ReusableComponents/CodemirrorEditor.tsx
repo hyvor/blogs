@@ -40,13 +40,22 @@ const CodeMirrorEditorFullScreen = ({ id = null, initCm, setShowCodeFullScreen, 
     const codeFullScreenRef = useRef<null | HTMLDivElement>(null);
     const codeFullScreenCm = useRef<any>(null);
 
+    const popupEditorLoading = useRef(true);
+
+    const popupEditorFullScreenClose = () => {
+        if (popupEditorLoading.current)
+            popupEditorLoading.current = false;
+        else
+            setShowCodeFullScreen(false);
+    }
+
     useEffect(() => {
         initCm(codeFullScreenRef, codeFullScreenCm)
     }, []);
 
-
     return <div className='code-fullscreen'>
                 <Popup
+                    onClose={() => popupEditorFullScreenClose()}
                     header={
                         <PopupHeaderDefault title={
                             <div className='code-fullscreen-header'>
