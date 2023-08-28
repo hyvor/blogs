@@ -74,8 +74,10 @@
         height: 100%;
     }
     .CodeMirror {
-        min-height: 500px;
+        min-height: 780px;
         height: 75% !important;
+        border-radius: 0%;
+        overflow: hidden;
     }
 
     .code-fullscreen-header {
