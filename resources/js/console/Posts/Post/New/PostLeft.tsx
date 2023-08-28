@@ -11,6 +11,7 @@ import Loader from "../../../ReusableComponents/Loader";
 import PublishButton from "./Publish/PublishButton";
 import UnpublishButton from "./Publish/UnpublishButton";
 import { OutsideClick } from "../../../ReusableComponents/OutsideClick";
+import DiscardingButton from "../PostTop/DiscardingButton";
 
 export default function PostLeft({id, postViewRef} : {id: number, postViewRef: React.RefObject<HTMLDivElement>}) {
 
@@ -51,6 +52,7 @@ export default function PostLeft({id, postViewRef} : {id: number, postViewRef: R
                     
                     <PreviewButton id={id} />
                     <UnpublishButton id={id} />
+                    <DiscardingButton id={id} />
                     <PublishButton id={id} />
 
                 </div>
@@ -71,13 +73,29 @@ export default function PostLeft({id, postViewRef} : {id: number, postViewRef: R
                                 :
 
                                 (
-                                    hasTitleOrContentChanged ?
-                                        <span className="not-saved">Unsaved changes *</span> :
-                                        <span className="saved">Saved</span>
-                                )
+                                    <div className="saver-information">
+                                        {
+                                                 
+                                                 hasTitleOrContentChanged ?
+                                                 <span className="not-saved">Unsaved changes *</span> :
+                                                 <span className="saved">Saved</span>
+                                        }
+                                        {
+                                                           
+
+                                                                currentVariant.status === 'published' && currentVariant.content !== currentVariant.content_unsaved ?
+                                                                <div className="text-edit">You are editing a published post</div> : <div></div>
+                                        }
+                                    </div>
+                                    
+
+                                        
+                                )    
 
                         }
 
+                    {
+                    }
                     </span>
                 </div>
 

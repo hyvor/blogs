@@ -7,6 +7,7 @@ import pagesLogic from "../../logic/pagesLogic";
 import PostLeft from './New/PostLeft';
 import PostRight from './New/PostRight';
 import { CaretLeftFill } from 'react-bootstrap-icons';
+import Discarder from './Discarder';
 
 export default function Post({ id, subdomain, type }: { id: number, subdomain: string, type: string }) {
 
@@ -38,6 +39,7 @@ export default function Post({ id, subdomain, type }: { id: number, subdomain: s
         <div className="post-inner">
             <PostLeft id={id} postViewRef={postViewRef} />
             <PostRight id={id} />
+            <Discarder id={id} />
         </div>
 
         <button className="icon-button back-button" onClick={() => saveAndNavigateToList()} >

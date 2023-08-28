@@ -98,6 +98,14 @@
                         cursor: pointer;
                     }
                 }
+                .saver-information {
+                    display: flex;
+                    flex-direction: row;
+                }
+                .text-edit {
+                    color: $color-red-dark;
+                    margin-left: 10px;
+                } 
                 .saving-name {
                     margin-left: 3px;
                     vertical-align: middle;
@@ -113,6 +121,7 @@
             }
 
             .left-header-left {
+                display: flex;
                 flex: 1;
             }
 
