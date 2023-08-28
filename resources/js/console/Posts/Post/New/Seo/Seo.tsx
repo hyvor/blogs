@@ -3,14 +3,26 @@ import { usePostActions, usePostValues } from '../../helpers';
 import { Output, TestResult } from './seo-analyzer';
 import { Check, X } from 'react-bootstrap-icons';
 import { toast } from 'react-toastify';
+import UpgradeRequired from "../../../../ReusableComponents/UpgradeRequired";
 
 export default function Seo({id}: {id: number}) {
 
-    return <div className="toolbar-content">
-        <div className="post-settings-wrap" data-testid="post-seo">
-            <SeoAnalysis id={id} />
+    return <UpgradeRequired
+        minPlan="growth" 
+        trialAllowed={true}
+        text={
+            <div>
+                SEO Analyzer is only available on the <b>Growth plan</b> and above. Upgrade now and get access to all the SEO features.
+            </div>
+        }
+    >
+        <div className="toolbar-content">
+            <div className="post-settings-wrap" data-testid="post-seo">
+                <SeoAnalysis id={id} />
+            </div>
         </div>
-    </div>
+
+    </UpgradeRequired>
 
 }
 

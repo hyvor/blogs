@@ -8,6 +8,7 @@ import Loader from "../../../../ReusableComponents/Loader";
 import { EditorView } from "prosemirror-view";
 import Button from "../../../../ReusableComponents/Button";
 import NoResults from "../../../../ReusableComponents/NoResults";
+import UpgradeRequired from "../../../../ReusableComponents/UpgradeRequired";
 
 export default function LinksComponent(
     {id, linkAnalysisProps} : 
@@ -37,91 +38,103 @@ export default function LinksComponent(
         });
     }
 
-    return <div className="toolbar-content links-analysis">
-
-        <div className="header">
-
-            <div className="title">
-                <div className="title-left">
-                    Links ({linksCount})
-                </div>
-                <div className="title-right">
-                    {
-                        linksCount > 0 &&
-                        <Button 
-                            type="primary" 
-                            size="mini" 
-                            onClick={handleReloadAll}
-                        >
-                            {
-                                isReloadingAll ?
-                                <Loader inline={true} size="mini" color="white" /> :
-                                <ArrowClockwise />
-                            } Recheck All
-                        </Button>
-                    }
-                </div>
+    return <UpgradeRequired 
+        minPlan="growth" 
+        trialAllowed={true}
+        text={
+            <div>
+                Link Analysis is only available on the <b>Growth plan</b> and above. Upgrade now to analyze links in your posts and say goodbye to broken links.
             </div>
-
-            <div className="summary">
-
-                {
-                    okCount > 0 &&
-                    <span className="ok">
-                        <span className="number">{okCount}</span> OK <CheckCircleFill />
-                    </span>
-                }
-
-                {
-                    brokenCount > 0 &&
-                    <span className="broken">
-                        <span className="number">{brokenCount}</span> Broken <XCircleFill />
-                    </span>
-                }
-
-                { 
-                    redirectCount > 0 &&
-                    <span className="redirect">
-                        <span className="number">{redirectCount}</span> Redirect <ExclamationCircleFill />
-                    </span>
-                }
-
-                {
-                    ignoreCount > 0 &&
-                    <span className="ignored">
-                        <span className="number">{ignoreCount}</span> Ignored <EyeSlashFill />
-                    </span>
-                }
-
-            </div>
-
-        </div>
-
-        <div className="links">
-
-            {
-
-                links.length ?
-
-                    links.map(link => <LinkComponent
-                        key={link.index} 
-                        link={link} 
-                        status={currentVariantLinkAnalysis[link.href]}
-                        editorView={editorState.editorView!}
-                        linkAnalysisProps={linkAnalysisProps}
-                    />) :
-
-                    <NoResults
-                        imageWidth={100}
-                        text="No links found in this post"
-                        padding={50}
-                    />
-
-            }
-
-        </div>
+        }
+    >    
     
-    </div>
+        <div className="toolbar-content links-analysis">
+
+            <div className="header">
+
+                <div className="title">
+                    <div className="title-left">
+                        Links ({linksCount})
+                    </div>
+                    <div className="title-right">
+                        {
+                            linksCount > 0 &&
+                            <Button 
+                                type="primary" 
+                                size="mini" 
+                                onClick={handleReloadAll}
+                            >
+                                {
+                                    isReloadingAll ?
+                                    <Loader inline={true} size="mini" color="white" /> :
+                                    <ArrowClockwise />
+                                } Recheck All
+                            </Button>
+                        }
+                    </div>
+                </div>
+
+                <div className="summary">
+
+                    {
+                        okCount > 0 &&
+                        <span className="ok">
+                            <span className="number">{okCount}</span> OK <CheckCircleFill />
+                        </span>
+                    }
+
+                    {
+                        brokenCount > 0 &&
+                        <span className="broken">
+                            <span className="number">{brokenCount}</span> Broken <XCircleFill />
+                        </span>
+                    }
+
+                    { 
+                        redirectCount > 0 &&
+                        <span className="redirect">
+                            <span className="number">{redirectCount}</span> Redirect <ExclamationCircleFill />
+                        </span>
+                    }
+
+                    {
+                        ignoreCount > 0 &&
+                        <span className="ignored">
+                            <span className="number">{ignoreCount}</span> Ignored <EyeSlashFill />
+                        </span>
+                    }
+
+                </div>
+
+            </div>
+
+            <div className="links">
+
+                {
+
+                    links.length ?
+
+                        links.map(link => <LinkComponent
+                            key={link.index} 
+                            link={link} 
+                            status={currentVariantLinkAnalysis[link.href]}
+                            editorView={editorState.editorView!}
+                            linkAnalysisProps={linkAnalysisProps}
+                        />) :
+
+                        <NoResults
+                            imageWidth={100}
+                            text="No links found in this post"
+                            padding={50}
+                        />
+
+                }
+
+            </div>
+        
+        </div>
+
+    </UpgradeRequired>
 
 }
 
@@ -156,7 +169,6 @@ function LinkComponent(
     }
 
     return <div className="link-wrap" key={link.index}>
-
         <div className="link-name">
 
             <div className="link-anchor">

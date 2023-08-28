@@ -89,6 +89,12 @@
         background-color: $color-text-light;
         color: $color-text;
     }
+    &.blue {
+        background-color: $color-blue-dark;
+        &:hover {
+            box-shadow: 0 0 0px 2px $color-blue-light;
+        }
+    }
 }
 
 .icon-button {

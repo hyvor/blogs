@@ -19,6 +19,7 @@ import { useBlogActions, useBlogValues } from "../../logic-helpers/blog";
 import SettingsSave from "../../ReusableComponents/SettingsSave";
 import Radio from "../../ReusableComponents/Radio";
 import LinksTab from './LinksTab';
+import UpgradeRequired from "../../ReusableComponents/UpgradeRequired";
 
 export interface Stats {
     counts: {
@@ -43,25 +44,37 @@ export default function LinkAnalysisTool() {
 
     }, []);
 
-    return <div className="tools-link-analysis">
+    return <UpgradeRequired
+        minPlan="growth"
+        trialAllowed={true}
+        text={
+            <div>
+                Link Analysis is only available on the <b>Growth plan</b> and above. Upgrade now to automatically analyze all links in your blog and receive email reports.
+            </div>
+        }
+    >
+    
+        <div className="tools-link-analysis">
 
-        <Tabs 
-            tabs={[
-                {label: 'Overview', value: 'overview', icon: <CardChecklist />},
-                {label: 'Links', value: 'links', icon: <Link45deg />},
-                {label: 'Settings', value: 'settings', icon: <Gear />}
-            ]}
-            active={tab}
-            setActive={tab => setTab(tab as TabType)}
-        />
+            <Tabs 
+                tabs={[
+                    {label: 'Overview', value: 'overview', icon: <CardChecklist />},
+                    {label: 'Links', value: 'links', icon: <Link45deg />},
+                    {label: 'Settings', value: 'settings', icon: <Gear />}
+                ]}
+                active={tab}
+                setActive={tab => setTab(tab as TabType)}
+            />
 
-        <div className='tab-content'>
-            { tab === 'overview' && <OverviewTab stats={stats} setTab={setTab} /> }
-            { tab === 'links' && <LinksTab stats={stats} /> }
-            { tab === 'settings' && <SettingsTab /> }
+            <div className='tab-content'>
+                { tab === 'overview' && <OverviewTab stats={stats} setTab={setTab} /> }
+                { tab === 'links' && <LinksTab stats={stats} /> }
+                { tab === 'settings' && <SettingsTab /> }
+            </div>
+
         </div>
 
-    </div>
+    </UpgradeRequired>
 
 }
 

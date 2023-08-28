@@ -309,7 +309,7 @@ $pricingRow = "<tr>
                         <?= $svgInfo ?>
                         <span class="tooltip">
                             In-post SEO analysis (check keywords, content, etc.)
-                            <img src="/img/landing/pricing/seo-feature.png" />
+                            <img src="/img/landing/pricing/seo-feature.png" alt="SEO Analysis" />
                         </span>
                     </span>
                 </div>
@@ -328,7 +328,7 @@ $pricingRow = "<tr>
                         <?= $svgInfo ?>
                         <span class="tooltip">
                             Analyze links in your posts, and bi-weekly full-blog analysis to check broken links
-                            <img src="/img/landing/pricing/links-feature.png" />
+                            <img src="/img/landing/pricing/links-feature.png" alt="Link Analysis" />
                         </span>
                     </span>
                 </div>
@@ -370,6 +370,7 @@ $pricingRow = "<tr>
                         <?= $svgInfo ?>
                         <span class="tooltip">
                             Use OpenAI GPT 3.5 for content writing, keyword generation, and more. Usually, 1000 tokens is about 750 words.
+                            <img src="/img/landing/pricing/gpt-feature.png" alt="GPT Writing" />
                         </span>
                     </span>
                 </div>
@@ -467,7 +468,7 @@ $pricingRow = "<tr>
                         </span>
                     </span>
                 </div>
-                <div class="feature-value"><div><?= $svgCancel ?></div></div>
+                <div class="feature-value"><div><?= $svgCheck ?></div></div>
                 <div class="feature-value"><div><?= $svgCheck ?></div></div>
                 <div class="feature-value"><div><?= $svgCheck ?></div></div>
                 <div class="feature-value"><div><?= $svgCheck ?></div></div>
