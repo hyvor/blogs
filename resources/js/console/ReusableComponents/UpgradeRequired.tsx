@@ -37,8 +37,6 @@ export default function UpgradeRequired(
     const hasMinPlan = blogSubscription && 
         allPlanTypes.indexOf(blogSubscription.plan) >= allPlanTypes.indexOf(minPlan);
 
-    console.log(trialAllowed, blogInTrial);
-
     if (hasMinPlan || (trialAllowed && blogInTrial) || allow) {
         return <Fragment>{children}</Fragment>;
     }
