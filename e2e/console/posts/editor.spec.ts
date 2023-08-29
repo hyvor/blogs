@@ -7,7 +7,7 @@ test.describe('Paragraph', () => {
         await testingApi.factory.testPost();
         await console.visitAndNav('posts');
         await page.getByRole('link', { name: 'Test Post' }).click();
-        await page.locator('.ProseMirror').fill(''); 
+        await page.locator('.ProseMirror').fill('');
     });
 
     consoleTest('Writing pargraph', async ({testingApi, console, page}) => {
@@ -62,12 +62,31 @@ test.describe('Image', () => {
 
     consoleTest.beforeEach(async ({testingApi, console, page}) => {
         await testingApi.factory.testPost();
+
+        const imageUrl = 'https://cdn.shopify.com/app-store/listing_images/8e6dbed9da2f06095141afa9e25fc33c/icon/CJWKsfjt3_kCEAE=.png';
+
+        await page.goto(imageUrl);
+
+        await page.click('img');
+
+        await page.keyboard.down('Control');
+        await page.keyboard.press('KeyC');
+        await page.keyboard.up('Control');
+
         await console.visitAndNav('posts');
         await page.getByRole('link', { name: 'Test Post' }).click();
+
         await page.locator('.ProseMirror').fill(''); 
+        await page.locator('.ProseMirror').focus();
+        await page.keyboard.down('Control');
+        await page.keyboard.press('KeyV');
+        await page.keyboard.up('Control');
     });
 
-    // TODO: Adapt the test to the new UI
+
+    consoleTest('Adding image', async ({testingApi, console, page}) => {
+        await expect(page.locator('figcaption')).toBeVisible();
+    });
 });
 
 test.describe('Quote', () => {
