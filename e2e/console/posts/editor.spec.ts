@@ -87,6 +87,12 @@ test.describe('Image', () => {
     consoleTest('Adding image', async ({testingApi, console, page}) => {
         await expect(page.locator('figcaption')).toBeVisible();
     });
+
+    consoleTest('Adding quote', async ({testingApi, console, page}) => {
+        await page.locator('figcaption').click();
+        await page.locator('div').filter({ hasText: /^Change$/ }).first().fill('Image caption');
+        
+    });
 });
 
 test.describe('Quote', () => {
