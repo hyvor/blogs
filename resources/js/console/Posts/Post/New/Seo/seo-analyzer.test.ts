@@ -25,8 +25,8 @@ describe.skip('seo tests', () => {
                 primaryKeyword: 'keyword',
                 title: 'keyword this is a title'
             })).run();
-            expect(result.result.score).toBe(100);
-            expect(result.result.message).toBe('Primary keyword found in title');
+            expect(result.score).toBe(100);
+            expect(result.message).toBe('Primary keyword found in title');
         })
 
         test('when keyword is not contained in the first 50', () => {

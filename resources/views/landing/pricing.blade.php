@@ -327,7 +327,7 @@ $pricingRow = "<tr>
                     <span class="info-tooltip">
                         <?= $svgInfo ?>
                         <span class="tooltip">
-                            Analyze links in your posts, and bi-weekly full-blog analysis to check broken links
+                            Post link analysis, bi-weekly full-blog link analysis, and email reports
                             <img src="/img/landing/pricing/links-feature.png" alt="Link Analysis" />
                         </span>
                     </span>
