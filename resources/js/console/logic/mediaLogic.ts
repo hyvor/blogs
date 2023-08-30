@@ -82,7 +82,7 @@ const mediaLogic = kea<mediaLogicType>([
          */
         uploadImage: async (
             {file, onUpload, onError} : 
-            {file: File, onUpload: (media: Media) => void, onError: Function}
+            {file: File | Blob, onUpload: (media: Media) => void, onError: Function}
         ) => {
             var formData = new FormData();
             formData.append('file', file, file.name);
