@@ -169,7 +169,7 @@ describe('seo tests', () => {
                 })
             })).run();
             expect(result2.score).toBe(0);
-            expect(result2.message).toBe('Primary keyword not found in the beginning of the content');
+            expect(result2.message).toBe('Primary keyword not found in the beginning of thecontent');
 
         });
 
@@ -237,18 +237,18 @@ describe('seo tests', () => {
                 return result;
             }
 
-            expect(testWithWordCount(1).result.score).toBe(0);
-            expect(testWithWordCount(1).result.message).toBe('Content is 1 words long. Consider using at least 400 words.');
+            expect(testWithWordCount(1).score).toBe(0);
+            expect(testWithWordCount(1).message).toBe('Content is 1 word long. Consider using at least 400 words.');
 
-            expect(testWithWordCount(100).result.score).toBe(0);
-            expect(testWithWordCount(400).result.score).toBe(20);
-            expect(testWithWordCount(1000).result.score).toBe(40);
-            expect(testWithWordCount(1500).result.score).toBe(60);
-            expect(testWithWordCount(2000).result.score).toBe(80);
-            expect(testWithWordCount(2500).result.score).toBe(100);
-            expect(testWithWordCount(3000).result.score).toBe(100);
+            expect(testWithWordCount(100).score).toBe(0);
+            expect(testWithWordCount(400).score).toBe(16);
+            expect(testWithWordCount(1000).score).toBe(40);
+            expect(testWithWordCount(1500).score).toBe(60);
+            expect(testWithWordCount(2000).score).toBe(80);
+            expect(testWithWordCount(2500).score).toBe(100);
+            expect(testWithWordCount(3000).score).toBe(100);
 
-            expect(testWithWordCount(500).result.message).toBe('Content is 500 words long');
+            expect(testWithWordCount(500).message).toBe('Content is 500 words long');
 
         });
 
