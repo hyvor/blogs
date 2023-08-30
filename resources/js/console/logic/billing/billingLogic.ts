@@ -10,7 +10,7 @@ export interface UsageTypes {
     users: Usage,
     media: Usage,
     auto_translate: Usage,
-    gpt: Usage
+    gpt?: Usage
 }
 
 interface ApiResponse {
