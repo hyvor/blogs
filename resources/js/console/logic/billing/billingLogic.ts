@@ -6,7 +6,7 @@ import {ajax} from "kea-ajax";
 import api from "../../lib/api";
 import {actionToUrl} from "kea-router";
 
-interface UsageTypes {
+export interface UsageTypes {
     users: Usage,
     media: Usage,
     auto_translate: Usage,
