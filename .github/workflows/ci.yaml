@@ -134,21 +134,10 @@ jobs:
                     key: npm-${{ hashFiles('package-lock.json') }}
                     restore-keys: npm-
 
-            -   name: Setup PHP
-                uses: shivammathur/setup-php@v2
-                with:
-                    coverage: "none"
-                    php-version: "8.1"
-                    ini-file: development
-                    tools: composer:v2
-                    extensions: mbstring, ctype, fileinfo, openssl, PDO, bcmath, json, tokenizer, xml, intl
-
             -   name: Install dependencies
                 env:
                     REPMAN_TOKEN: ${{ secrets.REPMAN_TOKEN }}
                 run: |
-                    composer config --global --auth http-basic.hyvor.repo.repman.io token ${REPMAN_TOKEN}
-                    composer install
                     npm install
                     npm ci --ignore-scripts
                     npm run build
