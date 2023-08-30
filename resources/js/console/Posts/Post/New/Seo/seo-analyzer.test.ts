@@ -170,7 +170,6 @@ describe('seo tests', () => {
             })).run();
             expect(result2.score).toBe(0);
             expect(result2.message).toBe('Primary keyword not found in the beginning of the content');
-
         });
 
     });

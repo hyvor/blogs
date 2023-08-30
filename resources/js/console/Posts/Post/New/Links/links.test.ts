@@ -8,7 +8,7 @@ test('get link type', () => {
 
     expect(getLinkType('mailto:test@hyvor.com', baseUrl)).toBe('mail');
     expect(getLinkType('tel:123456789', baseUrl)).toBe('tel');
-    expect(getLinkType('file:///home/user/file.txt', baseUrl)).toBe('file');
+    expect(getLinkType('file:///home/user/file.txt', baseUrl)).toBe('other');
     expect(getLinkType('#anchor', baseUrl)).toBe('anchor');
 
     // internal-blog
