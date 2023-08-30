@@ -16,7 +16,7 @@ function getInput(input: Partial<Input>) {
     }
 }
 
-describe.skip('seo tests', () => {
+describe('seo tests', () => {
 
     describe('primary keyword in title', () => {
 
@@ -26,7 +26,7 @@ describe.skip('seo tests', () => {
                 title: 'keyword this is a title'
             })).run();
             expect(result.score).toBe(100);
-            expect(result.message).toBe('Primary keyword found in title');
+            expect(result.message).toBe('Primary keyword found in the title');
         })
 
         test('when keyword is not contained in the first 50', () => {
@@ -34,8 +34,8 @@ describe.skip('seo tests', () => {
                 primaryKeyword: 'keyword',
                 title: 'this is a title with this is a title with this is a title with keyword'
             })).run();
-            expect(result.result.score).toBe(49);
-            expect(result.result.message).toBe('Primary keyword found in title, but not within first 50 characters');
+            expect(result.score).toBe(49);
+            expect(result.message).toBe('Primary keyword found in the title, but not within first 50 characters');
         });
 
         test('when keyword is not found', () => {
@@ -43,8 +43,8 @@ describe.skip('seo tests', () => {
                 primaryKeyword: 'keyword',
                 title: 'this is a title'
             })).run();
-            expect(result.result.score).toBe(0);
-            expect(result.result.message).toBe('Primary keyword not found in title');
+            expect(result.score).toBe(0);
+            expect(result.message).toBe('Primary keyword not found in title');
         });
 
     });
