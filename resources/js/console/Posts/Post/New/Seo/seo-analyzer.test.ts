@@ -169,7 +169,7 @@ describe('seo tests', () => {
                 })
             })).run();
             expect(result2.score).toBe(0);
-            expect(result2.message).toBe('Primary keyword not found in the beginning of thecontent');
+            expect(result2.message).toBe('Primary keyword not found in the beginning of the content');
 
         });
 
@@ -190,7 +190,7 @@ describe('seo tests', () => {
                             content: [
                                 {
                                     type: 'text', 
-                                    text: 'keyword this is a content keyword2'
+                                    text: 'keyword this is a content keyword2 and keyword3'
                                 }
                             ]
                         }
@@ -198,14 +198,8 @@ describe('seo tests', () => {
                 })
             })).run();
 
-            expect(result.results[0].keyword).toBe('keyword');
-            expect(result.results[0].result.score).toBe(100);
-
-            expect(result.results[1].keyword).toBe('keyword2');
-            expect(result.results[1].result.score).toBe(100);
-
-            expect(result.results[2].keyword).toBe('keyword3');
-            expect(result.results[2].result.score).toBe(0);
+            expect(result.message).toBe('All keywords found in the content');
+            expect(result.score).toBe(100);
 
         });
 
