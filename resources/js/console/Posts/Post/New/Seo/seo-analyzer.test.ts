@@ -56,8 +56,8 @@ describe('seo tests', () => {
                 primaryKeyword: 'keyword',
                 description: 'this is a description with keyword'
             })).run();
-            expect(result.result.score).toBe(100);
-            expect(result.result.message).toBe('Primary keyword found in description');
+            expect(result.score).toBe(100);
+            expect(result.message).toBe('Primary keyword found in the description');
         });
 
         test('when keyword is not found', () => {
@@ -65,8 +65,8 @@ describe('seo tests', () => {
                 primaryKeyword: 'keyword',
                 description: 'this is a description'
             })).run();
-            expect(result.result.score).toBe(0);
-            expect(result.result.message).toBe('Primary keyword not found in description');
+            expect(result.score).toBe(0);
+            expect(result.message).toBe('Primary keyword not found in the description');
         });
         
     });
@@ -78,8 +78,8 @@ describe('seo tests', () => {
                 primaryKeyword: 'keyword',
                 slug: 'this-is-a-slug-with-keyword'
             })).run();
-            expect(result.result.score).toBe(100);
-            expect(result.result.message).toBe('Primary keyword found in slug');
+            expect(result.score).toBe(100);
+            expect(result.message).toBe('Primary keyword found in the slug');
         });
 
         test('multi word keyword', () => {
@@ -87,8 +87,8 @@ describe('seo tests', () => {
                 primaryKeyword: 'Multi Word Keyword',
                 slug: 'this-is-a-slug-with-multi-word-keyword',
             })).run();
-            expect(result.result.score).toBe(100);
-            expect(result.result.message).toBe('Primary keyword found in slug');
+            expect(result.score).toBe(100);
+            expect(result.message).toBe('Primary keyword found in the slug');
         });
 
         test('when keyword is not found', () => {
@@ -96,8 +96,8 @@ describe('seo tests', () => {
                 primaryKeyword: 'keyword',
                 slug: 'this-is-a-slug'
             })).run();
-            expect(result.result.score).toBe(0);
-            expect(result.result.message).toBe('Primary keyword not found in slug');
+            expect(result.score).toBe(0);
+            expect(result.message).toBe('Primary keyword not found in the slug');
         });
         
     });
@@ -109,8 +109,8 @@ describe('seo tests', () => {
                 primaryKeyword: 'keyword',
                 content: null
             })).run();
-            expect(result.result.score).toBe(0);
-            expect(result.result.message).toBe('Primary keyword not found in the beginning of content');
+            expect(result.score).toBe(0);
+            expect(result.message).toBe('Primary keyword not found in the beginning of the content');
         });
 
         test('when keyword is found in the beginning', () => {
@@ -123,8 +123,8 @@ describe('seo tests', () => {
                     }]
                 })
             })).run();
-            expect(result.result.score).toBe(100);
-            expect(result.result.message).toBe('Primary keyword found in the beginning of content');
+            expect(result.score).toBe(100);
+            expect(result.message).toBe('Primary keyword found in the beginning of the content');
         });
 
         test('checks in first 10% when content is more than 300 words', () => {
@@ -148,8 +148,8 @@ describe('seo tests', () => {
                     ]
                 })
             })).run();
-            expect(result.result.score).toBe(100);
-            expect(result.result.message).toBe('Primary keyword found in the beginning of content');
+            expect(result.score).toBe(100);
+            expect(result.message).toBe('Primary keyword found in the beginning of the content');
 
             const result2 = new PrimaryKeywordInBeginningOfContentTest(getInput({
                 primaryKeyword: 'keyword',
@@ -168,8 +168,8 @@ describe('seo tests', () => {
                     ]
                 })
             })).run();
-            expect(result2.result.score).toBe(0);
-            expect(result2.result.message).toBe('Primary keyword not found in the beginning of content');
+            expect(result2.score).toBe(0);
+            expect(result2.message).toBe('Primary keyword not found in the beginning of the content');
 
         });
 
