@@ -88,10 +88,9 @@ test.describe('Image', () => {
         await expect(page.locator('figcaption')).toBeVisible();
     });
 
-    consoleTest('Adding quote', async ({testingApi, console, page}) => {
+    consoleTest('Adding caption', async ({testingApi, console, page}) => {
         await page.locator('figcaption').click();
-        await page.locator('div').filter({ hasText: /^Change$/ }).first().fill('Image caption');
-        
+        await page.locator('div').filter({ hasText: /^Change$/ }).first().fill('\n\n\nChange\nTest');        
     });
 });
 
