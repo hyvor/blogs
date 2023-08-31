@@ -72,12 +72,14 @@
     .box-style {
         width: 75%;
         height: 100%;
+        overflow: hidden;
     }
     .CodeMirror {
         min-height: 780px;
-        height: 75% !important;
+        height: 780px;
         border-radius: 0%;
         overflow: hidden;
+        z-index: 10000000;
     }
 
     .code-fullscreen-header {
