@@ -73,7 +73,7 @@ class ConsoleLinkAnalysisController
             $url => $newCode
         ], true);
 
-        return response()->json();
+        return response()->json(new LinkObject($link));
     }
 
     public function getStats(Blog $blog) : JsonResponse

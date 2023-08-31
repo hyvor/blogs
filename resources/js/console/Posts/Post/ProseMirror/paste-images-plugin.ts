@@ -48,7 +48,8 @@ async function uploadAndReplaceImages(imageUrls: string[], view: EditorView) {
             const blob = await fetched.blob();
             uploadImage({
                 file: blob,
-                onUpload: (media: Media) => replaceImage(url, media.url, view)
+                onUpload: (media: Media) => replaceImage(url, media.url, view),
+                onError: () => {}
             })
         } else {
 

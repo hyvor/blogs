@@ -10,6 +10,7 @@ import Loader from "../../ReusableComponents/Loader";
 import {PopupConfirm} from "../../ReusableComponents/Popup";
 import blogLogic from "../../logic/blogLogic";
 import {toast} from "react-toastify";
+import UpgradeRequired from "../../ReusableComponents/UpgradeRequired";
 
 export default function HyvorTalk() {
 
@@ -62,150 +63,162 @@ export default function HyvorTalk() {
         />;
     }
 
-    return <div className="integration hyvor-talk">
-
-        {
-            loadAjax.status === 'success' ?
-
+    return <UpgradeRequired
+        minPlan="growth"
+        trialAllowed={false}
+        text={
             <div>
+                This integration allows you to use <a href="https://talk.hyvor.com" target="_blank" style={{textDecoration: 'underline'}}>Hyvor Talk</a> on your blog for FREE. However, it is only available for blogs on the <b>Growth plan</b> or higher. Please upgrade your plan to use this integration.
+            </div>
+        }
+        allow={data.connected}
+    >
+        <div className="integration hyvor-talk">
 
-                <DualSetting
-                    title="Introduction"
-                    right={
-                        <div>
-                            <a href="https://talk.hyvor.com" target="_blank" className="link">Hyvor Talk</a> is our own commenting platform. You can use it on your blog for free.
-                            <ul>
-                                <li>
-                                    Connect your blog to a website in Hyvor Talk
-                                </li>
-                                <li>
-                                    Use the same HYVOR account (for the owner)
-                                </li>
-                                <li>
-                                    Completely free
-                                </li>
-                                <li>
-                                    Fast, secure, and privacy-focused
-                                </li>
-                            </ul>
-                        </div>
-                    }
-                />
+            {
+                loadAjax.status === 'success' ?
 
-                <DualSetting
-                    title="Connect Hyvor Talk"
-                    right={
-                        <div>
-                            {
-                                data.connected ?
-                                <>
-                                    <div className="connection-status">
-                                        This blog is connected to website ID <strong>{data.data.website_id}</strong> in Hyvor Talk. You can manage comments from the Hyvor Talk Console.
-                                    </div>
-                                    <a
-                                        className="button small"
-                                        href={`https://talk.hyvor.com/consolev3/${data.data.website_id}/comments`}
-                                        target="_blank"
-                                    >Go to Hyvor Talk Console</a>
-                                    <button
-                                        className="button small danger disconnect-button"
-                                        onClick={() => setIsDisconnecting(true)}
-                                    >Disconnect</button>
-                                </> :
-                                <>
-                                    <div className="connection-status">
-                                        This blog is not connected to a website in Hyvor Talk.
-                                    </div>
-                                    <button
-                                        className="button"
-                                        onClick={() => setIsConnecting(true)}
-                                    >Connect Now</button>
-                                </>
-                            }
-                        </div>
-                    }
-                />
+                <div>
 
-                {
-                    data.connected &&
                     <DualSetting
-                        title="Embed Code"
+                        title="Introduction"
                         right={
                             <div>
-                                <div className="connection-status">
-                                    Update <NavLink href={`/console/${subdomain}/settings/comments`} className="global-jump-link"><strong>Settings &rarr; Comments & Newsletter &rarr; Comments Embed Code</strong></NavLink> by clicking the button below. You may customize the code if you want.
-                                </div>
-                                <pre><code>{embedCode}</code></pre>
-                                <button className="button small" onClick={handleAddingCode}>Update "Comments Embed Code"</button>
+                                <a href="https://talk.hyvor.com" target="_blank" className="link">Hyvor Talk</a> is our own commenting platform. You can use it on your blog for free.
+                                <ul>
+                                    <li>
+                                        Connect your blog to a website in Hyvor Talk
+                                    </li>
+                                    <li>
+                                        Use the same HYVOR account (for the owner)
+                                    </li>
+                                    <li>
+                                        Completely free
+                                    </li>
+                                    <li>
+                                        Fast, secure, and privacy-focused
+                                    </li>
+                                </ul>
                             </div>
                         }
                     />
-                }
 
-            </div> :
-            <Loader padding={100} />
-        }
-
-        {
-            isConnecting &&
-
-            <PopupConfirm
-                title="Connect Hyvor Talk"
-                text={
-                    <div>
-                        <p>
-                            Please confirm that you want to create a website ID in Hyvor Talk for this blog.
-                        </p>
-                        <ul>
-                            <li>A new Hyvor Talk website ID will be created under your HYVOR account.</li>
-                            <li>It is free of charge.</li>
-                            <li>It can only be used on this blog.</li>
-                            <li>If you have any other websites on Hyvor Talk, you will need a separate subscription.</li>
-                        </ul>
-                    </div>
-                }
-                name="Connect Now"
-                onClick={() => {
-                    setIsConnectConfirming(true);
-                    createIntegration({
-                        onSuccess: () => {
-                            setIsConnectConfirming(false);
-                            setIsConnecting(false);
+                    <DualSetting
+                        title="Connect Hyvor Talk"
+                        right={
+                            <div>
+                                {
+                                    data.connected ?
+                                    <>
+                                        <div className="connection-status">
+                                            This blog is connected to website ID <strong>{data.data.website_id}</strong> in Hyvor Talk. You can manage comments from the Hyvor Talk Console.
+                                        </div>
+                                        <a
+                                            className="button small"
+                                            href={`https://talk.hyvor.com/consolev3/${data.data.website_id}/comments`}
+                                            target="_blank"
+                                        >Go to Hyvor Talk Console</a>
+                                        <button
+                                            className="button small danger disconnect-button"
+                                            onClick={() => setIsDisconnecting(true)}
+                                        >Disconnect</button>
+                                    </> :
+                                    <>
+                                        <div className="connection-status">
+                                            This blog is not connected to a website in Hyvor Talk.
+                                        </div>
+                                        <button
+                                            className="button"
+                                            onClick={() => setIsConnecting(true)}
+                                        >Connect Now</button>
+                                    </>
+                                }
+                            </div>
                         }
-                    });
-                }}
-                onCancel={() => setIsConnecting(false)}
-                isLoading={isConnectConfirming}
-            />
-        }
+                    />
 
-        {
-            isDisconnecting &&
-            <PopupConfirm
-                title="Disconnect Hyvor Talk"
-                text={
-                    <div>
-                        <Callout
-                            color={CalloutColors.RED}
-                            title="Caution"
-                            text="You cannot connect this blog to the same website ID again."
+                    {
+                        data.connected &&
+                        <DualSetting
+                            title="Embed Code"
+                            right={
+                                <div>
+                                    <div className="connection-status">
+                                        Update <NavLink href={`/console/${subdomain}/settings/comments`} className="global-jump-link"><strong>Settings &rarr; Comments & Newsletter &rarr; Comments Embed Code</strong></NavLink> by clicking the button below. You may customize the code if you want.
+                                    </div>
+                                    <pre><code>{embedCode}</code></pre>
+                                    <button className="button small" onClick={handleAddingCode}>Update "Comments Embed Code"</button>
+                                </div>
+                            }
                         />
-                        Are you sure you want to disconnect this blog from Hyvor Talk? This will not delete your Hyvor Talk Website ID. You will have to delete it manually from the Hyvor Talk Console.
-                    </div>
-                }
-                name="Disconnect"
-                onClick={() => {
-                    deleteIntegration({
-                        onSuccess: () => {
-                            setIsDisconnecting(false);
-                        }
-                    });
-                }}
-                onCancel={() => setIsDisconnecting(false)}
-                isLoading={deleteIntegrationAjax.status === 'loading'}
-                buttonClass="danger"
-            />
-        }
+                    }
 
-    </div>;
+                </div> :
+                <Loader padding={100} />
+            }
+
+            {
+                isConnecting &&
+
+                <PopupConfirm
+                    title="Connect Hyvor Talk"
+                    text={
+                        <div>
+                            <p>
+                                Please confirm that you want to create a website ID in Hyvor Talk for this blog.
+                            </p>
+                            <ul>
+                                <li>A new Hyvor Talk website ID will be created under your HYVOR account.</li>
+                                <li>It is free of charge.</li>
+                                <li>It can only be used on this blog.</li>
+                                <li>If you have any other websites on Hyvor Talk, you will need a separate subscription.</li>
+                            </ul>
+                        </div>
+                    }
+                    name="Connect Now"
+                    onClick={() => {
+                        setIsConnectConfirming(true);
+                        createIntegration({
+                            onSuccess: () => {
+                                setIsConnectConfirming(false);
+                                setIsConnecting(false);
+                            }
+                        });
+                    }}
+                    onCancel={() => setIsConnecting(false)}
+                    isLoading={isConnectConfirming}
+                />
+            }
+
+            {
+                isDisconnecting &&
+                <PopupConfirm
+                    title="Disconnect Hyvor Talk"
+                    text={
+                        <div>
+                            <Callout
+                                color={CalloutColors.RED}
+                                title="Caution"
+                                text="You cannot connect this blog to the same website ID again."
+                            />
+                            Are you sure you want to disconnect this blog from Hyvor Talk? This will not delete your Hyvor Talk Website ID. You will have to delete it manually from the Hyvor Talk Console.
+                        </div>
+                    }
+                    name="Disconnect"
+                    onClick={() => {
+                        deleteIntegration({
+                            onSuccess: () => {
+                                setIsDisconnecting(false);
+                            }
+                        });
+                    }}
+                    onCancel={() => setIsDisconnecting(false)}
+                    isLoading={deleteIntegrationAjax.status === 'loading'}
+                    buttonClass="danger"
+                />
+            }
+
+        </div>
+
+    </UpgradeRequired>
 }

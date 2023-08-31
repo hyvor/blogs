@@ -66,6 +66,8 @@ export class SeoAnalyzer {
 }
 
 export interface TestResult {
+    result: any;
+    results: any;
     name: string,
     score: number, // 0 - 100
     message: string,
@@ -85,6 +87,8 @@ class Test {
             score: 0,
             ignore: false,
             message: message,
+            result: null,
+            results: null,
         }
     }
 

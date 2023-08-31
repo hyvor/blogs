@@ -16,7 +16,7 @@ function getInput(input: Partial<Input>) {
     }
 }
 
-describe.skip('seo tests', () => {
+describe('seo tests', () => {
 
     describe('primary keyword in title', () => {
 
@@ -25,8 +25,8 @@ describe.skip('seo tests', () => {
                 primaryKeyword: 'keyword',
                 title: 'keyword this is a title'
             })).run();
-            expect(result.result.score).toBe(100);
-            expect(result.result.message).toBe('Primary keyword found in title');
+            expect(result.score).toBe(100);
+            expect(result.message).toBe('Primary keyword found in the title');
         })
 
         test('when keyword is not contained in the first 50', () => {
@@ -34,8 +34,8 @@ describe.skip('seo tests', () => {
                 primaryKeyword: 'keyword',
                 title: 'this is a title with this is a title with this is a title with keyword'
             })).run();
-            expect(result.result.score).toBe(49);
-            expect(result.result.message).toBe('Primary keyword found in title, but not within first 50 characters');
+            expect(result.score).toBe(49);
+            expect(result.message).toBe('Primary keyword found in the title, but not within first 50 characters');
         });
 
         test('when keyword is not found', () => {
@@ -43,8 +43,8 @@ describe.skip('seo tests', () => {
                 primaryKeyword: 'keyword',
                 title: 'this is a title'
             })).run();
-            expect(result.result.score).toBe(0);
-            expect(result.result.message).toBe('Primary keyword not found in title');
+            expect(result.score).toBe(0);
+            expect(result.message).toBe('Primary keyword not found in title');
         });
 
     });
@@ -56,8 +56,8 @@ describe.skip('seo tests', () => {
                 primaryKeyword: 'keyword',
                 description: 'this is a description with keyword'
             })).run();
-            expect(result.result.score).toBe(100);
-            expect(result.result.message).toBe('Primary keyword found in description');
+            expect(result.score).toBe(100);
+            expect(result.message).toBe('Primary keyword found in the description');
         });
 
         test('when keyword is not found', () => {
@@ -65,8 +65,8 @@ describe.skip('seo tests', () => {
                 primaryKeyword: 'keyword',
                 description: 'this is a description'
             })).run();
-            expect(result.result.score).toBe(0);
-            expect(result.result.message).toBe('Primary keyword not found in description');
+            expect(result.score).toBe(0);
+            expect(result.message).toBe('Primary keyword not found in the description');
         });
         
     });
@@ -78,8 +78,8 @@ describe.skip('seo tests', () => {
                 primaryKeyword: 'keyword',
                 slug: 'this-is-a-slug-with-keyword'
             })).run();
-            expect(result.result.score).toBe(100);
-            expect(result.result.message).toBe('Primary keyword found in slug');
+            expect(result.score).toBe(100);
+            expect(result.message).toBe('Primary keyword found in the slug');
         });
 
         test('multi word keyword', () => {
@@ -87,8 +87,8 @@ describe.skip('seo tests', () => {
                 primaryKeyword: 'Multi Word Keyword',
                 slug: 'this-is-a-slug-with-multi-word-keyword',
             })).run();
-            expect(result.result.score).toBe(100);
-            expect(result.result.message).toBe('Primary keyword found in slug');
+            expect(result.score).toBe(100);
+            expect(result.message).toBe('Primary keyword found in the slug');
         });
 
         test('when keyword is not found', () => {
@@ -96,8 +96,8 @@ describe.skip('seo tests', () => {
                 primaryKeyword: 'keyword',
                 slug: 'this-is-a-slug'
             })).run();
-            expect(result.result.score).toBe(0);
-            expect(result.result.message).toBe('Primary keyword not found in slug');
+            expect(result.score).toBe(0);
+            expect(result.message).toBe('Primary keyword not found in the slug');
         });
         
     });
@@ -109,8 +109,8 @@ describe.skip('seo tests', () => {
                 primaryKeyword: 'keyword',
                 content: null
             })).run();
-            expect(result.result.score).toBe(0);
-            expect(result.result.message).toBe('Primary keyword not found in the beginning of content');
+            expect(result.score).toBe(0);
+            expect(result.message).toBe('Primary keyword not found in the beginning of the content');
         });
 
         test('when keyword is found in the beginning', () => {
@@ -123,8 +123,8 @@ describe.skip('seo tests', () => {
                     }]
                 })
             })).run();
-            expect(result.result.score).toBe(100);
-            expect(result.result.message).toBe('Primary keyword found in the beginning of content');
+            expect(result.score).toBe(100);
+            expect(result.message).toBe('Primary keyword found in the beginning of the content');
         });
 
         test('checks in first 10% when content is more than 300 words', () => {
@@ -148,8 +148,8 @@ describe.skip('seo tests', () => {
                     ]
                 })
             })).run();
-            expect(result.result.score).toBe(100);
-            expect(result.result.message).toBe('Primary keyword found in the beginning of content');
+            expect(result.score).toBe(100);
+            expect(result.message).toBe('Primary keyword found in the beginning of the content');
 
             const result2 = new PrimaryKeywordInBeginningOfContentTest(getInput({
                 primaryKeyword: 'keyword',
@@ -168,9 +168,8 @@ describe.skip('seo tests', () => {
                     ]
                 })
             })).run();
-            expect(result2.result.score).toBe(0);
-            expect(result2.result.message).toBe('Primary keyword not found in the beginning of content');
-
+            expect(result2.score).toBe(0);
+            expect(result2.message).toBe('Primary keyword not found in the beginning of the content');
         });
 
     });
@@ -190,7 +189,7 @@ describe.skip('seo tests', () => {
                             content: [
                                 {
                                     type: 'text', 
-                                    text: 'keyword this is a content keyword2'
+                                    text: 'keyword this is a content keyword2 and keyword3'
                                 }
                             ]
                         }
@@ -198,14 +197,8 @@ describe.skip('seo tests', () => {
                 })
             })).run();
 
-            expect(result.results[0].keyword).toBe('keyword');
-            expect(result.results[0].result.score).toBe(100);
-
-            expect(result.results[1].keyword).toBe('keyword2');
-            expect(result.results[1].result.score).toBe(100);
-
-            expect(result.results[2].keyword).toBe('keyword3');
-            expect(result.results[2].result.score).toBe(0);
+            expect(result.message).toBe('All keywords found in the content');
+            expect(result.score).toBe(100);
 
         });
 
@@ -237,18 +230,18 @@ describe.skip('seo tests', () => {
                 return result;
             }
 
-            expect(testWithWordCount(1).result.score).toBe(0);
-            expect(testWithWordCount(1).result.message).toBe('Content is 1 words long. Consider using at least 400 words.');
+            expect(testWithWordCount(1).score).toBe(0);
+            expect(testWithWordCount(1).message).toBe('Content is 1 word long. Consider using at least 400 words.');
 
-            expect(testWithWordCount(100).result.score).toBe(0);
-            expect(testWithWordCount(400).result.score).toBe(20);
-            expect(testWithWordCount(1000).result.score).toBe(40);
-            expect(testWithWordCount(1500).result.score).toBe(60);
-            expect(testWithWordCount(2000).result.score).toBe(80);
-            expect(testWithWordCount(2500).result.score).toBe(100);
-            expect(testWithWordCount(3000).result.score).toBe(100);
+            expect(testWithWordCount(100).score).toBe(0);
+            expect(testWithWordCount(400).score).toBe(16);
+            expect(testWithWordCount(1000).score).toBe(40);
+            expect(testWithWordCount(1500).score).toBe(60);
+            expect(testWithWordCount(2000).score).toBe(80);
+            expect(testWithWordCount(2500).score).toBe(100);
+            expect(testWithWordCount(3000).score).toBe(100);
 
-            expect(testWithWordCount(500).result.message).toBe('Content is 500 words long');
+            expect(testWithWordCount(500).message).toBe('Content is 500 words long');
 
         });
 

@@ -397,7 +397,7 @@
     .posts-list-item {
         display: grid;
         align-items: center;
-        grid-template-columns: 1fr 1fr 1fr 1fr 150px;
+        grid-template-columns: 1fr 1fr 1fr 1fr 100px 100px;
         padding: 20px;
         border-left: 3px solid transparent;
         position: relative;
@@ -490,6 +490,24 @@
             margin-right: 3px;
             margin-bottom: 3px;
             display: inline-block;
+        }
+
+        .post-health-wrap {
+            display: inline-flex;
+            flex-direction: column;
+            .name {
+                font-size: 12px;
+                color: $color-text-light;
+                margin-right: 5px;
+            }
+            .links {
+                margin-top: 2px;
+                .global-seo-score-tag {
+                    padding: 0;
+                    background: transparent;
+                    width: initial;
+                }
+            }
         }
 
         &.active {

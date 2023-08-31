@@ -6,19 +6,62 @@ import { bringLeftHeaderToFront } from "../z-index";
 import Radio from "../../../../ReusableComponents/Radio";
 import ReactDatePicker from "react-datepicker";
 import ActionButton from "../../../../ReusableComponents/ActionButton";
-import { Post, PostVariant } from "../../../../types";
+import { PostVariant } from "../../../../types";
 import dayjs from "dayjs";
 import { toast } from "react-toastify";
 
 
 export default function PublishButton({id} : {id: number}) {
 
+    const { currentVariant, currentVariantOriginal } = usePostValues(id);
+    const { saveCurrentVariantDiff } = usePostActions(id);
     const [publisherOpen, setPublisherOpen] = useState(false);
+
+    const [isSavingPublishedPostChanges, setIsSavingPublishedPostChanges] = useState(false);
 
     function handleClick(e: React.MouseEvent<HTMLButtonElement, MouseEvent>) {
         e.stopPropagation();
         setPublisherOpen(true);
         bringLeftHeaderToFront();
+    }
+
+    function handlePublishedPostSave() {
+        setIsSavingPublishedPostChanges(true);
+
+        const diff = {
+            content: currentVariant.content_unsaved,
+            content_unsaved: null,
+        }
+
+        saveCurrentVariantDiff({
+            diff,
+            onSave: () => {
+                setIsSavingPublishedPostChanges(false);
+                toast.success("Changes saved", {autoClose: 5000});
+            }
+        });
+    }
+
+    if (currentVariant.status === 'published') {
+
+        const hasChanged = 
+            (
+                currentVariant.content_unsaved !== currentVariant.content &&
+                currentVariant.content_unsaved !== null
+            ) ||
+            currentVariant.title !== currentVariantOriginal.title;
+
+        if (!hasChanged) {
+            return null;
+        }
+
+        return <ActionButton 
+            className="medium"
+            status={isSavingPublishedPostChanges ? 'loading' : 'stale'}
+            staleName="Publish Changes"
+            loadingName="Publishing"
+            staleOnClick={handlePublishedPostSave}
+        />
     }
  
     return <Fragment>
@@ -68,21 +111,24 @@ function PublisherPopup({id, onClose} : {id: number, onClose: () => void}) {
 
         newDiff.variants = [variant as PostVariant];
 
-        savePostDiff({diff: newDiff, onSave: () => {
-            setIsPublishing(false);
-            onClose();
+        savePostDiff({
+            diff: newDiff, 
+            onSave: () => {
+                setIsPublishing(false);
+                onClose();
 
-            toast.success(
-                !publishTime ?
-                <div>Post Published. <a
-                    className="link"
-                    href={currentVariant.url}
-                    target="_blank"
-                >View</a></div> :
-                "Post scheduled"
-            , {autoClose: 5000});
+                toast.success(
+                    !publishTime ?
+                    <div>Post Published. <a
+                        className="link"
+                        href={currentVariant.url}
+                        target="_blank"
+                    >View</a></div> :
+                    "Post scheduled"
+                , {autoClose: 5000});
 
-        }});
+            }
+        });
 
     }
 

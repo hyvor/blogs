@@ -6,7 +6,6 @@ import getSubdomain from "../../logic-helpers/subdomain";
 import {usePostActions, usePostValues} from "./helpers";
 import {Language, Post, PostStatus} from "../../types";
 import Spinner from "../../ReusableComponents/Spinner";
-import AutoTranslate from "./AutoTranslate";
 import Tooltip from '../../ReusableComponents/Tooltip';
 
 export default function PostLanguageSelector({ id }: { id: number }) {
@@ -29,16 +28,6 @@ export default function PostLanguageSelector({ id }: { id: number }) {
                 )
             }
         </div>
-
-        {
-            !currentLanguage?.is_primary &&
-            <div>
-                <button className="button light small" onClick={() => setIsAutoTranslating(true)}>
-                    Auto-Translate <Magic />
-                </button>
-                { isAutoTranslating && <AutoTranslate id={id} onCancel={() => setIsAutoTranslating(false)} /> }
-            </div>
-        }
     </div>
 
 }

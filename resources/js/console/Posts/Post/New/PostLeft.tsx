@@ -2,7 +2,7 @@ import React, { useEffect, useState } from "react";
 import Editor from "../ProseMirror/Editor";
 import { usePostActions, usePostValues } from "../helpers";
 import PostLanguageSelector from "../PostLanguageSelector";
-import TitleRow from "../PostTop/TitleRow";
+import TitleRow from "./TitleRow";
 import {useLanguagesValues} from "../../../Settings/Languages/helpers";
 import { BoxArrowUpRight, InfoCircle } from "react-bootstrap-icons";
 import { getBlogUrl } from "../../../lib/blog-helpers";
@@ -11,6 +11,7 @@ import Loader from "../../../ReusableComponents/Loader";
 import PublishButton from "./Publish/PublishButton";
 import UnpublishButton from "./Publish/UnpublishButton";
 import { OutsideClick } from "../../../ReusableComponents/OutsideClick";
+import { AutoTranslateWrap } from "../AutoTranslate";
 
 export default function PostLeft({id, postViewRef} : {id: number, postViewRef: React.RefObject<HTMLDivElement>}) {
 
@@ -27,7 +28,8 @@ export default function PostLeft({id, postViewRef} : {id: number, postViewRef: R
         currentVariantOriginal.content !== currentVariant.content ||
         currentVariantOriginal.content_unsaved !== currentVariant.content_unsaved;
 
-    const hasContentChanged = currentVariant.content_unsaved !== currentVariant.content && currentVariant.content_unsaved !== null;
+    const hasPublishedContentChanged = currentVariant.content_unsaved !== currentVariant.content && 
+        currentVariant.content_unsaved !== null;
     
     const { changeEditorState } = usePostActions(id);
 
@@ -85,10 +87,13 @@ export default function PostLeft({id, postViewRef} : {id: number, postViewRef: R
                                         {
                                                            
 
-                                            currentVariant.status === 'published' && hasContentChanged ?
+                                            currentVariant.status === 'published' && hasPublishedContentChanged ?
                                                 <div className="published-edit text-edit">
                                                     <span>Editing a published post.</span>
-                                                    <div className="discard-changes" onClick={() => changeEditorState('isDiscarding', true)}>
+                                                    <div 
+                                                        className="discard-changes" 
+                                                        onClick={() => changeEditorState('isDiscarding', true)}
+                                                    >
                                                         Discard changes
                                                     </div>
                                                 </div> 
@@ -139,6 +144,10 @@ export default function PostLeft({id, postViewRef} : {id: number, postViewRef: R
 
                 <div className="post-left-editor">
                     <PostEditor id={id} />
+
+                    {
+                        !currentLanguage.is_primary && <AutoTranslateWrap id={id} />
+                    }
                 </div>
             </div>
         </div>

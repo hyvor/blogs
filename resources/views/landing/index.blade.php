@@ -636,7 +636,7 @@ c30.27,0,54.64-24.37,54.64-54.64v-1419l-363.61-362.75L1258.7,336.75z"/>
             <h4>Enriched with AI</h4>
 
             <p>
-                Translate your posts to more than 30 languages with a single click using DeepL AI.
+                DeepL integration to translate your posts to more than 30 languages with a single click, and GPT integration to generate content.
             </p>
 
         </div>
@@ -652,18 +652,95 @@ c30.27,0,54.64-24.37,54.64-54.64v-1419l-363.61-362.75L1258.7,336.75z"/>
     <div class="container">
 
 
-        <h2>A Powerful Console</h2>
+        <h2>All-in-one!</h2>
 
         <p>
-            Hyvor Blogs Console has everything you need to manage your blog easily. It is simple and initiative. The rich text editor is fun to work with. You can easily add images, embeds, code blocks, and more.
+            All the tools you need, in one place. No more switching between tools or installing plugins that break your site!
         </p>
 
-        <img
-            src="/img/landing/console.png"
-            alt="Hyvor Blogs Console"
-            width="900"
-            height="534.23"
-        />
+        <div class="console-feature">
+
+            <div class="feature-image">
+                <img 
+                    src="/img/landing/homepage/console-editor.gif" 
+                    alt="Console Editor Preview" 
+                    loading="lazy"
+                />
+            </div>
+
+            <div class="feature-data">
+                <h3>A Powerful Rich Text Editor</h3>
+
+                <p>
+                    Our carefully crafted rich text editor makes writing blog posts effortless. Add headings, blockquotes, images, embeds, code blocks, and more.
+                </p>
+            </div>
+
+        </div>
+
+        <div class="console-feature">
+
+            <div class="feature-data">
+                <h3>
+                    Real-time SEO Analysis
+                </h3>
+
+                <p>
+                    Our real-time SEO analyzer gives you suggestions to improve your post's SEO as you write. It checks for keyword usage, internal and external links, and more SEO-related factors.
+                </p>
+            </div>
+
+            <div class="feature-image">
+                <img 
+                    src="/img/landing/pricing/seo-feature.png"
+                    alt="SEO Analysis"
+                    loading="lazy"
+                />
+            </div>
+
+        </div>
+
+        <div class="console-feature">
+
+            <div class="feature-image">
+                <img 
+                    src="/img/landing/homepage/console-gpt.gif"
+                    alt="Use GPT in the Hyvor Blogs Console"
+                    loading="lazy"
+                />
+            </div>
+
+            <div class="feature-data">
+                <h3>GPT for Content Generation</h3>
+
+                <p>
+                    Chat with GPT to generate content, blog post outlines, and more. GPT is integrated directly into the editor, making it easy to use generated content in your posts.
+                </p>
+            </div>
+
+        </div>
+
+        <div class="console-feature">
+
+            <div class="feature-data">
+                <h3>
+                    Goodbye Broken Links
+                </h3>
+
+                <p>
+                    Our link analyzer checks for broken links in your posts as your write. It also runs a bi-weekly check on all your posts and notifies you via email if any links are broken.
+                </p>
+            </div>
+
+            <div class="feature-image">
+                <img 
+                    src="/img/landing/pricing/links-feature.png"
+                    alt="Link Analysis in Hyvor Blogs Console"
+                    loading="lazy"
+                />
+            </div>
+
+        </div>
 
 
     </div>

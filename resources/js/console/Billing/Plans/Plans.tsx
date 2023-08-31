@@ -9,7 +9,6 @@ import {SubscriptionFrequency, SubscriptionPlan} from "../../types";
 import Callout from "../../ReusableComponents/Callout";
 import dayjs from "dayjs";
 import {FriendlyDate} from "../../ReusableComponents/Time";
-import AppSumo from "./AppSumo";
 import {isBlogManuallyUpgraded} from "../../lib/blog-helpers";
 
 interface PlansProps {
@@ -42,8 +41,6 @@ export default function Plans({onSubscriptionCreate, onSubscriptionCancel, onSub
             </div>
         </div>
         <div className="section-content">
-
-            <AppSumo />
 
             {
                 !blog.subscription && !hasTrialEnded &&

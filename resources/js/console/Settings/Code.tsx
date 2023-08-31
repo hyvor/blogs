@@ -31,6 +31,8 @@ export default function Code() {
                         extension={'twig'}
                         value={blog.code_head || ''}
                         onChange={(v: string) => updateBlogValue('code_head', v)}
+                        allowFullScreen={true}
+                        fileName='Head code'
                     />
                 }
                 column={true}
@@ -44,6 +46,8 @@ export default function Code() {
                         extension={'twig'}
                         value={blog.code_foot || ''}
                         onChange={(v: string) => updateBlogValue('code_foot', v)}
+                        allowFullScreen={true}
+                        fileName='Foot code'
                     />
                 }
                 column={true}

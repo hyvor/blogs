@@ -6,12 +6,32 @@ import {PopupConfirm} from "../../ReusableComponents/Popup";
 import React, {useState} from "react";
 import DualSetting from "../../ReusableComponents/DualSetting";
 import api from "../../lib/api";
-import {getSubscription, hasSubscription, isInTrial} from "../../lib/blog-helpers";
+import {getSubscription, isInTrial} from "../../lib/blog-helpers";
 import billingLogic from "../../logic/billing/billingLogic";
 import Select from "../../ReusableComponents/Select";
 import {Language} from "../../types";
+import { Magic } from "react-bootstrap-icons";
+import { bringLeftHeaderToFront } from "./New/z-index";
 
-export default function AutoTranslate({id, onCancel}: { id: number, onCancel: Function}) {
+export function AutoTranslateWrap({id} : {id: number}) {
+
+    const [isAutoTranslating, setIsAutoTranslating] = useState(false);
+
+    function handleOpen() {
+        setIsAutoTranslating(true);
+        bringLeftHeaderToFront();
+    }
+
+    return <div className="auto-translate-wrap">
+        <button className="button light small" onClick={handleOpen}>
+            Auto-Translate <Magic />
+        </button>
+        { isAutoTranslating && <AutoTranslate id={id} onCancel={() => setIsAutoTranslating(false)} /> }
+    </div>
+
+}
+
+function AutoTranslate({id, onCancel}: { id: number, onCancel: Function}) {
 
     const subdomain = getSubdomain();
     const { languages } = useValues(languagesLogic({subdomain}))

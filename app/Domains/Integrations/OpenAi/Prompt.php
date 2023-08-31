@@ -11,7 +11,8 @@ use Yethee\Tiktoken\EncoderProvider;
 class Prompt
 {
 
-    const INPUT_MAX_LENGTH = 1000;
+    const INPUT_MAX_TOKENS = 1000;
+    const OUTPUT_MAX_TOKENS = 3000;
 
     const SYSTEM_PROMPT =
         'You are a helpful AI assistant. ' .
@@ -46,7 +47,8 @@ class Prompt
                     'role' => 'user',
                     'content' => $this->prompt
                 ]
-            ]
+            ],
+            'max_tokens' => self::OUTPUT_MAX_TOKENS,
         ]);
 
     }
@@ -62,7 +64,7 @@ class Prompt
         $currentPromptTokens = $this->getTokenLength($this->prompt);
         $systemPromptTokens = $this->getTokenLength(self::SYSTEM_PROMPT);
 
-        $remainingTokens = self::INPUT_MAX_LENGTH - $currentPromptTokens - $systemPromptTokens;
+        $remainingTokens = self::INPUT_MAX_TOKENS - $currentPromptTokens - $systemPromptTokens;
 
         $promptsOnPost = $this->post ?
             GptPrompt::where('post_id', $this->post->id)

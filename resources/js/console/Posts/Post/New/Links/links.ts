@@ -195,6 +195,29 @@ export function getStatusType(status: number) :
     return 'broken';
 }
 
+export function getCountsByStatus(statuses: Record<string, number>) {
+
+    const counts = {
+        total: 0,
+        ok: 0,
+        redirect: 0,
+        broken: 0,
+        ignored: 0,
+        loading: 0,
+    }
+
+    for (const link in statuses) {
+        const status = statuses[link];
+        let statusType = getStatusType(status);
+        if (statusType === 'error') statusType = 'broken';
+        counts.total++;
+        counts[statusType]++;
+    }
+
+    return counts;
+
+}
+
 export function useUpdateLinkAnalysis(id: number) {
 
     const subdomain = getSubdomain();
@@ -323,10 +346,10 @@ export function useUpdateLinkAnalysis(id: number) {
         ignoreLink: (link: Link, status: boolean = true) => {
             
             return callIgnoreLink(currentVariant.id, link.href, status)
-                .then(data => {
+                .then(res => {
                     updateCurrentPostVariantValue('link_analysis', {
                         ...currentVariantLinkAnalysis,
-                        [link.href]: data.status
+                        [link.href]: status ? LINK_STATUS.IGNORED : res.status_code
                     })
                 })
 
@@ -364,7 +387,7 @@ export function callLinkAnalysisApi(
 export function callIgnoreLink(postVariantId: number, url: string, status: boolean) {
 
     const subdomain = getSubdomain();
-    return api.patch<{status: number}>(subdomain, '/link-analysis/ignore-link', {
+    return api.patch<LinkAnalysisLink>(subdomain, '/link-analysis/ignore-link', {
         post_variant_id: postVariantId,
         url,
         status: status ? 1 : 0,

@@ -14,9 +14,9 @@ import Loader from "../../../ReusableComponents/Loader";
 import { toast } from "react-toastify";
 import languagesLogic from "../../../logic/languagesLogic";
 import getSubdomain from "../../../logic-helpers/subdomain";
-import ImageUploader from "../../../ReusableComponents/ImageUploader/ImageUploader";
 import { setGlobalImageUploader } from "../../../logic/mediaLogic";
 import { bringRightToFront } from "./z-index";
+import InfoTooltip from "../../../ReusableComponents/InfoTooltip";
 
 const settingToReadable = {
     authors: 'Authors',
@@ -106,7 +106,8 @@ export default function Settings({id}: {id: number}) {
             diff: postDiff,
             onSave: () => {
                 setIsSaving(false);
-            }
+            },
+            updateState: false
         });
     }
 
@@ -159,7 +160,10 @@ export default function Settings({id}: {id: number}) {
                     settingsType === 'basic' ?
                     <Fragment>
 
-                        <Setting title="Slug">
+                        <Setting 
+                            title="Slug"
+                            description="The unique part of the URL to identify this post"
+                        >
                             <input
                                 className="input"
                                 value={currentVariant.slug || ''}
@@ -171,7 +175,6 @@ export default function Settings({id}: {id: number}) {
 
                         <Setting 
                             title="Description"
-                            description="Summarization of the post for listing pages and search engines."
                             className="post-setting-description"
                         >
                             <textarea
@@ -186,7 +189,6 @@ export default function Settings({id}: {id: number}) {
 
                         <Setting 
                             title="Authors"
-                            description="The unique part of the URL to identify this post"
                             className="has-top-padding"
                         >
                             <PostAuthors post={post} updatePostValue={updatePostValue} />
@@ -258,8 +260,8 @@ export default function Settings({id}: {id: number}) {
                         </Setting>
 
                         <Setting 
-                            title="Featured?"
-                            description="The unique part of the URL to identify this post"
+                            title="Featured"
+                            description="Pin this post to the top of the blog in the index page."
                             className="has-top-padding"
                         >
                             <Checkbox
@@ -285,7 +287,7 @@ export default function Settings({id}: {id: number}) {
 
                             <Setting 
                                 title="Canonical URL"
-                                description=""
+                                description="Set canonical URL if the post is published elsewhere."
                             >
                                 <input
                                     className="input"
@@ -298,7 +300,7 @@ export default function Settings({id}: {id: number}) {
 
                             <Setting 
                                 title="Head Code"
-                                description="Summarization of the post for listing pages and search engines."
+                                description="Added to <head> of the post."
                                 className="code"
                             >
                                 <CodemirrorEditor
@@ -309,12 +311,14 @@ export default function Settings({id}: {id: number}) {
                                         "data-testid": "code-head-input"
                                     }}
                                     id={codemirrorUpdateId}
+                                    allowFullScreen={true}
+                                    fileName="Head Code"
                                 />
                             </Setting>
 
                             <Setting 
                                 title="Foot Code"
-                                description="Summarization of the post for listing pages and search engines."
+                                description="Added before </body> of the post."
                                 className="code"
                             >
                                 <CodemirrorEditor
@@ -325,6 +329,8 @@ export default function Settings({id}: {id: number}) {
                                         "data-testid": "code-foot-input"
                                     }}
                                     id={codemirrorUpdateId}
+                                    allowFullScreen={true}
+                                    fileName="Foot Code"
                                 />
                             </Setting>
 
@@ -422,8 +428,15 @@ const Setting: React.FC<SettingProps> = ({ title, description, className, childr
     <div className={"post-setting " + (className || "")}>
 
         <div className="post-setting-left">
-            <div className="post-setting-title">{title}</div>
-            <div style={{display: "none"}} className="post-setting-description">{description}</div>
+            <div className="post-setting-title">
+                {title}
+
+                {
+                    description &&
+                    <InfoTooltip>{description}</InfoTooltip>
+                }
+
+            </div>
         </div>
 
         <div className="post-setting-content">

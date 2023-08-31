@@ -67,3 +67,31 @@
         padding: 0 25px;
     }
 }
+
+.code-fullscreen {
+    .box-style {
+        width: 75%;
+        height: 100%;
+    }
+    .CodeMirror {
+        min-height: 780px;
+        height: 75% !important;
+        border-radius: 0%;
+        overflow: hidden;
+    }
+
+    .code-fullscreen-header {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+    }
+    .code-fullscreen-filename{
+        margin-left: 3px;
+    }
+    .fullscreen-exit-button {
+        position: relative;
+        margin-right: 0px;
+        margin-left: auto;
+    }
+
+}

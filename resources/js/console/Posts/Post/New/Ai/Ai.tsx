@@ -13,6 +13,7 @@ import Button from "../../../../ReusableComponents/Button";
 import { toast } from "react-toastify";
 import { usePostValues } from "../../helpers";
 import { appendHtml } from "../../ProseMirror/helpers";
+import UpgradeRequired from "../../../../ReusableComponents/UpgradeRequired";
 
 export default function Ai({id} : {id: number}) {
 
@@ -70,92 +71,105 @@ export default function Ai({id} : {id: number}) {
 
     }, []);
 
-    return <div className="ai-chat">
+    return  <UpgradeRequired
+        minPlan="growth" 
+        trialAllowed={true}
+        text={
+            <div>
+                AI chat is only available on the <b>Growth plan</b> and above. Upgrade now to use GPT to help you write amazing posts!
+            </div>
+        }
+    >
+    
+        <div className="ai-chat">
 
-        <div className="chat-display" ref={chatDisplayRef}>
+            <div className="chat-display" ref={chatDisplayRef}>
 
-            {
-                loadPromptsAjax.status === 'loading' ?
-                    <div className="loader-wrap"><Loader /></div> :
-                    !prompts.length && !pendingPrompt ?
-                    <div className="loader-wrap"><NoResults 
-                        text="No chat history on this post yet."
-                        imageWidth={100}
-                    /></div> :
-                    <div className="chat">
-                        {
-                            prompts.map((prompt, i) => {
+                {
+                    loadPromptsAjax.status === 'loading' ?
+                        <div className="loader-wrap"><Loader /></div> :
+                        !prompts.length && !pendingPrompt ?
+                        <div className="loader-wrap"><NoResults 
+                            text="No chat history on this post yet."
+                            imageWidth={100}
+                        /></div> :
+                        <div className="chat">
+                            {
+                                prompts.map((prompt, i) => {
 
-                                return <PromptResponse
-                                    key={prompt.id}
+                                    return <PromptResponse
+                                        key={prompt.id}
+                                        id={id}
+                                        prompt={prompt.prompt}
+                                        response={prompt.gpt_response}
+                                    />
+
+                                })
+                            }
+                            {
+                                pendingPrompt &&
+                                <PromptResponse
                                     id={id}
-                                    prompt={prompt.prompt}
-                                    response={prompt.gpt_response}
+                                    prompt={pendingPrompt.prompt}
+                                    response={null}
+                                    hasError={Boolean(pendingPrompt.error)}
                                 />
+                            }
+                        </div>
+                }
 
-                            })
-                        }
-                        {
-                            pendingPrompt &&
-                            <PromptResponse
-                                id={id}
-                                prompt={pendingPrompt.prompt}
-                                response={null}
-                                hasError={Boolean(pendingPrompt.error)}
-                            />
-                        }
+                {
+                    prompts && prompts.length > 0 &&
+                    <div className="clear-chat-wrap">
+                        <button
+                            className="button small light"
+                            onClick={handleResetChat}
+                        >
+                            <ArrowClockwise /> Reset Chat
+                        </button>
                     </div>
-            }
+                }
 
-            {
-                prompts && prompts.length > 0 &&
-                <div className="clear-chat-wrap">
-                    <button
-                        className="button small light"
-                        onClick={handleResetChat}
-                    >
-                        <ArrowClockwise /> Reset Chat
-                    </button>
-                </div>
-            }
+            </div>
+            <div className="chat-box">
 
-        </div>
-        <div className="chat-box">
+                <Prompts
+                    id={id}
+                    onSelect={handleSelect}
+                />
 
-            <Prompts
-                id={id}
-                onSelect={handleSelect}
-            />
-
-            <div className="inner">
-                <div className="textbox-wrap">
-                    <TextareaAutosize
-                        ref={inputRef}
-                        placeholder="Type your prompt here..."
-                        className="input"
-                        autoFocus={true}
-                        rows={1}
-                        value={prompt}
-                        onChange={e => setPrompt(e.target.value)}
-                        maxLength={1000}
-                        onKeyDown={handleKeyDown}
-                    />
-                </div>
-                <div className="send-wrap">
-                    <button 
-                        className="button medium"
-                        onClick={handleGenerate}
-                        disabled={Boolean(pendingPrompt && !pendingPrompt.error)}
-                    >
-                        Generate <Magic />
-                    </button>
+                <div className="inner">
+                    <div className="textbox-wrap">
+                        <TextareaAutosize
+                            ref={inputRef}
+                            placeholder="Type your prompt here..."
+                            className="input"
+                            autoFocus={true}
+                            rows={1}
+                            value={prompt}
+                            onChange={e => setPrompt(e.target.value)}
+                            maxLength={1000}
+                            onKeyDown={handleKeyDown}
+                        />
+                    </div>
+                    <div className="send-wrap">
+                        <button 
+                            className="button medium"
+                            onClick={handleGenerate}
+                            disabled={Boolean(pendingPrompt && !pendingPrompt.error)}
+                        >
+                            Generate <Magic />
+                        </button>
+                    </div>
                 </div>
             </div>
+            <div className="disclaimer">
+                This chat is powered by OpenAI's GPT-3.5 model. It may produce inaccurate results.
+            </div>
         </div>
-        <div className="disclaimer">
-            This chat is powered by OpenAI's GPT-3.5 model. It may produce inaccurate results.
-        </div>
-    </div>
+
+
+    </UpgradeRequired>
 
 }
 

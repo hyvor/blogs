@@ -51,6 +51,7 @@ const postLogic = kea<postLogicType>([
 
     actions(({values}) => ({
         set: (obj: Post) => ({obj}),
+        setVariant: (variant: PostVariant) => ({variant}),
         setOriginal: (obj: Post) => ({obj}),
         setVariantOriginal: (variant: PostVariant) => ({variant}),
         updatePostValue: (key: keyof Post, value: any) => ({key, value}),
@@ -109,19 +110,32 @@ const postLogic = kea<postLogicType>([
             typeof onSave === 'function' && onSave(response);
         },
 
-        savePostDiff: async({diff, onSave} : {diff: Partial<Post>, onSave: Function}) => {
+        savePostDiff: async(
+            {diff, onSave, updateState = true} : 
+            {diff: Partial<Post>, onSave: Function, updateState?: boolean}
+        ) => {
             const response = await updatePost(values.post, diff);
             actions.setOriginal(response)
+            if (updateState)
+                actions.set(response);
             typeof onSave === 'function' && onSave(response);
         },
 
-        saveCurrentVariantDiff: async({diff, onSave}: {diff: Partial<PostVariant>, onSave?: Function}) => {
+        saveCurrentVariantDiff: async(
+            {diff, onSave, updateState = true}: 
+            {diff: Partial<PostVariant>, onSave?: Function, updateState?: boolean}
+        ) => {
             const currentVariant = values.currentVariant;
             const response = await api.patch<PostVariant>(getSubdomain(), `/post/${values.post.id}/variant`, {
                 language_id: currentVariant.language_id,
                 ...diff
             });
             actions.setVariantOriginal(response);
+
+            if (updateState) {
+                actions.setVariant(response);
+            }
+
             typeof onSave === 'function' && onSave(response);
         },
 
@@ -174,7 +188,7 @@ const postLogic = kea<postLogicType>([
             {} as Post,
             {
                 set: (_, {obj}) => obj,
-                /* Original: (state, {variant}) => {
+                setVariant: (state, {variant}) => {
                     const copy = {...state}
                     copy.variants = copy.variants.map(
                         v => v.language_id === variant.language_id ?
@@ -182,7 +196,7 @@ const postLogic = kea<postLogicType>([
                             v
                     );
                     return copy;
-                }, */
+                },
                 updatePostValue: (state, {key, value}) => ({...state, ...{[key]: value}} as Post),
                 updatePost: (state, {update}) => ({...state, ...update} as Post),
                 updateCurrentPostVariantValue: (state, {key, value, languageId}) => {

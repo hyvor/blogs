@@ -232,7 +232,9 @@ class ConsolePostController extends Controller
         $variantUpdates = [];
 
         if ($request->has('slug'))
-            $variantUpdates['slug'] = (string)$request->string('slug');
+            $variantUpdates['slug'] = $request->input('slug') !== null ?
+                (string) $request->string('slug') :
+                null;
 
         if ($request->has('status'))
             $variantUpdates['status'] = PostStatusEnum::from((string)$request->string('status'));
