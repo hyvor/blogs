@@ -14,23 +14,6 @@
     --color-accent-active: #{$color-accent-active-dark};
 }
 
-.settings-view-wrap {
-    position:absolute;
-    top: 40px;
-    width:100%;
-    left:0;
-    z-index: 1;
-    transition:.125s transform, .125s opacity;
-    &.active {
-        pointer-events: auto;
-        opacity: 1;
-        transform:initial; // transform 0 causes child fixed elements to be relative to this element
-    }
-    &.inactive {
-        pointer-events: none;
-        opacity: 0;
-        transform:translateY(-10px);
-    }
 .post-settings-wrap {
 
     .setting-select {
@@ -254,5 +237,4 @@
             }
         }
     }
-}
 }
