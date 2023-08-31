@@ -204,7 +204,7 @@
             border-radius: 5px;
             margin: 40px auto;
             display: block;
-            box-shadow:0 0 20px 0px $color-box-shadow3;
+            box-shadow:0 0 20px 0px  rgba(0,0,0,0.2);
         }
 
         figcaption {
@@ -283,7 +283,7 @@
             border-left: 5px solid $color-accent;
             margin: 30px 0;
             &.danger {
-                border-left-color:$color-doc-red;
+                border-left-color: #f44336;
             }
             p {
                 margin:1rem 0!important;
@@ -294,8 +294,8 @@
             font-size: 85%;
             padding: 0.2em 0.4em;
             display: inline-block;
-            background-color: $color-doc-code-background;
-            color: $color-doc-code;
+            background-color: #f4f4f4;
+            color: #EB5757;
             font-family: Consolas, monospace;
             border-radius: 4px;
             line-height: normal;
@@ -345,7 +345,7 @@ pre[class*=language-].line-numbers{position:relative;padding-left:3.8em;counter-
     // custom
     &.syntax-highlighting {
         .language-tags {
-            background: $color-doc-code-background;
+            background: #f4f4f4;
             border-radius: 20px;
             padding: 20px;
             div {
@@ -357,7 +357,7 @@ pre[class*=language-].line-numbers{position:relative;padding-left:3.8em;counter-
                 padding: 2px 8px;
                 margin-right: 4px;
                 margin-bottom: 4px;
-                background: $color-doc-synthax;
+                background: #eaeaea;
                 border-radius: 20px;
                 font-size: 12px;
             }

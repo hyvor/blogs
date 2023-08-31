@@ -118,7 +118,7 @@
     border: 0;
     transition: .3s box-shadow;
     &:hover {
-        box-shadow: 0 0 10px $color-box-shadow2;
+        box-shadow: 0 0 10px $color-box-shadow;
     }
     &.active {
         background-color: $color-accent;

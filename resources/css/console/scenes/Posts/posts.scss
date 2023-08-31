@@ -6,17 +6,15 @@
     --color-background: #{$color-accent-very-light};
     --color-wrap-background: #{$color-white};
     --color-title: #{$color-black};
-    --color-accent-light: #{$color-accent-light};
     --color-text-light: #{$color-text-light};
   }
   
 [data-theme="dark"] {
-    --color-hover: #{$color-hover-dark};
+    --color-hover: #{$color-card-dark};
     --color-input: #{$color-input-dark};
     --color-background: #{$color-box-dark};
     --color-wrap-background: #{$color-card-dark};
     --color-title: #{$color-text-white};
-    --color-accent-light: #{$color-accent-light-dark};
     --color-text-light: #{$color-text-light-dark};
 }
 

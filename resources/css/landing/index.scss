@@ -54,8 +54,8 @@ body.index {
             .hero-message {
                 white-space: nowrap;
                 font-size: 12px;
-                color: $color-index-msg;
-                border: 1px solid $color-index-border;
+                color: #3F51B5;
+                border: 1px solid #3F51B5;
                 border-radius: 5px;
                 padding: 4px 8px 4px 8px;
                 position: relative;
@@ -435,7 +435,7 @@ body.index {
                 font-weight: 600;
             }
             .description {
-                color: $color-footer-item;
+                color: #555;
             }
         }
 

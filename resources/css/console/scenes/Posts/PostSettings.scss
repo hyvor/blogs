@@ -1,20 +1,16 @@
 @import '../../../colors.scss';
 
 :root {
-    --color-accent: #{$color-accent};
     --box-color: #{$color-box};
     --color-input: #{$color-input};
-    --color-accent-light: #{$color-accent-light};
     --color-hover: #{$color-hover};
     --color-accent-active: #{$color-accent-active};
   }
 
 [data-theme="dark"] {
-    --color-accent: #{$color-accent-dark};
     --box-color: #{$color-box-dark};
     --color-input: #{$color-input-dark};
-    --color-accent-light: #{$color-accent-light-dark};
-    --color-hover: #{$color-hover-dark};
+    --color-hover: #{$color-card-dark};
     --color-accent-active: #{$color-accent-active-dark};
 }
 
@@ -182,7 +178,7 @@
                 width: 300px;
                 background-color: $box-color;
                 border-radius: $box-radius;
-                box-shadow: $box-shadow;
+                box-shadow: $color-box-shadow;
                 z-index: 10;
                 padding: 15px;
                 .no-users {
@@ -258,4 +254,5 @@
             }
         }
     }
+}
 }

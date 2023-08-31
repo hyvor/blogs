@@ -37,12 +37,26 @@ $color-blue-light: #dae5ff;
 $color-purple-dark: #91598f;
 $color-purple-light: #ece0ec;
 
-// Todo: Merge with dark mode PR
 $color-white: #fff;
 $color-black: #000;
 
 $box-radius: 20px;
-$box-shadow: 0 0 30px rgba(0, 0, 0, 0.05);
+$color-box-shadow: 0 0 30px rgba(0, 0, 0, 0.05);
 $box-color: #fff;
 
-$box-shadow-popup: 0 0 10px 5px rgba(0, 0, 0, 0.05);
+$blog-card-shadow-color: #0000000d;
+
+$color-box-shadow-popup: 0 0 10px 5px rgba(0, 0, 0, 0.05);
+
+
+// Dark theme colors
+$color-box-dark: #222222;
+$color-input-dark: #818181;
+$color-card-dark: #2c2c2c;
+$color-accent-active-dark: #535353;
+$color-grey-dark: #333;
+$color-box-shadow-dark: rgba(255,255,255,0.05);
+$color-text-light-dark: #999;
+$blog-card-shadow-color-dark: #d4d4d40d;
+$color-accent-very-light-dark: #0a0a0a;
+$color-accent-light-dark: #838080;

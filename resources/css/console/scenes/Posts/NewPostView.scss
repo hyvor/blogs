@@ -1,3 +1,5 @@
+@import '../../../colors.scss';
+
 .new-post-view {
     position: fixed;
     top: 0;
@@ -66,7 +68,7 @@
                         margin-top: 5px;
                         padding: 15px;
                         background: $box-color;
-                        box-shadow: $box-shadow-popup;
+                        box-shadow: $color-box-shadow-popup;
                         border-radius: $box-radius;
                         width: 180px;
                         display: flex;

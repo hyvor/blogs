@@ -1,10 +1,8 @@
 @import '../colors.scss';
 
 :root {
-    --color-accent: #{$color-accent};
     --box-color: #{$color-box};
     --color-input: #{$color-input};
-    --color-accent-light: #{$color-accent-light};
     --color-hover: #{$color-hover};
     --color-accent-active: #{$color-accent-active};
     --color-text-input: #{$color-text-white};
@@ -12,11 +10,9 @@
   }
 
 [data-theme="dark"] {
-    --color-accent: #{$color-accent-dark};
     --box-color: #{$color-box-dark};
     --color-input: #{$color-input-dark};
-    --color-accent-light: #{$color-accent-light-dark};
-    --color-hover: #{$color-hover-dark};
+    --color-hover: #{$color-card-dark};
     --color-accent-active: #{$color-accent-active-dark};
     --color-text-input: #{$color-white};
     --color-placeholder: #{$color-grey-dark};
@@ -111,14 +107,14 @@ button {
     }
     .input-error {
         font-size: 12px;
-        color: $color-input-error;
+        color: #d64541;
     }
     .input-success {
         font-size:12px;
-        color: $color-input-success;
+        color: #3d9a51;
     }
     &.error input {
-        background: $color-input-background;
+        background: #ffe1e0;
     }
     .input-bottom {
         margin-top:5px;
@@ -143,7 +139,7 @@ button {
         min-height: 34px;
         cursor: pointer;
         &:hover {
-            box-shadow: 0 0 0px 2px var(--color-accent-light);
+            box-shadow: 0 0 0px 2px $color-accent-light;
         }
     }
     .react-select__control--is-focused {
@@ -340,7 +336,7 @@ button {
     left: 0;
     width: 100%;
     height: 100%;
-    background: $color-black-transparent;
+    background:rgba(0,0,0,0.4);
     z-index: 100000;
     display: flex;
     align-items: center;

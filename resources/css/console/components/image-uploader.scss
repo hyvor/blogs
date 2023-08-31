@@ -16,7 +16,7 @@
     .inner {
         background: $box-color;
         border-radius: $box-radius;
-        box-shadow: $box-shadow;
+        box-shadow: $color-box-shadow;
         width: 900px;
         max-width: 100%;
         height: calc(100vh - 150px);

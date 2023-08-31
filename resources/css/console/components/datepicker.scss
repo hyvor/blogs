@@ -72,6 +72,6 @@
 
     .react-datepicker__day--in-selecting-range:not(.react-datepicker__day--selected) {
         border-radius: 50%;
-        background-color: $color-date-picker-background!important;
+        background-color: rbg(239,248,255) !important;
         color: $color-black;
     }

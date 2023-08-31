@@ -21,10 +21,10 @@ footer {
 			/*margin-right: 4px;*/
 		}
 		.twitter {
-			color: $color-footer-twitter;
+			color: #26a7de;
 		}
 		.discord {
-			color: $color-footer-discord;
+			color: #7289DA;
 		}
 	}
 
@@ -55,7 +55,7 @@ footer {
 		}
 		.item {
 			font-size:14px;
-			color: $color-footer-item;
+			color: #555;
 			position: relative;
 			.link-wrap {
 				position: relative;
@@ -68,7 +68,7 @@ footer {
 					text-align: left;
 					margin-left: 4px;
 					top: 0;
-					color: $color-footer-link-wrap;
+					color: #97f9f0;
 				}
 			}
 

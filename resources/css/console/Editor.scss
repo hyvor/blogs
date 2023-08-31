@@ -15,7 +15,7 @@ $prosemirror-selected-outline: 3px solid #299af3;
 
 [data-theme="dark"] {
     --color-box: #{$color-box-dark};
-    --color-hover: #{$color-hover-dark};
+    --color-hover: #{$color-card-dark};
     --color-card: #{$color-card-dark};
     --color-input: #{$color-input-dark};
     --color-background: #{$color-black};
@@ -359,8 +359,8 @@ $prosemirror-selected-outline: 3px solid #299af3;
         }
 
         :not(pre) > code {
-            background: $color-editor-background;
-            color: $color-editor-red;
+            background: rgba(135,131,120,0.15);
+            color: #EB5757;
             border-radius: 3px;
             font-size: 85%;
             padding: 0.2em 0.4em;
@@ -433,7 +433,7 @@ $prosemirror-selected-outline: 3px solid #299af3;
                 border-radius: 50%;
                 margin-right: 5px;
                 cursor: pointer;
-                border: 1px solid $color-color-picker-border;
+                border: 1px solid #aaa;
                 position: relative;
 
                 .color-picker-view {
@@ -462,7 +462,7 @@ $prosemirror-selected-outline: 3px solid #299af3;
 
                 &.empty:before {
                     content: "Enter caption...";
-                    color: $color-color-picker-border;
+                    color: #aaa;
                     position: absolute;
                     left: 50%;
                     transform: translateX(-50%);
@@ -495,7 +495,7 @@ $prosemirror-selected-outline: 3px solid #299af3;
                 // border-radius: 20px;
                 padding: 8px;
                 width: 100%;
-                border: 1px solid $color-editor-border;
+                border: 1px solid $color-grey;
             }
 
             &.url-input, &.loading {
@@ -594,7 +594,7 @@ $prosemirror-selected-outline: 3px solid #299af3;
                 padding: 10px;
                 background: var(--color-input);
                 border-radius: 20px 20px 0 0;
-                border-bottom: 1px solid $color-editor-border-bottom;
+                border-bottom: 1px solid #dddddd;
             }
 
             .code-toolbar-labels {
@@ -638,7 +638,7 @@ $prosemirror-selected-outline: 3px solid #299af3;
             .topbar {
                 background: $color-input;
                 border-radius: 20px 20px 0 0;
-                border-bottom: 1px solid $color-editor-border-bottom;
+                border-bottom: 1px solid #dddddd;
                 font-size: 12px;
                 padding: 10px 15px;
             }
@@ -654,7 +654,7 @@ $prosemirror-selected-outline: 3px solid #299af3;
                 right: 10px;
                 width: 200px;
                 padding: 4px 10px;
-                border: 1px solid $color-color-picker-border;
+                border: 1px solid #aaa;
                 font-size: 12px;
             }
 
@@ -806,7 +806,7 @@ $prosemirror-selected-outline: 3px solid #299af3;
 
         mark {
             padding: 0.2em 0.4em;
-            background-color: $color-editor-background;
+            background-color: rgba(135,131,120,0.15);
         }
 
         table {
