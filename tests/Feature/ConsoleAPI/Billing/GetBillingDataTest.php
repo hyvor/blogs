@@ -6,6 +6,7 @@ use App\Models\AutoTranslation;
 use App\Models\GptPrompt;
 use Database\Factories\ReceiptFactory;
 use Database\Factories\SubscriptionFactory;
+use Illuminate\Database\Eloquent\Factories\Sequence;
 use Illuminate\Testing\Fluent\AssertableJson;
 
 it('gets billing data', function () {
@@ -23,11 +24,14 @@ it('gets billing data', function () {
         'chars' => 1234
     ]);
 
-    GptPrompt::create([
-        'blog_id' => $blog->id,
-        'prompt' => 'prompt',
-        'tokens_total' => 1324
-    ]);
+    GptPrompt::factory()->count(2)
+        ->state(new Sequence(
+            ['tokens_total' => 1234],
+            ['tokens_total' => 4321, 'deleted_at' => now()]
+        ))
+        ->create([
+            'blog_id' => $blog->id,
+        ]);
 
     consoleApi($blog, 'GET', '/billing')
         ->assertOk()
@@ -52,6 +56,6 @@ it('gets billing data', function () {
                 });
         })
         ->assertJsonPath('usage.auto_translate.current', 1234)
-        ->assertJsonPath('usage.gpt.current', 1324);
+        ->assertJsonPath('usage.gpt.current', 1234 + 4321);
 
 });

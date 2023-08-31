@@ -45,9 +45,10 @@ it('checks post variant links', function() {
         ],
     ])
         ->assertOk()
-        ->assertJson([
-            'https://hyvor.com' => 200,
-            'https://endpoint.com' => 404,
-        ]);
+        ->assertJsonCount(2)
+        ->assertJsonPath('0.url', 'https://hyvor.com')
+        ->assertJsonPath('0.status_code', 200)
+        ->assertJsonPath('1.url', 'https://endpoint.com')
+        ->assertJsonPath('1.status_code', 404);
 
 });
