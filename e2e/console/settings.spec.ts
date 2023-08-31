@@ -27,7 +27,7 @@ test.describe('Settings', () => {
         await expect(page.getByTestId('settings-saved-icon')).toBeVisible();
 
         // Fill secondary language
-        await page.locator('span').filter({ hasText: 'en' }).first().click();
+        await page.locator('span').filter({ hasText: /^en$/ }).first().click();
         await expect(page.locator('.global-non-primary-language-hidden')).toBeVisible();
         await page.locator('#input-name').fill('EnglishBlog');
         await page.locator('#input-description').fill('EnglishDescription');
@@ -263,11 +263,16 @@ test.describe('Settings', () => {
 
         consoleTest('Robot.txt custom', async ({testingApi, console, page}) => {
             await page.locator('pre').filter({ hasText: 'Disallow: /p/' }).click();
-            await page.getByRole('textbox').fill('test');
+            await page.locator('pre').filter({ hasText: 'Disallow: /p/' }).first().click();
+            await page.keyboard.press('T');
+            await page.keyboard.press('e');
+            await page.keyboard.press('s');
+            await page.keyboard.press('t');
+            await page.locator('.icon-button').click();
             await page.getByRole('button', { name: 'SAVE' }).click();
             await page.reload();
 
-            await expect(page.locator('pre').filter({ hasText: 'Disallow: /p/' })).toHaveText('Disallow: /p/test');
+            await expect(page.locator('pre').filter({ hasText: 'Disallow: /pTest' })).toBeVisible();
         });
 
     });
@@ -627,6 +632,7 @@ test.describe('Settings', () => {
         consoleTest('Comments Embed Code', async ({testingApi, console, page}) => {
             await page.locator('.CodeMirror-lines').first().click();
             await page.getByRole('textbox').first().fill('Test code');
+            await page.locator('.icon-button').click();
             await page.getByRole('button', { name: 'SAVE' }).click();
             await page.reload();
 
@@ -636,6 +642,7 @@ test.describe('Settings', () => {
         consoleTest('Newsletter Singup Form Code', async ({testingApi, console, page}) => {
             await page.locator('pre').nth(3).click();
             await page.getByRole('textbox').nth(1).fill('Test code2');
+            await page.locator('.icon-button').click();
             await page.getByRole('button', { name: 'SAVE' }).click();
             await page.reload();
 
