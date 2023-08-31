@@ -1,0 +1,181 @@
+.ai-chat {
+
+    height: 100%;
+    display: flex;
+    flex-direction: column;
+    min-height: 0;
+
+    .disclaimer {
+        padding: 0 25px 15px 25px;
+        font-size: 12px;
+        color: $color-text-light;
+    }
+
+    .chat-prompts {
+        margin-bottom: 10px;
+        .all-prompts {
+            .title {
+                font-weight: 600;
+                font-size: 1.2rem;
+                margin-bottom: 8px;
+            }
+            .prompt-buttons {
+                button {
+                    margin-right: 6px;
+                    margin-bottom: 6px;
+                }
+            }
+            .tip {
+                margin-top: 5px;
+                margin-bottom: 5px;
+                font-size: 12px;
+            }
+        }
+    }
+
+    .chat-display {
+        flex: 1;
+        overflow: auto;
+        .loader-wrap {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            height: 100%;
+        }
+        .single-prompt {
+            .message-wrap {
+                padding: 20px 25px;
+                display: flex;
+
+                .message-user {
+                    flex-shrink: 0;;
+                    img {
+                        width: 30px;
+                        height: 30px;
+                        border-radius: 50%;
+                    }
+                    .placeholder {
+                        display: inline-flex;
+                        align-items: center;
+                        justify-content: center;
+                        width: 30px;
+                        height: 30px;
+                        border-radius: 50%;
+                        background-color: $color-accent-light;
+                    }
+                }
+                .message {
+                    padding: 0px 12px;
+                    .buttons-wrap {
+                        margin-top: 10px;
+                        text-align: right;
+                        button {
+                            span {
+                                vertical-align: middle;
+                                margin-left: 4px;
+                            }
+                            &:not(:last-child) {
+                                margin-right: 6px;
+                            }
+                        }
+                    }
+                    &.message-input {
+                        line-height: 28px;
+                    }
+                    .error {
+                        color: $color-text-light;
+                    }
+                }
+                .message-html {
+                    line-height: 28px;
+
+                    &.message-input {
+                        white-space: pre-wrap;
+                    }
+
+                    h1, h2, h3, h4, h5 {
+                        margin-top: 0;
+                        margin-bottom: 15px;
+                    }
+
+                    h1 {
+                        font-size: 1.6rem;
+                    }
+
+                    h2 {
+                        font-size: 1.4rem;
+                    }
+
+                    h3 {
+                        font-size: 1.3rem;
+                    }
+                    h4 {
+                        font-size: 1.2rem;
+                    }
+                    h5 {
+                        font-size: 1.1rem;
+                    }
+                    h6 {
+                        font-size: 1rem;
+                    }
+
+                    p {
+                        margin-top: 0;
+                    }
+
+                    ul, ol {
+                        padding-left: 30px;
+                    }
+
+                    li {
+                        p {
+                            margin: 0;
+                        }
+                    }
+
+                    a {
+                        color: $color-link;
+                        text-decoration: underline;
+                    }
+
+                }
+                &.ai {
+                    background-color: #fafafa;
+                     .message-user img {
+                        padding: 6px;
+                        background-color: $color-accent-light;
+                    }
+                }
+            }
+        }
+
+        .clear-chat-wrap {
+            padding: 20px 25px;
+            text-align: right;
+        }
+    }
+
+    .chat-box {
+        padding: 20px 25px 15px;
+        border-top: 1px solid $color-accent-light;
+        .inner {
+            display: flex;
+            align-items: center;
+            .textbox-wrap {
+                flex: 1;
+                margin-right: 6px;
+                display: flex;
+                align-items: center;
+                textarea {
+                    min-height: initial;
+                    max-height: 250px;
+                    resize: none;
+                }
+            }
+            button {
+                padding: 8px 16px;
+            }
+        }
+    }
+
+}

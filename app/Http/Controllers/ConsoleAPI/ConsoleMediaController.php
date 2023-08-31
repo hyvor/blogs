@@ -20,14 +20,35 @@ class ConsoleMediaController extends Controller
         $request->validate([
             'limit' => 'integer',
             'offset' => 'integer',
-            'extension' => 'string',
+            'search' => 'string|nullable',
+            'extensions' => 'array|nullable',
+            'extensions.*' => 'string',
+            'type' => 'string|nullable'
         ]);
 
         $limit = $request->integer('limit', 50);
         $offset = $request->integer('offset', 0);
-        $extension = (string) $request->string('extension');
 
-        $media = MediaRepository::get($blog, $limit, $offset, $extension)
+        $search = $request->has('search') ?
+            (string) $request->string('search') :
+            null;
+
+        /** @var string[]|null $extensions */
+        $extensions = $request->input('extensions');
+
+        $type = (string) $request->string('type');
+
+        if ($type === 'image') {
+            $extensions = MediaRepository::IMAGE_EXTENSIONS;
+        }
+
+        $media = MediaRepository::get(
+            $blog,
+            $limit,
+            $offset,
+            $extensions,
+            $search,
+        )
             ->map(fn ($media) => new MediaObject($media, $blog));
 
         return response()->json($media);

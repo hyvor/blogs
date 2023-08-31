@@ -1,26 +1,28 @@
-<?php
+<?php declare(strict_types=1);
 
 namespace App\Domains\Post\Content\Nodes;
 
-use Tiptap\Core\Node;
+use Hyvor\Phrosemirror\Converters\HtmlParser\ParserRule;
+use Hyvor\Phrosemirror\Document\Node;
+use Hyvor\Phrosemirror\Types\NodeType;
 
-class Paragraph extends Node
+class Paragraph extends NodeType
 {
-    public static $name = 'paragraph';
 
-    public static $priority = 1000;
+    public string $name = 'paragraph';
+    public ?string $content = 'inline*';
+    public string $group = 'block';
 
-    public function parseHTML()
+    public function toHtml(Node $node, string $children): string
+    {
+        return "<p>$children</p>";
+    }
+
+    public function fromHtml(): array
     {
         return [
-            [
-                'tag' => 'p',
-            ],
+            new ParserRule(tag: 'p')
         ];
     }
 
-    public function renderHTML($node)
-    {
-        return ['p', 0];
-    }
 }

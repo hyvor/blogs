@@ -1,4 +1,4 @@
-<?php
+<?php declare(strict_types=1);
 
 namespace App\Domains\Delivery;
 
@@ -10,12 +10,13 @@ use App\Models\Blog;
 
 class DeliveryService
 {
-    public static function getLaravelResponse(Blog $blog, string $path)
+    public static function getLaravelResponse(Blog $blog, string $path) : mixed
     {
         $obj = self::getResponseObject($blog, $path);
         if ($obj->type === DeliveryAPITypeEnum::FILE) {
             return response($obj->content, $obj->status)
                 ->header('Content-Type', $obj->mime_type)
+                ->header('Cache-Control', isset($obj->cache_control) ? $obj->cache_control->value : 'no-cache, private')
                 ->header('Access-Control-Allow-Origin', '*');
         } elseif ($obj->type === DeliveryAPITypeEnum::REDIRECT) {
             return redirect($obj->to, $obj->status);
@@ -43,7 +44,7 @@ class DeliveryService
         $matcher = new PathMatcher($blog, $path);
         $responseObject = $matcher->getResponseObject();
 
-        if ($shouldUserCache) {
+        if ($shouldUserCache && $responseObject->cache) {
             app(CacheService::class)->blog($blog)->set($path, $responseObject);
         }
 

@@ -1,6 +1,6 @@
 
 .post-publisher {
-    position:absolute;
+    /* position:absolute;
     width:350px;
     right:0;
     z-index: 1;
@@ -14,33 +14,19 @@
         pointer-events: none;
         opacity: 0;
         transform:translateY(-10px);
-    }   
+    }    */
 
-    .post-publisher-view {
-        background: $color-box;
-        box-shadow: 0 0 40px 20px $color-box-shadow;
-        margin-left: 30px;
-        margin-top: 14px;
-        border-radius: 20px;
-        position: relative;
-        &:before {
-            position: absolute;
-            content: "";
-            right: 30px;
-            bottom: 100%;
-            border: 10px solid $color-box;
-            border-top-color: transparent;
-            border-left-color: transparent;
-            border-right-color: transparent;
-        }
+    text-align: left;
+
+    .post-publisher-inner {
+
     }
 
-    .publisher-head {
+    .publisher-title {
         padding: 15px;
         text-align: center;
         font-weight: 600;
         font-size: 16px;
-        border-bottom:1px solid $color-accent-light;
     }
 
     .publisher-select-time {
@@ -62,8 +48,25 @@
     .publisher-buttons {
         padding: 15px;
         text-align: right;
-        border-top:1px solid $color-accent-light;
         button:first-child {margin-right:6px}
+    }
+
+    .publisher-validation {
+        padding: 15px;
+        color: $color-text-light;
+        width: 300px;
+        font-size: 13px;
+        margin: auto;
+        .publisher-validation-item {
+            padding: 4px;
+            display: flex;
+            align-items: flex-start;
+            .publisher-validation-item-icon {
+                margin-right: 6px;
+                margin-top: -1px;
+                color: $color-red-dark;
+            }
+        }
     }
 
 }

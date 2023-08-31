@@ -5,6 +5,7 @@
 /public/css
 /public/build
 /storage/*.key
+/storage/debugbar
 /--coverage-php
 vendor
 .env
@@ -21,6 +22,7 @@ yarn-error.log
 /.vscode
 *LogicType.ts
 migrationChecksum.txt
+ignore
 
 /cypress/screenshots/
 cypress/videos/

@@ -1,14 +1,15 @@
-<?php
+<?php declare(strict_types=1);
 
 namespace App\Http\Controllers\DeliveryAPI;
 
 use App\Domains\Delivery\DeliveryService;
 use App\Models\Blog;
+use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 
 class DeliveryAPIController
 {
-    public function handle(Request $request, Blog $blog)
+    public function handle(Request $request, Blog $blog) : JsonResponse
     {
 
         /**
@@ -22,7 +23,7 @@ class DeliveryAPIController
          */
         $response = DeliveryService::getResponseObject(
             $blog,
-            $request->input('path') ?? '',
+            strval($request->input('path') ?? ''),
         );
 
         /**

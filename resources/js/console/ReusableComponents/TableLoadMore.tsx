@@ -1,5 +1,4 @@
 import React from 'react';
-import {KeaAjaxObject} from "kea-ajax";
 import Loader from "./Loader";
 
 interface LoadMoreProps {
@@ -13,7 +12,7 @@ export default function TableLoadMore({ hasMore, isLoading, onClick } : LoadMore
     if (!hasMore) {
         return null;
     } else if (isLoading) {
-        return <div className="global-table-load-more"><Loader size={20} /></div>
+        return <div className="global-table-load-more"><Loader size="small" /></div>
     } else {
         return <div className="global-table-load-more"><button
             className="button inactive medium"

@@ -10,7 +10,7 @@ The Data API returns the **public data** of the blog.
 
 > In addition to calling the Data API via HTTP, it is possible call it within template files using the Twig [data() function](themes-templates#fetch-data). It is the preferred method if you want data to render some UI (Ex: recent posts section) in your blog, because the `data()` function calls the Data API internally at the time of rendering the template, eliminating the need for additional HTTP requests.
 
-## Endpoints
+## Endpoints {#endpoints}
 
 **Single-object**
 
@@ -26,7 +26,7 @@ The Data API returns the **public data** of the blog.
 - `/tags`
 - `/authors`
 
-## Response Format
+## Response {#response}
 
 For single-object endpoints, the response is an object. For example, `/post` endpoint returns a `Post` object (See below for object definitions).
 
@@ -49,9 +49,9 @@ For multi-object endpoints, the response looks like this:
 ```
 
 
-## Request Query Parameters
+## Request {#request}
 
-#### Single-Object endpoints
+#### Single-Object endpoints {#single-object}
 
 For `/post`, `/tag`, and `/author`
 
@@ -66,7 +66,7 @@ For `/post`, `/tag`, and `/author`
 
 The `/blog` endpoint only takes `language` and `keys` as an input.
 
-#### Multi-object endpoints
+#### Multi-object endpoints {#multi-object}
 
 `/posts`, `/posts/search`, `/tags`, and `/authors`
 
@@ -84,8 +84,6 @@ The `/posts/search` endpoint has a required `search` param in addition to the ab
 | Param | Description                     | Type      | Default               |
 | --- |---------------------------------|-----------|-----------------------|
 | `search` | Value to search                 | `string`  |             |
-
-## Query Parameters Descriptions
 
 ### `language` param {#language}
 
@@ -129,7 +127,7 @@ A condition consists of three parts:
 - `operator`
 - `value`
 
-### Operators
+#### Operators
 
 - `=` - equals
 - `!=` - not equal
@@ -138,7 +136,7 @@ A condition consists of three parts:
 - `>=` - greater than or equals
 - `<=` - less than or equals
 
-### Values
+#### Values
 
 - `null`
 - bool: `true` or `false`
@@ -146,7 +144,7 @@ A condition consists of three parts:
     - Strings without quotes should match `[a-zA-Z_][a-zA-Z0-9_-]+` and cannot be `true`, `false`, or `null`.
 - numbers: `250`, `-250`, `2.5`
 
-### Logical Operators
+#### Logical Operators
 
 You can use Logical Operators to combine multiple conditions.
 
@@ -441,7 +439,8 @@ Let's say you only want to get the post ID and tag ID of the posts. Use `keys=id
 	"subdomain": "alex",
 	"name": "My Blog", 
 	"description": "This is my blog hosted on Hyvor Blogs",
-	"logo_url": "https://blog.hyvorblogs.io/media/icon.png",
+	"logo_url": "https://blog.hyvorblogs.io/media/logo.png",
+    "icon_url": "https://blog.hyvorblogs.io/media/icon.png",
 	"cover_url": "https://blog.hyvorblogs.io/media/cover.png",
 	"url": "https://blog.hyvorblogs.io",
 	"social": social media object,
@@ -499,7 +498,8 @@ Let's say you only want to get the post ID and tag ID of the posts. Use `keys=id
 	"id": 1000,
 	"code": "en",
 	"name": "English",
-	"is_primary": true
+	"is_primary": true,
+    "direction": "ltr"
 }
 ```
 
@@ -509,6 +509,7 @@ Let's say you only want to get the post ID and tag ID of the posts. Use `keys=id
 | `code` | `string` | Language code |
 | `name` | `string` | Language name |
 | `is_primary` | `boolean` | Whether the language is the primary language of the blog |
+| `direction` | `string` | `ltr` or `rtl` |
 
 ### Variant Object {#variant-object}
 
@@ -520,7 +521,8 @@ A variant object contains data of a language variant of a post, tag, or an autho
 		"id": 1001,
 		"code": "fr",
 		"name": "French",
-		"is_primary": false
+		"is_primary": false,
+        "direction": "ltr"
 	},
 	"url": "https://subdomain.hyvorblogs.io/fr/hello-world"
 }
@@ -569,7 +571,7 @@ A pagination object is included in all multi-object endpoints (`/posts`, `/autho
 }
 ```
 
-## Error Handling
+## Error Handling {#error-handling}
 
 In case of an error, the HTTP status code will be a non-200 status code. 
 
@@ -593,7 +595,7 @@ These HTTP codes are possible:
 
 5xx errors means something is wrong on our side. Check our [status page](https://blogs.hyvor.com) for any downtimes. If the issue persists, [contact us](support).
 
-## Pages
+## Pages {#pages}
 
 We do not have separate endpoints to fetch [Pages](writing#posts-pages).
 

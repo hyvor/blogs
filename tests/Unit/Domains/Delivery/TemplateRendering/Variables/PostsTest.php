@@ -162,3 +162,28 @@ it('sets featured posts first in _post', function () {
 
     expect($responseObject->content)->toBe('featured');
 });
+
+it('sets featured posts', function() {
+
+    $blog = blogWithAccessLanguageAndRoutes();
+
+    addPosts($blog, 3, [], ['status' => 'published']);
+
+    $post = $blog->posts[2];
+    $post->update(['is_featured' => true]);
+
+    $content = '{{ _featured_posts[0].title }}';
+
+    ThemeFilesRepository::createOrUpdateFile(
+        $blog,
+        ThemeFileFolderEnum::TEMPLATES,
+        'index.twig',
+        $content,
+    );
+
+    $pathMatcher = new PathMatcher($blog, '/');
+    $responseObject = $pathMatcher->getResponseObject();
+
+    expect($responseObject->content)->toBe($post->variants[0]->title);
+
+});

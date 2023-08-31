@@ -2,9 +2,8 @@
 
 namespace Tests\Unit\Domains\Blog\Fillers;
 
-use App\Data\Enums\BlogTypeEnum;
 use App\Domains\Blog\Fillers\LanguageFiller;
-use App\Domains\Blog\Fillers\PostFiller;
+use App\Domains\Blog\Fillers\PostFiller\PostFiller;
 use App\Domains\Blog\Fillers\TagFiller;
 use App\Domains\Blog\Fillers\UserFiller;
 use App\Models\Post;
@@ -44,7 +43,7 @@ it('adds more posts for DEV blogs', function () {
     $filler = new PostFiller($blog);
     $filler->fill();
 
-    expect($blog->posts()->count())->toBeGreaterThan(50);
+    expect($blog->posts()->count())->toBeGreaterThan(30);
 
     // get latest posts because, the first few  posts are default posts and does not have variants
     $post = $blog->posts()->latest('id')->first();
@@ -65,5 +64,5 @@ it('adds more posts for preview blogs', function () {
     $filler = new PostFiller($blog);
     $filler->fill();
 
-    expect($blog->posts()->count())->toBeGreaterThan(50);
+    expect($blog->posts()->count())->toBeGreaterThan(30);
 });

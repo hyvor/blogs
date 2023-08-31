@@ -28,5 +28,7 @@ class ConsoleBillingController
         if ($subscription) {
             SubscriptionService::cancelSubscription($subscription, now());
         }
+
+        return response()->json();
     }
 }

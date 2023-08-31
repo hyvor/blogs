@@ -3,7 +3,7 @@
     --color-box-shadow: #{$color-box-shadow};
     --color-text-light: #{$color-black};
   }
-  
+
 [data-theme="dark"] {
     --color-box-shadow: #{$color-box-shadow-dark};
     --color-text-light: #{$color-text-light-dark};
@@ -23,7 +23,7 @@
     bottom: 0;
     padding: 45px;
     background: var(--color-box-shadow);
-    z-index: 1000;
+    z-index: 1000000;
     overflow-y: auto;
 
     &.center {
@@ -35,6 +35,7 @@
     .popup {
         width:400px;
         margin: auto;
+        max-width: 100%;
     }
 
     .popup-footer-single {
@@ -75,4 +76,34 @@
     .popup-body-default {
         padding: 0 25px;
     }
+}
+
+.code-fullscreen {
+    .box-style {
+        width: 75%;
+        height: 100%;
+        overflow: hidden;
+    }
+    .CodeMirror {
+        min-height: 780px;
+        height: 780px;
+        border-radius: 0%;
+        overflow: hidden;
+        z-index: 10000000;
+    }
+
+    .code-fullscreen-header {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+    }
+    .code-fullscreen-filename{
+        margin-left: 3px;
+    }
+    .fullscreen-exit-button {
+        position: relative;
+        margin-right: 0px;
+        margin-left: auto;
+    }
+
 }

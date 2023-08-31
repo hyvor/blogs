@@ -6,6 +6,7 @@ use App\Data\Enums\BlogHostingAtEnum;
 use App\Data\Enums\BlogTypeEnum;
 use App\Data\Enums\ColorModeDefaultEnum;
 use App\Data\Enums\ColorModesEnum;
+use App\Data\Enums\LinkAnalysisEmailReportEnum;
 use App\Data\Enums\SeoExternalLinksFollowEnum;
 use App\Models\Blog;
 
@@ -29,6 +30,7 @@ class BlogObject
     public ?string $logo_url;
 
     public ?string $cover_url;
+    public ?string $icon_url;
 
     // meta
     public bool $embeddable;
@@ -73,7 +75,12 @@ class BlogObject
 
     public ?string $syntax_theme;
 
+    public bool $heading_anchors;
+
     public bool $flashload;
+
+    public bool $link_analysis_enabled;
+    public LinkAnalysisEmailReportEnum $link_analysis_email_report;
 
     /**
      * @var BlogVariantObject[]
@@ -95,6 +102,7 @@ class BlogObject
 
         $this->logo_url = $meta->logo_url;
         $this->cover_url = $meta->cover_url;
+        $this->icon_url = $meta->icon_url;
 
         $this->embeddable = $meta->embeddable;
         $this->embedding_domains = $meta->embedding_domains;
@@ -124,7 +132,12 @@ class BlogObject
         $this->syntax_line_numbers = (bool) $meta->syntax_line_numbers;
         $this->syntax_theme = $meta->syntax_theme;
 
+        $this->heading_anchors = (bool) $meta->heading_anchors;
+
         $this->flashload = (bool) $meta->flashload;
+
+        $this->link_analysis_enabled = (bool) $meta->link_analysis_enabled;
+        $this->link_analysis_email_report = LinkAnalysisEmailReportEnum::tryFrom($meta->link_analysis_email_report);
 
         $this->variants = $blog->variants->map(function ($variant) use ($blog) {
             return new BlogVariantObject($variant);

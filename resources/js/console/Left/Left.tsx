@@ -6,12 +6,12 @@ import NavLink from '../ReusableComponents/NavLink';
 import userBlogsLogic from '../logic/userBlogsLogic';
 import {
     BoxArrowUpRight,
-    Chat, Coin,
+    Coin, Discord,
     Exclamation,
     Files, Gear,
-    House, Megaphone,
+    House, InfoCircle, Megaphone,
     Palette,
-    Pencil,
+    Pencil, Plugin, Tools,
 } from 'react-bootstrap-icons';
 import dayjs from 'dayjs';
 import { appConfig } from "../helpers";
@@ -54,7 +54,7 @@ function LeftInner({subdomain} : {subdomain: string}) {
         const storedPreference = localStorage.getItem('prefersDarkMode');
         document.querySelector('body')?.setAttribute('data-theme', storedPreference == 'true' ? 'dark' : 'light');
         setIsDark(storedPreference === 'true');
-        
+
       }, []);
 
     const handleDarkMode = (val: boolean | ((prevState: boolean) => boolean)) => {
@@ -62,7 +62,7 @@ function LeftInner({subdomain} : {subdomain: string}) {
         document.querySelector('body')?.setAttribute('data-theme', val ? 'dark' : 'light');
         setIsDark(val);
     }
-    
+
 
     return <div id="left">
         <div id="left-header" className="box">
@@ -131,16 +131,34 @@ function LeftInner({subdomain} : {subdomain: string}) {
                       }
             />
 
+
+            <LeftLink
+                path="/integrations"
+                icon={<Plugin />}
+                name="Integrations"
+                permission={UserPermissions.canAccessSettings}
+            />
+
+            <LeftLink
+                path="/tools"
+                icon={<Tools />}
+                name="Tools"
+                permission={UserPermissions.canAccessSettings}
+                extra={
+                    <span className="global-tag blue">NEW</span>
+                }
+            />
+
             <LeftLink path="/settings" icon={<Gear />} name="Settings" permission={UserPermissions.canAccessSettings} />
 
         </div>
 
 
         <div id="left-bottom">
-        <div className='dark-mode-row'> 
-            Dark mode 
+        <div className='dark-mode-row'>
+            Dark mode
             <div className='dark-mode-switch'>
-                <Switch 
+                <Switch
                     checked={isDark}
                     onChange={handleDarkMode}
                 />
@@ -154,6 +172,28 @@ function LeftInner({subdomain} : {subdomain: string}) {
             }}>
                 <Megaphone /> Changes & Feedback <span id="fb-update-badge"></span>
             </div>
+
+            <a className="bottom-item" href="https://discord.gg/2WRJxQB" target="_blank">
+                <span className="icon discord"><Discord /></span>Join our Discord
+            </a>
+
+            <a className="bottom-item" href="/docs" target="_blank">
+                <span className="icon"><InfoCircle /></span>Docs
+            </a>
+
+
+            <a
+                className="bottom-item"
+                onClick={() => {
+                    window.postMessage({
+                        target: 'FeaturebaseWidget',
+                        data: { action: 'toggleWidget' },
+                    })
+                }}
+            >
+                <span className="icon"><Megaphone /></span>Changelog <span id="fb-update-badge"></span>
+            </a>
+
         </div>
 
     </div>

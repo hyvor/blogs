@@ -165,33 +165,40 @@ return [
     */
 
     'defaults' => [
-        'supervisor-1' => [
+        // default queue
+        'supervisor-main' => [
             'connection' => 'redis',
             'queue' => ['default'],
             'balance' => 'auto',
-            'maxProcesses' => 1,
+            'maxProcesses' => 10,
+            'balanceMaxShift' => 1,
+            'balanceCooldown' => 3,
             'maxTime' => 0,
             'maxJobs' => 0,
             'memory' => 128,
             'tries' => 1,
-            'timeout' => 60,
+            'timeout' => 3600,
             'nice' => 0,
         ],
+        // use for reports (link analysis, weekly reports, etc.)
+        'supervisor-reports' => [
+            'connection' => 'redis',
+            'queue' => ['reports'],
+            'balance' => 'auto',
+            'maxProcesses' => 4,
+            'balanceMaxShift' => 1,
+            'balanceCooldown' => 3,
+            'maxTime' => 0,
+            'maxJobs' => 0,
+            'memory' => 128,
+            'tries' => 1,
+            'timeout' => 60 * 60 * 4,
+            'nice' => 0,
+        ]
     ],
 
     'environments' => [
-        'production' => [
-            'supervisor-1' => [
-                'maxProcesses' => 10,
-                'balanceMaxShift' => 1,
-                'balanceCooldown' => 3,
-            ],
-        ],
-
-        'local' => [
-            'supervisor-1' => [
-                'maxProcesses' => 3,
-            ],
-        ],
+        'production' => [],
+        'local' => [],
     ],
 ];

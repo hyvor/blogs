@@ -16,6 +16,7 @@ use App\Domains\User\Events\UserVariantCreatedEvent;
 use App\Domains\User\Events\UserVariantDeletedEvent;
 use App\Domains\User\Events\UserVariantUpdatedEvent;
 use App\Domains\User\Mail\InviteUserMail;
+use App\Exceptions\SafetyException;
 use App\Helpers\CollectionWithTotal;
 use App\Models\Blog;
 use App\Models\Language;
@@ -277,7 +278,7 @@ class UserRepository
         return User::find($id);
     }
 
-    public static function getOwnerOfBlog(Blog $blog): User
+    public static function getOwnerOfBlog(Blog $blog): ?User
     {
         return User::where('blog_id', $blog->id)
             ->where('role', UserRoleEnum::OWNER)
@@ -313,6 +314,20 @@ class UserRepository
         return UserVariant::where('language_id', $languageId)
             ->where('user_id', $userId)
             ->first();
+    }
+
+    public static function getOwnerEmailAddress(Blog $blog) : ?string
+    {
+        if (!$blog->hyvor_user_id) {
+            return null;
+        }
+        $hyvorUser = Userbase::fromId($blog->hyvor_user_id, true);
+
+        if (!$hyvorUser) {
+            return null;
+        }
+
+        return $hyvorUser->email;
     }
 
     public static function sendInviteEmail(User $user)

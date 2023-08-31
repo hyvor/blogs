@@ -1,4 +1,4 @@
-<?php
+<?php declare(strict_types=1);
 
 namespace App\Domains\Cache\Listeners;
 
@@ -27,6 +27,7 @@ use App\Domains\Tag\Events\TagVariantDeletedEvent;
 use App\Domains\Tag\Events\TagVariantUpdatedEvent;
 use App\Domains\Theme\Events\AssetEditedEvent;
 use App\Domains\Theme\Events\ConfigEditedEvent;
+use App\Domains\Theme\Events\LangEditedEvent;
 use App\Domains\Theme\Events\StylesEditedEvent;
 use App\Domains\Theme\Events\TemplateEditedEvent;
 use App\Domains\User\Events\UserCreatedEvent;
@@ -87,8 +88,10 @@ class ClearCacheSubscriber
         $events->listen(LanguageChangedEvent::class, [static::class, 'onLanguageEvent']);
         $events->listen(RouteChangedEvent::class, [static::class, 'onRouteEvent']);
 
-        $events->listen(ConfigEditedEvent::class, [static::class, 'onConfigEditedEvent']);
-        $events->listen(TemplateEditedEvent::class, [static::class, 'onTemplateEditedEvent']);
+        $events->listen(ConfigEditedEvent::class, [static::class, 'onFileEditedEvent']);
+        $events->listen(TemplateEditedEvent::class, [static::class, 'onFileEditedEvent']);
+        $events->listen(LangEditedEvent::class, [static::class, 'onFileEditedEvent']);
+
     }
 
     private function subscribeSingleEvents(Dispatcher $events): void
@@ -107,23 +110,30 @@ class ClearCacheSubscriber
     }
 
 
-    public function onBlogUpdate(BlogUpdatedEvent $event)
+    public function onBlogUpdate(BlogUpdatedEvent $event) : void
     {
         $this->clearTemplateCache($event->blog);
     }
 
-    public function onBlogVariantUpdate(BlogVariantUpdatedEvent $event)
+    public function onBlogVariantUpdate(BlogVariantUpdatedEvent $event) : void
     {
-        $this->clearTemplateCache($event->variant->blog);
+        $blog = $event->variant->blog;
+        if ($blog) $this->clearTemplateCache($blog);
     }
 
-    public function onPostUpdate(PostUpdatedEvent $event)
+    public function onPostUpdate(PostUpdatedEvent $event) : void
     {
         $post = $event->post;
         $blog = $post->blog;
 
+        if (!$blog)
+            return;
+
         $primaryLanguage = LanguageRepository::getPrimaryLanguage($blog);
         $primaryVariant = PostRepository::getPostVariantByPostIdAndLanguageId($post->id, $primaryLanguage->id);
+
+        if (!$primaryVariant)
+            return;
 
         if ($primaryVariant->status !== PostStatusEnum::PUBLISHED) {
             return;
@@ -132,15 +142,20 @@ class ClearCacheSubscriber
         $this->clearTemplateCache($blog);
     }
 
-    public function onPostDelete(PostDeletedEvent $event)
+    public function onPostDelete(PostDeletedEvent $event) : void
     {
-        $this->clearTemplateCache($event->post->blog);
+        if ($blog = $event->post->blog) $this->clearTemplateCache($blog);
     }
 
-    public function onPostVariantUpdate(PostVariantUpdatedEvent $event)
+    public function onPostVariantUpdate(PostVariantUpdatedEvent $event) : void
     {
         $variant = $event->variant;
-        $blog = $variant->post->blog;
+        $post = $variant->post;
+        if (!$post) return;
+
+        $blog = $post->blog;
+        if (!$blog) return;
+
         $variantOld = $event->variantOld;
 
         /**
@@ -156,82 +171,94 @@ class ClearCacheSubscriber
         }
     }
 
-    public function onPostVariantDelete(PostVariantDeletedEvent $event)
+    public function onPostVariantDelete(PostVariantDeletedEvent $event) : void
     {
-        $this->clearTemplateCache($event->variant->post->blog);
+        $post = $event->variant->post;
+        if (!$post) return;
+        if ($blog = $post->blog) $this->clearTemplateCache($blog);
     }
 
-    public function onUserEvent(UserCreatedEvent|UserUpdatedEvent|UserDeletedEvent $event)
+    public function onUserEvent(
+        UserCreatedEvent|UserUpdatedEvent|UserDeletedEvent $event
+    ) : void
     {
-        $this->clearTemplateCache($event->user->blog);
+        if ($blog = $event->user->blog) $this->clearTemplateCache($blog);
     }
 
-    public function onUserVariantEvent(UserVariantUpdatedEvent|UserVariantDeletedEvent $event)
+    public function onUserVariantEvent(UserVariantUpdatedEvent|UserVariantDeletedEvent $event) : void
     {
-        $this->clearTemplateCache($event->variant->user->blog);
+        $user = $event->variant->user;
+        if (!$user) return;
+        if ($blog = $user->blog) $this->clearTemplateCache($blog);
     }
 
-    public function onTagEvent(TagCreatedEvent|TagUpdatedEvent|TagDeletedEvent $event)
+    public function onTagEvent(TagCreatedEvent|TagUpdatedEvent|TagDeletedEvent $event) : void
     {
-        $this->clearTemplateCache($event->tag->blog);
+        if ($blog = $event->tag->blog) $this->clearTemplateCache($blog);
     }
 
-    public function onTagVariantEvent(TagVariantUpdatedEvent|TagVariantDeletedEvent $event)
+    public function onTagVariantEvent(TagVariantUpdatedEvent|TagVariantDeletedEvent $event) : void
     {
-        $this->clearTemplateCache($event->variant->tag->blog);
+        $tag = $event->variant->tag;
+        if (!$tag) return;
+        if ($blog = $tag->blog) $this->clearTemplateCache($blog);
     }
 
-    public function onNavigationEvent(NavigationChangedEvent $event)
+    public function onNavigationEvent(NavigationChangedEvent $event) : void
     {
-        $this->clearTemplateCache($event->navigation->blog);
+        if ($blog = $event->navigation->blog) $this->clearTemplateCache($blog);
     }
-    public function onNavigationVariantEvent(NavigationVariantChangedEvent $event)
+    public function onNavigationVariantEvent(NavigationVariantChangedEvent $event) : void
     {
-        $this->clearTemplateCache($event->variant->navigation->blog);
-    }
-
-    public function onLanguageEvent(LanguageChangedEvent $event)
-    {
-        $this->clearTemplateCache($event->language->blog);
+        $nav = $event->variant->navigation;
+        if (!$nav) return;
+        if ($blog = $nav->blog) $this->clearTemplateCache($blog);
     }
 
-    public function onRouteEvent(RouteChangedEvent $event)
+    public function onLanguageEvent(LanguageChangedEvent $event) : void
     {
-        $this->clearTemplateCache($event->route->blog);
+        if ($blog = $event->language->blog) $this->clearTemplateCache($blog);
     }
 
-    public function onTemplateEditedEvent(TemplateEditedEvent $event)
+    public function onRouteEvent(RouteChangedEvent $event) : void
     {
-        $this->clearTemplateCache($event->file->blog);
+        if ($blog = $event->route->blog) $this->clearTemplateCache($blog);
     }
 
-    public function onConfigEditedEvent(ConfigEditedEvent $event)
+    public function onFileEditedEvent(
+        TemplateEditedEvent | ConfigEditedEvent | LangEditedEvent $event
+    ) : void
     {
-        $this->clearTemplateCache($event->file->blog);
+        $blog = $event->file->blog;
+        if ($blog)
+            $this->clearTemplateCache($blog);
     }
 
-    public function onMediaEvent(MediaCreatedEvent|MediaDeletedEvent $event)
+    public function onMediaEvent(MediaCreatedEvent|MediaDeletedEvent $event) : void
     {
         $media = $event->media;
         $blog = $media->blog;
+
+        if (!$blog) return;
 
         $path = PermalinkRepository::getMediaPermalink($media, $blog, true);
         $this->clearSingleCache($blog, $path);
     }
 
-    public function onAssetEdit(AssetEditedEvent $event)
+    public function onAssetEdit(AssetEditedEvent $event) : void
     {
         $path = PermalinkRepository::getAssetPermalink($event->name, $event->blog, true);
         $this->clearSingleCache($event->blog, $path);
     }
 
-    public function onStylesEdit(StylesEditedEvent $event)
+    public function onStylesEdit(StylesEditedEvent $event) : void
     {
         $this->clearSingleCache($event->blog, '/styles.css');
     }
 
-    public function onRedirectEvent(RedirectChangedEvent $event)
+    public function onRedirectEvent(RedirectChangedEvent $event) : void
     {
-        $this->clearSingleCache($event->redirect->blog, $event->redirect->path);
+        if ($blog = $event->redirect->blog)
+            $this->clearSingleCache($blog, $event->redirect->path);
     }
 }

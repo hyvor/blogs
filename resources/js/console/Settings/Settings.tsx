@@ -14,7 +14,7 @@ import SettingsGeneral from './General/SettingsGeneral';
 import Hosting from './Hosting';
 import SEO from './SEO';
 import ColorMode from "./ColorMode";
-import Highlight from "./Highlight";
+import PostContentSettings from "./PostContentSettings";
 import getSubdomain from "../logic-helpers/subdomain";
 import Webhooks from "./Webhooks/Webhooks";
 import ApiKeys from "./ApiKeys/ApiKeys";
@@ -27,44 +27,14 @@ import { getUserBlogBlog } from "../logic-helpers/blog";
 import Shopify from "./Integrations/Shopify";
 import Select from '../ReusableComponents/Select';
 import { components } from 'react-select';
-import Export from "./Export/Export";
-
-
-interface SettingsSelectProps {
-    name: string,
-    value: string | number | null,
-    options: {
-        value: string | number;
-        label: string | ReactNode
-    }[],
-    setPannel: Function,
-}
-
-function SettingsSelect({ name, value, options, setPannel }: SettingsSelectProps) {
-    const SingleValue = (p: any) => {
-        const value = p.data.label.props ? p.data.label.props.name : p.data.label;
-        return <components.SingleValue {...p}>
-            <div className='posts-filter-row'>
-                <div className='posts-filter-name'>{name}</div>
-                <div className='posts-filter-value'>{value}</div>
-            </div>
-        </components.SingleValue>
-    };
-
-    const valueCalculated = options.find(i => i.value === value) || options[0];
-
-    return <Select
-        value={valueCalculated}
-        options={options}
-        onChange={(v: any) => setPannel(v.value)}
-        components={{ SingleValue }}
-    />
-}
+import SettingsLink from '../ReusableComponents/SettingsLink';
+import SettingsSelect from '../ReusableComponents/SettingsSelect';
+import { ArrowBarRight, ArrowBarUp, CardText, ChatText, CodeSlash, CursorText, Database, Exclamation, ExclamationTriangle, FileEarmarkPlay, Globe, Key, Lightbulb, List, Lock, People, PeopleFill, Router, SearchHeart, Send, Tag } from 'react-bootstrap-icons';
 
 export default function Settings({ type }: { type: string | undefined }) {
     const blog = getUserBlogBlog();
     const [pannel, setPannel] = useState(type || 'general');
-    const pannelOption = [
+    let pannelOption = [
         { value: 'general', label: 'General' },
         { value: 'users', label: 'Users' },
         { value: 'tags', label: 'Tags' },
@@ -85,7 +55,9 @@ export default function Settings({ type }: { type: string | undefined }) {
         { value: 'danger', label: 'Danger Zone' },
     ]
 
-    console.log('Pannel', pannel);
+    if (blog.integration === 'shopify') {
+        pannelOption = [{ value: 'shopify', label: 'Shopify Guide' }, ...pannelOption];
+    }
 
     let Type = () => <SettingsGeneral />;
     switch (pannel) {
@@ -116,9 +88,6 @@ export default function Settings({ type }: { type: string | undefined }) {
         case 'comments':
             Type = () => <Comments />
             break;
-        case 'export':
-            Type = () => <Export />;
-            break;
         case 'danger':
             Type = () => <Danger />;
             break;
@@ -131,8 +100,8 @@ export default function Settings({ type }: { type: string | undefined }) {
         case 'color-mode':
             Type = () => <ColorMode />;
             break;
-        case 'highlight':
-            Type = () => <Highlight />;
+        case 'post-content':
+            Type = () => <PostContentSettings />;
             break;
         case 'webhooks':
             Type = () => <Webhooks />
@@ -154,34 +123,40 @@ export default function Settings({ type }: { type: string | undefined }) {
 
                 {
                     blog.integration === 'shopify' &&
-                    <SettingsLink path="/shopify" name="Shopify Guide" dividing={true} setPannel={setPannel} />
+                    <SettingsLink
+                        path="/shopify"
+                        name="Shopify Guide"
+                        dividing={true}
+                        setPannel={setPannel}
+                        pannelName="shopify"
+                    />
                 }
 
-                <SettingsLink path="" name="General" setPannel={setPannel} />
-                <SettingsLink path="/users" name="Users" setPannel={setPannel} />
-                <SettingsLink role={UserRole.EDITOR} path="/tags" name="Tags" setPannel={setPannel} />
-                <SettingsLink path="/languages" name="Languages" setPannel={setPannel} />
+                <SettingsLink path="" name="General" setPannel={setPannel} icon={<List />}/>
+                <SettingsLink path="/users" name="Users" setPannel={setPannel} icon={<People />}/>
+                <SettingsLink role={UserRole.EDITOR} path="/tags" name="Tags" setPannel={setPannel} icon={<Tag />}/>
+                <SettingsLink path="/languages" name="Languages" setPannel={setPannel} icon={<Globe />}/>
 
                 <div />
 
-                <SettingsLink path="/hosting" name="Hosting" setPannel={setPannel} />
-                <SettingsLink path="/seo" name="SEO" setPannel={setPannel} />
-                <SettingsLink path="/color-mode" name="Light & Dark Modes" pannelName={'color-mode'} setPannel={setPannel} />
-                <SettingsLink path="/navigation" name="Navigation" setPannel={setPannel} />
-                <SettingsLink path="/media" name="Media" setPannel={setPannel} />
-                <SettingsLink path="/redirects" name="Redirects" setPannel={setPannel} />
-                <SettingsLink path="/routes" name="Routes" setPannel={setPannel} />
-                <SettingsLink path="/api-keys" name="API Keys" setPannel={setPannel} pannelName={'api-keys'} />
-                <SettingsLink path="/webhooks" name="Webhooks" setPannel={setPannel} />
+                <SettingsLink path="/hosting" name="Hosting" setPannel={setPannel} icon={<Database />}/>
+                <SettingsLink path="/seo" name="SEO" setPannel={setPannel} icon={<SearchHeart />}/>
+                <SettingsLink path="/color-mode" name="Light & Dark Modes" pannelName={'color-mode'} setPannel={setPannel} icon={<Lightbulb />}/>
+                <SettingsLink path="/post-content" name="Post Content" pannelName={'post-content'} setPannel={setPannel} icon={<CursorText />}/>
+                <SettingsLink path="/navigation" name="Navigation" setPannel={setPannel} icon={<ArrowBarRight />}/>
+                <SettingsLink path="/media" name="Media" setPannel={setPannel} icon={<FileEarmarkPlay />}/>
+                <SettingsLink path="/redirects" name="Redirects" setPannel={setPannel} icon={<ArrowBarUp />}/>
+                <SettingsLink path="/routes" name="Routes" setPannel={setPannel} icon={<Router />}/>
 
                 <div />
-                <SettingsLink path="/comments" name="Comments & Newsletter" pannelName={'comments'} setPannel={setPannel} />
-                <SettingsLink path="/code" name="Custom Code" pannelName={'code'} setPannel={setPannel} />
-                <SettingsLink path="/highlight" name="Syntax Highlighting" pannelName={'highlight'} setPannel={setPannel} />
+                <SettingsLink path="/comments" name="Comments & Newsletter" pannelName={'comments'} setPannel={setPannel} icon={<ChatText />}/>
+                <SettingsLink path="/code" name="Custom Code" pannelName={'code'} setPannel={setPannel} icon={<CodeSlash />}/>
+                <SettingsLink path="/api-keys" name="API Keys" setPannel={setPannel} pannelName={'api-keys'} icon={<Key />}/>
+                <SettingsLink path="/webhooks" name="Webhooks" setPannel={setPannel} icon={<Send />}/>
 
                 <div />
-                <SettingsLink path="/export" name="Export" pannelName={'export'} setPannel={setPannel} />
-                <SettingsLink role={UserRole.OWNER} path="/danger" pannelName={'danger'} name="Danger Zone" setPannel={setPannel} />
+
+                <SettingsLink role={UserRole.OWNER} path="/danger" pannelName={'danger'} name="Danger Zone" setPannel={setPannel} icon={<ExclamationTriangle />}/>
             </div>
         </div>
         <div className="box box-right settings-right">
@@ -193,66 +168,5 @@ export default function Settings({ type }: { type: string | undefined }) {
             <Type />
         </div>
     </div>
-
-}
-
-interface SettingsLinkProps {
-    path: string,
-    role?: UserRole.OWNER | UserRole.ADMIN | UserRole.EDITOR,
-    name: string,
-    dividing?: boolean,
-    pannelName?: string,
-    setPannel: Function
-}
-
-function SettingsLink({ path, role = UserRole.ADMIN, name, dividing = false, setPannel, pannelName }: SettingsLinkProps) {
-
-    const subdomain = getSubdomain();
-    const settingsPrefix = `/console/${subdomain}/settings`;
-    const { push } = useActions(router);
-
-    const userRole = UserPermissions.getRole();
-    const ref = useRef<HTMLAnchorElement | null>(null);
-
-    const roles = {
-        [UserRole.EDITOR]: [UserRole.EDITOR],
-        [UserRole.ADMIN]: [UserRole.EDITOR, UserRole.ADMIN],
-        [UserRole.OWNER]: [UserRole.EDITOR, UserRole.ADMIN, UserRole.OWNER]
-    }
-
-    let cls = undefined;
-    // @ts-ignore
-    const availableRoles = roles[userRole];
-    if (!availableRoles || availableRoles.indexOf(role) < 0) {
-        cls = 'global-no-permissions'
-    }
-
-    useEffect(() => {
-        /**
-         * Redirect the user to Blog Preview when accessing unauthorized routes via the direct URL
-         * Just a simple check
-         */
-        const link = ref.current as HTMLAnchorElement
-        if (link.classList.contains('global-no-permissions') && link.classList.contains('active')) {
-            push('/console/' + subdomain);
-        }
-    }, []);
-
-    return <Fragment>
-        <NavLink
-            ref={ref}
-            href={settingsPrefix + path}
-            exact={1}
-            className={cls}
-            onClick={() => {
-                if (pannelName)
-                    setPannel(pannelName);
-                else
-                    setPannel(name.toLocaleLowerCase())
-            }}
-        > {name}</NavLink>
-
-        {dividing && <div />}
-    </Fragment >
 
 }

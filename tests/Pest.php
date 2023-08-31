@@ -27,6 +27,7 @@ uses(TestCase::class)->in('Feature', 'Unit');
 
 uses()->beforeEach(function () {
 
+    config(['laravelcloudflare.enabled' => false]);
 
     $this->blog = Blog::find(config('test.blog_id'));
     $this->user = User::where('hyvor_user_id', config('test.hyvor_user_id'))->first();
@@ -81,8 +82,4 @@ function testTwigRendering(string $template, array $vars, string $expectation)
     $vars = json_decode(json_encode($vars), true);
     $val = trim(TwigRenderer::renderString($template, $vars));
     expect($val)->toBe($expectation);
-}
-
-foreach (glob('tests/helpers/*.php') as $file) {
-    include_once $file;
 }

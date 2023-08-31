@@ -1,19 +1,25 @@
-<?php
+<?php declare(strict_types=1);
 
 namespace Database\Factories;
 
-use App\Domains\Post\Content\PostContentRepository;
 use App\Models\Language;
 use App\Models\Post;
+use App\Models\PostVariant;
 use Illuminate\Database\Eloquent\Factories\Factory;
 use Illuminate\Support\Arr;
 use Illuminate\Support\Str;
 
+/**
+ * @extends Factory<PostVariant>
+ */
 class PostVariantFactory extends Factory
 {
+
+    protected $model = PostVariant::class;
+
     public function definition()
     {
-        $content = PostContentRepository::generateRandom();
+        $content = $this->generateRandom();
 
         return [
             'post_id' => Post::factory(),
@@ -31,4 +37,27 @@ class PostVariantFactory extends Factory
             'words' => null,
         ];
     }
+
+    private function generateRandom() : string
+    {
+
+        $paragraphs = (array) $this->faker->paragraphs(rand(2, 6));
+        $content = [
+            'type' => 'doc',
+            'content' => [],
+        ];
+        foreach ($paragraphs as $para) {
+            $content['content'][] = [
+                'type' => 'paragraph',
+                'content' => [[
+                    'type' => 'text',
+                    'text' => $para,
+                ]],
+            ];
+        }
+
+        return strval(json_encode($content));
+
+    }
+
 }

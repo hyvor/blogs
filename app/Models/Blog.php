@@ -6,6 +6,7 @@ use App\Data\Enums\BlogBillingTypeEnum;
 use App\Data\Enums\BlogHostingAtEnum;
 use App\Data\Enums\BlogIntegrationEnum;
 use App\Data\Enums\BlogTypeEnum;
+use App\Domains\Route\PermalinkRepository;
 use App\Models\Concerns\Countable;
 use Carbon\Carbon;
 use Hyvor\JsonMeta\Definer;
@@ -40,6 +41,7 @@ class Blog extends Model
 
         $definer->add('logo_url')->default(null);
         $definer->add('cover_url')->default(null);
+        $definer->add('icon_url')->default(null);
 
         $definer->add('social_facebook')->default(null);
         $definer->add('social_twitter')->default(null);
@@ -73,7 +75,13 @@ class Blog extends Model
         $definer->add('syntax_line_numbers')->default(true);
         $definer->add('syntax_theme')->default(null);
 
+        $definer->add('heading_anchors')->default(true);
+
         $definer->add('flashload')->default(true);
+
+        $definer->add('link_analysis_enabled')->default(true);
+        $definer->add('link_analysis_email_report')->default('broken');
+
     }
 
     /**
@@ -198,6 +206,22 @@ class Blog extends Model
     public function exports()
     {
         return $this->hasMany(Export::class);
+    }
+
+    public function url() : string
+    {
+        return PermalinkRepository::getBaseUrl($this);
+    }
+
+    public function urlWithoutProtocol() : string
+    {
+        $url = $this->url();
+        return strval(preg_replace('/^https?:\/\//', '', $url));
+    }
+
+    public function isInTrial() : bool
+    {
+        return $this->trial_ends_at !== null && $this->trial_ends_at->isFuture();
     }
 
 }

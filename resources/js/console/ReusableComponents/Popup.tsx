@@ -1,19 +1,29 @@
 import React, {ReactNode} from 'react'
 import Loader from './Loader'
+import { OutsideClick } from './OutsideClick'
 
 interface PopupProps {
-    header: ReactNode,
+    header?: ReactNode,
     body: ReactNode,
-    footer: ReactNode,
-    isCenter?: boolean
+    footer?: ReactNode,
+    isCenter?: boolean,
+
+    className?: string
+
+    onClose?: Function
 }
 
 export function Popup(props: PopupProps) {
-    return <div className={"popup-wrap" + (props.isCenter ? " center" : "")}>
-        <div className="popup box-style">
-            <div className="popup-header">{props.header}</div>
-            <div className="popup-body">{props.body}</div>
-            <div className="popup-footer">{props.footer}</div>
+    return <div className={"popup-wrap" +
+            (props.isCenter ? " center" : "") +
+            (props.className ? " " + props.className : "")
+        }>
+        <div className="popup box-style">    
+            <OutsideClick onClick={() => props.onClose?.()}>
+                {props.header && <div className="popup-header">{props.header}</div>}
+                <div className="popup-body">{props.body}</div>
+                {props.footer && <div className="popup-footer">{props.footer}</div>}
+            </OutsideClick>
         </div>
     </div>
 }
@@ -31,7 +41,7 @@ export function PopupFooterSingleButton(
     {buttonClass?: string, onClick: Function, name: ReactNode}
 ) {
     return <div className="popup-footer-single">
-        <button className={"button " + props.buttonClass} onClick={() => props.onClick()}>{props.name}</button>
+        <button className={"button " + props.buttonClass} onClick={e => props.onClick(e)}>{props.name}</button>
     </div>
 }
 
@@ -55,13 +65,13 @@ export function PopupFooterDoubleButton( {
     buttonClass = ''
 } : PopupFooterDoubleButtonProps ) {
     return <div className={"popup-footer-double" + (isLoading ? " loading" : "")}>
-        <button className="button text-only" onClick={() => onCancel()}>{cancelName || "Cancel"}</button>
-        <button className={"button " + buttonClass} onClick={() => onClick()}>
+        <button className="button medium text-only" onClick={() => onCancel()}>{cancelName || "Cancel"}</button>
+        <button className={"button medium " + buttonClass} onClick={() => onClick()}>
             {isLoading ? (loadingName || "Loading") : name}
             {
                 isLoading ?
                 <div className="footer-loader">
-                    <Loader size={20} />
+                    <Loader size="mini" />
                 </div> : null
             }
         </button>

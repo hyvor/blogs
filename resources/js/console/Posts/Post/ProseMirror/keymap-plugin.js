@@ -46,11 +46,56 @@ export default function keymapPlugins(schema) {
         chainCommands(
             (state, dispatch) =>
                 convertEmptyBlocksToParagraphHandler(state, dispatch, schema),
-            figcaptionBackspaceHandler
+            figcaptionBackspaceHandler,
         )
     );
 
-    const enterAndArrowDown = chainCommands(
+    const commonEnterAndArrowDown = (state, dispatch) => {
+        const selection = state.selection;
+
+        if (selection.from !== selection.to)
+            // something was selected
+            return;
+
+        // If the cursor is in a list item, return false
+        const { path } = selection.$to;
+        if (path.some(item => item?.type?.name === "list_item"))
+            return false;
+
+        /**
+         * Code
+         * ================
+         */
+
+        const parent = selection.$to.parent;
+        const text = parent.firstChild?.text;
+        let codeMatch;
+        if (
+            (codeMatch =
+                parent &&
+                parent.type.name === "paragraph" &&
+                text &&
+                text.match(/^```([a-zA-Z0-9+#.]*)$/))
+        ) {
+            clearAndChangeNode(
+                schema.nodes.code_block.create({
+                    language: codeMatch[1],
+                })
+            )(state, dispatch);
+
+            return true;
+        }
+    };
+
+    const enterBehavior = chainCommands(
+        (state, dispatch) => {
+           commonEnterAndArrowDown(state, dispatch);
+        },
+        splitListItem(schema.nodes.list_item),
+        figcaptionEnterHandler,
+    );
+
+    const downArrowBehavior = chainCommands(
         (state, dispatch) => {
             const selection = state.selection;
 
@@ -60,44 +105,36 @@ export default function keymapPlugins(schema) {
 
             // If the cursor is in a list item, return false
             const { path } = selection.$to;
-            if (path.some(item => item?.type?.name === "list_item"))
-                return false;
-
-            /**
-             * Code
-             * ================
-             */
-
-            const parent = selection.$to.parent;
-            const text = parent.firstChild?.text;
-            let codeMatch;
-            if (
-                (codeMatch =
-                    parent &&
-                    parent.type.name === "paragraph" &&
-                    text &&
-                    text.match(/^```([a-zA-Z0-9+#.]*)$/))
-            ) {
-                clearAndChangeNode(
-                    schema.nodes.code_block.create({
-                        language: codeMatch[1],
-                    })
-                )(state, dispatch);
-
-                return true;
+            if (path.some(item => item?.type?.name === "table_cell")) {
+                // Get the next node
+                const tableCell = selection.$from.node(-1);
+                const table = selection.$from.node(-3);
+                const tablePos = selection.$from.before(-3);
+                const nextNode = selection.$to;
+                const nextNodeExpctedPos = tablePos + table.nodeSize;
+                const nodeAtPos = state.doc.nodeAt(nextNodeExpctedPos);
+                if (nextNode.pos + tableCell.nodeSize >= nextNodeExpctedPos && nodeAtPos == null)
+                {
+                    const { $from } = state.selection;
+                    const tr = state.tr.insert(
+                        $from.after(-1),
+                        schema.nodes.paragraph.create()
+                    );
+                    dispatch(tr.setSelection(Selection.near(tr.doc.resolve($from.after(-1)))));
+                }
             }
+           commonEnterAndArrowDown(state, dispatch);
         },
-        splitListItem(schema.nodes.list_item),
         figcaptionEnterHandler
     );
 
     // list item
-    bind("Enter", enterAndArrowDown);
+    bind("Enter", enterBehavior);
 
     bind("Tab", sinkListItem(schema.nodes.list_item));
     bind("Shift-Tab", liftListItem(schema.nodes.list_item));
 
-    bind("ArrowDown", enterAndArrowDown);
+    bind("ArrowDown", downArrowBehavior);
 
     bind("}", (state, dispatch) => {
         /**

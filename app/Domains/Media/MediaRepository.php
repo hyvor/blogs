@@ -8,6 +8,7 @@ use App\Domains\Media\Exceptions\UploadException;
 use App\Models\Blog;
 use App\Models\Media;
 use Illuminate\Database\Eloquent\Collection;
+use Illuminate\Http\Client\ConnectionException;
 use Illuminate\Http\UploadedFile;
 use Illuminate\Support\Facades\File;
 use Illuminate\Support\Facades\Http;
@@ -24,14 +25,38 @@ use Illuminate\Support\Str;
 class MediaRepository
 {
 
+    // /docs/writing
+    public const IMAGE_EXTENSIONS = [
+        'png',
+        'jpg', 'jpeg', 'jfif', 'pjpeg', 'pjp',
+        'gif',
+        'apng',
+        'avif',
+        'svg',
+        'webp',
+    ];
+
     /**
+     * @param string[]|null $extensions
      * @return Collection<int, Media>
      */
-    public static function get(Blog $blog, int $limit = 0, int $offset = 0, string|null $extension = null): Collection
+    public static function get(
+        Blog $blog,
+        int $limit = 0,
+        int $offset = 0,
+        array|null $extensions = null,
+        string|null $search = null,
+    ): Collection
     {
         return Media::where('blog_id', $blog->id)
-            ->when($extension, function ($query) use ($extension) {
-                $query->where('extension', $extension);
+            ->when($extensions, function ($query) use ($extensions) {
+                $query->whereIn('extension', $extensions);
+            })
+            ->when($search, function ($query) use ($search) {
+                $query->where(function($query) use ($search) {
+                    $query->where('name', 'LIKE', "%$search%")
+                        ->orWhere('original_name', 'LIKE', "%$search%");
+                });
             })
             ->limit($limit)
             ->offset($offset)
@@ -79,7 +104,11 @@ class MediaRepository
     public function uploadFromUrl(Blog $blog, string $url, ?int $postId = null): Media
     {
 
-        $response = Http::get($url);
+        try {
+            $response = Http::timeout(10)->get($url);
+        } catch (ConnectionException) {
+            throw new UploadException('Error while fetching image file');
+        }
 
         if (! $response->successful()) {
             throw new UploadException();

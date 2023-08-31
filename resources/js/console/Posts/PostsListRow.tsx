@@ -8,11 +8,20 @@ import LangTag from '../ReusableComponents/LangTag';
 import { getLangTagIconByPostStatus } from './Post/PostLanguageSelector';
 import { PostVariant } from "../types";
 import UserPermissions from "../services/UserPermissions";
+import { CheckCircleFill, ExclamationCircleFill, QuestionCircleFill, XCircleFill } from "react-bootstrap-icons";
+import { SeoScoreTag } from "./Post/New/Seo/Seo";
+import { getCountsByStatus } from "./Post/New/Links/links";
+import Tooltip from "../ReusableComponents/Tooltip";
 
 export default function PostsListRow({ id, subdomain }: { id: number, subdomain: string }) {
 
     const { languages, getLanguageById } = useValues(languagesLogic({ subdomain }))
-    const { post, postOriginal } = useValues(postLogic({ id }))
+    const { 
+        post, 
+        postOriginal, 
+        currentVariantSeoResults,
+        currentVariantLinkAnalysis
+    } = useValues(postLogic({ id }))
 
     const postsLink = `/console/${subdomain}/` + (post.is_page ? 'pages' : 'posts')
     const toLink = `${postsLink}/${post.id}`
@@ -21,11 +30,36 @@ export default function PostsListRow({ id, subdomain }: { id: number, subdomain:
 
     const variant = post.variants.find(v => v.language_id === languageId) as PostVariant;
 
-    const authorsNames = post.authors.map(author => author.variants[0].name).join(", ");
-
-    const authorsImages = post.authors.map(author => author.picture_url);
-
     const permClass = UserPermissions.canEditPost(postOriginal) ? '' : 'global-no-permissions';
+
+
+    function LinkTag() {
+
+        const counts = getCountsByStatus(currentVariantLinkAnalysis);
+
+        if (counts.loading > 0) {
+            return <Tooltip tooltip="Link analysis outdated. Open the post to analyze again">
+                <span className="global-seo-score-tag link-tag ignore"><QuestionCircleFill /></span>
+            </Tooltip>
+        }
+
+        if (counts.broken > 0) {
+            return <Tooltip tooltip="Some broken links found">
+                <span className="global-seo-score-tag link-tag red"><XCircleFill /></span>
+            </Tooltip>
+        }
+
+        if (counts.redirect > 0) {
+            return <Tooltip tooltip="Some redirects found">
+                <span className="global-seo-score-tag link-tag orange"><ExclamationCircleFill /></span>
+            </Tooltip>
+        }
+
+        return <Tooltip tooltip="All links are healthy">
+            <span className="global-seo-score-tag link-tag green"><CheckCircleFill /></span>
+        </Tooltip>
+
+    }
 
     return <NavLink
         key={post.id}
@@ -63,14 +97,14 @@ export default function PostsListRow({ id, subdomain }: { id: number, subdomain:
                 <div className="post-authors">
                     {
                         post.authors.map(author => {
-                            return <div className="post-author">
+                            return <div className="post-author" key={author.id}>
                                 <img
                                     src={author.picture_url || undefined}
                                     className="round-image-40 post-author-image "
                                     alt="Profile Picture"
                                 />
                                 <span className="post-author-name">
-                                        {author.variants[0].name}
+                                        {author.variants[0]?.name}
                                     </span>
                             </div>
                         })
@@ -98,6 +132,18 @@ export default function PostsListRow({ id, subdomain }: { id: number, subdomain:
                 }
             </div>
         </div>
+
+        <div className="post-health-wrap">
+            <div className="seo">
+                <span className="name">SEO</span>
+                <SeoScoreTag score={currentVariantSeoResults.average} percentage={true} />
+            </div>
+            <div className="links">
+                <span className="name">Links</span>
+                <LinkTag />
+            </div>
+        </div>
+
         <div className="post-status-wrap">
             <span className={`global-post-status ${variant.status}`}>{variant.status}</span>
         </div>

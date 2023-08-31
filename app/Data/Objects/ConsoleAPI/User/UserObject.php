@@ -53,8 +53,8 @@ class UserObject
     public function __construct(User $user, Blog $blog)
     {
         $this->id = $user->id;
-        $this->created_at = $user->created_at->getTimestamp();
-        $this->updated_at = $user->updated_at->getTimestamp();
+        $this->created_at = ($user->created_at ?? now())->getTimestamp();
+        $this->updated_at = ($user->updated_at ?? now())->getTimestamp();
         $this->hyvor_user_id = $user->hyvor_user_id;
 
         $this->status = $user->status;
@@ -62,7 +62,7 @@ class UserObject
         $this->slug = $user->slug;
         $this->posts_count = $user->posts_count;
 
-        $this->email = $user->email;
+        $this->email = $this->getUserEmail($user);
 
         $this->picture_url = $user->picture_url;
         $this->website_url = $user->website_url;
@@ -83,4 +83,26 @@ class UserObject
 
         $this->variants = $variants;
     }
+
+    private function getUserEmail(User $user): ?string
+    {
+
+        if ($user->status === UserStatusEnum::INVITED) {
+
+            // mask the email
+            $email = $user->email;
+
+            if (!$email)
+                return null;
+
+            $emailParts = explode('@', $email);
+            $emailParts[0] = substr($emailParts[0], 0, 3) . '***';
+            $emailParts[1] = substr($emailParts[1], 0, 3) . '***';
+            return implode('@', $emailParts);
+
+        } else {
+            return $user->email;
+        }
+    }
+
 }

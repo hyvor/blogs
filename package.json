@@ -11,6 +11,7 @@
   },
   "devDependencies": {
     "@playwright/test": "^1.32.3",
+    "@types/dompurify": "^3.0.2",
     "@types/js-yaml": "^4.0.5",
     "@types/react": "^18.0.5",
     "@types/react-color": "^3.0.6",
@@ -23,7 +24,8 @@
     "laravel-vite-plugin": "^0.5.4",
     "sass": "^1.49.8",
     "typescript": "^4.6.4",
-    "vite": "^3.0.4"
+    "vite": "^3.0.4",
+    "vitest": "^0.34.1"
   },
   "dependencies": {
     "@joeattardi/emoji-button": "^4.6.4",
@@ -31,10 +33,12 @@
     "dayjs": "^1.11.0",
     "deep-object-diff": "^1.1.7",
     "deepmerge": "^4.2.2",
+    "dompurify": "^3.0.5",
     "js-yaml": "^4.1.0",
     "kea": "^3.0.1",
     "kea-ajax": "^1.0.2",
     "kea-router": "^3.0.0",
+    "marked": "^7.0.5",
     "prosemirror-codemark": "^0.4.0",
     "prosemirror-commands": "^1.3.0",
     "prosemirror-dropcursor": "^1.5.0",
@@ -45,6 +49,7 @@
     "prosemirror-model": "^1.18.3",
     "prosemirror-schema-list": "^1.2.0",
     "prosemirror-state": "^1.4.2",
+    "prosemirror-tables": "^1.3.4",
     "prosemirror-transform": "^1.7.0",
     "prosemirror-view": "^1.29.1",
     "react": "^18.0.0",
@@ -59,6 +64,7 @@
     "react-toastify": "^8.2.0",
     "react-tooltip": "^4.2.21",
     "shiki": "^0.14.2",
-    "sortablejs": "^1.15.0"
+    "sortablejs": "^1.15.0",
+    "tldts": "^6.0.14"
   }
 }

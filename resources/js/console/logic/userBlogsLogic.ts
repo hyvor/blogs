@@ -1,5 +1,5 @@
 import axios, {AxiosResponse} from "axios";
-import {actions, kea, reducers, selectors} from "kea";
+import {actions, events, kea, reducers, selectors} from "kea";
 import { getUserEndpoint } from "../lib/api";
 import subdomainLogic from "./subdomainLogic";
 
@@ -52,7 +52,7 @@ const userBlogsLogic = kea<userBlogsLogicType>([
 
     reducers({
         blogs: [
-            appConfig().blogs,
+            [],
             {
                 addBlog: (state, { userBlog }) => [...state, userBlog],
                 setBlogs: (_, { blogs }) => blogs
@@ -67,6 +67,14 @@ const userBlogsLogic = kea<userBlogsLogicType>([
                 return (sub : string) : UserBlog => blogs.find(b => b.blog.subdomain === sub) as UserBlog;
             }
         ]
+    }),
+
+    events(({actions}) => {
+        return {
+            afterMount: () => {
+                actions.setBlogs(appConfig().blogs);
+            }
+        }
     })
 
 ]);

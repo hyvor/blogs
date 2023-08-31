@@ -9,12 +9,15 @@ import PostsListRow from './PostsListRow';
 import { useSubdomain } from "../logic-helpers/subdomain";
 import { TableHead, TableHeadItem, Table } from '../ReusableComponents/Table';
 import languagesLogic from '../logic/languagesLogic';
+import ActionButton from '../ReusableComponents/ActionButton';
 
 export default function Posts({ postId }: { postId: number | undefined }) {
 
     const subdomain = useSubdomain()
 
     const { languages, getLanguageById } = useValues(languagesLogic({ subdomain }));
+
+    const [newPostClick, setNewPostClick] = useState(false);
 
     const postLogicSubdomain = postsLogic({ subdomain })
     const {
@@ -38,14 +41,20 @@ export default function Posts({ postId }: { postId: number | undefined }) {
         }
     }
 
-    function handleNew() {
-        createPost();
+    const onLoad = () => {
+        setNewPostClick(false);
     }
+
+    function handleNew() {
+        setNewPostClick(true);
+        createPost({onLoad: onLoad});
+    }
+
 
     /*
     * If a postId is defined, display the Post view in fullscreen mode or the Posts List view 
     */
-    return <div className="posts-view">
+    return <div className="posts-view" data-testid="posts">
         {
             postId && loadPostsListAjax.status !== 'loading' ? <Post id={postId} subdomain={subdomain} type="post" /> :
                 <div id="posts-selector" className="box box-left box-content">
@@ -53,10 +62,15 @@ export default function Posts({ postId }: { postId: number | undefined }) {
                         <div>
                             Posts
                         </div>
-                        <button
-                            className="button small new-post-button"
-                            onClick={handleNew}
-                        >+ New</button>
+                        <ActionButton 
+                            className="medium new-post-button"
+                            status={newPostClick ? 'loading' : 'stale'}
+                            staleName="+ New"
+                            loadingName="Creating" 
+                            successName="Created"
+                            errorName="Try again"
+                            staleOnClick={handleNew}
+                        /> 
                     </div>
                     <PostsFilters filters={filters} changeFilter={changeFilter} />
                     <div className="posts-list" onScroll={handleScroll}>

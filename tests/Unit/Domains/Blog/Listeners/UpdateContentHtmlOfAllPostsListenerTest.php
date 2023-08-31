@@ -13,20 +13,25 @@ it('listens', function() {
     Event::assertListening(BlogUpdatedEvent::class, UpdateContentHtmlOfAllPostsListener::class);
 });
 
-it('calls the job if required data changes', function() {
+it('calls the job if required data changes', function(string $key) {
     Queue::fake();
 
     $blog = blog();
     $oldBlog = $blog->replicate();
 
-    $blog->setMeta('syntax_on', false);
-
+    $blog->setMeta($key, false);
     $event = new BlogUpdatedEvent($blog, $oldBlog);
     $listener = new UpdateContentHtmlOfAllPostsListener();
     $listener->handle($event);
 
     Queue::assertPushed(UpdateContentHtmlOfAllPostsJob::class);
-});
+})->with([
+    'syntax_on',
+    'seo_external_links_follow',
+    'syntax_line_numbers',
+    'syntax_theme',
+    'heading_anchors',
+]);
 
 it('does not call if other data changes', function() {
 

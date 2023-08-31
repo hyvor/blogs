@@ -1,7 +1,8 @@
-<?php
+<?php declare(strict_types=1);
 
 namespace App\Data\Objects\DeliveryAPI;
 
+use App\Data\Enums\DeliveryAPICacheControlHeaderEnum;
 use App\Data\Enums\DeliveryAPIFileTypeEnum;
 use App\Data\Enums\DeliveryAPITypeEnum;
 use App\Data\Enums\RedirectTypeEnum;
@@ -13,6 +14,8 @@ class DeliveryAPIResponseObject
     public int $at;
 
     public bool $cache;
+
+    public DeliveryAPICacheControlHeaderEnum $cache_control;
 
     public int $status;
 
@@ -29,19 +32,27 @@ class DeliveryAPIResponseObject
     public function __construct(DeliveryAPITypeEnum $type)
     {
         $this->type = $type;
-        $this->at = now()->timestamp;
+        $this->at = now()->getTimestamp();
     }
 
     /**
      * Files content is base64 encoded
      */
-    public static function forFile(DeliveryAPIFileTypeEnum $type, string $content, string $mimeType = 'text/html', bool $cache = true, int $status = 200)
+    public static function forFile(
+        DeliveryAPIFileTypeEnum $type,
+        string $content,
+        string $mimeType = 'text/html',
+        bool $cache = true,
+        int $status = 200,
+        DeliveryAPICacheControlHeaderEnum $browserCache = DeliveryAPICacheControlHeaderEnum::NO_CACHE
+    ) : self
     {
         $obj = new self(DeliveryAPITypeEnum::FILE);
         $obj->file_type = $type;
         $obj->content = $content;
         $obj->mime_type = $mimeType;
         $obj->cache = $cache;
+        $obj->cache_control = $browserCache;
         $obj->status = $status;
 
         return $obj;

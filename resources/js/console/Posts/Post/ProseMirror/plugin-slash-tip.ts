@@ -1,5 +1,6 @@
 import {EditorState, Plugin, PluginView} from 'prosemirror-state';
 import {EditorView} from "prosemirror-view";
+import {isEditorRtl} from "./rtl";
 
 export default function slashTipPlugin() {
     return new Plugin({
@@ -35,13 +36,14 @@ class SlashTipPlugin implements PluginView {
         const {state} = view;
         const {selection} = state;
 
+
         if (!selection.empty) {
             return this.hide();
         }
 
         const parent = selection.$from.parent;
-
-        if (parent.type.name !== 'paragraph')
+        const grandParent = selection.$from.node(-1);
+        if (parent.type.name !== 'paragraph' || grandParent.type.name == 'table_cell')
             return this.hide();
 
         if (parent.content.size > 0)
@@ -56,6 +58,14 @@ class SlashTipPlugin implements PluginView {
         const viewPos = view.dom.getBoundingClientRect()
 
         this.element.style.top = (posTop - wrapPos.top) + "px";
+
+        const isRtl = isEditorRtl();
+
+        if (isRtl) {
+            this.element.style.left = 25 + "px";
+            return;
+        }
+
         this.element.style.right = (viewPos.left - wrapPos.left) + "px";
 
     }

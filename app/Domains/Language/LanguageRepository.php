@@ -1,18 +1,20 @@
-<?php
+<?php declare(strict_types=1);
 
 namespace App\Domains\Language;
 
+use App\Data\Enums\LanguageDirectionEnum;
 use App\Domains\Language\Events\LanguageChangedEvent;
 use App\Domains\Language\Jobs\DeleteLanguageVariants;
 use App\Models\Blog;
 use App\Models\Language;
+use Exception;
 use Illuminate\Support\Collection;
 
 class LanguageRepository
 {
     /**
      * @param  Blog  $blog
-     * @return Collection<Language>
+     * @return Collection<int, Language>
      */
     public static function getAllLanguages(Blog $blog): Collection
     {
@@ -26,11 +28,14 @@ class LanguageRepository
         Blog $blog,
         string $code,
         string $name,
+        LanguageDirectionEnum $direction = LanguageDirectionEnum::LTR,
         bool $isPrimary = false
-    ): Language {
+    ): Language
+    {
         $language = $blog->languages()->create([
             'code' => $code,
             'name' => $name,
+            'direction' => $direction,
             'is_primary' => $isPrimary,
         ]);
 
@@ -39,10 +44,15 @@ class LanguageRepository
         return $language;
     }
 
-    public static function updateLanguage(Language $language, string $code, string $name)
+    public static function updateLanguage(Language $language,
+        string $code,
+        string $name,
+        LanguageDirectionEnum $direction
+    ) : Language
     {
         $language->code = $code;
         $language->name = $name;
+        $language->direction = $direction;
 
         $language->save();
 
@@ -51,7 +61,7 @@ class LanguageRepository
         return $language;
     }
 
-    public static function deleteLanguage(Language $language)
+    public static function deleteLanguage(Language $language) : void
     {
         $language->delete();
 
@@ -62,7 +72,13 @@ class LanguageRepository
 
     public static function getPrimaryLanguage(Blog $blog): Language
     {
-        return $blog->languages()->where('is_primary', true)->first();
+        $primaryLanguage = $blog->languages()->where('is_primary', true)->first();
+
+        if (!$primaryLanguage) {
+            throw new Exception('No primary language found');
+        }
+
+        return $primaryLanguage;
     }
 
     public static function getLanguageById(Blog $blog, ?int $languageId): ?Language

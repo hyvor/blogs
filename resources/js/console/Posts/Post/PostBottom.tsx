@@ -1,4 +1,4 @@
-import {InfoCircle} from "react-bootstrap-icons";
+/* import {InfoCircle} from "react-bootstrap-icons";
 import React from "react";
 import {usePostActions, usePostValues} from "./helpers";
 
@@ -44,4 +44,4 @@ export default function PostBottom({id} : {id:number}) {
         </div>
     </div>
 
-}
+} */

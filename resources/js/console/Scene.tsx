@@ -1,4 +1,4 @@
-import { useValues } from 'kea'
+import { useActions, useValues } from 'kea'
 import Billing from './Billing/Billing'
 import BlogPreview from './BlogPreview/BlogPreview'
 import userBlogsLogic from './logic/userBlogsLogic'
@@ -17,6 +17,9 @@ import subdomainLogic from "./logic/subdomainLogic"
 import BlogBlocked from "./Views/BlogBlocked";
 import {hasTrialEndedAndNotSubscribed} from "./lib/blog-helpers";
 import BlogTrialEnded from "./Views/BlogTrialEnded";
+import Integrations from "./Integrations/Integrations";
+import { router } from 'kea-router'
+import Tools from './Tools/Tools'
 
 export const scenes = {
     error404: () => <div>404</div>,
@@ -24,6 +27,8 @@ export const scenes = {
     posts: ({ postId } : { postId?: number }) => <Posts postId={postId} />,
     pages: ({ postId } : { postId?: number }) => <Pages postId={postId} />,
     settings: ({type} : {type?: string}) => <Settings type={type} />,
+    tools: ({type} : {type?: string}) => <Tools type={type} />,
+    integrations: ({type} : {type?: string}) => <Integrations type={type} />,
     theme: ({type} : {type?: string }) => <Theme />,
     billing: () => <Billing />,
     new: ({type} : {type? : string}) => <NewBlog type={type} />,
@@ -35,10 +40,16 @@ export default function Scene() {
     userBlogsLogic.mount()
 
     const { scene, params } = useValues(sceneLogic)
+    const { push } = useActions(router);
 
     const SceneComponent = scenes[scene as keyof typeof scenes] || scenes.error404
 
-    return <div className='dark'>
+    if (params.subdomain && !userBlogsLogic.values.findBlogBySubdomain(params.subdomain)) {
+        push('/console');
+        return <div></div>;
+    }
+
+    return <div className="dark">
         <Left />
         <Middle scene={scene}><SceneComponent {...params} /></Middle>
     </div>
@@ -68,17 +79,18 @@ function Middle({ children, scene } : {children: ReactNode, scene: string}) {
     }
 
     function isBlogTrialEndedAndNotActivated() {
-        return hasTrialEndedAndNotSubscribed(blog.subdomain) &&
+        return blog.subdomain && hasTrialEndedAndNotSubscribed(blog.subdomain) &&
             scene !== 'billing' &&
             scene !== 'welcome' &&
-            scene !== 'new';
+            scene !== 'new' &&
+            scene !== 'settings';
     }
 
     return <div id="middle">
         {
             loadAjax.status === 'loading' ?
                 <div className="posts-not-ready box">
-                    <Loader size={40} />
+                    <Loader />
                 </div>
             :
 

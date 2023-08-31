@@ -12,7 +12,7 @@ export const consoleTest = baseTest.extend<{console: Console}>({
     }
 });
 
-type NavType = 'billing' | 'posts';
+type NavType = 'billing' | 'posts' | 'settings' | 'tools';
 
 class Console {
 
@@ -22,8 +22,8 @@ class Console {
         this.page = page;
     }
 
-    async visit() {
-        await this.page.goto('/console');
+    async visit(path : string = '') {
+        await this.page.goto('/console' + path);
     }
 
     async visitAndNav(nav: NavType) {
@@ -35,4 +35,7 @@ class Console {
         await this.page.getByTestId('main-nav-' + nav).click();
     }
 
+    async newPost() {
+        
+    }
 }

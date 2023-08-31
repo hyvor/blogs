@@ -20,7 +20,8 @@ use App\Domains\Blog\Events\BlogUpdatedEvent;
 use App\Domains\Blog\Events\BlogVariantUpdatedEvent;
 use App\Domains\Blog\Fillers\LanguageFiller;
 use App\Domains\Blog\Fillers\NavigationFiller;
-use App\Domains\Blog\Fillers\PostFiller;
+use App\Domains\Blog\Fillers\PostFiller\PostFiller;
+use App\Domains\Blog\Fillers\PostFiller\RandomImageUrlGenerator;
 use App\Domains\Blog\Fillers\RouteFiller;
 use App\Domains\Blog\Fillers\TagFiller;
 use App\Domains\Blog\Fillers\ThemeFiller;
@@ -38,20 +39,28 @@ class BlogService
         string $subdomain,
         BlogTypeEnum $type = BlogTypeEnum::DEFAULT,
         BlogBillingTypeEnum $billingType = BlogBillingTypeEnum::PADDLE,
-        BlogIntegrationEnum $integration = null
+        BlogIntegrationEnum $integration = null,
+        ?string $ip = null
     ): Blog
     {
         $blog = Blog::create([
             'hyvor_user_id' => $userId,
+            'ip' => $ip,
             'subdomain' => $subdomain,
             'type' => $type,
             'billing_type' => $billingType,
             'integration' => $integration,
-            'trial_ends_at' => now()->addDays(config('limits.trial_days')),
+            'trial_ends_at' => now()->addDays(intval(config('limits.trial_days'))),
         ]);
         $blog->refresh(); // fetch default columns
 
         (new LanguageFiller($blog))->fill();
+
+        if ($type === BlogTypeEnum::PREVIEW) {
+            $blog->setMeta([
+                'cover_url' => RandomImageUrlGenerator::getFeaturedImageUrl()
+            ]);
+        }
 
         /**
          * Creating the variant is important because all functions are designed assuming primary variant is there
@@ -61,7 +70,7 @@ class BlogService
          */
         BlogVariant::create([
             'blog_id' => $blog->id,
-            'language_id' => $blog->languages[0]->id,
+            'language_id' => intval($blog->languages[0]?->id),
             'name' => $name,
         ]);
 

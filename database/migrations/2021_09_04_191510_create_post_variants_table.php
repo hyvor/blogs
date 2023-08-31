@@ -28,8 +28,13 @@ return new class () extends Migration {
             $table->mediumText('content_unsaved')->nullable();
             $table->mediumText('content_html')->nullable();
             $table->string('title')->nullable();
-            $table->string('description', 350)->default('');
+            $table->string('description', 350)->nullable();
             $table->integer('words')->nullable();
+
+            $table->string('seo_primary_keyword')->nullable();
+            $table->json('seo_secondary_keywords')->nullable();
+
+            $table->json('link_analysis')->nullable();
 
             $table->unique(['post_id', 'language_id']);
             $table->unique(['language_id', 'slug']);

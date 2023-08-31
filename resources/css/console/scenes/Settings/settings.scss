@@ -12,6 +12,7 @@
 @import './Webhooks.scss';
 @import './Integrations.scss';
 @import './Export.scss';
+@import './Danger.scss';
 
 :root {
     --color-hover: #{$color-hover};
@@ -65,7 +66,7 @@
     }
 
     .settings-right {
-        padding: 30px 50px 90px;
+        padding: 25px 45px;
         overflow:auto;
 
         & > div > .title {
@@ -73,6 +74,21 @@
             font-weight: 600;
             text-align: center;
             margin-bottom:15px;
+        }
+
+        .settings-title-row {
+            text-align: center;
+            .settings-title {
+                font-size: 20px;
+                font-weight: 600;
+                margin-bottom:5px;
+            }
+            .settings-description {
+                font-size: 14px;
+                color: $color-text-light;
+                width: 350px;
+                margin: 0 auto;
+            }
         }
     }
 
@@ -119,6 +135,11 @@
 
     @keyframes save-out {
         100% {opacity:0;transform:scale(0)}
+    }
+    
+    @media screen and (max-width: $breakpoint) {
+        left: 0;
+        right: 0;
     }
 
 }

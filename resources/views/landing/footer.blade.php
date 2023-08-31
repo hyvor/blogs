@@ -28,7 +28,13 @@
 			<div class="item"><a href="/docs" title="Hyvor Blogs Documentation">Docs</a></div>
 			<div class="item"><a data-flashload-skip-link href="https://hyvor.com/blog" title="Blog of HYVOR">Blog</a></div>
 			<div class="item"><a href="https://community.blogs.hyvor.com/roadmap" title="Hyvor Blogs Roadmap">Roadmap</a></div>
-			<div class="item"><a href="https://hyvorblogs.tolt.io/" target="_blank" rel="nofollow">Affiliate program</a></div>
+			<div class="item"><a href="/affiliate" target="_blank" rel="nofollow">Affiliate program</a></div>
+		</div>
+		<div class="pack">
+			<div class="title">Use Cases</div>
+			<div class="item"><a href="/customers" title="Hyvor Blogs Customers">Our Customers</a></div>
+			<div class="item"><a href="/for/developers" title="Hyvor Blogs for Developers">For Developers</a></div>
+			<div class="item"><a href="/for/startups" title="Hyvor Blogs for Startups">For Startups</a></div>
 		</div>
 		<div class="pack">
 			<div class="title">Legal</div>

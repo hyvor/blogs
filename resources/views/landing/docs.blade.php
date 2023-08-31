@@ -13,41 +13,47 @@
 
     @include('landing.nav')
 
-    <div id="sidebar">
-      
-        @foreach ($nav as $sectionTitle => $pages)
+    <div id="body-wrap">
 
-            <div class="nav-section">
-                
-                <div class="nav-section-title">{{ $sectionTitle }}</div>
+        <div id="sidebar">
 
-                <div class="nav-section-pages">
-                    
-                    @foreach ($pages as $page)
-                        <a class="nav-page {{ ($page[0] ?? 'index' ) == $pageName ? 'active' : '' }}" href="/docs/{{$page[0]}}">
-                            {{ $page[1] }}
-                        </a>
-                    @endforeach
+            @foreach ($nav as $sectionTitle => $pages)
+
+                <div class="nav-section">
+
+                    <div class="nav-section-title">{{ $sectionTitle }}</div>
+
+                    <div class="nav-section-pages">
+
+                        @foreach ($pages as $page)
+                            <a class="nav-page {{ ($page[0] ?? 'index' ) == $pageName ? 'active' : '' }}" href="/docs/{{$page[0]}}">
+                                {{ $page[1] }}
+                            </a>
+                        @endforeach
+
+                    </div>
 
                 </div>
 
-            </div>
+            @endforeach
 
-        @endforeach
+        </div>
 
-    </div>
+        <div id="content-view">
 
-    <div id="content-view">
+            <button id="docs-mobile" onclick="handleMobile()">
+                <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" fill="currentColor" class="bi bi-list" viewBox="0 0 16 16">
+                    <path fill-rule="evenodd" d="M2.5 12a.5.5 0 0 1 .5-.5h10a.5.5 0 0 1 0 1H3a.5.5 0 0 1-.5-.5zm0-4a.5.5 0 0 1 .5-.5h10a.5.5 0 0 1 0 1H3a.5.5 0 0 1-.5-.5zm0-4a.5.5 0 0 1 .5-.5h10a.5.5 0 0 1 0 1H3a.5.5 0 0 1-.5-.5z"/>
+                </svg>
+            </button>
 
-        <button id="docs-mobile" onclick="handleMobile()">
-            <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" fill="currentColor" class="bi bi-list" viewBox="0 0 16 16">
-                <path fill-rule="evenodd" d="M2.5 12a.5.5 0 0 1 .5-.5h10a.5.5 0 0 1 0 1H3a.5.5 0 0 1-.5-.5zm0-4a.5.5 0 0 1 .5-.5h10a.5.5 0 0 1 0 1H3a.5.5 0 0 1-.5-.5zm0-4a.5.5 0 0 1 .5-.5h10a.5.5 0 0 1 0 1H3a.5.5 0 0 1-.5-.5z"/>
-            </svg>
-        </button>
+            <content>
+                {!! $content !!}
+            </content>
 
-        <content>
-            {!! $content !!}
-        </content>
+        </div>
+
+        <div id="toc-view" class="toc"></div>
 
     </div>
 
@@ -79,9 +85,11 @@
         function handleScroll() {
             if (window.innerWidth <= 992) return;
             var nav = document.getElementById("sidebar");
-            nav.style.top = Math.max(65-window.scrollY, 15) + "px";
+            nav.style.height = window.scrollY > 65 ? "100vh" : 'calc(100vh - 80px)'
+            //nav.style.top = Math.max(65-window.scrollY, 15) + "px";
         }
         selfRemovingWindowEvent('scroll', handleScroll)
+        handleScroll();
 
         // scroll active
         var active = document.querySelector(".nav-page.active");
@@ -120,6 +128,23 @@
     </script>
 
     <script src="/js-static/docs-prism.js"></script>
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/tocbot/4.18.2/tocbot.min.js"></script>
+    <script>
+        tocbot.init({
+            // Where to render the table of contents.
+            tocSelector: '#toc-view',
+            // Where to grab the headings to build the table of contents.
+            contentSelector: '#content-view content',
+            // Which headings to grab inside of the contentSelector element.
+            headingSelector: 'h1, h2, h3',
+            // For headings inside relative or absolute positioned containers within content.
+            hasInnerContainers: true,
+            orderedList: false,
+            scrollSmooth: false,
+            throttleTimeout: 0
+        });
+    </script>
 
 </body>
 </html>

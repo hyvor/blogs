@@ -6,12 +6,15 @@ import {ajax} from "kea-ajax";
 import api from "../../lib/api";
 import {actionToUrl} from "kea-router";
 
+export interface UsageTypes {
+    users: Usage,
+    media: Usage,
+    auto_translate: Usage,
+    gpt?: Usage
+}
+
 interface ApiResponse {
-    usage: {
-        users: Usage,
-        media: Usage,
-        auto_translate: Usage,
-    },
+    usage: UsageTypes,
     subscriptions: Subscription[]
 }
 
@@ -40,19 +43,16 @@ const billingLogic = kea<billingLogicType>([
             actions.setSubscriptions(data.subscriptions);
         },
 
-        forceCancel: async () => {
+        forceCancel: async ({onCancel} : {onCancel :Function}) => {
             await api.delete(props.subdomain, '/billing/subscription');
+            onCancel();
         }
 
     })),
 
     reducers({
         usage: [
-            {} as {
-                users: Usage,
-                media: Usage,
-                auto_translate: Usage,
-            },
+            {} as UsageTypes,
             {
                 setUsage: (_, {usage}) => usage
             }

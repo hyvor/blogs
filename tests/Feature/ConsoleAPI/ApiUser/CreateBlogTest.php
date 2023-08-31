@@ -52,6 +52,7 @@ it('creates a blog', function () {
     $blog = Blog::find($blogId);
 
     expect($blog->subdomain)->toBe('new-blog');
+    expect($blog->ip)->toBe('127.0.0.1');
     expect($blog->type)->toBe(BlogTypeEnum::DEFAULT);
     expect(BlogVariant::where('blog_id', $blogId)->count())->toBe(1);
 });

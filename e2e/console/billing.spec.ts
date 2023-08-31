@@ -116,7 +116,7 @@ test.describe('plans', () => {
         await expect(page.getByText('Subscription Canceled')).toBeVisible();
 
         await page.getByText('Cancel', {exact: true}).click();
-        await expect(page.getByText('Are you sure you want to cancel the subscription and downgrade to the starter plan?')).toBeVisible();
+        await expect(page.getByText('Are you sure you want to force cancel the subscription now?')).toBeVisible();
         await page.getByRole('button', { name: "Cancel Subscription" }).click();
 
         await expect(page.getByText('Trial ends in')).toBeVisible();

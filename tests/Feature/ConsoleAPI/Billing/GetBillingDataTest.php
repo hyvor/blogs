@@ -3,8 +3,10 @@
 namespace Tests\Feature\ConsoleAPI\Billing;
 
 use App\Models\AutoTranslation;
+use App\Models\GptPrompt;
 use Database\Factories\ReceiptFactory;
 use Database\Factories\SubscriptionFactory;
+use Illuminate\Database\Eloquent\Factories\Sequence;
 use Illuminate\Testing\Fluent\AssertableJson;
 
 it('gets billing data', function () {
@@ -22,6 +24,15 @@ it('gets billing data', function () {
         'chars' => 1234
     ]);
 
+    GptPrompt::factory()->count(2)
+        ->state(new Sequence(
+            ['tokens_total' => 1234],
+            ['tokens_total' => 4321, 'deleted_at' => now()]
+        ))
+        ->create([
+            'blog_id' => $blog->id,
+        ]);
+
     consoleApi($blog, 'GET', '/billing')
         ->assertOk()
         ->assertJson(function (AssertableJson $json) {
@@ -29,7 +40,8 @@ it('gets billing data', function () {
                 ->has('usage', function (AssertableJson $json) {
                     $json->has('users')
                         ->has('media')
-                        ->has('auto_translate');
+                        ->has('auto_translate')
+                        ->has('gpt');
                 })
                 ->has('subscriptions', 3, function (AssertableJson $json) {
                     $json
@@ -39,9 +51,11 @@ it('gets billing data', function () {
                         ->has('frequency')
                         ->has('created_at')
                         ->has('paddle_subscription_id')
+                        ->has('shopify_subscription_id')
                         ->has('ends_at');
                 });
         })
-        ->assertJsonPath('usage.auto_translate.current', 1234);
+        ->assertJsonPath('usage.auto_translate.current', 1234)
+        ->assertJsonPath('usage.gpt.current', 1234 + 4321);
 
 });

@@ -2,7 +2,7 @@
 
 namespace Tests\Unit\PostContent\Nodes;
 
-use App\Domains\Post\Content\PostContentRepository;
+use App\Domains\Post\Content\PostContentService;
 
 test('json to HTML', function () {
     $content = 'I am a blockquote';
@@ -22,7 +22,7 @@ test('json to HTML', function () {
         ],
     ]);
 
-    $html = PostContentRepository::getHtml($json, blog());
+    $html = PostContentService::getHtml($json, blog());
 
     expect($html)->toEqual("<blockquote>$content</blockquote>");
 });
@@ -32,7 +32,7 @@ test('HTML to JSON', function () {
 
     $html = "<blockquote>$content</blockquote>";
 
-    $json = PostContentRepository::getJsonFromHtml($html, blog());
+    $json = PostContentService::getJsonFromHtml($html, blog());
 
     expect($json)
         ->toEqual(json_encode([
@@ -42,9 +42,14 @@ test('HTML to JSON', function () {
                     'type' => 'blockquote',
                     'content' => [
                         [
-                            'type' => 'text',
-                            'text' => $content,
-                        ],
+                            'type' => 'paragraph',
+                            'content' => [
+                                [
+                                    'type' => 'text',
+                                    'text' => $content,
+                                ],
+                            ]
+                        ]
                     ],
                 ],
             ],

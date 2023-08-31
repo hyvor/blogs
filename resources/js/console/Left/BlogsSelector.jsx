@@ -109,7 +109,7 @@ export default function BlogsSelector() {
                                     <div className="blog-row">
                                         <div className="row-left">{blog.name}</div>
                                         <div className="row-right">
-                                            <span className="plan-name">{blog.plan || "Personal"}</span>
+                                            <span className="plan-name">{blog.plan || "Free Trial"}</span>
                                             <span className="global-tag-role">{user.role}</span>
                                         </div>
                                     </div>

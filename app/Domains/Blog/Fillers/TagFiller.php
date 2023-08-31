@@ -1,4 +1,4 @@
-<?php
+<?php declare(strict_types=1);
 
 namespace App\Domains\Blog\Fillers;
 
@@ -23,7 +23,7 @@ class TagFiller implements FillerInterface
     {
     }
 
-    public function fill()
+    public function fill() : void
     {
         TagRepository::createTag($this->blog, 'Welcome');
 

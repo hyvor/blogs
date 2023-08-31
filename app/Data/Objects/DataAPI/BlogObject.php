@@ -25,6 +25,8 @@ class BlogObject
 
     public ?string $logo_url;
 
+    public ?string $icon_url;
+
     public ?string $cover_url;
 
     public string $url;
@@ -81,6 +83,7 @@ class BlogObject
         $meta = $blog->getAllMeta();
 
         $this->logo_url = $meta->logo_url;
+        $this->icon_url = $meta->icon_url;
         $this->cover_url = $meta->cover_url;
 
         $this->social = new SocialMediaObject(

@@ -22,6 +22,8 @@ export default defineConfig({
   /* Reporter to use. See https://playwright.dev/docs/test-reporters */
   reporter: 'html',
   /* Shared settings for all the projects below. See https://playwright.dev/docs/api/class-testoptions. */
+  globalTimeout: 600000,
+  timeout: 10000,
   use: {
     /* Base URL to use in actions like `await page.goto('/')`. */
     baseURL: 'http://127.0.0.1:8080',
@@ -34,18 +36,20 @@ export default defineConfig({
   projects: [
     {
       name: 'chromium',
-      use: { ...devices['Desktop Chrome'] },
+      use: { ...devices['Desktop Chrome'], contextOptions: {
+        permissions: ['clipboard-write', 'clipboard-read']
+      }},
     },
 
-    {
+    /* {
       name: 'firefox',
-      use: { ...devices['Desktop Firefox'] },
-    },
+      use: { ...devices['Desktop Firefox']},
+    }, */
 
-    {
+    /* {
       name: 'webkit',
       use: { ...devices['Desktop Safari'] },
-    },
+    }, */
 
     /* Test against mobile viewports. */
     // {

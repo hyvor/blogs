@@ -3,6 +3,7 @@
 namespace App\Http\Middleware\App;
 
 use App\Domains\Blog\BlogService;
+use App\Exceptions\SubdomainNotFoundException;
 use App\Exceptions\TrustedException;
 use App\Models\Blog;
 use Closure;
@@ -22,7 +23,7 @@ class SubdomainMiddleware
         $blog = BlogService::getBlogBySubdomain($subdomain);
 
         if (! $blog) {
-            throw new TrustedException('Subdomain not found', TrustedException::ERROR_NOT_FOUND);
+            throw new SubdomainNotFoundException('Subdomain not found', TrustedException::ERROR_NOT_FOUND);
         }
 
         app()->instance(Blog::class, $blog);

@@ -6,7 +6,7 @@ import getSubdomain from "../../logic-helpers/subdomain";
 import {usePostActions, usePostValues} from "./helpers";
 import {Language, Post, PostStatus} from "../../types";
 import Spinner from "../../ReusableComponents/Spinner";
-import AutoTranslate from "./AutoTranslate";
+import Tooltip from '../../ReusableComponents/Tooltip';
 
 export default function PostLanguageSelector({ id }: { id: number }) {
 
@@ -28,16 +28,6 @@ export default function PostLanguageSelector({ id }: { id: number }) {
                 )
             }
         </div>
-
-        {
-            !currentLanguage?.is_primary &&
-            <div>
-                <button className="button light small" onClick={() => setIsAutoTranslating(true)}>
-                    Auto-Translate <Magic />
-                </button>
-                { isAutoTranslating && <AutoTranslate id={id} onCancel={() => setIsAutoTranslating(false)} /> }
-            </div>
-        }
     </div>
 
 }
@@ -83,17 +73,23 @@ function LanguageTag({ id, language } : { id: number, language: Language }) {
         tip = `${language.name} - Draft`;
     }
 
-    return <span
-        key={language.id}
-        className={"lang-tag" + (editorState.languageId === language.id ? " active" : "")}
-        data-tip={tip}
-        onClick={onClick}
+    return <Tooltip
+        tooltip={tip}
+        position="bottom"
     >
-        <span className="code">{language.code}</span>
-        <span className="status-icon">
-            { isCreating ? <Spinner size={7} dark={true} /> : statusIcon }
+        <span
+            key={language.id}
+            className={"lang-tag" + (editorState.languageId === language.id ? " active" : "")}
+            data-tip={tip}
+            onClick={onClick}
+            data-testid={"lang-tag-" + language.code}
+        >
+            <span className="code">{language.code}</span>
+            <span className="status-icon">
+                { isCreating ? <Spinner size={7} dark={true} /> : statusIcon }
+            </span>
         </span>
-    </span>
+    </Tooltip>
 
 }
 

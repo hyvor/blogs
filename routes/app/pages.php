@@ -15,8 +15,12 @@ Route::middleware(LoginRequiredElseRedirectMiddleware::class)
 // landing
 Route::view('/', 'landing.index');
 Route::view('/pricing', 'landing.pricing');
+Route::view('/customers', 'landing.customers');
 Route::get('/docs/{page?}', [DocsController::class, 'handle']);
 Route::get('/for/{type}', [LandingController::class, 'for']);
 Route::get('sitemap.txt', [LandingController::class, 'sitemap']);
 Route::get('/themes/{name?}', [ThemesController::class, 'handle']);
 Route::view('/config', 'config');
+
+Route::view('/affiliate', 'landing.affiliate');
+Route::redirect('/affiliate-signup', 'https://hyvorblogs.tolt.io/');

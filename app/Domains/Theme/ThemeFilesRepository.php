@@ -5,6 +5,7 @@ namespace App\Domains\Theme;
 use App\Data\Enums\ThemeFileFolderEnum;
 use App\Domains\Theme\Events\AssetEditedEvent;
 use App\Domains\Theme\Events\ConfigEditedEvent;
+use App\Domains\Theme\Events\LangEditedEvent;
 use App\Domains\Theme\Events\StylesEditedEvent;
 use App\Domains\Theme\Events\TemplateEditedEvent;
 use App\Domains\Theme\GithubSync\File;
@@ -128,6 +129,7 @@ class ThemeFilesRepository
             ThemeFileFolderEnum::STYLES => StylesEditedEvent::dispatch($blog),
             ThemeFileFolderEnum::ASSETS => AssetEditedEvent::dispatch($blog, $file->name),
             ThemeFileFolderEnum::TEMPLATES => TemplateEditedEvent::dispatch($file),
+            ThemeFileFolderEnum::LANG => LangEditedEvent::dispatch($file),
             null => $file->name === 'config.yaml' ? ConfigEditedEvent::dispatch($file) : null,
             default => null
         };
