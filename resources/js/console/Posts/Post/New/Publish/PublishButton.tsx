@@ -31,6 +31,7 @@ export default function PublishButton({id} : {id: number}) {
         const diff = {
             content: currentVariant.content_unsaved,
             content_unsaved: null,
+            title: currentVariant.title,
         }
 
         saveCurrentVariantDiff({
@@ -87,7 +88,7 @@ function PublisherPopup({id, onClose} : {id: number, onClose: () => void}) {
 
     const [publishTime, setPublishTime] = useState<Date | null>(null)
     const { currentVariant, diff, savePostDiffAjax } = usePostValues(id);
-    const { savePostDiff } = usePostActions(id);
+    const { savePostDiff, saveCurrentVariantDiff } = usePostActions(id);
 
     const [isPublishing, setIsPublishing] = useState(false);
 
@@ -95,24 +96,25 @@ function PublisherPopup({id, onClose} : {id: number, onClose: () => void}) {
         setPublishTime(setTime ? new Date() : null);
     }
 
-    function handlePublish() {
+    async function handlePublish() {
 
         setIsPublishing(true);
-        
-        const newDiff = {...diff}
-        const variant = {...currentVariant};
 
-        if (publishTime) {
-            newDiff['published_at'] = dayjs(publishTime).unix()
-            variant.status = 'scheduled';
-        } else {
-            variant.status = 'published';
-        }
+        await new Promise(resolve => savePostDiff({
+            diff: {
+                published_at: publishTime ? dayjs(publishTime).unix() : dayjs().unix(),
+            },
+            onSave: () => {
+                resolve(null);
+            }
+        }));
 
-        newDiff.variants = [variant as PostVariant];
-
-        savePostDiff({
-            diff: newDiff, 
+        saveCurrentVariantDiff({
+            diff: {
+                status: publishTime ? 'scheduled' : 'published',
+                content: currentVariant.content,
+                title: currentVariant.title,
+            },
             onSave: () => {
                 setIsPublishing(false);
                 onClose();
@@ -126,9 +128,8 @@ function PublisherPopup({id, onClose} : {id: number, onClose: () => void}) {
                     >View</a></div> :
                     "Post scheduled"
                 , {autoClose: 5000});
-
             }
-        });
+        })
 
     }
 

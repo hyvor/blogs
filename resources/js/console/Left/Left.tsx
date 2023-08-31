@@ -37,15 +37,6 @@ function LeftInner({subdomain} : {subdomain: string}) {
     const { findBlogBySubdomain } = useValues(userBlogsLogic);
     const { blog, blog: { subscription: currentSubscription } } = findBlogBySubdomain(subdomain);
 
-    useEffect(() => {
-        (window as any).FeaturebaseWidget && (window as any).FeaturebaseWidget.init({
-            organization: "hyvorblogs",
-            initialPage: "MainView",
-            // placement: "left",
-            fullScreen: true
-        })
-    }, []);
-
     return <div id="left">
         <div id="left-header" className="box">
             <NavLink href={"/console"} className="console-link" exact={1}>
@@ -148,12 +139,8 @@ function LeftInner({subdomain} : {subdomain: string}) {
 
             <a
                 className="bottom-item"
-                onClick={() => {
-                    window.postMessage({
-                        target: 'FeaturebaseWidget',
-                        data: { action: 'toggleWidget' },
-                    })
-                }}
+                href="https://community.blogs.hyvor.com/roadmap"
+                target="_blank"
             >
                 <span className="icon"><Megaphone /></span>Changelog <span id="fb-update-badge"></span>
             </a>

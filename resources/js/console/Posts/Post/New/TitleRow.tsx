@@ -16,6 +16,7 @@ export default function TitleRow({ id }: { id: number }) {
                 placeholder="Title..."
                 value={currentVariant.title || ""}
                 onChange={e => updateCurrentPostVariantValue('title', e.target.value)}
+                autoFocus={(currentVariant.title || "") === ""}
             />
         </div>
     </div>

@@ -13,16 +13,17 @@ import userBlogsLogic from "./userBlogsLogic";
 import { SeoAnalyzer } from "../Posts/Post/New/Seo/seo-analyzer";
 import { calculateLinkAnalysis, getLinksFromContent } from "../Posts/Post/New/Links/links";
 
-export async function updatePost(post: Post, diff: Partial<Post>) {
+type PostDiff = Omit<Post, 'authors' | 'tags'> & {
+    authors: number[],
+    tags: number[],
+}
+
+export async function updatePost(post: Post, diff: Partial<PostDiff>) {
+
+    diff = {...diff};
 
     if (diff.variants) {
-        for (let variant of diff.variants) {
-            await api.patch(
-                getSubdomain(), `/post/${post.id}/variant`,
-                variant
-            )
-        }
-        delete diff.variants;
+        throw new Error('Use savePostVariantDiff instead');
     }
 
     if (diff.authors) {
@@ -50,6 +51,7 @@ const postLogic = kea<postLogicType>([
     path(key => ['post', key]),
 
     actions(({values}) => ({
+        setBoth: (obj: Post) => ({obj}),
         set: (obj: Post) => ({obj}),
         setVariant: (variant: PostVariant) => ({variant}),
         setOriginal: (obj: Post) => ({obj}),
@@ -71,7 +73,7 @@ const postLogic = kea<postLogicType>([
  
         loadPost: async () => {
             const response = await api.get<Post>(getSubdomain(), `/post/${props.id}`);
-            actions.set(response);
+            actions.setBoth(response);
         },
 
         deletePost: async () => {
@@ -96,33 +98,32 @@ const postLogic = kea<postLogicType>([
             const response = await updatePost(values.post, diff);
             actions.setOriginal(response);
         },
-        
-        /**
-         * @deprecated use savePostDiff instead
-         */
-        forceSavePost: async ({onSave, update} : { update: Partial<Post>, onSave: (post: Post) => void}) => {
 
-            const diff = mergePostWithUpdate(values.diff, update)
-
-            const response = await updatePost(values.post, diff);
-            actions.set(response)
-
-            typeof onSave === 'function' && onSave(response);
-        },
 
         savePostDiff: async(
-            {diff, onSave, updateState = true} : 
-            {diff: Partial<Post>, onSave: Function, updateState?: boolean}
+            {diff, onSave} : 
+            {diff: Partial<PostDiff>, onSave: Function, updateState?: boolean}
         ) => {
             const response = await updatePost(values.post, diff);
-            actions.setOriginal(response)
-            if (updateState)
-                actions.set(response);
+            actions.setOriginal(response);
+
+            /**
+             * This updates the state with the response from the server
+             * No side effects
+             */
+
+            const updatedObject : Post = {...values.post};
+            for (let key in diff) {
+                // @ts-ignore
+                updatedObject[key as keyof Post] = response[key as keyof Post];
+            }
+            actions.set(updatedObject);
+
             typeof onSave === 'function' && onSave(response);
         },
 
         saveCurrentVariantDiff: async(
-            {diff, onSave, updateState = true}: 
+            {diff, onSave}: 
             {diff: Partial<PostVariant>, onSave?: Function, updateState?: boolean}
         ) => {
             const currentVariant = values.currentVariant;
@@ -132,9 +133,18 @@ const postLogic = kea<postLogicType>([
             });
             actions.setVariantOriginal(response);
 
-            if (updateState) {
-                actions.setVariant(response);
+            /**
+             * This updates the state with the response from the server
+             * Has these side effects:
+             *  - slug of variant can change when the status is updated
+             */
+            const updatedObject : any = {...currentVariant};
+            const keys = Object.keys(diff) as (keyof PostVariant)[];
+            if (diff.status) {
+                keys.push('slug');
             }
+            keys.forEach(key => updatedObject[key] = response[key]);
+            actions.setVariant(updatedObject);
 
             typeof onSave === 'function' && onSave(response);
         },
@@ -187,6 +197,7 @@ const postLogic = kea<postLogicType>([
         post: [
             {} as Post,
             {
+                setBoth: (_, {obj}) => obj,
                 set: (_, {obj}) => obj,
                 setVariant: (state, {variant}) => {
                     const copy = {...state}
@@ -234,7 +245,7 @@ const postLogic = kea<postLogicType>([
         postOriginal: [
             {} as Post,
             {
-                set: (_, {obj}) => obj,
+                setBoth: (_, {obj}) => obj,
                 setVariantOriginal: (state, {variant}) => {
                     const copy = {...state}
                     copy.variants = copy.variants.map(
@@ -293,7 +304,20 @@ const postLogic = kea<postLogicType>([
         diff: [
             s => [s.post, s.postOriginal],
             (post, postOriginal) => {
-                const d = diff(postOriginal, post) as Partial<Post>
+
+                const postDiffCheck : PostDiff = {
+                    ...post,
+                    authors: post.authors.map(a => a.id),
+                    tags: post.tags.map(a => a.id),
+                };
+
+                const postOriginalDiffCheck : PostDiff = {
+                    ...postOriginal,
+                    authors: postOriginal.authors.map(a => a.id),
+                    tags: postOriginal.tags.map(a => a.id),
+                };
+
+                const d = diff(postOriginalDiffCheck, postDiffCheck) as Partial<PostDiff>;
 
                 if (d.preview_id) delete d.preview_id;
                 if (d.updated_at) delete d.updated_at;
@@ -393,7 +417,7 @@ const postLogic = kea<postLogicType>([
                 return;
 
             if (props.data) {
-                actions.set(props.data);
+                actions.setBoth(props.data);
             } else {
                 actions.loadPost();
             }

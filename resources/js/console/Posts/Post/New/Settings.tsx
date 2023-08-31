@@ -38,6 +38,7 @@ export default function Settings({id}: {id: number}) {
     const {
         updatePostValue, updateCurrentPostVariantValue,
         updatePost, updateCurrentPostVariant,
+        saveCurrentVariantDiff,
         savePostDiff,
         deletePost, deleteVariant,
         changeEditorState
@@ -88,7 +89,7 @@ export default function Settings({id}: {id: number}) {
         setCodemirrorUpdateId(codemirrorUpdateId + 1);
     }
 
-    function handleSave() {
+    async function handleSave() {
         setIsSaving(true);
 
         const postDiff = {} as Partial<Post>;
@@ -96,18 +97,28 @@ export default function Settings({id}: {id: number}) {
         changedKeys.forEach(key => (postDiff as any)[key] = diff[key]);
 
         if (changedVariantKeys.length > 0) {
-            const variant = {} as Partial<PostVariant>;
-            variant.language_id = currentLanguage.id;
-            changedVariantKeys.forEach(key => (variant as any)[key] = diffVariant![key]);
-            postDiff.variants = [variant as PostVariant];
+
+            await new Promise(resolve => {
+
+                const variant = {} as Partial<PostVariant>;
+                changedVariantKeys.forEach(key => (variant as any)[key] = diffVariant![key]);
+
+                saveCurrentVariantDiff({
+                    diff: variant,
+                    onSave: () => {
+                        resolve(null);
+                    },
+                });
+
+            })
+
         }
 
         savePostDiff({
             diff: postDiff,
             onSave: () => {
                 setIsSaving(false);
-            },
-            updateState: false
+            }
         });
     }
 
@@ -261,7 +272,7 @@ export default function Settings({id}: {id: number}) {
 
                         <Setting 
                             title="Featured"
-                            description="Pin this post to the top of the blog in the index page."
+                            description="Pin this post to the top of the index page."
                             className="has-top-padding"
                         >
                             <Checkbox

@@ -370,7 +370,17 @@ class PostRepository
                 // a slug is required if the post is published
                 if ($variant->slug === null) {
                     $title = $variant->title ?? $updates['title'] ?? null;
-                    $variant->slug = $title ? Str::slug($title) : Str::random();
+                    $slug = $title ? Str::slug($title) : Str::random();
+
+                    // if the slug is already taken, generate a random slug
+                    if (
+                        $variant->language &&
+                        self::getPostByLanguageAndSlug($variant->language, $slug)
+                    ) {
+                        $slug = Str::random();
+                    }
+
+                    $variant->slug = $slug;
                 }
 
             }
@@ -398,7 +408,7 @@ class PostRepository
 
         // title
         if (array_key_exists('title', $updates)) {
-            $variant->title = $updates['title'] ? mb_substr($updates['title'] ?? '', 0, 255) : null;
+            $variant->title = $updates['title'] ? mb_substr($updates['title'], 0, 255) : null;
         }
 
         // description
