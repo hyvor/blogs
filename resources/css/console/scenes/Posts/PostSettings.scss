@@ -1,5 +1,5 @@
 .post-settings-wrap {
-
+    
     .setting-select {
         text-align: center;
         //border-bottom: 1px solid $color-accent-light;
@@ -31,6 +31,7 @@
         }
         .post-setting-content {
             flex: 3;
+            width: 200px;
         }
         &:not(:last-child) {
             margin-bottom: 20px;
