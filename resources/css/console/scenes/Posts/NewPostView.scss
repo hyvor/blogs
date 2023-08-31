@@ -1,12 +1,24 @@
 @import '../../../colors.scss';
 
+:root {
+    --color-background: #{$color-accent-very-light};
+    --color-editor: #{$color-white};
+    --color-text: #{$color-black};
+  }
+
+[data-theme="dark"] {
+    --color-background: #{$color-black};
+    --color-editor: #{$color-card-dark};
+    --color-text: #{$color-black};
+}
+
 .new-post-view {
     position: fixed;
     top: 0;
     left: 0;
     width: 100%;
     height: 100%;
-    background: $color-accent-very-light;
+    background: var(--color-background);
     z-index: 10;
     overflow: auto;
     padding: 20px 0;
@@ -41,7 +53,7 @@
             padding: 15px 25px;
             border-radius: 20px;
             box-shadow: 0 0 30px rgb(0 0 0 / 5%);
-            background-color: #fff;
+            background-color: var(--color-editor);
 
             position: sticky;
             top: -20px;
@@ -165,13 +177,14 @@
             margin-top: 15px;
             border-radius: 20px;
             box-shadow: 0 0 30px rgb(0 0 0 / 5%);
-            background-color: #fff;
+            background-color: var(--color-editor);
         }
 
         .post-left-title {
             padding: 15px 25px;
             border-bottom: 1px solid $color-accent-light;
             .post-editor-title {
+                color: $color-white;
                 font-family: $font-content;
                 padding-top: 10px;
                 padding-bottom: 10px;
