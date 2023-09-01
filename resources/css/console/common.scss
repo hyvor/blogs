@@ -544,12 +544,12 @@ button {
     font-family: 'source-code-pro', Menlo, 'Courier New', Consolas, monospace!important;
     box-shadow: none!important;
     border-radius:20px;
-    background-color: $color-input!important;
+    background-color: var(--color-input)!important;
     .CodeMirror-line {
         padding-left: 15px!important;
     }
     .CodeMirror-gutters {
-        background-color: $color-input;
+        background-color: var(--color-input);
     }
     .CodeMirror-scroll {
         overflow-x: hidden!important;

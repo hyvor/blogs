@@ -1,3 +1,25 @@
+@import '../../colors.scss';
+
+:root {
+    --color-box: #{$color-box};
+    --color-hover: #{$color-hover};
+    --color-accent-active: #{$color-accent-active};
+    --color-card: #{$color-card};
+    --color-input: #{$color-input};
+    --color-background: #{$color-white};
+    --color-foreground: #{$color-black};
+    --color-text-light: #{$color-text-light};
+  }
+
+[data-theme="dark"] {
+    --color-box: #{$color-box-dark};
+    --color-hover: #{$color-card-dark};
+    --color-card: #{$color-card-dark};
+    --color-input: #{$color-input-dark};
+    --color-background: #{$color-black};
+    --color-foreground: #{$color-white};
+    --color-text-light: #{$color-text-light-dark};
+}
 
 .global-image-uploader {
 
@@ -14,7 +36,7 @@
     font-size: 1rem;
 
     .inner {
-        background: $box-color;
+        background: var(--color-box);
         border-radius: $box-radius;
         box-shadow: $color-box-shadow;
         width: 900px;
@@ -51,14 +73,14 @@
             flex: 1;
             .upload-area {
                 cursor: pointer;
-                background-color: $color-input;
+                background-color: var(--color-input);
                 width: 100%;
                 height: 100%;
                 border-radius: 20px;
                 display: flex;
                 align-items: center;
                 justify-content: center;
-                color: $color-text-light;
+                color: var(--color-text-light);
             }
         }
 

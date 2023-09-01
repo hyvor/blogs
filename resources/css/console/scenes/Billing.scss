@@ -3,11 +3,13 @@
 :root {
     --color-text: #{$color-white};
     --color-card: #{$color-card};
+    --color-accent-light: #{$color-accent-light};
   }
   
 [data-theme="dark"] {
     --color-text: #{$color-black};
     --color-card: #{$color-card-dark};
+    --color-accent-light: #{$color-accent-light-dark};
 }
 
 
@@ -42,7 +44,7 @@
                 .frequency-selector {
                     font-size: 12px;
                     font-weight: initial;
-                    background: $color-accent-light;
+                    background: var(--color-accent-light);
                     border-radius: 20px;
                     padding:2px 0;
                     color: var(--color-text);
