@@ -2,10 +2,12 @@
 
 :root {
     --color-blog-card-shadow: #{$blog-card-shadow-color};
+    --color-hover: #{$color-hover};
   }
 
 [data-theme="dark"] {
     --color-blog-card-shadow: #{$blog-card-shadow-color-dark};
+    --color-hover: #{$color-card-dark};
 }
 
 
@@ -147,7 +149,7 @@
             display: block;
             border-radius:20px;
             &:hover {
-                background-color: $color-hover;
+                background-color: var(--color-hover);
             }
         }
     }
