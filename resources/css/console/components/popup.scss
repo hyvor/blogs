@@ -2,11 +2,13 @@
 :root {
     --color-box-shadow: #{$color-box-shadow};
     --color-text-light: #{$color-black};
+    --color-text: #{$color-white};
   }
 
 [data-theme="dark"] {
     --color-box-shadow: #{$color-box-shadow-dark};
     --color-text-light: #{$color-text-light-dark};
+    --color-text: #{$color-black};
 }
 
 
@@ -90,6 +92,7 @@
         border-radius: 0%;
         overflow: hidden;
         z-index: 10000000;
+        color: var(--color-text);
     }
 
     .code-fullscreen-header {

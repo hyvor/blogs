@@ -515,6 +515,9 @@ img.ProseMirror-separator {
 
     x-embed.url-input {
         margin-top: 30px;
+        input {
+            background-color: var(--color-input);
+        }
     }
 
     bookmark {
