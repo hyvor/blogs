@@ -32,8 +32,15 @@ Then, paste it in **Console &rarr; Theme &rarr; config.yaml &rarr; THEME_FONTS**
 
 ![Use Fonts in config.yaml](/img/docs/fonts-config.png)
 
-> When you add this to the config.yaml, the fonts will be loaded in the `<head>` tag of your blog automatically. Then, you can use that font in your blog.
+When you add this to the config.yaml, the fonts will be loaded in the `<head>` tag of your blog automatically. Then, you can use that font in your blog.
 
+> Note: If you do not see the Theme Fonts option in the UI, switch to YAML mode (top right corner) and add `THEME_FONTS` option after `THEME_VERSION`.
+>
+> ```yaml
+> THEME_NAME: hello
+> THEME_VERSION: 1.0.0
+> THEME_FONTS: "mulish:400,700"
+> ```
 
 #### 2. Use the fonts
 
