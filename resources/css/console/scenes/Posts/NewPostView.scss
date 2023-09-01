@@ -4,12 +4,14 @@
     --color-background: #{$color-accent-very-light};
     --color-editor: #{$color-white};
     --color-text: #{$color-black};
+    --color-active: #{$color-accent-active};
   }
 
 [data-theme="dark"] {
     --color-background: #{$color-black};
     --color-editor: #{$color-card-dark};
-    --color-text: #{$color-black};
+    --color-text: #{$color-white};
+    --color-active: #{$color-accent-active-dark};
 }
 
 .new-post-view {
@@ -150,6 +152,7 @@
 
             .post-languages-wrap {
                 .post-languages {
+                    color: $color-black;
                     flex: 1;
                     .lang-tag {
                         display: inline-block;
@@ -184,7 +187,7 @@
             padding: 15px 25px;
             border-bottom: 1px solid $color-accent-light;
             .post-editor-title {
-                color: $color-white;
+                color: var(--color-text);
                 font-family: $font-content;
                 padding-top: 10px;
                 padding-bottom: 10px;
@@ -208,7 +211,7 @@
         height: calc(100vh - 40px);
         border-radius: 20px;
         box-shadow: 0 0 30px rgba(0,0,0,0.05);
-        background-color: #fff;
+        background-color: var(--color-editor);
         display: flex;
         flex-direction: column;
         position: sticky;
@@ -236,10 +239,10 @@
                 }
 
                 &:hover {
-                    background-color: $color-hover;
+                    background-color: var(--color-active);
                 }
                 &.active {
-                    background-color: $color-accent-light;
+                    background-color: var(--color-active);
                 }
 
                 &:first-child {
@@ -250,7 +253,7 @@
                 }
 
                 &:not(:last-child) {
-                    border-right: 1px solid $color-accent-light;
+                    border-right: 1px solid var(--color-active);
                 }
 
 

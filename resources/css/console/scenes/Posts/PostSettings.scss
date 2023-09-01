@@ -5,6 +5,7 @@
     --color-input: #{$color-input};
     --color-hover: #{$color-hover};
     --color-accent-active: #{$color-accent-active};
+    --color-placeholder: red;
   }
 
 [data-theme="dark"] {
@@ -12,6 +13,7 @@
     --color-input: #{$color-input-dark};
     --color-hover: #{$color-card-dark};
     --color-accent-active: #{$color-accent-active-dark};
+    --color-placeholder: green;
 }
 
 .post-settings-wrap {
@@ -48,6 +50,9 @@
         .post-setting-content {
             flex: 3;
             width: 200px;
+            ::placeholder {
+                color: var(--color-placeholder);
+            }
         }
         &:not(:last-child) {
             margin-bottom: 20px;
@@ -104,7 +109,7 @@
 
         .post-author {
             padding: 4px 8px;
-            background-color: $color-input;
+            background-color: var(--color-input);
             border-radius: 20px;
             display: inline-flex;
             align-items: center;
@@ -136,13 +141,14 @@
         }
 
         .author-adder {
+            color: $color-black;
             vertical-align: top;
             position: relative;
             .plus {
                 display: inline-flex;
                 width: 25px;
                 height: 25px;
-                background-color: $color-input;
+                background-color: var(--color-input);
                 border-radius: 50%;
                 align-items: center;
                 justify-content: center;

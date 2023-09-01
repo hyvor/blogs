@@ -1,3 +1,16 @@
+@import '../../colors.scss';
+
+:root {
+    --color-input: #{$color-input};
+    --color-hover: #{$color-hover};
+  }
+
+[data-theme="dark"] {
+    --color-input: #{$color-input-dark};
+    --color-hover: #{$color-card-dark};
+}
+
+
 label.global-checkbox {
 
     position: relative; /* to contain absolute elements */
@@ -21,7 +34,7 @@ label.global-checkbox {
         left:0;
         width:20px; 
         height:20px;
-        background-color: $color-input;
+        background-color: var(--color-input);
         border-radius: 2px;
     }
 
