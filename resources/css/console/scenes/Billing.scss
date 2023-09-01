@@ -1,11 +1,13 @@
 @import '../../colors.scss';
 
 :root {
-    --color-text: #{$color-text};
+    --color-text: #{$color-white};
+    --color-card: #{$color-card};
   }
   
 [data-theme="dark"] {
-    --color-text: #{$color-text};
+    --color-text: #{$color-black};
+    --color-card: #{$color-card-dark};
 }
 
 
@@ -62,7 +64,7 @@
                 .plan {
                     padding: 15px;
                     border-radius: 20px;
-                    background: $color-card;
+                    background: var(--color-card);
                     margin-bottom: 10px;
                     display:flex;
                     &.current {
