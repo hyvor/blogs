@@ -5,7 +5,6 @@
     --color-input: #{$color-input};
     --color-hover: #{$color-hover};
     --color-accent-active: #{$color-accent-active};
-    --color-placeholder: red;
     --color-text-light: #{$color-text-light};
     --color-box: #{$color-box};
   }
@@ -15,7 +14,6 @@
     --color-input: #{$color-input-dark};
     --color-hover: #{$color-card-dark};
     --color-accent-active: #{$color-accent-active-dark};
-    --color-placeholder: green;
     --color-text-light: #{$color-text-light-dark};
     --color-box: #{$color-box-dark};
 }
@@ -55,7 +53,7 @@
             flex: 3;
             width: 200px;
             ::placeholder {
-                color: var(--color-placeholder);
+                color: var(--color-text-light);
             }
         }
         &:not(:last-child) {
