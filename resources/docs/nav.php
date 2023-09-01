@@ -15,6 +15,7 @@ return [
         ['custom-domain', 'Custom Domain'],
         ['custom-code', 'Custom Code'],
         /*['edge-caching', 'Edge Caching'],*/
+        ['fonts', 'Fonts'],
         ['seo', 'SEO'],
         ['syntax-highlighting', 'Syntax Highlighting'],
         ['redirects', 'Redirects'],
