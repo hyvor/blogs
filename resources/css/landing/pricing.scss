@@ -19,7 +19,7 @@ body.pricing {
 
     .pricing-table-new {
         background: $color-accent-very-light;
-        padding: 100px;
+        padding-top: 100px;
 
         h1 {
             font-size: 26px;
@@ -42,7 +42,7 @@ body.pricing {
             top: 0;
             background-color: $color-accent-very-light;
             z-index: 10;
-            .container {
+            .inner {
                 display: flex;
             }
 
@@ -58,6 +58,15 @@ body.pricing {
                         flex: 1;
                     }
                     button.hidden {
+                        display: none;
+                    }
+                }
+
+                @media screen and (max-width: 900px) {
+                    .more-plans-left {
+                        flex: 3;
+                    }
+                    .plans-keyword {
                         display: none;
                     }
                 }
