@@ -28,7 +28,7 @@ jobs:
                 uses: shivammathur/setup-php@v2
                 with:
                     coverage: "none"
-                    php-version: "8.2"
+                    php-version: "8.1"
                     ini-file: development
                     tools: composer:v2
                     extensions: mbstring, ctype, fileinfo, openssl, PDO, bcmath, json, tokenizer, xml, intl
