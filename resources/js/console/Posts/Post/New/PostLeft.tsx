@@ -52,6 +52,7 @@ export default function PostLeft({id, postViewRef} : {id: number, postViewRef: R
 
                     <span 
                         className={`global-post-status ${currentVariant.status} large`}
+                        data-testid="post-status"
                     >{currentVariant.status}</span>
 
                     

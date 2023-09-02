@@ -124,7 +124,7 @@ const postLogic = kea<postLogicType>([
 
         saveCurrentVariantDiff: async(
             {diff, onSave}: 
-            {diff: Partial<PostVariant>, onSave?: Function, updateState?: boolean}
+            {diff: Partial<PostVariant>, onSave?: (variant: PostVariant) => void, updateState?: boolean}
         ) => {
             const currentVariant = values.currentVariant;
             const response = await api.patch<PostVariant>(getSubdomain(), `/post/${values.post.id}/variant`, {
@@ -140,6 +140,7 @@ const postLogic = kea<postLogicType>([
              */
             const updatedObject : any = {...currentVariant};
             const keys = Object.keys(diff) as (keyof PostVariant)[];
+            keys.push('url');
             if (diff.status) {
                 keys.push('slug');
             }

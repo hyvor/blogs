@@ -1,3 +1,4 @@
+import { TestingApi } from './../baseTest';
 import { Page } from "@playwright/test";
 import baseTest from "../baseTest.ts";
 
@@ -6,7 +7,7 @@ export const consoleTest = baseTest.extend<{console: Console}>({
 
         await testingApi.truncate();
 
-        const console = new Console(page);
+        const console = new Console(page, testingApi);
         await use(console);
 
     }
@@ -16,11 +17,8 @@ type NavType = 'billing' | 'posts' | 'settings' | 'tools';
 
 class Console {
 
-    private page : Page;
 
-    constructor(page: Page) {
-        this.page = page;
-    }
+    constructor(private page: Page, private testingApi: TestingApi) {}
 
     async visit(path : string = '') {
         await this.page.goto('/console' + path);
@@ -35,7 +33,9 @@ class Console {
         await this.page.getByTestId('main-nav-' + nav).click();
     }
 
-    async newPost() {
-        
+    async visitNewPost(attrs = {}) {
+        await this.testingApi.factory.testPost(attrs);
+        await this.visitAndNav('posts');
+        await this.page.getByRole('link', { name: 'Test Post' }).click();
     }
 }

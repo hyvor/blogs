@@ -115,7 +115,7 @@ function PublisherPopup({id, onClose} : {id: number, onClose: () => void}) {
                 content: currentVariant.content,
                 title: currentVariant.title,
             },
-            onSave: () => {
+            onSave: (v) => {
                 setIsPublishing(false);
                 onClose();
 
@@ -123,8 +123,9 @@ function PublisherPopup({id, onClose} : {id: number, onClose: () => void}) {
                     !publishTime ?
                     <div>Post Published. <a
                         className="link"
-                        href={currentVariant.url}
+                        href={v.url}
                         target="_blank"
+                        data-testid="publish-popup-view-link"
                     >View</a></div> :
                     "Post scheduled"
                 , {autoClose: 5000});
@@ -139,7 +140,7 @@ function PublisherPopup({id, onClose} : {id: number, onClose: () => void}) {
         description: !!currentVariant.description,
     }
 
-    return <div className="post-publisher">
+    return <div className="post-publisher" data-testid="publish-popup">
         <Popup 
             body={
                 <div className="post-publisher-inner">
