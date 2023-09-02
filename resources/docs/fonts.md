@@ -7,7 +7,7 @@ There are two ways to add fonts to your blog:
 
 ## Add Google Fonts (Proxied) {#google-fonts}
 
-[Google Fonts](https://fonts.google.com/) is the most popular service for web fonts. However, it has known privacy issues and is not compliant with privacy laws like GDPR. Therefore, we proxy Google Fonts to provide you with a better privacy and speed. All scripts or stylesheets will be served them directly from your blog's domain.
+[Google Fonts](https://fonts.google.com/) is the most popular service for web fonts. However, it has known privacy issues and is not compliant with privacy laws like GDPR. Therefore, we proxy Google Fonts to provide you with a better privacy and speed. All scripts or stylesheets will be served directly from your blog's domain.
 
 * `https://[your-domain]/fonts/css/{family}` - CSS Proxy
 * `https://[your-domain]/fonts/file/{file_name}` - Font file proxy

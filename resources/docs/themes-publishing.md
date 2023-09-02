@@ -35,9 +35,7 @@ All the following requirements should be met in order to publish a theme to our 
 * YAML files should use 2 spaces per indentation (not tabs, not 4 spaces).
 * Mobile responsive
 * Featured posts may have some unique UI in the index page (ex: a pinned/star icon)
-* Content Styles:
-  * All [blocks](writing#blocks) are styled properly. You can test this with the "Content Style" post in your DEV blog.
-  * Code blocks (`<pre><code>`) should have `tab-size: 4`
+* Content styles are added. See [Content styles](#content-styles) section below.
 * All assets (JS, fonts, etc.) should be added in the `assets` folder. Do not load assets from external sources like Google Fonts.
 * Should support the blog's social media links (shows an icon or link to the social media profile if the link is available)
   * Facebook
@@ -113,6 +111,105 @@ All published themes should support RTL (right-to-left) languages. Follow these 
 * Make sure absolute/fixed positioned elements are positioned correctly in RTL mode
 * `<pre><code>` blocks should have `direction: ltr` CSS
 * Make sure to add an RTL language to your DEV blog and test RTL support
+
+## Content Styles {#content-styles}
+
+All published themes should nicely style all the blocks in the "Content Style Guide" post in your DEV blog. In addition to styling them, follow these guidelines to avoid common but subtle UX issues.
+
+#### 1. Heading Anchors {#heading-anchors}
+
+We automatically add anchors to headings that have an `id` attribute.
+
+HTML without ID:
+
+```html
+<h1>My Heading</h1>
+```
+
+HTML with ID:
+
+```html
+<h1 id="heading-anchor">
+    <a href="#heading-anchor" class="heading-anchor">
+        My Heading
+    </a>
+</h1>
+```
+
+These heading anchor should be **styled differently** from other links. For example, you can add a `#` or an SVG image (via `background-image`) before the anchor text.
+
+```css
+h1, h2, h3, h4, h5, h6 {
+    a[href^="#"] {
+        
+        /* Remove usual link styles */
+        color: inherit;
+        text-decoration: none;
+        position: relative;
+        
+        /* Add different styles */
+        &:hover:before {
+            content: "#";
+            position: absolute;
+            right: 100%;
+            margin-right: 5px;
+            color: var(--color-text-content-secondary);
+        }
+    }
+}
+```
+
+#### 2. Code Blocks {#code-blocks}
+
+* Code blocks should have `tab-size: 4`
+* Code blocks should have `direction: ltr`
+* Line numbers should be absolutely positioned
+* Add left padding when line numbers are enabled (check for `.has-line-numbers`).
+
+And, line numbers should be absolutely positioned. Also, add left padding when line numbers are enabled (check for `.has-line-numbers`).
+
+```css
+pre {
+    position: relative;
+    tab-size: 4;
+    direction: ltr;
+    .line-number {
+        margin-right: 1rem;
+        position: absolute;
+        left: 1rem;
+    }
+    &.has-line-numbers .line {
+        padding-left: 2rem;
+    }
+}
+```
+
+#### 3. Tables {#tables}
+
+* `.table-container` should have `overflow-x: auto` to make sure the table is scrollable on mobile devices
+
+```css
+.table-container {
+    overflow-x: auto;
+}
+```
+
+#### 4. Paragraphs {#paragraphs}
+
+Margins must be handled carefully for paragraphs inside lists, tables, and blockquotes. The following works well in most cases.
+
+```css
+li {
+    p {
+        margin-top: 0;
+        &:last-child {
+            margin-bottom: 0;
+        }
+    }
+}
+```
+
+
 
 ## Versioning {#versioning}
 
