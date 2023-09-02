@@ -85,21 +85,6 @@ const postLogic = kea<postLogicType>([
             await api.delete(subdomain, `/post/${props.id}`);
         },
 
-        /**
-         * @deprecated use savePostDiff instead
-         */
-        savePost: async () => {
-            const diff = values.diff
-            
-            if (Object.keys(diff).length === 0) {
-                return false;
-            }
-
-            const response = await updatePost(values.post, diff);
-            actions.setOriginal(response);
-        },
-
-
         savePostDiff: async(
             {diff, onSave} : 
             {diff: Partial<PostDiff>, onSave: Function, updateState?: boolean}
