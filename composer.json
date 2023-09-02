@@ -61,8 +61,7 @@
         "twig/twig": "^2.0",
         "ueberdosis/tiptap-php": "^1.1",
         "unsplash/unsplash": "^3.2",
-        "vlucas/phpdotenv": "^5.4",
-        "yethee/tiktoken": "^0.1.2"
+        "vlucas/phpdotenv": "^5.4"
     },
     "require-dev": {
         "barryvdh/laravel-debugbar": "^3.6",
