@@ -36,6 +36,7 @@ nav {
             padding:8px;
             display: inline-block;
             transition: .3s transform;
+            border-bottom: 3px solid transparent;
             &.active {
                 border-bottom: 3px solid #886c6b;
             }
