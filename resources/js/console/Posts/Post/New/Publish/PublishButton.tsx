@@ -6,7 +6,6 @@ import { bringLeftHeaderToFront } from "../z-index";
 import Radio from "../../../../ReusableComponents/Radio";
 import ReactDatePicker from "react-datepicker";
 import ActionButton from "../../../../ReusableComponents/ActionButton";
-import { PostVariant } from "../../../../types";
 import dayjs from "dayjs";
 import { toast } from "react-toastify";
 
@@ -38,7 +37,15 @@ export default function PublishButton({id} : {id: number}) {
             diff,
             onSave: () => {
                 setIsSavingPublishedPostChanges(false);
-                toast.success("Changes saved", {autoClose: 5000});
+
+                toast.success(
+                    <div>Changes saved. <a
+                        className="link"
+                        href={currentVariant.url}
+                        target="_blank"
+                        data-testid="publish-popup-view-link"
+                    >View</a></div>
+                , {autoClose: 5000});
             }
         });
     }

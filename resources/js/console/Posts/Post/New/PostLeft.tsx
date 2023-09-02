@@ -67,11 +67,11 @@ export default function PostLeft({id, postViewRef} : {id: number, postViewRef: R
             <div className="left-header-row additional-data">
 
                 <div className="left-header-left">
-                    <span className="saver">
+                    <span className="saver" data-testid="save-status">
 
                         {
                             editorState.isSaving ?
-                                <span>
+                                <span data-testid="save-loader">
                                     <Loader size="extra-mini" inline={true} />
                                     <span className="saving-name">Saving</span>
                                 </span>

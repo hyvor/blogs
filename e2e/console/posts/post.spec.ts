@@ -1,5 +1,6 @@
 import { expect, test } from "@playwright/test";
 import {consoleTest} from "../consoleTest.ts";
+import { pmc } from "../../helpers/prosemirror-test-helper.ts";
 
 consoleTest('Create post', async ({testingApi, console, page}) => {
     await testingApi.factory.blogFull({routes: true});
@@ -194,3 +195,89 @@ test.describe('Post Status', () => {
     });
 
 });
+
+test.describe('Writing and Saving', () => {
+    
+    consoleTest('Save draft (ctrl + s)', async ({console, page}) => {
+
+        await console.visitNewPost({postVariantAttrs: {status: 'draft'}});
+        await page.locator('.ProseMirror').fill('This is my first post');
+
+        await expect(page.getByTestId('save-status')).toContainText('Unsaved changes *');
+
+        await page.keyboard.press('Control+s');
+
+        await expect(page.getByTestId('save-loader')).toBeVisible();
+        await expect(page.getByTestId('save-status')).toContainText('Saved');
+
+        await page.reload();
+        await expect(page.locator('.ProseMirror')).toContainText('This is my first post');
+
+    });
+
+    consoleTest('Published post editing and publishing changes', async ({testingApi, console, page}) => {
+
+        await testingApi.factory.testPost({postVariantAttrs: {
+            status: 'published',
+            content: pmc.p('This is a test post')
+        }});
+        await console.visitAndNav('posts');
+        await page.getByRole('link', { name: 'Test Post' }).click();
+
+        await expect(page.locator('.ProseMirror')).toContainText('This is a test post');
+        await expect(page.getByTestId('save-status')).toHaveText('Saved');
+
+        await page.locator('.ProseMirror').fill('Updated post');
+
+        await page.keyboard.press('Control+s');
+
+        await expect(page.getByTestId('save-loader')).toBeVisible();
+        await expect(page.getByTestId('save-status')).toContainText('Saved');
+
+        await page.reload();
+        await expect(page.locator('.ProseMirror')).toContainText('Updated post');
+
+        await expect(page.getByTestId('save-status')).toContainText('Unpublished changes');
+        await expect(page.getByTestId('save-status')).toContainText('Discard');
+
+        // publishing changes
+        await page.getByRole('button', { name: 'Publish Changes' }).click();
+        await expect(page.getByTestId('save-status')).toContainText('Saved');
+
+        await expect(page.getByText('Changes saved')).toBeVisible();
+
+    });
+
+    consoleTest('Published post edit & discard', async ({testingApi, console, page}) => {
+
+        await testingApi.factory.testPost({postVariantAttrs: {
+            status: 'published',
+            content: pmc.p('This is a test post')
+        }});
+        await console.visitAndNav('posts');
+        await page.getByRole('link', { name: 'Test Post' }).click();
+
+        const saveStatus = page.getByTestId('save-status');
+
+        await expect(page.locator('.ProseMirror')).toContainText('This is a test post');
+        await expect(saveStatus).toHaveText('Saved');
+
+        await page.locator('.ProseMirror').fill('Updated post');
+        await saveStatus.getByText('Discard').click();
+
+        await page.getByRole('button', { name: 'Discard Changes' }).click();
+
+        await expect(page.getByTestId('save-status')).toContainText('Saved');
+        await expect(page.getByText('Successfully discarded')).toBeVisible();
+
+        await expect(page.locator('.ProseMirror')).toContainText('This is a test post');
+
+        await page.reload();
+
+        await expect(page.locator('.ProseMirror')).toContainText('This is a test post');
+        await expect(page.getByTestId('save-status')).toHaveText('Saved');
+
+    });
+
+
+})
