@@ -17,6 +17,7 @@ import getSubdomain from "../../../logic-helpers/subdomain";
 import { setGlobalImageUploader } from "../../../logic/mediaLogic";
 import { bringRightToFront } from "./z-index";
 import InfoTooltip from "../../../ReusableComponents/InfoTooltip";
+import { PostDiff } from "../../../logic/postLogic";
 
 const settingToReadable = {
     authors: 'Authors',
@@ -92,7 +93,7 @@ export default function Settings({id}: {id: number}) {
     async function handleSave() {
         setIsSaving(true);
 
-        const postDiff = {} as Partial<Post>;
+        const postDiff = {} as Partial<PostDiff>;
 
         changedKeys.forEach(key => (postDiff as any)[key] = diff[key]);
 
@@ -288,7 +289,10 @@ export default function Settings({id}: {id: number}) {
                         >
                             <button 
                                 className="button small danger"
-                                onClick={() => setIsDeleting(true)}
+                                onClick={() => {
+                                    bringRightToFront();
+                                    setIsDeleting(true)
+                                }}
                             >Delete <Trash /></button>
                         </Setting>
 

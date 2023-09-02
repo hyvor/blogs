@@ -13,7 +13,7 @@ import userBlogsLogic from "./userBlogsLogic";
 import { SeoAnalyzer } from "../Posts/Post/New/Seo/seo-analyzer";
 import { calculateLinkAnalysis, getLinksFromContent } from "../Posts/Post/New/Links/links";
 
-type PostDiff = Omit<Post, 'authors' | 'tags'> & {
+export type PostDiff = Omit<Post, 'authors' | 'tags'> & {
     authors: number[],
     tags: number[],
 }
