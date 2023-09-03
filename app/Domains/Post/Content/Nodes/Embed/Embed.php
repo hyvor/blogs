@@ -14,7 +14,6 @@ class Embed extends NodeType
 
     public string $name = 'embed';
     public string $attrs = EmbedAttrs::class;
-    public string $group = 'block';
 
     public function fromHtml(): array
     {

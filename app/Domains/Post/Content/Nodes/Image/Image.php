@@ -19,7 +19,6 @@ class Image extends NodeType
 
     public string $name = 'image';
     public string $attrs = ImageAttrs::class;
-    public string $group = 'block';
 
     public function toHtml(Node $node, string $children): string
     {
