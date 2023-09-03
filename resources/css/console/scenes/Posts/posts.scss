@@ -43,7 +43,6 @@
     .table-menu {
         position: absolute;
         display: inline-block;
-
         .action-button {
             display: flex;
             flex-direction: row;
@@ -52,7 +51,7 @@
             border-radius: 50px;
             width: 100%;
             cursor: pointer;
-            padding: 5px
+            padding: 5px;
         }
         .action-button:hover {
             background-color: $color-accent-active;
@@ -179,7 +178,7 @@
             flex-direction: row;
             justify-content: flex-end;
             padding-right: 20px;
-            padding-bottom: 2px;
+            margin-bottom: 15px;
             width: fit-content;
             z-index: 1;
             button {
@@ -224,6 +223,7 @@
                 background-color: $color-white;
                 border: none;
                 cursor: pointer;
+                padding: 8px;
             }
             .add-column-button:hover {
                 background-color: $color-grey;
