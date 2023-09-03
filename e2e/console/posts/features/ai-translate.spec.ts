@@ -11,7 +11,7 @@ consoleTest('AI Translating', async ({ testingApi, console, page }) => {
                 title: 'Post de test',
                 description: 'Description de test',
                 slug: 'post-de-test',
-                content: pmc.p('Bonjour le monde'),
+                content: pmc.docP('Bonjour le monde'),
             }
         })
 

@@ -219,7 +219,7 @@ test.describe('Writing and Saving', () => {
 
         await testingApi.factory.testPost({postVariantAttrs: {
             status: 'published',
-            content: pmc.p('This is a test post')
+            content: pmc.docP('This is a test post')
         }});
         await console.visitAndNav('posts');
         await page.getByRole('link', { name: 'Test Post' }).click();
@@ -252,7 +252,7 @@ test.describe('Writing and Saving', () => {
 
         await testingApi.factory.testPost({postVariantAttrs: {
             status: 'published',
-            content: pmc.p('This is a test post')
+            content: pmc.docP('This is a test post')
         }});
         await console.visitAndNav('posts');
         await page.getByRole('link', { name: 'Test Post' }).click();

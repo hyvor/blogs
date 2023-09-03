@@ -1,5 +1,6 @@
 import { describe, expect, test } from 'vitest'
-import { AllKeywordsInContentTest, ContentLengthTest, Input, PrimaryKeywordInBeginningOfContentTest, PrimaryKeywordInDescriptionTest, PrimaryKeywordInSlugTest, PrimaryKeywordInTitleTest } from './seo-analyzer';
+import { AllKeywordsInContentTest, AllKeywordsInImgAltTest, AllKeywordsInSubHeadingsTest, ContentLengthTest, ExternalLinksTest, ImageAltTest, ImagesCountTest, Input, InternalLinksTest, KeywordDensityTest, PrimaryKeywordInBeginningOfContentTest, PrimaryKeywordInDescriptionTest, PrimaryKeywordInSlugTest, PrimaryKeywordInTitleTest, SlugLengthTest } from './seo-analyzer';
+import { pmc } from "../../../../../../../e2e/helpers/prosemirror-test-helper";
 
 function getInput(input: Partial<Input>) {
     return {
@@ -72,14 +73,23 @@ describe('seo tests', () => {
     });
 
     describe('primary keyword in slug', () => {
+
+        test('when exactly matched', () => {
+            const result = new PrimaryKeywordInSlugTest(getInput({
+                primaryKeyword: 'keyword',
+                slug: 'keyword'
+            })).run();
+            expect(result.score).toBe(100);
+            expect(result.message).toBe('Primary keyword found in the slug');
+        });
         
         test('when keyword is found', () => {
             const result = new PrimaryKeywordInSlugTest(getInput({
                 primaryKeyword: 'keyword',
                 slug: 'this-is-a-slug-with-keyword'
             })).run();
-            expect(result.score).toBe(100);
-            expect(result.message).toBe('Primary keyword found in the slug');
+            expect(result.score).toBe(75);
+            expect(result.message).toBe('Primary keyword found in the slug with other words');
         });
 
         test('multi word keyword', () => {
@@ -87,8 +97,8 @@ describe('seo tests', () => {
                 primaryKeyword: 'Multi Word Keyword',
                 slug: 'this-is-a-slug-with-multi-word-keyword',
             })).run();
-            expect(result.score).toBe(100);
-            expect(result.message).toBe('Primary keyword found in the slug');
+            expect(result.score).toBe(75);
+            expect(result.message).toBe('Primary keyword found in the slug with other words');
         });
 
         test('when keyword is not found', () => {
@@ -174,36 +184,6 @@ describe('seo tests', () => {
 
     });
 
-    describe('all keywords in content', () => {
-
-        test('runs for each keyword separately', () => {
-
-            const result = new AllKeywordsInContentTest(getInput({
-                primaryKeyword: 'keyword',
-                secondaryKeywords: ['keyword2', 'keyword3'],
-                content: JSON.stringify({
-                    type: 'doc',
-                    content: [
-                        {
-                            type: 'paragraph', 
-                            content: [
-                                {
-                                    type: 'text', 
-                                    text: 'keyword this is a content keyword2 and keyword3'
-                                }
-                            ]
-                        }
-                    ]
-                })
-            })).run();
-
-            expect(result.message).toBe('All keywords found in the content');
-            expect(result.score).toBe(100);
-
-        });
-
-    });
-
 
     describe('content length', () => {
 
@@ -246,5 +226,470 @@ describe('seo tests', () => {
         });
 
     });
+
+
+    describe('all keywords in content', () => {
+
+        test('runs for each keyword separately', () => {
+
+            const result = new AllKeywordsInContentTest(getInput({
+                primaryKeyword: 'keyword',
+                secondaryKeywords: ['keyword2', 'keyword3'],
+                content: JSON.stringify({
+                    type: 'doc',
+                    content: [
+                        {
+                            type: 'paragraph', 
+                            content: [
+                                {
+                                    type: 'text', 
+                                    text: 'keyword this is a content keyword2 and keyword3'
+                                }
+                            ]
+                        }
+                    ]
+                })
+            })).run();
+
+            expect(result.message).toBe('All keywords found in the content');
+            expect(result.score).toBe(100);
+
+        });
+
+        test('when some keywords are missing', () => {
+
+            const result = new AllKeywordsInContentTest(getInput({
+                primaryKeyword: 'keyword',
+                secondaryKeywords: ['keyword2', 'keyword3'],
+                content: pmc.docP('keyword this is a content keyword2'),
+            })).run();
+
+            expect(result.message).toBe('Some keywords are missing in the content: keyword3');
+            expect(Math.floor(result.score)).toBe(66);
+
+        });
+
+        test('when all are missing', () => {
+                
+            const result = new AllKeywordsInContentTest(getInput({
+                primaryKeyword: 'keyword',
+                secondaryKeywords: ['keyword2', 'keyword3'],
+                content: pmc.docP('this is a content'),
+            })).run();
+
+            expect(result.message).toBe('Some keywords are missing in the content: keyword, keyword2, keyword3');
+            expect(result.score).toBe(0);
+    
+        })
+
+    });
+
+    describe('all keywords in headings', () => {
+        
+        test('when all keywords are found', () => {
+
+            const result = new AllKeywordsInSubHeadingsTest(getInput({
+                primaryKeyword: 'keyword',
+                secondaryKeywords: ['keyword2', 'keyword3'],
+                content: pmc.doc([
+                    pmc.h('keyword'),
+                    pmc.h('keyword2'),
+                    pmc.h('keyword3'),
+                ]),
+            })).run();
+
+            expect(result.message).toBe('All keywords found in subheadings');
+            expect(result.score).toBe(100);
+
+        });
+
+        test('when some keywords are missing', () => {
+
+            const result = new AllKeywordsInSubHeadingsTest(getInput({
+                primaryKeyword: 'keyword',
+                secondaryKeywords: ['keyword2', 'keyword3'],
+                content: pmc.doc([
+                    pmc.h('keyword'),
+                    pmc.h('keyword2'),
+                    pmc.h('keyword4'),
+                ]),
+            })).run();
+
+            expect(result.message).toBe('Some keywords not found in subheadings: keyword3');
+            expect(Math.floor(result.score)).toBe(66);
+
+        });
+
+        test('when all keywords are missing', () => {
+
+            const result = new AllKeywordsInSubHeadingsTest(getInput({
+                primaryKeyword: 'keyword',
+                secondaryKeywords: ['keyword2', 'keyword3'],
+                content: pmc.doc([
+                    pmc.h('keyword4'),
+                    pmc.h('keyword5'),
+                    pmc.h('keyword6'),
+                ]),
+            })).run();
+
+            expect(result.message).toBe('Some keywords not found in subheadings: keyword, keyword2, keyword3');
+            expect(result.score).toBe(0);
+
+        });
+
+    });
+
+    describe('all keywords in image alt', () => {
+
+        test('when all keywords are found', () => {
+
+            const result = new AllKeywordsInImgAltTest(getInput({
+                primaryKeyword: 'keyword',
+                secondaryKeywords: ['keyword2', 'keyword3'],
+                content: pmc.doc([
+                    {
+                        type: 'image',
+                        attrs: {
+                            alt: 'keyword keyword2 keyword3',
+                        },
+                    },
+                ]),
+            })).run();
+
+            expect(result.message).toBe('All keywords found in image alt attributes');
+            expect(result.score).toBe(100);
+
+        });
+
+        test('when some keywords are missing', () => {
+
+            const result = new AllKeywordsInImgAltTest(getInput({
+                primaryKeyword: 'keyword',
+                secondaryKeywords: ['keyword2', 'keyword3'],
+                content: pmc.doc([
+                    {
+                        type: 'image',
+                        attrs: {
+                            alt: 'keyword keyword2 keyword4',
+                        },
+                    },
+                ]),
+            })).run();
+
+            expect(result.message).toBe('Some keywords not found in image alt attributes: keyword3');
+            expect(Math.floor(result.score)).toBe(66);
+
+        });
+
+        test('when all keywords are missing', () => {
+
+            const result = new AllKeywordsInImgAltTest(getInput({
+                primaryKeyword: 'keyword',
+                secondaryKeywords: ['keyword2', 'keyword3'],
+                content: pmc.doc([
+                    {
+                        type: 'image',
+                        attrs: {
+                            alt: 'keyword4 keyword5 keyword6',
+                        },
+                    },
+                ]),
+            })).run();
+
+            expect(result.message).toBe('Some keywords not found in image alt attributes: keyword, keyword2, keyword3');
+            expect(result.score).toBe(0);
+
+        });
+
+    });
+
+    describe('keyword density', () => {
+
+        test('when ignored', () => {
+            const result = new KeywordDensityTest(getInput({
+                primaryKeyword: null,
+                secondaryKeywords: [],
+                content: ''
+            })).run();
+
+            expect(result.message).toBe('Ignored keywords density test. Add keywords');
+            expect(result.ignore).toBe(true);
+        });
+
+        test('with each density', () => {
+
+            function getScoreForDensity(density: number) {
+
+                const keywordCount = density * 100;
+                const words = Array.from({length: (100 - density) * 100}, () => 'other').join(' ');
+                const keywords = Array.from({length: keywordCount}, () => 'keyword').join(' ');
+
+                const result = new KeywordDensityTest(getInput({
+                    primaryKeyword: 'keyword',
+                    secondaryKeywords: [],
+                    content: pmc.docP(keywords + ' ' + words)
+                })).run();
+                
+                return {
+                    score: result.score,
+                    message: result.message,
+                }
+            }
+
+            expect(getScoreForDensity(10)).toContain({
+                score: 0,
+                message: "Keyword density is 10.00%, which is too high. 1000 keywords found."
+            })
+
+            expect(getScoreForDensity(3)).toContain({
+                score: 50,
+                message: "Keyword density is 3.00%, which may be too high. 300 keywords found."
+            })
+
+            expect(getScoreForDensity(1)).toContain({
+                score: 100,
+                message: "Keyword density is 1.00%, which is good. 100 keywords found."
+            })
+
+            expect(getScoreForDensity(0.4)).toContain({
+                score: 50,
+                message: "Keyword density is 0.40%, which may be too low. 40 keywords found."
+            })
+
+            expect(getScoreForDensity(0.09)).toContain({
+                score: 0,
+                message: "Keyword density is 0.09%, which is too low. 9 keywords found."
+            })
+
+        });
+
+    });
+
+
+    describe('slug length', () => {
+
+        test('slug for different lengths', () => {
+
+            function runForSlugLength(length: number) {
+                return new SlugLengthTest(getInput({
+                    primaryKeyword: 'keyword',
+                    secondaryKeywords: [],
+                    content: '',
+                    slug: Array.from({length}, () => 'a').join(''),
+                })).run();
+            }
+
+            expect(runForSlugLength(0)).toContain({
+                ignore: true,
+                message: 'Slug length test ignored because slug is empty'
+            });
+
+            expect(runForSlugLength(10)).toContain({
+                score: 100,
+                message: 'Slug is 10 characters long'
+            });
+
+            expect(runForSlugLength(36)).toContain({
+                score: 50,
+                message: 'Slug is 36 characters long. Consider using a shorter slug'
+            });
+
+            expect(runForSlugLength(51)).toContain({
+                score: 0,
+                message: 'Slug is 51 characters long. Consider using a shorter slug'
+            });
+
+        });
+
+    });
+
+    describe('external links', () => {
+
+        test('when no external links', () => {
+
+            const result = new ExternalLinksTest(getInput({
+                primaryKeyword: 'keyword',
+                secondaryKeywords: [],
+                content: pmc.docP('this is a content'),
+            })).run();
+
+            expect(result.message).toBe('No external links found');
+            expect(result.score).toBe(0);
+
+        }); 
+        
+        test('when has 1 external link', () => {
+
+            const result = new ExternalLinksTest(getInput({
+                primaryKeyword: 'keyword',
+                secondaryKeywords: [],
+                content: pmc.docP([
+                    pmc.link('https://example.com', 'example')
+                ]),
+                blogUrl: 'https://hyvor.com/blog'
+            })).run();
+
+            expect(result.message).toBe('1 external link found');
+            expect(result.score).toBe(100);
+
+        })
+
+        test('when has multiple external links', () => {
+
+            const result = new ExternalLinksTest(getInput({
+                content: pmc.docP([
+                    pmc.link('https://example.com', 'example'),
+                    pmc.link('https://example.com', 'example'),
+                ]),
+                blogUrl: 'https://hyvor.com/blog'
+            })).run();
+
+            expect(result.message).toBe('2 external links found');
+            expect(result.score).toBe(100);
+
+        })
+
+    });
+
+    describe('internal links', () => {
+
+        test('when no internal links', () => {
+
+            const result = new InternalLinksTest(getInput({
+                primaryKeyword: 'keyword',
+                secondaryKeywords: [],
+                content: pmc.docP('this is a content'),
+            })).run();
+
+            expect(result.message).toBe('No internal links found');
+            expect(result.score).toBe(0);
+
+        }); 
+
+        test('when has 1 internal link', () => {
+
+            const result = new InternalLinksTest(getInput({
+                primaryKeyword: 'keyword',
+                secondaryKeywords: [],
+                content: pmc.docP([
+                    pmc.link('https://hyvor.com', 'HYVOR')
+                ]),
+                blogUrl: 'https://hyvor.com/blog'
+            })).run();
+
+            expect(result.message).toBe('1 internal link found');
+            expect(result.score).toBe(100);
+
+        })
+
+        test('when has multiple external links', () => {
+
+            const result = new InternalLinksTest(getInput({
+                content: pmc.docP([
+                    pmc.link('https://hyvor.com', 'example'),
+                    pmc.link('https://hyvor.com', 'example'),
+                ]),
+                blogUrl: 'https://hyvor.com/blog'
+            })).run();
+
+            expect(result.message).toBe('2 internal links found');
+            expect(result.score).toBe(100);
+
+        })
+
+    });
+
+    describe('Images count test', () => {
+
+        test('by count', () => {
+
+            function getByCount(count: number) {
+                return new ImagesCountTest(getInput({
+                    content: pmc.doc([
+                        ...Array.from({length: count}, () =>
+                            pmc.img('https://example.com/image1.jpg', 'image1'),
+                        )
+                    ]),
+                })).run();
+            }
+
+            expect(getByCount(0)).toContain({
+                score: 0,
+                message: '0 images found'
+            });
+
+            expect(getByCount(1)).toContain({
+                score: 70,
+                message: '1 image found'
+            });
+
+            expect(getByCount(2)).toContain({
+                score: 80,
+                message: '2 images found'
+            });
+
+            expect(getByCount(3)).toContain({
+                score: 90,
+                message: '3 images found'
+            });
+
+            expect(getByCount(4)).toContain({
+                score: 100,
+                message: '4 images found'
+            });
+
+            expect(getByCount(5)).toContain({
+                score: 100,
+                message: '5 images found'
+            });
+
+        });
+
+    });
+
+    describe('all images have alt', () => {
+
+        test('when no images', () => {
+
+            const result = new ImageAltTest(getInput({
+                content: pmc.doc([]),
+            })).run();
+
+            expect(result.ignore).toBe(true);
+            expect(result.message).toBe('Image alt test ignored because no images found');
+
+        });
+
+        test('when some missing alt', () => {
+
+            const result = new ImageAltTest(getInput({
+                content: pmc.doc([
+                    pmc.img('https://example.com/image1.jpg'),
+                    pmc.img('https://example.com/image2.jpg', 'image2'),
+                ]),
+            })).run();
+
+            expect(result.score).toBe(0);
+            expect(result.message).toBe('1 image missing alt attributes');
+
+        });
+        
+        test('when all has alt', () => {
+
+            const result = new ImageAltTest(getInput({
+                content: pmc.doc([
+                    pmc.img('https://example.com/image1.jpg', 'image1'),
+                    pmc.img('https://example.com/image2.jpg', 'image2'),
+                ]),
+            })).run();
+
+            expect(result.score).toBe(100);
+            expect(result.message).toBe('All images have alt attributes');
+
+        });
+
+    });
+
+
 
 });
