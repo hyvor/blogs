@@ -12,7 +12,7 @@ CREATE TABLE link_analyzer_links (
      post_variant_id INT,
      url VARCHAR(255),
      status_code SMALLINT,
-     ignore BOOLEAN DEFAULT FALSE,
+     `ignore` BOOLEAN DEFAULT FALSE,
      UNIQUE (post_variant_id, url),
      INDEX (url),
      INDEX (post_variant_id, last_checked_at)
