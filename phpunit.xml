@@ -1,46 +1,41 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<phpunit xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-         xsi:noNamespaceSchemaLocation="./vendor/phpunit/phpunit/phpunit.xsd"
-         bootstrap="vendor/autoload.php"
-         colors="true"
->
-    <testsuites>
-        <testsuite name="Feature">
-            <directory suffix="Test.php">./tests/Feature</directory>
-        </testsuite>
-        <testsuite name="Unit">
-            <directory suffix="Test.php">./tests/Unit</directory>
-        </testsuite>
-    </testsuites>
-    <coverage processUncoveredFiles="true">
-        <include>
-            <directory suffix=".php">./app</directory>
-        </include>
-        <exclude>
-            <directory suffix=".php">./app/Stale</directory>
-        </exclude>
-    </coverage>
-    <php>
-        <server name="APP_ENV" value="testing"/>
-        <server name="APP_DEBUG" value="false" />
-        <server name="APP_URL" value="https://blogs.hyvor.com" />
-        <server name="APP_KEY" value="base64:XOpWztMz2EsJT/TF7QzscDfgUUCO3a+A6c9oP37l4UI=" />
-        <server name="DOMAIN_APP" value="blogs.hyvor.com" />
-        <server name="DOMAIN_DELIVERY" value="hyvorblogs.io" />
-        <server name="BCRYPT_ROUNDS" value="4"/>
-        <server name="CACHE_DRIVER" value="redis"/>
-
-        <server name="DB_CONNECTION" value="mysql"/>
-        <server name="DB_DATABASE" value="hyvor_blogs_testing" />
-
-        <server name="MAIL_MAILER" value="array"/>
-        <server name="QUEUE_CONNECTION" value="sync"/>
-        <server name="SESSION_DRIVER" value="array"/>
-        <server name="TELESCOPE_ENABLED" value="false"/>
-        <server name="SCOUT_DRIVER" value="meilisearch" />
-        <server name="FILESYSTEM_DRIVER" value="local" />
-        <server name="HYVOR_DUMMY" value="true"/>
-        <server name="PADDLE_SANDBOX" value="false" />
-        <server name="HYVOR_TALK_URL" value="https://talk.hyvor.com" />
-    </php>
+<phpunit xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="https://schema.phpunit.de/10.3/phpunit.xsd" bootstrap="vendor/autoload.php" colors="true" cacheDirectory=".phpunit.cache">
+  <testsuites>
+    <testsuite name="Feature">
+      <directory suffix="Test.php">./tests/Feature</directory>
+    </testsuite>
+    <testsuite name="Unit">
+      <directory suffix="Test.php">./tests/Unit</directory>
+    </testsuite>
+  </testsuites>
+  <coverage/>
+  <php>
+    <server name="APP_ENV" value="testing"/>
+    <server name="APP_DEBUG" value="false"/>
+    <server name="APP_URL" value="https://blogs.hyvor.com"/>
+    <server name="APP_KEY" value="base64:XOpWztMz2EsJT/TF7QzscDfgUUCO3a+A6c9oP37l4UI="/>
+    <server name="DOMAIN_APP" value="blogs.hyvor.com"/>
+    <server name="DOMAIN_DELIVERY" value="hyvorblogs.io"/>
+    <server name="BCRYPT_ROUNDS" value="4"/>
+    <server name="CACHE_DRIVER" value="redis"/>
+    <server name="DB_CONNECTION" value="mysql"/>
+    <server name="DB_DATABASE" value="hyvor_blogs_testing"/>
+    <server name="MAIL_MAILER" value="array"/>
+    <server name="QUEUE_CONNECTION" value="sync"/>
+    <server name="SESSION_DRIVER" value="array"/>
+    <server name="TELESCOPE_ENABLED" value="false"/>
+    <server name="SCOUT_DRIVER" value="meilisearch"/>
+    <server name="FILESYSTEM_DRIVER" value="local"/>
+    <server name="HYVOR_DUMMY" value="true"/>
+    <server name="PADDLE_SANDBOX" value="false"/>
+    <server name="HYVOR_TALK_URL" value="https://talk.hyvor.com"/>
+  </php>
+  <source>
+    <include>
+      <directory suffix=".php">./app</directory>
+    </include>
+    <exclude>
+      <directory suffix=".php">./app/Stale</directory>
+    </exclude>
+  </source>
 </phpunit>

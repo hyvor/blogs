@@ -20,7 +20,7 @@ export function useUserBlog() {
 }
 
 export function getUserBlog() {
-    return userBlogsLogic.values.findBlogBySubdomain(getSubdomain())
+    return userBlogsLogic().values.findBlogBySubdomain(getSubdomain())
 }
 export function getUserBlogBlog() {
     return getUserBlog().blog;

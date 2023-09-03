@@ -36,13 +36,14 @@ class SlashTipPlugin implements PluginView {
         const {state} = view;
         const {selection} = state;
 
+
         if (!selection.empty) {
             return this.hide();
         }
 
         const parent = selection.$from.parent;
-
-        if (parent.type.name !== 'paragraph')
+        const grandParent = selection.$from.node(-1);
+        if (parent.type.name !== 'paragraph' || grandParent.type.name == 'table_cell')
             return this.hide();
 
         if (parent.content.size > 0)
@@ -61,7 +62,7 @@ class SlashTipPlugin implements PluginView {
         const isRtl = isEditorRtl();
 
         if (isRtl) {
-            this.element.style.left = (viewPos.left + 25) + "px";
+            this.element.style.left = 25 + "px";
             return;
         }
 

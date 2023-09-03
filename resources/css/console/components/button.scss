@@ -23,6 +23,10 @@
         font-size: 12px!important;
         padding: 5px 10px;
     }
+    &.mini {
+        font-size: 11px!important;
+        padding: 4px 8px;
+    }
     &.tiny {
         padding: 2px 8px;
         font-size: 10px!important;
@@ -60,7 +64,7 @@
         color: $color-text;
     }
 
-    &.disabled {
+    &.disabled, &:disabled {
         cursor: not-allowed;
         opacity: 0.5;
     }
@@ -85,6 +89,12 @@
         background-color: $color-text-light;
         color: $color-text;
     }
+    &.blue {
+        background-color: $color-blue-dark;
+        &:hover {
+            box-shadow: 0 0 0px 2px $color-blue-light;
+        }
+    }
 }
 
 .icon-button {
@@ -92,7 +102,7 @@
     width: 24px;
     height: 24px;
     border-radius: 50%;
-    background-color: $color-card;
+    background-color: #f1f1f1;
     cursor: pointer;
     align-items: center;
     justify-content: center;
@@ -101,5 +111,9 @@
     transition: .3s box-shadow;
     &:hover {
         box-shadow: 0 0 10px rgba(0,0,0,0.1);
+    }
+    &.active {
+        background-color: $color-accent;
+        color: #fff;
     }
 }

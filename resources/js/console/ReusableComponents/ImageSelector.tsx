@@ -32,6 +32,9 @@ export default function ImageSelector({ src, onChange } : ImageSelectorProps) {
                 file: files[0],
                 onUpload: (media: Media) => {
                     onChange(media.url)
+                },
+                onError: (error: string) => {
+                    toast.error(error)
                 }
             });
         }

@@ -10,7 +10,7 @@ const baseTest = test.extend<{testingApi: TestingApi}>({
     }
 });
 
-class TestingApi {
+export class TestingApi {
 
     factory: Factory;
 
@@ -47,13 +47,15 @@ class TestingApi {
 
 }
 
-class Factory {
+export class Factory {
 
     constructor(private testingApi: TestingApi) {}
 
     // blog + variant + user + language + routes
     async blogFull({
         blogAttrs = {},
+        languageAttrs = {},
+        routes = false,
     } = {}) {
         const blog = await this.blog(blogAttrs);
         const user = await this.user({
@@ -66,6 +68,7 @@ class Factory {
         const language = await this.language({
             blog_id: blog.id,
             is_primary: true,
+            ...languageAttrs
         });
 
 
@@ -74,11 +77,14 @@ class Factory {
             language_id: language.id,
         });
 
+        if (routes)
+            await this.defaultRoutes({blog_id: blog.id});
+
         return {
             blog,
             user,
             language,
-            variant
+            variant,
         }
     }
 
@@ -105,6 +111,66 @@ class Factory {
 
     async routes(attrs = {}) {
         return await this.testingApi.callFactory('Route', attrs);
+    }
+
+    async post({
+        attrs = {},
+        variantAttrs = {},
+    } = {}) {
+        const post =  await this.testingApi.callFactory('Post', attrs);
+        const variant = await this.postVariant({
+            post_id: post.id,
+            ...variantAttrs
+        });
+        return {
+            post,
+            variant
+        }
+    }
+
+    async postVariant(attrs = {}) {
+        return await this.testingApi.callFactory('PostVariant', attrs);
+    }
+
+    async testPost({
+        postAttrs = {},
+        postVariantAttrs = {},
+    } = {}) {
+        const {blog, language} = await this.blogFull({routes: true});
+        const post = await this.post({
+            attrs: {
+                blog_id: blog.id,
+                ...postAttrs
+            },
+            variantAttrs: {
+                language_id: language.id,
+                title: 'Test Post',
+                status: 'draft',
+                ...postVariantAttrs
+            }
+        });
+        return {
+            blog,
+            language,
+            post
+        }
+    }
+
+    async themeFile(attrs = {}) {
+        return await this.testingApi.callFactory('ThemeFile', {
+            folder: 'templates',
+            name: 'index.twig',
+            content: '',
+            ...attrs
+        });
+    }
+
+    async defaultRoutes(attrs = {}) {
+        await this.routes({ ...attrs, name: 'post', match: '/{slug}', template: 'post'});
+        await this.routes({ ...attrs, name: 'page', match: '/{slug}', template: 'page'});
+        await this.routes({ ...attrs, name: 'index', match: '/', template: 'index', posts_filter: ''});
+        await this.routes({ ...attrs, name: 'tag', match: '/tag/{slug}', template: 'tag,index', posts_filter: 'tag.slug={slug}'});
+        await this.routes({ ...attrs, name: 'author', match: '/author/{slug}', template: 'author,index', posts_filter: 'author.slug={slug}'});
     }
     
 }

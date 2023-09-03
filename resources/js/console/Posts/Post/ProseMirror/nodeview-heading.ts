@@ -50,7 +50,6 @@ export default class Heading implements NodeView {
     }
 
     update(node: ProsemirrorNode) {
-
         if (node.type.name === 'heading') {
             this.contentDOM.id = node.attrs.id;
             this.input.value = node.attrs.id;

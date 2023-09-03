@@ -6,6 +6,8 @@ use App\Data\Enums\DeliveryAPIFileTypeEnum;
 use App\Data\Enums\ThemeFileFolderEnum;
 use App\Data\Objects\DeliveryAPI\DeliveryAPIResponseObject;
 use App\Domains\Delivery\Processors\AssetsProcessor;
+use App\Domains\Delivery\Processors\Fonts\FontsCssProcessor;
+use App\Domains\Delivery\Processors\Fonts\FontsFileProcessor;
 use App\Domains\Delivery\Processors\MediaProcessor;
 use App\Domains\Delivery\Processors\PreviewProcessor;
 use App\Domains\Delivery\Processors\RobotsTxtProcessor;
@@ -105,6 +107,11 @@ class PathMatcher
             'additional' => null
         ]);
 
+        $routeMatcher->add('fonts-css', '/fonts/css/{family}');
+        $routeMatcher->add('fonts-file', '/fonts/file/{path}', [], [
+            'path' => '.*'
+        ]);
+
         $routeMatcher->add('sitemap-index', '/sitemap.xml');
         $routeMatcher->add('sitemap-pages', '/sitemap-pages.xml');
         $routeMatcher->add('sitemap-posts', '/sitemap-posts-{number}.xml', [], [
@@ -121,6 +128,9 @@ class PathMatcher
                 'preview' => PreviewProcessor::class,
                 'styles' => StylesProcessor::class,
                 'media' => MediaProcessor::class,
+
+                'fonts-css' => FontsCssProcessor::class,
+                'fonts-file' => FontsFileProcessor::class,
 
                 'sitemap-index' => SitemapIndexProcessor::class,
                 'sitemap-pages' => SitemapPagesProcessor::class,

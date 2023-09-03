@@ -9,18 +9,21 @@ import {diff} from "deep-object-diff";
 import languagesLogic from "./languagesLogic";
 import {PostEditorState} from "../states";
 import merge from "deepmerge";
-import { usePostValues } from "../Posts/Post/helpers";
+import userBlogsLogic from "./userBlogsLogic";
+import { SeoAnalyzer } from "../Posts/Post/New/Seo/seo-analyzer";
+import { calculateLinkAnalysis, getLinksFromContent } from "../Posts/Post/New/Links/links";
 
-async function updatePost(post: Post, diff: Partial<Post>) {
+export type PostDiff = Omit<Post, 'authors' | 'tags'> & {
+    authors: number[],
+    tags: number[],
+}
+
+export async function updatePost(post: Post, diff: Partial<PostDiff>) {
+
+    diff = {...diff};
 
     if (diff.variants) {
-        for (let variant of diff.variants) {
-            await api.patch(
-                getSubdomain(), `/post/${post.id}/variant`,
-                variant
-            )
-        }
-        delete diff.variants;
+        throw new Error('Use savePostVariantDiff instead');
     }
 
     if (diff.authors) {
@@ -48,14 +51,19 @@ const postLogic = kea<postLogicType>([
     path(key => ['post', key]),
 
     actions(({values}) => ({
+        setBoth: (obj: Post) => ({obj}),
         set: (obj: Post) => ({obj}),
+        setVariant: (variant: PostVariant) => ({variant}),
         setOriginal: (obj: Post) => ({obj}),
+        setVariantOriginal: (variant: PostVariant) => ({variant}),
         updatePostValue: (key: keyof Post, value: any) => ({key, value}),
+        updatePost: (update: Partial<Post>) => ({update}),
         updateCurrentPostVariantValue: (key: keyof PostVariant, value: any) => ({
             key,
             value,
             languageId: values.editorState.languageId
         }),
+        updateCurrentPostVariant: (update: Partial<PostVariant> & {language_id: number}) => ({update}),
         addVariant: (variant: PostVariant) => ({variant}),
         removeVariant: (languageId: number) => ({languageId}),
         changeEditorState: (key: keyof PostEditorState, value: any) => ({key, value})
@@ -65,7 +73,7 @@ const postLogic = kea<postLogicType>([
  
         loadPost: async () => {
             const response = await api.get<Post>(getSubdomain(), `/post/${props.id}`);
-            actions.set(response);
+            actions.setBoth(response);
         },
 
         deletePost: async () => {
@@ -77,28 +85,52 @@ const postLogic = kea<postLogicType>([
             await api.delete(subdomain, `/post/${props.id}`);
         },
 
-        /**
-         * Used for auto saving
-         */
-        savePost: async () => {
-            const diff = values.diff
-            
-            if (Object.keys(diff).length === 0) {
-                return false;
-            }
-
+        savePostDiff: async(
+            {diff, onSave} : 
+            {diff: Partial<PostDiff>, onSave: Function, updateState?: boolean}
+        ) => {
             const response = await updatePost(values.post, diff);
             actions.setOriginal(response);
+
+            /**
+             * This updates the state with the response from the server
+             * No side effects
+             */
+
+            const updatedObject : Post = {...values.post};
+            for (let key in diff) {
+                // @ts-ignore
+                updatedObject[key as keyof Post] = response[key as keyof Post];
+            }
+            actions.set(updatedObject);
+
+            typeof onSave === 'function' && onSave(response);
         },
-        /**
-         * Used for forced saving/publishing/unpublishing (usually on button click)
-         */
-        forceSavePost: async ({onSave, update} : { update: Partial<Post>, onSave: (post: Post) => void}) => {
 
-            const diff = mergePostWithUpdate(values.diff, update)
+        saveCurrentVariantDiff: async(
+            {diff, onSave}: 
+            {diff: Partial<PostVariant>, onSave?: (variant: PostVariant) => void, updateState?: boolean}
+        ) => {
+            const currentVariant = values.currentVariant;
+            const response = await api.patch<PostVariant>(getSubdomain(), `/post/${values.post.id}/variant`, {
+                language_id: currentVariant.language_id,
+                ...diff
+            });
+            actions.setVariantOriginal(response);
 
-            const response = await updatePost(values.post, diff);
-            actions.set(response)
+            /**
+             * This updates the state with the response from the server
+             * Has these side effects:
+             *  - slug of variant can change when the status is updated
+             */
+            const updatedObject : any = {...currentVariant};
+            const keys = Object.keys(diff) as (keyof PostVariant)[];
+            keys.push('url');
+            if (diff.status) {
+                keys.push('slug');
+            }
+            keys.forEach(key => updatedObject[key] = response[key]);
+            actions.setVariant(updatedObject);
 
             typeof onSave === 'function' && onSave(response);
         },
@@ -151,13 +183,33 @@ const postLogic = kea<postLogicType>([
         post: [
             {} as Post,
             {
+                setBoth: (_, {obj}) => obj,
                 set: (_, {obj}) => obj,
+                setVariant: (state, {variant}) => {
+                    const copy = {...state}
+                    copy.variants = copy.variants.map(
+                        v => v.language_id === variant.language_id ?
+                            variant :
+                            v
+                    );
+                    return copy;
+                },
                 updatePostValue: (state, {key, value}) => ({...state, ...{[key]: value}} as Post),
+                updatePost: (state, {update}) => ({...state, ...update} as Post),
                 updateCurrentPostVariantValue: (state, {key, value, languageId}) => {
                     const copy = {...state}
                     copy.variants = copy.variants.map(
                         variant => variant.language_id === languageId ?
                             {...variant, [key]: value || null} :
+                            variant
+                    );
+                    return copy;
+                },
+                updateCurrentPostVariant: (state, {update}) => {
+                    const copy = {...state}
+                    copy.variants = copy.variants.map(
+                        variant => variant.language_id === update.language_id ?
+                            {...variant, ...update} :
                             variant
                     );
                     return copy;
@@ -179,7 +231,16 @@ const postLogic = kea<postLogicType>([
         postOriginal: [
             {} as Post,
             {
-                set: (_, {obj}) => obj,
+                setBoth: (_, {obj}) => obj,
+                setVariantOriginal: (state, {variant}) => {
+                    const copy = {...state}
+                    copy.variants = copy.variants.map(
+                        v => v.language_id === variant.language_id ?
+                            variant :
+                            v
+                    );
+                    return copy;
+                },
                 setOriginal: (_, {obj}) => obj,
                 addVariant: (state, {variant}) => {
                     const copy = {...state}
@@ -198,15 +259,21 @@ const postLogic = kea<postLogicType>([
             {
                 languageId: languagesLogic({subdomain: getSubdomain()}).values.primaryLanguage.id as number,
                 isFullscreen: false,
-                isChangingSettings: false,
-                isPublishing: false,
-                isUnpublishing: false,
+                // isPublishing: false,
+                // isUnpublishing: false,
                 // just editing the post
-                isNonDraftEditing: false,
+                // isNonDraftEditing: false,
                 isDiscarding: false,
+                
+                isSaving: false,
+                
                 // updater opened
                 isNonDraftUpdating: false,
                 version: 1,
+                editorView: null,
+
+                settingsSection: 'settings'
+
             } as PostEditorState,
             {
                 changeEditorState: (state, {key, value}) => (
@@ -223,7 +290,20 @@ const postLogic = kea<postLogicType>([
         diff: [
             s => [s.post, s.postOriginal],
             (post, postOriginal) => {
-                const d = diff(postOriginal, post) as Partial<Post>
+
+                const postDiffCheck : PostDiff = {
+                    ...post,
+                    authors: post.authors.map(a => a.id),
+                    tags: post.tags.map(a => a.id),
+                };
+
+                const postOriginalDiffCheck : PostDiff = {
+                    ...postOriginal,
+                    authors: postOriginal.authors.map(a => a.id),
+                    tags: postOriginal.tags.map(a => a.id),
+                };
+
+                const d = diff(postOriginalDiffCheck, postDiffCheck) as Partial<PostDiff>;
 
                 if (d.preview_id) delete d.preview_id;
                 if (d.updated_at) delete d.updated_at;
@@ -268,9 +348,51 @@ const postLogic = kea<postLogicType>([
                 post.variants.find(v => v.language_id === editorState.languageId) as PostVariant
         ],
 
+        currentVariantDiff: [
+            s => [s.currentVariant, s.postOriginal],
+            (currentVariant, postOriginal) : Partial<PostVariant> => {
+                const variantOriginal = postOriginal.variants
+                    .find(v => v.language_id === currentVariant.language_id) as PostVariant;
+                const d = diff(variantOriginal, currentVariant) as Partial<PostVariant>
+                if (d.url) delete d.url;
+                return d;
+            }
+        ],
+
+        currentVariantOriginal: [
+            s => [s.currentVariant, s.postOriginal],
+            (currentVariant, postOriginal) : PostVariant => {
+                return postOriginal.variants
+                    .find(v => v.language_id === currentVariant.language_id) as PostVariant;
+            }
+        ],
+
         currentLanguage: [
             s => [s.editorState, languagesLogic({subdomain: getSubdomain()}).selectors.getLanguageById],
             (editorState, getLang) : Language => getLang(editorState.languageId) as Language
+        ],
+
+        currentVariantSeoResults: [
+            s => [s.currentVariant],
+            (currentVariant) => {
+                const userBlog = userBlogsLogic().values.findBlogBySubdomain(getSubdomain());
+                const blogUrl = userBlog.blog.base_url;
+                const analyzer = new SeoAnalyzer({
+                    primaryKeyword: currentVariant.seo_primary_keyword,
+                    secondaryKeywords: currentVariant.seo_secondary_keywords,
+                    title: currentVariant.title || '',
+                    slug: currentVariant.slug || '',
+                    description: currentVariant.description || '',
+                    content: currentVariant.content_unsaved || currentVariant.content,
+                    blogUrl,
+                });
+                return analyzer.analyze();
+            }
+        ],
+
+        currentVariantLinkAnalysis: [
+            s => [s.currentVariant],
+            (currentVariant) => calculateLinkAnalysis(currentVariant)
         ]
 
     }),
@@ -281,7 +403,7 @@ const postLogic = kea<postLogicType>([
                 return;
 
             if (props.data) {
-                actions.set(props.data);
+                actions.setBoth(props.data);
             } else {
                 actions.loadPost();
             }

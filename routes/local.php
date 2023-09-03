@@ -1,5 +1,6 @@
 <?php
 
+use App\Domains\LinkAnalyzer\Check\FullBlogAnalyzer;
 use App\Domains\Post\Content\PostContentService;
 use App\Domains\Integrations\Shopify\ShopifyService;
 use App\Domains\Post\Content\PostContentRepository;
@@ -62,5 +63,22 @@ Route::get('user-email', function() {
 
     $user = User::whereNotNull('hyvor_user_id')->first();
     UserRepository::sendInviteEmail($user);
+
+});
+
+Route::get('broken', function() {
+    sleep(4);
+    return 'hello';
+});
+
+Route::get('link-report', function() {
+
+    $blog = Blog::first();
+    $analyze = new FullBlogAnalyzer($blog);
+
+    return view('emails.link-analyze-report', [
+        'blog' => $blog,
+        'analyzer' => $analyze
+    ]);
 
 });

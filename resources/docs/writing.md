@@ -16,6 +16,9 @@ This page explains everything about publishing a post on Hyvor Blogs.
   * [Auto-saving & Post History](#auto-saving)
   * [Editing a published post](#editing-published)
   * [Multi-language posts](#multi-language)
+* [SEO Analysis](#seo-analysis)
+* [Link Analysis](#link-analysis)
+* [GPT Writing](#gpt-writing)
 
 ## Posts & Pages {#posts-pages}
 
@@ -336,3 +339,122 @@ You can make changes to a published post content at any time. However, the chang
 ### Multi-Language Posts {#multi-language}
 
 If you have set up multiple languages for your blog, you will see the language codes at the top of the post editor. Click on a language code to switch to that language variant of the post. Each variant should be published separately. See our [languages](languages) guide, which explains everything you need to know about publishing multi-language posts.
+
+## SEO Analysis {#seo-analysis}
+
+The SEO analysis tool in the post editor will give you suggestions to improve your post's SEO. It works based on pre-defined rules, inspired by the [Rank Math](https://rankmath.com/kb/score-100-in-tests) WordPress plugin.
+
+<p>
+  <img src="/img/landing/pricing/seo-feature.png" alt="SEO Analysis in Hyvor Blogs" width="350" />
+</p>
+
+> **Important!**
+> 
+> SEO analysis is **merely a suggestion**. Getting a higher score alone will not make your posts rank high. There are also other factors that affect your SEO, such as backlinks, domain authority, etc. However, these suggestions will help you better optimize your content for search engines.
+
+To start analyzing your post, add a primary keyword for your post. You can also add secondary keywords. Hyvor Blogs will then analyze your post content and metadata and give you suggestions in real-time to improve SEO for your post.
+
+These are the tests that Hyvor Blogs will run on your post:
+
+* **Primary keyword in the title**
+  * 100% if the primary keyword is at the beginning of the title
+  * 75% if the primary keyword is in the first 50 characters of the title
+  * 49% if the primary keyword is after the first 50 characters of the title
+  * 0% if the primary keyword is not in the title
+ 
+* **Primary keyword in the description**
+* **Primary keyword in the slug**
+  
+  If the primary keyword is `blogging platforms`, we check for `blogging-platforms` in the slug. It is recommended to set a **short slug with hyphens**. In this case, the score will be:
+  * 100% if the slug matches exactly `blogging-platforms`
+  * 75% if the slug contains `blogging-platforms` with other words
+* **Primary keyword in the beginning of the content**
+  
+  If your content is longer than 300 words, the primary keyword should be in the first 10% of the content. If it is shorter than 300 words, it should be somewhere in the content.
+* **Content length**
+
+  (The best content length depends on the topic, which is not considered here)
+  * 0% for less than 400 words
+  * 1% for each 25 words after 400 words (2500+ words = 100%)
+* **All keywords in the content**
+  
+  All keywords should be present in the post content.
+* **All keywords in subheadings**
+  
+  Each keyword should be present in at least one subheading (h2, h3, h4, h5, h6).
+* **All keywords in image alt attributes**
+  
+  Each keyword should be present in at least one image alt attribute.
+* **Keyword density**
+  
+  Checks for keyword density in content (`keywords count / total words`).
+
+  * 0% for less than 0.1%
+  * 50% for 0.1% to 0.5%
+  * 100% for 0.5% to 2.5%
+  * 50% for 2.5% to 5%
+  * 0% for more than 5%
+* **Slug length**
+
+  Shorter slugs are better. This test will pass if the slug is less than 50 characters.
+* **External links**
+  
+  At least one external link should be present in the post.
+* **Internal links**
+
+  At least one internal link should be present in the post. Links to any subdomain of your main domain will be considered as internal links. See [link types](#link-types) for more information. `internal-blog`, `internal-domain`, and `internal-root-domain` links are considered as internal links.
+* **Images**
+  * 70% - 1 image
+  * 80% - 2 images
+  * 90% - 3 images
+  * 100% - 4 or more images
+
+* **All images have alt attributes**
+  
+  All images should have alt attributes.
+
+
+## Link Analysis {#link-analysis}
+
+The link analysis tool in the post editor analyzes the status of the links in your post as you write. It will show you warding if there are any broken or redirect links in your post. It also shows you the [type of each link](#link-types).
+
+<p>
+  <img src="/img/landing/pricing/links-feature.png" alt="SEO Analysis in Hyvor Blogs" width="350" />
+</p>
+
+
+### Link Types {#link-types}
+
+Hyvor Blogs categorizes links into the following types.
+
+| Link Type | Description |
+| --- | --- |
+| `internal-blog` | Links to other posts/pages in your blog |
+| `internal-domain` | Links to the same domain as your blog, but not to your blog. |
+| `internal-root-domain` | Links to any domain of the root domain, but not to your blog's domain. |
+| `external` | Links to other domains |
+| `mail` | Mailto links (starts with `mailto:`) |
+| `tel` | Tel links (starts with `tel:`) |
+| `anchor` | Links to anchors in the same page (starts with `#`) |
+| `other` | Other links (`ftp:`, `data:`, javascript, etc.) |
+
+Go to **Console &rarr; Tools &rarr; Link Analysis** to
+
+* see an overview of all links in your blog
+* view results of bi-weekly link analysis
+* change email report settings
+
+## GPT Writing {#gpt-writing}
+
+We have integrated GPT 3.5 directly into the editor to help you with AI content generation tasks such as 
+
+* Generating a blog outline
+* Writing a blog post
+* Writing an article
+* and more...
+
+You can use the default prompts in most cases. However, you can also customize the prompts to get better results.
+
+<p>
+  <img src="/img/landing/homepage/console-gpt.gif" alt="GPT in the Console" />
+</p>

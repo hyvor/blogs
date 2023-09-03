@@ -1,16 +1,59 @@
 import {usePostActions, usePostValues} from "./helpers";
 import {useEffect} from "react";
 
-
 export default function useSave(id: number) {
 
-    const { currentVariant, diff, editorState } = usePostValues(id);
-    const { savePost } = usePostActions(id)
+    const { currentVariant, currentVariantDiff } = usePostValues(id);
+    const { saveCurrentVariantDiff, changeEditorState } = usePostActions(id)
 
-    function handleAutoSave() {
-        if (!editorState.isUnpublishing && !editorState.isPublishing && !editorState.isNonDraftUpdating) {
-            savePost();
+    function handleAutoSave(onSave?: Function) {
+
+        const diff = {} as {
+            content?: string,
+            content_unsaved?: string,
+            title?: string,
         }
+
+        if (currentVariantDiff.title) {
+            diff['title'] = currentVariantDiff.title;
+        }
+        if (currentVariantDiff.content) {
+            diff['content'] = currentVariantDiff.content;
+        }
+        if (currentVariantDiff.content_unsaved) {
+            diff['content_unsaved'] = currentVariantDiff.content_unsaved;
+        }
+
+        if (Object.keys(diff).length > 0) {
+            
+            changeEditorState('isSaving', true);
+
+            saveCurrentVariantDiff({
+                diff,
+                onSave: () => {
+                    changeEditorState('isSaving', false);
+                    onSave?.();
+                }
+            })
+
+        } else {
+            onSave?.();
+        }
+
+    }
+
+    function hasPublishedChanged() {
+        return (currentVariant.status === 'published' || currentVariant.status === 'scheduled') &&
+            (
+                currentVariantDiff.title ||
+                currentVariantDiff.content_unsaved
+            );  
+    }
+
+    async function handleBack() {
+        await new Promise(resolve => handleAutoSave(() => {
+            resolve(null);
+        }));
     }
 
     useEffect(() => {
@@ -26,39 +69,29 @@ export default function useSave(id: number) {
         }
 
         function checkSaveUnload(event: BeforeUnloadEvent) {
-            if (
-                (currentVariant.status === 'published' || currentVariant.status === 'scheduled') &&
-                Object.keys(diff).length > 0
-            ) {
-                event.returnValue = 'Are you sure to close this tab?';
+            if (hasPublishedChanged()) {
+                event.returnValue = 'Are you sure to close this tab? You have unsaved changes.';
             } else {
                 handleAutoSave();
             }
-        }
-
-        function checkSavePopstate(event: PopStateEvent) {
-            console.log(event)
-            event.preventDefault()
         }
 
         // save on CTRL + S
         window.addEventListener('keydown', checkSave);
         // save on unload
         window.addEventListener('beforeunload', checkSaveUnload);
-        // save on popstate change (internal navigation)
-        window.addEventListener('popstate', checkSavePopstate);
-
-        // save on outsideClick
-        // const removeOutsideEvent = onOutsideClick(viewRef.current, handleAutoSave, false, false, false);
-
+    
         return () => {
             clearInterval(autoSaveInterval)
             window.removeEventListener('keydown', checkSave);
             window.removeEventListener('beforeunload', checkSaveUnload);
-            window.removeEventListener('popstate', checkSavePopstate);
-            // removeOutsideEvent(false);
+            //window.removeEventListener('popstate', checkSavePopstate);
         }
 
-    }, [id, diff])
+    }, [id, currentVariantDiff, currentVariant])
+
+    return {
+        onBack: handleBack
+    }
 
 }

@@ -5,6 +5,7 @@ namespace App\Domains\Subscription;
 use App\Data\Enums\SubscriptionPlanEnum;
 use App\Data\Objects\ConsoleAPI\Billing\UsageObject;
 use App\Domains\Integrations\DeepL\DeepLService;
+use App\Domains\Integrations\OpenAi\GptPromptsService;
 use App\Models\Blog;
 
 class UsageRepository
@@ -21,7 +22,8 @@ class UsageRepository
         return [
             'users' => new UsageObject($blog->getCount('users'), $limits['users']),
             'media' => new UsageObject($blog->getCount('media'), $limits['media']),
-            'auto_translate' => new UsageObject(DeepLService::getThisMonthUsage($blog), $limits['auto_translate'])
+            'auto_translate' => new UsageObject(DeepLService::getThisMonthUsage($blog), $limits['auto_translate']),
+            'gpt' => new UsageObject(GptPromptsService::getThisMonthUsage($blog), $limits['gpt'])
         ];
     }
 
@@ -57,12 +59,16 @@ class UsageRepository
         };
 
         $autoTranslateChars = DeepLService::getMaxCharsPerMonth($blog, $plan);
+        $gptTokens = GptPromptsService::getMaxMonthlyGptTokens($blog, $plan);
 
         return [
             'users' => $users,
             'media' => $media,
             'auto_translate' => $autoTranslateChars,
+            'gpt' => $gptTokens
         ];
     }
+
+
 
 }

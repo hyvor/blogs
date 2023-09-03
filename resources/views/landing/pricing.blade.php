@@ -65,74 +65,509 @@ $pricingRow = "<tr>
 
 @include('landing.nav')
 
-<div class="pricing-table">
+
+<div class="pricing-table-new">
 
     <div class="container">
 
-        {{--<div class="discount">
-            <h2>Limited Offer!</h2>
-            Subscribe now and get a 50% lifetime discount on all paid plans.
-            <br>
-            Use the coupon <b>EARLY_USERS</b> at the checkout.
-        </div>--}}
+        <div class="">
 
-        <table>
+            <h1>
+                Simple & transparent pricing
+            </h1>
 
-            {!! $pricingRow !!}
+            <h2>
+                7-day free trial. Cancel anytime.
+            </h2>
 
-            <tr>
-                <td>Starter</td>
-                <td><span class="price">$9</span>/month</td>
-                <td>2</td>
-                <td>1GB</td>
-                <td><?= $svgCancel ?></td>
-            </tr>
+        </div>
 
-            <tr>
-                <td>Growth</td>
-                <td><span class="price">$19</span>/month</td>
-                <td>5</td>
-                <td>40GB</td>
-                <td>100,000 chars/m</td>
-            </tr>
+        <div class="pricing-table-top">
 
-            <tr>
-                <td>Premium</td>
-                <td><span class="price">$49</span>/month</td>
-                <td>15</td>
-                <td>250GB</td>
-                <td>300,000 chars/m</td>
-            </tr>
+            <div class="more-plans-wrap inner">
 
-            <tr>
-                <td>Team</td>
-                <td><span class="price">$299</span>/month</td>
-                <td>100</td>
-                <td>1TB</td>
-                <td>1,000,000 chars/m</td>
-            </tr>
+                <div class="more-plans-left">&nbsp;</div>
 
-            <tr>
-                <td>Business</td>
-                <td><span class="price">$699</span>/month</td>
-                <td>1000</td>
-                <td>2TB</td>
-                <td>5,000,000 chars/m</td>
-            </tr>
+                <div class="more-plans-right">
+                    <div class="l">
+                        <button 
+                            class="button text-only small more-plans-left-button"
+                            onclick="decreaseSection()"
+                        >
+                            <svg xmlns="http://www.w3.org/2000/svg" width="12" height="12" fill="currentColor" class="bi bi-caret-left" viewBox="0 0 16 16">
+                                <path d="M10 12.796V3.204L4.519 8 10 12.796zm-.659.753-5.48-4.796a1 1 0 0 1 0-1.506l5.48-4.796A1 1 0 0 1 11 3.204v9.592a1 1 0 0 1-1.659.753z"/>
+                            </svg> Lower <span class="plans-keyword">Plans</span>
+                        </button>
+                    </div>
+                    <div class="r">
+                        <button 
+                            class="button text-only small more-plans-right-button"
+                            onclick="increaseSection()"
+                        >
+                            Higher <span class="plans-keyword">Plans</span> <svg xmlns="http://www.w3.org/2000/svg" width="12" height="12" fill="currentColor" class="bi bi-caret-right" viewBox="0 0 16 16">
+                                <path d="M6 12.796V3.204L11.481 8 6 12.796zm.659.753 5.48-4.796a1 1 0 0 0 0-1.506L6.66 2.451C6.011 1.885 5 2.345 5 3.204v9.592a1 1 0 0 0 1.659.753z"/>
+                            </svg>
+                        </button>
+                    </div>
+                </div>
 
-            <tr>
-                <td>Enterprise</td>
-                <td><span class="price">$1299</span>/month</td>
-                <td>Unlimited</td>
-                <td>5TB</td>
-                <td>10,000,000 chars/m</td>
-            </tr>
+            </div>
+
+            <div class="inner">
+
+                <div class="feature-names">
+
+                    <div class="billing-frequency">
+                        {{-- Billed monthly --}}
+                    </div>
+
+                </div>
+
+                <div class="plan">
+
+                    <div class="plan-details">
+                        <div class="plan-name">Starter</div>
+                        <div class="plan-price">
+                            <span class="price">$9</span><span class="freq">/month</span>
+                        </div>
+                    </div>
+
+                    <div></div>
+
+                </div>
+
+                <div class="plan">
+
+                    <div class="plan-details">
+                        <div class="plan-name">Growth</div>
+                        <div class="plan-price">
+                            <span class="price">$19</span><span class="freq">/month</span>
+                        </div>
+                    </div>
+
+                    <div></div>
+
+                </div>
+
+                <div class="plan">
+
+                    <div class="plan-details">
+                        <div class="plan-name">Premium</div>
+                        <div class="plan-price">
+                            <span class="price">$49</span><span class="freq">/month</span>
+                        </div>
+                    </div>
+
+                    <div></div>
+
+                </div>
+
+                <div class="plan">
+
+                    <div class="plan-details">
+                        <div class="plan-name">Team</div>
+                        <div class="plan-price">
+                            <span class="price">$299</span><span class="freq">/month</span>
+                        </div>
+                    </div>
+
+                    <div></div>
+
+                </div>
+
+                <div class="plan">
+
+                    <div class="plan-details">
+                        <div class="plan-name">Business</div>
+                        <div class="plan-price">
+                            <span class="price">$699</span><span class="freq">/month</span>
+                        </div>
+                    </div>
+
+                    <div></div>
+
+                </div>
+
+                <div class="plan">
+
+                    <div class="plan-details">
+                        <div class="plan-name">Enterprise</div>
+                        <div class="plan-price">
+                            <span class="price">$1299</span><span class="freq">/month</span>
+                        </div>
+                    </div>
+
+                    <div></div>
+
+                </div>
 
 
-        </table>
+            </div>
+
+        </div>
+
+        <div class="pricing-table-features">
+
+            <div class="inner">
+
+                <div class="feature-title">
+                    Basic Features
+                </div>
+
+                <div class="feature">
+                    <div class="feature-name">
+                        Users
+                        <span class="info-tooltip">
+                            <?= $svgInfo ?>
+                            <span class="tooltip">
+                                Total number of users who writes for your blog (Your team members)
+                            </span>
+                        </span>
+                    </div>
+                    <div class="feature-value"><div>2</div></div>
+                    <div class="feature-value"><div>5</div></div>
+                    <div class="feature-value"><div>15</div></div>
+                    <div class="feature-value"><div>100</div></div>
+                    <div class="feature-value"><div>1000</div></div>
+                    <div class="feature-value"><div>Unlimited</div></div>
+                </div>
+
+                <div class="feature">
+                    <div class="feature-name">
+                        Storage
+                        <span class="info-tooltip">
+                            <?= $svgInfo ?>
+                            <span class="tooltip">
+                                Total storage used for blog media (mostly uploaded images)
+                            </span>
+                        </span>
+                    </div>
+                    <div class="feature-value"><div>1GB</div></div>
+                    <div class="feature-value"><div>40GB</div></div>
+                    <div class="feature-value"><div>250GB</div></div>
+                    <div class="feature-value"><div>1TB</div></div>
+                    <div class="feature-value"><div>2TB</div></div>
+                    <div class="feature-value"><div>5TB</div></div>
+                </div>
+
+                <div class="feature">
+                    <div class="feature-name">
+                        Custom themes
+                        <span class="info-tooltip">
+                            <?= $svgInfo ?>
+                            <span class="tooltip">
+                                Use default themes for free or build your own custom theme
+                            </span>
+                        </span>
+                    </div>
+                    <div class="feature-value"><div><?= $svgCheck ?></div></div>
+                    <div class="feature-value"><div><?= $svgCheck ?></div></div>
+                    <div class="feature-value"><div><?= $svgCheck ?></div></div>
+                    <div class="feature-value"><div><?= $svgCheck ?></div></div>
+                    <div class="feature-value"><div><?= $svgCheck ?></div></div>
+                    <div class="feature-value"><div><?= $svgCheck ?></div></div>
+                </div>
+
+                <div class="feature">
+                    <div class="feature-name">
+                        Custom domain
+                        <span class="info-tooltip">
+                            <?= $svgInfo ?>
+                            <span class="tooltip">
+                                Host your blog on your own domain
+                            </span>
+                        </span>
+                    </div>
+                    <div class="feature-value"><div><?= $svgCheck ?></div></div>
+                    <div class="feature-value"><div><?= $svgCheck ?></div></div>
+                    <div class="feature-value"><div><?= $svgCheck ?></div></div>
+                    <div class="feature-value"><div><?= $svgCheck ?></div></div>
+                    <div class="feature-value"><div><?= $svgCheck ?></div></div>
+                    <div class="feature-value"><div><?= $svgCheck ?></div></div>
+                </div>
+
+                <div class="feature">
+                    <div class="feature-name">
+                        Multi-language support
+                        <span class="info-tooltip">
+                            <?= $svgInfo ?>
+                            <span class="tooltip">
+                                Add multiple languages to your blog
+                            </span>
+                        </span>
+                    </div>
+                    <div class="feature-value"><div><?= $svgCheck ?></div></div>
+                    <div class="feature-value"><div><?= $svgCheck ?></div></div>
+                    <div class="feature-value"><div><?= $svgCheck ?></div></div>
+                    <div class="feature-value"><div><?= $svgCheck ?></div></div>
+                    <div class="feature-value"><div><?= $svgCheck ?></div></div>
+                    <div class="feature-value"><div><?= $svgCheck ?></div></div>
+                </div>
+
+                <div class="feature">
+                    <div class="feature-name">
+                        SEO Analysis
+                        <span class="info-tooltip">
+                            <?= $svgInfo ?>
+                            <span class="tooltip">
+                                In-post SEO analysis (check keywords, content, etc.)
+                                <img src="/img/landing/pricing/seo-feature.png" alt="SEO Analysis" />
+                            </span>
+                        </span>
+                    </div>
+                    <div class="feature-value"><div><?= $svgCancel ?></div></div>
+                    <div class="feature-value"><div><?= $svgCheck ?></div></div>
+                    <div class="feature-value"><div><?= $svgCheck ?></div></div>
+                    <div class="feature-value"><div><?= $svgCheck ?></div></div>
+                    <div class="feature-value"><div><?= $svgCheck ?></div></div>
+                    <div class="feature-value"><div><?= $svgCheck ?></div></div>
+                </div>
+
+                <div class="feature">
+                    <div class="feature-name">
+                        Link Analysis
+                        <span class="info-tooltip">
+                            <?= $svgInfo ?>
+                            <span class="tooltip">
+                                Post link analysis, bi-weekly full-blog link analysis, and email reports
+                                <img src="/img/landing/pricing/links-feature.png" alt="Link Analysis" />
+                            </span>
+                        </span>
+                    </div>
+                    <div class="feature-value"><div><?= $svgCancel ?></div></div>
+                    <div class="feature-value"><div><?= $svgCheck ?></div></div>
+                    <div class="feature-value"><div><?= $svgCheck ?></div></div>
+                    <div class="feature-value"><div><?= $svgCheck ?></div></div>
+                    <div class="feature-value"><div><?= $svgCheck ?></div></div>
+                    <div class="feature-value"><div><?= $svgCheck ?></div></div>
+                </div>
+
+                <div class="feature">
+                    <div class="feature-name">
+                        Data Ownership
+                        <span class="info-tooltip">
+                            <?= $svgInfo ?>
+                            <span class="tooltip">
+                                You own everything you write. Export and move to another platform anytime.
+                            </span>
+                        </span>
+                    </div>
+                    <div class="feature-value"><div><?= $svgCheck ?></div></div>
+                    <div class="feature-value"><div><?= $svgCheck ?></div></div>
+                    <div class="feature-value"><div><?= $svgCheck ?></div></div>
+                    <div class="feature-value"><div><?= $svgCheck ?></div></div>
+                    <div class="feature-value"><div><?= $svgCheck ?></div></div>
+                    <div class="feature-value"><div><?= $svgCheck ?></div></div>
+                </div>
+
+
+                <div class="feature-title">
+                    AI
+                </div>
+
+                <div class="feature">
+                    <div class="feature-name">
+                        GPT Writing
+                        <span class="info-tooltip">
+                            <?= $svgInfo ?>
+                            <span class="tooltip">
+                                Use OpenAI GPT 3.5 for content writing, keyword generation, and more. Usually, 1000 tokens is about 750 words.
+                                <img src="/img/landing/pricing/gpt-feature.png" alt="GPT Writing" />
+                            </span>
+                        </span>
+                    </div>
+                    <div class="feature-value"><div><?= $svgCancel ?></div></div>
+                    <div class="feature-value"><div>100k tokens/m</div></div>
+                    <div class="feature-value"><div>1m tokens/m</div></div>
+                    <div class="feature-value"><div>3m tokens/m</div></div>
+                    <div class="feature-value"><div>15m tokens/m</div></div>
+                    <div class="feature-value"><div>30m tokens/m</div></div>
+                </div>
+
+                <div class="feature">
+                    <div class="feature-name">
+                        Auto-Translations
+                        <span class="info-tooltip">
+                            <?= $svgInfo ?>
+                            <span class="tooltip">
+                                Automatically translate your posts into multiple languages using DeepL. Monthly characters limit on each plan.
+                            </span>
+                        </span>
+                    </div>
+                    <div class="feature-value"><div><?= $svgCancel ?></div></div>
+                    <div class="feature-value"><div>100k chars/m</div></div>
+                    <div class="feature-value"><div>300k chars/m</div></div>
+                    <div class="feature-value"><div>1m chars/m</div></div>
+                    <div class="feature-value"><div>5m chars/m</div></div>
+                    <div class="feature-value"><div>15m chars/m</div></div>
+                </div>
+
+                <div class="feature-title">
+                    Developer
+                </div>
+
+                <div class="feature">
+                    <div class="feature-name">
+                        Data API
+                        <span class="info-tooltip">
+                            <?= $svgInfo ?>
+                            <span class="tooltip">
+                                Access public data of your blog via API
+                            </span>
+                        </span>
+                    </div>
+                    <div class="feature-value"><div><?= $svgCheck ?></div></div>
+                    <div class="feature-value"><div><?= $svgCheck ?></div></div>
+                    <div class="feature-value"><div><?= $svgCheck ?></div></div>
+                    <div class="feature-value"><div><?= $svgCheck ?></div></div>
+                    <div class="feature-value"><div><?= $svgCheck ?></div></div>
+                    <div class="feature-value"><div><?= $svgCheck ?></div></div>
+                </div>
+
+                <div class="feature">
+                    <div class="feature-name">
+                        Console API
+                        <span class="info-tooltip">
+                            <?= $svgInfo ?>
+                            <span class="tooltip">
+                                The same API we use in our Console
+                            </span>
+                        </span>
+                    </div>
+                    <div class="feature-value"><div><?= $svgCheck ?></div></div>
+                    <div class="feature-value"><div><?= $svgCheck ?></div></div>
+                    <div class="feature-value"><div><?= $svgCheck ?></div></div>
+                    <div class="feature-value"><div><?= $svgCheck ?></div></div>
+                    <div class="feature-value"><div><?= $svgCheck ?></div></div>
+                    <div class="feature-value"><div><?= $svgCheck ?></div></div>
+                </div>
+
+                <div class="feature">
+                    <div class="feature-name">
+                        Delivery API
+                        <span class="info-tooltip">
+                            <?= $svgInfo ?>
+                            <span class="tooltip">
+                                For self-serving a blog within Web Frameworks.
+                            </span>
+                        </span>
+                    </div>
+                    <div class="feature-value"><div><?= $svgCheck ?></div></div>
+                    <div class="feature-value"><div><?= $svgCheck ?></div></div>
+                    <div class="feature-value"><div><?= $svgCheck ?></div></div>
+                    <div class="feature-value"><div><?= $svgCheck ?></div></div>
+                    <div class="feature-value"><div><?= $svgCheck ?></div></div>
+                    <div class="feature-value"><div><?= $svgCheck ?></div></div>
+                </div>
+
+                <div class="feature">
+                    <div class="feature-name">
+                        Webhooks
+                        <span class="info-tooltip">
+                            <?= $svgInfo ?>
+                            <span class="tooltip">
+                                Receive an HTTP request on events in your blog
+                            </span>
+                        </span>
+                    </div>
+                    <div class="feature-value"><div><?= $svgCheck ?></div></div>
+                    <div class="feature-value"><div><?= $svgCheck ?></div></div>
+                    <div class="feature-value"><div><?= $svgCheck ?></div></div>
+                    <div class="feature-value"><div><?= $svgCheck ?></div></div>
+                    <div class="feature-value"><div><?= $svgCheck ?></div></div>
+                    <div class="feature-value"><div><?= $svgCheck ?></div></div>
+                </div>
+
+                <div class="feature-title">
+                    Integrations
+                </div>
+
+                <div class="feature">
+                    <div class="feature-name">
+                        Hyvor Talk Comments
+                        <span class="info-tooltip">
+                            <?= $svgInfo ?>
+                            <span class="tooltip">
+                                Add Hyvor Talk commenting system for FREE
+                            </span>
+                        </span>
+                    </div>
+                    <div class="feature-value"><div><?= $svgCancel ?></div></div>
+                    <div class="feature-value"><div><?= $svgCheck ?></div></div>
+                    <div class="feature-value"><div><?= $svgCheck ?></div></div>
+                    <div class="feature-value"><div><?= $svgCheck ?></div></div>
+                    <div class="feature-value"><div><?= $svgCheck ?></div></div>
+                    <div class="feature-value"><div><?= $svgCheck ?></div></div>
+                </div>
+
+            </div>
+
+        </div>
 
     </div>
+
+    <div class="button-main" style="margin-top: 100px;">
+        @include('landing.inc.signup-button', ['buttonName' => 'Sign Up Now'])
+    </div>
+
 </div>
+
+
+</div>
+
+<script>
+
+var currentSectionStart = 0;
+
+function enableSections(startFrom) {
+    currentSectionStart = startFrom;
+    const max = window.innerWidth < 900 ? 1 : 3;
+    console.log(window.innerWidth, max)
+    document.querySelectorAll('.pricing-table-new .plan').forEach((plan, i) => {
+        if (i < startFrom || i - startFrom >= max) {
+            plan.classList.add('hidden');
+        } else {
+            plan.classList.remove('hidden');
+        }
+    })
+
+    document.querySelectorAll('.pricing-table-new .feature').forEach(feature => {
+        feature.querySelectorAll('.feature-value').forEach((value, i) => {
+            if (i < startFrom || i - startFrom >= max) {
+                value.classList.add('hidden');
+            } else {
+                value.classList.remove('hidden');
+            }
+        })
+    })
+
+    if (startFrom === 3) {
+        document.querySelector('.more-plans-right-button').classList.add('hidden');
+    } else {
+        document.querySelector('.more-plans-right-button').classList.remove('hidden');
+    }
+
+    if (startFrom === 0) {
+        document.querySelector('.more-plans-left-button').classList.add('hidden');
+    } else {
+        document.querySelector('.more-plans-left-button').classList.remove('hidden');
+    }
+}
+enableSections(0);
+
+function increaseSection() {
+    enableSections(currentSectionStart + 1);
+}
+
+function decreaseSection() {
+    enableSections(currentSectionStart - 1);
+}
+
+window.addEventListener('resize', () => {
+    enableSections(currentSectionStart);
+})
+
+</script>
 
 
 <div class="wave">
@@ -141,11 +576,7 @@ $pricingRow = "<tr>
 <div class="faqs">
     <div class="faq">
         <h3>Do you offer a trial?</h3>
-        <p>Yes, we offer a 7-day trial with all the features included. No credit card required to activate the trial.</p>
-    </div>
-    <div class="faq">
-        <h3>How do plans work?</h3>
-        <p>Plans are based on the number of <a class="link" href="/docs/users">users</a> (team members) and total media storage usage of that blog. Auto-translation feature has plan-based limits. All other features are included in all plans. Each blog requires a separate subscription.</p>
+        <p>Yes, we offer a 7-day trial with most of the features included. No credit card required to activate the trial.</p>
     </div>
     <div class="faq">
         <h3>Do I have to pay for themes?</h3>
@@ -172,9 +603,7 @@ $pricingRow = "<tr>
 </div>
 
 <div class="button-main">
-    <a data-flashload-skip-link href="/console?signup=1" class="button big">
-        Start a Blog
-    </a>
+    @include('landing.inc.signup-button', ['buttonName' => 'Sign Up Now'])
 </div>
 
 @include('landing.footer')

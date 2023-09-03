@@ -29,6 +29,9 @@ it('updates post variant', function () {
     $title = 'this is a title';
     $description = 'a description';
 
+    $primaryKeyword = 'primary keyword';
+    $secondaryKeywords = ['secondary keyword 1', 'secondary keyword 2'];
+
     consoleApi($blog, 'PATCH', "/post/$post->id/variant", [
             'language_id' => $language->id,
             'slug' => $slug,
@@ -37,6 +40,9 @@ it('updates post variant', function () {
             'content_unsaved' => $contentUnsaved,
             'title' => $title,
             'description' => $description,
+
+            'seo_primary_keyword' => $primaryKeyword,
+            'seo_secondary_keywords' => $secondaryKeywords,
         ])
         ->assertOk()
         ->assertJson(
@@ -47,6 +53,8 @@ it('updates post variant', function () {
                 ->where('content_unsaved', $contentUnsaved)
                 ->where('title', $title)
                 ->where('description', $description)
+                ->where('seo_primary_keyword', $primaryKeyword)
+                ->where('seo_secondary_keywords', $secondaryKeywords)
                 ->etc()
         );
 
@@ -156,6 +164,37 @@ it('updates slug when title is empty', function() {
         ->assertOk();
 
     expect($variant->refresh()->slug)->not->toBeNull();
+
+});
+
+it('checks for duplicates when generating the slug from the title', function() {
+
+    $blog = blogWithAccessLanguageAndRoutes();
+
+    addPublishedPost($blog, [], [
+        'slug' => 'my-post'
+    ]);
+
+    $post = Post::factory()->create([
+        'blog_id' => $blog,
+        'published_at' => null,
+    ]);
+    $variant = PostVariant::factory()->create([
+        'post_id' => $post,
+        'language_id' => $blog->languages[0],
+        'status' => PostStatusEnum::DRAFT,
+        'slug' => null,
+        'title' => 'My Post',
+    ]);
+
+    consoleApi($blog, 'PATCH', "/post/$post->id/variant", [
+        'language_id' => $blog->languages[0]->id,
+        'status' => 'published'
+    ])
+        ->assertOk();
+
+    expect($variant->refresh()->slug)->not->toBe('my-post-1');
+    expect($variant->refresh()->slug)->toBeString();
 
 });
 
@@ -275,16 +314,19 @@ it('updates to null', function() {
     $post = addPost($blog, [], [
         'language_id' => $language1->id,
         'title' => 'Title',
-        'description' => 'test'
+        'description' => 'test',
+        'seo_primary_keyword' => 'keyword'
     ]);
 
     consoleApi($blog, 'PATCH', "/post/$post->id/variant", [
         'language_id' => $language1->id,
         'title' => null,
         'description' => null,
+        'seo_primary_keyword' => null,
     ])
         ->assertOk()
         ->assertJsonPath('title', null)
-        ->assertJsonPath('description', null);
+        ->assertJsonPath('description', null)
+        ->assertJsonPath('seo_primary_keyword', null);
 
 });

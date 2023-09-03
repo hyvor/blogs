@@ -25,14 +25,38 @@ use Illuminate\Support\Str;
 class MediaRepository
 {
 
+    // /docs/writing
+    public const IMAGE_EXTENSIONS = [
+        'png',
+        'jpg', 'jpeg', 'jfif', 'pjpeg', 'pjp',
+        'gif',
+        'apng',
+        'avif',
+        'svg',
+        'webp',
+    ];
+
     /**
+     * @param string[]|null $extensions
      * @return Collection<int, Media>
      */
-    public static function get(Blog $blog, int $limit = 0, int $offset = 0, string|null $extension = null): Collection
+    public static function get(
+        Blog $blog,
+        int $limit = 0,
+        int $offset = 0,
+        array|null $extensions = null,
+        string|null $search = null,
+    ): Collection
     {
         return Media::where('blog_id', $blog->id)
-            ->when($extension, function ($query) use ($extension) {
-                $query->where('extension', $extension);
+            ->when($extensions, function ($query) use ($extensions) {
+                $query->whereIn('extension', $extensions);
+            })
+            ->when($search, function ($query) use ($search) {
+                $query->where(function($query) use ($search) {
+                    $query->where('name', 'LIKE', "%$search%")
+                        ->orWhere('original_name', 'LIKE', "%$search%");
+                });
             })
             ->limit($limit)
             ->offset($offset)

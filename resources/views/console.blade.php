@@ -33,10 +33,6 @@ use Illuminate\Support\Facades\App;
     </script>
     <script async src="https://cdn.paddle.com/paddle/paddle.js" onload="setUpPaddle()"></script>
 
-    @if (App::environment('production'))
-        <script src="https://do.featurebase.app/js/widget.js"></script>
-    @endif
-
     @include('shared.chat')
 
 </body>

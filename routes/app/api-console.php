@@ -8,7 +8,9 @@ use App\Http\Controllers\ConsoleAPI\ConsoleApiKeysController;
 use App\Http\Controllers\ConsoleAPI\ConsoleBlogController;
 use App\Http\Controllers\ConsoleAPI\ConsoleDangerController;
 use App\Http\Controllers\ConsoleAPI\ConsoleExportController;
+use App\Http\Controllers\ConsoleAPI\ConsoleGptController;
 use App\Http\Controllers\ConsoleAPI\ConsoleLanguageController;
+use App\Http\Controllers\ConsoleAPI\ConsoleLinkAnalysisController;
 use App\Http\Controllers\ConsoleAPI\ConsoleMediaController;
 use App\Http\Controllers\ConsoleAPI\ConsoleNavigationController;
 use App\Http\Controllers\ConsoleAPI\ConsolePostController;
@@ -117,6 +119,21 @@ Route::prefix('/api/console/v0/blog/{subdomain}')
             Route::get('/url-data', [ConsoleUrlDataController::class, 'getData']);
 
             Route::post('/ai/translate', [ConsoleAiController::class, 'translate']);
+
+            // link analysis
+            Route::post('/link-analysis/check-urls', [ConsoleLinkAnalysisController::class, 'checkPostVariantLinks']);
+            Route::patch('link-analysis/ignore-link', [ConsoleLinkAnalysisController::class, 'ignoreLink']);
+            Route::get('/link-analysis/stats', [ConsoleLinkAnalysisController::class, 'getStats']);
+            Route::get('/link-analysis/analyses', [ConsoleLinkAnalysisController::class, 'getAnalyses']);
+            Route::get('/link-analysis/links', [ConsoleLinkAnalysisController::class, 'getLinks']);
+            Route::get('/link-analysis/checks', [ConsoleLinkAnalysisController::class, 'getChecks']);
+            Route::post('/link-analysis/check', [ConsoleLinkAnalysisController::class, 'startCheck']);
+
+
+            // GPT
+            Route::post('/gpt/prompt', [ConsoleGptController::class, 'newPrompt']);
+            Route::get('/gpt/post-history', [ConsoleGptController::class, 'getPostChatHistory']);
+            Route::delete('/gpt/post-history', [ConsoleGptController::class, 'deletePostChatHistory']);
 
         });
 

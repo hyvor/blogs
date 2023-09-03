@@ -1,18 +1,17 @@
 import React from "react";
 import {InfoCircle} from "react-bootstrap-icons";
+import Tooltip from "./Tooltip";
 
 export default function InfoTooltip(props: { children: React.ReactNode }) {
 
-    return <span className="global-info-tooltip">
+    return <Tooltip
+        tooltip={props.children}
+    >
 
-        <span className="tooltip-icon">
+        <span className="global-info-tooltip">
             <InfoCircle />
         </span>
 
-        <span className="tooltip-content">
-            {props.children}
-        </span>
-
-    </span>
+    </Tooltip>
 
 }

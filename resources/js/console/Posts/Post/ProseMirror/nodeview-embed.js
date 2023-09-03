@@ -65,7 +65,7 @@ export default class EmbedView {
                         this.view.state.tr.replaceWith(
                             nodeSel.from,
                             nodeSel.to,
-                            createEmbed(this.schema, input.value)
+                            this.view.state.schema.nodes.embed.create({url: input.value})
                         )
                     )
                 }
@@ -90,17 +90,33 @@ export default class EmbedView {
     }
 
     removeInput() {
-        const pos = this.getPos()
+        let pos = this.getPos();
         const tr = this.view.state.tr.setNodeMarkup(
             pos,
             schema.nodes.paragraph
         )
+
         const selection = TextSelection.create(tr.doc, pos + 1);
         this.view.dispatch(
             tr.setSelection(selection)
                 .scrollIntoView()
         )
         this.view.focus();
+        const nodeBefore = tr.doc.nodeAt(pos - 1);
+        const nodeAfter = tr.doc.nodeAt(pos + nodeBefore.nodeSize + 1);
+
+        if (nodeBefore && nodeBefore.type.name === "figure") {
+            let tr2 = this.view.state.tr;
+            tr2.deleteRange(pos - 1, pos + nodeBefore.nodeSize - 1);
+            this.view.dispatch(tr2);
+        }
+
+        if (nodeAfter && nodeAfter.type.name === "figure") {
+            let tr3 = this.view.state.tr;
+            tr3.deleteRange(pos, pos + nodeAfter.nodeSize - 1);
+            this.view.dispatch(tr3);
+        }
+       
     }
 
 

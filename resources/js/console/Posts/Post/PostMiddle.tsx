@@ -1,4 +1,4 @@
-import Editor from "./ProseMirror/Editor";
+/* import Editor from "./ProseMirror/Editor";
 import React from "react";
 import { usePostActions, usePostValues } from "./helpers";
 import PostLanguageSelector from "./PostLanguageSelector";
@@ -48,4 +48,4 @@ export default function PostMiddle({ id }: { id: number }) {
         />
     </div>
 
-}
+} */

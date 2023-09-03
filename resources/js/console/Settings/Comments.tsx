@@ -3,6 +3,7 @@ import DualSetting from '../ReusableComponents/DualSetting';
 import SettingsSave from '../ReusableComponents/SettingsSave';
 import { useBlogActions, useBlogValues } from '../logic-helpers/blog';
 import CodemirrorEditor, {CODEMIRROR_MODES} from "../ReusableComponents/CodemirrorEditor";
+import NavLink from "../ReusableComponents/NavLink";
 
 export default function Comments() {
 
@@ -21,7 +22,10 @@ export default function Comments() {
                 title="Comments Embed Code"
                 description={
                     <div>
-                        Paste the embed code from your commenting system here. If you like a privacy-first, easy-to-use commenting system, try <a href="https://talk.hyvor.com" className="link" target="_blank">Hyvor Talk</a>. You can use Twig <a className="link" href="/docs/themes-templates#variables" target="_blank">route variables</a> if needed.
+                        Paste the embed code from your commenting system here. You can use Twig <a className="link" href="/docs/themes-templates#variables" target="_blank">route variables</a> if needed. To connect Hyvor Talk for FREE, go to <NavLink 
+                                href={`/console/${blog.subdomain}/integrations/hyvor-talk`}
+                                className="link"
+                            >Integrations &rarr; Hyvor Talk</NavLink>.
                     </div>
                 }
                 right={
@@ -29,6 +33,8 @@ export default function Comments() {
                         extension={'twig'}
                         value={blog.comments_code || ''}
                         onChange={(val: string) => updateBlogValue('comments_code', val)}
+                        allowFullScreen={true}
+                        fileName='Comments Embed Code'
                     />
                 }
                 column={true}
@@ -36,12 +42,18 @@ export default function Comments() {
 
             <DualSetting 
                 title="Newsletter Signup Form Code"
-                description="Paste the embed code provided by a email newsletter service here (for the sign up form)."
+                description={
+                    <div>
+                        Paste the embed code provided by a email newsletter service here (for the sign up form). You can use Twig <a className="link" href="/docs/themes-templates#variables" target="_blank">route variables</a> if needed.
+                    </div>
+                }
                 right={
                     <CodemirrorEditor
                         extension='twig'
                         value={blog.newsletter_code || ''}
                         onChange={(val: string) => updateBlogValue('newsletter_code', val)}
+                        allowFullScreen={true}
+                        fileName='Newsletter Signup Form Code'
                     />
                 }
                 column={true}

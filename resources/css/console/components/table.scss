@@ -2,6 +2,7 @@
 
     .table-head {
         display: grid;
+        grid-template-columns: var(--table-columns);
         padding: 10px 15px;
         border-radius: 20px;
         font-weight: 600;
@@ -11,11 +12,16 @@
 
     .table-row {
         display: grid;
+        grid-template-columns: var(--table-columns);
         padding: 10px 15px;
         border-radius: 20px;
         align-items: center;
         &:hover {
             background-color: $color-card;
+        }
+        .table-row-item {
+            min-width: 0;
+            padding-right: 5px;
         }
     }
 
@@ -24,4 +30,9 @@
 .global-table-load-more {
     text-align: center;
     padding: 15px;
+}
+  
+.resize-cursor {
+    cursor: ew-resize;
+    cursor: col-resize;
 }

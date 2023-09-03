@@ -1,5 +1,4 @@
 import React from 'react';
-import {KeaAjaxObject} from "kea-ajax";
 import Loader from "./Loader";
 
 interface LoadMoreProps {

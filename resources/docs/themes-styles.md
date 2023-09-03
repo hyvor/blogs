@@ -15,13 +15,20 @@ Back to “chunk-css”. let’s say you make a partial file for the blog header
 
 On our side, we process `index.scss` file and generate a `styles.css`, which will be accessible via `/styles.css`. **That is the only CSS file of the whole blog**!
 
-And, don't worry about using vendor prefixes like `-webkit-`. We auto-prefix the `styles.css` file before sending it to the user.
+<!-- 
+And, don't worry about using vendor prefixes like `-webkit-`. We auto-prefix the `styles.css` file before sending it to the user. -->
 
 > We strongly encourage you to write CSS from scratch without using any libraries like Bootstrap. A blog theme is very simple and it is totally possible to manage everything on your own without depending on third-party libraries. If you really want to use a library, add it to assets instead of styles.
 
 ## Fonts
 
-In the future, we have some plans to introduce font selection to [theme config](themes-config) so that users can select the fonts they want.
+The easiest way to load fonts is by adding `THEME_FONTS` to the [config](themes-config) file. 
+
+```yaml
+THEME_FONTS: "mulish:400"
+```
+
+Then, you can use the font in your SCSS files. See our [fonts](fonts) page for a in-depth guide.
 
 ## Advanced Nodes {#advanced-nodes}
 

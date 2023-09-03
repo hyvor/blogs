@@ -79,6 +79,8 @@ export default function SEO() {
                     extension="twig"
                     value={blog.seo_robots_txt || ''}
                     onChange={(val: string) => updateBlogValue('seo_robots_txt', val)}
+                    allowFullScreen={true}
+                    fileName='robots.txt'
                 />
             }
             column={true}

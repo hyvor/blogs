@@ -210,6 +210,10 @@ class ConsolePostController extends Controller
             'content_unsaved' => 'string|nullable',
             'title' => 'string|max:255|nullable',
             'description' => 'string|max:255|nullable',
+
+            'seo_primary_keyword' => 'string|max:255|nullable',
+            'seo_secondary_keywords' => 'array',
+            'seo_secondary_keywords.*' => 'string',
         ]);
 
         $languageId = $request->integer('language_id');
@@ -228,7 +232,9 @@ class ConsolePostController extends Controller
         $variantUpdates = [];
 
         if ($request->has('slug'))
-            $variantUpdates['slug'] = (string)$request->string('slug');
+            $variantUpdates['slug'] = $request->input('slug') !== null ?
+                (string) $request->string('slug') :
+                null;
 
         if ($request->has('status'))
             $variantUpdates['status'] = PostStatusEnum::from((string)$request->string('status'));
@@ -253,6 +259,18 @@ class ConsolePostController extends Controller
                 (string) $request->string('description') :
                 null;
 
+        if ($request->has('seo_primary_keyword')) {
+            $variantUpdates['seo_primary_keyword'] = $request->input('seo_primary_keyword') !== null ?
+                (string) $request->string('seo_primary_keyword') :
+                null;
+        }
+
+        if ($request->has('seo_secondary_keywords')) {
+            /** @var string[] $secondaryKeywords */
+            $secondaryKeywords =  (array) $request->input('seo_secondary_keywords');
+            $variantUpdates['seo_secondary_keywords'] = $secondaryKeywords;
+        }
+
         if (count($variantUpdates) > 0) {
 
             if (array_key_exists('slug', $variantUpdates)) {
@@ -267,6 +285,9 @@ class ConsolePostController extends Controller
         }
 
         $variant->refresh();
+
+        // update post and refresh variants
+        $post->refresh();
 
         return response()->json(
             new PostVariantObject($variant, $post, $blog)

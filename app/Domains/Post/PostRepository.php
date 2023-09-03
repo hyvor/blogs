@@ -340,7 +340,10 @@ class PostRepository
      *     content?: string | null,
      *     content_unsaved?: string | null,
      *     title?: string | null,
-     *     description?: string | null
+     *     description?: string | null,
+     *     seo_primary_keyword?: string | null,
+     *     seo_secondary_keywords?: string[],
+     *     link_analysis?: array<string, number>
      * } $updates
      */
     public static function updatePostVariant(PostVariant $variant, array $updates) : PostVariant
@@ -367,7 +370,17 @@ class PostRepository
                 // a slug is required if the post is published
                 if ($variant->slug === null) {
                     $title = $variant->title ?? $updates['title'] ?? null;
-                    $variant->slug = $title ? Str::slug($title) : Str::random();
+                    $slug = $title ? Str::slug($title) : Str::random();
+
+                    // if the slug is already taken, generate a random slug
+                    if (
+                        $variant->language &&
+                        self::getPostByLanguageAndSlug($variant->language, $slug)
+                    ) {
+                        $slug = Str::random();
+                    }
+
+                    $variant->slug = $slug;
                 }
 
             }
@@ -395,7 +408,7 @@ class PostRepository
 
         // title
         if (array_key_exists('title', $updates)) {
-            $variant->title = $updates['title'] ? mb_substr($updates['title'] ?? '', 0, 255) : null;
+            $variant->title = $updates['title'] ? mb_substr($updates['title'], 0, 255) : null;
         }
 
         // description
@@ -403,6 +416,25 @@ class PostRepository
             $variant->description = $updates['description'] ?
                 mb_substr($updates['description'], 0, 350) :
                 null;
+        }
+
+        // seo primary keyword
+        if (array_key_exists('seo_primary_keyword', $updates)) {
+            $variant->seo_primary_keyword = $updates['seo_primary_keyword'] ?
+                mb_substr($updates['seo_primary_keyword'], 0, 255) :
+                null;
+        }
+
+        // seo secondary keywords
+        if (array_key_exists('seo_secondary_keywords', $updates)) {
+            $variant->seo_secondary_keywords = $updates['seo_secondary_keywords'] ?
+                array_slice($updates['seo_secondary_keywords'], 0, 10) :
+                [];
+        }
+
+        // link analysis
+        if (array_key_exists('link_analysis', $updates)) {
+            $variant->link_analysis = $updates['link_analysis'];
         }
 
         $original = new PostVariant((array) $variant->getOriginal());
@@ -417,6 +449,11 @@ class PostRepository
         return PostVariant::where('language_id', $languageId)
             ->where('post_id', $postId)
             ->first();
+    }
+
+    public static function getPostVariantById(int $id): ?PostVariant
+    {
+        return PostVariant::find($id);
     }
 
     public static function deletePostVariant(Post $post, int $languageId) : void

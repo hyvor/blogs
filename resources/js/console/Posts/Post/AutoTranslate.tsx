@@ -6,17 +6,37 @@ import {PopupConfirm} from "../../ReusableComponents/Popup";
 import React, {useState} from "react";
 import DualSetting from "../../ReusableComponents/DualSetting";
 import api from "../../lib/api";
-import {getSubscription, hasSubscription, isInTrial} from "../../lib/blog-helpers";
+import {getSubscription, isInTrial} from "../../lib/blog-helpers";
 import billingLogic from "../../logic/billing/billingLogic";
 import Select from "../../ReusableComponents/Select";
-import {Language} from "../../types";
+import {Language, PostVariant} from "../../types";
+import { Magic } from "react-bootstrap-icons";
+import { bringLeftHeaderToFront } from "./New/z-index";
 
-export default function AutoTranslate({id, onCancel}: { id: number, onCancel: Function}) {
+export function AutoTranslateWrap({id} : {id: number}) {
+
+    const [isAutoTranslating, setIsAutoTranslating] = useState(false);
+
+    function handleOpen() {
+        setIsAutoTranslating(true);
+        bringLeftHeaderToFront();
+    }
+
+    return <div className="auto-translate-wrap">
+        <button className="button light small" onClick={handleOpen}>
+            Auto-Translate <Magic />
+        </button>
+        { isAutoTranslating && <AutoTranslate id={id} onCancel={() => setIsAutoTranslating(false)} /> }
+    </div>
+
+}
+
+function AutoTranslate({id, onCancel}: { id: number, onCancel: Function}) {
 
     const subdomain = getSubdomain();
     const { languages } = useValues(languagesLogic({subdomain}))
     const { editorState, post, currentVariant } = usePostValues(id)
-    const { updateCurrentPostVariantValue, changeEditorState, savePost } = usePostActions(id);
+    const { updateCurrentPostVariantValue, changeEditorState, saveCurrentVariantDiff } = usePostActions(id);
     const { navigateToBilling } = useActions(billingLogic({subdomain}));
 
     const currentLanguage = languages.find(l => l.id === editorState.languageId)
@@ -47,21 +67,30 @@ export default function AutoTranslate({id, onCancel}: { id: number, onCancel: Fu
             target_lang: targetLanguage
         }).then(data => {
 
-            updateCurrentPostVariantValue('title', data.title);
-            updateCurrentPostVariantValue('description', data.description);
+            const updates = {
+                // language_id: variantLanguageId,
+                title: data.title,
+                description: data.description,
+            } as Partial<PostVariant>;
 
-            // only update if the slug is not set
-            if (currentVariant.slug === null)
-                updateCurrentPostVariantValue('slug', data.slug);
+            if (currentVariant.slug === null) {
+                updates.slug = data.slug;
+            }
 
-            const contentKey = currentVariant.status === 'draft' ? 'content' : 'content_unsaved';
-            updateCurrentPostVariantValue(contentKey, data.content);
+            if (currentVariant.status === 'draft') {
+                updates.content = data.content;
+            } else {
+                updates.content_unsaved = data.content;
+            }
+    
+            saveCurrentVariantDiff({
+                diff: updates,
+                onSave: () => {
+                    changeEditorState('version', editorState.version + 1);
+                    onCancel();
+                }
+            });
 
-            changeEditorState('version', editorState.version + 1);
-
-            savePost();
-
-            onCancel();
 
         }).finally(() => {
             setIsTranslating(false);
@@ -87,75 +116,77 @@ export default function AutoTranslate({id, onCancel}: { id: number, onCancel: Fu
         }
     });
 
-    return <PopupConfirm
-        title={isBlogSubscribed ? "Auto-Translate" : "Upgrade Required"}
-        text={
-            isBlogSubscribed ?
-                <div>
-                    <DualSetting
-                        title="Source Variant"
-                        description="The variant you want to translate from"
-                        right={
-                            <div>
-                                {
-                                    languages.map(l => {
-                                        if (l.id === currentLanguage?.id) {
-                                            return null;
-                                        }
-                                        return <span
-                                            className={"global-lang-tag" + (variantLanguageId === l.id ? " active" : "")}
-                                            key={l.id}
-                                            onClick={() => {
-                                                setVariantLanguageId(l.id)
-                                                setSourceLanguage(findMatchingLanguage(l.code, SOURCE_LANGUAGES))
-                                            }}
-                                        >{l.code}</span>
-                                    })
-                                }
-                            </div>
-                        }
-                    />
-                    <DualSetting
-                        title="Source Language"
-                        description={
-                            <div>
-                                The language you want to translate from. { Object.keys(SOURCE_LANGUAGES).length } languages supported.
-                            </div>
-                        }
-                        right={
-                            <Select
-                                value={sourceLangOptions.find(o => o.value === sourceLanguage)}
-                                options={sourceLangOptions}
-                                onChange={(v: any) => setSourceLanguage(v.value)}
-                            />
-                        }
-                    />
-                    <DualSetting
-                        title="Target Language"
-                        description={
-                            <div>
-                                The language you want to translate to. { Object.keys(TARGET_LANGUAGES).length } languages supported.
-                            </div>
-                        }
-                        right={
-                            <Select
-                                value={targetLangOptions.find(o => o.value === targetLanguage)}
-                                options={targetLangOptions}
-                                onChange={(v: any) => setTargetLanguage(v.value)}
-                            />
-                        }
-                    />
-                </div> :
-                <div>
-                    Auto-translation is a premium feature available in the <b>Growth</b> and higher plans. Upgrade now to easily translate your posts into multiple languages. See <a className="link" href="/pricing" target="_blank">pricing</a> for more details.
-                </div>
-        }
-        name={isBlogSubscribed ? "Auto-Translate" : "Upgrade Now"}
-        onClick={handleTranslate}
-        onCancel={onCancel}
-        isLoading={isTranslating}
-        loadingName="Translating"
-    />
+    return <div data-testid="auto-translate-popup">
+        <PopupConfirm
+            title={isBlogSubscribed ? "Auto-Translate" : "Upgrade Required"}
+            text={
+                isBlogSubscribed ?
+                    <div>
+                        <DualSetting
+                            title="Source Variant"
+                            description="The variant you want to translate from"
+                            right={
+                                <div>
+                                    {
+                                        languages.map(l => {
+                                            if (l.id === currentLanguage?.id) {
+                                                return null;
+                                            }
+                                            return <span
+                                                className={"global-lang-tag" + (variantLanguageId === l.id ? " active" : "")}
+                                                key={l.id}
+                                                onClick={() => {
+                                                    setVariantLanguageId(l.id)
+                                                    setSourceLanguage(findMatchingLanguage(l.code, SOURCE_LANGUAGES))
+                                                }}
+                                            >{l.code}</span>
+                                        })
+                                    }
+                                </div>
+                            }
+                        />
+                        <DualSetting
+                            title="Source Language"
+                            description={
+                                <div>
+                                    The language you want to translate from. { Object.keys(SOURCE_LANGUAGES).length } languages supported.
+                                </div>
+                            }
+                            right={
+                                <Select
+                                    value={sourceLangOptions.find(o => o.value === sourceLanguage)}
+                                    options={sourceLangOptions}
+                                    onChange={(v: any) => setSourceLanguage(v.value)}
+                                />
+                            }
+                        />
+                        <DualSetting
+                            title="Target Language"
+                            description={
+                                <div>
+                                    The language you want to translate to. { Object.keys(TARGET_LANGUAGES).length } languages supported.
+                                </div>
+                            }
+                            right={
+                                <Select
+                                    value={targetLangOptions.find(o => o.value === targetLanguage)}
+                                    options={targetLangOptions}
+                                    onChange={(v: any) => setTargetLanguage(v.value)}
+                                />
+                            }
+                        />
+                    </div> :
+                    <div>
+                        Auto-translation is a premium feature available in the <b>Growth</b> and higher plans. Upgrade now to easily translate your posts into multiple languages. See <a className="link" href="/pricing" target="_blank">pricing</a> for more details.
+                    </div>
+            }
+            name={isBlogSubscribed ? "Auto-Translate" : "Upgrade Now"}
+            onClick={handleTranslate}
+            onCancel={onCancel}
+            isLoading={isTranslating}
+            loadingName="Translating"
+        />
+    </div>
 
 }
 

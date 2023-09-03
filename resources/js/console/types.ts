@@ -99,7 +99,10 @@ export interface Blog {
     heading_anchors: boolean,
 
     flashload: boolean,
-    variants: BlogVariant[]
+    variants: BlogVariant[],
+
+    link_analysis_enabled: boolean,
+    link_analysis_email_report: 'always' | 'when_broken' | 'never',
 
 }
 
@@ -140,6 +143,7 @@ export type PostStatus = 'draft' | 'published' | 'scheduled'
 
 export type PostVariant = {
 
+    id: number,
     language_id: number;
     slug: string | null,
     status: PostStatus,
@@ -150,6 +154,10 @@ export type PostVariant = {
     title: string | null;
     description: string | null;
 
+    seo_primary_keyword: string | null,
+    seo_secondary_keywords: string[],
+
+    link_analysis: Record<string, number>,
 };
 
 // == USER
@@ -418,4 +426,45 @@ export interface Import {
         users: number
     }
 
+}
+
+export interface LinkAnalysisLink {
+    id: number,
+    url: string,
+    status_code: number,
+    status_type: 'ok' | 'redirect' | 'broken' | 'ignored',
+    ignored: boolean,
+
+    post_id: number,
+    post_variant_id: number,
+    post_variant_language_id: number,
+    post_variant_title: string | null,
+}
+
+export interface LinkAnalysisCheck {
+    id: number,
+    created_at: number,
+
+    status: JobStatus,
+    error: string | null,
+
+    posts_count: number,
+    post_variants_count: number,
+    pages_count: number,
+    page_variants_count: number,
+
+    links_total_count: number,
+    links_ok_count: number,
+    links_broken_count: number,
+    links_redirect_count: number,
+    links_ignored_count: number,
+}
+
+export interface GptPrompt {
+    id: number,
+    created_at: number,
+    post_id: number,
+
+    prompt: string,
+    gpt_response: string,
 }

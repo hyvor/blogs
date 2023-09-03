@@ -11,7 +11,7 @@ import {
     Files, Gear,
     House, InfoCircle, Megaphone,
     Palette,
-    Pencil, Plugin,
+    Pencil, Plugin, Tools,
 } from 'react-bootstrap-icons';
 import dayjs from 'dayjs';
 import { appConfig } from "../helpers";
@@ -36,15 +36,6 @@ function LeftInner({subdomain} : {subdomain: string}) {
 
     const { findBlogBySubdomain } = useValues(userBlogsLogic);
     const { blog, blog: { subscription: currentSubscription } } = findBlogBySubdomain(subdomain);
-
-    useEffect(() => {
-        (window as any).FeaturebaseWidget && (window as any).FeaturebaseWidget.init({
-            organization: "hyvorblogs",
-            initialPage: "MainView",
-            // placement: "left",
-            fullScreen: true
-        })
-    }, []);
 
     return <div id="left">
         <div id="left-header" className="box">
@@ -119,6 +110,13 @@ function LeftInner({subdomain} : {subdomain: string}) {
                 icon={<Plugin />}
                 name="Integrations"
                 permission={UserPermissions.canAccessSettings}
+            />
+
+            <LeftLink 
+                path="/tools" 
+                icon={<Tools />} 
+                name="Tools" 
+                permission={UserPermissions.canAccessSettings}
                 extra={
                     <span className="global-tag blue">NEW</span>
                 }
@@ -141,12 +139,8 @@ function LeftInner({subdomain} : {subdomain: string}) {
 
             <a
                 className="bottom-item"
-                onClick={() => {
-                    window.postMessage({
-                        target: 'FeaturebaseWidget',
-                        data: { action: 'toggleWidget' },
-                    })
-                }}
+                href="https://community.blogs.hyvor.com/roadmap"
+                target="_blank"
             >
                 <span className="icon"><Megaphone /></span>Changelog <span id="fb-update-badge"></span>
             </a>

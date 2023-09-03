@@ -7,6 +7,7 @@ import Radio from '../console/ReusableComponents/Radio';
 import Switch from '../console/ReusableComponents/Switch';
 import { ColorPicker } from '../console/ReusableComponents/ColorPicker';
 import deepmerge from 'deepmerge';
+import DOMPurify from "dompurify";
 
 interface ConfigDefProps {
     configYaml: string,
@@ -88,6 +89,11 @@ export default function ConfigDef({ configYaml, configDefYaml, onConfigChange } 
             $name: 'Theme Version',
             $type: 'none'
         },
+        THEME_FONTS: {
+            $name: 'Theme Fonts',
+            $type: 'text',
+            $description: 'Load Google fonts locally. See <a class="link" href="https://blogs.hyvor.com/docs/fonts" target="_blank">docs</a> for more info.'
+        },
         POSTS_PER_PAGINATION: {
             $name: 'Posts per Pagination',
             $description: 'Number of posts to show per page on index pages',
@@ -131,7 +137,13 @@ function ObjectConfig({ config, configDef, onChange, parentKeys = [] } : ObjectC
 
                     <DualSetting
                         title={name}
-                        description={description}
+                        description={
+                            <div dangerouslySetInnerHTML={{
+                                __html: DOMPurify.sanitize(description || '', {
+                                    ADD_ATTR: ['target']
+                                })
+                            }}></div>
+                        }
                         right={
                             <div>
                                 {
