@@ -716,11 +716,10 @@ $prosemirror-selected-outline: 3px solid #299af3;
 
     table {
         margin: 0;
-        width: 100%;
         border: 1px solid black;
         border-collapse: collapse;
-        max-width: 100%;
         table-layout: fixed;
+        white-space: break-spaces;
     }
 
     tr {

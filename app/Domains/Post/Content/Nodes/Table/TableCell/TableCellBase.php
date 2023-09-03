@@ -22,6 +22,13 @@ abstract class TableCellBase extends NodeType
         $colspan = intval($node->attr('colspan'));
         $rowspan = intval($node->attr('rowspan'));
 
+        $colWidth = $node->attr('colwidth');
+
+        if ($colWidth) {
+            $width = array_sum($colWidth);
+            $attrs['style'] = 'width: ' . $width . 'px;';
+        }
+
         if ($colspan > 1) {
             $attrs['colspan'] = $colspan;
         }
