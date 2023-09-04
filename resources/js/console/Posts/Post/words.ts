@@ -1,4 +1,17 @@
 
+function getIntlLanguageCode(languageCode?: string | undefined) : string | undefined {
+    if (!languageCode)
+        return undefined;
+    try {
+        // @ts-ignore
+        const codes = Intl.getCanonicalLocales(languageCode);
+        return codes[0];
+    } catch (err) {
+        return undefined;
+    }
+}
+
+
 export function getWords(str: string, languageCode?: string | undefined) {
     str = str.trim();
 
@@ -7,7 +20,7 @@ export function getWords(str: string, languageCode?: string | undefined) {
 
     if (typeof Intl.Segmenter === "function") {
 
-        const segmenter = new Intl.Segmenter(languageCode, {granularity: "word"});
+        const segmenter = new Intl.Segmenter(getIntlLanguageCode(languageCode), {granularity: "word"});
         const segments = segmenter.segment(str)[Symbol.iterator]();
 
         let words = [];
@@ -34,7 +47,10 @@ export function getOccurrencesOfKeywordInContent(keyword: string, content: strin
         return getOccurrencesOfKeywordInContentWithoutIntl(keyword, content);
     }
 
-    const segmenter = new Intl.Segmenter(languageCode, {granularity: "word"});
+    const segmenter = new Intl.Segmenter(
+        getIntlLanguageCode(languageCode), 
+        {granularity: "word"}
+    );
     
     let occurrences = 0;
 
