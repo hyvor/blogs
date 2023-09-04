@@ -85,7 +85,7 @@ jobs:
                     composer config --global --auth http-basic.hyvor.repo.repman.io token ${REPMAN_TOKEN}
                     composer install
                     npm ci --ignore-scripts
-                    npm run build
+                    npx vite build --mode testing
 
             -   name: Run PHP Server
                 env:
