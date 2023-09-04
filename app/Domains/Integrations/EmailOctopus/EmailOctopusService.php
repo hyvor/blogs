@@ -25,9 +25,9 @@ class EmailOctopusService
             ],
         );
 
-        if (!$response->successful()) {
+        /*if (!$response->successful()) {
             throw new Exception('Failed to subscribe user');
-        }
+        }*/
 
     }
 
