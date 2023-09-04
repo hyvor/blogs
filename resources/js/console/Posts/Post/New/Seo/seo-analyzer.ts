@@ -1,7 +1,7 @@
 import { Mark, Node } from "prosemirror-model";
-import { getDocFromContent } from "../../ProseMirror/helpers";
+import { getDocFromContent, getTextFromContent } from "../../ProseMirror/helpers";
 import { Link, getLinksFromContent } from "../Links/links";
-import { getKeywordMatchingRegex, getOneCharPerWordScriptsRegexPart } from "../../words";
+import { getOccurrencesOfKeywordInContent, getWords, getWordsCount } from "../../words";
 
 export interface Input {
     primaryKeyword: string | null,
@@ -11,6 +11,7 @@ export interface Input {
     slug: string,
     content: string | null,
     blogUrl: string,
+    languageCode: string,
 }
 
 export interface Output {
@@ -97,18 +98,7 @@ export class Test {
         return getDocFromContent(this.input.content);
     }
     protected contentText() : string {
-        const doc = this.contentNode();
-        let text = '';
-
-        doc.descendants(node => {
-            const acceptedNodes = ['paragraph', 'figcaption'];
-            if (acceptedNodes.includes(node.type.name)) {
-                if (text.length > 0) text += "\n";
-                text += node.textContent;
-            }
-        });
-
-        return text;
+        return getTextFromContent(this.input.content);
     }
 
     protected links() : Link[] {
@@ -124,11 +114,11 @@ export class Test {
     }
 
     protected keywordInString(keyword: string, str: string) : boolean {
-        return this.getKeywordMatchingRegex(keyword).test(str);
-    }
-
-    protected getKeywordMatchingRegex(keyword: string, global: boolean = false) {
-        return getKeywordMatchingRegex(keyword, global);
+        return getOccurrencesOfKeywordInContent(
+            keyword, 
+            str, 
+            this.input.languageCode
+        ) > 0;
     }
 
 }
@@ -268,8 +258,7 @@ export class ContentLengthTest extends Test {
 
     public run() {
         const content = this.contentText().toLowerCase().trim();
-        const words = content === "" ? [] : content.split(/\s+/);
-        const wordsCount = words.length;
+        const wordsCount = getWordsCount(content, this.input.languageCode);
 
         let result = this.defaultResult(`Content is ${wordsCount} word${wordsCount === 1 ? '' : 's'} long. Consider using at least 400 words.`);
 
@@ -431,7 +420,7 @@ export class KeywordDensityTest extends Test {
         const wordsCount = words.length;
 
         const keywordsCount = keywords.reduce((count, keyword) => {
-            return count + (content.match(this.getKeywordMatchingRegex(keyword, true)) || []).length;
+            return count + getOccurrencesOfKeywordInContent(keyword, content, this.input.languageCode)
         }, 0);
 
         const density = keywordsCount * 100 / wordsCount;

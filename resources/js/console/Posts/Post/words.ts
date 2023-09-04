@@ -1,46 +1,93 @@
 
-export function getOneCharPerWordScriptsRegexPart() {
-    return '(?:' +
-        '\\p{Unified_Ideograph}' + // Han (Chinese)
-    ')';
-}
-
-export function getWords(str: string) {
+export function getWords(str: string, languageCode?: string | undefined) {
     str = str.trim();
 
     if (str === "")
         return [];
 
-    const regex = new RegExp(
-        // split by non-letter characters
-        '\\P{L}+' +
+    if (typeof Intl.Segmenter === "function") {
 
-        // or
-        '|' +
+        const segmenter = new Intl.Segmenter(languageCode, {granularity: "word"});
+        const segments = segmenter.segment(str)[Symbol.iterator]();
 
-        /*
-         * Split by zero or more whitespace characters
-         * if they are preceded by a CJK character.
-         */
-        '(?:(?<=' +
-            getOneCharPerWordScriptsRegexPart() +            
-        ')\\s*)'
+        let words = [];
+        for (const segment of segments) {
+            if (segment.isWordLike)
+                words.push(segment.segment);
+        }
+        
+        return words;
+
+    } else {
+        return str.split(/\s+/).filter(word => word !== "");
+    }
+
+}
+
+export function getWordsCount(str: string, languageCode: string) {
+    return getWords(str, languageCode).length;
+}
+
+export function getOccurrencesOfKeywordInContent(keyword: string, content: string, languageCode?: string | undefined) {
+
+    if (typeof Intl.Segmenter !== "function") {
+        return getOccurrencesOfKeywordInContentWithoutIntl(keyword, content);
+    }
+
+    const segmenter = new Intl.Segmenter(languageCode, {granularity: "word"});
     
-    , 'u');
+    let occurrences = 0;
 
-    return str.split(regex).filter(word => word !== "");
+    // the below problem is not occurred here because the keywords are short
+    const keywordWords = [...segmenter.segment(keyword)]
+        //.filter(segment => segment.isWordLike)
+        .map(segment => segment.segment);
+    
+    /**
+     * Bug fix: Directly converting segment to [] causes extremely high memory usage on large inputs
+     * due to saving the input in each segment.
+     * Therefore, we iterate and only save the words in an array
+     */
+    const contentSegmentsIterator = segmenter.segment(content)[Symbol.iterator]();
+
+
+    const contentWords : string[] = [];
+    for (const segment of contentSegmentsIterator) {
+        contentWords.push(segment.segment);
+    }
+
+    contentWords.forEach((contentWord, i) => {
+
+        if (
+            contentWord.toLowerCase() !== 
+            keywordWords[0].toLowerCase()
+        )
+            return;
+
+        let found = true;
+
+        for (let j = 1; j < keywordWords.length; j++) {
+            if (
+                contentWords[i + j].toLowerCase() !== 
+                keywordWords[j].toLowerCase()
+            ) {
+                found = false;
+                break;
+            }
+        }
+
+        if (found)
+            occurrences++;
+
+    });
+
+    return occurrences;
+
 }
 
-export function getWordsCount(str: string) {
-    return getWords(str).length;
-}
+function getOccurrencesOfKeywordInContentWithoutIntl(keyword: string, content: string) {
 
-
-export function getKeywordMatchingRegex(keyword: string, global: boolean = false) {
-
-    const singleCharPart = getOneCharPerWordScriptsRegexPart();
-
-    const regExp = new RegExp(
+    const regex = new RegExp(
         '(?<=' + // lookbehind
             /* 
             * a non-letter/number character
@@ -51,14 +98,6 @@ export function getKeywordMatchingRegex(keyword: string, global: boolean = false
             '[^\\p{L}\\p{N}]' +
             
             '|' + // or
-            
-            /*
-            * a CJK (Chinese, Japanese, Korean) character
-            * this is needed because, in CJK characters, word = character
-            */
-            singleCharPart + // a CJK (Chinese, Japanese, Korean) character
-            
-            '|' + // or
 
             // start of the string
             '^' +
@@ -66,16 +105,17 @@ export function getKeywordMatchingRegex(keyword: string, global: boolean = false
         keyword +
         '(?=' + // lookahead
             '[^\\p{L}\\p{N}]' +
-            '|' +
-            singleCharPart +
-            '|' +
+            '|' + // or
             '$' + // end of the string
         ')',
-        global ? 'giu' : 'iu'
+        'giu'
     );
 
-    console.log(regExp);
+    const matches = content.match(regex);
 
-    return regExp;
+    if (!matches)
+        return 0;
+
+    return matches.length;
 
 }

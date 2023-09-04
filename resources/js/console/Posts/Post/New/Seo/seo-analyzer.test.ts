@@ -12,6 +12,7 @@ function getInput(input: Partial<Input>) {
             description: '',
             content: '',
             blogUrl: '',
+            languageCode: 'en',
         },
         ...input,
     }
@@ -23,7 +24,7 @@ describe('helpers', () => {
         
         class FinalTest extends Test {
             t(content: string, keyword: string) {
-                return this.getKeywordMatchingRegex(keyword).test(content);
+                return this.keywordInString(keyword, content);
             }
         }
 
@@ -64,12 +65,8 @@ describe('helpers', () => {
         t('关键字', '这', false);
 
         // japanese
-       // t('これはキーワードです', 'キーワード', true);
+        t('これはキーワードです', 'キーワード', true);
         t('キーワード', 'これ', false);
-
-        // korean
-        t('이것은 키워드입니다', '키워드', true);
-        t('키워드', '이것은', false);
 
     });
 

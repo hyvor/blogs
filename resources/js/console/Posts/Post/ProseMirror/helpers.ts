@@ -9,6 +9,23 @@ export function getDocFromContent(content: string | null): Node {
     return json ? Node.fromJSON(schema, json) : schema.nodes.doc.createAndFill()!;
 }
 
+export function getTextFromContent(content: string | null): string {
+    return getTextFromDoc(getDocFromContent(content));
+}
+export function getTextFromDoc(doc: Node): string {
+    let text = '';
+
+    doc.descendants(node => {
+        const acceptedNodes = ['paragraph', 'callout', /* 'figcaption' */];
+        if (acceptedNodes.includes(node.type.name)) {
+            if (text.length > 0) text += "\n";
+            text += node.textContent;
+        }
+    });
+
+    return text;
+}
+
 
 // https://github.com/ueberdosis/tiptap/blob/9dc6b8f1aba105aa5378ec1d391e19ebcb01d8a8/packages/core/src/commands/blur.ts#L17
 export function blurEditor(view: EditorView) {

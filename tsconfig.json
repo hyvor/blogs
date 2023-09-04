@@ -3,7 +3,7 @@
         "baseUrl": "./",
         "noImplicitAny": true,
         "module": "CommonJS",
-        "target": "es5",
+        "target": "ES2022",
         "sourceMap": true,
         "jsx": "react",
         "allowJs": true,
@@ -12,7 +12,8 @@
         "allowSyntheticDefaultImports": true,
         "strict": true,
         "skipLibCheck": true,
-        "allowImportingTsExtensions": true
+        "allowImportingTsExtensions": true,
+        "noEmit": true
     },
     "include": ["resources/js", "e2e"]
 }
