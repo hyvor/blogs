@@ -2,6 +2,7 @@
 import * as Sentry from "@sentry/react";
 
 if (import.meta.env.PROD) {
+    
 
     Sentry.init({
         environment: 'production',
