@@ -15,6 +15,8 @@ import {createRoot} from "react-dom/client";
 import { ajaxPlugin } from 'kea-ajax'
 import dayjs from "dayjs";
 
+import '../integrations/sentry';
+
 resetContext({
     plugins: [
         routerPlugin(),
