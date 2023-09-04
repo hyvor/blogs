@@ -1,5 +1,6 @@
-import { Node } from "prosemirror-model";
 import {Plugin} from "prosemirror-state"
+import { EditorView } from "prosemirror-view";
+import { getWordsCount } from "../words";
 
 export default function wordCountPlugin() {
     return new Plugin({
@@ -7,27 +8,20 @@ export default function wordCountPlugin() {
     })
 }
 
-// https://stackoverflow.com/a/18679657/9059939
-function countWords(str) {
-    return str.trim().split(/\s+/).length;
-}
-
 class WordCountPlugin {
-    constructor(view) {
-        this.items = [];
-        this.view = view;
 
+    constructor(private view: EditorView) {
         this.updateCount(view);
     }
   
-    update(view) {
+    update(view: EditorView) {
         this.updateCount(view);
     }
 
-    updateCount(view) {
+    updateCount(view: EditorView) {
         const wordCount = document.getElementById("pm-word-count");
         if (wordCount)
-            wordCount.innerHTML = countWords(view.state.doc.textContent) + " Words";
+            wordCount.innerHTML = getWordsCount(view.state.doc.textContent) + " Words";
     }
 
 }

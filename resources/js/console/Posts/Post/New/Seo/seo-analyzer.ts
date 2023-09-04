@@ -1,6 +1,7 @@
 import { Mark, Node } from "prosemirror-model";
 import { getDocFromContent } from "../../ProseMirror/helpers";
 import { Link, getLinksFromContent } from "../Links/links";
+import { getKeywordMatchingRegex, getOneCharPerWordScriptsRegexPart } from "../../words";
 
 export interface Input {
     primaryKeyword: string | null,
@@ -75,7 +76,7 @@ export interface TestResult {
 }
 
 
-class Test {
+export class Test {
     constructor(protected input : Input) {}
     public run() : TestResult {
         throw new Error('Not implemented');
@@ -123,7 +124,11 @@ class Test {
     }
 
     protected keywordInString(keyword: string, str: string) : boolean {
-        return new RegExp(`\\b${keyword}\\b`, 'i').test(str);
+        return this.getKeywordMatchingRegex(keyword).test(str);
+    }
+
+    protected getKeywordMatchingRegex(keyword: string, global: boolean = false) {
+        return getKeywordMatchingRegex(keyword, global);
     }
 
 }
@@ -426,7 +431,7 @@ export class KeywordDensityTest extends Test {
         const wordsCount = words.length;
 
         const keywordsCount = keywords.reduce((count, keyword) => {
-            return count + (content.match(new RegExp(`\\b${keyword}\\b`, 'gi')) || []).length;
+            return count + (content.match(this.getKeywordMatchingRegex(keyword, true)) || []).length;
         }, 0);
 
         const density = keywordsCount * 100 / wordsCount;

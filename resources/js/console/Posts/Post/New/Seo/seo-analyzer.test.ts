@@ -1,5 +1,5 @@
 import { describe, expect, test } from 'vitest'
-import { AllKeywordsInContentTest, AllKeywordsInImgAltTest, AllKeywordsInSubHeadingsTest, ContentLengthTest, ExternalLinksTest, ImageAltTest, ImagesCountTest, Input, InternalLinksTest, KeywordDensityTest, PrimaryKeywordInBeginningOfContentTest, PrimaryKeywordInDescriptionTest, PrimaryKeywordInSlugTest, PrimaryKeywordInTitleTest, SlugLengthTest } from './seo-analyzer';
+import { AllKeywordsInContentTest, AllKeywordsInImgAltTest, AllKeywordsInSubHeadingsTest, ContentLengthTest, ExternalLinksTest, ImageAltTest, ImagesCountTest, Input, InternalLinksTest, KeywordDensityTest, PrimaryKeywordInBeginningOfContentTest, PrimaryKeywordInDescriptionTest, PrimaryKeywordInSlugTest, PrimaryKeywordInTitleTest, SlugLengthTest, Test } from './seo-analyzer';
 import { pmc } from "../../../../../../../e2e/helpers/prosemirror-test-helper";
 
 function getInput(input: Partial<Input>) {
@@ -16,6 +16,64 @@ function getInput(input: Partial<Input>) {
         ...input,
     }
 }
+
+describe('helpers', () => {
+
+    test('keywords in content', () => {
+        
+        class FinalTest extends Test {
+            t(content: string, keyword: string) {
+                return this.getKeywordMatchingRegex(keyword).test(content);
+            }
+        }
+
+        function t(content: string, keyword: string, expected: boolean) {
+            expect(new FinalTest({} as any).t(content, keyword)).toBe(expected);
+        }
+
+        t('keyword', 'keyword', true);
+        t('this keyword', 'keyword', true);
+        t('keyword this', 'keyword', true);
+        t('this keyword this', 'keyword', true);
+        t('keyword2', 'keyword', false);
+        t('2keyword', 'keyword', false);
+        t('keyword.', 'keyword', true);
+        t('.keyword', 'keyword', true);
+        t('keyword?', 'keyword', true);
+        t('keyword!', 'keyword', true);
+        t('keyword❤️', 'keyword', true);
+        t('keywords', 'keyword', false);
+        t('Keyword', 'keyword', true);
+        t('kEyWoRd', 'keyword', true);
+        t('keyword keyword', 'keyword', true);
+        t('keyword keyword keyword', 'keyword', true);
+
+        // non-ascii
+        t('යතුර', 'යතුර', true);
+        t('යතුරයතුර', 'යතුර', false);
+        t('this is යතුර', 'යතුර', true);
+        t('යතුර this is', 'යතුර', true);
+        t('යතුර2', 'යතුර', false);
+        t('යතුර.', 'යතුර', true);
+        t('.යතුර', 'යතුර', true);
+        t('යතුර?', 'යතුර', true);
+        t('යතුර!', 'යතුර', true);
+
+        // chinese
+        t('这是关键字', '关键字', true);
+        t('关键字', '这', false);
+
+        // japanese
+       // t('これはキーワードです', 'キーワード', true);
+        t('キーワード', 'これ', false);
+
+        // korean
+        t('이것은 키워드입니다', '키워드', true);
+        t('키워드', '이것은', false);
+
+    });
+
+})
 
 describe('seo tests', () => {
 
@@ -180,6 +238,16 @@ describe('seo tests', () => {
             })).run();
             expect(result2.score).toBe(0);
             expect(result2.message).toBe('Primary keyword not found in the beginning of the content');
+        });
+
+        test('non-ascci', () => {
+
+            const result = new PrimaryKeywordInBeginningOfContentTest(getInput({
+                primaryKeyword: 'යතුර',
+                content: pmc.docP('යතුර is here')
+            })).run();
+            expect(result.score).toBe(100);
+
         });
 
     });
