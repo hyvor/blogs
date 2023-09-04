@@ -23,7 +23,9 @@ const postsLogic = kea<postsLogicType>([
         setCounts: (counts: PostCounts) => ({counts}),
 
         navigateToPost: (id) => ({id}),
-        navigateToPosts: () => false
+        navigateToPosts: () => false,
+
+        setActivePostId: (id: number | null) => ({id}),
     }),
 
     actionToUrl(({ props }) => ({
@@ -78,6 +80,13 @@ const postsLogic = kea<postsLogicType>([
     })),
 
     reducers(({props}) => ({
+
+        activePostId: [
+            null as null | number,
+            {
+                setActivePostId: (_, {id}) => id,
+            }
+        ],
 
         counts: [null as null | PostCounts, {
             setCounts: (_, {counts}) => counts

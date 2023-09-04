@@ -26,7 +26,8 @@ export default function Posts({ postId }: { postId: number | undefined }) {
     } = useValues(postLogicSubdomain);
     const {
         loadPostsListMore, createPost,
-        changeFilter
+        changeFilter,
+        setActivePostId
     } = useActions(postLogicSubdomain)
 
     function handleScroll(e: React.UIEvent<HTMLDivElement>) {
@@ -49,6 +50,10 @@ export default function Posts({ postId }: { postId: number | undefined }) {
         setNewPostClick(true);
         createPost({onLoad: onLoad});
     }
+
+    useEffect(() => {
+        setActivePostId(postId ? postId : null);
+    }, [postId]);
 
 
     /*

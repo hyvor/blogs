@@ -1,4 +1,4 @@
-# status = pending
+# status = done
 # before
 ALTER TABLE link_analyzer_links
     ADD COLUMN full_url VARCHAR(255) NULL AFTER url;

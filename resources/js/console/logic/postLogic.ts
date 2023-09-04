@@ -373,8 +373,8 @@ const postLogic = kea<postLogicType>([
         ],
 
         currentVariantSeoResults: [
-            s => [s.currentVariant],
-            (currentVariant) => {
+            s => [s.currentVariant, s.currentLanguage],
+            (currentVariant, currentLanguage) => {
                 const userBlog = userBlogsLogic().values.findBlogBySubdomain(getSubdomain());
                 const blogUrl = userBlog.blog.base_url;
                 const analyzer = new SeoAnalyzer({
@@ -385,6 +385,7 @@ const postLogic = kea<postLogicType>([
                     description: currentVariant.description || '',
                     content: currentVariant.content_unsaved || currentVariant.content,
                     blogUrl,
+                    languageCode: currentLanguage.code
                 });
                 return analyzer.analyze();
             }
