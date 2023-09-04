@@ -204,7 +204,7 @@ function OverviewTab({stats, setTab} : {stats: null | Stats, setTab: Function}) 
                     </div>
 
                     <div className="stats-note">
-                        A full-blog analysis is done every 2 weeks automatically. You can also start one manually.
+                        A full-blog analysis is done every 2 weeks automatically (only published posts are analyzed). You can also start one manually. 
                     </div>
 
                 </div>
