@@ -24,7 +24,7 @@
                     All-in-one blogging platform
                 </h1>
                 <h2>
-                    Start a fully-customizable, SEO-friendly, blazingly fast, multi-language blog in 1 minutes.
+                    Start a fully-customizable, SEO-friendly, blazingly fast, multi-language blog.
                 </h2>
                 <a data-flashload-skip-link href="/console?signup=1" class="button big">
                     Start a Blog Now
