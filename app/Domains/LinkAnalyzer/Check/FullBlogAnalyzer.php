@@ -87,9 +87,15 @@ class FullBlogAnalyzer
 
         foreach ($linkMarks as $linkMark) {
             $url = self::getWebUrlFromLinkMark($linkMark, $this->baseUrl);
-            if ($url) {
-                $urls[] = $url;
+
+            if (!$url)
+                continue;
+
+            if (mb_strlen($url) > 255) {
+                continue;
             }
+
+            $urls[] = $url;
         }
 
         // who has more than 100 links in a post?

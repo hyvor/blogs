@@ -172,6 +172,11 @@ export function calculateLinkAnalysis(variant: PostVariant) : Record<string, num
             status === LINK_STATUS.IGNORED;
         }
 
+        // ignore links longer than 255 characters
+        if (link.originalHref.length > 255) {
+            status = LINK_STATUS.IGNORED;
+        }
+
         linkStatuses[link.originalHref] = status;
     })
 

@@ -25,7 +25,10 @@ it('analyzes a blog', function() {
             'https://hyvor.com/about',
             'https://example.com/1',
             'ftp://example.com/2',
-            '/about'
+            '/about',
+
+            // ignored (too long)
+            str_pad('https://too-long.com/', 256, 'a'),
         ])
     ]);
 
