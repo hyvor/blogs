@@ -22,6 +22,7 @@ return new class extends Migration
             $table->integer('post_variant_id');
 
             $table->string('url');
+            $table->string('full_url'); // this is the checked URL
             $table->smallInteger('status_code');
             $table->boolean('ignore')->default(false);
 

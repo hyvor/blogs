@@ -3,6 +3,7 @@
 namespace App\Domains\LinkAnalyzer\Check;
 
 use App\Data\Enums\PostStatusEnum;
+use App\Domains\LinkAnalyzer\FullUrl;
 use App\Domains\LinkAnalyzer\PostVariantLinkService;
 use App\Domains\LinkAnalyzer\LinkAnalyzeService;
 use App\Domains\LinkAnalyzer\LinkStatusTypeEnum;
@@ -94,7 +95,11 @@ class FullBlogAnalyzer
         // who has more than 100 links in a post?
         $urls = array_slice($urls, 0, 100);
 
-        $results = LinkAnalyzeService::analyze($urls);
+        $results = LinkAnalyzeService::analyzePostVariantLinks(
+            $this->blog,
+            $variant,
+            $urls,
+        );
 
         /** @var string[] $ignoredLinksUrls */
         $ignoredLinksUrls = PostVariantLinkService::getIgnoredLinks($variant)
@@ -137,7 +142,6 @@ class FullBlogAnalyzer
      */
     public static function getWebUrlFromLinkMark(Mark $linkMark, string $baseUrl) : ?string
     {
-
         $baseUrl = rtrim($baseUrl, '/');
 
         $href = $linkMark->attr('href', false);
@@ -145,18 +149,7 @@ class FullBlogAnalyzer
             return null;
         }
 
-        $scheme = parse_url($href, PHP_URL_SCHEME);
-
-        if ($scheme === null) {
-            // no scheme, so it's a relative URL
-            $path = $href === '' ? '' : '/' . ltrim($href, '/');
-            return $baseUrl . $path;
-        } else if ($scheme === 'http' || $scheme === 'https') {
-            // absolute URL
-            return $href;
-        }
-
-        return null;
+        return FullUrl::getFullUrl($href, $baseUrl);
     }
 
 }

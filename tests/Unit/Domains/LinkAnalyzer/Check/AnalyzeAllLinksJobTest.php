@@ -24,7 +24,7 @@ it('job works', function() {
         'example.com/*' => Http::response('', 301),
     ]);
 
-    $blog = blogWithLanguage([
+    $blog = blogWithLanguageAndRoutes([
         'hyvor_user_id' => 12
     ]);
     $blog->setMeta('link_analysis_email_report', 'always');
@@ -95,7 +95,7 @@ it('sends email when broken and there are broken links', function() {
 
     Mail::fake();
 
-    $blog = blogWithLanguage();
+    $blog = blogWithLanguageAndRoutes();
     $blog->setMeta('link_analysis_email_report', 'broken');
 
     addPost($blog, [], [

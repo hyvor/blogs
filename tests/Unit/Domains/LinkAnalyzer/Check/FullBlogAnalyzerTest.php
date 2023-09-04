@@ -10,7 +10,7 @@ use Tests\Helper\Generator\PostContentGenerator;
 
 it('analyzes a blog', function() {
 
-    $blog = blogWithLanguage();
+    $blog = blogWithLanguageAndRoutes();
 
     Http::fake([
         'hyvor.com/*' => Http::response('', 200),
@@ -95,7 +95,7 @@ it('it clears old links but keeps ignored links as ignored', function() {
         'example.com/*' => Http::response('', 301),
     ]);
 
-    $blog = blogWithLanguage();
+    $blog = blogWithLanguageAndRoutes();
 
     $post = addPost($blog, [], [
         'status' => PostStatusEnum::PUBLISHED,

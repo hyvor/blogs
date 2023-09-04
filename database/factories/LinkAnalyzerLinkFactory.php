@@ -17,11 +17,13 @@ class LinkAnalyzerLinkFactory extends Factory
 
     public function definition()
     {
+        $url = $this->faker->url;
         return [
             'last_checked_at' => now(),
             'post_variant_id' => PostVariant::factory(),
             'blog_id' => Blog::factory(),
-            'url' => $this->faker->url,
+            'url' => $url,
+            'full_url' => $url,
             'status_code' => $this->faker->numberBetween(200, 500),
             'ignore' => false
         ];

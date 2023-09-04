@@ -3,9 +3,11 @@
 namespace App\Domains\LinkAnalyzer;
 
 // checks if the given links are broken or not
+use App\Domains\Route\PermalinkRepository;
 use App\Exceptions\SafetyException;
 use App\Models\Blog;
 use App\Models\LinkAnalyzerLink;
+use App\Models\PostVariant;
 use Exception;
 use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Http\Client\Pool;
@@ -17,8 +19,51 @@ class LinkAnalyzeService
 
     const IGNORE_CODE = -2;
 
+    /**
+     * @param string[] $urls
+     * @return AnalyzedLink[]
+     */
+    public static function analyzePostVariantLinks(
+        Blog $blog,
+        PostVariant $variant,
+        array $urls
+    ) : array
+    {
+
+        $post = $variant->post;
+        $language = $variant->language;
+
+        if (!$post || !$language) {
+            throw new SafetyException('Post or language not found');
+        }
+
+        $variantUrl = PermalinkRepository::getPostPermalink($post, $blog, $language);
+
+        $urlMap = [];
+        $fullUrls = [];
+
+        foreach ($urls as $url) {
+            $fullUrl = FullUrl::getFullUrl($url, $variantUrl);
+            if (!$fullUrl)
+                continue;
+            $urlMap[$fullUrl] = $url;
+            $fullUrls[] = $fullUrl;
+        }
+
+        $results = self::analyze($fullUrls);
+
+        return array_map(fn (string $key, int $status) => new AnalyzedLink(
+            $urlMap[$key],
+            $key,
+            $status,
+        ), array_keys($results), array_values($results));
+
+    }
+
 
     /**
+     * When given a list of complete URLs, returns an array with the status code of each URL
+     *
      * @param string[] $urls
      * @return array<string, int>
      */

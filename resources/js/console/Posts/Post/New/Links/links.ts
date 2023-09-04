@@ -8,6 +8,7 @@ import { useEffect, useRef } from "react";
 import api from "../../../../lib/api";
 import getSubdomain from "../../../../logic-helpers/subdomain";
 import {parse} from 'tldts';
+import { toast } from "react-toastify";
 
 export const LINK_STATUS = {
     LOADING: -1,
@@ -28,6 +29,7 @@ type LinkType =
 export interface Link {
     index: number,
     type: LinkType,
+    originalHref: string,
     href: string,
     anchor: string | null,
 
@@ -43,7 +45,7 @@ function isValidUrlAnyProtocol(url: string) {
     }
 }
 
-export function getLinksFromContent(content: string | null, blogUrl: string) : Link[] {
+export function getLinksFromContent(content: string | null, baseUrl: string) : Link[] {
 
     const doc = getDocFromContent(content);
     const links: Link[] = [];
@@ -59,16 +61,17 @@ export function getLinksFromContent(content: string | null, blogUrl: string) : L
             const href = mark.attrs.href;
             if (!href) return;
 
-            const type = getLinkType(href, blogUrl);
+            const type = getLinkType(href, baseUrl);
             if (!type) return;
 
             links.push({
                 index: links.length,
                 type,
+                originalHref: href,
                 href: 
                     isValidUrlAnyProtocol(href) ? 
                         href : // absolute url
-                        getFullUrl(href, blogUrl).toString(),
+                        getFullUrl(href, baseUrl).toString(),
                 anchor: node.textContent ? node.textContent : null,
 
                 pos,
@@ -82,19 +85,19 @@ export function getLinksFromContent(content: string | null, blogUrl: string) : L
 
 }
 
-export function getLinkType(href: string, blogUrl: string) : LinkType {
+export function getLinkType(href: string, baseUrl: string) : LinkType {
 
     if (href.startsWith('mailto:')) return 'mail';
     if (href.startsWith('tel:')) return 'tel';
     if (href.startsWith('#')) return 'anchor';
 
-    const baseUrl = blogUrl.endsWith('/') ? blogUrl : blogUrl + '/';
-    const hrefFullUrl = getFullUrl(href, blogUrl);
+    // const baseUrl = blogUrl.endsWith('/') ? blogUrl : blogUrl + '/';
+    const hrefFullUrl = getFullUrl(href, baseUrl);
 
     if (hrefFullUrl.toString().startsWith(baseUrl)) return 'internal-blog';
     if (hrefFullUrl.protocol !== 'https:' && hrefFullUrl.protocol !== 'http:') return 'other';
 
-    const { domain: blogDomain, subdomain: blogSubdomain } = parse(blogUrl);
+    const { domain: blogDomain, subdomain: blogSubdomain } = parse(baseUrl);
     const { domain: hrefDomain, subdomain: hrefSubdomain } = parse(hrefFullUrl.toString());
 
     if (blogDomain === hrefDomain) {
@@ -126,29 +129,27 @@ export function focusLinkInEditor(link: Link, editorView: EditorView) {
 
 }
 
-export function getFullUrl(href: string, blogUrl: string) : URL {
-    const baseUrl = blogUrl.endsWith('/') ? blogUrl : blogUrl + '/';
+export function getFullUrl(href: string, baseUrl: string) : URL {
+    // const baseUrl = blogUrl.endsWith('/') ? blogUrl : blogUrl + '/';
     return new URL(href, baseUrl);
 }
 
 export function calculateLinkAnalysis(variant: PostVariant) : Record<string, number> {
 
-    const {base_url: baseUrl} = getUserBlogBlog();
-
     const content = variant.content_unsaved || variant.content;
-    const links = getLinksFromContent(content, baseUrl);
+    const links = getLinksFromContent(content, variant.url);
 
     const linkStatuses: Record<string, number> = {};
     const linkAnalysis = variant.link_analysis || {};
 
     links.forEach((link, i) => {
 
-        let status = linkAnalysis[link.href] || LINK_STATUS.LOADING;
+        let status = linkAnalysis[link.originalHref] || LINK_STATUS.LOADING;
 
         if (link.type === 'anchor') {
 
             const doc = getDocFromContent(content);
-            const anchorId = link.href.replace('#', '').trim();
+            const anchorId = link.originalHref.replace('#', '').trim();
 
             let found = false;
 
@@ -171,7 +172,7 @@ export function calculateLinkAnalysis(variant: PostVariant) : Record<string, num
             status === LINK_STATUS.IGNORED;
         }
 
-        linkStatuses[link.href] = status;
+        linkStatuses[link.originalHref] = status;
     })
 
     return linkStatuses;
@@ -236,7 +237,7 @@ export function useUpdateLinkAnalysis(id: number) {
     let loadingCount = 0;
 
     links.forEach(link => {
-        const status = currentVariantLinkAnalysis[link.href];
+        const status = currentVariantLinkAnalysis[link.originalHref];
         const statusType = getStatusType(status);
 
         if (statusType === "ok") {
@@ -284,10 +285,13 @@ export function useUpdateLinkAnalysis(id: number) {
             })
             .catch(() => {
 
-                updateCurrentPostVariantValue('link_analysis', loadingLinks.reduce((acc, link) => {
-                    acc[link] = LINK_STATUS.ERROR;
-                    return acc;
-                }, {} as Record<string, number>));
+                updateCurrentPostVariantValue('link_analysis', {
+                    ...currentVariantLinkAnalysis,
+                    ...loadingLinks.reduce((acc, link) => {
+                        acc[link] = LINK_STATUS.ERROR;
+                        return acc;
+                    }, {} as Record<string, number>)
+                });
 
             });
 
@@ -301,19 +305,28 @@ export function useUpdateLinkAnalysis(id: number) {
 
             callLinkAnalysisApi(
                 currentVariant.id, 
-                [link.href], 
+                [link.originalHref], 
                 // true
             ).then(res => {
 
-                const status = res.find(l => l.url === link.href)?.status_code || LINK_STATUS.ERROR;
+                const status = res.find(l => l.url === link.originalHref)?.status_code || LINK_STATUS.ERROR;
 
                 updateCurrentPostVariantValue('link_analysis', {
                     ...currentVariantLinkAnalysis,
-                    [link.href]: status,
+                    [link.originalHref]: status,
                 })
 
                 onReload(status);
 
+            }).catch(() => {
+                    
+                updateCurrentPostVariantValue('link_analysis', {
+                    ...currentVariantLinkAnalysis,
+                    [link.originalHref]: LINK_STATUS.ERROR,
+                })
+
+                onReload(LINK_STATUS.ERROR);
+    
             })
 
         },
@@ -336,6 +349,9 @@ export function useUpdateLinkAnalysis(id: number) {
                     ...currentVariantLinkAnalysis,
                     ...getResultObjectFromLinks(res),
                 })
+            })
+            .catch(e => {
+                toast.error(e);
             })
             .finally(() => {
                 onReload();
@@ -369,8 +385,8 @@ export function useUpdateLinkAnalysis(id: number) {
 }
 
 export function callLinkAnalysisApi(
-    postVariantId: number, 
-    urls: string[],
+    postVariantId: number,
+    urls: string[], // originalUrls
     // force: boolean = false
 ) {
 
@@ -378,9 +394,8 @@ export function callLinkAnalysisApi(
 
     return api.post<LinkAnalysisLink[]>(subdomain, '/link-analysis/check-urls', {
         post_variant_id: postVariantId,
-        urls,
-        // force: force ? 1 : 0,
-    });
+        urls
+    })
 
 }
 

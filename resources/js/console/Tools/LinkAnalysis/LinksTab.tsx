@@ -197,7 +197,7 @@ function Link({link, links, setLinks} : {link: LinkAnalysisLink, links: LinkAnal
 
         <TableRowItem>
             <div className='link-url-wrap'>
-                <a href={link.url} target="_blank" className="link">
+                <a href={link.full_url} target="_blank" className="link">
                     {link.url}
                 </a>
             </div>

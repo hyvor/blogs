@@ -51,4 +51,48 @@ it('checks post variant links', function() {
         ->assertJsonPath('1.url', 'https://endpoint.com')
         ->assertJsonPath('1.status_code', 404);
 
+    $postVariant->refresh();
+
+    expect($postVariant->link_analysis)->toBe([
+        'https://hyvor.com' => 200,
+        'https://endpoint.com' => 404
+    ]);
+
+});
+
+it('checks with relative URL', function() {
+
+    $blog = blogWithAccessLanguageAndRoutes([
+        'subdomain' => 'my-subdomain'
+    ]);
+    $post = addPost($blog, [], [
+        'status' => PostStatusEnum::PUBLISHED,
+        'slug' => 'post-slug'
+    ]);
+    $postVariant = $post->variants()->first();
+
+    $fullUrl = "https://my-subdomain.hyvorblogs.io/post-slug";
+
+    Http::fake([
+        $fullUrl => Http::response('', 200),
+    ]);
+
+    consoleApi($blog, 'POST', '/link-analysis/check-urls', [
+        'post_variant_id' => $postVariant->id,
+        'urls' => [
+            'post-slug'
+        ],
+    ])
+        ->assertOk()
+        ->assertJsonCount(1)
+        ->assertJsonPath('0.url', 'post-slug')
+        ->assertJsonPath('0.full_url', $fullUrl)
+        ->assertJsonPath('0.status_code', 200);
+
+    $postVariant->refresh();
+
+    expect($postVariant->link_analysis)->toBe([
+        'post-slug' => 200,
+    ]);
+
 });

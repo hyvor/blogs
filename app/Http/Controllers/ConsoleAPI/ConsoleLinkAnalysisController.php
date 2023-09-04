@@ -26,25 +26,18 @@ class ConsoleLinkAnalysisController
         $request->validate([
             'post_variant_id' => 'required|integer',
             'urls' => 'required|array',
-            'urls.*' => 'required|url',
+            'urls.*' => 'required|string',
             'force' => 'boolean',
         ]);
-
-        // if true, will recheck all links, even if they were checked recently
-        $force = $request->boolean('force');
 
         /** @var string[] $urls */
         $urls = $request->input('urls');
         $urls = array_slice($urls, 0, 100);
 
-        // $fromDb = $force ? [] : LinkAnalyzeService::getFromDb($blog, $urls);
-        // $urls = array_diff($urls, array_keys($fromDb));
-
-        $fromHttp = LinkAnalyzeService::analyze($urls);
+        $fromHttp = LinkAnalyzeService::analyzePostVariantLinks($blog, $postVariant, $urls);
         $links = PostVariantLinkService::updateLinksFromResults($blog, $postVariant, $fromHttp);
         $results = LinkAnalyzeService::getResultsFromLinks($links);
 
-        // $results = array_merge($fromDb, $fromHttp);
         PostVariantLinkService::updatePostVariantCache($postVariant, $results, true);
 
         return response()->json($links->mapInto(LinkObject::class));

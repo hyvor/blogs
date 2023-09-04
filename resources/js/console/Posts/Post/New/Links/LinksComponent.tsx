@@ -15,11 +15,10 @@ export default function LinksComponent(
     {id: number, linkAnalysisProps: ReturnType<typeof useUpdateLinkAnalysis>}
 ) {
 
-    const { blog: {base_url: baseUrl} } = useUserBlog();
     const { currentVariant, currentVariantLinkAnalysis, editorState } = usePostValues(id);
     const content = currentVariant.content_unsaved || currentVariant.content;
 
-    const links = getLinksFromContent(content, baseUrl);
+    const links = getLinksFromContent(content, currentVariant.url);
     let linksCount = links.length;
 
     const {
@@ -117,7 +116,7 @@ export default function LinksComponent(
                         links.map(link => <LinkComponent
                             key={link.index} 
                             link={link} 
-                            status={currentVariantLinkAnalysis[link.href]}
+                            status={currentVariantLinkAnalysis[link.originalHref]}
                             editorView={editorState.editorView!}
                             linkAnalysisProps={linkAnalysisProps}
                         />) :
@@ -181,7 +180,7 @@ function LinkComponent(
                     target="_blank" 
                     rel="nofollow"
                 >
-                    {link.href}
+                    {link.originalHref}
                 </a>
             </div>
 

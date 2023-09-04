@@ -431,6 +431,7 @@ export interface Import {
 export interface LinkAnalysisLink {
     id: number,
     url: string,
+    full_url: string,
     status_code: number,
     status_type: 'ok' | 'redirect' | 'broken' | 'ignored',
     ignored: boolean,

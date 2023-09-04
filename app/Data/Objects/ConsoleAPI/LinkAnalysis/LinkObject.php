@@ -12,6 +12,7 @@ class LinkObject
 
 
     public string $url;
+    public string $full_url;
     public int $status_code;
     public LinkStatusTypeEnum $status_type;
     public bool $ignored;
@@ -26,6 +27,7 @@ class LinkObject
 
         $this->id = $link->id;
         $this->url = $link->url;
+        $this->full_url = $link->full_url;
         $this->status_code = $link->status_code;
 
         $this->status_type = $link->ignore ?

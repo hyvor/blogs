@@ -36,7 +36,7 @@ class PostVariantLinkService
 
     /**
      * @param PostVariant $variant
-     * @param array<string, integer> $results
+     * @param AnalyzedLink[] $results
      * @param string[] $ignoreUrls
      * @return Collection<int, LinkAnalyzerLink>
      */
@@ -58,18 +58,19 @@ class PostVariantLinkService
 
         $links = [];
 
-        foreach ($results as $url => $statusCode) {
+        foreach ($results as $result) {
 
             $link = LinkAnalyzerLink::updateOrCreate(
                 [
                     'post_variant_id' => $variant->id,
-                    'url' => $url,
+                    'url' => $result->originalUrl,
                 ],
                 [
+                    'full_url' => $result->url,
                     'blog_id' => $blog->id,
                     'last_checked_at' => $now,
-                    'status_code' => $statusCode,
-                    'ignore' => in_array($url, $ignoreUrls),
+                    'status_code' => $result->status,
+                    'ignore' => in_array($result->originalUrl, $ignoreUrls),
                 ]
             );
 
