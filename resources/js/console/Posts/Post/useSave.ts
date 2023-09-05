@@ -6,7 +6,7 @@ export default function useSave(id: number) {
     const { currentVariant, currentVariantDiff } = usePostValues(id);
     const { saveCurrentVariantDiff, changeEditorState } = usePostActions(id)
 
-    function handleAutoSave() {
+    function handleAutoSave(onSave?: Function) {
 
         const diff = {} as {
             content?: string,
@@ -32,11 +32,28 @@ export default function useSave(id: number) {
                 diff,
                 onSave: () => {
                     changeEditorState('isSaving', false);
+                    onSave?.();
                 }
             })
 
+        } else {
+            onSave?.();
         }
 
+    }
+
+    function hasPublishedChanged() {
+        return (currentVariant.status === 'published' || currentVariant.status === 'scheduled') &&
+            (
+                currentVariantDiff.title ||
+                currentVariantDiff.content_unsaved
+            );  
+    }
+
+    async function handleBack() {
+        await new Promise(resolve => handleAutoSave(() => {
+            resolve(null);
+        }));
     }
 
     useEffect(() => {
@@ -52,38 +69,29 @@ export default function useSave(id: number) {
         }
 
         function checkSaveUnload(event: BeforeUnloadEvent) {
-            if (
-                (currentVariant.status === 'published' || currentVariant.status === 'scheduled') &&
-                (
-                    currentVariantDiff.title ||
-                    currentVariantDiff.content_unsaved
-                )
-            ) {
+            if (hasPublishedChanged()) {
                 event.returnValue = 'Are you sure to close this tab? You have unsaved changes.';
             } else {
                 handleAutoSave();
             }
         }
 
-        function checkSavePopstate(event: PopStateEvent) {
-            event.preventDefault()
-            handleAutoSave();
-        }
-
         // save on CTRL + S
         window.addEventListener('keydown', checkSave);
         // save on unload
         window.addEventListener('beforeunload', checkSaveUnload);
-        // save on popstate change (internal navigation)
-        window.addEventListener('popstate', checkSavePopstate);
-
+    
         return () => {
             clearInterval(autoSaveInterval)
             window.removeEventListener('keydown', checkSave);
             window.removeEventListener('beforeunload', checkSaveUnload);
-            window.removeEventListener('popstate', checkSavePopstate);
+            //window.removeEventListener('popstate', checkSavePopstate);
         }
 
     }, [id, currentVariantDiff, currentVariant])
+
+    return {
+        onBack: handleBack
+    }
 
 }

@@ -52,6 +52,7 @@ export default function PostLeft({id, postViewRef} : {id: number, postViewRef: R
 
                     <span 
                         className={`global-post-status ${currentVariant.status} large`}
+                        data-testid="post-status"
                     >{currentVariant.status}</span>
 
                     
@@ -66,11 +67,11 @@ export default function PostLeft({id, postViewRef} : {id: number, postViewRef: R
             <div className="left-header-row additional-data">
 
                 <div className="left-header-left">
-                    <span className="saver">
+                    <span className="saver" data-testid="save-status">
 
                         {
                             editorState.isSaving ?
-                                <span>
+                                <span data-testid="save-loader">
                                     <Loader size="extra-mini" inline={true} />
                                     <span className="saving-name">Saving</span>
                                 </span>
@@ -89,12 +90,12 @@ export default function PostLeft({id, postViewRef} : {id: number, postViewRef: R
 
                                             currentVariant.status === 'published' && hasPublishedContentChanged ?
                                                 <div className="published-edit text-edit">
-                                                    <span>Editing a published post.</span>
+                                                    <span>Unpublished changes.</span>
                                                     <div 
                                                         className="discard-changes" 
                                                         onClick={() => changeEditorState('isDiscarding', true)}
                                                     >
-                                                        Discard changes
+                                                        Discard
                                                     </div>
                                                 </div> 
                                             : <div></div>
@@ -237,6 +238,18 @@ function PostEditor({id} : {id: number}) {
         const key = isNonDraft ? 'content_unsaved' : 'content'
         updateCurrentPostVariantValue(key, value)
     }
+
+    useEffect(() => {
+
+        if (
+            currentVariant.title &&
+            editorState.editorView &&
+            editorState.editorView.state.doc.textContent === ''
+        ) {
+            editorState.editorView.focus();
+        }
+
+    }, [editorState.editorView]);
 
     return <Editor
         id={id}

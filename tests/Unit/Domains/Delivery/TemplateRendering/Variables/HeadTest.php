@@ -186,3 +186,32 @@ it('adds favicon from logo when icon is not set', function() {
     expect($content)->toContain("<link rel=\"shortcut icon\" href=\"$url\" />");
 
 });
+
+it('adds fonts', function() {
+
+    $blog = blogWithLanguageAndRoutes();
+
+    $content = '{{ _head | template }}';
+
+    ThemeFilesRepository::createOrUpdateFile(
+        $blog,
+        ThemeFileFolderEnum::TEMPLATES,
+        'index.twig',
+        $content,
+    );
+
+    ThemeFilesRepository::createOrUpdateFile(
+        $blog,
+        null,
+        'config.yaml',
+        'THEME_FONTS: mulish:400'
+    );
+
+    $pathMatcher = new PathMatcher($blog, '/');
+    $responseObject = $pathMatcher->getResponseObject();
+
+    $content = $responseObject->content;
+
+    expect($content)->toContain("<link rel=\"stylesheet\" href=\"https://{$blog->subdomain}.hyvorblogs.io/fonts/css/mulish:400\" />");
+
+});

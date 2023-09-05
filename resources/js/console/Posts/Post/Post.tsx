@@ -19,11 +19,10 @@ export default function Post({ id, subdomain, type }: { id: number, subdomain: s
     const { loadPostAjax } = usePostValues(id);
     const postsLogicInst = postsLogic({ subdomain });
     const pagesLogicInst = pagesLogic({ subdomain });
-    const { savePost } = usePostActions(id)
 
     const postViewRef = useRef<HTMLDivElement>(null);
 
-    useSave(id);
+    const { onBack } = useSave(id);
 
     if (loadPostAjax.status === 'loading') {
         return <div className="post-loading">
@@ -31,8 +30,8 @@ export default function Post({ id, subdomain, type }: { id: number, subdomain: s
         </div>;
     }
 
-    const saveAndNavigateToList = () => {
-        savePost();
+    async function handleBack() {
+        await onBack();
         if (type === 'post')
             postsLogicInst.actions.navigateToPosts();
         else
@@ -47,7 +46,7 @@ export default function Post({ id, subdomain, type }: { id: number, subdomain: s
             <Discarder id={id} />
         </div>
 
-        <button className="icon-button back-button" onClick={() => saveAndNavigateToList()} >
+        <button className="icon-button back-button" onClick={handleBack} >
             <CaretLeftFill />
         </button>
 

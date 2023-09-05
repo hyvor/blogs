@@ -7,18 +7,20 @@ function els() {
     }
 }
 
+const Z_INDEX = 1000;
+
 export function bringLeftHeaderToFront() {
     const { leftHeader, right } = els()
     if (leftHeader && right) {
-        leftHeader.style.zIndex = '10';
-        right.style.zIndex = '9';
+        leftHeader.style.zIndex = Z_INDEX.toString();
+        right.style.zIndex = (Z_INDEX - 1).toString();
     }
 }
 
 export function bringRightToFront() {
     const { leftHeader, right } = els()
     if (leftHeader && right) {
-        leftHeader.style.zIndex = '9';
-        right.style.zIndex = '10';
+        leftHeader.style.zIndex = (Z_INDEX - 1).toString();
+        right.style.zIndex = Z_INDEX.toString();
     }
 }

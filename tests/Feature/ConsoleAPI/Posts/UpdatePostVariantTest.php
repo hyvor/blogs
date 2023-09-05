@@ -167,6 +167,37 @@ it('updates slug when title is empty', function() {
 
 });
 
+it('checks for duplicates when generating the slug from the title', function() {
+
+    $blog = blogWithAccessLanguageAndRoutes();
+
+    addPublishedPost($blog, [], [
+        'slug' => 'my-post'
+    ]);
+
+    $post = Post::factory()->create([
+        'blog_id' => $blog,
+        'published_at' => null,
+    ]);
+    $variant = PostVariant::factory()->create([
+        'post_id' => $post,
+        'language_id' => $blog->languages[0],
+        'status' => PostStatusEnum::DRAFT,
+        'slug' => null,
+        'title' => 'My Post',
+    ]);
+
+    consoleApi($blog, 'PATCH', "/post/$post->id/variant", [
+        'language_id' => $blog->languages[0]->id,
+        'status' => 'published'
+    ])
+        ->assertOk();
+
+    expect($variant->refresh()->slug)->not->toBe('my-post-1');
+    expect($variant->refresh()->slug)->toBeString();
+
+});
+
 it('creates a history if post content has changed', function() {
 
     $blog = blogWithAccessLanguageAndRoutes();

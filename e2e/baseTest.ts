@@ -10,7 +10,7 @@ const baseTest = test.extend<{testingApi: TestingApi}>({
     }
 });
 
-class TestingApi {
+export class TestingApi {
 
     factory: Factory;
 
@@ -47,7 +47,7 @@ class TestingApi {
 
 }
 
-class Factory {
+export class Factory {
 
     constructor(private testingApi: TestingApi) {}
 

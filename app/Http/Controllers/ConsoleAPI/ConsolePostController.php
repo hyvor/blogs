@@ -286,6 +286,9 @@ class ConsolePostController extends Controller
 
         $variant->refresh();
 
+        // update post and refresh variants
+        $post->refresh();
+
         return response()->json(
             new PostVariantObject($variant, $post, $blog)
         );

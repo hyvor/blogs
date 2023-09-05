@@ -111,7 +111,7 @@ jobs:
                     path: playwright-report/
                     retention-days: 30
     unit:
-        name: Unit Tests
+        name: JS Unit Tests
         runs-on: ubuntu-latest
 
         steps:

@@ -210,12 +210,12 @@ export class PrimaryKeywordInSlugTest extends Test {
             return result;
         }
 
-        if (
-            slug.includes(primaryKeyword) ||
-            slug.includes(slugifiedPrimaryKeyword)
-        ) {
+        if (slug == slugifiedPrimaryKeyword) {
             result.score = 100;
             result.message = 'Primary keyword found in the slug';
+        } else if (slug.includes(slugifiedPrimaryKeyword)) {
+            result.score = 75;
+            result.message = 'Primary keyword found in the slug with other words';
         }
 
         return result;
@@ -258,6 +258,27 @@ export class PrimaryKeywordInBeginningOfContentTest extends Test {
 
 }
 
+
+export class ContentLengthTest extends Test {
+
+    public run() {
+        const content = this.contentText().toLowerCase().trim();
+        const words = content === "" ? [] : content.split(/\s+/);
+        const wordsCount = words.length;
+
+        let result = this.defaultResult(`Content is ${wordsCount} word${wordsCount === 1 ? '' : 's'} long. Consider using at least 400 words.`);
+
+        if (wordsCount >= 400) {
+            result.message = `Content is ${wordsCount} words long`;
+
+            const score = Math.floor(wordsCount / 25);
+            result.score = score > 100 ? 100 : score;
+        }
+
+        return result;
+    }
+}
+
 export class AllKeywordsInContentTest extends Test {
 
     public run() {
@@ -289,26 +310,6 @@ export class AllKeywordsInContentTest extends Test {
 
     }
 
-}
-
-export class ContentLengthTest extends Test {
-
-    public run() {
-        const content = this.contentText().toLowerCase().trim();
-        const words = content === "" ? [] : content.split(/\s+/);
-        const wordsCount = words.length;
-
-        let result = this.defaultResult(`Content is ${wordsCount} word${wordsCount === 1 ? '' : 's'} long. Consider using at least 400 words.`);
-
-        if (wordsCount >= 400) {
-            result.message = `Content is ${wordsCount} words long`;
-
-            const score = Math.floor(wordsCount / 25);
-            result.score = score > 100 ? 100 : score;
-        }
-
-        return result;
-    }
 }
 
 export class AllKeywordsInSubHeadingsTest extends Test {

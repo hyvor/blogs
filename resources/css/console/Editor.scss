@@ -30,7 +30,7 @@ $prosemirror-selected-outline: 3px solid #299af3;
         position: absolute;
         top: -14px;
         right: 30px;
-        z-index: 1;
+        z-index: 100000;
     }
 
     font-weight: 400;
@@ -813,11 +813,10 @@ img.ProseMirror-separator {
 
     table {
         margin: 0;
-        width: 100%;
         border: 1px solid black;
         border-collapse: collapse;
-        max-width: 100%;
         table-layout: fixed;
+        white-space: break-spaces;
     }
 
     tr {

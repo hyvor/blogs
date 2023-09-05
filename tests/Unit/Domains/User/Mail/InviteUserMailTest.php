@@ -16,5 +16,5 @@ it('has content', function () {
     $mailable->assertSeeInHtml($hyvorUser->name);
     $mailable->assertSeeInHtml("Invitation to join $blog->subdomain");
     $mailable->assertSeeInHtml('/user-accept-invite');
-    $mailable->assertSeeInHtml("user_id=$user->id&amp;signature=");
+    $mailable->assertSeeInHtml("user_id=$user->id&amp;signature=", false);
 });

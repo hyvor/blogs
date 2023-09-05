@@ -60,6 +60,10 @@ body.index {
                 padding: 4px 8px 4px 8px;
                 position: relative;
                 font-weight: 600;
+                transition: .3s box-shadow;
+                &:hover {
+                    box-shadow: 0 0 2px 5px #3f51b511;
+                }
             }
         }
 

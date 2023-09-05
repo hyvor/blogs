@@ -6,7 +6,6 @@ import { bringLeftHeaderToFront } from "../z-index";
 import Radio from "../../../../ReusableComponents/Radio";
 import ReactDatePicker from "react-datepicker";
 import ActionButton from "../../../../ReusableComponents/ActionButton";
-import { PostVariant } from "../../../../types";
 import dayjs from "dayjs";
 import { toast } from "react-toastify";
 
@@ -31,13 +30,22 @@ export default function PublishButton({id} : {id: number}) {
         const diff = {
             content: currentVariant.content_unsaved,
             content_unsaved: null,
+            title: currentVariant.title,
         }
 
         saveCurrentVariantDiff({
             diff,
             onSave: () => {
                 setIsSavingPublishedPostChanges(false);
-                toast.success("Changes saved", {autoClose: 5000});
+
+                toast.success(
+                    <div>Changes saved. <a
+                        className="link"
+                        href={currentVariant.url}
+                        target="_blank"
+                        data-testid="publish-popup-view-link"
+                    >View</a></div>
+                , {autoClose: 5000});
             }
         });
     }
@@ -87,7 +95,7 @@ function PublisherPopup({id, onClose} : {id: number, onClose: () => void}) {
 
     const [publishTime, setPublishTime] = useState<Date | null>(null)
     const { currentVariant, diff, savePostDiffAjax } = usePostValues(id);
-    const { savePostDiff } = usePostActions(id);
+    const { savePostDiff, saveCurrentVariantDiff } = usePostActions(id);
 
     const [isPublishing, setIsPublishing] = useState(false);
 
@@ -95,25 +103,26 @@ function PublisherPopup({id, onClose} : {id: number, onClose: () => void}) {
         setPublishTime(setTime ? new Date() : null);
     }
 
-    function handlePublish() {
+    async function handlePublish() {
 
         setIsPublishing(true);
-        
-        const newDiff = {...diff}
-        const variant = {...currentVariant};
 
-        if (publishTime) {
-            newDiff['published_at'] = dayjs(publishTime).unix()
-            variant.status = 'scheduled';
-        } else {
-            variant.status = 'published';
-        }
-
-        newDiff.variants = [variant as PostVariant];
-
-        savePostDiff({
-            diff: newDiff, 
+        await new Promise(resolve => savePostDiff({
+            diff: {
+                published_at: publishTime ? dayjs(publishTime).unix() : dayjs().unix(),
+            },
             onSave: () => {
+                resolve(null);
+            }
+        }));
+
+        saveCurrentVariantDiff({
+            diff: {
+                status: publishTime ? 'scheduled' : 'published',
+                content: currentVariant.content,
+                title: currentVariant.title,
+            },
+            onSave: (v) => {
                 setIsPublishing(false);
                 onClose();
 
@@ -121,14 +130,14 @@ function PublisherPopup({id, onClose} : {id: number, onClose: () => void}) {
                     !publishTime ?
                     <div>Post Published. <a
                         className="link"
-                        href={currentVariant.url}
+                        href={v.url}
                         target="_blank"
+                        data-testid="publish-popup-view-link"
                     >View</a></div> :
                     "Post scheduled"
                 , {autoClose: 5000});
-
             }
-        });
+        })
 
     }
 
@@ -138,7 +147,7 @@ function PublisherPopup({id, onClose} : {id: number, onClose: () => void}) {
         description: !!currentVariant.description,
     }
 
-    return <div className="post-publisher">
+    return <div className="post-publisher" data-testid="publish-popup">
         <Popup 
             body={
                 <div className="post-publisher-inner">

@@ -1,6 +1,6 @@
 import { expect, test } from "@playwright/test";
 import {consoleTest} from "../consoleTest.ts";
-
+import { pmc } from "../../helpers/prosemirror-test-helper.ts";
 
 consoleTest('Create post', async ({testingApi, console, page}) => {
     await testingApi.factory.blogFull({routes: true});
@@ -110,106 +110,174 @@ test.describe('Preview', () => {
 });
 
 
-consoleTest('Publish post', async ({testingApi, console, page}) => {
+test.describe('Post Status', () => {
 
-    const {blog, language} = await testingApi.factory.blogFull({routes: true});
-
-    await testingApi.factory.post({
-        attrs: {
-            blog_id: blog.id,
-        },
-        variantAttrs: {
-            language_id: language.id,
-            title: 'Test Post',
-            status: 'draft'
-        }
-    });
-
-    await console.visitAndNav('posts');
-    await page.getByRole('link', { name: 'Test Post' }).click();
-
-    await page.getByRole('button', { name: 'Publish' }).click();
-
-});
-
-test.describe('Post Settings', () => {
-
-    consoleTest('Has correct data & Discarding', async ({testingApi, console, page}) => {
+    consoleTest('Publish post', async ({testingApi, console, page}) => {
 
         const {blog, language} = await testingApi.factory.blogFull({routes: true});
-
+    
         await testingApi.factory.post({
             attrs: {
                 blog_id: blog.id,
-                canonical_url: 'https://example.com',
-                published_at: Math.floor(new Date("2015-11-25").getTime() / 1000),
-                code_head: 'code-head',
-                code_foot: 'code-foot'
             },
             variantAttrs: {
                 language_id: language.id,
                 title: 'Test Post',
-                description: 'Test Description',
-                slug: 'test-post',
-                status: 'published'
+                status: 'draft',
+                slug: null,
+                description: null
             }
         });
-
+    
         await console.visitAndNav('posts');
         await page.getByRole('link', { name: 'Test Post' }).click();
+        await page.getByRole('button', { name: 'Publish' }).click();
 
-        const settings = await page.getByTestId('post-settings');
+        // validations
+        await expect(page.getByText('Slug is not set, it will be auto-generated')).toBeVisible();
+        await expect(page.getByText('Description is not set')).toBeVisible();
 
-        const slugInput = await settings.getByTestId('slug-input');
-        await expect(slugInput).toHaveValue('test-post');
-        await slugInput.fill('test-post-2');
+        // publish
+        await page.getByTestId('publish-popup').getByRole('button', { name: 'Publish' }).click();
+        await expect(page.getByText('Post Published')).toBeVisible();
 
-        const descriptionInput = await settings.getByTestId('description-input');
-        await expect(descriptionInput).toHaveValue('Test Description');
-        await descriptionInput.fill('Test Description 2');
+        const href = await page.getByTestId('publish-popup-view-link').getAttribute('href');
+        await expect(href).toContain('/test-post');
 
-        const featuredCheckbox = await settings.getByTestId('featured-checkbox');
-        await expect(featuredCheckbox.locator('input')).not.toBeChecked();
-        await featuredCheckbox.click();
+        await expect(page.getByTestId('post-status')).toHaveText('published');
+        
+    });
 
-        const publishedTimeInput = await settings.getByTestId('publish-time-input-wrap').locator('input');
-        await expect(await publishedTimeInput.inputValue()).toContain('2015-11-25');
-        await publishedTimeInput.fill('2015-11-26 01:00:00');
+    consoleTest('Unpublish post', async ({console, page}) => {
+       
+        await console.visitNewPost({postVariantAttrs: {status: 'published'}});
+        await page.getByRole('button', { name: 'Unpublish' }).click();
 
-        await page.getByRole('button', { name: 'Discard' }).click();
-        await page.getByTestId('discard-popup').getByRole('button', { name: 'Discard' }).click();
+        await page.getByTestId('unpublish-popup').getByRole('button', { name: 'Unpublish' }).click();
+        await expect(page.getByText('Post unpublished successfully')).toBeVisible();
 
-        await expect(slugInput).toHaveValue('test-post');
-        await expect(descriptionInput).toHaveValue('Test Description');
-        await expect(featuredCheckbox).not.toBeChecked();
-        await expect(await publishedTimeInput.inputValue()).toContain('2015-11-25');
-
-        // advanced
-        await settings.getByRole('button', { name: 'Advanced' }).click();
-
-        const canonicalUrlInput = await settings.getByTestId('canonical-url-input');
-        await expect(canonicalUrlInput).toHaveValue('https://example.com');
-        await canonicalUrlInput.fill('https://example.com/2');
-
-        const codeHeadInput = await settings.getByTestId('code-head-input');
-        await expect(await codeHeadInput.innerText()).toContain('code-head');
-        await codeHeadInput.click();
-        await page.keyboard.type("-2");
-        await page.getByTestId('post-settings').getByRole('img').nth(2).click();
-
-        const codeFootInput = await settings.getByTestId('code-foot-input');
-        await expect(await codeFootInput.innerText()).toContain('code-foot');
-        await codeFootInput.click();
-        await page.keyboard.type("-2");
-        await page.getByTestId('post-settings').getByRole('img').nth(3).click();
-
-        await page.getByRole('button', { name: 'Discard' }).click();
-        await page.getByTestId('discard-popup').getByRole('button', { name: 'Discard' }).click();
-
-        await expect(canonicalUrlInput).toHaveValue('https://example.com');
-        await expect(await codeHeadInput.innerText()).not.toContain('-2');
-        await expect(await codeFootInput.innerText()).not.toContain('-2');
+        await expect(page.getByTestId('post-status')).toHaveText('draft');
 
     });
 
+    consoleTest('Schedule Post', async ({testingApi, console, page}) => {
+
+        await testingApi.factory.testPost({postVariantAttrs: {status: 'draft'}});
+        await console.visitAndNav('posts');
+        await page.getByRole('link', { name: 'Test Post' }).click();
+
+        await page.getByRole('button', { name: 'Publish' }).click();
+        await page.getByText('Schedule for Later').click();
+
+        const publishTimeInput = await page.getByTestId('publish-popup').locator('input[type="text"]');
+        await publishTimeInput.fill('2030-01-01 01:00:00');
+
+        await page.getByTestId('publish-popup').getByRole('button', { name: 'Schedule' }).click();
+        await expect(page.getByText('Post Scheduled')).toBeVisible();
+
+        const settings = await page.getByTestId('post-settings');
+        const publishedTimeInput = await settings.getByTestId('publish-time-input-wrap').locator('input');
+        await expect(await publishedTimeInput.inputValue()).toContain('2030-01-01');
+
+        await expect(page.getByTestId('post-status')).toHaveText('scheduled');
+
+    });
+
+    consoleTest('Unschedule Post', async ({console, page}) => {
+
+        await console.visitNewPost({postVariantAttrs: {status: 'scheduled'}});
+        await page.getByRole('button', { name: 'Unschedule' }).click();
+
+        await page.getByTestId('unpublish-popup').getByRole('button', { name: 'Unschedule' }).click();
+        await expect(page.getByText('Post unscheduled successfully')).toBeVisible();
+
+        await expect(page.getByTestId('post-status')).toHaveText('draft');
+    });
+
 });
+
+test.describe('Writing and Saving', () => {
+    
+    consoleTest('Save draft (ctrl + s)', async ({console, page}) => {
+
+        await console.visitNewPost({postVariantAttrs: {status: 'draft'}});
+        await page.locator('.ProseMirror').fill('This is my first post');
+
+        await expect(page.getByTestId('save-status')).toContainText('Unsaved changes *');
+
+        await page.keyboard.press('Control+s');
+
+        await expect(page.getByTestId('save-loader')).toBeVisible();
+        await expect(page.getByTestId('save-status')).toContainText('Saved');
+
+        await page.reload();
+        await expect(page.locator('.ProseMirror')).toContainText('This is my first post');
+
+    });
+
+    consoleTest('Published post editing and publishing changes', async ({testingApi, console, page}) => {
+
+        await testingApi.factory.testPost({postVariantAttrs: {
+            status: 'published',
+            content: pmc.docP('This is a test post')
+        }});
+        await console.visitAndNav('posts');
+        await page.getByRole('link', { name: 'Test Post' }).click();
+
+        await expect(page.locator('.ProseMirror')).toContainText('This is a test post');
+        await expect(page.getByTestId('save-status')).toHaveText('Saved');
+
+        await page.locator('.ProseMirror').fill('Updated post');
+
+        await page.keyboard.press('Control+s');
+
+        await expect(page.getByTestId('save-loader')).toBeVisible();
+        await expect(page.getByTestId('save-status')).toContainText('Saved');
+
+        await page.reload();
+        await expect(page.locator('.ProseMirror')).toContainText('Updated post');
+
+        await expect(page.getByTestId('save-status')).toContainText('Unpublished changes');
+        await expect(page.getByTestId('save-status')).toContainText('Discard');
+
+        // publishing changes
+        await page.getByRole('button', { name: 'Publish Changes' }).click();
+        await expect(page.getByTestId('save-status')).toContainText('Saved');
+
+        await expect(page.getByText('Changes saved')).toBeVisible();
+
+    });
+
+    consoleTest('Published post edit & discard', async ({testingApi, console, page}) => {
+
+        await testingApi.factory.testPost({postVariantAttrs: {
+            status: 'published',
+            content: pmc.docP('This is a test post')
+        }});
+        await console.visitAndNav('posts');
+        await page.getByRole('link', { name: 'Test Post' }).click();
+
+        const saveStatus = page.getByTestId('save-status');
+
+        await expect(page.locator('.ProseMirror')).toContainText('This is a test post');
+        await expect(saveStatus).toHaveText('Saved');
+
+        await page.locator('.ProseMirror').fill('Updated post');
+        await saveStatus.getByText('Discard').click();
+
+        await page.getByRole('button', { name: 'Discard Changes' }).click();
+
+        await expect(page.getByTestId('save-status')).toContainText('Saved');
+        await expect(page.getByText('Successfully discarded')).toBeVisible();
+
+        await expect(page.locator('.ProseMirror')).toContainText('This is a test post');
+
+        await page.reload();
+
+        await expect(page.locator('.ProseMirror')).toContainText('This is a test post');
+        await expect(page.getByTestId('save-status')).toHaveText('Saved');
+
+    });
+
+
+})

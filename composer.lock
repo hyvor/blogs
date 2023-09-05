@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "2887353c1d3b0e14ed530724c830aa2e",
+    "content-hash": "b44a3a97b45853df55604eb1416e7a89",
     "packages": [
         {
             "name": "akaunting/laravel-money",
@@ -4373,16 +4373,16 @@
         },
         {
             "name": "meilisearch/meilisearch-php",
-            "version": "v1.3.0",
+            "version": "v1.1.1",
             "source": {
                 "type": "git",
                 "url": "https://github.com/meilisearch/meilisearch-php.git",
-                "reference": "ba2756acae52c42e6f99376cebbe3b0a992404c6"
+                "reference": "950d587995bbd72f5eb794a1f3e88eceb34f6245"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/meilisearch/meilisearch-php/zipball/ba2756acae52c42e6f99376cebbe3b0a992404c6",
-                "reference": "ba2756acae52c42e6f99376cebbe3b0a992404c6",
+                "url": "https://api.github.com/repos/meilisearch/meilisearch-php/zipball/950d587995bbd72f5eb794a1f3e88eceb34f6245",
+                "reference": "950d587995bbd72f5eb794a1f3e88eceb34f6245",
                 "shasum": ""
             },
             "require": {
@@ -4397,11 +4397,11 @@
                 "guzzlehttp/guzzle": "^7.1",
                 "http-interop/http-factory-guzzle": "^1.0",
                 "phpstan/extension-installer": "^1.1",
-                "phpstan/phpstan": "1.10.26",
+                "phpstan/phpstan": "1.10.8",
                 "phpstan/phpstan-deprecation-rules": "^1.0",
                 "phpstan/phpstan-phpunit": "^1.0",
                 "phpstan/phpstan-strict-rules": "^1.1",
-                "phpunit/phpunit": "^9.5 || ^10.1"
+                "phpunit/phpunit": "^9.5"
             },
             "suggest": {
                 "guzzlehttp/guzzle": "Use Guzzle ^7 as HTTP client",
@@ -4435,9 +4435,9 @@
             ],
             "support": {
                 "issues": "https://github.com/meilisearch/meilisearch-php/issues",
-                "source": "https://github.com/meilisearch/meilisearch-php/tree/v1.3.0"
+                "source": "https://github.com/meilisearch/meilisearch-php/tree/v1.1.1"
             },
-            "time": "2023-07-31T12:08:59+00:00"
+            "time": "2023-04-03T10:05:59+00:00"
         },
         {
             "name": "monicahq/laravel-cloudflare",
@@ -7696,16 +7696,16 @@
         },
         {
             "name": "symfony/dom-crawler",
-            "version": "v6.3.4",
+            "version": "v6.2.7",
             "source": {
                 "type": "git",
                 "url": "https://github.com/symfony/dom-crawler.git",
-                "reference": "3fdd2a3d5fdc363b2e8dbf817f9726a4d013cbd1"
+                "reference": "65a906f5141ff2d3aef1b01c128fba78f5e9f921"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/symfony/dom-crawler/zipball/3fdd2a3d5fdc363b2e8dbf817f9726a4d013cbd1",
-                "reference": "3fdd2a3d5fdc363b2e8dbf817f9726a4d013cbd1",
+                "url": "https://api.github.com/repos/symfony/dom-crawler/zipball/65a906f5141ff2d3aef1b01c128fba78f5e9f921",
+                "reference": "65a906f5141ff2d3aef1b01c128fba78f5e9f921",
                 "shasum": ""
             },
             "require": {
@@ -7716,6 +7716,9 @@
             },
             "require-dev": {
                 "symfony/css-selector": "^5.4|^6.0"
+            },
+            "suggest": {
+                "symfony/css-selector": ""
             },
             "type": "library",
             "autoload": {
@@ -7743,7 +7746,7 @@
             "description": "Eases DOM navigation for HTML and XML documents",
             "homepage": "https://symfony.com",
             "support": {
-                "source": "https://github.com/symfony/dom-crawler/tree/v6.3.4"
+                "source": "https://github.com/symfony/dom-crawler/tree/v6.2.7"
             },
             "funding": [
                 {
@@ -7759,7 +7762,7 @@
                     "type": "tidelift"
                 }
             ],
-            "time": "2023-08-01T07:43:40+00:00"
+            "time": "2023-02-14T08:44:56+00:00"
         },
         {
             "name": "symfony/error-handler",
@@ -10909,55 +10912,6 @@
                 "source": "https://github.com/webmozarts/assert/tree/1.11.0"
             },
             "time": "2022-06-03T18:03:27+00:00"
-        },
-        {
-            "name": "yethee/tiktoken",
-            "version": "0.1.2",
-            "source": {
-                "type": "git",
-                "url": "https://github.com/yethee/tiktoken-php.git",
-                "reference": "549cfaa2fa5336037f0f6b0b8aff1cc0663e3754"
-            },
-            "dist": {
-                "type": "zip",
-                "url": "https://api.github.com/repos/yethee/tiktoken-php/zipball/549cfaa2fa5336037f0f6b0b8aff1cc0663e3754",
-                "reference": "549cfaa2fa5336037f0f6b0b8aff1cc0663e3754",
-                "shasum": ""
-            },
-            "require": {
-                "php": "^8.1",
-                "symfony/service-contracts": "^2.5 || ^3.0"
-            },
-            "require-dev": {
-                "doctrine/coding-standard": "^11.1",
-                "phpunit/phpunit": "^10.0",
-                "psalm/plugin-phpunit": "^0.18.3",
-                "vimeo/psalm": "5.9.0"
-            },
-            "type": "library",
-            "autoload": {
-                "psr-4": {
-                    "Yethee\\Tiktoken\\": "src"
-                }
-            },
-            "notification-url": "https://packagist.org/downloads/",
-            "license": [
-                "MIT"
-            ],
-            "description": "PHP version of tiktoken",
-            "keywords": [
-                "bpe",
-                "decode",
-                "encode",
-                "openai",
-                "tiktoken",
-                "tokenizer"
-            ],
-            "support": {
-                "issues": "https://github.com/yethee/tiktoken-php/issues",
-                "source": "https://github.com/yethee/tiktoken-php/tree/0.1.2"
-            },
-            "time": "2023-04-06T10:16:09+00:00"
         }
     ],
     "packages-dev": [

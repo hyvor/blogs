@@ -78,6 +78,10 @@
 
 <link rel="stylesheet" href="{{ _blog.base_url }}/styles.css" />
 
+{% if _config.THEME_FONTS %}
+<link rel="stylesheet" href="{{ _blog.base_url }}/fonts/css/{{ _config.THEME_FONTS }}" />
+{% endif %}
+
 <script>
 
     {#  DONT TOUCH THIS CODE. WRITE TESTS IF POSSIBLE #}

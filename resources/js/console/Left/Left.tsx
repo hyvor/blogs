@@ -184,12 +184,8 @@ function LeftInner({subdomain} : {subdomain: string}) {
 
             <a
                 className="bottom-item"
-                onClick={() => {
-                    window.postMessage({
-                        target: 'FeaturebaseWidget',
-                        data: { action: 'toggleWidget' },
-                    })
-                }}
+                href="https://community.blogs.hyvor.com/roadmap"
+                target="_blank"
             >
                 <span className="icon"><Megaphone /></span>Changelog <span id="fb-update-badge"></span>
             </a>

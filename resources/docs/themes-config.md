@@ -19,6 +19,7 @@ HB-aware configurations should be written in `ENGLISH_UPPER_SNAKE_CASE` in `conf
 |---------------|-----------------------------------------------------------------------------------------------|-----------------------------------------|----------------|
 | `THEME_NAME` | Name of the theme                                                                             | Only if [publishing](themes-publishing) |                |
 | `THEME_VERSION` | Semantic version of the theme                                                                 | Only if publishing                      |                |
+| `THEME_FONTS` | Fonts to load in the blog. See [fonts](fonts). | Only if publishing |  |
 | `DEMO_URL` | Can be used to set a custom demo URL when publishing                                          | No                                      | Auto-generated |
 | `POSTS_PER_PAGINATION` | Number of posts loaded initially in the `_posts` [route variable](themes-templates#variables) | No                                      | 10             
 
@@ -33,6 +34,7 @@ While you can use multi-nested YAML configs, we recommend to use only up to one 
 ```yaml
 THEME_NAME: hello
 THEME_VERSION: 1.0.0
+THEME_FONTS: "mulish:400,700"
 POSTS_PER_PAGINATION: 15
 
 dark_theme: Yes

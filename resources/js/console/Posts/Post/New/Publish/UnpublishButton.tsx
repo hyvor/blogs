@@ -47,15 +47,17 @@ export default function UnpublishButton({id} : {id: number}) {
         </button>
         
         {
-            isUnpublishing && <PopupConfirm
-                title={( status === 'published' ? 'Unpublish' : 'Unschedule' ) + " Post"}
-                text={"Are you sure to " + ( status === 'published' ? 'unpublish' : 'unschedule' ) + " this post? It will be changed to a draft."}
-                name={( status === 'published' ? 'Unpublish' : 'Unschedule' )}
-                onClick={handleUnpublish}
-                onCancel={() => setIsUnpublishing(false)}
-                isLoading={hasUnpublishingStarted}
-                loadingName="Unpublishing"
-            />
+            isUnpublishing && <div data-testid="unpublish-popup">
+                <PopupConfirm
+                    title={( status === 'published' ? 'Unpublish' : 'Unschedule' ) + " Post"}
+                    text={"Are you sure to " + ( status === 'published' ? 'unpublish' : 'unschedule' ) + " this post? It will be changed to a draft."}
+                    name={( status === 'published' ? 'Unpublish' : 'Unschedule' )}
+                    onClick={handleUnpublish}
+                    onCancel={() => setIsUnpublishing(false)}
+                    isLoading={hasUnpublishingStarted}
+                    loadingName="Unpublishing"
+                />
+            </div>
         }
 
     </Fragment>

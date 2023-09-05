@@ -24,24 +24,25 @@
                     All-in-one blogging platform
                 </h1>
                 <h2>
-                    Start a fully-customizable, multi-language blog with the blogging platform designed to make blogging effortless.
+                    Start a fully-customizable, SEO-friendly, blazingly fast, multi-language blog in 1 minutes.
                 </h2>
                 <a data-flashload-skip-link href="/console?signup=1" class="button big">
                     Start a Blog Now
                 </a>
 
-                <div style="margin-top: 25px;">
+                {{-- <div style="margin-top: 25px;">
                 <a href="https://www.producthunt.com/posts/hyvor-blogs?utm_source=badge-featured&utm_medium=badge&utm_souce=badge-hyvor&#0045;blogs" target="_blank"><img src="https://api.producthunt.com/widgets/embed-image/v1/featured.svg?post_id=393229&theme=light" alt="Hyvor&#0032;Blogs - Multi&#0045;language&#0032;Blogging&#0032;Platform | Product Hunt" style="width: 200px; height:45px;" width="200" height="45" /></a>
-                </div>
+                </div> --}}
 
-                 {{--<div class="hero-message-wrap">
+                 <div class="hero-message-wrap">
                     <a 
                         class="hero-message"
                         target="_blank"
+                        href="https://hyvor.com/blog/hyvor-blogs-september-2023"
                     >
-                        Hyvor Blogs is currently in public BETA
+                        New: GPT integration, SEO/link analysis, and more...
                     </a>
-                </div>--}}
+                </div>
             </div>
 
             <div class="hero-svg">
