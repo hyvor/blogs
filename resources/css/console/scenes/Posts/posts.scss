@@ -12,6 +12,7 @@
     --color-grey: #{$color-grey};
     --color-table-dot: #{$color-table-dot};
     --color-accent-light: #{$color-accent-light};
+    --color-accent-very-light: #{$color-accent-very-light};
   }
   
 [data-theme="dark"] {
@@ -26,6 +27,7 @@
     --color-grey: #{$color-grey-dark};
     --color-table-dot: #{$color-table-dot-dark};
     --color-accent-light: #{$color-accent-light-dark};
+    --color-accent-very-light: #{$color-accent-very-light-dark};
 }
 
 .posts-not-ready {
@@ -454,7 +456,7 @@
             position: absolute;
             justify-self: center;
             width: 95%;
-            background: $color-accent-very-light;
+            background: var(--color-accent-very-light);
             bottom: 0;
             height: 1px;
         }
