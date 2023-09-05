@@ -619,7 +619,7 @@ img.ProseMirror-separator {
                 padding: 5px 10px;
                 font-size: 12px;
                 margin-top: 5px;
-                background: $color-white;
+                background: var(--color-background);
             }
         }
 
@@ -629,12 +629,12 @@ img.ProseMirror-separator {
             padding: 5px 0;
             padding-bottom: 15px;
             border-radius: 0 0 20px 20px;
-            background-color: var(--color-background) !important;
+            background-color: var(--color-input) !important;
             color: var(--color-foreground) !important;
         }
 
         .CodeMirror-linenumber {
-            background-color: var(--color-background) !important;
+            background-color: var(--color-input) !important;
         }
 
         .topbar {
