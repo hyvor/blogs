@@ -281,14 +281,22 @@
    .dark-mode-row {
     display: flex;
     flex-direction: row;
-    align-items: start;
+    align-items: center;
     justify-content: center;
+    margin-bottom: 10px;
 
     .dark-mode-switch {
         margin-left: 10px
     }
    }
 
+    .switch-icon-center {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        height: 100%;
+    }
+    
    .blog-creation-button {
         color: var(--color-text-light);
     }

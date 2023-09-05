@@ -26,5 +26,7 @@ export default function Switch(props: SwitchProps) {
             boxShadow={"0 0 0px 1px " + (props.checked ? "#896c6b" : "#777")}
             activeBoxShadow="0 0 5px 1px #896c6b"
             {...props} />
+
+            
     </span>
 }

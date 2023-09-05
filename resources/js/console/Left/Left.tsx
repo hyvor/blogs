@@ -10,8 +10,9 @@ import {
     Exclamation,
     Files, Gear,
     House, InfoCircle, Megaphone,
+    Moon,
     Palette,
-    Pencil, Plugin, Tools,
+    Pencil, Plugin, Sun, Tools,
 } from 'react-bootstrap-icons';
 import dayjs from 'dayjs';
 import { appConfig } from "../helpers";
@@ -158,9 +159,15 @@ function LeftInner({subdomain} : {subdomain: string}) {
         <div className='dark-mode-row'>
             Dark mode
             <div className='dark-mode-switch'>
-                <Switch
+                <ReactSwitch
+                    className="react-switch"
+                    checkedIcon={<div className='switch-icon-center'><Sun /></div>}
+                    uncheckedIcon={<div className='switch-icon-center'><Moon /></div>}
                     checked={isDark}
                     onChange={handleDarkMode}
+                    onColor="#896c6b"
+                    offColor="#777"
+                    handleDiameter={21}
                 />
             </div>
         </div>
