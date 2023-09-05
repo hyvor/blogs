@@ -1,3 +1,12 @@
+@import '../../../colors.scss';
+
+:root {
+    --color-grey: #{'$color-grey'};
+}
+  
+[data-theme="dark"] {
+    --color-grey: #{'$color-grey-dark'};
+}
 
 .links-analysis {
 
@@ -61,7 +70,7 @@
                     margin-top: 3px;
                 }
                 .link-type {
-                    background-color: #eee;
+                    background-color: var(--color-grey);
                     display: inline-block;
                     padding: 3px 10px;
                     border-radius: 20px;
