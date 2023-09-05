@@ -7,6 +7,11 @@
     --color-wrap-background: #{$color-white};
     --color-title: #{$color-black};
     --color-text-light: #{$color-text-light};
+    --color-box: #{$color-box};
+    --color-main: #{$color-white};
+    --color-grey: #{$color-grey};
+    --color-table-dot: #{$color-table-dot};
+    --color-accent-light: #{$color-accent-light};
   }
   
 [data-theme="dark"] {
@@ -16,6 +21,11 @@
     --color-wrap-background: #{$color-card-dark};
     --color-title: #{$color-text-white};
     --color-text-light: #{$color-text-light-dark};
+    --color-box: #{$color-box-dark};
+    --color-main: #{$color-card-dark};
+    --color-grey: #{$color-grey-dark};
+    --color-table-dot: #{$color-table-dot-dark};
+    --color-accent-light: #{$color-accent-light-dark};
 }
 
 .posts-not-ready {
@@ -66,7 +76,7 @@
         .action-button {
             display: flex;
             flex-direction: row;
-            background-color: $color-box;
+            background-color: var(--color-box);
             border: none;
             border-radius: 50px;
             width: 100%;
@@ -74,7 +84,7 @@
             padding: 5px;
         }
         .action-button:hover {
-            background-color: $color-accent-active;
+            background-color: var(--color-hover);
         }
         .table-menu-icon {
             margin-right: 10px;
@@ -83,7 +93,7 @@
             width: 3px;
             height: 3px;
             border-radius: 100%;
-            background-color: rgb(0 0 0 / 50%);
+            background-color: var(--color-table-dot);
         }
       }
 
@@ -94,21 +104,21 @@
             display: flex;
             border-radius: 5px;
             cursor: pointer;
-            background-color: #fff;
-            border: solid 1px $color-grey;
+            background-color: var(--color-main);
+            border: solid 1px var(--color-grey);
             width: 35px;
             height: 20px;
         }
     .toggle-table-menu-button:hover {
-        background-color: $color-grey;
+        background-color: var(--color-grey);
     }
 
     .table-menu-options {
         position: absolute;
-        background-color: #fff;
+        background-color: var(--color-box);
         padding: 12px;
         border-radius: 15px;
-        border-bottom: 1px solid $color-accent-light;
+        border-bottom: 1px solid var(--color-accent-light);
         box-shadow: 0 2px 8px rgba(0, 0, 0, 0.15);
         display: flex;
         flex-direction: column;
@@ -240,13 +250,13 @@
                 align-items: center;
                 justify-content: center;
                 height: 100%;
-                background-color: $color-white;
+                background-color: var(--color-main);
                 border: none;
                 cursor: pointer;
                 padding: 8px;
             }
             .add-column-button:hover {
-                background-color: $color-grey;
+                background-color: var(--color-grey);
             }
         }
         .table-bottom-settings {
@@ -257,13 +267,13 @@
                 display: flex;
                 align-items: center;
                 justify-content: center;
-                background-color: $color-white;
+                background-color: var(--color-main);
                 width: 100%;
                 border: none;
                 cursor: pointer;
             }
             .add-row-button:hover {
-                background-color: $color-grey;
+                background-color: var(--color-grey);
             }
         }
     }
