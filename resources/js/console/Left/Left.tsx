@@ -157,7 +157,6 @@ function LeftInner({subdomain} : {subdomain: string}) {
 
         <div id="left-bottom">
         <div className='dark-mode-row'>
-            Dark mode
             <div className='dark-mode-switch'>
                 <ReactSwitch
                     className="react-switch"
@@ -166,7 +165,7 @@ function LeftInner({subdomain} : {subdomain: string}) {
                     checked={isDark}
                     onChange={handleDarkMode}
                     onColor="#896c6b"
-                    offColor="#777"
+                    offColor="#eee"
                     handleDiameter={21}
                 />
             </div>
