@@ -1,8 +1,23 @@
 @import 'react-datepicker/dist/react-datepicker.css';
+@import '../../colors.scss';
+
+:root {
+    --color-text: #{$color-white};
+    --color-input: #{$color-input};
+    --color-box: #{$color-box};
+  }
+
+[data-theme="dark"] {
+    --color-text: #{$color-black};
+    --color-input: #{$color-input-dark};
+    --color-box: #{$color-box-dark};
+}
 
 .react-datepicker-wrapper {
     .react-datepicker__input-container input {
         @include mixin-input;
+        background-color: var(--color-input);
+        color: var(--color-text);
     }
 }
 
@@ -13,13 +28,35 @@
         box-shadow: 0 0 20px 4px rgb(0 0 0 / 5%);
         border-radius: 20px;
         font-family: inherit;
+        background-color: var(--color-box);
     }
     
     .react-datepicker__header  {
         border-radius: 20px 20px 0 0;
         padding: 15px;
         border-bottom:1px solid $color-accent-light;
-        background: $color-box;
+        background: var(--color-box);
+    }
+
+    .react-datepicker__current-month {
+        color: var(--color-text);
+    }
+
+    .react-datepicker__day-name {
+        color: var(--color-text);
+    }
+
+    .react-datepicker__day {
+        color: var(--color-text);
+    }
+
+    .react-datepicker-time__caption {
+        color: var(--color-text);
+    }
+
+    .react-datepicker-time__input input {
+        background-color: var(--color-input) !important;
+        color: var(--color-text);
     }
 
     .react-datepicker__navigation {
