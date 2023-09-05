@@ -1,3 +1,13 @@
+@import '../../../colors.scss';
+
+:root {
+    --color-input: #{$color-input};
+  }
+
+[data-theme="dark"] {
+    --color-input: #{$color-input-dark};
+}
+
 .tools-link-analysis {
 
     .tab-content {
@@ -58,7 +68,7 @@
                 margin-bottom: 4px;
             }
             .stats-inner {
-                background-color: #f5f5f5;
+                background-color: var(--color-input);
                 border-radius: 20px;
                 padding: 10px;
             }

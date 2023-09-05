@@ -7,6 +7,7 @@
     --color-accent-active: #{$color-accent-active};
     --color-text-input: #{$color-text-white};
     --color-placeholder: #{$color-grey};
+    --color-blue-light: #{$color-blue-light};
   }
 
 [data-theme="dark"] {
@@ -16,6 +17,7 @@
     --color-accent-active: #{$color-accent-active-dark};
     --color-text-input: #{$color-white};
     --color-placeholder: #{$color-grey-dark};
+    --color-blue-light: #{$color-blue-light-dark};
 }
 
 a.link, span.link {
@@ -940,7 +942,7 @@ input[type=range]:focus::-ms-fill-upper {
     flex: 1;
     .upgrade-inner {
         padding: 20px 25px;
-        background-color: $color-blue-light;
+        background-color: var(--color-blue-light);
         border-radius: 20px;
         width: 550px;
         max-width: 100%;
