@@ -50,6 +50,7 @@ class PaddleService
         PaddleApiCaller::call('/subscription/users/update', [
             'subscription_id' => $subscriptionId,
             'plan_id' => $planId,
+            'bill_immediately' => true
         ]);
     }
 

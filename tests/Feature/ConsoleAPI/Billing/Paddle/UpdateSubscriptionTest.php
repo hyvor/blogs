@@ -27,7 +27,8 @@ it('updates subscription', function () {
 
     Http::assertSent(function (Request $request) {
         return $request['subscription_id'] === 100 &&
-            $request['plan_id'] === 32102;
+            $request['plan_id'] === 32102 &&
+            $request['bill_immediately'] === true;
     });
 });
 
