@@ -114,6 +114,9 @@ export class Test {
     }
 
     protected keywordInString(keyword: string, str: string) : boolean {
+        if (!keyword)
+            return false;
+
         return getOccurrencesOfKeywordInContent(
             keyword, 
             str, 
