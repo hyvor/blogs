@@ -84,8 +84,8 @@ export function getOccurrencesOfKeywordInContent(keyword: string, content: strin
 
         for (let j = 1; j < keywordWords.length; j++) {
             if (
-                contentWords[i + j].toLowerCase() !== 
-                keywordWords[j].toLowerCase()
+                !contentWords[i + j] ||
+                contentWords[i + j].toLowerCase() !== keywordWords[j].toLowerCase()
             ) {
                 found = false;
                 break;

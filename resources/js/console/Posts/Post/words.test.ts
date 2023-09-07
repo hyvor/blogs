@@ -91,6 +91,9 @@ describe('occurrences of keyword', () => {
         expect(getOccurrencesOfKeywordInContent('こんにちは', 'こんにちは')).toBe(1);
         expect(getOccurrencesOfKeywordInContent('こんにちは', 'こんにちは こんにちは')).toBe(2);
 
+        // bug
+        expect(getOccurrencesOfKeywordInContent('blogging platform', 'blogging')).toBe(0);
+
     });
 
     test('occurrence performance', () => {
