@@ -36,8 +36,6 @@ export default function Post({ id, subdomain, type }: { id: number, subdomain: s
             postsLogicInst.actions.navigateToPosts();
         else
             pagesLogicInst.actions.navigateToPages();
-
-        postsLogicInst.actions.setActivePostId(null);
     }
 
     return <div className="new-post-view" id="post-view" ref={postViewRef}>
