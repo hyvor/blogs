@@ -3,7 +3,11 @@ use Illuminate\Support\Facades\App;
 ?>
 
 <!DOCTYPE html>
-<html lang="en">
+<html 
+    lang="en"
+    class="notranslate" 
+    translate="no"
+>
 <head>
     <title>Console - Hyvor Blogs</title>
     <meta name="robots" content="nofollow, noindex">
