@@ -1,14 +1,26 @@
 import CodeMirror from "codemirror"
-import {chainCommands, exitCode, joinBackward, selectNodeBackward} from "./commands"
+import {exitCode} from "prosemirror-commands"
 import {undo, redo} from "prosemirror-history"
 import { TextSelection, Selection } from "prosemirror-state"
 import schema from './schema'
 import {CODEMIRROR_MODES} from "../../../ReusableComponents/CodemirrorEditor";
 import {computeChange} from "./nodeview-codeblock";
+import { Node } from "prosemirror-model"
+import { EditorView } from "prosemirror-view"
 
 export default class CustomHtml {
 
-    constructor(node, view, getPos) {
+    private cm: CodeMirror.Editor
+
+    private node: Node
+    private view: EditorView
+    private getPos: () => number
+
+    private dom: HTMLElement
+    private updating: boolean
+    private incomingChanges: boolean
+
+    constructor(node: Node, view: EditorView, getPos: () => number) {
         // Store for later
         this.node = node
         this.view = view
@@ -29,7 +41,7 @@ export default class CustomHtml {
         
 
         // Create a CodeMirror instance
-        this.cm = new CodeMirror(codemirrorWrap, {
+        this.cm = CodeMirror(codemirrorWrap, {
             value: this.node.textContent,
             lineNumbers: true,
             lineWrapping: true,
@@ -49,16 +61,16 @@ export default class CustomHtml {
         const message = document.createElement("div");
         message.className = "code-toolbar-quit-message";
         message.innerHTML = "<p>SHIFT + Enter to exit</p>";
-        message.style.opacity = 0;
+        message.style.opacity = "0";
         this.cm.getWrapperElement().appendChild(message);
 
         this.cm.on("focus", () => {
-            message.style.opacity = 1;
+            message.style.opacity = "1";
           });
 
         this.cm.on("blur", () => {
-            message.style.opacity = 0;  
-          });
+            message.style.opacity = "0";  
+        });
 
         //this.createLanguageSelector();
 
@@ -95,14 +107,14 @@ export default class CustomHtml {
             this.view.dispatch(state.tr.setSelection(selection))
     }
 
-    asProseMirrorSelection(doc) {
+    asProseMirrorSelection(doc: Node) {
         let offset = this.getPos() + 1
         let anchor = this.cm.indexFromPos(this.cm.getCursor("anchor")) + offset
         let head = this.cm.indexFromPos(this.cm.getCursor("head")) + offset
         return TextSelection.create(doc, anchor, head)
     }
 
-    setSelection(anchor, head) {
+    setSelection(anchor: number, head: number) {
         this.cm.focus()
         this.updating = true
         this.cm.setSelection(this.cm.posFromIndex(anchor),
@@ -116,7 +128,7 @@ export default class CustomHtml {
             let start = this.getPos() + 1
             let tr = this.view.state.tr.replaceWith(
                 start + change.from, start + change.to,
-                change.text ? schema.text(change.text) : null)
+                change.text ? schema.text(change.text) : [])
             this.view.dispatch(tr)
         }
     }
@@ -152,7 +164,7 @@ export default class CustomHtml {
         })
     }
 
-    maybeEscape(unit, dir) {
+    maybeEscape(unit: string, dir: number) {
         let pos = this.cm.getCursor()
         if (this.cm.somethingSelected() ||
             pos.line != (dir < 0 ? this.cm.firstLine() : this.cm.lastLine()) ||
@@ -166,7 +178,7 @@ export default class CustomHtml {
         this.view.focus()
     }
 
-    update(node) {
+    update(node: Node) {
         if (node.type != this.node.type) return false
 
         // console.log(this.node.attrs.language, node.attrs.language)
@@ -176,7 +188,7 @@ export default class CustomHtml {
             this.node.attrs.name !== node.attrs.name
         ) {
             this.node = node
-            this.updateFromAttrs()
+            // this.updateFromAttrs()
             return true;
         }
 

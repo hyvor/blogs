@@ -2,23 +2,24 @@ import { keymap } from "prosemirror-keymap";
 import {
     clearAndChangeNode,
     baseKeymap,
-    chainCommands,
-    setBlockType,
 } from "./commands";
-// import {  } from 'prosemirror-commands'
+import {
+    setBlockType,
+    chainCommands
+} from 'prosemirror-commands'
 import { undo, redo } from "prosemirror-history";
 import {
     splitListItem,
     sinkListItem,
     liftListItem,
 } from "prosemirror-schema-list";
-import { EditorState, NodeSelection, Selection } from "prosemirror-state";
+import { Command, EditorState, NodeSelection, Selection } from "prosemirror-state";
 import { Schema } from "prosemirror-model";
 import { EditorView } from "prosemirror-view";
 
 export default function keymapPlugins(schema: Schema) {
-    var extendedKeymap : Record<string, Function> = {};
-    function bind(key: string, func: Function) {
+    var extendedKeymap : Record<string, Command> = {};
+    function bind(key: string, func: Command) {
         extendedKeymap[key] = func;
     }
 
@@ -33,12 +34,12 @@ export default function keymapPlugins(schema: Schema) {
 
     // hard break
     const br = schema.nodes.hard_break,
-        brCmd = function (state: EditorState, dispatch: EditorView['dispatch']) {
-            dispatch(
+        brCmd = function (state, dispatch) {
+            dispatch && dispatch(
                 state.tr.replaceSelectionWith(br.create()).scrollIntoView()
             );
             return true;
-        };
+        } as Command;
     bind("Mod-Enter", brCmd);
     bind("Shift-Enter", brCmd);
     if (mac) bind("Ctrl-Enter", brCmd);
@@ -46,21 +47,23 @@ export default function keymapPlugins(schema: Schema) {
     bind(
         "Backspace",
         chainCommands(
-            (state: EditorState, dispatch: EditorView['dispatch']) =>
+            (state, dispatch) =>
                 convertEmptyBlocksToParagraphHandler(state, dispatch, schema),
             figcaptionBackspaceHandler,
         )
     );
 
-    const commonEnterAndArrowDown = (state: EditorState, dispatch: EditorView['dispatch']) => {
+    const commonEnterAndArrowDown : Command = (state, dispatch) => {
         const selection = state.selection;
 
         if (selection.from !== selection.to)
             // something was selected
-            return;
+            return false;
 
         // If the cursor is in a list item, return false
+        // @ts-ignore (TODO: fix this)
         const { path } = selection.$to;
+        // @ts-ignore (TODO: fix this)
         if (path.some(item => item?.type?.name === "list_item"))
             return false;
 
@@ -87,12 +90,12 @@ export default function keymapPlugins(schema: Schema) {
 
             return true;
         }
+
+        return false;
     };
 
     const enterBehavior = chainCommands(
-        (state, dispatch) => {
-           commonEnterAndArrowDown(state, dispatch);
-        },
+        commonEnterAndArrowDown,
         splitListItem(schema.nodes.list_item),
         figcaptionEnterHandler,
     );
@@ -103,10 +106,12 @@ export default function keymapPlugins(schema: Schema) {
 
             if (selection.from !== selection.to)
                 // something was selected
-                return;
+                return false; 
 
             // If the cursor is in a list item, return false
-            const { path } = selection.$to;
+            // @ts-ignore (TODO: fix this)
+            const { path } = selection.$to
+            // @ts-ignore (TODO: fix this)
             if (path.some(item => item?.type?.name === "table_cell")) {
                 // Get the next node
                 const tableCell = selection.$from.node(-1);
@@ -122,10 +127,12 @@ export default function keymapPlugins(schema: Schema) {
                         $from.after(-1),
                         schema.nodes.paragraph.create()
                     );
-                    dispatch(tr.setSelection(Selection.near(tr.doc.resolve($from.after(-1)))));
+                    if (dispatch)
+                        dispatch(tr.setSelection(Selection.near(tr.doc.resolve($from.after(-1)))));
+                    return true;
                 }
             }
-           commonEnterAndArrowDown(state, dispatch);
+            return commonEnterAndArrowDown(state, dispatch);
         },
         figcaptionEnterHandler
     );
@@ -147,7 +154,7 @@ export default function keymapPlugins(schema: Schema) {
 
         if (selection.from !== selection.to)
             // something was selected
-            return;
+            return false;
 
         const parent = selection.$to.parent;
         const text = parent.firstChild?.text;
@@ -156,7 +163,7 @@ export default function keymapPlugins(schema: Schema) {
             const match = text.match(/(.+{#([^}\s]+)$)/);
             const spacesMatch = text.match(/\s*{#([^}\s]+)$/);
 
-            if (match) {
+            if (match && dispatch) {
                 dispatch(
                     state.tr
                         .setNodeMarkup(
@@ -165,20 +172,22 @@ export default function keymapPlugins(schema: Schema) {
                             { ...parent.attrs, id: match[2] }
                         )
                         .replaceWith(
-                            selection.to - spacesMatch[0].length,
+                            selection.to - (spacesMatch ? spacesMatch[0].length : 0),
                             selection.to,
-                            ""
+                            []
                         )
                 );
                 return true;
             }
         }
+
+        return false;
     });
 
     return [keymap(extendedKeymap), keymap(baseKeymap), getCodeBlockKeymap()];
 }
 
-function figcaptionEnterHandler(state, dispatch) {
+const figcaptionEnterHandler : Command = (state, dispatch) => {
     /**
      * When enter is clicked inside figcaption,
      * we select the parent figure in this function
@@ -207,14 +216,14 @@ function figcaptionEnterHandler(state, dispatch) {
     return true;
 }
 
-function figcaptionBackspaceHandler(state, dispatch) {
+const figcaptionBackspaceHandler : Command = (state, dispatch) => {
     const { $from } = state.selection;
     if ($from.parent.type.name !== "figcaption") return false;
-
     if (!$from.parent?.firstChild?.text) return true;
+    return false;
 }
 
-function convertEmptyBlocksToParagraphHandler(state, dispatch, schema) {
+function convertEmptyBlocksToParagraphHandler(state: EditorState, dispatch: EditorView['dispatch'] | undefined, schema: Schema) : boolean {
     let { $from } = state.selection;
 
     const parent = $from.parent;
@@ -237,9 +246,9 @@ function convertEmptyBlocksToParagraphHandler(state, dispatch, schema) {
 
 // https://prosemirror.net/examples/codemirror/
 function getCodeBlockKeymap() {
-    function arrowHandler(dir) {
-        return (state, dispatch, view) => {
-            if (state.selection.empty && view.endOfTextblock(dir)) {
+    function arrowHandler(dir: 'left' | 'right' | 'up' | 'down') {
+        return ((state, dispatch, view) => {
+            if (state.selection.empty && view && view.endOfTextblock(dir)) {
                 let side = dir == "left" || dir == "up" ? -1 : 1,
                     $head = state.selection.$head;
                 let nextPos = Selection.near(
@@ -250,14 +259,15 @@ function getCodeBlockKeymap() {
                 );
                 if (
                     nextPos.$head &&
-                    nextPos.$head.parent.type.name == "code_block"
+                    nextPos.$head.parent.type.name == "code_block" &&
+                    dispatch
                 ) {
                     dispatch(state.tr.setSelection(nextPos));
                     return true;
                 }
             }
             return false;
-        };
+        }) as Command;
     }
 
     return keymap({
