@@ -16,15 +16,15 @@ export default class CustomHtml {
     private view: EditorView
     private getPos: () => number
 
-    private dom: HTMLElement
+    public dom: HTMLElement
     private updating: boolean
     private incomingChanges: boolean
 
-    constructor(node: Node, view: EditorView, getPos: () => number) {
+    constructor(node: Node, view: EditorView, getPos: () => number | undefined) {
         // Store for later
         this.node = node
         this.view = view
-        this.getPos = getPos
+        this.getPos = () => getPos() || 0;
         this.incomingChanges = false
 
 
