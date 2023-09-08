@@ -565,7 +565,7 @@ test.describe('Embed', () => {
         await page.locator('div').filter({ hasText: /^EmbedEmbed content from 1500\+ platforms$/ }).first().click();
         await page.getByPlaceholder('Paste URL to embed (Youtube, Twitter, and 1000+ platforms supported)').fill('https://www.youtube.com/watch?v=bK6ldnjE3Y0');
         await page.getByPlaceholder('Paste URL to embed (Youtube, Twitter, and 1000+ platforms supported)').press('Enter');
-        await page.locator('figcaption').click();
+        await page.locator('figure').click();
         await page.keyboard.press('Backspace');
 
         await expect(page.locator('iframe').first()).not.toBeVisible();
