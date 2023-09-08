@@ -228,7 +228,7 @@ function PreviewButton({id} : {id: number}) {
 function PostEditor({id} : {id: number}) {
 
     const { currentVariant, editorState } = usePostValues(id)
-    const { updateCurrentPostVariantValue } = usePostActions(id)
+    const { updateCurrentPostVariantValue, changeEditorState } = usePostActions(id)
 
     const isNonDraft = currentVariant.status !== 'draft';
 
@@ -250,6 +250,17 @@ function PostEditor({id} : {id: number}) {
         }
 
     }, [editorState.editorView]);
+
+    useEffect(() => {
+        
+        return () => {
+            if (editorState.editorView) {
+                editorState.editorView.destroy();
+                changeEditorState('editorView', null);
+            }
+        }
+
+    }, []);
 
     return <Editor
         id={id}
