@@ -64,13 +64,15 @@ test.describe('Post Settings', () => {
         await expect(await codeHeadInput.innerText()).toContain('code-head');
         await codeHeadInput.click();
         await page.keyboard.type("-2");
-        await page.getByTestId('post-settings').getByRole('img').nth(2).click();
+        await page.getByRole('button', { name: 'Done' }).click();
+    
 
         const codeFootInput = await settings.getByTestId('code-foot-input');
         await expect(await codeFootInput.innerText()).toContain('code-foot');
         await codeFootInput.click();
         await page.keyboard.type("-2");
-        await page.getByTestId('post-settings').getByRole('img').nth(3).click();
+        await page.getByRole('button', { name: 'Done' }).click();
+       
 
         await page.getByRole('button', { name: 'Discard' }).click();
         await page.getByTestId('discard-popup').getByRole('button', { name: 'Discard' }).click();

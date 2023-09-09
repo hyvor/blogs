@@ -265,7 +265,7 @@ test.describe('SEO', () => {
         await page.keyboard.press('e');
         await page.keyboard.press('s');
         await page.keyboard.press('t');
-        await page.locator('.icon-button').click();
+        await page.getByRole('button', { name: 'Done' }).click();
         await page.getByRole('button', { name: 'SAVE' }).click();
         await page.reload();
 
@@ -629,7 +629,7 @@ test.describe('Comments & Newsletter', () => {
     consoleTest('Comments Embed Code', async ({testingApi, console, page}) => {
         await page.locator('.CodeMirror-lines').first().click();
         await page.getByRole('textbox').first().fill('Test code');
-        await page.locator('.icon-button').click();
+        await page.getByRole('button', { name: 'Done' }).click();
         await page.getByRole('button', { name: 'SAVE' }).click();
         await page.reload();
 
@@ -639,7 +639,7 @@ test.describe('Comments & Newsletter', () => {
     consoleTest('Newsletter Singup Form Code', async ({testingApi, console, page}) => {
         await page.locator('pre').nth(3).click();
         await page.getByRole('textbox').nth(1).fill('Test code2');
-        await page.locator('.icon-button').click();
+        await page.getByRole('button', { name: 'Done' }).click();
         await page.getByRole('button', { name: 'SAVE' }).click();
         await page.reload();
 
