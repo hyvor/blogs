@@ -14,7 +14,7 @@ import {
     liftListItem,
 } from "prosemirror-schema-list";
 import { Command, EditorState, NodeSelection, Selection } from "prosemirror-state";
-import { Schema } from "prosemirror-model";
+import { ResolvedPos, Schema } from "prosemirror-model";
 import { EditorView } from "prosemirror-view";
 
 export default function keymapPlugins(schema: Schema) {
@@ -53,6 +53,22 @@ export default function keymapPlugins(schema: Schema) {
         )
     );
 
+    function getAllParentsFromSelection(state: { doc: { nodeAt: (arg0: any) => any; }; }, selection: { $from: any; $to: any; }) {
+        const selectionStart: ResolvedPos = selection.$from;
+        let depth = selectionStart.depth;
+        let parent;
+        const parentList = [];
+        do {
+        parent = selectionStart.node(depth);
+        if (parent) {
+            parentList.push(parent);
+            depth--;
+        }
+        } while (depth > 0 && parent);
+
+        return parentList;
+      }
+
     const commonEnterAndArrowDown : Command = (state, dispatch) => {
         const selection = state.selection;
 
@@ -60,11 +76,8 @@ export default function keymapPlugins(schema: Schema) {
             // something was selected
             return false;
 
-        // If the cursor is in a list item, return false
-        // @ts-ignore (TODO: fix this)
-        const { path } = selection.$to;
-        // @ts-ignore (TODO: fix this)
-        if (path.some(item => item?.type?.name === "list_item"))
+        const parents = getAllParentsFromSelection(state, selection);
+        if (parents.some(item => item?.type?.name === "list_item"))
             return false;
 
         /**
