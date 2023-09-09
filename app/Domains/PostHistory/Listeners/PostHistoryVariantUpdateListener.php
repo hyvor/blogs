@@ -11,7 +11,10 @@ class PostHistoryVariantUpdateListener
     public function handle(PostVariantUpdatedEvent $event) : void
     {
 
-        if ($event->variant->content !== $event->variantOld->content) {
+        if (
+            $event->variant->content !== $event->variantOld->content &&
+            $event->variant->content
+        ) {
             PostHistoryService::createHistory($event->variant);
         }
 
