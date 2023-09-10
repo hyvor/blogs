@@ -52,7 +52,7 @@ const userBlogsLogic = kea<userBlogsLogicType>([
 
     reducers({
         blogs: [
-            [],
+            [] as Array<UserBlog>,
             {
                 addBlog: (state, { userBlog }) => [...state, userBlog],
                 setBlogs: (_, { blogs }) => blogs
