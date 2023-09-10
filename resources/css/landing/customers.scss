@@ -35,6 +35,7 @@ body.customers {
     .customer {
         width: calc(50% - 25px);
         margin-bottom: 25px;
+        position: relative;
 
         img {
             border-radius: 20px;
@@ -51,10 +52,18 @@ body.customers {
         }
 
         .name {
-            padding: 10px;
+            margin: 10px 0;
             text-align: center;
             color: $color-accent;
             font-weight: 600;
+        }
+        .country-logo {
+            vertical-align: middle;
+            font-size: 18px;
+        }
+
+        @media screen and (max-width: 920px) {
+            width: 100%;
         }
     }
 

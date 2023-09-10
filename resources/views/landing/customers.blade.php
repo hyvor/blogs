@@ -2,12 +2,29 @@
 
 $blogs = [
     [
-        'image' => 'hyvor-blog_evzdkh.webp',
-        'url' => 'hyvor.com/blog'
+        'image' => 'hyvorblog_masfzs.webp',
+        'url' => 'hyvor.com/blog',
+        'country' => '🇫🇷',
+    ],
+    [
+        'image' => 'wildworkflows-blog.webp',
+        'url' => 'blog.wildworkflows.com',
+        'country' => '🇬🇧',
+    ],
+    [
+        'image' => 'rpadovani.webp',
+        'url' => 'rpadovani.com',
+        'country' => '🇩🇪',
+    ],
+    [
+        'image' => 'samiramly_cqakpw.webp',
+        'url' => 'samiramly.com',
+        'country' => '🇺🇸'
     ],
     [
         'image' => 'moonshots-blog_vwlnpk.webp',
-        'url' => 'blog.metamoonshots.io'
+        'url' => 'blog.metamoonshots.io',
+        'country' => '🇮🇳',
     ],
     [
         'image' => 'didgii-blog_yuhiqv.webp',
@@ -15,23 +32,38 @@ $blogs = [
     ],
     [
         'image' => 'deflekt_ik0u1p.webp',
-        'url' => 'deflekt.ai/blog'
+        'url' => 'deflekt.ai/blog',
+        'country' => '🇳🇱',
     ],
     [
         'image' => 'cyberhirn-blog_ff1go6.webp',
-        'url' => 'cyberhirn.de'
+        'url' => 'cyberhirn.de',
+        'country' => '🇩🇪',
+    ],
+    [
+        'image' => 'davidhooper_zb90qt.webp',
+        'url' => 'davidhooper.net',
+        'country' => '🇺🇸',
     ],
     [
         'image' => 'supun-blog_hn24y3.webp',
-        'url' => 'supun.io'
+        'url' => 'supun.io',
+        'country' => '🇱🇰/🇫🇷',
     ],
     [
         'image' => 'consevatruth-blog_kglswp.webp',
-        'url' => 'www.conservatruth.com'
+        'url' => 'conservatruthblog.com',
+        'country' => '🇺🇸',
     ],
     [
-        'image' => 'williu-blog_mlwazp.png',
-        'url' => 'willliu.net'
+        'image' => 'eiching.webp',
+        'url' => 'eiching.com',
+        'country' => '🇹🇼'
+    ],
+    [
+        'image' => 'pracazesmakiem_ctcqtv.webp',
+        'url' => 'pracazesmakiem.pl',
+        'country' => '🇵🇱'
     ]
 ];
 
@@ -72,7 +104,7 @@ $blogs = [
                     </a>
                     <div class="name">
                         <a href="//{{ $blog['url'] }}" target="_blank" rel="nofollow">
-                            {{ $blog['url'] }}
+                            {{ $blog['url'] }} <span class="country-logo">{{ $blog['country'] ?? '' }}</span>
                         </a>
                     </div>
                 </div>
