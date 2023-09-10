@@ -47,9 +47,11 @@ const CodeMirrorEditorFullScreen = ({ id = null, initCm, setShowCodeFullScreen, 
     const popupEditorFullScreenClose = () => {
         if (popupEditorLoading.current)
             popupEditorLoading.current = false;
-        else
-            setShowCodeFullScreen(false);
+        else {
+            toggleConfirmPopup();
+        }
     }
+
 
     useEffect(() => {
         initCm(codeFullScreenRef, codeFullScreenCm);
@@ -59,7 +61,7 @@ const CodeMirrorEditorFullScreen = ({ id = null, initCm, setShowCodeFullScreen, 
 
     return <div className='code-fullscreen'>
                 <Popup
-                    onClose={() => popupEditorFullScreenClose()}
+                    onClose={popupEditorFullScreenClose}
                     header={
                         <PopupHeaderDefault title={
                             <div className='code-fullscreen-header'>
@@ -113,7 +115,7 @@ export default function CodemirrorEditor({ id = null, value, onChange, onSave, e
                                     onCancel={() => setShowConfirmPopup(false)}/>
 
     function resetContent() {
-        onChange(saveValue.current);
+        onChange(codeCm.current.doc.getValue());
         setShowConfirmPopup(false);
         setShowCodeFullScreen(false);
     }
