@@ -69,7 +69,7 @@ const CodeMirrorEditorFullScreen = ({ id = null, initCm, setShowCodeFullScreen, 
                                 {filename && <span className='code-fullscreen-filename'>{` - ${filename}`}</span>}
                                 <div className='fullscreen-button-row'>
                                     <div className='fullscreen-cancel-button'>
-                                        <Button onClick={toggleConfirmPopup}>Cancel</Button>
+                                        <Button type="text-only" onClick={toggleConfirmPopup}>Cancel</Button>
                                     </div>
                                     <Button onClick={() => setShowCodeFullScreen(false)}>Done</Button>
                                 </div>
