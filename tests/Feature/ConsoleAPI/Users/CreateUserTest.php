@@ -5,6 +5,7 @@ namespace Tests\Feature\ConsoleAPI\Users;
 use App\Domains\User\Events\UserCreatedEvent;
 use App\Domains\User\Mail\InviteUserMail;
 use Hyvor\HyvorConnecter\Userbase;
+use Illuminate\Http\UploadedFile;
 use Illuminate\Support\Facades\Event;
 use Illuminate\Support\Facades\Mail;
 use Illuminate\Testing\Fluent\AssertableJson;
@@ -108,4 +109,16 @@ it('does not create if the user already exists', function () {
         'role' => 'admin',
     ])->assertUnprocessable()
         ->assertSee('User already exists');
+});
+
+it('fails when limits are exceeded', function() {
+    $blog = blogWithAccess();
+    $blog->setCount('users', 2);
+
+    consoleApi($blog, 'POST', '/user', [
+        'username_or_email' => 'test',
+        'role' => 'admin',
+    ])
+        ->assertUnprocessable()
+        ->assertSee('Max users limit exceeded. Please upgrade your plan');
 });

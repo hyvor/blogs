@@ -1,4 +1,4 @@
-<?php
+<?php declare(strict_types=1);
 
 namespace App\Domains\User;
 
@@ -9,6 +9,7 @@ use App\Domains\Media\Exceptions\UploadException;
 use App\Domains\Media\MediaRepository;
 use App\Domains\Post\PostTagAuthorRepository;
 use App\Domains\Route\PermalinkRepository;
+use App\Domains\Subscription\UsageRepository;
 use App\Domains\User\Events\UserCreatedEvent;
 use App\Domains\User\Events\UserDeletedEvent;
 use App\Domains\User\Events\UserUpdatedEvent;
@@ -341,5 +342,12 @@ class UserRepository
     {
         $user->status = UserStatusEnum::ACTIVE;
         $user->save();
+    }
+
+    public static function hasLimitsExceeded(Blog $blog) : bool
+    {
+        $usage = $blog->getCount('users');
+        $limit = UsageRepository::getLimitsOf($blog, 'users');
+        return $usage >= $limit;
     }
 }

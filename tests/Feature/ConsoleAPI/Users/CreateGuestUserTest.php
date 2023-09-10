@@ -25,3 +25,16 @@ it('creates a guest user', function () {
 
     Event::assertDispatched(UserCreatedEvent::class);
 });
+
+
+
+it('fails when limits are exceeded', function() {
+    $blog = blogWithAccess();
+    $blog->setCount('users', 2);
+
+    consoleApi($blog, 'POST', '/user/guest', [
+        'name' => 'guest'
+    ])
+        ->assertUnprocessable()
+        ->assertSee('Max users limit exceeded. Please upgrade your plan');
+});

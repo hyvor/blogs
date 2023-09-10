@@ -3,6 +3,7 @@
 namespace Tests\Feature\ConsoleAPI\Media;
 
 use App\Domains\Route\PermalinkRepository;
+use Illuminate\Http\UploadedFile;
 use Illuminate\Support\Facades\Http;
 
 it('uploads from url', function() {
@@ -46,5 +47,19 @@ it('rejects uploading larger files', function() {
     ])
         ->assertUnprocessable()
         ->assertSee('File size is too large');
+
+});
+
+
+it('throws error when media size exceeded', function() {
+
+    $blog = blogWithAccess();
+    $blog->setCount('media', 10**9*2);
+
+    consoleApi($blog, 'POST', '/media/from-url', [
+        'url' => 'https://test.com'
+    ])
+        ->assertUnprocessable()
+        ->assertSee('Total storage limit exceeded. Please upgrade your plan.');
 
 });

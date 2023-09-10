@@ -6,6 +6,7 @@ use App\Data\Objects\ConsoleAPI\Media\MediaObject;
 use App\Data\Objects\ConsoleAPI\Media\UnsplashImageObject;
 use App\Domains\Media\MediaRepository;
 use App\Domains\Media\Services\UnsplashService;
+use App\Exceptions\TrustedException;
 use App\Http\Controllers\Controller;
 use App\Models\Blog;
 use App\Models\Media;
@@ -54,14 +55,20 @@ class ConsoleMediaController extends Controller
         return response()->json($media);
     }
 
-    public static function uploadFile(Request $request, Blog $blog)
+    public static function uploadFile(Request $request, Blog $blog) : JsonResponse
     {
         $request->validate([
             'file' => 'required|file|max:'.config('limits.max_media_upload_size_kb'),
             'post_id' => 'integer'
         ]);
+
+        if (MediaRepository::hasLimitsExceeded($blog)) {
+            throw new TrustedException('Total storage limit exceeded. Please upgrade your plan.');
+        }
+
+        /** @var \Illuminate\Http\UploadedFile $file */
         $file = $request->file('file');
-        $postId = $request->input('post_id');
+        $postId = $request->has('post_id') ? $request->integer('post_id') : null;
 
         $media = MediaRepository::upload($blog, $file, $postId);
 
@@ -76,6 +83,10 @@ class ConsoleMediaController extends Controller
             'post_id' => 'integer|nullable'
         ]);
 
+        if (MediaRepository::hasLimitsExceeded($blog)) {
+            throw new TrustedException('Total storage limit exceeded. Please upgrade your plan.');
+        }
+
         $url = (string) $request->string('url');
         $postId = $request->has('post_id') ? $request->integer('post_id') : null;
 
@@ -85,12 +96,13 @@ class ConsoleMediaController extends Controller
 
     }
 
-    public static function deleteFile(Media $media)
+    public static function deleteFile(Media $media) : JsonResponse
     {
         MediaRepository::delete($media);
+        return response()->json();
     }
 
-    public static function searchUnsplash(Request $request)
+    public static function searchUnsplash(Request $request) : JsonResponse
     {
         $request->validate([
             'search' => 'required|string',

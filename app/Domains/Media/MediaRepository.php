@@ -1,10 +1,11 @@
-<?php
+<?php declare(strict_types=1);
 
 namespace App\Domains\Media;
 
 use App\Domains\Media\Events\MediaCreatedEvent;
 use App\Domains\Media\Events\MediaDeletedEvent;
 use App\Domains\Media\Exceptions\UploadException;
+use App\Domains\Subscription\UsageRepository;
 use App\Models\Blog;
 use App\Models\Media;
 use Illuminate\Database\Eloquent\Collection;
@@ -64,12 +65,12 @@ class MediaRepository
             ->get();
     }
 
-    public static function getOne(int $id)
+    public static function getOne(int $id) : ?Media
     {
         return Media::find($id);
     }
 
-    public static function getByBlogIdAndName(int $blogId, string $name)
+    public static function getByBlogIdAndName(int $blogId, string $name) : ?Media
     {
         return Media::where('blog_id', $blogId)
             ->where('name', $name)
@@ -81,6 +82,10 @@ class MediaRepository
         try {
             $prefix = self::getPathPrefix($blog->id);
             $path = Storage::putFile($prefix, $file);
+
+            if (!$path) {
+                throw new UploadException('Error while uploading');
+            }
 
             $fileName = self::getFileNameFromPath($path);
         } catch (\Exception $e) {
@@ -147,15 +152,20 @@ class MediaRepository
         return $media;
     }
 
-    public static function getContents(Media $media)
+    public static function getContents(Media $media) : ?string
     {
-        $content = Storage::get(self::getPath($media->blog_id, $media->name));
+        $name = $media->name;
+        if (!$name)
+            return null;
 
-        return $content;
+        return Storage::get(self::getPath($media->blog_id, $name));
     }
 
-    public static function delete(Media $media)
+    public static function delete(Media $media) : void
     {
+        if (!$media->name)
+            return;
+
         $path = self::getPath($media->blog_id, $media->name);
 
         if ($path) {
@@ -167,20 +177,27 @@ class MediaRepository
         MediaDeletedEvent::dispatch($media);
     }
 
-    private static function getPathPrefix(int $blogId)
+    private static function getPathPrefix(int $blogId) : string
     {
         return "blog/$blogId";
     }
 
-    private static function getPath(int $blogId, string $filName)
+    private static function getPath(int $blogId, string $filName) : string
     {
         return self::getPathPrefix($blogId).'/'.$filName;
     }
 
-    private static function getFileNameFromPath(string $path)
+    private static function getFileNameFromPath(string $path) : string
     {
         $split = explode('/', $path);
 
         return $split[count($split) - 1];
+    }
+
+    public static function hasLimitsExceeded(Blog $blog) : bool
+    {
+        $usage = $blog->getCount('media');
+        $limit = UsageRepository::getLimitsOf($blog, 'media');
+        return $usage >= $limit;
     }
 }

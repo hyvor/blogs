@@ -29,7 +29,7 @@ class UsageRepository
 
     /**
      * @param Blog $blog
-     * @return array{users: int, media: int, auto_translate: int}
+     * @return array{users: int, media: int, auto_translate: int, gpt: int}
      */
     private static function getLimits(Blog $blog): array
     {
@@ -67,6 +67,12 @@ class UsageRepository
             'auto_translate' => $autoTranslateChars,
             'gpt' => $gptTokens
         ];
+    }
+
+    public static function getLimitsOf(Blog $blog, string $type): int
+    {
+        $limits = self::getLimits($blog);
+        return $limits[$type];
     }
 
 

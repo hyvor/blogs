@@ -47,3 +47,16 @@ it('limits file size', function () {
         ->assertUnprocessable()
         ->assertSee(['must', 'not', 'kilobytes']);
 });
+
+it('throws error when media size exceeded', function() {
+
+    $blog = blogWithAccess();
+    $blog->setCount('media', 10**9*2);
+
+    consoleApi($blog, 'POST', '/media', [
+        'file' => UploadedFile::fake()->image('image.png')->size(100),
+    ])
+        ->assertUnprocessable()
+        ->assertSee('Total storage limit exceeded. Please upgrade your plan.');
+
+});

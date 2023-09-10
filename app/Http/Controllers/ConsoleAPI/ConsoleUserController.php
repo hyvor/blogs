@@ -1,4 +1,4 @@
-<?php
+<?php declare(strict_types=1);
 
 namespace App\Http\Controllers\ConsoleAPI;
 
@@ -13,12 +13,14 @@ use App\Models\Blog;
 use App\Models\Language;
 use App\Models\User;
 use Hyvor\HyvorConnecter\Userbase;
+use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use Illuminate\Validation\Rules\Enum;
+use Illuminate\View\View;
 
 class ConsoleUserController extends Controller
 {
-    public static function get(Request $request, Blog $blog)
+    public static function get(Request $request, Blog $blog) : JsonResponse
     {
         $request->validate([
             'offset' => 'integer',
@@ -32,7 +34,7 @@ class ConsoleUserController extends Controller
         return response()->json($users);
     }
 
-    public static function search(Request $request, Blog $blog)
+    public static function search(Request $request, Blog $blog) : JsonResponse
     {
         $request->validate([
             'search' => 'required|string',
@@ -46,12 +48,16 @@ class ConsoleUserController extends Controller
         return response()->json($users);
     }
 
-    public static function create(Request $request, Blog $blog)
+    public static function create(Request $request, Blog $blog) : JsonResponse
     {
         $request->validate([
             'username_or_email' => 'required|string',
             'role' => ['required', new Enum(UserRoleEnum::class)],
         ]);
+
+        if (UserRepository::hasLimitsExceeded($blog)) {
+            throw new TrustedException('Max users limit exceeded. Please upgrade your plan');
+        }
 
         $usernameOrEmail = $request->input('username_or_email');
         $role = UserRoleEnum::from($request->input('role'));
@@ -81,11 +87,15 @@ class ConsoleUserController extends Controller
         return response()->json(new UserObject($user, $blog));
     }
 
-    public static function createGuest(Request $request, Blog $blog)
+    public static function createGuest(Request $request, Blog $blog) : JsonResponse
     {
         $request->validate([
             'name' => 'required|string',
         ]);
+
+        if (UserRepository::hasLimitsExceeded($blog)) {
+            throw new TrustedException('Max users limit exceeded. Please upgrade your plan');
+        }
 
         $name = $request->input('name');
 
@@ -94,7 +104,7 @@ class ConsoleUserController extends Controller
         return response()->json(new UserObject($user, $blog));
     }
 
-    public static function update(Request $request, User $user, Blog $blog)
+    public static function update(Request $request, User $user, Blog $blog) : JsonResponse
     {
         $validators = [
             'hyvor_user_id' => 'integer|nullable',
@@ -161,21 +171,21 @@ class ConsoleUserController extends Controller
         return response()->json(new UserObject($user, $blog));
     }
 
-    public static function delete(User $user)
+    public static function delete(User $user) : JsonResponse
     {
         UserRepository::deleteUser($user);
 
         return response()->json();
     }
 
-    public static function createVariant(Blog $blog, User $user, Language $language)
+    public static function createVariant(Blog $blog, User $user, Language $language) : JsonResponse
     {
         $variant = UserRepository::createUserVariant($user, $language);
 
         return response()->json(new UserVariantObject($variant, $user, $blog));
     }
 
-    public static function updateVariant(Request $request, Blog $blog, User $user, Language $language)
+    public static function updateVariant(Request $request, Blog $blog, User $user, Language $language) : JsonResponse
     {
         $variant = UserRepository::getUserVariantByUserIdAndLanguageId($user->id, $language->id);
 
@@ -205,7 +215,7 @@ class ConsoleUserController extends Controller
         return response()->json(new UserVariantObject($variant, $user, $blog));
     }
 
-    public static function deleteVariant(User $user, Language $language)
+    public static function deleteVariant(User $user, Language $language) : JsonResponse
     {
         if ($language->is_primary) {
             throw new TrustedException(
@@ -225,7 +235,7 @@ class ConsoleUserController extends Controller
         return response()->json();
     }
 
-    public static function acceptInvite(Request $request)
+    public static function acceptInvite(Request $request) : mixed
     {
         $request->validate([
             'user_id' => 'required|integer',
@@ -243,6 +253,14 @@ class ConsoleUserController extends Controller
         $userId = $request->input('user_id');
         $user = UserRepository::getUserById($userId);
 
+        if (!$user) {
+            return response()->view('confirmation', [
+                'type' => 'error',
+                'title' => 'User not found',
+                'description' => 'Unable to accept the invitation. User not found.',
+            ], 422);
+        }
+
         UserRepository::activateUser($user);
 
         return view('confirmation', [
@@ -251,7 +269,7 @@ class ConsoleUserController extends Controller
         ]);
     }
 
-    public function resendInvite(User $user)
+    public function resendInvite(User $user) : JsonResponse
     {
         if ($user->status !== UserStatusEnum::INVITED) {
             throw new TrustedException('User is not invited');
