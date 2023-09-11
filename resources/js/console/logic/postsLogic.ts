@@ -40,6 +40,7 @@ const postsLogic = kea<postsLogicType>([
          * we want seperate loading states
          */
         loadPostsList: async () => {
+            try {
             const filters = values.filters
             const posts = await api.get<Post[]>(props.subdomain, '/posts', getPostParamsFromFilters(filters));
             posts.forEach(post => {
@@ -48,6 +49,9 @@ const postsLogic = kea<postsLogicType>([
             })
             actions.setPostsListHasMore(posts.length === 50);
             actions.setPostsList(posts.map(val => val.id))
+            } catch (e) {
+                console.log(e)
+            }
         },
 
         loadPostsListMore: async ({offset}) => {

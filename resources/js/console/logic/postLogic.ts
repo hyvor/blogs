@@ -1,4 +1,4 @@
-import {actions, events, kea, key, listeners, path, props, reducers, selectors} from "kea";
+import {actions, defaults, events, kea, key, listeners, path, props, reducers, selectors} from "kea";
 import api from "../lib/api";
 import postsLogic from "./postsLogic";
 import type { postLogicType } from "./postLogicType";
@@ -10,8 +10,9 @@ import languagesLogic from "./languagesLogic";
 import {PostEditorState} from "../states";
 import merge from "deepmerge";
 import userBlogsLogic from "./userBlogsLogic";
-import { SeoAnalyzer } from "../Posts/Post/New/Seo/seo-analyzer";
+import { Output, SeoAnalyzer } from "../Posts/Post/New/Seo/seo-analyzer";
 import { calculateLinkAnalysis, getLinksFromContent } from "../Posts/Post/New/Links/links";
+import { subscriptions } from 'kea-subscriptions'
 
 export type PostDiff = Omit<Post, 'authors' | 'tags'> & {
     authors: number[],
@@ -50,6 +51,13 @@ const postLogic = kea<postLogicType>([
     key(props => props.id),
     path(key => ['post', key]),
 
+    defaults(({props}) => {
+        return {
+            post: props.data || {} as Post,
+            postOriginal: props.data || {} as Post,
+        }
+    }),
+
     actions(({values}) => ({
         setBoth: (obj: Post) => ({obj}),
         set: (obj: Post) => ({obj}),
@@ -66,7 +74,9 @@ const postLogic = kea<postLogicType>([
         updateCurrentPostVariant: (update: Partial<PostVariant> & {language_id: number}) => ({update}),
         addVariant: (variant: PostVariant) => ({variant}),
         removeVariant: (languageId: number) => ({languageId}),
-        changeEditorState: (key: keyof PostEditorState, value: any) => ({key, value})
+        changeEditorState: (key: keyof PostEditorState, value: any) => ({key, value}),
+
+        setCurrentVariantSeoResults: (results: Output) => ({results})
     })),
 
     ajax(({actions, selectors, props, values}) => ({
@@ -280,6 +290,16 @@ const postLogic = kea<postLogicType>([
                     {...state, [key]: value} as PostEditorState
                 )
             }
+        ],
+
+        currentVariantSeoResults: [
+            {
+                average: 0,
+                tests: []
+            } as Output,
+            {
+                setCurrentVariantSeoResults: (_, {results}) => results
+            }
         ]
 
     })),
@@ -344,8 +364,9 @@ const postLogic = kea<postLogicType>([
 
         currentVariant: [
             s => [s.post, s.editorState],
-            (post, editorState) : PostVariant =>
-                post.variants.find(v => v.language_id === editorState.languageId) as PostVariant
+            (post, editorState) : PostVariant => {
+                return post.variants.find(v => v.language_id === editorState.languageId) as PostVariant
+            }
         ],
 
         currentVariantDiff: [
@@ -372,7 +393,7 @@ const postLogic = kea<postLogicType>([
             (editorState, getLang) : Language => getLang(editorState.languageId) as Language
         ],
 
-        currentVariantSeoResults: [
+        /* currentVariantSeoResults: [
             s => [s.currentVariant],
             (currentVariant) => {
                 console.log('calculating seo results', currentVariant.id)
@@ -392,7 +413,7 @@ const postLogic = kea<postLogicType>([
                         JSON.stringify(getSeoResultsInput(b));
                 }
             }
-        ],
+        ], */
 
         currentVariantLinkAnalysis: [
             s => [s.currentVariant],
@@ -400,6 +421,50 @@ const postLogic = kea<postLogicType>([
         ]
 
     }),
+
+    subscriptions(({actions, values, props}) => ({
+        currentVariant: (currentVariant: PostVariant, oldValue: PostVariant|undefined) => {
+
+            function analyzeSeo() {
+                console.log("CALCULATING SEO RESULTS", currentVariant.id);
+
+                const userBlog = userBlogsLogic().values.findBlogBySubdomain(getSubdomain());
+                const language = languagesLogic({subdomain: getSubdomain()}).values.getLanguageById(currentVariant.language_id);
+                const blogUrl = userBlog.blog.base_url;
+                const analyzer = new SeoAnalyzer({
+                    ...getSeoResultsInput(currentVariant),
+                    blogUrl,
+                    languageCode: language?.code || 'en',
+                });
+                const results = analyzer.analyze();
+                actions.setCurrentVariantSeoResults(results);
+            }
+
+            if (!oldValue) {
+                return analyzeSeo();
+            }
+
+            const currentVariantInput = getSeoResultsInput(currentVariant);
+            const oldValueInput = getSeoResultsInput(oldValue);
+
+            if (JSON.stringify(currentVariantInput) === JSON.stringify(oldValueInput)) {
+                return;
+            }
+
+            if (currentVariantInput.content !== oldValueInput.content) {
+                // wait 250ms before calculating seo results on content change
+                if (SEO_CALCULATION_TIMEOUTS[currentVariant.id]) {
+                    clearTimeout(SEO_CALCULATION_TIMEOUTS[currentVariant.id]);
+                }
+                SEO_CALCULATION_TIMEOUTS[currentVariant.id] = setTimeout(analyzeSeo, 250);
+            } else {
+                // for other changes calculate seo results immediately
+                analyzeSeo();
+            }
+
+
+        }
+    })),
 
     events(({actions, values, props}) => ({
         afterMount: () =>  {
@@ -415,6 +480,9 @@ const postLogic = kea<postLogicType>([
     }))
 
 ])
+
+// post variant id: date
+const SEO_CALCULATION_TIMEOUTS = {} as {[key: number]: ReturnType<typeof setTimeout>};
 
 function getSeoResultsInput(variant: PostVariant) {
     return {

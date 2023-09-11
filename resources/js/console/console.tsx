@@ -14,11 +14,13 @@ import 'prosemirror-codemark/dist/codemark.css';
 import {createRoot} from "react-dom/client";
 import { ajaxPlugin } from 'kea-ajax'
 import dayjs from "dayjs";
+import { subscriptionsPlugin } from 'kea-subscriptions'
 
 import '../integrations/sentry';
 
 resetContext({
     plugins: [
+        subscriptionsPlugin,
         routerPlugin(),
         ajaxPlugin()
     ]
