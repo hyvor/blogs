@@ -140,7 +140,6 @@
         .text-editor {
             flex:1;
             overflow: auto;
-            position: relative;
             .CodeMirror {
                 padding: 10px 0 60px 0;
                 border-radius: 0;
@@ -149,7 +148,7 @@
         }
 
         .save-button-wrap {
-            position: fixed;
+            position: absolute;
             bottom: 15px;
             left: 50%;
             transform: translateX(-50%);
