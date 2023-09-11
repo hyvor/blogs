@@ -373,21 +373,24 @@ const postLogic = kea<postLogicType>([
         ],
 
         currentVariantSeoResults: [
-            s => [s.currentVariant, s.currentLanguage],
-            (currentVariant, currentLanguage) => {
+            s => [s.currentVariant],
+            (currentVariant) => {
+                console.log('calculating seo results', currentVariant.id)
                 const userBlog = userBlogsLogic().values.findBlogBySubdomain(getSubdomain());
+                const language = languagesLogic({subdomain: getSubdomain()}).values.getLanguageById(currentVariant.language_id);
                 const blogUrl = userBlog.blog.base_url;
                 const analyzer = new SeoAnalyzer({
-                    primaryKeyword: currentVariant.seo_primary_keyword,
-                    secondaryKeywords: currentVariant.seo_secondary_keywords,
-                    title: currentVariant.title || '',
-                    slug: currentVariant.slug || '',
-                    description: currentVariant.description || '',
-                    content: currentVariant.content_unsaved || currentVariant.content,
+                    ...getSeoResultsInput(currentVariant),
                     blogUrl,
-                    languageCode: currentLanguage.code
+                    languageCode: language?.code || 'en',
                 });
                 return analyzer.analyze();
+            },
+            {
+                equalityCheck: (a, b) => {
+                    return JSON.stringify(getSeoResultsInput(a)) === 
+                        JSON.stringify(getSeoResultsInput(b));
+                }
             }
         ],
 
@@ -412,6 +415,17 @@ const postLogic = kea<postLogicType>([
     }))
 
 ])
+
+function getSeoResultsInput(variant: PostVariant) {
+    return {
+        primaryKeyword: variant.seo_primary_keyword,
+        secondaryKeywords: variant.seo_secondary_keywords,
+        title: variant.title || '',
+        slug: variant.slug || '',
+        description: variant.description || '',
+        content: variant.content_unsaved || variant.content
+    };
+}
 
 /**
  * Merges diff with update (for forced save) in a variant-safe manner
