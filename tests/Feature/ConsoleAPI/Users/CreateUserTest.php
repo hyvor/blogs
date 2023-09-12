@@ -2,6 +2,7 @@
 
 namespace Tests\Feature\ConsoleAPI\Users;
 
+use App\Data\Enums\SubscriptionPlanEnum;
 use App\Domains\User\Events\UserCreatedEvent;
 use App\Domains\User\Mail\InviteUserMail;
 use Hyvor\HyvorConnecter\Userbase;
@@ -99,12 +100,16 @@ it('does not create if the user is not found', function () {
 });
 
 it('does not create if the user already exists', function () {
-    consoleApi($this->blog, 'POST', '/user', [
+
+    $blog = blogWithAccessLanguageAndRoutes();
+    createSubscription($blog, SubscriptionPlanEnum::PREMIUM);
+
+    consoleApi($blog, 'POST', '/user', [
         'username_or_email' => $this->username,
         'role' => 'admin',
     ])->assertOk();
 
-    consoleApi($this->blog, 'POST', '/user', [
+    consoleApi($blog, 'POST', '/user', [
         'username_or_email' => $this->username,
         'role' => 'admin',
     ])->assertUnprocessable()
