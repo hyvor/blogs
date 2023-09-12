@@ -381,8 +381,8 @@ export interface PaddleSubscriptionInfo {
     email: string,
 
     card_brand: string,
-    card_last_four: string,
-    card_expiration: string,
+    card_last_four: string | null,
+    card_expiration: string | null,
 
     update_url: string,
 

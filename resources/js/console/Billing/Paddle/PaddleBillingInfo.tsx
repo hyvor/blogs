@@ -122,14 +122,20 @@ function InfoSection({info} : {info: PaddleSubscriptionInfo}) {
                         <div className="card-detail-name">Type</div>
                         <div>{ info.card_brand.toUpperCase() }</div>
                     </div>
-                    <div>
-                        <div className="card-detail-name">Card Ending</div>
-                        <div>{ info.card_last_four }</div>
-                    </div>
-                    <div>
-                        <div className="card-detail-name">Card Expiration</div>
-                        <div>{ info.card_expiration }</div>
-                    </div>
+                    {
+                        info.card_last_four &&
+                        <div>
+                            <div className="card-detail-name">Card Ending</div>
+                            <div>{ info.card_last_four }</div>
+                        </div>
+                    }
+                    {
+                        info.card_expiration &&
+                        <div>
+                            <div className="card-detail-name">Card Expiration</div>
+                            <div>{ info.card_expiration }</div>
+                        </div>
+                    }
                 </div>
             </div>
         </div>
