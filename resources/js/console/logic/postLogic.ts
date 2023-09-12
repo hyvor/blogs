@@ -455,7 +455,7 @@ const postLogic = kea<postLogicType>([
                 // wait 250ms before calculating seo results on content change
                 if (SEO_CALCULATION_TIMEOUTS[currentVariant.id]) {
                     clearTimeout(SEO_CALCULATION_TIMEOUTS[currentVariant.id]);
-                }
+                }            
                 SEO_CALCULATION_TIMEOUTS[currentVariant.id] = setTimeout(analyzeSeo, 250);
             } else {
                 // for other changes calculate seo results immediately

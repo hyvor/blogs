@@ -866,13 +866,20 @@ c30.27,0,54.64-24.37,54.64-54.64v-1419l-363.61-362.75L1258.7,336.75z"/>
 
         <div class="web-frameworks">
 
-            <h3>Web Framework Integrations</h3>
+            <h3>Sub-Directory Hosting</h3>
 
             <p>
-                Host your blog within your web applications. More integrations are coming soon!
+                Host your blog at <strong>/blog</strong> of your web app.
             </p>
 
             <div class="frameworks">
+
+                {{-- <a href="https://hyvor.com/blog/cloudflare-workers-blog" target="_blank">
+                    <img src="/img/landing/frameworks/cf-workers.svg" alt="Cloudflare Workers Logo" />
+                    <span>
+                        Cloudflare <br> Workers
+                    </span>
+                </a> --}}
 
                 <a href="https://hyvor.com/blog/nextjs-blog" target="_blank">
                     <img src="/img/landing/frameworks/next.svg" alt="Next.js Logo" />

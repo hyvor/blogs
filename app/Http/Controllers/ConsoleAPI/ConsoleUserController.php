@@ -250,7 +250,7 @@ class ConsoleUserController extends Controller
             ], 422);
         }
 
-        $userId = $request->input('user_id');
+        $userId = $request->integer('user_id');
         $user = UserRepository::getUserById($userId);
 
         if (!$user) {
