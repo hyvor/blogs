@@ -1,5 +1,5 @@
 import dayjs from "dayjs";
-import {actions, kea, key, listeners, path, props, reducers} from "kea";
+import {actions, kea, key, listeners, path, props, reducers, selectors} from "kea";
 import api from "../lib/api";
 import postLogic from "./postLogic";
 
@@ -26,6 +26,7 @@ const postsLogic = kea<postsLogicType>([
         navigateToPosts: () => false,
 
         setActivePostId: (id: number | null) => ({id}),
+        addLoadedPostIds: (ids: number[]) => ({ids}),
     }),
 
     actionToUrl(({ props }) => ({
@@ -35,23 +36,28 @@ const postsLogic = kea<postsLogicType>([
 
     ajax(({ values, props, actions }) => ({
 
+        loadPost: async({id}: {id: number}) => {
+            const post = await api.get<Post>(props.subdomain, `/post/${id}`);
+            const builtPostLogic = postLogic.build({id, data: post});
+            builtPostLogic.mount();
+            actions.addLoadedPostIds([id])
+        },
+
         /**
          * First and more loading uses seperate actiosn because
          * we want seperate loading states
          */
         loadPostsList: async () => {
-            try {
             const filters = values.filters
             const posts = await api.get<Post[]>(props.subdomain, '/posts', getPostParamsFromFilters(filters));
             posts.forEach(post => {
                 const builtPostLogic = postLogic.build({id: post.id, data: post});
                 builtPostLogic.mount();
             })
+
+            actions.addLoadedPostIds(posts.map(val => val.id))
             actions.setPostsListHasMore(posts.length === 50);
             actions.setPostsList(posts.map(val => val.id))
-            } catch (e) {
-                console.log(e)
-            }
         },
 
         loadPostsListMore: async ({offset}) => {
@@ -84,6 +90,13 @@ const postsLogic = kea<postsLogicType>([
     })),
 
     reducers(({props}) => ({
+
+        loadedPostIds: [
+            [] as number[],
+            {
+                addLoadedPostIds: (state, {ids}) => [...state, ...ids]
+            }
+        ],
 
         activePostId: [
             null as null | number,
@@ -129,6 +142,15 @@ const postsLogic = kea<postsLogicType>([
         ]
 
     })),
+
+    selectors(() => ({
+
+        hasPostLoaded: [
+            (s) => [s.loadedPostIds],
+            (loadedPostIds) => (id: number) => loadedPostIds.includes(id)
+        ]
+
+    }))
 
 ])
 

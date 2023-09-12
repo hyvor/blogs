@@ -1,4 +1,4 @@
-import React, { useRef } from 'react';
+import React, { useEffect, useRef } from 'react';
 import Loader from '../../ReusableComponents/Loader';
 import { usePostValues, usePostActions } from "./helpers";
 import useSave from './useSave'
@@ -7,11 +7,40 @@ import pagesLogic from "../../logic/pagesLogic";
 import PostLeft from './New/PostLeft';
 import PostRight from './New/PostRight';
 import { CaretLeftFill } from 'react-bootstrap-icons';
-import { useMountedLogic } from "kea";
+import { useMountedLogic, useValues } from "kea";
 import gptLogic from "../../logic/gptLogic";
 import Discarder from './Discarder';
 
-export default function Post({ id, subdomain, type }: { id: number, subdomain: string, type: string }) {
+interface Props { 
+    id: number, 
+    subdomain: string, 
+    type: string 
+}
+
+export default function Post(props : Props) {
+
+    const postsLogicInst = postsLogic({ subdomain: props.subdomain });
+    const { hasPostLoaded } = useValues(postsLogicInst)
+
+    const postLoaded = hasPostLoaded(props.id);
+
+    useEffect(() => {
+        if (!postLoaded) {
+            postsLogicInst.actions.loadPost({id: props.id});
+        }
+    }, [postLoaded])
+
+    if (!postLoaded) {
+        return <div className="post-loading">
+            <Loader />
+        </div>;
+    }
+
+    return <PostInner {...props} />
+
+}
+
+function PostInner({ id, subdomain, type } : Props) {
 
     // mount logic
     useMountedLogic(gptLogic({id}))

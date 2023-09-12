@@ -466,18 +466,7 @@ const postLogic = kea<postLogicType>([
         }
     })),
 
-    events(({actions, values, props}) => ({
-        afterMount: () =>  {
-            if (values.post.id)
-                return;
-
-            if (props.data) {
-                actions.setBoth(props.data);
-            } else {
-                actions.loadPost();
-            }
-        }
-    }))
+    events(({actions, values, props}) => ({}))
 
 ])
 
