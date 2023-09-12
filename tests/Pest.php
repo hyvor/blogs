@@ -27,8 +27,6 @@ uses(TestCase::class)->in('Feature', 'Unit');
 
 uses()->beforeEach(function () {
 
-    config(['laravelcloudflare.enabled' => false]);
-
     $this->blog = Blog::find(config('test.blog_id'));
     $this->user = User::where('hyvor_user_id', config('test.hyvor_user_id'))->first();
 

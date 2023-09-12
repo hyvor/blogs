@@ -22,6 +22,7 @@ class CreateBlogsTable extends Migration
             $table->string('ip')->nullable();
 
             $table->boolean('is_blocked')->default(false);
+            $table->timestamp('blocked_at')->nullable();
 
             // connections
             $table->bigInteger('hyvor_user_id')->nullable(); // hyvor user id (owner)

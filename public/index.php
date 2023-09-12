@@ -44,6 +44,8 @@ require __DIR__.'/../vendor/autoload.php';
 |
 */
 
+require_once __DIR__ . '/../bootstrap/cloudflare.php';
+
 $app = require_once __DIR__.'/../bootstrap/app.php';
 
 $kernel = $app->make(Kernel::class);

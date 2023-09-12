@@ -41,7 +41,6 @@
         "league/flysystem-aws-s3-v3": "^3.0",
         "masterminds/html5": "^2.7",
         "meilisearch/meilisearch-php": "1.1.1",
-        "monicahq/laravel-cloudflare": "^3.5",
         "nelexa/zip": "^4.0",
         "openai-php/laravel": "^0.6.3",
         "padaliyajay/php-autoprefixer": "^1.3",

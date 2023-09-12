@@ -22,6 +22,7 @@ export interface appConfig {
 
     hyvorUser: any,
     blogs: UserBlog[],
+    is_blocked: boolean,
 
     domains: {
         app: string,

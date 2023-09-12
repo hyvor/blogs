@@ -1,10 +1,10 @@
-import React from 'react';
+import React, { ReactNode } from 'react';
 
 /**
  * There are lot of instances where you want to show no-results section
  */
 interface NoResultsProps {
-    text: string,
+    text: ReactNode,
     padding?: number,
     imageWidth?: number
 }

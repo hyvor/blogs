@@ -4,6 +4,7 @@ namespace App\Http\Controllers\ConsoleAPI;
 
 use App\Data\Objects\ConsoleAPI\UserBlog\UserBlogObject;
 use App\Domains\User\UserBlogRepository;
+use App\Domains\User\UserRepository;
 use App\Http\Controllers\Controller;
 use Hyvor\HyvorConnecter\Login;
 use Hyvor\HyvorConnecter\Redirect;
@@ -12,7 +13,7 @@ use Illuminate\Http\Request;
 
 class ConsoleViewController extends Controller
 {
-    public function __invoke(Request $request)
+    public function __invoke(Request $request) : mixed
     {
         $hyvorUser = Login::check();
 
@@ -29,6 +30,8 @@ class ConsoleViewController extends Controller
 
             'hyvorUser' => $hyvorUser,
             'blogs' => $blogs,
+
+            'is_blocked' => UserRepository::isBlocked($hyvorUser->id),
 
             // static
 

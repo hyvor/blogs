@@ -28,10 +28,16 @@ resetContext({
 
 import relativeTime from 'dayjs/plugin/relativeTime'
 import { GlobalImageUploader } from './ReusableComponents/ImageUploader/ImageUploader';
+import { appConfig } from "./helpers";
+import UserBlocked from "./Views/UserBlocked";
 
 dayjs.extend(relativeTime);
 
 function App() {
+
+    if (appConfig().is_blocked) {
+        return <UserBlocked />
+    }
     
     return <div>
         <Scene />

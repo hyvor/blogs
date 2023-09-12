@@ -19,6 +19,7 @@ use App\Domains\User\Events\UserVariantUpdatedEvent;
 use App\Domains\User\Mail\InviteUserMail;
 use App\Exceptions\SafetyException;
 use App\Helpers\CollectionWithTotal;
+use App\Models\BlockedUser;
 use App\Models\Blog;
 use App\Models\Language;
 use App\Models\User;
@@ -349,5 +350,12 @@ class UserRepository
         $usage = $blog->getCount('users');
         $limit = UsageRepository::getLimitsOf($blog, 'users');
         return $usage >= $limit;
+    }
+
+
+    public static function isBlocked(int $hyvorUserId) : bool
+    {
+        return BlockedUser::where('hyvor_user_id', $hyvorUserId)
+            ->exists();
     }
 }
