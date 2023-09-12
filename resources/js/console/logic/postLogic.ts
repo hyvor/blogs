@@ -426,8 +426,6 @@ const postLogic = kea<postLogicType>([
         currentVariant: (currentVariant: PostVariant, oldValue: PostVariant|undefined) => {
 
             function analyzeSeo() {
-                console.log("CALCULATING SEO RESULTS", currentVariant.id);
-
                 const userBlog = userBlogsLogic().values.findBlogBySubdomain(getSubdomain());
                 const language = languagesLogic({subdomain: getSubdomain()}).values.getLanguageById(currentVariant.language_id);
                 const blogUrl = userBlog.blog.base_url;

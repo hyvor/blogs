@@ -24,8 +24,8 @@ import Tools from './Tools/Tools'
 export const scenes = {
     error404: () => <div>404</div>,
     blogPreview: () => <BlogPreview />,
-    posts: ({ postId } : { postId?: number }) => <Posts postId={postId} />,
-    pages: ({ postId } : { postId?: number }) => <Pages postId={postId} />,
+    posts: ({ postId } : { postId?: string }) => <Posts postId={postId ? Number(postId) : undefined} />,
+    pages: ({ postId } : { postId?: string }) => <Pages postId={postId ? Number(postId) : undefined} />,
     settings: ({type} : {type?: string}) => <Settings type={type} />,
     tools: ({type} : {type?: string}) => <Tools type={type} />,
     integrations: ({type} : {type?: string}) => <Integrations type={type} />,
