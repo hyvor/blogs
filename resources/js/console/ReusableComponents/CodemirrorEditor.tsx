@@ -30,6 +30,7 @@ interface Props {
 
 interface FullScreenProps {
     id?: null | string | number,
+    codeFullScreenCm: any,
     initCm: (ref: any, cm: any) => any,
     setShowCodeFullScreen: (val: boolean) => any,
     filename: string,
@@ -38,9 +39,8 @@ interface FullScreenProps {
     props?: object
 }
 
-const CodeMirrorEditorFullScreen = ({ id = null, initCm, setShowCodeFullScreen, props, filename, toggleConfirmPopup }: FullScreenProps) => {
+const CodeMirrorEditorFullScreen = ({ id = null, codeFullScreenCm, initCm, setShowCodeFullScreen, props, filename, toggleConfirmPopup }: FullScreenProps) => {
     const codeFullScreenRef = useRef<null | HTMLDivElement>(null);
-    const codeFullScreenCm = useRef<any>(null);
 
     const popupEditorLoading = useRef(true);
 
@@ -91,6 +91,7 @@ export default function CodemirrorEditor({ id = null, value, onChange, onSave, e
 
     const codeRef = useRef<null | HTMLDivElement>(null);
     const codeCm = useRef<any>(null);
+    const codeFullScreenCm = useRef<any>(null);
     const tabSize = extension === 'yaml' ? 2 : 4;
 
     const [showCodeFullScreen, setShowCodeFullScreen] = useState(false);
@@ -113,6 +114,14 @@ export default function CodemirrorEditor({ id = null, value, onChange, onSave, e
                                     text={'All changes made to the code will be discarded'} 
                                     name={'Confirm'} onClick={() => resetContent()} 
                                     onCancel={() => setShowConfirmPopup(false)}/>
+
+    function toggleConfirmPopup() {
+        if (codeCm.current.doc.getValue() !== saveValue.current || codeFullScreenCm.current.doc.getValue() !== saveValue.current) {
+            setShowConfirmPopup(true);
+        }
+        else
+            setShowCodeFullScreen(false);   
+    }
 
     function resetContent() {
         onChange(codeCm.current.doc.getValue());
@@ -169,10 +178,11 @@ export default function CodemirrorEditor({ id = null, value, onChange, onSave, e
             {showCodeFullScreen && 
                 <CodeMirrorEditorFullScreen 
                     id={id}
+                    codeFullScreenCm={codeFullScreenCm}
                     initCm={initCm}
                     setShowCodeFullScreen={setShowCodeFullScreen}
                     filename={fileName}
-                    toggleConfirmPopup={() => setShowConfirmPopup(true)}
+                    toggleConfirmPopup={toggleConfirmPopup}
                     props={props}/>
             }           
             {showConfirmPopup && <ConfirmPopup />}   
