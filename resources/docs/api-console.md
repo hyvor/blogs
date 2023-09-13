@@ -364,6 +364,166 @@ type Request = {
 }
 ```
 
+### Users {#users}
+
+Endpoints:
+
+* [`GET /users`](#get-users) - Get users
+* [`GET /users/search`](#search-users) - Search users
+* [`POST /user`](#create-user) - Create a user
+* [`POST /user/guest`](#create-guest-user) - Create a guest user
+* [`PATCH /user/{id}`](#update-user) - Update a user
+* [`DELETE /user/{id}`](#delete-user) - Delete a user
+* [`POST /user/{id}/variant`](#create-user-variant) - Create a user variant
+* [`PATCH /user/{id}/variant`](#update-user-variant) - Update a user variant
+* [`DELETE /user/{id}/variant`](#delete-user-variant) - Delete a user variant
+* [`POST /user`](#resend-invite) - Resend invitation email
+
+Objects:
+
+* [User](#user-object)
+* [UserVariant](#user-variant-object)
+
+#### Get users {#get-users}
+
+`GET /users`
+
+```ts
+type Request = {
+    offset?: number,
+}
+type Response = User[]
+```
+
+#### Search users {#search-users}
+
+Searches for users by name.
+
+`GET /users/search`
+
+```ts
+type Request = {
+    search: string,
+}
+type Response = User[]
+```
+
+#### Create a user {#create-user}
+
+`POST /user`
+
+```ts
+enum UserRoleEnum: string
+{
+    case OWNER = 'owner';
+    case ADMIN = 'admin';
+    case EDITOR = 'editor';
+    case WRITER = 'writer';
+    case CONTRIBUTOR = 'contributor';
+    case FINANCE = 'finance';
+}
+
+type Request = {
+    username_or_email: string,
+    role: UserRoleEnum,
+}
+type Response = User
+```
+
+#### Create a guest user {#create-guest-user}
+
+`POST /user/guest`
+
+```ts
+
+type Request = {
+    name: string,
+}
+type Response = User
+```
+
+#### Update a user {#update-user}
+
+`PATCH /user/{id}`
+
+```ts
+enum UserRoleEnum: string
+{
+    case OWNER = 'owner';
+    case ADMIN = 'admin';
+    case EDITOR = 'editor';
+    case WRITER = 'writer';
+    case CONTRIBUTOR = 'contributor';
+    case FINANCE = 'finance';
+}
+
+type Request = {
+    hyvor_user_id?: number | null,
+    role?: UserRoleEnum,
+    status: 'active' | 'blocked',
+    slug: string,
+    email?: string | null,
+    website_url?: string | null,
+    picture_url?: string | null,
+    social_facebook?: string | null,
+    social_twitter?: string | null,
+    social_linkedin?: string | null,
+    social_youtube?: string | null,
+    social_tiktok?: string | null,
+    social_instagram?: string | null,
+    social_github?: string | null,
+}
+type Response = User
+```
+
+#### Delete a user {#delete-user}
+
+`DELETE /user/{id}`
+
+```ts
+type Request = {}
+type Response = {}
+```
+
+#### Create a user variant {#create-user-variant}
+
+`POST /user/{id}/variant`
+
+```ts
+type Request = {}
+type Response = UserVariant
+```
+
+#### Update a user variant {#update-user-variant}
+
+`PATCH /user/{id}/variant`
+
+```ts
+type Request = {
+    name?: string | null,
+    bio?: string | null,
+    location?: string | null,
+}
+type Response = UserVariant
+```
+
+#### Delete a user variant {#delete-user-variant}
+
+`DELETE /user/{id}/variant`
+
+```ts
+type Request = {}
+type Response = {}
+```
+
+#### Resend email invitation {#resend-invite}
+
+`POST /user/{id}/resend-invite`
+
+```ts
+type Request = {}
+type Response = {}
+```
 
 ## Objects {#objects}
 
