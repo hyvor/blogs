@@ -1,4 +1,4 @@
-# status = pending
+# status = done
 ALTER TABLE blogs
 ADD COLUMN blocked_at TIMESTAMP NULL AFTER is_blocked;
 
