@@ -115,8 +115,8 @@ export default class Table implements NodeView{
         this.clearColumnContentWrapper = this.clearColumnContentWrapper.bind(this);
         this.focusTable = this.focusTable.bind(this);
 
-        this.view.dom.addEventListener('click', this.handleChange);
-        this.view.dom.addEventListener('keyup', this.handleChange);
+        this.dom.addEventListener('click', this.handleChange);
+        //this.view.dom.addEventListener('keyup', this.handleChange);
 
         this.middle.addEventListener('scroll', () => {this.columnSettings.setAttribute("style", `display: none;`)});
         this.middle.addEventListener('click', () => {this.columnSettings.setAttribute("style", `display: flex;`)});
@@ -415,6 +415,7 @@ export default class Table implements NodeView{
     }
 
     createMenuItems() {
+        console.log('table menu items created')
         const _self = this;
         const table = this.node;
         const rows = table.content.childCount;
