@@ -26,6 +26,11 @@ export function getBlogUrl(subdomain: string, path: string) {
     return blog.base_url + path;
 }
 
+export function getBlogBaseUrl(subdomain: string) {
+    const blog = getBlogFromSubdomain(subdomain)
+    return blog.base_url;
+}
+
 export function hasTrialEndedAndNotSubscribed(subdomain: string) {
     const blog = getBlogFromSubdomain(subdomain)
     return blog.type !== 'dev' && blog.trial_ends_at < dayjs().unix() && !blog.subscription;

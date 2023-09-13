@@ -11,8 +11,9 @@ import {PostEditorState} from "../states";
 import merge from "deepmerge";
 import userBlogsLogic from "./userBlogsLogic";
 import { Output, SeoAnalyzer } from "../Posts/Post/New/Seo/seo-analyzer";
-import { calculateLinkAnalysis, getLinksFromContent } from "../Posts/Post/New/Links/links";
+import { calculateLinkAnalysis, getLinksFromContent, Link } from "../Posts/Post/New/Links/links";
 import { subscriptions } from 'kea-subscriptions'
+import { getBlogBaseUrl, getBlogUrl } from "../lib/blog-helpers";
 
 export type PostDiff = Omit<Post, 'authors' | 'tags'> & {
     authors: number[],
@@ -76,7 +77,8 @@ const postLogic = kea<postLogicType>([
         removeVariant: (languageId: number) => ({languageId}),
         changeEditorState: (key: keyof PostEditorState, value: any) => ({key, value}),
 
-        setCurrentVariantSeoResults: (results: Output) => ({results})
+        setCurrentVariantSeoResults: (results: Output) => ({results}),
+        setCurrentVariantLinks: (links: Link[]) => ({links})
     })),
 
     ajax(({actions, selectors, props, values}) => ({
@@ -300,6 +302,13 @@ const postLogic = kea<postLogicType>([
             {
                 setCurrentVariantSeoResults: (_, {results}) => results
             }
+        ],
+
+        currentVariantLinks: [
+            [] as Link[],
+            {
+                setCurrentVariantLinks: (_, {links}) => links
+            }
         ]
 
     })),
@@ -418,57 +427,86 @@ const postLogic = kea<postLogicType>([
         currentVariantLinkAnalysis: [
             s => [s.currentVariant],
             (currentVariant) => calculateLinkAnalysis(currentVariant)
-        ]
+        ],
 
     }),
 
     subscriptions(({actions, values, props}) => ({
         currentVariant: (currentVariant: PostVariant, oldValue: PostVariant|undefined) => {
 
-            function analyzeSeo() {
+            // seo results
+            (function handleSeo() {
 
-                setTimeout(() => {
+                function analyzeSeo() {
 
-                    const startTime = new Date().getTime();
+                    setTimeout(() => {
 
-                    const userBlog = userBlogsLogic().values.findBlogBySubdomain(getSubdomain());
-                    const language = languagesLogic({subdomain: getSubdomain()}).values.getLanguageById(currentVariant.language_id);
-                    const blogUrl = userBlog.blog.base_url;
-                    const analyzer = new SeoAnalyzer({
-                        ...getSeoResultsInput(currentVariant),
-                        blogUrl,
-                        languageCode: language?.code || 'en',
-                    });
-                    const results = analyzer.analyze();
-                    actions.setCurrentVariantSeoResults(results);
+                        const startTime = new Date().getTime();
 
-                    const endTime = new Date().getTime();
-                    console.log('seo analysis took', endTime - startTime, 'ms');
+                        const userBlog = userBlogsLogic().values.findBlogBySubdomain(getSubdomain());
+                        const language = languagesLogic({subdomain: getSubdomain()}).values.getLanguageById(currentVariant.language_id);
+                        const blogUrl = userBlog.blog.base_url;
+                        const analyzer = new SeoAnalyzer({
+                            ...getSeoResultsInput(currentVariant),
+                            blogUrl,
+                            languageCode: language?.code || 'en',
+                        });
+                        const results = analyzer.analyze();
+                        actions.setCurrentVariantSeoResults(results);
 
-                }, 0);
-            }
+                        const endTime = new Date().getTime();
+                        console.log('seo analysis took', endTime - startTime, 'ms');
 
-            if (!oldValue) {
-                return analyzeSeo();
-            }
+                    }, 0);
+                }
 
-            const currentVariantInput = getSeoResultsInput(currentVariant);
-            const oldValueInput = getSeoResultsInput(oldValue);
+                if (!oldValue) {
+                    return analyzeSeo();
+                }
 
-            if (JSON.stringify(currentVariantInput) === JSON.stringify(oldValueInput)) {
-                return;
-            }
+                const currentVariantInput = getSeoResultsInput(currentVariant);
+                const oldValueInput = getSeoResultsInput(oldValue);
 
-            if (currentVariantInput.content !== oldValueInput.content) {
-                // wait 1s before calculating seo results on content change
+                if (JSON.stringify(currentVariantInput) === JSON.stringify(oldValueInput)) {
+                    return;
+                }
+
+                if (currentVariantInput.content !== oldValueInput.content) {
+                    // wait 1s before calculating seo results on content change
+                    if (SEO_CALCULATION_TIMEOUTS[currentVariant.id]) {
+                        clearTimeout(SEO_CALCULATION_TIMEOUTS[currentVariant.id]);
+                    }
+                    SEO_CALCULATION_TIMEOUTS[currentVariant.id] = setTimeout(analyzeSeo, 1000);
+                } else {
+                    // for other changes calculate seo results immediately
+                    analyzeSeo();
+                }
+
+            })();
+
+            // links
+            (function handleLinks() {
+
                 if (SEO_CALCULATION_TIMEOUTS[currentVariant.id]) {
                     clearTimeout(SEO_CALCULATION_TIMEOUTS[currentVariant.id]);
                 }
-                SEO_CALCULATION_TIMEOUTS[currentVariant.id] = setTimeout(analyzeSeo, 1000);
-            } else {
-                // for other changes calculate seo results immediately
-                analyzeSeo();
-            }
+
+                SEO_CALCULATION_TIMEOUTS[currentVariant.id] = setTimeout(() => {
+                        
+                    const startTime = new Date().getTime();
+
+                    const links = getLinksFromContent(
+                        currentVariant.content_unsaved || currentVariant.content,
+                        getBlogBaseUrl(getSubdomain())
+                    );
+                    actions.setCurrentVariantLinks(links);
+
+                    const endTime = new Date().getTime();
+                    console.log('links update took', endTime - startTime, 'ms');
+    
+                }, 1000);
+
+            })();
 
 
         }
@@ -480,6 +518,7 @@ const postLogic = kea<postLogicType>([
 
 // post variant id: date
 const SEO_CALCULATION_TIMEOUTS = {} as {[key: number]: ReturnType<typeof setTimeout>};
+const LINK_CALCULATION_TIMEOUTS = {} as {[key: number]: ReturnType<typeof setTimeout>};
 
 function getSeoResultsInput(variant: PostVariant) {
     return {
