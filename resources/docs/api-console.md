@@ -509,17 +509,17 @@ type Response = {}
 
 Endpoints:
 
-* [`GET /media`](#get-media) - Get media
+* [`GET /media`](#get-media) - Get medias
 * [`POST /media`](#create-media) - Create a media
 * [`POST /media/from-url`](#create-media-from-url) - Create a media from URL
-* [`DELETE /media/{id}`](#media-user) - Media a user
-* [`GET /media/unsplash/search`](#search-media-unsplash) - Get a media from unsplash
+* [`DELETE /media/{id}`](#delete-media) - Delete a navigation
+* [`GET /media/unsplash/search`](#search-media-unsplash) - Get medias from unsplash
 
 Objects:
 
 * [Media](#media-object)
 
-#### Get media {#get-media}
+#### Get medias {#get-media}
 
 `GET /media`
 
@@ -568,7 +568,7 @@ type Request = {}
 type Response = {}
 ```
 
-#### Get media from Unsplash {#search-media-unsplash}
+#### Get medias from Unsplash {#search-media-unsplash}
 
 `GET /media/unsplash/search`
 
@@ -578,6 +578,112 @@ type Request = {
     page: number
 }
 type Response = Media[]
+```
+
+### Navigation {#navigation}
+
+Endpoints:
+
+* [`GET /navigations`](#get-navigation) - Get navigations
+* [`PATCH /navigations/sort`](#sort-navigations) - Update sort navigations
+* [`POST /navigation`](#create-navigation) - Create a navigation
+* [`PUT /user/{id}`](#update-navigation) - Update a navigation
+* [`DELETE /navigation/{id}`](#delete-navigation) - Delete a navigation
+* [`POST /navigation/{id}/variant`](#create-navigation-variant) - Create a navigation variant
+* [`PUT /navigation/{id}/variant`](#update-navigation-variant) - Update a navigation variant
+* [`DELETE /navigation/{id}/variant`](#delete-navigation-variant) - Delete a navigation variant
+
+Objects:
+
+* [Navigation](#navigation-object)
+* [NavigationVariant](#navigation-variant-object)
+
+#### Get navigations {#get-navigations}
+
+`GET /navigations`
+
+```ts
+type Request = {}
+type Response = Navigation[]
+```
+
+#### Update sort navigations {#sort-navigations}
+
+`PATCH /navigations/search`
+
+```ts
+type Request = {
+    ids?: number[],
+    ids.*?: number
+}
+type Response = {}
+```
+
+#### Create a navigation {#create-navigation}
+
+`POST /navigation`
+
+```ts
+type Request = {
+    url: string,
+    name: string,
+    type: 'header' | 'footer'
+}
+type Response = Navigation
+```
+
+#### Update a navigation {#update-navigation}
+
+`PUT /navigation/{id}`
+
+```ts
+type Request = {
+    url: string,
+    name: string,
+    type: 'header' | 'footer',
+}
+type Response = Navigation
+```
+
+#### Delete a navigation {#delete-navigation}
+
+`DELETE /navigation/{id}`
+
+```ts
+type Request = {}
+type Response = {}
+```
+
+#### Create a navigation variant {#create-navigation-variant}
+
+`POST /navigation/{id}/variant`
+
+```ts
+type Request = {
+    language_id: number,
+    name?: string | null,
+}
+type Response = NavigationVariant
+```
+
+#### Update a navigation variant {#update-navigation-variant}
+
+`PUT /navigation/{id}/variant`
+
+```ts
+type Request = {
+    name: string | null,
+}
+type Response = NavigationVariant
+```
+
+#### Delete a navigation variant {#delete-navigation-variant}
+
+`DELETE /navigation/{id}/variant`
+
+```ts
+type Request = {}
+type Response = {}
 ```
 
 ## Objects {#objects}
