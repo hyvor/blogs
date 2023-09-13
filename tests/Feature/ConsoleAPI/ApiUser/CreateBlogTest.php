@@ -91,3 +91,31 @@ it('cant create a blog with already existing subdomain', function () {
         ->assertUnprocessable()
         ->assertSee(['Subdomain', 'taken']);
 });
+
+it('does not create if the user has 2 blogs without subscription', function() {
+
+    blogWithAccess();
+    blogWithAccess();
+
+    consoleUserApi('POST','/blog', [
+        'name' => 'Testing',
+        'subdomain' => 'some-subdomain'
+    ])
+        ->assertUnprocessable()
+        ->assertSee('Please upgrade at least one of your blogs to create more');
+
+});
+
+it('allows when you have a subscriptoin', function() {
+
+    $blog1 = blogWithAccess();
+    createSubscription($blog1);
+    blogWithAccess();
+
+    consoleUserApi('POST','/blog', [
+        'name' => 'Testing',
+        'subdomain' => 'some-subdomain'
+    ])
+        ->assertOk();
+
+});

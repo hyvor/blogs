@@ -26,10 +26,12 @@ use App\Domains\Blog\Fillers\RouteFiller;
 use App\Domains\Blog\Fillers\TagFiller;
 use App\Domains\Blog\Fillers\ThemeFiller;
 use App\Domains\Blog\Fillers\UserFiller;
+use App\Exceptions\SafetyException;
 use App\Exceptions\TrustedException;
 use App\Models\Blog;
 use App\Models\BlogVariant;
 use App\Models\Language;
+use App\Models\Subscription;
 
 class BlogService
 {
@@ -187,6 +189,9 @@ class BlogService
             ->where('language_id', $language->id)
             ->first();
 
+        if (!$variant)
+            throw new SafetyException('Variant not found');
+
         if (array_key_exists('name', $updates)) {
             $variant->name = $updates['name'];
         }
@@ -201,7 +206,7 @@ class BlogService
         return $variant;
     }
 
-    public function deleteBlog(Blog $blog)
+    public function deleteBlog(Blog $blog) : void
     {
         $deleters = [
             LanguageDeleter::class,
@@ -222,5 +227,25 @@ class BlogService
         $blog->delete();
 
         BlogDeletedEvent::dispatch($blog);
+    }
+
+    public static function canUserCreateBlog(int $hyvorUserId) : bool
+    {
+
+        /**
+         * User should have had at least one subscription
+         * on any of his blogs
+         */
+        $hasSubscription = Subscription::join('blogs', 'blogs.id', '=', 'subscriptions.blog_id')
+            ->where('hyvor_user_id', $hyvorUserId)
+            ->exists();
+
+        if ($hasSubscription) {
+            return true;
+        }
+
+        $blogsCount = Blog::where('hyvor_user_id', $hyvorUserId)->count();
+        return $blogsCount < 2;
+
     }
 }

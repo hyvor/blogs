@@ -11,12 +11,13 @@ use App\Exceptions\TrustedException;
 use App\Http\Controllers\Controller;
 use App\Rules\Subdomain;
 use Hyvor\HyvorConnecter\HyvorUser;
+use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Str;
 
 class ConsoleUserBlogController extends Controller
 {
-    public function createBlog(Request $request, HyvorUser $hyvorUser)
+    public function createBlog(Request $request, HyvorUser $hyvorUser) : JsonResponse
     {
         $request->validate([
             'name' => 'required|string',
@@ -33,6 +34,10 @@ class ConsoleUserBlogController extends Controller
             $subdomain = 'dev-'.((string) Str::uuid());
         }
 
+        if (!BlogService::canUserCreateBlog($hyvorUser->id)) {
+            throw new TrustedException('Please upgrade at least one of your blogs to create more.');
+        }
+
         $blog = app(BlogService::class)->createBlog(
             $hyvorUser->id,
             $name,
@@ -43,10 +48,14 @@ class ConsoleUserBlogController extends Controller
 
         $user = UserRepository::getOwnerOfBlog($blog);
 
+        if (!$user) {
+            throw new TrustedException('User not found');
+        }
+
         return response()->json(new UserBlogObject($user));
     }
 
-    public function changeSort(Request $request, HyvorUser $hyvorUser)
+    public function changeSort(Request $request, HyvorUser $hyvorUser) : JsonResponse
     {
         $request->validate([
             'blog_ids' => 'required|array',
@@ -60,7 +69,7 @@ class ConsoleUserBlogController extends Controller
         return response()->json();
     }
 
-    public function checkSubdomain(Request $request)
+    public function checkSubdomain(Request $request) : JsonResponse
     {
         $request->validate([
             'subdomain' => 'required|string',
