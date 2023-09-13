@@ -505,6 +505,81 @@ type Request = {}
 type Response = {}
 ```
 
+### Media {#media}
+
+Endpoints:
+
+* [`GET /media`](#get-media) - Get media
+* [`POST /media`](#create-media) - Create a media
+* [`POST /media/from-url`](#create-media-from-url) - Create a media from URL
+* [`DELETE /media/{id}`](#media-user) - Media a user
+* [`GET /media/unsplash/search`](#search-media-unsplash) - Get a media from unsplash
+
+Objects:
+
+* [Media](#media-object)
+
+#### Get media {#get-media}
+
+`GET /media`
+
+```ts
+type Request = {
+    limit: number,
+    offset: number,
+    search?: string | null,
+    extensions?: [] | null,
+    extensions.*: string,
+    type?: string | null
+}
+type Response = Media[]
+```
+
+#### Create a media {#create-media}
+
+`POST /media`
+
+```ts
+type Request = {
+    file: File,
+    post_id: number
+}
+type Response = Media
+```
+
+#### Create a media from URL {#create-media-from-url}
+
+`POST /media/from-url`
+
+```ts
+type Request = {
+    url: string,
+    post_id?: number | null
+}
+type Response = Media
+```
+
+#### Delete a media {#delete-media}
+
+`DELETE /media/{id}`
+
+```ts
+type Request = {}
+type Response = {}
+```
+
+#### Get media from Unsplash {#search-media-unsplash}
+
+`GET /media/unsplash/search`
+
+```ts
+type Request = {
+    search: string,
+    page: number
+}
+type Response = Media[]
+```
+
 ## Objects {#objects}
 
 ### Blog Object {#blog-object}
