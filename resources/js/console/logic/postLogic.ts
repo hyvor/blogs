@@ -426,16 +426,26 @@ const postLogic = kea<postLogicType>([
         currentVariant: (currentVariant: PostVariant, oldValue: PostVariant|undefined) => {
 
             function analyzeSeo() {
-                const userBlog = userBlogsLogic().values.findBlogBySubdomain(getSubdomain());
-                const language = languagesLogic({subdomain: getSubdomain()}).values.getLanguageById(currentVariant.language_id);
-                const blogUrl = userBlog.blog.base_url;
-                const analyzer = new SeoAnalyzer({
-                    ...getSeoResultsInput(currentVariant),
-                    blogUrl,
-                    languageCode: language?.code || 'en',
-                });
-                const results = analyzer.analyze();
-                actions.setCurrentVariantSeoResults(results);
+
+                setTimeout(() => {
+
+                    const startTime = new Date().getTime();
+
+                    const userBlog = userBlogsLogic().values.findBlogBySubdomain(getSubdomain());
+                    const language = languagesLogic({subdomain: getSubdomain()}).values.getLanguageById(currentVariant.language_id);
+                    const blogUrl = userBlog.blog.base_url;
+                    const analyzer = new SeoAnalyzer({
+                        ...getSeoResultsInput(currentVariant),
+                        blogUrl,
+                        languageCode: language?.code || 'en',
+                    });
+                    const results = analyzer.analyze();
+                    actions.setCurrentVariantSeoResults(results);
+
+                    const endTime = new Date().getTime();
+                    console.log('seo analysis took', endTime - startTime, 'ms');
+
+                }, 0);
             }
 
             if (!oldValue) {
@@ -450,11 +460,11 @@ const postLogic = kea<postLogicType>([
             }
 
             if (currentVariantInput.content !== oldValueInput.content) {
-                // wait 250ms before calculating seo results on content change
+                // wait 1s before calculating seo results on content change
                 if (SEO_CALCULATION_TIMEOUTS[currentVariant.id]) {
                     clearTimeout(SEO_CALCULATION_TIMEOUTS[currentVariant.id]);
-                }            
-                SEO_CALCULATION_TIMEOUTS[currentVariant.id] = setTimeout(analyzeSeo, 250);
+                }
+                SEO_CALCULATION_TIMEOUTS[currentVariant.id] = setTimeout(analyzeSeo, 1000);
             } else {
                 // for other changes calculate seo results immediately
                 analyzeSeo();
