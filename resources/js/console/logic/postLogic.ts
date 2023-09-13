@@ -438,26 +438,21 @@ const postLogic = kea<postLogicType>([
             (function handleSeo() {
 
                 function analyzeSeo() {
+                    const startTime = new Date().getTime();
 
-                    setTimeout(() => {
+                    const userBlog = userBlogsLogic().values.findBlogBySubdomain(getSubdomain());
+                    const language = languagesLogic({subdomain: getSubdomain()}).values.getLanguageById(currentVariant.language_id);
+                    const blogUrl = userBlog.blog.base_url;
+                    const analyzer = new SeoAnalyzer({
+                        ...getSeoResultsInput(currentVariant),
+                        blogUrl,
+                        languageCode: language?.code || 'en',
+                    });
+                    const results = analyzer.analyze();
+                    actions.setCurrentVariantSeoResults(results);
 
-                        const startTime = new Date().getTime();
-
-                        const userBlog = userBlogsLogic().values.findBlogBySubdomain(getSubdomain());
-                        const language = languagesLogic({subdomain: getSubdomain()}).values.getLanguageById(currentVariant.language_id);
-                        const blogUrl = userBlog.blog.base_url;
-                        const analyzer = new SeoAnalyzer({
-                            ...getSeoResultsInput(currentVariant),
-                            blogUrl,
-                            languageCode: language?.code || 'en',
-                        });
-                        const results = analyzer.analyze();
-                        actions.setCurrentVariantSeoResults(results);
-
-                        const endTime = new Date().getTime();
-                        console.log('seo analysis took', endTime - startTime, 'ms');
-
-                    }, 0);
+                    const endTime = new Date().getTime();
+                    console.log('seo analysis took', endTime - startTime, 'ms');
                 }
 
                 if (!oldValue) {
@@ -476,7 +471,7 @@ const postLogic = kea<postLogicType>([
                     if (SEO_CALCULATION_TIMEOUTS[currentVariant.id]) {
                         clearTimeout(SEO_CALCULATION_TIMEOUTS[currentVariant.id]);
                     }
-                    SEO_CALCULATION_TIMEOUTS[currentVariant.id] = setTimeout(analyzeSeo, 1000);
+                    SEO_CALCULATION_TIMEOUTS[currentVariant.id] = setTimeout(analyzeSeo, 500);
                 } else {
                     // for other changes calculate seo results immediately
                     analyzeSeo();
@@ -487,11 +482,11 @@ const postLogic = kea<postLogicType>([
             // links
             (function handleLinks() {
 
-                if (SEO_CALCULATION_TIMEOUTS[currentVariant.id]) {
-                    clearTimeout(SEO_CALCULATION_TIMEOUTS[currentVariant.id]);
+                if (LINK_CALCULATION_TIMEOUTS[currentVariant.id]) {
+                    clearTimeout(LINK_CALCULATION_TIMEOUTS[currentVariant.id]);
                 }
 
-                SEO_CALCULATION_TIMEOUTS[currentVariant.id] = setTimeout(() => {
+                LINK_CALCULATION_TIMEOUTS[currentVariant.id] = setTimeout(() => {
                         
                     const startTime = new Date().getTime();
 
@@ -504,7 +499,7 @@ const postLogic = kea<postLogicType>([
                     const endTime = new Date().getTime();
                     console.log('links update took', endTime - startTime, 'ms');
     
-                }, 1000);
+                }, 500);
 
             })();
 
