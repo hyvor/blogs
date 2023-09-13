@@ -413,19 +413,9 @@ type Response = User[]
 `POST /user`
 
 ```ts
-enum UserRoleEnum: string
-{
-    case OWNER = 'owner';
-    case ADMIN = 'admin';
-    case EDITOR = 'editor';
-    case WRITER = 'writer';
-    case CONTRIBUTOR = 'contributor';
-    case FINANCE = 'finance';
-}
-
 type Request = {
     username_or_email: string,
-    role: UserRoleEnum,
+    role: 'owner' | 'admin' | 'editor' | 'writer' | 'contributor' | 'finance',
 }
 type Response = User
 ```
@@ -447,19 +437,9 @@ type Response = User
 `PATCH /user/{id}`
 
 ```ts
-enum UserRoleEnum: string
-{
-    case OWNER = 'owner';
-    case ADMIN = 'admin';
-    case EDITOR = 'editor';
-    case WRITER = 'writer';
-    case CONTRIBUTOR = 'contributor';
-    case FINANCE = 'finance';
-}
-
 type Request = {
     hyvor_user_id?: number | null,
-    role?: UserRoleEnum,
+    role?: 'owner' | 'admin' | 'editor' | 'writer' | 'contributor' | 'finance' | null,
     status: 'active' | 'blocked',
     slug: string,
     email?: string | null,
