@@ -467,11 +467,11 @@ const postLogic = kea<postLogicType>([
                 }
 
                 if (currentVariantInput.content !== oldValueInput.content) {
-                    // wait 1s before calculating seo results on content change
+                    // wait 100ms before calculating seo results on content change
                     if (SEO_CALCULATION_TIMEOUTS[currentVariant.id]) {
                         clearTimeout(SEO_CALCULATION_TIMEOUTS[currentVariant.id]);
                     }
-                    SEO_CALCULATION_TIMEOUTS[currentVariant.id] = setTimeout(analyzeSeo, 500);
+                    SEO_CALCULATION_TIMEOUTS[currentVariant.id] = setTimeout(analyzeSeo, 100);
                 } else {
                     // for other changes calculate seo results immediately
                     analyzeSeo();
@@ -499,7 +499,7 @@ const postLogic = kea<postLogicType>([
                     const endTime = new Date().getTime();
                     console.log('links update took', endTime - startTime, 'ms');
     
-                }, 500);
+                }, 100);
 
             })();
 
