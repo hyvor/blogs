@@ -9,6 +9,7 @@ use App\Domains\Language\LanguageRepository;
 use App\Domains\Post\PostRepository;
 use App\Domains\Post\PostSearchRepository;
 use App\Domains\Post\PostTagAuthorRepository;
+use App\Domains\Post\Rules\ProsemirrorJsonRule;
 use App\Exceptions\TrustedException;
 use App\Http\Controllers\Controller;
 use App\Http\Middleware\App\ConsoleApi\ConsoleApiAccessingUser;
@@ -206,8 +207,8 @@ class ConsolePostController extends Controller
             'language_id' => 'required|integer',
             'slug' => 'string|max:255|nullable',
             'status' => 'string|in:draft,published,scheduled',
-            'content' => 'string|nullable',
-            'content_unsaved' => 'string|nullable',
+            'content' => ['string', 'nullable', new ProsemirrorJsonRule],
+            'content_unsaved' => ['string', 'nullable', new ProsemirrorJsonRule],
             'title' => 'string|max:255|nullable',
             'description' => 'string|max:255|nullable',
 

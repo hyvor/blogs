@@ -367,6 +367,22 @@ type Request = {
 }
 ```
 
+### Misc {#misc}
+
+#### Get Prosemirror JSON from HTML {#get-prosemirror-json}
+
+Get a valid Prosemirror JSON object from HTML.
+
+`GET /misc/prosemirror/json`
+
+```ts
+type Request = {
+    html: string,
+}
+type Response = {
+    json: string,
+}
+```
 
 ## Objects {#objects}
 
