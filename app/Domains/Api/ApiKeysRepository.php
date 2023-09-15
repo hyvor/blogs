@@ -1,4 +1,4 @@
-<?php
+<?php declare(strict_types=1);
 
 namespace App\Domains\Api;
 
@@ -9,6 +9,9 @@ use Illuminate\Database\Eloquent\Collection;
 
 class ApiKeysRepository
 {
+    /**
+     * @return Collection<int, ApiKey>
+     */
     public static function get(Blog $blog): Collection
     {
         return ApiKey::where('blog_id', $blog->id)->get();
@@ -26,7 +29,7 @@ class ApiKeysRepository
         ]);
     }
 
-    public static function delete(ApiKey $apiKey)
+    public static function delete(ApiKey $apiKey) : void
     {
         $apiKey->delete();
     }
@@ -38,4 +41,5 @@ class ApiKeysRepository
             ->where('api_key', $key)
             ->exists();
     }
+
 }

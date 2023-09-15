@@ -1,6 +1,7 @@
 # Console API
 
-> This documentation is still in progress.
+> ⏰ Console API documentation is still work in progress. We will add more endpoints and examples soon.
+> You can trace the API calls made by the Console from the Network tab of the Developer Tools, and use them as examples.
 
 Console API allows you to do administrative tasks of a blog. This is the same API we use internally in the Console. You can use it to automate some tasks or even build a completely new mini-console by yourself.
 
@@ -20,7 +21,9 @@ Console API allows you to do administrative tasks of a blog. This is the same AP
 
 ## Authenticating User {#authenticating-user}
 
-[To be written]
+[Coming soon]
+
+Currently, the Console API is always authenticated as the owner of the blog. We will add authentication as other [users](users) soon.
 
 ## Categories
 

@@ -2,6 +2,8 @@
 
 namespace App\Http\Middleware\App\ConsoleApi;
 
+use App\Data\Enums\ApiKeysTypeEnum;
+use App\Domains\Api\ApiKeysRepository;
 use App\Domains\User\UserRepository;
 use App\Exceptions\TrustedException;
 use App\Models\Blog;
@@ -25,22 +27,19 @@ class ConsoleApiAccessMiddleware
 
         if ($apiKey) {
 
-            die;
-            // TODO
-            /*if ($this->blog->api_key_console === null) {
-                throw new TrustedException('Console API is not enabled');
-            }
-
-            if ($apiKey !== $this->blog->api_key_console) {
+            if (!ApiKeysRepository::hasKey($this->blog, ApiKeysTypeEnum::CONSOLE, $apiKey)) {
                 throw new TrustedException('Invalid API key');
             }
 
             $owner = UserRepository::getOwnerOfBlog($this->blog);
+            if (!$owner) {
+                throw new TrustedException('Blog owner not found');
+            }
 
             app()->instance(
                 ConsoleApiAccessingUser::class,
                 new ConsoleApiAccessingUser($owner)
-            );*/
+            );
 
         } else {
             $hyvorUser = Login::check();
