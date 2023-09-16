@@ -104,7 +104,7 @@ jobs:
             -   name: Run e2e tests
                 run: |
                     npx playwright install --with-deps
-                    npx playwright test -g "Upload File"
+                    npx playwright test
             -   uses: actions/upload-artifact@v3
                 if: always()
                 with:
