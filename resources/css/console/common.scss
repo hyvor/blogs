@@ -512,7 +512,9 @@ button {
     border-radius:20px!important;
     font-weight:600!important;
 }
-
+.code-editor-container {
+    height: 100%;
+}
 // codemirror
 .global-codemirror-wrap {
     height:100%;

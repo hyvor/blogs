@@ -142,7 +142,7 @@ export default function CodemirrorEditor({ id = null, value, onChange, onSave, e
         initCm(codeRef, codeCm);
     }, [id, showCodeFullScreen])
 
-    return <div>
+    return <div className='code-editor-container'>
             {showCodeFullScreen && 
                 <CodeMirrorEditorFullScreen 
                     id={id}
