@@ -399,8 +399,9 @@ test.describe('Media', () => {
             mimeType: 'text/plain',
             buffer: Buffer.from('Hello World'),
         });
+        await page.keyboard.press('Enter');
 
-        await expect(page.getByText('file.txt')).toBeVisible();
+        await expect(page.getByText('TXT').first()).toBeVisible();
     });
 });
 
