@@ -84,7 +84,7 @@ class MediaRepository
             $path = Storage::putFile($prefix, $file);
 
             if (!$path) {
-                throw new UploadException('Error while uploading');
+                throw new UploadException('Error while uploading from storage');
             }
 
             $fileName = self::getFileNameFromPath($path);
