@@ -89,7 +89,7 @@ class MediaRepository
 
             $fileName = self::getFileNameFromPath($path);
         } catch (\Exception $e) {
-            throw new UploadException('Error while uploading');
+            throw new UploadException('Error while uploading', $e->getCode(), $e);
         }
 
         $media = Media::create([
