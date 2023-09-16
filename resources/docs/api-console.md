@@ -686,6 +686,63 @@ type Request = {}
 type Response = {}
 ```
 
+### Language {#language}
+
+Endpoints:
+
+* [`GET /languages`](#get-languages) - Get languages
+* [`POST /language`](#create-language) - Create a language
+* [`PATCH /language/{id}`](#update-language) - Update sort language
+* [`DELETE /language/{id}`](#delete-language) - Delete a language
+
+Objects:
+
+* [Language](#language-object)
+
+#### Get languages {#get-languages}
+
+`GET /languages`
+
+```ts
+type Request = {}
+type Response = Languages[]
+```
+
+#### Create a language {#create-language}
+
+`POST /language`
+
+```ts
+type Request = {
+    code: string, // max 12 chars
+    name: string, // max 255 chars
+    direction: 'ltr' | 'rtl',
+}
+type Response = Language
+```
+
+#### Update language {#updata-language}
+
+`PATCH /language/{id}`
+
+```ts
+type Request = {
+    code: string, // max 12 chars
+    name: string, // max 255 chars
+    direction: 'ltr' | 'rtl',
+}
+type Response = Language
+```
+
+#### Delete a language {#delete-language}
+
+`DELETE /language/{id}`
+
+```ts
+type Request = {}
+type Response = {}
+```
+
 ## Objects {#objects}
 
 ### Blog Object {#blog-object}
