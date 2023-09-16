@@ -692,7 +692,7 @@ Endpoints:
 
 * [`GET /languages`](#get-languages) - Get languages
 * [`POST /language`](#create-language) - Create a language
-* [`PATCH /language/{id}`](#update-language) - Update sort language
+* [`PATCH /language/{id}`](#update-language) - Update language
 * [`DELETE /language/{id}`](#delete-language) - Delete a language
 
 Objects:
@@ -737,6 +737,66 @@ type Response = Language
 #### Delete a language {#delete-language}
 
 `DELETE /language/{id}`
+
+```ts
+type Request = {}
+type Response = {}
+```
+
+### Redirect {#redirect}
+
+Endpoints:
+
+* [`GET /redirect`](#get-redirect) - Get redirect
+* [`POST /redirect`](#create-redirect) - Create a redirect
+* [`PUT /redirect/{id}`](#update-redirect) - Update redirect
+* [`DELETE /redirect/{id}`](#delete-redirect) - Delete a redirect
+
+Objects:
+
+* [Redirect](#redirect-object)
+
+#### Get Redirect {#get-redirect}
+
+`GET /redirect`
+
+```ts
+type Request = {
+    limit?: number,
+    offset?: number,
+}
+type Response = Redirect[]
+```
+
+#### Create a redirect {#create-redirect}
+
+`POST /redirect`
+
+```ts
+type Request = {
+    path: string,
+    to: string,
+    type: 'temporary' | 'permanent'
+}
+type Response = Redirect
+```
+
+#### Update redirect {#updata-redirect}
+
+`Put /redirect/{id}`
+
+```ts
+type Request = {
+    path?: string,
+    to?: string,
+    type?: 'temporary' | 'permanent'
+}
+type Response = Redirect
+```
+
+#### Delete a redirect {#delete-redirect}
+
+`DELETE /redirect/{id}`
 
 ```ts
 type Request = {}
