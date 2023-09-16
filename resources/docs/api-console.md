@@ -887,7 +887,7 @@ Objects:
 
 #### Get theme files {#get-theme-files}
 
-`GET /webhook`
+`GET /theme/files`
 
 ```ts
 type Request = {}
@@ -954,6 +954,76 @@ type Request = {}
 type Response = ExportObject
 ```
 
+### Billing {#billing}
+
+Endpoints:
+
+* [`GET /billing`](#get-billing-data) - Get billing data
+* [`DELETE /billing/subscription`](#delete-subscription) - Delete subscription
+* [`GET /billing/paddle`](#get-paddle-billing-data) - Get paddle billing data
+* [`POST /billing/paddle/subscription`](#create-paddle-billing-subscription) - Create paddle billing subscription
+* [`PATCH /billing/paddle/subscription`](#update-paddle-billing-subscription) - Update paddle billing subscription
+* [`DELETE /billing/paddle/subscription`](#delete-paddle-billing-subscription) - Delete paddle billing subscription
+* [`GET /billing/shopify`](#get-shopify-billing-data) - Get shopify billing data
+* [`POST /billing/shopify/subscription`](#create-shopify-billing-subscription) - Create shopify billing subscription
+* [`DELETE /billing/shopify/subscription`](#delete-shopify-billing-subscription) - Delete shopify billing subscription
+
+Objects:
+
+* [Usage](#usage-object)
+* [Subscription](#subscription-object)
+
+#### Get billing data {#get-billing-data}
+
+`GET /billing`
+
+```ts
+type Request = {}
+type Response = {
+    usage: Usage,
+    subscription: Subscription
+}
+```
+
+#### Delete subscription {#delete-subscription}
+
+`DELETE /billing/subscription`
+
+```ts
+type Request = {}
+type Response = {}
+```
+
+#### Get billing paddle data {#get-paddle-billing-data}
+
+`GET /billing/paddle`
+
+```ts
+type Request = {}
+type Response = {
+    usage: Usage,
+    subscription: Subscription
+}
+```
+
+### Misc {#misc}
+
+Endpoints:
+
+* [`GET /misc/themes`](#get-all-themes) - Get all themes
+
+Objects:
+
+* [Theme](#theme-object)
+
+#### Get all themes {#get-all-themes}
+
+`GET /misc/themes`
+
+```ts
+type Request = {}
+type Response = Theme[]
+```
 
 ## Objects {#objects}
 
@@ -1204,7 +1274,7 @@ interface Route {
 ### Webhook Object {#webhook-object}
 
 ```ts
-interface Route {
+interface Webhook {
     id: number,
     url: string,
     events: string[],
@@ -1215,7 +1285,7 @@ interface Route {
 ### File Object {#file-object}
 
 ```ts
-interface Route {
+interface FileObject {
     id: number,
     name: string,
     content?: string
@@ -1226,12 +1296,46 @@ interface Route {
 ### Export Object {#export-object}
 
 ```ts
-interface Route {
+interface Export {
     id: number,
     createdf_at: number,
     format: 'hyvor_blogs' | 'wordpress',
     status: 'pending' | 'completed' | 'failed',
     url?: string,
     error?: string
+}
+```
+
+### Usage Object {#usage-object}
+
+```ts
+interface Usage {
+    current: number,
+    total: number,
+    percentage: number
+}
+```
+
+### Subscription Object {#subscription-object}
+
+```ts
+interface Subscription {
+    id: number,
+    status: 'active' | 'past_due' | 'deleted',
+    plan: 'starter' | 'growth' | 'premium' | 'team' | 'business' | 'enterprise',
+    created_at: number,
+    ends_at?: number,
+    paddle_subscription_id?: number,
+    shopify_subscription_id?: number,
+}
+```
+
+### Theme Object {#theme-object}
+
+```ts
+interface Theme {
+    id: number,
+    type: 'original' | 'ported',
+    name: string
 }
 ```
