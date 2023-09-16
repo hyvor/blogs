@@ -399,7 +399,6 @@ test.describe('Media', () => {
             mimeType: 'text/plain',
             buffer: Buffer.from('Hello World'),
         });
-        await page.getByRole('button', { name: 'Upload' }).click();
 
         await expect(page.getByText('file.txt')).toBeVisible();
     });
