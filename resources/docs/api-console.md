@@ -929,6 +929,31 @@ type Request = {}
 type Response = {}
 ```
 
+### Export {#export}
+
+Endpoints:
+
+* [`GET /exports`](#get-exports) - Get exports
+* [`POST /export`](#create-export) - Create an export
+
+Objects:
+
+* [ExportObject](#export-object)
+
+#### Get exports {#get-exports}
+
+`GET /exports`
+
+```ts
+type Request = {}
+type Response = ExportObject[]
+```
+
+```ts
+type Request = {}
+type Response = ExportObject
+```
+
 
 ## Objects {#objects}
 
@@ -1195,5 +1220,18 @@ interface Route {
     name: string,
     content?: string
     folder: 'templates' | 'assets' | 'styles' | 'lang'
+}
+```
+
+### Export Object {#export-object}
+
+```ts
+interface Route {
+    id: number,
+    createdf_at: number,
+    format: 'hyvor_blogs' | 'wordpress',
+    status: 'pending' | 'completed' | 'failed',
+    url?: string,
+    error?: string
 }
 ```
