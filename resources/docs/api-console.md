@@ -692,7 +692,7 @@ Endpoints:
 
 * [`GET /languages`](#get-languages) - Get languages
 * [`POST /language`](#create-language) - Create a language
-* [`PATCH /language/{id}`](#update-language) - Update language
+* [`PATCH /language/{id}`](#update-language) - Update a language
 * [`DELETE /language/{id}`](#delete-language) - Delete a language
 
 Objects:
@@ -747,18 +747,18 @@ type Response = {}
 
 Endpoints:
 
-* [`GET /redirect`](#get-redirect) - Get redirect
+* [`GET /redirects`](#get-redirects) - Get redirects
 * [`POST /redirect`](#create-redirect) - Create a redirect
-* [`PUT /redirect/{id}`](#update-redirect) - Update redirect
+* [`PUT /redirect/{id}`](#update-redirect) - Update a redirect
 * [`DELETE /redirect/{id}`](#delete-redirect) - Delete a redirect
 
 Objects:
 
 * [Redirect](#redirect-object)
 
-#### Get Redirect {#get-redirect}
+#### Get Redirects {#get-redirects}
 
-`GET /redirect`
+`GET /redirects`
 
 ```ts
 type Request = {
@@ -781,9 +781,9 @@ type Request = {
 type Response = Redirect
 ```
 
-#### Update redirect {#updata-redirect}
+#### Update a redirect {#updata-redirect}
 
-`Put /redirect/{id}`
+`PUT /redirect/{id}`
 
 ```ts
 type Request = {
@@ -802,6 +802,133 @@ type Response = Redirect
 type Request = {}
 type Response = {}
 ```
+
+### Webhook {#webhook}
+
+Endpoints:
+
+* [`GET /webhooks`](#get-webhooks) - Get webhooks
+* [`POST /webhook`](#create-webhook) - Create a webhook
+* [`PATCH /webhook/{id}`](#update-webhook) - Update a webhook
+* [`DELETE /webhook/{id}`](#delete-webhook) - Delete a webhook
+* [`GET /webhook/{id}/deliveries`](#get-webhook-deliveries) - Get webhooks deliveries
+
+Objects:
+
+* [Webhook](#webhook-object)
+
+#### Get webhook {#get-webhook}
+
+`GET /webhook`
+
+```ts
+type Request = {}
+type Response = Webhook[]
+```
+
+#### Create a webhook {#create-webhook}
+
+`POST /webhook`
+
+```ts
+type Request = {
+    url: string,
+    events: string[],
+    events.*: 'cache.single' | 'cache.templates' | 'cache.all',
+}
+type Response = Webhook
+```
+
+#### Update a webhook {#updata-webhook}
+
+`PATCH /webhook/{id}`
+
+```ts
+type Request = {
+    url?: string,
+    events?: string[],
+    events.*: 'cache.single' | 'cache.templates' | 'cache.all',
+}
+type Response = Webhook
+```
+
+#### Delete a webhook {#delete-webhook}
+
+`DELETE /webhook/{id}`
+
+```ts
+type Request = {}
+type Response = {}
+```
+
+#### Get webhook deliveries {#get-webhook-deliveries}
+
+`GET /webhook/{id}/deliveries`
+
+```ts
+type Request = {
+    page?: number
+}
+type Response = Webhook[]
+```
+
+### Theme files {#theme-files}
+
+Endpoints:
+
+* [`GET /theme/files`](#get-theme-files) - Get theme files
+* [`POST /theme/file`](#create-theme-file) - Create a theme file
+* [`PATCH /theme/file/{id}`](#update-theme/file) - Update a theme file
+* [`DELETE /theme/file/{id}`](#delete-theme-file) - Delete a theme file
+
+Objects:
+
+* [FileObject](#file-object)
+
+#### Get theme files {#get-theme-files}
+
+`GET /webhook`
+
+```ts
+type Request = {}
+type Response = FileObject[]
+```
+
+#### Create a theme file {#create-theme-file}
+
+`POST /theme/file`
+
+```ts
+type Request = {
+    folder: 'templates' | 'assets' | 'styles' | 'lang',
+    name: string,
+    content?: string,
+    file: File
+}
+type Response = FileObject
+```
+
+#### Update a theme file {#updata-theme-file}
+
+`PATCH /theme/file/{id}`
+
+```ts
+type Request = {
+    name?: string,
+    content?: string | null
+}
+type Response = FileObject
+```
+
+#### Delete a theme file {#delete-theme-file}
+
+`DELETE /theme/file/{id}`
+
+```ts
+type Request = {}
+type Response = {}
+```
+
 
 ## Objects {#objects}
 
@@ -1046,5 +1173,27 @@ interface Route {
     posts_filter: string | null,
     content_type: string | null,
     is_enabled: boolean
+}
+```
+
+### Webhook Object {#webhook-object}
+
+```ts
+interface Route {
+    id: number,
+    url: string,
+    events: string[],
+    secret: string,
+}
+```
+
+### File Object {#file-object}
+
+```ts
+interface Route {
+    id: number,
+    name: string,
+    content?: string
+    folder: 'templates' | 'assets' | 'styles' | 'lang'
 }
 ```
