@@ -226,13 +226,10 @@ export function getCountsByStatus(statuses: Record<string, number>) {
 
 export function useUpdateLinkAnalysis(id: number) {
 
-    const subdomain = getSubdomain();
     const { updateCurrentPostVariantValue } = usePostActions(id);
-    const { currentVariant, currentVariantLinkAnalysis } = usePostValues(id);
-    const { blog: {base_url: baseUrl} } = useUserBlog();
+    const { currentVariant, currentVariantLinkAnalysis, currentVariantLinks } = usePostValues(id);
 
-    const content = currentVariant.content_unsaved || currentVariant.content;
-    const links = getLinksFromContent(content, baseUrl);
+    const links = currentVariantLinks;
     let linksCount = links.length;
 
     let okCount = 0;

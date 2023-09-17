@@ -92,6 +92,7 @@ jobs:
                     APP_ENV: testing
                     APP_DEBUG: true
                     APP_KEY: "base64:XOpWztMz2EsJT/TF7QzscDfgUUCO3a+A6c9oP37l4UI="
+                    FILESYSTEM_DRIVER: local
                 run: |
                     php artisan config:cache
                     php artisan serve --port=8080 &

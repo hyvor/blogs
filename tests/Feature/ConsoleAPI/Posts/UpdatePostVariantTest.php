@@ -24,8 +24,8 @@ it('updates post variant', function () {
 
     $slug = 'hello-world';
     $status = 'scheduled';
-    $content = 'this is content';
-    $contentUnsaved = 'this is unsaved content';
+    $content = '{"type":"doc","content":[{"type":"paragraph","content":[{"type":"text","text":"this is content"}]}]}';
+    $contentUnsaved = '{"type":"doc","content":[{"type":"paragraph","content":[{"type":"text","text":"this is content unsaved"}]}]}';
     $title = 'this is a title';
     $description = 'a description';
 
@@ -59,6 +59,22 @@ it('updates post variant', function () {
         );
 
     Event::assertDispatched(PostVariantUpdatedEvent::class);
+});
+
+it('prevents updating content when prosemirror doc is invalid', function() {
+
+    $blog = blogWithAccessLanguageAndRoutes();
+    $post = addPost($blog);
+    $variant = $post->variants[0];
+    $language = $variant->language;
+
+    consoleApi($blog, 'PATCH', "/post/$post->id/variant", [
+        'language_id' => $language->id,
+        'content' => '<p>invalid html</p>',
+    ])
+        ->assertUnprocessable()
+        ->assertSee('Unable to decode JSON');
+
 });
 
 it('updates post published_at when post status is changed to published', function () {

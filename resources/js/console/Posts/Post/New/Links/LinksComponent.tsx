@@ -15,10 +15,9 @@ export default function LinksComponent(
     {id: number, linkAnalysisProps: ReturnType<typeof useUpdateLinkAnalysis>}
 ) {
 
-    const { currentVariant, currentVariantLinkAnalysis, editorState } = usePostValues(id);
-    const content = currentVariant.content_unsaved || currentVariant.content;
+    const { currentVariantLinkAnalysis, currentVariantLinks, editorState } = usePostValues(id);
 
-    const links = getLinksFromContent(content, currentVariant.url);
+    const links = currentVariantLinks;
     let linksCount = links.length;
 
     const {

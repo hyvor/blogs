@@ -26,6 +26,7 @@ use App\Http\Controllers\ConsoleAPI\ConsoleWebhookController;
 use App\Http\Controllers\ConsoleAPI\Import\ConsoleImportController;
 use App\Http\Controllers\ConsoleAPI\Import\ConsoleImportSitemapController;
 use App\Http\Controllers\ConsoleAPI\Integrations\IntegrationHyvorTalkController;
+use App\Http\Controllers\ConsoleAPI\Misc\ConsoleMiscProsemirrorController;
 use App\Http\Controllers\ConsoleAPI\Temporary\AppSumoController;
 use App\Http\Middleware\App\ConsoleApi\ConsoleApiAccessMiddleware;
 use App\Http\Middleware\App\ConsoleApi\ConsoleApiUserEndpointsAccessMiddleware;
@@ -271,6 +272,15 @@ Route::prefix('/api/console/v0/blog/{subdomain}')
         });
 
         /**
+         * Misc
+         */
+        Route::prefix('misc')->group(function() {
+
+            Route::get('/prosemirror/json', [ConsoleMiscProsemirrorController::class, 'getJson']);
+
+        });
+
+        /**
          * Danger
          */
         Route::middleware('role:owner')->group(function () {
@@ -278,9 +288,6 @@ Route::prefix('/api/console/v0/blog/{subdomain}')
             // Route::post('/blog/reset', [ConsoleDangerController::class, 'reset']);
             Route::delete('/blog/cache', [ConsoleDangerController::class, 'deleteCache']);
         });
-
-        Route::get('/appsumo/codes', [AppSumoController::class, 'getCodes']);
-        Route::post('/appsumo/redeem', [AppSumoController::class, 'redeem']);
 
     });
 
