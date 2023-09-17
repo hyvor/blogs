@@ -39,7 +39,6 @@ Jump to each category:
 * [Webhooks](#webhooks)
 * [Theme Files](#theme-files)
 * [Export](#data-export)
-* [Billing](#billing)
 * [Misc](#misc)
 
 ### Blog {#blog}
@@ -811,7 +810,6 @@ Endpoints:
 * [`POST /webhook`](#create-webhook) - Create a webhook
 * [`PATCH /webhook/{id}`](#update-webhook) - Update a webhook
 * [`DELETE /webhook/{id}`](#delete-webhook) - Delete a webhook
-* [`GET /webhook/{id}/deliveries`](#get-webhook-deliveries) - Get webhooks deliveries
 
 Objects:
 
@@ -860,18 +858,6 @@ type Response = Webhook
 type Request = {}
 type Response = {}
 ```
-
-#### Get webhook deliveries {#get-webhook-deliveries}
-
-`GET /webhook/{id}/deliveries`
-
-```ts
-type Request = {
-    page?: number
-}
-type Response = Webhook[]
-```
-
 ### Theme files {#theme-files}
 
 Endpoints:
@@ -952,58 +938,6 @@ type Response = ExportObject[]
 ```ts
 type Request = {}
 type Response = ExportObject
-```
-
-### Billing {#billing}
-
-Endpoints:
-
-* [`GET /billing`](#get-billing-data) - Get billing data
-* [`DELETE /billing/subscription`](#delete-subscription) - Delete subscription
-* [`GET /billing/paddle`](#get-paddle-billing-data) - Get paddle billing data
-* [`POST /billing/paddle/subscription`](#create-paddle-billing-subscription) - Create paddle billing subscription
-* [`PATCH /billing/paddle/subscription`](#update-paddle-billing-subscription) - Update paddle billing subscription
-* [`DELETE /billing/paddle/subscription`](#delete-paddle-billing-subscription) - Delete paddle billing subscription
-* [`GET /billing/shopify`](#get-shopify-billing-data) - Get shopify billing data
-* [`POST /billing/shopify/subscription`](#create-shopify-billing-subscription) - Create shopify billing subscription
-* [`DELETE /billing/shopify/subscription`](#delete-shopify-billing-subscription) - Delete shopify billing subscription
-
-Objects:
-
-* [Usage](#usage-object)
-* [Subscription](#subscription-object)
-
-#### Get billing data {#get-billing-data}
-
-`GET /billing`
-
-```ts
-type Request = {}
-type Response = {
-    usage: Usage,
-    subscription: Subscription
-}
-```
-
-#### Delete subscription {#delete-subscription}
-
-`DELETE /billing/subscription`
-
-```ts
-type Request = {}
-type Response = {}
-```
-
-#### Get billing paddle data {#get-paddle-billing-data}
-
-`GET /billing/paddle`
-
-```ts
-type Request = {}
-type Response = {
-    usage: Usage,
-    subscription: Subscription
-}
 ```
 
 ### Misc {#misc}
@@ -1303,30 +1237,6 @@ interface Export {
     status: 'pending' | 'completed' | 'failed',
     url?: string,
     error?: string
-}
-```
-
-### Usage Object {#usage-object}
-
-```ts
-interface Usage {
-    current: number,
-    total: number,
-    percentage: number
-}
-```
-
-### Subscription Object {#subscription-object}
-
-```ts
-interface Subscription {
-    id: number,
-    status: 'active' | 'past_due' | 'deleted',
-    plan: 'starter' | 'growth' | 'premium' | 'team' | 'business' | 'enterprise',
-    created_at: number,
-    ends_at?: number,
-    paddle_subscription_id?: number,
-    shopify_subscription_id?: number,
 }
 ```
 
