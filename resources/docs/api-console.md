@@ -43,6 +43,7 @@ Jump to each category:
 * [Theme Files](#theme-files)
 * [Export](#data-export)
 * [Link Analysis](#link-analysis)
+* [Route](#route)
 * [Misc](#misc)
 
 ### Blog {#blog}
