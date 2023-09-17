@@ -143,9 +143,9 @@ class TwigExtensions extends AbstractExtension
         return $url;
     }
 
-    public function languageVariantUrlFilter($context, string $languageCode): string
+    public function languageVariantUrlFilter(mixed $context, string $languageCode): string
     {
-        $route = $context['_route']['name'];
+        $route = $context['_route']['name'] ?? null;
 
         if (
             $route === 'post' || $route === 'page' ||
@@ -170,17 +170,28 @@ class TwigExtensions extends AbstractExtension
             }
         }
 
-        $language = collect($context['_blog']['languages'])->firstWhere('code', $languageCode);
+        /** @var array<array<mixed>> $languages */
+        $languages = $context['_blog']['languages'];
+        $language = collect($languages)->firstWhere('code', $languageCode);
 
-        if (! $language) {
+        if (!$language) {
             return ''; // language not found?
+        }
+
+        $languageModel = LanguageRepository::getLanguageByCode(
+            $this->getBlogFromContext($context),
+            $language['code']
+        );
+
+        if (!$languageModel) {
+            return '';
         }
 
         $blog = $this->getBlogFromContext($context);
 
         return PermalinkRepository::getBlogPermalink(
             $blog,
-            LanguageRepository::getLanguageByCode($blog, $language['code'])
+            $languageModel
         );
     }
 

@@ -23,10 +23,11 @@ class DirectTemplateRenderer
     )
     {}
 
-    public function render()
+    public function render() : string
     {
 
-        $vars =$this->getDefaultVariables($this->blog, $this->language);$url = PermalinkRepository::getFullUrlFromPath($this->blog, $this->path);
+        $vars = $this->getDefaultVariables($this->blog, $this->language);
+        $url = PermalinkRepository::getFullUrlFromPath($this->blog, $this->path);
         $vars['_meta'] = new MetaObject(
             title: null,
             description: null,

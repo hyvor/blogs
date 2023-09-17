@@ -16,6 +16,9 @@ class RouteObject
 
     public ?string $content_type;
 
+    /**
+     * @var array<mixed>
+     */
     public array $params;
 
     public function __construct(MatchedRoute $matchedRoute, string $currentTemplateName)
