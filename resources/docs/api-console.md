@@ -1031,6 +1031,66 @@ type Request = {}
 type Response = CheckObject
 ```
 
+### Route {#route}
+
+Endpoints:
+
+* [`GET /routes`](#get-routes) - Get routes
+* [`POST /route`](#create-route) - Create a route
+* [`PATCH /route/{id}`](#update-route) - Udpate a route
+* [`DELETE /route/{id}`](#delete-route) - Delete a route
+
+Objects:
+
+* [Route](#route-object)
+
+#### Get routes {#get-routes}
+
+`GET /routes`
+
+```ts
+type Request = {}
+type Response = Route[]
+```
+
+#### Create a route {#create-route}
+
+`POST /route`
+
+```ts
+type Request = {
+    name: string,
+    match: string,
+    template: string,
+    post_filter?: string,
+    content_type?: string
+}
+type Response = Route
+```
+
+#### Update a route {#update-route}
+
+`PATCH /route/{id}`
+
+```ts
+type Request = {
+    name: string,
+    match: string,
+    template: string,
+    post_filter?: string,
+    content_type?: string
+}
+type Response = Route
+```
+
+#### Delete a route {#delete-route}
+
+`DELETE /route/{id}`
+
+```ts
+type Request = {}
+type Response = {}
+```
 
 ### Misc {#misc}
 
