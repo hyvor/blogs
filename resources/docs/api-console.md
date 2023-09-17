@@ -944,7 +944,6 @@ Endpoints:
 * [`POST /link-analysis/check-urls`](#check-variant-urls) - Check post variant link
 * [`PATCH /link-analysis/ignore-link`](#ignore-link) - Ignore a link
 * [`GET /link-analysis/stats`](#get-link-stats) - Get link statistics
-* [`GET /link-analysis/analyses`](#get-link-analyses) - Get link analyses
 * [`GET /link-analysis/links`](#get-links) - Get links
 * [`GET /link-analysis/checks`](#get-cheks) - Get checks
 * [`POST /link-analysis/check`](#create-check) - Create a check
