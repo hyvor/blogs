@@ -528,8 +528,7 @@ type Request = {
     limit: number,
     offset: number,
     search?: string | null,
-    extensions?: [] | null,
-    extensions.*: string,
+    extensions?: string[] | null,
     type?: string | null
 }
 type Response = Media[]
@@ -614,7 +613,6 @@ type Response = Navigation[]
 ```ts
 type Request = {
     ids?: number[],
-    ids.*?: number
 }
 type Response = {}
 ```
@@ -832,8 +830,7 @@ type Response = Webhook[]
 ```ts
 type Request = {
     url: string,
-    events: string[],
-    events.*: 'cache.single' | 'cache.templates' | 'cache.all',
+    events: 'cache.single' | 'cache.templates' | 'cache.all'[],
 }
 type Response = Webhook
 ```
@@ -845,8 +842,7 @@ type Response = Webhook
 ```ts
 type Request = {
     url?: string,
-    events?: string[],
-    events.*: 'cache.single' | 'cache.templates' | 'cache.all',
+    events?: 'cache.single' | 'cache.templates' | 'cache.all'[],
 }
 type Response = Webhook
 ```
@@ -967,7 +963,6 @@ Objects:
 type Request = {
     post_variant_id: number,
     urls: string[]
-    urls.*: string
     force?: boolean
 }
 type Response = LinkObject[]
@@ -1097,6 +1092,7 @@ type Response = {}
 Endpoints:
 
 * [`GET /misc/themes`](#get-all-themes) - Get all themes
+* [`DELETE /blog/cache`](#delete-cache) - Delete blog cache
 
 Objects:
 
@@ -1109,6 +1105,18 @@ Objects:
 ```ts
 type Request = {}
 type Response = Theme[]
+```
+
+#### Delete blog cache {#delete-cache}
+
+`DELETE /blog/cache`
+
+```ts
+type Request = {
+    type: 'all' | 'template' | 'paths',
+    paths?: string[],
+}
+type Response = {}
 ```
 
 ## Objects {#objects}
