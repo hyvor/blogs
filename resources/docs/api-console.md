@@ -39,6 +39,7 @@ Jump to each category:
 * [Webhooks](#webhooks)
 * [Theme Files](#theme-files)
 * [Export](#data-export)
+* [Link Analysis](#link-analysis)
 * [Misc](#misc)
 
 ### Blog {#blog}
@@ -940,6 +941,97 @@ type Request = {}
 type Response = ExportObject
 ```
 
+### Link Analysis {#link-analysis}
+
+Endpoints:
+
+* [`POST /link-analysis/check-urls`](#check-variant-urls) - Check post variant link
+* [`PATCH /link-analysis/ignore-link`](#ignore-link) - Ignore a link
+* [`GET /link-analysis/stats`](#get-link-stats) - Get link statistics
+* [`GET /link-analysis/analyses`](#get-link-analyses) - Get link analyses
+* [`GET /link-analysis/links`](#get-links) - Get links
+* [`GET /link-analysis/checks`](#get-cheks) - Get checks
+* [`POST /link-analysis/check`](#create-check) - Create a check
+
+
+Objects:
+
+* [Link](#link-object)
+* [Check](#check-object)
+
+#### Check post variant link {#check-variant-urls}
+
+`POST /link-analysis/check-urls`
+
+```ts
+type Request = {
+    post_variant_id: number,
+    urls: string[]
+    urls.*: string
+    force?: boolean
+}
+type Response = LinkObject[]
+```
+
+#### Ignore a link {#ignore-link}
+
+`PATCH /link-analysis/ignore-link`
+
+```ts
+type Request = {
+    post_variant_id: number,
+    urls: string[],
+    status: boolean
+}
+type Response = LinkObject
+```
+
+#### Get link statistics {#get-link-stats}
+
+`GET /link-analysis/stats`
+
+```ts
+type Request = {}
+type Response = {
+    counts: number
+}
+```
+
+#### Get links {#get-links}
+
+`GET /link-analysis/links`
+
+```ts
+type Request = {
+    type?: 'ok' | 'broken' | 'ignored' | 'redirected',
+    limit?: number,
+    offset?: number,
+}
+type Response = LinkObject[]
+```
+
+#### Get checks {#get-checks}
+
+`GET /link-analysis/checks`
+
+```ts
+type Request = {
+    limit?: number,
+    offset?: number,
+}
+type Response = CheckObject[]
+```
+
+#### Create a check {#create-check}
+
+`GET /link-analysis/checks`
+
+```ts
+type Request = {}
+type Response = CheckObject
+```
+
+
 ### Misc {#misc}
 
 Endpoints:
@@ -1247,5 +1339,42 @@ interface Theme {
     id: number,
     type: 'original' | 'ported',
     name: string
+}
+```
+
+### Link Object {#link-object}
+
+```ts
+interface LinkObject {
+    id: number,
+    url: string,
+    full_url: string,
+    status_code: number,
+    status_type: 'ok' | 'broken' | 'redirect' | 'ignored',
+    ignored: boolean,
+    post_id: number,
+    post_variant_id: number,
+    post_variant_language_id: number,
+    post_variant_title: string,
+}
+```
+
+### Check Object {#check-object}
+
+```ts
+interface CheckObject {
+    id: number,
+    created_at: number,
+    status: 'pending' | 'completed' | 'failed',
+    error?: string,
+    post_count: number,
+    post_variants_count: number,
+    page_count: number,
+    page_variants_count: number,
+    links_total_count: number,
+    links_ok_count: number,
+    links_broken_count: number,
+    links_redirect_count: number,
+    links_ignored_count: number,
 }
 ```
