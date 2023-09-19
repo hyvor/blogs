@@ -442,20 +442,20 @@ type Response = User
 
 ```ts
 type Request = {
-    hyvor_user_id?: number | null,
-    role?: 'owner' | 'admin' | 'editor' | 'writer' | 'contributor' | 'finance' | null,
+    hyvor_user_id?: number,
+    role?: 'owner' | 'admin' | 'editor' | 'writer' | 'contributor' | 'finance',
     status: 'active' | 'blocked',
     slug: string,
-    email?: string | null,
-    website_url?: string | null,
-    picture_url?: string | null,
-    social_facebook?: string | null,
-    social_twitter?: string | null,
-    social_linkedin?: string | null,
-    social_youtube?: string | null,
-    social_tiktok?: string | null,
-    social_instagram?: string | null,
-    social_github?: string | null,
+    email?: string,
+    website_url?: string,
+    picture_url?: string,
+    social_facebook?: string,
+    social_twitter?: string,
+    social_linkedin?: string,
+    social_youtube?: string,
+    social_tiktok?: string,
+    social_instagram?: string,
+    social_github?: string
 }
 type Response = User
 ```
@@ -484,9 +484,9 @@ type Response = UserVariant
 
 ```ts
 type Request = {
-    name?: string | null,
-    bio?: string | null,
-    location?: string | null,
+    name?: string,
+    bio?: string,
+    location?: string,
 }
 type Response = UserVariant
 ```
@@ -531,9 +531,9 @@ Objects:
 type Request = {
     limit: number,
     offset: number,
-    search?: string | null,
-    extensions?: string[] | null,
-    type?: string | null
+    search?: string,
+    extensions?: string[],
+    type?: string
 }
 type Response = Media[]
 ```
@@ -557,7 +557,7 @@ type Response = Media
 ```ts
 type Request = {
     url: string,
-    post_id?: number | null
+    post_id?: number
 }
 type Response = Media
 ```
@@ -663,7 +663,7 @@ type Response = {}
 ```ts
 type Request = {
     language_id: number,
-    name?: string | null,
+    name?: string,
 }
 type Response = NavigationVariant
 ```
@@ -674,7 +674,7 @@ type Response = NavigationVariant
 
 ```ts
 type Request = {
-    name: string | null,
+    name: string,
 }
 type Response = NavigationVariant
 ```
@@ -902,7 +902,7 @@ type Response = FileObject
 ```ts
 type Request = {
     name?: string,
-    content?: string | null
+    content?: string
 }
 type Response = FileObject
 ```
