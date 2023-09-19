@@ -1385,7 +1385,7 @@ interface Webhook {
 interface FileObject {
     id: number,
     name: string,
-    content?: string
+    content: string | null,
     folder: 'templates' | 'assets' | 'styles' | 'lang'
 }
 ```
@@ -1398,7 +1398,7 @@ interface Export {
     createdf_at: number,
     format: 'hyvor_blogs' | 'wordpress',
     status: 'pending' | 'completed' | 'failed',
-    url?: string,
+    url: string | null,
     error?: string
 }
 ```
@@ -1437,7 +1437,7 @@ interface CheckObject {
     id: number,
     created_at: number,
     status: 'pending' | 'completed' | 'failed',
-    error?: string,
+    error: string | null,
     post_count: number,
     post_variants_count: number,
     page_count: number,
