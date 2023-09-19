@@ -28,8 +28,9 @@ test.describe('SEO', () => {
         await page.locator('div').filter({ hasText: /^Secondary Keywords\+ Add$/ }).getByRole('button', { name: '+ Add' }).click();
         await page.getByTestId('post-seo').getByRole('textbox').fill('post');
         await page.getByTestId('post-seo').locator('a').first().click();
-
         await page.reload();
+        
+        await page.getByText('SEO').click();
         await expect(page.getByText('post', { exact: true })).toBeVisible();
     });
 });
