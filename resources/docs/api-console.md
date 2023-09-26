@@ -1,8 +1,5 @@
 # Console API
 
-> ⏰ Console API documentation is still work in progress. We will add more endpoints and examples soon.
-> You can trace the API calls made by the Console from the Network tab of the Developer Tools, and use them as examples.
-
 Console API allows you to do administrative tasks of a blog. This is the same API we use internally in the Console. You can use it to automate some tasks or even build a completely new mini-console by yourself.
 
 ## Calling the API
@@ -27,7 +24,7 @@ Currently, the Console API is always authenticated as the owner of the blog. We 
 
 ## Categories
 
-The Console API is huge, and is categorized by what "resource" you want to access or manage. Most categories have CRUD operations but some may have more endpoints for specific tasks.  These objects are defined within the Category. Also, note that Console API objects are different from Data API objects.
+The Console API has many endpoints and is categorized by what "resource" you want to access or manage. Most categories have CRUD operations but some may have more endpoints for specific tasks. These objects are defined within the Category. Also, note that Console API objects are different from [Data API](api-data) objects.
 
 Jump to each category:
 
@@ -226,6 +223,8 @@ type Request = {
 }
 type Response = PostVariant
 ```
+
+`content` and `content_unsaved` should be in ProseMirror JSON format. See [Get ProseMirror JSON endpoint](#get-prosemirror-json) to convert HTML to ProseMirror JSON.
 
 #### Delete a post variant {#delete-post-variant}
 
@@ -513,17 +512,17 @@ type Response = {}
 
 Endpoints:
 
-* [`GET /media`](#get-media) - Get medias
+* [`GET /media`](#get-media) - Get media
 * [`POST /media`](#create-media) - Create a media
 * [`POST /media/from-url`](#create-media-from-url) - Create a media from URL
 * [`DELETE /media/{id}`](#delete-media) - Delete a navigation
-* [`GET /media/unsplash/search`](#search-media-unsplash) - Get medias from unsplash
+* [`GET /media/unsplash/search`](#search-media-unsplash) - Get media from unsplash
 
 Objects:
 
 * [Media](#media-object)
 
-#### Get medias {#get-media}
+#### Get media {#get-media}
 
 `GET /media`
 
@@ -571,7 +570,9 @@ type Request = {}
 type Response = {}
 ```
 
-#### Get medias from Unsplash {#search-media-unsplash}
+<!--
+This does not need to be exposed outside of the admin panel.
+#### Search Unsplash {#search-media-unsplash}
 
 `GET /media/unsplash/search`
 
@@ -582,6 +583,7 @@ type Request = {
 }
 type Response = Media[]
 ```
+-->
 
 ### Navigation {#navigation}
 
@@ -1095,6 +1097,7 @@ type Response = {}
 Endpoints:
 
 * [`GET /misc/themes`](#get-all-themes) - Get all themes
+* [`GET /misc/prosemirror/json`](#get-prosemirror-json) - Get prosemirror json
 * [`DELETE /blog/cache`](#delete-cache) - Delete blog cache
 
 Objects:
@@ -1108,6 +1111,19 @@ Objects:
 ```ts
 type Request = {}
 type Response = Theme[]
+```
+
+#### Get Prosemirror JSON from HTML {#get-prosemirror-json}
+
+`GET /misc/prosemirror/json`
+
+```ts
+type Request = {
+  html: string,
+}
+type Response = {
+  json: string,
+}
 ```
 
 #### Delete blog cache {#delete-cache}
