@@ -42,7 +42,8 @@ Jump to each category:
 * [Webhooks](#webhooks)
 * [Theme Files](#theme-files)
 * [Export](#data-export)
-* [Billing](#billing)
+* [Link Analysis](#link-analysis)
+* [Route](#route)
 * [Misc](#misc)
 
 ### Blog {#blog}
@@ -367,21 +368,758 @@ type Request = {
 }
 ```
 
-### Misc {#misc}
+### Users {#users}
 
-#### Get Prosemirror JSON from HTML {#get-prosemirror-json}
+Endpoints:
 
-Get a valid Prosemirror JSON string from HTML.
+* [`GET /users`](#get-users) - Get users
+* [`GET /users/search`](#search-users) - Search users
+* [`POST /user`](#create-user) - Create a user
+* [`POST /user/guest`](#create-guest-user) - Create a guest user
+* [`PATCH /user/{id}`](#update-user) - Update a user
+* [`DELETE /user/{id}`](#delete-user) - Delete a user
+* [`POST /user/{id}/variant`](#create-user-variant) - Create a user variant
+* [`PATCH /user/{id}/variant`](#update-user-variant) - Update a user variant
+* [`DELETE /user/{id}/variant`](#delete-user-variant) - Delete a user variant
+* [`POST /user`](#resend-invite) - Resend invitation email
 
-`GET /misc/prosemirror/json`
+Objects:
+
+* [User](#user-object)
+* [UserVariant](#user-variant-object)
+
+#### Get users {#get-users}
+
+`GET /users`
 
 ```ts
 type Request = {
-    html: string,
+    offset?: number,
 }
+type Response = User[]
+```
+
+#### Search users {#search-users}
+
+Searches for users by name.
+
+`GET /users/search`
+
+```ts
+type Request = {
+    search: string,
+}
+type Response = User[]
+```
+
+#### Create a user {#create-user}
+
+`POST /user`
+
+```ts
+type Request = {
+    username_or_email: string,
+    role: 'owner' | 'admin' | 'editor' | 'writer' | 'contributor' | 'finance',
+}
+type Response = User
+```
+
+#### Create a guest user {#create-guest-user}
+
+`POST /user/guest`
+
+```ts
+
+type Request = {
+    name: string,
+}
+type Response = User
+```
+
+#### Update a user {#update-user}
+
+`PATCH /user/{id}`
+
+```ts
+type Request = {
+    hyvor_user_id?: number,
+    role?: 'owner' | 'admin' | 'editor' | 'writer' | 'contributor' | 'finance',
+    status: 'active' | 'blocked',
+    slug: string,
+    email?: string,
+    website_url?: string,
+    picture_url?: string,
+    social_facebook?: string,
+    social_twitter?: string,
+    social_linkedin?: string,
+    social_youtube?: string,
+    social_tiktok?: string,
+    social_instagram?: string,
+    social_github?: string
+}
+type Response = User
+```
+
+#### Delete a user {#delete-user}
+
+`DELETE /user/{id}`
+
+```ts
+type Request = {}
+type Response = {}
+```
+
+#### Create a user variant {#create-user-variant}
+
+`POST /user/{id}/variant`
+
+```ts
+type Request = {}
+type Response = UserVariant
+```
+
+#### Update a user variant {#update-user-variant}
+
+`PATCH /user/{id}/variant`
+
+```ts
+type Request = {
+    name?: string,
+    bio?: string,
+    location?: string,
+}
+type Response = UserVariant
+```
+
+#### Delete a user variant {#delete-user-variant}
+
+`DELETE /user/{id}/variant`
+
+```ts
+type Request = {}
+type Response = {}
+```
+
+#### Resend email invitation {#resend-invite}
+
+`POST /user/{id}/resend-invite`
+
+```ts
+type Request = {}
+type Response = {}
+```
+
+### Media {#media}
+
+Endpoints:
+
+* [`GET /media`](#get-media) - Get medias
+* [`POST /media`](#create-media) - Create a media
+* [`POST /media/from-url`](#create-media-from-url) - Create a media from URL
+* [`DELETE /media/{id}`](#delete-media) - Delete a navigation
+* [`GET /media/unsplash/search`](#search-media-unsplash) - Get medias from unsplash
+
+Objects:
+
+* [Media](#media-object)
+
+#### Get medias {#get-media}
+
+`GET /media`
+
+```ts
+type Request = {
+    limit: number,
+    offset: number,
+    search?: string,
+    extensions?: string[],
+    type?: string
+}
+type Response = Media[]
+```
+
+#### Create a media {#create-media}
+
+`POST /media`
+
+```ts
+type Request = {
+    file: File,
+    post_id: number
+}
+type Response = Media
+```
+
+#### Create a media from URL {#create-media-from-url}
+
+`POST /media/from-url`
+
+```ts
+type Request = {
+    url: string,
+    post_id?: number
+}
+type Response = Media
+```
+
+#### Delete a media {#delete-media}
+
+`DELETE /media/{id}`
+
+```ts
+type Request = {}
+type Response = {}
+```
+
+#### Get medias from Unsplash {#search-media-unsplash}
+
+`GET /media/unsplash/search`
+
+```ts
+type Request = {
+    search: string,
+    page: number
+}
+type Response = Media[]
+```
+
+### Navigation {#navigation}
+
+Endpoints:
+
+* [`GET /navigations`](#get-navigation) - Get navigations
+* [`PATCH /navigations/sort`](#sort-navigations) - Update sort navigations
+* [`POST /navigation`](#create-navigation) - Create a navigation
+* [`PUT /user/{id}`](#update-navigation) - Update a navigation
+* [`DELETE /navigation/{id}`](#delete-navigation) - Delete a navigation
+* [`POST /navigation/{id}/variant`](#create-navigation-variant) - Create a navigation variant
+* [`PUT /navigation/{id}/variant`](#update-navigation-variant) - Update a navigation variant
+* [`DELETE /navigation/{id}/variant`](#delete-navigation-variant) - Delete a navigation variant
+
+Objects:
+
+* [Navigation](#navigation-object)
+* [NavigationVariant](#navigation-variant-object)
+
+#### Get navigations {#get-navigations}
+
+`GET /navigations`
+
+```ts
+type Request = {}
+type Response = Navigation[]
+```
+
+#### Update sort navigations {#sort-navigations}
+
+`PATCH /navigations/search`
+
+```ts
+type Request = {
+    ids?: number[],
+}
+type Response = {}
+```
+
+#### Create a navigation {#create-navigation}
+
+`POST /navigation`
+
+```ts
+type Request = {
+    url: string,
+    name: string,
+    type: 'header' | 'footer'
+}
+type Response = Navigation
+```
+
+#### Update a navigation {#update-navigation}
+
+`PUT /navigation/{id}`
+
+```ts
+type Request = {
+    url: string,
+    name: string,
+    type: 'header' | 'footer',
+}
+type Response = Navigation
+```
+
+#### Delete a navigation {#delete-navigation}
+
+`DELETE /navigation/{id}`
+
+```ts
+type Request = {}
+type Response = {}
+```
+
+#### Create a navigation variant {#create-navigation-variant}
+
+`POST /navigation/{id}/variant`
+
+```ts
+type Request = {
+    language_id: number,
+    name?: string,
+}
+type Response = NavigationVariant
+```
+
+#### Update a navigation variant {#update-navigation-variant}
+
+`PUT /navigation/{id}/variant`
+
+```ts
+type Request = {
+    name: string,
+}
+type Response = NavigationVariant
+```
+
+#### Delete a navigation variant {#delete-navigation-variant}
+
+`DELETE /navigation/{id}/variant`
+
+```ts
+type Request = {}
+type Response = {}
+```
+
+### Language {#language}
+
+Endpoints:
+
+* [`GET /languages`](#get-languages) - Get languages
+* [`POST /language`](#create-language) - Create a language
+* [`PATCH /language/{id}`](#update-language) - Update a language
+* [`DELETE /language/{id}`](#delete-language) - Delete a language
+
+Objects:
+
+* [Language](#language-object)
+
+#### Get languages {#get-languages}
+
+`GET /languages`
+
+```ts
+type Request = {}
+type Response = Languages[]
+```
+
+#### Create a language {#create-language}
+
+`POST /language`
+
+```ts
+type Request = {
+    code: string, // max 12 chars
+    name: string, // max 255 chars
+    direction: 'ltr' | 'rtl',
+}
+type Response = Language
+```
+
+#### Update language {#updata-language}
+
+`PATCH /language/{id}`
+
+```ts
+type Request = {
+    code: string, // max 12 chars
+    name: string, // max 255 chars
+    direction: 'ltr' | 'rtl',
+}
+type Response = Language
+```
+
+#### Delete a language {#delete-language}
+
+`DELETE /language/{id}`
+
+```ts
+type Request = {}
+type Response = {}
+```
+
+### Redirect {#redirect}
+
+Endpoints:
+
+* [`GET /redirects`](#get-redirects) - Get redirects
+* [`POST /redirect`](#create-redirect) - Create a redirect
+* [`PUT /redirect/{id}`](#update-redirect) - Update a redirect
+* [`DELETE /redirect/{id}`](#delete-redirect) - Delete a redirect
+
+Objects:
+
+* [Redirect](#redirect-object)
+
+#### Get Redirects {#get-redirects}
+
+`GET /redirects`
+
+```ts
+type Request = {
+    limit?: number,
+    offset?: number,
+}
+type Response = Redirect[]
+```
+
+#### Create a redirect {#create-redirect}
+
+`POST /redirect`
+
+```ts
+type Request = {
+    path: string,
+    to: string,
+    type: 'temporary' | 'permanent'
+}
+type Response = Redirect
+```
+
+#### Update a redirect {#updata-redirect}
+
+`PUT /redirect/{id}`
+
+```ts
+type Request = {
+    path?: string,
+    to?: string,
+    type?: 'temporary' | 'permanent'
+}
+type Response = Redirect
+```
+
+#### Delete a redirect {#delete-redirect}
+
+`DELETE /redirect/{id}`
+
+```ts
+type Request = {}
+type Response = {}
+```
+
+### Webhook {#webhook}
+
+Endpoints:
+
+* [`GET /webhooks`](#get-webhooks) - Get webhooks
+* [`POST /webhook`](#create-webhook) - Create a webhook
+* [`PATCH /webhook/{id}`](#update-webhook) - Update a webhook
+* [`DELETE /webhook/{id}`](#delete-webhook) - Delete a webhook
+
+Objects:
+
+* [Webhook](#webhook-object)
+
+#### Get webhook {#get-webhook}
+
+`GET /webhook`
+
+```ts
+type Request = {}
+type Response = Webhook[]
+```
+
+#### Create a webhook {#create-webhook}
+
+`POST /webhook`
+
+```ts
+type Request = {
+    url: string,
+    events: 'cache.single' | 'cache.templates' | 'cache.all'[],
+}
+type Response = Webhook
+```
+
+#### Update a webhook {#updata-webhook}
+
+`PATCH /webhook/{id}`
+
+```ts
+type Request = {
+    url?: string,
+    events?: 'cache.single' | 'cache.templates' | 'cache.all'[],
+}
+type Response = Webhook
+```
+
+#### Delete a webhook {#delete-webhook}
+
+`DELETE /webhook/{id}`
+
+```ts
+type Request = {}
+type Response = {}
+```
+### Theme files {#theme-files}
+
+Endpoints:
+
+* [`GET /theme/files`](#get-theme-files) - Get theme files
+* [`POST /theme/file`](#create-theme-file) - Create a theme file
+* [`PATCH /theme/file/{id}`](#update-theme/file) - Update a theme file
+* [`DELETE /theme/file/{id}`](#delete-theme-file) - Delete a theme file
+
+Objects:
+
+* [FileObject](#file-object)
+
+#### Get theme files {#get-theme-files}
+
+`GET /theme/files`
+
+```ts
+type Request = {}
+type Response = FileObject[]
+```
+
+#### Create a theme file {#create-theme-file}
+
+`POST /theme/file`
+
+```ts
+type Request = {
+    folder: 'templates' | 'assets' | 'styles' | 'lang',
+    name: string,
+    content?: string,
+    file: File
+}
+type Response = FileObject
+```
+
+#### Update a theme file {#updata-theme-file}
+
+`PATCH /theme/file/{id}`
+
+```ts
+type Request = {
+    name?: string,
+    content?: string
+}
+type Response = FileObject
+```
+
+#### Delete a theme file {#delete-theme-file}
+
+`DELETE /theme/file/{id}`
+
+```ts
+type Request = {}
+type Response = {}
+```
+
+### Export {#export}
+
+Endpoints:
+
+* [`GET /exports`](#get-exports) - Get exports
+* [`POST /export`](#create-export) - Create an export
+
+Objects:
+
+* [ExportObject](#export-object)
+
+#### Get exports {#get-exports}
+
+`GET /exports`
+
+```ts
+type Request = {}
+type Response = ExportObject[]
+```
+
+```ts
+type Request = {}
+type Response = ExportObject
+```
+
+### Link Analysis {#link-analysis}
+
+Endpoints:
+
+* [`POST /link-analysis/check-urls`](#check-variant-urls) - Check post variant link
+* [`PATCH /link-analysis/ignore-link`](#ignore-link) - Ignore a link
+* [`GET /link-analysis/stats`](#get-link-stats) - Get link statistics
+* [`GET /link-analysis/links`](#get-links) - Get links
+* [`GET /link-analysis/checks`](#get-cheks) - Get checks
+* [`POST /link-analysis/check`](#create-check) - Create a check
+
+
+Objects:
+
+* [Link](#link-object)
+* [Check](#check-object)
+
+#### Check post variant link {#check-variant-urls}
+
+`POST /link-analysis/check-urls`
+
+```ts
+type Request = {
+    post_variant_id: number,
+    urls: string[]
+    force?: boolean
+}
+type Response = LinkObject[]
+```
+
+#### Ignore a link {#ignore-link}
+
+`PATCH /link-analysis/ignore-link`
+
+```ts
+type Request = {
+    post_variant_id: number,
+    urls: string[],
+    status: boolean
+}
+type Response = LinkObject
+```
+
+#### Get link statistics {#get-link-stats}
+
+`GET /link-analysis/stats`
+
+```ts
+type Request = {}
 type Response = {
-    json: string,
+    counts: number
 }
+```
+
+#### Get links {#get-links}
+
+`GET /link-analysis/links`
+
+```ts
+type Request = {
+    type?: 'ok' | 'broken' | 'ignored' | 'redirected',
+    limit?: number,
+    offset?: number,
+}
+type Response = LinkObject[]
+```
+
+#### Get checks {#get-checks}
+
+`GET /link-analysis/checks`
+
+```ts
+type Request = {
+    limit?: number,
+    offset?: number,
+}
+type Response = CheckObject[]
+```
+
+#### Create a check {#create-check}
+
+`GET /link-analysis/checks`
+
+```ts
+type Request = {}
+type Response = CheckObject
+```
+
+### Route {#route}
+
+Endpoints:
+
+* [`GET /routes`](#get-routes) - Get routes
+* [`POST /route`](#create-route) - Create a route
+* [`PATCH /route/{id}`](#update-route) - Udpate a route
+* [`DELETE /route/{id}`](#delete-route) - Delete a route
+
+Objects:
+
+* [Route](#route-object)
+
+#### Get routes {#get-routes}
+
+`GET /routes`
+
+```ts
+type Request = {}
+type Response = Route[]
+```
+
+#### Create a route {#create-route}
+
+`POST /route`
+
+```ts
+type Request = {
+    name: string,
+    match: string,
+    template: string,
+    post_filter?: string,
+    content_type?: string
+}
+type Response = Route
+```
+
+#### Update a route {#update-route}
+
+`PATCH /route/{id}`
+
+```ts
+type Request = {
+    name: string,
+    match: string,
+    template: string,
+    post_filter?: string,
+    content_type?: string
+}
+type Response = Route
+```
+
+#### Delete a route {#delete-route}
+
+`DELETE /route/{id}`
+
+```ts
+type Request = {}
+type Response = {}
+```
+
+### Misc {#misc}
+
+Endpoints:
+
+* [`GET /misc/themes`](#get-all-themes) - Get all themes
+* [`DELETE /blog/cache`](#delete-cache) - Delete blog cache
+
+Objects:
+
+* [Theme](#theme-object)
+
+#### Get all themes {#get-all-themes}
+
+`GET /misc/themes`
+
+```ts
+type Request = {}
+type Response = Theme[]
+```
+
+#### Delete blog cache {#delete-cache}
+
+`DELETE /blog/cache`
+
+```ts
+type Request = {
+    type: 'all' | 'template' | 'paths',
+    paths?: string[],
+}
+type Response = {}
 ```
 
 ## Objects {#objects}
@@ -627,5 +1365,87 @@ interface Route {
     posts_filter: string | null,
     content_type: string | null,
     is_enabled: boolean
+}
+```
+
+### Webhook Object {#webhook-object}
+
+```ts
+interface Webhook {
+    id: number,
+    url: string,
+    events: string[],
+    secret: string,
+}
+```
+
+### File Object {#file-object}
+
+```ts
+interface FileObject {
+    id: number,
+    name: string,
+    content: string | null,
+    folder: 'templates' | 'assets' | 'styles' | 'lang'
+}
+```
+
+### Export Object {#export-object}
+
+```ts
+interface Export {
+    id: number,
+    createdf_at: number,
+    format: 'hyvor_blogs' | 'wordpress',
+    status: 'pending' | 'completed' | 'failed',
+    url: string | null,
+    error?: string
+}
+```
+
+### Theme Object {#theme-object}
+
+```ts
+interface Theme {
+    id: number,
+    type: 'original' | 'ported',
+    name: string
+}
+```
+
+### Link Object {#link-object}
+
+```ts
+interface LinkObject {
+    id: number,
+    url: string,
+    full_url: string,
+    status_code: number,
+    status_type: 'ok' | 'broken' | 'redirect' | 'ignored',
+    ignored: boolean,
+    post_id: number,
+    post_variant_id: number,
+    post_variant_language_id: number,
+    post_variant_title: string,
+}
+```
+
+### Check Object {#check-object}
+
+```ts
+interface CheckObject {
+    id: number,
+    created_at: number,
+    status: 'pending' | 'completed' | 'failed',
+    error: string | null,
+    post_count: number,
+    post_variants_count: number,
+    page_count: number,
+    page_variants_count: number,
+    links_total_count: number,
+    links_ok_count: number,
+    links_broken_count: number,
+    links_redirect_count: number,
+    links_ignored_count: number,
 }
 ```
