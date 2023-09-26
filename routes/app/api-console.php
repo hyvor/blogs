@@ -27,7 +27,6 @@ use App\Http\Controllers\ConsoleAPI\Import\ConsoleImportController;
 use App\Http\Controllers\ConsoleAPI\Import\ConsoleImportSitemapController;
 use App\Http\Controllers\ConsoleAPI\Integrations\IntegrationHyvorTalkController;
 use App\Http\Controllers\ConsoleAPI\Misc\ConsoleMiscProsemirrorController;
-use App\Http\Controllers\ConsoleAPI\Temporary\AppSumoController;
 use App\Http\Middleware\App\ConsoleApi\ConsoleApiAccessMiddleware;
 use App\Http\Middleware\App\ConsoleApi\ConsoleApiUserEndpointsAccessMiddleware;
 use App\Http\Middleware\App\ConsoleApi\ConsoleMiscApiAccessMiddleware;

@@ -33,11 +33,9 @@ Route::get('code', function () {
 });
 
 Route::get('email', function () {
-    return view('emails.invite-user', [
-        'hyvorUser' => HyvorUser::dummy(),
-        'user' => User::first(),
+    return view('emails.trial-ended', [
+        'user' => HyvorUser::dummy(),
         'blog' => Blog::first(),
-        'link' => '',
     ]);
 });
 

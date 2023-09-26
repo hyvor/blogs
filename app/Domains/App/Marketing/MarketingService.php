@@ -1,6 +1,6 @@
 <?php declare(strict_types=1);
 
-namespace App\Domains\App;
+namespace App\Domains\App\Marketing;
 
 use App\Models\Blog;
 use Illuminate\Support\Facades\Cache;

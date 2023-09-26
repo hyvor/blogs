@@ -1,6 +1,6 @@
 <?php
 
-use App\Domains\App\MarketingService;
+use App\Domains\App\Marketing\MarketingService;
 
 $reviews = [
     [
@@ -38,7 +38,8 @@ $blogsCount = MarketingService::getBlogsCount();
         <h3>Loved by&nbsp;<span data-typewriter="Bloggers...,Startups...,Developers..."></span></h3>
 
         <div class="description">
-            Hyvor Blogs powers <span class="power">{{ number_format($blogsCount) }}</span> blogs and counting<sup>*</sup>
+            Hyvor Blogs powers <span class="power">{{ number_format($blogsCount) }}</span> blogs and
+            counting<sup>*</sup>
             <div class="note">*Updated daily.</div>
         </div>
 
