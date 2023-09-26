@@ -84,16 +84,20 @@
 
     .code-fullscreen-header {
         display: flex;
-        align-items: center;
-        justify-content: center;
+        flex-direction: row;
+    }
+    .fullscreen-button-row {
+        display: flex;
+        flex-direction: row;
+        margin-right: 0px;
+        margin-left: auto;
     }
     .code-fullscreen-filename{
         margin-left: 3px;
     }
-    .fullscreen-exit-button {
+    .fullscreen-cancel-button {
         position: relative;
-        margin-right: 0px;
-        margin-left: auto;
+        margin-right: 5px;   
     }
 
 }

@@ -1,5 +1,5 @@
 import React, {useEffect, useRef, useState} from 'react'
-import { Popup, PopupHeaderDefault, PopupFooterSingleButton, PopupBodyDefault } from './Popup';
+import { Popup, PopupHeaderDefault, PopupFooterSingleButton, PopupBodyDefault, PopupConfirm } from './Popup';
 import { X } from 'react-bootstrap-icons';
 import Button from './Button';
 
@@ -30,25 +30,28 @@ interface Props {
 
 interface FullScreenProps {
     id?: null | string | number,
+    codeFullScreenCm: any,
     initCm: (ref: any, cm: any) => any,
     setShowCodeFullScreen: (val: boolean) => any,
     filename: string,
+    toggleConfirmPopup: () => any,
 
     props?: object
 }
 
-const CodeMirrorEditorFullScreen = ({ id = null, initCm, setShowCodeFullScreen, props, filename }: FullScreenProps) => {
+const CodeMirrorEditorFullScreen = ({ id = null, codeFullScreenCm, initCm, setShowCodeFullScreen, props, filename, toggleConfirmPopup }: FullScreenProps) => {
     const codeFullScreenRef = useRef<null | HTMLDivElement>(null);
-    const codeFullScreenCm = useRef<any>(null);
 
     const popupEditorLoading = useRef(true);
 
     const popupEditorFullScreenClose = () => {
         if (popupEditorLoading.current)
             popupEditorLoading.current = false;
-        else
-            setShowCodeFullScreen(false);
+        else {
+            toggleConfirmPopup();
+        }
     }
+
 
     useEffect(() => {
         initCm(codeFullScreenRef, codeFullScreenCm);
@@ -58,15 +61,19 @@ const CodeMirrorEditorFullScreen = ({ id = null, initCm, setShowCodeFullScreen, 
 
     return <div className='code-fullscreen'>
                 <Popup
-                    onClose={() => popupEditorFullScreenClose()}
+                    onClose={popupEditorFullScreenClose}
                     header={
                         <PopupHeaderDefault title={
                             <div className='code-fullscreen-header'>
                                 Code Editor
                                 {filename && <span className='code-fullscreen-filename'>{` - ${filename}`}</span>}
-                                <div className='fullscreen-exit-button'>
+                                <div className='fullscreen-button-row'>
+                                    <div className='fullscreen-cancel-button'>
+                                        <Button type="text-only" onClick={toggleConfirmPopup}>Cancel</Button>
+                                    </div>
                                     <Button onClick={() => setShowCodeFullScreen(false)}>Done</Button>
                                 </div>
+                                
                             </div>
                         } />
                     }
@@ -84,9 +91,13 @@ export default function CodemirrorEditor({ id = null, value, onChange, onSave, e
 
     const codeRef = useRef<null | HTMLDivElement>(null);
     const codeCm = useRef<any>(null);
+    const codeFullScreenCm = useRef<any>(null);
     const tabSize = extension === 'yaml' ? 2 : 4;
 
     const [showCodeFullScreen, setShowCodeFullScreen] = useState(false);
+    const saveValue = useRef(value);
+
+    const [showConfirmPopup, setShowConfirmPopup] = useState(false);
 
     function handleTab(cm: any) {
         if (cm.somethingSelected()) {
@@ -95,6 +106,27 @@ export default function CodemirrorEditor({ id = null, value, onChange, onSave, e
           cm.replaceSelection(cm.getOption("indentWithTabs")? "\t":
             Array(cm.getOption("indentUnit") + 1).join(" "), "end", "+input");
         }
+    }
+
+
+    const ConfirmPopup = () => <PopupConfirm
+                                    title={'Cancel editing'} 
+                                    text={'All changes made to the code will be discarded'} 
+                                    name={'Confirm'} onClick={() => resetContent()} 
+                                    onCancel={() => setShowConfirmPopup(false)}/>
+
+    function toggleConfirmPopup() {
+        if (codeCm.current.doc.getValue() !== saveValue.current || codeFullScreenCm.current.doc.getValue() !== saveValue.current) {
+            setShowConfirmPopup(true);
+        }
+        else
+            setShowCodeFullScreen(false);   
+    }
+
+    function resetContent() {
+        onChange(codeCm.current.doc.getValue());
+        setShowConfirmPopup(false);
+        setShowCodeFullScreen(false);
     }
 
     function initCm(ref: any, cm: any) {
@@ -146,11 +178,14 @@ export default function CodemirrorEditor({ id = null, value, onChange, onSave, e
             {showCodeFullScreen && 
                 <CodeMirrorEditorFullScreen 
                     id={id}
+                    codeFullScreenCm={codeFullScreenCm}
                     initCm={initCm}
                     setShowCodeFullScreen={setShowCodeFullScreen}
                     filename={fileName}
+                    toggleConfirmPopup={toggleConfirmPopup}
                     props={props}/>
-            }              
+            }           
+            {showConfirmPopup && <ConfirmPopup />}   
             <div {
                 ...props} 
                 className="global-codemirror-wrap" 
