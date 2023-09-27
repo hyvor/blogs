@@ -54,7 +54,6 @@ const matchable = [
         icon: <ListUl />,
         keywords: ["toc", "table of contents"],
         node: "toc",
-        focusCell: true,
     },
     {
         name: "Image",

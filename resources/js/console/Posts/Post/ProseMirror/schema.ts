@@ -70,7 +70,9 @@ export const nodes = {
         attrs: { 
             levels: {default: [1,2,3,4]} 
         },
-        content: "inline*"
+        group: "block",
+        content: "",
+        atom: true,
     } as NodeSpec,
 
     // :: NodeSpec A code listing. Disallows marks or non-text inline
