@@ -19,6 +19,15 @@ export default class Toc implements NodeView {
 
         this.dom = document.createElement('div');
         this.contentDOM = document.createElement('div');
+        
+        const headings = [];
+        console.log(view.state.doc);
+        for (let i = 0; i < view.state.doc.content.size; i++) {
+            const node = view.state.doc.content.child(i);
+            if (node.type.name === 'heading') {
+                headings.push(node);
+            }
+        }
     }
 
 }

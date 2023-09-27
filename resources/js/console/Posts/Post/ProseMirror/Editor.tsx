@@ -65,7 +65,6 @@ const nodeViews: NodeViewsType = {
         return new Table(HBSchema, node, view, getPos);
     },
     toc(node, view, getPos) {
-        console.log('TOC');
         return new Toc(HBSchema, node, view, getPos);
     },
 }
