@@ -16,7 +16,8 @@ import {
     Quote,
     TypeH2,
     TypeH3,
-    Table
+    Table,
+    ListUl
 } from "react-bootstrap-icons";
 
 import { createEmbed, createImage, createQuote, createTable } from "./creators";
@@ -46,6 +47,14 @@ const matchable = [
         keywords: ["heading", "medium", "title", "h2", "h3", "h4"],
         node: "heading",
         attrs: { level: 3 },
+    },
+    {
+        name: "Table of Contents",
+        description: "Add a table of contents",
+        icon: <ListUl />,
+        keywords: ["toc", "table of contents"],
+        node: "toc",
+        focusCell: true,
     },
     {
         name: "Image",

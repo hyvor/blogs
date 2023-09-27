@@ -18,6 +18,7 @@ import Table from './nodeview-table';
 import { tableEditing, columnResizing, goToNextCell, fixTables } from 'prosemirror-tables';
 import { keymap } from 'prosemirror-keymap';
 import { usePostActions } from '../helpers';
+import Toc from './nodeview-toc';
 
 function getState(val: string) {
     val = val ? JSON.parse(val) : null
@@ -63,8 +64,9 @@ const nodeViews: NodeViewsType = {
     table(node, view, getPos) {
         return new Table(HBSchema, node, view, getPos);
     },
-    /*table_row(node, view, getPos) {
-    }*/
+    toc(node, view, getPos) {
+        return new Toc(HBSchema, node, view, getPos);
+    },
 }
 
 interface EditorProps {

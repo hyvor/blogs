@@ -64,6 +64,14 @@ export const nodes = {
         ],
         toDOM(node: Node) { return ["h" + node.attrs.level, {id: node.attrs.id}, 0] }
     } as NodeSpec,
+    // :: NodeSpec A Table Of Content node, with a `levels` attribute that
+    // should contains the level of heading to display in the table.
+    toc: {
+        attrs: { 
+            levels: {default: [1,2,3,4]} 
+        },
+        content: "inline*"
+    } as NodeSpec,
 
     // :: NodeSpec A code listing. Disallows marks or non-text inline
     // nodes by default. Represented as a `<pre>` element with a
