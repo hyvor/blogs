@@ -3,13 +3,19 @@
 namespace Tests\Unit\Domains\Blog\Jobs;
 
 use App\Domains\Blog\Jobs\UpdateUrlsJob;
+use App\Domains\Cache\CacheService;
 use App\Models\Post;
 use App\Models\PostVariant;
 use App\Models\User;
+use Mockery;
 
 it('updates URLs in content and content_unsaved', function() {
 
     $blog = blog();
+
+    $mock = Mockery::mock(CacheService::class, [$blog])->makePartial();
+    app()->bind(CacheService::class, fn() => $mock);
+    $mock->shouldReceive('clearTemplateCache')->once();
 
     $oldUrl = 'https://1.com';
     $newUrl = 'https://2.com';
