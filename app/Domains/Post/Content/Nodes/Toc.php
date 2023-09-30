@@ -8,8 +8,7 @@ use Hyvor\Phrosemirror\Types\NodeType;
 
 class Toc extends NodeType
 {
-    public string $name = 'paragraph';
-    public ?string $content = 'inline*';
+    public string $name = 'toc';
     public string $group = 'block';
 
     public function toHtml(Node $node, string $children): string
