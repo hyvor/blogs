@@ -20,6 +20,15 @@ class CacheService
     public const LAST_ALL_CACHE_CLEARED_AT = 'LAST_ALL_CACHE_CLEARED_AT';
     private Blog $blog;
 
+    public function __construct(
+        Blog $blog = null
+    )
+    {
+        if ($blog) {
+            $this->blog = $blog;
+        }
+    }
+
     /*
      * This is not done in constructor because laravel mock has a problem
      * when the constructor has params

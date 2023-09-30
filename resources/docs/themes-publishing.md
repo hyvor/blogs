@@ -18,6 +18,7 @@ All the following requirements should be met in order to publish a theme to our 
 * Supports both light and dark color modes
 * Respects the blog's color mode settings
 * Pagination
+* Blog search must be implemented at least with post searching. Optionally, you can add search for tags and authors.
 * All posts should have links to translated versions of them (if available). Ex: "This post is also available in..." or "Translations: ..."
 * All [placeholders](themes-templates#placeholders) are added
   * `_head`

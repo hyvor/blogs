@@ -2,6 +2,7 @@
 
 namespace App\Domains\Blog\Jobs;
 
+use App\Domains\Cache\CacheService;
 use App\Domains\Post\Content\ProsemirrorHelper;
 use App\Models\Blog;
 use App\Models\Post;
@@ -27,6 +28,8 @@ class UpdateUrlsJob implements ShouldQueue
         $this->updatePostsMetaUrls();
         $this->updatePostsContentUrls();
         $this->updateAuthorsUrls();
+
+        app(CacheService::class, ['blog' => $this->blog])->clearTemplateCache();
     }
 
     private function hasOldUrl(mixed $url) : bool
