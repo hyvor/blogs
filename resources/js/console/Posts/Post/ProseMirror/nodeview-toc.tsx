@@ -56,12 +56,12 @@ export default class Toc implements NodeView {
         for (let i = 0; i < docContent.length; i++) {
             const node = docContent[i];
             if (node.type.name === 'heading') {
+                if (!levels.includes(node.attrs.level))
+                    continue;
                 if (!displayHeadings) {
                     currentHeadingLevel = node.attrs.level;
                     displayHeadings = true;
                 }
-                if (!levels.includes(node.attrs.level))
-                    continue;
                 const currentList = headingStack[headingStack.length - 1];
                 const newNode = this.createHeading(node.attrs.id, node.textContent);
                 if (currentHeadingLevel == node.attrs.level) {
