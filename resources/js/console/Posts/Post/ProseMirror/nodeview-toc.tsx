@@ -26,7 +26,10 @@ export default class Toc implements NodeView {
         else {
            let root = ReactDOM.createRoot(anchor);
             root.render(
-                <InfoCircle />
+                <div>
+                    #
+                    <InfoCircle />
+                </div>
             );
         }
 
@@ -41,15 +44,7 @@ export default class Toc implements NodeView {
         return li;
     }
 
-    constructor(schema: Schema, node: ProsemirrorNode, view: EditorView, getPos: () => number | undefined) {
-        this.node = node;
-        this.view = view;
-        this.getPos = getPos;
-        this.schema = schema;
-
-        this.dom = document.createElement('div');
-        this.dom.contentEditable = 'false';
-
+    genereateTOC(levels: number[]) {
         const mainList = document.createElement('ul');
         mainList.contentEditable = 'false';
 
@@ -65,6 +60,8 @@ export default class Toc implements NodeView {
                     currentHeadingLevel = node.attrs.level;
                     displayHeadings = true;
                 }
+                if (!levels.includes(node.attrs.level))
+                    continue;
                 const currentList = headingStack[headingStack.length - 1];
                 const newNode = this.createHeading(node.attrs.id, node.textContent);
                 if (currentHeadingLevel == node.attrs.level) {
@@ -99,10 +96,64 @@ export default class Toc implements NodeView {
                 }
             }
         }
-        if (displayHeadings) {
-            this.dom.appendChild(headingStack[0]);
+        return headingStack;
+    }
+
+    createMenu(levels: number[]) {
+        const menu = document.createElement('div');
+        menu.classList.add('toc-menu');
+        for (let i = 0; i < 6; i++) {
+            const checkBoxWrapper = document.createElement('div');
+            checkBoxWrapper.classList.add('toc-checkbox-wrapper');
+            const headerCheckBox = document.createElement('input');
+            headerCheckBox.type = 'checkbox';
+            headerCheckBox.checked = levels.includes(i + 1);
+
+            headerCheckBox.addEventListener('change', (event) => {
+                const target = event.target as HTMLInputElement;
+                const levels = this.node.attrs.levels;
+                if (target.checked) {
+                    levels.push(i + 1);
+                }
+                else {
+                    const index = levels.indexOf(i + 1);
+                    levels.splice(index, 1);
+                }
+                this.loadTOC();
+            });
+
+            const label = document.createElement('span');
+            label.innerHTML = `H${i + 1}`;
+            checkBoxWrapper.appendChild(label);
+            checkBoxWrapper.appendChild(headerCheckBox);
+            menu.appendChild(checkBoxWrapper);
         }
-    
+        return menu;
+    }
+
+    loadTOC() {
+        const headingStack = this.genereateTOC(this.node.attrs.levels);
+        const menu = this.createMenu(this.node.attrs.levels);
+        // Clear the current content
+        this.dom.innerHTML = '';
+        if (headingStack.length > 0) {
+            this.dom.appendChild(headingStack[0]);
+            this.dom.appendChild(menu);
+        }
+    }
+
+    constructor(schema: Schema, node: ProsemirrorNode, view: EditorView, getPos: () => number | undefined) {
+        this.node = node;
+        this.view = view;
+        this.getPos = getPos;
+        this.schema = schema;
+
+        this.dom = document.createElement('div');
+        this.dom.classList.add('toc-wrapper');
+        this.dom.contentEditable = 'false';
+
+        this.loadTOC();
+        
     }
 
 }

@@ -788,6 +788,15 @@ $prosemirror-selected-outline: 3px solid #299af3;
     bottom: 20px;
 }
 
+.toc-wrapper {
+    display: flex;
+    flex-direction: column;
+}
+.toc-menu {
+    display: flex;
+    flex-direction: row;
+}
+
 .post-editor-wrap[dir="rtl"] .ProseMirror {
     blockquote, aside {
         border-left-width: 0;
