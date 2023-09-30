@@ -777,6 +777,17 @@ $prosemirror-selected-outline: 3px solid #299af3;
 }
 
 
+.toc-heading {
+    display: flex;
+    flex-direction: column;
+}
+
+.toc-anchor {
+    font-size: 12px;
+    position: absolute;
+    bottom: 20px;
+}
+
 .post-editor-wrap[dir="rtl"] .ProseMirror {
     blockquote, aside {
         border-left-width: 0;

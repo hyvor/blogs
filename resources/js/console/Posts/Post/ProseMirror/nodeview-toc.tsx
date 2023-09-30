@@ -1,5 +1,8 @@
 import {EditorView, NodeView} from "prosemirror-view";
 import type {Node as ProsemirrorNode, Schema} from 'prosemirror-model';
+import { InfoCircle } from "react-bootstrap-icons";
+import React from "react";
+import ReactDOM from "react-dom/client";
 
 export default class Toc implements NodeView {
 
@@ -9,8 +12,34 @@ export default class Toc implements NodeView {
     schema: Schema;
 
     dom: HTMLElement;
-    contentDOM: HTMLElement;
-    mainList: HTMLElement;
+
+    createHeading(id: string, text: string) {
+        const container = document.createElement('div');
+        container.contentEditable = 'false';
+        container.classList.add('toc-heading');
+        const anchor = document.createElement('span');
+        anchor.classList.add('toc-anchor');
+        
+        if (id) {
+            anchor.innerHTML = `#${id}`;
+        }
+        else {
+           let root = ReactDOM.createRoot(anchor);
+            root.render(
+                <InfoCircle />
+            );
+        }
+
+        const content = document.createElement('span');
+        content.innerHTML = text;
+        container.appendChild(anchor);
+        console.log(anchor);
+        container.appendChild(content);
+
+        const li = document.createElement('li');
+        li.appendChild(container);
+        return li;
+    }
 
     constructor(schema: Schema, node: ProsemirrorNode, view: EditorView, getPos: () => number | undefined) {
         this.node = node;
@@ -19,36 +48,31 @@ export default class Toc implements NodeView {
         this.schema = schema;
 
         this.dom = document.createElement('div');
-        this.contentDOM = document.createElement('div');
-        this.contentDOM.classList.add('toc');
+        this.dom.contentEditable = 'false';
 
-        this.mainList = document.createElement('ul');
+        const mainList = document.createElement('ul');
+        mainList.contentEditable = 'false';
 
         // Put the current heading on top of the stack
-        const headingStack: HTMLElement[] = [this.mainList];
+        const headingStack: HTMLElement[] = [mainList];
         let currentHeadingLevel = 1;
         let displayHeadings = false;
         const docContent = this.view.state.doc.content.content;
         for (let i = 0; i < docContent.length; i++) {
             const node = docContent[i];
             if (node.type.name === 'heading') {
-                console.log(headingStack);
-                console.log(node.attrs.level);
                 if (!displayHeadings) {
                     currentHeadingLevel = node.attrs.level;
                     displayHeadings = true;
                 }
                 const currentList = headingStack[headingStack.length - 1];
+                const newNode = this.createHeading(node.attrs.id, node.textContent);
                 if (currentHeadingLevel == node.attrs.level) {
-                    const newNode = document.createElement('li');
-                    newNode.innerHTML = node.textContent;
                     currentList.appendChild(newNode);
                 }
                 // Smaller heading
                 if (node.attrs.level > currentHeadingLevel) {
                     const newList = document.createElement('ul');
-                    const newNode = document.createElement('li');
-                    newNode.innerHTML = node.textContent;
                     newList.appendChild(newNode);
                     currentList.appendChild(newList);
                     headingStack.push(newList);
@@ -62,8 +86,6 @@ export default class Toc implements NodeView {
                         currentHeadingLevel--;
                     }
                     currentHeadingLevel = node.attrs.level;
-                    const newNode = document.createElement('li');
-                    newNode.innerHTML = node.textContent;
                     if (headingStack.length == 0) {
                         const newList = document.createElement('ul');
                         if (lastHeading)
@@ -78,8 +100,7 @@ export default class Toc implements NodeView {
             }
         }
         if (displayHeadings) {
-            this.contentDOM.appendChild(headingStack[0]);
-            this.dom.appendChild(this.contentDOM);
+            this.dom.appendChild(headingStack[0]);
         }
     
     }
