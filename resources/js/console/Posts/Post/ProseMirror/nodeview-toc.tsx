@@ -10,11 +10,12 @@ function HeadingRedirectionMenu({id}: {id: string}) {
     const [idValue, setIdValue] = useState(id);
 
     return <div className="toc-heading toc-anchor">
+        <span>#</span>
         {idValue != null 
             ? 
             <input
                 autoFocus={true}
-                value={'#' + idValue}
+                value={idValue}
                 onChange={(event) => {
                     setIdValue(event.target.value);
                 }}
