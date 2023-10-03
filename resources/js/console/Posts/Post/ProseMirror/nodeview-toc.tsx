@@ -18,6 +18,8 @@ function HeadingRedirectionMenu({id}: {id: string}) {
                 onChange={(event) => {
                     setIdValue(event.target.value);
                 }}
+                onKeyUp={(event) => {event.stopPropagation();}}
+                onKeyDown={(event) => {event.stopPropagation();}}
             /> 
             :
             <InfoCircle 
