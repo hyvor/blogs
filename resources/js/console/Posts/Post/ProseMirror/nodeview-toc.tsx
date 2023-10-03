@@ -1,8 +1,31 @@
 import {EditorView, NodeView} from "prosemirror-view";
 import type {Node as ProsemirrorNode, Schema} from 'prosemirror-model';
 import { InfoCircle } from "react-bootstrap-icons";
-import React from "react";
+import React, { useState } from "react";
 import ReactDOM from "react-dom/client";
+
+// React component for the heading redirection menu
+function HeadingRedirectionMenu({id}: {id: string}) {
+
+    const [idValue, setIdValue] = useState(id);
+
+    return <div className="toc-heading toc-anchor">
+        {idValue != null 
+            ? 
+            <input
+                autoFocus={true}
+                value={'#' + idValue}
+                onChange={(event) => {
+                    setIdValue(event.target.value);
+                }}
+            /> 
+            :
+            <InfoCircle 
+                className="toc-info-icon"
+                onClick={() => setIdValue('')}
+            />}
+    </div>
+}
 
 export default class Toc implements NodeView {
 
@@ -15,28 +38,15 @@ export default class Toc implements NodeView {
 
     createHeading(id: string, text: string) {
         const container = document.createElement('div');
-        container.contentEditable = 'false';
-        container.classList.add('toc-heading');
-        const anchor = document.createElement('span');
-        anchor.classList.add('toc-anchor');
-        
-        if (id) {
-            anchor.innerHTML = `#${id}`;
-        }
-        else {
-           let root = ReactDOM.createRoot(anchor);
-            root.render(
-                <div>
-                    #
-                    <InfoCircle />
-                </div>
-            );
-        }
+        const headingWrapper = document.createElement('div');
+
+        let root = ReactDOM.createRoot(headingWrapper);
+        root.render(<HeadingRedirectionMenu id={id} />);
 
         const content = document.createElement('span');
         content.innerHTML = text;
-        container.appendChild(anchor);
-        console.log(anchor);
+
+        container.appendChild(headingWrapper);
         container.appendChild(content);
 
         const li = document.createElement('li');

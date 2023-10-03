@@ -780,6 +780,21 @@ $prosemirror-selected-outline: 3px solid #299af3;
 .toc-heading {
     display: flex;
     flex-direction: column;
+    input {
+        width: 100%;
+        border: none;
+        outline: none;
+        background-color: transparent;
+    }
+}
+
+.toc-heading-row {
+    display: flex;
+    flex-direction: row;
+}
+
+.toc-info-icon {
+    cursor: pointer;
 }
 
 .toc-anchor {
