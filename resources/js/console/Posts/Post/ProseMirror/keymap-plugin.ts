@@ -16,6 +16,7 @@ import {
 import { Command, EditorState, NodeSelection, Selection } from "prosemirror-state";
 import { ResolvedPos, Schema } from "prosemirror-model";
 import { EditorView } from "prosemirror-view";
+import slugify from "../../../../../../resources/js/helpers/slugify";
 
 export default function keymapPlugins(schema: Schema) {
     var extendedKeymap : Record<string, Command> = {};
@@ -86,6 +87,17 @@ export default function keymapPlugins(schema: Schema) {
          */
 
         const parent = selection.$to.parent;
+
+        if (parent.type.name === "heading") {
+            dispatch(
+                state.tr
+                    .setNodeMarkup(
+                        selection.$to.before(),
+                        undefined,
+                        { ...parent.attrs, id: parent.attrs.id || slugify(parent.content.firstChild?.text) || "" }
+                    ))
+        }
+
         const text = parent.firstChild?.text;
         let codeMatch;
         if (

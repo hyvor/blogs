@@ -169,4 +169,8 @@ export default class Toc implements NodeView {
         
     }
 
+    stopEvent() {
+        return true;
+    }
+
 }
