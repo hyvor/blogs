@@ -41,6 +41,7 @@ function HeadingRedirectionMenu({nodeAttrs, editorView}: {nodeAttrs: {id: string
 
     const doc = editorView.state.doc;
 
+    // Modify the id on the document heading
     const modifyId = (newId: string) => {
         let pos = 0;
         doc.descendants((node, pos2) => {
@@ -203,10 +204,14 @@ export default class Toc implements NodeView {
     }
 
     loadTOC() {
+        const title = document.createElement('h3');
+        title.classList.add('toc-title');
+        title.innerHTML = 'Table of contents';
         const headingStack = this.genereateTOC(this.node.attrs.levels);
         const menu = this.createMenu(this.node.attrs.levels);
         // Clear the current content
         this.dom.innerHTML = '';
+        this.dom.appendChild(title);
         if (headingStack.length > 0) {
             const tocList = document.createElement('div');
             tocList.classList.add('toc-list');
