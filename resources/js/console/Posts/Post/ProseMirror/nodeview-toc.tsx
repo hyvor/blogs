@@ -1,12 +1,13 @@
 import {EditorView, NodeView} from "prosemirror-view";
 import type {Node as ProsemirrorNode, Schema} from 'prosemirror-model';
 import { InfoCircle } from "react-bootstrap-icons";
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import ReactDOM from "react-dom/client";
 import Checkbox from "../../../../../../resources/js/console/ReusableComponents/Checkbox";
 import { TextSelection } from "prosemirror-state";
 import { positionSelectionInMiddleOfScreen } from "./helpers";
 import Tooltip from "../../../../../../resources/js/console/ReusableComponents/Tooltip";
+import slugify from "../../../../../../resources/js/helpers/slugify";
 
 function focusHeading(id: string, editorView: EditorView) {
 
@@ -34,19 +35,39 @@ function focusHeading(id: string, editorView: EditorView) {
 }
 
 // React component for the heading redirection menu
-function HeadingRedirectionMenu({id}: {id: string}) {
+function HeadingRedirectionMenu({nodeAttrs, editorView}: {nodeAttrs: {id: string, level: number[]}, editorView: EditorView}) {
 
-    const [idValue, setIdValue] = useState(id);
+    const [saveIdValue, setSaveIdValue] = useState(nodeAttrs.id);
+
+    const doc = editorView.state.doc;
+
+    const modifyId = (newId: string) => {
+        let pos = 0;
+        doc.descendants((node, pos2) => {
+            if (node.type.name === 'heading' && node.attrs.id == saveIdValue) {
+                pos = pos2;
+            }
+        });
+        
+        editorView.dispatch(
+            editorView.state.tr
+                .setNodeMarkup(
+                    pos,
+                    undefined,
+                    { ...nodeAttrs, id: slugify(newId) || "" }
+                ));
+        setSaveIdValue(newId);
+    };
 
     return <div className="toc-heading toc-anchor">
         <span>#</span>
-        {idValue != null 
+        {saveIdValue != null 
             ? 
             <input
                 autoFocus={true}
-                value={idValue}
+                value={saveIdValue}
                 onChange={(event) => {
-                    setIdValue(event.target.value);
+                    modifyId(event.target.value);
                 }}
                 onKeyUp={(event) => {event.stopPropagation();}}
                 onKeyDown={(event) => {event.stopPropagation();}}
@@ -55,7 +76,7 @@ function HeadingRedirectionMenu({id}: {id: string}) {
             <Tooltip tooltip={'Heading ID not set'} >
                 <InfoCircle 
                     className="toc-info-icon"
-                    onClick={() => setIdValue('')}
+                    onClick={() => setSaveIdValue('')}
                 />
             </Tooltip>
          }
@@ -71,25 +92,26 @@ export default class Toc implements NodeView {
 
     dom: HTMLElement;
 
-    createHeading(id: string, text: string) {
+    createHeading(nodeAttrs: {id: string, level: number[]}, textContent: string) {
         const container = document.createElement('div');
         const headingWrapper = document.createElement('div');
 
         const root = ReactDOM.createRoot(headingWrapper);
-        root.render(<HeadingRedirectionMenu id={id} />);
+        root.render(<HeadingRedirectionMenu nodeAttrs={nodeAttrs} editorView={this.view}/>);
 
         const content = document.createElement('span');
-        content.innerHTML = text;
+        content.innerHTML = textContent;
 
         container.appendChild(headingWrapper);
         container.appendChild(content);
 
+        content.addEventListener('click', () => {
+            focusHeading(nodeAttrs.id, this.view);
+        });
+
         const li = document.createElement('li');
         li.appendChild(container);
 
-        li.addEventListener('click', () => {
-            focusHeading(id, this.view);
-        });
         return li;
     }
 
@@ -113,7 +135,7 @@ export default class Toc implements NodeView {
                     displayHeadings = true;
                 }
                 const currentList = headingStack[headingStack.length - 1];
-                const newNode = this.createHeading(node.attrs.id, node.textContent);
+                const newNode = this.createHeading(node.attrs, node.textContent);
                 if (currentHeadingLevel == node.attrs.level) {
                     currentList.appendChild(newNode);
                 }
