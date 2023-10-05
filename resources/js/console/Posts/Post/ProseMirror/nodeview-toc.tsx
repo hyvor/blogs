@@ -3,6 +3,35 @@ import type {Node as ProsemirrorNode, Schema} from 'prosemirror-model';
 import { InfoCircle } from "react-bootstrap-icons";
 import React, { useState } from "react";
 import ReactDOM from "react-dom/client";
+import Checkbox from "../../../../../../resources/js/console/ReusableComponents/Checkbox";
+import { TextSelection } from "prosemirror-state";
+import { positionSelectionInMiddleOfScreen } from "./helpers";
+import Tooltip from "../../../../../../resources/js/console/ReusableComponents/Tooltip";
+
+function focusHeading(id: string, editorView: EditorView) {
+
+    const doc = editorView.state.doc;
+
+    let pos = 0;
+    doc.descendants((node, pos2) => {
+        if (node.type.name === 'heading' && node.attrs.id === id) {
+            pos = pos2;
+        }
+    });
+
+    const resolvedPos = doc.resolve(pos);
+    const selection = TextSelection.create(doc, pos, pos + resolvedPos.nodeAfter!.nodeSize);
+
+    editorView.dispatch(
+        editorView.state.tr
+            .setSelection(selection)
+            .scrollIntoView()
+    );
+    editorView.focus();
+
+    positionSelectionInMiddleOfScreen(editorView);
+
+}
 
 // React component for the heading redirection menu
 function HeadingRedirectionMenu({id}: {id: string}) {
@@ -23,10 +52,13 @@ function HeadingRedirectionMenu({id}: {id: string}) {
                 onKeyDown={(event) => {event.stopPropagation();}}
             /> 
             :
-            <InfoCircle 
-                className="toc-info-icon"
-                onClick={() => setIdValue('')}
-            />}
+            <Tooltip tooltip={'Heading ID not set'} >
+                <InfoCircle 
+                    className="toc-info-icon"
+                    onClick={() => setIdValue('')}
+                />
+            </Tooltip>
+         }
     </div>
 }
 
@@ -43,7 +75,7 @@ export default class Toc implements NodeView {
         const container = document.createElement('div');
         const headingWrapper = document.createElement('div');
 
-        let root = ReactDOM.createRoot(headingWrapper);
+        const root = ReactDOM.createRoot(headingWrapper);
         root.render(<HeadingRedirectionMenu id={id} />);
 
         const content = document.createElement('span');
@@ -54,11 +86,16 @@ export default class Toc implements NodeView {
 
         const li = document.createElement('li');
         li.appendChild(container);
+
+        li.addEventListener('click', () => {
+            focusHeading(id, this.view);
+        });
         return li;
     }
 
     genereateTOC(levels: number[]) {
         const mainList = document.createElement('ul');
+        mainList.classList.add('toc-bullet-list');
         mainList.contentEditable = 'false';
 
         // Put the current heading on top of the stack
@@ -83,6 +120,7 @@ export default class Toc implements NodeView {
                 // Smaller heading
                 if (node.attrs.level > currentHeadingLevel) {
                     const newList = document.createElement('ul');
+                    newList.classList.add('toc-bullet-list');
                     newList.appendChild(newNode);
                     currentList.appendChild(newList);
                     headingStack.push(newList);
@@ -117,28 +155,26 @@ export default class Toc implements NodeView {
         menu.classList.add('toc-menu');
         for (let i = 0; i < 6; i++) {
             const checkBoxWrapper = document.createElement('div');
-            checkBoxWrapper.classList.add('toc-checkbox-wrapper');
-            const headerCheckBox = document.createElement('input');
-            headerCheckBox.type = 'checkbox';
-            headerCheckBox.checked = levels.includes(i + 1);
 
-            headerCheckBox.addEventListener('change', (event) => {
-                const target = event.target as HTMLInputElement;
-                const levels = this.node.attrs.levels;
-                if (target.checked) {
-                    levels.push(i + 1);
-                }
-                else {
-                    const index = levels.indexOf(i + 1);
-                    levels.splice(index, 1);
-                }
-                this.loadTOC();
-            });
+            const root = ReactDOM.createRoot(checkBoxWrapper);
+            root.render(
+                <Checkbox 
+                    label={`H${i + 1}`}
+                    checked={levels.includes(i + 1)}
+                    onChange={(checked: boolean) => {
+                        const levels = this.node.attrs.levels;
+                        if (checked) {
+                            levels.push(i + 1);
+                        }
+                        else {
+                            const index = levels.indexOf(i + 1);
+                            levels.splice(index, 1);
+                        }
+                        this.loadTOC();
+                    }}
+                />
+            );
 
-            const label = document.createElement('span');
-            label.innerHTML = `H${i + 1}`;
-            checkBoxWrapper.appendChild(label);
-            checkBoxWrapper.appendChild(headerCheckBox);
             menu.appendChild(checkBoxWrapper);
         }
         return menu;
@@ -150,7 +186,10 @@ export default class Toc implements NodeView {
         // Clear the current content
         this.dom.innerHTML = '';
         if (headingStack.length > 0) {
-            this.dom.appendChild(headingStack[0]);
+            const tocList = document.createElement('div');
+            tocList.classList.add('toc-list');
+            tocList.appendChild(headingStack[0]);
+            this.dom.appendChild(tocList);
             this.dom.appendChild(menu);
         }
     }

@@ -790,6 +790,9 @@ $prosemirror-selected-outline: 3px solid #299af3;
 
 .toc-info-icon {
     cursor: pointer;
+    background-color: $color-orange;
+    border-radius: 20px;
+    margin-left: 2px;
 }
 
 .toc-anchor {
@@ -798,15 +801,55 @@ $prosemirror-selected-outline: 3px solid #299af3;
     bottom: 15px;
     display: flex;
     flex-direction: row;
+    margin-bottom: 2px;
 }
 
 .toc-wrapper {
     display: flex;
     flex-direction: column;
+    background-color: $color-grey;
+    border-radius: 20px;
 }
+
+.toc-list {
+    padding: 20px;
+}
+
+.toc-list ul {
+    margin-top: 0px;
+    border-left: 2px solid #bbb;
+    padding-left: 20px;
+    li {
+        cursor: pointer;
+    }
+}
+
+.toc-list ul:first-child {
+    border-left: none;
+}
+
+.toc-list li {
+    margin-top: 12px;
+}
+
+.toc-bullet-list {
+    list-style-type: none;
+}
+
+
 .toc-menu {
     display: flex;
     flex-direction: row;
+    margin-top: 10px;
+    border-top: 1px solid #000000;
+    padding-left: 20px;
+    padding-right: 20px;
+    padding-top: 10px;
+    padding-bottom: 10px;
+}
+
+.global-checkbox {
+    margin-right: 10px;
 }
 
 .post-editor-wrap[dir="rtl"] .ProseMirror {
