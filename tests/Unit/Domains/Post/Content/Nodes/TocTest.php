@@ -31,7 +31,7 @@ test('simple TOC to HTML', function () {
     ]);
     
     $html = PostContentService::getHtml($json, blog());
-    expect($html)->toEqual('<ul><li><a href="#my-big-heading">My big heading</a></li></ul><h1 id="my-big-heading"><a href="#my-big-heading">My big heading</a></h1>');
+    expect($html)->toEqual('<div class="toc"><ul><li><a href="#my-big-heading">My big heading</a></li></ul></div><h1 id="my-big-heading"><a href="#my-big-heading">My big heading</a></h1>');
 });
 
 test('complex TOC to HTML', function () {
@@ -126,5 +126,5 @@ test('complex TOC to HTML', function () {
     ]);
     
     $html = PostContentService::getHtml($json, blog());
-    expect($html)->toEqual('<ul><li><a href="#my-big-heading">My big heading</a></li><ul><li><a href="#my-smaller-heading">My smaller heading</a></li><ul><li><a href="#my-little-heading">My little heading</a></li><li><a href="#my-little-heading2">My little heading 2</a></li></ul></ul><li><a href="#my-big-heading-2">My big heading 2</a></li><ul><li><a href="#my-way-smaller-heading">My way smaller heading</a></li></ul></ul><h1 id="my-big-heading"><a href="#my-big-heading">My big heading</a></h1><h2 id="my-smaller-heading"><a href="#my-smaller-heading">My smaller heading</a></h2><h3 id="my-little-heading"><a href="#my-little-heading">My little heading</a></h3><h3 id="my-little-heading2"><a href="#my-little-heading2">My little heading 2</a></h3><h1 id="my-big-heading-2"><a href="#my-big-heading-2">My big heading 2</a></h1><h5 id="my-way-smaller-heading"><a href="#my-way-smaller-heading">My way smaller heading</a></h5>');
+    expect($html)->toEqual('<div class="toc"><ul><li><a href="#my-big-heading">My big heading</a></li><ul><li><a href="#my-smaller-heading">My smaller heading</a></li><ul><li><a href="#my-little-heading">My little heading</a></li><li><a href="#my-little-heading2">My little heading 2</a></li></ul></ul><li><a href="#my-big-heading-2">My big heading 2</a></li><ul><li><a href="#my-way-smaller-heading">My way smaller heading</a></li></ul></ul></div><h1 id="my-big-heading"><a href="#my-big-heading">My big heading</a></h1><h2 id="my-smaller-heading"><a href="#my-smaller-heading">My smaller heading</a></h2><h3 id="my-little-heading"><a href="#my-little-heading">My little heading</a></h3><h3 id="my-little-heading2"><a href="#my-little-heading2">My little heading 2</a></h3><h1 id="my-big-heading-2"><a href="#my-big-heading-2">My big heading 2</a></h1><h5 id="my-way-smaller-heading"><a href="#my-way-smaller-heading">My way smaller heading</a></h5>');
 });

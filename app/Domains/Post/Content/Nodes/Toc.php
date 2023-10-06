@@ -14,15 +14,15 @@ class Toc extends NodeType
 
     public function toHtmlFromContext(Context $context): string
     {
-        $result = "";
+        $result = "<div class=\"toc\">";
         $currentLevel = 1;
         $offset = 0;
         // Go through all headings and create a TOC
         $context->topNode->traverse(function (Node $node) use (&$html, &$result, &$currentLevel, &$offset) {
             if ($node->type->name === 'heading') {
                 // If the first heading is found, add a <ul> tag
-                if ($result == "") {
-                    $result = "<ul>";
+                if ($result == "<div class=\"toc\">") {
+                    $result .= "<ul>";
                     $currentLevel = $node->attrs->get('level');
                     $offset++;
                 }
@@ -55,6 +55,7 @@ class Toc extends NodeType
             $result .= "</ul>";
             $offset--;
         }
+        $result .= "</div>";
         return $result;
     }
 }
