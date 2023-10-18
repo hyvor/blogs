@@ -378,8 +378,6 @@ function getShortcutKeymap(schema: Schema) {
           ...keyMap,
           ...{
             Enter: splitListItem(schema.nodes.list_item),
-            // "Mod-[": liftListItem(schema.nodes.list_item),
-            "Mod-]": sinkListItem(schema.nodes.list_item)
           }
         };
       if (schema.nodes.paragraph)
