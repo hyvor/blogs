@@ -831,3 +831,27 @@ test.describe('Table', () => {
         await expect(page.locator('table').first()).not.toBeVisible();
     });
 });
+
+test.describe('Shortcuts', () => {
+
+    consoleTest.beforeEach(async ({testingApi, console, page}) => {
+        await testingApi.factory.testPost();
+        await console.visitAndNav('posts');
+        await page.getByRole('link', { name: 'Test Post' }).click();
+        await page.locator('.ProseMirror').fill(''); 
+    });
+
+    consoleTest('Activate bold', async ({testingApi, console, page}) => {
+        await page.keyboard.press('Control+B');
+        await page.locator('.ProseMirror').fill('Bold');
+
+        await expect(page.locator('.ProseMirror strong').first()).toContainText('Bold');
+    });
+
+    consoleTest('Activate italic', async ({testingApi, console, page}) => {
+        await page.keyboard.press('Control+I');
+        await page.locator('.ProseMirror').fill('Italic');
+
+        await expect(page.locator('.ProseMirror em').first()).toContainText('Italic');
+    });
+});
