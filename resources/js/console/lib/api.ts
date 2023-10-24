@@ -26,7 +26,8 @@ const api = {
             return res.data as T;
         } catch (e: any) {
             toast.error(e.response.data.error)
-            throw new Error(e.response.data.error)
+            if (e.response.status !== 422)
+                throw new Error(e.response.data.error);
         }
     },
 
