@@ -29,6 +29,7 @@ const api = {
             if (e.response.status !== 422)
                 throw new Error(e.response.data.error);
         }
+        return {} as T;
     },
 
     post: async <T> (subdomain: string, endpoint: string, data = {}) : Promise<T> => {
