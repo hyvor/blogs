@@ -831,3 +831,84 @@ test.describe('Table', () => {
         await expect(page.locator('table').first()).not.toBeVisible();
     });
 });
+
+test.describe('Shortcuts', () => {
+
+    consoleTest.beforeEach(async ({testingApi, console, page}) => {
+        await testingApi.factory.testPost();
+        await console.visitAndNav('posts');
+        await page.getByRole('link', { name: 'Test Post' }).click();
+        await page.locator('.ProseMirror').fill(''); 
+    });
+
+    consoleTest('Activate bold', async ({testingApi, console, page}) => {
+        await page.keyboard.press('Control+B');
+        await page.locator('.ProseMirror').fill('Bold');
+
+        await expect(page.locator('.ProseMirror strong').first()).toContainText('Bold');
+    });
+
+    consoleTest('Activate italic', async ({testingApi, console, page}) => {
+        await page.keyboard.press('Control+I');
+        await page.locator('.ProseMirror').fill('Italic');
+
+        await expect(page.locator('.ProseMirror em').first()).toContainText('Italic');
+    });
+
+    consoleTest('Create unnordered list', async ({testingApi, console, page}) => {
+        await page.locator('.ProseMirror').fill('Bullet node');
+        await page.keyboard.press('Control+Shift+8');
+
+        await expect(page.locator('.ProseMirror ul').first()).toContainText('Bullet node');
+    });
+
+    consoleTest('Create ordered list', async ({testingApi, console, page}) => {
+        await page.locator('.ProseMirror').fill('Bullet node');
+        await page.keyboard.press('Control+Shift+9');
+
+        await expect(page.locator('.ProseMirror ol').first()).toContainText('Bullet node');
+    });
+
+    consoleTest('Create block quote', async ({testingApi, console, page}) => {
+        await page.locator('.ProseMirror').fill('Block quote');
+        await page.keyboard.press('Control+>');
+
+        await expect(page.locator('.ProseMirror blockquote').first()).toContainText('Block quote');
+    });
+
+    consoleTest('Create hard break', async ({testingApi, console, page}) => {
+        await page.locator('.ProseMirror').fill('Text');
+        await page.keyboard.press('Shift+Enter');
+        await page.keyboard.press('H');
+
+        await expect(page.getByText('TextH')).toBeVisible();
+    });
+
+    consoleTest('Turn into paragraph', async ({testingApi, console, page}) => {
+        await page.locator('.ProseMirror').fill('/');
+        await page.locator('div').filter({ hasText: /^Heading - LargeTo divide main sections of the post$/ }).first().click();
+        await page.locator('div').filter({ hasText: /^h2#$/ }).first().fill('heading\nh2#');
+        await page.locator('div').filter({ hasText: /^h2#$/ }).first().press('Control+Shift+0');
+
+        await expect(page.locator('.ProseMirror p').first()).toContainText('heading');
+    });
+
+    consoleTest('Turn into heading', async ({testingApi, console, page}) => {
+        await page.locator('.ProseMirror').fill('paragraph');
+        await page.keyboard.press('Control+Shift+1');
+        
+        await expect(page.locator('.ProseMirror h1').first()).toContainText('paragraph');
+    });
+
+    consoleTest('Turn into code', async ({testingApi, console, page}) => {
+        await page.locator('.ProseMirror').fill('Code');
+        await page.keyboard.down('Shift');
+        await page.locator('.ProseMirror').press('ArrowLeft');
+        await page.locator('.ProseMirror').press('ArrowLeft');
+        await page.locator('.ProseMirror').press('ArrowLeft');
+        await page.locator('.ProseMirror').press('ArrowLeft');
+        await page.keyboard.press('Control+`');
+
+        await expect(page.locator('.ProseMirror code').first()).toContainText('Code');
+    });
+});
