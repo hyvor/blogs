@@ -22,6 +22,7 @@ if (import.meta.env.PROD) {
         beforeSend: (event, hint) => {
 
             // Ignore all 402 errors, there are error in user input
+            //@ts-ignore
             const { response } = hint.originalException
             if (response && response.status && response.status === 422) {
               return null
