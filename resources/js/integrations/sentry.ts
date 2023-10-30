@@ -21,15 +21,12 @@ if (import.meta.env.PROD) {
 
         beforeSend: (event, hint) => {
 
-            const error = hint.originalException
-            if (
-                error &&
-                error.message &&
-                error.message.match(/The url must be a valid URL./i)
-              ) {
-                return null;
-              }
-              return event;
+            // Ignore all 402 errors, there are error in user input
+            const { response } = hint.originalException
+            if (response && response.status && response.status === 422) {
+              return null
+            }
+            return event
           }
     });
 
