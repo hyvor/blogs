@@ -16,7 +16,8 @@ import {
     Quote,
     TypeH2,
     TypeH3,
-    Table
+    Table,
+    Soundwave
 } from "react-bootstrap-icons";
 
 import { createEmbed, createImage, createQuote, createTable } from "./creators";
@@ -54,6 +55,13 @@ const matchable = [
         keywords: ["image", "picture", "upload"],
         node: selectImage,
         skipNodeCreation: true,
+    },
+    {
+        name: "Audio",
+        description: "Add an audio",
+        icon: <Soundwave />,
+        keywords: ["audio", "sound", "upload"],
+        node: 'audio',
     },
     {
         name: "Embed",

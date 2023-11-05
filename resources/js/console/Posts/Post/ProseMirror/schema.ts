@@ -140,6 +140,26 @@ export const nodes = {
           return ["img", {...node.attrs}]; 
         }
     } as NodeSpec,
+    audio: {
+        attrs: {
+            src: {default: null}
+        },
+        inline: false,
+        draggable: false,
+        selectable: false,
+        //group: "figure",
+        parseDOM: [{
+          tag: "audio[src]", 
+          getAttrs(audio: HTMLElement) {
+            return {
+                src: audio.getAttribute("src"),
+            };
+          }
+        }],
+        toDOM(node: Node) {
+          return ["img", {...node.attrs}]; 
+        }
+    },
     embed: {
         attrs: {
             url: {default: null}

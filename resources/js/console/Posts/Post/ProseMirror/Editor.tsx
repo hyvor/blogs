@@ -18,6 +18,7 @@ import Table from './nodeview-table';
 import { tableEditing, columnResizing, goToNextCell, fixTables } from 'prosemirror-tables';
 import { keymap } from 'prosemirror-keymap';
 import { usePostActions } from '../helpers';
+import Audio from './nodeview-audio';
 
 function getState(val: string) {
     val = val ? JSON.parse(val) : null
@@ -56,6 +57,9 @@ const nodeViews: NodeViewsType = {
     },
     image(node, view, getPos) {
         return new Image(HBSchema, node, view, getPos)
+    },
+    audio(node, view, getPos) {
+        return new Audio(HBSchema, node, view, getPos)
     },
     bookmark(node, view, getPos) {
         return new Bookmark(node, view, getPos)
