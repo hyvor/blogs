@@ -145,7 +145,7 @@ export const nodes = {
             src: {default: null}
         },
         inline: false,
-        draggable: false,
+        draggable: true,
         selectable: false,
         group: "block",
         atom: true,

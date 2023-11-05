@@ -10,6 +10,7 @@ import getSubdomain from '../../../../../../resources/js/console/logic-helpers/s
 import Loader from '../../../../../../resources/js/console/ReusableComponents/Loader';
 import api from '../../../../../../resources/js/console/lib/api';
 import { Media } from '../../../../../../resources/js/console/types';
+import { CloudUpload, Trash } from 'react-bootstrap-icons';
 
 
 export default class Audio implements NodeView {
@@ -34,19 +35,53 @@ export default class Audio implements NodeView {
         audio.setAttribute("controls", "controls");
         audio.setAttribute("src", node.attrs.src);
 
-        if (node.attrs.src == null) {
-            // Show file selector
-            const fileInput = document.createElement("input");
-            fileInput.type = "file";
-            fileInput.accept = "audio/*";
-            fileInput.addEventListener("change", () => {
-                this.handleFiles(fileInput.files);
-            });
+        const audioActions = document.createElement("div");
+        audioActions.className = "audio-actions";
 
-            wrap.appendChild(fileInput);
+        const fileInputWrapper = document.createElement("label");
+        fileInputWrapper.className = "button medium primary audio-upload-button";
+        fileInputWrapper.innerHTML = node.attrs.src == null ? 'Upload' : 'Change';
+        const fileInput = document.createElement("input");
+        fileInput.className = "audio-input";
+        fileInput.type = "file";
+        fileInput.accept = "audio/*";
+        fileInput.addEventListener("change", () => {
+            this.handleFiles(fileInput.files);
+        });
+        const fileInputLabel = document.createElement("span");
+        fileInputLabel.className = "audio-label-content";
+        ReactDOM.render(<CloudUpload />, fileInputLabel);
+        fileInputWrapper.appendChild(fileInputLabel);
+        fileInputWrapper.appendChild(fileInput);
+        audioActions.appendChild(fileInputWrapper);
+        
+        // Auto open file input if new node created
+        if (node.attrs.src == null) {
+            fileInput.click();
         }
 
-        wrap.appendChild(audio);
+        if (node.attrs.src != null) {
+            const deleteButton = document.createElement("button");
+            deleteButton.className = "button medium danger audio-delete-button";
+            ReactDOM.render(<Trash />, deleteButton);
+            deleteButton.addEventListener("click", () => {
+                const { tr } = this.view.state;
+                const pos = this.getPos();
+                if (pos === undefined)
+                    return;
+                tr.delete(pos, pos + this.node.nodeSize);
+                this.view.dispatch(tr);
+            });
+
+            const audioInfo = document.createElement("div");
+            audioInfo.className = "audio-info";
+            audioInfo.innerHTML = `File: ${node.attrs.src.split('/').pop()}`;
+
+            audioActions.appendChild(deleteButton);
+            wrap.appendChild(audioActions);
+            wrap.appendChild(audio);
+            wrap.appendChild(audioInfo);
+        }
 
         this.dom = wrap;
     }
@@ -92,7 +127,6 @@ export default class Audio implements NodeView {
             const pos = this.getPos();
             if (pos === undefined)
                 return;
-            console.log(media.url);
             tr.replaceWith(pos, pos + this.node.nodeSize, this.schema.nodes.audio.create({ src: media.url }));
             this.view.dispatch(tr);
 
