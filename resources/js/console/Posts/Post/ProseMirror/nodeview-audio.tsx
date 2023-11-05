@@ -87,6 +87,14 @@ export default class Audio implements NodeView {
         formData.append('file', file, file.name);
         try {
             const media = await api.post<Media>(subdomain, '/media', formData);
+            // Replace the node with the new one
+            const { tr } = this.view.state;
+            const pos = this.getPos();
+            if (pos === undefined)
+                return;
+            console.log(media.url);
+            tr.replaceWith(pos, pos + this.node.nodeSize, this.schema.nodes.audio.create({ src: media.url }));
+            this.view.dispatch(tr);
 
         } catch (e) {
             toast.error('Error uploading file');
