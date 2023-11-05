@@ -10,6 +10,7 @@ use App\Domains\Post\Content\Marks\Strike;
 use App\Domains\Post\Content\Marks\Strong;
 use App\Domains\Post\Content\Marks\Sub;
 use App\Domains\Post\Content\Marks\Sup;
+use App\Domains\Post\Content\Nodes\Audio;
 use App\Domains\Post\Content\Nodes\Blockquote;
 use App\Domains\Post\Content\Nodes\Bookmark\Bookmark;
 use App\Domains\Post\Content\Nodes\BulletList;
@@ -110,6 +111,7 @@ class PostContentService
                 new TableRow(),
                 new TableCell(),
                 new TableHeader(),
+                new Audio(),
             ],
             [
                 new Code,

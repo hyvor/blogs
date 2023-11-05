@@ -27,6 +27,21 @@ export default class Audio implements NodeView {
         audio.setAttribute("src", node.attrs.src);
         wrap.appendChild(audio);
 
+        if (node.attrs.src == null) {
+            // Show upload button
+            const button = document.createElement("button");
+            button.className = "primary";
+            button.innerText = "Upload";
+            button.onclick = () => {};
+
+            wrap.appendChild(button);
+        }
+
         this.dom = wrap;
     }
+
+    stopEvent() {
+        return true;
+    }
+
 }

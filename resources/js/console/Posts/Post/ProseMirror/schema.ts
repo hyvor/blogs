@@ -147,7 +147,8 @@ export const nodes = {
         inline: false,
         draggable: false,
         selectable: false,
-        //group: "figure",
+        group: "block",
+        atom: true,
         parseDOM: [{
           tag: "audio[src]", 
           getAttrs(audio: HTMLElement) {
