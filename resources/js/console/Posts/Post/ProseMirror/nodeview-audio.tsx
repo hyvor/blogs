@@ -46,6 +46,7 @@ export default class Audio implements NodeView {
         fileInput.type = "file";
         fileInput.accept = "audio/*";
         fileInput.addEventListener("change", () => {
+            ReactDOM.render(<Loader />, wrap);
             this.handleFiles(fileInput.files);
         });
         const fileInputLabel = document.createElement("span");
@@ -57,6 +58,7 @@ export default class Audio implements NodeView {
         
         // Auto open file input if new node created
         if (node.attrs.src == null) {
+            ReactDOM.render(<Loader />, wrap);
             fileInput.click();
         }
 
@@ -73,14 +75,10 @@ export default class Audio implements NodeView {
                 this.view.dispatch(tr);
             });
 
-            const audioInfo = document.createElement("div");
-            audioInfo.className = "audio-info";
-            audioInfo.innerHTML = `File: ${node.attrs.src.split('/').pop()}`;
-
             audioActions.appendChild(deleteButton);
             wrap.appendChild(audioActions);
             wrap.appendChild(audio);
-            wrap.appendChild(audioInfo);
+
         }
 
         this.dom = wrap;
