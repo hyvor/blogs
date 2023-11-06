@@ -804,6 +804,10 @@ $prosemirror-selected-outline: 3px solid #299af3;
 .audio-actions {
     display: flex;
     flex-direction: row;
+    align-self: self-end;
+}
+audio {
+    width: 100%;
 }
 
 
