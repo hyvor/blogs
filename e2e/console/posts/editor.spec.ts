@@ -830,6 +830,35 @@ test.describe('Table', () => {
 
         await expect(page.locator('table').first()).not.toBeVisible();
     });
+
+    consoleTest('Create and delete table from local column button', async ({testingApi, console, page}) => {
+        await page.locator('.ProseMirror').fill('/');
+        await page.locator('div').filter({ hasText: /^TableAdd a table$/ }).first().click();
+
+        await page.locator('td:nth-child(3) > p').first().click();
+        await page.locator('.toggle-table-menu-button').first().click();
+        await page.getByRole('button', { name: 'Delete column' }).click();
+        await page.locator('.toggle-table-menu-button').first().click();
+        await page.getByRole('button', { name: 'Delete column' }).click();
+        await page.locator('.toggle-table-menu-button').first().click();
+        await page.getByRole('button', { name: 'Delete column' }).click();
+
+        await expect(page.locator('table').first()).not.toBeVisible();
+    });
+
+    consoleTest('Create and delete table from local row button', async ({testingApi, console, page}) => {
+        await page.locator('.ProseMirror').fill('/');
+        await page.locator('div').filter({ hasText: /^TableAdd a table$/ }).first().click();
+
+        await page.locator('.table-left-side-settings > div:nth-child(3) > .table-menu > .toggle-table-menu-button').click();
+        await page.getByRole('button', { name: 'Delete row' }).click();
+        await page.locator('.table-left-side-settings > div > .table-menu > .toggle-table-menu-button').click();
+        await page.getByRole('button', { name: 'Delete row' }).click();
+        await page.locator('.table-left-side-settings > div > .table-menu > .toggle-table-menu-button').click();
+        await page.getByRole('button', { name: 'Delete row' }).click();
+
+        await expect(page.locator('table').first()).not.toBeVisible();
+    });
 });
 
 test.describe('Shortcuts', () => {
