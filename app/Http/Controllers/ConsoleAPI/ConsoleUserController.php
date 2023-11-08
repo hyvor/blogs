@@ -173,6 +173,11 @@ class ConsoleUserController extends Controller
 
     public static function delete(User $user) : JsonResponse
     {
+
+        if ($user->role === UserRoleEnum::OWNER) {
+            throw new TrustedException('Cannot delete the owner');
+        }
+
         UserRepository::deleteUser($user);
 
         return response()->json();

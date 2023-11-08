@@ -4,6 +4,7 @@ namespace Tests\Feature\ConsoleAPI\Users;
 
 use App\Domains\User\Events\UserDeletedEvent;
 use App\Domains\User\Events\UserVariantDeletedEvent;
+use App\Domains\User\UserRepository;
 use App\Models\PostAuthor;
 use App\Models\User;
 use App\Models\UserVariant;
@@ -41,4 +42,18 @@ it('deletes the user and its variants', function () {
 
     Event::assertDispatched(UserDeletedEvent::class);
     Event::assertDispatched(UserVariantDeletedEvent::class, 3);
+});
+
+// #295
+it('cannot delete owner', function() {
+
+    $blog = blogWithAccess();
+    $owner = UserRepository::getOwnerOfBlog($blog);
+
+    consoleApi($blog, 'DELETE', "/user/$owner->id")
+        ->assertUnprocessable()
+        ->assertSee('Cannot delete the owner');
+
+    expect(User::find($owner->id))->toBeInstanceOf(User::class);
+
 });

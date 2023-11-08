@@ -8,6 +8,7 @@ use App\Models\Blog;
 use App\Models\Import;
 use Illuminate\Contracts\Queue\ShouldQueue;
 use Throwable;
+use function Pest\Laravel\instance;
 
 class ImportJob implements ShouldQueue
 {
@@ -40,7 +41,8 @@ class ImportJob implements ShouldQueue
     {
         $this->import->update([
             'status' => JobStatusEnum::FAILED,
-            'error' => $e instanceof ImportException ?
+            'error' => $e instanceof ImportException ||
+                $e instanceof ParserException ?
                 $e->getMessage() :
                 'Unknown error'
         ]);
