@@ -43,10 +43,7 @@ export default function Paddle() {
                         }, 1000);
 
                         tracking.trackSubscriptionCreate(plan, frequency);
-                    },
-                    customData: {
-                        tolt_referral: (window as any).tolt_referral,
-                    },
+                    }
                 });
             }
         });

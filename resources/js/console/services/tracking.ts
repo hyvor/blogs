@@ -9,7 +9,6 @@ class Tracking {
         this.bingTrack('blog-created', 0);
         this.googleTrack('blog-created', 0);
         this.splitbeeTrack("Blog Created", {subdomain: userBlog.blog.subdomain})
-        this.trackAffiliate(userBlog.blog.subdomain)
     }
 
     trackSubscriptionCreate(plan: SubscriptionPlan, frequency: SubscriptionFrequency) {
@@ -52,10 +51,6 @@ class Tracking {
             });
         }
 
-    }
-
-    private trackAffiliate(subdomain: string) {
-        if ((window as any).tolt) (window as any).tolt.signup(subdomain);
     }
 
 }
