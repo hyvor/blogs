@@ -41,7 +41,7 @@ class Handler extends ExceptionHandler
             if (
                 app()->bound('sentry') && 
                 app()->environment('production') &&
-                !$e instanceof TrustedException
+                !($e instanceof TrustedException)
             ) {
                 app('sentry')->captureException($e);
             }
