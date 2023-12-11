@@ -231,19 +231,6 @@
         }
     }
 
-    #fb-update-badge {
-        display: inline-block;
-        padding: 2px 6px;
-        border-radius: 20px;
-        font-size: 9px;
-        font-weight: 600;
-        background-color: $color-blue-light;
-        color: $color-blue-dark;
-        &:empty {
-            display: none;
-        }
-    }
-
     @media screen and (max-width: $breakpoint) {
         display: none;
     }
