@@ -136,15 +136,6 @@ function LeftInner({subdomain} : {subdomain: string}) {
                 <span className="icon"><InfoCircle /></span>Docs
             </a>
 
-
-            <a
-                className="bottom-item"
-                href="https://community.blogs.hyvor.com/roadmap"
-                target="_blank"
-            >
-                <span className="icon"><Megaphone /></span>Changelog <span id="fb-update-badge"></span>
-            </a>
-
         </div>
 
     </div>
