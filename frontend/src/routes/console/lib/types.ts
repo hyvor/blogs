@@ -53,9 +53,11 @@ export interface Blog {
     is_blocked: boolean,
     subdomain: string,
     type: BlogType,
-    hosting_at: BlogHostingAt,
+    hosting_at: 'subdomain' | 'domain' | 'self',
     hosting_domain: string | null,
     hosting_url: string | null,
+
+    url: string,
 
     embeddable: boolean,
     embedding_domains: string | null,

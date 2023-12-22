@@ -3,12 +3,31 @@
 	import Nav from "./Nav/Nav.svelte";
     import { page } from '$app/stores';
 	import { Loader } from "@hyvor/design/components";
+	import consoleApi from "../lib/consoleApi";
+	import { blogStore, languagesStore } from "../lib/stores";
+	import type { Blog, Language } from "../lib/types";
 
     let isLoading = true;
+
+    interface BlogResponse {
+        blog: Blog,
+        languages: Language[]
+    }
 
     onMount(() => {
         
         const subdomain = $page.params.subdomain;
+
+        consoleApi.get<BlogResponse>({
+            endpoint: '/blog',
+            subdomain,
+        }).then(res => {
+
+            blogStore.set(res.blog)
+            languagesStore.set(res.languages)
+            
+            isLoading = false;
+        })
     
     });
 </script>

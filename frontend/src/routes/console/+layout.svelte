@@ -16,7 +16,8 @@
     onMount(() => {
 
         consoleApi.get<InitResponse>({
-            endpoint: '/init'
+            endpoint: '/init',
+            userApi: true,
         }).then(res => {
 
             authUserStore.set(res.user)

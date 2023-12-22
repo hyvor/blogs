@@ -1,4 +1,5 @@
 <script lang="ts">
+	import { blogStore } from './../lib/stores';
     import { IconButton, Link, Loader } from "@hyvor/design/components";
     import { IconBoxArrowUpRight, IconLaptop, IconTablet } from "@hyvor/icons";
 
@@ -10,8 +11,8 @@
 
     <div class="navi">
         <div class="left">
-            <Link href="https://supun.io" target="_blank" underline={false} color="text">
-                supun.io <IconBoxArrowUpRight slot="end" size={14} />
+            <Link href={$blogStore.url} target="_blank" underline={false} color="text">
+                {$blogStore.url.replace(/https?:\/\//, '')} <IconBoxArrowUpRight slot="end" size={14} />
             </Link>
         </div>
         <div class="right">
@@ -36,7 +37,7 @@
         {/if}
         <iframe
             id="preview-iframe"
-            src="https://supun.io"
+            src={$blogStore.url}
             style:width={type === 'laptop' ? "100%" : (type === 'tablet' ? 540 : 360) + "px"}
             style:height={type === 'laptop' ? "100%" : 740 + "px"}
             style:display={isLoading ? "none" : "block"}

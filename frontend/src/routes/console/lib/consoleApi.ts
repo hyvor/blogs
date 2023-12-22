@@ -1,12 +1,14 @@
 import { get } from "svelte/store";
+import { blogStore } from "./stores";
 // import { currentProjectIdStore } from "./stores";
 
 export const APP_URL = import.meta.env.VITE_APP_URL || location.origin;
 
 interface Options {
-    projectApi?: boolean,
     endpoint: string,
     data?: Record<string, any> | FormData,
+    userApi?: boolean,
+    subdomain?: string,
 }
 
 interface CallOptions extends Options {
@@ -17,14 +19,27 @@ function getConsoleApi() {
 
     const baseUrl = APP_URL + "/api/console/v0";
 
-    async function call<T>({ endpoint, projectApi = false, method, data = {} }: CallOptions) : Promise<T> {
+    async function call<T>({ 
+        endpoint, 
+        userApi = false, 
+        method, 
+        data = {},
+        subdomain,
+    }: CallOptions) : Promise<T> {
 
         if (!endpoint.startsWith('/'))
             endpoint = '/' + endpoint;
 
         // const projectId = get(currentProjectIdStore);
         // let url = baseUrl + (projectApi ? "/project/" + projectId : "") + endpoint;
-        let url = baseUrl + endpoint;
+
+        let url;
+        if (userApi) {
+            url = baseUrl + endpoint;
+        } else {
+            const blogSubdomain = subdomain || get(blogStore).subdomain;
+            url = baseUrl + "/blog/" + blogSubdomain + endpoint;
+        }
 
         if (method === 'get') {
 

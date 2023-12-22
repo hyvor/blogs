@@ -27,6 +27,8 @@ class BlogObject
 
     public ?string $hosting_url;
 
+    public string $url;
+
     public ?string $logo_url;
 
     public ?string $cover_url;
@@ -97,6 +99,8 @@ class BlogObject
         $this->hosting_at = $blog->hosting_at;
         $this->hosting_domain = $blog->hosting_domain;
         $this->hosting_url = $blog->hosting_url;
+
+        $this->url = $blog->url();
 
         $meta = $blog->getAllMeta();
 
