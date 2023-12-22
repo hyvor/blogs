@@ -57,13 +57,6 @@ const matchable = [
         skipNodeCreation: true,
     },
     {
-        name: "Audio",
-        description: "Add an audio",
-        icon: <Soundwave />,
-        keywords: ["audio", "sound", "upload"],
-        node: 'audio',
-    },
-    {
         name: "Embed",
         description: "Embed content from 1500+ platforms",
         icon: <Link45deg />,
@@ -83,6 +76,13 @@ const matchable = [
         ],
         node: createEmbed,
         focusInput: true,
+    },
+    {
+        name: "Audio",
+        description: "Add an audio",
+        icon: <Soundwave />,
+        keywords: ["audio", "sound", "upload"],
+        node: 'audio',
     },
     {
         name: "Code Block",
