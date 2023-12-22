@@ -263,7 +263,10 @@ export default function Settings({id}: {id: number}) {
                                 <div data-testid="publish-time-input-wrap">
                                     <ReactDatePicker
                                         selected={dayjs.unix(post.published_at as number).toDate()}
-                                        onChange={(date: Date) => updatePostValue("published_at", dayjs(date).unix())}
+                                        onChange={(date: Date) => {
+                                            if (date)
+                                                updatePostValue("published_at", dayjs(date).unix());
+                                        }}
                                         showTimeInput
                                         dateFormat="yyyy-MM-dd h:mm aa"
                                     />
