@@ -5,6 +5,7 @@ namespace App\Exceptions;
 use Hyvor\FilterQ\Exceptions\FilterQException;
 use Illuminate\Foundation\Exceptions\Handler as ExceptionHandler;
 use Illuminate\Validation\ValidationException;
+use Sentry\Laravel\Integration;
 use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 use Throwable;
 
@@ -38,13 +39,9 @@ class Handler extends ExceptionHandler
     public function register()
     {
         $this->reportable(function (Throwable $e) {
-            if (
-                app()->bound('sentry') && 
-                app()->environment('production') &&
-                !($e instanceof TrustedException)
-            ) {
-                app('sentry')->captureException($e);
-            }
+            if ($e instanceof TrustedException)
+                return;
+            Integration::captureUnhandledException($e);
         });
     }
 
