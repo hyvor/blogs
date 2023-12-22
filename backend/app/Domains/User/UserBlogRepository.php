@@ -3,6 +3,7 @@
 namespace App\Domains\User;
 
 use App\Models\User;
+use Hyvor\Helper\Auth\AuthUser;
 use Hyvor\HyvorConnecter\HyvorUser;
 use Illuminate\Support\Collection;
 
@@ -12,9 +13,9 @@ use Illuminate\Support\Collection;
  */
 class UserBlogRepository
 {
-    public static function getBlogsOfUser(HyvorUser $hyvorUser): Collection
+    public static function getBlogsOfUser(int $userId): Collection
     {
-        return User::where('hyvor_user_id', $hyvorUser->id)
+        return User::where('hyvor_user_id', $userId)
             ->where('status', 'active')
             ->orderBy('sort', 'ASC')
             ->orderBy('created_at', 'ASC')
@@ -28,7 +29,7 @@ class UserBlogRepository
      *
      * @param  int[]  $arr
      */
-    public static function changeBlogSorts(HyvorUser $user, array $arr): void
+    public static function changeBlogSorts(AuthUser $user, array $arr): void
     {
         $i = 1;
         foreach ($arr as $blogId) {

@@ -25,6 +25,7 @@
         "filament/filament": "^2.0",
         "guzzlehttp/guzzle": "^7.0.1",
         "http-interop/http-factory-guzzle": "^1.2",
+        "hyvor/helper-laravel": "^0.0.6",
         "hyvor/laravel-filterq": "^1.0",
         "hyvor/laravel-hyvor-connecter": "^1.1.4",
         "hyvor/laravel-json-meta": "0.0.3",
@@ -114,7 +115,7 @@
             "@php artisan key:generate --ansi"
         ],
 
-        "serve": "concurrently \"php artisan serve --host=blogs.hyvor.test --port=8080\" \"php artisan serve --host=test.hyvorblogs.test --port=8081\"",
+        "serve": "php artisan serve --port=2211",
         "expose": "ngrok http 8080",
         "test": "vendor/bin/pest -p",
         "coverage": "vendor/bin/pest --coverage -p",

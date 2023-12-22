@@ -55,19 +55,6 @@ class ConsoleUserBlogController extends Controller
         return response()->json(new UserBlogObject($user));
     }
 
-    public function changeSort(Request $request, HyvorUser $hyvorUser) : JsonResponse
-    {
-        $request->validate([
-            'blog_ids' => 'required|array',
-            'blog_ids.*' => 'integer',
-        ]);
-
-        $blogIds = $request->input('blog_ids');
-
-        UserBlogRepository::changeBlogSorts($hyvorUser, $blogIds);
-
-        return response()->json();
-    }
 
     public function checkSubdomain(Request $request) : JsonResponse
     {

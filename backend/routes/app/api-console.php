@@ -1,5 +1,6 @@
 <?php declare(strict_types=1);
 
+use App\Http\ConsoleApi\Controllers\ConsoleController;
 use App\Http\Controllers\ConsoleAPI\Billing\ConsoleBillingController;
 use App\Http\Controllers\ConsoleAPI\Billing\ConsoleBillingPaddleController;
 use App\Http\Controllers\ConsoleAPI\Billing\ConsoleBillingShopifyController;
@@ -33,10 +34,9 @@ use App\Http\Middleware\App\ConsoleApi\ConsoleMiscApiAccessMiddleware;
 use App\Http\Middleware\App\ConsoleApi\PostAuthorshipMiddleware;
 use App\Http\Middleware\App\ConsoleApi\ResourceAccessMiddleware;
 use App\Http\Middleware\App\SubdomainMiddleware;
+use App\Http\Middleware\CorsOnLocalhost;
+use Hyvor\Helper\Http\Middleware\AuthMiddleware;
 use Illuminate\Support\Facades\Route;
-
-Route::get('/console/{any?}', ConsoleViewController::class)
-    ->where('any', '.*');
 
 /**
  * This is an internal API for user-level functions
@@ -44,10 +44,14 @@ Route::get('/console/{any?}', ConsoleViewController::class)
  * Used only in our Console
  */
 Route::prefix('/api/console/v0')
-    ->middleware(ConsoleApiUserEndpointsAccessMiddleware::class)
+    ->middleware([
+        AuthMiddleware::class,
+        CorsOnLocalhost::class
+    ])
     ->group(function () {
+        Route::get('/init', [ConsoleController::class, 'init']);
         Route::post('/blog', [ConsoleUserBlogController::class, 'createBlog']);
-        Route::patch('/blogs/sort', [ConsoleUserBlogController::class, 'changeSort']);
+        Route::patch('/blogs/sort', [ConsoleController::class, 'changeBlogSort']);
         Route::get('/blog/check-subdomain', [ConsoleUserBlogController::class, 'checkSubdomain']);
     });
 

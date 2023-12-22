@@ -8,5 +8,6 @@ export default defineConfig({
 	},
 	server: {
 		port: 2210
-	}
+	},
+	envDir: '../'
 });

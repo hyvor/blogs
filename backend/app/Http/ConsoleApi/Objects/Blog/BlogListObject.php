@@ -1,6 +1,6 @@
 <?php declare(strict_types=1);
 
-namespace App\Http\ConsoleApi\Objects\DisplayBlog;
+namespace App\Http\ConsoleApi\Objects\Blog;
 
 use App\Data\Enums\BlogTypeEnum;
 use App\Data\Enums\UserRoleEnum;
@@ -8,7 +8,7 @@ use App\Data\Objects\ConsoleAPI\Billing\SubscriptionObject;
 use App\Exceptions\SafetyException;
 use App\Models\User;
 
-class DisplayBlogObject
+class BlogListObject
 {
 
     public int $id;
@@ -18,7 +18,7 @@ class DisplayBlogObject
     public string $name;
     public string $subdomain;
     public BlogTypeEnum $type;
-    public string $base_url;
+    public string $url;
     public ?string $logo_url;
     public int $posts_count;
     public int $users_count;
@@ -41,7 +41,7 @@ class DisplayBlogObject
         $this->name = $blog->variants[0]->name ?? 'Unnamed';
         $this->subdomain = $blog->subdomain;
         $this->type = $blog->type;
-        $this->base_url = $blog->url();
+        $this->url = $blog->url();
         $this->logo_url = $blog->getMeta('logo_url');
 
         $this->posts_count = $blog->getCount('posts');

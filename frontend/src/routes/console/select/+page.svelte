@@ -6,7 +6,7 @@
 	import { dndzone, SOURCES, TRIGGERS	 } from 'svelte-dnd-action';
 	import type { BlogList } from "../lib/types";
 	import { saveSort } from "../lib/actions/blogActions";
-    import arrowSvg from "./arrow.svg";
+    import arrowSvg from "./drag-note-arrow.svg";
 
 	const flipDurationMs = 200;
 	let dragDisabled = true;
@@ -102,7 +102,7 @@
                 on:consider={handleConsider}
             >
 
-                {#each items as blog (blog.id)}
+                {#each items as blog, i (blog.id)}
                 
                     <a 
                         class="blog-row" 
@@ -122,7 +122,18 @@
                         >
                             <IconGripVertical />
 
-                            <img src={arrowSvg} class="arrow" />
+                            {#if dragDisabled}
+                                <span class="drag-note">
+                                    <img 
+                                        src={arrowSvg} 
+                                        class="arrow"
+                                        alt="drag arrow"
+                                    />
+                                    <span class="note">
+                                        Drag to reorder
+                                    </span>
+                                </span>
+                            {/if}
                         </button>
 
                         <div class="left">
@@ -167,6 +178,8 @@
 
 
 <style>
+
+
     .wrap {
         display: flex;
         justify-content: center;
@@ -224,7 +237,36 @@
     .dragger {
         padding: 0 5px;
         margin-right: 10px;
+        position: relative;
+        font-family: inherit;
     }
+
+    .drag-note {
+        display: none;
+    }
+    .blog-row:hover .drag-note {
+        display: block;
+    }
+
+    .arrow {
+        position: absolute;
+        top: 100%;
+        right: 100%;
+        margin-right: -10px;
+        margin-top: -2px;
+        width: 40px;
+    }
+    .note {
+        position: absolute;
+        top: 100%;
+        right: 100%;
+        margin-right: 30px;
+        margin-top: 18px;
+        font-size: 0.8rem;
+        color: var(--text-light);
+        width: 100px;
+    }
+
     .blogs-list {
 
     }

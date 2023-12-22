@@ -1,30 +1,32 @@
-// === CONSOLE
 
-export type ConsoleWindow = (typeof window) & {
-    appConfig: appConfig,
-    currentSubdomain?: string,
-    Paddle: any
+export type UserRole = 'owner' | 'editor' | 'writer' | 'contributor' | 'finance';
+
+export type BlogType = 'default' | 'dev';
+
+export interface AuthUser {
+    id: number,
+    name: string,
+    username: string | null,
+    picture_url: string | null
 }
 
-export interface appConfig {
+export interface BlogList {
 
-    hyvorUser: any,
-    blogs: UserBlog[],
+    id: number,
+    role: UserRole,
     is_blocked: boolean,
+    trial_ends_at: number,
+    name: string,
+    subdomain: string,
+    type: BlogType,
+    url: string,
+    logo_url: string | null,
+    posts_count: number,
+    users_count: number,
 
-    domains: {
-        app: string,
-        delivery: string,
-        hyvor: string
-    },
-
-    syntax_themes: string[],
-
-    limits: {
-        max_theme_zip_size_kb: number,
-        max_asset_file_size: number
-    }
+    subscription: Subscription | null,
 }
+
 
 export interface Filters {
     status: string,
