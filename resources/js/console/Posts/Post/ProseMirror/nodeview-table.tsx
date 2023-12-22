@@ -163,15 +163,25 @@ export default class Table implements NodeView{
     };
 
     deleteRowWrapper = () => {
-        deleteRow(this.view.state, this.view.dispatch);
-        this.createMenuItems();
-        this.focusTable();
+        if (this.table.children[1].children.length === 1) {
+            deleteTable(this.view.state, this.view.dispatch);
+        } 
+        else {
+            deleteRow(this.view.state, this.view.dispatch);
+            this.createMenuItems();
+            this.focusTable();
+        }
     };
 
     deleteColumnWrapper = () => {
-        deleteColumn(this.view.state, this.view.dispatch);
-        this.createMenuItems();
-        this.focusTable();
+        if (this.table.children[0].children.length === 1) {
+            deleteTable(this.view.state, this.view.dispatch);
+        } 
+        else {
+            deleteColumn(this.view.state, this.view.dispatch);
+            this.createMenuItems();
+            this.focusTable();
+        }
     };
 
     clearRowContentWrapper = () => {
