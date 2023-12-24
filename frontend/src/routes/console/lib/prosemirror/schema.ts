@@ -1,4 +1,4 @@
-import {Mark, MarkSpec, Node, NodeSpec, Schema} from "prosemirror-model"
+import {Mark, type MarkSpec, Node, type NodeSpec, Schema} from "prosemirror-model"
 import { addListNodes } from "prosemirror-schema-list"
 import { tableNodes } from "prosemirror-tables"
 
@@ -319,9 +319,7 @@ export const marks = {
 
 const schemaWithoutList = new Schema({nodes, marks});
 
-const schema = new Schema({
+export default new Schema({
     nodes: addListNodes(schemaWithoutList.spec.nodes, "block+", "block"),
     marks: schemaWithoutList.spec.marks
 });
-
-export default schema;

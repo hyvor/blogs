@@ -1,5 +1,5 @@
-import { writable } from "svelte/store";
-import type { AuthUser, Blog, BlogList, Language } from "./types";
+import { derived, writable } from "svelte/store";
+import type { AuthUser, Blog, BlogList, Language, Post } from "./types";
 
 // Currently logged in user
 export const authUserStore = writable<AuthUser>();
@@ -21,4 +21,10 @@ export const languagesStore = writable<Language[]>([]);
 
 /**
  * CURRENT BLOG END ===========
+ */
+
+
+
+/**
+ * CURRENT POST START =================
  */

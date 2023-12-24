@@ -5,6 +5,7 @@
 	import { authUserStore, blogListStore } from "./lib/stores";
 	import { Loader } from "@hyvor/design/components";
 	import { goto } from "$app/navigation";
+    import { page } from '$app/stores';
 
     interface InitResponse {
         user: AuthUser,
@@ -25,10 +26,12 @@
 
             isLoading = false;
 
-            if (res.blogs.length === 0) {
-                goto('/console/new')
+            if (res.blogs.length > 0) {
+                if ($page.url.pathname === '/console') {
+                    goto('/console/' + res.blogs[0]!.subdomain)
+                }
             } else {
-                goto('/console/' + res.blogs[0].subdomain)
+                goto('/console/new')
             }
 
         })

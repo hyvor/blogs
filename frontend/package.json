@@ -36,7 +36,13 @@
 	},
 	"type": "module",
 	"dependencies": {
-		"@hyvor/design": "^0.0.20",
-		"@hyvor/icons": "^0.0.3"
+		"@hyvor/design": "^0.0.24",
+		"@hyvor/icons": "^0.0.3",
+		"dayjs": "^1.11.10",
+		"prosemirror-model": "^1.19.4",
+		"prosemirror-schema-list": "^1.3.0",
+		"prosemirror-state": "^1.4.3",
+		"prosemirror-tables": "^1.3.5",
+		"prosemirror-view": "^1.32.7"
 	}
 }

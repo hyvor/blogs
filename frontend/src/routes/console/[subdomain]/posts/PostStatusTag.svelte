@@ -4,14 +4,15 @@
 	import { IconCheck, IconHourglass, IconJournalText } from "@hyvor/icons";
     
     export let status: PostStatus;
+    export let size: 'small' | 'medium' = 'small';
 
-    const color = {
+    $: color = {
         draft: 'orange',
         published: 'green',
         scheduled: 'blue',
     }[status] as any;
 
-    const icon = {
+    $: icon = {
         draft: IconJournalText,
         published: IconCheck,
         scheduled: IconHourglass,
@@ -22,7 +23,7 @@
 
 <Tag
     color={color}
-    size="small"
+    size={size}
 >
 
     <svelte:component this={icon} slot="start" size={12} />
