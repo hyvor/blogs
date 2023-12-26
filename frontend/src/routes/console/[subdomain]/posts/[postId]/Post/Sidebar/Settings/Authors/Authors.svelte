@@ -6,6 +6,8 @@
 	import { IconPlus, IconX } from "@hyvor/icons";
 	import AuthorsSearch from "./AuthorsSearch.svelte";
 
+    let dropdownOpen = false;
+
     function getAuthorName(user: User) {
         const primaryLang = getPrimaryLanguage()
         const variant = user.variants.find(v => v.language_id === primaryLang.id);
@@ -14,6 +16,10 @@
 
     function handleRemoveAuthor(authorId: number) {
         // TODO: implement
+    }
+
+    function handleAddAuthor(user: User) {
+        dropdownOpen = false;
     }
 
 </script>
@@ -53,6 +59,8 @@
             <Dropdown
                 position="bottom"
                 align="end"
+                width={300}
+                bind:show={dropdownOpen}
             >
                 <IconButton
                     color="soft"
@@ -61,7 +69,12 @@
                 >
                     <IconPlus size={16} />
                 </IconButton>
-                <AuthorsSearch slot="content" />
+
+                <AuthorsSearch 
+                    slot="content"
+                    on:select={handleAddAuthor}
+                />
+            
             </Dropdown>
 
         </div>
@@ -82,6 +95,7 @@
         align-items: center;
         flex-wrap: wrap;
         gap: 5px;
+        min-width: 0;
     }
 
     .right {

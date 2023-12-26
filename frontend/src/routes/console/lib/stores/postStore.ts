@@ -1,5 +1,5 @@
 import { derived, get, writable } from "svelte/store";
-import { languagesStore } from "../stores";
+import { languagesStore } from "./languagesStore";
 import type { Post, PostVariant } from "../types";
 
 // originally loaded post
@@ -20,6 +20,12 @@ export interface PostEditingStatus {
 
 export const postEditingStatusStore = writable<PostEditingStatus>();
 
+export const postOriginalVariantStore = derived(
+    [postOriginalStore, postEditingStatusStore],
+    ([post, postEditingStatus]) => {
+        return post.variants.find(v => v.language_id === postEditingStatus.languageId)!;
+    }
+)
 
 export const postVariantStore = derived(
     [postStore, postEditingStatusStore],
@@ -45,19 +51,50 @@ export function initPostEditingState() {
 }
 
 
-export function updatePostVariantStore(values: Partial<PostVariant>) {
-    postStore.update(post => {
-        const languageId = get(postLanguageStore).id;
-        post.variants = post.variants.map(v => {
-            if (v.language_id === languageId) {
-                return {
-                    ...v,
-                    ...values
-                }
-            }
-            return v;
-        });
+export function updatePostStore(values: Partial<Post>, original = false) {
+    const stores = [postStore]
+    if (original) {
+        stores.push(postOriginalStore);
+    }
 
-        return post;
+    stores.forEach(store => {
+        store.update(post => {
+            return {
+                ...post,
+                ...values
+            }
+        });
     });
+}
+
+
+export function updatePostVariantStore(values: Partial<PostVariant>, original = false) {
+
+    const stores = [postStore]
+    if (original) {
+        stores.push(postOriginalStore);
+    }
+
+    stores.forEach(store => {
+        store.update(post => {
+            const languageId = get(postLanguageStore).id;
+            post.variants = post.variants.map(v => {
+                if (v.language_id === languageId) {
+                    return {
+                        ...v,
+                        ...values
+                    }
+                }
+                return v;
+            });
+
+            return post;
+        });
+    });
+}
+
+
+export function setPostAndPostOriginalStore(post: Post) {
+    postStore.set({...post});
+    postOriginalStore.set({...post});
 }

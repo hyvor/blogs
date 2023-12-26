@@ -3,12 +3,11 @@
 	import { IconTrash } from "@hyvor/icons";
 	import { postStore, postVariantStore, updatePostVariantStore } from "../../../../../../lib/stores/postStore";
 	import Slug from "./Slug.svelte";
+	import Description from "./Description.svelte";
+	import Authors from "./Authors/Authors.svelte";
+	import Tags from "./Tags/Tags.svelte";
 
     let type: 'basic' | 'advanced' = 'basic';
-
-    function handleDescriptionChange(e: any) {
-        updatePostVariantStore({description: e.target.value});
-    }
 
 </script>
 
@@ -32,26 +31,9 @@
     {#if type === 'basic'}
 
         <Slug />
-
-        <SplitControl>
-            <span slot="label">Description</span>
-            <Textarea
-                block
-                rows={4}
-                value={$postVariantStore.description || ''}
-                on:input={handleDescriptionChange}
-            />
-        </SplitControl>
-
-        <SplitControl>
-            <span slot="label">Authors</span>
-            
-        </SplitControl>
-
-        <SplitControl>
-            <span slot="label">Tags</span>
-            
-        </SplitControl>
+        <Description />
+        <Authors />
+        <Tags />
 
         <SplitControl>
             <span slot="label">Cover Image</span>
@@ -120,12 +102,12 @@
         margin-bottom: 10px;
     }
 
-    .settings-wrap :global(.split-control .left) {
+    .settings-wrap :global(.split-control > .left) {
         flex: 3;
         min-width: initial;
     }
 
-    .settings-wrap :global(.split-control .right) {
+    .settings-wrap :global(.split-control > .right) {
         flex: 7;
     }
 

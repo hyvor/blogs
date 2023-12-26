@@ -81,6 +81,7 @@
         box-shadow: var(--box-shadow);
         margin-top: 15px;
         flex: 1;
+        overflow: auto;
     }
 
     .title-wrap {

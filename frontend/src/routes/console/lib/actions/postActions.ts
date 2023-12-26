@@ -1,8 +1,8 @@
 import { get } from "svelte/store";
-import { languagesStore } from "../stores";
+import { languagesStore } from "../stores/languagesStore";
 import type { Post, PostVariant } from "../types";
 import consoleApi from "../consoleApi";
-import { postEditingStatusStore, postLanguageStore, postStore } from "../stores/postStore";
+import { postEditingStatusStore, postLanguageStore, postStore, updatePostVariantStore } from "../stores/postStore";
 
 
 // API
@@ -33,16 +33,14 @@ export function updatePostVariant(data: Partial<PostVariant>) {
     })
 
     promise.then(res => {
-        postStore.update(post => {
-            post.variants = post.variants.map(v => {
-                if (v.language_id === languageId) {
-                    return res;
-                }
-                return v;
-            });
+ 
+        // update only the fields that were changed
+        const update = {} as Partial<PostVariant>;
+        Object.keys(data).forEach(key => 
+            (update as any)[key] = (res as any)[key]
+        );
+        updatePostVariantStore(res, true);
 
-            return post;
-        });
     });
 
     return promise;

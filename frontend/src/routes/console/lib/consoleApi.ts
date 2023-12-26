@@ -4,14 +4,15 @@ import { blogStore } from "./stores";
 
 export const APP_URL = import.meta.env.VITE_APP_URL || location.origin;
 
-interface Options {
+export interface ConsoleApiOptions {
     endpoint: string,
     data?: Record<string, any> | FormData,
     userApi?: boolean,
     subdomain?: string,
+    signal?: AbortSignal,
 }
 
-interface CallOptions extends Options {
+interface CallOptions extends ConsoleApiOptions {
     method: 'get' | 'post' | 'patch' | 'delete'
 }
 
@@ -25,6 +26,7 @@ function getConsoleApi() {
         method, 
         data = {},
         subdomain,
+        signal
     }: CallOptions) : Promise<T> {
 
         if (!endpoint.startsWith('/'))
@@ -60,7 +62,8 @@ function getConsoleApi() {
             cache: 'no-cache',
             credentials: 'same-origin',
             method: method.toUpperCase(),
-            headers
+            headers,
+            signal
         } as RequestInit;
 
         if (method !== 'get') {
@@ -88,10 +91,10 @@ function getConsoleApi() {
 
     return {
         call,
-        get: async <T>(opt: Options) => call<T>({...opt, method: 'get'}),
-        post: async <T>(opt: Options) => call<T>({...opt, method: 'post'}),
-        patch: async <T>(opt: Options) => call<T>({...opt, method: 'patch'}),
-        delete: async <T>(opt: Options) => call<T>({...opt, method: 'delete'}),
+        get: async <T>(opt: ConsoleApiOptions) => call<T>({...opt, method: 'get'}),
+        post: async <T>(opt: ConsoleApiOptions) => call<T>({...opt, method: 'post'}),
+        patch: async <T>(opt: ConsoleApiOptions) => call<T>({...opt, method: 'patch'}),
+        delete: async <T>(opt: ConsoleApiOptions) => call<T>({...opt, method: 'delete'}),
     }
 
 }

@@ -4,14 +4,17 @@
     import { page } from '$app/stores';
 	import { Loader } from "@hyvor/design/components";
 	import consoleApi from "../lib/consoleApi";
-	import { blogStore, languagesStore } from "../lib/stores";
-	import type { Blog, Language } from "../lib/types";
+	import type { Blog, Language, User } from "../lib/types";
+	import { blogStore } from "../lib/stores";
+	import { languagesStore } from "../lib/stores/languagesStore";
+	import { usersStore } from "../lib/stores/usersStore";
 
     let isLoading = true;
 
     interface BlogResponse {
         blog: Blog,
-        languages: Language[]
+        languages: Language[],
+        users: User[]
     }
 
     onMount(() => {
@@ -25,6 +28,7 @@
 
             blogStore.set(res.blog)
             languagesStore.set(res.languages)
+            usersStore.set(res.users)
             
             isLoading = false;
         })

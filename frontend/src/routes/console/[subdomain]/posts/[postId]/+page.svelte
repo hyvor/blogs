@@ -5,10 +5,10 @@
 	import { scale } from 'svelte/transition';
 	import consoleApi from "../../../lib/consoleApi";
 	import type { Post } from "../../../lib/types";
-	import { initPostEditingState, postStore } from "../../../lib/stores/postStore";
+	import { initPostEditingState, postOriginalStore, postStore, setPostAndPostOriginalStore } from "../../../lib/stores/postStore";
 	import PostHeader from "./Post/PostHeader.svelte";
 	import PostBody from "./Post/PostBody.svelte";
-	import PostSidebar from "./Post/PostSidebar.svelte";
+	import PostSidebar from "./Post/Sidebar/PostSidebar.svelte";
 	import { blogStore } from "../../../lib/stores";
 	import { IconCaretLeftFill } from "@hyvor/icons";
     const postId = $page.params.postId;
@@ -21,7 +21,7 @@
             endpoint: '/post/' + postId,
         }).then(res => {
 
-            postStore.set(res);
+            setPostAndPostOriginalStore(res);
             initPostEditingState();
 
             isLoading = false;
@@ -102,6 +102,18 @@
         width: 700px;
         min-height: calc(100vh - 40px);
         position: relative;
+    }
+
+    .post-right {
+        flex: 1;
+        margin-left: 15px;
+        height: calc(100vh - 40px);
+        display: flex;
+        flex-direction: column;
+        position: sticky;
+        top: 0px;
+        z-index: 10;
+        min-width: 0;
     }
 
     .back {

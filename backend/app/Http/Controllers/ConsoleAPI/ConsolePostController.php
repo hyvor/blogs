@@ -350,4 +350,30 @@ class ConsolePostController extends Controller
 
         return response()->json();
     }
+
+    public function checkSlugAvailability(Request $request, Blog $blog, Post $post) : JsonResponse
+    {
+
+        $request->validate([
+            'language_id' => 'required|integer',
+            'slug' => 'required|string',
+        ]);
+
+        $languageId = $request->integer('language_id');
+        $slug = (string) $request->string('slug');
+
+        $language = LanguageRepository::getLanguageById($blog, $languageId);
+
+        $slugPost = PostRepository::getPostByLanguageAndSlug(
+            $language,
+            $slug
+        );
+
+        $available = $slugPost === null || $slugPost->id === $post->id;
+
+        return response()->json([
+            'available' => $available
+        ]);
+
+    }
 }

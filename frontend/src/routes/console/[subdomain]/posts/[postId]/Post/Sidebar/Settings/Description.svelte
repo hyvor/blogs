@@ -5,6 +5,16 @@
     function handleInput(e: any) {
         updatePostVariantStore({description: e.target.value});
     }
+
+    function handleBlur(e: any) {
+
+        if ($postVariantStore.status === 'draft') {
+            // TODO: Add LoaderState 
+            updatePostVariantStore({description: e.target.value});
+        }
+
+    }
+
 </script>
 
 
@@ -15,5 +25,6 @@
         rows={4}
         value={$postVariantStore.description || ''}
         on:input={handleInput}
+        on:blur={handleBlur}
     />
 </SplitControl>

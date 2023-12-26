@@ -5,6 +5,7 @@
 	import { postStore } from "../../../../../lib/stores/postStore";
 
     export let language: Language;
+    export let active: boolean = false;
 
     let tooltip = '';
     let icon: any;
@@ -32,7 +33,7 @@
 
 <Tooltip text={tooltip} position="bottom">
 
-    <Tag size="medium" interactive>
+    <Tag size="medium" interactive color={active ? "accent" : "default"}>
         {language.code}
         <svelte:component this={icon} size={12} slot="end" />
     </Tag>

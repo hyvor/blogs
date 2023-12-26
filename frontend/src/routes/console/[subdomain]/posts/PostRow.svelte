@@ -3,7 +3,7 @@
 	import type { Post } from "../../lib/types";
 	import { getLanguageById } from "../../lib/actions/languageActions";
 	import { Avatar, Tag } from "@hyvor/design/components";
-	import SeoScoreTag from "./[postId]/Seo/SeoScoreTag.svelte";
+	import SeoScoreTag from "./[postId]/Post/Sidebar/Seo/SeoScoreTag.svelte";
 	import { blogStore } from "../../lib/stores";
 	import PostStatusTag from "./PostStatusTag.svelte";
     export let post: Post;
