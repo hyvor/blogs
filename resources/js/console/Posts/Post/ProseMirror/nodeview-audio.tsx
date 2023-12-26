@@ -58,6 +58,13 @@ export default class Audio implements NodeView {
         // Auto open file input if new node created
         if (node.attrs.src == null) {
             fileInput.click();
+            if (fileInput.files != null && fileInput.files.length === 0) {
+                const { tr } = this.view.state;
+                const pos = this.getPos();
+                if (pos === undefined) return;
+                tr.delete(pos, pos + this.node.nodeSize);
+                this.view.dispatch(tr);
+            }
         }
 
         if (node.attrs.src != null) {
@@ -78,7 +85,7 @@ export default class Audio implements NodeView {
             wrap.appendChild(audio);
 
         }
-
+        
         this.dom = wrap;
     }
 
