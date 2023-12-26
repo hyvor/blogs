@@ -7,6 +7,7 @@ use App\Data\Enums\ColorModeDefaultEnum;
 use App\Data\Enums\ColorModesEnum;
 use App\Data\Enums\LinkAnalysisEmailReportEnum;
 use App\Data\Enums\SeoExternalLinksFollowEnum;
+use App\Data\Objects\ConsoleAPI\Billing\SubscriptionObject;
 use App\Data\Objects\ConsoleAPI\BlogObject;
 use App\Data\Objects\ConsoleAPI\BlogVariantObject;
 use App\Data\Objects\ConsoleAPI\LanguageObject;
@@ -35,8 +36,12 @@ class ConsoleBlogController extends Controller
      */
     public function getBlogData(Blog $blog)
     {
+
         return response()->json([
             'blog' => new BlogObject($blog),
+            'subscription' => $blog->subscription ?
+                new SubscriptionObject($blog->subscription) :
+                null,
             'counts' => [
                 'published' => $blog->getCount('posts'),
                 'draft' => $blog->getCount('posts_draft'),

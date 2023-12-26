@@ -49,6 +49,7 @@ export interface Blog {
 
     id: number,
     created_at: number,
+    trial_ends_at: number,
 
     is_blocked: boolean,
     subdomain: string,

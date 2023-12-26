@@ -3,6 +3,9 @@
 	import { IconGear, IconLink45deg, IconMagic, IconSearchHeart } from "@hyvor/icons";
 	import Settings from "./Settings/Settings.svelte";
 	import SeoScoreTag from "./Seo/SeoScoreTag.svelte";
+	import Seo from "./Seo/Seo.svelte";
+	import { variantSeoStore } from "../../../../../lib/stores/seoStore";
+	import Ai from "./Ai/Ai.svelte";
 
     export let tab: 'settings' | 'seo' | 'links' | 'ai' = 'settings';
 
@@ -23,7 +26,7 @@
             <TabNavItem name="seo">
                 <IconSearchHeart slot="start" />
                 SEO
-                <SeoScoreTag score={50} percentage slot="end" />
+                <SeoScoreTag score={$variantSeoStore.average} percentage slot="end" />
             </TabNavItem>
 
             <TabNavItem name="links">
@@ -45,11 +48,11 @@
         {#if tab === 'settings'}
             <Settings />
         {:else if tab === 'seo'}
-            
+            <Seo />
         {:else if tab === 'links'}
 
         {:else if tab === 'ai'}
-
+            <Ai />
         {/if}
 
     </div>
@@ -60,16 +63,21 @@
 
     .post-sidebar {
         height: 100%;
+        display: flex;
+        flex-direction: column;
     }
 
     .nav {
-        padding: 15px 25px 5px;
+        padding: 15px 25px 0px;
         overflow: auto;
         font-size: 14px;
     }
 
     .content {
         padding: 15px 25px;
+        flex: 1;
+        min-height: 0;
+        overflow: auto;
     }
 
 </style>

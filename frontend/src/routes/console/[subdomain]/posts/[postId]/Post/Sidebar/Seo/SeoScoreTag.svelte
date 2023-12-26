@@ -12,7 +12,7 @@
     class={color}
     class:ignore={ignore}
 >
-    {ignore ? "?" : score}{percentage && "%"}
+    {ignore ? "?" : score}{percentage ? "%" : ''}
 </span>
 
 
