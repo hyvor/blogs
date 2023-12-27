@@ -1,12 +1,19 @@
 <script lang="ts">
-	import { IconButton, Tooltip } from "@hyvor/design/components";
+	import { Button, IconButton, Tooltip } from "@hyvor/design/components";
 	import { IconPencilFill, IconTrash } from "@hyvor/icons";
-	import { selectedThemeFileStore } from "../../../lib/stores/themeStore";
+	import { selectedThemeFileOriginalStore, selectedThemeFileStore } from "../../../lib/stores/themeStore";
 
     let isUpdating = false;
     let isDeleting = false;
 
     $: currentFile = $selectedThemeFileStore!;
+    $: currentOriginalFile = $selectedThemeFileOriginalStore;
+    $: contentChanged = currentFile.content !== currentOriginalFile?.content;
+
+    $: console.log(
+        currentFile.content?.split("\n")[0], 
+        currentFile.content?.split("\n")[0]
+    );
 </script>
 
 
@@ -20,7 +27,7 @@
 
         <span class="buttons">
 
-            <Tooltip text="Edit file name" position="bottom">
+            <Tooltip text="Edit file name" position="bottom" show={true}>
                 <IconButton size={22} color="gray" on:click={() => isUpdating = true}>
                     <IconPencilFill size={10} />
                 </IconButton>
@@ -35,6 +42,14 @@
 
     </div>
 
+    <div class="right">
+
+        <Button disabled={!contentChanged}>
+            { contentChanged ? 'Save' : 'Saved' }
+        </Button>
+
+    </div>
+
 </div>
 
 <style lang="scss">
@@ -46,6 +61,7 @@
         padding: 10px 25px;
         border-bottom: 1px solid var(--accent-light-mid);
         position: relative;
+        align-items: center;
 
         .folder {
             font-weight: normal;

@@ -1,16 +1,16 @@
 <script>
 	import Editor from "./Editor/Editor.svelte";
-import ThemeNav from "./ThemeNav.svelte";
+    import ThemeNav from "./ThemeNav.svelte";
 </script>
-<div class="theme">
 
+
+<div class="theme">
     <div class="left hds-box">
         <ThemeNav />
     </div>
     <div class="right hds-box">
         <Editor />
     </div>
-
 </div>
 
 <style>
@@ -35,6 +35,8 @@ import ThemeNav from "./ThemeNav.svelte";
         position: relative;
         overflow: hidden;
         height: 100%;
+        display: flex;
+        flex-direction: column;
     }
 
 </style>

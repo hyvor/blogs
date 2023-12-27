@@ -11,3 +11,11 @@ import EditorBody from "./EditorBody.svelte";
         <EditorBody />
     </div>
 {/if}
+
+<style>
+    .editor-wrap {
+        display: flex;
+        flex-direction: column;
+        min-height: 0;
+    }
+</style>

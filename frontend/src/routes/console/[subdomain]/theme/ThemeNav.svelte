@@ -1,7 +1,7 @@
 <script lang="ts">
 	import { Button, Loader } from "@hyvor/design/components";
 	import { onMount } from "svelte";
-	import { loadThemeFiles, selectedThemeFileIdStore, themeFilesStore } from "../../lib/stores/themeStore";
+	import { loadThemeFiles, selectedThemeFileIdStore, themeFilesOriginalStore, themeFilesStore } from "../../lib/stores/themeStore";
 	import Folder from "./Folder.svelte";
 	import Upload from "./Upload.svelte";
 	import Download from "./Download.svelte";
@@ -23,6 +23,7 @@
         loadThemeFiles()
             .then(res => {
                 themeFilesStore.set(res);
+                themeFilesOriginalStore.set(res);
                 selectedThemeFileIdStore.set(getFocusFileId(res));
                 isLoading = false;
             })
