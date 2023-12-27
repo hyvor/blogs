@@ -36,7 +36,7 @@
 	},
 	"type": "module",
 	"dependencies": {
-		"@hyvor/design": "^0.0.27",
+		"@hyvor/design": "^0.0.28",
 		"@hyvor/icons": "^0.0.3",
 		"dayjs": "^1.11.10",
 		"prosemirror-model": "^1.19.4",
