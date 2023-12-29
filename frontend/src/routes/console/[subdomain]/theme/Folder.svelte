@@ -4,8 +4,7 @@
 	import { selectedThemeFileIdStore, themeFilesStore } from "../../lib/stores/themeStore";
     export let name: ThemeFolder;
 
-    const files = $themeFilesStore;
-
+    $: files = $themeFilesStore;
     $: filesOfFolder = files.filter(file => file.folder === name);
 
     let open = false;

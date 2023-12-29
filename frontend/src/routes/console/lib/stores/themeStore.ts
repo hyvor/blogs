@@ -48,3 +48,9 @@ export function updateThemeFileStore(id: number, data: Partial<ThemeFile>, origi
         })
     })
 }
+
+export function removeThemeFileStore(id: number) {
+    themeFilesStore.update(themeFiles => {
+        return themeFiles.filter(themeFile => themeFile.id !== id);
+    })
+}

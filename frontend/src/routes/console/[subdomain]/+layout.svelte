@@ -73,6 +73,7 @@
         padding-left: 0;
         flex: 1;
         height: 100%;
+        min-width: 0;
     }
     .full-loader {
         width: 100%;

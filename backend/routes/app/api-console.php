@@ -224,6 +224,7 @@ Route::prefix('/api/console/v0/blog/{subdomain}')
             Route::post('/theme/file', [ConsoleThemeController::class, 'createFile']);
             Route::patch('/theme/file/{id}', [ConsoleThemeController::class, 'updateFile']);
             Route::delete('/theme/file/{id}', [ConsoleThemeController::class, 'deleteFile']);
+            Route::get('/theme/file/name-available', [ConsoleThemeController::class, 'isFileNameAvailable']);
 
             // import and export
             Route::get('/data/exports', [ConsoleExportController::class, 'getExports']);

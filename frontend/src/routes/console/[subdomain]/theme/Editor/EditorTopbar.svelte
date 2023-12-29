@@ -1,7 +1,10 @@
 <script lang="ts">
-	import { Button, IconButton, Tooltip } from "@hyvor/design/components";
+	import { Button, Caption, FormControl, IconButton, Modal, TextInput, Tooltip } from "@hyvor/design/components";
 	import { IconPencilFill, IconTrash } from "@hyvor/icons";
 	import { selectedThemeFileOriginalStore, selectedThemeFileStore } from "../../../lib/stores/themeStore";
+	import { onMount } from "svelte";
+	import EditModal from "./Modals/EditModal.svelte";
+	import DeleteModal from "./Modals/DeleteModal.svelte";
 
     let isUpdating = false;
     let isDeleting = false;
@@ -10,12 +13,16 @@
     $: currentOriginalFile = $selectedThemeFileOriginalStore;
     $: contentChanged = currentFile.content !== currentOriginalFile?.content;
 
-    $: console.log(
-        currentFile.content?.split("\n")[0], 
-        currentFile.content?.split("\n")[0]
-    );
-</script>
+    let updatingFileName = '';
 
+    onMount(() => {
+        updatingFileName = currentFile.name;
+    })
+
+    function handleSave() {
+
+    }
+</script>
 
 <div class="editor-top-bar">
 
@@ -27,7 +34,7 @@
 
         <span class="buttons">
 
-            <Tooltip text="Edit file name" position="bottom" show={true}>
+            <Tooltip text="Edit file name" position="bottom">
                 <IconButton size={22} color="gray" on:click={() => isUpdating = true}>
                     <IconPencilFill size={10} />
                 </IconButton>
@@ -44,13 +51,18 @@
 
     <div class="right">
 
-        <Button disabled={!contentChanged}>
+        <Button disabled={!contentChanged} on:click={handleSave}>
             { contentChanged ? 'Save' : 'Saved' }
         </Button>
 
     </div>
 
 </div>
+
+{#key currentFile.id}
+    <EditModal bind:open={isUpdating} file={currentFile} />
+    <DeleteModal bind:open={isDeleting} file={currentFile} />
+{/key}
 
 <style lang="scss">
 

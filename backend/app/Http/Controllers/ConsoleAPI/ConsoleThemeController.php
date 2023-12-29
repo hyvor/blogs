@@ -124,6 +124,23 @@ class ConsoleThemeController extends Controller
         return response()->json();
     }
 
+    public function isFileNameAvailable(Request $request, Blog $blog)
+    {
+        $request->validate([
+            'name' => 'required|string',
+            'folder' => ['nullable', new Enum(ThemeFileFolderEnum::class)],
+        ]);
+
+        $folder = ThemeFileFolderEnum::tryFrom($request->input('folder'));
+        $name = $request->input('name');
+
+        $file = ThemeFilesRepository::getFile($blog, $name, $folder);
+
+        return response()->json([
+            'available' => ! $file,
+        ]);
+    }
+
     public function getAllFiles(Blog $blog)
     {
         $files = ThemeFilesRepository::getAllFilesOfBlog($blog)->mapInto(FileObject::class);

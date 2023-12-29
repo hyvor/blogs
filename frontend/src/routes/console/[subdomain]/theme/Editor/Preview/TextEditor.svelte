@@ -16,6 +16,7 @@
 <div class="text-editor">
     <CodemirrorEditor 
         value={file.content || ''}
+        id={file.id}
         ext={ext}
         on:change={e => handleChange(e.detail)}
     />
@@ -25,6 +26,7 @@
     .text-editor {
         flex: 1;
         min-height: 0;
+        height: 100%;
     }
     .text-editor :global(.CodeMirror) {
         padding: 10px 0 60px;

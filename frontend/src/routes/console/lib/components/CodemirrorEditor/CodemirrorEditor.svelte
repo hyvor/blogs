@@ -5,6 +5,8 @@
 
     export let value: string;
     export let ext: keyof typeof CODEMIRROR_MODES;
+    export let id: string | number;
+
     $: tabSize = ext === 'yaml' ? 2 : 4;
 
     let editorDiv: HTMLDivElement;
@@ -59,6 +61,11 @@
     }
 
     onMount(initCm);
+
+    // re-create codemirror instance when id changes
+    $: if (id) {
+        initCm();
+    }
 
 </script>
 

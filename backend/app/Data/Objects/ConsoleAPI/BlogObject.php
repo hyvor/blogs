@@ -17,6 +17,7 @@ class BlogObject
     public int $trial_ends_at;
     public int $created_at;
     public bool $is_blocked;
+    public ?int $theme_version_id;
 
     public string $subdomain;
 
@@ -96,6 +97,7 @@ class BlogObject
         $this->created_at = $blog->created_at->getTimestamp();
         $this->trial_ends_at = $blog->trial_ends_at->getTimestamp();
         $this->is_blocked = $blog->is_blocked;
+        $this->theme_version_id = $blog->theme_version_id;
 
         $this->subdomain = $blog->subdomain;
         $this->hosting_at = $blog->hosting_at;
