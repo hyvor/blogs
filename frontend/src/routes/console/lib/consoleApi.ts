@@ -52,11 +52,11 @@ function getConsoleApi() {
 
         }
 
-        const headers = {
-            'Content-Type': data instanceof FormData ?
-                    'application/x-www-form-urlencoded' :
-                    'application/json',
-        } as Record<string, string>;
+        const headers = {} as Record<string, string>;
+
+        if (!(data instanceof FormData)) {
+            headers['Content-Type'] = 'application/json';
+        }   
 
         const options = {
             cache: 'no-cache',

@@ -33,7 +33,7 @@ class ConsoleController
                     'delivery' => config('blogs.domain_delivery'),
                 ],
                 'limits' => [
-                    'max_theme_zip_size_kb' => config('limits.max_theme_zip_size_kb'),
+                    'max_theme_zip_size' => config('limits.max_theme_zip_size_kb') * 1000,
                     'max_asset_file_size' => config('limits.max_asset_file_size'),
                 ],
                 'highlight_themes' => Highlighter::getAllThemes(),

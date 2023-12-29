@@ -50,7 +50,20 @@ export function updateThemeFileStore(id: number, data: Partial<ThemeFile>, origi
 }
 
 export function removeThemeFileStore(id: number) {
-    themeFilesStore.update(themeFiles => {
-        return themeFiles.filter(themeFile => themeFile.id !== id);
-    })
+    [themeFilesStore, themeFilesOriginalStore].forEach(store => {
+        store.update(themeFiles => {
+            return themeFiles.filter(themeFile => themeFile.id !== id);
+        })
+    });
+}
+
+export function addThemeFileToStore(themeFile: ThemeFile) {
+    [themeFilesStore, themeFilesOriginalStore].forEach(store => {
+        store.update(themeFiles => {
+            return [
+                ...themeFiles,
+                themeFile
+            ]
+        })
+    });
 }

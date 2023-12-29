@@ -1,6 +1,19 @@
 import consoleApi from "../consoleApi";
 import type { ThemeFile, ThemeFolder } from "../types";
 
+export function createFile(folder: ThemeFolder, name: string, content: string | Blob = '') {
+    const formData = new FormData()
+    formData.append('name', name)
+    formData.append('folder', folder || '');
+    formData.append(content instanceof Blob ? 'file' : 'content', content)
+
+    console.log(formData.get('name'));
+
+    return consoleApi.post<ThemeFile>({
+        endpoint: '/theme/file',
+        data: formData
+    });
+}
 
 export function updateFile(id: number, data: Partial<ThemeFile>) {
     return consoleApi.patch({

@@ -2,6 +2,7 @@
 	import { IconCaretDownFill, IconCaretRightFill } from "@hyvor/icons";
 	import type { ThemeFolder } from "../../lib/types";
 	import { selectedThemeFileIdStore, themeFilesStore } from "../../lib/stores/themeStore";
+	import NewFileCreator from "./Editor/NewFileCreator.svelte";
     export let name: ThemeFolder;
 
     $: files = $themeFilesStore;
@@ -42,7 +43,7 @@
             </button>
         {/each}
 
-        <!-- <NewFileCreator folder={name} /> -->
+        <NewFileCreator folder={name} />
     </div>
 </div>
 

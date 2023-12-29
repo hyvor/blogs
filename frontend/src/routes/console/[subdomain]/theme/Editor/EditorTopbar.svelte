@@ -3,7 +3,7 @@
 	import { IconPencilFill, IconTrash } from "@hyvor/icons";
 	import { selectedThemeFileOriginalStore, selectedThemeFileStore } from "../../../lib/stores/themeStore";
 	import { onMount } from "svelte";
-	import EditModal from "./Modals/EditModal.svelte";
+	import EditModal from "./Modals/CreateEditModal.svelte";
 	import DeleteModal from "./Modals/DeleteModal.svelte";
 
     let isUpdating = false;

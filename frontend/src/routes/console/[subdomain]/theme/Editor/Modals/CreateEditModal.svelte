@@ -3,7 +3,7 @@
 	import { checkFilename, createFile, updateFile } from "../../../../lib/actions/themeActions";
 	import type { ThemeFile, ThemeFolder } from "../../../../lib/types";
 	import { onMount } from "svelte";
-	import { addThemeFileToStore, updateThemeFileStore } from "../../../../lib/stores/themeStore";
+	import { addThemeFileToStore, selectedThemeFileIdStore, updateThemeFileStore } from "../../../../lib/stores/themeStore";
 
     export let open = false;
     export let file: {id: number | null, name: string, folder: ThemeFolder};
@@ -18,12 +18,12 @@
 
     function handleUpdate() {
         const toastId = toast.loading('Updating file name...');
+        open = false;
 
         updateFile(file.id!, {
             name: fileName
         }).then(() => {
             toast.success('File name updated', {id: toastId});
-            open = false;
             updateThemeFileStore(file.id!, {name: fileName}, true);
         }).catch(() => {
             toast.error('Failed to update file name', {id: toastId});
@@ -32,12 +32,13 @@
 
     function handleCreate() {
         const toastId = toast.loading('Creating file...');
+        open = false;
 
         createFile(file.folder, fileName)
             .then(res => {
                 toast.success('File created', {id: toastId});
-                open = false;
                 addThemeFileToStore(res);
+                selectedThemeFileIdStore.set(res.id);
             })
             .catch(() => {
                 toast.error('Failed to create file', {id: toastId});
@@ -159,7 +160,7 @@
     </SplitControl>
 
     <SplitControl
-        label="Name"
+        label="File Name"
     >
 
         <FormControl>

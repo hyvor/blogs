@@ -21,7 +21,7 @@
 </script>
 
 
-<Modal bind:show={open} title="Delete file">
+<Modal size="small" bind:show={open} title="Delete file">
 
     Are you sure to delete this file?
 

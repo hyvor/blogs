@@ -1,8 +1,21 @@
+export interface Config {
+    domains: {
+        app: string,
+        delivery: string
+    },
+    limits: {
+        max_theme_zip_size: number,
+        max_asset_file_size: number
+    },
+    highlight_themes: string[]
+}
 
+let config = {} as Config;
 
+export function setConfig(c: Config) {
+    config = c;
+}
 
-interface Config {
-
-    
-
+export function getConfig() {
+    return config;
 }

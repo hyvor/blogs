@@ -67,7 +67,7 @@ class ConsoleThemeController extends Controller
     public function createFile(Request $request, Blog $blog)
     {
         $request->validate([
-            'folder' => ['required', 'nullable', new Enum(ThemeFileFolderEnum::class)],
+            'folder' => ['nullable', new Enum(ThemeFileFolderEnum::class)],
             'name' => 'required|string',
             'content' => 'string|nullable',
             'file' => (new File())->max(config('limits.max_asset_file_size') / 1000),

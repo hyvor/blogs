@@ -6,10 +6,12 @@
 	import { Loader } from "@hyvor/design/components";
 	import { goto } from "$app/navigation";
     import { page } from '$app/stores';
+	import { setConfig, type Config } from "./lib/config";
 
     interface InitResponse {
         user: AuthUser,
         blogs: BlogList[],
+        config: Config,
     }
 
     let isLoading = true;
@@ -20,6 +22,8 @@
             endpoint: '/init',
             userApi: true,
         }).then(res => {
+
+            setConfig(res.config);
 
             authUserStore.set(res.user)
             blogListStore.set(res.blogs)
