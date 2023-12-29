@@ -1,10 +1,8 @@
 <script>
 	import { NavLink } from "@hyvor/design/components";
-	import { blogStore } from "../../lib/stores";
-	import { page } from "$app/stores";
-    
     import hyvorTalkLogo from '$lib/img/services/hyvor-talk.svg';
-
+	import { page } from "$app/stores";
+	import { blogStore } from "../../lib/stores/blogStore";
 </script>
 
 <div class="integrations">
@@ -52,5 +50,6 @@
         min-width: 0;
         height: 100%;
         padding: 25px 45px;
+        overflow: auto;
     }
 </style>

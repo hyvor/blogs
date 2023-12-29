@@ -26,3 +26,9 @@ export function createHyvorTalkIntegration() {
         endpoint: '/integrations/hyvor-talk',
     })
 }
+
+export function deleteHyvorTalkIntegration() {
+    return consoleApi.delete({
+        endpoint: '/integrations/hyvor-talk',
+    })
+}

@@ -5,10 +5,10 @@
 	import { Loader } from "@hyvor/design/components";
 	import consoleApi from "../lib/consoleApi";
 	import type { Blog, Language, Subscription, User } from "../lib/types";
-	import { blogStore } from "../lib/stores";
-	import { languagesStore } from "../lib/stores/languagesStore";
 	import { usersStore } from "../lib/stores/usersStore";
 	import { subscriptionStore } from "../lib/stores/subscriptionStore";
+	import { blogStore } from "../lib/stores/blogStore";
+	import { languagesStore } from "../lib/stores/languagesStore";
 
     let isLoading = true;
 

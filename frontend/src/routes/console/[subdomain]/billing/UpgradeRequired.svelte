@@ -2,8 +2,8 @@
 	import { IconArrowUpCircle } from "@hyvor/icons";
 	import { isInTrial, subscriptionStore } from "../../lib/stores/subscriptionStore";
 	import type { SubscriptionPlan } from "../../lib/types";
-	import { blogStore } from "../../lib/stores";
 	import { Button } from "@hyvor/design/components";
+	import { blogStore } from "../../lib/stores/blogStore";
 
     const allPlanTypes : SubscriptionPlan[] = [
         'starter',

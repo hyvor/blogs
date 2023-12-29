@@ -1,8 +1,9 @@
 <script lang="ts">
-	import { Button, ButtonGroup, Link, Loader, Modal, SplitControl, toast } from "@hyvor/design/components";
+	import { Button, ButtonGroup, Callout, CodeBlock, Link, Loader, Modal, SplitControl, toast } from "@hyvor/design/components";
     import UpgradeRequired from "../../billing/UpgradeRequired.svelte";
-	import { loadHyvorTalk, type HyvorTalkIntegrationData, createHyvorTalkIntegration } from "./hyvorTalkActions";
+	import { loadHyvorTalk, type HyvorTalkIntegrationData, createHyvorTalkIntegration, deleteHyvorTalkIntegration } from "./hyvorTalkActions";
 	import { onMount } from "svelte";
+	import { blogStore } from "../../../lib/stores/blogStore";
 
     let isLoading = true;
     let data: HyvorTalkIntegrationData;
@@ -25,6 +26,34 @@
             })
             .catch(_ => toast.error('Failed to connect to Hyvor Talk', {id: toastId}));
 
+    }
+
+    function handleDisconnect() {
+
+        isDisconnecting = false;
+        const toastId = toast.loading('Disconnecting from Hyvor Talk...');
+
+        deleteHyvorTalkIntegration()
+            .then(_ => {
+                data = {
+                    connected: false,
+                }
+                toast.success('Hyvor Talk disconnected successfully', {id: toastId});
+            })
+            .catch(_ => toast.error('Failed to disconnect from Hyvor Talk', {id: toastId}));
+
+    }
+
+    $: embedCode = data && data.connected ? `<` + `script async src="https://talk.hyvor.com/embed/embed.js" type="module"></` + `script>
+<hyvor-talk-comments 
+    website-id="${data.data.website_id}" 
+    page-id="{{ _post.id }}"
+    page-url="{{ _post.url }}"
+></hyvor-talk-comments>` : '';
+
+    async function handleCopy() {
+        await navigator.clipboard.writeText(embedCode);
+        toast.success('Embed code copied to clipboard');
     }
 
     onMount(() => {
@@ -54,8 +83,7 @@
         <SplitControl label="Introduction">
 
             <div>            
-                <Link href="https://talk.hyvor.com" target="_blank">Hyvor Talk</Link>
-                is our own commenting platform. You can use it on your blog for free.
+                <Link href="https://talk.hyvor.com" target="_blank">Hyvor Talk</Link> is a privacy-first commenting platform. You can use it for free on your blog.
 
                 <p>
                     When you connect Hyvor Talk to your blog, we will automatically create a new website ID in Hyvor Talk for this blog under your account. You can manage the comments from the Hyvor Talk Console.
@@ -85,7 +113,7 @@
                 <Button
                     color="danger"
                     size="small"
-                    onClick={() => isDisconnecting = true}
+                    on:click={() => isDisconnecting = true}
                 >Disconnect</Button>
 
             {:else}
@@ -101,6 +129,42 @@
             {/if}
 
         </SplitControl>
+
+        {#if data.connected}
+
+            <div class="embed-code">
+
+                <SplitControl label="Embed Code">
+
+                    <p style="margin-top:0;">
+                        Add the embed code to <Link style="display:inline;" underline href={`/console/${$blogStore.subdomain}/settings/comments`}>Comments Embed Code</Link> to load Hyvor Talk on all posts.
+                    </p>
+
+                    <CodeBlock code={embedCode} />
+
+                    <div>
+
+                        <Button size="small">
+                            Add to "Comments Embed Code"
+                        </Button>
+
+                        <Button size="small" on:click={handleCopy}>
+                            Copy code
+                        </Button>
+
+                    </div>
+
+                    <p>
+                        You can also add it directly into your theme files. Feel free to customize the code (see <Link underline href="https://talk.hyvor.com/docs/install" target="_blank">Hyvor Talk docs</Link>).
+                    </p>
+
+                </SplitControl>
+
+            </div>
+
+        
+
+        {/if}
 
     {/if}
 
@@ -134,10 +198,38 @@
     </Modal>
 {/if}
 
+{#if isDisconnecting}
+    <Modal 
+        title="Disconnect Hyvor Talk"
+        bind:show={isDisconnecting}
+    >
+
+        <Callout type="warning">
+            You cannot connect this blog to the same website ID again.
+        </Callout>
+
+        <p>
+            Are you sure you want to disconnect this blog from Hyvor Talk? This will not delete your Hyvor Talk Website ID. You will have to delete it manually from the Hyvor Talk Console.
+        </p>
+
+        <svelte:fragment slot="footer">
+            <ButtonGroup>
+                <Button color="invisible" on:click={() => isConnecting = false}>Cancel</Button>
+                <Button color="danger" on:click={handleDisconnect}>Disconnect</Button>
+            </ButtonGroup>
+        </svelte:fragment>
+
+    </Modal>
+{/if}
+
 <style>
 
     .connection-status {
         margin-bottom: 10px;
+    }
+
+    .embed-code :global(.split-control .right) {
+        min-width: 0;
     }
 
 </style>

@@ -9,7 +9,7 @@
 	import PostHeader from "./Post/PostHeader.svelte";
 	import PostBody from "./Post/PostBody.svelte";
 	import PostSidebar from "./Post/Sidebar/PostSidebar.svelte";
-	import { blogStore } from "../../../lib/stores";
+	import { blogStore } from "../../../lib/stores/blogStore";
 	import { IconCaretLeftFill } from "@hyvor/icons";
     const postId = $page.params.postId;
 

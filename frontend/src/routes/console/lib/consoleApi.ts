@@ -1,5 +1,5 @@
 import { get } from "svelte/store";
-import { blogStore } from "./stores";
+import { blogStore } from "./stores/blogStore";
 // import { currentProjectIdStore } from "./stores";
 
 export const APP_URL = import.meta.env.VITE_APP_URL || location.origin;

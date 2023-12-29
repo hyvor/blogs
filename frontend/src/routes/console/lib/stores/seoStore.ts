@@ -2,7 +2,7 @@ import { derived } from "svelte/store";
 import { postLanguageStore, postVariantStore } from "./postStore";
 import { SeoAnalyzer } from "../seo/seo-analyzer";
 import type { PostVariant } from "../types";
-import { blogStore } from "../stores";
+import { blogStore } from "./blogStore";
 
 export const variantSeoStore = derived(
     [postVariantStore, blogStore, postLanguageStore],

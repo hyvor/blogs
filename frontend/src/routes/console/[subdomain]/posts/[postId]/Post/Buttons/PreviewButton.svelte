@@ -1,7 +1,7 @@
 <script lang="ts">
 	import { ActionList, ActionListItem, Button, Dropdown } from "@hyvor/design/components";
 	import { IconBoxArrowUpRight } from "@hyvor/icons";
-	import { blogStore } from "../../../../../lib/stores";
+	import { blogStore } from "../../../../../lib/stores/blogStore";
 	import { postLanguageStore, postStore, postVariantStore } from "../../../../../lib/stores/postStore";
 
     let showDropdown = false;

@@ -1,5 +1,5 @@
 <script lang="ts">
-	import { blogStore } from "../../../../lib/stores";
+	import { blogStore } from "../../../../lib/stores/blogStore";
 	import type { ThemeFile } from "../../../../lib/types";
 
     export let file: ThemeFile;    

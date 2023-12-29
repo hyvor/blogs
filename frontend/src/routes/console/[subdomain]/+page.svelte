@@ -1,7 +1,7 @@
 <script lang="ts">
-	import { blogStore } from './../lib/stores';
-    import { IconButton, Link, Loader } from "@hyvor/design/components";
     import { IconBoxArrowUpRight, IconLaptop, IconTablet } from "@hyvor/icons";
+	import { blogStore } from "../lib/stores/blogStore";
+	import { IconButton, Link, Loader } from "@hyvor/design/components";
 
     let type : 'laptop' | 'tablet' = 'laptop';
     let isLoading = true;
@@ -16,14 +16,14 @@
             </Link>
         </div>
         <div class="right">
-            <IconButton 
+            <IconButton
                 on:click={() => type = 'laptop'}
-                color={type == 'laptop' ? "accent" : "invisible"}
+                variant={type == 'laptop' ? "fill" : "invisible"}
             ><IconLaptop /></IconButton>
 
             <IconButton 
                 on:click={() => type = 'tablet'}
-                color={type == 'tablet' ? "accent" : "invisible"}
+                variant={type == 'tablet' ? "fill" : "invisible"}
             ><IconTablet /></IconButton>
         </div>
     </div>

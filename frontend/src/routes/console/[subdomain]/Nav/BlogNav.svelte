@@ -1,8 +1,8 @@
 <script>
 	import { IconBoxArrowUpRight, IconChevronExpand, IconCoin, IconColumns, IconFiles, IconGear, IconHouse, IconPalette, IconPencil, IconPlugin, IconThreeDots, IconTools } from "@hyvor/icons";
-    import { blogStore } from "../../lib/stores";
-	import { IconButton, NavLink } from "@hyvor/design/components";
 	import { page } from "$app/stores";
+	import { blogStore } from "../../lib/stores/blogStore";
+	import { NavLink } from "@hyvor/design/components";
 
 </script>
 
@@ -86,7 +86,7 @@
 
     <NavLink
         href={`/console/${$blogStore.subdomain}/integrations`}
-        active={$page.url.pathname === `/console/${$blogStore.subdomain}/integrations`}
+        active={$page.url.pathname.startsWith(`/console/${$blogStore.subdomain}/integrations`)}
     >
         <IconPlugin slot="start" />
         Integrations
