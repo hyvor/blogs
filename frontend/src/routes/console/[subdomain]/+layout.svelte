@@ -7,7 +7,7 @@
 	import type { Blog, Language, Subscription, User } from "../lib/types";
 	import { usersStore } from "../lib/stores/usersStore";
 	import { subscriptionStore } from "../lib/stores/subscriptionStore";
-	import { blogStore } from "../lib/stores/blogStore";
+	import { blogOriginalStore, blogStore } from "../lib/stores/blogStore";
 	import { languagesStore } from "../lib/stores/languagesStore";
 
     let isLoading = true;
@@ -29,6 +29,7 @@
         }).then(res => {
 
             blogStore.set(res.blog)
+            blogOriginalStore.set(res.blog)
             languagesStore.set(res.languages)
             usersStore.set(res.users)
             subscriptionStore.set(res.subscription)

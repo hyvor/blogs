@@ -4,12 +4,15 @@
 	import { loadHyvorTalk, type HyvorTalkIntegrationData, createHyvorTalkIntegration, deleteHyvorTalkIntegration } from "./hyvorTalkActions";
 	import { onMount } from "svelte";
 	import { blogStore } from "../../../lib/stores/blogStore";
+	import AddCommentsEmbedCode from "./AddCommentsEmbedCode.svelte";
 
     let isLoading = true;
     let data: HyvorTalkIntegrationData;
 
     let isConnecting = false;
     let isDisconnecting = false;
+
+    let addingCommentsEmbedCode = false;
 
     function handleConnect() {
         
@@ -53,7 +56,7 @@
 
     async function handleCopy() {
         await navigator.clipboard.writeText(embedCode);
-        toast.success('Embed code copied to clipboard');
+        toast.success('Copied to clipboard');
     }
 
     onMount(() => {
@@ -144,7 +147,7 @@
 
                     <div>
 
-                        <Button size="small">
+                        <Button size="small" on:click={() => addingCommentsEmbedCode = true}>
                             Add to "Comments Embed Code"
                         </Button>
 
@@ -214,12 +217,19 @@
 
         <svelte:fragment slot="footer">
             <ButtonGroup>
-                <Button color="invisible" on:click={() => isConnecting = false}>Cancel</Button>
+                <Button color="invisible" on:click={() => isDisconnecting = false}>Cancel</Button>
                 <Button color="danger" on:click={handleDisconnect}>Disconnect</Button>
             </ButtonGroup>
         </svelte:fragment>
 
     </Modal>
+{/if}
+
+{#if addingCommentsEmbedCode}
+    <AddCommentsEmbedCode 
+        bind:open={addingCommentsEmbedCode} 
+        code={embedCode}    
+    />
 {/if}
 
 <style>
