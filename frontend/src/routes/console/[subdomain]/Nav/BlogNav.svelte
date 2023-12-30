@@ -94,7 +94,7 @@
 
     <NavLink
         href={`/console/${$blogStore.subdomain}/tools`}
-        active={$page.url.pathname === `/console/${$blogStore.subdomain}/tools`}
+        active={$page.url.pathname.startsWith(`/console/${$blogStore.subdomain}/tools`)}
     >
         <IconTools slot="start" />
         Tools
@@ -102,7 +102,7 @@
 
     <NavLink
         href={`/console/${$blogStore.subdomain}/settings`}
-        active={$page.url.pathname === `/console/${$blogStore.subdomain}/settings`}
+        active={$page.url.pathname.startsWith(`/console/${$blogStore.subdomain}/settings`)}
     >
         <IconGear slot="start" />
         Settings

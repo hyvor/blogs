@@ -18,7 +18,7 @@
         </NavLink>
     </div>
 
-    <div class="content hds-box">
+    <div class="content">
         <slot />
     </div>
 
@@ -38,11 +38,6 @@
         height: 100%;
         padding: 25px 0;
     }
-    .nav img {
-        width: 20px;
-        height: 20px;
-        border-radius: 50%;
-    }
     .nav :global(a.active) {
         background-color: var(--accent-light-mid);
     }
@@ -50,7 +45,8 @@
         flex: 1;
         min-width: 0;
         height: 100%;
-        padding: 25px 45px;
         overflow: auto;
+        display: flex;
+        flex-direction: column;
     }
 </style>

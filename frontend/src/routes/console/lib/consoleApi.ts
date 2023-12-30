@@ -45,10 +45,12 @@ function getConsoleApi() {
 
         if (method === 'get') {
 
+            url += "?" + objectToParams(data);
+/* 
             url += "?" + Object.entries(data)
                 .filter(([_, val]) => val !== null && val !== undefined)
                 .map(([key, val]) => key + '=' + encodeURIComponent(val))
-                .join('&');
+                .join('&'); */
 
         }
 
@@ -78,7 +80,8 @@ function getConsoleApi() {
             /* toast({type: 'error', message: error});
             throw error; */
 
-            const toThrow = new Error(error) as any; 
+            const toThrow = new Error(error) as any;
+            toThrow.message = error;
             toThrow.code = e && e.code ? e.code : 500;
 
             throw toThrow;
@@ -97,6 +100,35 @@ function getConsoleApi() {
         delete: async <T>(opt: ConsoleApiOptions) => call<T>({...opt, method: 'delete'}),
     }
 
+}
+
+// ChatGPT
+function objectToParams(obj: object) : string {
+    const params = [];
+  
+    for (const key in obj) {
+        if (obj.hasOwnProperty(key)) {
+            const value = (obj as any)[key];
+
+            if (value === null || value === undefined) {
+                continue;
+            }
+
+            if (typeof value === 'object' && value !== null && !Array.isArray(value)) {
+                // Recurse into nested object
+                params.push(objectToParams(value));
+            } else if (Array.isArray(value)) {
+                // Handle arrays
+                for (let i = 0; i < value.length; i++) {
+                    params.push(`${encodeURIComponent(key)}[]=${encodeURIComponent(value[i])}`);
+                }
+            } else {
+                params.push(`${encodeURIComponent(key)}=${encodeURIComponent(value)}`);
+            }
+        }
+    }
+  
+    return params.join('&');
 }
 
 const consoleApi = getConsoleApi();

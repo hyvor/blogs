@@ -74,6 +74,7 @@
 <div 
     class="editor"
     bind:this={editorDiv}
+    {...$$restProps}
 ></div>
 
 <style lang="scss">

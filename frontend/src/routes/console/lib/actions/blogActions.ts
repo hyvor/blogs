@@ -1,6 +1,6 @@
 import consoleApi from "../consoleApi";
 import { updateBlogStore } from "../stores/blogStore";
-import type { Blog } from "../types";
+import type { Blog, BlogVariant } from "../types";
 
 export function saveSort(ids: number[]) {
     return consoleApi.patch({
@@ -28,6 +28,27 @@ export function updateBlog(data: Partial<Blog>, updateStore = true) {
 
             updateBlogStore(data, true);
         })
+    }
+
+    return promise;
+}
+
+export function createBlogVariant(languageId: number, updateStore = true) {
+    const promise = consoleApi.post<BlogVariant>({
+        endpoint: '/blog/variant',
+        data: {
+            language_id: languageId
+        }
+    })
+
+    if (updateStore) {
+
+        promise.then(res => {
+            updateBlogStore({
+                variants: [res]
+            }, true);
+        })
+    
     }
 
     return promise;

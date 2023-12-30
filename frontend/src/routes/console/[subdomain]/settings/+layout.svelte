@@ -112,8 +112,8 @@
         <div class="section-div"></div>
 
         <NavLink 
-            href={`${prefix}/media`}
-            active={$page.url.pathname === `${prefix}/media`}
+            href={`${prefix}/comments`}
+            active={$page.url.pathname === `${prefix}/comments`}
         >
             <IconChatText slot="start" />
             Comments & Newsletter
@@ -151,7 +151,7 @@
         </NavLink>
     </div>
 
-    <div class="content">
+    <div class="content hds-box">
         <slot />
     </div>
 
@@ -179,7 +179,6 @@
         flex: 1;
         min-width: 0;
         height: 100%;
-        overflow: auto;
         display: flex;
         flex-direction: column;
     }

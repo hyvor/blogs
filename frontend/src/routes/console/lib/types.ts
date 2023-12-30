@@ -80,12 +80,12 @@ export interface Blog {
 
     seo_indexing: boolean,
     seo_robots_txt: string | null,
-    seo_external_links_follow: SeoExternalLinksFollow,
+    seo_external_links_follow: 'follow' | 'nofollow',
     comments_code: string | null,
     newsletter_code: string | null,
 
-    color_modes: ColorModes,
-    color_mode_default: ColorModeDefault,
+    color_modes: 'light' | 'dark' | 'both',
+    color_mode_default: 'light' | 'dark' | 'os',
 
     syntax_on: boolean,
     syntax_line_numbers: boolean,
