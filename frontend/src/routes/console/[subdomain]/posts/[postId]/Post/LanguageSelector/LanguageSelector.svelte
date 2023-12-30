@@ -10,6 +10,7 @@
         <LanguageTag 
             language={lang}
             active={lang.id === $postEditingStatusStore.languageId}
+            isCreating={true}
         />
     {/each}
 

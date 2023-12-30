@@ -3,7 +3,7 @@
     export let ignore = false;
     export let percentage = false;
 
-    score = Math.round(score);
+    $: score = Math.round(score);
     const color = score < 50 ? 'red' : score < 80 ? 'orange' : 'green';
 
 </script>
