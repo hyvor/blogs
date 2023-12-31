@@ -6,6 +6,7 @@
 	import Description from "./Description.svelte";
 	import Authors from "./Authors/Authors.svelte";
 	import Tags from "./Tags/Tags.svelte";
+	import PublishTime from "./PublishTime.svelte";
 
     let type: 'basic' | 'advanced' = 'basic';
 
@@ -40,13 +41,7 @@
             
         </SplitControl>
 
-        <SplitControl>
-            <span slot="label">Publish Time</span>
-            <TextInput 
-                block 
-                type="datetime-local" 
-            />
-        </SplitControl>
+        <PublishTime />
 
         <SplitControl>
             <span slot="label">Featured</span>

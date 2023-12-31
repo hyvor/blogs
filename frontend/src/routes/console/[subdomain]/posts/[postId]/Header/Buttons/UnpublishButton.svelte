@@ -46,8 +46,8 @@
         Are you sure to {$postVariantStore.status === 'published' ? 'unpublish' : 'unschedule'} this post? It's status will be changed to draft.
 
         <div slot="footer">
-            <Button color="invisible" on:click={() => modalOpen = false}>Cancel</Button>
-            <Button color="danger" on:click={handleUnpublish}>
+            <Button variant="invisible" on:click={() => modalOpen = false}>Cancel</Button>
+            <Button color="red" on:click={handleUnpublish}>
                 {$postVariantStore.status === 'scheduled' ? 'Unschedule' : 'Unpublish'}
             </Button>
         </div>
