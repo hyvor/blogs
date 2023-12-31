@@ -1,5 +1,5 @@
 import { derived } from "svelte/store";
-import { postLanguageStore, postVariantStore } from "./postStore";
+import { postLanguageStore, postVariantStore } from "../../[subdomain]/posts/postStore";
 import { SeoAnalyzer } from "../seo/seo-analyzer";
 import type { PostVariant } from "../types";
 import { blogStore } from "./blogStore";

@@ -5,10 +5,10 @@
 	import { scale } from 'svelte/transition';
 	import consoleApi from "../../../lib/consoleApi";
 	import type { Post } from "../../../lib/types";
-	import { initPostEditingState, postOriginalStore, postStore, setPostAndPostOriginalStore } from "../../../lib/stores/postStore";
-	import PostHeader from "./Post/PostHeader.svelte";
-	import PostBody from "./Post/PostBody.svelte";
-	import PostSidebar from "./Post/Sidebar/PostSidebar.svelte";
+	import { initPostEditingState, postOriginalStore, postStore, setPostAndPostOriginalStore } from "../postStore";
+	import PostHeader from "./Header/PostHeader.svelte";
+	import PostBody from "./Body/PostBody.svelte";
+	import PostSidebar from "./Sidebar/PostSidebar.svelte";
 	import { blogStore } from "../../../lib/stores/blogStore";
 	import { IconCaretLeftFill } from "@hyvor/icons";
     const postId = $page.params.postId;
