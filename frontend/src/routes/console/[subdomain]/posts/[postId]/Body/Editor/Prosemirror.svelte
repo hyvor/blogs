@@ -3,12 +3,16 @@
 	import schema from "../../../../../lib/prosemirror/schema";
 	import { EditorView } from "prosemirror-view";
 	import { createEventDispatcher, onMount } from "svelte";
+	import { getNodeViews } from "./nodeviews/nodeviews";
+	import { importCodemirrorAll } from "../../../../../lib/components/CodemirrorEditor/codemirror";
     export let value: string | null;
     let wrap: HTMLDivElement;
 
     const dispatch = createEventDispatcher();
 
-    function createEditor() {
+    async function createEditor() {
+
+        await importCodemirrorAll();
 
         const jsonParsedValue = value ? JSON.parse(value) : null;
         wrap.innerHTML = '';
@@ -21,6 +25,7 @@
 
         const view = new EditorView(wrap, {
             state: state,
+            nodeViews: getNodeViews(),
             // nodeViews,
             // handleClickOn,
             // handleKeyDown,
@@ -94,8 +99,7 @@
         :global(ul),
         :global(ol)
         {
-            margin-top: 30px;
-            margin-bottom: 0;
+            margin: 30px 0 0 0;
         }
 
         // === NODES
@@ -117,9 +121,10 @@
                 left:0;
                 color: var(--text-light);
                 font-size:12px;
-                margin-bottom: -4px;
+                margin-bottom: -2px;
                 display: flex;
                 width:100%;
+                align-items: center;
             }
             :global(input) {
                 padding: 0;
@@ -129,9 +134,11 @@
                 outline:none;
                 flex: 1;
                 display:block;
+                font-family: inherit;
+                font-size: inherit;
             }
             :global(+ *) {
-                margin-top: 0;
+                margin-top: 10px;
             }
         }
 
@@ -221,14 +228,14 @@
                 font-size: 14px;
                 text-align: center;
                 margin-top: 22px;
-                :global(&.empty:before) {
-                    content: "Enter caption...";
-                    color: #aaa;
-                    position: absolute;
-                    left: 50%;
-                    transform: translateX(-50%);
-                    pointer-events: none;
-                }
+            }
+            :global(figcaption.empty:before) {
+                content: "Enter caption...";
+                color: #aaa;
+                position: absolute;
+                left: 50%;
+                transform: translateX(-50%);
+                pointer-events: none;
             }
 
             :global(x-embed) {
@@ -258,6 +265,67 @@
         :global(li) {
             :global(> *) {
                 margin:5px 0!important;
+            }
+        }
+
+        // code block
+        :global(.code-wrap) {
+            margin-top:30px;
+            :global(.code-toolbar) {
+                white-space: normal;
+                padding: 10px;
+                background: var(--input);
+                border-radius: 20px 20px 0 0;
+                border-bottom: 1px solid #dddddd;
+            }
+            :global(.code-toolbar-labels) {
+                display: flex;
+                font-size: 12px;
+                :global(div) {
+                    flex: 1;
+                    padding-left: 4px;
+                }
+            }
+            :global(.code-toolbar-inputs) {
+                display: flex;
+                :global(input) {
+                    flex: 1;
+                    min-width: 0;
+                    margin-right: 5px;
+                    padding: 5px 10px;
+                    font-size: 12px;
+                    margin-top: 5px;
+                    background: #fff;
+                    border: none;
+                    border-radius: 20px;
+                    font-family: inherit;
+                }
+            }
+            
+            :global(.CodeMirror) {
+                font-size:14px;
+                height: initial;
+                padding:5px  0;
+                padding-bottom: 15px;
+                border-radius: 0 0 20px 20px;
+                font-family: source-code-pro,Menlo,Courier New,Consolas,monospace!important;
+                box-shadow: none!important;
+                background-color: var(--input);
+            }
+            :global(.topbar) {
+                background: var(--input);
+                border-radius: 20px 20px 0 0;
+                border-bottom: 1px solid #dddddd;
+                font-size:12px;
+                padding: 10px 15px;
+            }
+            :global(.code-toolbar-quit-message) {
+                position: absolute;
+                bottom: 0;
+                right: 0;
+                font-size: 10px;
+                padding-right: 10px;
+                color: var(--text-light);
             }
         }
 

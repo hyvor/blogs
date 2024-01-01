@@ -1,0 +1,48 @@
+import type { NodeViewConstructor } from "prosemirror-view";
+import HeadingNodeView from "./nodeview-heading";
+import FigcaptionNodeView from "./nodeview-figcaption";
+import { CalloutNodeView } from "./callout/nodeview-callout";
+import CodeBlockNodeView from "./nodeview-codeblock";
+
+interface NodeViewsType {
+    [key: string]: NodeViewConstructor
+}
+
+export function getNodeViews() : NodeViewsType {
+
+    return {
+        /* embed(node, view, getPos) {
+            return new EmbedView(HBSchema, node, view, getPos);
+        },
+         */
+        figcaption(node) {
+            return new FigcaptionNodeView(node);
+        },
+        heading(node, view, getPos) {
+            return new HeadingNodeView(node, view, getPos);
+        },
+        callout(node, view, getPos) {
+            return new CalloutNodeView(node, view, getPos)
+        },
+        code_block(node, view, getPos) {
+            return new CodeBlockNodeView(node, view, getPos)
+        },
+        /* callout(node, view, getPos) {
+            return new Callout(node, view, getPos)
+        },
+        ,
+        custom_html(node, view, getPos) {
+            return new CustomHtml(node, view, getPos)
+        },
+        image(node, view, getPos) {
+            return new Image(HBSchema, node, view, getPos)
+        },
+        bookmark(node, view, getPos) {
+            return new Bookmark(node, view, getPos)
+        },
+        table(node, view, getPos) {
+            return new Table(HBSchema, node, view, getPos);
+        }, */
+    }
+
+}
