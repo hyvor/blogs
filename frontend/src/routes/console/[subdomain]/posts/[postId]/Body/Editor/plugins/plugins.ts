@@ -13,6 +13,7 @@ import slashTipPlugin from "./plugin-slash-tip"; */
 import { columnResizing, tableEditing, goToNextCell } from 'prosemirror-tables';
 import marksTooltipPlugin from "./marks-tooltip/plugin-marks-tooltip";
 import schema from "../../../../../../lib/prosemirror/schema";
+import wordCountPlugin from "./plugin-wordcount";
 
 export function getPlugins() {
 
@@ -22,7 +23,7 @@ export function getPlugins() {
 
         placeholderPlugin('Start writing...'),
         marksTooltipPlugin(),
-        // wordCountPlugin(),
+        wordCountPlugin(),
         // slashPlugin(schema),
         // slashTipPlugin(),
 

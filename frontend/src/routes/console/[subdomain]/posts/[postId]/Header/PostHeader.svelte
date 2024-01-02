@@ -2,10 +2,10 @@
 	import { postVariantStore } from "../../postStore";
 	import PostStatusTag from "../../PostStatusTag.svelte";
     import LanguageSelector from "./LanguageSelector/LanguageSelector.svelte";
-	import PreviewButton from "./Buttons/PreviewButton.svelte";
-	import UnpublishButton from "./Buttons/UnpublishButton.svelte";
-	import PublishButton from "./Buttons/PublishButton.svelte";
-	import UpdateButton from "./Buttons/UpdateButton.svelte";
+	import PreviewButton from "../Sidebar/Top/PreviewButton.svelte";
+	import UnpublishButton from "../Sidebar/Settings/Status/UnpublishButton.svelte";
+	import PublishButton from "../Sidebar/Top/PublishButton.svelte";
+	import UpdateButton from "../Sidebar/Top/UpdateButton.svelte";
 	import { Z_INDEX, increaseZIndex } from "../z-index";
 
     let div: HTMLDivElement;

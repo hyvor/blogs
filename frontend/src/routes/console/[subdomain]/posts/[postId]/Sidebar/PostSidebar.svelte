@@ -7,6 +7,7 @@
 	import { variantSeoStore } from "../../../../lib/stores/seoStore";
 	import Ai from "./Ai/Ai.svelte";
 	import { Z_INDEX, increaseZIndex } from "../z-index";
+	import SidebarTop from "./Top/SidebarTop.svelte";
 
     export let tab: 'settings' | 'seo' | 'links' | 'ai' = 'settings';
 
@@ -22,51 +23,57 @@
 <!-- svelte-ignore a11y-click-events-have-key-events -->
 <!-- svelte-ignore a11y-no-static-element-interactions -->
 <div 
-    class="post-sidebar hds-box"
+    class="post-sidebar"
     on:click={handleClick}
     bind:this={div}
 >
 
-    <div class="nav">
+    <SidebarTop />
 
-        <TabNav bind:active={tab}>
+    <div class="body hds-box">
 
-            <TabNavItem name="settings">
-                <IconGear slot="start" />
-                Settings
-            </TabNavItem>
+        <div class="nav">
 
-            <TabNavItem name="seo">
-                <IconSearchHeart slot="start" />
-                SEO
-                <SeoScoreTag score={$variantSeoStore.average} percentage slot="end" />
-            </TabNavItem>
+            <TabNav bind:active={tab}>
 
-            <TabNavItem name="links">
-                <IconLink45deg slot="start" />
-                Links
-            </TabNavItem>
+                <TabNavItem name="settings">
+                    <IconGear slot="start" />
+                    Settings
+                </TabNavItem>
 
-            <TabNavItem name="ai">
-                <IconMagic slot="start" />
-                AI
-            </TabNavItem>
+                <TabNavItem name="seo">
+                    <IconSearchHeart slot="start" />
+                    SEO
+                    <SeoScoreTag score={$variantSeoStore.average} percentage slot="end" />
+                </TabNavItem>
 
-        </TabNav>
+                <TabNavItem name="links">
+                    <IconLink45deg slot="start" />
+                    Links
+                </TabNavItem>
 
-    </div>
+                <TabNavItem name="ai">
+                    <IconMagic slot="start" />
+                    AI
+                </TabNavItem>
 
-    <div class="content">
+            </TabNav>
 
-        {#if tab === 'settings'}
-            <Settings />
-        {:else if tab === 'seo'}
-            <Seo />
-        {:else if tab === 'links'}
+        </div>
 
-        {:else if tab === 'ai'}
-            <Ai />
-        {/if}
+        <div class="content">
+
+            {#if tab === 'settings'}
+                <Settings />
+            {:else if tab === 'seo'}
+                <Seo />
+            {:else if tab === 'links'}
+
+            {:else if tab === 'ai'}
+                <Ai />
+            {/if}
+
+        </div>
 
     </div>
 
@@ -78,6 +85,13 @@
         height: 100%;
         display: flex;
         flex-direction: column;
+    }
+
+    .body {
+        flex: 1;
+        display: flex;
+        flex-direction: column;
+        min-height: 0;
     }
 
     .nav {

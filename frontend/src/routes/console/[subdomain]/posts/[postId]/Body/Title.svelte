@@ -25,7 +25,7 @@
 
 </script>
 
-<div class="title-wrap">
+<div class="title-wrap hds-box">
 
     <textarea
         placeholder="Title..."
@@ -40,15 +40,15 @@
 <style>
 
     .title-wrap {
-        padding: 15px 25px;
-        border-bottom: 1px solid var(--border);
+        padding: 10px 25px;
+        margin-bottom: 15px;
     }
 
     textarea {
         font-family:inherit;
         padding-top: 10px;
         padding-bottom: 10px;
-        font-size: 25px;
+        font-size: 22px;
         font-weight: 600;
         outline: none;
         word-break: break-all;

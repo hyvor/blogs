@@ -5,8 +5,7 @@
 </script>
 
 <div 
-    id="post-body" 
-    class="hds-box"
+    id="post-body"
     spellcheck={false}
     dir={$postLanguageStore.direction}
     style="
@@ -21,7 +20,7 @@
 <style>
 
     #post-body {
-        margin-top: 15px;
+        
     }
 
 </style>

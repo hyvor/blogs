@@ -1,20 +1,20 @@
 <script lang="ts">
-	import { Button, ButtonGroup, Checkbox, SplitControl, TextInput, Textarea } from "@hyvor/design/components";
+	import { Button, Checkbox, SplitControl, TextInput, Textarea } from "@hyvor/design/components";
 	import { IconTrash } from "@hyvor/icons";
-	import { postStore, postVariantStore, updatePostVariantStore } from "../../../postStore";
+	import { postStore } from "../../../postStore";
 	import Slug from "./Slug.svelte";
 	import Description from "./Description.svelte";
 	import Authors from "./Authors/Authors.svelte";
 	import Tags from "./Tags/Tags.svelte";
 	import PublishTime from "./PublishTime.svelte";
+	import Status from "./Status/Status.svelte";
 
     let type: 'basic' | 'advanced' = 'basic';
-
 </script>
 
 <div class="settings-wrap">
 
-    <div class="switch">
+    <!-- <div class="switch">
         <ButtonGroup>
             <Button 
                 size="x-small" 
@@ -27,7 +27,9 @@
                 on:click={() => type = 'advanced'}
             >Advanced</Button>
         </ButtonGroup>
-    </div>
+    </div> -->
+
+    <Status />
 
     {#if type === 'basic'}
 
@@ -50,7 +52,7 @@
 
         <SplitControl>
             <span slot="label">Delete Post</span>
-            <Button color="danger" size="small">
+            <Button color="red" size="small">
                 Delete
                 <IconTrash slot="start" />
             </Button>

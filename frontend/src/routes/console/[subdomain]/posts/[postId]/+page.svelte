@@ -5,8 +5,7 @@
 	import { scale } from 'svelte/transition';
 	import consoleApi from "../../../lib/consoleApi";
 	import type { Post } from "../../../lib/types";
-	import { initPostEditingState, postOriginalStore, postStore, setPostAndPostOriginalStore } from "../postStore";
-	import PostHeader from "./Header/PostHeader.svelte";
+	import { initPostEditingState, setPostAndPostOriginalStore } from "../postStore";
 	import PostBody from "./Body/PostBody.svelte";
 	import PostSidebar from "./Sidebar/PostSidebar.svelte";
 	import { blogStore } from "../../../lib/stores/blogStore";
@@ -40,7 +39,7 @@
         href="/console/{$blogStore.subdomain}/posts"
         class="back"
     >
-        <IconButton color="soft">
+        <IconButton variant="invisible">
             <IconCaretLeftFill />
         </IconButton>
     </a>
@@ -56,7 +55,7 @@
         <div class="post-inner">
             
             <div class="post-left">
-                <PostHeader />
+                <!-- <PostHeader /> -->
                 <PostBody />
             </div>
 

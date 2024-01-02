@@ -1,5 +1,6 @@
 <script lang="ts">
 	import { postEditingStatusStore, postVariantStore } from "../../../postStore";
+	import EditorTop from "./EditorTop/EditorTop.svelte";
     import Prosemirror from "./Prosemirror.svelte";
 
     let content: string | null;
@@ -18,7 +19,8 @@
 
 </script>
 
-<div class="editor">
+<div class="editor hds-box">
+    <EditorTop />
     <Prosemirror value={content} />
 </div>
 

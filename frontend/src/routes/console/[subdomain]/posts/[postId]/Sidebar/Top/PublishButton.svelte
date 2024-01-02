@@ -44,6 +44,7 @@
     <Button
         color="accent"
         on:click={() => modalOpen = true}
+        size="small"
     >
         Publish
         <IconSendFill slot="end" size={12} />
@@ -98,10 +99,3 @@
     </Modal>
 
 {/if}
-
-<style>
-
-    .modal-inner {
-    }
-
-</style>

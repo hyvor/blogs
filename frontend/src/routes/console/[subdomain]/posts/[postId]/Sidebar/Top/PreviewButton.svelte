@@ -31,7 +31,7 @@
 <Dropdown align="center" bind:show={showDropdown} width={200}>
 
     <Button 
-        size="medium" 
+        size="small" 
         color="light" 
         slot="trigger"
         on:click={handleClick}

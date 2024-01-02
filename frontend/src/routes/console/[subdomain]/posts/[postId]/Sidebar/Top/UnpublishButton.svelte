@@ -2,6 +2,7 @@
 	import { Button, Modal, toast } from "@hyvor/design/components";
 	import { postVariantStore } from "../../../postStore";
 	import { updatePostVariant } from "../../../postActions";
+	import { IconEyeSlash } from "@hyvor/icons";
 
     let modalOpen = false;
 
@@ -25,11 +26,12 @@
 
 {#if $postVariantStore.status !== 'draft'}
     <Button
-        size="medium" 
+        size="small"
         color="light"
         slot="trigger"
         on:click={() => modalOpen = true}
     >
+        <IconEyeSlash slot="start" size={12} />
         {#if $postVariantStore.status === 'scheduled'}
             Unschedule
         {:else}

@@ -2,7 +2,7 @@
 	import { Button } from "@hyvor/design/components";
     import { postOriginalStore, postStore, postVariantStore } from "../../../postStore";
 	import { hasPostChanges } from "../../changed";
-	import UpdateModal from "../Modals/UpdateModal.svelte";
+	import UpdateModal from "../../Header/Modals/UpdateModal.svelte";
 
     let hasChanges = false;
     let isUpdating = false;
