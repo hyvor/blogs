@@ -50,7 +50,7 @@
     {#if activeTab === 'paste'}
         <Paste on:add={handleAdd} />
     {:else}
-        <SearchPosts />
+        <SearchPosts on:add={handleAdd} />
     {/if}
 
 </Modal>

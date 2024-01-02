@@ -14,6 +14,7 @@ interface GetPostsData {
     start_timestamp?: number, // unix timestamp
     end_timestamp?: number, // unix timestamp
     search?: string,
+    language_id?: number,
     limit?: number, // default 50, max 100
     offset?: number,
 }

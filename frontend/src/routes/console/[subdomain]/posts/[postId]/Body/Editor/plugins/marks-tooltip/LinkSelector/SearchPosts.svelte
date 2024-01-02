@@ -1,11 +1,10 @@
 <script lang="ts">
-	import { ActionList, ActionListItem, Button, Dropdown, Loader, Tag, TextInput, Validation, toast } from "@hyvor/design/components";
-	import { IconArrowReturnLeft, IconCaretDown } from "@hyvor/icons";
+	import { ActionList, ActionListItem, Button, Dropdown, Loader, TextInput, toast } from "@hyvor/design/components";
+	import { IconCaretDown } from "@hyvor/icons";
 	import { createEventDispatcher, tick } from "svelte";
 	import { getPosts } from "../../../../../../postActions";
 	import type { Language, Post } from "../../../../../../../../lib/types";
-	import { getPrimaryLanguage, languagesStore, primaryLanguageStore } from "../../../../../../../../lib/stores/languagesStore";
-	import LanguageTag from "../../../../../Header/LanguageSelector/LanguageTag.svelte";
+	import { languagesStore, primaryLanguageStore } from "../../../../../../../../lib/stores/languagesStore";
 
     let input = '';
     let currentLanguage = $primaryLanguageStore;
@@ -15,10 +14,6 @@
     let posts : Post[] = [];
 
     const dispatch = createEventDispatcher();
-
-    function handleClick() {
-        dispatch('add', input.trim());
-    }
 
     let searchTimeout: null | ReturnType<typeof setTimeout> = null;
 
@@ -37,18 +32,20 @@
 
     function loadPosts() {
         isLoading = true;
-            posts = [];
+        posts = [];
 
-            getPosts({
-                search: input,
-                limit: 30
-            }).then(res => {
-                posts = res;
-                isLoading = false;
-            }).catch(err => {
-                toast.error(err.message);
-                isLoading = false;
-            });
+        getPosts({
+            search: input,
+            language_id: currentLanguage.id,
+            status: 'published',
+            limit: 30
+        }).then(res => {
+            posts = res;
+            isLoading = false;
+        }).catch(err => {
+            toast.error(err.message);
+            isLoading = false;
+        });
     }
 
 
@@ -64,7 +61,13 @@
         await tick();
         languageDropdownShow = false;
 
-        loadPosts();
+        if (input.trim().length)
+            loadPosts();
+    }
+
+    function handleClick(post: Post) {
+        const cur = getCurrentVariant(post);
+        dispatch('add', cur.url);
     }
 
 
@@ -123,7 +126,13 @@
 
             {#each posts as post}
 
-                <div class="post">
+                <div
+                    class="post"
+                    role="button"
+                    tabindex="0"
+                    on:click={() => handleClick(post)}
+                    on:keyup
+                >
 
                     <div class="title">
                         {getCurrentVariant(post).title}

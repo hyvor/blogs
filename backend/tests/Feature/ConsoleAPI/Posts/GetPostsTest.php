@@ -182,14 +182,14 @@ it('searches posts by language', function() {
 
     consoleApi($this->blog, 'GET', $this->endpoint, [
         'search' => 'henry',
-        'search_language_id' => $language2->id
+        'language_id' => $language2->id
     ])
         ->assertJsonCount(1)
         ->assertJsonPath('0.id', $post1->id);
 
     consoleApi($this->blog, 'GET', $this->endpoint, [
         'search' => 'henry',
-        'search_language_id' => $this->defaultLanguage->id
+        'language_id' => $this->defaultLanguage->id
     ])
         ->assertJsonCount(1)
         ->assertJsonPath('0.id', $post2->id);
