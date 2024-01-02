@@ -7,6 +7,24 @@ import { postEditingStatusStore, postLanguageStore, postStore, updatePostVariant
 
 // API
 
+interface GetPostsData {
+    status?: 'featured' | 'published' | 'draft' | 'scheduled',
+    author_id?: number,
+    tag_id?: number,
+    start_timestamp?: number, // unix timestamp
+    end_timestamp?: number, // unix timestamp
+    search?: string,
+    limit?: number, // default 50, max 100
+    offset?: number,
+}
+
+export function getPosts(data: GetPostsData) {
+    return consoleApi.get<Post[]>({
+        endpoint: "/posts",
+        data
+    });
+}
+
 export function updatePost(data: Partial<Post>) {
     
     const promise = consoleApi.patch<Post>({

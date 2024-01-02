@@ -5,6 +5,7 @@
 	import { createEventDispatcher, onMount } from "svelte";
 	import { getNodeViews } from "./nodeviews/nodeviews";
 	import { importCodemirrorAll } from "../../../../../lib/components/CodemirrorEditor/codemirror";
+	import { getPlugins } from "./plugins/plugins";
     export let value: string | null;
     let wrap: HTMLDivElement;
 
@@ -19,14 +20,13 @@
 
         let state = EditorState.create({
             schema: schema,
-            // plugins: plugins(HBSchema),
+            plugins: getPlugins(),
             doc: value ? schema.nodeFromJSON(jsonParsedValue) : undefined
         });
 
         const view = new EditorView(wrap, {
             state: state,
             nodeViews: getNodeViews(),
-            // nodeViews,
             // handleClickOn,
             // handleKeyDown,
             dispatchTransaction: (tr) => {

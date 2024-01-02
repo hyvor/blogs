@@ -46,6 +46,11 @@ class PostSearchRepository
         int $limit,
         int $offset,
         bool $isPage,
+        /**
+         * null = don't care
+         * true = only published
+         * false = only unpublished
+         */
         ?bool $isPublished = null
     ): CollectionWithTotal {
         $index = self::getIndex();

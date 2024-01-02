@@ -3,6 +3,7 @@ import HeadingNodeView from "./nodeview-heading";
 import FigcaptionNodeView from "./nodeview-figcaption";
 import { CalloutNodeView } from "./callout/nodeview-callout";
 import CodeBlockNodeView from "./nodeview-codeblock";
+import CustomHtmlNodeView from "./nodeview-custom-html";
 
 interface NodeViewsType {
     [key: string]: NodeViewConstructor
@@ -27,13 +28,10 @@ export function getNodeViews() : NodeViewsType {
         code_block(node, view, getPos) {
             return new CodeBlockNodeView(node, view, getPos)
         },
-        /* callout(node, view, getPos) {
-            return new Callout(node, view, getPos)
-        },
-        ,
         custom_html(node, view, getPos) {
-            return new CustomHtml(node, view, getPos)
-        },
+            return new CustomHtmlNodeView(node, view, getPos)
+        }
+        /*        
         image(node, view, getPos) {
             return new Image(HBSchema, node, view, getPos)
         },

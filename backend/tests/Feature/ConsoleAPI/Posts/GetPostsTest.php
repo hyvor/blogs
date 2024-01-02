@@ -160,3 +160,63 @@ it('searches posts', function() {
         ->assertJsonPath('1.id', $posts[1]->id);
 
 });
+
+
+it('searches posts by language', function() {
+
+    $language2 = addLanguage($this->blog);
+
+    // correct language
+    $post1 = postWithVariant(
+        ['blog_id' => $this->blog->id],
+        ['language_id' => $language2->id, 'title' => 'Henry VIII']
+    );
+
+    // primary language
+    $post2 = postWithVariant(
+        ['blog_id' => $this->blog->id],
+        ['language_id' => $this->defaultLanguage->id, 'title' => 'Henry VIII']
+    );
+
+    MeilisearchInefficient::waitForAllTasks();
+
+    consoleApi($this->blog, 'GET', $this->endpoint, [
+        'search' => 'henry',
+        'search_language_id' => $language2->id
+    ])
+        ->assertJsonCount(1)
+        ->assertJsonPath('0.id', $post1->id);
+
+    consoleApi($this->blog, 'GET', $this->endpoint, [
+        'search' => 'henry',
+        'search_language_id' => $this->defaultLanguage->id
+    ])
+        ->assertJsonCount(1)
+        ->assertJsonPath('0.id', $post2->id);
+
+});
+
+it('searches with published', function() {
+
+    // correct language
+    $post1 = postWithVariant(
+        ['blog_id' => $this->blog->id],
+        ['language_id' => $this->defaultLanguage->id, 'title' => 'Henry VIII', 'status' => 'draft']
+    );
+
+    // primary language
+    $post2 = postWithVariant(
+        ['blog_id' => $this->blog->id],
+        ['language_id' => $this->defaultLanguage->id, 'title' => 'Henry VIII', 'status' => 'published']
+    );
+
+    MeilisearchInefficient::waitForAllTasks();
+
+    consoleApi($this->blog, 'GET', $this->endpoint, [
+        'search' => 'henry',
+        'status' => 'published'
+    ])
+        ->assertJsonCount(1)
+        ->assertJsonPath('0.id', $post2->id);
+
+});

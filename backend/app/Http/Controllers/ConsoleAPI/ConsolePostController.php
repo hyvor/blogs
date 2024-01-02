@@ -33,6 +33,7 @@ class ConsolePostController extends Controller
             'start_timestamp' => 'integer',
             'end_timestamp' => 'integer',
             'search' => 'string|nullable',
+            'search_language_id' => 'integer|nullable',
             'limit' => 'integer|max:100',
             'offset' => 'integer',
         ]);
@@ -41,17 +42,29 @@ class ConsolePostController extends Controller
         $offset = $request->integer('offset');
 
         $search = (string) $request->string('search');
+        $status = $request->has('status') ? (string) $request->string('status') : null;
 
         if ($search) {
 
-            $primaryLanguage = LanguageRepository::getPrimaryLanguage($blog);
+            $searchLanguageId = $request->has('search_language_id') ?
+                    $request->integer('search_language_id') : null;
+
+            $searchLanguage = $searchLanguageId ?
+                    LanguageRepository::getLanguageById($blog, $searchLanguageId) :
+                    LanguageRepository::getPrimaryLanguage($blog);
+
+            if (!$searchLanguage) {
+                throw new TrustedException('Search language not found');
+            }
+
             $posts = PostSearchRepository::search(
                 $blog,
-                $primaryLanguage,
+                $searchLanguage,
                 $search,
                 $limit,
                 $offset,
                 false,
+                $status === 'published' ? true : null
             )
                 ->collection
                 ->map(fn ($post) => new PostObject($post, $blog));
@@ -60,7 +73,6 @@ class ConsolePostController extends Controller
 
         }
 
-        $status = $request->has('status') ? (string) $request->string('status') : null;
         $authorId = $request->has('author_id') ? $request->integer('author_id') : null;
         $tagId = $request->has('tag_id') ? $request->integer('tag_id') : null;
 
