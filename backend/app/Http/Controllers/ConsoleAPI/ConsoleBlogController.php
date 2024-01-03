@@ -16,6 +16,7 @@ use App\Data\Objects\ConsoleAPI\User\UserObject;
 use App\Domains\Blog\BlogService;
 use App\Domains\Language\LanguageRepository;
 use App\Domains\Subscription\SubscriptionService;
+use App\Domains\Subscription\UsageRepository;
 use App\Domains\Tag\TagRepository;
 use App\Domains\User\UserRepository;
 use App\Exceptions\TrustedException;
@@ -40,6 +41,7 @@ class ConsoleBlogController extends Controller
     {
 
         $subscription = SubscriptionService::getActiveBlogSubscription($blog);
+        $usage = UsageRepository::getUsage($blog);
 
         return response()->json([
             'blog' => new BlogObject($blog),
@@ -55,6 +57,7 @@ class ConsoleBlogController extends Controller
             'users' => UserRepository::getUsers($blog, limit: 15)->map(fn ($user) => new UserObject($user, $blog)),
             'tags' => TagRepository::getTags($blog, limit: 15)->map(fn ($tag) => new TagObject($tag, $blog)),
             'languages' => LanguageRepository::getAllLanguages($blog)->map(fn ($language) => new LanguageObject($language)),
+            'usage' => $usage,
         ]);
     }
 

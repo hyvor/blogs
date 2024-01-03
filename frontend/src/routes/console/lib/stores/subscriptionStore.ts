@@ -1,9 +1,10 @@
 import { get, writable } from "svelte/store";
-import type { Subscription } from "../types";
+import type { UsageTypes, Subscription } from "../types";
 import { blogStore } from "./blogStore";
 import dayjs from "dayjs";
 
 export const subscriptionStore = writable<Subscription | null>();
+export const usageStore = writable<UsageTypes>();
 
 export function isInTrial() {
     const blog = get(blogStore);

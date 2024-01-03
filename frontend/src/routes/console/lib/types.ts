@@ -360,6 +360,13 @@ export interface Usage {
 
 }
 
+export interface UsageTypes {
+    users: Usage,
+    media: Usage,
+    auto_translate: Usage,
+    gpt: Usage
+}
+
 export interface PaddlePayment {
 
     id: number,

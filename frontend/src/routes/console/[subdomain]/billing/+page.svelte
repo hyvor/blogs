@@ -2,6 +2,7 @@
 	import BillingBox from './BillingBox.svelte';
 import BillingInfo from './BillingInfo/BillingInfo.svelte';
 	import Plans from "./Plans/Plans.svelte";
+	import Usage from './Usage/Usage.svelte';
 
 </script>
 <div class="view">
@@ -21,7 +22,7 @@ import BillingInfo from './BillingInfo/BillingInfo.svelte';
     <div class="column">
 
         <BillingBox title="Usage">
-            
+            <Usage />
         </BillingBox>
 
         <BillingBox title="Payments">

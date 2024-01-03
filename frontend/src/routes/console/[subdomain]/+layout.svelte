@@ -4,9 +4,9 @@
     import { page } from '$app/stores';
 	import { Loader } from "@hyvor/design/components";
 	import consoleApi from "../lib/consoleApi";
-	import type { Blog, Language, Subscription, User } from "../lib/types";
+	import type { Blog, Language, Subscription, UsageTypes, User } from "../lib/types";
 	import { usersStore } from "../lib/stores/usersStore";
-	import { subscriptionStore } from "../lib/stores/subscriptionStore";
+	import { subscriptionStore, usageStore } from "../lib/stores/subscriptionStore";
 	import { blogOriginalStore, blogStore } from "../lib/stores/blogStore";
 	import { languagesStore } from "../lib/stores/languagesStore";
 
@@ -16,7 +16,8 @@
         blog: Blog,
         languages: Language[],
         users: User[],
-        subscription: Subscription | null
+        subscription: Subscription | null,
+        usage: UsageTypes
     }
 
     onMount(() => {
@@ -33,6 +34,7 @@
             languagesStore.set(res.languages)
             usersStore.set(res.users)
             subscriptionStore.set(res.subscription)
+            usageStore.set(res.usage);
             
             isLoading = false;
         })
@@ -68,13 +70,14 @@
     #nav {
         width: 280px;
         padding: 15px;
+        padding-right: 0;
     }
     #content {
         padding: 15px;
-        padding-left: 0;
         flex: 1;
         height: 100%;
         min-width: 0;
+        overflow: auto;
     }
     .full-loader {
         width: 100%;

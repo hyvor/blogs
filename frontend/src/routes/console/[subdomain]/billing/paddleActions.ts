@@ -1,5 +1,17 @@
 import consoleApi from "../../lib/consoleApi";
-import type { SubscriptionFrequency, SubscriptionPlan } from "../../lib/types";
+import type { PaddlePayment, PaddleSubscriptionInfo, SubscriptionFrequency, SubscriptionPlan } from "../../lib/types";
+
+
+export function getPaddleData() {
+    
+    return consoleApi.get<{
+        info: PaddleSubscriptionInfo | null,
+        payments: PaddlePayment[]
+    }>({
+        endpoint: '/billing/paddle'
+    });
+
+}
 
 
 export function createSubscription(plan: SubscriptionPlan, frequency: SubscriptionFrequency) {
