@@ -37,6 +37,13 @@ class ConsoleController
                     'max_asset_file_size' => config('limits.max_asset_file_size'),
                 ],
                 'highlight_themes' => Highlighter::getAllThemes(),
+
+                'services' => [
+                    'paddle' => [
+                        'sandbox' => (bool) config('services.paddle.sandbox'),
+                        'vendor_id' => (int) config('services.paddle.vendor_id'),
+                    ]
+                ]
             ]
         ]);
 

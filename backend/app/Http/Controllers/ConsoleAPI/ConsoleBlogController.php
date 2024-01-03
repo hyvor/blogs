@@ -15,12 +15,14 @@ use App\Data\Objects\ConsoleAPI\Tag\TagObject;
 use App\Data\Objects\ConsoleAPI\User\UserObject;
 use App\Domains\Blog\BlogService;
 use App\Domains\Language\LanguageRepository;
+use App\Domains\Subscription\SubscriptionService;
 use App\Domains\Tag\TagRepository;
 use App\Domains\User\UserRepository;
 use App\Exceptions\TrustedException;
 use App\Http\Controllers\Controller;
 use App\Models\Blog;
 use App\Models\Language;
+use App\Models\Subscription;
 use App\Rules\Subdomain;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
@@ -37,10 +39,12 @@ class ConsoleBlogController extends Controller
     public function getBlogData(Blog $blog)
     {
 
+        $subscription = SubscriptionService::getActiveBlogSubscription($blog);
+
         return response()->json([
             'blog' => new BlogObject($blog),
-            'subscription' => $blog->subscription ?
-                new SubscriptionObject($blog->subscription) :
+            'subscription' => $subscription ?
+                new SubscriptionObject($subscription) :
                 null,
             'counts' => [
                 'published' => $blog->getCount('posts'),
