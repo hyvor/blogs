@@ -2,7 +2,7 @@
 	import { onMount } from "svelte";
 	import type { LinkAnalysisLink } from "../../../../lib/types";
 	import { getLinks, type FilterType, type Stats } from "../linkAnalysisActions";
-	import { Button, ButtonGroup, Loader, Table, TableRow, toast } from "@hyvor/design/components";
+	import { Button, ButtonGroup, Loader, Table, TableRow, toast, LoadButton } from "@hyvor/design/components";
 	import LinkRow from "./LinkRow.svelte";
     export let stats: Stats;
 
@@ -12,6 +12,7 @@
 
     let isLoading = true;
     let isMoreLoading = false;
+    let hasMore = false;
     let links : LinkAnalysisLink[] = [];
 
     const limit = 40;
@@ -25,6 +26,7 @@
             type,
         }).then(res => {
             links = more ? [...links, ...res] : res;
+            hasMore = res.length === limit;
         }).catch(e => {
             links = [];
             toast.error(e.message || "Failed to load links.");
@@ -35,10 +37,6 @@
     }
 
     $: type, loadLinks();
-
-    onMount(() => {
-        loadLinks();
-    })
 
     function getButtonLabel(t: FilterType) {
 
@@ -121,6 +119,13 @@
                 {/each}
 
             </Table>
+
+            <LoadButton
+                text="Load More"
+                on:click={() => loadLinks(true)}
+                loading={isMoreLoading}
+                show={hasMore}
+            />
 
         {:else}
             <!-- TODO: Add IconMessage -->

@@ -36,7 +36,7 @@
 	},
 	"type": "module",
 	"dependencies": {
-		"@hyvor/design": "^0.0.37",
+		"@hyvor/design": "^0.0.38",
 		"@hyvor/icons": "^0.0.3",
 		"@joeattardi/emoji-button": "^4.6.4",
 		"codemirror": "^5.0.0",

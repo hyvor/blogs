@@ -225,6 +225,7 @@ class LinkAnalyzeService
             ->orderBy('broken', 'desc')
             ->orderBy('redirect', 'desc')
             ->orderBy('last_checked_at', 'desc')
+            ->orderBy('id', 'desc')
             ->limit($limit)
             ->offset($offset)
             ->get();

@@ -95,6 +95,7 @@
                 target="_blank"
                 size="small"
                 color="gray"
+                variant="fill-light"
             >
                 <IconPencilFill size={10} />
             </IconButton>
@@ -105,6 +106,7 @@
                 on:click={handleRecheck}
                 size="small"
                 color="gray"
+                variant="fill-light"
                 disabled={isRechecking}
             >
                 <IconArrowClockwise size={14} />
@@ -115,6 +117,7 @@
             <IconButton 
                 on:click={handleIgnore}
                 color={link.ignored ? "accent" : "gray"}
+                variant="fill-light"
                 size="small"
             >
                 <IconEyeSlashFill size={14} />

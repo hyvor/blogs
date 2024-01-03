@@ -5,7 +5,7 @@
 	import UpgradeRequired from "../../billing/UpgradeRequired.svelte";
 	import Settings from "./Settings.svelte";
 	import { getStats } from "./linkAnalysisActions";
-	import Overview from "./Overview.svelte";
+	import Overview from "./Overview/Overview.svelte";
 
     let tab: 'overview' | 'links' | 'settings' = 'overview';
 
