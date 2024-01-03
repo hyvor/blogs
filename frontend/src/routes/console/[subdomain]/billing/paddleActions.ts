@@ -1,15 +1,20 @@
+import { writable } from "svelte/store";
 import consoleApi from "../../lib/consoleApi";
 import type { PaddlePayment, PaddleSubscriptionInfo, SubscriptionFrequency, SubscriptionPlan } from "../../lib/types";
+interface PaddleData {
+    info: PaddleSubscriptionInfo | null,
+    payments: PaddlePayment[]
+}
 
+export const paddleDataPromise = writable<Promise<PaddleData>>(
+    Promise.resolve() as unknown as Promise<PaddleData>
+);
 
-export function getPaddleData() {
-    
-    return consoleApi.get<{
-        info: PaddleSubscriptionInfo | null,
-        payments: PaddlePayment[]
-    }>({
+export function loadPaddleData() {
+
+    paddleDataPromise.set(consoleApi.get<PaddleData>({
         endpoint: '/billing/paddle'
-    });
+    }));
 
 }
 

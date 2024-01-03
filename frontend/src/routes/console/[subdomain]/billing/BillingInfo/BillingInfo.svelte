@@ -1,14 +1,17 @@
 <script lang="ts">
 	import { Loader } from "@hyvor/design/components";
-	import { getPaddleData } from "../paddleActions";
+	import { loadPaddleData, paddleDataPromise } from "../paddleActions";
 	import Info from "./Info.svelte";
+	import { onMount } from "svelte";
 
-    const promise = getPaddleData();
+    onMount(() => {
+        loadPaddleData();
+    })
 
 </script>
 
 
-{#await promise}
+{#await $paddleDataPromise}
     <Loader 
         block 
         padding={100} 

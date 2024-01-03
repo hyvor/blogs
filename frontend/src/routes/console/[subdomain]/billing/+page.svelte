@@ -1,7 +1,9 @@
 <script>
 	import BillingBox from './BillingBox.svelte';
 import BillingInfo from './BillingInfo/BillingInfo.svelte';
+	import Payments from './Payments/Payments.svelte';
 	import Plans from "./Plans/Plans.svelte";
+	import Subscriptions from './Subscriptions/Subscriptions.svelte';
 	import Usage from './Usage/Usage.svelte';
 
 </script>
@@ -26,11 +28,11 @@ import BillingInfo from './BillingInfo/BillingInfo.svelte';
         </BillingBox>
 
         <BillingBox title="Payments">
-            
+            <Payments />
         </BillingBox>
 
         <BillingBox title="Subscriptions">
-            
+            <Subscriptions />
         </BillingBox>
 
     </div>
