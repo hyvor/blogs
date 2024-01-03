@@ -1,10 +1,14 @@
 <script lang="ts">
-	import { Button, Loader, Tag, toast } from "@hyvor/design/components";
+	import UpdateSuccessToast from './Success/UpdateSuccessToast.svelte';
+	import CancelSuccessToast from './Success/CancelSuccessToast.svelte';
+	import { Button, Loader, Tag, confirm, toast } from "@hyvor/design/components";
     import type { SubscriptionFrequency, SubscriptionPlan } from "../../../lib/types";
 	import { isManuallyUpgraded, subscriptionStore } from "../../../lib/stores/subscriptionStore";
-	import { createSubscription } from "../paddleActions";
-	import CheckoutSuccessToast from "./CheckoutSuccessToast.svelte";
+	import { cancelSubscription, createSubscription, updateSubscription } from "../paddleActions";
+	import CheckoutSuccessToast from "./Success/CheckoutSuccessToast.svelte";
 	import { initPaddle as initPaddleBase } from "../paddle";
+	import { forceCancelSubscription } from "../billingActions";
+	import SwitchConfirm from "./Confirm/SwitchConfirm.svelte";
 
     export let name: SubscriptionPlan;
     export let frequency: SubscriptionFrequency;
@@ -32,17 +36,95 @@
             $subscriptionStore?.frequency === frequency;
     }
 
-    function handleCancel() {
+    async function handleCancel() {
+
+        if ($subscriptionStore?.status === 'deleted') {
+
+            if (await confirm({
+                title: 'Force Cancel Subscription',
+                content: 'Are you sure you want to cancel the subscription now?',
+                confirmText: 'Yes, cancel',
+                cancelText: 'No, keep it',
+                danger: true,
+            })) {
+
+                const toastId = toast.loading('Cancelling subscription...');
+
+                forceCancelSubscription()
+                    .then(() => {
+                        toast.success('Subscription cancelled successfully.', {id: toastId});
+                        setTimeout(() => {
+                            window.location.reload();
+                        }, 2000);
+                    })
+                    .catch(e => {
+                        toast.error(e.message, {id: toastId});
+                    });
+
+            }
+
+        } else {
+
+            if (await confirm({
+                title: 'Cancel Subscription',
+                content: 'Are you sure you want to cancel your subscription?',
+                confirmText: 'Yes, cancel',
+                cancelText: 'No, keep it',
+                danger: true,
+            })) {
+
+                const toastId = toast.loading('Cancelling subscription...');
+
+                cancelSubscription()
+                    .then(() => {
+                        toast.success(CancelSuccessToast, {
+                            id: toastId,
+                            duration: 12000,
+                        });
+                    })
+                    .catch(e => {
+                        toast.error(e.message, {id: toastId});
+                    });
+
+            }
+
+        }
 
     }
 
-    function handleSwitch() {
-        
+    async function handleSwitch() {
+
+        if (await confirm({
+            title: 'Update Subscription',
+            content: SwitchConfirm,
+            contentProps: {
+                name,
+                frequency,
+            },
+            confirmText: 'Yes, update',
+            cancelText: 'No, keep it',
+        })) {
+
+            const toastId = toast.loading('Updating subscription...');
+
+            updateSubscription(name, frequency)
+                .then(() => {
+                    toast.success(UpdateSuccessToast, {
+                        id: toastId,
+                        duration: 12000,
+                    });
+                })
+                .catch(e => {
+                    toast.error(e.message);
+                });
+
+        }
+
     }
 
     async function initPaddle() {
         try {
-            await initPaddle();
+            await initPaddleBase();
         } catch (e) {
             checkoutLoading = false;
             toast.error('Failed to load checkout. Please try again later.');

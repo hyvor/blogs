@@ -116,7 +116,7 @@
         ],
 
         "serve": "php artisan serve --port=2211",
-        "expose": "ngrok http 8080",
+        "expose": "ngrok http 2211",
         "test": "vendor/bin/pest -p",
         "coverage": "vendor/bin/pest --coverage -p",
         "pint": "vendor/bin/pint",
