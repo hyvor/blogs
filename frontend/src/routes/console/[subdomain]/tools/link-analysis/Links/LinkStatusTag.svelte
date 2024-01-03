@@ -5,6 +5,7 @@
 
     export let status: number;
     export let isAnchor = false;
+    export let showTooltip = true;
 
     $: statusType = getStatusType(status);
     let statusDisplay = "";

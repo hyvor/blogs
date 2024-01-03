@@ -1,5 +1,6 @@
+import { writable } from "svelte/store";
 import consoleApi from "../../../lib/consoleApi";
-import type { LinkAnalysisLink } from "../../../lib/types";
+import type { LinkAnalysisCheck, LinkAnalysisLink } from "../../../lib/types";
 
 export interface Stats {
     counts: {
@@ -29,6 +30,22 @@ export function getLinks(data: GetLinksData) {
     return consoleApi.get<LinkAnalysisLink[]>({
         endpoint: '/link-analysis/links',
         data
+    });
+}
+
+
+export const linkAnalysisChecks = writable<LinkAnalysisCheck[]>([]);
+
+export function getChecks() {
+    return consoleApi.get<LinkAnalysisCheck[]>({
+        endpoint: '/link-analysis/checks'
+    });
+}
+
+
+export function startFullAnalysis() {
+    return consoleApi.post<LinkAnalysisCheck>({
+        endpoint: '/link-analysis/check',
     });
 }
 

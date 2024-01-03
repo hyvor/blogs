@@ -49,7 +49,10 @@
                 <Loader block padding={60} />
             {:then stats}
                 {#if tab === 'overview'}
-                    <Overview {stats} />
+                    <Overview 
+                        {stats} 
+                        on:links={() => tab = 'links'} 
+                    />
                 {:else if tab === 'links'}
                     <Links {stats} />
                 {:else if tab === 'settings'}
