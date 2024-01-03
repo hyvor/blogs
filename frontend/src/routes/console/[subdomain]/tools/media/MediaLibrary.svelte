@@ -1,5 +1,5 @@
 <script lang="ts">
-	import { Button, Loader, TextInput, toast } from "@hyvor/design/components";
+	import { Button, IconMessage, Loader, TextInput, toast } from "@hyvor/design/components";
 import MediaFilter from "./MediaFilter.svelte";
 	import { getMedia, type FileType } from "./mediaActions";
 	import { IconCloudUpload } from "@hyvor/icons";
@@ -50,8 +50,7 @@ import MediaFilter from "./MediaFilter.svelte";
     {:else}
 
         {#if !mediaFiles.length}
-            No media found
-            <!-- TODO: Add IconMessage -->
+            <IconMessage empty message="No Media Found" />
         {:else}
             {#each mediaFiles as media (media.id)}
                 <MediaFile {media} />

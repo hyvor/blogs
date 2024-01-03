@@ -2,7 +2,7 @@
 	import { onMount } from "svelte";
 	import type { LinkAnalysisLink } from "../../../../lib/types";
 	import { getLinks, type FilterType, type Stats } from "../linkAnalysisActions";
-	import { Button, ButtonGroup, Loader, Table, TableRow, toast, LoadButton } from "@hyvor/design/components";
+	import { Button, ButtonGroup, Loader, Table, TableRow, toast, LoadButton, IconMessage } from "@hyvor/design/components";
 	import LinkRow from "./LinkRow.svelte";
     export let stats: Stats;
 
@@ -128,7 +128,7 @@
             />
 
         {:else}
-            <!-- TODO: Add IconMessage -->
+            <IconMessage empty message="No links found." padding={100} />
         {/if}
 
     {/if}

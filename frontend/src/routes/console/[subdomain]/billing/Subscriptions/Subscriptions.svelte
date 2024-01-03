@@ -1,5 +1,5 @@
 <script lang="ts">
-	import { Loader, Table, TableRow } from "@hyvor/design/components";
+	import { IconMessage, Loader, Table, TableRow } from "@hyvor/design/components";
 import { usageStore } from "../../../lib/stores/subscriptionStore";
 	import { getBillingData } from "../billingActions";
 	import SubscriptionRow from "./SubscriptionRow.svelte";
@@ -39,13 +39,11 @@ import { usageStore } from "../../../lib/stores/subscriptionStore";
 
 
     {:else}
-        <!-- TODO: ADD IconMessage -->
+        <IconMessage empty message="No subscriptions" padding={60} />
     {/if}
 
-{:catch error}
-
-    <!-- TODO: ADD IconMessage error -->
-    
+{:catch}
+    <IconMessage error padding={60} />
 {/await}
 
 

@@ -1,5 +1,5 @@
 <script lang="ts">
-	import { Loader, Table, TableRow } from "@hyvor/design/components";
+	import { IconMessage, Loader, Table, TableRow } from "@hyvor/design/components";
 	import { paddleDataPromise } from "../paddleActions";
 	import PaymentRow from "./PaymentRow.svelte";
 </script>
@@ -30,13 +30,11 @@
 
 
     {:else}
-        <!-- TODO: ADD IconMessage -->
+        <IconMessage empty message="No Payments Found" padding={60} />
     {/if}
 
 {:catch error}
-
-    <!-- TODO: ADD IconMessage error -->
-    
+    <IconMessage error message={error.message || 'Error loading payments'} padding={60} />
 {/await}
 
 
