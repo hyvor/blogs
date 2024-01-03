@@ -78,6 +78,7 @@
         <Button 
             color="gray"
             disabled={!should}
+            variant="invisible"
         >
             Discard
         </Button>

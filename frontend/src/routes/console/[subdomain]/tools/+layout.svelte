@@ -3,7 +3,7 @@
     import hyvorTalkLogo from '$lib/img/services/hyvor-talk.svg';
 	import { page } from "$app/stores";
 	import { blogStore } from "../../lib/stores/blogStore";
-	import { IconImage } from "@hyvor/icons";
+	import { IconImage, IconLink45deg } from "@hyvor/icons";
 </script>
 
 <div class="tools">
@@ -15,6 +15,14 @@
         >
             <IconImage slot="start" />
             Media Library
+        </NavLink>
+
+        <NavLink 
+            href={`/console/${$blogStore.subdomain}/tools/link-analysis`}
+            active={$page.url.pathname === `/console/${$blogStore.subdomain}/tools/link-analysis`}
+        >
+            <IconLink45deg slot="start" />
+            Link Analysis
         </NavLink>
     </div>
 

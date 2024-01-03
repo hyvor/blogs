@@ -69,7 +69,7 @@
 <div class="toolbar">
 
     <Dropdown width={300} bind:show={showFileTypesDropdown}>
-        <Button slot="trigger" color="light">
+        <Button slot="trigger" color="input">
             <Text small light slot="start">File type</Text>
             { selectedFileName }
 

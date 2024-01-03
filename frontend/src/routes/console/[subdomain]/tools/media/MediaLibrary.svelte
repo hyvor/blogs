@@ -51,6 +51,7 @@ import MediaFilter from "./MediaFilter.svelte";
 
         {#if !mediaFiles.length}
             No media found
+            <!-- TODO: Add IconMessage -->
         {:else}
             {#each mediaFiles as media (media.id)}
                 <MediaFile {media} />

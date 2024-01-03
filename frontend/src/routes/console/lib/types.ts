@@ -96,7 +96,7 @@ export interface Blog {
     variants: BlogVariant[],
 
     link_analysis_enabled: boolean,
-    link_analysis_email_report: 'always' | 'when_broken' | 'never',
+    link_analysis_email_report: 'always' | 'broken' | 'never',
 
 }
 
