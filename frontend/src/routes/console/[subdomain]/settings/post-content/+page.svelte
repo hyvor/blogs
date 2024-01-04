@@ -53,7 +53,7 @@
             >
                 <Dropdown width={275} bind:show={showSyntaxThemes}>
 
-                    <Button slot="trigger" color="gray">
+                    <Button slot="trigger" color="input">
                         { $blogStore.syntax_theme || 'nord' }
                         <IconCaretDown slot="end" />
                     </Button>

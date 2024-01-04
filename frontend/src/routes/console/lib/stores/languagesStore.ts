@@ -13,3 +13,15 @@ export const primaryLanguageStore = derived(languagesStore, $languages => {
 export function getPrimaryLanguage() {
     return get(languagesStore).find(l => l.is_primary)!;
 }
+
+export function languageStoreAdd(lang: Language) {
+    languagesStore.update(langs => [...langs, lang]);
+}
+
+export function languageStoreUpdate(lang: Language) {
+    languagesStore.update(langs => langs.map(l => lang.id === l.id ? lang : l));
+}
+
+export function languageStoreRemove(id: number) {
+    languagesStore.update(langs => langs.filter(l => l.id !== id));
+}

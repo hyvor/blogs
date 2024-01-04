@@ -28,7 +28,7 @@
             links = more ? [...links, ...res] : res;
             hasMore = res.length === limit;
         }).catch(e => {
-            links = [];
+            if (!more) links = [];
             toast.error(e.message || "Failed to load links.");
         }).finally(() => {
             isMoreLoading = false;

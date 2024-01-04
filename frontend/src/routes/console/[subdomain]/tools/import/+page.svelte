@@ -1,0 +1,45 @@
+<script lang="ts">
+	import { TabNav, TabNavItem } from "@hyvor/design/components";
+	import NewImport from "./NewImport/NewImport.svelte";
+
+    let tab: 'new' | 'history' = 'new';
+</script>
+<div class="import hds-box">
+
+    <TabNav bind:active={tab}>
+        
+        <TabNavItem name="new">
+            New Import
+        </TabNavItem>
+        
+        <TabNavItem name="history">
+            History
+        </TabNavItem>
+
+    </TabNav>
+
+    <div class="content">
+
+        {#if tab === 'new'}
+            <NewImport />
+        {:else if tab === 'history'}
+
+        {/if}
+
+    </div>
+
+</div>
+
+<style>
+
+    .import {
+        height: 100%;
+        overflow: auto;
+        padding: 20px 30px;
+    }
+
+    .content {
+        padding: 20px 0;
+    }
+
+</style>

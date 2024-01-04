@@ -3,7 +3,7 @@
     import hyvorTalkLogo from '$lib/img/services/hyvor-talk.svg';
 	import { page } from "$app/stores";
 	import { blogStore } from "../../lib/stores/blogStore";
-	import { IconImage, IconLink45deg } from "@hyvor/icons";
+	import { IconDownload, IconImage, IconLink45deg, IconUpload } from "@hyvor/icons";
 </script>
 
 <div class="tools">
@@ -23,6 +23,24 @@
         >
             <IconLink45deg slot="start" />
             Link Analysis
+        </NavLink>
+
+        <div class="div" />
+
+        <NavLink 
+            href={`/console/${$blogStore.subdomain}/tools/import`}
+            active={$page.url.pathname === `/console/${$blogStore.subdomain}/tools/import`}
+        >
+            <IconDownload slot="start" />
+            Import
+        </NavLink>
+
+        <NavLink 
+            href={`/console/${$blogStore.subdomain}/tools/export`}
+            active={$page.url.pathname === `/console/${$blogStore.subdomain}/tools/export`}
+        >
+            <IconUpload slot="start" />
+            Export
         </NavLink>
     </div>
 
@@ -56,5 +74,9 @@
         overflow: auto;
         display: flex;
         flex-direction: column;
+    }
+
+    .div {
+        height: 25px;
     }
 </style>

@@ -33,7 +33,7 @@
     <Callout type="info">
         <div slot="title">Manually Upgraded</div>
         <IconLightbulb slot="icon" />
-        Your blog was manually upgraded to the current plan by our team or by an offer. You will not be charged for this plan. If you wish to change your plan, please cancel the plan and upgrade to the desired plan (you will be charged).
+        Your blog was manually upgraded to the current plan by our team or through an offer. You will not be charged for this plan. If you wish to change your plan, please cancel the plan and upgrade to the desired plan (you will be charged).
     </Callout>
 {/if}
 
