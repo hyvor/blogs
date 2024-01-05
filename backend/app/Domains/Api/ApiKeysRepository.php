@@ -29,6 +29,12 @@ class ApiKeysRepository
         ]);
     }
 
+    public static function regenerate(ApiKey $key)
+    {
+        $key->api_key = bin2hex(random_bytes(16));
+        $key->save();
+    }
+
     public static function delete(ApiKey $apiKey) : void
     {
         $apiKey->delete();
