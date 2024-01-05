@@ -1,12 +1,12 @@
 <script lang="ts">
 	import { Button, IconMessage, LoadButton, Loader, Table, TableRow, toast } from "@hyvor/design/components";
-	import SettingsTop from "../_components/SettingsTop.svelte";
+	import SettingsTop from "../@components/SettingsTop.svelte";
 	import { IconPlus } from "@hyvor/icons";
-	import type { Tag } from "../../../lib/types";
+	import type { Tag, TagVariant } from "../../../lib/types";
 	import { onMount } from "svelte";
 	import { getTags } from "./tagActions";
 	import TagRow from "./TagRow.svelte";
-	import TagModal from "./TagModal.svelte";
+	import CreateTagModal from "./CreateTagModal.svelte";
 
     let isCreating = false;
     
@@ -15,7 +15,7 @@
     let isLoadingMore = true;
     let hasMore = false;
 
-    const limit = 2;
+    const limit = 40;
 
     function loadTags(more = false) {
         more ? isLoadingMore = true : isLoading = true;
@@ -36,6 +36,27 @@
                 isLoading = false;
                 isLoadingMore = false;
             })
+    }
+
+    function handleCreate(e: CustomEvent<Tag>) {
+        tags = [e.detail, ...tags];
+    }
+
+    function handleDelete(e: CustomEvent<number>) {
+        tags = tags.filter(t => t.id !== e.detail);
+    }
+
+    function handleCreateVariant(e: CustomEvent<{id: number, variant: TagVariant}>) {
+        tags = tags.map(t => {
+            const newTag = t.id === e.detail.id ? 
+                {...t, variants: [...t.variants, e.detail.variant]} : 
+                t;
+            return newTag;
+        });
+    }
+
+    function handleUpdate(e: CustomEvent<Tag>) {
+        tags = tags.map(t => t.id === e.detail.id ? e.detail : t);
     }
 
     onMount(loadTags);
@@ -75,7 +96,12 @@
                     </TableRow>
 
                     {#each tags as tag (tag.id)}
-                        <TagRow {tag} />
+                        <TagRow 
+                            {tag}
+                            on:delete={handleDelete}
+                            on:variantCreate={handleCreateVariant}
+                            on:update={handleUpdate}
+                        />
                     {/each}
 
                     <LoadButton
@@ -95,7 +121,10 @@
 </div>
 
 {#if isCreating}
-    <TagModal bind:show={isCreating} />
+    <CreateTagModal 
+        bind:show={isCreating}
+        on:create={handleCreate}
+    />
 {/if}
 
 <style>

@@ -1,8 +1,11 @@
 <script lang="ts">
-	import { IconButton, Link, TableRow, Tooltip } from "@hyvor/design/components";
+	import { IconButton, Link, TableRow, Tooltip, confirm, toast } from "@hyvor/design/components";
 	import type { Tag } from "../../../lib/types";
 	import { primaryLanguageStore } from "../../../lib/stores/languagesStore";
 	import { IconPencilFill, IconTrash } from "@hyvor/icons";
+	import { deleteTag } from "./tagActions";
+	import { createEventDispatcher } from "svelte";
+	import UpdateTagModal from "./Update/UpdateTagModal.svelte";
 
     export let tag: Tag;
 
@@ -10,8 +13,28 @@
 
     let isEditing = false;
 
-    function handleDelete() {
+    const dispatch = createEventDispatcher();
 
+    async function handleDelete() {
+        if (await confirm({
+            title: 'Delete tag',
+            content: 'Are you sure you want to delete this tag?',
+            confirmText: 'Yes, delete',
+            danger: true,
+        })) {
+
+            const toastId = toast.loading('Deleting tag...');
+
+            deleteTag(tag.id)
+                .then(() => {
+                    toast.success('Tag deleted.', {id: toastId});
+                    dispatch('delete', tag.id)
+                })
+                .catch(e => {
+                    toast.error(e.message, {id: toastId});
+                });
+
+        }
     }
 
 </script>
@@ -51,3 +74,12 @@
         </Tooltip>
     </div>
 </TableRow>
+
+{#if isEditing}
+    <UpdateTagModal 
+        bind:show={isEditing}
+        {tag}
+        on:variantCreate
+        on:update
+    />
+{/if}

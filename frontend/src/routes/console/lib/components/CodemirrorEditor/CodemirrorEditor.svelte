@@ -55,6 +55,7 @@
         })
         cm.on('change', function() {
             const val = cm.doc.getValue();
+            value = val;
             dispatch('change', val);
         })
 

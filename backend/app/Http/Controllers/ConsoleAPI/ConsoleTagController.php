@@ -90,6 +90,21 @@ class ConsoleTagController extends Controller
         return response()->json();
     }
 
+    public function checkSlugAvailability(Request $request, Blog $blog, Tag $tag) : JsonResponse
+    {
+        $request->validate([
+            'slug' => 'required|string',
+        ]);
+
+        $slug = (string) $request->string('slug');
+
+        $slugTag = TagRepository::getTagByBlogIdAndSlug($blog->id, $slug);
+
+        return response()->json([
+            'available' => $slugTag === null || $slugTag->id === $tag->id,
+        ]);
+    }
+
     public function createVariant(Blog $blog, Tag $tag, Language $language) : JsonResponse
     {
         $variant = TagRepository::createTagVariant($tag, $language);

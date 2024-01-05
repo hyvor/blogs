@@ -4,7 +4,7 @@
 	import { languagesStore } from "../../lib/stores/languagesStore";
 	import type { BlogVariant } from "../../lib/types";
 	import { blogStore } from "../../lib/stores/blogStore";
-	import VariantCreator from "./general/VariantCreator.svelte";
+	import VariantCreator from "./@components/VariantInput/VariantCreator.svelte";
 
     function hasVariant(languageId: number) {
         return $blogStore.variants.some(v => v.language_id === languageId);

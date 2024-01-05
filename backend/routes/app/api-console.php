@@ -153,6 +153,7 @@ Route::prefix('/api/console/v0/blog/{subdomain}')
             Route::post('/tag', [ConsoleTagController::class, 'create']);
             Route::patch('/tag/{id}', [ConsoleTagController::class, 'update']);
             Route::delete('/tag/{id}', [ConsoleTagController::class, 'delete']);
+            Route::get('/tag/{id}/slug-available', [ConsoleTagController::class, 'checkSlugAvailability']);
             Route::post('/tag/{id}/variant', [ConsoleTagController::class, 'createVariant']);
             Route::patch('/tag/{id}/variant', [ConsoleTagController::class, 'updateVariant']);
             Route::delete('/tag/{id}/variant', [ConsoleTagController::class, 'deleteVariant']);

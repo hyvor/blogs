@@ -4,7 +4,7 @@
 	import { IconPlus } from "@hyvor/icons";
 	import { languagesStore } from "../../../lib/stores/languagesStore";
 	import LanguageModal from './LanguageModal.svelte';
-	import SettingsTop from '../_components/SettingsTop.svelte';
+	import SettingsTop from '../@components/SettingsTop.svelte';
 
     let isCreating = false;
 </script>
