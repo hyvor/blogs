@@ -2,7 +2,7 @@
 	import { Button, IconButton, TableRow, Tooltip, confirm, toast } from "@hyvor/design/components";
     import type { ApiKey } from "../../../lib/types";
 	import { IconArrowCounterclockwise, IconCopy, IconTrash } from "@hyvor/icons";
-	import { deleteApiKey } from "./apiKeysActions";
+	import { deleteApiKey, regenerateApiKey } from "./apiKeysActions";
 	import { createEventDispatcher } from "svelte";
 
     export let apiKey: ApiKey;
@@ -22,7 +22,16 @@
             danger: true
         })) {
 
-            
+            const toastId = toast.loading('Regenerating...');
+
+            regenerateApiKey(apiKey.id)
+                .then(newApiKey => {
+                    dispatch('update', newApiKey);
+                    toast.success('Regenerated', {id: toastId});
+                })
+                .catch(err => {
+                    toast.error(err.message, {id: toastId});
+                });
 
         }
     }

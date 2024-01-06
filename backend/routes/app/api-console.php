@@ -175,7 +175,7 @@ Route::prefix('/api/console/v0/blog/{subdomain}')
             // api-keys
             Route::get('/api-keys', [ConsoleApiKeysController::class, 'getApiKeys']);
             Route::post('/api-key', [ConsoleApiKeysController::class, 'createApiKey']);
-            Route::post('/api-key/{id}/regenerate', [ConsoleApiKeysController::class, 'regenerateApiKey']);
+            Route::patch('/api-key/{id}', [ConsoleApiKeysController::class, 'updateApiKey']);
             Route::delete('/api-key/{id}', [ConsoleApiKeysController::class, 'deleteApiKey']);
 
             // navigation

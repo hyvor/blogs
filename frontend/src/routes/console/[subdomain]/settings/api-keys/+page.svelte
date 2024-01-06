@@ -21,7 +21,8 @@
         apiKeys = apiKeys.filter(apiKey => apiKey.id !== e.detail);
     }
 
-    function handleUpdate(e: CustomEvent<ApiKey>) {
+    function handleUpdateEvent(e: CustomEvent<ApiKey>) {
+        console.log(e.detail)
         apiKeys = apiKeys.map(apiKey => {
             if (apiKey.id === e.detail.id) {
                 return e.detail;
@@ -74,6 +75,7 @@
                     <ApiKeyRow 
                         {apiKey}
                         on:delete={handleDeleteEvent}
+                        on:update={handleUpdateEvent}
                     />
                 {/each}
             

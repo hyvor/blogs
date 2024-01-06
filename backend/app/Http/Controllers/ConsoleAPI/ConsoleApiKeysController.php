@@ -34,7 +34,7 @@ class ConsoleApiKeysController
         return response()->json(new ApiKeyObject($apiKey));
     }
 
-    public function regenerateApiKey(ApiKey $apiKey)
+    public function updateApiKey(ApiKey $apiKey)
     {
         ApiKeysRepository::regenerate($apiKey);
         return response()->json(new ApiKeyObject($apiKey));

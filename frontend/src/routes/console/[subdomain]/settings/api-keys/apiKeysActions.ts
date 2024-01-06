@@ -22,3 +22,9 @@ export function deleteApiKey(id: number) {
         endpoint: `/api-key/${id}`
     })
 }
+
+export function regenerateApiKey(id: number) {
+    return consoleApi.patch<ApiKey>({
+        endpoint: `/api-key/${id}`
+    })
+}
