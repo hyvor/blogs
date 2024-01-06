@@ -18,7 +18,7 @@ export default function Discarder({id} : {id: number}) {
             diff: {
                 // content: currentVariant.content,
                 content_unsaved: null,
-                title: currentVariant.title
+                // title: currentVariant.title
             },
             onSave: () => {
                 changeEditorState('isSaving', false);
