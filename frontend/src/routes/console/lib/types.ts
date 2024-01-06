@@ -1,3 +1,4 @@
+import { WebhookEventNames } from "../[subdomain]/settings/webhooks/webhookActions";
 
 export type UserRole = 'owner' | 'editor' | 'writer' | 'contributor' | 'finance';
 
@@ -304,7 +305,8 @@ export interface ApiKey {
 
 // WEBHOOK
 
-export type WebhookEvent = typeof WebhookEventNames[number];
+export type WebhookEvent = keyof typeof WebhookEventNames;
+
 
 export interface Webhook {
     id: number,

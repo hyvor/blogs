@@ -60,6 +60,7 @@ class ConsoleWebhookController extends Controller
     public function deleteWebhook(Webhook $webhook)
     {
         WebhookService::deleteWebhook($webhook);
+        return response()->json();
     }
 
     public function getWebhookDeliveries(Webhook $webhook, Request $request)
