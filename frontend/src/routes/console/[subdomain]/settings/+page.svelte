@@ -1,87 +1,150 @@
 <script lang="ts">
-	import { Button, SplitControl, TextInput } from "@hyvor/design/components";
+	import { SplitControl, TextInput } from "@hyvor/design/components";
 	import BlogSettingsSave from "./BlogSettingsSave.svelte";
-	import { languagesStore } from "../../lib/stores/languagesStore";
-	import type { BlogVariant } from "../../lib/types";
-	import { blogStore } from "../../lib/stores/blogStore";
-	import VariantCreator from "./@components/VariantInput/VariantCreator.svelte";
+	import type { Blog, BlogVariant } from "../../lib/types";
+	import { blogStore, updateBlogStoreVariantValue } from "../../lib/stores/blogStore";
+	import VariantInput from "./@components/VariantInput/VariantInput.svelte";
 
-    function hasVariant(languageId: number) {
-        return $blogStore.variants.some(v => v.language_id === languageId);
+
+    function handleNameChange(e: CustomEvent<{languageId: number, value: string}>) {
+        updateBlogStoreVariantValue(e.detail.languageId, 'name', e.detail.value);
     }
 
-    function getVariantValue(languageId: number, key: keyof BlogVariant) {
-        const variant = $blogStore.variants.find(v => v.language_id === languageId);
-        if (variant) {
-            return variant[key];
-        }
-        return '';
+    function handleDescriptionChange(e: CustomEvent<{languageId: number, value: string}>) {
+        updateBlogStoreVariantValue(e.detail.languageId, 'description', e.detail.value);
     }
 
-
-    function handleNameChange(e: any) {
-
+    function handleBlogValueChangeEvent(e: any, key: keyof Blog) {
+        blogStore.update(b => {
+            return {
+                ...b, 
+                [key]: e.target.value
+            }
+        });
     }
-
-    function handleDescriptionChange(e: any) {
-
-    }
-
 
 </script>
 
 <BlogSettingsSave 
-    keys={['code_head', 'code_foot', 'flashload']}
+    keys={[
+        'social_facebook',
+        'social_twitter',
+        'social_linkedin',
+        'social_youtube',
+        'social_tiktok',
+        'social_instagram',
+        'social_github',
+    ]}
+    variantKeys={[
+        'name',
+        'description',
+    ]}
 />
 
 <div class="settings">
 
-    <SplitControl
+    <VariantInput 
         label="Name"
         caption="Name of your blog"
-    >
+        type="blog"
+        obj={$blogStore}
+        key="name"
+        maxlength={160}
+        on:change={handleNameChange}
+    />
 
-        <div slot="nested">
-            {#each $languagesStore as language}
-                <SplitControl
-                    label={language.name}
-                    caption={language.code}
-                >
-                    {#if hasVariant(language.id)}
-                        <TextInput 
-                            value={getVariantValue(language.id, 'name')}
-                            on:change={handleNameChange}
-                        />
-                    {:else}
-                        <VariantCreator {language} />
-                    {/if}
-                </SplitControl>
-            {/each}
-        </div>
-
-    </SplitControl>
-
-    <SplitControl
+    <VariantInput 
         label="Description"
         caption="A short description (or sub-title) for your blog"
+        type="blog"
+        obj={$blogStore}
+        key="description"
+        maxlength={255}
+        on:change={handleDescriptionChange}
+    />
+
+    <SplitControl
+        label="Social Media"
+        caption="Links to your social media channels (use full URLs with https://)"
     >
 
         <div slot="nested">
-            {#each $languagesStore as language}
-                <SplitControl
-                    label={language.name}
-                    caption={language.code}
-                >
-                    {#if hasVariant(language.id)}
-                        <TextInput 
-                            value={getVariantValue(language.id, 'description')}
-                            on:change={handleDescriptionChange}
-                        />
-                    {:else}
-                        <VariantCreator {language} />
-                    {/if}
-                </SplitControl>
-            {/each}
+
+            <SplitControl
+                label="Facebook"
+            >
+                <TextInput 
+                    block
+                    value={$blogStore.social_facebook}
+                    on:input={e => handleBlogValueChangeEvent(e, 'social_facebook')}
+                />
+            </SplitControl>
+
+            <SplitControl
+                label="Twitter"
+            >
+                <TextInput 
+                    block
+                    value={$blogStore.social_twitter}
+                    on:input={e => handleBlogValueChangeEvent(e, 'social_twitter')}
+                />
+            </SplitControl>
+
+            <!-- Linkedin -->
+            <SplitControl
+                label="Linkedin"
+            >
+                <TextInput 
+                    block
+                    value={$blogStore.social_linkedin}
+                    on:input={e => handleBlogValueChangeEvent(e, 'social_linkedin')}
+                />
+            </SplitControl>
+
+            <!-- Youtube -->
+            <SplitControl
+                label="Youtube"
+            >
+                <TextInput 
+                    block
+                    value={$blogStore.social_youtube}
+                    on:input={e => handleBlogValueChangeEvent(e, 'social_youtube')}
+                />
+            </SplitControl>
+
+            <!-- TikTok -->
+            <SplitControl
+                label="TikTok"
+            >
+                <TextInput 
+                    block
+                    value={$blogStore.social_tiktok}
+                    on:input={e => handleBlogValueChangeEvent(e, 'social_tiktok')}
+                />
+            </SplitControl>
+           
+            <!-- Instagram -->
+            <SplitControl
+                label="Instagram"
+            >
+                <TextInput 
+                    block
+                    value={$blogStore.social_instagram}
+                    on:input={e => handleBlogValueChangeEvent(e, 'social_instagram')}
+                />
+            </SplitControl>
+
+            <!-- Github -->
+            <SplitControl
+                label="Github"
+            >
+                <TextInput 
+                    block
+                    value={$blogStore.social_github}
+                    on:input={e => handleBlogValueChangeEvent(e, 'social_github')}
+                />
+            </SplitControl>
+
         </div>
 
     </SplitControl>

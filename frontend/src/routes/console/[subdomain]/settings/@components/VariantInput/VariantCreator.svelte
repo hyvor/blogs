@@ -4,6 +4,7 @@
 	import type { AcceptableTypes, AcceptableTypesNames } from "./VariantInput.svelte";
 	import { createTagVariant } from "../../tags/tagActions";
 	import { createEventDispatcher } from "svelte";
+	import { createBlogVariant } from "../../../../lib/actions/blogActions";
 
     export let obj: AcceptableTypes;
     export let type: AcceptableTypesNames;
@@ -28,6 +29,17 @@
 
         if (type === 'tag') {
             createTagVariant(obj.id, language.id)
+                .then(res => {
+                    dispatchCreateVariant(res);
+                })
+                .catch(e => {
+                    toast.error(e.message);
+                })
+                .finally(() => {
+                    isCreating = false;
+                })
+        } else if (type === 'blog') {
+            createBlogVariant(language.id, true)
                 .then(res => {
                     dispatchCreateVariant(res);
                 })

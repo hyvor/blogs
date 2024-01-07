@@ -1,5 +1,6 @@
+import { get } from "svelte/store";
 import consoleApi from "../consoleApi";
-import { updateBlogStore } from "../stores/blogStore";
+import { blogOriginalStore, blogStore, updateBlogStore } from "../stores/blogStore";
 import type { Blog, BlogVariant } from "../types";
 
 export function saveSort(ids: number[]) {
@@ -44,8 +45,11 @@ export function createBlogVariant(languageId: number, updateStore = true) {
     if (updateStore) {
 
         promise.then(res => {
-            updateBlogStore({
-                variants: [res]
+            updateBlogStore(blog => {
+                return {
+                    ...blog,
+                    variants: [...blog.variants, res]
+                }
             }, true);
         })
     
