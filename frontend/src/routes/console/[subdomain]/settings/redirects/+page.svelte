@@ -1,71 +1,12 @@
 <script lang="ts">
 	import { Button, ButtonGroup, FormControl, Modal, SplitControl, TextInput } from "@hyvor/design/components";
-
+    import RedirectsModal from './RedirectsModal.svelte';
 
     let showCreateModal = false;
 </script>
 
 {#if showCreateModal}
-
-    <Modal
-        title="Create Redirect"
-        bind:show={showCreateModal}
-    >
-
-        <SplitControl
-            label="From"
-            caption=""
-        >
-        <FormControl>
-            <TextInput 
-
-                placeholder="/welcome"
-                block
-                autofocus
-            />
-        </FormControl>
-    </SplitControl>
-
-    <SplitControl
-        label="To"
-        caption=""
-        >
-        <FormControl>
-            <TextInput 
-            
-                placeholder="https://hyvor.com"
-                block
-            
-            />
-        </FormControl>
-    </SplitControl>
-
-    <SplitControl
-        label="Type"
-    >
-    </SplitControl>
-
-    <svelte:fragment slot="footer">
-
-        <ButtonGroup>
-
-            <Button 
-                variant="invisible"
-                on:click={() => showCreateModal = false}
-            >
-                Cancel
-            </Button>
-
-            <Button
-            >
-            </Button>
-
-        </ButtonGroup>
-
-    </svelte:fragment>
-
-    </Modal>
-
+    <RedirectsModal bind:show={showCreateModal} />
 {/if}
 
 <div class="settings">
