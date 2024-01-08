@@ -1,6 +1,6 @@
 import { get } from "svelte/store";
 import consoleApi from "../consoleApi";
-import { blogOriginalStore, blogStore, updateBlogStore } from "../stores/blogStore";
+import { blogOriginalStore, blogStore, updateBlogStore, updateBlogStoreVariant } from "../stores/blogStore";
 import type { Blog, BlogVariant } from "../types";
 
 export function saveSort(ids: number[]) {
@@ -31,6 +31,22 @@ export function updateBlog(data: Partial<Blog>, updateStore = true) {
         })
     }
 
+    return promise;
+}
+
+export function updateBlogVariant(languageId: number, data: Partial<BlogVariant>, updateStore = true) {
+    const promise = consoleApi.patch<BlogVariant>({
+        endpoint: '/blog/variant',
+        data: {
+            language_id: languageId,
+            ...data
+        }
+    })
+    if (updateStore) {
+        promise.then(res => {
+            updateBlogStoreVariant(res.language_id, data, true);
+        })
+    }
     return promise;
 }
 

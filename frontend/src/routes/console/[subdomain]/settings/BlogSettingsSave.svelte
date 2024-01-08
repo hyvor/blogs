@@ -2,7 +2,7 @@
 	import { Button, ButtonGroup, Loader, toast } from "@hyvor/design/components";
     import { blogOriginalStore, blogStore } from "../../lib/stores/blogStore";
 	import type { Blog, BlogVariant } from "../../lib/types";
-	import { updateBlog } from "../../lib/actions/blogActions";
+	import { updateBlog, updateBlogVariant } from "../../lib/actions/blogActions";
 	import { beforeNavigate } from "$app/navigation";
 
     export let keys : (keyof Blog)[] = [];
@@ -15,7 +15,6 @@
     beforeNavigate(navigation => {
 
         if (should) {
-            // TODO: Update to new confirm API
             if (!confirm('You have unsaved changes. Are you sure you want to leave?')) {
                 navigation.cancel();
             }
@@ -43,6 +42,35 @@
     async function handleSave() {
 
         loadingState = 'loading';
+
+        const variantChanges : Record<number, Partial<BlogVariant>> = {};
+        $blogStore.variants.forEach((variant) => {
+            const original = $blogOriginalStore.variants.find(v => v.language_id === variant.language_id);
+
+            if (!original)
+                return;
+
+            const changes : Partial<BlogVariant> = {};
+            variantKeys.map(key => {
+                if (variant[key] !== original[key]) {
+                    (changes as any)[key] = variant[key];
+                }
+            })
+
+            if (Object.keys(changes).length !== 0) {
+                variantChanges[variant.language_id] = changes;
+            }
+        })
+
+        for (const [languageId, changes] of Object.entries(variantChanges)) {
+            try {
+                await updateBlogVariant(Number(languageId), changes, true);
+            } catch (e) {
+                toast.error('Failed to update blog variant');
+                loadingState = 'error';
+                return;
+            }
+        }
 
         const blogUpdate : Partial<Blog> = {}
         keys.map(key => {

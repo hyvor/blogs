@@ -34,3 +34,29 @@ export function updateBlogStoreVariantValue<T extends keyof BlogVariant>(
         }
     })
 }
+
+export function updateBlogStoreVariant(language_id: number, variant: Partial<BlogVariant>, original = false) {
+
+    const stores = [blogStore]
+    if (original) {
+        stores.push(blogOriginalStore);
+    }
+
+    stores.forEach(store => {
+        store.update(blog => {
+            return {
+                ...blog,
+                variants: blog.variants.map(v => {
+                    if (v.language_id === language_id) {
+                        return {
+                            ...v,
+                            ...variant
+                        }
+                    }
+                    return v;
+                })
+            }
+        });
+    });
+    
+}
