@@ -1,23 +1,35 @@
 <script lang="ts">
-	import { Button, ButtonGroup, FormControl, Modal, SplitControl, TextInput } from "@hyvor/design/components";
+	import { Button, ButtonGroup, FormControl, Modal, SplitControl, Table, TableRow, TextInput } from "@hyvor/design/components";
     import RedirectsModal from './RedirectsModal.svelte';
+	import SettingsTop from "../@components/SettingsTop.svelte";
+	import { IconPlus } from "@hyvor/icons";
 
-    let showCreateModal = false;
+    let isCreating = false;
 </script>
 
-{#if showCreateModal}
-    <RedirectsModal bind:show={showCreateModal} />
-{/if}
-
 <div class="settings">
-    <div class="button_header">
-        <Button
-            on:click={() => showCreateModal = true}
-        >
-            Create Redirect +
+    <SettingsTop>
+        <Button on:click={() => isCreating = true}>
+            Add Language <IconPlus slot="end" />
         </Button>
+    </SettingsTop>
+
+    <div class="table">
+        <Table columns="1fr 1fr 1fr 70px">
+
+            <TableRow head>
+                <div>Matching Path</div>
+                <div>Redirecting To</div>
+                <div>Type</div>
+                <div></div>
+            </TableRow>
+        </Table>
     </div>
 </div>
+
+{#if isCreating}
+    <RedirectsModal bind:show={isCreating} />
+{/if}
 
 <style>
      .settings {
@@ -26,9 +38,7 @@
         padding: 25px 30px;
     }
 
-    .button_header {
+    .table {
         padding: 15px 30px;
-        text-align: right;
-        border-bottom: 1px solid var(--border);
     }
 </style>
