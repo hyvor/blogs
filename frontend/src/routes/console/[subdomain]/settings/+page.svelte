@@ -4,6 +4,7 @@
 	import type { Blog, BlogVariant } from "../../lib/types";
 	import { blogStore, updateBlogStoreVariantValue } from "../../lib/stores/blogStore";
 	import VariantInput from "./@components/VariantInput/VariantInput.svelte";
+	import ImageUploader from "../../lib/components/ImageUploader/ImageUploader.svelte";
 
 
     function handleNameChange(e: CustomEvent<{languageId: number, value: string}>) {
@@ -62,6 +63,13 @@
         maxlength={255}
         on:change={handleDescriptionChange}
     />
+
+    <SplitControl
+        label="Logo"
+        caption="Your blog's logo, usually displayed in the header"
+    >
+        <ImageUploader />
+    </SplitControl>
 
     <SplitControl
         label="Social Media"

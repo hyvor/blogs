@@ -9,5 +9,10 @@ export default defineConfig({
 	server: {
 		port: 2210
 	},
-	envDir: '../'
+	envDir: '../',
+
+	define: {
+		// https://docs.excalidraw.com/docs/@excalidraw/excalidraw/integration#preact
+		"process.env.IS_PREACT": JSON.stringify("true"),
+	}
 });
