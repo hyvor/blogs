@@ -25,7 +25,7 @@
 
             deleteRedirect(redirect.id)
                 .then(() => {
-                    toast.success('redirect deleted.', {id: toastId});
+                    toast.success('Redirect deleted.', {id: toastId});
                     dispatch('delete', redirect.id)
                 })
                 .catch(e => {

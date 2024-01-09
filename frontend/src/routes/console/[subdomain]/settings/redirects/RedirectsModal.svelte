@@ -20,7 +20,6 @@
     let toError : null | string = null;
 
     function handleClick() {
-        loading = true;
         fromError = null;
         toError = null;
 
@@ -40,6 +39,7 @@
         }
 
         if (isCreating) {
+            loading = true;
             createRedirect(from, to, type)
                 .then(res => {
                     toast.success('Redirect created successfully');
@@ -54,19 +54,21 @@
 
         }   
         else {
+            loading = true;
             show = false;
-
-            const toastId = toast.loading('Updating redirect...');
 
             updateRedirect(redirect!.id, from, to, type)
                 .then(res => {
-                    toast.success('Redirect updated.', {id: toastId});
+                    toast.success('Redirect updated.');
                     dispatch('update', res);
                     show = false;
                 })
                 .catch(err => {
-                    toast.error(err.message, {id: toastId});
-                });
+                    toast.error(err.message);
+                })
+                .finally(() => {
+                    loading = false;
+                })
 
         }
     }
