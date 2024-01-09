@@ -34,6 +34,8 @@
         }
     }
 
+    $: isDefaultRoute = ['post', 'page', 'index', 'tag', 'author'].indexOf(route.name) >= 0;
+
 </script>
 
 <TableRow>
@@ -44,20 +46,26 @@
     <div>{route.posts_filter || ''}</div>
     <div>{route.content_type || 'text/html'}</div>
 
-    <!--
+    
     <div>
-        <Tooltip text="Edit Webhook">
+        <Tooltip text="Edit Route">
             <IconButton size="small" variant="fill-light" color="gray" on:click={() => isUpdating = true}>
                 <IconPencilFill size={10} />
             </IconButton>
         </Tooltip>
 
-        <Tooltip text="Delete Webhook">
-            <IconButton size="small" variant="fill-light" color="red" on:click={handleDelete}>
+        <Tooltip text={isDefaultRoute ? "Default routes cannot be deleted" : "Delete Route"}>
+            <IconButton 
+                size="small" 
+                variant="fill-light" 
+                color="red" 
+                on:click={handleDelete}
+                disabled={isDefaultRoute}
+            >
                 <IconTrash size={10} />
             </IconButton>
         </Tooltip>
-    </div> -->
+    </div>
 
 </TableRow>
 

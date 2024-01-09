@@ -132,6 +132,7 @@
                 placeholder="https://example.com/webhook"
                 autofocus
                 bind:value={url}
+                state={urlError ? 'error' : undefined}
             />
 
             {#if urlError}
