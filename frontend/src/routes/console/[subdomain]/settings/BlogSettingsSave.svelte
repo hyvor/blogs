@@ -8,9 +8,13 @@
     export let keys : (keyof Blog)[] = [];
     export let variantKeys : (keyof BlogVariant)[] = [];
 
+    export let outsideChanges : Partial<Blog> = {};
+    export let beforeSave : null | (() => boolean) = null;
+    export let afterSave : null | ((b: Blog) => void) = null;
+
     let loadingState : 'none' | 'loading' | 'success' | 'error' = 'none';
 
-    $: should = getShouldSave($blogStore, $blogOriginalStore);
+    $: should = getShouldSave($blogStore, $blogOriginalStore, outsideChanges);
 
     beforeNavigate(navigation => {
 
@@ -21,7 +25,11 @@
         }
     })
 
-    function getShouldSave(blog: Blog, blogOriginal: Blog) {
+    function getShouldSave(blog: Blog, blogOriginal: Blog, $outsideChanges: Partial<Blog>) {
+
+        if (Object.keys($outsideChanges).length > 0) {
+            return true;
+        }
 
         if (keys.some(key => blog[key] !== blogOriginal[key])) {
             return true;
@@ -40,6 +48,10 @@
     }
 
     async function handleSave() {
+
+        if (beforeSave && !beforeSave()) {
+            return;
+        }
 
         loadingState = 'loading';
 
@@ -72,15 +84,24 @@
             }
         }
 
-        const blogUpdate : Partial<Blog> = {}
+        let blogUpdate : Partial<Blog> = {}
         keys.map(key => {
             if ($blogStore[key] !== $blogOriginalStore[key]) {
                 (blogUpdate as any)[key] = $blogStore[key];
             }
         })
 
+        blogUpdate = {
+            ...blogUpdate,
+            ...outsideChanges
+        };
+
         try {
-            await updateBlog(blogUpdate, true);
+            const newBlog = await updateBlog(blogUpdate, true);
+
+            if (afterSave) {
+                afterSave(newBlog);
+            }
 
             loadingState = 'success';
         } catch (e: any) {
