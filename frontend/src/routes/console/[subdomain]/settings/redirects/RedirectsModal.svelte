@@ -6,6 +6,7 @@
 
     export let redirect: Redirect | null = null;
     export let show = false;
+    let loading = false;
 
     const isCreating = redirect === null;
 
@@ -19,7 +20,7 @@
     let toError : null | string = null;
 
     function handleClick() {
-
+        loading = true;
         fromError = null;
         toError = null;
 
@@ -39,19 +40,16 @@
         }
 
         if (isCreating) {
-
-            show = false;
-
-            const toastId = toast.loading('Creating redirect...');
-
             createRedirect(from, to, type)
                 .then(res => {
-                    toast.success('Redirect created.', {id: toastId});
+                    toast.success('Redirect created successfully');
                     dispatch('create', res);
                     show = false;
                 })
                 .catch(err => {
-                    toast.error(err.message, {id: toastId});
+                    toast.error(err.message);
+                }).finally(() => {
+                    loading = false;
                 });
 
         }   
@@ -82,6 +80,7 @@
 
 <Modal 
     title={isCreating ? 'Add new redirect' : 'Edit redirect'}
+    loading={loading}
     bind:show={show}
 >
 
