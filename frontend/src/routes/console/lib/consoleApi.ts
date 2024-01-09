@@ -13,7 +13,7 @@ export interface ConsoleApiOptions {
 }
 
 interface CallOptions extends ConsoleApiOptions {
-    method: 'get' | 'post' | 'patch' | 'delete'
+    method: 'get' | 'post' | 'patch' | 'delete' | 'put'
 }
 
 function getConsoleApi() {
@@ -97,6 +97,7 @@ function getConsoleApi() {
         get: async <T>(opt: ConsoleApiOptions) => call<T>({...opt, method: 'get'}),
         post: async <T>(opt: ConsoleApiOptions) => call<T>({...opt, method: 'post'}),
         patch: async <T>(opt: ConsoleApiOptions) => call<T>({...opt, method: 'patch'}),
+        put: async <T>(opt: ConsoleApiOptions) => call<T>({...opt, method: 'put'}),
         delete: async <T>(opt: ConsoleApiOptions) => call<T>({...opt, method: 'delete'}),
     }
 

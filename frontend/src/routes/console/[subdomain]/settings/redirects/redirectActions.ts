@@ -24,7 +24,7 @@ export function createRedirect(path: string, to: string, type: 'temporary' | 'pe
 }
 
 export function updateRedirect(id: number, path: string, to: string, type: 'temporary' | 'permanent') {
-    return consoleApi.patch<Redirect>({
+    return consoleApi.put<Redirect>({
         endpoint: `/redirect/${id}`,
         data: {path, to, type}
     })

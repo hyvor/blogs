@@ -32,7 +32,7 @@
             toError = 'To is required.';
             return;
         }
-        
+
         if (!from.startsWith('/')) {
             fromError = 'From value should be a relative path starting with /';
             return;

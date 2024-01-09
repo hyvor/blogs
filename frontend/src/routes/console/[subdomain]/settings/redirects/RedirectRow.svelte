@@ -67,6 +67,7 @@
 {#if isEditing}
     <RedirectsModal 
         bind:show={isEditing}
+        on:update
         {redirect}
     />
 {/if}

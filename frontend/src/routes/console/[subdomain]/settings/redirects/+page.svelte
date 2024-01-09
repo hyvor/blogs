@@ -79,6 +79,7 @@
     <RedirectsModal
         bind:show={isCreating}
         on:create={handleCreate}
+        on:updated={handleUpdate}
     />
 {/if}
 
