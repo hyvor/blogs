@@ -1,12 +1,15 @@
 <script lang="ts">
 	import { Button, ButtonGroup, FormControl, InputGroup, Modal, Radio, SplitControl, TextInput, Validation, toast } from "@hyvor/design/components";
     import type { Redirect } from "../../../lib/types";
-	import { createRedirect } from "./redirectAction";
+	import { createRedirect, updateRedirect } from "./redirectActions"
+	import { createEventDispatcher } from "svelte";
 
     export let redirect: Redirect | null = null;
     export let show = false;
 
     const isCreating = redirect === null;
+
+    const dispatch = createEventDispatcher();
 
     let from = redirect ? redirect.path : '';
     let to = redirect ? redirect.to : '';
@@ -29,6 +32,11 @@
             toError = 'To is required.';
             return;
         }
+        
+        if (!from.startsWith('/')) {
+            fromError = 'From value should be a relative path starting with /';
+            return;
+        }
 
         if (isCreating) {
 
@@ -39,14 +47,30 @@
             createRedirect(from, to, type)
                 .then(res => {
                     toast.success('Redirect created.', {id: toastId});
-                    //languageStoreAdd(res);
+                    dispatch('create', res);
+                    show = false;
+                })
+                .catch(err => {
+                    toast.error(err.message, {id: toastId});
+                });
+
+        }   
+        else {
+            show = false;
+
+            const toastId = toast.loading('Updating redirect...');
+
+            updateRedirect(redirect!.id, from, to, type)
+                .then(res => {
+                    toast.success('Redirect updated.', {id: toastId});
+                    dispatch('update', res);
+                    show = false;
                 })
                 .catch(err => {
                     toast.error(err.message, {id: toastId});
                 });
 
         }
-
     }
 
     $: isButtonDisabled = !(isCreating ||
