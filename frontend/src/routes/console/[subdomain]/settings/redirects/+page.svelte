@@ -41,12 +41,13 @@
     onMount(loadRedirect)
 </script>
 
+<SettingsTop>
+    <Button on:click={() => isCreating = true}>
+        Add Redirect <IconPlus slot="end" />
+    </Button>
+</SettingsTop>
+
 <div class="redirects">
-    <SettingsTop>
-        <Button on:click={() => isCreating = true}>
-            Add Redirect <IconPlus slot="end" />
-        </Button>
-    </SettingsTop>
     
     {#if isLoading}
         <Loader full />
@@ -55,10 +56,10 @@
             <IconMessage empty message="No Redirects configured" />
         {:else}
 
-        <Table columns="1fr 1fr 1fr 70px">
+        <Table columns="1fr 2fr 1fr 70px">
             <TableRow head>
-                <div>Matching Path</div>
-                <div>Redirecting To</div>
+                <div>From</div>
+                <div>To</div>
                 <div>Type</div>
                 <div></div>
             </TableRow>

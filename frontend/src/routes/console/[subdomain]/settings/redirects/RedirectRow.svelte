@@ -37,9 +37,20 @@
 </script>
 
 <TableRow>
-    <div>{redirect?.path || 'Unnamed'}</div>
-    <div>{redirect?.to || ''}</div>
-    <div>{redirect.type}</div>
+    <div>{redirect.path}</div>
+    <div>
+        <Link
+            href={redirect.to}
+            target="_blank"
+        >{redirect.to}</Link>
+    </div>
+    <div>
+        {#if redirect.type === 'permanent'}
+            Permanent (301)
+        {:else}
+            Temporary (302)
+        {/if}
+    </div>
     <div>
         <Tooltip text="Edit redirect">
             <IconButton 

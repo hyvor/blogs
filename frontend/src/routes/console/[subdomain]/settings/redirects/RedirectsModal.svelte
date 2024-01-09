@@ -3,6 +3,7 @@
     import type { Redirect } from "../../../lib/types";
 	import { createRedirect, updateRedirect } from "./redirectActions"
 	import { createEventDispatcher } from "svelte";
+	import { isValidUrl } from "../../../lib/helper/is-valid-url";
 
     export let redirect: Redirect | null = null;
     export let show = false;
@@ -28,15 +29,21 @@
             return;
         }
 
+        if (!from.startsWith('/')) {
+            fromError = 'From value should be a relative path starting with /';
+            return;
+        }
+
         if (!to) {
             toError = 'To is required.';
             return;
         }
 
-        if (!from.startsWith('/')) {
-            fromError = 'From value should be a relative path starting with /';
+        if (!isValidUrl(to)) {
+            toError = 'To value should be a valid URL.';
             return;
         }
+
 
         if (isCreating) {
             loading = true;
@@ -55,8 +62,6 @@
         }   
         else {
             loading = true;
-            show = false;
-
             updateRedirect(redirect!.id, from, to, type)
                 .then(res => {
                     toast.success('Redirect updated.');
@@ -88,7 +93,7 @@
 
     <SplitControl
         label="From"
-        caption=""
+        caption="Which path to match"
     >
 
         <FormControl>
@@ -111,7 +116,7 @@
 
     <SplitControl
         label="To"
-        caption=""
+        caption="An absolute URL to redirect to"
     >
         <FormControl>
             <TextInput 
@@ -131,6 +136,7 @@
 
     <SplitControl
         label="Type"
+        caption="Permanent redirects are cached by browsers."
     >
         <InputGroup>
             <Radio
@@ -138,14 +144,14 @@
                 value="permanent"
                 bind:group={type}
             >
-                Permanent
+                Permanent (301)
             </Radio>
             <Radio
                 name="type"
                 value="temporary"
                 bind:group={type}
             >
-                Temporary
+                Temporary (302)
             </Radio>
         </InputGroup>
     </SplitControl>

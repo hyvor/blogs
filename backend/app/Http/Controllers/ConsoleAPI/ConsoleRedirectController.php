@@ -57,6 +57,7 @@ class ConsoleRedirectController extends Controller
 
     public function update(Request $request, Blog $blog, Redirect $redirect) : JsonResponse
     {
+        sleep(1);
         $request->validate([
             'path' => [new RedirectPath($blog)],
             'to' => ['url'],
