@@ -1,5 +1,5 @@
 <script lang="ts">
-	import { Button, ButtonGroup, FormControl, Link, Modal, SplitControl, TextInput, toast } from "@hyvor/design/components";
+	import { Button, ButtonGroup, FormControl, InputGroup, Link, Modal, Radio, SplitControl, TextInput, Validation, toast } from "@hyvor/design/components";
 	import type { Navigation, NavigationVariant } from "../../../lib/types";
 	import VariantInput from "../@components/VariantInput/VariantInput.svelte";
 	import { updateNagivation, updateNavigationVariant } from "./navigationActions";
@@ -10,6 +10,8 @@
 
     let url = navigation.url;
     let type = navigation.type;
+
+    let urlError : null | string = null;
 
     const variantChanges : Record<number, Partial<NavigationVariant>> = {};
 
@@ -27,6 +29,11 @@
     let isUpdating = false;
 
     async function handleUpdate() {
+
+        if (!url) {
+            urlError = 'URL is required.';
+            return;
+        }
 
         isUpdating = true;
 
@@ -82,6 +89,46 @@
         on:variantCreate
         on:change={handleNameChange}
     />
+
+    <SplitControl
+        label="URL"
+    >
+        <FormControl>
+            <TextInput 
+                bind:value={url}
+                placeholder="/about"
+                block
+                state={urlError ? 'error' : undefined}
+            />
+
+            {#if urlError}
+                <Validation state="error">
+                    {urlError}
+                </Validation>
+            {/if}
+        </FormControl>
+    </SplitControl>
+
+    <SplitControl
+        label="Type"
+    >
+        <InputGroup>
+            <Radio
+                name="type"
+                value="header"
+                bind:group={type}
+            >
+                Header
+            </Radio>
+            <Radio
+                name="type"
+                value="footer"
+                bind:group={type}
+            >
+                Footer
+            </Radio>
+        </InputGroup>
+    </SplitControl>
 
     <svelte:fragment slot="footer">
 

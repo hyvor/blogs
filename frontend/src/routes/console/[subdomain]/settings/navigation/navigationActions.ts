@@ -37,8 +37,6 @@ export function updateNavigationVariant(navigationId: number, languageId: number
         endpoint: `/navigation/${navigationId}/variant`,
         data: {
             language_id: languageId,
-            type,
-            url,
             ...variant
         }
     })

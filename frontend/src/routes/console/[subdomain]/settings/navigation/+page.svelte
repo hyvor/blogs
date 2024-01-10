@@ -5,8 +5,8 @@
 	import type { Navigation, NavigationVariant } from "../../../lib/types";
 	import { onMount } from "svelte";
 	import { getNavigations } from "./navigationActions";
-	import NavigationModal from "./NavigationModal.svelte";
 	import NavigationRow from "./NavigationRow.svelte";
+	import CreateNavigationModal from "./CreateNavigationModal.svelte";
 
     let isCreating = false;
     
@@ -95,7 +95,7 @@
 </div>
 
 {#if isCreating}
-    <NavigationModal 
+    <CreateNavigationModal 
         bind:show={isCreating}
         on:create={handleCreate}
     />
