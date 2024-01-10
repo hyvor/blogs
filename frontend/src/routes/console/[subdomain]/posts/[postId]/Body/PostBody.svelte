@@ -1,7 +1,8 @@
 <script lang="ts">
 	import { postLanguageStore } from "../../postStore";
 	import Editor from "./Editor/Editor.svelte";
-	import Title from "./Title.svelte";
+	import Title from "./Top/Title.svelte";
+	import Top from "./Top/Top.svelte";
 </script>
 
 <div 
@@ -13,7 +14,7 @@
         text-align: {$postLanguageStore.direction === 'rtl' ? 'right' : 'left'};
     "
 >
-    <Title />
+    <Top />
     <Editor />
 </div>
 

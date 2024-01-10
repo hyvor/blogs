@@ -4,7 +4,7 @@
 	import { IconCheck, IconHourglass, IconJournalText } from "@hyvor/icons";
     
     export let status: PostStatus;
-    export let size: 'small' | 'medium' = 'small';
+    export let size: 'x-small' | 'small' | 'medium' = 'small';
 
     $: color = {
         draft: 'orange',

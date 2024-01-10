@@ -1,7 +1,7 @@
 <script lang="ts">
 	import type { FormEventHandler } from "svelte/elements";
-	import { postVariantStore, updatePostVariantStore } from "../../postStore";
-	import { onMount } from "svelte";
+	import { postVariantStore, updatePostVariantStore } from "../../../postStore";
+	import { onMount, tick } from "svelte";
 
     const handleInput: FormEventHandler<HTMLTextAreaElement> = (event) => {
         updatePostVariantStore({
@@ -11,21 +11,34 @@
 
     let textarea: HTMLTextAreaElement;
 
-    onMount(() => {
-
+    function handleResize() {
+        if (!textarea)
+            return;
         textarea.style.height = "0"
         textarea.style.height = (textarea.scrollHeight) + "px";
+    }
 
-        textarea.addEventListener('input', () => {
-            textarea.style.height = "0"
-            textarea.style.height = (textarea.scrollHeight) + "px";
-        })
+    onMount(() => {
+        textarea.style.height = "0"
+        textarea.style.height = (textarea.scrollHeight) + "px";
+        textarea.addEventListener('input', handleResize);
+        textarea.addEventListener('change', handleResize);
+        textarea.addEventListener('focus', handleResize);
+    });
 
+    let previousTitle = "";
+
+    postVariantStore.subscribe(async (value) => {
+        if (value.title !== previousTitle) {
+            previousTitle = value.title || '';
+            await tick();
+            handleResize();
+        }
     });
 
 </script>
 
-<div class="title-wrap hds-box">
+<div class="title-wrap">
 
     <textarea
         placeholder="Title..."
@@ -40,8 +53,7 @@
 <style>
 
     .title-wrap {
-        padding: 10px 25px;
-        margin-bottom: 15px;
+        flex: 1;
     }
 
     textarea {

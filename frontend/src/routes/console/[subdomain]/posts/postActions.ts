@@ -65,3 +65,12 @@ export function updatePostVariant(data: Partial<PostVariant>) {
     return promise;
 
 }
+
+export function createPostVariant(postId: number, languageId: number) {
+
+    return consoleApi.post<PostVariant>({
+        endpoint: `/post/${postId}/variant`,
+        data: { language_id: languageId }
+    })
+
+}
