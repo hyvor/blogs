@@ -4,7 +4,7 @@
 	import Settings from "./Settings/Settings.svelte";
 	import SeoScoreTag from "./Seo/SeoScoreTag.svelte";
 	import Seo from "./Seo/Seo.svelte";
-	import { variantSeoStore } from "../../../../lib/stores/seoStore";
+	import { variantSeoStore } from "../../seoStore";
 	import Ai from "./Ai/Ai.svelte";
 	import { Z_INDEX, increaseZIndex } from "../z-index";
 	import SidebarTop from "./Top/SidebarTop.svelte";

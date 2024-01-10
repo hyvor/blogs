@@ -195,7 +195,7 @@ export function getStatusType(status: number) :
     return 'broken';
 }
 
-/* export function getCountsByStatus(statuses: Record<string, number>) {
+export function getCountsByStatus(statuses: Record<string, number>) {
 
     const counts = {
         total: 0,
@@ -207,7 +207,7 @@ export function getStatusType(status: number) :
     }
 
     for (const link in statuses) {
-        const status = statuses[link];
+        const status = statuses[link]!;
         let statusType = getStatusType(status);
         if (statusType === 'error') statusType = 'broken';
         counts.total++;
@@ -216,7 +216,7 @@ export function getStatusType(status: number) :
 
     return counts;
 
-} */
+}
 
 
 /* 

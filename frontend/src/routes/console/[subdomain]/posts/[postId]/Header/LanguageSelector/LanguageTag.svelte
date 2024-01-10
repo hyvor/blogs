@@ -7,6 +7,7 @@
     export let language: Language;
     export let active: boolean = false;
     export let isCreating = false;
+    export let size : 'small' | 'medium' = 'medium';
 
     let tooltip = '';
     let icon: any;
@@ -42,13 +43,18 @@
 <Tooltip text={tooltip} position="bottom">
 
     <Tag
-        size="medium" 
+        size={size}
         interactive 
         color={active ? "accent" : "default"}
         {...$$restProps}
     >
         {language.code}
-        <svelte:component this={icon} size={12} slot="end" {...iconProps} />
+        <svelte:component 
+            this={icon} 
+            size={size === 'small' ? 10 : 12}
+            slot="end" 
+            {...iconProps} 
+        />
     </Tag>
 
 </Tooltip>

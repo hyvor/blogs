@@ -1,16 +1,25 @@
 <script lang="ts">
 	import dayjs from 'dayjs';
-	import type { Post } from "../../lib/types";
+	import type { Post, PostVariant } from "../../lib/types";
 	import { getLanguageById } from "../../lib/actions/languageActions";
-	import { Avatar, Tag } from "@hyvor/design/components";
+	import { Avatar, Link, Tag } from "@hyvor/design/components";
 	import PostStatusTag from "./PostStatusTag.svelte";
 	import { blogStore } from "../../lib/stores/blogStore";
+	import LinkAnalysisTag from "./Tags/LinkAnalysisTag.svelte";
+	import SeoAnalysisTag from "./Tags/SeoAnalysisTag.svelte";
+	import VariantLangTag from "./Tags/VariantLangTag.svelte";
+	import { IconBoxArrowUpRight } from "@hyvor/icons";
+    
     export let post: Post;
 
-    $: variant = post.variants[0];
+    $: variant = post.variants[0]!;
 
     const publishedAtDate = dayjs.unix(post.published_at || post.created_at).format('MMM D, YYYY');
     const createdAtDate = dayjs.unix(post.created_at).format('MMM D, YYYY');
+
+    function getVariantLanguage(v: PostVariant) {
+        return getLanguageById(v.language_id);
+    }
 
 </script>
 
@@ -22,6 +31,16 @@
     <div>
         <div class="post-title">{variant?.title || '(Untitled)'}</div>
 
+        <div class="post-slug">
+            <a 
+                href={post.variants[0]?.url || ''}
+                target="_blank"
+            >
+                {post.variants[0]?.slug || ''}
+                <IconBoxArrowUpRight size={10} style="margin-left: 4px;" />
+            </a>
+        </div>
+
         <div class="post-data">
             <div class="post-date">
                 {#if variant?.status === 'published'}
@@ -32,7 +51,7 @@
                     Created {createdAtDate}
                 {/if}
             </div>
-            {#if variant?.status === 'published'}
+            {#if variant?.status === 'published' && post.updated_at !== post.published_at}
                 <div class="post-date">
                     Updated {dayjs.unix(post.updated_at).format('MMM D, YYYY')}
                 </div>
@@ -44,9 +63,7 @@
     <div class="post-languages">
 
         {#each post.variants as variant (variant.id)}
-            <Tag size="small">
-                { getLanguageById(variant.language_id)?.code || '' }
-            </Tag>
+            <VariantLangTag {variant} />
         {/each}
 
     </div>
@@ -75,7 +92,7 @@
         <div class="post-tags">
             {#if !post.is_page}
                 {#each post.tags as tag (tag.id)}
-                    <Tag size="small" outline fill>
+                    <Tag size="small">
                         {tag.variants[0]?.name || null}
                     </Tag>
                 {/each}
@@ -90,10 +107,11 @@
                 score={variant?.average} 
                 percentage={true} 
             /> -->
+            <SeoAnalysisTag postVariant={variant} />
         </div>
         <div class="links">
             <span class="name">Links</span>
-            <!-- <LinkTag /> -->
+            <LinkAnalysisTag postVariant={variant} />
         </div>
     </div>
 
@@ -104,7 +122,7 @@
 </a>
 
 
-<style>
+<style lang="scss">
 
     .post-list-item {
         display: grid;
@@ -125,21 +143,21 @@
         background: var(--hover);
     }
 
-    /* &:not(:last-child):after {
-        // border-bottom: 1px solid $color-accent-very-light;
-        content: "";
-        position: absolute;
-        justify-self: center;
-        width: 95%;
-        background: $color-accent-very-light;
-        bottom: 0;
-        height: 1px;
-    } */
-
     .post-title {
         width: 300px;
         font-weight: 600;
         word-break: break-all;
+    }
+
+    .post-slug {
+        margin-top: 4px;
+        font-size: 12px;
+    }
+    .post-slug a {
+        color: var(--link);
+        &:hover {
+            text-decoration: underline;
+        }
     }
 
     .post-data {
@@ -175,6 +193,9 @@
 
     .post-languages {
         margin-top: 8px;
+        display: inline-flex;
+        flex-wrap: wrap;
+        gap: 5px;
     }
 
     .post-tags-wrap {
@@ -187,6 +208,9 @@
 
     .post-tags {
         flex: 1;
+        display: inline-flex;
+        flex-wrap: wrap;
+        gap: 5px;
     }
 
     .post-health-wrap {
@@ -202,7 +226,10 @@
     }
 
     .post-health-wrap .links {
-        margin-top: 2px;
+        margin-top: 4px;
+        display: inline-flex;
+        align-items: center;
+        gap: 4px;
     }
 
 </style>

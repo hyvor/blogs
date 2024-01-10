@@ -30,7 +30,8 @@
                     { getTagName(tag) }
 
                     <IconButton 
-                        color="danger" 
+                        color="red"
+                        variant="invisible"
                         on:click={() => handleRemoveTag(tag.id)}
                         size={16}
                         slot="end"
@@ -45,10 +46,11 @@
         <div class="right">
 
             <IconButton
-                color="soft"
-                size="small"
+                variant="fill-light"
+                color="gray"
+                size={22}
             >
-                <IconPlus size={16} />
+                <IconPlus size={14} />
             </IconButton>
 
         </div>

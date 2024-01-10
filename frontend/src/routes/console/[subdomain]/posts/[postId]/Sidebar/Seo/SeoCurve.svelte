@@ -1,5 +1,5 @@
 <script lang="ts">
-	import { variantSeoStore } from "../../../../../lib/stores/seoStore";
+	import { variantSeoStore } from "../../../seoStore";
 	import SeoCurveSvg from "./SeoCurveSvg.svelte";
 </script>
 <div class="score-wrap">
