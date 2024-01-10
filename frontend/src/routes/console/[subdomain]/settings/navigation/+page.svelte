@@ -6,6 +6,7 @@
 	import { onMount } from "svelte";
 	import { getNavigations } from "./navigationActions";
 	import NavigationModal from "./NavigationModal.svelte";
+	import NavigationRow from "./NavigationRow.svelte";
 
     let isCreating = false;
     
@@ -36,10 +37,10 @@
 
     function handleCreateVariant(e: CustomEvent<{id: number, variant: NavigationVariant}>) {
         navigations = navigations.map(t => {
-            const newTag = t.id === e.detail.id ? 
+            const newNavigation = t.id === e.detail.id ? 
                 {...t, variants: [...t.variants, e.detail.variant]} : 
                 t;
-            return newTag;
+            return newNavigation;
         });
     }
 
@@ -65,16 +66,25 @@
         {#if isLoading}
             <Loader full /> 
         {:else}
-        
             {#if navigations.length === 0}
                 <IconMessage empty message="No navigations found." />
             {:else}
-                <Table columns="2fr 2fr 3fr 1fr 70px">
+                <Table columns="2fr 2fr 70px">
 
                     <TableRow head>
                         <div>Name</div>
                         <div>URL</div>
+                        <div></div>
                     </TableRow>
+
+                    {#each navigations as navigation (navigation.id)}
+                        <NavigationRow 
+                            {navigation}
+                            on:delete={handleDelete}
+                            on:variantCreate={handleCreateVariant}
+                            on:update={handleUpdate}
+                        />
+                    {/each}
                 </Table>
             {/if}
 

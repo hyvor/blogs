@@ -32,11 +32,13 @@ export function createNavigationVariant(id: number, languageId: number) {
     })
 }
 
-export function updateNavigationVariant(navigationId: number, languageId: number, variant: Partial<Navigation>) {
-    return consoleApi.patch<Navigation>({
+export function updateNavigationVariant(navigationId: number, languageId: number, variant: Partial<NavigationVariant>, type: 'header' | 'footer', url: string) {
+    return consoleApi.put<NavigationVariant>({
         endpoint: `/navigation/${navigationId}/variant`,
         data: {
             language_id: languageId,
+            type,
+            url,
             ...variant
         }
     })
