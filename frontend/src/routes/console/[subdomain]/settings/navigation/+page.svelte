@@ -1,17 +1,108 @@
-<script>
-	import { Button } from "@hyvor/design/components";
+<script lang="ts">
+	import { Button, IconMessage, LoadButton, Loader, Table, TableRow, toast } from "@hyvor/design/components";
 	import SettingsTop from "../@components/SettingsTop.svelte";
 	import { IconPlus } from "@hyvor/icons";
+	import type { Navigation, NavigationVariant } from "../../../lib/types";
+	import { onMount } from "svelte";
+	import { getNavigations } from "./navigationActions";
+	import NavigationModal from "./NavigationModal.svelte";
 
     let isCreating = false;
+    
+    let navigations : Navigation[] = [];
+    let isLoading = true;
+
+  
+    function loadNavigation() {
+        getNavigations()
+            .then(res => {
+                navigations = res;
+            })
+            .catch(err => {
+                toast.error(err.message);
+            })
+            .finally(() => {
+                isLoading = false;
+            })
+        }
+
+    function handleCreate(e: CustomEvent<Navigation>) {
+        navigations = [e.detail, ...navigations];
+    }
+
+    function handleDelete(e: CustomEvent<number>) {
+        navigations = navigations.filter(t => t.id !== e.detail);
+    }
+
+    function handleCreateVariant(e: CustomEvent<{id: number, variant: NavigationVariant}>) {
+        navigations = navigations.map(t => {
+            const newTag = t.id === e.detail.id ? 
+                {...t, variants: [...t.variants, e.detail.variant]} : 
+                t;
+            return newTag;
+        });
+    }
+
+    function handleUpdate(e: CustomEvent<Navigation>) {
+        navigations = navigations.map(t => t.id === e.detail.id ? e.detail : t);
+    }
+
+    onMount(loadNavigation);
 
 </script>
 
 
-<SettingsTop>
+<div class="navigations">
 
-    <Button on:click={() => isCreating = true}>
-        Create Navigation <IconPlus slot="end" />
-    </Button>
+    <SettingsTop>
+        <Button on:click={() => isCreating = true}>
+            Create Navigation <IconPlus slot="end" />
+        </Button>
+    </SettingsTop>
 
-</SettingsTop>
+    <div class="table">
+
+        {#if isLoading}
+            <Loader full /> 
+        {:else}
+        
+            {#if navigations.length === 0}
+                <IconMessage empty message="No navigations found." />
+            {:else}
+                <Table columns="2fr 2fr 3fr 1fr 70px">
+
+                    <TableRow head>
+                        <div>Name</div>
+                        <div>URL</div>
+                    </TableRow>
+                </Table>
+            {/if}
+
+        {/if}
+
+    </div>
+
+</div>
+
+{#if isCreating}
+    <NavigationModal 
+        bind:show={isCreating}
+        on:create={handleCreate}
+    />
+{/if}
+
+<style>
+
+    .navigations {
+        height: 100%;
+        display: flex;
+        flex-direction: column;
+        overflow: auto;
+    }
+
+    .table {
+        flex: 1;
+        padding: 15px 30px;
+    }
+
+</style>
