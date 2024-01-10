@@ -49,10 +49,12 @@ class ConsoleBlogController extends Controller
                 new SubscriptionObject($subscription) :
                 null,
             'counts' => [
-                'published' => $blog->getCount('posts'),
-                'draft' => $blog->getCount('posts_draft'),
-                'scheduled' => $blog->getCount('posts_scheduled'),
-                'featured' => $blog->getCount('posts_featured'),
+                'posts' => [
+                    'published' => $blog->getCount('posts'),
+                    'draft' => $blog->getCount('posts_draft'),
+                    'scheduled' => $blog->getCount('posts_scheduled'),
+                    'featured' => $blog->getCount('posts_featured'),
+                ]
             ],
             'users' => UserRepository::getUsers($blog, limit: 15)->map(fn ($user) => new UserObject($user, $blog)),
             'tags' => TagRepository::getTags($blog, limit: 15)->map(fn ($tag) => new TagObject($tag, $blog)),

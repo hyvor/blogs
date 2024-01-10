@@ -101,11 +101,13 @@ export interface Blog {
 
 }
 
-export interface PostCounts {
-    published: number,
-    draft: number,
-    scheduled: number,
-    featured: number
+export interface BlogCounts {
+    posts: {
+        published: number,
+        draft: number,
+        scheduled: number,
+        featured: number
+    }
 }
 
 // == POST

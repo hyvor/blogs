@@ -1,8 +1,10 @@
 import { writable } from "svelte/store";
-import type { Blog, BlogVariant } from "../types";
+import type { Blog, BlogCounts, BlogVariant } from "../types";
 
 export const blogStore = writable<Blog>();
 export const blogOriginalStore = writable<Blog>();
+
+export const blogCountsStore = writable<BlogCounts>();
 
 export function updateBlogStore(blog: Partial<Blog> | ((currentBlog: Blog) => Partial<Blog>), original = false) {
     const stores = [blogStore];

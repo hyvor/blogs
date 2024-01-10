@@ -1,10 +1,12 @@
 <script lang="ts">
+	import AuthorFilter from './Filters/Author/AuthorFilter.svelte';
 	import { Button, Loader } from "@hyvor/design/components";
 	import { IconPlus } from "@hyvor/icons";
 	import { onMount } from "svelte";
 	import consoleApi from "../../lib/consoleApi";
 	import type { Post } from "../../lib/types";
 	import PostRow from "./PostRow.svelte";
+	import StatusFilter from "./Filters/StatusFilter.svelte";
 
     let isLoading = true;
     let posts: Post[] = [];
@@ -36,6 +38,11 @@
                     New
                 </Button>
             </div>
+        </div>
+
+        <div class="filters">
+            <StatusFilter />
+            <AuthorFilter />
         </div>
 
     </div>
@@ -72,6 +79,7 @@
         background-color: var(--box-background);
         border-radius: var(--box-radius);
         box-shadow: var(--box-shadow);
+        display: flex;
     }
 
     .middle {
@@ -87,6 +95,7 @@
     .title-wrap {
         display: flex;
         align-items: center;
+        flex: 1;
     }
 
     .loader-wrap {

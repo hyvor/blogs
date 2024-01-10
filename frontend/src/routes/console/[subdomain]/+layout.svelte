@@ -4,10 +4,10 @@
     import { page } from '$app/stores';
 	import { Loader } from "@hyvor/design/components";
 	import consoleApi from "../lib/consoleApi";
-	import type { Blog, Language, Subscription, UsageTypes, User } from "../lib/types";
+	import type { Blog, BlogCounts, Language, Subscription, UsageTypes, User } from "../lib/types";
 	import { usersStore } from "../lib/stores/usersStore";
 	import { subscriptionStore, usageStore } from "../lib/stores/subscriptionStore";
-	import { blogOriginalStore, blogStore } from "../lib/stores/blogStore";
+	import { blogCountsStore, blogOriginalStore, blogStore } from "../lib/stores/blogStore";
 	import { languagesStore } from "../lib/stores/languagesStore";
 
     let isLoading = true;
@@ -17,7 +17,8 @@
         languages: Language[],
         users: User[],
         subscription: Subscription | null,
-        usage: UsageTypes
+        usage: UsageTypes,
+        counts: BlogCounts
     }
 
     onMount(() => {
@@ -31,6 +32,7 @@
 
             blogStore.set(res.blog)
             blogOriginalStore.set(res.blog)
+            blogCountsStore.set(res.counts)
             languagesStore.set(res.languages)
             usersStore.set(res.users)
             subscriptionStore.set(res.subscription)
