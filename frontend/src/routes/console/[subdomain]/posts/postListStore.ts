@@ -7,7 +7,7 @@ interface PostListFilters {
     tag: Tag | null,
     startDate: Date | null,
     endDate: Date | null,
-    search: string | null
+    search: string
 }
 
 export const postListFiltersStore = writable<PostListFilters>({
@@ -16,7 +16,7 @@ export const postListFiltersStore = writable<PostListFilters>({
     tag: null,
     startDate: null,
     endDate: null,
-    search: null
+    search: ''
 })
 
 export function setFilter<K extends keyof PostListFilters>(name: K, value: PostListFilters[K]) {

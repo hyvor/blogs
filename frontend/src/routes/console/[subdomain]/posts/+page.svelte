@@ -1,6 +1,6 @@
 <script lang="ts">
 	import AuthorFilter from './Filters/Author/AuthorFilter.svelte';
-	import { Button, Loader } from "@hyvor/design/components";
+	import { Button, IconMessage, Loader } from "@hyvor/design/components";
 	import { IconPlus } from "@hyvor/icons";
 	import { onMount } from "svelte";
 	import consoleApi from "../../lib/consoleApi";
@@ -8,21 +8,46 @@
 	import PostRow from "./PostRow.svelte";
 	import StatusFilter from "./Filters/StatusFilter.svelte";
 	import TagFilter from "./Filters/Tag/TagFilter.svelte";
+	import DateFilter from "./Filters/Date/DateFilter.svelte";
+	import SearchFilter from "./Filters/SearchFilter.svelte";
+	import { postListFiltersStore } from "./postListStore";
+	import { getPosts } from "./postActions";
 
     let isLoading = true;
     let posts: Post[] = [];
+    let error : null | string = null;
 
-    onMount(() => {
+    function getTime(date: Date | null) {
+        if (!date)
+            return undefined;
+        return Math.floor(date.getTime() / 1000);
+    }
 
-        consoleApi.get<Post[]>({
-            endpoint: '/posts',
-        }).then(res => {
-            isLoading = false;
-            posts = res;
+    function loadPosts() {
+        isLoading = true;
+        posts = [];
+        error = null;
+        
+        getPosts({
+            status: $postListFiltersStore.status || undefined,
+            author_id: $postListFiltersStore.author?.id || undefined,
+            tag_id: $postListFiltersStore.tag?.id || undefined,
+            start_timestamp: getTime($postListFiltersStore.startDate),
+            end_timestamp: getTime($postListFiltersStore.endDate),
+            search: $postListFiltersStore.search || undefined,
         })
+            .then(res => {
+                posts = res;
+            })
+            .catch(() => {
+                error = "Failed to load posts";
+            })
+            .finally(() => {
+                isLoading = false;
+            })
+    }
 
-    });
-
+    postListFiltersStore.subscribe(loadPosts);
 </script>
 
 
@@ -45,6 +70,8 @@
             <StatusFilter />
             <AuthorFilter />
             <TagFilter />
+            <DateFilter />
+            <SearchFilter />
         </div>
 
     </div>
@@ -55,11 +82,17 @@
             <div class="loader-wrap">
                 <Loader size="large" />
             </div>
+        {:else if error}
+            <IconMessage error message={error} />
         {:else}
 
-            {#each posts as post (post.id)}
-                <PostRow {post} />
-            {/each}
+            {#if posts.length === 0}
+                <IconMessage empty message="No posts found" />
+            {:else}
+                {#each posts as post (post.id)}
+                    <PostRow {post} />
+                {/each}
+            {/if}
 
         {/if}
 
