@@ -7,6 +7,7 @@
 	import type { Post } from "../../lib/types";
 	import PostRow from "./PostRow.svelte";
 	import StatusFilter from "./Filters/StatusFilter.svelte";
+	import TagFilter from "./Filters/Tag/TagFilter.svelte";
 
     let isLoading = true;
     let posts: Post[] = [];
@@ -43,6 +44,7 @@
         <div class="filters">
             <StatusFilter />
             <AuthorFilter />
+            <TagFilter />
         </div>
 
     </div>
@@ -109,6 +111,11 @@
         font-size: 1.2rem;
         font-weight: 600;
         margin-right: 10px;
+    }
+
+    .filters {
+        display: flex;
+        gap: 7px;
     }
 
 </style>

@@ -1,27 +1,27 @@
 <script lang="ts">
-	import { ActionListItem, Avatar, IconMessage, Loader, Text, TextInput } from "@hyvor/design/components";
-	import type { User } from "../../../../lib/types";
+	import { ActionListItem, IconMessage, Loader, Tag as TagComponent, Text, TextInput } from "@hyvor/design/components";
+	import type { Tag } from "../../../../lib/types";
 	import { createEventDispatcher, onMount } from "svelte";
-	import { getUsers, searchUsers } from "../../../settings/users/userActions";
 	import { postListFiltersStore } from "../../postListStore";
+	import { getTags, searchTags } from "../../../settings/tags/tagActions";
 
     let isLoading = true;
-    let users : User[] = [];
+    let tags : Tag[] = [];
     let search = '';
 
     let err = false;
 
     function loadUsers() {
         isLoading = true;
-        users = [];
+        tags = [];
 
         const promise = search.trim() ? 
-            searchUsers({ search }) :
-            getUsers();
+            searchTags({ search }) :
+            getTags();
 
         promise
             .then(res => {
-                users = res;
+                tags = res;
                 isLoading = false;
             })
             .catch(_ => err = true)
@@ -30,11 +30,11 @@
     }
 
     const dispatch = createEventDispatcher<{
-        select: User
+        select: Tag
     }>();
 
-    function handleSelect(user: User) {
-        dispatch('select', user);
+    function handleSelect(tag: Tag) {
+        dispatch('select', tag);
     }
 
     let timeout : null | ReturnType<typeof setTimeout> = null;
@@ -54,7 +54,7 @@
 
 <TextInput 
     block
-    placeholder="Search author..."
+    placeholder="Search tag..."
     autofocus
     bind:value={search}
     on:input={handleSearchInput}
@@ -66,30 +66,24 @@
         <Loader block padding={35} size="small" />
     {:else if err}
         <IconMessage error padding={35} />
-    {:else if users.length === 0}
+    {:else if tags.length === 0}
         <IconMessage 
             empty 
-            padding={35} 
-            message="No users found" 
+            padding={35}
+            message="No tags found" 
             iconSize={40}
         />
     {:else}
-        {#each users as user (user.id)}
+        {#each tags as tag (tag.id)}
             <ActionListItem
-                on:click={() => handleSelect(user)}
-                selected={$postListFiltersStore.author?.id === user.id}
+                on:click={() => handleSelect(tag)}
+                selected={$postListFiltersStore.tag?.id === tag.id}
             >
-                <Avatar 
-                    src={user.picture_url} 
-                    alt={user.variants[0]?.name || 'Unnamed'}
-                    size={20}
-                    slot="start"
-                />
-                <span class="text">
-                    {user.variants[0]?.name || 'Unnamed'}
-                </span>
+                <TagComponent size="small">
+                    {tag.variants[0]?.name || 'Unnamed'}
+                </TagComponent>
                 <Text light slot="end" small>
-                    {user.posts_count} post{user.posts_count === 1 ? '' : 's'}
+                    {tag.posts_count} post{tag.posts_count === 1 ? '' : 's'}
                 </Text>
             </ActionListItem>
         {/each}

@@ -17,6 +17,17 @@ export function getTags({limit, offset} : GetTagsProps = {}) {
     })
 }
 
+interface SearchTagsProps {
+    search: string
+}
+
+export function searchTags(data: SearchTagsProps) {
+    return consoleApi.get<Tag[]>({
+        endpoint: '/tags/search',
+        data
+    })
+}
+
 export function createTag(name: string) {
     return consoleApi.post<Tag>({
         endpoint: '/tag',
