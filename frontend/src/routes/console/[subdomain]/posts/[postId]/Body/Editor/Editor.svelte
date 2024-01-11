@@ -1,24 +1,16 @@
 <script lang="ts">
-	import { postEditingStatusStore, postVariantStore } from "../../../postStore";
+	import { postCurrentContentKey, postCurrentContentStore, postEditingStatusStore, postVariantStore, updatePostVariantStore } from "../../../postStore";
 	import EditorTop from "./EditorTop/EditorTop.svelte";
     import Prosemirror from "./Prosemirror.svelte";
 
-    let content: string | null;
-
-    $: {
-
-        content = $postVariantStore.status === 'draft' ?
-            $postVariantStore.content :
-            (
-                $postEditingStatusStore.isEditingPublished ?
-                    $postVariantStore.content_unsaved :
-                    $postVariantStore.content
-            )
-
-    }
-
     $: uniqueKey = `${$postVariantStore.id}` +
         `-lang-${$postEditingStatusStore.languageId}`;
+
+    function handleChange(e: CustomEvent<string>) {
+        updatePostVariantStore({
+            [$postCurrentContentKey]: e.detail
+        });
+    }
 
 </script>
 
@@ -26,7 +18,10 @@
     <EditorTop />
 
     {#key uniqueKey}
-        <Prosemirror value={content} />
+        <Prosemirror 
+            value={$postCurrentContentStore} 
+            on:change={handleChange}    
+        />
     {/key}
 </div>
 

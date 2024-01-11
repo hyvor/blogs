@@ -26,6 +26,30 @@ export function getTextFromDoc(doc: Node): string {
     return text;
 }
 
+interface Heading {
+    level: number,
+    text: string,
+    id: string | null,
+}
+
+export function getHeadingsFromContent(content: string | null): Heading[] {
+
+    const headings = [] as Heading[];
+    const doc = getDocFromContent(content);
+
+    doc.descendants(node => {
+        if (node.type.name === 'heading') {
+            const level = node.attrs.level;
+            const text = node.textContent;
+            const id = node.attrs.id;
+            headings.push({ level, text, id });
+        }
+    });
+
+    return headings;
+
+}
+
 
 // https://github.com/ueberdosis/tiptap/blob/9dc6b8f1aba105aa5378ec1d391e19ebcb01d8a8/packages/core/src/commands/blur.ts#L17
 export function blurEditor(view: EditorView) {

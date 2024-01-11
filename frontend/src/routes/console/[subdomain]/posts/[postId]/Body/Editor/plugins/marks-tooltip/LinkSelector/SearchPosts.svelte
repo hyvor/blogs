@@ -1,5 +1,5 @@
 <script lang="ts">
-	import { ActionList, ActionListItem, Button, Dropdown, Loader, TextInput, toast } from "@hyvor/design/components";
+	import { ActionList, ActionListItem, Button, Dropdown, IconMessage, Loader, TextInput, toast } from "@hyvor/design/components";
 	import { IconCaretDown } from "@hyvor/icons";
 	import { createEventDispatcher, tick } from "svelte";
 	import { getPosts } from "../../../../../../postActions";
@@ -26,8 +26,10 @@
             return;
         }
 
+        isLoading = true;
+
         if (searchTimeout) clearTimeout(searchTimeout);
-        searchTimeout = setTimeout(loadPosts, 250);
+        searchTimeout = setTimeout(loadPosts, 500);
     }
 
     function loadPosts() {
@@ -124,27 +126,40 @@
 
         {#if input.trim().length}
 
-            {#each posts as post}
+            {#if posts.length === 0}
 
-                <div
-                    class="post"
-                    role="button"
-                    tabindex="0"
-                    on:click={() => handleClick(post)}
-                    on:keyup
-                >
+                <IconMessage
+                    empty
+                    message="No posts found"
+                    padding={35}
+                    iconSize={60}
+                />
 
-                    <div class="title">
-                        {getCurrentVariant(post).title}
+            {:else}
+
+                {#each posts as post}
+
+                    <div
+                        class="post"
+                        role="button"
+                        tabindex="0"
+                        on:click={() => handleClick(post)}
+                        on:keyup
+                    >
+
+                        <div class="title">
+                            {getCurrentVariant(post).title}
+                        </div>
+
+                        <div class="url">
+                            {getCurrentVariant(post).url}
+                        </div>
+
                     </div>
+                    
+                {/each}
 
-                    <div class="url">
-                        {getCurrentVariant(post).url}
-                    </div>
-
-                </div>
-                
-            {/each}
+            {/if}
 
         {/if}
 

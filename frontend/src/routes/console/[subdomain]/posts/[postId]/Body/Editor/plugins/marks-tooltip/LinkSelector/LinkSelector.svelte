@@ -1,6 +1,6 @@
 <script lang="ts">
 	import { Modal, TabNav, TabNavItem } from "@hyvor/design/components";
-	import { IconLink45deg, IconSearch } from "@hyvor/icons";
+	import { IconHash, IconLink45deg, IconSearch } from "@hyvor/icons";
 	import { tick } from "svelte";
 	import Paste from "./Paste.svelte";
 	import SearchPosts from "./SearchPosts.svelte";
@@ -8,11 +8,12 @@
 	import { toggleMark } from "prosemirror-commands";
 	import schema from "../../../../../../../../lib/prosemirror/schema";
 	import { TextSelection } from "prosemirror-state";
+	import Anchors from "./Anchors.svelte";
 
     export let show: boolean;
     export let view: EditorView;
 
-    let activeTab: 'paste' | 'posts' = 'paste';
+    let activeTab: 'paste' | 'anchors' | 'posts' = 'paste';
 
     function handleAdd(e: CustomEvent<string>) {
         toggleMark(schema.marks.link!, {href: e.detail})(view.state, view.dispatch)
@@ -41,15 +42,21 @@
             <IconLink45deg slot="start" />
             Paste Link
         </TabNavItem>
+        <TabNavItem name="anchors">
+            <IconHash slot="start" />
+            Anchors
+        </TabNavItem>
         <TabNavItem name="posts">
             <IconSearch slot="start" size={13} />
-            Search Posts
+            Posts
         </TabNavItem>
     </TabNav>
 
     {#if activeTab === 'paste'}
         <Paste on:add={handleAdd} />
-    {:else}
+    {:else if activeTab === 'anchors'}
+        <Anchors on:add={handleAdd} />
+    {:else if activeTab === 'posts'}
         <SearchPosts on:add={handleAdd} />
     {/if}
 

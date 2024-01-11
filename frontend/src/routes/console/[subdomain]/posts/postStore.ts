@@ -58,6 +58,26 @@ export const postLanguageStore = derived(
     }
 )
 
+export const postCurrentContentKey = derived(
+    [postVariantStore, postEditingStatusStore],
+    ([postVariant, postEditingStatus]) => {
+        return postVariant.status === 'draft' ?
+            'content' :
+            (
+                postEditingStatus.isEditingPublished ?
+                    'content_unsaved' :
+                    'content'
+            )
+    }
+);
+
+export const postCurrentContentStore = derived(
+    [postVariantStore, postCurrentContentKey],
+    ([postVariant, key]) => {
+        return postVariant[key];
+    }
+)
+
 
 export function updatePostStore(values: Partial<Post>, original = false) {
     const stores = [postStore]

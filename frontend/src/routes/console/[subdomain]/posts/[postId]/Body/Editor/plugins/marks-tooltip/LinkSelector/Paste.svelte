@@ -2,13 +2,15 @@
 	import { Button, TextInput, Validation } from "@hyvor/design/components";
 	import { IconArrowReturnLeft } from "@hyvor/icons";
 	import { createEventDispatcher } from "svelte";
+	import { getHeadingsFromContent } from "../../../../../../../../lib/prosemirror/helpers";
+	import { postCurrentContentStore } from "../../../../../../postStore";
 
     let input = '';
 
-    function isRelative(val: string) {
-        // does not have protocol
-        return !/^[a-zA-Z0-9]+:\/\//.test(val);
-    }
+    $: isRelative = !/^[a-zA-Z0-9]+:\/\//.test(input);
+    $: isAnchor = /^#/.test(input);
+    $: headings = getHeadingsFromContent($postCurrentContentStore);
+    $: isAnchorAvailable = headings.find((heading) => heading.id === input.replace('#', ''));
 
     const dispatch = createEventDispatcher();
 
@@ -21,7 +23,6 @@
             handleClick();
         }
     }
-
 </script>
 
 <TextInput
@@ -33,10 +34,22 @@
     on:keyup={handleKeyup}
 />
 
-{#if input.trim() !== '' &&  isRelative(input)}
+{#if input.trim() !== '' &&  (isRelative || isAnchor)}
     <div class="warning-wrap">
-        <Validation state="warning">
-            You are adding a <strong>relative link</strong>.
+        <Validation 
+            state={
+                isAnchor ?
+                    (isAnchorAvailable ? 'success' : 'error') :
+                    'warning'
+            }
+        >
+            {#if isAnchor && !isAnchorAvailable}
+                You are adding a <strong>missing anchor link</strong>.
+            {:else if isAnchor && isAnchorAvailable}
+                You are adding an <strong>anchor link</strong>.
+            {:else if isRelative}
+                You are adding a <strong>relative link</strong>.
+            {/if}
         </Validation>
     </div>
 {/if}
@@ -58,7 +71,8 @@
     </Button>
 </div>
 
-<style>
+<style lang="scss">
+
     .buttons {
         margin-top: 15px;
         text-align: right;
