@@ -1,23 +1,24 @@
 <script lang="ts">
-	import type { SelectedImage } from './image-uploader.ts';
+	import type { SelectedImage as SelectedImageType } from './image-uploader.ts';
 	import { Button, Modal, TabNav, TabNavItem } from "@hyvor/design/components";
 	import { IconCardImage, IconCaretLeft, IconCloudUpload } from "@hyvor/icons";
 	import TabUpload from "./TabUpload.svelte";
-	import ImageEditor from "./SelectedImage.svelte";
+	import SelectedImage from "./SelectedImage.svelte";
 	import ExcalidrawIcon from "./Excalidraw/ExcalidrawIcon.svelte";
 	import Excalidraw from "./Excalidraw/Excalidraw.svelte";
+	import Unsplash from "./Unsplash/Unsplash.svelte";
     
     let tab = 'upload';
 
-    let backImage: null | SelectedImage = null;
-    let selectedImage: null | SelectedImage = null;
+    let backImage: null | SelectedImageType = null;
+    let selectedImage: null | SelectedImageType = null;
 
     /* selectedImage = {
         url: 'https://fengyuanchen.github.io/cropperjs/images/picture.jpg',
         from: 'upload'
     }; */
 
-    function handleSelect(e: CustomEvent<SelectedImage>) {
+    function handleSelect(e: CustomEvent<SelectedImageType>) {
         selectedImage = e.detail;
         backImage = null;
     }
@@ -60,7 +61,7 @@
                         <IconCardImage slot="start" />
                         Media Library
                     </TabNavItem>
-                    <TabNavItem name="Unsplash">
+                    <TabNavItem name="unsplash">
                         <svg 
                             role="img" 
                             width="1em" 
@@ -82,23 +83,25 @@
 
         </div>
 
-        {#if selectedImage}
-            <ImageEditor url={selectedImage.url} />
-        {:else}
+
+        <div 
+            class="body"
+            style:position={selectedImage ? 'relative' : undefined}
+        >
 
             {#if tab === 'upload'}
                 <TabUpload />
+            {:else if tab === 'unsplash'}
+                <Unsplash on:select={handleSelect} />
             {:else if tab === 'excalidraw'}
-                <Excalidraw
-                    on:select={handleSelect}
-                    initialData={{
-                        appState: backImage?.excalidraw?.appState || undefined,
-                        elements: backImage?.excalidraw?.elements || []
-                    }}
-                />
+                <Excalidraw on:select={handleSelect} />
             {/if}
 
-        {/if}
+            {#if selectedImage}
+                <SelectedImage url={selectedImage.url} />
+            {/if}
+
+        </div>
 
     </Modal>
 </div>
@@ -110,15 +113,22 @@
     }
 
     .image-uploader :global(.inner) {
-        height: calc(100%);
+        height: 100%;
         width: 1100px!important;
         display: flex;
         flex-direction: column;
         :global(> .content) {
             flex: 1;
-            padding-top: 10px;
+            padding-top: 0;
             min-height: 0;
+            display: flex;
+            flex-direction: column;
         }
+    }
+
+    .body {
+        flex: 1;
+        min-height: 0;
     }
 
 </style>

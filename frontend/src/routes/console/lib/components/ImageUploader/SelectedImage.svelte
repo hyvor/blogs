@@ -26,16 +26,29 @@
     }
 </script>
 
-<div class="img-wrap">
-    <img 
-        src={url} 
-        alt="Editing"
-        bind:this={imgEl}
-        on:load={handleImageLoad}
-    />
+
+<div class="selected-image">
+    <div class="img-wrap">
+        <img 
+            src={url} 
+            alt="Editing"
+            bind:this={imgEl}
+            on:load={handleImageLoad}
+        />
+    </div>
 </div>
 
+
 <style>
+    .selected-image {
+        position: absolute;
+        z-index: 100;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        background-color: var(--box-background);
+    }
     .img-wrap {
         display: flex;
         align-items: center;
