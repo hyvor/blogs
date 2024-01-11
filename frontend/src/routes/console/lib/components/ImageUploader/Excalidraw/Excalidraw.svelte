@@ -1,14 +1,16 @@
 <script lang="ts">
 	import { Button, Loader, toast } from "@hyvor/design/components";
-    import type { ExcalidrawImperativeAPI } from "@excalidraw/excalidraw/types/types.js";
+    import type { ExcalidrawImperativeAPI, ExcalidrawInitialDataState } from "@excalidraw/excalidraw/types/types.js";
 	import { browser } from "$app/environment";
-	import { exportToBlob, exportToSvg } from "@excalidraw/excalidraw";
+	import { exportToSvg } from "@excalidraw/excalidraw";
 	import { createEventDispatcher, onMount } from "svelte";
 	import type { SelectedImage } from "../image-uploader";
 	import { IconSendFill } from "@hyvor/icons";
 
     if(browser)
 		window.process = {env: {IS_PREACT: false}};
+
+    export let initialData : ExcalidrawInitialDataState = {};
 
 	let excalidrawAPI: ExcalidrawImperativeAPI;
 
@@ -35,7 +37,11 @@
 
         dispatch('select', {
             url: URL.createObjectURL(blob),
-            from: 'excalidraw'
+            from: 'excalidraw',
+            excalidraw: {
+                elements,
+                appState: excalidrawAPI.getAppState(),
+            }
         })
     }
 
@@ -48,13 +54,14 @@
         <svelte:component 
             this={ExcalidrawComponent}
             bind:excalidrawAPI={excalidrawAPI}
+            initialData={initialData}
         />
         <div class="footer">
             <Button 
                 size="large"
                 on:click={handleFinish}
             >
-                Finish and Upload <IconSendFill slot="end" />
+                Finish and Add <IconSendFill slot="end" />
             </Button>
         </div>
     </div>

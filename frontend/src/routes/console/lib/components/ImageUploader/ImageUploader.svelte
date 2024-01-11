@@ -8,6 +8,8 @@
 	import Excalidraw from "./Excalidraw/Excalidraw.svelte";
     
     let tab = 'upload';
+
+    let backImage: null | SelectedImage = null;
     let selectedImage: null | SelectedImage = null;
 
     /* selectedImage = {
@@ -17,6 +19,12 @@
 
     function handleSelect(e: CustomEvent<SelectedImage>) {
         selectedImage = e.detail;
+        backImage = null;
+    }
+
+    function handleBack() {
+        backImage = selectedImage;
+        selectedImage = null;
     }
 
 </script>
@@ -34,7 +42,7 @@
             {#if selectedImage}
 
                 <Button 
-                    on:click={() => selectedImage = null}
+                    on:click={handleBack}
                     color="input"
                 >
                     <IconCaretLeft slot="start" va />
@@ -81,7 +89,13 @@
             {#if tab === 'upload'}
                 <TabUpload />
             {:else if tab === 'excalidraw'}
-                <Excalidraw on:select={handleSelect} />
+                <Excalidraw
+                    on:select={handleSelect}
+                    initialData={{
+                        appState: backImage?.excalidraw?.appState || {},
+                        elements: backImage?.excalidraw?.elements || []
+                    }}
+                />
             {/if}
 
         {/if}
