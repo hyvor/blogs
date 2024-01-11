@@ -11,6 +11,8 @@
     let isCreating = false;
     
     let navigations : Navigation[] = [];
+    let headerNavigations: Navigation[] = [];
+    let footerNavigations: Navigation[] = [];
     let isLoading = true;
 
   
@@ -18,6 +20,8 @@
         getNavigations()
             .then(res => {
                 navigations = res;
+                headerNavigations = navigations.filter(t => t.type === 'header');
+                footerNavigations = navigations.filter(t => t.type === 'footer');
             })
             .catch(err => {
                 toast.error(err.message);
@@ -69,6 +73,7 @@
             {#if navigations.length === 0}
                 <IconMessage empty message="No navigations found." />
             {:else}
+                <div class="nav-title">Header Navigation</div>
                 <Table columns="2fr 2fr 70px">
 
                     <TableRow head>
@@ -77,7 +82,28 @@
                         <div></div>
                     </TableRow>
 
-                    {#each navigations as navigation (navigation.id)}
+
+                    {#each headerNavigations as navigation (navigation.id)}
+                        <NavigationRow 
+                            {navigation}
+                            on:delete={handleDelete}
+                            on:variantCreate={handleCreateVariant}
+                            on:update={handleUpdate}
+                        />
+                    {/each}
+                </Table>
+
+                <div class="nav-title">Footer Navigation</div>
+                <Table columns="2fr 2fr 70px">
+
+                    <TableRow head>
+                        <div>Name</div>
+                        <div>URL</div>
+                        <div></div>
+                    </TableRow>
+
+
+                    {#each footerNavigations as navigation (navigation.id)}
                         <NavigationRow 
                             {navigation}
                             on:delete={handleDelete}
@@ -113,6 +139,12 @@
     .table {
         flex: 1;
         padding: 15px 30px;
+    }
+
+    .nav-title {
+        font-size: 16px;
+        font-weight: 600;
+        margin-bottom: 15px;
     }
 
 </style>
