@@ -1,11 +1,15 @@
 <script lang="ts">
-	import { Button, IconMessage, Loader, TextInput, toast } from "@hyvor/design/components";
-import MediaFilter from "./MediaFilter.svelte";
+	import { Button, IconMessage, Loader, toast } from "@hyvor/design/components";
+    import MediaFilter from "./MediaFilter.svelte";
 	import { getMedia, type FileType } from "./mediaActions";
 	import { IconCloudUpload } from "@hyvor/icons";
 	import type { Media } from "../../../lib/types";
 	import { onMount } from "svelte";
 	import MediaFile from "./MediaFile.svelte";
+
+    export let showUpload = true;
+    export let filterDefaultType = null as null | FileType;
+    export let filterTypeDisabled = false;
 
     let isLoading = true;
     let mediaFiles: Media[] = [];
@@ -34,40 +38,55 @@ import MediaFilter from "./MediaFilter.svelte";
 
 </script>
 
-<div class="topbar hds-box">
-    <MediaFilter on:change={handleChange} />
+<div class="wrap">
 
-    <Button>
-        <IconCloudUpload slot="start" />
-        Upload
-    </Button>
-</div>
+    <div class="topbar">
+        <MediaFilter 
+            on:change={handleChange} 
+            defaultType={filterDefaultType}
+            typeDisabled={filterTypeDisabled}
+        />
 
-<div class="media-show hds-box">
+        {#if showUpload}
+            <Button>
+                <IconCloudUpload slot="start" />
+                Upload
+            </Button>
+        {/if}
+    </div>
 
-    {#if isLoading}
-        <Loader full />
-    {:else}
+    <div class="media-show">
 
-        {#if !mediaFiles.length}
-            <IconMessage empty message="No Media Found" />
+        {#if isLoading}
+            <Loader full />
         {:else}
-            {#each mediaFiles as media (media.id)}
-                <MediaFile {media} />
-            {/each}
+
+            {#if !mediaFiles.length}
+                <IconMessage empty message="No Media Found" />
+            {:else}
+                {#each mediaFiles as media (media.id)}
+                    <MediaFile {media} />
+                {/each}
+            {/if}
+
         {/if}
 
-    {/if}
+    </div>
 
 </div>
 
 <style>
+    .wrap {
+        flex: 1;
+        height: 100%;
+        display: flex;
+        flex-direction: column;
+    }
     .topbar {
         display: flex;
         justify-content: space-between;
         align-items: center;
-        padding: 20px 25px;
-        margin-bottom: 15px;
+        margin-bottom: 30px;
     }
     .media-show {
         flex: 1;

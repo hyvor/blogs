@@ -4,7 +4,10 @@
 	import { getExtensionsByFileType, type FileType } from "./mediaActions";
 	import { createEventDispatcher } from "svelte";
 
-    let type: FileType = 'all';
+    export let defaultType: null | FileType = null;
+    export let typeDisabled = false;
+
+    let type: FileType = defaultType || 'all';
     let showFileTypesDropdown = false;
     let customExtension = '';
     let search = '';
@@ -69,7 +72,11 @@
 <div class="toolbar">
 
     <Dropdown width={300} bind:show={showFileTypesDropdown}>
-        <Button slot="trigger" color="input">
+        <Button 
+            slot="trigger" 
+            color="input"
+            disabled={typeDisabled}
+        >
             <Text small light slot="start">File type</Text>
             { selectedFileName }
 

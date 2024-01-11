@@ -13,6 +13,8 @@
     let hasMore = false;
     let images : UnsplashImage[] = [];
 
+    let hasLoaded = false;
+
     let inputError = false;
 
     const limit = 30;
@@ -36,6 +38,8 @@
 
                 isLoading = false;
                 isLoadingMore = false;
+
+                hasLoaded = true;
             })
             .catch(e => {
                 toast.error(e.message);
@@ -87,7 +91,7 @@
         {#if isLoading}
             <Loader full />
         {:else}
-            {#if images.length === 0}
+            {#if images.length === 0 && search.trim() !== '' && hasLoaded}
                 <IconMessage empty message="No images found" />
             {:else}
                 <div class="cols">

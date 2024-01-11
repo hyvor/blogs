@@ -7,6 +7,7 @@
 	import ExcalidrawIcon from "./Excalidraw/ExcalidrawIcon.svelte";
 	import Excalidraw from "./Excalidraw/Excalidraw.svelte";
 	import Unsplash from "./Unsplash/Unsplash.svelte";
+	import Media from "./Media/Media.svelte";
     
     let tab = 'upload';
 
@@ -91,6 +92,8 @@
 
             {#if tab === 'upload'}
                 <TabUpload />
+            {:else if tab === 'media'}
+                <Media on:select={handleSelect} />
             {:else if tab === 'unsplash'}
                 <Unsplash on:select={handleSelect} />
             {:else if tab === 'excalidraw'}

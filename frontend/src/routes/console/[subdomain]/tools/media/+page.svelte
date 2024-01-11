@@ -2,4 +2,13 @@
 	import MediaLibrary from "./MediaLibrary.svelte";
 </script>
 
-<MediaLibrary />
+<div class="media hds-box">
+	<MediaLibrary />
+</div>
+
+<style>
+	.media {
+		flex: 1;
+        padding: 25px;
+	}
+</style>
