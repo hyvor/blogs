@@ -92,7 +92,7 @@
                 <Excalidraw
                     on:select={handleSelect}
                     initialData={{
-                        appState: backImage?.excalidraw?.appState || {},
+                        appState: backImage?.excalidraw?.appState || undefined,
                         elements: backImage?.excalidraw?.elements || []
                     }}
                 />

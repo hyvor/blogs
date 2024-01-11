@@ -2,7 +2,7 @@
 	import { Button, Loader, toast } from "@hyvor/design/components";
     import type { ExcalidrawImperativeAPI, ExcalidrawInitialDataState } from "@excalidraw/excalidraw/types/types.js";
 	import { browser } from "$app/environment";
-	import { exportToSvg } from "@excalidraw/excalidraw";
+	import { exportToBlob, exportToCanvas, exportToSvg } from "@excalidraw/excalidraw";
 	import { createEventDispatcher, onMount } from "svelte";
 	import type { SelectedImage } from "../image-uploader";
 	import { IconSendFill } from "@hyvor/icons";
@@ -33,7 +33,28 @@
             appState: excalidrawAPI.getAppState(),
             files: excalidrawAPI.getFiles(),
         });
-        const blob = new Blob([svg.outerHTML], { type: "image/svg+xml" });
+
+        let data = (new XMLSerializer()).serializeToString(svg);
+        data = data.replace('excalidraw@undefined', 'excalidraw@0.17.2')
+
+        console.log(data);
+        const blob = new Blob([data], { 
+            type: "image/svg+xml;charset=utf-8" 
+        });
+
+        /* const blob = await exportToBlob({
+            elements,
+            mimeType: "image/svg+xml",
+            appState: excalidrawAPI.getAppState(),
+            files: excalidrawAPI.getFiles(),
+            quality: 1
+        }); */
+
+        /* const canvas = await exportToCanvas({
+            elements,
+            appState: excalidrawAPI.getAppState(),
+            files: excalidrawAPI.getFiles(),
+        }); */
 
         dispatch('select', {
             url: URL.createObjectURL(blob),
