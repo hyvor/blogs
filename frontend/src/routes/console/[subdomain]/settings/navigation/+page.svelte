@@ -50,6 +50,8 @@
 
     function handleUpdate(e: CustomEvent<Navigation>) {
         navigations = navigations.map(t => t.id === e.detail.id ? e.detail : t);
+        headerNavigations = navigations.filter(t => t.type === 'header');
+        footerNavigations = navigations.filter(t => t.type === 'footer');
     }
 
     onMount(loadNavigation);

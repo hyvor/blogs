@@ -48,7 +48,9 @@
             }
         }
 
-        const updates : Partial<Navigation> = navigation;
+        const updates : Partial<Navigation> = {};
+        updates.url = url;
+        updates.type = type;
 
         if (url !== navigation.url) {
             updates.url = url;
