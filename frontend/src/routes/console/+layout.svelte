@@ -22,22 +22,12 @@
             endpoint: '/init',
             userApi: true,
         }).then(res => {
-
             setConfig(res.config);
 
             authUserStore.set(res.user)
             blogListStore.set(res.blogs)
 
             isLoading = false;
-
-            if (res.blogs.length > 0) {
-                if ($page.url.pathname === '/console') {
-                    goto('/console/' + res.blogs[0]!.subdomain)
-                }
-            } else {
-                goto('/console/new')
-            }
-
         })
 
     })

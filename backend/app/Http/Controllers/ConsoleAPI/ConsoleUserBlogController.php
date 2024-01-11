@@ -8,8 +8,10 @@ use App\Domains\Blog\BlogService;
 use App\Domains\User\UserBlogRepository;
 use App\Domains\User\UserRepository;
 use App\Exceptions\TrustedException;
+use App\Http\ConsoleApi\Objects\Blog\BlogListObject;
 use App\Http\Controllers\Controller;
 use App\Rules\Subdomain;
+use Hyvor\Helper\Http\Middleware\AccessAuthUser;
 use Hyvor\HyvorConnecter\HyvorUser;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
@@ -17,7 +19,7 @@ use Illuminate\Support\Str;
 
 class ConsoleUserBlogController extends Controller
 {
-    public function createBlog(Request $request, HyvorUser $hyvorUser) : JsonResponse
+    public function createBlog(Request $request, AccessAuthUser $hyvorUser) : JsonResponse
     {
         $request->validate([
             'name' => 'required|string',
@@ -52,7 +54,7 @@ class ConsoleUserBlogController extends Controller
             throw new TrustedException('User not found');
         }
 
-        return response()->json(new UserBlogObject($user));
+        return response()->json(new BlogListObject($user));
     }
 
 
@@ -66,10 +68,8 @@ class ConsoleUserBlogController extends Controller
 
         $blog = BlogService::getBlogBySubdomain($subdomain);
 
-        if ($blog) {
-            throw new TrustedException('Subdomain already taken');
-        }
-
-        return response()->json();
+        return response()->json([
+            'available' => $blog === null,
+        ]);
     }
 }

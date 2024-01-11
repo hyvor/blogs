@@ -1,7 +1,26 @@
-import { get } from "svelte/store";
 import consoleApi from "../consoleApi";
-import { blogOriginalStore, blogStore, updateBlogStore, updateBlogStoreVariant } from "../stores/blogStore";
-import type { Blog, BlogVariant } from "../types";
+import { updateBlogStore, updateBlogStoreVariant } from "../stores/blogStore";
+import type { Blog, BlogList, BlogVariant } from "../types";
+
+export function getSubdomainAvailable(subdomain: string) {
+    return consoleApi.get<{available: boolean}>({
+        endpoint: '/blog/check-subdomain',
+        data: {subdomain},
+        userApi: true
+    })
+}
+
+export function createBlog(name: string, subdomain: string, isDev = false) {
+    return consoleApi.post<BlogList>({
+        endpoint: '/blog',
+        data: {
+            name,
+            subdomain,
+            is_dev: isDev
+        },
+        userApi: true
+    })
+}
 
 export function saveSort(ids: number[]) {
     return consoleApi.patch({
