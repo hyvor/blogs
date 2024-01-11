@@ -33,7 +33,7 @@ export function createNavigationVariant(id: number, languageId: number) {
 }
 
 export function updateNavigationVariant(navigationId: number, languageId: number, variant: Partial<NavigationVariant>, type: 'header' | 'footer', url: string) {
-    return consoleApi.put<NavigationVariant>({
+    return consoleApi.patch<NavigationVariant>({
         endpoint: `/navigation/${navigationId}/variant`,
         data: {
             language_id: languageId,
@@ -43,9 +43,9 @@ export function updateNavigationVariant(navigationId: number, languageId: number
 }
 
 export function updateNagivation(id: number, navigation: Partial<Navigation>) {
-    return consoleApi.put<Navigation>({
+    return consoleApi.patch<Navigation>({
         endpoint: `/navigation/${id}`,
-        data: navigation
+        data: {...navigation}
     })
 }
 

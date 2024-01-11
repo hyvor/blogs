@@ -74,6 +74,8 @@ Route::prefix('/api/console/v0/blog/{subdomain}')
 
         // checks relationship to the blog, for resources that have {id} in route
         ResourceAccessMiddleware::class,
+
+        CorsOnLocalhost::class
     ])
     ->group(function () {
 
@@ -182,10 +184,10 @@ Route::prefix('/api/console/v0/blog/{subdomain}')
             Route::get('/navigations', [ConsoleNavigationController::class, 'get']);
             Route::patch('/navigations/sort', [ConsoleNavigationController::class, 'updateSort']);
             Route::post('/navigation', [ConsoleNavigationController::class, 'create']);
-            Route::put('/navigation/{id}', [ConsoleNavigationController::class, 'update']);
+            Route::patch('/navigation/{id}', [ConsoleNavigationController::class, 'update']);
             Route::delete('/navigation/{id}', [ConsoleNavigationController::class, 'delete']);
             Route::post('/navigation/{id}/variant', [ConsoleNavigationController::class, 'createVariant']);
-            Route::put('/navigation/{id}/variant', [ConsoleNavigationController::class, 'updateVariant']);
+            Route::patch('/navigation/{id}/variant', [ConsoleNavigationController::class, 'updateVariant']);
             Route::delete('/navigation/{id}/variant', [ConsoleNavigationController::class, 'deleteVariant']);
 
             // languages

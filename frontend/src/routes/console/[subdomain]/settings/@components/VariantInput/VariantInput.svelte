@@ -1,6 +1,6 @@
 <script lang="ts" context="module">
-    export type AcceptableTypes = Blog | Tag;
-    export type AcceptableTypesNames = 'blog' | 'tag';
+    export type AcceptableTypes = Blog | Tag | Navigation;
+    export type AcceptableTypesNames = 'blog' | 'tag' | 'navigation';
 </script>
 
 <script lang="ts" generics="T extends AcceptableTypes">
@@ -8,7 +8,7 @@
 	import VariantCreator from "./VariantCreator.svelte";
 	import { languagesStore } from "../../../../lib/stores/languagesStore";
 	import { SplitControl, TextInput } from "@hyvor/design/components";
-	import type { Blog, Tag } from "../../../../lib/types";
+	import type { Blog, Navigation, Tag } from "../../../../lib/types";
     import { createEventDispatcher } from "svelte";
 
     export let type: AcceptableTypesNames;
