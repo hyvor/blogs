@@ -17,11 +17,17 @@
 
     }
 
+    $: uniqueKey = `${$postVariantStore.id}` +
+        `-lang-${$postEditingStatusStore.languageId}`;
+
 </script>
 
 <div class="editor hds-box">
     <EditorTop />
-    <Prosemirror value={content} />
+
+    {#key uniqueKey}
+        <Prosemirror value={content} />
+    {/key}
 </div>
 
 <style>
