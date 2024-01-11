@@ -14,6 +14,7 @@ import { columnResizing, tableEditing, goToNextCell } from 'prosemirror-tables';
 import marksTooltipPlugin from "./marks-tooltip/plugin-marks-tooltip";
 import schema from "../../../../../../lib/prosemirror/schema";
 import wordCountPlugin from "./plugin-wordcount";
+import slashPlugin from "./slash/plugin-slash";
 
 export function getPlugins() {
 
@@ -24,7 +25,7 @@ export function getPlugins() {
         placeholderPlugin('Start writing...'),
         marksTooltipPlugin(),
         wordCountPlugin(),
-        // slashPlugin(schema),
+        slashPlugin(),
         // slashTipPlugin(),
 
         // from defaults
