@@ -4,6 +4,7 @@ export interface Config {
         delivery: string
     },
     limits: {
+        max_upload_size: number,
         max_theme_zip_size: number,
         max_asset_file_size: number
     },

@@ -2,8 +2,10 @@
 	import { Button, Loader, TextInput, toast } from "@hyvor/design/components";
 	import { IconArrowReturnLeft } from "@hyvor/icons";
 	import { createEventDispatcher, onMount } from "svelte";
-	import type { SelectedImage } from "./image-uploader";
+	import { VALID_MIME_TYPES, type SelectedImage, VALID_MIME_TYPES_NAMES } from "./image-uploader";
 	import { isValidUrl } from "../../helper/is-valid-url";
+	import { getConfig } from "../../config";
+	import byteFormatter from "../../helper/byte-formatter";
 
     export let isUploading = false;
 
@@ -130,6 +132,18 @@
         const file = files[0];
         if (!file) {
             toast.error('No files selected');
+            return null;
+        }
+
+        const max = getConfig().limits.max_upload_size;
+        if (file.size > max) {
+            toast.error('File size exceeds the limit of ' + byteFormatter(max));
+            return null;
+        }
+
+        if (!VALID_MIME_TYPES.includes(file.type)) {
+            const names = VALID_MIME_TYPES_NAMES.join(', ').toUpperCase();
+            toast.error(`Only ${names} images are allowed`);
             return null;
         }
 

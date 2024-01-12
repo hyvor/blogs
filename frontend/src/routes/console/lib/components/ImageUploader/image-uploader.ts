@@ -16,3 +16,18 @@ export interface SelectedImage {
         appState: AppState,
     }
 }
+
+
+export const VALID_MIME_TYPES = [
+    'image/gif', 
+    'image/jpeg', 
+    'image/png',
+    'image/svg+xml', 
+    'image/webp',
+    'image/apng', 
+    'image/avif'
+];
+
+export const VALID_MIME_TYPES_NAMES = VALID_MIME_TYPES.map(
+    m => m.split('/')[1]?.split('+')[0]
+);
