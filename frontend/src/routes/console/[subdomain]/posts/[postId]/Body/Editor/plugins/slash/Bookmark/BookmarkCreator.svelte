@@ -55,7 +55,7 @@
                 urlData = data;
             })
             .catch(_ => {
-                error = 'Failed to embed this URL';
+                error = 'Failed to load URL';
             })
             .finally(() => {
                 isFetching = false;

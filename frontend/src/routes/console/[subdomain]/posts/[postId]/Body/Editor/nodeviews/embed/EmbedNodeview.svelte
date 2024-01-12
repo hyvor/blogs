@@ -3,17 +3,21 @@
 	import { onMount } from "svelte";
 	import { getUrlData } from "../../../../../../../lib/actions/urlDataActions";
 	import EmbedHtmlDisplay from "../../plugins/slash/Embed/EmbedHtmlDisplay.svelte";
+	import BookmarkDisplay from "../../plugins/slash/Bookmark/BookmarkDisplay.svelte";
+	import type { UrlData } from "../../../../../../../lib/types";
 
     export let url: string;
 
+    export let type : 'embed' | 'link' = 'embed';
+
     let isLoading = true;
-    let html = '';
+    let urlData: UrlData;
     let error : null | string = null;
 
     onMount(() => {
-        getUrlData(url, 'embed')
+        getUrlData(url, type)
             .then(res => {
-                html = res.html!;
+                urlData = res;
             })
             .catch(() => {
                 error = 'Failed to load embed';
@@ -37,12 +41,13 @@
             iconSize={70}
         />
     {:else}
-        <EmbedHtmlDisplay {html} />
+        {#if type === 'embed'}
+            <EmbedHtmlDisplay html={urlData.html} />
+        {:else}
+            <BookmarkDisplay {urlData} />
+        {/if}
     {/if}
 </div>
 
 <style>
-    div {
-        background: var(--input);
-    }
 </style>

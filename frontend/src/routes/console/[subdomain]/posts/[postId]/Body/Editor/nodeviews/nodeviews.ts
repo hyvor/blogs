@@ -5,6 +5,7 @@ import { CalloutNodeView } from "./callout/nodeview-callout";
 import CodeBlockNodeView from "./nodeview-codeblock";
 import CustomHtmlNodeView from "./nodeview-custom-html";
 import EmbedView from "./embed/nodeview-embed";
+import BookmarkView from "./nodeview-bookmark";
 
 interface NodeViewsType {
     [key: string]: NodeViewConstructor
@@ -14,7 +15,7 @@ export function getNodeViews() : NodeViewsType {
 
     return {
         embed(node, view, getPos) {
-            return new EmbedView(node, view, getPos);
+            return new EmbedView(node);
         },
         figcaption(node) {
             return new FigcaptionNodeView(node);
@@ -30,13 +31,13 @@ export function getNodeViews() : NodeViewsType {
         },
         custom_html(node, view, getPos) {
             return new CustomHtmlNodeView(node, view, getPos)
-        }
+        },
+        bookmark(node, view, getPos) {
+            return new BookmarkView(node)
+        },
         /*        
         image(node, view, getPos) {
             return new Image(HBSchema, node, view, getPos)
-        },
-        bookmark(node, view, getPos) {
-            return new Bookmark(node, view, getPos)
         },
         table(node, view, getPos) {
             return new Table(HBSchema, node, view, getPos);

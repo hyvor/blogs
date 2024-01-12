@@ -10,19 +10,20 @@
         <div class="link-description">{urlData.description}</div>
         <div class="link-domain">{urlData.domain}</div>
     </div>
-    <div class="link-thumbnail">
-        <img alt="Thumbnail" src="{urlData.thumbnail_url}" />
-    </div>
+    {#if urlData.thumbnail_url}
+        <div class="link-thumbnail">
+            <img alt="Thumbnail" src="{urlData.thumbnail_url}" />
+        </div>
+    {/if}
 </div>
 
 <style lang="scss">
     .wrap {
         cursor: default;
         display: flex;
-        border: 1px solid var(--border);
+        border: 2px solid var(--input);
         border-radius: 20px;
         overflow: hidden;
-        box-shadow: 0 0 5px rgb(0 0 0 / 6%);
         width: 100%;
         white-space: normal;
     }
