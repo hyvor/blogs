@@ -6,7 +6,7 @@
 	import { Button, Switch } from "@hyvor/design/components";
 	import { IconCheckAll, IconCloudUpload } from "@hyvor/icons";
 	import byteFormatter from "../../../helper/byte-formatter";
-	import { onMount } from "svelte";
+	import { createEventDispatcher, onMount } from "svelte";
 
     export let image: SelectedImage;
 
@@ -88,6 +88,20 @@
             });
     }
 
+    const dispatch = createEventDispatcher<{select: SelectedImage}>();
+
+    function handleSelect() {
+        dispatch('select', image);
+    }
+
+    function handleUpload() {
+        if (shouldUpload) {
+            
+        } else {
+            handleSelect();
+        }
+    }
+
 
     onMount(async () => {
 
@@ -145,7 +159,7 @@
 
     <div class="footer">
 
-        <Button>
+        <Button on:click={handleUpload}>
             { shouldUpload ? 'Upload' : 'Select' }
             <svelte:fragment slot="end">
                 {#if shouldUpload}

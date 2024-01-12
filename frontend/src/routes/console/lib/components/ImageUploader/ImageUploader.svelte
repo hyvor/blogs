@@ -14,11 +14,6 @@
     let backImage: null | SelectedImageType = null;
     let selectedImage: null | SelectedImageType = null;
 
-    /* selectedImage = {
-        url: 'https://fengyuanchen.github.io/cropperjs/images/picture.jpg',
-        from: 'upload'
-    }; */
-
     function handleSelect(e: CustomEvent<SelectedImageType>) {
         selectedImage = e.detail;
         backImage = null;
@@ -101,7 +96,10 @@
             {/if}
 
             {#if selectedImage}
-                <SelectedImage image={selectedImage} />
+                <SelectedImage 
+                    image={selectedImage} 
+                    on:select
+                />
             {/if}
 
         </div>

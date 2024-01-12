@@ -5,6 +5,7 @@
 	import { blogStore, updateBlogStoreVariantValue } from "../../lib/stores/blogStore";
 	import VariantInput from "./@components/VariantInput/VariantInput.svelte";
 	import ImageUploader from "../../lib/components/ImageUploader/ImageUploader.svelte";
+	import ImageSetting from "./@components/ImageSetting.svelte";
 
 
     function handleNameChange(e: CustomEvent<{languageId: number, value: string}>) {
@@ -16,10 +17,14 @@
     }
 
     function handleBlogValueChangeEvent(e: any, key: keyof Blog) {
+        changeBlogValue(key, e.target.value);
+    }
+
+    function changeBlogValue(key: keyof Blog, value: any) {
         blogStore.update(b => {
             return {
                 ...b, 
-                [key]: e.target.value
+                [key]: value
             }
         });
     }
@@ -28,6 +33,9 @@
 
 <BlogSettingsSave 
     keys={[
+        'logo_url',
+        'icon_url',
+        'cover_url',
         'social_facebook',
         'social_twitter',
         'social_linkedin',
@@ -68,7 +76,30 @@
         label="Logo"
         caption="Your blog's logo, usually displayed in the header"
     >
-        <ImageUploader />
+        <ImageSetting 
+            src={$blogStore.logo_url}
+            on:change={e => changeBlogValue('logo_url', e.detail)}
+        />
+    </SplitControl>
+
+    <SplitControl
+        label="Icon"
+        caption="Blog favicon. If not set, the logo will be used."
+    >
+        <ImageSetting 
+            src={$blogStore.icon_url}
+            on:change={e => changeBlogValue('icon_url', e.detail)}
+        />
+    </SplitControl>
+
+    <SplitControl
+        label="Cover Image"
+        caption="A cover image for the blog. Placement depends on the theme."
+    >
+        <ImageSetting 
+            src={$blogStore.cover_url}
+            on:change={e => changeBlogValue('cover_url', e.detail)}
+        />
     </SplitControl>
 
     <SplitControl
