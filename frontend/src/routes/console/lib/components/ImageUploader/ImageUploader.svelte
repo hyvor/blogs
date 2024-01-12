@@ -3,7 +3,7 @@
 	import { Button, Modal, TabNav, TabNavItem } from "@hyvor/design/components";
 	import { IconCardImage, IconCaretLeft, IconCloudUpload } from "@hyvor/icons";
 	import TabUpload from "./TabUpload.svelte";
-	import SelectedImage from "./SelectedImage.svelte";
+	import SelectedImage from "./PreviewSelected/SelectedImage.svelte";
 	import ExcalidrawIcon from "./Excalidraw/ExcalidrawIcon.svelte";
 	import Excalidraw from "./Excalidraw/Excalidraw.svelte";
 	import Unsplash from "./Unsplash/Unsplash.svelte";
@@ -101,7 +101,7 @@
             {/if}
 
             {#if selectedImage}
-                <SelectedImage url={selectedImage.url} />
+                <SelectedImage image={selectedImage} />
             {/if}
 
         </div>

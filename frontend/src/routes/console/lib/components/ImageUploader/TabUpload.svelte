@@ -38,8 +38,13 @@
                 const url = URL.createObjectURL(blob);
                 dispatch('select', {
                     url,
+                    name: byUrl.split('/').pop() || null,
+                    size: blob.size,
                     from: 'upload',
-                    upload: 'url'
+                    upload: {
+                        type: 'url',
+                        originalUrl: byUrl
+                    }
                 });
             })
             .catch(err => {
@@ -71,8 +76,10 @@
                 const url = URL.createObjectURL(blob);
                 dispatch('select', {
                     url,
+                    name: blob.name || 'Pasted Image',
+                    size: blob.size,
                     from: 'upload',
-                    upload: 'paste'
+                    upload: {type: 'paste'}
                 });
                 break;
             }
@@ -100,13 +107,15 @@
 
         if (!e.dataTransfer) return;
         const files = e.dataTransfer.files;
-        const url = getUrlFromFiles(files);
-        if (!url) return;
+        const data = getUrlFromFiles(files);
+        if (!data) return;
 
         dispatch('select', {
-            url,
+            url: data.url,
+            name: data.file.name,
+            size: data.file.size,
             from: 'upload',
-            upload: 'dnd'
+            upload: {type: 'dnd'}
         });
     }
 
@@ -115,16 +124,18 @@
     }
 
     function handleInputChange(e: any) {
-        const url = getUrlFromFiles(e.target.files);
-        if (!url) return;
+        const data = getUrlFromFiles(e.target.files);
+        if (!data) return;
         dispatch('select', {
-            url,
+            url: data.url,
+            name: data.file.name,
+            size: data.file.size,
             from: 'upload',
-            upload: 'browse'
+            upload: {type: 'browse'}
         });
     }
 
-    function getUrlFromFiles(files: FileList | null) : string | null {
+    function getUrlFromFiles(files: FileList | null) : {url: string, file: File} | null {
         if (!files || files.length === 0) {
             toast.error('No files selected');
             return null;
@@ -149,7 +160,7 @@
 
         const url = URL.createObjectURL(file);
         
-        return url;
+        return {url, file};
     }
 
     onMount(() => {

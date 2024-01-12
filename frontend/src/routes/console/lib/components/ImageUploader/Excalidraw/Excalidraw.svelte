@@ -5,7 +5,7 @@
 	import { exportToBlob, exportToCanvas, exportToSvg } from "@excalidraw/excalidraw";
 	import { createEventDispatcher, onMount } from "svelte";
 	import type { SelectedImage } from "../image-uploader";
-	import { IconSendFill } from "@hyvor/icons";
+	import { IconArrowRight, IconArrowRightCircle, IconSendFill } from "@hyvor/icons";
 
     if(browser)
 		window.process = {env: {IS_PREACT: false}};
@@ -58,6 +58,8 @@
 
         dispatch('select', {
             url: URL.createObjectURL(blob),
+            name: null,
+            size: blob.size,
             from: 'excalidraw',
             excalidraw: {
                 elements,
@@ -82,7 +84,7 @@
                 size="large"
                 on:click={handleFinish}
             >
-                Finish and Add <IconSendFill slot="end" />
+                Finalize <IconArrowRightCircle slot="end" />
             </Button>
         </div>
     </div>

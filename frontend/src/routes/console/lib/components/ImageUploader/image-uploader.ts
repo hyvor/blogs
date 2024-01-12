@@ -8,8 +8,13 @@ export type UploadType = 'paste' | 'dnd' | 'browse' | 'url';
 export interface SelectedImage {
     from: SelectFromType,
     url: string,
+    name: string | null,
+    size: number | null,
 
-    upload?: UploadType,
+    upload?: {
+        type: UploadType,
+        originalUrl?: string,
+    },
     unsplash?: UnsplashImage,
     excalidraw?: {
         elements: readonly ExcalidrawElement[],
