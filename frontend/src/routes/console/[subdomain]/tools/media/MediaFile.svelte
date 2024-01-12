@@ -4,7 +4,23 @@
 	import { IMAGE_EXTENSIONS } from "./mediaActions";
 	import { IconButton } from "@hyvor/design/components";
 	import { IconTrash } from "@hyvor/icons";
+	import { createEventDispatcher } from "svelte";
+    
     export let media: Media;
+
+    // If the user is selecting media files
+    // delete button will not be shown
+    // an event will be fired when the user selects a media file
+    export let selecting = false;
+
+    const dispatch = createEventDispatcher<{select: Media}>();
+
+    function handleClick(e: any) {
+        if (selecting) {
+            e.preventDefault();
+            dispatch('select', media);
+        }
+    }
 
     function handleDelete() {
         console.log('delete', media);
@@ -21,6 +37,7 @@
         class="body"
         href={media.url}
         target="_blank"
+        on:click={handleClick}
     >
 
         {#if isImage}
@@ -47,16 +64,18 @@
 
     </div>
 
-    <span class="media-delete">
-        <IconButton 
-            on:click={handleDelete}
-            size="small"
-            color="red"
-            variant="invisible"
-        >
-            <IconTrash size={10} />
-        </IconButton>
-    </span>
+    {#if !selecting}
+        <span class="media-delete">
+            <IconButton 
+                on:click={handleDelete}
+                size="small"
+                color="red"
+                variant="invisible"
+            >
+                <IconTrash size={10} />
+            </IconButton>
+        </span>
+    {/if}
 
 </div>
 

@@ -85,7 +85,7 @@ class PermalinkRepository
 
         if ($blog->hosting_at === BlogHostingAtEnum::SUBDOMAIN) {
             $deliveryDomain = config('blogs.domain_delivery');
-            $port = $isLocal ? ':8081' : '';
+            $port = $isLocal ? ':2211' : '';
 
             return "$protocol$blog->subdomain.$deliveryDomain$port";
         } elseif ($blog->hosting_at === BlogHostingAtEnum::DOMAIN) {

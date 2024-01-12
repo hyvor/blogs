@@ -1,5 +1,5 @@
 import type { ExcalidrawElement } from "@excalidraw/excalidraw/types/element/types";
-import type { UnsplashImage } from "../../types";
+import type { Media, UnsplashImage } from "../../types";
 import type { AppState } from "@excalidraw/excalidraw/types/types";
 
 export type SelectFromType = 'upload' | 'media' | 'unsplash' | 'excalidraw';
@@ -17,7 +17,8 @@ export interface SelectedImage {
     excalidraw?: {
         elements: readonly ExcalidrawElement[],
         appState: AppState,
-    }
+    },
+    media?: Media,
 }
 
 

@@ -60,6 +60,9 @@
 
     function handleKeydown(e: KeyboardEvent) {
 
+        if (isCreatingNode)
+            return;
+
         if (!show)
             return;
 
@@ -96,14 +99,20 @@
         }
     }
 
+    let isCreatingNode = false;
+
     async function handleClick(option: SlashOption) {
 
         let node: Node;
 
+        if (isCreatingNode) return;
+
         if (typeof option.node === 'string') {
             node = schema.nodes[option.node]!.create(option.attrs);
         } else {
+            isCreatingNode = true;
             const tempNode = await option.node();
+            isCreatingNode = false;
             if (!tempNode) return;
             node = tempNode;
         }

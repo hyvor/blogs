@@ -60,7 +60,11 @@
                 <IconMessage empty message="No Media Found" />
             {:else}
                 {#each mediaFiles as media (media.id)}
-                    <MediaFile {media} />
+                    <MediaFile 
+                        {media}
+                        selecting={true}
+                        on:select
+                    />
                 {/each}
             {/if}
 

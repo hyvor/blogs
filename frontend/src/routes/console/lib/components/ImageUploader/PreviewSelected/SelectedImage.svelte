@@ -13,7 +13,10 @@
     
     const imageUrl = image.url instanceof Blob ? URL.createObjectURL(image.url) : image.url;
     let imageSize = image.url instanceof File ? image.url.size : null;
-    const imageName = image.url instanceof File ? image.url.name : null;
+    const imageName = 
+        image.url instanceof File ? image.url.name : 
+        image.media ? image.media.original_name : 
+        null;
 
     let imgEl : HTMLImageElement;
 
