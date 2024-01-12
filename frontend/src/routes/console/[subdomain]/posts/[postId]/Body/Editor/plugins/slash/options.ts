@@ -5,6 +5,7 @@ import { IconBookmark, IconCardImage, IconCode, IconCodeSlash, IconHr, IconLight
 import ImageUploader from "../../../../../../../lib/components/ImageUploader/ImageUploader.svelte";
 import type { SelectedImage } from "../../../../../../../lib/components/ImageUploader/image-uploader";
 import EmbedCreator from "./Embed/EmbedCreator.svelte";
+import BookmarkCreator from "./Bookmark/BookmarkCreator.svelte";
 
 export interface SlashOption {
     name: string,
@@ -85,7 +86,7 @@ const options: SlashOption[] = [
         description: "Link preview as a bookmark",
         icon: IconBookmark,
         keywords: ["bookmark", "link"],
-        node: "bookmark",
+        node: createBookmark,
     },
     {
         name: "Divider",
@@ -213,6 +214,41 @@ function createEmbed() {
             return resolve(
                 schema.nodes.figure!.create({}, [
                     schema.nodes.embed!.create({ url: e.detail }),
+                    schema.nodes.figcaption!.create()
+                ])
+            )
+        });
+
+    });
+
+}
+
+function createBookmark() {
+
+    return new Promise<Node | null>((resolve, reject) => {
+
+        const div = document.createElement("div");
+        document.body.appendChild(div);
+
+        const creator = new BookmarkCreator({
+            target: div,
+        });
+
+        function destroy() {
+            creator.$destroy();
+            div.remove();
+        }
+
+        creator.$on('close', () => {
+            destroy();
+            resolve(null);
+        })
+
+        creator.$on('create', (e: CustomEvent<string>) => {
+            destroy();
+            return resolve(
+                schema.nodes.figure!.create({}, [
+                    schema.nodes.bookmark!.create({ url: e.detail }),
                     schema.nodes.figcaption!.create()
                 ])
             )
