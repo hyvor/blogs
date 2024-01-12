@@ -9,7 +9,10 @@
     export let value: string | null;
     let wrap: HTMLDivElement;
 
-    const dispatch = createEventDispatcher();
+    const dispatch = createEventDispatcher<{
+        change: string,
+        view: EditorView
+    }>();
 
     async function createEditor() {
 
@@ -36,6 +39,8 @@
                 view.updateState(state)
             },
         });
+
+        dispatch('view', view);
 
         return view;
 

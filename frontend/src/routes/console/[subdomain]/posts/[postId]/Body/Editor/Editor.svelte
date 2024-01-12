@@ -1,5 +1,6 @@
 <script lang="ts">
-	import { postCurrentContentKey, postCurrentContentStore, postEditingStatusStore, postVariantStore, updatePostVariantStore } from "../../../postStore";
+	import type { EditorView } from "prosemirror-view";
+	import { postCurrentContentKey, postCurrentContentStore, postEditingStatusStore, postVariantStore, updatePostEditingStatusValue, updatePostVariantStore } from "../../../postStore";
 	import EditorTop from "./EditorTop/EditorTop.svelte";
     import Prosemirror from "./Prosemirror.svelte";
 
@@ -12,6 +13,10 @@
         });
     }
 
+    function handleView(e: CustomEvent<EditorView>) {
+        updatePostEditingStatusValue('editorView', e.detail);
+    }
+
 </script>
 
 <div class="editor hds-box">
@@ -21,6 +26,7 @@
         <Prosemirror 
             value={$postCurrentContentStore} 
             on:change={handleChange}    
+            on:view={handleView}
         />
     {/key}
 </div>

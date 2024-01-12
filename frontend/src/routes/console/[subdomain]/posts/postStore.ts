@@ -1,6 +1,7 @@
 import { derived, get, writable } from "svelte/store";
 import { languagesStore } from "../../lib/stores/languagesStore";
 import type { Post, PostVariant } from "../../lib/types";
+import type { EditorView } from "prosemirror-view";
 
 // originally loaded post
 export const postOriginalStore = writable<Post>();
@@ -15,6 +16,7 @@ export interface PostEditingStatus {
     languageId: number,
     sidebar: PostSidebar,
     isEditingPublished: boolean,
+    editorView: EditorView | null,
 }
 
 
@@ -25,6 +27,7 @@ export function initPostEditingState() {
         languageId: get(languagesStore).find(l => l.is_primary === true)!.id,
         sidebar: 'settings',
         isEditingPublished: false,
+        editorView: null
     })
 }
 
