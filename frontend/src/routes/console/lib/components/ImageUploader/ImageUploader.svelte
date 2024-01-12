@@ -91,7 +91,7 @@
         >
 
             {#if tab === 'upload'}
-                <TabUpload />
+                <TabUpload on:select={handleSelect} />
             {:else if tab === 'media'}
                 <Media on:select={handleSelect} />
             {:else if tab === 'unsplash'}

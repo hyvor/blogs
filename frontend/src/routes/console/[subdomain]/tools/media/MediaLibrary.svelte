@@ -4,7 +4,6 @@
 	import { getMedia, type FileType } from "./mediaActions";
 	import { IconCloudUpload } from "@hyvor/icons";
 	import type { Media } from "../../../lib/types";
-	import { onMount } from "svelte";
 	import MediaFile from "./MediaFile.svelte";
 
     export let showUpload = true;
@@ -31,10 +30,6 @@
     function handleChange(e: CustomEvent<{extensions: string[], search: string | null}>) {
         load(e.detail.extensions, e.detail.search);
     }
-
-    onMount(() => {
-        load();
-    });
 
 </script>
 

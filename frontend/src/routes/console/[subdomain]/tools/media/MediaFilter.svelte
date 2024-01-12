@@ -2,7 +2,7 @@
 	import { ActionList, ActionListItem, Button, Dropdown, Text, TextInput } from "@hyvor/design/components";
 	import { IconCaretDown } from "@hyvor/icons";
 	import { getExtensionsByFileType, type FileType } from "./mediaActions";
-	import { createEventDispatcher } from "svelte";
+	import { createEventDispatcher, onMount } from "svelte";
 
     export let defaultType: null | FileType = null;
     export let typeDisabled = false;
@@ -65,7 +65,9 @@
 
         searchTimeout = setTimeout(dispatchChange, 400);
     }
-    
+
+    onMount(dispatchChange);
+
 </script>
 
 
