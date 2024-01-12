@@ -9,7 +9,9 @@
 	import DateFilter from "./Filters/Date/DateFilter.svelte";
 	import SearchFilter from "./Filters/SearchFilter.svelte";
 	import { postListFiltersStore } from "./postListStore";
-	import { getPosts } from "./postActions";
+	import { createPost, getPosts } from "./postActions";
+	import { goto } from "$app/navigation";
+	import { blogStore } from "../../lib/stores/blogStore";
 
     let isLoading = true;
     let isLoadingMore = false;
@@ -55,6 +57,25 @@
             })
     }
 
+    let isCreating = false;
+
+    function handleCreate() {
+        const toastId = toast.loading('Creating post...');
+        isCreating = true;
+
+        createPost()
+            .then(res => {
+                toast.success('Post created', { id: toastId });
+                goto(`/console/${$blogStore.subdomain}/posts/${res.id}`);
+            })
+            .catch(e => {
+                toast.error(e.message, { id: toastId });
+            })
+            .finally(() => {
+                isCreating = false;
+            })
+    }
+
     postListFiltersStore.subscribe(() => loadPosts());
 </script>
 
@@ -67,7 +88,11 @@
 
             <div class="title">Posts</div>
             <div class="">
-                <Button size="small">
+                <Button 
+                    size="small"
+                    on:click={handleCreate}
+                    disabled={isCreating}
+                >
                     <IconPlus slot="start" />
                     New
                 </Button>

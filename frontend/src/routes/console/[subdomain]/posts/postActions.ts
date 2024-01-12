@@ -26,6 +26,12 @@ export function getPosts(data: GetPostsData) {
     });
 }
 
+export function createPost() {
+    return consoleApi.post<Post>({
+        endpoint: '/post'
+    });
+}
+
 export function updatePost(data: Partial<Post>) {
     
     const promise = consoleApi.patch<Post>({
