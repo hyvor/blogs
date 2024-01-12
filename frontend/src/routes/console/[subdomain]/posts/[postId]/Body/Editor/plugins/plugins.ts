@@ -15,6 +15,7 @@ import marksTooltipPlugin from "./marks-tooltip/plugin-marks-tooltip";
 import schema from "../../../../../../lib/prosemirror/schema";
 import wordCountPlugin from "./plugin-wordcount";
 import slashPlugin from "./slash/plugin-slash";
+import slashTipPlugin from "./slash/plugin-slash-tip";
 
 export function getPlugins() {
 
@@ -25,8 +26,9 @@ export function getPlugins() {
         placeholderPlugin('Start writing...'),
         marksTooltipPlugin(),
         wordCountPlugin(),
+        
         slashPlugin(),
-        // slashTipPlugin(),
+        slashTipPlugin(),
 
         // from defaults
         dropCursor(),

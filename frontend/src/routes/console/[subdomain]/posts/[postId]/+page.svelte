@@ -39,7 +39,10 @@
         href="/console/{$blogStore.subdomain}/posts"
         class="back"
     >
-        <IconButton variant="invisible">
+        <IconButton 
+            variant="invisible"
+            color="gray"
+        >
             <IconCaretLeftFill />
         </IconButton>
     </a>

@@ -103,7 +103,9 @@
         if (typeof option.node === 'string') {
             node = schema.nodes[option.node]!.create(option.attrs);
         } else {
-            node = new Node;
+            const tempNode = await option.node();
+            if (!tempNode) return;
+            node = tempNode;
         }
 
         let { $from, to } = view.state.selection,

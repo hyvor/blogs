@@ -1,14 +1,16 @@
 import type { Node } from "prosemirror-model";
 import type { ComponentType } from "svelte";
-import type schema from "../../../../../../../lib/prosemirror/schema";
+import schema from "../../../../../../../lib/prosemirror/schema";
 import { IconBookmark, IconCardImage, IconCode, IconCodeSlash, IconHr, IconLightbulb, IconLink45deg, IconQuote, IconTable, IconTypeH2, IconTypeH3 } from "@hyvor/icons";
+import ImageUploader from "../../../../../../../lib/components/ImageUploader/ImageUploader.svelte";
+import type { SelectedImage } from "../../../../../../../lib/components/ImageUploader/image-uploader";
 
 export interface SlashOption {
     name: string,
     description: string,
     icon: ComponentType,
     keywords: string[],
-    node: string | ((s: typeof schema) => Promise<Node>),
+    node: string | (() => Promise<Node | null>),
     attrs?: Record<string, any>,
 }
 
@@ -34,7 +36,7 @@ const options: SlashOption[] = [
         description: "Add an image",
         icon: IconCardImage,
         keywords: ["image", "picture", "upload"],
-        // node: selectImage,
+        node: selectImage,
     },
     {
         name: "Embed",
@@ -140,4 +142,40 @@ export function findOptions(match: string) : SlashOption[] {
     }
 
     return matched.sort((a, b) => a.score - b.score) as SlashOption[];
+}
+
+
+function selectImage() {
+
+    return new Promise<Node | null>((resolve, reject) => {
+
+        const div = document.createElement("div");
+        document.body.appendChild(div);
+
+        const selector = new ImageUploader({
+            target: div,
+        });
+
+        function destroy() {
+            selector.$destroy();
+            div.remove();
+        }
+
+        selector.$on('close', () => {
+            destroy();
+            resolve(null);
+        })
+
+        selector.$on('select', (e: CustomEvent<SelectedImage>) => {
+            destroy();
+            return resolve(
+                schema.nodes.figure!.create({}, [
+                    schema.nodes.image!.create({ src: e.detail.url }),
+                    schema.nodes.figcaption!.create()
+                ])
+            )
+        });
+
+    });
+
 }

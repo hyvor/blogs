@@ -8,9 +8,11 @@
 	import Excalidraw from "./Excalidraw/Excalidraw.svelte";
 	import Unsplash from "./Unsplash/Unsplash.svelte";
 	import Media from "./Media/Media.svelte";
+	import { createEventDispatcher } from "svelte";
     
     let tab = 'upload';
 
+    let show = true;
     let backImage: null | SelectedImageType = null;
     let selectedImage: null | SelectedImageType = null;
 
@@ -24,11 +26,27 @@
         selectedImage = null;
     }
 
+
+    const dispatch = createEventDispatcher<{
+        select: SelectedImageType,
+        close: undefined
+    }>();
+
+    $: if (!show) {
+        dispatch('close');
+    }
+
+
+    function handleFinish(e: CustomEvent<SelectedImageType>) {
+        dispatch('select', e.detail);
+        show = false;
+    }
+
 </script>
 
 <div class="image-uploader">
     <Modal 
-        show={true} 
+        bind:show={show} 
         size="large"
         closeOnEscape={false}
         closeOnOutsideClick={false}
@@ -98,7 +116,7 @@
             {#if selectedImage}
                 <SelectedImage 
                     image={selectedImage} 
-                    on:select
+                    on:select={handleFinish}
                 />
             {/if}
 

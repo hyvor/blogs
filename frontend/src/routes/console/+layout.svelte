@@ -43,7 +43,7 @@
     {:else}
         <slot />
     {/if}
-    
+
 </main>
 
 <style>

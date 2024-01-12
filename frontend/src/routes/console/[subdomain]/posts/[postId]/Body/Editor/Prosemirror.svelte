@@ -87,6 +87,15 @@
             }
         }
 
+        // placeholder plugin
+        :global(.ProseMirror[data-placeholder]::before) {
+            color: var(--text-light);
+            position: absolute;
+            content: attr(data-placeholder);
+            pointer-events: none;
+            line-height: 30px;
+        }
+
         :global(.ProseMirror > *:first-child) {
             margin-top:0!important;
         }
