@@ -148,6 +148,7 @@ export const nodes = {
         //group: "block",
         // atom: true,
         selectable: true,
+        draggable: false,
         parseDOM: [{
             tag: "x-embed[data-url]",
             getAttrs(div: HTMLElement) {

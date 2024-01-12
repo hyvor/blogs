@@ -54,7 +54,7 @@
             .then(data => {
                 urlData = data;
             })
-            .catch(err => {
+            .catch(_ => {
                 error = 'Failed to embed this URL';
             })
             .finally(() => {
@@ -63,7 +63,7 @@
     }
 
     function handleCreate() {
-
+        dispatch('create', url);
     }
 
 </script>

@@ -4,6 +4,7 @@ import FigcaptionNodeView from "./nodeview-figcaption";
 import { CalloutNodeView } from "./callout/nodeview-callout";
 import CodeBlockNodeView from "./nodeview-codeblock";
 import CustomHtmlNodeView from "./nodeview-custom-html";
+import EmbedView from "./embed/nodeview-embed";
 
 interface NodeViewsType {
     [key: string]: NodeViewConstructor
@@ -12,10 +13,9 @@ interface NodeViewsType {
 export function getNodeViews() : NodeViewsType {
 
     return {
-        /* embed(node, view, getPos) {
-            return new EmbedView(HBSchema, node, view, getPos);
+        embed(node, view, getPos) {
+            return new EmbedView(node, view, getPos);
         },
-         */
         figcaption(node) {
             return new FigcaptionNodeView(node);
         },
