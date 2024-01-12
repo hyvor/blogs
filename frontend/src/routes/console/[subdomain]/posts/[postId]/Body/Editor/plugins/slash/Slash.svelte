@@ -113,7 +113,10 @@
             isCreatingNode = true;
             const tempNode = await option.node();
             isCreatingNode = false;
-            if (!tempNode) return;
+            if (!tempNode) {
+                view.focus();
+                return;
+            }
             node = tempNode;
         }
 
@@ -174,7 +177,12 @@
                 on:click={() => handleClick(option)}
                 on:mouseover={() => houseMouseOver(option)}
                 on:focus={() => houseMouseOver(option)}
-                on:keyup={e => e.key === "Enter" && handleClick(option)}
+                on:keyup={e => {
+                    if (e.key === "Enter") {
+                        e.stopPropagation();
+                        handleClick(option)
+                    }
+                }}
                 role="button"
                 tabindex="0"
                 class:active={option.name === active?.name}

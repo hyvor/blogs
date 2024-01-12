@@ -4,6 +4,7 @@ import schema from "../../../../../../../lib/prosemirror/schema";
 import { IconBookmark, IconCardImage, IconCode, IconCodeSlash, IconHr, IconLightbulb, IconLink45deg, IconQuote, IconTable, IconTypeH2, IconTypeH3 } from "@hyvor/icons";
 import ImageUploader from "../../../../../../../lib/components/ImageUploader/ImageUploader.svelte";
 import type { SelectedImage } from "../../../../../../../lib/components/ImageUploader/image-uploader";
+import EmbedCreator from "./Embed/EmbedCreator.svelte";
 
 export interface SlashOption {
     name: string,
@@ -56,7 +57,7 @@ const options: SlashOption[] = [
             "maps",
             "codepen",
         ],
-        // node: createEmbed,
+        node: createEmbed,
     },
     {
         name: "Code Block",
@@ -70,7 +71,7 @@ const options: SlashOption[] = [
         description: "Capture a quote",
         icon: IconQuote,
         keywords: ["quote", "blockquote"],
-        // node: createQuote,
+        node: createQuote,
     },
     {
         name: "Callout",
@@ -171,6 +172,47 @@ function selectImage() {
             return resolve(
                 schema.nodes.figure!.create({}, [
                     schema.nodes.image!.create({ src: e.detail.url }),
+                    schema.nodes.figcaption!.create()
+                ])
+            )
+        });
+
+    });
+
+}
+
+function createQuote() {
+    return Promise.resolve(schema.nodes.blockquote!.create({}, [
+        schema.nodes.paragraph!.create()
+    ]));
+}
+
+function createEmbed() {
+
+    return new Promise<Node | null>((resolve, reject) => {
+
+        const div = document.createElement("div");
+        document.body.appendChild(div);
+
+        const creator = new EmbedCreator({
+            target: div,
+        });
+
+        function destroy() {
+            creator.$destroy();
+            div.remove();
+        }
+
+        creator.$on('close', () => {
+            destroy();
+            resolve(null);
+        })
+
+        creator.$on('create', (e: CustomEvent<string>) => {
+            destroy();
+            return resolve(
+                schema.nodes.figure!.create({}, [
+                    schema.nodes.embed!.create({ url: e.detail }),
                     schema.nodes.figcaption!.create()
                 ])
             )

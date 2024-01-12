@@ -157,6 +157,8 @@ export type PostVariant = {
     link_analysis: Record<string, number>,
 };
 
+export type UserStatus = 'invited' | 'active' | 'blocked';
+
 // == USER
 export type User = {
     id: number;
@@ -473,4 +475,16 @@ export interface GptPrompt {
 
     prompt: string,
     gpt_response: string,
+}
+
+export interface UrlData {
+    url: string,
+    original_url: string,
+    domain: string,
+    html: string | null, // for embeds
+    title: string,
+    description: string,
+    thumbnail_url: string | null,
+    icon_url: string | null,
+    site: string | null,
 }

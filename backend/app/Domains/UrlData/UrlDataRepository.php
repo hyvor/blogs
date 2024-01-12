@@ -25,6 +25,11 @@ class UrlDataRepository
             ->first();
 
         if ($embed) {
+
+            if ($fetchType === UrlDataFetchTypeEnum::EMBED && empty($embed->html)) {
+                throw new IframelyException('HTML is empty for embed');
+            }
+
             return $embed;
         }
 

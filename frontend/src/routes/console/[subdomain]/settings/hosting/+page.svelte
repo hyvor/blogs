@@ -4,7 +4,7 @@
 	import BlogSettingsSave from "../BlogSettingsSave.svelte";
 	import { IconBoxArrowUpRight, IconExclamationCircle } from "@hyvor/icons";
 	import type { Blog } from "../../../lib/types";
-	import { isSubdomainValid } from "../../../lib/helper/isSubsomdinValid";
+	import { isSubdomainValid } from "../../../lib/helper/isSubdomainValid";
 	import { isValidUrl } from "../../../lib/helper/is-valid-url";
 
     const originalSubdomain = $blogStore.subdomain;
