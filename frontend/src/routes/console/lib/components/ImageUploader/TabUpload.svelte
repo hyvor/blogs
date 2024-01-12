@@ -107,13 +107,13 @@
 
         if (!e.dataTransfer) return;
         const files = e.dataTransfer.files;
-        const data = getUrlFromFiles(files);
-        if (!data) return;
+        const file = getFileFromFiles(files);
+        if (!file) return;
 
         dispatch('select', {
-            url: data.url,
-            name: data.file.name,
-            size: data.file.size,
+            url: file,
+            name: file.name,
+            size: file.size,
             from: 'upload',
             upload: {type: 'dnd'}
         });
@@ -124,18 +124,18 @@
     }
 
     function handleInputChange(e: any) {
-        const data = getUrlFromFiles(e.target.files);
-        if (!data) return;
+        const file = getFileFromFiles(e.target.files);
+        if (!file) return;
         dispatch('select', {
-            url: data.url,
-            name: data.file.name,
-            size: data.file.size,
+            url: file,
+            name: file.name,
+            size: file.size,
             from: 'upload',
             upload: {type: 'browse'}
         });
     }
 
-    function getUrlFromFiles(files: FileList | null) : {url: string, file: File} | null {
+    function getFileFromFiles(files: FileList | null) : File | null {
         if (!files || files.length === 0) {
             toast.error('No files selected');
             return null;
@@ -158,9 +158,9 @@
             return null;
         }
 
-        const url = URL.createObjectURL(file);
+        // const url = URL.createObjectURL(file);
         
-        return {url, file};
+        return file;
     }
 
     onMount(() => {

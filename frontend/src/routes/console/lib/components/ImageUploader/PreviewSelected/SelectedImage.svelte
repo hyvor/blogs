@@ -3,15 +3,17 @@
     import 'cropperjs/dist/cropper.css';
 	import Meta from "./Meta.svelte";
 	import type { SelectedImage } from "../image-uploader";
-	import { Button, Switch } from "@hyvor/design/components";
+	import { Button, Loader, Switch, toast } from "@hyvor/design/components";
 	import { IconCheckAll, IconCloudUpload } from "@hyvor/icons";
 	import byteFormatter from "../../../helper/byte-formatter";
-	import { createEventDispatcher, onMount } from "svelte";
+	import { createEventDispatcher, onDestroy, onMount } from "svelte";
+	import { uploadMedia } from "../../../../[subdomain]/tools/media/mediaActions";
 
     export let image: SelectedImage;
+    
+    const imageUrl = image.url instanceof Blob ? URL.createObjectURL(image.url) : image.url;
 
     let imgEl : HTMLImageElement;
-    let cropper : Cropper;
 
     let width = 0;
     let height = 0;
@@ -52,29 +54,12 @@
     const hosting = getHosting();
 
     function handleImageLoad() {
-
         width = imgEl.naturalWidth;
         height = imgEl.naturalHeight;
-
-        /* cropper = new Cropper(imgEl, {
-            viewMode: 3,
-            aspectRatio: 16 / 9,
-            crop(event) {
-                console.log(event.detail.x);
-                console.log(event.detail.y);
-                console.log(event.detail.width);
-                console.log(event.detail.height);
-                console.log(event.detail.rotate);
-                console.log(event.detail.scaleX);
-                console.log(event.detail.scaleY);
-            },
-        }); */
     }
 
-    let editing : null | 'crop' = null;
-
     function tryGetSize() {
-        fetch(image.url)
+        fetch(imageUrl)
             .then(res => res.blob())
             .then(blob => {
                 const size = blob.size;
@@ -90,87 +75,113 @@
 
     const dispatch = createEventDispatcher<{select: SelectedImage}>();
 
-    function handleSelect() {
-        dispatch('select', image);
+    function handleSelect(img: SelectedImage = image) {
+        dispatch('select', img);
     }
+    
+    let isUploading = false;
 
     function handleUpload() {
-        if (shouldUpload) {
-            
+        if (shouldUpload && image.url instanceof Blob) {
+            isUploading = true;
+            uploadMedia(image.url, image.name)
+                .then(res => {
+                    handleSelect({
+                        ...image,
+                        url: res.url,
+                    });
+                })
+                .catch(err => {
+                    toast.error(err.message || 'Failed to upload image');
+                })
+                .finally(() => {
+                    isUploading = false;
+                });
         } else {
             handleSelect();
         }
     }
 
 
-    onMount(async () => {
-
+    onMount(() => {
         if (image.size === null) {
             tryGetSize();
         }
+    })
 
+    onDestroy(() => {
+        URL.revokeObjectURL(imageUrl);
     })
 
 </script>
 
 
+
 <div class="selected-image">
 
-    <div class="img-wrap">
-        <img 
-            src={image.url} 
-            alt="Editing"
-            bind:this={imgEl}
-            on:load={handleImageLoad}
-        />
-    </div>
+    {#if isUploading}
+        <Loader full>
+            Uploading...
+        </Loader>
+    {:else}
 
-    <div class="top-bar">
-        <div class="meta">
-            <Meta name="Dimensions (px)">
-                {width} x {height}
-            </Meta>
-            <Meta name="File Size">
-                {#if image.size !== null}
-                    { byteFormatter(image.size) }
-                {:else}
-                    Unknown
-                {/if}
-            </Meta>
-            {#if image.name}
-                <Meta name="Name">
-                    { image.name }
-                </Meta>
-            {/if}
-            {#if hosting}
-                <Meta name="Hosting">
-                    {hosting}
-                </Meta>
-            {/if}
-        </div>
-        <div class="upload-switch">
-            Upload to Media Library
-            <Switch 
-                bind:checked={shouldUpload}
-                disabled={!canChangeUpload}
+        <div class="img-wrap">
+            <img
+                src={imageUrl} 
+                alt="Editing"
+                bind:this={imgEl}
+                on:load={handleImageLoad}
             />
         </div>
-    </div>
 
-    <div class="footer">
-
-        <Button on:click={handleUpload}>
-            { shouldUpload ? 'Upload' : 'Select' }
-            <svelte:fragment slot="end">
-                {#if shouldUpload}
-                    <IconCloudUpload />
-                {:else}
-                    <IconCheckAll />
+        <div class="top-bar">
+            <div class="meta">
+                <Meta name="Dimensions (px)">
+                    {width} x {height}
+                </Meta>
+                <Meta name="File Size">
+                    {#if image.size !== null}
+                        { byteFormatter(image.size) }
+                    {:else}
+                        Unknown
+                    {/if}
+                </Meta>
+                {#if image.name}
+                    <Meta name="Name">
+                        { image.name }
+                    </Meta>
                 {/if}
-            </svelte:fragment>
-        </Button>
+                {#if hosting}
+                    <Meta name="Hosting">
+                        {hosting}
+                    </Meta>
+                {/if}
+            </div>
+            <div class="upload-switch">
+                Upload to Media Library
+                <Switch 
+                    bind:checked={shouldUpload}
+                    disabled={!canChangeUpload}
+                />
+            </div>
+        </div>
 
-    </div>
+        <div class="footer">
+
+            <Button on:click={handleUpload}>
+                { shouldUpload ? 'Upload' : 'Select' }
+                <svelte:fragment slot="end">
+                    {#if shouldUpload}
+                        <IconCloudUpload />
+                    {:else}
+                        <IconCheckAll />
+                    {/if}
+                </svelte:fragment>
+            </Button>
+
+        </div>
+
+    {/if}
 
 </div>
 

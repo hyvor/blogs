@@ -47,3 +47,12 @@ export function getMedia(
     })
 
 }
+
+export function uploadMedia(file: File | Blob, name: string | null = null) {
+    const formData = new FormData();
+    formData.append('file', file, name || (file instanceof File ? file.name : 'file'));
+    return consoleApi.post<Media>({
+        endpoint: '/media',
+        data: formData
+    })
+}
