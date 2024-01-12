@@ -12,6 +12,8 @@
     export let image: SelectedImage;
     
     const imageUrl = image.url instanceof Blob ? URL.createObjectURL(image.url) : image.url;
+    let imageSize = image.url instanceof File ? image.url.size : null;
+    const imageName = image.url instanceof File ? image.url.name : null;
 
     let imgEl : HTMLImageElement;
 
@@ -62,11 +64,7 @@
         fetch(imageUrl)
             .then(res => res.blob())
             .then(blob => {
-                const size = blob.size;
-                image = {
-                    ...image,
-                    size,
-                }
+                imageSize = blob.size;
             })
             .catch(err => {
                 console.error(err);
@@ -84,7 +82,7 @@
     function handleUpload() {
         if (shouldUpload && image.url instanceof Blob) {
             isUploading = true;
-            uploadMedia(image.url, image.name)
+            uploadMedia(image.url, imageName)
                 .then(res => {
                     handleSelect({
                         ...image,
@@ -98,13 +96,16 @@
                     isUploading = false;
                 });
         } else {
-            handleSelect();
+            handleSelect({
+                ...image,
+                url: image.upload?.originalUrl || image.url
+            });
         }
     }
 
 
     onMount(() => {
-        if (image.size === null) {
+        if (imageSize === null) {
             tryGetSize();
         }
     })
@@ -140,15 +141,15 @@
                     {width} x {height}
                 </Meta>
                 <Meta name="File Size">
-                    {#if image.size !== null}
-                        { byteFormatter(image.size) }
+                    {#if imageSize !== null}
+                        { byteFormatter(imageSize) }
                     {:else}
                         Unknown
                     {/if}
                 </Meta>
-                {#if image.name}
+                {#if imageName}
                     <Meta name="Name">
-                        { image.name }
+                        { imageName }
                     </Meta>
                 {/if}
                 {#if hosting}

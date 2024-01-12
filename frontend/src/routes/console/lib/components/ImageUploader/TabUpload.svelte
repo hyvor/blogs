@@ -28,18 +28,14 @@
         fetch(byUrl)
             .then(res => res.blob())
             .then(blob => {
-
                 // check if valid image
                 if (blob.type.indexOf('image') !== 0) {
                     toast.error('The URL is not an image');
                     return;
                 }
 
-                const url = URL.createObjectURL(blob);
                 dispatch('select', {
-                    url,
-                    name: byUrl.split('/').pop() || null,
-                    size: blob.size,
+                    url: blob,
                     from: 'upload',
                     upload: {
                         type: 'url',
@@ -73,11 +69,8 @@
             if (item.type.indexOf('image') === 0) {
                 const blob = item.getAsFile();
                 if (!blob) continue;
-                const url = URL.createObjectURL(blob);
                 dispatch('select', {
-                    url,
-                    name: blob.name || 'Pasted Image',
-                    size: blob.size,
+                    url: blob,
                     from: 'upload',
                     upload: {type: 'paste'}
                 });
@@ -112,8 +105,6 @@
 
         dispatch('select', {
             url: file,
-            name: file.name,
-            size: file.size,
             from: 'upload',
             upload: {type: 'dnd'}
         });
@@ -128,8 +119,6 @@
         if (!file) return;
         dispatch('select', {
             url: file,
-            name: file.name,
-            size: file.size,
             from: 'upload',
             upload: {type: 'browse'}
         });

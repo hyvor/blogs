@@ -56,8 +56,6 @@
     function handleSelect(image: UnsplashImage) {
         dispatch('select', {
             url: image.url,
-            name: null,
-            size: null,
             from: 'unsplash',
             unsplash: image
         });

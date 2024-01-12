@@ -8,8 +8,6 @@ export type UploadType = 'paste' | 'dnd' | 'browse' | 'url';
 export interface SelectedImage {
     from: SelectFromType,
     url: string | Blob,
-    name: string | null,
-    size: number | null,
 
     upload?: {
         type: UploadType,

@@ -57,9 +57,7 @@
         }); */
 
         dispatch('select', {
-            url: URL.createObjectURL(blob),
-            name: null,
-            size: blob.size,
+            url: blob,
             from: 'excalidraw',
             excalidraw: {
                 elements,
