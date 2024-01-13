@@ -263,10 +263,10 @@
     .nav-row {
         padding: 10px 20px;
         width: 100%;
-        display: flex;
+        display: grid;
+        grid-template-columns: 70px 1fr 70px;
         align-items: center;
         cursor: pointer;
-        align-self: flex-start;
     }
 
     .nav-row:hover {
