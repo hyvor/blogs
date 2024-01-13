@@ -54,3 +54,10 @@ export function deleteNavigation(id: number) {
         endpoint: `/navigation/${id}`
     })
 }
+
+export function saveSort(ids: number[]) {
+    return consoleApi.patch({
+        endpoint: '/navigations/sort',
+        data: {ids},
+    })
+}
