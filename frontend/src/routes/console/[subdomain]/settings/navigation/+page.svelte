@@ -137,6 +137,7 @@
                         </TableRow>
 
                         <div
+                            class="dragging"
                             use:dndzone="{{ 
                                 items: items.filter(t => t.type === 'header'),
                                 dragDisabled, 
@@ -261,15 +262,16 @@
 
     .nav-row {
         padding: 10px 20px;
-        display: block;
+        width: 100%;
+        display: flex;
         align-items: center;
         cursor: pointer;
+        align-self: flex-start;
     }
 
     .nav-row:hover {
         background: var(--hover);
     }
-
 
     .dragger {
         padding: 0 5px;
@@ -278,8 +280,9 @@
         font-family: inherit;
     }
 
-    .nav-row:hover {
-        display: block;
+    .dragging {
+        width: 100%;
     }
+
 
 </style>

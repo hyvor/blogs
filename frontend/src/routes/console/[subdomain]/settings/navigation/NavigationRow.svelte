@@ -39,6 +39,7 @@
 
 </script>
 
+<div class="row-content">
 <TableRow>
     <div>{variant?.name || 'Unnamed'}</div>
     <div>{navigation?.url || ''}</div>
@@ -74,3 +75,12 @@
         on:update
     />
 {/if}
+</div>
+
+<style>
+
+    .row-content {
+        width: 100%;
+    }
+
+</style>    
