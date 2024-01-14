@@ -33,9 +33,12 @@ export function getPages() {
     });
 }
 
-export function createPost() {
+export function createPost(isPage = false) {
     return consoleApi.post<Post>({
-        endpoint: '/post'
+        endpoint: '/post',
+        data: {
+            is_page: isPage
+        }
     });
 }
 

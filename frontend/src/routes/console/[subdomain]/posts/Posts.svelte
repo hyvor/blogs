@@ -79,12 +79,12 @@
     let isCreating = false;
 
     function handleCreate() {
-        const toastId = toast.loading('Creating post...');
+        const toastId = toast.loading(`Creating ${pages ? 'page' : 'post'}...`);
         isCreating = true;
 
-        createPost()
+        createPost(pages)
             .then(res => {
-                toast.success('Post created', { id: toastId });
+                toast.success(`${pages ? 'Page' : 'Post'} created`, { id: toastId });
                 goto(`/console/${$blogStore.subdomain}/posts/${res.id}`);
             })
             .catch(e => {
