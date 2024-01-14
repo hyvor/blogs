@@ -1,6 +1,7 @@
 <script lang="ts">
 	import { TabNav, TabNavItem } from "@hyvor/design/components";
 	import NewImport from "./NewImport/NewImport.svelte";
+	import ImportHistory from "./History/ImportHistory.svelte";
 
     let tab: 'new' | 'history' = 'new';
 </script>
@@ -23,7 +24,7 @@
         {#if tab === 'new'}
             <NewImport />
         {:else if tab === 'history'}
-
+            <ImportHistory />
         {/if}
 
     </div>

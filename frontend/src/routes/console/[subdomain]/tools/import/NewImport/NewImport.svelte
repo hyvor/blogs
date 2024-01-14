@@ -1,5 +1,7 @@
-<script>
-	import { Button, Radio, SplitControl, Switch, TextInput } from "@hyvor/design/components";
+<script lang="ts">
+	import { Button, Link, Loader, Modal, Radio, SplitControl, Switch, TextInput, toast } from "@hyvor/design/components";
+	import { testSitemapUrl, type TestSitemapResponse } from "../importActions";
+	import dayjs from "dayjs";
 
     let importFrom = 'sitemap';
 
@@ -13,6 +15,37 @@
 
     let importImages = true;
     let slugExclude = '';
+    let testUrl = '';
+
+    let testData : TestSitemapResponse | null = null;
+
+    let isTestLoading = false;
+
+    function startTesting() {
+
+        if (testUrl.trim() === '') {
+            return toast.error('Please enter a URL to test');
+        }
+
+        isTestLoading = true;
+
+        testSitemapUrl({
+            url: testUrl,
+            slug_exclude: slugExclude,
+            css: {
+                title: titleCssSelector,
+                description: descriptionCssSelector,
+                content: contentCssSelector,
+                content_exclude: contentExcludeCssSelector,
+                published_date: publishedDateCssSelector
+            }
+        })
+        .then(res => testData = res)
+        .catch(err => toast.error(err.message))
+        .finally(() => isTestLoading = false);
+        
+    }
+
 </script>
 
 <SplitControl 
@@ -97,7 +130,7 @@
 
 <SplitControl 
     label="Import Images"
-    caption="Copy images into blog media (recommended)"
+    caption="Copy images into your media library (recommended)"
 >
 
     <Switch 
@@ -121,14 +154,29 @@
 
 <SplitControl 
     label="Test"
-    caption="Test a single page before importing the sitemap (recommended)"
+    caption="Test a page to make sure CSS selectors are working (recommended)"
 >
 
     <TextInput 
         block
-        bind:value={slugExclude}
+        bind:value={testUrl}
         placeholder="URL to test"
     />
+
+    <div style="margin-top:10px;">
+        <Button
+            size="small"
+            on:click={startTesting}
+        >
+            Test <Loader 
+                slot="end" 
+                state={isTestLoading ? 'loading' : 'none'} 
+                size="small"
+                colorTrack="transparent"
+                color="white"
+            />
+        </Button>
+    </div>
 
 </SplitControl>
 
@@ -142,17 +190,106 @@
     </div>
 
     <Button>
-        Import
+        Import Sitemap
     </Button>
 
 </div>
 
 
-<style>
+{#if testData}
+
+    <Modal
+        show={testData !== null}
+        title="Test Results"
+        on:close={() => testData = null}
+        footer={{
+            cancel: {
+                text: "Close"
+            },
+            confirm: false
+        }}
+        on:cancel={() => testData = null}
+    >
+
+        <SplitControl label="URL" flex={[1,4]}>
+            <Link href={testData.url} target="_blank">
+                {testData.url}
+            </Link>
+        </SplitControl>
+
+        <!-- SLUG -->
+        <SplitControl label="Slug" flex={[1,4]}>
+            {testData.data.slug}
+        </SplitControl>
+
+        <!-- Title -->
+        <SplitControl label="Title" flex={[1,4]}>
+            {testData.data.title}
+        </SplitControl>
+
+        <!-- Description -->
+        <SplitControl label="Description" flex={[1,4]}>
+            {testData.data.description}
+        </SplitControl>
+
+        <!-- Content -->
+        <SplitControl label="Content" flex={[1,4]}>
+            <div class="test-content">
+                {@html testData.data.content_html}
+            </div>
+        </SplitControl>
+
+        <!-- Published Date -->
+        <SplitControl label="Published Date" flex={[1,4]}>
+            {dayjs.unix(testData.data.published_at).format('MMMM D, YYYY')}
+        </SplitControl>
+
+        <!-- Featured Image -->
+        <SplitControl label="Featured Image" flex={[1,4]}>
+            {#if testData.data.featured_image_url}
+                <img 
+                    src={testData.data.featured_image_url} 
+                    alt="Featured" 
+                />
+            {/if}
+        </SplitControl>
+
+    </Modal>
+
+{/if}
+
+
+<style lang="scss">
 
     .footer {
         padding: 20px 100px;
         text-align: center;
+    }
+
+    .test-content {
+        :global(a:not([href^="#"])) {
+            color: var(--link);
+        }
+        :global(pre) {
+            overflow: auto;
+        }
+        :global(blockquote) {
+            border-left: 3px solid #000;
+            padding-left: 20px;
+        }
+        :global(img) {
+            max-width: 100%;
+        }
+        :global(aside) {
+            display: flex;
+            padding: 10px;
+            gap: 10px;
+            border-radius: 15px;
+        }
+    }
+
+    img {
+        max-width: 100%;
     }
 
 </style>
