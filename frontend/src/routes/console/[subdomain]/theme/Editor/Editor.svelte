@@ -1,5 +1,5 @@
 <script lang="ts">
-	import { selectedThemeFileStore } from "../../../lib/stores/themeStore";
+	import { selectedThemeFileStore } from "../themeStore";
 import EditorBody from "./EditorBody.svelte";
     import EditorTopbar from "./EditorTopbar.svelte";
 </script>

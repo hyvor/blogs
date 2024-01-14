@@ -2,13 +2,14 @@
 	import { onMount } from "svelte";
 	import Nav from "./Nav/Nav.svelte";
     import { page } from '$app/stores';
-	import { Loader } from "@hyvor/design/components";
+	import { Loader, toast } from "@hyvor/design/components";
 	import consoleApi from "../lib/consoleApi";
 	import type { Blog, BlogCounts, Language, Subscription, UsageTypes, User } from "../lib/types";
 	import { usersStore } from "../lib/stores/usersStore";
 	import { subscriptionStore, usageStore } from "../lib/stores/subscriptionStore";
 	import { blogCountsStore, blogOriginalStore, blogStore } from "../lib/stores/blogStore";
 	import { languagesStore } from "../lib/stores/languagesStore";
+	import { goto } from "$app/navigation";
 
     let isLoading = true;
 
@@ -39,6 +40,9 @@
             usageStore.set(res.usage);
             
             isLoading = false;
+        }).catch(() => {
+            toast.error('Unable to load blog');
+            goto('/console');
         })
     
     });

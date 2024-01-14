@@ -1,6 +1,6 @@
 import { beforeNavigate } from "$app/navigation";
 import { get } from "svelte/store";
-import { themeFilesOriginalStore, themeFilesStore } from "../../lib/stores/themeStore";
+import { themeFilesOriginalStore, themeFilesStore } from "./themeStore";
 
 
 export function useIsFileEditingCheck() {

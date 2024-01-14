@@ -2,7 +2,7 @@
 	import { Button, ButtonGroup, Modal, toast } from "@hyvor/design/components";
 	import type { ThemeFile } from "../../../../lib/types";
 	import { deleteFile } from "../../../../lib/actions/themeActions";
-	import { removeThemeFileStore, selectedThemeFileIdStore } from "../../../../lib/stores/themeStore";
+	import { removeThemeFileStore, selectedThemeFileIdStore } from "../../themeStore";
 
     export let open = false;
     export let file: ThemeFile;

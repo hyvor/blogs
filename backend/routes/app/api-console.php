@@ -299,11 +299,5 @@ Route::prefix('/api/console/v0/blog/{subdomain}')
 
     });
 
-Route::prefix('/api/console/v0/misc')->middleware([
-    ConsoleMiscApiAccessMiddleware::class,
-])->group(function () {
-    Route::get('/themes', [ConsoleThemeController::class, 'getAllThemes']);
-});
-
 // SPECIAL
 Route::get('user-accept-invite', [ConsoleUserController::class, 'acceptInvite'])->name('user-accept-invite');

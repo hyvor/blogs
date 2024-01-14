@@ -1,6 +1,6 @@
 <script lang="ts">
 	import { type CodeMirrorMode } from './../../../lib/components/CodemirrorEditor/codemirror';
-	import { selectedThemeFileStore } from "../../../lib/stores/themeStore";
+	import { selectedThemeFileStore } from "../themeStore";
 	import TextEditor from "./Preview/TextEditor.svelte";
 
     $: currentFile = $selectedThemeFileStore!;

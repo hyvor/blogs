@@ -1,11 +1,13 @@
 <script lang="ts">
 	import { Button, Loader } from "@hyvor/design/components";
 	import { onMount } from "svelte";
-	import { loadThemeFiles, selectedThemeFileIdStore, themeFilesOriginalStore, themeFilesStore } from "../../lib/stores/themeStore";
+	import { selectedThemeFileIdStore, themeFilesOriginalStore, themeFilesStore } from "./themeStore";
 	import Folder from "./Folder.svelte";
 	import Upload from "./Upload.svelte";
 	import Download from "./Download.svelte";
 	import type { ThemeFile } from "../../lib/types";
+	import ChangeTheme from "./ChangeTheme/ChangeTheme.svelte";
+	import { loadThemeFiles } from "./themeActions";
 
     let isLoading = true;
 
@@ -36,9 +38,7 @@
 
     <div class="title">
         <span>Theme</span>
-        <Button size="small">
-            Change
-        </Button>
+        <ChangeTheme />
     </div>
 
     <div class="folders">

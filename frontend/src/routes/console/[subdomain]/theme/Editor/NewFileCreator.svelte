@@ -6,7 +6,7 @@
 	import { getConfig } from "../../../lib/config";
 	import byteFormatter from "../../../lib/helper/byte-formatter";
 	import { createFile } from "../../../lib/actions/themeActions";
-	import { addThemeFileToStore, selectedThemeFileIdStore } from "../../../lib/stores/themeStore";
+	import { addThemeFileToStore, selectedThemeFileIdStore } from "../themeStore";
 
     export let folder: ThemeFolder;
 

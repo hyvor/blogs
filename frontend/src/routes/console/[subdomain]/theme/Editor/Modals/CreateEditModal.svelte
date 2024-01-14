@@ -3,7 +3,7 @@
 	import { checkFilename, createFile, updateFile } from "../../../../lib/actions/themeActions";
 	import type { ThemeFile, ThemeFolder } from "../../../../lib/types";
 	import { onMount } from "svelte";
-	import { addThemeFileToStore, selectedThemeFileIdStore, updateThemeFileStore } from "../../../../lib/stores/themeStore";
+	import { addThemeFileToStore, selectedThemeFileIdStore, updateThemeFileStore } from "../../themeStore";
 
     export let open = false;
     export let file: {id: number | null, name: string, folder: ThemeFolder};

@@ -1,6 +1,6 @@
 import { derived, writable } from "svelte/store";
-import type { ThemeFile } from "../types";
-import consoleApi from "../consoleApi";
+import type { ThemeFile } from "../../lib/types";
+import consoleApi from "../../lib/consoleApi";
 
 export const themeFilesOriginalStore = writable<ThemeFile[]>([]);
 export const themeFilesStore = writable<ThemeFile[]>([]);
@@ -20,12 +20,6 @@ export const selectedThemeFileOriginalStore = derived(
         return $themeFiles.find(themeFile => themeFile.id === $selectedThemeFileId);
     }
 )
-
-export function loadThemeFiles() {
-    return consoleApi.get<ThemeFile[]>({
-        endpoint: '/theme/files'
-    });
-}
 
 export function updateThemeFileStore(id: number, data: Partial<ThemeFile>, original = false) {
     const stores = [themeFilesStore]

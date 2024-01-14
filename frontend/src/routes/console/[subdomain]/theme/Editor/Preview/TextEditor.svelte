@@ -1,7 +1,7 @@
 <script lang="ts">
 	import CodemirrorEditor from "../../../../lib/components/CodemirrorEditor/CodemirrorEditor.svelte";
 	import type { CodeMirrorMode } from "../../../../lib/components/CodemirrorEditor/codemirror";
-	import { updateThemeFileStore } from "../../../../lib/stores/themeStore";
+	import { updateThemeFileStore } from "../../themeStore";
 	import type { ThemeFile } from "../../../../lib/types";
 
     export let file: ThemeFile;
