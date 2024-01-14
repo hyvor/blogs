@@ -5,6 +5,7 @@
 	import { createTagVariant } from "../../tags/tagActions";
 	import { createEventDispatcher } from "svelte";
 	import { createBlogVariant } from "../../../../lib/actions/blogActions";
+	import { createNavigationVariant } from "../../navigation/navigationActions";
 
     export let obj: AcceptableTypes;
     export let type: AcceptableTypesNames;
@@ -40,6 +41,17 @@
                 })
         } else if (type === 'blog') {
             createBlogVariant(language.id, true)
+                .then(res => {
+                    dispatchCreateVariant(res);
+                })
+                .catch(e => {
+                    toast.error(e.message);
+                })
+                .finally(() => {
+                    isCreating = false;
+                })
+        } else if (type == 'navigation') {
+            createNavigationVariant(obj.id, language.id)
                 .then(res => {
                     dispatchCreateVariant(res);
                 })
