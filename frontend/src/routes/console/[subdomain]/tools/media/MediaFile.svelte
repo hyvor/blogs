@@ -1,8 +1,8 @@
 <script lang="ts">
 	import dayjs from "dayjs";
 	import type { Media } from "../../../lib/types";
-	import { IMAGE_EXTENSIONS } from "./mediaActions";
-	import { IconButton } from "@hyvor/design/components";
+	import { IMAGE_EXTENSIONS, deleteMedia } from "./mediaActions";
+	import { IconButton, confirm, toast } from "@hyvor/design/components";
 	import { IconTrash } from "@hyvor/icons";
 	import { createEventDispatcher } from "svelte";
     
@@ -13,7 +13,10 @@
     // an event will be fired when the user selects a media file
     export let selecting = false;
 
-    const dispatch = createEventDispatcher<{select: Media}>();
+    const dispatch = createEventDispatcher<{
+        select: Media,
+        delete: Media,
+    }>();
 
     function handleClick(e: any) {
         if (selecting) {
@@ -22,8 +25,23 @@
         }
     }
 
-    function handleDelete() {
-        console.log('delete', media);
+    async function handleDelete() {
+        if (await confirm({
+            title: 'Delete Media',
+            content: 'Are you sure you want to delete this media file? This action cannot be undone!',
+            confirmText: 'Yes, Delete',
+            danger: true,
+        })) {
+            const toastId = toast.loading('Deleting...');
+
+            deleteMedia(media.id)
+                .then(() => {
+                    toast.success('Deleted', {id: toastId});
+                    dispatch('delete', media);
+                })
+                .catch(err => toast.error(err.message, {id: toastId}));
+
+        }
     }
 
     const isImage = IMAGE_EXTENSIONS.indexOf(media.extension) !== -1;
@@ -96,6 +114,7 @@
         flex: 1;
         background-color: var(--input);
         border-radius: var(--box-radius);
+        min-height: 0;
     }
 
     .footer {

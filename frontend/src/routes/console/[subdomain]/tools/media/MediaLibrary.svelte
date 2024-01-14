@@ -1,17 +1,57 @@
 <script lang="ts">
 	import { Button, IconMessage, Loader, toast } from "@hyvor/design/components";
     import MediaFilter from "./MediaFilter.svelte";
-	import { getMedia, type FileType } from "./mediaActions";
+	import { getMedia, type FileType, uploadMedia } from "./mediaActions";
 	import { IconCloudUpload } from "@hyvor/icons";
 	import type { Media } from "../../../lib/types";
 	import MediaFile from "./MediaFile.svelte";
+	import { getConfig } from "../../../lib/config";
 
     export let showUpload = true;
     export let filterDefaultType = null as null | FileType;
     export let filterTypeDisabled = false;
+    export let selecting = false;
 
     let isLoading = true;
     let mediaFiles: Media[] = [];
+
+    let uploadInput: HTMLInputElement;
+
+    let isUploading = false;
+
+    function handleUpload() {
+        const files = uploadInput?.files;
+
+        if (!files || !files.length) {
+            return toast.error('Please select a file');
+        }
+
+        const file = files[0];
+
+        if (!file) {
+            return toast.error('Please select a file');
+        }
+
+        if (file.size > getConfig().limits.max_upload_size) {
+            return toast.error('File size is too large. Max file size is 50MB');
+        }
+
+        const toastId = toast.loading('Uploading...');
+        isUploading = true;
+
+        uploadMedia(file, file.name)
+            .then(media => {
+                toast.success('Uploaded', {id: toastId});
+                mediaFiles = [media, ...mediaFiles];
+            })
+            .catch(err => toast.error(err.message, {id: toastId}))
+            .finally(() => isUploading = false)
+
+    }
+
+    function handleClickUpload() {
+        uploadInput?.click();
+    }
 
     function load(extensions: string[] = [], search: string | null = null) {
         isLoading = true;
@@ -31,6 +71,10 @@
         load(e.detail.extensions, e.detail.search);
     }
 
+    function handleDelete(e: CustomEvent<Media>) {
+        mediaFiles = mediaFiles.filter(media => media.id !== e.detail.id);
+    }
+
 </script>
 
 <div class="wrap">
@@ -43,7 +87,13 @@
         />
 
         {#if showUpload}
-            <Button>
+            <input 
+                type="file" 
+                bind:this={uploadInput}
+                style="display:none"
+                on:change={handleUpload}
+            />
+            <Button on:click={handleClickUpload}>
                 <IconCloudUpload slot="start" />
                 Upload
             </Button>
@@ -62,8 +112,9 @@
                 {#each mediaFiles as media (media.id)}
                     <MediaFile 
                         {media}
-                        selecting={true}
+                        {selecting}
                         on:select
+                        on:delete={handleDelete}
                     />
                 {/each}
             {/if}

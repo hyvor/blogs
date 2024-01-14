@@ -56,3 +56,10 @@ export function uploadMedia(file: File | Blob, name: string | null = null) {
         data: formData
     })
 }
+
+
+export function deleteMedia(id: number) {
+    return consoleApi.delete({
+        endpoint: `/media/${id}`
+    })
+}
