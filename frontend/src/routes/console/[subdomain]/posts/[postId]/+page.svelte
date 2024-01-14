@@ -5,11 +5,12 @@
 	import { scale } from 'svelte/transition';
 	import consoleApi from "../../../lib/consoleApi";
 	import type { Post } from "../../../lib/types";
-	import { initPostEditingState, setPostAndPostOriginalStore } from "../postStore";
+	import { initPostEditingState, setPostAndPostOriginalStore, postStore } from "../postStore";
 	import PostBody from "./Body/PostBody.svelte";
 	import PostSidebar from "./Sidebar/PostSidebar.svelte";
 	import { blogStore } from "../../../lib/stores/blogStore";
 	import { IconCaretLeftFill } from "@hyvor/icons";
+    
     const postId = $page.params.postId;
 
     let isLoading = true;
@@ -28,6 +29,13 @@
 
     });
 
+    function getBackUrl() {
+        const postData = $postStore;
+        return '/console/' + 
+            $blogStore.subdomain + 
+            (postData && postData.is_page ? '/pages' : '/posts');
+    }
+
 </script>
 
 <div 
@@ -36,7 +44,7 @@
 >
 
     <a 
-        href="/console/{$blogStore.subdomain}/posts"
+        href={getBackUrl()}
         class="back"
     >
         <IconButton 

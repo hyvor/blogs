@@ -19,10 +19,17 @@ interface GetPostsData {
     offset?: number,
 }
 
+
 export function getPosts(data: GetPostsData) {
     return consoleApi.get<Post[]>({
         endpoint: "/posts",
         data
+    });
+}
+
+export function getPages() {
+    return consoleApi.get<Post[]>({
+        endpoint: "/pages",
     });
 }
 
