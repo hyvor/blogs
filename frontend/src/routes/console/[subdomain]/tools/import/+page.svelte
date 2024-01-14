@@ -4,6 +4,11 @@
 	import ImportHistory from "./History/ImportHistory.svelte";
 
     let tab: 'new' | 'history' = 'new';
+
+    function handleComplete() {
+        tab = 'history';
+    }
+
 </script>
 <div class="import hds-box">
 
@@ -22,7 +27,7 @@
     <div class="content">
 
         {#if tab === 'new'}
-            <NewImport />
+            <NewImport on:complete={handleComplete} />
         {:else if tab === 'history'}
             <ImportHistory />
         {/if}

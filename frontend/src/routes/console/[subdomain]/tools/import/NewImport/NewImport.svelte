@@ -2,6 +2,7 @@
 	import { Button, Link, Loader, Modal, Radio, SplitControl, Switch, TextInput, toast } from "@hyvor/design/components";
 	import { testSitemapUrl, type TestSitemapResponse, importSitemap } from "../importActions";
 	import dayjs from "dayjs";
+	import { createEventDispatcher } from "svelte";
 
     let importFrom = 'sitemap';
 
@@ -46,6 +47,11 @@
         
     }
 
+    const dispatch = createEventDispatcher();
+    function dispatchComplete() {
+        dispatch('complete');
+    }
+
     function handleSitemapImport() {
 
         const toastId = toast.loading('Importing sitemap...');
@@ -63,6 +69,7 @@
             import_images: importImages
         }).then(() => {
             toast.success('Sitemap imported started. It may take a while.', {id: toastId});
+            dispatchComplete();
         }).catch(err => {
             toast.error(err.message, {id: toastId});        
         })
