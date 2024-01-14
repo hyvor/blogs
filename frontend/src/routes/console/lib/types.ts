@@ -326,7 +326,9 @@ export type ApiKeyType = 'console' | 'delivery';
 export interface Theme {
     id: number,
     type: 'original' | 'ported',
-    name: string
+    name: string,
+    latest_version: string,
+    preview_subdomain: string,
 }
 
 export type ThemeFolder = 'templates' | 'assets' | 'styles' | 'lang' | null

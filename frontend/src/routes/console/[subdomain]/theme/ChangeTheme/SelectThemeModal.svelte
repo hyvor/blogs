@@ -1,8 +1,10 @@
 <script lang="ts">
-	import { Loader, Modal } from "@hyvor/design/components";
+	import { Loader, Modal, Button, ActionList, ActionListItem, Text, confirm, Callout, toast } from "@hyvor/design/components";
 	import { onMount } from "svelte";
-	import { loadThemes } from "../themeActions";
+	import { changeTheme, loadThemes } from "../themeActions";
 	import type { Theme } from "../../../lib/types";
+	import { IconBoxArrowUpRight, IconExclamation, IconExclamationCircle } from "@hyvor/icons";
+	import { setThemeFiles } from "../themeStore";
 
     export let show = false;
 
@@ -18,20 +20,83 @@
             .finally(() => isLoading = false);
 
     });
+
+    async function handleClick(name: string) {
+        if (await confirm({
+            title: 'Confirm change',
+            content: 'Are you sure you want to change the theme? Any changes you made to the current theme will be lost.',
+            confirmText: 'Yes, Change',
+        })) {
+
+            show = false;
+
+            const toastId = toast.loading('Changing theme...');
+
+            changeTheme(name)
+                .then(files => {
+                    toast.success('Theme changed successfully', {id: toastId});
+                    setThemeFiles(files);
+                })
+                .catch(e => toast.error(e.message, {id: toastId}));
+
+        }
+    }
     
 </script>
 
 <Modal
-    title="Choose a theme"
     bind:show={show}
+    footer={{
+        cancel: {
+            text: 'Close',
+        },
+        confirm: false,
+    }}
+    closeOnOutsideClick={false}
+    size="small"
 >
+    <div slot="title" class="title">
+        Choose a theme <Button
+            as="a"
+            href="/themes"
+            target="_blank"
+            size="small"
+        >
+            Preview Themes <IconBoxArrowUpRight slot="end" size={12} />
+        </Button>
+    </div>
+
     {#if isLoading}
-        <Loader block padding={100} />
+        <Loader block padding={150} />
     {:else}
 
-        {#each themes as theme (theme.id)}
-            {theme.name}
-        {/each}
+        <Callout type="warning" style="text-align:initial;margin-bottom:20px;font-size:14px">
+            <IconExclamationCircle slot="icon" size={16} />
+            Changing the theme will reset any changes you made to the current theme.
+        </Callout>
+
+        <ActionList>
+            {#each themes as theme (theme.id)}
+                <ActionListItem
+                    on:click={() => handleClick(theme.name)}
+                >
+                    {theme.name}
+
+                    <Text light slot="end">
+                        v{theme.latest_version}
+                    </Text>
+                </ActionListItem>
+            {/each}
+        </ActionList>
+
 
     {/if}
 </Modal>
+
+<style>
+    .title {
+        font-weight: 600;
+        text-align: left;
+        font-size: 18px;
+    }
+</style>

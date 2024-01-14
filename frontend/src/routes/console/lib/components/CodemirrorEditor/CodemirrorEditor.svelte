@@ -20,8 +20,8 @@
 
         editorDiv.innerHTML = "";
 
-        function handleSave() {
-            dispatch('save', cm.current.doc.getValue());
+        function handleSave(cm: any) {
+            dispatch('save', cm.doc.getValue());
         }
 
         function handleTab(cm: any) {
@@ -41,7 +41,7 @@
             tabSize,
             indentWithTabs: false,
             indentUnit: tabSize,
-            lineWrapping: false,
+            lineWrapping: true,
             lineNumbers: true,
             matchBrackets: true,
             matchTags: {bothTags: true},

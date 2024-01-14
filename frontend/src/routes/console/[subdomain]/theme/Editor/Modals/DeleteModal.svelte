@@ -1,7 +1,7 @@
 <script lang="ts">
 	import { Button, ButtonGroup, Modal, toast } from "@hyvor/design/components";
 	import type { ThemeFile } from "../../../../lib/types";
-	import { deleteFile } from "../../../../lib/actions/themeActions";
+	import { deleteFile } from "../../themeActions";
 	import { removeThemeFileStore, selectedThemeFileIdStore } from "../../themeStore";
 
     export let open = false;
@@ -29,12 +29,12 @@
 
         <ButtonGroup>
 
-            <Button color="invisible" on:click={() => open = false}>
+            <Button variant="invisible" on:click={() => open = false}>
                 Cancel
             </Button>
 
             <Button
-                color="danger" 
+                color="red" 
                 on:click={handleDelete}
             >
                 Delete

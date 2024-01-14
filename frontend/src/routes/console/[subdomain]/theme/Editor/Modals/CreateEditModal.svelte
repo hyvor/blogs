@@ -1,6 +1,6 @@
 <script lang="ts">
 	import { Button, ButtonGroup, Caption, FormControl, Loader, Modal, SplitControl, Text, TextInput, Validation, toast } from "@hyvor/design/components";
-	import { checkFilename, createFile, updateFile } from "../../../../lib/actions/themeActions";
+	import { checkFilename, createFile, updateFile } from "../../themeActions";
 	import type { ThemeFile, ThemeFolder } from "../../../../lib/types";
 	import { onMount } from "svelte";
 	import { addThemeFileToStore, selectedThemeFileIdStore, updateThemeFileStore } from "../../themeStore";

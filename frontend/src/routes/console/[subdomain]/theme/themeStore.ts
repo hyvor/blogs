@@ -21,6 +21,26 @@ export const selectedThemeFileOriginalStore = derived(
     }
 )
 
+export function setThemeFiles(files: ThemeFile[]) {
+    themeFilesStore.set(files);
+    themeFilesOriginalStore.set(files);
+
+    // focus the file
+    selectedThemeFileIdStore.set(getFocusFileId(files));
+
+    // get the first file to focus
+    function getFocusFileId(files: ThemeFile[]) {
+        const configYaml = files.find(file => file.folder === null && file.name === 'config.yaml');
+        if (configYaml) return configYaml.id;
+
+        const firstRoot = files.find(file => file.folder === null);
+        if (firstRoot) return firstRoot.id;
+
+        return null;
+    }
+
+}
+
 export function updateThemeFileStore(id: number, data: Partial<ThemeFile>, original = false) {
     const stores = [themeFilesStore]
     if (original) {

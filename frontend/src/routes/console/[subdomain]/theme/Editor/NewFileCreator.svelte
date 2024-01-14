@@ -5,7 +5,7 @@
 	import CreateEditModal from "./Modals/CreateEditModal.svelte";
 	import { getConfig } from "../../../lib/config";
 	import byteFormatter from "../../../lib/helper/byte-formatter";
-	import { createFile } from "../../../lib/actions/themeActions";
+	import { createFile } from "../themeActions";
 	import { addThemeFileToStore, selectedThemeFileIdStore } from "../themeStore";
 
     export let folder: ThemeFolder;

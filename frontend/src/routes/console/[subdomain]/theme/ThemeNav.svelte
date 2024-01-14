@@ -1,7 +1,7 @@
 <script lang="ts">
 	import { Button, Loader } from "@hyvor/design/components";
 	import { onMount } from "svelte";
-	import { selectedThemeFileIdStore, themeFilesOriginalStore, themeFilesStore } from "./themeStore";
+	import { selectedThemeFileIdStore, setThemeFiles, themeFilesOriginalStore, themeFilesStore } from "./themeStore";
 	import Folder from "./Folder.svelte";
 	import Upload from "./Upload.svelte";
 	import Download from "./Download.svelte";
@@ -11,22 +11,10 @@
 
     let isLoading = true;
 
-    function getFocusFileId(files: ThemeFile[]) {
-        const configYaml = files.find(file => file.folder === null && file.name === 'config.yaml');
-        if (configYaml) return configYaml.id;
-
-        const firstRoot = files.find(file => file.folder === null);
-        if (firstRoot) return firstRoot.id;
-
-        return null;
-    }
-
     onMount(() => {
         loadThemeFiles()
             .then(res => {
-                themeFilesStore.set(res);
-                themeFilesOriginalStore.set(res);
-                selectedThemeFileIdStore.set(getFocusFileId(res));
+                setThemeFiles(res);
                 isLoading = false;
             })
     });

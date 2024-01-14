@@ -1,6 +1,9 @@
 import { beforeNavigate } from "$app/navigation";
-import { get } from "svelte/store";
-import { themeFilesOriginalStore, themeFilesStore } from "./themeStore";
+import { get, writable } from "svelte/store";
+import { selectedThemeFileStore, themeFilesOriginalStore, themeFilesStore, updateThemeFileStore } from "./themeStore";
+import consoleApi from "../../lib/consoleApi";
+import { updateFile } from "./themeActions";
+import { toast } from "@hyvor/design/components";
 
 
 export function useIsFileEditingCheck() {
@@ -23,4 +26,29 @@ export function useIsFileEditingCheck() {
             
     });
 
+}
+
+export const fileSavingState  = writable<'none' | 'loading' | 'success' | 'error'>('none');
+
+export function saveCurrentFile() {
+    fileSavingState.set('loading');
+
+    const file = get(selectedThemeFileStore);
+
+    function reset() {
+        fileSavingState.set('none');
+    }
+
+    if (!file)
+        return reset();
+
+    return updateFile(file.id, {
+        content: file.content
+    }).then(res => {
+        updateThemeFileStore(file.id, res, true);
+        fileSavingState.set('success');
+    }).catch(e => {
+        fileSavingState.set('error');
+        toast.error(e.message);
+    })
 }

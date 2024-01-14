@@ -3,6 +3,7 @@
 	import type { CodeMirrorMode } from "../../../../lib/components/CodemirrorEditor/codemirror";
 	import { updateThemeFileStore } from "../../themeStore";
 	import type { ThemeFile } from "../../../../lib/types";
+	import { saveCurrentFile } from "../../theme";
 
     export let file: ThemeFile;
     export let ext: CodeMirrorMode;
@@ -11,7 +12,19 @@
         updateThemeFileStore(file.id, {content: val});
     }
 
+    function handleTextSave(e: CustomEvent<string>) {
+        saveCurrentFile();
+    }
+
+    function handleKeydown(e: KeyboardEvent) {
+        if ((e.ctrlKey || e.metaKey) && e.key === 's') {
+            e.preventDefault();
+        }
+    }
+
 </script>
+
+<svelte:window on:keydown={handleKeydown} />
 
 <div class="text-editor">
     <CodemirrorEditor 
@@ -19,6 +32,7 @@
         id={file.id}
         ext={ext}
         on:change={e => handleChange(e.detail)}
+        on:save={handleTextSave}
     />
 </div>
 

@@ -41,7 +41,10 @@ class ThemeRepository
         $versions = ThemeVersion::whereIn('id', $versionIds)->get();
 
         foreach ($themes as $theme) {
-            $theme->setRelation('versions', [$versions->firstWhere('id', $theme->latest_version_id)]); // @phpstan-ignore-line
+            $theme->setRelation(
+                'versions',
+                collect([$versions->firstWhere('id', $theme->latest_version_id)])
+            ); // @phpstan-ignore-line
         }
 
         return $themes;

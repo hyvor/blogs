@@ -19,7 +19,7 @@ class ConsoleThemeController extends Controller
 {
     public function getAllThemes()
     {
-        $all = ThemeRepository::getAllThemes();
+        $all = ThemeRepository::getAllThemesWithLatestVersions();
 
         return response()->json($all->mapInto(ThemeObject::class));
     }
