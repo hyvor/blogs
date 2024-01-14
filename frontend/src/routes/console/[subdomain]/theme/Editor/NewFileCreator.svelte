@@ -37,7 +37,7 @@
             addThemeFileToStore(res);
             selectedThemeFileIdStore.set(res.id);
         }).catch(err => {
-            toast.error(err.err || 'Unable to upload file', {id: toastId});
+            toast.error(err.message || 'Unable to upload file', {id: toastId});
         });
 
     }
@@ -60,7 +60,7 @@
 
     <Button 
         size="x-small" 
-        color="invisible"
+        variant="invisible"
         on:click={() => isCreating = true}
     >
         <IconPlus size={11} slot="start" />
@@ -70,7 +70,7 @@
     {#if folder === 'assets'}
         <Button 
             size="x-small" 
-            color="invisible"
+            variant="invisible"
             on:click={handleUploadClick}
         >
             <IconCloudUpload size={11} slot="start" />

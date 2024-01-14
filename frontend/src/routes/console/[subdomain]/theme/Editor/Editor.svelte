@@ -1,6 +1,6 @@
 <script lang="ts">
 	import { selectedThemeFileStore } from "../themeStore";
-import EditorBody from "./EditorBody.svelte";
+    import EditorBody from "./EditorBody.svelte";
     import EditorTopbar from "./EditorTopbar.svelte";
 </script>
 

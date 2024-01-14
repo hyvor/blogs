@@ -24,4 +24,7 @@
         min-width: 0;
         overflow: hidden;
     }
+    img {
+        max-width: 100%;
+    }
 </style>
