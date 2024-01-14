@@ -48,3 +48,16 @@ export function testSitemapUrl(data: TestSitemapData) {
         data
     })
 }
+
+export type ImportSitemapData = Omit<TestSitemapData, 'url'> & {
+    sitemap_url: string,
+    import_images: boolean,
+}
+
+
+export function importSitemap(data: ImportSitemapData) {
+    return consoleApi.post<Import>({
+        endpoint: '/data/import/sitemap/import',
+        data
+    })
+}

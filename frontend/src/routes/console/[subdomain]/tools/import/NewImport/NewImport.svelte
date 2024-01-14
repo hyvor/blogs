@@ -1,6 +1,6 @@
 <script lang="ts">
 	import { Button, Link, Loader, Modal, Radio, SplitControl, Switch, TextInput, toast } from "@hyvor/design/components";
-	import { testSitemapUrl, type TestSitemapResponse } from "../importActions";
+	import { testSitemapUrl, type TestSitemapResponse, importSitemap } from "../importActions";
 	import dayjs from "dayjs";
 
     let importFrom = 'sitemap';
@@ -44,6 +44,29 @@
         .catch(err => toast.error(err.message))
         .finally(() => isTestLoading = false);
         
+    }
+
+    function handleSitemapImport() {
+
+        const toastId = toast.loading('Importing sitemap...');
+
+        importSitemap({
+            sitemap_url: sitemapUrl,
+            slug_exclude: slugExclude,
+            css: {
+                title: titleCssSelector,
+                description: descriptionCssSelector,
+                content: contentCssSelector,
+                content_exclude: contentExcludeCssSelector,
+                published_date: publishedDateCssSelector
+            },
+            import_images: importImages
+        }).then(() => {
+            toast.success('Sitemap imported started. It may take a while.', {id: toastId});
+        }).catch(err => {
+            toast.error(err.message, {id: toastId});        
+        })
+
     }
 
 </script>
@@ -189,7 +212,9 @@
         Please test a few pages before importing the sitemap. If you need help, feel free to contact us.
     </div>
 
-    <Button>
+    <Button
+        on:click={handleSitemapImport}
+    >
         Import Sitemap
     </Button>
 
