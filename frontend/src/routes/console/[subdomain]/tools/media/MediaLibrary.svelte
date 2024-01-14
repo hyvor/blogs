@@ -1,5 +1,5 @@
 <script lang="ts">
-	import { Button, IconMessage, Loader, toast } from "@hyvor/design/components";
+	import { Button, IconMessage, LoadButton, Loader, toast } from "@hyvor/design/components";
     import MediaFilter from "./MediaFilter.svelte";
 	import { getMedia, type FileType, uploadMedia } from "./mediaActions";
 	import { IconCloudUpload } from "@hyvor/icons";
@@ -13,11 +13,15 @@
     export let selecting = false;
 
     let isLoading = true;
+    let isLoadingMore = false;
+    let hasMore = false;
     let mediaFiles: Media[] = [];
 
     let uploadInput: HTMLInputElement;
-
     let isUploading = false;
+
+    let extensions: string[] = [];
+    let search: string | null = null;
 
     function handleUpload() {
         const files = uploadInput?.files;
@@ -53,13 +57,17 @@
         uploadInput?.click();
     }
 
-    function load(extensions: string[] = [], search: string | null = null) {
-        isLoading = true;
+    const limit = 50;
 
-        getMedia(extensions, search)
+    function load(more = false) {
+        more ? isLoadingMore = true : isLoading = true;
+
+        getMedia(extensions, search, limit, more ? mediaFiles.length : 0)
             .then(res => {
                 isLoading = false;
-                mediaFiles = res;
+                isLoadingMore = false;
+                hasMore = res.length === limit;
+                mediaFiles = more ? [...mediaFiles, ...res] : res;
             })
             .catch(err => {
                 isLoading = false;
@@ -68,7 +76,10 @@
     }
 
     function handleChange(e: CustomEvent<{extensions: string[], search: string | null}>) {
-        load(e.detail.extensions, e.detail.search);
+        extensions = e.detail.extensions;
+        search = e.detail.search;
+
+        load();
     }
 
     function handleDelete(e: CustomEvent<Media>) {
@@ -80,7 +91,7 @@
 <div class="wrap">
 
     <div class="topbar">
-        <MediaFilter 
+        <MediaFilter
             on:change={handleChange} 
             defaultType={filterDefaultType}
             typeDisabled={filterTypeDisabled}
@@ -123,6 +134,13 @@
 
     </div>
 
+    <LoadButton 
+        text="Load More"
+        loading={isLoadingMore}
+        show={hasMore}
+        on:click={() => load(true)}
+    />
+
 </div>
 
 <style>
@@ -137,10 +155,11 @@
         justify-content: space-between;
         align-items: center;
         margin-bottom: 30px;
+        padding: 0 5px;
     }
     .media-show {
         flex: 1;
-        padding: 25px;
+        padding: 25px 5px;
         overflow: auto;
         display: flex;
         flex-wrap: wrap;

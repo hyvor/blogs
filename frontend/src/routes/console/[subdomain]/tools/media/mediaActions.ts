@@ -33,6 +33,7 @@ export function getExtensionsByFileType(fileType: FileType, customExtensions: st
 export function getMedia(
     extensions: string[] | null = null,
     search: string | null = null,
+    limit: number = 50,
     offset: number = 0,
 ) {
 
@@ -41,7 +42,7 @@ export function getMedia(
         data: {
             search,
             extensions,
-            limit: 50,
+            limit,
             offset,
         }
     })
