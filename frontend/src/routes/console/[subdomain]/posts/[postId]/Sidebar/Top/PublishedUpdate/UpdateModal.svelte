@@ -1,15 +1,15 @@
 <script lang="ts">
 	import { Button, ButtonGroup, Modal, SplitControl, Switch, Tag } from "@hyvor/design/components";
-	import { postOriginalStore, postStore, postOriginalVariantStore, postVariantStore } from "../../../postStore";
-	import { getPostChanges } from "../../changed";
+	import { postOriginalStore, postStore, postOriginalVariantStore, postVariantStore } from "../../../../postStore";
 	import Diff from "$lib/components/Diff/Diff.svelte";
 	import dayjs from "dayjs";
+	import { getPublishedChanges } from "./published-changes";
     export let show = false;
 
-    let changes: ReturnType<typeof getPostChanges>;
+    let changes: ReturnType<typeof getPublishedChanges>;
     let diff = true;
     
-    $: $postStore, $postOriginalStore, changes = getPostChanges();
+    $: $postStore, $postOriginalStore, changes = getPublishedChanges();
 
 
     function handleUpdate() {

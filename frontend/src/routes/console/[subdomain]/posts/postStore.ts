@@ -17,17 +17,21 @@ export interface PostEditingStatus {
     sidebar: PostSidebar,
     isEditingPublished: boolean,
     editorView: EditorView | null,
+    postView: HTMLDivElement,
+    isSaving: boolean
 }
 
 
 export const postEditingStatusStore = writable<PostEditingStatus>();
 
-export function initPostEditingState() {
+export function initPostEditingState(postView: HTMLDivElement) {
     postEditingStatusStore.set({
         languageId: get(languagesStore).find(l => l.is_primary === true)!.id,
         sidebar: 'settings',
         isEditingPublished: false,
-        editorView: null
+        editorView: null,
+        postView,
+        isSaving: false,
     })
 }
 
@@ -72,7 +76,7 @@ export const postCurrentContentKey = derived(
                     'content'
             )
     }
-);
+)
 
 export const postCurrentContentStore = derived(
     [postVariantStore, postCurrentContentKey],

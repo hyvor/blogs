@@ -1,7 +1,11 @@
+<script lang="ts">
+	import SaveStatus from './SaveStatus.svelte';
+</script>
+
 <div class="editor-top">
 
     <div class="left">
-        <span class="saved">Saved</span>
+        <SaveStatus />
     </div>
 
     <div class="right">
@@ -19,10 +23,6 @@
     }
     .left {
         flex: 1;
-    }
-    .saved {
-        font-size: 12px;
-        color: var(--text-light);
     }
     #pm-word-count {
         font-size: 12px;

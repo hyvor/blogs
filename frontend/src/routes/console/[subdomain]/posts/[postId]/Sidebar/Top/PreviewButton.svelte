@@ -32,7 +32,7 @@
 
     <Button 
         size="small" 
-        color="light" 
+        color="input" 
         slot="trigger"
         on:click={handleClick}
     >
@@ -44,7 +44,7 @@
 
         <Button 
             block 
-            color="light"
+            color="input"
             on:click={() => handleOpenNewTab(previewUrl)}
         >
             Preview
@@ -53,7 +53,7 @@
 
         <Button 
             block
-            on:click={() => handleOpenNewTab($blogStore.url)}
+            on:click={() => handleOpenNewTab($postVariantStore.url)}
         >
             Published Post
             <IconBoxArrowUpRight slot="end" size={14} />

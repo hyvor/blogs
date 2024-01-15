@@ -56,7 +56,7 @@ export function updatePost(data: Partial<Post>) {
 }
 
 // updates current post variant
-export function updatePostVariant(data: Partial<PostVariant>) {
+export function updatePostVariant(data: Partial<PostVariant>, updateStore = true) {
 
     const postId = get(postStore).id;
     const languageId = get(postLanguageStore).id;
@@ -69,12 +69,14 @@ export function updatePostVariant(data: Partial<PostVariant>) {
 
     promise.then(res => {
  
-        // update only the fields that were changed
-        const update = {} as Partial<PostVariant>;
-        Object.keys(data).forEach(key => 
-            (update as any)[key] = (res as any)[key]
-        );
-        updatePostVariantStore(res, true);
+        if (updateStore) {
+            // update only the fields that were changed
+            const update = {} as Partial<PostVariant>;
+            Object.keys(data).forEach(key => 
+                (update as any)[key] = (res as any)[key]
+            );
+            updatePostVariantStore(res, true);
+        }
 
     });
 

@@ -15,6 +15,8 @@
 
     let isLoading = true;
 
+    let postView : HTMLDivElement;
+
     onMount(() => {
 
         consoleApi.get<Post>({
@@ -22,7 +24,7 @@
         }).then(res => {
 
             setPostAndPostOriginalStore(res);
-            initPostEditingState();
+            initPostEditingState(postView);
 
             isLoading = false;
         })
@@ -41,6 +43,7 @@
 <div 
     id="post-view"
     in:scale={{ duration: 300, opacity: 0, start: 0.8 }}
+    bind:this={postView}
 >
 
     <a 

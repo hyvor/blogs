@@ -5,7 +5,7 @@
 	import PreviewButton from "../Sidebar/Top/PreviewButton.svelte";
 	import UnpublishButton from "../Sidebar/Settings/Status/UnpublishButton.svelte";
 	import PublishButton from "../Sidebar/Top/PublishButton.svelte";
-	import UpdateButton from "../Sidebar/Top/UpdateButton.svelte";
+	import UpdateButton from "../Sidebar/Top/PublishedUpdate/UpdateButton.svelte";
 	import { Z_INDEX, increaseZIndex } from "../z-index";
 
     let div: HTMLDivElement;

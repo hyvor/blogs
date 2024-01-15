@@ -3,7 +3,7 @@
 	import PreviewButton from "./PreviewButton.svelte";
 	import PublishButton from "./PublishButton.svelte";
 	import UnpublishButton from "./UnpublishButton.svelte";
-	import UpdateButton from "./UpdateButton.svelte";
+	import UpdateButton from "./PublishedUpdate/UpdateButton.svelte";
 
 </script>
 

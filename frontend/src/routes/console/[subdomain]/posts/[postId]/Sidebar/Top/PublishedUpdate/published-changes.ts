@@ -1,9 +1,9 @@
 import { get } from "svelte/store";
-import { postOriginalStore, postOriginalVariantStore, postStore, postVariantStore } from "../postStore";
-import type { Post, PostVariant } from "../../../lib/types";
+import { postOriginalStore, postOriginalVariantStore, postStore, postVariantStore } from "../../../../postStore";
+import type { Post, PostVariant } from "../../../../../../lib/types";
 
 
-export function getPostChanges() {
+export function getPublishedChanges() {
 
     // checks the post and the current variant for changes
 
@@ -29,7 +29,6 @@ export function getPostChanges() {
     const postVariantKeys: (keyof PostVariant)[] = [
         'slug',
         'content',
-        'content_unsaved',
         'title',
         'description',
     ];
@@ -52,8 +51,8 @@ export function getPostChanges() {
 
 }
 
-export function hasPostChanges() {
-    const changes = getPostChanges();
+export function hasPublishedChanges() {
+    const changes = getPublishedChanges();
     return Object.keys(changes.post).length > 0 
         || Object.keys(changes.variant).length > 0;
 }

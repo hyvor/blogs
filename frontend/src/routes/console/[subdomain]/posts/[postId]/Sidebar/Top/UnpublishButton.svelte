@@ -27,7 +27,7 @@
 {#if $postVariantStore.status !== 'draft'}
     <Button
         size="small"
-        color="light"
+        color="input"
         slot="trigger"
         on:click={() => modalOpen = true}
     >
