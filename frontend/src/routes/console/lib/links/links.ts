@@ -104,7 +104,9 @@ export function getLinkType(href: string, baseUrl: string) : LinkType {
 
 }
 
-export function focusLinkInEditor(link: Link, editorView: EditorView) {
+export function focusLinkInEditor(link: Link, editorView: EditorView | null) {
+
+    if (!editorView) return;
 
     const doc = editorView.state.doc;
     const pos = link.pos;

@@ -1,4 +1,5 @@
 <script lang="ts">
+	import Links from './Links/Links.svelte';
 	import { TabNav, TabNavItem } from "@hyvor/design/components";
 	import { IconGear, IconLink45deg, IconMagic, IconSearchHeart } from "@hyvor/icons";
 	import Settings from "./Settings/Settings.svelte";
@@ -68,7 +69,7 @@
             {:else if tab === 'seo'}
                 <Seo />
             {:else if tab === 'links'}
-
+                <Links />
             {:else if tab === 'ai'}
                 <Ai />
             {/if}

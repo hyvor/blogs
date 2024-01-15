@@ -7,8 +7,7 @@
 
 <UpgradeRequired 
     minPlan="growth" 
-    trialAllowed={true} 
-    allow={true}
+    trialAllowed={true}
 >
 
     <div slot="upgrade-text">
