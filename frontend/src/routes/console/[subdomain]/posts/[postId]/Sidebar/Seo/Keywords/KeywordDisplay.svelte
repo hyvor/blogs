@@ -39,6 +39,7 @@
         <Tag 
             size="small"
             on:click={() => isUpdating = true}
+            interactive
         >{keyword}</Tag>
 
         <IconButton

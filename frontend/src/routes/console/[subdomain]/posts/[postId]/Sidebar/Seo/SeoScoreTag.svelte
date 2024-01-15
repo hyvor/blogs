@@ -4,7 +4,7 @@
     export let percentage = false;
 
     $: score = Math.round(score);
-    const color = score < 50 ? 'red' : score < 80 ? 'orange' : 'green';
+    $: color = score < 50 ? 'red' : score < 80 ? 'orange' : 'green';
 
 </script>
 

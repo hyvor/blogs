@@ -8,7 +8,7 @@
     
     export let keyword = '';
 
-    let isAdding = false;
+    let isAdding = !!keyword;
     
     const dispatch = createEventDispatcher<{add: string, close: void}>();
 
