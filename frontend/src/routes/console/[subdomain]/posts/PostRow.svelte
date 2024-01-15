@@ -32,13 +32,15 @@
         <div class="post-title">{variant?.title || '(Untitled)'}</div>
 
         <div class="post-slug">
-            <a 
-                href={post.variants[0]?.url || ''}
-                target="_blank"
-            >
-                {post.variants[0]?.slug || ''}
-                <IconBoxArrowUpRight size={10} style="margin-left: 4px;" />
-            </a>
+            {#if variant?.slug && variant.status === 'published'}
+                <a 
+                    href={post.variants[0]?.url || ''}
+                    target="_blank"
+                >
+                    {post.variants[0]?.slug || ''}
+                    <IconBoxArrowUpRight size={10} style="margin-left: 4px;" />
+                </a>
+            {/if}
         </div>
 
         <div class="post-data">
