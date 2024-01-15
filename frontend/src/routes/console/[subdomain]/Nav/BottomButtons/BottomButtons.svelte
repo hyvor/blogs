@@ -71,7 +71,7 @@
         
         <ActionList>
             <a 
-                href="https://www.g2.com/products/hyvor-talk/reviews"
+                href="https://www.g2.com/products/hyvor-blogs/reviews"
                 target="_blank"
             >
                 <ActionListItem>
