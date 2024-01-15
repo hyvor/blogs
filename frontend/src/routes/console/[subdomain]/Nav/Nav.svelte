@@ -1,4 +1,5 @@
 <script>
+	import BottomButtons from './BottomButtons/BottomButtons.svelte';
 	import BlogNav from "./BlogNav.svelte";
 </script>
 
@@ -8,12 +9,10 @@
         <BlogNav />
     </div>
 
-    <div id="nav-bottom">
-        This is the bottom
-    </div>
+    <BottomButtons />
 </div>
 
-<style>
+<style lang="scss">
 
     #nav-wrap {
         display: flex;
@@ -25,12 +24,6 @@
         border-radius: var(--box-radius);
         background: var(--box-background);
         box-shadow: var(--box-shadow);
-    }
-
-    #nav-bottom {
-        flex: 1;
-        display: flex;
-        align-items: flex-end;
-    }
+    } 
 
 </style>
