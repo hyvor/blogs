@@ -1,8 +1,8 @@
 import { get } from "svelte/store";
 import { languagesStore } from "../../lib/stores/languagesStore";
-import type { Post, PostVariant } from "../../lib/types";
+import type { Post, PostVariant, User, Tag } from "../../lib/types";
 import consoleApi from "../../lib/consoleApi";
-import { postEditingStatusStore, postLanguageStore, postStore, updatePostVariantStore } from "./postStore";
+import { postEditingStatusStore, postLanguageStore, postStore, updatePostStore, updatePostVariantStore } from "./postStore";
 
 
 // API
@@ -54,6 +54,49 @@ export function updatePost(data: Partial<Post>) {
     });
 
 }
+
+export function updatePostAuthors(authors: User[], updateStore = true) {
+
+    const postId = get(postStore).id;
+
+    const promise = consoleApi.patch({
+        endpoint: `/post/${postId}/authors`,
+        data: {
+            ids: authors.map(author => author.id)
+        }
+    })
+
+    promise.then(() => {
+        if (updateStore) {
+            updatePostStore({authors}, true);
+        }
+    });
+
+    return promise;
+
+}
+
+export function updatePostTags(tags: Tag[], updateStore = true) {
+
+    const postId = get(postStore).id;
+
+    const promise = consoleApi.patch({
+        endpoint: `/post/${postId}/tags`,
+        data: {
+            ids: tags.map(tag => tag.id)
+        }
+    })
+
+    promise.then(() => {
+        if (updateStore) {
+            updatePostStore({tags}, true);
+        }
+    });
+
+    return promise;
+
+}
+
 
 // updates current post variant
 export function updatePostVariant(data: Partial<PostVariant>, updateStore = true) {

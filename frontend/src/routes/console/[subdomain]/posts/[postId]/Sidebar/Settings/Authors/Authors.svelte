@@ -1,12 +1,18 @@
 <script lang="ts">
-	import { Avatar, Dropdown, IconButton, SplitControl, Tag, TextInput } from "@hyvor/design/components";
-    import { postStore } from "../../../../postStore";
+	import { Avatar, Dropdown, IconButton, Loader, SplitControl, Tag, Text, TextInput } from "@hyvor/design/components";
+    import { postOriginalStore, postStore, postVariantStore, updatePostStore } from "../../../../postStore";
 	import type { User } from "../../../../../../lib/types";
 	import { getPrimaryLanguage } from "../../../../../../lib/stores/languagesStore";
 	import { IconPlus, IconX } from "@hyvor/icons";
 	import AuthorsSearch from "./AuthorsSearch.svelte";
+	import UnsavedTag from "../UnsavedTag.svelte";
+	import { updatePost, updatePostAuthors } from "../../../../postActions";
+	import OnlyPrimaryVariant from "../OnlyPrimaryVariant.svelte";
+	import { hasIdArrayChanged } from "../settingsHelpers";
 
     let dropdownOpen = false;
+
+    let loaderState : 'none' | 'loading' | 'success' | 'error' = 'none';
 
     function getAuthorName(user: User) {
         const primaryLang = getPrimaryLanguage()
@@ -14,75 +20,120 @@
         return variant?.name || 'Unknown user';
     }
 
-    function handleRemoveAuthor(authorId: number) {
-        // TODO: implement
+    function saveAuthors() {
+        loaderState = 'loading';
+
+        updatePostAuthors($postStore.authors)
+            .then(() => loaderState = 'success')
+            .catch(() => loaderState = 'error');
     }
 
-    function handleAddAuthor(user: User) {
-        dropdownOpen = false;
+    function handleRemoveAuthor(authorId: number) {
+        updatePostStore({
+            authors: $postStore.authors.filter(a => a.id !== authorId)
+        });
+
+        if ($postVariantStore.status !== 'published')
+            saveAuthors();
     }
+
+    function handleAddAuthor(e: CustomEvent<User>) {
+        dropdownOpen = false;
+
+        const author = e.detail;
+        if ($postStore.authors.find(a => a.id === author.id)) return;
+
+        updatePostStore({
+            authors: [...$postStore.authors, author]
+        });
+
+        if ($postVariantStore.status !== 'published')
+            saveAuthors();
+
+    }
+
+    $: hasAuthorsChanged  = hasIdArrayChanged($postStore.authors, $postOriginalStore.authors);
 
 </script>
 
-<SplitControl>
-    <span slot="label">Authors</span>
+<OnlyPrimaryVariant>
 
-    <div class="authors">
+    <SplitControl>
+        <span slot="label">
+            Authors
 
-        <div class="left">
+            {#if hasAuthorsChanged}
+                <UnsavedTag />
+            {/if}
 
-            {#each $postStore.authors as author}
-                <Tag size="small" style="padding: 4px 8px" bg="#f1f1f1">
-                    <Avatar 
-                        src={author.picture_url} 
-                        alt={getAuthorName(author)} 
-                        slot="start"
-                        size={16}
-                    />
-                    { getAuthorName(author) }
+        </span>
 
-                    <IconButton 
-                        color="danger" 
-                        on:click={() => handleRemoveAuthor(author.id)}
-                        size={16}
-                        slot="end"
-                    >
-                        <IconX size={12} />
-                    </IconButton>
-                </Tag>
-            {/each}
+        <div class="authors">
 
-        </div>
+            <div class="left">
 
-        <div class="right">
+                {#if $postStore.authors.length}
 
-            <Dropdown
-                position="bottom"
-                align="end"
-                width={300}
-                bind:show={dropdownOpen}
-            >
-                <IconButton
-                    color="soft"
-                    size="small"
-                    slot="trigger"
+                    {#each $postStore.authors as author}
+                        <Tag size="small" style="padding: 4px 8px" bg="#f1f1f1">
+                            <Avatar 
+                                src={author.picture_url} 
+                                alt={getAuthorName(author)} 
+                                slot="start"
+                                size={16}
+                            />
+                            { getAuthorName(author) }
+
+                            <IconButton 
+                                color="red"
+                                variant="invisible"
+                                on:click={() => handleRemoveAuthor(author.id)}
+                                size={16}
+                                slot="end"
+                            >
+                                <IconX size={12} />
+                            </IconButton>
+                        </Tag>
+                    {/each}
+
+                {:else}
+                    <Text light small>No authors</Text>
+                {/if}
+
+            </div>
+
+            <div class="right">
+
+                <Loader state={loaderState} size="small" />
+
+                <Dropdown
+                    position="bottom"
+                    align="end"
+                    width={300}
+                    bind:show={dropdownOpen}
                 >
-                    <IconPlus size={16} />
-                </IconButton>
+                    <IconButton
+                        color="input"
+                        size={22}
+                        slot="trigger"
+                    >
+                        <IconPlus size={14} />
+                    </IconButton>
 
-                <AuthorsSearch 
-                    slot="content"
-                    on:select={handleAddAuthor}
-                />
-            
-            </Dropdown>
+                    <AuthorsSearch 
+                        slot="content"
+                        on:select={handleAddAuthor}
+                    />
+                
+                </Dropdown>
+
+            </div>
 
         </div>
 
-    </div>
 
-
-</SplitControl>
+    </SplitControl>
+</OnlyPrimaryVariant>
 
 <style>
     .authors {

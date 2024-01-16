@@ -38,7 +38,7 @@
 
     }
 
-    const dispatch = createEventDispatcher();
+    const dispatch = createEventDispatcher<{select: User}>();
 
     function handleSelect(user: User) {
         dispatch('select', user);

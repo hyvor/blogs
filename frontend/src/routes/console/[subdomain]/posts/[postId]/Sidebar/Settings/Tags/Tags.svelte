@@ -1,9 +1,17 @@
 <script lang="ts">
-	import { Avatar, IconButton, SplitControl, Tag } from "@hyvor/design/components";
-    import { postStore } from "../../../../postStore";
+	import { Avatar, Dropdown, IconButton, Loader, SplitControl, Tag, Text } from "@hyvor/design/components";
+    import { postOriginalStore, postStore, postVariantStore, updatePostStore } from "../../../../postStore";
 	import type { Tag as TagType } from "../../../../../../lib/types";
 	import { getPrimaryLanguage } from "../../../../../../lib/stores/languagesStore";
 	import { IconPlus, IconX } from "@hyvor/icons";
+	import TagsSearch from "./TagsSearch.svelte";
+	import { hasIdArrayChanged } from "../settingsHelpers";
+	import UnsavedTag from "../UnsavedTag.svelte";
+	import OnlyPrimaryVariant from "../OnlyPrimaryVariant.svelte";
+	import { updatePostTags } from "../../../../postActions";
+
+    let dropdownOpen = false;
+    let loaderState : 'none' | 'loading' | 'success' | 'error' = 'none';
 
     function getTagName(tag: TagType) {
         const primaryLang = getPrimaryLanguage()
@@ -11,54 +19,110 @@
         return variant?.name || 'Unknown tag';
     }
 
-    function handleRemoveTag(authorId: number) {
-        // TODO: implement
+    function saveTags() {
+        loaderState = 'loading';
+
+        updatePostTags($postStore.tags)
+            .then(() => loaderState = 'success')
+            .catch(() => loaderState = 'error');
     }
+
+    function handleRemoveTag(tagId: number) {
+        updatePostStore({
+            tags: $postStore.tags.filter(a => a.id !== tagId)
+        });
+
+        if ($postVariantStore.status !== 'published')
+            saveTags();
+    }
+
+    function handleAddTag(e: CustomEvent<TagType>) {
+        dropdownOpen = false;
+
+        const tag = e.detail;
+        if ($postStore.tags.find(a => a.id === tag.id)) return;
+
+        updatePostStore({
+            tags: [...$postStore.tags, tag]
+        });
+
+        if ($postVariantStore.status !== 'published')
+            saveTags();
+    }
+
+    $: hasChanged = hasIdArrayChanged($postStore.tags, $postOriginalStore.tags);
 
 </script>
 
 
-<SplitControl>
-    <span slot="label">Tags</span>
+<OnlyPrimaryVariant>
+    <SplitControl>
+        <span slot="label">
+            Tags
 
-    <div class="tags">
+            {#if hasChanged}
+                <UnsavedTag />
+            {/if}
+        </span>
 
-        <div class="left">
+        <div class="tags">
 
-            {#each $postStore.tags as tag}
-                <Tag size="small" bg="#f1f1f1">
-                    { getTagName(tag) }
+            <div class="left">
 
-                    <IconButton 
-                        color="red"
-                        variant="invisible"
-                        on:click={() => handleRemoveTag(tag.id)}
-                        size={16}
-                        slot="end"
+                {#if $postStore.tags.length}
+                    {#each $postStore.tags as tag}
+                        <Tag size="small" bg="#f1f1f1">
+                            { getTagName(tag) }
+
+                            <IconButton 
+                                color="red"
+                                variant="invisible"
+                                on:click={() => handleRemoveTag(tag.id)}
+                                size={14}
+                                slot="end"
+                            >
+                                <IconX size={10} />
+                            </IconButton>
+                        </Tag>
+                    {/each}
+                {:else}
+                    <Text light small>No tags</Text>
+                {/if}
+
+            </div>
+
+            <div class="right">
+
+                <Loader state={loaderState} size="small" />
+
+                <Dropdown
+                    position="bottom"
+                    align="end"
+                    width={300}
+                    bind:show={dropdownOpen}
+                >
+                    <IconButton
+                        color="input"
+                        size={22}
+                        slot="trigger"
                     >
-                        <IconX size={12} />
+                        <IconPlus size={14} />
                     </IconButton>
-                </Tag>
-            {/each}
+
+                    <TagsSearch 
+                        slot="content"
+                        on:select={handleAddTag}
+                    />
+                
+                </Dropdown>
+
+            </div>
 
         </div>
 
-        <div class="right">
-
-            <IconButton
-                variant="fill-light"
-                color="gray"
-                size={22}
-            >
-                <IconPlus size={14} />
-            </IconButton>
-
-        </div>
-
-    </div>
-
-    
-</SplitControl>
+        
+    </SplitControl>
+</OnlyPrimaryVariant>
 
 <style>
     .tags {

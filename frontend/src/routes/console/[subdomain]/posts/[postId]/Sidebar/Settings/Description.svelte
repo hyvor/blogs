@@ -12,11 +12,16 @@
 
     function handleBlur(e: any) {
 
+        const desc = (e.target.value as string).trim();
+        
+        if (desc === $postOriginalVariantStore.description)
+            return;
+
         if ($postVariantStore.status !== 'published') {
 
             loaderState = 'loading';
 
-            updatePostVariant({description: e.target.value})
+            updatePostVariant({description: desc})
                 .then(() => {
                     loaderState = 'success';
                 })
