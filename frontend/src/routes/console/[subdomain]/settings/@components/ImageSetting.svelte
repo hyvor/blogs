@@ -12,7 +12,7 @@
     
     function handleSelect(e: CustomEvent<SelectedImage>) {
         isUploading = false;
-        dispatch('change', e.detail.url);
+        dispatch('change', e.detail.url as string);
     }
 
     function handleRemove() {

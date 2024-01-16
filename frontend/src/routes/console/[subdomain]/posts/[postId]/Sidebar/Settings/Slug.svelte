@@ -56,7 +56,7 @@
                 loaderState = 'error';
                 error = 'Slug is already taken';
             } else {
-                if ($postVariantStore.status === 'draft') {
+                if ($postVariantStore.status !== 'published') {
                     updatePostVariant({slug})
                         .catch(err => {
                             loaderState = 'error';
