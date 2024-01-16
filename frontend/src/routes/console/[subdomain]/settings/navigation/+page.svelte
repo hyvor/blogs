@@ -140,6 +140,7 @@
                             class="dragging"
                             use:dndzone="{{ 
                                 items: items.filter(t => t.type === 'header'),
+                                type: 'header',
                                 dragDisabled, 
                                 flipDurationMs,
                                 dropTargetStyle: {
@@ -190,7 +191,8 @@
                         <div
                             use:dndzone="{{ 
                                 items: items.filter(t => t.type === 'footer'),
-                                dragDisabled, 
+                                type: 'footer',
+                                dragDisabled,
                                 flipDurationMs,
                                 dropTargetStyle: {
                                     outline: 'none',
