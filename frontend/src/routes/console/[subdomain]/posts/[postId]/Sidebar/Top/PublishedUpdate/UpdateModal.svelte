@@ -4,6 +4,7 @@
 	import Diff from "$lib/components/Diff/Diff.svelte";
 	import dayjs from "dayjs";
 	import { getPublishedChanges } from "./published-changes";
+	import { getTextFromContent } from "../../../../../../lib/prosemirror/helpers";
     export let show = false;
 
     let changes: ReturnType<typeof getPublishedChanges>;
@@ -46,6 +47,18 @@
             {:else}
                 <span>{$postVariantStore.slug}</span>
             {/if}
+        </SplitControl>
+    {/if}
+
+
+    {#if changes.variant.content}
+        <SplitControl
+            label="Content"
+        >
+            <Diff 
+                strOld={getTextFromContent($postOriginalVariantStore.content)}
+                strNew={getTextFromContent($postVariantStore.content)}
+            />
         </SplitControl>
     {/if}
 
@@ -93,7 +106,7 @@
             {/if}
         </SplitControl>
     {/if}
-
+    
     <svelte:fragment slot="footer">
 
         <ButtonGroup>

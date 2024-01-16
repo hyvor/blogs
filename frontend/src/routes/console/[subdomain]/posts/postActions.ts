@@ -75,7 +75,7 @@ export function updatePostVariant(data: Partial<PostVariant>, updateStore = true
             Object.keys(data).forEach(key => 
                 (update as any)[key] = (res as any)[key]
             );
-            updatePostVariantStore(res, true);
+            updatePostVariantStore(update, true);
         }
 
     });

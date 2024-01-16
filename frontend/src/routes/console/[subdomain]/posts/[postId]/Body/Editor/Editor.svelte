@@ -18,7 +18,7 @@
         } as Partial<PostVariant>;
        
         if (key === 'content_unsaved') {
-            updates.content = $postVariantStore.content;
+            updates.content = e.detail;
         }
 
         updatePostVariantStore(updates);
