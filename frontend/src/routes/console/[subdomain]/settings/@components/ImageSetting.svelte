@@ -5,6 +5,7 @@
 	import { createEventDispatcher } from "svelte";
 
     export let src: string | null = null;
+    export let uploadText = "Upload";
 
     let isUploading = false;
 
@@ -22,8 +23,8 @@
 </script>
 
 {#if !src}
-    <Button on:click={() => isUploading = true}>
-        Upload
+    <Button size="small" on:click={() => isUploading = true}>
+        {uploadText}
     </Button>
 {:else}
 
@@ -47,6 +48,7 @@
 {#if isUploading}
     <ImageUploader 
         on:select={handleSelect}
+        bind:show={isUploading}
     />
 {/if}
 

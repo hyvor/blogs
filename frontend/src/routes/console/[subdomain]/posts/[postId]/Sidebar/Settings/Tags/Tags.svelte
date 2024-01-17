@@ -60,9 +60,10 @@
         <span slot="label">
             Tags
 
-            {#if hasChanged}
-                <UnsavedTag />
-            {/if}
+            <UnsavedTag 
+                show={hasChanged}
+                loaderState={loaderState}
+            />
         </span>
 
         <div class="tags">
@@ -92,8 +93,6 @@
             </div>
 
             <div class="right">
-
-                <Loader state={loaderState} size="small" />
 
                 <Dropdown
                     position="bottom"

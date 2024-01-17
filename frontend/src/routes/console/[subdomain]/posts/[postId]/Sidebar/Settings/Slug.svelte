@@ -86,9 +86,10 @@
     <span slot="label">
         Slug
 
-        {#if $postVariantStore.slug !== $postOriginalVariantStore.slug}
-            <UnsavedTag />
-        {/if}
+        <UnsavedTag 
+            show={$postVariantStore.slug !== $postOriginalVariantStore.slug}
+            loaderState={loaderState}
+        />
     </span>
 
     <FormControl>
@@ -102,17 +103,7 @@
                 'error' : 
                 (warning ? 'warning' : 'default')
             }
-        >
-
-            <span slot="end">
-                <Loader 
-                    size="small" 
-                    colorTrack="var(--input)"
-                    state={loaderState}
-                />
-            </span>
-
-        </TextInput>
+        />
 
         {#if error}
             <Validation state="error">{error}</Validation>

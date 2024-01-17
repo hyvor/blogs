@@ -21,5 +21,6 @@
 	filterDefaultType="images"
 	filterTypeDisabled={true}
 	showUpload={false}
+	selecting={true}
 	on:select={handleSelect}
 />

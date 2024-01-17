@@ -62,9 +62,10 @@
         <span slot="label">
             Authors
 
-            {#if hasAuthorsChanged}
-                <UnsavedTag />
-            {/if}
+            <UnsavedTag
+                show={hasAuthorsChanged}
+                loaderState={loaderState}
+            />
 
         </span>
 
@@ -103,8 +104,6 @@
             </div>
 
             <div class="right">
-
-                <Loader state={loaderState} size="small" />
 
                 <Dropdown
                     position="bottom"

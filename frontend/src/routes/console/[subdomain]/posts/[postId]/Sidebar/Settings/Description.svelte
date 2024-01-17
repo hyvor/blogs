@@ -38,10 +38,10 @@
 <SplitControl>
     <span slot="label">
         Description
-        
-        {#if $postVariantStore.description !== $postOriginalVariantStore.description}
-            <UnsavedTag />
-        {/if}
+        <UnsavedTag 
+            show={$postVariantStore.description !== $postOriginalVariantStore.description}
+            loaderState={loaderState}
+        />
     </span>
     <Textarea
         block
@@ -50,13 +50,5 @@
         on:input={handleInput}
         on:blur={handleBlur}
         maxlength={255}
-    >
-        <span slot="end">
-            <Loader
-                size="small" 
-                colorTrack="var(--input)"
-                state={loaderState}
-            />
-        </span>
-    </Textarea>
+    />
 </SplitControl>

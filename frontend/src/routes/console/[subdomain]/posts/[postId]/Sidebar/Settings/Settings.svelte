@@ -8,26 +8,12 @@
 	import Tags from "./Tags/Tags.svelte";
 	import PublishTime from "./PublishTime.svelte";
 	import Status from "./Status/Status.svelte";
+	import CoverImage from "./CoverImage.svelte";
 
     let type: 'basic' | 'advanced' = 'basic';
 </script>
 
 <div class="settings-wrap">
-
-    <!-- <div class="switch">
-        <ButtonGroup>
-            <Button 
-                size="x-small" 
-                color={type === 'basic' ? 'accent' : 'invisible'}
-                on:click={() => type = 'basic'}
-            >Basic</Button>
-            <Button 
-                size="x-small" 
-                color={type === 'advanced' ? 'accent' : 'invisible'}
-                on:click={() => type = 'advanced'}
-            >Advanced</Button>
-        </ButtonGroup>
-    </div> -->
 
     <Status />
 
@@ -37,12 +23,7 @@
         <Description />
         <Authors />
         <Tags />
-
-        <SplitControl>
-            <span slot="label">Cover Image</span>
-            
-        </SplitControl>
-
+        <CoverImage />
         <PublishTime />
 
         <SplitControl>

@@ -1,8 +1,7 @@
 import { get } from "svelte/store";
-import { languagesStore } from "../../lib/stores/languagesStore";
 import type { Post, PostVariant, User, Tag } from "../../lib/types";
 import consoleApi from "../../lib/consoleApi";
-import { postEditingStatusStore, postLanguageStore, postStore, updatePostStore, updatePostVariantStore } from "./postStore";
+import { postLanguageStore, postStore, updatePostStore, updatePostVariantStore } from "./postStore";
 
 
 // API
@@ -42,7 +41,7 @@ export function createPost(isPage = false) {
     });
 }
 
-export function updatePost(data: Partial<Post>) {
+export function updatePost(data: Partial<Post>, updateStore = true) {
     
     const promise = consoleApi.patch<Post>({
         endpoint: `/post/${get(postStore).id}`,
@@ -50,8 +49,19 @@ export function updatePost(data: Partial<Post>) {
     });
 
     promise.then(res => {
-        postStore.set(res);
+
+        if (updateStore) {
+            // update only the fields that were changed
+            const update = {} as Partial<Post>;
+            Object.keys(data).forEach(key => 
+                (update as any)[key] = (res as any)[key]
+            );
+            updatePostStore(update, true);
+        }
+
     });
+
+    return promise;
 
 }
 

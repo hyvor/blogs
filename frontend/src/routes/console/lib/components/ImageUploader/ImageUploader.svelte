@@ -12,7 +12,7 @@
     
     let tab = 'upload';
 
-    let show = true;
+    export let show = true;
     let backImage: null | SelectedImageType = null;
     let selectedImage: null | SelectedImageType = null;
 
