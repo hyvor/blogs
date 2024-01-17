@@ -4,6 +4,7 @@
 	import type { User, Tag as TagType } from "../../../../../../lib/types";
 	import { createTag, getTags, searchTags } from "../../../../../settings/tags/tagActions";
 	import { IconPlus } from "@hyvor/icons";
+	import { postStore } from "../../../../postStore";
 
     let isLoading = true;
     let tags : TagType[] = [];
@@ -92,6 +93,9 @@
                     {#each availableTags as tag (tag.id)}
                         <ActionListItem
                             on:click={() => handleSelect(tag)}
+                            disabled={
+                                !!$postStore.tags.find(t => t.id === tag.id)
+                            }
                         >
                             <Tag size="small">
                                 {tag.variants[0]?.name || ''}
@@ -137,6 +141,11 @@
         margin-top: 10px;
         max-height: 200px;
         overflow: auto;
+    }
+
+    .results :global(.action-list-item.disabled) {
+        opacity: 0.5;
+        pointer-events: none;
     }
 
 </style>

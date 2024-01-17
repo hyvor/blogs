@@ -2,8 +2,9 @@
 	import { onDestroy, onMount } from "svelte";
 	import { postCurrentContentKey, postEditingStatusStore, postOriginalVariantStore, postVariantStore, updatePostEditingStatusValue } from "../../../../postStore";
 	import { updatePostVariant } from "../../../../postActions";
-	import { toast } from "@hyvor/design/components";
+	import { Tag, toast } from "@hyvor/design/components";
 	import { beforeNavigate } from "$app/navigation";
+	import UnsavedTag from "../../../Sidebar/Settings/UnsavedTag.svelte";
 
     $: key = $postCurrentContentKey as 'content' | 'content_unsaved';
     $: hasChanged = $postVariantStore[key] !== $postOriginalVariantStore[key];
@@ -59,14 +60,13 @@
 
 <span class="save-text">
 
-    {#if $postEditingStatusStore.isSaving}
-        Saving...
-    {:else}
-        {#if hasChanged}
-            Not saved *
-        {:else}
-            Saved
-        {/if}
+    <UnsavedTag 
+        show={hasChanged}
+        loaderState={$postEditingStatusStore.isSaving ? 'loading' : 'none'}
+    />
+
+    {#if !hasChanged}
+        <Tag size="x-small" color="green">Saved</Tag>
     {/if}
 
 </span>
