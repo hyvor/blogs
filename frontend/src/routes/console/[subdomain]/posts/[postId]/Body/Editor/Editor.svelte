@@ -7,7 +7,8 @@
 	import type { PostVariant } from "../../../../../lib/types";
 
     $: uniqueKey = `${$postVariantStore.id}` +
-        `-lang-${$postEditingStatusStore.languageId}`;
+        `-lang-${$postEditingStatusStore.languageId}` +
+        `-key-${$postCurrentContentKey}`;
 
     function handleChange(e: CustomEvent<string>) {
 

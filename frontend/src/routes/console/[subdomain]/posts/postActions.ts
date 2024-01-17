@@ -1,7 +1,7 @@
 import { get } from "svelte/store";
 import type { Post, PostVariant, User, Tag } from "../../lib/types";
 import consoleApi from "../../lib/consoleApi";
-import { postLanguageStore, postStore, updatePostStore, updatePostVariantStore } from "./postStore";
+import { postLanguageStore, postStore, removePostVariantStore, updatePostStore, updatePostVariantStore } from "./postStore";
 
 
 // API
@@ -63,6 +63,12 @@ export function updatePost(data: Partial<Post>, updateStore = true) {
 
     return promise;
 
+}
+
+export function deletePost() {
+    return consoleApi.delete({
+        endpoint: `/post/${get(postStore).id}`
+    });
 }
 
 export function updatePostAuthors(authors: User[], updateStore = true) {
@@ -144,4 +150,13 @@ export function createPostVariant(postId: number, languageId: number) {
         data: { language_id: languageId }
     })
 
+}
+
+export function deletePostVariant() {
+    const languageId = get(postLanguageStore).id;
+
+    return consoleApi.delete({
+        endpoint: `/post/${get(postStore).id}/variant`,
+        data: { language_id: languageId }
+    });
 }

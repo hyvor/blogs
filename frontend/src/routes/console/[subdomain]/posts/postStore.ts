@@ -141,6 +141,22 @@ export function addPostVariantStore(variant: PostVariant, original =  true) {
     });
 }
 
+export function removePostVariantStore(languageId: number, original = true) {
+
+    const stores = [postStore]
+    if (original) {
+        stores.push(postOriginalStore);
+    }
+
+    stores.forEach(store => {
+        store.update(post => {
+            post.variants = post.variants.filter(v => v.language_id !== languageId);
+            return post;
+        });
+    });
+
+}
+
 
 export function setPostAndPostOriginalStore(post: Post) {
     postStore.set({...post});

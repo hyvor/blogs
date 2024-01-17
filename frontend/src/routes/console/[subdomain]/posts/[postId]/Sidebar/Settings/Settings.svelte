@@ -9,6 +9,8 @@
 	import PublishTime from "./PublishTime.svelte";
 	import Status from "./Status/Status.svelte";
 	import CoverImage from "./CoverImage.svelte";
+	import Featured from "./Featured.svelte";
+	import Delete from "./Delete.svelte";
 
     let type: 'basic' | 'advanced' = 'basic';
 </script>
@@ -25,19 +27,8 @@
         <Tags />
         <CoverImage />
         <PublishTime />
-
-        <SplitControl>
-            <span slot="label">Featured</span>
-            <Checkbox />
-        </SplitControl>
-
-        <SplitControl>
-            <span slot="label">Delete Post</span>
-            <Button color="red" size="small">
-                Delete
-                <IconTrash slot="start" />
-            </Button>
-        </SplitControl>
+        <Featured />
+        <Delete />
 
     {:else}
 
