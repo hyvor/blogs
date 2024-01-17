@@ -2,7 +2,7 @@
 	import { Button, Divider, Loader, Textarea, Tooltip } from "@hyvor/design/components";
 	import type { GptPrompt } from "../../../../../lib/types";
 	import { postVariantStore } from "../../../postStore";
-	import { IconMagic } from "@hyvor/icons";
+	import { IconMagic, IconSearch } from "@hyvor/icons";
 
     interface AutomaticPromptOptions {
         title: string | null,
@@ -95,7 +95,8 @@
         {:else}
             <div class="chat-zone">
                 {#if prompts.length == 0 && !pendingPrompt}
-                    No chat history on this post yet.
+                    <IconSearch size={80}/>
+                    <div class="empty-chat-text">No chat history on this post yet.</div>
                 {:else}
                     Prompts...
                     
@@ -121,6 +122,12 @@
                         </div>
                     {/each}
                 </div>
+
+                {#if !primaryKeyword}
+                    <div class="keyword-tip">
+                        Tip: Add SEO keywords for better prompts.
+                    </div>
+                {/if}
 
                 <div class="input-row">
                     <div class="prompt-input">
@@ -174,6 +181,10 @@
         padding: 20px 15px 15px;
         height: 75%;
         overflow: auto;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
     }
 
     .input-zone {
@@ -183,6 +194,11 @@
     
     .disclaimer {
         padding: 0 15px 15px;
+        font-size: 12px;
+    }
+
+    .keyword-tip {
+        padding: 5px;
         font-size: 12px;
     }
 
@@ -220,6 +236,10 @@
     
     .prompt-input {
         margin-right: 5px;
+    }
+
+    .empty-chat-text {
+        margin-top: 10px;
     }
 
 </style>
