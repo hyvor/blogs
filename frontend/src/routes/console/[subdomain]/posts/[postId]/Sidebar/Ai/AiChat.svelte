@@ -1,11 +1,83 @@
 <script lang="ts">
-	import { Loader } from "@hyvor/design/components";
-	import type { GptPrompt } from "../../../../../../lib/types";
+	import { Button, Divider, Loader, Textarea } from "@hyvor/design/components";
+	import type { GptPrompt } from "../../../../../lib/types";
+	import { postVariantStore } from "../../../postStore";
 
-    export let isLoading = true;
+    interface AutomaticPromptOptions {
+        title: string | null,
+        primaryKeyword: string | null,
+        secondaryKeywords: string[] | null,
+    }
+
+    interface AutomaticPrompt {
+        name: string,
+        description: string,
+        prompt: (options: AutomaticPromptOptions) => string,
+        tip?: false
+    }
+
+    function addKeywordPrompt(p:string, options: AutomaticPromptOptions) {
+        if (options.primaryKeyword) {
+            p += `\n\nMy primary keyword is ${options.primaryKeyword}.`;
+            if (options.secondaryKeywords?.length) {
+                p += ` Secondary keywords are ${options.secondaryKeywords.join(', ')}.`;
+            }
+        }
+        return p;
+    }
+
+    const automaticPrompts : AutomaticPrompt[]  = [
+        {
+            name: 'Blog Outline',
+            description: 'Generate an outline for a blog post',
+            prompt: (options) => addKeywordPrompt(`Write a blog outline on ${options.title}.`, options)
+        },
+
+        {
+            name: 'Blog Post',
+            description: 'Generate a blog post',
+            prompt: (options) => addKeywordPrompt(`Write a blog post about ${options.title}.`, options)
+        },
+
+        {
+            name: 'Article',
+            description: 'Generate an article, which is more formal than a blog post',
+            prompt: (options) => {
+                let p = `Write an article about ${options.title}.`;
+                p = addKeywordPrompt(p, options);
+                p += `\n\nInclude real-life examples and case studies to support my points.`;
+                return p;
+            }
+        },
+
+        {
+            name: 'FAQ generator',
+            description: 'Generate a list of questions and answers',
+            prompt: (options) => addKeywordPrompt(`Write a list of frequently asked questions about "${options.title}" and provide answers to them considering SERP and rich result guidelines.`, options)
+        },
+
+        {
+            name: 'SEO Brief',
+            description: 'Generate an SEO content brief',
+            prompt: (options) => addKeywordPrompt(`Write an SEO content brief for ${options.title}.`, options)
+        },
+
+        {
+            name: 'SEO Keyword Ideas',
+            description: 'Generate a list of SEO keyword ideas',
+            prompt: (options) => `Write a list of SEO keyword ideas for ${options.title}.`,
+            tip: false
+        }
+    ];
+
+    export let isLoading = false;
 
     let prompts : GptPrompt[] = [];
-    let pendingPrompt: string | null = null;
+    let pendingPrompt: string = '';
+
+    let title = $postVariantStore.title;
+    let primaryKeyword = $postVariantStore.seo_primary_keyword;
+    let secondaryKeywords = $postVariantStore.seo_secondary_keywords;
 
 </script>
 
@@ -20,14 +92,50 @@
             </div>
 
         {:else}
+            <div class="chat-zone">
+                {#if prompts.length == 0 && !pendingPrompt}
+                    No chat history on this post yet.
+                {:else}
+                    Prompts...
+                    
+                {/if}
+            </div>
+            <Divider />
+            <div class="input-zone">
 
-            {#if !prompts.length && !pendingPrompt}
+                <div class="automatic-prompts-buttons">
+                    {#each automaticPrompts as prompt}
+                        <div class="automatic-prompt-button">
+                            <Button
+                                on:click={() => pendingPrompt = prompt.prompt({
+                                    title,
+                                    primaryKeyword,
+                                    secondaryKeywords })}
+                                outline
+                                size="small"
+                                style="margin-right: 10px;">
+                                {prompt.name}
+                            </Button>
+                        </div>
+                        
+                    {/each}
+                </div>
 
-                
-
-            {:else}
-
-            {/if}
+                <div class="input-row">
+                    <Textarea
+                        placeholder="Type your prompt here..."
+                        rows={1}
+                        bind:value={pendingPrompt}
+                    />
+                    <Button
+                        on:click={() => console.log(pendingPrompt)}>
+                        Generate
+                    </Button>
+                </div>
+                <div class="disclaimer">
+                    This chat is powered by OpenAI's GPT-3.5 model. It may produce inaccurate results.
+                </div>
+            </div>
 
         {/if}
 
@@ -47,7 +155,6 @@
 
     .chat-display {
         flex: 1;
-        overflow: auto;
     }
 
     .loader-wrap {
@@ -55,6 +162,39 @@
         align-items: center;
         justify-content: center;
         height: 100%;
+    }
+
+    .chat-zone {
+        padding: 20px 15px 15px;
+        height: 75%;
+        overflow: auto;
+    }
+
+    .input-zone {
+        padding: 20px 15px 15px;
+        height: 25%;
+    }
+    
+    .disclaimer {
+        padding: 0 25px 15px;
+        font-size: 12px;
+    }
+
+    .input-row {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        margin-bottom: 15px;
+    }
+
+    .automatic-prompts-buttons {
+        display: flex;
+        flex-wrap: wrap;
+    }
+
+    .automatic-prompt-button {
+        margin-right: 6px;
+        margin-bottom: 6px;
     }
 
 </style>
