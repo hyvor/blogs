@@ -1,7 +1,8 @@
 <script lang="ts">
-	import { Button, Divider, Loader, Textarea } from "@hyvor/design/components";
+	import { Button, Divider, Loader, Textarea, Tooltip } from "@hyvor/design/components";
 	import type { GptPrompt } from "../../../../../lib/types";
 	import { postVariantStore } from "../../../postStore";
+	import { IconMagic } from "@hyvor/icons";
 
     interface AutomaticPromptOptions {
         title: string | null,
@@ -106,30 +107,35 @@
                 <div class="automatic-prompts-buttons">
                     {#each automaticPrompts as prompt}
                         <div class="automatic-prompt-button">
-                            <Button
-                                on:click={() => pendingPrompt = prompt.prompt({
-                                    title,
-                                    primaryKeyword,
-                                    secondaryKeywords })}
-                                outline
-                                size="small"
-                                style="margin-right: 10px;">
-                                {prompt.name}
-                            </Button>
+                            <Tooltip text={prompt.description}>
+                                <Button
+                                    on:click={() => pendingPrompt = prompt.prompt({
+                                        title,
+                                        primaryKeyword,
+                                        secondaryKeywords })}
+                                    outline
+                                    size="small">
+                                <div class="prompt-button-title">{prompt.name}</div>
+                                </Button>
+                            </Tooltip>
                         </div>
-                        
                     {/each}
                 </div>
 
                 <div class="input-row">
-                    <Textarea
-                        placeholder="Type your prompt here..."
-                        rows={1}
-                        bind:value={pendingPrompt}
-                    />
+                    <div class="prompt-input">
+                        <Textarea
+                            placeholder="Type your prompt here..."
+                            rows={1}
+                            bind:value={pendingPrompt}
+                        />
+                    </div>
                     <Button
                         on:click={() => console.log(pendingPrompt)}>
-                        Generate
+                        <div class="generate-button-content">
+                            Generate
+                            <div class="generate-icon"><IconMagic /></div>
+                        </div>
                     </Button>
                 </div>
                 <div class="disclaimer">
@@ -176,7 +182,7 @@
     }
     
     .disclaimer {
-        padding: 0 25px 15px;
+        padding: 0 15px 15px;
         font-size: 12px;
     }
 
@@ -192,9 +198,28 @@
         flex-wrap: wrap;
     }
 
+    .prompt-button-title {
+        font-weight: 600;
+        font-size: 12px;
+    }
+    
     .automatic-prompt-button {
         margin-right: 6px;
         margin-bottom: 6px;
+    }
+
+    .generate-button-content {
+        display: flex;
+        font-size: 12px;
+        align-items: center;
+    }
+
+    .generate-icon {
+        margin-left: 5px;
+    }
+    
+    .prompt-input {
+        margin-right: 5px;
     }
 
 </style>
