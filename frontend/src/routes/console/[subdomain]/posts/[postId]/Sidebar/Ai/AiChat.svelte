@@ -1,8 +1,10 @@
 <script lang="ts">
-	import { Button, Divider, Loader, Textarea, Tooltip } from "@hyvor/design/components";
+	import { Button, Divider, Loader, Textarea, Tooltip, toast } from "@hyvor/design/components";
 	import type { GptPrompt } from "../../../../../lib/types";
-	import { postVariantStore } from "../../../postStore";
+	import { postStore, postVariantStore } from "../../../postStore";
 	import { IconMagic, IconSearch } from "@hyvor/icons";
+	import { getPrompts, sendPrompt } from "./aiActions";
+	import { onMount } from "svelte";
 
     interface AutomaticPromptOptions {
         title: string | null,
@@ -80,6 +82,33 @@
     let primaryKeyword = $postVariantStore.seo_primary_keyword;
     let secondaryKeywords = $postVariantStore.seo_secondary_keywords;
 
+    function loadPrompts() {
+        getPrompts($postStore.id)
+            .then(res => {
+                prompts = res;
+            })
+            .catch(err => {
+                toast.error(err.message);
+            })
+            .finally(() => {
+                isLoading = false;
+            })
+        }
+
+    onMount(loadPrompts);
+    console.log('prompts', prompts);
+
+    function getPromptResult() {
+        sendPrompt(pendingPrompt, $postStore.id)
+            .then(res => {
+                console.log('Response:', res);
+                pendingPrompt = '';
+            })
+            .catch(err => {
+                toast.error(err.message);
+            })
+    }
+
 </script>
 
 <div class="ai-chat">
@@ -98,8 +127,9 @@
                     <IconSearch size={80}/>
                     <div class="empty-chat-text">No chat history on this post yet.</div>
                 {:else}
-                    Prompts...
-                    
+                    {#each prompts as prompt}
+                        <div>{prompt.prompt}</div>
+                    {/each}
                 {/if}
             </div>
             <Divider />
@@ -138,7 +168,7 @@
                         />
                     </div>
                     <Button
-                        on:click={() => console.log(pendingPrompt)}>
+                        on:click={() => getPromptResult()}>
                         <div class="generate-button-content">
                             Generate
                             <div class="generate-icon"><IconMagic /></div>
