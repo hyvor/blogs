@@ -1,17 +1,19 @@
 <script lang="ts">
 	import { EditorState } from 'prosemirror-state';
 	import schema from "../../../../../lib/prosemirror/schema";
-	import { EditorView } from "prosemirror-view";
+	import { EditorView, type DOMEventMap } from "prosemirror-view";
 	import { createEventDispatcher, onMount } from "svelte";
 	import { getNodeViews } from "./nodeviews/nodeviews";
 	import { importCodemirrorAll } from "../../../../../lib/components/CodemirrorEditor/codemirror";
 	import { getPlugins } from "./plugins/plugins";
+	import type { ProsemirrorEventDispatchType } from "./editorEvents";
     export let value: string | null;
     let wrap: HTMLDivElement;
 
     const dispatch = createEventDispatcher<{
         change: string,
-        view: EditorView
+        view: EditorView,
+        event: ProsemirrorEventDispatchType
     }>();
 
     async function createEditor() {
@@ -27,9 +29,25 @@
             doc: value ? schema.nodeFromJSON(jsonParsedValue) : undefined
         });
 
+        function getDomEvents() {
+            const events :  (keyof HTMLElementEventMap)[] = ['blur', 'focus'];
+
+            return events.reduce((obj, e) => {
+                return {
+                    ...obj,
+                    [e]: <T extends keyof DOMEventMap>(view: EditorView, event: DOMEventMap[T]) => dispatch('event', {
+                        view,
+                        name: e,
+                        event
+                    })
+                }
+            }, {} as Record<keyof DOMEventMap, any>);
+        }
+
         const view = new EditorView(wrap, {
             state: state,
             nodeViews: getNodeViews(),
+            handleDOMEvents: getDomEvents(),
             // handleClickOn,
             // handleKeyDown,
             dispatchTransaction: (tr) => {

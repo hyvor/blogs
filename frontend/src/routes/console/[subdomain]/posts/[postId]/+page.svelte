@@ -10,6 +10,7 @@
 	import PostSidebar from "./Sidebar/PostSidebar.svelte";
 	import { blogStore } from "../../../lib/stores/blogStore";
 	import { IconCaretLeftFill } from "@hyvor/icons";
+	import { initEditorEventHandlers } from "./Body/Editor/editorEvents";
     
     const postId = $page.params.postId;
 
@@ -25,6 +26,7 @@
 
             setPostAndPostOriginalStore(res);
             initPostEditingState(postView);
+            initEditorEventHandlers();
 
             isLoading = false;
         })

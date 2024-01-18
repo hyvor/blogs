@@ -5,6 +5,8 @@
     import Prosemirror from "./Prosemirror.svelte";
 	import PublishedOverlay from "./PublishedOverlay.svelte";
 	import type { PostVariant } from "../../../../../lib/types";
+	import { handleEditorEventHandlers, type ProsemirrorEventDispatchType } from "./editorEvents";
+	import { get } from "svelte/store";
 
     $: uniqueKey = `${$postVariantStore.id}` +
         `-lang-${$postEditingStatusStore.languageId}` +
@@ -29,6 +31,10 @@
         updatePostEditingStatusValue('editorView', e.detail);
     }
 
+    function handleEvent(e: CustomEvent<ProsemirrorEventDispatchType>) {
+        handleEditorEventHandlers(e.detail.name, e.detail.event);
+    }
+
 </script>
 
 <div class="editor hds-box">
@@ -40,6 +46,7 @@
                 value={$postCurrentContentStore} 
                 on:change={handleChange}
                 on:view={handleView}
+                on:event={handleEvent}
             />
             <PublishedOverlay />
         </div>

@@ -18,8 +18,7 @@
 
         const title = (e.target.value as string).trim();
 
-        if (title === $postOriginalVariantStore.title)
-            return;
+        if (!hasChanged) return;
 
         if ($postVariantStore.status === 'draft') {
             loaderState = 'loading';
@@ -69,6 +68,9 @@
         }
     });
 
+    $: hasChanged = ($postVariantStore.title?.trim() || '') !==
+        ($postOriginalVariantStore.title || '');
+
 </script>
 
 <div class="title-wrap">
@@ -83,15 +85,16 @@
         on:blur={handleBlur}
     />
 
-    <div class="loader-wrap">
+    <!-- <div class="loader-wrap">
         <Loader state={loaderState} size="small" />
-    </div>
+    </div> -->
 
-    {#if $postVariantStore.title?.trim() !== $postOriginalVariantStore.title}
-        <span class="unsaved-tag">
-            <UnsavedTag />
-        </span>
-    {/if}
+    <span class="unsaved-tag">
+        <UnsavedTag 
+            show={hasChanged}
+            loaderState={loaderState}
+        />
+    </span>
 
 </div>
 
@@ -125,11 +128,6 @@
         bottom: 100%;
         transform: translateY(50%);
         left: 25px;
-    }
-
-    .loader-wrap {
-        margin-left: 5px;
-        width: 20px;
     }
 
 </style>

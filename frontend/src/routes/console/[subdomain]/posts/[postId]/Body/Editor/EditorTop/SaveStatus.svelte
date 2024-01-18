@@ -5,6 +5,7 @@
 	import { Tag, toast } from "@hyvor/design/components";
 	import { beforeNavigate } from "$app/navigation";
 	import UnsavedTag from "../../../Sidebar/Settings/UnsavedTag.svelte";
+	import { addEditorEventListener } from "../editorEvents";
 
     $: key = $postCurrentContentKey as 'content' | 'content_unsaved';
     $: hasChanged = $postVariantStore[key] !== $postOriginalVariantStore[key];
@@ -39,6 +40,7 @@
     let autoSaveInterval: ReturnType<typeof setInterval>;
 
     onMount(() => {
+        addEditorEventListener('blur', save);
         autoSaveInterval = setInterval(save, 15000);
     });
 
