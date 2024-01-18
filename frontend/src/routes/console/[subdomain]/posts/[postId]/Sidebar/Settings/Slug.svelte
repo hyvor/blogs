@@ -1,10 +1,12 @@
 <script lang="ts">
 	import UnsavedTag from './UnsavedTag.svelte';
-	import { FormControl, Loader, SplitControl, TextInput, Validation, toast } from "@hyvor/design/components";
+	import { FormControl, Loader, SplitControl, TextInput, Tooltip, Validation, toast } from "@hyvor/design/components";
 	import { postOriginalStore, postOriginalVariantStore, postStore, postVariantStore, updatePostVariantStore } from "../../../postStore";
 	import { onMount } from "svelte";
 	import consoleApi from "../../../../../lib/consoleApi";
 	import { updatePostVariant } from "../../../postActions";
+	import { IconInfo, IconInfoCircle } from "@hyvor/icons";
+	import LabelWithInfo from "./LabelWithInfo.svelte";
 
     let error: null | string = null;
     let warning: null | string = null;
@@ -84,7 +86,7 @@
 
 <SplitControl>
     <span slot="label">
-        Slug
+        <LabelWithInfo label="Slug" info="The unique part of the URL to identify this post" />
 
         <UnsavedTag 
             show={$postVariantStore.slug !== $postOriginalVariantStore.slug}

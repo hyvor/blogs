@@ -4,6 +4,7 @@
 	import { postOriginalStore, postStore, postVariantStore, updatePostStore } from "../../../postStore";
 	import UnsavedTag from "./UnsavedTag.svelte";
 	import { updatePost } from "../../../postActions";
+	import LabelWithInfo from "./LabelWithInfo.svelte";
     
     let loaderState : 'none' | 'loading' | 'success' | 'error' = 'none';
 
@@ -35,7 +36,12 @@
 
     <SplitControl>
         <span slot="label">
-            Featured
+
+            <LabelWithInfo 
+                label="Featured"
+                info="Featured posts are shown on the top of the home page"
+            />
+
             <UnsavedTag
                 show={$postStore.is_featured !== $postOriginalStore.is_featured}   
                 loaderState={loaderState} 

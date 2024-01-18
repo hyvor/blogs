@@ -1,6 +1,5 @@
 <script lang="ts">
-	import { Button, Checkbox, SplitControl, TextInput, Textarea } from "@hyvor/design/components";
-	import { IconTrash } from "@hyvor/icons";
+	import { Button, SplitControl, TextInput, Textarea } from "@hyvor/design/components";
 	import { postStore } from "../../../postStore";
 	import Slug from "./Slug.svelte";
 	import Description from "./Description.svelte";
@@ -11,26 +10,35 @@
 	import CoverImage from "./CoverImage.svelte";
 	import Featured from "./Featured.svelte";
 	import Delete from "./Delete.svelte";
+	import { IconCaretDown, IconCaretRight } from "@hyvor/icons";
 
-    let type: 'basic' | 'advanced' = 'basic';
+    let showAdvanced = false;
 </script>
 
 <div class="settings-wrap">
 
     <Status />
+    <Slug />
+    <Description />
+    <Authors />
+    <Tags />
+    <CoverImage />
+    <PublishTime />
+    <Featured />
+    <Delete />
 
-    {#if type === 'basic'}
+    <div class="advanced-wrap">
+        <Button 
+            color="input" 
+            size="small"
+            on:click={() => showAdvanced = !showAdvanced}
+        >
+            Show advanced 
+            <svelte:component this={showAdvanced ? IconCaretDown : IconCaretRight} size={12} slot="end" />
+        </Button>
+    </div>
 
-        <Slug />
-        <Description />
-        <Authors />
-        <Tags />
-        <CoverImage />
-        <PublishTime />
-        <Featured />
-        <Delete />
-
-    {:else}
+    {#if showAdvanced}
 
         <SplitControl>
             <span slot="label">Canonical URL</span>
@@ -60,16 +68,10 @@
 
     {/if}
 
-
 </div>
 
 
 <style>
-
-    .switch {
-        text-align: center;
-        margin-bottom: 10px;
-    }
 
     .settings-wrap :global(.split-control > .left) {
         flex: 3;
@@ -78,6 +80,10 @@
 
     .settings-wrap :global(.split-control > .right) {
         flex: 7;
+    }
+
+    .advanced-wrap {
+        padding: 10px 10px;
     }
 
 </style>
