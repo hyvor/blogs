@@ -1,6 +1,6 @@
 <script lang="ts">
 	import { Button, SplitControl, TextInput, Textarea } from "@hyvor/design/components";
-	import { postStore } from "../../../postStore";
+	import { postLanguageStore, postStore } from "../../../postStore";
 	import Slug from "./Slug.svelte";
 	import Description from "./Description.svelte";
 	import Authors from "./Authors/Authors.svelte";
@@ -11,6 +11,7 @@
 	import Featured from "./Featured.svelte";
 	import Delete from "./Delete.svelte";
 	import { IconCaretDown, IconCaretRight } from "@hyvor/icons";
+	import CanonicalUrl from "./CanonicalUrl.svelte";
 
     let showAdvanced = false;
 </script>
@@ -38,15 +39,9 @@
         </Button>
     </div>
 
-    {#if showAdvanced}
+    {#if showAdvanced && $postLanguageStore.is_primary}
 
-        <SplitControl>
-            <span slot="label">Canonical URL</span>
-            <TextInput 
-                block
-                value={$postStore.canonical_url}
-            />
-        </SplitControl>
+        <CanonicalUrl />
 
         <SplitControl>
             <span slot="label">Head Code</span>
