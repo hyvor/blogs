@@ -6,6 +6,7 @@
     import hyvorLogo from './logo.png';
 
     export let gptPrompt: GptPrompt;
+    export let loading: boolean;
 
     function getResponseHtml(response: string | null) {
         // TODO
@@ -37,7 +38,7 @@
     </div>
     <div class="prompt-response">
         <span class="blog-logo"><img src={hyvorLogo} width="20px"/></span>
-        {#if gptPrompt.gpt_response}
+        {#if gptPrompt.gpt_response && !loading}
             <span class="prompt-response">{@html gptPrompt.gpt_response}</span>
             <div class="prompt-response-button-row">
                 <Button color="gray" on:click={() => handleCopy()}>
@@ -50,9 +51,7 @@
                 </Button>
             </div>
         {:else}
-            <div class="response-text">
-                <Loader />
-            </div>
+            <span class="prompt-loader"><Loader /></span>
         {/if}
     </div>
 
@@ -92,6 +91,10 @@
     .prompt-response-button-content{
         margin-left: 5px;
         font-size: 10px;
+    }
+
+    .prompt-loader {
+        margin-left: 10px;
     }
 
 </style>

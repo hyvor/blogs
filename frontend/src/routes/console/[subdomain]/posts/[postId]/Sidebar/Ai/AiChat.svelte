@@ -74,10 +74,12 @@
         }
     ];
 
-    export let isLoading = false;
+    let isLoading = false;
 
     let prompts : GptPrompt[] = [];
     let pendingPrompt: string = '';
+    let pendingPromptLoading = false;
+    let constantFalse = false;
 
     let title = $postVariantStore.title;
     let primaryKeyword = $postVariantStore.seo_primary_keyword;
@@ -97,25 +99,27 @@
         }
 
 
-        function getPromptResult() {
-            sendPrompt(pendingPrompt, $postStore.id)
-                .then(res => {
-                    prompts = [res as GptPrompt, ...prompts];
-                    pendingPrompt = '';
-                })
-                .catch(err => {
-                    toast.error(err.message);
-                })
-        }
-
-        function resetPrompts() {
-            resetChat($postStore.id).then(res => {
-                prompts = [];
-            }).catch(err => {
+    function getPromptResult() {
+        pendingPromptLoading = true;
+        sendPrompt(pendingPrompt, $postStore.id)
+            .then(res => {
+                pendingPromptLoading = false;
+                prompts = [res as GptPrompt, ...prompts];
+                pendingPrompt = '';
+            })
+            .catch(err => {
                 toast.error(err.message);
             })
-            pendingPrompt = '';
-        }
+    }
+
+    function resetPrompts() {
+        resetChat($postStore.id).then(res => {
+            prompts = [];
+        }).catch(err => {
+            toast.error(err.message);
+        })
+        pendingPrompt = '';
+    }
 
     onMount(loadPrompts);
 
@@ -139,9 +143,14 @@
                         <div class="empty-chat-text">No chat history on this post yet.</div>
                     </div>
                 {:else}
-                    {#each prompts as prompt}
-                        <AiResponse gptPrompt={prompt} />
-                    {/each}
+                {#each prompts as prompt, i}
+                    <!-- Only the last prompt can be in loading state -->
+                    {#if i === prompts.length - 1}
+                        <AiResponse bind:loading={pendingPromptLoading} gptPrompt={prompt} />
+                    {:else}
+                        <AiResponse bind:loading={constantFalse} gptPrompt={prompt} />
+                    {/if}
+                {/each}
                     <div class="reset-button">
                         <Button size="small" color="gray" on:click={() => resetPrompts()}>
                             <div class="reset-button-content">
