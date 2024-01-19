@@ -2,8 +2,8 @@
 	import { Button, Divider, Loader, Textarea, Tooltip, toast } from "@hyvor/design/components";
 	import type { GptPrompt } from "../../../../../lib/types";
 	import { postStore, postVariantStore } from "../../../postStore";
-	import { IconMagic, IconSearch } from "@hyvor/icons";
-	import { getPrompts, sendPrompt } from "./aiActions";
+	import { Icon2Square, IconArrowClockwise, IconMagic, IconRewind, IconSearch } from "@hyvor/icons";
+	import { getPrompts, resetChat, sendPrompt } from "./aiActions";
 	import { onMount } from "svelte";
     import AiResponse from "./AiResponse.svelte";
 
@@ -96,19 +96,28 @@
             })
         }
 
-    onMount(loadPrompts);
-    console.log('prompts', prompts);
 
-    function getPromptResult() {
-        sendPrompt(pendingPrompt, $postStore.id)
-            .then(res => {
-                prompts = [res as GptPrompt, ...prompts];
-                pendingPrompt = '';
-            })
-            .catch(err => {
+        function getPromptResult() {
+            sendPrompt(pendingPrompt, $postStore.id)
+                .then(res => {
+                    prompts = [res as GptPrompt, ...prompts];
+                    pendingPrompt = '';
+                })
+                .catch(err => {
+                    toast.error(err.message);
+                })
+        }
+
+        function resetPrompts() {
+            resetChat($postStore.id).then(res => {
+                prompts = [];
+            }).catch(err => {
                 toast.error(err.message);
             })
-    }
+            pendingPrompt = '';
+        }
+
+    onMount(loadPrompts);
 
 </script>
 
@@ -125,12 +134,22 @@
         {:else}
             <div class="chat-zone">
                 {#if prompts.length == 0 && !pendingPrompt}
-                    <IconSearch size={80}/>
-                    <div class="empty-chat-text">No chat history on this post yet.</div>
+                    <div class="empty-chat">
+                        <IconSearch size={80}/>
+                        <div class="empty-chat-text">No chat history on this post yet.</div>
+                    </div>
                 {:else}
                     {#each prompts as prompt}
                         <AiResponse gptPrompt={prompt} />
                     {/each}
+                    <div class="reset-button">
+                        <Button size="small" on:click={() => resetPrompts()}>
+                            <div class="reset-button-content">
+                                <IconArrowClockwise />
+                                <span class="reset-button-text">Reset chat</span>
+                            </div>
+                        </Button>
+                    </div>
                 {/if}
             </div>
             <Divider />
@@ -270,6 +289,29 @@
 
     .empty-chat-text {
         margin-top: 10px;
+    }
+
+    .empty-chat {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+        height: 100%;
+    }
+
+    .reset-button {
+        align-self: flex-end;
+        display: block;
+    }
+
+    .reset-button-content {
+        display: flex;
+        align-items: center;
+        font-size: 12px;
+    }
+
+    .reset-button-text {
+        margin-left: 5px;
     }
 
 </style>

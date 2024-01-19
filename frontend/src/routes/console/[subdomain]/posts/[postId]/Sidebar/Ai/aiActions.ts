@@ -20,3 +20,12 @@ export function getPrompts(post_id: number) {
         }
     });
 }
+
+export function resetChat(post_id: number) {
+    return consoleApi.delete({
+        endpoint: '/gpt/post-history',
+        data: {
+            post_id
+        }
+    });
+}
