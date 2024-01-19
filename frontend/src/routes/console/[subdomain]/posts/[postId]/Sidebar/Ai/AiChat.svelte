@@ -5,6 +5,7 @@
 	import { IconMagic, IconSearch } from "@hyvor/icons";
 	import { getPrompts, sendPrompt } from "./aiActions";
 	import { onMount } from "svelte";
+    import AiResponse from "./AiResponse.svelte";
 
     interface AutomaticPromptOptions {
         title: string | null,
@@ -101,7 +102,7 @@
     function getPromptResult() {
         sendPrompt(pendingPrompt, $postStore.id)
             .then(res => {
-                console.log('Response:', res);
+                prompts = [res as GptPrompt, ...prompts];
                 pendingPrompt = '';
             })
             .catch(err => {
@@ -128,7 +129,7 @@
                     <div class="empty-chat-text">No chat history on this post yet.</div>
                 {:else}
                     {#each prompts as prompt}
-                        <div>{prompt.prompt}</div>
+                        <AiResponse gptPrompt={prompt} />
                     {/each}
                 {/if}
             </div>
@@ -198,6 +199,7 @@
 
     .chat-display {
         flex: 1;
+        overflow: hidden;
     }
 
     .loader-wrap {
@@ -213,8 +215,6 @@
         overflow: auto;
         display: flex;
         flex-direction: column;
-        align-items: center;
-        justify-content: center;
     }
 
     .input-zone {
