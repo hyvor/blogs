@@ -244,7 +244,7 @@
     }
     
     .disclaimer {
-        padding: 0 15px 15px;
+        padding: 0 5px 15px;
         font-size: 12px;
     }
 

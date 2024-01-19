@@ -3,6 +3,7 @@
 	import type { GptPrompt } from "../../../../../lib/types";
 	import { blogStore } from "../../../../../lib/stores/blogStore";
 	import { IconClipboard, IconCopy, IconFileEarmark } from "@hyvor/icons";
+    import hyvorLogo from './logo.png';
 
     export let gptPrompt: GptPrompt;
 
@@ -34,10 +35,10 @@
             {gptPrompt.prompt}
         </div>
     </div>
-    <div class="response">
-        <span class="blog-logo">{"H"}</span>
+    <div class="prompt-response">
+        <span class="blog-logo"><img src={hyvorLogo} width="20px"/></span>
         {#if gptPrompt.gpt_response}
-            {@html gptPrompt.gpt_response}
+            <span class="prompt-response">{@html gptPrompt.gpt_response}</span>
             <div class="prompt-response-button-row">
                 <Button color="gray" on:click={() => handleCopy()}>
                     <IconClipboard />
@@ -76,6 +77,10 @@
         height: 30px;
         border-radius: 50%;
         background-color: var(--accent-light);
+    }
+
+    .prompt-response {
+        margin-top: 10px;
     }
 
     .prompt-response-button-row {
