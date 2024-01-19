@@ -1,5 +1,5 @@
 <script lang="ts">
-	import { Button, Divider, Loader, Textarea, Tooltip, toast } from "@hyvor/design/components";
+	import { Button, Divider, Loader, TextInput, Textarea, Tooltip, toast } from "@hyvor/design/components";
 	import type { GptPrompt } from "../../../../../lib/types";
 	import { postStore, postVariantStore } from "../../../postStore";
 	import { Icon2Square, IconArrowClockwise, IconMagic, IconRewind, IconSearch } from "@hyvor/icons";
@@ -133,7 +133,7 @@
 
         {:else}
             <div class="chat-zone">
-                {#if prompts.length == 0 && !pendingPrompt}
+                {#if prompts.length == 0}
                     <div class="empty-chat">
                         <IconSearch size={80}/>
                         <div class="empty-chat-text">No chat history on this post yet.</div>
@@ -143,7 +143,7 @@
                         <AiResponse gptPrompt={prompt} />
                     {/each}
                     <div class="reset-button">
-                        <Button size="small" on:click={() => resetPrompts()}>
+                        <Button size="small" color="gray" on:click={() => resetPrompts()}>
                             <div class="reset-button-content">
                                 <IconArrowClockwise />
                                 <span class="reset-button-text">Reset chat</span>
@@ -160,6 +160,7 @@
                         <div class="automatic-prompt-button">
                             <Tooltip text={prompt.description}>
                                 <Button
+                                    color="gray"
                                     on:click={() => pendingPrompt = prompt.prompt({
                                         title,
                                         primaryKeyword,
@@ -181,7 +182,8 @@
 
                 <div class="input-row">
                     <div class="prompt-input">
-                        <Textarea
+                        <TextInput
+                            block={true}
                             placeholder="Type your prompt here..."
                             rows={1}
                             bind:value={pendingPrompt}
@@ -284,6 +286,7 @@
     }
     
     .prompt-input {
+        width: 100%;
         margin-right: 5px;
     }
 

@@ -2,12 +2,23 @@
 	import { Button, Divider, Loader, Textarea, Tooltip, toast } from "@hyvor/design/components";
 	import type { GptPrompt } from "../../../../../lib/types";
 	import { blogStore } from "../../../../../lib/stores/blogStore";
+	import { IconClipboard, IconCopy, IconFileEarmark } from "@hyvor/icons";
 
     export let gptPrompt: GptPrompt;
 
     function getResponseHtml(response: string | null) {
-    
-}
+        // TODO
+    }
+
+    // Copy the response to clipboard
+    async function handleCopy() {
+        try {
+            await navigator.clipboard.writeText(gptPrompt.gpt_response);
+            toast.success("Copied to clipboard");
+        } catch (err) {
+            toast.error("Failed to copy to clipboard");
+        }
+    }
 
     let imageUrl = $blogStore.icon_url || $blogStore.icon_url;
 </script>
@@ -27,6 +38,16 @@
         <span class="blog-logo">{"H"}</span>
         {#if gptPrompt.gpt_response}
             {@html gptPrompt.gpt_response}
+            <div class="prompt-response-button-row">
+                <Button color="gray" on:click={() => handleCopy()}>
+                    <IconClipboard />
+                    <span class="prompt-response-button-content">Copy</span>
+                </Button>
+                <Button color="gray">
+                    <IconFileEarmark />
+                    <span class="prompt-response-button-content">Add to Editor</span>
+                </Button>
+            </div>
         {:else}
             <div class="response-text">
                 <Loader />
@@ -56,4 +77,16 @@
         border-radius: 50%;
         background-color: var(--accent-light);
     }
+
+    .prompt-response-button-row {
+        text-align: right;
+        margin-top: 10px;
+        margin-bottom: 10px;
+    }
+
+    .prompt-response-button-content{
+        margin-left: 5px;
+        font-size: 10px;
+    }
+
 </style>
