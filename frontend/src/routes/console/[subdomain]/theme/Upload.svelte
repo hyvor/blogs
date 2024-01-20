@@ -1,20 +1,64 @@
-<script>
-	import { Button, Tooltip } from "@hyvor/design/components";
-	import { IconCloudDownload, IconCloudUpload } from "@hyvor/icons";
+<script lang="ts">
+	import { Button, Tooltip, toast } from "@hyvor/design/components";
+	import { IconCloudUpload } from "@hyvor/icons";
+	import { getConfig } from "../../lib/config";
+	import byteFormatter from "../../lib/helper/byte-formatter";
+	import { uploadTheme } from "./themeActions";
+	import { setThemeFiles } from "./themeStore";
+
+    let inputEl : HTMLInputElement;
+
+    function handleClick() {
+        inputEl.click()
+    }
+
+    function handleUpload() {
+
+        const file = inputEl.files?.[0];
+
+        if (!file) {
+            return toast.error("Please select a file");
+        }
+
+        const max = getConfig().limits.max_theme_zip_size;
+        if (file.size > max) {
+            return toast.error("Max file size is" + byteFormatter(max));
+        }
+
+        const toastId = toast.loading("Uploading theme...");
+
+        uploadTheme(file)
+            .then(files => {
+                toast.success("Theme uploading completed", {id: toastId});
+                setThemeFiles(files);
+            })
+            .catch(err => {
+                toast.error(err.message, {id: toastId});
+            });
+
+    }
 </script>
 
 <Tooltip
     text="Upload a theme from a zip file"
 >
 
-    <Button color="soft" size="small" style="font-size:13px">
+    <Button 
+        color="input" 
+        size="small" 
+        style="font-size:13px"
+        on:click={handleClick}
+    >
         <IconCloudUpload size={16} slot="start" />
         Upload
     </Button>
 
-    <Button color="soft" size="small" style="font-size:13px">
-        <IconCloudDownload size={16} slot="start" />
-        Download
-    </Button>
+    <input
+        bind:this={inputEl}
+        type="file"
+        accept="zip,application/octet-stream,application/zip,application/x-zip,application/x-zip-compressed"
+        on:change={handleUpload}
+        style="display:none"
+    />
 
 </Tooltip>

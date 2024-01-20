@@ -13,7 +13,8 @@ class CorsOnLocalhost
     {
         if (App::environment('local', 'testing')) {
             $response = $next($request);
-            $response->header('Access-Control-Allow-Origin', '*');
+            if (method_exists($response, 'header'))
+                $response->header('Access-Control-Allow-Origin', '*');
             return $response;
         }
         return $next($request);

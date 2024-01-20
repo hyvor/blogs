@@ -68,3 +68,14 @@ export function checkFilename(
         signal
     })
 }
+
+export function uploadTheme(zip: File) {
+
+    const formData = new FormData()
+    formData.append('zip', zip)
+
+    return consoleApi.post<ThemeFile[]>({
+        endpoint: '/theme',
+        data: formData
+    });
+}
