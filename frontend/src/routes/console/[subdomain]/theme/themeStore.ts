@@ -21,6 +21,8 @@ export const selectedThemeFileOriginalStore = derived(
     }
 )
 
+export const configModeStore = writable<'yaml' | 'ui'>('ui');
+
 export function setThemeFiles(files: ThemeFile[]) {
     themeFilesStore.set(files);
     themeFilesOriginalStore.set(files);

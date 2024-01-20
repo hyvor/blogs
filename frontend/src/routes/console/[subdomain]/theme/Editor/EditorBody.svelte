@@ -1,4 +1,6 @@
 <script lang="ts">
+	import ConfigUiPreview from './Preview/ConfigUiPreview.svelte';
+	import { configModeStore } from './../themeStore';
 	import { type CodeMirrorMode } from './../../../lib/components/CodemirrorEditor/codemirror';
 	import { selectedThemeFileStore } from "../themeStore";
 	import TextEditor from "./Preview/TextEditor.svelte";
@@ -12,10 +14,14 @@
 
     const textExtensions = ['scss', 'twig', 'js', 'yaml'];
     const imageExtensions = ['png', 'jpg', 'jpeg', 'jfif', 'pjpeg', 'pjp', 'gif', 'apng', 'avif', 'svg', 'webp'];
+
+    let configShowYaml = false;
+
 </script>
 
-
-{#if textExtensions.includes(ext)}
+{#if currentFile.folder === null && currentFile.name === 'config.yaml' && $configModeStore === 'ui'}
+    <ConfigUiPreview />
+{:else if textExtensions.includes(ext)}
     <TextEditor file={currentFile} {ext} />
 {:else if currentFile.folder === 'assets' && imageExtensions.includes(ext)}
     <AssetImage file={currentFile} />
