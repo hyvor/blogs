@@ -28,18 +28,23 @@
     <Featured />
     <Delete />
 
-    <div class="advanced-wrap">
-        <Button 
-            color="input" 
-            size="small"
-            on:click={() => showAdvanced = !showAdvanced}
-        >
-            Show advanced 
-            <svelte:component this={showAdvanced ? IconCaretDown : IconCaretRight} size={12} slot="end" />
-        </Button>
-    </div>
+    {#if $postLanguageStore.is_primary}
+        <div class="advanced-wrap">
+            <Button 
+                color="input" 
+                size="small"
+                on:click={() => showAdvanced = !showAdvanced}
+            >
+                <svelte:component 
+                    this={showAdvanced ? IconCaretDown : IconCaretRight} 
+                    size={12} 
+                    slot="end" 
+                />
+            </Button>
+        </div>
+    {/if}
 
-    {#if showAdvanced && $postLanguageStore.is_primary}
+    {#if showAdvanced}
 
         <CanonicalUrl />
 
