@@ -27,7 +27,7 @@ class ConsoleUserController extends Controller
         ]);
 
         $limit = 50;
-        $offset = $request->input('offset', 0);
+        $offset = $request->integer('offset');
 
         $users = UserRepository::getUsers($blog, $limit, $offset)->map(fn ($user) => new UserObject($user, $blog));
 

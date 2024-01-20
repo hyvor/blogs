@@ -3,7 +3,8 @@
 	import { Loader, Text, TextInput } from "@hyvor/design/components";
 	import { createEventDispatcher, onMount } from "svelte";
 	import type { User } from "../../../../../../lib/types";
-	import { getUsers, searchUsers } from "../../../../../../lib/actions/userActions";
+	import {  } from "../../../../../../lib/actions/userActions";
+	import { getUsers, searchUsers } from "../../../../../settings/users/userActions";
 
     let isLoading = true;
     let users : User[] = [];
@@ -29,7 +30,7 @@
         }
 
         setTimeout(() => {
-            searchUsers(search)
+            searchUsers({search})
                 .then(res => {
                     isLoading = false;
                     searchedUsers = res;
