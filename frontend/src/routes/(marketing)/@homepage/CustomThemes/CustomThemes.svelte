@@ -25,7 +25,7 @@
 
 <div class="action">
     <Button as="a" href="/themes" color="gray">
-        View Pre-built Themes &rarr;
+        Go to themes page &rarr;
     </Button>
 </div>
 

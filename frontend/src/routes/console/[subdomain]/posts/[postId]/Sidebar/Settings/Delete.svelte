@@ -6,6 +6,7 @@
 	import { getPrimaryLanguage } from "../../../../../lib/stores/languagesStore";
 	import { goto } from "$app/navigation";
 	import { blogStore } from "../../../../../lib/stores/blogStore";
+	import { consoleUrlWithBlog } from "../../../../../lib/consoleUrl";
 
     async function handleClick() {
 
@@ -33,10 +34,7 @@
                     );
 
                     if ($postLanguageStore.is_primary) {
-                        goto(
-                            '/console/' + $blogStore.subdomain + 
-                            ($postStore.is_page ? '/pages' : '/posts')
-                        );
+                        goto(consoleUrlWithBlog($postStore.is_page ? '/pages' : '/posts'));
                     } else {
                         const languageId = $postLanguageStore.id;
                         updatePostEditingStatusValue('languageId', getPrimaryLanguage().id);

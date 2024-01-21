@@ -9,12 +9,12 @@ use Illuminate\Support\Str;
 class TempBlogService
 {
 
-    public static function getTempBlog(string $uniqueId) : Blog
+    public static function getTempBlog(?string $subdomain) : Blog
     {
 
-        $blog = Blog::where('temp_unique_id', $uniqueId)->first();
+        $blog = $subdomain ? BlogService::getBlogBySubdomain($subdomain) : null;
 
-        if ($blog)
+        if ($blog && $blog->type === BlogTypeEnum::TEMP)
             return $blog;
 
         $subdomain = 'temp-' . Str::random(24) . '-' . now()->getTimestamp();
@@ -24,7 +24,6 @@ class TempBlogService
             'Temporary Blog',
             $subdomain,
             BlogTypeEnum::TEMP,
-            tempUniqueId: $uniqueId
         );
 
     }

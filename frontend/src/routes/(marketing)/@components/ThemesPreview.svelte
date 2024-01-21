@@ -3,7 +3,8 @@
 	import type { Theme } from "../../console/lib/types";
 	import { loadThemes } from "../../console/[subdomain]/theme/themeActions";
 	import { getConfig, loadConfig } from "../../console/lib/config";
-	import { NavLink } from "@hyvor/design/components";
+	import { IconButton, Link, Loader, NavLink } from "@hyvor/design/components";
+	import { IconBoxArrowUpRight, IconLaptop, IconTablet } from "@hyvor/icons";
 
     let isLoaded = false;
     let themes: Theme[] = [];
@@ -12,8 +13,12 @@
     $: portedThemes = themes.filter((theme) => theme.type === "ported");
 
     $: currentTheme = originalThemes[0];
+    $: currentThemeUrl = `//${currentTheme?.preview_subdomain}.${getConfig().domains?.delivery}${port}`;
 
     let port: string = "";
+    let type : 'laptop' | 'tablet' = 'laptop';
+
+    let isLoading = true;
 
     const dispatch = createEventDispatcher();
 
@@ -49,7 +54,10 @@
                     {#if theme.name !== 'blank'}
                         <NavLink
                             href="javaScript:void(0)"
-                            on:click={() => currentTheme = theme}
+                            on:click={() => {
+                                isLoading = true;
+                                currentTheme = theme;
+                            }}
                             active={currentTheme?.name === theme.name}
                         >
                             {theme.name}
@@ -60,11 +68,50 @@
         </div>
 
         <div class="preview hds-box">
+
+            <div class="navi">
+                <div class="left">
+                    <Link 
+                        href={currentThemeUrl} 
+                        target="_blank" 
+                        underline={false} 
+                        color="text"
+                    >
+                        Open in new tab
+                        <IconBoxArrowUpRight slot="end" size={14} />
+                    </Link>
+                </div>
+                <div class="right">
+                    <IconButton
+                        on:click={() => type = 'laptop'}
+                        variant={type == 'laptop' ? "fill" : "invisible"}
+                    ><IconLaptop /></IconButton>
+        
+                    <IconButton 
+                        on:click={() => type = 'tablet'}
+                        variant={type == 'tablet' ? "fill" : "invisible"}
+                    ><IconTablet /></IconButton>
+                </div>
+            </div>
+
             {#if currentTheme}
-                <iframe
-                    src={`//${currentTheme.preview_subdomain}.${getConfig().domains.delivery}${port}`}
-                    title={currentTheme.name}
-                />
+                <div 
+                    class="iframe"
+                    style="padding: {type === 'laptop' ? 0 : 15}px"
+                >
+                    {#if isLoading}
+                        <Loader full />
+                    {/if}
+
+                    <iframe
+                        src={currentThemeUrl}
+                        title={currentTheme.name}
+                        style:width={type === 'laptop' ? "100%" : (type === 'tablet' ? 540 : 360) + "px"}
+                        style:height={type === 'laptop' ? "100%" : 740 + "px"}
+                        on:load={() => isLoading = false}
+                        style:display={isLoading ? "none" : "block"}
+                    />
+                </div>
             {/if}
         </div>
 
@@ -103,15 +150,48 @@
         width: 100%;
         height: 100%;
         display: flex;
+        justify-content: center;
+        overflow: hidden;
+        flex-direction: column;
+    }
+
+    .navi {
+        padding: 15px 20px;
+        display: flex;
+        align-items: center;
+        border-bottom: 1px solid var(--border);
+    }
+    .left {    
+        flex: 1;
+        font-size: 14px;
+        font-weight: 600;
+    }
+
+    .iframe {
+        flex: 1;
+        display:flex;
         align-items: center;
         justify-content: center;
         overflow: hidden;
+        position:relative;
     }
+
     iframe {
-        width: 100%;
-        height: 100%;
+        max-width: 100%;
+        max-height: 100%;
         border: none;
         transition: .3s width, .3s height;
+    }
+
+    @keyframes preview-iframe {
+        0% {opacity: 0;}
+        100% {opacity: 1;}
+    }
+
+    @media screen and (max-width: 1200px) {
+        .iframe, iframe {
+            min-height: 600px;
+        }
     }
 
 </style>

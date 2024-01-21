@@ -12,6 +12,7 @@
 	import { IconCaretLeftFill } from "@hyvor/icons";
 	import { initEditorEventHandlers } from "./Body/Editor/editorEvents";
 	import { isTempStore } from "../../../lib/temp";
+	import { consoleUrlWithBlog } from "../../../lib/consoleUrl";
     
     const postId = $page.params.postId;
 
@@ -36,9 +37,9 @@
 
     function getBackUrl() {
         const postData = $postStore;
-        return '/console/' + 
-            $blogStore.subdomain + 
-            (postData && postData.is_page ? '/pages' : '/posts');
+        return consoleUrlWithBlog(
+            (postData && postData.is_page ? '/pages' : '/posts')
+        );
     }
 
 </script>

@@ -1,5 +1,5 @@
 <script lang="ts">
-	import { setTempUniqueId, tempUniqueIdStore } from './lib/temp';
+	import { initTempSubdomain, setTempSubdomain } from './lib/temp';
 	import { onMount } from "svelte";
 	import consoleApi from "./lib/consoleApi";
 	import type { AuthUser, BlogList } from "./lib/types";
@@ -8,7 +8,7 @@
 	import { goto } from "$app/navigation";
     import { page } from '$app/stores';
 	import { setConfig, type Config } from "./lib/config";
-	import { initTempUniqueId, isTempStore } from "./lib/temp";
+	import { isTempStore } from "./lib/temp";
 
     interface InitResponse {
         user: AuthUser,
@@ -24,13 +24,13 @@
         const isTemp = $page.url.searchParams.has('temp');
         isTempStore.set(isTemp);
 
-        const tempUniqueId = initTempUniqueId();
+        const tempSubdomain = initTempSubdomain();
 
         consoleApi.get<InitResponse>({
             endpoint: isTemp ? 'init-temp' : 'init',
             userApi: true,
             data: {
-                temp_unique_id: isTemp ? tempUniqueId : undefined,
+                temp_subdomain: isTemp ? tempSubdomain : undefined,
             }
         }).then(res => {
             setConfig(res.config);
@@ -38,8 +38,8 @@
             authUserStore.set(res.user)
             blogListStore.set(res.blogs)
 
-            if (res.temp_unique_id) {
-                setTempUniqueId(res.temp_unique_id);
+            if (res.blogs[0]?.type === 'temp') {
+                setTempSubdomain(res.blogs[0].subdomain);
             }
 
             isLoading = false;

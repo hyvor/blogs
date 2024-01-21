@@ -25,6 +25,10 @@
 
     onMount(() => {
 
+        if ($isTempStore) {
+            document.documentElement.classList.add('has-top-offset');
+        }
+
         // 24 hours
         timeRemaining = 86400 - Math.floor((Date.now() - $blogStore.created_at) / 1000);
 
@@ -58,14 +62,14 @@
                 href="/console?signup"
                 data-sveltekit-reload
             >
-                Start your blog now
+                Start a live blog now
             </Button>
         </div>
     </div>
 
 {/if}
 
-<style>
+<style lang="scss">
 
     .notice {
         position: fixed;
@@ -82,12 +86,11 @@
         z-index: 1000000000000000;
     }
 
-    :global(:root) {
+    :global(:root.has-top-offset) {
         --top-offset: 40px;
-    }
-
-    :global(body) {
-        margin-top: 40px;
+        :global(body) {
+            margin-top: var(--top-offset);
+        }
     }
 
 </style>

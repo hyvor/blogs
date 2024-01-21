@@ -33,8 +33,8 @@
         In a hurry?
     </div>
 
-    Try Hyvor Blogs with a free <strong>temporary</strong> blog.
-    No sign up required, not even an email address. Click & go.
+    Try Hyvor Blogs with a free temporary blog, created in a few seconds.
+    <strong>No sign up required</strong>.
 
     <div class="temp-button">
         <Button as="a" href="/console?temp" target="_blank">
@@ -58,10 +58,17 @@
         <div class="hds-container inner">
 
             <div>
-                In a hurry? Try Hyvor Blogs with a <strong>free temporary</strong> blog.
+                Try Hyvor Blogs with a free temporary blog. <strong>No sign up required</strong>.
             </div>
 
-            <Button variant="outline" size="small" as="a" href="/console?temp" target="_blank">
+            <Button
+                color="input"
+                variant="outline" 
+                size="small" 
+                as="a" 
+                href="/console?temp"
+                target="_blank"
+            >
                 Create a temporary blog
                 <IconBoxArrowUpRight slot="end" size={10} />
             </Button>
@@ -97,7 +104,8 @@
         top: var(--header-height);
         left: 0;
         width: 100%;
-        background: var(--accent-lightest);
+        background: var(--accent);
+        color: var(--accent-text);
         border-bottom: 1px solid var(--border);
         align-items: center;
         height: 50px;
@@ -107,6 +115,7 @@
             display: flex;
             gap: 10px;
             align-items: center;
+            justify-content: center;
         }
     }
 

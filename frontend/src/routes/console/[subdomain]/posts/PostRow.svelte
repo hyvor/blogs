@@ -9,6 +9,7 @@
 	import SeoAnalysisTag from "./Tags/SeoAnalysisTag.svelte";
 	import VariantLangTag from "./Tags/VariantLangTag.svelte";
 	import { IconBoxArrowUpRight } from "@hyvor/icons";
+	import { consoleUrlWithBlog } from "../../lib/consoleUrl";
     
     export let post: Post;
 
@@ -25,7 +26,7 @@
 
 <a 
     class="post-list-item"
-    href={`/console/${$blogStore.subdomain}/posts/${post.id}`}
+    href={consoleUrlWithBlog(`/posts/${post.id}`)}
 >
 
     <div>

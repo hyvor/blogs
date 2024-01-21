@@ -36,13 +36,9 @@ class ConsoleController
     public function initTemp(Request $request) : JsonResponse
     {
 
-        $tempUniqueId = $request->input('temp_unique_id');
+        $tempSubdomain = $request->input('temp_subdomain');
 
-        if (!$tempUniqueId) {
-            $tempUniqueId = Str::random(32);
-        }
-
-        $blog = BlogListObject::fromTempBlog(TempBlogService::getTempBlog($tempUniqueId));
+        $blog = BlogListObject::fromTempBlog(TempBlogService::getTempBlog($tempSubdomain));
 
         return response()->json([
             'user' => [
@@ -51,7 +47,6 @@ class ConsoleController
                 'picture_url' => null,
                 'username' => null,
             ],
-            'temp_unique_id' => $tempUniqueId,
             'blogs' => [$blog],
             'is_blocked' => false,
             'config' => $this->config()

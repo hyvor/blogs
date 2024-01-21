@@ -1,5 +1,5 @@
 <script lang="ts">
-	import { FormControl, Radio, SplitControl, Switch } from "@hyvor/design/components";
+	import { Callout, FormControl, Radio, SplitControl, Switch } from "@hyvor/design/components";
 	import { blogStore, updateBlogStore } from "../../../lib/stores/blogStore";
 	import CodemirrorEditor from "../../../lib/components/CodemirrorEditor/CodemirrorEditor.svelte";
 	import BlogSettingsSave from "../BlogSettingsSave.svelte";
@@ -26,9 +26,16 @@
     >
 
         <Switch
-            checked={$blogStore.seo_indexing}
+            checked={$blogStore.type === 'temp' ? false : $blogStore.seo_indexing}
+            disabled={$blogStore.type === 'temp'}
             on:change={handleAllowIndexingChange}
         />
+
+        {#if $blogStore.type === 'temp'}
+            <Callout type="warning" style="margin-top: 15px">
+                Temporary blogs are not indexable by search engines.
+            </Callout>
+        {/if}
 
     </SplitControl>
 

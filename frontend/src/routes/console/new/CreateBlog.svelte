@@ -122,12 +122,12 @@
 
         <div class="back">
             <Button
-                color="input"
-                variant="invisible"
+                variant="outline"
+                size='small'
                 on:click={handleBack}
                 disabled={isCreating}
             >
-                <IconCaretLeft slot="start" />
+                <IconCaretLeft slot="start" size={14} />
                 Back
             </Button>
         </div>

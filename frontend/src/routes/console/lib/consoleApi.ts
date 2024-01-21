@@ -1,7 +1,7 @@
 import { get } from "svelte/store";
 import { blogStore } from "./stores/blogStore";
 import { APP_URL } from "../../../lib";
-import { tempUniqueIdStore } from "./temp";
+import { tempSubdomainStore } from "./temp";
 // import { currentProjectIdStore } from "./stores";
 
 export interface ConsoleApiOptions {
@@ -55,7 +55,7 @@ function getConsoleApi() {
         }
 
         const headers = {
-            'X-TEMP-UNIQUE-ID': get(tempUniqueIdStore)
+            'X-TEMP-SUBDOMAIN': get(tempSubdomainStore)
         } as Record<string, string>;
 
         if (!(data instanceof FormData)) {

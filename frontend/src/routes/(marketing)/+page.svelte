@@ -7,18 +7,13 @@
 	import MultiLanguage from './@homepage/MultiLanguage/MultiLanguage.svelte';
 </script>
 
+<svelte:head>
+    <title>Hyvor Blogs - All-in-one Blogging Platform</title>
+    <meta name="description" content="Hyvor Blogs is a powerful blogging platform that allows you to create a blog, customize it, and start publishing articles instantly. In-built SEO, multi-language support, custom domains with SSL, and many more features included!">
+</svelte:head>
+
 <AboveFold />
 <Reviews />
-
-<!-- <div class="all hds-container">
-    <h2>
-        All-in-one!
-    </h2>
-    <h3>
-        EVERYTHING you need to run a blog is here. No more switching between tools or installing plugins that break your site!
-    </h3>
-</div> -->
-
 <CustomThemes />
 <Hosting />
 <Seo />

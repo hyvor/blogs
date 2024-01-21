@@ -3,6 +3,7 @@
 	import { blogStore, updateBlogStore } from "../../../lib/stores/blogStore";
 	import BlogSettingsSave from "../BlogSettingsSave.svelte";
 	import CodemirrorEditor from "../../../lib/components/CodemirrorEditor/CodemirrorEditor.svelte";
+	import { consoleUrlWithBlog } from "../../../lib/consoleUrl";
 </script>
 
 <BlogSettingsSave 
@@ -16,7 +17,7 @@
     >
 
         <div slot="caption">
-            Paste the embed code from your commenting system here. You can use Twig <Link href="/docs/themes-templates#variables" style="display:inline" target="_blank">route variables</Link> if needed. To connect Hyvor Talk, go to <Link href={`/console/${$blogStore.subdomain}/integrations/hyvor-talk`} style="display:inline">Integrations &rarr; Hyvor Talk</Link>.
+            Paste the embed code from your commenting system here. You can use Twig <Link href="/docs/themes-templates#variables" style="display:inline" target="_blank">route variables</Link> if needed. To connect Hyvor Talk, go to <Link href={consoleUrlWithBlog('/integrations/hyvor-talk')} style="display:inline">Integrations &rarr; Hyvor Talk</Link>.
         </div>
 
         <CodemirrorEditor

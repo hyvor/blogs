@@ -3,6 +3,7 @@
 	import { page } from "$app/stores";
 	import { blogStore } from "../../lib/stores/blogStore";
 	import { IconChatText, IconCodeSlash, IconCursorText, IconDatabase, IconExclamationTriangle, IconGlobe, IconImage, IconKey, IconLightbulb, IconLink45deg, IconList, IconPeople, IconSearchHeart, IconSend, IconSignTurnRight, IconSignTurnSlightRight, IconSignpost2, IconSlash, IconTag } from "@hyvor/icons";
+	import { consoleUrlWithBlog } from "../../lib/consoleUrl";
 
     const prefix = `/console/${$blogStore.subdomain}/settings`;
 </script>
@@ -12,7 +13,7 @@
     <div class="nav hds-box">
 
         <NavLink 
-            href={`${prefix}`}
+            href={consoleUrlWithBlog('/settings')}
             active={$page.url.pathname === `${prefix}`}
         >
             <IconList slot="start" />
@@ -20,7 +21,7 @@
         </NavLink>
 
         <NavLink 
-            href={`${prefix}/users`}
+            href={consoleUrlWithBlog('/settings/users')}
             active={$page.url.pathname === `${prefix}/users`}
         >
             <IconPeople slot="start" />
@@ -28,7 +29,7 @@
         </NavLink>
 
         <NavLink 
-            href={`${prefix}/tags`}
+            href={consoleUrlWithBlog('/settings/tags')}
             active={$page.url.pathname === `${prefix}/tags`}
         >
             <IconTag slot="start" />
@@ -36,7 +37,7 @@
         </NavLink>
 
         <NavLink 
-            href={`${prefix}/languages`}
+            href={consoleUrlWithBlog('/settings/languages')}
             active={$page.url.pathname === `${prefix}/languages`}
         >
             <IconGlobe slot="start" />
@@ -46,7 +47,7 @@
         <div class="section-div"></div>
 
         <NavLink 
-            href={`${prefix}/hosting`}
+            href={consoleUrlWithBlog('/settings/hosting')}
             active={$page.url.pathname === `${prefix}/hosting`}
         >
             <IconDatabase slot="start" />
@@ -54,7 +55,7 @@
         </NavLink>
 
         <NavLink 
-            href={`${prefix}/seo`}
+            href={consoleUrlWithBlog('/settings/seo')}
             active={$page.url.pathname === `${prefix}/seo`}
         >
             <IconSearchHeart slot="start" />
@@ -62,7 +63,7 @@
         </NavLink>
 
         <NavLink 
-            href={`${prefix}/color-mode`}
+            href={consoleUrlWithBlog('/settings/color-mode')}
             active={$page.url.pathname === `${prefix}/color-mode`}
         >
             <IconLightbulb slot="start" />
@@ -70,7 +71,7 @@
         </NavLink>
 
         <NavLink 
-            href={`${prefix}/post-content`}
+            href={consoleUrlWithBlog('/settings/post-content')}
             active={$page.url.pathname === `${prefix}/post-content`}
         >
             <IconCursorText slot="start" />
@@ -78,7 +79,7 @@
         </NavLink>
 
         <NavLink 
-            href={`${prefix}/navigation`}
+            href={consoleUrlWithBlog('/settings/navigation')}
             active={$page.url.pathname === `${prefix}/navigation`}
         >
             <IconLink45deg slot="start" />
@@ -86,7 +87,7 @@
         </NavLink>
 
         <NavLink 
-            href={`${prefix}/media`}
+            href={consoleUrlWithBlog('/settings/media')}
             active={$page.url.pathname === `${prefix}/media`}
         >
             <IconImage slot="start" />
@@ -94,7 +95,7 @@
         </NavLink>
 
         <NavLink 
-            href={`${prefix}/redirects`}
+            href={consoleUrlWithBlog('/settings/redirects')}
             active={$page.url.pathname === `${prefix}/redirects`}
         >
             <IconSignTurnSlightRight slot="start" />
@@ -102,7 +103,7 @@
         </NavLink>
 
         <NavLink 
-            href={`${prefix}/routes`}
+            href={consoleUrlWithBlog('/settings/routes')}
             active={$page.url.pathname === `${prefix}/routes`}
         >
             <IconSignpost2 slot="start" />
@@ -112,28 +113,28 @@
         <div class="section-div"></div>
 
         <NavLink 
-            href={`${prefix}/comments`}
+            href={consoleUrlWithBlog('/settings/comments')}
             active={$page.url.pathname === `${prefix}/comments`}
         >
             <IconChatText slot="start" />
             Comments & Newsletter
         </NavLink>
         <NavLink 
-            href={`${prefix}/code`}
+            href={consoleUrlWithBlog('/settings/code')}
             active={$page.url.pathname === `${prefix}/code`}
         >
             <IconCodeSlash slot="start" />
             Custom Code
         </NavLink>
         <NavLink 
-            href={`${prefix}/api-keys`}
+            href={consoleUrlWithBlog('/settings/api-keys')}
             active={$page.url.pathname === `${prefix}/api-keys`}
         >
             <IconKey slot="start" />
             API Keys
         </NavLink>
         <NavLink 
-            href={`${prefix}/webhooks`}
+            href={consoleUrlWithBlog('/settings/webhooks')}
             active={$page.url.pathname === `${prefix}/webhooks`}
         >
             <IconSend slot="start" />
@@ -143,7 +144,7 @@
         <div class="section-div"></div>
 
         <NavLink 
-            href={`${prefix}/danger`}
+            href={consoleUrlWithBlog('/settings/danger')}
             active={$page.url.pathname === `${prefix}/danger`}
         >
             <IconExclamationTriangle slot="start" />

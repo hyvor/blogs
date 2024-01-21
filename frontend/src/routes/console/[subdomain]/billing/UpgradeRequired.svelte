@@ -4,6 +4,7 @@
 	import type { SubscriptionPlan } from "../../lib/types";
 	import { Button } from "@hyvor/design/components";
 	import { blogStore } from "../../lib/stores/blogStore";
+	import { consoleUrlWithBlog } from "../../lib/consoleUrl";
 
     const allPlanTypes : SubscriptionPlan[] = [
         'starter',
@@ -44,7 +45,10 @@
             </div>
 
             <div class="upgrade-cta">
-                <Button as="a" href={`/console/` + $blogStore.subdomain + `/billing`}>
+                <Button 
+                    as="a"
+                    href={consoleUrlWithBlog('/billing')}
+                >
                     Upgrade Now
                 </Button>
             </div>

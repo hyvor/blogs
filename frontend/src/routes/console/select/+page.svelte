@@ -1,12 +1,15 @@
 <script lang="ts">
-	import { Button } from "@hyvor/design/components";
+	import { Button, Tooltip } from "@hyvor/design/components";
     import { authUserStore, blogListStore } from "../lib/stores";
-    import { IconCaretRight, IconGripVertical } from '@hyvor/icons';
+    import { IconCaretLeft, IconCaretRight, IconGripVertical } from '@hyvor/icons';
 	import { flip } from "svelte/animate";
 	import { dndzone, SOURCES, TRIGGERS	 } from 'svelte-dnd-action';
 	import type { BlogList } from "../lib/types";
 	import { saveSort } from "../lib/actions/blogActions";
     import arrowSvg from "./drag-note-arrow.svg";
+	import { isTempStore } from "../lib/temp";
+	import { base } from "$app/paths";
+	import { afterNavigate, goto } from "$app/navigation";
 
 	const flipDurationMs = 200;
 	let dragDisabled = true;
@@ -44,42 +47,32 @@
 		if ((e.key === "Enter" || e.key === " ") && dragDisabled) dragDisabled = false;
 	}
 
+    let previousPage : string = '/';
+
+    afterNavigate(({from}) => {
+        previousPage = from?.url.pathname || previousPage
+    });
+
+    function handleBack() {
+        goto(previousPage);
+    }
+
 </script>
 
 <div class="wrap">
-
     
     <div class="selector">
 
-        <div class="user-account">
-
-            <div class="left">
-
-                <img 
-                    src={$authUserStore.picture_url} 
-                    alt="{ $authUserStore.name }'s profile picture"
-                />
-
-                <div class="name-username">
-                    <div class="name">
-                        { $authUserStore.name }
-                    </div>
-                    {#if $authUserStore.username}
-                        <div class="username">
-                            @{ $authUserStore.username }
-                        </div>
-                    {/if}
-                </div>
-
-            </div>
-
-            <div>
-                <Button as="a" href="/api/auth/logout" color="soft">
-                    Logout
-                </Button>
-            </div>
-
-        </div>
+        <span class="back-button">
+            <Button
+                variant="outline"
+                size='small'
+                on:click={handleBack}
+            >
+                <IconCaretLeft slot="start" size={14} />
+                Back
+            </Button>
+        </span>
 
         <div class="selector-box">
 
@@ -110,31 +103,33 @@
                         animate:flip="{{ duration: flipDurationMs }}"
                     >
 
-                        <button 
-                            class="dragger"
-                            style={dragDisabled ? 'cursor: grab' : 'cursor: grabbing'}
-                            tabindex={dragDisabled? 0 : -1} 
-                            aria-label="drag-handle"
-                            on:mousedown={startDrag}
-                            on:touchstart={startDrag}
-                            on:keydown={handleKeyDown}
-                            on:click={e => e.preventDefault()}
-                        >
-                            <IconGripVertical />
+                        {#if items.length > 1}
+                            <button 
+                                class="dragger"
+                                style={dragDisabled ? 'cursor: grab' : 'cursor: grabbing'}
+                                tabindex={dragDisabled? 0 : -1} 
+                                aria-label="drag-handle"
+                                on:mousedown={startDrag}
+                                on:touchstart={startDrag}
+                                on:keydown={handleKeyDown}
+                                on:click={e => e.preventDefault()}
+                            >
+                                <IconGripVertical />
 
-                            {#if dragDisabled}
-                                <span class="drag-note">
-                                    <img 
-                                        src={arrowSvg} 
-                                        class="arrow"
-                                        alt="drag arrow"
-                                    />
-                                    <span class="note">
-                                        Drag to reorder
+                                {#if dragDisabled}
+                                    <span class="drag-note">
+                                        <img 
+                                            src={arrowSvg} 
+                                            class="arrow"
+                                            alt="drag arrow"
+                                        />
+                                        <span class="note">
+                                            Drag to reorder
+                                        </span>
                                     </span>
-                                </span>
-                            {/if}
-                        </button>
+                                {/if}
+                            </button>
+                        {/if}
 
                         <div class="left">
                             <div class="name">
@@ -165,8 +160,46 @@
             </div>
 
             <div class="footer">
-                <Button as="a" href="/console/new">
+                <Button 
+                    as="a" 
+                    href="/console/new"
+                    data-sveltekit-reload={$isTempStore}
+                >
                     Create a new blog
+                </Button>
+            </div>
+
+        </div>
+
+    </div>
+
+    <div class="user-account">
+
+        <div class="inner">
+
+            <div class="left">
+
+                <img 
+                    src={$authUserStore.picture_url} 
+                    alt="{ $authUserStore.name }'s profile picture"
+                />
+
+                <div class="name-username">
+                    <div class="name">
+                        { $authUserStore.name }
+                    </div>
+                    {#if $authUserStore.username}
+                        <div class="username">
+                            @{ $authUserStore.username }
+                        </div>
+                    {/if}
+                </div>
+
+            </div>
+
+            <div>
+                <Button as="a" href="/api/auth/logout" variant="fill-light">
+                    Logout
                 </Button>
             </div>
 
@@ -177,20 +210,29 @@
 </div>
 
 
-<style>
+<style lang="scss">
 
 
     .wrap {
         display: flex;
         justify-content: center;
-        align-items: flex-start;
+        align-items: center;
+        flex-direction: column;
         height: 100vh;
         width: 100%;
     }
 
     .user-account {
-        padding: 30px 25px;
-        display: flex;
+        padding: 15px;
+        border-top: 1px solid var(--border);
+        width: 100%;
+        .inner {
+            width: 600px;
+            max-width: 100%;
+            margin: auto;
+            display: flex;
+            align-items: center;
+        }
     }
     .user-account .left {
         flex: 1;
@@ -217,6 +259,9 @@
     .selector {
         width: 600px;
         max-width: 100%;
+        flex: 1;
+        position: relative;
+        margin-top: 60px;
     }
     .selector-box {
         background: var(--box-background);
@@ -228,6 +273,13 @@
         font-size: 1.2rem;
         font-weight: 600;
         text-align: center;
+        position: relative;
+    }
+    .back-button {
+        position: absolute;
+        left: 0;
+        bottom: 100%;
+        padding: 15px 0;
     }
     .footer {
         padding: 25px;

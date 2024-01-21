@@ -5,6 +5,7 @@
 	import { onMount } from "svelte";
 	import { blogStore } from "../../../lib/stores/blogStore";
 	import AddCommentsEmbedCode from "./AddCommentsEmbedCode.svelte";
+	import { consoleUrlWithBlog } from "../../../lib/consoleUrl";
 
     let isLoading = true;
     let data: HyvorTalkIntegrationData;
@@ -114,7 +115,7 @@
                 </Button>
                 
                 <Button
-                    color="danger"
+                    color="red"
                     size="small"
                     on:click={() => isDisconnecting = true}
                 >Disconnect</Button>
@@ -140,7 +141,11 @@
                 <SplitControl label="Embed Code">
 
                     <p style="margin-top:0;">
-                        Add the embed code to <Link style="display:inline;" underline href={`/console/${$blogStore.subdomain}/settings/comments`}>Comments Embed Code</Link> to load Hyvor Talk on all posts.
+                        Add the embed code to <Link 
+                            style="display:inline;" 
+                            underline
+                            href={consoleUrlWithBlog('/settings/comments')}
+                        >Comments Embed Code</Link> to load Hyvor Talk on all posts.
                     </p>
 
                     <CodeBlock code={embedCode} />
@@ -194,7 +199,7 @@
 
         <svelte:fragment slot="footer">
             <ButtonGroup>
-                <Button color="invisible" on:click={() => isConnecting = false}>Cancel</Button>
+                <Button variant="invisible" on:click={() => isConnecting = false}>Cancel</Button>
                 <Button on:click={handleConnect}>Confirm</Button>
             </ButtonGroup>
         </svelte:fragment>
@@ -217,8 +222,8 @@
 
         <svelte:fragment slot="footer">
             <ButtonGroup>
-                <Button color="invisible" on:click={() => isDisconnecting = false}>Cancel</Button>
-                <Button color="danger" on:click={handleDisconnect}>Disconnect</Button>
+                <Button variant="invisible" on:click={() => isDisconnecting = false}>Cancel</Button>
+                <Button color="red" on:click={handleDisconnect}>Disconnect</Button>
             </ButtonGroup>
         </svelte:fragment>
 

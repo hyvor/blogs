@@ -2,6 +2,7 @@
 	import { Button, DarkToggle } from '@hyvor/design/components';
     import { Footer, FooterLinkList, Header } from '@hyvor/design/marketing';
     import logo from '$lib/img/logo.png';
+	import { page } from "$app/stores";
 </script>
 
 <Header
@@ -11,13 +12,28 @@
 >
 
     <div slot="center">
-        <Button as="a" size="small" href="/pricing" variant="invisible">
+        <Button 
+            as="a" 
+            size="small" 
+            href="/pricing" 
+            variant={$page.url.pathname === '/pricing' ? 'fill' : 'invisible'}
+        >
             Pricing
         </Button>
-        <Button as="a" size="small" href="/docs" variant="invisible">
+        <Button 
+            as="a" 
+            size="small" 
+            href="/docs" 
+            variant="invisible"
+        >
             Docs
         </Button>
-        <Button as="a" size="small" href="/docs" variant="invisible">
+        <Button 
+            as="a" 
+            size="small" 
+            href="/themes"
+            variant={$page.url.pathname === '/themes' ? 'fill-light' : 'invisible'}
+        >
             Themes
         </Button>
         <Button as="a" size="small" href="/customers" variant="invisible">
@@ -39,32 +55,45 @@
 
 <slot />
 
-<div class="footer-wrap">
-    <Footer
-        email="blogs.support@hyvor.com"
-        social={{
-            x: 'https://x.com/HyvorBlogs'
-        }}
-    >
+{#if $page.url.pathname !== '/themes'}
 
-        <div slot="center">
+    <div class="footer-wrap">
+        <Footer
+            email="blogs.support@hyvor.com"
+            social={{
+                x: 'https://x.com/HyvorBlogs',
+            }}
+        >
 
-            <div style="display:flex">
-                <FooterLinkList title="Product">
-                    <a href="/pricing" target="_blank">Pricing</a>
-                    <a href="/docs" target="_blank">Docs</a>
-                    <a href="/customers" target="_blank">Customers</a>
-                </FooterLinkList>
+            <div slot="center">
 
-                <FooterLinkList title="HYVOR">
-                    <a href="https://hyvor.com" target="_blank">hyvor.com</a>
-                </FooterLinkList>
+                <div style="display:flex">
+                    <FooterLinkList title="Product">
+                        <a href="/console">Console</a>
+                        <a href="/themes">Themes</a>
+                        <a href="/pricing">Pricing</a>
+                        <a href="/docs">Docs</a>
+                        <a href="/customers">Customers</a>
+                    </FooterLinkList>
+
+                    <FooterLinkList title="Legal">
+                        <a href="/docs/terms">Terms</a>
+                        <a href="/docs/privacy">Privacy</a>
+                    </FooterLinkList>
+
+                    <FooterLinkList title="HYVOR">
+                        <a href="https://hyvor.com" target="_blank">hyvor.com</a>
+                        <a href="https://hyvor.com/about" target="_blank">About</a>
+                        <a href="https://status.hyvor.com" target="_blank">System Status</a>
+                    </FooterLinkList>
+                </div>
+
             </div>
 
-        </div>
+        </Footer>
+    </div>
 
-    </Footer>
-</div>
+{/if}
 
 <style>
 

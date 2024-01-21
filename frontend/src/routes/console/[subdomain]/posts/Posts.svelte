@@ -12,6 +12,7 @@
 	import { createPost, getPages, getPosts } from "./postActions";
 	import { goto } from "$app/navigation";
 	import { blogStore } from "../../lib/stores/blogStore";
+	import { consoleUrlWithBlog } from "../../lib/consoleUrl";
 
     export let pages = false;
 
@@ -85,7 +86,7 @@
         createPost(pages)
             .then(res => {
                 toast.success(`${pages ? 'Page' : 'Post'} created`, { id: toastId });
-                goto(`/console/${$blogStore.subdomain}/posts/${res.id}`);
+                goto(consoleUrlWithBlog(`/posts/${res.id}`));
             })
             .catch(e => {
                 toast.error(e.message, { id: toastId });

@@ -8,13 +8,14 @@
 	import { IconArrowClockwise, IconEyeSlashFill, IconPencilFill } from "@hyvor/icons";
 	import { callIgnoreLink, callLinkAnalysisApi } from "../linkAnalysisActions";
 	import { createEventDispatcher } from "svelte";
+	import { consoleUrlWithBlog } from "../../../../lib/consoleUrl";
     
     export let link: LinkAnalysisLink;
 
     let isRechecking = false;
 
     const language = getLanguageById(link.post_variant_language_id);
-    const postEditUrl = `/console/${$blogStore.subdomain}/posts/${link.post_id}`;
+    const postEditUrl = consoleUrlWithBlog(`/posts/${link.post_id}`);
 
     const dispatch = createEventDispatcher();
 

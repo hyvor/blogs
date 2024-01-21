@@ -28,12 +28,6 @@ class ConsoleApiAccessMiddleware
 
         if ($this->blog->type === BlogTypeEnum::TEMP) {
 
-            $uniqueId = $request->header('X-TEMP-UNIQUE-ID');
-
-            if ($this->blog->temp_unique_id !== $uniqueId) {
-                throw new TrustedException('You do not have access to this blog. Invalid ID');
-            }
-
             $owner = UserRepository::getOwnerOfBlog($this->blog);
             if (!$owner) {
                 throw new TrustedException('Blog owner not found');

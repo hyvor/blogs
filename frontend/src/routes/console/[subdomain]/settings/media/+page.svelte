@@ -1,6 +1,7 @@
 <script>
 	import { Callout, Link } from "@hyvor/design/components";
 	import { blogStore } from "../../../lib/stores/blogStore";
+	import { consoleUrlWithBlog } from "../../../lib/consoleUrl";
 
 </script>
 
@@ -19,7 +20,7 @@
 </Callout>
 
 <p style="font-size:14px;color:var(--text-light)">
-    Media library is now moved to <Link href={`/console/${$blogStore.subdomain}/tools/media`}>Tools &rarr; Media Library</Link>.
+    Media library is now moved to <Link href={consoleUrlWithBlog('/tools/media')}>Tools &rarr; Media Library</Link>.
 </p>
 </div>
 

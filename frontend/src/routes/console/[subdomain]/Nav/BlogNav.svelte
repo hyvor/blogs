@@ -7,7 +7,7 @@
 
 </script>
 
-<a class="current-blog" href="/console/select">
+<a class="current-blog" href={consoleUrl('/select')}>
 
     <div class="name-url">
         <div class="name">
