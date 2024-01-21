@@ -16,6 +16,7 @@ class BlogListObject
     public int $id;
     public UserRoleEnum $role;
     public bool $is_blocked;
+    public int $created_at;
     public int $trial_ends_at;
     public string $name;
     public string $subdomain;

@@ -6,6 +6,7 @@
 	import type { Blog } from "../../../lib/types";
 	import { isSubdomainValid } from "../../../lib/helper/isSubdomainValid";
 	import { isValidUrl } from "../../../lib/helper/is-valid-url";
+	import DisabledOnTemp from "../../Temp/DisabledOnTemp.svelte";
 
     const originalSubdomain = $blogStore.subdomain;
     let subdomain = $blogStore.subdomain;
@@ -105,139 +106,143 @@
 
 </script>
 
-<BlogSettingsSave
-    keys={['subdomain', 'hosting_at', 'hosting_domain', 'hosting_url']}
-    outsideChanges={subdomain !== $blogStore.subdomain ? { subdomain } : {}}
-    beforeSave={handleBeforeSave}
-    afterSave={handleAfterSave}
-/>
+<DisabledOnTemp>
 
-<div class="hosting">
+    <BlogSettingsSave
+        keys={['subdomain', 'hosting_at', 'hosting_domain', 'hosting_url']}
+        outsideChanges={subdomain !== $blogStore.subdomain ? { subdomain } : {}}
+        beforeSave={handleBeforeSave}
+        afterSave={handleAfterSave}
+    />
 
-    <SplitControl
-        label="Subdomain"
-        caption="The hyvorblogs.io subdomain. Uniquely identifies your blog within Hyvor Blogs."
-    >
-        <FormControl>
-            <TextInput 
-                bind:value={subdomain}
-                block
-                state={subdomainError ? 'error' : undefined}
-                on:input={handleSubdomainInput}
-            />
-            {#if subdomainError}
-                <Validation state="error">{subdomainError}</Validation>
-            {/if}
-        </FormControl>
-    </SplitControl>
+    <div class="hosting">
 
-    <SplitControl
-        label="Hosted at"
-        caption="Where do you like to host your blog?"
-    >
-        <InputGroup>
-            <Radio
-                value="subdomain"
-                group={$blogStore.hosting_at}
-                on:change={handleHostedAtChange}
-            >
-                Subdomain (hyvorblogs.io)
-            </Radio>
-            <Radio
-                value="domain"
-                group={$blogStore.hosting_at}
-                on:change={handleHostedAtChange}
-            >
-                Custom Domain - &nbsp;<Link 
-                    href="/docs/custom-domain" 
-                    target="_blank"
-                    style="font-size:14px;"
-                >
-                    Docs
-                    <IconBoxArrowUpRight slot="end" size={10} />
-                </Link>
-            </Radio>
-            <Radio
-                value="self"
-                group={$blogStore.hosting_at}
-                on:change={handleHostedAtChange}
-            >
-                Self-hosting - &nbsp;<Link 
-                    href="/docs/self-hosting" 
-                    target="_blank"
-                    style="font-size:14px;"
-                >
-                    Docs
-                    <IconBoxArrowUpRight slot="end" size={10} />
-                </Link>
-            </Radio>
-        </InputGroup>
-    </SplitControl>
-
-    {#if $blogStore.hosting_at === 'domain'}
         <SplitControl
-            label="Custom Domain"
-            caption="Your custom domain name"
+            label="Subdomain"
+            caption="The hyvorblogs.io subdomain. Uniquely identifies your blog within Hyvor Blogs."
         >
             <FormControl>
                 <TextInput 
-                    bind:value={$blogStore.hosting_domain}
-                    on:input={e => handleBlogValueChangeEvent(e, 'hosting_domain')}
+                    bind:value={subdomain}
                     block
-                    placeholder="blog.example.com"
-                    state={hostingUrlError ? 'error' : undefined}
+                    state={subdomainError ? 'error' : undefined}
+                    on:input={handleSubdomainInput}
                 />
-                {#if hostingUrlError}
-                    <Validation state="error">{hostingUrlError}</Validation>
+                {#if subdomainError}
+                    <Validation state="error">{subdomainError}</Validation>
                 {/if}
             </FormControl>
         </SplitControl>
-    {/if}
 
-    {#if $blogStore.hosting_at === 'self'}
         <SplitControl
-            label="Self-hosting URL"
-            caption="Where your blog is hosted (absolute URL)"
+            label="Hosted at"
+            caption="Where do you like to host your blog?"
         >
-            <FormControl>
-                <TextInput 
-                    bind:value={$blogStore.hosting_url}
-                    on:input={e => handleBlogValueChangeEvent(e, 'hosting_url')}
-                    block
-                    placeholder="https://example.com/blog"
-                    state={hostingUrlError ? 'error' : undefined}
-                />
-                {#if hostingUrlError}
-                    <Validation state="error">{hostingUrlError}</Validation>
-                {/if}
-            </FormControl>
+            <InputGroup>
+                <Radio
+                    value="subdomain"
+                    group={$blogStore.hosting_at}
+                    on:change={handleHostedAtChange}
+                >
+                    Subdomain (hyvorblogs.io)
+                </Radio>
+                <Radio
+                    value="domain"
+                    group={$blogStore.hosting_at}
+                    on:change={handleHostedAtChange}
+                >
+                    Custom Domain - &nbsp;<Link 
+                        href="/docs/custom-domain" 
+                        target="_blank"
+                        style="font-size:14px;"
+                    >
+                        Docs
+                        <IconBoxArrowUpRight slot="end" size={10} />
+                    </Link>
+                </Radio>
+                <Radio
+                    value="self"
+                    group={$blogStore.hosting_at}
+                    on:change={handleHostedAtChange}
+                >
+                    Self-hosting - &nbsp;<Link 
+                        href="/docs/self-hosting" 
+                        target="_blank"
+                        style="font-size:14px;"
+                    >
+                        Docs
+                        <IconBoxArrowUpRight slot="end" size={10} />
+                    </Link>
+                </Radio>
+            </InputGroup>
         </SplitControl>
-    {/if}
+
+        {#if $blogStore.hosting_at === 'domain'}
+            <SplitControl
+                label="Custom Domain"
+                caption="Your custom domain name"
+            >
+                <FormControl>
+                    <TextInput 
+                        bind:value={$blogStore.hosting_domain}
+                        on:input={e => handleBlogValueChangeEvent(e, 'hosting_domain')}
+                        block
+                        placeholder="blog.example.com"
+                        state={hostingUrlError ? 'error' : undefined}
+                    />
+                    {#if hostingUrlError}
+                        <Validation state="error">{hostingUrlError}</Validation>
+                    {/if}
+                </FormControl>
+            </SplitControl>
+        {/if}
+
+        {#if $blogStore.hosting_at === 'self'}
+            <SplitControl
+                label="Self-hosting URL"
+                caption="Where your blog is hosted (absolute URL)"
+            >
+                <FormControl>
+                    <TextInput 
+                        bind:value={$blogStore.hosting_url}
+                        on:input={e => handleBlogValueChangeEvent(e, 'hosting_url')}
+                        block
+                        placeholder="https://example.com/blog"
+                        state={hostingUrlError ? 'error' : undefined}
+                    />
+                    {#if hostingUrlError}
+                        <Validation state="error">{hostingUrlError}</Validation>
+                    {/if}
+                </FormControl>
+            </SplitControl>
+        {/if}
 
 
-    {#if hasUrlChanged}
-        <Callout 
-            type="warning" 
-            style="margin-top: 20px;"
-        >
-            <IconExclamationCircle slot="icon" size={18} />
-            <div slot="title">URL Change</div>
-            You are about to change the URL of your blog!
-            <ul>
-                <li>
-                    Previously shared links may break. However, when changing from hyvorblogs.io subdomain to a custom domain or self-hosting, we'll redirect users to the new URL.
-                </li>
-                <li>
-                    This may impact the SEO of your blog.
-                </li>
-                <li>
-                    We'll update the media links in your post content and blog settings. This may take some time.
-                </li>
-            </ul>
-        </Callout>
-    {/if}
+        {#if hasUrlChanged}
+            <Callout 
+                type="warning" 
+                style="margin-top: 20px;"
+            >
+                <IconExclamationCircle slot="icon" size={18} />
+                <div slot="title">URL Change</div>
+                You are about to change the URL of your blog!
+                <ul>
+                    <li>
+                        Previously shared links may break. However, when changing from hyvorblogs.io subdomain to a custom domain or self-hosting, we'll redirect users to the new URL.
+                    </li>
+                    <li>
+                        This may impact the SEO of your blog.
+                    </li>
+                    <li>
+                        We'll update the media links in your post content and blog settings. This may take some time.
+                    </li>
+                </ul>
+            </Callout>
+        {/if}
 
-</div>
+    </div>
+
+</DisabledOnTemp>
 
 <style>
     .hosting {

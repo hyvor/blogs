@@ -100,6 +100,7 @@ class BlogObject
         $this->theme_version_id = $blog->theme_version_id;
 
         $this->subdomain = $blog->subdomain;
+        $this->type = $blog->type;
         $this->hosting_at = $blog->hosting_at;
         $this->hosting_domain = $blog->hosting_domain;
         $this->hosting_url = $blog->hosting_url;

@@ -7,6 +7,7 @@
 	import { getUsers } from "./userActions";
 	import { onMount } from "svelte";
 	import Slug from "../../posts/[postId]/Sidebar/Settings/Slug.svelte";
+	import DisabledOnTemp from "../../Temp/DisabledOnTemp.svelte";
 
     let isLoading = true;
     let isCreating = false;
@@ -64,58 +65,62 @@
 </script>
 
 
-<SettingsTop>
+<DisabledOnTemp>
 
-    <Button on:click={() => isCreating = true}>
-        Add User <IconPlus slot="end" />
-    </Button>
+    <SettingsTop>
 
-</SettingsTop>
+        <Button on:click={() => isCreating = true}>
+            Add User <IconPlus slot="end" />
+        </Button>
 
-<div class="table">
+    </SettingsTop>
 
-    {#if isLoading}
-        <Loader full />
-    {:else}
+    <div class="table">
 
-        {#if users.length === 0}
-            <IconMessage empty message="No users found" />
+        {#if isLoading}
+            <Loader full />
         {:else}
 
-            <Table columns="1fr 1fr 1fr 1fr 1fr 70px">
-                
-                <TableRow head>
-                    <div>Name</div>
-                    <div>Slug</div>
-                    <div>Status</div>
-                    <div>Role</div>
-                    <div>Posts</div>
-                    <div />
-                </TableRow>
+            {#if users.length === 0}
+                <IconMessage empty message="No users found" />
+            {:else}
 
-                {#each users as user}
-                    <UserRow
-                        {user}
-                        on:delete={handleDelete}
-                        on:update={handleUpdate}
-                        on:variantCreate={handleCreateVariant}
+                <Table columns="1fr 1fr 1fr 1fr 1fr 70px">
+                    
+                    <TableRow head>
+                        <div>Name</div>
+                        <div>Slug</div>
+                        <div>Status</div>
+                        <div>Role</div>
+                        <div>Posts</div>
+                        <div />
+                    </TableRow>
+
+                    {#each users as user}
+                        <UserRow
+                            {user}
+                            on:delete={handleDelete}
+                            on:update={handleUpdate}
+                            on:variantCreate={handleCreateVariant}
+                        />
+                    {/each}
+
+                    <LoadButton
+                        text="Load More"
+                        show={hasMore}
+                        on:click={() => loadUsers(true)}
+                        loading={isLoadingMore}
                     />
-                {/each}
 
-                <LoadButton
-                    text="Load More"
-                    show={hasMore}
-                    on:click={() => loadUsers(true)}
-                    loading={isLoadingMore}
-                />
+                </Table>
 
-            </Table>
+            {/if}
 
         {/if}
 
-    {/if}
+    </div>
 
-</div>
+</DisabledOnTemp>
 
 <style>
     .table {

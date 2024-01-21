@@ -2,7 +2,7 @@ import { WebhookEventNames } from "../[subdomain]/settings/webhooks/webhookActio
 
 export type UserRole = 'owner' | 'editor' | 'writer' | 'contributor' | 'finance';
 
-export type BlogType = 'default' | 'dev';
+export type BlogType = 'default' | 'dev' | 'temp';
 
 export interface AuthUser {
     id: number,

@@ -1,6 +1,6 @@
 <script lang="ts">
 	import { goto } from "$app/navigation";
-	import { blogStore } from "../../lib/stores/blogStore";
+	import { consoleUrlWithBlog } from "../../lib/consoleUrl";
 
-    goto('/console/' + $blogStore.subdomain + '/tools/media');
+	goto(consoleUrlWithBlog('/tools/media'))
 </script>

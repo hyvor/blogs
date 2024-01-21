@@ -11,6 +11,7 @@
 	import { blogStore } from "../../../lib/stores/blogStore";
 	import { IconCaretLeftFill } from "@hyvor/icons";
 	import { initEditorEventHandlers } from "./Body/Editor/editorEvents";
+	import { isTempStore } from "../../../lib/temp";
     
     const postId = $page.params.postId;
 
@@ -44,6 +45,7 @@
 
 <div 
     id="post-view"
+    class:is-temp={$isTempStore}
     in:scale={{ duration: 300, opacity: 0, start: 0.8 }}
     bind:this={postView}
 >
@@ -85,7 +87,7 @@
 
 </div>
 
-<style>
+<style lang="scss">
 
     #post-view {
         position: fixed;
@@ -97,6 +99,7 @@
         overflow: auto;
         padding: 20px 0;
     }
+
 
     .full-loader {
         width: 100%;
@@ -141,6 +144,15 @@
         font-weight: 600;
         width: 35px;
         height: 35px;
+    }
+
+
+    #post-view.is-temp {
+        height: calc(100% - var(--top-offset));
+        top: var(--top-offset);
+        .back {
+            top: var(--top-offset);
+        }
     }
 
 </style>

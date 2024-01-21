@@ -3,6 +3,7 @@
 	import { page } from "$app/stores";
 	import { blogStore } from "../../lib/stores/blogStore";
 	import { NavLink } from "@hyvor/design/components";
+	import { consoleUrl } from "../../lib/consoleUrl";
 
 </script>
 
@@ -27,7 +28,7 @@
 <div class="nav-items">
 
     <NavLink
-        href={`/console/${$blogStore.subdomain}`} 
+        href={consoleUrl($blogStore.subdomain)}
         active={$page.url.pathname === `/console/${$blogStore.subdomain}`}
     >
         <IconHouse slot="start" />
@@ -48,7 +49,7 @@
     <div class="section-div"></div>
 
     <NavLink
-        href={`/console/${$blogStore.subdomain}/posts`} 
+        href={consoleUrl(`${$blogStore.subdomain}/posts`)}
         active={$page.url.pathname.startsWith(`/console/${$blogStore.subdomain}/posts`)}
     >
         <IconPencil slot="start" />
@@ -56,7 +57,7 @@
     </NavLink>
 
     <NavLink
-        href={`/console/${$blogStore.subdomain}/pages`} 
+        href={consoleUrl(`${$blogStore.subdomain}/pages`)}
         active={$page.url.pathname.startsWith(`/console/${$blogStore.subdomain}/pages`)}
     >
         <IconFiles slot="start" />
@@ -67,7 +68,7 @@
     <div class="section-div"></div>
 
     <NavLink
-        href={`/console/${$blogStore.subdomain}/theme`} 
+        href={consoleUrl(`${$blogStore.subdomain}/theme`)} 
         active={$page.url.pathname === `/console/${$blogStore.subdomain}/theme`}
     >
         <IconPalette slot="start" />
@@ -76,7 +77,7 @@
 
 
     <NavLink
-        href={`/console/${$blogStore.subdomain}/billing`}
+        href={consoleUrl(`${$blogStore.subdomain}/billing`)}
         active={$page.url.pathname === `/console/${$blogStore.subdomain}/billing`}
     >
         <IconCoin slot="start" />
@@ -85,7 +86,7 @@
 
 
     <NavLink
-        href={`/console/${$blogStore.subdomain}/integrations`}
+        href={consoleUrl(`${$blogStore.subdomain}/integrations`)}
         active={$page.url.pathname.startsWith(`/console/${$blogStore.subdomain}/integrations`)}
     >
         <IconPlugin slot="start" />
@@ -93,7 +94,7 @@
     </NavLink>
 
     <NavLink
-        href={`/console/${$blogStore.subdomain}/tools`}
+        href={consoleUrl(`${$blogStore.subdomain}/tools`)}
         active={$page.url.pathname.startsWith(`/console/${$blogStore.subdomain}/tools`)}
     >
         <IconTools slot="start" />
@@ -101,7 +102,7 @@
     </NavLink>
 
     <NavLink
-        href={`/console/${$blogStore.subdomain}/settings`}
+        href={consoleUrl(`${$blogStore.subdomain}/settings`)}
         active={$page.url.pathname.startsWith(`/console/${$blogStore.subdomain}/settings`)}
     >
         <IconGear slot="start" />

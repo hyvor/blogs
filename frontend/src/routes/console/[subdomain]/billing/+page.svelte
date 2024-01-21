@@ -1,4 +1,5 @@
 <script>
+	import DisabledOnTemp from '../Temp/DisabledOnTemp.svelte';
 	import BillingBox from './BillingBox.svelte';
 import BillingInfo from './BillingInfo/BillingInfo.svelte';
 	import Payments from './Payments/Payments.svelte';
@@ -10,9 +11,11 @@ import BillingInfo from './BillingInfo/BillingInfo.svelte';
 <div class="view">
 
     <div class="column">
-
+        
         <BillingBox>
-            <Plans />
+            <DisabledOnTemp>
+                <Plans />
+            </DisabledOnTemp>
         </BillingBox>
 
         <BillingBox title="Billing Info">

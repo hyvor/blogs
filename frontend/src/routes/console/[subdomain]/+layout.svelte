@@ -10,6 +10,8 @@
 	import { blogCountsStore, blogOriginalStore, blogStore } from "../lib/stores/blogStore";
 	import { languagesStore } from "../lib/stores/languagesStore";
 	import { goto } from "$app/navigation";
+	import TempBlogNotice from "./Temp/TempBlogNotice.svelte";
+	import { isTempStore } from "../lib/temp";
 
     let isLoading = true;
 
@@ -31,6 +33,10 @@
             subdomain,
         }).then(res => {
 
+            if (res.blog.type === 'temp' && !$isTempStore) {
+                location.href = '/console'
+            }
+
             blogStore.set(res.blog)
             blogOriginalStore.set(res.blog)
             blogCountsStore.set(res.counts)
@@ -47,13 +53,15 @@
     });
 </script>
 
-<main>
+<main id="blog-main">
 
     {#if isLoading}
         <div class="full-loader">
             <Loader size="large" />
         </div>
     {:else}
+
+        <TempBlogNotice />
 
         <div id="nav">
             <Nav />
@@ -67,10 +75,10 @@
 </main>
 
 <style>
-    main {
+    main#blog-main {
         display: flex;
         width: 100%;
-        height: 100vh;
+        height: calc(100vh - var(--top-offset, 0));
     }
     #nav {
         width: 280px;

@@ -1,5 +1,5 @@
 <script lang="ts">
-	import { tempUniqueIdStore } from './lib/temp';
+	import { setTempUniqueId, tempUniqueIdStore } from './lib/temp';
 	import { onMount } from "svelte";
 	import consoleApi from "./lib/consoleApi";
 	import type { AuthUser, BlogList } from "./lib/types";
@@ -39,7 +39,7 @@
             blogListStore.set(res.blogs)
 
             if (res.temp_unique_id) {
-                tempUniqueIdStore.set(res.temp_unique_id);
+                setTempUniqueId(res.temp_unique_id);
             }
 
             isLoading = false;

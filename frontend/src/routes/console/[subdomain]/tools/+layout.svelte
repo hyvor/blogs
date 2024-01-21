@@ -4,13 +4,14 @@
 	import { page } from "$app/stores";
 	import { blogStore } from "../../lib/stores/blogStore";
 	import { IconDownload, IconImage, IconLink45deg, IconUpload } from "@hyvor/icons";
+	import { consoleUrlWithBlog } from "../../lib/consoleUrl";
 </script>
 
 <div class="tools">
 
     <div class="nav hds-box">
         <NavLink 
-            href={`/console/${$blogStore.subdomain}/tools/media`}
+            href={consoleUrlWithBlog('/tools/media')}
             active={$page.url.pathname === `/console/${$blogStore.subdomain}/tools/media`}
         >
             <IconImage slot="start" />
@@ -18,7 +19,7 @@
         </NavLink>
 
         <NavLink 
-            href={`/console/${$blogStore.subdomain}/tools/link-analysis`}
+            href={consoleUrlWithBlog('/tools/link-analysis')}
             active={$page.url.pathname === `/console/${$blogStore.subdomain}/tools/link-analysis`}
         >
             <IconLink45deg slot="start" />
@@ -28,15 +29,15 @@
         <div class="div" />
 
         <NavLink 
-            href={`/console/${$blogStore.subdomain}/tools/import`}
+            href={consoleUrlWithBlog('/tools/import')}
             active={$page.url.pathname === `/console/${$blogStore.subdomain}/tools/import`}
         >
             <IconDownload slot="start" />
             Import
         </NavLink>
 
-        <NavLink 
-            href={`/console/${$blogStore.subdomain}/tools/export`}
+        <NavLink
+            href={consoleUrlWithBlog('/tools/export')}
             active={$page.url.pathname === `/console/${$blogStore.subdomain}/tools/export`}
         >
             <IconUpload slot="start" />
