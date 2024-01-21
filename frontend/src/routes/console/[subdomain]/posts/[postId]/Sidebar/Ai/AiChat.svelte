@@ -98,13 +98,31 @@
             })
         }
 
+    function scrollToBottom() {
+        const chatZone = document.querySelector('.chat-zone');
+        if (chatZone) {
+            chatZone.scrollTop = chatZone.scrollHeight;
+        }
+    }
 
     function getPromptResult() {
+        scrollToBottom();
         pendingPromptLoading = true;
+        // Genrate a fake new prompt
+        prompts = [...prompts, {
+            id: 0,
+            prompt: pendingPrompt,
+            post_id: $postStore.id,
+            gpt_response: '',
+            created_at: 0
+        }];
         sendPrompt(pendingPrompt, $postStore.id)
             .then(res => {
                 pendingPromptLoading = false;
-                prompts = [res as GptPrompt, ...prompts];
+                // Remove the last prompt
+                prompts = prompts.slice(0, prompts.length - 1);
+                prompts = [...prompts, res as GptPrompt];
+                scrollToBottom();
                 pendingPrompt = '';
             })
             .catch(err => {
@@ -199,6 +217,7 @@
                         />
                     </div>
                     <Button
+                        disabled={!pendingPrompt}
                         on:click={() => getPromptResult()}>
                         <div class="generate-button-content">
                             Generate
