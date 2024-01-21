@@ -4,6 +4,7 @@
 	import AboveFold from './@homepage/AboveFold.svelte';
 	import Hosting from './@homepage/Hosting/Hosting.svelte';
 	import Seo from './@homepage/Seo/Seo.svelte';
+	import MultiLanguage from './@homepage/MultiLanguage/MultiLanguage.svelte';
 </script>
 
 <AboveFold />
@@ -21,6 +22,7 @@
 <CustomThemes />
 <Hosting />
 <Seo />
+<MultiLanguage />
 
 <style lang="scss">
     .all {

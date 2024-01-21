@@ -4,7 +4,7 @@
     export let gradient = false;
 
     const radius = 65;
-    const dashArray = Math.PI * radius * perc / 100;
+    $: dashArray = Math.PI * radius * perc / 100;
 
 </script>
 
