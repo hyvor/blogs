@@ -1,6 +1,7 @@
 <script>
 	import { IconBoxArrowUpRight } from '@hyvor/icons';
 	import { Button } from '@hyvor/design/components';
+	import Hurry from './Hurry.svelte';
 </script>
 
 <div class="hds-container above-fold">
@@ -30,28 +31,7 @@
     </div>
 
     <div class="right">
-
-        <div class="hds-box hurry">
-            <div class="title">
-                In a hurry?
-            </div>
-
-            Try Hyvor Blogs with a free <strong>temporary</strong> blog.
-            No sign up required, not even an email address. Click & go.
-
-            <div class="temp-button">
-                <Button as="a" href="/console?temp" target="_blank">
-                    Create a temporary blog
-                    <IconBoxArrowUpRight slot="end" size={10} />
-                </Button>
-            </div>
-
-            <div class="temp-note">
-                Temporary blogs are deleted after 24 hours.
-            </div>
-
-        </div>
-
+        <Hurry />
     </div>
 
 </div>
@@ -91,26 +71,6 @@
             gap: 10px;
             margin-top: 30px;
         }
-
-        .hurry {
-            padding: 25px 30px;
-
-            .title {
-                font-weight: 600;
-                font-size: 20px;
-                margin-bottom: 20px;
-            }
-            .temp-button {
-                margin-top: 15px;
-            }
-
-            .temp-note {
-                margin-top: 15px;
-                font-size:14px;
-                color: var(--text-light);
-            }
-        }
-
     }
 
 </style>
