@@ -7,14 +7,15 @@
 
 <div class="wrap">
 
-    {#if icon}
-        <div class="img-wrap">
-            <img src={icon} alt={title} />
-        </div>
-    {/if}
 
-
-    <h2 style={h2Style}>{title}</h2>
+    <h2 style={h2Style}>
+        {title}
+        {#if icon}
+            <div class="img-wrap">
+                <img src={icon} alt={title} />
+            </div>
+        {/if}
+    </h2>
 
     <h3>{@html subtitle}</h3>
 
@@ -31,6 +32,10 @@
         margin-bottom: 10px;
         margin-top: 20px;
         text-align: center;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        margin-right: -100px;
     }
     h3 {
         font-size: 20px;
@@ -42,10 +47,13 @@
     }
     .img-wrap {
         text-align: center;
+        margin-left: 20px;
+        display: inline-flex;
+        align-items: center;
     }
     img {
-        width: 140px;
-        height: 140px;
+        width: 85px;
+        height: 85px;
     }
 
 </style>

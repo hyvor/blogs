@@ -1,8 +1,9 @@
 <script>
 	import { Button, Link, Loader } from "@hyvor/design/components";
-    import ThemesPreview from "../@components/ThemesPreview.svelte";
+    import ThemesPreview from "../../@components/ThemesPreview.svelte";
 	import { IconBoxArrowUpRight } from "@hyvor/icons";
-	import FeatureSectionTitle from "./FeatureSectionTitle.svelte";
+	import FeatureSectionTitle from "../FeatureSectionTitle.svelte";
+    import logo from "./custom-themes.svg";
 
     let isLoading = true;
 </script>
@@ -11,6 +12,7 @@
     title="Custom Themes" 
     subtitle="Match your blog to your brand with custom themes. Choose from a variety of themes or create your own."
     h2Style="margin-top: 50px;"
+    icon={logo}
 />
 
 <div class="preview">

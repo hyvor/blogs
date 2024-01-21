@@ -1,5 +1,5 @@
 <script>
-	import CustomThemes from './@homepage/CustomThemes.svelte';
+	import CustomThemes from './@homepage/CustomThemes/CustomThemes.svelte';
 	import Reviews from './@components/Reviews.svelte';
 	import AboveFold from './@homepage/AboveFold.svelte';
 	import Hosting from './@homepage/Hosting/Hosting.svelte';
