@@ -10,6 +10,7 @@
 <FeatureSectionTitle 
     title="Custom Themes" 
     subtitle="Match your blog to your brand with custom themes. Choose from a variety of themes or create your own."
+    h2Style="margin-top: 50px;"
 />
 
 <div class="preview">

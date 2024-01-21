@@ -1,7 +1,9 @@
 <script>
-	import CustomThemes from './@hompage/CustomThemes.svelte';
+	import CustomThemes from './@homepage/CustomThemes.svelte';
 	import Reviews from './@components/Reviews.svelte';
-	import AboveFold from './@hompage/AboveFold.svelte';
+	import AboveFold from './@homepage/AboveFold.svelte';
+	import Hosting from './@homepage/Hosting/Hosting.svelte';
+	import Seo from './@homepage/Seo/Seo.svelte';
 </script>
 
 <AboveFold />
@@ -17,7 +19,8 @@
 </div> -->
 
 <CustomThemes />
-
+<Hosting />
+<Seo />
 
 <style lang="scss">
     .all {
