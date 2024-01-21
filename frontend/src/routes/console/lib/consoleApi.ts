@@ -1,8 +1,7 @@
 import { get } from "svelte/store";
 import { blogStore } from "./stores/blogStore";
+import { APP_URL } from "../../../lib";
 // import { currentProjectIdStore } from "./stores";
-
-export const APP_URL = import.meta.env.VITE_APP_URL || location.origin;
 
 export interface ConsoleApiOptions {
     endpoint: string,

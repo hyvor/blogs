@@ -1,8 +1,8 @@
 <script>
 	import { Button, Tooltip, confirm } from "@hyvor/design/components";
 	import { IconCloudDownload } from "@hyvor/icons";
-	import { APP_URL } from "../../lib/consoleApi";
 	import { blogStore } from "../../lib/stores/blogStore";
+	import { APP_URL } from "$lib";
 
     async function handleDownload() {
 

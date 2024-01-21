@@ -1,1 +1,3 @@
-// place files you want to import through the `$lib` alias in this folder.
+
+// backend APP url
+export const APP_URL = import.meta.env.VITE_APP_URL || location.origin;

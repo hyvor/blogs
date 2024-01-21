@@ -1,4 +1,5 @@
-import consoleApi, { APP_URL } from "../../lib/consoleApi";
+import { APP_URL } from "../../../../lib";
+import consoleApi from "../../lib/consoleApi";
 import type { Theme, ThemeFile, ThemeFolder } from "../../lib/types";
 
 export function loadThemeFiles() {

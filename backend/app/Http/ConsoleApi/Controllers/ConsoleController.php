@@ -26,28 +26,37 @@ class ConsoleController
             'user' => new AuthUserObject($user),
             'blogs' => $blogs,
             'is_blocked' => UserRepository::isBlocked($user->id),
-
-            'config' => [
-                'domains' => [
-                    'app' => config('blogs.domain_app'),
-                    'delivery' => config('blogs.domain_delivery'),
-                ],
-                'limits' => [
-                    'max_upload_size' => config('limits.max_media_upload_size_kb') * 1000,
-                    'max_theme_zip_size' => config('limits.max_theme_zip_size_kb') * 1000,
-                    'max_asset_file_size' => config('limits.max_asset_file_size'),
-                ],
-                'highlight_themes' => Highlighter::getAllThemes(),
-
-                'services' => [
-                    'paddle' => [
-                        'sandbox' => (bool) config('services.paddle.sandbox'),
-                        'vendor_id' => (int) config('services.paddle.vendor_id'),
-                    ]
-                ]
-            ]
+            'config' => $this->config()
         ]);
 
+    }
+
+    public function getConfig() : JsonResponse
+    {
+        return response()->json($this->config());
+    }
+
+    private function config() : array
+    {
+        return [
+            'domains' => [
+                'app' => config('blogs.domain_app'),
+                'delivery' => config('blogs.domain_delivery'),
+            ],
+            'limits' => [
+                'max_upload_size' => config('limits.max_media_upload_size_kb') * 1000,
+                'max_theme_zip_size' => config('limits.max_theme_zip_size_kb') * 1000,
+                'max_asset_file_size' => config('limits.max_asset_file_size'),
+            ],
+            'highlight_themes' => Highlighter::getAllThemes(),
+
+            'services' => [
+                'paddle' => [
+                    'sandbox' => (bool) config('services.paddle.sandbox'),
+                    'vendor_id' => (int) config('services.paddle.vendor_id'),
+                ]
+            ]
+        ];
     }
 
     public function changeBlogSort(Request $request, AccessAuthUser $user) : JsonResponse
