@@ -18,7 +18,17 @@ class UserFiller implements FillerInterface
 
     public function fill() : void
     {
-        if ($this->blog->type !== BlogTypeEnum::PREVIEW) {
+
+        if ($this->blog->type === BlogTypeEnum::TEMP) {
+
+            UserRepository::createGuestUser(
+                $this->blog,
+                'Temporary User',
+                UserRoleEnum::OWNER,
+                pictureUrl: RandomImageUrlGenerator::getUserImageUrl()
+            );
+
+        } else if ($this->blog->type !== BlogTypeEnum::PREVIEW) {
 
             // add the OWNER
             UserRepository::createUserFromHyvorUser(

@@ -6,7 +6,9 @@ use App\Data\Enums\BlogTypeEnum;
 use App\Data\Enums\UserRoleEnum;
 use App\Data\Objects\ConsoleAPI\Billing\SubscriptionObject;
 use App\Exceptions\SafetyException;
+use App\Models\Blog;
 use App\Models\User;
+use ReflectionClass;
 
 class BlogListObject
 {
@@ -34,8 +36,14 @@ class BlogListObject
             throw new SafetyException('User does not have a blog');
         }
 
-        $this->id = $blog->id;
         $this->role = $user->role;
+        $this->setBlogAttrs($blog);
+
+    }
+
+    private function setBlogAttrs(Blog $blog)
+    {
+        $this->id = $blog->id;
         $this->is_blocked = $blog->is_blocked;
         $this->trial_ends_at = $blog->trial_ends_at->getTimestamp();
         $this->name = $blog->variants[0]->name ?? 'Unnamed';
@@ -50,7 +58,17 @@ class BlogListObject
         $this->subscription = $blog->subscription ?
             new SubscriptionObject($blog->subscription) :
             null;
+    }
 
+    public static function fromTempBlog(Blog $blog) : self
+    {
+        $obj = (new ReflectionClass(self::class))
+            ->newInstanceWithoutConstructor();
+
+        $obj->role = UserRoleEnum::OWNER;
+        $obj->setBlogAttrs($blog);
+
+        return $obj;
     }
 
 }

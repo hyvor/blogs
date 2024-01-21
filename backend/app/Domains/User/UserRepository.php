@@ -187,12 +187,15 @@ class UserRepository
     public static function createGuestUser(
         Blog $blog,
         string $name,
+        UserRoleEnum $role = UserRoleEnum::CONTRIBUTOR,
+        ?string $pictureUrl = null,
     ): User {
         $user = User::create([
             'blog_id' => $blog->id,
-            'role' => UserRoleEnum::CONTRIBUTOR,
+            'role' => $role,
             'status' => UserStatusEnum::ACTIVE,
             'slug' => UniqueBlogItemSlugGenerator::forGuestUser($blog, $name),
+            'picture_url' => $pictureUrl,
         ]);
 
         $language = LanguageRepository::getPrimaryLanguage($blog);

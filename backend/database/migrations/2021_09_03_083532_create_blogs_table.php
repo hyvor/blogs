@@ -34,6 +34,7 @@ class CreateBlogsTable extends Migration
             $table->enum('billing_type', ['paddle', 'shopify'])->default('paddle');
             $table->enum('integration', ['shopify'])->nullable();
             $table->enum('type', ['default', 'dev', 'preview', 'temp'])->default('default');
+            $table->string('temp_unique_id')->nullable();
 
             $table->enum('hosting_at', ['subdomain', 'domain', 'self'])->default('subdomain');
             $table->string('hosting_domain')->nullable()->unique(); // for domain
@@ -44,6 +45,7 @@ class CreateBlogsTable extends Migration
 
             // index
             $table->index('type');
+            $table->unique('temp_unique_id');
         });
     }
 

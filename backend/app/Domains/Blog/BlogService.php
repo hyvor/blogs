@@ -42,7 +42,8 @@ class BlogService
         BlogTypeEnum $type = BlogTypeEnum::DEFAULT,
         BlogBillingTypeEnum $billingType = BlogBillingTypeEnum::PADDLE,
         BlogIntegrationEnum $integration = null,
-        ?string $ip = null
+        ?string $ip = null,
+        ?string $tempUniqueId = null,
     ): Blog
     {
         $blog = Blog::create([
@@ -53,6 +54,7 @@ class BlogService
             'billing_type' => $billingType,
             'integration' => $integration,
             'trial_ends_at' => now()->addDays(intval(config('limits.trial_days'))),
+            'temp_unique_id' => $tempUniqueId,
         ]);
         $blog->refresh(); // fetch default columns
 

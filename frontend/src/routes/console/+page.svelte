@@ -5,9 +5,9 @@
 
     onMount(() => {
         if ($blogListStore.length > 0) {
-            goto('/console/' + $blogListStore[0]!.subdomain)
+            goto('/console/' + $blogListStore[0]!.subdomain, {replaceState: true})
         } else {
-            goto('/console/new')
+            goto('/console/new', {replaceState: true})
         }
     });
 

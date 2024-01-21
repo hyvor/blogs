@@ -36,7 +36,16 @@ use App\Http\Middleware\App\ConsoleApi\ResourceAccessMiddleware;
 use App\Http\Middleware\App\SubdomainMiddleware;
 use App\Http\Middleware\CorsOnLocalhost;
 use Hyvor\Helper\Http\Middleware\AuthMiddleware;
+use Illuminate\Session\Middleware\StartSession;
 use Illuminate\Support\Facades\Route;
+
+Route::prefix('/api/console/v0')
+    ->middleware([
+        CorsOnLocalhost::class,
+    ])
+    ->group(function() {
+        Route::get('/init-temp', [ConsoleController::class, 'initTemp']);
+    });
 
 /**
  * This is an internal API for user-level functions

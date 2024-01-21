@@ -3,6 +3,7 @@
 namespace App\Http\Middleware\App\ConsoleApi;
 
 use App\Data\Enums\ApiKeysTypeEnum;
+use App\Data\Enums\BlogTypeEnum;
 use App\Domains\Api\ApiKeysRepository;
 use App\Domains\User\UserRepository;
 use App\Exceptions\TrustedException;
@@ -25,7 +26,25 @@ class ConsoleApiAccessMiddleware
     {
         $apiKey = $request->header('X-API-KEY');
 
-        if ($apiKey) {
+        if ($this->blog->type === BlogTypeEnum::TEMP) {
+
+            $uniqueId = $request->header('X-TEMP-UNIQUE-ID');
+
+            if ($this->blog->temp_unique_id !== $uniqueId) {
+                throw new TrustedException('You do not have access to this blog. Invalid session ID');
+            }
+
+            $owner = UserRepository::getOwnerOfBlog($this->blog);
+            if (!$owner) {
+                throw new TrustedException('Blog owner not found');
+            }
+
+            app()->instance(
+                ConsoleApiAccessingUser::class,
+                new ConsoleApiAccessingUser($owner)
+            );
+
+        } else if ($apiKey) {
 
             if (!ApiKeysRepository::hasKey($this->blog, ApiKeysTypeEnum::CONSOLE, $apiKey)) {
                 throw new TrustedException('Invalid API key');

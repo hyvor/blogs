@@ -3,6 +3,7 @@
 namespace App\Http\ConsoleApi\Controllers;
 
 use App\Data\Objects\ConsoleAPI\UserBlog\UserBlogObject;
+use App\Domains\Blog\TempBlogService;
 use App\Domains\User\UserBlogRepository;
 use App\Domains\User\UserRepository;
 use App\Http\ConsoleApi\Objects\Blog\BlogListObject;
@@ -12,6 +13,7 @@ use Hyvor\HyvorConnecter\HyvorUser;
 use Hyvor\SyntaxHighlighter\Highlighter;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
+use Illuminate\Support\Str;
 
 class ConsoleController
 {
@@ -26,6 +28,32 @@ class ConsoleController
             'user' => new AuthUserObject($user),
             'blogs' => $blogs,
             'is_blocked' => UserRepository::isBlocked($user->id),
+            'config' => $this->config()
+        ]);
+
+    }
+
+    public function initTemp(Request $request) : JsonResponse
+    {
+
+        $tempUniqueId = $request->input('temp_unique_id');
+
+        if (!$tempUniqueId) {
+            $tempUniqueId = Str::random(32);
+        }
+
+        $blog = BlogListObject::fromTempBlog(TempBlogService::getTempBlog($tempUniqueId));
+
+        return response()->json([
+            'user' => [
+                'id' => 0,
+                'name' => 'Temp User',
+                'picture_url' => null,
+                'username' => null,
+            ],
+            'temp_unique_id' => $tempUniqueId,
+            'blogs' => [$blog],
+            'is_blocked' => false,
             'config' => $this->config()
         ]);
 

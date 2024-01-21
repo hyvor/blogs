@@ -42,7 +42,6 @@
             isLoading = false;
         }).catch(() => {
             toast.error('Unable to load blog');
-            goto('/console');
         })
     
     });
