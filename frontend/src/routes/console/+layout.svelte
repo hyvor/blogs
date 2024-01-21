@@ -53,7 +53,13 @@
 
     {#if isLoading}
         <div class="full-loader">
-            <Loader size="large" />
+            <Loader size="large">
+                <div>
+                    {#if $isTempStore}
+                        Creating your temporary blog...
+                    {/if}
+                </div>
+            </Loader>
         </div>
     {:else}
         <slot />
