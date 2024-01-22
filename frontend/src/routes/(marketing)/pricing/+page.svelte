@@ -1,9 +1,12 @@
 <script lang="ts">
+	import { onMount } from 'svelte';
+	import { PLANS, plansMax, plansStart } from './pricing';
 	import FullTrialSignup from './../@components/FullTrialSignup.svelte';
 	import type { Feature } from './pricing';
 	import FeatureSectionTitle from "../@homepage/FeatureSectionTitle.svelte";
 	import FeatureList from "./FeatureList.svelte";
 	import Plan from "./Plan.svelte";
+	import PlanSwitcher from "./PlanSwitcher.svelte";
 
     const basicFeatures : Feature[] = [
         {
@@ -92,7 +95,23 @@
         }
     ]
 
+    function handleResize() {
+        if (window.innerWidth < 1000) {
+            plansMax.set(1);
+        } else {
+            plansMax.set(3);
+        }
+    }
+
+    onMount(handleResize);
+
 </script>
+
+<svelte:head>
+    <title>Pricing - Hyvor Blogs</title>
+</svelte:head>
+
+<svelte:window on:resize={handleResize} />
 
 <FeatureSectionTitle 
     title="Simple & transparent pricing"
@@ -102,14 +121,14 @@
 
 <div class="hds-container plans-wrap">
     <div class="top">
+        <PlanSwitcher />
         <div class="plans">
-            <div style="flex:1"></div>
-            <Plan name="Starter" price={9} />
-            <Plan name="Growth" price={19} />
-            <Plan name="Premium" price={49} />
-            <Plan name="Team" price={299} />
-            <Plan name="Business" price={699} />
-            <Plan name="Enterprise" price={1299} />
+            <div class="plans-left"></div>
+            {#each PLANS as plan, i}
+                {#if i >= $plansStart && i < $plansMax + $plansStart}
+                    <Plan name={plan.name} price={plan.price} />
+                {/if}
+            {/each}
         </div>
     </div>
 
@@ -121,12 +140,29 @@
     </div>
 </div>
 
-<FullTrialSignup />
+<FullTrialSignup style="margin-top:130px" />
 
 <style lang="scss">
 
     .plans {
         display: flex;
+    }
+    .plans-left {
+        flex: 1;
+    }
+
+    @media (max-width: 1000px) {
+        .plans-left {
+            flex: 2;
+        }
+    }
+
+    .top {
+        position: sticky;
+        top: var(--header-height);
+        background-color: #fffaf8;
+        z-index: 10;
+        padding: 15px 0;
     }
 
     .plans-wrap {
@@ -134,7 +170,7 @@
     }
 
     .features {  
-        margin: 50px 0;
+        margin: 20px 0;
     }
 
 

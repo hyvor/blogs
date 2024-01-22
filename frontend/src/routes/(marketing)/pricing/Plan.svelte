@@ -4,9 +4,11 @@
 </script>
 
 <div class="plan hds-box">
-    <div class="name">{name}</div>
-    <div class="price-wrap">
-        <span class="price">${price}</span><span class="freq">/month</span>
+    <div class="inner">
+        <div class="name">{name}</div>
+        <div class="price-wrap">
+            <span class="price">${price}</span><span class="freq">/month</span>
+        </div>
     </div>
 </div>
 
@@ -14,9 +16,11 @@
 
     .plan {
         flex: 1;
-        margin-left: 10px;
-        padding: 15px 25px;
         min-width: 0;
+        margin-left: 15px;
+    }
+    .inner {
+        padding: 15px 25px;
     }
 
     .name {
@@ -35,6 +39,12 @@
 
     .freq {
         color: var(--text-light);
+    }
+
+    @media (max-width: 1000px) {
+        .plan {
+            flex: 3;
+        }
     }
 
 </style>

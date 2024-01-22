@@ -42,6 +42,7 @@
     h3 {
         font-size: 20px;
         width: 650px;
+        max-width: 100%;
         margin: 0 auto;
         font-weight: normal;
         line-height: 1.4;

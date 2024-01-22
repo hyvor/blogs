@@ -5,7 +5,7 @@
 </script>
 
 
-<div class="wrap">
+<div class="wrap" {...$$restProps}>
 
     <div class="hds-container inner">
 
