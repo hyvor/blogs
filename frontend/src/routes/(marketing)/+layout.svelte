@@ -52,7 +52,7 @@
             Login
         </Button>
         <Button as="a" size="small" href="/console?signup">
-            Signup
+            Start a Blog
         </Button>
     </div>
 

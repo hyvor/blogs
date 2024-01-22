@@ -9,6 +9,8 @@
 	import { Button } from "@hyvor/design/components";
 	import { IconBoxArrowUpRight } from "@hyvor/icons";
 
+    export let button = true;
+
     const customers = [
         {
             name: 'Aqeez',
@@ -128,18 +130,20 @@
 
     </div>
 
-    <div class="view-on-g2">
-        <Button
-            as="a"
-            color="gray"
-            variant="fill"
-            href="https://www.g2.com/products/hyvor-blogs/reviews"
-            target="_blank"
-        >
-            View reviews on G2
-            <IconBoxArrowUpRight slot="end" size={12} />
-        </Button>
-    </div>
+    {#if button}
+        <div class="view-on-g2">
+            <Button
+                as="a"
+                color="gray"
+                variant="fill"
+                href="https://www.g2.com/products/hyvor-blogs/reviews"
+                target="_blank"
+            >
+                View reviews on G2
+                <IconBoxArrowUpRight slot="end" size={12} />
+            </Button>
+        </div>
+    {/if}
 
 
 </div>

@@ -22,6 +22,14 @@
             country: '🇫🇷',
         },
         {
+            name: 'Times of Madeira',
+            type: 'news',
+            url: 'www.timesofmadeira.com',
+            country: '🇵🇹',
+            image: 'timesof_madeira_exngfb.webp',
+            color: '#ffd5d4',
+        },
+        {
             name: 'Wild Workflows',
             type: 'business',
             image: 'wildworkflows-blog.webp',
@@ -30,12 +38,50 @@
             color: '#ebeae6'
         },
         {
+            name: 'Subdivisions',
+            type: 'business',
+            image: 'subdivisions_ckyoai.webp',
+            url: 'blog.subdivisions.com',
+            country: '🇺🇸',
+            color: '#e8f0ff'
+        },
+        {
+            name: 'Aqeez',
+            type: 'business',
+            image: 'aqeez_ertemk.webp',
+            url: 'blog.aqeez.com',
+            country: '🇱🇺',
+            color: '#ffe2df',
+        },
+        {
             name: 'Riccardo Padovani',
             type: 'personal',
             image: 'rpadovani.webp',
             url: 'rpadovani.com',
             country: '🇩🇪',
             color: '#fff0ea'
+        },
+        {
+            name: 'JobPosts.ai',
+            type: 'business',
+            image: 'job-posts_g0pjhw.png',
+            url: 'jobposts.ai/blog',
+            color: '#f9f3e8',
+        },
+        {
+            name: "Marko's Way",
+            type: 'business',
+            image: 'markos-way.webp',
+            url: 'markosway.com/blog',
+            color: '#fff9e6',
+        },
+        {
+            name: 'Didgii',
+            type: 'business',
+            image: 'didgii-blog_yuhiqv.webp',
+            url: 'blog.didgii.com',
+            country: '🇲🇽',
+            color: '#e9f6ff'
         },
         {
             name: 'Sami Ramly',
@@ -52,14 +98,6 @@
             url: 'blog.metamoonshots.io',
             country: '🇮🇳',
             color: '#fee8ff',
-        },
-        {
-            name: 'Didgii',
-            type: 'business',
-            image: 'didgii-blog_yuhiqv.webp',
-            url: 'blog.didgii.com',
-            country: '🇲🇽',
-            color: '#e9f6ff'
         },
         {
             name: 'Deflekt',
@@ -86,20 +124,20 @@
             color: '#ffe9e5'
         },
         {
-            name: 'Warm and Wise',
-            type: 'personal',
-            image: 'eiching.webp',
-            url: 'warmandwise.com',
-            country: '🇹🇼'
-        },
-        {
             name: 'Praca ze smakiem',
             type: 'business',
             image: 'pracazesmakiem_ctcqtv.webp',
             url: 'pracazesmakiem.pl',
             country: '🇵🇱',
             color: '#d6e7f9',
-        }
+        },
+        {
+            name: 'Warm and Wise',
+            type: 'personal',
+            image: 'warm-and-wise_yctsz8.webp',
+            url: 'warmandwise.com',
+            country: '🇹🇼'
+        },
     ];
 
     function getTagColor(type: CustomerType) {
@@ -124,7 +162,7 @@
             style:background-color={customer.color || '#eee'}
             href="//{customer.url}" 
             target="_blank" 
-            rel="nofollow"
+            rel="nofollow noopener noreferrer"
         >
             <img src="https://res.cloudinary.com/dqabfne6s/image/upload/c_scale,w_800/v1687716078/blogs.hyvor.com/customer-screenshots/{customer.image}" alt="{customer.url}">
 
@@ -163,7 +201,7 @@
     .customer {
         width: calc(50% - 8px);
         position: relative;
-        padding: 30px;
+        padding: 25px;
         border-radius: 20px;
         transition: .1s;
         &:hover {

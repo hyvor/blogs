@@ -3,10 +3,13 @@
     export let subtitle: string;
     export let icon: null | string = null;
     export let h2Style: string | undefined = undefined;
+    export let wrapStyle: string | undefined = undefined;
 </script>
 
-<div class="wrap">
-
+<div 
+    class="wrap"
+    style={wrapStyle}
+>
 
     <h2 style={h2Style}>
         {title}

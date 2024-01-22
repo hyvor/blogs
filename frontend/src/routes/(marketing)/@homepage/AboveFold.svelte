@@ -1,7 +1,8 @@
 <script>
-	import { IconBoxArrowUpRight } from '@hyvor/icons';
+	import { IconBoxArrowUpRight, IconCheckCircle, IconCheckCircleFill } from '@hyvor/icons';
 	import { Button } from '@hyvor/design/components';
 	import Hurry from './Hurry.svelte';
+	import TrialChecks from '../@components/TrialChecks.svelte';
 </script>
 
 <div class="hds-container above-fold">
@@ -26,6 +27,11 @@
                 See customer blogs
             </Button>
 
+        </div>
+
+
+        <div class="trial-checks">
+            <TrialChecks />
         </div>
 
     </div>
@@ -71,6 +77,11 @@
             gap: 10px;
             margin-top: 30px;
         }
+    }
+
+    .trial-checks {
+        margin-top:25px;
+        margin-left:5px;
     }
 
 </style>
