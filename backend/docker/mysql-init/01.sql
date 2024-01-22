@@ -1,2 +1,0 @@
-CREATE DATABASE IF NOT EXISTS hyvor_blogs;
-CREATE DATABASE IF NOT EXISTS hyvor_blogs_testing;
