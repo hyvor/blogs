@@ -1,6 +1,6 @@
 <script lang="ts">
     export let title: string;
-    export let subtitle: string;
+    export let subtitle: string | undefined = undefined;
     export let icon: null | string = null;
     export let h2Style: string | undefined = undefined;
     export let wrapStyle: string | undefined = undefined;
@@ -20,7 +20,9 @@
         {/if}
     </h2>
 
-    <h3>{@html subtitle}</h3>
+    {#if subtitle}
+        <h3>{@html subtitle}</h3>
+    {/if}
 
 </div>
 
