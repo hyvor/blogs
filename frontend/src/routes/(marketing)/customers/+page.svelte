@@ -15,8 +15,8 @@ import CustomerList from "./CustomerList.svelte";
     <CustomerList />
 </div>
 
-<FullTrialSignup />
 <Reviews button={false} />
+<FullTrialSignup />
 
 <style>
     .wrap {

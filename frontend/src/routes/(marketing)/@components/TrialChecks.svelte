@@ -34,7 +34,6 @@
     }
 
     .check :global(svg) {
-        color: var(--green);
         color: var(--accent);
     }
 

@@ -16,7 +16,7 @@
             as="a" 
             size="small" 
             href="/pricing" 
-            variant={$page.url.pathname === '/pricing' ? 'fill' : 'invisible'}
+            variant={$page.url.pathname === '/pricing' ? 'fill-light' : 'invisible'}
         >
             Pricing
         </Button>
