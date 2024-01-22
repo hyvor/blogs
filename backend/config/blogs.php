@@ -8,8 +8,9 @@
 return [
 
     // domains
-    'domain_app' => env('DOMAIN_APP', '127.0.0.1'),
-    'domain_delivery' => env('DOMAIN_DELIVERY', 'hyvorblogs.io'),
+    'domain_app' => env('DOMAIN_APP', 'localhost'),
+    'domain_delivery' => env('DOMAIN_DELIVERY', 'localhost'),
+
     'domain_hyvor' => env('DOMAIN_HYVOR', 'hyvor.com'),
 
     'logo' => '/img/logo.png',

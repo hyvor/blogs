@@ -1,4 +1,4 @@
-<?php
+<?php declare(strict_types=1);
 
 namespace App\Domains\App;
 
@@ -8,10 +8,7 @@ class DomainService
 {
     public static function getAppDomainWithPort() : string
     {
-        $domain = strval(config('blogs.domain_app'));
-        return App::environment('local') ?
-            $domain . ':8080' :
-            $domain;
+        return strval(config('blogs.domain_app'));
     }
 
     public static function getAppUrl() : string

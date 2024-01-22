@@ -1,0 +1,39 @@
+{
+    on_demand_tls {
+        ask http://localhost/api/special/caddy/allowed-domain
+    }
+}
+
+# hyvorblogs.io subdomain
+*.{$DOMAIN_DELIVERY}:80 {
+    root * /var/www/app
+    encode zstd gzip
+    php_fastcgi unix//run/php/php8.1-fpm.sock
+}
+
+# main app
+{$DOMAIN_APP}:80 {
+    handle /api/* {
+        root * /var/www/app/backend/public
+        php_fastcgi unix//run/php-fpm.sock
+    }
+    handle {
+        root * /var/www/app/frontend/build
+        file_server
+        encode zstd gzip
+        try_files {path} {path}.html /index.html /200.html
+    }
+}
+
+# custom domain
+http://, https:// {
+
+    tls {
+        on_demand
+    }
+
+	root * /var/www/app
+    encode zstd gzip
+    php_fastcgi unix//run/php/php8.1-fpm.sock
+
+}
