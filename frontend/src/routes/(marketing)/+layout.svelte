@@ -36,7 +36,12 @@
         >
             Themes
         </Button>
-        <Button as="a" size="small" href="/customers" variant="invisible">
+        <Button 
+            as="a" 
+            size="small" 
+            href="/customers" 
+            variant={$page.url.pathname === '/customers' ? 'fill-light' : 'invisible'}
+        >
             Customers
         </Button>
     </div>
