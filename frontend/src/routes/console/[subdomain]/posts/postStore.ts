@@ -67,13 +67,22 @@ export const postLanguageStore = derived(
 export const postCurrentContentKey = derived(
     [postVariantStore, postEditingStatusStore],
     ([postVariant, postEditingStatus]) => {
-        return postVariant.status === 'draft' ?
-            'content' :
-            (
-                postEditingStatus.isEditingPublished ?
-                    'content_unsaved' :
-                    'content'
-            )
+
+        if (postVariant.status === 'draft') 
+            return 'content';
+
+        // editing published
+        if (postEditingStatus.isEditingPublished) {
+            // content_unsaved is set (editing started)
+            if (postVariant.content_unsaved) {
+                return 'content_unsaved'
+            } else {
+                // otherwise start from content
+                return 'content';
+            }
+        }
+
+        return 'content';
     }
 )
 

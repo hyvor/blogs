@@ -16,7 +16,7 @@ RUN DEBIAN_FRONTEND=noninteractive TZ=Etc/UTC \
     php8.1-gd \
     php8.1-intl \
     php8.1-mbstring \
-    php8.1-pgsql \
+    php8.1-mysqli \
     php8.1-opcache \
     php8.1-phar \
     php8.1-xml \
@@ -60,6 +60,9 @@ RUN curl -sS https://getcomposer.org/installer -o /tmp/composer-setup.php && \
 
 # composer install
 RUN COMPOSER_ALLOW_SUPERUSER=1 composer install --optimize-autoloader --no-dev --no-interaction --no-progress --working-dir=/var/www/app/backend
+
+# backend npm packages (shiki)
+RUN npm install --prefix /var/www/app/backend
 
 # laravel directories
 RUN chmod -R 777 /var/www/app/backend/storage /var/www/app/backend/bootstrap/cache

@@ -6,9 +6,9 @@
 
 # hyvorblogs.io subdomain
 *.{$DOMAIN_DELIVERY}:80 {
-    root * /var/www/app
+    root * /var/www/app/backend/public
     encode zstd gzip
-    php_fastcgi unix//run/php/php8.1-fpm.sock
+    php_fastcgi unix//run/php-fpm.sock
 }
 
 # main app
@@ -21,7 +21,7 @@
         root * /var/www/app/frontend/build
         file_server
         encode zstd gzip
-        try_files {path} {path}.html /index.html /200.html
+        try_files {path} /200.html
     }
 }
 
@@ -32,8 +32,8 @@ http://, https:// {
         on_demand
     }
 
-	root * /var/www/app
+	root * /var/www/app/backend/public
     encode zstd gzip
-    php_fastcgi unix//run/php/php8.1-fpm.sock
+    php_fastcgi unix//run/php-fpm.sock
 
 }

@@ -3,18 +3,20 @@
 
     export let show : boolean = true;
     export let loaderState : 'none' | 'loading' | 'success' | 'error' = 'none';
+    export let size: 'x-small' | 'small' = 'x-small'
+    export let addMarginTop: boolean = true;
 
 </script>
 
 <div
-    class:shown={show || loaderState !== 'none'}
+    class:add-margin={(show || loaderState !== 'none') && addMarginTop}
 >
     {#if show}
-        <Tag size="x-small" color="orange">
+        <Tag {size} color="orange">
             Unsaved
         </Tag>
     {/if}
-    <Loader state={loaderState} size="small" />
+    <Loader state={loaderState} size={12} />
 </div>
 
 <style>
@@ -22,7 +24,7 @@
         display: flex;
         gap: 5px;
     }
-    div.shown {
+    div.add-margin {
         margin-top:5px;
     }
 </style>

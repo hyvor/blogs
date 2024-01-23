@@ -65,10 +65,12 @@
     <UnsavedTag 
         show={hasChanged}
         loaderState={$postEditingStatusStore.isSaving ? 'loading' : 'none'}
+        size="small"
+        addMarginTop={false}
     />
 
     {#if !hasChanged}
-        <Tag size="x-small" color="green">Saved</Tag>
+        <Tag size="small" color="green">Saved</Tag>
     {/if}
 
 </span>

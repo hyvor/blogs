@@ -10,19 +10,20 @@
 
     $: uniqueKey = `${$postVariantStore.id}` +
         `-lang-${$postEditingStatusStore.languageId}` +
-        `-key-${$postCurrentContentKey}`;
+        `-key-${$postCurrentContentKey}` + 
+        `-is-editing-published-${Number($postEditingStatusStore.isEditingPublished)}`;
 
     function handleChange(e: CustomEvent<string>) {
 
-        const key = $postCurrentContentKey as 'content' | 'content_unsaved';
+        const key = $postEditingStatusStore.isEditingPublished ? 'content_unsaved' : 'content';
 
         const updates = {
             [key]: e.detail
         } as Partial<PostVariant>;
        
-        if (key === 'content_unsaved') {
+        /* if (key === 'content_unsaved') {
             updates.content = e.detail;
-        }
+        } */
 
         updatePostVariantStore(updates);
     }

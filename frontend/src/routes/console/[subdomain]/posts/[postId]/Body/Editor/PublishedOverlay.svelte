@@ -1,6 +1,6 @@
 <script lang="ts">
-	import { onMount } from "svelte";
-	import { postEditingStatusStore, postVariantStore, updatePostEditingStatusValue } from "../../../postStore";
+	import { onMount, tick } from "svelte";
+	import { postEditingStatusStore, postVariantStore, updatePostEditingStatusValue, updatePostVariantStore } from "../../../postStore";
 	import { IconLock, IconUnlock } from "@hyvor/icons";
 
     $: show = $postVariantStore.status === 'published' && 
@@ -22,8 +22,10 @@
 
     $: show, positionMessage();
 
-    function handleClick() {
+    async function handleClick() {
         updatePostEditingStatusValue('isEditingPublished', true);
+        await tick();
+        $postEditingStatusStore.editorView?.focus();
     }
 
 </script>

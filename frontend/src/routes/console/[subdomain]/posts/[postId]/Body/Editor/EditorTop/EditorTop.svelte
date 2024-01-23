@@ -1,6 +1,7 @@
 <script lang="ts">
 	import { onMount } from "svelte";
 	import SaveStatus from './SaveStatus.svelte';
+	import PublishedEditingStatus from "./PublishedEditingStore/PublishedEditingStatus.svelte";
 
     let el: HTMLDivElement;
     let parent: HTMLDivElement;
@@ -36,6 +37,7 @@
 
     <div class="left">
         <SaveStatus />
+        <PublishedEditingStatus />
     </div>
 
     <div class="right">
@@ -63,6 +65,9 @@
     }
     .left {
         flex: 1;
+        display: flex;
+        align-items: center;
+        gap: 8px;
     }
     #pm-word-count {
         font-size: 12px;
