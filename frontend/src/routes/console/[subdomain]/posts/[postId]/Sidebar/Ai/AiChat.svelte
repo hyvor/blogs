@@ -1,9 +1,9 @@
 <script lang="ts">
 	import { Button, Divider, Loader, TextInput, Textarea, Tooltip, toast } from "@hyvor/design/components";
 	import type { GptPrompt } from "../../../../../lib/types";
-	import { postStore, postVariantStore } from "../../../postStore";
+	import { postEditingStatusStore, postStore, postVariantStore } from "../../../postStore";
 	import { Icon2Square, IconArrowClockwise, IconMagic, IconRewind, IconSearch } from "@hyvor/icons";
-	import { getPrompts, resetChat, sendPrompt } from "./aiActions";
+	import { appendHtml, getPrompts, resetChat, sendPrompt } from "./aiActions";
 	import { onMount } from "svelte";
     import AiResponse from "./AiResponse.svelte";
 
@@ -119,7 +119,7 @@
         sendPrompt(pendingPrompt, $postStore.id)
             .then(res => {
                 pendingPromptLoading = false;
-                // Remove the last prompt
+                // Remove the fake prompt
                 prompts = prompts.slice(0, prompts.length - 1);
                 prompts = [...prompts, res as GptPrompt];
                 scrollToBottom();
@@ -137,6 +137,11 @@
             toast.error(err.message);
         })
         pendingPrompt = '';
+    }
+
+    function addToContent() {
+        // Append the last prompt result to the post content
+        appendHtml($postEditingStatusStore.editorView!, prompts[prompts.length - 1]!.gpt_response);
     }
 
     onMount(loadPrompts);
@@ -164,9 +169,9 @@
                 {#each prompts as prompt, i}
                     <!-- Only the last prompt can be in loading state -->
                     {#if i === prompts.length - 1}
-                        <AiResponse bind:loading={pendingPromptLoading} gptPrompt={prompt} />
+                        <AiResponse bind:loading={pendingPromptLoading} gptPrompt={prompt} addToEditor={addToContent} />
                     {:else}
-                        <AiResponse bind:loading={constantFalse} gptPrompt={prompt} />
+                        <AiResponse bind:loading={constantFalse} gptPrompt={prompt} addToEditor={addToContent} />
                     {/if}
                 {/each}
                     <div class="reset-button">

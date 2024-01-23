@@ -7,6 +7,7 @@
 
     export let gptPrompt: GptPrompt;
     export let loading: boolean;
+    export let addToEditor: () => void;
 
     function getResponseHtml(response: string | null) {
         // TODO
@@ -45,7 +46,7 @@
                     <IconClipboard />
                     <span class="prompt-response-button-content">Copy</span>
                 </Button>
-                <Button color="gray">
+                <Button color="gray" on:click={() => addToEditor()}>
                     <IconFileEarmark />
                     <span class="prompt-response-button-content">Add to Editor</span>
                 </Button>
