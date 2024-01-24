@@ -177,6 +177,9 @@
     .post-author:not(:first-child) {
         margin-top: 6px;
     }
+    .post-author :global(img) {
+        flex-shrink: 0;
+    }
 
     .post-date {
         color: var(--text-light);

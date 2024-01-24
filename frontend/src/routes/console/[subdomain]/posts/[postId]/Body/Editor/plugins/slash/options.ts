@@ -107,7 +107,7 @@ const options: SlashOption[] = [
         description: "Add a table",
         icon: IconTable,
         keywords: ["table", "spreadsheet"],
-        // node: createTable,
+        node: createTable,
     },
 ];
 
@@ -255,5 +255,29 @@ function createBookmark() {
         });
 
     });
+
+}
+
+function createTable() {
+
+    const rows = [];
+    for (let i = 0; i < 3; i++) {
+        const cells = [];
+        for (let j = 0; j < 3; j++) {
+            cells.push(schema.nodes.table_cell!
+                    .create({}, [schema.nodes.paragraph!.create()]))
+        }
+        rows.push(
+            schema.nodes.table_row!.create(
+                {},
+                cells
+            )
+        )
+    }
+
+    return Promise.resolve(schema.nodes.table!.create(
+        {},
+        [...rows]
+    ));
 
 }

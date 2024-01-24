@@ -1,5 +1,4 @@
 import { EditorState, Plugin, type PluginView } from "prosemirror-state";
-import schema from "../../../../../../../lib/prosemirror/schema";
 import type { EditorView } from "prosemirror-view";
 import type { SvelteComponent } from "svelte";
 import Slash from "./Slash.svelte";

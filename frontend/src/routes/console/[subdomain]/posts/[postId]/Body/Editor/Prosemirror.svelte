@@ -384,8 +384,13 @@
         }
 
 
+        :global(.table-wrap) {
+            margin-top: 30px;
+        }
+
         :global(table) {
             margin: 0;
+            margin-top:5px;
             border: 1px solid black;
             border-collapse: collapse;
             table-layout: fixed;
@@ -414,6 +419,30 @@
                 font-weight: bold;
                 text-align: left;
             }
+
+            :global(.column-resize-handle) {
+                position: absolute;
+                right: -2px;
+                top: 0;
+                bottom: -2px;
+                width: 4px;
+                background-color: #adf;
+                cursor: col-resize;
+            }
+
+            :global(.selectedCell:after) {
+                z-index: 2;
+                position: absolute;
+                content: "";
+                left: 0;
+                right: 0;
+                top: 0;
+                bottom: 0;
+                background: rgba(200, 200, 255, 0.4);
+                pointer-events: none;
+                cursor: default;
+            }
+
         }
 
     }

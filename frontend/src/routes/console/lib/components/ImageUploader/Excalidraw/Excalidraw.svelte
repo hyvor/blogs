@@ -37,7 +37,6 @@
         let data = (new XMLSerializer()).serializeToString(svg);
         data = data.replace('excalidraw@undefined', 'excalidraw@0.17.2')
 
-        console.log(data);
         const blob = new Blob([data], { 
             type: "image/svg+xml;charset=utf-8" 
         });

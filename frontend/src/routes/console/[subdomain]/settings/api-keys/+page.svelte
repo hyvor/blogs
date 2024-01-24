@@ -22,7 +22,6 @@
     }
 
     function handleUpdateEvent(e: CustomEvent<ApiKey>) {
-        console.log(e.detail)
         apiKeys = apiKeys.map(apiKey => {
             if (apiKey.id === e.detail.id) {
                 return e.detail;

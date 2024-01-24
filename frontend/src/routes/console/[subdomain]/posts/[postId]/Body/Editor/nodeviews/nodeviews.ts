@@ -6,6 +6,7 @@ import CodeBlockNodeView from "./nodeview-codeblock";
 import CustomHtmlNodeView from "./nodeview-custom-html";
 import EmbedView from "./embed/nodeview-embed";
 import BookmarkView from "./nodeview-bookmark";
+import TableNodeView from "./table/nodeview-table";
 
 interface NodeViewsType {
     [key: string]: NodeViewConstructor
@@ -35,6 +36,9 @@ export function getNodeViews() : NodeViewsType {
         bookmark(node, view, getPos) {
             return new BookmarkView(node)
         },
+        table(node, view, getPos) {
+            return new TableNodeView(node, view, getPos)
+        }
         /*        
         image(node, view, getPos) {
             return new Image(HBSchema, node, view, getPos)

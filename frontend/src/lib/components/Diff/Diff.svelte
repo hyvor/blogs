@@ -8,8 +8,6 @@
     // $: diff = diffChars(strOld, strNew);
     $: diff = diffSentences(strOld, strNew);
 
-    console.log(diff);
-
     function getColor(part: { added: boolean; removed: boolean }) {
         if (part.added) {
             return 'var(--green)';
