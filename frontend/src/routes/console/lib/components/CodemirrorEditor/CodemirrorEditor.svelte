@@ -12,7 +12,10 @@
     let editorDiv: HTMLDivElement;
     let cm: any;
 
-    const dispatch = createEventDispatcher();
+    const dispatch = createEventDispatcher<{
+        save: string,
+        change: string
+    }>();
 
     async function initCm() {
 

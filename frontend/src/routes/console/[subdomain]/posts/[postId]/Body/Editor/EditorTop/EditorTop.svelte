@@ -56,7 +56,7 @@
     }
     .editor-top:global(.fixed) {
         position: fixed;
-        z-index: 100;
+        z-index: 10;
         top: var(--top-offset, 0);
         background-color: var(--box-background);
         box-shadow: var(--box-shadow);

@@ -214,6 +214,18 @@
             {diff}
         />
     {/if}
+
+    {#if changes.post.code_head !== undefined}
+        <SplitControl label="Code Head">
+            Changed
+        </SplitControl>
+    {/if}
+
+    {#if changes.post.code_foot !== undefined}
+        <SplitControl label="Code Foot">
+            Changed
+        </SplitControl>
+    {/if}
     
     <svelte:fragment slot="footer">
 

@@ -12,6 +12,8 @@
 	import Delete from "./Delete.svelte";
 	import { IconCaretDown, IconCaretRight } from "@hyvor/icons";
 	import CanonicalUrl from "./CanonicalUrl.svelte";
+	import CodeHead from "./CodeHead.svelte";
+	import CodeFoot from "./CodeFoot.svelte";
 
     let showAdvanced = false;
 </script>
@@ -46,27 +48,9 @@
     {/if}
 
     {#if showAdvanced}
-
         <CanonicalUrl />
-
-        <SplitControl>
-            <span slot="label">Head Code</span>
-            <Textarea
-                block
-                rows={4}
-                value={$postStore.code_head || ''}
-            />
-        </SplitControl>
-
-        <SplitControl>
-            <span slot="label">Foot Code</span>
-            <Textarea
-                block
-                rows={4}
-                value={$postStore.code_foot || ''}
-            />
-        </SplitControl>
-
+        <CodeHead />
+        <CodeFoot />
     {/if}
 
 </div>
