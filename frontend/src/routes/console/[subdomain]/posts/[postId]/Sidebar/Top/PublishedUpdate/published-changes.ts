@@ -1,6 +1,7 @@
 import { get } from "svelte/store";
 import { postOriginalStore, postOriginalVariantStore, postStore, postVariantStore, updatePostEditingStatusValue, updatePostVariantStore } from "../../../../postStore";
 import type { Post, PostVariant } from "../../../../../../lib/types";
+import { hasIdArrayChanged } from "../../Settings/settingsHelpers";
 
 
 export function getPublishedChanges() {
@@ -45,6 +46,13 @@ export function getPublishedChanges() {
             changes.variant[key] = postVariant[key];
         }
     });
+
+    if (hasIdArrayChanged(post.tags, postOriginal.tags)) {
+        changes.post.tags = post.tags;
+    }
+    if (hasIdArrayChanged(post.authors, postOriginal.authors)) {
+        changes.post.authors = post.authors;
+    }
 
     if (
         postVariant.content_unsaved !== null &&

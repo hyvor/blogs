@@ -40,6 +40,7 @@
                     size={12} 
                     slot="end" 
                 />
+                Advanced
             </Button>
         </div>
     {/if}

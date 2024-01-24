@@ -46,7 +46,7 @@
         font-size:14px;
     }
     .arrow {
-        margin: 0 25px;
+        margin: 0 15px;
         color: var(--text-light);
         display: flex;
         align-items: center;

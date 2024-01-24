@@ -9,6 +9,9 @@
 	import ContentChange from "./Changes/ContentChange.svelte";
 	import { updatePost, updatePostVariant } from "../../../../postActions";
 	import CoverImageChange from "./Changes/CoverImageChange.svelte";
+	import CanonicalUrlChange from "./Changes/CanonicalUrlChange.svelte";
+	import TagChanges from "./Changes/TagChanges.svelte";
+	import AuthorChanges from "./Changes/AuthorChanges.svelte";
     export let show = false;
 
     let changes: ReturnType<typeof getPublishedChanges>;
@@ -127,6 +130,14 @@
         </SplitControl>
     {/if}
 
+    {#if changes.post.tags !== undefined}
+        <TagChanges {diff} />
+    {/if}
+
+    {#if changes.post.authors !== undefined}
+        <AuthorChanges {diff} />
+    {/if}
+
     {#if changes.post.featured_image_url !== undefined}
         <SplitControl
             label="Cover Image"
@@ -178,6 +189,14 @@
                 {diff}
             />
         </SplitControl>
+    {/if}
+
+    {#if changes.post.canonical_url !== undefined}
+        <CanonicalUrlChange 
+            canonicalUrlOld={$postOriginalStore.canonical_url}
+            canonicalUrlNew={$postStore.canonical_url}
+            {diff}
+        />
     {/if}
     
     <svelte:fragment slot="footer">

@@ -27,7 +27,7 @@
         align-items: center;
     }
     .wrap :global(svg) {
-        margin: 0 25px;
+        margin: 0 15px;
         color: var(--text-light);
     }
     .after {
