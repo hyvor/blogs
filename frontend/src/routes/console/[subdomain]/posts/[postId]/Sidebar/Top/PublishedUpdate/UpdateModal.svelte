@@ -7,7 +7,7 @@
 	import dayjs from "dayjs";
 	import { finishUpdating, getPublishedChanges } from "./published-changes";
 	import ContentChange from "./Changes/ContentChange.svelte";
-	import { updatePost, updatePostVariant } from "../../../../postActions";
+	import { updatePost, updatePostAuthors, updatePostTags, updatePostVariant } from "../../../../postActions";
 	import CoverImageChange from "./Changes/CoverImageChange.svelte";
 	import CanonicalUrlChange from "./Changes/CanonicalUrlChange.svelte";
 	import TagChanges from "./Changes/TagChanges.svelte";
@@ -52,6 +52,22 @@
 
         }
 
+        if (changes.authors !== undefined) {
+            try {
+                await updatePostAuthors(changes.authors);
+            } catch (e: any) {
+                return toast.error(e.message);
+            }
+        }
+
+        if (changes.tags !== undefined) {
+            try {
+                await updatePostTags(changes.tags);
+            } catch (e: any) {
+                return toast.error(e.message);
+            }
+        }
+
         isLoading = false;
         show = false;
 
@@ -65,7 +81,7 @@
 <Modal 
     bind:show={show}
     title="Update Post"
-    size="large"
+    size="medium"
     loading={isLoading}
 >
 
@@ -130,12 +146,12 @@
         </SplitControl>
     {/if}
 
-    {#if changes.post.tags !== undefined}
-        <TagChanges {diff} />
+    {#if changes.authors !== undefined}
+        <AuthorChanges {diff} />
     {/if}
 
-    {#if changes.post.authors !== undefined}
-        <AuthorChanges {diff} />
+    {#if changes.tags !== undefined}
+        <TagChanges {diff} />
     {/if}
 
     {#if changes.post.featured_image_url !== undefined}

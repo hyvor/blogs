@@ -1,6 +1,6 @@
 import { get } from "svelte/store";
 import { postOriginalStore, postOriginalVariantStore, postStore, postVariantStore, updatePostEditingStatusValue, updatePostVariantStore } from "../../../../postStore";
-import type { Post, PostVariant } from "../../../../../../lib/types";
+import type { Post, PostVariant, Tag, User } from "../../../../../../lib/types";
 import { hasIdArrayChanged } from "../../Settings/settingsHelpers";
 
 
@@ -17,6 +17,8 @@ export function getPublishedChanges() {
     const changes = {
         post: {} as Partial<Post>,
         variant: {} as Partial<PostVariant>,
+        tags: undefined as undefined | Tag[],
+        authors: undefined as undefined | User[],
     }
 
     const postKeys: (keyof Post)[] = [
@@ -48,10 +50,10 @@ export function getPublishedChanges() {
     });
 
     if (hasIdArrayChanged(post.tags, postOriginal.tags)) {
-        changes.post.tags = post.tags;
+        changes.tags = post.tags;
     }
     if (hasIdArrayChanged(post.authors, postOriginal.authors)) {
-        changes.post.authors = post.authors;
+        changes.authors = post.authors;
     }
 
     if (
@@ -68,7 +70,9 @@ export function getPublishedChanges() {
 export function hasPublishedChanges() {
     const changes = getPublishedChanges();
     return Object.keys(changes.post).length > 0 
-        || Object.keys(changes.variant).length > 0;
+        || Object.keys(changes.variant).length > 0
+        || changes.tags !== undefined
+        || changes.authors !== undefined;
 }
 
 
