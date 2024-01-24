@@ -1,12 +1,12 @@
 <script lang="ts">
 	import { Button, Divider, IconMessage, Link, Loader, TextInput, Textarea, Tooltip, toast } from "@hyvor/design/components";
 	import type { GptPrompt } from "../../../../../lib/types";
-	import { postEditingStatusStore, postStore, postVariantStore } from "../../../postStore";
-	import { Icon2Square, IconArrowClockwise, IconMagic, IconRewind, IconRobot, IconSearch } from "@hyvor/icons";
-	import { appendHtml, getPrompts, resetChat, sendPrompt } from "./aiActions";
-	import { onMount } from "svelte";
-    import AiResponse from "./AiResponse.svelte";
+	import { postStore, postVariantStore } from "../../../postStore";
+	import { IconArrowClockwise, IconMagic, IconRobot } from "@hyvor/icons";
+	import { getPrompts, resetChat, sendPrompt } from "./aiActions";
+	import { onMount, tick } from "svelte";
 	import { tab } from "../sidebar";
+	import PromptResponse from "./PromptResponse.svelte";
 
     interface AutomaticPromptOptions {
         title: string | null,
@@ -75,16 +75,17 @@
         }
     ];
 
-    let isLoading = false;
+    let isLoading = true;
 
     let prompts : GptPrompt[] = [];
-    let pendingPrompt: string = '';
-    let pendingPromptLoading = false;
-    let constantFalse = false;
+    let prompt = '';
+    
+    let pendingPrompt : string | null = null;
+    let pendingPromptError : string | null = null;
 
-    let title = $postVariantStore.title;
-    let primaryKeyword = $postVariantStore.seo_primary_keyword;
-    let secondaryKeywords = $postVariantStore.seo_secondary_keywords;
+    $: title = $postVariantStore.title;
+    $: primaryKeyword = $postVariantStore.seo_primary_keyword;
+    $: secondaryKeywords = $postVariantStore.seo_secondary_keywords;
 
     function loadPrompts() {
         getPrompts($postStore.id)
@@ -106,43 +107,39 @@
         }
     }
 
-    function getPromptResult() {
+    async function handleGenerate() {
+
+        pendingPrompt = prompt;
+        pendingPromptError = null;
+
+        await tick();
+        
         scrollToBottom();
-        pendingPromptLoading = true;
-        // Genrate a fake new prompt
-        prompts = [...prompts, {
-            id: 0,
-            prompt: pendingPrompt,
-            post_id: $postStore.id,
-            gpt_response: '',
-            created_at: 0
-        }];
-        sendPrompt(pendingPrompt, $postStore.id)
+
+        sendPrompt(prompt, $postStore.id)
             .then(res => {
-                pendingPromptLoading = false;
-                // Remove the fake prompt
-                prompts = prompts.slice(0, prompts.length - 1);
-                prompts = [...prompts, res as GptPrompt];
+                prompts = [...prompts, res];
                 scrollToBottom();
-                pendingPrompt = '';
+                prompt = '';
+                pendingPrompt = null;
             })
             .catch(err => {
-                toast.error(err.message);
-            })
+                pendingPromptError = err.message;
+            });
+
     }
 
     function resetPrompts() {
+        isLoading = true;
         resetChat($postStore.id).then(res => {
             prompts = [];
         }).catch(err => {
             toast.error(err.message);
         })
+        .finally(() => {
+            isLoading = false;
+        })
         pendingPrompt = '';
-    }
-
-    function addToContent() {
-        // Append the last prompt result to the post content
-        appendHtml($postEditingStatusStore.editorView!, prompts[prompts.length - 1]!.gpt_response);
     }
 
     onMount(loadPrompts);
@@ -163,13 +160,20 @@
                 />
             {:else}
                 {#each prompts as prompt, i}
-                    <!-- Only the last prompt can be in loading state -->
-                    {#if i === prompts.length - 1}
-                        <AiResponse bind:loading={pendingPromptLoading} gptPrompt={prompt} addToEditor={addToContent} />
-                    {:else}
-                        <AiResponse bind:loading={constantFalse} gptPrompt={prompt} addToEditor={addToContent} />
-                    {/if}
+                    <PromptResponse 
+                        prompt={prompt.prompt} 
+                        response={prompt.gpt_response}
+                    />
                 {/each}
+
+                {#if pendingPrompt}
+                    <PromptResponse 
+                        prompt={pendingPrompt} 
+                        response={null}
+                        error={pendingPromptError}
+                    />
+                {/if}
+
                 <div class="reset-button">
                     <Button size="small" color="input" on:click={() => resetPrompts()}>
                         <IconArrowClockwise slot="start" />
@@ -184,19 +188,19 @@
         <div class="input-zone">
 
             <div class="automatic-prompts-buttons">
-                {#each automaticPrompts as prompt}
+                {#each automaticPrompts as p}
                     <div class="automatic-prompt-button">
-                        <Tooltip text={prompt.description}>
+                        <Tooltip text={p.description}>
                             <Button
                                 color="input"
-                                on:click={() => pendingPrompt = prompt.prompt({
+                                on:click={() => prompt = p.prompt({
                                     title,
                                     primaryKeyword,
                                     secondaryKeywords })}
                                 outline
                                 size="small"
                             >
-                                <div class="prompt-button-title">{prompt.name}</div>
+                                <div class="prompt-button-title">{p.name}</div>
                             </Button>
                         </Tooltip>
                     </div>
@@ -218,12 +222,12 @@
                         block={true}
                         placeholder="Type your prompt here..."
                         rows={1}
-                        bind:value={pendingPrompt}
+                        bind:value={prompt}
                     />
                 </div>
                 <Button
-                    disabled={!pendingPrompt}
-                    on:click={() => getPromptResult()}>
+                    disabled={prompt.trim() === ''}
+                    on:click={handleGenerate}>
                     <div class="generate-button-content">
                         Generate
                         <div class="generate-icon"><IconMagic /></div>
@@ -314,6 +318,7 @@
     .reset-button {
         align-self: flex-end;
         display: block;
+        padding: 15px 25px;
     }
 
 </style>
