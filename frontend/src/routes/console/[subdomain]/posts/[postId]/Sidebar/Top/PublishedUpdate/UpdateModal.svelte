@@ -1,10 +1,14 @@
 <script lang="ts">
-	import { Button, ButtonGroup, Modal, SplitControl, Switch, Tag } from "@hyvor/design/components";
+	import FeaturedChange from './Changes/FeaturedChange.svelte';
+	import { postEditingStatusStore, postLanguageStore, updatePostEditingStatusValue } from './../../../../postStore';
+	import { Button, ButtonGroup, Modal, SplitControl, Switch, Tag, Validation, toast } from "@hyvor/design/components";
 	import { postOriginalStore, postStore, postOriginalVariantStore, postVariantStore } from "../../../../postStore";
 	import Diff from "$lib/components/Diff/Diff.svelte";
 	import dayjs from "dayjs";
-	import { getPublishedChanges } from "./published-changes";
-	import { getTextFromContent } from "../../../../../../lib/prosemirror/helpers";
+	import { finishUpdating, getPublishedChanges } from "./published-changes";
+	import ContentChange from "./Changes/ContentChange.svelte";
+	import { updatePost, updatePostVariant } from "../../../../postActions";
+	import CoverImageChange from "./Changes/CoverImageChange.svelte";
     export let show = false;
 
     let changes: ReturnType<typeof getPublishedChanges>;
@@ -12,9 +16,45 @@
     
     $: $postStore, $postOriginalStore, changes = getPublishedChanges();
 
+    $: disabled = changes.variant.slug !== undefined &&
+        (changes.variant.slug || '').trim() === '';
 
-    function handleUpdate() {
+    let isLoading = false;
 
+    async function handleUpdate() {
+        isLoading = true;
+
+        if (Object.keys(changes.variant).length) {
+
+            try {
+                await updatePostVariant({
+                    language_id: $postLanguageStore.id,
+                    ...changes.variant
+                });
+            } catch (e: any) {
+                return toast.error(e.message);
+            }
+
+        }
+
+        if (Object.keys(changes.post).length) {
+
+            try {
+                await updatePost({
+                    ...changes.post
+                });
+            } catch (e: any) {
+                return toast.error(e.message);
+            }
+
+        }
+
+        isLoading = false;
+        show = false;
+
+        toast.success('Post updated successfully.');
+
+        finishUpdating();
     }
 
 </script>
@@ -23,11 +63,12 @@
     bind:show={show}
     title="Update Post"
     size="large"
+    loading={isLoading}
 >
 
-    <p>
+    <div class="note">
         You are about to update the post. Please review the changes below.
-    </p>
+    </div>
 
     <div class="diff">
         <span>
@@ -35,7 +76,19 @@
         </span> <Switch bind:checked={diff} />
     </div>
 
-    {#if changes.variant.slug}
+    {#if changes.variant.content}
+        <SplitControl
+            label="Content"
+        >
+            <ContentChange 
+                contentOld={$postOriginalVariantStore.content}
+                contentNew={$postVariantStore.content_unsaved}
+                {diff}
+            />
+        </SplitControl>
+    {/if}
+
+    {#if changes.variant.slug !== undefined}
         <SplitControl
             label="Slug"
         >
@@ -47,22 +100,19 @@
             {:else}
                 <span>{$postVariantStore.slug}</span>
             {/if}
+
+            <div style="margin-top:15px;">
+                {#if (changes.variant.slug || '').trim() === ''}
+                    <Validation state="error">
+                        Slug cannot be empty.
+                    </Validation>
+                {/if}
+            </div>
+
         </SplitControl>
     {/if}
 
-
-    {#if changes.variant.content}
-        <SplitControl
-            label="Content"
-        >
-            <Diff 
-                strOld={getTextFromContent($postOriginalVariantStore.content)}
-                strNew={getTextFromContent($postVariantStore.content)}
-            />
-        </SplitControl>
-    {/if}
-
-    {#if changes.variant.description}
+    {#if changes.variant.description !== undefined}
         <SplitControl
             label="Description"
         >
@@ -77,7 +127,19 @@
         </SplitControl>
     {/if}
 
-    {#if changes.post.published_at}
+    {#if changes.post.featured_image_url !== undefined}
+        <SplitControl
+            label="Cover Image"
+        >
+            <CoverImageChange 
+                featuredImageOld={$postOriginalStore.featured_image_url}
+                featuredImageNew={$postStore.featured_image_url}
+                {diff}
+            />
+        </SplitControl>
+    {/if}
+
+    {#if changes.post.published_at !== undefined}
         <SplitControl
             label="Publish Time"
         >
@@ -106,6 +168,17 @@
             {/if}
         </SplitControl>
     {/if}
+
+    {#if changes.post.is_featured !== undefined}
+        <SplitControl
+            label="Featured"
+        >
+            <FeaturedChange 
+                old={$postOriginalStore.is_featured}
+                {diff}
+            />
+        </SplitControl>
+    {/if}
     
     <svelte:fragment slot="footer">
 
@@ -118,6 +191,7 @@
 
             <Button
                 on:click={handleUpdate}
+                disabled={disabled}
             >Update</Button>
 
         </ButtonGroup>
@@ -128,6 +202,9 @@
 
 
 <style>
+    .note {
+        margin-bottom: 15px;
+    }
     .diff {
         text-align: center;
         padding: 10px 15px;

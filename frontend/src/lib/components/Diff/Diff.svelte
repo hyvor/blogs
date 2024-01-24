@@ -4,9 +4,10 @@
 
     export let strOld: string;
     export let strNew: string;
+    export let sentences = false;
+    export let onlyChanged = false;
 
-    // $: diff = diffChars(strOld, strNew);
-    $: diff = diffSentences(strOld, strNew);
+    $: diff = sentences ? diffSentences(strOld, strNew) : diffChars(strOld, strNew);
 
     function getColor(part: { added: boolean; removed: boolean }) {
         if (part.added) {
@@ -24,7 +25,7 @@
 
 <span>
     {#each diff as part}
-        {#if part.added || part.removed}
+        {#if !onlyChanged || (part.added || part.removed)}
             <span style="color: {getColor(part)}">{part.value}</span>
         {/if}
     {/each}

@@ -16,6 +16,7 @@
     <Button 
         disabled={!hasChanges}
         on:click={() => isUpdating = true}
+        size="small"
     >
         Update
     </Button>

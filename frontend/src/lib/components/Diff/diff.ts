@@ -3,7 +3,6 @@ import { diffWords } from 'diff';
 
 export function getDiffWordsCount(oldText: string, newText: string) {
     const wordDiff = diffWords(oldText, newText);
-    console.log(wordDiff);
 
     // Count the changed words
     let changedWordsCount = 0;

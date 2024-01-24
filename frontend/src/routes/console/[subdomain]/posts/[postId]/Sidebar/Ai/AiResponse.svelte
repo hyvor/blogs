@@ -1,8 +1,8 @@
 <script lang="ts">
-	import { Button, Divider, Loader, Textarea, Tooltip, toast } from "@hyvor/design/components";
+	import { Button, Loader, toast } from "@hyvor/design/components";
 	import type { GptPrompt } from "../../../../../lib/types";
 	import { blogStore } from "../../../../../lib/stores/blogStore";
-	import { IconClipboard, IconCopy, IconFileEarmark } from "@hyvor/icons";
+	import { IconClipboard, IconFileEarmark } from "@hyvor/icons";
     import hyvorLogo from './logo.png';
 
     export let gptPrompt: GptPrompt;
@@ -29,7 +29,7 @@
 <div class="single-prompt">
     <div class="prompt">
         {#if imageUrl}
-            <img src={imageUrl} />
+            <img src={imageUrl} alt="blog icon" />
         {:else}
             <span class="blog-logo">{$blogStore.subdomain[0]?.toUpperCase()}</span>
         {/if}
@@ -40,22 +40,21 @@
     <div class="prompt-response">
         <span class="blog-logo"><img src={hyvorLogo} width="20px"/></span>
         {#if gptPrompt.gpt_response && !loading}
-            <span class="prompt-response">{@html gptPrompt.gpt_response}</span>
+            <span class="response-content">{@html gptPrompt.gpt_response}</span>
             <div class="prompt-response-button-row">
-                <Button color="gray" on:click={() => handleCopy()}>
-                    <IconClipboard />
-                    <span class="prompt-response-button-content">Copy</span>
+                <Button color="input" on:click={() => handleCopy()} size="small">
+                    <IconClipboard slot="start" />
+                    Copy
                 </Button>
-                <Button color="gray" on:click={() => addToEditor()}>
-                    <IconFileEarmark />
-                    <span class="prompt-response-button-content">Add to Editor</span>
+                <Button color="input" on:click={() => addToEditor()} size="small">
+                    <IconFileEarmark slot="start" />
+                    Add to Editor
                 </Button>
             </div>
         {:else}
             <span class="prompt-loader"><Loader /></span>
         {/if}
     </div>
-
 </div>
 
 <style>
@@ -63,6 +62,7 @@
         display: flex;
         flex-direction: row;
         align-items: center;
+        padding: 15px 25px;
     }
 
     .prompt-text {
@@ -80,7 +80,8 @@
     }
 
     .prompt-response {
-        margin-top: 10px;
+        padding: 15px 25px;
+        background-color: #fafafa;
     }
 
     .prompt-response-button-row {
@@ -89,10 +90,6 @@
         margin-bottom: 10px;
     }
 
-    .prompt-response-button-content{
-        margin-left: 5px;
-        font-size: 10px;
-    }
 
     .prompt-loader {
         margin-left: 10px;

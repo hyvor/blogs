@@ -2,7 +2,7 @@
 	import { Loader, SplitControl } from "@hyvor/design/components";
 	import OnlyPrimaryVariant from "./OnlyPrimaryVariant.svelte";
 	import UnsavedTag from "./UnsavedTag.svelte";
-	import { postStore, postVariantStore, updatePostStore } from "../../../postStore";
+	import { postOriginalStore, postStore, postVariantStore, updatePostStore } from "../../../postStore";
 	import ImageSetting from "../../../../settings/@components/ImageSetting.svelte";
 	import { updatePost } from "../../../postActions";
 
@@ -12,9 +12,10 @@
         const url  = e.detail;
         updatePostStore({featured_image_url: url});
 
-        loaderState = 'loading';
 
         if ($postVariantStore.status !== 'published') {
+            loaderState = 'loading';
+            
             updatePost({featured_image_url: url})
                 .then(() => loaderState = 'success')
                 .catch(() => loaderState = 'error');
@@ -30,10 +31,9 @@
             Cover Image
             
             <UnsavedTag 
-                show={$postStore.featured_image_url !== $postStore.featured_image_url}
+                show={$postStore.featured_image_url !== $postOriginalStore.featured_image_url}
                 loaderState={loaderState}
             />
-
         </span>
         
         <ImageSetting 

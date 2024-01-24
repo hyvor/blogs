@@ -1,5 +1,5 @@
 import { get } from "svelte/store";
-import { postOriginalStore, postOriginalVariantStore, postStore, postVariantStore } from "../../../../postStore";
+import { postOriginalStore, postOriginalVariantStore, postStore, postVariantStore, updatePostEditingStatusValue, updatePostVariantStore } from "../../../../postStore";
 import type { Post, PostVariant } from "../../../../../../lib/types";
 
 
@@ -28,7 +28,6 @@ export function getPublishedChanges() {
 
     const postVariantKeys: (keyof PostVariant)[] = [
         'slug',
-        'content',
         'title',
         'description',
     ];
@@ -47,6 +46,13 @@ export function getPublishedChanges() {
         }
     });
 
+    if (
+        postVariant.content_unsaved !== null &&
+        postVariant.content_unsaved !== postVariantOriginal.content
+    ) {
+        changes.variant.content = postVariant.content_unsaved;
+    }
+
     return changes;
 
 }
@@ -55,4 +61,15 @@ export function hasPublishedChanges() {
     const changes = getPublishedChanges();
     return Object.keys(changes.post).length > 0 
         || Object.keys(changes.variant).length > 0;
+}
+
+
+export function finishUpdating() {
+
+    // no longer editing
+    updatePostEditingStatusValue('isEditingPublished', false);
+
+    // clear unsaved content
+    updatePostVariantStore({content_unsaved: null});
+
 }

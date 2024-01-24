@@ -24,6 +24,8 @@
 
     async function handleClick() {
         updatePostEditingStatusValue('isEditingPublished', true);
+        if ($postVariantStore.content_unsaved === null)
+            updatePostVariantStore({content_unsaved: $postVariantStore.content});
         await tick();
         $postEditingStatusStore.editorView?.focus();
     }
@@ -80,10 +82,11 @@
 
     .icon {
         margin-bottom: 10px;
+        transition: .3s transform;
     }
 
-    .overlay:hover {
-        opacity: 0.7;
-    }
+    .overlay:hover + .message .icon {
+        transform: scale(1.1);
+    } 
 
 </style>

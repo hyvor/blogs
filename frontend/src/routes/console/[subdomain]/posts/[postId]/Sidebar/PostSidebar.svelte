@@ -9,8 +9,7 @@
 	import Ai from "./Ai/Ai.svelte";
 	import { Z_INDEX, increaseZIndex } from "../z-index";
 	import SidebarTop from "./Top/SidebarTop.svelte";
-
-    export let tab: 'settings' | 'seo' | 'links' | 'ai' = 'settings';
+	import { tab } from "./sidebar";
 
     let div: HTMLDivElement;
 
@@ -35,7 +34,7 @@
 
         <div class="nav">
 
-            <TabNav bind:active={tab}>
+            <TabNav bind:active={$tab}>
 
                 <TabNavItem name="settings">
                     <IconGear slot="start" />
@@ -64,13 +63,13 @@
 
         <div class="content">
 
-            {#if tab === 'settings'}
+            {#if $tab === 'settings'}
                 <Settings />
-            {:else if tab === 'seo'}
+            {:else if $tab === 'seo'}
                 <Seo />
-            {:else if tab === 'links'}
+            {:else if $tab === 'links'}
                 <Links />
-            {:else if tab === 'ai'}
+            {:else if $tab === 'ai'}
                 <Ai />
             {/if}
 

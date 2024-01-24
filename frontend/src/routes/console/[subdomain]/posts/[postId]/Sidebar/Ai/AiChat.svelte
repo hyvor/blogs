@@ -1,11 +1,12 @@
 <script lang="ts">
-	import { Button, Divider, Loader, TextInput, Textarea, Tooltip, toast } from "@hyvor/design/components";
+	import { Button, Divider, IconMessage, Link, Loader, TextInput, Textarea, Tooltip, toast } from "@hyvor/design/components";
 	import type { GptPrompt } from "../../../../../lib/types";
 	import { postEditingStatusStore, postStore, postVariantStore } from "../../../postStore";
-	import { Icon2Square, IconArrowClockwise, IconMagic, IconRewind, IconSearch } from "@hyvor/icons";
+	import { Icon2Square, IconArrowClockwise, IconMagic, IconRewind, IconRobot, IconSearch } from "@hyvor/icons";
 	import { appendHtml, getPrompts, resetChat, sendPrompt } from "./aiActions";
 	import { onMount } from "svelte";
     import AiResponse from "./AiResponse.svelte";
+	import { tab } from "../sidebar";
 
     interface AutomaticPromptOptions {
         title: string | null,
@@ -150,22 +151,17 @@
 
 <div class="ai-chat">
 
-    <div class="chat-display">
 
-        {#if isLoading}
-
-            <div class="loader-wrap">
-                <Loader padding={100} />
-            </div>
-
-        {:else}
-            <div class="chat-zone">
-                {#if prompts.length == 0}
-                    <div class="empty-chat">
-                        <IconSearch size={80}/>
-                        <div class="empty-chat-text">No chat history on this post yet.</div>
-                    </div>
-                {:else}
+    {#if isLoading}
+        <Loader full />
+    {:else}
+        <div class="chat-zone">
+            {#if prompts.length == 0}
+                <IconMessage 
+                    icon={IconRobot}
+                    message="Start a conversation with the AI to generate content."
+                />
+            {:else}
                 {#each prompts as prompt, i}
                     <!-- Only the last prompt can be in loading state -->
                     {#if i === prompts.length - 1}
@@ -174,70 +170,72 @@
                         <AiResponse bind:loading={constantFalse} gptPrompt={prompt} addToEditor={addToContent} />
                     {/if}
                 {/each}
-                    <div class="reset-button">
-                        <Button size="small" color="gray" on:click={() => resetPrompts()}>
-                            <div class="reset-button-content">
-                                <IconArrowClockwise />
-                                <span class="reset-button-text">Reset chat</span>
-                            </div>
-                        </Button>
-                    </div>
-                {/if}
-            </div>
-            <Divider />
-            <div class="input-zone">
-
-                <div class="automatic-prompts-buttons">
-                    {#each automaticPrompts as prompt}
-                        <div class="automatic-prompt-button">
-                            <Tooltip text={prompt.description}>
-                                <Button
-                                    color="gray"
-                                    on:click={() => pendingPrompt = prompt.prompt({
-                                        title,
-                                        primaryKeyword,
-                                        secondaryKeywords })}
-                                    outline
-                                    size="small">
-                                <div class="prompt-button-title">{prompt.name}</div>
-                                </Button>
-                            </Tooltip>
-                        </div>
-                    {/each}
-                </div>
-
-                {#if !primaryKeyword}
-                    <div class="keyword-tip">
-                        Tip: Add SEO keywords for better prompts.
-                    </div>
-                {/if}
-
-                <div class="input-row">
-                    <div class="prompt-input">
-                        <TextInput
-                            block={true}
-                            placeholder="Type your prompt here..."
-                            rows={1}
-                            bind:value={pendingPrompt}
-                        />
-                    </div>
-                    <Button
-                        disabled={!pendingPrompt}
-                        on:click={() => getPromptResult()}>
-                        <div class="generate-button-content">
-                            Generate
-                            <div class="generate-icon"><IconMagic /></div>
-                        </div>
+                <div class="reset-button">
+                    <Button size="small" color="input" on:click={() => resetPrompts()}>
+                        <IconArrowClockwise slot="start" />
+                        Reset chat
                     </Button>
                 </div>
-                <div class="disclaimer">
-                    This chat is powered by OpenAI's GPT-3.5 model. It may produce inaccurate results.
-                </div>
+            {/if}
+        </div>
+
+        <Divider color="var(--border)" />
+
+        <div class="input-zone">
+
+            <div class="automatic-prompts-buttons">
+                {#each automaticPrompts as prompt}
+                    <div class="automatic-prompt-button">
+                        <Tooltip text={prompt.description}>
+                            <Button
+                                color="input"
+                                on:click={() => pendingPrompt = prompt.prompt({
+                                    title,
+                                    primaryKeyword,
+                                    secondaryKeywords })}
+                                outline
+                                size="small"
+                            >
+                                <div class="prompt-button-title">{prompt.name}</div>
+                            </Button>
+                        </Tooltip>
+                    </div>
+                {/each}
             </div>
 
-        {/if}
+            {#if !primaryKeyword}
+                <div class="keyword-tip">
+                    💡 Tip: <Link
+                        href="javascript:void(0)"
+                        on:click={() => tab.set('seo')}
+                    >Add SEO keywords</Link> for better prompts.
+                </div>
+            {/if}
 
-    </div>
+            <div class="input-row">
+                <div class="prompt-input">
+                    <TextInput
+                        block={true}
+                        placeholder="Type your prompt here..."
+                        rows={1}
+                        bind:value={pendingPrompt}
+                    />
+                </div>
+                <Button
+                    disabled={!pendingPrompt}
+                    on:click={() => getPromptResult()}>
+                    <div class="generate-button-content">
+                        Generate
+                        <div class="generate-icon"><IconMagic /></div>
+                    </div>
+                </Button>
+            </div>
+            <div class="disclaimer">
+                This chat is powered by OpenAI's GPT-3.5 model. It may produce inaccurate results.
+            </div>
+        </div>
+
+    {/if}
 
 </div>
 
@@ -246,51 +244,41 @@
 
     .ai-chat {
         height: 100%;
+        min-height: 0;
+        margin:0 -25px;
+        overflow: hidden;
         display: flex;
         flex-direction: column;
-        min-height: 0;
-    }
-
-    .chat-display {
-        flex: 1;
-        overflow: hidden;
-    }
-
-    .loader-wrap {
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        height: 100%;
     }
 
     .chat-zone {
-        padding: 20px 15px 15px;
-        height: 75%;
         overflow: auto;
         display: flex;
         flex-direction: column;
+        flex: 1;
     }
 
     .input-zone {
-        padding: 20px 15px 15px;
-        height: 25%;
+        padding: 15px 25px 0;
     }
     
     .disclaimer {
-        padding: 0 5px 15px;
         font-size: 12px;
+        color: var(--text-light);
     }
 
     .keyword-tip {
         padding: 5px;
         font-size: 12px;
+        color: var(--text-light);
+        margin-bottom:3px;
     }
 
     .input-row {
         display: flex;
         align-items: center;
         justify-content: space-between;
-        margin-bottom: 15px;
+        margin-bottom: 10px;
     }
 
     .automatic-prompts-buttons {
@@ -323,31 +311,9 @@
         margin-right: 5px;
     }
 
-    .empty-chat-text {
-        margin-top: 10px;
-    }
-
-    .empty-chat {
-        display: flex;
-        flex-direction: column;
-        align-items: center;
-        justify-content: center;
-        height: 100%;
-    }
-
     .reset-button {
         align-self: flex-end;
         display: block;
-    }
-
-    .reset-button-content {
-        display: flex;
-        align-items: center;
-        font-size: 12px;
-    }
-
-    .reset-button-text {
-        margin-left: 5px;
     }
 
 </style>
