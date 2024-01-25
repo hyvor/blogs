@@ -1,5 +1,5 @@
 import consoleApi from "../../../lib/consoleApi";
-import type { User } from "../../../lib/types";
+import type { User, UserRole } from "../../../lib/types";
 
 interface GetUsersData {
     limit?: number,
@@ -26,6 +26,23 @@ export function searchUsers(data: SearchUsersData) {
 
 export function deleteUser(id: number) {
     return consoleApi.delete({
-        endpoint: `/users/${id}`
+        endpoint: `/user/${id}`
+    });
+}
+
+export function createHyvorUser(usernameOrEmail: string, role: UserRole) {
+    return consoleApi.post<User>({
+        endpoint: '/user',
+        data: { 
+            username_or_email: usernameOrEmail,
+            role: role
+        }
+    });
+}
+
+export function createGuestUser(name: string) {
+    return consoleApi.post<User>({
+        endpoint: '/user/guest',
+        data: { name }
     });
 }

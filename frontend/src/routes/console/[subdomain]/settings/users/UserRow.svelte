@@ -49,20 +49,20 @@
     <div>
         {#if user.hyvor_user_id}
             {#if user.status === 'active'}
-                <Tag size="small" color="green">ACTIVE</Tag>
+                <Tag size="x-small" color="green">ACTIVE</Tag>
             {:else if user.status === 'invited'}
-                <Tag size="small" color="blue">PENDING</Tag>
+                <Tag size="x-small" color="blue">PENDING</Tag>
                 <!-- TODO: Add Resent -->
             {:else if user.status === 'blocked'}
-                <Tag size="small" color="red">BLOCKED</Tag>
+                <Tag size="x-small" color="red">BLOCKED</Tag>
             {/if}
         {:else}
-            <Tag size="small" color="orange">GUEST</Tag>
+            <Tag size="x-small" color="orange">GUEST</Tag>
         {/if}
     </div>
     <div>
         {#if user.hyvor_user_id}
-            <Tag size="small">{user.role}</Tag>
+            <Tag size="x-small">{user.role.toUpperCase()}</Tag>
         {/if}
     </div>
     <div>{ user.posts_count }</div>

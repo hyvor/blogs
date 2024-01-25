@@ -1,13 +1,14 @@
 <script lang="ts">
 	import type { User, UserVariant } from './../../../lib/types';
 	import { IconPlus } from '@hyvor/icons';
-	import { Button, Loader, IconMessage, Table, TableRow, LoadButton, toast } from "@hyvor/design/components";
+	import { Button, Loader, IconMessage, Table, TableRow, LoadButton, toast, Modal } from "@hyvor/design/components";
 	import SettingsTop from "../@components/SettingsTop.svelte";
 	import UserRow from "./UserRow.svelte";
 	import { getUsers } from "./userActions";
 	import { onMount } from "svelte";
 	import Slug from "../../posts/[postId]/Sidebar/Settings/Slug.svelte";
 	import DisabledOnTemp from "../../Temp/DisabledOnTemp.svelte";
+	import AddUser from "./AddUser.svelte";
 
     let isLoading = true;
     let isCreating = false;
@@ -39,7 +40,7 @@
             })
     }
 
-    function handleCreate(e: CustomEvent<User>) {
+    function handleAdd(e: CustomEvent<User>) {
         users = [e.detail, ...users];
     }
 
@@ -121,6 +122,13 @@
     </div>
 
 </DisabledOnTemp>
+
+{#if isCreating}
+    <AddUser 
+        bind:show={isCreating} 
+        on:add={handleAdd}
+    />
+{/if}
 
 <style>
     .table {

@@ -6,7 +6,10 @@ import { isTempStore } from "../../lib/temp";
 </script>
 
 
-<div class="wrap">
+<div 
+    class="wrap"
+    class:is-temp={$isTempStore}
+>
 
     <slot />
 
@@ -29,6 +32,8 @@ import { isTempStore } from "../../lib/temp";
         position: relative;
         height: 100%;
         flex: 1;
+    }
+    .wrap.is-temp {
         pointer-events: none;
     }
     .temp-notice {
