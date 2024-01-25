@@ -6,6 +6,7 @@
 	import { createEventDispatcher } from "svelte";
 	import { createBlogVariant } from "../../../../lib/actions/blogActions";
 	import { createNavigationVariant } from "../../navigation/navigationActions";
+	import { createUserVariant } from "../../users/userActions";
 
     export let obj: AcceptableTypes;
     export let type: AcceptableTypesNames;
@@ -52,6 +53,17 @@
                 })
         } else if (type == 'navigation') {
             createNavigationVariant(obj.id, language.id)
+                .then(res => {
+                    dispatchCreateVariant(res);
+                })
+                .catch(e => {
+                    toast.error(e.message);
+                })
+                .finally(() => {
+                    isCreating = false;
+                })
+        } else if (type === 'user') {
+            createUserVariant(obj.id, language.id)
                 .then(res => {
                     dispatchCreateVariant(res);
                 })

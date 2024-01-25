@@ -1,5 +1,5 @@
 import consoleApi from "../../../lib/consoleApi";
-import type { User, UserRole } from "../../../lib/types";
+import type { User, UserRole, UserVariant } from "../../../lib/types";
 
 interface GetUsersData {
     limit?: number,
@@ -55,5 +55,31 @@ export function checkSlugAvailability(userId: number, slug: string, signal: Abor
             slug
         },
         signal
+    })
+}
+
+export function updateUserVariant(userId: number, languageId: number, variant: Partial<UserVariant>) {
+    return consoleApi.patch<User>({
+        endpoint: `/user/${userId}/variant`,
+        data: {
+            language_id: languageId,
+            ...variant
+        }
+    })
+}
+
+export function updateUser(id: number, user: Partial<User>) {
+    return consoleApi.patch<User>({
+        endpoint: `/user/${id}`,
+        data: user
+    })
+}
+
+export function createUserVariant(userId: number, languageId: number) {
+    return consoleApi.post<User>({
+        endpoint: `/user/${userId}/variant`,
+        data: {
+            language_id: languageId
+        }
     })
 }

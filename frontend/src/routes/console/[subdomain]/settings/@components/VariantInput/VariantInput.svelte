@@ -64,6 +64,7 @@
                         on:input={e => handleValueChange(language.id, e)}
                         {maxlength}
                         block
+                        dir={language.direction}
                     />
                 {:else}
                     <VariantCreator 

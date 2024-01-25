@@ -21,6 +21,7 @@
 
     function handleNameChange(e: CustomEvent<{languageId: number, value: string}>) {
         variantChanges[e.detail.languageId] = {
+            ...(variantChanges[e.detail.languageId] || {}),
             name: e.detail.value,
         }
     }

@@ -113,6 +113,7 @@
     <UpdateUser 
         {user}
         on:update 
+        on:variantCreate
         bind:show={isEditing} 
     />
 {/if}

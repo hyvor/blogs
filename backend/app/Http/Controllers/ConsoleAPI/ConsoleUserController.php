@@ -25,10 +25,11 @@ class ConsoleUserController extends Controller
     public static function get(Request $request, Blog $blog) : JsonResponse
     {
         $request->validate([
+            'limit' => 'integer',
             'offset' => 'integer',
         ]);
 
-        $limit = 50;
+        $limit = $request->integer('limit', 50);
         $offset = $request->integer('offset');
 
         $users = UserRepository::getUsers($blog, $limit, $offset)->map(fn ($user) => new UserObject($user, $blog));

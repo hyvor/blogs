@@ -1,9 +1,11 @@
 <script lang="ts">
-	import { Modal, SplitControl, TextInput } from "@hyvor/design/components";
+	import { Modal, SplitControl, TextInput, toast } from "@hyvor/design/components";
 	import ImageSetting from "../../@components/ImageSetting.svelte";
 	import type { User, UserVariant } from "../../../../lib/types";
 	import VariantInput from "../../@components/VariantInput/VariantInput.svelte";
 	import UserSlug from "./UserSlug.svelte";
+	import { updateUser, updateUserVariant } from "../userActions";
+	import { createEventDispatcher } from "svelte";
 
     export let user: User;
     export let show: boolean;
@@ -25,15 +27,83 @@
 
     function handleVariantChange(key: keyof UserVariant, e: CustomEvent<{languageId: number, value: string}>) {
         variantChanges[e.detail.languageId] = {
+            ...(variantChanges[e.detail.languageId] || {}),
             [key]: e.detail.value,
         }
     }
 
     let isUpdating = false;
 
-    function handleUpdate() {
+    const dispatch = createEventDispatcher<{update: User}>();
 
-        
+    async function handleUpdate() {
+
+        isUpdating = true;
+
+        if (Object.keys(variantChanges).length > 0) {
+            for (const [languageId, changes] of Object.entries(variantChanges)) {
+                try {
+                    await updateUserVariant(user.id, Number(languageId), changes);
+                } catch (e: any) {
+                    toast.error(e.message);
+                    isUpdating = false;
+                    return;
+                }
+            }
+        }
+
+        const updates : Partial<User> = {};
+
+        if (pictureUrl !== user.picture_url) {
+            updates.picture_url = pictureUrl;
+        }
+        if (slug !== user.slug) {
+            updates.slug = slug;
+        }
+        if (email !== user.email) {
+            updates.email = email;
+        }
+        if (websiteUrl !== (user.website_url || '')) {
+            updates.website_url = websiteUrl;
+        }
+
+        if (socialFacebook !== (user.social_facebook || '')) {
+            updates.social_facebook = socialFacebook;
+        }
+        if (socialTwitter !== (user.social_twitter || '')) {
+            updates.social_twitter = socialTwitter;
+        }
+        if (socialLinkedin !== (user.social_linkedin || '')) {
+            updates.social_linkedin = socialLinkedin;
+        }
+        if (socialYoutube !== (user.social_youtube || '')) {
+            updates.social_youtube = socialYoutube;
+        }
+        if (socialTiktok !== (user.social_tiktok || '')) {
+            updates.social_tiktok = socialTiktok;
+        }
+        if (socialInstagram !== (user.social_instagram || '')) {
+            updates.social_instagram = socialInstagram;
+        }
+        if (socialGithub !== (user.social_github || '')) {
+            updates.social_github = socialGithub;
+        }
+
+
+        updateUser(user.id, updates)
+            .then(res => {
+                toast.success('User updated');
+                show = false;
+                dispatch('update', res);
+            })
+            .catch(e => {
+                toast.error(e.message);
+            })
+            .finally(() => {
+                isUpdating = false;
+            });
+
+        isUpdating = false;
 
     }
 
@@ -122,6 +192,7 @@
 
     <SplitControl
         label="Social Links"
+        caption="Add absolute URLs with protocol (https://)"
     >
 
         <div slot="nested">
