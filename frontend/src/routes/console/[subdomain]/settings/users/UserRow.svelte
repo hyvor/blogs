@@ -4,6 +4,7 @@
 	import { IconPencilFill, IconTrash } from "@hyvor/icons";
 	import { createEventDispatcher } from "svelte";
 	import { deleteUser } from "./userActions";
+	import UpdateUser from "./Update/UpdateUser.svelte";
 
     export let user: User;
 
@@ -11,7 +12,7 @@
 
     let isEditing = false;
 
-    const dispatch = createEventDispatcher();
+    const dispatch = createEventDispatcher<{delete: number, update: User}>();
 
     async function handleDelete() {
         if (await confirm({
@@ -40,11 +41,11 @@
 <TableRow>
     <div>
         <div>{ variant?.name }</div>
-    </div>
-    <div>
-        <Link href={variant?.url || ''} target="_blank">
-            {user.slug}
-        </Link>
+        <div class="slug">
+            <Link href={variant?.url || ''} target="_blank">
+                {user.slug}
+            </Link>
+        </div>
     </div>
     <div>
         {#if user.hyvor_user_id}
@@ -70,8 +71,7 @@
 
         <Tooltip text="Edit user data">
             <IconButton
-                variant="fill-light" 
-                color="gray"
+                color="input"
                 size="small"
                 on:click={() => isEditing = true}
             >
@@ -81,9 +81,8 @@
 
         {#if user.role !== 'owner'}
             <Tooltip text="Delete user">
-                <IconButton 
-                    variant="fill-light" 
-                    color="red" 
+                <IconButton
+                    color="input" 
                     size="small"
                     on:click={handleDelete}
                 >
@@ -107,27 +106,21 @@
     {
         isUpdating && <UpdateUserPopup user={user} onClose={() => setIsUpdating(false)} />
     }
-
-    {
-        isDeleting &&
-        <PopupConfirm
-            title="Remove User"
-            text={
-                <div>
-                    <p>
-                        Please confirm to remove this user from the blog.
-                    </p>
-                    <ul>
-                        <li>The user will be removed as an author from all posts.</li>
-                        <li>Posts created by this user will not be deleted.</li>
-                    </ul>
-                </div>
-            }
-            name="Remove"
-            buttonClass="danger"
-            onClick={handleDelete}
-            onCancel={() => setIsDeleting(false)}
-        />
-    }
  -->
 </TableRow>
+
+{#if isEditing}
+    <UpdateUser 
+        {user}
+        on:update 
+        bind:show={isEditing} 
+    />
+{/if}
+
+
+<style>
+    .slug {
+        margin-top: 2px;
+        font-size:14px;
+    }
+</style>

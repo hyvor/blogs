@@ -218,6 +218,7 @@ Route::prefix('/api/console/v0/blog/{subdomain}')
             Route::post('/user/guest', [ConsoleUserController::class, 'createGuest']);
             Route::patch('/user/{id}', [ConsoleUserController::class, 'update']);
             Route::delete('/user/{id}', [ConsoleUserController::class, 'delete']);
+            Route::get('/user/{id}/slug-available', [ConsoleUserController::class, 'checkSlugAvailability']);
             Route::post('/user/{id}/variant', [ConsoleUserController::class, 'createVariant']);
             Route::patch('/user/{id}/variant', [ConsoleUserController::class, 'updateVariant']);
             Route::delete('/user/{id}/variant', [ConsoleUserController::class, 'deleteVariant']);

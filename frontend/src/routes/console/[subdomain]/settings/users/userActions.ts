@@ -46,3 +46,14 @@ export function createGuestUser(name: string) {
         data: { name }
     });
 }
+
+
+export function checkSlugAvailability(userId: number, slug: string, signal: AbortSignal) {
+    return consoleApi.get<{available: boolean}>({
+        endpoint: `/user/${userId}/slug-available`,
+        data: {
+            slug
+        },
+        signal
+    })
+}

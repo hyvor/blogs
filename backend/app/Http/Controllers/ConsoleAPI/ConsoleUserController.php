@@ -6,11 +6,13 @@ use App\Data\Enums\UserRoleEnum;
 use App\Data\Enums\UserStatusEnum;
 use App\Data\Objects\ConsoleAPI\User\UserObject;
 use App\Data\Objects\ConsoleAPI\User\UserVariantObject;
+use App\Domains\Tag\TagRepository;
 use App\Domains\User\UserRepository;
 use App\Exceptions\TrustedException;
 use App\Http\Controllers\Controller;
 use App\Models\Blog;
 use App\Models\Language;
+use App\Models\Tag;
 use App\Models\User;
 use Hyvor\HyvorConnecter\Userbase;
 use Illuminate\Http\JsonResponse;
@@ -181,6 +183,21 @@ class ConsoleUserController extends Controller
         UserRepository::deleteUser($user);
 
         return response()->json();
+    }
+
+    public function checkSlugAvailability(Request $request, Blog $blog, User $user) : JsonResponse
+    {
+        $request->validate([
+            'slug' => 'required|string',
+        ]);
+
+        $slug = (string) $request->string('slug');
+
+        $slugUser = UserRepository::getUserByBlogIdAndSlug($blog->id, $slug);
+
+        return response()->json([
+            'available' => $slugUser === null || $slugUser->id === $user->id,
+        ]);
     }
 
     public static function createVariant(Blog $blog, User $user, Language $language) : JsonResponse

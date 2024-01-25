@@ -86,10 +86,9 @@
                 <IconMessage empty message="No users found" />
             {:else}
 
-                <Table columns="1fr 1fr 1fr 1fr 1fr 70px">
+                <Table columns="2fr 1fr 1fr 1fr 70px">
                     
                     <TableRow head>
-                        <div>Name</div>
                         <div>Slug</div>
                         <div>Status</div>
                         <div>Role</div>
