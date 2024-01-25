@@ -4,11 +4,12 @@
 	import consoleApi from "./lib/consoleApi";
 	import type { AuthUser, BlogList } from "./lib/types";
 	import { authUserStore, blogListStore } from "./lib/stores";
-	import { Loader } from "@hyvor/design/components";
+	import { Loader, toast } from "@hyvor/design/components";
 	import { goto } from "$app/navigation";
     import { page } from '$app/stores';
 	import { setConfig, type Config } from "./lib/config";
 	import { isTempStore } from "./lib/temp";
+	import { APP_URL } from "../../lib";
 
     interface InitResponse {
         user: AuthUser,
@@ -43,6 +44,15 @@
             }
 
             isLoading = false;
+        }).catch(err => {
+
+            if (err.code === 401) {
+                const toPage = $page.url.searchParams.has('signup') ? 'signup' : 'login';
+                location.href = APP_URL + `/api/auth/${toPage}?redirect=` + encodeURIComponent(location.href);
+            } else {
+                toast.error(err.message);
+            }
+
         })
 
     })

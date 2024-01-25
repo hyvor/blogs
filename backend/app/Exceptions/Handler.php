@@ -3,6 +3,7 @@
 namespace App\Exceptions;
 
 use Hyvor\FilterQ\Exceptions\FilterQException;
+use Hyvor\Helper\Http\Exceptions\HttpException;
 use Illuminate\Foundation\Exceptions\Handler as ExceptionHandler;
 use Illuminate\Validation\ValidationException;
 use Sentry\Laravel\Integration;
@@ -68,7 +69,8 @@ class Handler extends ExceptionHandler
 
                     $error =
                         $exception instanceof TrustedException ||
-                        $exception instanceof FilterQException
+                        $exception instanceof FilterQException ||
+                        $exception instanceof HttpException
                         ?
                         $exception->getMessage() :
                         'Something went wrong on our side.';
@@ -84,7 +86,7 @@ class Handler extends ExceptionHandler
 
                     return response()->json([
                         'error' => $error,
-                        'error_code' => $code,
+                        'code' => $code,
                     ], $httpCode);
                 }
             } else {
