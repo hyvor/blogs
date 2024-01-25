@@ -83,3 +83,9 @@ export function createUserVariant(userId: number, languageId: number) {
         }
     })
 }
+
+export function resendInvitation(userId: number) {
+    return consoleApi.post<User>({
+        endpoint: `/user/${userId}/resend-invite`
+    })
+}
