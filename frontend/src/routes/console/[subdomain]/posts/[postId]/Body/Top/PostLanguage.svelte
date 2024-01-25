@@ -5,6 +5,7 @@
 	import { IconCaretDown } from "@hyvor/icons";
 	import type { Language } from "../../../../../lib/types";
 	import { createPostVariant } from "../../../postActions";
+	import { goto } from "$app/navigation";
 
     let showDropdown = false;
     let isCreatingVariant = false;
@@ -12,6 +13,10 @@
     function handleSelect(lang: Language) {
         if (lang.id === $postLanguageStore.id) return;
         showDropdown = false;
+
+        // this triggers navigation
+        // which will check for unsaved changes
+        goto('?lang=' + lang.code, {replaceState: true});
 
         if (getVariantOfLanguage(lang.id)) {
             // has the variant
@@ -95,6 +100,9 @@
 <style>
     .wrap {
         padding: 10px;
+    }
+    .wrap :global(.dropdown .content-wrap) {
+        z-index: 11;
     }
     .status {
         text-transform: capitalize;

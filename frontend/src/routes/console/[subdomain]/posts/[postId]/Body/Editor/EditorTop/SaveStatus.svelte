@@ -40,7 +40,7 @@
     let autoSaveInterval: ReturnType<typeof setInterval>;
 
     onMount(() => {
-        addEditorEventListener('blur', save);
+        // addEditorEventListener('blur', save);
         autoSaveInterval = setInterval(save, 15000);
     });
 
