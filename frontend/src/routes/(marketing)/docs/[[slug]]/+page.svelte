@@ -17,21 +17,18 @@
 </svelte:head>
 
 <Docs>
-
     <Nav slot="nav">
         {#each categories as category}
             <NavCategory name={category.name}>
-                {#each category.items as item}
+                {#each category.pages as page}
                     <NavItem 
-                        href={item.slug === '' ? '/docs' : `/docs/${item.slug}`}
-                    >{item.name}</NavItem>
+                        href={page.slug === '' ? '/docs' : `/docs/${page.slug}`}
+                    >{page.name}</NavItem>
                 {/each}
             </NavCategory>
         {/each}
     </Nav>
-
     <Content slot="content">
         <svelte:component this={data.component} />
     </Content>
-
 </Docs>

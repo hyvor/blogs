@@ -1,18 +1,18 @@
 import { error } from "@sveltejs/kit";
-import { items } from "./docs";
+import { pages } from "./docs";
 
 export async function load({ params }) {
 
     const slug = params.slug;
-    const item = slug === undefined ? items[0] : items.find(item => item.slug === slug);
+    const page = slug === undefined ? pages[0] : pages.find(p => p.slug === slug);
 
-    if(!item) {
+    if(!page) {
         error(404, 'Not found');
     }
 
     return {
         slug: params.slug,
-        name: item.name,
-        component: item.component
+        name: page.name,
+        component: page.component
     }
 }
