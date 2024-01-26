@@ -6,12 +6,12 @@
 	import PublishedOverlay from "./PublishedOverlay.svelte";
 	import type { PostVariant } from "../../../../../lib/types";
 	import { handleEditorEventHandlers, type ProsemirrorEventDispatchType } from "./editorEvents";
-	import { get } from "svelte/store";
 
     $: uniqueKey = `${$postVariantStore.id}` +
         `-lang-${$postEditingStatusStore.languageId}` +
         `-key-${$postCurrentContentKey}` + 
-        `-is-editing-published-${Number($postEditingStatusStore.isEditingPublished)}`;
+        `-is-editing-published-${Number($postEditingStatusStore.isEditingPublished)}` +
+        `-version-${$postEditingStatusStore.editorVersion}`;
 
     function handleChange(e: CustomEvent<string>) {
 

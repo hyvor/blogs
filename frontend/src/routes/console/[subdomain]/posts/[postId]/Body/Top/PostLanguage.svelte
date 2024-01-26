@@ -102,7 +102,7 @@
         padding: 10px;
     }
     .wrap :global(.dropdown .content-wrap) {
-        z-index: 11;
+        z-index: 11!important;
     }
     .status {
         text-transform: capitalize;

@@ -2,6 +2,7 @@
 	import { onMount } from "svelte";
 	import SaveStatus from './SaveStatus.svelte';
 	import PublishedEditingStatus from "./PublishedEditingStore/PublishedEditingStatus.svelte";
+	import AutoTranslate from "./AutoTranslate/AutoTranslate.svelte";
 
     let el: HTMLDivElement;
     let parent: HTMLDivElement;
@@ -41,6 +42,7 @@
     </div>
 
     <div class="right">
+        <AutoTranslate />
         <!-- see plugin-wordocount.ts -->
         <span id="pm-word-count" />
     </div>

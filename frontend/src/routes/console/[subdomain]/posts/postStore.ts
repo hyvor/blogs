@@ -18,7 +18,8 @@ export interface PostEditingStatus {
     isEditingPublished: boolean,
     editorView: EditorView | null,
     postView: HTMLDivElement,
-    isSaving: boolean
+    isSaving: boolean,
+    editorVersion: number, // to force re-rendering of editor
 }
 
 export const postEditingStatusStore = writable<PostEditingStatus>();
@@ -31,6 +32,7 @@ export function initPostEditingState(postView: HTMLDivElement) {
         editorView: null,
         postView,
         isSaving: false,
+        editorVersion: 0
     })
 }
 
@@ -39,6 +41,15 @@ export function updatePostEditingStatusValue<T extends keyof PostEditingStatus>(
         return {
             ...status,
             [key]: value
+        }
+    })
+}
+
+export function increaseEditorVersion() {
+    postEditingStatusStore.update(status => {
+        return {
+            ...status,
+            editorVersion: status.editorVersion + 1
         }
     })
 }
