@@ -28,55 +28,9 @@ export const categories = [
                 name: 'Writing',
                 component: Writing,
             }
-
         ]
     },
 
-    {
-        name: 'Features',
-        items: [
-
-            {
-                slug: 'services',
-                name: 'Services',
-                component: Services
-            }
-        ]
-
-    },
-
-    {
-        name: 'Hosting',
-        pages: [
-            {
-                slug: 'custom-domain',
-                name: 'Custom  Domain',
-                component: CustomDomain,
-            },
-            {
-                slug: 'subdirectory',
-                name: 'Subdirectory',
-                component: SubDirectoryHosting,
-            }
-        ]
-    },
-
-    {
-        name: 'Legal',
-        items: [
-            {
-                slug: 'terms',
-                name: 'Terms',
-                component: Terms,
-            },
-            {
-                slug: 'privacy-policy',
-                name: 'Privacy Policy',
-                component: PrivacyPolicy,
-            }
-        ]
-    },
-  
     {
         name: 'Features',
         pages: [
@@ -99,9 +53,46 @@ export const categories = [
                 slug: 'media',
                 name: 'Media',
                 component: Media,
+            },
+            {
+                slug: 'services',
+                name: 'Services',
+                component: Services
             }
         ]
-    }
+    },
+
+    {
+        name: 'Hosting',
+        pages: [
+            {
+                slug: 'custom-domain',
+                name: 'Custom  Domain',
+                component: CustomDomain,
+            },
+            {
+                slug: 'subdirectory',
+                name: 'Subdirectory',
+                component: SubDirectoryHosting,
+            }
+        ]
+    },
+
+    {
+        name: 'Legal',
+        pages: [
+            {
+                slug: 'terms',
+                name: 'Terms',
+                component: Terms,
+            },
+            {
+                slug: 'privacy-policy',
+                name: 'Privacy Policy',
+                component: PrivacyPolicy,
+            }
+        ]
+    },
     
     
 ] as Category[];
