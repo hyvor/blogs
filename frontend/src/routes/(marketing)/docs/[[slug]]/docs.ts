@@ -3,6 +3,9 @@ import Introduction from "./content/Introduction.svelte";
 import Writing from "./content/writing/Writing.svelte";
 import CustomDomain from "./content/custom-domain/CustomDomain.svelte";
 import SubDirectoryHosting from "./content/subdirectory/SubDirectoryHosting.svelte";
+import Seo from "./content/seo/Seo.svelte";
+import Fonts from "./content/fonts/Fonts.svelte";
+import Redirect from "./content/redirect/Redirect.svelte";
 
 export const categories = [
 
@@ -37,6 +40,27 @@ export const categories = [
                 slug: 'subdirectory',
                 name: 'Subdirectory',
                 component: SubDirectoryHosting,
+            }
+        ]
+    },
+
+    {
+        name: 'Features',
+        pages: [
+            {
+                slug: 'fonts',
+                name: 'Fonts',
+                component: Fonts,
+            },
+            {
+                slug: 'seo',
+                name: 'SEO',
+                component: Seo
+            },
+            {
+                slug: 'redirects',
+                name: 'Redirects',
+                component: Redirect,
             }
         ]
     }
