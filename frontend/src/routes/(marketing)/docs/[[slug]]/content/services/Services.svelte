@@ -1,0 +1,232 @@
+<script lang="ts">
+    import { Callout, TabNav, TabNavItem, Table, TableRow, Link } from "@hyvor/design/components";
+	import { IconBoxArrowInUpRight } from "@hyvor/icons";
+    let active = 'comments';
+</script>
+<h1>Services</h1>
+
+<TabNav bind:active={active}>
+    <TabNavItem name="comments">
+        Comments
+    </TabNavItem>
+
+    <TabNavItem name="newsletter">
+        Newsletter
+    </TabNavItem>
+
+    <TabNavItem name="analytics">
+        Analytics
+    </TabNavItem>
+
+    <TabNavItem name="memberships">
+        Memberships
+    </TabNavItem>
+
+    <TabNavItem name="forms">
+        Forms
+    </TabNavItem>
+
+</TabNav>
+
+{#if active === 'comments'}
+    <div>
+        <p>Adding a commenting system to your blog means your readers have a way to share their opinions and participate in conversations in the blog. It can increase the authority of your blog.</p>
+        <p>Because comments are dynamic, Hyvor Blogs does not come with an in-built commenting system. However, HB integrates well with its sister product, Hyvor Talk. Hyvor Talk also comes with a reactions and a ratings widget. We invite you to visit HT website, and see its unique features to see if it fits with your needs.</p>
+        
+        <Callout type="info">
+            Please note that HB and HT operates independently. Therefore, if you choose to use HT, you will need a separate subscription for that. If you have multiple websites, you can use Hyvor Talk on all of them with one subscription. Hyvor Talk charges based on pageviews not the number of websites.
+        </Callout>
+        <p>Comments Settings: <b>Console → Settings → Comments & Newsletter</b>.</p>
+
+        <h2>Adding Comments</h2>
+            <p>To add comments to your blog, you need to add the code given by the commenting system in the "Comments Embed Code" field. This will add the comments to the bottom of each post. You can find the code in the commenting system's dashboard.</p>
+            <p>Here are some popular commenting systems:</p>
+            <ul>
+                <li><a href="https://talk.hyvor.com" target="_blank">Hyvor Talk</a></li>
+                <li><a href="https://disqus.com" target="_blank">Disqus</a></li>
+                <li><a href="https://commento.io" target="_blank">Commento</a></li>
+                <li><a href="https://getreplybox.com/">GetReplyBox</a></li>
+            </ul>
+            <p>You can also customize the theme to add the embed code manually.</p>
+    </div>
+
+{:else if active === 'newsletter'}
+    <div>
+        <p>A newsletter is a great way to build an audience and share valuable information.</p>
+
+        <h2>Adding</h2>
+        <p>To add an email signup form to your blog,</p>
+            <ul>
+                <li>First, signup for a <a href="https://blogs.hyvor.com/docs/newsletter#services">newsletter service</a>.</li>
+                <li>Copy the given HTML code.</li>
+                <li>Paste it in <b>Console → Settings → Comments & Newsletter → Newsletter Signup Form Code</b>.</li>
+            </ul>
+
+        <h2>Positioning</h2>
+        <p>
+            All Hyvor Blogs <a href="https://blogs.hyvor.com/themes">themes</a> are designed to have a place for the newsletter signup form. If you want to change this position, you will need to <a href="https://blogs.hyvor.com/docs/theme#editing">edit your theme</a>, and change the position of the newsletter <a href="https://blogs.hyvor.com/docs/themes-templates#placeholders">placeholder</a>. In your template files, find and cut this code <code>{`{{ _newsletter | template }}`}</code>, and paste it in the place you need the signup form to be.
+        </p>
+
+        <h2>Newsletter Services</h2>
+
+        <Table columns= "1fr 1fr" hover>
+            <TableRow head>
+                <div>Service</div>
+                <div>Integration Tutorial</div>
+            </TableRow>
+
+            <TableRow>
+                <div><a href="https://convertkit.com/">ConvertKit</a></div>
+                <div><Link href="https://hyvor.com/blog/add-convertkit"><IconBoxArrowInUpRight slot="end" />View</Link></div>
+            </TableRow>
+            <TableRow>
+                <div><a href="https://mailchimp.com/en-gb/">MailChimp</a></div>
+                <div><Link href="https://hyvor.com/blog/how-to-add-mailchimp"><IconBoxArrowInUpRight slot="end" />View</Link></div>
+            </TableRow>
+            <TableRow>
+                <div><a href="https://emailoctopus.com/">EmailOctopus</a></div>
+                <!-- <div><Link href="https://hyvor.com/blog/how-to-add-mailchimp"><IconBoxArrowInUpRight slot="end" />View</Link></div> -->
+            </TableRow>
+            <TableRow><div><a href="https://moosend.com/">Mossend</a></div></TableRow>
+            <TableRow><div><a href="https://www.mailerlite.com/">MailerLite</a></div></TableRow>
+
+        </Table>
+           
+            <p>We are not affiliated with any of these services. There are plenty of other newsletter services not mentioned here.</p>
+    </div>
+
+{:else if active === 'analytics'}
+    <div>
+        <p>It is cool to know some metrics about how much traffic your blog gets. You can easily integrate analytic services to the blog using custom code.</p>
+
+        <h2>How to Add</h2>
+            <ul>
+                <li>First, signup for an <a href="https://blogs.hyvor.com/docs/analytics#services">analytic service</a>.</li>
+                <li>Copy the given HTML code.</li>
+                <li>Paste it in <b>Console → Settings → Custom Code → Foot Code</b>.</li>
+            </ul>
+
+        <h2>Analytics Services</h2>
+        <Table columns= "1fr 1fr" hover>
+            <TableRow head>
+                <div>Service</div>
+                <div>Blog Tutorial</div>
+            </TableRow>
+
+            <TableRow>
+                <div><a href="https://analytics.google.com/analytics">Google Analytics</a></div>
+                <div><Link href="https://hyvor.com/blog/add-google-analytics-to-your-blog"><IconBoxArrowInUpRight slot="end" />View</Link></div>
+            </TableRow>
+            <TableRow>
+                <div><a href="https://www.cloudflare.com/analytics">Cloudflare Analytics</a></div>
+            </TableRow>
+            <TableRow>
+                <div><a href="https://matomo.org/">Matomo</a></div>
+            </TableRow>
+            <TableRow>
+                <div><a href="https://usefathom.com/">Fathom</a></div>
+            </TableRow>
+            <TableRow><div><a href="https://plausible.io/">Plausible Analytics</a></div></TableRow>
+            <TableRow><div><a href="https://simpleanalytics.io/">Simple Analytics</a></div></TableRow>
+            <TableRow><div><a href="https://posthog.com/">Posthog</a></div></TableRow>
+        </Table>
+
+        <p>We are not affiliated with any of these services. There are plenty of other analytics tools not mentioned here.</p>
+
+        <h2>Privacy</h2>
+        <p>Some of those platforms track <b>users</b> while others only track <b>visits</b>. Before tracking users, you will need the user's consent (Using a <b>cookie banner</b>). Please consult the documentations of each service to learn more about how they handle personal data.</p>
+    </div>
+
+{:else if active === 'memberships'}
+    <div>
+        <p>Adding memberships (login, signup, subscriptions, etc.) is an easy way to allow your readers to log in to your blog, as well as for you to provide gated content and earn a subscription revenue. Because these feature are dynamic, Hyvor Blogs does not and will not support memberships natively, as we thrive to make your blog static.</p>
+
+        <h2>Membership Platforms</h2>
+
+            <Table columns="1fr 1fr" hover>
+                <TableRow head>
+                    <div>Service</div>
+                    <div>Blog Tutorial</div>
+                </TableRow>
+
+                <TableRow>
+                    <div><a href="https://memberstack.com/">Memberstack</a></div>
+                    <div><Link href="https://hyvor.com/blog/add-memberstack"><IconBoxArrowInUpRight slot="end" />View</Link></div>
+                </TableRow>
+
+                <TableRow>
+                    <div><a href="https://www.memberspace.com/">Memberspace</a></div>
+                    <!-- <div><Link href="https://hyvor.com/blog/add-memberspace"><IconBoxArrowInUpRight slot="end" />View</Link></div> -->
+                </TableRow>
+            </Table>
+
+            <Callout type="info">Note that integrating these platforms, in most cases, requires you to write Javascript code. If you just want to connect with your users, embedding a <a href="https://blogs.hyvor.com/docs/newsletter">newsletter</a> signup form would be a better and easy option.</Callout>
+
+    </div>
+
+{:else}
+    <div>
+        <p>You may want to collect data from your visitors. Embedding a forms service is the easier way to do that.</p>
+
+        <h2>How to Embed Forms</h2>
+            <ul>
+                <li>First, signup for a <a href="https://blogs.hyvor.com/docs/forms#forms">forms services</a>. They allow you to create custom forms as you like</li>
+                <li>Then, add the form embed code to your blog:</li>
+                    <ul>
+                        <li>To add a form to a post or page, use <a href="https://blogs.hyvor.com/docs/writing#custom-html">custom HTML/Twig blocks</a>.</li>
+                        <li>To add a form to a specific place in the blog, you will need to <a href="https://blogs.hyvor.com/docs/theme#editing">edit the theme</a>.</li>
+                    </ul>
+            </ul>
+
+        <h2>Forms Services</h2>
+
+            <Table columns="1fr 1fr">
+                <TableRow head>
+                    <div>Service</div>
+                    <div>Blog Tutorial</div>
+                </TableRow>
+
+                <TableRow>
+                    <div><a href="https://www.google.com/forms">Google Forms</a></div>
+                    <div><Link href="https://hyvor.com/blog/add-google-forms"><IconBoxArrowInUpRight slot="end" />View</Link></div>
+                </TableRow>
+
+                <TableRow>
+                    <div><a href="https://forms.office.com/">Microsoft Forms</a></div>
+                    <div><Link href="https://hyvor.com/blog/add-microsoft-forms"><IconBoxArrowInUpRight slot="end" />View</Link></div>
+                </TableRow>
+
+                <TableRow>
+                    <div><a href="https://www.typeform.com/">Typeform</a></div>
+                    <div><Link href="https://hyvor.com/blog/add-microsoft-forms"><IconBoxArrowInUpRight slot="end" />View</Link></div>
+                </TableRow>
+
+                <TableRow>
+                    <div><a href="https://www.wufoo.com/">Wufoo</a></div>
+                    <div><Link href="https://hyvor.com/blog/add-wufoo"><IconBoxArrowInUpRight slot="end" />View</Link></div>
+                </TableRow>
+
+                <TableRow>
+                    <div><a href="https://www.jotform.com/">JotForm</a></div>
+                </TableRow>
+
+                <TableRow>
+                    <div><a href="https://www.formsite.com/">Formsite</a></div>
+                </TableRow>
+
+                <TableRow>
+                    <div><a href="https://paperform.co/">Paperform</a></div>
+                </TableRow>
+
+                <TableRow>
+                    <div><a href="https://www.zoho.com/forms/">Zoho Forms</a></div>
+                </TableRow>
+            </Table>
+
+            <p>We are not affiliated with any of these services. There are plenty of other forms services not mentioned here.</p>
+    </div>
+{/if}
+
+
+
+
