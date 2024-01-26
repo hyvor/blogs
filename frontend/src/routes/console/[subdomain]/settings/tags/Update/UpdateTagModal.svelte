@@ -149,7 +149,6 @@
 
             <SplitControl
                 label="Head Code"
-                caption="Added to the head of"
                 column
             >
 
@@ -164,7 +163,6 @@
 
             <SplitControl
                 label="Foot Code"
-                caption="Added to the head of"
                 column
             >
 
