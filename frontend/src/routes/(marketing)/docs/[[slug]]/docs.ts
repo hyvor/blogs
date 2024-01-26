@@ -6,6 +6,7 @@ import SubDirectoryHosting from "./content/subdirectory/SubDirectoryHosting.svel
 import Seo from "./content/seo/Seo.svelte";
 import Fonts from "./content/fonts/Fonts.svelte";
 import Redirect from "./content/redirect/Redirect.svelte";
+import Media from "./content/media/Media.svelte";
 
 export const categories = [
 
@@ -61,6 +62,11 @@ export const categories = [
                 slug: 'redirects',
                 name: 'Redirects',
                 component: Redirect,
+            },
+            {
+                slug: 'media',
+                name: 'Media',
+                component: Media,
             }
         ]
     }
