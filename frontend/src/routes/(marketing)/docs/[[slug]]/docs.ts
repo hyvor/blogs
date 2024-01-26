@@ -8,7 +8,7 @@ export const categories = [
 
     {
         name: 'Intro',
-        items: [
+        pages: [
 
             {
                 slug: '',
@@ -27,7 +27,7 @@ export const categories = [
 
     {
         name: 'Hosting',
-        items: [
+        pages: [
             {
                 slug: 'custom-domain',
                 name: 'Custom  Domain',
@@ -44,16 +44,14 @@ export const categories = [
 ] as Category[];
 
 
-export const items = categories.reduce((acc, category) => {
-    return acc.concat(category.items);
-}, [] as Item[]);
+export const pages = categories.reduce((acc, category) => acc.concat(category.pages), [] as Page[]);
 
 interface Category {
     name: string,
-    items: Item[]
+    pages: Page[]
 }
 
-interface Item {
+interface Page {
     slug: string,
     name: string,
     component: ComponentType
