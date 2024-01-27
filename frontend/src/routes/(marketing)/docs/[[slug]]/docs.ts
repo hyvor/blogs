@@ -5,11 +5,12 @@ import CustomDomain from "./content/custom-domain/CustomDomain.svelte";
 import SubDirectoryHosting from "./content/subdirectory/SubDirectoryHosting.svelte";
 import Services from "./content/services/Services.svelte";
 import Terms from "./content/terms/Terms.svelte";
-import PrivacyPolicy from "./content/prrivacy-policy/PrivacyPolicy.svelte";
+import PrivacyPolicy from "./content/privacy-policy/PrivacyPolicy.svelte";
 import Seo from "./content/seo/Seo.svelte";
 import Fonts from "./content/fonts/Fonts.svelte";
 import Redirect from "./content/redirect/Redirect.svelte";
 import Media from "./content/media/Media.svelte";
+import Routes from "./content/routes/Routes.svelte";
 
 export const categories = [
 
@@ -58,6 +59,11 @@ export const categories = [
                 slug: 'services',
                 name: 'Services',
                 component: Services
+            },
+            {
+                slug: 'routes',
+                name: 'Routes',
+                component:Routes
             }
         ]
     },

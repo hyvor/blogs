@@ -1,6 +1,6 @@
 <script lang="ts">
     import { Callout, TabNav, TabNavItem, Table, TableRow, Link } from "@hyvor/design/components";
-	import { IconBoxArrowInUpRight } from "@hyvor/icons";
+	import { IconBoxArrowUpRight } from '@hyvor/icons';
     let active = 'comments';
 </script>
 <h1>Services</h1>
@@ -31,12 +31,17 @@
 {#if active === 'comments'}
     <div>
         <p>Adding a commenting system to your blog means your readers have a way to share their opinions and participate in conversations in the blog. It can increase the authority of your blog.</p>
-        <p>Because comments are dynamic, Hyvor Blogs does not come with an in-built commenting system. However, HB integrates well with its sister product, Hyvor Talk. Hyvor Talk also comes with a reactions and a ratings widget. We invite you to visit HT website, and see its unique features to see if it fits with your needs.</p>
+        <p><a href="https://talk.hyvor.com">Hyvor Talk</a> is our own commenting platform. Hyvor Blogs integrates with Hyvor Talk directly to allow comments on your blog. You can use Hyvor Talk for <b>FREE</b> starting from <a href="/pricing">Growth Plan</a>.</p>
         
-        <Callout type="info">
-            Please note that HB and HT operates independently. Therefore, if you choose to use HT, you will need a separate subscription for that. If you have multiple websites, you can use Hyvor Talk on all of them with one subscription. Hyvor Talk charges based on pageviews not the number of websites.
-        </Callout>
-        <p>Comments Settings: <b>Console → Settings → Comments & Newsletter</b>.</p>
+       <!--  <Callout type="info">
+            <ul>
+                <li>Connect your blog to Hyvor Talk, It's easy and fast</li>
+                <li>Use the same HYVOR account (for the owner)</li>
+                <li>Completely free</li>
+                <li>Fast, secure, and privacy-focused</li>
+                </ul>
+        </Callout> -->
+        <p>Comments Settings: <b>Console → Integrations → Hyvor Talk</b>.</p>
 
         <h2>Adding Comments</h2>
             <p>To add comments to your blog, you need to add the code given by the commenting system in the "Comments Embed Code" field. This will add the comments to the bottom of each post. You can find the code in the commenting system's dashboard.</p>
@@ -77,11 +82,11 @@
 
             <TableRow>
                 <div><a href="https://convertkit.com/">ConvertKit</a></div>
-                <div><Link href="https://hyvor.com/blog/add-convertkit"><IconBoxArrowInUpRight slot="end" />View</Link></div>
+                <div><Link href="https://hyvor.com/blog/add-convertkit"><IconBoxArrowUpRight slot="end" />View</Link></div>
             </TableRow>
             <TableRow>
                 <div><a href="https://mailchimp.com/en-gb/">MailChimp</a></div>
-                <div><Link href="https://hyvor.com/blog/how-to-add-mailchimp"><IconBoxArrowInUpRight slot="end" />View</Link></div>
+                <div><Link href="https://hyvor.com/blog/how-to-add-mailchimp"><IconBoxArrowUpRight slot="end" />View</Link></div>
             </TableRow>
             <TableRow>
                 <div><a href="https://emailoctopus.com/">EmailOctopus</a></div>
@@ -115,7 +120,7 @@
 
             <TableRow>
                 <div><a href="https://analytics.google.com/analytics">Google Analytics</a></div>
-                <div><Link href="https://hyvor.com/blog/add-google-analytics-to-your-blog"><IconBoxArrowInUpRight slot="end" />View</Link></div>
+                <div><Link href="https://hyvor.com/blog/add-google-analytics-to-your-blog"><IconBoxArrowUpRight slot="end" />View</Link></div>
             </TableRow>
             <TableRow>
                 <div><a href="https://www.cloudflare.com/analytics">Cloudflare Analytics</a></div>
@@ -151,7 +156,7 @@
 
                 <TableRow>
                     <div><a href="https://memberstack.com/">Memberstack</a></div>
-                    <div><Link href="https://hyvor.com/blog/add-memberstack"><IconBoxArrowInUpRight slot="end" />View</Link></div>
+                    <div><Link href="https://hyvor.com/blog/add-memberstack"><IconBoxArrowUpRight slot="end" />View</Link></div>
                 </TableRow>
 
                 <TableRow>
@@ -160,7 +165,7 @@
                 </TableRow>
             </Table>
 
-            <Callout type="info">Note that integrating these platforms, in most cases, requires you to write Javascript code. If you just want to connect with your users, embedding a <a href="https://blogs.hyvor.com/docs/newsletter">newsletter</a> signup form would be a better and easy option.</Callout>
+            <Callout type="info"><p>Note that integrating these platforms, in most cases, requires you to write Javascript code. If you just want to connect with your users, embedding a <a href="https://blogs.hyvor.com/docs/newsletter">newsletter</a> signup form would be a better and easy option.</p></Callout>
 
     </div>
 
@@ -188,22 +193,22 @@
 
                 <TableRow>
                     <div><a href="https://www.google.com/forms">Google Forms</a></div>
-                    <div><Link href="https://hyvor.com/blog/add-google-forms"><IconBoxArrowInUpRight slot="end" />View</Link></div>
+                    <div><Link href="https://hyvor.com/blog/add-google-forms"><IconBoxArrowUpRight slot="end" />View</Link></div>
                 </TableRow>
 
                 <TableRow>
                     <div><a href="https://forms.office.com/">Microsoft Forms</a></div>
-                    <div><Link href="https://hyvor.com/blog/add-microsoft-forms"><IconBoxArrowInUpRight slot="end" />View</Link></div>
+                    <div><Link href="https://hyvor.com/blog/add-microsoft-forms"><IconBoxArrowUpRight slot="end" />View</Link></div>
                 </TableRow>
 
                 <TableRow>
                     <div><a href="https://www.typeform.com/">Typeform</a></div>
-                    <div><Link href="https://hyvor.com/blog/add-microsoft-forms"><IconBoxArrowInUpRight slot="end" />View</Link></div>
+                    <div><Link href="https://hyvor.com/blog/add-microsoft-forms"><IconBoxArrowUpRight slot="end" />View</Link></div>
                 </TableRow>
 
                 <TableRow>
                     <div><a href="https://www.wufoo.com/">Wufoo</a></div>
-                    <div><Link href="https://hyvor.com/blog/add-wufoo"><IconBoxArrowInUpRight slot="end" />View</Link></div>
+                    <div><Link href="https://hyvor.com/blog/add-wufoo"><IconBoxArrowUpRight slot="end" />View</Link></div>
                 </TableRow>
 
                 <TableRow>

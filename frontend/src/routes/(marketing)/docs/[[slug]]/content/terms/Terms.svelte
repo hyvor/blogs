@@ -7,7 +7,7 @@
 
     <p>Last Updated: 9th of September 2022</p>
     <Callout type="info">
-        HYVOR may revise these terms of use for its service at any time without notice. By using this service you agree to be bound by the then current version of these Terms of Service.
+        <p>HYVOR may revise these terms of use for its service at any time without notice. By using this service you agree to be bound by the then current version of these Terms of Service.</p>
     </Callout>
 
 <p>"We", "us", "Company" means <a href="https://hyvor.com/">HYVOR</a>. "Service" and "Site" means <a href="https://blogs.hyvor.com/">Hyvor Blogs</a>. "You", "Blogger", "Customer" refers to the user/company who uses the Service.</p>
