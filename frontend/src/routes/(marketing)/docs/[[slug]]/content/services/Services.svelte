@@ -47,10 +47,10 @@
             <p>To add comments to your blog, you need to add the code given by the commenting system in the "Comments Embed Code" field. This will add the comments to the bottom of each post. You can find the code in the commenting system's dashboard.</p>
             <p>Here are some popular commenting systems:</p>
             <ul>
-                <li><a href="https://talk.hyvor.com" target="_blank">Hyvor Talk</a></li>
-                <li><a href="https://disqus.com" target="_blank">Disqus</a></li>
-                <li><a href="https://commento.io" target="_blank">Commento</a></li>
-                <li><a href="https://getreplybox.com/">GetReplyBox</a></li>
+                <li><a href="https://talk.hyvor.com" target="_blank" rel="nofollow">Hyvor Talk</a></li>
+                <li><a href="https://disqus.com" target="_blank" rel="nofollow">Disqus</a></li>
+                <li><a href="https://commento.io" target="_blank" rel="nofollow">Commento</a></li>
+                <li><a href="https://getreplybox.com/" rel="nofollow">GetReplyBox</a></li>
             </ul>
             <p>You can also customize the theme to add the embed code manually.</p>
     </div>
@@ -81,19 +81,19 @@
             </TableRow>
 
             <TableRow>
-                <div><a href="https://convertkit.com/">ConvertKit</a></div>
-                <div><Link href="https://hyvor.com/blog/add-convertkit"><IconBoxArrowUpRight slot="end" />View</Link></div>
+                <div><a href="https://convertkit.com/" rel="nofollow" target="_blank">ConvertKit</a></div>
+                <div><Link href="https://hyvor.com/blog/add-convertkit" target="_blank"><IconBoxArrowUpRight slot="end" />View</Link></div>
             </TableRow>
             <TableRow>
-                <div><a href="https://mailchimp.com/en-gb/">MailChimp</a></div>
-                <div><Link href="https://hyvor.com/blog/how-to-add-mailchimp"><IconBoxArrowUpRight slot="end" />View</Link></div>
+                <div><a href="https://mailchimp.com/en-gb/" rel="nofollow" target="_blank">MailChimp</a></div>
+                <div><Link href="https://hyvor.com/blog/how-to-add-mailchimp" target="_blank"><IconBoxArrowUpRight slot="end" />View</Link></div>
             </TableRow>
             <TableRow>
-                <div><a href="https://emailoctopus.com/">EmailOctopus</a></div>
+                <div><a href="https://emailoctopus.com/" rel="nofollow" target="_blank">EmailOctopus</a></div>
                 <!-- <div><Link href="https://hyvor.com/blog/how-to-add-mailchimp"><IconBoxArrowInUpRight slot="end" />View</Link></div> -->
             </TableRow>
-            <TableRow><div><a href="https://moosend.com/">Mossend</a></div></TableRow>
-            <TableRow><div><a href="https://www.mailerlite.com/">MailerLite</a></div></TableRow>
+            <TableRow><div><a href="https://moosend.com/" rel="nofollow" target="_blank">Mossend</a></div></TableRow>
+            <TableRow><div><a href="https://www.mailerlite.com/" rel="nofollow" target="_blank">MailerLite</a></div></TableRow>
 
         </Table>
            
@@ -119,21 +119,21 @@
             </TableRow>
 
             <TableRow>
-                <div><a href="https://analytics.google.com/analytics">Google Analytics</a></div>
-                <div><Link href="https://hyvor.com/blog/add-google-analytics-to-your-blog"><IconBoxArrowUpRight slot="end" />View</Link></div>
+                <div><a href="https://analytics.google.com/analytics" rel="nofollow" target="_blank">Google Analytics</a></div>
+                <div><Link href="https://hyvor.com/blog/add-google-analytics-to-your-blog" target="_blank"><IconBoxArrowUpRight slot="end" />View</Link></div>
             </TableRow>
             <TableRow>
-                <div><a href="https://www.cloudflare.com/analytics">Cloudflare Analytics</a></div>
+                <div><a href="https://www.cloudflare.com/analytics" rel="nofollow" target="_blank">Cloudflare Analytics</a></div>
             </TableRow>
             <TableRow>
-                <div><a href="https://matomo.org/">Matomo</a></div>
+                <div><a href="https://matomo.org/" rel="nofollow" target="_blank">Matomo</a></div>
             </TableRow>
             <TableRow>
-                <div><a href="https://usefathom.com/">Fathom</a></div>
+                <div><a href="https://usefathom.com/" rel="nofollow" target="_blank">Fathom</a></div>
             </TableRow>
-            <TableRow><div><a href="https://plausible.io/">Plausible Analytics</a></div></TableRow>
-            <TableRow><div><a href="https://simpleanalytics.io/">Simple Analytics</a></div></TableRow>
-            <TableRow><div><a href="https://posthog.com/">Posthog</a></div></TableRow>
+            <TableRow><div><a href="https://plausible.io/" rel="nofollow" target="_blank">Plausible Analytics</a></div></TableRow>
+            <TableRow><div><a href="https://simpleanalytics.io/" rel="nofollow" target="_blank">Simple Analytics</a></div></TableRow>
+            <TableRow><div><a href="https://posthog.com/" rel="nofollow" target="_blank">Posthog</a></div></TableRow>
         </Table>
 
         <p>We are not affiliated with any of these services. There are plenty of other analytics tools not mentioned here.</p>
@@ -155,12 +155,12 @@
                 </TableRow>
 
                 <TableRow>
-                    <div><a href="https://memberstack.com/">Memberstack</a></div>
-                    <div><Link href="https://hyvor.com/blog/add-memberstack"><IconBoxArrowUpRight slot="end" />View</Link></div>
+                    <div><a href="https://memberstack.com/" rel="nofollow" target="_blank">Memberstack</a></div>
+                    <div><Link href="https://hyvor.com/blog/add-memberstack" target="_blank"><IconBoxArrowUpRight slot="end" />View</Link></div>
                 </TableRow>
 
                 <TableRow>
-                    <div><a href="https://www.memberspace.com/">Memberspace</a></div>
+                    <div><a href="https://www.memberspace.com/" rel="nofollow" target="_blank">Memberspace</a></div>
                     <!-- <div><Link href="https://hyvor.com/blog/add-memberspace"><IconBoxArrowInUpRight slot="end" />View</Link></div> -->
                 </TableRow>
             </Table>
@@ -192,39 +192,39 @@
                 </TableRow>
 
                 <TableRow>
-                    <div><a href="https://www.google.com/forms">Google Forms</a></div>
-                    <div><Link href="https://hyvor.com/blog/add-google-forms"><IconBoxArrowUpRight slot="end" />View</Link></div>
+                    <div><a href="https://www.google.com/forms" rel="nofollow" target="_blank">Google Forms</a></div>
+                    <div><Link href="https://hyvor.com/blog/add-google-forms" target="_blank"><IconBoxArrowUpRight slot="end" />View</Link></div>
                 </TableRow>
 
                 <TableRow>
-                    <div><a href="https://forms.office.com/">Microsoft Forms</a></div>
-                    <div><Link href="https://hyvor.com/blog/add-microsoft-forms"><IconBoxArrowUpRight slot="end" />View</Link></div>
+                    <div><a href="https://forms.office.com/" rel="nofollow" target="_blank">Microsoft Forms</a></div>
+                    <div><Link href="https://hyvor.com/blog/add-microsoft-forms" target="_blank"><IconBoxArrowUpRight slot="end" />View</Link></div>
                 </TableRow>
 
                 <TableRow>
-                    <div><a href="https://www.typeform.com/">Typeform</a></div>
-                    <div><Link href="https://hyvor.com/blog/add-microsoft-forms"><IconBoxArrowUpRight slot="end" />View</Link></div>
+                    <div><a href="https://www.typeform.com/" rel="nofollow" target="_blank">Typeform</a></div>
+                    <div><Link href="https://hyvor.com/blog/add-microsoft-forms" target="_blank"><IconBoxArrowUpRight slot="end" />View</Link></div>
                 </TableRow>
 
                 <TableRow>
-                    <div><a href="https://www.wufoo.com/">Wufoo</a></div>
-                    <div><Link href="https://hyvor.com/blog/add-wufoo"><IconBoxArrowUpRight slot="end" />View</Link></div>
+                    <div><a href="https://www.wufoo.com/" rel="nofollow" target="_blank">Wufoo</a></div>
+                    <div><Link href="https://hyvor.com/blog/add-wufoo" target="_blank"><IconBoxArrowUpRight slot="end" />View</Link></div>
                 </TableRow>
 
                 <TableRow>
-                    <div><a href="https://www.jotform.com/">JotForm</a></div>
+                    <div><a href="https://www.jotform.com/" rel="nofollow" target="_blank">JotForm</a></div>
                 </TableRow>
 
                 <TableRow>
-                    <div><a href="https://www.formsite.com/">Formsite</a></div>
+                    <div><a href="https://www.formsite.com/" rel="nofollow" target="_blank">Formsite</a></div>
                 </TableRow>
 
                 <TableRow>
-                    <div><a href="https://paperform.co/">Paperform</a></div>
+                    <div><a href="https://paperform.co/" rel="nofollow" target="_blank">Paperform</a></div>
                 </TableRow>
 
                 <TableRow>
-                    <div><a href="https://www.zoho.com/forms/">Zoho Forms</a></div>
+                    <div><a href="https://www.zoho.com/forms/" rel="nofollow" target="_blank">Zoho Forms</a></div>
                 </TableRow>
             </Table>
 

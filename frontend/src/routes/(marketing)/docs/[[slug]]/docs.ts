@@ -13,6 +13,7 @@ import Media from "./content/media/Media.svelte";
 import Routes from "./content/routes/Routes.svelte";
 import CustomCode from "./content/custom-code/CustomCode.svelte";
 import Languages from "./content/languages/Languages.svelte";
+import Export from "./content/export/Export.svelte";
 
 export const categories = [
 
@@ -35,12 +36,33 @@ export const categories = [
     },
 
     {
+        name: 'Hosting',
+        pages: [
+            {
+                slug: 'custom-domain',
+                name: 'Custom  Domain',
+                component: CustomDomain,
+            },
+            {
+                slug: 'subdirectory',
+                name: 'Subdirectory',
+                component: SubDirectoryHosting,
+            }
+        ]
+    },
+
+    {
         name: 'Features',
         pages: [
             {
                 slug: 'languages',
                 name: 'Languages',
                 component: Languages,
+            },
+            {
+                slug: 'media',
+                name: 'Media',
+                component: Media,
             },
             {
                 slug: 'fonts',
@@ -56,11 +78,6 @@ export const categories = [
                 slug: 'redirects',
                 name: 'Redirects',
                 component: Redirect,
-            },
-            {
-                slug: 'media',
-                name: 'Media',
-                component: Media,
             },
             {
                 slug: 'custom-code',
@@ -81,17 +98,16 @@ export const categories = [
     },
 
     {
-        name: 'Hosting',
+        name: 'Data',
         pages: [
             {
-                slug: 'custom-domain',
-                name: 'Custom  Domain',
-                component: CustomDomain,
+                slug: 'export',
+                name: 'Export Data',
+                component: Export,
             },
             {
-                slug: 'subdirectory',
-                name: 'Subdirectory',
-                component: SubDirectoryHosting,
+                slug: 'import-sitemap',
+                name: 'Import from Sitemap'
             }
         ]
     },
