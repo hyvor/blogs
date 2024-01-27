@@ -12,6 +12,7 @@ import Redirect from "./content/redirect/Redirect.svelte";
 import Media from "./content/media/Media.svelte";
 import Routes from "./content/routes/Routes.svelte";
 import CustomCode from "./content/custom-code/CustomCode.svelte";
+import Languages from "./content/languages/Languages.svelte";
 
 export const categories = [
 
@@ -36,6 +37,11 @@ export const categories = [
     {
         name: 'Features',
         pages: [
+            {
+                slug: 'languages',
+                name: 'Languages',
+                component: Languages,
+            },
             {
                 slug: 'fonts',
                 name: 'Fonts',
