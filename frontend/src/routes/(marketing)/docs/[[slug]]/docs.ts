@@ -14,8 +14,9 @@ import Routes from "./content/routes/Routes.svelte";
 import CustomCode from "./content/custom-code/CustomCode.svelte";
 import Languages from "./content/languages/Languages.svelte";
 import Export from "./content/export/Export.svelte";
+import ImportSitemap from "./content/import-sitemap/ImportSitemap.svelte";
 
-export const categories = [
+export const categories: Category[] = [
 
     {
         name: 'Intro',
@@ -107,7 +108,8 @@ export const categories = [
             },
             {
                 slug: 'import-sitemap',
-                name: 'Import from Sitemap'
+                name: 'Import from Sitemap',
+                component: ImportSitemap,
             }
         ]
     },
@@ -126,10 +128,9 @@ export const categories = [
                 component: PrivacyPolicy,
             }
         ]
-    },
+    },   
     
-    
-] as Category[];
+];
 
 
 export const pages = categories.reduce((acc, category) => acc.concat(category.pages), [] as Page[]);
