@@ -95,12 +95,12 @@
 
 <ul>
     <li>
-        <a href="https://www.g2.com/products/hyvor-blogs/reviews">
+        <a href="https://www.g2.com/products/hyvor-blogs/reviews" target="_blank" rel="nofollow">
             G2
         </a>
     </li>
     <li>
-        <a href="https://www.trustpilot.com/review/hyvor.com">
+        <a href="https://www.trustpilot.com/review/hyvor.com" target="_blank" rel="nofollow">
             Truspilot
         </a> (Customer Support)
     </li>

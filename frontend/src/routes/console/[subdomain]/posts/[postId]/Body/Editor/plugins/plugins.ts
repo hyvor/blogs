@@ -5,11 +5,7 @@ import { history } from 'prosemirror-history';
 import inputRulesPlugin from './plugin-inputrules';
 import keymapPlugins from "./plugin-keymap";
 import codemark from 'prosemirror-codemark';
-/* import wordCountPlugin from "./wordcount-plugin";
-import slashPlugin from "./slash-plugin";
-import pasteImagesPlugin from "./paste-images-plugin";
-import linkPlugin from "./link-plugin";
-import slashTipPlugin from "./plugin-slash-tip"; */
+import pasteImagesPlugin from "./plugin-paste-images";
 import { columnResizing, tableEditing, goToNextCell } from 'prosemirror-tables';
 import marksTooltipPlugin from "./marks-tooltip/plugin-marks-tooltip";
 import schema from "../../../../../../lib/prosemirror/schema";
@@ -37,7 +33,7 @@ export function getPlugins() {
 
         history(),
 
-        // pasteImagesPlugin(),
+        pasteImagesPlugin(),
         // linkPlugin(),
 
         // https://github.com/curvenote/prosemirror-codemark

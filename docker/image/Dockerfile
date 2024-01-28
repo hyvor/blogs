@@ -61,8 +61,6 @@ RUN curl -sS https://getcomposer.org/installer -o /tmp/composer-setup.php && \
 # composer install
 RUN COMPOSER_ALLOW_SUPERUSER=1 composer install --optimize-autoloader --no-dev --no-interaction --no-progress --working-dir=/var/www/app/backend
 
-# backend npm packages (shiki)
-RUN npm install --prefix /var/www/app/backend
 
 # laravel directories
 RUN chmod -R 777 /var/www/app/backend/storage /var/www/app/backend/bootstrap/cache
@@ -78,6 +76,9 @@ RUN apt-get install -y nodejs
 ENV NODE_OPTIONS="--max-old-space-size=4096" 
 RUN npm install --prefix /var/www/app/frontend && \
     npm run build --prefix /var/www/app/frontend
+
+# backend npm packages (shiki)
+RUN npm install --prefix /var/www/app/backend
 
 # delete all in /var/www/app/frontend except build folder
 RUN find /var/www/app/frontend -mindepth 1 -maxdepth 1 ! -name build -exec rm -rf {} \;

@@ -16,8 +16,13 @@ import Overview from "./content/overview/Overview.svelte";
 import Templates from "./content/templates/Templates.svelte";
 import Styling from "./content/styling/Styling.svelte";
 import Scripts from "./content/scripts/Scripts.svelte";
+import Languages from "./content/languages/Languages.svelte";
+import Export from "./content/export/Export.svelte";
+import ImportSitemap from "./content/import-sitemap/ImportSitemap.svelte";
+import Webhooks from "./content/webhooks/Webhooks.svelte";
+import ApiDelivery from "./content/api-delivery/ApiDelivery.svelte";
 
-export const categories = [
+export const categories: Category[] = [
 
     {
         name: 'Intro',
@@ -38,8 +43,34 @@ export const categories = [
     },
 
     {
+        name: 'Hosting',
+        pages: [
+            {
+                slug: 'custom-domain',
+                name: 'Custom  Domain',
+                component: CustomDomain,
+            },
+            {
+                slug: 'subdirectory',
+                name: 'Subdirectory',
+                component: SubDirectoryHosting,
+            }
+        ]
+    },
+
+    {
         name: 'Features',
         pages: [
+            {
+                slug: 'languages',
+                name: 'Languages',
+                component: Languages,
+            },
+            {
+                slug: 'media',
+                name: 'Media',
+                component: Media,
+            },
             {
                 slug: 'fonts',
                 name: 'Fonts',
@@ -56,11 +87,6 @@ export const categories = [
                 component: Redirect,
             },
             {
-                slug: 'media',
-                name: 'Media',
-                component: Media,
-            },
-            {
                 slug: 'custom-code',
                 name: 'Custom Code',
                 component: CustomCode
@@ -74,22 +100,53 @@ export const categories = [
                 slug: 'routes',
                 name: 'Routes',
                 component:Routes
+            },
+            {
+                slug: 'navigation',
+                name: 'Navigation',
+                component: Routes
             }
         ]
     },
 
     {
-        name: 'Hosting',
+        name: 'Developer',
         pages: [
             {
-                slug: 'custom-domain',
-                name: 'Custom  Domain',
-                component: CustomDomain,
+                slug: 'webhooks',
+                name: 'Webhooks',
+                component: Webhooks,
             },
             {
-                slug: 'subdirectory',
-                name: 'Subdirectory',
-                component: SubDirectoryHosting,
+                slug: 'api-data',
+                name: 'Data API',
+                component: Webhooks,
+            },
+            {
+                slug: 'api-console',
+                name: 'Console API',
+                component: Webhooks,
+            },
+            {
+                slug: 'api-delivery',
+                name: 'Delivery API',
+                component: ApiDelivery,
+            }
+        ],
+    },
+
+    {
+        name: 'Data',
+        pages: [
+            {
+                slug: 'export',
+                name: 'Export Data',
+                component: Export,
+            },
+            {
+                slug: 'import-sitemap',
+                name: 'Import from Sitemap',
+                component: ImportSitemap,
             }
         ]
     },
@@ -137,10 +194,9 @@ export const categories = [
                 component: PrivacyPolicy,
             }
         ]
-    },
+    },   
     
-    
-] as Category[];
+];
 
 
 export const pages = categories.reduce((acc, category) => acc.concat(category.pages), [] as Page[]);

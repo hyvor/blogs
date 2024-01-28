@@ -63,9 +63,9 @@
             review: 'I need a simple, easy-to-use, fast, beautiful and mature blogging tool that resolves the WordPress bloat. Hyvor Blogs handles this beautifully.'
         },
         {
-            name: 'Christian',
-            role: 'Small Business Owner',
-            review: 'The interface is so easy for our team. The price points have made increasing the team size affordable and the output is everything we expect.'
+            name: 'Manoj P.',
+            role: 'Senior Application Engineer',
+            review: ' The platform offers a seamless and user-friendly experience for both bloggers and readers. The customization options are extensive, allowing bloggers to create a unique and visually appealing blog.'
         },
     ]
 
