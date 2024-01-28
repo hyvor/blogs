@@ -12,6 +12,10 @@ import Redirect from "./content/redirect/Redirect.svelte";
 import Media from "./content/media/Media.svelte";
 import Routes from "./content/routes/Routes.svelte";
 import CustomCode from "./content/custom-code/CustomCode.svelte";
+import Overview from "./content/overview/Overview.svelte";
+import Templates from "./content/templates/Templates.svelte";
+import Styling from "./content/styling/Styling.svelte";
+import Scripts from "./content/scripts/Scripts.svelte";
 import Languages from "./content/languages/Languages.svelte";
 import Export from "./content/export/Export.svelte";
 import ImportSitemap from "./content/import-sitemap/ImportSitemap.svelte";
@@ -143,6 +147,35 @@ export const categories: Category[] = [
                 slug: 'import-sitemap',
                 name: 'Import from Sitemap',
                 component: ImportSitemap,
+            }
+        ]
+    },
+
+    {
+        name: 'Theme Development',
+        pages: [
+            {
+                slug: 'overview',
+                name: 'Overview',
+                component: Overview
+            },
+
+            {
+                slug: 'templates',
+                name: 'Templates',
+                component: Templates
+            },
+
+            {
+                slug: 'styling',
+                name: 'Styling',
+                component:Styling
+            },
+
+            {
+                slug: 'scripts',
+                name: 'Scripts',
+                component: Scripts
             }
         ]
     },
