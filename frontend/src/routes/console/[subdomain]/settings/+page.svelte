@@ -200,7 +200,4 @@
     .settings :global(.CodeMirror) {
         min-height: 200px;
     }
-    .intro {
-        padding:15px;
-    }
 </style>

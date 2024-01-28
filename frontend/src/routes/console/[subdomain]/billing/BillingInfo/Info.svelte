@@ -163,9 +163,6 @@
             .title-text {
                 flex:1;
             }
-            a {
-                font-size:14px;
-            }
         }
         .card-desc {
             display: flex;

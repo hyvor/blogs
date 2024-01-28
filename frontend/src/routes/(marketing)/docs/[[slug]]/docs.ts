@@ -38,6 +38,12 @@ export const categories: Category[] = [
                 slug: 'writing',
                 name: 'Writing',
                 component: Writing,
+            },
+
+            {
+                slug: 'theme',
+                name: 'Theme',
+                component: Writing,
             }
         ]
     },
@@ -64,6 +70,11 @@ export const categories: Category[] = [
             {
                 slug: 'languages',
                 name: 'Languages',
+                component: Languages,
+            },
+            {
+                slug: 'users',
+                name: 'Users',
                 component: Languages,
             },
             {

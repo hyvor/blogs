@@ -76,11 +76,3 @@
         on:update
     />
 {/if}
-
-<style>
-    .events {
-        display: flex;
-        flex-wrap: wrap;
-        gap: 4px;
-    }
-</style>

@@ -1,7 +1,7 @@
 <script lang="ts">
 	import LinkStatusTag from "../Links/LinkStatusTag.svelte";
 
-    export let name: string;
+    /* export let name: string; */
     export let value: number;
     export let status: number;
 

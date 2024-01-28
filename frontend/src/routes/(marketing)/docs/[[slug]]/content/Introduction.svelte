@@ -39,7 +39,7 @@
         <strong><a href="/docs/custom-domain">Custom Domain</a></strong> - Host your blog on your own domain like example.com or blog.example.com.
     </li>
     <li>
-        <strong><a href="/docs/subdirecotory">Sub-directory Hosting</a></strong> - Host your blog on your a sub-directory like example.com/blog. Multiple integrations are available.
+        <strong><a href="/docs/subdirectory">Sub-directory Hosting</a></strong> - Host your blog on your a sub-directory like example.com/blog. Multiple integrations are available.
     </li>
     <li>
         <strong><a href="/docs/seo">In-built SEO</a></strong> - Hyvor Blogs is built with SEO in mind. Most of the technical SEO stuff is handled by us. You just need to focus on writing.

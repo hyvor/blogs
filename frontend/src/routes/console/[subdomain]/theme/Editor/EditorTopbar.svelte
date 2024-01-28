@@ -97,7 +97,7 @@
             margin-left: 6px;
         }
 
-        .config-yaml-switch {
+        /* .config-yaml-switch {
             position: absolute;
             right: 10px;
             top: 50%;
@@ -107,7 +107,7 @@
             .switch-title {
                 margin-right: 5px;
             }
-        }
+        } */
     }
 
 </style>

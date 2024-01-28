@@ -127,12 +127,6 @@
         }
         .input {
             margin-bottom: 15px;
-            .secondary-keyword-adder-wrap {
-                margin-top: 5px;
-            }
-        }
-        input {
-            font-size: 13px;
         }
     }
 

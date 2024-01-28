@@ -75,6 +75,7 @@
 
 <div class="title-wrap">
 
+    <!-- svelte-ignore a11y-autofocus -->
     <textarea
         placeholder="Title..."
         autoFocus={($postVariantStore.title || "") === ""}
