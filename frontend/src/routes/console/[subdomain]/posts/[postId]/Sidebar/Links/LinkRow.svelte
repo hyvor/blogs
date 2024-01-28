@@ -80,7 +80,7 @@
     export let link: Link;
 </script>
 
-<div class="link-wrap">
+<div class="link-wrap type-{linkStatusType}">
 
     <div class="link-name">
         <div class="link-anchor">

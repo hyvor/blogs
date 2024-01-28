@@ -16,8 +16,13 @@
 
     let isReloadingAll = false;
 
+    let linksEl: HTMLDivElement;
+
     function handleJump(type: 'ok' | 'broken' | 'redirect' | 'ignored') {
-        
+        const el = linksEl.querySelector('.link-wrap.type-' + type);
+        if (el) {
+            el.scrollIntoView({ behavior: 'smooth', block: 'center' });
+        }
     }
 
 </script>
@@ -55,7 +60,7 @@
         {/if}
 
         {#if $variantLinkCountsStore.broken > 0}
-            <Tag size="small" color="red">
+            <Tag size="small" color="red" interactive on:click={() => handleJump('broken')}>
                 <Text bold slot="start">{$variantLinkCountsStore.broken}</Text>
                 Broken
                 <IconXCircleFill slot="end" size={12} />
@@ -63,7 +68,7 @@
         {/if}
 
         {#if $variantLinkCountsStore.redirect > 0}
-            <Tag size="small" color="orange">
+            <Tag size="small" color="orange" interactive on:click={() => handleJump('redirect')}>
                 <Text bold slot="start">{$variantLinkCountsStore.redirect}</Text>
                 Redirect
                 <IconExclamationCircleFill slot="end" size={12} />
@@ -71,7 +76,7 @@
         {/if}
 
         {#if $variantLinkCountsStore.ignored > 0}
-            <Tag size="small" color="default">
+            <Tag size="small" color="default" interactive on:click={() => handleJump('ignored')}>
                 <Text bold slot="start">{$variantLinkCountsStore.ignored}</Text>
                 Ignored
                 <IconEyeSlashFill slot="end" size={12} />
@@ -80,7 +85,7 @@
 
     </div>
 
-    <div class="links">
+    <div class="links" bind:this={linksEl}>
         {#if linksCount > 0}
             {#each $variantLinksStore as link}
                 <LinkRow {link} />
