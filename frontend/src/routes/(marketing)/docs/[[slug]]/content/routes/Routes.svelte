@@ -289,10 +289,10 @@
 
 
 
-    <h2 id="">Route Conflicts</h2>
+    <h2 id="conflicts">Route Conflicts</h2>
             <p>Usually, route conflicts can happen when two or more routes has the same match value. In Hyvor Blogs, <code>post</code> and <code>page</code> routes can have the same match values. (You can see, the default values of those two routes are the same: <code>{`/{slug}`}</code>). However, other routes match cannot have duplicate match values.</p>
 
-    <h2>Suffixes and Prefixes</h2>
+    <h2 id="suffix-prefix">Suffixes and Prefixes</h2>
             <p>These suffixes are supported:</p>
                 <ul>
                     <li><code>/feed</code> - For the atom feed (<code>posts_filter</code>should be set)</li>

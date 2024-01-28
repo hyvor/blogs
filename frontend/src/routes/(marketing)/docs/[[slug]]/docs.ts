@@ -21,6 +21,7 @@ import Export from "./content/export/Export.svelte";
 import ImportSitemap from "./content/import-sitemap/ImportSitemap.svelte";
 import Webhooks from "./content/webhooks/Webhooks.svelte";
 import ApiDelivery from "./content/api-delivery/ApiDelivery.svelte";
+import Theme from "./content/theme/Theme.svelte";
 
 export const categories: Category[] = [
 
@@ -43,7 +44,7 @@ export const categories: Category[] = [
             {
                 slug: 'theme',
                 name: 'Theme',
-                component: Writing,
+                component: Theme,
             }
         ]
     },
@@ -75,6 +76,11 @@ export const categories: Category[] = [
             {
                 slug: 'users',
                 name: 'Users',
+                component: Languages,
+            },
+            {
+                slug: 'tags',
+                name: 'Tags',
                 component: Languages,
             },
             {
@@ -166,28 +172,47 @@ export const categories: Category[] = [
         name: 'Theme Development',
         pages: [
             {
-                slug: 'overview',
+                slug: 'themes-overview',
                 name: 'Overview',
                 component: Overview
             },
 
             {
-                slug: 'templates',
+                slug: 'themes-templates',
                 name: 'Templates',
                 component: Templates
             },
 
             {
-                slug: 'styling',
+                slug: 'themes-styles',
                 name: 'Styling',
                 component:Styling
             },
 
             {
-                slug: 'scripts',
+                slug: 'themes-scripts',
                 name: 'Scripts',
                 component: Scripts
+            },
+
+            {
+                slug: 'themes-internationalization',
+                name: 'Internationalization',
+                component: Overview
+            },
+
+            {
+                slug: 'themes-config',
+                name: 'Configuration',
+                component: Overview
+            },
+
+            {
+                slug: 'themes-publishing',
+                name: 'Publishing',
+                component: Overview
             }
+
         ]
     },
 

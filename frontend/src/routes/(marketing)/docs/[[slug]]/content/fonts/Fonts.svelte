@@ -16,7 +16,7 @@
 
 <ul>
     <li>
-        <a href="#bunny-fonts">Google Fonts</a>
+        <a href="#google-fonts">Google Fonts</a>
     </li>
     <li>
         <a href="#custom-fonts">Custom Fonts</a>
