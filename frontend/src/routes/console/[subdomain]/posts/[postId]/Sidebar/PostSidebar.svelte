@@ -10,6 +10,7 @@
 	import { Z_INDEX, increaseZIndex } from "../z-index";
 	import SidebarTop from "./Top/SidebarTop.svelte";
 	import { tab } from "./sidebar";
+	import LinksSidebarTag from "./Links/LinksSidebarTag.svelte";
 
     let div: HTMLDivElement;
 
@@ -50,6 +51,7 @@
                 <TabNavItem name="links">
                     <IconLink45deg slot="start" />
                     Links
+                    <LinksSidebarTag slot="end" />
                 </TabNavItem>
 
                 <TabNavItem name="ai">
