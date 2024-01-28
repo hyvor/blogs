@@ -12,6 +12,10 @@ import Redirect from "./content/redirect/Redirect.svelte";
 import Media from "./content/media/Media.svelte";
 import Routes from "./content/routes/Routes.svelte";
 import CustomCode from "./content/custom-code/CustomCode.svelte";
+import Overview from "./content/overview/Overview.svelte";
+import Templates from "./content/templates/Templates.svelte";
+import Styling from "./content/styling/Styling.svelte";
+import Scripts from "./content/scripts/Scripts.svelte";
 
 export const categories = [
 
@@ -86,6 +90,35 @@ export const categories = [
                 slug: 'subdirectory',
                 name: 'Subdirectory',
                 component: SubDirectoryHosting,
+            }
+        ]
+    },
+
+    {
+        name: 'Theme Development',
+        pages: [
+            {
+                slug: 'overview',
+                name: 'Overview',
+                component: Overview
+            },
+
+            {
+                slug: 'templates',
+                name: 'Templates',
+                component: Templates
+            },
+
+            {
+                slug: 'styling',
+                name: 'Styling',
+                component:Styling
+            },
+
+            {
+                slug: 'scripts',
+                name: 'Scripts',
+                component: Scripts
             }
         ]
     },
