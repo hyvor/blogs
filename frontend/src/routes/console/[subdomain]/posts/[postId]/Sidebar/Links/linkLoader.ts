@@ -5,8 +5,8 @@ import { variantLinkAnalysisStore } from "./linksStore";
 import { postVariantStore, updatePostVariantStore } from "../../../postStore";
 import type { LinkAnalysisLink } from "../../../../../lib/types";
 
-export function initLoader() {
-    variantLinkAnalysisStore.subscribe(handleChange);
+export function initLinkAnalysisLoader() {
+    return variantLinkAnalysisStore.subscribe(handleChange);
 }
 
 let lastLoadedLinks: null | string = null;

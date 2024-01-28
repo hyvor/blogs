@@ -15,6 +15,11 @@
     $: linksCount = $variantLinksStore.length;
 
     let isReloadingAll = false;
+
+    function handleJump(type: 'ok' | 'broken' | 'redirect' | 'ignored') {
+        
+    }
+
 </script>
 
 <div class="wrap">
@@ -42,7 +47,7 @@
     <div class="summary">
 
         {#if $variantLinkCountsStore.ok > 0}
-            <Tag size="small" color="green">
+            <Tag size="small" color="green" interactive on:click={() => handleJump('ok')}>
                 <Text bold slot="start">{$variantLinkCountsStore.ok}</Text>
                 OK
                 <IconCheckCircleFill slot="end" size={12} />

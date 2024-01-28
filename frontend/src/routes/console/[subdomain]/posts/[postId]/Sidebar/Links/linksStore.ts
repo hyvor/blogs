@@ -2,7 +2,6 @@ import { derived } from "svelte/store";
 import { postCurrentContentStore, postVariantStore } from "../../../postStore";
 import { blogStore } from "../../../../../lib/stores/blogStore";
 import { calculateLinkAnalysis, getLinksFromContent, getStatusType, LINK_STATUS, type Link } from "../../../../../lib/links/links";
-import { initLoader } from "./linkLoader";
 
 export const variantLinksStore = derived(
     [postCurrentContentStore, blogStore],
@@ -56,5 +55,3 @@ function getLinkCounts(analysis: Record<string, number>, links: Link[]) {
     }
 
 }
-
-initLoader();
