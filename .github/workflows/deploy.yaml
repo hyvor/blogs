@@ -82,7 +82,7 @@ jobs:
                 with:
                     host: ${{ matrix.server.ip }}
                     username: root
-                    key: ${{ secrets.SSH_KEY }}
+                    key: ${{ secrets.DEPLOY_SSH_KEY }}
                     envs: IMAGE_VERSION, DOCKERHUB_USERNAME, DOCKERHUB_TOKEN, ENV_FILE
                     script: |
                         docker login -u $DOCKERHUB_USERNAME -p $DOCKERHUB_TOKEN
