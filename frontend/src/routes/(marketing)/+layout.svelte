@@ -24,7 +24,7 @@
             as="a" 
             size="small" 
             href="/docs" 
-            variant="invisible"
+            variant={$page.url.pathname.startsWith('/docs') ? 'fill-light' : 'invisible'}
         >
             Docs
         </Button>

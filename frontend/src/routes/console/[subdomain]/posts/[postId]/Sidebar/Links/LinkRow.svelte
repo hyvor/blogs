@@ -1,8 +1,8 @@
 <script lang="ts">
 	import { IconEyeSlashFill } from '@hyvor/icons';
 	import { IconArrowClockwise } from '@hyvor/icons';
-	import { postEditingStatusStore } from './../../../postStore';
-	import { Tooltip } from '@hyvor/design/components';
+	import { postEditingStatusStore, postVariantStore, updatePostVariantStore } from './../../../postStore';
+	import { Tooltip, toast } from '@hyvor/design/components';
 	import { IconPencilFill } from '@hyvor/icons';
 	import { IconButton } from '@hyvor/design/components';
 	import LinkStatusTag from './../../../../tools/link-analysis/Links/LinkStatusTag.svelte';
@@ -10,6 +10,7 @@
 	import { Loader } from '@hyvor/design/components';
 	import { getStatusType, type Link } from './../../../../../lib/links/links';
     import { variantLinkAnalysisStore } from './linksStore';
+	import { callIgnoreLink, callLinkAnalysisApi } from "../../../../tools/link-analysis/linkAnalysisActions";
 
     $: linkStatus = $variantLinkAnalysisStore[link.originalHref] || LINK_STATUS.ERROR;
     $: linkStatusType = getStatusType(linkStatus);
@@ -19,18 +20,69 @@
 
     function handleReload() {
 
-    }   
+        isReloading = true;
+
+        callLinkAnalysisApi($postVariantStore.id, [link.originalHref])
+            .then(res => {
+
+                const status = res.find(l => l.url === link.originalHref)?.status_code || LINK_STATUS.ERROR;
+
+                updatePostVariantStore({
+                    'link_analysis': {
+                        ...$postVariantStore.link_analysis,
+                        [link.originalHref]: status,
+                    }
+                });
+
+            })
+            .catch(() => {
+
+                updatePostVariantStore({
+                    'link_analysis': {
+                        ...$postVariantStore.link_analysis,
+                        [link.originalHref]: LINK_STATUS.ERROR,
+                    }
+                });
+
+            })
+            .finally(() => {
+                isReloading = false;
+            })
+
+    }
     
     function handleIgnore() {
+
+        isReloading = true;
+
+        const status = linkStatusType === 'ignored' ? false : true
+
+        callIgnoreLink($postVariantStore.id, link.originalHref, status)
+            .then(res => {
+
+                updatePostVariantStore({
+                    'link_analysis': {
+                        ...$postVariantStore.link_analysis,
+                        [link.originalHref]:  status ? LINK_STATUS.IGNORED : res.status_code,
+                    }
+                });
+
+            })
+            .catch(e => {
+                toast.error(e.message)
+            })
+            .finally(() => {
+                isReloading = false;
+            })
 
     }
 
     export let link: Link;
 </script>
 
-<div class="link-wrap">
-    <div class="link-name">
+<div class="link-wrap type-{linkStatusType}">
 
+    <div class="link-name">
         <div class="link-anchor">
             {link.anchor}
         </div>
@@ -48,7 +100,6 @@
         <div class="link-type-wrap">
             <span class="link-type">{link.type}</span>
         </div>
-
     </div>
 
     <div class="link-status">
@@ -79,18 +130,18 @@
                 size={22}
                 color="input"
                 on:click={handleReload}
-                disabled={!isHttp}
+                disabled={!isHttp || isReloading}
             >
                 <IconArrowClockwise size={12} />
             </IconButton>
         </Tooltip>
 
-        <Tooltip text="Ignore this link">
+        <Tooltip text={(linkStatusType === 'ignored' ? 'Unignore' : 'Ignore') + ' this link'}>
             <IconButton 
                 size={22}
-                color="input"
+                color={linkStatusType === 'ignored' ? 'accent' : 'input'}
                 on:click={handleIgnore}
-                disabled={!isHttp}
+                disabled={!isHttp || isReloading}
             >
                 <IconEyeSlashFill size={12} />
             </IconButton>
@@ -135,6 +186,7 @@
 
         .link-buttons {
             margin-left: 10px;
+            margin-right: 3px;
         }
 
     }

@@ -7,6 +7,7 @@ import CustomHtmlNodeView from "./nodeview-custom-html";
 import EmbedView from "./embed/nodeview-embed";
 import BookmarkView from "./nodeview-bookmark";
 import TableNodeView from "./table/nodeview-table";
+import ImageView from "./image/nodeview-image";
 
 interface NodeViewsType {
     [key: string]: NodeViewConstructor
@@ -38,14 +39,10 @@ export function getNodeViews() : NodeViewsType {
         },
         table(node, view, getPos) {
             return new TableNodeView(node, view, getPos)
-        }
-        /*        
-        image(node, view, getPos) {
-            return new Image(HBSchema, node, view, getPos)
         },
-        table(node, view, getPos) {
-            return new Table(HBSchema, node, view, getPos);
-        }, */
+        image(node, view, getPos) {
+            return new ImageView(node, view, getPos)
+        },
     }
 
 }

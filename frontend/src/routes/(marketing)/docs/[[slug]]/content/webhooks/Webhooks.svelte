@@ -1,0 +1,251 @@
+<script>
+	import { Callout, CodeBlock, Table, TableRow, Text } from "@hyvor/design/components";
+	import { IconExclamationCircle } from "@hyvor/icons";
+</script>
+<h1>Webhooks</h1>
+
+<p>
+    Webhooks are a way to get notified when an event happens on your blog.
+</p>
+
+<ul>
+    <li>A blog can have up to 5 webhooks</li>
+    <li>Each webhook can subscribe to one or more events</li>
+</ul>
+
+<Callout type="warning">
+    <IconExclamationCircle slot="icon" />
+    Currently, only cache events are enabled. They can be used for <a href="/docs/subdirectory">subdirectory hosting</a>. The other events will be enabled in February 2024.
+</Callout>
+
+<Table columns="1fr 2fr 1fr">
+    <TableRow head>
+        <div>Event</div>
+        <div>Dispatched</div>
+        <div>Data</div>
+    </TableRow>
+    <TableRow>
+        <div><code>blog.updated</code></div>
+        <div>Any setting of the blog is updated</div>
+    </TableRow>
+    
+    <div class="separator"></div>
+
+    <div class="title">Post</div>
+
+    <TableRow>
+        <div><code>post.created</code></div>
+        <div>A new post is created</div>
+    </TableRow>
+    <TableRow>
+        <div><code>post.updated</code></div>
+        <div>A post is updated</div>
+    </TableRow>
+    <TableRow>
+        <div><code>post.deleted</code></div>
+        <div>A post is deleted</div>
+    </TableRow>
+    <TableRow>
+        <div><code>post.tags.changed</code></div>
+        <div>Tags assigned to a post are changed</div>
+    </TableRow>
+    <TableRow>
+        <div><code>post.authors.changed</code></div>
+        <div>Authors assigned to a post are changed</div>
+    </TableRow>
+
+    <div class="separator"></div>
+
+    <div class="title">Pages</div>
+
+    <!-- all with page. -->
+    <TableRow>
+        <div><code>page.created</code></div>
+        <div>A new page is created</div>
+    </TableRow>
+    <TableRow>
+        <div><code>page.updated</code></div>
+        <div>A page is updated</div>
+    </TableRow>
+    <TableRow>
+        <div><code>page.deleted</code></div>
+        <div>A page is deleted</div>
+    </TableRow>
+    <TableRow>
+        <div><code>page.tags.changed</code></div>
+        <div>Tags assigned to a page are changed</div>
+    </TableRow>
+    <TableRow>
+        <div><code>page.authors.changed</code></div>
+        <div>Authors assigned to a page are changed</div>
+    </TableRow>
+    
+
+    <div class="separator"></div>
+
+    <div class="title">Tags</div>
+
+    <!-- All with tag. -->
+
+    <TableRow>
+        <div><code>tag.created</code></div>
+        <div>A new tag is created</div>
+    </TableRow>
+    <TableRow>
+        <div><code>tag.updated</code></div>
+        <div>A tag is updated</div>
+    </TableRow>
+    <TableRow>
+        <div><code>tag.deleted</code></div>
+        <div>A tag is deleted</div>
+    </TableRow>
+
+    <div class="separator"></div>
+
+    <!-- All tag events with users -->
+
+    <div class="title">Users</div>
+
+    <TableRow>
+        <div><code>user.created</code></div>
+        <div>A new user is created</div>
+    </TableRow> 
+    <TableRow>
+        <div><code>user.updated</code></div>
+        <div>A user is updated</div>
+    </TableRow>
+    <TableRow>
+        <div><code>user.deleted</code></div>
+        <div>A user is deleted</div>
+    </TableRow>
+
+    <div class="separator"></div>
+    <div class="title">Media</div>
+
+    <TableRow>
+        <div><code>media.created</code></div>
+        <div>A media item is added</div>
+    </TableRow>
+
+    <TableRow>
+        <div><code>media.deleted</code></div>
+        <div>A media item is deleted</div>
+    </TableRow>
+
+    <div class="separator"></div>
+
+    <div class="title">Other</div>
+
+    <TableRow>
+        <div><code>navigation.changed</code></div>
+        <div><a href="/docs/navigation">Blog navigation</a> changed</div>
+    </TableRow>
+
+    <TableRow>
+        <div><code>routes.changed</code></div>
+        <div><a href="/docs/routes">Blog routes</a> changed</div>
+    </TableRow>
+
+    <TableRow>
+        <div><code>languages.changed</code></div>
+        <div><a href="/docs/languages">Blog languages</a> changed</div>
+    </TableRow>
+
+
+    <div class="separator"></div>
+    <div class="title">Cache Clearing</div>
+
+    <TableRow>
+        <div><code>cache.single</code></div>
+        <div>
+            When cache of a single path should be cleared (styles.css, assets, media, etc.)
+        </div>
+        <div>
+            <code>{`{path: string}`}</code>
+        </div>
+    </TableRow>
+    <TableRow>
+        <div><code>cache.templates</code></div>
+        <div>
+            When cache of all template-generated paths should be cleared (index, posts, feeds, etc.)
+        </div>
+        <div>
+            <Text small light>Empty object</Text>
+        </div>
+    </TableRow>
+    <TableRow>
+        <div><code>cache.all</code></div>
+        <div>
+            When all cache should be cleared
+        </div>
+        <div>
+            <Text small light>Empty object</Text>
+        </div>
+    </TableRow>
+
+</Table>
+
+<h2 id="request">
+    Webhook Request
+</h2>
+
+<p>
+    When an event happens, a <strong>POST</strong> request is sent to the webhook URL. The request body is a JSON object with the following properties. The <code>content</code> property is the event data. See the above table for the event data structure.
+</p>
+
+<CodeBlock code={`
+    {
+        "subdomain": "my-subdomain",
+        "timestamp": 1645208678,
+        "event": "cache.single",
+        "data": {}
+    }
+`} language="json" />
+
+<h2 id="security">
+    Security
+</h2>
+
+<p>
+    In the console, you can find a key for each Webhook you create. This key is sent in each response. You can use it to verify the webhook using a simple string comparison.
+</p>
+
+<CodeBlock code={`
+    if (request.post.key !== env.HB_WEBHOOK_KEY) {
+        return "Unauthorized";
+    }
+`} language="js" />
+
+<p>
+    Soon we will be moving to a signature-based method for verification.
+</p>
+
+<h2 id="response">
+    Response & Retries
+</h2>
+
+<p>
+    We expect a <strong>200 HTTP Response Code</strong> from your server to mark the webhook as success. If we get any other response code or fail to reach your servers, we will retry to send the webhook for 3 more times after
+</p>
+
+<ul>
+    <li>1 minute</li>
+    <li>5 minutes</li>
+    <li>30 minutes</li>
+</ul>
+
+<p>
+    If all fail, we will mark that webhook as failed and will no longer send it automatically. However, you can manually trigger it from the Console later.
+</p>
+
+<style>
+    .separator {
+        margin: 15px 0;
+        border-bottom: 1px solid var(--border);
+    }
+    .title {
+        padding: 0 16px;
+        font-weight: 600;
+        margin-bottom: 8px;
+    }
+</style>

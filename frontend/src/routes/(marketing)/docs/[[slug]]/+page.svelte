@@ -16,19 +16,27 @@
     </title>
 </svelte:head>
 
-<Docs>
-    <Nav slot="nav">
-        {#each categories as category}
-            <NavCategory name={category.name}>
-                {#each category.pages as page}
-                    <NavItem 
-                        href={page.slug === '' ? '/docs' : `/docs/${page.slug}`}
-                    >{page.name}</NavItem>
-                {/each}
-            </NavCategory>
-        {/each}
-    </Nav>
-    <Content slot="content">
-        <svelte:component this={data.component} />
-    </Content>
-</Docs>
+<div class="docs-wrap">
+    <Docs>
+        <Nav slot="nav">
+            {#each categories as category}
+                <NavCategory name={category.name}>
+                    {#each category.pages as page}
+                        <NavItem 
+                            href={page.slug === '' ? '/docs' : `/docs/${page.slug}`}
+                        >{page.name}</NavItem>
+                    {/each}
+                </NavCategory>
+            {/each}
+        </Nav>
+        <Content slot="content">
+            <svelte:component this={data.component} />
+        </Content>
+    </Docs>
+</div>
+
+<style>
+    .docs-wrap :global(.nav-items a.active) {
+        background-color:var(--accent-light-mid)!important;
+    }
+</style>

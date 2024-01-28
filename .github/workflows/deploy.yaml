@@ -1,122 +1,90 @@
-name: Deploy to Production Servers
+name: Deploy
 
 on:
-  workflow_dispatch:
+    workflow_dispatch:
 
 jobs:
-  build:
-    name: "Building ${{ github.sha }}"
-    runs-on: ubuntu-latest
-    steps:
-      - uses: actions/checkout@v2
+    docker:
+        name: "Building docker image ${{ github.sha }}"
+        runs-on: ubuntu-latest
+        steps:
 
-      - name: Compile CSS and JS
-        run: |
-          npm install
-          npm run kea:build
-          npm run build
+            -   uses: actions/checkout@v2
 
-      - name: Configure PHP 8.1
-        uses: shivammathur/setup-php@master
-        with:
-          php-version: 8.1
-          extensions: mbstring, ctype, fileinfo, openssl, PDO, bcmath, json, tokenizer, xml, intl
-      - name: Composer Install
-        env:
-          REPMAN_TOKEN: ${{ secrets.REPMAN_TOKEN }}
-        run: |
-          composer config --global --auth http-basic.hyvor.repo.repman.io token ${REPMAN_TOKEN}
-          composer install --no-dev --no-interaction --prefer-dist --optimize-autoloader
+            -   name: Set up Docker Buildx
+                uses: docker/setup-buildx-action@v1
 
-      - name: Create deployment artifact
-        env:
-          GITHUB_SHA: ${{ github.sha }}
-        run: tar -czf "${GITHUB_SHA}".tar.gz --exclude=*.git --exclude=node_modules --exclude=tests --exclude=storage *
+            -   name: Cache Docker layers
+                uses: actions/cache@v2
+                with:
+                    path: /tmp/.buildx-cache
+                    key: ${{ runner.os }}-buildx-${{ github.sha }}
+                    restore-keys: |
+                        ${{ runner.os }}-buildx-
 
-      - name: Store artifact for distribution
-        uses: actions/upload-artifact@v2
-        with:
-          name: app-build
-          path: ${{ github.sha }}.tar.gz
+            -   name: Login to DockerHub
+                uses: docker/login-action@v1
+                with:
+                    username: ${{ secrets.HYVOR_ORG_DOCKERHUB_USERNAME }}
+                    password: ${{ secrets.HYVOR_ORG_DOCKERHUB_TOKEN }}
 
-  prepare-release:
-    runs-on: ubuntu-latest
-    needs: build
-    name: "${{ matrix.server.name }}: Preparing Release"
-    strategy:
-      matrix:
-        server:
-          - name: hyvor-blogs-server
-            ip: 195.201.92.6
-    steps:
-      - uses: actions/download-artifact@v2
-        with:
-          name: app-build
-      - name: Uploading artifact
-        uses: appleboy/scp-action@master
-        with:
-          host: ${{ matrix.server.ip }}
-          username: root
-          key: ${{ secrets.DEPLOY_SSH_KEY }}
-          source: ${{ github.sha }}.tar.gz
-          target: /var/www/artifacts
-      - name: Extract Archive and create directories
-        uses: appleboy/ssh-action@master
-        env:
-          GITHUB_SHA: ${{ github.sha }}
-        with:
-          host: ${{ matrix.server.ip }}
-          username: root
-          key: ${{ secrets.DEPLOY_SSH_KEY }}
-          envs: GITHUB_SHA
-          script: |
-            mkdir -p "/var/www/releases/${GITHUB_SHA}"
-            tar xzf /var/www/artifacts/${GITHUB_SHA}.tar.gz -C "/var/www/releases/${GITHUB_SHA}"
+            -   name: Build and push
+                uses: docker/build-push-action@v4
+                with:
+                    context: .
+                    push: true
+                    tags: |
+                        ${{ secrets.HYVOR_ORG_DOCKERHUB_USERNAME }}/blogs:${{ github.sha }}
+                        ${{ secrets.HYVOR_ORG_DOCKERHUB_USERNAME }}/blogs:latest
+                    cache-from: type=local,src=/tmp/.buildx-cache
+                    cache-to: type=local,dest=/tmp/.buildx-cache-new
+                    file: ./docker/image/Dockerfile
 
-  activate-release:
-    runs-on: ubuntu-latest
-    needs: [build, prepare-release]
-    name: "${{ matrix.server.name }}: Activate Release"
-    strategy:
-      matrix:
-        server:
-          - name: hyvor-blogs-server
-            ip: 195.201.92.6
-    steps:
-      - name: Extract Archive and create directories
-        uses: appleboy/ssh-action@master
-        env:
-          LARAVEL_ENV: ${{ secrets.LARAVEL_ENV }}
-          RELEASE_PATH: /var/www/releases/${{ github.sha }}
-        with:
-          host: ${{ matrix.server.ip }}
-          username: root
-          key: ${{ secrets.DEPLOY_SSH_KEY }}
-          envs: LARAVEL_ENV, RELEASE_PATH
-          script: |
-            rsync -a --delete $RELEASE_PATH/ /var/www/current/
+            # This ugly bit is necessary if you don't want your cache to grow forever
+            # until it hits GitHub's limit of 5GB.
+            # Temp fix
+            # https://github.com/docker/build-push-action/issues/252
+            # https://github.com/moby/buildkit/issues/1896
+            -   name: Move cache
+                run: |
+                    rm -rf /tmp/.buildx-cache
+                    mv /tmp/.buildx-cache-new /tmp/.buildx-cache
 
-            mkdir -p /var/www/current/storage/{app,public,framework,logs}
-            mkdir -p /var/www/current/storage/framework/{cache,sessions,testing,views}
-            mkdir -p /var/www/current/storage/framework/cache/data
+    deploy:
+        name: "Deploying ${{ github.sha }}"
+        needs: docker
+        runs-on: ubuntu-latest
+        strategy:
+            matrix:
+                server:
+                    - name: hyvor-blogs-server-new
+                      ip: 49.13.172.95
 
-            printf "%s" "$LARAVEL_ENV" > "/var/www/current/.env"
-            printf "%s" "$LARAVEL_ENV" > "/var/www/.env"
-            systemctl reload php8.1-fpm
-            
-            rm /var/www/current/package.json
-            mv /var/www/current/package.server.json /var/www/current/package.json
-            npm install --prefix /var/www/current
+        steps:
+            - uses: actions/checkout@v3
 
-            php /var/www/current/artisan config:cache
-            php /var/www/current/artisan route:cache
-            php /var/www/current/artisan view:cache
-            
-            # restart horizon to catch code changes
-            php /var/www/current/artisan horizon:terminate
-            php /var/www/current/artisan horizon:publish
+            -   name: Upload docker-compose.yaml
+                uses: appleboy/scp-action@master
+                with:
+                    host: ${{ matrix.server.ip }}
+                    username: root
+                    key: ${{ secrets.DEPLOY_SSH_KEY }}
+                    source: "docker/deployment/docker-compose.yaml"
+                    target: /root
 
-            chmod -R 777 /var/www/current/storage /var/www/current/bootstrap/cache
-
-            cd /var/www/releases && ls -t -1 | tail -n +6 | xargs rm -rf
-            cd /var/www/artifacts && ls -t -1 | tail -n +6 | xargs rm -rf
+            -   name: Deploy to Cloud
+                uses: appleboy/ssh-action@master
+                env:
+                    IMAGE_VERSION: ${{ github.sha }}
+                    DOCKERHUB_USERNAME: ${{ secrets.HYVOR_ORG_DOCKERHUB_USERNAME }}
+                    DOCKERHUB_TOKEN: ${{ secrets.HYVOR_ORG_DOCKERHUB_TOKEN }}
+                    ENV_FILE: ${{ secrets.LARAVEL_ENV }}
+                with:
+                    host: ${{ matrix.server.ip }}
+                    username: root
+                    key: ${{ secrets.SSH_KEY }}
+                    envs: IMAGE_VERSION, DOCKERHUB_USERNAME, DOCKERHUB_TOKEN, ENV_FILE
+                    script: |
+                        docker login -u $DOCKERHUB_USERNAME -p $DOCKERHUB_TOKEN
+                        printf "%s" "$ENV_FILE" > .env
+                        docker rollout hyvor-blogs

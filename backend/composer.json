@@ -123,9 +123,6 @@
         "pint": "vendor/bin/pint",
         "minio": "minio server storage/app/minio"
     },
-    "repositories": [
-        {"type": "composer", "url": "https://hyvor.repo.repman.io"}
-    ],
     "extra": {
         "laravel": {
             "dont-discover": []

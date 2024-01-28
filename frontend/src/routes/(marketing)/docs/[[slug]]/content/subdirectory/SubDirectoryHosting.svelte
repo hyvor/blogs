@@ -37,7 +37,7 @@
 <Divider color="var(--border)" margin={40} />
 
 <h2 id="web-frameworks">
-    2. Web Frameworks <Tag color="red">#code</Tag>
+    2. Web Frameworks
 </h2>
 
 <p>
@@ -126,7 +126,7 @@
 <Divider color="var(--border)" margin={40} />
 
 <h2 id="reverse-proxy">
-    3. Reverse Proxy <Tag color="red">#code</Tag>
+    3. Reverse Proxy
 </h2>
 
 <p>

@@ -13,6 +13,8 @@
 	import { initEditorEventHandlers } from "./Body/Editor/editorEvents";
 	import { isTempStore } from "../../../lib/temp";
 	import { consoleUrlWithBlog } from "../../../lib/consoleUrl";
+	import type { Unsubscriber } from "svelte/store";
+	import { initLinkAnalysisLoader } from "./Sidebar/Links/linkLoader";
     
     const postId = $page.params.postId;
 
@@ -22,6 +24,8 @@
 
     onMount(() => {
 
+        let linkAnalysisLoaderUnsubscriber : Unsubscriber | null = null;
+
         consoleApi.get<Post>({
             endpoint: '/post/' + postId,
         }).then(res => {
@@ -30,8 +34,14 @@
             initPostEditingState(postView);
             initEditorEventHandlers();
 
+            linkAnalysisLoaderUnsubscriber = initLinkAnalysisLoader();
+
             isLoading = false;
         })
+
+        return () => {
+            linkAnalysisLoaderUnsubscriber?.();
+        }
 
     });
 

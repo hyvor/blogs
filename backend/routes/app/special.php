@@ -11,9 +11,7 @@ Route::prefix('/api/special')->group(function () {
     Route::get('caddy/allowed-domain', [CaddyController::class, 'checkDomain']);
     Route::post('themes/publish', [GithubThemeController::class, 'publish']);
 
-    Route::get('/error', function() {
-        throw new Exception('This is a test exception');
-    });
+    Route::get('/health', fn() => 'ok');
 
     Route::get('/themes', [ConsoleThemeController::class, 'getAllThemes']);
     Route::get('/config', [ConsoleController::class, 'getConfig']);

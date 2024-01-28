@@ -64,6 +64,8 @@
                 <IconXCircleFill size={12} />
             {:else if statusType === "ignored"}
                 <IconEyeSlashFill size={12} />
+            {:else if statusType === "error"}
+                <IconXCircleFill size={12} />
             {/if}
         </span>
 

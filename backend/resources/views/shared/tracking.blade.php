@@ -1,22 +1,6 @@
 @if (!\Illuminate\Support\Facades\App::environment('local', 'testing'))
     <script async src="https://cdn.splitbee.io/sb.js"></script>
 
-    {{-- BING --}}
-    {{--<script>(function(w,d,t,r,u){var f,n,i;w[u]=w[u]||[],f=function(){var o={ti:"97038522"};o.q=w[u],w[u]=new UET(o),w[u].push("pageLoad")},n=d.createElement(t),n.src=r,n.async=1,n.onload=n.onreadystatechange=function(){var s=this.readyState;s&&s!=="loaded"&&s!=="complete"||(f(),n.onload=n.onreadystatechange=null)},i=d.getElementsByTagName(t)[0],i.parentNode.insertBefore(n,i)})(window,document,"script","//bat.bing.com/bat.js","uetq");</script>--}}
-    {{-- BING END --}}
-
-    {{-- GOOGLE --}}
-    <!-- Google tag (gtag.js) -->
-    <script async src="https://www.googletagmanager.com/gtag/js?id=AW-10985628367"></script>
-    <script>
-        window.dataLayer = window.dataLayer || [];
-        function gtag(){dataLayer.push(arguments);}
-        gtag('js', new Date());
-
-        gtag('config', 'AW-10985628367');
-    </script>
-    {{-- GOOGLE END --}}
-
     {{-- PROFITWELL --}}
     <script id="profitwell-js" data-pw-auth="5b7888c594f1580aece249d322375e48">
         (function(i,s,o,g,r,a,m){i[o]=i[o]||function(){(i[o].q=i[o].q||[]).push(arguments)};
