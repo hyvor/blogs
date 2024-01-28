@@ -1,0 +1,6 @@
+# backend/vendor
+frontend/node_modules
+frontend/.svelte-kit
+github
+.idea
+.vscode
