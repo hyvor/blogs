@@ -1,5 +1,5 @@
 <script lang="ts">
-	import { IconMessage } from '@hyvor/design/components';
+	import { IconMessage, toast } from '@hyvor/design/components';
 	import { IconEyeSlashFill } from '@hyvor/icons';
 	import { IconXCircleFill } from '@hyvor/icons';
 	import { IconExclamationCircleFill } from '@hyvor/icons';
@@ -11,6 +11,10 @@
 	import { Button } from '@hyvor/design/components';
     import { variantLinksStore, variantLinkCountsStore } from './linksStore';
 	import LinkRow from "./LinkRow.svelte";
+	import { isHttpLink } from "../../../../../lib/links/links";
+	import { callLinkAnalysisApi } from "../../../../tools/link-analysis/linkAnalysisActions";
+	import { postVariantStore, updatePostVariantStore } from "../../../postStore";
+	import { getResultObjectFromLinks } from "./linkLoader";
 
     $: linksCount = $variantLinksStore.length;
 
@@ -23,6 +27,31 @@
         if (el) {
             el.scrollIntoView({ behavior: 'smooth', block: 'center' });
         }
+    }
+
+    function handleReloadAll() {
+        isReloadingAll = true;
+        
+        const allLinks = $variantLinksStore
+            .filter(link => isHttpLink(link))
+            .map(link => link.href);
+
+        callLinkAnalysisApi($postVariantStore.id, allLinks)
+            .then(res => {
+                updatePostVariantStore({
+                    link_analysis: {
+                        ...$postVariantStore.link_analysis,
+                        ...getResultObjectFromLinks(res)
+                    }
+                })
+            })
+            .catch(() => {
+                toast.error('Failed to recheck links');
+            })
+            .finally(() => {
+                isReloadingAll = false;
+            })
+        
     }
 
 </script>
@@ -39,10 +68,12 @@
             {#if linksCount > 0}
                 <Button
                     size="small"
+                    on:click={handleReloadAll}
+                    disabled={isReloadingAll}
                 >
                     <IconArrowClockwise size={14} slot="start" />
                     Recheck All
-                    <Loader slot="end" state={isReloadingAll ? 'loading' : 'none'} />
+                    <Loader slot="end" size={12} state={isReloadingAll ? 'loading' : 'none'} />
                 </Button>
             {/if}
         </div>

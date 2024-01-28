@@ -50,7 +50,7 @@ function handleChange(analysis: Record<string, number>) {
 
 }
 
-function getResultObjectFromLinks(links: LinkAnalysisLink[]) {
+export function getResultObjectFromLinks(links: LinkAnalysisLink[]) {
     const obj : Record<string, number> = {}
     links.forEach(link => {
         obj[link.url] = link.ignored ? LINK_STATUS.IGNORED : link.status_code;
