@@ -15,6 +15,8 @@ import CustomCode from "./content/custom-code/CustomCode.svelte";
 import Languages from "./content/languages/Languages.svelte";
 import Export from "./content/export/Export.svelte";
 import ImportSitemap from "./content/import-sitemap/ImportSitemap.svelte";
+import Webhooks from "./content/webhooks/Webhooks.svelte";
+import ApiDelivery from "./content/api-delivery/ApiDelivery.svelte";
 
 export const categories: Category[] = [
 
@@ -94,8 +96,39 @@ export const categories: Category[] = [
                 slug: 'routes',
                 name: 'Routes',
                 component:Routes
+            },
+            {
+                slug: 'navigation',
+                name: 'Navigation',
+                component: Routes
             }
         ]
+    },
+
+    {
+        name: 'Developer',
+        pages: [
+            {
+                slug: 'webhooks',
+                name: 'Webhooks',
+                component: Webhooks,
+            },
+            {
+                slug: 'api-data',
+                name: 'Data API',
+                component: Webhooks,
+            },
+            {
+                slug: 'api-console',
+                name: 'Console API',
+                component: Webhooks,
+            },
+            {
+                slug: 'api-delivery',
+                name: 'Delivery API',
+                component: ApiDelivery,
+            }
+        ],
     },
 
     {
