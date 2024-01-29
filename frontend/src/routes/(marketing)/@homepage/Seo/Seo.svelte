@@ -4,7 +4,9 @@
 	import Score from "./Score.svelte";
     import iconSeo from './seo.svg';
 
-    import seoAnalyzerMov from '../img/seo-analyzer.mov';
+    import seoAnalyzerMov from './seo-analyzer.mov';
+    import linkAnalyzerMov from './link-analyzer.mov';
+    import linkAnalyzerSettingsPng from './link-analyzer-settings.png';
 </script>
 
 <FeatureSectionTitle 
@@ -87,20 +89,39 @@
     <div class="analyzer">
 
         <div class="title">
-            Link Analyzer
+            Post Link Analyzer
         </div>
 
         <div class="subtitle">
-            Remember that broken link you added to your blog post? That won't happen again with our link analyzer. What about links that break over time? No worries! We run a full-blog link analysis every two weeks to notify you of any broken or redirect links.
+            Remember that broken link you added to your blog post? That won't happen again with our link analyzer.
         </div>
 
         <div class="hds-box video-wrap">
             <video muted controls>
-                <source src={seoAnalyzerMov} type="video/mp4">
+                <source src={linkAnalyzerMov} type="video/mp4">
                 <track kind="captions">
             </video>
         </div>
 
+    </div>
+
+</div>
+
+<div class="analyzer">
+
+    <div class="title">
+        Full-blog Link Analyzer
+    </div>
+
+    <div class="subtitle">
+        What about links that break over time? No worries! We run a full-blog link analysis every two weeks to notify you of any broken or redirect links.
+    </div>
+
+    <div class="img-wrap">
+        <img 
+            src={linkAnalyzerSettingsPng} 
+            alt="Link Analyzer Settings"
+        >
     </div>
 
 </div>
@@ -165,6 +186,13 @@
             border-radius: 20px;
             overflow: hidden;
             margin-top: 20px;
+        }
+
+        img {
+            width: 750px;
+            max-width: 100%;
+            margin: 40px auto;
+            display: block;
         }
 
     }

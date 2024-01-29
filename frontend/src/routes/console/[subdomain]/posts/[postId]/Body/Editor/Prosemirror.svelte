@@ -71,8 +71,9 @@
         createEditor();
     })
 
-    function handleWrapClick() {
-        $postEditingStatusStore.editorView?.focus();
+    function handleWrapClick(e: MouseEvent) {
+        if (e.target === wrap)
+            $postEditingStatusStore.editorView?.focus();
     }
 
 </script>

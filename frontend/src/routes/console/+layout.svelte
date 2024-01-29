@@ -59,6 +59,11 @@
 
 </script>
 
+<svelte:head>
+    <title>Console · Hyvor Blogs</title>
+    <meta name="robots" content="noindex">
+</svelte:head>
+
 <main>
 
     {#if isLoading}

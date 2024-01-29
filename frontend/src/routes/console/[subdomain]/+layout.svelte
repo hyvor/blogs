@@ -53,6 +53,12 @@
     });
 </script>
 
+<svelte:head>
+    <title>
+        {$blogStore ? $blogStore.subdomain : 'Loading...'} · Console · Hyvor Blogs
+    </title>
+</svelte:head>
+
 <main id="blog-main">
 
     {#if isLoading}

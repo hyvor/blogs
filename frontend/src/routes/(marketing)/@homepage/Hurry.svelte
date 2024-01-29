@@ -33,7 +33,7 @@
         In a hurry?
     </div>
 
-    Try Hyvor Blogs with a free temporary blog, created in a few seconds.
+    Try Hyvor Blogs with a free temporary blog created in a few seconds.
     <strong>No sign up required</strong>.
 
     <div class="temp-button">

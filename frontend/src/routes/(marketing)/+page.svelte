@@ -5,6 +5,9 @@
 	import Hosting from './@homepage/Hosting/Hosting.svelte';
 	import Seo from './@homepage/Seo/Seo.svelte';
 	import MultiLanguage from './@homepage/MultiLanguage/MultiLanguage.svelte';
+	import FullTrialSignup from './@components/FullTrialSignup.svelte';
+	import AllFeatures from './@homepage/AllFeatures/AllFeatures.svelte';
+	import HomepageCustomers from './@homepage/Customers/HomepageCustomers.svelte';
 </script>
 
 <svelte:head>
@@ -18,3 +21,6 @@
 <Hosting />
 <Seo />
 <MultiLanguage />
+<AllFeatures />
+<HomepageCustomers />
+<FullTrialSignup />

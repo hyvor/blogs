@@ -14,7 +14,11 @@
         </h3>
 
         <div class="button-wrap">
-            <Button size="large">
+            <Button 
+                as="a"
+                size="large"
+                href="/console?signup"
+            >
                 Start your blog
             </Button>
         </div>

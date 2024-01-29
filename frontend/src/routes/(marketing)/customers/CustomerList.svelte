@@ -140,6 +140,11 @@
         },
     ];
 
+    export let max : number | null = null;
+    if (max) {
+        customers.splice(max);
+    }
+
     function getTagColor(type: CustomerType) {
         switch (type) {
             case 'business':
