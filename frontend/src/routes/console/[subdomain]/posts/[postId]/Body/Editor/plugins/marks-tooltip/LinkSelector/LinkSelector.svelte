@@ -1,7 +1,6 @@
 <script lang="ts">
 	import { Modal, TabNav, TabNavItem } from "@hyvor/design/components";
 	import { IconHash, IconLink45deg, IconSearch } from "@hyvor/icons";
-	import { tick } from "svelte";
 	import Paste from "./Paste.svelte";
 	import SearchPosts from "./SearchPosts.svelte";
 	import type { EditorView } from "prosemirror-view";
@@ -12,15 +11,22 @@
 
     export let show: boolean;
     export let view: EditorView;
+    export let edit : null | string = null;
 
     let activeTab: 'paste' | 'anchors' | 'posts' = 'paste';
 
     function handleAdd(e: CustomEvent<string>) {
+        if (edit) {
+            // remove the link
+            toggleMark(schema.marks.link!)(view.state, view.dispatch);
+        }
+
         toggleMark(schema.marks.link!, {href: e.detail})(view.state, view.dispatch)
         show = false;
-
         view.focus();
-        focusAtLinkEnd();
+
+        if (!edit)
+            focusAtLinkEnd();
     }
 
     function focusAtLinkEnd() {
@@ -53,7 +59,7 @@
     </TabNav>
 
     {#if activeTab === 'paste'}
-        <Paste on:add={handleAdd} />
+        <Paste on:add={handleAdd} input={edit || ''} />
     {:else if activeTab === 'anchors'}
         <Anchors on:add={handleAdd} />
     {:else if activeTab === 'posts'}

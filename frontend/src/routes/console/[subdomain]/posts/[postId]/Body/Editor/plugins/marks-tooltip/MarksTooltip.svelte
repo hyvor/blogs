@@ -8,6 +8,7 @@
 	import type { EditorState } from "prosemirror-state";
 	import { toggleMark } from "prosemirror-commands";
 	import LinkSelector from "./LinkSelector/LinkSelector.svelte";
+	import { markExtend } from "./mark-helpers";
 
     export let view: EditorView;
     export let show = false;
@@ -101,6 +102,25 @@
         return link;
     }
 
+    function deleteLink() {
+        if (!link) return;
+
+        const extend = markExtend(view.state.selection.$from, link);
+
+        view.dispatch(
+            view.state.tr.removeMark(
+                extend.from,
+                extend.to,
+                view.state.schema.marks.link
+            )
+        );
+        view.focus();
+    }
+
+    function editLink() {
+        linkSelectorOpen = true;
+    }
+
 </script>
 
 {#key view}
@@ -121,10 +141,18 @@
                         {getTrimmedLink(link.attrs.href)} <IconBoxArrowUpRight size={12} />
                     </a>
                     <span class="link-actions">
-                        <IconButton color="input" size={20}>
+                        <IconButton 
+                            color="input" 
+                            size={20}
+                            on:click={editLink}
+                        >
                             <IconPencil size={10} />
                         </IconButton>
-                        <IconButton color="input" size={20}>
+                        <IconButton 
+                            color="input" 
+                            size={20}
+                            on:click={deleteLink}
+                        >
                             <IconTrash size={10} />
                         </IconButton>
                     </span>
@@ -132,7 +160,7 @@
             {/if}
 
             <div class="buttons-row">
-                <IconButton 
+                <IconButton
                     {...getProps('link')}
                     on:click={() => handleClick('link')}
                 >
@@ -175,6 +203,7 @@
     <LinkSelector 
         bind:show={linkSelectorOpen}
         {view}
+        edit={link ? link.attrs.href : null}
     />
 {/if}
 
