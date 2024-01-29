@@ -111,8 +111,7 @@
 
 </div>
 
-
-<style>
+<style lang="scss">
 
     .current-blog {
         display: flex;
@@ -169,6 +168,35 @@
     
     .section-div {
         height: 25px;
+    }
+
+
+    @media (max-width: 992px) {
+        .current-blog {
+            margin: 0;
+            border-radius: 0;
+        }
+        .nav-items {
+            padding: 0;
+            display: flex;
+            border-top: 1px solid var(--border);
+            :global(a) {
+                flex: 1;
+                justify-content: center;
+                padding: 15px 0;
+                border-top: 3px solid transparent;
+                border-left: none!important;
+            }
+            :global(a .middle) {
+                display: none;
+            }
+            :global(a.active) {
+                border-top: 3px solid var(--accent);
+            }
+            :global(a .end) {
+                display: none;
+            }
+        }
     }
 
 </style>

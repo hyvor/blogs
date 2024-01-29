@@ -5,7 +5,7 @@
 
 
 <div id="nav-wrap">
-    <div id="nav">
+    <div class="nav">
         <BlogNav />
     </div>
 
@@ -20,10 +20,25 @@
         height: 100%;
     }
 
-    #nav {
+    .nav {
         border-radius: var(--box-radius);
         background: var(--box-background);
         box-shadow: var(--box-shadow);
-    } 
+    }
+
+    @media (max-width: 992px) {
+        #nav-wrap {
+            flex-direction: row;
+            height: initial;
+            flex: 1;
+        }
+
+        .nav {
+            border-radius: 0;
+            box-shadow: none;
+            border-bottom: none;
+            width: 100%;
+        }
+    }
 
 </style>

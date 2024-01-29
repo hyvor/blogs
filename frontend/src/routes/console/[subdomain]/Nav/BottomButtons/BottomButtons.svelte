@@ -117,4 +117,11 @@
             font-weight: normal;
         }
     }
+
+    @media (max-width: 992px) {
+        #nav-bottom {
+            display: none;
+        }
+    }
+
 </style>

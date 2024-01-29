@@ -95,4 +95,11 @@
         justify-content: center;
         align-items: center;
     }
+
+    @media (max-width: 992px) {
+        main {
+            display: block;
+        }
+    }
+
 </style>
