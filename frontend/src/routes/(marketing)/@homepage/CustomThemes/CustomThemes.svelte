@@ -15,7 +15,7 @@
     icon={logo}
 />
 
-<div class="preview">
+<div class="preview hds-container">
     <ThemesPreview on:load={() => isLoading = false} />
 
     {#if isLoading}
@@ -40,7 +40,7 @@
 <style>
     .preview {
         margin-top: 50px;
-        padding: 0 100px;
+        width: 1300px;
         height: 600px;
     }
     .action {

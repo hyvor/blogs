@@ -37,4 +37,16 @@
         color: var(--accent);
     }
 
+    @media (max-width: 992px) {
+        .checks {
+            justify-content: center;
+            flex-direction: column;
+            align-items: center;
+        }
+        .check {
+            width: 250px;
+            max-width: 100%;
+        }
+    }
+
 </style>

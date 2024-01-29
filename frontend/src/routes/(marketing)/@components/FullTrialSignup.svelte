@@ -35,7 +35,7 @@
 
     .wrap {
         background-color: var(--accent-light-mid);
-        padding:80px;
+        padding:80px 15px;
         margin: 30px 0;
     }
 

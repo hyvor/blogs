@@ -61,4 +61,11 @@
         height: 85px;
     }
 
+    @media (max-width: 992px) {
+        h2 {
+            flex-direction: column-reverse;
+            gap: 15px;
+        }
+    }
+
 </style>

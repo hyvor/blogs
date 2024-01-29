@@ -139,8 +139,10 @@
 
     .scores-inner {
         width: 700px;
+        max-width: 100%;
         margin: 0 auto;
         display: flex;
+        flex-wrap: wrap;
         justify-content: space-between;
     }
     .features {
@@ -158,7 +160,7 @@
 
     .analyzer {
 
-        margin-top: 50px;
+        margin-top: 60px;
 
         .title {
             font-weight: 600;
@@ -195,6 +197,21 @@
             display: block;
         }
 
+    }
+
+    @media (max-width: 992px) {
+        .scores-inner {
+            justify-content: center;
+            gap: 45px;
+        }
+        .features {
+            flex-direction: column;
+            align-items: center;
+            .features-one {
+                width: 500px;
+                max-width: 100%;
+            }
+        }
     }
 
 </style>

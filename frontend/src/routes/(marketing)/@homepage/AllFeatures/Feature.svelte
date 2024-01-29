@@ -52,4 +52,11 @@
         margin-top: 10px;
     }
 
+    @media (max-width: 992px) {
+        .feature {
+            width: 100%;
+            text-align: center;
+        }
+    }
+
 </style>

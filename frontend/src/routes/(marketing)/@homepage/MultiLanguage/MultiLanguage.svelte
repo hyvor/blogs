@@ -55,4 +55,10 @@
         max-width: 100%;
     }
 
+    @media (max-width:992px) {
+        .inner {
+            flex-direction: column;
+        }
+    }
+
 </style>

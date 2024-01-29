@@ -161,7 +161,7 @@
     .customer-logos {
         display: flex;
         align-items: center;
-        justify-content: space-between;
+        justify-content: center;
         padding: 20px 0;
         flex-wrap: wrap;
         gap: 30px;
@@ -206,6 +206,17 @@
 
     .view-on-g2 {
         text-align: center;
+    }
+
+    @media (max-width: 992px) {
+        .reviews {
+            flex-direction: column;
+            padding: 0;
+            .review {
+                width: 100%;
+                padding: 15px;
+            }
+        }
     }
 
 </style>

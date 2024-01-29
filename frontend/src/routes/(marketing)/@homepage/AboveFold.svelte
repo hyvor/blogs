@@ -14,7 +14,7 @@
         </h1>
 
         <h2>
-            Hyvor Blogs is a platform that helps you to create a blog, manage it, and grow it without having to worry about managing servers, databases, and other technical stuff.
+            Hyvor Blogs is a platform to create a blog, manage it, and grow it without having to worry about managing servers, databases, and other technical stuff.
         </h2>
 
         <div class="buttons">
@@ -82,6 +82,28 @@
     .trial-checks {
         margin-top:25px;
         margin-left:5px;
+    }
+
+    @media (max-width: 992px) {
+        .above-fold {
+            flex-direction: column;
+            text-align: center;
+            .right {
+                margin: auto;
+                margin-top: 30px;
+                padding-left: 0;
+                width: 500px;
+                max-width: 100%;
+            }
+            .buttons {
+                justify-content: center;
+            }
+        }
+        .trial-checks {
+            margin-left: 0;
+            display: flex;
+            justify-content: center;
+        }
     }
 
 </style>

@@ -17,4 +17,10 @@
         margin-bottom: 30px;
         margin-top:60px;
     }
+
+    @media (max-width: 992px) {
+        .feature-section {
+            text-align: center;
+        }
+    }
 </style>

@@ -188,4 +188,11 @@
         gap: 30px 15px;
         flex-wrap: wrap;
     }
+
+    @media (max-width: 992px) {
+        .features-wrap {
+            flex-direction: column;
+        }
+    }
+
 </style>

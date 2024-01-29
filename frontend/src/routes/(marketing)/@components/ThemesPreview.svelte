@@ -4,7 +4,7 @@
 	import { loadThemes } from "../../console/[subdomain]/theme/themeActions";
 	import { getConfig, loadConfig } from "../../console/lib/config";
 	import { IconButton, Link, Loader, NavLink } from "@hyvor/design/components";
-	import { IconBoxArrowUpRight, IconLaptop, IconTablet } from "@hyvor/icons";
+	import { IconBoxArrowUpRight, IconCaretDown, IconLaptop, IconList, IconTablet, IconThreeDots } from "@hyvor/icons";
 
     let isLoaded = false;
     let themes: Theme[] = [];
@@ -34,6 +34,15 @@
         port = window.location.port ? `:${Number(window.location.port) + 1}` : "";
     })
 
+    let navEl: HTMLDivElement;
+
+    function handleMobileNavClick() {
+        if (!navEl) return;
+        if (window.innerWidth > 992) return;
+
+        navEl.style.display = navEl.style.display !== 'block' ? 'block' : 'none';
+    }
+
 </script>
 
 
@@ -41,7 +50,22 @@
 
     <div class="wrap">
 
-        <div class="nav hds-box">
+        <!-- svelte-ignore a11y-missing-attribute -->
+        <a 
+            class="mobile-nav"
+            on:click={handleMobileNavClick}
+            on:keyup={e => e.key === 'Enter' && handleMobileNavClick()}
+            role="button"
+            tabindex="0"
+        >
+            <div class="mobile-nav-left">
+                Choose theme
+            </div>
+            <span class="theme-name">{currentTheme?.name}</span>
+            <IconCaretDown size={14} />
+        </a>
+
+        <div class="nav hds-box" bind:this={navEl}>
             {#each [originalThemes, portedThemes] as group, i}
                 <div class="section">
                     {#if i === 0}
@@ -57,6 +81,7 @@
                             on:click={() => {
                                 isLoading = true;
                                 currentTheme = theme;
+                                handleMobileNavClick();
                             }}
                             active={currentTheme?.name === theme.name}
                         >
@@ -123,6 +148,29 @@
 
 <style lang='scss'>
 
+    .mobile-nav {
+        padding: 10px 20px;
+        display: flex;
+        align-items: center;
+        gap: 10px;
+        background-color: var(--box-background);
+        border-radius: var(--box-radius);
+        box-shadow: var(--box-shadow);
+        cursor: pointer;
+        display: none;
+        .mobile-nav-left {
+            flex: 1;
+            color: var(--text-light);
+            font-size: 14px;
+        }
+        .theme-name {
+            font-weight: 600;
+        }
+        &:hover {
+            background-color: var(--hover);
+        }
+    }
+
     .wrap {
         display: flex;
         height: 100%;
@@ -134,6 +182,10 @@
         padding: 10px 20px;
         margin-top: 20px;
         font-size: 14px;
+    }
+
+    .nav {
+        padding-bottom: 15px;
     }
 
     .nav :global(a) {
@@ -188,9 +240,23 @@
         100% {opacity: 1;}
     }
 
-    @media screen and (max-width: 1200px) {
-        .iframe, iframe {
-            min-height: 600px;
+    @media screen and (max-width: 992px) {
+        .wrap {
+            flex-direction: column;
+        }
+        .nav {
+            width: 100%;
+            margin-bottom: 15px;
+            display: none;
+        }
+        .preview {
+            height: 600px;
+        }
+        .mobile-nav {
+            display: flex;
+        }
+        .navi .right {
+            display: none;
         }
     }
 
