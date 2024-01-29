@@ -228,23 +228,6 @@
                 right: 0;
                 bottom: 100%;
             }
-            :global(.color-picker) {
-                display: inline-block;
-                width: 15px;
-                height: 15px;
-                border-radius: 50%;
-                margin-right: 5px;
-                cursor: pointer;
-                border: 1px solid #aaa;
-                position:relative;
-                :global(.color-picker-view) {
-                    position: absolute;
-                    top: 100%;
-                    right: 0;
-                    margin-top: 4px;
-                    width: 200px;
-                }
-            }
         }
 
         // figure (embed and image)
