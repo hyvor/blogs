@@ -16,6 +16,8 @@
 
     $: {
 
+        error = null;
+
         try {
             configYaml = yaml.load(config);
         } catch (e: any) {
@@ -43,8 +45,6 @@
         key: string,
         value: any
     }>) {
-
-        console.log('reached', e.detail)
 
         function createUpdatingObject(parentKeys: string[], key: string, value: any) {
             let updatingObject : any = {};

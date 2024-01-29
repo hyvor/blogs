@@ -5,7 +5,7 @@
 
     export let value: string;
     export let ext: keyof typeof CODEMIRROR_MODES;
-    export let id: string | number;
+    export let id: string | number = '';
 
     $: tabSize = ext === 'yaml' ? 2 : 4;
 
