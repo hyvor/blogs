@@ -82,8 +82,8 @@
                     </FooterLinkList>
 
                     <FooterLinkList title="Legal">
-                        <!-- <a href="/docs/terms">Terms</a>
-                        <a href="/docs/privacy">Privacy</a> -->
+                        <a href="/docs/terms">Terms of Service</a>
+                        <a href="/docs/privacy-policy">Privacy Policy</a>
                     </FooterLinkList>
 
                     <FooterLinkList title="HYVOR">

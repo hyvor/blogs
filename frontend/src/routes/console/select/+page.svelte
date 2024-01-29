@@ -8,7 +8,6 @@
 	import { saveSort } from "../lib/actions/blogActions";
     import arrowSvg from "./drag-note-arrow.svg";
 	import { isTempStore } from "../lib/temp";
-	import { base } from "$app/paths";
 	import { afterNavigate, goto } from "$app/navigation";
 
 	const flipDurationMs = 200;
@@ -57,6 +56,35 @@
         goto(previousPage);
     }
 
+    let currentDragger : HTMLButtonElement | null = null;
+    let dragNoteEl : HTMLSpanElement;
+
+    function handleMouseEnter(e: MouseEvent) {
+        currentDragger = e.target as HTMLButtonElement;
+    }
+    function handleMouseLeave() {   
+        currentDragger = null;
+    }
+
+    $: currentDragger, dragDisabled, positionDragNote();
+
+    function positionDragNote() {
+
+        if (!dragNoteEl) return;
+
+        if (!currentDragger || !dragDisabled) {
+            dragNoteEl.style.display = 'none';
+            return;
+        }
+
+        const { top, left, height } = currentDragger.getBoundingClientRect();
+
+        dragNoteEl.style.top = `${top + height / 2}px`;
+        dragNoteEl.style.left = `${left + 15}px`;
+        dragNoteEl.style.display = 'block';
+
+    }
+
 </script>
 
 <div class="wrap">
@@ -101,6 +129,8 @@
                         class="blog-row" 
                         href="/console/{blog.subdomain}"
                         animate:flip="{{ duration: flipDurationMs }}"
+                        on:mouseenter={handleMouseEnter}
+                        on:mouseleave={handleMouseLeave}
                     >
 
                         {#if items.length > 1}
@@ -115,19 +145,6 @@
                                 on:click={e => e.preventDefault()}
                             >
                                 <IconGripVertical />
-
-                                {#if dragDisabled}
-                                    <span class="drag-note">
-                                        <img 
-                                            src={arrowSvg} 
-                                            class="arrow"
-                                            alt="drag arrow"
-                                        />
-                                        <span class="note">
-                                            Drag to reorder
-                                        </span>
-                                    </span>
-                                {/if}
                             </button>
                         {/if}
 
@@ -209,6 +226,17 @@
 
 </div>
 
+<span class="drag-note" bind:this={dragNoteEl}>
+    <img 
+        src={arrowSvg} 
+        class="arrow"
+        alt="drag arrow"
+    />
+    <span class="note">
+        Drag to reorder
+    </span>
+</span>
+
 
 <style lang="scss">
 
@@ -262,11 +290,18 @@
         flex: 1;
         position: relative;
         margin-top: 60px;
+        padding-bottom: 30px;
+        min-height: 0;
+        display: flex;
+        flex-direction: column;
     }
     .selector-box {
         background: var(--box-background);
         box-shadow: var(--box-shadow);
         border-radius: var(--box-radius);
+        min-height: 0;
+        display: flex;
+        flex-direction: column;
     }
     .title {
         padding: 25px;
@@ -294,10 +329,8 @@
     }
 
     .drag-note {
+        position: fixed;
         display: none;
-    }
-    .blog-row:hover .drag-note {
-        display: block;
     }
 
     .arrow {
@@ -320,7 +353,9 @@
     }
 
     .blogs-list {
-
+        overflow-y: auto;
+        flex: 1;
+        min-height: 0;
     }
     .blog-row {
         padding: 10px 20px;
