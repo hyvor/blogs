@@ -15,12 +15,10 @@
     const textExtensions = ['scss', 'twig', 'js', 'yaml'];
     const imageExtensions = ['png', 'jpg', 'jpeg', 'jfif', 'pjpeg', 'pjp', 'gif', 'apng', 'avif', 'svg', 'webp'];
 
-    let configShowYaml = false;
-
 </script>
 
 {#if currentFile.folder === null && currentFile.name === 'config.yaml' && $configModeStore === 'ui'}
-    <ConfigUiPreview />
+    <ConfigUiPreview file={currentFile} />
 {:else if textExtensions.includes(ext)}
     <TextEditor file={currentFile} {ext} />
 {:else if currentFile.folder === 'assets' && imageExtensions.includes(ext)}

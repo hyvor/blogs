@@ -2,13 +2,13 @@
 	import { createEventDispatcher } from "svelte";
     // @ts-ignore
     import yaml from 'js-yaml';
+    import deepmerge from 'deepmerge';
 	import { Callout } from "@hyvor/design/components";
 	import { addDefaultDefs } from "./configUi";
 	import Object from "./Object.svelte";
 
     export let config: string;
     export let configDef: string;
-
 
     let configYaml : object;
     let configDefYaml : object;
@@ -36,7 +36,46 @@
 
     }
 
-    const dispatch = createEventDispatcher();
+    const dispatch = createEventDispatcher<{change: string}>();
+
+    function handleChange(e: CustomEvent<{
+        parentKeys: string[],
+        key: string,
+        value: any
+    }>) {
+
+        console.log('reached', e.detail)
+
+        function createUpdatingObject(parentKeys: string[], key: string, value: any) {
+            let updatingObject : any = {};
+
+            if (parentKeys.length === 0) {
+                updatingObject[key] = value;
+            } else {
+                updatingObject = {
+                    [parentKeys[0]!]: createUpdatingObject(parentKeys.slice(1), key, value)
+                }
+            }
+            return updatingObject;
+        }
+
+        function getNewConfig(configState: object, parentKeys: string[], key: string, value: any) : object {
+            const updatingObject = createUpdatingObject(parentKeys, key, value);
+            return deepmerge(configState, updatingObject);
+        }
+
+        const newConfig = getNewConfig(
+            configYaml, 
+            e.detail.parentKeys, 
+            e.detail.key, 
+            e.detail.value
+        );
+
+        configYaml = newConfig;
+        dispatch('change', yaml.dump(newConfig));
+
+    }
+
 </script>
 
 {#if error}
@@ -47,6 +86,7 @@
     <Object 
         config={configYaml} 
         configDef={configDefYaml}
+        on:change={handleChange}
     />
 {/if}
 
