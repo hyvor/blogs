@@ -22,6 +22,9 @@ import ImportSitemap from "./content/import-sitemap/ImportSitemap.svelte";
 import Webhooks from "./content/webhooks/Webhooks.svelte";
 import ApiDelivery from "./content/api-delivery/ApiDelivery.svelte";
 import Theme from "./content/theme/Theme.svelte";
+import Internationalization from "./content/internationalization/Internationalization.svelte";
+import Configuration from "./content/configuration/Configuration.svelte";
+import Publishing from "./content/publishing/Publishing.svelte";
 
 export const categories: Category[] = [
 
@@ -198,19 +201,19 @@ export const categories: Category[] = [
             {
                 slug: 'themes-internationalization',
                 name: 'Internationalization',
-                component: Overview
+                component: Internationalization
             },
 
             {
                 slug: 'themes-config',
                 name: 'Configuration',
-                component: Overview
+                component: Configuration
             },
 
             {
                 slug: 'themes-publishing',
                 name: 'Publishing',
-                component: Overview
+                component: Publishing
             }
 
         ]
