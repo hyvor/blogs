@@ -8,7 +8,6 @@ jobs:
         name: "Building docker image ${{ github.sha }}"
         runs-on: ubuntu-latest
         steps:
-
             -   uses: actions/checkout@v2
 
             -   name: Set up Docker Buildx
@@ -69,7 +68,7 @@ jobs:
                     host: ${{ matrix.server.ip }}
                     username: root
                     key: ${{ secrets.DEPLOY_SSH_KEY }}
-                    source: "docker/deployment/docker-compose.yaml"
+                    source: "docker/hosted/*"
                     target: /root
 
             -   name: Deploy to Cloud
@@ -78,6 +77,7 @@ jobs:
                     IMAGE_VERSION: ${{ github.sha }}
                     DOCKERHUB_USERNAME: ${{ secrets.HYVOR_ORG_DOCKERHUB_USERNAME }}
                     DOCKERHUB_TOKEN: ${{ secrets.HYVOR_ORG_DOCKERHUB_TOKEN }}
+                    ONE_PASSWORD_SERVICE_ACCOUNT_TOKEN: ${{ secrets.HYVOR_ORG_ONE_PASSWORD_SERVICE_ACCOUNT_TOKEN }}
                     ENV_FILE: ${{ secrets.LARAVEL_ENV }}
                 with:
                     host: ${{ matrix.server.ip }}
@@ -85,6 +85,13 @@ jobs:
                     key: ${{ secrets.DEPLOY_SSH_KEY }}
                     envs: IMAGE_VERSION, DOCKERHUB_USERNAME, DOCKERHUB_TOKEN, ENV_FILE
                     script: |
+                        # docker
                         docker login -u $DOCKERHUB_USERNAME -p $DOCKERHUB_TOKEN
-                        printf "%s" "$ENV_FILE" > .env
+
+                        # 1password
+                        export OP_SERVICE_ACCOUNT_TOKEN=$ONE_PASSWORD_SERVICE_ACCOUNT_TOKEN
+                        op user get --me
+                        op inject --in-file prod.env --out-file .env
+
+                        # docker rollout
                         docker rollout hyvor-blogs
