@@ -56,4 +56,16 @@
         padding: 25px 45px;
         overflow: auto;
     }
+
+    @media (max-width: 992px) {
+        .integrations {
+            flex-direction: column;
+        }
+        .nav {
+            width: 100%;
+            margin-right: 0;
+            margin-bottom: 20px;
+        }
+    }
+
 </style>

@@ -187,6 +187,9 @@
                 border-top: 3px solid transparent;
                 border-left: none!important;
             }
+            :global(a .start) {
+                margin-right: 0!important;
+            }
             :global(a .middle) {
                 display: none;
             }

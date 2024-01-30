@@ -137,7 +137,7 @@
 
         {#if isLoading}
             <div class="loader-wrap">
-                <Loader size="large" />
+                <Loader size="large" block padding={100} />
             </div>
         {:else if error}
             <IconMessage error message={error} />
@@ -166,7 +166,7 @@
 </div>
 
 
-<style>
+<style lang="scss">
 
     #posts {
         display: flex;
@@ -214,6 +214,29 @@
     .filters {
         display: flex;
         gap: 7px;
+    }
+
+    @media (max-width: 992px) {
+        .top {
+            flex-direction: column;
+            gap: 15px;
+        }
+        .filters {
+            flex-wrap: wrap;
+            :global(.dropdown) {
+                display: block!important;
+                width: calc(50% - 7px);
+            }
+            :global(.dropdown .trigger > button),
+            :global(.dropdown .content-wrap),
+            :global(.dropdown .content-wrap .content)
+            {
+                width: 100%!important;
+            }
+            :global(.input-wrap) {
+                width: 100%;
+            }
+        }
     }
 
 </style>

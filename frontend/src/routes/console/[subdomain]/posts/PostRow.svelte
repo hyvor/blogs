@@ -238,4 +238,14 @@
         gap: 4px;
     }
 
+    @media (max-width: 992px) {
+        .post-list-item {
+            display: flex;
+            flex-direction: column;
+            justify-content: flex-start;
+            align-items: flex-start;
+            gap: 5px;
+        }
+    }
+
 </style>

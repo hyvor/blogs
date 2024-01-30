@@ -109,4 +109,11 @@
         overflow: auto;
     }
 
+    @media (max-width: 992px) {
+        .post-sidebar {
+            width: 100%;
+            margin-top:20px;
+        }
+    }
+
 </style>

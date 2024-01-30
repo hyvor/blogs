@@ -61,17 +61,16 @@
     bind:this={postView}
 >
 
-    <a 
-        href={getBackUrl()}
-        class="back"
-    >
-        <IconButton 
-            variant="invisible"
-            color="gray"
-        >
-            <IconCaretLeftFill />
-        </IconButton>
-    </a>
+    <div class="back">
+        <a href={getBackUrl()}>
+            <IconButton 
+                variant="invisible"
+                color="gray"
+            >
+                <IconCaretLeftFill />
+            </IconButton>
+        </a>
+    </div>
 
     {#if isLoading}
 
@@ -163,6 +162,23 @@
         top: var(--top-offset);
         .back {
             top: var(--top-offset);
+        }
+    }
+
+    @media (max-width: 992px) {
+        .post-inner {
+            width: 100%;
+            padding: 0 15px;
+            flex-direction: column;
+            margin-top: 15px;
+        }
+        .back {
+            position: relative;
+            margin-top: 0;
+        }
+        .post-right {
+            margin-left: 0;
+            width: 100%;
         }
     }
 

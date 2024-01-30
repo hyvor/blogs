@@ -55,4 +55,10 @@ import BillingInfo from './BillingInfo/BillingInfo.svelte';
         flex-direction: column;
     }
 
+    @media (max-width: 992px) {
+        .view {
+            flex-direction: column;
+        }
+    }
+
 </style>
