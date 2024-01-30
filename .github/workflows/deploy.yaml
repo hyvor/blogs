@@ -70,6 +70,8 @@ jobs:
                     key: ${{ secrets.DEPLOY_SSH_KEY }}
                     source: "docker/hosted/docker-compose.yaml,docker/hosted/prod.env"
                     target: /root
+                    overwrite: true
+                    strip_components: 2
 
             -   name: Deploy to Cloud
                 uses: appleboy/ssh-action@master
