@@ -25,6 +25,10 @@ import Theme from "./content/theme/Theme.svelte";
 import Internationalization from "./content/internationalization/Internationalization.svelte";
 import Configuration from "./content/configuration/Configuration.svelte";
 import Publishing from "./content/publishing/Publishing.svelte";
+import DataApi from "./content/api-data/ApiData.svelte";
+import ConsoleApi from "./content/api-console/ApiConsole.svelte";
+import ApiConsole from "./content/api-console/ApiConsole.svelte";
+import ApiData from "./content/api-data/ApiData.svelte";
 
 export const categories: Category[] = [
 
@@ -138,21 +142,21 @@ export const categories: Category[] = [
                 component: Webhooks,
             },
             {
-                slug: 'api-data',
-                name: 'Data API',
-                component: Webhooks,
-            },
-            {
                 slug: 'api-console',
                 name: 'Console API',
-                component: Webhooks,
+                component: ApiConsole,
             },
             {
                 slug: 'api-delivery',
                 name: 'Delivery API',
                 component: ApiDelivery,
+            },
+            {
+                slug:'api-data',
+                name: 'Data API',
+                component: ApiData,
             }
-        ],
+        ]
     },
 
     {
