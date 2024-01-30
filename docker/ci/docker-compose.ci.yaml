@@ -8,7 +8,7 @@ services:
       MYSQL_ROOT_PASSWORD: ""
       MYSQL_ROOT_HOST: "%"
       MYSQL_ALLOW_EMPTY_PASSWORD: 1
-      MYSQL_DATABASE: hyvor_blogs
+      MYSQL_DATABASE: hyvor_blogs_testing
     ports:
       - "3306:3306"
     expose:

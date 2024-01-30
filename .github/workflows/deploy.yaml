@@ -93,7 +93,7 @@ jobs:
                         # 1password
                         export OP_SERVICE_ACCOUNT_TOKEN=$ONE_PASSWORD_SERVICE_ACCOUNT_TOKEN
                         op user get --me
-                        op inject --in-file prod.env --out-file .env
+                        op inject --force --in-file prod.env --out-file .env
 
                         # docker rollout
                         docker rollout hyvor-blogs
