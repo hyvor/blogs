@@ -47,7 +47,7 @@
     </div>
 
     <div slot="end">
-        <DarkToggle />
+        <!-- <DarkToggle /> -->
         <Button as="a" size="small" href="/console" variant="invisible">
             Login
         </Button>
