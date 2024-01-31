@@ -9,7 +9,7 @@ use Illuminate\Support\Str;
 class TempBlogService
 {
 
-    public static function getTempBlog(?string $subdomain) : Blog
+    public static function getTempBlog(?string $subdomain, ?string $ip) : Blog
     {
 
         $blog = $subdomain ? BlogService::getBlogBySubdomain($subdomain) : null;
@@ -24,6 +24,7 @@ class TempBlogService
             'Temporary Blog',
             $subdomain,
             BlogTypeEnum::TEMP,
+            ip: $ip,
         );
 
     }
