@@ -35,13 +35,16 @@ jobs:
                     extensions: mbstring, ctype, fileinfo, openssl, PDO, bcmath, json, tokenizer, xml, intl
 
             -   name: Install dependencies
+                working-directory: backend
                 run: |
                     # npm ci --ignore-scripts
                     # npm run build
-                    cd backend && composer install --ansi --no-progress
+                    npm ci
+                    composer install --ansi --no-progress
 
             -   name: Run tests
-                run: cd backend && vendor/bin/pest
+                working-directory: backend
+                run: vendor/bin/pest
 
     # e2e:
     #     name: "E2E Tests"
