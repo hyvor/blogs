@@ -29,6 +29,8 @@ import DataApi from "./content/api-data/ApiData.svelte";
 import ConsoleApi from "./content/api-console/ApiConsole.svelte";
 import ApiConsole from "./content/api-console/ApiConsole.svelte";
 import ApiData from "./content/api-data/ApiData.svelte";
+import Users from "./content/users/Users.svelte";
+import SyntaxHighlighting from "./content/syntax-highlighting/SyntaxHighlighting.svelte";
 
 export const categories: Category[] = [
 
@@ -83,7 +85,7 @@ export const categories: Category[] = [
             {
                 slug: 'users',
                 name: 'Users',
-                component: Languages,
+                component: Users,
             },
             {
                 slug: 'tags',
@@ -126,9 +128,9 @@ export const categories: Category[] = [
                 component:Routes
             },
             {
-                slug: 'navigation',
-                name: 'Navigation',
-                component: Routes
+                slug: 'syntax-highlighting',
+                name: 'Syntax Highlighting',
+                component: SyntaxHighlighting
             }
         ]
     },
