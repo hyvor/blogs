@@ -3,7 +3,6 @@
 	import { blogStore } from "../../lib/stores/blogStore";
 	import { isTempStore } from "../../lib/temp";
 	import { Button } from "@hyvor/design/components";
-	import { beforeNavigate, goto } from "$app/navigation";
 
     let timeRemaining = 0;
 
@@ -25,16 +24,16 @@
 
     onMount(() => {
 
-        if ($isTempStore) {
-            document.documentElement.classList.add('has-top-offset');
-        }
+        if (!$isTempStore)  return;
+
+        document.documentElement.classList.add('has-top-offset');
 
         // 24 hours
-        timeRemaining = 86400 - Math.floor((Date.now() - $blogStore.created_at) / 1000);
+        timeRemaining = 86400 - Math.floor((Date.now() / 1000) - $blogStore.created_at);
 
         const interval = setInterval(() => {
             timeRemaining -= 1;
-            if (timeRemaining >= 0) {
+            if (timeRemaining < 0) {
                 clearInterval(interval);
                 location.href = '/console';
             }
