@@ -2,10 +2,11 @@
     import logoAqeez from '$lib/img/customers/aqeez.svg';
     import logoSubdivisions from '$lib/img/customers/subdivisions.svg';
     import logoTimesOfMadeira from '$lib/img/customers/timesofmadeira.svg';
-    import logoMarkos from '$lib/img/customers/markos.png';
     import logoBeautyVouch from '$lib/img/customers/beautyvouch.png';
     import logoJobPosts from '$lib/img/customers/jobposts.webp';
     import yogakiddy from '$lib/img/customers/yogakiddy.png';
+    import logoUniverbal from '$lib/img/customers/univerbal.svg';
+
 	import { Button } from "@hyvor/design/components";
 	import { IconBoxArrowUpRight } from "@hyvor/icons";
 
@@ -53,6 +54,13 @@
             url: 'https://fr.yogakiddy.com',
             width: 40,
             height: 40,
+        },
+        {
+            name: 'Univerbal',
+            logo: logoUniverbal,
+            url: 'https://blog.univerbal.app',
+            width: 130,
+            height: 50,
         }
     ];
 

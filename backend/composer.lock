@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "f2f5595c1892a8a8717184d56cb6b19f",
+    "content-hash": "b97aad6d48a4995fed4bc9c22fd5b3a9",
     "packages": [
         {
             "name": "akaunting/laravel-money",
@@ -2413,16 +2413,16 @@
         },
         {
             "name": "hyvor/helper-laravel",
-            "version": "0.0.6",
+            "version": "0.0.7",
             "source": {
                 "type": "git",
                 "url": "https://github.com/hyvor/hyvor-helper-laravel.git",
-                "reference": "7a0f92ddbf5b7aa8a95f6edad2edf1d8ca79646f"
+                "reference": "7dfb642192eb07d5f36a6f823521b89e6b1a696e"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/hyvor/hyvor-helper-laravel/zipball/7a0f92ddbf5b7aa8a95f6edad2edf1d8ca79646f",
-                "reference": "7a0f92ddbf5b7aa8a95f6edad2edf1d8ca79646f",
+                "url": "https://api.github.com/repos/hyvor/hyvor-helper-laravel/zipball/7dfb642192eb07d5f36a6f823521b89e6b1a696e",
+                "reference": "7dfb642192eb07d5f36a6f823521b89e6b1a696e",
                 "shasum": ""
             },
             "require": {
@@ -2460,9 +2460,9 @@
             "description": "Helper Package for HYVOR Applications",
             "support": {
                 "issues": "https://github.com/hyvor/hyvor-helper-laravel/issues",
-                "source": "https://github.com/hyvor/hyvor-helper-laravel/tree/0.0.6"
+                "source": "https://github.com/hyvor/hyvor-helper-laravel/tree/0.0.7"
             },
-            "time": "2023-12-18T10:18:07+00:00"
+            "time": "2024-02-01T00:29:49+00:00"
         },
         {
             "name": "hyvor/laravel-filterq",
