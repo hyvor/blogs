@@ -180,6 +180,9 @@
             margin-left: 0;
             width: 100%;
         }
+        .post-left {
+            width: 100%;
+        }
     }
 
 </style>
