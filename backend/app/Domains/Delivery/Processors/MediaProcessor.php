@@ -110,8 +110,12 @@ class MediaProcessor extends RouteProcessorAbstract
             $mimeType === 'image/png' ||
             $mimeType === 'image/jpeg'
         ) {
-            $content = (string) Image::make($content)->encode('webp', 100);
-            $mimeType = 'image/webp';
+            try {
+                $content = (string) Image::make($content)->encode('webp', 100);
+                $mimeType = 'image/webp';
+            } catch (\Exception $e) {
+                // Ignore
+            }
         }
 
         return [
