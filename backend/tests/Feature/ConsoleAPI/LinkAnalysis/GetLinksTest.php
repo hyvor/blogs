@@ -49,7 +49,7 @@ it('gets links', function() {
         ->assertJsonPath('2.status_type', 'ignored')
         ->assertJsonPath('2.ignored', true)
 
-        ->assertJsonPath('3.id', $okLinks[0]->id)
+        ->assertJsonPath('3.id', $okLinks->last()->id)
         ->assertJsonPath('3.status_code', 200)
         ->assertJsonPath('3.status_type', 'ok')
         ->assertJsonPath('3.ignored', false);
@@ -85,7 +85,7 @@ it('gets link by type with limit and offset', function() {
     ])
         ->assertOk()
         ->assertJsonCount(2)
-        ->assertJsonPath('0.id', $brokenLinks[1]->id)
+        ->assertJsonPath('0.id', $brokenLinks[0]->id)
         ->assertJsonPath('1.id', $brokenLinks[2]->id);
 
 });
