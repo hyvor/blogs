@@ -3,8 +3,10 @@
 	import type { Theme } from "../../console/lib/types";
 	import { loadThemes } from "../../console/[subdomain]/theme/themeActions";
 	import { getConfig, loadConfig } from "../../console/lib/config";
-	import { IconButton, Link, Loader, NavLink } from "@hyvor/design/components";
-	import { IconBoxArrowUpRight, IconCaretDown, IconLaptop, IconList, IconTablet, IconThreeDots } from "@hyvor/icons";
+	import { IconButton, IconMessage, Link, Loader, NavLink } from "@hyvor/design/components";
+	import { IconBoxArrowUpRight, IconCaretDown, IconLaptop, IconList, IconLock, IconTablet, IconThreeDots } from "@hyvor/icons";
+
+    export let lockScroll = false;
 
     let isLoaded = false;
     let themes: Theme[] = [];
@@ -136,6 +138,21 @@
                         on:load={() => isLoading = false}
                         style:display={isLoading ? "none" : "block"}
                     />
+
+                    {#if lockScroll}
+                        <button 
+                            class="lock-scroll"
+                            on:click={() => lockScroll = false}
+                        >
+                            <div class="overlay" />
+                            <IconMessage
+                                icon={IconLock}
+                                iconSize={50}
+                                message="Click to unlock scroll"
+                            />
+                        </button>
+                    {/if}
+
                 </div>
             {/if}
         </div>
@@ -226,6 +243,26 @@
         justify-content: center;
         overflow: hidden;
         position:relative;
+    }
+
+    .lock-scroll {
+        position: absolute;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        z-index: 1;
+        cursor: pointer;
+        .overlay {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: #fafafa;
+            opacity: 0.7;
+            z-index: -1;
+        }
     }
 
     iframe {

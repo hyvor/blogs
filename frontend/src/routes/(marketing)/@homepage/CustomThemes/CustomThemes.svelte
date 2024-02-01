@@ -16,7 +16,10 @@
 />
 
 <div class="preview hds-container">
-    <ThemesPreview on:load={() => isLoading = false} />
+    <ThemesPreview 
+        on:load={() => isLoading = false}
+        lockScroll={true}
+    />
 
     {#if isLoading}
         <Loader full />
