@@ -11,7 +11,6 @@ if (App::environment('local')) {
 
 // main app
 Route::domain(config('blogs.domain_app'))->group(function () {
-    include 'app/pages.php';
     include 'app/api-data.php';
     include 'app/api-console.php';
     include 'app/api-cli.php';

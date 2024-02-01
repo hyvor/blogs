@@ -15,7 +15,7 @@ it('updates a navigation', function () {
 
     $url = 'https://example.com/or';
     $type = 'footer';
-    consoleApi($blog, 'PUT', "/navigation/$navigation->id", [
+    consoleApi($blog, 'PATCH', "/navigation/$navigation->id", [
         'url' => $url,
         'type' => $type,
     ])

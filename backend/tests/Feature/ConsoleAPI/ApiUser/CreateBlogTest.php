@@ -40,14 +40,10 @@ it('creates a blog', function () {
         'subdomain' => 'new-blog',
     ])
         ->assertOk()
-        ->assertJson(
-            fn (AssertableJson $json) => $json->has('blog')
-                ->has(
-                    'user',
-                    fn (AssertableJson $json) => $json->where('role', UserRoleEnum::OWNER->value)
-                        ->etc()
-                )
-        )->json()['blog']['id'];
+        ->assertJsonPath('subdomain', 'new-blog')
+        ->assertJsonPath('type', 'default')
+        ->assertJsonPath('role', 'owner')
+        ->json()['id'];
 
     $blog = Blog::find($blogId);
 
@@ -63,14 +59,8 @@ it('creates a dev blog', function () {
         'is_dev' => true,
     ])
         ->assertOk()
-        ->assertJson(
-            fn (AssertableJson $json) => $json->has('blog')
-            ->has(
-                'user',
-                fn (AssertableJson $json) => $json->where('role', UserRoleEnum::OWNER->value)
-                ->etc()
-            )
-        )->json()['blog']['id'];
+        ->assertJsonPath('role', 'owner')
+        ->json()['id'];
 
     $blog = Blog::find($blogId);
 

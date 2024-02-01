@@ -14,7 +14,7 @@ it('regenerates api key', function() {
         'api_key' => $key
     ]);
 
-    consoleApi($blog, 'POST', "/api-key/$apiKey->id/regenerate")
+    consoleApi($blog, 'PATCH', "/api-key/$apiKey->id")
         ->assertOk();
 
     $apiKey->refresh();
