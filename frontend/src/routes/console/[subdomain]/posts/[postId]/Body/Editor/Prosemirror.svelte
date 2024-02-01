@@ -196,6 +196,25 @@
             margin-top: 35px;
         }
 
+        :global(h1) {
+            font-size: 2em;
+        }
+        :global(h2) {
+            font-size: 1.5em;
+        }
+        :global(h3) {
+            font-size: 1.3em;
+        }
+        :global(h4) {
+            font-size: 1.2em;
+        }
+        :global(h5) {
+            font-size: 1.1em;
+        }
+        :global(h6) {
+            font-size: 1em;
+        }
+
         // hr
         :global(hr) {
             margin: 30px 0;
