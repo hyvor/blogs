@@ -23,6 +23,10 @@ services:
         healthcheck:
             test: 'curl -f http://localhost || exit 1 && curl -f http://localhost/api/special/health || exit 1'
 
+        volumes:
+            # caddy data
+            -  caddy_data:/root/.local/share/caddy
+
     traefik:
         image: traefik:v2.9
         container_name: traefik
@@ -42,3 +46,6 @@ services:
         volumes:
             - "/var/run/docker.sock:/var/run/docker.sock"
             - "./traefik/log:/var/log"
+
+volumes:
+    caddy_data:
