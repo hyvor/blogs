@@ -30,7 +30,7 @@ import ApiData from "./content/api-data/ApiData.svelte";
 import Users from "./content/users/Users.svelte";
 import SyntaxHighlighting from "./content/syntax-highlighting/SyntaxHighlighting.svelte";
 import Tags from "./content/tags/Tags.svelte";
-import Navigation from "./content/navigation/Navigation.svelte";
+import NavigationLinks from "./content/navigation/NavigationLinks.svelte";
 
 export const categories: Category[] = [
 
@@ -108,9 +108,9 @@ export const categories: Category[] = [
                 component: Seo
             },
             {
-                slug: 'navigation',
-                name: 'Navigation',
-                component: Navigation,
+                slug: 'navigation-links',
+                name: 'Navigation Links',
+                component: NavigationLinks,
             },
             {
                 slug: 'redirects',
