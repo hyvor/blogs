@@ -1,6 +1,6 @@
 {
     on_demand_tls {
-        ask {$APP_URL}/api/special/caddy/allowed-domain
+        ask https://{$DOMAIN_APP}/api/special/caddy/allowed-domain
     }
 }
 
