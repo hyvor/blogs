@@ -2,6 +2,12 @@
 	import Header from './Header.svelte';
     import { Footer, FooterLinkList } from '@hyvor/design/marketing';
 	import { page } from "$app/stores";
+    import { Crisp } from "crisp-sdk-web";
+	import { onMount } from "svelte";
+
+    onMount(() => {
+        Crisp.configure("1cab78fb-4baf-497e-a10f-00a3b12cfcfe");
+    });
 </script>
 
 <Header />
