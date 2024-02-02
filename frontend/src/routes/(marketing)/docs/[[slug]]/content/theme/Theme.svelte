@@ -12,7 +12,7 @@
 </ul>
 
 <Callout type="info">
-    <p>If you want to develop a custom theme, visit the <a href="https://blogs.hyvor.com/docs/themes-overview">Theme Development</a> page.</p>
+    <p>If you want to develop a custom theme, visit the <a href="/docs/themes-overview">Theme Development</a> page.</p>
 </Callout>
 
 <h2 id="changing">Changing Theme</h2>

@@ -21,7 +21,7 @@
 <h2 id="themes">Themes</h2>
 
 <h2 id="adding">Adding Code Blocks to Your Post</h2>
-<p>See <a href="https://blogs.hyvor.com/docs/writing#code-block">Code Block</a> in Writing.</p>
+<p>See <a href="/docs/writing#code-block">Code Block</a> in Writing.</p>
 
 <h2 id="annotations">Annotations</h2>
 <p>Annotations are used for highlighting, focusing, and numbering lines. You can add annotations to the code block in the Editor. Let's see some examples.</p>
