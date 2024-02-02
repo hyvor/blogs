@@ -15,6 +15,8 @@
             email="blogs.support@hyvor.com"
             social={{
                 x: 'https://x.com/HyvorBlogs',
+                youtube: null,
+                discord: null,
             }}
         >
 
