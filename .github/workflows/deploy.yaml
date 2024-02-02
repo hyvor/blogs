@@ -85,12 +85,12 @@ jobs:
                     host: ${{ matrix.server.ip }}
                     username: root
                     key: ${{ secrets.DEPLOY_SSH_KEY }}
-                    envs: IMAGE_VERSION, DOCKERHUB_USERNAME, DOCKERHUB_TOKEN, ENV_FILE
+                    envs: IMAGE_VERSION, DOCKERHUB_USERNAME, DOCKERHUB_TOKEN, ONE_PASSWORD_SERVICE_ACCOUNT_TOKEN, ENV_FILE
                     script: |
                         set -e
 
                         # docker
-                        docker login -u $DOCKERHUB_USERNAME -p $DOCKERHUB_TOKEN
+                        echo $DOCKERHUB_TOKEN | docker login -u $DOCKERHUB_USERNAME --password-stdin
 
                         # 1password
                         export OP_SERVICE_ACCOUNT_TOKEN=$ONE_PASSWORD_SERVICE_ACCOUNT_TOKEN
