@@ -1,11 +1,14 @@
-<script>
-	import { Button, Callout, Table, TableRow, Tag, toast } from "@hyvor/design/components";
+<script lang="ts">
+	import { Button, Callout, TabNav, TabNavItem, Table, TableRow, Tag, toast } from "@hyvor/design/components";
 	import { IconCopy, IconLightbulb } from "@hyvor/icons";
     
     import customDomainSettingsImg from './custom-domain-settings.png';
 	import { DocsImage } from "@hyvor/design/marketing";
 
     const CUSTOM_DOMAIN_IP = '116.202.185.2';
+    const CNAME_DOMAIN = 'hyvorblogs.io';
+
+    let dnsMethod : 'cname' | 'a' = 'cname';
 </script>
 <h1>Custom Domain</h1>
 
@@ -49,68 +52,129 @@
     Step 2: Update DNS Records
 </h2>
 
-<ul>
-    <li>
-        Go to your domain registrar's DNS settings.
-    </li>
-    <li>
-        Create a <strong>A</strong> record with the following details.
+<TabNav bind:active={dnsMethod}>
+    <TabNavItem name="cname">
+        CNAME <Tag size="small" color="blue" slot="end">
+            Preferred
+        </Tag>
+    </TabNavItem>
+    <TabNavItem name="a">A Record</TabNavItem>
+</TabNav>
 
-        <Table columns="1fr 2fr">
-            <TableRow>
-                <div>Host/Name</div>
-                <div>
-                    <div style="margin-bottom:6px;">
-                        <code>@</code> for <strong>example.com</strong> or
-                    </div>
-                    <code>blog</code> for <strong>blog.example.com</strong>
+{#if dnsMethod === 'cname'}
+
+    <p>
+        <strong>Recommended</strong> method. It's easier and more reliable. Go to your domain registrar's DNS settings and create a <strong>CNAME</strong> record with the following details.
+    </p>
+
+    <Table columns="1fr 2fr">
+        <TableRow head>
+            <div>Field</div>
+            <div>Value</div>
+        </TableRow>
+        <TableRow>
+            <div>
+                Host/Name
+            </div>
+            <div>
+                <div style="margin-bottom:6px;">
+                    <code>@</code> for <strong>example.com</strong> or
                 </div>
-            </TableRow>
-            <TableRow>
-                <div>IP Address</div>
-                <div>
-                    <code>{CUSTOM_DOMAIN_IP}</code>
-                    <Button
-                        size="x-small"
-                        on:click={() => {
-                            navigator.clipboard.writeText(CUSTOM_DOMAIN_IP)
-                            toast.success('Copied to clipboard')
-                        }}
-                        style="margin-left:5px;"
-                        color="input"
-                    >
-                        Copy <IconCopy slot="end" size={12} />
-                    </Button>
+                <code>blog</code> for <strong>blog.example.com</strong>
+            </div>
+        </TableRow>
+        <TableRow>
+            <div>
+                Content
+            </div>
+            <div>
+                <code>{CNAME_DOMAIN}</code>
+                <Button
+                    size="x-small"
+                    on:click={() => {
+                        navigator.clipboard.writeText(CNAME_DOMAIN)
+                        toast.success('Copied to clipboard')
+                    }}
+                    style="margin-left:5px;"
+                    color="input"
+                >
+                    Copy <IconCopy slot="end" size={12} />
+                </Button>
+            </div>
+        </TableRow>
+    </Table>
+
+{:else}
+
+    <p>
+        If you can't use the CNAME method, you can use the <strong>A</strong> record method. This method depends on our infrastructure. If you use this method, you may need to update the IP address in the future if we have a <i>major</i> infrastructure change.
+    </p>
+
+    <p>
+        Go to your domain registrar's DNS settings and create an <strong>A</strong> record with the following details.
+    </p>
+
+    <Table columns="1fr 2fr">
+        <TableRow head>
+            <div>Field</div>
+            <div>Value</div>
+        </TableRow>
+        <TableRow>
+            <div>Host/Name</div>
+            <div>
+                <div style="margin-bottom:6px;">
+                    <code>@</code> for <strong>example.com</strong> or
                 </div>
-            </TableRow>
-        </Table>
-    </li>
-</ul>
+                <code>blog</code> for <strong>blog.example.com</strong>
+            </div>
+        </TableRow>
+        <TableRow>
+            <div>IP Address</div>
+            <div>
+                <code>{CUSTOM_DOMAIN_IP}</code>
+                <Button
+                    size="x-small"
+                    on:click={() => {
+                        navigator.clipboard.writeText(CUSTOM_DOMAIN_IP)
+                        toast.success('Copied to clipboard')
+                    }}
+                    style="margin-left:5px;"
+                    color="input"
+                >
+                    Copy <IconCopy slot="end" size={12} />
+                </Button>
+            </div>
+        </TableRow>
+    </Table>
+
+{/if}
 
 <p>
     Voila! Your blog is now available at your custom domain.
 </p>
+
+<h2 id="cloudflare">
+    Using Cloudflare
+</h2>
+
+<p>
+    If you are using Cloudflare for your domain, use one of the following options.
+</p>
+
+<ul>
+    <li>
+        (Recommended) Turn on the proxy (Orange Cloud) and set the <a href="https://developers.cloudflare.com/ssl/origin-configuration/ssl-modes/" target="_blank" rel="nofollow">Encryption Mode</a> to <strong>Full</strong> or <strong>Full (Strict)</strong>. This will enable the Cloudflare global CDN for your blog for better caching and performance.
+    </li>
+    <li>
+        Turn off the proxy (Gray Cloud)
+    </li>
+</ul>
 
 
 <h2 id="troubleshoot">
     Troubleshooting
 </h2>
 
-<ul>
-    <li>
-        If your blog with custom domain is loading infinitely or returning any other errors codes, make sure you do not have any other <code>A</code> or <code>AAAA</code> records with the same hostname as your custom domain.
-    </li>
-    <li>
-        If you are using <strong>Cloudflare</strong> for your domain, use one the following options.
-        <ul>
-            <li>
-                <Tag size="small" color="green" style="display:inline">Recommended</Tag> &nbsp;
-
-                Turn on the proxy (Orange Cloud) and set the <a href="https://developers.cloudflare.com/ssl/origin-configuration/ssl-modes/" target="_blank" rel="nofollow">Encryption Mode</a> to <strong>Full</strong> or <strong>Full (Strict)</strong>. This will enable the Cloudflare global CDN for your blog for better caching and performance.
-            </li>
-            <li>
-                Turn off the proxy (Gray Cloud)
-            </li>
-        </ul>
-    </li>
-</ul>
+<p>
+    If your blog with custom domain is loading infinitely or returning any other errors codes, make sure you do not have any other <code>A</code> or <code>AAAA</code> records with the same hostname as your custom domain.
+</p>
