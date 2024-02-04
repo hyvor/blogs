@@ -3,17 +3,33 @@
 	import schema from "../../../../../../../lib/prosemirror/schema";
 	import { tick } from "svelte";
 	import { IconButton } from "@hyvor/design/components";
-	import { IconCode, IconLink45deg, IconTypeBold, IconTypeItalic, IconTypeStrikethrough } from "@hyvor/icons";
-	import type { MarkType } from "prosemirror-model";
+	import { IconBoxArrowUpRight, IconCode, IconLink45deg, IconPencil, IconTrash, IconTypeBold, IconTypeItalic, IconTypeStrikethrough } from "@hyvor/icons";
+	import { Mark, type MarkType } from "prosemirror-model";
 	import type { EditorState } from "prosemirror-state";
 	import { toggleMark } from "prosemirror-commands";
 	import LinkSelector from "./LinkSelector/LinkSelector.svelte";
+	import { markExtend } from "./mark-helpers";
 
     export let view: EditorView;
     export let show = false;
 
     let tooltip: HTMLSpanElement;
     let linkSelectorOpen = false;
+
+    function getLink() {
+        const sel = view.state.selection;
+        let link : Mark | null = null;
+        view.state.doc.nodesBetween(sel.from, sel.to, (node, pos) => {
+            const mark = schema.marks.link!.isInSet(node.marks)
+            if (mark) {
+                link = mark;
+            }
+        });
+        return link;
+    }
+
+    let  link: Mark | null;
+    $: if (view) link = getLink();
 
     function updatePosition() {
         if (!tooltip) return;
@@ -78,6 +94,33 @@
         view.focus();
     }
 
+    function getTrimmedLink(link: string) {
+        const limit = 100;
+        if (link.length > limit) {
+            return link.slice(0, limit) + '...';
+        }
+        return link;
+    }
+
+    function deleteLink() {
+        if (!link) return;
+
+        const extend = markExtend(view.state.selection.$from, link);
+
+        view.dispatch(
+            view.state.tr.removeMark(
+                extend.from,
+                extend.to,
+                view.state.schema.marks.link
+            )
+        );
+        view.focus();
+    }
+
+    function editLink() {
+        linkSelectorOpen = true;
+    }
+
 </script>
 
 {#key view}
@@ -87,40 +130,71 @@
             bind:this={tooltip}
         >
 
-            <IconButton 
-                {...getProps('link')}
-                on:click={() => handleClick('link')}
-            >
-                <IconLink45deg />
-            </IconButton>
+            {#if link}
+                <div class="link-row">
+                    <a 
+                        class="link"
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        href={link.attrs.href}
+                    >
+                        {getTrimmedLink(link.attrs.href)} <IconBoxArrowUpRight size={12} />
+                    </a>
+                    <span class="link-actions">
+                        <IconButton 
+                            color="input" 
+                            size={20}
+                            on:click={editLink}
+                        >
+                            <IconPencil size={10} />
+                        </IconButton>
+                        <IconButton 
+                            color="input" 
+                            size={20}
+                            on:click={deleteLink}
+                        >
+                            <IconTrash size={10} />
+                        </IconButton>
+                    </span>
+                </div>
+            {/if}
 
-            <IconButton 
-                {...getProps('strong')}
-                on:click={() => handleClick('strong')}    
-            >
-                <IconTypeBold />
-            </IconButton>
+            <div class="buttons-row">
+                <IconButton
+                    {...getProps('link')}
+                    on:click={() => handleClick('link')}
+                >
+                    <IconLink45deg />
+                </IconButton>
 
-            <IconButton 
-                {...getProps('em')}
-                on:click={() => handleClick('em')}
-            >
-                <IconTypeItalic />
-            </IconButton>
+                <IconButton 
+                    {...getProps('strong')}
+                    on:click={() => handleClick('strong')}    
+                >
+                    <IconTypeBold />
+                </IconButton>
 
-            <IconButton 
-                {...getProps('code')}
-                on:click={() => handleClick('code')} 
-            >
-                <IconCode />
-            </IconButton>
+                <IconButton 
+                    {...getProps('em')}
+                    on:click={() => handleClick('em')}
+                >
+                    <IconTypeItalic />
+                </IconButton>
 
-            <IconButton 
-                {...getProps('strike')}
-                on:click={() => handleClick('strike')}  
-            >
-                <IconTypeStrikethrough />
-            </IconButton>
+                <IconButton 
+                    {...getProps('code')}
+                    on:click={() => handleClick('code')} 
+                >
+                    <IconCode />
+                </IconButton>
+
+                <IconButton 
+                    {...getProps('strike')}
+                    on:click={() => handleClick('strike')}  
+                >
+                    <IconTypeStrikethrough />
+                </IconButton>
+            </div>
         </span>
     {/if}
 {/key}
@@ -129,6 +203,7 @@
     <LinkSelector 
         bind:show={linkSelectorOpen}
         {view}
+        edit={link ? link.attrs.href : null}
     />
 {/if}
 
@@ -139,7 +214,6 @@
         background: #fff;
         box-shadow: 0 0 10px rgba(0,0,0,.1);
         border-radius: 20px;
-        padding: 5px 10px;
         margin-bottom: 10px;
         z-index: 100;
     }
@@ -156,6 +230,33 @@
         position: absolute;
         border-left-color: transparent;
         border-right-color: transparent;
+    }
+
+    .link-row {
+        margin-bottom: 5px;
+        padding: 10px 15px;
+        border-bottom: 1px solid var(--border);
+        display: flex;
+        align-items: center;
+    }
+    .link {
+        display: inline-block;
+        color: var(--link);
+        font-size:14px;
+        cursor: pointer;
+        text-decoration: none!important;
+        padding-right: 8px;
+        margin-right: 8px;
+        border-right: 1px solid var(--border);
+        max-width: 250px;
+        word-break: break-all;
+    }
+    .link:hover {
+        text-decoration: underline!important;
+    }
+
+    .buttons-row {
+        padding: 10px 15px;
     }
 
 </style>

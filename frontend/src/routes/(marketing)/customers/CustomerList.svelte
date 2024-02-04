@@ -138,7 +138,20 @@
             url: 'warmandwise.com',
             country: '🇹🇼'
         },
+        {
+            name: 'Fadak Blog',
+            type: 'personal',
+            image: 'fadak.webp',
+            url: 'fadak.blog',
+            country: '🇮🇶',
+            color: '#f9f3e8',
+        }
     ];
+
+    export let max : number | null = null;
+    if (max) {
+        customers.splice(max);
+    }
 
     function getTagColor(type: CustomerType) {
         switch (type) {

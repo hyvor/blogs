@@ -158,6 +158,16 @@
     }
 
     function handleUpgradeComplete() {
+
+        const event = new CustomEvent('console:subscription:created', {
+            detail: {
+                price: getPriceFromPlan(name),
+                plan: name,
+                frequency,
+            }
+        });
+        window.dispatchEvent(event);
+
         toast.success(CheckoutSuccessToast, {
             duration: 12000,
         });

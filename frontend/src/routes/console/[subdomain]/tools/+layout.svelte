@@ -80,4 +80,17 @@
     .div {
         height: 25px;
     }
+
+
+    @media (max-width: 992px) {
+        .tools {
+            flex-direction: column;
+        }
+        .nav {
+            width: 100%;
+            margin-right: 0;
+            margin-bottom: 20px;
+        }
+    }
+
 </style>

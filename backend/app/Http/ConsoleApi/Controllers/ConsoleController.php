@@ -38,7 +38,12 @@ class ConsoleController
 
         $tempSubdomain = $request->input('temp_subdomain');
 
-        $blog = BlogListObject::fromTempBlog(TempBlogService::getTempBlog($tempSubdomain));
+        $blog = BlogListObject::fromTempBlog(
+            TempBlogService::getTempBlog(
+                $tempSubdomain,
+                $request->ip(),
+            )
+        );
 
         return response()->json([
             'user' => [

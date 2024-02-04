@@ -36,13 +36,13 @@
         <span class="buttons">
 
             <Tooltip text="Edit file name" position="bottom">
-                <IconButton size={22} on:click={() => isUpdating = true}>
+                <IconButton color="input" size={22} on:click={() => isUpdating = true}>
                     <IconPencilFill size={10} />
                 </IconButton>
             </Tooltip>
 
             <Tooltip text="Delete file" position="bottom">
-                <IconButton size={22} on:click={() => isDeleting = true}>
+                <IconButton color="input" size={22} on:click={() => isDeleting = true}>
                     <IconTrash size={10} />
                 </IconButton>
             </Tooltip>

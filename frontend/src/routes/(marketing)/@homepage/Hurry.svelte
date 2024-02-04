@@ -33,7 +33,7 @@
         In a hurry?
     </div>
 
-    Try Hyvor Blogs with a free temporary blog, created in a few seconds.
+    Try Hyvor Blogs with a free temporary blog created in a few seconds.
     <strong>No sign up required</strong>.
 
     <div class="temp-button">
@@ -57,8 +57,12 @@
 
         <div class="hds-container inner">
 
-            <div>
+            <div class="desktop">
                 Try Hyvor Blogs with a free temporary blog. <strong>No sign up required</strong>.
+            </div>
+
+            <div class="mobile">
+                In a hurry?
             </div>
 
             <Button
@@ -69,7 +73,10 @@
                 href="/console?temp"
                 target="_blank"
             >
-                Create a temporary blog
+                <span class="desktop">Create a temporary blog</span>
+                <span class="mobile">
+                    Create temp blog
+                </span>
                 <IconBoxArrowUpRight slot="end" size={10} />
             </Button>
 
@@ -99,6 +106,13 @@
         }
     }
 
+    .desktop {
+        display: block;
+    }
+    .mobile {
+        display: none;
+    }
+
     .fixed {
         position: fixed;
         top: var(--header-height);
@@ -117,6 +131,20 @@
             align-items: center;
             justify-content: center;
         }
+    }
+
+    @media (max-width: 992px) {
+
+        .fixed {
+        }
+
+        .desktop {
+            display: none;
+        }
+        .mobile {
+            display: block;
+        }
+
     }
 
 </style>

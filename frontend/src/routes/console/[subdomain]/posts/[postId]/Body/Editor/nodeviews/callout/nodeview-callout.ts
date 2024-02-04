@@ -1,6 +1,8 @@
 import type { EditorView, NodeView } from "prosemirror-view";
 import { type Node as ProsemirrorNode } from 'prosemirror-model';
 import { EmojiButton } from '@joeattardi/emoji-button';
+import CalloutColors from "./CalloutColors.svelte";
+import type { SvelteComponent } from "svelte";
 
 export class CalloutNodeView implements NodeView {
 
@@ -13,9 +15,8 @@ export class CalloutNodeView implements NodeView {
 
     emoji: HTMLSpanElement;
     colorPickersWrap: HTMLDivElement;
-    colorPickerBg: HTMLSpanElement;
-    colorPickerFg: HTMLSpanElement;
 
+    private colorsComponent: SvelteComponent;
 
     constructor(node: ProsemirrorNode, view: EditorView, getPos: () => number | undefined) {
         this.node = node;
@@ -71,12 +72,30 @@ export class CalloutNodeView implements NodeView {
         this.colorPickersWrap = document.createElement("div");
         this.colorPickersWrap.contentEditable = "false";
         this.colorPickersWrap.className = "color-pickers-wrap";
-        this.dom.appendChild(this.colorPickersWrap);
-        
-        this.colorPickerBg = this.createColorPicker('bg')
-        this.colorPickerFg = this.createColorPicker('fg')
+        this.dom.appendChild(this.colorPickersWrap)
+
+        this.colorsComponent = new CalloutColors({
+            target: this.colorPickersWrap,
+            props: this.getColorsProps()
+        })
         
         this.updateFromAttrs();
+    }
+
+    private getColorsProps() {
+        return {
+            bg: this.node.attrs.bg,
+            fg: this.node.attrs.fg,
+            changeAttr: this.changeAttr.bind(this)
+        }
+    }
+
+    stopEvent() {
+        return true;
+    }
+
+    ignoreMutation() {
+        return true;
     }
 
     update(node: ProsemirrorNode) {
@@ -94,67 +113,15 @@ export class CalloutNodeView implements NodeView {
     updateFromAttrs() {
         this.emoji.innerHTML = this.node.attrs.emoji;
         this.changeColors(this.node.attrs.bg, this.node.attrs.fg)
-
         this.dom.dataset.emoji = this.node.attrs.emoji;
     }
     
     changeColors(bg: string, fg: string) {
         this.dom.style.backgroundColor = bg;
         this.dom.style.color = fg;
-        this.colorPickerBg.style.backgroundColor = bg;
-        this.colorPickerFg.style.backgroundColor = fg;
+        this.colorsComponent.$set(this.getColorsProps())
     }
-    
-    createColorPicker(type: 'bg' | 'fg') {
-        
-        const picker = document.createElement("span");
-        picker.className = 'color-picker';
-        
-        const _self =  this;
-        
-        picker.addEventListener('click', function () {
-            const pickerWrap = document.createElement("div");
-            document.body.appendChild(pickerWrap)
 
-            pickerWrap.style.position = 'fixed';
-            const cord = picker.getBoundingClientRect()
-            pickerWrap.style.top = (cord.top + 25) + "px";
-            pickerWrap.style.left = (cord.left - 200) + "px";
-            pickerWrap.style.zIndex = "100000";
-            
-            const preset = type === 'bg' ? 
-                [
-                    '#e3e2e080',
-                    '#e3e2e0',
-                    '#eedfda',
-                    '#f9dec9',
-                    '#fdecc8',
-                    '#daecda',
-                    '#d2e4ef',
-                    '#e7ddee',
-                    '#ffe2dd'
-                ] : 
-                [
-                    '#000', '#fff'
-                ];
-            
-            /* ReactDOM.render(
-                <ColorPicker
-                    color={_self.node.attrs[type]}
-                    onChange={(color: string) => _self.changeAttr(type, color)}
-                    onClose={() => document.body.removeChild(pickerWrap)}
-                    preset={preset}
-                />,
-                pickerWrap
-            ) */
-        });
-        
-        this.colorPickersWrap.appendChild(picker)
-        
-        return picker
-        
-    }
-    
     changeAttr(name: string, value: string) {
         const attrs = {...this.node.attrs, [name]: value }
         const pos = this.getPos();

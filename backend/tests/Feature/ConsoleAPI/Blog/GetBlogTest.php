@@ -2,7 +2,6 @@
 
 namespace Tests\Feature\ConsoleAPI\Blog;
 
-use Illuminate\Testing\Fluent\AssertableJson;
 
 it('gets blog', function () {
 
@@ -11,11 +10,12 @@ it('gets blog', function () {
 
     consoleApi($blog, 'GET', '/blog')
         ->assertOk()
-        ->assertJson(function (AssertableJson $json) {
-            $json->has('blog')
-                ->has('counts')
-                ->has('users')
-                ->has('tags')
-                ->has('languages');
-        });
+        ->assertJsonPath('blog.subdomain', $blog->subdomain)
+        ->assertJsonPath('subscription', null)
+        ->assertJsonIsObject('counts')
+        ->assertJsonIsArray('users')
+        ->assertJsonIsArray('tags')
+        ->assertJsonIsArray('languages')
+        ->assertJsonIsObject('usage');
+
 });

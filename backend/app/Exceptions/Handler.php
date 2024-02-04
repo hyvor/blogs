@@ -40,7 +40,10 @@ class Handler extends ExceptionHandler
     public function register()
     {
         $this->reportable(function (Throwable $e) {
-            if ($e instanceof TrustedException)
+            if (
+                $e instanceof TrustedException ||
+                $e instanceof HttpException
+            )
                 return;
             Integration::captureUnhandledException($e);
         });

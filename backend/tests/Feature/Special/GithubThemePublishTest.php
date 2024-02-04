@@ -9,7 +9,7 @@ it('does not work when the key is wrong', function() {
 
     config(['services.github.themes_publish_key' => '1234567890']);
 
-    $this->post('/special/themes/publish', [], [
+    $this->post('/api/special/themes/publish', [], [
         'X-Key' => 'wrongkey'
     ])->assertStatus(500);
 
@@ -23,7 +23,7 @@ it('works when the key is correct', function() {
 
     Queue::fake();
 
-    $this->post('/special/themes/publish', [], [
+    $this->post('/api/special/themes/publish', [], [
         'X-Key' => $key
     ])->assertOk();
 

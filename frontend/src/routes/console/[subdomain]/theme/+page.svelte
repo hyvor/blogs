@@ -42,4 +42,16 @@
         flex-direction: column;
     }
 
+    @media (max-width: 992px) {
+        .theme {
+            flex-direction: column;
+        }
+        .left {
+            width: 100%;
+            margin-right: 0;
+            margin-bottom: 20px;
+        }
+    }
+
+
 </style>

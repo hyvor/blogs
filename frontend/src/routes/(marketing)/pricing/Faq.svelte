@@ -29,4 +29,11 @@
         margin-top: 10px;
         line-height: 22px;
     }
+
+    @media (max-width: 992px) {
+        .faq {
+            width: 100%;
+        }
+    }
+
 </style>

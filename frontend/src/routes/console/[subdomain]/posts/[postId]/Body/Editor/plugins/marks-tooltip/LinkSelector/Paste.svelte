@@ -5,7 +5,7 @@
 	import { getHeadingsFromContent } from "../../../../../../../../lib/prosemirror/helpers";
 	import { postCurrentContentStore } from "../../../../../../postStore";
 
-    let input = '';
+    export let input = '';
 
     $: isRelative = !/^[a-zA-Z0-9]+:\/\//.test(input);
     $: isAnchor = /^#/.test(input);

@@ -3,7 +3,7 @@
 
 use Illuminate\Support\Facades\Route;
 
-Route::prefix('/integrations')->group(function () {
+Route::prefix('/api/integrations')->group(function () {
     include 'paddle.php';
     include 'shopify.php';
 });

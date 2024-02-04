@@ -1,22 +1,56 @@
 <script lang="ts">
-	import { themeFilesStore } from "../../themeStore";
+	import { Switch } from "@hyvor/design/components";
+    import type { ThemeFile } from "../../../../lib/types";
+	import { themeFilesStore, updateThemeFileStore } from "../../themeStore";
 	import ConfigUi from "../ConfigUi/ConfigUi.svelte";
+	import TextEditor from "./TextEditor.svelte";
+
+    export let file: ThemeFile;
 
     $: files = $themeFilesStore;
 
     $: configYaml = files.find(f => f.folder === null && f.name === 'config.yaml')?.content || '';
     $: configDefYaml = files.find(f => f.folder === null && f.name === 'config.def.yaml')?.content || '';
 
+    function handleChange(e: CustomEvent<string>) {
+        updateThemeFileStore(file.id, {content: e.detail}, false);
+    }
+
+    let showYaml = false;
 </script>
 
-<div>
-    <ConfigUi config={configYaml} configDef={configDefYaml} />
+<div class="switch-wrap">
+    <Switch
+        bind:checked={showYaml}
+    >
+        Show YAML
+    </Switch>
 </div>
 
+{#if showYaml}
+    <TextEditor 
+        {file}
+        ext="yaml"
+    />
+{:else}
+    <div class="ui-wrap">
+        <ConfigUi 
+            config={configYaml}
+            configDef={configDefYaml}
+            on:change={handleChange}
+        />
+    </div>
+{/if}
 
 <style>
-    div {
+    .ui-wrap {
         padding: 15px 25px;
         overflow: auto;
+        position: relative;
+    }
+    .switch-wrap {
+        text-align: center;
+        border-bottom: 1px solid var(--border);
+        padding: 10px 25px;
     }
 </style>

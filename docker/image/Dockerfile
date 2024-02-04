@@ -83,6 +83,6 @@ RUN npm install --prefix /var/www/app/backend
 # delete all in /var/www/app/frontend except build folder
 RUN find /var/www/app/frontend -mindepth 1 -maxdepth 1 ! -name build -exec rm -rf {} \;
 
-EXPOSE 80
+EXPOSE 80 443
 
 CMD ["/usr/bin/supervisord"]

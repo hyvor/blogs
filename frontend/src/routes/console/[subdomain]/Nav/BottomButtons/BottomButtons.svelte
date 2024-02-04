@@ -13,6 +13,20 @@
 </script>
 <div id="nav-bottom">
 
+    <div class="announcement-wrap">
+        <Button
+            as="a"
+            href="https://hyvor.com/blog/hyvor-blogs-ui-update"
+            target="_blank"
+            block
+            variant="fill-light"
+            color="blue"
+            align="start"
+        >
+            📣 A new look <IconBoxArrowUpRight size={14} slot="end" />
+        </Button>
+    </div>
+
     <Button
         block
         variant="invisible"
@@ -113,8 +127,22 @@
     #nav-bottom {
         padding: 5px 15px;
         :global(button), :global(a) {
-            color: var(--text)!important;
+            color: var(--text);
             font-weight: normal;
         }
     }
+
+    .announcement-wrap {
+        margin-bottom: 15px;
+        :global(.button-content) {
+            justify-content: center!important;
+        }
+    }
+
+    @media (max-width: 992px) {
+        #nav-bottom {
+            display: none;
+        }
+    }
+
 </style>

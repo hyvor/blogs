@@ -4,7 +4,13 @@
 
     import relativeTime from 'dayjs/plugin/relativeTime'
 	import dayjs from "dayjs";
+	import { onMount } from "svelte";
+	import { setUpMarketing } from "./marketing";
     dayjs.extend(relativeTime);
+
+    onMount(() => {
+        setUpMarketing();
+    })
 </script>
 
 <Base>

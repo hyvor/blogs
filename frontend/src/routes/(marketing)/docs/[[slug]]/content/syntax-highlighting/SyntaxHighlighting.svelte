@@ -1,5 +1,29 @@
 <script lang="ts">
-	import { Table, TableRow } from "@hyvor/design/components";
+	import { Button, Loader, Table, TableRow } from "@hyvor/design/components";
+	import { onMount } from "svelte";
+	import { APP_URL } from "../../../../../../lib";
+	import { IconCaretDown, IconCaretRight } from "@hyvor/icons";
+
+    interface DataType {
+        languageTags: string,
+        languagesCount: number,
+        themeTags: string,
+        themesCount: number,
+        previews: string,
+    }
+
+    let data : null | DataType = null;
+    let showPreview = false;
+
+    onMount(() => {
+
+        fetch(APP_URL + '/api/special/syntax')
+            .then(res => res.json())
+            .then(res => {
+                data = res;
+            })
+
+    });
 
 
 </script>
@@ -16,9 +40,63 @@
 
 <p>Most importantly, syntax highlighting is done at the time of rendering posts in our back-end. Therefore, it does not require any additional Javascript or CSS. To change syntax highlighting settings, go to <code>Console → Settings → Post Content</code>.</p>
 
-<h2 id="languages">Languages</h2>
+<div class="dynamic">
 
-<h2 id="themes">Themes</h2>
+    <h2 id="languages">Languages</h2>
+
+    {#if data === null}
+        <Loader block padding={40}>
+            Loading languages
+        </Loader>
+    {:else}
+        <p>
+            Our syntax highlighter supports {data.languagesCount} programming languages:
+        </p>
+        <div class="language-tags">
+            <div>Supported Languages</div>
+            {@html data.languageTags}
+        </div>
+    {/if}
+
+
+    <h2 id="themes">Themes</h2>
+
+    {#if data === null}
+        <Loader block padding={40}>
+            Loading themes
+        </Loader>
+    {:else}
+        <p>
+            Hyvor Blogs supports {data.themesCount} VS Code themes.
+        </p>
+
+        <div class="language-tags themes">
+            <div>Supported Themes</div>
+            {@html data.themeTags}
+        </div>
+
+        <p>
+            <Button size="small" on:click={() => showPreview = !showPreview}>
+                Show theme previews
+                <svelte:fragment slot="end">
+                    {#if showPreview}
+                        <IconCaretDown size={12} />
+                    {:else}
+                        <IconCaretRight size={12} />
+                    {/if}
+                </svelte:fragment>
+            </Button>
+        </p>
+
+        {#if showPreview}
+            <div id="theme-previews">
+                {@html data.previews}
+            </div>
+        {/if}
+
+    {/if}
+
+</div>
 
 <h2 id="adding">Adding Code Blocks to Your Post</h2>
 <p>See <a href="/docs/writing#code-block">Code Block</a> in Writing.</p>
@@ -98,3 +176,56 @@
     <li>Under the hood, Hyvor Blogs use <a href="https://github.com/shikijs/shiki" rel="nofollow">Shiki</a> for syntax highlighting. Therefore, we can support and VSCode-supported language or theme. If you want to add any, contact us.</li>
     <li>Colors for syntax comes from our side, but styles like padding, margins, space between lines, and font sizes comes from the <a href="/docs/theme">theme</a> of your blog.</li>
 </ul>
+
+
+<style lang="scss">
+
+    .dynamic {
+        :global(.language-tags) {
+            background: #fafafa;
+            border-radius: 20px;
+            padding: 20px;
+            :global(div) {
+                font-weight: 600;
+                margin-bottom: 10px;
+            }
+            :global(span) {
+                display: inline-block;
+                padding: 2px 8px;
+                margin-right: 4px;
+                margin-bottom: 4px;
+                background: #eaeaea;
+                border-radius: 20px;
+                font-size: 12px;
+            }
+        }
+        :global(#theme-previews) {
+            margin: 20px 0;
+            :global(pre code) {
+                display: block;
+                padding: 20px 0;
+                line-height: 1.5;
+                font-family: Consolas,Menlo,Monaco,source-code-pro,Courier New,monospace;
+                font-size: 13.6px;
+                background-color: transparent;
+                :global(.line) {
+                    padding: 0 20px;
+                }
+                :global(.line-number) {
+                    margin-right: 1rem;
+                }
+            }
+            :global(pre) {
+                padding:0!important;
+                margin-top: 10px!important;
+                border-radius: 20px!important;
+            }
+            
+            :global(.theme-key) {
+                font-weight: 600;
+                font-size: 20px;
+            }
+        }
+    }
+    
+</style>

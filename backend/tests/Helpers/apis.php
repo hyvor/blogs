@@ -39,6 +39,6 @@ if (!function_exists('integrationApi')) {
     function integrationApi(string $method, string $endpoint, $data = []): TestResponse
     {
         $endpoint = trim($endpoint, '/');
-        return test()->call($method, config('app.url') . "/integrations/$endpoint", $data);
+        return test()->call($method, config('app.url') . "/api/integrations/$endpoint", $data);
     }
 }

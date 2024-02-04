@@ -1,11 +1,29 @@
 <script lang="ts">
-	import { Radio, Switch, TextInput, Textarea } from "@hyvor/design/components";
+	import { ColorPicker, Radio, Switch, TextInput, Textarea } from "@hyvor/design/components";
     import { getInputType } from "./configUi";
+	import { createEventDispatcher } from "svelte";
 
     export let value: any;
     export let configDef: Record<string, any>;
 
     $: type = getInputType(configDef);
+
+    const dispatch = createEventDispatcher<{change: any}>();
+
+    function handleChange() {
+        dispatch('change', value);
+    }
+
+    function handleNumberInput(e: Event) {
+        value = Number((e.target as HTMLInputElement).value);
+    }
+
+    function handleColorChange(e: CustomEvent<string>) {
+        value = e.detail;
+    }
+
+    $: value, handleChange();
+
 </script>
 
 {#if type === 'none'}
@@ -14,14 +32,14 @@
     <TextInput 
         maxlength={configDef.$maxlength}
         minlength={configDef.$minlength}
-        value={value}
+        bind:value={value}
         block
     />
 {:else if type === 'textarea'}
     <Textarea 
         maxlength={configDef.$maxlength}
         minlength={configDef.$minlength}
-        value={value}
+        bind:value={value}
         block
     />
 {:else if type === 'number'}
@@ -30,11 +48,12 @@
         min={configDef.$min}
         max={configDef.$max}
         value={value}
+        on:input={handleNumberInput}
         block
     />
 {:else if type === 'checkbox'}
     <Switch 
-        checked={value}
+        bind:checked={value}
     />
 {:else if type === 'radio'}
 
@@ -42,7 +61,7 @@
         <Radio
             name={configDef.$name}
             value={key}
-            group={value}
+            bind:group={value}
         >
             {label}
         </Radio>
@@ -50,10 +69,9 @@
 
 {:else if type === 'color'}
     
-    <TextInput 
-        type="color"
-        value={value}
-        style="width: 50px"
+    <ColorPicker 
+        color={value}
+        on:input={handleColorChange}
     />
 
 {/if}

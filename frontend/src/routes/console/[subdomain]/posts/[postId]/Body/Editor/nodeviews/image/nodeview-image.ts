@@ -34,6 +34,8 @@ export default class ImageView implements NodeView {
             alt: node.attrs.alt,
             width: node.attrs.width,
             height: node.attrs.height,
+            getPos: this.getPos,
+            view: this.view,
         }
     }
 
@@ -47,8 +49,10 @@ export default class ImageView implements NodeView {
 
 
     stopEvent(e: Event) {
-        console.log(e)
-        return true;
+        if (e.target instanceof HTMLElement && e.target.closest('.image-node-wrap .top')) {
+            return true;
+        }
+        return false;
     }
 
 } 

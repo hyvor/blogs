@@ -7,7 +7,10 @@
 	import { importCodemirrorAll } from "../../../../../lib/components/CodemirrorEditor/codemirror";
 	import { getPlugins } from "./plugins/plugins";
 	import type { ProsemirrorEventDispatchType } from "./editorEvents";
+	import { postEditingStatusStore } from "../../../postStore";
+    
     export let value: string | null;
+    
     let wrap: HTMLDivElement;
 
     const dispatch = createEventDispatcher<{
@@ -68,12 +71,20 @@
         createEditor();
     })
 
+    function handleWrapClick(e: MouseEvent) {
+        if (e.target === wrap)
+            $postEditingStatusStore.editorView?.focus();
+    }
+
 </script>
 
 
+<!-- svelte-ignore a11y-no-static-element-interactions -->
 <div 
     class="pm-editor"
     bind:this={wrap}
+    on:click={handleWrapClick}
+    on:keyup
 ></div>
 
 
@@ -83,6 +94,7 @@
 
         --prosemirror-hover-outline: 2px solid #8cf;
         --prosemirror-selected-outline: 3px solid #299af3;
+        padding-bottom: 100px;
 
 
         :global(.ProseMirror) {
@@ -184,6 +196,25 @@
             margin-top: 35px;
         }
 
+        :global(h1) {
+            font-size: 2em;
+        }
+        :global(h2) {
+            font-size: 1.5em;
+        }
+        :global(h3) {
+            font-size: 1.3em;
+        }
+        :global(h4) {
+            font-size: 1.2em;
+        }
+        :global(h5) {
+            font-size: 1.1em;
+        }
+        :global(h6) {
+            font-size: 1em;
+        }
+
         // hr
         :global(hr) {
             margin: 30px 0;
@@ -227,23 +258,6 @@
                 position: absolute;
                 right: 0;
                 bottom: 100%;
-            }
-            :global(.color-picker) {
-                display: inline-block;
-                width: 15px;
-                height: 15px;
-                border-radius: 50%;
-                margin-right: 5px;
-                cursor: pointer;
-                border: 1px solid #aaa;
-                position:relative;
-                :global(.color-picker-view) {
-                    position: absolute;
-                    top: 100%;
-                    right: 0;
-                    margin-top: 4px;
-                    width: 200px;
-                }
             }
         }
 

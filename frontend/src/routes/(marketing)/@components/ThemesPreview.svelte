@@ -3,8 +3,10 @@
 	import type { Theme } from "../../console/lib/types";
 	import { loadThemes } from "../../console/[subdomain]/theme/themeActions";
 	import { getConfig, loadConfig } from "../../console/lib/config";
-	import { IconButton, Link, Loader, NavLink } from "@hyvor/design/components";
-	import { IconBoxArrowUpRight, IconLaptop, IconTablet } from "@hyvor/icons";
+	import { IconButton, IconMessage, Link, Loader, NavLink } from "@hyvor/design/components";
+	import { IconBoxArrowUpRight, IconCaretDown, IconLaptop, IconList, IconLock, IconTablet, IconThreeDots } from "@hyvor/icons";
+
+    export let lockScroll = false;
 
     let isLoaded = false;
     let themes: Theme[] = [];
@@ -34,6 +36,15 @@
         port = window.location.port ? `:${Number(window.location.port) + 1}` : "";
     })
 
+    let navEl: HTMLDivElement;
+
+    function handleMobileNavClick() {
+        if (!navEl) return;
+        if (window.innerWidth > 992) return;
+
+        navEl.style.display = navEl.style.display !== 'block' ? 'block' : 'none';
+    }
+
 </script>
 
 
@@ -41,7 +52,22 @@
 
     <div class="wrap">
 
-        <div class="nav hds-box">
+        <!-- svelte-ignore a11y-missing-attribute -->
+        <a 
+            class="mobile-nav"
+            on:click={handleMobileNavClick}
+            on:keyup={e => e.key === 'Enter' && handleMobileNavClick()}
+            role="button"
+            tabindex="0"
+        >
+            <div class="mobile-nav-left">
+                Choose theme
+            </div>
+            <span class="theme-name">{currentTheme?.name}</span>
+            <IconCaretDown size={14} />
+        </a>
+
+        <div class="nav hds-box" bind:this={navEl}>
             {#each [originalThemes, portedThemes] as group, i}
                 <div class="section">
                     {#if i === 0}
@@ -57,6 +83,7 @@
                             on:click={() => {
                                 isLoading = true;
                                 currentTheme = theme;
+                                handleMobileNavClick();
                             }}
                             active={currentTheme?.name === theme.name}
                         >
@@ -111,6 +138,21 @@
                         on:load={() => isLoading = false}
                         style:display={isLoading ? "none" : "block"}
                     />
+
+                    {#if lockScroll}
+                        <button 
+                            class="lock-scroll"
+                            on:click={() => lockScroll = false}
+                        >
+                            <div class="overlay" />
+                            <IconMessage
+                                icon={IconLock}
+                                iconSize={50}
+                                message="Click to unlock scroll"
+                            />
+                        </button>
+                    {/if}
+
                 </div>
             {/if}
         </div>
@@ -123,6 +165,29 @@
 
 <style lang='scss'>
 
+    .mobile-nav {
+        padding: 10px 20px;
+        display: flex;
+        align-items: center;
+        gap: 10px;
+        background-color: var(--box-background);
+        border-radius: var(--box-radius);
+        box-shadow: var(--box-shadow);
+        cursor: pointer;
+        display: none;
+        .mobile-nav-left {
+            flex: 1;
+            color: var(--text-light);
+            font-size: 14px;
+        }
+        .theme-name {
+            font-weight: 600;
+        }
+        &:hover {
+            background-color: var(--hover);
+        }
+    }
+
     .wrap {
         display: flex;
         height: 100%;
@@ -134,6 +199,10 @@
         padding: 10px 20px;
         margin-top: 20px;
         font-size: 14px;
+    }
+
+    .nav {
+        padding-bottom: 15px;
     }
 
     .nav :global(a) {
@@ -176,6 +245,26 @@
         position:relative;
     }
 
+    .lock-scroll {
+        position: absolute;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        z-index: 1;
+        cursor: pointer;
+        .overlay {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: #fafafa;
+            opacity: 0.7;
+            z-index: -1;
+        }
+    }
+
     iframe {
         max-width: 100%;
         max-height: 100%;
@@ -188,9 +277,23 @@
         100% {opacity: 1;}
     }
 
-    @media screen and (max-width: 1200px) {
-        .iframe, iframe {
-            min-height: 600px;
+    @media screen and (max-width: 992px) {
+        .wrap {
+            flex-direction: column;
+        }
+        .nav {
+            width: 100%;
+            margin-bottom: 15px;
+            display: none;
+        }
+        .preview {
+            height: 600px;
+        }
+        .mobile-nav {
+            display: flex;
+        }
+        .navi .right {
+            display: none;
         }
     }
 

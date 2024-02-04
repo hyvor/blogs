@@ -21,7 +21,7 @@ it('updates a variant', function () {
     ]);
 
     $name = 'ehw';
-    consoleApi($blog, 'PUT', "/navigation/$nav->id/variant", [
+    consoleApi($blog, 'PATCH', "/navigation/$nav->id/variant", [
         'language_id' => $languageId,
         'name' => $name,
     ])

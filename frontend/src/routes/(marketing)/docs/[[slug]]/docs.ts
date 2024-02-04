@@ -25,12 +25,12 @@ import Theme from "./content/theme/Theme.svelte";
 import Internationalization from "./content/internationalization/Internationalization.svelte";
 import Configuration from "./content/configuration/Configuration.svelte";
 import Publishing from "./content/publishing/Publishing.svelte";
-import DataApi from "./content/api-data/ApiData.svelte";
-import ConsoleApi from "./content/api-console/ApiConsole.svelte";
 import ApiConsole from "./content/api-console/ApiConsole.svelte";
 import ApiData from "./content/api-data/ApiData.svelte";
 import Users from "./content/users/Users.svelte";
 import SyntaxHighlighting from "./content/syntax-highlighting/SyntaxHighlighting.svelte";
+import Tags from "./content/tags/Tags.svelte";
+import NavigationLinks from "./content/navigation/NavigationLinks.svelte";
 
 export const categories: Category[] = [
 
@@ -90,7 +90,7 @@ export const categories: Category[] = [
             {
                 slug: 'tags',
                 name: 'Tags',
-                component: Languages,
+                component: Tags,
             },
             {
                 slug: 'media',
@@ -106,6 +106,11 @@ export const categories: Category[] = [
                 slug: 'seo',
                 name: 'SEO',
                 component: Seo
+            },
+            {
+                slug: 'navigation-links',
+                name: 'Navigation Links',
+                component: NavigationLinks,
             },
             {
                 slug: 'redirects',

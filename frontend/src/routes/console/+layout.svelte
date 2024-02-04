@@ -59,6 +59,11 @@
 
 </script>
 
+<svelte:head>
+    <title>Console · Hyvor Blogs</title>
+    <meta name="robots" content="noindex">
+</svelte:head>
+
 <main>
 
     {#if isLoading}
@@ -90,4 +95,11 @@
         justify-content: center;
         align-items: center;
     }
+
+    @media (max-width: 992px) {
+        main {
+            display: block;
+        }
+    }
+
 </style>

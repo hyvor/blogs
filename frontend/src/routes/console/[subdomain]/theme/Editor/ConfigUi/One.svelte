@@ -2,7 +2,7 @@
 	import { SplitControl } from "@hyvor/design/components";
 	import Object from "./Object.svelte";
 	import ConfigInput from "./ConfigInput.svelte";
-
+	import { createEventDispatcher } from "svelte";
 
     export let config: object;
     export let configDef: object;
@@ -24,6 +24,24 @@
         parentKeysWithCurrentKey = [...parentKeys, key];
     }
 
+    const dispatch = createEventDispatcher<{change: {
+        parentKeys: string[],
+        key: string,
+        value: any
+    }}>();
+
+    function handleChange(e: CustomEvent<any>) {
+        dispatch('change', {
+            parentKeys,
+            key,
+            value: e.detail
+        });
+    }
+
+    function handleObjectChange(e: CustomEvent<any>) {
+        dispatch('change', e.detail);
+    }
+
 </script>
 
 <SplitControl
@@ -38,6 +56,7 @@
         <ConfigInput 
             value={value} 
             configDef={currentDef}
+            on:change={handleChange}
         />
     {/if}
 
@@ -47,6 +66,7 @@
                 config={value} 
                 configDef={currentDef}
                 parentKeys={parentKeysWithCurrentKey}
+                on:change={handleObjectChange}
             />
         {/if}
     </div>

@@ -103,6 +103,10 @@
             .then(res => {
                 toast.success('Blog created successfully');
                 addToBlogList(res);
+
+                const event = new CustomEvent('console:blog:created', {detail: res});
+                window.dispatchEvent(event);
+
                 goto('/console/' + res.subdomain);
             })
             .catch(e => {

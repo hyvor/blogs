@@ -34,7 +34,6 @@ export function getPlugins() {
         history(),
 
         pasteImagesPlugin(),
-        // linkPlugin(),
 
         // https://github.com/curvenote/prosemirror-codemark
         ...codemark({ markType: schema.marks.code }),

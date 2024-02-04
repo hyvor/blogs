@@ -14,7 +14,11 @@
         </h3>
 
         <div class="button-wrap">
-            <Button size="large">
+            <Button 
+                as="a"
+                size="large"
+                href="/console?signup"
+            >
                 Start your blog
             </Button>
         </div>
@@ -31,7 +35,7 @@
 
     .wrap {
         background-color: var(--accent-light-mid);
-        padding:80px;
+        padding:80px 15px;
         margin: 30px 0;
     }
 
