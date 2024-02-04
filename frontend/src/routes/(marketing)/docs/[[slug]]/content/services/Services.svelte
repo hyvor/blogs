@@ -62,14 +62,14 @@
         <h2>Adding</h2>
         <p>To add an email signup form to your blog,</p>
             <ul>
-                <li>First, signup for a <a href="https://blogs.hyvor.com/docs/newsletter#services">newsletter service</a>.</li>
+                <li>First, signup for a <a href="/docs/newsletter#services">newsletter service</a>.</li>
                 <li>Copy the given HTML code.</li>
                 <li>Paste it in <b>Console → Settings → Comments & Newsletter → Newsletter Signup Form Code</b>.</li>
             </ul>
 
         <h2>Positioning</h2>
         <p>
-            All Hyvor Blogs <a href="https://blogs.hyvor.com/themes">themes</a> are designed to have a place for the newsletter signup form. If you want to change this position, you will need to <a href="https://blogs.hyvor.com/docs/theme#editing">edit your theme</a>, and change the position of the newsletter <a href="https://blogs.hyvor.com/docs/themes-templates#placeholders">placeholder</a>. In your template files, find and cut this code <code>{`{{ _newsletter | template }}`}</code>, and paste it in the place you need the signup form to be.
+            All Hyvor Blogs <a href="/themes">themes</a> are designed to have a place for the newsletter signup form. If you want to change this position, you will need to <a href="/docs/theme#editing">edit your theme</a>, and change the position of the newsletter <a href="/docs/themes-templates#placeholders">placeholder</a>. In your template files, find and cut this code <code>{`{{ _newsletter | template }}`}</code>, and paste it in the place you need the signup form to be.
         </p>
 
         <h2>Newsletter Services</h2>
@@ -106,7 +106,7 @@
 
         <h2>How to Add</h2>
             <ul>
-                <li>First, signup for an <a href="https://blogs.hyvor.com/docs/analytics#services">analytic service</a>.</li>
+                <li>First, signup for an <a href="/docs/analytics#services">analytic service</a>.</li>
                 <li>Copy the given HTML code.</li>
                 <li>Paste it in <b>Console → Settings → Custom Code → Foot Code</b>.</li>
             </ul>
@@ -175,11 +175,11 @@
 
         <h2>How to Embed Forms</h2>
             <ul>
-                <li>First, signup for a <a href="https://blogs.hyvor.com/docs/forms#forms">forms services</a>. They allow you to create custom forms as you like</li>
+                <li>First, signup for a <a href="/docs/forms#forms">forms services</a>. They allow you to create custom forms as you like</li>
                 <li>Then, add the form embed code to your blog:</li>
                     <ul>
-                        <li>To add a form to a post or page, use <a href="https://blogs.hyvor.com/docs/writing#custom-html">custom HTML/Twig blocks</a>.</li>
-                        <li>To add a form to a specific place in the blog, you will need to <a href="https://blogs.hyvor.com/docs/theme#editing">edit the theme</a>.</li>
+                        <li>To add a form to a post or page, use <a href="/docs/writing#custom-html">custom HTML/Twig blocks</a>.</li>
+                        <li>To add a form to a specific place in the blog, you will need to <a href="/docs/theme#editing">edit the theme</a>.</li>
                     </ul>
             </ul>
 

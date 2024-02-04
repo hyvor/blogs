@@ -10,7 +10,7 @@
         <p>HYVOR may revise these terms of use for its service at any time without notice. By using this service you agree to be bound by the then current version of these Terms of Service.</p>
     </Callout>
 
-<p>"We", "us", "Company" means <a href="https://hyvor.com/">HYVOR</a>. "Service" and "Site" means <a href="https://blogs.hyvor.com/">Hyvor Blogs</a>. "You", "Blogger", "Customer" refers to the user/company who uses the Service.</p>
+<p>"We", "us", "Company" means <a href="https://hyvor.com/">HYVOR</a>. "Service" and "Site" means <a href="/">Hyvor Blogs</a>. "You", "Blogger", "Customer" refers to the user/company who uses the Service.</p>
 
 <h2>APPLICATION OF TERMS</h2>
 <p>These Terms apply to your use of the Service. By using Hyvor Blogs (https://blogs.hyvor.com) as a customer you agree to these terms, and where your access and use is on behalf of another person (e.g. a company), you confirm that you are authorised to, and do in fact, agree to these Terms on that person’s behalf and that, by agreeing to these Terms on that person’s behalf, that person is bound by these Terms.</p>
@@ -26,7 +26,7 @@
         <p>The Service is operated, the License is granted, and Features are offered by HYVOR EURL, a limited liability company in France (entreprise unipersonelle à responsibilité limitée) registered at 11 RUE CARNOT 94270 LE KREMLIN-BICETRE FRANCE under the number 914168042.</p>
 
     <h3>Blog Eligibility</h3>
-        <p>Hyvor Blogs can be used to create and host a blog. Content shared within the blog should obey our <a href="https://blogs.hyvor.com/docs/policy-content">Content Policy</a>. We have the right to stop providing services to blogs that does not abide our content policy.</p>
+        <p>Hyvor Blogs can be used to create and host a blog. Content shared within the blog should obey our <a href="/docs/policy-content">Content Policy</a>. We have the right to stop providing services to blogs that does not abide our content policy.</p>
 
 <h2>SUBSCRIPTION</h2>
     <p>Hyvor Blogs is a subscription-based paid service. Bloggers are required to pay the Fees to use the Service. The Fees vary based on the selected subscription plan. Features and plans are described on our pricing page. Pricing is shown including applicable VAT charges.</p>
@@ -47,7 +47,7 @@
         <p>Paddle.com works as the Merchant of Record, who resells our product to you. All charges in your card will have "PADDLE.NET HYVORBLOGS". Payments in PayPal may only contain PADDLE.NET. You can also contact Paddle.net for any payment related issues. Paddle will collect VAT charges and will remit it to tax authorities. See <a href="https://www.paddle.com/legal/terms">Paddle Terms</a>.</p>
 
 <h2>DATA</h2>
-    <p>You agree that personal data and electronic communications on our Service will be processed in accordance with our data <a href="https://blogs.hyvor.com/docs/policy-privacy">privacy policy</a>. The blogger own the content they publish on their website. They can export data anytime. We take required actions to make sure your data is safe and not shared with anyone without your consent.</p>
+    <p>You agree that personal data and electronic communications on our Service will be processed in accordance with our data <a href="/docs/policy-privacy">privacy policy</a>. The blogger own the content they publish on their website. They can export data anytime. We take required actions to make sure your data is safe and not shared with anyone without your consent.</p>
 
 <h2>GENERAL</h2>
 
