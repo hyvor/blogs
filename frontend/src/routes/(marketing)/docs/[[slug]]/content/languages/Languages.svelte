@@ -36,6 +36,7 @@
             <li><code>fr</code></li>
             <li><code>fr-FR</code></li>
         </ul>
+    </li>
     <li>
         <strong>Name</strong> - The language name is the text that explains the language code. We recommend you to write it in the native alphabet. Some themes may use the name to show a message like "This post is translated into Español, 简体中文, and Nederlands".
     </li>

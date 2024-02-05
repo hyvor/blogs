@@ -40,5 +40,6 @@
                     </Link>
                 </div>
             {/if}
+        </div>
     </IconMessage>
 {/if}
