@@ -46,7 +46,7 @@
 </script>
 
 
-<Tooltip text={tooltip} show={showTooltip}>
+<Tooltip text={tooltip}>
 
     <Tag 
         size="small"
