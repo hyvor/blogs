@@ -16,7 +16,10 @@ class RedirectIfNotOnSubdomainMiddleware
 
         $blog = app(Blog::class);
 
-        if ($blog->hosting_at !== BlogHostingAtEnum::SUBDOMAIN) {
+        if (
+            $blog->hosting_at !== BlogHostingAtEnum::SUBDOMAIN &&
+            $blog->hosting_redirect_subdomain
+        ) {
             $path = $request->path();
             $path = ltrim($path, '/');
             return redirect()->to(

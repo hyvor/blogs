@@ -126,6 +126,7 @@ class BlogService
             'hosting_at',
             'hosting_domain',
             'hosting_url',
+            'hosting_redirect_subdomain',
         ];
 
         foreach ($updates as $key => $value) {

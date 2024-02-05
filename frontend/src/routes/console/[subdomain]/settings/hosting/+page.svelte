@@ -1,5 +1,5 @@
 <script lang="ts">
-	import { Callout, FormControl, InputGroup, Link, Radio, SplitControl, TextInput, Validation, toast } from "@hyvor/design/components";
+	import { Callout, FormControl, InputGroup, Link, Radio, SplitControl, Switch, TextInput, Validation, toast } from "@hyvor/design/components";
 	import { blogOriginalStore, blogStore } from "../../../lib/stores/blogStore";
 	import BlogSettingsSave from "../BlogSettingsSave.svelte";
 	import { IconBoxArrowUpRight, IconExclamationCircle } from "@hyvor/icons";
@@ -19,6 +19,15 @@
             return {
                 ...b, 
                 [key]: e.target.value
+            }
+        });
+    }
+
+    function handleRedirectSubdomainChange() {
+        blogStore.update(b => {
+            return {
+                ...b, 
+                hosting_redirect_subdomain: !b.hosting_redirect_subdomain
             }
         });
     }
@@ -109,7 +118,7 @@
 <DisabledOnTemp>
 
     <BlogSettingsSave
-        keys={['subdomain', 'hosting_at', 'hosting_domain', 'hosting_url']}
+        keys={['subdomain', 'hosting_at', 'hosting_domain', 'hosting_url', 'hosting_redirect_subdomain']}
         outsideChanges={subdomain !== $blogStore.subdomain ? { subdomain } : {}}
         beforeSave={handleBeforeSave}
         afterSave={handleAfterSave}
@@ -214,6 +223,21 @@
                         <Validation state="error">{hostingUrlError}</Validation>
                     {/if}
                 </FormControl>
+            </SplitControl>
+        {/if}
+
+        {#if $blogStore.hosting_at !== 'subdomain'}
+            <SplitControl
+                label="Redirect Subdomain"
+                caption={
+                    `Whether to redirect ${$blogStore.subdomain}.hyvorblogs.io to your ` + 
+                    ($blogStore.hosting_at === 'domain' ? 'custom domain' : 'self-hosting URL')
+                }
+            >
+                <Switch
+                    checked={$blogStore.hosting_redirect_subdomain}
+                    on:change={handleRedirectSubdomainChange}
+                />
             </SplitControl>
         {/if}
 

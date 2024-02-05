@@ -30,6 +30,7 @@ class Blog extends Model
         'billing_type' => BlogBillingTypeEnum::class,
         'integration' => BlogIntegrationEnum::class,
         'hosting_at' => BlogHostingAtEnum::class,
+        'hosting_redirect_subdomain' => 'bool',
         'trial_ends_at' => 'datetime'
     ];
 

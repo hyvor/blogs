@@ -58,6 +58,22 @@ it('redirects to other domain if not hosted on subdomain', function() {
 
 });
 
+it('does not redirect if it is disabled', function() {
+
+    $blog = blogWithAccessLanguageAndRoutes([
+        'hosting_at' => 'domain',
+        'hosting_domain' => 'hyvorblogs.com',
+        'hosting_redirect_subdomain' => false
+    ]);
+    addThemeTemplateFile($blog, 'hello world');
+
+    $this
+        ->get("http://$blog->subdomain.hyvorblogs.io")
+        ->assertOk()
+        ->assertSee('hello world');
+
+});
+
 // bug #197
 it('redirects to homepage correctly', function() {
 

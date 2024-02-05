@@ -78,6 +78,7 @@ class ConsoleBlogController extends Controller
             'hosting_at' => new Enum(BlogHostingAtEnum::class),
             'hosting_domain' => 'string|nullable',
             'hosting_url' => 'string|url|nullable',
+            'hosting_redirect_subdomain' => 'boolean',
 
             // meta
             'embeddable' => 'boolean',

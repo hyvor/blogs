@@ -38,6 +38,7 @@ class CreateBlogsTable extends Migration
             $table->enum('hosting_at', ['subdomain', 'domain', 'self'])->default('subdomain');
             $table->string('hosting_domain')->nullable()->unique(); // for domain
             $table->string('hosting_url')->nullable(); // for self
+            $table->boolean('hosting_redirect_subdomain')->default(true);
 
             $table->json('meta')->nullable();
             $table->json('counts')->nullable();

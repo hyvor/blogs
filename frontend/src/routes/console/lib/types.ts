@@ -58,6 +58,7 @@ export interface Blog {
     hosting_at: 'subdomain' | 'domain' | 'self',
     hosting_domain: string | null,
     hosting_url: string | null,
+    hosting_redirect_subdomain: boolean,
 
     url: string,
 

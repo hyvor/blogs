@@ -29,6 +29,8 @@ class BlogObject
 
     public ?string $hosting_url;
 
+    public bool $hosting_redirect_subdomain;
+
     public string $url;
 
     public ?string $logo_url;
@@ -104,6 +106,7 @@ class BlogObject
         $this->hosting_at = $blog->hosting_at;
         $this->hosting_domain = $blog->hosting_domain;
         $this->hosting_url = $blog->hosting_url;
+        $this->hosting_redirect_subdomain = $blog->hosting_redirect_subdomain;
 
         $this->url = $blog->url();
 
