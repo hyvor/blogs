@@ -130,5 +130,30 @@
 </h2>
 
 <p>
-    Reverse proxy tutorials are coming soon. We'll be adding tutorials for Nginx and Caddy!
+    If you are using a web server like Nginx or Caddy, you can use a reverse proxy to serve the blog from a subdirectory.
 </p>
+
+<Table columns="1fr 1fr">
+    <TableRow head>
+        <div>Server</div>
+        <div>Blog Tutorial</div>
+    </TableRow>
+    <TableRow>
+        <div>
+            Caddy
+        </div>
+        <div>
+            <a href="https://hyvor.com/blog/caddy-blog" target="_blank">
+                View <IconBoxArrowUpRight slot="end" />
+            </a>
+        </div>
+    </TableRow>
+    <TableRow>
+        <div>
+            Nginx
+        </div>
+        <div>
+            Coming soon
+        </div>
+    </TableRow>
+</Table>

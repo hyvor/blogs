@@ -1,5 +1,6 @@
 import { vitePreprocess } from '@sveltejs/vite-plugin-svelte';
 import adapter from '@sveltejs/adapter-static';
+import { APP_REDIRECTS } from './src/redirects.js';
 
 /** @type {import('@sveltejs/kit').Config} */
 const config = {
@@ -13,12 +14,15 @@ const config = {
 		// See https://kit.svelte.dev/docs/adapters for more information about adapters.
 		adapter: adapter({
 			fallback: '200.html',
-			
 		}),
 		prerender: {
 			/* TODO: REMOVE THIS! */
 			handleMissingId: 'ignore',
-			handleHttpError: 'ignore'
+			handleHttpError: 'ignore',
+			entries: [
+				'*',
+				...Object.keys(APP_REDIRECTS)
+			]
 		}
 	},
 };
