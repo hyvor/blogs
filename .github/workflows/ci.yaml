@@ -8,8 +8,8 @@ on:
     workflow_dispatch:
 
 jobs:
-    tests:
-        name: "Tests"
+    php-tests:
+        name: "PHP Tests"
         runs-on: ubuntu-latest
 
         steps:
@@ -45,6 +45,29 @@ jobs:
             -   name: Run tests
                 working-directory: backend
                 run: vendor/bin/pest
+
+    svelte-check:
+        name: "Svelte Check"
+        runs-on: ubuntu-latest
+
+        steps:
+            -   name: Checkout
+                uses: actions/checkout@v3
+
+            -   name: Setup Node
+                uses: actions/setup-node@v3
+                with:
+                    node-version: 18
+
+            -   name: Install dependencies
+                working-directory: frontend
+                run: |
+                    npm ci
+
+            -   name: Run tests
+                working-directory: frontend
+                run: npm run check
+
 
     # e2e:
     #     name: "E2E Tests"
