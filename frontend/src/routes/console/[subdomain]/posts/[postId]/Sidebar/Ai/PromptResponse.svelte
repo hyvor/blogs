@@ -62,9 +62,6 @@
 </div>
 
 <style lang="scss">
-    .single {
-
-    }
     .message-wrap {
         padding: 20px 25px;
         display: flex;

@@ -1,4 +1,4 @@
-
+import type { Mark, ResolvedPos } from "prosemirror-model";
 
 export function markExtend ($start: ResolvedPos, mark: Mark) {
     let startIndex = $start.index()

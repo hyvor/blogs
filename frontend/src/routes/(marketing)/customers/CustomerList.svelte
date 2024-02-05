@@ -226,8 +226,6 @@
             border-radius: 20px;
             aspect-ratio: 16 / 9;
             transition: .2s ease-in-out;
-            &:hover {
-            }
         }
 
         .data {

@@ -343,9 +343,6 @@ li {
     .child-checkbox {
         margin-top: 5px;
         margin-left: 30px;
-        div {
-            padding: 3px;
-        }
     }
 
     .checklist-main :global(.placeholder) {

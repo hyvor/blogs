@@ -135,9 +135,6 @@
 
     @media (max-width: 992px) {
 
-        .fixed {
-        }
-
         .desktop {
             display: none;
         }

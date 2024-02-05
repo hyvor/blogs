@@ -148,8 +148,4 @@
         min-width: 0;
     }
 
-    .right {
-        
-    }
-
 </style>

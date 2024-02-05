@@ -7,8 +7,7 @@
 </script>
 
 {#each Object.entries(config) as [key, value] (parentKeys + "." + key)}
-    <One 
-        {config} 
+    <One
         {configDef} 
         {key} 
         {value} 

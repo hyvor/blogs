@@ -19,9 +19,4 @@
 </div>
 
 <style>
-
-    #post-body {
-        
-    }
-
 </style>

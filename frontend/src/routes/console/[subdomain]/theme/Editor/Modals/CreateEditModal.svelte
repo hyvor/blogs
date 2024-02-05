@@ -186,7 +186,7 @@
 
         <ButtonGroup>
 
-            <Button color="invisible" on:click={() => open = false}>
+            <Button variant="invisible" on:click={() => open = false}>
                 Cancel
             </Button>
 

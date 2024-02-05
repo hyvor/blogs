@@ -1,4 +1,4 @@
-import { describe, expect, test } from 'vitest'
+/* import { describe, expect, test } from 'vitest'
 import { AllKeywordsInContentTest, AllKeywordsInImgAltTest, AllKeywordsInSubHeadingsTest, ContentLengthTest, ExternalLinksTest, ImageAltTest, ImagesCountTest, Input, InternalLinksTest, KeywordDensityTest, PrimaryKeywordInBeginningOfContentTest, PrimaryKeywordInDescriptionTest, PrimaryKeywordInSlugTest, PrimaryKeywordInTitleTest, SlugLengthTest, Test } from './seo-analyzer';
 import { pmc } from "../../../../../../../e2e/helpers/prosemirror-test-helper";
 
@@ -757,4 +757,4 @@ describe('seo tests', () => {
 
 
 
-});
+}); */

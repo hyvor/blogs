@@ -213,10 +213,10 @@
 </p>
 
 <p>
-    HB adds the lang attribute to the <code>{`<html>`}</code> tag in all pages using the language code you set (this is why using the correct language codes are important).
+    HB adds the lang attribute to the <code>{`<html` + `>`}</code> tag in all pages using the language code you set (this is why using the correct language codes are important).
 </p>
 
-<CodeBlock code={`<html lang="en">`} />
+<CodeBlock code={`<` + `html lang="en">`} />
 
 <p>
     In addition, HB will add <code>hreflang</code> alternate tags. For example, if you have three languages (<code>en</code>, <code>fr</code>, <code>es</code>), the en index page (/) will have these tags.

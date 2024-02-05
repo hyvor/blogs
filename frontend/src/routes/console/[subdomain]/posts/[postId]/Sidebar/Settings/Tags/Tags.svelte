@@ -135,9 +135,4 @@
         flex-wrap: wrap;
         gap: 5px;
     }
-
-    .right {
-        
-    }
-
 </style>

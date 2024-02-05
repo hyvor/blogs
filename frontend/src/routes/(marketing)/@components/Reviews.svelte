@@ -173,8 +173,6 @@
         padding: 20px 0;
         flex-wrap: wrap;
         gap: 30px;
-        img {
-        }
     }
 
     .reviews {

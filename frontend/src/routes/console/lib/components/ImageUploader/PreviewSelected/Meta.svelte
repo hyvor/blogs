@@ -13,8 +13,6 @@
         flex-direction: column;
         padding: 0 15px;
     }
-    .meta:not(:last-child) {
-    }
 
     .name {
         font-size: 13px;

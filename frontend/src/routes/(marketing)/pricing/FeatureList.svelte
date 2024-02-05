@@ -62,9 +62,6 @@
             > div {
                 padding: 0 25px;
             }
-            &.hidden {
-                display: none;
-            }
         }
     }
     @media (max-width: 1000px) {

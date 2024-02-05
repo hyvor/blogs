@@ -115,34 +115,4 @@
         padding: 15px 30px;
     }
 
-    .nav-title {
-        font-size: 16px;
-        font-weight: 600;
-        margin-bottom: 15px;
-    }
-
-    .nav-row {
-        border-radius: 20px;
-        width: 100%;
-        display: grid;
-        grid-template-columns: 70px 1fr 70px;
-        align-items: center;
-        cursor: pointer;
-    }
-
-    .nav-row:hover {
-        background: var(--hover);
-    }
-
-    .dragger {
-        margin-right: 10px;
-        position: relative;
-        font-family: inherit;
-    }
-
-    .dragging {
-        width: 100%;
-    }
-
-
 </style>

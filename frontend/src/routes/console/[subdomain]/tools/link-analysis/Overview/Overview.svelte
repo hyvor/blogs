@@ -64,22 +64,18 @@
         <div class="stats-row">
 
             <Stat
-                name="OK" 
                 value={stats.counts.ok}
                 status={200}
             />
             <Stat
-                name="Broken" 
                 value={stats.counts.broken} 
                 status={404}
             />
             <Stat
-                name="Redirect" 
                 value={stats.counts.redirect} 
                 status={301}
             />
             <Stat
-                name="Ignored" 
                 value={stats.counts.ignored} 
                 status={-2}
             />

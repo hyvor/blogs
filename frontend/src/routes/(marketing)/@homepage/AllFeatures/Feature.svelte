@@ -23,10 +23,6 @@
         width: calc(33.33% - 15px);
     }
 
-    .icon {
-        
-    }
-
     .icon.green {
         color: var(--green);
     }

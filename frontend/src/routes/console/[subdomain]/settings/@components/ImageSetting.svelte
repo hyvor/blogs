@@ -53,9 +53,6 @@
 {/if}
 
 <style>
-    .img-wrap {
-
-    }
     img {
         max-width: 250px;
         max-height: 250px;

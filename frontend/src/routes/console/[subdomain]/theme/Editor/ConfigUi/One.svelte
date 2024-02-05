@@ -4,7 +4,7 @@
 	import ConfigInput from "./ConfigInput.svelte";
 	import { createEventDispatcher } from "svelte";
 
-    export let config: object;
+    // export let config: object;
     export let configDef: object;
     export let parentKeys : string[] = [];
     export let value: any;

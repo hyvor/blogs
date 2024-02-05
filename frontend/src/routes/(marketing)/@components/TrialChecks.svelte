@@ -23,8 +23,6 @@
 
 <style>
 
-    .checks {
-    }
 
     .check {
         display: flex;

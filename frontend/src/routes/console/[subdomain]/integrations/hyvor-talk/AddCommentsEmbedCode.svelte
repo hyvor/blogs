@@ -55,7 +55,7 @@
 
         <svelte:fragment slot="footer">
             <ButtonGroup>
-                <Button color="invisible" on:click={() => open = false}>Cancel</Button>
+                <Button variant="invisible" on:click={() => open = false}>Cancel</Button>
                 <Button on:click={handleUpdate}>Update</Button>
             </ButtonGroup>
         </svelte:fragment>
