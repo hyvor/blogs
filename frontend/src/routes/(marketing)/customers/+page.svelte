@@ -1,9 +1,14 @@
 <script>
 	import FullTrialSignup from "../@components/FullTrialSignup.svelte";
 	import Reviews from "../@components/Reviews.svelte";
-import FeatureSectionTitle from "../@homepage/FeatureSectionTitle.svelte";
-import CustomerList from "./CustomerList.svelte";
+    import FeatureSectionTitle from "../@homepage/FeatureSectionTitle.svelte";
+    import CustomerList from "./CustomerList.svelte";
 </script>
+
+<svelte:head>
+    <title>Customers - Hyvor Blogs</title>
+    <link rel="canonical" href="https://blogs.hyvor.com/customers">
+</svelte:head>
 
 <FeatureSectionTitle 
     title="Customers"
