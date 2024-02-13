@@ -1,7 +1,6 @@
 import { redirect } from "@sveltejs/kit";
 import { APP_REDIRECTS } from "../redirects";
 
-
 export async function load({ url }) {
     const pathname = url.pathname;
 

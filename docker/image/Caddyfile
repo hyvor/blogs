@@ -19,9 +19,17 @@
     }
     handle {
         root * /var/www/app/frontend/build
-        file_server
+        file_server {
+            pass_thru
+        }
         encode zstd gzip
-        try_files {path} /200.html
+        try_files {path} {path}.html
+    }
+    handle {
+        root * /var/www/app/frontend/build
+        encode zstd gzip
+        file_server
+        rewrite * /200.html
     }
 }
 
