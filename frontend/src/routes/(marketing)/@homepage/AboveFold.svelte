@@ -1,20 +1,32 @@
-<script>
-	import { IconBoxArrowUpRight, IconCheckCircle, IconCheckCircleFill } from '@hyvor/icons';
+<script lang="ts">
 	import { Button } from '@hyvor/design/components';
 	import Hurry from './Hurry.svelte';
 	import TrialChecks from '../@components/TrialChecks.svelte';
+    import hbIcon from '$lib/img/logo-social.png';
+
+    export let title: string
+    export let subtitle: string;
+    export let integrationIcon: string | undefined = undefined;
 </script>
 
 <div class="hds-container above-fold">
 
     <div class="left">
 
+        {#if integrationIcon}
+            <div class="int">
+                <img src={integrationIcon} alt="Integration icon" class="int-icon" />
+                <span>+</span>
+                <img src={hbIcon} alt="Hyvor Blogs" class="int-icon" />
+            </div>
+        {/if}
+
         <h1>
-            All-in-one Blogging Platform
+            {title}
         </h1>
 
         <h2>
-            Hyvor Blogs is a platform to create a blog, manage it, and grow it without having to worry about managing servers, databases, and other technical stuff.
+            {subtitle}
         </h2>
 
         <div class="buttons">
@@ -59,6 +71,23 @@
             padding-left: 25px;
         }
 
+        .int {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+            font-size: 35px;
+            margin-bottom: 10px;
+            span {
+                opacity: 0.2;
+            }
+        }
+
+        .int-icon {
+            width: 50px;
+            height: 50px;
+            border-radius: 50%;
+        }
+
         h1 {
             margin: 0;
             font-size:40px;
@@ -99,6 +128,11 @@
                 justify-content: center;
             }
         }
+
+        .int {
+            justify-content: center;
+        }
+
         .trial-checks {
             margin-left: 0;
             display: flex;

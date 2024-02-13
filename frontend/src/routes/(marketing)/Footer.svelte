@@ -37,12 +37,21 @@
         </div>
 
         <div class="row">
+            <FooterLinkList title="Platforms">
+                <a href="/platforms/webflow">Blog for Webflow</a>
+                <a href="/platforms/bubble">Blog for Bubble</a>
+                <a href="/platforms/squarespace">Blog for Squarespace</a>
+                <a href="/platforms/wix">Blog for Wix</a>
+                <a href="/platforms/shopify">Blog for Shopify</a>
+                <a href="/platforms/wordpress">Blog for WordPress</a>
+            </FooterLinkList>
             <FooterLinkList title="Alternatives">
                 <a href="https://hyvor.com/blog/wordpress-alternatives" target="_blank">WordPress Alternatives</a>
                 <a href="https://hyvor.com/blog/ghost-alternatives" target="_blank">Ghost Alternatives</a>
                 <a href="https://hyvor.com/blog/medium-alternatives" target="_blank">Medium Alternatives</a>
                 <a href="https://hyvor.com/blog/blogger-alternatives" target="_blank">Blogger Alternatives</a>
             </FooterLinkList>
+            <div style="flex:1;" />
         </div>
 
     </div>

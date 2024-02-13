@@ -2,6 +2,8 @@
 	import { Button } from "@hyvor/design/components";
 	import TrialChecks from "./TrialChecks.svelte";
 
+    export let title = "Ready to start your fully-customizable, SEO-friendly, and blazing-fast blog?";
+
 </script>
 
 
@@ -10,7 +12,7 @@
     <div class="hds-container inner">
 
         <h3>
-            Ready to start your fully-customizable, SEO-friendly, and blazing-fast blog?
+            {title}
         </h3>
 
         <div class="button-wrap">
