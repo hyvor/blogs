@@ -1,7 +1,7 @@
 import { Crisp } from "crisp-sdk-web";
 import splitbee from '@splitbee/web';
 import posthog from 'posthog-js'
-import { browser } from "$app/environment";
+import { browser, dev } from "$app/environment";
 import { afterNavigate, beforeNavigate } from "$app/navigation";
 
 function initCrisp() {
@@ -46,6 +46,8 @@ function initPosthog() {
 }
 
 export function setUpMarketing() {
+    if (dev)
+        return;
     if (browser) {
         initCrisp();
         initSplitbee();

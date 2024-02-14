@@ -72,7 +72,7 @@
 
         if (!dragNoteEl) return;
 
-        if (!currentDragger || !dragDisabled) {
+        if (!currentDragger || !dragDisabled || items.length < 2) {
             dragNoteEl.style.display = 'none';
             return;
         }

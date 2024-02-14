@@ -6,12 +6,17 @@
 	import consoleApi from "../lib/consoleApi";
 	import type { Blog, BlogCounts, Language, Subscription, UsageTypes, User } from "../lib/types";
 	import { usersStore } from "../lib/stores/usersStore";
-	import { subscriptionStore, usageStore } from "../lib/stores/subscriptionStore";
+	import { hasTrialEndedAndNotSubscribed, subscriptionStore, usageStore } from "../lib/stores/subscriptionStore";
 	import { blogCountsStore, blogOriginalStore, blogStore } from "../lib/stores/blogStore";
 	import { languagesStore } from "../lib/stores/languagesStore";
 	import { goto } from "$app/navigation";
 	import TempBlogNotice from "./Temp/TempBlogNotice.svelte";
 	import { isTempStore } from "../lib/temp";
+	import BlogStatus from "./@components/BlogStatus/BlogStatus.svelte";
+	import { IconClock } from "@hyvor/icons";
+	import TrialEndedStatus from "./@components/BlogStatus/TrialEndedStatus.svelte";
+	import { consoleUrlWithBlog } from "../lib/consoleUrl";
+	import BlogBannedStatus from "./@components/BlogStatus/BlogBannedStatus.svelte";
 
     let isLoading = true;
 
@@ -51,6 +56,13 @@
         })
     
     });
+
+    $: forcedShow = !isLoading && 
+        (   
+            $page.url.pathname === consoleUrlWithBlog('billing') ||
+            $page.url.pathname.startsWith(consoleUrlWithBlog('settings'))
+        );
+
 </script>
 
 <svelte:head>
@@ -73,7 +85,14 @@
             <Nav />
         </div>
         <div id="content">
-            <slot />
+
+            {#if hasTrialEndedAndNotSubscribed() && !forcedShow}
+                <TrialEndedStatus />
+            {:else if $blogStore.is_blocked && !forcedShow}
+                <BlogBannedStatus />
+            {:else}
+                <slot />
+            {/if}
         </div>
 
     {/if}
