@@ -31,6 +31,7 @@ import Users from "./content/users/Users.svelte";
 import SyntaxHighlighting from "./content/syntax-highlighting/SyntaxHighlighting.svelte";
 import Tags from "./content/tags/Tags.svelte";
 import NavigationLinks from "./content/navigation/NavigationLinks.svelte";
+import WordPressMigration from "./content/wordpress-migration/WordPressMigration.svelte";
 
 export const categories: Category[] = [
 
@@ -169,6 +170,11 @@ export const categories: Category[] = [
     {
         name: 'Data',
         pages: [
+            {
+                slug: 'wordpress-migration',
+                name: 'Wordpress Migration',
+                component: WordPressMigration,
+            },
             {
                 slug: 'export',
                 name: 'Export Data',

@@ -1,6 +1,6 @@
-<script>
-	import { Button, Radio, SplitControl, confirm, toast } from "@hyvor/design/components";
-	import { startExport } from "./exportActions";
+<script lang="ts">
+	import { Button, FormControl, Radio, SplitControl, confirm, toast } from "@hyvor/design/components";
+	import { startExport, type ExportFormat } from "./exportActions";
 	import { createEventDispatcher } from 'svelte';
 
     const dispatch = createEventDispatcher();
@@ -10,15 +10,18 @@
     }
 
     async function exportNow() {
+
+        const formatName = format === 'hyvor_blogs' ? 'Hyvor Blog JSON' : 'WordPress';
+
         if (await confirm({
             title: 'Export Data',
-            content: 'You are about to export your data. This may take a few minutes. You can track the progress in Export History.',
+            content: `You are about to export your data in the ${formatName} format. This may take a few minutes. You can track the progress in Export History.`,
             confirmText: 'Export Now'
         })) {
 
             const toastId = toast.loading('Exporting...');
 
-            startExport()
+            startExport(format)
                 .then(() => {
                     toast.success(
                         'Export started, you can track the progress in Export History.', 
@@ -34,15 +37,22 @@
         }
     }
 
+    let format : ExportFormat = 'hyvor_blogs';
+
 </script>
 
 
 <SplitControl
     label="Export Format"
 >
-    <Radio checked={true}>
-        Hyvor Blog JSON
-    </Radio>
+    <FormControl>
+        <Radio value="hyvor_blogs" bind:group={format}>
+            Hyvor Blog JSON
+        </Radio>
+        <Radio value="wordpress" bind:group={format}>
+            WordPress
+        </Radio>
+    </FormControl>
 </SplitControl>
 
 <div class="button-wrap">
