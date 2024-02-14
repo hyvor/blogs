@@ -1,5 +1,6 @@
 import { Crisp } from "crisp-sdk-web";
 import splitbee from '@splitbee/web';
+import posthog from 'posthog-js'
 
 function initCrisp() {
     Crisp.configure("1cab78fb-4baf-497e-a10f-00a3b12cfcfe");
@@ -20,7 +21,12 @@ function initSplitbee() {
     });
 }
 
+function initPosthog() {
+    posthog.init('phc_75BsBwYy8qSn2Vsox8ZGyxiyweG1rPd1UemYHT2GI0p', { api_host: 'https://eu.posthog.com' })
+}
+
 export function setUpMarketing() {
     initCrisp();
     initSplitbee();
+    initPosthog();
 }
