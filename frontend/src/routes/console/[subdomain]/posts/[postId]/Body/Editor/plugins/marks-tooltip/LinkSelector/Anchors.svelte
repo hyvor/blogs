@@ -70,6 +70,8 @@
 <style lang="scss">
 
     .headings {
+        max-height: 400px;
+        overflow: auto;
         .type {
             margin-right: 8px;
         }
