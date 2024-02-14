@@ -8,6 +8,7 @@
 	import { getPlugins } from "./plugins/plugins";
 	import type { ProsemirrorEventDispatchType } from "./editorEvents";
 	import { postEditingStatusStore } from "../../../postStore";
+	import { Loader } from "@hyvor/design/components";
     
     export let value: string | null;
     
@@ -19,9 +20,13 @@
         event: ProsemirrorEventDispatchType
     }>();
 
+    let isLoading = true;
+
     async function createEditor() {
 
+        isLoading = true;
         await importCodemirrorAll();
+        isLoading = false;
 
         const jsonParsedValue = value ? JSON.parse(value) : null;
         wrap.innerHTML = '';
@@ -85,7 +90,12 @@
     bind:this={wrap}
     on:click={handleWrapClick}
     on:keyup
-></div>
+    class:loaded={!isLoading}
+>
+    {#if isLoading}
+        <Loader block padding={250} />
+    {/if}
+</div>
 
 
 <style lang="scss">
@@ -94,7 +104,10 @@
 
         --prosemirror-hover-outline: 2px solid #8cf;
         --prosemirror-selected-outline: 3px solid #299af3;
-        padding-bottom: 100px;
+
+        &.loaded {
+            padding-bottom: 100px;
+        }
 
 
         :global(.ProseMirror) {
