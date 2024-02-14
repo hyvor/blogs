@@ -6,11 +6,10 @@
 	import dayjs from "dayjs";
 	import { onMount } from "svelte";
 	import { setUpMarketing } from "./marketing";
+    
     dayjs.extend(relativeTime);
 
-    onMount(() => {
-        setUpMarketing();
-    })
+    setUpMarketing();
 </script>
 
 <Base>

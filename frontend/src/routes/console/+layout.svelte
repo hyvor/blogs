@@ -40,8 +40,14 @@
             blogListStore.set(res.blogs)
 
             if (res.blogs[0]?.type === 'temp') {
-                setTempSubdomain(res.blogs[0].subdomain);
+                const subdomain = res.blogs[0].subdomain;
+                setTempSubdomain(subdomain);
+                if (!tempSubdomain) {
+                    const event = new CustomEvent('console:temp_blog:created', {detail: {subdomain}});
+                    window.dispatchEvent(event);
+                }
             }
+
 
             isLoading = false;
         }).catch(err => {
