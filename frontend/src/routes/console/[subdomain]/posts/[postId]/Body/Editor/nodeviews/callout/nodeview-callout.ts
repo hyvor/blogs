@@ -90,11 +90,10 @@ export class CalloutNodeView implements NodeView {
         }
     }
 
-    stopEvent() {
-        return true;
-    }
-
-    ignoreMutation() {
+    ignoreMutation(mutation: MutationRecord) {
+        if (mutation.target === this.contentDOM) {
+            return false;
+        }
         return true;
     }
 
