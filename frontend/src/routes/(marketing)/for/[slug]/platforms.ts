@@ -11,7 +11,7 @@ interface Platform {
     title: string;
     subtitle: string;
     ctaTitle: string;
-    icon: string;
+    icon?: string;
 }
 
 export const platforms : Platform[] = [
@@ -62,5 +62,19 @@ export const platforms : Platform[] = [
         subtitle: 'Set up a beautiful blog for your WordPress site in minutes. No coding required. Host on a custom domain or subdirectory.',
         ctaTitle: "Ready to add a blazing fast, SEO-friendly blog to your WordPress site?",
         icon: wordpressIcon,
+    },
+    {
+        slug: 'saas',
+        name: "SaaS",
+        title: "Start your SaaS Blog Today",
+        subtitle: 'Want to add a blog to your SaaS app? Set up a fast and SEO-friendly blog in minutes. No coding required. Host on a custom domain or subdirectory. Get started with your SaaS blog today.',
+        ctaTitle: 'Ready to start your SaaS blog? Get started with Hyvor Blogs now.',
+    },
+    {
+        slug: 'ecommerce',
+        name: "E-commerce",
+        title: "Blog for your E-commerce site",
+        subtitle: 'Want to start a blog for your e-commerce site? Set up a fast and SEO-friendly blog in minutes. No coding required. Host on a custom domain or subdirectory. Get started with your e-commerce blog today',
+        ctaTitle: 'Ready to add a blog to your e-commerce site? Get started with Hyvor Blogs now.',
     }
 ];

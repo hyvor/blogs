@@ -9,6 +9,7 @@
     import arrowSvg from "./drag-note-arrow.svg";
 	import { isTempStore } from "../lib/temp";
 	import { afterNavigate, goto } from "$app/navigation";
+	import BlogPlanTag from "./BlogPlanTag.svelte";
 
 	const flipDurationMs = 200;
 	let dragDisabled = true;
@@ -150,7 +151,7 @@
 
                         <div class="left">
                             <div class="name">
-                                {blog.name}
+                                {blog.name} <BlogPlanTag {blog} />
                             </div>
                             <div class="url">
                                 <a href={blog.url} target="_blank">
@@ -163,7 +164,9 @@
                         <div class="right">
 
                             <div class="metadata">
-
+                                <span>
+                                    { blog.posts_count } { blog.posts_count === 1 ? 'post' : 'posts' }
+                                </span>
                             </div>
 
                             <div class="icon">
@@ -376,6 +379,16 @@
     }
     .metadata {
         flex: 1;
+        display: flex;
+        flex-direction: column;
+        align-items: flex-end;
+        margin-right: 20px;
+        font-size: 14px;
+        color: var(--text-light);
+    }
+    .icon {
+        display: flex;
+        align-items: center;
     }
     .name {
         font-weight: 600;

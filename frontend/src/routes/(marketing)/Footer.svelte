@@ -51,7 +51,10 @@
                 <a href="https://hyvor.com/blog/medium-alternatives" target="_blank">Medium Alternatives</a>
                 <a href="https://hyvor.com/blog/blogger-alternatives" target="_blank">Blogger Alternatives</a>
             </FooterLinkList>
-            <div style="flex:1;" />
+            <FooterLinkList title="Use Cases">
+                <a href="/for/saas">For SaaS</a>
+                <a href="/for/ecommerce">For E-commerce</a>
+            </FooterLinkList>
         </div>
 
     </div>
