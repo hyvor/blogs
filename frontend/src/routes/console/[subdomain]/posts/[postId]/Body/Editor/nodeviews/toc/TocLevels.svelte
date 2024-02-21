@@ -1,7 +1,26 @@
 <script lang="ts">
 	import { Checkbox } from "@hyvor/design/components";
+	import { createEventDispatcher } from "svelte";
 
     export let levels : number[];
+
+    const dispatch = createEventDispatcher();
+
+    function handleChange(level: number) {
+
+        let newLevels : number[];
+
+        if (levels.includes(level)) {
+            newLevels = levels.filter(l => l !== level);
+        } else {
+            newLevels = [...levels, level];
+        }
+
+        dispatch('change', newLevels);
+
+        levels = newLevels;
+    }
+
 </script>
 
 <div class="levels">
@@ -10,13 +29,7 @@
             h{level}
             <Checkbox
                 checked={levels.includes(level)} 
-                on:change={() => {
-                    if (levels.includes(level)) {
-                        levels = levels.filter(l => l !== level);
-                    } else {
-                        levels = [...levels, level];
-                    }
-                }}    
+                on:change={() => handleChange(level)}
             />
         </div>
     {/each}

@@ -56,14 +56,6 @@
 
                 <div class="dots"></div>
 
-                <!-- {#if child.id}
-                    <span class="id">#{child.id}</span>
-                {:else}
-                    <Tag color="red" size="x-small">
-                        No ID
-                    </Tag>
-                {/if} -->
-
                 <HeadingId heading={child} />
 
             </div>

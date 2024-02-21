@@ -4,6 +4,7 @@
 	import { get } from "svelte/store";
 	import { postEditingStatusStore } from "../../../../../postStore";
 	import { tick } from "svelte";
+	import { IconExclamation, IconExclamationCircle } from "@hyvor/icons";
 
     export let heading: TocEntry;
 
@@ -86,6 +87,7 @@
                     <span class="id">#{heading.id}</span>
                 {:else}
                     <Tag color="red" size="x-small">
+                        <IconExclamationCircle slot="start" size={10} />
                         No ID
                     </Tag>
                 {/if}

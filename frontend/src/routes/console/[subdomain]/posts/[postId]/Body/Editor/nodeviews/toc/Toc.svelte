@@ -4,9 +4,11 @@
 	import { generateToc } from "./toc";
 	import TocChildren from "./TocChildren.svelte";
 	import TocLevels from "./TocLevels.svelte";
+	import { IconMessage } from "@hyvor/design/components";
 
     export let view: EditorView;
     export let levels : number[] = [1,2,3,4];
+    export let getPos : () => number | undefined;
 
     let doc = view.state.doc;
 
@@ -23,14 +25,38 @@
         }
     })
 
+    function handleLevelsChange(e: CustomEvent<number[]>) {
+
+        const pos = getPos();
+        if (pos === undefined) return;
+
+        view.dispatch(
+            view.state.tr.setMeta('addToHistory', false)
+                .setNodeMarkup(pos, null, { levels: e.detail })
+        );
+
+    }   
+
 </script>
 
 <div class="wrap">
     <div class="title" role="heading" aria-level={2}>Table of Contents</div>
     <div class="toc-inner">
-        <TocChildren children={toc} top />
+        {#if toc.length}
+            <TocChildren children={toc} top />
+        {:else}
+            <IconMessage 
+                padding={40} 
+                empty 
+                iconSize={50} 
+                message="No headings found"
+            />
+        {/if}
     </div>
-    <TocLevels bind:levels={levels} />
+    <TocLevels 
+        bind:levels={levels} 
+        on:change={handleLevelsChange}
+    />
 </div>
 
 <style>

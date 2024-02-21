@@ -23,9 +23,7 @@ export default class TocView implements NodeView {
 
         this.component = new Toc({
             target: this.dom,
-            props: {
-                view: this.view
-            }
+            props: this.getPropsFromNode(node)
         });
 
     }   
@@ -34,18 +32,23 @@ export default class TocView implements NodeView {
         return true;
     }
 
+    update(node: Node) {
+        if (node.type.name === 'toc') {
+            this.component.$set(this.getPropsFromNode(node));
+            return true;
+        }
+        return false;
+    }
+
     /* ignoreMutation() {
         return true;
     } */
 
     private getPropsFromNode(node: Node) {
         return {
-            src: node.attrs.src,
-            alt: node.attrs.alt,
-            width: node.attrs.width,
-            height: node.attrs.height,
             getPos: this.getPos,
             view: this.view,
+            levels: node.attrs.levels,
         }
     }
 
