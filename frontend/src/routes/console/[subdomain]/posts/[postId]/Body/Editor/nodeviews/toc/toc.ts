@@ -5,6 +5,7 @@ export interface TocEntry {
     id: string | null,
     level: number,
     children: TocEntry[],
+    pos: number
 }
 type Heading = Omit<TocEntry, 'children'>;
 
@@ -25,6 +26,7 @@ export function generateToc(doc: Node, levels: number[]) {
                     title: node.textContent,
                     id: node.attrs.id,
                     level: level,
+                    pos
                 });
             }
         });
@@ -58,7 +60,8 @@ export function generateToc(doc: Node, levels: number[]) {
                 children: buildToc(
                     headings.slice(i + 1),
                     heading.level
-                )
+                ),
+                pos: heading.pos
             });
 
             currentLevel = heading.level;

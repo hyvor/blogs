@@ -37,7 +37,7 @@
     .wrap {
         border: 1px solid #ccc;
         border-radius: 5px;
-        margin-top: 10px;
+        margin-top: 25px;
         white-space: initial;
     }
     .title {

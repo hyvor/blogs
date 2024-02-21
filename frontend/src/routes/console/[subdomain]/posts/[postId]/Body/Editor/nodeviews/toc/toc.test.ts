@@ -120,7 +120,7 @@ test('toc tests', () => {
 });
 
 
-test.only('when the first heading is lower', () => {
+test('when the first heading is lower', () => {
 
     const toc = getToc(`
         <h3 id="my-3">h3</h3>

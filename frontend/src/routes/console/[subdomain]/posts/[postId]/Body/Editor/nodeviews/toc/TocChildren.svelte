@@ -1,16 +1,51 @@
 <script lang="ts">
 	import { Tag } from "@hyvor/design/components";
     import type { TocEntry } from "./toc";
+	import { get } from "svelte/store";
+	import { postEditingStatusStore } from "../../../../../postStore";
+	import { TextSelection } from "prosemirror-state";
+	import { positionSelectionInMiddleOfScreen } from "../../../../../../../lib/prosemirror/helpers";
     
     export let children: TocEntry[];
     export let top = false;
+
+    function handleHeadingClick(entry: TocEntry) {
+
+        const editorView = get(postEditingStatusStore).editorView;
+        if (!editorView)
+            return;
+
+        const doc = editorView.state.doc;
+        const pos = entry.pos;
+
+        const resolvedPos = doc.resolve(pos);
+        const selection = TextSelection.create(
+            doc, 
+            pos + resolvedPos.nodeAfter!.nodeSize - 1
+        );
+
+        editorView.dispatch(
+            editorView.state.tr
+                .setSelection(selection)
+                .scrollIntoView()
+        );
+        editorView.focus();
+
+        positionSelectionInMiddleOfScreen(editorView);
+    }
 </script>
 
 <div class="toc-ul" class:top>
     {#each children as child}
         <div class="toc-li">
 
-            <div class="heading">
+            <div 
+                class="heading"
+                on:click={() => handleHeadingClick(child)}
+                on:keyup
+                role="button"
+                tabindex="0"
+            >
 
                 <Tag size="x-small">
                     <strong>H{child.level}</strong>
@@ -23,7 +58,7 @@
                 {#if child.id}
                     <span class="id">#{child.id}</span>
                 {:else}
-                    <Tag color="orange" size="x-small">
+                    <Tag color="red" size="x-small">
                         No ID
                     </Tag>
                 {/if}
@@ -71,11 +106,6 @@
     .id {
         font-size: 14px;
         color: #666;
-    }
-
-    .level {
-        font-size: 14px;
-        font-weight: 600;
     }
 
 </style>

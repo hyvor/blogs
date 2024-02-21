@@ -32,6 +32,7 @@ use App\Domains\Post\Content\Nodes\Table\TableCell\TableCell;
 use App\Domains\Post\Content\Nodes\Table\TableCell\TableHeader;
 use App\Domains\Post\Content\Nodes\Table\TableRow;
 use App\Domains\Post\Content\Nodes\Text;
+use App\Domains\Post\Content\Nodes\Toc\Toc;
 use App\Models\Blog;
 use Hyvor\Phrosemirror\Converters\HtmlParser\HtmlParser;
 use Hyvor\Phrosemirror\Document\Document;
@@ -110,6 +111,7 @@ class PostContentService
                 new TableRow(),
                 new TableCell(),
                 new TableHeader(),
+                new Toc(),
             ],
             [
                 new Code,
