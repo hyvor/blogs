@@ -30,6 +30,14 @@ export default class TocView implements NodeView {
 
     }   
 
+    stopEvent() {
+        return true;
+    }
+
+    /* ignoreMutation() {
+        return true;
+    } */
+
     private getPropsFromNode(node: Node) {
         return {
             src: node.attrs.src,

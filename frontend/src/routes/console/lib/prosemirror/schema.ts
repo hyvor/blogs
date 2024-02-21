@@ -235,9 +235,9 @@ export const nodes = {
             levels: {default: [1,2,3,4]} 
         },
         group: "block",
-        selectable: false,
+        inline: false,
         draggable: false,
-        content: "",
+        selectable: false,
         atom: true,
     },
 

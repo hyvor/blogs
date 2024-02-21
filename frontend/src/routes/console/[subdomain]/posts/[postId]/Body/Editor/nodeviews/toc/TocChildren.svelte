@@ -5,6 +5,7 @@
 	import { postEditingStatusStore } from "../../../../../postStore";
 	import { TextSelection } from "prosemirror-state";
 	import { positionSelectionInMiddleOfScreen } from "../../../../../../../lib/prosemirror/helpers";
+	import HeadingId from "./HeadingId.svelte";
     
     export let children: TocEntry[];
     export let top = false;
@@ -41,7 +42,7 @@
 
             <div 
                 class="heading"
-                on:click={() => handleHeadingClick(child)}
+                on:click={e => handleHeadingClick(child)}
                 on:keyup
                 role="button"
                 tabindex="0"
@@ -55,13 +56,16 @@
 
                 <div class="dots"></div>
 
-                {#if child.id}
+                <!-- {#if child.id}
                     <span class="id">#{child.id}</span>
                 {:else}
                     <Tag color="red" size="x-small">
                         No ID
                     </Tag>
-                {/if}
+                {/if} -->
+
+                <HeadingId heading={child} />
+
             </div>
 
 
@@ -101,11 +105,6 @@
     .dots {
         flex: 1;
         border-top: 1px dashed #ccc;
-    }
-
-    .id {
-        font-size: 14px;
-        color: #666;
     }
 
 </style>
