@@ -139,6 +139,26 @@
             }
         }
 
+        :global(.ProseMirror-hideselection *::selection) {
+            background: transparent;
+        }
+        :global(.ProseMirror-hideselection *::-moz-selection) {
+            background: transparent;
+        }
+
+        :global(.ProseMirror-hideselection) {
+            caret-color: transparent;
+        }
+
+        :global(.ProseMirror-selectednode) {
+            outline: var(--prosemirror-selected-outline)!important;
+        }
+        :global(img.ProseMirror-separator) {
+            display: inline !important;
+            border: none !important;
+            margin: 0 !important;
+        }
+
         // placeholder plugin
         :global(.ProseMirror[data-placeholder]::before) {
             color: var(--text-light);
