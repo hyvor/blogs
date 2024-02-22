@@ -230,6 +230,17 @@ export const nodes = {
         toDOM() { return ['br'] }
     } as NodeSpec,
 
+    toc: {
+        attrs: { 
+            levels: {default: [1,2,3,4,5,6]} 
+        },
+        group: "block",
+        inline: false,
+        draggable: false,
+        selectable: false,
+        atom: true,
+    },
+
      ...tableNodes({
         tableGroup: "block",
         cellContent: "block+",

@@ -49,7 +49,7 @@ class Bookmark extends NodeType
 
         $template = ThemeFilesRepository::getFile(
             $blog,
-            'block-bookmark.twig',
+            'node-bookmark.twig',
             ThemeFileFolderEnum::TEMPLATES
         )?->content;
 

@@ -5,6 +5,9 @@ namespace App\Domains\Delivery\Twig;
 use App\Data\Enums\ThemeFileFolderEnum;
 use App\Domains\Blog\BlogService;
 use App\Domains\Language\LanguageRepository;
+use App\Domains\Post\Content\Nodes\Toc\Toc;
+use App\Domains\Post\Content\Nodes\Toc\TocHeading;
+use App\Domains\Post\Content\Nodes\Toc\TocHtml;
 use App\Domains\Route\PermalinkRepository;
 use App\Domains\Theme\ThemeFilesRepository;
 use App\Exceptions\TrustedException;
@@ -50,6 +53,7 @@ class TwigExtensions extends AbstractExtension
             new TwigFilter('language_variant_url', [$this, 'languageVariantUrlFilter'], [
                 'needs_context' => true,
             ]),
+            new TwigFilter('toc', [$this, 'tocFilter'], ['is_safe' => ['html']]),
         ];
     }
 
@@ -251,6 +255,13 @@ class TwigExtensions extends AbstractExtension
         } else {
             return trim($url, '/') === $currentPath;
         }
+    }
+
+    public function tocFilter(string $content, null|array|string $levels = null): string
+    {
+        $levels = TocHeading::getLevels($levels);
+        $toc = new TocHtml($levels);
+        return $toc->htmlFromHtml($content);
     }
 
     private function getBlogFromContext($context)

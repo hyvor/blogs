@@ -13,8 +13,8 @@ import Media from "./content/media/Media.svelte";
 import Routes from "./content/routes/Routes.svelte";
 import CustomCode from "./content/custom-code/CustomCode.svelte";
 import Overview from "./content/overview/Overview.svelte";
-import Templates from "./content/templates/Templates.svelte";
-import Styling from "./content/styling/Styling.svelte";
+import ThemeTemplates from "./content/themes-templates/ThemesTemplates.svelte";
+import ThemesStyles from "./content/themes-styles/ThemesStyles.svelte";
 import Scripts from "./content/scripts/Scripts.svelte";
 import Languages from "./content/languages/Languages.svelte";
 import Export from "./content/export/Export.svelte";
@@ -194,13 +194,13 @@ export const categories: Category[] = [
             {
                 slug: 'themes-templates',
                 name: 'Templates',
-                component: Templates
+                component: ThemeTemplates
             },
 
             {
                 slug: 'themes-styles',
                 name: 'Styling',
-                component:Styling
+                component:ThemesStyles
             },
 
             {

@@ -1,7 +1,7 @@
 import type { Node } from "prosemirror-model";
 import type { ComponentType } from "svelte";
 import schema from "../../../../../../../lib/prosemirror/schema";
-import { IconBookmark, IconCardImage, IconCode, IconCodeSlash, IconHr, IconLightbulb, IconLink45deg, IconQuote, IconTable, IconTypeH2, IconTypeH3 } from "@hyvor/icons";
+import { IconBookmark, IconCardImage, IconCode, IconCodeSlash, IconHr, IconLightbulb, IconLink45deg, IconListUl, IconQuote, IconTable, IconTypeH2, IconTypeH3 } from "@hyvor/icons";
 import ImageUploader from "../../../../../../../lib/components/ImageUploader/ImageUploader.svelte";
 import type { SelectedImage } from "../../../../../../../lib/components/ImageUploader/image-uploader";
 import EmbedCreator from "./Embed/EmbedCreator.svelte";
@@ -101,6 +101,13 @@ const options: SlashOption[] = [
         icon: IconCodeSlash,
         keywords: ["html", "twig", "code", "custom"],
         node: "custom_html",
+    },
+    {
+        name: 'Table of Contents',
+        description: 'Add a table of contents',
+        icon: IconListUl,
+        keywords: ['toc', 'table of contents', 'contents', 'outline', 'index', 'menu'],
+        node: "toc",
     },
     {
         name: "Table",

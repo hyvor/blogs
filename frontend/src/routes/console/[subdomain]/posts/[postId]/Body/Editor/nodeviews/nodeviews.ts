@@ -8,6 +8,7 @@ import EmbedView from "./embed/nodeview-embed";
 import BookmarkView from "./nodeview-bookmark";
 import TableNodeView from "./table/nodeview-table";
 import ImageView from "./image/nodeview-image";
+import TocView from "./toc/nodeview-toc";
 
 interface NodeViewsType {
     [key: string]: NodeViewConstructor
@@ -43,6 +44,9 @@ export function getNodeViews() : NodeViewsType {
         image(node, view, getPos) {
             return new ImageView(node, view, getPos)
         },
+        toc(node, view, getPos) {
+            return new TocView(node, view, getPos);
+        }
     }
 
 }

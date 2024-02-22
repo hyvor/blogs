@@ -61,6 +61,15 @@
             dispatchTransaction: (tr) => {
                 dispatch('change', JSON.stringify(tr.doc.toJSON()));
 
+                // dispatch a transaction event
+                // this event is used by Toc to update itself
+                const customEvent = new CustomEvent('prosemirror:transaction', {
+                    detail: {
+                        doc: tr.doc
+                    }
+                });
+                document.dispatchEvent(customEvent);
+
                 const state = view.state.apply(tr)
                 view.updateState(state)
             },

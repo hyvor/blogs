@@ -258,10 +258,23 @@
                     <li><code>lang</code> - a filter for translations. Learn more in <a href="/docs/themes-internationalization">internationalization</a>.</li>
                     <li><code>lang_by_number</code> - See <a href="/docs/themes-internationalization#lang-by-number">conditional strings based on a number</a>.</li>
                     <li><code>language_variant_url</code> - See <a href="/docs/themes-internationalization#language-switcher">language switcher</a></li>
+
+                    <li>
+                        <code>toc</code> - a filter to generate a table of contents from a HTML string.
+                        <CodeBlock code={`
+                            {{ _post.content | toc }}
+                        `} />
+                        <p>
+                            By default, all headings are included in the table of contents. You can set which levels to include as follows:
+                        </p>
+                        <CodeBlock code={`
+                            {{ _post.content | toc('2,3') }}
+                        `} />
+                    </li>
                 </ul>
 
                 <Callout type="info">
-                    <p>The difference between functions and filters can be quite confusing in Twig. Our general rule is to use functions when multiple inputs are taken (<code>data</code> and <code>icon</code>) and use filters when only a single input matters (<code>asset_url</code>, <code>asset</code>, etc.).</p>
+                    <p>The difference between functions and filters can be quite confusing in Twig. Our general rule is to use functions to compute things (<code>data</code> and <code>icon</code>) and use filters when apply a transformation (<code>asset_url</code>, <code>asset</code>, etc.).</p>
                 </Callout>
 
     <h2 id="fetch-data">Fetching Data</h2>
