@@ -2,45 +2,52 @@
 
 namespace App\Domains\Post\Content\Nodes\Toc;
 
+use App\Domains\Post\Content\Nodes\Heading\Heading;
 use Hyvor\Phrosemirror\Document\Node;
 
 /**
- * @phpstan-type TocHeading {title: string, id: string | null, level: int}
  * @phpstan-type TocEntry {title: string, id: string | null, level: int, children: TocEntry[]}
  */
 class TocHtml
 {
 
     public function __construct(
-        private Node $doc,
         /** int[] */
         private array $levels,
     ) {}
 
+    public function htmlFromHtml(string $html) : string
+    {
+        return $this->headingsToHtml(TocHeading::fromHtml($html, $this->levels));
+    }
+
+    public function htmlFromNode(Node $node) : string
+    {
+        return $this->headingsToHtml(TocHeading::fromNode($node, $this->levels));
+    }
+
     /**
      * @return TocEntry[]
      */
-    public function toArray() : array
+    public function arrayFromNode(Node $node) : array
     {
-        $headings = $this->getHeadings();
+        $headings = TocHeading::fromNode($node, $this->levels);
         return $this->buildToc($headings);
     }
 
-    public function toHtml() : string
+    private function headingsToHtml(array $headings) : string
     {
-
         $levelsString = implode(',', $this->levels);
 
         $html = "<div class=\"toc\" data-levels=\"$levelsString\">";
 
-        $array = $this->toArray();
+        $array = $this->buildToc($headings);
         $childrenHtml = $this->childrenToHtml($array);
 
         $html .= $childrenHtml;
         $html .= '</div>';
 
         return $html;
-
     }
 
     /**
@@ -66,32 +73,6 @@ class TocHtml
     }
 
     /**
-     * @return TocHeading[]
-     */
-    private function getHeadings() : array
-    {
-
-        $headings = [];
-
-        $this->doc->traverse(function (Node $node) use (&$headings) {
-            if ($node->type->name === 'heading') {
-                $level = $node->attrs->level;
-                if (!in_array($level, $this->levels)) {
-                    return;
-                }
-                $headings[] = [
-                    'title' => $node->allText(),
-                    'id' => $node->attrs->id ?? null,
-                    'level' => $node->attrs->level,
-                ];
-            }
-        });
-
-        return $headings;
-
-    }
-
-    /**
      * @param TocHeading[] $headings
      * @return TocEntry[]
      */
@@ -105,25 +86,25 @@ class TocHtml
 
         foreach ($headings as $index => $heading) {
 
-            if ($previousLevel !== null && $heading['level'] <= $previousLevel) {
+            if ($previousLevel !== null && $heading->level <= $previousLevel) {
                 break;
             }
 
-            if ($currentLevel && $heading['level'] > $currentLevel) {
+            if ($currentLevel && $heading->level > $currentLevel) {
                 continue;
             }
 
             $toc[] = [
-                'title' => $heading['title'],
-                'id' => $heading['id'],
-                'level' => $heading['level'],
+                'title' => $heading->title,
+                'id' => $heading->id,
+                'level' => $heading->level,
                 'children' => $this->buildToc(
                     array_slice($headings, $index + 1),
-                    $heading['level']
+                    $heading->level
                 ),
             ];
 
-            $currentLevel = $heading['level'];
+            $currentLevel = $heading->level;
 
         }
 

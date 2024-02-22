@@ -37,11 +37,8 @@ class Toc extends NodeType
             $template = '{{ toc | raw }}';
         }
 
-        $tocHtml = new TocHtml(
-            $context->topNode,
-            $context->node->attrs->levels
-        );
-        $toc = $tocHtml->toHtml();
+        $tocHtml = new TocHtml($context->node->attrs->levels);
+        $toc = $tocHtml->htmlFromNode($context->topNode);
 
         return TwigRenderer::renderString($template, [
             'toc' => $toc
