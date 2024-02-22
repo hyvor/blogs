@@ -2,6 +2,11 @@
 
 namespace App\Domains\Post\Content\Nodes\Toc;
 
+use App\Data\Enums\ThemeFileFolderEnum;
+use App\Domains\Delivery\Twig\TwigRenderer;
+use App\Domains\Post\Content\PostContentService;
+use App\Domains\Theme\ThemeFilesRepository;
+use App\Models\Blog;
 use Hyvor\Phrosemirror\Converters\HtmlParser\ParserRule;
 use Hyvor\Phrosemirror\Types\NodeType;
 use Hyvor\Phrosemirror\Converters\HtmlSerializer\Context;
@@ -9,18 +14,38 @@ use Hyvor\Phrosemirror\Converters\HtmlSerializer\Context;
 class Toc extends NodeType
 {
 
+    public const DEFAULT_LEVELS = [1,2,3,4,5,6];
+
     public string $name = 'toc';
     public ?string $content = null;
     public string $group = 'block';
     public string $attrs = TocAttrs::class;
 
+    public function __construct(private Blog $blog)
+    {}
+
     public function toHtmlFromContext(Context $context): string
     {
+
+        $template = ThemeFilesRepository::getFile(
+            $this->blog,
+            'node-toc.twig',
+            ThemeFileFolderEnum::TEMPLATES
+        )?->content;
+
+        if (!$template) {
+            $template = '{{ toc | raw }}';
+        }
+
         $tocHtml = new TocHtml(
             $context->topNode,
             $context->node->attrs->levels
         );
-        return $tocHtml->toHtml();
+        $toc = $tocHtml->toHtml();
+
+        return TwigRenderer::renderString($template, [
+            'toc' => $toc
+        ]);
     }
 
     public function fromHtml(): array

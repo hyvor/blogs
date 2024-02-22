@@ -10,6 +10,6 @@ class TocAttrs extends AttrsType
     /**
      * @var int[]
      */
-    public array $levels = [1,2,3,4,5,6];
+    public array $levels = Toc::DEFAULT_LEVELS;
 
 }

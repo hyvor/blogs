@@ -194,3 +194,44 @@ it('disregards ul/li inside toc', function() {
         ]));
 
 });
+
+it('with custom twig', function() {
+
+    $json = json_encode([
+        'type' => 'doc',
+        'content' => [
+            [
+                'type' => 'toc',
+                'attrs' => [
+                    'levels' => [1,2,3,4],
+                ],
+            ],
+            [
+                'type' => 'heading',
+                'attrs' => [
+                    'level' => 1,
+                    'id' => 'my-big-heading',
+                ],
+                'content' => [
+                    [
+                        'type' => 'text',
+                        'text' => 'My big heading',
+                    ],
+                ],
+            ]
+        ]
+    ]);
+
+    $blog = blog();
+
+    addThemeTemplateFile(
+        $blog,
+        '<div>Table of Contents{{ toc | raw }}</div>',
+        'node-toc.twig'
+    );
+
+    $html = PostContentService::getHtml($json, $blog);
+
+    expect($html)->toEqual('<div>Table of Contents<div class="toc" data-levels="1,2,3,4"><ul><li><a href="#my-big-heading">My big heading</a></li></ul></div></div><h1 id="my-big-heading"><a href="#my-big-heading">My big heading</a></h1>');
+
+});

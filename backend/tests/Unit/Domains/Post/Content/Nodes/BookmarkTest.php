@@ -94,7 +94,7 @@ test('custom template', function () {
     ThemeFilesRepository::createOrUpdateFile(
         $blog,
         ThemeFileFolderEnum::TEMPLATES,
-        'block-bookmark.twig',
+        'node-bookmark.twig',
         $template
     );
 

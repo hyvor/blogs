@@ -10,8 +10,10 @@
     <p>Back to “chunk-css”. let’s say you make a partial file for the blog header (<code>templates/_header.twig</code>). Then create an SCSS file to hold its CSS (<code>header.scss</code>). This pattern makes understanding and editing easier for the blogger. Finally, import all chunk files to <code>index.scss</code> using <code>@import</code> statements.</p>
 
     <CodeBlock code={`
-    { Table, TableRow, CodeBlock, Callout } from "@hyvor/design/components";
-    `} />
+    @import 'css-variables.scss';
+    @import 'header.scss';
+    @import 'body.scss';
+    `} language="css" />
 
     <p>On our side, we process <code>index.scss</code> file and generate a <code>styles.css</code>, which will be accessible via <ocde>/styles.css</ocde>. <b>That is the only CSS file of the whole blog!</b></p>
 
@@ -24,7 +26,7 @@
             <p>The easiest way to load fonts is by adding <code>THEME_FONTS</code> to the <a href="/docs/themes-config">config</a> file.</p>
             <CodeBlock code={`
             THEME_FONTS: "mulish:400"
-            `} />
+            `} language="yaml" />
 
             <p>Then, you can use the font in your SCSS files. See our <a href="/docs/fonts">fonts</a> page for a in-depth guide.</p>
 
@@ -42,7 +44,7 @@
 
                         <p>Note that figcaption can be empty. So, check if margins look good when figcaption is not there.</p>
 
-                    <h3 id="embed-rich">Embed: Rich</h3>
+                    <h3 id="embed-rich">Embed</h3>
                         <CodeBlock code={`
                         <figure>
                             <div class="rich-embed">
@@ -52,7 +54,7 @@
                         </figure>
                         `} />
 
-                    <h3 id="embed-link">Embed: Link</h3>
+                    <h3 id="embed-link">Link Bookmark</h3>
                         <CodeBlock code={`
                         <figure>
                             <a class="rich-link">
@@ -68,22 +70,6 @@
                             <figcaption>{{ data.caption }}</figcaption>
                         </figure>
                             `} />  
-                    
-                        <p><b>TIP</b>: It is possible to change this HTML structure, by adding a <code>{`component-rich-link.twig`}</code> to <code>/templates</code> folder. The <code>data</code> object is as follows.</p>
-
-                        <CodeBlock code={`
-                        {
-                            {
-                                "url": "https://blogs.hyvor.com",
-                                "title": "Hyvor Blogs",
-                                "description": "A simple blogging platform",
-                                "domain": "blogs.hyvor.com",
-                                "thumbnail": "https://blogs.hyvor.com/thumbnail.png",
-                                "icon": "https://blogs.hyvor.com/icon.png",
-                                "site": "Hyvor Blogs",
-                            }
-                        }
-                        `} />
 
                     <h3 id="callout">Callout</h3>
                         <CodeBlock code={`
@@ -91,6 +77,85 @@
                             <mark></mark>
                         </aside>
                             `} />
+
+        <h2 id="node-templates">
+            Node Templates
+        </h2>
+
+            <p>
+                Some nodes have templates. And, as the theme developer, you can customize them if the default template doesn't fit your design. To do that, add the given file to the <code>/templates</code> folder.
+            </p>
+
+            <h3 id="template-link-bookmark">
+                Link Bookmark
+            </h3>
+
+            <p>
+                Custom file name: <code>node-bookmark.twig</code>
+            </p>
+
+            <p>
+                Default template:
+            </p>
+
+            <CodeBlock code={`
+                <a class="bookmark" target="_blank" href="{{ data.url }}" data-url="{{ data.original_url }}">
+                    <div class="bookmark-details">
+                        <div class="bookmark-title">{{ data.title }}</div>
+                        <div class="bookmark-description">{{ data.description }}</div>
+                        <div class="bookmark-domain">{{ data.domain }}</div>
+                    </div>
+                    <div class="bookmark-thumbnail">
+                        <img src="{{ data.thumbnail_url }}"  alt="{{ data.title }}"/>
+                    </div>
+                </a>
+            `} />
+
+            <p>
+                <code>data</code> object definition:
+            </p>
+
+            <CodeBlock code={`
+                {
+                    "url": "https://blogs.hyvor.com",
+                    "original_url": "https://blogs.hyvor.com",
+                    "title": "Hyvor Blogs",
+                    "description": "A simple blogging platform",
+                    "domain": "blogs.hyvor.com",
+                    "thumbnail_url": "https://blogs.hyvor.com/thumbnail.png",
+                }
+            `} language="json" />
+
+            <h3 id="template-toc">
+                Table of Contents (TOC)
+            </h3>
+
+            <p>
+                Custom file name: <code>node-toc.twig</code>
+            </p>
+
+            <p>
+                Default template:
+            </p>
+
+            <CodeBlock code={`
+                {{ toc | raw }}
+            `} />
+
+            <p>
+                The <code>toc</code> variable is a string that contains the HTML of the TOC as nested <code>ul</code> and <code>li</code> elements.
+            </p>
+
+            <p>
+                Example: If you want to add a heading to the TOC, you can do it as follows. The <code>raw</code> filter is required to render the HTML of the TOC.
+            </p>
+
+            <CodeBlock code={`
+                <div class="toc-wrap">
+                    <h2>Table of Contents</h2>
+                    {{ toc | raw }}
+                </div>
+            `} />
 
         <h2 id="light-dark">Light/Dark Modes</h2>
 

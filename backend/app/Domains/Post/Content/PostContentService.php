@@ -93,7 +93,7 @@ class PostContentService
                 new Text,
                 new Paragraph,
                 new Blockquote,
-                new Toc(),
+                new Toc($blog),
                 new Bookmark($blog),
                 new BulletList,
                 new Callout,
