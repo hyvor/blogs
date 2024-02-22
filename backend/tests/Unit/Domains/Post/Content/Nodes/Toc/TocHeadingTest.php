@@ -154,12 +154,11 @@ it('levels test', function() {
 });
 
 # bug - unicode chars problem
+# https://davidwalsh.name/domdocument-utf8-problem didn't work
+# https://stackoverflow.com/a/8218649/9059939
 it('html specials', function() {
-
     // … is a unicode char
     $html = '<h1 id="my-big-heading">Hello Worlding…</h1>';
     $headings = TocHeading::fromHtml($html, [1,2,3]);
-
-    dd($headings[0]);
-
+    expect($headings[0]->title)->toBe('Hello Worlding…');
 });
