@@ -113,10 +113,10 @@ class ConsoleUserController extends Controller
             'hyvor_user_id' => 'integer|nullable',
             'role' => new Enum(UserRoleEnum::class),
             'status' => 'string|in:active,blocked',
-            'slug' => 'string',
-            'email' => 'string|nullable',
-            'website_url' => 'string|nullable',
-            'picture_url' => 'string|nullable',
+            'slug' => 'string|max:255',
+            'email' => 'string|nullable|max:255',
+            'website_url' => 'string|nullable|max:255',
+            'picture_url' => 'string|nullable|max:255',
 
             'social_facebook' => 'string|nullable',
             'social_twitter' => 'string|nullable',
@@ -217,9 +217,9 @@ class ConsoleUserController extends Controller
         }
 
         $validations = [
-            'name' => 'string|nullable',
-            'bio' => 'string|nullable',
-            'location' => 'string|nullable',
+            'name' => 'string|nullable|max:255',
+            'bio' => 'string|nullable|max:255',
+            'location' => 'string|nullable|max:255',
         ];
 
         $request->validate($validations);

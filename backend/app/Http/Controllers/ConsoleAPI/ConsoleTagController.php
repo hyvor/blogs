@@ -121,8 +121,8 @@ class ConsoleTagController extends Controller
         }
 
         $validates = [
-            'name' => 'string|nullable',
-            'description' => 'string|nullable',
+            'name' => 'string|nullable|max:255',
+            'description' => 'string|nullable|max:255',
         ];
 
         $request->validate($validates);

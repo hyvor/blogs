@@ -88,6 +88,7 @@
             block
             state={validation?.state || 'default'}
             on:input={handleInput}
+            maxlength={255}
         >
             <Loader
                 slot="end"

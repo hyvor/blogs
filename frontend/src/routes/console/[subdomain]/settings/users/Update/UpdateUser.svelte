@@ -165,6 +165,7 @@
         type="user"
         key="bio"
         label="Bio"
+        maxlength={255}
         caption="User's bio"
         on:variantCreate
         on:change={e => handleVariantChange('bio', e)}
@@ -176,6 +177,7 @@
         key="location"
         label="Location"
         caption="User's location"
+        maxlength={255}
         on:variantCreate
         on:change={e => handleVariantChange('location', e)}
     />
@@ -187,6 +189,7 @@
         <TextInput 
             bind:value={websiteUrl}
             block
+            maxlength={255}
         />
     </SplitControl>
 
@@ -203,6 +206,7 @@
                 <TextInput 
                     block
                     bind:value={socialFacebook}
+                    maxlength={255}
                 />
             </SplitControl>
 
@@ -212,6 +216,7 @@
                 <TextInput 
                     block
                     bind:value={socialTwitter}
+                    maxlength={255}
                 />
             </SplitControl>
 
@@ -222,6 +227,7 @@
                 <TextInput 
                     block
                     bind:value={socialLinkedin}
+                    maxlength={255}
                 />
             </SplitControl>
 
@@ -232,6 +238,7 @@
                 <TextInput 
                     block
                     bind:value={socialYoutube}
+                    maxlength={255}
                 />
             </SplitControl>
 
@@ -242,6 +249,7 @@
                 <TextInput 
                     block
                     bind:value={socialTiktok}
+                    maxlength={255}
                 />
             </SplitControl>
            
@@ -252,6 +260,7 @@
                 <TextInput 
                     block
                     bind:value={socialInstagram}
+                    maxlength={255}
                 />
             </SplitControl>
 
@@ -262,6 +271,7 @@
                 <TextInput 
                     block
                     bind:value={socialGithub}
+                    maxlength={255}
                 />
             </SplitControl>
 

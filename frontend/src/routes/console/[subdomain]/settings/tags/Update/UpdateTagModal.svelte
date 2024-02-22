@@ -97,6 +97,7 @@
         key="name"
         label="Name"
         caption="Name of the tag"
+        maxlength={255}
         on:variantCreate
         on:change={handleNameChange}
     />
@@ -107,6 +108,7 @@
         key="description"
         label="Description"
         caption="A short description of the tag"
+        maxlength={255}
         on:variantCreate
         on:change={handleDescriptionChange}
     />
