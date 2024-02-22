@@ -232,7 +232,7 @@ export const nodes = {
 
     toc: {
         attrs: { 
-            levels: {default: [1,2,3,4]} 
+            levels: {default: [1,2,3,4,5,6]} 
         },
         group: "block",
         inline: false,

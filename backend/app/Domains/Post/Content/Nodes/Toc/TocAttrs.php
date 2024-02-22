@@ -10,6 +10,6 @@ class TocAttrs extends AttrsType
     /**
      * @var int[]
      */
-    public array $levels = [1,2,3,4];
+    public array $levels = [1,2,3,4,5,6];
 
 }
