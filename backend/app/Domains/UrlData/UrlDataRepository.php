@@ -50,7 +50,7 @@ class UrlDataRepository
                  * We only want either the link or rich
                  */
                 'url' => $url,
-                'final_url' => $json['url'],
+                'final_url' => $json['url'] ?? $url,
                 'html' => $json['html'] ?? null,
                 'title' => _safe_length($json['meta']['title'] ?? null),
                 'description' => _safe_length($json['meta']['description'] ?? null),
