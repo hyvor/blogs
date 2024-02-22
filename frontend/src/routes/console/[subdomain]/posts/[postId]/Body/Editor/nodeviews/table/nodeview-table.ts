@@ -42,6 +42,7 @@ export default class TableNodeView implements NodeView {
         // this.createRowMenuComponent();
 
         this.middle = this.dom.appendChild(document.createElement("div"));
+        this.middle.className = "table-middle";
 
         this.table = this.middle.appendChild(document.createElement("table"));
         this.colgroup = this.table.appendChild(document.createElement("colgroup"));

@@ -422,6 +422,9 @@
 
         :global(.table-wrap) {
             margin-top: 30px;
+            :global(.table-middle) {
+                overflow-x: auto;
+            }
         }
 
         :global(table) {
