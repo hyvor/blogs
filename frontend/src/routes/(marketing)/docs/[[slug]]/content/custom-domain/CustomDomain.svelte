@@ -176,5 +176,14 @@
 </h2>
 
 <p>
-    If your blog with custom domain is loading infinitely or returning any other errors codes, make sure you do not have any other <code>A</code> or <code>AAAA</code> records with the same hostname as your custom domain.
+    If your blog with custom domain is loading infinitely or returning any other errors codes, please check the following.
 </p>
+
+<ul>
+    <li>
+        Make sure you do not have any other <code>A</code> or <code>AAAA</code> records with the same hostname as your custom domain.
+    </li>
+    <li>
+        If you have set up <code>CAA</code> records for your domain, make sure you have allowed ZeroSSL to issue certificates for your domain (see <a href="https://help.zerossl.com/hc/en-us/articles/360060119753-Invalid-CAA-Records" target="_blank">this guide</a>). <strong>HOWEVER</strong>, please note that in the event of a change in our certificate provider, you may need to update your CAA records accordingly. Therefore, if possible, we recommend not to use CAA records for your domain.
+    </li>
+</ul>
