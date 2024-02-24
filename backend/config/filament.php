@@ -38,7 +38,7 @@ return [
     |
     */
 
-    'core_path' => env('FILAMENT_CORE_PATH', 'filament'),
+    'core_path' => env('FILAMENT_CORE_PATH', 'api/filament'),
 
     /*
     |--------------------------------------------------------------------------
@@ -50,7 +50,7 @@ return [
     |
     */
 
-    'domain' => env('FILAMENT_DOMAIN'),
+    'domain' => env('DOMAIN_APP'),
 
     /*
     |--------------------------------------------------------------------------
