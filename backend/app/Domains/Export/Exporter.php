@@ -53,7 +53,7 @@ class Exporter
 
         Storage::setVisibility($path, 'public');
 
-        $url = config('filesystems.disks.s3.url') . '/' . $path;
+        $url = config('app.url') . '/api/media/' . $path;
 
         $this->export->update([
             'status' => 'completed',

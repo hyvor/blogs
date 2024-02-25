@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "37903e27146c2f22e815654e8d01a6c7",
+    "content-hash": "b767ca6ea660eed82587d6246ca2ca19",
     "packages": [
         {
             "name": "akaunting/laravel-money",
@@ -2413,19 +2413,20 @@
         },
         {
             "name": "hyvor/helper-laravel",
-            "version": "0.0.7",
+            "version": "0.0.10",
             "source": {
                 "type": "git",
                 "url": "https://github.com/hyvor/hyvor-helper-laravel.git",
-                "reference": "7dfb642192eb07d5f36a6f823521b89e6b1a696e"
+                "reference": "26b0c8fb2456da46448e1fd6ff79bdbd3823c0dd"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/hyvor/hyvor-helper-laravel/zipball/7dfb642192eb07d5f36a6f823521b89e6b1a696e",
-                "reference": "7dfb642192eb07d5f36a6f823521b89e6b1a696e",
+                "url": "https://api.github.com/repos/hyvor/hyvor-helper-laravel/zipball/26b0c8fb2456da46448e1fd6ff79bdbd3823c0dd",
+                "reference": "26b0c8fb2456da46448e1fd6ff79bdbd3823c0dd",
                 "shasum": ""
             },
             "require": {
+                "ext-intl": "*",
                 "guzzlehttp/guzzle": "^7.8",
                 "php": "^8.1|^8.2"
             },
@@ -2438,7 +2439,8 @@
             "extra": {
                 "laravel": {
                     "providers": [
-                        "Hyvor\\Helper\\Auth\\AuthServiceProvider"
+                        "Hyvor\\Helper\\HelperServiceProvider",
+                        "Hyvor\\Helper\\Internationalization\\InternationalizationServiceProvider"
                     ]
                 }
             },
@@ -2460,9 +2462,9 @@
             "description": "Helper Package for HYVOR Applications",
             "support": {
                 "issues": "https://github.com/hyvor/hyvor-helper-laravel/issues",
-                "source": "https://github.com/hyvor/hyvor-helper-laravel/tree/0.0.7"
+                "source": "https://github.com/hyvor/hyvor-helper-laravel/tree/0.0.10"
             },
-            "time": "2024-02-01T00:29:49+00:00"
+            "time": "2024-02-25T09:08:47+00:00"
         },
         {
             "name": "hyvor/laravel-filterq",

@@ -23,6 +23,7 @@
             <Link 
                 href={data.url} 
                 download={fileNameFromUrl(data.url)}
+                target="_blank"
             >Download</Link>
         {/if}
     </div>

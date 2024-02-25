@@ -40,7 +40,7 @@ it('exports in Hyvor Blogs format', function() {
 
     expect($export->status)->toBe(JobStatusEnum::COMPLETED);
     expect($export->format)->toBe(ExportFormatEnum::HYVOR_BLOGS);
-    expect($export->url)->toBeString();
+    expect($export->url)->toStartWith('https://blogs.hyvor.com/api/media/exports/');
 
     $date = date('Y-m-d');
     $path = storage_path("/app/exports/$blog->id/$date-$export->id.json");
