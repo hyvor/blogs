@@ -17,10 +17,7 @@ jobs:
             - name: Get latest tag
               id: get_tag
               run: |
-                  TAG=${{ github.event.inputs.tag }}
-                  if [ -z "$TAG" ]; then
-                      TAG=$(git describe --tags `git rev-list --tags --max-count=1`)
-                  fi
+                  TAG=${{ github.event.inputs.tag }} || $(git describe --tags --abbrev=0)
                   echo "::set-output name=tag::$TAG"
 
     deploy:
