@@ -29,3 +29,23 @@ it('returns font file', function() {
     expect($responseObject->cache_control)->toBe(DeliveryAPICacheControlHeaderEnum::CACHE_ONE_YEAR);
 
 });
+
+it('on fail', function() {
+
+    Http::fake([
+        'https://fonts.bunny.net/*' => Http::response('', 500)
+    ]);
+
+    $blog = blog();
+
+    $pathMatcher = new PathMatcher($blog, "/fonts/file/mulish/files/mulish-latin-400-normal.woff2");
+    $responseObject = $pathMatcher->getResponseObject();
+
+    expect($responseObject->content)->toBe('Failed to fetch font file: Request failed');
+    expect($responseObject->status)->toBe(500);
+    expect($responseObject->type)->toBe(DeliveryAPITypeEnum::FILE);
+    expect($responseObject->file_type)->toBe(DeliveryAPIFileTypeEnum::ASSET);
+    expect($responseObject->mime_type)->toBe('text/plain');
+    expect($responseObject->cache_control)->toBe(DeliveryAPICacheControlHeaderEnum::NO_CACHE);
+
+});

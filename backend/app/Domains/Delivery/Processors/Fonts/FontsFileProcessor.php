@@ -8,7 +8,9 @@ use App\Data\Objects\DeliveryAPI\DeliveryAPIResponseObject;
 use App\Domains\Delivery\PathMatcher;
 use App\Domains\Delivery\Processors\RouteProcessorAbstract;
 use App\Domains\Delivery\RouteMatcher\MatchedRoute;
-use Http;
+use Illuminate\Http\Client\ConnectionException;
+use Illuminate\Http\Client\RequestException;
+use Illuminate\Support\Facades\Http;
 
 class FontsFileProcessor extends RouteProcessorAbstract
 {
@@ -19,8 +21,19 @@ class FontsFileProcessor extends RouteProcessorAbstract
         $path = $matchedRoute->param('path');
 
         $url = "https://fonts.bunny.net/$path";
-        $response = Http::get($url);
-        $response->throw();
+        try {
+            $response = Http::get($url);
+            $response->throw();
+        } catch (ConnectionException|RequestException $e) {
+            $errorMessage = $e instanceof ConnectionException ?
+                'Connection failed' :
+                'Request failed';
+            $this->setResponseObject(DeliveryAPIResponseObject::forError(
+                DeliveryAPIFileTypeEnum::ASSET,
+                'Failed to fetch font file: ' . $errorMessage,
+            ));
+            return;
+        }
 
         $this->setResponseObject(DeliveryAPIResponseObject::forFile(
             DeliveryAPIFileTypeEnum::ASSET,

@@ -68,6 +68,22 @@ class DeliveryAPIResponseObject
         return $obj;
     }
 
+    public static function forError(
+        DeliveryAPIFileTypeEnum $type,
+        string $content = '',
+        int $status = 500,
+    )
+    {
+        return self::forFile(
+            $type,
+            $content,
+            'text/plain',
+            false,
+            $status,
+            DeliveryAPICacheControlHeaderEnum::NO_CACHE
+        );
+    }
+
     /*// for caching
     public static function fromArray(array $arr)
     {

@@ -8,6 +8,8 @@ use App\Data\Objects\DeliveryAPI\DeliveryAPIResponseObject;
 use App\Domains\Delivery\PathMatcher;
 use App\Domains\Delivery\Processors\RouteProcessorAbstract;
 use App\Domains\Delivery\RouteMatcher\MatchedRoute;
+use Illuminate\Http\Client\ConnectionException;
+use Illuminate\Http\Client\RequestException;
 use Illuminate\Support\Facades\Http;
 
 class FontsCssProcessor extends RouteProcessorAbstract
@@ -21,8 +23,19 @@ class FontsCssProcessor extends RouteProcessorAbstract
         $family = $matchedRoute->param('family');
 
         $url = "https://fonts.bunny.net/css?family=$family&display=swap";
-        $response = Http::get($url);
-        $response->throw();
+        try {
+            $response = Http::get($url);
+            $response->throw();
+        } catch (ConnectionException|RequestException $e) {
+            $errorMessage = $e instanceof ConnectionException ?
+                'Connection failed' :
+                'Request failed';
+            $this->setResponseObject(DeliveryAPIResponseObject::forError(
+                DeliveryAPIFileTypeEnum::ASSET,
+                'Failed to fetch font css: ' . $errorMessage,
+            ));
+            return;
+        }
 
         $css = $response->body();
         $css = str_replace(

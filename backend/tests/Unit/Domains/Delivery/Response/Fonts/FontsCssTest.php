@@ -51,3 +51,20 @@ it('returns font css', function() {
     });
 
 });
+
+it('on fail', function() {
+
+    Http::fake([
+        'https://fonts.bunny.net/css*' => Http::response('', 500)
+    ]);
+
+    $blog = blog();
+    $pathMatcher = new PathMatcher($blog, "/fonts/css/mulish:400");
+    $responseObject = $pathMatcher->getResponseObject();
+
+    expect($responseObject->content)->toBe('Failed to fetch font css: Request failed');
+    expect($responseObject->status)->toBe(500);
+    expect($responseObject->type)->toBe(DeliveryAPITypeEnum::FILE);
+
+
+});
