@@ -30,6 +30,11 @@ class WebhookDeliveryService
         $webhook = $delivery->webhook;
         $blog = $webhook->blog;
 
+        if (!$blog) {
+            self::fail($delivery);
+            return;
+        }
+
         $payload = [
             'subdomain' => $blog->subdomain,
             'timestamp' => $delivery->created_at->timestamp,
