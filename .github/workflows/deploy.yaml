@@ -8,6 +8,7 @@ on:
                 required: false
                 default: 'latest'
 
+jobs:
     deploy:
         name: "Deploying ${{ github.event.inputs.tag }}"
         needs: tag
