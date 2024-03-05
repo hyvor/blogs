@@ -16,8 +16,12 @@ jobs:
               uses: actions/checkout@v2
             - name: Get latest tag
               id: get_tag
-              # input tag or latest tag
-              run: echo ::set-output name=tag::${{ github.event.inputs.tag || $(git describe --tags --abbrev=0) }}
+              run: |
+                  TAG=${{ github.event.inputs.tag }}
+                  if [ -z "$TAG" ]; then
+                      TAG=$(git describe --tags `git rev-list --tags --max-count=1`)
+                  fi
+                  echo "::set-output name=tag::$TAG"
 
     deploy:
         name: "Deploying ${{ needs.tag.outputs.tag }}"
