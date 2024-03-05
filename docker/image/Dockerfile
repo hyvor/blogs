@@ -63,8 +63,8 @@ RUN COMPOSER_ALLOW_SUPERUSER=1 composer install --optimize-autoloader --no-dev -
 
 
 # laravel directories
+RUN touch /var/www/app/backend/storage/logs/laravel.log
 RUN chmod -R 777 /var/www/app/backend/storage /var/www/app/backend/bootstrap/cache
-
 
 ### FRONTEND
 
