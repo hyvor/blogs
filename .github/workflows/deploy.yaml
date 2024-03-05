@@ -11,7 +11,6 @@ on:
 jobs:
     deploy:
         name: "Deploying ${{ github.event.inputs.tag }}"
-        needs: tag
         runs-on: ubuntu-latest
         strategy:
             matrix:
