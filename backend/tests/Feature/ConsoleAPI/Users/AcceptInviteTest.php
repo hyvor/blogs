@@ -31,7 +31,7 @@ it('does not accept invitation if the signature is wrong', function () {
         'status' => UserStatusEnum::INVITED,
     ]);
 
-    $this->call('GET', "/user-accept-invite?user_id=$user->id&signature=wrong")
+    $this->call('GET', "/api/user-accept-invite?user_id=$user->id&signature=wrong")
         ->assertUnprocessable()
         ->assertSee('Invalid Link');
 

@@ -312,4 +312,4 @@ Route::prefix('/api/console/v0/blog/{subdomain}')
     });
 
 // SPECIAL
-Route::get('user-accept-invite', [ConsoleUserController::class, 'acceptInvite'])->name('user-accept-invite');
+Route::get('api/user-accept-invite', [ConsoleUserController::class, 'acceptInvite'])->name('user-accept-invite');
