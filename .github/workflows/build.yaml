@@ -6,7 +6,7 @@ on:
 
 jobs:
   docker:
-    name: "Building docker image ${{ github.ref_name }}"
+    name: "${{ github.ref_name }}: Build and Push"
     runs-on: ubuntu-latest
     steps:
       -   uses: actions/checkout@v2
