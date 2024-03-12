@@ -1,4 +1,4 @@
-name: "Deploy to Production 🚀"
+name: "Deploy to Production"
 
 on:
     workflow_dispatch:
@@ -27,7 +27,7 @@ jobs:
                     host: ${{ matrix.server.ip }}
                     username: root
                     key: ${{ secrets.DEPLOY_SSH_KEY }}
-                    source: "docker/hosted/docker-compose.yaml,docker/hosted/prod.env"
+                    source: "docker/cloud/docker-compose.yaml,docker/cloud/prod.env"
                     target: /root
                     overwrite: true
                     strip_components: 2

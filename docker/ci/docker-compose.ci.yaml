@@ -17,15 +17,6 @@ services:
       - ~/mysql:/var/lib/mysql:delegated
       - ./docker/mysql-init:/docker-entrypoint-initdb.d
 
-  redis:
-    image: redis:6.2
-    restart: always
-    ports:
-      - '6379:6379'
-    command: redis-server --save 20 1 --loglevel warning
-    volumes:
-      - redis:/data
-
   meilisearch:
     image: getmeili/meilisearch:v1.0
     restart: unless-stopped
