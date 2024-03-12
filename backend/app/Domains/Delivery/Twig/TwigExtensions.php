@@ -12,6 +12,8 @@ use App\Domains\Route\PermalinkRepository;
 use App\Domains\Theme\ThemeFilesRepository;
 use App\Exceptions\TrustedException;
 use App\Models\Blog;
+use Hyvor\SvgIcons\Exception\IconNotFoundException;
+use Hyvor\SvgIcons\Exception\InvalidLibraryException;
 use Hyvor\SvgIcons\Exception\SvgIconException;
 use Hyvor\SvgIcons\Icon;
 use Twig\Environment;
@@ -223,12 +225,19 @@ class TwigExtensions extends AbstractExtension
 
     public function iconFunction($library, $iconName, $width = null, $height = null): string
     {
+
+        if (!$iconName) {
+            throw new Error('Icon name is required for the icon() function');
+        }
+
         try {
             $icon = new Icon($library, $iconName);
 
             return $icon->getSvg($width, $height);
-        } catch (SvgIconException) {
-            return '';
+        } catch (InvalidLibraryException $e) {
+            throw new Error("Invalid icon library $library for $iconName");
+        } catch (IconNotFoundException) {
+            throw new Error("Icon not found $library - $iconName");
         }
     }
 

@@ -2,6 +2,8 @@
 
 namespace Tests\Unit\Domains\Delivery\Twig\TwigExtensions;
 
+use Twig\Error\Error;
+
 it('returns icons', function () {
     testTwigRendering(
         "{{ icon('bootstrap', 'alarm') }}",
@@ -44,4 +46,20 @@ it('returns empty on error', function () {
         [],
         ''
     );
-});
+})->throws(Error::class, 'Invalid icon library wrong-library for alarm');
+
+it('returns an error when svg icon name is invalid', function() {
+    testTwigRendering(
+        "{{ icon('bootstrap', null) }}",
+        [],
+        ''
+    );
+})->throws(Error::class, 'Icon name is required for the icon() function');
+
+it('throws an error when icon not found', function() {
+    testTwigRendering(
+        "{{ icon('bootstrap', 'wrong-icon') }}",
+        [],
+        ''
+    );
+})->throws(Error::class, 'Icon not found bootstrap - wrong-icon');
