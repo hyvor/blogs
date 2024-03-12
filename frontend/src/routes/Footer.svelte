@@ -1,9 +1,6 @@
 <script>
    import { Footer, FooterLinkList } from '@hyvor/design/marketing';
-   import { page } from "$app/stores";
 </script>
-
-{#if $page.url.pathname !== '/themes'}
 
 <div class="footer-wrap">
     <Footer
@@ -41,4 +38,9 @@
     </Footer>
 </div>
 
-{/if}
+<style>
+    .footer-wrap {
+        margin-top: 100px;
+    }
+
+</style>

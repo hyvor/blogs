@@ -1,6 +1,6 @@
 <script lang="ts">
     import { Button, DarkToggle } from '@hyvor/design/components';
-    import {Header } from '@hyvor/design/marketing';
+    import { Header } from '@hyvor/design/marketing';
     import logo from '$lib/img/logo.png';
 	import { page } from "$app/stores";
 </script>
@@ -57,3 +57,13 @@
     </div>
 
 </Header>
+
+<style>
+
+    div[slot="end"] {
+        display: flex;
+        align-items: center;
+        gap: 5px;
+    }
+
+</style>
