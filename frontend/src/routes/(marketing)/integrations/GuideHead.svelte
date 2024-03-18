@@ -3,9 +3,21 @@
     export let title: string
     export let description: string | null = '';
     export let integrationIcon: string | null = '';
+
+    import { Button } from '@hyvor/design/components';
 </script>
 
+
+
 <div class="hds-container guide-head">
+
+    <div class="buttons">
+        <div class="button">
+            <Button as="a" href="/integrations" size="large">
+                Go to Integrations
+            </Button>
+        </div> 
+    </div>
 
     <div class="left">
 
@@ -44,6 +56,15 @@
 
 <style lang="scss">
 
+    .buttons {
+        
+        display: flex;
+        justify-content: flex-end;
+        padding-bottom: 20px;
+        
+
+    }
+
     .guide-head {
 
         display: flex;
@@ -52,7 +73,11 @@
         align-items: center;
         justify-content: center;
 
-
+        .button {
+            display: flex;
+            //align the button to left
+            justify-content:flex-start;
+        }
 
         .int {
             display: flex;
