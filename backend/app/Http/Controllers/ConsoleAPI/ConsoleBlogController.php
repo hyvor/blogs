@@ -121,6 +121,14 @@ class ConsoleBlogController extends Controller
 
         $updates = $request->all();
 
+        if (
+            array_key_exists('hosting_domain', $updates) &&
+            $updates['hosting_domain'] &&
+            BlogService::getBlogByCustomDomain($updates['hosting_domain'])
+        ) {
+            throw new TrustedException('domain_taken');
+        }
+
         $blog = BlogService::updateBlog($blog, $updates);
 
         return response()->json(new BlogObject($blog));

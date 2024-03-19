@@ -1,159 +1,142 @@
 <script lang="ts">
-	import { Button, ButtonGroup, Loader, toast } from "@hyvor/design/components";
-    import { blogOriginalStore, blogStore } from "../../lib/stores/blogStore";
-	import type { Blog, BlogVariant } from "../../lib/types";
-	import { updateBlog, updateBlogVariant } from "../../lib/actions/blogActions";
-	import { beforeNavigate } from "$app/navigation";
+	import { Button, ButtonGroup, Loader, toast } from '@hyvor/design/components';
+	import { blogOriginalStore, blogStore } from '../../lib/stores/blogStore';
+	import type { Blog, BlogVariant } from '../../lib/types';
+	import { updateBlog, updateBlogVariant } from '../../lib/actions/blogActions';
+	import { beforeNavigate } from '$app/navigation';
 
-    export let keys : (keyof Blog)[] = [];
-    export let variantKeys : (keyof BlogVariant)[] = [];
+	export let keys: (keyof Blog)[] = [];
+	export let variantKeys: (keyof BlogVariant)[] = [];
 
-    export let outsideChanges : Partial<Blog> = {};
-    export let beforeSave : null | (() => boolean) = null;
-    export let afterSave : null | ((b: Blog) => void) = null;
+	export let outsideChanges: Partial<Blog> = {};
+	export let beforeSave: null | (() => boolean) = null;
+	export let afterSave: null | ((b: Blog) => void) = null;
+	export let onError: null | ((message: string, code: number) => void) = null;
 
-    let loadingState : 'none' | 'loading' | 'success' | 'error' = 'none';
+	let loadingState: 'none' | 'loading' | 'success' | 'error' = 'none';
 
-    $: should = getShouldSave($blogStore, $blogOriginalStore, outsideChanges);
+	$: should = getShouldSave($blogStore, $blogOriginalStore, outsideChanges);
 
-    beforeNavigate(navigation => {
+	beforeNavigate((navigation) => {
+		if (should) {
+			if (!confirm('You have unsaved changes. Are you sure you want to leave?')) {
+				navigation.cancel();
+			}
+		}
+	});
 
-        if (should) {
-            if (!confirm('You have unsaved changes. Are you sure you want to leave?')) {
-                navigation.cancel();
-            }
-        }
-    })
+	function getShouldSave(blog: Blog, blogOriginal: Blog, $outsideChanges: Partial<Blog>) {
+		if (Object.keys($outsideChanges).length > 0) {
+			return true;
+		}
 
-    function getShouldSave(blog: Blog, blogOriginal: Blog, $outsideChanges: Partial<Blog>) {
+		if (keys.some((key) => blog[key] !== blogOriginal[key])) {
+			return true;
+		}
 
-        if (Object.keys($outsideChanges).length > 0) {
-            return true;
-        }
+		if (
+			blog.variants.some((variant, i) =>
+				variantKeys.some((key) => variant[key] !== blogOriginal.variants[i]![key])
+			)
+		) {
+			return true;
+		}
 
-        if (keys.some(key => blog[key] !== blogOriginal[key])) {
-            return true;
-        }
+		return false;
+	}
 
-        if (
-            blog.variants.some(
-                (variant, i) => 
-                    variantKeys.some(key => variant[key] !== blogOriginal.variants[i]![key])
-                )
-        ) {
-            return true;
-        }
+	async function handleSave() {
+		if (beforeSave && !beforeSave()) {
+			return;
+		}
 
-        return false;
-    }
+		loadingState = 'loading';
 
-    async function handleSave() {
+		const variantChanges: Record<number, Partial<BlogVariant>> = {};
+		$blogStore.variants.forEach((variant) => {
+			const original = $blogOriginalStore.variants.find(
+				(v) => v.language_id === variant.language_id
+			);
 
-        if (beforeSave && !beforeSave()) {
-            return;
-        }
+			if (!original) return;
 
-        loadingState = 'loading';
+			const changes: Partial<BlogVariant> = {};
+			variantKeys.map((key) => {
+				if (variant[key] !== original[key]) {
+					(changes as any)[key] = variant[key];
+				}
+			});
 
-        const variantChanges : Record<number, Partial<BlogVariant>> = {};
-        $blogStore.variants.forEach((variant) => {
-            const original = $blogOriginalStore.variants.find(v => v.language_id === variant.language_id);
+			if (Object.keys(changes).length !== 0) {
+				variantChanges[variant.language_id] = changes;
+			}
+		});
 
-            if (!original)
-                return;
+		for (const [languageId, changes] of Object.entries(variantChanges)) {
+			try {
+				await updateBlogVariant(Number(languageId), changes, true);
+			} catch (e) {
+				toast.error('Failed to update blog variant');
+				loadingState = 'error';
+				return;
+			}
+		}
 
-            const changes : Partial<BlogVariant> = {};
-            variantKeys.map(key => {
-                if (variant[key] !== original[key]) {
-                    (changes as any)[key] = variant[key];
-                }
-            })
+		let blogUpdate: Partial<Blog> = {};
+		keys.map((key) => {
+			if ($blogStore[key] !== $blogOriginalStore[key]) {
+				(blogUpdate as any)[key] = $blogStore[key];
+			}
+		});
 
-            if (Object.keys(changes).length !== 0) {
-                variantChanges[variant.language_id] = changes;
-            }
-        })
+		blogUpdate = {
+			...blogUpdate,
+			...outsideChanges
+		};
 
-        for (const [languageId, changes] of Object.entries(variantChanges)) {
-            try {
-                await updateBlogVariant(Number(languageId), changes, true);
-            } catch (e) {
-                toast.error('Failed to update blog variant');
-                loadingState = 'error';
-                return;
-            }
-        }
+		try {
+			const newBlog = await updateBlog(blogUpdate, true);
 
-        let blogUpdate : Partial<Blog> = {}
-        keys.map(key => {
-            if ($blogStore[key] !== $blogOriginalStore[key]) {
-                (blogUpdate as any)[key] = $blogStore[key];
-            }
-        })
+			if (afterSave) {
+				afterSave(newBlog);
+			}
 
-        blogUpdate = {
-            ...blogUpdate,
-            ...outsideChanges
-        };
+			loadingState = 'success';
+		} catch (e: any) {
+			loadingState = 'error';
 
-        try {
-            const newBlog = await updateBlog(blogUpdate, true);
-
-            if (afterSave) {
-                afterSave(newBlog);
-            }
-
-            loadingState = 'success';
-        } catch (e: any) {
-            loadingState = 'error';
-            toast.error(e.message);
-        }
-
-    }
- 
+			if (onError) {
+				onError(e.message as string, e.code as number);
+			} else {
+				toast.error(e.message);
+			}
+		}
+	}
 </script>
 
 <div class="save">
+	<span class="loader-wrap">
+		<Loader state={loadingState} size="small" />
+	</span>
 
-    <span class="loader-wrap">
-        <Loader
-            state={loadingState}
-            size="small"
-        />
-    </span>
+	<ButtonGroup>
+		<Button color="gray" disabled={!should} variant="invisible">Discard</Button>
 
-    <ButtonGroup>
-
-        <Button 
-            color="gray"
-            disabled={!should}
-            variant="invisible"
-        >
-            Discard
-        </Button>
-
-        <Button
-            disabled={!should}
-            on:click={handleSave}
-        >
-            Save
-        </Button>
-
-    </ButtonGroup>
-
+		<Button disabled={!should} on:click={handleSave}>Save</Button>
+	</ButtonGroup>
 </div>
 
 <style>
-    .save {
-        padding: 15px 30px;
-        text-align: right;
-        border-bottom: 1px solid var(--border);
-    }
-    .loader-wrap {
-        display: inline-flex;
-        align-items: center;
-        height: 100%;
-        vertical-align: middle;
-        width: 20px;
-    }
+	.save {
+		padding: 15px 30px;
+		text-align: right;
+		border-bottom: 1px solid var(--border);
+	}
+	.loader-wrap {
+		display: inline-flex;
+		align-items: center;
+		height: 100%;
+		vertical-align: middle;
+		width: 20px;
+	}
 </style>
